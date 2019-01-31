@@ -16,7 +16,6 @@
 
 package models.register
 
-import config.FrontendAppConfig
 import utils.{Enumerable, InputOption, WithName}
 
 sealed trait DeclarationDormant
@@ -31,7 +30,7 @@ object DeclarationDormant {
     Yes, No
   )
 
-  def options(config: FrontendAppConfig): Seq[InputOption] = values.map {
+  def options: Seq[InputOption] = values.map {
     value =>
       InputOption(value.toString, s"messages__is_dormant__${value.toString}")
   }

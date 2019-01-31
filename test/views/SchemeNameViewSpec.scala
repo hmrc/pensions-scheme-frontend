@@ -35,7 +35,7 @@ class SchemeNameViewSpec extends QuestionViewBehaviours[String] {
     schemeName(frontendAppConfig, form, NormalMode, scheme)(fakeRequest, messages)
 
   def createViewInCheckMode: () => HtmlFormat.Appendable = () =>
-    schemeName(appConfig(isHubEnabled = true), form, CheckMode, scheme)(fakeRequest, messages)
+    schemeName(frontendAppConfig, form, CheckMode, scheme)(fakeRequest, messages)
 
   "SchemeName view" must {
 
@@ -47,7 +47,7 @@ class SchemeNameViewSpec extends QuestionViewBehaviours[String] {
     behave like pageWithReturnLink(createView, frontendAppConfig.managePensionsSchemeOverviewUrl.url)
   }
 
-  "SchemeName view in check mode with hub enabled" must {
+  "SchemeName view in check mode" must {
     behave like pageWithReturnLink(createViewInCheckMode, controllers.routes.SchemeTaskListController.onPageLoad().url)
   }
 }

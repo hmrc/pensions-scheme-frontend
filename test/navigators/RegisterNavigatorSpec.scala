@@ -17,7 +17,7 @@
 package navigators
 
 import base.SpecBase
-import config.{FeatureSwitchManagementServiceTestImpl, FrontendAppConfig}
+import config.FrontendAppConfig
 import connectors.FakeUserAnswersCacheConnector
 import identifiers.{IsBeforeYouStartCompleteId, UserResearchDetailsId}
 import identifiers.register._
@@ -34,8 +34,6 @@ import utils.UserAnswers
 class RegisterNavigatorSpec extends SpecBase with MustMatchers with NavigatorBehaviour {
 
   import RegisterNavigatorSpec._
-
-  override lazy val frontendAppConfig = frontendAppConfigWithHubEnabled
 
   private def routesWithRestrictedEstablisher = Table(
     ("Id", "User Answers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (Check Mode)", "Save (CM)"),
@@ -64,7 +62,7 @@ class RegisterNavigatorSpec extends SpecBase with MustMatchers with NavigatorBeh
     (UKBankAccountId, ukBankAccountFalse, checkYourAnswers, true, Some(checkYourAnswers), true),
     (UKBankAccountId, emptyAnswers, expired, false, Some(expired), false),
     (UKBankDetailsId, emptyAnswers, checkYourAnswers, true, Some(checkYourAnswers), true),
-    (CheckYourAnswersId, emptyAnswers, taskList, true, None, false),
+    (CheckYourAnswersId, emptyAnswers, taskList, false, None, false),
 
     // Review, declarations, success - return from establishers
     (SchemeReviewId, hasCompanies, declarationDormant, true, None, false),
@@ -80,13 +78,8 @@ class RegisterNavigatorSpec extends SpecBase with MustMatchers with NavigatorBeh
     (UserResearchDetailsId, emptyAnswers, schemeOverview(frontendAppConfig), false, None, false)
   )
 
-  private val config = app.injector.instanceOf[Configuration]
-  val fakeFeatureSwitchManagementService = new FeatureSwitchManagementServiceTestImpl(config, environment)
-
-
   "RegisterNavigator" must {
-    fakeFeatureSwitchManagementService.change("enable-hub-v2", true)
-    val navigator = new RegisterNavigator(FakeUserAnswersCacheConnector, frontendAppConfig, fakeFeatureSwitchManagementService)
+    val navigator = new RegisterNavigator(FakeUserAnswersCacheConnector, frontendAppConfig)
     behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, routesWithRestrictedEstablisher, dataDescriber)
     behave like nonMatchingNavigator(navigator)
   }
@@ -162,6 +155,5 @@ object RegisterNavigatorSpec extends OptionValues{
   private def taskList: Call = controllers.routes.SchemeTaskListController.onPageLoad()
 
   private def adviserCheckYourAnswers: Call = controllers.register.adviser.routes.CheckYourAnswersController.onPageLoad()
-
 
 }

@@ -34,13 +34,6 @@ import scala.concurrent.ExecutionContext.Implicits.global
 trait NavigatorBehaviour extends PropertyChecks with OptionValues {
   this: WordSpec with MustMatchers =>
 
-  lazy val frontendAppConfigWithHubEnabled : FrontendAppConfig = {
-    val app = new GuiceApplicationBuilder()
-      .configure("features.enable-hub-v2" -> true)
-      .build()
-    app.injector.instanceOf[FrontendAppConfig]
-  }
-
   protected implicit val request: IdentifiedRequest = new IdentifiedRequest {
     override def externalId: String = "test-external-id"
   }

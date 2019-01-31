@@ -17,21 +17,21 @@
 package navigators
 
 import com.google.inject.Inject
-import config.{FeatureSwitchManagementService, FrontendAppConfig}
+import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
-import identifiers.{IsBeforeYouStartCompleteId, UserResearchDetailsId}
 import identifiers.register._
+import identifiers.{IsBeforeYouStartCompleteId, UserResearchDetailsId}
 import models.{CheckMode, Mode, NormalMode}
 import utils.{Navigator, UserAnswers}
 
 //scalastyle:off cyclomatic.complexity
 class RegisterNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector,
-                                  appConfig: FrontendAppConfig,
-                                  featureSwitchManagementService: FeatureSwitchManagementService) extends Navigator {
+                                  appConfig: FrontendAppConfig) extends Navigator {
 
   override protected def routeMap(from: NavigateFrom): Option[NavigateTo] =
     from.id match {
-      case ContinueRegistrationId => continueRegistration(from.userAnswers)
+      case ContinueRegistrationId =>
+        continueRegistration(from.userAnswers)
       case SchemeDetailsId =>
         NavigateTo.save(controllers.register.routes.SchemeEstablishedCountryController.onPageLoad(NormalMode))
       case SchemeEstablishedCountryId =>
@@ -61,7 +61,7 @@ class RegisterNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnec
       case UKBankDetailsId =>
         NavigateTo.save(controllers.register.routes.CheckYourAnswersController.onPageLoad())
       case CheckYourAnswersId =>
-        navigateToTaskList()
+        NavigateTo.dontSave(controllers.routes.SchemeTaskListController.onPageLoad())
       case SchemeReviewId =>
         schemeReviewRoutes(from.userAnswers)
       case DeclarationDormantId =>
@@ -157,29 +157,17 @@ class RegisterNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnec
       case Some(true) =>
         NavigateTo.save(controllers.register.adviser.routes.CheckYourAnswersController.onPageLoad())
       case Some(false) =>
-          NavigateTo.save(controllers.register.adviser.routes.AdviserNameController.onPageLoad(NormalMode))
+        NavigateTo.save(controllers.register.adviser.routes.AdviserNameController.onPageLoad(NormalMode))
       case None =>
         NavigateTo.dontSave(controllers.routes.SessionExpiredController.onPageLoad())
     }
   }
 
   private def continueRegistration(userAnswers: UserAnswers): Option[NavigateTo] =
-    if (featureSwitchManagementService.get("enable-hub-v2")) {
-      userAnswers.get(IsBeforeYouStartCompleteId) match {
-        case Some(true) =>
-          NavigateTo.dontSave(controllers.routes.SchemeTaskListController.onPageLoad())
-        case _ =>
-          NavigateTo.dontSave(controllers.routes.BeforeYouStartController.onPageLoad())
-      }
+    userAnswers.get(IsBeforeYouStartCompleteId) match {
+      case Some(true) =>
+        NavigateTo.dontSave(controllers.routes.SchemeTaskListController.onPageLoad())
+      case _ =>
+        NavigateTo.dontSave(controllers.routes.BeforeYouStartController.onPageLoad())
     }
-    else {
-      NavigateTo.dontSave(controllers.routes.WhatYouWillNeedController.onPageLoad())
-    }
-
-
-  private def navigateToTaskList() =
-    if(appConfig.enableHubV2)
-      NavigateTo.save(controllers.routes.SchemeTaskListController.onPageLoad())
-    else
-      NavigateTo.save(controllers.register.routes.SchemeTaskListController.onPageLoad())
 }

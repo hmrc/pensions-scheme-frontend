@@ -58,7 +58,7 @@ class EstablishersIndividualNavigator @Inject()(
       case ContactDetailsId(index) =>
         checkYourAnswers(index)(from.userAnswers)
       case CheckYourAnswersId =>
-        navigateToTaskList()
+        NavigateTo.dontSave(controllers.routes.SchemeTaskListController.onPageLoad())
     }
   }
 
@@ -110,10 +110,4 @@ class EstablishersIndividualNavigator @Inject()(
         NavigateTo.dontSave(controllers.routes.SessionExpiredController.onPageLoad())
     }
   }
-
-  private def navigateToTaskList() =
-    if(appConfig.enableHubV2)
-      NavigateTo.dontSave(controllers.routes.SchemeTaskListController.onPageLoad())
-    else
-      NavigateTo.dontSave(controllers.register.routes.SchemeTaskListController.onPageLoad())
 }

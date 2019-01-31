@@ -60,7 +60,7 @@ object CheckYourAnswersMembersControllerSpec extends ControllerSpecBase {
 
   private def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): CheckYourAnswersMembersController =
     new CheckYourAnswersMembersController(
-      frontendAppConfigWithHubEnabled,
+      frontendAppConfig,
       messagesApi,
       FakeAuthAction,
       dataRetrievalAction,
@@ -89,7 +89,7 @@ object CheckYourAnswersMembersControllerSpec extends ControllerSpecBase {
   )
 
   private def viewAsString(): String = check_your_answers(
-    frontendAppConfigWithHubEnabled,
+    frontendAppConfig,
     Seq(
       membersSection
     ),

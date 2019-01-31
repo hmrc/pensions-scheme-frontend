@@ -44,8 +44,6 @@ class BeforeYouStartNavigatorSpec extends SpecBase with NavigatorBehaviour {
     (CheckYourAnswersId, emptyAnswers, taskListPage, false, None, false)
   )
 
-  override lazy val frontendAppConfig = frontendAppConfigWithHubEnabled
-
   val navigator = new BeforeYouStartNavigator(FakeUserAnswersCacheConnector, frontendAppConfig)
   "BeforeYouStartNavigator" must {
 

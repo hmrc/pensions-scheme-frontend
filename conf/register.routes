@@ -4,8 +4,6 @@
 ->         /trustees                                    trustees.Routes
 ->         /adviser                                     adviser.Routes
 
-GET        /scheme-details                              controllers.register.SchemeTaskListController.onPageLoad
-
 GET        /scheme-detail                              controllers.register.SchemeDetailsController.onPageLoad(mode: Mode = NormalMode)
 POST       /scheme-detail                              controllers.register.SchemeDetailsController.onSubmit(mode: Mode = NormalMode)
 GET        /change-scheme-detail                       controllers.register.SchemeDetailsController.onPageLoad(mode: Mode = CheckMode)

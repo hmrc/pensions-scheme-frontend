@@ -49,9 +49,9 @@
 
         @components.submit_button()
         @if(returnOverview){
-            @components.return_link("messages__complete__return", appConfig.enableHubV2, schemeName, Some(appConfig.managePensionsSchemeOverviewUrl))
+            @components.return_link("messages__complete__return", schemeName, Some(appConfig.managePensionsSchemeOverviewUrl))
         } else {
-            @components.return_link("messages__schemeTaskList__returnlink", appConfig.enableHubV2, schemeName)
+            @components.return_link("messages__schemeTaskList__returnlink", schemeName)
         }
 
     }

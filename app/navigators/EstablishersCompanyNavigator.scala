@@ -57,7 +57,7 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
       case OtherDirectorsId(index) =>
         NavigateTo.save(controllers.register.establishers.company.routes.CompanyReviewController.onPageLoad(index))
       case CompanyReviewId(_) =>
-        navigateToTaskList()
+        NavigateTo.dontSave(controllers.routes.SchemeTaskListController.onPageLoad())
       case CheckYourAnswersId(index) =>
         NavigateTo.save(controllers.register.establishers.company.routes.AddCompanyDirectorsController.onPageLoad(NormalMode, index))
       case _ => None
@@ -141,10 +141,4 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
       NavigateTo.save(controllers.register.establishers.company.routes.OtherDirectorsController.onPageLoad(mode, index))
     }
   }
-
-  private def navigateToTaskList() =
-    if(appConfig.enableHubV2)
-      NavigateTo.dontSave(controllers.routes.SchemeTaskListController.onPageLoad())
-    else
-      NavigateTo.dontSave(controllers.register.routes.SchemeTaskListController.onPageLoad())
 }

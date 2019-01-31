@@ -30,7 +30,7 @@ class ConfirmDeleteTrusteeViewSpec extends YesNoViewBehaviours {
 
   override val form: Form[Boolean] = formLocal
 
-  "ConfirmDeleteTrustee view with hub enabled" must {
+  "ConfirmDeleteTrustee view" must {
 
     behave like normalPage(createView(), messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__heading", trusteeName))
 

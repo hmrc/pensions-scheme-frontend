@@ -16,25 +16,22 @@
 
 package controllers
 
-import config.FeatureSwitchManagementService
 import controllers.actions._
 import models.NormalMode
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.mockito.MockitoSugar
 import play.api.mvc.Call
 import play.api.test.Helpers._
-import utils.FakeFeatureSwitchManagementService
 import views.html.whatYouWillNeedWorkingKnowledge
 
 class WhatYouWillNeedWorkingKnowledgeControllerSpec extends ControllerSpecBase with MockitoSugar with BeforeAndAfterEach {
 
   def onwardRoute: Call = controllers.routes.AdviserNameController.onPageLoad(NormalMode)
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData, isEnabledV2: Boolean = false): WhatYouWillNeedWorkingKnowledgeController =
+  def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): WhatYouWillNeedWorkingKnowledgeController =
     new WhatYouWillNeedWorkingKnowledgeController(frontendAppConfig,
       messagesApi,
       FakeAuthAction,
-      new FakeFeatureSwitchManagementService(isEnabledV2),
       dataRetrievalAction
     )
 
@@ -52,15 +49,8 @@ class WhatYouWillNeedWorkingKnowledgeControllerSpec extends ControllerSpecBase w
     }
 
     "on a POST" must {
-      "redirect to working knowledge page when toggle is off" in {
+      "redirect to adviser name page" in {
         val result = controller().onSubmit()(fakeRequest)
-
-        status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(controllers.register.adviser.routes.WorkingKnowledgeController.onPageLoad(NormalMode).url)
-      }
-
-      "redirect to adviser name page when toggle is on" in {
-        val result = controller(isEnabledV2 = true).onSubmit()(fakeRequest)
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(onwardRoute.url)

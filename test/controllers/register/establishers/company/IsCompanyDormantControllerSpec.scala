@@ -86,7 +86,7 @@ class IsCompanyDormantControllerSpec extends ControllerSpecBase {
     }
 
     "redirect to the next page when valid data is submitted" in {
-      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", DeclarationDormant.options(frontendAppConfig).head.value))
+      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", DeclarationDormant.options.head.value))
 
       val result = controller().onSubmit(NormalMode, index)(postRequest)
 
@@ -113,7 +113,7 @@ class IsCompanyDormantControllerSpec extends ControllerSpecBase {
           redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
         }
         "POST" in {
-          val postRequest = fakeRequest.withFormUrlEncodedBody(("value", DeclarationDormant.options(frontendAppConfig).head.value))
+          val postRequest = fakeRequest.withFormUrlEncodedBody(("value", DeclarationDormant.options.head.value))
           val result = controller(dontGetAnyData).onSubmit(NormalMode, index)(postRequest)
 
           status(result) mustBe SEE_OTHER

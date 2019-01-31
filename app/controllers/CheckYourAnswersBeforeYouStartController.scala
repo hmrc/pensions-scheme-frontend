@@ -18,8 +18,7 @@ package controllers
 
 import config.FrontendAppConfig
 import controllers.actions._
-import identifiers._
-import identifiers.DeclarationDutiesId
+import identifiers.{DeclarationDutiesId, _}
 import javax.inject.Inject
 import models.CheckMode
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -67,11 +66,7 @@ class CheckYourAnswersBeforeYouStartController @Inject()(appConfig: FrontendAppC
   def onSubmit: Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       sectionComplete.setCompleteFlag(request.externalId, IsBeforeYouStartCompleteId, request.userAnswers, value = true) map { _ =>
-        if(appConfig.enableHubV2){
-          Redirect(controllers.routes.SchemeTaskListController.onPageLoad())
-        } else {
-          Redirect(controllers.register.routes.SchemeTaskListController.onPageLoad())
-        }
+        Redirect(controllers.routes.SchemeTaskListController.onPageLoad())
       }
   }
 

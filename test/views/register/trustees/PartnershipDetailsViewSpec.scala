@@ -38,7 +38,7 @@ class PartnershipDetailsViewSpec extends QuestionViewBehaviours[PartnershipDetai
     partnershipDetails(frontendAppConfig, form, NormalMode, firstIndex, None)(fakeRequest, messages)
 
 
-  "PartnershipDetails view with hub enabled" must {
+  "PartnershipDetails view" must {
 
     behave like normalPage(createView(), messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"))
 

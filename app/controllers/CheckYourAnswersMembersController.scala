@@ -16,7 +16,7 @@
 
 package controllers
 
-import config.{FeatureSwitchManagementService, FrontendAppConfig}
+import config.FrontendAppConfig
 import controllers.actions._
 import identifiers.{CurrentMembersId, FutureMembersId, IsAboutMembersCompleteId}
 import javax.inject.Inject
@@ -24,7 +24,6 @@ import models.CheckMode
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import utils.Toggles.enableHubV2
 import utils.checkyouranswers.Ops._
 import utils.{Enumerable, SectionComplete}
 import viewmodels.AnswerSection
@@ -60,11 +59,7 @@ class CheckYourAnswersMembersController @Inject()(appConfig: FrontendAppConfig,
   def onSubmit: Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       sectionComplete.setCompleteFlag(request.externalId, IsAboutMembersCompleteId, request.userAnswers, value = true) map { _ =>
-        if(appConfig.enableHubV2){
-          Redirect(controllers.routes.SchemeTaskListController.onPageLoad())
-        } else {
-          Redirect(controllers.register.routes.SchemeTaskListController.onPageLoad())
-        }
+        Redirect(controllers.routes.SchemeTaskListController.onPageLoad())
       }
   }
 

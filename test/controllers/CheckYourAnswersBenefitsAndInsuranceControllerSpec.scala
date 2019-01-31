@@ -65,7 +65,7 @@ object CheckYourAnswersBenefitsAndInsuranceControllerSpec extends ControllerSpec
 
   private def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): CheckYourAnswersBenefitsAndInsuranceController =
     new CheckYourAnswersBenefitsAndInsuranceController(
-      frontendAppConfigWithHubEnabled,
+      frontendAppConfig,
       messagesApi,
       FakeAuthAction,
       dataRetrievalAction,
@@ -135,7 +135,7 @@ object CheckYourAnswersBenefitsAndInsuranceControllerSpec extends ControllerSpec
   )
 
   private def viewAsString(): String = check_your_answers(
-    frontendAppConfigWithHubEnabled,
+    frontendAppConfig,
     Seq(
       benefitsAndInsuranceSection
     ),

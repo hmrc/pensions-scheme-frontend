@@ -16,7 +16,7 @@
 
 package controllers.register
 
-import config.{FeatureSwitchManagementService, FrontendAppConfig}
+import config.FrontendAppConfig
 import connectors._
 import controllers.Retrievals
 import controllers.actions._
@@ -42,7 +42,6 @@ import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.Register
 import utils.{Enumerable, Navigator, UserAnswers}
 import views.html.register.declaration
-import utils.Toggles.enableHubV2
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -59,8 +58,7 @@ class DeclarationController @Inject()(
                                        emailConnector: EmailConnector,
                                        psaNameCacheConnector: PSANameCacheConnector,
                                        crypto: ApplicationCrypto,
-                                       pensionAdministratorConnector: PensionAdministratorConnector,
-                                       fs: FeatureSwitchManagementService
+                                       pensionAdministratorConnector: PensionAdministratorConnector
                                      )(implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
 
   private val form = formProvider()
@@ -99,30 +97,17 @@ class DeclarationController @Inject()(
     }
 
     readyForRender.flatMap { _ =>
-      val declarationDuties = if (fs.get(enableHubV2)) {
-        request.userAnswers.get(identifiers.DeclarationDutiesId)
-      } else {
-        request.userAnswers.get(DeclarationDutiesId)
-      }
-      declarationDuties match {
+      request.userAnswers.get(identifiers.DeclarationDutiesId) match {
         case Some(hasWorkingKnowledge) => Future.successful(
           status(
-            declaration(appConfig, form, isCompany, isDormant = isDeclarationDormant, showMasterTrustDeclaration, hasWorkingKnowledge, existingSchemeName)
+            declaration(appConfig, form, isCompany, isDormant = isDeclarationDormant,
+              request.userAnswers.get(SchemeTypeId).contains(MasterTrust), hasWorkingKnowledge, existingSchemeName)
           )
         )
         case _ => Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
       }
     }
   }
-
-  private def showMasterTrustDeclaration(implicit request: DataRequest[AnyContent]): Boolean = {
-    if (fs.get(enableHubV2)) {
-      request.userAnswers.get(SchemeTypeId).contains(MasterTrust)
-    } else {
-      request.userAnswers.get(SchemeDetailsId).map(_.schemeType).contains(MasterTrust)
-    }
-  }
-
 
   private def isDeclarationDormant(implicit request: DataRequest[AnyContent]): Boolean =
     request.userAnswers.allEstablishersAfterDelete.exists { allEstablishers =>

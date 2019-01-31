@@ -61,7 +61,7 @@ object CheckYourAnswersBankDetailsControllerSpec extends ControllerSpecBase {
 
   private def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): CheckYourAnswersBankDetailsController =
     new CheckYourAnswersBankDetailsController(
-      frontendAppConfigWithHubEnabled,
+      frontendAppConfig,
       messagesApi,
       FakeAuthAction,
       dataRetrievalAction,
@@ -108,7 +108,7 @@ object CheckYourAnswersBankDetailsControllerSpec extends ControllerSpecBase {
   )
 
   private def viewAsString(): String = check_your_answers(
-    frontendAppConfigWithHubEnabled, Seq(bankAccountSection), postUrl, Some("Test Scheme Name"))(fakeRequest, messages).toString
+    frontendAppConfig, Seq(bankAccountSection), postUrl, Some("Test Scheme Name"))(fakeRequest, messages).toString
 
 }
 
