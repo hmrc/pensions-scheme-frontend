@@ -34,7 +34,7 @@ class AnyMoreChangesControllerSpec extends ControllerSpecBase {
 
   def controller(dataRetrievalAction: DataRetrievalAction = getMandatorySchemeName): AnyMoreChangesController =
     new AnyMoreChangesController(
-      frontendAppConfig,
+      appConfig(false),
       messagesApi,
       FakeUserAnswersCacheConnector,
       new FakeNavigator(desiredRoute = onwardRoute),
@@ -44,7 +44,7 @@ class AnyMoreChangesControllerSpec extends ControllerSpecBase {
       formProvider
     )
 
-  private def viewAsString(form: Form[_] = form) = anyMoreChanges(frontendAppConfig, form, schemeName)(fakeRequest, messages).toString
+  private def viewAsString(form: Form[_] = form) = anyMoreChanges(appConfig(false), form, schemeName)(fakeRequest, messages).toString
 
   "AnyMoreChangesController" must {
 
