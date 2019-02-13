@@ -2,13 +2,9 @@
 
 ->         /establishers                                establishers.Routes
 ->         /trustees                                    trustees.Routes
-->         /adviser                                     adviser.Routes
 
 GET         /confirmation                                controllers.register.SchemeSuccessController.onPageLoad()
 POST        /confirmation                                controllers.register.SchemeSuccessController.onSubmit()
-
-GET        /declaration-working-knowledge               controllers.register.DeclarationDutiesController.onPageLoad
-POST       /declaration-working-knowledge               controllers.register.DeclarationDutiesController.onSubmit
 
 GET        /declaration                                 controllers.register.DeclarationController.onPageLoad
 POST       /declaration                                 controllers.register.DeclarationController.onSubmit

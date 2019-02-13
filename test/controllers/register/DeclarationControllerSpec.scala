@@ -19,7 +19,6 @@ package controllers.register
 import connectors.{FakeUserAnswersCacheConnector, _}
 import controllers.ControllerSpecBase
 import controllers.actions._
-import controllers.register.DeclarationDutiesControllerSpec.psaId
 import forms.register.DeclarationFormProvider
 import identifiers.register.DeclarationDormantId
 import identifiers.register.establishers.company.{CompanyDetailsId, IsCompanyDormantId}
@@ -202,6 +201,7 @@ object DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar {
 
   private val formProvider = new DeclarationFormProvider()
   private val form = formProvider()
+  val psaId = PsaId("A0000000")
 
   private def controller(dataRetrievalAction: DataRetrievalAction,
                          fakeEmailConnector: EmailConnector = fakeEmailConnector,

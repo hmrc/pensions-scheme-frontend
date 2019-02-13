@@ -16,25 +16,17 @@
 
 package utils
 
-import controllers.register.routes
-import identifiers.HaveAnyTrusteesId
-import identifiers.register._
-import identifiers.register.adviser.AdviserDetailsId
 import identifiers.register.establishers.company._
 import identifiers.register.establishers.company.director._
 import identifiers.register.establishers.individual._
 import identifiers.register.establishers.{EstablisherKindId, company}
 import identifiers.register.trustees.individual.{TrusteeAddressYearsId, TrusteeNinoId}
 import models.Nino.{No, Yes}
-import models.{UniqueTaxReference, _}
 import models.address.Address
+import models.{UniqueTaxReference, _}
 import viewmodels.{AnswerRow, Message}
 
 class CheckYourAnswersHelper(userAnswers: UserAnswers, countryOptions: CountryOptions) extends Enumerable.Implicits {
-
-  def adviserDetails: Option[AnswerRow] = userAnswers.get(AdviserDetailsId) map {
-    x => AnswerRow("adviserDetails.checkYourAnswersLabel", Seq(s"${x.adviserName} ${x.emailAddress} ${x.phoneNumber}"), false, Some(controllers.register.adviser.routes.AdviserDetailsController.onPageLoad(CheckMode).url))
-  }
 
   def haveAnyTrustees: Option[AnswerRow] = userAnswers.get(identifiers.register.trustees.HaveAnyTrusteesId) map {
     x =>

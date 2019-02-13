@@ -22,7 +22,7 @@ import org.jsoup.Jsoup
 import play.api.data.Form
 import play.twirl.api.HtmlFormat
 import views.behaviours.QuestionViewBehaviours
-import views.html.register.adviser.adviserEmailAddress
+import views.html.adviserEmailAddress
 
 class AdviserEmailAddressViewSpec extends QuestionViewBehaviours[String] {
 
@@ -41,7 +41,7 @@ class AdviserEmailAddressViewSpec extends QuestionViewBehaviours[String] {
   behave like pageWithTextFields(
     createViewWithForm,
     messageKeyPrefix,
-    controllers.register.adviser.routes.AdviserEmailAddressController.onSubmit(NormalMode).url,
+    controllers.routes.AdviserEmailAddressController.onSubmit(NormalMode).url,
     "email"
   )
 

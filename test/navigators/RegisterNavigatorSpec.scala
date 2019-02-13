@@ -23,7 +23,7 @@ import identifiers.register._
 import identifiers.{IsBeforeYouStartCompleteId, UserResearchDetailsId}
 import models._
 import models.address.Address
-import models.register.{SchemeDetails, SchemeType}
+import models.register.SchemeType
 import org.scalatest.{MustMatchers, OptionValues}
 import play.api.libs.json.Json
 import play.api.mvc.Call
@@ -46,9 +46,6 @@ class RegisterNavigatorSpec extends SpecBase with MustMatchers with NavigatorBeh
 
     // Review, declarations, success - return from establishers
     (DeclarationId, hasEstablishers, schemeSuccess, false, None, false),
-    (DeclarationDutiesId, dutiesTrue, adviserCheckYourAnswers, true, Some(adviserCheckYourAnswers), true),
-    (DeclarationDutiesId, dutiesFalse, adviserName, true, Some(adviserName), true),
-    (DeclarationDutiesId, emptyAnswers, expired, false, None, false),
 
     // User Research page - return to SchemeOverview
     (UserResearchDetailsId, emptyAnswers, schemeOverview(frontendAppConfig), false, None, false)
@@ -72,8 +69,6 @@ object RegisterNavigatorSpec extends OptionValues{
   private val securedBenefitsFalse = UserAnswers().securedBenefits(false)
   private val ukBankAccountTrue = UserAnswers().ukBankAccount(true)
   private val ukBankAccountFalse = UserAnswers().ukBankAccount(false)
-  private val dutiesTrue = UserAnswers().declarationDuties(true)
-  private val dutiesFalse = UserAnswers().declarationDuties(false)
   private val hasCompanies = UserAnswers().establisherCompanyDetails(0, CompanyDetails("test-company-name", None, None))
   private val hasPartnership = UserAnswers().establisherPartnershipDetails(0, models.PartnershipDetails("test-company-name"))
   private val hasEstablishers = hasCompanies.schemeName("test-scheme-name").schemeType(SchemeType.GroupLifeDeath)
@@ -88,8 +83,6 @@ object RegisterNavigatorSpec extends OptionValues{
 
   private def beforeYouStart = controllers.routes.BeforeYouStartController.onPageLoad()
 
-  private def adviserName = controllers.register.adviser.routes.AdviserNameController.onPageLoad(NormalMode)
-
   private def expired = controllers.routes.SessionExpiredController.onPageLoad()
 
   private def schemeOverview(appConfig: FrontendAppConfig) = appConfig.managePensionsSchemeOverviewUrl
@@ -97,7 +90,5 @@ object RegisterNavigatorSpec extends OptionValues{
   private def dataDescriber(answers: UserAnswers): String = answers.toString
 
   private def taskList: Call = controllers.routes.SchemeTaskListController.onPageLoad()
-
-  private def adviserCheckYourAnswers: Call = controllers.register.adviser.routes.CheckYourAnswersController.onPageLoad()
 
 }

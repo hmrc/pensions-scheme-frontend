@@ -21,7 +21,6 @@ import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
 import identifiers.register._
 import identifiers.{IsBeforeYouStartCompleteId, UserResearchDetailsId}
-import models.{CheckMode, Mode, NormalMode}
 import utils.{Navigator, UserAnswers}
 
 //scalastyle:off cyclomatic.complexity
@@ -38,30 +37,14 @@ class RegisterNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnec
         NavigateTo.save(controllers.register.routes.DeclarationController.onPageLoad())
       case DeclarationId =>
         NavigateTo.dontSave(controllers.register.routes.SchemeSuccessController.onPageLoad())
-      case DeclarationDutiesId =>
-        declarationDutiesRoutes(NormalMode, from.userAnswers)
       case UserResearchDetailsId => NavigateTo.dontSave(appConfig.managePensionsSchemeOverviewUrl)
       case _ => None
     }
 
   override protected def editRouteMap(from: NavigateFrom): Option[NavigateTo] =
     from.id match {
-      case DeclarationDutiesId =>
-        declarationDutiesRoutes(CheckMode, from.userAnswers)
       case _ => None
     }
-
-
-  private def declarationDutiesRoutes(mode: Mode, userAnswers: UserAnswers): Option[NavigateTo] = {
-    userAnswers.get(DeclarationDutiesId) match {
-      case Some(true) =>
-        NavigateTo.save(controllers.register.adviser.routes.CheckYourAnswersController.onPageLoad())
-      case Some(false) =>
-        NavigateTo.save(controllers.register.adviser.routes.AdviserNameController.onPageLoad(NormalMode))
-      case None =>
-        NavigateTo.dontSave(controllers.routes.SessionExpiredController.onPageLoad())
-    }
-  }
 
   private def continueRegistration(userAnswers: UserAnswers): Option[NavigateTo] =
     userAnswers.get(IsBeforeYouStartCompleteId) match {

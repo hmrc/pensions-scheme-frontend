@@ -27,11 +27,6 @@ package object utils {
 
   implicit class UserAnswerOps(answers: UserAnswers) extends OptionValues with Enumerable .Implicits {
 
-    // Scheme details
-    def declarationDuties(declarationDuties: Boolean): UserAnswers = {
-      answers.set(identifiers.register.DeclarationDutiesId)(declarationDuties).asOpt.value
-    }
-
     def occupationalPensionScheme(isOccupational: Boolean): UserAnswers = {
       answers.set(identifiers.OccupationalPensionSchemeId)(isOccupational).asOpt.value
     }
@@ -266,15 +261,15 @@ package object utils {
 
     //Advisers
     def advisersAddress(address: Address): UserAnswers = {
-      answers.set(adviser.AdviserAddressId)(address).asOpt.value
+      answers.set(AdviserAddressId)(address).asOpt.value
     }
 
     def adviserEmailAddress(email: String): UserAnswers = {
-      answers.set(adviser.AdviserEmailId)(email).asOpt.value
+      answers.set(AdviserEmailId)(email).asOpt.value
     }
 
     def adviserPhone(phone: String): UserAnswers = {
-      answers.set(adviser.AdviserPhoneId)(phone).asOpt.value
+      answers.set(AdviserPhoneId)(phone).asOpt.value
     }
 
     def workingKnowledgePersonPhone(phone: String): UserAnswers = {
@@ -282,11 +277,11 @@ package object utils {
     }
 
     def adviserName(name: String): UserAnswers = {
-      answers.set(adviser.AdviserNameId)(name).asOpt.value
+      answers.set(AdviserNameId)(name).asOpt.value
     }
 
     def advisersAddressList(selectedAddress: TolerantAddress): UserAnswers = {
-      answers.set(adviser.AdviserAddressListId)(selectedAddress).asOpt.value
+      answers.set(AdviserAddressListId)(selectedAddress).asOpt.value
     }
 
     //Insurers

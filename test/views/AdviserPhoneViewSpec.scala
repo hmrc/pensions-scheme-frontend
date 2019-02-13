@@ -22,7 +22,7 @@ import org.jsoup.Jsoup
 import play.api.data.Form
 import play.twirl.api.HtmlFormat
 import views.behaviours.QuestionViewBehaviours
-import views.html.register.adviser.adviserPhone
+import views.html.adviserPhone
 
 class AdviserPhoneViewSpec extends QuestionViewBehaviours[String] {
 
@@ -41,7 +41,7 @@ class AdviserPhoneViewSpec extends QuestionViewBehaviours[String] {
   behave like pageWithTextFields(
     createViewWithForm,
     messageKeyPrefix,
-    controllers.register.adviser.routes.AdviserPhoneController.onSubmit(NormalMode).url,
+    controllers.routes.AdviserPhoneController.onSubmit(NormalMode).url,
     "phone"
   )
 
