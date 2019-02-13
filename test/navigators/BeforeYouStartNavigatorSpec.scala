@@ -17,14 +17,11 @@
 package navigators
 
 import base.SpecBase
-import config.FrontendAppConfig
 import connectors.FakeUserAnswersCacheConnector
 import controllers.routes._
-import identifiers.register.CheckYourAnswersId
 import identifiers._
 import models.register.SchemeType
 import models.{CheckMode, NormalMode}
-import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
 import play.api.mvc.Call
 import utils.UserAnswers
@@ -40,8 +37,7 @@ class BeforeYouStartNavigatorSpec extends SpecBase with NavigatorBehaviour {
     (SchemeTypeId, schemeTypeSingleTrust, establishedCountryPage, false, Some(checkYourAnswersPage), false),
     (HaveAnyTrusteesId, emptyAnswers, establishedCountryPage, false, Some(checkYourAnswersPage), false),
     (EstablishedCountryId, emptyAnswers, workingKnowledgePage, false, Some(checkYourAnswersPage), false),
-    (DeclarationDutiesId, emptyAnswers, checkYourAnswersPage, false, Some(checkYourAnswersPage), false),
-    (CheckYourAnswersId, emptyAnswers, taskListPage, false, None, false)
+    (DeclarationDutiesId, emptyAnswers, checkYourAnswersPage, false, Some(checkYourAnswersPage), false)
   )
 
   val navigator = new BeforeYouStartNavigator(FakeUserAnswersCacheConnector, frontendAppConfig)

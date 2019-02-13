@@ -31,8 +31,6 @@ class RegisterNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnec
     from.id match {
       case ContinueRegistrationId =>
         continueRegistration(from.userAnswers)
-      case CheckYourAnswersId =>
-        NavigateTo.dontSave(controllers.routes.SchemeTaskListController.onPageLoad())
       case DeclarationDormantId =>
         NavigateTo.save(controllers.register.routes.DeclarationController.onPageLoad())
       case DeclarationId =>

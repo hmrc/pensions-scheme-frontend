@@ -20,7 +20,6 @@ import com.google.inject.Inject
 import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
 import controllers.routes._
-import identifiers.register.CheckYourAnswersId
 import identifiers._
 import models.register.SchemeType
 import models.{CheckMode, NormalMode}
@@ -38,7 +37,6 @@ class BeforeYouStartNavigator @Inject()(val dataCacheConnector: UserAnswersCache
     case HaveAnyTrusteesId => NavigateTo.dontSave(EstablishedCountryController.onPageLoad(NormalMode))
     case EstablishedCountryId => NavigateTo.dontSave(WorkingKnowledgeController.onPageLoad(NormalMode))
     case DeclarationDutiesId => checkYourAnswers
-    case CheckYourAnswersId => NavigateTo.dontSave(controllers.routes.SchemeTaskListController.onPageLoad())
     case _ => None
   }
 

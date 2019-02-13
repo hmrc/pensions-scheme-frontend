@@ -40,9 +40,6 @@ class RegisterNavigatorSpec extends SpecBase with MustMatchers with NavigatorBeh
     (ContinueRegistrationId, beforeYouStartInProgress, beforeYouStart, false, None, false),
     (ContinueRegistrationId, beforeYouStartCompleted, taskList, false, None, false),
 
-    // Scheme registration
-    (CheckYourAnswersId, emptyAnswers, taskList, false, None, false),
-
     // Review, declarations, success - return from establishers
     (DeclarationId, hasEstablishers, schemeSuccess, false, None, false),
 
