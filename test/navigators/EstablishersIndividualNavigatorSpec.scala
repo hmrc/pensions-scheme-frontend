@@ -22,7 +22,7 @@ import identifiers.Identifier
 import identifiers.register.establishers.individual._
 import identifiers.register.trustees.HaveAnyTrusteesId
 import models._
-import models.register.{SchemeDetails, SchemeType}
+import models.register.SchemeType
 import org.scalatest.prop.TableFor6
 import org.scalatest.{MustMatchers, OptionValues}
 import play.api.libs.json.Json

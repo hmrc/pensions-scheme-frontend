@@ -17,7 +17,7 @@
 package views
 
 import controllers.routes
-import forms.register.InvestmentRegulatedFormProvider
+import forms.InvestmentRegulatedSchemeFormProvider
 import models.NormalMode
 import play.api.data.Form
 import views.behaviours.YesNoViewBehaviours
@@ -27,7 +27,7 @@ class InvestmentRegulatedSchemeViewSpec extends YesNoViewBehaviours {
 
   val messageKeyPrefix = "investment_regulated_scheme"
 
-  val form = new InvestmentRegulatedFormProvider()()
+  val form = new InvestmentRegulatedSchemeFormProvider()()
 
   private def createView() = () =>
     investmentRegulatedScheme(frontendAppConfig, form, NormalMode, None)(fakeRequest, messages)

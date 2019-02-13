@@ -27,7 +27,6 @@ import identifiers.register.trustees.partnership.PartnershipDetailsId
 import models.person.PersonDetails
 import models.register.trustees.TrusteeKind
 import models.register.trustees.TrusteeKind.{Company, Individual, Partnership}
-import models.register.{SchemeDetails, SchemeType}
 import models.{CompanyDetails, PartnershipDetails}
 import org.joda.time.LocalDate
 import play.api.libs.json.Writes
@@ -137,11 +136,6 @@ object ConfirmDeleteTrusteeControllerSpec extends ControllerSpecBase {
 
   private val postRequestForCancle: FakeRequest[AnyContentAsFormUrlEncoded] =
     FakeRequest().withFormUrlEncodedBody(("value", "false"))
-
-  private val scheme = SchemeDetails(
-    "test-scheme-name",
-    SchemeType.BodyCorporate
-  )
 
   private val individualId = TrusteeDetailsId(0)
   private val companyId = CompanyDetailsId(0)

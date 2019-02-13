@@ -17,7 +17,6 @@
 package views
 
 import forms.FutureMembersFormProvider
-import forms.register.MembershipFutureFormProvider
 import models.NormalMode
 import models.register.Membership
 import play.api.data.Form

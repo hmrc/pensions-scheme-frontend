@@ -39,15 +39,9 @@ object CheckYourAnswers {
 
   implicit def companyRegistrationNumber[I <: TypedIdentifier[CompanyRegistrationNumber]](implicit rds: Reads[CompanyRegistrationNumber]): CheckYourAnswers[I] = CompanyRegistrationNumberCYA()()
 
-  implicit def schemeDetails[I <: TypedIdentifier[SchemeDetails]](implicit rds: Reads[SchemeDetails]): CheckYourAnswers[I] = SchemeDetailsCYA()()
-
-  implicit def bankDetails[I <: TypedIdentifier[UKBankDetails]](implicit rds: Reads[UKBankDetails]): CheckYourAnswers[I] = BankDetailsCYA()()
-
   implicit def addressYears[I <: TypedIdentifier[AddressYears]](implicit rds: Reads[AddressYears]): CheckYourAnswers[I] = AddressYearsCYA()()
 
   implicit def address[I <: TypedIdentifier[Address]](implicit rds: Reads[Address], countryOptions: CountryOptions): CheckYourAnswers[I] = AddressCYA()()
-
-  implicit def benefitsInsurer[I <: TypedIdentifier[BenefitsInsurer]](implicit rds: Reads[BenefitsInsurer]): CheckYourAnswers[I] = BenefitsInsurerCYA()()
 
   implicit def uniqueTaxReference[I <: TypedIdentifier[UniqueTaxReference]](implicit rds: Reads[UniqueTaxReference]): CheckYourAnswers[I] = UniqueTaxReferenceCYA()()
 
@@ -135,23 +129,6 @@ object CheckYourAnswers {
     }
   }
 
-  implicit def schemeBenefits[I <: TypedIdentifier[Benefits]](implicit rds: Reads[Benefits]): CheckYourAnswers[I] = {
-    new CheckYourAnswers[I] {
-      override def row(id: I)(changeUrl: String, userAnswers: UserAnswers) = userAnswers.get(id).map {
-        benefits =>
-          Seq(
-            AnswerRow(
-              "messages__benefits__title",
-              Seq(s"messages__benefits__$benefits"),
-              answerIsMessageKey = true,
-              Some(changeUrl),
-              "messages__visuallyhidden__benefits"
-            )
-          )
-      }.getOrElse(Seq.empty[AnswerRow])
-    }
-  }
-
   implicit def typeOfBenefitsCYA[I <: TypedIdentifier[TypeOfBenefits]](implicit rds: Reads[TypeOfBenefits]): CheckYourAnswers[I] = {
     new CheckYourAnswers[I] {
       override def row(id: I)(changeUrl: String, userAnswers: UserAnswers) = userAnswers.get(id).map {
@@ -193,36 +170,6 @@ object CheckYourAnswers {
               ))
         }.getOrElse(Seq.empty[AnswerRow])
       }
-    }
-  }
-
-  implicit def adviserDetails[I <: TypedIdentifier[AdviserDetails]](implicit rds: Reads[AdviserDetails]): CheckYourAnswers[I] = {
-    new CheckYourAnswers[I] {
-      override def row(id: I)(changeUrl: String, userAnswers: UserAnswers) = userAnswers.get(id).map {
-        adviserDetails =>
-          Seq(
-            AnswerRow(
-              "messages__common__cya__name",
-              Seq(s"${adviserDetails.adviserName}"),
-              answerIsMessageKey = false,
-              Some(changeUrl),
-              Message("messages__visuallyhidden__common__name", adviserDetails.adviserName)
-            ),
-            AnswerRow(
-              "messages__adviserDetails__email",
-              Seq(s"${adviserDetails.emailAddress}"),
-              answerIsMessageKey = false,
-              Some(changeUrl),
-              "messages__visuallyhidden__adviser__email_address"
-            ),
-            AnswerRow(
-              "messages__adviserDetails__phone",
-              Seq(s"${adviserDetails.phoneNumber}"),
-              answerIsMessageKey = false,
-              Some(changeUrl),
-              "messages__visuallyhidden__adviser__phone_number"
-            ))
-      }.getOrElse(Seq.empty[AnswerRow])
     }
   }
 
@@ -475,102 +422,6 @@ case class CompanyRegistrationNumberCYA[I <: TypedIdentifier[CompanyRegistration
 
 }
 
-case class SchemeDetailsCYA[I <: TypedIdentifier[SchemeDetails]](
-                                                                  nameLabel: String = "messages__scheme_details__name_label",
-                                                                  changeName: String = "messages__visuallyhidden__scheme_name",
-                                                                  typeLabel: String = "messages__scheme_details__type_legend_short",
-                                                                  changeType: String = "messages__visuallyhidden__scheme_type"
-                                                                ) {
-
-  def apply()(implicit rds: Reads[SchemeDetails]): CheckYourAnswers[I] = {
-    new CheckYourAnswers[I] {
-      override def row(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
-
-        userAnswers.get(id).map {
-          schemeDetails =>
-
-            Seq(AnswerRow(
-              nameLabel,
-              Seq(s"${schemeDetails.schemeName}"),
-              answerIsMessageKey = false,
-              Some(changeUrl),
-              changeName
-            ),
-              AnswerRow(
-                typeLabel,
-                Seq(s"messages__scheme_details__type_${schemeDetails.schemeType}"),
-                answerIsMessageKey = true,
-                Some(changeUrl),
-                changeType
-              )
-            )
-        }.getOrElse(Seq.empty[AnswerRow])
-      }
-    }
-  }
-
-}
-
-case class BankDetailsCYA[I <: TypedIdentifier[UKBankDetails]](
-                                                                bankNameLabel: String = "messages__uk_bank_account_details__bank_name",
-                                                                changeBankName: String = "messages__visuallyhidden__uKBankAccount__bank_name",
-                                                                accountNameLabel: String = "messages__uk_bank_account_details__account_name",
-                                                                changeAccountName: String = "messages__visuallyhidden__uKBankAccount__account_name",
-                                                                sortCodeLabel: String = "messages__uk_bank_account_details__sort_code",
-                                                                changeSortCode: String = "messages__visuallyhidden__uKBankAccount__sort_code",
-                                                                accountNumberLabel: String = "messages__uk_bank_account_details__account_number",
-                                                                changeAccountNumber: String = "messages__visuallyhidden__uKBankAccount__account_number",
-                                                                dateLabel: String = "bankAccountDate.checkYourAnswersLabel",
-                                                                changeDate: String = "messages__visuallyhidden__uKBankAccount__date_bank_account"
-                                                              ) {
-
-  def apply()(implicit rds: Reads[UKBankDetails]): CheckYourAnswers[I] = {
-    new CheckYourAnswers[I] {
-      override def row(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = userAnswers.get(id).map {
-        bankDetails =>
-          Seq(
-            AnswerRow(
-              bankNameLabel,
-              Seq(s"${bankDetails.bankName}"),
-              answerIsMessageKey = false,
-              changeUrl = Some(changeUrl),
-              changeBankName
-            ),
-            AnswerRow(
-              accountNameLabel,
-              Seq(s"${bankDetails.accountName}"),
-              answerIsMessageKey = false,
-              Some(changeUrl),
-              changeAccountName
-            ),
-            AnswerRow(
-              sortCodeLabel,
-              Seq(s"${bankDetails.sortCode.first}-${bankDetails.sortCode.second}-${bankDetails.sortCode.third}"),
-              answerIsMessageKey = false,
-              Some(changeUrl),
-              changeSortCode
-            ),
-            AnswerRow(
-              accountNumberLabel,
-              Seq(s"${bankDetails.accountNumber}"),
-              answerIsMessageKey = false,
-              Some(changeUrl),
-              changeAccountNumber
-            ),
-            AnswerRow(
-              dateLabel,
-              Seq(s"${DateHelper.formatDate(bankDetails.date)}"),
-              answerIsMessageKey = false,
-              Some(changeUrl),
-              changeDate
-            )
-          )
-      }.getOrElse(Seq.empty[AnswerRow])
-    }
-  }
-
-}
-
 case class BankDetailsHnSCYA[I <: TypedIdentifier[BankAccountDetails]](label: Option[String] = None, hiddenLabel: Option[String] = None) {
 
   def apply()(implicit rds: Reads[BankAccountDetails], countryOptions: CountryOptions): CheckYourAnswers[I] = {
@@ -641,39 +492,6 @@ case class AddressCYA[I <: TypedIdentifier[Address]](
           ))
         }.getOrElse(Seq.empty[AnswerRow])
       }
-    }
-  }
-
-}
-
-case class BenefitsInsurerCYA[I <: TypedIdentifier[BenefitsInsurer]](
-                                                                      nameLabel: String = "messages__benefits_insurance__name",
-                                                                      changeName: String = "messages__visuallyhidden__benefits_insurance__name",
-                                                                      policyLabel: String = "messages__benefits_insurance__policy",
-                                                                      changePolicyNumber: String = "messages__visuallyhidden__benefits_insurance__policy"
-                                                                    ) {
-
-  def apply()(implicit rds: Reads[BenefitsInsurer]): CheckYourAnswers[I] = {
-    new CheckYourAnswers[I] {
-      override def row(id: I)(changeUrl: String, userAnswers: UserAnswers) = userAnswers.get(id).map {
-        benefitsInsurer =>
-          Seq(
-            AnswerRow(
-              nameLabel,
-              Seq(s"${benefitsInsurer.companyName}"),
-              answerIsMessageKey = false,
-              Some(changeUrl),
-              changeName
-            ),
-            AnswerRow(
-              policyLabel,
-              Seq(s"${benefitsInsurer.policyNumber}"),
-              answerIsMessageKey = false,
-              Some(changeUrl),
-              changePolicyNumber
-            )
-          )
-      }.getOrElse(Seq.empty[AnswerRow])
     }
   }
 

@@ -22,7 +22,6 @@ import controllers.actions._
 import forms.register.trustees.individual.UniqueTaxReferenceFormProvider
 import identifiers.register.trustees.individual.{TrusteeDetailsId, UniqueTaxReferenceId}
 import models.person.PersonDetails
-import models.register.{SchemeDetails, SchemeType}
 import models.{Index, NormalMode, UniqueTaxReference}
 import org.joda.time.LocalDate
 import play.api.data.Form
@@ -42,8 +41,6 @@ class UniqueTaxReferenceControllerSpec extends ControllerSpecBase {
   val trustee = "Test Trustee Name"
 
   val validData = Json.obj(
-    SchemeDetails.toString ->
-      SchemeDetails("Test Scheme Name", SchemeType.SingleTrust),
     "trustees" -> Json.arr(
       Json.obj(
         TrusteeDetailsId.toString ->
