@@ -20,11 +20,9 @@ import connectors.{AddressLookupConnector, FakeUserAnswersCacheConnector}
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.address.PostCodeLookupFormProvider
-import identifiers.register.SchemeDetailsId
 import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.partnership.{PartnershipDetailsId, PartnershipPreviousAddressPostcodeLookupId}
 import models.address.TolerantAddress
-import models.register.{SchemeDetails, SchemeType}
 import models.{Index, NormalMode, PartnershipDetails}
 import org.mockito.Mockito._
 import org.mockito._
@@ -67,8 +65,6 @@ class PartnershipPreviousAddressPostcodeLookupControllerSpec extends ControllerS
   private val testAnswer = "AB12 3CD"
 
   val validData: JsObject = Json.obj(
-    SchemeDetailsId.toString ->
-      SchemeDetails("Test Scheme Name", SchemeType.SingleTrust),
     EstablishersId.toString -> Json.arr(
       Json.obj(
         PartnershipDetailsId.toString ->

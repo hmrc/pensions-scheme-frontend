@@ -35,7 +35,7 @@ class WorkingKnowledgeControllerSpec extends ControllerSpecBase {
   val formProvider = new WorkingKnowledgeFormProvider()
   val form = formProvider()
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getMandatorySchemeName): WorkingKnowledgeController =
+  def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): WorkingKnowledgeController =
     new WorkingKnowledgeController(
       frontendAppConfig,
       messagesApi,

@@ -21,8 +21,8 @@ import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.register.DeclarationDutiesFormProvider
 import identifiers.TypedIdentifier
-import identifiers.register.{DeclarationDutiesId, SchemeDetailsId}
-import models.register.{SchemeDetails, SchemeSubmissionResponse, SchemeType}
+import identifiers.register.DeclarationDutiesId
+import models.register.SchemeSubmissionResponse
 import org.mockito.Matchers.{any, eq => eqTo}
 import org.mockito.Mockito._
 import org.scalatest.concurrent.ScalaFutures
@@ -131,7 +131,7 @@ class DeclarationDutiesControllerSpec extends ControllerSpecBase with MockitoSug
           .overrides(bind[UserAnswersCacheConnector].toInstance(FakeUserAnswersCacheConnector))
           .overrides(bind[AuthAction].toInstance(FakeAuthAction))
           .overrides(bind[PSANameCacheConnector].toInstance(mockPSANameCacheConnector))
-          .overrides(bind[DataRetrievalAction].toInstance(getMandatorySchemeName))
+          .overrides(bind[DataRetrievalAction].toInstance(getEmptyData))
           .overrides(bind[PensionsSchemeConnector].toInstance(fakePensionsSchemeConnector))
           .overrides(bind[PensionAdministratorConnector].toInstance(fakePensionAdminstratorConnector))
           .build()

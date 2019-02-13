@@ -18,12 +18,10 @@ package controllers.register.establishers.partnership
 
 import controllers.ControllerSpecBase
 import controllers.actions.{DataRequiredActionImpl, DataRetrievalAction, FakeAuthAction, FakeDataRetrievalAction}
-import identifiers.register.SchemeDetailsId
 import identifiers.register.establishers.partnership.partner.{IsPartnerCompleteId, PartnerDetailsId}
 import identifiers.register.establishers.partnership.{IsPartnershipCompleteId, PartnershipDetailsId}
 import identifiers.register.establishers.{EstablishersId, IsEstablisherCompleteId}
 import models.person.PersonDetails
-import models.register.{SchemeDetails, SchemeType}
 import models.{Index, PartnershipDetails}
 import org.joda.time.LocalDate
 import play.api.libs.json.{JsObject, Json}
@@ -90,8 +88,6 @@ class PartnershipReviewControllerSpec extends ControllerSpecBase {
     "not set establisher as complete when partner is not complete but partners are completed" in {
       FakeSectionComplete.reset()
       val validData: JsObject = Json.obj(
-        SchemeDetailsId.toString ->
-          SchemeDetails(schemeName, SchemeType.SingleTrust),
         EstablishersId.toString -> Json.arr(
           Json.obj(
             PartnershipDetailsId.toString -> partnershipDetails,
@@ -116,8 +112,6 @@ class PartnershipReviewControllerSpec extends ControllerSpecBase {
     "not set establisher as complete when partnership is complete but partners are not present" in {
       FakeSectionComplete.reset()
       val validData: JsObject = Json.obj(
-        SchemeDetailsId.toString ->
-          SchemeDetails(schemeName, SchemeType.SingleTrust),
         EstablishersId.toString -> Json.arr(
           Json.obj(
             PartnershipDetailsId.toString -> partnershipDetails,
@@ -149,8 +143,6 @@ object PartnershipReviewControllerSpec {
   val partners = Seq(partner("a"), partner("b"), partner("c"))
 
   def validData(inPartners: Seq[JsObject] = partners): JsObject = Json.obj(
-    SchemeDetailsId.toString ->
-      SchemeDetails(schemeName, SchemeType.SingleTrust),
     EstablishersId.toString -> Json.arr(
       Json.obj(
         PartnershipDetailsId.toString -> partnershipDetails,

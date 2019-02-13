@@ -19,12 +19,9 @@ package navigators
 import com.google.inject.Inject
 import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
-import identifiers.HaveAnyTrusteesId
-import identifiers.register.SchemeDetailsId
 import identifiers.register.establishers.{AddEstablisherId, ConfirmDeleteEstablisherId, EstablisherKindId}
 import models.NormalMode
 import models.register.establishers.EstablisherKind
-import models.register.{SchemeDetails, SchemeType}
 import utils.{Enumerable, Navigator, UserAnswers}
 
 class EstablishersNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector,

@@ -22,11 +22,9 @@ import connectors.FakeUserAnswersCacheConnector
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.address.AddressFormProvider
-import identifiers.register.SchemeDetailsId
 import identifiers.register.trustees.TrusteesId
 import identifiers.register.trustees.partnership.{PartnershipDetailsId, PartnershipPreviousAddressId}
 import models.address.{Address, TolerantAddress}
-import models.register.{SchemeDetails, SchemeType}
 import models.{Index, NormalMode, PartnershipDetails}
 import org.scalatest.concurrent.ScalaFutures
 import play.api.data.Form
@@ -55,7 +53,6 @@ class PartnershipPreviousAddressControllerSpec extends ControllerSpecBase with S
   val fakeAuditService = new StubSuccessfulAuditService()
 
   private val validData = Json.obj(
-    SchemeDetailsId.toString -> SchemeDetails("Test Scheme Name", SchemeType.SingleTrust),
     TrusteesId.toString -> Json.arr(
       Json.obj(
         PartnershipDetailsId.toString -> PartnershipDetails(partnershipName, false),

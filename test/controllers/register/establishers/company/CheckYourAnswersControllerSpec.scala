@@ -21,7 +21,7 @@ import controllers.actions._
 import identifiers.register.establishers.company._
 import models._
 import models.address.Address
-import models.register.{DeclarationDormant, SchemeDetails, SchemeType}
+import models.register.DeclarationDormant
 import models.requests.DataRequest
 import play.api.mvc.{AnyContent, Call}
 import play.api.test.Helpers._
@@ -78,7 +78,6 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase with Enumerable
   private val contactDetails = ContactDetails("test@test.com", "1234")
 
   private val emptyAnswers = UserAnswers()
-    .schemeDetails(SchemeDetails(testSchemeName, SchemeType.BodyCorporate))
   private val companyRegistrationNumberRoute = routes.CompanyRegistrationNumberController.onPageLoad(CheckMode, 0).url
   private val companyUniqueTaxReferenceRoute = routes.CompanyUniqueTaxReferenceController.onPageLoad(CheckMode, 0).url
   private val companyDetailsRoute = routes.CompanyDetailsController.onPageLoad(CheckMode, 0).url

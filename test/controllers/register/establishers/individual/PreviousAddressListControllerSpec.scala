@@ -16,15 +16,13 @@
 
 package controllers.register.establishers.individual
 
-import connectors.{UserAnswersCacheConnector, FakeUserAnswersCacheConnector}
+import connectors.{FakeUserAnswersCacheConnector, UserAnswersCacheConnector}
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.address.AddressListFormProvider
-import identifiers.register.SchemeDetailsId
 import identifiers.register.establishers.individual._
 import models.address.TolerantAddress
 import models.person.PersonDetails
-import models.register.{SchemeDetails, SchemeType}
 import models.{Index, NormalMode, UniqueTaxReference}
 import org.joda.time.LocalDate
 import org.scalatest.BeforeAndAfterEach
@@ -88,8 +86,7 @@ class PreviousAddressListControllerSpec extends ControllerSpecBase with Enumerab
     Some("United Kingdom")
   )
 
-  val validData: JsObject = Json.obj(SchemeDetailsId.toString -> Json.toJson(
-    SchemeDetails("value 1", SchemeType.SingleTrust)),
+  val validData: JsObject = Json.obj(
     "establishers" -> Json.arr(
       Json.obj(
         EstablisherDetailsId.toString ->

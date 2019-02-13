@@ -32,10 +32,6 @@ package object utils {
       answers.set(identifiers.register.DeclarationDutiesId)(declarationDuties).asOpt.value
     }
 
-    def schemeDetails(schemeDetails: SchemeDetails): UserAnswers = {
-      answers.set(SchemeDetailsId)(schemeDetails).asOpt.value
-    }
-
     def occupationalPensionScheme(isOccupational: Boolean): UserAnswers = {
       answers.set(identifiers.OccupationalPensionSchemeId)(isOccupational).asOpt.value
     }

@@ -20,14 +20,11 @@ import connectors.FakeUserAnswersCacheConnector
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.register.establishers.ConfirmDeleteEstablisherFormProvider
-import identifiers.register.SchemeDetailsId
 import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.company.CompanyDetailsId
 import identifiers.register.establishers.individual.EstablisherDetailsId
 import identifiers.register.establishers.partnership.PartnershipDetailsId
 import models.person.PersonDetails
-import models.register.SchemeDetails
-import models.register.SchemeType.SingleTrust
 import models.register.establishers.EstablisherKind
 import models.{CompanyDetails, Index, NormalMode, PartnershipDetails}
 import org.joda.time.LocalDate
@@ -82,7 +79,6 @@ class ConfirmDeleteEstablisherControllerSpec extends ControllerSpecBase {
     "redirect to already deleted view for a GET if the establisher was already deleted" in {
 
       val deletedData = Json.obj(
-        SchemeDetailsId.toString -> SchemeDetails(schemeName, SingleTrust),
         EstablishersId.toString -> Json.arr(
           Json.obj(
             EstablisherDetailsId.toString -> deletedEstablisher

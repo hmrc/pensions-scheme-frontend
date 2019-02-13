@@ -20,12 +20,10 @@ import connectors.FakeUserAnswersCacheConnector
 import controllers.ControllerSpecBase
 import controllers.actions.{DataRequiredActionImpl, DataRetrievalAction, FakeAuthAction, FakeDataRetrievalAction}
 import forms.register.establishers.partnership.partner.ConfirmDeletePartnerFormProvider
-import identifiers.register.SchemeDetailsId
 import identifiers.register.establishers.partnership.PartnershipDetailsId
 import identifiers.register.establishers.partnership.partner.PartnerDetailsId
 import identifiers.register.establishers.{EstablishersId, IsEstablisherCompleteId}
 import models.person.PersonDetails
-import models.register.{SchemeDetails, SchemeType}
 import models.{Index, PartnershipDetails}
 import org.joda.time.LocalDate
 import play.api.libs.json.{JsObject, Json}
@@ -98,8 +96,6 @@ class ConfirmDeletePartnerControllerSpec extends ControllerSpecBase {
     "set the establisher as not complete when partners are deleted" in {
       FakeSectionComplete.reset()
       val validData: JsObject = Json.obj(
-        SchemeDetailsId.toString ->
-          SchemeDetails("Test Scheme Name", SchemeType.SingleTrust),
         EstablishersId.toString -> Json.arr(
           Json.obj(
             PartnershipDetailsId.toString -> PartnershipDetails(partnershipName),

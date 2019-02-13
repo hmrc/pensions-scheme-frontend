@@ -20,10 +20,8 @@ import connectors.FakeUserAnswersCacheConnector
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.register.trustees.TrusteeKindFormProvider
-import identifiers.register.SchemeDetailsId
 import identifiers.register.trustees.TrusteeKindId
 import models.register.trustees.TrusteeKind
-import models.register.{SchemeDetails, SchemeType}
 import models.{Index, NormalMode}
 import play.api.data.Form
 import play.api.libs.json.{JsString, _}
@@ -57,7 +55,6 @@ class TrusteeKindControllerSpec extends ControllerSpecBase {
 
     "populate the view correctly on a GET when the question has previously been answered" in {
       val validData = Json.obj(
-        SchemeDetailsId.toString -> SchemeDetails("Test Scheme Name", SchemeType.SingleTrust),
         "trustees" -> Json.arr(Json.obj(TrusteeKindId.toString -> JsString(TrusteeKind.values.head.toString))))
       val getRelevantData = new FakeDataRetrievalAction(Some(validData))
 

@@ -20,7 +20,6 @@ import connectors.FakeUserAnswersCacheConnector
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.register.trustees.AddTrusteeFormProvider
-import identifiers.register.SchemeDetailsId
 import identifiers.register.trustees.TrusteesId
 import identifiers.register.trustees.company.CompanyDetailsId
 import identifiers.register.trustees.individual.TrusteeDetailsId
@@ -60,8 +59,7 @@ class AddTrusteeControllerSpec extends ControllerSpecBase {
   lazy val allTrustees = Seq(trusteeCompanyA, trusteeCompanyB, trusteeIndividual)
 
   private def validData = {
-    Json.obj(SchemeDetailsId.toString ->
-      SchemeDetails("Test Scheme Name", SchemeType.SingleTrust),
+    Json.obj(
       TrusteesId.toString -> Json.arr(
         Json.obj(
           CompanyDetailsId.toString -> CompanyDetails("Trustee Company A", None, None)
@@ -78,7 +76,7 @@ class AddTrusteeControllerSpec extends ControllerSpecBase {
 
   val form = formProvider()
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getMandatorySchemeName): AddTrusteeController =
+  def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): AddTrusteeController =
     new AddTrusteeController(frontendAppConfig, messagesApi, FakeUserAnswersCacheConnector, new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
       dataRetrievalAction, new DataRequiredActionImpl, formProvider)
 

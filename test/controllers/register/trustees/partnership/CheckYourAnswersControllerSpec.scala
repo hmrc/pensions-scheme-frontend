@@ -18,17 +18,14 @@ package controllers.register.trustees.partnership
 
 import controllers.ControllerSpecBase
 import controllers.actions.{DataRequiredActionImpl, DataRetrievalAction, FakeAuthAction}
-import identifiers.register.SchemeDetailsId
 import identifiers.register.trustees.partnership._
 import models.AddressYears.UnderAYear
 import models._
 import models.address.Address
-import models.register.SchemeDetails
-import models.register.SchemeType.SingleTrust
 import play.api.test.Helpers._
 import utils._
 import utils.checkyouranswers.Ops._
-import viewmodels.{AnswerSection, Message}
+import viewmodels.AnswerSection
 import views.html.check_your_answers
 
 class CheckYourAnswersControllerSpec extends ControllerSpecBase {
@@ -37,8 +34,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase {
   val partnershipName = "PartnershipName"
   val schemeName = "testScheme"
   val partnershipAnswers = UserAnswers()
-    .set(SchemeDetailsId)(SchemeDetails(schemeName, SingleTrust))
-    .flatMap(_.set(PartnershipDetailsId(firstIndex))(PartnershipDetails(partnershipName)))
+    .set(PartnershipDetailsId(firstIndex))(PartnershipDetails(partnershipName))
     .flatMap(_.set(PartnershipVatId(firstIndex))(Vat.No))
     .flatMap(_.set(PartnershipUniqueTaxReferenceId(firstIndex))(UniqueTaxReference.Yes("0987654321")))
     .flatMap(_.set(PartnershipAddressId(firstIndex))(Address("Address 1", "Address 2", None, None, None, "GB")))

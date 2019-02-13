@@ -17,20 +17,16 @@
 package navigators
 
 import base.SpecBase
-import config.FrontendAppConfig
 import connectors.FakeUserAnswersCacheConnector
-import identifiers.{Identifier}
-import identifiers.register.SchemeDetailsId
+import identifiers.Identifier
 import identifiers.register.trustees._
 import identifiers.register.trustees.individual.TrusteeDetailsId
 import models.NormalMode
 import models.person.PersonDetails
 import models.register.trustees.TrusteeKind
-import models.register.{SchemeDetails, SchemeType}
 import org.joda.time.LocalDate
 import org.scalatest.OptionValues
 import org.scalatest.prop.TableFor6
-import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.Call
 import utils.{Enumerable, UserAnswers}
 
@@ -155,11 +151,6 @@ object TrusteesNavigatorSpec extends OptionValues with Enumerable.Implicits {
         }
       }
     }
-
-    def schemeType(schemeType: SchemeType): UserAnswers = {
-      answers.set(SchemeDetailsId)(SchemeDetails("test-scheme-name", schemeType)).asOpt.value
-    }
-
   }
 
 }

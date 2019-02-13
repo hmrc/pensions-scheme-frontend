@@ -20,10 +20,9 @@ import connectors.FakeUserAnswersCacheConnector
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.register.establishers.IsDormantFormProvider
-import identifiers.register.SchemeDetailsId
 import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.partnership.{IsPartnershipDormantId, PartnershipDetailsId}
-import models.register.{DeclarationDormant, SchemeDetails, SchemeType}
+import models.register.DeclarationDormant
 import models.{NormalMode, PartnershipDetails}
 import play.api.data.Form
 import play.api.libs.json._
@@ -56,8 +55,6 @@ class IsPartnershipDormantControllerSpec extends ControllerSpecBase {
   def postCall: Call = routes.IsPartnershipDormantController.onSubmit(NormalMode, index)
 
   val validData: JsObject = Json.obj(
-      SchemeDetailsId.toString ->
-        SchemeDetails("Test Scheme Name", SchemeType.SingleTrust),
       EstablishersId.toString -> Json.arr(
         Json.obj(
           PartnershipDetailsId.toString ->
