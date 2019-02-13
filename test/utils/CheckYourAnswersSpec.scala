@@ -16,8 +16,7 @@
 
 package utils
 
-import identifiers.TypedIdentifier
-import identifiers.register.SchemeEstablishedCountryId
+import identifiers.{EstablishedCountryId, TypedIdentifier}
 import models._
 import models.address.Address
 import models.person.PersonDetails
@@ -49,13 +48,13 @@ class CheckYourAnswersSpec extends WordSpec with MustMatchers with PropertyCheck
 
       "string" when {
 
-        "id is schemeEstablishedCountryId" in {
+        "id is EstablishedCountryId" in {
           implicit val countryOptions = new CountryOptions(Seq(InputOption("AU", "Australia"),
             InputOption("GB", "United Kingdom")))
-          implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(Json.obj(SchemeEstablishedCountryId.toString -> "AU")), PsaId("A0000000"))
+          implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(Json.obj(EstablishedCountryId.toString -> "AU")), PsaId("A0000000"))
           implicit val userAnswers = request.userAnswers
 
-          SchemeEstablishedCountryId.row(onwardUrl) must equal(Seq(
+          EstablishedCountryId.row(onwardUrl) must equal(Seq(
             AnswerRow("schemeEstablishedCountry.checkYourAnswersLabel", Seq("Australia"), false, Some(onwardUrl), "messages__visuallyhidden__schemeEstablishedCountry")))
         }
 

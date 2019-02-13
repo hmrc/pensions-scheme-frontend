@@ -79,20 +79,12 @@ package object utils {
       answers.set(SchemeTypeId)(schemeType).asOpt.value
     }
 
-    def securedBenefits(securedBenefits: Boolean): UserAnswers = {
-      answers.set(SecuredBenefitsId)(securedBenefits).asOpt.value
-    }
-
     def insurerConfirmAddress(address: Address): UserAnswers = {
       answers.set(identifiers.InsurerConfirmAddressId)(address).asOpt.value
     }
 
     def insurerSelectAddress(address: TolerantAddress): UserAnswers = {
       answers.set(identifiers.InsurerSelectAddressId)(address).asOpt.value
-    }
-
-    def insurerAddress(address: Address): UserAnswers = {
-      answers.set(InsurerAddressId)(address).asOpt.value
     }
 
     def ukBankAccount(ukBankAccount: Boolean): UserAnswers = {
@@ -282,15 +274,6 @@ package object utils {
 
     def advisersAddressList(selectedAddress: TolerantAddress): UserAnswers = {
       answers.set(AdviserAddressListId)(selectedAddress).asOpt.value
-    }
-
-    //Insurers
-    def insurersAddress(address: Address): UserAnswers = {
-      answers.set(InsurerAddressId)(address).asOpt.value
-    }
-
-    def insurersAddressList(selectedAddress: TolerantAddress): UserAnswers = {
-      answers.set(InsurerAddressListId)(selectedAddress).asOpt.value
     }
 
     // Other

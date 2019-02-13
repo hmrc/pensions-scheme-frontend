@@ -22,7 +22,6 @@ import connectors.FakeUserAnswersCacheConnector
 import identifiers.register._
 import identifiers.{IsBeforeYouStartCompleteId, UserResearchDetailsId}
 import models._
-import models.address.Address
 import models.register.SchemeType
 import org.scalatest.{MustMatchers, OptionValues}
 import play.api.libs.json.Json
@@ -64,16 +63,12 @@ object RegisterNavigatorSpec extends OptionValues{
   private val lastPage: Call = Call("GET", "http://www.test.com")
 
   private val emptyAnswers = UserAnswers(Json.obj())
-
-  private val securedBenefitsTrue = UserAnswers().securedBenefits(true)
-  private val securedBenefitsFalse = UserAnswers().securedBenefits(false)
   private val ukBankAccountTrue = UserAnswers().ukBankAccount(true)
   private val ukBankAccountFalse = UserAnswers().ukBankAccount(false)
   private val hasCompanies = UserAnswers().establisherCompanyDetails(0, CompanyDetails("test-company-name", None, None))
   private val hasPartnership = UserAnswers().establisherPartnershipDetails(0, models.PartnershipDetails("test-company-name"))
   private val hasEstablishers = hasCompanies.schemeName("test-scheme-name").schemeType(SchemeType.GroupLifeDeath)
   private val savedLastPage = UserAnswers().lastPage(LastPage(lastPage.method, lastPage.url))
-  private val insurerAddress = UserAnswers().insurerAddress(Address("line-1", "line-2", None, None, None, "GB"))
   private val beforeYouStartCompleted = UserAnswers().set(IsBeforeYouStartCompleteId)(true).asOpt.value
   private val beforeYouStartInProgress = UserAnswers().set(IsBeforeYouStartCompleteId)(false).asOpt.value
 

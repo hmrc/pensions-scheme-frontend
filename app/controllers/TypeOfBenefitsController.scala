@@ -21,7 +21,6 @@ import connectors.UserAnswersCacheConnector
 import controllers.actions._
 import forms.TypeOfBenefitsFormProvider
 import identifiers.TypeOfBenefitsId
-import identifiers.register.BenefitsId
 import javax.inject.Inject
 import models.Mode
 import play.api.data.Form

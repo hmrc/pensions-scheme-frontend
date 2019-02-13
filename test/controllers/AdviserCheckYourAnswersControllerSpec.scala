@@ -18,8 +18,7 @@ package controllers
 
 import connectors._
 import controllers.actions._
-import identifiers.register.IsWorkingKnowledgeCompleteId
-import identifiers.{AdviserAddressId, AdviserEmailId, AdviserNameId}
+import identifiers.{AdviserAddressId, AdviserEmailId, AdviserNameId, IsWorkingKnowledgeCompleteId}
 import models.CheckMode
 import models.address.Address
 import org.scalatest.concurrent.ScalaFutures

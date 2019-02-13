@@ -17,7 +17,6 @@
 package utils.checkyouranswers
 
 import identifiers.{EstablishedCountryId, TypedIdentifier}
-import identifiers.register.SchemeEstablishedCountryId
 import models._
 import models.address.Address
 import models.person.PersonDetails
@@ -370,7 +369,7 @@ object CheckYourAnswers {
 
   private def retrieveStringAnswer[I](id: I, stringValue: String)(implicit countryOptions: CountryOptions): String = {
     id match {
-      case SchemeEstablishedCountryId | EstablishedCountryId =>
+      case EstablishedCountryId =>
         countryOptions.options.find(_.value == stringValue).map(_.label).getOrElse(stringValue)
       case _ => stringValue
     }

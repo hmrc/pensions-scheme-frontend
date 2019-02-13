@@ -21,7 +21,6 @@ import connectors.UserAnswersCacheConnector
 import controllers.actions._
 import forms.register.SchemeNameFormProvider
 import identifiers.{IsBeforeYouStartCompleteId, SchemeNameId}
-import identifiers.register.IsAboutSchemeCompleteId
 import javax.inject.Inject
 import models.Mode
 import models.PSAName._
@@ -32,8 +31,8 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.http.NotFoundException
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import utils.annotations.BeforeYouStart
 import utils._
+import utils.annotations.BeforeYouStart
 import views.html.schemeName
 
 import scala.concurrent.{ExecutionContext, Future}
