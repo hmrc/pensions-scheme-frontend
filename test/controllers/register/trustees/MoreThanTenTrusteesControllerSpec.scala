@@ -39,13 +39,12 @@ class MoreThanTenTrusteesControllerSpec extends ControllerSpecBase {
   val form = formProvider()
   val schemeName = "Test Scheme Name"
   val validData: JsObject = Json.obj(
-    SchemeDetailsId.toString ->
-      SchemeDetails("Test Scheme Name", SchemeType.SingleTrust),
     MoreThanTenTrusteesId.toString -> false
   )
 
   def controller(dataRetrievalAction: DataRetrievalAction = getMandatorySchemeName): MoreThanTenTrusteesController =
-    new MoreThanTenTrusteesController(frontendAppConfig, messagesApi, FakeUserAnswersCacheConnector, new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
+    new MoreThanTenTrusteesController(frontendAppConfig, messagesApi, FakeUserAnswersCacheConnector,
+      new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
       dataRetrievalAction, new DataRequiredActionImpl, formProvider)
 
   def viewAsString(form: Form[_] = form): String = moreThanTenTrustees(frontendAppConfig, form, NormalMode, None)(fakeRequest, messages).toString
