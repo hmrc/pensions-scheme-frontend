@@ -16,7 +16,7 @@
 
 package views
 
-import controllers.register.routes
+import controllers.routes
 import forms.UKBankAccountFormProvider
 import models.NormalMode
 import play.api.data.Form

@@ -52,30 +52,6 @@ class EstablishersNavigator @Inject()(val dataCacheConnector: UserAnswersCacheCo
     }
   }
 
-  private def navigateBasedOnSchemeDetails(answers: UserAnswers): Option[NavigateTo] = {
-    val listOfSchemeTypeTrusts: Seq[SchemeType] = Seq(SchemeType.SingleTrust, SchemeType.MasterTrust)
-    answers.get(SchemeDetailsId) match {
-      case Some(SchemeDetails(_, schemeType)) if listOfSchemeTypeTrusts.contains(schemeType) =>
-        NavigateTo.save(controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode))
-      case Some(SchemeDetails(_, _)) =>
-        answers.allTrusteesAfterDelete.isEmpty match {
-          case false =>
-            NavigateTo.save(controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode))
-          case _ =>
-            answers.get(HaveAnyTrusteesId) match {
-              case Some(true) =>
-                NavigateTo.save(controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode))
-              case Some(false) =>
-                NavigateTo.save(controllers.register.routes.SchemeReviewController.onPageLoad())
-              case _ =>
-                NavigateTo.save(controllers.register.trustees.routes.HaveAnyTrusteesController.onPageLoad(NormalMode))
-            }
-        }
-      case None =>
-        NavigateTo.dontSave(controllers.routes.SessionExpiredController.onPageLoad())
-    }
-  }
-
   private def establisherKindRoutes(index: Int, answers: UserAnswers): Option[NavigateTo] = {
     answers.get(EstablisherKindId(index)) match {
       case Some(EstablisherKind.Company) =>

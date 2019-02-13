@@ -44,31 +44,27 @@ class MoreThanTenTrusteesController @Inject()(
                                                getData: DataRetrievalAction,
                                                requireData: DataRequiredAction,
                                                formProvider: MoreThanTenTrusteesFormProvider
-                                             ) (implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport {
+                                             )(implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport {
 
   private val form: Form[Boolean] = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      SchemeDetailsId.retrieve.right.map { details =>
-        val preparedForm = request.userAnswers.get(MoreThanTenTrusteesId) match {
-          case None => form
-          case Some(value) => form.fill(value)
-        }
-        Future.successful(Ok(moreThanTenTrustees(appConfig, preparedForm, mode, existingSchemeName)))
+      val preparedForm = request.userAnswers.get(MoreThanTenTrusteesId) match {
+        case None => form
+        case Some(value) => form.fill(value)
       }
+      Future.successful(Ok(moreThanTenTrustees(appConfig, preparedForm, mode, existingSchemeName)))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      SchemeDetailsId.retrieve.right.map { details =>
-        form.bindFromRequest().fold(
-          (formWithErrors: Form[_]) =>
-            Future.successful(BadRequest(moreThanTenTrustees(appConfig, formWithErrors, mode, existingSchemeName))),
-          value =>
-            dataCacheConnector.save(request.externalId, MoreThanTenTrusteesId, value).map(cacheMap =>
-              Redirect(navigator.nextPage(MoreThanTenTrusteesId, mode, UserAnswers(cacheMap))))
-        )
-      }
+      form.bindFromRequest().fold(
+        (formWithErrors: Form[_]) =>
+          Future.successful(BadRequest(moreThanTenTrustees(appConfig, formWithErrors, mode, existingSchemeName))),
+        value =>
+          dataCacheConnector.save(request.externalId, MoreThanTenTrusteesId, value).map(cacheMap =>
+            Redirect(navigator.nextPage(MoreThanTenTrusteesId, mode, UserAnswers(cacheMap))))
+      )
   }
 }

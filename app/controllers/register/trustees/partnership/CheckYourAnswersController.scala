@@ -19,7 +19,6 @@ package controllers.register.trustees.partnership
 import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions.{AuthAction, DataRequiredAction, DataRetrievalAction}
-import identifiers.register.SchemeDetailsId
 import identifiers.register.trustees.partnership._
 import javax.inject.{Inject, Singleton}
 import models.{CheckMode, Index, NormalMode}
@@ -29,7 +28,7 @@ import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.TrusteesPartnership
 import utils.checkyouranswers.Ops._
 import utils.{CountryOptions, Navigator, SectionComplete}
-import viewmodels.{AnswerSection, Message}
+import viewmodels.AnswerSection
 import views.html.check_your_answers
 
 import scala.concurrent.{ExecutionContext, Future}

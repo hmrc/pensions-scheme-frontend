@@ -4,84 +4,8 @@
 ->         /trustees                                    trustees.Routes
 ->         /adviser                                     adviser.Routes
 
-GET        /scheme-detail                              controllers.register.SchemeDetailsController.onPageLoad(mode: Mode = NormalMode)
-POST       /scheme-detail                              controllers.register.SchemeDetailsController.onSubmit(mode: Mode = NormalMode)
-GET        /change-scheme-detail                       controllers.register.SchemeDetailsController.onPageLoad(mode: Mode = CheckMode)
-POST       /change-scheme-detail                       controllers.register.SchemeDetailsController.onSubmit(mode: Mode = CheckMode)
-
-GET        /membership-current                          controllers.register.MembershipController.onPageLoad(mode: Mode = NormalMode)
-POST       /membership-current                          controllers.register.MembershipController.onSubmit(mode: Mode = NormalMode)
-GET        /change-current-membership                   controllers.register.MembershipController.onPageLoad(mode: Mode = CheckMode)
-POST       /change-current-membership                   controllers.register.MembershipController.onSubmit(mode: Mode = CheckMode)
-
-GET        /membership-future                           controllers.register.MembershipFutureController.onPageLoad(mode: Mode = NormalMode)
-POST       /membership-future                           controllers.register.MembershipFutureController.onSubmit(mode: Mode = NormalMode)
-GET        /change-future-membership                    controllers.register.MembershipFutureController.onPageLoad(mode: Mode = CheckMode)
-POST       /change-future-membership                    controllers.register.MembershipFutureController.onSubmit(mode: Mode = CheckMode)
-
-GET        /benefits-insurance                          controllers.register.BenefitsInsurerController.onPageLoad(mode: Mode = NormalMode)
-POST       /benefits-insurance                          controllers.register.BenefitsInsurerController.onSubmit(mode: Mode = NormalMode)
-GET        /change-benefits-insurance                   controllers.register.BenefitsInsurerController.onPageLoad(mode: Mode = CheckMode)
-POST       /change-benefits-insurance                   controllers.register.BenefitsInsurerController.onSubmit(mode: Mode = CheckMode)
-
-GET        /investment-regulated                        controllers.register.InvestmentRegulatedController.onPageLoad(mode: Mode = NormalMode)
-POST       /investment-regulated                        controllers.register.InvestmentRegulatedController.onSubmit(mode: Mode = NormalMode)
-GET        /change-investment-regulated                 controllers.register.InvestmentRegulatedController.onPageLoad(mode: Mode = CheckMode)
-POST       /change-investment-regulated                 controllers.register.InvestmentRegulatedController.onSubmit(mode: Mode = CheckMode)
-
-GET        /secured-benefits                            controllers.register.SecuredBenefitsController.onPageLoad(mode: Mode = NormalMode)
-POST       /secured-benefits                            controllers.register.SecuredBenefitsController.onSubmit(mode: Mode = NormalMode)
-GET        /change-secured-benefits                     controllers.register.SecuredBenefitsController.onPageLoad(mode: Mode = CheckMode)
-POST       /change-secured-benefits                     controllers.register.SecuredBenefitsController.onSubmit(mode: Mode = CheckMode)
-
-GET        /occupational-pension-scheme                 controllers.register.OccupationalPensionSchemeController.onPageLoad(mode: Mode = NormalMode)
-POST       /occupational-pension-scheme                 controllers.register.OccupationalPensionSchemeController.onSubmit(mode: Mode = NormalMode)
-GET        /change-occupational-pension-scheme          controllers.register.OccupationalPensionSchemeController.onPageLoad(mode: Mode = CheckMode)
-POST       /change-occupational-pension-scheme          controllers.register.OccupationalPensionSchemeController.onSubmit(mode: Mode = CheckMode)
-
-GET        /benefits                                    controllers.register.BenefitsController.onPageLoad(mode: Mode = NormalMode)
-POST       /benefits                                    controllers.register.BenefitsController.onSubmit(mode: Mode = NormalMode)
-GET        /change-benefits                             controllers.register.BenefitsController.onPageLoad(mode: Mode = CheckMode)
-POST       /change-benefits                             controllers.register.BenefitsController.onSubmit(mode: Mode = CheckMode)
-
 GET         /confirmation                                controllers.register.SchemeSuccessController.onPageLoad()
 POST        /confirmation                                controllers.register.SchemeSuccessController.onSubmit()
-
-GET        /where-was-scheme-established                controllers.register.SchemeEstablishedCountryController.onPageLoad(mode: Mode = NormalMode)
-POST       /where-was-scheme-established                controllers.register.SchemeEstablishedCountryController.onSubmit(mode: Mode = NormalMode)
-GET        /change-where-scheme-was-established         controllers.register.SchemeEstablishedCountryController.onPageLoad(mode: Mode = CheckMode)
-POST       /change-where-scheme-was-established         controllers.register.SchemeEstablishedCountryController.onSubmit(mode: Mode = CheckMode)
-
-GET        /uk-bank-account                             controllers.register.UKBankAccountController.onPageLoad(mode: Mode = NormalMode)
-POST       /uk-bank-account                             controllers.register.UKBankAccountController.onSubmit(mode: Mode = NormalMode)
-GET        /change-uk-bank-account                      controllers.register.UKBankAccountController.onPageLoad(mode: Mode = CheckMode)
-POST       /change-uk-bank-account                      controllers.register.UKBankAccountController.onSubmit(mode: Mode = CheckMode)
-
-GET        /uk-bank-details                             controllers.register.UKBankDetailsController.onPageLoad(mode: Mode = NormalMode)
-POST       /uk-bank-details                             controllers.register.UKBankDetailsController.onSubmit(mode: Mode = NormalMode)
-GET        /change-uk-bank-details                      controllers.register.UKBankDetailsController.onPageLoad(mode: Mode = CheckMode)
-POST       /change-uk-bank-details                      controllers.register.UKBankDetailsController.onSubmit(mode: Mode = CheckMode)
-
-GET        /benefits-insurance-address-results          controllers.register.InsurerAddressListController.onPageLoad(mode: Mode = NormalMode)
-POST       /benefits-insurance-address-results          controllers.register.InsurerAddressListController.onSubmit(mode: Mode = NormalMode)
-GET        /change-benefits-insurance-address-results   controllers.register.InsurerAddressListController.onPageLoad(mode: Mode = CheckMode)
-POST       /change-benefits-insurance-address-results   controllers.register.InsurerAddressListController.onSubmit(mode: Mode = CheckMode)
-
-GET        /benefits-insurance-address-manual           controllers.register.InsurerAddressController.onPageLoad(mode: Mode = NormalMode)
-POST       /benefits-insurance-address-manual           controllers.register.InsurerAddressController.onSubmit(mode: Mode = NormalMode)
-GET        /change-benefits-insurance-address-manual    controllers.register.InsurerAddressController.onPageLoad(mode: Mode = CheckMode)
-POST       /change-benefits-insurance-address-manual    controllers.register.InsurerAddressController.onSubmit(mode: Mode = CheckMode)
-
-GET        /benefits-insurance-address                  controllers.register.InsurerPostCodeLookupController.onPageLoad(mode: Mode = NormalMode)
-POST       /benefits-insurance-address                  controllers.register.InsurerPostCodeLookupController.onSubmit(mode: Mode = NormalMode)
-GET        /change-benefits-insurance-address           controllers.register.InsurerPostCodeLookupController.onPageLoad(mode: Mode = CheckMode)
-POST       /change-benefits-insurance-address           controllers.register.InsurerPostCodeLookupController.onSubmit(mode: Mode = CheckMode)
-
-GET        /review                                      controllers.register.SchemeReviewController.onPageLoad()
-POST       /review                                      controllers.register.SchemeReviewController.onSubmit()
-
-GET        /check-your-answers                          controllers.register.CheckYourAnswersController.onPageLoad()
-POST       /check-your-answers                          controllers.register.CheckYourAnswersController.onSubmit()
 
 GET        /declaration-working-knowledge               controllers.register.DeclarationDutiesController.onPageLoad
 POST       /declaration-working-knowledge               controllers.register.DeclarationDutiesController.onSubmit
@@ -90,9 +14,3 @@ GET        /declaration                                 controllers.register.Dec
 POST       /declaration                                 controllers.register.DeclarationController.onSubmit
 GET        /change-declaration                          controllers.register.DeclarationController.onPageLoad
 POST       /change-declaration                          controllers.register.DeclarationController.onSubmit
-
-GET        /declaration-dormant-company                 controllers.register.DeclarationDormantController.onPageLoad
-POST       /declaration-dormant-company                 controllers.register.DeclarationDormantController.onSubmit
-
-GET        /need-contact                                controllers.register.NeedContactController.onPageLoad
-POST       /need-contact                                controllers.register.NeedContactController.onSubmit

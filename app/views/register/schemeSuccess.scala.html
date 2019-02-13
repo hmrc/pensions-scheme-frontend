@@ -21,7 +21,7 @@
 @import utils.DateHelper
 @import viewmodels.Message
 
-@(appConfig: FrontendAppConfig, schemeName: Option[String], currentDate: LocalDate, applicationNumber: String, showMasterTrustContent: Boolean)(implicit request: Request[_], messages: Messages)
+@(appConfig: FrontendAppConfig, currentDate: LocalDate, applicationNumber: String, showMasterTrustContent: Boolean)(implicit request: Request[_], messages: Messages)
 
 @appealLink = {<a id="tribunal-appeal" href="@appConfig.appealLink">@messages("messages__complete__appeal_link")</a>}
 @pensionsRegulatorLink = {<a id="regulator-contact" href="@appConfig.pensionsRegulatorLink">@messages("messages__complete__pension_regulator_link")</a>}
@@ -33,9 +33,7 @@
     bodyClasses = None) {
 
     <div class="govuk-box-highlight">
-        @schemeName.map{ name =>
-            @components.heading(messages("messages__complete__heading", s"<span class='hyphen'>${name}</span>"), "heading-xlarge")
-        }
+        @components.heading(messages("messages__complete__heading"), "heading-xlarge")
 
         <p class="font-large">@Html(Message("messages__complete__application_number_is", applicationNumber))</p>
 

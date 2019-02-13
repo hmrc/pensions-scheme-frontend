@@ -64,7 +64,6 @@ class SchemeSuccessControllerSpec extends ControllerSpecBase with MockitoSugar {
   def viewAsString(): String =
     schemeSuccess(
       frontendAppConfig,
-      Some("test scheme name"),
       LocalDate.now(),
       submissionReferenceNumber,
       showMasterTrustContent = false

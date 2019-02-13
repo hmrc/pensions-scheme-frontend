@@ -20,6 +20,7 @@ import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
 import controllers.Retrievals
 import controllers.actions._
+import identifiers.SchemeNameId
 import identifiers.register.{SchemeDetailsId, SubmissionReferenceNumberId}
 import javax.inject.Inject
 import models.register.SchemeType.MasterTrust
@@ -46,13 +47,11 @@ class SchemeSuccessController @Inject()(appConfig: FrontendAppConfig,
 
       SubmissionReferenceNumberId.retrieve.right.map {
         submissionReferenceNumber =>
-          val schemeName = request.userAnswers.get(SchemeDetailsId).map(_.schemeName)
 
           cacheConnector.removeAll(request.externalId).map { _ =>
               Ok(
                 schemeSuccess(
                   appConfig,
-                  schemeName,
                   LocalDate.now(),
                   submissionReferenceNumber.schemeReferenceNumber,
                   showMasterTrustContent

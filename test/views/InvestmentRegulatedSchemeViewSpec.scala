@@ -16,7 +16,7 @@
 
 package views
 
-import controllers.register.routes
+import controllers.routes
 import forms.register.InvestmentRegulatedFormProvider
 import models.NormalMode
 import play.api.data.Form
@@ -40,7 +40,7 @@ class InvestmentRegulatedSchemeViewSpec extends YesNoViewBehaviours {
     behave like normalPage(createView(), messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__h1"))
 
     behave like yesNoPage(createView = createViewUsingForm, messageKeyPrefix = messageKeyPrefix,
-      expectedFormAction = routes.InvestmentRegulatedController.onSubmit(NormalMode).url)
+      expectedFormAction = routes.InvestmentRegulatedSchemeController.onSubmit(NormalMode).url)
 
     behave like pageWithReturnLink(createView(), getReturnLink)
   }
