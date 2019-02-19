@@ -20,10 +20,8 @@ import connectors.FakeUserAnswersCacheConnector
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.register.PersonDetailsFormProvider
-import identifiers.register.SchemeDetailsId
 import identifiers.register.trustees.individual.TrusteeDetailsId
 import models.person.PersonDetails
-import models.register.{SchemeDetails, SchemeType}
 import models.{Index, NormalMode}
 import org.joda.time.LocalDate
 import play.api.data.Form
@@ -32,7 +30,6 @@ import play.api.mvc.Call
 import play.api.test.Helpers._
 import utils.FakeNavigator
 import views.html.register.trustees.individual.trusteeDetails
-import scala.concurrent.ExecutionContext.Implicits.global
 
 class TrusteeDetailsControllerSpec extends ControllerSpecBase {
 
@@ -49,7 +46,7 @@ class TrusteeDetailsControllerSpec extends ControllerSpecBase {
 
   val personDetails = PersonDetails("Firstname", Some("Middle"), "Last", LocalDate.now())
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getMandatorySchemeName): TrusteeDetailsController =
+  def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): TrusteeDetailsController =
     new TrusteeDetailsController(
       frontendAppConfig,
       messagesApi,
@@ -75,7 +72,6 @@ class TrusteeDetailsControllerSpec extends ControllerSpecBase {
 
     "populate the view correctly on a GET when the question has previously been answered" in {
       val validData = Json.obj(
-        SchemeDetailsId.toString -> SchemeDetails("Test Scheme Name", SchemeType.SingleTrust),
         "trustees" -> Json.arr(
           Json.obj(
             TrusteeDetailsId.toString -> personDetails

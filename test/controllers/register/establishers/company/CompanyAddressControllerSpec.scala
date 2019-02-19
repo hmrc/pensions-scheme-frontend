@@ -22,18 +22,16 @@ import connectors.FakeUserAnswersCacheConnector
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.address.AddressFormProvider
-import identifiers.register.SchemeDetailsId
 import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.company.{CompanyAddressId, CompanyDetailsId}
 import models.address.{Address, TolerantAddress}
-import models.register.{SchemeDetails, SchemeType}
 import models.{CompanyDetails, Index, NormalMode}
 import org.scalatest.concurrent.ScalaFutures
 import play.api.data.Form
 import play.api.libs.json.Json
 import play.api.mvc.Call
 import play.api.test.Helpers._
-import utils.{CountryOptions, FakeCountryOptions, FakeNavigator, InputOption, UserAnswers}
+import utils._
 import viewmodels.Message
 import viewmodels.address.ManualAddressViewModel
 import views.html.address.manualAddress
@@ -97,7 +95,6 @@ class CompanyAddressControllerSpec extends ControllerSpecBase with ScalaFutures 
     "populate the view correctly on a GET when the question has previously been answered" in {
 
       val validData = Json.obj(
-        SchemeDetailsId.toString -> SchemeDetails("Test Scheme Name", SchemeType.SingleTrust),
         EstablishersId.toString -> Json.arr(
           Json.obj(
             CompanyDetailsId.toString -> CompanyDetails(companyName, Some("123456"), Some("abcd")),

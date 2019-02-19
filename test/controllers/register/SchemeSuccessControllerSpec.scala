@@ -19,8 +19,8 @@ package controllers.register
 import connectors.UserAnswersCacheConnector
 import controllers.ControllerSpecBase
 import controllers.actions._
-import identifiers.register.{SchemeDetailsId, SubmissionReferenceNumberId}
-import models.register.{SchemeDetails, SchemeSubmissionResponse, SchemeType}
+import identifiers.register.SubmissionReferenceNumberId
+import models.register.SchemeSubmissionResponse
 import org.joda.time.LocalDate
 import org.mockito.Matchers._
 import org.mockito.Mockito._
@@ -46,7 +46,6 @@ class SchemeSuccessControllerSpec extends ControllerSpecBase with MockitoSugar {
   private val fakeUserAnswersCacheConnector = mock[UserAnswersCacheConnector]
 
   val validData: JsObject = Json.obj(
-    SchemeDetailsId.toString -> Json.toJson(SchemeDetails("test scheme name", SchemeType.SingleTrust)),
     SubmissionReferenceNumberId.toString -> SchemeSubmissionResponse(submissionReferenceNumber)
   )
 
@@ -64,7 +63,6 @@ class SchemeSuccessControllerSpec extends ControllerSpecBase with MockitoSugar {
   def viewAsString(): String =
     schemeSuccess(
       frontendAppConfig,
-      Some("test scheme name"),
       LocalDate.now(),
       submissionReferenceNumber,
       showMasterTrustContent = false

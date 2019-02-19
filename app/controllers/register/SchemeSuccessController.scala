@@ -20,39 +20,37 @@ import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
 import controllers.Retrievals
 import controllers.actions._
-import identifiers.register.{SchemeDetailsId, SubmissionReferenceNumberId}
+import identifiers.SchemeTypeId
+import identifiers.register.SubmissionReferenceNumberId
 import javax.inject.Inject
 import models.register.SchemeType.MasterTrust
 import models.requests.DataRequest
 import org.joda.time.LocalDate
-import play.api.Logger
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import views.html.register.schemeSuccess
 
-import scala.concurrent.{ExecutionContext, Future}
-import scala.util.Failure
+import scala.concurrent.ExecutionContext
 
 class SchemeSuccessController @Inject()(appConfig: FrontendAppConfig,
                                         override val messagesApi: MessagesApi,
                                         cacheConnector: UserAnswersCacheConnector,
                                         authenticate: AuthAction,
                                         getData: DataRetrievalAction,
-                                        requireData: DataRequiredAction) (implicit val ec: ExecutionContext) extends FrontendController with I18nSupport with Retrievals {
+                                        requireData: DataRequiredAction)
+                                       (implicit val ec: ExecutionContext) extends FrontendController with I18nSupport with Retrievals {
 
   def onPageLoad: Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
 
       SubmissionReferenceNumberId.retrieve.right.map {
         submissionReferenceNumber =>
-          val schemeName = request.userAnswers.get(SchemeDetailsId).map(_.schemeName)
 
           cacheConnector.removeAll(request.externalId).map { _ =>
               Ok(
                 schemeSuccess(
                   appConfig,
-                  schemeName,
                   LocalDate.now(),
                   submissionReferenceNumber.schemeReferenceNumber,
                   showMasterTrustContent
@@ -68,5 +66,5 @@ class SchemeSuccessController @Inject()(appConfig: FrontendAppConfig,
   }
 
 
-  private def showMasterTrustContent(implicit request: DataRequest[AnyContent]): Boolean = request.userAnswers.get(SchemeDetailsId).map(_.schemeType).contains(MasterTrust)
+  private def showMasterTrustContent(implicit request: DataRequest[AnyContent]): Boolean = request.userAnswers.get(SchemeTypeId).contains(MasterTrust)
 }

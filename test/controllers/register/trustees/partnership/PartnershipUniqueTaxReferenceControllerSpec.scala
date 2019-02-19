@@ -22,7 +22,6 @@ import controllers.actions.{DataRequiredActionImpl, DataRetrievalAction, FakeAut
 import forms.register.trustees.partnership.PartnershipUniqueTaxReferenceFormProvider
 import identifiers.register.trustees.TrusteesId
 import identifiers.register.trustees.partnership.{PartnershipDetailsId, PartnershipUniqueTaxReferenceId}
-import models.register.{SchemeDetails, SchemeType}
 import models.{Index, NormalMode, PartnershipDetails, UniqueTaxReference}
 import play.api.data.Form
 import play.api.libs.json.{JsObject, Json}
@@ -41,8 +40,6 @@ class PartnershipUniqueTaxReferenceControllerSpec extends ControllerSpecBase {
   val partnershipName = "test partnership name"
 
   val validData: JsObject = Json.obj(
-    SchemeDetails.toString ->
-      SchemeDetails("Test Scheme Name", SchemeType.SingleTrust),
     TrusteesId.toString -> Json.arr(
       Json.obj(
         PartnershipDetailsId.toString ->

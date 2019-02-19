@@ -19,16 +19,15 @@ package controllers.register.establishers.company
 import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions._
-import identifiers.register.SchemeDetailsId
 import identifiers.register.establishers.company._
 import javax.inject.Inject
 import models.{CheckMode, Index, NormalMode}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import utils._
 import utils.annotations.EstablishersCompany
 import utils.checkyouranswers.Ops._
-import utils._
 import viewmodels.AnswerSection
 import views.html.check_your_answers
 

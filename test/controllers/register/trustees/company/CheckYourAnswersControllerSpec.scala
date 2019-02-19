@@ -22,7 +22,6 @@ import identifiers.register.trustees.IsTrusteeCompleteId
 import identifiers.register.trustees.company._
 import models._
 import models.address.Address
-import models.register.{SchemeDetails, SchemeType}
 import models.requests.DataRequest
 import play.api.mvc.AnyContent
 import play.api.test.Helpers._
@@ -87,7 +86,6 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase {
   private val previousAddress = Address("address-2-line-1", "address-2-line-2", None, None, Some("post-code-2"), "country-2")
 
   private val emptyAnswers = UserAnswers()
-    .schemeDetails(SchemeDetails(schemeName, SchemeType.BodyCorporate))
 
   private val fullAnswers = emptyAnswers
     .trusteesCompanyDetails(index, companyDetails)

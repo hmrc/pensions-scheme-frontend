@@ -20,11 +20,9 @@ import connectors.FakeUserAnswersCacheConnector
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.register.establishers.individual.EstablisherNinoFormProvider
-import identifiers.register.SchemeDetailsId
 import identifiers.register.establishers.individual.{EstablisherDetailsId, EstablisherNinoId}
 import models._
 import models.person.PersonDetails
-import models.register.{SchemeDetails, SchemeType}
 import org.joda.time.LocalDate
 import play.api.data.Form
 import play.api.libs.json.{JsObject, Json}
@@ -44,7 +42,6 @@ class EstablisherNinoControllerSpec extends ControllerSpecBase {
   val establisherDetails = PersonDetails("test first name", None, "test last name", LocalDate.now, false)
 
   val validData: JsObject = Json.obj(
-    SchemeDetailsId.toString -> SchemeDetails("Test Scheme Name", SchemeType.SingleTrust),
     "establishers" -> Json.arr(
       Json.obj(
         EstablisherDetailsId.toString -> establisherDetails,

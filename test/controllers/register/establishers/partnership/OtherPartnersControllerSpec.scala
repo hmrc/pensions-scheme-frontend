@@ -20,10 +20,8 @@ import connectors.FakeUserAnswersCacheConnector
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.register.establishers.partnership.OtherPartnersFormProvider
-import identifiers.register.SchemeDetailsId
 import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.partnership.{OtherPartnersId, PartnershipDetailsId}
-import models.register.{SchemeDetails, SchemeType}
 import models.{Index, NormalMode, PartnershipDetails}
 import play.api.data.Form
 import play.api.libs.json._
@@ -48,8 +46,6 @@ class OtherPartnersControllerSpec extends ControllerSpecBase {
   val partnershipName = "test partnership name"
 
   val validData: JsObject = Json.obj(
-    SchemeDetailsId.toString ->
-      SchemeDetails("Test Scheme Name", SchemeType.SingleTrust),
     EstablishersId.toString -> Json.arr(
       Json.obj(
         PartnershipDetailsId.toString -> PartnershipDetails("test partnership name", false),

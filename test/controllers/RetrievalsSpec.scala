@@ -16,12 +16,10 @@
 
 package controllers
 
-import identifiers.register.SchemeDetailsId
 import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.company.CompanyDetailsId
 import identifiers.register.establishers.partnership.PartnershipDetailsId
 import identifiers.{SchemeNameId, TypedIdentifier}
-import models.register.{SchemeDetails, SchemeType}
 import models.requests.{DataRequest, IdentifiedRequest}
 import models.{CompanyDetails, PartnershipDetails}
 import org.scalatest.EitherValues
@@ -107,22 +105,6 @@ class RetrievalsSpec extends ControllerSpecBase with FrontendController with Ret
       implicit val request: DataRequest[AnyContent] = dataRequest(validData)
 
       val result = controller.retrievePartnershipName(0)(success)
-
-      status(result) must be(OK)
-    }
-  }
-
-
-  "retrieveSchemeName" must {
-    "reach the intended result when schemeName is found" in {
-
-      val validData = Json.obj(
-        SchemeDetailsId.toString -> Json.toJson(SchemeDetails("schemeName", SchemeType.SingleTrust))
-      )
-
-      implicit val request: DataRequest[AnyContent] = dataRequest(validData)
-
-      val result = controller.retrieveSchemeName(success)
 
       status(result) must be(OK)
     }

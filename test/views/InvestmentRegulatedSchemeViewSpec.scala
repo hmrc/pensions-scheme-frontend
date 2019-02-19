@@ -16,8 +16,8 @@
 
 package views
 
-import controllers.register.routes
-import forms.register.InvestmentRegulatedFormProvider
+import controllers.routes
+import forms.InvestmentRegulatedSchemeFormProvider
 import models.NormalMode
 import play.api.data.Form
 import views.behaviours.YesNoViewBehaviours
@@ -27,7 +27,7 @@ class InvestmentRegulatedSchemeViewSpec extends YesNoViewBehaviours {
 
   val messageKeyPrefix = "investment_regulated_scheme"
 
-  val form = new InvestmentRegulatedFormProvider()()
+  val form = new InvestmentRegulatedSchemeFormProvider()()
 
   private def createView() = () =>
     investmentRegulatedScheme(frontendAppConfig, form, NormalMode, None)(fakeRequest, messages)
@@ -40,7 +40,7 @@ class InvestmentRegulatedSchemeViewSpec extends YesNoViewBehaviours {
     behave like normalPage(createView(), messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__h1"))
 
     behave like yesNoPage(createView = createViewUsingForm, messageKeyPrefix = messageKeyPrefix,
-      expectedFormAction = routes.InvestmentRegulatedController.onSubmit(NormalMode).url)
+      expectedFormAction = routes.InvestmentRegulatedSchemeController.onSubmit(NormalMode).url)
 
     behave like pageWithReturnLink(createView(), getReturnLink)
   }

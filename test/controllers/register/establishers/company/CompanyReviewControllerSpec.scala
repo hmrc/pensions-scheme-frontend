@@ -18,12 +18,10 @@ package controllers.register.establishers.company
 
 import controllers.ControllerSpecBase
 import controllers.actions._
-import identifiers.register.SchemeDetailsId
 import identifiers.register.establishers.company.director.{DirectorDetailsId, IsDirectorCompleteId}
 import identifiers.register.establishers.company.{CompanyDetailsId, IsCompanyCompleteId}
 import identifiers.register.establishers.{EstablishersId, IsEstablisherCompleteId}
 import models.person.PersonDetails
-import models.register.{SchemeDetails, SchemeType}
 import models.{CompanyDetails, Index}
 import org.joda.time.LocalDate
 import play.api.libs.json.{JsObject, Json}
@@ -77,8 +75,6 @@ class CompanyReviewControllerSpec extends ControllerSpecBase {
     "not set establisher as complete when company is not complete but directors are completed" in {
       FakeSectionComplete.reset()
       val validData: JsObject = Json.obj(
-        SchemeDetailsId.toString ->
-          SchemeDetails(schemeName, SchemeType.SingleTrust),
         EstablishersId.toString -> Json.arr(
           Json.obj(
             CompanyDetailsId.toString -> companyDetails,
@@ -103,8 +99,6 @@ class CompanyReviewControllerSpec extends ControllerSpecBase {
     "not set establisher as complete when company is complete but directors are not present" in {
       FakeSectionComplete.reset()
       val validData: JsObject = Json.obj(
-        SchemeDetailsId.toString ->
-          SchemeDetails(schemeName, SchemeType.SingleTrust),
         EstablishersId.toString -> Json.arr(
           Json.obj(
             CompanyDetailsId.toString -> companyDetails,
@@ -137,8 +131,6 @@ object CompanyReviewControllerSpec {
   val directors = Seq(director("a"), director("b"), director("c"))
 
   def validData(inDirectors: Seq[JsObject] = directors): JsObject = Json.obj(
-    SchemeDetailsId.toString ->
-      SchemeDetails(schemeName, SchemeType.SingleTrust),
     EstablishersId.toString -> Json.arr(
       Json.obj(
         CompanyDetailsId.toString -> companyDetails,

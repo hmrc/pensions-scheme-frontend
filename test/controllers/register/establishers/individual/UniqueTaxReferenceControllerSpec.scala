@@ -23,7 +23,6 @@ import forms.register.establishers.individual.UniqueTaxReferenceFormProvider
 import identifiers.register.establishers.individual.{EstablisherDetailsId, UniqueTaxReferenceId}
 import models._
 import models.person.PersonDetails
-import models.register.{SchemeDetails, SchemeType}
 import org.joda.time.LocalDate
 import play.api.data.Form
 import play.api.libs.json.{JsObject, Json}
@@ -42,8 +41,6 @@ class UniqueTaxReferenceControllerSpec extends ControllerSpecBase {
   val establisherName = "test first name test last name"
 
   val validData: JsObject = Json.obj(
-    SchemeDetails.toString ->
-      SchemeDetails("Test Scheme Name", SchemeType.SingleTrust),
     "establishers" -> Json.arr(
       Json.obj(
         EstablisherDetailsId.toString ->

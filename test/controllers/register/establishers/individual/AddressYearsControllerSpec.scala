@@ -20,11 +20,9 @@ import connectors.FakeUserAnswersCacheConnector
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.address.AddressYearsFormProvider
-import identifiers.register.SchemeDetailsId
 import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.individual.{AddressYearsId, EstablisherDetailsId}
 import models.person.PersonDetails
-import models.register.{SchemeDetails, SchemeType}
 import models.{AddressYears, Index, NormalMode}
 import org.joda.time.LocalDate
 import play.api.data.Form
@@ -77,8 +75,7 @@ class AddressYearsControllerSpec extends ControllerSpecBase {
       None
     )(fakeRequest, messages).toString
 
-  private val validData = Json.obj(SchemeDetailsId.toString -> Json.toJson(
-    SchemeDetails("value 1", SchemeType.SingleTrust)),
+  private val validData = Json.obj(
     EstablishersId.toString -> Json.arr(
       Json.obj(
         EstablisherDetailsId.toString ->

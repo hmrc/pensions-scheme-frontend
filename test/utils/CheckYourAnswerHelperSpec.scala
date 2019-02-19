@@ -18,13 +18,10 @@ package utils
 
 import base.SpecBase
 import controllers.register.establishers.individual.routes._
-import identifiers.register.SchemeDetailsId
-import identifiers.register.establishers.company.CompanyUniqueTaxReferenceId
 import identifiers.register.establishers.individual._
 import models._
 import models.address.Address
 import models.person.PersonDetails
-import models.register.{SchemeDetails, SchemeType}
 import org.joda.time.LocalDate
 import play.api.libs.json._
 import viewmodels.{AnswerRow, Message}
@@ -44,8 +41,7 @@ class CheckYourAnswerHelperSpec extends SpecBase {
   "check your answer helper" must {
     "return the AnswerRows for the address" in {
       val userAnswers = new UserAnswers(
-        Json.obj(SchemeDetailsId.toString -> Json.toJson(
-          SchemeDetails("value 1", SchemeType.SingleTrust)),
+        Json.obj(
           "establishers" -> Json.arr(
             Json.obj(
               EstablisherDetailsId.toString -> establisherDetails,
@@ -67,8 +63,7 @@ class CheckYourAnswerHelperSpec extends SpecBase {
 
     "return the AnswerRows for the previous address" in {
       val userAnswers = new UserAnswers(
-        Json.obj(SchemeDetailsId.toString -> Json.toJson(
-          SchemeDetails("value 1", SchemeType.SingleTrust)),
+        Json.obj(
           "establishers" -> Json.arr(
             Json.obj(
               EstablisherDetailsId.toString -> establisherDetails,
@@ -90,8 +85,7 @@ class CheckYourAnswerHelperSpec extends SpecBase {
 
     "return the AnswerRows for establisher Nino when answered Yes" in {
       val userAnswers = new UserAnswers(
-        Json.obj(SchemeDetailsId.toString -> Json.toJson(
-          SchemeDetails("value 1", SchemeType.SingleTrust)),
+        Json.obj(
           "establishers" -> Json.arr(
             Json.obj(
               EstablisherDetailsId.toString -> establisherDetails,
@@ -119,8 +113,7 @@ class CheckYourAnswerHelperSpec extends SpecBase {
 
     "return the AnswerRows for establisher Nino when answered No" in {
       val userAnswers = new UserAnswers(
-        Json.obj(SchemeDetailsId.toString -> Json.toJson(
-          SchemeDetails("value 1", SchemeType.SingleTrust)),
+        Json.obj(
           "establishers" -> Json.arr(
             Json.obj(
               EstablisherDetailsId.toString -> establisherDetails,
@@ -148,8 +141,7 @@ class CheckYourAnswerHelperSpec extends SpecBase {
 
     "return the AnswerRows for contact details" in {
       val userAnswers = new UserAnswers(
-        Json.obj(SchemeDetailsId.toString -> Json.toJson(
-          SchemeDetails("value 1", SchemeType.SingleTrust)),
+        Json.obj(
           "establishers" -> Json.arr(
             Json.obj(
               ContactDetailsId.toString ->
@@ -176,8 +168,7 @@ class CheckYourAnswerHelperSpec extends SpecBase {
 
     "return the AnswerRows for establisher details" in {
       val userAnswers = new UserAnswers(
-        Json.obj(SchemeDetailsId.toString -> Json.toJson(
-          SchemeDetails("value 1", SchemeType.SingleTrust)),
+        Json.obj(
           "establishers" -> Json.arr(
             Json.obj(EstablisherDetailsId.toString -> establisherDetails)
           ))
@@ -204,8 +195,7 @@ class CheckYourAnswerHelperSpec extends SpecBase {
 
     "return the AnswerRows for establisher details No MiddleName" in {
       val userAnswers = new UserAnswers(
-        Json.obj(SchemeDetailsId.toString -> Json.toJson(
-          SchemeDetails("value 1", SchemeType.SingleTrust)),
+        Json.obj(
           "establishers" -> Json.arr(
             Json.obj(EstablisherDetailsId.toString -> establisherDetails.copy(middleName = None))
           ))
@@ -232,8 +222,7 @@ class CheckYourAnswerHelperSpec extends SpecBase {
 
     "return the AnswerRows for address years" in {
       val userAnswers = new UserAnswers(
-        Json.obj(SchemeDetailsId.toString -> Json.toJson(
-          SchemeDetails("value 1", SchemeType.SingleTrust)),
+        Json.obj(
           "establishers" -> Json.arr(
             Json.obj(
               AddressYearsId.toString -> AddressYears.UnderAYear.toString)))

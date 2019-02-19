@@ -28,7 +28,6 @@ class SchemeSuccessViewSpec extends ViewBehaviours {
 
   val submissionReferenceNumber = "XX123456789132"
 
-  val testScheme = "test scheme name"
 
   val appealLink = frontendAppConfig.appealLink
   val pensionsRegulatorLink = frontendAppConfig.pensionsRegulatorLink
@@ -37,7 +36,6 @@ class SchemeSuccessViewSpec extends ViewBehaviours {
   def createView: () => HtmlFormat.Appendable = () =>
     schemeSuccess(
       frontendAppConfig,
-      Some(testScheme),
       LocalDate.now(),
       submissionReferenceNumber,
       showMasterTrustContent = false
@@ -46,7 +44,6 @@ class SchemeSuccessViewSpec extends ViewBehaviours {
   def createMasterTrustView: () => HtmlFormat.Appendable = () =>
     schemeSuccess(
       frontendAppConfig,
-      Some(testScheme),
       LocalDate.now(),
       submissionReferenceNumber,
       showMasterTrustContent = true

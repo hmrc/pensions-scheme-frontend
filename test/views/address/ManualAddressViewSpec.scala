@@ -56,7 +56,7 @@ class ManualAddressViewSpec extends QuestionViewBehaviours[Address] {
     behave like pageWithTextFields(
       createViewUsingForm,
       messageKeyPrefix,
-      routes.InsurerAddressController.onSubmit(NormalMode).url,
+      controllers.routes.AdviserAddressController.onPageLoad(NormalMode).url,
       "addressLine1", "addressLine2", "addressLine3", "addressLine4"
     )
 

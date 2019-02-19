@@ -21,7 +21,6 @@ import connectors.UserAnswersCacheConnector
 import controllers.Retrievals
 import controllers.actions._
 import forms.register.trustees.TrusteeKindFormProvider
-import identifiers.register.SchemeDetailsId
 import identifiers.register.trustees.TrusteeKindId
 import javax.inject.Inject
 import models.{Index, Mode}

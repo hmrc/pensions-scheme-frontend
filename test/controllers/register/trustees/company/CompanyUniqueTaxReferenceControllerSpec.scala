@@ -23,7 +23,6 @@ import forms.register.trustees.company.CompanyUniqueTaxReferenceFormProvider
 import identifiers.register.trustees.TrusteesId
 import identifiers.register.trustees.company.{CompanyDetailsId, CompanyUniqueTaxReferenceId}
 import models.{UniqueTaxReference, _}
-import models.register.{SchemeDetails, SchemeType}
 import play.api.data.Form
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
@@ -44,8 +43,6 @@ class CompanyUniqueTaxReferenceControllerSpec extends ControllerSpecBase {
   val companyName = "test company name"
 
   val validData: JsObject = Json.obj(
-    SchemeDetails.toString ->
-      SchemeDetails("Test Scheme Name", SchemeType.SingleTrust),
     TrusteesId.toString -> Json.arr(
       Json.obj(
         CompanyDetailsId.toString ->

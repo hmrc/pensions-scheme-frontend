@@ -16,13 +16,11 @@
 
 package controllers
 
-import identifiers.register.SchemeDetailsId
 import identifiers.register.establishers.company.CompanyDetailsId
 import identifiers.register.establishers.individual.EstablisherDetailsId
 import identifiers.register.establishers.partnership.PartnershipDetailsId
 import identifiers.{SchemeNameId, TypedIdentifier}
 import models.person.PersonDetails
-import models.register.SchemeDetails
 import models.requests.{DataRequest, OptionalDataRequest}
 import models.{CompanyDetails, PartnershipDetails}
 import play.api.libs.json.Reads
@@ -49,13 +47,6 @@ trait Retrievals {
                                                   (implicit request: DataRequest[AnyContent]): Future[Result] = {
     retrieve[PartnershipDetails](PartnershipDetailsId(index)) { partnershipDetails =>
       f(partnershipDetails.name)
-    }
-  }
-
-  private[controllers] def retrieveSchemeName(f: String => Future[Result])
-                                             (implicit request: DataRequest[AnyContent]): Future[Result] = {
-    retrieve[SchemeDetails](SchemeDetailsId) { schemeDetails =>
-      f(schemeDetails.schemeName)
     }
   }
 

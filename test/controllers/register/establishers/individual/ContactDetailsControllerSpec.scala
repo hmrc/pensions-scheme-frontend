@@ -20,11 +20,9 @@ import connectors.FakeUserAnswersCacheConnector
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.ContactDetailsFormProvider
-import identifiers.register.SchemeDetailsId
 import identifiers.register.establishers.individual.{ContactDetailsId, EstablisherDetailsId}
 import models._
 import models.person.PersonDetails
-import models.register.{SchemeDetails, SchemeType}
 import org.joda.time.LocalDate
 import play.api.data.Form
 import play.api.libs.json.{JsObject, Json}
@@ -74,7 +72,6 @@ class ContactDetailsControllerSpec extends ControllerSpecBase {
   )(fakeRequest, messages).toString
 
   val validData: JsObject = Json.obj(
-    SchemeDetailsId.toString -> SchemeDetails("Test Scheme Name", SchemeType.SingleTrust),
     "establishers" -> Json.arr(
       Json.obj(
         EstablisherDetailsId.toString ->

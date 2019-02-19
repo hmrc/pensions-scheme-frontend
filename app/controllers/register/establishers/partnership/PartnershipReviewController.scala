@@ -19,7 +19,6 @@ package controllers.register.establishers.partnership
 import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions.{AuthAction, DataRequiredAction, DataRetrievalAction}
-import identifiers.register.SchemeDetailsId
 import identifiers.register.establishers.IsEstablisherCompleteId
 import identifiers.register.establishers.partnership.{IsPartnershipCompleteId, PartnershipDetailsId, PartnershipReviewId}
 import javax.inject.Inject

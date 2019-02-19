@@ -20,10 +20,8 @@ import connectors.FakeUserAnswersCacheConnector
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.CompanyRegistrationNumberFormProvider
-import identifiers.register.SchemeDetailsId
 import identifiers.register.trustees.TrusteesId
 import identifiers.register.trustees.company.{CompanyDetailsId, CompanyRegistrationNumberId}
-import models.register.{SchemeDetails, SchemeType}
 import models.{CompanyDetails, CompanyRegistrationNumber, Index, NormalMode}
 import play.api.data.Form
 import play.api.libs.json._
@@ -43,8 +41,6 @@ class CompanyRegistrationNumberControllerSpec extends ControllerSpecBase {
 
   val getCompanyDetails = new FakeDataRetrievalAction(
     Some(Json.obj(
-      SchemeDetailsId.toString ->
-        SchemeDetails("Test Scheme Name", SchemeType.SingleTrust),
       TrusteesId.toString -> Json.arr(
         Json.obj(
           CompanyDetailsId.toString ->
@@ -55,8 +51,6 @@ class CompanyRegistrationNumberControllerSpec extends ControllerSpecBase {
   )
 
   val validData: JsObject = Json.obj(
-    SchemeDetailsId.toString ->
-      SchemeDetails("Test Scheme Name", SchemeType.SingleTrust),
     TrusteesId.toString -> Json.arr(
       Json.obj(
         CompanyDetailsId.toString ->

@@ -19,7 +19,6 @@ package controllers.register.trustees.individual
 import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions.{AuthAction, DataRequiredAction, DataRetrievalAction}
-import identifiers.register.SchemeDetailsId
 import identifiers.register.trustees.IsTrusteeCompleteId
 import identifiers.register.trustees.individual._
 import javax.inject.Inject
@@ -30,7 +29,7 @@ import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.TrusteesIndividual
 import utils.checkyouranswers.Ops._
 import utils.{CountryOptions, Navigator, SectionComplete}
-import viewmodels.{AnswerSection, Message}
+import viewmodels.AnswerSection
 import views.html.check_your_answers
 
 import scala.concurrent.{ExecutionContext, Future}

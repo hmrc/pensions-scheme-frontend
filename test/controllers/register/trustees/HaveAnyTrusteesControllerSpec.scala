@@ -37,9 +37,7 @@ import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.register.trustees.HaveAnyTrusteesFormProvider
 import identifiers.HaveAnyTrusteesId
-import identifiers.register.SchemeDetailsId
 import models.NormalMode
-import models.register.{SchemeDetails, SchemeType}
 import play.api.data.Form
 import play.api.libs.json._
 import play.api.mvc.Call
@@ -55,7 +53,7 @@ class HaveAnyTrusteesControllerSpec extends ControllerSpecBase {
   val form = formProvider()
   val schemeName = "Test Scheme Name"
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getMandatorySchemeName): HaveAnyTrusteesController =
+  def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): HaveAnyTrusteesController =
     new HaveAnyTrusteesController(frontendAppConfig, messagesApi, FakeUserAnswersCacheConnector, new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
       dataRetrievalAction, formProvider)
 
@@ -71,8 +69,7 @@ class HaveAnyTrusteesControllerSpec extends ControllerSpecBase {
     }
 
     "populate the view correctly on a GET when the question has previously been answered" in {
-      val validData = Json.obj(SchemeDetailsId.toString -> SchemeDetails("Test Scheme Name", SchemeType.SingleTrust),
-        HaveAnyTrusteesId.toString -> true)
+      val validData = Json.obj(HaveAnyTrusteesId.toString -> true)
       val getRelevantData = new FakeDataRetrievalAction(Some(validData))
 
       val result = controller(getRelevantData).onPageLoad(NormalMode)(fakeRequest)

@@ -21,12 +21,10 @@ import controllers.ControllerSpecBase
 import controllers.actions._
 import controllers.register.establishers.company.routes.AddCompanyDirectorsController
 import forms.register.establishers.company.director.ConfirmDeleteDirectorFormProvider
-import identifiers.register.SchemeDetailsId
 import identifiers.register.establishers.company.CompanyDetailsId
 import identifiers.register.establishers.company.director.DirectorDetailsId
 import identifiers.register.establishers.{EstablishersId, IsEstablisherCompleteId}
 import models.person.PersonDetails
-import models.register.{SchemeDetails, SchemeType}
 import models.{CompanyDetails, Index, NormalMode}
 import org.joda.time.LocalDate
 import play.api.libs.json._
@@ -99,8 +97,6 @@ class ConfirmDeleteDirectorControllerSpec extends ControllerSpecBase {
     "set the establisher as not complete when directors are deleted" in {
       FakeSectionComplete.reset()
       val validData: JsObject = Json.obj(
-        SchemeDetailsId.toString ->
-          SchemeDetails("Test Scheme Name", SchemeType.SingleTrust),
         EstablishersId.toString -> Json.arr(
           Json.obj(
             CompanyDetailsId.toString -> CompanyDetails(companyName, None, None),

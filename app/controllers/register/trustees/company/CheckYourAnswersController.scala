@@ -19,7 +19,6 @@ package controllers.register.trustees.company
 import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions.{AuthAction, DataRequiredAction, DataRetrievalAction}
-import identifiers.register.SchemeDetailsId
 import identifiers.register.trustees.IsTrusteeCompleteId
 import identifiers.register.trustees.company._
 import javax.inject.Inject
@@ -27,10 +26,10 @@ import models.{CheckMode, Index, NormalMode}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import utils._
 import utils.annotations.TrusteesCompany
 import utils.checkyouranswers.Ops._
-import utils._
-import viewmodels.{AnswerSection, Message}
+import viewmodels.AnswerSection
 import views.html.check_your_answers
 
 import scala.concurrent.{ExecutionContext, Future}

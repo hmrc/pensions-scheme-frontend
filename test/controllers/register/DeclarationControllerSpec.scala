@@ -19,15 +19,14 @@ package controllers.register
 import connectors.{FakeUserAnswersCacheConnector, _}
 import controllers.ControllerSpecBase
 import controllers.actions._
-import controllers.register.DeclarationDutiesControllerSpec.psaId
 import forms.register.DeclarationFormProvider
+import identifiers.register.DeclarationDormantId
 import identifiers.register.establishers.company.{CompanyDetailsId, IsCompanyDormantId}
 import identifiers.register.establishers.individual.EstablisherDetailsId
 import identifiers.register.establishers.partnership.{IsPartnershipDormantId, PartnershipDetailsId}
-import identifiers.register.{DeclarationDormantId, SchemeDetailsId}
 import identifiers.{SchemeTypeId, TypedIdentifier}
 import models.person.PersonDetails
-import models.register.{DeclarationDormant, SchemeDetails, SchemeSubmissionResponse, SchemeType}
+import models.register.{DeclarationDormant, SchemeSubmissionResponse, SchemeType}
 import models.{CompanyDetails, PartnershipDetails}
 import org.joda.time.LocalDate
 import org.mockito.Matchers.{any, eq => eqTo}
@@ -202,6 +201,7 @@ object DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar {
 
   private val formProvider = new DeclarationFormProvider()
   private val form = formProvider()
+  val psaId = PsaId("A0000000")
 
   private def controller(dataRetrievalAction: DataRetrievalAction,
                          fakeEmailConnector: EmailConnector = fakeEmailConnector,
@@ -237,7 +237,6 @@ object DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar {
 
   private val individual =
     UserAnswers()
-      .schemeDetails()
       .individualEstablisher()
       .set(identifiers.DeclarationDutiesId)(false).asOpt
       .value
@@ -245,14 +244,12 @@ object DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar {
 
   private val nonDormantCompany =
     UserAnswers()
-      .schemeDetails()
       .companyEstablisher(0)
       .dormant(false)
       .asDataRetrievalAction()
 
   private val nonDormantCompanyAndPartnership =
     UserAnswers()
-      .schemeDetails()
       .companyEstablisher(0)
       .set(identifiers.DeclarationDutiesId)(false)
       .asOpt
@@ -264,7 +261,6 @@ object DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar {
 
   private val dormantCompanyAndNonDormantPartnership =
     UserAnswers()
-      .schemeDetails()
       .companyEstablisher(0)
       .set(identifiers.DeclarationDutiesId)(false)
       .asOpt
@@ -278,7 +274,6 @@ object DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar {
 
   private val dormantPartnershipAndNonDormantCompany =
     UserAnswers()
-      .schemeDetails()
       .companyEstablisher(0)
       .set(identifiers.DeclarationDutiesId)(false)
       .asOpt
@@ -293,10 +288,6 @@ object DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar {
       .asDataRetrievalAction()
 
   private implicit class UserAnswersOps(answers: UserAnswers) {
-
-    def schemeDetails(): UserAnswers = {
-      answers.set(SchemeDetailsId)(SchemeDetails("Test Scheme Name", SchemeType.SingleTrust)).asOpt.value
-    }
 
     def dormant(dormant: Boolean): UserAnswers = {
       val declarationDormant = if (dormant) DeclarationDormant.Yes else DeclarationDormant.No

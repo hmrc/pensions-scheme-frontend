@@ -18,17 +18,15 @@ package controllers.register.establishers.partnership
 
 import controllers.ControllerSpecBase
 import controllers.actions.{DataRequiredActionImpl, DataRetrievalAction, FakeAuthAction}
-import identifiers.register.SchemeDetailsId
 import identifiers.register.establishers.partnership._
 import models.AddressYears.UnderAYear
 import models._
 import models.address.Address
-import models.register.{DeclarationDormant, SchemeDetails}
-import models.register.SchemeType.SingleTrust
+import models.register.DeclarationDormant
 import play.api.test.Helpers._
 import utils._
 import utils.checkyouranswers.Ops._
-import viewmodels.{AnswerSection, Message}
+import viewmodels.AnswerSection
 import views.html.check_your_answers
 
 class CheckYourAnswersControllerSpec extends ControllerSpecBase {

@@ -20,10 +20,8 @@ import connectors.FakeUserAnswersCacheConnector
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.CompanyDetailsFormProvider
-import identifiers.register.SchemeDetailsId
 import identifiers.register.trustees.TrusteesId
 import identifiers.register.trustees.company.CompanyDetailsId
-import models.register.{SchemeDetails, SchemeType}
 import models.{CompanyDetails, Index, NormalMode}
 import play.api.data.Form
 import play.api.libs.json.{JsObject, Json}
@@ -42,15 +40,13 @@ class CompanyDetailsControllerSpec extends ControllerSpecBase {
   val invalidIndex = Index(3)
   val schemeName = "Test Scheme Name"
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getMandatorySchemeName): CompanyDetailsController =
+  def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): CompanyDetailsController =
     new CompanyDetailsController(frontendAppConfig, messagesApi, FakeUserAnswersCacheConnector, new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
       dataRetrievalAction, new DataRequiredActionImpl, formProvider)
 
   def viewAsString(form: Form[_] = form): String = companyDetails(frontendAppConfig, form, NormalMode, firstIndex, None)(fakeRequest, messages).toString
 
   val validData: JsObject = Json.obj(
-    SchemeDetailsId.toString ->
-      SchemeDetails(schemeName, SchemeType.SingleTrust),
     TrusteesId.toString -> Json.arr(
       Json.obj(
         CompanyDetailsId.toString ->

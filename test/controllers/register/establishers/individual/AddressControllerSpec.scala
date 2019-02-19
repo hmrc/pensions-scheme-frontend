@@ -22,11 +22,9 @@ import connectors.FakeUserAnswersCacheConnector
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.address.AddressFormProvider
-import identifiers.register.SchemeDetailsId
 import identifiers.register.establishers.individual.{AddressId, EstablisherDetailsId}
 import models.address.{Address, TolerantAddress}
 import models.person.PersonDetails
-import models.register.{SchemeDetails, SchemeType}
 import models.{Index, NormalMode}
 import org.joda.time.LocalDate
 import org.scalatest.concurrent.ScalaFutures
@@ -84,8 +82,7 @@ class AddressControllerSpec extends ControllerSpecBase with ScalaFutures {
 
   val addressData = Address("address line 1", "address line 2", Some("test town"), Some("test county"), Some("test post code"), "GB")
 
-  val validData: JsObject = Json.obj(SchemeDetailsId.toString -> Json.toJson(
-    SchemeDetails("value 1", SchemeType.SingleTrust)),
+  val validData: JsObject = Json.obj(
     "establishers" -> Json.arr(
       Json.obj(
         EstablisherDetailsId.toString ->

@@ -16,8 +16,7 @@
 
 package utils
 
-import identifiers.TypedIdentifier
-import identifiers.register.SchemeEstablishedCountryId
+import identifiers.{EstablishedCountryId, TypedIdentifier}
 import models._
 import models.address.Address
 import models.person.PersonDetails
@@ -49,13 +48,13 @@ class CheckYourAnswersSpec extends WordSpec with MustMatchers with PropertyCheck
 
       "string" when {
 
-        "id is schemeEstablishedCountryId" in {
+        "id is EstablishedCountryId" in {
           implicit val countryOptions = new CountryOptions(Seq(InputOption("AU", "Australia"),
             InputOption("GB", "United Kingdom")))
-          implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(Json.obj(SchemeEstablishedCountryId.toString -> "AU")), PsaId("A0000000"))
+          implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(Json.obj(EstablishedCountryId.toString -> "AU")), PsaId("A0000000"))
           implicit val userAnswers = request.userAnswers
 
-          SchemeEstablishedCountryId.row(onwardUrl) must equal(Seq(
+          EstablishedCountryId.row(onwardUrl) must equal(Seq(
             AnswerRow("schemeEstablishedCountry.checkYourAnswersLabel", Seq("Australia"), false, Some(onwardUrl), "messages__visuallyhidden__schemeEstablishedCountry")))
         }
 
@@ -73,55 +72,12 @@ class CheckYourAnswersSpec extends WordSpec with MustMatchers with PropertyCheck
         testIdentifier[Boolean].row(onwardUrl) must equal(Seq(AnswerRow("testId.checkYourAnswersLabel", Seq("site.yes"), true, Some(onwardUrl), "messages__visuallyhidden__testId")))
       }
 
-      "schemeDetails" in {
-        val schemeType = SchemeType.SingleTrust
-        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(
-          Json.obj("testId" -> SchemeDetails("test name", schemeType))), PsaId("A0000000"))
-
-        testIdentifier[SchemeDetails].row(onwardUrl) must equal(Seq(
-          AnswerRow("messages__scheme_details__name_label", Seq("test name"), false, Some(onwardUrl), "messages__visuallyhidden__scheme_name"),
-          AnswerRow("messages__scheme_details__type_legend_short", Seq(s"messages__scheme_details__type_$schemeType"), true, Some(onwardUrl), "messages__visuallyhidden__scheme_type")
-        ))
-      }
-
       "membership" in {
         val membershipVal = Membership.options.head.value
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(Json.obj("testId" -> membershipVal)), PsaId("A0000000"))
 
         testIdentifier[Membership].row(onwardUrl) must equal(Seq(AnswerRow(
           "testId.checkYourAnswersLabel", Seq(s"messages__membership__$membershipVal"), true, Some(onwardUrl), "messages__visuallyhidden__testId")))
-      }
-
-      "bankDetails" in {
-        val date = LocalDate.now()
-        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(
-          Json.obj("testId" -> UKBankDetails("test bank name", "test account name", SortCode("12", "23", "45"), "test account number", date))), PsaId("A0000000"))
-
-        testIdentifier[UKBankDetails].row(onwardUrl) must equal(Seq(
-          AnswerRow("messages__uk_bank_account_details__bank_name", Seq("test bank name"), false, Some(onwardUrl), "messages__visuallyhidden__uKBankAccount__bank_name"),
-          AnswerRow("messages__uk_bank_account_details__account_name", Seq("test account name"), false, Some(onwardUrl), "messages__visuallyhidden__uKBankAccount__account_name"),
-          AnswerRow("messages__uk_bank_account_details__sort_code", Seq("12-23-45"), false, Some(onwardUrl), "messages__visuallyhidden__uKBankAccount__sort_code"),
-          AnswerRow("messages__uk_bank_account_details__account_number", Seq("test account number"), false, Some(onwardUrl), "messages__visuallyhidden__uKBankAccount__account_number"),
-          AnswerRow("bankAccountDate.checkYourAnswersLabel", Seq(s"${DateHelper.formatDate(date)}"), false, Some(onwardUrl), "messages__visuallyhidden__uKBankAccount__date_bank_account")
-        ))
-      }
-
-      "schemeBenefits" in {
-        val benefitsVal = Benefits.options.head.value
-        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(Json.obj("testId" -> benefitsVal)), PsaId("A0000000"))
-
-        testIdentifier[Benefits].row(onwardUrl) must equal(Seq(AnswerRow(
-          "messages__benefits__title", Seq(s"messages__benefits__$benefitsVal"), true, Some(onwardUrl), "messages__visuallyhidden__benefits")))
-      }
-
-      "benefitsInsurer" in {
-        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(
-          Json.obj("testId" -> BenefitsInsurer("test name", "test policy"))), PsaId("A0000000"))
-
-        testIdentifier[BenefitsInsurer].row(onwardUrl) must equal(Seq(
-          AnswerRow("messages__benefits_insurance__name", Seq("test name"), false, Some(onwardUrl), "messages__visuallyhidden__benefits_insurance__name"),
-          AnswerRow("messages__benefits_insurance__policy", Seq("test policy"), false, Some(onwardUrl), "messages__visuallyhidden__benefits_insurance__policy")
-        ))
       }
 
       "companyDetails" when {

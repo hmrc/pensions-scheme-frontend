@@ -20,12 +20,10 @@ import connectors.UserAnswersCacheConnector
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.register.PersonDetailsFormProvider
-import identifiers.register.SchemeDetailsId
 import identifiers.register.establishers.company.CompanyDetailsId
 import identifiers.register.establishers.company.director.DirectorDetailsId
 import identifiers.register.establishers.{EstablishersId, IsEstablisherCompleteId}
 import models.person.PersonDetails
-import models.register.{SchemeDetails, SchemeType}
 import models.{CompanyDetails, Index, NormalMode}
 import org.joda.time.LocalDate
 import org.mockito.Matchers.{eq => eqTo, _}
@@ -101,8 +99,6 @@ class DirectorDetailsControllerSpec extends ControllerSpecBase {
 
     "redirect to the next page when valid data is submitted" in {
       val validData = Json.obj(
-        SchemeDetailsId.toString ->
-          SchemeDetails("Test Scheme Name", SchemeType.SingleTrust),
         EstablishersId.toString -> Json.arr(
           Json.obj(
             CompanyDetailsId.toString ->
@@ -174,8 +170,6 @@ class DirectorDetailsControllerSpec extends ControllerSpecBase {
       reset(mockSectionComplete)
       val validData =
         Json.obj(
-          SchemeDetailsId.toString ->
-            SchemeDetails("Test Scheme Name", SchemeType.SingleTrust),
           EstablishersId.toString -> Json.arr(
             Json.obj(
               CompanyDetailsId.toString ->

@@ -16,25 +16,17 @@
 
 package utils
 
-import controllers.register.routes
-import identifiers.HaveAnyTrusteesId
-import identifiers.register._
-import identifiers.register.adviser.AdviserDetailsId
 import identifiers.register.establishers.company._
 import identifiers.register.establishers.company.director._
 import identifiers.register.establishers.individual._
 import identifiers.register.establishers.{EstablisherKindId, company}
 import identifiers.register.trustees.individual.{TrusteeAddressYearsId, TrusteeNinoId}
 import models.Nino.{No, Yes}
-import models.{UniqueTaxReference, _}
 import models.address.Address
+import models.{UniqueTaxReference, _}
 import viewmodels.{AnswerRow, Message}
 
 class CheckYourAnswersHelper(userAnswers: UserAnswers, countryOptions: CountryOptions) extends Enumerable.Implicits {
-
-  def adviserDetails: Option[AnswerRow] = userAnswers.get(AdviserDetailsId) map {
-    x => AnswerRow("adviserDetails.checkYourAnswersLabel", Seq(s"${x.adviserName} ${x.emailAddress} ${x.phoneNumber}"), false, Some(controllers.register.adviser.routes.AdviserDetailsController.onPageLoad(CheckMode).url))
-  }
 
   def haveAnyTrustees: Option[AnswerRow] = userAnswers.get(identifiers.register.trustees.HaveAnyTrusteesId) map {
     x =>
@@ -385,72 +377,6 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers, countryOptions: CountryOp
   def establisherKind(index: Int): Seq[AnswerRow] = userAnswers.get(EstablisherKindId(index)) match {
     case Some(x) => Seq(AnswerRow("establisherKind.checkYourAnswersLabel", Seq(s"${x.toString}"), false,
       Some(controllers.register.establishers.routes.EstablisherKindController.onPageLoad(CheckMode, Index(index)).url)))
-    case _ => Seq.empty
-  }
-
-  def schemeEstablishedCountry: Seq[AnswerRow] = userAnswers.get(SchemeEstablishedCountryId) match {
-    case Some(x) => Seq(AnswerRow("schemeEstablishedCountry.checkYourAnswersLabel", Seq(s"$x"), false,
-      Some(routes.SchemeEstablishedCountryController.onPageLoad(CheckMode).url)))
-    case _ => Seq.empty
-  }
-
-  def uKBankAccount: Seq[AnswerRow] = userAnswers.get(UKBankAccountId) match {
-    case Some(x) => Seq(AnswerRow("uKBankAccount.checkYourAnswersLabel", if (x) Seq("site.yes") else Seq("site.no"), true,
-      Some(routes.UKBankAccountController.onPageLoad(CheckMode).url)))
-    case _ => Seq.empty
-  }
-
-  def uKBankDetails: Seq[AnswerRow] = userAnswers.get(UKBankDetailsId) match {
-    case Some(x) => Seq(AnswerRow("uKBankDetails.checkYourAnswersLabel", Seq(s"${x.accountName} ${x.bankName}"), false,
-      Some(routes.UKBankDetailsController.onPageLoad(CheckMode).url)))
-    case _ => Seq.empty
-  }
-
-  def benefits: Seq[AnswerRow] = userAnswers.get(BenefitsId) match {
-    case Some(x) => Seq(AnswerRow("benefits.checkYourAnswersLabel", Seq(s"benefits.$x"), true,
-      Some(routes.BenefitsController.onPageLoad(CheckMode).url)))
-    case _ => Seq.empty
-  }
-
-  def benefitsInsurer: Seq[AnswerRow] = userAnswers.get(BenefitsInsurerId) match {
-    case Some(x) => Seq(AnswerRow("benefitsInsurer.checkYourAnswersLabel", Seq(s"${x.companyName} ${x.policyNumber}"), false,
-      Some(routes.BenefitsInsurerController.onPageLoad(CheckMode).url)))
-    case _ => Seq.empty
-  }
-
-  def membership: Seq[AnswerRow] = userAnswers.get(MembershipId) match {
-    case Some(x) => Seq(AnswerRow("membership.checkYourAnswersLabel", Seq(s"membership.$x"), true,
-      Some(routes.MembershipController.onPageLoad(CheckMode).url)))
-    case _ => Seq.empty
-  }
-
-  def membershipFuture: Seq[AnswerRow] = userAnswers.get(MembershipFutureId) match {
-    case Some(x) => Seq(AnswerRow("membershipFuture.checkYourAnswersLabel", Seq(s"membershipFuture.$x"), true,
-      Some(routes.MembershipFutureController.onPageLoad(CheckMode).url)))
-    case _ => Seq.empty
-  }
-
-  def investmentRegulated: Seq[AnswerRow] = userAnswers.get(InvestmentRegulatedId) match {
-    case Some(x) => Seq(AnswerRow("investmentRegulated.checkYourAnswersLabel", Seq(if (x) "site.yes" else "site.no"), true,
-      Some(routes.InvestmentRegulatedController.onPageLoad(CheckMode).url)))
-    case _ => Seq.empty
-  }
-
-  def securedBenefits: Seq[AnswerRow] = userAnswers.get(SecuredBenefitsId) match {
-    case Some(x) => Seq(AnswerRow("securedBenefits.checkYourAnswersLabel", Seq(if (x) "site.yes" else "site.no"), true,
-      Some(routes.SecuredBenefitsController.onPageLoad(CheckMode).url)))
-    case _ => Seq.empty
-  }
-
-  def occupationalPensionScheme: Seq[AnswerRow] = userAnswers.get(OccupationalPensionSchemeId) match {
-    case Some(x) => Seq(AnswerRow("occupationalPensionScheme.checkYourAnswersLabel", Seq(if (x) "site.yes" else "site.no"), true,
-      Some(routes.OccupationalPensionSchemeController.onPageLoad(CheckMode).url)))
-    case _ => Seq.empty
-  }
-
-  def schemeDetails: Seq[AnswerRow] = userAnswers.get(SchemeDetailsId) match {
-    case Some(x) => Seq(AnswerRow("schemeDetails.checkYourAnswersLabel", Seq(s"${x.schemeName} ${x.schemeType}"), false,
-      Some(routes.SchemeDetailsController.onPageLoad(CheckMode).url)))
     case _ => Seq.empty
   }
 }

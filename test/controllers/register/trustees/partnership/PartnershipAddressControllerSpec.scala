@@ -22,11 +22,9 @@ import connectors.FakeUserAnswersCacheConnector
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.address.AddressFormProvider
-import identifiers.register.SchemeDetailsId
 import identifiers.register.trustees.TrusteesId
 import identifiers.register.trustees.partnership.{PartnershipAddressId, PartnershipDetailsId}
 import models.address.{Address, TolerantAddress}
-import models.register.{SchemeDetails, SchemeType}
 import models.{Index, NormalMode, PartnershipDetails}
 import org.scalatest.concurrent.ScalaFutures
 import play.api.data.Form
@@ -97,7 +95,6 @@ class PartnershipAddressControllerSpec extends ControllerSpecBase with ScalaFutu
     "populate the view correctly on a GET when the question has previously been answered" in {
 
       val validData = Json.obj(
-        SchemeDetailsId.toString -> SchemeDetails("Test Scheme Name", SchemeType.SingleTrust),
         TrusteesId.toString -> Json.arr(
           Json.obj(
             PartnershipDetailsId.toString -> PartnershipDetails(partnershipName),

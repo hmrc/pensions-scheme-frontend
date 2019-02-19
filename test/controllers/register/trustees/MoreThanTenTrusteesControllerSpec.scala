@@ -20,10 +20,8 @@ import connectors.FakeUserAnswersCacheConnector
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.register.trustees.MoreThanTenTrusteesFormProvider
-import identifiers.register.SchemeDetailsId
 import identifiers.register.trustees.MoreThanTenTrusteesId
 import models.NormalMode
-import models.register.{SchemeDetails, SchemeType}
 import play.api.data.Form
 import play.api.libs.json._
 import play.api.mvc.Call
@@ -42,9 +40,8 @@ class MoreThanTenTrusteesControllerSpec extends ControllerSpecBase {
     MoreThanTenTrusteesId.toString -> false
   )
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getMandatorySchemeName): MoreThanTenTrusteesController =
-    new MoreThanTenTrusteesController(frontendAppConfig, messagesApi, FakeUserAnswersCacheConnector,
-      new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
+  def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): MoreThanTenTrusteesController =
+    new MoreThanTenTrusteesController(frontendAppConfig, messagesApi, FakeUserAnswersCacheConnector, new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
       dataRetrievalAction, new DataRequiredActionImpl, formProvider)
 
   def viewAsString(form: Form[_] = form): String = moreThanTenTrustees(frontendAppConfig, form, NormalMode, None)(fakeRequest, messages).toString

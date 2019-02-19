@@ -19,12 +19,9 @@ package navigators
 import com.google.inject.Inject
 import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
-import identifiers.HaveAnyTrusteesId
-import identifiers.register.SchemeDetailsId
 import identifiers.register.establishers.{AddEstablisherId, ConfirmDeleteEstablisherId, EstablisherKindId}
 import models.NormalMode
 import models.register.establishers.EstablisherKind
-import models.register.{SchemeDetails, SchemeType}
 import utils.{Enumerable, Navigator, UserAnswers}
 
 class EstablishersNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector,
@@ -49,30 +46,6 @@ class EstablishersNavigator @Inject()(val dataCacheConnector: UserAnswersCacheCo
         NavigateTo.save(controllers.register.establishers.routes.EstablisherKindController.onPageLoad(NormalMode, answers.establishersCount))
       case None =>
         NavigateTo.save(controllers.register.establishers.routes.EstablisherKindController.onPageLoad(NormalMode, answers.establishersCount))
-    }
-  }
-
-  private def navigateBasedOnSchemeDetails(answers: UserAnswers): Option[NavigateTo] = {
-    val listOfSchemeTypeTrusts: Seq[SchemeType] = Seq(SchemeType.SingleTrust, SchemeType.MasterTrust)
-    answers.get(SchemeDetailsId) match {
-      case Some(SchemeDetails(_, schemeType)) if listOfSchemeTypeTrusts.contains(schemeType) =>
-        NavigateTo.save(controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode))
-      case Some(SchemeDetails(_, _)) =>
-        answers.allTrusteesAfterDelete.isEmpty match {
-          case false =>
-            NavigateTo.save(controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode))
-          case _ =>
-            answers.get(HaveAnyTrusteesId) match {
-              case Some(true) =>
-                NavigateTo.save(controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode))
-              case Some(false) =>
-                NavigateTo.save(controllers.register.routes.SchemeReviewController.onPageLoad())
-              case _ =>
-                NavigateTo.save(controllers.register.trustees.routes.HaveAnyTrusteesController.onPageLoad(NormalMode))
-            }
-        }
-      case None =>
-        NavigateTo.dontSave(controllers.routes.SessionExpiredController.onPageLoad())
     }
   }
 

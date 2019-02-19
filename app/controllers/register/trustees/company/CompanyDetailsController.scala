@@ -21,7 +21,6 @@ import connectors.UserAnswersCacheConnector
 import controllers.Retrievals
 import controllers.actions._
 import forms.CompanyDetailsFormProvider
-import identifiers.register.SchemeDetailsId
 import identifiers.register.trustees.TrusteeKindId
 import identifiers.register.trustees.company.CompanyDetailsId
 import javax.inject.Inject

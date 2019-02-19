@@ -19,11 +19,10 @@ package navigators
 import base.SpecBase
 import connectors.FakeUserAnswersCacheConnector
 import identifiers.Identifier
-import identifiers.register.SchemeDetailsId
 import identifiers.register.establishers.individual._
 import identifiers.register.trustees.HaveAnyTrusteesId
 import models._
-import models.register.{SchemeDetails, SchemeType}
+import models.register.SchemeType
 import org.scalatest.prop.TableFor6
 import org.scalatest.{MustMatchers, OptionValues}
 import play.api.libs.json.Json
@@ -68,11 +67,10 @@ object EstablishersIndividualNavigatorSpec extends OptionValues {
     .set(AddressYearsId(0))(AddressYears.OverAYear).asOpt.value
   private val addressYearsUnderAYear = UserAnswers(Json.obj())
     .set(AddressYearsId(0))(AddressYears.UnderAYear).asOpt.value
-  private val schemeBodyCorporate = UserAnswers().set(SchemeDetailsId)(SchemeDetails("test-scheme-name", SchemeType.BodyCorporate)).asOpt.value
-  private val schemeSingleTrust = UserAnswers().set(SchemeDetailsId)(SchemeDetails("test-scheme-name", SchemeType.SingleTrust)).asOpt.value
+
   private val hasTrusteeCompanies = UserAnswers().trusteesCompanyDetails(0, CompanyDetails("test-company-name", None, None))
   private val bodyCorporateWithNoTrustees =
-    UserAnswers().schemeDetails(SchemeDetails("test-scheme-name", SchemeType.BodyCorporate)).set(HaveAnyTrusteesId)(false).asOpt.value
+    UserAnswers().schemeName("test-scheme-name").schemeType(SchemeType.BodyCorporate).set(HaveAnyTrusteesId)(false).asOpt.value
 
   private def establisherNino(mode: Mode) = controllers.register.establishers.individual.routes.EstablisherNinoController.onPageLoad(mode, 0)
 
@@ -100,8 +98,6 @@ object EstablishersIndividualNavigatorSpec extends OptionValues {
   private def haveAnyTrustees = controllers.register.trustees.routes.HaveAnyTrusteesController.onPageLoad(NormalMode)
 
   private def addTrustees = controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode)
-
-  private def schemeReview = controllers.register.routes.SchemeReviewController.onPageLoad()
 
   private def addEstablisher = controllers.register.establishers.routes.AddEstablisherController.onPageLoad(NormalMode)
 

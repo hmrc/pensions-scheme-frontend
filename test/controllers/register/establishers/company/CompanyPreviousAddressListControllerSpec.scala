@@ -20,11 +20,9 @@ import connectors.FakeUserAnswersCacheConnector
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.address.AddressListFormProvider
-import identifiers.register.SchemeDetailsId
 import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.company.CompanyPreviousAddressPostcodeLookupId
 import models.address.TolerantAddress
-import models.register.{SchemeDetails, SchemeType}
 import models.{CompanyDetails, Index, NormalMode}
 import play.api.data.Form
 import play.api.libs.json._
@@ -60,8 +58,6 @@ class CompanyPreviousAddressListControllerSpec extends ControllerSpecBase {
   )
 
   val validData: JsObject = Json.obj(
-    SchemeDetailsId.toString ->
-      SchemeDetails(schemeName, SchemeType.SingleTrust),
     EstablishersId.toString -> Json.arr(
       Json.obj(
         "companyDetails" -> CompanyDetails(companyName, None, None),
