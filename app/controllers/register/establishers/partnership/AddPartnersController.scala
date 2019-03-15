@@ -23,14 +23,14 @@ import controllers.actions._
 import forms.register.AddPartnersFormProvider
 import identifiers.register.establishers.partnership.AddPartnersId
 import javax.inject.Inject
-import models.NormalMode
+import models.{Mode, NormalMode}
 import play.api.Logger
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.JsResultException
 import play.api.mvc.{Action, AnyContent, Call}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import utils.{Navigator}
+import utils.Navigator
 import utils.annotations.EstablishersPartner
 import views.html.register.addPartners
 
@@ -49,18 +49,18 @@ class AddPartnersController @Inject()(
 
   private val form: Form[Boolean] = formProvider()
 
-  private def postUrl(index: Int): Call = routes.AddPartnersController.onSubmit(index)
+  private def postUrl(index: Int, mode: Mode): Call = routes.AddPartnersController.onSubmit(mode, index)
 
-  def onPageLoad(index: Int): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onPageLoad(mode: Mode, index: Int): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       retrievePartnershipName(index) {
         partnershipName =>
           val partners = request.userAnswers.allPartnersAfterDelete(index)
-          Future.successful(Ok(addPartners(appConfig, form, index, partners, postUrl(index), existingSchemeName)))
+          Future.successful(Ok(addPartners(appConfig, form, index, partners, postUrl(index, mode), existingSchemeName)))
       }
   }
 
-  def onSubmit(index: Int): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode, index: Int): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       val partners = request.userAnswers.allPartnersAfterDelete(index)
       if (partners.isEmpty || partners.lengthCompare(appConfig.maxPartners) >= 0) {
@@ -79,7 +79,7 @@ class AddPartnersController @Inject()(
                       formWithErrors,
                       index,
                       partners,
-                      postUrl(index),
+                      postUrl(index, mode),
                       existingSchemeName
                     )
                   )

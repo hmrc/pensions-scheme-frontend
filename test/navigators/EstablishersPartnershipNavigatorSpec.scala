@@ -93,7 +93,7 @@ object EstablishersPartnershipNavigatorSpec extends OptionValues {
 
   private def partnershipReview = routes.PartnershipReviewController.onPageLoad(0)
 
-  private def addPartners = routes.AddPartnersController.onPageLoad(0)
+  private def addPartners = routes.AddPartnersController.onPageLoad(NormalMode, 0)
 
   private def addEstablisher = controllers.register.establishers.routes.AddEstablisherController.onPageLoad(NormalMode)
 
