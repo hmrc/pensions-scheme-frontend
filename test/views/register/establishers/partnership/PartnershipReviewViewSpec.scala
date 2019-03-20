@@ -18,7 +18,7 @@ package views.register.establishers.partnership
 
 import controllers.register.establishers.partnership.routes
 import identifiers.register.establishers.partnership.partner.PartnerDetailsId
-import models.Index
+import models.{Index, NormalMode}
 import models.person.PersonDetails
 import org.joda.time.LocalDate
 import org.jsoup.Jsoup
@@ -75,7 +75,7 @@ class PartnershipReviewViewSpec extends ViewBehaviours {
 
     "have link to edit partner details when there are less than 10 partners" in {
       Jsoup.parse(createView()().toString).select("a[id=edit-partner-details]") must haveLink(
-        routes.AddPartnersController.onPageLoad(index).url
+        routes.AddPartnersController.onPageLoad(NormalMode, index).url
       )
       Jsoup.parse(createView()().toString) must haveDynamicText("messages__partnershipReview__partners__editLink")
 
@@ -83,7 +83,7 @@ class PartnershipReviewViewSpec extends ViewBehaviours {
 
     "have link to edit partners when there are 10 partners" in {
       Jsoup.parse(createView()().toString).select("a[id=edit-partner-details]") must haveLink(
-        routes.AddPartnersController.onPageLoad(index).url
+        routes.AddPartnersController.onPageLoad(NormalMode, index).url
       )
       Jsoup.parse(createSecView().toString) must haveDynamicText("messages__partnershipReview__partners__changeLink")
     }

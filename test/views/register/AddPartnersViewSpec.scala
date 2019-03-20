@@ -19,6 +19,7 @@ package views.register
 import controllers.register.establishers.partnership.routes
 import forms.register.AddPartnersFormProvider
 import identifiers.register.establishers.partnership.partner.PartnerDetailsId
+import models.NormalMode
 import models.person.PersonDetails
 import models.register.PartnerEntity
 import org.joda.time.LocalDate
@@ -38,7 +39,7 @@ class AddPartnersViewSpec extends YesNoViewBehaviours with EntityListBehaviours 
   // scalastyle:on magic.number
 
   val messageKeyPrefix = "addPartners"
-  private val postUrl: Call = routes.AddPartnersController.onSubmit(establisherIndex)
+  private val postUrl: Call = routes.AddPartnersController.onSubmit(NormalMode, establisherIndex)
 
   val form = new AddPartnersFormProvider()()
   private val johnDoeEntity = PartnerEntity(PartnerDetailsId(0, 0), johnDoe.fullName, isDeleted = false, isCompleted = false)
@@ -73,7 +74,7 @@ class AddPartnersViewSpec extends YesNoViewBehaviours with EntityListBehaviours 
     behave like yesNoPage(
       createViewUsingForm(Seq(johnDoeEntity)),
       messageKeyPrefix,
-      routes.AddPartnersController.onSubmit(0).url,
+      routes.AddPartnersController.onSubmit(NormalMode, 0).url,
       legendKey = "add_more",
       expectedHintKey = Some("lede")
     )

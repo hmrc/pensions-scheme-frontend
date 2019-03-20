@@ -56,9 +56,9 @@ class EstablishersPartnerNavigator @Inject()(val dataCacheConnector: UserAnswers
     case PartnerContactDetailsId(establisherIndex, partnerIndex) =>
       checkYourAnswers(establisherIndex, partnerIndex)(from.userAnswers)
     case ConfirmDeletePartnerId(establisherIndex) =>
-      NavigateTo.dontSave(controllers.register.establishers.partnership.routes.AddPartnersController.onPageLoad(establisherIndex))
+      NavigateTo.dontSave(controllers.register.establishers.partnership.routes.AddPartnersController.onPageLoad(NormalMode, establisherIndex))
     case CheckYourAnswersId(establisherIndex, partnerIndex) =>
-      NavigateTo.save(controllers.register.establishers.partnership.routes.AddPartnersController.onPageLoad(establisherIndex))
+      NavigateTo.save(controllers.register.establishers.partnership.routes.AddPartnersController.onPageLoad(NormalMode, establisherIndex))
     case _ =>
       None
   }

@@ -58,7 +58,7 @@ class EstablishersPartnershipNavigator @Inject()(val dataCacheConnector: UserAns
     case IsPartnershipDormantId(index) =>
       NavigateTo.save(routes.CheckYourAnswersController.onPageLoad(index))
     case CheckYourAnswersId(index) =>
-      NavigateTo.save(routes.AddPartnersController.onPageLoad(index))
+      NavigateTo.save(routes.AddPartnersController.onPageLoad(NormalMode, index))
     case OtherPartnersId(index) =>
       NavigateTo.save(routes.PartnershipReviewController.onPageLoad(index))
     case PartnershipReviewId(index) =>

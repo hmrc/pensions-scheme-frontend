@@ -47,7 +47,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase {
 
   implicit val request = FakeDataRequest(partnershipAnswers)
   implicit val countryOptions = new FakeCountryOptions()
-  private val onwardRoute = routes.AddPartnersController.onPageLoad(firstIndex)
+  private val onwardRoute = routes.AddPartnersController.onPageLoad(NormalMode, firstIndex)
 
   private def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): CheckYourAnswersController =
     new CheckYourAnswersController(
