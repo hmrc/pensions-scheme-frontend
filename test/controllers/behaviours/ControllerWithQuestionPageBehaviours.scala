@@ -26,6 +26,7 @@ import play.api.libs.json.Format
 import play.api.mvc._
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import services.UserAnswersService
 import utils.FakeNavigator
 
 trait ControllerWithQuestionPageBehaviours extends ControllerSpecBase with ScalaFutures {
@@ -142,6 +143,26 @@ trait ControllerWithQuestionPageBehaviours extends ControllerSpecBase with Scala
       whenReady(result) {
         _ =>
          cache.verify(id, value)
+      }
+
+    }
+
+  }
+
+  def controllerThatSavesUserAnswersWithService[A, I <: TypedIdentifier[A]](
+                                                                  saveAction: UserAnswersService => Action[AnyContent],
+                                                                  validRequest: FakeRequest[AnyContentAsFormUrlEncoded],
+                                                                  id: I,
+                                                                  value: A
+                                                                )(implicit fmt: Format[A]): Unit = {
+
+    "save user answers to cache" in {
+      val cache = new FakeUserAnswersCacheConnector() {}
+      val result = saveAction(cache)(validRequest)
+
+      whenReady(result) {
+        _ =>
+          cache.verify(id, value)
       }
 
     }

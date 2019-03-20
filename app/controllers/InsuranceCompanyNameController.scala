@@ -26,8 +26,9 @@ import models.Mode
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
+import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import utils.annotations.AboutBenefitsAndInsurance
+import utils.annotations.{AboutBenefitsAndInsurance, InsuranceService}
 import utils.{Navigator, UserAnswers}
 import views.html.insuranceCompanyName
 
@@ -35,7 +36,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class InsuranceCompanyNameController @Inject()(appConfig: FrontendAppConfig,
                                                override val messagesApi: MessagesApi,
-                                               dataCacheConnector: UserAnswersCacheConnector,
+                                               @InsuranceService userAnswersService: UserAnswersService,
                                                @AboutBenefitsAndInsurance navigator: Navigator,
                                                authenticate: AuthAction,
                                                getData: DataRetrievalAction,
@@ -56,7 +57,7 @@ class InsuranceCompanyNameController @Inject()(appConfig: FrontendAppConfig,
         (formWithErrors: Form[_]) =>
           Future.successful(BadRequest(insuranceCompanyName(appConfig, formWithErrors, mode, existingSchemeName))),
         value =>
-          dataCacheConnector.save(request.externalId, InsuranceCompanyNameId, value).map(cacheMap =>
+          userAnswersService.save(mode, request.externalId, InsuranceCompanyNameId, value).map(cacheMap =>
             Redirect(navigator.nextPage(InsuranceCompanyNameId, mode, UserAnswers(cacheMap))))
       )
   }

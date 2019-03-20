@@ -15,8 +15,9 @@
  */
 
 import com.google.inject.AbstractModule
-import connectors.{UserAnswersCacheConnector, PSANameCacheConnector}
+import connectors.{PSANameCacheConnector, UserAnswersCacheConnector}
 import navigators._
+import services.{UserAnswersService, UserAnswersServiceImpl, UserAnswersServiceInsuranceImpl}
 import utils.annotations.{EstablishersPartner, _}
 import utils.Navigator
 
@@ -28,6 +29,14 @@ class PODSModule extends AbstractModule {
     bind(classOf[UserAnswersCacheConnector])
       .annotatedWith(classOf[PSANameCache])
       .to(classOf[PSANameCacheConnector])
+
+    bind(classOf[UserAnswersService])
+      .annotatedWith(classOf[InsuranceService])
+      .to(classOf[UserAnswersServiceInsuranceImpl])
+
+    bind(classOf[UserAnswersService])
+      .annotatedWith(classOf[InsuranceService])
+      .to(classOf[UserAnswersServiceImpl])
 
     bind(classOf[Navigator])
       .annotatedWith(classOf[AboutMembers])

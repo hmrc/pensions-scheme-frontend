@@ -26,6 +26,7 @@ import models.NormalMode
 import play.api.data.Form
 import play.api.mvc.{Action, AnyContent, AnyContentAsFormUrlEncoded}
 import play.api.test.FakeRequest
+import services.{FakeUserAnswersService, UserAnswersService}
 import utils.{FakeNavigator, Navigator, UserAnswers}
 import views.html.insuranceCompanyName
 
@@ -54,7 +55,7 @@ class InsuranceCompanyNameControllerSpec extends ControllerWithQuestionPageBehav
       postRequest
     )
 
-    behave like controllerThatSavesUserAnswers(
+    behave like controllerThatSavesUserAnswersWithService(
       saveAction(this),
       postRequest,
       InsuranceCompanyNameId,
@@ -82,7 +83,7 @@ object InsuranceCompanyNameControllerSpec {
     dataRetrievalAction: DataRetrievalAction = base.getEmptyData,
     authAction: AuthAction = FakeAuthAction,
     navigator: Navigator = FakeNavigator,
-    cache: UserAnswersCacheConnector = FakeUserAnswersCacheConnector
+    cache: UserAnswersService = FakeUserAnswersService
   ): InsuranceCompanyNameController =
     new InsuranceCompanyNameController(
       base.frontendAppConfig,
@@ -101,7 +102,7 @@ object InsuranceCompanyNameControllerSpec {
                                                                              authAction: AuthAction): Action[AnyContent] =
     controller(base)(dataRetrievalAction, authAction, navigator).onSubmit(NormalMode)
 
-  private def saveAction(base: ControllerSpecBase)(cache: UserAnswersCacheConnector): Action[AnyContent] =
+  private def saveAction(base: ControllerSpecBase)(cache: UserAnswersService): Action[AnyContent] =
     controller(base)(cache = cache).onSubmit(NormalMode)
 }
 
