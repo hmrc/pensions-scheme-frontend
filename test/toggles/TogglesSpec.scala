@@ -14,9 +14,12 @@
  * limitations under the License.
  */
 
-package utils
+package toggles
 
-object Toggles {
+class TogglesSpec extends FeatureToggleBehaviours {
 
-  val isVariationsEnabled: String = "is-variations-enabled"
+  "is-variations-enabled new feature toggle" should {
+    behave like featureToggle("is-variations-enabled", false)
+  }
+
 }
