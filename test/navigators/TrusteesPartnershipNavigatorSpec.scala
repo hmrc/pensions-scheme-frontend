@@ -49,7 +49,7 @@ class TrusteesPartnershipNavigatorSpec extends SpecBase with NavigatorBehaviour 
     (PartnershipPreviousAddressListId(0), emptyAnswers, partnershipPa(NormalMode), true, Some(partnershipPa(CheckMode)), true),
     (PartnershipPreviousAddressId(0), emptyAnswers, partnershipContact(NormalMode), true, Some(checkYourAnswers), true),
     (PartnershipContactDetailsId(0), emptyAnswers, checkYourAnswers, true, Some(checkYourAnswers), true),
-    (CheckYourAnswersId(0), emptyAnswers, taskList, false, None, true)
+    (CheckYourAnswersId(0), emptyAnswers, addTrustee, false, None, true)
   )
 
   private val navigator: TrusteesPartnershipNavigator =
