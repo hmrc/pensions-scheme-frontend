@@ -46,19 +46,19 @@ class InsuranceCompanyNameController @Inject()(appConfig: FrontendAppConfig,
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode, srn: SchemeReferenceNumber = SchemeReferenceNumber(None)): Action[AnyContent] = (authenticate andThen getData) {
+  def onPageLoad(mode: Mode, srn: Option[String] = None): Action[AnyContent] = (authenticate andThen getData) {
     implicit request =>
       val preparedForm = request.userAnswers.flatMap(_.get(InsuranceCompanyNameId)).fold(form)(v => form.fill(v))
       Ok(insuranceCompanyName(appConfig, preparedForm, mode, existingSchemeName))
   }
 
-  def onSubmit(mode: Mode, srn: SchemeReferenceNumber= SchemeReferenceNumber(None)): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode, srn: Option[String] = None): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) =>
           Future.successful(BadRequest(insuranceCompanyName(appConfig, formWithErrors, mode, existingSchemeName))),
         value =>
-          userAnswersService.save(mode, srn.srn, InsuranceCompanyNameId, value).map(cacheMap =>
+          userAnswersService.save(mode, srn, InsuranceCompanyNameId, value).map(cacheMap =>
             Redirect(navigator.nextPage(InsuranceCompanyNameId, mode, UserAnswers(cacheMap))))
       )
   }

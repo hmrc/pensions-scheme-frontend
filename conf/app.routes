@@ -78,12 +78,12 @@ POST       /country-established-in                      controllers.EstablishedC
 GET        /:mode/country-established-in               controllers.EstablishedCountryController.onPageLoad(mode: Mode)
 POST       /:mode/country-established-in               controllers.EstablishedCountryController.onSubmit(mode: Mode)
 
-GET        /insurance-company-name                      controllers.InsuranceCompanyNameController.onPageLoad(mode: Mode = NormalMode)
-POST       /insurance-company-name                      controllers.InsuranceCompanyNameController.onSubmit(mode: Mode = NormalMode)
-GET        /change/change-insurance-company-name               controllers.InsuranceCompanyNameController.onPageLoad(mode: Mode = CheckMode)
-POST       /change/insurance-company-name               controllers.InsuranceCompanyNameController.onSubmit(mode: Mode = CheckMode)
-GET        /:mode/insurance-company-name/:srn               controllers.InsuranceCompanyNameController.onPageLoad(mode: Mode, srn: SchemeReferenceNumber)
-POST       /:mode/insurance-company-name/:srn               controllers.InsuranceCompanyNameController.onSubmit(mode: Mode, srn: SchemeReferenceNumber)
+GET        /insurance-company-name                      controllers.InsuranceCompanyNameController.onPageLoad(mode: Mode = NormalMode, srn: Option[String] = None)
+POST       /insurance-company-name                      controllers.InsuranceCompanyNameController.onSubmit(mode: Mode = NormalMode, srn: Option[String] = None)
+GET        /change/insurance-company-name                      controllers.InsuranceCompanyNameController.onPageLoad(mode: Mode = CheckMode, srn: Option[String] = None)
+POST       /change/insurance-company-name                      controllers.InsuranceCompanyNameController.onSubmit(mode: Mode = CheckMode, srn: Option[String] = None)
+GET        /:mode/insurance-company-name/:srn               controllers.InsuranceCompanyNameController.onPageLoad(mode: Mode, srn: Option[String])
+POST       /:mode/insurance-company-name/:srn               controllers.InsuranceCompanyNameController.onSubmit(mode: Mode, srn: Option[String])
 
 GET        /insurance-policy-number                     controllers.InsurancePolicyNumberController.onPageLoad(mode: Mode = NormalMode)
 POST       /insurance-policy-number                     controllers.InsurancePolicyNumberController.onSubmit(mode: Mode = NormalMode)

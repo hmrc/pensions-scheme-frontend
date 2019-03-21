@@ -16,6 +16,7 @@
 
 package models
 
+import play.api.libs.json.{JsError, JsString, JsSuccess, Reads}
 import play.api.mvc.{PathBindable, QueryStringBindable}
 
 import scala.language.implicitConversions
@@ -39,4 +40,5 @@ object SchemeReferenceNumber {
       optionalBinder.unbind(key, value.srn)
     }
   }
+
 }
