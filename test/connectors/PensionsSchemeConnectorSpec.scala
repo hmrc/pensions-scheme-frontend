@@ -22,7 +22,7 @@ import models.register.SchemeSubmissionResponse
 import org.scalatest.{AsyncFlatSpec, Matchers, OptionValues}
 import play.api.http.Status
 import play.api.libs.json.{JsResultException, Json}
-import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.http.{BadRequestException, HeaderCarrier, NotFoundException, Upstream5xxResponse}
 import utils.{UserAnswers, WireMockHelper}
 
 class PensionsSchemeConnectorSpec extends AsyncFlatSpec with Matchers with WireMockHelper {
@@ -133,16 +133,103 @@ class PensionsSchemeConnectorSpec extends AsyncFlatSpec with Matchers with WireM
 
   }
 
+  "updateSchemeDetails" should "return without exceptions for a valid request/response" in {
+    server.stubFor(
+      post(urlEqualTo(updateSchemeUrl))
+        .withHeader("Content-Type", equalTo("application/json"))
+        .withHeader("psaId", equalTo(psaId))
+        .withHeader("pstr", equalTo(pstr))
+        .withRequestBody(equalToJson(Json.stringify(userAnswers.json)))
+        .willReturn(
+          ok(validResponse)
+            .withHeader("Content-Type", "application/json")
+        )
+    )
+
+    val connector = injector.instanceOf[PensionsSchemeConnector]
+
+    noException shouldBe thrownBy {
+      connector.updateSchemeDetails(psaId, pstr, userAnswers)
+    }
+  }
+
+  it should "return BadRequestException where invalid psaid response is received" in {
+    server.stubFor(
+      post(urlEqualTo(updateSchemeUrl))
+        .willReturn(
+          badRequest
+            .withHeader("Content-Type", "application/json")
+            .withBody(invalidPayloadResponse)
+        )
+    )
+
+    val connector = injector.instanceOf[PensionsSchemeConnector]
+
+    recoverToSucceededIf[InvalidPayloadException] {
+      connector.updateSchemeDetails(psaId, pstr, userAnswers)
+    }
+  }
+
+
+  it should "return BadRequestException where not found response is received" in {
+    server.stubFor(
+      post(urlEqualTo(updateSchemeUrl))
+        .willReturn(
+          aResponse.withStatus(404)
+        )
+    )
+
+    val connector = injector.instanceOf[PensionsSchemeConnector]
+
+    recoverToSucceededIf[NotFoundException] {
+      connector.updateSchemeDetails(psaId, pstr, userAnswers)
+    }
+  }
+
+  it should "return BadRequestException where 400 response is received" in {
+    server.stubFor(
+      post(urlEqualTo(updateSchemeUrl))
+        .willReturn(
+          aResponse.withStatus(400)
+        )
+    )
+
+    val connector = injector.instanceOf[PensionsSchemeConnector]
+
+    recoverToSucceededIf[BadRequestException] {
+      connector.updateSchemeDetails(psaId, pstr, userAnswers)
+    }
+  }
+
+  it should "return Upstream5xxResponse where 500 response is received" in {
+    server.stubFor(
+      post(urlEqualTo(updateSchemeUrl))
+        .willReturn(
+          aResponse.withStatus(500)
+        )
+    )
+
+    val connector = injector.instanceOf[PensionsSchemeConnector]
+
+    recoverToSucceededIf[Upstream5xxResponse] {
+      connector.updateSchemeDetails(psaId, pstr, userAnswers)
+    }
+  }
+
 }
 
 object PensionsSchemeConnectorSpec extends OptionValues {
 
   private val registerSchemeUrl = "/pensions-scheme/register-scheme"
+  
+  private val updateSchemeUrl = "/pensions-scheme/update-scheme"
 
   private implicit val headerCarrier: HeaderCarrier = HeaderCarrier()
 
   private val userAnswers = UserAnswers()
   private val schemeId = "test-scheme-id"
+  private val psaId = "test-psa-id"
+  private val pstr = "test-pstr"
   private val schemeSubmissionResponse = SchemeSubmissionResponse(schemeId)
 
   private val validResponse =
