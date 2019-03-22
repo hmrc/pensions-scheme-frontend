@@ -41,7 +41,7 @@ trait MicroService {
         "models.NormalMode",
         "models.register.trustees.TrusteeKind",
         "models.register.establishers.EstablisherKind",
-        "models.SchemeReferenceNumber"
+        "models.Binders._"
       )
     )
     .settings(

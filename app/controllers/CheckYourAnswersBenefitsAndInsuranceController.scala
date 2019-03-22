@@ -50,7 +50,7 @@ class CheckYourAnswersBenefitsAndInsuranceController @Inject()(appConfig: Fronte
           OccupationalPensionSchemeId.row(routes.OccupationalPensionSchemeController.onPageLoad(CheckMode).url) ++
           TypeOfBenefitsId.row(routes.TypeOfBenefitsController.onPageLoad(CheckMode).url) ++
           BenefitsSecuredByInsuranceId.row(routes.BenefitsSecuredByInsuranceController.onPageLoad(CheckMode).url) ++
-          InsuranceCompanyNameId.row(routes.InsuranceCompanyNameController.onPageLoad(CheckMode).url) ++
+          InsuranceCompanyNameId.row(routes.InsuranceCompanyNameController.onPageLoad(CheckMode, None).url) ++
           InsurancePolicyNumberId.row(routes.InsurancePolicyNumberController.onPageLoad(CheckMode).url) ++
           InsurerConfirmAddressId.row(routes.InsurerConfirmAddressController.onPageLoad(CheckMode).url)
       )
