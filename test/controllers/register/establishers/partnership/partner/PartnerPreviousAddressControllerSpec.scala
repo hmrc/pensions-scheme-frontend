@@ -20,7 +20,6 @@ import audit.testdoubles.StubSuccessfulAuditService
 import audit.{AddressAction, AddressEvent, AuditService}
 import base.CSRFRequest
 import config.FrontendAppConfig
-import connectors.{UserAnswersCacheConnector, FakeUserAnswersCacheConnector}
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.address.AddressFormProvider
@@ -39,6 +38,7 @@ import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import services.{FakeUserAnswersService, UserAnswersService}
 import utils.{CountryOptions, FakeNavigator, InputOption, Navigator}
 import viewmodels.address.ManualAddressViewModel
 import views.html.address.manualAddress
@@ -73,7 +73,7 @@ class PartnerPreviousAddressControllerSpec extends ControllerSpecBase with Mocki
       running(_.overrides(
         bind[FrontendAppConfig].to(frontendAppConfig),
         bind[Navigator].toInstance(FakeNavigator),
-        bind[UserAnswersCacheConnector].toInstance(FakeUserAnswersCacheConnector),
+        bind[UserAnswersService].toInstance(FakeUserAnswersService),
         bind[AuthAction].to(FakeAuthAction),
         bind[DataRetrievalAction].to(retrieval),
         bind[CountryOptions].to(countryOptions)
@@ -118,7 +118,7 @@ class PartnerPreviousAddressControllerSpec extends ControllerSpecBase with Mocki
         running(_.overrides(
           bind[FrontendAppConfig].to(frontendAppConfig),
           bind[MessagesApi].to(messagesApi),
-          bind[UserAnswersCacheConnector].toInstance(FakeUserAnswersCacheConnector),
+          bind[UserAnswersService].toInstance(FakeUserAnswersService),
           bind[Navigator].toInstance(new FakeNavigator(desiredRoute = onwardCall)),
           bind[AuthAction].to(FakeAuthAction),
           bind[DataRetrievalAction].to(retrieval),
@@ -148,7 +148,7 @@ class PartnerPreviousAddressControllerSpec extends ControllerSpecBase with Mocki
             status(result) must be(SEE_OTHER)
             redirectLocation(result).value mustEqual onwardCall.url
 
-            FakeUserAnswersCacheConnector.verify(PartnerPreviousAddressId(establisherIndex, partnerIndex), address)
+            FakeUserAnswersService.verify(PartnerPreviousAddressId(establisherIndex, partnerIndex), address)
         }
       }
     }
@@ -166,9 +166,10 @@ class PartnerPreviousAddressControllerSpec extends ControllerSpecBase with Mocki
       running(_.overrides(
         bind[FrontendAppConfig].to(frontendAppConfig),
         bind[Navigator].toInstance(FakeNavigator),
-        bind[UserAnswersCacheConnector].toInstance(FakeUserAnswersCacheConnector),
         bind[AuthAction].to(FakeAuthAction),
+        bind[UserAnswersService].to(FakeUserAnswersService),
         bind[CountryOptions].to(countryOptions),
+        bind[DataRetrievalAction].to(retrieval),
         bind[AuditService].toInstance(fakeAuditService)
       )) {
         implicit app =>

@@ -17,8 +17,7 @@
 package controllers
 
 import base.SpecBase
-import connectors.{FakeUserAnswersCacheConnector, UserAnswersCacheConnector}
-import controllers.actions.{AuthAction, DataRetrievalAction, FakeAuthAction}
+import controllers.actions.{AuthAction, DataRequiredActionImpl, DataRetrievalAction, FakeAuthAction}
 import controllers.behaviours.ControllerWithQuestionPageBehaviours
 import forms.InsuranceCompanyNameFormProvider
 import identifiers.InsuranceCompanyNameId
@@ -63,7 +62,7 @@ class InsuranceCompanyNameControllerSpec extends ControllerWithQuestionPageBehav
     )
   }
 }
-object InsuranceCompanyNameControllerSpec {
+object InsuranceCompanyNameControllerSpec extends SpecBase {
 
   val schemeName = "Test Scheme Name"
   val companyName = "test company name"
@@ -83,7 +82,7 @@ object InsuranceCompanyNameControllerSpec {
     dataRetrievalAction: DataRetrievalAction = base.getEmptyData,
     authAction: AuthAction = FakeAuthAction,
     navigator: Navigator = FakeNavigator,
-    cache: UserAnswersService = FakeUserAnswersService
+    cache: UserAnswersService = new FakeUserAnswersService
   ): InsuranceCompanyNameController =
     new InsuranceCompanyNameController(
       base.frontendAppConfig,
@@ -92,6 +91,7 @@ object InsuranceCompanyNameControllerSpec {
       navigator,
       authAction,
       dataRetrievalAction,
+      new DataRequiredActionImpl(),
       formProvider
     )
 

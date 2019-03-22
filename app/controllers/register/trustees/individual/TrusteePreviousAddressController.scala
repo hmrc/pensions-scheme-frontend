@@ -18,18 +18,18 @@ package controllers.register.trustees.individual
 
 import audit.AuditService
 import config.FrontendAppConfig
-import connectors.UserAnswersCacheConnector
 import controllers.actions._
 import controllers.address.ManualAddressController
 import controllers.register.trustees.individual.routes._
 import forms.address.AddressFormProvider
-import identifiers.register.trustees.individual.{IndividualPreviousAddressPostCodeLookupId, TrusteeDetailsId, TrusteePreviousAddressId, TrusteePreviousAddressListId}
+import identifiers.register.trustees.individual._
 import javax.inject.Inject
 import models.address.Address
 import models.{Index, Mode}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
+import services.UserAnswersService
 import utils.annotations.TrusteesIndividual
 import utils.{CountryOptions, Navigator}
 import viewmodels.Message
@@ -38,7 +38,7 @@ import viewmodels.address.ManualAddressViewModel
 class TrusteePreviousAddressController @Inject()(
                                                   override val appConfig: FrontendAppConfig,
                                                   override val messagesApi: MessagesApi,
-                                                  override val dataCacheConnector: UserAnswersCacheConnector,
+                                                  val userAnswersService: UserAnswersService,
                                                   @TrusteesIndividual override val navigator: Navigator,
                                                   authenticate: AuthAction,
                                                   getData: DataRetrievalAction,

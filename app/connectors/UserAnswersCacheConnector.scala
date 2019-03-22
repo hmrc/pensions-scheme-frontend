@@ -16,9 +16,12 @@
 
 package connectors
 
+import config.FrontendAppConfig
 import identifiers.TypedIdentifier
+import models.{Mode, NormalMode}
 import models.requests.DataRequest
 import play.api.libs.json._
+import play.api.libs.ws.WSClient
 import play.api.mvc.{AnyContent, Result}
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.UserAnswers
@@ -26,6 +29,17 @@ import utils.UserAnswers
 import scala.concurrent.{ExecutionContext, Future}
 
 trait UserAnswersCacheConnector {
+
+  def config: FrontendAppConfig
+  def http: WSClient
+
+  def apply(mode: Mode): UserAnswersCacheConnector = {
+    if(mode == NormalMode) {
+      new MicroserviceCacheConnector(config, http)
+    } else {
+      new UpdateSchemeCacheConnector(config, http)
+    }
+  }
 
   def save[A, I <: TypedIdentifier[A]](id: I, value: A)
                                       (implicit

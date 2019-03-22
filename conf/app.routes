@@ -80,8 +80,10 @@ POST       /:mode/country-established-in               controllers.EstablishedCo
 
 GET        /insurance-company-name                      controllers.InsuranceCompanyNameController.onPageLoad(mode: Mode = NormalMode)
 POST       /insurance-company-name                      controllers.InsuranceCompanyNameController.onSubmit(mode: Mode = NormalMode)
-GET        /:mode/insurance-company-name               controllers.InsuranceCompanyNameController.onPageLoad(mode: Mode)
-POST       /:mode/insurance-company-name               controllers.InsuranceCompanyNameController.onSubmit(mode: Mode)
+GET        /change/change-insurance-company-name               controllers.InsuranceCompanyNameController.onPageLoad(mode: Mode = CheckMode)
+POST       /change/insurance-company-name               controllers.InsuranceCompanyNameController.onSubmit(mode: Mode = CheckMode)
+GET        /:mode/insurance-company-name/:srn               controllers.InsuranceCompanyNameController.onPageLoad(mode: Mode, srn: SchemeReferenceNumber)
+POST       /:mode/insurance-company-name/:srn               controllers.InsuranceCompanyNameController.onSubmit(mode: Mode, srn: SchemeReferenceNumber)
 
 GET        /insurance-policy-number                     controllers.InsurancePolicyNumberController.onPageLoad(mode: Mode = NormalMode)
 POST       /insurance-policy-number                     controllers.InsurancePolicyNumberController.onSubmit(mode: Mode = NormalMode)

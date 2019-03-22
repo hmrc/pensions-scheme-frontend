@@ -40,7 +40,8 @@ trait MicroService {
         "models.CheckMode",
         "models.NormalMode",
         "models.register.trustees.TrusteeKind",
-        "models.register.establishers.EstablisherKind"
+        "models.register.establishers.EstablisherKind",
+        "models.SchemeReferenceNumber"
       )
     )
     .settings(

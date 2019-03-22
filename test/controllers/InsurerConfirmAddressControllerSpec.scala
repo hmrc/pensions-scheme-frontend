@@ -29,6 +29,7 @@ import models.address.{Address, TolerantAddress}
 import play.api.data.Form
 import play.api.mvc.{Action, AnyContent, AnyContentAsFormUrlEncoded}
 import play.api.test.FakeRequest
+import services.{FakeUserAnswersService, UserAnswersService}
 import utils._
 import viewmodels.Message
 import viewmodels.address.ManualAddressViewModel
@@ -57,7 +58,7 @@ class InsurerConfirmAddressControllerSpec extends ControllerWithQuestionPageBeha
       postRequest
     )
 
-    behave like controllerThatSavesUserAnswers(
+    behave like controllerThatSavesUserAnswersWithService(
       saveAction(this),
       postRequest,
       InsurerConfirmAddressId,
@@ -130,7 +131,7 @@ object InsurerConfirmAddressControllerSpec {
     dataRetrievalAction: DataRetrievalAction = base.getEmptyData,
     authAction: AuthAction = FakeAuthAction,
     navigator: Navigator = FakeNavigator,
-    cache: UserAnswersCacheConnector = FakeUserAnswersCacheConnector
+    cache: UserAnswersService = FakeUserAnswersService
   ): InsurerConfirmAddressController =
     new InsurerConfirmAddressController(
       base.frontendAppConfig,
@@ -151,6 +152,6 @@ object InsurerConfirmAddressControllerSpec {
   def onSubmitAction(base: ControllerSpecBase, navigator: Navigator)(dataRetrievalAction: DataRetrievalAction, authAction: AuthAction): Action[AnyContent] =
     controller(base)(dataRetrievalAction, authAction, navigator).onSubmit(NormalMode)
 
-  def saveAction(base: ControllerSpecBase)(cache: UserAnswersCacheConnector): Action[AnyContent] =
+  def saveAction(base: ControllerSpecBase)(cache: UserAnswersService): Action[AnyContent] =
     controller(base)(cache = cache).onSubmit(NormalMode)
 }

@@ -18,12 +18,25 @@ package connectors
 
 import com.google.inject.Inject
 import config.FrontendAppConfig
+import identifiers.TypedIdentifier
+import play.api.Logger
+import play.api.http.Status.{NOT_FOUND, OK}
+import play.api.libs.json._
 import play.api.libs.ws.WSClient
+import play.api.mvc.Result
+import play.api.mvc.Results.Ok
+import uk.gov.hmrc.crypto.PlainText
+import uk.gov.hmrc.http.{HeaderCarrier, HttpException}
+import utils.UserAnswers
+
+import scala.concurrent.{ExecutionContext, Future}
 
 class UpdateSchemeCacheConnector @Inject()(
-                                       config: FrontendAppConfig,
-                                       http: WSClient
-                                     ) extends MicroserviceCacheConnector(config, http) {
+                                               config: FrontendAppConfig,
+                                               http: WSClient
+                                             ) extends MicroserviceCacheConnector(config, http) {
 
   override protected def url(id: String) = s"${config.pensionsSchemeUrl}/pensions-scheme/journey-cache/update-scheme/$id"
+
+  override protected def lastUpdatedUrl(id: String) = s"${config.pensionsSchemeUrl}/pensions-scheme/journey-cache/update-scheme/$id"
 }

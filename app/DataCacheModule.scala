@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import connectors.{MicroserviceCacheConnector, PSANameCacheConnector, UserAnswersCacheConnector}
+import connectors._
 import play.api.inject.{Binding, Module}
 import play.api.{Configuration, Environment}
 import utils.annotations.PSANameCache

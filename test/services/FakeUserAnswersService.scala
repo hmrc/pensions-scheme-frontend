@@ -16,25 +16,65 @@
 
 package services
 
-import connectors.{FakeUpdateSchemeCacheConnector, FakeUserAnswersCacheConnector, UpdateSchemeCacheConnector, UserAnswersCacheConnector}
+import com.google.inject.Inject
+import config.FrontendAppConfig
+import connectors.{FakeDataCacheConnector, UserAnswersCacheConnector}
 import identifiers.TypedIdentifier
 import models.Mode
+import models.requests.DataRequest
 import org.scalatest.Matchers
 import play.api.libs.json.{Format, JsValue, Json}
+import play.api.libs.ws.WSClient
+import play.api.mvc.Results.Ok
+import play.api.mvc.{AnyContent, Result}
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.collection.mutable
 import scala.concurrent.{ExecutionContext, Future}
 
-class FakeUserAnswersService extends UserAnswersService with Matchers {
+class FakeUserAnswersService @Inject() (implicit config: FrontendAppConfig, http: WSClient) extends UserAnswersService with Matchers {
 
+  override protected def userAnswersCacheConnector: UserAnswersCacheConnector = new FakeDataCacheConnector
   private val data: mutable.HashMap[String, JsValue] = mutable.HashMap()
+  private val removed: mutable.ListBuffer[String] = mutable.ListBuffer()
 
-  override def save[A, I <: TypedIdentifier[A]](mode: Mode, cacheId: String, id: I, value: A)
-                                               (implicit fmt: Format[A], ec: ExecutionContext, hc: HeaderCarrier): Future[JsValue] =
+  override def save[A, I <: TypedIdentifier[A]](mode: Mode, srn: Option[String], id: I, value: A)
+                                               (implicit fmt: Format[A], ec: ExecutionContext, hc: HeaderCarrier,
+                                                request: DataRequest[AnyContent]): Future[JsValue] =
   {
     data += (id.toString -> Json.toJson(value))
     Future.successful(Json.obj())
+  }
+
+  def upsert(cacheId: String, value: JsValue)
+            (implicit ec: ExecutionContext, hc: HeaderCarrier): Future[JsValue] = {
+    Future.successful(value)
+  }
+
+  override def remove[I <: TypedIdentifier[_]](mode: Mode, srn: Option[String], id: I)
+                                     (implicit
+                                      ec: ExecutionContext,
+                                      hc: HeaderCarrier,
+                                      request: DataRequest[AnyContent]
+                                     ): Future[JsValue] = {
+    removed += id.toString
+    Future.successful(Json.obj())
+  }
+
+  def fetch(cacheId: String)(implicit
+                                      ec: ExecutionContext,
+                                      hc: HeaderCarrier
+  ): Future[Option[JsValue]] = {
+
+    Future.successful(Some(Json.obj()))
+  }
+
+  def lastUpdated(cacheId: String)(implicit
+                                            ec: ExecutionContext,
+                                            hc: HeaderCarrier
+  ): Future[Option[JsValue]] = {
+
+    Future.successful(Some(Json.obj()))
   }
 
   def verify[A, I <: TypedIdentifier[A]](id: I, value: A)(implicit fmt: Format[A]): Unit = {
@@ -44,13 +84,17 @@ class FakeUserAnswersService extends UserAnswersService with Matchers {
   def verifyNot(id: TypedIdentifier[_]): Unit = {
     data should not contain key(id.toString)
   }
-  def reset(): Unit = {
-    data.clear()
+
+  def verifyRemoved(id: TypedIdentifier[_]): Unit = {
+    removed should contain(id.toString)
   }
 
-  override protected def userAnswersCacheConnector: UserAnswersCacheConnector = FakeUserAnswersCacheConnector
+  def removeAll(cacheId: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Result] = {
+    Future.successful(Ok)
+  }
 
-  override protected def updateSchemeCacheConnector: UpdateSchemeCacheConnector = FakeUpdateSchemeCacheConnector
+  def reset(): Unit = {
+    data.clear()
+    removed.clear()
+  }
 }
-
-object FakeUserAnswersService extends FakeUserAnswersService

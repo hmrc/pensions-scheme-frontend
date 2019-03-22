@@ -16,9 +16,12 @@
 
 package connectors
 
+import com.google.inject.Inject
+import config.FrontendAppConfig
 import identifiers.TypedIdentifier
 import org.scalatest.Matchers
 import play.api.libs.json._
+import play.api.libs.ws.WSClient
 import play.api.mvc.Result
 import play.api.mvc.Results._
 import uk.gov.hmrc.http.HeaderCarrier
@@ -26,7 +29,8 @@ import uk.gov.hmrc.http.HeaderCarrier
 import scala.collection.mutable
 import scala.concurrent.{ExecutionContext, Future}
 
-trait FakeUserAnswersCacheConnector extends UserAnswersCacheConnector with Matchers {
+class FakeUserAnswersCacheConnector @Inject() (implicit val config: FrontendAppConfig, val http: WSClient)
+  extends UserAnswersCacheConnector with Matchers {
 
   private val data: mutable.HashMap[String, JsValue] = mutable.HashMap()
   private val removed: mutable.ListBuffer[String] = mutable.ListBuffer()
@@ -94,4 +98,4 @@ trait FakeUserAnswersCacheConnector extends UserAnswersCacheConnector with Match
 
 }
 
-object FakeUserAnswersCacheConnector extends FakeUserAnswersCacheConnector
+

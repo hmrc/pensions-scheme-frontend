@@ -23,6 +23,7 @@ import play.api.Environment
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.inject.Injector
 import play.api.inject.guice.GuiceApplicationBuilder
+import play.api.libs.ws.WSClient
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 import uk.gov.hmrc.crypto.ApplicationCrypto
@@ -33,6 +34,9 @@ trait SpecBase extends PlaySpec with GuiceOneAppPerSuite {
   def injector: Injector = app.injector
 
   def frontendAppConfig: FrontendAppConfig = injector.instanceOf[FrontendAppConfig]
+
+  implicit def appConfig : FrontendAppConfig = injector.instanceOf[FrontendAppConfig]
+  implicit def http : WSClient = injector.instanceOf[WSClient]
 
   def messagesApi: MessagesApi = injector.instanceOf[MessagesApi]
 

@@ -23,10 +23,11 @@ import identifiers.TypedIdentifier
 import org.scalatest.concurrent.ScalaFutures
 import play.api.data.Form
 import play.api.libs.json.Format
+import play.api.libs.ws.WSClient
 import play.api.mvc._
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import services.UserAnswersService
+import services.{FakeUserAnswersService, UserAnswersService}
 import utils.FakeNavigator
 
 trait ControllerWithQuestionPageBehaviours extends ControllerSpecBase with ScalaFutures {
@@ -137,7 +138,7 @@ trait ControllerWithQuestionPageBehaviours extends ControllerSpecBase with Scala
   )(implicit fmt: Format[A]): Unit = {
 
     "save user answers to cache" in {
-      val cache = new FakeUserAnswersCacheConnector() {}
+      val cache = new FakeUserAnswersCacheConnector(frontendAppConfig, injector.instanceOf[WSClient]) {}
       val result = saveAction(cache)(validRequest)
 
       whenReady(result) {
@@ -157,7 +158,7 @@ trait ControllerWithQuestionPageBehaviours extends ControllerSpecBase with Scala
                                                                 )(implicit fmt: Format[A]): Unit = {
 
     "save user answers to cache" in {
-      val cache = new FakeUserAnswersCacheConnector() {}
+      val cache = new FakeUserAnswersService() {}
       val result = saveAction(cache)(validRequest)
 
       whenReady(result) {

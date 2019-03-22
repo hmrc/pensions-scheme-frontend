@@ -20,7 +20,7 @@ import audit.testdoubles.StubSuccessfulAuditService
 import audit.{AddressAction, AddressEvent, AuditService}
 import com.google.inject.Inject
 import config.FrontendAppConfig
-import connectors.{UserAnswersCacheConnector, FakeUserAnswersCacheConnector}
+import connectors.{FakeUserAnswersCacheConnector, UserAnswersCacheConnector}
 import forms.address.AddressFormProvider
 import identifiers.TypedIdentifier
 import models._
@@ -36,6 +36,7 @@ import play.api.libs.json.Json
 import play.api.mvc._
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import services.{FakeUserAnswersService, UserAnswersService}
 import uk.gov.hmrc.domain.PsaId
 import utils.{CountryOptions, FakeCountryOptions, FakeNavigator, Navigator, UserAnswers}
 import viewmodels.address.ManualAddressViewModel
@@ -64,7 +65,7 @@ object ManualAddressControllerSpec {
   class TestController @Inject()(
                                   override val appConfig: FrontendAppConfig,
                                   override val messagesApi: MessagesApi,
-                                  override val dataCacheConnector: UserAnswersCacheConnector,
+                                  override val userAnswersService: UserAnswersService,
                                   override val navigator: Navigator,
                                   formProvider: AddressFormProvider,
                                   override val auditService: AuditService
@@ -214,7 +215,7 @@ class ManualAddressControllerSpec extends WordSpec with MustMatchers with Mockit
 
         running(_.overrides(
           bind[CountryOptions].to[FakeCountryOptions],
-          bind[UserAnswersCacheConnector].to(FakeUserAnswersCacheConnector),
+          bind[UserAnswersService].to(FakeUserAnswersService),
           bind[Navigator].to(navigator),
           bind[AuditService].to[StubSuccessfulAuditService]
         )) {
@@ -234,8 +235,8 @@ class ManualAddressControllerSpec extends WordSpec with MustMatchers with Mockit
 
             val address = Address("value 1", "value 2", None, None, Some("AB1 1AB"), "GB")
 
-            FakeUserAnswersCacheConnector.verify(fakeAddressId, address)
-            FakeUserAnswersCacheConnector.verifyRemoved(fakeSeqTolerantAddressId)
+            FakeUserAnswersService.verify(fakeAddressId, address)
+            FakeUserAnswersService.verifyRemoved(fakeSeqTolerantAddressId)
         }
 
       }
@@ -249,7 +250,7 @@ class ManualAddressControllerSpec extends WordSpec with MustMatchers with Mockit
 
         running(_.overrides(
           bind[CountryOptions].to[FakeCountryOptions],
-          bind[UserAnswersCacheConnector].to(FakeUserAnswersCacheConnector),
+          bind[UserAnswersService].to(FakeUserAnswersService),
           bind[Navigator].to(navigator),
           bind[AuditService].toInstance(auditService)
         )) {

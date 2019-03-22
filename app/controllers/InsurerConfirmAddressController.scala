@@ -29,14 +29,15 @@ import models.address.Address
 import play.api.data.Form
 import play.api.i18n._
 import play.api.mvc._
-import utils.annotations.AboutBenefitsAndInsurance
+import services.UserAnswersService
+import utils.annotations.{AboutBenefitsAndInsurance, InsuranceService}
 import utils.{CountryOptions, Navigator}
 import viewmodels.Message
 import viewmodels.address.ManualAddressViewModel
 
 class InsurerConfirmAddressController @Inject()(val appConfig: FrontendAppConfig,
                                                 val messagesApi: MessagesApi,
-                                                val dataCacheConnector: UserAnswersCacheConnector,
+                                                @InsuranceService val userAnswersService: UserAnswersService,
                                                 @AboutBenefitsAndInsurance val navigator: Navigator,
                                                 authenticate: AuthAction,
                                                 getData: DataRetrievalAction,
@@ -52,23 +53,24 @@ class InsurerConfirmAddressController @Inject()(val appConfig: FrontendAppConfig
 
   protected val form: Form[Address] = formProvider()
 
-  private def viewmodel(mode: Mode): ManualAddressViewModel =
+  private def viewmodel(mode: Mode, srn: Option[String]): ManualAddressViewModel =
     ManualAddressViewModel(
       postCall(mode),
       countryOptions.options,
       title = Message(title),
       heading = Message(heading),
-      secondaryHeader = None
+      secondaryHeader = None,
+      srn = srn
     )
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onPageLoad(mode: Mode, srn: Option[String] = None): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      get(InsurerConfirmAddressId, InsurerSelectAddressId, viewmodel(mode))
+      get(InsurerConfirmAddressId, InsurerSelectAddressId, viewmodel(mode, srn))
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode, srn: Option[String] = None): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      post(InsurerConfirmAddressId, InsurerSelectAddressId, viewmodel(mode), mode, "Insurer Address", InsurerEnterPostCodeId)
+      post(InsurerConfirmAddressId, InsurerSelectAddressId, viewmodel(mode, srn), mode, "Insurer Address", InsurerEnterPostCodeId)
   }
 
 }

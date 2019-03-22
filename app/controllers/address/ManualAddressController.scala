@@ -18,7 +18,6 @@ package controllers.address
 
 import audit.{AddressEvent, AuditService}
 import config.FrontendAppConfig
-import connectors.UserAnswersCacheConnector
 import controllers.Retrievals
 import identifiers.TypedIdentifier
 import models.Mode
@@ -27,6 +26,7 @@ import models.requests.DataRequest
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{AnyContent, Result}
+import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.{Navigator, UserAnswers}
 import viewmodels.address.ManualAddressViewModel
@@ -40,7 +40,7 @@ trait ManualAddressController extends FrontendController with Retrievals with I1
 
   protected def appConfig: FrontendAppConfig
 
-  protected def dataCacheConnector: UserAnswersCacheConnector
+  protected def userAnswersService: UserAnswersService
 
   protected def navigator: Navigator
 
@@ -79,13 +79,9 @@ trait ManualAddressController extends FrontendController with Retrievals with I1
 
         val auditEvent = AddressEvent.addressEntryEvent(request.externalId, address, existingAddress, selectedAddress, context)
 
-        dataCacheConnector.remove(request.externalId, postCodeLookupIdForCleanup)
+        userAnswersService.remove(mode, viewModel.srn, postCodeLookupIdForCleanup)
           .flatMap { _ =>
-            dataCacheConnector.save(
-              request.externalId,
-              id,
-              address
-            ).map {
+            userAnswersService.save(mode, viewModel.srn, id, address).map {
               cacheMap =>
                 auditEvent.foreach(auditService.sendEvent(_))
                 Redirect(navigator.nextPage(id, mode, UserAnswers(cacheMap)))

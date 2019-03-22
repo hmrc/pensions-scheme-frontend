@@ -22,7 +22,7 @@ import controllers.actions._
 import forms.InsuranceCompanyNameFormProvider
 import identifiers.InsuranceCompanyNameId
 import javax.inject.Inject
-import models.Mode
+import models.{Mode, SchemeReferenceNumber}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
@@ -40,24 +40,25 @@ class InsuranceCompanyNameController @Inject()(appConfig: FrontendAppConfig,
                                                @AboutBenefitsAndInsurance navigator: Navigator,
                                                authenticate: AuthAction,
                                                getData: DataRetrievalAction,
+                                               requireData: DataRequiredAction,
                                                formProvider: InsuranceCompanyNameFormProvider
                                               )(implicit val ec: ExecutionContext) extends FrontendController with I18nSupport with Retrievals {
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate andThen getData) {
+  def onPageLoad(mode: Mode, srn: SchemeReferenceNumber = SchemeReferenceNumber(None)): Action[AnyContent] = (authenticate andThen getData) {
     implicit request =>
       val preparedForm = request.userAnswers.flatMap(_.get(InsuranceCompanyNameId)).fold(form)(v => form.fill(v))
       Ok(insuranceCompanyName(appConfig, preparedForm, mode, existingSchemeName))
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (authenticate andThen getData).async {
+  def onSubmit(mode: Mode, srn: SchemeReferenceNumber= SchemeReferenceNumber(None)): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) =>
           Future.successful(BadRequest(insuranceCompanyName(appConfig, formWithErrors, mode, existingSchemeName))),
         value =>
-          userAnswersService.save(mode, request.externalId, InsuranceCompanyNameId, value).map(cacheMap =>
+          userAnswersService.save(mode, srn.srn, InsuranceCompanyNameId, value).map(cacheMap =>
             Redirect(navigator.nextPage(InsuranceCompanyNameId, mode, UserAnswers(cacheMap))))
       )
   }

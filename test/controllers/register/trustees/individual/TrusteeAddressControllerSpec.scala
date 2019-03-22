@@ -19,7 +19,7 @@ package controllers.register.trustees.individual
 import audit.testdoubles.StubSuccessfulAuditService
 import audit.{AddressAction, AddressEvent, AuditService}
 import config.FrontendAppConfig
-import connectors.{UserAnswersCacheConnector, FakeUserAnswersCacheConnector}
+import connectors.{FakeUserAnswersCacheConnector, UserAnswersCacheConnector}
 import controllers.actions._
 import controllers.behaviours.ControllerBehaviours
 import identifiers.register.trustees.TrusteesId
@@ -33,6 +33,7 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import services.{FakeUserAnswersService, UserAnswersService}
 import utils.annotations.TrusteesIndividual
 import utils.{CountryOptions, FakeNavigator, InputOption, Navigator}
 import viewmodels.Message
@@ -58,7 +59,7 @@ class TrusteeAddressControllerSpec extends ControllerBehaviours {
     .overrides(
       bind[FrontendAppConfig].to(frontendAppConfig),
       bind[Navigator].qualifiedWith(classOf[TrusteesIndividual]).toInstance(FakeNavigator),
-      bind[UserAnswersCacheConnector].toInstance(FakeUserAnswersCacheConnector),
+      bind[UserAnswersService].toInstance(FakeUserAnswersService),
       bind[AuthAction].to(FakeAuthAction),
       bind[DataRetrievalAction].to(retrieval),
       bind[CountryOptions].to(countryOptions)
@@ -95,9 +96,10 @@ class TrusteeAddressControllerSpec extends ControllerBehaviours {
     running(_.overrides(
       bind[FrontendAppConfig].to(frontendAppConfig),
       bind[Navigator].toInstance(FakeNavigator),
-      bind[UserAnswersCacheConnector].toInstance(FakeUserAnswersCacheConnector),
+      bind[UserAnswersService].toInstance(FakeUserAnswersService),
       bind[AuthAction].to(FakeAuthAction),
       bind[CountryOptions].to(countryOptions),
+      bind[DataRetrievalAction].to(retrieval),
       bind[AuditService].toInstance(fakeAuditService)
     )) {
       implicit app =>

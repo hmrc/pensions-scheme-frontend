@@ -30,6 +30,7 @@ import models.{Index, Mode}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
+import services.UserAnswersService
 import utils.annotations.EstablishersCompanyDirector
 import utils.{CountryOptions, Navigator}
 import viewmodels.Message
@@ -38,7 +39,7 @@ import viewmodels.address.ManualAddressViewModel
 class DirectorPreviousAddressController @Inject()(
                                                    val appConfig: FrontendAppConfig,
                                                    val messagesApi: MessagesApi,
-                                                   val dataCacheConnector: UserAnswersCacheConnector,
+                                                   val userAnswersService: UserAnswersService,
                                                    @EstablishersCompanyDirector val navigator: Navigator,
                                                    authenticate: AuthAction,
                                                    getData: DataRetrievalAction,
