@@ -34,7 +34,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class UpdateSchemeCacheConnector @Inject()(
                                                config: FrontendAppConfig,
                                                http: WSClient
-                                             ) extends MicroserviceCacheConnector(config, http) {
+                                             ) extends UserAnswersCacheConnector(config, http) {
 
   override protected def url(id: String) = s"${config.pensionsSchemeUrl}/pensions-scheme/journey-cache/update-scheme/$id"
 

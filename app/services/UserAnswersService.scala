@@ -30,8 +30,17 @@ import scala.concurrent.{ExecutionContext, Future}
 trait UserAnswersService {
 
   protected def userAnswersCacheConnector: UserAnswersCacheConnector
+  protected def updateCacheConnector: UpdateSchemeCacheConnector
 
   case class MissingSrnNumber() extends Exception
+
+  def save[A, I <: TypedIdentifier[A]](mode: Mode, srn: Option[String], id: I, value: A)
+                                      (implicit
+                                       fmt: Format[A],
+                                       ec: ExecutionContext,
+                                       hc: HeaderCarrier,
+                                       request: DataRequest[AnyContent]
+                                      ): Future[JsValue]
 
   def save[A, I <: TypedIdentifier[A]](mode: Mode, srn: Option[String], id: I, value: A,
                                                   changeId: TypedIdentifier[Boolean])
@@ -41,20 +50,12 @@ trait UserAnswersService {
       case UpdateMode | CheckUpdateMode =>
         srn match {
           case Some(srnId) =>
-            userAnswersCacheConnector.save(srnId, id, value).flatMap { _ =>
-              userAnswersCacheConnector.save(srnId, changeId, true)
+            updateCacheConnector.save(srnId, id, value).flatMap { _ =>
+              updateCacheConnector.save(srnId, changeId, true)
           }
           case _ => Future.failed(throw new MissingSrnNumber)
         }
     }
-
-  def save[A, I <: TypedIdentifier[A]](mode: Mode, srn: Option[String], id: I, value: A)
-                                      (implicit
-                                       fmt: Format[A],
-                                       ec: ExecutionContext,
-                                       hc: HeaderCarrier,
-                                       request: DataRequest[AnyContent]
-                                      ): Future[JsValue]
 
   def remove[I <: TypedIdentifier[_]](mode: Mode, srn: Option[String], id: I)
                                      (implicit
@@ -67,14 +68,14 @@ trait UserAnswersService {
       case UpdateMode | CheckUpdateMode =>
         srn match {
           case Some(srnId) =>
-            userAnswersCacheConnector.asInstanceOf[UpdateSchemeCacheConnector].remove(srnId, id)
+            updateCacheConnector.remove(srnId, id)
           case _ => Future.failed(throw new MissingSrnNumber)
         }
     }
-
 }
 
-class UserAnswersServiceImpl @Inject()(override val userAnswersCacheConnector: UserAnswersCacheConnector) extends UserAnswersService {
+class UserAnswersServiceImpl @Inject()(override val userAnswersCacheConnector: UserAnswersCacheConnector,
+                                       override val updateCacheConnector: UpdateSchemeCacheConnector) extends UserAnswersService {
 
   override def save[A, I <: TypedIdentifier[A]](mode: Mode, srn: Option[String], id: I, value: A)
                                                (implicit fmt: Format[A], ec: ExecutionContext, hc: HeaderCarrier,
@@ -82,7 +83,8 @@ class UserAnswersServiceImpl @Inject()(override val userAnswersCacheConnector: U
     save(mode: Mode, srn: Option[String], id: I, value: A, EstablishersOrTrusteesChangedId)
 }
 
-class UserAnswersServiceInsuranceImpl @Inject()(override val userAnswersCacheConnector: UserAnswersCacheConnector) extends UserAnswersService {
+class UserAnswersServiceInsuranceImpl @Inject()(override val userAnswersCacheConnector: UserAnswersCacheConnector,
+                                                override val updateCacheConnector: UpdateSchemeCacheConnector) extends UserAnswersService {
   override def save[A, I <: TypedIdentifier[A]](mode: Mode, srn: Option[String], id: I, value: A)
                                                (implicit fmt: Format[A], ec: ExecutionContext, hc: HeaderCarrier,
                                                 request: DataRequest[AnyContent]): Future[JsValue] =

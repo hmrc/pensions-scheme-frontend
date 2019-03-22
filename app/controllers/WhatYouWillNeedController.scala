@@ -17,7 +17,7 @@
 package controllers
 
 import config.FrontendAppConfig
-import connectors.{PSANameCacheConnector, UserAnswersCacheConnector}
+import connectors.UserAnswersCacheConnector
 import controllers.actions._
 import javax.inject.Inject
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -31,7 +31,6 @@ import scala.concurrent.{ExecutionContext, Future}
 class WhatYouWillNeedController @Inject()(appConfig: FrontendAppConfig,
                                           override val messagesApi: MessagesApi,
                                           authenticate: AuthAction,
-                                          psaNameCacheConnector: PSANameCacheConnector,
                                           crypto: ApplicationCrypto,
                                           userAnswersCacheConnector: UserAnswersCacheConnector
                                          )(implicit val ec: ExecutionContext) extends FrontendController with I18nSupport {
