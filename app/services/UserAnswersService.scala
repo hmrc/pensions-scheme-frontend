@@ -41,8 +41,8 @@ trait UserAnswersService {
       case UpdateMode | CheckUpdateMode =>
         srn match {
           case Some(srnId) =>
-            userAnswersCacheConnector.asInstanceOf[UpdateSchemeCacheConnector].save(srnId, id, value).flatMap { _ =>
-              userAnswersCacheConnector.asInstanceOf[UpdateSchemeCacheConnector].save(srnId, changeId, true)
+            userAnswersCacheConnector.save(srnId, id, value).flatMap { _ =>
+              userAnswersCacheConnector.save(srnId, changeId, true)
           }
           case _ => Future.failed(throw new MissingSrnNumber)
         }
