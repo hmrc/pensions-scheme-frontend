@@ -213,7 +213,7 @@ object ConfirmDeleteEstablisherControllerSpec extends ControllerSpecBase {
 
   private def onwardRoute = controllers.routes.IndexController.onPageLoad()
 
-  private val fakeUserAnswersCacheConnector = new FakeUserAnswersCacheConnector
+  private val fakeUserAnswersCacheConnector = FakeUserAnswersCacheConnector
 
   private def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData) =
     new ConfirmDeleteEstablisherController(

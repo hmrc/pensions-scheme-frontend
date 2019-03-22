@@ -138,7 +138,7 @@ trait ControllerWithQuestionPageBehaviours extends ControllerSpecBase with Scala
   )(implicit fmt: Format[A]): Unit = {
 
     "save user answers to cache" in {
-      val cache = new FakeUserAnswersCacheConnector(frontendAppConfig, injector.instanceOf[WSClient]) {}
+      val cache = FakeUserAnswersCacheConnector
       val result = saveAction(cache)(validRequest)
 
       whenReady(result) {
@@ -158,7 +158,7 @@ trait ControllerWithQuestionPageBehaviours extends ControllerSpecBase with Scala
                                                                 )(implicit fmt: Format[A]): Unit = {
 
     "save user answers to cache" in {
-      val cache = new FakeUserAnswersService() {}
+      val cache = FakeUserAnswersService
       val result = saveAction(cache)(validRequest)
 
       whenReady(result) {

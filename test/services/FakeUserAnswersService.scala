@@ -16,15 +16,12 @@
 
 package services
 
-import com.google.inject.Inject
-import config.FrontendAppConfig
-import connectors.{FakeDataCacheConnector, UserAnswersCacheConnector}
+import connectors.{FakeUserAnswersCacheConnector, UserAnswersCacheConnector}
 import identifiers.TypedIdentifier
 import models.Mode
 import models.requests.DataRequest
 import org.scalatest.Matchers
 import play.api.libs.json.{Format, JsValue, Json}
-import play.api.libs.ws.WSClient
 import play.api.mvc.Results.Ok
 import play.api.mvc.{AnyContent, Result}
 import uk.gov.hmrc.http.HeaderCarrier
@@ -32,9 +29,9 @@ import uk.gov.hmrc.http.HeaderCarrier
 import scala.collection.mutable
 import scala.concurrent.{ExecutionContext, Future}
 
-class FakeUserAnswersService @Inject() (implicit config: FrontendAppConfig, http: WSClient) extends UserAnswersService with Matchers {
+trait FakeUserAnswersService extends UserAnswersService with Matchers {
 
-  override protected def userAnswersCacheConnector: UserAnswersCacheConnector = new FakeDataCacheConnector
+  override protected def userAnswersCacheConnector: UserAnswersCacheConnector = FakeUserAnswersCacheConnector
   private val data: mutable.HashMap[String, JsValue] = mutable.HashMap()
   private val removed: mutable.ListBuffer[String] = mutable.ListBuffer()
 
@@ -98,3 +95,5 @@ class FakeUserAnswersService @Inject() (implicit config: FrontendAppConfig, http
     removed.clear()
   }
 }
+
+object FakeUserAnswersService extends FakeUserAnswersService

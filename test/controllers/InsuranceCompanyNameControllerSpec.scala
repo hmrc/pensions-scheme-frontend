@@ -82,7 +82,7 @@ object InsuranceCompanyNameControllerSpec extends SpecBase {
     dataRetrievalAction: DataRetrievalAction = base.getEmptyData,
     authAction: AuthAction = FakeAuthAction,
     navigator: Navigator = FakeNavigator,
-    cache: UserAnswersService = new FakeUserAnswersService
+    cache: UserAnswersService = FakeUserAnswersService
   ): InsuranceCompanyNameController =
     new InsuranceCompanyNameController(
       base.frontendAppConfig,

@@ -30,17 +30,6 @@ import scala.concurrent.{ExecutionContext, Future}
 
 trait UserAnswersCacheConnector {
 
-  def config: FrontendAppConfig
-  def http: WSClient
-
-  def apply(mode: Mode): UserAnswersCacheConnector = {
-    if(mode == NormalMode) {
-      new MicroserviceCacheConnector(config, http)
-    } else {
-      new UpdateSchemeCacheConnector(config, http)
-    }
-  }
-
   def save[A, I <: TypedIdentifier[A]](id: I, value: A)
                                       (implicit
                                        request: DataRequest[AnyContent],

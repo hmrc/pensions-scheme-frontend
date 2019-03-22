@@ -17,7 +17,7 @@
 package services
 
 import com.google.inject.Inject
-import connectors.UserAnswersCacheConnector
+import connectors.{UpdateSchemeCacheConnector, UserAnswersCacheConnector}
 import identifiers.{EstablishersOrTrusteesChangedId, InsuranceDetailsChangedId, TypedIdentifier}
 import models._
 import models.requests.DataRequest
@@ -41,8 +41,8 @@ trait UserAnswersService {
       case UpdateMode | CheckUpdateMode =>
         srn match {
           case Some(srnId) =>
-            userAnswersCacheConnector(mode).save(srnId, id, value).flatMap { _ =>
-              userAnswersCacheConnector(mode).save(srnId, changeId, true)
+            userAnswersCacheConnector.asInstanceOf[UpdateSchemeCacheConnector].save(srnId, id, value).flatMap { _ =>
+              userAnswersCacheConnector.asInstanceOf[UpdateSchemeCacheConnector].save(srnId, changeId, true)
           }
           case _ => Future.failed(throw new MissingSrnNumber)
         }
@@ -67,7 +67,7 @@ trait UserAnswersService {
       case UpdateMode | CheckUpdateMode =>
         srn match {
           case Some(srnId) =>
-            userAnswersCacheConnector(mode).remove(srnId, id)
+            userAnswersCacheConnector.asInstanceOf[UpdateSchemeCacheConnector].remove(srnId, id)
           case _ => Future.failed(throw new MissingSrnNumber)
         }
     }
