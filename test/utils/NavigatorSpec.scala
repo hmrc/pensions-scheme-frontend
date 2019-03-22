@@ -118,7 +118,7 @@ object NavigatorSpec {
   }
 
   def testFixture(): TestFixture = new TestFixture {
-    override val dataCacheConnector: FakeUserAnswersCacheConnector = new FakeUserAnswersCacheConnector {}
+    override val dataCacheConnector: FakeUserAnswersCacheConnector = FakeUserAnswersCacheConnector
     override val navigator: TestNavigator = new TestNavigator(dataCacheConnector)
   }
 

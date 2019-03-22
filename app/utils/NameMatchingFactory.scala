@@ -30,7 +30,6 @@ import utils.annotations.PSANameCache
 import scala.concurrent.{ExecutionContext, Future}
 
 class NameMatchingFactory @Inject()(
-                                     @PSANameCache val pSANameCacheConnector: UserAnswersCacheConnector,
                                      pensionAdministratorConnector: PensionAdministratorConnector,
                                      crypto: ApplicationCrypto,
                                      config: FrontendAppConfig

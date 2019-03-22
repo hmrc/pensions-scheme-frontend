@@ -45,7 +45,7 @@ class SchemeTypeControllerSpec extends ControllerSpecBase {
 
   val minData = UserAnswers().schemeName(schemeName).dataRetrievalAction
 
-  object FakeNameMatchingFactory extends NameMatchingFactory(FakeUserAnswersCacheConnector, pensionAdministratorConnector, crypto, config) {
+  object FakeNameMatchingFactory extends NameMatchingFactory(pensionAdministratorConnector, crypto, config) {
     override def nameMatching(schemeName: String)
                              (implicit request: OptionalDataRequest[AnyContent],
                               ec: ExecutionContext,
