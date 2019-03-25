@@ -54,13 +54,13 @@ class PartnershipAddressController @Inject()(
 
   protected val form: Form[Address] = formProvider()
 
-  private def viewmodel(index: Int, mode: Mode): Retrieval[ManualAddressViewModel] =
+  private def viewmodel(index: Int, mode: Mode, srn: Option[String]): Retrieval[ManualAddressViewModel] =
     Retrieval {
       implicit request =>
         PartnershipDetailsId(index).retrieve.right.map {
           details =>
             ManualAddressViewModel(
-              postCall(mode, Index(index)),
+              postCall(mode, Index(index), srn),
               countryOptions.options,
               title = Message(title),
               heading = Message(heading),
@@ -70,17 +70,17 @@ class PartnershipAddressController @Inject()(
         }
     }
 
-  def onPageLoad(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onPageLoad(mode: Mode, index: Index, srn: Option[String] = None): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      viewmodel(index, mode).retrieve.right.map {
+      viewmodel(index, mode, srn).retrieve.right.map {
         vm =>
           get(PartnershipAddressId(index), PartnershipAddressListId(index), vm)
       }
   }
 
-  def onSubmit(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode, index: Index, srn: Option[String] = None): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      viewmodel(index, mode).retrieve.right.map {
+      viewmodel(index, mode, srn).retrieve.right.map {
         vm =>
           val context = s"Trustee Partnership Address: ${vm.secondaryHeader.get}"
           post(PartnershipAddressId(index), PartnershipAddressListId(index), vm, mode, context,

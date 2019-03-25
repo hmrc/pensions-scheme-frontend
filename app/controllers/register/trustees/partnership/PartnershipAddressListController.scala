@@ -42,28 +42,28 @@ class PartnershipAddressListController @Inject()(override val appConfig: Fronten
                                                  getData: DataRetrievalAction,
                                                  requireData: DataRequiredAction) extends AddressListController with Retrievals {
 
-  def onPageLoad(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onPageLoad(mode: Mode, index: Index, srn: Option[String] = None): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      viewmodel(mode, index).right.map(get)
+      viewmodel(mode, index, srn).right.map(get)
   }
 
-  def onSubmit(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode, index: Index, srn: Option[String] = None): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      viewmodel(mode, index).right.map {
+      viewmodel(mode, index, srn).right.map {
         vm =>
           post(vm, PartnershipAddressListId(index), PartnershipAddressId(index), mode)
       }
   }
 
-  private def viewmodel(mode: Mode, index: Index)(implicit request: DataRequest[AnyContent]): Either[Future[Result], AddressListViewModel] = {
+  private def viewmodel(mode: Mode, index: Index, srn: Option[String])(implicit request: DataRequest[AnyContent]): Either[Future[Result], AddressListViewModel] = {
     (PartnershipDetailsId(index) and PartnershipPostcodeLookupId(index)).retrieve.right.map {
       case partnershipDetails ~ addresses => AddressListViewModel(
-        postCall = routes.PartnershipAddressListController.onSubmit(mode, index),
-        manualInputCall = routes.PartnershipAddressController.onPageLoad(mode, index),
+        postCall = routes.PartnershipAddressListController.onSubmit(mode, index, srn),
+        manualInputCall = routes.PartnershipAddressController.onPageLoad(mode, index, srn),
         addresses = addresses,
         subHeading = Some(Message(partnershipDetails.name))
       )
     }.left.map(_ =>
-      Future.successful(Redirect(routes.PartnershipPostcodeLookupController.onPageLoad(mode, index))))
+      Future.successful(Redirect(routes.PartnershipPostcodeLookupController.onPageLoad(mode, index, srn))))
   }
 }

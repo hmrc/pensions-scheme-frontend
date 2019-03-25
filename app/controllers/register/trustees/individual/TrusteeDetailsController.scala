@@ -49,21 +49,21 @@ class TrusteeDetailsController @Inject()(
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onPageLoad(mode: Mode, index: Index, srn: Option[String] = None): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      val redirectResult = request.userAnswers.get(TrusteeDetailsId(index)) match {
-        case None => Ok(trusteeDetails(appConfig, form, mode, index, existingSchemeName))
-        case Some(value) => Ok(trusteeDetails(appConfig, form.fill(value), mode, index, existingSchemeName))
-      }
-      Future.successful(redirectResult)
+      val submitUrl = controllers.register.trustees.partnership.routes.TrusteeDetailsController.onPageLoad(mode, index, srn)
+      val updatedForm = request.userAnswers.get(TrusteeDetailsId(index)).fold(form)(form.fill)
+      Future.successful(Ok(trusteeDetails(appConfig, updatedForm, mode, index, existingSchemeName, submitUrl)))
   }
 
-  def onSubmit(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode, index: Index, srn: Option[String] = None): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       form.bindFromRequest().fold(
-        (formWithErrors: Form[_]) =>
-          Future.successful(BadRequest(trusteeDetails(appConfig, formWithErrors, mode, index, existingSchemeName))),
-        (value) =>
+        (formWithErrors: Form[_]) => {
+          val submitUrl = controllers.register.trustees.partnership.routes.TrusteeDetailsController.onPageLoad(mode, index, srn)
+          Future.successful(BadRequest(trusteeDetails(appConfig, formWithErrors, mode, index, existingSchemeName, submitUrl)))
+        },
+        value =>
           request.userAnswers.upsert(TrusteeDetailsId(index))(value) {
             _.upsert(TrusteeKindId(index))(Individual) { answers =>
               dataCacheConnector.upsert(request.externalId, answers.json).map { cacheMap =>
@@ -73,5 +73,4 @@ class TrusteeDetailsController @Inject()(
           }
       )
   }
-
 }

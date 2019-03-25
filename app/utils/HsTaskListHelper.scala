@@ -120,14 +120,14 @@ class HsTaskListHelper(answers: UserAnswers)(implicit messages: Messages) extend
           Some(
             SchemeDetailsTaskListSection(
               Some(isAllTrusteesCompleted(userAnswers)),
-              Link(changeTrusteesLinkText, controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode).url),
+              Link(changeTrusteesLinkText, controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode, None).url),
               None
             )
           )
         } else {
           Some(
             SchemeDetailsTaskListSection(None,
-              Link(addTrusteesLinkText, controllers.register.trustees.routes.TrusteeKindController.onPageLoad(NormalMode, userAnswers.allTrustees.size).url),
+              Link(addTrusteesLinkText, controllers.register.trustees.routes.TrusteeKindController.onPageLoad(NormalMode, userAnswers.allTrustees.size, None).url),
               None
             )
           )

@@ -42,14 +42,14 @@ class CompanyAddressYearsController @Inject()(
                                                formProvider: AddressYearsFormProvider
                                              ) extends controllers.address.AddressYearsController {
 
-  private def viewmodel(index: Index, mode: Mode): Retrieval[AddressYearsViewModel] =
+  private def viewmodel(index: Index, mode: Mode, srn: Option[String] = None): Retrieval[AddressYearsViewModel] =
     Retrieval(
       implicit request =>
         CompanyDetailsId(index.id).retrieve.right.map {
           details =>
             val questionText = "messages__company_address_years__title"
             AddressYearsViewModel(
-              postCall = routes.CompanyAddressYearsController.onSubmit(mode, index),
+              postCall = routes.CompanyAddressYearsController.onSubmit(mode, index, srn),
               title = Message(questionText),
               heading = Message(questionText),
               legend = Message(questionText),
@@ -60,7 +60,7 @@ class CompanyAddressYearsController @Inject()(
 
   private val form: Form[AddressYears] = formProvider(Message("messages__common_error__current_address_years"))
 
-  def onPageLoad(mode: Mode, index: Index): Action[AnyContent] =
+  def onPageLoad(mode: Mode, index: Index, srn: Option[String] = None): Action[AnyContent] =
     (authenticate andThen getData andThen requireData).async {
       implicit request =>
         viewmodel(index, mode).retrieve.right.map {
@@ -69,7 +69,7 @@ class CompanyAddressYearsController @Inject()(
         }
     }
 
-  def onSubmit(mode: Mode, index: Index): Action[AnyContent] =
+  def onSubmit(mode: Mode, index: Index, srn: Option[String] = None): Action[AnyContent] =
     (authenticate andThen getData andThen requireData).async {
       implicit request =>
         viewmodel(index, mode).retrieve.right.map {

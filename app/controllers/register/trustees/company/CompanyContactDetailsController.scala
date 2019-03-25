@@ -42,24 +42,24 @@ class CompanyContactDetailsController @Inject()(
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onPageLoad(mode: Mode, index: Index, srn: Option[String] = None): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       CompanyDetailsId(index).retrieve.right.map {
         companyDetails =>
-          get(CompanyContactDetailsId(index), form, viewmodel(mode, index, companyDetails.companyName))
+          get(CompanyContactDetailsId(index), form, viewmodel(mode, index, companyDetails.companyName, srn))
       }
   }
 
-  def onSubmit(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode, index: Index, srn: Option[String] = None): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       CompanyDetailsId(index).retrieve.right.map {
         companyDetails =>
-          post(CompanyContactDetailsId(index), mode, form, viewmodel(mode, index, companyDetails.companyName))
+          post(CompanyContactDetailsId(index), mode, form, viewmodel(mode, index, companyDetails.companyName, srn))
       }
   }
 
-  private def viewmodel(mode: Mode, index: Index, companyName: String) = ContactDetailsViewModel(
-    postCall = routes.CompanyContactDetailsController.onSubmit(mode, index),
+  private def viewmodel(mode: Mode, index: Index, companyName: String, srn: Option[String]) = ContactDetailsViewModel(
+    postCall = routes.CompanyContactDetailsController.onSubmit(mode, index, srn),
     title = Message("messages__trustee_company_contact_details__title"),
     heading = Message("messages__trustee_company_contact_details__heading"),
     body = Message("messages__contact_details__body"),

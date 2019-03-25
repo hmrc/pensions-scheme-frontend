@@ -47,20 +47,20 @@ class MoreThanTenTrusteesController @Inject()(
 
   private val form: Form[Boolean] = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onPageLoad(mode: Mode, srn: Option[String] = None): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      val preparedForm = request.userAnswers.get(MoreThanTenTrusteesId) match {
-        case None => form
-        case Some(value) => form.fill(value)
-      }
-      Future.successful(Ok(moreThanTenTrustees(appConfig, preparedForm, mode, existingSchemeName)))
+      val submitUrl = controllers.register.trustees.routes.MoreThanTenTrusteesController.onPageLoad(mode, srn)
+      val updatedForm = request.userAnswers.get(MoreThanTenTrusteesId).fold(form)(form.fill)
+      Future.successful(Ok(moreThanTenTrustees(appConfig, updatedForm, mode, existingSchemeName, submitUrl)))
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode, srn: Option[String] = None): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       form.bindFromRequest().fold(
-        (formWithErrors: Form[_]) =>
-          Future.successful(BadRequest(moreThanTenTrustees(appConfig, formWithErrors, mode, existingSchemeName))),
+        (formWithErrors: Form[_]) => {
+          val submitUrl = controllers.register.trustees.routes.MoreThanTenTrusteesController.onPageLoad(mode, srn)
+          Future.successful(BadRequest(moreThanTenTrustees(appConfig, formWithErrors, mode, existingSchemeName, submitUrl)))
+        },
         value =>
           dataCacheConnector.save(request.externalId, MoreThanTenTrusteesId, value).map(cacheMap =>
             Redirect(navigator.nextPage(MoreThanTenTrusteesId, mode, UserAnswers(cacheMap))))

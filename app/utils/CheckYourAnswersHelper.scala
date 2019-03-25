@@ -31,7 +31,7 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers, countryOptions: CountryOp
   def haveAnyTrustees: Option[AnswerRow] = userAnswers.get(identifiers.register.trustees.HaveAnyTrusteesId) map {
     x =>
       AnswerRow("haveAnyTrustees.checkYourAnswersLabel", Seq(if (x) "site.yes" else "site.no"), true,
-        Some(controllers.register.trustees.routes.HaveAnyTrusteesController.onPageLoad(CheckMode).url))
+        Some(controllers.register.trustees.routes.HaveAnyTrusteesController.onPageLoad(CheckMode, None).url))
   }
 
   def declaration: Option[AnswerRow] = userAnswers.get(identifiers.register.DeclarationId) map {
@@ -41,31 +41,32 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers, countryOptions: CountryOp
   def moreThanTenTrustees: Option[AnswerRow] = userAnswers.get(identifiers.register.trustees.MoreThanTenTrusteesId) map {
     x =>
       AnswerRow("moreThanTenTrustees.checkYourAnswersLabel", Seq(if (x) "site.yes" else "site.no"), true,
-        Some(controllers.register.trustees.routes.MoreThanTenTrusteesController.onPageLoad(CheckMode).url))
+        Some(controllers.register.trustees.routes.MoreThanTenTrusteesController.onPageLoad(CheckMode, None).url))
   }
 
   def trusteePreviousAddress(index: Int): Option[AnswerRow] = userAnswers.get(identifiers.register.trustees.individual.TrusteePreviousAddressId(index)) map {
-    x => AnswerRow("trusteePreviousAddress.checkYourAnswersLabel", addressAnswer(x), false, Some(controllers.register.trustees.individual.routes.TrusteePreviousAddressController.onPageLoad(CheckMode, index).url))
+    x => AnswerRow("trusteePreviousAddress.checkYourAnswersLabel", addressAnswer(x), false, Some(controllers.register.trustees.individual.routes.TrusteePreviousAddressController.onPageLoad(CheckMode, index, None).url))
   }
 
   def trusteeContactDetails(index: Int): Option[AnswerRow] = userAnswers.get(identifiers.register.trustees.individual.TrusteeContactDetailsId(index)) map {
-    x => AnswerRow("messages__trusteeContactDetails__checkYourAnswersLabel", Seq(s"${x.emailAddress} ${x.phoneNumber}"), false, Some(controllers.register.trustees.individual.routes.TrusteeContactDetailsController.onPageLoad(CheckMode, index).url))
+    x => AnswerRow("messages__trusteeContactDetails__checkYourAnswersLabel", Seq(s"${x.emailAddress} ${x.phoneNumber}"), false,
+      Some(controllers.register.trustees.individual.routes.TrusteeContactDetailsController.onPageLoad(CheckMode, index, None).url))
   }
 
   def trusteeNino(index: Int): Seq[AnswerRow] = userAnswers.get(TrusteeNinoId(index)) match {
     case Some(Yes(nino)) =>
       Seq(
         AnswerRow("messages__trusteeNino__nino_question_cya_label", Seq(s"${Nino.Yes}"), false,
-          Some(controllers.register.trustees.individual.routes.TrusteeNinoController.onPageLoad(CheckMode, Index(index)).url)),
+          Some(controllers.register.trustees.individual.routes.TrusteeNinoController.onPageLoad(CheckMode, Index(index), None).url)),
         AnswerRow("messages__trusteeNino__nino_cya_label", Seq(nino), false,
-          Some(controllers.register.trustees.individual.routes.TrusteeNinoController.onPageLoad(CheckMode, Index(index)).url))
+          Some(controllers.register.trustees.individual.routes.TrusteeNinoController.onPageLoad(CheckMode, Index(index), None).url))
       )
     case Some(No(reason)) =>
       Seq(
         AnswerRow("messages__trusteeNino__nino_question_cya_label", Seq(s"${Nino.No}"), false,
-          Some(controllers.register.trustees.individual.routes.TrusteeNinoController.onPageLoad(CheckMode, Index(index)).url)),
+          Some(controllers.register.trustees.individual.routes.TrusteeNinoController.onPageLoad(CheckMode, Index(index), None).url)),
         AnswerRow("messages__trusteeNino__nino_reason_cya_label", Seq(reason), false,
-          Some(controllers.register.trustees.individual.routes.TrusteeNinoController.onPageLoad(CheckMode, Index(index)).url))
+          Some(controllers.register.trustees.individual.routes.TrusteeNinoController.onPageLoad(CheckMode, Index(index), None).url))
       )
     case _ => Nil
   }
@@ -73,28 +74,31 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers, countryOptions: CountryOp
   def trusteeIndividualAddressYears(index: Int): Seq[AnswerRow] =
     userAnswers.get(TrusteeAddressYearsId(index)) match {
       case Some(x) => Seq(AnswerRow("messages__trusteeAddressYears__cya_label", Seq(s"messages__common__$x"), true,
-        Some(controllers.register.trustees.individual.routes.TrusteeAddressYearsController.onPageLoad(CheckMode, Index(index)).url)))
+        Some(controllers.register.trustees.individual.routes.TrusteeAddressYearsController.onPageLoad(CheckMode, Index(index), None).url)))
       case _ => Seq.empty
     }
 
   def individualPostCodeLookup(index: Int): Option[AnswerRow] = userAnswers.get(identifiers.register.trustees.individual.IndividualPostCodeLookupId(index)) map {
-    x => AnswerRow("individualPostCodeLookup.checkYourAnswersLabel", Seq(s"$x"), false, Some(controllers.register.trustees.individual.routes.IndividualPostCodeLookupController.onPageLoad(CheckMode, index).url))
+    x => AnswerRow("individualPostCodeLookup.checkYourAnswersLabel", Seq(s"$x"), false, Some(controllers.register.trustees.individual.routes.IndividualPostCodeLookupController.onPageLoad(CheckMode, index, None).url))
   }
 
   def uniqueTaxReference(index: Int): Option[AnswerRow] = userAnswers.get(identifiers.register.trustees.individual.UniqueTaxReferenceId(index)) map {
-    x => AnswerRow("messages__uniqueTaxReference__checkYourAnswersLabel", Seq(s"uniqueTaxReference.$x"), true, Some(controllers.register.trustees.individual.routes.UniqueTaxReferenceController.onPageLoad(CheckMode, index).url))
+    x => AnswerRow("messages__uniqueTaxReference__checkYourAnswersLabel", Seq(s"uniqueTaxReference.$x"), true, Some(controllers.register.trustees.individual.routes.UniqueTaxReferenceController.onPageLoad(CheckMode, index, None).url))
   }
 
   def trusteeKind(index: Int): Option[AnswerRow] = userAnswers.get(identifiers.register.trustees.TrusteeKindId(index)) map {
-    x => AnswerRow("messages__trusteeKind__checkYourAnswersLabel", Seq(s"trusteeKind.$x"), true, Some(controllers.register.trustees.routes.TrusteeKindController.onPageLoad(CheckMode, index).url))
+    x => AnswerRow("messages__trusteeKind__checkYourAnswersLabel", Seq(s"trusteeKind.$x"), true, Some(controllers.register.trustees.routes.TrusteeKindController.onPageLoad(CheckMode, index, None).url))
   }
 
   def companyRegistrationNumberTrustee(index: Int): Option[AnswerRow] = userAnswers.get(identifiers.register.trustees.company.CompanyRegistrationNumberId(index)) map {
-    x => AnswerRow("messages__companyRegistrationNumber__checkYourAnswersLabel", Seq(s"companyRegistrationNumber.$x"), true, Some(controllers.register.trustees.company.routes.CompanyRegistrationNumberController.onPageLoad(CheckMode, index).url))
+    x => AnswerRow("messages__companyRegistrationNumber__checkYourAnswersLabel", Seq(s"companyRegistrationNumber.$x"), true,
+      Some(controllers.register.trustees.company.routes.CompanyRegistrationNumberController.onPageLoad(CheckMode, index, None).url))
   }
 
-  def directorPreviousAddressPostcodeLookup(mode: Mode, establisherIndex: Int, directorIndex: Int): Option[AnswerRow] = userAnswers.get(identifiers.register.establishers.company.director.DirectorPreviousAddressPostcodeLookupId(establisherIndex, directorIndex)) map {
-    x => AnswerRow("directorPreviousAddressPostcodeLookup.checkYourAnswersLabel", Seq(s"$x"), false, Some(controllers.register.establishers.company.director.routes.DirectorPreviousAddressPostcodeLookupController.onPageLoad(CheckMode, establisherIndex, directorIndex).url))
+  def directorPreviousAddressPostcodeLookup(mode: Mode, establisherIndex: Int, directorIndex: Int): Option[AnswerRow] =
+    userAnswers.get(identifiers.register.establishers.company.director.DirectorPreviousAddressPostcodeLookupId(establisherIndex, directorIndex)) map {
+    x => AnswerRow("directorPreviousAddressPostcodeLookup.checkYourAnswersLabel", Seq(s"$x"), false,
+      Some(controllers.register.establishers.company.director.routes.DirectorPreviousAddressPostcodeLookupController.onPageLoad(CheckMode, establisherIndex, directorIndex).url))
   }
 
   def directorUniqueTaxReference(establisherIndex: Int, directorIndex: Int): Seq[AnswerRow] =

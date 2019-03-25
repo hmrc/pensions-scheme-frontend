@@ -42,28 +42,29 @@ class IndividualAddressListController @Inject()(override val appConfig: Frontend
                                                 getData: DataRetrievalAction,
                                                 requireData: DataRequiredAction) extends AddressListController with Retrievals {
 
-  def onPageLoad(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onPageLoad(mode: Mode, index: Index, srn: Option[String] = None): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      viewmodel(mode, index).right.map(get)
+      viewmodel(mode, index, srn).right.map(get)
   }
 
-  def onSubmit(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode, index: Index, srn: Option[String] = None): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      viewmodel(mode, index).right.map {
+      viewmodel(mode, index, srn).right.map {
         vm =>
           post(vm, IndividualAddressListId(index), TrusteeAddressId(index), mode)
       }
   }
 
-  private def viewmodel(mode: Mode, index: Index)(implicit request: DataRequest[AnyContent]): Either[Future[Result], AddressListViewModel] = {
+  private def viewmodel(mode: Mode, index: Index, srn: Option[String])(implicit request: DataRequest[AnyContent]):
+  Either[Future[Result], AddressListViewModel] = {
     (TrusteeDetailsId(index) and IndividualPostCodeLookupId(index)).retrieve.right.map {
       case trusteeDetails ~ addresses => AddressListViewModel(
-        postCall = routes.IndividualAddressListController.onSubmit(mode, index),
-        manualInputCall = routes.TrusteeAddressController.onPageLoad(mode, index),
+        postCall = routes.IndividualAddressListController.onSubmit(mode, index, srn),
+        manualInputCall = routes.TrusteeAddressController.onPageLoad(mode, index, srn),
         addresses = addresses,
         subHeading = Some(Message(trusteeDetails.fullName))
       )
     }.left.map(_ =>
-      Future.successful(Redirect(routes.IndividualPostCodeLookupController.onPageLoad(mode, index))))
+      Future.successful(Redirect(routes.IndividualPostCodeLookupController.onPageLoad(mode, index, srn))))
   }
 }

@@ -152,15 +152,15 @@ case class TrusteeCompanyEntity(id: TrusteeCompanyDetailsId,
                                 name: String, isDeleted: Boolean, isCompleted: Boolean) extends Trustee[TrusteeCompanyDetailsId] {
   override def editLink: String = {
     if (isCompleted) {
-      controllers.register.trustees.company.routes.CheckYourAnswersController.onPageLoad(id.index).url
+      controllers.register.trustees.company.routes.CheckYourAnswersController.onPageLoad(NormalMode, id.index, None).url
     }
     else {
-      controllers.register.trustees.company.routes.CompanyDetailsController.onPageLoad(NormalMode, id.index).url
+      controllers.register.trustees.company.routes.CompanyDetailsController.onPageLoad(NormalMode, id.index, None).url
     }
   }
 
   override def deleteLink: String =
-    controllers.register.trustees.routes.ConfirmDeleteTrusteeController.onPageLoad(id.index, TrusteeKind.Company).url
+    controllers.register.trustees.routes.ConfirmDeleteTrusteeController.onPageLoad(NormalMode, id.index, TrusteeKind.Company, None).url
 
   override def index: Int = id.index
 }
@@ -168,15 +168,15 @@ case class TrusteeCompanyEntity(id: TrusteeCompanyDetailsId,
 case class TrusteeIndividualEntity(id: TrusteeDetailsId, name: String, isDeleted: Boolean, isCompleted: Boolean) extends Trustee[TrusteeDetailsId] {
   override def editLink: String = {
     if (isCompleted) {
-      controllers.register.trustees.individual.routes.CheckYourAnswersController.onPageLoad(id.index).url
+      controllers.register.trustees.individual.routes.CheckYourAnswersController.onPageLoad(NormalMode, id.index, None).url
     }
     else {
-      controllers.register.trustees.individual.routes.TrusteeDetailsController.onPageLoad(NormalMode, id.index).url
+      controllers.register.trustees.individual.routes.TrusteeDetailsController.onPageLoad(NormalMode, id.index, None).url
     }
   }
 
   override def deleteLink: String =
-    controllers.register.trustees.routes.ConfirmDeleteTrusteeController.onPageLoad(id.index, TrusteeKind.Individual).url
+    controllers.register.trustees.routes.ConfirmDeleteTrusteeController.onPageLoad(NormalMode, id.index, TrusteeKind.Individual, None).url
 
   override def index: Int = id.index
 }
@@ -185,15 +185,15 @@ case class TrusteePartnershipEntity(id: TrusteePartnershipDetailsId,
                                     name: String, isDeleted: Boolean, isCompleted: Boolean) extends Trustee[TrusteePartnershipDetailsId] {
   override def editLink: String = {
     if (isCompleted) {
-      controllers.register.trustees.partnership.routes.CheckYourAnswersController.onPageLoad(id.index).url
+      controllers.register.trustees.partnership.routes.CheckYourAnswersController.onPageLoad(NormalMode, id.index, None).url
     }
     else {
-      controllers.register.trustees.partnership.routes.TrusteeDetailsController.onPageLoad(NormalMode, id.index).url
+      controllers.register.trustees.partnership.routes.TrusteeDetailsController.onPageLoad(NormalMode, id.index, None).url
     }
   }
 
   override def deleteLink: String =
-    controllers.register.trustees.routes.ConfirmDeleteTrusteeController.onPageLoad(id.index, TrusteeKind.Partnership).url
+    controllers.register.trustees.routes.ConfirmDeleteTrusteeController.onPageLoad(NormalMode, id.index, TrusteeKind.Partnership, None).url
 
   override def index: Int = id.index
 }

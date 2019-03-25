@@ -52,14 +52,14 @@ class CompanyPostCodeLookupController @Inject()(
 
   override protected val form: Form[String] = formProvider()
 
-  private def viewmodel(index: Int, mode: Mode): Retrieval[PostcodeLookupViewModel] =
+  private def viewmodel(index: Int, mode: Mode, srn: Option[String]): Retrieval[PostcodeLookupViewModel] =
     Retrieval {
       implicit request =>
         CompanyDetailsId(index).retrieve.right.map {
           details =>
             PostcodeLookupViewModel(
-              postCall(mode, index),
-              manualAddressCall(mode, index),
+              postCall(mode, index, srn),
+              manualAddressCall(mode, index, srn),
               title = Message(title),
               heading = Message(heading),
               subHeading = Some(details.companyName)
@@ -67,16 +67,16 @@ class CompanyPostCodeLookupController @Inject()(
         }
     }
 
-  def onPageLoad(mode: Mode, index: Index): Action[AnyContent] =
+  def onPageLoad(mode: Mode, index: Index, srn: Option[String] = None): Action[AnyContent] =
     (authenticate andThen getData andThen requireData).async {
       implicit request =>
-        viewmodel(index, mode).retrieve.right map get
+        viewmodel(index, mode, srn).retrieve.right map get
     }
 
-  def onSubmit(mode: Mode, index: Index): Action[AnyContent] =
+  def onSubmit(mode: Mode, index: Index, srn: Option[String] = None): Action[AnyContent] =
     (authenticate andThen getData andThen requireData).async {
       implicit request =>
-        viewmodel(index, mode).retrieve.right.map { vm =>
+        viewmodel(index, mode, srn).retrieve.right.map { vm =>
           post(CompanyPostcodeLookupId(index), vm, mode)
         }
     }

@@ -42,26 +42,26 @@ class TrusteePreviousAddressListController @Inject()(override val appConfig: Fro
                                                      getData: DataRetrievalAction,
                                                      requireData: DataRequiredAction) extends AddressListController with Retrievals with I18nSupport {
 
-  def viewmodel(mode: Mode, index: Index)(implicit request: DataRequest[AnyContent]): Either[Future[Result], AddressListViewModel] = {
+  def viewmodel(mode: Mode, index: Index, srn: Option[String])(implicit request: DataRequest[AnyContent]): Either[Future[Result], AddressListViewModel] = {
     (TrusteeDetailsId(index) and IndividualPreviousAddressPostCodeLookupId(index)).retrieve.right.map {
       case trusteeDetails ~ addresses => AddressListViewModel(
-        routes.TrusteePreviousAddressListController.onSubmit(mode, index),
-        routes.TrusteePreviousAddressController.onPageLoad(mode, index),
+        routes.TrusteePreviousAddressListController.onSubmit(mode, index, srn),
+        routes.TrusteePreviousAddressController.onPageLoad(mode, index, srn),
         addresses,
         title = Message("messages__select_the_previous_address__title"),
         heading = Message("messages__select_the_previous_address__heading"),
         subHeading = Some(trusteeDetails.fullName)
       )
-    }.left.map(_ => Future.successful(Redirect(routes.IndividualPreviousAddressPostcodeLookupController.onPageLoad(mode, index))))
+    }.left.map(_ => Future.successful(Redirect(routes.IndividualPreviousAddressPostcodeLookupController.onPageLoad(mode, index, srn))))
   }
 
-  def onPageLoad(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onPageLoad(mode: Mode, index: Index, srn: Option[String] = None): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      viewmodel(mode, index).right.map(get)
+      viewmodel(mode, index, srn).right.map(get)
   }
 
-  def onSubmit(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode, index: Index, srn: Option[String] = None): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      viewmodel(mode, index).right.map(vm => post(vm, TrusteePreviousAddressListId(index), TrusteePreviousAddressId(index), mode))
+      viewmodel(mode, index, srn).right.map(vm => post(vm, TrusteePreviousAddressListId(index), TrusteePreviousAddressId(index), mode))
   }
 }
