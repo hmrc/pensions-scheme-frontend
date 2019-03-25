@@ -57,9 +57,10 @@ class TrusteeDetailsControllerSpec extends ControllerSpecBase {
       new DataRequiredActionImpl,
       formProvider
     )
+  val submitUrl = controllers.register.trustees.individual.routes.TrusteeDetailsController.onSubmit(NormalMode, firstIndex, None)
 
   def viewAsString(form: Form[_] = form): String = trusteeDetails(frontendAppConfig, form,
-    NormalMode, firstIndex, None)(fakeRequest, messages).toString
+    NormalMode, firstIndex, None, submitUrl)(fakeRequest, messages).toString
 
   "TrusteeDetails Controller" must {
 

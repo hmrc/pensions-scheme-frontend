@@ -20,7 +20,6 @@ import audit.testdoubles.StubSuccessfulAuditService
 import audit.{AddressAction, AddressEvent, AuditService}
 import base.CSRFRequest
 import config.FrontendAppConfig
-import connectors.{FakeUserAnswersCacheConnector, UserAnswersCacheConnector}
 import controllers.ControllerSpecBase
 import controllers.actions._
 import controllers.register.trustees.company.routes._
@@ -81,7 +80,7 @@ class CompanyPreviousAddressControllerSpec extends ControllerSpecBase with Mocki
           val controller = app.injector.instanceOf[CompanyPreviousAddressController]
 
           val viewmodel = ManualAddressViewModel(
-            controller.postCall(NormalMode, firstIndex),
+            controller.postCall(NormalMode, firstIndex, None),
             countryOptions.options,
             Message(controller.title),
             Message(controller.heading),
@@ -90,7 +89,7 @@ class CompanyPreviousAddressControllerSpec extends ControllerSpecBase with Mocki
           )
 
           val request = addToken(
-            FakeRequest(CompanyPreviousAddressController.onPageLoad(NormalMode, firstIndex))
+            FakeRequest(CompanyPreviousAddressController.onPageLoad(NormalMode, firstIndex, None))
               .withHeaders("Csrf-Token" -> "nocheck")
           )
 
@@ -135,7 +134,7 @@ class CompanyPreviousAddressControllerSpec extends ControllerSpecBase with Mocki
           implicit app =>
 
 
-            val fakeRequest = addToken(FakeRequest(CompanyPreviousAddressController.onSubmit(NormalMode, firstIndex))
+            val fakeRequest = addToken(FakeRequest(CompanyPreviousAddressController.onSubmit(NormalMode, firstIndex, None))
               .withHeaders("Csrf-Token" -> "nocheck")
               .withFormUrlEncodedBody(
                 ("addressLine1", address.addressLine1),
@@ -174,7 +173,7 @@ class CompanyPreviousAddressControllerSpec extends ControllerSpecBase with Mocki
       )) {
         implicit app =>
 
-          val fakeRequest = addToken(FakeRequest(routes.CompanyPreviousAddressController.onSubmit(NormalMode, firstIndex))
+          val fakeRequest = addToken(FakeRequest(routes.CompanyPreviousAddressController.onSubmit(NormalMode, firstIndex, None))
             .withHeaders("Csrf-Token" -> "nocheck")
             .withFormUrlEncodedBody(
               ("addressLine1", address.addressLine1),

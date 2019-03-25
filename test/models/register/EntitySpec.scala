@@ -166,7 +166,7 @@ class EntitySpec extends WordSpecLike with MustMatchers with OptionValues {
     }
 
     "have correct edit link when company is incomplete" in {
-      val expectedEditLink = controllers.register.trustees.company.routes.CompanyDetailsController.onPageLoad(NormalMode, 1).url
+      val expectedEditLink = controllers.register.trustees.company.routes.CompanyDetailsController.onPageLoad(NormalMode, 1, None).url
       companyEntity.editLink mustEqual expectedEditLink
     }
 
@@ -178,12 +178,12 @@ class EntitySpec extends WordSpecLike with MustMatchers with OptionValues {
         isCompleted = true
       )
 
-      val expectedEditLink = controllers.register.trustees.company.routes.CheckYourAnswersController.onPageLoad(1).url
+      val expectedEditLink = controllers.register.trustees.company.routes.CheckYourAnswersController.onPageLoad(NormalMode, 1, None).url
       completeCompanyEntity.editLink mustEqual expectedEditLink
     }
 
     "have correct delete link" in {
-      val expectedDeleteLink = controllers.register.trustees.routes.ConfirmDeleteTrusteeController.onPageLoad(1, TrusteeKind.Company).url
+      val expectedDeleteLink = controllers.register.trustees.routes.ConfirmDeleteTrusteeController.onPageLoad(NormalMode, 1, TrusteeKind.Company, None).url
       companyEntity.deleteLink mustEqual expectedDeleteLink
     }
   }
@@ -200,7 +200,7 @@ class EntitySpec extends WordSpecLike with MustMatchers with OptionValues {
     }
 
     "have correct edit link when individual is incomplete" in {
-      val expectedEditLink = controllers.register.trustees.individual.routes.TrusteeDetailsController.onPageLoad(NormalMode, 1).url
+      val expectedEditLink = controllers.register.trustees.individual.routes.TrusteeDetailsController.onPageLoad(NormalMode, 1, None).url
       individualEntity.editLink mustEqual expectedEditLink
     }
 
@@ -212,12 +212,12 @@ class EntitySpec extends WordSpecLike with MustMatchers with OptionValues {
         isCompleted = true
       )
 
-      val expectedEditLink = controllers.register.trustees.individual.routes.CheckYourAnswersController.onPageLoad(1).url
+      val expectedEditLink = controllers.register.trustees.individual.routes.CheckYourAnswersController.onPageLoad(NormalMode, 1, None).url
       completeIndividualEntity.editLink mustEqual expectedEditLink
     }
 
     "have correct delete link" in {
-      val expectedDeleteLink = controllers.register.trustees.routes.ConfirmDeleteTrusteeController.onPageLoad(1, TrusteeKind.Individual).url
+      val expectedDeleteLink = controllers.register.trustees.routes.ConfirmDeleteTrusteeController.onPageLoad(NormalMode, 1, TrusteeKind.Individual, None).url
       individualEntity.deleteLink mustEqual expectedDeleteLink
     }
   }

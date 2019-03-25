@@ -45,7 +45,7 @@ class CompanyContactDetailsControllerSpec extends ControllerSpecBase {
   val companyName = "test company name"
 
   private def viewmodel(mode: Mode, index: Index, companyName: String) = ContactDetailsViewModel(
-    postCall = routes.CompanyContactDetailsController.onSubmit(mode, index),
+    postCall = routes.CompanyContactDetailsController.onSubmit(mode, index, None),
     title = Message("messages__trustee_company_contact_details__title"),
     heading = Message("messages__trustee_company_contact_details__heading"),
     body = Message("messages__contact_details__body"),

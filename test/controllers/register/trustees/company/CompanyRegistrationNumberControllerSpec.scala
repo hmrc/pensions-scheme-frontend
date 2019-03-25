@@ -72,6 +72,7 @@ class CompanyRegistrationNumberControllerSpec extends ControllerSpecBase {
       new DataRequiredActionImpl,
       formProvider
     )
+  val submitUrl = controllers.register.trustees.company.routes.CompanyRegistrationNumberController.onSubmit(NormalMode, index, None)
 
   def viewAsString(form: Form[_] = form): String =
     companyRegistrationNumber(
@@ -79,7 +80,8 @@ class CompanyRegistrationNumberControllerSpec extends ControllerSpecBase {
       form,
       NormalMode,
       index,
-      None
+      None,
+      submitUrl
     )(fakeRequest, messages).toString
 
   "CompanyRegistrationNumber Controller" must {

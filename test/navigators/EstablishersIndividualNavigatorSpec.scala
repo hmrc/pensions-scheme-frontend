@@ -95,9 +95,9 @@ object EstablishersIndividualNavigatorSpec extends OptionValues {
 
   private def previousAddress(mode: Mode) = controllers.register.establishers.individual.routes.PreviousAddressController.onPageLoad(mode, 0)
 
-  private def haveAnyTrustees = controllers.register.trustees.routes.HaveAnyTrusteesController.onPageLoad(NormalMode)
+  private def haveAnyTrustees = controllers.register.trustees.routes.HaveAnyTrusteesController.onPageLoad(NormalMode, None)
 
-  private def addTrustees = controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode)
+  private def addTrustees = controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode, None)
 
   private def addEstablisher = controllers.register.establishers.routes.AddEstablisherController.onPageLoad(NormalMode)
 

@@ -124,6 +124,7 @@ object TrusteeNinoControllerSpec extends ControllerSpecBase {
       fakeNavigator,
       FakeUserAnswersCacheConnector
     )
+  val submitUrl = controllers.register.trustees.individual.routes.TrusteeNinoController.onSubmit(NormalMode, index, None)
 
   private def viewAsString(form: Form[Nino] = form) =
     trusteeNino(
@@ -131,7 +132,7 @@ object TrusteeNinoControllerSpec extends ControllerSpecBase {
       form,
       mode,
       index,
-      None
+      None, submitUrl
     )(fakeRequest, messages).toString
 
   private def trusteeUserAnswers: UserAnswers = {

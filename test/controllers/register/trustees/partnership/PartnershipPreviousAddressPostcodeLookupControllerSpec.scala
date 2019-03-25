@@ -97,8 +97,8 @@ class PartnershipPreviousAddressPostcodeLookupControllerSpec extends ControllerS
       frontendAppConfig,
       form,
       PostcodeLookupViewModel(
-        routes.PartnershipPreviousAddressPostcodeLookupController.onSubmit(NormalMode, index),
-        routes.PartnershipPreviousAddressController.onPageLoad(NormalMode, index),
+        routes.PartnershipPreviousAddressPostcodeLookupController.onSubmit(NormalMode, index, None),
+        routes.PartnershipPreviousAddressController.onPageLoad(NormalMode, index, None),
         Message("messages__partnershipPreviousAddressPostcodeLookup__title"),
         Message("messages__partnershipPreviousAddressPostcodeLookup__title"),
         Some(partnershipName)

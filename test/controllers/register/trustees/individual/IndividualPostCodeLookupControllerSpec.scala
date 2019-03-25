@@ -52,7 +52,7 @@ class IndividualPostCodeLookupControllerSpec extends ControllerSpecBase with CSR
   "IndividualPostCodeLookup Controller" must {
     "render postCodeLookup from a GET request" in {
       requestResult(
-        implicit app => addToken(FakeRequest(routes.IndividualPostCodeLookupController.onPageLoad(NormalMode, firstIndex))),
+        implicit app => addToken(FakeRequest(routes.IndividualPostCodeLookupController.onPageLoad(NormalMode, firstIndex, None))),
         (request, result) => {
           status(result) mustBe OK
           contentAsString(result) mustBe postcodeLookup(frontendAppConfig, form, viewModel, None)(request, messages).toString()
@@ -63,7 +63,7 @@ class IndividualPostCodeLookupControllerSpec extends ControllerSpecBase with CSR
     "redirect to next page on POST request" which {
       "returns a list of addresses from addressLookup given a postcode" in {
         requestResult(
-          implicit app => addToken(FakeRequest(routes.IndividualPostCodeLookupController.onSubmit(NormalMode, firstIndex))
+          implicit app => addToken(FakeRequest(routes.IndividualPostCodeLookupController.onSubmit(NormalMode, firstIndex, None))
             .withFormUrlEncodedBody("value" -> validPostcode)),
           (_, result) => {
             status(result) mustBe SEE_OTHER
@@ -88,8 +88,8 @@ object IndividualPostCodeLookupControllerSpec extends ControllerSpecBase with Mo
   val address = TolerantAddress(Some("address line 1"), Some("address line 2"), None, None, Some(validPostcode), Some("GB"))
 
   lazy val viewModel = PostcodeLookupViewModel(
-    postCall = routes.IndividualPostCodeLookupController.onSubmit(NormalMode, firstIndex),
-    manualInputCall = routes.TrusteeAddressController.onPageLoad(NormalMode, firstIndex),
+    postCall = routes.IndividualPostCodeLookupController.onSubmit(NormalMode, firstIndex, None),
+    manualInputCall = routes.TrusteeAddressController.onPageLoad(NormalMode, firstIndex, None),
     title = Message("messages__individualPostCodeLookup__title"),
     heading = Message("messages__individualPostCodeLookup__heading"),
     subHeading = Some(personDetails.fullName),

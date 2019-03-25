@@ -66,7 +66,7 @@ class CompanyAddressControllerSpec extends ControllerBehaviours {
   private val controller = builder.build().injector.instanceOf[CompanyAddressController]
 
   val viewmodel = ManualAddressViewModel(
-    controller.postCall(NormalMode, firstIndex),
+    controller.postCall(NormalMode, firstIndex, None),
     countryOptions.options,
     Message(controller.title),
     Message(controller.heading),
@@ -75,8 +75,8 @@ class CompanyAddressControllerSpec extends ControllerBehaviours {
   )
 
   behave like manualAddress(
-    routes.CompanyAddressController.onPageLoad(NormalMode, firstIndex),
-    routes.CompanyAddressController.onSubmit(NormalMode, firstIndex),
+    routes.CompanyAddressController.onPageLoad(NormalMode, firstIndex, None),
+    routes.CompanyAddressController.onSubmit(NormalMode, firstIndex, None),
     CompanyAddressId(firstIndex),
     viewmodel
   )
@@ -102,7 +102,7 @@ class CompanyAddressControllerSpec extends ControllerBehaviours {
     )) {
       implicit app =>
 
-        val fakeRequest = addToken(FakeRequest(routes.CompanyAddressController.onSubmit(NormalMode, firstIndex))
+        val fakeRequest = addToken(FakeRequest(routes.CompanyAddressController.onSubmit(NormalMode, firstIndex, None))
           .withHeaders("Csrf-Token" -> "nocheck")
           .withFormUrlEncodedBody(
             ("addressLine1", address.addressLine1),

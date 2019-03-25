@@ -81,7 +81,7 @@ class IndividualAddressListControllerSpec extends ControllerSpecBase with CSRFRe
         bind[DataRetrievalAction].toInstance(dataRetrievalAction),
         bind(classOf[Navigator]).qualifiedWith(classOf[TrusteesIndividual]).toInstance(fakeNavigator)
       )) { implicit app =>
-        val request = addToken(FakeRequest(routes.IndividualAddressListController.onPageLoad(NormalMode, Index(0))))
+        val request = addToken(FakeRequest(routes.IndividualAddressListController.onPageLoad(NormalMode, Index(0), None)))
         val result = route(app, request).value
 
         status(result) mustBe OK
@@ -103,11 +103,11 @@ class IndividualAddressListControllerSpec extends ControllerSpecBase with CSRFRe
         bind[DataRetrievalAction].toInstance(getEmptyData),
         bind(classOf[Navigator]).qualifiedWith(classOf[TrusteesIndividual]).toInstance(fakeNavigator)
       )) { implicit app =>
-        val request = addToken(FakeRequest(routes.IndividualAddressListController.onPageLoad(NormalMode, Index(0))))
+        val request = addToken(FakeRequest(routes.IndividualAddressListController.onPageLoad(NormalMode, Index(0), None)))
         val result = route(app, request).value
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.IndividualPostCodeLookupController.onPageLoad(NormalMode, Index(0)).url)
+        redirectLocation(result) mustBe Some(routes.IndividualPostCodeLookupController.onPageLoad(NormalMode, Index(0), None).url)
       }
 
     }
@@ -120,7 +120,7 @@ class IndividualAddressListControllerSpec extends ControllerSpecBase with CSRFRe
         bind[DataRetrievalAction].toInstance(dontGetAnyData),
         bind(classOf[Navigator]).qualifiedWith(classOf[TrusteesIndividual]).toInstance(fakeNavigator)
       )) { implicit app =>
-        val request = addToken(FakeRequest(routes.IndividualAddressListController.onPageLoad(NormalMode, Index(0))))
+        val request = addToken(FakeRequest(routes.IndividualAddressListController.onPageLoad(NormalMode, Index(0), None)))
         val result = route(app, request).value
 
         status(result) mustBe SEE_OTHER
@@ -139,7 +139,7 @@ class IndividualAddressListControllerSpec extends ControllerSpecBase with CSRFRe
       )) { implicit app =>
         val request =
           addToken(
-            FakeRequest(routes.IndividualAddressListController.onSubmit(NormalMode, Index(0)))
+            FakeRequest(routes.IndividualAddressListController.onSubmit(NormalMode, Index(0), None))
               .withFormUrlEncodedBody(("value", "0"))
           )
 
@@ -160,7 +160,7 @@ class IndividualAddressListControllerSpec extends ControllerSpecBase with CSRFRe
       )) { implicit app =>
         val request =
           addToken(
-            FakeRequest(routes.IndividualAddressListController.onSubmit(NormalMode, Index(0)))
+            FakeRequest(routes.IndividualAddressListController.onSubmit(NormalMode, Index(0), None))
               .withFormUrlEncodedBody(("value", "0"))
           )
 
@@ -182,14 +182,14 @@ class IndividualAddressListControllerSpec extends ControllerSpecBase with CSRFRe
       )) { implicit app =>
         val request =
           addToken(
-            FakeRequest(routes.IndividualAddressListController.onSubmit(NormalMode, Index(0)))
+            FakeRequest(routes.IndividualAddressListController.onSubmit(NormalMode, Index(0), None))
               .withFormUrlEncodedBody(("value", "0"))
           )
 
         val result = route(app, request).value
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.IndividualPostCodeLookupController.onPageLoad(NormalMode, Index(0)).url)
+        redirectLocation(result) mustBe Some(routes.IndividualPostCodeLookupController.onPageLoad(NormalMode, Index(0), None).url)
       }
 
     }
@@ -197,8 +197,8 @@ class IndividualAddressListControllerSpec extends ControllerSpecBase with CSRFRe
 
   private def addressListViewModel(addresses: Seq[TolerantAddress]): AddressListViewModel = {
     AddressListViewModel(
-      routes.IndividualAddressListController.onSubmit(NormalMode, Index(0)),
-      routes.TrusteeAddressController.onPageLoad(NormalMode, Index(0)),
+      routes.IndividualAddressListController.onSubmit(NormalMode, Index(0), None),
+      routes.TrusteeAddressController.onPageLoad(NormalMode, Index(0), None),
       addresses,
       subHeading = Some(Message(trusteeDetails.fullName))
     )

@@ -81,7 +81,7 @@ class PartnershipPreviousAddressControllerSpec extends ControllerSpecBase with S
       frontendAppConfig,
       form,
       ManualAddressViewModel(
-        routes.PartnershipPreviousAddressController.onSubmit(NormalMode, index),
+        routes.PartnershipPreviousAddressController.onSubmit(NormalMode, index, None),
         options,
         Message("messages__partnershipPreviousAddress__title"),
         Message("messages__partnershipPreviousAddress__heading"),

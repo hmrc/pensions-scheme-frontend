@@ -27,16 +27,16 @@ class MoreThanTenTrusteesViewSpec extends YesNoViewBehaviours {
 
   val messageKeyPrefix = "moreThanTenTrustees"
   val form = new MoreThanTenTrusteesFormProvider()()
+  val submitUrl = controllers.register.trustees.routes.MoreThanTenTrusteesController.onSubmit(NormalMode, None)
+  private def createView() = () => moreThanTenTrustees(frontendAppConfig, form, NormalMode, None, submitUrl)(fakeRequest, messages)
 
-  private def createView() = () => moreThanTenTrustees(frontendAppConfig, form, NormalMode, None)(fakeRequest, messages)
-
-  private def createViewUsingForm = (form: Form[_]) => moreThanTenTrustees(frontendAppConfig, form, NormalMode, None)(fakeRequest, messages)
+  private def createViewUsingForm = (form: Form[_]) => moreThanTenTrustees(frontendAppConfig, form, NormalMode, None, submitUrl)(fakeRequest, messages)
 
   "MoreThanTenTrustees view" must {
 
     behave like normalPage(createView(), messageKeyPrefix, messages("messages__moreThanTenTrustees__heading"))
 
-    behave like yesNoPage(createViewUsingForm, messageKeyPrefix, routes.MoreThanTenTrusteesController.onSubmit(NormalMode).url, expectedHintKey = Some("_hint"))
+    behave like yesNoPage(createViewUsingForm, messageKeyPrefix, routes.MoreThanTenTrusteesController.onSubmit(NormalMode, None).url, expectedHintKey = Some("_hint"))
 
     behave like pageWithReturnLink(createView(), getReturnLink)
   }

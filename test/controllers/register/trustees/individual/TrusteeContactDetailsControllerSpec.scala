@@ -118,7 +118,7 @@ object TrusteeContactDetailsControllerSpec extends ControllerSpecBase {
   private val form = formProvider()
 
   private def viewmodel(mode: Mode, index: Index, trusteeName: String) = ContactDetailsViewModel(
-    postCall = routes.TrusteeContactDetailsController.onSubmit(mode, index),
+    postCall = routes.TrusteeContactDetailsController.onSubmit(mode, index, None),
     title = Message("messages__trustee_contact_details__title"),
     heading = Message("messages__trustee_contact_details__heading"),
     body = Message("messages__contact_details__body"),

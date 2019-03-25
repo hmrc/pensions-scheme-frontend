@@ -40,13 +40,13 @@ class AddTrusteeControllerSpec extends ControllerSpecBase {
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
   def editTrusteeCompanyRoute(id: Int): String =
-    controllers.register.trustees.company.routes.CompanyDetailsController.onPageLoad(NormalMode, id).url
+    controllers.register.trustees.company.routes.CompanyDetailsController.onPageLoad(NormalMode, id, None).url
 
   def editTrusteeIndividualRoute(id: Int): String =
-    controllers.register.trustees.individual.routes.TrusteeDetailsController.onPageLoad(NormalMode, id).url
+    controllers.register.trustees.individual.routes.TrusteeDetailsController.onPageLoad(NormalMode, id, None).url
 
   def deleteTrusteeRoute(id: Int, kind: TrusteeKind): String =
-    controllers.register.trustees.routes.ConfirmDeleteTrusteeController.onPageLoad(id, kind).url
+    controllers.register.trustees.routes.ConfirmDeleteTrusteeController.onPageLoad(NormalMode, id, kind, None).url
 
   val formProvider = new AddTrusteeFormProvider()
   val schemeName = "Test Scheme Name"
@@ -80,8 +80,9 @@ class AddTrusteeControllerSpec extends ControllerSpecBase {
     new AddTrusteeController(frontendAppConfig, messagesApi, FakeUserAnswersCacheConnector, new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
       dataRetrievalAction, new DataRequiredActionImpl, formProvider)
 
+  val submitUrl = controllers.register.trustees.routes.AddTrusteeController.onSubmit(NormalMode, None)
   def viewAsString(form: Form[_] = form, trustees: Seq[Trustee[_]] = Seq.empty): String =
-    addTrustee(frontendAppConfig, form, NormalMode, trustees, None)(fakeRequest, messages).toString
+    addTrustee(frontendAppConfig, form, NormalMode, trustees, None, submitUrl)(fakeRequest, messages).toString
 
   val testAnswer = "answer"
 

@@ -134,7 +134,7 @@ object TrusteeAddressYearsControllerSpec extends ControllerSpecBase {
 
   private val viewModel =
     AddressYearsViewModel(
-      postCall = controllers.register.trustees.individual.routes.TrusteeAddressYearsController.onSubmit(mode, index),
+      postCall = controllers.register.trustees.individual.routes.TrusteeAddressYearsController.onSubmit(mode, index, None),
       title = Message("messages__trusteeAddressYears__title"),
       heading = Message("messages__trusteeAddressYears__heading"),
       legend = Message("messages__trusteeAddressYears__title"),

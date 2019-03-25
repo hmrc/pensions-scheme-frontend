@@ -56,8 +56,8 @@ class HaveAnyTrusteesControllerSpec extends ControllerSpecBase {
   def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): HaveAnyTrusteesController =
     new HaveAnyTrusteesController(frontendAppConfig, messagesApi, FakeUserAnswersCacheConnector, new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
       dataRetrievalAction, formProvider)
-
-  def viewAsString(form: Form[_] = form): String = haveAnyTrustees(frontendAppConfig, form, NormalMode, None)(fakeRequest, messages).toString
+  val submitUrl = controllers.register.trustees.routes.HaveAnyTrusteesController.onSubmit(NormalMode, None)
+  def viewAsString(form: Form[_] = form): String = haveAnyTrustees(frontendAppConfig, form, NormalMode, None, submitUrl)(fakeRequest, messages).toString
 
   "HaveAnyTrustees Controller" must {
 

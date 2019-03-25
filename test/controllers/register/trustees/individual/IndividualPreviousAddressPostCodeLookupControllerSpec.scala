@@ -52,7 +52,7 @@ class IndividualPreviousAddressPostCodeLookupControllerSpec extends ControllerSp
   "IndividualPreviousAddressPostCodeLookup Controller" must {
     "render postCodeLookup from a GET request" in {
       requestResult(
-        implicit app => addToken(FakeRequest(routes.IndividualPreviousAddressPostcodeLookupController.onPageLoad(NormalMode, firstIndex))),
+        implicit app => addToken(FakeRequest(routes.IndividualPreviousAddressPostcodeLookupController.onPageLoad(NormalMode, firstIndex, None))),
         (request, result) => {
           status(result) mustBe OK
           contentAsString(result) mustBe postcodeLookup(frontendAppConfig, form, viewModel, None)(request, messages).toString()
@@ -63,7 +63,7 @@ class IndividualPreviousAddressPostCodeLookupControllerSpec extends ControllerSp
     "redirect to next page on POST request" which {
       "returns a list of addresses from addressLookup given a postcode" in {
         requestResult(
-          implicit app => addToken(FakeRequest(routes.IndividualPreviousAddressPostcodeLookupController.onSubmit(NormalMode, firstIndex))
+          implicit app => addToken(FakeRequest(routes.IndividualPreviousAddressPostcodeLookupController.onSubmit(NormalMode, firstIndex, None))
             .withFormUrlEncodedBody("value" -> validPostcode)),
           (_, result) => {
             status(result) mustBe SEE_OTHER
@@ -88,8 +88,8 @@ object IndividualPreviousAddressPostCodeLookupControllerSpec extends ControllerS
   val address = TolerantAddress(Some("address line 1"), Some("address line 2"), None, None, Some(validPostcode), Some("GB"))
 
   lazy val viewModel = PostcodeLookupViewModel(
-    postCall = routes.IndividualPreviousAddressPostcodeLookupController.onSubmit(NormalMode, firstIndex),
-    manualInputCall = routes.TrusteePreviousAddressController.onPageLoad(NormalMode, firstIndex),
+    postCall = routes.IndividualPreviousAddressPostcodeLookupController.onSubmit(NormalMode, firstIndex, None),
+    manualInputCall = routes.TrusteePreviousAddressController.onPageLoad(NormalMode, firstIndex, None),
     title = Message("messages__trustee_individual_previous_address__title"),
     heading = Message("messages__trustee_individual_previous_address__heading"),
     subHeading = Some(personDetails.fullName),

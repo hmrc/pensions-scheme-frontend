@@ -48,7 +48,7 @@ class CompanyAddressYearsControllerSpec extends ControllerSpecBase {
   )))
 
   val viewmodel = AddressYearsViewModel(
-    postCall = routes.CompanyAddressYearsController.onSubmit(NormalMode, firstIndex),
+    postCall = routes.CompanyAddressYearsController.onSubmit(NormalMode, firstIndex, None),
     title = Message(questionText),
     heading = Message(questionText),
     legend = Message(questionText),
