@@ -106,16 +106,11 @@ class UserAnswersServiceSpec extends AsyncWordSpec with MustMatchers with WireMo
     "save data with updateSchemeCacheConnector in UpdateMode" in {
 
       val json = Json.obj(
-        "fake-identifier" -> "foobar"
-      )
-
-      val updatedJson = Json.obj(
         "fake-identifier" -> "foobar",
         "changeOfEstablisherOrTrustDetails" -> true
       )
 
       val value = Json.stringify(json)
-      val updatedValue = Json.stringify(updatedJson)
 
       server.stubFor(
         get(urlEqualTo(urlUpdate(srn)))
@@ -126,14 +121,14 @@ class UserAnswersServiceSpec extends AsyncWordSpec with MustMatchers with WireMo
 
       server.stubFor(
         post(urlEqualTo(urlUpdate(srn)))
-          .withRequestBody(equalTo(updatedValue))
+          .withRequestBody(equalTo(value))
           .willReturn(
             ok
           )
       )
 
       service.save(UpdateMode, Some(srn), FakeIdentifier, "foobar") map {result =>
-        result mustEqual updatedJson
+        result mustEqual json
       }
     }
 
@@ -169,6 +164,39 @@ class UserAnswersServiceSpec extends AsyncWordSpec with MustMatchers with WireMo
       )
 
       service.remove(NormalMode, None, FakeIdentifier) map {
+        _ mustEqual updatedJson
+      }
+    }
+
+    "remove existing data in UpdateMode/ CheckUpdateMode" in {
+      val json = Json.obj(
+        FakeIdentifier.toString -> "fake value",
+        "other-key" -> "meh"
+      )
+
+      val updatedJson = Json.obj(
+        "other-key" -> "meh"
+      )
+
+      val value = Json.stringify(json)
+      val updatedValue = Json.stringify(updatedJson)
+
+      server.stubFor(
+        get(urlEqualTo(urlUpdate(srn)))
+          .willReturn(
+            ok(value)
+          )
+      )
+
+      server.stubFor(
+        post(urlEqualTo(urlUpdate(srn)))
+          .withRequestBody(equalTo(updatedValue))
+          .willReturn(
+            ok
+          )
+      )
+
+      service.remove(UpdateMode, Some(srn), FakeIdentifier) map {
         _ mustEqual updatedJson
       }
     }
