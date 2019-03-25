@@ -72,7 +72,7 @@ object InsurancePolicyNumberControllerSpec {
 
   val policyNumber = "test policy number"
   val companyName = "test company name"
-
+  private def postUrl = routes.InsurancePolicyNumberController.onSubmit(NormalMode, None)
   private val formProvider = new InsurancePolicyNumberFormProvider()
   private val form = formProvider.apply()
   private val mandatoryData = UserAnswers().insuranceCompanyName(companyName)
@@ -83,7 +83,7 @@ object InsurancePolicyNumberControllerSpec {
     FakeRequest().withFormUrlEncodedBody(("policyNumber", policyNumber))
 
   private def viewAsString(base: SpecBase)(form: Form[_] = form): Form[_] => String = form =>
-    insurancePolicyNumber(base.frontendAppConfig, form, NormalMode, companyName, None)(base.fakeRequest, base.messages).toString()
+    insurancePolicyNumber(base.frontendAppConfig, form, NormalMode, companyName, None, postUrl)(base.fakeRequest, base.messages).toString()
 
   private def controller(base: ControllerSpecBase)(
     dataRetrievalAction: DataRetrievalAction = base.getEmptyData,
@@ -103,7 +103,7 @@ object InsurancePolicyNumberControllerSpec {
     )
 
   private def onPageLoadAction(base: ControllerSpecBase)(dataRetrievalAction: DataRetrievalAction, authAction: AuthAction): Action[AnyContent] =
-    controller(base)(dataRetrievalAction, authAction).onPageLoad(NormalMode)
+    controller(base)(dataRetrievalAction, authAction).onPageLoad(NormalMode, None)
 
   private def onSubmitAction(base: ControllerSpecBase, navigator: Navigator)(dataRetrievalAction: DataRetrievalAction,
                                                                              authAction: AuthAction): Action[AnyContent] =

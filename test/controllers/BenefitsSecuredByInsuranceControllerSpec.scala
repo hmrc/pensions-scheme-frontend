@@ -17,7 +17,6 @@
 package controllers
 
 import base.SpecBase
-import connectors.{FakeUserAnswersCacheConnector, UserAnswersCacheConnector}
 import controllers.actions.{AuthAction, DataRequiredActionImpl, DataRetrievalAction, FakeAuthAction}
 import controllers.behaviours.ControllerWithQuestionPageBehaviours
 import forms.BenefitsSecuredByInsuranceFormProvider
@@ -27,6 +26,7 @@ import play.api.data.Form
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, AnyContentAsFormUrlEncoded}
 import play.api.test.FakeRequest
+import services.{FakeUserAnswersService, UserAnswersService}
 import utils.{FakeNavigator, Navigator, UserAnswers}
 import views.html.benefitsSecuredByInsurance
 
@@ -55,7 +55,7 @@ class BenefitsSecuredByInsuranceControllerSpec extends ControllerWithQuestionPag
       postRequest
     )
 
-    behave like controllerThatSavesUserAnswers(
+    behave like controllerThatSavesUserAnswersWithService(
       saveAction(this),
       postRequest,
       BenefitsSecuredByInsuranceId,
@@ -71,15 +71,16 @@ object BenefitsSecuredByInsuranceControllerSpec {
     SchemeNameId.toString -> "Test Scheme Name")).benefitsSecuredByInsurance(true)
   private val postRequest: FakeRequest[AnyContentAsFormUrlEncoded] =
     FakeRequest().withFormUrlEncodedBody(("value", "true"))
+  private val postCall = controllers.routes.BenefitsSecuredByInsuranceController.onSubmit(NormalMode, None)
 
   private def viewAsString(base: SpecBase)(form: Form[_] = form): Form[_] => String = form =>
-    benefitsSecuredByInsurance(base.frontendAppConfig, form, NormalMode, Some("Test Scheme Name"))(base.fakeRequest, base.messages).toString()
+    benefitsSecuredByInsurance(base.frontendAppConfig, form, NormalMode, Some("Test Scheme Name"), postCall)(base.fakeRequest, base.messages).toString()
 
   private def controller(base: ControllerSpecBase)(
     dataRetrievalAction: DataRetrievalAction = base.getEmptyData,
     authAction: AuthAction = FakeAuthAction,
     navigator: Navigator = FakeNavigator,
-    cache: UserAnswersCacheConnector = FakeUserAnswersCacheConnector
+    cache: UserAnswersService = FakeUserAnswersService
   ): BenefitsSecuredByInsuranceController =
     new BenefitsSecuredByInsuranceController(
       base.frontendAppConfig,
@@ -93,14 +94,14 @@ object BenefitsSecuredByInsuranceControllerSpec {
     )
 
   private def onPageLoadAction(base: ControllerSpecBase)(dataRetrievalAction: DataRetrievalAction, authAction: AuthAction): Action[AnyContent] =
-    controller(base)(dataRetrievalAction, authAction).onPageLoad(NormalMode)
+    controller(base)(dataRetrievalAction, authAction).onPageLoad(NormalMode, None)
 
   private def onSubmitAction(base: ControllerSpecBase, navigator: Navigator)(dataRetrievalAction: DataRetrievalAction,
                                                                              authAction: AuthAction): Action[AnyContent] =
-    controller(base)(dataRetrievalAction, authAction, navigator).onSubmit(NormalMode)
+    controller(base)(dataRetrievalAction, authAction, navigator).onSubmit(NormalMode, None)
 
-  private def saveAction(base: ControllerSpecBase)(cache: UserAnswersCacheConnector): Action[AnyContent] =
-    controller(base)(cache = cache).onSubmit(NormalMode)
+  private def saveAction(base: ControllerSpecBase)(cache: UserAnswersService): Action[AnyContent] =
+    controller(base)(cache = cache).onSubmit(NormalMode, None)
 }
 
 

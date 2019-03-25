@@ -17,7 +17,6 @@
 package controllers
 
 import config.FrontendAppConfig
-import connectors.UserAnswersCacheConnector
 import controllers.actions._
 import forms.InsurancePolicyNumberFormProvider
 import identifiers.{InsuranceCompanyNameId, InsurancePolicyNumberId}
@@ -25,7 +24,7 @@ import javax.inject.Inject
 import models.Mode
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent}
+import play.api.mvc.{Action, AnyContent, Call}
 import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.{AboutBenefitsAndInsurance, InsuranceService}
@@ -46,14 +45,17 @@ class InsurancePolicyNumberController @Inject()(appConfig: FrontendAppConfig,
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+
+  def postCall: (Mode,Option[String]) => Call = routes.InsurancePolicyNumberController.onSubmit
+
+  def onPageLoad(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       InsuranceCompanyNameId.retrieve.right.map { companyName =>
         val preparedForm = request.userAnswers.get(InsurancePolicyNumberId) match {
           case None => form
           case Some(value) => form.fill(value)
         }
-        Future.successful(Ok(insurancePolicyNumber(appConfig, preparedForm, mode, companyName, existingSchemeName)))
+        Future.successful(Ok(insurancePolicyNumber(appConfig, preparedForm, mode, companyName, existingSchemeName, postCall(mode, srn))))
       }
   }
 
@@ -62,7 +64,7 @@ class InsurancePolicyNumberController @Inject()(appConfig: FrontendAppConfig,
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) =>
           InsuranceCompanyNameId.retrieve.right.map { companyName =>
-            Future.successful(BadRequest(insurancePolicyNumber(appConfig, formWithErrors, mode, companyName, existingSchemeName)))
+            Future.successful(BadRequest(insurancePolicyNumber(appConfig, formWithErrors, mode, companyName, existingSchemeName, postCall(mode, srn))))
           },
         value =>
           userAnswersService.save(mode, srn, InsurancePolicyNumberId, value).map(cacheMap =>
