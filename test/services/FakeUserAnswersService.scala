@@ -105,16 +105,11 @@ trait FakeUserAnswersService extends UserAnswersService with Matchers {
 object FakeUserAnswersService extends FakeUserAnswersService {
 
   object FakeSubscriptionCacheConnector extends SpecBase {
-
-    def getConnector = new SubscriptionCacheConnector(frontendAppConfig, injector.instanceOf[WSClient]) {
-    }
+    def getConnector: SubscriptionCacheConnector = new SubscriptionCacheConnector(frontendAppConfig, injector.instanceOf[WSClient])
   }
 
   object FakeUpdateCacheConnector extends SpecBase {
-
-    def getConnector = new UpdateSchemeCacheConnector(frontendAppConfig, injector.instanceOf[WSClient]) {
-
-    }
+    def getConnector: UpdateSchemeCacheConnector =new UpdateSchemeCacheConnector(frontendAppConfig, injector.instanceOf[WSClient])
   }
 }
 

@@ -16,12 +16,11 @@
 
 package models
 
-import play.api.mvc.PathBindable
+import play.api.mvc._
 
-import scala.language.implicitConversions
+object OptionBinder {
 
-object OptionString {
-  implicit def OptionBindable[T : PathBindable]: PathBindable[Option[T]] = new PathBindable[Option[T]] {
+  implicit def optionBindable[T: PathBindable]: PathBindable[Option[T]] = new PathBindable[Option[T]] {
     def bind(key: String, value: String): Either[String, Option[T]] =
       implicitly[PathBindable[T]].
         bind(key, value).
@@ -33,5 +32,3 @@ object OptionString {
     def unbind(key: String, value: Option[T]): String = value map (_.toString) getOrElse ""
   }
 }
-
-

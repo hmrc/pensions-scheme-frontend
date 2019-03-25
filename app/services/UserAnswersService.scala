@@ -16,9 +16,10 @@
 
 package services
 
-import com.google.inject.Inject
+import com.google.inject.{ImplementedBy, Inject}
 import connectors.{SubscriptionCacheConnector, UpdateSchemeCacheConnector}
 import identifiers.{EstablishersOrTrusteesChangedId, InsuranceDetailsChangedId, TypedIdentifier}
+import javax.inject.Singleton
 import models._
 import models.requests.DataRequest
 import play.api.libs.json.{Format, JsValue}
@@ -76,6 +77,7 @@ trait UserAnswersService {
     }
 }
 
+@Singleton
 class UserAnswersServiceImpl @Inject()(override val subscriptionCacheConnector: SubscriptionCacheConnector,
                                        override val updateSchemeCacheConnector: UpdateSchemeCacheConnector) extends UserAnswersService {
 
@@ -85,6 +87,7 @@ class UserAnswersServiceImpl @Inject()(override val subscriptionCacheConnector: 
     save(mode: Mode, srn: Option[String], id: I, value: A, EstablishersOrTrusteesChangedId)
 }
 
+@Singleton
 class UserAnswersServiceInsuranceImpl @Inject()(override val subscriptionCacheConnector: SubscriptionCacheConnector,
                                                 override val updateSchemeCacheConnector: UpdateSchemeCacheConnector) extends UserAnswersService {
   override def save[A, I <: TypedIdentifier[A]](mode: Mode, srn: Option[String], id: I, value: A)
