@@ -26,7 +26,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import scala.collection.mutable
 import scala.concurrent.{ExecutionContext, Future}
 
-trait FakeUserAnswersCacheConnector extends ICacheConnector with Matchers {
+trait FakeUserAnswersCacheConnector extends UserAnswersCacheConnector with Matchers {
 
   private val data: mutable.HashMap[String, JsValue] = mutable.HashMap()
   private val removed: mutable.ListBuffer[String] = mutable.ListBuffer()

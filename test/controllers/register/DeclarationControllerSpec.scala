@@ -145,6 +145,7 @@ class DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar wit
             eqTo(Map("srn" -> "S12345 67890")),
             eqTo(psaId)
           )(any(), any())
+
         }
       }
     }
@@ -317,6 +318,7 @@ object DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar {
 
   private val mockEmailConnector = mock[EmailConnector]
   private val applicationCrypto = injector.instanceOf[ApplicationCrypto]
+
 
   private val validSchemeSubmissionResponse = SchemeSubmissionResponse("S1234567890")
 

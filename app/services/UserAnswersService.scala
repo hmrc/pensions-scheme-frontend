@@ -51,9 +51,10 @@ trait UserAnswersService {
       case UpdateMode | CheckUpdateMode =>
         srn match {
           case Some(srnId) =>
-            updateSchemeCacheConnector.save(srnId, id, value).flatMap { _ =>
-              updateSchemeCacheConnector.save(srnId, changeId, true)
-            }
+            val answers = request.userAnswers.set(id)(value).flatMap {
+              _.set(changeId)(true)
+            }.asOpt.getOrElse(request.userAnswers)
+            updateSchemeCacheConnector.upsert(srnId, answers.json)
           case _ => Future.failed(throw new MissingSrnNumber)
         }
     }

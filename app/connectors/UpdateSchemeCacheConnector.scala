@@ -25,7 +25,7 @@ import play.api.libs.ws.WSClient
 class UpdateSchemeCacheConnector @Inject()(
                                             override val config: FrontendAppConfig,
                                             override val http: WSClient
-                                          ) extends UserAnswersCacheConnector {
+                                          ) extends CacheConnector {
 
   override protected def url(id: String) = s"${config.pensionsSchemeUrl}/pensions-scheme/journey-cache/update-scheme/$id"
 

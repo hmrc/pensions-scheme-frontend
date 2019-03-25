@@ -111,7 +111,7 @@ class UserAnswersServiceSpec extends AsyncWordSpec with MustMatchers with WireMo
 
       val updatedJson = Json.obj(
         "fake-identifier" -> "foobar",
-        "changeOfEstablisherOrTrustDetails" -> "true"
+        "changeOfEstablisherOrTrustDetails" -> true
       )
 
       val value = Json.stringify(json)
@@ -133,7 +133,6 @@ class UserAnswersServiceSpec extends AsyncWordSpec with MustMatchers with WireMo
       )
 
       service.save(UpdateMode, Some(srn), FakeIdentifier, "foobar") map {result =>
-        println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"+result)
         result mustEqual updatedJson
       }
     }
