@@ -75,8 +75,10 @@ object InsuranceCompanyNameControllerSpec extends SpecBase {
   private val postRequest: FakeRequest[AnyContentAsFormUrlEncoded] =
     FakeRequest().withFormUrlEncodedBody(("companyName", companyName))
 
+  private val submitCall = controllers.routes.InsuranceCompanyNameController.onSubmit(NormalMode, None)
+
   private def viewAsString(base: SpecBase)(form: Form[_] = form): Form[_] => String = form =>
-    insuranceCompanyName(base.frontendAppConfig, form, NormalMode, Some(schemeName))(base.fakeRequest, base.messages).toString()
+    insuranceCompanyName(base.frontendAppConfig, form, NormalMode, Some(schemeName), submitCall)(base.fakeRequest, base.messages).toString()
 
   private def controller(base: ControllerSpecBase)(
     dataRetrievalAction: DataRetrievalAction = base.getEmptyData,

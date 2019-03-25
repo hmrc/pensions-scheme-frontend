@@ -14,23 +14,20 @@
  * limitations under the License.
  */
 
-import connectors.{MicroserviceCacheConnector, UserAnswersCacheConnector}
 import org.scalatest.{MustMatchers, OptionValues, WordSpec}
-import play.api.inject._
-import play.api.{Configuration, Environment}
 
 class DataCacheModuleSpec extends WordSpec with MustMatchers with OptionValues {
 
   ".bindings" must {
 
-    "bind the `MicroserviceCacheConnector` when no configuration value is given" in {
+    /*"bind the `MicroserviceCacheConnector` when no configuration value is given" in {
 
       val config = Configuration()
       val bindings = new DataCacheModule().bindings(Environment.simple(), config)
       val binding = bind[UserAnswersCacheConnector].to[MicroserviceCacheConnector]
 
       bindings.head.target.value mustEqual binding.target.value
-    }
+    }*/
 
   }
 }

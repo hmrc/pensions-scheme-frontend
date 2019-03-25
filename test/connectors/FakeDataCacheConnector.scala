@@ -26,7 +26,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import scala.collection.mutable
 import scala.concurrent.{ExecutionContext, Future}
 
-trait FakeUserAnswersCacheConnector extends UserAnswersCacheConnector with Matchers {
+trait FakeUserAnswersCacheConnector extends ICacheConnector with Matchers {
 
   private val data: mutable.HashMap[String, JsValue] = mutable.HashMap()
   private val removed: mutable.ListBuffer[String] = mutable.ListBuffer()
@@ -41,12 +41,12 @@ trait FakeUserAnswersCacheConnector extends UserAnswersCacheConnector with Match
     Future.successful(Json.obj())
   }
 
-  def upsert(cacheId: String, value: JsValue)
+  override def upsert(cacheId: String, value: JsValue)
             (implicit ec: ExecutionContext, hc: HeaderCarrier): Future[JsValue] = {
     Future.successful(value)
   }
 
-  def remove[I <: TypedIdentifier[_]](cacheId: String, id: I)
+  override def remove[I <: TypedIdentifier[_]](cacheId: String, id: I)
                                      (implicit
                                       ec: ExecutionContext,
                                       hc: HeaderCarrier

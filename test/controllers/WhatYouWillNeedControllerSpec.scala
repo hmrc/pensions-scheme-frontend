@@ -16,29 +16,25 @@
 
 package controllers
 
-import connectors.{FakeUserAnswersCacheConnector, PSANameCacheConnector}
+import connectors.FakeUserAnswersCacheConnector
 import controllers.actions._
-import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.mockito.MockitoSugar
 import play.api.test.Helpers._
 import uk.gov.hmrc.crypto.ApplicationCrypto
 
 class WhatYouWillNeedControllerSpec extends ControllerSpecBase with MockitoSugar with BeforeAndAfterEach {
-  private val fakePsaNameCacheConnector = mock[PSANameCacheConnector]
   private val applicationCrypto = injector.instanceOf[ApplicationCrypto]
 
   private def controller(): WhatYouWillNeedController =
     new WhatYouWillNeedController(frontendAppConfig,
       messagesApi,
       FakeAuthAction,
-      fakePsaNameCacheConnector,
       applicationCrypto,
       FakeUserAnswersCacheConnector
     )
 
   override def beforeEach(): Unit = {
-    reset(fakePsaNameCacheConnector)
     super.beforeEach()
   }
 

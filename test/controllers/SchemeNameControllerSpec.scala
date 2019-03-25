@@ -42,7 +42,7 @@ class SchemeNameControllerSpec extends ControllerSpecBase {
   val config: FrontendAppConfig = injector.instanceOf[FrontendAppConfig]
   val pensionAdministratorConnector: PensionAdministratorConnector = injector.instanceOf[PensionAdministratorConnector]
 
-  object FakeNameMatchingFactory extends NameMatchingFactory(FakeUserAnswersCacheConnector, pensionAdministratorConnector, crypto, config) {
+  object FakeNameMatchingFactory extends NameMatchingFactory(pensionAdministratorConnector, crypto, config) {
     override def nameMatching(schemeName: String)
                              (implicit request: OptionalDataRequest[AnyContent],
                               ec: ExecutionContext,

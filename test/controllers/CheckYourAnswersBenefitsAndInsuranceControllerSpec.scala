@@ -109,7 +109,7 @@ object CheckYourAnswersBenefitsAndInsuranceControllerSpec extends ControllerSpec
         messages("insuranceCompanyName.checkYourAnswersLabel"),
         Seq(insuranceCompanyName),
         answerIsMessageKey = false,
-        Some(routes.InsuranceCompanyNameController.onPageLoad(CheckMode).url),
+        Some(routes.InsuranceCompanyNameController.onPageLoad(CheckMode, None).url),
         messages("messages__visuallyhidden__insuranceCompanyName")
       ),
       AnswerRow(

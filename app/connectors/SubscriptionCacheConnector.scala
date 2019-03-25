@@ -22,12 +22,12 @@ import javax.inject.Singleton
 import play.api.libs.ws.WSClient
 
 @Singleton
-class UpdateSchemeCacheConnector @Inject()(
-                                            override val config: FrontendAppConfig,
-                                            override val http: WSClient
-                                          ) extends UserAnswersCacheConnector {
+class SubscriptionCacheConnector @Inject()(
+                                               override val config: FrontendAppConfig,
+                                               override val http: WSClient
+                                             ) extends UserAnswersCacheConnector {
 
-  override protected def url(id: String) = s"${config.pensionsSchemeUrl}/pensions-scheme/journey-cache/update-scheme/$id"
+  override protected def url(id: String) = s"${config.pensionsSchemeUrl}/pensions-scheme/journey-cache/scheme/$id"
 
-  override protected def lastUpdatedUrl(id: String) = s"${config.pensionsSchemeUrl}/pensions-scheme/journey-cache/update-scheme/$id"
+  override protected def lastUpdatedUrl(id: String) = s"${config.pensionsSchemeUrl}/pensions-scheme/journey-cache/scheme/$id/lastUpdated"
 }

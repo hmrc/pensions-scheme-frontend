@@ -16,31 +16,28 @@
 
 package connectors
 
-import com.google.inject.Inject
 import config.FrontendAppConfig
 import identifiers.TypedIdentifier
-import models.{Mode, NormalMode}
 import models.requests.DataRequest
 import play.api.Logger
 import play.api.http.Status._
 import play.api.libs.json._
 import play.api.libs.ws.WSClient
-import play.api.mvc.{AnyContent, Result}
 import play.api.mvc.Results._
+import play.api.mvc.{AnyContent, Result}
 import uk.gov.hmrc.crypto.PlainText
 import uk.gov.hmrc.http._
 import utils.UserAnswers
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class UserAnswersCacheConnector @Inject()(
-                                            val config: FrontendAppConfig,
-                                            val http: WSClient
-                                          ){
+trait UserAnswersCacheConnector extends ICacheConnector{
 
-  protected def url(id: String) = s"${config.pensionsSchemeUrl}/pensions-scheme/journey-cache/scheme/$id"
+  val config: FrontendAppConfig
+  val http: WSClient
+  protected def url(id: String): String
 
-  protected def lastUpdatedUrl(id: String) = s"${config.pensionsSchemeUrl}/pensions-scheme/journey-cache/scheme/$id/lastUpdated"
+  protected def lastUpdatedUrl(id: String): String
 
   def save[A, I <: TypedIdentifier[A]](id: I, value: A)
                                       (implicit
@@ -52,7 +49,7 @@ class UserAnswersCacheConnector @Inject()(
     save(request.externalId, id, value).map(UserAnswers)
   }
 
-  def save[A, I <: TypedIdentifier[A]](cacheId: String, id: I, value: A)
+  override def save[A, I <: TypedIdentifier[A]](cacheId: String, id: I, value: A)
                                                (implicit
                                                 fmt: Format[A],
                                                 ec: ExecutionContext,
@@ -61,10 +58,10 @@ class UserAnswersCacheConnector @Inject()(
     modify(cacheId, _.set(id)(value))
   }
 
-  def upsert(cacheId: String, value: JsValue)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[JsValue] =
+  override  def upsert(cacheId: String, value: JsValue)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[JsValue] =
     modify(cacheId, _ => JsSuccess(UserAnswers(value)))
 
-  def remove[I <: TypedIdentifier[_]](cacheId: String, id: I)
+  override def remove[I <: TypedIdentifier[_]](cacheId: String, id: I)
                                      (implicit
                                       ec: ExecutionContext,
                                       hc: HeaderCarrier
@@ -72,7 +69,7 @@ class UserAnswersCacheConnector @Inject()(
     modify(cacheId, _.remove(id))
   }
 
-  private[connectors] def modify(cacheId: String, modification: (UserAnswers) => JsResult[UserAnswers])
+  private[connectors] def modify(cacheId: String, modification: UserAnswers => JsResult[UserAnswers])
                                 (implicit
                                  ec: ExecutionContext,
                                  hc: HeaderCarrier
@@ -99,7 +96,7 @@ class UserAnswersCacheConnector @Inject()(
     }
   }
 
-  def fetch(id: String)(implicit
+  override def fetch(id: String)(implicit
                                  ec: ExecutionContext,
                                  hc: HeaderCarrier
   ): Future[Option[JsValue]] = {
@@ -120,13 +117,13 @@ class UserAnswersCacheConnector @Inject()(
       }
   }
 
-  def removeAll(id: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Result] = {
+  override def removeAll(id: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Result] = {
     http.url(url(id))
       .withHeaders(hc.headers: _*)
       .delete().map(_ => Ok)
   }
 
-  def lastUpdated(id: String)(implicit
+  override def lastUpdated(id: String)(implicit
                                        ec: ExecutionContext,
                                        hc: HeaderCarrier
   ): Future[Option[JsValue]] = {
@@ -138,10 +135,9 @@ class UserAnswersCacheConnector @Inject()(
         response.status match {
           case NOT_FOUND =>
             Future.successful(None)
-          case OK => {
+          case OK =>
             Logger.debug(s"connectors.MicroserviceCacheConnector.fetch: Successful response: ${response.body}")
             Future.successful(Some(Json.parse(response.body)))
-          }
           case _ =>
             Future.failed(new HttpException(response.body, response.status))
         }

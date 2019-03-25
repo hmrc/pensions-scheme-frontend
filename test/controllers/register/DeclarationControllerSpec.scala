@@ -137,8 +137,7 @@ class DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar wit
 
         val postRequest = fakeRequest.withFormUrlEncodedBody("agree" -> "agreed")
 
-        whenReady(controller(nonDormantCompany, fakeEmailConnector = mockEmailConnector,
-          fakePsaNameCacheConnector = mockPSANameCacheConnector).onSubmit(postRequest)) { _ =>
+        whenReady(controller(nonDormantCompany, fakeEmailConnector = mockEmailConnector).onSubmit(postRequest)) { _ =>
 
           verify(mockEmailConnector, times(1)).sendEmail(
             eqTo("email@test.com"),
@@ -146,9 +145,6 @@ class DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar wit
             eqTo(Map("srn" -> "S12345 67890")),
             eqTo(psaId)
           )(any(), any())
-
-          verifyZeroInteractions(mockPSANameCacheConnector)
-
         }
       }
     }
@@ -204,8 +200,7 @@ object DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar {
   val psaId = PsaId("A0000000")
 
   private def controller(dataRetrievalAction: DataRetrievalAction,
-                         fakeEmailConnector: EmailConnector = fakeEmailConnector,
-                         fakePsaNameCacheConnector: PSANameCacheConnector = fakePsaNameCacheConnector
+                         fakeEmailConnector: EmailConnector = fakeEmailConnector
                         ): DeclarationController =
     new DeclarationController(
       frontendAppConfig,
@@ -218,7 +213,6 @@ object DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar {
       formProvider,
       fakePensionsSchemeConnector,
       fakeEmailConnector,
-      fakePsaNameCacheConnector,
       applicationCrypto,
       fakePensionAdminstratorConnector
     )
@@ -321,29 +315,8 @@ object DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar {
     }
   }
 
-  private val mockPSANameCacheConnector = mock[PSANameCacheConnector]
   private val mockEmailConnector = mock[EmailConnector]
   private val applicationCrypto = injector.instanceOf[ApplicationCrypto]
-
-  object fakePsaNameCacheConnector extends PSANameCacheConnector(
-    frontendAppConfig,
-    mock[WSClient]
-  ) with FakeUserAnswersCacheConnector {
-
-    override def fetch(cacheId: String)(implicit
-                                        ec: ExecutionContext,
-                                        hc: HeaderCarrier): Future[Option[JsValue]] = Future.successful(Some(Json.obj("psaName" -> "Test",
-      "psaEmail" -> "email@test.com")))
-
-    override def upsert(cacheId: String, value: JsValue)
-                       (implicit ec: ExecutionContext, hc: HeaderCarrier): Future[JsValue] = Future.successful(value)
-
-    override def remove[I <: TypedIdentifier[_]](cacheId: String, id: I)
-                                                (implicit
-                                                 ec: ExecutionContext,
-                                                 hc: HeaderCarrier
-                                                ): Future[JsValue] = ???
-  }
 
   private val validSchemeSubmissionResponse = SchemeSubmissionResponse("S1234567890")
 

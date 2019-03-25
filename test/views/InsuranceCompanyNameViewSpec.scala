@@ -29,16 +29,18 @@ class InsuranceCompanyNameViewSpec extends QuestionViewBehaviours[String] {
 
   override val form = new InsuranceCompanyNameFormProvider()()
 
-  def createView: () => HtmlFormat.Appendable = () => insuranceCompanyName(frontendAppConfig, form, NormalMode, None)(fakeRequest, messages)
+  private val submitCall = controllers.routes.InsuranceCompanyNameController.onSubmit(NormalMode, None)
+
+  def createView: () => HtmlFormat.Appendable = () => insuranceCompanyName(frontendAppConfig, form, NormalMode, None, submitCall)(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) =>
-    insuranceCompanyName(frontendAppConfig, form, NormalMode, None)(fakeRequest, messages)
+    insuranceCompanyName(frontendAppConfig, form, NormalMode, None, submitCall)(fakeRequest, messages)
 
   "InsuranceCompanyName view" must {
 
     behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__h1"))
 
-    behave like pageWithTextFields(createViewUsingForm, messageKeyPrefix, controllers.routes.InsuranceCompanyNameController.onSubmit(NormalMode).url,
+    behave like pageWithTextFields(createViewUsingForm, messageKeyPrefix, controllers.routes.InsuranceCompanyNameController.onSubmit(NormalMode, None).url,
       "companyName")
 
     behave like pageWithReturnLink(createView, getReturnLink)

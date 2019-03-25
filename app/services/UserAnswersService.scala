@@ -17,7 +17,7 @@
 package services
 
 import com.google.inject.Inject
-import connectors.{UpdateSchemeCacheConnector, UserAnswersCacheConnector}
+import connectors.{SubscriptionCacheConnector, UpdateSchemeCacheConnector}
 import identifiers.{EstablishersOrTrusteesChangedId, InsuranceDetailsChangedId, TypedIdentifier}
 import models._
 import models.requests.DataRequest
@@ -29,8 +29,9 @@ import scala.concurrent.{ExecutionContext, Future}
 
 trait UserAnswersService {
 
-  protected def userAnswersCacheConnector: UserAnswersCacheConnector
-  protected def updateCacheConnector: UpdateSchemeCacheConnector
+  protected def subscriptionCacheConnector: SubscriptionCacheConnector
+
+  protected def updateSchemeCacheConnector: UpdateSchemeCacheConnector
 
   case class MissingSrnNumber() extends Exception
 
@@ -43,16 +44,16 @@ trait UserAnswersService {
                                       ): Future[JsValue]
 
   def save[A, I <: TypedIdentifier[A]](mode: Mode, srn: Option[String], id: I, value: A,
-                                                  changeId: TypedIdentifier[Boolean])
+                                       changeId: TypedIdentifier[Boolean])
                                       (implicit fmt: Format[A], ec: ExecutionContext, hc: HeaderCarrier, request: DataRequest[AnyContent]): Future[JsValue] =
     mode match {
-      case NormalMode | CheckMode => userAnswersCacheConnector.save(request.externalId, id, value)
+      case NormalMode | CheckMode => subscriptionCacheConnector.save(request.externalId, id, value)
       case UpdateMode | CheckUpdateMode =>
         srn match {
           case Some(srnId) =>
-            updateCacheConnector.save(srnId, id, value).flatMap { _ =>
-              updateCacheConnector.save(srnId, changeId, true)
-          }
+            updateSchemeCacheConnector.save(srnId, id, value).flatMap { _ =>
+              updateSchemeCacheConnector.save(srnId, changeId, true)
+            }
           case _ => Future.failed(throw new MissingSrnNumber)
         }
     }
@@ -64,18 +65,18 @@ trait UserAnswersService {
                                       request: DataRequest[AnyContent]
                                      ): Future[JsValue] =
     mode match {
-      case NormalMode | CheckMode => userAnswersCacheConnector.remove(request.externalId, id)
+      case NormalMode | CheckMode => subscriptionCacheConnector.remove(request.externalId, id)
       case UpdateMode | CheckUpdateMode =>
         srn match {
           case Some(srnId) =>
-            updateCacheConnector.remove(srnId, id)
+            updateSchemeCacheConnector.remove(srnId, id)
           case _ => Future.failed(throw new MissingSrnNumber)
         }
     }
 }
 
-class UserAnswersServiceImpl @Inject()(override val userAnswersCacheConnector: UserAnswersCacheConnector,
-                                       override val updateCacheConnector: UpdateSchemeCacheConnector) extends UserAnswersService {
+class UserAnswersServiceImpl @Inject()(override val subscriptionCacheConnector: SubscriptionCacheConnector,
+                                       override val updateSchemeCacheConnector: UpdateSchemeCacheConnector) extends UserAnswersService {
 
   override def save[A, I <: TypedIdentifier[A]](mode: Mode, srn: Option[String], id: I, value: A)
                                                (implicit fmt: Format[A], ec: ExecutionContext, hc: HeaderCarrier,
@@ -83,8 +84,8 @@ class UserAnswersServiceImpl @Inject()(override val userAnswersCacheConnector: U
     save(mode: Mode, srn: Option[String], id: I, value: A, EstablishersOrTrusteesChangedId)
 }
 
-class UserAnswersServiceInsuranceImpl @Inject()(override val userAnswersCacheConnector: UserAnswersCacheConnector,
-                                                override val updateCacheConnector: UpdateSchemeCacheConnector) extends UserAnswersService {
+class UserAnswersServiceInsuranceImpl @Inject()(override val subscriptionCacheConnector: SubscriptionCacheConnector,
+                                                override val updateSchemeCacheConnector: UpdateSchemeCacheConnector) extends UserAnswersService {
   override def save[A, I <: TypedIdentifier[A]](mode: Mode, srn: Option[String], id: I, value: A)
                                                (implicit fmt: Format[A], ec: ExecutionContext, hc: HeaderCarrier,
                                                 request: DataRequest[AnyContent]): Future[JsValue] =

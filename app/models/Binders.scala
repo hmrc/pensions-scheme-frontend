@@ -17,9 +17,10 @@
 package models
 
 import play.api.mvc._
+
 object Binders {
 
-  implicit def OptionBindable[T : PathBindable] = new PathBindable[Option[T]] {
+  implicit def optionBindable[T: PathBindable]: PathBindable[Option[T]] = new PathBindable[Option[T]] {
     def bind(key: String, value: String): Either[String, Option[T]] =
       implicitly[PathBindable[T]].
         bind(key, value).
