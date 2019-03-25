@@ -15,7 +15,7 @@
  */
 
 import com.google.inject.AbstractModule
-import connectors.{SubscriptionCacheConnector, UpdateSchemeCacheConnector, UserAnswersCacheConnector}
+import connectors.{SubscriptionCacheConnector, UserAnswersCacheConnector}
 import navigators._
 import services.{UserAnswersService, UserAnswersServiceImpl, UserAnswersServiceInsuranceImpl}
 import utils.Navigator
