@@ -14,17 +14,12 @@
  * limitations under the License.
  */
 
-import connectors.{MicroserviceCacheConnector, PSANameCacheConnector, UserAnswersCacheConnector}
-import play.api.inject.{Binding, Module}
-import play.api.{Configuration, Environment}
-import utils.annotations.PSANameCache
+package toggles
 
-class DataCacheModule extends Module {
+class TogglesSpec extends FeatureToggleBehaviours {
 
-  override def bindings(environment: Environment, configuration: Configuration): Seq[Binding[_]] = {
-    Seq(
-      bind[UserAnswersCacheConnector].to[MicroserviceCacheConnector],
-      bind[UserAnswersCacheConnector].qualifiedWith(classOf[PSANameCache]).to[PSANameCacheConnector]
-    )
+  "is-variations-enabled new feature toggle" should {
+    behave like featureToggle("is-variations-enabled", false)
   }
+
 }

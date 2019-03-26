@@ -19,7 +19,7 @@ package controllers
 import controllers.actions.{DataRequiredActionImpl, DataRetrievalAction, FakeAuthAction}
 import identifiers.IsAboutBenefitsAndInsuranceCompleteId
 import models.address.Address
-import models.{CheckMode, TypeOfBenefits}
+import models.{CheckMode, NormalMode, TypeOfBenefits}
 import org.scalatest.OptionValues
 import play.api.test.Helpers._
 import utils.{FakeCountryOptions, FakeSectionComplete, UserAnswers}
@@ -34,7 +34,7 @@ class CheckYourAnswersBenefitsAndInsuranceControllerSpec extends ControllerSpecB
 
     "onPageLoad() is called" must {
       "return OK and the correct view" in {
-        val result = controller(data).onPageLoad(fakeRequest)
+        val result = controller(data).onPageLoad(NormalMode, None)(fakeRequest)
 
         status(result) mustBe OK
         contentAsString(result) mustBe viewAsString()
@@ -43,7 +43,7 @@ class CheckYourAnswersBenefitsAndInsuranceControllerSpec extends ControllerSpecB
 
     "onSubmit is called" must {
       "redirect to next page" in {
-        val result = controller().onSubmit(fakeRequest)
+        val result = controller().onSubmit(NormalMode, None)(fakeRequest)
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result).value mustBe controllers.routes.SchemeTaskListController.onPageLoad().url
@@ -57,7 +57,7 @@ object CheckYourAnswersBenefitsAndInsuranceControllerSpec extends ControllerSpec
 
   private val insuranceCompanyName = "Test company Name"
   private val policyNumber = "Test policy number"
-  private val postUrl = routes.CheckYourAnswersBenefitsAndInsuranceController.onSubmit()
+  private val postUrl = routes.CheckYourAnswersBenefitsAndInsuranceController.onSubmit(NormalMode, None)
   private val insurerAddress = Address("addr1", "addr2", Some("addr3"), Some("addr4"), Some("xxx"), "GB")
   private val data = UserAnswers().investmentRegulated(true).occupationalPensionScheme(true).
     typeOfBenefits(TypeOfBenefits.Defined).benefitsSecuredByInsurance(true).insuranceCompanyName(insuranceCompanyName).
@@ -102,21 +102,21 @@ object CheckYourAnswersBenefitsAndInsuranceControllerSpec extends ControllerSpec
         messages("securedBenefits.checkYourAnswersLabel"),
         Seq("site.yes"),
         answerIsMessageKey = true,
-        Some(routes.BenefitsSecuredByInsuranceController.onPageLoad(CheckMode).url),
+        Some(routes.BenefitsSecuredByInsuranceController.onPageLoad(CheckMode, None).url),
         messages("messages__visuallyhidden__securedBenefits")
       ),
       AnswerRow(
         messages("insuranceCompanyName.checkYourAnswersLabel"),
         Seq(insuranceCompanyName),
         answerIsMessageKey = false,
-        Some(routes.InsuranceCompanyNameController.onPageLoad(CheckMode).url),
+        Some(routes.InsuranceCompanyNameController.onPageLoad(CheckMode, None).url),
         messages("messages__visuallyhidden__insuranceCompanyName")
       ),
       AnswerRow(
         messages("messages__insurance_policy_number_cya_label", insuranceCompanyName),
         Seq(policyNumber),
         answerIsMessageKey = false,
-        Some(routes.InsurancePolicyNumberController.onPageLoad(CheckMode).url),
+        Some(routes.InsurancePolicyNumberController.onPageLoad(CheckMode, None).url),
         messages("messages__visuallyhidden__insurance_policy_number", insuranceCompanyName)
       ),
       AnswerRow(
@@ -129,7 +129,7 @@ object CheckYourAnswersBenefitsAndInsuranceControllerSpec extends ControllerSpec
           insurerAddress.postcode.get,
           "Country of GB"),
         answerIsMessageKey = false,
-        Some(routes.InsurerConfirmAddressController.onPageLoad(CheckMode).url),
+        Some(routes.InsurerConfirmAddressController.onPageLoad(CheckMode, None).url),
         messages("messages__visuallyhidden__insurer_confirm_address"))
     )
   )

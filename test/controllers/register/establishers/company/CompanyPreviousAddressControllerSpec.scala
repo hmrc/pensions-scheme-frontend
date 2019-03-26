@@ -31,6 +31,7 @@ import play.api.data.Form
 import play.api.libs.json.Json
 import play.api.mvc.Call
 import play.api.test.Helpers._
+import services.FakeUserAnswersService
 import utils.{CountryOptions, FakeCountryOptions, FakeNavigator, InputOption, UserAnswers}
 import viewmodels.Message
 import viewmodels.address.ManualAddressViewModel
@@ -65,7 +66,7 @@ class CompanyPreviousAddressControllerSpec extends ControllerSpecBase with Scala
     new CompanyPreviousAddressController(
       frontendAppConfig,
       messagesApi,
-      FakeUserAnswersCacheConnector,
+      FakeUserAnswersService,
       new FakeNavigator(desiredRoute = onwardRoute),
       FakeAuthAction,
       dataRetrievalAction,

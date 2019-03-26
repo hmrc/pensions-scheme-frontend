@@ -17,7 +17,7 @@
 package controllers.register.establishers.partnership
 
 import config.FrontendAppConfig
-import connectors.UserAnswersCacheConnector
+import connectors.{SubscriptionCacheConnector, UserAnswersCacheConnector}
 import controllers.Retrievals
 import controllers.actions._
 import forms.register.establishers.partnership.OtherPartnersFormProvider

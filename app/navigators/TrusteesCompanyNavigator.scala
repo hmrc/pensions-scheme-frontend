@@ -63,8 +63,7 @@ class TrusteesCompanyNavigator @Inject()(val dataCacheConnector: UserAnswersCach
         NavigateTo.save(controllers.register.trustees.company.routes.CheckYourAnswersController.onPageLoad(index))
 
       case CheckYourAnswersId =>
-        NavigateTo.dontSave(controllers.routes.SchemeTaskListController.onPageLoad())
-
+        NavigateTo.dontSave(controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode))
       case _ => None
     }
   }

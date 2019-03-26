@@ -15,19 +15,26 @@
  */
 
 import com.google.inject.AbstractModule
-import connectors.{UserAnswersCacheConnector, PSANameCacheConnector}
+import connectors.{SubscriptionCacheConnector, UserAnswersCacheConnector}
 import navigators._
-import utils.annotations.{EstablishersPartner, _}
+import services.{UserAnswersService, UserAnswersServiceImpl, UserAnswersServiceInsuranceImpl}
 import utils.Navigator
+import utils.annotations.{EstablishersPartner, _}
 
 class PODSModule extends AbstractModule {
 
   //scalastyle:off method.length
   override def configure(): Unit = {
 
+    bind(classOf[UserAnswersService])
+      .annotatedWith(classOf[InsuranceService])
+      .to(classOf[UserAnswersServiceInsuranceImpl])
+
     bind(classOf[UserAnswersCacheConnector])
-      .annotatedWith(classOf[PSANameCache])
-      .to(classOf[PSANameCacheConnector])
+      .to(classOf[SubscriptionCacheConnector])
+
+    bind(classOf[UserAnswersService])
+      .to(classOf[UserAnswersServiceImpl])
 
     bind(classOf[Navigator])
       .annotatedWith(classOf[AboutMembers])

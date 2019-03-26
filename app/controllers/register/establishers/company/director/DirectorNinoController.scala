@@ -26,7 +26,7 @@ import javax.inject.Inject
 import models.{Index, Mode, Nino}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent}
+import play.api.mvc.{Action, AnyContent, Call}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.EstablishersCompanyDirector
 import utils.{Enumerable, Navigator, UserAnswers}
@@ -46,25 +46,26 @@ class DirectorNinoController @Inject()(
                                       )(implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
 
   private val form: Form[Nino] = formProvider()
+  private def postCall: (Mode, Index, Index, Option[String]) => Call = routes.DirectorNinoController.onSubmit _
 
-  def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       DirectorDetailsId(establisherIndex, directorIndex).retrieve.right.flatMap { director =>
         DirectorNinoId(establisherIndex, directorIndex).retrieve.right.map { value =>
-          Future.successful(Ok(directorNino(appConfig, form.fill(value), mode, establisherIndex, directorIndex, existingSchemeName)))
+          Future.successful(Ok(directorNino(appConfig, form.fill(value), mode, establisherIndex, directorIndex, existingSchemeName, postCall(mode, establisherIndex, directorIndex, srn))))
         }.left.map { _ =>
-          Future.successful(Ok(directorNino(appConfig, form, mode, establisherIndex, directorIndex, existingSchemeName)))
+          Future.successful(Ok(directorNino(appConfig, form, mode, establisherIndex, directorIndex, existingSchemeName, postCall(mode, establisherIndex, directorIndex, srn))))
         }
       }
   }
 
 
-  def onSubmit(mode: Mode, establisherIndex: Index, directorIndex: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       DirectorDetailsId(establisherIndex, directorIndex).retrieve.right.map { director =>
         form.bindFromRequest().fold(
           (formWithErrors: Form[_]) =>
-            Future.successful(BadRequest(directorNino(appConfig, formWithErrors, mode, establisherIndex, directorIndex, existingSchemeName))),
+            Future.successful(BadRequest(directorNino(appConfig, formWithErrors, mode, establisherIndex, directorIndex, existingSchemeName, postCall(mode, establisherIndex, directorIndex, srn)))),
           (value) =>
             dataCacheConnector.save(
               request.externalId,

@@ -26,7 +26,7 @@ import javax.inject.Inject
 import models.{Index, Mode}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent}
+import play.api.mvc.{Action, AnyContent, Call}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils._
 import utils.annotations.EstablishersCompany
@@ -46,16 +46,17 @@ class CompanyRegistrationNumberController @Inject()(
                                                    )(implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits with MapFormats {
 
   val form = formProvider()
+  private def postCall: (Mode, Option[String], Index) => Call = routes.CompanyRegistrationNumberController.onSubmit _
 
-  def onPageLoad(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onPageLoad(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       retrieveCompanyName(index) {
         companyName =>
           val redirectResult = request.userAnswers.get(CompanyRegistrationNumberId(index)) match {
             case None =>
-              Ok(companyRegistrationNumber(appConfig, form, mode, index, existingSchemeName))
+              Ok(companyRegistrationNumber(appConfig, form, mode, index, existingSchemeName, postCall(mode, srn, index)))
             case Some(value) =>
-              Ok(companyRegistrationNumber(appConfig, form.fill(value), mode, index, existingSchemeName))
+              Ok(companyRegistrationNumber(appConfig, form.fill(value), mode, index, existingSchemeName, postCall(mode, srn, index)))
           }
 
           Future.successful(redirectResult)
@@ -63,13 +64,13 @@ class CompanyRegistrationNumberController @Inject()(
       }
   }
 
-  def onSubmit(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       retrieveCompanyName(index) {
         companyName =>
           form.bindFromRequest().fold(
             (formWithErrors: Form[_]) =>
-              Future.successful(BadRequest(companyRegistrationNumber(appConfig, formWithErrors, mode, index, existingSchemeName))),
+              Future.successful(BadRequest(companyRegistrationNumber(appConfig, formWithErrors, mode, index, existingSchemeName, postCall(mode, srn, index)))),
             value =>
               dataCacheConnector.save(request.externalId, CompanyRegistrationNumberId(index), value).map(cacheMap =>
                 Redirect(navigator.nextPage(CompanyRegistrationNumberId(index), mode, UserAnswers(cacheMap))))

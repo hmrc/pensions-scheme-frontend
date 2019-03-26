@@ -50,7 +50,7 @@ class TrusteesCompanyNavigatorSpec extends SpecBase with MustMatchers with Navig
     (CompanyPreviousAddressId(0), emptyAnswers, companyContactDetails, true, Some(checkYourAnswers), true),
     (CompanyContactDetailsId(0), emptyAnswers, checkYourAnswers, true, Some(checkYourAnswers), true),
     (CompanyAddressYearsId(0), emptyAnswers, sessionExpired, false, Some(sessionExpired), false),
-    (CheckYourAnswersId, emptyAnswers, taskList, false, None, true)
+    (CheckYourAnswersId, emptyAnswers, addTrustee, false, None, true)
   )
 
   private val navigator: TrusteesCompanyNavigator =

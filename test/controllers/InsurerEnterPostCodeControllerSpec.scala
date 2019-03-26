@@ -52,12 +52,12 @@ class InsurerEnterPostCodeControllerSpec extends ControllerSpecBase with CSRFReq
   "InsurerEnterPostCodeController Controller" must {
     "render postCodeLookup from a GET request" in {
       requestResult(
-        implicit app => addToken(FakeRequest(routes.InsurerEnterPostcodeController.onPageLoad(NormalMode))),
+        implicit app => addToken(FakeRequest(routes.InsurerEnterPostcodeController.onPageLoad(NormalMode, None))),
         (request, result) => {
 
           val viewModel = PostcodeLookupViewModel(
-            routes.InsurerEnterPostcodeController.onSubmit(NormalMode),
-            routes.InsurerConfirmAddressController.onSubmit(NormalMode),
+            routes.InsurerEnterPostcodeController.onSubmit(NormalMode, None),
+            routes.InsurerConfirmAddressController.onSubmit(NormalMode, None),
             Messages("messages__insurer_enter_postcode__title"),
             "messages__insurer_enter_postcode__h1",
             None,
@@ -73,7 +73,7 @@ class InsurerEnterPostCodeControllerSpec extends ControllerSpecBase with CSRFReq
     "redirect to next page on POST request" which {
       "returns a list of addresses from addressLookup given a postcode" in {
         requestResult(
-          implicit app => addToken(FakeRequest(routes.InsurerEnterPostcodeController.onSubmit(NormalMode))
+          implicit app => addToken(FakeRequest(routes.InsurerEnterPostcodeController.onSubmit(NormalMode, None))
             .withFormUrlEncodedBody("value" -> validPostcode)),
           (_, result) => {
             status(result) mustBe SEE_OTHER

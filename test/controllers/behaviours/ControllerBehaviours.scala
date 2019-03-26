@@ -17,7 +17,6 @@
 package controllers.behaviours
 
 import base.CSRFRequest
-import connectors.FakeUserAnswersCacheConnector
 import controllers.ControllerSpecBase
 import forms.address.AddressFormProvider
 import identifiers.TypedIdentifier
@@ -30,6 +29,7 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import services.FakeUserAnswersService
 import utils.{CountryOptions, InputOption}
 import viewmodels.address.ManualAddressViewModel
 import views.html.address.{manualAddress => manualAddressView}
@@ -112,7 +112,7 @@ trait ControllerBehaviours extends ControllerSpecBase
             status(result) must be(SEE_OTHER)
             redirectLocation(result).value mustEqual onwardCall.url
 
-            FakeUserAnswersCacheConnector.verify(id, address)
+            FakeUserAnswersService.verify(id, address)
 
         }
       }

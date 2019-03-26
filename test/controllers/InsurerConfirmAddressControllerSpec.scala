@@ -29,6 +29,7 @@ import models.address.{Address, TolerantAddress}
 import play.api.data.Form
 import play.api.mvc.{Action, AnyContent, AnyContentAsFormUrlEncoded}
 import play.api.test.FakeRequest
+import services.{FakeUserAnswersService, UserAnswersService}
 import utils._
 import viewmodels.Message
 import viewmodels.address.ManualAddressViewModel
@@ -57,7 +58,7 @@ class InsurerConfirmAddressControllerSpec extends ControllerWithQuestionPageBeha
       postRequest
     )
 
-    behave like controllerThatSavesUserAnswers(
+    behave like controllerThatSavesUserAnswersWithService(
       saveAction(this),
       postRequest,
       InsurerConfirmAddressId,
@@ -69,7 +70,7 @@ class InsurerConfirmAddressControllerSpec extends ControllerWithQuestionPageBeha
       val insurerUpdatedData = Address("address line updated", "address line 2", None, None, Some("AB1 1AB"), "country:AF")
 
       val validData: UserAnswers = UserAnswers().schemeName(schemeName).insurerConfirmAddress(insurerUpdatedData).insurerSelectAddress(selectedAddress)
-      val result = controller(this)(validData.dataRetrievalAction, FakeAuthAction).onSubmit(NormalMode)(postRequest)
+      val result = controller(this)(validData.dataRetrievalAction, FakeAuthAction).onSubmit(NormalMode, None)(postRequest)
 
       whenReady(result) {
         _ =>
@@ -117,7 +118,7 @@ object InsurerConfirmAddressControllerSpec {
       manualAddress(
         base.frontendAppConfig,
         form,ManualAddressViewModel(
-          routes.InsurerConfirmAddressController.onSubmit(NormalMode),
+          routes.InsurerConfirmAddressController.onSubmit(NormalMode, None),
           options,
           Message("messages__insurer_confirm_address__title"),
           Message("messages__insurer_confirm_address__h1"),
@@ -130,7 +131,7 @@ object InsurerConfirmAddressControllerSpec {
     dataRetrievalAction: DataRetrievalAction = base.getEmptyData,
     authAction: AuthAction = FakeAuthAction,
     navigator: Navigator = FakeNavigator,
-    cache: UserAnswersCacheConnector = FakeUserAnswersCacheConnector
+    cache: UserAnswersService = FakeUserAnswersService
   ): InsurerConfirmAddressController =
     new InsurerConfirmAddressController(
       base.frontendAppConfig,
@@ -146,11 +147,11 @@ object InsurerConfirmAddressControllerSpec {
     )
 
   def onPageLoadAction(base: ControllerSpecBase)(dataRetrievalAction: DataRetrievalAction, authAction: AuthAction): Action[AnyContent] =
-    controller(base)(dataRetrievalAction, authAction).onPageLoad(NormalMode)
+    controller(base)(dataRetrievalAction, authAction).onPageLoad(NormalMode, None)
 
   def onSubmitAction(base: ControllerSpecBase, navigator: Navigator)(dataRetrievalAction: DataRetrievalAction, authAction: AuthAction): Action[AnyContent] =
-    controller(base)(dataRetrievalAction, authAction, navigator).onSubmit(NormalMode)
+    controller(base)(dataRetrievalAction, authAction, navigator).onSubmit(NormalMode, None)
 
-  def saveAction(base: ControllerSpecBase)(cache: UserAnswersCacheConnector): Action[AnyContent] =
-    controller(base)(cache = cache).onSubmit(NormalMode)
+  def saveAction(base: ControllerSpecBase)(cache: UserAnswersService): Action[AnyContent] =
+    controller(base)(cache = cache).onSubmit(NormalMode, None)
 }

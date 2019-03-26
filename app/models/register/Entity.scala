@@ -49,10 +49,10 @@ sealed trait Entity[ID] {
 case class DirectorEntity(id: DirectorDetailsId, name: String, isDeleted: Boolean, isCompleted: Boolean) extends Entity[DirectorDetailsId] {
   override def editLink: String = {
     if (isCompleted) {
-      controllers.register.establishers.company.director.routes.CheckYourAnswersController.onPageLoad(id.establisherIndex, id.directorIndex).url
+      controllers.register.establishers.company.director.routes.CheckYourAnswersController.onPageLoad(id.establisherIndex, id.directorIndex, NormalMode, None).url
     }
     else {
-      controllers.register.establishers.company.director.routes.DirectorDetailsController.onPageLoad(NormalMode, id.establisherIndex, id.directorIndex).url
+      controllers.register.establishers.company.director.routes.DirectorDetailsController.onPageLoad(NormalMode, id.establisherIndex, id.directorIndex, None).url
     }
   }
 
@@ -84,10 +84,10 @@ case class EstablisherCompanyEntity(id: EstablisherCompanyDetailsId,
                                     name: String, isDeleted: Boolean, isCompleted: Boolean) extends Establisher[EstablisherCompanyDetailsId] {
   override def editLink: String = {
     if (isCompleted) {
-      controllers.register.establishers.company.routes.CheckYourAnswersController.onPageLoad(id.index).url
+      controllers.register.establishers.company.routes.CheckYourAnswersController.onPageLoad(NormalMode, None, id.index).url
     }
     else {
-      controllers.register.establishers.company.routes.CompanyDetailsController.onPageLoad(NormalMode, id.index).url
+      controllers.register.establishers.company.routes.CompanyDetailsController.onPageLoad(NormalMode, None, id.index).url
     }
   }
 

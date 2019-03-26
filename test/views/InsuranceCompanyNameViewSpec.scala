@@ -19,6 +19,7 @@ package views
 import forms.InsuranceCompanyNameFormProvider
 import models.NormalMode
 import play.api.data.Form
+import play.api.mvc.Call
 import play.twirl.api.HtmlFormat
 import views.behaviours.QuestionViewBehaviours
 import views.html.insuranceCompanyName
@@ -28,17 +29,18 @@ class InsuranceCompanyNameViewSpec extends QuestionViewBehaviours[String] {
   val messageKeyPrefix = "insurance_company_name"
 
   override val form = new InsuranceCompanyNameFormProvider()()
+  val postCall: Call = controllers.routes.InsuranceCompanyNameController.onSubmit(NormalMode, None)
 
-  def createView: () => HtmlFormat.Appendable = () => insuranceCompanyName(frontendAppConfig, form, NormalMode, None)(fakeRequest, messages)
+  def createView: () => HtmlFormat.Appendable = () => insuranceCompanyName(frontendAppConfig, form, NormalMode, None, postCall)(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) =>
-    insuranceCompanyName(frontendAppConfig, form, NormalMode, None)(fakeRequest, messages)
+    insuranceCompanyName(frontendAppConfig, form, NormalMode, None, postCall)(fakeRequest, messages)
 
   "InsuranceCompanyName view" must {
 
     behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__h1"))
 
-    behave like pageWithTextFields(createViewUsingForm, messageKeyPrefix, controllers.routes.InsuranceCompanyNameController.onSubmit(NormalMode).url,
+    behave like pageWithTextFields(createViewUsingForm, messageKeyPrefix, controllers.routes.InsuranceCompanyNameController.onSubmit(NormalMode, None).url,
       "companyName")
 
     behave like pageWithReturnLink(createView, getReturnLink)

@@ -26,7 +26,7 @@ import javax.inject.Inject
 import models.{Index, Mode}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent}
+import play.api.mvc.{Action, AnyContent, Call}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.EstablishersCompany
 import utils.{Enumerable, Navigator, UserAnswers}
@@ -46,18 +46,19 @@ class CompanyDetailsController @Inject()(
                                         )(implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
 
   private val form = formProvider()
+  private def postCall: (Mode, Option[String], Index) => Call = routes.CompanyDetailsController.onSubmit _
 
-  def onPageLoad(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onPageLoad(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       val formWithData = request.userAnswers.get(CompanyDetailsId(index)).fold(form)(form.fill)
-      Future.successful(Ok(companyDetails(appConfig, formWithData, mode, index, existingSchemeName)))
+      Future.successful(Ok(companyDetails(appConfig, formWithData, mode, index, existingSchemeName, postCall(mode, srn, index))))
   }
 
-  def onSubmit(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) =>
-          Future.successful(BadRequest(companyDetails(appConfig, formWithErrors, mode, index, existingSchemeName))),
+          Future.successful(BadRequest(companyDetails(appConfig, formWithErrors, mode, index, existingSchemeName, postCall(mode, srn, index)))),
         value =>
           dataCacheConnector.save(
             request.externalId,

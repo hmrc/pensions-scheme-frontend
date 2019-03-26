@@ -88,7 +88,7 @@ class HsTaskListHelperSpec extends WordSpec with MustMatchers with OptionValues 
           SchemeDetailsTaskListSection(Some(true), Link(aboutMembersLinkText,
             controllers.routes.CheckYourAnswersMembersController.onPageLoad.url), None),
           SchemeDetailsTaskListSection(Some(true), Link(aboutBenefitsAndInsuranceLinkText,
-            controllers.routes.CheckYourAnswersBenefitsAndInsuranceController.onPageLoad.url), None),
+            controllers.routes.CheckYourAnswersBenefitsAndInsuranceController.onPageLoad(NormalMode, None).url), None),
           SchemeDetailsTaskListSection(Some(true), Link(aboutBankDetailsLinkText,
             controllers.routes.CheckYourAnswersBankDetailsController.onPageLoad.url), None)
         )

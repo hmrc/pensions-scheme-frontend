@@ -20,7 +20,7 @@ import config.FrontendAppConfig
 import controllers.actions._
 import identifiers._
 import javax.inject.Inject
-import models.CheckMode
+import models.{CheckMode, Mode}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
@@ -41,7 +41,7 @@ class CheckYourAnswersBenefitsAndInsuranceController @Inject()(appConfig: Fronte
                                                               )(implicit val ec: ExecutionContext) extends FrontendController
   with Enumerable.Implicits with I18nSupport with Retrievals {
 
-  def onPageLoad: Action[AnyContent] = (authenticate andThen getData andThen requireData) {
+  def onPageLoad(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData andThen requireData) {
     implicit request =>
       implicit val userAnswers = request.userAnswers
       val benefitsAndInsuranceSection = AnswerSection(
@@ -49,20 +49,20 @@ class CheckYourAnswersBenefitsAndInsuranceController @Inject()(appConfig: Fronte
         InvestmentRegulatedSchemeId.row(routes.InvestmentRegulatedSchemeController.onPageLoad(CheckMode).url) ++
           OccupationalPensionSchemeId.row(routes.OccupationalPensionSchemeController.onPageLoad(CheckMode).url) ++
           TypeOfBenefitsId.row(routes.TypeOfBenefitsController.onPageLoad(CheckMode).url) ++
-          BenefitsSecuredByInsuranceId.row(routes.BenefitsSecuredByInsuranceController.onPageLoad(CheckMode).url) ++
-          InsuranceCompanyNameId.row(routes.InsuranceCompanyNameController.onPageLoad(CheckMode).url) ++
-          InsurancePolicyNumberId.row(routes.InsurancePolicyNumberController.onPageLoad(CheckMode).url) ++
-          InsurerConfirmAddressId.row(routes.InsurerConfirmAddressController.onPageLoad(CheckMode).url)
+          BenefitsSecuredByInsuranceId.row(routes.BenefitsSecuredByInsuranceController.onPageLoad(CheckMode, srn).url) ++
+          InsuranceCompanyNameId.row(routes.InsuranceCompanyNameController.onPageLoad(CheckMode, None).url) ++
+          InsurancePolicyNumberId.row(routes.InsurancePolicyNumberController.onPageLoad(CheckMode, srn).url) ++
+          InsurerConfirmAddressId.row(routes.InsurerConfirmAddressController.onPageLoad(CheckMode, srn).url)
       )
       Ok(check_your_answers(
         appConfig,
         Seq(benefitsAndInsuranceSection),
-        routes.CheckYourAnswersBenefitsAndInsuranceController.onSubmit(),
+        routes.CheckYourAnswersBenefitsAndInsuranceController.onSubmit(mode, srn),
         existingSchemeName
       ))
   }
 
-  def onSubmit: Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       sectionComplete.setCompleteFlag(request.externalId, IsAboutBenefitsAndInsuranceCompleteId, request.userAnswers, value = true) map { _ =>
         Redirect(controllers.routes.SchemeTaskListController.onPageLoad())
