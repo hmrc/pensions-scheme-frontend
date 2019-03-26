@@ -62,7 +62,7 @@ class EstablishersPartnershipNavigator @Inject()(val dataCacheConnector: UserAns
     case OtherPartnersId(index) =>
       NavigateTo.save(routes.PartnershipReviewController.onPageLoad(index))
     case PartnershipReviewId(index) =>
-      NavigateTo.dontSave(controllers.routes.SchemeTaskListController.onPageLoad())
+      NavigateTo.dontSave(controllers.register.establishers.routes.AddEstablisherController.onPageLoad(NormalMode))
     case _ =>
       None
   }

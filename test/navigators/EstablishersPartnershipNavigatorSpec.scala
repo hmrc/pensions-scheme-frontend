@@ -51,7 +51,7 @@ class EstablishersPartnershipNavigatorSpec extends SpecBase with NavigatorBehavi
     (PartnershipContactDetailsId(0),                  emptyAnswers,                 isDormant,                                true,         Some(checkYourAnswers),               true),
     (IsPartnershipDormantId(0),                       emptyAnswers,                 checkYourAnswers,                         true,         Some(checkYourAnswers),               true),
     (OtherPartnersId(0),                              emptyAnswers,                 partnershipReview,                        true,         Some(partnershipReview),              true),
-    (PartnershipReviewId(0),                          emptyAnswers,                 taskList,                                false,         None,                                 true)
+    (PartnershipReviewId(0),                          emptyAnswers,                 addEstablisher,                           false,         None,                                 true)
   )
 
   private val navigator: EstablishersPartnershipNavigator =

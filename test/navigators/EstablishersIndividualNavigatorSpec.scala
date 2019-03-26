@@ -47,7 +47,7 @@ class EstablishersIndividualNavigatorSpec extends SpecBase with MustMatchers wit
     (PreviousPostCodeLookupId(0), emptyAnswers, previousAddressAddressList(NormalMode), true, Some(previousAddressAddressList(CheckMode)), true),
     (PreviousAddressListId(0), emptyAnswers, previousAddress(NormalMode), true, Some(previousAddress(CheckMode)), true),
     (PreviousAddressId(0), emptyAnswers, contactDetails, true, Some(checkYourAnswers), true),
-    (CheckYourAnswersId, emptyAnswers, taskList, false, None, true)
+    (CheckYourAnswersId, emptyAnswers, addEstablisher, false, None, true)
   )
 
   private val navigator: EstablishersIndividualNavigator =
