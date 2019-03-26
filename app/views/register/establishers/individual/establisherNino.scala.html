@@ -20,8 +20,9 @@
 @import controllers.register.establishers.individual._
 @import models.Nino._
 @import models.Mode
+@import play.api.mvc.Call
 
-@(appConfig: FrontendAppConfig, form: Form[_], mode: Mode, index: Index, schemeName: Option[String])(implicit request: Request[_], messages: Messages)
+@(appConfig: FrontendAppConfig, form: Form[_], mode: Mode, index: Index, schemeName: Option[String], submitUrl: Call)(implicit request: Request[_], messages: Messages)
 
 @_options = @{
         Nino.options
@@ -32,7 +33,7 @@
     appConfig = appConfig,
     bodyClasses = None) {
 
-    @helpers.form(action = EstablisherNinoController.onSubmit(mode, index), 'autoComplete -> "off") {
+    @helpers.form(action = submitUrl, 'autoComplete -> "off") {
 
         @components.error_summary(form.errors)
 

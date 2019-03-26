@@ -30,31 +30,31 @@ class EstablishersIndividualNavigator @Inject()(
                                                ) extends Navigator {
 
   private def checkYourAnswers(index: Int)(answers: UserAnswers): Option[NavigateTo] =
-    NavigateTo.save(controllers.register.establishers.individual.routes.CheckYourAnswersController.onPageLoad(index))
+    NavigateTo.save(controllers.register.establishers.individual.routes.CheckYourAnswersController.onPageLoad(NormalMode, index, None))
 
   //scalastyle:off cyclomatic.complexity
   override protected def routeMap(from: NavigateFrom): Option[NavigateTo] = {
     from.id match {
       case EstablisherDetailsId(index) =>
-        NavigateTo.save(controllers.register.establishers.individual.routes.EstablisherNinoController.onPageLoad(NormalMode, index))
+        NavigateTo.save(controllers.register.establishers.individual.routes.EstablisherNinoController.onPageLoad(NormalMode, index, None))
       case EstablisherNinoId(index) =>
-        NavigateTo.save(controllers.register.establishers.individual.routes.UniqueTaxReferenceController.onPageLoad(NormalMode, index))
+        NavigateTo.save(controllers.register.establishers.individual.routes.UniqueTaxReferenceController.onPageLoad(NormalMode, index, None))
       case UniqueTaxReferenceId(index) =>
-        NavigateTo.save(controllers.register.establishers.individual.routes.PostCodeLookupController.onPageLoad(NormalMode, index))
+        NavigateTo.save(controllers.register.establishers.individual.routes.PostCodeLookupController.onPageLoad(NormalMode, index, None))
       case PostCodeLookupId(index) =>
-        NavigateTo.save(controllers.register.establishers.individual.routes.AddressListController.onPageLoad(NormalMode, index))
+        NavigateTo.save(controllers.register.establishers.individual.routes.AddressListController.onPageLoad(NormalMode, index, None))
       case AddressListId(index) =>
-        NavigateTo.save(controllers.register.establishers.individual.routes.AddressController.onPageLoad(NormalMode, index))
+        NavigateTo.save(controllers.register.establishers.individual.routes.AddressController.onPageLoad(NormalMode, index, None))
       case AddressId(index) =>
-        NavigateTo.save(controllers.register.establishers.individual.routes.AddressYearsController.onPageLoad(NormalMode, index))
+        NavigateTo.save(controllers.register.establishers.individual.routes.AddressYearsController.onPageLoad(NormalMode, index, None))
       case AddressYearsId(index) =>
         addressYearsRoutes(index)(from.userAnswers)
       case PreviousPostCodeLookupId(index) =>
-        NavigateTo.save(controllers.register.establishers.individual.routes.PreviousAddressListController.onPageLoad(NormalMode, index))
+        NavigateTo.save(controllers.register.establishers.individual.routes.PreviousAddressListController.onPageLoad(NormalMode, index, None))
       case PreviousAddressListId(index) =>
-        NavigateTo.save(controllers.register.establishers.individual.routes.PreviousAddressController.onPageLoad(NormalMode, index))
+        NavigateTo.save(controllers.register.establishers.individual.routes.PreviousAddressController.onPageLoad(NormalMode, index, None))
       case PreviousAddressId(index) =>
-        NavigateTo.save(controllers.register.establishers.individual.routes.ContactDetailsController.onPageLoad(NormalMode, index))
+        NavigateTo.save(controllers.register.establishers.individual.routes.ContactDetailsController.onPageLoad(NormalMode, index, None))
       case ContactDetailsId(index) =>
         checkYourAnswers(index)(from.userAnswers)
       case CheckYourAnswersId =>
@@ -71,17 +71,17 @@ class EstablishersIndividualNavigator @Inject()(
       case UniqueTaxReferenceId(index) =>
         checkYourAnswers(index)(from.userAnswers)
       case PostCodeLookupId(index) =>
-        NavigateTo.save(controllers.register.establishers.individual.routes.AddressListController.onPageLoad(CheckMode, index))
+        NavigateTo.save(controllers.register.establishers.individual.routes.AddressListController.onPageLoad(CheckMode, index, None))
       case AddressListId(index) =>
-        NavigateTo.save(controllers.register.establishers.individual.routes.AddressController.onPageLoad(CheckMode, index))
+        NavigateTo.save(controllers.register.establishers.individual.routes.AddressController.onPageLoad(CheckMode, index, None))
       case AddressId(index) =>
         checkYourAnswers(index)(from.userAnswers)
       case AddressYearsId(index) =>
         addressYearsEditRoutes(index)(from.userAnswers)
       case PreviousPostCodeLookupId(index) =>
-        NavigateTo.save(controllers.register.establishers.individual.routes.PreviousAddressListController.onPageLoad(CheckMode, index))
+        NavigateTo.save(controllers.register.establishers.individual.routes.PreviousAddressListController.onPageLoad(CheckMode, index, None))
       case PreviousAddressListId(index) =>
-        NavigateTo.save(controllers.register.establishers.individual.routes.PreviousAddressController.onPageLoad(CheckMode, index))
+        NavigateTo.save(controllers.register.establishers.individual.routes.PreviousAddressController.onPageLoad(CheckMode, index, None))
       case PreviousAddressId(index) =>
         checkYourAnswers(index)(from.userAnswers)
       case ContactDetailsId(index) =>
@@ -92,9 +92,9 @@ class EstablishersIndividualNavigator @Inject()(
   private def addressYearsRoutes(index: Int)(answers: UserAnswers): Option[NavigateTo] = {
     answers.get(AddressYearsId(index)) match {
       case Some(AddressYears.UnderAYear) =>
-        NavigateTo.save(controllers.register.establishers.individual.routes.PreviousAddressPostCodeLookupController.onPageLoad(NormalMode, index))
+        NavigateTo.save(controllers.register.establishers.individual.routes.PreviousAddressPostCodeLookupController.onPageLoad(NormalMode, index, None))
       case Some(AddressYears.OverAYear) =>
-        NavigateTo.save(controllers.register.establishers.individual.routes.ContactDetailsController.onPageLoad(NormalMode, index))
+        NavigateTo.save(controllers.register.establishers.individual.routes.ContactDetailsController.onPageLoad(NormalMode, index, None))
       case None =>
         NavigateTo.dontSave(controllers.routes.SessionExpiredController.onPageLoad())
     }
@@ -103,9 +103,9 @@ class EstablishersIndividualNavigator @Inject()(
   private def addressYearsEditRoutes(index: Int)(answers: UserAnswers): Option[NavigateTo] = {
     answers.get(AddressYearsId(index)) match {
       case Some(AddressYears.UnderAYear) =>
-        NavigateTo.save(controllers.register.establishers.individual.routes.PreviousAddressPostCodeLookupController.onPageLoad(CheckMode, index))
+        NavigateTo.save(controllers.register.establishers.individual.routes.PreviousAddressPostCodeLookupController.onPageLoad(CheckMode, index, None))
       case Some(AddressYears.OverAYear) =>
-        NavigateTo.save(controllers.register.establishers.individual.routes.CheckYourAnswersController.onPageLoad(index))
+        NavigateTo.save(controllers.register.establishers.individual.routes.CheckYourAnswersController.onPageLoad(NormalMode, index, None))
       case None =>
         NavigateTo.dontSave(controllers.routes.SessionExpiredController.onPageLoad())
     }

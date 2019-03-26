@@ -97,9 +97,9 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers, countryOptions: CountryOp
 
   def directorPreviousAddressPostcodeLookup(mode: Mode, establisherIndex: Int, directorIndex: Int): Option[AnswerRow] =
     userAnswers.get(identifiers.register.establishers.company.director.DirectorPreviousAddressPostcodeLookupId(establisherIndex, directorIndex)) map {
-    x => AnswerRow("directorPreviousAddressPostcodeLookup.checkYourAnswersLabel", Seq(s"$x"), false,
-      Some(controllers.register.establishers.company.director.routes.DirectorPreviousAddressPostcodeLookupController.onPageLoad(CheckMode, establisherIndex, directorIndex).url))
-  }
+      x => AnswerRow("directorPreviousAddressPostcodeLookup.checkYourAnswersLabel", Seq(s"$x"), false,
+        Some(controllers.register.establishers.company.director.routes.DirectorPreviousAddressPostcodeLookupController.onPageLoad(CheckMode, establisherIndex, directorIndex).url))
+    }
 
   def directorUniqueTaxReference(establisherIndex: Int, directorIndex: Int): Seq[AnswerRow] =
     userAnswers.get(DirectorUniqueTaxReferenceId(establisherIndex, directorIndex)) match {
@@ -174,22 +174,22 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers, countryOptions: CountryOp
       Seq(
         AnswerRow("messages__director_nino_question_cya_label", Seq(s"${Nino.Yes}"), false,
           Some(controllers.register.establishers.company.director.routes.DirectorNinoController.onPageLoad(CheckMode, Index(establisherIndex),
-          Index(directorIndex)).url),
+            Index(directorIndex)).url),
           "messages__visuallyhidden__director__nino_yes_no"),
         AnswerRow("messages__director_nino_cya_label", Seq(nino), false,
           Some(controllers.register.establishers.company.director.routes.DirectorNinoController.onPageLoad(CheckMode, Index(establisherIndex),
-          Index(directorIndex)).url),
+            Index(directorIndex)).url),
           "messages__visuallyhidden__director__nino")
       )
     case Some(Nino.No(reason)) =>
       Seq(
         AnswerRow("messages__director_nino_question_cya_label", Seq(s"${Nino.No}"), false,
           Some(controllers.register.establishers.company.director.routes.DirectorNinoController.onPageLoad(CheckMode, Index(establisherIndex),
-          Index(directorIndex)).url),
+            Index(directorIndex)).url),
           "messages__visuallyhidden__director__nino_yes_no"),
         AnswerRow("messages__director_nino_reason_cya_label", Seq(reason), false,
           Some(controllers.register.establishers.company.director.routes.DirectorNinoController.onPageLoad(CheckMode, Index(establisherIndex),
-          Index(directorIndex)).url),
+            Index(directorIndex)).url),
           "messages__visuallyhidden__director__nino_no")
       )
     case _ => Nil
@@ -241,7 +241,7 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers, countryOptions: CountryOp
         Seq(s"messages__common__$x"),
         true,
         Some(controllers.register.establishers.company.director.routes.DirectorAddressYearsController.onPageLoad(
-        CheckMode, establisherIndex, directorIndex).url),
+          CheckMode, establisherIndex, directorIndex).url),
         "messages__visuallyhidden__director__address_years"
       ))
       case _ => Seq.empty
@@ -292,19 +292,19 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers, countryOptions: CountryOp
     case Some(Yes(nino)) =>
       Seq(
         AnswerRow("messages__establisher_individual_nino_question_cya_label", Seq(s"${Nino.Yes}"), false,
-          Some(controllers.register.establishers.individual.routes.EstablisherNinoController.onPageLoad(CheckMode, Index(index)).url),
+          Some(controllers.register.establishers.individual.routes.EstablisherNinoController.onPageLoad(CheckMode, Index(index), None).url),
           "messages__visuallyhidden__establisher__nino_yes_no"),
         AnswerRow("messages__establisher_individual_nino_cya_label", Seq(nino), false,
-          Some(controllers.register.establishers.individual.routes.EstablisherNinoController.onPageLoad(CheckMode, Index(index)).url),
+          Some(controllers.register.establishers.individual.routes.EstablisherNinoController.onPageLoad(CheckMode, Index(index), None).url),
           "messages__visuallyhidden__establisher__nino")
       )
     case Some(No(reason)) =>
       Seq(
         AnswerRow("messages__establisher_individual_nino_question_cya_label", Seq(s"${Nino.No}"), false,
-          Some(controllers.register.establishers.individual.routes.EstablisherNinoController.onPageLoad(CheckMode, Index(index)).url),
+          Some(controllers.register.establishers.individual.routes.EstablisherNinoController.onPageLoad(CheckMode, Index(index), None).url),
           "messages__visuallyhidden__establisher__nino_yes_no"),
         AnswerRow("messages__establisher_individual_nino_reason_cya_label", Seq(reason), false,
-          Some(controllers.register.establishers.individual.routes.EstablisherNinoController.onPageLoad(CheckMode, Index(index)).url),
+          Some(controllers.register.establishers.individual.routes.EstablisherNinoController.onPageLoad(CheckMode, Index(index), None).url),
           "messages__visuallyhidden__establisher__nino_no")
       )
     case _ => Nil
@@ -315,9 +315,9 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers, countryOptions: CountryOp
       Seq(
         AnswerRow(
           "messages__establisher_individual_email_cya_label", Seq(s"${x.emailAddress}"), false,
-          Some(controllers.register.establishers.individual.routes.ContactDetailsController.onPageLoad(CheckMode, Index(index)).url),"messages__visuallyhidden__establisher__email_address"),
+          Some(controllers.register.establishers.individual.routes.ContactDetailsController.onPageLoad(CheckMode, Index(index), None).url),"messages__visuallyhidden__establisher__email_address"),
         AnswerRow("messages__establisher_individual_phone_cya_label", Seq(s"${x.phoneNumber}"), false,
-          Some(controllers.register.establishers.individual.routes.ContactDetailsController.onPageLoad(CheckMode, Index(index)).url),"messages__visuallyhidden__establisher__phone_number")
+          Some(controllers.register.establishers.individual.routes.ContactDetailsController.onPageLoad(CheckMode, Index(index), None).url),"messages__visuallyhidden__establisher__phone_number")
       )
     case _ => Nil
   }
@@ -329,12 +329,12 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers, countryOptions: CountryOp
         AnswerRow("messages__establisher_individual_name_cya_label",
           Seq(establisherName),
           false,
-          Some(controllers.register.establishers.individual.routes.EstablisherDetailsController.onPageLoad(CheckMode, Index(index)).url),
+          Some(controllers.register.establishers.individual.routes.EstablisherDetailsController.onPageLoad(CheckMode, Index(index), None).url),
           Message("messages__visuallyhidden__common__name", establisherName)),
         AnswerRow("messages__establisher_individual_dob_cya_label",
           Seq(s"${DateHelper.formatDate(details.date)}"),
           false,
-          Some(controllers.register.establishers.individual.routes.EstablisherDetailsController.onPageLoad(CheckMode, Index(index)).url),
+          Some(controllers.register.establishers.individual.routes.EstablisherDetailsController.onPageLoad(CheckMode, Index(index), None).url),
           Message("messages__visuallyhidden__common__dob", establisherName))
       )
     case _ => Nil
@@ -345,7 +345,7 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers, countryOptions: CountryOp
       case Some(x) =>
         Seq(
           AnswerRow("messages__establisher_individual_address_years_cya_label", Seq(s"messages__common__$x"), true,
-            Some(controllers.register.establishers.individual.routes.AddressYearsController.onPageLoad(CheckMode, Index(index)).url),
+            Some(controllers.register.establishers.individual.routes.AddressYearsController.onPageLoad(CheckMode, Index(index), None).url),
             "messages__visuallyhidden__establisher__address_years")
         )
       case _ => Nil
@@ -356,7 +356,7 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers, countryOptions: CountryOp
     case Some(x) =>
       Seq(
         AnswerRow("messages__establisher_individual_address_cya_label", addressAnswer(x), false,
-          Some(controllers.register.establishers.individual.routes.AddressController.onPageLoad(CheckMode, Index(index)).url),
+          Some(controllers.register.establishers.individual.routes.AddressController.onPageLoad(CheckMode, Index(index), None).url),
           "messages__visuallyhidden__establisher__address")
       )
     case _ => Nil
@@ -366,7 +366,7 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers, countryOptions: CountryOp
     case Some(x) =>
       Seq(
         AnswerRow("messages__establisher_individual_previous_address_cya_label", addressAnswer(x), false,
-          Some(controllers.register.establishers.individual.routes.PreviousAddressController.onPageLoad(CheckMode, Index(index)).url),
+          Some(controllers.register.establishers.individual.routes.PreviousAddressController.onPageLoad(CheckMode, Index(index), None).url),
           "messages__visuallyhidden__establisher__previous_address")
       )
     case _ => Nil

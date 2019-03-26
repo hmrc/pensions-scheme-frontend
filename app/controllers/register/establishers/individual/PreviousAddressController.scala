@@ -55,13 +55,13 @@ class PreviousAddressController @Inject()(
 
   protected val form: Form[Address] = formProvider()
 
-  private def viewmodel(index: Int, mode: Mode): Retrieval[ManualAddressViewModel] =
+  private def viewmodel(index: Int, mode: Mode, srn: Option[String]): Retrieval[ManualAddressViewModel] =
     Retrieval {
       implicit request =>
         EstablisherDetailsId(index).retrieve.right.map {
           details =>
             ManualAddressViewModel(
-              postCall(mode, Index(index)),
+              postCall(mode, Index(index), srn),
               countryOptions.options,
               title = Message(title),
               heading = Message(heading),
@@ -71,17 +71,17 @@ class PreviousAddressController @Inject()(
         }
     }
 
-  def onPageLoad(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onPageLoad(mode: Mode, index: Index, srn: Option[String] = None): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      viewmodel(index, mode).retrieve.right.map {
+      viewmodel(index, mode, srn).retrieve.right.map {
         vm =>
           get(PreviousAddressId(index), PreviousAddressListId(index), vm)
       }
   }
 
-  def onSubmit(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode, index: Index, srn: Option[String] = None): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      viewmodel(index, mode).retrieve.right.map {
+      viewmodel(index, mode, srn).retrieve.right.map {
         vm =>
           post(PreviousAddressId(index), PreviousAddressListId(index), vm, mode, context(vm),
             PreviousPostCodeLookupId(index)

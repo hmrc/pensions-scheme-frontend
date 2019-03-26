@@ -92,7 +92,7 @@ case class EstablisherCompanyEntity(id: EstablisherCompanyDetailsId,
   }
 
   override def deleteLink: String =
-    controllers.register.establishers.routes.ConfirmDeleteEstablisherController.onPageLoad(id.index, EstablisherKind.Company).url
+    controllers.register.establishers.routes.ConfirmDeleteEstablisherController.onPageLoad(NormalMode, id.index, EstablisherKind.Company, None).url
 
   override def index: Int = id.index
 }
@@ -101,15 +101,15 @@ case class EstablisherIndividualEntity(id: EstablisherDetailsId,
                                        name: String, isDeleted: Boolean, isCompleted: Boolean) extends Establisher[EstablisherDetailsId] {
   override def editLink: String = {
     if (isCompleted) {
-      controllers.register.establishers.individual.routes.CheckYourAnswersController.onPageLoad(id.index).url
+      controllers.register.establishers.individual.routes.CheckYourAnswersController.onPageLoad(NormalMode, id.index, None).url
     }
     else {
-      controllers.register.establishers.individual.routes.EstablisherDetailsController.onPageLoad(NormalMode, id.index).url
+      controllers.register.establishers.individual.routes.EstablisherDetailsController.onPageLoad(NormalMode, id.index, None).url
     }
   }
 
   override def deleteLink: String =
-    controllers.register.establishers.routes.ConfirmDeleteEstablisherController.onPageLoad(id.index, EstablisherKind.Indivdual).url
+    controllers.register.establishers.routes.ConfirmDeleteEstablisherController.onPageLoad(NormalMode, id.index, EstablisherKind.Indivdual, None).url
 
   override def index: Int = id.index
 }
@@ -126,7 +126,7 @@ case class EstablisherPartnershipEntity(id: PartnershipDetailsId,
   }
 
   override def deleteLink: String =
-    controllers.register.establishers.routes.ConfirmDeleteEstablisherController.onPageLoad(id.index, EstablisherKind.Partnership).url
+    controllers.register.establishers.routes.ConfirmDeleteEstablisherController.onPageLoad(NormalMode, id.index, EstablisherKind.Partnership, None).url
 
   override def index: Int = id.index
 }

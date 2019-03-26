@@ -44,30 +44,31 @@ class PreviousAddressListController @Inject()(
                                                requireData: DataRequiredAction
                                              ) extends GenericAddressListController with Retrievals {
 
-  def onPageLoad(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onPageLoad(mode: Mode, index: Index, srn: Option[String] = None): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      viewmodel(mode, index).right.map(get)
+      viewmodel(mode, index, srn).right.map(get)
   }
 
-  def onSubmit(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode, index: Index, srn: Option[String] = None): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      viewmodel(mode, index).right.map {
+      viewmodel(mode, index, srn).right.map {
         vm =>
           post(vm, PreviousAddressListId(index), PreviousAddressId(index), mode)
       }
   }
 
-  private def viewmodel(mode: Mode, index: Index)(implicit request: DataRequest[AnyContent]): Either[Future[Result], AddressListViewModel] = {
+  private def viewmodel(mode: Mode, index: Index, srn: Option[String])(implicit request: DataRequest[AnyContent]):
+  Either[Future[Result], AddressListViewModel] = {
     (EstablisherDetailsId(index) and PreviousPostCodeLookupId(index)).retrieve.right.map {
       case establisherDetails ~ addresses => AddressListViewModel(
-        postCall = routes.PreviousAddressListController.onSubmit(mode, index),
-        manualInputCall = routes.PreviousAddressController.onPageLoad(mode, index),
+        postCall = routes.PreviousAddressListController.onSubmit(mode, index, srn),
+        manualInputCall = routes.PreviousAddressController.onPageLoad(mode, index, srn),
         addresses = addresses,
         title = Message("messages__select_the_previous_address__title"),
         heading = Message("messages__select_the_previous_address__title"),
         subHeading = Some(Message(establisherDetails.fullName))
       )
     }.left.map(_ =>
-      Future.successful(Redirect(routes.PreviousAddressPostCodeLookupController.onPageLoad(mode, index))))
+      Future.successful(Redirect(routes.PreviousAddressPostCodeLookupController.onPageLoad(mode, index, srn))))
   }
 }
