@@ -56,7 +56,7 @@ class TrusteesIndividualNavigator @Inject()(val dataCacheConnector: UserAnswersC
       case TrusteeContactDetailsId(index) =>
         NavigateTo.save(controllers.register.trustees.individual.routes.CheckYourAnswersController.onPageLoad(NormalMode, index, None))
       case CheckYourAnswersId =>
-        NavigateTo.dontSave(controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode))
+        NavigateTo.dontSave(controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode, None))
       case _ =>
         None
     }
