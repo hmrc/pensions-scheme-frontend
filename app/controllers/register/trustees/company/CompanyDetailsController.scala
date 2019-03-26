@@ -51,7 +51,7 @@ class CompanyDetailsController @Inject()(
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String] = None): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      val submitUrl = controllers.register.trustees.company.routes.CompanyDetailsController.onPageLoad(mode, index, srn)
+      val submitUrl = controllers.register.trustees.company.routes.CompanyDetailsController.onSubmit(mode, index, srn)
       val updatedForm = request.userAnswers.get(CompanyDetailsId(index)).fold(form)(form.fill)
       Future.successful(Ok(companyDetails(appConfig, updatedForm, mode, index, existingSchemeName, submitUrl)))
   }
@@ -60,7 +60,7 @@ class CompanyDetailsController @Inject()(
     implicit request =>
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) => {
-          val submitUrl = controllers.register.trustees.company.routes.CompanyDetailsController.onPageLoad(mode, index, srn)
+          val submitUrl = controllers.register.trustees.company.routes.CompanyDetailsController.onSubmit(mode, index, srn)
           Future.successful(BadRequest(companyDetails(appConfig, formWithErrors, mode, index, existingSchemeName, submitUrl)))
         },
         value =>

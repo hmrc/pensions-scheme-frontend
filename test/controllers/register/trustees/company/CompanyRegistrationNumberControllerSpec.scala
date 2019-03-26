@@ -31,7 +31,7 @@ import utils.FakeNavigator
 import views.html.register.trustees.company.companyRegistrationNumber
 
 class CompanyRegistrationNumberControllerSpec extends ControllerSpecBase {
-
+ appRunning()
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
   val formProvider = new CompanyRegistrationNumberFormProvider()

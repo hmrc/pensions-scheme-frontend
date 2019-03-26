@@ -32,7 +32,7 @@ import utils.FakeNavigator
 import views.html.register.trustees.individual.trusteeDetails
 
 class TrusteeDetailsControllerSpec extends ControllerSpecBase {
-
+  appRunning()
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
   val firstIndex = Index(0)

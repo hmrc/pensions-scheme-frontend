@@ -31,7 +31,7 @@ import utils.FakeNavigator
 import views.html.register.trustees.partnership.partnershipUniqueTaxReference
 
 class PartnershipUniqueTaxReferenceControllerSpec extends ControllerSpecBase {
-
+  appRunning()
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
   val firstIndex = Index(0)

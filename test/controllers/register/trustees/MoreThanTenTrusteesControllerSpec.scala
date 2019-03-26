@@ -30,7 +30,7 @@ import utils.FakeNavigator
 import views.html.register.trustees.moreThanTenTrustees
 
 class MoreThanTenTrusteesControllerSpec extends ControllerSpecBase {
-
+  appRunning()
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
   val formProvider = new MoreThanTenTrusteesFormProvider()

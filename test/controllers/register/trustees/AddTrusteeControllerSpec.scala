@@ -36,7 +36,7 @@ import utils.FakeNavigator
 import views.html.register.trustees.addTrustee
 
 class AddTrusteeControllerSpec extends ControllerSpecBase {
-
+  appRunning()
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
   def editTrusteeCompanyRoute(id: Int): String =

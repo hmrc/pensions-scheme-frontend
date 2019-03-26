@@ -49,27 +49,31 @@ class PartnershipUniqueTaxReferenceController @Inject()(
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String] = None): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      val updatedForm = request.userAnswers.get(PartnershipUniqueTaxReferenceId(index)).fold(form)(form.fill)
-      val submitUrl = controllers.register.trustees.partnership.routes.PartnershipUniqueTaxReferenceController.onSubmit(mode, index, srn)
-      Future.successful(Ok(partnershipUniqueTaxReference(appConfig, updatedForm, mode, index, existingSchemeName, submitUrl)))
+      PartnershipDetailsId(index).retrieve.right.map { _ =>
+        val updatedForm = request.userAnswers.get(PartnershipUniqueTaxReferenceId(index)).fold(form)(form.fill)
+        val submitUrl = controllers.register.trustees.partnership.routes.PartnershipUniqueTaxReferenceController.onSubmit(mode, index, srn)
+        Future.successful(Ok(partnershipUniqueTaxReference(appConfig, updatedForm, mode, index, existingSchemeName, submitUrl)))
+      }
   }
 
   def onSubmit(mode: Mode, index: Index, srn: Option[String] = None): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      form.bindFromRequest().fold(
-        (formWithErrors: Form[_]) => {
-          val submitUrl = controllers.register.trustees.partnership.routes.PartnershipUniqueTaxReferenceController.onSubmit(mode, index, srn)
-          Future.successful(BadRequest(partnershipUniqueTaxReference(appConfig, formWithErrors, mode, index, existingSchemeName, submitUrl)))
-        },
-        value =>
-          dataCacheConnector.save(
-            request.externalId,
-            PartnershipUniqueTaxReferenceId(index),
-            value
-          ).map {
-            json =>
-              Redirect(navigator.nextPage(PartnershipUniqueTaxReferenceId(index), mode, UserAnswers(json)))
-          }
-      )
+      PartnershipDetailsId(index).retrieve.right.map { _ =>
+        form.bindFromRequest().fold(
+          (formWithErrors: Form[_]) => {
+            val submitUrl = controllers.register.trustees.partnership.routes.PartnershipUniqueTaxReferenceController.onSubmit(mode, index, srn)
+            Future.successful(BadRequest(partnershipUniqueTaxReference(appConfig, formWithErrors, mode, index, existingSchemeName, submitUrl)))
+          },
+          value =>
+            dataCacheConnector.save(
+              request.externalId,
+              PartnershipUniqueTaxReferenceId(index),
+              value
+            ).map {
+              json =>
+                Redirect(navigator.nextPage(PartnershipUniqueTaxReferenceId(index), mode, UserAnswers(json)))
+            }
+        )
+      }
   }
 }

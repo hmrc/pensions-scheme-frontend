@@ -49,21 +49,25 @@ class UniqueTaxReferenceController @Inject()(
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String] = None): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      val submitUrl = controllers.register.trustees.individual.routes.UniqueTaxReferenceController.onPageLoad(mode, index, srn)
-      val updatedForm = request.userAnswers.get(UniqueTaxReferenceId(index)).fold(form)(form.fill)
-      Future.successful(Ok(uniqueTaxReference(appConfig, updatedForm, mode, index, existingSchemeName, submitUrl)))
+      TrusteeDetailsId(index).retrieve.right.map { _ =>
+        val submitUrl = controllers.register.trustees.individual.routes.UniqueTaxReferenceController.onSubmit(mode, index, srn)
+        val updatedForm = request.userAnswers.get(UniqueTaxReferenceId(index)).fold(form)(form.fill)
+        Future.successful(Ok(uniqueTaxReference(appConfig, updatedForm, mode, index, existingSchemeName, submitUrl)))
+      }
   }
 
   def onSubmit(mode: Mode, index: Index, srn: Option[String] = None): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      form.bindFromRequest().fold(
-        (formWithErrors: Form[_]) => {
-          val submitUrl = controllers.register.trustees.partnership.routes.TrusteeDetailsController.onPageLoad(mode, index, srn)
-          Future.successful(BadRequest(uniqueTaxReference(appConfig, formWithErrors, mode, index, existingSchemeName, submitUrl)))
-        },
-        value =>
-          dataCacheConnector.save(request.externalId, UniqueTaxReferenceId(index), value).map(cacheMap =>
-            Redirect(navigator.nextPage(UniqueTaxReferenceId(index), mode, new UserAnswers(cacheMap))))
-      )
+      TrusteeDetailsId(index).retrieve.right.map { _ =>
+        form.bindFromRequest().fold(
+          (formWithErrors: Form[_]) => {
+            val submitUrl = controllers.register.trustees.individual.routes.UniqueTaxReferenceController.onSubmit(mode, index, srn)
+            Future.successful(BadRequest(uniqueTaxReference(appConfig, formWithErrors, mode, index, existingSchemeName, submitUrl)))
+          },
+          value =>
+            dataCacheConnector.save(request.externalId, UniqueTaxReferenceId(index), value).map(cacheMap =>
+              Redirect(navigator.nextPage(UniqueTaxReferenceId(index), mode, new UserAnswers(cacheMap))))
+        )
+      }
   }
 }

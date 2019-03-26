@@ -48,7 +48,7 @@ class TrusteeDetailsController @Inject()(
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String] = None): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      val submitUrl = controllers.register.trustees.partnership.routes.TrusteeDetailsController.onPageLoad(mode, index, srn)
+      val submitUrl = controllers.register.trustees.partnership.routes.TrusteeDetailsController.onSubmit(mode, index, srn)
       val updatedForm = request.userAnswers.get(PartnershipDetailsId(index)).fold(form)(form.fill)
       Future.successful(Ok(partnershipDetails(appConfig, updatedForm, mode, index, existingSchemeName, submitUrl)))
   }
@@ -57,7 +57,7 @@ class TrusteeDetailsController @Inject()(
     implicit request =>
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) => {
-          val submitUrl = controllers.register.trustees.partnership.routes.TrusteeDetailsController.onPageLoad(mode, index, srn)
+          val submitUrl = controllers.register.trustees.partnership.routes.TrusteeDetailsController.onSubmit(mode, index, srn)
           Future.successful(BadRequest(partnershipDetails(appConfig, formWithErrors, mode, index, existingSchemeName, submitUrl)))
         },
         value =>

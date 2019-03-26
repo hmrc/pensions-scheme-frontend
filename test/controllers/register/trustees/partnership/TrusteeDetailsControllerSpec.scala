@@ -31,7 +31,7 @@ import utils.FakeNavigator
 import views.html.register.trustees.partnership.partnershipDetails
 
 class TrusteeDetailsControllerSpec extends ControllerSpecBase {
-
+  appRunning()
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
   val formProvider = new PartnershipDetailsFormProvider()

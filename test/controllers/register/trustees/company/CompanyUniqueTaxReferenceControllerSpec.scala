@@ -33,7 +33,7 @@ import views.html.register.trustees.company.companyUniqueTaxReference
 //scalastyle:off magic.number
 
 class CompanyUniqueTaxReferenceControllerSpec extends ControllerSpecBase {
-
+  appRunning()
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
   val firstIndex = Index(0)

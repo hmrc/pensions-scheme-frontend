@@ -49,8 +49,8 @@ class CompanyRegistrationNumberController @Inject()(
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String] = None): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      CompanyDetailsId(index).retrieve.right.map { companyDetails =>
-        val submitUrl = controllers.register.trustees.company.routes.CompanyRegistrationNumberController.onPageLoad(mode, index, srn)
+      CompanyDetailsId(index).retrieve.right.map { _ =>
+        val submitUrl = controllers.register.trustees.company.routes.CompanyRegistrationNumberController.onSubmit(mode, index, srn)
         val updatedForm = request.userAnswers.get(CompanyRegistrationNumberId(index)).fold(form)(form.fill)
         Future.successful(Ok(companyRegistrationNumber(appConfig, updatedForm, mode, index, existingSchemeName, submitUrl)))
       }
@@ -58,10 +58,10 @@ class CompanyRegistrationNumberController @Inject()(
 
   def onSubmit(mode: Mode, index: Index, srn: Option[String] = None): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      CompanyDetailsId(index).retrieve.right.map { companyDetails =>
+      CompanyDetailsId(index).retrieve.right.map { _ =>
         form.bindFromRequest().fold(
           (formWithErrors: Form[_]) => {
-            val submitUrl = controllers.register.trustees.company.routes.CompanyRegistrationNumberController.onPageLoad(mode, index, srn)
+            val submitUrl = controllers.register.trustees.company.routes.CompanyRegistrationNumberController.onSubmit(mode, index, srn)
             Future.successful(BadRequest(companyRegistrationNumber(appConfig, formWithErrors, mode, index, existingSchemeName, submitUrl)))
           },
           (value) =>
