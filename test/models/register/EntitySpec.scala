@@ -43,7 +43,7 @@ class EntitySpec extends WordSpecLike with MustMatchers with OptionValues {
     }
 
     "have correct edit link when the director is incomplete" in {
-      val expectedEditLink = controllers.register.establishers.company.director.routes.DirectorDetailsController.onPageLoad(NormalMode, 0, 1).url
+      val expectedEditLink = controllers.register.establishers.company.director.routes.DirectorDetailsController.onPageLoad(NormalMode, 0, 1, None).url
       directorEntity.editLink mustEqual expectedEditLink
     }
 
@@ -56,7 +56,8 @@ class EntitySpec extends WordSpecLike with MustMatchers with OptionValues {
       )
 
       val expectedEditLink =
-        controllers.register.establishers.company.director.routes.CheckYourAnswersController.onPageLoad(establisherIndex = 0, directorIndex = 0).url
+        controllers.register.establishers.company.director.routes.CheckYourAnswersController.onPageLoad(
+          establisherIndex = 0, directorIndex = 0, NormalMode, None).url
       completedDirectorEntity.editLink mustEqual expectedEditLink
     }
 
@@ -79,7 +80,7 @@ class EntitySpec extends WordSpecLike with MustMatchers with OptionValues {
     }
 
     "have correct edit link when company is incomplete" in {
-      val expectedEditLink = controllers.register.establishers.company.routes.CompanyDetailsController.onPageLoad(NormalMode, 1).url
+      val expectedEditLink = controllers.register.establishers.company.routes.CompanyDetailsController.onPageLoad(NormalMode, None, 1).url
       companyEntity.editLink mustEqual expectedEditLink
     }
 
@@ -90,7 +91,7 @@ class EntitySpec extends WordSpecLike with MustMatchers with OptionValues {
         isDeleted = false,
         isCompleted = true
       )
-      val expectedEditLink = controllers.register.establishers.company.routes.CheckYourAnswersController.onPageLoad(index = 1).url
+      val expectedEditLink = controllers.register.establishers.company.routes.CheckYourAnswersController.onPageLoad(NormalMode, None, 1).url
       completedCompanyEntity.editLink mustEqual expectedEditLink
     }
 

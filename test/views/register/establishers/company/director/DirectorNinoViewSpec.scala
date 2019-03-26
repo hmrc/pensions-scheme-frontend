@@ -16,6 +16,7 @@
 
 package views.register.establishers.company.director
 
+import controllers.register.establishers.company.director.routes
 import forms.register.establishers.company.director.DirectorNinoFormProvider
 import models.{Index, NormalMode}
 import play.api.data.Form
@@ -29,12 +30,15 @@ class DirectorNinoViewSpec extends ViewBehaviours {
   val establisherIndex = Index(1)
   val directorIndex = Index(1)
   val form = new DirectorNinoFormProvider()()
+  private val postCall = routes.DirectorNinoController.onSubmit _
 
   def createView(): () => HtmlFormat.Appendable = () =>
-    directorNino(frontendAppConfig, form, NormalMode, establisherIndex, directorIndex, None)(fakeRequest, messages)
+    directorNino(frontendAppConfig, form, NormalMode, establisherIndex, directorIndex, None,
+      postCall(NormalMode, establisherIndex, directorIndex, None))(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) => directorNino(frontendAppConfig, form, NormalMode,
-    establisherIndex, directorIndex, None)(fakeRequest, messages)
+    establisherIndex, directorIndex, None,
+    postCall(NormalMode, establisherIndex, directorIndex, None))(fakeRequest, messages)
 
   "DirectorNino view" when {
     "rendered" must {

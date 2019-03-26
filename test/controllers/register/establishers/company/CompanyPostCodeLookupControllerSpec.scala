@@ -43,9 +43,9 @@ import scala.concurrent.Future
 
 class CompanyPostCodeLookupControllerSpec extends ControllerSpecBase with MockitoSugar with ScalaFutures with CSRFRequest with OptionValues {
 
-  def onwardRoute: Call = routes.CompanyAddressListController.onPageLoad(NormalMode, firstIndex)
+  def onwardRoute: Call = routes.CompanyAddressListController.onPageLoad(NormalMode, None, firstIndex)
 
-  def manualInputCall: Call = routes.CompanyAddressController.onPageLoad(NormalMode, firstIndex)
+  def manualInputCall: Call = routes.CompanyAddressController.onPageLoad(NormalMode, None, firstIndex)
 
   private def fakeAddress(postCode: String) = TolerantAddress(
     Some("Address Line 1"),
@@ -71,7 +71,7 @@ class CompanyPostCodeLookupControllerSpec extends ControllerSpecBase with Mockit
   val company = CompanyDetails(companyName, None, None)
 
   lazy val viewModel = PostcodeLookupViewModel(
-    postCall = routes.CompanyPostCodeLookupController.onSubmit(NormalMode, firstIndex),
+    postCall = routes.CompanyPostCodeLookupController.onSubmit(NormalMode, None, firstIndex),
     manualInputCall = manualInputCall,
     title = Message("messages__companyAddress__title"),
     heading = Message("messages__companyAddress__heading"),
@@ -94,7 +94,7 @@ class CompanyPostCodeLookupControllerSpec extends ControllerSpecBase with Mockit
       )) {
         implicit app =>
 
-          val request = addToken(FakeRequest(routes.CompanyPostCodeLookupController.onPageLoad(NormalMode, firstIndex))
+          val request = addToken(FakeRequest(routes.CompanyPostCodeLookupController.onPageLoad(NormalMode, None, firstIndex))
             .withHeaders("Csrf-Token" -> "nocheck"))
 
           val result = route(app, request).value
@@ -112,7 +112,7 @@ class CompanyPostCodeLookupControllerSpec extends ControllerSpecBase with Mockit
 
     "redirect to next page on POST request" in {
 
-      val call: Call = routes.CompanyPostCodeLookupController.onSubmit(NormalMode, firstIndex)
+      val call: Call = routes.CompanyPostCodeLookupController.onSubmit(NormalMode, None, firstIndex)
 
       val validPostcode = "ZZ1 1ZZ"
 

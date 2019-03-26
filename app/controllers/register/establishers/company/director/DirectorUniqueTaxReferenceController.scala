@@ -48,24 +48,29 @@ class DirectorUniqueTaxReferenceController @Inject()(
   private val form: Form[UniqueTaxReference] = formProvider()
   private def postCall: (Mode, Index, Index, Option[String]) => Call = routes.DirectorUniqueTaxReferenceController.onSubmit _
 
-  def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData andThen requireData).async {
     implicit request =>
       DirectorDetailsId(establisherIndex, directorIndex).retrieve.right.flatMap { director =>
         DirectorUniqueTaxReferenceId(establisherIndex, directorIndex).retrieve.right.map { value =>
-          Future.successful(Ok(directorUniqueTaxReference(appConfig, form.fill(value), mode, establisherIndex, directorIndex, existingSchemeName, postCall(mode, establisherIndex, directorIndex, srn))))
+          Future.successful(Ok(directorUniqueTaxReference(
+            appConfig, form.fill(value), mode, establisherIndex, directorIndex, existingSchemeName, postCall(mode, establisherIndex, directorIndex, srn))))
         }.left.map { _ =>
-          Future.successful(Ok(directorUniqueTaxReference(appConfig, form, mode, establisherIndex, directorIndex, existingSchemeName, postCall(mode, establisherIndex, directorIndex, srn))))
+          Future.successful(Ok(directorUniqueTaxReference(
+            appConfig, form, mode, establisherIndex, directorIndex, existingSchemeName, postCall(mode, establisherIndex, directorIndex, srn))))
         }
       }
   }
 
 
-  def onSubmit(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData andThen requireData).async {
     implicit request =>
       DirectorDetailsId(establisherIndex, directorIndex).retrieve.right.map { director =>
         form.bindFromRequest().fold(
           (formWithErrors: Form[_]) =>
-            Future.successful(BadRequest(directorUniqueTaxReference(appConfig, formWithErrors, mode, establisherIndex, directorIndex, existingSchemeName, postCall(mode, establisherIndex, directorIndex, srn)))),
+            Future.successful(BadRequest(directorUniqueTaxReference(
+              appConfig, formWithErrors, mode, establisherIndex, directorIndex, existingSchemeName, postCall(mode, establisherIndex, directorIndex, srn)))),
           (value) =>
             dataCacheConnector.save(
               request.externalId,

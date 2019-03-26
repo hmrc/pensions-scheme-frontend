@@ -61,7 +61,7 @@ object EstablishersNavigatorSpec extends OptionValues with Enumerable.Implicits 
   private val addEstablishersFalse = UserAnswers(Json.obj(AddEstablisherId.toString -> "false"))
   private val addEstablishersFalseWithNoScheme = UserAnswers(Json.obj(AddEstablisherId.toString -> "false"))
 
-  private def companyDetails = controllers.register.establishers.company.routes.CompanyDetailsController.onPageLoad(NormalMode, 0)
+  private def companyDetails = controllers.register.establishers.company.routes.CompanyDetailsController.onPageLoad(NormalMode, None, 0)
 
   private def individualDetails = controllers.register.establishers.individual.routes.EstablisherDetailsController.onPageLoad(NormalMode, 0)
 

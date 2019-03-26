@@ -191,7 +191,7 @@ class HsTaskListHelperSpec extends WordSpec with MustMatchers with OptionValues 
         Seq(SchemeDetailsTaskListSection(Some(true), Link(individualLinkText,
           controllers.register.establishers.individual.routes.CheckYourAnswersController.onPageLoad(0).url), Some("firstName lastName")),
           SchemeDetailsTaskListSection(Some(true), Link(companyLinkText,
-            controllers.register.establishers.company.routes.CompanyReviewController.onPageLoad(1).url), Some("test company")),
+            controllers.register.establishers.company.routes.CompanyReviewController.onPageLoad(NormalMode, None, 1).url), Some("test company")),
           SchemeDetailsTaskListSection(Some(true), Link(partnershipLinkText,
             controllers.register.establishers.partnership.routes.PartnershipReviewController.onPageLoad(2).url), Some("test partnership"))
         )
@@ -204,7 +204,7 @@ class HsTaskListHelperSpec extends WordSpec with MustMatchers with OptionValues 
         Seq(SchemeDetailsTaskListSection(Some(false), Link(individualLinkText,
           controllers.register.establishers.individual.routes.EstablisherDetailsController.onPageLoad(NormalMode, 0).url), Some("firstName lastName")),
           SchemeDetailsTaskListSection(Some(false), Link(companyLinkText,
-            controllers.register.establishers.company.routes.CompanyDetailsController.onPageLoad(NormalMode, 1).url), Some("test company")),
+            controllers.register.establishers.company.routes.CompanyDetailsController.onPageLoad(NormalMode, None, 1).url), Some("test company")),
           SchemeDetailsTaskListSection(Some(false), Link(partnershipLinkText,
             controllers.register.establishers.partnership.routes.PartnershipDetailsController.onPageLoad(NormalMode, 2).url), Some("test partnership"))
         )
