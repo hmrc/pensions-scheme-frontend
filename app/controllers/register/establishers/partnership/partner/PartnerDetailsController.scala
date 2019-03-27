@@ -51,26 +51,28 @@ class PartnerDetailsController @Inject()(
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index): Action[AnyContent] =
+  def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String] = None): Action[AnyContent] =
     (authenticate andThen getData andThen requireData).async {
       implicit request =>
-        PartnershipDetailsId(establisherIndex).retrieve.right.map { partnershipDetails =>
+        PartnershipDetailsId(establisherIndex).retrieve.right.map { _ =>
           val preparedForm = request.userAnswers.get[PersonDetails](PartnerDetailsId(establisherIndex, partnerIndex)) match {
             case None => form
             case Some(value) => form.fill(value)
           }
-          Future.successful(Ok(partnerDetails(appConfig, preparedForm, mode, establisherIndex, partnerIndex, existingSchemeName)))
+          val submitUrl = controllers.register.establishers.partnership.partner.routes.PartnerDetailsController.onSubmit(mode, establisherIndex, partnerIndex, srn)
+          Future.successful(Ok(partnerDetails(appConfig, preparedForm, mode, establisherIndex, partnerIndex, existingSchemeName, submitUrl)))
         }
     }
 
-  def onSubmit(mode: Mode, establisherIndex: Index, partnerIndex: Index): Action[AnyContent] =
+  def onSubmit(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String] = None): Action[AnyContent] =
     (authenticate andThen getData andThen requireData).async {
       implicit request =>
         PartnershipDetailsId(establisherIndex).retrieve.right.map { partnershipDetails =>
           form.bindFromRequest().fold(
-            (formWithErrors: Form[_]) =>
-              Future.successful(BadRequest(partnerDetails(appConfig, formWithErrors, mode, establisherIndex, partnerIndex, existingSchemeName)))
-            ,
+            (formWithErrors: Form[_]) => {
+              val submitUrl = controllers.register.establishers.partnership.partner.routes.PartnerDetailsController.onSubmit(mode, establisherIndex, partnerIndex, srn)
+              Future.successful(BadRequest(partnerDetails(appConfig, formWithErrors, mode, establisherIndex, partnerIndex, existingSchemeName, submitUrl)))
+            },
             value =>
               dataCacheConnector.save(request.externalId, PartnerDetailsId(establisherIndex, partnerIndex), value).flatMap {
                 cacheMap =>

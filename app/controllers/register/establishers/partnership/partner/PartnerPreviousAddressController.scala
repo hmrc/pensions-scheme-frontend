@@ -54,13 +54,13 @@ class PartnerPreviousAddressController @Inject()(
 
   protected val form: Form[Address] = formProvider()
 
-  private def viewmodel(mode: Mode, establisherIndex: Index, partnerIndex: Index): Retrieval[ManualAddressViewModel] =
+  private def viewmodel(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Retrieval[ManualAddressViewModel] =
     Retrieval {
       implicit request =>
         PartnerDetailsId(establisherIndex, partnerIndex).retrieve.right.map {
           partner =>
             ManualAddressViewModel(
-              postCall(mode, establisherIndex, partnerIndex),
+              postCall(mode, establisherIndex, partnerIndex, srn),
               countryOptions.options,
               title = Message(title),
               heading = Message(heading),
@@ -69,17 +69,19 @@ class PartnerPreviousAddressController @Inject()(
         }
     }
 
-  def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String] = None): Action[AnyContent] =
+    (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      viewmodel(mode: Mode, establisherIndex: Index, partnerIndex: Index).retrieve.right.map {
+      viewmodel(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn).retrieve.right.map {
         vm =>
           get(PartnerPreviousAddressId(establisherIndex, partnerIndex), PartnerPreviousAddressListId(establisherIndex, partnerIndex), vm)
       }
   }
 
-  def onSubmit(mode: Mode, establisherIndex: Index, partnerIndex: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String] = None): Action[AnyContent] =
+    (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      viewmodel(mode: Mode, establisherIndex: Index, partnerIndex: Index).retrieve.right.map {
+      viewmodel(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn).retrieve.right.map {
         vm =>
           post(
             PartnerPreviousAddressId(establisherIndex, partnerIndex),

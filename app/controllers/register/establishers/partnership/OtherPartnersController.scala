@@ -17,7 +17,7 @@
 package controllers.register.establishers.partnership
 
 import config.FrontendAppConfig
-import connectors.{SubscriptionCacheConnector, UserAnswersCacheConnector}
+import connectors.UserAnswersCacheConnector
 import controllers.Retrievals
 import controllers.actions._
 import forms.register.establishers.partnership.OtherPartnersFormProvider
@@ -47,25 +47,26 @@ class OtherPartnersController @Inject()(
 
   private val form: Form[Boolean] = formProvider()
 
-  def onPageLoad(mode: Mode, establisherIndex: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onPageLoad(mode: Mode, establisherIndex: Index, srn: Option[String] = None): Action[AnyContent] =
+    (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      retrievePartnershipName(establisherIndex) { partnershipName =>
-        val redirectResult = request.userAnswers.get(OtherPartnersId(establisherIndex)) match {
-          case None => Ok(otherPartners(appConfig, form, mode, establisherIndex, existingSchemeName))
-          case Some(value) => Ok(otherPartners(appConfig, form.fill(value), mode, establisherIndex, existingSchemeName))
-        }
-        Future.successful(redirectResult)
+      retrievePartnershipName(establisherIndex) { _ =>
+        val preparedForm = request.userAnswers.get(OtherPartnersId(establisherIndex)).fold(form)(form.fill)
+        val submitUrl = controllers.register.establishers.partnership.routes.OtherPartnersController.onSubmit(mode, establisherIndex, srn)
+        Future.successful(Ok(otherPartners(appConfig, preparedForm, mode, establisherIndex, existingSchemeName, submitUrl)))
       }
 
   }
 
-  def onSubmit(mode: Mode, establisherIndex: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode, establisherIndex: Index, srn: Option[String] = None): Action[AnyContent] =
+    (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      retrievePartnershipName(establisherIndex) {
-        partnershipName =>
+      retrievePartnershipName(establisherIndex) {_ =>
           form.bindFromRequest().fold(
-            (formWithErrors: Form[_]) =>
-              Future.successful(BadRequest(otherPartners(appConfig, formWithErrors, mode, establisherIndex, existingSchemeName))),
+            (formWithErrors: Form[_]) => {
+              val submitUrl = controllers.register.establishers.partnership.routes.OtherPartnersController.onSubmit(mode, establisherIndex, srn)
+              Future.successful(BadRequest(otherPartners(appConfig, formWithErrors, mode, establisherIndex, existingSchemeName, submitUrl)))
+            },
             value =>
               dataCacheConnector.save(request.externalId, OtherPartnersId(establisherIndex), value).map(cacheMap =>
                 Redirect(navigator.nextPage(OtherPartnersId(establisherIndex), mode, UserAnswers(cacheMap))))

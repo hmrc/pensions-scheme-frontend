@@ -18,15 +18,16 @@
 @import uk.gov.hmrc.play.views.html._
 @import controllers.register.establishers.partnership.partner.routes._
 @import models.Mode
+@import play.api.mvc.Call
 
-@(appConfig: FrontendAppConfig, form: Form[_], mode: Mode, establisherIndex: Index, partnerIndex: Index, schemeName: Option[String])(implicit request: Request[_], messages: Messages)
+@(appConfig: FrontendAppConfig, form: Form[_], mode: Mode, establisherIndex: Index, partnerIndex: Index, schemeName: Option[String], submitCall: Call)(implicit request: Request[_], messages: Messages)
 
 @main_template(
     title = messages("messages__partnerDetails__title"),
     appConfig = appConfig,
     bodyClasses = None) {
 
-    @helpers.form(action = controllers.register.establishers.partnership.partner.routes.PartnerDetailsController.onSubmit(mode, establisherIndex, partnerIndex), 'autoComplete -> "off") {
+    @helpers.form(action = submitCall, 'autoComplete -> "off") {
 
         @components.error_summary(form.errors)
 

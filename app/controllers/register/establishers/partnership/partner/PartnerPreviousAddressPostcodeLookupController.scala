@@ -46,12 +46,12 @@ class PartnerPreviousAddressPostcodeLookupController @Inject()(
 
   protected val form: Form[String] = formProvider()
 
-  private def viewmodel(mode: Mode, establisherIndex: Index, partnerIndex: Index) = Retrieval {
+  private def viewmodel(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]) = Retrieval {
     implicit request =>
       PartnerDetailsId(establisherIndex, partnerIndex).retrieve.right.map(
         details => PostcodeLookupViewModel(
-          routes.PartnerPreviousAddressPostcodeLookupController.onSubmit(mode, establisherIndex, partnerIndex),
-          routes.PartnerPreviousAddressController.onPageLoad(mode, establisherIndex, partnerIndex),
+          routes.PartnerPreviousAddressPostcodeLookupController.onSubmit(mode, establisherIndex, partnerIndex, srn),
+          routes.PartnerPreviousAddressController.onPageLoad(mode, establisherIndex, partnerIndex, srn),
           Message("messages__partnerPreviousAddressPostcodeLookup__title"),
           Message("messages__partnerPreviousAddressPostcodeLookup__heading"),
           Some(details.fullName),
@@ -60,17 +60,19 @@ class PartnerPreviousAddressPostcodeLookupController @Inject()(
       )
   }
 
-  def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String] = None): Action[AnyContent] =
+    (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      viewmodel(mode, establisherIndex, partnerIndex).retrieve.right.map(
+      viewmodel(mode, establisherIndex, partnerIndex, srn).retrieve.right.map(
         vm =>
           get(vm)
       )
   }
 
-  def onSubmit(mode: Mode, establisherIndex: Index, partnerIndex: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String] = None): Action[AnyContent] =
+    (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      viewmodel(mode, establisherIndex, partnerIndex).retrieve.right.map(
+      viewmodel(mode, establisherIndex, partnerIndex, srn).retrieve.right.map(
         vm =>
           post(PartnerPreviousAddressPostcodeLookupId(establisherIndex, partnerIndex), vm, mode)
       )

@@ -44,22 +44,24 @@ class PartnershipAddressYearsController @Inject()(
 
   private val form = new AddressYearsFormProvider()(Message("messages__partnershipAddressYears__error"))
 
-  def onPageLoad(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onPageLoad(mode: Mode, index: Index, srn: Option[String] = None): Action[AnyContent] =
+    (authenticate andThen getData andThen requireData).async {
     implicit request =>
       PartnershipDetailsId(index).retrieve.right.map { partnershipDetails =>
-        get(PartnershipAddressYearsId(index), form, viewModel(mode, index, partnershipDetails.name))
+        get(PartnershipAddressYearsId(index), form, viewModel(mode, index, partnershipDetails.name, srn))
       }
   }
 
-  def onSubmit(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode, index: Index, srn: Option[String] = None): Action[AnyContent] =
+    (authenticate andThen getData andThen requireData).async {
     implicit request =>
       PartnershipDetailsId(index).retrieve.right.map { partnershipDetails =>
-        post(PartnershipAddressYearsId(index), mode, form, viewModel(mode, index, partnershipDetails.name))
+        post(PartnershipAddressYearsId(index), mode, form, viewModel(mode, index, partnershipDetails.name, srn))
       }
   }
 
-  private def viewModel(mode: Mode, index: Index, partnershipName: String) = AddressYearsViewModel(
-    postCall = routes.PartnershipAddressYearsController.onSubmit(mode, index),
+  private def viewModel(mode: Mode, index: Index, partnershipName: String, srn: Option[String]) = AddressYearsViewModel(
+    postCall = routes.PartnershipAddressYearsController.onSubmit(mode, index, srn),
     title = Message("messages__partnershipAddressYears__title"),
     heading = Message("messages__partnershipAddressYears__heading"),
     legend = Message("messages__partnershipAddressYears__heading"),
