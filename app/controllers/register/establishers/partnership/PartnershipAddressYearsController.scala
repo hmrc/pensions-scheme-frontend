@@ -44,7 +44,7 @@ class PartnershipAddressYearsController @Inject()(
 
   private val form = new AddressYearsFormProvider()(Message("messages__partnershipAddressYears__error"))
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String] = None): Action[AnyContent] =
+  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData andThen requireData).async {
     implicit request =>
       PartnershipDetailsId(index).retrieve.right.map { partnershipDetails =>
@@ -52,7 +52,7 @@ class PartnershipAddressYearsController @Inject()(
       }
   }
 
-  def onSubmit(mode: Mode, index: Index, srn: Option[String] = None): Action[AnyContent] =
+  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData andThen requireData).async {
     implicit request =>
       PartnershipDetailsId(index).retrieve.right.map { partnershipDetails =>

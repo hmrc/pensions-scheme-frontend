@@ -39,7 +39,7 @@ class AlreadyDeletedController @Inject()(
                                           requireData: DataRequiredAction
                                         ) (implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
 
-  def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String] = None): Action[AnyContent] =
+  def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData andThen requireData).async {
     implicit request =>
       PartnerDetailsId(establisherIndex, partnerIndex).retrieve.right.map {

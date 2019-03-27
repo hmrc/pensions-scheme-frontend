@@ -48,7 +48,7 @@ class TrusteeKindControllerSpec extends ControllerSpecBase {
   "TrusteeKind Controller" must {
 
     "return OK and the correct view for a GET" in {
-      val result = controller().onPageLoad(NormalMode, index)(fakeRequest)
+      val result = controller().onPageLoad(NormalMode, index, None)(fakeRequest)
 
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString()
@@ -59,7 +59,7 @@ class TrusteeKindControllerSpec extends ControllerSpecBase {
         "trustees" -> Json.arr(Json.obj(TrusteeKindId.toString -> JsString(TrusteeKind.values.head.toString))))
       val getRelevantData = new FakeDataRetrievalAction(Some(validData))
 
-      val result = controller(getRelevantData).onPageLoad(NormalMode, index)(fakeRequest)
+      val result = controller(getRelevantData).onPageLoad(NormalMode, index, None)(fakeRequest)
 
       contentAsString(result) mustBe viewAsString(form.fill(TrusteeKind.values.head))
     }
@@ -67,7 +67,7 @@ class TrusteeKindControllerSpec extends ControllerSpecBase {
     "save the data and redirect to the next page when valid data is submitted" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", TrusteeKind.options.head.value))
 
-      val result = controller().onSubmit(NormalMode, index)(postRequest)
+      val result = controller().onSubmit(NormalMode, index, None)(postRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
@@ -78,7 +78,7 @@ class TrusteeKindControllerSpec extends ControllerSpecBase {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "invalid value"))
       val boundForm = form.bind(Map("value" -> "invalid value"))
 
-      val result = controller().onSubmit(NormalMode, index)(postRequest)
+      val result = controller().onSubmit(NormalMode, index, None)(postRequest)
 
       status(result) mustBe BAD_REQUEST
       contentAsString(result) mustBe viewAsString(boundForm)
@@ -86,7 +86,7 @@ class TrusteeKindControllerSpec extends ControllerSpecBase {
 
     "redirect to Session Expired for a POST if no existing data is found" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", TrusteeKind.options.head.value))
-      val result = controller(dontGetAnyData).onSubmit(NormalMode, index)(postRequest)
+      val result = controller(dontGetAnyData).onSubmit(NormalMode, index, None)(postRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)

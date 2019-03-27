@@ -80,7 +80,7 @@ class PostCodeLookupControllerSpec extends ControllerSpecBase with MockitoSugar 
   "Address Controller" must {
 
     "return OK and the correct view for a GET" in {
-      val result = controller().onPageLoad(NormalMode, firstIndex)(fakeRequest)
+      val result = controller().onPageLoad(NormalMode, firstIndex, None)(fakeRequest)
 
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString()
@@ -95,7 +95,7 @@ class PostCodeLookupControllerSpec extends ControllerSpecBase with MockitoSugar 
       when(fakeAddressLookupConnector.addressLookupByPostCode(Matchers.eq(invalidPostCode))(Matchers.any(), Matchers.any())).thenReturn(
         Future.successful(Seq(TolerantAddress(Some("address line 1"), Some("address line 2"), None, None, Some(invalidPostCode), Some("GB")))))
 
-      val result = controller().onSubmit(NormalMode, firstIndex)(postRequest)
+      val result = controller().onSubmit(NormalMode, firstIndex, None)(postRequest)
 
       status(result) mustBe BAD_REQUEST
       contentAsString(result) mustBe viewAsString(boundForm)
@@ -109,7 +109,7 @@ class PostCodeLookupControllerSpec extends ControllerSpecBase with MockitoSugar 
       when(fakeAddressLookupConnector.addressLookupByPostCode(Matchers.eq(notFoundPostCode))
       (Matchers.any(), Matchers.any())).thenReturn(Future.successful(Nil))
 
-      val result = controller().onSubmit(NormalMode, firstIndex)(postRequest)
+      val result = controller().onSubmit(NormalMode, firstIndex, None)(postRequest)
 
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString(boundForm)
@@ -123,7 +123,7 @@ class PostCodeLookupControllerSpec extends ControllerSpecBase with MockitoSugar 
       when(fakeAddressLookupConnector.addressLookupByPostCode(Matchers.any())(Matchers.any(), Matchers.any()))
         .thenReturn(Future.failed(new HttpException("Failed", INTERNAL_SERVER_ERROR)))
 
-      val result = controller().onSubmit(NormalMode, firstIndex)(postRequest)
+      val result = controller().onSubmit(NormalMode, firstIndex, None)(postRequest)
 
       status(result) mustBe BAD_REQUEST
       contentAsString(result) mustBe viewAsString(boundForm)
@@ -135,7 +135,7 @@ class PostCodeLookupControllerSpec extends ControllerSpecBase with MockitoSugar 
       when(fakeAddressLookupConnector.addressLookupByPostCode(Matchers.eq(validPostCode))(Matchers.any(), Matchers.any())).thenReturn(
         Future.successful(Seq(TolerantAddress(Some("address line 1"), Some("address line 2"), None, None, Some(validPostCode), Some("GB")))))
 
-      val result = controller().onSubmit(NormalMode, firstIndex)(postRequest)
+      val result = controller().onSubmit(NormalMode, firstIndex, None)(postRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
@@ -145,14 +145,14 @@ class PostCodeLookupControllerSpec extends ControllerSpecBase with MockitoSugar 
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", ""))
       val boundForm = form.bind(Map("value" -> ""))
 
-      val result = controller().onSubmit(NormalMode, firstIndex)(postRequest)
+      val result = controller().onSubmit(NormalMode, firstIndex, None)(postRequest)
 
       status(result) mustBe BAD_REQUEST
       contentAsString(result) mustBe viewAsString(boundForm)
     }
 
     "redirect to Session Expired for a GET if no existing data is found" in {
-      val result = controller(dontGetAnyData).onPageLoad(NormalMode, firstIndex)(fakeRequest)
+      val result = controller(dontGetAnyData).onPageLoad(NormalMode, firstIndex, None)(fakeRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
@@ -160,7 +160,7 @@ class PostCodeLookupControllerSpec extends ControllerSpecBase with MockitoSugar 
 
     "redirect to Session Expired for a POST if no existing data is found" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "valid"))
-      val result = controller(dontGetAnyData).onSubmit(NormalMode, firstIndex)(postRequest)
+      val result = controller(dontGetAnyData).onSubmit(NormalMode, firstIndex, None)(postRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)

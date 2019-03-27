@@ -47,7 +47,7 @@ class OtherPartnersController @Inject()(
 
   private val form: Form[Boolean] = formProvider()
 
-  def onPageLoad(mode: Mode, establisherIndex: Index, srn: Option[String] = None): Action[AnyContent] =
+  def onPageLoad(mode: Mode, establisherIndex: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData andThen requireData).async {
     implicit request =>
       retrievePartnershipName(establisherIndex) { _ =>
@@ -58,7 +58,7 @@ class OtherPartnersController @Inject()(
 
   }
 
-  def onSubmit(mode: Mode, establisherIndex: Index, srn: Option[String] = None): Action[AnyContent] =
+  def onSubmit(mode: Mode, establisherIndex: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData andThen requireData).async {
     implicit request =>
       retrievePartnershipName(establisherIndex) {_ =>

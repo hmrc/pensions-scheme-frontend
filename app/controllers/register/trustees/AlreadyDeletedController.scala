@@ -44,10 +44,10 @@ class AlreadyDeletedController @Inject()(
                                           requireData: DataRequiredAction
                                         ) (implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
 
-  def onPageLoad(mode: Mode, index: Index, trusteeKind: TrusteeKind, srn: Option[String] = None): Action[AnyContent] =
+  def onPageLoad(mode: Mode, index: Index, trusteeKind: TrusteeKind, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      trusteeName(index, trusteeKind) match {
+      trusteeName(index, trusteeKind, srn) match {
         case Right(trusteeName) =>
           Future.successful(Ok(alreadyDeleted(appConfig, vm(index, trusteeName, srn))))
         case Left(result) => result
@@ -60,7 +60,7 @@ class AlreadyDeletedController @Inject()(
     returnCall = controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode, srn)
   )
 
-  private def trusteeName(index: Index, trusteeKind: TrusteeKind, srn: Option[String] = None)
+  private def trusteeName(index: Index, trusteeKind: TrusteeKind, srn: Option[String])
                          (implicit dataRequest: DataRequest[AnyContent]): Either[Future[Result], String] = {
     trusteeKind match {
       case Company => CompanyDetailsId(index).retrieve.right.map(_.companyName)

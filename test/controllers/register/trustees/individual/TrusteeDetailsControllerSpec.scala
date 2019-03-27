@@ -65,7 +65,7 @@ class TrusteeDetailsControllerSpec extends ControllerSpecBase {
   "TrusteeDetails Controller" must {
 
     "return OK and the correct view for a GET" in {
-      val result = controller().onPageLoad(NormalMode, firstIndex)(fakeRequest)
+      val result = controller().onPageLoad(NormalMode, firstIndex, None)(fakeRequest)
 
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString()
@@ -81,7 +81,7 @@ class TrusteeDetailsControllerSpec extends ControllerSpecBase {
       )
       val getRelevantData = new FakeDataRetrievalAction(Some(validData))
 
-      val result = controller(getRelevantData).onPageLoad(NormalMode, firstIndex)(fakeRequest)
+      val result = controller(getRelevantData).onPageLoad(NormalMode, firstIndex, None)(fakeRequest)
 
       contentAsString(result) mustBe viewAsString(form.fill(personDetails))
     }
@@ -95,7 +95,7 @@ class TrusteeDetailsControllerSpec extends ControllerSpecBase {
         ("date.year", year.toString)
       )
 
-      val result = controller().onSubmit(NormalMode, firstIndex)(postRequest)
+      val result = controller().onSubmit(NormalMode, firstIndex, None)(postRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
@@ -105,7 +105,7 @@ class TrusteeDetailsControllerSpec extends ControllerSpecBase {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "invalid value"))
       val boundForm = form.bind(Map("value" -> "invalid value"))
 
-      val result = controller().onSubmit(NormalMode, firstIndex)(postRequest)
+      val result = controller().onSubmit(NormalMode, firstIndex, None)(postRequest)
 
       status(result) mustBe BAD_REQUEST
       contentAsString(result) mustBe viewAsString(boundForm)
@@ -114,14 +114,14 @@ class TrusteeDetailsControllerSpec extends ControllerSpecBase {
     "redirect to Session Expired" when {
       "no existing data is found" when {
         "GET" in {
-          val result = controller(dontGetAnyData).onPageLoad(NormalMode, firstIndex)(fakeRequest)
+          val result = controller(dontGetAnyData).onPageLoad(NormalMode, firstIndex, None)(fakeRequest)
 
           status(result) mustBe SEE_OTHER
           redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
         }
         "POST" in {
           val postRequest = fakeRequest.withFormUrlEncodedBody(("field1", "value 1"), ("field2", "value 2"))
-          val result = controller(dontGetAnyData).onSubmit(NormalMode, firstIndex)(postRequest)
+          val result = controller(dontGetAnyData).onSubmit(NormalMode, firstIndex, None)(postRequest)
 
           status(result) mustBe SEE_OTHER
           redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)

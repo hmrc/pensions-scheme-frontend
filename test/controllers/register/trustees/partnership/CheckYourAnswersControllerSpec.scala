@@ -99,7 +99,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase {
     "redirect to Add Trustees page on submit" which {
       "marks partnership as complete on submit" in {
 
-        val result = controller().onSubmit(NormalMode, firstIndex)(request)
+        val result = controller().onSubmit(NormalMode, firstIndex, None)(request)
 
         status(result) mustBe 303
         redirectLocation(result) mustBe Some(onwardRoute.url)

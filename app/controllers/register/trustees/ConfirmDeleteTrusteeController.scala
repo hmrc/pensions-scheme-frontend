@@ -53,7 +53,7 @@ class ConfirmDeleteTrusteeController @Inject()(appConfig: FrontendAppConfig,
 
   private val form: Form[Boolean] = formProvider()
 
-  def onPageLoad(mode: Mode, index: Index, trusteeKind: TrusteeKind, srn: Option[String] = None): Action[AnyContent] =
+  def onPageLoad(mode: Mode, index: Index, trusteeKind: TrusteeKind, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData andThen requireData).async {
     implicit request =>
       getDeletableTrustee(index, trusteeKind, request.userAnswers) map {
@@ -76,7 +76,7 @@ class ConfirmDeleteTrusteeController @Inject()(appConfig: FrontendAppConfig,
       } getOrElse Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
   }
 
-  def onSubmit(mode: Mode, index: Index, trusteeKind: TrusteeKind, srn: Option[String] = None): Action[AnyContent] =
+  def onSubmit(mode: Mode, index: Index, trusteeKind: TrusteeKind, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData andThen requireData).async {
     implicit request =>
       trusteeKind match {

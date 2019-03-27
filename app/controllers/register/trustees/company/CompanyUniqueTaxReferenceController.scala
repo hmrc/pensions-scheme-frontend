@@ -47,7 +47,7 @@ class CompanyUniqueTaxReferenceController @Inject()(
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String] = None): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       CompanyDetailsId(index).retrieve.right.map { companyDetails =>
         val submitUrl = controllers.register.trustees.company.routes.CompanyUniqueTaxReferenceController.onSubmit(mode, index, srn)
@@ -56,7 +56,7 @@ class CompanyUniqueTaxReferenceController @Inject()(
       }
   }
 
-  def onSubmit(mode: Mode, index: Index, srn: Option[String] = None): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       CompanyDetailsId(index).retrieve.right.map {
         companyDetails =>

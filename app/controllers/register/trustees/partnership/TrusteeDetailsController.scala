@@ -46,14 +46,14 @@ class TrusteeDetailsController @Inject()(
                                         )(implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String] = None): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       val submitUrl = controllers.register.trustees.partnership.routes.TrusteeDetailsController.onSubmit(mode, index, srn)
       val updatedForm = request.userAnswers.get(PartnershipDetailsId(index)).fold(form)(form.fill)
       Future.successful(Ok(partnershipDetails(appConfig, updatedForm, mode, index, existingSchemeName, submitUrl)))
   }
 
-  def onSubmit(mode: Mode, index: Index, srn: Option[String] = None): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) => {

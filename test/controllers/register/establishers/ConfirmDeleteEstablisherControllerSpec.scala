@@ -67,7 +67,7 @@ class ConfirmDeleteEstablisherControllerSpec extends ControllerSpecBase {
       val establisherIndex = Index(2)
       val postCall = routes.ConfirmDeleteEstablisherController.onSubmit(NormalMode, establisherIndex, EstablisherKind.Partnership, None)
       val data = new FakeDataRetrievalAction(Some(testData))
-      val result = controller(data).onPageLoad(NormalMode, establisherIndex, EstablisherKind.Partnership)(fakeRequest)
+      val result = controller(data).onPageLoad(NormalMode, establisherIndex, EstablisherKind.Partnership, None)(fakeRequest)
 
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString(

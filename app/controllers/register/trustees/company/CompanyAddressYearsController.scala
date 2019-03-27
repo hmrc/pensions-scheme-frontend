@@ -42,7 +42,7 @@ class CompanyAddressYearsController @Inject()(
                                                formProvider: AddressYearsFormProvider
                                              ) extends controllers.address.AddressYearsController {
 
-  private def viewmodel(index: Index, mode: Mode, srn: Option[String] = None): Retrieval[AddressYearsViewModel] =
+  private def viewmodel(index: Index, mode: Mode, srn: Option[String]): Retrieval[AddressYearsViewModel] =
     Retrieval(
       implicit request =>
         CompanyDetailsId(index.id).retrieve.right.map {
@@ -60,19 +60,19 @@ class CompanyAddressYearsController @Inject()(
 
   private val form: Form[AddressYears] = formProvider(Message("messages__common_error__current_address_years"))
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String] = None): Action[AnyContent] =
+  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData andThen requireData).async {
       implicit request =>
-        viewmodel(index, mode).retrieve.right.map {
+        viewmodel(index, mode, srn).retrieve.right.map {
           vm =>
             get(CompanyAddressYearsId(index), form, vm)
         }
     }
 
-  def onSubmit(mode: Mode, index: Index, srn: Option[String] = None): Action[AnyContent] =
+  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData andThen requireData).async {
       implicit request =>
-        viewmodel(index, mode).retrieve.right.map {
+        viewmodel(index, mode, srn).retrieve.right.map {
           vm =>
             post(CompanyAddressYearsId(index), mode, form, vm)
         }
