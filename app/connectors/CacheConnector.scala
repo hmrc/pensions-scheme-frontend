@@ -16,29 +16,28 @@
 
 package connectors
 
-import com.google.inject.Inject
 import config.FrontendAppConfig
 import identifiers.TypedIdentifier
+import models.requests.DataRequest
 import play.api.Logger
 import play.api.http.Status._
 import play.api.libs.json._
 import play.api.libs.ws.WSClient
-import play.api.mvc.Result
 import play.api.mvc.Results._
+import play.api.mvc.{AnyContent, Result}
 import uk.gov.hmrc.crypto.PlainText
 import uk.gov.hmrc.http._
 import utils.UserAnswers
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class MicroserviceCacheConnector @Inject()(
-                                            config: FrontendAppConfig,
-                                            http: WSClient
-                                          ) extends UserAnswersCacheConnector {
+trait CacheConnector extends UserAnswersCacheConnector{
 
-  protected def url(id: String) = s"${config.pensionsSchemeUrl}/pensions-scheme/journey-cache/scheme/$id"
+  val config: FrontendAppConfig
+  val http: WSClient
+  protected def url(id: String): String
 
-  protected def lastUpdatedUrl(id: String) = s"${config.pensionsSchemeUrl}/pensions-scheme/journey-cache/scheme/$id/lastUpdated"
+  protected def lastUpdatedUrl(id: String): String
 
   override def save[A, I <: TypedIdentifier[A]](cacheId: String, id: I, value: A)
                                                (implicit
@@ -49,10 +48,10 @@ class MicroserviceCacheConnector @Inject()(
     modify(cacheId, _.set(id)(value))
   }
 
-  override def upsert(cacheId: String, value: JsValue)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[JsValue] =
+  override  def upsert(cacheId: String, value: JsValue)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[JsValue] =
     modify(cacheId, _ => JsSuccess(UserAnswers(value)))
 
-  def remove[I <: TypedIdentifier[_]](cacheId: String, id: I)
+  override def remove[I <: TypedIdentifier[_]](cacheId: String, id: I)
                                      (implicit
                                       ec: ExecutionContext,
                                       hc: HeaderCarrier
@@ -60,7 +59,7 @@ class MicroserviceCacheConnector @Inject()(
     modify(cacheId, _.remove(id))
   }
 
-  private[connectors] def modify(cacheId: String, modification: (UserAnswers) => JsResult[UserAnswers])
+  private[connectors] def modify(cacheId: String, modification: UserAnswers => JsResult[UserAnswers])
                                 (implicit
                                  ec: ExecutionContext,
                                  hc: HeaderCarrier
@@ -126,10 +125,9 @@ class MicroserviceCacheConnector @Inject()(
         response.status match {
           case NOT_FOUND =>
             Future.successful(None)
-          case OK => {
+          case OK =>
             Logger.debug(s"connectors.MicroserviceCacheConnector.fetch: Successful response: ${response.body}")
             Future.successful(Some(Json.parse(response.body)))
-          }
           case _ =>
             Future.failed(new HttpException(response.body, response.status))
         }

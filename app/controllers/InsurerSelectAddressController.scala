@@ -41,28 +41,29 @@ class InsurerSelectAddressController @Inject()(override val appConfig: FrontendA
                                                requireData: DataRequiredAction) extends AddressListController with Retrievals {
 
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onPageLoad(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      viewModel(mode).right.map(get)
+      viewModel(mode, srn).right.map(get)
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      viewModel(mode).right.map {
+      viewModel(mode, srn).right.map {
         vm =>
           post(vm, InsurerSelectAddressId, InsurerConfirmAddressId, mode)
       }
   }
 
-  private def viewModel(mode: Mode)(implicit request: DataRequest[AnyContent]): Either[Future[Result],
+  private def viewModel(mode: Mode, srn: Option[String])(implicit request: DataRequest[AnyContent]): Either[Future[Result],
     AddressListViewModel] = {
     (InsurerEnterPostCodeId).retrieve.right.map {
       case addresses =>
         AddressListViewModel(
-          postCall = routes.InsurerSelectAddressController.onSubmit(mode),
-          manualInputCall = routes.InsurerConfirmAddressController.onPageLoad(mode),
-          addresses = addresses
+          postCall = routes.InsurerSelectAddressController.onSubmit(mode, srn),
+          manualInputCall = routes.InsurerConfirmAddressController.onPageLoad(mode, srn),
+          addresses = addresses,
+          srn = srn
         )
-    }.left.map(_ => Future.successful(Redirect(routes.InsurerEnterPostcodeController.onPageLoad(mode))))
+    }.left.map(_ => Future.successful(Redirect(routes.InsurerEnterPostcodeController.onPageLoad(mode, srn))))
   }
 }

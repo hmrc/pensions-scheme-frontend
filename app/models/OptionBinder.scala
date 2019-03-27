@@ -14,17 +14,21 @@
  * limitations under the License.
  */
 
-import connectors.{MicroserviceCacheConnector, PSANameCacheConnector, UserAnswersCacheConnector}
-import play.api.inject.{Binding, Module}
-import play.api.{Configuration, Environment}
-import utils.annotations.PSANameCache
+package models
 
-class DataCacheModule extends Module {
+import play.api.mvc._
 
-  override def bindings(environment: Environment, configuration: Configuration): Seq[Binding[_]] = {
-    Seq(
-      bind[UserAnswersCacheConnector].to[MicroserviceCacheConnector],
-      bind[UserAnswersCacheConnector].qualifiedWith(classOf[PSANameCache]).to[PSANameCacheConnector]
-    )
+object OptionBinder {
+
+  implicit def optionBindable[T: PathBindable]: PathBindable[Option[T]] = new PathBindable[Option[T]] {
+    def bind(key: String, value: String): Either[String, Option[T]] =
+      implicitly[PathBindable[T]].
+        bind(key, value).
+        fold(
+          left => Left(left),
+          right => Right(Some(right))
+        )
+
+    def unbind(key: String, value: Option[T]): String = value map (_.toString) getOrElse ""
   }
 }

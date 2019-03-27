@@ -61,13 +61,13 @@ object AboutBenefitsAndInsuranceNavigatorSpec extends OptionValues {
 
   private def occupationalPension: Call = OccupationalPensionSchemeController.onPageLoad(NormalMode)
   private def typesofBenefits: Call = TypeOfBenefitsController.onPageLoad(NormalMode)
-  private def benefitsSecured: Call = BenefitsSecuredByInsuranceController.onPageLoad(NormalMode)
-  private def insuranceCompanyName: Call = InsuranceCompanyNameController.onPageLoad(NormalMode)
-  private def policyNumber: Call = InsurancePolicyNumberController.onPageLoad(NormalMode)
-  private def insurerPostcode: Call = InsurerEnterPostcodeController.onPageLoad(NormalMode)
-  private def insurerAddressList: Call = InsurerSelectAddressController.onPageLoad(NormalMode)
-  private def insurerAddress: Call = InsurerConfirmAddressController.onPageLoad(NormalMode)
-  private def checkYouAnswers: Call = CheckYourAnswersBenefitsAndInsuranceController.onPageLoad()
+  private def benefitsSecured: Call = BenefitsSecuredByInsuranceController.onPageLoad(NormalMode, None)
+  private def insuranceCompanyName: Call = InsuranceCompanyNameController.onPageLoad(NormalMode, None)
+  private def policyNumber: Call = InsurancePolicyNumberController.onPageLoad(NormalMode, None)
+  private def insurerPostcode: Call = InsurerEnterPostcodeController.onPageLoad(NormalMode, None)
+  private def insurerAddressList: Call = InsurerSelectAddressController.onPageLoad(NormalMode, None)
+  private def insurerAddress: Call = InsurerConfirmAddressController.onPageLoad(NormalMode, None)
+  private def checkYouAnswers: Call = CheckYourAnswersBenefitsAndInsuranceController.onPageLoad(NormalMode, None)
 
   private def dataDescriber(answers: UserAnswers): String = answers.toString
 }

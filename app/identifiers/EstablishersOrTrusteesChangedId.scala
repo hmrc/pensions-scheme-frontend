@@ -14,20 +14,8 @@
  * limitations under the License.
  */
 
-package viewmodels.address
+package identifiers
 
-import play.api.mvc.Call
-import utils.InputOption
-import viewmodels.Message
-
-case class ManualAddressViewModel(
-                                   postCall: Call,
-                                   countryOptions: Seq[InputOption],
-                                   title: Message,
-                                   heading: Message,
-                                   secondaryHeader: Option[Message],
-                                   hint: Option[Message] = None,
-                                   srn: Option[String] = None
-                                 ) {
-
+case object EstablishersOrTrusteesChangedId extends TypedIdentifier[Boolean] {
+  override def toString: String = "changeOfEstablisherOrTrustDetails"
 }

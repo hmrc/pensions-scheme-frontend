@@ -14,48 +14,57 @@
  * limitations under the License.
  */
 
-package connectors
+package services
 
+import base.SpecBase
+import connectors.{SubscriptionCacheConnector, UpdateSchemeCacheConnector}
 import identifiers.TypedIdentifier
+import models.Mode
+import models.requests.DataRequest
 import org.scalatest.Matchers
-import play.api.libs.json._
-import play.api.mvc.Result
-import play.api.mvc.Results._
+import play.api.libs.json.{Format, JsValue, Json}
+import play.api.libs.ws.WSClient
+import play.api.mvc.Results.Ok
+import play.api.mvc.{AnyContent, Result}
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.collection.mutable
 import scala.concurrent.{ExecutionContext, Future}
 
-trait FakeUserAnswersCacheConnector extends UserAnswersCacheConnector with Matchers {
+trait FakeUserAnswersService extends UserAnswersService with Matchers {
+
+  import FakeUserAnswersService._
+
+  override protected def subscriptionCacheConnector: SubscriptionCacheConnector = FakeSubscriptionCacheConnector.getConnector
+  override protected def updateSchemeCacheConnector: UpdateSchemeCacheConnector = FakeUpdateCacheConnector.getConnector
 
   private val data: mutable.HashMap[String, JsValue] = mutable.HashMap()
   private val removed: mutable.ListBuffer[String] = mutable.ListBuffer()
 
-  override def save[A, I <: TypedIdentifier[A]](cacheId: String, id: I, value: A)
-                                               (implicit
-                                                fmt: Format[A],
-                                                ec: ExecutionContext,
-                                                hc: HeaderCarrier
-                                               ): Future[JsValue] = {
+  override def save[A, I <: TypedIdentifier[A]](mode: Mode, srn: Option[String], id: I, value: A)
+                                               (implicit fmt: Format[A], ec: ExecutionContext, hc: HeaderCarrier,
+                                                request: DataRequest[AnyContent]): Future[JsValue] =
+  {
     data += (id.toString -> Json.toJson(value))
     Future.successful(Json.obj())
   }
 
-  override def upsert(cacheId: String, value: JsValue)
+  def upsert(cacheId: String, value: JsValue)
             (implicit ec: ExecutionContext, hc: HeaderCarrier): Future[JsValue] = {
     Future.successful(value)
   }
 
-  override def remove[I <: TypedIdentifier[_]](cacheId: String, id: I)
+  override def remove[I <: TypedIdentifier[_]](mode: Mode, srn: Option[String], id: I)
                                      (implicit
                                       ec: ExecutionContext,
-                                      hc: HeaderCarrier
+                                      hc: HeaderCarrier,
+                                      request: DataRequest[AnyContent]
                                      ): Future[JsValue] = {
     removed += id.toString
     Future.successful(Json.obj())
   }
 
-  override def fetch(cacheId: String)(implicit
+  def fetch(cacheId: String)(implicit
                                       ec: ExecutionContext,
                                       hc: HeaderCarrier
   ): Future[Option[JsValue]] = {
@@ -63,7 +72,7 @@ trait FakeUserAnswersCacheConnector extends UserAnswersCacheConnector with Match
     Future.successful(Some(Json.obj()))
   }
 
-  override def lastUpdated(cacheId: String)(implicit
+  def lastUpdated(cacheId: String)(implicit
                                             ec: ExecutionContext,
                                             hc: HeaderCarrier
   ): Future[Option[JsValue]] = {
@@ -83,7 +92,7 @@ trait FakeUserAnswersCacheConnector extends UserAnswersCacheConnector with Match
     removed should contain(id.toString)
   }
 
-  override def removeAll(cacheId: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Result] = {
+  def removeAll(cacheId: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Result] = {
     Future.successful(Ok)
   }
 
@@ -91,8 +100,17 @@ trait FakeUserAnswersCacheConnector extends UserAnswersCacheConnector with Match
     data.clear()
     removed.clear()
   }
-
 }
 
-object FakeUserAnswersCacheConnector extends FakeUserAnswersCacheConnector
+object FakeUserAnswersService extends FakeUserAnswersService {
+
+  object FakeSubscriptionCacheConnector extends SpecBase {
+    def getConnector: SubscriptionCacheConnector = new SubscriptionCacheConnector(frontendAppConfig, injector.instanceOf[WSClient])
+  }
+
+  object FakeUpdateCacheConnector extends SpecBase {
+    def getConnector: UpdateSchemeCacheConnector =new UpdateSchemeCacheConnector(frontendAppConfig, injector.instanceOf[WSClient])
+  }
+}
+
 

@@ -18,13 +18,16 @@ package connectors
 
 import com.google.inject.Inject
 import config.FrontendAppConfig
+import javax.inject.Singleton
 import play.api.libs.ws.WSClient
-import uk.gov.hmrc.crypto.ApplicationCrypto
 
-class PSANameCacheConnector @Inject()(
-                                       config: FrontendAppConfig,
-                                       http: WSClient
-                                     ) extends MicroserviceCacheConnector(config, http) {
+@Singleton
+class SubscriptionCacheConnector @Inject()(
+                                               override val config: FrontendAppConfig,
+                                               override val http: WSClient
+                                             ) extends CacheConnector {
 
-  override protected def url(id: String) = s"${config.pensionsSchemeUrl}/pensions-scheme/psa-name/$id"
+  override protected def url(id: String) = s"${config.pensionsSchemeUrl}/pensions-scheme/journey-cache/scheme/$id"
+
+  override protected def lastUpdatedUrl(id: String) = s"${config.pensionsSchemeUrl}/pensions-scheme/journey-cache/scheme/$id/lastUpdated"
 }

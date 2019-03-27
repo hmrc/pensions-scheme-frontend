@@ -30,6 +30,7 @@ import models.address.Address
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
+import services.UserAnswersService
 import utils.annotations.WorkingKnowledge
 import utils.{CountryOptions, Navigator}
 import viewmodels.Message
@@ -38,7 +39,7 @@ import viewmodels.address.ManualAddressViewModel
 class AdviserAddressController @Inject()(
                                           val appConfig: FrontendAppConfig,
                                           val messagesApi: MessagesApi,
-                                          val dataCacheConnector: UserAnswersCacheConnector,
+                                          val userAnswersService: UserAnswersService,
                                           @WorkingKnowledge val navigator: Navigator,
                                           authenticate: AuthAction,
                                           getData: DataRetrievalAction,
