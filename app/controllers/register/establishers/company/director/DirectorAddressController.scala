@@ -56,17 +56,17 @@ class DirectorAddressController @Inject()(
 
   protected val form: Form[Address] = formProvider()
 
-  def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      viewmodel(establisherIndex, directorIndex, mode).retrieve.right.map {
+      viewmodel(establisherIndex, directorIndex, mode, srn).retrieve.right.map {
         vm =>
           get(DirectorAddressId(establisherIndex, directorIndex), DirectorAddressListId(establisherIndex, directorIndex), vm)
       }
   }
 
-  def onSubmit(mode: Mode, establisherIndex: Index, directorIndex: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      viewmodel(establisherIndex, directorIndex, mode).retrieve.right.map {
+      viewmodel(establisherIndex, directorIndex, mode, srn).retrieve.right.map {
         vm =>
           post(
             DirectorAddressId(establisherIndex, directorIndex),
@@ -79,13 +79,13 @@ class DirectorAddressController @Inject()(
       }
   }
 
-  private def viewmodel(establisherIndex: Int, directorIndex: Int, mode: Mode): Retrieval[ManualAddressViewModel] =
+  private def viewmodel(establisherIndex: Int, directorIndex: Int, mode: Mode, srn: Option[String]): Retrieval[ManualAddressViewModel] =
     Retrieval {
       implicit request =>
         DirectorDetailsId(establisherIndex, directorIndex).retrieve.right.map {
           details =>
             ManualAddressViewModel(
-              postCall(mode, Index(establisherIndex), Index(directorIndex)),
+              postCall(mode, Index(establisherIndex), Index(directorIndex), srn),
               countryOptions.options,
               title = Message(title),
               heading = Message(heading),

@@ -83,7 +83,7 @@ class PartnerPreviousAddressControllerSpec extends ControllerSpecBase with Mocki
           val controller = app.injector.instanceOf[PartnerPreviousAddressController]
 
           val viewmodel = ManualAddressViewModel(
-            controller.postCall(NormalMode, establisherIndex, partnerIndex),
+            controller.postCall(NormalMode, establisherIndex, partnerIndex, None),
             countryOptions.options,
             controller.title,
             controller.heading,
@@ -91,7 +91,7 @@ class PartnerPreviousAddressControllerSpec extends ControllerSpecBase with Mocki
           )
 
           val request = addToken(
-            FakeRequest(routes.PartnerPreviousAddressController.onPageLoad(NormalMode, establisherIndex, partnerIndex))
+            FakeRequest(routes.PartnerPreviousAddressController.onPageLoad(NormalMode, establisherIndex, partnerIndex, None))
               .withHeaders("Csrf-Token" -> "nocheck")
           )
 

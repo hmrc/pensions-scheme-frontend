@@ -56,11 +56,11 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase {
           Some("messages__partner__cya__details_heading"),
           Seq(
             PartnerDetailsId(firstIndex, firstIndex).
-              row(routes.PartnerDetailsController.onPageLoad(CheckMode, firstIndex, firstIndex).url),
+              row(routes.PartnerDetailsController.onPageLoad(CheckMode, firstIndex, firstIndex, None).url),
             PartnerNinoId(firstIndex, firstIndex).
-              row(routes.PartnerNinoController.onPageLoad(CheckMode, firstIndex, firstIndex).url),
+              row(routes.PartnerNinoController.onPageLoad(CheckMode, firstIndex, firstIndex, None).url),
             PartnerUniqueTaxReferenceId(firstIndex, firstIndex).
-              row(routes.PartnerUniqueTaxReferenceController.onPageLoad(CheckMode, firstIndex, firstIndex).url)
+              row(routes.PartnerUniqueTaxReferenceController.onPageLoad(CheckMode, firstIndex, firstIndex, None).url)
           ).flatten
         )
 
@@ -68,13 +68,13 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase {
           Some("messages__partner__cya__contact__details_heading"),
           Seq(
             PartnerAddressId(firstIndex, firstIndex).
-              row(routes.PartnerAddressController.onPageLoad(CheckMode, firstIndex, firstIndex).url),
+              row(routes.PartnerAddressController.onPageLoad(CheckMode, firstIndex, firstIndex, None).url),
             PartnerAddressYearsId(firstIndex, firstIndex).
-              row(routes.PartnerAddressYearsController.onPageLoad(CheckMode, firstIndex, firstIndex).url),
+              row(routes.PartnerAddressYearsController.onPageLoad(CheckMode, firstIndex, firstIndex, None).url),
             PartnerPreviousAddressId(firstIndex, firstIndex).
-              row(routes.PartnerPreviousAddressController.onPageLoad(CheckMode, firstIndex, firstIndex).url),
+              row(routes.PartnerPreviousAddressController.onPageLoad(CheckMode, firstIndex, firstIndex, None).url),
             PartnerContactDetailsId(firstIndex, firstIndex).
-              row(routes.PartnerContactDetailsController.onPageLoad(CheckMode, firstIndex, firstIndex).url)
+              row(routes.PartnerContactDetailsController.onPageLoad(CheckMode, firstIndex, firstIndex, None).url)
           ).flatten
         )
 

@@ -28,5 +28,6 @@ case class AddressListViewModel(
                                  heading: Message = Message("messages__select_the_address__title"),
                                  subHeading: Option[Message] = None,
                                  selectAddress: Message = Message("messages__common__select_address"),
-                                 selectAddressLink: Message = Message("messages__common__select_address_link")
+                                 selectAddressLink: Message = Message("messages__common__select_address_link"),
+                                 srn: Option[String] = None
                                )

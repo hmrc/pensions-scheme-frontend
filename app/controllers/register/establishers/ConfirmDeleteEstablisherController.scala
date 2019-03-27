@@ -70,7 +70,7 @@ class ConfirmDeleteEstablisherController @Inject()(
         getDeletableEstablisher(index, establisherKind, request.userAnswers) map {
           establisher =>
             if (establisher.isDeleted) {
-              Future.successful(Redirect(routes.AlreadyDeletedController.onPageLoad(index, establisherKind)))
+              Future.successful(Redirect(routes.AlreadyDeletedController.onPageLoad(mode, index, establisherKind, srn)))
             } else {
               Future.successful(
                 Ok(

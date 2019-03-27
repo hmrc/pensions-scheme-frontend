@@ -22,7 +22,7 @@ import identifiers.register.establishers.partnership.partner.{IsPartnerCompleteI
 import identifiers.register.establishers.partnership.{IsPartnershipCompleteId, PartnershipDetailsId}
 import identifiers.register.establishers.{EstablishersId, IsEstablisherCompleteId}
 import models.person.PersonDetails
-import models.{Index, PartnershipDetails}
+import models.{Index, NormalMode, PartnershipDetails}
 import org.joda.time.LocalDate
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
@@ -52,7 +52,9 @@ class PartnershipReviewControllerSpec extends ControllerSpecBase {
     index,
     partnershipName,
     partnerNames,
-    None
+    None,
+    None,
+    NormalMode
   )(fakeRequest, messages).toString
 
   "PartnershipReview Controller" must {
@@ -73,14 +75,14 @@ class PartnershipReviewControllerSpec extends ControllerSpecBase {
     }
 
     "redirect to the next page on submit" in {
-      val result = controller().onSubmit(index)(fakeRequest)
+      val result = controller().onSubmit(NormalMode, index, None)(fakeRequest)
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
     }
 
     "set establisher as complete when partnership is complete and all partners are completed on submit" in {
       val getRelevantData = new FakeDataRetrievalAction(Some(validData()))
-      val result = controller(getRelevantData).onSubmit(index)(fakeRequest)
+      val result = controller(getRelevantData).onSubmit(NormalMode, index, None)(fakeRequest)
       status(result) mustBe SEE_OTHER
       FakeSectionComplete.verify(IsEstablisherCompleteId(0), true)
     }
@@ -96,7 +98,7 @@ class PartnershipReviewControllerSpec extends ControllerSpecBase {
         )
       )
       val getRelevantData = new FakeDataRetrievalAction(Some(validData))
-      val result = controller(getRelevantData).onSubmit(index)(fakeRequest)
+      val result = controller(getRelevantData).onSubmit(NormalMode, index, None)(fakeRequest)
       status(result) mustBe SEE_OTHER
       FakeSectionComplete.verifyNot(IsEstablisherCompleteId(0))
     }
@@ -104,7 +106,7 @@ class PartnershipReviewControllerSpec extends ControllerSpecBase {
     "not set establisher as complete when partnership is complete but partners are not complete" in {
       FakeSectionComplete.reset()
       val getRelevantData = new FakeDataRetrievalAction(Some(validData(Seq(partner("a"), partner("b"), partner("c", isComplete = false)))))
-      val result = controller(getRelevantData).onSubmit(index)(fakeRequest)
+      val result = controller(getRelevantData).onSubmit(NormalMode, index, None)(fakeRequest)
       status(result) mustBe SEE_OTHER
       FakeSectionComplete.verifyNot(IsEstablisherCompleteId(0))
     }
@@ -120,7 +122,7 @@ class PartnershipReviewControllerSpec extends ControllerSpecBase {
         )
       )
       val getRelevantData = new FakeDataRetrievalAction(Some(validData))
-      val result = controller(getRelevantData).onSubmit(index)(fakeRequest)
+      val result = controller(getRelevantData).onSubmit(NormalMode, index, None)(fakeRequest)
       status(result) mustBe SEE_OTHER
       FakeSectionComplete.verifyNot(IsEstablisherCompleteId(0))
     }

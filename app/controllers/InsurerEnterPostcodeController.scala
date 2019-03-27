@@ -42,8 +42,8 @@ class InsurerEnterPostcodeController @Inject()(val appConfig: FrontendAppConfig,
                                                formProvider: PostCodeLookupFormProvider
                                               ) extends PostcodeLookupController {
 
-  val postCall: Mode => Call = routes.InsurerEnterPostcodeController.onSubmit
-  val manualCall: Mode => Call = routes.InsurerConfirmAddressController.onPageLoad
+  val postCall: (Mode, Option[String]) => Call = routes.InsurerEnterPostcodeController.onSubmit
+  val manualCall: (Mode, Option[String]) => Call = routes.InsurerConfirmAddressController.onPageLoad
 
   val form: Form[String] = formProvider()
 
@@ -51,24 +51,25 @@ class InsurerEnterPostcodeController @Inject()(val appConfig: FrontendAppConfig,
     form.withError("value", s"messages__error__postcode_$messageKey")
   }
 
-  def viewModel(mode: Mode): PostcodeLookupViewModel =
+  def viewModel(mode: Mode, srn: Option[String]): PostcodeLookupViewModel =
     PostcodeLookupViewModel(
-      postCall(mode),
-      manualCall(mode),
+      postCall(mode, srn),
+      manualCall(mode, srn),
       Messages("messages__insurer_enter_postcode__title"),
       "messages__insurer_enter_postcode__h1",
       None,
-      None
+      None,
+      srn = srn
     )
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onPageLoad(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      get(viewModel(mode))
+      get(viewModel(mode, srn))
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      post(InsurerEnterPostCodeId, viewModel(mode), mode)
+      post(InsurerEnterPostCodeId, viewModel(mode, srn), mode)
   }
 
 }

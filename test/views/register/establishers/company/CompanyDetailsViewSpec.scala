@@ -30,19 +30,20 @@ class CompanyDetailsViewSpec extends QuestionViewBehaviours[CompanyDetails] {
 
   override val form = new CompanyDetailsFormProvider()()
   val firstIndex = Index(1)
+  private val postCall = routes.CompanyDetailsController.onSubmit _
 
   def createView(): () => HtmlFormat.Appendable = () =>
-    companyDetails(frontendAppConfig, form, NormalMode, firstIndex, None)(fakeRequest, messages)
+    companyDetails(frontendAppConfig, form, NormalMode, firstIndex, None, postCall(NormalMode, None, firstIndex))(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) =>
-    companyDetails(frontendAppConfig, form, NormalMode, firstIndex, None)(fakeRequest, messages)
+    companyDetails(frontendAppConfig, form, NormalMode, firstIndex, None, postCall(NormalMode, None, firstIndex))(fakeRequest, messages)
 
   "CompanyDetails view" must {
 
     behave like normalPage(createView(), messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"))
 
     behave like pageWithTextFields(createViewUsingForm, messageKeyPrefix,
-      routes.CompanyDetailsController.onSubmit(NormalMode, firstIndex).url, "companyName", "vatNumber", "payeNumber")
+      routes.CompanyDetailsController.onSubmit(NormalMode, None, firstIndex).url, "companyName", "vatNumber", "payeNumber")
 
     behave like pageWithReturnLink(createView(), getReturnLink)
   }

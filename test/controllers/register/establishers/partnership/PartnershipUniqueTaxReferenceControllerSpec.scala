@@ -65,6 +65,7 @@ class PartnershipUniqueTaxReferenceControllerSpec extends ControllerSpecBase {
       new DataRequiredActionImpl,
       formProvider
     )
+  val submitUrl = controllers.register.establishers.partnership.routes.PartnershipUniqueTaxReferenceController.onSubmit(NormalMode, firstIndex, None)
 
   def viewAsString(form: Form[_] = form): String =
     partnershipUniqueTaxReference(
@@ -72,7 +73,8 @@ class PartnershipUniqueTaxReferenceControllerSpec extends ControllerSpecBase {
       form,
       NormalMode,
       firstIndex,
-      None
+      None,
+      submitUrl
     )(fakeRequest, messages).toString
 
   "PartnershipUniqueTaxReference Controller" must {

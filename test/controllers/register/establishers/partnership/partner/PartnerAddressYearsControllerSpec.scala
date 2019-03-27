@@ -64,7 +64,7 @@ class PartnerAddressYearsControllerSpec extends ControllerSpecBase {
       frontendAppConfig,
       form,
       AddressYearsViewModel(
-        routes.PartnerAddressYearsController.onSubmit(NormalMode, establisherIndex, partnerIndex),
+        routes.PartnerAddressYearsController.onSubmit(NormalMode, establisherIndex, partnerIndex, None),
         title = Message("messages__partner_address_years__title"),
         heading = Message("messages__partner_address_years__heading"),
         legend = Message("messages__partner_address_years__heading"),

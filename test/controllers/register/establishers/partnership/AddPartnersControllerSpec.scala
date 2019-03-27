@@ -62,7 +62,7 @@ class AddPartnersControllerSpec extends ControllerSpecBase {
       formProvider
     )
 
-  private val postUrl: Call = routes.AddPartnersController.onSubmit(NormalMode, establisherIndex)
+  private val postUrl: Call = routes.AddPartnersController.onSubmit(NormalMode, establisherIndex, None)
 
   private def viewAsString(form: Form[_] = form, partners: Seq[PartnerEntity] = Nil) =
     addPartners(

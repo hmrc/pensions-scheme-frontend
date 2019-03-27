@@ -44,13 +44,14 @@ class PartnershipDetailsControllerSpec extends ControllerSpecBase {
     new PartnershipDetailsController(frontendAppConfig, messagesApi, FakeUserAnswersCacheConnector,
       new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
       dataRetrievalAction, new DataRequiredActionImpl, formProvider)
-
+  val submitUrl = controllers.register.establishers.partnership.routes.PartnershipDetailsController.onSubmit(NormalMode, firstIndex, None)
   def viewAsString(form: Form[_] = form): String = partnershipDetails(
     frontendAppConfig,
     form,
     NormalMode,
     firstIndex,
-    None
+    None,
+    submitUrl
   )(fakeRequest, messages).toString
 
   val validData: JsObject = Json.obj(

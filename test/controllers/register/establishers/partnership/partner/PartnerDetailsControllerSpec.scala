@@ -53,14 +53,16 @@ class PartnerDetailsControllerSpec extends ControllerSpecBase {
       new DataRequiredActionImpl,
       formProvider,
       mockSectionComplete)
-
+  val submitUrl = controllers.register.establishers.partnership.partner.routes.
+    PartnerDetailsController.onSubmit(NormalMode, firstEstablisherIndex, firstPartnerIndex, None)
   def viewAsString(form: Form[_] = form): String = partnerDetails(
     frontendAppConfig,
     form,
     NormalMode,
     firstEstablisherIndex,
     firstPartnerIndex,
-    None
+    None,
+    submitUrl
   )(fakeRequest, messages).toString
 
   private val postRequest = fakeRequest.withFormUrlEncodedBody(("firstName", "testFirstName"), ("lastName", "testLastName"),

@@ -60,9 +60,9 @@ class EstablisherDetailsControllerSpec extends ControllerSpecBase {
       new DataRequiredActionImpl,
       formProvider
     )
-
+  private val submitUrl = controllers.register.establishers.individual.routes.EstablisherDetailsController.onSubmit(NormalMode, firstIndex, None)
   def viewAsString(form: Form[_] = form): String =
-    establisherDetails(frontendAppConfig, form, NormalMode, firstIndex, None)(fakeRequest, messages).toString
+    establisherDetails(frontendAppConfig, form, NormalMode, firstIndex, None, submitUrl)(fakeRequest, messages).toString
 
   "EstablisherDetails Controller" must {
 

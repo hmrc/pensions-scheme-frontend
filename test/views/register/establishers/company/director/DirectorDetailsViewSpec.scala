@@ -16,6 +16,7 @@
 
 package views.register.establishers.company.director
 
+import controllers.register.establishers.company.director.routes
 import forms.register.PersonDetailsFormProvider
 import models.person.PersonDetails
 import models.{Index, NormalMode}
@@ -31,14 +32,17 @@ class DirectorDetailsViewSpec extends QuestionViewBehaviours[PersonDetails] {
 
   val establisherIndex = Index(1)
   val directorIndex = Index(1)
+  private val postCall = routes.DirectorDetailsController.onSubmit _
 
   override val form = new PersonDetailsFormProvider()()
 
   def createView(): () => HtmlFormat.Appendable = () =>
-    directorDetails(frontendAppConfig, form, NormalMode, establisherIndex, directorIndex, None)(fakeRequest, messages)
+    directorDetails(frontendAppConfig, form, NormalMode, establisherIndex, directorIndex, None,
+      postCall(NormalMode, establisherIndex, directorIndex, None))(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) =>
-    directorDetails(frontendAppConfig, form, NormalMode, establisherIndex, directorIndex, None)(fakeRequest, messages)
+    directorDetails(frontendAppConfig, form, NormalMode, establisherIndex, directorIndex, None,
+      postCall(NormalMode, establisherIndex, directorIndex, None))(fakeRequest, messages)
 
   private val day = LocalDate.now().getDayOfMonth
   private val year = LocalDate.now().getYear
@@ -57,7 +61,7 @@ class DirectorDetailsViewSpec extends QuestionViewBehaviours[PersonDetails] {
     behave like normalPage(createView(), messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"))
 
     behave like pageWithTextFields(createViewUsingForm, messageKeyPrefix,
-      controllers.register.establishers.company.director.routes.DirectorDetailsController.onSubmit(NormalMode, establisherIndex, directorIndex).url,
+      controllers.register.establishers.company.director.routes.DirectorDetailsController.onSubmit(NormalMode, establisherIndex, directorIndex, None).url,
       "firstName", "lastName")
 
     "display an input text box with the correct label and value for day" in {

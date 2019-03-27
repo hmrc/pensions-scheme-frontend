@@ -129,7 +129,7 @@ object PartnershipAddressYearsControllerSpec extends ControllerSpecBase {
 
   private val viewModel =
     AddressYearsViewModel(
-      postCall = routes.PartnershipAddressYearsController.onSubmit(mode, index),
+      postCall = routes.PartnershipAddressYearsController.onSubmit(mode, index, None),
       title = Message("messages__partnershipAddressYears__title"),
       heading = Message("messages__partnershipAddressYears__heading"),
       legend = Message("messages__partnershipAddressYears__heading"),

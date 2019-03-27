@@ -70,7 +70,7 @@ class InsurerConfirmAddressControllerSpec extends ControllerWithQuestionPageBeha
       val insurerUpdatedData = Address("address line updated", "address line 2", None, None, Some("AB1 1AB"), "country:AF")
 
       val validData: UserAnswers = UserAnswers().schemeName(schemeName).insurerConfirmAddress(insurerUpdatedData).insurerSelectAddress(selectedAddress)
-      val result = controller(this)(validData.dataRetrievalAction, FakeAuthAction).onSubmit(NormalMode)(postRequest)
+      val result = controller(this)(validData.dataRetrievalAction, FakeAuthAction).onSubmit(NormalMode, None)(postRequest)
 
       whenReady(result) {
         _ =>
@@ -118,7 +118,7 @@ object InsurerConfirmAddressControllerSpec {
       manualAddress(
         base.frontendAppConfig,
         form,ManualAddressViewModel(
-          routes.InsurerConfirmAddressController.onSubmit(NormalMode),
+          routes.InsurerConfirmAddressController.onSubmit(NormalMode, None),
           options,
           Message("messages__insurer_confirm_address__title"),
           Message("messages__insurer_confirm_address__h1"),
@@ -147,11 +147,11 @@ object InsurerConfirmAddressControllerSpec {
     )
 
   def onPageLoadAction(base: ControllerSpecBase)(dataRetrievalAction: DataRetrievalAction, authAction: AuthAction): Action[AnyContent] =
-    controller(base)(dataRetrievalAction, authAction).onPageLoad(NormalMode)
+    controller(base)(dataRetrievalAction, authAction).onPageLoad(NormalMode, None)
 
   def onSubmitAction(base: ControllerSpecBase, navigator: Navigator)(dataRetrievalAction: DataRetrievalAction, authAction: AuthAction): Action[AnyContent] =
-    controller(base)(dataRetrievalAction, authAction, navigator).onSubmit(NormalMode)
+    controller(base)(dataRetrievalAction, authAction, navigator).onSubmit(NormalMode, None)
 
   def saveAction(base: ControllerSpecBase)(cache: UserAnswersService): Action[AnyContent] =
-    controller(base)(cache = cache).onSubmit(NormalMode)
+    controller(base)(cache = cache).onSubmit(NormalMode, None)
 }

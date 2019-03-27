@@ -26,7 +26,7 @@ import identifiers.register.establishers.IsEstablisherCompleteId
 import identifiers.register.establishers.company.CompanyDetailsId
 import identifiers.register.establishers.company.director.{ConfirmDeleteDirectorId, DirectorDetailsId}
 import javax.inject.Inject
-import models.{Index, NormalMode}
+import models.{Index, Mode, NormalMode}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
@@ -51,7 +51,7 @@ class ConfirmDeleteDirectorController @Inject()(
 
   private val form: Form[Boolean] = formProvider()
 
-  def onPageLoad(establisherIndex: Index, directorIndex: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onPageLoad(establisherIndex: Index, directorIndex: Index, mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       (CompanyDetailsId(establisherIndex) and DirectorDetailsId(establisherIndex, directorIndex)).retrieve.right.map {
         case company ~ director =>
@@ -63,18 +63,18 @@ class ConfirmDeleteDirectorController @Inject()(
                     appConfig,
                     form,
                     director.fullName,
-                    routes.ConfirmDeleteDirectorController.onSubmit(establisherIndex, directorIndex),
+                    routes.ConfirmDeleteDirectorController.onSubmit(establisherIndex, directorIndex, mode, srn),
                     existingSchemeName
                   )
                 )
               )
             case true =>
-              Future.successful(Redirect(routes.AlreadyDeletedController.onPageLoad(establisherIndex, directorIndex)))
+              Future.successful(Redirect(routes.AlreadyDeletedController.onPageLoad(establisherIndex, directorIndex, srn)))
           }
       }
   }
 
-  def onSubmit(establisherIndex: Index, directorIndex: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onSubmit(establisherIndex: Index, directorIndex: Index, mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
 
       (DirectorDetailsId(establisherIndex, directorIndex)).retrieve.right.map {
@@ -86,7 +86,7 @@ class ConfirmDeleteDirectorController @Inject()(
                 appConfig,
                 formWithErrors,
                 directorDetails.fullName,
-                routes.ConfirmDeleteDirectorController.onSubmit(establisherIndex, directorIndex),
+                routes.ConfirmDeleteDirectorController.onSubmit(establisherIndex, directorIndex, mode, srn),
                 existingSchemeName
               ))),
             value => {

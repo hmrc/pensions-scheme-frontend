@@ -73,7 +73,7 @@ class HsTaskListHelper(answers: UserAnswers)(implicit messages: Messages) extend
     }
 
     val benefitsAndInsuranceLink = userAnswers.get(IsAboutBenefitsAndInsuranceCompleteId) match {
-      case Some(true) => Link(aboutBenefitsAndInsuranceLinkText, controllers.routes.CheckYourAnswersBenefitsAndInsuranceController.onPageLoad().url)
+      case Some(true) => Link(aboutBenefitsAndInsuranceLinkText, controllers.routes.CheckYourAnswersBenefitsAndInsuranceController.onPageLoad(NormalMode, None).url)
       case _ => Link(aboutBenefitsAndInsuranceLinkText, controllers.routes.WhatYouWillNeedBenefitsInsuranceController.onPageLoad.url)
     }
 
@@ -168,9 +168,9 @@ class HsTaskListHelper(answers: UserAnswers)(implicit messages: Messages) extend
   private def linkTarget(item: Entity[_], index: Int, userAnswers: UserAnswers) = {
     item match {
       case models.register.EstablisherCompanyEntity(_, _, _, true) =>
-        controllers.register.establishers.company.routes.CompanyReviewController.onPageLoad(index).url
+        controllers.register.establishers.company.routes.CompanyReviewController.onPageLoad(NormalMode, None, index).url
       case models.register.EstablisherPartnershipEntity(_, _, _, true) =>
-        controllers.register.establishers.partnership.routes.PartnershipReviewController.onPageLoad(index).url
+        controllers.register.establishers.partnership.routes.PartnershipReviewController.onPageLoad(NormalMode, index, None).url
       case _ => item.editLink
     }
   }

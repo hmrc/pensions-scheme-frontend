@@ -49,7 +49,7 @@ class PartnerContactDetailsControllerSpec extends ControllerSpecBase {
   val partnerName = "First Name Middle Name Last Name"
 
   private def viewmodel(mode: Mode, establisherIndex: Index, partnerIndex: Index, partnerName: String) = ContactDetailsViewModel(
-    postCall = routes.PartnerContactDetailsController.onSubmit(mode, establisherIndex, partnerIndex),
+    postCall = routes.PartnerContactDetailsController.onSubmit(mode, establisherIndex, partnerIndex, None),
     title = Message("messages__partner_contact__title"),
     heading = Message("messages__partner_contact__heading"),
     body = Message("messages__partner_contact__body"),

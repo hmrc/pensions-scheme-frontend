@@ -52,7 +52,7 @@ class IsPartnershipDormantControllerSpec extends ControllerSpecBase {
 
   val index = 0
   val partnershipName = "test partnership name"
-  def postCall: Call = routes.IsPartnershipDormantController.onSubmit(NormalMode, index)
+  def postCall: Call = routes.IsPartnershipDormantController.onSubmit(NormalMode, index, None)
 
   val validData: JsObject = Json.obj(
       EstablishersId.toString -> Json.arr(

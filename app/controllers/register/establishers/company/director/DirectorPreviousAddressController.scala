@@ -55,32 +55,33 @@ class DirectorPreviousAddressController @Inject()(
 
   protected val form: Form[Address] = formProvider()
 
-  private def viewmodel(mode: Mode, establisherIndex: Index, directorIndex: Index): Retrieval[ManualAddressViewModel] =
+  private def viewmodel(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Retrieval[ManualAddressViewModel] =
     Retrieval {
       implicit request =>
         DirectorDetailsId(establisherIndex, directorIndex).retrieve.right.map {
           director =>
             ManualAddressViewModel(
-              postCall(mode, establisherIndex, directorIndex),
+              postCall(mode, establisherIndex, directorIndex, srn),
               countryOptions.options,
               title = Message(title),
               heading = Message(heading),
-              secondaryHeader = Some(director.fullName)
+              secondaryHeader = Some(director.fullName),
+              srn = srn
             )
         }
     }
 
-  def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      viewmodel(mode: Mode, establisherIndex: Index, directorIndex: Index).retrieve.right.map {
+      viewmodel(mode: Mode, establisherIndex: Index, directorIndex: Index, srn).retrieve.right.map {
         vm =>
           get(DirectorPreviousAddressId(establisherIndex, directorIndex), DirectorPreviousAddressListId(establisherIndex, directorIndex), vm)
       }
   }
 
-  def onSubmit(mode: Mode, establisherIndex: Index, directorIndex: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      viewmodel(mode: Mode, establisherIndex: Index, directorIndex: Index).retrieve.right.map {
+      viewmodel(mode: Mode, establisherIndex: Index, directorIndex: Index, srn).retrieve.right.map {
         vm =>
           post(
             DirectorPreviousAddressId(establisherIndex, directorIndex),

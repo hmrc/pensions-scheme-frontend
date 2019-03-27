@@ -65,14 +65,15 @@ class OtherPartnersControllerSpec extends ControllerSpecBase {
       new DataRequiredActionImpl,
       formProvider
     )
-
+  val submitUrl = controllers.register.establishers.partnership.routes.OtherPartnersController.onSubmit(NormalMode, index, None)
   def viewAsString(form: Form[_] = form): String =
     otherPartners(
       frontendAppConfig,
       form,
       NormalMode,
       index,
-      None
+      None,
+      submitUrl
     )(fakeRequest, messages).toString
 
   "OtherPartners Controller" must {

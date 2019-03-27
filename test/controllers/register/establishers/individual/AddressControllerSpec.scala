@@ -71,7 +71,7 @@ class AddressControllerSpec extends ControllerSpecBase with ScalaFutures {
     frontendAppConfig,
     form,
     ManualAddressViewModel(
-      routes.AddressController.onSubmit(NormalMode, firstIndex),
+      routes.AddressController.onSubmit(NormalMode, firstIndex, None),
       countryOptions.options,
       Message("messages__establisher_individual_address__title"),
       Message("messages__establisher_individual_address__title"),

@@ -23,12 +23,12 @@ import controllers.actions._
 import forms.register.establishers.company.AddCompanyDirectorsFormProvider
 import identifiers.register.establishers.company.AddCompanyDirectorsId
 import javax.inject.Inject
-import models.Mode
+import models.{Index, Mode}
 import play.api.Logger
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.JsResultException
-import play.api.mvc.{Action, AnyContent}
+import play.api.mvc.{Action, AnyContent, Call}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.Navigator
 import utils.annotations.EstablishersCompany
@@ -48,17 +48,18 @@ class AddCompanyDirectorsController @Inject()(
                                              )(implicit val ec: ExecutionContext) extends FrontendController with I18nSupport with Retrievals {
 
   private val form: Form[Boolean] = formProvider()
+  private def postCall: (Mode, Option[String], Index) => Call = routes.AddCompanyDirectorsController.onSubmit _
 
-  def onPageLoad(mode: Mode, index: Int): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onPageLoad(mode: Mode, srn: Option[String], index: Int): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       retrieveCompanyName(index) {
         companyName =>
           val directors = request.userAnswers.allDirectorsAfterDelete(index)
-          Future.successful(Ok(addCompanyDirectors(appConfig, form, mode, index, directors, existingSchemeName)))
+          Future.successful(Ok(addCompanyDirectors(appConfig, form, mode, index, directors, existingSchemeName, postCall(mode, srn, index))))
       }
   }
 
-  def onSubmit(mode: Mode, index: Int): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode, srn: Option[String], index: Int): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       val directors = request.userAnswers.allDirectorsAfterDelete(index)
       if (directors.isEmpty || directors.lengthCompare(appConfig.maxDirectors) >= 0) {
@@ -78,7 +79,8 @@ class AddCompanyDirectorsController @Inject()(
                       mode,
                       index,
                       directors,
-                      existingSchemeName
+                      existingSchemeName,
+                      postCall(mode, srn, index)
                     )
                   )
                 )

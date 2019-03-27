@@ -71,7 +71,7 @@ class PreviousAddressControllerSpec extends ControllerSpecBase with ScalaFutures
       frontendAppConfig,
       form,
       ManualAddressViewModel(
-        routes.PreviousAddressController.onSubmit(NormalMode, firstIndex),
+        routes.PreviousAddressController.onSubmit(NormalMode, firstIndex, None),
         countryOptions.options,
         Message("messages__establisher_individual_previous_address__title"),
         Message("messages__establisher_individual_previous_address__title"),

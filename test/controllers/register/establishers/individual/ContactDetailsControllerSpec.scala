@@ -45,7 +45,7 @@ class ContactDetailsControllerSpec extends ControllerSpecBase {
   val establisherName = "test first name test last name"
 
   private def viewmodel(mode: Mode, index: Index, establisherName: String) = ContactDetailsViewModel(
-    postCall = routes.ContactDetailsController.onSubmit(mode, index),
+    postCall = routes.ContactDetailsController.onSubmit(mode, index, None),
     title = Message("messages__establisher_individual_contact_details__title"),
     heading = Message("messages__establisher_individual_contact_details__heading"),
     body = Message("messages__contact_details__body"),

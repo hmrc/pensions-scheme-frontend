@@ -67,6 +67,6 @@ class PartnershipPreviousAddressListController @Inject()(
           heading = Message("messages__select_the_previous_address__heading"),
           subHeading = Some(partnershipDetails.name)
         )
-    }.left.map(_ => Future.successful(Redirect(routes.PartnershipPreviousAddressPostcodeLookupController.onPageLoad(mode, index))))
+    }.left.map(_ => Future.successful(Redirect(routes.PartnershipPreviousAddressPostcodeLookupController.onPageLoad(mode, index, srn))))
   }
 }
