@@ -57,7 +57,7 @@ case class DirectorEntity(id: DirectorDetailsId, name: String, isDeleted: Boolea
   }
 
   override def deleteLink: String =
-    controllers.register.establishers.company.director.routes.ConfirmDeleteDirectorController.onPageLoad(id.establisherIndex, id.directorIndex).url
+    controllers.register.establishers.company.director.routes.ConfirmDeleteDirectorController.onPageLoad(id.establisherIndex, id.directorIndex, NormalMode, None).url
 
   override def index: Int = id.directorIndex
 }
