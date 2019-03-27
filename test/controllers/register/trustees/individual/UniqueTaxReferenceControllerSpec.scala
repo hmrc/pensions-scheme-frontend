@@ -31,7 +31,7 @@ import utils.FakeNavigator
 import views.html.register.trustees.individual.uniqueTaxReference
 
 class UniqueTaxReferenceControllerSpec extends ControllerSpecBase {
-
+  appRunning()
   def onwardRoute = controllers.routes.IndexController.onPageLoad()
 
   val formProvider = new UniqueTaxReferenceFormProvider()
@@ -51,36 +51,40 @@ class UniqueTaxReferenceControllerSpec extends ControllerSpecBase {
     )
   )
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryTrustee) =
-    new UniqueTaxReferenceController(frontendAppConfig, messagesApi, FakeUserAnswersCacheConnector, new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
+  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryTrustee): UniqueTaxReferenceController =
+    new UniqueTaxReferenceController(frontendAppConfig, messagesApi, FakeUserAnswersCacheConnector,
+      new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
       dataRetrievalAction, new DataRequiredActionImpl, formProvider)
 
-  def viewAsString(form: Form[_] = form) = uniqueTaxReference(frontendAppConfig, form, NormalMode, index, None)(fakeRequest, messages).toString
+  private val submitUrl = controllers.register.trustees.individual.routes.UniqueTaxReferenceController.onSubmit(NormalMode, index, None)
+
+  private def viewAsString(form: Form[_] = form) =
+    uniqueTaxReference(frontendAppConfig, form, NormalMode, index, None, submitUrl)(fakeRequest, messages).toString
 
   "UniqueTaxReference Controller" must {
 
     "return OK and the correct view for a GET when trustee name is present" in {
-      val result = controller().onPageLoad(NormalMode, index)(fakeRequest)
+      val result = controller().onPageLoad(NormalMode, index, None)(fakeRequest)
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString()
     }
 
     "populate the view correctly on a GET when the question has previously been answered" in {
       val getRelevantData = new FakeDataRetrievalAction(Some(validData))
-      val result = controller(getRelevantData).onPageLoad(NormalMode, index)(fakeRequest)
+      val result = controller(getRelevantData).onPageLoad(NormalMode, index, None)(fakeRequest)
       contentAsString(result) mustBe viewAsString(form.fill(UniqueTaxReference.Yes("1234567891")))
     }
 
     "redirect to Session Expired page when the index is not valid" in {
       val getRelevantData = new FakeDataRetrievalAction(Some(validData))
-      val result = controller(getRelevantData).onPageLoad(NormalMode, Index(2))(fakeRequest)
+      val result = controller(getRelevantData).onPageLoad(NormalMode, Index(2), None)(fakeRequest)
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
     }
 
     "redirect to the next page when valid data is submitted" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("uniqueTaxReference.hasUtr", "true"), ("uniqueTaxReference.utr", "1234565656"))
-      val result = controller().onSubmit(NormalMode, index)(postRequest)
+      val result = controller().onSubmit(NormalMode, index, None)(postRequest)
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
     }
@@ -88,20 +92,20 @@ class UniqueTaxReferenceControllerSpec extends ControllerSpecBase {
     "return a Bad Request and errors when invalid data is submitted" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "invalid value"))
       val boundForm = form.bind(Map("value" -> "invalid value"))
-      val result = controller().onSubmit(NormalMode, index)(postRequest)
+      val result = controller().onSubmit(NormalMode, index, None)(postRequest)
       status(result) mustBe BAD_REQUEST
       contentAsString(result) mustBe viewAsString(boundForm)
     }
 
     "redirect to Session Expired for a GET if no existing data is found" in {
-      val result = controller(dontGetAnyData).onPageLoad(NormalMode, index)(fakeRequest)
+      val result = controller(dontGetAnyData).onPageLoad(NormalMode, index, None)(fakeRequest)
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
     }
 
     "redirect to Session Expired for a POST if no existing data is found" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "invalid"))
-      val result = controller(dontGetAnyData).onSubmit(NormalMode, index)(postRequest)
+      val result = controller(dontGetAnyData).onSubmit(NormalMode, index, None)(postRequest)
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
     }

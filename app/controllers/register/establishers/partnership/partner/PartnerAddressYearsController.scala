@@ -44,27 +44,30 @@ class PartnerAddressYearsController @Inject()(
 
   private val form = new AddressYearsFormProvider()(Message("messages__common_error__current_address_years"))
 
-  def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData andThen requireData).async {
     implicit request =>
       PartnerDetailsId(establisherIndex, partnerIndex).retrieve.right.map { partnerDetails =>
-        get(PartnerAddressYearsId(establisherIndex, partnerIndex), form, viewModel(mode, establisherIndex, partnerIndex, partnerDetails.fullName))
+        get(PartnerAddressYearsId(establisherIndex, partnerIndex), form,
+          viewModel(mode, establisherIndex, partnerIndex, partnerDetails.fullName, srn))
       }
   }
 
-  def onSubmit(mode: Mode, establisherIndex: Index, partnerIndex: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData andThen requireData).async {
     implicit request =>
       PartnerDetailsId(establisherIndex, partnerIndex).retrieve.right.map { partnerDetails =>
         post(
           PartnerAddressYearsId(establisherIndex, partnerIndex),
           mode,
           form,
-          viewModel(mode, establisherIndex, partnerIndex, partnerDetails.fullName)
+          viewModel(mode, establisherIndex, partnerIndex, partnerDetails.fullName, srn)
         )
       }
   }
 
-  private def viewModel(mode: Mode, establisherIndex: Index, partnerIndex: Index, partnerName: String) = AddressYearsViewModel(
-    postCall = routes.PartnerAddressYearsController.onSubmit(mode, establisherIndex, partnerIndex),
+  private def viewModel(mode: Mode, establisherIndex: Index, partnerIndex: Index, partnerName: String, srn: Option[String]) = AddressYearsViewModel(
+    postCall = routes.PartnerAddressYearsController.onSubmit(mode, establisherIndex, partnerIndex, srn),
     title = Message("messages__partner_address_years__title"),
     heading = Message("messages__partner_address_years__heading"),
     legend = Message("messages__partner_address_years__heading"),

@@ -19,7 +19,7 @@
 @import models.{Mode, CheckMode}
 @import controllers.register.establishers.partnership.routes
 
-@(appConfig: FrontendAppConfig, index: Index, partnershipName: String, partners: Seq[String], schemeName: Option[String])(implicit request: Request[_], messages: Messages)
+@(appConfig: FrontendAppConfig, index: Index, partnershipName: String, partners: Seq[String], schemeName: Option[String], srn: Option[String], mode: Mode)(implicit request: Request[_], messages: Messages)
 
 @main_template(
     title = messages("messages__partnershipReview__title"),
@@ -34,7 +34,7 @@
         heading = partnershipName,
         linkMessage = "messages__partnershipReview__partnership__editLink",
         linkId = "edit-partnership-details",
-        link = routes.CheckYourAnswersController.onPageLoad(index)
+        link = routes.CheckYourAnswersController.onPageLoad(mode, index, srn)
     )
 
     @components.review_section(
@@ -45,11 +45,11 @@
             "messages__partnershipReview__partners__changeLink"
         },
         linkId = "edit-partner-details",
-        link = routes.AddPartnersController.onPageLoad(NormalMode, index),
+        link = routes.AddPartnersController.onPageLoad(NormalMode, index, srn),
         list = Some(partners)
     )
 
-    @helpers.form(action = routes.PartnershipReviewController.onSubmit(index), 'autoComplete -> "off") {
+    @helpers.form(action = routes.PartnershipReviewController.onSubmit(mode, index, srn), 'autoComplete -> "off") {
         @components.submit_button("site.confirm")
     }
 

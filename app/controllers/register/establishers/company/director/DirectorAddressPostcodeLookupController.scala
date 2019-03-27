@@ -46,33 +46,34 @@ class DirectorAddressPostcodeLookupController @Inject()(
 
   protected val form: Form[String] = formProvider()
 
-  def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index): Action[AnyContent] =
+  def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData andThen requireData).async {
       implicit request =>
-        viewmodel(establisherIndex, directorIndex, mode).retrieve.right map get
+        viewmodel(establisherIndex, directorIndex, mode, srn).retrieve.right map get
     }
 
-  def onSubmit(mode: Mode, establisherIndex: Index, directorIndex: Index): Action[AnyContent] =
+  def onSubmit(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData andThen requireData).async {
       implicit request =>
-        viewmodel(establisherIndex, directorIndex, mode).retrieve.right.map(
+        viewmodel(establisherIndex, directorIndex, mode, srn).retrieve.right.map(
           vm =>
             post(DirectorAddressPostcodeLookupId(establisherIndex, directorIndex), vm, mode)
         )
     }
 
-  private def viewmodel(establisherIndex: Index, directorIndex: Index, mode: Mode): Retrieval[PostcodeLookupViewModel] =
+  private def viewmodel(establisherIndex: Index, directorIndex: Index, mode: Mode, srn: Option[String]): Retrieval[PostcodeLookupViewModel] =
     Retrieval(
       implicit request =>
         DirectorDetailsId(establisherIndex, directorIndex).retrieve.right.map {
           details =>
             PostcodeLookupViewModel(
-              routes.DirectorAddressPostcodeLookupController.onSubmit(mode, establisherIndex, directorIndex),
-              routes.DirectorAddressController.onPageLoad(mode, establisherIndex, directorIndex),
+              routes.DirectorAddressPostcodeLookupController.onSubmit(mode, establisherIndex, directorIndex, srn),
+              routes.DirectorAddressController.onPageLoad(mode, establisherIndex, directorIndex, srn),
               Message("messages__directorAddressPostcodeLookup__title"),
               Message("messages__directorAddressPostcodeLookup__heading"),
               Some(details.fullName),
-              Some(Message("messages__directorAddressPostcodeLookup__lede"))
+              Some(Message("messages__directorAddressPostcodeLookup__lede")),
+              srn = srn
             )
         }
     )

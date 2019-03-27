@@ -28,12 +28,12 @@ class UniqueTaxReferenceViewSpec extends ViewBehaviours {
   val index = Index(0)
 
   val form = new UniqueTaxReferenceFormProvider()()
-
+  val submitUrl = controllers.register.trustees.individual.routes.UniqueTaxReferenceController.onSubmit(NormalMode, index, None)
   private def createView() = () =>
-    uniqueTaxReference(frontendAppConfig, form, NormalMode, index, None)(fakeRequest, messages)
+    uniqueTaxReference(frontendAppConfig, form, NormalMode, index, None, submitUrl)(fakeRequest, messages)
 
   private def createViewUsingForm = (form: Form[_]) =>
-    uniqueTaxReference(frontendAppConfig, form, NormalMode, index, None)(fakeRequest, messages)
+    uniqueTaxReference(frontendAppConfig, form, NormalMode, index, None, submitUrl)(fakeRequest, messages)
 
   "UniqueTaxReference view" when {
     "rendered" must {

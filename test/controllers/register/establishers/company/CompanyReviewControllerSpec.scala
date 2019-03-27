@@ -22,7 +22,7 @@ import identifiers.register.establishers.company.director.{DirectorDetailsId, Is
 import identifiers.register.establishers.company.{CompanyDetailsId, IsCompanyCompleteId}
 import identifiers.register.establishers.{EstablishersId, IsEstablisherCompleteId}
 import models.person.PersonDetails
-import models.{CompanyDetails, Index}
+import models.{CompanyDetails, Index, NormalMode}
 import org.joda.time.LocalDate
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
@@ -40,13 +40,13 @@ class CompanyReviewControllerSpec extends ControllerSpecBase {
     new CompanyReviewController(frontendAppConfig, messagesApi, new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
       dataRetrievalAction, new DataRequiredActionImpl, FakeSectionComplete)
 
-  def viewAsString(): String = companyReview(frontendAppConfig, index, companyName, directorNames, None)(fakeRequest, messages).toString
+  def viewAsString(): String = companyReview(frontendAppConfig, index, companyName, directorNames, None, NormalMode, None)(fakeRequest, messages).toString
 
   "CompanyReview Controller" must {
 
     "return OK and the correct view for a GET" in {
       val getRelevantData = new FakeDataRetrievalAction(Some(validData()))
-      val result = controller(getRelevantData).onPageLoad(index)(fakeRequest)
+      val result = controller(getRelevantData).onPageLoad(NormalMode, None, index)(fakeRequest)
 
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString()
@@ -54,20 +54,20 @@ class CompanyReviewControllerSpec extends ControllerSpecBase {
 
     "redirect to session expired page on a GET when the index is not valid" in {
       val getRelevantData = new FakeDataRetrievalAction(Some(validData()))
-      val result = controller(getRelevantData).onPageLoad(invalidIndex)(fakeRequest)
+      val result = controller(getRelevantData).onPageLoad(NormalMode, None, invalidIndex)(fakeRequest)
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
     }
 
     "redirect to the next page on submit" in {
-      val result = controller().onSubmit(index)(fakeRequest)
+      val result = controller().onSubmit(NormalMode, None, index)(fakeRequest)
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
     }
 
     "set establisher as complete when company is complete and all directors are completed on submit" in {
       val getRelevantData = new FakeDataRetrievalAction(Some(validData()))
-      val result = controller(getRelevantData).onSubmit(index)(fakeRequest)
+      val result = controller(getRelevantData).onSubmit(NormalMode, None, index)(fakeRequest)
       status(result) mustBe SEE_OTHER
       FakeSectionComplete.verify(IsEstablisherCompleteId(0), true)
     }
@@ -83,7 +83,7 @@ class CompanyReviewControllerSpec extends ControllerSpecBase {
         )
       )
       val getRelevantData = new FakeDataRetrievalAction(Some(validData))
-      val result = controller(getRelevantData).onSubmit(index)(fakeRequest)
+      val result = controller(getRelevantData).onSubmit(NormalMode, None, index)(fakeRequest)
       status(result) mustBe SEE_OTHER
       FakeSectionComplete.verifyNot(IsEstablisherCompleteId(0))
     }
@@ -91,7 +91,7 @@ class CompanyReviewControllerSpec extends ControllerSpecBase {
     "not set establisher as complete when company is complete but directors are not complete" in {
       FakeSectionComplete.reset()
       val getRelevantData = new FakeDataRetrievalAction(Some(validData(Seq(director("a"), director("b"), director("c", isComplete = false)))))
-      val result = controller(getRelevantData).onSubmit(index)(fakeRequest)
+      val result = controller(getRelevantData).onSubmit(NormalMode, None, index)(fakeRequest)
       status(result) mustBe SEE_OTHER
       FakeSectionComplete.verifyNot(IsEstablisherCompleteId(0))
     }
@@ -107,7 +107,7 @@ class CompanyReviewControllerSpec extends ControllerSpecBase {
         )
       )
       val getRelevantData = new FakeDataRetrievalAction(Some(validData))
-      val result = controller(getRelevantData).onSubmit(index)(fakeRequest)
+      val result = controller(getRelevantData).onSubmit(NormalMode, None, index)(fakeRequest)
       status(result) mustBe SEE_OTHER
       FakeSectionComplete.verifyNot(IsEstablisherCompleteId(0))
     }

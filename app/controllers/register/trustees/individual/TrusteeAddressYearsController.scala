@@ -45,22 +45,22 @@ class TrusteeAddressYearsController @Inject()(
 
   private val form = new AddressYearsFormProvider()(Message("messages__trusteeAddressYears__error_required"))
 
-  def onPageLoad(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       TrusteeDetailsId(index).retrieve.right.map { trusteeDetails =>
-        get(TrusteeAddressYearsId(index), form, viewModel(mode, index, trusteeDetails.fullName))
+        get(TrusteeAddressYearsId(index), form, viewModel(mode, index, trusteeDetails.fullName, srn))
       }
   }
 
-  def onSubmit(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       TrusteeDetailsId(index).retrieve.right.map { trusteeDetails =>
-        post(TrusteeAddressYearsId(index), mode, form, viewModel(mode, index, trusteeDetails.fullName))
+        post(TrusteeAddressYearsId(index), mode, form, viewModel(mode, index, trusteeDetails.fullName, srn))
       }
   }
 
-  private def viewModel(mode: Mode, index: Index, trusteeName: String) = AddressYearsViewModel(
-    postCall = controllers.register.trustees.individual.routes.TrusteeAddressYearsController.onSubmit(mode, index),
+  private def viewModel(mode: Mode, index: Index, trusteeName: String, srn: Option[String]) = AddressYearsViewModel(
+    postCall = controllers.register.trustees.individual.routes.TrusteeAddressYearsController.onSubmit(mode, index, srn),
     title = Message("messages__trusteeAddressYears__title"),
     heading = Message("messages__trusteeAddressYears__heading"),
     legend = Message("messages__trusteeAddressYears__title"),

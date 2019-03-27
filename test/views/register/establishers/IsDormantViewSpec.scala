@@ -33,7 +33,7 @@ class IsDormantViewSpec extends ViewBehaviours {
   val messageKeyPrefix = "is_dormant"
 
   val form = new IsDormantFormProvider()()
-  val postCall: Call = routes.IsCompanyDormantController.onSubmit(NormalMode, 0)
+  val postCall: Call = routes.IsCompanyDormantController.onSubmit(NormalMode, None, 0)
 
   def createView: () => HtmlFormat.Appendable = () => isDormant(frontendAppConfig, form, companyName, postCall, None)(fakeRequest, messages)
 

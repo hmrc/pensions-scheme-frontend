@@ -19,7 +19,7 @@ package controllers.register.establishers.individual
 import controllers.ControllerSpecBase
 import controllers.actions.{DataRequiredActionImpl, DataRetrievalAction, FakeAuthAction}
 import identifiers.register.establishers.IsEstablisherCompleteId
-import models.{CheckMode, Index}
+import models.{CheckMode, Index, NormalMode}
 import org.joda.time.LocalDate
 import play.api.test.Helpers.{contentAsString, redirectLocation, status, _}
 import utils._
@@ -38,14 +38,14 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase {
       "messages__establisher_individual_name_cya_label",
       Seq("test first name test last name"),
       answerIsMessageKey = false,
-      Some(routes.EstablisherDetailsController.onPageLoad(CheckMode, firstIndex).url),
+      Some(routes.EstablisherDetailsController.onPageLoad(CheckMode, firstIndex, None).url),
       Message("messages__visuallyhidden__common__name", "test first name test last name")
     ),
     AnswerRow(
       "messages__establisher_individual_dob_cya_label",
       Seq(DateHelper.formatDate(LocalDate.now)),
       answerIsMessageKey = false,
-      Some(routes.EstablisherDetailsController.onPageLoad(CheckMode, firstIndex).url),
+      Some(routes.EstablisherDetailsController.onPageLoad(CheckMode, firstIndex, None).url),
       Message("messages__visuallyhidden__common__dob", "test first name test last name")
     )
   )
@@ -67,29 +67,29 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase {
   "Check Your Answers Controller" must {
 
     "return 200 and the correct view for a GET" in {
-      val postUrl = routes.CheckYourAnswersController.onSubmit(firstIndex)
-      val result = controller().onPageLoad(firstIndex)(fakeRequest)
+      val postUrl = routes.CheckYourAnswersController.onSubmit(NormalMode, firstIndex, None)
+      val result = controller().onPageLoad(NormalMode, firstIndex, None)(fakeRequest)
       status(result) mustBe OK
       contentAsString(result) mustBe check_your_answers(frontendAppConfig,
         Seq(AnswerSection(None, answers)), postUrl, None)(fakeRequest, messages).toString
     }
 
     "redirect to Session Expired for a GET if no existing data is found" in {
-      val result = controller(dontGetAnyData).onPageLoad(firstIndex)(fakeRequest)
+      val result = controller(dontGetAnyData).onPageLoad(NormalMode, firstIndex, None)(fakeRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
     }
 
     "redirect to the next page on a POST request" in {
-      val result = controller().onSubmit(firstIndex)(fakeRequest)
+      val result = controller().onSubmit(NormalMode, firstIndex, None)(fakeRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
     }
 
     "mark establisher as complete on submit" in {
-      val result = controller().onSubmit(firstIndex)(fakeRequest)
+      val result = controller().onSubmit(NormalMode, firstIndex, None)(fakeRequest)
       status(result) mustBe SEE_OTHER
       redirectLocation(result).value mustEqual onwardRoute.url
       FakeSectionComplete.verify(IsEstablisherCompleteId(firstIndex), true)

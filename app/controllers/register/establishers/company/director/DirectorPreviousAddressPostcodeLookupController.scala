@@ -46,31 +46,32 @@ class DirectorPreviousAddressPostcodeLookupController @Inject()(
 
   protected val form: Form[String] = formProvider()
 
-  private def viewmodel(mode: Mode, establisherIndex: Index, directorIndex: Index) = Retrieval {
+  private def viewmodel(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]) = Retrieval {
     implicit request =>
       DirectorDetailsId(establisherIndex, directorIndex).retrieve.right.map(
         details => PostcodeLookupViewModel(
-          routes.DirectorPreviousAddressPostcodeLookupController.onSubmit(mode, establisherIndex, directorIndex),
-          routes.DirectorPreviousAddressController.onPageLoad(mode, establisherIndex, directorIndex),
+          routes.DirectorPreviousAddressPostcodeLookupController.onSubmit(mode, establisherIndex, directorIndex, srn),
+          routes.DirectorPreviousAddressController.onPageLoad(mode, establisherIndex, directorIndex, srn),
           Message("messages__directorPreviousAddressPostcodeLookup__title"),
           Message("messages__directorPreviousAddressPostcodeLookup__heading"),
           Some(details.fullName),
-          Some(Message("messages__directorPreviousAddressPostcodeLookup__lede"))
+          Some(Message("messages__directorPreviousAddressPostcodeLookup__lede")),
+          srn = srn
         )
       )
   }
 
-  def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      viewmodel(mode, establisherIndex, directorIndex).retrieve.right.map(
+      viewmodel(mode, establisherIndex, directorIndex, srn).retrieve.right.map(
         vm =>
           get(vm)
       )
   }
 
-  def onSubmit(mode: Mode, establisherIndex: Index, directorIndex: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      viewmodel(mode, establisherIndex, directorIndex).retrieve.right.map(
+      viewmodel(mode, establisherIndex, directorIndex, srn).retrieve.right.map(
         vm =>
           post(DirectorPreviousAddressPostcodeLookupId(establisherIndex, directorIndex), vm, mode)
       )

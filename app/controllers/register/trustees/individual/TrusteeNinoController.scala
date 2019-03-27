@@ -45,22 +45,21 @@ class TrusteeNinoController @Inject()(appConfig: FrontendAppConfig,
 
   private val form: Form[Nino] = new TrusteeNinoFormProvider()()
 
-  def onPageLoad(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       TrusteeDetailsId(index).retrieve.right.map { trusteeDetails =>
-        val filledForm = request.userAnswers.get(TrusteeNinoId(index)) match {
-          case Some(nino) => form.fill(nino)
-          case _ => form
-        }
-        Future.successful(Ok(trusteeNino(appConfig, filledForm, mode, index, existingSchemeName)))
+        val filledForm = request.userAnswers.get(TrusteeNinoId(index)).fold(form)(form.fill)
+        val submitUrl = controllers.register.trustees.individual.routes.TrusteeNinoController.onSubmit(mode, index, srn)
+        Future.successful(Ok(trusteeNino(appConfig, filledForm, mode, index, existingSchemeName, submitUrl)))
       }
   }
 
-  def onSubmit(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       form.bindFromRequest().fold(
         errors => TrusteeDetailsId(index).retrieve.right.map { trusteeDetails =>
-          Future.successful(BadRequest(trusteeNino(appConfig, errors, mode, index, existingSchemeName)))
+          val submitUrl = controllers.register.trustees.individual.routes.TrusteeNinoController.onSubmit(mode, index, srn)
+          Future.successful(BadRequest(trusteeNino(appConfig, errors, mode, index, existingSchemeName, submitUrl)))
         },
         nino => dataCacheConnector.save(TrusteeNinoId(index), nino).map { userAnswers =>
           Redirect(navigator.nextPage(TrusteeNinoId(index), mode, userAnswers))

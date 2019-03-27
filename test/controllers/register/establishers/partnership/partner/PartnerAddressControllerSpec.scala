@@ -98,7 +98,7 @@ class PartnerAddressControllerSpec extends ControllerSpecBase with MockitoSugar 
           val controller = app.injector.instanceOf[PartnerAddressController]
 
           val viewmodel = ManualAddressViewModel(
-            controller.postCall(NormalMode, establisherIndex, partnerIndex),
+            controller.postCall(NormalMode, establisherIndex, partnerIndex, None),
             countryOptions.options,
             Message(controller.title),
             Message(controller.heading),
@@ -107,7 +107,7 @@ class PartnerAddressControllerSpec extends ControllerSpecBase with MockitoSugar 
           )
 
           val request = addToken(
-            FakeRequest(PartnerAddressController.onPageLoad(NormalMode, establisherIndex, partnerIndex))
+            FakeRequest(PartnerAddressController.onPageLoad(NormalMode, establisherIndex, partnerIndex, None))
               .withHeaders("Csrf-Token" -> "nocheck")
           )
 
@@ -129,7 +129,7 @@ class PartnerAddressControllerSpec extends ControllerSpecBase with MockitoSugar 
     "redirect to next page on POST request" which {
       "save address" in {
 
-        val onwardCall = controllers.register.establishers.partnership.partner.routes.PartnerAddressYearsController.onPageLoad(NormalMode, Index(0), Index(0))
+        val onwardCall = controllers.register.establishers.partnership.partner.routes.PartnerAddressYearsController.onPageLoad(NormalMode, Index(0), Index(0), None)
 
         val address = Address(
           addressLine1 = "value 1",
@@ -151,7 +151,7 @@ class PartnerAddressControllerSpec extends ControllerSpecBase with MockitoSugar 
         )) {
           implicit app =>
 
-            val fakeRequest = addToken(FakeRequest(PartnerAddressController.onSubmit(NormalMode, establisherIndex, partnerIndex))
+            val fakeRequest = addToken(FakeRequest(PartnerAddressController.onSubmit(NormalMode, establisherIndex, partnerIndex, None))
               .withHeaders("Csrf-Token" -> "nocheck")
               .withFormUrlEncodedBody(
                 ("addressLine1", address.addressLine1),
@@ -190,7 +190,7 @@ class PartnerAddressControllerSpec extends ControllerSpecBase with MockitoSugar 
       )) {
         implicit app =>
 
-          val fakeRequest = addToken(FakeRequest(PartnerAddressController.onSubmit(NormalMode, establisherIndex, partnerIndex))
+          val fakeRequest = addToken(FakeRequest(PartnerAddressController.onSubmit(NormalMode, establisherIndex, partnerIndex, None))
             .withHeaders("Csrf-Token" -> "nocheck")
             .withFormUrlEncodedBody(
               ("addressLine1", address.addressLine1),

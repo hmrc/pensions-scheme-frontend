@@ -31,7 +31,7 @@ import views.html.register.establishers.addEstablisher
 
 class AddEstablisherViewSpec extends QuestionViewBehaviours[Option[Boolean]] with EntityListBehaviours {
 
-  private def companyUrl(index: Int) = controllers.register.establishers.company.routes.CompanyDetailsController.onPageLoad(NormalMode, index).url
+  private def companyUrl(index: Int) = controllers.register.establishers.company.routes.CompanyDetailsController.onPageLoad(NormalMode, None, index).url
 
   private val messageKeyPrefix = "establishers__add"
 

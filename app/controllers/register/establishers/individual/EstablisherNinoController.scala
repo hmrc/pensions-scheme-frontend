@@ -43,31 +43,28 @@ class EstablisherNinoController @Inject()(
                                            getData: DataRetrievalAction,
                                            requireData: DataRequiredAction,
                                            formProvider: EstablisherNinoFormProvider
-                                         ) (implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
+                                         )(implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
 
   private val form: Form[Nino] = formProvider()
 
-  def onPageLoad(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      retrieveEstablisherName(index) {
-        establisherName =>
-          val redirectResult = request.userAnswers.get(EstablisherNinoId(index)) match {
-            case None =>
-              Ok(establisherNino(appConfig, form, mode, index, existingSchemeName))
-            case Some(value) =>
-              Ok(establisherNino(appConfig, form.fill(value), mode, index, existingSchemeName))
-          }
-          Future.successful(redirectResult)
+      retrieveEstablisherName(index) { _ =>
+        val preparedForm = request.userAnswers.get(EstablisherNinoId(index)).fold(form)(form.fill)
+        val submitUrl = controllers.register.establishers.individual.routes.EstablisherNinoController.onSubmit(mode, index, srn)
+        Future.successful(Ok(establisherNino(appConfig, preparedForm, mode, index, existingSchemeName, submitUrl)))
       }
   }
 
-  def onSubmit(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       retrieveEstablisherName(index) {
         establisherName =>
           form.bindFromRequest().fold(
-            (formWithErrors: Form[_]) =>
-              Future.successful(BadRequest(establisherNino(appConfig, formWithErrors, mode, index, existingSchemeName))),
+            (formWithErrors: Form[_]) => {
+              val submitUrl = controllers.register.establishers.individual.routes.EstablisherNinoController.onSubmit(mode, index, srn)
+              Future.successful(BadRequest(establisherNino(appConfig, formWithErrors, mode, index, existingSchemeName, submitUrl)))
+            },
             (value) =>
               dataCacheConnector.save(
                 request.externalId,

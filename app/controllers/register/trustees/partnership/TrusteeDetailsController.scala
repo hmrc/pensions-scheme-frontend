@@ -46,22 +46,20 @@ class TrusteeDetailsController @Inject()(
                                         )(implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      val redirectResult = request.userAnswers.get(PartnershipDetailsId(index)) match {
-        case None =>
-          Ok(partnershipDetails(appConfig, form, mode, index, existingSchemeName))
-        case Some(value) =>
-          Ok(partnershipDetails(appConfig, form.fill(value), mode, index, existingSchemeName))
-      }
-      Future.successful(redirectResult)
+      val submitUrl = controllers.register.trustees.partnership.routes.TrusteeDetailsController.onSubmit(mode, index, srn)
+      val updatedForm = request.userAnswers.get(PartnershipDetailsId(index)).fold(form)(form.fill)
+      Future.successful(Ok(partnershipDetails(appConfig, updatedForm, mode, index, existingSchemeName, submitUrl)))
   }
 
-  def onSubmit(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       form.bindFromRequest().fold(
-        (formWithErrors: Form[_]) =>
-          Future.successful(BadRequest(partnershipDetails(appConfig, formWithErrors, mode, index, existingSchemeName))),
+        (formWithErrors: Form[_]) => {
+          val submitUrl = controllers.register.trustees.partnership.routes.TrusteeDetailsController.onSubmit(mode, index, srn)
+          Future.successful(BadRequest(partnershipDetails(appConfig, formWithErrors, mode, index, existingSchemeName, submitUrl)))
+        },
         value =>
           dataCacheConnector.save(request.externalId, PartnershipDetailsId(index), value
           ).map {

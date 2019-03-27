@@ -72,32 +72,32 @@ object EstablishersIndividualNavigatorSpec extends OptionValues {
   private val bodyCorporateWithNoTrustees =
     UserAnswers().schemeName("test-scheme-name").schemeType(SchemeType.BodyCorporate).set(HaveAnyTrusteesId)(false).asOpt.value
 
-  private def establisherNino(mode: Mode) = controllers.register.establishers.individual.routes.EstablisherNinoController.onPageLoad(mode, 0)
+  private def establisherNino(mode: Mode) = controllers.register.establishers.individual.routes.EstablisherNinoController.onPageLoad(mode, 0, None)
 
-  private def establisherUtr(mode: Mode) = controllers.register.establishers.individual.routes.UniqueTaxReferenceController.onPageLoad(mode, 0)
+  private def establisherUtr(mode: Mode) = controllers.register.establishers.individual.routes.UniqueTaxReferenceController.onPageLoad(mode, 0, None)
 
-  private def postCodeLookup(mode: Mode) = controllers.register.establishers.individual.routes.PostCodeLookupController.onPageLoad(mode, 0)
+  private def postCodeLookup(mode: Mode) = controllers.register.establishers.individual.routes.PostCodeLookupController.onPageLoad(mode, 0, None)
 
-  private def addressList(mode: Mode) = controllers.register.establishers.individual.routes.AddressListController.onPageLoad(mode, 0)
+  private def addressList(mode: Mode) = controllers.register.establishers.individual.routes.AddressListController.onPageLoad(mode, 0, None)
 
-  private def address(mode: Mode) = controllers.register.establishers.individual.routes.AddressController.onPageLoad(mode, 0)
+  private def address(mode: Mode) = controllers.register.establishers.individual.routes.AddressController.onPageLoad(mode, 0, None)
 
-  private def addressYears(mode: Mode) = controllers.register.establishers.individual.routes.AddressYearsController.onPageLoad(mode, 0)
+  private def addressYears(mode: Mode) = controllers.register.establishers.individual.routes.AddressYearsController.onPageLoad(mode, 0, None)
 
-  private def checkYourAnswers = controllers.register.establishers.individual.routes.CheckYourAnswersController.onPageLoad(0)
+  private def checkYourAnswers = controllers.register.establishers.individual.routes.CheckYourAnswersController.onPageLoad(NormalMode, 0, None)
 
-  private def contactDetails = controllers.register.establishers.individual.routes.ContactDetailsController.onPageLoad(NormalMode, 0)
+  private def contactDetails = controllers.register.establishers.individual.routes.ContactDetailsController.onPageLoad(NormalMode, 0, None)
 
   private def previousAddressPostCodeLookup(mode: Mode) =
-    controllers.register.establishers.individual.routes.PreviousAddressPostCodeLookupController.onPageLoad(mode, 0)
+    controllers.register.establishers.individual.routes.PreviousAddressPostCodeLookupController.onPageLoad(mode, 0, None)
 
-  private def previousAddressAddressList(mode: Mode) = controllers.register.establishers.individual.routes.PreviousAddressListController.onPageLoad(mode, 0)
+  private def previousAddressAddressList(mode: Mode) = controllers.register.establishers.individual.routes.PreviousAddressListController.onPageLoad(mode, 0, None)
 
-  private def previousAddress(mode: Mode) = controllers.register.establishers.individual.routes.PreviousAddressController.onPageLoad(mode, 0)
+  private def previousAddress(mode: Mode) = controllers.register.establishers.individual.routes.PreviousAddressController.onPageLoad(mode, 0, None)
 
-  private def haveAnyTrustees = controllers.register.trustees.routes.HaveAnyTrusteesController.onPageLoad(NormalMode)
+  private def haveAnyTrustees = controllers.register.trustees.routes.HaveAnyTrusteesController.onPageLoad(NormalMode, None)
 
-  private def addTrustees = controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode)
+  private def addTrustees = controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode, None)
 
   private def addEstablisher = controllers.register.establishers.routes.AddEstablisherController.onPageLoad(NormalMode)
 

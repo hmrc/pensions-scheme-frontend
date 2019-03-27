@@ -47,17 +47,20 @@ class EstablisherDetailsController @Inject()(
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       val filledForm = request.userAnswers.get(EstablisherDetailsId(index)).fold(form)(form.fill)
-      Future.successful(Ok(establisherDetails(appConfig, filledForm, mode, index, existingSchemeName)))
+      val submitUrl = controllers.register.establishers.individual.routes.EstablisherDetailsController.onSubmit(mode, index, srn)
+      Future.successful(Ok(establisherDetails(appConfig, filledForm, mode, index, existingSchemeName, submitUrl)))
   }
 
-  def onSubmit(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       form.bindFromRequest().fold(
-        (formWithErrors: Form[_]) =>
-          Future.successful(BadRequest(establisherDetails(appConfig, formWithErrors, mode, index, existingSchemeName))),
+        (formWithErrors: Form[_]) => {
+          val submitUrl = controllers.register.establishers.individual.routes.EstablisherDetailsController.onSubmit(mode, index, srn)
+          Future.successful(BadRequest(establisherDetails(appConfig, formWithErrors, mode, index, existingSchemeName, submitUrl)))
+        },
         value =>
           dataCacheConnector.save(
             request.externalId,

@@ -43,29 +43,29 @@ class CompanyUniqueTaxReferenceController @Inject()(
                                                      getData: DataRetrievalAction,
                                                      requireData: DataRequiredAction,
                                                      formProvider: CompanyUniqueTaxReferenceFormProvider
-                                                   ) (implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
+                                                   )(implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      CompanyDetailsId(index).retrieve.right.flatMap { companyDetails =>
-        CompanyUniqueTaxReferenceId(index).retrieve.right.map { value =>
-          Future.successful(Ok(companyUniqueTaxReference(appConfig, form.fill(value), mode, index, existingSchemeName)))
-        }.left.map { _ =>
-          Future.successful(Ok(companyUniqueTaxReference(appConfig, form, mode, index, existingSchemeName)))
-        }
+      CompanyDetailsId(index).retrieve.right.map { companyDetails =>
+        val submitUrl = controllers.register.trustees.company.routes.CompanyUniqueTaxReferenceController.onSubmit(mode, index, srn)
+        val updatedForm = request.userAnswers.get(CompanyUniqueTaxReferenceId(index)).fold(form)(form.fill)
+        Future.successful(Ok(companyUniqueTaxReference(appConfig, updatedForm, mode, index, existingSchemeName, submitUrl)))
       }
   }
 
-  def onSubmit(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       CompanyDetailsId(index).retrieve.right.map {
         companyDetails =>
           form.bindFromRequest().fold(
-            (formWithErrors: Form[_]) =>
-              Future.successful(BadRequest(companyUniqueTaxReference(appConfig, formWithErrors, mode, index, existingSchemeName))),
-            (value) =>
+            (formWithErrors: Form[_]) => {
+              val submitUrl = controllers.register.trustees.company.routes.CompanyUniqueTaxReferenceController.onSubmit(mode, index, srn)
+              Future.successful(BadRequest(companyUniqueTaxReference(appConfig, formWithErrors, mode, index, existingSchemeName, submitUrl)))
+            },
+            value =>
               dataCacheConnector.save(
                 request.externalId,
                 CompanyUniqueTaxReferenceId(index),

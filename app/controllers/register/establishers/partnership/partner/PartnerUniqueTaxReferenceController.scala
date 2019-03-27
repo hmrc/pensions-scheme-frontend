@@ -47,24 +47,26 @@ class PartnerUniqueTaxReferenceController @Inject()(
 
   private val form: Form[UniqueTaxReference] = formProvider()
 
-  def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      PartnerDetailsId(establisherIndex, partnerIndex).retrieve.right.flatMap { partner =>
-        PartnerUniqueTaxReferenceId(establisherIndex, partnerIndex).retrieve.right.map { value =>
-          Future.successful(Ok(partnerUniqueTaxReference(appConfig, form.fill(value), mode, establisherIndex, partnerIndex, existingSchemeName)))
-        }.left.map { _ =>
-          Future.successful(Ok(partnerUniqueTaxReference(appConfig, form, mode, establisherIndex, partnerIndex, existingSchemeName)))
-        }
+      PartnerDetailsId(establisherIndex, partnerIndex).retrieve.right.map { _ =>
+        val preparedForm = request.userAnswers.get(PartnerUniqueTaxReferenceId(establisherIndex, partnerIndex)).fold(form)(form.fill)
+        val submitUrl = controllers.register.establishers.partnership.partner.routes.PartnerUniqueTaxReferenceController.onSubmit(mode, establisherIndex, partnerIndex, srn)
+        Future.successful(Ok(partnerUniqueTaxReference(appConfig, preparedForm, mode, establisherIndex, partnerIndex, existingSchemeName, submitUrl)))
       }
   }
 
 
-  def onSubmit(mode: Mode, establisherIndex: Index, partnerIndex: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData andThen requireData).async {
     implicit request =>
       PartnerDetailsId(establisherIndex, partnerIndex).retrieve.right.map { partner =>
         form.bindFromRequest().fold(
-          (formWithErrors: Form[_]) =>
-            Future.successful(BadRequest(partnerUniqueTaxReference(appConfig, formWithErrors, mode, establisherIndex, partnerIndex, existingSchemeName))),
+          (formWithErrors: Form[_]) => {
+            val submitUrl = controllers.register.establishers.partnership.partner.routes.PartnerUniqueTaxReferenceController.onSubmit(mode, establisherIndex, partnerIndex, srn)
+            Future.successful(BadRequest(partnerUniqueTaxReference(appConfig, formWithErrors, mode, establisherIndex, partnerIndex, existingSchemeName, submitUrl)))
+          },
           (value) =>
             dataCacheConnector.save(
               request.externalId,

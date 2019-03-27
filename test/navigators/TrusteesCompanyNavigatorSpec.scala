@@ -71,33 +71,33 @@ object TrusteesCompanyNavigatorSpec extends OptionValues {
   private def taskList: Call = controllers.routes.SchemeTaskListController.onPageLoad()
 
   private def companyRegistrationNumber(mode: Mode): Call =
-    controllers.register.trustees.company.routes.CompanyRegistrationNumberController.onPageLoad(mode, 0)
+    controllers.register.trustees.company.routes.CompanyRegistrationNumberController.onPageLoad(mode, 0, None)
 
   private def companyUTR(mode: Mode): Call =
-    controllers.register.trustees.company.routes.CompanyUniqueTaxReferenceController.onPageLoad(mode, 0)
+    controllers.register.trustees.company.routes.CompanyUniqueTaxReferenceController.onPageLoad(mode, 0, None)
 
-  private def companyPostCodeLookup(mode: Mode) = controllers.register.trustees.company.routes.CompanyPostCodeLookupController.onPageLoad(mode, 0)
+  private def companyPostCodeLookup(mode: Mode) = controllers.register.trustees.company.routes.CompanyPostCodeLookupController.onPageLoad(mode, 0, None)
 
-  private def companyAddressList(mode: Mode) = controllers.register.trustees.company.routes.CompanyAddressListController.onPageLoad(mode, 0)
+  private def companyAddressList(mode: Mode) = controllers.register.trustees.company.routes.CompanyAddressListController.onPageLoad(mode, 0, None)
 
-  private def companyManualAddress(mode: Mode) = controllers.register.trustees.company.routes.CompanyAddressController.onPageLoad(mode, 0)
+  private def companyManualAddress(mode: Mode) = controllers.register.trustees.company.routes.CompanyAddressController.onPageLoad(mode, 0, None)
 
-  private def companyAddressYears(mode: Mode) = controllers.register.trustees.company.routes.CompanyAddressYearsController.onPageLoad(mode, 0)
+  private def companyAddressYears(mode: Mode) = controllers.register.trustees.company.routes.CompanyAddressYearsController.onPageLoad(mode, 0, None)
 
   private def prevAddPostCodeLookup(mode: Mode) =
-    controllers.register.trustees.company.routes.CompanyPreviousAddressPostcodeLookupController.onPageLoad(mode, 0)
+    controllers.register.trustees.company.routes.CompanyPreviousAddressPostcodeLookupController.onPageLoad(mode, 0, None)
 
   private def companyPaList(mode: Mode) =
-    controllers.register.trustees.company.routes.CompanyPreviousAddressListController.onPageLoad(mode, 0)
+    controllers.register.trustees.company.routes.CompanyPreviousAddressListController.onPageLoad(mode, 0, None)
 
   private def companyPreviousAddress(mode: Mode) =
-    controllers.register.trustees.company.routes.CompanyPreviousAddressController.onPageLoad(mode, 0)
+    controllers.register.trustees.company.routes.CompanyPreviousAddressController.onPageLoad(mode, 0, None)
 
-  private def companyContactDetails = controllers.register.trustees.company.routes.CompanyContactDetailsController.onPageLoad(NormalMode, 0)
+  private def companyContactDetails = controllers.register.trustees.company.routes.CompanyContactDetailsController.onPageLoad(NormalMode, 0, None)
 
-  private def checkYourAnswers = controllers.register.trustees.company.routes.CheckYourAnswersController.onPageLoad(0)
+  private def checkYourAnswers = controllers.register.trustees.company.routes.CheckYourAnswersController.onPageLoad(NormalMode, 0, None)
 
-  private def addTrustee = controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode)
+  private def addTrustee = controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode, None)
 
   private def sessionExpired = controllers.routes.SessionExpiredController.onPageLoad()
 

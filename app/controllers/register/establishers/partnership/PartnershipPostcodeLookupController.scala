@@ -50,14 +50,14 @@ class PartnershipPostcodeLookupController @Inject()(
 
   protected val form: Form[String] = formProvider()
 
-  private def viewmodel(index: Int, mode: Mode): Retrieval[PostcodeLookupViewModel] =
+  private def viewmodel(index: Int, mode: Mode, srn: Option[String]): Retrieval[PostcodeLookupViewModel] =
     Retrieval {
       implicit request =>
         PartnershipDetailsId(index).retrieve.right.map {
           details =>
             PostcodeLookupViewModel(
-              routes.PartnershipPostcodeLookupController.onSubmit(mode, index),
-              routes.PartnershipAddressController.onPageLoad(mode, index),
+              routes.PartnershipPostcodeLookupController.onSubmit(mode, index, srn),
+              routes.PartnershipAddressController.onPageLoad(mode, index, srn),
               title = Message(title),
               heading = Message(heading),
               subHeading = Some(details.name),
@@ -66,16 +66,16 @@ class PartnershipPostcodeLookupController @Inject()(
         }
     }
 
-  def onPageLoad(mode: Mode, index: Index): Action[AnyContent] =
+  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData andThen requireData).async {
       implicit request =>
-        viewmodel(index, mode).retrieve.right map get
+        viewmodel(index, mode, srn).retrieve.right map get
     }
 
-  def onSubmit(mode: Mode, index: Index): Action[AnyContent] =
+  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData andThen requireData).async {
       implicit request =>
-        viewmodel(index, mode).retrieve.right.map {
+        viewmodel(index, mode, srn).retrieve.right.map {
           vm =>
             post(PartnershipPostcodeLookupId(index), vm, mode)
         }

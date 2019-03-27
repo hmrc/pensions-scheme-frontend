@@ -37,7 +37,7 @@ class TrusteeNinoControllerSpec extends ControllerSpecBase {
   "TrusteeNino Controller" must {
 
     "return OK and the correct view for a GET" in {
-      val result = controller(trusteeData).onPageLoad(mode, index)(fakeRequest)
+      val result = controller(trusteeData).onPageLoad(mode, index, None)(fakeRequest)
 
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString()
@@ -46,14 +46,14 @@ class TrusteeNinoControllerSpec extends ControllerSpecBase {
     "return OK and the correct view when the question has already been answered" in {
       val answer = Nino.Yes(nino)
       val filledForm = form.fill(answer)
-      val result = controller(trusteeAndAnswerData(answer)).onPageLoad(mode, index)(fakeRequest)
+      val result = controller(trusteeAndAnswerData(answer)).onPageLoad(mode, index, None)(fakeRequest)
 
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString(filledForm)
     }
 
     "redirect to Session Expired on a GET when no cached data exists" in {
-      val result = controller(dontGetAnyData).onPageLoad(mode, index)(fakeRequest)
+      val result = controller(dontGetAnyData).onPageLoad(mode, index, None)(fakeRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
@@ -61,7 +61,7 @@ class TrusteeNinoControllerSpec extends ControllerSpecBase {
 
     "redirect to the next page when valid data is submitted" in {
       val request = fakeRequest.withFormUrlEncodedBody(("nino.hasNino", "true"), ("nino.nino", nino))
-      val result = controller().onSubmit(mode, index)(request)
+      val result = controller().onSubmit(mode, index, None)(request)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
@@ -69,7 +69,7 @@ class TrusteeNinoControllerSpec extends ControllerSpecBase {
 
     "save the asnwer when valid data is submitted" in {
       val request = fakeRequest.withFormUrlEncodedBody(("nino.hasNino", "true"), ("nino.nino", nino))
-      val result = controller().onSubmit(mode, index)(request)
+      val result = controller().onSubmit(mode, index, None)(request)
 
       status(result) mustBe SEE_OTHER
       FakeUserAnswersCacheConnector.verify[Nino, TrusteeNinoId](TrusteeNinoId(index), Nino.Yes(nino))
@@ -79,14 +79,14 @@ class TrusteeNinoControllerSpec extends ControllerSpecBase {
       val errorForm = form.bind(Map.empty[String, String])
       assume(errorForm.errors.nonEmpty)
 
-      val result = controller(trusteeData).onSubmit(mode, index)(fakeRequest)
+      val result = controller(trusteeData).onSubmit(mode, index, None)(fakeRequest)
 
       status(result) mustBe BAD_REQUEST
       contentAsString(result) mustBe viewAsString(errorForm)
     }
 
     "redirect to Session Expired on a POST when no cached data exists" in {
-      val result = controller(dontGetAnyData).onSubmit(mode, index)(fakeRequest)
+      val result = controller(dontGetAnyData).onSubmit(mode, index, None)(fakeRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
@@ -124,6 +124,7 @@ object TrusteeNinoControllerSpec extends ControllerSpecBase {
       fakeNavigator,
       FakeUserAnswersCacheConnector
     )
+  val submitUrl = controllers.register.trustees.individual.routes.TrusteeNinoController.onSubmit(NormalMode, index, None)
 
   private def viewAsString(form: Form[Nino] = form) =
     trusteeNino(
@@ -131,7 +132,7 @@ object TrusteeNinoControllerSpec extends ControllerSpecBase {
       form,
       mode,
       index,
-      None
+      None, submitUrl
     )(fakeRequest, messages).toString
 
   private def trusteeUserAnswers: UserAnswers = {

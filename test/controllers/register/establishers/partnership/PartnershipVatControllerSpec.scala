@@ -44,7 +44,7 @@ class PartnershipVatControllerSpec extends ControllerSpecBase with MustMatchers 
 
     "render the view correctly on a GET request" in {
       requestResult(
-        implicit app => addToken(FakeRequest(routes.PartnershipVatController.onPageLoad(NormalMode, firstIndex))),
+        implicit app => addToken(FakeRequest(routes.PartnershipVatController.onPageLoad(NormalMode, firstIndex, None))),
         (request, result) => {
           status(result) mustBe OK
           contentAsString(result) mustBe vat(frontendAppConfig, form, viewModel, None)(request, messages).toString()
@@ -54,7 +54,7 @@ class PartnershipVatControllerSpec extends ControllerSpecBase with MustMatchers 
 
     "redirect to the next page on a POST request" in {
       requestResult(
-        implicit app => addToken(FakeRequest(routes.PartnershipVatController.onSubmit(NormalMode, firstIndex))
+        implicit app => addToken(FakeRequest(routes.PartnershipVatController.onSubmit(NormalMode, firstIndex, None))
           .withFormUrlEncodedBody(("vat.hasVat", "true"), ("vat.vat", "123456789"))),
         (_, result) => {
           status(result) mustBe SEE_OTHER
@@ -75,7 +75,7 @@ object PartnershipVatControllerSpec extends PartnershipVatControllerSpec {
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
   val viewModel = VatViewModel(
-    routes.PartnershipVatController.onSubmit(NormalMode, firstIndex),
+    routes.PartnershipVatController.onSubmit(NormalMode, firstIndex, None),
     title = Message("messages__partnershipVat__title"),
     heading = Message("messages__partnershipVat__heading"),
     hint = Message("messages__common__vat__hint"),

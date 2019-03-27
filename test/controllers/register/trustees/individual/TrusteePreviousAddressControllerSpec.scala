@@ -83,7 +83,7 @@ class TrusteePreviousAddressControllerSpec extends ControllerSpecBase with CSRFR
           val controller = app.injector.instanceOf[TrusteePreviousAddressController]
 
           val viewmodel = ManualAddressViewModel(
-            controller.postCall(NormalMode, firstIndex),
+            controller.postCall(NormalMode, firstIndex, None),
             countryOptions.options,
             Message(controller.title),
             Message(controller.heading),
@@ -91,7 +91,7 @@ class TrusteePreviousAddressControllerSpec extends ControllerSpecBase with CSRFR
           )
 
           val request = addToken(
-            FakeRequest(TrusteePreviousAddressController.onPageLoad(NormalMode, firstIndex))
+            FakeRequest(TrusteePreviousAddressController.onPageLoad(NormalMode, firstIndex, None))
               .withHeaders("Csrf-Token" -> "nocheck")
           )
 
@@ -134,7 +134,7 @@ class TrusteePreviousAddressControllerSpec extends ControllerSpecBase with CSRFR
           implicit app =>
 
 
-            val fakeRequest = addToken(FakeRequest(TrusteePreviousAddressController.onSubmit(NormalMode, firstIndex))
+            val fakeRequest = addToken(FakeRequest(TrusteePreviousAddressController.onSubmit(NormalMode, firstIndex, None))
               .withHeaders("Csrf-Token" -> "nocheck")
               .withFormUrlEncodedBody(
                 ("addressLine1", address.addressLine1),
@@ -173,7 +173,7 @@ class TrusteePreviousAddressControllerSpec extends ControllerSpecBase with CSRFR
       )) {
         implicit app =>
 
-          val fakeRequest = addToken(FakeRequest(routes.TrusteePreviousAddressController.onSubmit(NormalMode, firstIndex))
+          val fakeRequest = addToken(FakeRequest(routes.TrusteePreviousAddressController.onSubmit(NormalMode, firstIndex, None))
             .withHeaders("Csrf-Token" -> "nocheck")
             .withFormUrlEncodedBody(
               ("addressLine1", address.addressLine1),

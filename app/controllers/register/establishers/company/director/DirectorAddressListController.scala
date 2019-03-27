@@ -44,31 +44,31 @@ class DirectorAddressListController @Inject()(
                                                requireData: DataRequiredAction
                                              ) extends AddressListController with Retrievals {
 
-  def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index): Action[AnyContent] =
+  def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData andThen requireData).async { implicit request =>
-      viewmodel(mode, establisherIndex, directorIndex).right.map(get)
+      viewmodel(mode, establisherIndex, directorIndex, srn).right.map(get)
     }
 
-  def onSubmit(mode: Mode, establisherIndex: Index, directorIndex: Index): Action[AnyContent] =
+  def onSubmit(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData andThen requireData).async { implicit request =>
-      viewmodel(mode, establisherIndex, directorIndex).right.map {
+      viewmodel(mode, establisherIndex, directorIndex, srn).right.map {
         vm =>
           post(vm, DirectorAddressListId(establisherIndex, directorIndex), DirectorAddressId(establisherIndex, directorIndex), mode)
       }
     }
 
-  private def viewmodel(mode: Mode, establisherIndex: Index, directorIndex: Index)
+  private def viewmodel(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String])
                        (implicit request: DataRequest[AnyContent]): Either[Future[Result], AddressListViewModel] = {
 
     (DirectorDetailsId(establisherIndex, directorIndex) and DirectorAddressPostcodeLookupId(establisherIndex, directorIndex))
       .retrieve.right.map {
       case directorDetails ~ addresses =>
         AddressListViewModel(
-          postCall = routes.DirectorAddressListController.onSubmit(mode, establisherIndex, directorIndex),
-          manualInputCall = routes.DirectorAddressController.onPageLoad(mode, establisherIndex, directorIndex),
+          postCall = routes.DirectorAddressListController.onSubmit(mode, establisherIndex, directorIndex, srn),
+          manualInputCall = routes.DirectorAddressController.onPageLoad(mode, establisherIndex, directorIndex, srn),
           addresses = addresses,
           subHeading = Some(Message(directorDetails.fullName))
         )
-    }.left.map(_ => Future.successful(Redirect(routes.DirectorAddressPostcodeLookupController.onPageLoad(mode, establisherIndex, directorIndex))))
+    }.left.map(_ => Future.successful(Redirect(routes.DirectorAddressPostcodeLookupController.onPageLoad(mode, establisherIndex, directorIndex, srn))))
   }
 }

@@ -69,7 +69,7 @@ object SchemeTaskListControllerSpec extends SpecBase with JsonFileReader {
       controllers.register.establishers.routes.EstablisherKindController.onPageLoad(NormalMode, 0).url), None),
     Seq.empty,
     Some(SchemeDetailsTaskListSection(None,
-      Link(addTrusteesLinkText, controllers.register.trustees.routes.TrusteeKindController.onPageLoad(NormalMode, 0).url),
+      Link(addTrusteesLinkText, controllers.register.trustees.routes.TrusteeKindController.onPageLoad(NormalMode, 0, None).url),
       None
     )),
     Seq.empty,

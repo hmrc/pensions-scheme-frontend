@@ -27,5 +27,6 @@ case class AddressYearsViewModel(
                                   heading: Message,
                                   legend: Message,
                                   subHeading: Option[Message] = None,
-                                  inputs: Seq[InputOption] = AddressYears.options
+                                  inputs: Seq[InputOption] = AddressYears.options,
+                                  srn: Option[String] = None
                                 )

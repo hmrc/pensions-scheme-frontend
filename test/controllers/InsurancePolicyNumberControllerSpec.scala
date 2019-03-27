@@ -107,10 +107,10 @@ object InsurancePolicyNumberControllerSpec {
 
   private def onSubmitAction(base: ControllerSpecBase, navigator: Navigator)(dataRetrievalAction: DataRetrievalAction,
                                                                              authAction: AuthAction): Action[AnyContent] =
-    controller(base)(dataRetrievalAction, authAction, navigator).onSubmit(NormalMode)
+    controller(base)(dataRetrievalAction, authAction, navigator).onSubmit(NormalMode, None)
 
   private def saveAction(base: ControllerSpecBase)(cache: UserAnswersService): Action[AnyContent] =
-    controller(base)(cache = cache).onSubmit(NormalMode)
+    controller(base)(cache = cache).onSubmit(NormalMode, None)
 }
 
 

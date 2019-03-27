@@ -18,6 +18,7 @@ package views.register.establishers.company.director
 
 import controllers.register.establishers.company.director.routes.ConfirmDeleteDirectorController
 import forms.register.establishers.company.director.ConfirmDeleteDirectorFormProvider
+import models.NormalMode
 import play.api.data.Form
 import play.twirl.api.HtmlFormat
 import views.behaviours.YesNoViewBehaviours
@@ -30,7 +31,7 @@ class ConfirmDeleteDirectorViewSpec extends YesNoViewBehaviours {
   val form = new ConfirmDeleteDirectorFormProvider()()
 
   private val directorName = "John Doe"
-  private val postCall = ConfirmDeleteDirectorController.onSubmit(0, 0)
+  private val postCall = ConfirmDeleteDirectorController.onSubmit(0, 0, NormalMode, None)
 
   private def createView() = () =>
     confirmDeleteDirector(frontendAppConfig, form, directorName, postCall, None)(fakeRequest, messages)

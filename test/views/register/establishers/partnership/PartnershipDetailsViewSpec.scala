@@ -31,18 +31,19 @@ class PartnershipDetailsViewSpec extends QuestionViewBehaviours[PartnershipDetai
   override val form = new PartnershipDetailsFormProvider()()
   val firstIndex = Index(1)
 
+  val submitUrl = controllers.register.establishers.partnership.routes.PartnershipDetailsController.onSubmit(NormalMode, firstIndex, None)
   def createView(): () => HtmlFormat.Appendable = () =>
-    partnershipDetails(frontendAppConfig, form, NormalMode, firstIndex, None)(fakeRequest, messages)
+    partnershipDetails(frontendAppConfig, form, NormalMode, firstIndex, None, submitUrl)(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) =>
-    partnershipDetails(frontendAppConfig, form, NormalMode, firstIndex, None)(fakeRequest, messages)
+    partnershipDetails(frontendAppConfig, form, NormalMode, firstIndex, None, submitUrl)(fakeRequest, messages)
 
   "PartnershipDetails view" must {
 
     behave like normalPage(createView(), messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"))
 
     behave like pageWithTextFields(createViewUsingForm, messageKeyPrefix,
-      routes.PartnershipDetailsController.onSubmit(NormalMode, firstIndex).url, "partnershipName")
+      routes.PartnershipDetailsController.onSubmit(NormalMode, firstIndex, None).url, "partnershipName")
 
     behave like pageWithReturnLink(createView(), getReturnLink)
   }
