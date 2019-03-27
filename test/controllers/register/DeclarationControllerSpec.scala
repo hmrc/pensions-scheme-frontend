@@ -328,6 +328,9 @@ object DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar {
     (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[SchemeSubmissionResponse] = {
       Future.successful(validSchemeSubmissionResponse)
     }
+
+    override def updateSchemeDetails(psaId: String, pstr: String, answers: UserAnswers)(
+      implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Unit] = ???
   }
 
   private val fakeEmailConnector = new EmailConnector {
