@@ -33,7 +33,7 @@ class AboutMembersNavigator @Inject()(val dataCacheConnector: UserAnswersCacheCo
       case MembershipPensionRegulatorId =>
         NavigateTo.dontSave(controllers.routes.FutureMembersController.onPageLoad(NormalMode))
       case FutureMembersId =>
-        NavigateTo.dontSave(controllers.routes.CheckYourAnswersMembersController.onPageLoad())
+        NavigateTo.dontSave(controllers.routes.CheckYourAnswersMembersController.onPageLoad(NormalMode, None))
       case _ =>
         None
     }
@@ -44,9 +44,9 @@ class AboutMembersNavigator @Inject()(val dataCacheConnector: UserAnswersCacheCo
       case CurrentMembersId =>
         currentMembersNavigationEditRoutes(from.userAnswers)
       case MembershipPensionRegulatorId =>
-        NavigateTo.dontSave(controllers.routes.CheckYourAnswersMembersController.onPageLoad())
+        NavigateTo.dontSave(controllers.routes.CheckYourAnswersMembersController.onPageLoad(NormalMode, None))
       case FutureMembersId =>
-        NavigateTo.dontSave(controllers.routes.CheckYourAnswersMembersController.onPageLoad())
+        NavigateTo.dontSave(controllers.routes.CheckYourAnswersMembersController.onPageLoad(NormalMode, None))
       case _ =>
         None
     }
@@ -66,7 +66,7 @@ class AboutMembersNavigator @Inject()(val dataCacheConnector: UserAnswersCacheCo
   private def currentMembersNavigationEditRoutes(userAnswers: UserAnswers): Option[NavigateTo] = {
     userAnswers.get(CurrentMembersId) match {
       case Some(Members.None) | Some(Members.One) =>
-        NavigateTo.dontSave(controllers.routes.CheckYourAnswersMembersController.onPageLoad())
+        NavigateTo.dontSave(controllers.routes.CheckYourAnswersMembersController.onPageLoad(NormalMode, None))
       case Some(_) =>
         NavigateTo.dontSave(controllers.routes.MembershipPensionRegulatorController.onPageLoad(CheckMode))
       case _ =>

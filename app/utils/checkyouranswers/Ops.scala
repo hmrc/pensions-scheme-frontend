@@ -17,6 +17,7 @@
 package utils.checkyouranswers
 
 import identifiers.TypedIdentifier
+import models.{Mode, NormalMode, UpdateMode}
 import models.requests.DataRequest
 import play.api.libs.json.Reads
 import play.api.mvc.AnyContent
@@ -25,13 +26,17 @@ import viewmodels.AnswerRow
 import scala.language.implicitConversions
 
 trait Ops[A] {
-  def row(changeUrl: String)(implicit request: DataRequest[AnyContent], reads: Reads[A]): Seq[AnswerRow]
+  def row(changeUrl: String, mode: Mode = NormalMode)(implicit request: DataRequest[AnyContent], reads: Reads[A]): Seq[AnswerRow]
 }
 
 object Ops {
   implicit def toOps[I <: TypedIdentifier.PathDependent](id: I)(implicit ev: CheckYourAnswers[I]): Ops[id.Data] =
     new Ops[id.Data] {
-      override def row(changeUrl: String)(implicit request: DataRequest[AnyContent], reads: Reads[id.Data]): Seq[AnswerRow] =
-        ev.row(id)(changeUrl, request.userAnswers)
+      override def row(changeUrl: String, mode: Mode)(implicit request: DataRequest[AnyContent], reads: Reads[id.Data]): Seq[AnswerRow] =
+        if(mode == UpdateMode) {
+          ev.updateRow(id)(changeUrl, request.userAnswers)
+        } else {
+          ev.row(id)(changeUrl, request.userAnswers)
+        }
     }
 }
