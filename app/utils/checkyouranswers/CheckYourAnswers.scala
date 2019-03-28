@@ -117,7 +117,6 @@ object CheckYourAnswers {
     }
   }
 
-
   case class SchemeTypeCYA[I <: TypedIdentifier[SchemeType]](label: Option[String] = None, hiddenLabel: Option[String] = None) {
 
     def apply()(implicit rds: Reads[SchemeType]): CheckYourAnswers[I] = {
@@ -206,25 +205,6 @@ object CheckYourAnswers {
               Some(changeUrl),
               Message("messages__visuallyhidden__common__dob", personDetails.fullName)
             ))
-      }.getOrElse(Seq.empty[AnswerRow])
-
-      override def updateRow(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = row(id)(changeUrl, userAnswers)
-    }
-  }
-
-  implicit def membership[I <: TypedIdentifier[Membership]](implicit rds: Reads[Membership]): CheckYourAnswers[I] = {
-    new CheckYourAnswers[I] {
-      override def row(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = userAnswers.get(id).map {
-        membership =>
-          Seq(
-            AnswerRow(
-              s"${id.toString}.checkYourAnswersLabel",
-              Seq(s"messages__membership__$membership"),
-              answerIsMessageKey = true,
-              Some(changeUrl),
-              s"messages__visuallyhidden__${id.toString}"
-            )
-          )
       }.getOrElse(Seq.empty[AnswerRow])
 
       override def updateRow(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = row(id)(changeUrl, userAnswers)
