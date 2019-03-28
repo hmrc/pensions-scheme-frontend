@@ -44,10 +44,6 @@ class BeforeYouStartControllerSpec extends ControllerSpecBase with MockitoSugar 
 
   def viewAsString(): String = beforeYouStart(frontendAppConfig)(fakeRequest, messages).toString
 
-  override def beforeEach(): Unit = {
-    super.beforeEach()
-  }
-
   "BeforeYouStart Controller" when {
 
     "on a GET" must {

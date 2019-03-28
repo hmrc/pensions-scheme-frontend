@@ -16,7 +16,7 @@
 
 package controllers.register.trustees.individual
 
-import connectors.FakeUserAnswersCacheConnector
+import services.FakeUserAnswersService
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.ContactDetailsFormProvider
@@ -39,7 +39,7 @@ class TrusteeContactDetailsControllerSpec extends ControllerSpecBase {
   "TrusteeContactDetails Controller" must {
 
     "return OK and the correct view for a GET" in {
-      val result = controller(trusteeData).onPageLoad(NormalMode, index)(fakeRequest)
+      val result = controller(trusteeData).onPageLoad(NormalMode, index, None)(fakeRequest)
 
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString()
@@ -47,7 +47,7 @@ class TrusteeContactDetailsControllerSpec extends ControllerSpecBase {
 
     "populate the view correctly on a GET when the question has previously been answered" in {
       val filledForm = form.fill(contactDetailsModel)
-      val result = controller(trusteeAndAnswerData(contactDetailsModel)).onPageLoad(NormalMode, index)(fakeRequest)
+      val result = controller(trusteeAndAnswerData(contactDetailsModel)).onPageLoad(NormalMode, index, None)(fakeRequest)
 
       contentAsString(result) mustBe viewAsString(filledForm)
     }
@@ -55,7 +55,7 @@ class TrusteeContactDetailsControllerSpec extends ControllerSpecBase {
     "redirect to the next page when valid data is submitted" in {
       val request = postRequest(contactDetailsModel)
 
-      val result = controller(trusteeData).onSubmit(NormalMode, index)(request)
+      val result = controller(trusteeData).onSubmit(NormalMode, index, None)(request)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
@@ -64,31 +64,31 @@ class TrusteeContactDetailsControllerSpec extends ControllerSpecBase {
     "save the answer" in {
       val request = postRequest(contactDetailsModel)
 
-      val result = controller(trusteeData).onSubmit(NormalMode, index)(request)
+      val result = controller(trusteeData).onSubmit(NormalMode, index, None)(request)
 
       status(result) mustBe SEE_OTHER
-      FakeUserAnswersCacheConnector.verify(TrusteeContactDetailsId(index), contactDetailsModel)
+      FakeUserAnswersService.verify(TrusteeContactDetailsId(index), contactDetailsModel)
     }
 
     "return a Bad Request and errors when invalid data is submitted" in {
       val errorForm = form.bind(Map.empty[String, String])
       assume(errorForm.hasErrors)
 
-      val result = controller(trusteeData).onSubmit(NormalMode, index)(fakeRequest)
+      val result = controller(trusteeData).onSubmit(NormalMode, index, None)(fakeRequest)
 
       status(result) mustBe BAD_REQUEST
       contentAsString(result) mustBe viewAsString(errorForm)
     }
 
     "redirect to Session Expired for a GET if no existing data is found" in {
-      val result = controller(dontGetAnyData).onPageLoad(NormalMode, index)(fakeRequest)
+      val result = controller(dontGetAnyData).onPageLoad(NormalMode, index, None)(fakeRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
     }
 
     "redirect to Session Expired for a POST if no existing data is found" in {
-      val result = controller(dontGetAnyData).onSubmit(NormalMode, index)(fakeRequest)
+      val result = controller(dontGetAnyData).onSubmit(NormalMode, index, None)(fakeRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
@@ -118,7 +118,7 @@ object TrusteeContactDetailsControllerSpec extends ControllerSpecBase {
   private val form = formProvider()
 
   private def viewmodel(mode: Mode, index: Index, trusteeName: String) = ContactDetailsViewModel(
-    postCall = routes.TrusteeContactDetailsController.onSubmit(mode, index),
+    postCall = routes.TrusteeContactDetailsController.onSubmit(mode, index, None),
     title = Message("messages__trustee_contact_details__title"),
     heading = Message("messages__trustee_contact_details__heading"),
     body = Message("messages__contact_details__body"),
@@ -130,7 +130,7 @@ object TrusteeContactDetailsControllerSpec extends ControllerSpecBase {
       new FakeNavigator(desiredRoute = onwardRoute),
       frontendAppConfig,
       messagesApi,
-      FakeUserAnswersCacheConnector,
+      FakeUserAnswersService,
       FakeAuthAction,
       dataRetrievalAction,
       new DataRequiredActionImpl,

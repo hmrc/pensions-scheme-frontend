@@ -23,7 +23,7 @@ import forms.InsuranceCompanyNameFormProvider
 import identifiers.InsuranceCompanyNameId
 import models.NormalMode
 import play.api.data.Form
-import play.api.mvc.{Action, AnyContent, AnyContentAsFormUrlEncoded}
+import play.api.mvc.{Action, AnyContent, AnyContentAsFormUrlEncoded, Call}
 import play.api.test.FakeRequest
 import services.{FakeUserAnswersService, UserAnswersService}
 import utils.{FakeNavigator, Navigator, UserAnswers}
@@ -75,10 +75,10 @@ object InsuranceCompanyNameControllerSpec extends SpecBase {
   private val postRequest: FakeRequest[AnyContentAsFormUrlEncoded] =
     FakeRequest().withFormUrlEncodedBody(("companyName", companyName))
 
-  private val submitCall = controllers.routes.InsuranceCompanyNameController.onSubmit(NormalMode, None)
+  private val postCall: Call = controllers.routes.InsuranceCompanyNameController.onSubmit(NormalMode, None)
 
   private def viewAsString(base: SpecBase)(form: Form[_] = form): Form[_] => String = form =>
-    insuranceCompanyName(base.frontendAppConfig, form, NormalMode, Some(schemeName), submitCall)(base.fakeRequest, base.messages).toString()
+    insuranceCompanyName(base.frontendAppConfig, form, NormalMode, Some(schemeName), postCall)(base.fakeRequest, base.messages).toString()
 
   private def controller(base: ControllerSpecBase)(
     dataRetrievalAction: DataRetrievalAction = base.getEmptyData,
@@ -98,14 +98,14 @@ object InsuranceCompanyNameControllerSpec extends SpecBase {
     )
 
   private def onPageLoadAction(base: ControllerSpecBase)(dataRetrievalAction: DataRetrievalAction, authAction: AuthAction): Action[AnyContent] =
-    controller(base)(dataRetrievalAction, authAction).onPageLoad(NormalMode)
+    controller(base)(dataRetrievalAction, authAction).onPageLoad(NormalMode, None)
 
   private def onSubmitAction(base: ControllerSpecBase, navigator: Navigator)(dataRetrievalAction: DataRetrievalAction,
                                                                              authAction: AuthAction): Action[AnyContent] =
-    controller(base)(dataRetrievalAction, authAction, navigator).onSubmit(NormalMode)
+    controller(base)(dataRetrievalAction, authAction, navigator).onSubmit(NormalMode, None)
 
   private def saveAction(base: ControllerSpecBase)(cache: UserAnswersService): Action[AnyContent] =
-    controller(base)(cache = cache).onSubmit(NormalMode)
+    controller(base)(cache = cache).onSubmit(NormalMode, None)
 }
 
 

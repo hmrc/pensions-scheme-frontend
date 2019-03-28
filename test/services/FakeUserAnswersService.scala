@@ -16,12 +16,14 @@
 
 package services
 
-import connectors.{FakeUserAnswersCacheConnector, UserAnswersCacheConnector}
+import base.SpecBase
+import connectors.{SubscriptionCacheConnector, UpdateSchemeCacheConnector}
 import identifiers.TypedIdentifier
 import models.Mode
 import models.requests.DataRequest
 import org.scalatest.Matchers
 import play.api.libs.json.{Format, JsValue, Json}
+import play.api.libs.ws.WSClient
 import play.api.mvc.Results.Ok
 import play.api.mvc.{AnyContent, Result}
 import uk.gov.hmrc.http.HeaderCarrier
@@ -31,7 +33,11 @@ import scala.concurrent.{ExecutionContext, Future}
 
 trait FakeUserAnswersService extends UserAnswersService with Matchers {
 
-  override protected def userAnswersCacheConnector: UserAnswersCacheConnector = FakeUserAnswersCacheConnector
+  import FakeUserAnswersService._
+
+  override protected def subscriptionCacheConnector: SubscriptionCacheConnector = FakeSubscriptionCacheConnector.getConnector
+  override protected def updateSchemeCacheConnector: UpdateSchemeCacheConnector = FakeUpdateCacheConnector.getConnector
+
   private val data: mutable.HashMap[String, JsValue] = mutable.HashMap()
   private val removed: mutable.ListBuffer[String] = mutable.ListBuffer()
 
@@ -43,8 +49,9 @@ trait FakeUserAnswersService extends UserAnswersService with Matchers {
     Future.successful(Json.obj())
   }
 
-  def upsert(cacheId: String, value: JsValue)
-            (implicit ec: ExecutionContext, hc: HeaderCarrier): Future[JsValue] = {
+  override def upsert(mode: Mode, srn: Option[String], value: JsValue)
+            (implicit ec: ExecutionContext, hc: HeaderCarrier,
+             request: DataRequest[AnyContent]): Future[JsValue] = {
     Future.successful(value)
   }
 
@@ -96,4 +103,15 @@ trait FakeUserAnswersService extends UserAnswersService with Matchers {
   }
 }
 
-object FakeUserAnswersService extends FakeUserAnswersService
+object FakeUserAnswersService extends FakeUserAnswersService {
+
+  object FakeSubscriptionCacheConnector extends SpecBase {
+    def getConnector: SubscriptionCacheConnector = new SubscriptionCacheConnector(frontendAppConfig, injector.instanceOf[WSClient])
+  }
+
+  object FakeUpdateCacheConnector extends SpecBase {
+    def getConnector: UpdateSchemeCacheConnector =new UpdateSchemeCacheConnector(frontendAppConfig, injector.instanceOf[WSClient])
+  }
+}
+
+

@@ -145,6 +145,7 @@ class DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar wit
             eqTo(Map("srn" -> "S12345 67890")),
             eqTo(psaId)
           )(any(), any())
+
         }
       }
     }
@@ -318,6 +319,7 @@ object DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar {
   private val mockEmailConnector = mock[EmailConnector]
   private val applicationCrypto = injector.instanceOf[ApplicationCrypto]
 
+
   private val validSchemeSubmissionResponse = SchemeSubmissionResponse("S1234567890")
 
   private val fakePensionsSchemeConnector = new PensionsSchemeConnector {
@@ -326,6 +328,9 @@ object DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar {
     (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[SchemeSubmissionResponse] = {
       Future.successful(validSchemeSubmissionResponse)
     }
+
+    override def updateSchemeDetails(psaId: String, pstr: String, answers: UserAnswers)(
+      implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Unit] = ???
   }
 
   private val fakeEmailConnector = new EmailConnector {

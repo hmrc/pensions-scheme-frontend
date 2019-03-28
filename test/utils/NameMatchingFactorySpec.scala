@@ -30,7 +30,7 @@ import play.api.mvc.AnyContent
 import play.api.test.FakeRequest
 import uk.gov.hmrc.crypto.{ApplicationCrypto, PlainText}
 import uk.gov.hmrc.domain.PsaId
-import uk.gov.hmrc.http.{HeaderCarrier, NotFoundException}
+import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -64,26 +64,11 @@ class NameMatchingFactorySpec extends SpecBase with MockitoSugar with ScalaFutur
 
           result mustEqual NameMatching("My Scheme Reg", "My PSA")
           verify(pensionAdministratorConnector, times(1)).getPSAName(any(), any())
+
         }
       }
     }
 
-    "return NotFoundException" when {
-
-      "psa name returns None when fetched" in {
-        recoverToSucceededIf[NotFoundException] {
-          nameMatchingFactory.nameMatching(schemeName)
-        }
-
-      }
-
-      "psa name is not a PSAName" in {
-        recoverToSucceededIf[NotFoundException] {
-          nameMatchingFactory.nameMatching(schemeName)
-        }
-
-      }
-    }
   }
 
 }

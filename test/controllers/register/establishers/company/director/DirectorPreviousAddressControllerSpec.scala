@@ -20,7 +20,6 @@ import audit.testdoubles.StubSuccessfulAuditService
 import audit.{AddressAction, AddressEvent, AuditService}
 import base.CSRFRequest
 import config.FrontendAppConfig
-import connectors.{FakeUserAnswersCacheConnector, UserAnswersCacheConnector}
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.address.AddressFormProvider
@@ -84,7 +83,7 @@ class DirectorPreviousAddressControllerSpec extends ControllerSpecBase with Mock
           val controller = app.injector.instanceOf[DirectorPreviousAddressController]
 
           val viewmodel = ManualAddressViewModel(
-            controller.postCall(NormalMode, establisherIndex, directorIndex),
+            controller.postCall(NormalMode, establisherIndex, directorIndex, None),
             countryOptions.options,
             controller.title,
             controller.heading,
@@ -92,7 +91,7 @@ class DirectorPreviousAddressControllerSpec extends ControllerSpecBase with Mock
           )
 
           val request = addToken(
-            FakeRequest(routes.DirectorPreviousAddressController.onPageLoad(NormalMode, establisherIndex, directorIndex))
+            FakeRequest(routes.DirectorPreviousAddressController.onPageLoad(NormalMode, establisherIndex, directorIndex, None))
               .withHeaders("Csrf-Token" -> "nocheck")
           )
 
@@ -114,7 +113,7 @@ class DirectorPreviousAddressControllerSpec extends ControllerSpecBase with Mock
     "redirect to next page on POST request" which {
       "saves director address" in {
 
-        val onwardCall = routes.DirectorContactDetailsController.onPageLoad(NormalMode, establisherIndex, directorIndex)
+        val onwardCall = routes.DirectorContactDetailsController.onPageLoad(NormalMode, establisherIndex, directorIndex, None)
 
         running(_.overrides(
           bind[FrontendAppConfig].to(frontendAppConfig),
@@ -136,7 +135,7 @@ class DirectorPreviousAddressControllerSpec extends ControllerSpecBase with Mock
               "GB"
             )
 
-            val fakeRequest = addToken(FakeRequest(routes.DirectorPreviousAddressController.onSubmit(NormalMode, establisherIndex, directorIndex))
+            val fakeRequest = addToken(FakeRequest(routes.DirectorPreviousAddressController.onSubmit(NormalMode, establisherIndex, directorIndex, None))
               .withHeaders("Csrf-Token" -> "nocheck")
               .withFormUrlEncodedBody(
                 ("addressLine1", address.addressLine1),
@@ -175,7 +174,7 @@ class DirectorPreviousAddressControllerSpec extends ControllerSpecBase with Mock
       )) {
         implicit app =>
 
-          val fakeRequest = addToken(FakeRequest(routes.DirectorPreviousAddressController.onSubmit(NormalMode, establisherIndex, directorIndex))
+          val fakeRequest = addToken(FakeRequest(routes.DirectorPreviousAddressController.onSubmit(NormalMode, establisherIndex, directorIndex, None))
             .withHeaders("Csrf-Token" -> "nocheck")
             .withFormUrlEncodedBody(
               ("addressLine1", address.addressLine1),

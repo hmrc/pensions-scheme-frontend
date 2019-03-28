@@ -17,7 +17,7 @@
 package controllers.register.establishers.partnership
 
 import base.CSRFRequest
-import connectors.{UserAnswersCacheConnector, FakeUserAnswersCacheConnector}
+import services.{UserAnswersService, FakeUserAnswersService}
 import controllers.ControllerSpecBase
 import controllers.actions.{AuthAction, DataRetrievalAction, FakeAuthAction}
 import forms.PayeFormProvider
@@ -44,7 +44,7 @@ class PartnershipPayeControllerSpec extends ControllerSpecBase with MustMatchers
 
     "render the view correctly on a GET request" in {
       requestResult(
-        implicit app => addToken(FakeRequest(routes.PartnershipPayeController.onPageLoad(NormalMode, firstIndex))),
+        implicit app => addToken(FakeRequest(routes.PartnershipPayeController.onPageLoad(NormalMode, firstIndex, None))),
         (request, result) => {
           status(result) mustBe OK
           contentAsString(result) mustBe paye(frontendAppConfig, form, viewModel, None)(request, messages).toString()
@@ -54,7 +54,7 @@ class PartnershipPayeControllerSpec extends ControllerSpecBase with MustMatchers
 
     "redirect to the next page on a POST request" in {
       requestResult(
-        implicit app => addToken(FakeRequest(routes.PartnershipPayeController.onSubmit(NormalMode, firstIndex))
+        implicit app => addToken(FakeRequest(routes.PartnershipPayeController.onSubmit(NormalMode, firstIndex, None))
           .withFormUrlEncodedBody(("paye.hasPaye", "true"), ("paye.paye", "123456789"))),
         (_, result) => {
           status(result) mustBe SEE_OTHER
@@ -75,7 +75,7 @@ object PartnershipPayeControllerSpec extends PartnershipPayeControllerSpec {
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
   val viewModel = PayeViewModel(
-    routes.PartnershipPayeController.onSubmit(NormalMode, firstIndex),
+    routes.PartnershipPayeController.onSubmit(NormalMode, firstIndex, None),
     title = Message("messages__partnershipPaye__title"),
     heading = Message("messages__partnershipPaye__heading"),
     hint = Some(Message("messages__common__paye_hint")),
@@ -89,7 +89,7 @@ object PartnershipPayeControllerSpec extends PartnershipPayeControllerSpec {
       bind[AuthAction].to(FakeAuthAction),
       bind[DataRetrievalAction].toInstance(getMandatoryEstablisherPartnership),
       bind(classOf[Navigator]).qualifiedWith(classOf[EstablisherPartnership]).toInstance(new FakeNavigator(onwardRoute)),
-      bind[UserAnswersCacheConnector].toInstance(FakeUserAnswersCacheConnector)
+      bind[UserAnswersService].toInstance(FakeUserAnswersService)
     )) {
       app =>
         val req = request(app)

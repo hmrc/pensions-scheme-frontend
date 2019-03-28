@@ -17,7 +17,6 @@
 package controllers.register.establishers.partnership
 
 import config.FrontendAppConfig
-import connectors.UserAnswersCacheConnector
 import controllers.Retrievals
 import controllers.actions._
 import forms.register.AddPartnersFormProvider
@@ -39,7 +38,6 @@ import scala.concurrent.{ExecutionContext, Future}
 class AddPartnersController @Inject()(
                                        appConfig: FrontendAppConfig,
                                        override val messagesApi: MessagesApi,
-                                       dataCacheConnector: UserAnswersCacheConnector,
                                        @EstablishersPartner navigator: Navigator,
                                        authenticate: AuthAction,
                                        getData: DataRetrievalAction,
@@ -49,18 +47,17 @@ class AddPartnersController @Inject()(
 
   private val form: Form[Boolean] = formProvider()
 
-  private def postUrl(index: Int, mode: Mode): Call = routes.AddPartnersController.onSubmit(mode, index)
+  private def postUrl(index: Int, mode: Mode, srn: Option[String]): Call = routes.AddPartnersController.onSubmit(mode, index, srn)
 
-  def onPageLoad(mode: Mode, index: Int): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onPageLoad(mode: Mode, index: Int, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      retrievePartnershipName(index) {
-        partnershipName =>
+      retrievePartnershipName(index) {_ =>
           val partners = request.userAnswers.allPartnersAfterDelete(index)
-          Future.successful(Ok(addPartners(appConfig, form, index, partners, postUrl(index, mode), existingSchemeName)))
+          Future.successful(Ok(addPartners(appConfig, form, index, partners, postUrl(index, mode, srn), existingSchemeName)))
       }
   }
 
-  def onSubmit(mode: Mode, index: Int): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode, index: Int, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       val partners = request.userAnswers.allPartnersAfterDelete(index)
       if (partners.isEmpty || partners.lengthCompare(appConfig.maxPartners) >= 0) {
@@ -71,7 +68,7 @@ class AddPartnersController @Inject()(
         form.bindFromRequest().fold(
           (formWithErrors: Form[_]) =>
             retrievePartnershipName(index) {
-              partnershipName =>
+              _ =>
                 Future.successful(
                   BadRequest(
                     addPartners(
@@ -79,7 +76,7 @@ class AddPartnersController @Inject()(
                       formWithErrors,
                       index,
                       partners,
-                      postUrl(index, mode),
+                      postUrl(index, mode, srn),
                       existingSchemeName
                     )
                   )

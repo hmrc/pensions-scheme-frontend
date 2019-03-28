@@ -17,7 +17,6 @@
 package controllers
 
 import config.FrontendAppConfig
-import connectors.UserAnswersCacheConnector
 import controllers.actions._
 import controllers.address.AddressListController
 import identifiers._
@@ -26,43 +25,45 @@ import models.Mode
 import models.requests.DataRequest
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, Result}
+import services.UserAnswersService
 import utils.Navigator
-import utils.annotations.AboutBenefitsAndInsurance
+import utils.annotations.{AboutBenefitsAndInsurance, InsuranceService}
 import viewmodels.address.AddressListViewModel
 
 import scala.concurrent.Future
 
 class InsurerSelectAddressController @Inject()(override val appConfig: FrontendAppConfig,
                                                override val messagesApi: MessagesApi,
-                                               override val cacheConnector: UserAnswersCacheConnector,
+                                               @InsuranceService val userAnswersService: UserAnswersService,
                                                @AboutBenefitsAndInsurance override val navigator: Navigator,
                                                authenticate: AuthAction,
                                                getData: DataRetrievalAction,
                                                requireData: DataRequiredAction) extends AddressListController with Retrievals {
 
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onPageLoad(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      viewModel(mode).right.map(get)
+      viewModel(mode, srn).right.map(get)
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      viewModel(mode).right.map {
+      viewModel(mode, srn).right.map {
         vm =>
           post(vm, InsurerSelectAddressId, InsurerConfirmAddressId, mode)
       }
   }
 
-  private def viewModel(mode: Mode)(implicit request: DataRequest[AnyContent]): Either[Future[Result],
+  private def viewModel(mode: Mode, srn: Option[String])(implicit request: DataRequest[AnyContent]): Either[Future[Result],
     AddressListViewModel] = {
     (InsurerEnterPostCodeId).retrieve.right.map {
       case addresses =>
         AddressListViewModel(
-          postCall = routes.InsurerSelectAddressController.onSubmit(mode),
-          manualInputCall = routes.InsurerConfirmAddressController.onPageLoad(mode),
-          addresses = addresses
+          postCall = routes.InsurerSelectAddressController.onSubmit(mode, srn),
+          manualInputCall = routes.InsurerConfirmAddressController.onPageLoad(mode, srn),
+          addresses = addresses,
+          srn = srn
         )
-    }.left.map(_ => Future.successful(Redirect(routes.InsurerEnterPostcodeController.onPageLoad(mode))))
+    }.left.map(_ => Future.successful(Redirect(routes.InsurerEnterPostcodeController.onPageLoad(mode, srn))))
   }
 }

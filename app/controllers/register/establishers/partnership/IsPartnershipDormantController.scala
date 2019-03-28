@@ -18,7 +18,6 @@ package controllers.register.establishers.partnership
 
 import com.google.inject.Inject
 import config.FrontendAppConfig
-import connectors.UserAnswersCacheConnector
 import controllers.Retrievals
 import controllers.actions.{AuthAction, DataRequiredAction, DataRetrievalAction}
 import forms.register.establishers.IsDormantFormProvider
@@ -29,6 +28,7 @@ import models.{Mode, NormalMode}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Call}
+import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.EstablisherPartnership
 import utils.{Enumerable, Navigator, UserAnswers}
@@ -38,7 +38,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class IsPartnershipDormantController @Inject()(appConfig: FrontendAppConfig,
                                                override val messagesApi: MessagesApi,
-                                               dataCacheConnector: UserAnswersCacheConnector,
+                                               userAnswersService: UserAnswersService,
                                                @EstablisherPartnership navigator: Navigator,
                                                authenticate: AuthAction,
                                                getData: DataRetrievalAction,
@@ -48,30 +48,30 @@ class IsPartnershipDormantController @Inject()(appConfig: FrontendAppConfig,
 
   private val form: Form[DeclarationDormant] = formProvider()
 
-  private def postCall(mode: Mode, index: Int): Call = routes.IsPartnershipDormantController.onSubmit(mode, index)
+  private def postCall(mode: Mode, index: Int, srn: Option[String]): Call = routes.IsPartnershipDormantController.onSubmit(mode, index, srn)
 
-  def onPageLoad(mode: Mode, index: Int): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onPageLoad(mode: Mode, index: Int, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       retrievePartnershipName(index) {
         partnershipName =>
           val preparedForm = request.userAnswers.get(IsPartnershipDormantId(index)).fold(form)(v => form.fill(v))
-          Future.successful(Ok(isDormant(appConfig, preparedForm, partnershipName, postCall(mode, index), existingSchemeName)))
+          Future.successful(Ok(isDormant(appConfig, preparedForm, partnershipName, postCall(mode, index, srn), existingSchemeName)))
       }
   }
 
-  def onSubmit(mode: Mode, index: Int): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode, index: Int, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       retrievePartnershipName(index) { partnershipName =>
         form.bindFromRequest().fold(
           (formWithErrors: Form[_]) =>
-            Future.successful(BadRequest(isDormant(appConfig, formWithErrors, partnershipName, postCall(mode, index), existingSchemeName))),
+            Future.successful(BadRequest(isDormant(appConfig, formWithErrors, partnershipName, postCall(mode, index, srn), existingSchemeName))),
           {
             case Yes =>
-              dataCacheConnector.save(request.externalId, IsPartnershipDormantId(index), DeclarationDormant.values(0)).map { cacheMap =>
+              userAnswersService.save(mode, srn, IsPartnershipDormantId(index), DeclarationDormant.values(0)).map { cacheMap =>
                 Redirect(navigator.nextPage(IsPartnershipDormantId(index), NormalMode, UserAnswers(cacheMap)))
               }
             case No =>
-              dataCacheConnector.save(request.externalId, IsPartnershipDormantId(index), DeclarationDormant.values(1)).map(cacheMap =>
+              userAnswersService.save(mode, srn, IsPartnershipDormantId(index), DeclarationDormant.values(1)).map(cacheMap =>
                 Redirect(navigator.nextPage(IsPartnershipDormantId(index), mode, UserAnswers(cacheMap))))
 
           }

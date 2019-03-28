@@ -16,6 +16,7 @@
 
 package views.register.establishers.company
 
+import controllers.register.establishers.company.routes
 import forms.CompanyRegistrationNumberFormProvider
 import models.{Index, NormalMode}
 import play.api.data.Form
@@ -27,12 +28,13 @@ class CompanyRegistrationNumberViewSpec extends ViewBehaviours {
   val messageKeyPrefix = "company__crn"
   val index = Index(1)
   val form = new CompanyRegistrationNumberFormProvider()()
+  private val postCall = routes.CompanyRegistrationNumberController.onSubmit _
 
   private def createView() = () =>
-    companyRegistrationNumber(frontendAppConfig, form, NormalMode, index, None)(fakeRequest, messages)
+    companyRegistrationNumber(frontendAppConfig, form, NormalMode, index, None, postCall(NormalMode, None, index))(fakeRequest, messages)
 
   private def createViewUsingForm = (form: Form[_]) =>
-    companyRegistrationNumber(frontendAppConfig, form, NormalMode, index, None)(fakeRequest, messages)
+    companyRegistrationNumber(frontendAppConfig, form, NormalMode, index, None, postCall(NormalMode, None, index))(fakeRequest, messages)
 
   "CompanyRegistrationNumber view" when {
     val crnOptions = Seq("true", "false")

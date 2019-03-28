@@ -38,7 +38,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase {
   "Check Your Answers Controller" must {
     "return 200 and the correct view for a GET with full answers" in {
       val request = FakeDataRequest(fullAnswers)
-      val result = controller(fullAnswers.dataRetrievalAction).onPageLoad(index)(request)
+      val result = controller(fullAnswers.dataRetrievalAction).onPageLoad(NormalMode, index, None)(request)
 
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString(answerSections(request))
@@ -46,7 +46,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase {
 
     "return 200 and the correct view for a GET with empty answers" in {
       val request = FakeDataRequest(emptyAnswers)
-      val result = controller(emptyAnswers.dataRetrievalAction).onPageLoad(index)(request)
+      val result = controller(emptyAnswers.dataRetrievalAction).onPageLoad(NormalMode, index, None)(request)
 
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString(answerSections(request))
@@ -54,13 +54,13 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase {
 
     "redirect to next page" when {
       "POST is called" in {
-        val result = controller().onSubmit(index)(fakeRequest)
+        val result = controller().onSubmit(NormalMode, index, None)(fakeRequest)
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(onwardRoute.url)
       }
 
       "mark trustee company as complete" in {
-        val result = controller().onSubmit(index)(fakeRequest)
+        val result = controller().onSubmit(NormalMode, index, None)(fakeRequest)
         status(result) mustBe SEE_OTHER
         FakeSectionComplete.verify(IsTrusteeCompleteId(index), true)
       }
@@ -95,14 +95,14 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase {
     .trusteesCompanyAddressYears(index, addressYears)
     .trusteesCompanyPreviousAddress(index, previousAddress)
 
-  private lazy val companyAddressRoute = routes.CompanyAddressController.onPageLoad(CheckMode, index).url
-  private lazy val companyAddressYearsRoute = routes.CompanyAddressYearsController.onPageLoad(CheckMode, index).url
-  private lazy val companyDetailsRoute = routes.CompanyDetailsController.onPageLoad(CheckMode, index).url
-  private lazy val companyPreviousAddressRoute = routes.CompanyPreviousAddressController.onPageLoad(CheckMode, index).url
-  private lazy val companyRegistrationNumberRoute = routes.CompanyRegistrationNumberController.onPageLoad(CheckMode, index).url
-  private lazy val companyUniqueTaxReferenceRoute = routes.CompanyUniqueTaxReferenceController.onPageLoad(CheckMode, index).url
+  private lazy val companyAddressRoute = routes.CompanyAddressController.onPageLoad(CheckMode, index, None).url
+  private lazy val companyAddressYearsRoute = routes.CompanyAddressYearsController.onPageLoad(CheckMode, index, None).url
+  private lazy val companyDetailsRoute = routes.CompanyDetailsController.onPageLoad(CheckMode, index, None).url
+  private lazy val companyPreviousAddressRoute = routes.CompanyPreviousAddressController.onPageLoad(CheckMode, index, None).url
+  private lazy val companyRegistrationNumberRoute = routes.CompanyRegistrationNumberController.onPageLoad(CheckMode, index, None).url
+  private lazy val companyUniqueTaxReferenceRoute = routes.CompanyUniqueTaxReferenceController.onPageLoad(CheckMode, index, None).url
 
-  private lazy val postUrl = routes.CheckYourAnswersController.onSubmit(index)
+  private lazy val postUrl = routes.CheckYourAnswersController.onSubmit(NormalMode, index, None)
 
   private def answerSections(implicit request: DataRequest[AnyContent]): Seq[AnswerSection] = {
 

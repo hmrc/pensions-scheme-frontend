@@ -27,6 +27,7 @@ import models.{Index, Mode}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
+import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.TrusteesCompany
 import utils.{Navigator, UserAnswers}
@@ -37,7 +38,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class CompanyRegistrationNumberController @Inject()(
                                                      appConfig: FrontendAppConfig,
                                                      override val messagesApi: MessagesApi,
-                                                     dataCacheConnector: UserAnswersCacheConnector,
+                                                     userAnswersService: UserAnswersService,
                                                      @TrusteesCompany navigator: Navigator,
                                                      authenticate: AuthAction,
                                                      getData: DataRetrievalAction,
@@ -47,25 +48,25 @@ class CompanyRegistrationNumberController @Inject()(
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      CompanyDetailsId(index).retrieve.right.map { companyDetails =>
-        val redirectResult = request.userAnswers.get(CompanyRegistrationNumberId(index)) match {
-          case None => Ok(companyRegistrationNumber(appConfig, form, mode, index, existingSchemeName))
-          case Some(value) => Ok(companyRegistrationNumber(appConfig, form.fill(value), mode, index, existingSchemeName))
-        }
-        Future.successful(redirectResult)
+      CompanyDetailsId(index).retrieve.right.map { _ =>
+        val submitUrl = controllers.register.trustees.company.routes.CompanyRegistrationNumberController.onSubmit(mode, index, srn)
+        val updatedForm = request.userAnswers.get(CompanyRegistrationNumberId(index)).fold(form)(form.fill)
+        Future.successful(Ok(companyRegistrationNumber(appConfig, updatedForm, mode, index, existingSchemeName, submitUrl)))
       }
   }
 
-  def onSubmit(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      CompanyDetailsId(index).retrieve.right.map { companyDetails =>
+      CompanyDetailsId(index).retrieve.right.map { _ =>
         form.bindFromRequest().fold(
-          (formWithErrors: Form[_]) =>
-            Future.successful(BadRequest(companyRegistrationNumber(appConfig, formWithErrors, mode, index, existingSchemeName))),
+          (formWithErrors: Form[_]) => {
+            val submitUrl = controllers.register.trustees.company.routes.CompanyRegistrationNumberController.onSubmit(mode, index, srn)
+            Future.successful(BadRequest(companyRegistrationNumber(appConfig, formWithErrors, mode, index, existingSchemeName, submitUrl)))
+          },
           (value) =>
-            dataCacheConnector.save(request.externalId, CompanyRegistrationNumberId(index), value).map(cacheMap =>
+            userAnswersService.save(mode, srn, CompanyRegistrationNumberId(index), value).map(cacheMap =>
               Redirect(navigator.nextPage(CompanyRegistrationNumberId(index), mode, UserAnswers(cacheMap))))
         )
       }

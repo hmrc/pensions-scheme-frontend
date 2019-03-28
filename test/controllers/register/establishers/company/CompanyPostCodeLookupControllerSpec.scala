@@ -18,7 +18,7 @@ package controllers.register.establishers.company
 
 import base.CSRFRequest
 import config.FrontendAppConfig
-import connectors.{AddressLookupConnector, UserAnswersCacheConnector, FakeUserAnswersCacheConnector}
+import connectors.AddressLookupConnector
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.address.PostCodeLookupFormProvider
@@ -34,6 +34,7 @@ import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import services.{FakeUserAnswersService, UserAnswersService}
 import uk.gov.hmrc.http.HeaderCarrier
 import viewmodels.Message
 import viewmodels.address.PostcodeLookupViewModel
@@ -43,9 +44,9 @@ import scala.concurrent.Future
 
 class CompanyPostCodeLookupControllerSpec extends ControllerSpecBase with MockitoSugar with ScalaFutures with CSRFRequest with OptionValues {
 
-  def onwardRoute: Call = routes.CompanyAddressListController.onPageLoad(NormalMode, firstIndex)
+  def onwardRoute: Call = routes.CompanyAddressListController.onPageLoad(NormalMode, None, firstIndex)
 
-  def manualInputCall: Call = routes.CompanyAddressController.onPageLoad(NormalMode, firstIndex)
+  def manualInputCall: Call = routes.CompanyAddressController.onPageLoad(NormalMode, None, firstIndex)
 
   private def fakeAddress(postCode: String) = TolerantAddress(
     Some("Address Line 1"),
@@ -71,7 +72,7 @@ class CompanyPostCodeLookupControllerSpec extends ControllerSpecBase with Mockit
   val company = CompanyDetails(companyName, None, None)
 
   lazy val viewModel = PostcodeLookupViewModel(
-    postCall = routes.CompanyPostCodeLookupController.onSubmit(NormalMode, firstIndex),
+    postCall = routes.CompanyPostCodeLookupController.onSubmit(NormalMode, None, firstIndex),
     manualInputCall = manualInputCall,
     title = Message("messages__companyAddress__title"),
     heading = Message("messages__companyAddress__heading"),
@@ -82,19 +83,19 @@ class CompanyPostCodeLookupControllerSpec extends ControllerSpecBase with Mockit
 
     "render postcodeLookup from GET request" in {
 
-      val cacheConnector: UserAnswersCacheConnector = mock[UserAnswersCacheConnector]
+      val cacheConnector: UserAnswersService = mock[UserAnswersService]
       val addressConnector: AddressLookupConnector = mock[AddressLookupConnector]
 
       running(_.overrides(
         bind[FrontendAppConfig].to(frontendAppConfig),
-        bind[UserAnswersCacheConnector].toInstance(cacheConnector),
+        bind[UserAnswersService].toInstance(cacheConnector),
         bind[AddressLookupConnector].toInstance(addressConnector),
         bind[AuthAction].to(FakeAuthAction),
         bind[DataRetrievalAction].to(getMandatoryEstablisherCompany)
       )) {
         implicit app =>
 
-          val request = addToken(FakeRequest(routes.CompanyPostCodeLookupController.onPageLoad(NormalMode, firstIndex))
+          val request = addToken(FakeRequest(routes.CompanyPostCodeLookupController.onPageLoad(NormalMode, None, firstIndex))
             .withHeaders("Csrf-Token" -> "nocheck"))
 
           val result = route(app, request).value
@@ -112,7 +113,7 @@ class CompanyPostCodeLookupControllerSpec extends ControllerSpecBase with Mockit
 
     "redirect to next page on POST request" in {
 
-      val call: Call = routes.CompanyPostCodeLookupController.onSubmit(NormalMode, firstIndex)
+      val call: Call = routes.CompanyPostCodeLookupController.onSubmit(NormalMode, None, firstIndex)
 
       val validPostcode = "ZZ1 1ZZ"
 
@@ -123,7 +124,7 @@ class CompanyPostCodeLookupControllerSpec extends ControllerSpecBase with Mockit
       running(_.overrides(
         bind[FrontendAppConfig].to(frontendAppConfig),
         bind[MessagesApi].to(messagesApi),
-        bind[UserAnswersCacheConnector].toInstance(FakeUserAnswersCacheConnector),
+        bind[UserAnswersService].toInstance(FakeUserAnswersService),
         bind[AddressLookupConnector].toInstance(fakeAddressLookupConnector),
         bind[AuthAction].to(FakeAuthAction),
         bind[DataRetrievalAction].to(getMandatoryEstablisherCompany),

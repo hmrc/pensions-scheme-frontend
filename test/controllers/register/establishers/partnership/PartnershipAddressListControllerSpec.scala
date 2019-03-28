@@ -17,7 +17,7 @@
 package controllers.register.establishers.partnership
 
 import base.CSRFRequest
-import connectors.{UserAnswersCacheConnector, FakeUserAnswersCacheConnector}
+import services.{UserAnswersService, FakeUserAnswersService}
 import controllers.ControllerSpecBase
 import controllers.actions.{AuthAction, DataRetrievalAction, FakeAuthAction, FakeDataRetrievalAction}
 import forms.address.AddressListFormProvider
@@ -37,7 +37,7 @@ import views.html.address.addressList
 
 class PartnershipAddressListControllerSpec extends ControllerSpecBase with CSRFRequest {
 
-  def onwardRoute: Call = routes.PartnershipAddressController.onPageLoad(NormalMode, 0)
+  def onwardRoute: Call = routes.PartnershipAddressController.onPageLoad(NormalMode, 0, None)
 
   private val partnershipDetails = PartnershipDetails("test partnership name")
 
@@ -75,11 +75,11 @@ class PartnershipAddressListControllerSpec extends ControllerSpecBase with CSRFR
     "return Ok and the correct view on a GET Request" in {
       running(_.overrides(
         bind[AuthAction].to(FakeAuthAction),
-        bind[UserAnswersCacheConnector].toInstance(FakeUserAnswersCacheConnector),
+        bind[UserAnswersService].toInstance(FakeUserAnswersService),
         bind[DataRetrievalAction].toInstance(dataRetrievalAction),
         bind(classOf[Navigator]).qualifiedWith(classOf[EstablisherPartnership]).toInstance(fakeNavigator)
       )) { implicit app =>
-        val request = addToken(FakeRequest(routes.PartnershipAddressListController.onPageLoad(NormalMode, Index(0))))
+        val request = addToken(FakeRequest(routes.PartnershipAddressListController.onPageLoad(NormalMode, Index(0), None)))
         val result = route(app, request).value
 
         status(result) mustBe OK
@@ -96,15 +96,15 @@ class PartnershipAddressListControllerSpec extends ControllerSpecBase with CSRFR
 
       running(_.overrides(
         bind[AuthAction].to(FakeAuthAction),
-        bind[UserAnswersCacheConnector].toInstance(FakeUserAnswersCacheConnector),
+        bind[UserAnswersService].toInstance(FakeUserAnswersService),
         bind[DataRetrievalAction].toInstance(getEmptyData),
         bind(classOf[Navigator]).qualifiedWith(classOf[EstablisherPartnership]).toInstance(fakeNavigator)
       )) { implicit app =>
-        val request = addToken(FakeRequest(routes.PartnershipAddressListController.onPageLoad(NormalMode, Index(0))))
+        val request = addToken(FakeRequest(routes.PartnershipAddressListController.onPageLoad(NormalMode, Index(0), None)))
         val result = route(app, request).value
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.PartnershipPostcodeLookupController.onPageLoad(NormalMode, Index(0)).url)
+        redirectLocation(result) mustBe Some(routes.PartnershipPostcodeLookupController.onPageLoad(NormalMode, Index(0), None).url)
       }
 
     }
@@ -113,11 +113,11 @@ class PartnershipAddressListControllerSpec extends ControllerSpecBase with CSRFR
 
       running(_.overrides(
         bind[AuthAction].to(FakeAuthAction),
-        bind[UserAnswersCacheConnector].toInstance(FakeUserAnswersCacheConnector),
+        bind[UserAnswersService].toInstance(FakeUserAnswersService),
         bind[DataRetrievalAction].toInstance(dontGetAnyData),
         bind(classOf[Navigator]).qualifiedWith(classOf[EstablisherPartnership]).toInstance(fakeNavigator)
       )) { implicit app =>
-        val request = addToken(FakeRequest(routes.PartnershipAddressListController.onPageLoad(NormalMode, Index(0))))
+        val request = addToken(FakeRequest(routes.PartnershipAddressListController.onPageLoad(NormalMode, Index(0), None)))
         val result = route(app, request).value
 
         status(result) mustBe SEE_OTHER
@@ -130,13 +130,13 @@ class PartnershipAddressListControllerSpec extends ControllerSpecBase with CSRFR
 
       running(_.overrides(
         bind[AuthAction].to(FakeAuthAction),
-        bind[UserAnswersCacheConnector].toInstance(FakeUserAnswersCacheConnector),
+        bind[UserAnswersService].toInstance(FakeUserAnswersService),
         bind(classOf[Navigator]).qualifiedWith(classOf[EstablisherPartnership]).toInstance(fakeNavigator),
         bind[DataRetrievalAction].toInstance(dataRetrievalAction)
       )) { implicit app =>
         val request =
           addToken(
-            FakeRequest(routes.PartnershipAddressListController.onSubmit(NormalMode, Index(0)))
+            FakeRequest(routes.PartnershipAddressListController.onSubmit(NormalMode, Index(0), None))
               .withFormUrlEncodedBody(("value", "0"))
           )
 
@@ -151,13 +151,13 @@ class PartnershipAddressListControllerSpec extends ControllerSpecBase with CSRFR
 
       running(_.overrides(
         bind[AuthAction].to(FakeAuthAction),
-        bind[UserAnswersCacheConnector].toInstance(FakeUserAnswersCacheConnector),
+        bind[UserAnswersService].toInstance(FakeUserAnswersService),
         bind[DataRetrievalAction].toInstance(dontGetAnyData),
         bind(classOf[Navigator]).qualifiedWith(classOf[EstablisherPartnership]).toInstance(fakeNavigator)
       )) { implicit app =>
         val request =
           addToken(
-            FakeRequest(routes.PartnershipAddressListController.onSubmit(NormalMode, Index(0)))
+            FakeRequest(routes.PartnershipAddressListController.onSubmit(NormalMode, Index(0), None))
               .withFormUrlEncodedBody(("value", "0"))
           )
 
@@ -173,20 +173,20 @@ class PartnershipAddressListControllerSpec extends ControllerSpecBase with CSRFR
 
       running(_.overrides(
         bind[AuthAction].to(FakeAuthAction),
-        bind[UserAnswersCacheConnector].toInstance(FakeUserAnswersCacheConnector),
+        bind[UserAnswersService].toInstance(FakeUserAnswersService),
         bind[DataRetrievalAction].toInstance(getEmptyData),
         bind(classOf[Navigator]).qualifiedWith(classOf[EstablisherPartnership]).toInstance(fakeNavigator)
       )) { implicit app =>
         val request =
           addToken(
-            FakeRequest(routes.PartnershipAddressListController.onSubmit(NormalMode, Index(0)))
+            FakeRequest(routes.PartnershipAddressListController.onSubmit(NormalMode, Index(0), None))
               .withFormUrlEncodedBody(("value", "0"))
           )
 
         val result = route(app, request).value
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.PartnershipPostcodeLookupController.onPageLoad(NormalMode, Index(0)).url)
+        redirectLocation(result) mustBe Some(routes.PartnershipPostcodeLookupController.onPageLoad(NormalMode, Index(0), None).url)
       }
 
     }
@@ -194,8 +194,8 @@ class PartnershipAddressListControllerSpec extends ControllerSpecBase with CSRFR
 
   private def addressListViewModel(addresses: Seq[TolerantAddress]): AddressListViewModel = {
     AddressListViewModel(
-      routes.PartnershipAddressListController.onSubmit(NormalMode, Index(0)),
-      routes.PartnershipAddressController.onPageLoad(NormalMode, Index(0)),
+      routes.PartnershipAddressListController.onSubmit(NormalMode, Index(0), None),
+      routes.PartnershipAddressController.onPageLoad(NormalMode, Index(0), None),
       addresses,
       subHeading = Some(Message(partnershipDetails.name))
     )

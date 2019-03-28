@@ -17,6 +17,7 @@
 package views.register.trustees
 
 import forms.register.trustees.ConfirmDeleteTrusteeFormProvider
+import models.NormalMode
 import models.register.trustees.TrusteeKind.Company
 import play.api.data.Form
 import play.twirl.api.HtmlFormat
@@ -49,7 +50,7 @@ object ConfirmDeleteTrusteeViewSpec extends ViewSpecBase {
 
   val formLocal = new ConfirmDeleteTrusteeFormProvider()()
 
-  val postCall = controllers.register.trustees.routes.ConfirmDeleteTrusteeController.onSubmit(0, Company)
+  val postCall = controllers.register.trustees.routes.ConfirmDeleteTrusteeController.onSubmit(NormalMode, 0, Company, None)
 
   private def createView() =
     () => confirmDeleteTrustee(

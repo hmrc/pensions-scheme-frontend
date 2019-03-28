@@ -17,7 +17,7 @@
 package controllers.register.establishers.partnership.partner
 
 import config.FrontendAppConfig
-import connectors.{AddressLookupConnector, UserAnswersCacheConnector}
+import connectors.AddressLookupConnector
 import controllers.actions._
 import controllers.address.PostcodeLookupController
 import forms.address.PostCodeLookupFormProvider
@@ -27,17 +27,16 @@ import models.{Index, Mode}
 import play.api.data.Form
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent}
+import services.UserAnswersService
 import utils.Navigator
 import utils.annotations.EstablishersPartner
 import viewmodels.Message
 import viewmodels.address.PostcodeLookupViewModel
 
-import scala.concurrent.ExecutionContext
-
 class PartnerAddressPostcodeLookupController @Inject()(
                                                         override val appConfig: FrontendAppConfig,
                                                         override val messagesApi: MessagesApi,
-                                                        override val cacheConnector: UserAnswersCacheConnector,
+                                                        val userAnswersService: UserAnswersService,
                                                         override val addressLookupConnector: AddressLookupConnector,
                                                         @EstablishersPartner override val navigator: Navigator,
                                                         authenticate: AuthAction,
@@ -48,29 +47,29 @@ class PartnerAddressPostcodeLookupController @Inject()(
 
   protected val form: Form[String] = formProvider()
 
-  def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index): Action[AnyContent] =
+  def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData andThen requireData).async {
       implicit request =>
-        viewmodel(establisherIndex, partnerIndex, mode).retrieve.right map get
+        viewmodel(establisherIndex, partnerIndex, mode, srn).retrieve.right map get
     }
 
-  def onSubmit(mode: Mode, establisherIndex: Index, partnerIndex: Index): Action[AnyContent] =
+  def onSubmit(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData andThen requireData).async {
       implicit request =>
-        viewmodel(establisherIndex, partnerIndex, mode).retrieve.right.map(
+        viewmodel(establisherIndex, partnerIndex, mode, srn).retrieve.right.map(
           vm =>
             post(PartnerAddressPostcodeLookupId(establisherIndex, partnerIndex), vm, mode)
         )
     }
 
-  private def viewmodel(establisherIndex: Index, partnerIndex: Index, mode: Mode): Retrieval[PostcodeLookupViewModel] =
+  private def viewmodel(establisherIndex: Index, partnerIndex: Index, mode: Mode, srn: Option[String]): Retrieval[PostcodeLookupViewModel] =
     Retrieval(
       implicit request =>
         PartnerDetailsId(establisherIndex, partnerIndex).retrieve.right.map {
           details =>
             PostcodeLookupViewModel(
-              routes.PartnerAddressPostcodeLookupController.onSubmit(mode, establisherIndex, partnerIndex),
-              routes.PartnerAddressController.onPageLoad(mode, establisherIndex, partnerIndex),
+              routes.PartnerAddressPostcodeLookupController.onSubmit(mode, establisherIndex, partnerIndex, srn),
+              routes.PartnerAddressController.onPageLoad(mode, establisherIndex, partnerIndex, srn),
               Message("messages__partnerAddressPostcodeLookup__title"),
               Message("messages__partnerAddressPostcodeLookup__heading"),
               Some(details.fullName),

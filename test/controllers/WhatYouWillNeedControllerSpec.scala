@@ -24,6 +24,7 @@ import play.api.test.Helpers._
 import uk.gov.hmrc.crypto.ApplicationCrypto
 
 class WhatYouWillNeedControllerSpec extends ControllerSpecBase with MockitoSugar with BeforeAndAfterEach {
+
   private val applicationCrypto = injector.instanceOf[ApplicationCrypto]
 
   private def controller(): WhatYouWillNeedController =
@@ -33,10 +34,6 @@ class WhatYouWillNeedControllerSpec extends ControllerSpecBase with MockitoSugar
       applicationCrypto,
       FakeUserAnswersCacheConnector
     )
-
-  override def beforeEach(): Unit = {
-    super.beforeEach()
-  }
 
   "WhatYouWillNeed Controller " when {
     "on a POST" must {

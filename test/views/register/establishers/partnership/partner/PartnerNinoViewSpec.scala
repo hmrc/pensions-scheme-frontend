@@ -30,11 +30,12 @@ class PartnerNinoViewSpec extends ViewBehaviours {
   val partnerIndex = Index(1)
   val form = new PartnerNinoFormProvider()()
 
+  val submitUrl = controllers.register.establishers.partnership.partner.routes.PartnerNinoController.onSubmit(NormalMode, establisherIndex, partnerIndex, None)
   def createView(): () => HtmlFormat.Appendable = () =>
-    partnerNino(frontendAppConfig, form, NormalMode, establisherIndex, partnerIndex, None)(fakeRequest, messages)
+    partnerNino(frontendAppConfig, form, NormalMode, establisherIndex, partnerIndex, None, submitUrl)(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) => partnerNino(frontendAppConfig, form, NormalMode,
-    establisherIndex, partnerIndex, None)(fakeRequest, messages)
+    establisherIndex, partnerIndex, None, submitUrl)(fakeRequest, messages)
 
   "PartnerNino view" when {
     "rendered" must {

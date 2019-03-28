@@ -17,7 +17,6 @@
 package controllers.register.trustees.company
 
 import config.FrontendAppConfig
-import connectors.UserAnswersCacheConnector
 import controllers.Retrievals
 import controllers.actions._
 import controllers.address.AddressListController
@@ -27,6 +26,7 @@ import models.requests.DataRequest
 import models.{Index, Mode}
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, Result}
+import services.UserAnswersService
 import utils.Navigator
 import utils.annotations.TrusteesCompany
 import viewmodels.Message
@@ -36,33 +36,34 @@ import scala.concurrent.Future
 
 class CompanyAddressListController @Inject()(override val appConfig: FrontendAppConfig,
                                              override val messagesApi: MessagesApi,
-                                             override val cacheConnector: UserAnswersCacheConnector,
+                                             val userAnswersService: UserAnswersService,
                                              @TrusteesCompany override val navigator: Navigator,
                                              authenticate: AuthAction,
                                              getData: DataRetrievalAction,
                                              requireData: DataRequiredAction) extends AddressListController with Retrievals {
 
-  def onPageLoad(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      viewmodel(mode, index).right.map(get)
+      viewmodel(mode, index, srn).right.map(get)
   }
 
-  def onSubmit(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      viewmodel(mode, index).right.map {
+      viewmodel(mode, index, srn).right.map {
         vm =>
           post(vm, CompanyAddressListId(index), CompanyAddressId(index), mode)
       }
   }
 
-  private def viewmodel(mode: Mode, index: Index)(implicit request: DataRequest[AnyContent]): Either[Future[Result], AddressListViewModel] = {
+  private def viewmodel(mode: Mode, index: Index, srn: Option[String])(implicit request: DataRequest[AnyContent]):
+  Either[Future[Result], AddressListViewModel] = {
     (CompanyDetailsId(index) and CompanyPostcodeLookupId(index)).retrieve.right.map {
       case companyDetails ~ addresses => AddressListViewModel(
-        postCall = routes.CompanyAddressListController.onSubmit(mode, index),
-        manualInputCall = routes.CompanyAddressController.onPageLoad(mode, index),
+        postCall = routes.CompanyAddressListController.onSubmit(mode, index, srn),
+        manualInputCall = routes.CompanyAddressController.onPageLoad(mode, index, srn),
         addresses = addresses,
         subHeading = Some(Message(companyDetails.companyName))
       )
-    }.left.map(_ => Future.successful(Redirect(routes.CompanyPostCodeLookupController.onPageLoad(mode, index))))
+    }.left.map(_ => Future.successful(Redirect(routes.CompanyPostCodeLookupController.onPageLoad(mode, index, srn))))
   }
 }

@@ -55,7 +55,7 @@ class InsurerConfirmAddressController @Inject()(val appConfig: FrontendAppConfig
 
   private def viewmodel(mode: Mode, srn: Option[String]): ManualAddressViewModel =
     ManualAddressViewModel(
-      postCall(mode),
+      postCall(mode, srn),
       countryOptions.options,
       title = Message(title),
       heading = Message(heading),
@@ -63,12 +63,12 @@ class InsurerConfirmAddressController @Inject()(val appConfig: FrontendAppConfig
       srn = srn
     )
 
-  def onPageLoad(mode: Mode, srn: Option[String] = None): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onPageLoad(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       get(InsurerConfirmAddressId, InsurerSelectAddressId, viewmodel(mode, srn))
   }
 
-  def onSubmit(mode: Mode, srn: Option[String] = None): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       post(InsurerConfirmAddressId, InsurerSelectAddressId, viewmodel(mode, srn), mode, "Insurer Address", InsurerEnterPostCodeId)
   }

@@ -17,7 +17,6 @@
 package controllers.register.establishers.company.director
 
 import config.FrontendAppConfig
-import connectors.UserAnswersCacheConnector
 import controllers.actions._
 import forms.ContactDetailsFormProvider
 import identifiers.register.establishers.company.director.{DirectorContactDetailsId, DirectorDetailsId}
@@ -25,6 +24,7 @@ import javax.inject.Inject
 import models.{Index, Mode}
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent}
+import services.UserAnswersService
 import utils._
 import utils.annotations.EstablishersCompanyDirector
 import viewmodels.{ContactDetailsViewModel, Message}
@@ -33,7 +33,7 @@ class DirectorContactDetailsController @Inject()(
                                                   @EstablishersCompanyDirector override val navigator: Navigator,
                                                   override val appConfig: FrontendAppConfig,
                                                   override val messagesApi: MessagesApi,
-                                                  override val cacheConnector: UserAnswersCacheConnector,
+                                                  val userAnswersService: UserAnswersService,
                                                   authenticate: AuthAction,
                                                   getData: DataRetrievalAction,
                                                   requireData: DataRequiredAction,
@@ -42,27 +42,28 @@ class DirectorContactDetailsController @Inject()(
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       DirectorDetailsId(establisherIndex, directorIndex).retrieve.right.map {
         director =>
-          get(DirectorContactDetailsId(establisherIndex, directorIndex), form, viewmodel(mode, establisherIndex, directorIndex, director.fullName))
+          get(DirectorContactDetailsId(establisherIndex, directorIndex), form, viewmodel(mode, establisherIndex, directorIndex, director.fullName, srn))
       }
   }
 
-  def onSubmit(mode: Mode, establisherIndex: Index, directorIndex: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       DirectorDetailsId(establisherIndex, directorIndex).retrieve.right.map {
         director =>
-          post(DirectorContactDetailsId(establisherIndex, directorIndex), mode, form, viewmodel(mode, establisherIndex, directorIndex, director.fullName))
+          post(DirectorContactDetailsId(establisherIndex, directorIndex), mode, form, viewmodel(mode, establisherIndex, directorIndex, director.fullName, srn))
       }
   }
 
-  private def viewmodel(mode: Mode, establisherIndex: Index, directorIndex: Index, directorName: String) = ContactDetailsViewModel(
-    postCall = routes.DirectorContactDetailsController.onSubmit(mode, establisherIndex, directorIndex),
+  private def viewmodel(mode: Mode, establisherIndex: Index, directorIndex: Index, directorName: String, srn: Option[String]) = ContactDetailsViewModel(
+    postCall = routes.DirectorContactDetailsController.onSubmit(mode, establisherIndex, directorIndex, srn),
     title = Message("messages__company_director_contact__title"),
     heading = Message("messages__company_director_contact__heading"),
     body = Message("messages__contact_details__body"),
-    subHeading = Some(directorName)
+    subHeading = Some(directorName),
+    srn = srn
   )
 }

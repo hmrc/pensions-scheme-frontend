@@ -17,7 +17,6 @@
 package controllers.register.establishers.partnership.partner
 
 import config.FrontendAppConfig
-import connectors.UserAnswersCacheConnector
 import controllers.Retrievals
 import controllers.actions.{AuthAction, DataRequiredAction, DataRetrievalAction}
 import forms.register.PersonDetailsFormProvider
@@ -30,6 +29,7 @@ import models.{Index, Mode}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
+import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.EstablishersPartner
 import utils.{Navigator, SectionComplete, UserAnswers}
@@ -40,7 +40,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class PartnerDetailsController @Inject()(
                                           appConfig: FrontendAppConfig,
                                           override val messagesApi: MessagesApi,
-                                          dataCacheConnector: UserAnswersCacheConnector,
+                                          userAnswersService: UserAnswersService,
                                           @EstablishersPartner navigator: Navigator,
                                           authenticate: AuthAction,
                                           getData: DataRetrievalAction,
@@ -51,28 +51,32 @@ class PartnerDetailsController @Inject()(
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index): Action[AnyContent] =
+  def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData andThen requireData).async {
       implicit request =>
-        PartnershipDetailsId(establisherIndex).retrieve.right.map { partnershipDetails =>
+        PartnershipDetailsId(establisherIndex).retrieve.right.map { _ =>
           val preparedForm = request.userAnswers.get[PersonDetails](PartnerDetailsId(establisherIndex, partnerIndex)) match {
             case None => form
             case Some(value) => form.fill(value)
           }
-          Future.successful(Ok(partnerDetails(appConfig, preparedForm, mode, establisherIndex, partnerIndex, existingSchemeName)))
+          val submitUrl = controllers.register.establishers.partnership.partner.routes.PartnerDetailsController.onSubmit(
+            mode, establisherIndex, partnerIndex, srn)
+          Future.successful(Ok(partnerDetails(appConfig, preparedForm, mode, establisherIndex, partnerIndex, existingSchemeName, submitUrl)))
         }
     }
 
-  def onSubmit(mode: Mode, establisherIndex: Index, partnerIndex: Index): Action[AnyContent] =
+  def onSubmit(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData andThen requireData).async {
       implicit request =>
         PartnershipDetailsId(establisherIndex).retrieve.right.map { partnershipDetails =>
           form.bindFromRequest().fold(
-            (formWithErrors: Form[_]) =>
-              Future.successful(BadRequest(partnerDetails(appConfig, formWithErrors, mode, establisherIndex, partnerIndex, existingSchemeName)))
-            ,
+            (formWithErrors: Form[_]) => {
+              val submitUrl = controllers.register.establishers.partnership.partner.routes.PartnerDetailsController.onSubmit(
+                mode, establisherIndex, partnerIndex, srn)
+              Future.successful(BadRequest(partnerDetails(appConfig, formWithErrors, mode, establisherIndex, partnerIndex, existingSchemeName, submitUrl)))
+            },
             value =>
-              dataCacheConnector.save(request.externalId, PartnerDetailsId(establisherIndex, partnerIndex), value).flatMap {
+              userAnswersService.save(mode, srn, PartnerDetailsId(establisherIndex, partnerIndex), value).flatMap {
                 cacheMap =>
                   val userAnswers = UserAnswers(cacheMap)
                   val allPartners = userAnswers.allPartnersAfterDelete(establisherIndex)

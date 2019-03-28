@@ -16,7 +16,7 @@
 
 package controllers.register.establishers.partnership
 
-import connectors.FakeUserAnswersCacheConnector
+import services.FakeUserAnswersService
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.register.AddPartnersFormProvider
@@ -54,7 +54,6 @@ class AddPartnersControllerSpec extends ControllerSpecBase {
     new AddPartnersController(
       frontendAppConfig,
       messagesApi,
-      FakeUserAnswersCacheConnector,
       navigator,
       FakeAuthAction,
       dataRetrievalAction,
@@ -62,7 +61,7 @@ class AddPartnersControllerSpec extends ControllerSpecBase {
       formProvider
     )
 
-  private val postUrl: Call = routes.AddPartnersController.onSubmit(NormalMode, establisherIndex)
+  private val postUrl: Call = routes.AddPartnersController.onSubmit(NormalMode, establisherIndex, None)
 
   private def viewAsString(form: Form[_] = form, partners: Seq[PartnerEntity] = Nil) =
     addPartners(
@@ -98,7 +97,7 @@ class AddPartnersControllerSpec extends ControllerSpecBase {
 
     "return OK and the correct view for a GET" in {
       val getRelevantData = new FakeDataRetrievalAction(Some(validData()))
-      val result = controller(getRelevantData).onPageLoad(NormalMode, establisherIndex)(fakeRequest)
+      val result = controller(getRelevantData).onPageLoad(NormalMode, establisherIndex, None)(fakeRequest)
 
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString()
@@ -109,7 +108,7 @@ class AddPartnersControllerSpec extends ControllerSpecBase {
         .set(AddPartnersId(firstIndex))(true)
         .map { userAnswers =>
           val getRelevantData = new FakeDataRetrievalAction(Some(userAnswers.json))
-          val result = controller(getRelevantData).onPageLoad(NormalMode, establisherIndex)(fakeRequest)
+          val result = controller(getRelevantData).onPageLoad(NormalMode, establisherIndex, None)(fakeRequest)
 
           contentAsString(result) mustBe viewAsString(form,
             Seq(PartnerEntity(PartnerDetailsId(0, 0), johnDoe.fullName, isDeleted = false, isCompleted = false)))
@@ -118,7 +117,7 @@ class AddPartnersControllerSpec extends ControllerSpecBase {
 
     "redirect to the next page when no partners exist and the user submits" in {
       val getRelevantData = new FakeDataRetrievalAction(Some(validData()))
-      val result = controller(getRelevantData).onSubmit(NormalMode, establisherIndex)(fakeRequest)
+      val result = controller(getRelevantData).onSubmit(NormalMode, establisherIndex, None)(fakeRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
@@ -127,7 +126,7 @@ class AddPartnersControllerSpec extends ControllerSpecBase {
     "redirect to the next page when less than maximum partners exist and valid data is submitted" in {
       val getRelevantData = new FakeDataRetrievalAction(Some(validData(johnDoe)))
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "true"))
-      val result = controller(getRelevantData).onSubmit(NormalMode, establisherIndex)(postRequest)
+      val result = controller(getRelevantData).onSubmit(NormalMode, establisherIndex, None)(postRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
@@ -137,7 +136,7 @@ class AddPartnersControllerSpec extends ControllerSpecBase {
       val getRelevantData = new FakeDataRetrievalAction(Some(validData(johnDoe)))
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "meh"))
       val boundForm = form.bind(Map("value" -> "meh"))
-      val result = controller(getRelevantData).onSubmit(NormalMode, establisherIndex)(postRequest)
+      val result = controller(getRelevantData).onSubmit(NormalMode, establisherIndex, None)(postRequest)
 
       status(result) mustBe BAD_REQUEST
       contentAsString(result) mustBe viewAsString(boundForm,
@@ -147,24 +146,24 @@ class AddPartnersControllerSpec extends ControllerSpecBase {
     "not save the answer when directors exist and valid data is submitted" in {
       val getRelevantData = new FakeDataRetrievalAction(Some(validData(johnDoe)))
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "true"))
-      controller(getRelevantData).onSubmit(NormalMode, establisherIndex)(postRequest)
+      controller(getRelevantData).onSubmit(NormalMode, establisherIndex, None)(postRequest)
 
-      FakeUserAnswersCacheConnector.verifyNot(AddPartnersId(firstIndex))
+      FakeUserAnswersService.verifyNot(AddPartnersId(firstIndex))
     }
 
     "not save the answer when partners exist and valid data is submitted" in {
       val getRelevantData = new FakeDataRetrievalAction(Some(validData(johnDoe)))
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "true"))
-      controller(getRelevantData).onSubmit(NormalMode, establisherIndex)(postRequest)
+      controller(getRelevantData).onSubmit(NormalMode, establisherIndex, None)(postRequest)
 
-      FakeUserAnswersCacheConnector.verifyNot(AddPartnersId(firstIndex))
+      FakeUserAnswersService.verifyNot(AddPartnersId(firstIndex))
     }
 
     "set the user answer when partners exist and valid data is submitted" in {
       val getRelevantData = new FakeDataRetrievalAction(Some(validData(johnDoe)))
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "true"))
       val navigator = fakeNavigator()
-      val result = controller(getRelevantData, navigator).onSubmit(NormalMode, establisherIndex)(postRequest)
+      val result = controller(getRelevantData, navigator).onSubmit(NormalMode, establisherIndex, None)(postRequest)
 
       status(result) mustBe SEE_OTHER
       navigator.lastUserAnswers.value.get(AddPartnersId(firstIndex)).value mustBe true
@@ -173,7 +172,7 @@ class AddPartnersControllerSpec extends ControllerSpecBase {
     "redirect to the next page when maximum partners exist and the user submits" in {
       val partners = Seq.fill(maxPartners)(johnDoe)
       val getRelevantData = new FakeDataRetrievalAction(Some(validData(partners: _*)))
-      val result = controller(getRelevantData).onSubmit(NormalMode, establisherIndex)(fakeRequest)
+      val result = controller(getRelevantData).onSubmit(NormalMode, establisherIndex, None)(fakeRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
@@ -184,14 +183,14 @@ class AddPartnersControllerSpec extends ControllerSpecBase {
       val partnersViewModel = Seq(PartnerEntity(PartnerDetailsId(0, 0), johnDoe.fullName, isDeleted = false, isCompleted = false),
         PartnerEntity(PartnerDetailsId(0, 1), joeBloggs.fullName, isDeleted = false, isCompleted = false))
       val getRelevantData = new FakeDataRetrievalAction(Some(validData(partners: _*)))
-      val result = controller(getRelevantData).onPageLoad(NormalMode, establisherIndex)(fakeRequest)
+      val result = controller(getRelevantData).onPageLoad(NormalMode, establisherIndex, None)(fakeRequest)
 
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString(form, partnersViewModel)
     }
 
     "redirect to Session Expired for a GET if no existing data is found" in {
-      val result = controller(dontGetAnyData).onPageLoad(NormalMode, 0)(fakeRequest)
+      val result = controller(dontGetAnyData).onPageLoad(NormalMode, 0, None)(fakeRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
@@ -199,7 +198,7 @@ class AddPartnersControllerSpec extends ControllerSpecBase {
 
     "redirect to Session Expired for a POST if no existing data is found" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "true"))
-      val result = controller(dontGetAnyData).onSubmit(NormalMode, 0)(postRequest)
+      val result = controller(dontGetAnyData).onSubmit(NormalMode, 0, None)(postRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)

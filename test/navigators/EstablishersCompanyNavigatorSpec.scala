@@ -60,7 +60,7 @@ class EstablishersCompanyNavigatorSpec extends SpecBase with MustMatchers with N
     (AddCompanyDirectorsId(0),                    addOneCompanyDirectors,           sessionExpired,                           false,          Some(sessionExpired),                      false),
     (AddCompanyDirectorsId(0),                    addCompanyDirectorsMoreThan10,    otherDirectors(NormalMode),               true,           Some(otherDirectors(CheckMode)),           true),
     (OtherDirectorsId(0),                         emptyAnswers,                     companyReview,                            true,           Some(companyReview),                       true),
-    (CompanyReviewId(0),                          emptyAnswers,                     taskList,                                 false,           None,                                      false),
+    (CompanyReviewId(0),                          emptyAnswers,                     addEstablisher,                           false,           None,                                      false),
     (CheckYourAnswersId(0),                       emptyAnswers,                     addCompanyDirectors(0, NormalMode),true,           None,                                      false)
   )
 
@@ -93,44 +93,44 @@ object EstablishersCompanyNavigatorSpec extends OptionValues {
   private def sessionExpired = controllers.routes.SessionExpiredController.onPageLoad()
 
   private def companyRegistrationNumber(mode: Mode): Call =
-    controllers.register.establishers.company.routes.CompanyRegistrationNumberController.onPageLoad(mode, 0)
+    controllers.register.establishers.company.routes.CompanyRegistrationNumberController.onPageLoad(mode, None, 0)
 
   private def companyUTR(mode: Mode): Call =
-    controllers.register.establishers.company.routes.CompanyUniqueTaxReferenceController.onPageLoad(mode, 0)
+    controllers.register.establishers.company.routes.CompanyUniqueTaxReferenceController.onPageLoad(mode, None, 0)
 
-  private def companyPostCodeLookup(mode: Mode) = controllers.register.establishers.company.routes.CompanyPostCodeLookupController.onPageLoad(mode, 0)
+  private def companyPostCodeLookup(mode: Mode) = controllers.register.establishers.company.routes.CompanyPostCodeLookupController.onPageLoad(mode, None, 0)
 
-  private def companyAddressList(mode: Mode) = controllers.register.establishers.company.routes.CompanyAddressListController.onPageLoad(mode, 0)
+  private def companyAddressList(mode: Mode) = controllers.register.establishers.company.routes.CompanyAddressListController.onPageLoad(mode, None, 0)
 
-  private def companyManualAddress(mode: Mode) = controllers.register.establishers.company.routes.CompanyAddressController.onPageLoad(mode, 0)
+  private def companyManualAddress(mode: Mode) = controllers.register.establishers.company.routes.CompanyAddressController.onPageLoad(mode, None, 0)
 
-  private def companyAddressYears(mode: Mode) = controllers.register.establishers.company.routes.CompanyAddressYearsController.onPageLoad(mode, 0)
+  private def companyAddressYears(mode: Mode) = controllers.register.establishers.company.routes.CompanyAddressYearsController.onPageLoad(mode, None, 0)
 
   private def prevAddPostCodeLookup(mode: Mode) =
-    controllers.register.establishers.company.routes.CompanyPreviousAddressPostcodeLookupController.onPageLoad(mode, 0)
+    controllers.register.establishers.company.routes.CompanyPreviousAddressPostcodeLookupController.onPageLoad(mode, None, 0)
 
   private def companyPaList(mode: Mode) =
-    controllers.register.establishers.company.routes.CompanyPreviousAddressListController.onPageLoad(mode, 0)
+    controllers.register.establishers.company.routes.CompanyPreviousAddressListController.onPageLoad(mode, None, 0)
 
   private def companyPreviousAddress(mode: Mode) =
-    controllers.register.establishers.company.routes.CompanyPreviousAddressController.onPageLoad(mode, 0)
+    controllers.register.establishers.company.routes.CompanyPreviousAddressController.onPageLoad(mode, None, 0)
 
-  private def companyContactDetails = controllers.register.establishers.company.routes.CompanyContactDetailsController.onPageLoad(NormalMode, 0)
+  private def companyContactDetails = controllers.register.establishers.company.routes.CompanyContactDetailsController.onPageLoad(NormalMode, None, 0)
 
   private def directorDetails(index: Index, mode: Mode) =
-    controllers.register.establishers.company.director.routes.DirectorDetailsController.onPageLoad(mode, 0, index)
+    controllers.register.establishers.company.director.routes.DirectorDetailsController.onPageLoad(mode, 0, index, None)
 
-  private def companyReview = controllers.register.establishers.company.routes.CompanyReviewController.onPageLoad(0)
+  private def companyReview = controllers.register.establishers.company.routes.CompanyReviewController.onPageLoad(NormalMode, None, 0)
 
-  private def otherDirectors(mode: Mode) = controllers.register.establishers.company.routes.OtherDirectorsController.onPageLoad(mode, 0)
+  private def otherDirectors(mode: Mode) = controllers.register.establishers.company.routes.OtherDirectorsController.onPageLoad(mode, None, 0)
 
-  private def checkYourAnswers = controllers.register.establishers.company.routes.CheckYourAnswersController.onPageLoad(0)
+  private def checkYourAnswers = controllers.register.establishers.company.routes.CheckYourAnswersController.onPageLoad(NormalMode, None, 0)
 
   private def addEstablisher = controllers.register.establishers.routes.AddEstablisherController.onPageLoad(NormalMode)
 
-  private def addCompanyDirectors(index: Int, mode: Mode) = controllers.register.establishers.company.routes.AddCompanyDirectorsController.onPageLoad(mode, index)
+  private def addCompanyDirectors(index: Int, mode: Mode) = controllers.register.establishers.company.routes.AddCompanyDirectorsController.onPageLoad(mode, None, index)
 
-  private def isDormant(mode: Mode) = controllers.register.establishers.company.routes.IsCompanyDormantController.onPageLoad(mode, 0)
+  private def isDormant(mode: Mode) = controllers.register.establishers.company.routes.IsCompanyDormantController.onPageLoad(mode, None, 0)
 
   private def taskList: Call = controllers.routes.SchemeTaskListController.onPageLoad()
 

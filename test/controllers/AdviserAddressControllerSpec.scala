@@ -38,6 +38,7 @@ import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import services.{FakeUserAnswersService, UserAnswersService}
 import utils.{CountryOptions, FakeNavigator, InputOption, Navigator}
 import viewmodels.Message
 import viewmodels.address.ManualAddressViewModel
@@ -66,7 +67,7 @@ class AdviserAddressControllerSpec extends ControllerSpecBase with MockitoSugar 
         bind[FrontendAppConfig].to(frontendAppConfig),
         bind[Navigator].toInstance(FakeNavigator),
         bind[DataRetrievalAction].to(retrieval),
-        bind[UserAnswersCacheConnector].toInstance(FakeUserAnswersCacheConnector),
+        bind[UserAnswersService].toInstance(FakeUserAnswersService),
         bind[AuthAction].to(FakeAuthAction),
         bind[CountryOptions].to(countryOptions),
         bind[AuditService].toInstance(fakeAuditService)
@@ -116,7 +117,7 @@ class AdviserAddressControllerSpec extends ControllerSpecBase with MockitoSugar 
         running(_.overrides(
           bind[FrontendAppConfig].to(frontendAppConfig),
           bind[MessagesApi].to(messagesApi),
-          bind[UserAnswersCacheConnector].toInstance(FakeUserAnswersCacheConnector),
+          bind[UserAnswersService].toInstance(FakeUserAnswersService),
           bind[DataRetrievalAction].to(retrieval),
           bind[AuthAction].to(FakeAuthAction),
           bind[DataRequiredAction].to(new DataRequiredActionImpl),
@@ -136,7 +137,7 @@ class AdviserAddressControllerSpec extends ControllerSpecBase with MockitoSugar 
 
             status(result) must be(SEE_OTHER)
 
-            FakeUserAnswersCacheConnector.verify(AdviserAddressId, address)
+            FakeUserAnswersService.verify(AdviserAddressId, address)
         }
       }
     }
@@ -154,7 +155,8 @@ class AdviserAddressControllerSpec extends ControllerSpecBase with MockitoSugar 
       running(_.overrides(
         bind[FrontendAppConfig].to(frontendAppConfig),
         bind[Navigator].toInstance(FakeNavigator),
-        bind[UserAnswersCacheConnector].toInstance(FakeUserAnswersCacheConnector),
+        bind[DataRetrievalAction].to(retrieval),
+        bind[UserAnswersService].toInstance(FakeUserAnswersService),
         bind[AuthAction].to(FakeAuthAction),
         bind[CountryOptions].to(countryOptions),
         bind[AuditService].toInstance(fakeAuditService)

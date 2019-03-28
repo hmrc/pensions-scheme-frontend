@@ -17,7 +17,6 @@
 package controllers.register.trustees.company
 
 import config.FrontendAppConfig
-import connectors.UserAnswersCacheConnector
 import controllers.actions.{AuthAction, DataRequiredAction, DataRetrievalAction}
 import forms.address.AddressYearsFormProvider
 import identifiers.register.trustees.company.{CompanyAddressYearsId, CompanyDetailsId}
@@ -26,6 +25,7 @@ import models.{AddressYears, Index, Mode}
 import play.api.data.Form
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent}
+import services.UserAnswersService
 import utils.Navigator
 import utils.annotations.TrusteesCompany
 import viewmodels.Message
@@ -35,21 +35,21 @@ class CompanyAddressYearsController @Inject()(
                                                override val appConfig: FrontendAppConfig,
                                                override val messagesApi: MessagesApi,
                                                @TrusteesCompany override val navigator: Navigator,
-                                               override val cacheConnector: UserAnswersCacheConnector,
+                                               val userAnswersService: UserAnswersService,
                                                authenticate: AuthAction,
                                                getData: DataRetrievalAction,
                                                requireData: DataRequiredAction,
                                                formProvider: AddressYearsFormProvider
                                              ) extends controllers.address.AddressYearsController {
 
-  private def viewmodel(index: Index, mode: Mode): Retrieval[AddressYearsViewModel] =
+  private def viewmodel(index: Index, mode: Mode, srn: Option[String]): Retrieval[AddressYearsViewModel] =
     Retrieval(
       implicit request =>
         CompanyDetailsId(index.id).retrieve.right.map {
           details =>
             val questionText = "messages__company_address_years__title"
             AddressYearsViewModel(
-              postCall = routes.CompanyAddressYearsController.onSubmit(mode, index),
+              postCall = routes.CompanyAddressYearsController.onSubmit(mode, index, srn),
               title = Message(questionText),
               heading = Message(questionText),
               legend = Message(questionText),
@@ -60,19 +60,19 @@ class CompanyAddressYearsController @Inject()(
 
   private val form: Form[AddressYears] = formProvider(Message("messages__common_error__current_address_years"))
 
-  def onPageLoad(mode: Mode, index: Index): Action[AnyContent] =
+  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData andThen requireData).async {
       implicit request =>
-        viewmodel(index, mode).retrieve.right.map {
+        viewmodel(index, mode, srn).retrieve.right.map {
           vm =>
             get(CompanyAddressYearsId(index), form, vm)
         }
     }
 
-  def onSubmit(mode: Mode, index: Index): Action[AnyContent] =
+  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData andThen requireData).async {
       implicit request =>
-        viewmodel(index, mode).retrieve.right.map {
+        viewmodel(index, mode, srn).retrieve.right.map {
           vm =>
             post(CompanyAddressYearsId(index), mode, form, vm)
         }

@@ -17,7 +17,6 @@
 package controllers.register.establishers.partnership
 
 import config.FrontendAppConfig
-import connectors.UserAnswersCacheConnector
 import controllers.actions._
 import forms.ContactDetailsFormProvider
 import identifiers.register.establishers.partnership.{PartnershipContactDetailsId, PartnershipDetailsId}
@@ -25,6 +24,7 @@ import javax.inject.Inject
 import models.{Index, Mode}
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent}
+import services.UserAnswersService
 import utils._
 import utils.annotations.EstablisherPartnership
 import viewmodels.{ContactDetailsViewModel, Message}
@@ -33,7 +33,7 @@ class PartnershipContactDetailsController @Inject()(
                                                      @EstablisherPartnership override val navigator: Navigator,
                                                      override val appConfig: FrontendAppConfig,
                                                      override val messagesApi: MessagesApi,
-                                                     override val cacheConnector: UserAnswersCacheConnector,
+                                                     val userAnswersService: UserAnswersService,
                                                      authenticate: AuthAction,
                                                      getData: DataRetrievalAction,
                                                      requireData: DataRequiredAction,
@@ -42,24 +42,26 @@ class PartnershipContactDetailsController @Inject()(
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData andThen requireData).async {
     implicit request =>
       PartnershipDetailsId(index).retrieve.right.map {
         partnershipDetails =>
-          get(PartnershipContactDetailsId(index), form, viewmodel(mode, index, partnershipDetails.name))
+          get(PartnershipContactDetailsId(index), form, viewmodel(mode, index, partnershipDetails.name, srn))
       }
   }
 
-  def onSubmit(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData andThen requireData).async {
     implicit request =>
       PartnershipDetailsId(index).retrieve.right.map {
         partnershipDetails =>
-          post(PartnershipContactDetailsId(index), mode, form, viewmodel(mode, index, partnershipDetails.name))
+          post(PartnershipContactDetailsId(index), mode, form, viewmodel(mode, index, partnershipDetails.name, srn))
       }
   }
 
-  private def viewmodel(mode: Mode, index: Index, partnershipName: String) = ContactDetailsViewModel(
-    postCall = routes.PartnershipContactDetailsController.onSubmit(mode, index),
+  private def viewmodel(mode: Mode, index: Index, partnershipName: String, srn: Option[String]) = ContactDetailsViewModel(
+    postCall = routes.PartnershipContactDetailsController.onSubmit(mode, index, srn),
     title = Message("messages__partnership_contact_details__title"),
     heading = Message("messages__partnership_contact_details__heading"),
     body = Message("messages__partnership_contact_details__body"),

@@ -18,8 +18,9 @@
 @import uk.gov.hmrc.play.views.html._
 @import models.{Mode, CheckMode}
 @import controllers.register.establishers.company.routes
+@import play.api.mvc.Call
 
-@(appConfig: FrontendAppConfig, index: Index, companyName: String, directors: Seq[String], schemeName: Option[String])(implicit request: Request[_], messages: Messages)
+@(appConfig: FrontendAppConfig, index: Index, companyName: String, directors: Seq[String], schemeName: Option[String], mode: Mode, srn: Option[String])(implicit request: Request[_], messages: Messages)
 
 @main_template(
     title = messages("messages__companyReview__title"),
@@ -34,7 +35,7 @@
         heading = companyName,
         linkMessage = "messages__companyReview__company__editLink",
         linkId = "edit-company-details",
-        link = routes.CheckYourAnswersController.onPageLoad(index)
+        link = routes.CheckYourAnswersController.onPageLoad(mode, srn, index)
     )
 
     @components.review_section(
@@ -45,11 +46,11 @@
             "messages__companyReview__directors__changeLink"
         },
         linkId = "edit-director-details",
-        link = routes.AddCompanyDirectorsController.onPageLoad(NormalMode, index),
+        link = routes.AddCompanyDirectorsController.onPageLoad(mode, srn, index),
         list = Some(directors)
     )
 
-    @helpers.form(action = routes.CompanyReviewController.onSubmit(index), 'autoComplete -> "off") {
+    @helpers.form(action = routes.CompanyReviewController.onSubmit(mode, srn, index), 'autoComplete -> "off") {
         @components.submit_button("site.confirm")
     }
 

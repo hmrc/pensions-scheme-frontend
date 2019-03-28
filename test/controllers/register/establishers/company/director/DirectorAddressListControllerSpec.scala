@@ -17,7 +17,7 @@
 package controllers.register.establishers.company.director
 
 import base.CSRFRequest
-import connectors.{UserAnswersCacheConnector, FakeUserAnswersCacheConnector}
+import services.{UserAnswersService, FakeUserAnswersService}
 import controllers.ControllerSpecBase
 import controllers.actions.{AuthAction, DataRetrievalAction, FakeAuthAction, FakeDataRetrievalAction}
 import forms.address.AddressListFormProvider
@@ -71,10 +71,10 @@ class DirectorAddressListControllerSpec extends ControllerSpecBase with CSRFRequ
 
       running(_.overrides(
         bind[AuthAction].to(FakeAuthAction),
-        bind[UserAnswersCacheConnector].toInstance(FakeUserAnswersCacheConnector),
+        bind[UserAnswersService].toInstance(FakeUserAnswersService),
         bind[DataRetrievalAction].toInstance(dataRetrievalAction)
       )) { implicit app =>
-        val request = addToken(FakeRequest(routes.DirectorAddressListController.onPageLoad(NormalMode, Index(0), Index(0))))
+        val request = addToken(FakeRequest(routes.DirectorAddressListController.onPageLoad(NormalMode, Index(0), Index(0), None)))
         val result = route(app, request).value
 
         status(result) mustBe OK
@@ -91,14 +91,14 @@ class DirectorAddressListControllerSpec extends ControllerSpecBase with CSRFRequ
 
       running(_.overrides(
         bind[AuthAction].to(FakeAuthAction),
-        bind[UserAnswersCacheConnector].toInstance(FakeUserAnswersCacheConnector),
+        bind[UserAnswersService].toInstance(FakeUserAnswersService),
         bind[DataRetrievalAction].toInstance(getEmptyData)
       )) { implicit app =>
-        val request = addToken(FakeRequest(routes.DirectorAddressListController.onPageLoad(NormalMode, Index(0), Index(0))))
+        val request = addToken(FakeRequest(routes.DirectorAddressListController.onPageLoad(NormalMode, Index(0), Index(0), None)))
         val result = route(app, request).value
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.DirectorAddressPostcodeLookupController.onPageLoad(NormalMode, Index(0), Index(0)).url)
+        redirectLocation(result) mustBe Some(routes.DirectorAddressPostcodeLookupController.onPageLoad(NormalMode, Index(0), Index(0), None).url)
       }
 
     }
@@ -107,10 +107,10 @@ class DirectorAddressListControllerSpec extends ControllerSpecBase with CSRFRequ
 
       running(_.overrides(
         bind[AuthAction].to(FakeAuthAction),
-        bind[UserAnswersCacheConnector].toInstance(FakeUserAnswersCacheConnector),
+        bind[UserAnswersService].toInstance(FakeUserAnswersService),
         bind[DataRetrievalAction].toInstance(dontGetAnyData)
       )) { implicit app =>
-        val request = addToken(FakeRequest(routes.DirectorAddressListController.onPageLoad(NormalMode, Index(0), Index(0))))
+        val request = addToken(FakeRequest(routes.DirectorAddressListController.onPageLoad(NormalMode, Index(0), Index(0), None)))
         val result = route(app, request).value
 
         status(result) mustBe SEE_OTHER
@@ -123,19 +123,19 @@ class DirectorAddressListControllerSpec extends ControllerSpecBase with CSRFRequ
 
       running(_.overrides(
         bind[AuthAction].to(FakeAuthAction),
-        bind[UserAnswersCacheConnector].toInstance(FakeUserAnswersCacheConnector),
+        bind[UserAnswersService].toInstance(FakeUserAnswersService),
         bind[DataRetrievalAction].toInstance(dataRetrievalAction)
       )) { implicit app =>
         val request =
           addToken(
-            FakeRequest(routes.DirectorAddressListController.onSubmit(NormalMode, Index(0), Index(0)))
+            FakeRequest(routes.DirectorAddressListController.onSubmit(NormalMode, Index(0), Index(0), None))
               .withFormUrlEncodedBody(("value", "0"))
           )
 
         val result = route(app, request).value
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.DirectorAddressController.onPageLoad(NormalMode, Index(0), Index(0)).url)
+        redirectLocation(result) mustBe Some(routes.DirectorAddressController.onPageLoad(NormalMode, Index(0), Index(0), None).url)
       }
 
     }
@@ -144,12 +144,12 @@ class DirectorAddressListControllerSpec extends ControllerSpecBase with CSRFRequ
 
       running(_.overrides(
         bind[AuthAction].to(FakeAuthAction),
-        bind[UserAnswersCacheConnector].toInstance(FakeUserAnswersCacheConnector),
+        bind[UserAnswersService].toInstance(FakeUserAnswersService),
         bind[DataRetrievalAction].toInstance(dontGetAnyData)
       )) { implicit app =>
         val request =
           addToken(
-            FakeRequest(routes.DirectorAddressListController.onSubmit(NormalMode, Index(0), Index(0)))
+            FakeRequest(routes.DirectorAddressListController.onSubmit(NormalMode, Index(0), Index(0), None))
               .withFormUrlEncodedBody(("value", "0"))
           )
 
@@ -165,19 +165,19 @@ class DirectorAddressListControllerSpec extends ControllerSpecBase with CSRFRequ
 
       running(_.overrides(
         bind[AuthAction].to(FakeAuthAction),
-        bind[UserAnswersCacheConnector].toInstance(FakeUserAnswersCacheConnector),
+        bind[UserAnswersService].toInstance(FakeUserAnswersService),
         bind[DataRetrievalAction].toInstance(getEmptyData)
       )) { implicit app =>
         val request =
           addToken(
-            FakeRequest(routes.DirectorAddressListController.onSubmit(NormalMode, Index(0), Index(0)))
+            FakeRequest(routes.DirectorAddressListController.onSubmit(NormalMode, Index(0), Index(0), None))
               .withFormUrlEncodedBody(("value", "0"))
           )
 
         val result = route(app, request).value
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.DirectorAddressPostcodeLookupController.onPageLoad(NormalMode, Index(0), Index(0)).url)
+        redirectLocation(result) mustBe Some(routes.DirectorAddressPostcodeLookupController.onPageLoad(NormalMode, Index(0), Index(0), None).url)
       }
 
     }
@@ -186,8 +186,8 @@ class DirectorAddressListControllerSpec extends ControllerSpecBase with CSRFRequ
 
   private def addressListViewModel(addresses: Seq[TolerantAddress]): AddressListViewModel = {
     AddressListViewModel(
-      routes.DirectorAddressListController.onSubmit(NormalMode, Index(0), Index(0)),
-      routes.DirectorAddressController.onPageLoad(NormalMode, Index(0), Index(0)),
+      routes.DirectorAddressListController.onSubmit(NormalMode, Index(0), Index(0), None),
+      routes.DirectorAddressController.onPageLoad(NormalMode, Index(0), Index(0), None),
       addresses,
       subHeading = Some(Message(directorDetails.fullName))
     )

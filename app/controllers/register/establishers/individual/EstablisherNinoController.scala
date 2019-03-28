@@ -27,6 +27,7 @@ import models.{Index, Mode, Nino}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
+import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.EstablishersIndividual
 import utils.{Enumerable, Navigator, UserAnswers}
@@ -37,40 +38,38 @@ import scala.concurrent.{ExecutionContext, Future}
 class EstablisherNinoController @Inject()(
                                            appConfig: FrontendAppConfig,
                                            override val messagesApi: MessagesApi,
-                                           dataCacheConnector: UserAnswersCacheConnector,
+                                           userAnswersService: UserAnswersService,
                                            @EstablishersIndividual navigator: Navigator,
                                            authenticate: AuthAction,
                                            getData: DataRetrievalAction,
                                            requireData: DataRequiredAction,
                                            formProvider: EstablisherNinoFormProvider
-                                         ) (implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
+                                         )(implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
 
   private val form: Form[Nino] = formProvider()
 
-  def onPageLoad(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      retrieveEstablisherName(index) {
-        establisherName =>
-          val redirectResult = request.userAnswers.get(EstablisherNinoId(index)) match {
-            case None =>
-              Ok(establisherNino(appConfig, form, mode, index, existingSchemeName))
-            case Some(value) =>
-              Ok(establisherNino(appConfig, form.fill(value), mode, index, existingSchemeName))
-          }
-          Future.successful(redirectResult)
+      retrieveEstablisherName(index) { _ =>
+        val preparedForm = request.userAnswers.get(EstablisherNinoId(index)).fold(form)(form.fill)
+        val submitUrl = controllers.register.establishers.individual.routes.EstablisherNinoController.onSubmit(mode, index, srn)
+        Future.successful(Ok(establisherNino(appConfig, preparedForm, mode, index, existingSchemeName, submitUrl)))
       }
   }
 
-  def onSubmit(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       retrieveEstablisherName(index) {
         establisherName =>
           form.bindFromRequest().fold(
-            (formWithErrors: Form[_]) =>
-              Future.successful(BadRequest(establisherNino(appConfig, formWithErrors, mode, index, existingSchemeName))),
+            (formWithErrors: Form[_]) => {
+              val submitUrl = controllers.register.establishers.individual.routes.EstablisherNinoController.onSubmit(mode, index, srn)
+              Future.successful(BadRequest(establisherNino(appConfig, formWithErrors, mode, index, existingSchemeName, submitUrl)))
+            },
             (value) =>
-              dataCacheConnector.save(
-                request.externalId,
+              userAnswersService.save(
+                mode,
+                srn,
                 EstablisherNinoId(index),
                 value
               ).map {

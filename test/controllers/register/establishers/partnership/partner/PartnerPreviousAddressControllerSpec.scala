@@ -83,7 +83,7 @@ class PartnerPreviousAddressControllerSpec extends ControllerSpecBase with Mocki
           val controller = app.injector.instanceOf[PartnerPreviousAddressController]
 
           val viewmodel = ManualAddressViewModel(
-            controller.postCall(NormalMode, establisherIndex, partnerIndex),
+            controller.postCall(NormalMode, establisherIndex, partnerIndex, None),
             countryOptions.options,
             controller.title,
             controller.heading,
@@ -91,7 +91,7 @@ class PartnerPreviousAddressControllerSpec extends ControllerSpecBase with Mocki
           )
 
           val request = addToken(
-            FakeRequest(routes.PartnerPreviousAddressController.onPageLoad(NormalMode, establisherIndex, partnerIndex))
+            FakeRequest(routes.PartnerPreviousAddressController.onPageLoad(NormalMode, establisherIndex, partnerIndex, None))
               .withHeaders("Csrf-Token" -> "nocheck")
           )
 
@@ -113,7 +113,8 @@ class PartnerPreviousAddressControllerSpec extends ControllerSpecBase with Mocki
     "redirect to next page on POST request" which {
       "saves partner address" in {
 
-        val onwardCall = controllers.register.establishers.partnership.partner.routes.PartnerContactDetailsController.onPageLoad(NormalMode, establisherIndex, partnerIndex)
+        val onwardCall = controllers.register.establishers.partnership.partner.routes.
+          PartnerContactDetailsController.onPageLoad(NormalMode, establisherIndex, partnerIndex, None)
 
         running(_.overrides(
           bind[FrontendAppConfig].to(frontendAppConfig),
@@ -135,7 +136,7 @@ class PartnerPreviousAddressControllerSpec extends ControllerSpecBase with Mocki
               "GB"
             )
 
-            val fakeRequest = addToken(FakeRequest(routes.PartnerPreviousAddressController.onSubmit(NormalMode, establisherIndex, partnerIndex))
+            val fakeRequest = addToken(FakeRequest(routes.PartnerPreviousAddressController.onSubmit(NormalMode, establisherIndex, partnerIndex, None))
               .withHeaders("Csrf-Token" -> "nocheck")
               .withFormUrlEncodedBody(
                 ("addressLine1", address.addressLine1),
@@ -174,7 +175,7 @@ class PartnerPreviousAddressControllerSpec extends ControllerSpecBase with Mocki
       )) {
         implicit app =>
 
-          val fakeRequest = addToken(FakeRequest(routes.PartnerPreviousAddressController.onSubmit(NormalMode, establisherIndex, partnerIndex))
+          val fakeRequest = addToken(FakeRequest(routes.PartnerPreviousAddressController.onSubmit(NormalMode, establisherIndex, partnerIndex, None))
             .withHeaders("Csrf-Token" -> "nocheck")
             .withFormUrlEncodedBody(
               ("addressLine1", address.addressLine1),

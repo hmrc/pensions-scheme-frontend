@@ -54,7 +54,7 @@ class ContactDetailsViewSpec extends QuestionViewBehaviours[ContactDetails] {
     behave like pageWithTextFields(
       createViewUsingForm,
       messageKeyPrefix,
-      controllers.register.establishers.individual.routes.ContactDetailsController.onSubmit(NormalMode, 0).url,
+      controllers.register.establishers.individual.routes.ContactDetailsController.onSubmit(NormalMode, 0, None).url,
       "emailAddress",
       "phoneNumber"
     )

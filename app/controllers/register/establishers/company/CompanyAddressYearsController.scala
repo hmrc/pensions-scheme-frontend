@@ -17,7 +17,6 @@
 package controllers.register.establishers.company
 
 import config.FrontendAppConfig
-import connectors.UserAnswersCacheConnector
 import controllers.Retrievals
 import controllers.actions._
 import controllers.address.AddressYearsController
@@ -27,6 +26,7 @@ import javax.inject.Inject
 import models.{Index, Mode}
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent}
+import services.UserAnswersService
 import utils.Navigator
 import utils.annotations.EstablishersCompany
 import viewmodels.Message
@@ -34,7 +34,8 @@ import viewmodels.address.AddressYearsViewModel
 
 class CompanyAddressYearsController @Inject()(
                                                val appConfig: FrontendAppConfig,
-                                               val cacheConnector: UserAnswersCacheConnector,
+
+                                               val userAnswersService: UserAnswersService,
                                                @EstablishersCompany val navigator: Navigator,
                                                val messagesApi: MessagesApi,
                                                authenticate: AuthAction,
@@ -44,25 +45,26 @@ class CompanyAddressYearsController @Inject()(
 
   private val form = new AddressYearsFormProvider()(Message("messages__common_error__current_address_years"))
 
-  def onPageLoad(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onPageLoad(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       CompanyDetailsId(index).retrieve.right.map { companyDetails =>
-        get(CompanyAddressYearsId(index), form, viewModel(mode, index, companyDetails.companyName))
+        get(CompanyAddressYearsId(index), form, viewModel(mode, srn, index, companyDetails.companyName))
       }
   }
 
-  def onSubmit(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       CompanyDetailsId(index).retrieve.right.map { companyDetails =>
-        post(CompanyAddressYearsId(index), mode, form, viewModel(mode, index, companyDetails.companyName))
+        post(CompanyAddressYearsId(index), mode, form, viewModel(mode, srn, index, companyDetails.companyName))
       }
   }
 
-  private def viewModel(mode: Mode, index: Index, companyName: String) = AddressYearsViewModel(
-    postCall = routes.CompanyAddressYearsController.onSubmit(mode, index),
+  private def viewModel(mode: Mode, srn: Option[String], index: Index, companyName: String) = AddressYearsViewModel(
+    postCall = routes.CompanyAddressYearsController.onSubmit(mode, srn, index),
     title = Message("messages__company_address_years__title"),
     heading = Message("messages__company_address_years__title"),
     legend = Message("messages__company_address_years__title"),
-    subHeading = Some(Message(companyName))
+    subHeading = Some(Message(companyName)),
+    srn = srn
   )
 }

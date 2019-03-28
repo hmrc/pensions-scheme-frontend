@@ -66,10 +66,10 @@ object SchemeTaskListControllerSpec extends SpecBase with JsonFileReader {
         controllers.routes.WhatYouWillNeedBenefitsInsuranceController.onPageLoad.url), None),
       SchemeDetailsTaskListSection(None, Link(aboutBankDetailsLinkText, controllers.routes.WhatYouWillNeedBankDetailsController.onPageLoad.url), None)), None,
     SchemeDetailsTaskListSection(None, Link(addEstablisherLinkText,
-      controllers.register.establishers.routes.EstablisherKindController.onPageLoad(NormalMode, 0).url), None),
+      controllers.register.establishers.routes.EstablisherKindController.onPageLoad(NormalMode, 0, None).url), None),
     Seq.empty,
     Some(SchemeDetailsTaskListSection(None,
-      Link(addTrusteesLinkText, controllers.register.trustees.routes.TrusteeKindController.onPageLoad(NormalMode, 0).url),
+      Link(addTrusteesLinkText, controllers.register.trustees.routes.TrusteeKindController.onPageLoad(NormalMode, 0, None).url),
       None
     )),
     Seq.empty,

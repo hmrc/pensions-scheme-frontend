@@ -17,7 +17,6 @@
 package controllers.register.establishers.partnership.partner
 
 import config.FrontendAppConfig
-import connectors.UserAnswersCacheConnector
 import controllers.Retrievals
 import controllers.actions.{AuthAction, DataRequiredAction, DataRetrievalAction}
 import forms.register.establishers.partnership.partner.ConfirmDeletePartnerFormProvider
@@ -25,13 +24,14 @@ import identifiers.register.establishers.IsEstablisherCompleteId
 import identifiers.register.establishers.partnership.PartnershipDetailsId
 import identifiers.register.establishers.partnership.partner.{ConfirmDeletePartnerId, PartnerDetailsId}
 import javax.inject.Inject
-import models.{Index, NormalMode}
+import models.{Index, Mode, NormalMode}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
+import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.EstablishersPartner
-import utils.{Navigator, SectionComplete}
+import utils.{Navigator, SectionComplete, UserAnswers}
 import views.html.register.establishers.partnership.partner.confirmDeletePartner
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -39,7 +39,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class ConfirmDeletePartnerController @Inject()(
                                                 appConfig: FrontendAppConfig,
                                                 override val messagesApi: MessagesApi,
-                                                dataCacheConnector: UserAnswersCacheConnector,
+                                                userAnswersService: UserAnswersService,
                                                 @EstablishersPartner navigator: Navigator,
                                                 authenticate: AuthAction,
                                                 getData: DataRetrievalAction,
@@ -50,12 +50,13 @@ class ConfirmDeletePartnerController @Inject()(
 
   private val form: Form[Boolean] = formProvider()
 
-  def onPageLoad(establisherIndex: Index, partnerIndex: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData andThen requireData).async {
     implicit request =>
       (PartnershipDetailsId(establisherIndex) and PartnerDetailsId(establisherIndex, partnerIndex)).retrieve.right.map {
         case partnership ~ partner =>
           if (partner.isDeleted) {
-            Future.successful(Redirect(routes.AlreadyDeletedController.onPageLoad(establisherIndex, partnerIndex)))
+            Future.successful(Redirect(routes.AlreadyDeletedController.onPageLoad(mode, establisherIndex, partnerIndex, srn)))
           } else {
             Future.successful(
               Ok(
@@ -63,7 +64,7 @@ class ConfirmDeletePartnerController @Inject()(
                   appConfig,
                   form,
                   partner.fullName,
-                  routes.ConfirmDeletePartnerController.onSubmit(establisherIndex, partnerIndex),
+                  routes.ConfirmDeletePartnerController.onSubmit(mode, establisherIndex, partnerIndex, srn),
                   existingSchemeName
                 )
               )
@@ -72,7 +73,8 @@ class ConfirmDeletePartnerController @Inject()(
       }
   }
 
-  def onSubmit(establisherIndex: Index, partnerIndex: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData andThen requireData).async {
     implicit request =>
       PartnerDetailsId(establisherIndex, partnerIndex).retrieve.right.map {
         partnerDetails =>
@@ -82,17 +84,18 @@ class ConfirmDeletePartnerController @Inject()(
                 appConfig,
                 formWithErrors,
                 partnerDetails.fullName,
-                routes.ConfirmDeletePartnerController.onSubmit(establisherIndex, partnerIndex),
+                routes.ConfirmDeletePartnerController.onSubmit(mode, establisherIndex, partnerIndex, srn),
                 existingSchemeName
               ))),
             value => {
               val deletionResult = if (value) {
-                dataCacheConnector.save(PartnerDetailsId(establisherIndex, partnerIndex), partnerDetails.copy(isDeleted = true))
+                userAnswersService.save(mode, srn, PartnerDetailsId(establisherIndex, partnerIndex), partnerDetails.copy(isDeleted = true))
               } else {
-                Future.successful(request.userAnswers)
+                Future.successful(request.userAnswers.json)
               }
               deletionResult.flatMap {
-                userAnswers =>
+                jsValue =>
+                  val userAnswers = UserAnswers(jsValue)
                   if (userAnswers.allDirectorsAfterDelete(establisherIndex).isEmpty) {
                     sectionComplete.setCompleteFlag(
                       request.externalId, IsEstablisherCompleteId(establisherIndex), request.userAnswers, value = false).map { _ =>

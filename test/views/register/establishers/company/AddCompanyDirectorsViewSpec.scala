@@ -38,6 +38,7 @@ class AddCompanyDirectorsViewSpec extends YesNoViewBehaviours with EntityListBeh
   // scalastyle:on magic.number
 
   val messageKeyPrefix = "addCompanyDirectors"
+  private val postCall = routes.AddCompanyDirectorsController.onSubmit _
 
   val form = new AddCompanyDirectorsFormProvider()()
   private val johnDoeEntity = DirectorEntity(DirectorDetailsId(0, 0), johnDoe.fullName, isDeleted = false, isCompleted = false)
@@ -51,7 +52,8 @@ class AddCompanyDirectorsViewSpec extends YesNoViewBehaviours with EntityListBeh
         NormalMode,
         establisherIndex,
         directors,
-        None
+        None,
+        postCall(NormalMode, None, establisherIndex)
       )(fakeRequest, messages)
 
   private def createViewUsingForm(directors: Seq[DirectorEntity] = Nil) =
@@ -62,7 +64,8 @@ class AddCompanyDirectorsViewSpec extends YesNoViewBehaviours with EntityListBeh
         NormalMode,
         establisherIndex,
         directors,
-        None
+        None,
+        postCall(NormalMode, None, establisherIndex)
       )(fakeRequest, messages)
 
   "AddCompanyDirectors view" must {
@@ -72,7 +75,7 @@ class AddCompanyDirectorsViewSpec extends YesNoViewBehaviours with EntityListBeh
     behave like yesNoPage(
       createViewUsingForm(Seq(johnDoeEntity)),
       messageKeyPrefix,
-      routes.AddCompanyDirectorsController.onSubmit(NormalMode, 0).url,
+      routes.AddCompanyDirectorsController.onSubmit(NormalMode, None, 0).url,
       legendKey = "add_more",
       expectedHintKey = Some("lede")
     )

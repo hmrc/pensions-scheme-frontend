@@ -27,6 +27,7 @@ import models.{Index, Mode}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
+import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.TrusteesCompany
 import utils.{Enumerable, Navigator, UserAnswers}
@@ -37,37 +38,38 @@ import scala.concurrent.{ExecutionContext, Future}
 class CompanyUniqueTaxReferenceController @Inject()(
                                                      appConfig: FrontendAppConfig,
                                                      override val messagesApi: MessagesApi,
-                                                     dataCacheConnector: UserAnswersCacheConnector,
+                                                     userAnswersService: UserAnswersService,
                                                      @TrusteesCompany navigator: Navigator,
                                                      authenticate: AuthAction,
                                                      getData: DataRetrievalAction,
                                                      requireData: DataRequiredAction,
                                                      formProvider: CompanyUniqueTaxReferenceFormProvider
-                                                   ) (implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
+                                                   )(implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      CompanyDetailsId(index).retrieve.right.flatMap { companyDetails =>
-        CompanyUniqueTaxReferenceId(index).retrieve.right.map { value =>
-          Future.successful(Ok(companyUniqueTaxReference(appConfig, form.fill(value), mode, index, existingSchemeName)))
-        }.left.map { _ =>
-          Future.successful(Ok(companyUniqueTaxReference(appConfig, form, mode, index, existingSchemeName)))
-        }
+      CompanyDetailsId(index).retrieve.right.map { companyDetails =>
+        val submitUrl = controllers.register.trustees.company.routes.CompanyUniqueTaxReferenceController.onSubmit(mode, index, srn)
+        val updatedForm = request.userAnswers.get(CompanyUniqueTaxReferenceId(index)).fold(form)(form.fill)
+        Future.successful(Ok(companyUniqueTaxReference(appConfig, updatedForm, mode, index, existingSchemeName, submitUrl)))
       }
   }
 
-  def onSubmit(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       CompanyDetailsId(index).retrieve.right.map {
         companyDetails =>
           form.bindFromRequest().fold(
-            (formWithErrors: Form[_]) =>
-              Future.successful(BadRequest(companyUniqueTaxReference(appConfig, formWithErrors, mode, index, existingSchemeName))),
-            (value) =>
-              dataCacheConnector.save(
-                request.externalId,
+            (formWithErrors: Form[_]) => {
+              val submitUrl = controllers.register.trustees.company.routes.CompanyUniqueTaxReferenceController.onSubmit(mode, index, srn)
+              Future.successful(BadRequest(companyUniqueTaxReference(appConfig, formWithErrors, mode, index, existingSchemeName, submitUrl)))
+            },
+            value =>
+              userAnswersService.save(
+                mode,
+                srn,
                 CompanyUniqueTaxReferenceId(index),
                 value
               ).map {

@@ -37,16 +37,16 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase {
 
   val checkYourAnswersFactory = new CheckYourAnswersFactory(countryOptions)
 
-  def postUrl: Call = director.routes.CheckYourAnswersController.onSubmit(establisherIndex, directorIndex)
+  def postUrl: Call = director.routes.CheckYourAnswersController.onSubmit(establisherIndex, directorIndex, NormalMode, None)
 
   lazy val answersDirectorDetails: Seq[AnswerRow] =
     Seq(
       AnswerRow("messages__common__cya__name", Seq("first middle last"), false,
-        Some(director.routes.DirectorDetailsController.onPageLoad(CheckMode, Index(establisherIndex), Index(directorIndex)).url),
+        Some(director.routes.DirectorDetailsController.onPageLoad(CheckMode, Index(establisherIndex), Index(directorIndex), None).url),
         Message("messages__visuallyhidden__common__name", "first middle last")
       ),
       AnswerRow("messages__common__dob", Seq(DateHelper.formatDate(new LocalDate(1990, 2, 2))), false,
-        Some(director.routes.DirectorDetailsController.onPageLoad(CheckMode, Index(establisherIndex), Index(directorIndex)).url),
+        Some(director.routes.DirectorDetailsController.onPageLoad(CheckMode, Index(establisherIndex), Index(directorIndex), None).url),
         Message("messages__visuallyhidden__common__dob", "first middle last")
       )
     )
@@ -55,7 +55,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase {
     AnswerSection(Some("messages__director__cya__details_heading"), answersDirectorDetails),
     AnswerSection(Some("messages__director__cya__contact__details_heading"), Seq.empty[AnswerRow])
   )
-  val onwardRoute = controllers.register.establishers.company.routes.AddCompanyDirectorsController.onPageLoad(NormalMode, 0)
+  val onwardRoute = controllers.register.establishers.company.routes.AddCompanyDirectorsController.onPageLoad(NormalMode, None, 0)
 
   def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisherCompany): CheckYourAnswersController =
     new director.CheckYourAnswersController(frontendAppConfig, messagesApi, new FakeNavigator(onwardRoute), FakeAuthAction,
@@ -66,14 +66,14 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase {
   "CheckYourAnswers Controller" must {
 
     "return OK and the correct view for a GET" in {
-      val result = controller(getMandatoryEstablisherCompanyDirector).onPageLoad(establisherIndex, directorIndex)(fakeRequest)
+      val result = controller(getMandatoryEstablisherCompanyDirector).onPageLoad(establisherIndex, directorIndex, NormalMode, None)(fakeRequest)
 
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString()
     }
 
     "mark director as complete on submit" in {
-      val result = controller().onSubmit(establisherIndex, directorIndex)(fakeRequest)
+      val result = controller().onSubmit(establisherIndex, directorIndex, NormalMode, None)(fakeRequest)
       status(result) mustBe SEE_OTHER
       redirectLocation(result).value mustEqual onwardRoute.url
       FakeSectionComplete.verify(IsDirectorCompleteId(establisherIndex, directorIndex), true)

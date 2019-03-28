@@ -35,8 +35,9 @@ import play.api.libs.json.Json
 import play.api.mvc.{Call, Request, Result}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{contentAsString, route, _}
+import services.{FakeUserAnswersService, UserAnswersService}
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.annotations.AboutBenefitsAndInsurance
+import utils.annotations.{AboutBenefitsAndInsurance, InsuranceService}
 import utils.{FakeNavigator, Navigator}
 import viewmodels.address.PostcodeLookupViewModel
 import views.html.address.postcodeLookup
@@ -52,12 +53,12 @@ class InsurerEnterPostCodeControllerSpec extends ControllerSpecBase with CSRFReq
   "InsurerEnterPostCodeController Controller" must {
     "render postCodeLookup from a GET request" in {
       requestResult(
-        implicit app => addToken(FakeRequest(routes.InsurerEnterPostcodeController.onPageLoad(NormalMode))),
+        implicit app => addToken(FakeRequest(routes.InsurerEnterPostcodeController.onPageLoad(NormalMode, None))),
         (request, result) => {
 
           val viewModel = PostcodeLookupViewModel(
-            routes.InsurerEnterPostcodeController.onSubmit(NormalMode),
-            routes.InsurerConfirmAddressController.onSubmit(NormalMode),
+            routes.InsurerEnterPostcodeController.onSubmit(NormalMode, None),
+            routes.InsurerConfirmAddressController.onSubmit(NormalMode, None),
             Messages("messages__insurer_enter_postcode__title"),
             "messages__insurer_enter_postcode__h1",
             None,
@@ -73,7 +74,7 @@ class InsurerEnterPostCodeControllerSpec extends ControllerSpecBase with CSRFReq
     "redirect to next page on POST request" which {
       "returns a list of addresses from addressLookup given a postcode" in {
         requestResult(
-          implicit app => addToken(FakeRequest(routes.InsurerEnterPostcodeController.onSubmit(NormalMode))
+          implicit app => addToken(FakeRequest(routes.InsurerEnterPostcodeController.onSubmit(NormalMode, None))
             .withFormUrlEncodedBody("value" -> validPostcode)),
           (_, result) => {
             status(result) mustBe SEE_OTHER
@@ -114,7 +115,7 @@ object InsurerEnterPostCodeControllerSpec extends OptionValues {
       bind[DataRequiredAction].to(new DataRequiredActionImpl),
       bind[AddressLookupConnector].toInstance(fakeAddressLookupConnector),
       bind(classOf[Navigator]).qualifiedWith(classOf[AboutBenefitsAndInsurance]).toInstance(fakeNavigator),
-      bind[UserAnswersCacheConnector].toInstance(FakeUserAnswersCacheConnector),
+      bind[UserAnswersService].qualifiedWith(classOf[InsuranceService]).toInstance(FakeUserAnswersService),
       bind[PostCodeLookupFormProvider].to(formProvider)
     )) {
       app =>

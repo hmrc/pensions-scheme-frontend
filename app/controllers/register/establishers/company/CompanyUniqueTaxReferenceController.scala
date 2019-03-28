@@ -17,7 +17,6 @@
 package controllers.register.establishers.company
 
 import config.FrontendAppConfig
-import connectors.UserAnswersCacheConnector
 import controllers.Retrievals
 import controllers.actions._
 import forms.register.establishers.company.CompanyUniqueTaxReferenceFormProvider
@@ -26,7 +25,8 @@ import javax.inject.Inject
 import models.{Index, Mode, UniqueTaxReference}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent}
+import play.api.mvc.{Action, AnyContent, Call}
+import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.EstablishersCompany
 import utils.{Enumerable, Navigator, UserAnswers}
@@ -37,7 +37,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class CompanyUniqueTaxReferenceController @Inject()(
                                                      appConfig: FrontendAppConfig,
                                                      override val messagesApi: MessagesApi,
-                                                     dataCacheConnector: UserAnswersCacheConnector,
+                                                     userAnswersService: UserAnswersService,
                                                      @EstablishersCompany navigator: Navigator,
                                                      authenticate: AuthAction,
                                                      getData: DataRetrievalAction,
@@ -46,31 +46,28 @@ class CompanyUniqueTaxReferenceController @Inject()(
                                                    )(implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
 
   private val form: Form[UniqueTaxReference] = formProvider()
+  private def postCall: (Mode, Option[String], Index) => Call = routes.CompanyUniqueTaxReferenceController.onSubmit _
 
-  def onPageLoad(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onPageLoad(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      retrieveCompanyName(index) {
-        companyName =>
           val redirectResult = request.userAnswers.get(CompanyUniqueTaxReferenceId(index)) match {
             case None =>
-              Ok(companyUniqueTaxReference(appConfig, form, mode, index, existingSchemeName))
+              Ok(companyUniqueTaxReference(appConfig, form, mode, index, existingSchemeName, postCall(mode, srn, index)))
             case Some(value) =>
-              Ok(companyUniqueTaxReference(appConfig, form.fill(value), mode, index, existingSchemeName))
+              Ok(companyUniqueTaxReference(appConfig, form.fill(value), mode, index, existingSchemeName, postCall(mode, srn, index)))
           }
           Future.successful(redirectResult)
-      }
   }
 
-  def onSubmit(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      retrieveCompanyName(index) {
-        companyName =>
           form.bindFromRequest().fold(
             (formWithErrors: Form[_]) =>
-              Future.successful(BadRequest(companyUniqueTaxReference(appConfig, formWithErrors, mode, index, existingSchemeName))),
+              Future.successful(BadRequest(companyUniqueTaxReference(appConfig, formWithErrors, mode, index, existingSchemeName, postCall(mode, srn, index)))),
             value =>
-              dataCacheConnector.save(
-                request.externalId,
+              userAnswersService.save(
+                mode,
+                srn,
                 CompanyUniqueTaxReferenceId(index),
                 value
               ).map {
@@ -78,7 +75,6 @@ class CompanyUniqueTaxReferenceController @Inject()(
                   Redirect(navigator.nextPage(CompanyUniqueTaxReferenceId(index), mode, UserAnswers(json)))
               }
           )
-      }
   }
 
 }

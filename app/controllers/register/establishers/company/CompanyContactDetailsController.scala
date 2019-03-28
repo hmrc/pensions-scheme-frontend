@@ -17,7 +17,6 @@
 package controllers.register.establishers.company
 
 import config.FrontendAppConfig
-import connectors.UserAnswersCacheConnector
 import controllers.actions._
 import forms.ContactDetailsFormProvider
 import identifiers.register.establishers.company.CompanyContactDetailsId
@@ -25,6 +24,7 @@ import javax.inject.Inject
 import models.{Index, Mode}
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent}
+import services.UserAnswersService
 import utils._
 import utils.annotations.EstablishersCompany
 import viewmodels.{ContactDetailsViewModel, Message}
@@ -33,7 +33,7 @@ class CompanyContactDetailsController @Inject()(
                                                  @EstablishersCompany override val navigator: Navigator,
                                                  override val appConfig: FrontendAppConfig,
                                                  override val messagesApi: MessagesApi,
-                                                 override val cacheConnector: UserAnswersCacheConnector,
+                                                 val userAnswersService: UserAnswersService,
                                                  authenticate: AuthAction,
                                                  getData: DataRetrievalAction,
                                                  requireData: DataRequiredAction,
@@ -42,24 +42,24 @@ class CompanyContactDetailsController @Inject()(
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onPageLoad(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       retrieveCompanyName(index) {
         companyName =>
-          get(CompanyContactDetailsId(index), form, viewmodel(mode, index, companyName))
+          get(CompanyContactDetailsId(index), form, viewmodel(mode, srn, index, companyName))
       }
   }
 
-  def onSubmit(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       retrieveCompanyName(index) {
         companyName =>
-          post(CompanyContactDetailsId(index), mode, form, viewmodel(mode, index, companyName))
+          post(CompanyContactDetailsId(index), mode, form, viewmodel(mode, srn, index, companyName))
       }
   }
 
-  private def viewmodel(mode: Mode, index: Index, companyName: String) = ContactDetailsViewModel(
-    postCall = routes.CompanyContactDetailsController.onSubmit(mode, index),
+  private def viewmodel(mode: Mode, srn: Option[String], index: Index, companyName: String) = ContactDetailsViewModel(
+    postCall = routes.CompanyContactDetailsController.onSubmit(mode, srn, index),
     title = Message("messages__establisher_company_contact_details__title"),
     heading = Message("messages__establisher_company_contact_details__heading"),
     body = Message("messages__contact_details__body"),

@@ -17,7 +17,6 @@
 package controllers.register.establishers.individual
 
 import config.FrontendAppConfig
-import connectors.UserAnswersCacheConnector
 import controllers.Retrievals
 import controllers.actions._
 import controllers.address.{AddressListController => GenericAddressListController}
@@ -27,6 +26,7 @@ import models.requests.DataRequest
 import models.{Index, Mode}
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, Result}
+import services.UserAnswersService
 import utils.Navigator
 import utils.annotations.EstablishersIndividual
 import viewmodels.Message
@@ -37,35 +37,37 @@ import scala.concurrent.Future
 class AddressListController @Inject()(
                                        val appConfig: FrontendAppConfig,
                                        val messagesApi: MessagesApi,
-                                       val cacheConnector: UserAnswersCacheConnector,
+                                       val userAnswersService: UserAnswersService,
                                        @EstablishersIndividual override val navigator: Navigator,
                                        authenticate: AuthAction,
                                        getData: DataRetrievalAction,
                                        requireData: DataRequiredAction
                                      ) extends GenericAddressListController with Retrievals {
 
-  def onPageLoad(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      viewmodel(mode, index).right.map(get)
+      viewmodel(mode, index, srn).right.map(get)
   }
 
-  def onSubmit(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      viewmodel(mode, index).right.map {
+      viewmodel(mode, index, srn).right.map {
         vm =>
           post(vm, AddressListId(index), AddressId(index), mode)
       }
   }
 
-  private def viewmodel(mode: Mode, index: Index)(implicit request: DataRequest[AnyContent]): Either[Future[Result], AddressListViewModel] = {
+  private def viewmodel(mode: Mode, index: Index, srn: Option[String])(implicit request: DataRequest[AnyContent]):
+  Either[Future[Result], AddressListViewModel] = {
     (EstablisherDetailsId(index) and PostCodeLookupId(index)).retrieve.right.map {
       case establisherDetails ~ addresses => AddressListViewModel(
-        postCall = routes.AddressListController.onSubmit(mode, index),
-        manualInputCall = routes.AddressController.onPageLoad(mode, index),
+        postCall = routes.AddressListController.onSubmit(mode, index, srn),
+        manualInputCall = routes.AddressController.onPageLoad(mode, index, srn),
         addresses = addresses,
-        subHeading = Some(Message(establisherDetails.fullName))
+        subHeading = Some(Message(establisherDetails.fullName)),
+        srn = srn
       )
     }.left.map(_ =>
-      Future.successful(Redirect(routes.PostCodeLookupController.onPageLoad(mode, index))))
+      Future.successful(Redirect(routes.PostCodeLookupController.onPageLoad(mode, index, srn))))
   }
 }

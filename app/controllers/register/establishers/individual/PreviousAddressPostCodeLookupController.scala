@@ -17,7 +17,7 @@
 package controllers.register.establishers.individual
 
 import config.FrontendAppConfig
-import connectors.{AddressLookupConnector, UserAnswersCacheConnector}
+import connectors.AddressLookupConnector
 import controllers.actions._
 import controllers.address.{PostcodeLookupController => GenericPostcodeLookupController}
 import forms.address.PostCodeLookupFormProvider
@@ -27,6 +27,7 @@ import models.{Index, Mode}
 import play.api.data.Form
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent}
+import services.UserAnswersService
 import utils.Navigator
 import utils.annotations.EstablishersIndividual
 import viewmodels.Message
@@ -35,7 +36,7 @@ import viewmodels.address.PostcodeLookupViewModel
 class PreviousAddressPostCodeLookupController @Inject()(
                                                          override val appConfig: FrontendAppConfig,
                                                          override val messagesApi: MessagesApi,
-                                                         override val cacheConnector: UserAnswersCacheConnector,
+                                                         val userAnswersService: UserAnswersService,
                                                          override val addressLookupConnector: AddressLookupConnector,
                                                          @EstablishersIndividual override val navigator: Navigator,
                                                          authenticate: AuthAction,
@@ -50,14 +51,14 @@ class PreviousAddressPostCodeLookupController @Inject()(
 
   protected val form: Form[String] = formProvider()
 
-  private def viewmodel(index: Int, mode: Mode): Retrieval[PostcodeLookupViewModel] =
+  private def viewmodel(index: Int, mode: Mode, srn: Option[String]): Retrieval[PostcodeLookupViewModel] =
     Retrieval {
       implicit request =>
         EstablisherDetailsId(index).retrieve.right.map {
           details =>
             PostcodeLookupViewModel(
-              routes.PreviousAddressPostCodeLookupController.onSubmit(mode, index),
-              routes.PreviousAddressController.onPageLoad(mode, index),
+              routes.PreviousAddressPostCodeLookupController.onSubmit(mode, index, srn),
+              routes.PreviousAddressController.onPageLoad(mode, index, srn),
               title = Message(title),
               heading = Message(heading),
               subHeading = Some(details.fullName),
@@ -66,16 +67,16 @@ class PreviousAddressPostCodeLookupController @Inject()(
         }
     }
 
-  def onPageLoad(mode: Mode, index: Index): Action[AnyContent] =
+  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData andThen requireData).async {
       implicit request =>
-        viewmodel(index, mode).retrieve.right map get
+        viewmodel(index, mode, srn).retrieve.right map get
     }
 
-  def onSubmit(mode: Mode, index: Index): Action[AnyContent] =
+  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData andThen requireData).async {
       implicit request =>
-        viewmodel(index, mode).retrieve.right.map {
+        viewmodel(index, mode, srn).retrieve.right.map {
           vm =>
             post(PreviousPostCodeLookupId(index), vm, mode)
         }

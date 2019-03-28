@@ -18,7 +18,7 @@ package controllers.register.establishers.company.director
 
 import base.CSRFRequest
 import config.FrontendAppConfig
-import connectors.{AddressLookupConnector, UserAnswersCacheConnector, FakeUserAnswersCacheConnector}
+import connectors.AddressLookupConnector
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.address.PostCodeLookupFormProvider
@@ -34,6 +34,7 @@ import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import services.{FakeUserAnswersService, UserAnswersService}
 import utils.{FakeNavigator, Navigator}
 import viewmodels.Message
 import viewmodels.address.PostcodeLookupViewModel
@@ -43,9 +44,9 @@ import scala.concurrent.Future
 
 class DirectorPreviousAddressPostcodeLookupControllerSpec extends ControllerSpecBase with MockitoSugar with CSRFRequest {
 
-  def onwardRoute: Call = routes.DirectorPreviousAddressPostcodeLookupController.onSubmit(NormalMode, establisherIndex, directorIndex)
+  def onwardRoute: Call = routes.DirectorPreviousAddressPostcodeLookupController.onSubmit(NormalMode, establisherIndex, directorIndex, None)
 
-  def manualInputCall: Call = routes.DirectorPreviousAddressController.onPageLoad(NormalMode, establisherIndex, directorIndex)
+  def manualInputCall: Call = routes.DirectorPreviousAddressController.onPageLoad(NormalMode, establisherIndex, directorIndex, None)
 
   val formProvider = new PostCodeLookupFormProvider()
 
@@ -58,7 +59,7 @@ class DirectorPreviousAddressPostcodeLookupControllerSpec extends ControllerSpec
 
   val form = formProvider()
   val fakeAddressLookupConnector: AddressLookupConnector = mock[AddressLookupConnector]
-  val fakeCacheConnector: UserAnswersCacheConnector = mock[UserAnswersCacheConnector]
+  val fakeCacheConnector: UserAnswersService = mock[UserAnswersService]
 
 
   lazy val viewmodel = PostcodeLookupViewModel(
@@ -74,11 +75,11 @@ class DirectorPreviousAddressPostcodeLookupControllerSpec extends ControllerSpec
 
     "return OK and the correct view for a GET" in {
 
-      val call: Call = routes.DirectorPreviousAddressPostcodeLookupController.onPageLoad(NormalMode, establisherIndex, directorIndex)
+      val call: Call = routes.DirectorPreviousAddressPostcodeLookupController.onPageLoad(NormalMode, establisherIndex, directorIndex, None)
       running(_.overrides(
         bind[FrontendAppConfig].to(frontendAppConfig),
         bind[Navigator].toInstance(FakeNavigator),
-        bind[UserAnswersCacheConnector].toInstance(fakeCacheConnector),
+        bind[UserAnswersService].toInstance(fakeCacheConnector),
         bind[AddressLookupConnector].toInstance(fakeAddressLookupConnector),
         bind[AuthAction].to(FakeAuthAction),
         bind[DataRetrievalAction].to(getMandatoryEstablisherCompanyDirector)
@@ -103,7 +104,7 @@ class DirectorPreviousAddressPostcodeLookupControllerSpec extends ControllerSpec
     "redirect to the next page on POST request" in {
 
       val validPostcode = "ZZ1 1ZZ"
-      val onwardUrl = routes.DirectorPreviousAddressListController.onPageLoad(NormalMode, establisherIndex, directorIndex)
+      val onwardUrl = routes.DirectorPreviousAddressListController.onPageLoad(NormalMode, establisherIndex, directorIndex, None)
 
       val fakeRequest = addToken(FakeRequest(onwardRoute)
         .withFormUrlEncodedBody("value" -> validPostcode))
@@ -117,7 +118,7 @@ class DirectorPreviousAddressPostcodeLookupControllerSpec extends ControllerSpec
         bind[FrontendAppConfig].to(frontendAppConfig),
         bind[MessagesApi].to(messagesApi),
         bind[Navigator].toInstance(new FakeNavigator(desiredRoute = onwardRoute)),
-        bind[UserAnswersCacheConnector].toInstance(FakeUserAnswersCacheConnector),
+        bind[UserAnswersService].toInstance(FakeUserAnswersService),
         bind[AddressLookupConnector].toInstance(fakeAddressLookupConnector),
         bind[AuthAction].to(FakeAuthAction),
         bind[DataRetrievalAction].to(getMandatoryEstablisherCompanyDirector),

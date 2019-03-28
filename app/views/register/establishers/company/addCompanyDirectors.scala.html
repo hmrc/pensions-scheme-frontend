@@ -19,6 +19,7 @@
 @import uk.gov.hmrc.play.views.html._
 @import models.Mode
 @import models.register.DirectorEntity
+@import play.api.mvc.Call
 
 @(
     appConfig: FrontendAppConfig,
@@ -26,7 +27,8 @@
     mode: Mode,
     establisherIndex: Int,
     directors: Seq[DirectorEntity],
-    schemeName: Option[String]
+    schemeName: Option[String],
+    postCall: Call
 )(implicit request: Request[_], messages: Messages)
 
 @disableSubmission = @{
@@ -38,7 +40,7 @@
     appConfig = appConfig,
     bodyClasses = None) {
 
-    @helpers.form(action = routes.AddCompanyDirectorsController.onSubmit(mode, establisherIndex), 'autoComplete -> "off") {
+    @helpers.form(action = postCall, 'autoComplete -> "off") {
 
         @components.error_summary(form.errors)
 

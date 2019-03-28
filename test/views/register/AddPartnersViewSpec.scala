@@ -39,7 +39,7 @@ class AddPartnersViewSpec extends YesNoViewBehaviours with EntityListBehaviours 
   // scalastyle:on magic.number
 
   val messageKeyPrefix = "addPartners"
-  private val postUrl: Call = routes.AddPartnersController.onSubmit(NormalMode, establisherIndex)
+  private val postUrl: Call = routes.AddPartnersController.onSubmit(NormalMode, establisherIndex, None)
 
   val form = new AddPartnersFormProvider()()
   private val johnDoeEntity = PartnerEntity(PartnerDetailsId(0, 0), johnDoe.fullName, isDeleted = false, isCompleted = false)
@@ -74,7 +74,7 @@ class AddPartnersViewSpec extends YesNoViewBehaviours with EntityListBehaviours 
     behave like yesNoPage(
       createViewUsingForm(Seq(johnDoeEntity)),
       messageKeyPrefix,
-      routes.AddPartnersController.onSubmit(NormalMode, 0).url,
+      routes.AddPartnersController.onSubmit(NormalMode, 0, None).url,
       legendKey = "add_more",
       expectedHintKey = Some("lede")
     )

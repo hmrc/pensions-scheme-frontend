@@ -17,7 +17,6 @@
 package controllers.register.establishers.partnership
 
 import config.FrontendAppConfig
-import connectors.UserAnswersCacheConnector
 import controllers.VatController
 import controllers.actions._
 import forms.VatFormProvider
@@ -26,6 +25,7 @@ import javax.inject.Inject
 import models.{Index, Mode}
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent}
+import services.UserAnswersService
 import utils.Navigator
 import utils.annotations.EstablisherPartnership
 import viewmodels.{Message, VatViewModel}
@@ -34,7 +34,7 @@ import viewmodels.{Message, VatViewModel}
 class PartnershipVatController @Inject()(
                                           override val appConfig: FrontendAppConfig,
                                           override val messagesApi: MessagesApi,
-                                          override val cacheConnector: UserAnswersCacheConnector,
+                                          val userAnswersService: UserAnswersService,
                                           @EstablisherPartnership override val navigator: Navigator,
                                           authenticate: AuthAction,
                                           getData: DataRetrievalAction,
@@ -42,34 +42,37 @@ class PartnershipVatController @Inject()(
                                           formProvider: VatFormProvider
                                         ) extends VatController {
 
-  private def viewmodel(mode: Mode, index: Index): Retrieval[VatViewModel] =
+  private def viewmodel(mode: Mode, index: Index, srn: Option[String]): Retrieval[VatViewModel] =
     Retrieval {
       implicit request =>
         PartnershipDetailsId(index).retrieve.right.map {
           details =>
             VatViewModel(
-              postCall = routes.PartnershipVatController.onSubmit(mode, index),
+              postCall = routes.PartnershipVatController.onSubmit(mode, index, srn),
               title = Message("messages__partnershipVat__title"),
               heading = Message("messages__partnershipVat__heading"),
               hint = Message("messages__common__vat__hint"),
-              subHeading = Some(details.name)
+              subHeading = Some(details.name),
+              srn = srn
             )
         }
     }
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      viewmodel(mode, index).retrieve.right.map {
+      viewmodel(mode, index, srn).retrieve.right.map {
         vm =>
           get(PartnershipVatId(index), form, vm)
       }
   }
 
-  def onSubmit(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      viewmodel(mode, index).retrieve.right.map {
+      viewmodel(mode, index, srn).retrieve.right.map {
         vm =>
           post(PartnershipVatId(index), mode, form, vm)
       }

@@ -17,13 +17,13 @@
 package controllers
 
 import config.FrontendAppConfig
-import connectors.UserAnswersCacheConnector
 import identifiers.TypedIdentifier
 import models.requests.DataRequest
 import models.{Mode, Vat}
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{AnyContent, Result}
+import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.{Navigator, UserAnswers}
 import viewmodels.VatViewModel
@@ -37,7 +37,7 @@ trait VatController extends FrontendController with Retrievals with I18nSupport 
 
   protected def appConfig: FrontendAppConfig
 
-  protected def cacheConnector: UserAnswersCacheConnector
+  protected def userAnswersService: UserAnswersService
 
   protected def navigator: Navigator
 
@@ -55,7 +55,7 @@ trait VatController extends FrontendController with Retrievals with I18nSupport 
       (formWithErrors: Form[_]) =>
         Future.successful(BadRequest(vat(appConfig, formWithErrors, viewmodel, existingSchemeName))),
       value =>
-        cacheConnector.save(request.externalId, id, value).map(cacheMap =>
+        userAnswersService.save(mode, viewmodel.srn, id, value).map(cacheMap =>
           Redirect(navigator.nextPage(id, mode, UserAnswers(cacheMap))))
     )
   }

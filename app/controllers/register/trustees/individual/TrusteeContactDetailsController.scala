@@ -17,7 +17,6 @@
 package controllers.register.trustees.individual
 
 import config.FrontendAppConfig
-import connectors.UserAnswersCacheConnector
 import controllers.actions._
 import forms.ContactDetailsFormProvider
 import identifiers.register.trustees.individual.{TrusteeContactDetailsId, TrusteeDetailsId}
@@ -25,6 +24,7 @@ import javax.inject.Inject
 import models.{Index, Mode}
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent}
+import services.UserAnswersService
 import utils.Navigator
 import utils.annotations.TrusteesIndividual
 import viewmodels.{ContactDetailsViewModel, Message}
@@ -33,7 +33,7 @@ class TrusteeContactDetailsController @Inject()(
                                                  @TrusteesIndividual override val navigator: Navigator,
                                                  override val appConfig: FrontendAppConfig,
                                                  override val messagesApi: MessagesApi,
-                                                 override val cacheConnector: UserAnswersCacheConnector,
+                                                 val userAnswersService: UserAnswersService,
                                                  authenticate: AuthAction,
                                                  getData: DataRetrievalAction,
                                                  requireData: DataRequiredAction,
@@ -42,24 +42,24 @@ class TrusteeContactDetailsController @Inject()(
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       TrusteeDetailsId(index).retrieve.right.map {
         trusteeDetails =>
-          get(TrusteeContactDetailsId(index), form, viewmodel(mode, index, trusteeDetails.fullName))
+          get(TrusteeContactDetailsId(index), form, viewmodel(mode, index, trusteeDetails.fullName, srn))
       }
   }
 
-  def onSubmit(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       TrusteeDetailsId(index).retrieve.right.map {
         trusteeDetails =>
-          post(TrusteeContactDetailsId(index), mode, form, viewmodel(mode, index, trusteeDetails.fullName))
+          post(TrusteeContactDetailsId(index), mode, form, viewmodel(mode, index, trusteeDetails.fullName, srn))
       }
   }
 
-  private def viewmodel(mode: Mode, index: Index, trusteeName: String) = ContactDetailsViewModel(
-    postCall = routes.TrusteeContactDetailsController.onSubmit(mode, index),
+  private def viewmodel(mode: Mode, index: Index, trusteeName: String, srn: Option[String]) = ContactDetailsViewModel(
+    postCall = routes.TrusteeContactDetailsController.onSubmit(mode, index, srn),
     title = Message("messages__trustee_contact_details__title"),
     heading = Message("messages__trustee_contact_details__heading"),
     body = Message("messages__contact_details__body"),

@@ -17,7 +17,6 @@
 package controllers.register.trustees
 
 import config.FrontendAppConfig
-import connectors.UserAnswersCacheConnector
 import controllers.Retrievals
 import controllers.actions._
 import forms.register.trustees.ConfirmDeleteTrusteeFormProvider
@@ -26,14 +25,15 @@ import identifiers.register.trustees.company.CompanyDetailsId
 import identifiers.register.trustees.individual.TrusteeDetailsId
 import identifiers.register.trustees.partnership.PartnershipDetailsId
 import javax.inject.Inject
+import models._
 import models.person.PersonDetails
 import models.register.trustees.TrusteeKind
 import models.register.trustees.TrusteeKind.{Company, Individual, Partnership}
 import models.requests.DataRequest
-import models.{CompanyDetails, Index, NormalMode, PartnershipDetails}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Result}
+import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.Trustees
 import utils.{Navigator, UserAnswers}
@@ -47,18 +47,19 @@ class ConfirmDeleteTrusteeController @Inject()(appConfig: FrontendAppConfig,
                                                getData: DataRetrievalAction,
                                                requireData: DataRequiredAction,
                                                @Trustees navigator: Navigator,
-                                               dataCacheConnector: UserAnswersCacheConnector,
+                                               userAnswersService: UserAnswersService,
                                                formProvider: ConfirmDeleteTrusteeFormProvider)(implicit val ec: ExecutionContext)
   extends FrontendController with I18nSupport with Retrievals {
 
   private val form: Form[Boolean] = formProvider()
 
-  def onPageLoad(index: Index, trusteeKind: TrusteeKind): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onPageLoad(mode: Mode, index: Index, trusteeKind: TrusteeKind, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData andThen requireData).async {
     implicit request =>
       getDeletableTrustee(index, trusteeKind, request.userAnswers) map {
         trustee =>
           if (trustee.isDeleted) {
-            Future.successful(Redirect(routes.AlreadyDeletedController.onPageLoad(index, trusteeKind)))
+            Future.successful(Redirect(routes.AlreadyDeletedController.onPageLoad(mode, index, trusteeKind, srn)))
           } else {
             Future.successful(
               Ok(
@@ -66,7 +67,7 @@ class ConfirmDeleteTrusteeController @Inject()(appConfig: FrontendAppConfig,
                   appConfig,
                   form,
                   trustee.name,
-                  routes.ConfirmDeleteTrusteeController.onSubmit(index, trusteeKind),
+                  routes.ConfirmDeleteTrusteeController.onSubmit(mode, index, trusteeKind, srn),
                   existingSchemeName
                 )
               )
@@ -75,20 +76,21 @@ class ConfirmDeleteTrusteeController @Inject()(appConfig: FrontendAppConfig,
       } getOrElse Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
   }
 
-  def onSubmit(index: Index, trusteeKind: TrusteeKind): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode, index: Index, trusteeKind: TrusteeKind, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData andThen requireData).async {
     implicit request =>
       trusteeKind match {
         case Company =>
           CompanyDetailsId(index).retrieve.right.map { companyDetails =>
-            updateTrusteeKind(companyDetails.companyName, trusteeKind, index, Some(companyDetails), None, None)
+            updateTrusteeKind(companyDetails.companyName, trusteeKind, index, Some(companyDetails), None, None, srn, mode)
           }
         case Individual =>
           TrusteeDetailsId(index).retrieve.right.map { trusteeDetails =>
-            updateTrusteeKind(trusteeDetails.fullName, trusteeKind, index, None, Some(trusteeDetails), None)
+            updateTrusteeKind(trusteeDetails.fullName, trusteeKind, index, None, Some(trusteeDetails), None, srn, mode)
           }
         case Partnership =>
           PartnershipDetailsId(index).retrieve.right.map { partnershipDetails =>
-            updateTrusteeKind(partnershipDetails.name, trusteeKind, index, None, None, Some(partnershipDetails))
+            updateTrusteeKind(partnershipDetails.name, trusteeKind, index, None, None, Some(partnershipDetails), srn, mode)
           }
         case _ =>
           Left(Future.successful(SeeOther(controllers.routes.SessionExpiredController.onPageLoad().url)))
@@ -100,31 +102,33 @@ class ConfirmDeleteTrusteeController @Inject()(appConfig: FrontendAppConfig,
                                 trusteeIndex: Index,
                                 companyDetails: Option[CompanyDetails],
                                 trusteeDetails: Option[PersonDetails],
-                                partnershipDetails: Option[PartnershipDetails])(implicit dataRequest: DataRequest[AnyContent]): Future[Result] = {
+                                partnershipDetails: Option[PartnershipDetails],
+                                srn: Option[String],
+                                mode: Mode)(implicit dataRequest: DataRequest[AnyContent]): Future[Result] = {
     form.bindFromRequest().fold(
       (formWithErrors: Form[_]) =>
         Future.successful(BadRequest(confirmDeleteTrustee(
           appConfig,
           formWithErrors,
           name,
-          routes.ConfirmDeleteTrusteeController.onSubmit(trusteeIndex, trusteeKind),
+          routes.ConfirmDeleteTrusteeController.onSubmit(mode, trusteeIndex, trusteeKind, srn),
           existingSchemeName
         ))),
       value => {
         val deletionResult = if (value) {
           trusteeKind match {
-            case Company => companyDetails.fold(Future.successful(dataRequest.userAnswers))(
-              company => dataCacheConnector.save(CompanyDetailsId(trusteeIndex), company.copy(isDeleted = true)))
-            case Individual => trusteeDetails.fold(Future.successful(dataRequest.userAnswers))(
-              trustee => dataCacheConnector.save(TrusteeDetailsId(trusteeIndex), trustee.copy(isDeleted = true)))
-            case Partnership => partnershipDetails.fold(Future.successful(dataRequest.userAnswers))(
-              partnership => dataCacheConnector.save(PartnershipDetailsId(trusteeIndex), partnership.copy(isDeleted = true)))
+            case Company => companyDetails.fold(Future.successful(dataRequest.userAnswers.json))(
+              company => userAnswersService.save(mode, srn, CompanyDetailsId(trusteeIndex), company.copy(isDeleted = true)))
+            case Individual => trusteeDetails.fold(Future.successful(dataRequest.userAnswers.json))(
+              trustee => userAnswersService.save(mode, srn, TrusteeDetailsId(trusteeIndex), trustee.copy(isDeleted = true)))
+            case Partnership => partnershipDetails.fold(Future.successful(dataRequest.userAnswers.json))(
+              partnership => userAnswersService.save(mode, srn, PartnershipDetailsId(trusteeIndex), partnership.copy(isDeleted = true)))
           }
         } else {
-          Future.successful(dataRequest.userAnswers)
+          Future.successful(dataRequest.userAnswers.json)
         }
-        deletionResult.flatMap { userAnswers =>
-          Future.successful(Redirect(navigator.nextPage(ConfirmDeleteTrusteeId, NormalMode, userAnswers)))
+        deletionResult.flatMap { answers =>
+          Future.successful(Redirect(navigator.nextPage(ConfirmDeleteTrusteeId, NormalMode, UserAnswers(answers))))
         }
       }
     )

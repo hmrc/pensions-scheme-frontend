@@ -17,7 +17,7 @@
 package controllers.register.trustees.individual
 
 import config.FrontendAppConfig
-import connectors.{AddressLookupConnector, UserAnswersCacheConnector}
+import connectors.AddressLookupConnector
 import controllers.actions._
 import controllers.address.PostcodeLookupController
 import forms.address.PostCodeLookupFormProvider
@@ -27,6 +27,7 @@ import models.{Index, Mode}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
+import services.UserAnswersService
 import utils.Navigator
 import utils.annotations.TrusteesIndividual
 import viewmodels.Message
@@ -35,7 +36,7 @@ import viewmodels.address.PostcodeLookupViewModel
 class IndividualPreviousAddressPostcodeLookupController @Inject()(
                                                                    val appConfig: FrontendAppConfig,
                                                                    override val messagesApi: MessagesApi,
-                                                                   val cacheConnector: UserAnswersCacheConnector,
+                                                                   val userAnswersService: UserAnswersService,
                                                                    @TrusteesIndividual val navigator: Navigator,
                                                                    authenticate: AuthAction,
                                                                    getData: DataRetrievalAction,
@@ -45,14 +46,14 @@ class IndividualPreviousAddressPostcodeLookupController @Inject()(
                                                                  ) extends PostcodeLookupController with I18nSupport {
   override protected val form: Form[String] = formProvider()
 
-  private def viewmodel(index: Int, mode: Mode): Retrieval[PostcodeLookupViewModel] =
+  private def viewmodel(index: Int, mode: Mode, srn: Option[String]): Retrieval[PostcodeLookupViewModel] =
     Retrieval {
       implicit request =>
         TrusteeDetailsId(index).retrieve.right.map {
           details =>
             PostcodeLookupViewModel(
-              routes.IndividualPreviousAddressPostcodeLookupController.onSubmit(mode, index),
-              routes.TrusteePreviousAddressController.onPageLoad(mode, index),
+              routes.IndividualPreviousAddressPostcodeLookupController.onSubmit(mode, index, srn),
+              routes.TrusteePreviousAddressController.onPageLoad(mode, index, srn),
               title = Message("messages__trustee_individual_previous_address__title"),
               heading = Message("messages__trustee_individual_previous_address__heading"),
               subHeading = Some(details.fullName),
@@ -62,14 +63,14 @@ class IndividualPreviousAddressPostcodeLookupController @Inject()(
         }
     }
 
-  def onPageLoad(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      viewmodel(index, mode).retrieve.right map get
+      viewmodel(index, mode, srn).retrieve.right map get
   }
 
-  def onSubmit(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      viewmodel(index, mode).retrieve.right.map { vm =>
+      viewmodel(index, mode, srn).retrieve.right.map { vm =>
         post(IndividualPreviousAddressPostCodeLookupId(index), vm, mode)
       }
   }

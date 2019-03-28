@@ -14,20 +14,12 @@
  * limitations under the License.
  */
 
-import org.scalatest.{MustMatchers, OptionValues, WordSpec}
+package toggles
 
-class DataCacheModuleSpec extends WordSpec with MustMatchers with OptionValues {
+class TogglesSpec extends FeatureToggleBehaviours {
 
-  ".bindings" must {
-
-    /*"bind the `MicroserviceCacheConnector` when no configuration value is given" in {
-
-      val config = Configuration()
-      val bindings = new DataCacheModule().bindings(Environment.simple(), config)
-      val binding = bind[UserAnswersCacheConnector].to[MicroserviceCacheConnector]
-
-      bindings.head.target.value mustEqual binding.target.value
-    }*/
-
+  "is-variations-enabled new feature toggle" should {
+    behave like featureToggle("is-variations-enabled", false)
   }
+
 }

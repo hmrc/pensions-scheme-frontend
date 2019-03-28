@@ -18,7 +18,7 @@ package controllers.register.trustees.company
 
 import base.CSRFRequest
 import config.FrontendAppConfig
-import connectors.{AddressLookupConnector, UserAnswersCacheConnector, FakeUserAnswersCacheConnector}
+import connectors.AddressLookupConnector
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.address.PostCodeLookupFormProvider
@@ -36,6 +36,7 @@ import play.api.libs.json.Json
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import services.{FakeUserAnswersService, UserAnswersService}
 import utils.{FakeNavigator, Navigator}
 import viewmodels.Message
 import viewmodels.address.PostcodeLookupViewModel
@@ -45,7 +46,7 @@ import scala.concurrent.Future
 
 class CompanyPreviousAddressPostCodeLookupControllerSpec extends ControllerSpecBase with CSRFRequest with MockitoSugar with ScalaFutures {
 
-  def onwardRoute: Call = routes.CompanyPreviousAddressListController.onPageLoad(NormalMode, Index(0))
+  def onwardRoute: Call = routes.CompanyPreviousAddressListController.onPageLoad(NormalMode, Index(0), None)
 
   val formProvider = new PostCodeLookupFormProvider()
   val form = formProvider()
@@ -67,12 +68,12 @@ class CompanyPreviousAddressPostCodeLookupControllerSpec extends ControllerSpecB
 
     "render postcodeLookup from GET request" in {
 
-      val cacheConnector: UserAnswersCacheConnector = mock[UserAnswersCacheConnector]
+      val cacheConnector: UserAnswersService = mock[UserAnswersService]
 
       running(_.overrides(
         bind[FrontendAppConfig].to(frontendAppConfig),
         bind[Navigator].toInstance(FakeNavigator),
-        bind[UserAnswersCacheConnector].toInstance(cacheConnector),
+        bind[UserAnswersService].toInstance(cacheConnector),
         bind[AddressLookupConnector].toInstance(fakeAddressLookupConnector),
         bind[AuthAction].to(FakeAuthAction),
         bind[DataRetrievalAction].to(retrieval)
@@ -82,14 +83,14 @@ class CompanyPreviousAddressPostCodeLookupControllerSpec extends ControllerSpecB
           val controller = app.injector.instanceOf[CompanyPreviousAddressPostcodeLookupController]
 
           lazy val viewModel = PostcodeLookupViewModel(
-            postCall = controller.postCall(NormalMode, firstIndex),
-            manualInputCall = controller.manualAddressCall(NormalMode, firstIndex),
+            postCall = controller.postCall(NormalMode, firstIndex, None),
+            manualInputCall = controller.manualAddressCall(NormalMode, firstIndex, None),
             title = Message(controller.title),
             heading = Message(controller.heading),
             subHeading = Some(company.companyName)
           )
 
-          val request = addToken(FakeRequest(routes.CompanyPreviousAddressPostcodeLookupController.onPageLoad(NormalMode, firstIndex))
+          val request = addToken(FakeRequest(routes.CompanyPreviousAddressPostcodeLookupController.onPageLoad(NormalMode, firstIndex, None))
             .withHeaders("Csrf-Token" -> "nocheck"))
 
           val result = route(app, request).value
@@ -108,7 +109,7 @@ class CompanyPreviousAddressPostCodeLookupControllerSpec extends ControllerSpecB
     "redirect to next page on POST request" which {
       "returns a list of addresses from addressLookup given a postcode" in {
 
-        val call: Call = routes.CompanyPreviousAddressPostcodeLookupController.onSubmit(NormalMode, firstIndex)
+        val call: Call = routes.CompanyPreviousAddressPostcodeLookupController.onSubmit(NormalMode, firstIndex, None)
 
         val validPostcode = "ZZ1 1ZZ"
 
@@ -120,7 +121,7 @@ class CompanyPreviousAddressPostCodeLookupControllerSpec extends ControllerSpecB
         running(_.overrides(
           bind[FrontendAppConfig].to(frontendAppConfig),
           bind[MessagesApi].to(messagesApi),
-          bind[UserAnswersCacheConnector].toInstance(FakeUserAnswersCacheConnector),
+          bind[UserAnswersService].toInstance(FakeUserAnswersService),
           bind[AddressLookupConnector].toInstance(fakeAddressLookupConnector),
           bind[AuthAction].to(FakeAuthAction),
           bind[DataRetrievalAction].to(retrieval),

@@ -18,6 +18,7 @@ package views.register.establishers.partnership.partner
 
 import controllers.register.establishers.partnership.partner.routes.ConfirmDeletePartnerController
 import forms.register.establishers.partnership.partner.ConfirmDeletePartnerFormProvider
+import models.NormalMode
 import play.api.data.Form
 import play.twirl.api.HtmlFormat
 import views.behaviours.YesNoViewBehaviours
@@ -28,7 +29,7 @@ class ConfirmDeletePartnerViewSpec extends YesNoViewBehaviours{
   val messageKeyPrefix = "confirmDeletePartner"
 
   private val partnerName = "John Doe"
-  private val postCall = ConfirmDeletePartnerController.onSubmit(establisherIndex = 0, partnerIndex = 0)
+  private val postCall = ConfirmDeletePartnerController.onSubmit(NormalMode, establisherIndex = 0, partnerIndex = 0, None)
 
   val form = new ConfirmDeletePartnerFormProvider()()
 

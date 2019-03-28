@@ -17,7 +17,6 @@
 package controllers.register.establishers.partnership.partner
 
 import config.FrontendAppConfig
-import connectors.UserAnswersCacheConnector
 import controllers.actions._
 import forms.ContactDetailsFormProvider
 import identifiers.register.establishers.partnership.partner.{PartnerContactDetailsId, PartnerDetailsId}
@@ -25,6 +24,7 @@ import javax.inject.Inject
 import models.{Index, Mode}
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent}
+import services.UserAnswersService
 import utils._
 import utils.annotations.EstablishersPartner
 import viewmodels.{ContactDetailsViewModel, Message}
@@ -33,7 +33,7 @@ class PartnerContactDetailsController @Inject()(
                                                  @EstablishersPartner override val navigator: Navigator,
                                                  override val appConfig: FrontendAppConfig,
                                                  override val messagesApi: MessagesApi,
-                                                 override val cacheConnector: UserAnswersCacheConnector,
+                                                 val userAnswersService: UserAnswersService,
                                                  authenticate: AuthAction,
                                                  getData: DataRetrievalAction,
                                                  requireData: DataRequiredAction,
@@ -42,24 +42,26 @@ class PartnerContactDetailsController @Inject()(
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData andThen requireData).async {
     implicit request =>
       PartnerDetailsId(establisherIndex, partnerIndex).retrieve.right.map {
         partner =>
-          get(PartnerContactDetailsId(establisherIndex, partnerIndex), form, viewmodel(mode, establisherIndex, partnerIndex, partner.fullName))
+          get(PartnerContactDetailsId(establisherIndex, partnerIndex), form, viewmodel(mode, establisherIndex, partnerIndex, partner.fullName, srn))
       }
   }
 
-  def onSubmit(mode: Mode, establisherIndex: Index, partnerIndex: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData andThen requireData).async {
     implicit request =>
       PartnerDetailsId(establisherIndex, partnerIndex).retrieve.right.map {
         partner =>
-          post(PartnerContactDetailsId(establisherIndex, partnerIndex), mode, form, viewmodel(mode, establisherIndex, partnerIndex, partner.fullName))
+          post(PartnerContactDetailsId(establisherIndex, partnerIndex), mode, form, viewmodel(mode, establisherIndex, partnerIndex, partner.fullName, srn))
       }
   }
 
-  private def viewmodel(mode: Mode, establisherIndex: Index, partnerIndex: Index, partnerName: String) = ContactDetailsViewModel(
-    postCall = routes.PartnerContactDetailsController.onSubmit(mode, establisherIndex, partnerIndex),
+  private def viewmodel(mode: Mode, establisherIndex: Index, partnerIndex: Index, partnerName: String, srn: Option[String]) = ContactDetailsViewModel(
+    postCall = routes.PartnerContactDetailsController.onSubmit(mode, establisherIndex, partnerIndex, srn),
     title = Message("messages__partner_contact__title"),
     heading = Message("messages__partner_contact__heading"),
     body = Message("messages__partner_contact__body"),
