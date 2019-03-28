@@ -22,7 +22,7 @@ import controllers.actions.{AuthAction, DataRequiredAction, DataRetrievalAction}
 import identifiers.register.trustees.IsTrusteeCompleteId
 import identifiers.register.trustees.individual._
 import javax.inject.Inject
-import models.{CheckMode, Index, NormalMode}
+import models.{CheckMode, Index, Mode, NormalMode}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
@@ -45,17 +45,17 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
                                            implicit val countryOptions: CountryOptions
                                           )(implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport {
 
-  def onPageLoad(index: Index): Action[AnyContent] = (authenticate andThen getData andThen requiredData).async {
+  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData andThen requiredData).async {
     implicit request =>
-      val trusteeDetailsRow = TrusteeDetailsId(index).row(routes.TrusteeDetailsController.onPageLoad(CheckMode, index).url)
-      val trusteeNinoRow = TrusteeNinoId(index).row(routes.TrusteeNinoController.onPageLoad(CheckMode, index).url)
-      val trusteeUtrRow = UniqueTaxReferenceId(index).row(routes.UniqueTaxReferenceController.onPageLoad(CheckMode, index).url)
-      val trusteeAddressRow = TrusteeAddressId(index).row(routes.TrusteeAddressController.onPageLoad(CheckMode, index).url)
+      val trusteeDetailsRow = TrusteeDetailsId(index).row(routes.TrusteeDetailsController.onPageLoad(CheckMode, index, None).url)
+      val trusteeNinoRow = TrusteeNinoId(index).row(routes.TrusteeNinoController.onPageLoad(CheckMode, index, None).url)
+      val trusteeUtrRow = UniqueTaxReferenceId(index).row(routes.UniqueTaxReferenceController.onPageLoad(CheckMode, index, None).url)
+      val trusteeAddressRow = TrusteeAddressId(index).row(routes.TrusteeAddressController.onPageLoad(CheckMode, index, None).url)
       val trusteeAddressYearsRow = TrusteeAddressYearsId(index).row(
-        routes.TrusteeAddressYearsController.onPageLoad(CheckMode, index).url)
+        routes.TrusteeAddressYearsController.onPageLoad(CheckMode, index, None).url)
       val trusteePreviousAddressRow = TrusteePreviousAddressId(index).row(routes.TrusteePreviousAddressController.onPageLoad(CheckMode,
-        index).url)
-      val trusteeContactDetails = TrusteeContactDetailsId(index).row(routes.TrusteeContactDetailsController.onPageLoad(CheckMode, index).url)
+        index, None).url)
+      val trusteeContactDetails = TrusteeContactDetailsId(index).row(routes.TrusteeContactDetailsController.onPageLoad(CheckMode, index, None).url)
 
       val trusteeDetailsSection = AnswerSection(None,
         trusteeDetailsRow ++ trusteeNinoRow ++ trusteeUtrRow
@@ -68,12 +68,12 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
       Future.successful(Ok(check_your_answers(
         appConfig,
         Seq(trusteeDetailsSection, contactDetailsSection),
-        routes.CheckYourAnswersController.onSubmit(index),
+        routes.CheckYourAnswersController.onSubmit(mode, index, srn),
         existingSchemeName
       )))
   }
 
-  def onSubmit(index: Index): Action[AnyContent] = (authenticate andThen getData andThen requiredData).async {
+  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData andThen requiredData).async {
     implicit request =>
       sectionComplete.setCompleteFlag(request.externalId, IsTrusteeCompleteId(index), request.userAnswers, true).map { _ =>
         Redirect(navigator.nextPage(CheckYourAnswersId, NormalMode, request.userAnswers))

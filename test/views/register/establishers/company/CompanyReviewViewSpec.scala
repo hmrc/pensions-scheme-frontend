@@ -41,9 +41,9 @@ class CompanyReviewViewSpec extends ViewBehaviours {
   )
 
   def createView(): () => HtmlFormat.Appendable = () =>
-    companyReview(frontendAppConfig, index, companyName, directors, None)(fakeRequest, messages)
+    companyReview(frontendAppConfig, index, companyName, directors, None, NormalMode, None)(fakeRequest, messages)
 
-  def createSecView: () => HtmlFormat.Appendable = () => companyReview(frontendAppConfig, index, companyName, tenDirectors, None)(fakeRequest, messages)
+  def createSecView: () => HtmlFormat.Appendable = () => companyReview(frontendAppConfig, index, companyName, tenDirectors, None, NormalMode, None)(fakeRequest, messages)
 
   "CompanyReview view" must {
     behave like normalPage(
@@ -58,13 +58,13 @@ class CompanyReviewViewSpec extends ViewBehaviours {
 
     "have link to edit company details" in {
       Jsoup.parse(createView()().toString).select("a[id=edit-company-details]") must haveLink(
-        routes.CheckYourAnswersController.onPageLoad(index).url
+        routes.CheckYourAnswersController.onPageLoad(NormalMode, None, index).url
       )
     }
 
     "have link to edit director details when there are less than 10 directors" in {
       Jsoup.parse(createView()().toString).select("a[id=edit-director-details]") must haveLink(
-        routes.AddCompanyDirectorsController.onPageLoad(NormalMode, index).url
+        routes.AddCompanyDirectorsController.onPageLoad(NormalMode, None, index).url
       )
       Jsoup.parse(createView()().toString) must haveDynamicText("messages__companyReview__directors__editLink")
 
@@ -72,7 +72,7 @@ class CompanyReviewViewSpec extends ViewBehaviours {
 
     "have link to edit directors when there are 10 directors" in {
       Jsoup.parse(createView()().toString).select("a[id=edit-director-details]") must haveLink(
-        routes.AddCompanyDirectorsController.onPageLoad(NormalMode, index).url
+        routes.AddCompanyDirectorsController.onPageLoad(NormalMode, None, index).url
       )
       Jsoup.parse(createSecView().toString) must haveDynamicText("messages__companyReview__directors__changeLink")
     }

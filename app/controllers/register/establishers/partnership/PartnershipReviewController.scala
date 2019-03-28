@@ -22,7 +22,7 @@ import controllers.actions.{AuthAction, DataRequiredAction, DataRetrievalAction}
 import identifiers.register.establishers.IsEstablisherCompleteId
 import identifiers.register.establishers.partnership.{IsPartnershipCompleteId, PartnershipDetailsId, PartnershipReviewId}
 import javax.inject.Inject
-import models.{Index, NormalMode}
+import models.{Index, Mode, NormalMode}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
@@ -41,17 +41,17 @@ class PartnershipReviewController @Inject()(appConfig: FrontendAppConfig,
                                             sectionComplete: SectionComplete) (implicit val ec: ExecutionContext)
   extends FrontendController with I18nSupport with Retrievals {
 
-  def onPageLoad(index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       PartnershipDetailsId(index).retrieve.right.map {
         case partnershipDetails =>
           val partners: Seq[String] = request.userAnswers.allPartnersAfterDelete(index).map(_.name)
 
-          Future.successful(Ok(partnershipReview(appConfig, index, partnershipDetails.name, partners, existingSchemeName)))
+          Future.successful(Ok(partnershipReview(appConfig, index, partnershipDetails.name, partners, existingSchemeName, srn, mode)))
       }
   }
 
-  def onSubmit(index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       val allPartners = request.userAnswers.allPartnersAfterDelete(index)
       val allPartnersCompleted = allPartners.nonEmpty & (allPartners.count(!_.isCompleted) == 0)

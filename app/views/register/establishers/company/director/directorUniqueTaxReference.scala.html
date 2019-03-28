@@ -19,9 +19,9 @@
 @import controllers.register.establishers.company.director.routes._
 @import models.Mode
 @import models.UniqueTaxReference
+@import play.api.mvc.Call
 
-
-@(appConfig: FrontendAppConfig, form: Form[_], mode: Mode, establisherIndex: Index, directorIndex: Index, schemeName: Option[String])(implicit request: Request[_], messages: Messages)
+@(appConfig: FrontendAppConfig, form: Form[_], mode: Mode, establisherIndex: Index, directorIndex: Index, schemeName: Option[String], postCall: Call)(implicit request: Request[_], messages: Messages)
 
 @options = @{
     UniqueTaxReference.options
@@ -32,7 +32,7 @@
         appConfig = appConfig,
         bodyClasses = None) {
 
-            @helpers.form(action = DirectorUniqueTaxReferenceController.onSubmit(mode, establisherIndex, directorIndex), 'autoComplete -> "off") {
+            @helpers.form(action = postCall, 'autoComplete -> "off") {
 
             @components.error_summary(form.errors)
 

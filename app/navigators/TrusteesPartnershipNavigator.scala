@@ -28,36 +28,36 @@ class TrusteesPartnershipNavigator @Inject()(val dataCacheConnector: UserAnswers
                                              appConfig: FrontendAppConfig) extends Navigator {
 
   private def checkYourAnswers(index: Int, answers: UserAnswers): Option[NavigateTo] =
-    NavigateTo.save(routes.CheckYourAnswersController.onPageLoad(index))
+    NavigateTo.save(routes.CheckYourAnswersController.onPageLoad(NormalMode, index, None))
 
   //scalastyle:off cyclomatic.complexity
   override protected def routeMap(from: NavigateFrom): Option[NavigateTo] = from.id match {
     case PartnershipDetailsId(index) =>
-      NavigateTo.save(routes.PartnershipVatController.onPageLoad(NormalMode, index))
+      NavigateTo.save(routes.PartnershipVatController.onPageLoad(NormalMode, index, None))
     case PartnershipVatId(index) =>
-      NavigateTo.save(routes.PartnershipPayeController.onPageLoad(NormalMode, index))
+      NavigateTo.save(routes.PartnershipPayeController.onPageLoad(NormalMode, index, None))
     case PartnershipPayeId(index) =>
-      NavigateTo.save(routes.PartnershipUniqueTaxReferenceController.onPageLoad(NormalMode, index))
+      NavigateTo.save(routes.PartnershipUniqueTaxReferenceController.onPageLoad(NormalMode, index, None))
     case PartnershipUniqueTaxReferenceId(index) =>
-      NavigateTo.save(routes.PartnershipPostcodeLookupController.onPageLoad(NormalMode, index))
+      NavigateTo.save(routes.PartnershipPostcodeLookupController.onPageLoad(NormalMode, index, None))
     case PartnershipPostcodeLookupId(index) =>
-      NavigateTo.save(routes.PartnershipAddressListController.onPageLoad(NormalMode, index))
+      NavigateTo.save(routes.PartnershipAddressListController.onPageLoad(NormalMode, index, None))
     case PartnershipAddressListId(index) =>
-      NavigateTo.save(routes.PartnershipAddressController.onPageLoad(NormalMode, index))
+      NavigateTo.save(routes.PartnershipAddressController.onPageLoad(NormalMode, index, None))
     case PartnershipAddressId(index) =>
-      NavigateTo.save(routes.PartnershipAddressYearsController.onPageLoad(NormalMode, index))
+      NavigateTo.save(routes.PartnershipAddressYearsController.onPageLoad(NormalMode, index, None))
     case PartnershipAddressYearsId(index) =>
       addressYearsRoutes(index)(from.userAnswers)
     case PartnershipPreviousAddressPostcodeLookupId(index) =>
-      NavigateTo.save(routes.PartnershipPreviousAddressListController.onPageLoad(NormalMode, index))
+      NavigateTo.save(routes.PartnershipPreviousAddressListController.onPageLoad(NormalMode, index, None))
     case PartnershipPreviousAddressListId(index) =>
-      NavigateTo.save(routes.PartnershipPreviousAddressController.onPageLoad(NormalMode, index))
+      NavigateTo.save(routes.PartnershipPreviousAddressController.onPageLoad(NormalMode, index, None))
     case PartnershipPreviousAddressId(index) =>
-      NavigateTo.save(routes.PartnershipContactDetailsController.onPageLoad(NormalMode, index))
+      NavigateTo.save(routes.PartnershipContactDetailsController.onPageLoad(NormalMode, index, None))
     case PartnershipContactDetailsId(index) =>
-      NavigateTo.save(routes.CheckYourAnswersController.onPageLoad(index))
+      NavigateTo.save(routes.CheckYourAnswersController.onPageLoad(NormalMode, index, None))
     case CheckYourAnswersId(index) =>
-      NavigateTo.dontSave(controllers.routes.SchemeTaskListController.onPageLoad())
+      NavigateTo.dontSave(controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode, None))
     case _ =>
       None
   }
@@ -72,17 +72,17 @@ class TrusteesPartnershipNavigator @Inject()(val dataCacheConnector: UserAnswers
     case PartnershipUniqueTaxReferenceId(index) =>
       checkYourAnswers(index, from.userAnswers)
     case PartnershipPostcodeLookupId(index) =>
-      NavigateTo.save(routes.PartnershipAddressListController.onPageLoad(CheckMode, index))
+      NavigateTo.save(routes.PartnershipAddressListController.onPageLoad(CheckMode, index, None))
     case PartnershipAddressListId(index) =>
-      NavigateTo.save(routes.PartnershipAddressController.onPageLoad(CheckMode, index))
+      NavigateTo.save(routes.PartnershipAddressController.onPageLoad(CheckMode, index, None))
     case PartnershipAddressId(index) =>
       checkYourAnswers(index, from.userAnswers)
     case PartnershipAddressYearsId(index) =>
       editAddressYearsRoutes(index)(from.userAnswers)
     case PartnershipPreviousAddressPostcodeLookupId(index) =>
-      NavigateTo.save(routes.PartnershipPreviousAddressListController.onPageLoad(CheckMode, index))
+      NavigateTo.save(routes.PartnershipPreviousAddressListController.onPageLoad(CheckMode, index, None))
     case PartnershipPreviousAddressListId(index) =>
-      NavigateTo.save(routes.PartnershipPreviousAddressController.onPageLoad(CheckMode, index))
+      NavigateTo.save(routes.PartnershipPreviousAddressController.onPageLoad(CheckMode, index, None))
     case PartnershipPreviousAddressId(index) =>
       checkYourAnswers(index, from.userAnswers)
     case PartnershipContactDetailsId(index) =>
@@ -94,9 +94,9 @@ class TrusteesPartnershipNavigator @Inject()(val dataCacheConnector: UserAnswers
   private def addressYearsRoutes(index: Int)(answers: UserAnswers): Option[NavigateTo] = {
     answers.get(PartnershipAddressYearsId(index)) match {
       case Some(AddressYears.UnderAYear) =>
-        NavigateTo.save(routes.PartnershipPreviousAddressPostcodeLookupController.onPageLoad(NormalMode, index))
+        NavigateTo.save(routes.PartnershipPreviousAddressPostcodeLookupController.onPageLoad(NormalMode, index, None))
       case Some(AddressYears.OverAYear) =>
-        NavigateTo.save(routes.PartnershipContactDetailsController.onPageLoad(NormalMode, index))
+        NavigateTo.save(routes.PartnershipContactDetailsController.onPageLoad(NormalMode, index, None))
       case None =>
         NavigateTo.dontSave(controllers.routes.SessionExpiredController.onPageLoad())
     }
@@ -105,9 +105,9 @@ class TrusteesPartnershipNavigator @Inject()(val dataCacheConnector: UserAnswers
   private def editAddressYearsRoutes(index: Int)(answers: UserAnswers): Option[NavigateTo] = {
     answers.get(PartnershipAddressYearsId(index)) match {
       case Some(AddressYears.UnderAYear) =>
-        NavigateTo.save(controllers.register.trustees.partnership.routes.PartnershipPreviousAddressPostcodeLookupController.onPageLoad(CheckMode, index))
+        NavigateTo.save(controllers.register.trustees.partnership.routes.PartnershipPreviousAddressPostcodeLookupController.onPageLoad(CheckMode, index, None))
       case Some(AddressYears.OverAYear) =>
-        NavigateTo.save(controllers.register.trustees.partnership.routes.CheckYourAnswersController.onPageLoad(index))
+        NavigateTo.save(controllers.register.trustees.partnership.routes.CheckYourAnswersController.onPageLoad(NormalMode, index, None))
       case None =>
         NavigateTo.dontSave(controllers.routes.SessionExpiredController.onPageLoad())
     }

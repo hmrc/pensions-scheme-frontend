@@ -49,7 +49,7 @@ class TrusteesPartnershipNavigatorSpec extends SpecBase with NavigatorBehaviour 
     (PartnershipPreviousAddressListId(0), emptyAnswers, partnershipPa(NormalMode), true, Some(partnershipPa(CheckMode)), true),
     (PartnershipPreviousAddressId(0), emptyAnswers, partnershipContact(NormalMode), true, Some(checkYourAnswers), true),
     (PartnershipContactDetailsId(0), emptyAnswers, checkYourAnswers, true, Some(checkYourAnswers), true),
-    (CheckYourAnswersId(0), emptyAnswers, taskList, false, None, true)
+    (CheckYourAnswersId(0), emptyAnswers, addTrustee, false, None, true)
   )
 
   private val navigator: TrusteesPartnershipNavigator =
@@ -68,31 +68,31 @@ object TrusteesPartnershipNavigatorSpec extends OptionValues {
 
   private val emptyAnswers = UserAnswers(Json.obj())
 
-  private def partnershipVat(mode: Mode) = routes.PartnershipVatController.onPageLoad(mode, 0)
+  private def partnershipVat(mode: Mode) = routes.PartnershipVatController.onPageLoad(mode, 0, None)
 
-  private def checkYourAnswers = routes.CheckYourAnswersController.onPageLoad(0)
+  private def checkYourAnswers = routes.CheckYourAnswersController.onPageLoad(NormalMode, 0, None)
 
-  private def partnershipPaye(mode: Mode) = routes.PartnershipPayeController.onPageLoad(mode, 0)
+  private def partnershipPaye(mode: Mode) = routes.PartnershipPayeController.onPageLoad(mode, 0, None)
 
-  private def partnershipUtr(mode: Mode) = routes.PartnershipUniqueTaxReferenceController.onPageLoad(mode, 0)
+  private def partnershipUtr(mode: Mode) = routes.PartnershipUniqueTaxReferenceController.onPageLoad(mode, 0, None)
 
-  private def partnershipPostcodeLookup(mode: Mode) = routes.PartnershipPostcodeLookupController.onPageLoad(mode, 0)
+  private def partnershipPostcodeLookup(mode: Mode) = routes.PartnershipPostcodeLookupController.onPageLoad(mode, 0, None)
 
-  private def partnershipAddressList(mode: Mode) = routes.PartnershipAddressListController.onPageLoad(mode, 0)
+  private def partnershipAddressList(mode: Mode) = routes.PartnershipAddressListController.onPageLoad(mode, 0, None)
 
-  private def partnershipAddress(mode: Mode) = routes.PartnershipAddressController.onPageLoad(mode, 0)
+  private def partnershipAddress(mode: Mode) = routes.PartnershipAddressController.onPageLoad(mode, 0, None)
 
-  private def partnershipAddressYears(mode: Mode) = routes.PartnershipAddressYearsController.onPageLoad(mode, 0)
+  private def partnershipAddressYears(mode: Mode) = routes.PartnershipAddressYearsController.onPageLoad(mode, 0, None)
 
-  private def partnershipContact(mode: Mode) = routes.PartnershipContactDetailsController.onPageLoad(mode, 0)
+  private def partnershipContact(mode: Mode) = routes.PartnershipContactDetailsController.onPageLoad(mode, 0, None)
 
-  private def partnershipPaPostCodeLookup(mode: Mode) = routes.PartnershipPreviousAddressPostcodeLookupController.onPageLoad(mode, 0)
+  private def partnershipPaPostCodeLookup(mode: Mode) = routes.PartnershipPreviousAddressPostcodeLookupController.onPageLoad(mode, 0, None)
 
-  private def partnershipPaList(mode: Mode) = routes.PartnershipPreviousAddressListController.onPageLoad(mode, 0)
+  private def partnershipPaList(mode: Mode) = routes.PartnershipPreviousAddressListController.onPageLoad(mode, 0, None)
 
-  private def partnershipPa(mode: Mode) = routes.PartnershipPreviousAddressController.onPageLoad(mode, 0)
+  private def partnershipPa(mode: Mode) = routes.PartnershipPreviousAddressController.onPageLoad(mode, 0, None)
 
-  private def addTrustee = controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode)
+  private def addTrustee = controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode, None)
 
   private def sessionExpired = controllers.routes.SessionExpiredController.onPageLoad()
 

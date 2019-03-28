@@ -56,7 +56,6 @@ class DeclarationController @Inject()(
                                        formProvider: DeclarationFormProvider,
                                        pensionsSchemeConnector: PensionsSchemeConnector,
                                        emailConnector: EmailConnector,
-                                       psaNameCacheConnector: PSANameCacheConnector,
                                        crypto: ApplicationCrypto,
                                        pensionAdministratorConnector: PensionAdministratorConnector
                                      )(implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {

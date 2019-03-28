@@ -39,6 +39,7 @@ class AddCompanyDirectorsControllerSpec extends ControllerSpecBase {
 
   private val formProvider = new AddCompanyDirectorsFormProvider()
   private val form = formProvider()
+  private val postCall = routes.AddCompanyDirectorsController.onSubmit _
 
   private def fakeNavigator() = new FakeNavigator(desiredRoute = onwardRoute)
 
@@ -66,7 +67,8 @@ class AddCompanyDirectorsControllerSpec extends ControllerSpecBase {
       NormalMode,
       establisherIndex,
       directors,
-      None
+      None,
+      postCall(NormalMode, None, establisherIndex)
     )(fakeRequest, messages).toString
 
   private val establisherIndex = 0
@@ -94,7 +96,7 @@ class AddCompanyDirectorsControllerSpec extends ControllerSpecBase {
 
     "return OK and the correct view for a GET" in {
       val getRelevantData = new FakeDataRetrievalAction(Some(validData()))
-      val result = controller(getRelevantData).onPageLoad(NormalMode, establisherIndex)(fakeRequest)
+      val result = controller(getRelevantData).onPageLoad(NormalMode, None, establisherIndex)(fakeRequest)
 
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString()
@@ -105,7 +107,7 @@ class AddCompanyDirectorsControllerSpec extends ControllerSpecBase {
         .set(AddCompanyDirectorsId(firstIndex))(true)
         .map { userAnswers =>
           val getRelevantData = new FakeDataRetrievalAction(Some(userAnswers.json))
-          val result = controller(getRelevantData).onPageLoad(NormalMode, establisherIndex)(fakeRequest)
+          val result = controller(getRelevantData).onPageLoad(NormalMode, None, establisherIndex)(fakeRequest)
 
           contentAsString(result) mustBe viewAsString(form,
             Seq(DirectorEntity(DirectorDetailsId(0, 0), johnDoe.fullName, isDeleted = false, isCompleted = false)))
@@ -114,7 +116,7 @@ class AddCompanyDirectorsControllerSpec extends ControllerSpecBase {
 
     "redirect to the next page when no directors exist and the user submits" in {
       val getRelevantData = new FakeDataRetrievalAction(Some(validData()))
-      val result = controller(getRelevantData).onSubmit(NormalMode, establisherIndex)(fakeRequest)
+      val result = controller(getRelevantData).onSubmit(NormalMode, None, establisherIndex)(fakeRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
@@ -123,7 +125,7 @@ class AddCompanyDirectorsControllerSpec extends ControllerSpecBase {
     "redirect to the next page when less than maximum directors exist and valid data is submitted" in {
       val getRelevantData = new FakeDataRetrievalAction(Some(validData(johnDoe)))
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "true"))
-      val result = controller(getRelevantData).onSubmit(NormalMode, establisherIndex)(postRequest)
+      val result = controller(getRelevantData).onSubmit(NormalMode, None, establisherIndex)(postRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
@@ -133,7 +135,7 @@ class AddCompanyDirectorsControllerSpec extends ControllerSpecBase {
       val getRelevantData = new FakeDataRetrievalAction(Some(validData(johnDoe)))
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "meh"))
       val boundForm = form.bind(Map("value" -> "meh"))
-      val result = controller(getRelevantData).onSubmit(NormalMode, establisherIndex)(postRequest)
+      val result = controller(getRelevantData).onSubmit(NormalMode, None, establisherIndex)(postRequest)
 
       status(result) mustBe BAD_REQUEST
       contentAsString(result) mustBe viewAsString(boundForm,
@@ -143,7 +145,7 @@ class AddCompanyDirectorsControllerSpec extends ControllerSpecBase {
     "not save the answer when directors exist and valid data is submitted" in {
       val getRelevantData = new FakeDataRetrievalAction(Some(validData(johnDoe)))
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "true"))
-      controller(getRelevantData).onSubmit(NormalMode, establisherIndex)(postRequest)
+      controller(getRelevantData).onSubmit(NormalMode, None, establisherIndex)(postRequest)
 
       FakeUserAnswersCacheConnector.verifyNot(AddCompanyDirectorsId(firstIndex))
     }
@@ -152,7 +154,7 @@ class AddCompanyDirectorsControllerSpec extends ControllerSpecBase {
       val getRelevantData = new FakeDataRetrievalAction(Some(validData(johnDoe)))
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "true"))
       val navigator = fakeNavigator()
-      val result = controller(getRelevantData, navigator).onSubmit(NormalMode, establisherIndex)(postRequest)
+      val result = controller(getRelevantData, navigator).onSubmit(NormalMode, None, establisherIndex)(postRequest)
 
       status(result) mustBe SEE_OTHER
       navigator.lastUserAnswers.value.get(AddCompanyDirectorsId(firstIndex)).value mustBe true
@@ -161,7 +163,7 @@ class AddCompanyDirectorsControllerSpec extends ControllerSpecBase {
     "redirect to the next page when maximum directors exist and the user submits" in {
       val directors = Seq.fill(maxDirectors)(johnDoe)
       val getRelevantData = new FakeDataRetrievalAction(Some(validData(directors: _*)))
-      val result = controller(getRelevantData).onSubmit(NormalMode, establisherIndex)(fakeRequest)
+      val result = controller(getRelevantData).onSubmit(NormalMode, None, establisherIndex)(fakeRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
@@ -172,14 +174,14 @@ class AddCompanyDirectorsControllerSpec extends ControllerSpecBase {
       val directorsViewModel = Seq(DirectorEntity(DirectorDetailsId(0, 0), johnDoe.fullName, isDeleted = false, isCompleted = false),
         DirectorEntity(DirectorDetailsId(0, 1), joeBloggs.fullName, isDeleted = false, isCompleted = false))
       val getRelevantData = new FakeDataRetrievalAction(Some(validData(directors: _*)))
-      val result = controller(getRelevantData).onPageLoad(NormalMode, establisherIndex)(fakeRequest)
+      val result = controller(getRelevantData).onPageLoad(NormalMode, None, establisherIndex)(fakeRequest)
 
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString(form, directorsViewModel)
     }
 
     "redirect to Session Expired for a GET if no existing data is found" in {
-      val result = controller(dontGetAnyData).onPageLoad(NormalMode, 0)(fakeRequest)
+      val result = controller(dontGetAnyData).onPageLoad(NormalMode, None, 0)(fakeRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
@@ -187,7 +189,7 @@ class AddCompanyDirectorsControllerSpec extends ControllerSpecBase {
 
     "redirect to Session Expired for a POST if no existing data is found" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "true"))
-      val result = controller(dontGetAnyData).onSubmit(NormalMode, 0)(postRequest)
+      val result = controller(dontGetAnyData).onSubmit(NormalMode, None, 0)(postRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)

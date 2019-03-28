@@ -21,7 +21,7 @@ import controllers.Retrievals
 import controllers.actions.{AuthAction, DataRequiredAction, DataRetrievalAction}
 import identifiers.register.establishers.partnership.partner._
 import javax.inject.Inject
-import models.{CheckMode, Index, NormalMode}
+import models.{CheckMode, Index, Mode, NormalMode}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
@@ -43,17 +43,18 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
                                            implicit val countryOptions: CountryOptions
                                           )(implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport {
 
-  def onPageLoad(establisherIndex: Index, partnerIndex: Index): Action[AnyContent] = (authenticate andThen getData andThen requiredData).async {
+  def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData andThen requiredData).async {
     implicit request =>
       val partnerDetails = AnswerSection(
         Some("messages__partner__cya__details_heading"),
         Seq(
           PartnerDetailsId(establisherIndex, partnerIndex).
-            row(routes.PartnerDetailsController.onPageLoad(CheckMode, establisherIndex, partnerIndex).url),
+            row(routes.PartnerDetailsController.onPageLoad(CheckMode, establisherIndex, partnerIndex, srn).url),
           PartnerNinoId(establisherIndex, partnerIndex).
-            row(routes.PartnerNinoController.onPageLoad(CheckMode, establisherIndex, partnerIndex).url),
+            row(routes.PartnerNinoController.onPageLoad(CheckMode, establisherIndex, partnerIndex, srn).url),
           PartnerUniqueTaxReferenceId(establisherIndex, partnerIndex).
-            row(routes.PartnerUniqueTaxReferenceController.onPageLoad(CheckMode, establisherIndex, partnerIndex).url)
+            row(routes.PartnerUniqueTaxReferenceController.onPageLoad(CheckMode, establisherIndex, partnerIndex, srn).url)
         ).flatten
       )
 
@@ -61,26 +62,27 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
         Some("messages__partner__cya__contact__details_heading"),
         Seq(
           PartnerAddressId(establisherIndex, partnerIndex).
-            row(routes.PartnerAddressController.onPageLoad(CheckMode, establisherIndex, partnerIndex).url),
+            row(routes.PartnerAddressController.onPageLoad(CheckMode, establisherIndex, partnerIndex, srn).url),
           PartnerAddressYearsId(establisherIndex, partnerIndex).
-            row(routes.PartnerAddressYearsController.onPageLoad(CheckMode, establisherIndex, partnerIndex).url),
+            row(routes.PartnerAddressYearsController.onPageLoad(CheckMode, establisherIndex, partnerIndex, srn).url),
           PartnerPreviousAddressId(establisherIndex, partnerIndex).
-            row(routes.PartnerPreviousAddressController.onPageLoad(CheckMode, establisherIndex, partnerIndex).url),
+            row(routes.PartnerPreviousAddressController.onPageLoad(CheckMode, establisherIndex, partnerIndex, srn).url),
           PartnerContactDetailsId(establisherIndex, partnerIndex).
-            row(routes.PartnerContactDetailsController.onPageLoad(CheckMode, establisherIndex, partnerIndex).url)
+            row(routes.PartnerContactDetailsController.onPageLoad(CheckMode, establisherIndex, partnerIndex, srn).url)
         ).flatten
       )
 
       Future.successful(Ok(check_your_answers(
         appConfig,
         Seq(partnerDetails, partnerContactDetails),
-        routes.CheckYourAnswersController.onSubmit(establisherIndex, partnerIndex),
+        routes.CheckYourAnswersController.onSubmit(mode, establisherIndex, partnerIndex, srn),
         existingSchemeName
       )))
 
   }
 
-  def onSubmit(establisherIndex: Index, partnerIndex: Index): Action[AnyContent] = (authenticate andThen getData andThen requiredData).async {
+  def onSubmit(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData andThen requiredData).async {
     implicit request =>
       sectionComplete.setCompleteFlag(request.externalId, IsPartnerCompleteId(establisherIndex, partnerIndex), request.userAnswers, value = true) map { _ =>
         Redirect(navigator.nextPage(CheckYourAnswersId(establisherIndex, partnerIndex), NormalMode, request.userAnswers))

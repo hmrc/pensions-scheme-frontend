@@ -32,12 +32,12 @@ class TrusteeDetailsViewSpec extends QuestionViewBehaviours[PersonDetails] {
   val firstIndex = Index(0)
 
   override val form = new PersonDetailsFormProvider()()
-
+  val submitUrl = controllers.register.trustees.individual.routes.TrusteeDetailsController.onSubmit(NormalMode, firstIndex, None)
   def createView(): () => HtmlFormat.Appendable = () =>
-    trusteeDetails(frontendAppConfig, form, NormalMode, firstIndex, None)(fakeRequest, messages)
+    trusteeDetails(frontendAppConfig, form, NormalMode, firstIndex, None, submitUrl)(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) =>
-    trusteeDetails(frontendAppConfig, form, NormalMode, firstIndex, None)(fakeRequest, messages)
+    trusteeDetails(frontendAppConfig, form, NormalMode, firstIndex, None, submitUrl)(fakeRequest, messages)
 
 
   "TrusteeDetails view" must {
@@ -49,7 +49,7 @@ class TrusteeDetailsViewSpec extends QuestionViewBehaviours[PersonDetails] {
     behave like pageWithTextFields(
       createViewUsingForm,
       messageKeyPrefix,
-      TrusteeDetailsController.onSubmit(NormalMode, firstIndex).url,
+      TrusteeDetailsController.onSubmit(NormalMode, firstIndex, None).url,
       "firstName", "middleName", "lastName"
     )
 

@@ -18,18 +18,18 @@ package controllers.register.trustees.individual
 
 import audit.AuditService
 import config.FrontendAppConfig
-import connectors.UserAnswersCacheConnector
 import controllers.actions._
 import controllers.address.ManualAddressController
 import controllers.register.trustees.individual.routes._
 import forms.address.AddressFormProvider
-import identifiers.register.trustees.individual.{IndividualPreviousAddressPostCodeLookupId, TrusteeDetailsId, TrusteePreviousAddressId, TrusteePreviousAddressListId}
+import identifiers.register.trustees.individual._
 import javax.inject.Inject
 import models.address.Address
 import models.{Index, Mode}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
+import services.UserAnswersService
 import utils.annotations.TrusteesIndividual
 import utils.{CountryOptions, Navigator}
 import viewmodels.Message
@@ -38,7 +38,7 @@ import viewmodels.address.ManualAddressViewModel
 class TrusteePreviousAddressController @Inject()(
                                                   override val appConfig: FrontendAppConfig,
                                                   override val messagesApi: MessagesApi,
-                                                  override val dataCacheConnector: UserAnswersCacheConnector,
+                                                  val userAnswersService: UserAnswersService,
                                                   @TrusteesIndividual override val navigator: Navigator,
                                                   authenticate: AuthAction,
                                                   getData: DataRetrievalAction,
@@ -54,13 +54,13 @@ class TrusteePreviousAddressController @Inject()(
 
   protected val form: Form[Address] = formProvider()
 
-  private def viewmodel(index: Int, mode: Mode): Retrieval[ManualAddressViewModel] =
+  private def viewmodel(index: Int, mode: Mode, srn: Option[String]): Retrieval[ManualAddressViewModel] =
     Retrieval {
       implicit request =>
         TrusteeDetailsId(index).retrieve.right.map {
           details =>
             ManualAddressViewModel(
-              postCall(mode, Index(index)),
+              postCall(mode, Index(index), srn),
               countryOptions.options,
               title = Message(title),
               heading = Message(heading),
@@ -69,17 +69,17 @@ class TrusteePreviousAddressController @Inject()(
         }
     }
 
-  def onPageLoad(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      viewmodel(index, mode).retrieve.right.map {
+      viewmodel(index, mode, srn).retrieve.right.map {
         vm =>
           get(TrusteePreviousAddressId(index), TrusteePreviousAddressListId(index), vm)
       }
   }
 
-  def onSubmit(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      viewmodel(index, mode).retrieve.right.map {
+      viewmodel(index, mode, srn).retrieve.right.map {
         vm =>
           post(TrusteePreviousAddressId(index), TrusteePreviousAddressListId(index), vm, mode, context(vm),
             IndividualPreviousAddressPostCodeLookupId(index)

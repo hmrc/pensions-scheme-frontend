@@ -19,7 +19,7 @@ package controllers.register.trustees.company
 import audit.testdoubles.StubSuccessfulAuditService
 import audit.{AddressAction, AddressEvent, AuditService}
 import config.FrontendAppConfig
-import connectors.{UserAnswersCacheConnector, FakeUserAnswersCacheConnector}
+import connectors.{FakeUserAnswersCacheConnector, UserAnswersCacheConnector}
 import controllers.actions._
 import controllers.behaviours.ControllerBehaviours
 import identifiers.register.trustees.TrusteesId
@@ -31,6 +31,7 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import services.{FakeUserAnswersService, UserAnswersService}
 import utils.annotations.TrusteesCompany
 import utils.{CountryOptions, FakeNavigator, InputOption, Navigator}
 import viewmodels.Message
@@ -56,7 +57,7 @@ class CompanyAddressControllerSpec extends ControllerBehaviours {
     .overrides(
       bind[FrontendAppConfig].to(frontendAppConfig),
       bind[Navigator].qualifiedWith(classOf[TrusteesCompany]).toInstance(FakeNavigator),
-      bind[UserAnswersCacheConnector].toInstance(FakeUserAnswersCacheConnector),
+      bind[UserAnswersService].toInstance(FakeUserAnswersService),
       bind[AuthAction].to(FakeAuthAction),
       bind[DataRetrievalAction].to(retrieval),
       bind[CountryOptions].to(countryOptions)
@@ -65,7 +66,7 @@ class CompanyAddressControllerSpec extends ControllerBehaviours {
   private val controller = builder.build().injector.instanceOf[CompanyAddressController]
 
   val viewmodel = ManualAddressViewModel(
-    controller.postCall(NormalMode, firstIndex),
+    controller.postCall(NormalMode, firstIndex, None),
     countryOptions.options,
     Message(controller.title),
     Message(controller.heading),
@@ -74,8 +75,8 @@ class CompanyAddressControllerSpec extends ControllerBehaviours {
   )
 
   behave like manualAddress(
-    routes.CompanyAddressController.onPageLoad(NormalMode, firstIndex),
-    routes.CompanyAddressController.onSubmit(NormalMode, firstIndex),
+    routes.CompanyAddressController.onPageLoad(NormalMode, firstIndex, None),
+    routes.CompanyAddressController.onSubmit(NormalMode, firstIndex, None),
     CompanyAddressId(firstIndex),
     viewmodel
   )
@@ -93,14 +94,15 @@ class CompanyAddressControllerSpec extends ControllerBehaviours {
     running(_.overrides(
       bind[FrontendAppConfig].to(frontendAppConfig),
       bind[Navigator].toInstance(FakeNavigator),
-      bind[UserAnswersCacheConnector].toInstance(FakeUserAnswersCacheConnector),
+      bind[UserAnswersService].toInstance(FakeUserAnswersService),
       bind[AuthAction].to(FakeAuthAction),
       bind[CountryOptions].to(countryOptions),
+      bind[DataRetrievalAction].to(retrieval),
       bind[AuditService].toInstance(fakeAuditService)
     )) {
       implicit app =>
 
-        val fakeRequest = addToken(FakeRequest(routes.CompanyAddressController.onSubmit(NormalMode, firstIndex))
+        val fakeRequest = addToken(FakeRequest(routes.CompanyAddressController.onSubmit(NormalMode, firstIndex, None))
           .withHeaders("Csrf-Token" -> "nocheck")
           .withFormUrlEncodedBody(
             ("addressLine1", address.addressLine1),

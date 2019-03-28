@@ -81,14 +81,15 @@ object TrusteeNinoViewSpec extends ViewBehaviours {
   private val index = Index(0)
 
   private val form = new TrusteeNinoFormProvider()()
-
+  val submitUrl = controllers.register.trustees.individual.routes.TrusteeNinoController.onSubmit(NormalMode, index, None)
   private def createView() =
     () => trusteeNino(
       frontendAppConfig,
       form,
       mode,
       index,
-      None
+      None,
+      submitUrl
     )(fakeRequest, messages)
 
   private def createViewUsingForm: Form[_] => HtmlFormat.Appendable =
@@ -97,7 +98,8 @@ object TrusteeNinoViewSpec extends ViewBehaviours {
       form,
       mode,
       index,
-      None
+      None,
+      submitUrl
     )(fakeRequest, messages)
 
 }

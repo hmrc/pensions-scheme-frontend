@@ -43,9 +43,9 @@ import scala.concurrent.Future
 
 class PartnerPreviousAddressPostcodeLookupControllerSpec extends ControllerSpecBase with MockitoSugar with CSRFRequest {
 
-  def onwardRoute: Call = routes.PartnerPreviousAddressPostcodeLookupController.onSubmit(NormalMode, establisherIndex, partnerIndex)
+  def onwardRoute: Call = routes.PartnerPreviousAddressPostcodeLookupController.onSubmit(NormalMode, establisherIndex, partnerIndex, None)
 
-  def manualInputCall: Call = routes.PartnerPreviousAddressController.onPageLoad(NormalMode, establisherIndex, partnerIndex)
+  def manualInputCall: Call = routes.PartnerPreviousAddressController.onPageLoad(NormalMode, establisherIndex, partnerIndex, None)
 
   private val formProvider = new PostCodeLookupFormProvider()
 
@@ -72,7 +72,7 @@ class PartnerPreviousAddressPostcodeLookupControllerSpec extends ControllerSpecB
 
     "return OK and the correct view for a GET" in {
 
-      val call: Call = routes.PartnerPreviousAddressPostcodeLookupController.onPageLoad(NormalMode, establisherIndex, partnerIndex)
+      val call: Call = routes.PartnerPreviousAddressPostcodeLookupController.onPageLoad(NormalMode, establisherIndex, partnerIndex, None)
       running(_.overrides(
         bind[FrontendAppConfig].to(frontendAppConfig),
         bind[Navigator].toInstance(FakeNavigator),
@@ -101,7 +101,7 @@ class PartnerPreviousAddressPostcodeLookupControllerSpec extends ControllerSpecB
     "redirect to the next page on POST request" in {
 
       val validPostcode = "ZZ1 1ZZ"
-      val onwardUrl = routes.PartnerPreviousAddressListController.onSubmit(NormalMode, establisherIndex, partnerIndex)
+      val onwardUrl = routes.PartnerPreviousAddressListController.onSubmit(NormalMode, establisherIndex, partnerIndex, None)
 
       val fakeRequest = addToken(FakeRequest(onwardUrl)
         .withFormUrlEncodedBody("value" -> validPostcode))

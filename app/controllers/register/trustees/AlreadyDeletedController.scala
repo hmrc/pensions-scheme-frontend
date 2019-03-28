@@ -26,7 +26,7 @@ import javax.inject.Inject
 import models.register.trustees.TrusteeKind
 import models.register.trustees.TrusteeKind.{Company, Individual, Partnership}
 import models.requests.DataRequest
-import models.{Index, NormalMode}
+import models.{Index, Mode, NormalMode}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Result}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
@@ -44,22 +44,24 @@ class AlreadyDeletedController @Inject()(
                                           requireData: DataRequiredAction
                                         ) (implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
 
-  def onPageLoad(index: Index, trusteeKind: TrusteeKind): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onPageLoad(mode: Mode, index: Index, trusteeKind: TrusteeKind, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      trusteeName(index, trusteeKind) match {
+      trusteeName(index, trusteeKind, srn) match {
         case Right(trusteeName) =>
-          Future.successful(Ok(alreadyDeleted(appConfig, vm(index, trusteeName))))
+          Future.successful(Ok(alreadyDeleted(appConfig, vm(index, trusteeName, srn))))
         case Left(result) => result
       }
   }
 
-  private def vm(index: Index, trusteeName: String) = AlreadyDeletedViewModel(
+  private def vm(index: Index, trusteeName: String, srn: Option[String]) = AlreadyDeletedViewModel(
     title = Message("messages__alreadyDeleted__trustee_title"),
     deletedEntity = trusteeName,
-    returnCall = controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode)
+    returnCall = controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode, srn)
   )
 
-  private def trusteeName(index: Index, trusteeKind: TrusteeKind)(implicit dataRequest: DataRequest[AnyContent]): Either[Future[Result], String] = {
+  private def trusteeName(index: Index, trusteeKind: TrusteeKind, srn: Option[String])
+                         (implicit dataRequest: DataRequest[AnyContent]): Either[Future[Result], String] = {
     trusteeKind match {
       case Company => CompanyDetailsId(index).retrieve.right.map(_.companyName)
       case Individual => TrusteeDetailsId(index).retrieve.right.map(_.fullName)

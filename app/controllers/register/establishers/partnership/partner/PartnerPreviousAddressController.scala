@@ -18,18 +18,18 @@ package controllers.register.establishers.partnership.partner
 
 import audit.AuditService
 import config.FrontendAppConfig
-import connectors.UserAnswersCacheConnector
 import controllers.Retrievals
 import controllers.actions.{AuthAction, DataRequiredAction, DataRetrievalAction}
 import controllers.address.ManualAddressController
 import forms.address.AddressFormProvider
-import identifiers.register.establishers.partnership.partner.{PartnerDetailsId, PartnerPreviousAddressId, PartnerPreviousAddressListId, PartnerPreviousAddressPostcodeLookupId}
+import identifiers.register.establishers.partnership.partner._
 import javax.inject.Inject
 import models.address.Address
 import models.{Index, Mode}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
+import services.UserAnswersService
 import utils.annotations.EstablishersPartner
 import utils.{CountryOptions, Navigator}
 import viewmodels.Message
@@ -38,7 +38,7 @@ import viewmodels.address.ManualAddressViewModel
 class PartnerPreviousAddressController @Inject()(
                                                   val appConfig: FrontendAppConfig,
                                                   val messagesApi: MessagesApi,
-                                                  val dataCacheConnector: UserAnswersCacheConnector,
+                                                  val userAnswersService: UserAnswersService,
                                                   @EstablishersPartner val navigator: Navigator,
                                                   authenticate: AuthAction,
                                                   getData: DataRetrievalAction,
@@ -54,13 +54,13 @@ class PartnerPreviousAddressController @Inject()(
 
   protected val form: Form[Address] = formProvider()
 
-  private def viewmodel(mode: Mode, establisherIndex: Index, partnerIndex: Index): Retrieval[ManualAddressViewModel] =
+  private def viewmodel(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Retrieval[ManualAddressViewModel] =
     Retrieval {
       implicit request =>
         PartnerDetailsId(establisherIndex, partnerIndex).retrieve.right.map {
           partner =>
             ManualAddressViewModel(
-              postCall(mode, establisherIndex, partnerIndex),
+              postCall(mode, establisherIndex, partnerIndex, srn),
               countryOptions.options,
               title = Message(title),
               heading = Message(heading),
@@ -69,17 +69,19 @@ class PartnerPreviousAddressController @Inject()(
         }
     }
 
-  def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      viewmodel(mode: Mode, establisherIndex: Index, partnerIndex: Index).retrieve.right.map {
+      viewmodel(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn).retrieve.right.map {
         vm =>
           get(PartnerPreviousAddressId(establisherIndex, partnerIndex), PartnerPreviousAddressListId(establisherIndex, partnerIndex), vm)
       }
   }
 
-  def onSubmit(mode: Mode, establisherIndex: Index, partnerIndex: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      viewmodel(mode: Mode, establisherIndex: Index, partnerIndex: Index).retrieve.right.map {
+      viewmodel(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn).retrieve.right.map {
         vm =>
           post(
             PartnerPreviousAddressId(establisherIndex, partnerIndex),

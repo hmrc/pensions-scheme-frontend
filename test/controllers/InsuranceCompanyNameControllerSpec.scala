@@ -17,15 +17,15 @@
 package controllers
 
 import base.SpecBase
-import connectors.{FakeUserAnswersCacheConnector, UserAnswersCacheConnector}
-import controllers.actions.{AuthAction, DataRetrievalAction, FakeAuthAction}
+import controllers.actions.{AuthAction, DataRequiredActionImpl, DataRetrievalAction, FakeAuthAction}
 import controllers.behaviours.ControllerWithQuestionPageBehaviours
 import forms.InsuranceCompanyNameFormProvider
 import identifiers.InsuranceCompanyNameId
 import models.NormalMode
 import play.api.data.Form
-import play.api.mvc.{Action, AnyContent, AnyContentAsFormUrlEncoded}
+import play.api.mvc.{Action, AnyContent, AnyContentAsFormUrlEncoded, Call}
 import play.api.test.FakeRequest
+import services.{FakeUserAnswersService, UserAnswersService}
 import utils.{FakeNavigator, Navigator, UserAnswers}
 import views.html.insuranceCompanyName
 
@@ -54,7 +54,7 @@ class InsuranceCompanyNameControllerSpec extends ControllerWithQuestionPageBehav
       postRequest
     )
 
-    behave like controllerThatSavesUserAnswers(
+    behave like controllerThatSavesUserAnswersWithService(
       saveAction(this),
       postRequest,
       InsuranceCompanyNameId,
@@ -62,7 +62,7 @@ class InsuranceCompanyNameControllerSpec extends ControllerWithQuestionPageBehav
     )
   }
 }
-object InsuranceCompanyNameControllerSpec {
+object InsuranceCompanyNameControllerSpec extends SpecBase {
 
   val schemeName = "Test Scheme Name"
   val companyName = "test company name"
@@ -75,14 +75,16 @@ object InsuranceCompanyNameControllerSpec {
   private val postRequest: FakeRequest[AnyContentAsFormUrlEncoded] =
     FakeRequest().withFormUrlEncodedBody(("companyName", companyName))
 
+  private val postCall: Call = controllers.routes.InsuranceCompanyNameController.onSubmit(NormalMode, None)
+
   private def viewAsString(base: SpecBase)(form: Form[_] = form): Form[_] => String = form =>
-    insuranceCompanyName(base.frontendAppConfig, form, NormalMode, Some(schemeName))(base.fakeRequest, base.messages).toString()
+    insuranceCompanyName(base.frontendAppConfig, form, NormalMode, Some(schemeName), postCall)(base.fakeRequest, base.messages).toString()
 
   private def controller(base: ControllerSpecBase)(
     dataRetrievalAction: DataRetrievalAction = base.getEmptyData,
     authAction: AuthAction = FakeAuthAction,
     navigator: Navigator = FakeNavigator,
-    cache: UserAnswersCacheConnector = FakeUserAnswersCacheConnector
+    cache: UserAnswersService = FakeUserAnswersService
   ): InsuranceCompanyNameController =
     new InsuranceCompanyNameController(
       base.frontendAppConfig,
@@ -91,18 +93,19 @@ object InsuranceCompanyNameControllerSpec {
       navigator,
       authAction,
       dataRetrievalAction,
+      new DataRequiredActionImpl(),
       formProvider
     )
 
   private def onPageLoadAction(base: ControllerSpecBase)(dataRetrievalAction: DataRetrievalAction, authAction: AuthAction): Action[AnyContent] =
-    controller(base)(dataRetrievalAction, authAction).onPageLoad(NormalMode)
+    controller(base)(dataRetrievalAction, authAction).onPageLoad(NormalMode, None)
 
   private def onSubmitAction(base: ControllerSpecBase, navigator: Navigator)(dataRetrievalAction: DataRetrievalAction,
                                                                              authAction: AuthAction): Action[AnyContent] =
-    controller(base)(dataRetrievalAction, authAction, navigator).onSubmit(NormalMode)
+    controller(base)(dataRetrievalAction, authAction, navigator).onSubmit(NormalMode, None)
 
-  private def saveAction(base: ControllerSpecBase)(cache: UserAnswersCacheConnector): Action[AnyContent] =
-    controller(base)(cache = cache).onSubmit(NormalMode)
+  private def saveAction(base: ControllerSpecBase)(cache: UserAnswersService): Action[AnyContent] =
+    controller(base)(cache = cache).onSubmit(NormalMode, None)
 }
 
 

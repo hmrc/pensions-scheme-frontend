@@ -18,7 +18,7 @@ package controllers.register.establishers.partnership.partner
 
 import controllers.ControllerSpecBase
 import controllers.actions.{DataRequiredActionImpl, DataRetrievalAction, FakeAuthAction}
-import models.Index
+import models.{Index, NormalMode}
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import viewmodels.{AlreadyDeletedViewModel, Message}
@@ -26,7 +26,7 @@ import views.html.alreadyDeleted
 
 class AlreadyDeletedControllerSpec extends ControllerSpecBase {
 
-  def onwardRoute: Call = controllers.register.establishers.partnership.routes.AddPartnersController.onPageLoad(establisherIndex)
+  def onwardRoute: Call = controllers.register.establishers.partnership.routes.AddPartnersController.onPageLoad(NormalMode, establisherIndex, None)
 
   private val establisherIndex = Index(0)
   private val partnerIndex = Index(0)
@@ -55,14 +55,14 @@ class AlreadyDeletedControllerSpec extends ControllerSpecBase {
   "AlreadyDeleted Controller" must {
 
     "return OK and the correct view for a GET" in {
-      val result = controller().onPageLoad(establisherIndex, partnerIndex)(fakeRequest)
+      val result = controller().onPageLoad(NormalMode, establisherIndex, partnerIndex, None)(fakeRequest)
 
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString()
     }
 
     "redirect to Session Expired for a GET if no existing data is found" in {
-      val result = controller(dontGetAnyData).onPageLoad(establisherIndex, partnerIndex)(fakeRequest)
+      val result = controller(dontGetAnyData).onPageLoad(NormalMode, establisherIndex, partnerIndex, None)(fakeRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)

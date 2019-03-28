@@ -73,7 +73,7 @@ class CompanyAddressListControllerSpec extends ControllerSpecBase with CSRFReque
         bind[UserAnswersCacheConnector].toInstance(FakeUserAnswersCacheConnector),
         bind[DataRetrievalAction].toInstance(dataRetrievalAction)
       )) { implicit app =>
-        val request = addToken(FakeRequest(routes.CompanyAddressListController.onPageLoad(NormalMode, Index(0))))
+        val request = addToken(FakeRequest(routes.CompanyAddressListController.onPageLoad(NormalMode, Index(0), None)))
         val result = route(app, request).value
 
         status(result) mustBe OK
@@ -93,11 +93,11 @@ class CompanyAddressListControllerSpec extends ControllerSpecBase with CSRFReque
         bind[UserAnswersCacheConnector].toInstance(FakeUserAnswersCacheConnector),
         bind[DataRetrievalAction].toInstance(getEmptyData)
       )) { implicit app =>
-        val request = addToken(FakeRequest(routes.CompanyAddressListController.onPageLoad(NormalMode, Index(0))))
+        val request = addToken(FakeRequest(routes.CompanyAddressListController.onPageLoad(NormalMode, Index(0), None)))
         val result = route(app, request).value
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.CompanyPostCodeLookupController.onPageLoad(NormalMode, Index(0)).url)
+        redirectLocation(result) mustBe Some(routes.CompanyPostCodeLookupController.onPageLoad(NormalMode, Index(0), None).url)
       }
 
     }
@@ -109,7 +109,7 @@ class CompanyAddressListControllerSpec extends ControllerSpecBase with CSRFReque
         bind[UserAnswersCacheConnector].toInstance(FakeUserAnswersCacheConnector),
         bind[DataRetrievalAction].toInstance(dontGetAnyData)
       )) { implicit app =>
-        val request = addToken(FakeRequest(routes.CompanyAddressListController.onPageLoad(NormalMode, Index(0))))
+        val request = addToken(FakeRequest(routes.CompanyAddressListController.onPageLoad(NormalMode, Index(0), None)))
         val result = route(app, request).value
 
         status(result) mustBe SEE_OTHER
@@ -127,14 +127,14 @@ class CompanyAddressListControllerSpec extends ControllerSpecBase with CSRFReque
       )) { implicit app =>
         val request =
           addToken(
-            FakeRequest(routes.CompanyAddressListController.onSubmit(NormalMode, Index(0)))
+            FakeRequest(routes.CompanyAddressListController.onSubmit(NormalMode, Index(0), None))
               .withFormUrlEncodedBody(("value", "0"))
           )
 
         val result = route(app, request).value
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(controllers.register.trustees.company.routes.CompanyAddressController.onPageLoad(NormalMode, 0).url)
+        redirectLocation(result) mustBe Some(controllers.register.trustees.company.routes.CompanyAddressController.onPageLoad(NormalMode, 0, None).url)
       }
 
     }
@@ -148,7 +148,7 @@ class CompanyAddressListControllerSpec extends ControllerSpecBase with CSRFReque
       )) { implicit app =>
         val request =
           addToken(
-            FakeRequest(routes.CompanyAddressListController.onSubmit(NormalMode, Index(0)))
+            FakeRequest(routes.CompanyAddressListController.onSubmit(NormalMode, Index(0), None))
               .withFormUrlEncodedBody(("value", "0"))
           )
 
@@ -169,14 +169,14 @@ class CompanyAddressListControllerSpec extends ControllerSpecBase with CSRFReque
       )) { implicit app =>
         val request =
           addToken(
-            FakeRequest(routes.CompanyAddressListController.onSubmit(NormalMode, Index(0)))
+            FakeRequest(routes.CompanyAddressListController.onSubmit(NormalMode, Index(0), None))
               .withFormUrlEncodedBody(("value", "0"))
           )
 
         val result = route(app, request).value
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.CompanyPostCodeLookupController.onPageLoad(NormalMode, Index(0)).url)
+        redirectLocation(result) mustBe Some(routes.CompanyPostCodeLookupController.onPageLoad(NormalMode, Index(0), None).url)
       }
 
     }
@@ -185,8 +185,8 @@ class CompanyAddressListControllerSpec extends ControllerSpecBase with CSRFReque
 
   private def addressListViewModel(addresses: Seq[TolerantAddress]): AddressListViewModel = {
     AddressListViewModel(
-      routes.CompanyAddressListController.onSubmit(NormalMode, Index(0)),
-      routes.CompanyAddressController.onPageLoad(NormalMode, Index(0)),
+      routes.CompanyAddressListController.onSubmit(NormalMode, Index(0), None),
+      routes.CompanyAddressController.onPageLoad(NormalMode, Index(0), None),
       addresses,
       subHeading = Some(Message(companyDetails.companyName))
     )

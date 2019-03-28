@@ -18,7 +18,6 @@ package controllers.register.trustees.company
 
 import audit.AuditService
 import config.FrontendAppConfig
-import connectors.UserAnswersCacheConnector
 import controllers.Retrievals
 import controllers.actions._
 import controllers.address.ManualAddressController
@@ -31,6 +30,7 @@ import models.{Index, Mode}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
+import services.UserAnswersService
 import utils.annotations.TrusteesCompany
 import utils.{CountryOptions, Navigator}
 import viewmodels.Message
@@ -39,7 +39,7 @@ import viewmodels.address.ManualAddressViewModel
 class CompanyPreviousAddressController @Inject()(
                                                   val appConfig: FrontendAppConfig,
                                                   val messagesApi: MessagesApi,
-                                                  val dataCacheConnector: UserAnswersCacheConnector,
+                                                  val userAnswersService: UserAnswersService,
                                                   @TrusteesCompany val navigator: Navigator,
                                                   authenticate: AuthAction,
                                                   getData: DataRetrievalAction,
@@ -56,13 +56,13 @@ class CompanyPreviousAddressController @Inject()(
 
   protected val form: Form[Address] = formProvider()
 
-  private def viewmodel(index: Int, mode: Mode): Retrieval[ManualAddressViewModel] =
+  private def viewmodel(index: Int, mode: Mode, srn: Option[String]): Retrieval[ManualAddressViewModel] =
     Retrieval {
       implicit request =>
         CompanyDetailsId(index).retrieve.right.map {
           details =>
             ManualAddressViewModel(
-              postCall(mode, Index(index)),
+              postCall(mode, Index(index), srn),
               countryOptions.options,
               title = Message(title),
               heading = Message(heading),
@@ -72,17 +72,17 @@ class CompanyPreviousAddressController @Inject()(
         }
     }
 
-  def onPageLoad(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      viewmodel(index, mode).retrieve.right.map {
+      viewmodel(index, mode, srn).retrieve.right.map {
         vm =>
           get(CompanyPreviousAddressId(index), CompanyPreviousAddressListId(index), vm)
       }
   }
 
-  def onSubmit(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      viewmodel(index, mode).retrieve.right.map {
+      viewmodel(index, mode, srn).retrieve.right.map {
         vm =>
           post(CompanyPreviousAddressId(index), CompanyPreviousAddressListId(index), vm, mode, context(vm),
             CompanyPreviousAddressPostcodeLookupId(index))

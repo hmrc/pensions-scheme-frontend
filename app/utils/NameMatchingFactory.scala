@@ -17,20 +17,18 @@
 package utils
 
 import config.FrontendAppConfig
-import connectors.{PensionAdministratorConnector, UserAnswersCacheConnector}
+import connectors.PensionAdministratorConnector
 import javax.inject.Inject
 import models.PSAName
 import models.requests.OptionalDataRequest
-import play.api.libs.json.{JsValue, Reads}
+import play.api.libs.json.Reads
 import play.api.mvc.AnyContent
-import uk.gov.hmrc.crypto.{ApplicationCrypto, PlainText}
-import uk.gov.hmrc.http.{HeaderCarrier, NotFoundException}
-import utils.annotations.PSANameCache
+import uk.gov.hmrc.crypto.ApplicationCrypto
+import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.{ExecutionContext, Future}
 
 class NameMatchingFactory @Inject()(
-                                     @PSANameCache val pSANameCacheConnector: UserAnswersCacheConnector,
                                      pensionAdministratorConnector: PensionAdministratorConnector,
                                      crypto: ApplicationCrypto,
                                      config: FrontendAppConfig

@@ -73,7 +73,7 @@ class HsTaskListHelper(answers: UserAnswers)(implicit messages: Messages) extend
     }
 
     val benefitsAndInsuranceLink = userAnswers.get(IsAboutBenefitsAndInsuranceCompleteId) match {
-      case Some(true) => Link(aboutBenefitsAndInsuranceLinkText, controllers.routes.CheckYourAnswersBenefitsAndInsuranceController.onPageLoad().url)
+      case Some(true) => Link(aboutBenefitsAndInsuranceLinkText, controllers.routes.CheckYourAnswersBenefitsAndInsuranceController.onPageLoad(NormalMode, None).url)
       case _ => Link(aboutBenefitsAndInsuranceLinkText, controllers.routes.WhatYouWillNeedBenefitsInsuranceController.onPageLoad.url)
     }
 
@@ -120,14 +120,14 @@ class HsTaskListHelper(answers: UserAnswers)(implicit messages: Messages) extend
           Some(
             SchemeDetailsTaskListSection(
               Some(isAllTrusteesCompleted(userAnswers)),
-              Link(changeTrusteesLinkText, controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode).url),
+              Link(changeTrusteesLinkText, controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode, None).url),
               None
             )
           )
         } else {
           Some(
             SchemeDetailsTaskListSection(None,
-              Link(addTrusteesLinkText, controllers.register.trustees.routes.TrusteeKindController.onPageLoad(NormalMode, userAnswers.allTrustees.size).url),
+              Link(addTrusteesLinkText, controllers.register.trustees.routes.TrusteeKindController.onPageLoad(NormalMode, userAnswers.allTrustees.size, None).url),
               None
             )
           )
@@ -168,9 +168,9 @@ class HsTaskListHelper(answers: UserAnswers)(implicit messages: Messages) extend
   private def linkTarget(item: Entity[_], index: Int, userAnswers: UserAnswers) = {
     item match {
       case models.register.EstablisherCompanyEntity(_, _, _, true) =>
-        controllers.register.establishers.company.routes.CompanyReviewController.onPageLoad(index).url
+        controllers.register.establishers.company.routes.CompanyReviewController.onPageLoad(NormalMode, None, index).url
       case models.register.EstablisherPartnershipEntity(_, _, _, true) =>
-        controllers.register.establishers.partnership.routes.PartnershipReviewController.onPageLoad(index).url
+        controllers.register.establishers.partnership.routes.PartnershipReviewController.onPageLoad(NormalMode, index, None).url
       case _ => item.editLink
     }
   }

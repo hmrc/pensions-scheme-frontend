@@ -100,35 +100,35 @@ object EstablishersPartnerNavigatorSpec extends OptionValues {
   private val addPartnersMoreThan10 = UserAnswers(validData(Seq.fill(10)(johnDoe): _*))
   private val addOnePartner = UserAnswers(validData(johnDoe))
 
-  private def partnerNino(mode: Mode) = routes.PartnerNinoController.onPageLoad(mode, establisherIndex, partnerIndex)
+  private def partnerNino(mode: Mode) = routes.PartnerNinoController.onPageLoad(mode, establisherIndex, partnerIndex, None)
 
-  private def partnerDetails(partnerIndex: Index = Index(0), mode: Mode) = routes.PartnerDetailsController.onPageLoad(mode, 0, partnerIndex)
+  private def partnerDetails(partnerIndex: Index = Index(0), mode: Mode) = routes.PartnerDetailsController.onPageLoad(mode, 0, partnerIndex, None)
 
-  private def partnerUtr(mode: Mode) = routes.PartnerUniqueTaxReferenceController.onPageLoad(mode, partnerIndex, establisherIndex)
+  private def partnerUtr(mode: Mode) = routes.PartnerUniqueTaxReferenceController.onPageLoad(mode, partnerIndex, establisherIndex, None)
 
-  private def partnerContactDetails(mode: Mode) = routes.PartnerContactDetailsController.onPageLoad(mode, partnerIndex, establisherIndex)
+  private def partnerContactDetails(mode: Mode) = routes.PartnerContactDetailsController.onPageLoad(mode, partnerIndex, establisherIndex, None)
 
-  private def partnerAddressPostcode(mode: Mode) = routes.PartnerAddressPostcodeLookupController.onPageLoad(mode, partnerIndex, establisherIndex)
+  private def partnerAddressPostcode(mode: Mode) = routes.PartnerAddressPostcodeLookupController.onPageLoad(mode, partnerIndex, establisherIndex, None)
 
-  private def partnerAddressList(mode: Mode) = routes.PartnerAddressListController.onPageLoad(mode, partnerIndex, establisherIndex)
+  private def partnerAddressList(mode: Mode) = routes.PartnerAddressListController.onPageLoad(mode, partnerIndex, establisherIndex, None)
 
-  private def partnerAddress(mode: Mode) = routes.PartnerAddressController.onPageLoad(mode, partnerIndex, establisherIndex)
+  private def partnerAddress(mode: Mode) = routes.PartnerAddressController.onPageLoad(mode, partnerIndex, establisherIndex, None)
 
-  private def partnerAddressYears(mode: Mode) = routes.PartnerAddressYearsController.onPageLoad(mode, partnerIndex, establisherIndex)
+  private def partnerAddressYears(mode: Mode) = routes.PartnerAddressYearsController.onPageLoad(mode, partnerIndex, establisherIndex, None)
 
-  private def partnerPreviousAddPostcode(mode: Mode) = routes.PartnerPreviousAddressPostcodeLookupController.onPageLoad(mode, partnerIndex, establisherIndex)
+  private def partnerPreviousAddPostcode(mode: Mode) = routes.PartnerPreviousAddressPostcodeLookupController.onPageLoad(mode, partnerIndex, establisherIndex, None)
 
-  private def partnerPreviousAddList(mode: Mode) = routes.PartnerPreviousAddressListController.onPageLoad(mode, partnerIndex, establisherIndex)
+  private def partnerPreviousAddList(mode: Mode) = routes.PartnerPreviousAddressListController.onPageLoad(mode, partnerIndex, establisherIndex, None)
 
-  private def partnerPreviousAddress(mode: Mode) = routes.PartnerPreviousAddressController.onPageLoad(mode, partnerIndex, establisherIndex)
+  private def partnerPreviousAddress(mode: Mode) = routes.PartnerPreviousAddressController.onPageLoad(mode, partnerIndex, establisherIndex, None)
 
-  private def checkYourAnswers = routes.CheckYourAnswersController.onPageLoad(establisherIndex, partnerIndex)
+  private def checkYourAnswers = routes.CheckYourAnswersController.onPageLoad(NormalMode, establisherIndex, partnerIndex, None)
 
   private def sessionExpired = controllers.routes.SessionExpiredController.onPageLoad()
 
-  private def addPartners = controllers.register.establishers.partnership.routes.AddPartnersController.onPageLoad(establisherIndex)
+  private def addPartners = controllers.register.establishers.partnership.routes.AddPartnersController.onPageLoad(NormalMode, establisherIndex, None)
 
-  private def partnershipReview = controllers.register.establishers.partnership.routes.PartnershipReviewController.onPageLoad(establisherIndex)
+  private def partnershipReview = controllers.register.establishers.partnership.routes.PartnershipReviewController.onPageLoad(NormalMode, establisherIndex, None)
 
-  private def otherPartners(mode: Mode) = controllers.register.establishers.partnership.routes.OtherPartnersController.onPageLoad(mode, 0)
+  private def otherPartners(mode: Mode) = controllers.register.establishers.partnership.routes.OtherPartnersController.onPageLoad(mode, 0, None)
 }

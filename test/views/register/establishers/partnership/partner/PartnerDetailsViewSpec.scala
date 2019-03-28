@@ -33,12 +33,13 @@ class PartnerDetailsViewSpec extends QuestionViewBehaviours[PersonDetails] {
   val partnerIndex = Index(1)
 
   override val form = new PersonDetailsFormProvider()()
+  val submitUrl = controllers.register.establishers.partnership.partner.routes.PartnerDetailsController.onSubmit(NormalMode, establisherIndex, partnerIndex, None)
 
   def createView(): () => HtmlFormat.Appendable = () =>
-    partnerDetails(frontendAppConfig, form, NormalMode, establisherIndex, partnerIndex, None)(fakeRequest, messages)
+    partnerDetails(frontendAppConfig, form, NormalMode, establisherIndex, partnerIndex, None, submitUrl)(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) =>
-    partnerDetails(frontendAppConfig, form, NormalMode, establisherIndex, partnerIndex, None)(fakeRequest, messages)
+    partnerDetails(frontendAppConfig, form, NormalMode, establisherIndex, partnerIndex, None, submitUrl)(fakeRequest, messages)
 
   private val day = LocalDate.now().getDayOfMonth
   private val year = LocalDate.now().getYear
@@ -58,7 +59,7 @@ class PartnerDetailsViewSpec extends QuestionViewBehaviours[PersonDetails] {
     behave like normalPage(createView(), messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"))
 
     behave like pageWithTextFields(createViewUsingForm, messageKeyPrefix,
-      controllers.register.establishers.partnership.partner.routes.PartnerDetailsController.onSubmit(NormalMode, establisherIndex, partnerIndex).url,
+      controllers.register.establishers.partnership.partner.routes.PartnerDetailsController.onSubmit(NormalMode, establisherIndex, partnerIndex, None).url,
       "firstName", "lastName")
 
     "display an input text box with the correct label and value for day" in {

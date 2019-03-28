@@ -20,7 +20,7 @@ import audit.testdoubles.StubSuccessfulAuditService
 import audit.{AddressAction, AddressEvent, AuditService}
 import base.CSRFRequest
 import config.FrontendAppConfig
-import connectors.{UserAnswersCacheConnector, FakeUserAnswersCacheConnector}
+import connectors.{FakeUserAnswersCacheConnector, UserAnswersCacheConnector}
 import controllers.ControllerSpecBase
 import controllers.actions._
 import controllers.register.trustees.company.routes._
@@ -38,6 +38,7 @@ import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import services.{FakeUserAnswersService, UserAnswersService}
 import utils.annotations.TrusteesCompany
 import utils.{CountryOptions, FakeCountryOptions, FakeNavigator, InputOption, Navigator}
 import viewmodels.Message
@@ -69,7 +70,7 @@ class CompanyPreviousAddressControllerSpec extends ControllerSpecBase with Mocki
 
       running(_.overrides(
         bind[FrontendAppConfig].to(frontendAppConfig),
-        bind[UserAnswersCacheConnector].toInstance(FakeUserAnswersCacheConnector),
+        bind[UserAnswersService].toInstance(FakeUserAnswersService),
         bind[AuthAction].to(FakeAuthAction),
         bind[DataRetrievalAction].to(retrieval),
         bind[CountryOptions].to(countryOptions),
@@ -80,7 +81,7 @@ class CompanyPreviousAddressControllerSpec extends ControllerSpecBase with Mocki
           val controller = app.injector.instanceOf[CompanyPreviousAddressController]
 
           val viewmodel = ManualAddressViewModel(
-            controller.postCall(NormalMode, firstIndex),
+            controller.postCall(NormalMode, firstIndex, None),
             countryOptions.options,
             Message(controller.title),
             Message(controller.heading),
@@ -89,7 +90,7 @@ class CompanyPreviousAddressControllerSpec extends ControllerSpecBase with Mocki
           )
 
           val request = addToken(
-            FakeRequest(CompanyPreviousAddressController.onPageLoad(NormalMode, firstIndex))
+            FakeRequest(CompanyPreviousAddressController.onPageLoad(NormalMode, firstIndex, None))
               .withHeaders("Csrf-Token" -> "nocheck")
           )
 
@@ -125,7 +126,7 @@ class CompanyPreviousAddressControllerSpec extends ControllerSpecBase with Mocki
           bind(classOf[Navigator]).qualifiedWith(classOf[TrusteesCompany]).toInstance(new FakeNavigator(onwardCall)),
           bind[FrontendAppConfig].to(frontendAppConfig),
           bind[MessagesApi].to(messagesApi),
-          bind[UserAnswersCacheConnector].toInstance(FakeUserAnswersCacheConnector),
+          bind[UserAnswersService].toInstance(FakeUserAnswersService),
           bind[AuthAction].to(FakeAuthAction),
           bind[DataRetrievalAction].to(retrieval),
           bind[DataRequiredAction].to(new DataRequiredActionImpl),
@@ -134,7 +135,7 @@ class CompanyPreviousAddressControllerSpec extends ControllerSpecBase with Mocki
           implicit app =>
 
 
-            val fakeRequest = addToken(FakeRequest(CompanyPreviousAddressController.onSubmit(NormalMode, firstIndex))
+            val fakeRequest = addToken(FakeRequest(CompanyPreviousAddressController.onSubmit(NormalMode, firstIndex, None))
               .withHeaders("Csrf-Token" -> "nocheck")
               .withFormUrlEncodedBody(
                 ("addressLine1", address.addressLine1),
@@ -147,7 +148,7 @@ class CompanyPreviousAddressControllerSpec extends ControllerSpecBase with Mocki
             status(result) must be(SEE_OTHER)
             redirectLocation(result).value mustEqual onwardCall.url
 
-            FakeUserAnswersCacheConnector.verify(CompanyPreviousAddressId(firstIndex), address)
+            FakeUserAnswersService.verify(CompanyPreviousAddressId(firstIndex), address)
         }
       }
     }
@@ -165,14 +166,15 @@ class CompanyPreviousAddressControllerSpec extends ControllerSpecBase with Mocki
       running(_.overrides(
         bind[FrontendAppConfig].to(frontendAppConfig),
         bind[Navigator].toInstance(FakeNavigator),
-        bind[UserAnswersCacheConnector].toInstance(FakeUserAnswersCacheConnector),
+        bind[DataRetrievalAction].to(retrieval),
+        bind[UserAnswersService].toInstance(FakeUserAnswersService),
         bind[AuthAction].to(FakeAuthAction),
         bind[CountryOptions].to(countryOptions),
         bind[AuditService].toInstance(fakeAuditService)
       )) {
         implicit app =>
 
-          val fakeRequest = addToken(FakeRequest(routes.CompanyPreviousAddressController.onSubmit(NormalMode, firstIndex))
+          val fakeRequest = addToken(FakeRequest(routes.CompanyPreviousAddressController.onSubmit(NormalMode, firstIndex, None))
             .withHeaders("Csrf-Token" -> "nocheck")
             .withFormUrlEncodedBody(
               ("addressLine1", address.addressLine1),

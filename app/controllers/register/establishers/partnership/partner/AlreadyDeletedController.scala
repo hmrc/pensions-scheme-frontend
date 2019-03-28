@@ -21,7 +21,7 @@ import controllers.Retrievals
 import controllers.actions.{AuthAction, DataRequiredAction, DataRetrievalAction}
 import identifiers.register.establishers.partnership.partner.PartnerDetailsId
 import javax.inject.Inject
-import models.Index
+import models.{Index, Mode, NormalMode}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
@@ -39,18 +39,19 @@ class AlreadyDeletedController @Inject()(
                                           requireData: DataRequiredAction
                                         ) (implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
 
-  def onPageLoad(establisherIndex: Index, partnerIndex: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData andThen requireData).async {
     implicit request =>
       PartnerDetailsId(establisherIndex, partnerIndex).retrieve.right.map {
         details =>
-          Future.successful(Ok(alreadyDeleted(appConfig, vm(establisherIndex, details.fullName))))
+          Future.successful(Ok(alreadyDeleted(appConfig, vm(establisherIndex, details.fullName, srn))))
       }
 
   }
 
-  private def vm(establisherIndex: Index, partnerName: String) = AlreadyDeletedViewModel(
+  private def vm(establisherIndex: Index, partnerName: String, srn: Option[String]) = AlreadyDeletedViewModel(
     Message("messages__alreadyDeleted__partner_title"),
     partnerName,
-    controllers.register.establishers.partnership.routes.AddPartnersController.onPageLoad(establisherIndex)
+    controllers.register.establishers.partnership.routes.AddPartnersController.onPageLoad(NormalMode, establisherIndex, srn)
   )
 }

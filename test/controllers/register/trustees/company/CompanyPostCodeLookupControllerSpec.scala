@@ -45,7 +45,7 @@ import scala.concurrent.Future
 
 class CompanyPostCodeLookupControllerSpec extends ControllerSpecBase with CSRFRequest with MockitoSugar with ScalaFutures {
 
-  def onwardRoute: Call = routes.CompanyAddressListController.onPageLoad(NormalMode, Index(0))
+  def onwardRoute: Call = routes.CompanyAddressListController.onPageLoad(NormalMode, Index(0), None)
 
   val formProvider = new PostCodeLookupFormProvider()
   val form = formProvider()
@@ -82,14 +82,14 @@ class CompanyPostCodeLookupControllerSpec extends ControllerSpecBase with CSRFRe
           val controller = app.injector.instanceOf[CompanyPostCodeLookupController]
 
           lazy val viewModel = PostcodeLookupViewModel(
-            postCall = controller.postCall(NormalMode, firstIndex),
-            manualInputCall = controller.manualAddressCall(NormalMode, firstIndex),
+            postCall = controller.postCall(NormalMode, firstIndex, None),
+            manualInputCall = controller.manualAddressCall(NormalMode, firstIndex, None),
             title = Message(controller.title),
             heading = Message(controller.heading),
             subHeading = Some(company.companyName)
           )
 
-          val request = addToken(FakeRequest(routes.CompanyPostCodeLookupController.onPageLoad(NormalMode, firstIndex))
+          val request = addToken(FakeRequest(routes.CompanyPostCodeLookupController.onPageLoad(NormalMode, firstIndex, None))
             .withHeaders("Csrf-Token" -> "nocheck"))
 
           val result = route(app, request).value
@@ -108,7 +108,7 @@ class CompanyPostCodeLookupControllerSpec extends ControllerSpecBase with CSRFRe
     "redirect to next page on POST request" which {
       "returns a list of addresses from addressLookup given a postcode" in {
 
-        val call: Call = routes.CompanyPostCodeLookupController.onSubmit(NormalMode, firstIndex)
+        val call: Call = routes.CompanyPostCodeLookupController.onSubmit(NormalMode, firstIndex, None)
 
         val validPostcode = "ZZ1 1ZZ"
 

@@ -44,9 +44,9 @@ import scala.concurrent.Future
 
 class PartnerAddressPostcodeLookupControllerSpec extends ControllerSpecBase with MockitoSugar with CSRFRequest {
 
-  def onwardRoute: Call = routes.PartnerAddressPostcodeLookupController.onSubmit(NormalMode, estIndex, parIndex)
+  def onwardRoute: Call = routes.PartnerAddressPostcodeLookupController.onSubmit(NormalMode, estIndex, parIndex, None)
 
-  def manualInputCall: Call = routes.PartnerAddressController.onPageLoad(NormalMode, estIndex, parIndex)
+  def manualInputCall: Call = routes.PartnerAddressController.onPageLoad(NormalMode, estIndex, parIndex, None)
 
   val formProvider = new PostCodeLookupFormProvider()
   val form = formProvider()
@@ -82,7 +82,7 @@ class PartnerAddressPostcodeLookupControllerSpec extends ControllerSpecBase with
   "PartnerAddressPostcodeLookup Controller" must {
 
     "render postcodeLookup from GET request" in {
-      val call: Call = routes.PartnerAddressPostcodeLookupController.onPageLoad(NormalMode, estIndex, parIndex)
+      val call: Call = routes.PartnerAddressPostcodeLookupController.onPageLoad(NormalMode, estIndex, parIndex, None)
 
       val cacheConnector: UserAnswersCacheConnector = mock[UserAnswersCacheConnector]
       val addressConnector: AddressLookupConnector = mock[AddressLookupConnector]
@@ -114,7 +114,7 @@ class PartnerAddressPostcodeLookupControllerSpec extends ControllerSpecBase with
 
     "redirect to next page on POST request" in {
 
-      val call: Call = routes.PartnerAddressListController.onSubmit(NormalMode, estIndex, parIndex)
+      val call: Call = routes.PartnerAddressListController.onSubmit(NormalMode, estIndex, parIndex, None)
 
       val validPostcode = "ZZ1 1ZZ"
 

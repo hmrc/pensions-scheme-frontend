@@ -44,14 +44,14 @@ class PartnerPreviousAddressListController @Inject()(
                                                       requireData: DataRequiredAction
                                                     ) extends AddressListController with Retrievals {
 
-  def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index): Action[AnyContent] =
+  def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData andThen requireData).async { implicit request =>
-      viewmodel(mode, establisherIndex, partnerIndex).right.map(get)
+      viewmodel(mode, establisherIndex, partnerIndex, srn).right.map(get)
     }
 
-  def onSubmit(mode: Mode, establisherIndex: Index, partnerIndex: Index): Action[AnyContent] =
+  def onSubmit(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData andThen requireData).async { implicit request =>
-      viewmodel(mode, establisherIndex, partnerIndex).right.map {
+      viewmodel(mode, establisherIndex, partnerIndex, srn).right.map {
         vm =>
           post(
             vm,
@@ -62,20 +62,21 @@ class PartnerPreviousAddressListController @Inject()(
       }
     }
 
-  private def viewmodel(mode: Mode, establisherIndex: Index, directorIndex: Index)
+  private def viewmodel(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String])
                        (implicit request: DataRequest[AnyContent]): Either[Future[Result], AddressListViewModel] = {
 
     (PartnerDetailsId(establisherIndex, directorIndex) and PartnerPreviousAddressPostcodeLookupId(establisherIndex, directorIndex))
       .retrieve.right.map {
       case partnerDetails ~ addresses =>
         AddressListViewModel(
-          postCall = routes.PartnerPreviousAddressListController.onSubmit(mode, establisherIndex, directorIndex),
-          manualInputCall = routes.PartnerPreviousAddressController.onPageLoad(mode, establisherIndex, directorIndex),
+          postCall = routes.PartnerPreviousAddressListController.onSubmit(mode, establisherIndex, directorIndex, srn),
+          manualInputCall = routes.PartnerPreviousAddressController.onPageLoad(mode, establisherIndex, directorIndex, srn),
           addresses = addresses,
           title = Message("messages__select_the_previous_address__title"),
           heading = Message("messages__select_the_previous_address__heading"),
           subHeading = Some(Message(partnerDetails.fullName))
         )
-    }.left.map(_ => Future.successful(Redirect(routes.PartnerPreviousAddressPostcodeLookupController.onPageLoad(mode, establisherIndex, directorIndex))))
+    }.left.map(_ => Future.successful(Redirect(
+      routes.PartnerPreviousAddressPostcodeLookupController.onPageLoad(mode, establisherIndex, directorIndex, srn))))
   }
 }

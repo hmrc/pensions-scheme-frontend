@@ -42,13 +42,13 @@ class PartnershipVatController @Inject()(
                                           formProvider: VatFormProvider
                                         ) extends VatController {
 
-  private def viewmodel(mode: Mode, index: Index): Retrieval[VatViewModel] =
+  private def viewmodel(mode: Mode, index: Index, srn: Option[String]): Retrieval[VatViewModel] =
     Retrieval {
       implicit request =>
         PartnershipDetailsId(index).retrieve.right.map {
           details =>
             VatViewModel(
-              postCall = routes.PartnershipVatController.onSubmit(mode, index),
+              postCall = routes.PartnershipVatController.onSubmit(mode, index, srn),
               title = Message("messages__partnershipVat__title"),
               heading = Message("messages__partnershipVat__heading"),
               hint = Message("messages__common__vat__hint"),
@@ -59,17 +59,17 @@ class PartnershipVatController @Inject()(
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      viewmodel(mode, index).retrieve.right.map {
+      viewmodel(mode, index, srn).retrieve.right.map {
         vm =>
           get(PartnershipVatId(index), form, vm)
       }
   }
 
-  def onSubmit(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      viewmodel(mode, index).retrieve.right.map {
+      viewmodel(mode, index, srn).retrieve.right.map {
         vm =>
           post(PartnershipVatId(index), mode, form, vm)
       }

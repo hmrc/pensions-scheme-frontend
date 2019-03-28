@@ -61,7 +61,7 @@ object ConfirmDeleteEstablisherViewSpec extends ViewSpecBase {
 
   private val firstIndex = Index(0)
   private val establisherName = "John Doe"
-  private val postCall = ConfirmDeleteEstablisherController.onSubmit(firstIndex, EstablisherKind.Indivdual)
+  private val postCall = ConfirmDeleteEstablisherController.onSubmit(NormalMode, firstIndex, EstablisherKind.Indivdual, None)
   private val cancelCall = AddEstablisherController.onSubmit(NormalMode)
 
   private def createView(hintText:Option[String] = None) =

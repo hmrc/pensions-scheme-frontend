@@ -16,7 +16,6 @@
 
 package connectors
 
-import com.fasterxml.jackson.core.JsonParseException
 import com.github.tomakehurst.wiremock.client.WireMock._
 import identifiers.TypedIdentifier
 import org.scalatest.{AsyncWordSpec, MustMatchers, OptionValues}
@@ -24,13 +23,13 @@ import play.api.http.Status
 import play.api.libs.json.Json
 import play.api.mvc.Results._
 import play.api.test.Helpers._
-import uk.gov.hmrc.crypto.{ApplicationCrypto, PlainText}
+import uk.gov.hmrc.crypto.PlainText
 import uk.gov.hmrc.http.{HeaderCarrier, HttpException}
 import utils.WireMockHelper
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
-class MicroserviceCacheConnectorSpec extends AsyncWordSpec with MustMatchers with WireMockHelper with OptionValues {
+class UserAnswersCacheConnectorSpec extends AsyncWordSpec with MustMatchers with WireMockHelper with OptionValues {
 
   protected object FakeIdentifier extends TypedIdentifier[String] {
     override def toString: String = "fake-identifier"
@@ -44,7 +43,7 @@ class MicroserviceCacheConnectorSpec extends AsyncWordSpec with MustMatchers wit
 
   protected def lastUpdatedUrl(id: String) = s"/pensions-scheme/journey-cache/scheme/$id/lastUpdated"
 
-  protected lazy val connector: UserAnswersCacheConnector = injector.instanceOf[MicroserviceCacheConnector]
+  protected lazy val connector: UserAnswersCacheConnector = injector.instanceOf[UserAnswersCacheConnector]
 
 
   ".fetch" must {
@@ -76,6 +75,7 @@ class MicroserviceCacheConnectorSpec extends AsyncWordSpec with MustMatchers wit
         result =>
           result.value mustEqual Json.obj()
       }
+
     }
 
     "return a failed future on upstream error" in {

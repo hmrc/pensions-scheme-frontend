@@ -53,14 +53,16 @@ class PartnerDetailsControllerSpec extends ControllerSpecBase {
       new DataRequiredActionImpl,
       formProvider,
       mockSectionComplete)
-
+  val submitUrl = controllers.register.establishers.partnership.partner.routes.
+    PartnerDetailsController.onSubmit(NormalMode, firstEstablisherIndex, firstPartnerIndex, None)
   def viewAsString(form: Form[_] = form): String = partnerDetails(
     frontendAppConfig,
     form,
     NormalMode,
     firstEstablisherIndex,
     firstPartnerIndex,
-    None
+    None,
+    submitUrl
   )(fakeRequest, messages).toString
 
   private val postRequest = fakeRequest.withFormUrlEncodedBody(("firstName", "testFirstName"), ("lastName", "testLastName"),
@@ -69,7 +71,7 @@ class PartnerDetailsControllerSpec extends ControllerSpecBase {
   "PartnerDetails Controller" must {
 
     "return OK and the correct view for a GET" in {
-      val result = controller().onPageLoad(NormalMode, firstEstablisherIndex, firstPartnerIndex)(fakeRequest)
+      val result = controller().onPageLoad(NormalMode, firstEstablisherIndex, firstPartnerIndex, None)(fakeRequest)
 
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString()
@@ -91,7 +93,7 @@ class PartnerDetailsControllerSpec extends ControllerSpecBase {
       )
       val getRelevantData = new FakeDataRetrievalAction(Some(validData))
 
-      val result = controller(getRelevantData).onPageLoad(NormalMode, firstEstablisherIndex, firstPartnerIndex)(fakeRequest)
+      val result = controller(getRelevantData).onPageLoad(NormalMode, firstEstablisherIndex, firstPartnerIndex, None)(fakeRequest)
 
       contentAsString(result) mustBe viewAsString(form.fill(PersonDetails("First Name", Some("Middle Name"), "Last Name", new LocalDate(year, month, day))))
     }
@@ -106,7 +108,7 @@ class PartnerDetailsControllerSpec extends ControllerSpecBase {
 
       when(mockUserAnswersCacheConnector.save(any(), any(), any())(any(), any(), any())).thenReturn(Future.successful(validData))
 
-      val result = controller().onSubmit(NormalMode, firstEstablisherIndex, firstPartnerIndex)(postRequest)
+      val result = controller().onSubmit(NormalMode, firstEstablisherIndex, firstPartnerIndex, None)(postRequest)
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
     }
@@ -115,35 +117,35 @@ class PartnerDetailsControllerSpec extends ControllerSpecBase {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "invalid value"))
       val boundForm = form.bind(Map("value" -> "invalid value"))
 
-      val result = controller().onSubmit(NormalMode, firstEstablisherIndex, firstPartnerIndex)(postRequest)
+      val result = controller().onSubmit(NormalMode, firstEstablisherIndex, firstPartnerIndex, None)(postRequest)
 
       status(result) mustBe BAD_REQUEST
       contentAsString(result) mustBe viewAsString(boundForm)
     }
 
     "redirect to Session Expired for a GET if no existing data is found" in {
-      val result = controller(dontGetAnyData).onPageLoad(NormalMode, firstEstablisherIndex, firstPartnerIndex)(fakeRequest)
+      val result = controller(dontGetAnyData).onPageLoad(NormalMode, firstEstablisherIndex, firstPartnerIndex, None)(fakeRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
     }
 
     "redirect to Session Expired for a POST if no existing data is found" in {
-      val result = controller(dontGetAnyData).onSubmit(NormalMode, firstEstablisherIndex, firstPartnerIndex)(postRequest)
+      val result = controller(dontGetAnyData).onSubmit(NormalMode, firstEstablisherIndex, firstPartnerIndex, None)(postRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
     }
 
     "redirect to session expired from a GET when the index is invalid for establisher" in {
-      val result = controller().onPageLoad(NormalMode, invalidIndex, firstPartnerIndex)(fakeRequest)
+      val result = controller().onPageLoad(NormalMode, invalidIndex, firstPartnerIndex, None)(fakeRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
     }
 
     "redirect to session expired from a POST when the index is invalid for establisher" in {
-      val result = controller().onSubmit(NormalMode, invalidIndex, firstPartnerIndex)(fakeRequest)
+      val result = controller().onSubmit(NormalMode, invalidIndex, firstPartnerIndex, None)(fakeRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
@@ -171,7 +173,7 @@ class PartnerDetailsControllerSpec extends ControllerSpecBase {
       when(mockSectionComplete.setCompleteFlag(any(), eqTo(IsEstablisherCompleteId(0)),
         eqTo(userAnswers), eqTo(false))(any(), any())).thenReturn(Future.successful(userAnswers))
 
-      val result = controller(getRelevantData).onSubmit(NormalMode, firstEstablisherIndex, firstPartnerIndex)(postRequest)
+      val result = controller(getRelevantData).onSubmit(NormalMode, firstEstablisherIndex, firstPartnerIndex, None)(postRequest)
       status(result) mustBe SEE_OTHER
       verify(mockSectionComplete, times(1)).setCompleteFlag(any(), eqTo(IsEstablisherCompleteId(0)), eqTo(userAnswers), eqTo(false))(any(), any())
     }

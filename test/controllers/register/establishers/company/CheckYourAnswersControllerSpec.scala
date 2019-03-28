@@ -39,21 +39,21 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase {
 
     "return OK and the correct view for a GET with all the answers" in {
       val request = FakeDataRequest(fullAnswers)
-      val result = controller(fullAnswers.dataRetrievalAction).onPageLoad(index)(request)
+      val result = controller(fullAnswers.dataRetrievalAction).onPageLoad(NormalMode, None, index)(request)
 
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString(answerSections(request))
     }
 
     "redirect to Session Expired for a GET if no existing data is found" in {
-      val result = controller(dontGetAnyData).onPageLoad(index)(fakeRequest)
+      val result = controller(dontGetAnyData).onPageLoad(NormalMode, None, index)(fakeRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
     }
 
     "mark company as complete on submit" in {
-      val result = controller().onSubmit(index)(fakeRequest)
+      val result = controller().onSubmit(NormalMode, None, index)(fakeRequest)
       status(result) mustBe SEE_OTHER
       redirectLocation(result).value mustEqual onwardRoute.url
       FakeSectionComplete.verify(IsCompanyCompleteId(index), true)
@@ -78,14 +78,14 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase with Enumerable
   private val contactDetails = ContactDetails("test@test.com", "1234")
 
   private val emptyAnswers = UserAnswers()
-  private val companyRegistrationNumberRoute = routes.CompanyRegistrationNumberController.onPageLoad(CheckMode, 0).url
-  private val companyUniqueTaxReferenceRoute = routes.CompanyUniqueTaxReferenceController.onPageLoad(CheckMode, 0).url
-  private val companyDetailsRoute = routes.CompanyDetailsController.onPageLoad(CheckMode, 0).url
-  private val isCompanyDormantRoute = routes.IsCompanyDormantController.onPageLoad(CheckMode, 0).url
-  private val companyAddressRoute = routes.CompanyAddressController.onPageLoad(CheckMode, Index(index)).url
-  private val companyAddressYearsRoute = routes.CompanyAddressYearsController.onPageLoad(CheckMode, Index(index)).url
-  private val companyPreviousAddressRoute = routes.CompanyPreviousAddressController.onPageLoad(CheckMode, Index(index)).url
-  private val companyContactDetailsRoute = routes.CompanyContactDetailsController.onPageLoad(CheckMode, Index(index)).url
+  private val companyRegistrationNumberRoute = routes.CompanyRegistrationNumberController.onPageLoad(CheckMode, None, 0).url
+  private val companyUniqueTaxReferenceRoute = routes.CompanyUniqueTaxReferenceController.onPageLoad(CheckMode, None, 0).url
+  private val companyDetailsRoute = routes.CompanyDetailsController.onPageLoad(CheckMode, None, 0).url
+  private val isCompanyDormantRoute = routes.IsCompanyDormantController.onPageLoad(CheckMode, None, 0).url
+  private val companyAddressRoute = routes.CompanyAddressController.onPageLoad(CheckMode, None, Index(index)).url
+  private val companyAddressYearsRoute = routes.CompanyAddressYearsController.onPageLoad(CheckMode, None, Index(index)).url
+  private val companyPreviousAddressRoute = routes.CompanyPreviousAddressController.onPageLoad(CheckMode, None, Index(index)).url
+  private val companyContactDetailsRoute = routes.CompanyContactDetailsController.onPageLoad(CheckMode, None, Index(index)).url
 
   private val fullAnswers = emptyAnswers.
     establisherCompanyDetails(0, companyDetails).
@@ -97,7 +97,7 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase with Enumerable
     establishersCompanyPreviousAddress(0, previousAddress).
     establishersCompanyContactDetails(0, contactDetails)
 
-  def postUrl: Call = routes.CheckYourAnswersController.onSubmit(index)
+  def postUrl: Call = routes.CheckYourAnswersController.onSubmit(NormalMode, None, index)
 
   private def companyDetailsSection(implicit request: DataRequest[AnyContent]): AnswerSection = {
     val companyDetailsRow = CompanyDetailsCYA(

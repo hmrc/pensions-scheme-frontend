@@ -47,17 +47,20 @@ class PartnershipDetailsController @Inject()(
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       val formWithData = request.userAnswers.get(PartnershipDetailsId(index)).fold(form)(form.fill)
-      Future.successful(Ok(partnershipDetails(appConfig, formWithData, mode, index, existingSchemeName)))
+      val submitUrl = controllers.register.establishers.partnership.routes.PartnershipDetailsController.onSubmit(mode, index, srn)
+      Future.successful(Ok(partnershipDetails(appConfig, formWithData, mode, index, existingSchemeName, submitUrl)))
   }
 
-  def onSubmit(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       form.bindFromRequest().fold(
-        (formWithErrors: Form[_]) =>
-          Future.successful(BadRequest(partnershipDetails(appConfig, formWithErrors, mode, index, existingSchemeName))),
+        (formWithErrors: Form[_]) => {
+          val submitUrl = controllers.register.establishers.partnership.routes.PartnershipDetailsController.onSubmit(mode, index, srn)
+          Future.successful(BadRequest(partnershipDetails(appConfig, formWithErrors, mode, index, existingSchemeName, submitUrl)))
+        },
         value =>
           dataCacheConnector.save(request.externalId, PartnershipDetailsId(index), value
           ).map {

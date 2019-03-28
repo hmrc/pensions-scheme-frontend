@@ -26,6 +26,7 @@ import models.NormalMode
 import play.api.data.Form
 import play.api.mvc.{Action, AnyContent, AnyContentAsFormUrlEncoded}
 import play.api.test.FakeRequest
+import services.{FakeUserAnswersService, UserAnswersService}
 import utils.{FakeNavigator, Navigator, UserAnswers}
 import views.html.insurancePolicyNumber
 
@@ -59,7 +60,7 @@ class InsurancePolicyNumberControllerSpec extends ControllerWithQuestionPageBeha
       postRequest
     )
 
-    behave like controllerThatSavesUserAnswers(
+    behave like controllerThatSavesUserAnswersWithService(
       saveAction(this),
       postRequest,
       InsurancePolicyNumberId,
@@ -71,7 +72,7 @@ object InsurancePolicyNumberControllerSpec {
 
   val policyNumber = "test policy number"
   val companyName = "test company name"
-
+  private def postUrl = routes.InsurancePolicyNumberController.onSubmit(NormalMode, None)
   private val formProvider = new InsurancePolicyNumberFormProvider()
   private val form = formProvider.apply()
   private val mandatoryData = UserAnswers().insuranceCompanyName(companyName)
@@ -82,13 +83,13 @@ object InsurancePolicyNumberControllerSpec {
     FakeRequest().withFormUrlEncodedBody(("policyNumber", policyNumber))
 
   private def viewAsString(base: SpecBase)(form: Form[_] = form): Form[_] => String = form =>
-    insurancePolicyNumber(base.frontendAppConfig, form, NormalMode, companyName, None)(base.fakeRequest, base.messages).toString()
+    insurancePolicyNumber(base.frontendAppConfig, form, NormalMode, companyName, None, postUrl)(base.fakeRequest, base.messages).toString()
 
   private def controller(base: ControllerSpecBase)(
     dataRetrievalAction: DataRetrievalAction = base.getEmptyData,
     authAction: AuthAction = FakeAuthAction,
     navigator: Navigator = FakeNavigator,
-    cache: UserAnswersCacheConnector = FakeUserAnswersCacheConnector
+    cache: UserAnswersService = FakeUserAnswersService
   ): InsurancePolicyNumberController =
     new InsurancePolicyNumberController(
       base.frontendAppConfig,
@@ -102,14 +103,14 @@ object InsurancePolicyNumberControllerSpec {
     )
 
   private def onPageLoadAction(base: ControllerSpecBase)(dataRetrievalAction: DataRetrievalAction, authAction: AuthAction): Action[AnyContent] =
-    controller(base)(dataRetrievalAction, authAction).onPageLoad(NormalMode)
+    controller(base)(dataRetrievalAction, authAction).onPageLoad(NormalMode, None)
 
   private def onSubmitAction(base: ControllerSpecBase, navigator: Navigator)(dataRetrievalAction: DataRetrievalAction,
                                                                              authAction: AuthAction): Action[AnyContent] =
-    controller(base)(dataRetrievalAction, authAction, navigator).onSubmit(NormalMode)
+    controller(base)(dataRetrievalAction, authAction, navigator).onSubmit(NormalMode, None)
 
-  private def saveAction(base: ControllerSpecBase)(cache: UserAnswersCacheConnector): Action[AnyContent] =
-    controller(base)(cache = cache).onSubmit(NormalMode)
+  private def saveAction(base: ControllerSpecBase)(cache: UserAnswersService): Action[AnyContent] =
+    controller(base)(cache = cache).onSubmit(NormalMode, None)
 }
 
 

@@ -61,18 +61,19 @@ class NavigatorSpec extends WordSpec with MustMatchers {
     }
 
     "in either mode" must {
+      "not save the last page when configured not to" in {
+        val fixture = testFixture()
+        fixture.dataCacheConnector.reset()
+        val result = fixture.navigator.nextPage(testNotSaveId, NormalMode, UserAnswers())
+        result mustBe testNotSaveCall
+        fixture.dataCacheConnector.verifyNot(LastPageId)
+      }
+
       "save the last page when configured to do so" in {
         val fixture = testFixture()
         val result = fixture.navigator.nextPage(testSaveId, NormalMode, UserAnswers())
         result mustBe testSaveCall
         fixture.dataCacheConnector.verify(LastPageId, LastPage(testSaveCall.method, testSaveCall.url))
-      }
-
-      "not save the last page when configured not to" in {
-        val fixture = testFixture()
-        val result = fixture.navigator.nextPage(testNotSaveId, NormalMode, UserAnswers())
-        result mustBe testNotSaveCall
-        fixture.dataCacheConnector.verifyNot(LastPageId)
       }
     }
 
@@ -118,7 +119,7 @@ object NavigatorSpec {
   }
 
   def testFixture(): TestFixture = new TestFixture {
-    override val dataCacheConnector: FakeUserAnswersCacheConnector = new FakeUserAnswersCacheConnector {}
+    override val dataCacheConnector: FakeUserAnswersCacheConnector = FakeUserAnswersCacheConnector
     override val navigator: TestNavigator = new TestNavigator(dataCacheConnector)
   }
 

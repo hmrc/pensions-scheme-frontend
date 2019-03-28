@@ -48,23 +48,23 @@ class IsPartnershipDormantController @Inject()(appConfig: FrontendAppConfig,
 
   private val form: Form[DeclarationDormant] = formProvider()
 
-  private def postCall(mode: Mode, index: Int): Call = routes.IsPartnershipDormantController.onSubmit(mode, index)
+  private def postCall(mode: Mode, index: Int, srn: Option[String]): Call = routes.IsPartnershipDormantController.onSubmit(mode, index, srn)
 
-  def onPageLoad(mode: Mode, index: Int): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onPageLoad(mode: Mode, index: Int, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       retrievePartnershipName(index) {
         partnershipName =>
           val preparedForm = request.userAnswers.get(IsPartnershipDormantId(index)).fold(form)(v => form.fill(v))
-          Future.successful(Ok(isDormant(appConfig, preparedForm, partnershipName, postCall(mode, index), existingSchemeName)))
+          Future.successful(Ok(isDormant(appConfig, preparedForm, partnershipName, postCall(mode, index, srn), existingSchemeName)))
       }
   }
 
-  def onSubmit(mode: Mode, index: Int): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode, index: Int, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       retrievePartnershipName(index) { partnershipName =>
         form.bindFromRequest().fold(
           (formWithErrors: Form[_]) =>
-            Future.successful(BadRequest(isDormant(appConfig, formWithErrors, partnershipName, postCall(mode, index), existingSchemeName))),
+            Future.successful(BadRequest(isDormant(appConfig, formWithErrors, partnershipName, postCall(mode, index, srn), existingSchemeName))),
           {
             case Yes =>
               dataCacheConnector.save(request.externalId, IsPartnershipDormantId(index), DeclarationDormant.values(0)).map { cacheMap =>

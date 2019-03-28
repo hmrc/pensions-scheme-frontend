@@ -74,7 +74,7 @@ class PartnerAddressListControllerSpec extends ControllerSpecBase with CSRFReque
         bind[UserAnswersCacheConnector].toInstance(FakeUserAnswersCacheConnector),
         bind[DataRetrievalAction].toInstance(dataRetrievalAction)
       )) { implicit app =>
-        val request = addToken(FakeRequest(routes.PartnerAddressListController.onPageLoad(NormalMode, Index(0), Index(0))))
+        val request = addToken(FakeRequest(routes.PartnerAddressListController.onPageLoad(NormalMode, Index(0), Index(0), None)))
         val result = route(app, request).value
 
         status(result) mustBe OK
@@ -94,11 +94,11 @@ class PartnerAddressListControllerSpec extends ControllerSpecBase with CSRFReque
         bind[UserAnswersCacheConnector].toInstance(FakeUserAnswersCacheConnector),
         bind[DataRetrievalAction].toInstance(getEmptyData)
       )) { implicit app =>
-        val request = addToken(FakeRequest(routes.PartnerAddressListController.onPageLoad(NormalMode, Index(0), Index(0))))
+        val request = addToken(FakeRequest(routes.PartnerAddressListController.onPageLoad(NormalMode, Index(0), Index(0), None)))
         val result = route(app, request).value
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.PartnerAddressPostcodeLookupController.onPageLoad(NormalMode, Index(0), Index(0)).url)
+        redirectLocation(result) mustBe Some(routes.PartnerAddressPostcodeLookupController.onPageLoad(NormalMode, Index(0), Index(0), None).url)
       }
 
     }
@@ -110,7 +110,7 @@ class PartnerAddressListControllerSpec extends ControllerSpecBase with CSRFReque
         bind[UserAnswersCacheConnector].toInstance(FakeUserAnswersCacheConnector),
         bind[DataRetrievalAction].toInstance(dontGetAnyData)
       )) { implicit app =>
-        val request = addToken(FakeRequest(routes.PartnerAddressListController.onPageLoad(NormalMode, Index(0), Index(0))))
+        val request = addToken(FakeRequest(routes.PartnerAddressListController.onPageLoad(NormalMode, Index(0), Index(0), None)))
         val result = route(app, request).value
 
         status(result) mustBe SEE_OTHER
@@ -121,7 +121,7 @@ class PartnerAddressListControllerSpec extends ControllerSpecBase with CSRFReque
 
     "redirect to the next page on POST of valid data" in {
 
-      val onwardCall = controllers.register.establishers.partnership.partner.routes.PartnerAddressController.onPageLoad(NormalMode, Index(0), Index(0))
+      val onwardCall = controllers.register.establishers.partnership.partner.routes.PartnerAddressController.onPageLoad(NormalMode, Index(0), Index(0), None)
 
       running(_.overrides(
         bind[AuthAction].to(FakeAuthAction),
@@ -130,7 +130,7 @@ class PartnerAddressListControllerSpec extends ControllerSpecBase with CSRFReque
       )) { implicit app =>
         val request =
           addToken(
-            FakeRequest(routes.PartnerAddressListController.onSubmit(NormalMode, Index(0), Index(0)))
+            FakeRequest(routes.PartnerAddressListController.onSubmit(NormalMode, Index(0), Index(0), None))
               .withFormUrlEncodedBody(("value", "0"))
           )
 
@@ -151,7 +151,7 @@ class PartnerAddressListControllerSpec extends ControllerSpecBase with CSRFReque
       )) { implicit app =>
         val request =
           addToken(
-            FakeRequest(routes.PartnerAddressListController.onSubmit(NormalMode, Index(0), Index(0)))
+            FakeRequest(routes.PartnerAddressListController.onSubmit(NormalMode, Index(0), Index(0), None))
               .withFormUrlEncodedBody(("value", "0"))
           )
 
@@ -172,14 +172,14 @@ class PartnerAddressListControllerSpec extends ControllerSpecBase with CSRFReque
       )) { implicit app =>
         val request =
           addToken(
-            FakeRequest(routes.PartnerAddressListController.onSubmit(NormalMode, Index(0), Index(0)))
+            FakeRequest(routes.PartnerAddressListController.onSubmit(NormalMode, Index(0), Index(0), None))
               .withFormUrlEncodedBody(("value", "0"))
           )
 
         val result = route(app, request).value
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.PartnerAddressPostcodeLookupController.onPageLoad(NormalMode, Index(0), Index(0)).url)
+        redirectLocation(result) mustBe Some(routes.PartnerAddressPostcodeLookupController.onPageLoad(NormalMode, Index(0), Index(0), None).url)
       }
 
     }
@@ -188,8 +188,8 @@ class PartnerAddressListControllerSpec extends ControllerSpecBase with CSRFReque
 
   private def addressListViewModel(addresses: Seq[TolerantAddress]): AddressListViewModel = {
     AddressListViewModel(
-      routes.PartnerAddressListController.onSubmit(NormalMode, Index(0), Index(0)),
-      routes.PartnerAddressController.onPageLoad(NormalMode, Index(0), Index(0)),
+      routes.PartnerAddressListController.onSubmit(NormalMode, Index(0), Index(0), None),
+      routes.PartnerAddressController.onPageLoad(NormalMode, Index(0), Index(0), None),
       addresses,
       subHeading = Some(Message(partnerDetails.fullName))
     )

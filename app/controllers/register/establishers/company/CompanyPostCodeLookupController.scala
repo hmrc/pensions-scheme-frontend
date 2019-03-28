@@ -50,31 +50,32 @@ class CompanyPostCodeLookupController @Inject()(
 
   protected val form: Form[String] = formProvider()
 
-  private def viewmodel(index: Int, mode: Mode): Retrieval[PostcodeLookupViewModel] =
+  private def viewmodel(index: Int, srn: Option[String], mode: Mode): Retrieval[PostcodeLookupViewModel] =
     Retrieval {
       implicit request =>
         CompanyDetailsId(index).retrieve.right.map {
           details =>
             PostcodeLookupViewModel(
-              routes.CompanyPostCodeLookupController.onSubmit(mode, index),
-              routes.CompanyAddressController.onPageLoad(mode, index),
+              routes.CompanyPostCodeLookupController.onSubmit(mode, srn, index),
+              routes.CompanyAddressController.onPageLoad(mode, srn, index),
               title = Message(title),
               heading = Message(heading),
-              subHeading = Some(details.companyName)
+              subHeading = Some(details.companyName),
+              srn = srn
             )
         }
     }
 
-  def onPageLoad(mode: Mode, index: Index): Action[AnyContent] =
+  def onPageLoad(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] =
     (authenticate andThen getData andThen requireData).async {
       implicit request =>
-        viewmodel(index, mode).retrieve.right map get
+        viewmodel(index, srn, mode).retrieve.right map get
     }
 
-  def onSubmit(mode: Mode, index: Index): Action[AnyContent] =
+  def onSubmit(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] =
     (authenticate andThen getData andThen requireData).async {
       implicit request =>
-        viewmodel(index, mode).retrieve.right.map {
+        viewmodel(index, srn, mode).retrieve.right.map {
           vm =>
             post(CompanyPostCodeLookupId(index), vm, mode)
         }

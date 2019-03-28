@@ -20,7 +20,7 @@ import audit.testdoubles.StubSuccessfulAuditService
 import audit.{AddressAction, AddressEvent, AuditService}
 import base.CSRFRequest
 import config.FrontendAppConfig
-import connectors.{UserAnswersCacheConnector, FakeUserAnswersCacheConnector}
+import connectors.{FakeUserAnswersCacheConnector, UserAnswersCacheConnector}
 import controllers.ControllerSpecBase
 import controllers.actions._
 import controllers.register.establishers.partnership.partner.routes._
@@ -40,6 +40,7 @@ import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import services.{FakeUserAnswersService, UserAnswersService}
 import utils.{CountryOptions, FakeNavigator, InputOption, Navigator}
 import viewmodels.Message
 import viewmodels.address.ManualAddressViewModel
@@ -87,7 +88,7 @@ class PartnerAddressControllerSpec extends ControllerSpecBase with MockitoSugar 
       running(_.overrides(
         bind[FrontendAppConfig].to(frontendAppConfig),
         bind[Navigator].toInstance(FakeNavigator),
-        bind[UserAnswersCacheConnector].toInstance(FakeUserAnswersCacheConnector),
+        bind[UserAnswersService].toInstance(FakeUserAnswersService),
         bind[AuthAction].to(FakeAuthAction),
         bind[DataRetrievalAction].to(retrieval),
         bind[CountryOptions].to(countryOptions)
@@ -97,7 +98,7 @@ class PartnerAddressControllerSpec extends ControllerSpecBase with MockitoSugar 
           val controller = app.injector.instanceOf[PartnerAddressController]
 
           val viewmodel = ManualAddressViewModel(
-            controller.postCall(NormalMode, establisherIndex, partnerIndex),
+            controller.postCall(NormalMode, establisherIndex, partnerIndex, None),
             countryOptions.options,
             Message(controller.title),
             Message(controller.heading),
@@ -106,7 +107,7 @@ class PartnerAddressControllerSpec extends ControllerSpecBase with MockitoSugar 
           )
 
           val request = addToken(
-            FakeRequest(PartnerAddressController.onPageLoad(NormalMode, establisherIndex, partnerIndex))
+            FakeRequest(PartnerAddressController.onPageLoad(NormalMode, establisherIndex, partnerIndex, None))
               .withHeaders("Csrf-Token" -> "nocheck")
           )
 
@@ -128,7 +129,7 @@ class PartnerAddressControllerSpec extends ControllerSpecBase with MockitoSugar 
     "redirect to next page on POST request" which {
       "save address" in {
 
-        val onwardCall = controllers.register.establishers.partnership.partner.routes.PartnerAddressYearsController.onPageLoad(NormalMode, Index(0), Index(0))
+        val onwardCall = controllers.register.establishers.partnership.partner.routes.PartnerAddressYearsController.onPageLoad(NormalMode, Index(0), Index(0), None)
 
         val address = Address(
           addressLine1 = "value 1",
@@ -141,7 +142,7 @@ class PartnerAddressControllerSpec extends ControllerSpecBase with MockitoSugar 
         running(_.overrides(
           bind[FrontendAppConfig].to(frontendAppConfig),
           bind[MessagesApi].to(messagesApi),
-          bind[UserAnswersCacheConnector].toInstance(FakeUserAnswersCacheConnector),
+          bind[UserAnswersService].toInstance(FakeUserAnswersService),
           bind[Navigator].toInstance(new FakeNavigator(desiredRoute = onwardCall)),
           bind[AuthAction].to(FakeAuthAction),
           bind[DataRetrievalAction].to(retrieval),
@@ -150,7 +151,7 @@ class PartnerAddressControllerSpec extends ControllerSpecBase with MockitoSugar 
         )) {
           implicit app =>
 
-            val fakeRequest = addToken(FakeRequest(PartnerAddressController.onSubmit(NormalMode, establisherIndex, partnerIndex))
+            val fakeRequest = addToken(FakeRequest(PartnerAddressController.onSubmit(NormalMode, establisherIndex, partnerIndex, None))
               .withHeaders("Csrf-Token" -> "nocheck")
               .withFormUrlEncodedBody(
                 ("addressLine1", address.addressLine1),
@@ -163,7 +164,7 @@ class PartnerAddressControllerSpec extends ControllerSpecBase with MockitoSugar 
             status(result) must be(SEE_OTHER)
             redirectLocation(result).value mustEqual onwardCall.url
 
-            FakeUserAnswersCacheConnector.verify(PartnerAddressId(establisherIndex, partnerIndex), address)
+            FakeUserAnswersService.verify(PartnerAddressId(establisherIndex, partnerIndex), address)
         }
       }
     }
@@ -181,14 +182,15 @@ class PartnerAddressControllerSpec extends ControllerSpecBase with MockitoSugar 
       running(_.overrides(
         bind[FrontendAppConfig].to(frontendAppConfig),
         bind[Navigator].toInstance(FakeNavigator),
-        bind[UserAnswersCacheConnector].toInstance(FakeUserAnswersCacheConnector),
+        bind[UserAnswersService].toInstance(FakeUserAnswersService),
         bind[AuthAction].to(FakeAuthAction),
+        bind[DataRetrievalAction].to(retrieval),
         bind[CountryOptions].to(countryOptions),
         bind[AuditService].toInstance(fakeAuditService)
       )) {
         implicit app =>
 
-          val fakeRequest = addToken(FakeRequest(PartnerAddressController.onSubmit(NormalMode, establisherIndex, partnerIndex))
+          val fakeRequest = addToken(FakeRequest(PartnerAddressController.onSubmit(NormalMode, establisherIndex, partnerIndex, None))
             .withHeaders("Csrf-Token" -> "nocheck")
             .withFormUrlEncodedBody(
               ("addressLine1", address.addressLine1),

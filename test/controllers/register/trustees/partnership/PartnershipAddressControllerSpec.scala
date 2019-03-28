@@ -31,6 +31,7 @@ import play.api.data.Form
 import play.api.libs.json.Json
 import play.api.mvc.Call
 import play.api.test.Helpers._
+import services.FakeUserAnswersService
 import utils.{CountryOptions, FakeCountryOptions, FakeNavigator, InputOption, UserAnswers}
 import viewmodels.Message
 import viewmodels.address.ManualAddressViewModel
@@ -58,7 +59,7 @@ class PartnershipAddressControllerSpec extends ControllerSpecBase with ScalaFutu
     new PartnershipAddressController(
       frontendAppConfig,
       messagesApi,
-      FakeUserAnswersCacheConnector,
+      FakeUserAnswersService,
       new FakeNavigator(desiredRoute = onwardRoute),
       FakeAuthAction,
       dataRetrievalAction,
@@ -73,7 +74,7 @@ class PartnershipAddressControllerSpec extends ControllerSpecBase with ScalaFutu
       frontendAppConfig,
       form,
       ManualAddressViewModel(
-        routes.PartnershipAddressController.onSubmit(NormalMode, firstIndex),
+        routes.PartnershipAddressController.onSubmit(NormalMode, firstIndex, None),
         options,
         Message("messages__trusteePartnershipAddress__title"),
         Message("messages__trusteePartnershipAddress__heading"),
@@ -86,7 +87,7 @@ class PartnershipAddressControllerSpec extends ControllerSpecBase with ScalaFutu
   "PartnershipAddressController" must {
 
     "return OK and the correct view for a GET" in {
-      val result = controller().onPageLoad(NormalMode, firstIndex)(fakeRequest)
+      val result = controller().onPageLoad(NormalMode, firstIndex, None)(fakeRequest)
 
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString()
@@ -105,7 +106,7 @@ class PartnershipAddressControllerSpec extends ControllerSpecBase with ScalaFutu
 
       val getRelevantData = new FakeDataRetrievalAction(Some(validData))
 
-      val result = controller(getRelevantData).onPageLoad(NormalMode, firstIndex)(fakeRequest)
+      val result = controller(getRelevantData).onPageLoad(NormalMode, firstIndex, None)(fakeRequest)
 
       contentAsString(result) mustBe viewAsString(form.fill(address))
     }
@@ -118,7 +119,7 @@ class PartnershipAddressControllerSpec extends ControllerSpecBase with ScalaFutu
         "country" -> "GB"
       )
 
-      val result = controller().onSubmit(NormalMode, firstIndex)(postRequest)
+      val result = controller().onSubmit(NormalMode, firstIndex, None)(postRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
@@ -128,7 +129,7 @@ class PartnershipAddressControllerSpec extends ControllerSpecBase with ScalaFutu
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "invalid value"))
       val boundForm = form.bind(Map("value" -> "invalid value"))
 
-      val result = controller().onSubmit(NormalMode, firstIndex)(postRequest)
+      val result = controller().onSubmit(NormalMode, firstIndex, None)(postRequest)
 
       status(result) mustBe BAD_REQUEST
       contentAsString(result) mustBe viewAsString(boundForm)
@@ -137,14 +138,14 @@ class PartnershipAddressControllerSpec extends ControllerSpecBase with ScalaFutu
     "redirect to Session Expired" when {
       "no existing data is found" when {
         "GET" in {
-          val result = controller(dontGetAnyData).onPageLoad(NormalMode, firstIndex)(fakeRequest)
+          val result = controller(dontGetAnyData).onPageLoad(NormalMode, firstIndex, None)(fakeRequest)
 
           status(result) mustBe SEE_OTHER
           redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
         }
         "POST" in {
           val postRequest = fakeRequest.withFormUrlEncodedBody()
-          val result = controller(dontGetAnyData).onSubmit(NormalMode, firstIndex)(postRequest)
+          val result = controller(dontGetAnyData).onSubmit(NormalMode, firstIndex, None)(postRequest)
 
           status(result) mustBe SEE_OTHER
           redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
@@ -180,7 +181,7 @@ class PartnershipAddressControllerSpec extends ControllerSpecBase with ScalaFutu
 
       fakeAuditService.reset()
 
-      val result = controller(data).onSubmit(NormalMode, firstIndex)(postRequest)
+      val result = controller(data).onSubmit(NormalMode, firstIndex, None)(postRequest)
 
       whenReady(result) {
         _ =>

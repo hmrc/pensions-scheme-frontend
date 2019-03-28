@@ -50,7 +50,7 @@ class PartnershipPostcodeLookupControllerSpec extends ControllerSpecBase with CS
   "IndividualPostCodeLookup Controller" must {
     "render postCodeLookup from a GET request" in {
       requestResult(
-        implicit app => addToken(FakeRequest(routes.PartnershipPostcodeLookupController.onPageLoad(NormalMode, firstIndex))),
+        implicit app => addToken(FakeRequest(routes.PartnershipPostcodeLookupController.onPageLoad(NormalMode, firstIndex, None))),
         (request, result) => {
           status(result) mustBe OK
           contentAsString(result) mustBe postcodeLookup(frontendAppConfig, form, viewModel, None)(request, messages).toString()
@@ -61,7 +61,7 @@ class PartnershipPostcodeLookupControllerSpec extends ControllerSpecBase with CS
     "redirect to next page on POST request" which {
       "returns a list of addresses from addressLookup given a postcode" in {
         requestResult(
-          implicit app => addToken(FakeRequest(routes.PartnershipPostcodeLookupController.onSubmit(NormalMode, firstIndex))
+          implicit app => addToken(FakeRequest(routes.PartnershipPostcodeLookupController.onSubmit(NormalMode, firstIndex, None))
             .withFormUrlEncodedBody("value" -> validPostcode)),
           (_, result) => {
             status(result) mustBe SEE_OTHER
@@ -86,8 +86,8 @@ object PartnershipPostcodeLookupControllerSpec extends ControllerSpecBase with M
   val address = TolerantAddress(Some("address line 1"), Some("address line 2"), None, None, Some(validPostcode), Some("GB"))
 
   lazy val viewModel = PostcodeLookupViewModel(
-    postCall = routes.PartnershipPostcodeLookupController.onSubmit(NormalMode, firstIndex),
-    manualInputCall = routes.PartnershipAddressController.onPageLoad(NormalMode, firstIndex),
+    postCall = routes.PartnershipPostcodeLookupController.onSubmit(NormalMode, firstIndex, None),
+    manualInputCall = routes.PartnershipAddressController.onPageLoad(NormalMode, firstIndex, None),
     title = Message("messages__partnershipPostcodeLookup__title"),
     heading = Message("messages__partnershipPostcodeLookup__heading"),
     subHeading = Some(partnershipDetails.name),
