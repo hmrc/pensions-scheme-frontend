@@ -49,10 +49,10 @@ trait CheckYourAnswersBehaviours extends ViewSpecBase {
           assertLink(doc, "cya-0-0-change", answerRow.changeUrl.get)
         }
 
-        "correctly display an AnswerSection where answerIsMessageKey is true" in {
+        "correctly display an AnswerSection where answerIsMessageKey is true and there is no change url" in {
           val headingKey = "test-headingKey"
 
-          val answerRow = AnswerRow("test-label", Seq("date.day"), answerIsMessageKey = true, Some("http//:google.com"))
+          val answerRow = AnswerRow("test-label", Seq("date.day"), answerIsMessageKey = true, None)
 
           val section = AnswerSection(
             Some(headingKey),
@@ -64,6 +64,7 @@ trait CheckYourAnswersBehaviours extends ViewSpecBase {
           val doc = asDocument(view(Seq(section)))
 
           assertRenderedByIdWithText(doc, "cya-0-0-0-answer", "Day")
+          assertNotRenderedById(doc, "cya-0-0-change")
         }
 
         "correctly display a RepeaterAnswerSection" in {
