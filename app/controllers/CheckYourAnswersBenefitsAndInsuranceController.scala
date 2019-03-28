@@ -46,11 +46,11 @@ class CheckYourAnswersBenefitsAndInsuranceController @Inject()(appConfig: Fronte
       implicit val userAnswers = request.userAnswers
       val benefitsAndInsuranceSection = AnswerSection(
         None,
-        InvestmentRegulatedSchemeId.row(routes.InvestmentRegulatedSchemeController.onPageLoad(CheckMode).url) ++
-          OccupationalPensionSchemeId.row(routes.OccupationalPensionSchemeController.onPageLoad(CheckMode).url) ++
-          TypeOfBenefitsId.row(routes.TypeOfBenefitsController.onPageLoad(CheckMode).url) ++
+        InvestmentRegulatedSchemeId.row(routes.InvestmentRegulatedSchemeController.onPageLoad(CheckMode).url, mode) ++
+          OccupationalPensionSchemeId.row(routes.OccupationalPensionSchemeController.onPageLoad(CheckMode).url, mode) ++
+          TypeOfBenefitsId.row(routes.TypeOfBenefitsController.onPageLoad(CheckMode).url, mode) ++
           BenefitsSecuredByInsuranceId.row(routes.BenefitsSecuredByInsuranceController.onPageLoad(CheckMode, srn).url) ++
-          InsuranceCompanyNameId.row(routes.InsuranceCompanyNameController.onPageLoad(CheckMode, None).url) ++
+          InsuranceCompanyNameId.row(routes.InsuranceCompanyNameController.onPageLoad(CheckMode, srn).url) ++
           InsurancePolicyNumberId.row(routes.InsurancePolicyNumberController.onPageLoad(CheckMode, srn).url) ++
           InsurerConfirmAddressId.row(routes.InsurerConfirmAddressController.onPageLoad(CheckMode, srn).url)
       )
@@ -58,7 +58,8 @@ class CheckYourAnswersBenefitsAndInsuranceController @Inject()(appConfig: Fronte
         appConfig,
         Seq(benefitsAndInsuranceSection),
         routes.CheckYourAnswersBenefitsAndInsuranceController.onSubmit(mode, srn),
-        existingSchemeName
+        existingSchemeName,
+        mode = mode
       ))
   }
 
