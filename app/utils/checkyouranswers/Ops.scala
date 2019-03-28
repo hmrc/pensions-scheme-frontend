@@ -17,7 +17,7 @@
 package utils.checkyouranswers
 
 import identifiers.TypedIdentifier
-import models.{Mode, NormalMode}
+import models.{Mode, NormalMode, UpdateMode}
 import models.requests.DataRequest
 import play.api.libs.json.Reads
 import play.api.mvc.AnyContent
@@ -33,10 +33,10 @@ object Ops {
   implicit def toOps[I <: TypedIdentifier.PathDependent](id: I)(implicit ev: CheckYourAnswers[I]): Ops[id.Data] =
     new Ops[id.Data] {
       override def row(changeUrl: String, mode: Mode)(implicit request: DataRequest[AnyContent], reads: Reads[id.Data]): Seq[AnswerRow] =
-        if(mode == NormalMode) {
-          ev.row(id)(changeUrl, request.userAnswers)
-        } else {
+        if(mode == UpdateMode) {
           ev.updateRow(id)(changeUrl, request.userAnswers)
+        } else {
+          ev.row(id)(changeUrl, request.userAnswers)
         }
     }
 }

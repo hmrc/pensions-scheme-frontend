@@ -52,7 +52,8 @@ class CheckYourAnswersMembersController @Inject()(appConfig: FrontendAppConfig,
         appConfig,
         Seq(membersSection),
         routes.CheckYourAnswersMembersController.onSubmit(mode, srn),
-        existingSchemeName
+        existingSchemeName,
+        mode = mode
       ))
   }
 

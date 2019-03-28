@@ -217,23 +217,21 @@ object CheckYourAnswers {
     def apply()(implicit rds: Reads[Members]): CheckYourAnswers[I] = {
       new CheckYourAnswers[I] {
 
-        private def memberAnswerRow(id: I, members: Members, changeUrl: Option[String]): Seq[AnswerRow] = {
-          Seq(AnswerRow(
-            label.fold(s"${id.toString}.checkYourAnswersLabel")(customLabel => customLabel),
-            Seq(s"messages__members__$members"),
-            answerIsMessageKey = true,
-            changeUrl,
-            hiddenLabel.fold(s"messages__visuallyhidden__${id.toString}")(customHiddenLabel => customHiddenLabel)
-          ))
+        private def memberCYARow(id: I, userAnswers: UserAnswers, changeUrl: Option[String]): Seq[AnswerRow] = {
+          userAnswers.get(id).map { members =>
+            Seq(AnswerRow(
+              label.fold(s"${id.toString}.checkYourAnswersLabel")(customLabel => customLabel),
+              Seq(s"messages__members__$members"),
+              answerIsMessageKey = true,
+              changeUrl,
+              hiddenLabel.fold(s"messages__visuallyhidden__${id.toString}")(customHiddenLabel => customHiddenLabel)
+            ))
+          }.getOrElse(Seq.empty[AnswerRow])
         }
 
-        override def row(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = userAnswers.get(id).map { members =>
-          memberAnswerRow(id, members, Some(changeUrl))
-        }.getOrElse(Seq.empty[AnswerRow])
+        override def row(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = memberCYARow(id, userAnswers, Some(changeUrl))
 
-        override def updateRow(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = userAnswers.get(id).map { members =>
-          memberAnswerRow(id, members, None)
-        }.getOrElse(Seq.empty[AnswerRow])
+        override def updateRow(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = memberCYARow(id, userAnswers, None)
       }
     }
   }
