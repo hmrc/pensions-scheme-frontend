@@ -30,18 +30,17 @@ import utils.UserAnswers
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class DataRetrieval(dataCacheConnector: UserAnswersCacheConnector,
-                    viewConnector: SubscriptionCacheConnector,
-                    updateConnector: UpdateSchemeCacheConnector,
-                    lockConnector: PensionSchemeVarianceLockConnector,
-                    mode: Mode = NormalMode,
-                    srn: Option[String] = None)
-  extends DataRetrievalActionImpl(dataCacheConnector, viewConnector, updateConnector, lockConnector) {
+class DataRetrievalImpl(dataConnector: UserAnswersCacheConnector,
+                        viewConnector: SubscriptionCacheConnector,
+                        updateConnector: UpdateSchemeCacheConnector,
+                        lockConnector: PensionSchemeVarianceLockConnector,
+                        mode: Mode = NormalMode,
+                        srn: Option[String] = None) extends DataRetrieval {
 
   override protected def transform[A](request: AuthenticatedRequest[A]): Future[OptionalDataRequest[A]] = {
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
     mode match {
-      case NormalMode | CheckMode => getOptionalRequest(dataCacheConnector.fetch(request.externalId))(request)
+      case NormalMode | CheckMode => getOptionalRequest(dataConnector.fetch(request.externalId))(request)
 
       case UpdateMode | CheckUpdateMode =>
         srn.map { srn =>
@@ -74,17 +73,20 @@ class DataRetrieval(dataCacheConnector: UserAnswersCacheConnector,
     }
 }
 
-@ImplementedBy(classOf[DataRetrieval])
-abstract class DataRetrievalActionImpl @Inject()(dataCacheConnector: UserAnswersCacheConnector,
-                                                 viewConnector: SubscriptionCacheConnector,
-                                                 updateConnector: UpdateSchemeCacheConnector,
-                                                 lockConnector: PensionSchemeVarianceLockConnector
-                                                ) extends DataRetrievalAction {
-  override def apply(mode: Mode = NormalMode, srn: Option[String] = None): DataRetrievalAction =
-    new DataRetrieval(dataCacheConnector, viewConnector, updateConnector, lockConnector, mode)
+@ImplementedBy(classOf[DataRetrievalImpl])
+trait DataRetrieval extends ActionTransformer[AuthenticatedRequest, OptionalDataRequest]
+
+class DataRetrievalActionImpl @Inject()(dataConnector: UserAnswersCacheConnector,
+                                        viewConnector: SubscriptionCacheConnector,
+                                        updateConnector: UpdateSchemeCacheConnector,
+                                        lockConnector: PensionSchemeVarianceLockConnector
+                                       ) extends DataRetrievalAction {
+  override def apply(mode: Mode = NormalMode,
+                     srn: Option[String] = None): DataRetrieval =
+    new DataRetrievalImpl(dataConnector, viewConnector, updateConnector, lockConnector, mode, srn)
 }
 
 @ImplementedBy(classOf[DataRetrievalActionImpl])
-trait DataRetrievalAction extends ActionTransformer[AuthenticatedRequest, OptionalDataRequest] {
-  def apply(mode: Mode = NormalMode, srn: Option[String] = None): DataRetrievalAction
+trait DataRetrievalAction {
+  def apply(mode: Mode = NormalMode, srn: Option[String] = None): DataRetrieval
 }

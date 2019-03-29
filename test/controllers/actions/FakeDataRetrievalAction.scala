@@ -25,12 +25,14 @@ import utils.UserAnswers
 import scala.concurrent.Future
 
 class FakeDataRetrievalAction(json: Option[JsValue], mode: Mode = NormalMode) extends DataRetrievalAction {
+  override def apply(mode: Mode, srn: Option[String]): DataRetrieval = new FakeDataRetrieval(json,mode)
+}
+
+class FakeDataRetrieval(json: Option[JsValue], mode: Mode = NormalMode) extends DataRetrieval {
   override protected def transform[A](request: AuthenticatedRequest[A]): Future[OptionalDataRequest[A]] = json match {
     case None =>
       Future.successful(OptionalDataRequest(request.request, request.externalId, None, PsaId("A0000000")))
     case Some(cacheMap) =>
       Future.successful(OptionalDataRequest(request.request, request.externalId, Some(new UserAnswers(cacheMap)), PsaId("A0000000")))
   }
-
-  override def apply(mode: Mode, srn: Option[String]): DataRetrievalAction = ???
 }

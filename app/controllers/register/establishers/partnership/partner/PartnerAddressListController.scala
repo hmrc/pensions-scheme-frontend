@@ -45,12 +45,12 @@ class PartnerAddressListController @Inject()(
                                             ) extends AddressListController with Retrievals {
 
   def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData andThen requireData).async { implicit request =>
+    (authenticate andThen getData() andThen requireData).async { implicit request =>
       viewmodel(mode, establisherIndex, partnerIndex, srn).right.map(get)
     }
 
   def onSubmit(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData andThen requireData).async { implicit request =>
+    (authenticate andThen getData() andThen requireData).async { implicit request =>
       viewmodel(mode, establisherIndex, partnerIndex, srn).right.map {
         vm =>
           post(vm, PartnerAddressListId(establisherIndex, partnerIndex), PartnerAddressId(establisherIndex, partnerIndex), mode)

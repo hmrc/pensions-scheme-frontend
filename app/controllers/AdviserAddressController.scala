@@ -58,7 +58,7 @@ class AdviserAddressController @Inject()(
   protected val form: Form[Address] = formProvider()
 
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate andThen getData() andThen requireData).async {
     implicit request =>
       AdviserNameId.retrieve.right.map { adviserName =>
         get(AdviserAddressId, AdviserAddressListId, viewmodel(mode, adviserName))
@@ -66,7 +66,7 @@ class AdviserAddressController @Inject()(
   }
 
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = (authenticate andThen getData() andThen requireData).async {
     implicit request =>
       AdviserNameId.retrieve.right.map { adviserName =>
         post(AdviserAddressId, AdviserAddressListId, viewmodel(mode, adviserName), mode, "Adviser Address", AdviserAddressPostCodeLookupId)

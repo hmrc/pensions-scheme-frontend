@@ -61,7 +61,7 @@ class CompanyAddressYearsController @Inject()(
   private val form: Form[AddressYears] = formProvider(Message("messages__common_error__current_address_years"))
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData andThen requireData).async {
+    (authenticate andThen getData() andThen requireData).async {
       implicit request =>
         viewmodel(index, mode, srn).retrieve.right.map {
           vm =>
@@ -70,7 +70,7 @@ class CompanyAddressYearsController @Inject()(
     }
 
   def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData andThen requireData).async {
+    (authenticate andThen getData() andThen requireData).async {
       implicit request =>
         viewmodel(index, mode, srn).retrieve.right.map {
           vm =>

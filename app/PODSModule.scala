@@ -16,6 +16,7 @@
 
 import com.google.inject.AbstractModule
 import connectors.{SubscriptionCacheConnector, UserAnswersCacheConnector}
+import controllers.actions.{DataRetrievalAction, DataRetrievalActionImpl}
 import navigators._
 import services.{UserAnswersService, UserAnswersServiceImpl, UserAnswersServiceInsuranceImpl}
 import utils.Navigator
@@ -103,6 +104,9 @@ class PODSModule extends AbstractModule {
     bind(classOf[Navigator])
       .annotatedWith(classOf[Variations])
       .to(classOf[VariationsNavigator])
+
+    bind(classOf[DataRetrievalAction]).to(classOf[DataRetrievalActionImpl]).asEagerSingleton()
+
 
   }
 

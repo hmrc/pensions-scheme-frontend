@@ -32,13 +32,14 @@ import scala.concurrent.Future
 
 class DataRetrievalActionSpec extends SpecBase with MockitoSugar with ScalaFutures {
 
-  class Harness(dataCacheConnector: UserAnswersCacheConnector,
+
+  class Harness(dataConnector: UserAnswersCacheConnector,
                 viewConnector: SubscriptionCacheConnector = FakeSubscriptionCacheConnector.getConnector,
                 updateConnector: UpdateSchemeCacheConnector = FakeUpdateCacheConnector.getConnector,
                 lockConnector: PensionSchemeVarianceLockConnector = FakeLockConnector.getConnector,
                 mode: Mode = NormalMode,
                 srn: Option[String] = None) extends
-    DataRetrieval(dataCacheConnector, viewConnector, updateConnector, lockConnector, mode, srn) {
+    DataRetrievalImpl(dataConnector, viewConnector, updateConnector, lockConnector, mode, srn) {
     def callTransform[A](request: AuthenticatedRequest[A]): Future[OptionalDataRequest[A]] = transform(request)
   }
 
