@@ -19,7 +19,7 @@ package controllers
 import controllers.actions.{DataRequiredActionImpl, DataRetrievalAction, FakeAuthAction}
 import identifiers.IsAboutBenefitsAndInsuranceCompleteId
 import models.address.Address
-import models.{CheckMode, NormalMode, TypeOfBenefits}
+import models.{CheckMode, Link, NormalMode, TypeOfBenefits}
 import org.scalatest.OptionValues
 import play.api.test.Helpers._
 import utils.{FakeCountryOptions, FakeSectionComplete, UserAnswers}
@@ -81,43 +81,43 @@ object CheckYourAnswersBenefitsAndInsuranceControllerSpec extends ControllerSpec
         messages("investmentRegulated.checkYourAnswersLabel"),
         Seq("site.yes"),
         answerIsMessageKey = true,
-        Some(routes.InvestmentRegulatedSchemeController.onPageLoad(CheckMode).url),
-        messages("messages__visuallyhidden__investmentRegulated")
+        Some(Link("site.change", routes.InvestmentRegulatedSchemeController.onPageLoad(CheckMode).url,
+          Some(messages("messages__visuallyhidden__investmentRegulated"))))
       ),
       AnswerRow(
         messages("occupationalPensionScheme.checkYourAnswersLabel"),
         Seq("site.yes"),
         answerIsMessageKey = true,
-        Some(routes.OccupationalPensionSchemeController.onPageLoad(CheckMode).url),
-        messages("messages__visuallyhidden__occupationalPensionScheme")
+        Some(Link("site.change", routes.OccupationalPensionSchemeController.onPageLoad(CheckMode).url,
+          Some(messages("messages__visuallyhidden__occupationalPensionScheme"))))
       ),
       AnswerRow(
         messages("messages__type_of_benefits_cya_label"),
         Seq(s"messages__type_of_benefits__${TypeOfBenefits.Defined}"),
         answerIsMessageKey = true,
-        Some(controllers.routes.TypeOfBenefitsController.onPageLoad(CheckMode).url),
-        messages("messages__visuallyhidden__type_of_benefits_change")
+        Some(Link("site.change", routes.TypeOfBenefitsController.onPageLoad(CheckMode).url,
+          Some(messages("messages__visuallyhidden__type_of_benefits_change"))))
       ),
       AnswerRow(
         messages("securedBenefits.checkYourAnswersLabel"),
         Seq("site.yes"),
         answerIsMessageKey = true,
-        Some(routes.BenefitsSecuredByInsuranceController.onPageLoad(CheckMode, None).url),
-        messages("messages__visuallyhidden__securedBenefits")
+        Some(Link("site.change", routes.BenefitsSecuredByInsuranceController.onPageLoad(CheckMode, None).url,
+          Some(messages("messages__visuallyhidden__securedBenefits"))))
       ),
       AnswerRow(
         messages("insuranceCompanyName.checkYourAnswersLabel"),
         Seq(insuranceCompanyName),
         answerIsMessageKey = false,
-        Some(routes.InsuranceCompanyNameController.onPageLoad(CheckMode, None).url),
-        messages("messages__visuallyhidden__insuranceCompanyName")
+        Some(Link("site.change", routes.InsuranceCompanyNameController.onPageLoad(CheckMode, None).url,
+          Some(messages("messages__visuallyhidden__insuranceCompanyName"))))
       ),
       AnswerRow(
         messages("messages__insurance_policy_number_cya_label", insuranceCompanyName),
         Seq(policyNumber),
         answerIsMessageKey = false,
-        Some(routes.InsurancePolicyNumberController.onPageLoad(CheckMode, None).url),
-        messages("messages__visuallyhidden__insurance_policy_number", insuranceCompanyName)
+        Some(Link("site.change", routes.InsurancePolicyNumberController.onPageLoad(CheckMode, None).url,
+          Some(messages("messages__visuallyhidden__insurance_policy_number", insuranceCompanyName))))
       ),
       AnswerRow(
         messages("messages__insurer_confirm_address_cya_label"),
@@ -129,8 +129,8 @@ object CheckYourAnswersBenefitsAndInsuranceControllerSpec extends ControllerSpec
           insurerAddress.postcode.get,
           "Country of GB"),
         answerIsMessageKey = false,
-        Some(routes.InsurerConfirmAddressController.onPageLoad(CheckMode, None).url),
-        messages("messages__visuallyhidden__insurer_confirm_address"))
+        Some(Link("site.change", routes.InsurerConfirmAddressController.onPageLoad(CheckMode, None).url,
+          Some(messages("messages__visuallyhidden__insurer_confirm_address")))))
     )
   )
 

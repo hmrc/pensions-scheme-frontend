@@ -21,6 +21,7 @@ import identifiers.register.establishers.{EstablishersId, IsEstablisherCompleteI
 import models.AddressYears
 import play.api.libs.json.{JsPath, JsResult}
 import utils.UserAnswers
+import utils.checkyouranswers.{AddressYearsCYA, CheckYourAnswers}
 
 case class DirectorAddressYearsId(establisherIndex: Int, directorIndex: Int) extends TypedIdentifier[AddressYears] {
 
@@ -44,4 +45,8 @@ case class DirectorAddressYearsId(establisherIndex: Int, directorIndex: Int) ext
 
 object DirectorAddressYearsId {
   override lazy val toString: String = "companyDirectorAddressYears"
+
+  implicit val cya: CheckYourAnswers[DirectorAddressYearsId] = AddressYearsCYA[DirectorAddressYearsId](
+    label = "messages__director_address_years__cya",
+    changeAddressYears = "messages__visuallyhidden__director__address_years")()
 }

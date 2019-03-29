@@ -16,5 +16,6 @@
 
 package viewmodels
 
-case class AnswerRow(label: String, answer: Seq[String], answerIsMessageKey: Boolean,
-                     changeUrl: Option[String] = None, visuallyHiddenText: Message = "site.hidden-edit")
+import models.Link
+
+case class AnswerRow(label: String, answer: Seq[String], answerIsMessageKey: Boolean, changeUrl: Option[Link] = None)
