@@ -17,7 +17,6 @@
 package utils
 
 import base.SpecBase
-import identifiers._
 import identifiers.register.establishers.IsEstablisherCompleteId
 import identifiers.register.establishers.company.{CompanyDetailsId => EstablisherCompanyDetailsId}
 import identifiers.register.establishers.individual.EstablisherDetailsId
@@ -26,9 +25,9 @@ import identifiers.register.trustees.IsTrusteeCompleteId
 import identifiers.register.trustees.company.{CompanyDetailsId => TrusteeCompanyDetailsId}
 import identifiers.register.trustees.individual.TrusteeDetailsId
 import identifiers.register.trustees.partnership.{IsPartnershipCompleteId, PartnershipDetailsId => TrusteePartnershipDetailsId}
-import identifiers.{DeclarationDutiesId, IsWorkingKnowledgeCompleteId}
+import identifiers.{DeclarationDutiesId, IsWorkingKnowledgeCompleteId, _}
 import models.person.PersonDetails
-import models.{CompanyDetails, NormalMode, PartnershipDetails}
+import models.{CompanyDetails, Link, NormalMode, PartnershipDetails}
 import org.joda.time.LocalDate
 import org.scalatest.{MustMatchers, OptionValues, WordSpec}
 import play.api.libs.json.JsResult

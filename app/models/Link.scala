@@ -14,7 +14,12 @@
  * limitations under the License.
  */
 
-package viewmodels
+package models
 
-case class AnswerRow(label: String, answer: Seq[String], answerIsMessageKey: Boolean,
-                     changeUrl: Option[String] = None, visuallyHiddenText: Message = "site.hidden-edit")
+import play.api.libs.json.{Json, OFormat}
+
+case class Link(text: String, target: String, visuallyHiddenText: Option[String] = None)
+
+object Link {
+  implicit val formats: OFormat[Link] = Json.format[Link]
+}
