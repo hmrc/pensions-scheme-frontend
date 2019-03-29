@@ -72,12 +72,12 @@ class CheckYourAnswersSpec extends WordSpec with MustMatchers with PropertyCheck
         testIdentifier[Boolean].row(onwardUrl) must equal(Seq(AnswerRow("testId.checkYourAnswersLabel", Seq("site.yes"), true, Some(onwardUrl), "messages__visuallyhidden__testId")))
       }
 
-      "membership" in {
-        val membershipVal = Membership.options.head.value
+      "members" in {
+        val membershipVal = Members.options.head.value
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(Json.obj("testId" -> membershipVal)), PsaId("A0000000"))
 
-        testIdentifier[Membership].row(onwardUrl) must equal(Seq(AnswerRow(
-          "testId.checkYourAnswersLabel", Seq(s"messages__membership__$membershipVal"), true, Some(onwardUrl), "messages__visuallyhidden__testId")))
+        testIdentifier[Members].row(onwardUrl) must equal(Seq(AnswerRow(
+          "testId.checkYourAnswersLabel", Seq(s"messages__members__$membershipVal"), true, Some(onwardUrl), "messages__visuallyhidden__testId")))
       }
 
       "companyDetails" when {
@@ -426,6 +426,17 @@ class CheckYourAnswersSpec extends WordSpec with MustMatchers with PropertyCheck
               "messages__visuallyhidden__trustee__nino_no"
             )))
         }
+      }
+    }
+
+    "produce update row(row in UpdateMode) of answers" when {
+
+      "members without change url" in {
+        val membershipVal = Members.options.head.value
+        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(Json.obj("testId" -> membershipVal)), PsaId("A0000000"))
+
+        testIdentifier[Members].row(onwardUrl, UpdateMode) must equal(Seq(AnswerRow(
+          "testId.checkYourAnswersLabel", Seq(s"messages__members__$membershipVal"), true, None, "messages__visuallyhidden__testId")))
       }
     }
   }
