@@ -29,34 +29,23 @@ import models.register.Entity
 import play.api.i18n.Messages
 import viewmodels._
 
-class HsTaskListHelper(answers: UserAnswers)(implicit messages: Messages) extends Enumerable.Implicits {
+abstract class HsTaskListHelper(answers: UserAnswers)(implicit messages: Messages) extends Enumerable.Implicits {
 
-  private lazy val beforeYouStartLinkText = messages("messages__schemeTaskList__before_you_start_link_text")
-  private lazy val aboutMembersLinkText = messages("messages__schemeTaskList__about_members_link_text")
-  private lazy val aboutBenefitsAndInsuranceLinkText = messages("messages__schemeTaskList__about_benefits_and_insurance_link_text")
-  private lazy val aboutBankDetailsLinkText = messages("messages__schemeTaskList__about_bank_details_link_text")
-  private lazy val workingKnowledgeLinkText = messages("messages__schemeTaskList__working_knowledge_link_text")
-  private lazy val addEstablisherLinkText = messages("messages__schemeTaskList__sectionEstablishers_add_link")
-  private lazy val changeEstablisherLinkText = messages("messages__schemeTaskList__sectionEstablishers_change_link")
-  private lazy val companyLinkText = messages("messages__schemeTaskList__company_link")
-  private lazy val individualLinkText = messages("messages__schemeTaskList__individual_link")
-  private lazy val partnershipLinkText = messages("messages__schemeTaskList__partnership_link")
-  private lazy val addTrusteesLinkText = messages("messages__schemeTaskList__sectionTrustees_add_link")
-  private lazy val changeTrusteesLinkText = messages("messages__schemeTaskList__sectionTrustees_change_link")
-  private lazy val declarationLinkText = messages("messages__schemeTaskList__declaration_link")
+  protected lazy val beforeYouStartLinkText = messages("messages__schemeTaskList__before_you_start_link_text")
+  protected lazy val aboutMembersLinkText = messages("messages__schemeTaskList__about_members_link_text")
+  protected lazy val aboutBenefitsAndInsuranceLinkText = messages("messages__schemeTaskList__about_benefits_and_insurance_link_text")
+  protected lazy val aboutBankDetailsLinkText = messages("messages__schemeTaskList__about_bank_details_link_text")
+  protected lazy val workingKnowledgeLinkText = messages("messages__schemeTaskList__working_knowledge_link_text")
+  protected lazy val addEstablisherLinkText = messages("messages__schemeTaskList__sectionEstablishers_add_link")
+  protected lazy val changeEstablisherLinkText = messages("messages__schemeTaskList__sectionEstablishers_change_link")
+  protected lazy val companyLinkText = messages("messages__schemeTaskList__company_link")
+  protected lazy val individualLinkText = messages("messages__schemeTaskList__individual_link")
+  protected lazy val partnershipLinkText = messages("messages__schemeTaskList__partnership_link")
+  protected lazy val addTrusteesLinkText = messages("messages__schemeTaskList__sectionTrustees_add_link")
+  protected lazy val changeTrusteesLinkText = messages("messages__schemeTaskList__sectionTrustees_change_link")
+  protected lazy val declarationLinkText = messages("messages__schemeTaskList__declaration_link")
 
-  def taskList: SchemeDetailsTaskList = {
-    SchemeDetailsTaskList(
-      beforeYouStartSection(answers),
-      aboutSection(answers),
-      workingKnowledgeSection(answers),
-      addEstablisherHeader(answers),
-      establishers(answers),
-      addTrusteeHeader(answers),
-      trustees(answers),
-      declarationLink(answers)
-    )
-  }
+  def taskList: SchemeDetailsTaskList
 
   private[utils] def beforeYouStartSection(userAnswers: UserAnswers): SchemeDetailsTaskListSection = {
     val link = userAnswers.get(IsBeforeYouStartCompleteId) match {
@@ -159,13 +148,13 @@ class HsTaskListHelper(answers: UserAnswers)(implicit messages: Messages) extend
     else None
   }
 
-  private def linkText(item: Entity[_]): String = item.id match {
+  protected def linkText(item: Entity[_]): String = item.id match {
     case EstablisherCompanyDetailsId(_) | TrusteeCompanyDetailsId(_) => companyLinkText
     case EstablisherDetailsId(_) | TrusteeDetailsId(_) => individualLinkText
     case EstablisherPartnershipDetailsId(_) | TrusteePartnershipDetailsId(_) => partnershipLinkText
   }
 
-  private def linkTarget(item: Entity[_], index: Int, userAnswers: UserAnswers) = {
+  protected def linkTarget(item: Entity[_], index: Int, userAnswers: UserAnswers) = {
     item match {
       case models.register.EstablisherCompanyEntity(_, _, _, true) =>
         controllers.register.establishers.company.routes.CompanyReviewController.onPageLoad(NormalMode, None, index).url
@@ -175,7 +164,7 @@ class HsTaskListHelper(answers: UserAnswers)(implicit messages: Messages) extend
     }
   }
 
-  private def listOf(sections: Seq[Entity[_]], userAnswers: UserAnswers): Seq[SchemeDetailsTaskListSection] = {
+  protected def listOf(sections: Seq[Entity[_]], userAnswers: UserAnswers): Seq[SchemeDetailsTaskListSection] = {
     val notDeletedElements = for ((section, index) <- sections.zipWithIndex) yield {
       if (section.isDeleted) None else {
         Some(SchemeDetailsTaskListSection(
@@ -188,11 +177,11 @@ class HsTaskListHelper(answers: UserAnswers)(implicit messages: Messages) extend
     notDeletedElements.flatten
   }
 
-  private def isAllTrusteesCompleted(userAnswers: UserAnswers): Boolean = {
+  protected def isAllTrusteesCompleted(userAnswers: UserAnswers): Boolean = {
     userAnswers.allTrusteesAfterDelete.nonEmpty && userAnswers.allTrusteesAfterDelete.forall(_.isCompleted)
   }
 
-  private def isAllEstablishersCompleted(userAnswers: UserAnswers): Boolean = {
+  protected def isAllEstablishersCompleted(userAnswers: UserAnswers): Boolean = {
     userAnswers.allEstablishersAfterDelete.nonEmpty && userAnswers.allEstablishersAfterDelete.forall(_.isCompleted)
   }
 }

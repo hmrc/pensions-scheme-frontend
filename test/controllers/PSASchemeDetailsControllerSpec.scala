@@ -16,6 +16,7 @@
 
 package controllers
 
+import config.FeatureSwitchManagementService
 import connectors._
 import controllers.PSASchemeDetailsControllerSpec.psaSchemeDetailsSample
 import controllers.actions.{DataRetrievalAction, _}
@@ -47,7 +48,7 @@ class PSASchemeDetailsControllerSpec extends ControllerSpecBase {
         .thenReturn(Future.successful(psaSchemeDetailsSampleAdministeredByLoggedInUser))
       when(fakeSchemeTransformer.transformMasterSection(Matchers.any())).thenReturn(masterSections)
 
-      val result = controller().onPageLoad(srn)(fakeRequest)
+      val result = controller(isVariationsEnabled = false).onPageLoad(srn)(fakeRequest)
 
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString()
@@ -59,7 +60,7 @@ class PSASchemeDetailsControllerSpec extends ControllerSpecBase {
         .thenReturn(Future.successful(psaSchemeDetailsSample))
       when(fakeSchemeTransformer.transformMasterSection(Matchers.any())).thenReturn(masterSections)
 
-      val result = controller().onPageLoad(srn)(fakeRequest)
+      val result = controller(isVariationsEnabled = false).onPageLoad(srn)(fakeRequest)
 
       status(result) mustBe NOT_FOUND
       contentAsString(result).contains(messages("messages__pageNotFound404__heading")) mustBe true
@@ -73,13 +74,22 @@ private object PSASchemeDetailsControllerSpec extends ControllerSpecBase with Mo
   val fakeSchemeDetailsConnector: SchemeDetailsConnector = mock[SchemeDetailsConnector]
   val fakeSchemeTransformer: SchemeDetailsMasterSection = mock[SchemeDetailsMasterSection]
 
-  def controller(dataRetrievalAction: DataRetrievalAction = dontGetAnyData): PSASchemeDetailsController =
+  def featureSwitchManagementService(isVariationsEnabled:Boolean): FeatureSwitchManagementService = new FeatureSwitchManagementService {
+    override def change(name: String, newValue: Boolean): Boolean = ???
+
+    override def get(name: String): Boolean = isVariationsEnabled
+
+    override def reset(name: String): Unit = ???
+  }
+
+  def controller(dataRetrievalAction: DataRetrievalAction = dontGetAnyData, isVariationsEnabled:Boolean): PSASchemeDetailsController =
     new PSASchemeDetailsController(frontendAppConfig,
       messagesApi,
       fakeSchemeDetailsConnector,
       fakeSchemeTransformer,
       FakeAuthAction,
-      new ErrorHandler(frontendAppConfig, messagesApi))
+      new ErrorHandler(frontendAppConfig, messagesApi),
+      featureSwitchManagementService(isVariationsEnabled))
 
   val masterSections = Seq(individualMasterSection)
   val srn = "S1000000456"

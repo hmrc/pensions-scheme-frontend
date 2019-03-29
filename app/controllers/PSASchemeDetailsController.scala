@@ -25,10 +25,10 @@ import javax.inject.Inject
 import models.details.transformation.SchemeDetailsMasterSection
 import models.requests.AuthenticatedRequest
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.libs.json.{JsArray, JsPath}
 import play.api.mvc.{Action, AnyContent, Result}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import utils.HsTaskListHelperVariations
 import viewmodels.SchemeDetailsTaskList
 import views.html.{psa_scheme_details, schemeDetailsTaskList}
 
@@ -54,7 +54,7 @@ class PSASchemeDetailsController @Inject()(appConfig: FrontendAppConfig,
 
   private def onPageLoadVariationsToggledOff(srn: String)(implicit
                                                           request: AuthenticatedRequest[AnyContent],
-                                                          ec: ExecutionContext, hc: HeaderCarrier): Future[Result] = {
+                                                          hc: HeaderCarrier): Future[Result] = {
     schemeDetailsConnector.getSchemeDetails(request.psaId.id, schemeIdType = "srn", srn).flatMap { scheme =>
       if (scheme.psaDetails.exists(_.id == request.psaId.id)) {
         val schemeDetailMasterSection = schemeTransformer.transformMasterSection(scheme)
@@ -67,11 +67,11 @@ class PSASchemeDetailsController @Inject()(appConfig: FrontendAppConfig,
 
   private def onPageLoadVariationsToggledOn(srn: String)(implicit
                                                          request: AuthenticatedRequest[AnyContent],
-                                                         ec: ExecutionContext, hc: HeaderCarrier): Future[Result] = {
-    schemeDetailsConnector.getSchemeDetailsVariations(request.psaId.id, schemeIdType = "srn", srn).flatMap { scheme =>
-      val schemeAdministrators = scheme.get(PsaDetailsId).toSeq.flatten
+                                                          hc: HeaderCarrier): Future[Result] = {
+    schemeDetailsConnector.getSchemeDetailsVariations(request.psaId.id, schemeIdType = "srn", srn).flatMap { userAnswers =>
+      val schemeAdministrators = userAnswers.get(PsaDetailsId).toSeq.flatten
       if (schemeAdministrators.contains(request.psaId.id)) {
-        val taskSections: SchemeDetailsTaskList = SchemeDetailsTaskList
+        val taskSections: SchemeDetailsTaskList = new HsTaskListHelperVariations(userAnswers).taskList
         Future.successful(Ok(schemeDetailsTaskList(appConfig, taskSections)))
       } else {
         Future.successful(NotFound(errorHandler.notFoundTemplate))
