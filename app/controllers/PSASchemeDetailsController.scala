@@ -17,7 +17,7 @@
 package controllers
 
 import config.{FeatureSwitchManagementService, FrontendAppConfig}
-import connectors.SchemeDetailsConnector
+import connectors.{CacheConnector, SchemeDetailsConnector, SubscriptionCacheConnector, UserAnswersCacheConnector}
 import controllers.actions._
 import handlers.ErrorHandler
 import identifiers.PsaDetailsId
@@ -29,6 +29,7 @@ import play.api.mvc.{Action, AnyContent, Result}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.HsTaskListHelperVariations
+import utils.annotations.SchemeDetailsReadOnly
 import viewmodels.SchemeDetailsTaskList
 import views.html.{psa_scheme_details, schemeDetailsTaskList}
 
@@ -40,7 +41,8 @@ class PSASchemeDetailsController @Inject()(appConfig: FrontendAppConfig,
                                            schemeTransformer: SchemeDetailsMasterSection,
                                            authenticate: AuthAction,
                                            errorHandler: ErrorHandler,
-                                           featureSwitchManagementService: FeatureSwitchManagementService
+                                           featureSwitchManagementService: FeatureSwitchManagementService,
+                                           @SchemeDetailsReadOnly schemeDetailsReadOnlyCacheConnector: UserAnswersCacheConnector
                                           )(implicit val ec: ExecutionContext) extends FrontendController with I18nSupport {
 
   def onPageLoad(srn: String): Action[AnyContent] = authenticate.async {
@@ -71,9 +73,10 @@ class PSASchemeDetailsController @Inject()(appConfig: FrontendAppConfig,
     schemeDetailsConnector.getSchemeDetailsVariations(request.psaId.id, schemeIdType = "srn", srn).flatMap { userAnswers =>
       val schemeAdministrators = userAnswers.get(PsaDetailsId).toSeq.flatten
       if (schemeAdministrators.contains(request.psaId.id)) {
-        
         val taskSections: SchemeDetailsTaskList = new HsTaskListHelperVariations(userAnswers).taskList
-        Future.successful(Ok(schemeDetailsTaskList(appConfig, taskSections)))
+        schemeDetailsReadOnlyCacheConnector.upsert(request.externalId, userAnswers.json).map( _ =>
+          Ok(schemeDetailsTaskList(appConfig, taskSections))
+        )
       } else {
         Future.successful(NotFound(errorHandler.notFoundTemplate))
       }

@@ -24,9 +24,10 @@ import identifiers.PsaDetailsId
 import models.details.transformation.{SchemeDetailsMasterSection, SchemeDetailsStubData}
 import models.details.{Name, PsaDetails}
 import org.mockito.Matchers
-import org.mockito.Mockito.{reset, when}
+import org.mockito.Matchers.any
+import org.mockito.Mockito.{reset, times, verify, when}
 import org.scalatest.mockito.MockitoSugar
-import play.api.libs.json.Json
+import play.api.libs.json.{JsNull, Json}
 import play.api.test.Helpers.{contentAsString, _}
 import utils.UserAnswers
 import views.html.psa_scheme_details
@@ -40,7 +41,7 @@ class PSASchemeDetailsControllerSpec extends ControllerSpecBase {
   "SchemeDetailsController when isVariationsEnabled toggle switched off" must {
 
     "return OK and the correct view for a GET" in {
-      val psaDetails3 = PsaDetails("A0000000",Some("org name test zero"),Some(Name(Some("Minnie"),Some("m"),Some("Mouse"))))
+      val psaDetails3 = PsaDetails("A0000000", Some("org name test zero"), Some(Name(Some("Minnie"), Some("m"), Some("Mouse"))))
       val psaSchemeDetailsSampleAdministeredByLoggedInUser = psaSchemeDetailsSample copy (
         psaDetails = List(psaDetails1, psaDetails2, psaDetails3)
         )
@@ -73,17 +74,24 @@ class PSASchemeDetailsControllerSpec extends ControllerSpecBase {
   "SchemeDetailsController when isVariationsEnabled toggle switched on" must {
 
     "return OK and the correct view for a GET" in {
+
+      val userAnswersResponse = UserAnswers(Json.obj(
+        PsaDetailsId.toString -> Seq("A0000000")
+      ))
+
       reset(fakeSchemeDetailsConnector)
       when(fakeSchemeDetailsConnector.getSchemeDetailsVariations(Matchers.any(), Matchers.any(), Matchers.any())(Matchers.any(), Matchers.any()))
-        .thenReturn(Future.successful(UserAnswers(Json.obj(
-          PsaDetailsId.toString -> Seq("A0000000")
-        ))))
+        .thenReturn(Future.successful(userAnswersResponse))
       when(fakeSchemeTransformer.transformMasterSection(Matchers.any())).thenReturn(masterSections)
+      when(fakeSchemeDetailsReadOnlyCacheConnector.upsert(Matchers.any(), Matchers.any())(Matchers.any(), Matchers.any()))
+        .thenReturn(Future.successful(JsNull))
 
       val result = controller(isVariationsEnabled = true).onPageLoad(srn)(fakeRequest)
 
       status(result) mustBe OK
-      //contentAsString(result) mustBe viewAsString()
+      verify(fakeSchemeDetailsReadOnlyCacheConnector, times(1)).upsert(any(), Matchers.eq(userAnswersResponse.json))(any(), any())
+
+      contentAsString(result).contains(messages("messages__schemeTaskList__title")) mustBe true
     }
 
     "return NOT_FOUND for a GET where logged in PSA is not administrator of scheme" in {
@@ -106,9 +114,10 @@ class PSASchemeDetailsControllerSpec extends ControllerSpecBase {
 private object PSASchemeDetailsControllerSpec extends ControllerSpecBase with MockitoSugar with SchemeDetailsStubData {
 
   val fakeSchemeDetailsConnector: SchemeDetailsConnector = mock[SchemeDetailsConnector]
+  val fakeSchemeDetailsReadOnlyCacheConnector: SchemeDetailsReadOnlyCacheConnector = mock[SchemeDetailsReadOnlyCacheConnector]
   val fakeSchemeTransformer: SchemeDetailsMasterSection = mock[SchemeDetailsMasterSection]
 
-  def featureSwitchManagementService(isVariationsEnabled:Boolean): FeatureSwitchManagementService = new FeatureSwitchManagementService {
+  def featureSwitchManagementService(isVariationsEnabled: Boolean): FeatureSwitchManagementService = new FeatureSwitchManagementService {
     override def change(name: String, newValue: Boolean): Boolean = ???
 
     override def get(name: String): Boolean = isVariationsEnabled
@@ -116,14 +125,15 @@ private object PSASchemeDetailsControllerSpec extends ControllerSpecBase with Mo
     override def reset(name: String): Unit = ???
   }
 
-  def controller(dataRetrievalAction: DataRetrievalAction = dontGetAnyData, isVariationsEnabled:Boolean): PSASchemeDetailsController =
+  def controller(dataRetrievalAction: DataRetrievalAction = dontGetAnyData, isVariationsEnabled: Boolean): PSASchemeDetailsController =
     new PSASchemeDetailsController(frontendAppConfig,
       messagesApi,
       fakeSchemeDetailsConnector,
       fakeSchemeTransformer,
       FakeAuthAction,
       new ErrorHandler(frontendAppConfig, messagesApi),
-      featureSwitchManagementService(isVariationsEnabled))
+      featureSwitchManagementService(isVariationsEnabled),
+      fakeSchemeDetailsReadOnlyCacheConnector)
 
   val masterSections = Seq(individualMasterSection)
   val srn = "S1000000456"
