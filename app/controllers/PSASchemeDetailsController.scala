@@ -71,6 +71,7 @@ class PSASchemeDetailsController @Inject()(appConfig: FrontendAppConfig,
     schemeDetailsConnector.getSchemeDetailsVariations(request.psaId.id, schemeIdType = "srn", srn).flatMap { userAnswers =>
       val schemeAdministrators = userAnswers.get(PsaDetailsId).toSeq.flatten
       if (schemeAdministrators.contains(request.psaId.id)) {
+        
         val taskSections: SchemeDetailsTaskList = new HsTaskListHelperVariations(userAnswers).taskList
         Future.successful(Ok(schemeDetailsTaskList(appConfig, taskSections)))
       } else {
