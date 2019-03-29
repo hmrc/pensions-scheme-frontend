@@ -97,8 +97,8 @@ class PartnershipPreviousAddressPostcodeLookupControllerSpec extends ControllerS
       frontendAppConfig,
       form,
       PostcodeLookupViewModel(
-        routes.PartnershipPreviousAddressPostcodeLookupController.onSubmit(NormalMode, index),
-        routes.PartnershipPreviousAddressController.onPageLoad(NormalMode, index),
+        routes.PartnershipPreviousAddressPostcodeLookupController.onSubmit(NormalMode, index, None),
+        routes.PartnershipPreviousAddressController.onPageLoad(NormalMode, index, None),
         Message("messages__partnershipPreviousAddressPostcodeLookup__title"),
         Message("messages__partnershipPreviousAddressPostcodeLookup__title"),
         Some(partnershipName)
@@ -109,7 +109,7 @@ class PartnershipPreviousAddressPostcodeLookupControllerSpec extends ControllerS
   "PartnershipPreviousAddressPostcodeLookup Controller" must {
 
     "return OK and the correct view for a GET" in {
-      val result = controller().onPageLoad(NormalMode, index)(fakeRequest)
+      val result = controller().onPageLoad(NormalMode, index, None)(fakeRequest)
 
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString()
@@ -118,7 +118,7 @@ class PartnershipPreviousAddressPostcodeLookupControllerSpec extends ControllerS
     "not populate the view correctly on a GET when the question has previously been answered" in {
       val getRelevantData = new FakeDataRetrievalAction(Some(validData))
 
-      val result = controller(getRelevantData).onPageLoad(NormalMode, index)(fakeRequest)
+      val result = controller(getRelevantData).onPageLoad(NormalMode, index, None)(fakeRequest)
 
       contentAsString(result) mustBe viewAsString()
     }
@@ -127,7 +127,7 @@ class PartnershipPreviousAddressPostcodeLookupControllerSpec extends ControllerS
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", testAnswer))
       when(fakeAddressLookupConnector.addressLookupByPostCode(Matchers.eq(testAnswer))(Matchers.any(), Matchers.any()))
         .thenReturn(Future.successful(Seq(fakeAddress(testAnswer))))
-      val result = controller().onSubmit(NormalMode, index)(postRequest)
+      val result = controller().onSubmit(NormalMode, index, None)(postRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
@@ -137,14 +137,14 @@ class PartnershipPreviousAddressPostcodeLookupControllerSpec extends ControllerS
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", ""))
       val boundForm = form.bind(Map("value" -> ""))
 
-      val result = controller().onSubmit(NormalMode, index)(postRequest)
+      val result = controller().onSubmit(NormalMode, index, None)(postRequest)
 
       status(result) mustBe BAD_REQUEST
       contentAsString(result) mustBe viewAsString(boundForm)
     }
 
     "redirect to Session Expired for a GET if no existing data is found" in {
-      val result = controller(dontGetAnyData).onPageLoad(NormalMode, index)(fakeRequest)
+      val result = controller(dontGetAnyData).onPageLoad(NormalMode, index, None)(fakeRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
@@ -152,7 +152,7 @@ class PartnershipPreviousAddressPostcodeLookupControllerSpec extends ControllerS
 
     "redirect to Session Expired for a POST if no existing data is found" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", testAnswer))
-      val result = controller(dontGetAnyData).onSubmit(NormalMode, index)(postRequest)
+      val result = controller(dontGetAnyData).onSubmit(NormalMode, index, None)(postRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)

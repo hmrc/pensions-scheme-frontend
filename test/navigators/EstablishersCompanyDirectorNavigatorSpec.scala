@@ -68,32 +68,32 @@ object EstablishersCompanyDirectorNavigatorSpec extends OptionValues {
 
   private def sessionExpired = controllers.routes.SessionExpiredController.onPageLoad()
 
-  private def directorDetails(mode: Mode) = routes.DirectorDetailsController.onPageLoad(mode, directorIndex, establisherIndex)
+  private def directorDetails(mode: Mode) = routes.DirectorDetailsController.onPageLoad(mode, directorIndex, establisherIndex, None)
 
-  private def directorNino(mode: Mode) = routes.DirectorNinoController.onPageLoad(mode, directorIndex, establisherIndex)
+  private def directorNino(mode: Mode) = routes.DirectorNinoController.onPageLoad(mode, directorIndex, establisherIndex, None)
 
-  private def directorUtr(mode: Mode) = routes.DirectorUniqueTaxReferenceController.onPageLoad(mode, directorIndex, establisherIndex)
+  private def directorUtr(mode: Mode) = routes.DirectorUniqueTaxReferenceController.onPageLoad(mode, directorIndex, establisherIndex, None)
 
-  private def directorContactDetails(mode: Mode) = routes.DirectorContactDetailsController.onPageLoad(mode, directorIndex, establisherIndex)
+  private def directorContactDetails(mode: Mode) = routes.DirectorContactDetailsController.onPageLoad(mode, directorIndex, establisherIndex, None)
 
-  private def directorAddressPostcode(mode: Mode) = routes.DirectorAddressPostcodeLookupController.onPageLoad(mode, directorIndex, establisherIndex)
+  private def directorAddressPostcode(mode: Mode) = routes.DirectorAddressPostcodeLookupController.onPageLoad(mode, directorIndex, establisherIndex, None)
 
-  private def directorAddressList(mode: Mode) = routes.DirectorAddressListController.onPageLoad(mode, directorIndex, establisherIndex)
+  private def directorAddressList(mode: Mode) = routes.DirectorAddressListController.onPageLoad(mode, directorIndex, establisherIndex, None)
 
-  private def directorAddress(mode: Mode) = routes.DirectorAddressController.onPageLoad(mode, directorIndex, establisherIndex)
+  private def directorAddress(mode: Mode) = routes.DirectorAddressController.onPageLoad(mode, directorIndex, establisherIndex, None)
 
-  private def directorAddressYears(mode: Mode) = routes.DirectorAddressYearsController.onPageLoad(mode, directorIndex, establisherIndex)
+  private def directorAddressYears(mode: Mode) = routes.DirectorAddressYearsController.onPageLoad(mode, directorIndex, establisherIndex, None)
 
-  private def directorPreviousAddPostcode(mode: Mode) = routes.DirectorPreviousAddressPostcodeLookupController.onPageLoad(mode, directorIndex, establisherIndex)
+  private def directorPreviousAddPostcode(mode: Mode) = routes.DirectorPreviousAddressPostcodeLookupController.onPageLoad(mode, directorIndex, establisherIndex, None)
 
-  private def directorPreviousAddList(mode: Mode) = routes.DirectorPreviousAddressListController.onPageLoad(mode, directorIndex, establisherIndex)
+  private def directorPreviousAddList(mode: Mode) = routes.DirectorPreviousAddressListController.onPageLoad(mode, directorIndex, establisherIndex, None)
 
-  private def directorPreviousAddress(mode: Mode) = routes.DirectorPreviousAddressController.onPageLoad(mode, directorIndex, establisherIndex)
+  private def directorPreviousAddress(mode: Mode) = routes.DirectorPreviousAddressController.onPageLoad(mode, directorIndex, establisherIndex, None)
 
-  private def checkYourAnswers = routes.CheckYourAnswersController.onPageLoad(directorIndex, establisherIndex)
+  private def checkYourAnswers = routes.CheckYourAnswersController.onPageLoad(directorIndex, establisherIndex, NormalMode, None)
 
   private def addCompanyDirectors(mode: Mode) = controllers.register.establishers.company.routes.AddCompanyDirectorsController.onPageLoad(
-    mode, establisherIndex)
+    mode, None, establisherIndex)
 
   val addressYearsOverAYear = UserAnswers(Json.obj())
     .set(DirectorAddressYearsId(establisherIndex, directorIndex))(AddressYears.OverAYear).asOpt.value

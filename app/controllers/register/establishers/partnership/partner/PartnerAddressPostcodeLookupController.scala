@@ -48,29 +48,29 @@ class PartnerAddressPostcodeLookupController @Inject()(
 
   protected val form: Form[String] = formProvider()
 
-  def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index): Action[AnyContent] =
+  def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData andThen requireData).async {
       implicit request =>
-        viewmodel(establisherIndex, partnerIndex, mode).retrieve.right map get
+        viewmodel(establisherIndex, partnerIndex, mode, srn).retrieve.right map get
     }
 
-  def onSubmit(mode: Mode, establisherIndex: Index, partnerIndex: Index): Action[AnyContent] =
+  def onSubmit(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData andThen requireData).async {
       implicit request =>
-        viewmodel(establisherIndex, partnerIndex, mode).retrieve.right.map(
+        viewmodel(establisherIndex, partnerIndex, mode, srn).retrieve.right.map(
           vm =>
             post(PartnerAddressPostcodeLookupId(establisherIndex, partnerIndex), vm, mode)
         )
     }
 
-  private def viewmodel(establisherIndex: Index, partnerIndex: Index, mode: Mode): Retrieval[PostcodeLookupViewModel] =
+  private def viewmodel(establisherIndex: Index, partnerIndex: Index, mode: Mode, srn: Option[String]): Retrieval[PostcodeLookupViewModel] =
     Retrieval(
       implicit request =>
         PartnerDetailsId(establisherIndex, partnerIndex).retrieve.right.map {
           details =>
             PostcodeLookupViewModel(
-              routes.PartnerAddressPostcodeLookupController.onSubmit(mode, establisherIndex, partnerIndex),
-              routes.PartnerAddressController.onPageLoad(mode, establisherIndex, partnerIndex),
+              routes.PartnerAddressPostcodeLookupController.onSubmit(mode, establisherIndex, partnerIndex, srn),
+              routes.PartnerAddressController.onPageLoad(mode, establisherIndex, partnerIndex, srn),
               Message("messages__partnerAddressPostcodeLookup__title"),
               Message("messages__partnerAddressPostcodeLookup__heading"),
               Some(details.fullName),

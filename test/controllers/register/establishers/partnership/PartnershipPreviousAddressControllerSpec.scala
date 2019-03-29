@@ -81,7 +81,7 @@ class PartnershipPreviousAddressControllerSpec extends ControllerSpecBase with S
       frontendAppConfig,
       form,
       ManualAddressViewModel(
-        routes.PartnershipPreviousAddressController.onSubmit(NormalMode, index),
+        routes.PartnershipPreviousAddressController.onSubmit(NormalMode, index, None),
         options,
         Message("messages__partnershipPreviousAddress__title"),
         Message("messages__partnershipPreviousAddress__heading"),
@@ -94,7 +94,7 @@ class PartnershipPreviousAddressControllerSpec extends ControllerSpecBase with S
   "PartnershipPreviousAddress Controller" must {
 
     "return OK and the correct view for a GET" in {
-      val result = controller().onPageLoad(NormalMode, index)(fakeRequest)
+      val result = controller().onPageLoad(NormalMode, index, None)(fakeRequest)
 
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString()
@@ -103,7 +103,7 @@ class PartnershipPreviousAddressControllerSpec extends ControllerSpecBase with S
     "populate the view correctly on a GET when the question has previously been answered" in {
       val getRelevantData = new FakeDataRetrievalAction(Some(validData))
 
-      val result = controller(getRelevantData).onPageLoad(NormalMode, index)(fakeRequest)
+      val result = controller(getRelevantData).onPageLoad(NormalMode, index, None)(fakeRequest)
 
       contentAsString(result) mustBe viewAsString(form.fill(address))
     }
@@ -114,7 +114,7 @@ class PartnershipPreviousAddressControllerSpec extends ControllerSpecBase with S
         ("addressLine2", "address line 2"),
         ("postCode", "AB12 3CD"),
         "country" -> "GB")
-      val result = controller().onSubmit(NormalMode, index)(postRequest)
+      val result = controller().onSubmit(NormalMode, index, None)(postRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
@@ -124,14 +124,14 @@ class PartnershipPreviousAddressControllerSpec extends ControllerSpecBase with S
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "invalid value"))
       val boundForm = form.bind(Map("value" -> "invalid value"))
 
-      val result = controller().onSubmit(NormalMode, index)(postRequest)
+      val result = controller().onSubmit(NormalMode, index, None)(postRequest)
 
       status(result) mustBe BAD_REQUEST
       contentAsString(result) mustBe viewAsString(boundForm)
     }
 
     "redirect to Session Expired for a GET if no existing data is found" in {
-      val result = controller(dontGetAnyData).onPageLoad(NormalMode, index)(fakeRequest)
+      val result = controller(dontGetAnyData).onPageLoad(NormalMode, index, None)(fakeRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
@@ -139,7 +139,7 @@ class PartnershipPreviousAddressControllerSpec extends ControllerSpecBase with S
 
     "redirect to Session Expired for a POST if no existing data is found" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("addressLine1", "address line 1"), ("addressLine2", "address line 2"))
-      val result = controller(dontGetAnyData).onSubmit(NormalMode, index)(postRequest)
+      val result = controller(dontGetAnyData).onSubmit(NormalMode, index, None)(postRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
@@ -173,7 +173,7 @@ class PartnershipPreviousAddressControllerSpec extends ControllerSpecBase with S
 
       fakeAuditService.reset()
 
-      val result = controller(data).onSubmit(NormalMode, index)(postRequest)
+      val result = controller(data).onSubmit(NormalMode, index, None)(postRequest)
 
       whenReady(result) {
         _ =>

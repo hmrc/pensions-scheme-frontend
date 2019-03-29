@@ -60,14 +60,14 @@ class EstablisherDetailsControllerSpec extends ControllerSpecBase {
       new DataRequiredActionImpl,
       formProvider
     )
-
+  private val submitUrl = controllers.register.establishers.individual.routes.EstablisherDetailsController.onSubmit(NormalMode, firstIndex, None)
   def viewAsString(form: Form[_] = form): String =
-    establisherDetails(frontendAppConfig, form, NormalMode, firstIndex, None)(fakeRequest, messages).toString
+    establisherDetails(frontendAppConfig, form, NormalMode, firstIndex, None, submitUrl)(fakeRequest, messages).toString
 
   "EstablisherDetails Controller" must {
 
     "return OK and the correct view for a GET when scheme name is present" in {
-      val result = controller().onPageLoad(NormalMode, firstIndex)(fakeRequest)
+      val result = controller().onPageLoad(NormalMode, firstIndex, None)(fakeRequest)
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString()
     }
@@ -79,7 +79,7 @@ class EstablisherDetailsControllerSpec extends ControllerSpecBase {
         )
       )
       val getRelevantData = new FakeDataRetrievalAction(Some(validData))
-      val result = controller(getRelevantData).onPageLoad(NormalMode, firstIndex)(fakeRequest)
+      val result = controller(getRelevantData).onPageLoad(NormalMode, firstIndex, None)(fakeRequest)
       contentAsString(result) mustBe viewAsString(form.fill(establisherDetailsObj))
     }
 
@@ -92,7 +92,7 @@ class EstablisherDetailsControllerSpec extends ControllerSpecBase {
         ("date.year", year.toString)
       )
 
-      val result = controller().onSubmit(NormalMode, firstIndex)(postRequest)
+      val result = controller().onSubmit(NormalMode, firstIndex, None)(postRequest)
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
     }
@@ -100,13 +100,13 @@ class EstablisherDetailsControllerSpec extends ControllerSpecBase {
     "return a Bad Request and errors when invalid data is submitted" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "invalid value"))
       val boundForm = form.bind(Map("value" -> "invalid value"))
-      val result = controller().onSubmit(NormalMode, firstIndex)(postRequest)
+      val result = controller().onSubmit(NormalMode, firstIndex, None)(postRequest)
       status(result) mustBe BAD_REQUEST
       contentAsString(result) mustBe viewAsString(boundForm)
     }
 
     "redirect to Session Expired for a GET if no existing data is found" in {
-      val result = controller(dontGetAnyData).onPageLoad(NormalMode, firstIndex)(fakeRequest)
+      val result = controller(dontGetAnyData).onPageLoad(NormalMode, firstIndex, None)(fakeRequest)
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
     }
@@ -114,7 +114,7 @@ class EstablisherDetailsControllerSpec extends ControllerSpecBase {
     "redirect to Session Expired for a POST if no existing data is found" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("firstName", "testFirstName"), ("lastName", "testLastName"),
         ("date.day", day.toString), ("date.month", month.toString), ("date.year", year.toString))
-      val result = controller(dontGetAnyData).onSubmit(NormalMode, firstIndex)(postRequest)
+      val result = controller(dontGetAnyData).onSubmit(NormalMode, firstIndex, None)(postRequest)
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
     }

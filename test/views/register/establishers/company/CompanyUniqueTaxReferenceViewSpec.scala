@@ -16,6 +16,7 @@
 
 package views.register.establishers.company
 
+import controllers.register.establishers.company.routes
 import forms.register.establishers.company.CompanyUniqueTaxReferenceFormProvider
 import models.{Index, NormalMode}
 import play.api.data.Form
@@ -30,12 +31,13 @@ class CompanyUniqueTaxReferenceViewSpec extends ViewBehaviours {
   val form: Form[_] = new CompanyUniqueTaxReferenceFormProvider().apply()
 
   val index = Index(1)
+  private val postCall = routes.CompanyUniqueTaxReferenceController.onSubmit _
 
   def createView(): () => HtmlFormat.Appendable = () =>
-    companyUniqueTaxReference(frontendAppConfig, form, NormalMode, index, None)(fakeRequest, messages)
+    companyUniqueTaxReference(frontendAppConfig, form, NormalMode, index, None, postCall(NormalMode, None, index))(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) => companyUniqueTaxReference(frontendAppConfig, form,
-    NormalMode, index, None)(fakeRequest, messages)
+    NormalMode, index, None, postCall(NormalMode, None, index))(fakeRequest, messages)
 
   "CompanyUniqueTaxReference view" when {
     "rendered" must {

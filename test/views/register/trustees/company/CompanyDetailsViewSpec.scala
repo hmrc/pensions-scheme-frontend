@@ -29,12 +29,12 @@ class CompanyDetailsViewSpec extends QuestionViewBehaviours[CompanyDetails] {
 
   override val form = new CompanyDetailsFormProvider()()
   val firstIndex = Index(1)
-
+  val submitUrl = controllers.register.trustees.company.routes.CompanyDetailsController.onSubmit(NormalMode, firstIndex, None)
   private def createView() = () =>
-    companyDetails(frontendAppConfig, form, NormalMode, firstIndex, None)(fakeRequest, messages)
+    companyDetails(frontendAppConfig, form, NormalMode, firstIndex, None, submitUrl)(fakeRequest, messages)
 
   private def createViewUsingForm = (form: Form[_]) =>
-    companyDetails(frontendAppConfig, form, NormalMode, firstIndex, None)(fakeRequest, messages)
+    companyDetails(frontendAppConfig, form, NormalMode, firstIndex, None, submitUrl)(fakeRequest, messages)
 
 
   "CompanyDetails view" must {
@@ -44,6 +44,6 @@ class CompanyDetailsViewSpec extends QuestionViewBehaviours[CompanyDetails] {
     behave like pageWithReturnLink(createView(), getReturnLink)
 
     behave like pageWithTextFields(createViewUsingForm, messageKeyPrefix,
-      company.routes.CompanyDetailsController.onSubmit(NormalMode, firstIndex).url, "companyName", "vatNumber", "payeNumber")
+      company.routes.CompanyDetailsController.onSubmit(NormalMode, firstIndex, None).url, "companyName", "vatNumber", "payeNumber")
   }
 }

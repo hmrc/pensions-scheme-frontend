@@ -30,12 +30,13 @@ class OtherDirectorsViewSpec extends YesNoViewBehaviours {
   val messageKeyPrefix = "otherDirectors"
 
   val form = new OtherDirectorsFormProvider()()
+  private val postCall = routes.OtherDirectorsController.onSubmit _
 
   private def createView() = () =>
-    otherDirectors(frontendAppConfig, form, NormalMode, index, None)(fakeRequest, messages)
+    otherDirectors(frontendAppConfig, form, NormalMode, index, None, postCall(NormalMode, None, index))(fakeRequest, messages)
 
   private def createViewUsingForm = (form: Form[_]) =>
-    otherDirectors(frontendAppConfig, form, NormalMode, index, None)(fakeRequest, messages)
+    otherDirectors(frontendAppConfig, form, NormalMode, index, None, postCall(NormalMode, None, index))(fakeRequest, messages)
 
   "OtherDirectors view" must {
 
@@ -47,7 +48,7 @@ class OtherDirectorsViewSpec extends YesNoViewBehaviours {
 
     behave like yesNoPage(createViewUsingForm,
       messageKeyPrefix,
-      routes.OtherDirectorsController.onSubmit(NormalMode, index).url,
+      routes.OtherDirectorsController.onSubmit(NormalMode, None, index).url,
       expectedHintKey = Some("_lede")
     )
 

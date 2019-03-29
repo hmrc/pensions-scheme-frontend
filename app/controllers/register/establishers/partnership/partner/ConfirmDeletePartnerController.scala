@@ -25,7 +25,7 @@ import identifiers.register.establishers.IsEstablisherCompleteId
 import identifiers.register.establishers.partnership.PartnershipDetailsId
 import identifiers.register.establishers.partnership.partner.{ConfirmDeletePartnerId, PartnerDetailsId}
 import javax.inject.Inject
-import models.{Index, NormalMode}
+import models.{Index, Mode, NormalMode}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
@@ -50,12 +50,13 @@ class ConfirmDeletePartnerController @Inject()(
 
   private val form: Form[Boolean] = formProvider()
 
-  def onPageLoad(establisherIndex: Index, partnerIndex: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData andThen requireData).async {
     implicit request =>
       (PartnershipDetailsId(establisherIndex) and PartnerDetailsId(establisherIndex, partnerIndex)).retrieve.right.map {
         case partnership ~ partner =>
           if (partner.isDeleted) {
-            Future.successful(Redirect(routes.AlreadyDeletedController.onPageLoad(establisherIndex, partnerIndex)))
+            Future.successful(Redirect(routes.AlreadyDeletedController.onPageLoad(mode, establisherIndex, partnerIndex, srn)))
           } else {
             Future.successful(
               Ok(
@@ -63,7 +64,7 @@ class ConfirmDeletePartnerController @Inject()(
                   appConfig,
                   form,
                   partner.fullName,
-                  routes.ConfirmDeletePartnerController.onSubmit(establisherIndex, partnerIndex),
+                  routes.ConfirmDeletePartnerController.onSubmit(mode, establisherIndex, partnerIndex, srn),
                   existingSchemeName
                 )
               )
@@ -72,7 +73,8 @@ class ConfirmDeletePartnerController @Inject()(
       }
   }
 
-  def onSubmit(establisherIndex: Index, partnerIndex: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData andThen requireData).async {
     implicit request =>
       PartnerDetailsId(establisherIndex, partnerIndex).retrieve.right.map {
         partnerDetails =>
@@ -82,7 +84,7 @@ class ConfirmDeletePartnerController @Inject()(
                 appConfig,
                 formWithErrors,
                 partnerDetails.fullName,
-                routes.ConfirmDeletePartnerController.onSubmit(establisherIndex, partnerIndex),
+                routes.ConfirmDeletePartnerController.onSubmit(mode, establisherIndex, partnerIndex, srn),
                 existingSchemeName
               ))),
             value => {

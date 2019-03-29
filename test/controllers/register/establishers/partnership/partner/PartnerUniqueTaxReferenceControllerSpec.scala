@@ -100,7 +100,8 @@ class PartnerUniqueTaxReferenceControllerSpec extends ControllerSpecBase {
       new DataRequiredActionImpl,
       formProvider
     )
-
+  val submitUrl = controllers.register.establishers.partnership.partner.routes.
+    PartnerUniqueTaxReferenceController.onSubmit(NormalMode, establisherIndex, partnerIndex, None)
   def viewAsString(form: Form[_] = form): String =
     partnerUniqueTaxReference(
       frontendAppConfig,
@@ -108,7 +109,8 @@ class PartnerUniqueTaxReferenceControllerSpec extends ControllerSpecBase {
       NormalMode,
       establisherIndex,
       partnerIndex,
-      None
+      None,
+      submitUrl
     )(fakeRequest, messages).toString
 
   "PartnerUniqueTaxReference Controller" must {
@@ -117,7 +119,7 @@ class PartnerUniqueTaxReferenceControllerSpec extends ControllerSpecBase {
     "return OK and the correct view for a GET when partner name is present" in {
       val getRelevantData = new FakeDataRetrievalAction(Some(validDataEmptyForm))
 
-      val result = controller(getRelevantData).onPageLoad(NormalMode, establisherIndex, partnerIndex)(fakeRequest)
+      val result = controller(getRelevantData).onPageLoad(NormalMode, establisherIndex, partnerIndex, None)(fakeRequest)
 
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString()
@@ -125,14 +127,14 @@ class PartnerUniqueTaxReferenceControllerSpec extends ControllerSpecBase {
 
     "populate the view correctly on a GET when the question has previously been answered" in {
       val getRelevantData = new FakeDataRetrievalAction(Some(validData))
-      val result = controller(getRelevantData).onPageLoad(NormalMode, establisherIndex, partnerIndex)(fakeRequest)
+      val result = controller(getRelevantData).onPageLoad(NormalMode, establisherIndex, partnerIndex, None)(fakeRequest)
 
       contentAsString(result) mustBe viewAsString(form.fill(UniqueTaxReference.Yes("1234567891")))
     }
 
     "redirect to Session Expired page when the establisher index is not valid" ignore {
       val getRelevantData = new FakeDataRetrievalAction(Some(validData))
-      val result = controller(getRelevantData).onPageLoad(NormalMode, invalidIndex, partnerIndex)(fakeRequest)
+      val result = controller(getRelevantData).onPageLoad(NormalMode, invalidIndex, partnerIndex, None)(fakeRequest)
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
     }
@@ -140,7 +142,7 @@ class PartnerUniqueTaxReferenceControllerSpec extends ControllerSpecBase {
 
     "redirect to Session Expired page when the partner index is not valid" ignore {
       val getRelevantData = new FakeDataRetrievalAction(Some(validData))
-      val result = controller(getRelevantData).onPageLoad(NormalMode, establisherIndex, invalidIndex)(fakeRequest)
+      val result = controller(getRelevantData).onPageLoad(NormalMode, establisherIndex, invalidIndex, None)(fakeRequest)
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
     }
@@ -148,7 +150,7 @@ class PartnerUniqueTaxReferenceControllerSpec extends ControllerSpecBase {
     "redirect to the next page when valid data is submitted" in {
       val getRelevantData = new FakeDataRetrievalAction(Some(validDataEmptyForm))
       val postRequest = fakeRequest.withFormUrlEncodedBody(("uniqueTaxReference.hasUtr", "true"), ("uniqueTaxReference.utr", "1234565656"))
-      val result = controller(getRelevantData).onSubmit(NormalMode, establisherIndex, partnerIndex)(postRequest)
+      val result = controller(getRelevantData).onSubmit(NormalMode, establisherIndex, partnerIndex, None)(postRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
@@ -157,14 +159,14 @@ class PartnerUniqueTaxReferenceControllerSpec extends ControllerSpecBase {
     "return a Bad Request and errors when invalid data is submitted" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "invalid value"))
       val boundForm = form.bind(Map("value" -> "invalid value"))
-      val result = controller(getRelevantData).onSubmit(NormalMode, establisherIndex, partnerIndex)(postRequest)
+      val result = controller(getRelevantData).onSubmit(NormalMode, establisherIndex, partnerIndex, None)(postRequest)
 
       status(result) mustBe BAD_REQUEST
       contentAsString(result) mustBe viewAsString(boundForm)
     }
 
     "redirect to Session Expired for a GET if no existing data is found" in {
-      val result = controller(dontGetAnyData).onPageLoad(NormalMode, establisherIndex, partnerIndex)(fakeRequest)
+      val result = controller(dontGetAnyData).onPageLoad(NormalMode, establisherIndex, partnerIndex, None)(fakeRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
@@ -172,7 +174,7 @@ class PartnerUniqueTaxReferenceControllerSpec extends ControllerSpecBase {
 
     "redirect to Session Expired for a GET if no partner data is found" in {
       val getRelevantData = new FakeDataRetrievalAction(Some(validDataNoPartnerDetails))
-      val result = controller(getRelevantData).onPageLoad(NormalMode, establisherIndex, partnerIndex)(fakeRequest)
+      val result = controller(getRelevantData).onPageLoad(NormalMode, establisherIndex, partnerIndex, None)(fakeRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
@@ -181,7 +183,7 @@ class PartnerUniqueTaxReferenceControllerSpec extends ControllerSpecBase {
 
     "redirect to Session Expired for a POST if no existing data is found" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "invalid"))
-      val result = controller(dontGetAnyData).onSubmit(NormalMode, establisherIndex, partnerIndex)(postRequest)
+      val result = controller(dontGetAnyData).onSubmit(NormalMode, establisherIndex, partnerIndex, None)(postRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
@@ -189,7 +191,7 @@ class PartnerUniqueTaxReferenceControllerSpec extends ControllerSpecBase {
 
     "redirect to Session Expired for a POST if no partner data is found" in {
       val getRelevantData = new FakeDataRetrievalAction(Some(validDataNoPartnerDetails))
-      val result = controller(getRelevantData).onSubmit(NormalMode, establisherIndex, partnerIndex)(fakeRequest)
+      val result = controller(getRelevantData).onSubmit(NormalMode, establisherIndex, partnerIndex, None)(fakeRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)

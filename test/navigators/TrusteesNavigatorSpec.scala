@@ -92,15 +92,15 @@ object TrusteesNavigatorSpec extends OptionValues with Enumerable.Implicits {
 
   private def trusteeKindIndividual = emptyAnswers.trusteeKind(TrusteeKind.Individual)
 
-  private def addTrustee = controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode)
+  private def addTrustee = controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode, None)
 
-  private def companyDetails = controllers.register.trustees.company.routes.CompanyDetailsController.onPageLoad(NormalMode, 0)
+  private def companyDetails = controllers.register.trustees.company.routes.CompanyDetailsController.onPageLoad(NormalMode, 0, None)
 
-  private def moreThanTenTrustees = controllers.register.trustees.routes.MoreThanTenTrusteesController.onPageLoad(NormalMode)
+  private def moreThanTenTrustees = controllers.register.trustees.routes.MoreThanTenTrusteesController.onPageLoad(NormalMode, None)
 
-  private def trusteeDetails = controllers.register.trustees.individual.routes.TrusteeDetailsController.onPageLoad(NormalMode, 0)
+  private def trusteeDetails = controllers.register.trustees.individual.routes.TrusteeDetailsController.onPageLoad(NormalMode, 0, None)
 
-  private def trusteeKind(index: Int) = controllers.register.trustees.routes.TrusteeKindController.onPageLoad(NormalMode, index)
+  private def trusteeKind(index: Int) = controllers.register.trustees.routes.TrusteeKindController.onPageLoad(NormalMode, index, None)
 
   private def sessionExpired = controllers.routes.SessionExpiredController.onPageLoad()
 

@@ -52,11 +52,11 @@ class EstablishersNavigator @Inject()(val dataCacheConnector: UserAnswersCacheCo
   private def establisherKindRoutes(index: Int, answers: UserAnswers): Option[NavigateTo] = {
     answers.get(EstablisherKindId(index)) match {
       case Some(EstablisherKind.Company) =>
-        NavigateTo.save(controllers.register.establishers.company.routes.CompanyDetailsController.onPageLoad(NormalMode, index))
+        NavigateTo.save(controllers.register.establishers.company.routes.CompanyDetailsController.onPageLoad(NormalMode, None, index))
       case Some(EstablisherKind.Indivdual) =>
-        NavigateTo.save(controllers.register.establishers.individual.routes.EstablisherDetailsController.onPageLoad(NormalMode, index))
+        NavigateTo.save(controllers.register.establishers.individual.routes.EstablisherDetailsController.onPageLoad(NormalMode, index, None))
       case Some(EstablisherKind.Partnership) =>
-        NavigateTo.save(controllers.register.establishers.partnership.routes.PartnershipDetailsController.onPageLoad(NormalMode, index))
+        NavigateTo.save(controllers.register.establishers.partnership.routes.PartnershipDetailsController.onPageLoad(NormalMode, index, None))
       case _ =>
         NavigateTo.dontSave(controllers.routes.SessionExpiredController.onPageLoad())
     }

@@ -65,31 +65,31 @@ object TrusteesIndividualNavigatorSpec {
   private val emptyAnswers = UserAnswers(Json.obj())
   val firstIndex = Index(0)
 
-  private def details(mode: Mode) = controllers.register.trustees.individual.routes.TrusteeDetailsController.onPageLoad(mode, Index(0))
+  private def details(mode: Mode) = controllers.register.trustees.individual.routes.TrusteeDetailsController.onPageLoad(mode, Index(0), None)
 
-  private def nino(mode: Mode) = controllers.register.trustees.individual.routes.TrusteeNinoController.onPageLoad(mode, firstIndex)
+  private def nino(mode: Mode) = controllers.register.trustees.individual.routes.TrusteeNinoController.onPageLoad(mode, firstIndex, None)
 
-  private def utr(mode: Mode) = controllers.register.trustees.individual.routes.UniqueTaxReferenceController.onPageLoad(mode, firstIndex)
+  private def utr(mode: Mode) = controllers.register.trustees.individual.routes.UniqueTaxReferenceController.onPageLoad(mode, firstIndex, None)
 
-  private def postcode(mode: Mode) = controllers.register.trustees.individual.routes.IndividualPostCodeLookupController.onPageLoad(mode, firstIndex)
+  private def postcode(mode: Mode) = controllers.register.trustees.individual.routes.IndividualPostCodeLookupController.onPageLoad(mode, firstIndex, None)
 
-  private def addressList(mode: Mode) = controllers.register.trustees.individual.routes.IndividualAddressListController.onPageLoad(mode, firstIndex)
+  private def addressList(mode: Mode) = controllers.register.trustees.individual.routes.IndividualAddressListController.onPageLoad(mode, firstIndex, None)
 
-  private def address(mode: Mode) = controllers.register.trustees.individual.routes.TrusteeAddressController.onPageLoad(mode, firstIndex)
+  private def address(mode: Mode) = controllers.register.trustees.individual.routes.TrusteeAddressController.onPageLoad(mode, firstIndex, None)
 
-  private def addressYears(mode: Mode) = controllers.register.trustees.individual.routes.TrusteeAddressYearsController.onPageLoad(mode, firstIndex)
+  private def addressYears(mode: Mode) = controllers.register.trustees.individual.routes.TrusteeAddressYearsController.onPageLoad(mode, firstIndex, None)
 
-  private def previousAddressPostcode(mode: Mode) = controllers.register.trustees.individual.routes.IndividualPreviousAddressPostcodeLookupController.onPageLoad(mode, firstIndex)
+  private def previousAddressPostcode(mode: Mode) = controllers.register.trustees.individual.routes.IndividualPreviousAddressPostcodeLookupController.onPageLoad(mode, firstIndex, None)
 
-  private def previousAddressList(mode: Mode) = controllers.register.trustees.individual.routes.TrusteePreviousAddressListController.onPageLoad(mode, firstIndex)
+  private def previousAddressList(mode: Mode) = controllers.register.trustees.individual.routes.TrusteePreviousAddressListController.onPageLoad(mode, firstIndex, None)
 
-  private def previousAddress(mode: Mode) = controllers.register.trustees.individual.routes.TrusteePreviousAddressController.onPageLoad(mode, firstIndex)
+  private def previousAddress(mode: Mode) = controllers.register.trustees.individual.routes.TrusteePreviousAddressController.onPageLoad(mode, firstIndex, None)
 
-  private def contactDetails(mode: Mode) = controllers.register.trustees.individual.routes.TrusteeContactDetailsController.onPageLoad(mode, firstIndex)
+  private def contactDetails(mode: Mode) = controllers.register.trustees.individual.routes.TrusteeContactDetailsController.onPageLoad(mode, firstIndex, None)
 
-  private def checkYourAnswers = controllers.register.trustees.individual.routes.CheckYourAnswersController.onPageLoad(firstIndex)
+  private def checkYourAnswers = controllers.register.trustees.individual.routes.CheckYourAnswersController.onPageLoad(NormalMode, firstIndex, None)
 
-  private def addTrustee(mode: Mode) = controllers.register.trustees.routes.AddTrusteeController.onPageLoad(mode)
+  private def addTrustee(mode: Mode) = controllers.register.trustees.routes.AddTrusteeController.onPageLoad(mode, None)
 
   private def sessionExpired = controllers.routes.SessionExpiredController.onPageLoad()
 

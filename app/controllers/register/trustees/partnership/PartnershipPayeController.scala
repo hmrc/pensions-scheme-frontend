@@ -44,13 +44,13 @@ class PartnershipPayeController @Inject()(
 
   protected val form: Form[Paye] = formProvider()
 
-  private def viewmodel(mode: Mode, index: Index): Retrieval[PayeViewModel] =
+  private def viewmodel(mode: Mode, index: Index, srn: Option[String]): Retrieval[PayeViewModel] =
     Retrieval {
       implicit request =>
         PartnershipDetailsId(index).retrieve.right.map {
           details =>
             PayeViewModel(
-              postCall = routes.PartnershipPayeController.onSubmit(mode, index),
+              postCall = routes.PartnershipPayeController.onSubmit(mode, index, srn),
               title = Message("messages__partnershipPaye__title"),
               heading = Message("messages__partnershipPaye__heading"),
               hint = Some(Message("messages__common__paye_hint")),
@@ -59,17 +59,17 @@ class PartnershipPayeController @Inject()(
         }
     }
 
-  def onPageLoad(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      viewmodel(mode, index).retrieve.right.map {
+      viewmodel(mode, index, srn).retrieve.right.map {
         vm =>
           get(PartnershipPayeId(index), form, vm)
       }
   }
 
-  def onSubmit(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      viewmodel(mode, index).retrieve.right.map {
+      viewmodel(mode, index, srn).retrieve.right.map {
         vm =>
           post(PartnershipPayeId(index), mode, form, vm)
       }

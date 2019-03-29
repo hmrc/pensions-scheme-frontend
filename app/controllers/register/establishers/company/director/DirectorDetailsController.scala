@@ -29,7 +29,7 @@ import models.person.PersonDetails
 import models.{Index, Mode}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent}
+import play.api.mvc.{Action, AnyContent, Call}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.EstablishersCompanyDirector
 import utils.{Navigator, SectionComplete, UserAnswers}
@@ -51,7 +51,9 @@ class DirectorDetailsController @Inject()(
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index): Action[AnyContent] =
+  private def postCall: (Mode, Index, Index, Option[String]) => Call = routes.DirectorDetailsController.onSubmit _
+
+  def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData andThen requireData).async {
       implicit request =>
         CompanyDetailsId(establisherIndex).retrieve.right.map { companyDetails =>
@@ -59,17 +61,18 @@ class DirectorDetailsController @Inject()(
             case None => form
             case Some(value) => form.fill(value)
           }
-          Future.successful(Ok(directorDetails(appConfig, preparedForm, mode, establisherIndex, directorIndex, existingSchemeName)))
+          Future.successful(Ok(directorDetails(
+            appConfig, preparedForm, mode, establisherIndex, directorIndex, existingSchemeName, postCall(mode, establisherIndex, directorIndex, srn))))
         }
     }
 
-  def onSubmit(mode: Mode, establisherIndex: Index, directorIndex: Index): Action[AnyContent] =
+  def onSubmit(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData andThen requireData).async {
       implicit request =>
         CompanyDetailsId(establisherIndex).retrieve.right.map { companyDetails =>
           form.bindFromRequest().fold(
             (formWithErrors: Form[_]) =>
-              Future.successful(BadRequest(directorDetails(appConfig, formWithErrors, mode, establisherIndex, directorIndex, existingSchemeName)))
+              Future.successful(BadRequest(directorDetails(appConfig, formWithErrors, mode, establisherIndex, directorIndex, existingSchemeName, postCall(mode, establisherIndex, directorIndex, srn))))
             ,
             value =>
               dataCacheConnector.save(request.externalId, DirectorDetailsId(establisherIndex, directorIndex), value).flatMap {

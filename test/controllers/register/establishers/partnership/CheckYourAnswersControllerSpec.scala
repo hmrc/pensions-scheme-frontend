@@ -47,7 +47,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase {
 
   implicit val request = FakeDataRequest(partnershipAnswers)
   implicit val countryOptions = new FakeCountryOptions()
-  private val onwardRoute = routes.AddPartnersController.onPageLoad(NormalMode, firstIndex)
+  private val onwardRoute = routes.AddPartnersController.onPageLoad(NormalMode, firstIndex, None)
 
   private def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): CheckYourAnswersController =
     new CheckYourAnswersController(
@@ -68,30 +68,30 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase {
       val partnershipDetails = AnswerSection(
         Some("messages__partnership__checkYourAnswers__partnership_details"),
         Seq(
-          PartnershipDetailsId(firstIndex).row(routes.PartnershipDetailsController.onPageLoad(CheckMode, firstIndex).url),
-          PartnershipVatId(firstIndex).row(routes.PartnershipVatController.onPageLoad(CheckMode, firstIndex).url),
-          PartnershipPayeId(firstIndex).row(routes.PartnershipPayeController.onPageLoad(CheckMode, firstIndex).url),
-          PartnershipUniqueTaxReferenceID(firstIndex).row(routes.PartnershipUniqueTaxReferenceController.onPageLoad(CheckMode, firstIndex).url),
-          IsPartnershipDormantId(firstIndex).row(routes.IsPartnershipDormantController.onPageLoad(CheckMode, firstIndex).url)
+          PartnershipDetailsId(firstIndex).row(routes.PartnershipDetailsController.onPageLoad(CheckMode, firstIndex, None).url),
+          PartnershipVatId(firstIndex).row(routes.PartnershipVatController.onPageLoad(CheckMode, firstIndex, None).url),
+          PartnershipPayeId(firstIndex).row(routes.PartnershipPayeController.onPageLoad(CheckMode, firstIndex, None).url),
+          PartnershipUniqueTaxReferenceID(firstIndex).row(routes.PartnershipUniqueTaxReferenceController.onPageLoad(CheckMode, firstIndex, None).url),
+          IsPartnershipDormantId(firstIndex).row(routes.IsPartnershipDormantController.onPageLoad(CheckMode, firstIndex, None).url)
         ).flatten
       )
 
       val partnershipContactDetails = AnswerSection(
         Some("messages__partnership__checkYourAnswers__partnership_contact_details"),
         Seq(
-          PartnershipAddressId(firstIndex).row(routes.PartnershipAddressController.onPageLoad(CheckMode, firstIndex).url),
-          PartnershipAddressYearsId(firstIndex).row(routes.PartnershipAddressYearsController.onPageLoad(CheckMode, firstIndex).url),
-          PartnershipPreviousAddressId(firstIndex).row(routes.PartnershipPreviousAddressController.onPageLoad(CheckMode, firstIndex).url),
-          PartnershipContactDetailsId(firstIndex).row(routes.PartnershipContactDetailsController.onPageLoad(CheckMode, firstIndex).url)
+          PartnershipAddressId(firstIndex).row(routes.PartnershipAddressController.onPageLoad(CheckMode, firstIndex, None).url),
+          PartnershipAddressYearsId(firstIndex).row(routes.PartnershipAddressYearsController.onPageLoad(CheckMode, firstIndex, None).url),
+          PartnershipPreviousAddressId(firstIndex).row(routes.PartnershipPreviousAddressController.onPageLoad(CheckMode, firstIndex, None).url),
+          PartnershipContactDetailsId(firstIndex).row(routes.PartnershipContactDetailsController.onPageLoad(CheckMode, firstIndex, None).url)
         ).flatten
       )
 
-      val result = controller(partnershipAnswers.dataRetrievalAction).onPageLoad(firstIndex)(request)
+      val result = controller(partnershipAnswers.dataRetrievalAction).onPageLoad(NormalMode, firstIndex, None)(request)
 
       lazy val viewAsString: String = check_your_answers(
         frontendAppConfig,
         Seq(partnershipDetails, partnershipContactDetails),
-        routes.CheckYourAnswersController.onSubmit(firstIndex),
+        routes.CheckYourAnswersController.onSubmit(NormalMode, firstIndex, None),
         None
       )(fakeRequest, messages).toString
 
@@ -102,7 +102,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase {
     "redirect to Add Partners page on submit" which {
       "marks partnership as complete on submit" in {
 
-        val result = controller().onSubmit(firstIndex)(request)
+        val result = controller().onSubmit(NormalMode, firstIndex, None)(request)
 
         status(result) mustBe 303
         redirectLocation(result) mustBe Some(onwardRoute.url)

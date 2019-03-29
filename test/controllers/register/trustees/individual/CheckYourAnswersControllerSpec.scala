@@ -33,7 +33,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase {
 
   "Check Your Answers Controller" must {
     "return 200 and the correct view for a GET" in {
-      val result = controller(getMandatoryTrustee).onPageLoad(firstIndex)(fakeRequest)
+      val result = controller(getMandatoryTrustee).onPageLoad(NormalMode, firstIndex, None)(fakeRequest)
 
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString
@@ -41,13 +41,13 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase {
 
     "redirect to Add Trustee page" when {
       "POST is called" in {
-        val result = controller().onSubmit(firstIndex)(fakeRequest)
+        val result = controller().onSubmit(NormalMode, firstIndex, None)(fakeRequest)
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(onwardRoute.url)
       }
 
       "mark trustee individual as complete" in {
-        val result = controller().onSubmit(firstIndex)(fakeRequest)
+        val result = controller().onSubmit(NormalMode, firstIndex, None)(fakeRequest)
         status(result) mustBe SEE_OTHER
         FakeSectionComplete.verify(IsTrusteeCompleteId(firstIndex), true)
       }
@@ -59,8 +59,8 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase {
   val schemeName = "Test Scheme Name"
   val trusteeName = "Test Trustee Name"
   val firstIndex = Index(0)
-  lazy val trusteeDetailsRoute: String = routes.TrusteeDetailsController.onPageLoad(CheckMode, firstIndex).url
-  lazy val postUrl: Call = routes.CheckYourAnswersController.onSubmit(firstIndex)
+  lazy val trusteeDetailsRoute: String = routes.TrusteeDetailsController.onPageLoad(CheckMode, firstIndex, None).url
+  lazy val postUrl: Call = routes.CheckYourAnswersController.onSubmit(NormalMode, firstIndex, None)
   lazy val trusteeDetailsSection = AnswerSection(None,
     Seq(
       AnswerRow(
@@ -83,7 +83,7 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase {
     Some("messages__checkYourAnswers__section__contact_details"),
     Seq.empty[AnswerRow]
   )
-  val onwardRoute = controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode)
+  val onwardRoute = controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode, None)
 
   def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisher): CheckYourAnswersController =
     new CheckYourAnswersController(

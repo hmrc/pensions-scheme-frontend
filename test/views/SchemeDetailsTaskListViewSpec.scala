@@ -118,7 +118,7 @@ class SchemeDetailsTaskListViewSpec extends ViewBehaviours {
         Some(SchemeDetailsTaskListSection(
           None,
           Link(messages("messages__schemeTaskList__sectionTrustees_add_link"),
-            controllers.register.trustees.routes.TrusteeKindController.onPageLoad(NormalMode, 0).url),
+            controllers.register.trustees.routes.TrusteeKindController.onPageLoad(NormalMode, 0, None).url),
           None
         )), Seq.empty, None
       )
@@ -188,7 +188,7 @@ class SchemeDetailsTaskListViewSpec extends ViewBehaviours {
         Some(SchemeDetailsTaskListSection(
           None,
           Link(messages("messages__schemeTaskList__sectionTrustees_add_link"),
-            controllers.register.trustees.routes.TrusteeKindController.onPageLoad(NormalMode, 0).url),
+            controllers.register.trustees.routes.TrusteeKindController.onPageLoad(NormalMode, 0, None).url),
           None
         )), Seq.empty, None
       )
@@ -202,7 +202,7 @@ class SchemeDetailsTaskListViewSpec extends ViewBehaviours {
 
       "display the correct link" in {
         view must haveLinkWithText(
-          url = controllers.register.trustees.routes.TrusteeKindController.onPageLoad(NormalMode, 0).url,
+          url = controllers.register.trustees.routes.TrusteeKindController.onPageLoad(NormalMode, 0, None).url,
           linkText = messages("messages__schemeTaskList__sectionTrustees_add_link"),
           linkId = "section-trustees-link"
         )
@@ -216,7 +216,7 @@ class SchemeDetailsTaskListViewSpec extends ViewBehaviours {
       "display the correct link" in {
 
         view must haveLinkWithText(
-          url = controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode).url,
+          url = controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode, None).url,
           linkText = messages("messages__schemeTaskList__sectionTrustees_change_link"),
           linkId = "section-trustees-link"
         )
@@ -348,21 +348,21 @@ object SchemeDetailsTaskListViewSpec extends ViewSpecBase {
 
   private def addTrusteesHeader(): SchemeDetailsTaskListSection = {
     SchemeDetailsTaskListSection(None, Link(changeTrusteesLinkText,
-      controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode).url), None)
+      controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode, None).url), None)
   }
 
   private def establishers: Seq[SchemeDetailsTaskListSection] = {
     Seq(SchemeDetailsTaskListSection(Some(false), Link(individualLinkText,
-      controllers.register.establishers.individual.routes.EstablisherDetailsController.onPageLoad(NormalMode, 0).url), Some("firstName lastName")),
+      controllers.register.establishers.individual.routes.EstablisherDetailsController.onPageLoad(NormalMode, 0, None).url), Some("firstName lastName")),
       SchemeDetailsTaskListSection(Some(true), Link(individualLinkText,
-        controllers.register.establishers.individual.routes.CheckYourAnswersController.onPageLoad(1).url), Some("firstName lastName")))
+        controllers.register.establishers.individual.routes.CheckYourAnswersController.onPageLoad(NormalMode, 1, None).url), Some("firstName lastName")))
   }
 
   private def trustees: Seq[SchemeDetailsTaskListSection] = {
     Seq(SchemeDetailsTaskListSection(Some(false), Link(individualLinkText,
-      controllers.register.trustees.individual.routes.TrusteeDetailsController.onPageLoad(NormalMode, 0).url), Some("firstName lastName")),
+      controllers.register.trustees.individual.routes.TrusteeDetailsController.onPageLoad(NormalMode, 0, None).url), Some("firstName lastName")),
       SchemeDetailsTaskListSection(Some(true), Link(individualLinkText,
-        controllers.register.trustees.individual.routes.CheckYourAnswersController.onPageLoad(0).url), Some("firstName lastName")))
+        controllers.register.trustees.individual.routes.CheckYourAnswersController.onPageLoad(NormalMode, 0, None).url), Some("firstName lastName")))
   }
 
   private val schemeDetailsTaskListData: SchemeDetailsTaskList = SchemeDetailsTaskList(

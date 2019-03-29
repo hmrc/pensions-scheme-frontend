@@ -34,14 +34,14 @@ import views.html.adviserName
 import scala.concurrent.{ExecutionContext, Future}
 
 class AdviserNameController @Inject()(
-                                          appConfig: FrontendAppConfig,
-                                          override val messagesApi: MessagesApi,
-                                          dataCacheConnector: UserAnswersCacheConnector,
-                                          @WorkingKnowledge navigator: Navigator,
-                                          authenticate: AuthAction,
-                                          getData: DataRetrievalAction,
-                                          requireData: DataRequiredAction,
-                                          formProvider: AdviserNameFormProvider
+                                       appConfig: FrontendAppConfig,
+                                       override val messagesApi: MessagesApi,
+                                       dataCacheConnector: UserAnswersCacheConnector,
+                                       @WorkingKnowledge navigator: Navigator,
+                                       authenticate: AuthAction,
+                                       getData: DataRetrievalAction,
+                                       requireData: DataRequiredAction,
+                                       formProvider: AdviserNameFormProvider
                                         ) (implicit val ec: ExecutionContext) extends FrontendController with I18nSupport with Retrievals {
 
   private val form = formProvider()

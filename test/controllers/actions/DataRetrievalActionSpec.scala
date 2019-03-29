@@ -17,8 +17,9 @@
 package controllers.actions
 
 import base.SpecBase
-import connectors.UserAnswersCacheConnector
+import connectors._
 import models.requests.{AuthenticatedRequest, OptionalDataRequest}
+import models.{Mode, NormalMode}
 import org.mockito.Matchers.{eq => eqTo, _}
 import org.mockito.Mockito._
 import org.scalatest.concurrent.ScalaFutures
@@ -31,7 +32,13 @@ import scala.concurrent.Future
 
 class DataRetrievalActionSpec extends SpecBase with MockitoSugar with ScalaFutures {
 
-  class Harness(dataCacheConnector: UserAnswersCacheConnector) extends DataRetrievalActionImpl(dataCacheConnector) {
+  class Harness(dataCacheConnector: UserAnswersCacheConnector,
+                viewConnector: SubscriptionCacheConnector = FakeSubscriptionCacheConnector.getConnector,
+                updateConnector: UpdateSchemeCacheConnector = FakeUpdateCacheConnector.getConnector,
+                lockConnector: PensionSchemeVarianceLockConnector = FakeLockConnector.getConnector,
+                mode: Mode = NormalMode,
+                srn: Option[String] = None) extends
+    DataRetrieval(dataCacheConnector, viewConnector, updateConnector, lockConnector, mode, srn) {
     def callTransform[A](request: AuthenticatedRequest[A]): Future[OptionalDataRequest[A]] = transform(request)
   }
 

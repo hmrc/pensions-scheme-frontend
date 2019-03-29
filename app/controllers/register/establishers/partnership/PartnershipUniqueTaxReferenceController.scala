@@ -43,31 +43,28 @@ class PartnershipUniqueTaxReferenceController @Inject()(
                                                          getData: DataRetrievalAction,
                                                          requireData: DataRequiredAction,
                                                          formProvider: PartnershipUniqueTaxReferenceFormProvider
-                                                       ) (implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
+                                                       )(implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
 
   private val form: Form[UniqueTaxReference] = formProvider()
 
-  def onPageLoad(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      retrievePartnershipName(index) {
-        partnershipName =>
-          val redirectResult = request.userAnswers.get(PartnershipUniqueTaxReferenceID(index)) match {
-            case None =>
-              Ok(partnershipUniqueTaxReference(appConfig, form, mode, index, existingSchemeName))
-            case Some(value) =>
-              Ok(partnershipUniqueTaxReference(appConfig, form.fill(value), mode, index, existingSchemeName))
-          }
-          Future.successful(redirectResult)
+      retrievePartnershipName(index) { _ =>
+        val preparedForm = request.userAnswers.get(PartnershipUniqueTaxReferenceID(index)).fold(form)(form.fill)
+        val submitUrl = controllers.register.establishers.partnership.routes.PartnershipUniqueTaxReferenceController.onSubmit(mode, index, srn)
+        Future.successful(Ok(partnershipUniqueTaxReference(appConfig, preparedForm, mode, index, existingSchemeName, submitUrl)))
       }
   }
 
-  def onSubmit(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       retrievePartnershipName(index) {
         partnershipName =>
           form.bindFromRequest().fold(
-            (formWithErrors: Form[_]) =>
-              Future.successful(BadRequest(partnershipUniqueTaxReference(appConfig, formWithErrors, mode, index,existingSchemeName))),
+            (formWithErrors: Form[_]) => {
+              val submitUrl = controllers.register.establishers.partnership.routes.PartnershipUniqueTaxReferenceController.onSubmit(mode, index, srn)
+              Future.successful(BadRequest(partnershipUniqueTaxReference(appConfig, formWithErrors, mode, index, existingSchemeName, submitUrl)))
+            },
             value =>
               dataCacheConnector.save(
                 request.externalId,

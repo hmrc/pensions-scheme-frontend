@@ -55,17 +55,19 @@ class PartnerAddressController @Inject()(
 
   protected val form: Form[Address] = formProvider()
 
-  def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      viewmodel(establisherIndex, partnerIndex, mode).retrieve.right.map {
+      viewmodel(establisherIndex, partnerIndex, mode, srn).retrieve.right.map {
         vm =>
           get(PartnerAddressId(establisherIndex, partnerIndex), PartnerAddressListId(establisherIndex, partnerIndex), vm)
       }
   }
 
-  def onSubmit(mode: Mode, establisherIndex: Index, partnerIndex: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      viewmodel(establisherIndex, partnerIndex, mode).retrieve.right.map {
+      viewmodel(establisherIndex, partnerIndex, mode, srn).retrieve.right.map {
         vm =>
           post(
             PartnerAddressId(establisherIndex, partnerIndex),
@@ -78,13 +80,13 @@ class PartnerAddressController @Inject()(
       }
   }
 
-  private def viewmodel(establisherIndex: Int, partnerIndex: Int, mode: Mode): Retrieval[ManualAddressViewModel] =
+  private def viewmodel(establisherIndex: Int, partnerIndex: Int, mode: Mode, srn: Option[String]): Retrieval[ManualAddressViewModel] =
     Retrieval {
       implicit request =>
         PartnerDetailsId(establisherIndex, partnerIndex).retrieve.right.map {
           details =>
             ManualAddressViewModel(
-              postCall(mode, Index(establisherIndex), Index(partnerIndex)),
+              postCall(mode, Index(establisherIndex), Index(partnerIndex), srn),
               countryOptions.options,
               title = Message(title),
               heading = Message(heading),

@@ -30,12 +30,12 @@ class CompanyUniqueTaxReferenceViewSpec extends ViewBehaviours {
   val form: Form[_] = new CompanyUniqueTaxReferenceFormProvider().apply()
 
   val index = Index(1)
-
+  val submitUrl = controllers.register.trustees.company.routes.CompanyUniqueTaxReferenceController.onSubmit(NormalMode, index, None)
   def createView(): () => HtmlFormat.Appendable = () =>
-    companyUniqueTaxReference(frontendAppConfig, form, NormalMode, index, None)(fakeRequest, messages)
+    companyUniqueTaxReference(frontendAppConfig, form, NormalMode, index, None, submitUrl)(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) => companyUniqueTaxReference(frontendAppConfig, form,
-    NormalMode, index, None)(fakeRequest, messages)
+    NormalMode, index, None, submitUrl)(fakeRequest, messages)
 
   "CompanyUniqueTaxReference view" when {
     "rendered" must {

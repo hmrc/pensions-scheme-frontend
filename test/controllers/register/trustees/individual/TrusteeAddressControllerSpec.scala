@@ -68,7 +68,7 @@ class TrusteeAddressControllerSpec extends ControllerBehaviours {
   private val controller = builder.build().injector.instanceOf[TrusteeAddressController]
 
   val viewmodel = ManualAddressViewModel(
-    controller.postCall(NormalMode, firstIndex),
+    controller.postCall(NormalMode, firstIndex, None),
     countryOptions.options,
     Message(controller.title),
     Message(controller.heading),
@@ -77,8 +77,8 @@ class TrusteeAddressControllerSpec extends ControllerBehaviours {
   )
 
   behave like manualAddress(
-    routes.TrusteeAddressController.onPageLoad(NormalMode, firstIndex),
-    routes.TrusteeAddressController.onSubmit(NormalMode, firstIndex),
+    routes.TrusteeAddressController.onPageLoad(NormalMode, firstIndex, None),
+    routes.TrusteeAddressController.onSubmit(NormalMode, firstIndex, None),
     TrusteeAddressId(firstIndex),
     viewmodel
   )
@@ -104,7 +104,7 @@ class TrusteeAddressControllerSpec extends ControllerBehaviours {
     )) {
       implicit app =>
 
-        val fakeRequest = addToken(FakeRequest(routes.TrusteeAddressController.onSubmit(NormalMode, firstIndex))
+        val fakeRequest = addToken(FakeRequest(routes.TrusteeAddressController.onSubmit(NormalMode, firstIndex, None))
           .withHeaders("Csrf-Token" -> "nocheck")
           .withFormUrlEncodedBody(
             ("addressLine1", address.addressLine1),

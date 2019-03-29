@@ -38,32 +38,32 @@ import views.html.register.establishers.isDormant
 import scala.concurrent.{ExecutionContext, Future}
 
 class IsCompanyDormantController @Inject()(appConfig: FrontendAppConfig,
-                                 override val messagesApi: MessagesApi,
-                                 dataCacheConnector: UserAnswersCacheConnector,
-                                 @EstablishersCompany navigator: Navigator,
-                                 authenticate: AuthAction,
-                                 getData: DataRetrievalAction,
-                                 requireData: DataRequiredAction,
-                                 formProvider: IsDormantFormProvider)(implicit val ec: ExecutionContext) extends FrontendController with Enumerable.Implicits with I18nSupport with Retrievals {
+                                           override val messagesApi: MessagesApi,
+                                           dataCacheConnector: UserAnswersCacheConnector,
+                                           @EstablishersCompany navigator: Navigator,
+                                           authenticate: AuthAction,
+                                           getData: DataRetrievalAction,
+                                           requireData: DataRequiredAction,
+                                           formProvider: IsDormantFormProvider)(implicit val ec: ExecutionContext) extends FrontendController with Enumerable.Implicits with I18nSupport with Retrievals {
 
   private val form: Form[DeclarationDormant] = formProvider()
-  private def postCall(mode: Mode, index: Int): Call = routes.IsCompanyDormantController.onSubmit(mode, index)
+  private def postCall(mode: Mode, srn: Option[String], index: Int): Call = routes.IsCompanyDormantController.onSubmit(mode, srn, index )
 
-  def onPageLoad(mode: Mode, index: Int): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onPageLoad(mode: Mode, srn: Option[String], index: Int): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       retrieveCompanyName(index) {
         companyName =>
           val preparedForm = request.userAnswers.get(IsCompanyDormantId(index)).fold(form)(v=> form.fill(v))
-          Future.successful(Ok(isDormant(appConfig, preparedForm, companyName, postCall(mode, index), existingSchemeName)))
+          Future.successful(Ok(isDormant(appConfig, preparedForm, companyName, postCall(mode, srn, index), existingSchemeName)))
       }
   }
 
-  def onSubmit(mode: Mode, index: Int): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode, srn: Option[String], index: Int): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       retrieveCompanyName(index) { companyName =>
         form.bindFromRequest().fold(
           (formWithErrors: Form[_]) =>
-            Future.successful(BadRequest(isDormant(appConfig, formWithErrors, companyName, postCall(mode, index), existingSchemeName))),
+            Future.successful(BadRequest(isDormant(appConfig, formWithErrors, companyName, postCall(mode, srn, index), existingSchemeName))),
           {
             case Yes =>
               dataCacheConnector.save(request.externalId, IsCompanyDormantId(index), DeclarationDormant.values(0)).map { cacheMap =>

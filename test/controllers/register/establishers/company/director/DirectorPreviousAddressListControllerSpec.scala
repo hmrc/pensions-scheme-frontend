@@ -78,7 +78,7 @@ class DirectorPreviousAddressListControllerSpec extends ControllerSpecBase with 
         bind[UserAnswersCacheConnector].toInstance(FakeUserAnswersCacheConnector),
         bind[DataRetrievalAction].toInstance(dataRetrievalAction)
       )) { implicit app =>
-        val request = addToken(FakeRequest(routes.DirectorPreviousAddressListController.onPageLoad(NormalMode, Index(0), Index(0))))
+        val request = addToken(FakeRequest(routes.DirectorPreviousAddressListController.onPageLoad(NormalMode, Index(0), Index(0), None)))
         val result = route(app, request).value
 
         status(result) mustBe OK
@@ -98,11 +98,11 @@ class DirectorPreviousAddressListControllerSpec extends ControllerSpecBase with 
         bind[UserAnswersCacheConnector].toInstance(FakeUserAnswersCacheConnector),
         bind[DataRetrievalAction].toInstance(getEmptyData)
       )) { implicit app =>
-        val request = addToken(FakeRequest(routes.DirectorPreviousAddressListController.onPageLoad(NormalMode, Index(0), Index(0))))
+        val request = addToken(FakeRequest(routes.DirectorPreviousAddressListController.onPageLoad(NormalMode, Index(0), Index(0), None)))
         val result = route(app, request).value
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.DirectorPreviousAddressPostcodeLookupController.onPageLoad(NormalMode, Index(0), Index(0)).url)
+        redirectLocation(result) mustBe Some(routes.DirectorPreviousAddressPostcodeLookupController.onPageLoad(NormalMode, Index(0), Index(0), None).url)
       }
 
     }
@@ -114,7 +114,7 @@ class DirectorPreviousAddressListControllerSpec extends ControllerSpecBase with 
         bind[UserAnswersCacheConnector].toInstance(FakeUserAnswersCacheConnector),
         bind[DataRetrievalAction].toInstance(dontGetAnyData)
       )) { implicit app =>
-        val request = addToken(FakeRequest(routes.DirectorPreviousAddressListController.onPageLoad(NormalMode, Index(0), Index(0))))
+        val request = addToken(FakeRequest(routes.DirectorPreviousAddressListController.onPageLoad(NormalMode, Index(0), Index(0), None)))
         val result = route(app, request).value
 
         status(result) mustBe SEE_OTHER
@@ -132,7 +132,7 @@ class DirectorPreviousAddressListControllerSpec extends ControllerSpecBase with 
       )) { implicit app =>
         val request =
           addToken(
-            FakeRequest(routes.DirectorPreviousAddressListController.onSubmit(NormalMode, Index(0), Index(0)))
+            FakeRequest(routes.DirectorPreviousAddressListController.onSubmit(NormalMode, Index(0), Index(0), None))
               .withFormUrlEncodedBody(("value", "0"))
           )
 
@@ -140,7 +140,7 @@ class DirectorPreviousAddressListControllerSpec extends ControllerSpecBase with 
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(
-          controllers.register.establishers.company.director.routes.DirectorPreviousAddressController.onPageLoad(NormalMode, 0, 0).url)
+          controllers.register.establishers.company.director.routes.DirectorPreviousAddressController.onPageLoad(NormalMode, 0, 0, None).url)
       }
 
     }
@@ -154,7 +154,7 @@ class DirectorPreviousAddressListControllerSpec extends ControllerSpecBase with 
       )) { implicit app =>
         val request =
           addToken(
-            FakeRequest(routes.DirectorPreviousAddressListController.onSubmit(NormalMode, Index(0), Index(0)))
+            FakeRequest(routes.DirectorPreviousAddressListController.onSubmit(NormalMode, Index(0), Index(0), None))
               .withFormUrlEncodedBody(("value", "0"))
           )
 
@@ -175,14 +175,14 @@ class DirectorPreviousAddressListControllerSpec extends ControllerSpecBase with 
       )) { implicit app =>
         val request =
           addToken(
-            FakeRequest(routes.DirectorPreviousAddressListController.onSubmit(NormalMode, Index(0), Index(0)))
+            FakeRequest(routes.DirectorPreviousAddressListController.onSubmit(NormalMode, Index(0), Index(0), None))
               .withFormUrlEncodedBody(("value", "0"))
           )
 
         val result = route(app, request).value
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.DirectorPreviousAddressPostcodeLookupController.onPageLoad(NormalMode, Index(0), Index(0)).url)
+        redirectLocation(result) mustBe Some(routes.DirectorPreviousAddressPostcodeLookupController.onPageLoad(NormalMode, Index(0), Index(0), None).url)
       }
 
     }
@@ -191,8 +191,8 @@ class DirectorPreviousAddressListControllerSpec extends ControllerSpecBase with 
 
   private def addressListViewModel(addresses: Seq[TolerantAddress]): AddressListViewModel = {
     AddressListViewModel(
-      routes.DirectorPreviousAddressListController.onSubmit(NormalMode, Index(0), Index(0)),
-      routes.DirectorPreviousAddressController.onPageLoad(NormalMode, Index(0), Index(0)),
+      routes.DirectorPreviousAddressListController.onSubmit(NormalMode, Index(0), Index(0), None),
+      routes.DirectorPreviousAddressController.onPageLoad(NormalMode, Index(0), Index(0), None),
       addresses,
       title = previousAddressTitle,
       heading = previousAddressHeading,

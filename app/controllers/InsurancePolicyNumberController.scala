@@ -48,7 +48,7 @@ class InsurancePolicyNumberController @Inject()(appConfig: FrontendAppConfig,
 
   def postCall: (Mode,Option[String]) => Call = routes.InsurancePolicyNumberController.onSubmit
 
-  def onPageLoad(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onPageLoad(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
       InsuranceCompanyNameId.retrieve.right.map { companyName =>
         val preparedForm = request.userAnswers.get(InsurancePolicyNumberId) match {
@@ -59,7 +59,7 @@ class InsurancePolicyNumberController @Inject()(appConfig: FrontendAppConfig,
       }
   }
 
-  def onSubmit(mode: Mode, srn: Option[String] = None): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) =>

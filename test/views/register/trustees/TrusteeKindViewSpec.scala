@@ -29,10 +29,10 @@ class TrusteeKindViewSpec extends ViewBehaviours {
 
   private val form = new TrusteeKindFormProvider()()
   private val index = Index(0)
+  val submitUrl = controllers.register.trustees.routes.TrusteeKindController.onSubmit(NormalMode, index, None)
+  private def createView() = () => trusteeKind(frontendAppConfig, form, NormalMode, index, None, submitUrl)(fakeRequest, messages)
 
-  private def createView() = () => trusteeKind(frontendAppConfig, form, NormalMode, index, None)(fakeRequest, messages)
-
-  private def createViewUsingForm = (form: Form[_]) => trusteeKind(frontendAppConfig, form, NormalMode, index, None)(fakeRequest, messages)
+  private def createViewUsingForm = (form: Form[_]) => trusteeKind(frontendAppConfig, form, NormalMode, index, None, submitUrl)(fakeRequest, messages)
 
   private def trusteeKindOptions = TrusteeKind.options
 

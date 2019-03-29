@@ -98,7 +98,7 @@ class DirectorAddressControllerSpec extends ControllerSpecBase with MockitoSugar
           val controller = app.injector.instanceOf[DirectorAddressController]
 
           val viewmodel = ManualAddressViewModel(
-            controller.postCall(NormalMode, establisherIndex, directorIndex),
+            controller.postCall(NormalMode, establisherIndex, directorIndex, None),
             countryOptions.options,
             Message(controller.title),
             Message(controller.heading),
@@ -107,7 +107,7 @@ class DirectorAddressControllerSpec extends ControllerSpecBase with MockitoSugar
           )
 
           val request = addToken(
-            FakeRequest(DirectorAddressController.onPageLoad(NormalMode, establisherIndex, directorIndex))
+            FakeRequest(DirectorAddressController.onPageLoad(NormalMode, establisherIndex, directorIndex, None))
               .withHeaders("Csrf-Token" -> "nocheck")
           )
 
@@ -129,7 +129,7 @@ class DirectorAddressControllerSpec extends ControllerSpecBase with MockitoSugar
     "redirect to next page on POST request" which {
       "save address" in {
 
-        val onwardCall = routes.DirectorAddressYearsController.onPageLoad(NormalMode, establisherIndex, directorIndex)
+        val onwardCall = routes.DirectorAddressYearsController.onPageLoad(NormalMode, establisherIndex, directorIndex, None)
 
         val address = Address(
           addressLine1 = "value 1",
@@ -151,7 +151,7 @@ class DirectorAddressControllerSpec extends ControllerSpecBase with MockitoSugar
         )) {
           implicit app =>
 
-            val fakeRequest = addToken(FakeRequest(DirectorAddressController.onSubmit(NormalMode, establisherIndex, directorIndex))
+            val fakeRequest = addToken(FakeRequest(DirectorAddressController.onSubmit(NormalMode, establisherIndex, directorIndex, None))
               .withHeaders("Csrf-Token" -> "nocheck")
               .withFormUrlEncodedBody(
                 ("addressLine1", address.addressLine1),
@@ -190,7 +190,7 @@ class DirectorAddressControllerSpec extends ControllerSpecBase with MockitoSugar
       )) {
         implicit app =>
 
-          val fakeRequest = addToken(FakeRequest(DirectorAddressController.onSubmit(NormalMode, establisherIndex, directorIndex))
+          val fakeRequest = addToken(FakeRequest(DirectorAddressController.onSubmit(NormalMode, establisherIndex, directorIndex, None))
             .withHeaders("Csrf-Token" -> "nocheck")
             .withFormUrlEncodedBody(
               ("addressLine1", address.addressLine1),

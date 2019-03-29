@@ -43,28 +43,30 @@ class PartnerNinoController @Inject()(
                                        getData: DataRetrievalAction,
                                        requireData: DataRequiredAction,
                                        formProvider: PartnerNinoFormProvider
-                                     ) (implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
+                                     )(implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
 
   private val form: Form[Nino] = formProvider()
 
-  def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
-    implicit request =>
-      PartnerDetailsId(establisherIndex, partnerIndex).retrieve.right.flatMap { partner =>
-        PartnerNinoId(establisherIndex, partnerIndex).retrieve.right.map { value =>
-          Future.successful(Ok(partnerNino(appConfig, form.fill(value), mode, establisherIndex, partnerIndex, existingSchemeName)))
-        }.left.map { _ =>
-          Future.successful(Ok(partnerNino(appConfig, form, mode, establisherIndex, partnerIndex, existingSchemeName)))
+  def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData andThen requireData).async {
+      implicit request =>
+        PartnerDetailsId(establisherIndex, partnerIndex).retrieve.right.map { _ =>
+          val preparedForm = request.userAnswers.get(PartnerNinoId(establisherIndex, partnerIndex)).fold(form)(form.fill)
+          val submitUrl = controllers.register.establishers.partnership.partner.routes.PartnerNinoController.onSubmit(mode, establisherIndex, partnerIndex, srn)
+          Future.successful(Ok(partnerNino(appConfig, preparedForm, mode, establisherIndex, partnerIndex, existingSchemeName, submitUrl)))
         }
-      }
-  }
+    }
 
 
-  def onSubmit(mode: Mode, establisherIndex: Index, partnerIndex: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData andThen requireData).async {
     implicit request =>
       PartnerDetailsId(establisherIndex, partnerIndex).retrieve.right.map { partner =>
         form.bindFromRequest().fold(
-          (formWithErrors: Form[_]) =>
-            Future.successful(BadRequest(partnerNino(appConfig, formWithErrors, mode, establisherIndex, partnerIndex, existingSchemeName))),
+          (formWithErrors: Form[_]) => {
+            val submitUrl = controllers.register.establishers.partnership.partner.routes.PartnerNinoController.onSubmit(mode, establisherIndex, partnerIndex, srn)
+            Future.successful(BadRequest(partnerNino(appConfig, formWithErrors, mode, establisherIndex, partnerIndex, existingSchemeName, submitUrl)))
+          },
           (value) =>
             dataCacheConnector.save(
               request.externalId,

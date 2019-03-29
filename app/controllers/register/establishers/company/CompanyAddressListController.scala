@@ -45,31 +45,32 @@ class CompanyAddressListController @Inject()(
                                               requireData: DataRequiredAction
                                             ) extends AddressListController with Retrievals {
 
-  def onPageLoad(mode: Mode, index: Index): Action[AnyContent] =
+  def onPageLoad(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] =
     (authenticate andThen getData andThen requireData).async { implicit request =>
-      viewmodel(mode, index).right.map(get)
+      viewmodel(mode, srn, index).right.map(get)
     }
 
-  def onSubmit(mode: Mode, index: Index): Action[AnyContent] =
+  def onSubmit(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] =
     (authenticate andThen getData andThen requireData).async { implicit request =>
 
-      viewmodel(mode, index).right.map {
+      viewmodel(mode, srn, index).right.map {
         vm =>
           post(vm, CompanyAddressListId(index), CompanyAddressId(index), mode)
       }
     }
 
-  private def viewmodel(mode: Mode, index: Index)
+  private def viewmodel(mode: Mode, srn: Option[String], index: Index)
                        (implicit request: DataRequest[AnyContent]): Either[Future[Result], AddressListViewModel] = {
 
     (CompanyDetailsId(index) and CompanyPostCodeLookupId(index)).retrieve.right.map {
       case companyDetails ~ addresses =>
         AddressListViewModel(
-          postCall = routes.CompanyAddressListController.onSubmit(mode, index),
-          manualInputCall = routes.CompanyAddressController.onPageLoad(mode, index),
+          postCall = routes.CompanyAddressListController.onSubmit(mode, srn, index),
+          manualInputCall = routes.CompanyAddressController.onPageLoad(mode, srn, index),
           addresses = addresses,
-          subHeading = Some(Message(companyDetails.companyName))
+          subHeading = Some(Message(companyDetails.companyName)),
+          srn = srn
         )
-    }.left.map(_ => Future.successful(Redirect(CompanyPostCodeLookupController.onPageLoad(mode, index))))
+    }.left.map(_ => Future.successful(Redirect(CompanyPostCodeLookupController.onPageLoad(mode, srn, index))))
   }
 }

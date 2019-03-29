@@ -56,11 +56,11 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase {
           Some("messages__partner__cya__details_heading"),
           Seq(
             PartnerDetailsId(firstIndex, firstIndex).
-              row(routes.PartnerDetailsController.onPageLoad(CheckMode, firstIndex, firstIndex).url),
+              row(routes.PartnerDetailsController.onPageLoad(CheckMode, firstIndex, firstIndex, None).url),
             PartnerNinoId(firstIndex, firstIndex).
-              row(routes.PartnerNinoController.onPageLoad(CheckMode, firstIndex, firstIndex).url),
+              row(routes.PartnerNinoController.onPageLoad(CheckMode, firstIndex, firstIndex, None).url),
             PartnerUniqueTaxReferenceId(firstIndex, firstIndex).
-              row(routes.PartnerUniqueTaxReferenceController.onPageLoad(CheckMode, firstIndex, firstIndex).url)
+              row(routes.PartnerUniqueTaxReferenceController.onPageLoad(CheckMode, firstIndex, firstIndex, None).url)
           ).flatten
         )
 
@@ -68,24 +68,24 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase {
           Some("messages__partner__cya__contact__details_heading"),
           Seq(
             PartnerAddressId(firstIndex, firstIndex).
-              row(routes.PartnerAddressController.onPageLoad(CheckMode, firstIndex, firstIndex).url),
+              row(routes.PartnerAddressController.onPageLoad(CheckMode, firstIndex, firstIndex, None).url),
             PartnerAddressYearsId(firstIndex, firstIndex).
-              row(routes.PartnerAddressYearsController.onPageLoad(CheckMode, firstIndex, firstIndex).url),
+              row(routes.PartnerAddressYearsController.onPageLoad(CheckMode, firstIndex, firstIndex, None).url),
             PartnerPreviousAddressId(firstIndex, firstIndex).
-              row(routes.PartnerPreviousAddressController.onPageLoad(CheckMode, firstIndex, firstIndex).url),
+              row(routes.PartnerPreviousAddressController.onPageLoad(CheckMode, firstIndex, firstIndex, None).url),
             PartnerContactDetailsId(firstIndex, firstIndex).
-              row(routes.PartnerContactDetailsController.onPageLoad(CheckMode, firstIndex, firstIndex).url)
+              row(routes.PartnerContactDetailsController.onPageLoad(CheckMode, firstIndex, firstIndex, None).url)
           ).flatten
         )
 
         val viewAsString = check_your_answers(
           frontendAppConfig,
           Seq(partnerDetails, partnerContactDetails),
-          routes.CheckYourAnswersController.onSubmit(firstIndex, firstIndex),
+          routes.CheckYourAnswersController.onSubmit(NormalMode, firstIndex, firstIndex, None),
           None
         )(fakeRequest, messages).toString
 
-        val result = controller(partnerAnswers.dataRetrievalAction).onPageLoad(firstIndex, firstIndex)(request)
+        val result = controller(partnerAnswers.dataRetrievalAction).onPageLoad(NormalMode, firstIndex, firstIndex, None)(request)
         status(result) mustBe OK
         contentAsString(result) mustBe viewAsString
       }
@@ -93,7 +93,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase {
 
     "onSubmit" must {
       "mark the section as complete and redirect to the next page" in {
-        val result = controller().onSubmit(firstIndex, firstIndex)(request)
+        val result = controller().onSubmit(NormalMode, firstIndex, firstIndex, None)(request)
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(desiredRoute.url)
 
