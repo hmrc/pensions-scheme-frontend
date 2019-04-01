@@ -33,6 +33,7 @@ sealed trait Lock
 case object VarianceLock extends WithName("SuccessfulVarianceLock") with Lock
 case object PsaLock extends WithName("PsaHasLockedAnotherScheme") with Lock
 case object SchemeLock extends WithName("AnotherPsaHasLockedScheme") with Lock
+case object BothLock extends WithName("PsaAndSchemeHasAlreadyLocked") with Lock
 
 
 object Lock extends Enumerable.Implicits {
