@@ -43,14 +43,14 @@ class AddEstablisherController @Inject()(appConfig: FrontendAppConfig,
                                          formProvider: AddEstablisherFormProvider)(implicit val ec: ExecutionContext)
   extends FrontendController with Retrievals with I18nSupport {
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate andThen getData() andThen requireData).async {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       val establishers = request.userAnswers.allEstablishersAfterDelete
       Future.successful(Ok(addEstablisher(appConfig, formProvider(establishers), mode,
         establishers, existingSchemeName)))
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (authenticate andThen getData() andThen requireData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       val establishers = request.userAnswers.allEstablishersAfterDelete
       formProvider(establishers).bindFromRequest().fold(

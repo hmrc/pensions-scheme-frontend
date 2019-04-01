@@ -52,7 +52,7 @@ class PartnerDetailsController @Inject()(
   private val form = formProvider()
 
   def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData() andThen requireData).async {
+    (authenticate andThen getData andThen requireData).async {
       implicit request =>
         PartnershipDetailsId(establisherIndex).retrieve.right.map { _ =>
           val preparedForm = request.userAnswers.get[PersonDetails](PartnerDetailsId(establisherIndex, partnerIndex)) match {
@@ -65,7 +65,7 @@ class PartnerDetailsController @Inject()(
     }
 
   def onSubmit(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData() andThen requireData).async {
+    (authenticate andThen getData andThen requireData).async {
       implicit request =>
         PartnershipDetailsId(establisherIndex).retrieve.right.map { partnershipDetails =>
           form.bindFromRequest().fold(

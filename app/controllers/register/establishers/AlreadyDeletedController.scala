@@ -44,7 +44,7 @@ class AlreadyDeletedController @Inject()(
                                         ) (implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
 
   def onPageLoad(mode: Mode, index: Index, establisherKind: EstablisherKind, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData() andThen requireData).async {
+    (authenticate andThen getData andThen requireData).async {
     implicit request =>
       establisherName(index, establisherKind) match {
         case Right(establisherName) =>

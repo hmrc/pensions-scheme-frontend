@@ -49,7 +49,7 @@ class DirectorUniqueTaxReferenceController @Inject()(
   private def postCall: (Mode, Index, Index, Option[String]) => Call = routes.DirectorUniqueTaxReferenceController.onSubmit _
 
   def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData() andThen requireData).async {
+    (authenticate andThen getData andThen requireData).async {
     implicit request =>
       DirectorDetailsId(establisherIndex, directorIndex).retrieve.right.flatMap { director =>
         DirectorUniqueTaxReferenceId(establisherIndex, directorIndex).retrieve.right.map { value =>
@@ -64,7 +64,7 @@ class DirectorUniqueTaxReferenceController @Inject()(
 
 
   def onSubmit(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData() andThen requireData).async {
+    (authenticate andThen getData andThen requireData).async {
     implicit request =>
       DirectorDetailsId(establisherIndex, directorIndex).retrieve.right.map { director =>
         form.bindFromRequest().fold(

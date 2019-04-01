@@ -51,7 +51,7 @@ class AddPartnersController @Inject()(
 
   private def postUrl(index: Int, mode: Mode, srn: Option[String]): Call = routes.AddPartnersController.onSubmit(mode, index, srn)
 
-  def onPageLoad(mode: Mode, index: Int, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData() andThen requireData).async {
+  def onPageLoad(mode: Mode, index: Int, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       retrievePartnershipName(index) {_ =>
           val partners = request.userAnswers.allPartnersAfterDelete(index)
@@ -59,7 +59,7 @@ class AddPartnersController @Inject()(
       }
   }
 
-  def onSubmit(mode: Mode, index: Int, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData() andThen requireData).async {
+  def onSubmit(mode: Mode, index: Int, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       val partners = request.userAnswers.allPartnersAfterDelete(index)
       if (partners.isEmpty || partners.lengthCompare(appConfig.maxPartners) >= 0) {

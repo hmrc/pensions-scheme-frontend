@@ -46,12 +46,12 @@ class AnyMoreChangesController @Inject()(appConfig: FrontendAppConfig,
 
   private val form: Form[Boolean] = formProvider()
 
-  def onPageLoad: Action[AnyContent] = (authenticate andThen getData() andThen requireData).async {
+  def onPageLoad: Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       Future.successful(Ok(anyMoreChanges(appConfig, form, existingSchemeName)))
   }
 
-  def onSubmit: Action[AnyContent] = (authenticate andThen getData() andThen requireData).async {
+  def onSubmit: Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) =>
