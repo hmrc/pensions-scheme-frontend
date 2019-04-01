@@ -16,7 +16,7 @@
 
 package utils
 
-import identifiers.{IsAboutBenefitsAndInsuranceCompleteId, IsAboutMembersCompleteId}
+import identifiers.{IsAboutBenefitsAndInsuranceCompleteId, IsAboutMembersCompleteId, SchemeNameId}
 import models.NormalMode
 import play.api.i18n.Messages
 import viewmodels._
@@ -49,7 +49,8 @@ class HsTaskListHelperVariations(answers: UserAnswers)(implicit messages: Messag
       establishers(answers),
       addTrusteeHeader(answers),
       trustees(answers),
-      declarationLink(answers)
+      declarationLink(answers),
+      answers.get(SchemeNameId).getOrElse("")
     )
   }
 

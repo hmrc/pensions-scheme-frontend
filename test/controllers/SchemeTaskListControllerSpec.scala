@@ -73,7 +73,8 @@ object SchemeTaskListControllerSpec extends SpecBase with JsonFileReader {
       None
     )),
     Seq.empty,
-    None
+    None,
+    ""
   )
 
   private lazy val changeEstablisherLinkText = messages("messages__schemeTaskList__sectionEstablishers_change_link")

@@ -16,12 +16,23 @@
 
 package utils
 
-import identifiers.{DeclarationDutiesId, IsAboutBenefitsAndInsuranceCompleteId, IsAboutMembersCompleteId}
+import identifiers.{DeclarationDutiesId, IsAboutBenefitsAndInsuranceCompleteId, IsAboutMembersCompleteId, SchemeNameId}
 import models.NormalMode
 import utils.behaviours.HsTaskListHelperBehaviour
 import viewmodels.{Link, SchemeDetailsTaskListSection}
 
 class HsTaskListHelperVariationsSpec extends HsTaskListHelperBehaviour {
+
+  "h1 key" must {
+    "have the name of the scheme" in {
+      val name = "scheme name 1"
+      val userAnswers = UserAnswers().set(IsAboutMembersCompleteId)(false).flatMap(
+        _.set(SchemeNameId)(name)
+      ).asOpt.value
+      val helper = new HsTaskListHelperVariations(userAnswers)
+      helper.taskList.h1 mustBe name
+    }
+  }
 
   "beforeYouStartSection " must {
     behave like beforeYouStartSection()

@@ -120,7 +120,7 @@ class SchemeDetailsTaskListViewSpec extends ViewBehaviours {
           Link(messages("messages__schemeTaskList__sectionTrustees_add_link"),
             controllers.register.trustees.routes.TrusteeKindController.onPageLoad(NormalMode, 0, None).url),
           None
-        )), Seq.empty, None
+        )), Seq.empty, None, ""
       )
       val view = createView(journeyTaskListNoEstablisher)
 
@@ -190,7 +190,7 @@ class SchemeDetailsTaskListViewSpec extends ViewBehaviours {
           Link(messages("messages__schemeTaskList__sectionTrustees_add_link"),
             controllers.register.trustees.routes.TrusteeKindController.onPageLoad(NormalMode, 0, None).url),
           None
-        )), Seq.empty, None
+        )), Seq.empty, None, ""
       )
       val view = createView(journeyTaskListNoTrustees)
 
@@ -366,7 +366,7 @@ object SchemeDetailsTaskListViewSpec extends ViewSpecBase {
   }
 
   private val schemeDetailsTaskListData: SchemeDetailsTaskList = SchemeDetailsTaskList(
-    beforeYouStartSection, aboutSection, Some(wkSection), addEstablisherHeader(), establishers, Some(addTrusteesHeader()), trustees, None )
+    beforeYouStartSection, aboutSection, Some(wkSection), addEstablisherHeader(), establishers, Some(addTrusteesHeader()), trustees, None, "" )
 
   private val pageHeader = messages("messages__schemeTaskList__title")
   private val messageKeyPrefix = "schemeTaskList"

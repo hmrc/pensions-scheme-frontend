@@ -54,7 +54,8 @@ class HsTaskListHelperRegistration(answers: UserAnswers)(implicit messages: Mess
       establishers(answers),
       addTrusteeHeader(answers),
       trustees(answers),
-      declarationLink(answers)
+      declarationLink(answers),
+      messages("messages__schemeTaskList__heading")
     )
   }
 
