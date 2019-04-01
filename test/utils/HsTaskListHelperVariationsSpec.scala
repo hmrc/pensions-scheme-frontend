@@ -16,7 +16,7 @@
 
 package utils
 
-import identifiers.{IsAboutBankDetailsCompleteId, IsAboutBenefitsAndInsuranceCompleteId, IsAboutMembersCompleteId}
+import identifiers.{DeclarationDutiesId, IsAboutBenefitsAndInsuranceCompleteId, IsAboutMembersCompleteId}
 import models.NormalMode
 import utils.behaviours.HsTaskListHelperBehaviour
 import viewmodels.{Link, SchemeDetailsTaskListSection}
@@ -60,7 +60,17 @@ class HsTaskListHelperVariationsSpec extends HsTaskListHelperBehaviour {
   }
 
   "workingKnowledgeSection " must {
-    behave like workingKnowledgeSection()
+    "not display when do you have working knowledge is false " in {
+      val userAnswers = UserAnswers().set(DeclarationDutiesId)(false).asOpt.value
+      val helper = new HsTaskListHelperVariations(userAnswers)
+      helper.taskList.workingKnowledge mustBe None
+    }
+
+    "not display when do you have working knowledge is true " in {
+      val userAnswers = UserAnswers().set(DeclarationDutiesId)(true).asOpt.value
+      val helper = new HsTaskListHelperVariations(userAnswers)
+      helper.taskList.workingKnowledge mustBe None
+    }
   }
 
   "addEstablisherHeader " must {

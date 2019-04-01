@@ -16,7 +16,7 @@
 
 package utils
 
-import identifiers.{IsAboutBankDetailsCompleteId, IsAboutBenefitsAndInsuranceCompleteId, IsAboutMembersCompleteId}
+import identifiers._
 import models.NormalMode
 import utils.behaviours.HsTaskListHelperBehaviour
 import viewmodels.{Link, SchemeDetailsTaskListSection}
@@ -68,7 +68,31 @@ class HsTaskListHelperRegistrationSpec extends HsTaskListHelperBehaviour {
   }
 
   "workingKnowledgeSection " must {
-    behave like workingKnowledgeSection()
+    "not display when do you have working knowledge is true " in {
+      val userAnswers = UserAnswers().set(DeclarationDutiesId)(true).asOpt.value
+      val helper = new HsTaskListHelperRegistration(userAnswers)
+      helper.workingKnowledgeSection(userAnswers) mustBe None
+    }
+
+    "display and link should go to what you will need page when do you have working knowledge is false and section not completed " in {
+      val userAnswers = UserAnswers().set(DeclarationDutiesId)(false).flatMap(
+        _.set(IsWorkingKnowledgeCompleteId)(false)
+      ).asOpt.value
+      val helper = new HsTaskListHelperRegistration(userAnswers)
+      helper.workingKnowledgeSection(userAnswers).value mustBe
+        SchemeDetailsTaskListSection(Some(false), Link(workingKnowledgeLinkText,
+          controllers.routes.WhatYouWillNeedWorkingKnowledgeController.onPageLoad.url), None)
+    }
+
+    "display and link should go to cya page when do you have working knowledge is false and section is completed " in {
+      val userAnswers = UserAnswers().set(DeclarationDutiesId)(false).flatMap(
+        _.set(IsWorkingKnowledgeCompleteId)(true)
+      ).asOpt.value
+      val helper = new HsTaskListHelperRegistration(userAnswers)
+      helper.workingKnowledgeSection(userAnswers).value mustBe
+        SchemeDetailsTaskListSection(Some(true), Link(workingKnowledgeLinkText,
+          controllers.routes.AdviserCheckYourAnswersController.onPageLoad().url), None)
+    }
   }
 
   "addEstablisherHeader " must {

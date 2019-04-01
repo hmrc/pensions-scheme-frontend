@@ -44,7 +44,7 @@ class HsTaskListHelperVariations(answers: UserAnswers)(implicit messages: Messag
     SchemeDetailsTaskList(
       beforeYouStartSection(answers),
       aboutSection(answers),
-      workingKnowledgeSection(answers),
+      None,
       addEstablisherHeader(answers),
       establishers(answers),
       addTrusteeHeader(answers),
