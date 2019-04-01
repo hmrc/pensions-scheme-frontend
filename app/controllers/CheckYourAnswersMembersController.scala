@@ -20,7 +20,7 @@ import config.FrontendAppConfig
 import controllers.actions._
 import identifiers.{CurrentMembersId, FutureMembersId, IsAboutMembersCompleteId}
 import javax.inject.Inject
-import models.CheckMode
+import models.{CheckMode, Mode}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
@@ -40,23 +40,24 @@ class CheckYourAnswersMembersController @Inject()(appConfig: FrontendAppConfig,
                                                  )(implicit val ec: ExecutionContext) extends FrontendController
   with Enumerable.Implicits with I18nSupport with Retrievals {
 
-  def onPageLoad: Action[AnyContent] = (authenticate andThen getData andThen requireData) {
+  def onPageLoad(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData andThen requireData) {
     implicit request =>
       implicit val userAnswers = request.userAnswers
       val membersSection = AnswerSection(
         None,
-        CurrentMembersId.row(routes.CurrentMembersController.onPageLoad(CheckMode).url) ++
-          FutureMembersId.row(routes.FutureMembersController.onPageLoad(CheckMode).url)
+        CurrentMembersId.row(routes.CurrentMembersController.onPageLoad(CheckMode).url, mode) ++
+          FutureMembersId.row(routes.FutureMembersController.onPageLoad(CheckMode).url, mode)
       )
       Ok(check_your_answers(
         appConfig,
         Seq(membersSection),
-        routes.CheckYourAnswersMembersController.onSubmit(),
-        existingSchemeName
+        routes.CheckYourAnswersMembersController.onSubmit(mode, srn),
+        existingSchemeName,
+        mode = mode
       ))
   }
 
-  def onSubmit: Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       sectionComplete.setCompleteFlag(request.externalId, IsAboutMembersCompleteId, request.userAnswers, value = true) map { _ =>
         Redirect(controllers.routes.SchemeTaskListController.onPageLoad())
