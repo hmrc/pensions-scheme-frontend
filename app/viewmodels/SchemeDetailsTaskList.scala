@@ -27,7 +27,8 @@ case class SchemeDetailsTaskList(beforeYouStart: SchemeDetailsTaskListSection,
                                  trustees: Seq[SchemeDetailsTaskListSection],
                                  declaration: Option[Link] = None,
                                  h1: String,
-                                 h2: String
+                                 h2: String,
+                                 pageTitle: String
                                 ) {
 
 }

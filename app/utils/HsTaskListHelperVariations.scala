@@ -51,6 +51,7 @@ class HsTaskListHelperVariations(answers: UserAnswers)(implicit messages: Messag
       trustees(answers),
       declarationLink(answers),
       answers.get(SchemeNameId).getOrElse(""),
+      messages("messages__scheme_details__title"),
       messages("messages__scheme_details__title")
     )
   }

@@ -31,7 +31,7 @@ class SchemeDetailsTaskListViewSpec extends ViewBehaviours {
 
   "SchemeDetailsTaskListView" should {
 
-    behave like normalPageWithTitle(createView(), messageKeyPrefix, schemeDetailsTaskListData.h2, schemeDetailsTaskListData.h1)
+    behave like normalPageWithTitle(createView(), messageKeyPrefix, schemeDetailsTaskListData.pageTitle, schemeDetailsTaskListData.h1)
 
     "display the correct link" in {
       val view = createView(schemeDetailsTaskListData)
@@ -43,7 +43,7 @@ class SchemeDetailsTaskListViewSpec extends ViewBehaviours {
     }
   }
 
-  "SchemeTaskListView Befor start section" should {
+  "SchemeTaskListView Before start section" should {
 
     val notStarted = schemeDetailsTaskListData.copy(beforeYouStart = beforeYouStartSection.copy(isCompleted = None))
     val inProgress = schemeDetailsTaskListData.copy(beforeYouStart = beforeYouStartSection.copy(isCompleted = Some(false)))
@@ -123,7 +123,7 @@ class SchemeDetailsTaskListViewSpec extends ViewBehaviours {
           Link(messages("messages__schemeTaskList__sectionTrustees_add_link"),
             controllers.register.trustees.routes.TrusteeKindController.onPageLoad(NormalMode, 0, None).url),
           None
-        )), Seq.empty, None, "h1", "h2"
+        )), Seq.empty, None, "h1", "h2", "pageTitle"
       )
       val view = createView(journeyTaskListNoEstablisher)
 
@@ -193,7 +193,7 @@ class SchemeDetailsTaskListViewSpec extends ViewBehaviours {
           Link(messages("messages__schemeTaskList__sectionTrustees_add_link"),
             controllers.register.trustees.routes.TrusteeKindController.onPageLoad(NormalMode, 0, None).url),
           None
-        )), Seq.empty, None, "h1", "h2"
+        )), Seq.empty, None, "h1", "h2", "pageTitle"
       )
       val view = createView(journeyTaskListNoTrustees)
 
@@ -365,7 +365,7 @@ object SchemeDetailsTaskListViewSpec extends ViewSpecBase {
   }
 
   private val schemeDetailsTaskListData: SchemeDetailsTaskList = SchemeDetailsTaskList(
-    beforeYouStartSection, aboutSection, Some(wkSection), addEstablisherHeader(), establishers, Some(addTrusteesHeader()), trustees, None, "h1", "h2" )
+    beforeYouStartSection, aboutSection, Some(wkSection), addEstablisherHeader(), establishers, Some(addTrusteesHeader()), trustees, None, "h1", "h2", "pageTitle" )
 
   private val pageHeader = messages("messages__schemeTaskList__title")
   private val messageKeyPrefix = "schemeTaskList"

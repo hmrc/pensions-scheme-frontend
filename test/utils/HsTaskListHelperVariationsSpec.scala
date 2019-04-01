@@ -22,23 +22,28 @@ import utils.behaviours.HsTaskListHelperBehaviour
 import viewmodels.{Link, SchemeDetailsTaskListSection}
 
 class HsTaskListHelperVariationsSpec extends HsTaskListHelperBehaviour {
-
-  "h1 key" must {
+  "h1" must {
     "have the name of the scheme" in {
       val name = "scheme name 1"
-      val userAnswers = UserAnswers().set(IsAboutMembersCompleteId)(false).flatMap(
-        _.set(SchemeNameId)(name)
-      ).asOpt.value
+      val userAnswers = UserAnswers().set(SchemeNameId)(name).asOpt.value
       val helper = new HsTaskListHelperVariations(userAnswers)
       helper.taskList.h1 mustBe name
     }
   }
 
   "h2" must {
-    "display appropriate text" in {
+    "display \"Scheme details\"" in {
       val userAnswers = UserAnswers()
       val helper = new HsTaskListHelperVariations(userAnswers)
       helper.taskList.h2 mustBe messages("messages__scheme_details__title")
+    }
+  }
+
+  "page title" must {
+    "display \"Scheme details\"" in {
+      val userAnswers = UserAnswers()
+      val helper = new HsTaskListHelperVariations(userAnswers)
+      helper.taskList.pageTitle mustBe messages("messages__scheme_details__title")
     }
   }
 

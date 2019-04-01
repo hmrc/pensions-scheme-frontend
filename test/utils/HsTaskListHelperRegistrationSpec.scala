@@ -39,6 +39,14 @@ class HsTaskListHelperRegistrationSpec extends HsTaskListHelperBehaviour {
     }
   }
 
+  "page title" must {
+    "display \"Pension scheme details\"" in {
+      val userAnswers = UserAnswers()
+      val helper = new HsTaskListHelperRegistration(userAnswers)
+      helper.taskList.pageTitle mustBe messages("messages__schemeTaskList__title")
+    }
+  }
+
   "beforeYouStartSection " must {
     behave like beforeYouStartSection()
   }
