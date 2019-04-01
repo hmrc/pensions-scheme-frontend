@@ -21,48 +21,40 @@ import models.NormalMode
 import utils.behaviours.HsTaskListHelperBehaviour
 import viewmodels.{Link, SchemeDetailsTaskListSection}
 
-class HsTaskListHelperRegistrationSpec extends HsTaskListHelperBehaviour {
+class HsTaskListHelperVariationsSpec extends HsTaskListHelperBehaviour {
 
   "beforeYouStartSection " must {
     behave like beforeYouStartSection()
   }
 
   "aboutSection " must {
-    "return the the Seq of members, bank details and benefits section with " +
+    "return the the Seq of members and benefits section with " +
       "links of the first pages of individual sub sections when not completed " in {
       val userAnswers = UserAnswers().set(IsAboutMembersCompleteId)(false).flatMap(
-        _.set(IsAboutBankDetailsCompleteId)(false).flatMap(
           _.set(IsAboutBenefitsAndInsuranceCompleteId)(false)
-        )
       ).asOpt.value
-      val helper = new HsTaskListHelperRegistration(userAnswers)
+      val helper = new HsTaskListHelperVariations(userAnswers)
       helper.aboutSection(userAnswers) mustBe
         Seq(
           SchemeDetailsTaskListSection(Some(false), Link(aboutMembersLinkText,
             controllers.routes.WhatYouWillNeedMembersController.onPageLoad().url), None),
           SchemeDetailsTaskListSection(Some(false), Link(aboutBenefitsAndInsuranceLinkText,
-            controllers.routes.WhatYouWillNeedBenefitsInsuranceController.onPageLoad().url), None),
-          SchemeDetailsTaskListSection(Some(false), Link(aboutBankDetailsLinkText,
-            controllers.routes.WhatYouWillNeedBankDetailsController.onPageLoad().url), None)
+            controllers.routes.WhatYouWillNeedBenefitsInsuranceController.onPageLoad().url), None)
         )
     }
 
-    "return the the Seq of members, bank details and benefits section with " +
+    "return the the Seq of members and benefits section with " +
       "links of the cya pages of individual sub sections when completed " in {
       val userAnswers = UserAnswers().set(IsAboutMembersCompleteId)(true).flatMap(
-        _.set(IsAboutBankDetailsCompleteId)(true).flatMap(
           _.set(IsAboutBenefitsAndInsuranceCompleteId)(true)
-        )
       ).asOpt.value
-      val helper = new HsTaskListHelperRegistration(userAnswers)
+      val helper = new HsTaskListHelperVariations(userAnswers)
       helper.aboutSection(userAnswers) mustBe
         Seq(
           SchemeDetailsTaskListSection(Some(true), Link(aboutMembersLinkText,
             controllers.routes.CheckYourAnswersMembersController.onPageLoad(NormalMode, None).url), None),
           SchemeDetailsTaskListSection(Some(true), Link(aboutBenefitsAndInsuranceLinkText,
-            controllers.routes.CheckYourAnswersBenefitsAndInsuranceController.onPageLoad(NormalMode, None).url), None),
-          SchemeDetailsTaskListSection(Some(true), Link(aboutBankDetailsLinkText,
-            controllers.routes.CheckYourAnswersBankDetailsController.onPageLoad.url), None)
+            controllers.routes.CheckYourAnswersBenefitsAndInsuranceController.onPageLoad(NormalMode, None).url), None)
         )
     }
   }

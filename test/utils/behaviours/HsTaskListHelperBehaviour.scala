@@ -34,9 +34,73 @@ import play.api.libs.json.JsResult
 import utils.{HsTaskListHelperRegistration, UserAnswers}
 import viewmodels._
 
-trait HsTaskListHelperBehaviour extends WordSpec with MustMatchers with OptionValues {
+trait HsTaskListHelperBehaviour extends SpecBase with MustMatchers with OptionValues {
 
-  import HsTaskListHelperBehaviour._
+  protected lazy val beforeYouStartLinkText = messages("messages__schemeTaskList__before_you_start_link_text")
+  protected lazy val aboutMembersLinkText = messages("messages__schemeTaskList__about_members_link_text")
+  protected lazy val aboutBenefitsAndInsuranceLinkText = messages("messages__schemeTaskList__about_benefits_and_insurance_link_text")
+  protected lazy val aboutBankDetailsLinkText = messages("messages__schemeTaskList__about_bank_details_link_text")
+  protected lazy val workingKnowledgeLinkText = messages("messages__schemeTaskList__working_knowledge_link_text")
+  protected lazy val addEstablisherLinkText = messages("messages__schemeTaskList__sectionEstablishers_add_link")
+  protected lazy val changeEstablisherLinkText = messages("messages__schemeTaskList__sectionEstablishers_change_link")
+  protected lazy val companyLinkText = messages("messages__schemeTaskList__company_link")
+  protected lazy val individualLinkText = messages("messages__schemeTaskList__individual_link")
+  protected lazy val partnershipLinkText = messages("messages__schemeTaskList__partnership_link")
+  protected lazy val addTrusteesLinkText = messages("messages__schemeTaskList__sectionTrustees_add_link")
+  protected lazy val changeTrusteesLinkText = messages("messages__schemeTaskList__sectionTrustees_change_link")
+  protected lazy val declarationLinkText = messages("messages__schemeTaskList__declaration_link")
+
+  protected def beforeYouStartLink(link: String) = {
+    Link(
+      messages(beforeYouStartLinkText),
+      link
+    )
+  }
+
+  protected def answersData(isCompleteBeforeStart: Boolean = true,
+                          isCompleteAboutMembers: Boolean = true,
+                          isCompleteAboutBank: Boolean = true,
+                          isCompleteAboutBenefits: Boolean = true,
+                          isCompleteWk: Boolean = true,
+                          isCompleteEstablishers: Boolean = true,
+                          isCompleteTrustees: Boolean = true
+                         ): JsResult[UserAnswers] = {
+    UserAnswers().set(IsBeforeYouStartCompleteId)(isCompleteBeforeStart).flatMap(
+      _.set(IsAboutMembersCompleteId)(isCompleteAboutMembers).flatMap(
+        _.set(IsAboutBankDetailsCompleteId)(isCompleteAboutBank).flatMap(
+          _.set(IsAboutBenefitsAndInsuranceCompleteId)(isCompleteAboutBenefits).flatMap(
+            _.set(IsWorkingKnowledgeCompleteId)(isCompleteWk).flatMap(
+              _.set(EstablisherDetailsId(0))(PersonDetails("firstName", None, "lastName", LocalDate.now())).flatMap(
+                _.set(IsEstablisherCompleteId(0))(isCompleteEstablishers)).flatMap(
+                _.set(TrusteeDetailsId(0))(PersonDetails("firstName", None, "lastName", LocalDate.now())).flatMap(
+                  _.set(IsTrusteeCompleteId(0))(isCompleteTrustees))
+              )
+            )
+          )
+        )
+      )
+    )
+  }
+
+  protected def allEstablishers(isCompleteEstablisher: Boolean = true): UserAnswers = {
+    UserAnswers().set(EstablisherDetailsId(0))(PersonDetails("firstName", None, "lastName", LocalDate.now())).flatMap(
+      _.set(IsEstablisherCompleteId(0))(isCompleteEstablisher).flatMap(
+        _.set(EstablisherCompanyDetailsId(1))(CompanyDetails("test company", None, None, false)).flatMap(
+          _.set(IsEstablisherCompleteId(1))(isCompleteEstablisher).flatMap(
+            _.set(EstablisherPartnershipDetailsId(2))(PartnershipDetails("test partnership", false)).flatMap(
+              _.set(IsEstablisherCompleteId(2))(isCompleteEstablisher)
+            ))))).asOpt.value
+  }
+
+  protected def allTrustees(isCompleteTrustees: Boolean = true): UserAnswers = {
+    UserAnswers().set(TrusteeDetailsId(0))(PersonDetails("firstName", None, "lastName", LocalDate.now())).flatMap(
+      _.set(IsTrusteeCompleteId(0))(isCompleteTrustees).flatMap(
+        _.set(TrusteeCompanyDetailsId(1))(CompanyDetails("test company", None, None, false)).flatMap(
+          _.set(IsTrusteeCompleteId(1))(isCompleteTrustees).flatMap(
+            _.set(TrusteePartnershipDetailsId(2))(PartnershipDetails("test partnership", false)).flatMap(
+              _.set(IsPartnershipCompleteId(2))(isCompleteTrustees)
+            ))))).asOpt.value
+  }
 
   def beforeYouStartSection(): Unit = {
       "return the link to scheme name page when not completed " in {
@@ -52,46 +116,6 @@ trait HsTaskListHelperBehaviour extends WordSpec with MustMatchers with OptionVa
         helper.beforeYouStartSection(userAnswers).link mustBe beforeYouStartLink(
           controllers.routes.CheckYourAnswersBeforeYouStartController.onPageLoad().url
         )
-      }
-  }
-
-  def aboutSection(): Unit = {
-      "return the the Seq of members, bank details and benefits section with " +
-        "links of the first pages of individual sub sections when not completed " in {
-        val userAnswers = UserAnswers().set(IsAboutMembersCompleteId)(false).flatMap(
-          _.set(IsAboutBankDetailsCompleteId)(false).flatMap(
-            _.set(IsAboutBenefitsAndInsuranceCompleteId)(false)
-          )
-        ).asOpt.value
-        val helper = new HsTaskListHelperRegistration(userAnswers)
-        helper.aboutSection(userAnswers) mustBe
-          Seq(
-            SchemeDetailsTaskListSection(Some(false), Link(aboutMembersLinkText,
-              controllers.routes.WhatYouWillNeedMembersController.onPageLoad.url), None),
-            SchemeDetailsTaskListSection(Some(false), Link(aboutBenefitsAndInsuranceLinkText,
-              controllers.routes.WhatYouWillNeedBenefitsInsuranceController.onPageLoad.url), None),
-            SchemeDetailsTaskListSection(Some(false), Link(aboutBankDetailsLinkText,
-              controllers.routes.WhatYouWillNeedBankDetailsController.onPageLoad.url), None)
-          )
-      }
-
-      "return the the Seq of members, bank details and benefits section with " +
-        "links of the cya pages of individual sub sections when completed " in {
-        val userAnswers = UserAnswers().set(IsAboutMembersCompleteId)(true).flatMap(
-          _.set(IsAboutBankDetailsCompleteId)(true).flatMap(
-            _.set(IsAboutBenefitsAndInsuranceCompleteId)(true)
-          )
-        ).asOpt.value
-        val helper = new HsTaskListHelperRegistration(userAnswers)
-        helper.aboutSection(userAnswers) mustBe
-          Seq(
-            SchemeDetailsTaskListSection(Some(true), Link(aboutMembersLinkText,
-              controllers.routes.CheckYourAnswersMembersController.onPageLoad(NormalMode, None).url), None),
-            SchemeDetailsTaskListSection(Some(true), Link(aboutBenefitsAndInsuranceLinkText,
-              controllers.routes.CheckYourAnswersBenefitsAndInsuranceController.onPageLoad(NormalMode, None).url), None),
-            SchemeDetailsTaskListSection(Some(true), Link(aboutBankDetailsLinkText,
-              controllers.routes.CheckYourAnswersBankDetailsController.onPageLoad.url), None)
-          )
       }
   }
 
@@ -374,75 +398,6 @@ trait HsTaskListHelperBehaviour extends WordSpec with MustMatchers with OptionVa
         helper.declarationLink(userAnswers) mustBe None
       }
     }
-}
-
-object HsTaskListHelperBehaviour extends SpecBase {
-  private lazy val beforeYouStartLinkText = messages("messages__schemeTaskList__before_you_start_link_text")
-  private lazy val aboutMembersLinkText = messages("messages__schemeTaskList__about_members_link_text")
-  private lazy val aboutBenefitsAndInsuranceLinkText = messages("messages__schemeTaskList__about_benefits_and_insurance_link_text")
-  private lazy val aboutBankDetailsLinkText = messages("messages__schemeTaskList__about_bank_details_link_text")
-  private lazy val workingKnowledgeLinkText = messages("messages__schemeTaskList__working_knowledge_link_text")
-  private lazy val addEstablisherLinkText = messages("messages__schemeTaskList__sectionEstablishers_add_link")
-  private lazy val changeEstablisherLinkText = messages("messages__schemeTaskList__sectionEstablishers_change_link")
-  private lazy val companyLinkText = messages("messages__schemeTaskList__company_link")
-  private lazy val individualLinkText = messages("messages__schemeTaskList__individual_link")
-  private lazy val partnershipLinkText = messages("messages__schemeTaskList__partnership_link")
-  private lazy val addTrusteesLinkText = messages("messages__schemeTaskList__sectionTrustees_add_link")
-  private lazy val changeTrusteesLinkText = messages("messages__schemeTaskList__sectionTrustees_change_link")
-  private lazy val declarationLinkText = messages("messages__schemeTaskList__declaration_link")
-
-  private def beforeYouStartLink(link: String) = {
-    Link(
-      messages(beforeYouStartLinkText),
-      link
-    )
-  }
-
-  private def answersData(isCompleteBeforeStart: Boolean = true,
-                          isCompleteAboutMembers: Boolean = true,
-                          isCompleteAboutBank: Boolean = true,
-                          isCompleteAboutBenefits: Boolean = true,
-                          isCompleteWk: Boolean = true,
-                          isCompleteEstablishers: Boolean = true,
-                          isCompleteTrustees: Boolean = true
-                         ): JsResult[UserAnswers] = {
-    UserAnswers().set(IsBeforeYouStartCompleteId)(isCompleteBeforeStart).flatMap(
-      _.set(IsAboutMembersCompleteId)(isCompleteAboutMembers).flatMap(
-        _.set(IsAboutBankDetailsCompleteId)(isCompleteAboutBank).flatMap(
-          _.set(IsAboutBenefitsAndInsuranceCompleteId)(isCompleteAboutBenefits).flatMap(
-            _.set(IsWorkingKnowledgeCompleteId)(isCompleteWk).flatMap(
-              _.set(EstablisherDetailsId(0))(PersonDetails("firstName", None, "lastName", LocalDate.now())).flatMap(
-                _.set(IsEstablisherCompleteId(0))(isCompleteEstablishers)).flatMap(
-                _.set(TrusteeDetailsId(0))(PersonDetails("firstName", None, "lastName", LocalDate.now())).flatMap(
-                  _.set(IsTrusteeCompleteId(0))(isCompleteTrustees))
-              )
-            )
-          )
-        )
-      )
-    )
-  }
-
-  private def allEstablishers(isCompleteEstablisher: Boolean = true): UserAnswers = {
-    UserAnswers().set(EstablisherDetailsId(0))(PersonDetails("firstName", None, "lastName", LocalDate.now())).flatMap(
-      _.set(IsEstablisherCompleteId(0))(isCompleteEstablisher).flatMap(
-        _.set(EstablisherCompanyDetailsId(1))(CompanyDetails("test company", None, None, false)).flatMap(
-          _.set(IsEstablisherCompleteId(1))(isCompleteEstablisher).flatMap(
-            _.set(EstablisherPartnershipDetailsId(2))(PartnershipDetails("test partnership", false)).flatMap(
-              _.set(IsEstablisherCompleteId(2))(isCompleteEstablisher)
-            ))))).asOpt.value
-  }
-
-  private def allTrustees(isCompleteTrustees: Boolean = true): UserAnswers = {
-    UserAnswers().set(TrusteeDetailsId(0))(PersonDetails("firstName", None, "lastName", LocalDate.now())).flatMap(
-      _.set(IsTrusteeCompleteId(0))(isCompleteTrustees).flatMap(
-        _.set(TrusteeCompanyDetailsId(1))(CompanyDetails("test company", None, None, false)).flatMap(
-          _.set(IsTrusteeCompleteId(1))(isCompleteTrustees).flatMap(
-            _.set(TrusteePartnershipDetailsId(2))(PartnershipDetails("test partnership", false)).flatMap(
-              _.set(IsPartnershipCompleteId(2))(isCompleteTrustees)
-            ))))).asOpt.value
-  }
-
 }
 
 
