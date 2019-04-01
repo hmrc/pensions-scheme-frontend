@@ -16,10 +16,29 @@
 
 package utils
 
+import identifiers.{IsAboutBenefitsAndInsuranceCompleteId, IsAboutMembersCompleteId}
+import models.NormalMode
 import play.api.i18n.Messages
 import viewmodels._
 
 class HsTaskListHelperVariations(answers: UserAnswers)(implicit messages: Messages) extends HsTaskListHelper(answers) {
+
+  override protected[utils] def aboutSection(userAnswers: UserAnswers): Seq[SchemeDetailsTaskListSection] = {
+    val membersLink = userAnswers.get(IsAboutMembersCompleteId) match {
+      case Some(true) => Link(aboutMembersLinkText, controllers.routes.CheckYourAnswersMembersController.onPageLoad(NormalMode, None).url)
+      case _ => Link(aboutMembersLinkText, controllers.routes.WhatYouWillNeedMembersController.onPageLoad().url)
+    }
+
+    val benefitsAndInsuranceLink = userAnswers.get(IsAboutBenefitsAndInsuranceCompleteId) match {
+      case Some(true) => Link(aboutBenefitsAndInsuranceLinkText,
+        controllers.routes.CheckYourAnswersBenefitsAndInsuranceController.onPageLoad(NormalMode, None).url)
+      case _ => Link(aboutBenefitsAndInsuranceLinkText,
+        controllers.routes.WhatYouWillNeedBenefitsInsuranceController.onPageLoad().url)
+    }
+
+    Seq(SchemeDetailsTaskListSection(userAnswers.get(IsAboutMembersCompleteId), membersLink, None),
+      SchemeDetailsTaskListSection(userAnswers.get(IsAboutBenefitsAndInsuranceCompleteId), benefitsAndInsuranceLink, None))
+  }
 
   def taskList: SchemeDetailsTaskList = {
     SchemeDetailsTaskList(
