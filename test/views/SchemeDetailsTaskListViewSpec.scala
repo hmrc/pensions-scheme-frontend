@@ -31,7 +31,7 @@ class SchemeDetailsTaskListViewSpec extends ViewBehaviours {
 
   "SchemeDetailsTaskListView" should {
 
-    behave like normalPageWithTitle(createView(), messageKeyPrefix, pageHeader, schemeDetailsTaskListData.h1)
+    behave like normalPageWithTitle(createView(), messageKeyPrefix, schemeDetailsTaskListData.h2, schemeDetailsTaskListData.h1)
 
     "display the correct link" in {
       val view = createView(schemeDetailsTaskListData)
