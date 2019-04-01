@@ -74,6 +74,7 @@ object SchemeTaskListControllerSpec extends SpecBase with JsonFileReader {
     )),
     Seq.empty,
     None,
+    "",
     ""
   )
 

@@ -50,7 +50,8 @@ class HsTaskListHelperVariations(answers: UserAnswers)(implicit messages: Messag
       addTrusteeHeader(answers),
       trustees(answers),
       declarationLink(answers),
-      answers.get(SchemeNameId).getOrElse("")
+      answers.get(SchemeNameId).getOrElse(""),
+      messages("messages__scheme_details__title")
     )
   }
 

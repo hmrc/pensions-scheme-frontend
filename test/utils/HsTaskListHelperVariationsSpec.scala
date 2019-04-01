@@ -34,6 +34,14 @@ class HsTaskListHelperVariationsSpec extends HsTaskListHelperBehaviour {
     }
   }
 
+  "h2" must {
+    "display appropriate text" in {
+      val userAnswers = UserAnswers()
+      val helper = new HsTaskListHelperVariations(userAnswers)
+      helper.taskList.h2 mustBe messages("messages__scheme_details__title")
+    }
+  }
+
   "beforeYouStartSection " must {
     behave like beforeYouStartSection()
   }

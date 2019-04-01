@@ -23,11 +23,19 @@ import viewmodels.{Link, SchemeDetailsTaskListSection}
 
 class HsTaskListHelperRegistrationSpec extends HsTaskListHelperBehaviour {
 
-  "h1 key" must {
-    "have the name of the scheme" in {
+  "h1" must {
+    "display appropriate heading" in {
       val userAnswers = UserAnswers()
       val helper = new HsTaskListHelperRegistration(userAnswers)
       helper.taskList.h1 mustBe messages("messages__schemeTaskList__heading")
+    }
+  }
+
+  "h2" must {
+    "display appropriate text" in {
+      val userAnswers = UserAnswers()
+      val helper = new HsTaskListHelperRegistration(userAnswers)
+      helper.taskList.h2 mustBe messages("messages__schemeTaskList__before_you_start_header")
     }
   }
 
