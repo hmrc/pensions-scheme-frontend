@@ -20,6 +20,8 @@ import connectors.FakeUserAnswersCacheConnector
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.vary.AnyMoreChangesFormProvider
+import org.joda.time.LocalDate
+import org.joda.time.format.DateTimeFormat
 import play.api.data.Form
 import play.api.test.Helpers._
 import utils.FakeNavigator
@@ -31,6 +33,7 @@ class AnyMoreChangesControllerSpec extends ControllerSpecBase {
   private def onwardRoute = controllers.routes.IndexController.onPageLoad()
   val formProvider = new AnyMoreChangesFormProvider()
   val form = formProvider()
+  val date: String = LocalDate.now().plusDays(28).toString(DateTimeFormat.forPattern("dd MMMM YYYY"))
 
   def controller(dataRetrievalAction: DataRetrievalAction = getMandatorySchemeNameHs): AnyMoreChangesController =
     new AnyMoreChangesController(
@@ -44,7 +47,7 @@ class AnyMoreChangesControllerSpec extends ControllerSpecBase {
       formProvider
     )
 
-  private def viewAsString(form: Form[_] = form) = anyMoreChanges(frontendAppConfig, form, schemeName)(fakeRequest, messages).toString
+  private def viewAsString(form: Form[_] = form) = anyMoreChanges(frontendAppConfig, form, schemeName, date)(fakeRequest, messages).toString
 
   "AnyMoreChangesController" must {
 

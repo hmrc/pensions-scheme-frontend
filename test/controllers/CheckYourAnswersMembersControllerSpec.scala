@@ -18,7 +18,7 @@ package controllers
 
 import controllers.actions.{DataRequiredActionImpl, DataRetrievalAction, FakeAuthAction}
 import identifiers.IsAboutMembersCompleteId
-import models.{CheckMode, Members}
+import models.{CheckMode, Members, NormalMode}
 import org.scalatest.OptionValues
 import play.api.test.Helpers._
 import utils.{FakeSectionComplete, UserAnswers}
@@ -33,7 +33,7 @@ class CheckYourAnswersMembersControllerSpec extends ControllerSpecBase with Opti
 
     "onPageLoad() is called" must {
       "return OK and the correct view" in {
-        val result = controller(data).onPageLoad(fakeRequest)
+        val result = controller(data).onPageLoad(NormalMode, None)(fakeRequest)
 
         status(result) mustBe OK
         contentAsString(result) mustBe viewAsString()
@@ -42,7 +42,7 @@ class CheckYourAnswersMembersControllerSpec extends ControllerSpecBase with Opti
 
     "onSubmit is called" must {
       "redirect to next page" in {
-        val result = controller().onSubmit(fakeRequest)
+        val result = controller().onSubmit(NormalMode, None)(fakeRequest)
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result).value mustBe controllers.routes.SchemeTaskListController.onPageLoad().url
@@ -55,7 +55,7 @@ class CheckYourAnswersMembersControllerSpec extends ControllerSpecBase with Opti
 object CheckYourAnswersMembersControllerSpec extends ControllerSpecBase {
 
   private val schemeName = "Test Scheme Name"
-  private val postUrl = routes.CheckYourAnswersMembersController.onSubmit()
+  private val postUrl = routes.CheckYourAnswersMembersController.onSubmit(NormalMode, None)
   private val data = UserAnswers().schemeName(schemeName).currentMembers(Members.One).futureMembers(Members.None).dataRetrievalAction
 
   private def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): CheckYourAnswersMembersController =

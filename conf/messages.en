@@ -196,19 +196,6 @@ messages__error__scheme_type_other_length = The other scheme type cannot be more
 messages__error__scheme_type_other_invalid = The other scheme type contains invalid characters
 messages__error__scheme_name_psa_name_match = The Pension Scheme name cannot be the same as Pension Scheme Administrator name
 
-messages__membership_current__title = How many scheme members are there?
-messages__membership_current__body1 = You might have to register the pension scheme with The Pensions Regulator.
-messages__membership_current__body2 = If the scheme has 2 or more members, HMRC will share the scheme and your contact details with The Pensions Regulator. They will then contact you to register the scheme with them.
-
-messages__membership__title = How many scheme members could there be in the next 12 months?
-messages__membership__title_short = Membership within 12 months
-messages__membership__opt1 = None
-messages__membership__opt2 = 1
-messages__membership__opt3 = 2 - 11
-messages__membership__opt4 = 12 - 50
-messages__membership__opt5 = 51 - 10,000
-messages__membership__opt6 = more than 10,000
-
 messages__investment_regulated__title = Is the scheme investment regulated?
 
 #Duplicated these messages with the new keys, it can be deleted once the Benefits insurer page is deleted from register routes
@@ -1352,5 +1339,6 @@ messages__schemeTaskList__working_knowledge_link_text = Details of this person
 messages__any_more_changes__title = Do you want to make any more changes?
 messages__any_more_changes__p1 = The pension scheme has not been updated yet.
 messages__any_more_changes__p2 = You will need to complete a declaration to update the scheme when you have made all of your changes.
+messages__any_more_changes__p3_date = You have until {0} to complete the declaration. If you do not complete the declaration by this date, your changes will be deleted.
 
 messages__any_more_changes__error__required = Select yes if you want to make more changes
