@@ -64,7 +64,6 @@ class AnyMoreChangesController @Inject()(appConfig: FrontendAppConfig,
       )
   }
 
-  private val formatter = DateTimeFormat.forPattern("dd MMMM YYYY")
-  private def dateToCompleteDeclaration: String = LocalDate.now().plusDays(appConfig.daysDataSaved).toString(formatter)
+  private def dateToCompleteDeclaration: String = LocalDate.now().plusDays(appConfig.daysDataSaved).toString(DateTimeFormat.forPattern("dd MMMM YYYY"))
 }
 
