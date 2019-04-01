@@ -20,9 +20,10 @@
 @import play.api.mvc.Call
 @import uk.gov.hmrc.play.views.html._
 @import viewmodels.{Section, AnswerSection, RepeaterAnswerSection}
+@import models.{NormalMode, Mode}
 
 @(appConfig: FrontendAppConfig, answerSections: Seq[Section], postUrl: Call, schemeName: Option[String],
-    returnOverview: Boolean = false)(implicit request: Request[_], messages: Messages)
+    returnOverview: Boolean = false, mode: Mode = NormalMode)(implicit request: Request[_], messages: Messages)
 
 @returnMessage=@{
     schemeName.fold(messages("messages__complete__return"))(name=>messages("messages__psaSchemeDetails__return_link", name))
@@ -47,7 +48,10 @@
             }
         }
 
-        @components.submit_button()
+        @if(mode == NormalMode) {
+            @components.submit_button()
+        }
+
         @if(returnOverview){
             @components.return_link("messages__complete__return", schemeName, Some(appConfig.managePensionsSchemeOverviewUrl))
         } else {
