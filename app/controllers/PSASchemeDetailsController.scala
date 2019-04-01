@@ -27,7 +27,7 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Result}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import utils.HsTaskListHelperVariations
+import utils.{HsTaskListHelperVariations, Toggles}
 import utils.annotations.SchemeDetailsReadOnly
 import viewmodels.SchemeDetailsTaskList
 import views.html.{psa_scheme_details, schemeDetailsTaskList}
@@ -46,7 +46,7 @@ class PSASchemeDetailsController @Inject()(appConfig: FrontendAppConfig,
 
   def onPageLoad(srn: String): Action[AnyContent] = authenticate.async {
     implicit request =>
-      if (featureSwitchManagementService.get("is-variations-enabled")) {
+      if (featureSwitchManagementService.get(Toggles.isVariationsEnabled)) {
         onPageLoadVariationsToggledOn(srn)
       } else {
         onPageLoadVariationsToggledOff(srn)
