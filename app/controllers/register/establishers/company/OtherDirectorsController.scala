@@ -48,7 +48,7 @@ class OtherDirectorsController @Inject()(
   private val form: Form[Boolean] = formProvider()
   private def postCall: (Mode, Option[String], Index) => Call = routes.OtherDirectorsController.onSubmit _
 
-  def onPageLoad(mode: Mode, srn: Option[String], establisherIndex: Index): Action[AnyContent] = (authenticate andThen getData() andThen requireData).async {
+  def onPageLoad(mode: Mode, srn: Option[String], establisherIndex: Index): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
       retrieveCompanyName(establisherIndex) { companyName =>
         val redirectResult = request.userAnswers.get(OtherDirectorsId(establisherIndex)) match {
@@ -60,7 +60,7 @@ class OtherDirectorsController @Inject()(
 
   }
 
-  def onSubmit(mode: Mode, srn: Option[String], establisherIndex: Index): Action[AnyContent] = (authenticate andThen getData() andThen requireData).async {
+  def onSubmit(mode: Mode, srn: Option[String], establisherIndex: Index): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
       retrieveCompanyName(establisherIndex) {
         companyName =>

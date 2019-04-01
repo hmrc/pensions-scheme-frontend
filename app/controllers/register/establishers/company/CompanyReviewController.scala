@@ -40,7 +40,7 @@ class CompanyReviewController @Inject()(appConfig: FrontendAppConfig,
                                         requireData: DataRequiredAction,
                                         sectionComplete: SectionComplete)(implicit val ec: ExecutionContext) extends FrontendController with I18nSupport with Retrievals {
 
-  def onPageLoad(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] = (authenticate andThen getData() andThen requireData).async {
+  def onPageLoad(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
       CompanyDetailsId(index).retrieve.right.map {
         case companyDetails =>
@@ -50,7 +50,7 @@ class CompanyReviewController @Inject()(appConfig: FrontendAppConfig,
       }
   }
 
-  def onSubmit(mode: Mode,  srn: Option[String], index: Index): Action[AnyContent] = (authenticate andThen getData() andThen requireData).async {
+  def onSubmit(mode: Mode,  srn: Option[String], index: Index): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
       val allDirectors = request.userAnswers.allDirectorsAfterDelete(index)
       val allDirectorsCompleted = allDirectors.nonEmpty & (allDirectors.count(!_.isCompleted) == 0)

@@ -45,12 +45,12 @@ class DirectorAddressListController @Inject()(
                                              ) extends AddressListController with Retrievals {
 
   def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData() andThen requireData).async { implicit request =>
+    (authenticate andThen getData(mode, srn) andThen requireData).async { implicit request =>
       viewmodel(mode, establisherIndex, directorIndex, srn).right.map(get)
     }
 
   def onSubmit(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData() andThen requireData).async { implicit request =>
+    (authenticate andThen getData(mode, srn) andThen requireData).async { implicit request =>
       viewmodel(mode, establisherIndex, directorIndex, srn).right.map {
         vm =>
           post(vm, DirectorAddressListId(establisherIndex, directorIndex), DirectorAddressId(establisherIndex, directorIndex), mode)

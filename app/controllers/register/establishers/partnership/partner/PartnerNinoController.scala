@@ -48,7 +48,7 @@ class PartnerNinoController @Inject()(
   private val form: Form[Nino] = formProvider()
 
   def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData() andThen requireData).async {
+    (authenticate andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
         PartnerDetailsId(establisherIndex, partnerIndex).retrieve.right.map { _ =>
           val preparedForm = request.userAnswers.get(PartnerNinoId(establisherIndex, partnerIndex)).fold(form)(form.fill)
@@ -59,7 +59,7 @@ class PartnerNinoController @Inject()(
 
 
   def onSubmit(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData() andThen requireData).async {
+    (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
       PartnerDetailsId(establisherIndex, partnerIndex).retrieve.right.map { partner =>
         form.bindFromRequest().fold(

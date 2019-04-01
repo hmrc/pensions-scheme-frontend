@@ -46,18 +46,19 @@ class EstablisherKindController @Inject()(
                                          )(implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
 
   private val form = formProvider()
+  private val postCall = routes.EstablisherKindController.onSubmit _
 
-  def onPageLoad(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData() andThen requireData).async {
+  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
       val formWithData = request.userAnswers.get(EstablisherKindId(index)).fold(form)(form.fill)
-      Future.successful(Ok(establisherKind(appConfig, formWithData, mode, index, existingSchemeName)))
+      Future.successful(Ok(establisherKind(appConfig, formWithData, mode, index, existingSchemeName, postCall(mode, index, srn))))
   }
 
-  def onSubmit(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData() andThen requireData).async {
+  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) =>
-          Future.successful(BadRequest(establisherKind(appConfig, formWithErrors, mode, index, existingSchemeName))),
+          Future.successful(BadRequest(establisherKind(appConfig, formWithErrors, mode, index, existingSchemeName, postCall(mode, index, srn)))),
         value =>
           dataCacheConnector.save(
             request.externalId,

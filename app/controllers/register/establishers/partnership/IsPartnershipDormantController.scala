@@ -50,7 +50,7 @@ class IsPartnershipDormantController @Inject()(appConfig: FrontendAppConfig,
 
   private def postCall(mode: Mode, index: Int, srn: Option[String]): Call = routes.IsPartnershipDormantController.onSubmit(mode, index, srn)
 
-  def onPageLoad(mode: Mode, index: Int, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData() andThen requireData).async {
+  def onPageLoad(mode: Mode, index: Int, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
       retrievePartnershipName(index) {
         partnershipName =>
@@ -59,7 +59,7 @@ class IsPartnershipDormantController @Inject()(appConfig: FrontendAppConfig,
       }
   }
 
-  def onSubmit(mode: Mode, index: Int, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData() andThen requireData).async {
+  def onSubmit(mode: Mode, index: Int, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
       retrievePartnershipName(index) { partnershipName =>
         form.bindFromRequest().fold(

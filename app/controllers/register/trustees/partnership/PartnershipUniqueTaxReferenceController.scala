@@ -47,7 +47,7 @@ class PartnershipUniqueTaxReferenceController @Inject()(
 
   private val form: Form[UniqueTaxReference] = formProvider()
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData() andThen requireData).async {
+  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
       PartnershipDetailsId(index).retrieve.right.map { _ =>
         val updatedForm = request.userAnswers.get(PartnershipUniqueTaxReferenceId(index)).fold(form)(form.fill)
@@ -56,7 +56,7 @@ class PartnershipUniqueTaxReferenceController @Inject()(
       }
   }
 
-  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData() andThen requireData).async {
+  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
       PartnershipDetailsId(index).retrieve.right.map { _ =>
         form.bindFromRequest().fold(

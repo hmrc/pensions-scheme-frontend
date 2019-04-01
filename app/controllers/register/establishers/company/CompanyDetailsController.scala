@@ -48,13 +48,13 @@ class CompanyDetailsController @Inject()(
   private val form = formProvider()
   private def postCall: (Mode, Option[String], Index) => Call = routes.CompanyDetailsController.onSubmit _
 
-  def onPageLoad(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] = (authenticate andThen getData() andThen requireData).async {
+  def onPageLoad(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
       val formWithData = request.userAnswers.get(CompanyDetailsId(index)).fold(form)(form.fill)
       Future.successful(Ok(companyDetails(appConfig, formWithData, mode, index, existingSchemeName, postCall(mode, srn, index))))
   }
 
-  def onSubmit(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] = (authenticate andThen getData() andThen requireData).async {
+  def onSubmit(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) =>

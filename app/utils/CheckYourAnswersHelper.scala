@@ -378,7 +378,7 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers, countryOptions: CountryOp
 
   def establisherKind(index: Int): Seq[AnswerRow] = userAnswers.get(EstablisherKindId(index)) match {
     case Some(x) => Seq(AnswerRow("establisherKind.checkYourAnswersLabel", Seq(s"${x.toString}"), false,
-      Some(controllers.register.establishers.routes.EstablisherKindController.onPageLoad(CheckMode, Index(index)).url)))
+      Some(controllers.register.establishers.routes.EstablisherKindController.onPageLoad(CheckMode, Index(index), None).url)))
     case _ => Seq.empty
   }
 }
