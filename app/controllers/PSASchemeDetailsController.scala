@@ -17,10 +17,9 @@
 package controllers
 
 import config.{FeatureSwitchManagementService, FrontendAppConfig}
-import connectors.{CacheConnector, SchemeDetailsConnector, SubscriptionCacheConnector, UserAnswersCacheConnector}
+import connectors.{SchemeDetailsConnector, UserAnswersCacheConnector}
 import controllers.actions._
 import handlers.ErrorHandler
-import identifiers.PsaDetailsId
 import javax.inject.Inject
 import models.details.transformation.SchemeDetailsMasterSection
 import models.requests.AuthenticatedRequest
@@ -58,12 +57,8 @@ class PSASchemeDetailsController @Inject()(appConfig: FrontendAppConfig,
                                                           request: AuthenticatedRequest[AnyContent],
                                                           hc: HeaderCarrier): Future[Result] = {
     schemeDetailsConnector.getSchemeDetails(request.psaId.id, schemeIdType = "srn", srn).flatMap { scheme =>
-      if (scheme.psaDetails.exists(_.id == request.psaId.id)) {
-        val schemeDetailMasterSection = schemeTransformer.transformMasterSection(scheme)
-        Future.successful(Ok(psa_scheme_details(appConfig, schemeDetailMasterSection, scheme.schemeDetails.name, srn)))
-      } else {
-        Future.successful(NotFound(errorHandler.notFoundTemplate))
-      }
+      val schemeDetailMasterSection = schemeTransformer.transformMasterSection(scheme)
+      Future.successful(Ok(psa_scheme_details(appConfig, schemeDetailMasterSection, scheme.schemeDetails.name, srn)))
     }
   }
 
@@ -71,15 +66,10 @@ class PSASchemeDetailsController @Inject()(appConfig: FrontendAppConfig,
                                                          request: AuthenticatedRequest[AnyContent],
                                                           hc: HeaderCarrier): Future[Result] = {
     schemeDetailsConnector.getSchemeDetailsVariations(request.psaId.id, schemeIdType = "srn", srn).flatMap { userAnswers =>
-      val schemeAdministrators = userAnswers.get(PsaDetailsId).toSeq.flatten
-      if (schemeAdministrators.contains(request.psaId.id)) {
-        val taskSections: SchemeDetailsTaskList = new HsTaskListHelperVariations(userAnswers).taskList
-        schemeDetailsReadOnlyCacheConnector.upsert(request.externalId, userAnswers.json).map( _ =>
-          Ok(schemeDetailsTaskList(appConfig, taskSections))
-        )
-      } else {
-        Future.successful(NotFound(errorHandler.notFoundTemplate))
-      }
+      val taskSections: SchemeDetailsTaskList = new HsTaskListHelperVariations(userAnswers).taskList
+      schemeDetailsReadOnlyCacheConnector.upsert(request.externalId, userAnswers.json).map( _ =>
+        Ok(schemeDetailsTaskList(appConfig, taskSections))
+      )
     }
   }
 }

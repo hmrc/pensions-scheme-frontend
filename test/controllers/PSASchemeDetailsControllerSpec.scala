@@ -20,7 +20,6 @@ import config.FeatureSwitchManagementService
 import connectors._
 import controllers.actions.{DataRetrievalAction, _}
 import handlers.ErrorHandler
-import identifiers.PsaDetailsId
 import models.details.transformation.{SchemeDetailsMasterSection, SchemeDetailsStubData}
 import models.details.{Name, PsaDetails}
 import org.mockito.Matchers
@@ -56,19 +55,6 @@ class PSASchemeDetailsControllerSpec extends ControllerSpecBase {
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString()
     }
-
-    "return NOT_FOUND for a GET where logged in PSA is not administrator of scheme" in {
-      reset(fakeSchemeDetailsConnector)
-      when(fakeSchemeDetailsConnector.getSchemeDetails(Matchers.any(), Matchers.any(), Matchers.any())(Matchers.any(), Matchers.any()))
-        .thenReturn(Future.successful(psaSchemeDetailsSample))
-      when(fakeSchemeTransformer.transformMasterSection(Matchers.any())).thenReturn(masterSections)
-
-      val result = controller(isVariationsEnabled = false).onPageLoad(srn)(fakeRequest)
-
-      status(result) mustBe NOT_FOUND
-      contentAsString(result).contains(messages("messages__pageNotFound404__heading")) mustBe true
-    }
-
   }
 
   "SchemeDetailsController when isVariationsEnabled toggle switched on" must {
@@ -76,7 +62,7 @@ class PSASchemeDetailsControllerSpec extends ControllerSpecBase {
     "return OK and the correct view for a GET" in {
 
       val userAnswersResponse = UserAnswers(Json.obj(
-        PsaDetailsId.toString -> Seq("A0000000")
+        "test attribute" -> "test value"
       ))
 
       reset(fakeSchemeDetailsConnector)
@@ -93,21 +79,6 @@ class PSASchemeDetailsControllerSpec extends ControllerSpecBase {
 
       contentAsString(result).contains(messages("messages__schemeTaskList__title")) mustBe true
     }
-
-    "return NOT_FOUND for a GET where logged in PSA is not administrator of scheme" in {
-      reset(fakeSchemeDetailsConnector)
-      when(fakeSchemeDetailsConnector.getSchemeDetailsVariations(Matchers.any(), Matchers.any(), Matchers.any())(Matchers.any(), Matchers.any()))
-        .thenReturn(Future.successful(UserAnswers(Json.obj(
-          PsaDetailsId.toString -> Seq("A0000099")
-        ))))
-      when(fakeSchemeTransformer.transformMasterSection(Matchers.any())).thenReturn(masterSections)
-
-      val result = controller(isVariationsEnabled = true).onPageLoad(srn)(fakeRequest)
-
-      status(result) mustBe NOT_FOUND
-      contentAsString(result).contains(messages("messages__pageNotFound404__heading")) mustBe true
-    }
-
   }
 }
 
