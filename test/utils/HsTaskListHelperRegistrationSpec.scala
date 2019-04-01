@@ -34,21 +34,21 @@ import org.scalatest.{MustMatchers, OptionValues, WordSpec}
 import play.api.libs.json.JsResult
 import viewmodels._
 
-class HsTaskListHelperSpec extends WordSpec with MustMatchers with OptionValues {
+class HsTaskListHelperRegistrationSpec extends WordSpec with MustMatchers with OptionValues {
 
-  import HsTaskListHelperSpec._
+  import HsTaskListHelperRegistrationSpec._
 
   "beforeYouStartSection " must {
     "return the link to scheme name page when not completed " in {
       val userAnswers = UserAnswers().set(IsBeforeYouStartCompleteId)(false).asOpt.value
-      val helper = new HsTaskListHelper(userAnswers)
+      val helper = new HsTaskListHelperRegistration(userAnswers)
       helper.beforeYouStartSection(userAnswers).link mustBe
         beforeYouStartLink(controllers.routes.SchemeNameController.onPageLoad(NormalMode).url)
     }
 
     "return the link to cya page when completed " in {
       val userAnswers = UserAnswers().set(IsBeforeYouStartCompleteId)(true).asOpt.value
-      val helper = new HsTaskListHelper(userAnswers)
+      val helper = new HsTaskListHelperRegistration(userAnswers)
       helper.beforeYouStartSection(userAnswers).link mustBe beforeYouStartLink(
         controllers.routes.CheckYourAnswersBeforeYouStartController.onPageLoad().url
       )
@@ -63,7 +63,7 @@ class HsTaskListHelperSpec extends WordSpec with MustMatchers with OptionValues 
           _.set(IsAboutBenefitsAndInsuranceCompleteId)(false)
         )
       ).asOpt.value
-      val helper = new HsTaskListHelper(userAnswers)
+      val helper = new HsTaskListHelperRegistration(userAnswers)
       helper.aboutSection(userAnswers) mustBe
         Seq(
           SchemeDetailsTaskListSection(Some(false), Link(aboutMembersLinkText,
@@ -82,7 +82,7 @@ class HsTaskListHelperSpec extends WordSpec with MustMatchers with OptionValues 
           _.set(IsAboutBenefitsAndInsuranceCompleteId)(true)
         )
       ).asOpt.value
-      val helper = new HsTaskListHelper(userAnswers)
+      val helper = new HsTaskListHelperRegistration(userAnswers)
       helper.aboutSection(userAnswers) mustBe
         Seq(
           SchemeDetailsTaskListSection(Some(true), Link(aboutMembersLinkText,
@@ -98,7 +98,7 @@ class HsTaskListHelperSpec extends WordSpec with MustMatchers with OptionValues 
   "workingKnowledgeSection " must {
     "not display when do you have working knowledge is true " in {
       val userAnswers = UserAnswers().set(DeclarationDutiesId)(true).asOpt.value
-      val helper = new HsTaskListHelper(userAnswers)
+      val helper = new HsTaskListHelperRegistration(userAnswers)
       helper.workingKnowledgeSection(userAnswers) mustBe None
     }
 
@@ -106,7 +106,7 @@ class HsTaskListHelperSpec extends WordSpec with MustMatchers with OptionValues 
       val userAnswers = UserAnswers().set(DeclarationDutiesId)(false).flatMap(
         _.set(IsWorkingKnowledgeCompleteId)(false)
       ).asOpt.value
-      val helper = new HsTaskListHelper(userAnswers)
+      val helper = new HsTaskListHelperRegistration(userAnswers)
       helper.workingKnowledgeSection(userAnswers).value mustBe
         SchemeDetailsTaskListSection(Some(false), Link(workingKnowledgeLinkText,
           controllers.routes.WhatYouWillNeedWorkingKnowledgeController.onPageLoad.url), None)
@@ -116,7 +116,7 @@ class HsTaskListHelperSpec extends WordSpec with MustMatchers with OptionValues 
       val userAnswers = UserAnswers().set(DeclarationDutiesId)(false).flatMap(
         _.set(IsWorkingKnowledgeCompleteId)(true)
       ).asOpt.value
-      val helper = new HsTaskListHelper(userAnswers)
+      val helper = new HsTaskListHelperRegistration(userAnswers)
       helper.workingKnowledgeSection(userAnswers).value mustBe
         SchemeDetailsTaskListSection(Some(true), Link(workingKnowledgeLinkText,
           controllers.routes.AdviserCheckYourAnswersController.onPageLoad().url), None)
@@ -127,7 +127,7 @@ class HsTaskListHelperSpec extends WordSpec with MustMatchers with OptionValues 
 
     "return the link to establisher kind page when no establishers are added " in {
       val userAnswers = UserAnswers()
-      val helper = new HsTaskListHelper(userAnswers)
+      val helper = new HsTaskListHelperRegistration(userAnswers)
       helper.addEstablisherHeader(userAnswers) mustBe
         SchemeDetailsTaskListSection(None, Link(addEstablisherLinkText,
           controllers.register.establishers.routes.EstablisherKindController.onPageLoad(NormalMode, userAnswers.allEstablishers.size).url), None)
@@ -136,7 +136,7 @@ class HsTaskListHelperSpec extends WordSpec with MustMatchers with OptionValues 
     "return the link to add establisher page when establishers are added " in {
       val userAnswers = UserAnswers().set(EstablisherDetailsId(0))(PersonDetails("firstName", None, "lastName", LocalDate.now())).asOpt.value
         .set(IsEstablisherCompleteId(0))(true).asOpt.value
-      val helper = new HsTaskListHelper(userAnswers)
+      val helper = new HsTaskListHelperRegistration(userAnswers)
       helper.addEstablisherHeader(userAnswers) mustBe
         SchemeDetailsTaskListSection(None, Link(changeEstablisherLinkText,
           controllers.register.establishers.routes.AddEstablisherController.onPageLoad(NormalMode).url), None)
@@ -147,13 +147,13 @@ class HsTaskListHelperSpec extends WordSpec with MustMatchers with OptionValues 
 
     "not display when do you have any trustees is false " in {
       val userAnswers = UserAnswers().set(HaveAnyTrusteesId)(false).asOpt.value
-      val helper = new HsTaskListHelper(userAnswers)
+      val helper = new HsTaskListHelperRegistration(userAnswers)
       helper.addTrusteeHeader(userAnswers) mustBe None
     }
 
     "display and link should go to trustee kind page when do you have any trustees is true and no trustees are added " in {
       val userAnswers = UserAnswers().set(HaveAnyTrusteesId)(true).asOpt.value
-      val helper = new HsTaskListHelper(userAnswers)
+      val helper = new HsTaskListHelperRegistration(userAnswers)
       helper.addTrusteeHeader(userAnswers).value mustBe
         SchemeDetailsTaskListSection(None, Link(addTrusteesLinkText,
           controllers.register.trustees.routes.TrusteeKindController.onPageLoad(NormalMode, userAnswers.allTrustees.size, None).url), None)
@@ -164,7 +164,7 @@ class HsTaskListHelperSpec extends WordSpec with MustMatchers with OptionValues 
       val userAnswers = UserAnswers().set(TrusteeDetailsId(0))(PersonDetails("firstName", None, "lastName", LocalDate.now())).flatMap(
         _.set(IsTrusteeCompleteId(0))(true)
       ).asOpt.value
-      val helper = new HsTaskListHelper(userAnswers)
+      val helper = new HsTaskListHelperRegistration(userAnswers)
       helper.addTrusteeHeader(userAnswers).value mustBe
         SchemeDetailsTaskListSection(Some(true), Link(changeTrusteesLinkText,
           controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode, None).url), None)
@@ -175,7 +175,7 @@ class HsTaskListHelperSpec extends WordSpec with MustMatchers with OptionValues 
       val userAnswers = UserAnswers().set(TrusteeDetailsId(0))(PersonDetails("firstName", None, "lastName", LocalDate.now())).flatMap(
         _.set(IsTrusteeCompleteId(0))(false)
       ).asOpt.value
-      val helper = new HsTaskListHelper(userAnswers)
+      val helper = new HsTaskListHelperRegistration(userAnswers)
       helper.addTrusteeHeader(userAnswers).value mustBe
         SchemeDetailsTaskListSection(Some(false), Link(changeTrusteesLinkText,
           controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode, None).url), None)
@@ -186,7 +186,7 @@ class HsTaskListHelperSpec extends WordSpec with MustMatchers with OptionValues 
 
     "return the seq of establishers sub sections for non deleted establishers which are all completed" in {
       val userAnswers = allEstablishers()
-      val helper = new HsTaskListHelper(userAnswers)
+      val helper = new HsTaskListHelperRegistration(userAnswers)
       helper.establishers(userAnswers) mustBe
         Seq(SchemeDetailsTaskListSection(Some(true), Link(individualLinkText,
           controllers.register.establishers.individual.routes.CheckYourAnswersController.onPageLoad(NormalMode, 0, None).url), Some("firstName lastName")),
@@ -199,7 +199,7 @@ class HsTaskListHelperSpec extends WordSpec with MustMatchers with OptionValues 
 
     "return the seq of establishers sub sections for non deleted establishers which are not completed" in {
       val userAnswers = allEstablishers(isCompleteEstablisher = false)
-      val helper = new HsTaskListHelper(userAnswers)
+      val helper = new HsTaskListHelperRegistration(userAnswers)
       helper.establishers(userAnswers) mustBe
         Seq(SchemeDetailsTaskListSection(Some(false), Link(individualLinkText,
           controllers.register.establishers.individual.routes.EstablisherDetailsController.onPageLoad(NormalMode, 0, None).url), Some("firstName lastName")),
@@ -218,7 +218,7 @@ class HsTaskListHelperSpec extends WordSpec with MustMatchers with OptionValues 
               _.set(EstablisherPartnershipDetailsId(2))(PartnershipDetails("test partnership", false)).flatMap(
                 _.set(IsEstablisherCompleteId(2))(false)
               ))))).asOpt.value
-      val helper = new HsTaskListHelper(userAnswers)
+      val helper = new HsTaskListHelperRegistration(userAnswers)
       helper.establishers(userAnswers) mustBe
         Seq(SchemeDetailsTaskListSection(Some(false), Link(individualLinkText,
           controllers.register.establishers.individual.routes.EstablisherDetailsController.onPageLoad(NormalMode, 0, None).url), Some("firstName lastName")),
@@ -232,7 +232,7 @@ class HsTaskListHelperSpec extends WordSpec with MustMatchers with OptionValues 
 
     "return the seq of trustees sub sections for non deleted trustees which are all completed" in {
       val userAnswers = allTrustees()
-      val helper = new HsTaskListHelper(userAnswers)
+      val helper = new HsTaskListHelperRegistration(userAnswers)
       helper.trustees(userAnswers) mustBe
         Seq(SchemeDetailsTaskListSection(Some(true), Link(individualLinkText,
           controllers.register.trustees.individual.routes.CheckYourAnswersController.onPageLoad(NormalMode, 0, None).url), Some("firstName lastName")),
@@ -245,7 +245,7 @@ class HsTaskListHelperSpec extends WordSpec with MustMatchers with OptionValues 
 
     "return the seq of trustees sub sections for non deleted trustees which are not completed" in {
       val userAnswers = allTrustees(isCompleteTrustees = false)
-      val helper = new HsTaskListHelper(userAnswers)
+      val helper = new HsTaskListHelperRegistration(userAnswers)
       helper.trustees(userAnswers) mustBe
         Seq(SchemeDetailsTaskListSection(Some(false), Link(individualLinkText,
           controllers.register.trustees.individual.routes.TrusteeDetailsController.onPageLoad(NormalMode, 0, None).url), Some("firstName lastName")),
@@ -264,7 +264,7 @@ class HsTaskListHelperSpec extends WordSpec with MustMatchers with OptionValues 
               _.set(TrusteePartnershipDetailsId(2))(PartnershipDetails("test partnership", false)).flatMap(
                 _.set(IsPartnershipCompleteId(2))(false)
               ))))).asOpt.value
-      val helper = new HsTaskListHelper(userAnswers)
+      val helper = new HsTaskListHelperRegistration(userAnswers)
       helper.trustees(userAnswers) mustBe
         Seq(SchemeDetailsTaskListSection(Some(false), Link(individualLinkText,
           controllers.register.trustees.individual.routes.TrusteeDetailsController.onPageLoad(NormalMode, 0, None).url), Some("firstName lastName")),
@@ -278,7 +278,7 @@ class HsTaskListHelperSpec extends WordSpec with MustMatchers with OptionValues 
 
     "return true when all the sections are completed with trustees" in {
       val userAnswers = answersData().asOpt.value
-      val helper = new HsTaskListHelper(userAnswers)
+      val helper = new HsTaskListHelperRegistration(userAnswers)
       helper.declarationEnabled(userAnswers) mustBe true
     }
 
@@ -296,49 +296,49 @@ class HsTaskListHelperSpec extends WordSpec with MustMatchers with OptionValues 
           )
         )
       ).asOpt.value
-      val helper = new HsTaskListHelper(userAnswers)
+      val helper = new HsTaskListHelperRegistration(userAnswers)
       helper.declarationEnabled(userAnswers) mustBe true
     }
 
     "return false when about you start section not completed" in {
       val userAnswers = answersData(isCompleteBeforeStart = false).asOpt.value
-      val helper = new HsTaskListHelper(userAnswers)
+      val helper = new HsTaskListHelperRegistration(userAnswers)
       helper.declarationEnabled(userAnswers) mustBe false
     }
 
     "return false when about members section not completed" in {
       val userAnswers = answersData(isCompleteAboutMembers = false).asOpt.value
-      val helper = new HsTaskListHelper(userAnswers)
+      val helper = new HsTaskListHelperRegistration(userAnswers)
       helper.declarationEnabled(userAnswers) mustBe false
     }
 
     "return false when about bank details section not completed" in {
       val userAnswers = answersData(isCompleteAboutBank = false).asOpt.value
-      val helper = new HsTaskListHelper(userAnswers)
+      val helper = new HsTaskListHelperRegistration(userAnswers)
       helper.declarationEnabled(userAnswers) mustBe false
     }
 
     "return false when about benefits and insurance section not completed" in {
       val userAnswers = answersData(isCompleteAboutBenefits = false).asOpt.value
-      val helper = new HsTaskListHelper(userAnswers)
+      val helper = new HsTaskListHelperRegistration(userAnswers)
       helper.declarationEnabled(userAnswers) mustBe false
     }
 
     "return false when working knowledge section not completed" in {
       val userAnswers = answersData(isCompleteWk = false).asOpt.value
-      val helper = new HsTaskListHelper(userAnswers)
+      val helper = new HsTaskListHelperRegistration(userAnswers)
       helper.declarationEnabled(userAnswers) mustBe false
     }
 
     "return false when establishers section not completed" in {
       val userAnswers = answersData(isCompleteEstablishers = false).asOpt.value
-      val helper = new HsTaskListHelper(userAnswers)
+      val helper = new HsTaskListHelperRegistration(userAnswers)
       helper.declarationEnabled(userAnswers) mustBe false
     }
 
     "return false when trustees section not completed" in {
       val userAnswers = answersData(isCompleteTrustees = false).asOpt.value
-      val helper = new HsTaskListHelper(userAnswers)
+      val helper = new HsTaskListHelperRegistration(userAnswers)
       helper.declarationEnabled(userAnswers) mustBe false
     }
 
@@ -356,7 +356,7 @@ class HsTaskListHelperSpec extends WordSpec with MustMatchers with OptionValues 
           )
         )
       ).asOpt.value
-      val helper = new HsTaskListHelper(userAnswers)
+      val helper = new HsTaskListHelperRegistration(userAnswers)
       helper.declarationEnabled(userAnswers) mustBe false
     }
   }
@@ -364,19 +364,19 @@ class HsTaskListHelperSpec extends WordSpec with MustMatchers with OptionValues 
   "declarationLink" must {
     "return the link when all the sections are completed" in {
         val userAnswers = answersData().asOpt.value
-        val helper = new HsTaskListHelper(userAnswers)
+        val helper = new HsTaskListHelperRegistration(userAnswers)
         helper.declarationLink(userAnswers).value mustBe Link(declarationLinkText, controllers.register.routes.DeclarationController.onPageLoad().url)
     }
 
     "return None when all the sections are not completed" in {
       val userAnswers = answersData(isCompleteBeforeStart = false).asOpt.value
-      val helper = new HsTaskListHelper(userAnswers)
+      val helper = new HsTaskListHelperRegistration(userAnswers)
       helper.declarationLink(userAnswers) mustBe None
     }
   }
 }
 
-object HsTaskListHelperSpec extends SpecBase {
+object HsTaskListHelperRegistrationSpec extends SpecBase {
   private lazy val beforeYouStartLinkText = messages("messages__schemeTaskList__before_you_start_link_text")
   private lazy val aboutMembersLinkText = messages("messages__schemeTaskList__about_members_link_text")
   private lazy val aboutBenefitsAndInsuranceLinkText = messages("messages__schemeTaskList__about_benefits_and_insurance_link_text")

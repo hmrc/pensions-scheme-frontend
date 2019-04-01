@@ -16,16 +16,21 @@
 
 package controllers
 
-import config.FrontendAppConfig
-import connectors.SchemeDetailsConnector
+import config.{FeatureSwitchManagementService, FrontendAppConfig}
+import connectors.{SchemeDetailsConnector, UserAnswersCacheConnector}
 import controllers.actions._
 import handlers.ErrorHandler
 import javax.inject.Inject
 import models.details.transformation.SchemeDetailsMasterSection
+import models.requests.AuthenticatedRequest
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent}
+import play.api.mvc.{Action, AnyContent, Result}
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import views.html.psa_scheme_details
+import utils.{HsTaskListHelperVariations, Toggles}
+import utils.annotations.SchemeDetailsReadOnly
+import viewmodels.SchemeDetailsTaskList
+import views.html.{psa_scheme_details, schemeDetailsTaskList}
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -34,18 +39,37 @@ class PSASchemeDetailsController @Inject()(appConfig: FrontendAppConfig,
                                            schemeDetailsConnector: SchemeDetailsConnector,
                                            schemeTransformer: SchemeDetailsMasterSection,
                                            authenticate: AuthAction,
-                                           errorHandler: ErrorHandler
-                                       )(implicit val ec: ExecutionContext) extends FrontendController with I18nSupport {
+                                           errorHandler: ErrorHandler,
+                                           featureSwitchManagementService: FeatureSwitchManagementService,
+                                           @SchemeDetailsReadOnly schemeDetailsReadOnlyCacheConnector: UserAnswersCacheConnector
+                                          )(implicit val ec: ExecutionContext) extends FrontendController with I18nSupport {
 
   def onPageLoad(srn: String): Action[AnyContent] = authenticate.async {
     implicit request =>
-      schemeDetailsConnector.getSchemeDetails(request.psaId.id, schemeIdType ="srn", srn).flatMap { scheme =>
-        if (scheme.psaDetails.exists(_.id == request.psaId.id)) {
-          val schemeDetailMasterSection = schemeTransformer.transformMasterSection(scheme)
-          Future.successful(Ok(psa_scheme_details(appConfig, schemeDetailMasterSection, scheme.schemeDetails.name, srn)))
-        } else {
-          Future.successful(NotFound(errorHandler.notFoundTemplate))
-        }
+      if (featureSwitchManagementService.get(Toggles.isVariationsEnabled)) {
+        onPageLoadVariationsToggledOn(srn)
+      } else {
+        onPageLoadVariationsToggledOff(srn)
       }
+  }
+
+  private def onPageLoadVariationsToggledOff(srn: String)(implicit
+                                                          request: AuthenticatedRequest[AnyContent],
+                                                          hc: HeaderCarrier): Future[Result] = {
+    schemeDetailsConnector.getSchemeDetails(request.psaId.id, schemeIdType = "srn", srn).flatMap { scheme =>
+      val schemeDetailMasterSection = schemeTransformer.transformMasterSection(scheme)
+      Future.successful(Ok(psa_scheme_details(appConfig, schemeDetailMasterSection, scheme.schemeDetails.name, srn)))
+    }
+  }
+
+  private def onPageLoadVariationsToggledOn(srn: String)(implicit
+                                                         request: AuthenticatedRequest[AnyContent],
+                                                          hc: HeaderCarrier): Future[Result] = {
+    schemeDetailsConnector.getSchemeDetailsVariations(request.psaId.id, schemeIdType = "srn", srn).flatMap { userAnswers =>
+      val taskSections: SchemeDetailsTaskList = new HsTaskListHelperVariations(userAnswers).taskList
+      schemeDetailsReadOnlyCacheConnector.upsert(request.externalId, userAnswers.json).map( _ =>
+        Ok(schemeDetailsTaskList(appConfig, taskSections))
+      )
+    }
   }
 }
