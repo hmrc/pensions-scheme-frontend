@@ -41,7 +41,7 @@ class CheckYourAnswersBenefitsAndInsuranceController @Inject()(appConfig: Fronte
                                                               )(implicit val ec: ExecutionContext) extends FrontendController
   with Enumerable.Implicits with I18nSupport with Retrievals {
 
-  def onPageLoad(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData andThen requireData) {
+  def onPageLoad(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData() andThen requireData) {
     implicit request =>
       implicit val userAnswers = request.userAnswers
       val benefitsAndInsuranceSection = AnswerSection(
@@ -62,7 +62,7 @@ class CheckYourAnswersBenefitsAndInsuranceController @Inject()(appConfig: Fronte
       ))
   }
 
-  def onSubmit(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData() andThen requireData).async {
     implicit request =>
       sectionComplete.setCompleteFlag(request.externalId, IsAboutBenefitsAndInsuranceCompleteId, request.userAnswers, value = true) map { _ =>
         Redirect(controllers.routes.SchemeTaskListController.onPageLoad())

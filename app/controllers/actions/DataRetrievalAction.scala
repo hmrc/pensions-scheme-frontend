@@ -45,7 +45,7 @@ class DataRetrievalImpl(dataConnector: UserAnswersCacheConnector,
       case UpdateMode | CheckUpdateMode =>
         srn.map { srn =>
           lockConnector.getLock(request.psaId.id, srn).flatMap {
-            case Some(SchemeVarianceLock(true, true)) => getOptionalRequest(updateConnector.fetch(srn))(request)
+            case Some(_) => getOptionalRequest(updateConnector.fetch(srn))(request)
             case _ => placeLockAndGetRequest(srn)(request, implicitly)
           }
         }.getOrElse(Future(OptionalDataRequest(request.request, request.externalId, None, request.psaId)))
@@ -57,7 +57,7 @@ class DataRetrievalImpl(dataConnector: UserAnswersCacheConnector,
       case None => Future(OptionalDataRequest(request.request, request.externalId, None, request.psaId))
       case Some(data) =>
         lockConnector.lock(request.psaId.id, srn).flatMap {
-          case SchemeVarianceLock(true, true) => updateConnector.upsert(srn, UserAnswers(data).json).map { _ =>
+          case VarianceLock => updateConnector.upsert(srn, UserAnswers(data).json).map { _ =>
             OptionalDataRequest(request.request, request.externalId, Some(UserAnswers(data)), request.psaId)
           }
           case _ => getOptionalRequest(viewConnector.fetch(request.externalId))(request)

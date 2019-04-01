@@ -42,7 +42,7 @@ class CompanyContactDetailsController @Inject()(
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData() andThen requireData).async {
     implicit request =>
       CompanyDetailsId(index).retrieve.right.map {
         companyDetails =>
@@ -50,7 +50,7 @@ class CompanyContactDetailsController @Inject()(
       }
   }
 
-  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData() andThen requireData).async {
     implicit request =>
       CompanyDetailsId(index).retrieve.right.map {
         companyDetails =>

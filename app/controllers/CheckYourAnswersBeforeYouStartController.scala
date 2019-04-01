@@ -41,7 +41,7 @@ class CheckYourAnswersBeforeYouStartController @Inject()(appConfig: FrontendAppC
                                                         )(implicit val ec: ExecutionContext) extends FrontendController
   with Enumerable.Implicits with I18nSupport with Retrievals {
 
-  def onPageLoad: Action[AnyContent] = (authenticate andThen getData andThen requireData) {
+  def onPageLoad: Action[AnyContent] = (authenticate andThen getData() andThen requireData) {
     implicit request =>
 
       implicit val userAnswers = request.userAnswers
@@ -63,7 +63,7 @@ class CheckYourAnswersBeforeYouStartController @Inject()(appConfig: FrontendAppC
         returnOverview = !userAnswers.get(IsBeforeYouStartCompleteId).getOrElse(false)))
   }
 
-  def onSubmit: Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onSubmit: Action[AnyContent] = (authenticate andThen getData() andThen requireData).async {
     implicit request =>
       sectionComplete.setCompleteFlag(request.externalId, IsBeforeYouStartCompleteId, request.userAnswers, value = true) map { _ =>
         Redirect(controllers.routes.SchemeTaskListController.onPageLoad())

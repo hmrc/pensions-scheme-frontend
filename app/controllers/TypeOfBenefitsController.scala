@@ -45,7 +45,7 @@ class TypeOfBenefitsController @Inject()(appConfig: FrontendAppConfig,
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate andThen getData() andThen requireData).async {
     implicit request =>
       val preparedForm = request.userAnswers.get(TypeOfBenefitsId) match {
         case None => form
@@ -54,7 +54,7 @@ class TypeOfBenefitsController @Inject()(appConfig: FrontendAppConfig,
       Future.successful(Ok(typeOfBenefits(appConfig, preparedForm, mode, existingSchemeName)))
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = (authenticate andThen getData() andThen requireData).async {
     implicit request =>
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) =>

@@ -45,7 +45,7 @@ class TrusteeNinoController @Inject()(appConfig: FrontendAppConfig,
 
   private val form: Form[Nino] = new TrusteeNinoFormProvider()()
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData() andThen requireData).async {
     implicit request =>
       TrusteeDetailsId(index).retrieve.right.map { trusteeDetails =>
         val filledForm = request.userAnswers.get(TrusteeNinoId(index)).fold(form)(form.fill)
@@ -54,7 +54,7 @@ class TrusteeNinoController @Inject()(appConfig: FrontendAppConfig,
       }
   }
 
-  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData() andThen requireData).async {
     implicit request =>
       form.bindFromRequest().fold(
         errors => TrusteeDetailsId(index).retrieve.right.map { trusteeDetails =>

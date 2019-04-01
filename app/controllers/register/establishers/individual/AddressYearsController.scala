@@ -46,14 +46,14 @@ class AddressYearsController @Inject()(
 
   private val form = new AddressYearsFormProvider()(Message("messages__common_error__current_address_years"))
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData() andThen requireData).async {
     implicit request =>
       EstablisherDetailsId(index).retrieve.right.map { establisherDetails =>
         get(AddressYearsId(index), form, viewModel(mode, index, establisherDetails.fullName, srn))
       }
   }
 
-  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData() andThen requireData).async {
     implicit request =>
       EstablisherDetailsId(index).retrieve.right.map { establisherDetails =>
         post(AddressYearsId(index), mode, form, viewModel(mode, index, establisherDetails.fullName, srn))

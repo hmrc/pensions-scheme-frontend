@@ -62,12 +62,12 @@ class IndividualPostCodeLookupController @Inject()(
         }
     }
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData() andThen requireData).async {
     implicit request =>
       postCodeViewmodel(index, mode, srn).retrieve.right map get
   }
 
-  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData() andThen requireData).async {
     implicit request =>
       postCodeViewmodel(index, mode, srn).retrieve.right.map { vm =>
         post(IndividualPostCodeLookupId(index), vm, mode)

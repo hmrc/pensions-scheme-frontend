@@ -48,7 +48,7 @@ class PartnerUniqueTaxReferenceController @Inject()(
   private val form: Form[UniqueTaxReference] = formProvider()
 
   def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData andThen requireData).async {
+    (authenticate andThen getData() andThen requireData).async {
     implicit request =>
       PartnerDetailsId(establisherIndex, partnerIndex).retrieve.right.map { _ =>
         val preparedForm = request.userAnswers.get(PartnerUniqueTaxReferenceId(establisherIndex, partnerIndex)).fold(form)(form.fill)
@@ -59,7 +59,7 @@ class PartnerUniqueTaxReferenceController @Inject()(
 
 
   def onSubmit(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData andThen requireData).async {
+    (authenticate andThen getData() andThen requireData).async {
     implicit request =>
       PartnerDetailsId(establisherIndex, partnerIndex).retrieve.right.map { partner =>
         form.bindFromRequest().fold(
