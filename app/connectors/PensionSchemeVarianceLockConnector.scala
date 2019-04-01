@@ -19,9 +19,8 @@ package connectors
 import com.google.inject.ImplementedBy
 import config.FrontendAppConfig
 import javax.inject.{Inject, Singleton}
-import models.SchemeVarianceLock
+import models.{Lock, SchemeVariance}
 import play.api.Logger
-import play.api.http.Status
 import play.api.http.Status._
 import play.api.libs.json.{JsError, JsResultException, JsSuccess, Json}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpException, HttpReads, HttpResponse}
@@ -33,9 +32,9 @@ import scala.util.{Failure, Try}
 @ImplementedBy(classOf[PensionSchemeVarianceLockConnectorImpl])
 trait PensionSchemeVarianceLockConnector {
 
-  def lock(psaId: String, srn: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[SchemeVarianceLock]
+  def lock(psaId: String, srn: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Lock]
 
-  def getLock(psaId: String, srn: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[SchemeVarianceLock]]
+  def getLock(psaId: String, srn: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[SchemeVariance]]
 
   def releaseLock(psaId: String, srn: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Unit]
 
@@ -44,7 +43,7 @@ trait PensionSchemeVarianceLockConnector {
 @Singleton
 class PensionSchemeVarianceLockConnectorImpl @Inject()(http: HttpClient, config: FrontendAppConfig) extends PensionSchemeVarianceLockConnector {
 
-  override def lock(psaId: String, srn: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[SchemeVarianceLock] = {
+  override def lock(psaId: String, srn: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Lock] = {
 
     implicit val headerCarrier: HeaderCarrier = hc.withExtraHeaders("psaId" -> psaId, "srn" -> srn)
 
@@ -54,7 +53,7 @@ class PensionSchemeVarianceLockConnectorImpl @Inject()(http: HttpClient, config:
 
       response.status match {
         case OK =>
-          Json.parse(response.body).validate[SchemeVarianceLock] match {
+          Json.parse(response.body).validate[Lock] match {
             case JsSuccess(value, _) => value
             case JsError(errors) => throw JsResultException(errors)
           }
@@ -64,7 +63,7 @@ class PensionSchemeVarianceLockConnectorImpl @Inject()(http: HttpClient, config:
     } andThen logExceptions("Unable to get the lock")
   }
 
-  override def getLock(psaId: String, srn: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[SchemeVarianceLock]] = {
+  override def getLock(psaId: String, srn: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[SchemeVariance]] = {
 
     implicit val rds: HttpReads[HttpResponse] = new HttpReads[HttpResponse] {
       override def read(method: String, url: String, response: HttpResponse): HttpResponse = response
@@ -80,7 +79,7 @@ class PensionSchemeVarianceLockConnectorImpl @Inject()(http: HttpClient, config:
         case NOT_FOUND =>
           None
         case OK =>
-          Json.parse(response.body).validate[SchemeVarianceLock] match {
+          Json.parse(response.body).validate[SchemeVariance] match {
             case JsSuccess(value, _) => Some(value)
             case JsError(errors) => throw JsResultException(errors)
           }

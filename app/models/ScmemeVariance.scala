@@ -16,7 +16,10 @@
 
 package models
 
-import play.api.libs.json.{Json, OFormat, Writes}
+import play.api.libs.json._
+import utils.{Enumerable, WithName}
+
+import scala.language.implicitConversions
 
 
 case class SchemeVariance(psaId: String, srn: String)
@@ -25,9 +28,32 @@ object SchemeVariance {
   implicit val format: OFormat[SchemeVariance] = Json.format[SchemeVariance]
 }
 
-case class SchemeVarianceLock(psaIdLocked: Boolean, srnLocked: Boolean)
+sealed trait Lock
 
-object SchemeVarianceLock {
-  implicit val format: OFormat[SchemeVarianceLock] = Json.format[SchemeVarianceLock]
-  implicit val writes: Writes[SchemeVarianceLock] = Json.writes[SchemeVarianceLock]
+case object VarianceLock extends WithName("SuccessfulVarianceLock") with Lock
+case object PsaLock extends WithName("AnotherPsaHasLockedScheme") with Lock
+case object SchemeLock extends WithName("PsaHasLockedAnotherScheme") with Lock
+
+
+object Lock extends Enumerable.Implicits {
+
+  override def toString: String = super.toString.toLowerCase
+
+  implicit object LockFormat extends Format[Lock] {
+
+    implicit def reads(json: JsValue) : JsResult[Lock] =
+      json match {
+        case JsString("SuccessfulVarianceLock") => JsSuccess(VarianceLock)
+        case JsString("AnotherPsaHasLockedScheme") => JsSuccess(PsaLock)
+        case JsString("PsaHasLockedAnotherScheme") => JsSuccess(SchemeLock)
+        case _ => JsError("cannot parse it")
+      }
+
+    implicit def writes(lock: Lock) = JsString(lock.toString)
+
+  }
+
+  implicit val enumerable: Enumerable[Lock] = Enumerable(
+    Seq(VarianceLock, PsaLock, SchemeLock).map(v => v.toString -> v): _*
+  )
 }

@@ -17,7 +17,7 @@
 package connectors
 
 import com.github.tomakehurst.wiremock.client.WireMock._
-import models.SchemeVarianceLock
+import models.{Lock, SchemeVariance, VarianceLock}
 import org.scalatest.{AsyncFlatSpec, Matchers}
 import play.api.http.Status
 import play.api.libs.json.Json
@@ -30,7 +30,7 @@ class PensionSchemeVarianceLockConnectorSpec extends AsyncFlatSpec with Matchers
 
   import PensionSchemeVarianceLockConnectorSpec._
 
-  "lock" should "return the SchemeVarianceLock for a valid request/response" in {
+  "lock" should "return the Lock for a valid request/response" in {
 
     server.stubFor(
       post(urlEqualTo(lockUrl))
@@ -40,14 +40,14 @@ class PensionSchemeVarianceLockConnectorSpec extends AsyncFlatSpec with Matchers
           aResponse()
             .withStatus(Status.OK)
             .withHeader("Content-Type", "application/json")
-            .withBody(validSchemeVarianceLockResponse)
+            .withBody(Json.toJson(VarianceLock).toString())
         )
     )
 
     val connector = injector.instanceOf[PensionSchemeVarianceLockConnectorImpl]
 
     connector.lock(psaId, srn).map(schemeVariance =>
-      schemeVariance shouldBe schemeVarianceLockResponse
+      schemeVariance shouldBe VarianceLock
     )
 
   }
@@ -131,7 +131,7 @@ class PensionSchemeVarianceLockConnectorSpec extends AsyncFlatSpec with Matchers
     }
   }
 
-  "releaseLock" should "return the SchemeVarianceLock for a valid request/response" in {
+  "releaseLock" should "return the Lock for a valid request/response" in {
 
     server.stubFor(
       delete(urlEqualTo(releaseLockUrl))
@@ -183,7 +183,7 @@ object PensionSchemeVarianceLockConnectorSpec {
   private val getLockUrl = s"/pensions-scheme/update-scheme/getLock"
   private val releaseLockUrl = s"/pensions-scheme/update-scheme/releaseLock"
 
-  val schemeVarianceLockResponse = SchemeVarianceLock(true, true)
+  val schemeVarianceLockResponse = SchemeVariance("A2100005", "00000000AA")
 
   private implicit val headerCarrier: HeaderCarrier = HeaderCarrier()
 
