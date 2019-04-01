@@ -126,7 +126,7 @@ object EstablishersCompanyNavigatorSpec extends OptionValues {
 
   private def checkYourAnswers = controllers.register.establishers.company.routes.CheckYourAnswersController.onPageLoad(NormalMode, None, 0)
 
-  private def addEstablisher = controllers.register.establishers.routes.AddEstablisherController.onPageLoad(NormalMode)
+  private def addEstablisher = controllers.register.establishers.routes.AddEstablisherController.onPageLoad(NormalMode, None)
 
   private def addCompanyDirectors(index: Int, mode: Mode) = controllers.register.establishers.company.routes.AddCompanyDirectorsController.onPageLoad(mode, None, index)
 

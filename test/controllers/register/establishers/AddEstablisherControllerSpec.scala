@@ -41,7 +41,7 @@ class AddEstablisherControllerSpec extends ControllerSpecBase {
   "AddEstablisher Controller" must {
 
     "return OK and the correct view for a GET when scheme name is present" in {
-      val result = controller().onPageLoad(NormalMode)(fakeRequest)
+      val result = controller().onPageLoad(NormalMode, None)(fakeRequest)
 
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString()
@@ -50,21 +50,21 @@ class AddEstablisherControllerSpec extends ControllerSpecBase {
     "not populate the view on a GET when the question has previously been answered" in {
       val getRelevantData = individualEstablisherDataRetrieval
 
-      val result = controller(getRelevantData).onPageLoad(NormalMode)(fakeRequest)
+      val result = controller(getRelevantData).onPageLoad(NormalMode, None)(fakeRequest)
       contentAsString(result) mustBe viewAsString(form, Seq(johnDoe))
     }
 
     "populate the view with establishers when they exist" in {
       val establishersAsEntities = Seq(johnDoe, testLtd)
       val getRelevantData = establisherWithDeletedDataRetrieval
-      val result = controller(getRelevantData).onPageLoad(NormalMode)(fakeRequest)
+      val result = controller(getRelevantData).onPageLoad(NormalMode, None)(fakeRequest)
 
       contentAsString(result) mustBe viewAsString(form, establishersAsEntities)
     }
 
     "exclude the deleted establishers from the list" in {
       val getRelevantData = establisherWithDeletedDataRetrieval
-      val result = controller(getRelevantData).onPageLoad(NormalMode)(fakeRequest)
+      val result = controller(getRelevantData).onPageLoad(NormalMode, None)(fakeRequest)
 
       contentAsString(result) mustBe viewAsString(form, Seq(johnDoe, testLtd))
     }
@@ -72,21 +72,21 @@ class AddEstablisherControllerSpec extends ControllerSpecBase {
     "redirect to the next page when valid data is submitted" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "true"))
 
-      val result = controller().onSubmit(NormalMode)(postRequest)
+      val result = controller().onSubmit(NormalMode, None)(postRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
     }
 
     "redirect to the next page when no establishers exist and the user submits" in {
-      val result = controller().onSubmit(NormalMode)(fakeRequest)
+      val result = controller().onSubmit(NormalMode, None)(fakeRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
     }
 
     "redirect to Session Expired for a GET if no existing data is found" in {
-      val result = controller(dontGetAnyData).onPageLoad(NormalMode)(fakeRequest)
+      val result = controller(dontGetAnyData).onPageLoad(NormalMode, None)(fakeRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
@@ -94,7 +94,7 @@ class AddEstablisherControllerSpec extends ControllerSpecBase {
 
     "redirect to Session Expired for a POST if no existing data is found" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "true"))
-      val result = controller(dontGetAnyData).onSubmit(NormalMode)(postRequest)
+      val result = controller(dontGetAnyData).onSubmit(NormalMode, None)(postRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
@@ -104,7 +104,7 @@ class AddEstablisherControllerSpec extends ControllerSpecBase {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "invalid value"))
       val boundForm = form.bind(Map("value" -> "invalid value"))
 
-      val result = controller().onSubmit(NormalMode)(postRequest)
+      val result = controller().onSubmit(NormalMode, None)(postRequest)
 
       status(result) mustBe BAD_REQUEST
       contentAsString(result) mustBe viewAsString(boundForm)
@@ -141,7 +141,8 @@ object AddEstablisherControllerSpec extends AddEstablisherControllerSpec {
       form,
       NormalMode,
       allEstablishers,
-      None
+      None,
+      routes.AddEstablisherController.onSubmit(NormalMode, None)
     )(fakeRequest, messages).toString
 
   private val day = LocalDate.now().getDayOfMonth

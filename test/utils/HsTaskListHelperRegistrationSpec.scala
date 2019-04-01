@@ -130,7 +130,7 @@ class HsTaskListHelperRegistrationSpec extends WordSpec with MustMatchers with O
       val helper = new HsTaskListHelperRegistration(userAnswers)
       helper.addEstablisherHeader(userAnswers) mustBe
         SchemeDetailsTaskListSection(None, Link(addEstablisherLinkText,
-          controllers.register.establishers.routes.EstablisherKindController.onPageLoad(NormalMode, userAnswers.allEstablishers.size).url), None)
+          controllers.register.establishers.routes.EstablisherKindController.onPageLoad(NormalMode, userAnswers.allEstablishers.size, None).url), None)
     }
 
     "return the link to add establisher page when establishers are added " in {
@@ -139,7 +139,7 @@ class HsTaskListHelperRegistrationSpec extends WordSpec with MustMatchers with O
       val helper = new HsTaskListHelperRegistration(userAnswers)
       helper.addEstablisherHeader(userAnswers) mustBe
         SchemeDetailsTaskListSection(None, Link(changeEstablisherLinkText,
-          controllers.register.establishers.routes.AddEstablisherController.onPageLoad(NormalMode).url), None)
+          controllers.register.establishers.routes.AddEstablisherController.onPageLoad(NormalMode, None).url), None)
     }
   }
 
