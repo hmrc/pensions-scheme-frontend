@@ -21,8 +21,8 @@ import identifiers.register.establishers.EstablishersId
 import models.Link
 import models.address.Address
 import play.api.libs.json.JsPath
+import utils.checkyouranswers.CheckYourAnswers
 import utils.{CountryOptions, UserAnswers}
-import utils.checkyouranswers.{AddressCYA, CheckYourAnswers}
 import viewmodels.AnswerRow
 
 case class CompanyPreviousAddressId(index: Int) extends TypedIdentifier[Address] {
@@ -34,24 +34,11 @@ object CompanyPreviousAddressId {
 
   implicit def cya(implicit countryOptions: CountryOptions): CheckYourAnswers[CompanyPreviousAddressId] =
     new CheckYourAnswers[CompanyPreviousAddressId] {
-
-      def addressAnswer(address: Address): Seq[String] = {
-        val country = countryOptions.options.find(_.value == address.country).map(_.label).getOrElse(address.country)
-        Seq(
-          Some(address.addressLine1),
-          Some(address.addressLine2),
-          address.addressLine3,
-          address.addressLine4,
-          address.postcode,
-          Some(country)
-        ).flatten
-      }
-
       def previousAddressRow(userAnswers: UserAnswers, changeLink: Option[Link], id: CompanyPreviousAddressId): Seq[AnswerRow] = {
         userAnswers.get(id).map { address =>
           Seq(AnswerRow(
             "messages__common__cya__previous_address",
-            addressAnswer(address),
+            userAnswers.addressAnswer(address),
             answerIsMessageKey = false,
             changeLink
           ))

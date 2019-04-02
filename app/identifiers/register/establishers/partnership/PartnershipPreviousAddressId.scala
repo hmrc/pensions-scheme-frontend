@@ -34,24 +34,11 @@ object PartnershipPreviousAddressId {
 
   implicit def cya(implicit countryOptions: CountryOptions): CheckYourAnswers[PartnershipPreviousAddressId] =
     new CheckYourAnswers[PartnershipPreviousAddressId] {
-
-      def addressAnswer(address: Address): Seq[String] = {
-        val country = countryOptions.options.find(_.value == address.country).map(_.label).getOrElse(address.country)
-        Seq(
-          Some(address.addressLine1),
-          Some(address.addressLine2),
-          address.addressLine3,
-          address.addressLine4,
-          address.postcode,
-          Some(country)
-        ).flatten
-      }
-
       def previousAddressRow(userAnswers: UserAnswers, changeLink: Option[Link], id: PartnershipPreviousAddressId): Seq[AnswerRow] = {
         userAnswers.get(id).map { address =>
           Seq(AnswerRow(
             "messages__common__cya__previous_address",
-            addressAnswer(address),
+            userAnswers.addressAnswer(address),
             answerIsMessageKey = false,
             changeLink
           ))

@@ -27,6 +27,7 @@ import identifiers.register.trustees.company.CompanyDetailsId
 import identifiers.register.trustees.individual.TrusteeDetailsId
 import identifiers.register.trustees.partnership.{IsPartnershipCompleteId, PartnershipDetailsId => TrusteePartnershipDetailsId}
 import identifiers.register.trustees.{IsTrusteeCompleteId, TrusteeKindId, TrusteesId}
+import models.address.Address
 import models.person.PersonDetails
 import models.register._
 import models.{CompanyDetails, PartnershipDetails}
@@ -325,6 +326,18 @@ case class UserAnswers(json: JsValue = Json.obj()) {
         },
         userAnswers => fn(userAnswers)
       )
+  }
+
+  def addressAnswer(address: Address)(implicit countryOptions: CountryOptions): Seq[String] = {
+    val country = countryOptions.options.find(_.value == address.country).map(_.label).getOrElse(address.country)
+    Seq(
+      Some(address.addressLine1),
+      Some(address.addressLine2),
+      address.addressLine3,
+      address.addressLine4,
+      address.postcode,
+      Some(country)
+    ).flatten
   }
 
 }
