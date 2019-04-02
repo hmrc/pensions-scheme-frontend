@@ -22,7 +22,7 @@ import identifiers.register.establishers.IsEstablisherCompleteId
 import identifiers.register.establishers.company.{CompanyDetailsId => EstablisherCompanyDetailsId}
 import identifiers.register.establishers.individual.EstablisherDetailsId
 import identifiers.register.establishers.partnership.{PartnershipDetailsId => EstablisherPartnershipDetailsId}
-import identifiers.register.trustees.IsTrusteeCompleteId
+import identifiers.register.trustees.{IsTrusteeCompleteId, MoreThanTenTrusteesId}
 import identifiers.register.trustees.company.{CompanyDetailsId => TrusteeCompanyDetailsId}
 import identifiers.register.trustees.individual.TrusteeDetailsId
 import identifiers.register.trustees.partnership.{IsPartnershipCompleteId, PartnershipDetailsId => TrusteePartnershipDetailsId}
@@ -193,7 +193,7 @@ class HsTaskListHelperRegistrationSpec extends WordSpec with MustMatchers with O
           SchemeDetailsTaskListSection(Some(true), Link(companyLinkText,
             controllers.register.establishers.company.routes.CompanyReviewController.onPageLoad(NormalMode, None, 1).url), Some("test company")),
           SchemeDetailsTaskListSection(Some(true), Link(partnershipLinkText,
-            controllers.register.establishers.partnership.routes.PartnershipReviewController.onPageLoad(NormalMode,2, None).url), Some("test partnership"))
+            controllers.register.establishers.partnership.routes.PartnershipReviewController.onPageLoad(NormalMode, 2, None).url), Some("test partnership"))
         )
     }
 
@@ -300,6 +300,21 @@ class HsTaskListHelperRegistrationSpec extends WordSpec with MustMatchers with O
       helper.declarationEnabled(userAnswers) mustBe true
     }
 
+
+    "return false when all the sections are completed with 10 trustees but the more than ten question has not been answered" in {
+      val userAnswers = answersDataWithTenTrustees().asOpt.value
+      val helper = new HsTaskListHelperRegistration(userAnswers)
+      helper.declarationEnabled(userAnswers) mustBe false
+    }
+
+    "return true when all the sections are completed with 10 trustees and the more than ten question has been answered" in {
+      val userAnswers = answersDataWithTenTrustees().flatMap(
+        _.set(MoreThanTenTrusteesId)(true)
+      ).asOpt.value
+      val helper = new HsTaskListHelperRegistration(userAnswers)
+      helper.declarationEnabled(userAnswers) mustBe true
+    }
+
     "return false when about you start section not completed" in {
       val userAnswers = answersData(isCompleteBeforeStart = false).asOpt.value
       val helper = new HsTaskListHelperRegistration(userAnswers)
@@ -363,9 +378,9 @@ class HsTaskListHelperRegistrationSpec extends WordSpec with MustMatchers with O
 
   "declarationLink" must {
     "return the link when all the sections are completed" in {
-        val userAnswers = answersData().asOpt.value
-        val helper = new HsTaskListHelperRegistration(userAnswers)
-        helper.declarationLink(userAnswers).value mustBe Link(declarationLinkText, controllers.register.routes.DeclarationController.onPageLoad().url)
+      val userAnswers = answersData().asOpt.value
+      val helper = new HsTaskListHelperRegistration(userAnswers)
+      helper.declarationLink(userAnswers).value mustBe Link(declarationLinkText, controllers.register.routes.DeclarationController.onPageLoad().url)
     }
 
     "return None when all the sections are not completed" in {
@@ -421,6 +436,37 @@ object HsTaskListHelperRegistrationSpec extends SpecBase {
         )
       )
     )
+  }
+
+  private def answersDataWithTenTrustees(isCompleteBeforeStart: Boolean = true,
+                                         isCompleteAboutMembers: Boolean = true,
+                                         isCompleteAboutBank: Boolean = true,
+                                         isCompleteAboutBenefits: Boolean = true,
+                                         isCompleteWk: Boolean = true,
+                                         isCompleteEstablishers: Boolean = true,
+                                         isCompleteTrustees: Boolean = true
+                                        ): JsResult[UserAnswers] = {
+
+    val addTrustee: (UserAnswers, Int) => JsResult[UserAnswers] = (ua, index) =>
+      ua.set(TrusteeDetailsId(index))(PersonDetails(s"firstName$index", None, s"lastName$index", LocalDate.now())).flatMap(
+        _.set(IsTrusteeCompleteId(index))(isCompleteTrustees))
+
+    answersData(isCompleteBeforeStart,
+      isCompleteAboutMembers,
+      isCompleteAboutBank,
+      isCompleteAboutBenefits,
+      isCompleteWk,
+      isCompleteEstablishers,
+      isCompleteTrustees)
+      .flatMap(addTrustee(_, 1))
+      .flatMap(addTrustee(_, 2))
+      .flatMap(addTrustee(_, 3))
+      .flatMap(addTrustee(_, 4))
+      .flatMap(addTrustee(_, 5))
+      .flatMap(addTrustee(_, 6))
+      .flatMap(addTrustee(_, 7))
+      .flatMap(addTrustee(_, 8))
+      .flatMap(addTrustee(_, 9))
   }
 
   private def allEstablishers(isCompleteEstablisher: Boolean = true): UserAnswers = {
