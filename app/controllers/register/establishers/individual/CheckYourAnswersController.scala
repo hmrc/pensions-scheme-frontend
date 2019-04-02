@@ -60,7 +60,7 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
             AddressYearsId(index).row(
               controllers.register.establishers.individual.routes.AddressYearsController.onPageLoad(CheckMode, index, srn).url, mode) ++
             PreviousAddressId(index).row(
-              controllers.register.establishers.individual.routes.PreviousAddressController.onPageLoad(CheckMode, index, srn).url
+              controllers.register.establishers.individual.routes.PreviousAddressController.onPageLoad(CheckMode, index, srn).url, mode
             ) ++
             ContactDetailsId(index).row(
               controllers.register.establishers.individual.routes.ContactDetailsController.onPageLoad(CheckMode, index, srn).url
