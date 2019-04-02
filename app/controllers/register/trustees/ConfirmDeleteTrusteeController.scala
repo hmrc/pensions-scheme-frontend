@@ -30,6 +30,7 @@ import models.person.PersonDetails
 import models.register.trustees.TrusteeKind
 import models.register.trustees.TrusteeKind.{Company, Individual, Partnership}
 import models.requests.DataRequest
+import models._
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Result}

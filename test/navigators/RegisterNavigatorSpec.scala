@@ -71,8 +71,6 @@ object RegisterNavigatorSpec extends OptionValues{
 
   private def schemeSuccess = controllers.register.routes.SchemeSuccessController.onPageLoad()
 
-  private def whatYouWillNeed = controllers.routes.WhatYouWillNeedController.onPageLoad()
-
   private def beforeYouStart = controllers.routes.BeforeYouStartController.onPageLoad()
 
   private def expired = controllers.routes.SessionExpiredController.onPageLoad()

@@ -64,7 +64,7 @@ object AboutMembersNavigatorSpec {
 
   private def membershipPensionRegulator(mode: Mode): Call = controllers.routes.MembershipPensionRegulatorController.onPageLoad(mode)
 
-  private def cya: Call = controllers.routes.CheckYourAnswersMembersController.onPageLoad()
+  private def cya: Call = controllers.routes.CheckYourAnswersMembersController.onPageLoad(NormalMode, None)
 
   private def dataDescriber(answers: UserAnswers): String = answers.toString
 }

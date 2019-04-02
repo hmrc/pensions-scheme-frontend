@@ -33,14 +33,17 @@
             }
         </p>
     </div>
-    <div class="cya-change">
-        <a id="cya-@idPath-change" href='@row.changeUrl'>
-            <span aria-hidden="true">@messages("site.change")</span>
-            @if(messages(row.visuallyHiddenText) != messages("site.hidden-edit")) {
-            <span class="visually-hidden">@messages(row.visuallyHiddenText)</span>
-            } else {
-            <span class="visually-hidden">@messages(row.visuallyHiddenText, messages(row.label))</span>
-            }
-        </a>
-    </div>
+
+    @row.changeUrl.map{ changeUrl =>
+        <div class="cya-change">
+            <a id="cya-@idPath-change" href='@changeUrl'>
+                <span aria-hidden="true">@messages("site.change")</span>
+                @if(messages(row.visuallyHiddenText) != messages("site.hidden-edit")) {
+                <span class="visually-hidden">@messages(row.visuallyHiddenText)</span>
+                } else {
+                <span class="visually-hidden">@messages(row.visuallyHiddenText, messages(row.label))</span>
+                }
+            </a>
+        </div>
+    }
 </li>

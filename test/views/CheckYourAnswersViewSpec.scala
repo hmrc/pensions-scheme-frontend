@@ -17,6 +17,7 @@
 package views
 
 import controllers.routes
+import models.Mode
 import play.twirl.api.HtmlFormat
 import viewmodels.Section
 import views.behaviours.{CheckYourAnswersBehaviours, ViewBehaviours}
@@ -37,19 +38,18 @@ class CheckYourAnswersViewSpec extends CheckYourAnswersBehaviours with ViewBehav
       returnOverview
     )(fakeRequest, messages)
 
-  def createViewWithData: (Seq[Section]) => HtmlFormat.Appendable = (sections) =>
+  def createViewWithData: (Seq[Section], Mode) => HtmlFormat.Appendable = (sections, mode) =>
     check_your_answers(
       frontendAppConfig,
       sections,
       routes.IndexController.onPageLoad(),
-      None
+      None,
+      mode = mode
     )(fakeRequest, messages)
 
   "check_your_answers view" must {
 
     behave like normalPageWithTitle(createView(), messageKeyPrefix, messages("checkYourAnswers.hs.title"), messages("checkYourAnswers.hs.heading"))
-
-    behave like pageWithSubmitButton(createView())
 
     behave like pageWithReturnLink(createView(), (controllers.routes.SchemeTaskListController.onPageLoad().url))
 

@@ -30,6 +30,7 @@ import models.person.PersonDetails
 import models.register.establishers.EstablisherKind
 import models.register.establishers.EstablisherKind._
 import models.requests.DataRequest
+import models._
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Result}
