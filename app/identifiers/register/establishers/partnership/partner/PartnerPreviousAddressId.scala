@@ -18,10 +18,12 @@ package identifiers.register.establishers.partnership.partner
 
 import identifiers.TypedIdentifier
 import identifiers.register.establishers.EstablishersId
+import models.Link
 import models.address.Address
 import play.api.libs.json.JsPath
-import utils.CountryOptions
-import utils.checkyouranswers.{AddressCYA, CheckYourAnswers}
+import utils.checkyouranswers.CheckYourAnswers
+import utils.{CountryOptions, UserAnswers}
+import viewmodels.AnswerRow
 
 case class PartnerPreviousAddressId(establisherIndex: Int, partnerIndex: Int) extends TypedIdentifier[Address] {
   override def path: JsPath = EstablishersId(establisherIndex).path \ "partner" \ partnerIndex \ PartnerPreviousAddressId.toString
@@ -31,8 +33,22 @@ object PartnerPreviousAddressId {
   override def toString: String = "partnerPreviousAddress"
 
   implicit def cya(implicit countryOptions: CountryOptions): CheckYourAnswers[PartnerPreviousAddressId] =
-    AddressCYA[PartnerPreviousAddressId](
-      label = "messages__common__cya__previous_address",
-      changeAddress = "messages__visuallyhidden__partner__previous_address"
-    )()
+    new CheckYourAnswers[PartnerPreviousAddressId] {
+      def previousAddressRow(userAnswers: UserAnswers, changeLink: Option[Link], id: PartnerPreviousAddressId): Seq[AnswerRow] =
+        userAnswers.get(id).map { address =>
+          Seq(AnswerRow(
+            "messages__common__cya__previous_address",
+            userAnswers.addressAnswer(address),
+            answerIsMessageKey = false,
+            changeLink
+          ))
+        }.getOrElse(Seq.empty[AnswerRow])
+
+      override def row(id: PartnerPreviousAddressId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+        previousAddressRow(userAnswers, Some(Link("site.change", changeUrl,
+          Some("messages__visuallyhidden__partner__previous_address"))), id)
+
+      override def updateRow(id: PartnerPreviousAddressId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+        previousAddressRow(userAnswers, None, id)
+    }
 }

@@ -50,11 +50,11 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
           Some("messages__director__cya__details_heading"),
           Seq(
             DirectorDetailsId(companyIndex, directorIndex).
-              row(routes.DirectorDetailsController.onPageLoad(CheckMode, companyIndex, directorIndex, srn).url),
+              row(routes.DirectorDetailsController.onPageLoad(CheckMode, companyIndex, directorIndex, srn).url, mode),
             DirectorNinoId(companyIndex, directorIndex).
-              row(routes.DirectorNinoController.onPageLoad(CheckMode, companyIndex, directorIndex, srn).url),
+              row(routes.DirectorNinoController.onPageLoad(CheckMode, companyIndex, directorIndex, srn).url, mode),
             DirectorUniqueTaxReferenceId(companyIndex, directorIndex).
-              row(routes.DirectorUniqueTaxReferenceController.onPageLoad(CheckMode, companyIndex, directorIndex, srn).url)
+              row(routes.DirectorUniqueTaxReferenceController.onPageLoad(CheckMode, companyIndex, directorIndex, srn).url, mode)
           ).flatten
         )
 
@@ -64,9 +64,9 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
             DirectorAddressId(companyIndex, directorIndex).
               row(routes.DirectorAddressController.onPageLoad(CheckMode, companyIndex, directorIndex, srn).url),
             DirectorAddressYearsId(companyIndex, directorIndex).
-              row(routes.DirectorAddressYearsController.onPageLoad(CheckMode, companyIndex, directorIndex, srn).url),
+              row(routes.DirectorAddressYearsController.onPageLoad(CheckMode, companyIndex, directorIndex, srn).url, mode),
             DirectorPreviousAddressId(companyIndex, directorIndex).
-              row(routes.DirectorPreviousAddressController.onPageLoad(CheckMode, companyIndex, directorIndex, srn).url),
+              row(routes.DirectorPreviousAddressController.onPageLoad(CheckMode, companyIndex, directorIndex, srn).url, mode),
             DirectorContactDetailsId(companyIndex, directorIndex).
               row(routes.DirectorContactDetailsController.onPageLoad(CheckMode, companyIndex, directorIndex, srn).url)
           ).flatten
@@ -76,7 +76,8 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
           appConfig,
           Seq(companyDirectorDetails, companyDirectorContactDetails),
           routes.CheckYourAnswersController.onSubmit(companyIndex, directorIndex, mode, srn),
-          existingSchemeName
+          existingSchemeName,
+          mode = mode
         )))
 
     }
