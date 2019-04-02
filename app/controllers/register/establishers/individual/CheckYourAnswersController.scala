@@ -50,15 +50,15 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
       val sections = Seq(
         AnswerSection(None,
           EstablisherDetailsId(index).row(
-            controllers.register.establishers.individual.routes.EstablisherDetailsController.onPageLoad(CheckMode, index, srn).url) ++
+            controllers.register.establishers.individual.routes.EstablisherDetailsController.onPageLoad(CheckMode, index, srn).url, mode) ++
             EstablisherNinoId(index).row(
-              controllers.register.establishers.individual.routes.EstablisherNinoController.onPageLoad(CheckMode, index, srn).url) ++
+              controllers.register.establishers.individual.routes.EstablisherNinoController.onPageLoad(CheckMode, index, srn).url, mode) ++
             UniqueTaxReferenceId(index).row(
               routes.UniqueTaxReferenceController.onPageLoad(CheckMode, Index(index), srn).url) ++
             AddressId(index).row(
               controllers.register.establishers.individual.routes.AddressController.onPageLoad(CheckMode, index, srn).url) ++
             AddressYearsId(index).row(
-              controllers.register.establishers.individual.routes.AddressYearsController.onPageLoad(CheckMode, index, srn).url) ++
+              controllers.register.establishers.individual.routes.AddressYearsController.onPageLoad(CheckMode, index, srn).url, mode) ++
             PreviousAddressId(index).row(
               controllers.register.establishers.individual.routes.PreviousAddressController.onPageLoad(CheckMode, index, srn).url
             ) ++

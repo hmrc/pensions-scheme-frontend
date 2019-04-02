@@ -48,7 +48,8 @@ messages__common__country = Country
 messages__common__previous_address = Previous Address
 messages__common__trustee_secondary_header = Trustees for {0}
 messages__common__vat__hint = This has 9 characters and is issued by HMRC. It might start with GB. For example, GB123456789.
-
+messages__common__nino = National Insurance number
+messages__common__reason = Reason
 
 messages__common__postcode_lookup__enter_postcode = Enter the postcode, or if you have an overseas address, {0} enter the address manually {1}
 messages__common__postcode_lookup__address_postcode = Postcode
@@ -115,6 +116,8 @@ site.continue = Continue
 site.delete = Remove
 site.edit = Edit
 site.change = Change
+site.add = Add
+site.not_entered = Not entered
 site.hidden-delete = Delete {0}
 site.hidden-edit = Change {0}
 site.no = No
@@ -1008,6 +1011,7 @@ messages__visuallyhidden__uKBankAccount__date_bank_account = Change approximate 
 messages__visuallyhidden__establisher__nino_yes_no = Change whether the establisher has a National Insurance number
 messages__visuallyhidden__establisher__nino_no = Change why the establisher does not have a National Insurance number
 messages__visuallyhidden__establisher__nino = Change the establisher’s National Insurance number
+messages__visuallyhidden__establisher__nino_add = Add the establisher’s National Insurance number
 messages__visuallyhidden__establisher__utr_yes_no = Change whether the establisher has a Unique Taxpayer Reference number
 messages__visuallyhidden__establisher__utr_no = Change why the establisher does not have a Unique Taxpayer Reference number
 messages__visuallyhidden__establisher__utr = Change the establisher’s Unique Taxpayer Reference number

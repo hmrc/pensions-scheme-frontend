@@ -34,8 +34,8 @@
         </p>
     </div>
 
-    @row.changeUrl.map{ changeUrl =>
-        <div class="cya-change">
+    <div class="cya-change">
+        @row.changeUrl.map{ changeUrl =>
             <a id="cya-@idPath-change" href='@changeUrl.target'>
                 <span aria-hidden="true">@messages(changeUrl.text)</span>
                 @changeUrl.visuallyHiddenText.map { visuallyHiddenText =>
@@ -44,6 +44,6 @@
                     <span class="visually-hidden">@messages("site.hidden-edit")</span>
                 }
             </a>
-        </div>
-    }
+        }
+    </div>
 </li>
