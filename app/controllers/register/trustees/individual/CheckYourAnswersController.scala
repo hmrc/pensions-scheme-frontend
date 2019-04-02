@@ -47,14 +47,14 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData andThen requiredData).async {
     implicit request =>
-      val trusteeDetailsRow = TrusteeDetailsId(index).row(routes.TrusteeDetailsController.onPageLoad(CheckMode, index, None).url)
-      val trusteeNinoRow = TrusteeNinoId(index).row(routes.TrusteeNinoController.onPageLoad(CheckMode, index, None).url)
-      val trusteeUtrRow = UniqueTaxReferenceId(index).row(routes.UniqueTaxReferenceController.onPageLoad(CheckMode, index, None).url)
+      val trusteeDetailsRow = TrusteeDetailsId(index).row(routes.TrusteeDetailsController.onPageLoad(CheckMode, index, None).url, mode)
+      val trusteeNinoRow = TrusteeNinoId(index).row(routes.TrusteeNinoController.onPageLoad(CheckMode, index, None).url, mode)
+      val trusteeUtrRow = UniqueTaxReferenceId(index).row(routes.UniqueTaxReferenceController.onPageLoad(CheckMode, index, None).url, mode)
       val trusteeAddressRow = TrusteeAddressId(index).row(routes.TrusteeAddressController.onPageLoad(CheckMode, index, None).url)
       val trusteeAddressYearsRow = TrusteeAddressYearsId(index).row(
-        routes.TrusteeAddressYearsController.onPageLoad(CheckMode, index, None).url)
+        routes.TrusteeAddressYearsController.onPageLoad(CheckMode, index, None).url, mode)
       val trusteePreviousAddressRow = TrusteePreviousAddressId(index).row(routes.TrusteePreviousAddressController.onPageLoad(CheckMode,
-        index, None).url)
+        index, None).url, mode)
       val trusteeContactDetails = TrusteeContactDetailsId(index).row(routes.TrusteeContactDetailsController.onPageLoad(CheckMode, index, None).url)
 
       val trusteeDetailsSection = AnswerSection(None,
@@ -69,7 +69,8 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
         appConfig,
         Seq(trusteeDetailsSection, contactDetailsSection),
         routes.CheckYourAnswersController.onSubmit(mode, index, srn),
-        existingSchemeName
+        existingSchemeName,
+        mode = mode
       )))
   }
 
