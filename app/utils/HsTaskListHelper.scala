@@ -16,16 +16,15 @@
 
 package utils
 
-import identifiers._
 import identifiers.register.establishers.company.{CompanyDetailsId => EstablisherCompanyDetailsId}
 import identifiers.register.establishers.individual.EstablisherDetailsId
 import identifiers.register.establishers.partnership.{PartnershipDetailsId => EstablisherPartnershipDetailsId}
 import identifiers.register.trustees.company.{CompanyDetailsId => TrusteeCompanyDetailsId}
 import identifiers.register.trustees.individual.TrusteeDetailsId
 import identifiers.register.trustees.partnership.{PartnershipDetailsId => TrusteePartnershipDetailsId}
-import identifiers.{DeclarationDutiesId, IsWorkingKnowledgeCompleteId}
-import models.NormalMode
+import identifiers.{DeclarationDutiesId, IsWorkingKnowledgeCompleteId, _}
 import models.register.Entity
+import models.{Link, NormalMode}
 import play.api.i18n.Messages
 import viewmodels._
 
@@ -62,7 +61,8 @@ abstract class HsTaskListHelper(answers: UserAnswers)(implicit messages: Message
     }
 
     val benefitsAndInsuranceLink = userAnswers.get(IsAboutBenefitsAndInsuranceCompleteId) match {
-      case Some(true) => Link(aboutBenefitsAndInsuranceLinkText, controllers.routes.CheckYourAnswersBenefitsAndInsuranceController.onPageLoad(NormalMode, None).url)
+      case Some(true) => Link(aboutBenefitsAndInsuranceLinkText,
+        controllers.routes.CheckYourAnswersBenefitsAndInsuranceController.onPageLoad(NormalMode, None).url)
       case _ => Link(aboutBenefitsAndInsuranceLinkText, controllers.routes.WhatYouWillNeedBenefitsInsuranceController.onPageLoad.url)
     }
 

@@ -18,40 +18,27 @@ package controllers.register.establishers.individual
 
 import controllers.ControllerSpecBase
 import controllers.actions.{DataRequiredActionImpl, DataRetrievalAction, FakeAuthAction}
-import identifiers.register.establishers.IsEstablisherCompleteId
-import models.{CheckMode, Index, NormalMode}
+import identifiers.register.establishers.individual._
+import identifiers.register.establishers.{IsEstablisherCompleteId, individual}
+import models._
+import models.address.Address
+import models.person.PersonDetails
 import org.joda.time.LocalDate
+import org.scalatest.OptionValues
 import play.api.test.Helpers.{contentAsString, redirectLocation, status, _}
 import utils._
-import viewmodels.{AnswerRow, AnswerSection, Message}
+import utils.checkyouranswers.Ops._
+import viewmodels.AnswerSection
 import views.html.check_your_answers
 
 class CheckYourAnswersControllerSpec extends ControllerSpecBase {
+ import CheckYourAnswersControllerSpec._
 
-  val countryOptions: CountryOptions = new CountryOptions(Seq(InputOption("GB", "United Kingdom")))
+  implicit val countryOptions = new FakeCountryOptions()
+  implicit val request = FakeDataRequest(individualAnswers)
   val firstIndex = Index(0)
 
-  val checkYourAnswersFactory = new CheckYourAnswersFactory(countryOptions)
-
-  lazy val answers: Seq[AnswerRow] = Seq(
-    AnswerRow(
-      "messages__establisher_individual_name_cya_label",
-      Seq("test first name test last name"),
-      answerIsMessageKey = false,
-      Some(routes.EstablisherDetailsController.onPageLoad(CheckMode, firstIndex, None).url),
-      Message("messages__visuallyhidden__common__name", "test first name test last name")
-    ),
-    AnswerRow(
-      "messages__establisher_individual_dob_cya_label",
-      Seq(DateHelper.formatDate(LocalDate.now)),
-      answerIsMessageKey = false,
-      Some(routes.EstablisherDetailsController.onPageLoad(CheckMode, firstIndex, None).url),
-      Message("messages__visuallyhidden__common__dob", "test first name test last name")
-    )
-  )
-
   private val onwardRoute = controllers.routes.IndexController.onPageLoad()
-
   private def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisherHns): CheckYourAnswersController =
     new CheckYourAnswersController(
       frontendAppConfig,
@@ -59,42 +46,68 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase {
       FakeAuthAction,
       dataRetrievalAction,
       new DataRequiredActionImpl,
-      checkYourAnswersFactory,
       FakeSectionComplete,
+      countryOptions,
       new FakeNavigator(onwardRoute)
     )
 
-  "Check Your Answers Controller" must {
+  "CheckYourAnswersController" when {
+    "onPageLoad" must {
+      "return OK and display all the answers" in {
+        val individualDetails = AnswerSection(
+          None,
+          EstablisherDetailsId(firstIndex).row(
+            controllers.register.establishers.individual.routes.EstablisherDetailsController.onPageLoad(CheckMode, firstIndex, None).url) ++
+            EstablisherNinoId(firstIndex).row(
+              controllers.register.establishers.individual.routes.EstablisherNinoController.onPageLoad(CheckMode, firstIndex, None).url) ++
+              UniqueTaxReferenceId(firstIndex).row(
+                routes.UniqueTaxReferenceController.onPageLoad(CheckMode, firstIndex, None).url) ++
+              AddressId(firstIndex).row(
+                controllers.register.establishers.individual.routes.AddressController.onPageLoad(CheckMode, firstIndex, None).url) ++
+              AddressYearsId(firstIndex).row(
+                controllers.register.establishers.individual.routes.AddressYearsController.onPageLoad(CheckMode, firstIndex, None).url) ++
+              PreviousAddressId(firstIndex).row(
+                controllers.register.establishers.individual.routes.PreviousAddressController.onPageLoad(CheckMode, firstIndex, None).url
+              ) ++
+              ContactDetailsId(firstIndex).row(
+                controllers.register.establishers.individual.routes.ContactDetailsController.onPageLoad(CheckMode, firstIndex, None).url
+              )
+          )
 
-    "return 200 and the correct view for a GET" in {
-      val postUrl = routes.CheckYourAnswersController.onSubmit(NormalMode, firstIndex, None)
-      val result = controller().onPageLoad(NormalMode, firstIndex, None)(fakeRequest)
-      status(result) mustBe OK
-      contentAsString(result) mustBe check_your_answers(frontendAppConfig,
-        Seq(AnswerSection(None, answers)), postUrl, None)(fakeRequest, messages).toString
+        val viewAsString = check_your_answers(
+          frontendAppConfig,
+          Seq(individualDetails),
+          routes.CheckYourAnswersController.onSubmit(NormalMode, firstIndex, None),
+          None
+        )(fakeRequest, messages).toString
+
+        val result = controller(individualAnswers.dataRetrievalAction).onPageLoad(NormalMode, firstIndex, None)(request)
+        status(result) mustBe OK
+        contentAsString(result) mustBe viewAsString
+      }
     }
 
-    "redirect to Session Expired for a GET if no existing data is found" in {
-      val result = controller(dontGetAnyData).onPageLoad(NormalMode, firstIndex, None)(fakeRequest)
+    "onSubmit" must {
+      "mark the section as complete and redirect to the next page" in {
+        val result = controller().onSubmit(NormalMode, firstIndex, None)(request)
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result) mustBe Some(desiredRoute.url)
 
-      status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
+        FakeSectionComplete.verify(IsEstablisherCompleteId(firstIndex), true)
+      }
     }
-
-    "redirect to the next page on a POST request" in {
-      val result = controller().onSubmit(NormalMode, firstIndex, None)(fakeRequest)
-
-      status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(onwardRoute.url)
-    }
-
-    "mark establisher as complete on submit" in {
-      val result = controller().onSubmit(NormalMode, firstIndex, None)(fakeRequest)
-      status(result) mustBe SEE_OTHER
-      redirectLocation(result).value mustEqual onwardRoute.url
-      FakeSectionComplete.verify(IsEstablisherCompleteId(firstIndex), true)
-    }
-
   }
+}
 
+object CheckYourAnswersControllerSpec extends OptionValues {
+  val firstIndex = Index(0)
+  val desiredRoute = controllers.routes.IndexController.onPageLoad()
+  val individualAnswers = UserAnswers()
+    .set(EstablisherDetailsId(firstIndex))(PersonDetails("first name", None, "last name", LocalDate.now(), false))
+    .flatMap(_.set(EstablisherNinoId(firstIndex))(Nino.Yes("AB100100A")))
+    .flatMap(_.set(UniqueTaxReferenceId(firstIndex))(UniqueTaxReference.Yes("1234567890")))
+    .flatMap(_.set(AddressId(firstIndex))(Address("Address 1", "Address 2", None, None, None, "GB")))
+    .flatMap(_.set(AddressYearsId(firstIndex))(AddressYears.UnderAYear))
+    .flatMap(_.set(individual.PreviousAddressId(firstIndex))(Address("Previous Address 1", "Previous Address 2", None, None, None, "GB")))
+    .flatMap(_.set(individual.ContactDetailsId(firstIndex))(ContactDetails("test@test.com", "123456789"))).asOpt.value
 }

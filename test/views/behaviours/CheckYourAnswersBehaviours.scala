@@ -16,7 +16,7 @@
 
 package views.behaviours
 
-import models.{Mode, NormalMode, UpdateMode}
+import models.{Link, Mode, NormalMode, UpdateMode}
 import play.twirl.api.HtmlFormat
 import viewmodels._
 import views.ViewSpecBase
@@ -32,7 +32,8 @@ trait CheckYourAnswersBehaviours extends ViewSpecBase {
           val answer1 = "test-answer-1"
           val answer2 = "test-answer-2"
 
-          val answerRow = AnswerRow("test-label", Seq(answer1, answer2), answerIsMessageKey = false, Some("http//:google.com"), "site.hidden-edit")
+          val answerRow = AnswerRow("test-label", Seq(answer1, answer2), answerIsMessageKey = false, Some(
+            Link("site.change", "http//:google.com", Some("site.hidden-edit"))))
 
           val section = AnswerSection(
             Some(headingKey),
@@ -47,7 +48,7 @@ trait CheckYourAnswersBehaviours extends ViewSpecBase {
           assertRenderedByIdWithText(doc, "cya-0-0-question", answerRow.label)
           assertRenderedByIdWithText(doc, "cya-0-0-0-answer", answer1)
           assertRenderedByIdWithText(doc, "cya-0-0-1-answer", answer2)
-          assertLink(doc, "cya-0-0-change", answerRow.changeUrl.get)
+          assertLink(doc, "cya-0-0-change", answerRow.changeUrl.get.target)
           assertRenderedById(doc, "submit")
         }
 
@@ -75,7 +76,7 @@ trait CheckYourAnswersBehaviours extends ViewSpecBase {
             "test-relevance-row-label",
             Seq("test-relevance-row-answer"),
             answerIsMessageKey = false,
-            Some("test-relevance-row-url")
+            Some(Link("site.change", "test-relevance-row-url"))
           )
 
           val answerRow = RepeaterAnswerRow(
@@ -92,7 +93,7 @@ trait CheckYourAnswersBehaviours extends ViewSpecBase {
 
           assertRenderedByIdWithText(doc, "cya-0-relevance-question", relevanceRow.label)
           assertRenderedByIdWithText(doc, "cya-0-relevance-0-answer", relevanceRow.answer.head)
-          assertLink(doc, "cya-0-relevance-change", relevanceRow.changeUrl.get)
+          assertLink(doc, "cya-0-relevance-change", relevanceRow.changeUrl.get.target)
 
           assertRenderedByIdWithText(doc, "cya-0-0-answer", answerRow.answer)
           assertLink(doc, "cya-0-0-change", answerRow.changeUrl)
@@ -102,7 +103,7 @@ trait CheckYourAnswersBehaviours extends ViewSpecBase {
         }
 
         "display the correct number of answers" in {
-          val answerRow = AnswerRow("test-label", Seq("test-answer"), answerIsMessageKey = true, Some("test-change-url"))
+          val answerRow = AnswerRow("test-label", Seq("test-answer"), answerIsMessageKey = true, Some(Link("site.change", "test-change-url")))
 
           val section = AnswerSection(
             Some("test-heading-key"),

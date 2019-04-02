@@ -18,7 +18,7 @@ package controllers
 
 import controllers.actions.{DataRequiredActionImpl, DataRetrievalAction, FakeAuthAction}
 import identifiers.IsAboutMembersCompleteId
-import models.{CheckMode, Members, NormalMode}
+import models.{CheckMode, Link, Members, NormalMode}
 import org.scalatest.OptionValues
 import play.api.test.Helpers._
 import utils.{FakeSectionComplete, UserAnswers}
@@ -75,15 +75,15 @@ object CheckYourAnswersMembersControllerSpec extends ControllerSpecBase {
         messages("messages__current_members_cya_label", schemeName),
         Seq(s"messages__members__${Members.One}"),
         answerIsMessageKey = true,
-        Some(controllers.routes.CurrentMembersController.onPageLoad(CheckMode).url),
-        messages("messages__visuallyhidden__current_members_change", schemeName)
+        Some(Link("site.change", controllers.routes.CurrentMembersController.onPageLoad(CheckMode).url,
+          Some(messages("messages__visuallyhidden__current_members_change", schemeName))))
       ),
       AnswerRow(
         messages("messages__future_members_cya_label", schemeName),
         Seq(s"messages__members__${Members.None}"),
         answerIsMessageKey = true,
-        Some(controllers.routes.FutureMembersController.onPageLoad(CheckMode).url),
-        messages("messages__visuallyhidden__future_members_change", schemeName)
+        Some(Link("site.change", controllers.routes.FutureMembersController.onPageLoad(CheckMode).url,
+          Some(messages("messages__visuallyhidden__future_members_change", schemeName))))
       )
     )
   )
