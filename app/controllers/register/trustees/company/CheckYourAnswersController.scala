@@ -51,11 +51,11 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
       val companyDetailsRow = CompanyDetailsId(index).row(routes.CompanyDetailsController.onPageLoad(CheckMode, index, None).url)
 
       val companyRegistrationNumber = CompanyRegistrationNumberId(index).row(
-        routes.CompanyRegistrationNumberController.onPageLoad(CheckMode, index, None).url
+        routes.CompanyRegistrationNumberController.onPageLoad(CheckMode, index, None).url, mode
       )
 
       val companyUtr = CompanyUniqueTaxReferenceId(index).row(
-        routes.CompanyUniqueTaxReferenceController.onPageLoad(CheckMode, index, None).url
+        routes.CompanyUniqueTaxReferenceController.onPageLoad(CheckMode, index, None).url, mode
       )
 
       val companyDetailsSection = AnswerSection(
@@ -68,11 +68,11 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
       )
 
       val companyAddressYears = CompanyAddressYearsId(index).row(
-        routes.CompanyAddressYearsController.onPageLoad(CheckMode, index, None).url
+        routes.CompanyAddressYearsController.onPageLoad(CheckMode, index, None).url, mode
       )
 
       val companyPreviousAddress = CompanyPreviousAddressId(index).row(
-        routes.CompanyPreviousAddressController.onPageLoad(CheckMode, index, None).url
+        routes.CompanyPreviousAddressController.onPageLoad(CheckMode, index, None).url, mode
       )
 
       val companyContactDetails = CompanyContactDetailsId(index).row(
@@ -88,7 +88,8 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
         appConfig,
         Seq(companyDetailsSection, contactDetailsSection),
         routes.CheckYourAnswersController.onSubmit(mode, index, None),
-        existingSchemeName
+        existingSchemeName,
+        mode = mode
       )))
   }
 

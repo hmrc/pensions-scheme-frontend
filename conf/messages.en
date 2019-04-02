@@ -1077,6 +1077,7 @@ messages__visuallyhidden__trustee__paye_number = Change the trustee’s PAYE emp
 messages__visuallyhidden__trustee__crn_yes_no = Change whether the trustee has a Company Registration number
 messages__visuallyhidden__trustee__crn_no = Change why the trustee does not have a Company Registration number
 messages__visuallyhidden__trustee__crn = Change the trustee’s Company Registration number
+messages__visuallyhidden__trustee__crn_add = Add the trustee’s Company Registration number
 messages__visuallyhidden__trustee__utr_yes_no = Change whether the trustee has a Unique Taxpayer Reference number
 messages__visuallyhidden__trustee__utr_no = Change why the trustee does not have a Unique Taxpayer Reference number
 messages__visuallyhidden__trustee__utr = Change the trustee’s Unique Taxpayer Reference number
