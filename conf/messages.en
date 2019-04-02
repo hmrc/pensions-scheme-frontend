@@ -115,6 +115,7 @@ site.continue = Continue
 site.delete = Remove
 site.edit = Edit
 site.change = Change
+site.add = Add
 site.hidden-delete = Delete {0}
 site.hidden-edit = Change {0}
 site.no = No
@@ -982,6 +983,7 @@ messages__psaSchemeDetails__partnership_phone = Partnership’s phone number
 messages__psaSchemeDetails__return_link = Return to {0}
 
 messages__visuallyhidden__common__address = Change address
+messages__visuallyhidden__common__add_address = Add address
 messages__visuallyhidden__common__address_years = Change how long at address
 messages__visuallyhidden__common__email_address = Change email address
 messages__visuallyhidden__common__phone_number = Change phone number
@@ -1272,6 +1274,7 @@ messages__error__insurance_company_name_invalid = Enter the insurance company’
 messages__error__insurance_company_name_length = Enter the insurance company’s name using 160 characters or less
 insuranceCompanyName.checkYourAnswersLabel = What is the name of the insurance company that secures the scheme benefits?
 messages__visuallyhidden__insuranceCompanyName = Change the name of the insurance company that secures the scheme benefits
+messages__visuallyhidden__add_insuranceCompanyName = Add the name of the insurance company that secures the scheme benefits
 
 messages__insurance_policy_number__title = What is the policy number with the insurance company?
 messages__insurance_policy_number__h1 = What is the policy number with {0}?
@@ -1279,7 +1282,9 @@ messages__error__insurance_policy_number = Enter a policy number
 messages__error__insurance_policy_number_invalid = Enter the policy number only using European characters
 messages__error__insurance_policy_number_length = Enter a policy number using 55 characters or less
 messages__insurance_policy_number_cya_label = What is the policy number with {0}?
+messages__insurance_policy_number_cya_label_add = What is the policy number?
 messages__visuallyhidden__insurance_policy_number = Change the policy number with {0}
+messages__visuallyhidden__insurance_policy_number_add = Add the policy number
 
 messages__insurer_enter_postcode__title = Enter the insurance company’s postcode
 messages__insurer_enter_postcode__h1 = Enter the insurance company’s postcode

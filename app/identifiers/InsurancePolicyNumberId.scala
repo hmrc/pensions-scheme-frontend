@@ -27,7 +27,15 @@ case object InsurancePolicyNumberId extends TypedIdentifier[String] {
 
   implicit def cya(implicit userAnswers: UserAnswers, messages: Messages, countryOptions: CountryOptions): CheckYourAnswers[self.type] =
     StringCYA[self.type](
-      label = Some(messages("messages__insurance_policy_number_cya_label", userAnswers.get(InsuranceCompanyNameId).getOrElse(""))),
-      hiddenLabel = Some(messages("messages__visuallyhidden__insurance_policy_number", userAnswers.get(InsuranceCompanyNameId).getOrElse("")))
+      label = if(userAnswers.get(InsuranceCompanyNameId).isDefined){
+        Some(messages("messages__insurance_policy_number_cya_label", userAnswers.get(InsuranceCompanyNameId).getOrElse("")))
+      } else {
+        Some(messages("messages__insurance_policy_number_cya_label_add"))
+      },
+      hiddenLabel = if(userAnswers.get(InsuranceCompanyNameId).isDefined){
+        Some(messages("messages__visuallyhidden__insurance_policy_number", userAnswers.get(InsuranceCompanyNameId).getOrElse("")))
+      } else {
+        Some(messages("messages__visuallyhidden__insurance_policy_number_add"))
+      }
     )()
 }
