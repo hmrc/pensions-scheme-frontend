@@ -29,7 +29,7 @@ class VariationDeclarationControllerSpec extends ControllerSpecBase {
   val schemeName = "Test Scheme Name"
   private val onwardRoute = controllers.routes.IndexController.onPageLoad()
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): VariationDeclarationController =
+  def controller(dataRetrievalAction: DataRetrievalAction = getMandatorySchemeNameHs): VariationDeclarationController =
     new VariationDeclarationController(frontendAppConfig, messagesApi, new FakeNavigator(onwardRoute), FakeAuthAction,
       dataRetrievalAction, new DataRequiredActionImpl, formProvider)
 
@@ -45,7 +45,7 @@ class VariationDeclarationControllerSpec extends ControllerSpecBase {
     }
 
       "redirect to the next page for a POST" in {
-        val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "true"))
+        val postRequest = fakeRequest.withFormUrlEncodedBody(("agree", "agreed"))
         val result = controller().onSubmit()(postRequest)
 
         status(result) mustBe SEE_OTHER
