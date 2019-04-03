@@ -28,16 +28,16 @@
             <div class="cya-question">
                 <h2 id="person-@{entity.index}" class="bold std-text">@entity.name</h2>
             </div>
-
-            <div id="person-@{entity.index}-status" class="cya-status status">
-                @if(entity.isCompleted){
-                    <span class="complete">COMPLETE</span>
-                } else {
-                    <span class="rejected">INCOMPLETE</span>
-                }
-            </div>
-
             @if(!readOnly){
+                <div id="person-@{entity.index}-status" class="cya-status status">
+                    @if(entity.isCompleted){
+                        <span class="complete">COMPLETE</span>
+                    } else {
+                        <span class="rejected">INCOMPLETE</span>
+                    }
+                </div>
+
+
                 <div>
                     <a id="person-@{entity.index}-delete" href="@entity.deleteLink">
                         @messages("site.delete")

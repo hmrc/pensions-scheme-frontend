@@ -134,24 +134,29 @@ class AddPartnersViewSpec extends YesNoViewBehaviours with EntityListBehaviours 
       submit.size() mustBe 0
     }
 
-    "not show delete or edit links, but show view links in readOnly mode" in {
+    "not show delete, edit links or incomplete lozenge, but show view links in readOnly mode" in {
       val doc = asDocument(createViewUsingForm(Seq(johnDoeEntity), readOnly = true)(form))
       val editLink = doc.select(s"a[id=person-0-edit]")
       val deleteLink = doc.select(s"a[id=person-0-delete]")
       val viewLink = doc.select(s"a[id=person-0-view]")
+      val incompleteLozenge = doc.select(s"span[class=rejected]")
       deleteLink.size() mustBe 0
       editLink.size() mustBe 0
       viewLink.size() mustBe 1
+      incompleteLozenge.size() mustBe 0
     }
 
-    "show delete and edit links, but not show view links when readOnly is false" in {
+    "show delete and edit links and incomplete lozenge, but not show view links when readOnly is false" in {
       val doc = asDocument(createViewUsingForm(Seq(johnDoeEntity), readOnly = false)(form))
+      println(doc)
       val editLink = doc.select(s"a[id=person-0-edit]")
       val deleteLink = doc.select(s"a[id=person-0-delete]")
       val viewLink = doc.select(s"a[id=person-0-view]")
+      val incompleteLozenge = doc.select(s"span[class=rejected]")
       deleteLink.size() mustBe 1
       editLink.size() mustBe 1
       viewLink.size() mustBe 0
+      incompleteLozenge.size() mustBe 1
     }
 
     behave like pageWithReturnLink(createView(), getReturnLink)
