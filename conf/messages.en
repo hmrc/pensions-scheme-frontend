@@ -1342,3 +1342,9 @@ messages__any_more_changes__p2 = You will need to complete a declaration to upda
 messages__any_more_changes__p3_date = You have until {0} to complete the declaration. If you do not complete the declaration by this date, your changes will be deleted.
 
 messages__any_more_changes__error__required = Select yes if you want to make more changes
+
+messages__companyPaye__title = Does the partnership have a PAYE employer reference number?
+messages__companyPaye__heading = Does the partnership have a PAYE employer reference number?
+
+messages__companyVat__title = Does the partnership have a VAT registration number?
+messages__companyVat__heading = Does the partnership have a VAT registration number?
