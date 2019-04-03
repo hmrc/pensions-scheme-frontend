@@ -438,6 +438,12 @@ class CheckYourAnswersSpec extends WordSpec with MustMatchers with PropertyCheck
         testIdentifier[Members].row(onwardUrl, UpdateMode) must equal(Seq(AnswerRow(
           "testId.checkYourAnswersLabel", Seq(s"messages__members__$membershipVal"), true, None, "messages__visuallyhidden__testId")))
       }
+
+      "boolean without change url" in {
+        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(Json.obj("testId" -> true)), PsaId("A0000000"))
+
+        testIdentifier[Boolean].row(onwardUrl, UpdateMode) must equal(Seq(AnswerRow("testId.checkYourAnswersLabel", Seq("site.yes"), true, None, "messages__visuallyhidden__testId")))
+      }
     }
   }
 }
