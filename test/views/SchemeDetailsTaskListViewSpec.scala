@@ -62,6 +62,11 @@ class SchemeDetailsTaskListViewSpec extends ViewBehaviours {
       val doc = asDocument(createView(notStarted)())
       assertRenderedByIdWithText(doc, id = "section-before-you-start-header", text = schemeDetailsTaskListData.h2)
     }
+
+    "display correct h3" in {
+      val doc = asDocument(createView(notStarted)())
+      assertRenderedByIdWithText(doc, id = "section-information-h3", text = schemeDetailsTaskListData.h3.getOrElse(""))
+    }
   }
 
   "SchemeTaskListView Working knowledge of pensions section" should {
@@ -123,7 +128,7 @@ class SchemeDetailsTaskListViewSpec extends ViewBehaviours {
           Link(messages("messages__schemeTaskList__sectionTrustees_add_link"),
             controllers.register.trustees.routes.TrusteeKindController.onPageLoad(NormalMode, 0, None).url),
           None
-        )), Seq.empty, None, "h1", "h2", "pageTitle"
+        )), Seq.empty, None, "h1", "h2",None, "pageTitle"
       )
       val view = createView(journeyTaskListNoEstablisher)
 
@@ -193,7 +198,7 @@ class SchemeDetailsTaskListViewSpec extends ViewBehaviours {
           Link(messages("messages__schemeTaskList__sectionTrustees_add_link"),
             controllers.register.trustees.routes.TrusteeKindController.onPageLoad(NormalMode, 0, None).url),
           None
-        )), Seq.empty, None, "h1", "h2", "pageTitle"
+        )), Seq.empty, None, "h1", "h2",None, "pageTitle"
       )
       val view = createView(journeyTaskListNoTrustees)
 
@@ -365,7 +370,9 @@ object SchemeDetailsTaskListViewSpec extends ViewSpecBase {
   }
 
   private val schemeDetailsTaskListData: SchemeDetailsTaskList = SchemeDetailsTaskList(
-    beforeYouStartSection, aboutSection, Some(wkSection), addEstablisherHeader(), establishers, Some(addTrusteesHeader()), trustees, None, "h1", "h2", "pageTitle" )
+    beforeYouStartSection, aboutSection, Some(wkSection),
+    addEstablisherHeader(), establishers, Some(addTrusteesHeader()),
+    trustees, None, "h1", "h2",Some("h3"), "pageTitle" )
 
   private val pageHeader = messages("messages__schemeTaskList__title")
   private val messageKeyPrefix = "schemeTaskList"

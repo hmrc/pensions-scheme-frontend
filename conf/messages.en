@@ -1329,6 +1329,7 @@ messages__whatYouWillNeedEstablisherCompany__item4 = employer PAYE number
 
 messages__schemeTaskList__before_you_start_link_text = Setting up your scheme application
 messages__schemeTaskList__scheme_info_link_text = Information about your scheme
+messages__schemeTaskList__scheme_information_link_text = Scheme information
 messages__schemeTaskList__about_members_link_text = Membership details
 messages__schemeTaskList__about_benefits_and_insurance_link_text = Benefits and insurance
 messages__schemeTaskList__about_bank_details_link_text = Bank details

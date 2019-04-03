@@ -38,7 +38,13 @@ class HsTaskListHelperVariationsSpec extends HsTaskListHelperBehaviour {
       helper.taskList.h2 mustBe messages("messages__scheme_details__title")
     }
   }
-
+  "h3" must {
+    "display \"Scheme Information\"" in {
+      val userAnswers = UserAnswers()
+      val helper = new HsTaskListHelperVariations(userAnswers)
+      helper.taskList.h3 mustBe Some(messages("messages__schemeTaskList__scheme_information_link_text"))
+    }
+  }
   "page title" must {
     "display \"Scheme details\"" in {
       val userAnswers = UserAnswers()

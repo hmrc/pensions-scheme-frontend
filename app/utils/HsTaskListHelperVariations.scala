@@ -54,6 +54,7 @@ class HsTaskListHelperVariations(answers: UserAnswers)(implicit messages: Messag
       declarationLink(answers),
       answers.get(SchemeNameId).getOrElse(""),
       messages("messages__scheme_details__title"),
+      Some(messages("messages__schemeTaskList__scheme_information_link_text")),
       messages("messages__scheme_details__title")
     )
   }

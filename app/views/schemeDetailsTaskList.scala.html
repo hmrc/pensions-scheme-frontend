@@ -54,6 +54,13 @@
             <h2 id="section-before-you-start-header" class="heading-large">
                 @messages(taskSections.h2)
             </h2>
+
+            @taskSections.h3.map{v=>
+                <h3 id="section-information-h3" class="heading-medium">
+                  @v
+                </h3>
+            }
+
             <ul class="task-list-items">
                 <li class="task-list-item">
                     <a id= "section-before-you-start-link" href="@taskSections.beforeYouStart.link.target" aria-describedby="section-beforeYouStart-status">

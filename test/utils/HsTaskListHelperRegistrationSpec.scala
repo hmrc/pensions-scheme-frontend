@@ -38,7 +38,13 @@ class HsTaskListHelperRegistrationSpec extends HsTaskListHelperBehaviour {
       helper.taskList.h2 mustBe messages("messages__schemeTaskList__before_you_start_header")
     }
   }
-
+  "h3" must {
+    "not display \"Scheme Information\"" in {
+      val userAnswers = UserAnswers()
+      val helper = new HsTaskListHelperRegistration(userAnswers)
+      helper.taskList.h3 mustBe None
+    }
+  }
   "page title" must {
     "display \"Pension scheme details\"" in {
       val userAnswers = UserAnswers()

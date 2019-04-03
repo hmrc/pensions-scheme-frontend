@@ -28,6 +28,7 @@ case class SchemeDetailsTaskList(beforeYouStart: SchemeDetailsTaskListSection,
                                  declaration: Option[Link] = None,
                                  h1: String,
                                  h2: String,
+                                 h3: Option[String],
                                  pageTitle: String
                                 ) {
 
