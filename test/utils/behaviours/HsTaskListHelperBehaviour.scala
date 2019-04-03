@@ -21,22 +21,23 @@ import identifiers.register.establishers.IsEstablisherCompleteId
 import identifiers.register.establishers.company.{CompanyDetailsId => EstablisherCompanyDetailsId}
 import identifiers.register.establishers.individual.EstablisherDetailsId
 import identifiers.register.establishers.partnership.{PartnershipDetailsId => EstablisherPartnershipDetailsId}
-import identifiers.register.trustees.{IsTrusteeCompleteId, MoreThanTenTrusteesId}
 import identifiers.register.trustees.company.{CompanyDetailsId => TrusteeCompanyDetailsId}
 import identifiers.register.trustees.individual.TrusteeDetailsId
 import identifiers.register.trustees.partnership.{IsPartnershipCompleteId, PartnershipDetailsId => TrusteePartnershipDetailsId}
+import identifiers.register.trustees.{IsTrusteeCompleteId, MoreThanTenTrusteesId}
 import identifiers.{IsWorkingKnowledgeCompleteId, _}
 import models.person.PersonDetails
 import models.{CompanyDetails, NormalMode, PartnershipDetails}
 import org.joda.time.LocalDate
 import org.scalatest.{MustMatchers, OptionValues}
 import play.api.libs.json.JsResult
-import utils.{HsTaskListHelperRegistration, UserAnswers}
+import utils.{HsTaskListHelper, HsTaskListHelperRegistration, UserAnswers}
 import viewmodels._
 
 trait HsTaskListHelperBehaviour extends SpecBase with MustMatchers with OptionValues {
 
   protected lazy val beforeYouStartLinkText = messages("messages__schemeTaskList__before_you_start_link_text")
+  protected lazy val schemeInfoLinkText = messages("messages__schemeTaskList__scheme_info_link_text")
   protected lazy val aboutMembersLinkText = messages("messages__schemeTaskList__about_members_link_text")
   protected lazy val aboutBenefitsAndInsuranceLinkText = messages("messages__schemeTaskList__about_benefits_and_insurance_link_text")
   protected lazy val aboutBankDetailsLinkText = messages("messages__schemeTaskList__about_bank_details_link_text")
@@ -50,12 +51,6 @@ trait HsTaskListHelperBehaviour extends SpecBase with MustMatchers with OptionVa
   protected lazy val changeTrusteesLinkText = messages("messages__schemeTaskList__sectionTrustees_change_link")
   protected lazy val declarationLinkText = messages("messages__schemeTaskList__declaration_link")
 
-  protected def beforeYouStartLink(link: String) = {
-    Link(
-      messages(beforeYouStartLinkText),
-      link
-    )
-  }
 
   protected def answersData(isCompleteBeforeStart: Boolean = true,
                             isCompleteAboutMembers: Boolean = true,
@@ -134,18 +129,22 @@ trait HsTaskListHelperBehaviour extends SpecBase with MustMatchers with OptionVa
             ))))).asOpt.value
   }
 
-  def beforeYouStartSection(): Unit = {
+
+  def beforeYouStartSection(func: UserAnswers => HsTaskListHelper, linkContent: String): Unit = {
+
+    def link(target: String) = Link(linkContent, target)
+
     "return the link to scheme name page when not completed " in {
       val userAnswers = UserAnswers().set(IsBeforeYouStartCompleteId)(false).asOpt.value
-      val helper = new HsTaskListHelperRegistration(userAnswers)
+      val helper = func(userAnswers)
       helper.beforeYouStartSection(userAnswers).link mustBe
-        beforeYouStartLink(controllers.routes.SchemeNameController.onPageLoad(NormalMode).url)
+        link(controllers.routes.SchemeNameController.onPageLoad(NormalMode).url)
     }
 
     "return the link to cya page when completed " in {
       val userAnswers = UserAnswers().set(IsBeforeYouStartCompleteId)(true).asOpt.value
-      val helper = new HsTaskListHelperRegistration(userAnswers)
-      helper.beforeYouStartSection(userAnswers).link mustBe beforeYouStartLink(
+      val helper = func(userAnswers)
+      helper.beforeYouStartSection(userAnswers).link mustBe link(
         controllers.routes.CheckYourAnswersBeforeYouStartController.onPageLoad().url
       )
     }

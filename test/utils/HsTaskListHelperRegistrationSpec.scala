@@ -48,7 +48,10 @@ class HsTaskListHelperRegistrationSpec extends HsTaskListHelperBehaviour {
   }
 
   "beforeYouStartSection " must {
-    behave like beforeYouStartSection()
+    behave like beforeYouStartSection(
+      new HsTaskListHelperRegistration(_),
+      beforeYouStartLinkText
+    )
   }
 
   "aboutSection " must {

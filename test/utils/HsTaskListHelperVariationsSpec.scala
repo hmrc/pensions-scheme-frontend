@@ -47,8 +47,11 @@ class HsTaskListHelperVariationsSpec extends HsTaskListHelperBehaviour {
     }
   }
 
-  "beforeYouStartSection " must {
-    behave like beforeYouStartSection()
+  "schemeInfoSection " must {
+    behave like beforeYouStartSection(
+      new HsTaskListHelperVariations(_),
+      schemeInfoLinkText
+    )
   }
 
   "aboutSection " must {
