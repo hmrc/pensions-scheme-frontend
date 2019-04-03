@@ -16,6 +16,35 @@
 
 package identifiers
 
+import models.Link
+import play.api.i18n.Messages
+import utils.{CountryOptions, UserAnswers}
+import utils.checkyouranswers.CheckYourAnswers
+import utils.checkyouranswers.CheckYourAnswers.StringCYA
+import viewmodels.AnswerRow
+
 case object InsuranceCompanyNameId extends TypedIdentifier[String] {
+  self =>
   override def toString: String = "insuranceCompanyName"
+
+  implicit def cya(implicit userAnswers: UserAnswers, messages: Messages, countryOptions: CountryOptions): CheckYourAnswers[self.type] = {
+
+    new CheckYourAnswers[self.type] {
+
+      override def row(id: self.type)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
+        StringCYA[self.type]()().row(id)(changeUrl, userAnswers)
+      }
+
+      override def updateRow(id: self.type)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
+        userAnswers.get(id) match {
+          case Some(_) => row(id)(changeUrl, userAnswers)
+          case _=>  Seq(AnswerRow(
+            "insuranceCompanyName.checkYourAnswersLabel",
+            Seq("site.not_entered"),
+            answerIsMessageKey = true,
+            Some(Link("site.add", changeUrl, Some(messages("messages__visuallyhidden__add_insuranceCompanyName"))))))
+        }
+      }
+    }
+  }
 }

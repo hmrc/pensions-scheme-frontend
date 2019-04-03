@@ -31,7 +31,7 @@ import scala.language.implicitConversions
 trait CheckYourAnswers[I <: TypedIdentifier.PathDependent] {
   def row(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow]
 
-  def updateRow(id: I)(changeUrl: String, userAnswers: UserAnswers, isEmptyRow: Boolean): Seq[AnswerRow]
+  def updateRow(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow]
 }
 
 object CheckYourAnswers {
@@ -75,18 +75,7 @@ object CheckYourAnswers {
               ))
           }.getOrElse(Seq.empty[AnswerRow])
 
-        override def updateRow(id: I)(changeUrl: String, userAnswers: UserAnswers, isEmptyRow: Boolean): Seq[AnswerRow] = {
-          userAnswers.get(id) match {
-            case Some(_) => row(id)(changeUrl, userAnswers)
-            case _ if(isEmptyRow) => Seq(AnswerRow(
-              label.fold(s"${id.toString}.checkYourAnswersLabel")(customLabel => customLabel),
-              Seq("site.not_entered"),
-              answerIsMessageKey = true,
-              Some(Link("site.add", changeUrl,
-                Some(hiddenLabel.fold(s"messages__visuallyhidden__add_${id.toString}")(customHiddenLabel => customHiddenLabel))))))
-            case _=> Seq.empty[AnswerRow]
-          }
-        }
+        override def updateRow(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = row(id)(changeUrl, userAnswers)
       }
     }
   }
@@ -107,7 +96,7 @@ object CheckYourAnswers {
               ))
           }.getOrElse(Seq.empty[AnswerRow])
 
-        override def updateRow(id: I)(changeUrl: String, userAnswers: UserAnswers, isEmptyRow: Boolean): Seq[AnswerRow] = row(id)(changeUrl, userAnswers)
+        override def updateRow(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = row(id)(changeUrl, userAnswers)
       }
     }
   }
@@ -126,7 +115,7 @@ object CheckYourAnswers {
             ))
         }.getOrElse(Seq.empty)
 
-      override def updateRow(id: I)(changeUrl: String, userAnswers: UserAnswers, isEmptyRow: Boolean): Seq[AnswerRow] = row(id)(changeUrl, userAnswers)
+      override def updateRow(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = row(id)(changeUrl, userAnswers)
     }
   }
 
@@ -146,7 +135,7 @@ object CheckYourAnswers {
               ))
           }.getOrElse(Seq.empty[AnswerRow])
 
-        override def updateRow(id: I)(changeUrl: String, userAnswers: UserAnswers, isEmptyRow: Boolean): Seq[AnswerRow] = row(id)(changeUrl, userAnswers)
+        override def updateRow(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = row(id)(changeUrl, userAnswers)
       }
     }
   }
@@ -166,7 +155,7 @@ object CheckYourAnswers {
           )
       }.getOrElse(Seq.empty[AnswerRow])
 
-      override def updateRow(id: I)(changeUrl: String, userAnswers: UserAnswers, isEmptyRow: Boolean): Seq[AnswerRow] = row(id)(changeUrl, userAnswers)
+      override def updateRow(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = row(id)(changeUrl, userAnswers)
     }
   }
 
@@ -194,7 +183,7 @@ object CheckYourAnswers {
               ))
         }.getOrElse(Seq.empty[AnswerRow])
 
-        override def updateRow(id: I)(changeUrl: String, userAnswers: UserAnswers, isEmptyRow: Boolean): Seq[AnswerRow] = row(id)(changeUrl, userAnswers)
+        override def updateRow(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = row(id)(changeUrl, userAnswers)
       }
     }
   }
@@ -220,7 +209,7 @@ object CheckYourAnswers {
             ))
       }.getOrElse(Seq.empty[AnswerRow])
 
-      override def updateRow(id: I)(changeUrl: String, userAnswers: UserAnswers, isEmptyRow: Boolean): Seq[AnswerRow] = row(id)(changeUrl, userAnswers)
+      override def updateRow(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = row(id)(changeUrl, userAnswers)
     }
   }
 
@@ -245,7 +234,7 @@ object CheckYourAnswers {
           Some(Link("site.change", changeUrl,
             Some(hiddenLabel.fold(s"messages__visuallyhidden__${id.toString}")(customHiddenLabel => customHiddenLabel)))))
 
-        override def updateRow(id: I)(changeUrl: String, userAnswers: UserAnswers, isEmptyRow: Boolean): Seq[AnswerRow] = memberCYARow(id, userAnswers, None)
+        override def updateRow(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = memberCYARow(id, userAnswers, None)
       }
     }
   }
@@ -265,7 +254,7 @@ object CheckYourAnswers {
         )
       } getOrElse Seq.empty[AnswerRow]
 
-      override def updateRow(id: I)(changeUrl: String, userAnswers: UserAnswers, isEmptyRow: Boolean): Seq[AnswerRow] = row(id)(changeUrl, userAnswers)
+      override def updateRow(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = row(id)(changeUrl, userAnswers)
     }
   }
 
@@ -299,7 +288,7 @@ object CheckYourAnswers {
             ))
         } getOrElse Seq.empty[AnswerRow]
 
-      override def updateRow(id: I)(changeUrl: String, userAnswers: UserAnswers, isEmptyRow: Boolean): Seq[AnswerRow] = row(id)(changeUrl, userAnswers)
+      override def updateRow(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = row(id)(changeUrl, userAnswers)
     }
   }
 
@@ -333,7 +322,7 @@ object CheckYourAnswers {
             ))
         } getOrElse Seq.empty[AnswerRow]
 
-      override def updateRow(id: I)(changeUrl: String, userAnswers: UserAnswers, isEmptyRow: Boolean): Seq[AnswerRow] = row(id)(changeUrl, userAnswers)
+      override def updateRow(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = row(id)(changeUrl, userAnswers)
     }
   }
 
@@ -392,7 +381,7 @@ case class NinoCYA[I <: TypedIdentifier[Nino]](
           case _ => Seq.empty[AnswerRow]
         }
 
-      override def updateRow(id: I)(changeUrl: String, userAnswers: UserAnswers, isEmptyRow: Boolean): Seq[AnswerRow] = row(id)(changeUrl, userAnswers)
+      override def updateRow(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = row(id)(changeUrl, userAnswers)
     }
   }
 
@@ -445,7 +434,7 @@ case class CompanyRegistrationNumberCYA[I <: TypedIdentifier[CompanyRegistration
         }
       }
 
-      override def updateRow(id: I)(changeUrl: String, userAnswers: UserAnswers, isEmptyRow: Boolean): Seq[AnswerRow] = row(id)(changeUrl, userAnswers)
+      override def updateRow(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = row(id)(changeUrl, userAnswers)
     }
   }
 
@@ -470,7 +459,7 @@ case class BankDetailsHnSCYA[I <: TypedIdentifier[BankAccountDetails]](label: Op
             ))
         }.getOrElse(Seq.empty[AnswerRow])
 
-      override def updateRow(id: I)(changeUrl: String, userAnswers: UserAnswers, isEmptyRow: Boolean): Seq[AnswerRow] = row(id)(changeUrl, userAnswers)
+      override def updateRow(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = row(id)(changeUrl, userAnswers)
     }
   }
 }
@@ -489,7 +478,7 @@ case class AddressYearsCYA[I <: TypedIdentifier[AddressYears]](label: String = "
             Some(changeAddressYears)))
         ))).getOrElse(Seq.empty[AnswerRow])
 
-      override def updateRow(id: I)(changeUrl: String, userAnswers: UserAnswers, isEmptyRow: Boolean): Seq[AnswerRow] = row(id)(changeUrl, userAnswers)
+      override def updateRow(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = row(id)(changeUrl, userAnswers)
     }
   }
 
@@ -502,7 +491,6 @@ case class AddressCYA[I <: TypedIdentifier[Address]](
 
   def apply()(implicit rds: Reads[Address], countryOptions: CountryOptions): CheckYourAnswers[I] = {
     new CheckYourAnswers[I] {
-
       override def row(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
 
         def addressAnswer(address: Address): Seq[String] = {
@@ -528,17 +516,7 @@ case class AddressCYA[I <: TypedIdentifier[Address]](
         }.getOrElse(Seq.empty[AnswerRow])
       }
 
-
-      override def updateRow(id: I)(changeUrl: String, userAnswers: UserAnswers, isEmptyRow: Boolean): Seq[AnswerRow] = {
-        userAnswers.get(id) match {
-          case Some(_) => row(id)(changeUrl, userAnswers)
-          case _ if(isEmptyRow) => Seq(AnswerRow(label,
-            Seq("site.not_entered"),
-            answerIsMessageKey = true,
-            Some(Link("site.add", changeUrl,Some("messages__visuallyhidden__common__add_address")))))
-          case _=> Seq.empty[AnswerRow]
-        }
-      }
+      override def updateRow(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = row(id)(changeUrl, userAnswers)
     }
   }
 
@@ -591,7 +569,7 @@ case class UniqueTaxReferenceCYA[I <: TypedIdentifier[UniqueTaxReference]](
           case _ => Seq.empty[AnswerRow]
         }
 
-      override def updateRow(id: I)(changeUrl: String, userAnswers: UserAnswers, isEmptyRow: Boolean): Seq[AnswerRow] = row(id)(changeUrl, userAnswers)
+      override def updateRow(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = row(id)(changeUrl, userAnswers)
     }
   }
 }
@@ -625,7 +603,7 @@ case class IsDormantCYA[I <: TypedIdentifier[DeclarationDormant]](
           case _ => Seq.empty[AnswerRow]
         }
 
-      override def updateRow(id: I)(changeUrl: String, userAnswers: UserAnswers, isEmptyRow: Boolean): Seq[AnswerRow] = row(id)(changeUrl, userAnswers)
+      override def updateRow(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = row(id)(changeUrl, userAnswers)
     }
   }
 
@@ -674,7 +652,7 @@ case class CompanyDetailsCYA[I <: TypedIdentifier[CompanyDetails]](
 
         }.getOrElse(Seq.empty[AnswerRow])
 
-      override def updateRow(id: I)(changeUrl: String, userAnswers: UserAnswers, isEmptyRow: Boolean): Seq[AnswerRow] = row(id)(changeUrl, userAnswers)
+      override def updateRow(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = row(id)(changeUrl, userAnswers)
     }
   }
 }

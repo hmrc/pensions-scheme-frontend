@@ -99,42 +99,7 @@ object CheckYourAnswersBenefitsAndInsuranceControllerSpec extends ControllerSpec
 
   private def benefitsAndInsuranceSection(mode : Mode) = AnswerSection(
     None,
-    Seq(
-      AnswerRow(
-        messages("investmentRegulated.checkYourAnswersLabel"),
-        Seq("site.yes"),
-        answerIsMessageKey = true,
-        Some(Link("site.change", routes.InvestmentRegulatedSchemeController.onPageLoad(checkMode(mode)).url,
-          Some(messages("messages__visuallyhidden__investmentRegulated"))))
-      ),
-      AnswerRow(
-        messages("occupationalPensionScheme.checkYourAnswersLabel"),
-        Seq("site.yes"),
-        answerIsMessageKey = true,
-        Some(Link("site.change", routes.OccupationalPensionSchemeController.onPageLoad(checkMode(mode)).url,
-          Some(messages("messages__visuallyhidden__occupationalPensionScheme"))))
-      ),
-      AnswerRow(
-        messages("messages__type_of_benefits_cya_label"),
-        Seq(s"messages__type_of_benefits__${TypeOfBenefits.Defined}"),
-        answerIsMessageKey = true,
-        Some(Link("site.change", controllers.routes.TypeOfBenefitsController.onPageLoad(checkMode(mode)).url,
-          Some(messages("messages__visuallyhidden__type_of_benefits_change"))))
-      ),
-      AnswerRow(
-        messages("securedBenefits.checkYourAnswersLabel"),
-        Seq("site.yes"),
-        answerIsMessageKey = true,
-        Some(Link("site.change", routes.BenefitsSecuredByInsuranceController.onPageLoad(checkMode(mode), None).url,
-          Some(messages("messages__visuallyhidden__securedBenefits"))))
-      ),
-      AnswerRow(
-        messages("insuranceCompanyName.checkYourAnswersLabel"),
-        Seq(insuranceCompanyName),
-        answerIsMessageKey = false,
-        Some(Link("site.change", routes.InsuranceCompanyNameController.onPageLoad(checkMode(mode), None).url,
-          Some(messages("messages__visuallyhidden__insuranceCompanyName"))))
-      ),
+    commonRows(mode) ++  Seq(
       AnswerRow(
         messages("messages__insurance_policy_number_cya_label", insuranceCompanyName),
         Seq(policyNumber),
@@ -159,6 +124,24 @@ object CheckYourAnswersBenefitsAndInsuranceControllerSpec extends ControllerSpec
 
   private def updateBenefitsAndInsuranceSection(mode : Mode) = AnswerSection(
     None,
+    commonRows(mode) ++ Seq(
+      AnswerRow(
+        messages("messages__insurance_policy_number_cya_label", insuranceCompanyName),
+        Seq("site.not_entered"),
+        answerIsMessageKey = true,
+        Some(Link("site.add", routes.InsurancePolicyNumberController.onPageLoad(checkMode(mode), None).url,
+          Some(messages("messages__visuallyhidden__insurance_policy_number", insuranceCompanyName))))
+      ),
+      AnswerRow(
+        messages("messages__insurer_confirm_address_cya_label"),
+        Seq("site.not_entered"),
+        answerIsMessageKey = true,
+        Some(Link("site.add", routes.InsurerConfirmAddressController.onPageLoad(checkMode(mode), None).url,
+          Some(messages("messages__visuallyhidden__add_insurer_confirm_address")))))
+    )
+  )
+
+  private def commonRows(mode : Mode):  Seq[AnswerRow] ={
     Seq(
       AnswerRow(
         messages("investmentRegulated.checkYourAnswersLabel"),
@@ -194,22 +177,9 @@ object CheckYourAnswersBenefitsAndInsuranceControllerSpec extends ControllerSpec
         answerIsMessageKey = false,
         Some(Link("site.change", routes.InsuranceCompanyNameController.onPageLoad(checkMode(mode), None).url,
           Some(messages("messages__visuallyhidden__insuranceCompanyName"))))
-      ),
-      AnswerRow(
-        messages("messages__insurance_policy_number_cya_label", insuranceCompanyName),
-        Seq("site.not_entered"),
-        answerIsMessageKey = true,
-        Some(Link("site.add", routes.InsurancePolicyNumberController.onPageLoad(checkMode(mode), None).url,
-          Some(messages("messages__visuallyhidden__insurance_policy_number", insuranceCompanyName))))
-      ),
-      AnswerRow(
-        messages("messages__insurer_confirm_address_cya_label"),
-        Seq("site.not_entered"),
-        answerIsMessageKey = true,
-        Some(Link("site.add", routes.InsurerConfirmAddressController.onPageLoad(checkMode(mode), None).url,
-          Some(messages("messages__visuallyhidden__common__add_address")))))
+      )
     )
-  )
+  }
 
   private def viewAsString(mode : Mode = NormalMode): String = check_your_answers(
     frontendAppConfig,

@@ -1282,7 +1282,7 @@ messages__error__insurance_policy_number = Enter a policy number
 messages__error__insurance_policy_number_invalid = Enter the policy number only using European characters
 messages__error__insurance_policy_number_length = Enter a policy number using 55 characters or less
 messages__insurance_policy_number_cya_label = What is the policy number with {0}?
-messages__insurance_policy_number_cya_label_add = What is the policy number?
+messages__insurance_policy_number_cya_label_add = What is the policy number with ?
 messages__visuallyhidden__insurance_policy_number = Change the policy number with {0}
 messages__visuallyhidden__insurance_policy_number_add = Add the policy number
 
@@ -1293,6 +1293,7 @@ messages__insurer_confirm_address__title = Insurance company’s address
 messages__insurer_confirm_address__h1 = Insurance company’s address
 messages__insurer_confirm_address_cya_label = Insurance company’s address
 messages__visuallyhidden__insurer_confirm_address = Change the insurance company’s address
+messages__visuallyhidden__add_insurer_confirm_address = Add the insurance company’s address
 
 messages__established_country__title = Which country was the scheme established in?
 messages__established_country__h1 = Which country was {0} established in?

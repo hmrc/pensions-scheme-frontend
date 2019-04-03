@@ -47,13 +47,13 @@ class CheckYourAnswersBenefitsAndInsuranceController @Inject()(appConfig: Fronte
       implicit val userAnswers = request.userAnswers
       val benefitsAndInsuranceSection = AnswerSection(
         None,
-        InvestmentRegulatedSchemeId.row(routes.InvestmentRegulatedSchemeController.onPageLoad(checkMode(mode)).url) ++
-          OccupationalPensionSchemeId.row(routes.OccupationalPensionSchemeController.onPageLoad(checkMode(mode)).url) ++
-          TypeOfBenefitsId.row(routes.TypeOfBenefitsController.onPageLoad(checkMode(mode)).url) ++
+        InvestmentRegulatedSchemeId.row(routes.InvestmentRegulatedSchemeController.onPageLoad(checkMode(mode)).url, mode) ++
+          OccupationalPensionSchemeId.row(routes.OccupationalPensionSchemeController.onPageLoad(checkMode(mode)).url, mode) ++
+          TypeOfBenefitsId.row(routes.TypeOfBenefitsController.onPageLoad(checkMode(mode)).url, mode) ++
           BenefitsSecuredByInsuranceId.row(routes.BenefitsSecuredByInsuranceController.onPageLoad(checkMode(mode), srn).url, mode) ++
-          InsuranceCompanyNameId.row(routes.InsuranceCompanyNameController.onPageLoad(checkMode(mode), None).url, mode, true) ++
-          InsurancePolicyNumberId.row(routes.InsurancePolicyNumberController.onPageLoad(checkMode(mode), srn).url, mode, true) ++
-          InsurerConfirmAddressId.row(routes.InsurerConfirmAddressController.onPageLoad(checkMode(mode), srn).url, mode, true)
+          InsuranceCompanyNameId.row(routes.InsuranceCompanyNameController.onPageLoad(checkMode(mode), None).url, mode) ++
+          InsurancePolicyNumberId.row(routes.InsurancePolicyNumberController.onPageLoad(checkMode(mode), srn).url, mode) ++
+          InsurerConfirmAddressId.row(routes.InsurerConfirmAddressController.onPageLoad(checkMode(mode), srn).url, mode)
       )
       Ok(check_your_answers(
         appConfig,
