@@ -89,8 +89,9 @@ class SchemeDetailsTaskListViewSpec extends ViewBehaviours {
 
     "display correct header" in {
       val doc = asDocument(view())
-      assertRenderedByIdWithText(doc, id = "section-about-header", text = messages("messages__schemeTaskList__about_header"))
+      assertRenderedByIdWithText(doc, id = "section-about-header", text = schemeDetailsTaskListData.aboutHeader)
     }
+
 
     Seq(("01", "members", "messages__schemeTaskList__inProgress"), ("02", "benefits and insurance", "messages__schemeTaskList__completed"),
       ("03", "bank details", "messages__schemeTaskList__completed")
@@ -116,7 +117,7 @@ class SchemeDetailsTaskListViewSpec extends ViewBehaviours {
   "SchemeTaskListView Establishers section" when {
 
     "no establishers" should {
-      val journeyTaskListNoEstablisher: SchemeDetailsTaskList = SchemeDetailsTaskList(beforeYouStartSection, Seq.empty, None,
+      val journeyTaskListNoEstablisher: SchemeDetailsTaskList = SchemeDetailsTaskList(beforeYouStartSection,"test", Seq.empty, None,
         SchemeDetailsTaskListSection(
           None,
           Link(messages("messages__schemeTaskList__sectionEstablishers_add_link"),
@@ -186,7 +187,7 @@ class SchemeDetailsTaskListViewSpec extends ViewBehaviours {
 
     "no trustees" should {
 
-      val journeyTaskListNoTrustees: SchemeDetailsTaskList = SchemeDetailsTaskList(beforeYouStartSection, Seq.empty, None,
+      val journeyTaskListNoTrustees: SchemeDetailsTaskList = SchemeDetailsTaskList(beforeYouStartSection,"test", Seq.empty, None,
         SchemeDetailsTaskListSection(
           None,
           Link(messages("messages__schemeTaskList__sectionEstablishers_add_link"),
@@ -369,13 +370,16 @@ object SchemeDetailsTaskListViewSpec extends ViewSpecBase {
         controllers.register.trustees.individual.routes.CheckYourAnswersController.onPageLoad(NormalMode, 0, None).url), Some("firstName lastName")))
   }
 
+  private val testAboutHeader = "testabout"
+
   private val schemeDetailsTaskListData: SchemeDetailsTaskList = SchemeDetailsTaskList(
-    beforeYouStartSection, aboutSection, Some(wkSection),
+    beforeYouStartSection, testAboutHeader,aboutSection, Some(wkSection),
     addEstablisherHeader(), establishers, Some(addTrusteesHeader()),
     trustees, None, "h1", "h2",Some("h3"), "pageTitle" )
 
   private val pageHeader = messages("messages__schemeTaskList__title")
   private val messageKeyPrefix = "schemeTaskList"
+
 }
 
 

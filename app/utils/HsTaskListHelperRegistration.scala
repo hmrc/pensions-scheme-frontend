@@ -49,6 +49,7 @@ class HsTaskListHelperRegistration(answers: UserAnswers)(implicit messages: Mess
   def taskList: SchemeDetailsTaskList = {
     SchemeDetailsTaskList(
       beforeYouStartSection(answers),
+      messages("messages__schemeTaskList__about_header"),
       aboutSection(answers),
       workingKnowledgeSection(answers),
       addEstablisherHeader(answers),

@@ -61,6 +61,7 @@ object SchemeTaskListControllerSpec extends SpecBase with JsonFileReader {
 
   private val schemeDetailsTL = SchemeDetailsTaskList(
     SchemeDetailsTaskListSection(None, Link(beforeYouStartLinkText, controllers.routes.SchemeNameController.onPageLoad(NormalMode).url)),
+    messages("messages__schemeTaskList__about_header"),
     Seq(SchemeDetailsTaskListSection(None, Link(aboutMembersLinkText, controllers.routes.WhatYouWillNeedMembersController.onPageLoad.url), None),
       SchemeDetailsTaskListSection(None, Link(aboutBenefitsAndInsuranceLinkText,
         controllers.routes.WhatYouWillNeedBenefitsInsuranceController.onPageLoad.url), None),

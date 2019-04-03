@@ -43,8 +43,10 @@ class HsTaskListHelperVariations(answers: UserAnswers)(implicit messages: Messag
   }
 
   def taskList: SchemeDetailsTaskList = {
+    val schemeName = answers.get(SchemeNameId).getOrElse("")
     SchemeDetailsTaskList(
       beforeYouStartSection(answers),
+      messages("messages__schemeTaskList__about_scheme_header", schemeName),
       aboutSection(answers),
       None,
       addEstablisherHeader(answers),
