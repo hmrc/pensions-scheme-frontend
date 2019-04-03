@@ -62,10 +62,10 @@ class AddTrusteeControllerSpec extends ControllerSpecBase {
     Json.obj(
       TrusteesId.toString -> Json.arr(
         Json.obj(
-          CompanyDetailsId.toString -> CompanyDetails("Trustee Company A", None, None)
+          CompanyDetailsId.toString -> CompanyDetails("Trustee Company A")
         ),
         Json.obj(
-          CompanyDetailsId.toString -> CompanyDetails("Trustee Company B", None, None)
+          CompanyDetailsId.toString -> CompanyDetails("Trustee Company B")
         ),
         Json.obj(
           TrusteeDetailsId.toString -> PersonDetails("Trustee", None, "Individual", LocalDate.now())

@@ -24,7 +24,7 @@
 @(appConfig: FrontendAppConfig, form: Form[_], mode: Mode, index: Index, schemeName: Option[String], postCall: Call)(implicit request: Request[_], messages: Messages)
 
 @main_template(
-    title = messages("messages__common__company_details__title"),
+    title = messages("messages__companyName__title"),
     appConfig = appConfig,
     bodyClasses = None) {
 
@@ -33,22 +33,13 @@
         @components.error_summary(form.errors)
 
         @components.heading(
-            headingKey=messages("messages__common__company_details__title")
+            headingKey=messages("messages__companyName__heading")
         )
 
         @components.input_text(
             field = form("companyName"),
-            label = messages("messages__common__company_name")
-        )
-
-        @components.input_text(
-            field = form("vatNumber"),
-            label = messages("messages__common__vat")
-        )
-
-        @components.input_text(
-            field = form("payeNumber"),
-            label = messages("messages__common__paye")
+            label = messages("messages__common__company_name"),
+            labelClass = Some("visually-hidden")
         )
 
         @components.submit_button()

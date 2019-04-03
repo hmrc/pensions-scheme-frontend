@@ -290,7 +290,7 @@ object DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar {
     }
 
     def companyEstablisher(index: Int): UserAnswers = {
-      answers.set(CompanyDetailsId(index))(CompanyDetails("test-company-name", None, None)).asOpt.value
+      answers.set(CompanyDetailsId(index))(CompanyDetails("test-company-name")).asOpt.value
     }
 
     def partnershipEstablisher(index: Int): UserAnswers = {

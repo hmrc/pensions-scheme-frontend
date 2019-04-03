@@ -68,7 +68,7 @@ class DirectorAddressPostcodeLookupControllerSpec extends ControllerSpecBase wit
     Some("GB")
   )
 
-  val company = CompanyDetails(companyName, None, None)
+  val company = CompanyDetails(companyName)
   val director = PersonDetails("first", Some("middle"), "last", LocalDate.now())
 
   lazy val viewmodel = PostcodeLookupViewModel(

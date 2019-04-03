@@ -83,7 +83,7 @@ class DirectorDetailsControllerSpec extends ControllerSpecBase {
       val validData = Json.obj(
         EstablishersId.toString -> Json.arr(
           Json.obj(
-            CompanyDetailsId.toString -> CompanyDetails(companyName, Some("123456"), Some("abcd")),
+            CompanyDetailsId.toString -> CompanyDetails(companyName),
             "director" -> Json.arr(
               Json.obj(
                 DirectorDetailsId.toString ->
@@ -105,7 +105,7 @@ class DirectorDetailsControllerSpec extends ControllerSpecBase {
         EstablishersId.toString -> Json.arr(
           Json.obj(
             CompanyDetailsId.toString ->
-              CompanyDetails("test company name", Some("123456"), Some("abcd"))
+              CompanyDetails("test company name")
           )
         )
       )
@@ -176,7 +176,7 @@ class DirectorDetailsControllerSpec extends ControllerSpecBase {
           EstablishersId.toString -> Json.arr(
             Json.obj(
               CompanyDetailsId.toString ->
-                CompanyDetails("test company name", Some("123456"), Some("abcd")),
+                CompanyDetails("test company name"),
               "director" -> Json.arr(
                 Json.obj(
                   DirectorDetailsId.toString ->

@@ -36,7 +36,7 @@ import views.html.address.addressList
 class CompanyPreviousAddressListControllerSpec extends ControllerSpecBase with CSRFRequest {
 
 
-  private val companyDetails = CompanyDetails("Test company name", None, None)
+  private val companyDetails = CompanyDetails("Test company name")
 
   val previousAddressTitle = "Select the previous address"
   val previousAddressHeading = "Select the previous address"

@@ -49,7 +49,7 @@ class OtherDirectorsControllerSpec extends ControllerSpecBase {
   val validData: JsObject = Json.obj(
     EstablishersId.toString -> Json.arr(
       Json.obj(
-        CompanyDetailsId.toString -> CompanyDetails("test company name", Some("123456"), Some("abcd")),
+        CompanyDetailsId.toString -> CompanyDetails("test company name"),
         OtherDirectorsId.toString -> true
       )
     )

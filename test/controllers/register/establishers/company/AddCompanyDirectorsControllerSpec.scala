@@ -85,7 +85,7 @@ class AddCompanyDirectorsControllerSpec extends ControllerSpecBase {
     Json.obj(
       EstablishersId.toString -> Json.arr(
         Json.obj(
-          CompanyDetailsId.toString -> CompanyDetails(companyName, None, None),
+          CompanyDetailsId.toString -> CompanyDetails(companyName),
           "director" -> directors.map(d => Json.obj(DirectorDetailsId.toString -> Json.toJson(d)))
         )
       )

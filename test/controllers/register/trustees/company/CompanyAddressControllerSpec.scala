@@ -41,7 +41,7 @@ class CompanyAddressControllerSpec extends ControllerBehaviours {
 
   val firstIndex = Index(0)
 
-  val companyDetails = CompanyDetails("companyName", None, None)
+  val companyDetails = CompanyDetails("companyName")
 
   val countryOptions = new CountryOptions(
     Seq(InputOption("GB", "GB"))

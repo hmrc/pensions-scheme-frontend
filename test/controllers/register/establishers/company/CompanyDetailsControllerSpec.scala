@@ -52,7 +52,7 @@ class CompanyDetailsControllerSpec extends ControllerSpecBase {
     EstablishersId.toString -> Json.arr(
       Json.obj(
         CompanyDetailsId.toString ->
-          CompanyDetails("test company name", Some("test vat number"), Some("test paye number"))
+          CompanyDetails("test company name")
       )
     )
   )
@@ -68,7 +68,7 @@ class CompanyDetailsControllerSpec extends ControllerSpecBase {
     "populate the view correctly on a GET when the question has previously been answered" in {
       val getRelevantData = new FakeDataRetrievalAction(Some(validData))
       val result = controller(getRelevantData).onPageLoad(NormalMode, None, firstIndex)(fakeRequest)
-      contentAsString(result) mustBe viewAsString(form.fill(CompanyDetails("test company name", Some("test vat number"), Some("test paye number"))))
+      contentAsString(result) mustBe viewAsString(form.fill(CompanyDetails("test company name")))
     }
 
     "redirect to session expired page on a GET when the index is not valid" ignore {

@@ -53,7 +53,7 @@ class CompanyPreviousAddressPostCodeLookupControllerSpec extends ControllerSpecB
   val firstIndex = Index(0)
 
   val companyName: String = "test company name"
-  val company = CompanyDetails(companyName, None, None)
+  val company = CompanyDetails(companyName)
 
   val retrieval = new FakeDataRetrievalAction(Some(
     Json.obj(TrusteesId.toString -> Json.arr(

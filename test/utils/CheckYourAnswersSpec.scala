@@ -84,7 +84,7 @@ class CheckYourAnswersSpec extends WordSpec with MustMatchers with PropertyCheck
 
         "only name exists" in {
 
-          val companyDetails = CompanyDetails("Company Name", None, None)
+          val companyDetails = CompanyDetails("Company Name")
 
           implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(Json.obj(
             "testId" -> companyDetails
@@ -97,89 +97,6 @@ class CheckYourAnswersSpec extends WordSpec with MustMatchers with PropertyCheck
             Some(onwardUrl),
             Message("messages__visuallyhidden__common__name", "Company Name")
           )))
-
-        }
-        "vat number exists" in {
-
-          val companyDetails = CompanyDetails("Company Name", Some("VAT123"), None)
-
-          implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(Json.obj(
-            "testId" -> companyDetails
-          )), PsaId("A0000000"))
-
-          testIdentifier[CompanyDetails].row(onwardUrl) must equal(Seq(
-            AnswerRow(
-              "messages__common__cya__name",
-              Seq(s"${companyDetails.companyName}"),
-              false,
-              Some(onwardUrl),
-              Message("messages__visuallyhidden__common__name", "Company Name")
-            ),
-            AnswerRow(
-              "messages__common__cya__vat",
-              Seq(s"${companyDetails.vatNumber.get}"),
-              false,
-              Some(onwardUrl),
-              "messages__visuallyhidden__establisher__vat_number"
-            )))
-
-        }
-        "paye ref exists" in {
-
-          val companyDetails = CompanyDetails("Company Name", None, Some("PAYE/123"))
-
-          implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(Json.obj(
-            "testId" -> companyDetails
-          )), PsaId("A0000000"))
-
-          testIdentifier[CompanyDetails].row(onwardUrl) must equal(Seq(
-            AnswerRow(
-              "messages__common__cya__name",
-              Seq(s"${companyDetails.companyName}"),
-              false,
-              Some(onwardUrl),
-              Message("messages__visuallyhidden__common__name", "Company Name")
-            ),
-            AnswerRow(
-              "messages__common__cya__paye",
-              Seq(s"${companyDetails.payeNumber.get}"),
-              false,
-              Some(onwardUrl),
-              "messages__visuallyhidden__establisher__paye_number"
-            )))
-
-        }
-
-        "all values exist" in {
-
-          val companyDetails = CompanyDetails("Company Name", Some("VAT123"), Some("PAYE/123"))
-
-          implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(Json.obj(
-            "testId" -> companyDetails
-          )), PsaId("A0000000"))
-
-          testIdentifier[CompanyDetails].row(onwardUrl) must equal(Seq(
-            AnswerRow(
-              "messages__common__cya__name",
-              Seq(s"${companyDetails.companyName}"),
-              false,
-              Some(onwardUrl),
-              Message("messages__visuallyhidden__common__name", "Company Name")
-            ),
-            AnswerRow(
-              "messages__common__cya__vat",
-              Seq(s"${companyDetails.vatNumber.get}"),
-              false,
-              Some(onwardUrl),
-              "messages__visuallyhidden__establisher__vat_number"
-            ),
-            AnswerRow(
-              "messages__common__cya__paye",
-              Seq(s"${companyDetails.payeNumber.get}"),
-              false,
-              Some(onwardUrl),
-              "messages__visuallyhidden__establisher__paye_number"
-            )))
 
         }
       }

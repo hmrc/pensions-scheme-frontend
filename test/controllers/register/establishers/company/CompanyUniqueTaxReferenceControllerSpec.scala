@@ -43,13 +43,13 @@ class CompanyUniqueTaxReferenceControllerSpec extends ControllerSpecBase {
     EstablishersId.toString -> Json.arr(
       Json.obj(
         CompanyDetailsId.toString ->
-          CompanyDetails("test company name", Some("123456"), Some("abcd")),
+          CompanyDetails("test company name"),
         CompanyUniqueTaxReferenceId.toString ->
           UniqueTaxReference.Yes("1234567891")
       ),
       Json.obj(
         CompanyDetailsId.toString ->
-          CompanyDetails("test", Some("654321"), Some("dcba"))
+          CompanyDetails("test")
       )
     )
   )

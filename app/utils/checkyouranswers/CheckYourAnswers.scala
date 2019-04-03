@@ -96,6 +96,7 @@ object CheckYourAnswers {
               ))
           }.getOrElse(Seq.empty[AnswerRow])
         }
+
         override def row(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = booleanCYARow(id, userAnswers, Some(changeUrl))
 
         override def updateRow(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = booleanCYARow(id, userAnswers, None)
@@ -604,38 +605,17 @@ case class CompanyDetailsCYA[I <: TypedIdentifier[CompanyDetails]](
       override def row(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
         userAnswers.get(id).map {
           companyDetails =>
-
-            val nameRow = AnswerRow(
+            Seq(AnswerRow(
               nameLabel,
               Seq(s"${companyDetails.companyName}"),
               answerIsMessageKey = false,
               Some(changeUrl),
               Message("messages__visuallyhidden__common__name", companyDetails.companyName)
-            )
-
-            val withVat = companyDetails.vatNumber.fold(Seq(nameRow)) { vat =>
-              Seq(nameRow, AnswerRow(
-                vatLabel,
-                Seq(s"$vat"),
-                answerIsMessageKey = false,
-                Some(changeUrl),
-                changeVat
-              ))
-            }
-
-            companyDetails.payeNumber.fold(withVat) { paye =>
-              withVat :+ AnswerRow(
-                payeLabel,
-                Seq(s"$paye"),
-                answerIsMessageKey = false,
-                Some(changeUrl),
-                changePaye
-              )
-            }
-
+            ))
         }.getOrElse(Seq.empty[AnswerRow])
 
       override def updateRow(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = row(id)(changeUrl, userAnswers)
     }
   }
+
 }

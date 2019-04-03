@@ -149,9 +149,7 @@ object ConfirmDeleteTrusteeControllerSpec extends ControllerSpecBase {
   )
 
   private val companyTrustee = CompanyDetails(
-    "test-company-name",
-    None,
-    None
+    "test-company-name"
   )
 
   private val partnershipTrustee = PartnershipDetails(

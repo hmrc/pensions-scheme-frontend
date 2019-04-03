@@ -54,7 +54,7 @@ class CompanyDetailsControllerSpec extends ControllerSpecBase {
     TrusteesId.toString -> Json.arr(
       Json.obj(
         CompanyDetailsId.toString ->
-          CompanyDetails("test company name", Some("test vat number"), Some("test paye number"))
+          CompanyDetails("test company name")
       )
     )
   )
@@ -74,7 +74,7 @@ class CompanyDetailsControllerSpec extends ControllerSpecBase {
 
       val result = controller(getRelevantData).onPageLoad(NormalMode, firstIndex, None)(fakeRequest)
 
-      contentAsString(result) mustBe viewAsString(form.fill(CompanyDetails("test company name", Some("test vat number"), Some("test paye number"))))
+      contentAsString(result) mustBe viewAsString(form.fill(CompanyDetails("test company name")))
     }
 
     "redirect to the next page when valid data is submitted" in {

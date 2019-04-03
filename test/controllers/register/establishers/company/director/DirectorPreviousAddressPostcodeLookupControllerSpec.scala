@@ -53,7 +53,7 @@ class DirectorPreviousAddressPostcodeLookupControllerSpec extends ControllerSpec
   val directorIndex = Index(0)
 
   val companyName: String = "test company name"
-  val company = CompanyDetails(companyName, None, None)
+  val company = CompanyDetails(companyName)
   val director = PersonDetails("first", Some("middle"), "last", LocalDate.now())
 
   val form = formProvider()

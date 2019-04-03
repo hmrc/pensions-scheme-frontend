@@ -98,7 +98,7 @@ class CompanyAddressControllerSpec extends ControllerSpecBase with ScalaFutures 
       val validData = Json.obj(
         EstablishersId.toString -> Json.arr(
           Json.obj(
-            CompanyDetailsId.toString -> CompanyDetails(companyName, Some("123456"), Some("abcd")),
+            CompanyDetailsId.toString -> CompanyDetails(companyName),
             CompanyAddressId.toString -> address
           )
         )

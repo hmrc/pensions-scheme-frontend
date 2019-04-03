@@ -156,7 +156,7 @@ object AddEstablisherControllerSpec extends AddEstablisherControllerSpec {
     false
   )
 
-  private val companyDetails = CompanyDetails("Test Ltd", None, None)
+  private val companyDetails = CompanyDetails("Test Ltd")
   private val testLtd = EstablisherCompanyEntity(
     CompanyDetailsId(1),
     "Test Ltd",

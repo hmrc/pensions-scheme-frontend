@@ -66,7 +66,7 @@ class CompanyRegistrationNumberControllerSpec extends ControllerSpecBase {
     EstablishersId.toString -> Json.arr(
       Json.obj(
         CompanyDetailsId.toString ->
-          CompanyDetails("test company name", Some("123456"), Some("abcd")),
+          CompanyDetails("test company name"),
         CompanyRegistrationNumberId.toString ->
           CompanyRegistrationNumber.Yes("1234567")
       )
