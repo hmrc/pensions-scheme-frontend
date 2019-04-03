@@ -129,6 +129,7 @@ site.agree_and_continue = Agree and continue
 site.go_back = Go back
 site.signOut = Sign out
 site.printThisPage = Print this page
+site.return_to = Return to {0}
 
 messages__unauthorised__title = You can’t access this service with this account
 
@@ -367,7 +368,7 @@ messages__common__company_details__title = Company details
 messages__common__company_name = Company name
 messages__common__vat = VAT Registration number (optional)
 messages__common__vat_yes = Enter VAT number
-messages__common__vat_hint = This is 9 numbers, sometimes with ‘GB’ at the start, for example 123456789 or GB123456789. You can find it on ’s VAT registration certificate.
+messages__common__vat_hint = This number issued by HMRC. It is 9 numbers, with "GB" sometimes added at the start, for example GB123456789
 messages__common__paye = PAYE number (optional)
 messages__common__paye_label = Enter the employer PAYE number
 messages__common__paye_hint = This is a 3 digit tax office number, a forward slash, and a tax office employer reference, like 123/AB456. It may be called ‘Employer PAYE reference’ or ‘PAYE reference’.
@@ -376,7 +377,6 @@ messages__error__vat_length = Enter a VAT number using either 9 numbers only or 
 messages__error__vat_required = Enter a VAT number
 messages__error__vat_invalid = Enter a VAT number using either 9 numbers only or GB followed by 9 numbers
 messages__error__has_vat_establisher = Select whether the partnership has a VAT number
-messages__error__has_vat_company = Select whether the company has a VAT number
 messages__error__paye_required = Enter an employer PAYE number
 messages__error__paye_length = Enter an employer PAYE number using 16 characters or less
 messages__error__paye_invalid = Enter an employer PAYE number using only numbers, letters or a forward slash
@@ -1343,6 +1343,13 @@ messages__any_more_changes__p2 = You will need to complete a declaration to upda
 messages__any_more_changes__p3_date = You have until {0} to complete the declaration. If you do not complete the declaration by this date, your changes will be deleted.
 
 messages__any_more_changes__error__required = Select yes if you want to make more changes
+
+messages__variationDeclaration__title = Declaration
+messages__variationDeclaration__heading = Declaration
+messages__variationDeclaration__declare = By continuing you declare that you:
+messages__variationDeclaration__statement1 = understand that you may be liable to a penalty and the pension scheme may be de-registered if a false statement is made in any information I provide and that false statements may also lead to prosecution
+messages__variationDeclaration__statement2 = are a fit and proper person to be the scheme administrator, with a working knowledge of pensions and the scheme administrator duties and liabilities
+messages__variationDeclaration__statement3 = understand that where HMRC believes that any of the persons who are the scheme administrator is not a fit and proper person, HMRC may de-register the scheme
 
 messages__companyPaye__title = Does the company have an employer PAYE number?
 messages__companyPaye__heading = Does {0} have an employer PAYE number?
