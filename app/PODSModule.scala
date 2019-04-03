@@ -110,8 +110,6 @@ class PODSModule extends AbstractModule {
       .annotatedWith(classOf[Variations])
       .to(classOf[VariationsNavigator])
 
-    bind(classOf[DataRetrievalAction]).to(classOf[DataRetrievalActionImpl]).asEagerSingleton()
-
 
   }
 
