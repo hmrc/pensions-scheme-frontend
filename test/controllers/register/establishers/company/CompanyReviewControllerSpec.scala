@@ -40,7 +40,7 @@ class CompanyReviewControllerSpec extends ControllerSpecBase {
     new CompanyReviewController(frontendAppConfig, messagesApi, new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
       dataRetrievalAction, new DataRequiredActionImpl, FakeSectionComplete)
 
-  def viewAsString(): String = companyReview(frontendAppConfig, index, companyName, directorNames, None, NormalMode, None)(fakeRequest, messages).toString
+  def viewAsString(): String = companyReview(frontendAppConfig, index, companyName, directorNames, None, NormalMode, None, false)(fakeRequest, messages).toString
 
   "CompanyReview Controller" must {
 

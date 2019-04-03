@@ -40,14 +40,15 @@ class PartnershipReviewViewSpec extends ViewBehaviours {
     PartnerDetailsId.toString -> PersonDetails("partner", None, lastName, LocalDate.now())
   )
 
-  def createView(): () => HtmlFormat.Appendable = () => partnershipReview(
+  def createView(readOnly: Boolean = false): () => HtmlFormat.Appendable = () => partnershipReview(
     frontendAppConfig,
     index,
     partnershipName,
     partners,
     None,
     None,
-    NormalMode
+    NormalMode,
+    readOnly
   )(fakeRequest, messages)
 
   def createSecView: () => HtmlFormat.Appendable = () => partnershipReview(
@@ -57,7 +58,8 @@ class PartnershipReviewViewSpec extends ViewBehaviours {
     tenPartners,
     None,
     None,
-    NormalMode
+    NormalMode,
+    false
   )(fakeRequest, messages)
 
   "PartnershipReview view" must {
@@ -77,6 +79,13 @@ class PartnershipReviewViewSpec extends ViewBehaviours {
       )
     }
 
+    "have link to view partnership details when readOnly flag is true" in {
+      Jsoup.parse(createView()().toString).select("a[id=edit-partnership-details]") must haveLink(
+        routes.CheckYourAnswersController.onPageLoad(NormalMode, index, None).url
+      )
+      Jsoup.parse(createView()().toString) must haveDynamicText("messages__partnershipReview__partnership__viewLink")
+    }
+
     "have link to edit partner details when there are less than 10 partners" in {
       Jsoup.parse(createView()().toString).select("a[id=edit-partner-details]") must haveLink(
         routes.AddPartnersController.onPageLoad(NormalMode, index, None).url
@@ -90,6 +99,14 @@ class PartnershipReviewViewSpec extends ViewBehaviours {
         routes.AddPartnersController.onPageLoad(NormalMode, index, None).url
       )
       Jsoup.parse(createSecView().toString) must haveDynamicText("messages__partnershipReview__partners__changeLink")
+    }
+
+    "have link to view partner details when readOnly flag is true" in {
+      Jsoup.parse(createView()().toString).select("a[id=edit-partner-details]") must haveLink(
+        routes.AddPartnersController.onPageLoad(NormalMode, index, None).url
+      )
+      Jsoup.parse(createView()().toString) must haveDynamicText("messages__partnershipReview__partners__viewLink")
+
     }
 
     "contain list of partners" in {
