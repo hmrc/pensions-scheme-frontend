@@ -51,7 +51,7 @@ class CompanyVatController @Inject()(
               postCall = routes.CompanyVatController.onSubmit(mode, index, srn),
               title = Message("messages__companyVat__title"),
               heading = Message("messages__companyVat__heading", details.companyName),
-              hint = Message("messages__common__vat__hint"),
+              hint = Message("messages__common__company_vat__hint", details.companyName),
               subHeading = None
             )
         }

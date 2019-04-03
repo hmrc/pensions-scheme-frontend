@@ -76,7 +76,7 @@ object CompanyVatControllerSpec extends CompanyVatControllerSpec {
     routes.CompanyVatController.onSubmit(NormalMode, firstIndex, None),
     title = Message("messages__companyVat__title"),
     heading = Message("messages__companyVat__heading", "test company name"),
-    hint = Message("messages__common__vat__hint"),
+    hint = Message("messages__common__company_vat__hint", "test company name"),
     subHeading = None
   )
 

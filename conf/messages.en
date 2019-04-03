@@ -47,8 +47,8 @@ messages__common__address4 = Address line 4 (optional)
 messages__common__country = Country
 messages__common__previous_address = Previous Address
 messages__common__trustee_secondary_header = Trustees for {0}
-messages__common__vat__hint = This is 9 numbers, sometimes with ‘GB’ at the start, for example 123456789 or GB123456789. You can find it on ’s VAT registration certificate.
-
+messages__common__vat__hint = This has 9 characters and is issued by HMRC. It might start with GB. For example, GB123456789.
+messages__common__company_vat__hint = This is 9 numbers, sometimes with ‘GB’ at the start, for example 123456789 or GB123456789. You can find it on {0}’s VAT registration certificate.
 
 messages__common__postcode_lookup__enter_postcode = Enter the postcode, or if you have an overseas address, {0} enter the address manually {1}
 messages__common__postcode_lookup__address_postcode = Postcode
