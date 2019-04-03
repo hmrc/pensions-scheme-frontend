@@ -1339,5 +1339,6 @@ messages__schemeTaskList__working_knowledge_link_text = Details of this person
 messages__any_more_changes__title = Do you want to make any more changes?
 messages__any_more_changes__p1 = The pension scheme has not been updated yet.
 messages__any_more_changes__p2 = You will need to complete a declaration to update the scheme when you have made all of your changes.
+messages__any_more_changes__p3_date = You have until {0} to complete the declaration. If you do not complete the declaration by this date, your changes will be deleted.
 
 messages__any_more_changes__error__required = Select yes if you want to make more changes

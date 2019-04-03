@@ -20,6 +20,7 @@ import identifiers._
 import identifiers.register.establishers.company.{CompanyDetailsId => EstablisherCompanyDetailsId}
 import identifiers.register.establishers.individual.EstablisherDetailsId
 import identifiers.register.establishers.partnership.{PartnershipDetailsId => EstablisherPartnershipDetailsId}
+import identifiers.register.trustees.MoreThanTenTrusteesId
 import identifiers.register.trustees.company.{CompanyDetailsId => TrusteeCompanyDetailsId}
 import identifiers.register.trustees.individual.TrusteeDetailsId
 import identifiers.register.trustees.partnership.{PartnershipDetailsId => TrusteePartnershipDetailsId}
@@ -119,7 +120,8 @@ abstract class HsTaskListHelper(answers: UserAnswers)(implicit messages: Message
       userAnswers.get(IsAboutBenefitsAndInsuranceCompleteId),
       userAnswers.get(IsWorkingKnowledgeCompleteId),
       Some(isAllEstablishersCompleted(userAnswers)),
-      Some(isTrusteeOptional | isAllTrusteesCompleted(userAnswers))
+      Some(isTrusteeOptional | isAllTrusteesCompleted(userAnswers)),
+      Some(userAnswers.allTrusteesAfterDelete.size < 10 || userAnswers.get(MoreThanTenTrusteesId).isDefined)
     ).forall(_.contains(true))
   }
 
