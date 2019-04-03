@@ -55,7 +55,7 @@ class AddCompanyDirectorsController @Inject()(
       retrieveCompanyName(index) {
         companyName =>
           val directors = request.userAnswers.allDirectorsAfterDelete(index)
-          Future.successful(Ok(addCompanyDirectors(appConfig, form, mode, index, directors, existingSchemeName, postCall(mode, srn, index))))
+          Future.successful(Ok(addCompanyDirectors(appConfig, form, directors, existingSchemeName, postCall(mode, srn, index), request.readOnly)))
       }
   }
 
@@ -76,11 +76,10 @@ class AddCompanyDirectorsController @Inject()(
                     addCompanyDirectors(
                       appConfig,
                       formWithErrors,
-                      mode,
-                      index,
                       directors,
                       existingSchemeName,
-                      postCall(mode, srn, index)
+                      postCall(mode, srn, index),
+                      request.readOnly
                     )
                   )
                 )

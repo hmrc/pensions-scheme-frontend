@@ -24,11 +24,10 @@
 @(
     appConfig: FrontendAppConfig,
     form: Form[_],
-    mode: Mode,
-    establisherIndex: Int,
     directors: Seq[DirectorEntity],
     schemeName: Option[String],
-    postCall: Call
+    postCall: Call,
+    readOnly: Boolean
 )(implicit request: Request[_], messages: Messages)
 
 @disableSubmission = @{
@@ -53,21 +52,23 @@
             @components.submit_button("messages__addCompanyDirectors_add_director")
         } else {
 
-            @components.entity_list(directors)
+            @components.entity_list(directors, readOnly)
 
-            @if(directors.size < appConfig.maxDirectors) {
-                @components.input_yes_no(
-                    field = form("value"),
-                    label = messages("messages__addCompanyDirectors_add_more"),
-                    labelClass = Some("bold-small"),
-                    hint = Some(messages("messages__addCompanyDirectors_lede"))
-                )
-            } else {
-                @components.paragraph_text(messages("messages__addCompanyDirectors_at_maximum"))
-                @components.paragraph_text(messages("messages__addCompanyDirectorsOrPartners_tell_us_if_you_have_more"))
+            @if(!readOnly){
+                @if(directors.size < appConfig.maxDirectors) {
+                    @components.input_yes_no(
+                        field = form("value"),
+                        label = messages("messages__addCompanyDirectors_add_more"),
+                        labelClass = Some("bold-small"),
+                        hint = Some(messages("messages__addCompanyDirectors_lede"))
+                    )
+                } else {
+                    @components.paragraph_text(messages("messages__addCompanyDirectors_at_maximum"))
+                    @components.paragraph_text(messages("messages__addCompanyDirectorsOrPartners_tell_us_if_you_have_more"))
+                }
+
+                @components.submit_button("site.save_and_continue", disableSubmission)
             }
-
-            @components.submit_button("site.save_and_continue", disableSubmission)
         }
 
         @components.return_link("messages__schemeTaskList__returnlink", schemeName)

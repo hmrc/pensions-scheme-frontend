@@ -22,10 +22,10 @@
 @(
     appConfig: FrontendAppConfig,
     form: Form[_],
-    establisherIndex: Int,
     partners: Seq[PartnerEntity],
     postUrl: Call,
-    schemeName: Option[String]
+    schemeName: Option[String],
+    readOnly: Boolean
 )(implicit request: Request[_], messages: Messages)
 
 @disableSubmission = @{
@@ -50,21 +50,23 @@
             @components.submit_button("messages__addPartners_add_partner")
         } else {
 
-            @components.entity_list(partners)
+            @components.entity_list(partners, readOnly)
 
-            @if(partners.size < appConfig.maxPartners) {
-                @components.input_yes_no(
-                    field = form("value"),
-                    label = messages("messages__addPartners_add_more"),
-                    labelClass = Some("bold-small"),
-                    hint = Some(messages("messages__addPartners_lede"))
-                )
-            } else {
-                @components.paragraph_text(messages("messages__addPartners_at_maximum"))
-                @components.paragraph_text(messages("messages__addCompanyDirectorsOrPartners_tell_us_if_you_have_more"))
+            @if(!readOnly){
+                @if(partners.size < appConfig.maxPartners) {
+                    @components.input_yes_no(
+                        field = form("value"),
+                        label = messages("messages__addPartners_add_more"),
+                        labelClass = Some("bold-small"),
+                        hint = Some(messages("messages__addPartners_lede"))
+                    )
+                } else {
+                    @components.paragraph_text(messages("messages__addPartners_at_maximum"))
+                    @components.paragraph_text(messages("messages__addCompanyDirectorsOrPartners_tell_us_if_you_have_more"))
+                }
+
+                @components.submit_button("site.save_and_continue", disableSubmission)
             }
-
-            @components.submit_button("site.save_and_continue", disableSubmission)
         }
 
         @components.return_link("messages__schemeTaskList__returnlink", schemeName)

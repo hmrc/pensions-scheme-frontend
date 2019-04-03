@@ -47,37 +47,17 @@ class DataRetrievalImpl(dataConnector: UserAnswersCacheConnector,
         srn.map { srn =>
           lockConnector.getLock(request.psaId.id, srn).flatMap {
             case Some(_) => getOptionalRequest(updateConnector.fetch(srn))(request)
-            case None if disableLock => getOptionalRequest(viewConnector.fetch(request.externalId))(request)
-            case None => placeLockAndGetRequest(srn)(request, implicitly)
+            case None => getOptionalRequest(viewConnector.fetch(request.externalId), true)(request)
           }
-        }.getOrElse(Future(emptyDataRequest(request)))
+        }.getOrElse(Future(OptionalDataRequest(request.request, request.externalId, None, request.psaId)))
     }
   }
 
-  def placeLockAndGetRequest[A](srn: String)(implicit request: AuthenticatedRequest[A], hc: HeaderCarrier): Future[OptionalDataRequest[A]] =
-    viewConnector.fetch(request.externalId).flatMap {
-      case Some(data) =>
-        lockConnector.lock(request.psaId.id, srn).flatMap {
-          case VarianceLock => updateConnector.upsert(srn, UserAnswers(data).json).map(_ => validDataRequest(data))
-          case _ => Future(validDataRequest(data))
-        }
-      case None => Future(emptyDataRequest)
-    }
-
-
-
-
-  def getOptionalRequest[A](f: Future[Option[JsValue]])(implicit request: AuthenticatedRequest[A]): Future[OptionalDataRequest[A]] =
+  def getOptionalRequest[A](f: Future[Option[JsValue]], readOnly: Boolean = false)(implicit request: AuthenticatedRequest[A]): Future[OptionalDataRequest[A]] =
     f.map {
-      case None => emptyDataRequest
-      case Some(data) => validDataRequest(data)
+      case None => OptionalDataRequest(request.request, request.externalId, None, request.psaId, readOnly)
+      case Some(data) => OptionalDataRequest(request.request, request.externalId, Some(UserAnswers(data)), request.psaId, readOnly)
     }
-
-  private def emptyDataRequest[A](implicit request: AuthenticatedRequest[A]) =
-    OptionalDataRequest(request.request, request.externalId, None, request.psaId)
-
-  private def validDataRequest[A](data:JsValue)(implicit request: AuthenticatedRequest[A]) =
-    OptionalDataRequest(request.request, request.externalId, Some(UserAnswers(data)), request.psaId)
 }
 
 @ImplementedBy(classOf[DataRetrievalImpl])

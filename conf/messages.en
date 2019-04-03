@@ -115,6 +115,7 @@ site.continue = Continue
 site.delete = Remove
 site.edit = Edit
 site.change = Change
+site.view = View
 site.hidden-delete = Delete {0}
 site.hidden-edit = Change {0}
 site.no = No

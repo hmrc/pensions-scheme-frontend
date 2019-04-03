@@ -64,11 +64,10 @@ class AddCompanyDirectorsControllerSpec extends ControllerSpecBase {
     addCompanyDirectors(
       frontendAppConfig,
       form,
-      NormalMode,
-      establisherIndex,
       directors,
       None,
-      postCall(NormalMode, None, establisherIndex)
+      postCall(NormalMode, None, establisherIndex),
+      false
     )(fakeRequest, messages).toString
 
   private val establisherIndex = 0
