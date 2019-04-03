@@ -83,7 +83,7 @@ class PartnershipReviewViewSpec extends ViewBehaviours {
       Jsoup.parse(createView()().toString).select("a[id=edit-partnership-details]") must haveLink(
         routes.CheckYourAnswersController.onPageLoad(NormalMode, index, None).url
       )
-      Jsoup.parse(createView()().toString) must haveDynamicText("messages__partnershipReview__partnership__viewLink")
+      Jsoup.parse(createView(true)().toString) must haveDynamicText("messages__partnershipReview__partnership__viewLink")
     }
 
     "have link to edit partner details when there are less than 10 partners" in {
@@ -105,7 +105,7 @@ class PartnershipReviewViewSpec extends ViewBehaviours {
       Jsoup.parse(createView()().toString).select("a[id=edit-partner-details]") must haveLink(
         routes.AddPartnersController.onPageLoad(NormalMode, index, None).url
       )
-      Jsoup.parse(createView()().toString) must haveDynamicText("messages__partnershipReview__partners__viewLink")
+      Jsoup.parse(createView(true)().toString) must haveDynamicText("messages__partnershipReview__partners__viewLink")
 
     }
 

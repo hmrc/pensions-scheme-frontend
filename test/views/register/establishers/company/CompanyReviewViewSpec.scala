@@ -66,7 +66,7 @@ class CompanyReviewViewSpec extends ViewBehaviours {
       Jsoup.parse(createView()().toString).select("a[id=edit-company-details]") must haveLink(
         routes.CheckYourAnswersController.onPageLoad(NormalMode, None, index).url
       )
-      Jsoup.parse(createView()().toString) must haveDynamicText("messages__companyReview__company__viewLink")
+      Jsoup.parse(createView(true)().toString) must haveDynamicText("messages__companyReview__company__viewLink")
     }
 
     "have link to edit director details when there are less than 10 directors" in {
@@ -88,7 +88,7 @@ class CompanyReviewViewSpec extends ViewBehaviours {
       Jsoup.parse(createView()().toString).select("a[id=edit-director-details]") must haveLink(
         routes.AddCompanyDirectorsController.onPageLoad(NormalMode, None, index).url
       )
-      Jsoup.parse(createView(true).toString) must haveDynamicText("messages__companyReview__directors__viewLink")
+      Jsoup.parse(createView(true)().toString) must haveDynamicText("messages__companyReview__directors__viewLink")
     }
 
     "contain list of directors" in {
