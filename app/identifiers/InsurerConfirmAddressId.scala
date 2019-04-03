@@ -41,10 +41,13 @@ case object InsurerConfirmAddressId extends TypedIdentifier[Address] {
       override def updateRow(id: self.type)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
         userAnswers.get(id) match {
           case Some(_) => row(id)(changeUrl, userAnswers)
-          case _ => Seq(AnswerRow(label,
-            Seq("site.not_entered"),
-            answerIsMessageKey = true,
-            Some(Link("site.add", changeUrl,Some("messages__visuallyhidden__add_insurer_confirm_address")))))
+          case _ => userAnswers.get(BenefitsSecuredByInsuranceId) match{
+            case Some(true) => Seq(AnswerRow(label,
+              Seq("site.not_entered"),
+              answerIsMessageKey = true,
+              Some(Link("site.add", changeUrl,Some("messages__visuallyhidden__add_insurer_confirm_address")))))
+            case _ => Seq.empty[AnswerRow]
+          }
         }
       }
     }

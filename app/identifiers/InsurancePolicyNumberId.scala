@@ -28,7 +28,7 @@ case object InsurancePolicyNumberId extends TypedIdentifier[String] {
   override def toString: String = "insurancePolicyNumber"
 
   implicit def cya(implicit userAnswers: UserAnswers, messages: Messages, countryOptions: CountryOptions): CheckYourAnswers[self.type] = {
-    
+
       val label = if (userAnswers.get(InsuranceCompanyNameId).isDefined) {
         Some(messages("messages__insurance_policy_number_cya_label", userAnswers.get(InsuranceCompanyNameId).getOrElse("")))
       } else {
@@ -49,11 +49,14 @@ case object InsurancePolicyNumberId extends TypedIdentifier[String] {
       override def updateRow(id: self.type)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
         userAnswers.get(id) match {
           case Some(_) => row(id)(changeUrl, userAnswers)
-          case _=>  Seq(AnswerRow(
-            label.fold(s"${id.toString}.checkYourAnswersLabel")(customLabel => customLabel),
-            Seq("site.not_entered"),
-            answerIsMessageKey = true,
-            Some(Link("site.add", changeUrl, hiddenLabel))))
+          case _=> userAnswers.get(BenefitsSecuredByInsuranceId) match{
+            case Some(true) => Seq(AnswerRow(
+              label.fold(s"${id.toString}.checkYourAnswersLabel")(customLabel => customLabel),
+              Seq("site.not_entered"),
+              answerIsMessageKey = true,
+              Some(Link("site.add", changeUrl, hiddenLabel))))
+            case _ => Seq.empty[AnswerRow]
+          }
         }
       }
     }
