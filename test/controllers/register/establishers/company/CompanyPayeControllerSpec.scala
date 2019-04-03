@@ -76,7 +76,7 @@ object CompanyPayeControllerSpec extends CompanyPayeControllerSpec{
   val viewModel = PayeViewModel(
     routes.CompanyPayeController.onSubmit(NormalMode, firstIndex, None),
     title = Message("messages__companyPaye__title"),
-    heading = Message("messages__companyPaye__heading"),
+    heading = Message("messages__companyPaye__heading", "test company name"),
     hint = Some(Message("messages__common__paye_hint")),
     subHeading = None
   )

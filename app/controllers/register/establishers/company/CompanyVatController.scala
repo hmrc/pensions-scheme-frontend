@@ -46,18 +46,18 @@ class CompanyVatController @Inject()(
     Retrieval {
       implicit request =>
         CompanyDetailsId(index).retrieve.right.map {
-          _ =>
+          details =>
             VatViewModel(
               postCall = routes.CompanyVatController.onSubmit(mode, index, srn),
               title = Message("messages__companyVat__title"),
-              heading = Message("messages__companyVat__heading"),
+              heading = Message("messages__companyVat__heading", details.companyName),
               hint = Message("messages__common__vat__hint"),
               subHeading = None
             )
         }
     }
 
-  private val form = formProvider()
+  private val form = formProvider("messages__companyVat__error__required")
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData andThen requireData).async {

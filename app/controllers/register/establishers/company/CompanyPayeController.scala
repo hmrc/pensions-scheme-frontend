@@ -42,17 +42,17 @@ class CompanyPayeController @Inject()(
                                        formProvider: PayeFormProvider
                                      ) extends PayeController with I18nSupport {
 
-  protected val form: Form[Paye] = formProvider()
+  protected val form: Form[Paye] = formProvider("messages__companyPaye__error__required")
 
   private def viewmodel(mode: Mode, index: Index, srn: Option[String]): Retrieval[PayeViewModel] =
     Retrieval {
       implicit request =>
         CompanyDetailsId(index).retrieve.right.map {
-          _ =>
+          details =>
             PayeViewModel(
               postCall = routes.CompanyPayeController.onSubmit(mode, index, srn),
               title = Message("messages__companyPaye__title"),
-              heading = Message("messages__companyPaye__heading"),
+              heading = Message("messages__companyPaye__heading", details.companyName),
               hint = Some(Message("messages__common__paye_hint")),
               subHeading = None
             )
