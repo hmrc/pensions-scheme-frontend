@@ -24,7 +24,7 @@ import views.behaviours.QuestionViewBehaviours
 import views.html.variationDeclaration
 
 class VariationDeclarationViewSpec extends QuestionViewBehaviours[Boolean] {
-  private val messageKeyPrefix = "declaration"
+  private val messageKeyPrefix = "variationDeclaration"
 
   val schemeName = "Test Scheme Name"
   val form: Form[Boolean] = new DeclarationFormProvider()()
