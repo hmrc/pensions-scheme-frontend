@@ -14,32 +14,32 @@
  * limitations under the License.
  */
 
-package controllers.register.trustees.company
+package controllers.register.establishers.company
 
 import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
 import controllers.VatController
 import controllers.actions._
 import forms.VatFormProvider
-import identifiers.register.trustees.company.{CompanyDetailsId, CompanyVatId}
+import identifiers.register.establishers.company.{CompanyDetailsId, CompanyVatId}
 import javax.inject.Inject
 import models.{Index, Mode}
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent}
 import utils.Navigator
-import utils.annotations.TrusteesCompany
+import utils.annotations.EstablishersCompany
 import viewmodels.{Message, VatViewModel}
 
 
 class CompanyVatController @Inject()(
-                                      override val appConfig: FrontendAppConfig,
-                                      override val messagesApi: MessagesApi,
-                                      override val cacheConnector: UserAnswersCacheConnector,
-                                      @TrusteesCompany override val navigator: Navigator,
-                                      authenticate: AuthAction,
-                                      getData: DataRetrievalAction,
-                                      requireData: DataRequiredAction,
-                                      formProvider: VatFormProvider
+                                          override val appConfig: FrontendAppConfig,
+                                          override val messagesApi: MessagesApi,
+                                          override val cacheConnector: UserAnswersCacheConnector,
+                                          @EstablishersCompany override val navigator: Navigator,
+                                          authenticate: AuthAction,
+                                          getData: DataRetrievalAction,
+                                          requireData: DataRequiredAction,
+                                          formProvider: VatFormProvider
                                         ) extends VatController {
 
   private def viewmodel(mode: Mode, index: Index, srn: Option[String]): Retrieval[VatViewModel] =
@@ -59,7 +59,8 @@ class CompanyVatController @Inject()(
 
   private val form = formProvider("messages__companyVat__error__required")
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData andThen requireData).async {
     implicit request =>
       viewmodel(mode, index, srn).retrieve.right.map {
         vm =>
@@ -67,7 +68,8 @@ class CompanyVatController @Inject()(
       }
   }
 
-  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData andThen requireData).async {
     implicit request =>
       viewmodel(mode, index, srn).retrieve.right.map {
         vm =>

@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package controllers.register.trustees.company
+package controllers.register.establishers.company
 
 import base.CSRFRequest
 import connectors.{FakeUserAnswersCacheConnector, UserAnswersCacheConnector}
 import controllers.ControllerSpecBase
 import controllers.actions.{AuthAction, DataRetrievalAction, FakeAuthAction}
-import forms.VatFormProvider
+import forms.PayeFormProvider
 import models.{Index, NormalMode}
 import org.scalatest.MustMatchers
 import play.api.Application
@@ -28,54 +28,56 @@ import play.api.http.Writeable
 import play.api.inject.bind
 import play.api.mvc.{Call, Request, Result}
 import play.api.test.FakeRequest
-import play.api.test.Helpers.{contentAsString, redirectLocation, status, _}
-import utils.annotations.TrusteesCompany
+import play.api.test.Helpers._
+import utils.annotations.EstablishersCompany
 import utils.{FakeNavigator, Navigator}
-import viewmodels.{Message, VatViewModel}
-import views.html.vat
+import viewmodels.{Message, PayeViewModel}
+import views.html.paye
 
 import scala.concurrent.Future
 
-class CompanyVatControllerSpec extends ControllerSpecBase with MustMatchers with CSRFRequest {
+class CompanyPayeControllerSpec extends ControllerSpecBase with MustMatchers with CSRFRequest {
 
-  import CompanyVatControllerSpec._
+  import CompanyPayeControllerSpec._
 
-  "CompanyVatController" must {
+  "CompanyPayeController" must {
 
     "render the view correctly on a GET request" in {
       requestResult(
-        implicit app => addToken(FakeRequest(routes.CompanyVatController.onPageLoad(NormalMode, firstIndex, None))),
+        implicit app => addToken(FakeRequest(routes.CompanyPayeController.onPageLoad(NormalMode, firstIndex, None))),
         (request, result) => {
           status(result) mustBe OK
-          contentAsString(result) mustBe vat(frontendAppConfig, form, viewModel, None)(request, messages).toString()
+          contentAsString(result) mustBe paye(frontendAppConfig, form, viewModel, None)(request, messages).toString()
         }
       )
     }
 
     "redirect to the next page on a POST request" in {
       requestResult(
-        implicit app => addToken(FakeRequest(routes.CompanyVatController.onSubmit(NormalMode, firstIndex, None))
-          .withFormUrlEncodedBody(("vat.hasVat", "true"), ("vat.vat", "123456789"))),
+        implicit app => addToken(FakeRequest(routes.CompanyPayeController.onSubmit(NormalMode, firstIndex, None))
+          .withFormUrlEncodedBody(("paye.hasPaye", "true"), ("paye.paye", "123456789"))),
         (_, result) => {
           status(result) mustBe SEE_OTHER
           redirectLocation(result) mustBe Some(onwardRoute.url)
         }
       )
     }
-  }
-}
-object CompanyVatControllerSpec extends CompanyVatControllerSpec {
 
-  val form = new VatFormProvider()()
+  }
+
+}
+object CompanyPayeControllerSpec extends CompanyPayeControllerSpec{
+
+  val form = new PayeFormProvider()()
   val firstIndex = Index(0)
 
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
-  val viewModel = VatViewModel(
-    routes.CompanyVatController.onSubmit(NormalMode, firstIndex, None),
-    title = Message("messages__companyVat__title"),
-    heading = Message("messages__companyVat__heading", "test company name"),
-    hint = Message("messages__common__company_vat__hint", "test company name"),
+  val viewModel = PayeViewModel(
+    routes.CompanyPayeController.onSubmit(NormalMode, firstIndex, None),
+    title = Message("messages__companyPaye__title"),
+    heading = Message("messages__companyPaye__heading", "test company name"),
+    hint = Some(Message("messages__common__paye_hint")),
     subHeading = None
   )
 
@@ -84,8 +86,8 @@ object CompanyVatControllerSpec extends CompanyVatControllerSpec {
 
     running(_.overrides(
       bind[AuthAction].to(FakeAuthAction),
-      bind[DataRetrievalAction].toInstance(getMandatoryTrusteeCompany),
-      bind(classOf[Navigator]).qualifiedWith(classOf[TrusteesCompany]).toInstance(new FakeNavigator(onwardRoute)),
+      bind[DataRetrievalAction].toInstance(getMandatoryEstablisherCompany),
+      bind(classOf[Navigator]).qualifiedWith(classOf[EstablishersCompany]).toInstance(new FakeNavigator(onwardRoute)),
       bind[UserAnswersCacheConnector].toInstance(FakeUserAnswersCacheConnector)
     )) {
       app =>
@@ -94,6 +96,9 @@ object CompanyVatControllerSpec extends CompanyVatControllerSpec {
         test(req, result)
     }
   }
+
 }
+
+
 
 

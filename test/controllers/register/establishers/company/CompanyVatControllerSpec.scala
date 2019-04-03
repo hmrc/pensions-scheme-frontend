@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers.register.trustees.company
+package controllers.register.establishers.company
 
 import base.CSRFRequest
 import connectors.{FakeUserAnswersCacheConnector, UserAnswersCacheConnector}
@@ -28,8 +28,8 @@ import play.api.http.Writeable
 import play.api.inject.bind
 import play.api.mvc.{Call, Request, Result}
 import play.api.test.FakeRequest
-import play.api.test.Helpers.{contentAsString, redirectLocation, status, _}
-import utils.annotations.TrusteesCompany
+import play.api.test.Helpers._
+import utils.annotations.EstablishersCompany
 import utils.{FakeNavigator, Navigator}
 import viewmodels.{Message, VatViewModel}
 import views.html.vat
@@ -39,7 +39,6 @@ import scala.concurrent.Future
 class CompanyVatControllerSpec extends ControllerSpecBase with MustMatchers with CSRFRequest {
 
   import CompanyVatControllerSpec._
-
   "CompanyVatController" must {
 
     "render the view correctly on a GET request" in {
@@ -62,7 +61,9 @@ class CompanyVatControllerSpec extends ControllerSpecBase with MustMatchers with
         }
       )
     }
+
   }
+
 }
 object CompanyVatControllerSpec extends CompanyVatControllerSpec {
 
@@ -84,8 +85,8 @@ object CompanyVatControllerSpec extends CompanyVatControllerSpec {
 
     running(_.overrides(
       bind[AuthAction].to(FakeAuthAction),
-      bind[DataRetrievalAction].toInstance(getMandatoryTrusteeCompany),
-      bind(classOf[Navigator]).qualifiedWith(classOf[TrusteesCompany]).toInstance(new FakeNavigator(onwardRoute)),
+      bind[DataRetrievalAction].toInstance(getMandatoryEstablisherCompany),
+      bind(classOf[Navigator]).qualifiedWith(classOf[EstablishersCompany]).toInstance(new FakeNavigator(onwardRoute)),
       bind[UserAnswersCacheConnector].toInstance(FakeUserAnswersCacheConnector)
     )) {
       app =>
@@ -94,6 +95,7 @@ object CompanyVatControllerSpec extends CompanyVatControllerSpec {
         test(req, result)
     }
   }
+
 }
 
 
