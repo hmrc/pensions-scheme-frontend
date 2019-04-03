@@ -23,6 +23,7 @@ import viewmodels._
 
 class HsTaskListHelperRegistration(answers: UserAnswers)(implicit messages: Messages) extends HsTaskListHelper(answers) {
 
+  override protected lazy val beforeYouStartLinkText = messages("messages__schemeTaskList__before_you_start_link_text")
 
   override protected[utils] def aboutSection(userAnswers: UserAnswers): Seq[SchemeDetailsTaskListSection] = {
     val membersLink = userAnswers.get(IsAboutMembersCompleteId) match {
