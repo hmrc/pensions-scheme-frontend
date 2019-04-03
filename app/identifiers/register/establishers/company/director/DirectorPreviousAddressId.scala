@@ -36,12 +36,10 @@ object DirectorPreviousAddressId {
     new CheckYourAnswers[DirectorPreviousAddressId] {
       def previousAddressRow(userAnswers: UserAnswers, changeLink: Option[Link], id: DirectorPreviousAddressId): Seq[AnswerRow] =
         userAnswers.get(id).map { address =>
-          Seq(AnswerRow(
-            "messages__common__cya__previous_address",
-            userAnswers.addressAnswer(address),
-            answerIsMessageKey = false,
-            changeLink
-          ))
+          Seq(
+            AnswerRow("messages__common__cya__previous_address", userAnswers.addressAnswer(address),
+              answerIsMessageKey = false, changeLink)
+          )
         }.getOrElse(Seq.empty[AnswerRow])
 
       override def row(id: DirectorPreviousAddressId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =

@@ -485,10 +485,17 @@ class CheckYourAnswersSpec extends SpecBase with MustMatchers with PropertyCheck
           ))
         }
 
-        "no will not have any row" in {
+        "no will have not entered with no change url" in {
           val utr = UniqueTaxReference.No("Not sure")
           implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(Json.obj("testId" -> utr)), PsaId("A0000000"))
-          testIdentifier[UniqueTaxReference].row(onwardUrl, UpdateMode) must equal(Nil)
+          testIdentifier[UniqueTaxReference].row(onwardUrl, UpdateMode) must equal(Seq(
+            AnswerRow(
+              "messages__establisher_individual_utr_cya_label",
+              Seq("site.not_entered"),
+              true,
+              None
+            )
+          ))
         }
       }
     }

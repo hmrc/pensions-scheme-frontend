@@ -119,6 +119,7 @@ object CheckYourAnswers {
     }
   }
 
+
   case class SchemeTypeCYA[I <: TypedIdentifier[SchemeType]](label: Option[String] = None, hiddenLabel: Option[String] = None) {
 
     def apply()(implicit rds: Reads[SchemeType]): CheckYourAnswers[I] = {
@@ -193,18 +194,9 @@ object CheckYourAnswers {
 
       private def personDetailsCYARow(personDetails: PersonDetails, changeUrlName: Option[Link], changeUrlDob: Option[Link]): Seq[AnswerRow] = {
         Seq(
-          AnswerRow(
-            "messages__common__cya__name",
-            Seq(personDetails.fullName),
-            answerIsMessageKey = false,
-            changeUrlName
-          ),
-          AnswerRow(
-            "messages__common__dob",
-            Seq(DateHelper.formatDate(personDetails.date)),
-            answerIsMessageKey = false,
-            changeUrlDob
-          ))
+          AnswerRow("messages__common__cya__name", Seq(personDetails.fullName), answerIsMessageKey = false, changeUrlName),
+          AnswerRow("messages__common__dob", Seq(DateHelper.formatDate(personDetails.date)), answerIsMessageKey = false, changeUrlDob)
+        )
       }
 
       override def row(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = userAnswers.get(id).map { personDetails =>
@@ -368,13 +360,9 @@ case class NinoCYA[I <: TypedIdentifier[Nino]](
         }
 
       override def updateRow(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = userAnswers.get(id) match {
-        case Some(Nino.Yes(nino)) => Seq(
-          AnswerRow("messages__common__nino", Seq(nino), answerIsMessageKey = false, None)
-        )
-        case Some(Nino.No(reason)) => Seq(
-          AnswerRow("messages__common__nino", Seq("site.not_entered"), answerIsMessageKey = true,
-            Some(Link("site.add", changeUrl, Some(s"${changeNino}_add"))))
-        )
+        case Some(Nino.Yes(nino)) => Seq(AnswerRow("messages__common__nino", Seq(nino), answerIsMessageKey = false, None))
+        case Some(Nino.No(_)) => Seq(AnswerRow("messages__common__nino", Seq("site.not_entered"), answerIsMessageKey = true,
+          Some(Link("site.add", changeUrl, Some(s"${changeNino}_add")))))
         case _ => Seq.empty[AnswerRow]
       }
     }
@@ -488,22 +476,10 @@ case class AddressCYA[I <: TypedIdentifier[Address]](
     new CheckYourAnswers[I] {
       override def row(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
 
-        def addressAnswer(address: Address): Seq[String] = {
-          val country = countryOptions.options.find(_.value == address.country).map(_.label).getOrElse(address.country)
-          Seq(
-            Some(address.addressLine1),
-            Some(address.addressLine2),
-            address.addressLine3,
-            address.addressLine4,
-            address.postcode,
-            Some(country)
-          ).flatten
-        }
-
         userAnswers.get(id).map { address =>
           Seq(AnswerRow(
             label,
-            addressAnswer(address),
+            userAnswers.addressAnswer(address),
             answerIsMessageKey = false,
             Some(Link("site.change", changeUrl,
               Some(changeAddress)))
@@ -548,9 +524,9 @@ case class UniqueTaxReferenceCYA[I <: TypedIdentifier[UniqueTaxReference]](
       override def updateRow(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
         userAnswers.get(id) match {
           case Some(UniqueTaxReference.Yes(utr)) => Seq(AnswerRow(utrLabel, Seq(utr), answerIsMessageKey = false, None))
+          case Some(UniqueTaxReference.No(_)) => Seq(AnswerRow(utrLabel, Seq("site.not_entered"), answerIsMessageKey = true, None))
           case _ => Seq.empty[AnswerRow]
         }
-
     }
   }
 }
