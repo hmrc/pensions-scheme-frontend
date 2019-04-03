@@ -531,9 +531,9 @@ case class UniqueTaxReferenceCYA[I <: TypedIdentifier[UniqueTaxReference]](
       override def updateRow(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
         userAnswers.get(id) match {
           case Some(UniqueTaxReference.Yes(utr)) => Seq(AnswerRow(utrLabel, Seq(utr), answerIsMessageKey = false, None))
+          case Some(UniqueTaxReference.No(_)) => Seq(AnswerRow(utrLabel, Seq("site.not_entered"), answerIsMessageKey = true, None))
           case _ => Seq.empty[AnswerRow]
         }
-
     }
   }
 }
