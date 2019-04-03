@@ -57,6 +57,8 @@ object CheckYourAnswers {
 
   implicit def string[I <: TypedIdentifier[String]](implicit rds: Reads[String], countryOptions: CountryOptions): CheckYourAnswers[I] = StringCYA()()
 
+  implicit def boolean[I <: TypedIdentifier[Boolean]](implicit rds: Reads[Boolean]): CheckYourAnswers[I] = BooleanCYA()()
+
   implicit def members[I <: TypedIdentifier[Members]](implicit rds: Reads[Members]): CheckYourAnswers[I] = MembersCYA()()
 
   case class StringCYA[I <: TypedIdentifier[String]](label: Option[String] = None, hiddenLabel: Option[String] = None) {
@@ -82,43 +84,28 @@ object CheckYourAnswers {
 
   case class BooleanCYA[I <: TypedIdentifier[Boolean]](label: Option[String] = None, hiddenLabel: Option[String] = None) {
 
-    def apply()(implicit rds: Reads[Boolean], countryOptions: CountryOptions): CheckYourAnswers[I] = {
+    def apply()(implicit rds: Reads[Boolean]): CheckYourAnswers[I] = {
       new CheckYourAnswers[I] {
-        override def row(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+        private def booleanCYARow(id: I, userAnswers: UserAnswers, changeUrl: Option[Link]): Seq[AnswerRow] = {
           userAnswers.get(id).map {
             flag =>
               Seq(AnswerRow(
                 label.fold(s"${id.toString}.checkYourAnswersLabel")(customLabel => customLabel),
                 Seq(if (flag) "site.yes" else "site.no"),
                 answerIsMessageKey = true,
-                Some(Link("site.change", changeUrl,
-                  Some(hiddenLabel.fold(s"messages__visuallyhidden__${id.toString}")(customHiddenLabel => customHiddenLabel))))
+                changeUrl
               ))
           }.getOrElse(Seq.empty[AnswerRow])
+        }
 
-        override def updateRow(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = row(id)(changeUrl, userAnswers)
+        override def row(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+          booleanCYARow(id, userAnswers, Some(Link("site.change", changeUrl,
+            Some(hiddenLabel.fold(s"messages__visuallyhidden__${id.toString}")(customHiddenLabel => customHiddenLabel)))))
+
+        override def updateRow(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = booleanCYARow(id, userAnswers, None)
       }
     }
   }
-
-  implicit def boolean[I <: TypedIdentifier[Boolean]](implicit rds: Reads[Boolean]): CheckYourAnswers[I] = {
-    new CheckYourAnswers[I] {
-      override def row(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        userAnswers.get(id).map {
-          flag =>
-            Seq(AnswerRow(
-              s"${id.toString}.checkYourAnswersLabel",
-              Seq(if (flag) "site.yes" else "site.no"),
-              answerIsMessageKey = true,
-              Some(Link("site.change", changeUrl,
-                Some(s"messages__visuallyhidden__${id.toString}")))
-            ))
-        }.getOrElse(Seq.empty)
-
-      override def updateRow(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = row(id)(changeUrl, userAnswers)
-    }
-  }
-
 
   case class SchemeTypeCYA[I <: TypedIdentifier[SchemeType]](label: Option[String] = None, hiddenLabel: Option[String] = None) {
 
@@ -143,20 +130,24 @@ object CheckYourAnswers {
 
   implicit def typeOfBenefitsCYA[I <: TypedIdentifier[TypeOfBenefits]](implicit rds: Reads[TypeOfBenefits]): CheckYourAnswers[I] = {
     new CheckYourAnswers[I] {
-      override def row(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = userAnswers.get(id).map {
-        typeOfBenefits =>
-          Seq(
-            AnswerRow(
-              "messages__type_of_benefits_cya_label",
-              Seq(s"messages__type_of_benefits__$typeOfBenefits"),
-              answerIsMessageKey = true,
-              Some(Link("site.change", changeUrl,
-                Some(s"messages__visuallyhidden__type_of_benefits_change")))
+      private def typeOfBenefitsCYARow(id: I, userAnswers: UserAnswers, changeUrl: Option[Link]): Seq[AnswerRow] = {
+        userAnswers.get(id).map {
+          typeOfBenefits =>
+            Seq(
+              AnswerRow(
+                "messages__type_of_benefits_cya_label",
+                Seq(s"messages__type_of_benefits__$typeOfBenefits"),
+                answerIsMessageKey = true,
+                changeUrl
+              )
             )
-          )
-      }.getOrElse(Seq.empty[AnswerRow])
+        }.getOrElse(Seq.empty[AnswerRow])
+      }
 
-      override def updateRow(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = row(id)(changeUrl, userAnswers)
+      override def row(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = typeOfBenefitsCYARow(id, userAnswers,
+        Some(Link("site.change", changeUrl, Some("messages__visuallyhidden__type_of_benefits_change"))))
+
+      override def updateRow(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = typeOfBenefitsCYARow(id, userAnswers, None)
     }
   }
 

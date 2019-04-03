@@ -2,12 +2,9 @@
 ->         /register                                    register.Routes
 ->         /establisher                                 establisher.Routes
 
-GET        /                                            controllers.WhatYouWillNeedController.onPageLoad()
+GET        /                                            controllers.BeforeYouStartController.onPageLoad()
 
 GET        /scheme-details                              controllers.SchemeTaskListController.onPageLoad
-
-GET        /what-you-will-need                          controllers.WhatYouWillNeedController.onPageLoad()
-POST       /what-you-will-need                          controllers.WhatYouWillNeedController.onSubmit()
 
 GET        /what-you-will-need-before-start             controllers.BeforeYouStartController.onPageLoad()
 POST       /what-you-will-need-before-start             controllers.BeforeYouStartController.onSubmit()

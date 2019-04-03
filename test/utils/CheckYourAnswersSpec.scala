@@ -498,6 +498,12 @@ class CheckYourAnswersSpec extends SpecBase with MustMatchers with PropertyCheck
           ))
         }
       }
+
+      "boolean without change url" in {
+        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(Json.obj("testId" -> true)), PsaId("A0000000"))
+
+        testIdentifier[Boolean].row(onwardUrl, UpdateMode) must equal(Seq(AnswerRow("testId.checkYourAnswersLabel", Seq("site.yes"), true, None)))
+      }
     }
   }
 }
