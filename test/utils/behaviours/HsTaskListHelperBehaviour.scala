@@ -31,7 +31,7 @@ import models.{CompanyDetails, NormalMode, PartnershipDetails}
 import org.joda.time.LocalDate
 import org.scalatest.{MustMatchers, OptionValues}
 import play.api.libs.json.JsResult
-import utils.{HsTaskListHelper, HsTaskListHelperRegistration, UserAnswers}
+import utils.{HsTaskListHelper, UserAnswers}
 import viewmodels._
 
 trait HsTaskListHelperBehaviour extends SpecBase with MustMatchers with OptionValues {
@@ -151,11 +151,11 @@ trait HsTaskListHelperBehaviour extends SpecBase with MustMatchers with OptionVa
   }
 
 
-  def addEstablisherHeader(): Unit = {
+  def addEstablisherHeader(func:UserAnswers => HsTaskListHelper): Unit = {
 
     "return the link to establisher kind page when no establishers are added " in {
       val userAnswers = UserAnswers()
-      val helper = new HsTaskListHelperRegistration(userAnswers)
+      val helper = func(userAnswers)
       helper.addEstablisherHeader(userAnswers) mustBe
         SchemeDetailsTaskListSection(None, Link(addEstablisherLinkText,
           controllers.register.establishers.routes.EstablisherKindController.onPageLoad(NormalMode, userAnswers.allEstablishers.size).url), None)
@@ -164,24 +164,24 @@ trait HsTaskListHelperBehaviour extends SpecBase with MustMatchers with OptionVa
     "return the link to add establisher page when establishers are added " in {
       val userAnswers = UserAnswers().set(EstablisherDetailsId(0))(PersonDetails("firstName", None, "lastName", LocalDate.now())).asOpt.value
         .set(IsEstablisherCompleteId(0))(true).asOpt.value
-      val helper = new HsTaskListHelperRegistration(userAnswers)
+      val helper = func(userAnswers)
       helper.addEstablisherHeader(userAnswers) mustBe
         SchemeDetailsTaskListSection(None, Link(changeEstablisherLinkText,
           controllers.register.establishers.routes.AddEstablisherController.onPageLoad(NormalMode).url), None)
     }
   }
 
-  def addTrusteeHeader(): Unit = {
+  def addTrusteeHeader(func:UserAnswers => HsTaskListHelper): Unit = {
 
     "not display when do you have any trustees is false " in {
       val userAnswers = UserAnswers().set(HaveAnyTrusteesId)(false).asOpt.value
-      val helper = new HsTaskListHelperRegistration(userAnswers)
+      val helper = func(userAnswers)
       helper.addTrusteeHeader(userAnswers) mustBe None
     }
 
     "display and link should go to trustee kind page when do you have any trustees is true and no trustees are added " in {
       val userAnswers = UserAnswers().set(HaveAnyTrusteesId)(true).asOpt.value
-      val helper = new HsTaskListHelperRegistration(userAnswers)
+      val helper = func(userAnswers)
       helper.addTrusteeHeader(userAnswers).value mustBe
         SchemeDetailsTaskListSection(None, Link(addTrusteesLinkText,
           controllers.register.trustees.routes.TrusteeKindController.onPageLoad(NormalMode, userAnswers.allTrustees.size, None).url), None)
@@ -192,7 +192,7 @@ trait HsTaskListHelperBehaviour extends SpecBase with MustMatchers with OptionVa
       val userAnswers = UserAnswers().set(TrusteeDetailsId(0))(PersonDetails("firstName", None, "lastName", LocalDate.now())).flatMap(
         _.set(IsTrusteeCompleteId(0))(true)
       ).asOpt.value
-      val helper = new HsTaskListHelperRegistration(userAnswers)
+      val helper = func(userAnswers)
       helper.addTrusteeHeader(userAnswers).value mustBe
         SchemeDetailsTaskListSection(Some(true), Link(changeTrusteesLinkText,
           controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode, None).url), None)
@@ -203,18 +203,18 @@ trait HsTaskListHelperBehaviour extends SpecBase with MustMatchers with OptionVa
       val userAnswers = UserAnswers().set(TrusteeDetailsId(0))(PersonDetails("firstName", None, "lastName", LocalDate.now())).flatMap(
         _.set(IsTrusteeCompleteId(0))(false)
       ).asOpt.value
-      val helper = new HsTaskListHelperRegistration(userAnswers)
+      val helper = func(userAnswers)
       helper.addTrusteeHeader(userAnswers).value mustBe
         SchemeDetailsTaskListSection(Some(false), Link(changeTrusteesLinkText,
           controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode, None).url), None)
     }
   }
 
-  def establishersSection(): Unit = {
+  def establishersSection(func:UserAnswers => HsTaskListHelper): Unit = {
 
     "return the seq of establishers sub sections for non deleted establishers which are all completed" in {
       val userAnswers = allEstablishers()
-      val helper = new HsTaskListHelperRegistration(userAnswers)
+      val helper = func(userAnswers)
       helper.establishers(userAnswers) mustBe
         Seq(SchemeDetailsTaskListSection(Some(true), Link(individualLinkText,
           controllers.register.establishers.individual.routes.CheckYourAnswersController.onPageLoad(NormalMode, 0, None).url), Some("firstName lastName")),
@@ -227,7 +227,7 @@ trait HsTaskListHelperBehaviour extends SpecBase with MustMatchers with OptionVa
 
     "return the seq of establishers sub sections for non deleted establishers which are not completed" in {
       val userAnswers = allEstablishers(isCompleteEstablisher = false)
-      val helper = new HsTaskListHelperRegistration(userAnswers)
+      val helper = func(userAnswers)
       helper.establishers(userAnswers) mustBe
         Seq(SchemeDetailsTaskListSection(Some(false), Link(individualLinkText,
           controllers.register.establishers.individual.routes.EstablisherDetailsController.onPageLoad(NormalMode, 0, None).url), Some("firstName lastName")),
@@ -246,7 +246,7 @@ trait HsTaskListHelperBehaviour extends SpecBase with MustMatchers with OptionVa
               _.set(EstablisherPartnershipDetailsId(2))(PartnershipDetails("test partnership", false)).flatMap(
                 _.set(IsEstablisherCompleteId(2))(false)
               ))))).asOpt.value
-      val helper = new HsTaskListHelperRegistration(userAnswers)
+      val helper = func(userAnswers)
       helper.establishers(userAnswers) mustBe
         Seq(SchemeDetailsTaskListSection(Some(false), Link(individualLinkText,
           controllers.register.establishers.individual.routes.EstablisherDetailsController.onPageLoad(NormalMode, 0, None).url), Some("firstName lastName")),
@@ -256,11 +256,11 @@ trait HsTaskListHelperBehaviour extends SpecBase with MustMatchers with OptionVa
     }
   }
 
-  def trusteesSection(): Unit = {
+  def trusteesSection(func:UserAnswers => HsTaskListHelper): Unit = {
 
     "return the seq of trustees sub sections for non deleted trustees which are all completed" in {
       val userAnswers = allTrustees()
-      val helper = new HsTaskListHelperRegistration(userAnswers)
+      val helper = func(userAnswers)
       helper.trustees(userAnswers) mustBe
         Seq(SchemeDetailsTaskListSection(Some(true), Link(individualLinkText,
           controllers.register.trustees.individual.routes.CheckYourAnswersController.onPageLoad(NormalMode, 0, None).url), Some("firstName lastName")),
@@ -273,7 +273,7 @@ trait HsTaskListHelperBehaviour extends SpecBase with MustMatchers with OptionVa
 
     "return the seq of trustees sub sections for non deleted trustees which are not completed" in {
       val userAnswers = allTrustees(isCompleteTrustees = false)
-      val helper = new HsTaskListHelperRegistration(userAnswers)
+      val helper = func(userAnswers)
       helper.trustees(userAnswers) mustBe
         Seq(SchemeDetailsTaskListSection(Some(false), Link(individualLinkText,
           controllers.register.trustees.individual.routes.TrusteeDetailsController.onPageLoad(NormalMode, 0, None).url), Some("firstName lastName")),
@@ -292,7 +292,7 @@ trait HsTaskListHelperBehaviour extends SpecBase with MustMatchers with OptionVa
               _.set(TrusteePartnershipDetailsId(2))(PartnershipDetails("test partnership", false)).flatMap(
                 _.set(IsPartnershipCompleteId(2))(false)
               ))))).asOpt.value
-      val helper = new HsTaskListHelperRegistration(userAnswers)
+      val helper = func(userAnswers)
       helper.trustees(userAnswers) mustBe
         Seq(SchemeDetailsTaskListSection(Some(false), Link(individualLinkText,
           controllers.register.trustees.individual.routes.TrusteeDetailsController.onPageLoad(NormalMode, 0, None).url), Some("firstName lastName")),
@@ -302,11 +302,11 @@ trait HsTaskListHelperBehaviour extends SpecBase with MustMatchers with OptionVa
     }
   }
 
-  def declarationEnabled(): Unit = {
+  def declarationEnabled(func:UserAnswers => HsTaskListHelper): Unit = {
 
     "return true when all the sections are completed with trustees" in {
       val userAnswers = answersData().asOpt.value
-      val helper = new HsTaskListHelperRegistration(userAnswers)
+      val helper = func(userAnswers)
       helper.declarationEnabled(userAnswers) mustBe true
     }
 
@@ -324,13 +324,13 @@ trait HsTaskListHelperBehaviour extends SpecBase with MustMatchers with OptionVa
           )
         )
       ).asOpt.value
-      val helper = new HsTaskListHelperRegistration(userAnswers)
+      val helper = func(userAnswers)
       helper.declarationEnabled(userAnswers) mustBe true
     }
 
     "return false when all the sections are completed with 10 trustees but the more than ten question has not been answered" in {
       val userAnswers = answersDataWithTenTrustees().asOpt.value
-      val helper = new HsTaskListHelperRegistration(userAnswers)
+      val helper = func(userAnswers)
       helper.declarationEnabled(userAnswers) mustBe false
     }
 
@@ -338,49 +338,49 @@ trait HsTaskListHelperBehaviour extends SpecBase with MustMatchers with OptionVa
       val userAnswers = answersDataWithTenTrustees().flatMap(
         _.set(MoreThanTenTrusteesId)(true)
       ).asOpt.value
-      val helper = new HsTaskListHelperRegistration(userAnswers)
+      val helper = func(userAnswers)
       helper.declarationEnabled(userAnswers) mustBe true
     }
 
     "return false when about you start section not completed" in {
       val userAnswers = answersData(isCompleteBeforeStart = false).asOpt.value
-      val helper = new HsTaskListHelperRegistration(userAnswers)
+      val helper = func(userAnswers)
       helper.declarationEnabled(userAnswers) mustBe false
     }
 
     "return false when about members section not completed" in {
       val userAnswers = answersData(isCompleteAboutMembers = false).asOpt.value
-      val helper = new HsTaskListHelperRegistration(userAnswers)
+      val helper = func(userAnswers)
       helper.declarationEnabled(userAnswers) mustBe false
     }
 
     "return false when about bank details section not completed" in {
       val userAnswers = answersData(isCompleteAboutBank = false).asOpt.value
-      val helper = new HsTaskListHelperRegistration(userAnswers)
+      val helper = func(userAnswers)
       helper.declarationEnabled(userAnswers) mustBe false
     }
 
     "return false when about benefits and insurance section not completed" in {
       val userAnswers = answersData(isCompleteAboutBenefits = false).asOpt.value
-      val helper = new HsTaskListHelperRegistration(userAnswers)
+      val helper = func(userAnswers)
       helper.declarationEnabled(userAnswers) mustBe false
     }
 
     "return false when working knowledge section not completed" in {
       val userAnswers = answersData(isCompleteWk = false).asOpt.value
-      val helper = new HsTaskListHelperRegistration(userAnswers)
+      val helper = func(userAnswers)
       helper.declarationEnabled(userAnswers) mustBe false
     }
 
     "return false when establishers section not completed" in {
       val userAnswers = answersData(isCompleteEstablishers = false).asOpt.value
-      val helper = new HsTaskListHelperRegistration(userAnswers)
+      val helper = func(userAnswers)
       helper.declarationEnabled(userAnswers) mustBe false
     }
 
     "return false when trustees section not completed" in {
       val userAnswers = answersData(isCompleteTrustees = false).asOpt.value
-      val helper = new HsTaskListHelperRegistration(userAnswers)
+      val helper = func(userAnswers)
       helper.declarationEnabled(userAnswers) mustBe false
     }
 
@@ -398,21 +398,21 @@ trait HsTaskListHelperBehaviour extends SpecBase with MustMatchers with OptionVa
           )
         )
       ).asOpt.value
-      val helper = new HsTaskListHelperRegistration(userAnswers)
+      val helper = func(userAnswers)
       helper.declarationEnabled(userAnswers) mustBe false
     }
   }
 
-  def declarationLink(): Unit = {
+  def declarationLink(func:UserAnswers => HsTaskListHelper): Unit = {
     "return the link when all the sections are completed" in {
       val userAnswers = answersData().asOpt.value
-      val helper = new HsTaskListHelperRegistration(userAnswers)
+      val helper = func(userAnswers)
       helper.declarationLink(userAnswers).value mustBe Link(declarationLinkText, controllers.register.routes.DeclarationController.onPageLoad().url)
     }
 
     "return None when all the sections are not completed" in {
       val userAnswers = answersData(isCompleteBeforeStart = false).asOpt.value
-      val helper = new HsTaskListHelperRegistration(userAnswers)
+      val helper = func(userAnswers)
       helper.declarationLink(userAnswers) mustBe None
     }
   }

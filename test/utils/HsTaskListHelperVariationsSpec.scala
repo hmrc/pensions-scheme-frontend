@@ -16,12 +16,19 @@
 
 package utils
 
+import identifiers.register.establishers.IsEstablisherCompleteId
+import identifiers.register.establishers.individual.EstablisherDetailsId
 import identifiers.{DeclarationDutiesId, IsAboutBenefitsAndInsuranceCompleteId, IsAboutMembersCompleteId, SchemeNameId}
-import models.NormalMode
+import models.person.PersonDetails
+import models.{CompanyDetails, NormalMode, PartnershipDetails}
+import org.joda.time.LocalDate
 import utils.behaviours.HsTaskListHelperBehaviour
 import viewmodels.{Link, SchemeDetailsTaskListSection}
+import identifiers.register.establishers.company.{CompanyDetailsId => EstablisherCompanyDetailsId}
+import identifiers.register.establishers.partnership.{PartnershipDetailsId => EstablisherPartnershipDetailsId}
 
 class HsTaskListHelperVariationsSpec extends HsTaskListHelperBehaviour {
+  val func:UserAnswers => HsTaskListHelper = ua => new HsTaskListHelperVariations(ua)
   "h1" must {
     "have the name of the scheme" in {
       val name = "scheme name 1"
@@ -54,6 +61,7 @@ class HsTaskListHelperVariationsSpec extends HsTaskListHelperBehaviour {
       helper.taskList.aboutHeader mustBe messages("messages__schemeTaskList__about_scheme_header", schemeName)
     }
   }
+
   "page title" must {
     "display \"Scheme details\"" in {
       val userAnswers = UserAnswers()
@@ -117,32 +125,77 @@ class HsTaskListHelperVariationsSpec extends HsTaskListHelperBehaviour {
 
   "addEstablisherHeader " must {
 
-    behave like addEstablisherHeader()
+    behave like addEstablisherHeader(func)
   }
 
   "addTrusteeHeader " must {
 
-    behave like addTrusteeHeader()
+    behave like addTrusteeHeader(func)
   }
 
-  "establishers" must {
-
-    behave like establishersSection()
-  }
+//  "establishers" must {
+//
+//    behave like establishersSection(func)
+//  }
 
   "trustees" must {
 
-    behave like trusteesSection()
+    behave like trusteesSection(func)
   }
 
   "declarationEnabled" must {
 
-    behave like declarationEnabled()
+    behave like declarationEnabled(func)
   }
 
   "declarationLink" must {
+    behave like declarationLink(ua => new HsTaskListHelperVariations(ua))
+  }
 
-    behave like declarationLink()
+  def establishersSection(): Unit = {
+
+    "return the seq of establishers sub sections for non deleted establishers which are all completed" in {
+      val userAnswers = allEstablishers()
+      val helper = new HsTaskListHelperVariations(userAnswers)
+      helper.establishers(userAnswers) mustBe
+        Seq(SchemeDetailsTaskListSection(Some(true), Link("firstName lastName",
+          controllers.register.establishers.individual.routes.CheckYourAnswersController.onPageLoad(NormalMode, 0, None).url), None),
+          SchemeDetailsTaskListSection(Some(true), Link("test company",
+            controllers.register.establishers.company.routes.CompanyReviewController.onPageLoad(NormalMode, None, 1).url), None),
+          SchemeDetailsTaskListSection(Some(true), Link("test partnership",
+            controllers.register.establishers.partnership.routes.PartnershipReviewController.onPageLoad(NormalMode, 2, None).url), None)
+        )
+    }
+
+    "return the seq of establishers sub sections for non deleted establishers which are not completed" in {
+      val userAnswers = allEstablishers(isCompleteEstablisher = false)
+      val helper = new HsTaskListHelperVariations(userAnswers)
+      helper.establishers(userAnswers) mustBe
+        Seq(SchemeDetailsTaskListSection(Some(false), Link("firstName lastName",
+          controllers.register.establishers.individual.routes.EstablisherDetailsController.onPageLoad(NormalMode, 0, None).url), None),
+          SchemeDetailsTaskListSection(Some(false), Link("test company",
+            controllers.register.establishers.company.routes.CompanyDetailsController.onPageLoad(NormalMode, None, 1).url), None),
+          SchemeDetailsTaskListSection(Some(false), Link("test partnership",
+            controllers.register.establishers.partnership.routes.PartnershipDetailsController.onPageLoad(NormalMode, 2, None).url), None)
+        )
+    }
+
+    "return the seq of establishers sub sections after filtering out deleted establishers" in {
+      val userAnswers = UserAnswers().set(EstablisherDetailsId(0))(PersonDetails("firstName", None, "lastName", LocalDate.now())).flatMap(
+        _.set(IsEstablisherCompleteId(0))(false).flatMap(
+          _.set(EstablisherCompanyDetailsId(1))(CompanyDetails("test company", None, None, true)).flatMap(
+            _.set(IsEstablisherCompleteId(1))(true).flatMap(
+              _.set(EstablisherPartnershipDetailsId(2))(PartnershipDetails("test partnership", false)).flatMap(
+                _.set(IsEstablisherCompleteId(2))(false)
+              ))))).asOpt.value
+      val helper = new HsTaskListHelperVariations(userAnswers)
+      helper.establishers(userAnswers) mustBe
+        Seq(SchemeDetailsTaskListSection(Some(false), Link("firstName lastName",
+          controllers.register.establishers.individual.routes.EstablisherDetailsController.onPageLoad(NormalMode, 0, None).url), None),
+          SchemeDetailsTaskListSection(Some(false), Link("test partnership",
+            controllers.register.establishers.partnership.routes.PartnershipDetailsController.onPageLoad(NormalMode, 2, None).url), None)
+        )
+    }
   }
 }
 
