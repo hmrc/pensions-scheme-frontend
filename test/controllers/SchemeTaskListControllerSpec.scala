@@ -18,7 +18,7 @@ package controllers
 
 import base.{JsonFileReader, SpecBase}
 import controllers.actions._
-import models.NormalMode
+import models.{Link, NormalMode}
 import play.api.test.Helpers._
 import utils.UserAnswers
 import viewmodels._
@@ -73,7 +73,10 @@ object SchemeTaskListControllerSpec extends SpecBase with JsonFileReader {
       None
     )),
     Seq.empty,
-    None
+    None,
+    messages("messages__schemeTaskList__heading"),
+    messages("messages__schemeTaskList__before_you_start_header"),
+    messages("messages__schemeTaskList__title")
   )
 
   private lazy val changeEstablisherLinkText = messages("messages__schemeTaskList__sectionEstablishers_change_link")

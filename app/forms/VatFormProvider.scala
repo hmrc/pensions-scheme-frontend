@@ -23,10 +23,10 @@ import play.api.data.Form
 
 class VatFormProvider @Inject() extends VatMapping {
 
-  def apply(): Form[Vat] =
+  def apply(requiredKeyMsg: String = "messages__error__has_vat_establisher"): Form[Vat] =
     Form(
       "vat" -> vatMapping(
-        requiredKey = "messages__error__has_vat_establisher",
+        requiredKey = requiredKeyMsg,
         vatLengthKey = "messages__error__vat_length"
       )
     )

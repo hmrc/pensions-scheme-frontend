@@ -17,7 +17,6 @@
 package controllers.register.establishers.company
 
 import config.FrontendAppConfig
-import connectors.UserAnswersCacheConnector
 import controllers.Retrievals
 import controllers.actions._
 import controllers.address.AddressListController
@@ -27,6 +26,7 @@ import models._
 import models.requests.DataRequest
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, Result}
+import services.UserAnswersService
 import utils.Navigator
 import utils.annotations.EstablishersCompany
 import viewmodels.Message
@@ -37,7 +37,7 @@ import scala.concurrent.Future
 class CompanyPreviousAddressListController @Inject()(
                                                       val appConfig: FrontendAppConfig,
                                                       val messagesApi: MessagesApi,
-                                                      val cacheConnector: UserAnswersCacheConnector,
+                                                      val userAnswersService: UserAnswersService,
                                                       @EstablishersCompany val navigator: Navigator,
                                                       authenticate: AuthAction,
                                                       getData: DataRetrievalAction,

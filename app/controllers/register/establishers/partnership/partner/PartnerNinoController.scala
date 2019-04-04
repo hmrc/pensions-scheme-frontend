@@ -17,7 +17,6 @@
 package controllers.register.establishers.partnership.partner
 
 import config.FrontendAppConfig
-import connectors.UserAnswersCacheConnector
 import controllers.Retrievals
 import controllers.actions._
 import forms.register.establishers.partnership.partner.PartnerNinoFormProvider
@@ -27,6 +26,7 @@ import models.{Index, Mode, Nino}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
+import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.EstablishersPartner
 import utils.{Enumerable, Navigator, UserAnswers}
@@ -37,7 +37,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class PartnerNinoController @Inject()(
                                        appConfig: FrontendAppConfig,
                                        override val messagesApi: MessagesApi,
-                                       dataCacheConnector: UserAnswersCacheConnector,
+                                       userAnswersService: UserAnswersService,
                                        @EstablishersPartner navigator: Navigator,
                                        authenticate: AuthAction,
                                        getData: DataRetrievalAction,
@@ -64,12 +64,14 @@ class PartnerNinoController @Inject()(
       PartnerDetailsId(establisherIndex, partnerIndex).retrieve.right.map { partner =>
         form.bindFromRequest().fold(
           (formWithErrors: Form[_]) => {
-            val submitUrl = controllers.register.establishers.partnership.partner.routes.PartnerNinoController.onSubmit(mode, establisherIndex, partnerIndex, srn)
+            val submitUrl = controllers.register.establishers.partnership.partner.routes.PartnerNinoController.onSubmit(
+              mode, establisherIndex, partnerIndex, srn)
             Future.successful(BadRequest(partnerNino(appConfig, formWithErrors, mode, establisherIndex, partnerIndex, existingSchemeName, submitUrl)))
           },
           (value) =>
-            dataCacheConnector.save(
-              request.externalId,
+            userAnswersService.save(
+              mode,
+              srn,
               PartnerNinoId(establisherIndex, partnerIndex),
               value
             ) map { json =>

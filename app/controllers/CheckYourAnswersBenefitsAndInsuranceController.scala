@@ -28,6 +28,7 @@ import utils.checkyouranswers.Ops._
 import utils.{CountryOptions, Enumerable, SectionComplete}
 import viewmodels.AnswerSection
 import views.html.check_your_answers
+import models.Mode._
 
 import scala.concurrent.ExecutionContext
 
@@ -46,13 +47,13 @@ class CheckYourAnswersBenefitsAndInsuranceController @Inject()(appConfig: Fronte
       implicit val userAnswers = request.userAnswers
       val benefitsAndInsuranceSection = AnswerSection(
         None,
-        InvestmentRegulatedSchemeId.row(routes.InvestmentRegulatedSchemeController.onPageLoad(CheckMode).url, mode) ++
-          OccupationalPensionSchemeId.row(routes.OccupationalPensionSchemeController.onPageLoad(CheckMode).url, mode) ++
-          TypeOfBenefitsId.row(routes.TypeOfBenefitsController.onPageLoad(CheckMode).url, mode) ++
-          BenefitsSecuredByInsuranceId.row(routes.BenefitsSecuredByInsuranceController.onPageLoad(CheckMode, srn).url) ++
-          InsuranceCompanyNameId.row(routes.InsuranceCompanyNameController.onPageLoad(CheckMode, srn).url) ++
-          InsurancePolicyNumberId.row(routes.InsurancePolicyNumberController.onPageLoad(CheckMode, srn).url) ++
-          InsurerConfirmAddressId.row(routes.InsurerConfirmAddressController.onPageLoad(CheckMode, srn).url)
+        InvestmentRegulatedSchemeId.row(routes.InvestmentRegulatedSchemeController.onPageLoad(checkMode(mode)).url, mode) ++
+          OccupationalPensionSchemeId.row(routes.OccupationalPensionSchemeController.onPageLoad(checkMode(mode)).url, mode) ++
+          TypeOfBenefitsId.row(routes.TypeOfBenefitsController.onPageLoad(checkMode(mode)).url, mode) ++
+          BenefitsSecuredByInsuranceId.row(routes.BenefitsSecuredByInsuranceController.onPageLoad(checkMode(mode), srn).url, mode) ++
+          InsuranceCompanyNameId.row(routes.InsuranceCompanyNameController.onPageLoad(checkMode(mode), None).url, mode) ++
+          InsurancePolicyNumberId.row(routes.InsurancePolicyNumberController.onPageLoad(checkMode(mode), srn).url, mode) ++
+          InsurerConfirmAddressId.row(routes.InsurerConfirmAddressController.onPageLoad(checkMode(mode), srn).url, mode)
       )
       Ok(check_your_answers(
         appConfig,

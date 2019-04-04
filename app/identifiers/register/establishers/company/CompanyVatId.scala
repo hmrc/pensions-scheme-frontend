@@ -14,14 +14,21 @@
  * limitations under the License.
  */
 
-package utils
+package identifiers.register.establishers.company
 
-import com.google.inject.Inject
+import identifiers._
+import identifiers.register.establishers.EstablishersId
+import models.Vat
+import play.api.libs.json.JsPath
 
-class CheckYourAnswersFactory @Inject()(countryOptions: CountryOptions) {
-
-  def checkYourAnswersHelper(userAnswers: UserAnswers): CheckYourAnswersHelper = {
-    new CheckYourAnswersHelper(userAnswers, countryOptions)
-  }
+case class CompanyVatId(index: Int) extends TypedIdentifier[Vat] {
+  override def path: JsPath = EstablishersId(index).path \ CompanyVatId.toString
 }
+
+object CompanyVatId {
+  override def toString: String = "companyVat"
+}
+
+
+
 

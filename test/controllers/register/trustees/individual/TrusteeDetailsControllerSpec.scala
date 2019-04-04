@@ -16,7 +16,7 @@
 
 package controllers.register.trustees.individual
 
-import connectors.FakeUserAnswersCacheConnector
+import services.FakeUserAnswersService
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.register.PersonDetailsFormProvider
@@ -50,7 +50,7 @@ class TrusteeDetailsControllerSpec extends ControllerSpecBase {
     new TrusteeDetailsController(
       frontendAppConfig,
       messagesApi,
-      FakeUserAnswersCacheConnector,
+      FakeUserAnswersService,
       new FakeNavigator(desiredRoute = onwardRoute),
       FakeAuthAction,
       dataRetrievalAction,

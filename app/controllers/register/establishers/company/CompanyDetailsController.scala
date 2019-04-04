@@ -27,6 +27,7 @@ import models.{Index, Mode}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Call}
+import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.EstablishersCompany
 import utils.{Enumerable, Navigator, UserAnswers}
@@ -37,7 +38,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class CompanyDetailsController @Inject()(
                                           appConfig: FrontendAppConfig,
                                           override val messagesApi: MessagesApi,
-                                          dataCacheConnector: UserAnswersCacheConnector,
+                                          userAnswersService: UserAnswersService,
                                           @EstablishersCompany navigator: Navigator,
                                           authenticate: AuthAction,
                                           getData: DataRetrievalAction,
@@ -60,8 +61,9 @@ class CompanyDetailsController @Inject()(
         (formWithErrors: Form[_]) =>
           Future.successful(BadRequest(companyDetails(appConfig, formWithErrors, mode, index, existingSchemeName, postCall(mode, srn, index)))),
         value =>
-          dataCacheConnector.save(
-            request.externalId,
+          userAnswersService.save(
+            mode,
+            srn,
             CompanyDetailsId(index),
             value
           ).map {

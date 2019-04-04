@@ -27,6 +27,7 @@ import models.{Index, Mode, UniqueTaxReference}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
+import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.TrusteesPartnership
 import utils.{Enumerable, Navigator, UserAnswers}
@@ -37,7 +38,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class PartnershipUniqueTaxReferenceController @Inject()(
                                                          appConfig: FrontendAppConfig,
                                                          override val messagesApi: MessagesApi,
-                                                         dataCacheConnector: UserAnswersCacheConnector,
+                                                         userAnswersService: UserAnswersService,
                                                          authenticate: AuthAction,
                                                          @TrusteesPartnership navigator: Navigator,
                                                          getData: DataRetrievalAction,
@@ -65,8 +66,9 @@ class PartnershipUniqueTaxReferenceController @Inject()(
             Future.successful(BadRequest(partnershipUniqueTaxReference(appConfig, formWithErrors, mode, index, existingSchemeName, submitUrl)))
           },
           value =>
-            dataCacheConnector.save(
-              request.externalId,
+            userAnswersService.save(
+              mode,
+              srn,
               PartnershipUniqueTaxReferenceId(index),
               value
             ).map {

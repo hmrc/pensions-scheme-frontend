@@ -17,7 +17,7 @@
 package controllers.register.establishers.partnership.partner
 
 import base.CSRFRequest
-import connectors.{UserAnswersCacheConnector, FakeUserAnswersCacheConnector}
+import services.{UserAnswersService, FakeUserAnswersService}
 import controllers.ControllerSpecBase
 import controllers.actions.{AuthAction, DataRetrievalAction, FakeAuthAction, FakeDataRetrievalAction}
 import forms.address.AddressListFormProvider
@@ -71,7 +71,7 @@ class PartnerAddressListControllerSpec extends ControllerSpecBase with CSRFReque
 
       running(_.overrides(
         bind[AuthAction].to(FakeAuthAction),
-        bind[UserAnswersCacheConnector].toInstance(FakeUserAnswersCacheConnector),
+        bind[UserAnswersService].toInstance(FakeUserAnswersService),
         bind[DataRetrievalAction].toInstance(dataRetrievalAction)
       )) { implicit app =>
         val request = addToken(FakeRequest(routes.PartnerAddressListController.onPageLoad(NormalMode, Index(0), Index(0), None)))
@@ -91,7 +91,7 @@ class PartnerAddressListControllerSpec extends ControllerSpecBase with CSRFReque
 
       running(_.overrides(
         bind[AuthAction].to(FakeAuthAction),
-        bind[UserAnswersCacheConnector].toInstance(FakeUserAnswersCacheConnector),
+        bind[UserAnswersService].toInstance(FakeUserAnswersService),
         bind[DataRetrievalAction].toInstance(getEmptyData)
       )) { implicit app =>
         val request = addToken(FakeRequest(routes.PartnerAddressListController.onPageLoad(NormalMode, Index(0), Index(0), None)))
@@ -107,7 +107,7 @@ class PartnerAddressListControllerSpec extends ControllerSpecBase with CSRFReque
 
       running(_.overrides(
         bind[AuthAction].to(FakeAuthAction),
-        bind[UserAnswersCacheConnector].toInstance(FakeUserAnswersCacheConnector),
+        bind[UserAnswersService].toInstance(FakeUserAnswersService),
         bind[DataRetrievalAction].toInstance(dontGetAnyData)
       )) { implicit app =>
         val request = addToken(FakeRequest(routes.PartnerAddressListController.onPageLoad(NormalMode, Index(0), Index(0), None)))
@@ -125,7 +125,7 @@ class PartnerAddressListControllerSpec extends ControllerSpecBase with CSRFReque
 
       running(_.overrides(
         bind[AuthAction].to(FakeAuthAction),
-        bind[UserAnswersCacheConnector].toInstance(FakeUserAnswersCacheConnector),
+        bind[UserAnswersService].toInstance(FakeUserAnswersService),
         bind[DataRetrievalAction].toInstance(dataRetrievalAction)
       )) { implicit app =>
         val request =
@@ -146,7 +146,7 @@ class PartnerAddressListControllerSpec extends ControllerSpecBase with CSRFReque
 
       running(_.overrides(
         bind[AuthAction].to(FakeAuthAction),
-        bind[UserAnswersCacheConnector].toInstance(FakeUserAnswersCacheConnector),
+        bind[UserAnswersService].toInstance(FakeUserAnswersService),
         bind[DataRetrievalAction].toInstance(dontGetAnyData)
       )) { implicit app =>
         val request =
@@ -167,7 +167,7 @@ class PartnerAddressListControllerSpec extends ControllerSpecBase with CSRFReque
 
       running(_.overrides(
         bind[AuthAction].to(FakeAuthAction),
-        bind[UserAnswersCacheConnector].toInstance(FakeUserAnswersCacheConnector),
+        bind[UserAnswersService].toInstance(FakeUserAnswersService),
         bind[DataRetrievalAction].toInstance(getEmptyData)
       )) { implicit app =>
         val request =
