@@ -77,7 +77,7 @@ class PSASchemeDetailsControllerSpec extends ControllerSpecBase {
       status(result) mustBe OK
       verify(fakeSchemeDetailsReadOnlyCacheConnector, times(1)).upsert(any(), Matchers.eq(userAnswersResponse.json))(any(), any())
 
-      contentAsString(result).contains(messages("messages__schemeTaskList__title")) mustBe true
+      contentAsString(result).contains(messages("messages__scheme_details__title")) mustBe true
     }
   }
 }
