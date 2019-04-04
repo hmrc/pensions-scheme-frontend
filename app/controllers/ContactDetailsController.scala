@@ -24,6 +24,7 @@ import models.{ContactDetails, Mode}
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{AnyContent, Result}
+import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.{Navigator, UserAnswers}
 import viewmodels.ContactDetailsViewModel
@@ -37,7 +38,7 @@ trait ContactDetailsController extends FrontendController with Retrievals with I
 
   protected def appConfig: FrontendAppConfig
 
-  protected def cacheConnector: UserAnswersCacheConnector
+  protected def userAnswersService: UserAnswersService
 
   protected def navigator: Navigator
 
@@ -60,7 +61,7 @@ trait ContactDetailsController extends FrontendController with Retrievals with I
       formWithErrors =>
         Future.successful(BadRequest(contactDetails(appConfig, formWithErrors, viewmodel, existingSchemeName))),
       contactDetails =>
-        cacheConnector.save(request.externalId, id, contactDetails).map {
+        userAnswersService.save(mode, viewmodel.srn, id, contactDetails).map {
           answers =>
             Redirect(navigator.nextPage(id, mode, UserAnswers(answers)))
         }

@@ -29,6 +29,7 @@ import play.api.inject.bind
 import play.api.mvc.{Call, Request, Result}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import services.{FakeUserAnswersService, UserAnswersService}
 import utils.annotations.EstablishersCompany
 import utils.{FakeNavigator, Navigator}
 import viewmodels.{Message, VatViewModel}
@@ -87,7 +88,7 @@ object CompanyVatControllerSpec extends CompanyVatControllerSpec {
       bind[AuthAction].to(FakeAuthAction),
       bind[DataRetrievalAction].toInstance(getMandatoryEstablisherCompany),
       bind(classOf[Navigator]).qualifiedWith(classOf[EstablishersCompany]).toInstance(new FakeNavigator(onwardRoute)),
-      bind[UserAnswersCacheConnector].toInstance(FakeUserAnswersCacheConnector)
+      bind[UserAnswersService].toInstance(FakeUserAnswersService)
     )) {
       app =>
         val req = request(app)

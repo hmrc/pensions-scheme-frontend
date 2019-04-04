@@ -16,7 +16,7 @@
 
 package controllers.register.establishers.company.director
 
-import connectors.FakeUserAnswersCacheConnector
+import services.FakeUserAnswersService
 import controllers.ControllerSpecBase
 import controllers.actions._
 import controllers.register.establishers.company.routes.AddCompanyDirectorsController
@@ -60,16 +60,16 @@ class ConfirmDeleteDirectorControllerSpec extends ControllerSpecBase {
       val result = controller(data).onSubmit(establisherIndex, directorIndex, NormalMode, None)(postRequest)
 
       status(result) mustBe SEE_OTHER
-      FakeUserAnswersCacheConnector.verify(DirectorDetailsId(establisherIndex, directorIndex), directorDetails.copy(isDeleted = true))
+      FakeUserAnswersService.verify(DirectorDetailsId(establisherIndex, directorIndex), directorDetails.copy(isDeleted = true))
     }
 
     "dont delete the director on a POST if No selected" in {
-      FakeUserAnswersCacheConnector.reset()
+      FakeUserAnswersService.reset()
       val data = new FakeDataRetrievalAction(Some(testData()))
       val result = controller(data).onSubmit(establisherIndex, directorIndex, NormalMode, None)(postRequestForCancel)
 
       status(result) mustBe SEE_OTHER
-      FakeUserAnswersCacheConnector.verifyNot(DirectorDetailsId(establisherIndex, directorIndex))
+      FakeUserAnswersService.verifyNot(DirectorDetailsId(establisherIndex, directorIndex))
     }
 
     "redirect to the next page on a successful POST" in {
@@ -157,7 +157,7 @@ object ConfirmDeleteDirectorControllerSpec extends ControllerSpecBase {
     new ConfirmDeleteDirectorController(
       frontendAppConfig,
       messagesApi,
-      FakeUserAnswersCacheConnector,
+      FakeUserAnswersService,
       new FakeNavigator(desiredRoute = onwardRoute),
       FakeAuthAction,
       dataRetrievalAction,

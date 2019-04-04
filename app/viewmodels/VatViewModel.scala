@@ -23,5 +23,6 @@ case class VatViewModel(
                          title: Message,
                          heading: Message,
                          hint: Message,
-                         subHeading: Option[Message] = None
+                         subHeading: Option[Message] = None,
+                         srn: Option[String] = None
                        )

@@ -115,7 +115,7 @@ class SchemeDetailsTaskListViewSpec extends ViewBehaviours {
         SchemeDetailsTaskListSection(
           None,
           Link(messages("messages__schemeTaskList__sectionEstablishers_add_link"),
-            controllers.register.establishers.routes.EstablisherKindController.onPageLoad(NormalMode, 0).url),
+            controllers.register.establishers.routes.EstablisherKindController.onPageLoad(NormalMode, 0, None).url),
           None
         ), Seq.empty,
         Some(SchemeDetailsTaskListSection(
@@ -136,7 +136,7 @@ class SchemeDetailsTaskListViewSpec extends ViewBehaviours {
       "display the correct link" in {
 
         view must haveLinkWithText(
-          url = controllers.register.establishers.routes.EstablisherKindController.onPageLoad(NormalMode, 0).url,
+          url = controllers.register.establishers.routes.EstablisherKindController.onPageLoad(NormalMode, 0, None).url,
           linkText = messages("messages__schemeTaskList__sectionEstablishers_add_link"),
           linkId = "section-establishers-link"
         )
@@ -185,7 +185,7 @@ class SchemeDetailsTaskListViewSpec extends ViewBehaviours {
         SchemeDetailsTaskListSection(
           None,
           Link(messages("messages__schemeTaskList__sectionEstablishers_add_link"),
-            controllers.register.establishers.routes.EstablisherKindController.onPageLoad(NormalMode, 0).url),
+            controllers.register.establishers.routes.EstablisherKindController.onPageLoad(NormalMode, 0, None).url),
           None
         ), Seq.empty,
         Some(SchemeDetailsTaskListSection(

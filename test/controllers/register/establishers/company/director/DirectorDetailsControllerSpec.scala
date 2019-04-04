@@ -16,7 +16,7 @@
 
 package controllers.register.establishers.company.director
 
-import connectors.UserAnswersCacheConnector
+import services.UserAnswersService
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.register.PersonDetailsFormProvider
@@ -48,7 +48,7 @@ class DirectorDetailsControllerSpec extends ControllerSpecBase {
     new DirectorDetailsController(
       frontendAppConfig,
       messagesApi,
-      mockUserAnswersCacheConnector,
+      mockUserAnswersService,
       new FakeNavigator(desiredRoute = onwardRoute),
       FakeAuthAction,
       dataRetrievalAction,
@@ -110,7 +110,7 @@ class DirectorDetailsControllerSpec extends ControllerSpecBase {
         )
       )
 
-      when(mockUserAnswersCacheConnector.save(any(), any(), any())(any(), any(), any())).thenReturn(Future.successful(validData))
+      when(mockUserAnswersService.save(any(), any(), any(), any())(any(), any(), any(), any())).thenReturn(Future.successful(validData))
 
       val result = controller().onSubmit(NormalMode, firstEstablisherIndex, firstDirectorIndex, None)(postRequest)
       status(result) mustBe SEE_OTHER
@@ -141,34 +141,6 @@ class DirectorDetailsControllerSpec extends ControllerSpecBase {
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
     }
 
-    "redirect to session expired from a GET when the index is invalid for establisher" in {
-      val result = controller().onPageLoad(NormalMode, invalidIndex, firstDirectorIndex, None)(fakeRequest)
-
-      status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
-    }
-
-    "redirect to session expired from a POST when the index is invalid for establisher" in {
-      val result = controller().onSubmit(NormalMode, invalidIndex, firstDirectorIndex, None)(fakeRequest)
-
-      status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
-    }
-
-    "redirect to session expired from a GET when the index is invalid for director" ignore {
-      val result = controller().onPageLoad(NormalMode, firstEstablisherIndex, invalidIndex, None)(fakeRequest)
-
-      status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
-    }
-
-    "redirect to session expired from a POST when the index is invalid for director" ignore {
-      val result = controller().onSubmit(NormalMode, firstEstablisherIndex, invalidIndex, None)(fakeRequest)
-
-      status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
-    }
-
     "set the establisher as not complete when the new director is being added" in {
       reset(mockSectionComplete)
       val validData =
@@ -188,7 +160,7 @@ class DirectorDetailsControllerSpec extends ControllerSpecBase {
         )
       val getRelevantData = new FakeDataRetrievalAction(Some(validData))
       val userAnswers = UserAnswers(validData)
-      when(mockUserAnswersCacheConnector.save(any(), any(), any())(any(), any(), any())).thenReturn(Future.successful(validData))
+      when(mockUserAnswersService.save(any(), any(), any(), any())(any(), any(), any(), any())).thenReturn(Future.successful(validData))
       when(mockSectionComplete.setCompleteFlag(any(), eqTo(IsEstablisherCompleteId(0)),
         eqTo(userAnswers), eqTo(false))(any(), any())).thenReturn(Future.successful(userAnswers))
 
@@ -210,7 +182,7 @@ object DirectorDetailsControllerSpec extends MockitoSugar {
   val invalidIndex: Index = Index(10)
 
   val companyName: String = "test company name"
-  val mockUserAnswersCacheConnector: UserAnswersCacheConnector = mock[UserAnswersCacheConnector]
+  val mockUserAnswersService: UserAnswersService = mock[UserAnswersService]
   val mockSectionComplete: SectionComplete = mock[SectionComplete]
 
   val day: Int = LocalDate.now().getDayOfMonth

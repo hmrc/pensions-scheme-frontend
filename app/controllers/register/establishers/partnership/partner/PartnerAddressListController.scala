@@ -18,7 +18,6 @@ package controllers.register.establishers.partnership.partner
 
 import com.google.inject.Inject
 import config.FrontendAppConfig
-import connectors.UserAnswersCacheConnector
 import controllers.Retrievals
 import controllers.actions.{AuthAction, DataRequiredAction, DataRetrievalAction}
 import controllers.address.AddressListController
@@ -27,6 +26,7 @@ import models.requests.DataRequest
 import models.{Index, Mode}
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, Result}
+import services.UserAnswersService
 import utils.Navigator
 import utils.annotations.EstablishersPartner
 import viewmodels.Message
@@ -36,7 +36,7 @@ import scala.concurrent.Future
 
 class PartnerAddressListController @Inject()(
                                               override val appConfig: FrontendAppConfig,
-                                              override val cacheConnector: UserAnswersCacheConnector,
+                                              val userAnswersService: UserAnswersService,
                                               @EstablishersPartner override val navigator: Navigator,
                                               override val messagesApi: MessagesApi,
                                               authenticate: AuthAction,
@@ -67,7 +67,8 @@ class PartnerAddressListController @Inject()(
           postCall = routes.PartnerAddressListController.onSubmit(mode, establisherIndex, partnerIndex, srn),
           manualInputCall = routes.PartnerAddressController.onPageLoad(mode, establisherIndex, partnerIndex, srn),
           addresses = addresses,
-          subHeading = Some(Message(partnerDetails.fullName))
+          subHeading = Some(Message(partnerDetails.fullName)),
+          srn = srn
         )
     }.left.map(_ => Future.successful(Redirect(
       routes.PartnerAddressPostcodeLookupController.onPageLoad(mode, establisherIndex, partnerIndex, srn))))
