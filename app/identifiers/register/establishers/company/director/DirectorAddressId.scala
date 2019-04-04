@@ -20,6 +20,8 @@ import identifiers.TypedIdentifier
 import identifiers.register.establishers.EstablishersId
 import models.address.Address
 import play.api.libs.json.JsPath
+import utils.CountryOptions
+import utils.checkyouranswers.{AddressCYA, CheckYourAnswers}
 
 case class DirectorAddressId(establisherIndex: Int, directorIndex: Int) extends TypedIdentifier[Address] {
   override def path: JsPath = EstablishersId(establisherIndex).path \ "director" \ directorIndex \ DirectorAddressId.toString
@@ -27,4 +29,7 @@ case class DirectorAddressId(establisherIndex: Int, directorIndex: Int) extends 
 
 object DirectorAddressId {
   override def toString: String = "directorAddressId"
+
+  implicit def cya(implicit countryOptions: CountryOptions): CheckYourAnswers[DirectorAddressId] =
+    AddressCYA[DirectorAddressId](changeAddress = "messages__visuallyhidden__director__address")()
 }

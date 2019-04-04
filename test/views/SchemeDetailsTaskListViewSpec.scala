@@ -16,7 +16,7 @@
 
 package views
 
-import models.NormalMode
+import models.{Link, NormalMode}
 import play.twirl.api.HtmlFormat
 import viewmodels._
 import views.behaviours.ViewBehaviours

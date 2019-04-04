@@ -14,14 +14,12 @@
  * limitations under the License.
  */
 
-package utils
+package models
 
-import com.google.inject.Inject
+import play.api.libs.json.{Json, OFormat}
 
-class CheckYourAnswersFactory @Inject()(countryOptions: CountryOptions) {
+case class Link(text: String, target: String, visuallyHiddenText: Option[String] = None)
 
-  def checkYourAnswersHelper(userAnswers: UserAnswers): CheckYourAnswersHelper = {
-    new CheckYourAnswersHelper(userAnswers, countryOptions)
-  }
+object Link {
+  implicit val formats: OFormat[Link] = Json.format[Link]
 }
-

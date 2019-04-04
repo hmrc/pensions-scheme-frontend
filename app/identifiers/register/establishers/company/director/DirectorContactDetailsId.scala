@@ -20,6 +20,8 @@ import identifiers.TypedIdentifier
 import identifiers.register.establishers.EstablishersId
 import models.ContactDetails
 import play.api.libs.json.JsPath
+import utils.checkyouranswers.CheckYourAnswers
+import utils.checkyouranswers.CheckYourAnswers.ContactDetailsCYA
 
 
 case class DirectorContactDetailsId(establisherIndex: Int, directorIndex: Int) extends TypedIdentifier[ContactDetails] {
@@ -28,4 +30,10 @@ case class DirectorContactDetailsId(establisherIndex: Int, directorIndex: Int) e
 
 object DirectorContactDetailsId {
   override def toString: String = "directorContactDetails"
+
+  implicit val cya: CheckYourAnswers[DirectorContactDetailsId] =
+    ContactDetailsCYA(
+      changeEmailAddress = "messages__visuallyhidden__director__email_address",
+      changePhoneNumber = "messages__visuallyhidden__director__phone_number"
+    )()
 }

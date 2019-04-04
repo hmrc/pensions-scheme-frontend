@@ -19,7 +19,7 @@ package controllers
 import controllers.actions.{DataRequiredActionImpl, DataRetrievalAction, FakeAuthAction, FakeDataRetrievalAction}
 import identifiers.{BankAccountDetailsId, IsAboutBankDetailsCompleteId, SchemeNameId, UKBankAccountId}
 import models.register._
-import models.{BankAccountDetails, CheckMode}
+import models.{BankAccountDetails, CheckMode, Link}
 import play.api.libs.json.Json
 import play.api.test.Helpers._
 import utils.{FakeCountryOptions, FakeNavigator, FakeSectionComplete}
@@ -91,8 +91,8 @@ object CheckYourAnswersBankDetailsControllerSpec extends ControllerSpecBase {
         messages("uKBankAccount.hns_checkYourAnswersLabel", "Test Scheme Name"),
         Seq("site.yes"),
         answerIsMessageKey = true,
-        Some(controllers.routes.UKBankAccountController.onPageLoad(CheckMode).url),
-        messages("messages__visuallyhidden__hns_uKBankAccount", "Test Scheme Name")
+        Some(Link("site.change", routes.UKBankAccountController.onPageLoad(CheckMode).url,
+          Some(messages("messages__visuallyhidden__hns_uKBankAccount", "Test Scheme Name"))))
       ),
       AnswerRow(
         messages("uKBankDetails.hns_checkYourAnswersLabel", "Test Scheme Name"),
@@ -101,8 +101,8 @@ object CheckYourAnswersBankDetailsControllerSpec extends ControllerSpecBase {
           s"${bankDetails.sortCode.first}-${bankDetails.sortCode.second}-${bankDetails.sortCode.third}",
           bankDetails.accountNumber),
         answerIsMessageKey = false,
-        Some(controllers.routes.BankAccountDetailsController.onPageLoad(CheckMode).url),
-        messages("messages__visuallyhidden__hns_uKBankDetails", "Test Scheme Name")
+        Some(Link("site.change", routes.BankAccountDetailsController.onPageLoad(CheckMode).url,
+          Some(messages("messages__visuallyhidden__hns_uKBankDetails", "Test Scheme Name"))))
       )
     )
   )

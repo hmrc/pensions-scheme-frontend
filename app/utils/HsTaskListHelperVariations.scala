@@ -17,7 +17,7 @@
 package utils
 
 import identifiers.{IsAboutBenefitsAndInsuranceCompleteId, IsAboutMembersCompleteId, SchemeNameId}
-import models.NormalMode
+import models.{Link, NormalMode}
 import play.api.i18n.Messages
 import viewmodels._
 
