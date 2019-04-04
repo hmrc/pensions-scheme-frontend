@@ -14,20 +14,8 @@
  * limitations under the License.
  */
 
-package forms
+package identifiers
 
-import forms.mappings.VatMapping
-import javax.inject.Inject
-import models.Vat
-import play.api.data.Form
-
-class VatFormProvider @Inject() extends VatMapping {
-
-  def apply(requiredKeyMsg: String = "messages__error__has_vat_establisher"): Form[Vat] =
-    Form(
-      "vat" -> vatMapping(
-        requiredKey = requiredKeyMsg,
-        vatLengthKey = "messages__error__vat_length"
-      )
-    )
+case object VariationDeclarationId extends TypedIdentifier[Boolean] {
+  override def toString: String = "declaration"
 }
