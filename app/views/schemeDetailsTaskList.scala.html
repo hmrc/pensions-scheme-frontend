@@ -22,11 +22,14 @@
 @import models.NormalMode
 @import controllers.register.establishers.routes._
 @import controllers.register.trustees.routes._
+@import uk.gov.hmrc.play.views.html._
 
 @(appConfig: FrontendAppConfig, taskSections: SchemeDetailsTaskList)(implicit request: Request[_], messages: Messages)
 
-@isVariations=@{
-    taskSections.h3.isDefined
+@variationsOnly(html:Html)=@{
+    taskSections.h3.map{ _ =>
+        html
+    }
 }
 
 @status(isCompleted:Boolean)=@{
@@ -129,15 +132,11 @@
             <h2 id="section-establishers-header" class="heading-large">
                 @messages("messages__schemeTaskList__sectionEstablishers_header")
             </h2>
-                @if(isVariations){
-                <p>
-                }
+                @variationsOnly(Html("<p>"))
                 <a id= "section-establishers-link" href="@{taskSections.addEstablisherHeader.link.target}" >
                     @messages(taskSections.addEstablisherHeader.link.text)
                 </a>
-                @if(isVariations){
-                </p>
-                }
+                @variationsOnly(Html("</p>"))
             <ol class="tasklist">
 
                 <ul class="task-list-items">
@@ -167,18 +166,16 @@
                 <h2 id="section-trustees-header" class="heading-large">
                     @messages("messages__schemeTaskList__sectionTrustees_header")
                 </h2>
-                @if(isVariations){
-                <p>
-                }
+
+                @variationsOnly(Html("<p>"))
                 <a id= "section-trustees-link"  href="@{header.link.target}">
                     @messages(header.link.text)
                 </a>
-                @if(isVariations){
-                </p>
-                }
+
                 @header.isCompleted.map{ isCompleted =>
                     <strong class="@statusClass(isCompleted)" id="section-trustees-status">@messages(status(isCompleted))</strong>
                 }
+                @variationsOnly(Html("</p>"))
                 <ol class="tasklist">
                     <ul class="task-list-items">
 
