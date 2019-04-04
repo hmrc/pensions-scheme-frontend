@@ -16,7 +16,7 @@
 
 package controllers.register.establishers.partnership.partner
 
-import connectors.FakeUserAnswersCacheConnector
+import services.FakeUserAnswersService
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.address.AddressYearsFormProvider
@@ -51,7 +51,7 @@ class PartnerAddressYearsControllerSpec extends ControllerSpecBase {
   def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): PartnerAddressYearsController =
     new PartnerAddressYearsController(
       frontendAppConfig,
-      FakeUserAnswersCacheConnector,
+      FakeUserAnswersService,
       new FakeNavigator(desiredRoute = onwardRoute),
       messagesApi,
       FakeAuthAction,

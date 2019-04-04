@@ -159,7 +159,7 @@ trait HsTaskListHelperBehaviour extends SpecBase with MustMatchers with OptionVa
       val helper = new HsTaskListHelperRegistration(userAnswers)
       helper.addEstablisherHeader(userAnswers) mustBe
         SchemeDetailsTaskListSection(None, Link(addEstablisherLinkText,
-          controllers.register.establishers.routes.EstablisherKindController.onPageLoad(NormalMode, userAnswers.allEstablishers.size).url), None)
+          controllers.register.establishers.routes.EstablisherKindController.onPageLoad(NormalMode, userAnswers.allEstablishers.size, None).url), None)
     }
 
     "return the link to add establisher page when establishers are added " in {

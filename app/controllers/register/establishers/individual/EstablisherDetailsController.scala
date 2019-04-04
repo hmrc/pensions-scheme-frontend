@@ -17,7 +17,6 @@
 package controllers.register.establishers.individual
 
 import config.FrontendAppConfig
-import connectors.UserAnswersCacheConnector
 import controllers.Retrievals
 import controllers.actions._
 import forms.register.PersonDetailsFormProvider
@@ -27,6 +26,7 @@ import models.{Index, Mode}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
+import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.EstablishersIndividual
 import utils.{Enumerable, Navigator, UserAnswers}
@@ -37,7 +37,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class EstablisherDetailsController @Inject()(
                                               appConfig: FrontendAppConfig,
                                               override val messagesApi: MessagesApi,
-                                              dataCacheConnector: UserAnswersCacheConnector,
+                                              userAnswersService: UserAnswersService,
                                               @EstablishersIndividual navigator: Navigator,
                                               authenticate: AuthAction,
                                               getData: DataRetrievalAction,
@@ -62,8 +62,9 @@ class EstablisherDetailsController @Inject()(
           Future.successful(BadRequest(establisherDetails(appConfig, formWithErrors, mode, index, existingSchemeName, submitUrl)))
         },
         value =>
-          dataCacheConnector.save(
-            request.externalId,
+          userAnswersService.save(
+            mode,
+            srn,
             EstablisherDetailsId(index),
             value
           ).map {

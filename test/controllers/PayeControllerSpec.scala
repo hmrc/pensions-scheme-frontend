@@ -19,7 +19,6 @@ package controllers
 import akka.stream.Materializer
 import com.google.inject.Inject
 import config.FrontendAppConfig
-import connectors.UserAnswersCacheConnector
 import forms.PayeFormProvider
 import identifiers.TypedIdentifier
 import models.requests.DataRequest
@@ -35,6 +34,7 @@ import play.api.libs.json._
 import play.api.mvc.{AnyContent, Call, Request, Result}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import services.UserAnswersService
 import uk.gov.hmrc.domain.PsaId
 import utils.{FakeNavigator, Navigator, UserAnswers}
 import viewmodels.PayeViewModel
@@ -111,10 +111,10 @@ class PayeControllerSpec extends WordSpec with MustMatchers with OptionValues wi
 
       import play.api.inject._
 
-      val cacheConnector = mock[UserAnswersCacheConnector]
+      val userAnswersService = mock[UserAnswersService]
 
       running(_.overrides(
-        bind[UserAnswersCacheConnector].toInstance(cacheConnector),
+        bind[UserAnswersService].toInstance(userAnswersService),
         bind[Navigator].toInstance(FakeNavigator)
       )) {
         app =>
@@ -122,7 +122,7 @@ class PayeControllerSpec extends WordSpec with MustMatchers with OptionValues wi
           implicit val materializer: Materializer = app.materializer
 
           when(
-            cacheConnector.save[Paye, FakeIdentifier.type](any(), eqTo(FakeIdentifier), any())(any(), any(), any())
+            userAnswersService.save[Paye, FakeIdentifier.type](any(), any(), eqTo(FakeIdentifier), any())(any(), any(), any(), any())
           ).thenReturn(Future.successful(Json.obj()))
 
           val request = FakeRequest().withFormUrlEncodedBody(
@@ -171,7 +171,7 @@ object PayeControllerSpec {
   class TestController @Inject()(
                                   override val appConfig: FrontendAppConfig,
                                   override val messagesApi: MessagesApi,
-                                  override val cacheConnector: UserAnswersCacheConnector,
+                                  override val userAnswersService: UserAnswersService,
                                   override val navigator: Navigator,
                                   formProvider: PayeFormProvider
                                 ) extends PayeController {

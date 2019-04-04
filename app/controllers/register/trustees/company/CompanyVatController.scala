@@ -26,6 +26,7 @@ import javax.inject.Inject
 import models.{Index, Mode}
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent}
+import services.UserAnswersService
 import utils.Navigator
 import utils.annotations.TrusteesCompany
 import viewmodels.{Message, VatViewModel}
@@ -34,7 +35,7 @@ import viewmodels.{Message, VatViewModel}
 class CompanyVatController @Inject()(
                                       override val appConfig: FrontendAppConfig,
                                       override val messagesApi: MessagesApi,
-                                      override val cacheConnector: UserAnswersCacheConnector,
+                                      override val userAnswersService: UserAnswersService,
                                       @TrusteesCompany override val navigator: Navigator,
                                       authenticate: AuthAction,
                                       getData: DataRetrievalAction,

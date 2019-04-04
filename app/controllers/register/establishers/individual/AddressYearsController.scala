@@ -17,7 +17,6 @@
 package controllers.register.establishers.individual
 
 import config.FrontendAppConfig
-import connectors.UserAnswersCacheConnector
 import controllers.Retrievals
 import controllers.actions._
 import controllers.address.{AddressYearsController => GenericAddressYearController}
@@ -27,16 +26,15 @@ import javax.inject.Inject
 import models.{Index, Mode}
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent}
+import services.UserAnswersService
 import utils._
 import utils.annotations.EstablishersIndividual
 import viewmodels.Message
 import viewmodels.address.AddressYearsViewModel
 
-import scala.concurrent.ExecutionContext
-
 class AddressYearsController @Inject()(
                                         override val appConfig: FrontendAppConfig,
-                                        override val cacheConnector: UserAnswersCacheConnector,
+                                        val userAnswersService: UserAnswersService,
                                         @EstablishersIndividual val navigator: Navigator,
                                         override val messagesApi: MessagesApi,
                                         authenticate: AuthAction,

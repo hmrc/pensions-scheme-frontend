@@ -18,7 +18,6 @@ package controllers.address
 
 import com.google.inject.Inject
 import config.FrontendAppConfig
-import connectors.{UserAnswersCacheConnector, FakeUserAnswersCacheConnector}
 import forms.address.AddressListFormProvider
 import identifiers.TypedIdentifier
 import models._
@@ -30,6 +29,7 @@ import play.api.i18n.MessagesApi
 import play.api.mvc.{Call, Result}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import services.{FakeUserAnswersService, UserAnswersService}
 import uk.gov.hmrc.domain.PsaId
 import utils.{FakeNavigator, Navigator, UserAnswers}
 import viewmodels.Message
@@ -104,7 +104,7 @@ class AddressListControllerSpec extends WordSpec with Matchers {
         val result = controller.onSubmit(viewModel, 0)
 
         status(result) shouldBe SEE_OTHER
-        FakeUserAnswersCacheConnector.verify(fakeAddressListId, viewModel.addresses.head)
+        FakeUserAnswersService.verify(fakeAddressListId, viewModel.addresses.head)
       }
 
     }
@@ -117,7 +117,7 @@ class AddressListControllerSpec extends WordSpec with Matchers {
         val result = controller.onSubmit(viewModel, 0)
 
         status(result) shouldBe SEE_OTHER
-        FakeUserAnswersCacheConnector.verifyNot(fakeAddressId)
+        FakeUserAnswersService.verifyNot(fakeAddressId)
       }
 
     }
@@ -146,7 +146,7 @@ object AddressListControllerSpec {
                                   override val messagesApi: MessagesApi
                                 ) extends AddressListController {
 
-    override protected def cacheConnector: UserAnswersCacheConnector = FakeUserAnswersCacheConnector
+    override protected def userAnswersService: UserAnswersService = FakeUserAnswersService
 
     override protected def navigator: Navigator = new FakeNavigator(onwardRoute)
 

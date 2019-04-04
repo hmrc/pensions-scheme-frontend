@@ -19,7 +19,6 @@ package controllers
 import akka.stream.Materializer
 import com.google.inject.Inject
 import config.FrontendAppConfig
-import connectors.UserAnswersCacheConnector
 import forms.ContactDetailsFormProvider
 import identifiers.TypedIdentifier
 import models.requests.DataRequest
@@ -35,6 +34,7 @@ import play.api.libs.json.Json
 import play.api.mvc.{AnyContent, Call, Request, Result}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{contentAsString, _}
+import services.UserAnswersService
 import uk.gov.hmrc.domain.PsaId
 import utils.{FakeNavigator, Navigator, UserAnswers}
 import viewmodels.ContactDetailsViewModel
@@ -49,7 +49,7 @@ object ContactDetailsControllerSpec {
   class TestController @Inject()(
                                   override val appConfig: FrontendAppConfig,
                                   override val messagesApi: MessagesApi,
-                                  override val cacheConnector: UserAnswersCacheConnector,
+                                  override val userAnswersService: UserAnswersService,
                                   override val navigator: Navigator,
                                   formProvider: ContactDetailsFormProvider
                                 ) extends ContactDetailsController {
@@ -133,10 +133,10 @@ class ContactDetailsControllerSpec extends WordSpec with MustMatchers with Optio
 
       import play.api.inject._
 
-      val cacheConnector = mock[UserAnswersCacheConnector]
+      val service = mock[UserAnswersService]
 
       running(_.overrides(
-        bind[UserAnswersCacheConnector].toInstance(cacheConnector),
+        bind[UserAnswersService].toInstance(service),
         bind[Navigator].toInstance(FakeNavigator)
       )) {
         app =>
@@ -145,7 +145,7 @@ class ContactDetailsControllerSpec extends WordSpec with MustMatchers with Optio
 
           val answers = UserAnswers().set(FakeIdentifier)(ContactDetails("test@test.com", "123456789")).get
           when(
-            cacheConnector.save[ContactDetails, FakeIdentifier.type](any(), eqTo(FakeIdentifier), any())(any(), any(), any())
+            service.save[ContactDetails, FakeIdentifier.type](any(), any(), eqTo(FakeIdentifier), any())(any(), any(), any(), any())
           ).thenReturn(Future.successful(Json.obj()))
 
           val appConfig = app.injector.instanceOf[FrontendAppConfig]

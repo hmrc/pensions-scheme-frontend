@@ -17,7 +17,7 @@
 package controllers.register.trustees.partnership
 
 import config.FrontendAppConfig
-import connectors.{AddressLookupConnector, UserAnswersCacheConnector}
+import connectors.AddressLookupConnector
 import controllers.actions._
 import controllers.address.PostcodeLookupController
 import forms.address.PostCodeLookupFormProvider
@@ -27,6 +27,7 @@ import models.{Index, Mode}
 import play.api.data.Form
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent}
+import services.UserAnswersService
 import utils.Navigator
 import utils.annotations.TrusteesPartnership
 import viewmodels.Message
@@ -35,7 +36,7 @@ import viewmodels.address.PostcodeLookupViewModel
 class PartnershipPreviousAddressPostcodeLookupController @Inject()(
                                                                     override val appConfig: FrontendAppConfig,
                                                                     override val messagesApi: MessagesApi,
-                                                                    override val cacheConnector: UserAnswersCacheConnector,
+                                                                    val userAnswersService: UserAnswersService,
                                                                     override val addressLookupConnector: AddressLookupConnector,
                                                                     @TrusteesPartnership override val navigator: Navigator,
                                                                     authenticate: AuthAction,
