@@ -42,17 +42,17 @@
 }
 
 @main_template(
-    title = messages("messages__schemeTaskList__title"),
+    title = messages(taskSections.pageTitle),
     appConfig = appConfig,
     bodyClasses = None
     ) {
 
-        @components.heading(messages("messages__schemeTaskList__heading").toString)
+        @components.heading(taskSections.h1)
 
     <ol class="task-list">
         <li>
             <h2 id="section-before-you-start-header" class="heading-large">
-                @messages("messages__schemeTaskList__before_you_start_header")
+                @messages(taskSections.h2)
             </h2>
             <ul class="task-list-items">
                 <li class="task-list-item">

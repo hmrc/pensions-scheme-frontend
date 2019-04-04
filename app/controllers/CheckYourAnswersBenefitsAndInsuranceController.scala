@@ -21,7 +21,6 @@ import controllers.actions._
 import identifiers._
 import javax.inject.Inject
 import models.{CheckMode, Mode}
-import models.Mode._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
@@ -29,6 +28,7 @@ import utils.checkyouranswers.Ops._
 import utils.{CountryOptions, Enumerable, SectionComplete}
 import viewmodels.AnswerSection
 import views.html.check_your_answers
+import models.Mode._
 
 import scala.concurrent.ExecutionContext
 
@@ -59,7 +59,8 @@ class CheckYourAnswersBenefitsAndInsuranceController @Inject()(appConfig: Fronte
         appConfig,
         Seq(benefitsAndInsuranceSection),
         routes.CheckYourAnswersBenefitsAndInsuranceController.onSubmit(mode, srn),
-        existingSchemeName
+        existingSchemeName,
+        mode = mode
       ))
   }
 

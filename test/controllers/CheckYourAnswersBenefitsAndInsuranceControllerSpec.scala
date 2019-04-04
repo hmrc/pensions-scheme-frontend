@@ -147,15 +147,19 @@ object CheckYourAnswersBenefitsAndInsuranceControllerSpec extends ControllerSpec
         messages("investmentRegulated.checkYourAnswersLabel"),
         Seq("site.yes"),
         answerIsMessageKey = true,
-        Some(Link("site.change", routes.InvestmentRegulatedSchemeController.onPageLoad(checkMode(mode)).url,
-          Some(messages("messages__visuallyhidden__investmentRegulated"))))
+        if(mode==UpdateMode) { None } else {
+          Some(Link("site.change", routes.InvestmentRegulatedSchemeController.onPageLoad(checkMode(mode)).url,
+            Some(messages("messages__visuallyhidden__investmentRegulated"))))
+        }
       ),
       AnswerRow(
         messages("occupationalPensionScheme.checkYourAnswersLabel"),
         Seq("site.yes"),
         answerIsMessageKey = true,
-        Some(Link("site.change", routes.OccupationalPensionSchemeController.onPageLoad(checkMode(mode)).url,
-          Some(messages("messages__visuallyhidden__occupationalPensionScheme"))))
+        if(mode==UpdateMode) { None } else {
+          Some(Link("site.change", routes.OccupationalPensionSchemeController.onPageLoad(checkMode(mode)).url,
+            Some(messages("messages__visuallyhidden__occupationalPensionScheme"))))
+        }
       ),
       AnswerRow(
         messages("messages__type_of_benefits_cya_label"),
@@ -187,7 +191,9 @@ object CheckYourAnswersBenefitsAndInsuranceControllerSpec extends ControllerSpec
       benefitsAndInsuranceSection(mode)
     ),
     postUrl(mode),
-    None
+    None,
+    false,
+    mode
   )(fakeRequest, messages).toString
 
   private def viewAsStringWithLessData(mode : Mode = CheckMode): String = check_your_answers(
@@ -196,7 +202,9 @@ object CheckYourAnswersBenefitsAndInsuranceControllerSpec extends ControllerSpec
       updateBenefitsAndInsuranceSection(mode)
     ),
     postUrl(mode),
-    None
+    None,
+    false,
+    mode
   )(fakeRequest, messages).toString
 
 }
