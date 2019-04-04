@@ -99,7 +99,7 @@ class ConfirmDeleteDirectorControllerSpec extends ControllerSpecBase {
       val validData: JsObject = Json.obj(
         EstablishersId.toString -> Json.arr(
           Json.obj(
-            CompanyDetailsId.toString -> CompanyDetails(companyName, None, None),
+            CompanyDetailsId.toString -> CompanyDetails(companyName),
             "director" -> Json.arr(
               Json.obj(
                 DirectorDetailsId.toString ->
@@ -135,7 +135,7 @@ object ConfirmDeleteDirectorControllerSpec extends ControllerSpecBase {
   private def testData(directors: PersonDetails = directorDetails) = Json.obj(
     EstablishersId.toString -> Json.arr(
       Json.obj(
-        CompanyDetailsId.toString -> CompanyDetails(companyName, None, None),
+        CompanyDetailsId.toString -> CompanyDetails(companyName),
         "director" -> Json.arr(
           Json.obj(
             DirectorDetailsId.toString ->

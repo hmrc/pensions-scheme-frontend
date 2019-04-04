@@ -68,7 +68,7 @@ object EstablishersIndividualNavigatorSpec extends OptionValues {
   private val addressYearsUnderAYear = UserAnswers(Json.obj())
     .set(AddressYearsId(0))(AddressYears.UnderAYear).asOpt.value
 
-  private val hasTrusteeCompanies = UserAnswers().trusteesCompanyDetails(0, CompanyDetails("test-company-name", None, None))
+  private val hasTrusteeCompanies = UserAnswers().trusteesCompanyDetails(0, CompanyDetails("test-company-name"))
   private val bodyCorporateWithNoTrustees =
     UserAnswers().schemeName("test-scheme-name").schemeType(SchemeType.BodyCorporate).set(HaveAnyTrusteesId)(false).asOpt.value
 

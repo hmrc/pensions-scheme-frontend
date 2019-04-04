@@ -50,9 +50,11 @@ class CheckYourAnswersController @Inject()(
       val companyDetails = AnswerSection(
         Some("messages__common__company_details__title"),
         CompanyDetailsId(index).row(routes.CompanyDetailsController.onPageLoad(CheckMode, srn, index).url) ++
-          CompanyRegistrationNumberId(index).row(routes.CompanyRegistrationNumberController.onPageLoad(CheckMode, srn, Index(index)).url, mode) ++
-          CompanyUniqueTaxReferenceId(index).row(routes.CompanyUniqueTaxReferenceController.onPageLoad(CheckMode, srn, Index(index)).url, mode) ++
-          IsCompanyDormantId(index).row(routes.IsCompanyDormantController.onPageLoad(CheckMode, srn, Index(index)).url, mode)
+        CompanyVatId(index).row(routes.CompanyVatController.onPageLoad(CheckMode, index, srn).url) ++
+        CompanyPayeId(index).row(routes.CompanyPayeController.onPageLoad(CheckMode, index, srn).url) ++
+          CompanyRegistrationNumberId(index).row(routes.CompanyRegistrationNumberController.onPageLoad(CheckMode, srn, Index(index)).url) ++
+          CompanyUniqueTaxReferenceId(index).row(routes.CompanyUniqueTaxReferenceController.onPageLoad(CheckMode, srn, Index(index)).url) ++
+          IsCompanyDormantId(index).row(routes.IsCompanyDormantController.onPageLoad(CheckMode, srn, Index(index)).url)
       )
 
       val companyContactDetails = AnswerSection(

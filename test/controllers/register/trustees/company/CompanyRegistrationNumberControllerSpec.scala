@@ -44,7 +44,7 @@ class CompanyRegistrationNumberControllerSpec extends ControllerSpecBase {
       TrusteesId.toString -> Json.arr(
         Json.obj(
           CompanyDetailsId.toString ->
-            CompanyDetails("Test company name", Some("123456"), Some("abcd"))
+            CompanyDetails("Test company name")
         )
       )
     ))
@@ -54,7 +54,7 @@ class CompanyRegistrationNumberControllerSpec extends ControllerSpecBase {
     TrusteesId.toString -> Json.arr(
       Json.obj(
         CompanyDetailsId.toString ->
-          CompanyDetails("Test company name", Some("123456"), Some("abcd")),
+          CompanyDetails("Test company name"),
         CompanyRegistrationNumberId.toString ->
           CompanyRegistrationNumber.Yes("1234567")
       )

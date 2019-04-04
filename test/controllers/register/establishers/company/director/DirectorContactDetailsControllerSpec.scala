@@ -79,7 +79,7 @@ class DirectorContactDetailsControllerSpec extends ControllerSpecBase {
   val validData: JsObject = Json.obj(
     EstablishersId.toString -> Json.arr(
       Json.obj(
-        CompanyDetailsId.toString -> CompanyDetails(companyName, Some("123456"), Some("abcd")),
+        CompanyDetailsId.toString -> CompanyDetails(companyName),
         "director" -> Json.arr(
           Json.obj(
             DirectorDetailsId.toString ->
@@ -94,7 +94,7 @@ class DirectorContactDetailsControllerSpec extends ControllerSpecBase {
   val validDataNoPreviousAnswer: JsObject = Json.obj(
     EstablishersId.toString -> Json.arr(
       Json.obj(
-        CompanyDetailsId.toString -> CompanyDetails(companyName, Some("123456"), Some("abcd")),
+        CompanyDetailsId.toString -> CompanyDetails(companyName),
         "director" -> Json.arr(
           Json.obj(
             DirectorDetailsId.toString ->
@@ -108,7 +108,7 @@ class DirectorContactDetailsControllerSpec extends ControllerSpecBase {
   val validDataNoDirectorDetails: JsObject = Json.obj(
     EstablishersId.toString -> Json.arr(
       Json.obj(
-        CompanyDetailsId.toString -> CompanyDetails(companyName, Some("123456"), Some("abcd")),
+        CompanyDetailsId.toString -> CompanyDetails(companyName),
         "director" -> Json.arr()
       )
     )

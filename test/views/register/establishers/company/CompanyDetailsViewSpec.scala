@@ -26,7 +26,7 @@ import views.html.register.establishers.company.companyDetails
 
 class CompanyDetailsViewSpec extends QuestionViewBehaviours[CompanyDetails] {
 
-  val messageKeyPrefix = "common__company_details"
+  val messageKeyPrefix = "companyName"
 
   override val form = new CompanyDetailsFormProvider()()
   val firstIndex = Index(1)
@@ -43,7 +43,7 @@ class CompanyDetailsViewSpec extends QuestionViewBehaviours[CompanyDetails] {
     behave like normalPage(createView(), messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"))
 
     behave like pageWithTextFields(createViewUsingForm, messageKeyPrefix,
-      routes.CompanyDetailsController.onSubmit(NormalMode, None, firstIndex).url, "companyName", "vatNumber", "payeNumber")
+      routes.CompanyDetailsController.onSubmit(NormalMode, None, firstIndex).url, "companyName")
 
     behave like pageWithReturnLink(createView(), getReturnLink)
   }

@@ -40,7 +40,9 @@ class EstablishersCompanyNavigatorSpec extends SpecBase with MustMatchers with N
 
   private def routes: TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = Table(
     ("Id",                                      "User Answers",                   "Next Page (Normal Mode)",                "Save (NM)",    "Next Page (Check Mode)",                 "Save (CM)"),
-    (CompanyDetailsId(0),                         emptyAnswers,                     companyRegistrationNumber(NormalMode),    true,           Some(checkYourAnswers),                   true),
+    (CompanyDetailsId(0),                         emptyAnswers,                     companyVat(NormalMode),    true,           Some(checkYourAnswers),                   true),
+    (CompanyVatId(0),                             emptyAnswers,                     companyPaye(NormalMode),    true,           Some(checkYourAnswers),                   true),
+    (CompanyPayeId(0),                            emptyAnswers,                     companyRegistrationNumber(NormalMode),    true,           Some(checkYourAnswers),                   true),
     (CompanyRegistrationNumberId(0),              emptyAnswers,                     companyUTR(NormalMode),                   true,           Some(checkYourAnswers),                   true),
     (CompanyUniqueTaxReferenceId(0),              emptyAnswers,                     companyPostCodeLookup(NormalMode),        true,           Some(checkYourAnswers),                   true),
     (CompanyPostCodeLookupId(0),                  emptyAnswers,                     companyAddressList(NormalMode),           true,           Some(companyAddressList(CheckMode)),      true),
@@ -83,7 +85,7 @@ object EstablishersCompanyNavigatorSpec extends OptionValues {
     Json.obj(
       EstablishersId.toString -> Json.arr(
         Json.obj(
-          CompanyDetailsId.toString -> CompanyDetails("test company name", None, None),
+          CompanyDetailsId.toString -> CompanyDetails("test company name"),
           "director" -> directors.map(d => Json.obj(DirectorDetailsId.toString -> Json.toJson(d)))
         )
       )
@@ -94,6 +96,12 @@ object EstablishersCompanyNavigatorSpec extends OptionValues {
 
   private def companyRegistrationNumber(mode: Mode): Call =
     controllers.register.establishers.company.routes.CompanyRegistrationNumberController.onPageLoad(mode, None, 0)
+
+  private def companyPaye(mode: Mode): Call =
+    controllers.register.establishers.company.routes.CompanyPayeController.onPageLoad(mode, 0, None)
+
+  private def companyVat(mode: Mode): Call =
+    controllers.register.establishers.company.routes.CompanyVatController.onPageLoad(mode, 0, None)
 
   private def companyUTR(mode: Mode): Call =
     controllers.register.establishers.company.routes.CompanyUniqueTaxReferenceController.onPageLoad(mode, None, 0)

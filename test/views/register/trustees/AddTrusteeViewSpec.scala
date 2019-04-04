@@ -33,9 +33,7 @@ class AddTrusteeViewSpec extends YesNoViewBehaviours with EntityListBehaviours {
 
   private val messageKeyPrefix = "addTrustee"
   private val companyDetails = CompanyDetails(
-    "Trustee Company",
-    None,
-    None
+    "Trustee Company"
   )
 
   private val trusteeDetails = PersonDetails(

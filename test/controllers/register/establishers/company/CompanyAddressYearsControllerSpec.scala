@@ -72,7 +72,7 @@ class CompanyAddressYearsControllerSpec extends ControllerSpecBase {
   val validData: JsObject = Json.obj(
     EstablishersId.toString -> Json.arr(
       Json.obj(
-        CompanyDetailsId.toString -> CompanyDetails(companyName, Some("123456"), Some("abcd"))
+        CompanyDetailsId.toString -> CompanyDetails(companyName)
       )
     )
   )
@@ -91,7 +91,7 @@ class CompanyAddressYearsControllerSpec extends ControllerSpecBase {
       val previousAnsweredValidData = Json.obj(
         EstablishersId.toString -> Json.arr(
           Json.obj(
-            CompanyDetailsId.toString -> CompanyDetails(companyName, Some("123456"), Some("abcd")),
+            CompanyDetailsId.toString -> CompanyDetails(companyName),
             CompanyAddressYearsId.toString -> AddressYears.options.head.value.toString
           )
         )
