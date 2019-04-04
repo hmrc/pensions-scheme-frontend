@@ -163,11 +163,11 @@ class HsTaskListHelperVariationsSpec extends HsTaskListHelperBehaviour {
       val userAnswers = allEstablishers()
       val helper = new HsTaskListHelperVariations(userAnswers)
       helper.establishers(userAnswers) mustBe
-        Seq(SchemeDetailsTaskListSection(Some(true), Link("firstName lastName",
+        Seq(SchemeDetailsTaskListSection(Some(true), Link(messages("messages__schemeTaskList__persons_details__link_text", "firstName lastName"),
           controllers.register.establishers.individual.routes.CheckYourAnswersController.onPageLoad(NormalMode, 0, None).url), None),
-          SchemeDetailsTaskListSection(Some(true), Link("test company",
+          SchemeDetailsTaskListSection(Some(true), Link(messages("messages__schemeTaskList__persons_details__link_text", "test company"),
             controllers.register.establishers.company.routes.CompanyReviewController.onPageLoad(NormalMode, None, 1).url), None),
-          SchemeDetailsTaskListSection(Some(true), Link("test partnership",
+          SchemeDetailsTaskListSection(Some(true), Link(messages("messages__schemeTaskList__persons_details__link_text", "test partnership"),
             controllers.register.establishers.partnership.routes.PartnershipReviewController.onPageLoad(NormalMode, 2, None).url), None)
         )
     }
@@ -176,11 +176,11 @@ class HsTaskListHelperVariationsSpec extends HsTaskListHelperBehaviour {
       val userAnswers = allEstablishers(isCompleteEstablisher = false)
       val helper = new HsTaskListHelperVariations(userAnswers)
       helper.establishers(userAnswers) mustBe
-        Seq(SchemeDetailsTaskListSection(Some(false), Link("firstName lastName",
+        Seq(SchemeDetailsTaskListSection(Some(false), Link(messages("messages__schemeTaskList__persons_details__link_text", "firstName lastName"),
           controllers.register.establishers.individual.routes.EstablisherDetailsController.onPageLoad(NormalMode, 0, None).url), None),
-          SchemeDetailsTaskListSection(Some(false), Link("test company",
+          SchemeDetailsTaskListSection(Some(false), Link(messages("messages__schemeTaskList__persons_details__link_text", "test company"),
             controllers.register.establishers.company.routes.CompanyDetailsController.onPageLoad(NormalMode, None, 1).url), None),
-          SchemeDetailsTaskListSection(Some(false), Link("test partnership",
+          SchemeDetailsTaskListSection(Some(false), Link(messages("messages__schemeTaskList__persons_details__link_text", "test partnership"),
             controllers.register.establishers.partnership.routes.PartnershipDetailsController.onPageLoad(NormalMode, 2, None).url), None)
         )
     }
@@ -195,9 +195,9 @@ class HsTaskListHelperVariationsSpec extends HsTaskListHelperBehaviour {
               ))))).asOpt.value
       val helper = new HsTaskListHelperVariations(userAnswers)
       helper.establishers(userAnswers) mustBe
-        Seq(SchemeDetailsTaskListSection(Some(false), Link("firstName lastName",
+        Seq(SchemeDetailsTaskListSection(Some(false), Link(messages("messages__schemeTaskList__persons_details__link_text", "firstName lastName"),
           controllers.register.establishers.individual.routes.EstablisherDetailsController.onPageLoad(NormalMode, 0, None).url), None),
-          SchemeDetailsTaskListSection(Some(false), Link("test partnership",
+          SchemeDetailsTaskListSection(Some(false), Link(messages("messages__schemeTaskList__persons_details__link_text", "test partnership"),
             controllers.register.establishers.partnership.routes.PartnershipDetailsController.onPageLoad(NormalMode, 2, None).url), None)
         )
     }
@@ -209,11 +209,11 @@ class HsTaskListHelperVariationsSpec extends HsTaskListHelperBehaviour {
       val userAnswers = allTrustees()
       val helper = createTaskListHelper(userAnswers)
       helper.trustees(userAnswers) mustBe
-        Seq(SchemeDetailsTaskListSection(Some(true), Link("firstName lastName",
+        Seq(SchemeDetailsTaskListSection(Some(true), Link(messages("messages__schemeTaskList__persons_details__link_text", "firstName lastName"),
           controllers.register.trustees.individual.routes.CheckYourAnswersController.onPageLoad(NormalMode, 0, None).url), None),
-          SchemeDetailsTaskListSection(Some(true), Link("test company",
+          SchemeDetailsTaskListSection(Some(true), Link(messages("messages__schemeTaskList__persons_details__link_text", "test company"),
             controllers.register.trustees.company.routes.CheckYourAnswersController.onPageLoad(NormalMode, 1, None).url), None),
-          SchemeDetailsTaskListSection(Some(true), Link("test partnership",
+          SchemeDetailsTaskListSection(Some(true), Link(messages("messages__schemeTaskList__persons_details__link_text", "test partnership"),
             controllers.register.trustees.partnership.routes.CheckYourAnswersController.onPageLoad(NormalMode, 2, None).url), None)
         )
     }
@@ -222,11 +222,11 @@ class HsTaskListHelperVariationsSpec extends HsTaskListHelperBehaviour {
       val userAnswers = allTrustees(isCompleteTrustees = false)
       val helper = createTaskListHelper(userAnswers)
       helper.trustees(userAnswers) mustBe
-        Seq(SchemeDetailsTaskListSection(Some(false), Link("firstName lastName",
+        Seq(SchemeDetailsTaskListSection(Some(false), Link(messages("messages__schemeTaskList__persons_details__link_text", "firstName lastName"),
           controllers.register.trustees.individual.routes.TrusteeDetailsController.onPageLoad(NormalMode, 0, None).url), None),
-          SchemeDetailsTaskListSection(Some(false), Link("test company",
+          SchemeDetailsTaskListSection(Some(false), Link(messages("messages__schemeTaskList__persons_details__link_text", "test company"),
             controllers.register.trustees.company.routes.CompanyDetailsController.onPageLoad(NormalMode, 1, None).url), None),
-          SchemeDetailsTaskListSection(Some(false), Link("test partnership",
+          SchemeDetailsTaskListSection(Some(false), Link(messages("messages__schemeTaskList__persons_details__link_text", "test partnership"),
             controllers.register.trustees.partnership.routes.TrusteeDetailsController.onPageLoad(NormalMode, 2, None).url), None)
         )
     }
@@ -241,9 +241,9 @@ class HsTaskListHelperVariationsSpec extends HsTaskListHelperBehaviour {
               ))))).asOpt.value
       val helper = createTaskListHelper(userAnswers)
       helper.trustees(userAnswers) mustBe
-        Seq(SchemeDetailsTaskListSection(Some(false), Link("firstName lastName",
+        Seq(SchemeDetailsTaskListSection(Some(false), Link(messages("messages__schemeTaskList__persons_details__link_text", "firstName lastName"),
           controllers.register.trustees.individual.routes.TrusteeDetailsController.onPageLoad(NormalMode, 0, None).url), None),
-          SchemeDetailsTaskListSection(Some(false), Link("test partnership",
+          SchemeDetailsTaskListSection(Some(false), Link(messages("messages__schemeTaskList__persons_details__link_text", "test partnership"),
             controllers.register.trustees.partnership.routes.TrusteeDetailsController.onPageLoad(NormalMode, 2, None).url), None)
         )
     }

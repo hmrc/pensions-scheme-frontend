@@ -67,7 +67,7 @@ class HsTaskListHelperVariations(answers: UserAnswers)(implicit messages: Messag
       if (section.isDeleted) None else {
         Some(SchemeDetailsTaskListSection(
           Some(section.isCompleted),
-          Link(section.name, linkTarget(section, index, userAnswers)),
+          Link(messages("messages__schemeTaskList__persons_details__link_text", section.name), linkTarget(section, index, userAnswers)),
           None)
         )
       }

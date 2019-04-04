@@ -1345,3 +1345,5 @@ messages__any_more_changes__p2 = You will need to complete a declaration to upda
 messages__any_more_changes__p3_date = You have until {0} to complete the declaration. If you do not complete the declaration by this date, your changes will be deleted.
 
 messages__any_more_changes__error__required = Select yes if you want to make more changes
+
+messages__schemeTaskList__persons_details__link_text = {0}’s details
