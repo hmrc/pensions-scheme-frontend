@@ -19,6 +19,8 @@ package utils
 import identifiers.TypedIdentifier
 import identifiers.register.establishers.company.director.{DirectorDetailsId, IsDirectorCompleteId}
 import identifiers.register.establishers.company.{CompanyDetailsId => EstablisherCompanyDetailsId}
+import identifiers.register.establishers.company.{CompanyVatId => EstablisherCompanyVatId}
+import identifiers.register.establishers.company.{CompanyPayeId => EstablisherCompanyPayeId}
 import identifiers.register.establishers.individual.EstablisherDetailsId
 import identifiers.register.establishers.partnership.PartnershipDetailsId
 import identifiers.register.establishers.partnership.partner.{IsPartnerCompleteId, PartnerDetailsId}
@@ -29,7 +31,7 @@ import identifiers.register.trustees.partnership.{IsPartnershipCompleteId, Partn
 import identifiers.register.trustees.{IsTrusteeCompleteId, TrusteeKindId, TrusteesId}
 import models.person.PersonDetails
 import models.register._
-import models.{CompanyDetails, PartnershipDetails}
+import models.{CompanyDetails, PartnershipDetails, Paye, Vat}
 import play.api.Logger
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
@@ -144,9 +146,16 @@ case class UserAnswers(json: JsValue = Json.obj()) {
 
     private def readsCompany(index: Int): Reads[Establisher[_]] = (
       (JsPath \ EstablisherCompanyDetailsId.toString).read[CompanyDetails] and
+        (JsPath \ EstablisherCompanyVatId.toString).readNullable[Vat] and
+        (JsPath \ EstablisherCompanyPayeId.toString).readNullable[Paye] and
         (JsPath \ IsEstablisherCompleteId.toString).readNullable[Boolean]
-      ) ((details, isComplete) =>
-      EstablisherCompanyEntity(EstablisherCompanyDetailsId(index), details.companyName, details.isDeleted, isComplete.getOrElse(false))
+      ) ((details, vat, paye, isComplete) => {
+      val isEstCompanyComplete = (vat, paye) match {
+        case (None, None) => Some(false)
+        case _ => isComplete
+      }
+      EstablisherCompanyEntity(EstablisherCompanyDetailsId(index), details.companyName, details.isDeleted, isEstCompanyComplete.getOrElse(false))
+    }
     )
 
     private def readsPartnership(index: Int): Reads[Establisher[_]] = (
@@ -242,8 +251,16 @@ case class UserAnswers(json: JsValue = Json.obj()) {
 
     private def readsCompany(index: Int): Reads[Trustee[_]] = (
       (JsPath \ CompanyDetailsId.toString).read[CompanyDetails] and
+        (JsPath \ CompanyDetailsId.toString).readNullable[Vat] and
+        (JsPath \ CompanyDetailsId.toString).readNullable[Paye] and
         (JsPath \ IsTrusteeCompleteId.toString).readNullable[Boolean]
-      ) ((details, isComplete) => TrusteeCompanyEntity(CompanyDetailsId(index), details.companyName, details.isDeleted, isComplete.getOrElse(false))
+      ) ((details, vat, paye, isComplete) => {
+      val isTrusteeCompanyComplete = (vat, paye) match {
+        case (None, None) => Some(false)
+        case _ => isComplete
+      }
+      TrusteeCompanyEntity(CompanyDetailsId(index), details.companyName, details.isDeleted, isTrusteeCompanyComplete.getOrElse(false))
+    }
     )
 
     private def readsPartnership(index: Int): Reads[Trustee[_]] = (
