@@ -27,6 +27,7 @@ import models.requests.DataRequest
 import models.{Index, Mode}
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, Result}
+import services.UserAnswersService
 import utils.Navigator
 import utils.annotations.EstablishersCompanyDirector
 import viewmodels.Message
@@ -36,7 +37,7 @@ import scala.concurrent.Future
 
 class DirectorPreviousAddressListController @Inject()(
                                                        override val appConfig: FrontendAppConfig,
-                                                       override val cacheConnector: UserAnswersCacheConnector,
+                                                       val userAnswersService: UserAnswersService,
                                                        @EstablishersCompanyDirector override val navigator: Navigator,
                                                        override val messagesApi: MessagesApi,
                                                        authenticate: AuthAction,

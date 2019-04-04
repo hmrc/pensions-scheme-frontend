@@ -16,7 +16,7 @@
 
 package controllers.register.establishers.individual
 
-import connectors.FakeUserAnswersCacheConnector
+import services.FakeUserAnswersService
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.address.AddressYearsFormProvider
@@ -50,7 +50,7 @@ class AddressYearsControllerSpec extends ControllerSpecBase {
   private def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisher) =
     new AddressYearsController(
       frontendAppConfig,
-      FakeUserAnswersCacheConnector,
+      FakeUserAnswersService,
       new FakeNavigator(desiredRoute = onwardRoute),
       messagesApi,
       FakeAuthAction,

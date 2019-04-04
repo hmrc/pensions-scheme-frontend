@@ -339,5 +339,4 @@ case class UserAnswers(json: JsValue = Json.obj()) {
       Some(country)
     ).flatten
   }
-
 }

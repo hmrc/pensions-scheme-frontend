@@ -23,5 +23,6 @@ case class PayeViewModel(
                           title: Message,
                           heading: Message,
                           hint: Option[Message] = None,
-                          subHeading: Option[Message] = None
+                          subHeading: Option[Message] = None,
+                          srn: Option[String] = None
                         )

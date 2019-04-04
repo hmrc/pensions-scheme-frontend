@@ -17,7 +17,6 @@
 package controllers.register.establishers.company.director
 
 import config.FrontendAppConfig
-import connectors.UserAnswersCacheConnector
 import controllers.actions._
 import forms.ContactDetailsFormProvider
 import identifiers.register.establishers.company.director.{DirectorContactDetailsId, DirectorDetailsId}
@@ -25,6 +24,7 @@ import javax.inject.Inject
 import models.{Index, Mode}
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent}
+import services.UserAnswersService
 import utils._
 import utils.annotations.EstablishersCompanyDirector
 import viewmodels.{ContactDetailsViewModel, Message}
@@ -33,7 +33,7 @@ class DirectorContactDetailsController @Inject()(
                                                   @EstablishersCompanyDirector override val navigator: Navigator,
                                                   override val appConfig: FrontendAppConfig,
                                                   override val messagesApi: MessagesApi,
-                                                  override val cacheConnector: UserAnswersCacheConnector,
+                                                  val userAnswersService: UserAnswersService,
                                                   authenticate: AuthAction,
                                                   getData: DataRetrievalAction,
                                                   requireData: DataRequiredAction,

@@ -26,6 +26,7 @@ import models.address.{Address, TolerantAddress}
 import models.requests.DataRequest
 import play.api.i18n.I18nSupport
 import play.api.mvc.{AnyContent, Result}
+import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.{Navigator, UserAnswers}
 import viewmodels.address.AddressListViewModel
@@ -39,7 +40,7 @@ trait AddressListController extends FrontendController with Retrievals  with I18
 
   protected def appConfig: FrontendAppConfig
 
-  protected def cacheConnector: UserAnswersCacheConnector
+  protected def userAnswersService: UserAnswersService
 
   protected def navigator: Navigator
 
@@ -61,9 +62,9 @@ trait AddressListController extends FrontendController with Retrievals  with I18
       addressIndex => {
         val address = viewModel.addresses(addressIndex).copy(country = Some("GB"))
 
-        cacheConnector.remove(request.externalId, dataId).flatMap {
+        userAnswersService.remove(mode, viewModel.srn, dataId).flatMap {
           _ =>
-            cacheConnector.save(request.externalId, navigatorId, address).map {
+            userAnswersService.save(mode, viewModel.srn, navigatorId, address).map {
               json =>
                 Redirect(navigator.nextPage(navigatorId, mode, UserAnswers(json)))
             }

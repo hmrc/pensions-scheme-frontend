@@ -18,7 +18,7 @@ package controllers.register.establishers.individual
 
 import audit.testdoubles.StubSuccessfulAuditService
 import audit.{AddressAction, AddressEvent}
-import connectors.FakeUserAnswersCacheConnector
+import services.FakeUserAnswersService
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.address.AddressFormProvider

@@ -17,13 +17,13 @@
 package controllers
 
 import config.FrontendAppConfig
-import connectors.UserAnswersCacheConnector
 import identifiers.TypedIdentifier
 import models.requests.DataRequest
 import models.{Mode, Paye}
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{AnyContent, Result}
+import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.{Navigator, UserAnswers}
 import viewmodels.PayeViewModel
@@ -37,7 +37,7 @@ trait PayeController extends FrontendController with Retrievals with I18nSupport
 
   protected def appConfig: FrontendAppConfig
 
-  protected def cacheConnector: UserAnswersCacheConnector
+  protected def userAnswersService: UserAnswersService
 
   protected def navigator: Navigator
 
@@ -60,7 +60,7 @@ trait PayeController extends FrontendController with Retrievals with I18nSupport
       formWithErrors =>
         Future.successful(BadRequest(paye(appConfig, formWithErrors, viewmodel, existingSchemeName))),
       paye =>
-        cacheConnector.save(request.externalId, id, paye).map {
+        userAnswersService.save(mode, viewmodel.srn, id, paye).map {
           answers =>
             Redirect(navigator.nextPage(id, mode, UserAnswers(answers)))
         }

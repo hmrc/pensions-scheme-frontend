@@ -22,7 +22,7 @@ import javax.inject.Inject
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import utils.HsTaskListHelper
+import utils.HsTaskListHelperRegistration
 import views.html.schemeDetailsTaskList
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -36,6 +36,6 @@ class SchemeTaskListController @Inject()(appConfig: FrontendAppConfig,
 
   def onPageLoad: Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      Future.successful(Ok(schemeDetailsTaskList(appConfig, new HsTaskListHelper(request.userAnswers).taskList)))
+      Future.successful(Ok(schemeDetailsTaskList(appConfig, new HsTaskListHelperRegistration(request.userAnswers).taskList)))
   }
 }

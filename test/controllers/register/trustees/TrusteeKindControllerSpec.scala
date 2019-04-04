@@ -16,7 +16,7 @@
 
 package controllers.register.trustees
 
-import connectors.FakeUserAnswersCacheConnector
+import services.FakeUserAnswersService
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.register.trustees.TrusteeKindFormProvider
@@ -39,7 +39,7 @@ class TrusteeKindControllerSpec extends ControllerSpecBase {
   val index = Index(0)
 
   def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): TrusteeKindController =
-    new TrusteeKindController(frontendAppConfig, messagesApi, FakeUserAnswersCacheConnector, new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
+    new TrusteeKindController(frontendAppConfig, messagesApi, FakeUserAnswersService, new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
       dataRetrievalAction, new DataRequiredActionImpl, formProvider)
   val submitUrl = controllers.register.trustees.routes.TrusteeKindController.onSubmit(NormalMode, index, None)
 
@@ -71,7 +71,7 @@ class TrusteeKindControllerSpec extends ControllerSpecBase {
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
-      FakeUserAnswersCacheConnector.verify(TrusteeKindId(0), TrusteeKind.values.head)
+      FakeUserAnswersService.verify(TrusteeKindId(0), TrusteeKind.values.head)
     }
 
     "return a Bad Request and errors when invalid data is submitted" in {

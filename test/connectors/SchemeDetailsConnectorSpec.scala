@@ -22,14 +22,15 @@ import org.scalatest.{AsyncFlatSpec, Matchers}
 import play.api.http.Status
 import play.api.libs.json.Json
 import uk.gov.hmrc.http.{BadRequestException, HeaderCarrier}
-import utils.WireMockHelper
+import utils.{UserAnswers, WireMockHelper}
 
 class SchemeDetailsConnectorSpec extends AsyncFlatSpec with Matchers with WireMockHelper {
 
   import SchemeDetailsConnectorSpec._
 
   override protected def portConfigKey: String = "microservice.services.pensions-scheme.port"
-
+  
+  
   "getSchemeDetails" should "return the SchemeDetails for a valid request/response" in {
 
     server.stubFor(
@@ -129,6 +130,104 @@ class SchemeDetailsConnectorSpec extends AsyncFlatSpec with Matchers with WireMo
 
   }
 
+  "getSchemeDetailsVariations" should "return the SchemeDetails for a valid request/response" in {
+
+    server.stubFor(
+      get(urlEqualTo(schemeDetailsUrl))
+        .withHeader("schemeIdType", equalTo(schemeIdType))
+        .withHeader("idNumber", equalTo(idNumber))
+        .withHeader("PSAId", equalTo(psaId))
+        .willReturn(
+          aResponse()
+            .withStatus(Status.OK)
+            .withHeader("Content-Type", "application/json")
+            .withBody(validSchemeDetailsVariationsResponse)
+        )
+    )
+
+    val connector = injector.instanceOf[SchemeDetailsConnector]
+
+    connector.getSchemeDetailsVariations(psaId, schemeIdType, idNumber).map(schemeDetails =>
+      schemeDetails shouldBe psaSchemeDetailsVariationsResponse
+    )
+  }
+
+  it should "throw BadRequestException for a 400 INVALID_IDTYPE response" in {
+
+    server.stubFor(
+      get(urlEqualTo(schemeDetailsUrl))
+        .withHeader("schemeIdType", equalTo(schemeIdType))
+        .withHeader("idNumber", equalTo(idNumber))
+        .withHeader("PSAId", equalTo(psaId))
+        .willReturn(
+          badRequest
+            .withHeader("Content-Type", "application/json")
+            .withBody(errorResponse("INVALID_IDTYPE"))
+        )
+    )
+
+    val connector = injector.instanceOf[SchemeDetailsConnector]
+    recoverToSucceededIf[BadRequestException] {
+      connector.getSchemeDetailsVariations(psaId, schemeIdType, idNumber)
+    }
+  }
+
+  it should "throw BadRequestException for a 400 INVALID_SRN response" in {
+
+    server.stubFor(
+      get(urlEqualTo(schemeDetailsUrl))
+        .withHeader("schemeIdType", equalTo(schemeIdType))
+        .withHeader("idNumber", equalTo(idNumber))
+        .withHeader("PSAId", equalTo(psaId))
+        .willReturn(
+          badRequest
+            .withHeader("Content-Type", "application/json")
+            .withBody(errorResponse("INVALID_SRN"))
+        )
+    )
+    val connector = injector.instanceOf[SchemeDetailsConnector]
+
+    recoverToSucceededIf[BadRequestException] {
+      connector.getSchemeDetailsVariations(psaId, schemeIdType, idNumber)
+    }
+
+  }
+  it should "throw BadRequestException for a 400 INVALID_PSTR response" in {
+
+    server.stubFor(
+      get(urlEqualTo(schemeDetailsUrl))
+        .willReturn(
+          badRequest
+            .withHeader("Content-Type", "application/json")
+            .withBody(errorResponse("INVALID_PSTR"))
+        )
+    )
+    val connector = injector.instanceOf[SchemeDetailsConnector]
+
+    recoverToSucceededIf[BadRequestException] {
+      connector.getSchemeDetailsVariations(psaId, schemeIdType, idNumber)
+    }
+
+  }
+
+  it should "throw BadRequest for a 400 INVALID_CORRELATIONID response" in {
+
+    server.stubFor(
+      get(urlEqualTo(schemeDetailsUrl))
+        .willReturn(
+          badRequest
+            .withHeader("Content-Type", "application/json")
+            .withBody(errorResponse("INVALID_CORRELATIONID"))
+        )
+    )
+    val connector = injector.instanceOf[SchemeDetailsConnector]
+
+    recoverToSucceededIf[BadRequestException] {
+      connector.getSchemeDetailsVariations(psaId, schemeIdType, idNumber)
+    }
+
+  }
+
 }
 
 object SchemeDetailsConnectorSpec {
@@ -148,6 +247,14 @@ object SchemeDetailsConnectorSpec {
   private implicit val headerCarrier: HeaderCarrier = HeaderCarrier()
 
   private val validSchemeDetailsResponse = Json.toJson(psaSchemeDetailsResponse).toString()
+
+
+  private val validSchemeDetailsVariationsResponse = """
+        { "somedata": "somevalue" }
+      """.stripMargin
+
+  private val psaSchemeDetailsVariationsResponse = UserAnswers(Json.parse(validSchemeDetailsVariationsResponse))
+
 
   def errorResponse(code: String): String = {
     Json.stringify(

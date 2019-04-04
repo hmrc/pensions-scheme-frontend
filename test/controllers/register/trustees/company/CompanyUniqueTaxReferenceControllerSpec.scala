@@ -16,7 +16,7 @@
 
 package controllers.register.trustees.company
 
-import connectors.FakeUserAnswersCacheConnector
+import services.FakeUserAnswersService
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.register.trustees.company.CompanyUniqueTaxReferenceFormProvider
@@ -58,7 +58,7 @@ class CompanyUniqueTaxReferenceControllerSpec extends ControllerSpecBase {
   )
 
   def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryTrusteeCompany): CompanyUniqueTaxReferenceController =
-    new CompanyUniqueTaxReferenceController(frontendAppConfig, messagesApi, FakeUserAnswersCacheConnector, new FakeNavigator(desiredRoute = onwardRoute),
+    new CompanyUniqueTaxReferenceController(frontendAppConfig, messagesApi, FakeUserAnswersService, new FakeNavigator(desiredRoute = onwardRoute),
       FakeAuthAction, dataRetrievalAction, new DataRequiredActionImpl, formProvider)
   val submitUrl = controllers.register.trustees.company.routes.CompanyUniqueTaxReferenceController.onSubmit(NormalMode, firstIndex, None)
 

@@ -17,7 +17,6 @@
 package controllers.register.trustees.individual
 
 import config.FrontendAppConfig
-import connectors.UserAnswersCacheConnector
 import controllers.Retrievals
 import controllers.actions._
 import controllers.address.AddressListController
@@ -27,6 +26,7 @@ import models.requests.DataRequest
 import models.{Index, Mode}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Result}
+import services.UserAnswersService
 import utils.Navigator
 import utils.annotations.TrusteesIndividual
 import viewmodels.Message
@@ -37,7 +37,7 @@ import scala.concurrent.Future
 class TrusteePreviousAddressListController @Inject()(override val appConfig: FrontendAppConfig,
                                                      override val messagesApi: MessagesApi,
                                                      @TrusteesIndividual override val navigator: Navigator,
-                                                     override val cacheConnector: UserAnswersCacheConnector,
+                                                     val userAnswersService: UserAnswersService,
                                                      authenticate: AuthAction,
                                                      getData: DataRetrievalAction,
                                                      requireData: DataRequiredAction) extends AddressListController with Retrievals with I18nSupport {

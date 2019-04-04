@@ -16,7 +16,7 @@
 
 package controllers.register.establishers.partnership
 
-import connectors.FakeUserAnswersCacheConnector
+import services.FakeUserAnswersService
 import controllers.ControllerSpecBase
 import controllers.actions.{DataRequiredActionImpl, DataRetrievalAction, FakeAuthAction, FakeDataRetrievalAction}
 import forms.address.AddressYearsFormProvider
@@ -78,7 +78,7 @@ class PartnershipAddressYearsControllerSpec extends ControllerSpecBase {
       val result = controller(trusteeData).onSubmit(mode, index, None)(request)
 
       status(result) mustBe SEE_OTHER
-      FakeUserAnswersCacheConnector.verify(PartnershipAddressYearsId(index), answer)
+      FakeUserAnswersService.verify(PartnershipAddressYearsId(index), answer)
     }
 
     "return a Bad Request and errors when invalid data is submitted" in {
@@ -119,7 +119,7 @@ object PartnershipAddressYearsControllerSpec extends ControllerSpecBase {
   private def controller(dataRetrievalAction: DataRetrievalAction) =
     new PartnershipAddressYearsController(
       frontendAppConfig,
-      FakeUserAnswersCacheConnector,
+      FakeUserAnswersService,
       fakeNavigator,
       messagesApi,
       FakeAuthAction,
