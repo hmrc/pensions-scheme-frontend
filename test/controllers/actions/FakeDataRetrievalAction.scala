@@ -24,8 +24,8 @@ import utils.UserAnswers
 
 import scala.concurrent.Future
 
-class FakeDataRetrievalAction(json: Option[JsValue], mode: Mode = NormalMode, disableLock: Boolean = false) extends DataRetrievalAction {
-  override def apply(mode: Mode, srn: Option[String], disableLock: Boolean): DataRetrieval = new FakeDataRetrieval(json,mode)
+class FakeDataRetrievalAction(json: Option[JsValue], mode: Mode = NormalMode) extends DataRetrievalAction {
+  override def apply(mode: Mode, srn: Option[String]): DataRetrieval = new FakeDataRetrieval(json,mode)
 }
 
 class FakeDataRetrieval(json: Option[JsValue], mode: Mode = NormalMode) extends DataRetrieval {

@@ -18,7 +18,6 @@ package controllers
 
 import controllers.actions._
 import forms.register.DeclarationFormProvider
-import models.NormalMode
 import play.api.test.Helpers._
 import utils.FakeNavigator
 import views.html.variationDeclaration

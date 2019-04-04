@@ -88,11 +88,11 @@ class DataRetrievalActionImpl @Inject()(dataConnector: UserAnswersCacheConnector
                                         updateConnector: UpdateSchemeCacheConnector,
                                         lockConnector: PensionSchemeVarianceLockConnector
                                        ) extends DataRetrievalAction {
-  override def apply(mode: Mode, srn: Option[String], disableLock: Boolean): DataRetrieval =
-    new DataRetrievalImpl(dataConnector, viewConnector, updateConnector, lockConnector, mode, srn, disableLock)
+  override def apply(mode: Mode, srn: Option[String]): DataRetrieval =
+    new DataRetrievalImpl(dataConnector, viewConnector, updateConnector, lockConnector, mode, srn, false)
 }
 
 @ImplementedBy(classOf[DataRetrievalActionImpl])
 trait DataRetrievalAction {
-  def apply(mode: Mode = NormalMode, srn: Option[String] = None, disableLock: Boolean = false): DataRetrieval
+  def apply(mode: Mode = NormalMode, srn: Option[String] = None): DataRetrieval
 }
