@@ -32,7 +32,8 @@ object CompanyVatId {
 
   implicit def cya(implicit r: Reads[Vat]): CheckYourAnswers[CompanyVatId] =
     VatCYA(labelYesNo = Some("messages__company__cya__vat_yes_no"),
-      hiddenLabelYesNo = Some("messages__visuallyhidden__establisher__vat_yes_no"))()
+      hiddenLabelYesNo = "messages__visuallyhidden__establisher__vat_yes_no",
+      hiddenLabelVat = "messages__visuallyhidden__establisher__vat_number")()
 }
 
 

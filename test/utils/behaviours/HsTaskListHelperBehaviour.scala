@@ -117,7 +117,7 @@ trait HsTaskListHelperBehaviour extends SpecBase with MustMatchers with OptionVa
   protected def allEstablishers(isCompleteEstablisher: Boolean = true): UserAnswers = {
     UserAnswers().set(EstablisherDetailsId(0))(PersonDetails("firstName", None, "lastName", LocalDate.now())).flatMap(
       _.set(IsEstablisherCompleteId(0))(isCompleteEstablisher).flatMap(
-        _.set(EstablisherCompanyDetailsId(1))(CompanyDetails("test company", None, None, false)).flatMap(
+        _.set(EstablisherCompanyDetailsId(1))(CompanyDetails("test company", false)).flatMap(
           _.set(IsEstablisherCompleteId(1))(isCompleteEstablisher).flatMap(
             _.set(EstablisherPartnershipDetailsId(2))(PartnershipDetails("test partnership", false)).flatMap(
               _.set(IsEstablisherCompleteId(2))(isCompleteEstablisher)
@@ -127,7 +127,7 @@ trait HsTaskListHelperBehaviour extends SpecBase with MustMatchers with OptionVa
   protected def allTrustees(isCompleteTrustees: Boolean = true): UserAnswers = {
     UserAnswers().set(TrusteeDetailsId(0))(PersonDetails("firstName", None, "lastName", LocalDate.now())).flatMap(
       _.set(IsTrusteeCompleteId(0))(isCompleteTrustees).flatMap(
-        _.set(TrusteeCompanyDetailsId(1))(CompanyDetails("test company", None, None, false)).flatMap(
+        _.set(TrusteeCompanyDetailsId(1))(CompanyDetails("test company", false)).flatMap(
           _.set(IsTrusteeCompleteId(1))(isCompleteTrustees).flatMap(
             _.set(TrusteePartnershipDetailsId(2))(PartnershipDetails("test partnership", false)).flatMap(
               _.set(IsPartnershipCompleteId(2))(isCompleteTrustees)
@@ -242,7 +242,7 @@ trait HsTaskListHelperBehaviour extends SpecBase with MustMatchers with OptionVa
     "return the seq of establishers sub sections after filtering out deleted establishers" in {
       val userAnswers = UserAnswers().set(EstablisherDetailsId(0))(PersonDetails("firstName", None, "lastName", LocalDate.now())).flatMap(
         _.set(IsEstablisherCompleteId(0))(false).flatMap(
-          _.set(EstablisherCompanyDetailsId(1))(CompanyDetails("test company", None, None, true)).flatMap(
+          _.set(EstablisherCompanyDetailsId(1))(CompanyDetails("test company", true)).flatMap(
             _.set(IsEstablisherCompleteId(1))(true).flatMap(
               _.set(EstablisherPartnershipDetailsId(2))(PartnershipDetails("test partnership", false)).flatMap(
                 _.set(IsEstablisherCompleteId(2))(false)
@@ -288,7 +288,7 @@ trait HsTaskListHelperBehaviour extends SpecBase with MustMatchers with OptionVa
     "return the seq of trustees sub sections after filtering out deleted trustees" in {
       val userAnswers = UserAnswers().set(TrusteeDetailsId(0))(PersonDetails("firstName", None, "lastName", LocalDate.now())).flatMap(
         _.set(IsTrusteeCompleteId(0))(false).flatMap(
-          _.set(TrusteeCompanyDetailsId(1))(CompanyDetails("test company", None, None, true)).flatMap(
+          _.set(TrusteeCompanyDetailsId(1))(CompanyDetails("test company", true)).flatMap(
             _.set(IsTrusteeCompleteId(1))(false).flatMap(
               _.set(TrusteePartnershipDetailsId(2))(PartnershipDetails("test partnership", false)).flatMap(
                 _.set(IsPartnershipCompleteId(2))(false)

@@ -53,7 +53,7 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
 
       val companyVatRow = CompanyVatId(index).row(routes.CompanyVatController.onPageLoad(CheckMode, index, None).url)
 
-      val companyPayeRow = CompanyVatId(index).row(routes.CompanyPayeController.onPageLoad(CheckMode, index, None).url)
+      val companyPayeRow = CompanyPayeId(index).row(routes.CompanyPayeController.onPageLoad(CheckMode, index, None).url)
 
       val companyRegistrationNumber = CompanyRegistrationNumberId(index).row(
         routes.CompanyRegistrationNumberController.onPageLoad(CheckMode, index, None).url

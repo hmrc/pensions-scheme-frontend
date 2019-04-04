@@ -535,6 +535,8 @@ messages__checkYourAnswers__section__contact_details = Contact details
 messages__checkYourAnswers__section__company_details = Company details
 
 messages__checkYourAnswers__trustees__company__crn = Does the trustee have a Company Registration number?
+messages__checkYourAnswers__trustees__company__vat = Does the trustee have a VAT registration number?
+messages__checkYourAnswers__trustees__company__paye = Does the trustee have a PAYE employer reference number?
 messages__checkYourAnswers__trustees__company__utr = Does the trustee have a Unique Taxpayer Reference number?
 messages__checkYourAnswers__trustees__company__address_years = How long has the company been at this address?
 
@@ -1013,6 +1015,7 @@ messages__visuallyhidden__uKBankAccount__date_bank_account = Change approximate 
 
 messages__visuallyhidden__establisher__nino_yes_no = Change whether the establisher has a National Insurance number
 messages__visuallyhidden__establisher__vat_yes_no = Change whether the establisher has a VAT registration number
+messages__visuallyhidden__establisher__paye_yes_no = Change whether the establisher has a PAYE employer reference number
 messages__visuallyhidden__establisher__nino_no = Change why the establisher does not have a National Insurance number
 messages__visuallyhidden__establisher__nino = Change the establisher’s National Insurance number
 messages__visuallyhidden__establisher__utr_yes_no = Change whether the establisher has a Unique Taxpayer Reference number
@@ -1074,6 +1077,8 @@ messages__visuallyhidden__trustee__nino = Change the trustee’s National Insura
 messages__visuallyhidden__trustee__vat_number = Change the trustee’s VAT registration number
 messages__visuallyhidden__trustee__paye_number = Change the trustee’s PAYE employer reference number
 messages__visuallyhidden__trustee__crn_yes_no = Change whether the trustee has a Company Registration number
+messages__visuallyhidden__trustee__vat_yes_no = Change whether the trustee has a VAT registration number
+messages__visuallyhidden__trustee__paye_yes_no = Change whether the trustee has a PAYE employer reference number
 messages__visuallyhidden__trustee__crn_no = Change why the trustee does not have a Company Registration number
 messages__visuallyhidden__trustee__crn = Change the trustee’s Company Registration number
 messages__visuallyhidden__trustee__utr_yes_no = Change whether the trustee has a Unique Taxpayer Reference number

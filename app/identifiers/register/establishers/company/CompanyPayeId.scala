@@ -32,7 +32,8 @@ object CompanyPayeId {
 
   implicit def cya(implicit r: Reads[Paye]): CheckYourAnswers[CompanyPayeId] =
     PayeCYA(labelYesNo = Some("messages__company__cya__paye_yes_no"),
-      hiddenLabelYesNo = Some("messages__visuallyhidden__establisher__paye_yes_no"))()
+      hiddenLabelYesNo = "messages__visuallyhidden__establisher__paye_yes_no",
+      hiddenLabelPaye = "messages__visuallyhidden__establisher__paye_number")()
 }
 
 

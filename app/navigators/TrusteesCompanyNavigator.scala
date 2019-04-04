@@ -79,6 +79,12 @@ class TrusteesCompanyNavigator @Inject()(val dataCacheConnector: UserAnswersCach
       case CompanyDetailsId(index) =>
         checkYourAnswers(index, from.userAnswers)
 
+      case CompanyVatId(index) =>
+        checkYourAnswers(index, from.userAnswers)
+
+      case CompanyPayeId(index) =>
+        checkYourAnswers(index, from.userAnswers)
+
       case CompanyRegistrationNumberId(index) =>
         checkYourAnswers(index, from.userAnswers)
 
