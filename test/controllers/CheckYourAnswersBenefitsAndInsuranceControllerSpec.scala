@@ -165,8 +165,10 @@ object CheckYourAnswersBenefitsAndInsuranceControllerSpec extends ControllerSpec
         messages("messages__type_of_benefits_cya_label"),
         Seq(s"messages__type_of_benefits__${TypeOfBenefits.Defined}"),
         answerIsMessageKey = true,
-        Some(Link("site.change", controllers.routes.TypeOfBenefitsController.onPageLoad(checkMode(mode)).url,
-          Some(messages("messages__visuallyhidden__type_of_benefits_change"))))
+        if(mode==UpdateMode) { None } else {
+          Some(Link("site.change", controllers.routes.TypeOfBenefitsController.onPageLoad(checkMode(mode)).url,
+            Some(messages("messages__visuallyhidden__type_of_benefits_change"))))
+        }
       ),
       AnswerRow(
         messages("securedBenefits.checkYourAnswersLabel"),

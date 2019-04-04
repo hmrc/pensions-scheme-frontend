@@ -131,7 +131,7 @@ object CheckYourAnswers {
 
   implicit def typeOfBenefitsCYA[I <: TypedIdentifier[TypeOfBenefits]](implicit rds: Reads[TypeOfBenefits]): CheckYourAnswers[I] = {
     new CheckYourAnswers[I] {
-      private def typeOfBenefitsCYARow(id: I, changeUrl: String, userAnswers: UserAnswers) = {
+      private def typeOfBenefitsCYARow(id: I, changeUrl: Option[Link], userAnswers: UserAnswers) = {
         userAnswers.get(id).map {
           typeOfBenefits =>
             Seq(
@@ -139,16 +139,17 @@ object CheckYourAnswers {
                 "messages__type_of_benefits_cya_label",
                 Seq(s"messages__type_of_benefits__$typeOfBenefits"),
                 answerIsMessageKey = true,
-                Some(Link("site.change", changeUrl,
-                  Some(s"messages__visuallyhidden__type_of_benefits_change")))
+                changeUrl
               )
             )
         }.getOrElse(Seq.empty[AnswerRow])
       }
 
-      override def row(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = typeOfBenefitsCYARow(id, changeUrl, userAnswers)
+      override def row(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = typeOfBenefitsCYARow(id,
+        Some(Link("site.change", changeUrl,
+          Some(s"messages__visuallyhidden__type_of_benefits_change"))), userAnswers)
 
-      override def updateRow(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = typeOfBenefitsCYARow(id, changeUrl, userAnswers)
+      override def updateRow(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = typeOfBenefitsCYARow(id, None, userAnswers)
     }
   }
 
