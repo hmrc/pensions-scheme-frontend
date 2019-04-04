@@ -86,7 +86,7 @@ object CheckYourAnswers {
 
     def apply()(implicit rds: Reads[Boolean]): CheckYourAnswers[I] = {
       new CheckYourAnswers[I] {
-        private def booleanCYARow(id: I, userAnswers: UserAnswers, changeUrl: Option[Link]): Seq[AnswerRow] = {
+        private def booleanCYARow(id: I, changeUrl: Option[Link], userAnswers: UserAnswers): Seq[AnswerRow] = {
           userAnswers.get(id).map {
             flag =>
               Seq(AnswerRow(
@@ -98,11 +98,12 @@ object CheckYourAnswers {
           }.getOrElse(Seq.empty[AnswerRow])
         }
 
-        override def row(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-          booleanCYARow(id, userAnswers, Some(Link("site.change", changeUrl,
-            Some(hiddenLabel.fold(s"messages__visuallyhidden__${id.toString}")(customHiddenLabel => customHiddenLabel)))))
+        override def row(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = booleanCYARow(id,
+          Some(Link("site.change", changeUrl,
+            Some(hiddenLabel.fold(s"messages__visuallyhidden__${id.toString}")(customHiddenLabel => customHiddenLabel)))),
+          userAnswers)
 
-        override def updateRow(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = booleanCYARow(id, userAnswers, None)
+        override def updateRow(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = booleanCYARow(id, None, userAnswers)
       }
     }
   }
