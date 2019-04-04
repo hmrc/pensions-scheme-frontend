@@ -28,7 +28,7 @@ import identifiers.register.establishers.company.{CompanyDetailsId => Establishe
 import identifiers.register.establishers.partnership.{PartnershipDetailsId => EstablisherPartnershipDetailsId}
 
 class HsTaskListHelperVariationsSpec extends HsTaskListHelperBehaviour {
-  val func:UserAnswers => HsTaskListHelper = ua => new HsTaskListHelperVariations(ua)
+  override val createTaskListHelper:UserAnswers => HsTaskListHelper = ua => new HsTaskListHelperVariations(ua)
   "h1" must {
     "have the name of the scheme" in {
       val name = "scheme name 1"
@@ -125,34 +125,34 @@ class HsTaskListHelperVariationsSpec extends HsTaskListHelperBehaviour {
 
   "addEstablisherHeader " must {
 
-    behave like addEstablisherHeader(func)
+    behave like addEstablisherHeader()
   }
 
   "addTrusteeHeader " must {
 
-    behave like addTrusteeHeader(func)
+    behave like addTrusteeHeader()
   }
 
-//  "establishers" must {
-//
-//    behave like establishersSection(func)
-//  }
+  "establishers" must {
+
+    behave like establishersSection()
+  }
 
   "trustees" must {
 
-    behave like trusteesSection(func)
+    behave like trusteesSection()
   }
 
   "declarationEnabled" must {
 
-    behave like declarationEnabled(func)
+    behave like declarationEnabled()
   }
 
   "declarationLink" must {
-    behave like declarationLink(ua => new HsTaskListHelperVariations(ua))
+    behave like declarationLink()
   }
 
-  def establishersSection(): Unit = {
+  override def establishersSection(): Unit = {
 
     "return the seq of establishers sub sections for non deleted establishers which are all completed" in {
       val userAnswers = allEstablishers()

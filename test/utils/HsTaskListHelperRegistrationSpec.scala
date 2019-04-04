@@ -22,7 +22,7 @@ import utils.behaviours.HsTaskListHelperBehaviour
 import viewmodels.{Link, SchemeDetailsTaskListSection}
 
 class HsTaskListHelperRegistrationSpec extends HsTaskListHelperBehaviour {
-  val func:UserAnswers => HsTaskListHelper = ua => new HsTaskListHelperRegistration(ua)
+  override val createTaskListHelper:UserAnswers => HsTaskListHelper = ua => new HsTaskListHelperRegistration(ua)
 
   "h1" must {
     "display appropriate heading" in {
@@ -142,32 +142,32 @@ class HsTaskListHelperRegistrationSpec extends HsTaskListHelperBehaviour {
 
   "addEstablisherHeader " must {
 
-    behave like addEstablisherHeader(func)
+    behave like addEstablisherHeader()
   }
 
   "addTrusteeHeader " must {
 
-    behave like addTrusteeHeader(func)
+    behave like addTrusteeHeader()
   }
 
   "establishers" must {
 
-    behave like establishersSection(func)
+    behave like establishersSection()
   }
 
   "trustees" must {
 
-    behave like trusteesSection(func)
+    behave like trusteesSection()
   }
 
   "declarationEnabled" must {
 
-    behave like declarationEnabled(func)
+    behave like declarationEnabled()
   }
 
   "declarationLink" must {
 
-    behave like declarationLink(func)
+    behave like declarationLink()
   }
 }
 
