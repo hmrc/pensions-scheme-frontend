@@ -24,6 +24,8 @@ import forms.vary.AnyMoreChangesFormProvider
 import identifiers.vary.AnyMoreChangesId
 import javax.inject.Inject
 import models.NormalMode
+import org.joda.time.LocalDate
+import org.joda.time.format.DateTimeFormat
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
@@ -48,18 +50,20 @@ class AnyMoreChangesController @Inject()(appConfig: FrontendAppConfig,
 
   def onPageLoad: Action[AnyContent] = (authenticate andThen getData() andThen requireData).async {
     implicit request =>
-      Future.successful(Ok(anyMoreChanges(appConfig, form, existingSchemeName)))
+      Future.successful(Ok(anyMoreChanges(appConfig, form, existingSchemeName, dateToCompleteDeclaration)))
   }
 
   def onSubmit: Action[AnyContent] = (authenticate andThen getData() andThen requireData).async {
     implicit request =>
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) =>
-          Future.successful(BadRequest(anyMoreChanges(appConfig, formWithErrors, existingSchemeName))),
+          Future.successful(BadRequest(anyMoreChanges(appConfig, formWithErrors, existingSchemeName, dateToCompleteDeclaration))),
         value =>
           dataCacheConnector.save(request.externalId, AnyMoreChangesId, value).map(cacheMap =>
             Redirect(navigator.nextPage(AnyMoreChangesId, NormalMode, UserAnswers(cacheMap))))
       )
   }
+
+  private def dateToCompleteDeclaration: String = LocalDate.now().plusDays(appConfig.daysDataSaved).toString(DateTimeFormat.forPattern("dd MMMM YYYY"))
 }
 
