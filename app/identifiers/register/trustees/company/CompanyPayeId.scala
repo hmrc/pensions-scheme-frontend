@@ -14,20 +14,19 @@
  * limitations under the License.
  */
 
-package forms
+package identifiers.register.trustees.company
 
-import forms.mappings.VatMapping
-import javax.inject.Inject
-import models.Vat
-import play.api.data.Form
+import identifiers.TypedIdentifier
+import identifiers.register.trustees.TrusteesId
+import models.Paye
+import play.api.libs.json.JsPath
 
-class VatFormProvider @Inject() extends VatMapping {
-
-  def apply(requiredKeyMsg: String = "messages__error__has_vat_establisher"): Form[Vat] =
-    Form(
-      "vat" -> vatMapping(
-        requiredKey = requiredKeyMsg,
-        vatLengthKey = "messages__error__vat_length"
-      )
-    )
+case class CompanyPayeId(index: Int) extends TypedIdentifier[Paye] {
+  override def path: JsPath = TrusteesId(index).path \ CompanyPayeId.toString
 }
+
+object CompanyPayeId {
+  override def toString: String = "companyPaye"
+}
+
+

@@ -31,7 +31,7 @@ class SchemeDetailsTaskListViewSpec extends ViewBehaviours {
 
   "SchemeDetailsTaskListView" should {
 
-    behave like normalPageWithTitle(createView(), messageKeyPrefix, pageHeader, pageHeader)
+    behave like normalPageWithTitle(createView(), messageKeyPrefix, schemeDetailsTaskListData.pageTitle, schemeDetailsTaskListData.h1)
 
     "display the correct link" in {
       val view = createView(schemeDetailsTaskListData)
@@ -43,14 +43,13 @@ class SchemeDetailsTaskListViewSpec extends ViewBehaviours {
     }
   }
 
-  "SchemeTaskListView Befor start section" should {
+  "SchemeTaskListView Before start section" should {
 
     val notStarted = schemeDetailsTaskListData.copy(beforeYouStart = beforeYouStartSection.copy(isCompleted = None))
     val inProgress = schemeDetailsTaskListData.copy(beforeYouStart = beforeYouStartSection.copy(isCompleted = Some(false)))
     val completed = schemeDetailsTaskListData.copy(beforeYouStart = beforeYouStartSection.copy(isCompleted = Some(true)))
 
-    behave like simpleSection(headerId = "section-before-you-start-header",
-      headerText = "messages__schemeTaskList__before_you_start_header",
+    behave like simpleSection(
       linkId = "section-before-you-start-link",
       linkUrl = beforeYouStartSection.link.target,
       linkText = beforeYouStartSection.link.text,
@@ -58,6 +57,11 @@ class SchemeDetailsTaskListViewSpec extends ViewBehaviours {
       notStarted = notStarted,
       inProgress = inProgress,
       completed = completed)
+
+    "display correct h2" in {
+      val doc = asDocument(createView(notStarted)())
+      assertRenderedByIdWithText(doc, id = "section-before-you-start-header", text = schemeDetailsTaskListData.h2)
+    }
   }
 
   "SchemeTaskListView Working knowledge of pensions section" should {
@@ -65,8 +69,7 @@ class SchemeDetailsTaskListViewSpec extends ViewBehaviours {
     val inProgress = schemeDetailsTaskListData.copy(workingKnowledge = Some(wkSection.copy(isCompleted = Some(false))))
     val completed = schemeDetailsTaskListData.copy(workingKnowledge = Some(wkSection.copy(isCompleted = Some(true))))
 
-    behave like simpleSection(headerId = "section-working-knowledge-header",
-      headerText = "messages__schemeTaskList__working_knowledge_header",
+    behave like simpleSection(
       linkId = "section-working-knowledge-link",
       linkUrl = wkSection.link.target,
       linkText = wkSection.link.text,
@@ -120,7 +123,7 @@ class SchemeDetailsTaskListViewSpec extends ViewBehaviours {
           Link(messages("messages__schemeTaskList__sectionTrustees_add_link"),
             controllers.register.trustees.routes.TrusteeKindController.onPageLoad(NormalMode, 0, None).url),
           None
-        )), Seq.empty, None
+        )), Seq.empty, None, "h1", "h2", "pageTitle"
       )
       val view = createView(journeyTaskListNoEstablisher)
 
@@ -190,7 +193,7 @@ class SchemeDetailsTaskListViewSpec extends ViewBehaviours {
           Link(messages("messages__schemeTaskList__sectionTrustees_add_link"),
             controllers.register.trustees.routes.TrusteeKindController.onPageLoad(NormalMode, 0, None).url),
           None
-        )), Seq.empty, None
+        )), Seq.empty, None, "h1", "h2", "pageTitle"
       )
       val view = createView(journeyTaskListNoTrustees)
 
@@ -267,14 +270,10 @@ class SchemeDetailsTaskListViewSpec extends ViewBehaviours {
     }
   }
 
-  private def simpleSection(headerId:String, headerText:String, linkId: String, linkUrl: String, linkText: String, statusId: String,
+  private def simpleSection(linkId: String, linkUrl: String, linkText: String, statusId: String,
                             notStarted: SchemeDetailsTaskList,  inProgress: SchemeDetailsTaskList,  completed: SchemeDetailsTaskList) {
 
-    "display correct header" in {
 
-      val doc = asDocument(createView(notStarted)())
-      assertRenderedByIdWithText(doc, id = headerId, text = messages(headerText))
-    }
 
     "display the correct link" in {
 
@@ -366,7 +365,7 @@ object SchemeDetailsTaskListViewSpec extends ViewSpecBase {
   }
 
   private val schemeDetailsTaskListData: SchemeDetailsTaskList = SchemeDetailsTaskList(
-    beforeYouStartSection, aboutSection, Some(wkSection), addEstablisherHeader(), establishers, Some(addTrusteesHeader()), trustees, None )
+    beforeYouStartSection, aboutSection, Some(wkSection), addEstablisherHeader(), establishers, Some(addTrusteesHeader()), trustees, None, "h1", "h2", "pageTitle" )
 
   private val pageHeader = messages("messages__schemeTaskList__title")
   private val messageKeyPrefix = "schemeTaskList"

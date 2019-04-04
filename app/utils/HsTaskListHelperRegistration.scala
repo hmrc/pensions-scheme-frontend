@@ -16,10 +16,34 @@
 
 package utils
 
+import identifiers.{IsAboutBankDetailsCompleteId, IsAboutBenefitsAndInsuranceCompleteId, IsAboutMembersCompleteId}
+import models.NormalMode
 import play.api.i18n.Messages
 import viewmodels._
 
 class HsTaskListHelperRegistration(answers: UserAnswers)(implicit messages: Messages) extends HsTaskListHelper(answers) {
+
+
+  override protected[utils] def aboutSection(userAnswers: UserAnswers): Seq[SchemeDetailsTaskListSection] = {
+    val membersLink = userAnswers.get(IsAboutMembersCompleteId) match {
+      case Some(true) => Link(aboutMembersLinkText, controllers.routes.CheckYourAnswersMembersController.onPageLoad(NormalMode, None).url)
+      case _ => Link(aboutMembersLinkText, controllers.routes.WhatYouWillNeedMembersController.onPageLoad.url)
+    }
+
+    val benefitsAndInsuranceLink = userAnswers.get(IsAboutBenefitsAndInsuranceCompleteId) match {
+      case Some(true) => Link(aboutBenefitsAndInsuranceLinkText, controllers.routes.CheckYourAnswersBenefitsAndInsuranceController.onPageLoad(NormalMode, None).url)
+      case _ => Link(aboutBenefitsAndInsuranceLinkText, controllers.routes.WhatYouWillNeedBenefitsInsuranceController.onPageLoad.url)
+    }
+
+    val bankDetailsLink = userAnswers.get(IsAboutBankDetailsCompleteId) match {
+      case Some(true) => Link(aboutBankDetailsLinkText, controllers.routes.CheckYourAnswersBankDetailsController.onPageLoad().url)
+      case _ => Link(aboutBankDetailsLinkText, controllers.routes.WhatYouWillNeedBankDetailsController.onPageLoad.url)
+    }
+
+    Seq(SchemeDetailsTaskListSection(userAnswers.get(IsAboutMembersCompleteId), membersLink, None),
+      SchemeDetailsTaskListSection(userAnswers.get(IsAboutBenefitsAndInsuranceCompleteId), benefitsAndInsuranceLink, None),
+      SchemeDetailsTaskListSection(userAnswers.get(IsAboutBankDetailsCompleteId), bankDetailsLink, None))
+  }
 
   def taskList: SchemeDetailsTaskList = {
     SchemeDetailsTaskList(
@@ -30,7 +54,10 @@ class HsTaskListHelperRegistration(answers: UserAnswers)(implicit messages: Mess
       establishers(answers),
       addTrusteeHeader(answers),
       trustees(answers),
-      declarationLink(answers)
+      declarationLink(answers),
+      messages("messages__schemeTaskList__heading"),
+      messages("messages__schemeTaskList__before_you_start_header"),
+      messages("messages__schemeTaskList__title")
     )
   }
 
