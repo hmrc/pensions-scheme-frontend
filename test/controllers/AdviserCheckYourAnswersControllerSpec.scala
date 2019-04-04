@@ -19,7 +19,7 @@ package controllers
 import connectors._
 import controllers.actions._
 import identifiers.{AdviserAddressId, AdviserEmailId, AdviserNameId, IsWorkingKnowledgeCompleteId}
-import models.CheckMode
+import models.{CheckMode, Link}
 import models.address.Address
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.mockito.MockitoSugar
@@ -64,11 +64,14 @@ class AdviserCheckYourAnswersControllerSpec extends ControllerSpecBase with Scal
       lazy val adviserSection = AnswerSection(None,
         Seq(
           AnswerRow("adviserName.checkYourAnswersLabel", Seq(adviserName), answerIsMessageKey = false,
-            Some(routes.AdviserNameController.onPageLoad(CheckMode).url), "messages__visuallyhidden__adviserName"),
+            Some(Link("site.change", routes.AdviserNameController.onPageLoad(CheckMode).url,
+              Some("messages__visuallyhidden__adviserName")))),
           AnswerRow(Messages("adviserEmail.checkYourAnswersLabel", adviserName), Seq(adviserEmail), answerIsMessageKey = false,
-            Some(routes.AdviserEmailAddressController.onPageLoad(CheckMode).url), "messages__visuallyhidden__adviserEmail"),
+            Some(Link("site.change", routes.AdviserEmailAddressController.onPageLoad(CheckMode).url,
+              Some("messages__visuallyhidden__adviserEmail")))),
           AnswerRow(Messages("adviserPhone.checkYourAnswersLabel", adviserName), Seq(adviserPhone), answerIsMessageKey = false,
-            Some(routes.AdviserPhoneController.onPageLoad(CheckMode).url), "messages__visuallyhidden__adviserPhone"),
+            Some(Link("site.change", routes.AdviserPhoneController.onPageLoad(CheckMode).url,
+              Some("messages__visuallyhidden__adviserPhone")))),
           AnswerRow(Messages("adviserAddress.checkYourAnswersLabel", adviserName),
             Seq(
               adviserAddress.addressLine1,
@@ -78,7 +81,8 @@ class AdviserCheckYourAnswersControllerSpec extends ControllerSpecBase with Scal
               adviserAddress.postcode.get,
               "Country of GB"),
             answerIsMessageKey = false,
-            Some(routes.AdviserAddressController.onPageLoad(CheckMode).url), "Change the adviser’s address")
+            Some(Link("site.change", routes.AdviserAddressController.onPageLoad(CheckMode).url,
+              Some("Change the adviser’s address"))))
         )
       )
 
@@ -120,15 +124,18 @@ object AdviserCheckYourAnswersControllerSpec extends ControllerSpecBase with Moc
 
   private val psaName = Json.obj("psaName" -> "Test", "psaEmail" -> "email@test.com")
 
-  lazy val adviserNameRoute: Option[String] = Some(controllers.routes.AdviserNameController.onPageLoad(CheckMode).url)
-  lazy val adviserEmailRoute: Option[String] = Some(controllers.routes.AdviserEmailAddressController.onPageLoad(CheckMode).url)
-  lazy val adviserPhoneRoute: Option[String] = Some(controllers.routes.AdviserPhoneController.onPageLoad(CheckMode).url)
+  lazy val adviserNameRoute: String = controllers.routes.AdviserNameController.onPageLoad(CheckMode).url
+  lazy val adviserEmailRoute: String = controllers.routes.AdviserEmailAddressController.onPageLoad(CheckMode).url
+  lazy val adviserPhoneRoute: String = controllers.routes.AdviserPhoneController.onPageLoad(CheckMode).url
   lazy val postUrl: Call = routes.AdviserCheckYourAnswersController.onSubmit()
   lazy val adviserSection = AnswerSection(None,
     Seq(
-      AnswerRow("messages__common__cya__name", Seq(adviserName), answerIsMessageKey = false, adviserNameRoute, Message("messages__visuallyhidden__common__name", adviserName)),
-      AnswerRow("messages__adviserDetails__email", Seq("email"), answerIsMessageKey = false, adviserEmailRoute, "messages__visuallyhidden__adviser__email_address"),
-      AnswerRow("messages__adviserDetails__phone", Seq("phone"), answerIsMessageKey = false, adviserPhoneRoute, "messages__visuallyhidden__adviser__phone_number")
+      AnswerRow("messages__common__cya__name", Seq(adviserName), answerIsMessageKey = false,
+        Some(Link("site.change", adviserNameRoute, Some(Message("messages__visuallyhidden__common__name", adviserName))))),
+      AnswerRow("messages__adviserDetails__email", Seq("email"), answerIsMessageKey = false,
+        Some(Link("site.change", adviserEmailRoute, Some(Message("messages__visuallyhidden__adviser__email_address"))))),
+      AnswerRow("messages__adviserDetails__phone", Seq("phone"), answerIsMessageKey = false,
+        Some(Link("site.change", adviserPhoneRoute, Some(Message("messages__visuallyhidden__adviser__phone_number")))))
     )
   )
 

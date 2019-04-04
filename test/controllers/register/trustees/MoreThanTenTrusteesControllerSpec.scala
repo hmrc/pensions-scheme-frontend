@@ -16,7 +16,7 @@
 
 package controllers.register.trustees
 
-import connectors.FakeUserAnswersCacheConnector
+import services.FakeUserAnswersService
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.register.trustees.MoreThanTenTrusteesFormProvider
@@ -41,7 +41,7 @@ class MoreThanTenTrusteesControllerSpec extends ControllerSpecBase {
   )
 
   def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): MoreThanTenTrusteesController =
-    new MoreThanTenTrusteesController(frontendAppConfig, messagesApi, FakeUserAnswersCacheConnector,
+    new MoreThanTenTrusteesController(frontendAppConfig, messagesApi, FakeUserAnswersService,
       new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
       dataRetrievalAction, new DataRequiredActionImpl, formProvider)
   val submitUrl = controllers.register.trustees.routes.MoreThanTenTrusteesController.onSubmit(NormalMode, None)

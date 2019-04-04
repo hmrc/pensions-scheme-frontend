@@ -17,14 +17,12 @@
 package utils
 
 import identifiers.{IsAboutBenefitsAndInsuranceCompleteId, IsAboutMembersCompleteId, SchemeNameId}
-import models.NormalMode
 import models.register.Entity
+import models.{Link, NormalMode}
 import play.api.i18n.Messages
 import viewmodels._
 
 class HsTaskListHelperVariations(answers: UserAnswers)(implicit messages: Messages) extends HsTaskListHelper(answers) {
-
-
 
   override protected lazy val beforeYouStartLinkText = messages("messages__schemeTaskList__scheme_info_link_text")
 

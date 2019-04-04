@@ -19,7 +19,7 @@ package controllers.register.trustees.individual
 import controllers.ControllerSpecBase
 import controllers.actions.{DataRequiredActionImpl, DataRetrievalAction, FakeAuthAction}
 import identifiers.register.trustees.IsTrusteeCompleteId
-import models.{CheckMode, Index, NormalMode}
+import models.{CheckMode, Index, Link, NormalMode}
 import org.joda.time.LocalDate
 import play.api.mvc.Call
 import play.api.test.Helpers._
@@ -67,15 +67,13 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase {
         "messages__common__cya__name",
         Seq("Test Trustee Name"),
         answerIsMessageKey = false,
-        Some(trusteeDetailsRoute),
-        Message("messages__visuallyhidden__common__name", trusteeName)
+        Some(Link("site.change", trusteeDetailsRoute, Some(Message("messages__visuallyhidden__common__name", trusteeName))))
       ),
       AnswerRow(
         "messages__common__dob",
         Seq(s"${DateHelper.formatDate(LocalDate.now)}"),
         answerIsMessageKey = false,
-        Some(trusteeDetailsRoute),
-        Message("messages__visuallyhidden__common__dob", trusteeName)
+        Some(Link("site.change", trusteeDetailsRoute, Some(Message("messages__visuallyhidden__common__dob", trusteeName))))
       )
     )
   )

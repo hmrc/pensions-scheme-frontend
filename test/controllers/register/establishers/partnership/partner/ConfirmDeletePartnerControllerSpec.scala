@@ -16,7 +16,7 @@
 
 package controllers.register.establishers.partnership.partner
 
-import connectors.FakeUserAnswersCacheConnector
+import services.FakeUserAnswersService
 import controllers.ControllerSpecBase
 import controllers.actions.{DataRequiredActionImpl, DataRetrievalAction, FakeAuthAction, FakeDataRetrievalAction}
 import forms.register.establishers.partnership.partner.ConfirmDeletePartnerFormProvider
@@ -59,16 +59,16 @@ class ConfirmDeletePartnerControllerSpec extends ControllerSpecBase {
       val result = controller(data).onSubmit(NormalMode, establisherIndex, partnerIndex, None)(postRequest)
 
       status(result) mustBe SEE_OTHER
-      FakeUserAnswersCacheConnector.verify(PartnerDetailsId(establisherIndex, partnerIndex), partnerDetails.copy(isDeleted = true))
+      FakeUserAnswersService.verify(PartnerDetailsId(establisherIndex, partnerIndex), partnerDetails.copy(isDeleted = true))
     }
 
     "never delete the partner on a POST if selected No" in {
-      FakeUserAnswersCacheConnector.reset()
+      FakeUserAnswersService.reset()
       val data = new FakeDataRetrievalAction(Some(testData()))
       val result = controller(data).onSubmit(NormalMode, establisherIndex, partnerIndex, None)(postRequestForCancle)
 
       status(result) mustBe SEE_OTHER
-      FakeUserAnswersCacheConnector.verifyNot(PartnerDetailsId(establisherIndex, partnerIndex))
+      FakeUserAnswersService.verifyNot(PartnerDetailsId(establisherIndex, partnerIndex))
     }
 
     "redirect to the next page on a successful POST" in {
@@ -157,7 +157,7 @@ object ConfirmDeletePartnerControllerSpec extends ControllerSpecBase {
     new ConfirmDeletePartnerController(
       frontendAppConfig,
       messagesApi,
-      FakeUserAnswersCacheConnector,
+      FakeUserAnswersService,
       new FakeNavigator(desiredRoute = onwardRoute),
       FakeAuthAction,
       dataRetrievalAction,

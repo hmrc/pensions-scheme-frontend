@@ -16,6 +16,7 @@
 
 package views.register.establishers
 
+import controllers.register.establishers.routes
 import forms.register.establishers.EstablisherKindFormProvider
 import models.register.establishers.EstablisherKind
 import models.{Index, NormalMode}
@@ -28,12 +29,13 @@ class EstablisherKindViewSpec extends ViewBehaviours {
   private val messageKeyPrefix = "establishers__add"
 
   private val form = new EstablisherKindFormProvider()()
+  private val postCall = routes.EstablisherKindController.onSubmit _
 
   private def createView() = () =>
-    establisherKind(frontendAppConfig, form, NormalMode, Index(1), None)(fakeRequest, messages)
+    establisherKind(frontendAppConfig, form, NormalMode, Index(1), None, postCall(NormalMode, Index(1), None))(fakeRequest, messages)
 
   private def createViewUsingForm = (form: Form[_]) =>
-    establisherKind(frontendAppConfig, form, NormalMode, Index(1), None)(fakeRequest, messages)
+    establisherKind(frontendAppConfig, form, NormalMode, Index(1), None, postCall(NormalMode, Index(1), None))(fakeRequest, messages)
 
   private def establisherKindOptions = EstablisherKind.options
 

@@ -27,7 +27,7 @@ import identifiers.register.trustees.partnership.{IsPartnershipCompleteId, Partn
 import identifiers.register.trustees.{IsTrusteeCompleteId, MoreThanTenTrusteesId}
 import identifiers.{IsWorkingKnowledgeCompleteId, _}
 import models.person.PersonDetails
-import models.{CompanyDetails, NormalMode, PartnershipDetails}
+import models.{CompanyDetails, Link, NormalMode, PartnershipDetails}
 import org.joda.time.LocalDate
 import org.scalatest.{MustMatchers, OptionValues}
 import play.api.libs.json.JsResult
@@ -160,7 +160,7 @@ trait HsTaskListHelperBehaviour extends SpecBase with MustMatchers with OptionVa
       val helper = createTaskListHelper(userAnswers)
       helper.addEstablisherHeader(userAnswers) mustBe
         SchemeDetailsTaskListSection(None, Link(addEstablisherLinkText,
-          controllers.register.establishers.routes.EstablisherKindController.onPageLoad(NormalMode, userAnswers.allEstablishers.size).url), None)
+          controllers.register.establishers.routes.EstablisherKindController.onPageLoad(NormalMode, userAnswers.allEstablishers.size, None).url), None)
     }
 
     "return the link to add establisher page when establishers are added " in {

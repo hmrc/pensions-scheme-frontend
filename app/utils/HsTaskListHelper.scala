@@ -16,7 +16,6 @@
 
 package utils
 
-import identifiers._
 import identifiers.register.establishers.company.{CompanyDetailsId => EstablisherCompanyDetailsId}
 import identifiers.register.establishers.individual.EstablisherDetailsId
 import identifiers.register.establishers.partnership.{PartnershipDetailsId => EstablisherPartnershipDetailsId}
@@ -24,9 +23,9 @@ import identifiers.register.trustees.MoreThanTenTrusteesId
 import identifiers.register.trustees.company.{CompanyDetailsId => TrusteeCompanyDetailsId}
 import identifiers.register.trustees.individual.TrusteeDetailsId
 import identifiers.register.trustees.partnership.{PartnershipDetailsId => TrusteePartnershipDetailsId}
-import identifiers.{DeclarationDutiesId, IsWorkingKnowledgeCompleteId}
-import models.NormalMode
+import identifiers.{DeclarationDutiesId, IsWorkingKnowledgeCompleteId, _}
 import models.register.Entity
+import models.{Link, NormalMode}
 import play.api.i18n.Messages
 import viewmodels._
 
@@ -74,7 +73,7 @@ abstract class HsTaskListHelper(answers: UserAnswers)(implicit messages: Message
   private[utils] def addEstablisherHeader(userAnswers: UserAnswers): SchemeDetailsTaskListSection = {
     if (userAnswers.allEstablishersAfterDelete.isEmpty) {
       SchemeDetailsTaskListSection(None, Link(addEstablisherLinkText,
-        controllers.register.establishers.routes.EstablisherKindController.onPageLoad(NormalMode, userAnswers.allEstablishers.size).url), None)
+        controllers.register.establishers.routes.EstablisherKindController.onPageLoad(NormalMode, userAnswers.allEstablishers.size, None).url), None)
     } else {
       SchemeDetailsTaskListSection(None, Link(changeEstablisherLinkText,
         controllers.register.establishers.routes.AddEstablisherController.onPageLoad(NormalMode).url), None)

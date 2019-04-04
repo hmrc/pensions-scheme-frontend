@@ -17,7 +17,6 @@
 package controllers.register.establishers.partnership
 
 import config.FrontendAppConfig
-import connectors.{SubscriptionCacheConnector, UserAnswersCacheConnector}
 import controllers.Retrievals
 import controllers.actions._
 import forms.register.establishers.partnership.OtherPartnersFormProvider
@@ -27,6 +26,7 @@ import models.{Index, Mode}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
+import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.EstablisherPartnership
 import utils.{Navigator, UserAnswers}
@@ -37,7 +37,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class OtherPartnersController @Inject()(
                                          appConfig: FrontendAppConfig,
                                          override val messagesApi: MessagesApi,
-                                         dataCacheConnector: UserAnswersCacheConnector,
+                                         userAnswersService: UserAnswersService,
                                          @EstablisherPartnership navigator: Navigator,
                                          authenticate: AuthAction,
                                          getData: DataRetrievalAction,
@@ -68,7 +68,7 @@ class OtherPartnersController @Inject()(
               Future.successful(BadRequest(otherPartners(appConfig, formWithErrors, mode, establisherIndex, existingSchemeName, submitUrl)))
             },
             value =>
-              dataCacheConnector.save(request.externalId, OtherPartnersId(establisherIndex), value).map(cacheMap =>
+              userAnswersService.save(mode, srn, OtherPartnersId(establisherIndex), value).map(cacheMap =>
                 Redirect(navigator.nextPage(OtherPartnersId(establisherIndex), mode, UserAnswers(cacheMap))))
           )
       }

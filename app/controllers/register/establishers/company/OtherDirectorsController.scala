@@ -17,7 +17,6 @@
 package controllers.register.establishers.company
 
 import config.FrontendAppConfig
-import connectors.UserAnswersCacheConnector
 import controllers.Retrievals
 import controllers.actions._
 import forms.register.establishers.company.OtherDirectorsFormProvider
@@ -27,6 +26,7 @@ import models.{Index, Mode}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Call}
+import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.EstablishersCompany
 import utils.{Navigator, UserAnswers}
@@ -37,7 +37,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class OtherDirectorsController @Inject()(
                                           appConfig: FrontendAppConfig,
                                           override val messagesApi: MessagesApi,
-                                          dataCacheConnector: UserAnswersCacheConnector,
+                                          userAnswersService: UserAnswersService,
                                           @EstablishersCompany navigator: Navigator,
                                           authenticate: AuthAction,
                                           getData: DataRetrievalAction,
@@ -50,28 +50,23 @@ class OtherDirectorsController @Inject()(
 
   def onPageLoad(mode: Mode, srn: Option[String], establisherIndex: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      retrieveCompanyName(establisherIndex) { companyName =>
         val redirectResult = request.userAnswers.get(OtherDirectorsId(establisherIndex)) match {
           case None => Ok(otherDirectors(appConfig, form, mode, establisherIndex, existingSchemeName, postCall(mode, srn, establisherIndex)))
           case Some(value) => Ok(otherDirectors(appConfig, form.fill(value), mode, establisherIndex, existingSchemeName, postCall(mode, srn, establisherIndex)))
         }
         Future.successful(redirectResult)
-      }
 
   }
 
   def onSubmit(mode: Mode, srn: Option[String], establisherIndex: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      retrieveCompanyName(establisherIndex) {
-        companyName =>
           form.bindFromRequest().fold(
             (formWithErrors: Form[_]) =>
               Future.successful(BadRequest(
                 otherDirectors(appConfig, formWithErrors, mode, establisherIndex, existingSchemeName, postCall(mode, srn, establisherIndex)))),
             value =>
-              dataCacheConnector.save(request.externalId, OtherDirectorsId(establisherIndex), value).map(cacheMap =>
+              userAnswersService.save(mode, srn, OtherDirectorsId(establisherIndex), value).map(cacheMap =>
                 Redirect(navigator.nextPage(OtherDirectorsId(establisherIndex), mode, UserAnswers(cacheMap))))
           )
-      }
   }
 }

@@ -17,7 +17,7 @@
 package controllers.register.trustees.partnership
 
 import base.CSRFRequest
-import connectors.{AddressLookupConnector, UserAnswersCacheConnector, FakeUserAnswersCacheConnector}
+import connectors.AddressLookupConnector
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.address.PostCodeLookupFormProvider
@@ -34,6 +34,7 @@ import play.api.libs.json.Json
 import play.api.mvc.{Call, Request, Result}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import services.{FakeUserAnswersService, UserAnswersService}
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.annotations.TrusteesPartnership
 import utils.{FakeNavigator, Navigator}
@@ -116,7 +117,7 @@ object PartnershipPostcodeLookupControllerSpec extends ControllerSpecBase with M
       bind[DataRequiredAction].to(new DataRequiredActionImpl),
       bind[AddressLookupConnector].toInstance(fakeAddressLookupConnector),
       bind(classOf[Navigator]).qualifiedWith(classOf[TrusteesPartnership]).toInstance(fakeNavigator),
-      bind[UserAnswersCacheConnector].toInstance(FakeUserAnswersCacheConnector),
+      bind[UserAnswersService].toInstance(FakeUserAnswersService),
       bind[PostCodeLookupFormProvider].to(formProvider)
     )) {
       app =>

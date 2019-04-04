@@ -67,7 +67,7 @@ object EstablishersNavigatorSpec extends OptionValues with Enumerable.Implicits 
 
   private def partnershipDetails = controllers.register.establishers.partnership.routes.PartnershipDetailsController.onPageLoad(NormalMode, 0, None)
 
-  private def establisherKind = controllers.register.establishers.routes.EstablisherKindController.onPageLoad(NormalMode, 0)
+  private def establisherKind = controllers.register.establishers.routes.EstablisherKindController.onPageLoad(NormalMode, 0, None)
 
   private def addEstablisher = controllers.register.establishers.routes.AddEstablisherController.onPageLoad(NormalMode)
 

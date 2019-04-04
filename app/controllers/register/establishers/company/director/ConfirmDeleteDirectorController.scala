@@ -17,10 +17,8 @@
 package controllers.register.establishers.company.director
 
 import config.FrontendAppConfig
-import connectors.UserAnswersCacheConnector
 import controllers.Retrievals
 import controllers.actions._
-import controllers.register.establishers.company.routes.AddCompanyDirectorsController
 import forms.register.establishers.company.director.ConfirmDeleteDirectorFormProvider
 import identifiers.register.establishers.IsEstablisherCompleteId
 import identifiers.register.establishers.company.CompanyDetailsId
@@ -30,9 +28,10 @@ import models.{Index, Mode, NormalMode}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
+import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.EstablishersCompanyDirector
-import utils.{Navigator, SectionComplete}
+import utils.{Navigator, SectionComplete, UserAnswers}
 import views.html.register.establishers.company.director.confirmDeleteDirector
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -40,7 +39,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class ConfirmDeleteDirectorController @Inject()(
                                                  appConfig: FrontendAppConfig,
                                                  override val messagesApi: MessagesApi,
-                                                 dataCacheConnector: UserAnswersCacheConnector,
+                                                 userAnswersService: UserAnswersService,
                                                  @EstablishersCompanyDirector navigator: Navigator,
                                                  authenticate: AuthAction,
                                                  getData: DataRetrievalAction,
@@ -51,7 +50,8 @@ class ConfirmDeleteDirectorController @Inject()(
 
   private val form: Form[Boolean] = formProvider()
 
-  def onPageLoad(establisherIndex: Index, directorIndex: Index, mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onPageLoad(establisherIndex: Index, directorIndex: Index, mode: Mode, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData andThen requireData).async {
     implicit request =>
       (CompanyDetailsId(establisherIndex) and DirectorDetailsId(establisherIndex, directorIndex)).retrieve.right.map {
         case company ~ director =>
@@ -74,7 +74,8 @@ class ConfirmDeleteDirectorController @Inject()(
       }
   }
 
-  def onSubmit(establisherIndex: Index, directorIndex: Index, mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onSubmit(establisherIndex: Index, directorIndex: Index, mode: Mode, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData andThen requireData).async {
     implicit request =>
 
       (DirectorDetailsId(establisherIndex, directorIndex)).retrieve.right.map {
@@ -91,12 +92,13 @@ class ConfirmDeleteDirectorController @Inject()(
               ))),
             value => {
               val deletionResult = if (value) {
-                dataCacheConnector.save(DirectorDetailsId(establisherIndex, directorIndex), directorDetails.copy(isDeleted = true))
+                userAnswersService.save(mode, srn, DirectorDetailsId(establisherIndex, directorIndex), directorDetails.copy(isDeleted = true))
               } else {
-                Future.successful(request.userAnswers)
+                Future.successful(request.userAnswers.json)
               }
               deletionResult.flatMap {
-                userAnswers =>
+                jsValue =>
+                  val userAnswers = UserAnswers(jsValue)
                   if (userAnswers.allDirectorsAfterDelete(establisherIndex).isEmpty) {
                     sectionComplete.setCompleteFlag(request.externalId, IsEstablisherCompleteId(establisherIndex), request.userAnswers, false).map { _ =>
                       Redirect(navigator.nextPage(ConfirmDeleteDirectorId(establisherIndex), NormalMode, userAnswers))
