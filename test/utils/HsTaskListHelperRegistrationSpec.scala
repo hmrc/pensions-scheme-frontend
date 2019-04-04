@@ -48,14 +48,6 @@ class HsTaskListHelperRegistrationSpec extends HsTaskListHelperBehaviour {
     }
   }
 
-  "isVariations" must {
-    "return false" in {
-      val userAnswers = UserAnswers()
-      val helper = new HsTaskListHelperRegistration(userAnswers)
-      helper.taskList.isVariations mustBe false
-    }
-  }
-
   "about header" must {
     "display \"About\"" in {
       val userAnswers = UserAnswers()

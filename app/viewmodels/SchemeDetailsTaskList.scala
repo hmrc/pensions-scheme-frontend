@@ -32,9 +32,6 @@ case class SchemeDetailsTaskList(beforeYouStart: SchemeDetailsTaskListSection,
                                  h3: Option[String],
                                  pageTitle: String
                                 ) {
-
-  def isVariations:Boolean = h3.isDefined
-
 }
 
 object SchemeDetailsTaskList {
