@@ -55,93 +55,107 @@
                 @messages(taskSections.h2)
             </h2>
 
-            @taskSections.h3.map{v=>
+            @taskSections.h3.map{item=>
                 <h3 id="section-information-h3" class="heading-medium">
-                  @v
+                  @item
                 </h3>
             }
+            <ol class="tasklist">
+                <ul class="task-list-items">
+                    <li class="task-list-item">
+                        <a id= "section-before-you-start-link" href="@taskSections.beforeYouStart.link.target" aria-describedby="section-beforeYouStart-status">
+                            @messages(taskSections.beforeYouStart.link.text)
+                        </a>
 
-            <ul class="task-list-items">
-                <li class="task-list-item">
-                    <a id= "section-before-you-start-link" href="@taskSections.beforeYouStart.link.target" aria-describedby="section-beforeYouStart-status">
-                        @messages(taskSections.beforeYouStart.link.text)
-                    </a>
-
-                    @taskSections.beforeYouStart.isCompleted.map{ isCompleted =>
-                    <strong class="@statusClass(isCompleted)" id="section-beforeYouStart-status">@messages(status(isCompleted))</strong>
-                    }
-                </li>
-            </ul>
+                        @taskSections.beforeYouStart.isCompleted.map{ isCompleted =>
+                        <strong class="@statusClass(isCompleted)" id="section-beforeYouStart-status">@messages(status(isCompleted))</strong>
+                        }
+                    </li>
+                </ul>
+            </ol>
         </li>
 
         <li>
             <h2 id="section-about-header" class="heading-large">
                 @taskSections.aboutHeader
             </h2>
-            <ul class="task-list-items">
-                @for((item, i) <- taskSections.about.zipWithIndex){
-                    @defining(i+1) { index =>
-                        <li class="task-list-item">
-                            <a id= "section-about-link-0@index"  href="@{item.link.target}">
-                                @messages(item.link.text)
-                            </a>
-                            @item.isCompleted.map{ isCompleted =>
-                                <strong class="@statusClass(isCompleted)" id="section-about-status-0@index">@messages(status(isCompleted))</strong>
-                            }
-                        </li>
-                    }
-                }
-
-            </ul>
-        </li>
-
-        <li>
-            @taskSections.workingKnowledge.map { wk =>
-                <h2 id="section-working-knowledge-header" class="heading-large">
-                    @messages("messages__schemeTaskList__working_knowledge_header")
-                </h2>
+            <ol class="tasklist">
                 <ul class="task-list-items">
-                    <li class="task-list-item">
-                        <a id= "section-working-knowledge-link" href="@wk.link.target" aria-describedby="section-working-knowledge-status">
-                            @messages(wk.link.text)
-                        </a>
-
-                        @wk.isCompleted.map{ isCompleted =>
-                        <strong class="@statusClass(isCompleted)" id="section-working-knowledge-status">@messages(status(isCompleted))</strong>
+                    @for((item, i) <- taskSections.about.zipWithIndex){
+                        @defining(i+1) { index =>
+                            <li class="task-list-item">
+                                <a id= "section-about-link-0@index"  href="@{item.link.target}">
+                                    @messages(item.link.text)
+                                </a>
+                                @item.isCompleted.map{ isCompleted =>
+                                    <strong class="@statusClass(isCompleted)" id="section-about-status-0@index">@messages(status(isCompleted))</strong>
+                                }
+                            </li>
                         }
-                    </li>
+                    }
+
                 </ul>
-            }
+            </ol>
         </li>
+
+
+            @taskSections.workingKnowledge.map { wk =>
+                <li>
+                    <h2 id="section-working-knowledge-header" class="heading-large">
+                        @messages("messages__schemeTaskList__working_knowledge_header")
+                    </h2>
+                    <ol class="tasklist">
+                        <ul class="task-list-items">
+                            <li class="task-list-item">
+                                <a id= "section-working-knowledge-link" href="@wk.link.target" aria-describedby="section-working-knowledge-status">
+                                    @messages(wk.link.text)
+                                </a>
+
+                                @wk.isCompleted.map{ isCompleted =>
+                                <strong class="@statusClass(isCompleted)" id="section-working-knowledge-status">@messages(status(isCompleted))</strong>
+                                }
+                            </li>
+                        </ul>
+                    </ol>
+                </li>
+            }
+
 
         <li>
             <h2 id="section-establishers-header" class="heading-large">
                 @messages("messages__schemeTaskList__sectionEstablishers_header")
             </h2>
-            <ul class="task-list-items">
-                <li>
-                    <a id= "section-establishers-link" href="@{taskSections.addEstablisherHeader.link.target}">
-                        @messages(taskSections.addEstablisherHeader.link.text)
-                    </a>
-                </li>
+                @if(taskSections.isVariations){
+                <p>
+                }
+                <a id= "section-establishers-link" href="@{taskSections.addEstablisherHeader.link.target}" >
+                    @messages(taskSections.addEstablisherHeader.link.text)
+                </a>
+                @if(taskSections.isVariations){
+                </p>
+                }
+            <ol class="tasklist">
 
-                @for((item, i) <- taskSections.establishers.zipWithIndex){
-                @defining(i+1) { index =>
-                <li class="task-list-item">
-                    <h3 class="task-list-section">@messages(item.header.getOrElse(""))</h3>
-                </li>
-                <li class="task-list-item">
-                    <a id= "section-establishers-link-0@index" href="@{item.link.target}">
-                        @messages(item.link.text)
-                    </a>
-                    @item.isCompleted.map{ isCompleted =>
-                    <strong class="@statusClass(isCompleted)" id="section-establishers-status-0@index">@messages(status(isCompleted))</strong>
+                <ul class="task-list-items">
+                    @for((item, i) <- taskSections.establishers.zipWithIndex){
+                        @defining(i+1) { index =>
+                            @item.header.map{hdr=>
+                                <li class="task-list-item">
+                                    <h3 class="task-list-section">@messages(hdr)</h3>
+                                </li>
+                            }
+                            <li class="task-list-item">
+                                <a id= "section-establishers-link-0@index" href="@{item.link.target}">
+                                    @messages(item.link.text)
+                                </a>
+                                @item.isCompleted.map{ isCompleted =>
+                                <strong class="@statusClass(isCompleted)" id="section-establishers-status-0@index">@messages(status(isCompleted))</strong>
+                                }
+                            </li>
+                        }
                     }
-                </li>
-                }
-                }
-
-            </ul>
+                </ul>
+            </ol>
         </li>
 
         @taskSections.addTrusteeHeader.map { header =>
@@ -149,33 +163,42 @@
                 <h2 id="section-trustees-header" class="heading-large">
                     @messages("messages__schemeTaskList__sectionTrustees_header")
                 </h2>
-                <ul class="task-list-items">
-                    <li>
-                        <a id= "section-trustees-link"  href="@{header.link.target}">
-                            @messages(header.link.text)
-                        </a>
-                        @header.isCompleted.map{ isCompleted =>
-                            <strong class="@statusClass(isCompleted)" id="section-trustees-status">@messages(status(isCompleted))</strong>
-                        }
-                    </li>
+                @if(taskSections.isVariations){
+                <p>
+                }
+                <a id= "section-trustees-link"  href="@{header.link.target}">
+                    @messages(header.link.text)
+                </a>
+                @if(taskSections.isVariations){
+                </p>
+                }
+                @header.isCompleted.map{ isCompleted =>
+                    <strong class="@statusClass(isCompleted)" id="section-trustees-status">@messages(status(isCompleted))</strong>
+                }
+                <ol class="tasklist">
+                    <ul class="task-list-items">
 
-                    @for((item, i) <- taskSections.trustees.zipWithIndex){
-                    @defining(i+1) { index =>
-                        <li class="task-list-item">
-                            <h3 class="task-list-section">@messages(item.header.getOrElse(""))</h3>
-                        </li>
-                        <li class="task-list-item">
-                            <a id= "section-trustees-link-0@index"  href="@{item.link.target}">
-                                @messages(item.link.text)
-                            </a>
-                            @item.isCompleted.map{ isCompleted =>
-                            <strong class="@statusClass(isCompleted)" id="section-trustees-status-0@index">@messages(status(isCompleted))</strong>
+
+                        @for((item, i) <- taskSections.trustees.zipWithIndex){
+                        @defining(i+1) { index =>
+                            @item.header.map{hdr=>
+                                <li class="task-list-item">
+                                    <h3 class="task-list-section">@messages(hdr)</h3>
+                                </li>
                             }
-                        </li>
+                            <li class="task-list-item">
+                                <a id= "section-trustees-link-0@index"  href="@{item.link.target}">
+                                    @messages(item.link.text)
+                                </a>
+                                @item.isCompleted.map{ isCompleted =>
+                                <strong class="@statusClass(isCompleted)" id="section-trustees-status-0@index">@messages(status(isCompleted))</strong>
+                                }
+                            </li>
+                            }
                         }
-                    }
 
-                </ul>
+                    </ul>
+                </ol>
             </li>
         }
 
@@ -183,19 +206,21 @@
             <h2 id="section-declaration-header" class="heading-large">
                 @messages("messages__schemeTaskList__sectionDeclaration_header")
             </h2>
-            <ul class="task-list-items">
-                <li class="task-list-item">
-                    @if(taskSections.declaration.isDefined){
-                    @taskSections.declaration.map{ link =>
-                    <a id= "section-declaration-link" href="@link.target">
-                        @messages(link.text)
-                    </a>
-                    }
-                    }else{
-                    <span id="section-declaration-text">@messages("messages__schemeTaskList__sectionDeclaration_incomplete")</span>
-                    }
-                </li>
-            </ul>
+            <ol class="tasklist">
+                <ul class="task-list-items">
+                    <li class="task-list-item">
+                        @if(taskSections.declaration.isDefined){
+                        @taskSections.declaration.map{ link =>
+                        <a id= "section-declaration-link" href="@link.target">
+                            @messages(link.text)
+                        </a>
+                        }
+                        }else{
+                        <span id="section-declaration-text">@messages("messages__schemeTaskList__sectionDeclaration_incomplete")</span>
+                        }
+                    </li>
+                </ul>
+            </ol>
         </li>
 
     </ol>

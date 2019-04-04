@@ -33,6 +33,8 @@ case class SchemeDetailsTaskList(beforeYouStart: SchemeDetailsTaskListSection,
                                  pageTitle: String
                                 ) {
 
+  def isVariations:Boolean = h3.isDefined
+
 }
 
 object SchemeDetailsTaskList {
