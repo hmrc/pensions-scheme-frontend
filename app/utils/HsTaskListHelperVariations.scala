@@ -18,6 +18,7 @@ package utils
 
 import identifiers.{IsAboutBenefitsAndInsuranceCompleteId, IsAboutMembersCompleteId, SchemeNameId}
 import models.NormalMode
+import models.register.Entity
 import play.api.i18n.Messages
 import viewmodels._
 
@@ -60,5 +61,24 @@ class HsTaskListHelperVariations(answers: UserAnswers)(implicit messages: Messag
       messages("messages__scheme_details__title")
     )
   }
+
+  private def listOfSectionNameAsLink(sections: Seq[Entity[_]], userAnswers: UserAnswers): Seq[SchemeDetailsTaskListSection] = {
+    val notDeletedElements = for ((section, index) <- sections.zipWithIndex) yield {
+      if (section.isDeleted) None else {
+        Some(SchemeDetailsTaskListSection(
+          Some(section.isCompleted),
+          Link(section.name, linkTarget(section, index, userAnswers)),
+          None)
+        )
+      }
+    }
+    notDeletedElements.flatten
+  }
+
+  override protected[utils] def establishers(userAnswers: UserAnswers): Seq[SchemeDetailsTaskListSection] =
+    listOfSectionNameAsLink(userAnswers.allEstablishers, userAnswers)
+
+  override protected[utils] def trustees(userAnswers: UserAnswers): Seq[SchemeDetailsTaskListSection] =
+    listOfSectionNameAsLink(userAnswers.allTrustees, userAnswers)
 
 }

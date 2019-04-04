@@ -26,6 +26,11 @@ import utils.behaviours.HsTaskListHelperBehaviour
 import viewmodels.{Link, SchemeDetailsTaskListSection}
 import identifiers.register.establishers.company.{CompanyDetailsId => EstablisherCompanyDetailsId}
 import identifiers.register.establishers.partnership.{PartnershipDetailsId => EstablisherPartnershipDetailsId}
+import identifiers.register.trustees.partnership.{PartnershipDetailsId => TrusteePartnershipDetailsId}
+import identifiers.register.trustees.company.{CompanyDetailsId => TrusteeCompanyDetailsId}
+import identifiers.register.trustees.IsTrusteeCompleteId
+import identifiers.register.trustees.individual.TrusteeDetailsId
+import identifiers.register.trustees.partnership.IsPartnershipCompleteId
 
 class HsTaskListHelperVariationsSpec extends HsTaskListHelperBehaviour {
   override val createTaskListHelper:UserAnswers => HsTaskListHelper = ua => new HsTaskListHelperVariations(ua)
@@ -194,6 +199,52 @@ class HsTaskListHelperVariationsSpec extends HsTaskListHelperBehaviour {
           controllers.register.establishers.individual.routes.EstablisherDetailsController.onPageLoad(NormalMode, 0, None).url), None),
           SchemeDetailsTaskListSection(Some(false), Link("test partnership",
             controllers.register.establishers.partnership.routes.PartnershipDetailsController.onPageLoad(NormalMode, 2, None).url), None)
+        )
+    }
+  }
+
+  override def trusteesSection(): Unit = {
+
+    "return the seq of trustees sub sections for non deleted trustees which are all completed" in {
+      val userAnswers = allTrustees()
+      val helper = createTaskListHelper(userAnswers)
+      helper.trustees(userAnswers) mustBe
+        Seq(SchemeDetailsTaskListSection(Some(true), Link("firstName lastName",
+          controllers.register.trustees.individual.routes.CheckYourAnswersController.onPageLoad(NormalMode, 0, None).url), None),
+          SchemeDetailsTaskListSection(Some(true), Link("test company",
+            controllers.register.trustees.company.routes.CheckYourAnswersController.onPageLoad(NormalMode, 1, None).url), None),
+          SchemeDetailsTaskListSection(Some(true), Link("test partnership",
+            controllers.register.trustees.partnership.routes.CheckYourAnswersController.onPageLoad(NormalMode, 2, None).url), None)
+        )
+    }
+
+    "return the seq of trustees sub sections for non deleted trustees which are not completed" in {
+      val userAnswers = allTrustees(isCompleteTrustees = false)
+      val helper = createTaskListHelper(userAnswers)
+      helper.trustees(userAnswers) mustBe
+        Seq(SchemeDetailsTaskListSection(Some(false), Link("firstName lastName",
+          controllers.register.trustees.individual.routes.TrusteeDetailsController.onPageLoad(NormalMode, 0, None).url), None),
+          SchemeDetailsTaskListSection(Some(false), Link("test company",
+            controllers.register.trustees.company.routes.CompanyDetailsController.onPageLoad(NormalMode, 1, None).url), None),
+          SchemeDetailsTaskListSection(Some(false), Link("test partnership",
+            controllers.register.trustees.partnership.routes.TrusteeDetailsController.onPageLoad(NormalMode, 2, None).url), None)
+        )
+    }
+
+    "return the seq of trustees sub sections after filtering out deleted trustees" in {
+      val userAnswers = UserAnswers().set(TrusteeDetailsId(0))(PersonDetails("firstName", None, "lastName", LocalDate.now())).flatMap(
+        _.set(IsTrusteeCompleteId(0))(false).flatMap(
+          _.set(TrusteeCompanyDetailsId(1))(CompanyDetails("test company", None, None, true)).flatMap(
+            _.set(IsTrusteeCompleteId(1))(false).flatMap(
+              _.set(TrusteePartnershipDetailsId(2))(PartnershipDetails("test partnership", false)).flatMap(
+                _.set(IsPartnershipCompleteId(2))(false)
+              ))))).asOpt.value
+      val helper = createTaskListHelper(userAnswers)
+      helper.trustees(userAnswers) mustBe
+        Seq(SchemeDetailsTaskListSection(Some(false), Link("firstName lastName",
+          controllers.register.trustees.individual.routes.TrusteeDetailsController.onPageLoad(NormalMode, 0, None).url), None),
+          SchemeDetailsTaskListSection(Some(false), Link("test partnership",
+            controllers.register.trustees.partnership.routes.TrusteeDetailsController.onPageLoad(NormalMode, 2, None).url), None)
         )
     }
   }
