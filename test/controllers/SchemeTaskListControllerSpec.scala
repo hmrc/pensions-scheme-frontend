@@ -43,7 +43,7 @@ class SchemeTaskListControllerSpec extends ControllerSpecBase {
       val result = controller(UserAnswers().dataRetrievalAction).onPageLoad()(fakeRequest)
 
       status(result) mustBe OK
-      contentAsString(result) mustBe schemeDetailsTaskList(frontendAppConfig, schemeDetailsTL)(fakeRequest, messages).toString()
+      contentAsString(result) mustBe schemeDetailsTaskList(frontendAppConfig, schemeDetailsTL, isVariations = false)(fakeRequest, messages).toString()
     }
   }
 }

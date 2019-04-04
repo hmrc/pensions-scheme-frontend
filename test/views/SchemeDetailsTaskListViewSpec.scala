@@ -27,7 +27,7 @@ class SchemeDetailsTaskListViewSpec extends ViewBehaviours {
   import SchemeDetailsTaskListViewSpec._
 
   private def createView(schemeDetailsList: SchemeDetailsTaskList = schemeDetailsTaskListData): () => HtmlFormat.Appendable = () =>
-    schemeDetailsTaskList(frontendAppConfig, schemeDetailsList)(fakeRequest, messages)
+    schemeDetailsTaskList(frontendAppConfig, schemeDetailsList, isVariations = false)(fakeRequest, messages)
 
   "SchemeDetailsTaskListView" should {
 

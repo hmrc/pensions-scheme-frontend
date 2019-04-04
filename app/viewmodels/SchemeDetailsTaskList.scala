@@ -18,6 +18,8 @@ package viewmodels
 
 import play.api.libs.json.{Json, OFormat}
 
+import scala.xml.Elem
+
 case class SchemeDetailsTaskList(beforeYouStart: SchemeDetailsTaskListSection,
                                  aboutHeader:String,
                                  about: Seq[SchemeDetailsTaskListSection],

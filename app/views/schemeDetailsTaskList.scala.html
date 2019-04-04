@@ -24,11 +24,13 @@
 @import controllers.register.trustees.routes._
 @import uk.gov.hmrc.play.views.html._
 
-@(appConfig: FrontendAppConfig, taskSections: SchemeDetailsTaskList)(implicit request: Request[_], messages: Messages)
+@(appConfig: FrontendAppConfig, taskSections: SchemeDetailsTaskList, isVariations:Boolean)(implicit request: Request[_], messages: Messages)
 
 @variationsOnly(html:Html)=@{
-    taskSections.h3.map{ _ =>
-        html
+    if(isVariations){
+        Option(html)
+    }else{
+        None
     }
 }
 
