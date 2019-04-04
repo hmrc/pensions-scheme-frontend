@@ -464,6 +464,8 @@ messages__company__cya__paye_ern = PAYE employer reference number
 messages__company__cya__crn_yes_no = Does the scheme establisher have a Company Registration number?
 messages__company__cya__crn_no_reason = Why the scheme establisher does not have a Company Registration number
 messages__company__cya__utr_yes_no = Does the scheme establisher have a Unique Taxpayer Reference number?
+messages__company__cya__vat_yes_no = Does the scheme establisher have a VAT registration number?
+messages__company__cya__paye_yes_no = Does the scheme establisher have a PAYE employer reference number?
 messages__company__cya__utr = UTR
 messages__company__cya__utr_no_reason = Why the scheme establisher does not have a Unique Taxpayer Reference number
 messages__company__cya__dormant = Has the establisher been dormant in the last 12 months?
@@ -854,6 +856,9 @@ messages__partnership__checkYourAnswers__utr = Does the partnership have a Self 
 messages__partnership__checkYourAnswers__addressYears = How long has the partnership been at this address?
 messages__partnership__checkYourAnswers__isDormant = Has the partnership been dormant in the last 12 months?
 
+messages__company__checkYourAnswers__vat = Does the company have a VAT registration number?
+messages__company__checkYourAnswers__paye = Does the company have a PAYE employer reference number?
+
 messages__partnershipPaye__title = Does the partnership have a PAYE employer reference number?
 messages__partnershipPaye__heading = Does the partnership have a PAYE employer reference number?
 
@@ -1007,6 +1012,7 @@ messages__visuallyhidden__uKBankAccount__account_number = Change the account num
 messages__visuallyhidden__uKBankAccount__date_bank_account = Change approximate date the account was opened
 
 messages__visuallyhidden__establisher__nino_yes_no = Change whether the establisher has a National Insurance number
+messages__visuallyhidden__establisher__vat_yes_no = Change whether the establisher has a VAT registration number
 messages__visuallyhidden__establisher__nino_no = Change why the establisher does not have a National Insurance number
 messages__visuallyhidden__establisher__nino = Change the establisher’s National Insurance number
 messages__visuallyhidden__establisher__utr_yes_no = Change whether the establisher has a Unique Taxpayer Reference number
