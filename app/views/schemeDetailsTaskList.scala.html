@@ -26,9 +26,9 @@
 
 @(appConfig: FrontendAppConfig, taskSections: SchemeDetailsTaskList, isVariations:Boolean)(implicit request: Request[_], messages: Messages)
 
-@variationsOnly(html:Html)=@{
+@variationsOnly(html:String)=@{
     if(isVariations){
-        Option(html)
+        Option(Html(html))
     }else{
         None
     }
@@ -134,11 +134,11 @@
             <h2 id="section-establishers-header" class="heading-large">
                 @messages("messages__schemeTaskList__sectionEstablishers_header")
             </h2>
-                @variationsOnly(Html("<p>"))
+                @variationsOnly("<p>")
                 <a id= "section-establishers-link" href="@{taskSections.addEstablisherHeader.link.target}" >
                     @messages(taskSections.addEstablisherHeader.link.text)
                 </a>
-                @variationsOnly(Html("</p>"))
+                @variationsOnly("</p>")
             <ol class="tasklist">
 
                 <ul class="task-list-items">
@@ -169,7 +169,7 @@
                     @messages("messages__schemeTaskList__sectionTrustees_header")
                 </h2>
 
-                @variationsOnly(Html("<p>"))
+                @variationsOnly("<p>")
                 <a id= "section-trustees-link"  href="@{header.link.target}">
                     @messages(header.link.text)
                 </a>
@@ -177,7 +177,7 @@
                 @header.isCompleted.map{ isCompleted =>
                     <strong class="@statusClass(isCompleted)" id="section-trustees-status">@messages(status(isCompleted))</strong>
                 }
-                @variationsOnly(Html("</p>"))
+                @variationsOnly("</p>")
                 <ol class="tasklist">
                     <ul class="task-list-items">
 
