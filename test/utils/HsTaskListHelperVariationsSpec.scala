@@ -58,6 +58,14 @@ class HsTaskListHelperVariationsSpec extends HsTaskListHelperBehaviour {
     }
   }
 
+  "isVariations" must {
+    "return true" in {
+      val userAnswers = UserAnswers()
+      val helper = new HsTaskListHelperVariations(userAnswers)
+      helper.taskList.isVariations mustBe true
+    }
+  }
+
   "about header" must {
     "display \"About\" with Pension scheme Name" in {
       val schemeName = "test scheme"

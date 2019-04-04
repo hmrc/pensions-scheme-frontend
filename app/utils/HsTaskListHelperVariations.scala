@@ -24,6 +24,8 @@ import viewmodels._
 
 class HsTaskListHelperVariations(answers: UserAnswers)(implicit messages: Messages) extends HsTaskListHelper(answers) {
 
+
+
   override protected lazy val beforeYouStartLinkText = messages("messages__schemeTaskList__scheme_info_link_text")
 
   override protected[utils] def aboutSection(userAnswers: UserAnswers): Seq[SchemeDetailsTaskListSection] = {
