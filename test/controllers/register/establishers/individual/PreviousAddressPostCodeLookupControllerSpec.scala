@@ -16,7 +16,7 @@
 
 package controllers.register.establishers.individual
 
-import connectors.{AddressLookupConnector, FakeUserAnswersCacheConnector}
+import connectors.AddressLookupConnector
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.address.PostCodeLookupFormProvider
@@ -28,6 +28,7 @@ import org.scalatest.mockito.MockitoSugar
 import play.api.data.{Form, FormError}
 import play.api.mvc.Call
 import play.api.test.Helpers._
+import services.FakeUserAnswersService
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.FakeNavigator
 import viewmodels.Message
@@ -53,7 +54,7 @@ class PreviousAddressPostCodeLookupControllerSpec extends ControllerSpecBase wit
     new PreviousAddressPostCodeLookupController(
       frontendAppConfig,
       messagesApi,
-      FakeUserAnswersCacheConnector,
+      FakeUserAnswersService,
       fakeAddressLookupConnector,
       new FakeNavigator(desiredRoute = onwardRoute),
       FakeAuthAction,
