@@ -357,13 +357,13 @@ class CheckYourAnswersSpec extends SpecBase with MustMatchers with PropertyCheck
             Seq(s"${personDetails.fullName}"),
             false,
             Some(Link("site.change", onwardUrl, Some(Message("messages__visuallyhidden__common__name", personDetails.fullName)))
-          )),
-            AnswerRow(
-              "messages__common__dob",
-              Seq(s"${DateHelper.formatDate(personDetails.date)}"),
-              false,
-              Some(Link("site.change", onwardUrl, Some(Message("messages__visuallyhidden__common__dob", personDetails.fullName))))
-            )))
+            )),
+          AnswerRow(
+            "messages__common__dob",
+            Seq(s"${DateHelper.formatDate(personDetails.date)}"),
+            false,
+            Some(Link("site.change", onwardUrl, Some(Message("messages__visuallyhidden__common__dob", personDetails.fullName))))
+          )))
       }
 
       "Nino" when {
@@ -379,7 +379,7 @@ class CheckYourAnswersSpec extends SpecBase with MustMatchers with PropertyCheck
               Some(Link("site.change", onwardUrl, Some("messages__visuallyhidden__trustee__nino_yes_no")))
             ),
             AnswerRow(
-              "messages__trusteeNino_nino_cya_label",
+              "messages__common__nino",
               Seq(nino.nino),
               false,
               Some(Link("site.change", onwardUrl, Some("messages__visuallyhidden__trustee__nino")))
@@ -398,7 +398,7 @@ class CheckYourAnswersSpec extends SpecBase with MustMatchers with PropertyCheck
               Some(Link("site.change", onwardUrl, Some("messages__visuallyhidden__trustee__nino_yes_no")))
             ),
             AnswerRow(
-              "messages__trusteeNino_reason_cya_label",
+              "messages__common__reason",
               Seq(nino.reason),
               false,
               Some(Link("site.change", onwardUrl, Some("messages__visuallyhidden__trustee__nino_no")))
@@ -415,6 +415,88 @@ class CheckYourAnswersSpec extends SpecBase with MustMatchers with PropertyCheck
 
         testIdentifier[Members].row(onwardUrl, UpdateMode) must equal(Seq(AnswerRow(
           "testId.checkYourAnswersLabel", Seq(s"messages__members__$membershipVal"), true, None)))
+      }
+
+      "personDetails without change url" in {
+        val personDetails = PersonDetails("firstName", None, "last", LocalDate.now)
+        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(Json.obj("testId" -> personDetails)), PsaId("A0000000"))
+
+        testIdentifier[PersonDetails].row(onwardUrl, UpdateMode) must equal(Seq(
+          AnswerRow(
+            "messages__common__cya__name",
+            Seq(s"${personDetails.fullName}"),
+            false,
+            None
+          ),
+          AnswerRow(
+            "messages__common__dob",
+            Seq(s"${DateHelper.formatDate(personDetails.date)}"),
+            false,
+            None
+          )))
+      }
+
+      "no address years" in {
+
+        val addressYears = AddressYears.values.head
+
+        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(Json.obj("testId" -> addressYears)), PsaId("A0000000"))
+
+        testIdentifier[AddressYears].row(onwardUrl, UpdateMode) must equal(Nil)
+      }
+
+      "Nino" when {
+        "yes will have no change url" in {
+          val nino = Nino.Yes("AB700100A")
+          implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(Json.obj("testId" -> nino)), PsaId("A0000000"))
+
+          testIdentifier[Nino].row(onwardUrl, UpdateMode) must equal(Seq(
+            AnswerRow("messages__common__nino", Seq(nino.nino), false, None)))
+        }
+
+        "no will have add url" in {
+          val nino = Nino.No("Not sure")
+          implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(Json.obj("testId" -> nino)), PsaId("A0000000"))
+
+          testIdentifier[Nino].row(onwardUrl, UpdateMode) must equal(Seq(
+            AnswerRow(
+              "messages__common__nino",
+              Seq("site.not_entered"),
+              true,
+              Some(Link("site.add", onwardUrl, Some("messages__visuallyhidden__trustee__nino_add")))
+            )))
+        }
+      }
+
+      "UTR" when {
+
+        "yes will have no change url" in {
+          val utr = UniqueTaxReference.Yes("7654321244")
+          implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(Json.obj("testId" -> utr)), PsaId("A0000000"))
+          testIdentifier[UniqueTaxReference].row(onwardUrl, UpdateMode) must equal(Seq(
+            AnswerRow(
+              "messages__establisher_individual_utr_cya_label",
+              Seq({
+                utr.utr
+              }),
+              false,
+              None
+            )
+          ))
+        }
+
+        "no will have not entered with no change url" in {
+          val utr = UniqueTaxReference.No("Not sure")
+          implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(Json.obj("testId" -> utr)), PsaId("A0000000"))
+          testIdentifier[UniqueTaxReference].row(onwardUrl, UpdateMode) must equal(Seq(
+            AnswerRow(
+              "messages__establisher_individual_utr_cya_label",
+              Seq("site.not_entered"),
+              true,
+              None
+            )
+          ))
+        }
       }
 
       "boolean without change url" in {
