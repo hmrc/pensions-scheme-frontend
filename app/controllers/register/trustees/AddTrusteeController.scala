@@ -39,7 +39,6 @@ import scala.concurrent.{ExecutionContext, Future}
 class AddTrusteeController @Inject()(
                                       appConfig: FrontendAppConfig,
                                       override val messagesApi: MessagesApi,
-                                      dataCacheConnector: UserAnswersCacheConnector,
                                       @Trustees navigator: Navigator,
                                       authenticate: AuthAction,
                                       getData: DataRetrievalAction,

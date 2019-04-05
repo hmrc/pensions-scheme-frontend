@@ -17,7 +17,6 @@
 package controllers.register.establishers.company
 
 import config.FrontendAppConfig
-import connectors.UserAnswersCacheConnector
 import controllers.Retrievals
 import controllers.actions._
 import forms.register.establishers.company.AddCompanyDirectorsFormProvider
@@ -39,7 +38,6 @@ import scala.concurrent.{ExecutionContext, Future}
 class AddCompanyDirectorsController @Inject()(
                                                appConfig: FrontendAppConfig,
                                                override val messagesApi: MessagesApi,
-                                               dataCacheConnector: UserAnswersCacheConnector,
                                                @EstablishersCompany navigator: Navigator,
                                                authenticate: AuthAction,
                                                getData: DataRetrievalAction,
@@ -52,11 +50,8 @@ class AddCompanyDirectorsController @Inject()(
 
   def onPageLoad(mode: Mode, srn: Option[String], index: Int): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
-      retrieveCompanyName(index) {
-        companyName =>
           val directors = request.userAnswers.allDirectorsAfterDelete(index)
           Future.successful(Ok(addCompanyDirectors(appConfig, form, mode, index, directors, existingSchemeName, postCall(mode, srn, index))))
-      }
   }
 
   def onSubmit(mode: Mode, srn: Option[String], index: Int): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
@@ -69,8 +64,6 @@ class AddCompanyDirectorsController @Inject()(
 
         form.bindFromRequest().fold(
           (formWithErrors: Form[_]) =>
-            retrieveCompanyName(index) {
-              companyName =>
                 Future.successful(
                   BadRequest(
                     addCompanyDirectors(
@@ -83,8 +76,7 @@ class AddCompanyDirectorsController @Inject()(
                       postCall(mode, srn, index)
                     )
                   )
-                )
-            },
+                ),
           value =>
             request.userAnswers.set(AddCompanyDirectorsId(index))(value).fold(
               errors => {

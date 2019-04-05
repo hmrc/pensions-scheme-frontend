@@ -19,7 +19,7 @@ package controllers.address
 import akka.stream.Materializer
 import com.google.inject.Inject
 import config.FrontendAppConfig
-import connectors.UserAnswersCacheConnector
+import services.UserAnswersService
 import forms.address.AddressYearsFormProvider
 import identifiers.TypedIdentifier
 import models.requests.DataRequest
@@ -34,6 +34,7 @@ import play.api.inject.bind
 import play.api.mvc.{AnyContent, Call, Request, Result}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import services.UserAnswersService
 import uk.gov.hmrc.domain.PsaId
 import utils.{FakeNavigator, Navigator, UserAnswers}
 import viewmodels.address.AddressYearsViewModel
@@ -48,7 +49,7 @@ object AddressYearsControllerSpec {
   class TestController @Inject()(
                                   override val appConfig: FrontendAppConfig,
                                   override val messagesApi: MessagesApi,
-                                  override val cacheConnector: UserAnswersCacheConnector,
+                                  override val userAnswersService: UserAnswersService,
                                   override val navigator: Navigator,
                                   formProvider: AddressYearsFormProvider
                                 ) extends AddressYearsController {
@@ -132,19 +133,20 @@ class AddressYearsControllerSpec extends WordSpec with MustMatchers with OptionV
 
       import play.api.inject._
 
-      val cacheConnector = mock[UserAnswersCacheConnector]
+      val userAnswersService = mock[UserAnswersService]
 
       running(_.overrides(
-        bind[UserAnswersCacheConnector].toInstance(cacheConnector),
+        bind[UserAnswersService].toInstance(userAnswersService),
         bind[Navigator].toInstance(FakeNavigator)
       )) {
         app =>
 
           implicit val materializer: Materializer = app.materializer
 
-          when(cacheConnector.save[AddressYears, FakeIdentifier.type](
+          when(userAnswersService.save[AddressYears, FakeIdentifier.type](
+            eqTo(NormalMode), eqTo(None),
             eqTo(FakeIdentifier), any())(any(), any(), any(), any())
-          ) thenReturn Future.successful(UserAnswers())
+          ) thenReturn Future.successful(UserAnswers().json)
 
           val request = FakeRequest().withFormUrlEncodedBody(
             "value" -> AddressYears.OverAYear.toString

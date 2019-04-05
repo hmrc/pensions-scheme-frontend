@@ -20,6 +20,7 @@ import identifiers._
 import identifiers.register.establishers.EstablishersId
 import models.Nino
 import play.api.libs.json.JsPath
+import utils.checkyouranswers.{CheckYourAnswers, NinoCYA}
 
 case class DirectorNinoId(establisherIndex: Int, directorIndex: Int) extends TypedIdentifier[Nino] {
   override def path: JsPath = EstablishersId(establisherIndex).path \ "director" \ directorIndex \ DirectorNinoId.toString
@@ -27,4 +28,12 @@ case class DirectorNinoId(establisherIndex: Int, directorIndex: Int) extends Typ
 
 object DirectorNinoId {
   override lazy val toString: String = "directorNino"
+
+  implicit val cya: CheckYourAnswers[DirectorNinoId] =
+    NinoCYA(
+      label = "messages__director_nino_question_cya_label",
+      changeHasNino = "messages__visuallyhidden__director__nino_yes_no",
+      changeNino = "messages__visuallyhidden__director__nino",
+      changeNoNino = "messages__visuallyhidden__director__nino_no"
+    )()
 }

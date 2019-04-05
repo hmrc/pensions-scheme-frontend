@@ -16,7 +16,7 @@
 
 package controllers.register.establishers.company
 
-import connectors.FakeUserAnswersCacheConnector
+import services.FakeUserAnswersService
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.register.establishers.company.AddCompanyDirectorsFormProvider
@@ -52,7 +52,6 @@ class AddCompanyDirectorsControllerSpec extends ControllerSpecBase {
     new AddCompanyDirectorsController(
       frontendAppConfig,
       messagesApi,
-      FakeUserAnswersCacheConnector,
       navigator,
       FakeAuthAction,
       dataRetrievalAction,
@@ -147,7 +146,7 @@ class AddCompanyDirectorsControllerSpec extends ControllerSpecBase {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "true"))
       controller(getRelevantData).onSubmit(NormalMode, None, establisherIndex)(postRequest)
 
-      FakeUserAnswersCacheConnector.verifyNot(AddCompanyDirectorsId(firstIndex))
+      FakeUserAnswersService.verifyNot(AddCompanyDirectorsId(firstIndex))
     }
 
     "set the user answer when directors exist and valid data is submitted" in {

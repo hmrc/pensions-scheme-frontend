@@ -27,6 +27,7 @@ import models.requests.DataRequest
 import models.{Index, Mode}
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, Result}
+import services.UserAnswersService
 import utils.Navigator
 import utils.annotations.EstablishersCompanyDirector
 import viewmodels.Message
@@ -36,7 +37,7 @@ import scala.concurrent.Future
 
 class DirectorAddressListController @Inject()(
                                                override val appConfig: FrontendAppConfig,
-                                               override val cacheConnector: UserAnswersCacheConnector,
+                                               val userAnswersService: UserAnswersService,
                                                @EstablishersCompanyDirector override val navigator: Navigator,
                                                override val messagesApi: MessagesApi,
                                                authenticate: AuthAction,
@@ -67,7 +68,8 @@ class DirectorAddressListController @Inject()(
           postCall = routes.DirectorAddressListController.onSubmit(mode, establisherIndex, directorIndex, srn),
           manualInputCall = routes.DirectorAddressController.onPageLoad(mode, establisherIndex, directorIndex, srn),
           addresses = addresses,
-          subHeading = Some(Message(directorDetails.fullName))
+          subHeading = Some(Message(directorDetails.fullName)),
+          srn = srn
         )
     }.left.map(_ => Future.successful(Redirect(routes.DirectorAddressPostcodeLookupController.onPageLoad(mode, establisherIndex, directorIndex, srn))))
   }

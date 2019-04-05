@@ -17,9 +17,9 @@
 package utils
 
 import identifiers._
-import models.NormalMode
+import models.{Link, NormalMode}
 import utils.behaviours.HsTaskListHelperBehaviour
-import viewmodels.{Link, SchemeDetailsTaskListSection}
+import viewmodels.SchemeDetailsTaskListSection
 
 class HsTaskListHelperRegistrationSpec extends HsTaskListHelperBehaviour {
 

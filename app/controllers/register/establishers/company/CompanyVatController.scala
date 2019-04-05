@@ -17,7 +17,6 @@
 package controllers.register.establishers.company
 
 import config.FrontendAppConfig
-import connectors.UserAnswersCacheConnector
 import controllers.VatController
 import controllers.actions._
 import forms.VatFormProvider
@@ -26,6 +25,7 @@ import javax.inject.Inject
 import models.{Index, Mode}
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent}
+import services.UserAnswersService
 import utils.Navigator
 import utils.annotations.EstablishersCompany
 import viewmodels.{Message, VatViewModel}
@@ -34,7 +34,7 @@ import viewmodels.{Message, VatViewModel}
 class CompanyVatController @Inject()(
                                           override val appConfig: FrontendAppConfig,
                                           override val messagesApi: MessagesApi,
-                                          override val cacheConnector: UserAnswersCacheConnector,
+                                          override val userAnswersService: UserAnswersService,
                                           @EstablishersCompany override val navigator: Navigator,
                                           authenticate: AuthAction,
                                           getData: DataRetrievalAction,

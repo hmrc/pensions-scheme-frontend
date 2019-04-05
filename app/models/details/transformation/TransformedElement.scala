@@ -16,9 +16,10 @@
 
 package models.details.transformation
 
+import models.Link
 import models.details._
 import utils.CountryOptions
-import viewmodels.{AnswerRow, Message, SuperSection}
+import viewmodels.{AnswerRow, SuperSection}
 
 import scala.language.implicitConversions
 
@@ -33,9 +34,9 @@ trait TransformedElement[I] {
   def transformRow(label: String,
                    answer: Seq[String],
                    answerIsMessageKey: Boolean = false,
-                   changeUrl: Option[String] = None): AnswerRow = {
+                   changeUrl: Option[Link] = None): AnswerRow = {
 
-    AnswerRow(label, answer, answerIsMessageKey, changeUrl, "site.hidden-edit")
+    AnswerRow(label, answer, answerIsMessageKey, changeUrl)
   }
 
   protected def fullName(data: IndividualName): String = data.middleName match {

@@ -16,7 +16,7 @@
 
 package controllers.register.establishers
 
-import connectors.FakeUserAnswersCacheConnector
+import services.FakeUserAnswersService
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.register.establishers.EstablisherKindFormProvider
@@ -41,6 +41,7 @@ class EstablisherKindControllerSpec extends ControllerSpecBase {
 
   val firstIndex = Index(0)
   val invalidIndex = Index(11)
+  private val postCall = routes.EstablisherKindController.onSubmit _
 
   def validData: JsValue = Json.obj(
     EstablishersId.toString -> Json.arr(
@@ -52,12 +53,11 @@ class EstablisherKindControllerSpec extends ControllerSpecBase {
   )
 
   def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): EstablisherKindController =
-    new EstablisherKindController(frontendAppConfig, messagesApi, FakeUserAnswersCacheConnector, new FakeNavigator(desiredRoute = onwardRoute),
+    new EstablisherKindController(frontendAppConfig, messagesApi, FakeUserAnswersService, new FakeNavigator(desiredRoute = onwardRoute),
       FakeAuthAction, dataRetrievalAction, new DataRequiredActionImpl, formProvider)
 
   def viewAsString(form: Form[_] = form): String = establisherKind(frontendAppConfig, form, NormalMode, firstIndex, None,
-  routes.EstablisherKindController.onSubmit(NormalMode, firstIndex, None)
-  )(fakeRequest, messages).toString
+    routes.EstablisherKindController.onSubmit(NormalMode, firstIndex, None))(fakeRequest, messages).toString
 
   "EstablisherKind Controller" must {
 
