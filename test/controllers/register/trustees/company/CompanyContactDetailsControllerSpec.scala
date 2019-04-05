@@ -78,13 +78,13 @@ class CompanyContactDetailsControllerSpec extends ControllerSpecBase {
     TrusteesId.toString -> Json.arr(
       Json.obj(
         CompanyDetailsId.toString ->
-          CompanyDetails("test company name", Some("123456"), Some("abcd")),
+          CompanyDetails("test company name"),
         CompanyContactDetailsId.toString ->
           ContactDetails("test@test.com", "123456789")
       ),
       Json.obj(
         CompanyDetailsId.toString ->
-          CompanyDetails("test", Some("654321"), Some("bcda"))
+          CompanyDetails("test")
       )
     )
   )

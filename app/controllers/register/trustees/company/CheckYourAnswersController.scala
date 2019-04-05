@@ -50,6 +50,10 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
 
       val companyDetailsRow = CompanyDetailsId(index).row(routes.CompanyDetailsController.onPageLoad(CheckMode, index, None).url)
 
+      val companyVatRow = CompanyVatId(index).row(routes.CompanyVatController.onPageLoad(CheckMode, index, None).url)
+
+      val companyPayeRow = CompanyPayeId(index).row(routes.CompanyPayeController.onPageLoad(CheckMode, index, None).url)
+
       val companyRegistrationNumber = CompanyRegistrationNumberId(index).row(
         routes.CompanyRegistrationNumberController.onPageLoad(CheckMode, index, None).url
       )
@@ -60,7 +64,7 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
 
       val companyDetailsSection = AnswerSection(
         Some("messages__checkYourAnswers__section__company_details"),
-        companyDetailsRow ++ companyRegistrationNumber ++ companyUtr
+        companyDetailsRow ++ companyVatRow ++ companyPayeRow ++ companyRegistrationNumber ++ companyUtr
       )
 
       val companyAddress = CompanyAddressId(index).row(

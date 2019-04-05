@@ -79,7 +79,7 @@ trait ControllerSpecBase extends SpecBase with Enumerable.Implicits with MapForm
       TrusteesId.toString -> Json.arr(
         Json.obj(
           CompanyDetailsId.toString ->
-            CompanyDetails("test company name", Some("123456"), Some("abcd"))
+            CompanyDetails("test company name")
         )
       )
     ))
@@ -90,7 +90,7 @@ trait ControllerSpecBase extends SpecBase with Enumerable.Implicits with MapForm
       EstablishersId.toString -> Json.arr(
         Json.obj(
           CompanyDetailsId.toString ->
-            CompanyDetails("test company name", Some("123456"), Some("abcd"))
+            CompanyDetails("test company name")
         )
       )
     ))
@@ -123,7 +123,7 @@ trait ControllerSpecBase extends SpecBase with Enumerable.Implicits with MapForm
       EstablishersId.toString -> Json.arr(
         Json.obj(
           CompanyDetailsId.toString ->
-            CompanyDetails("test company name", Some("123456"), Some("abcd")),
+            CompanyDetails("test company name"),
           "director" -> Json.arr(
             Json.obj(
               DirectorDetailsId.toString -> PersonDetails("first", Some("middle"), "last",

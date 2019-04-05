@@ -19,7 +19,9 @@ package identifiers.register.trustees.company
 import identifiers.TypedIdentifier
 import identifiers.register.trustees.TrusteesId
 import models.Paye
-import play.api.libs.json.JsPath
+import play.api.libs.json.{JsPath, Reads}
+import utils.checkyouranswers.CheckYourAnswers
+import utils.checkyouranswers.CheckYourAnswers.PayeCYA
 
 case class CompanyPayeId(index: Int) extends TypedIdentifier[Paye] {
   override def path: JsPath = TrusteesId(index).path \ CompanyPayeId.toString
@@ -27,6 +29,12 @@ case class CompanyPayeId(index: Int) extends TypedIdentifier[Paye] {
 
 object CompanyPayeId {
   override def toString: String = "companyPaye"
+
+  implicit def cya(implicit r: Reads[Paye]): CheckYourAnswers[CompanyPayeId] =
+    PayeCYA(labelYesNo = Some("messages__checkYourAnswers__trustees__company__paye"),
+      hiddenLabelYesNo = "messages__visuallyhidden__trustee__paye_yes_no",
+      hiddenLabelPaye = "messages__visuallyhidden__trustee__paye_number"
+      )()
 }
 
 
