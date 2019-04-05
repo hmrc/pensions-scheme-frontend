@@ -87,9 +87,7 @@ class CheckYourAnswersSpec extends SpecBase with MustMatchers with PropertyCheck
           Some(Link("site.change", onwardUrl, Some("messages__visuallyhidden__testId"))))))
       }
 
-      "companyDetails" when {
-
-        "only name exists" in {
+      "companyDetails" in {
 
           val companyDetails = CompanyDetails("Company Name")
 
@@ -103,8 +101,6 @@ class CheckYourAnswersSpec extends SpecBase with MustMatchers with PropertyCheck
             false,
             Some(Link("site.change", onwardUrl, Some(Message("messages__visuallyhidden__common__name", "Company Name"))))
           )))
-
-        }
       }
 
       "CRN" when {
@@ -673,6 +669,22 @@ class CheckYourAnswersSpec extends SpecBase with MustMatchers with PropertyCheck
             AnswerRow("messages__common__crn", Seq("site.not_entered"), true,
               Some(Link("site.add", onwardUrl, Some(s"messages__visuallyhidden__establisher__crn_add")))
             )))
+        }
+
+        "companyDetails without change url" in {
+
+          val companyDetails = CompanyDetails("Company Name")
+
+          implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(Json.obj(
+            "testId" -> companyDetails
+          )), PsaId("A0000000"))
+
+          testIdentifier[CompanyDetails].row("onwardUrl", UpdateMode) must equal(Seq(AnswerRow(
+            "messages__common__cya__name",
+            Seq(companyDetails.companyName),
+            false,
+            None
+          )))
         }
 
       }

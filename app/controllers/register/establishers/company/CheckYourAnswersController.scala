@@ -49,20 +49,20 @@ class CheckYourAnswersController @Inject()(
     implicit request =>
       val companyDetails = AnswerSection(
         Some("messages__common__company_details__title"),
-        CompanyDetailsId(index).row(routes.CompanyDetailsController.onPageLoad(CheckMode, srn, index).url) ++
-        CompanyVatId(index).row(routes.CompanyVatController.onPageLoad(CheckMode, index, srn).url) ++
-        CompanyPayeId(index).row(routes.CompanyPayeController.onPageLoad(CheckMode, index, srn).url) ++
-          CompanyRegistrationNumberId(index).row(routes.CompanyRegistrationNumberController.onPageLoad(CheckMode, srn, Index(index)).url) ++
-          CompanyUniqueTaxReferenceId(index).row(routes.CompanyUniqueTaxReferenceController.onPageLoad(CheckMode, srn, Index(index)).url) ++
-          IsCompanyDormantId(index).row(routes.IsCompanyDormantController.onPageLoad(CheckMode, srn, Index(index)).url)
+        CompanyDetailsId(index).row(routes.CompanyDetailsController.onPageLoad(CheckMode, srn, index).url, mode) ++
+          CompanyVatId(index).row(routes.CompanyVatController.onPageLoad(CheckMode, index, srn).url, mode) ++
+          CompanyPayeId(index).row(routes.CompanyPayeController.onPageLoad(CheckMode, index, srn).url, mode) ++
+          CompanyRegistrationNumberId(index).row(routes.CompanyRegistrationNumberController.onPageLoad(CheckMode, srn, Index(index)).url, mode) ++
+          CompanyUniqueTaxReferenceId(index).row(routes.CompanyUniqueTaxReferenceController.onPageLoad(CheckMode, srn, Index(index)).url, mode) ++
+          IsCompanyDormantId(index).row(routes.IsCompanyDormantController.onPageLoad(CheckMode, srn, Index(index)).url, mode)
       )
 
       val companyContactDetails = AnswerSection(
         Some("messages__establisher_company_contact_details__title"),
-        CompanyAddressId(index).row(routes.CompanyAddressController.onPageLoad(CheckMode, srn, Index(index)).url) ++
+        CompanyAddressId(index).row(routes.CompanyAddressController.onPageLoad(CheckMode, srn, Index(index)).url, mode) ++
           CompanyAddressYearsId(index).row(routes.CompanyAddressYearsController.onPageLoad(CheckMode, srn, index).url, mode) ++
           CompanyPreviousAddressId(index).row(routes.CompanyPreviousAddressController.onPageLoad(CheckMode, srn, index).url, mode) ++
-          CompanyContactDetailsId(index).row(routes.CompanyContactDetailsController.onPageLoad(CheckMode, srn, index).url)
+          CompanyContactDetailsId(index).row(routes.CompanyContactDetailsController.onPageLoad(CheckMode, srn, index).url, mode)
       )
 
       Future.successful(Ok(check_your_answers(

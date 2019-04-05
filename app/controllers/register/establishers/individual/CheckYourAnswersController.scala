@@ -54,16 +54,16 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
             EstablisherNinoId(index).row(
               controllers.register.establishers.individual.routes.EstablisherNinoController.onPageLoad(CheckMode, index, srn).url, mode) ++
             UniqueTaxReferenceId(index).row(
-              routes.UniqueTaxReferenceController.onPageLoad(CheckMode, Index(index), srn).url) ++
+              routes.UniqueTaxReferenceController.onPageLoad(CheckMode, Index(index), srn).url, mode) ++
             AddressId(index).row(
-              controllers.register.establishers.individual.routes.AddressController.onPageLoad(CheckMode, index, srn).url) ++
+              controllers.register.establishers.individual.routes.AddressController.onPageLoad(CheckMode, index, srn).url, mode) ++
             AddressYearsId(index).row(
               controllers.register.establishers.individual.routes.AddressYearsController.onPageLoad(CheckMode, index, srn).url, mode) ++
             PreviousAddressId(index).row(
               controllers.register.establishers.individual.routes.PreviousAddressController.onPageLoad(CheckMode, index, srn).url, mode
             ) ++
             ContactDetailsId(index).row(
-              controllers.register.establishers.individual.routes.ContactDetailsController.onPageLoad(CheckMode, index, srn).url
+              controllers.register.establishers.individual.routes.ContactDetailsController.onPageLoad(CheckMode, index, srn).url, mode
             )
         )
       )

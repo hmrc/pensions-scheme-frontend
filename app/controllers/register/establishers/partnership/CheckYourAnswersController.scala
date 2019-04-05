@@ -61,10 +61,10 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
       val partnershipContactDetails = AnswerSection(
         Some("messages__partnership__checkYourAnswers__partnership_contact_details"),
         Seq(
-          PartnershipAddressId(index).row(routes.PartnershipAddressController.onPageLoad(CheckMode, index, None).url),
+          PartnershipAddressId(index).row(routes.PartnershipAddressController.onPageLoad(CheckMode, index, None).url, mode),
           PartnershipAddressYearsId(index).row(routes.PartnershipAddressYearsController.onPageLoad(CheckMode, index, None).url, mode),
           PartnershipPreviousAddressId(index).row(routes.PartnershipPreviousAddressController.onPageLoad(CheckMode, index, None).url, mode),
-          PartnershipContactDetailsId(index).row(routes.PartnershipContactDetailsController.onPageLoad(CheckMode, index, None).url)
+          PartnershipContactDetailsId(index).row(routes.PartnershipContactDetailsController.onPageLoad(CheckMode, index, None).url, mode)
         ).flatten
       )
 

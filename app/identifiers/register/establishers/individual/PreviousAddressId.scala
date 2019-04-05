@@ -18,12 +18,10 @@ package identifiers.register.establishers.individual
 
 import identifiers.TypedIdentifier
 import identifiers.register.establishers.EstablishersId
-import models.Link
 import models.address.Address
 import play.api.libs.json.JsPath
-import utils.checkyouranswers.CheckYourAnswers
-import utils.{CountryOptions, UserAnswers}
-import viewmodels.AnswerRow
+import utils.CountryOptions
+import utils.checkyouranswers.{AddressCYA, CheckYourAnswers}
 
 case class PreviousAddressId(index: Int) extends TypedIdentifier[Address] {
   override def path: JsPath = EstablishersId(index).path \ PreviousAddressId.toString
@@ -31,26 +29,9 @@ case class PreviousAddressId(index: Int) extends TypedIdentifier[Address] {
 
 object PreviousAddressId {
   override def toString: String = "previousAddress"
-
-  implicit def cya(implicit countryOptions: CountryOptions): CheckYourAnswers[PreviousAddressId] = {
-    new CheckYourAnswers[PreviousAddressId] {
-      def previousAddressRow(userAnswers: UserAnswers, changeLink: Option[Link], id: PreviousAddressId): Seq[AnswerRow] = {
-        userAnswers.get(id).map { address =>
-          Seq(AnswerRow(
-            "messages__establisher_individual_previous_address_cya_label",
-            userAnswers.addressAnswer(address),
-            answerIsMessageKey = false,
-            changeLink
-          ))
-        }.getOrElse(Seq.empty[AnswerRow])
-      }
-
-      override def row(id: PreviousAddressId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        previousAddressRow(userAnswers, Some(Link("site.change", changeUrl,
-          Some("messages__visuallyhidden__establisher__previous_address"))), id)
-
-      override def updateRow(id: PreviousAddressId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        previousAddressRow(userAnswers, None, id)
-    }
-  }
+  implicit def cya(implicit countryOptions: CountryOptions): CheckYourAnswers[PreviousAddressId] =
+    AddressCYA[PreviousAddressId](
+      label = "messages__establisher_individual_previous_address_cya_label",
+      changeAddress = "messages__visuallyhidden__establisher__previous_address"
+    )()
 }

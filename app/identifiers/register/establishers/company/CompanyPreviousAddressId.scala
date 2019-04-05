@@ -18,12 +18,10 @@ package identifiers.register.establishers.company
 
 import identifiers._
 import identifiers.register.establishers.EstablishersId
-import models.Link
 import models.address.Address
 import play.api.libs.json.JsPath
-import utils.checkyouranswers.CheckYourAnswers
-import utils.{CountryOptions, UserAnswers}
-import viewmodels.AnswerRow
+import utils.CountryOptions
+import utils.checkyouranswers.{AddressCYA, CheckYourAnswers}
 
 case class CompanyPreviousAddressId(index: Int) extends TypedIdentifier[Address] {
   override def path: JsPath = EstablishersId(index).path \ CompanyPreviousAddressId.toString
@@ -33,23 +31,8 @@ object CompanyPreviousAddressId {
   override def toString: String = "companyPreviousAddress"
 
   implicit def cya(implicit countryOptions: CountryOptions): CheckYourAnswers[CompanyPreviousAddressId] =
-    new CheckYourAnswers[CompanyPreviousAddressId] {
-      def previousAddressRow(userAnswers: UserAnswers, changeLink: Option[Link], id: CompanyPreviousAddressId): Seq[AnswerRow] = {
-        userAnswers.get(id).map { address =>
-          Seq(AnswerRow(
-            "messages__common__cya__previous_address",
-            userAnswers.addressAnswer(address),
-            answerIsMessageKey = false,
-            changeLink
-          ))
-        }.getOrElse(Seq.empty[AnswerRow])
-      }
-
-      override def row(id: CompanyPreviousAddressId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        previousAddressRow(userAnswers, Some(Link("site.change", changeUrl,
-          Some("messages__visuallyhidden__establisher__previous_address"))), id)
-
-      override def updateRow(id: CompanyPreviousAddressId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        previousAddressRow(userAnswers, None, id)
-    }
+    AddressCYA(
+      label = "messages__common__cya__previous_address",
+      changeAddress = "messages__visuallyhidden__establisher__previous_address"
+    )()
 }
