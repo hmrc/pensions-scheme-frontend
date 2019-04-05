@@ -57,7 +57,7 @@ class EstablisherKindControllerSpec extends ControllerSpecBase {
       FakeAuthAction, dataRetrievalAction, new DataRequiredActionImpl, formProvider)
 
   def viewAsString(form: Form[_] = form): String = establisherKind(frontendAppConfig, form, NormalMode, firstIndex, None,
-    postCall(NormalMode, firstIndex, None))(fakeRequest, messages).toString
+    routes.EstablisherKindController.onSubmit(NormalMode, firstIndex, None))(fakeRequest, messages).toString
 
   "EstablisherKind Controller" must {
 

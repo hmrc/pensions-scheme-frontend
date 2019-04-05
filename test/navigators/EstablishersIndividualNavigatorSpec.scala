@@ -99,7 +99,7 @@ object EstablishersIndividualNavigatorSpec extends OptionValues {
 
   private def addTrustees = controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode, None)
 
-  private def addEstablisher = controllers.register.establishers.routes.AddEstablisherController.onPageLoad(NormalMode)
+  private def addEstablisher = controllers.register.establishers.routes.AddEstablisherController.onPageLoad(NormalMode, None)
 
   private def dataDescriber(answers: UserAnswers): String = answers.toString
 

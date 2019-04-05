@@ -150,7 +150,7 @@ class SchemeDetailsTaskListViewSpec extends ViewBehaviours {
       "display the correct link" in {
 
         view must haveLinkWithText(
-          url = controllers.register.establishers.routes.AddEstablisherController.onPageLoad(NormalMode).url,
+          url = controllers.register.establishers.routes.AddEstablisherController.onPageLoad(NormalMode, None).url,
           linkText = messages("messages__schemeTaskList__sectionEstablishers_change_link"),
           linkId = "section-establishers-link"
         )
@@ -342,7 +342,7 @@ object SchemeDetailsTaskListViewSpec extends ViewSpecBase {
 
   private def addEstablisherHeader(): SchemeDetailsTaskListSection = {
     SchemeDetailsTaskListSection(None, Link(changeEstablisherLinkText,
-      controllers.register.establishers.routes.AddEstablisherController.onPageLoad(NormalMode).url), None)
+      controllers.register.establishers.routes.AddEstablisherController.onPageLoad(NormalMode, None).url), None)
   }
 
   private def addTrusteesHeader(): SchemeDetailsTaskListSection = {

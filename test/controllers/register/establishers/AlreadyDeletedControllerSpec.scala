@@ -27,7 +27,7 @@ import views.html.alreadyDeleted
 
 class AlreadyDeletedControllerSpec extends ControllerSpecBase {
 
-  def onwardRoute: Call = controllers.register.establishers.routes.AddEstablisherController.onPageLoad(NormalMode)
+  def onwardRoute: Call = controllers.register.establishers.routes.AddEstablisherController.onPageLoad(NormalMode, None)
 
   private val establisherIndex = Index(0)
   private val establisherName = "test first name test last name"

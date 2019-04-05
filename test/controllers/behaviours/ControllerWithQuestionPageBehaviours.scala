@@ -73,10 +73,10 @@ trait ControllerWithQuestionPageBehaviours extends ControllerSpecBase with Scala
   }
 
   def controllerWithOnSubmitMethod[T](onSubmitAction: (DataRetrievalAction, AuthAction) => Action[AnyContent],
-    validData: DataRetrievalAction,
-    formWithErrors: Form[T],
-    viewAsString: Form[T] => String,
-    postRequest: FakeRequest[AnyContentAsFormUrlEncoded]): Unit = {
+                                      validData: DataRetrievalAction,
+                                      formWithErrors: Form[T],
+                                      viewAsString: Form[T] => String,
+                                      postRequest: FakeRequest[AnyContentAsFormUrlEncoded]): Unit = {
 
     "calling onSubmit" must {
 
@@ -115,7 +115,7 @@ trait ControllerWithQuestionPageBehaviours extends ControllerSpecBase with Scala
   }
 
   def controllerWithOnSubmitMethodMissingRequiredData(onSubmitAction: (DataRetrievalAction, AuthAction) => Action[AnyContent],
-                                                        validDate: DataRetrievalAction): Unit = {
+                                                      validDate: DataRetrievalAction): Unit = {
 
     "when required data is not present" must {
 

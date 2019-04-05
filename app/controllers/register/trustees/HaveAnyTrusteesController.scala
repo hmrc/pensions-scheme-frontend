@@ -46,14 +46,14 @@ class HaveAnyTrusteesController @Inject()(
 
   private val form: Form[Boolean] = formProvider()
 
-  def onPageLoad(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData).async {
+  def onPageLoad(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData()).async {
     implicit request =>
       val preparedForm = request.userAnswers.flatMap(_.get(HaveAnyTrusteesId)).fold(form)(form.fill)
       val submitUrl = controllers.register.trustees.routes.HaveAnyTrusteesController.onSubmit(mode, srn)
       Future.successful(Ok(haveAnyTrustees(appConfig, preparedForm, mode, existingSchemeName, submitUrl)))
   }
 
-  def onSubmit(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData).async {
+  def onSubmit(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData()).async {
     implicit request =>
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) => {
