@@ -45,7 +45,7 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
                                            sectionComplete: SectionComplete
                                           )(implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport {
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData andThen requiredData).async {
+  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requiredData).async {
     implicit request =>
 
       val companyDetailsRow = CompanyDetailsId(index).row(routes.CompanyDetailsController.onPageLoad(CheckMode, index, None).url)
@@ -96,7 +96,7 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
       )))
   }
 
-  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData andThen requiredData).async {
+  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requiredData).async {
     implicit request =>
       sectionComplete.setCompleteFlag(request.externalId, IsTrusteeCompleteId(index), request.userAnswers, true).map { _ =>
         Redirect(navigator.nextPage(CheckYourAnswersId, NormalMode, request.userAnswers))

@@ -76,7 +76,7 @@ abstract class HsTaskListHelper(answers: UserAnswers)(implicit messages: Message
         controllers.register.establishers.routes.EstablisherKindController.onPageLoad(NormalMode, userAnswers.allEstablishers.size, None).url), None)
     } else {
       SchemeDetailsTaskListSection(None, Link(changeEstablisherLinkText,
-        controllers.register.establishers.routes.AddEstablisherController.onPageLoad(NormalMode).url), None)
+        controllers.register.establishers.routes.AddEstablisherController.onPageLoad(NormalMode, None).url), None)
     }
   }
 

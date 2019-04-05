@@ -43,50 +43,49 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
                                            implicit val countryOptions: CountryOptions
                                           )(implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport {
 
-  def onPageLoad(companyIndex: Index, directorIndex: Index, mode: Mode, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData andThen requiredData).async {
-      implicit request =>
-        val companyDirectorDetails = AnswerSection(
-          Some("messages__director__cya__details_heading"),
-          Seq(
-            DirectorDetailsId(companyIndex, directorIndex).
-              row(routes.DirectorDetailsController.onPageLoad(CheckMode, companyIndex, directorIndex, srn).url, mode),
-            DirectorNinoId(companyIndex, directorIndex).
-              row(routes.DirectorNinoController.onPageLoad(CheckMode, companyIndex, directorIndex, srn).url, mode),
-            DirectorUniqueTaxReferenceId(companyIndex, directorIndex).
-              row(routes.DirectorUniqueTaxReferenceController.onPageLoad(CheckMode, companyIndex, directorIndex, srn).url, mode)
-          ).flatten
-        )
+  def onPageLoad(companyIndex: Index, directorIndex: Index, mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requiredData).async {
+    implicit request =>
+      val companyDirectorDetails = AnswerSection(
+        Some("messages__director__cya__details_heading"),
+        Seq(
+          DirectorDetailsId(companyIndex, directorIndex).
+            row(routes.DirectorDetailsController.onPageLoad(CheckMode, companyIndex, directorIndex, srn).url, mode),
+          DirectorNinoId(companyIndex, directorIndex).
+            row(routes.DirectorNinoController.onPageLoad(CheckMode, companyIndex, directorIndex, srn).url, mode),
+          DirectorUniqueTaxReferenceId(companyIndex, directorIndex).
+            row(routes.DirectorUniqueTaxReferenceController.onPageLoad(CheckMode, companyIndex, directorIndex, srn).url, mode)
+        ).flatten
+      )
 
-        val companyDirectorContactDetails = AnswerSection(
-          Some("messages__director__cya__contact__details_heading"),
-          Seq(
-            DirectorAddressId(companyIndex, directorIndex).
-              row(routes.DirectorAddressController.onPageLoad(CheckMode, companyIndex, directorIndex, srn).url),
-            DirectorAddressYearsId(companyIndex, directorIndex).
-              row(routes.DirectorAddressYearsController.onPageLoad(CheckMode, companyIndex, directorIndex, srn).url, mode),
-            DirectorPreviousAddressId(companyIndex, directorIndex).
-              row(routes.DirectorPreviousAddressController.onPageLoad(CheckMode, companyIndex, directorIndex, srn).url, mode),
-            DirectorContactDetailsId(companyIndex, directorIndex).
-              row(routes.DirectorContactDetailsController.onPageLoad(CheckMode, companyIndex, directorIndex, srn).url)
-          ).flatten
-        )
+      val companyDirectorContactDetails = AnswerSection(
+        Some("messages__director__cya__contact__details_heading"),
+        Seq(
+          DirectorAddressId(companyIndex, directorIndex).
+            row(routes.DirectorAddressController.onPageLoad(CheckMode, companyIndex, directorIndex, srn).url),
+          DirectorAddressYearsId(companyIndex, directorIndex).
+            row(routes.DirectorAddressYearsController.onPageLoad(CheckMode, companyIndex, directorIndex, srn).url, mode),
+          DirectorPreviousAddressId(companyIndex, directorIndex).
+            row(routes.DirectorPreviousAddressController.onPageLoad(CheckMode, companyIndex, directorIndex, srn).url, mode),
+          DirectorContactDetailsId(companyIndex, directorIndex).
+            row(routes.DirectorContactDetailsController.onPageLoad(CheckMode, companyIndex, directorIndex, srn).url)
+        ).flatten
+      )
 
-        Future.successful(Ok(check_your_answers(
-          appConfig,
-          Seq(companyDirectorDetails, companyDirectorContactDetails),
-          routes.CheckYourAnswersController.onSubmit(companyIndex, directorIndex, mode, srn),
-          existingSchemeName,
-          mode = mode
-        )))
+      Future.successful(Ok(check_your_answers(
+        appConfig,
+        Seq(companyDirectorDetails, companyDirectorContactDetails),
+        routes.CheckYourAnswersController.onSubmit(companyIndex, directorIndex, mode, srn),
+        existingSchemeName,
+        mode = mode
+      )))
 
     }
 
-  def onSubmit(companyIndex: Index, directorIndex: Index, mode: Mode, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData andThen requiredData).async {
-      implicit request =>
-        sectionComplete.setCompleteFlag(request.externalId, IsDirectorCompleteId(companyIndex, directorIndex), request.userAnswers, true).map { _ =>
-          Redirect(navigator.nextPage(CheckYourAnswersId(companyIndex, directorIndex), NormalMode, request.userAnswers))
-        }
-    }
+  def onSubmit(companyIndex: Index, directorIndex: Index, mode: Mode, srn: Option[String]): Action[AnyContent] = (
+    authenticate andThen getData(mode, srn) andThen requiredData).async {
+    implicit request =>
+      sectionComplete.setCompleteFlag(request.externalId, IsDirectorCompleteId(companyIndex, directorIndex), request.userAnswers, true).map { _ =>
+        Redirect(navigator.nextPage(CheckYourAnswersId(companyIndex, directorIndex), NormalMode, request.userAnswers))
+      }
+  }
 }

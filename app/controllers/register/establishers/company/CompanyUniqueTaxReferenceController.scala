@@ -48,7 +48,7 @@ class CompanyUniqueTaxReferenceController @Inject()(
   private val form: Form[UniqueTaxReference] = formProvider()
   private def postCall: (Mode, Option[String], Index) => Call = routes.CompanyUniqueTaxReferenceController.onSubmit _
 
-  def onPageLoad(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onPageLoad(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
           val redirectResult = request.userAnswers.get(CompanyUniqueTaxReferenceId(index)) match {
             case None =>
@@ -59,7 +59,7 @@ class CompanyUniqueTaxReferenceController @Inject()(
           Future.successful(redirectResult)
   }
 
-  def onSubmit(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
           form.bindFromRequest().fold(
             (formWithErrors: Form[_]) =>

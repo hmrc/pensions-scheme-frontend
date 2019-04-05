@@ -95,7 +95,7 @@ object EstablishersPartnershipNavigatorSpec extends OptionValues {
 
   private def addPartners = routes.AddPartnersController.onPageLoad(NormalMode, 0, None)
 
-  private def addEstablisher = controllers.register.establishers.routes.AddEstablisherController.onPageLoad(NormalMode)
+  private def addEstablisher = controllers.register.establishers.routes.AddEstablisherController.onPageLoad(NormalMode, None)
 
   private def sessionExpired = controllers.routes.SessionExpiredController.onPageLoad()
 

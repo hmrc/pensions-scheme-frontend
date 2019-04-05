@@ -45,7 +45,7 @@ class CheckYourAnswersController @Inject()(
                                           )(implicit val ec: ExecutionContext) extends FrontendController
   with Retrievals with I18nSupport with Enumerable.Implicits {
 
-  def onPageLoad(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onPageLoad(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
       val companyDetails = AnswerSection(
         Some("messages__common__company_details__title"),
@@ -73,7 +73,8 @@ class CheckYourAnswersController @Inject()(
       )
   }
 
-  def onSubmit(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] = (
+    authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
       sectionComplete.setCompleteFlag(request.externalId, IsCompanyCompleteId(index), request.userAnswers, true).map { _ =>
         Redirect(navigator.nextPage(CheckYourAnswersId(index), NormalMode, request.userAnswers))

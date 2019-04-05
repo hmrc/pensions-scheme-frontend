@@ -67,13 +67,13 @@ class CompanyPreviousAddressPostcodeLookupController @Inject()(
     }
 
   def onPageLoad(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] =
-    (authenticate andThen getData andThen requireData).async {
+    (authenticate andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
         viewmodel(index, srn, mode).retrieve.right map get
     }
 
   def onSubmit(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] =
-    (authenticate andThen getData andThen requireData).async {
+    (authenticate andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
         viewmodel(index, srn, mode).retrieve.right.map {
           vm =>

@@ -42,7 +42,7 @@ class TrusteeContactDetailsController @Inject()(
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
       TrusteeDetailsId(index).retrieve.right.map {
         trusteeDetails =>
@@ -50,7 +50,7 @@ class TrusteeContactDetailsController @Inject()(
       }
   }
 
-  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
       TrusteeDetailsId(index).retrieve.right.map {
         trusteeDetails =>

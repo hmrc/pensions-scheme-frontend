@@ -44,7 +44,7 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
                                           )(implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport {
 
   def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData andThen requiredData).async {
+    (authenticate andThen getData(mode, srn) andThen requiredData).async {
     implicit request =>
       val partnerDetails = AnswerSection(
         Some("messages__partner__cya__details_heading"),
@@ -83,7 +83,7 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
   }
 
   def onSubmit(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData andThen requiredData).async {
+    (authenticate andThen getData(mode, srn) andThen requiredData).async {
     implicit request =>
       sectionComplete.setCompleteFlag(request.externalId, IsPartnerCompleteId(establisherIndex, partnerIndex), request.userAnswers, value = true) map { _ =>
         Redirect(navigator.nextPage(CheckYourAnswersId(establisherIndex, partnerIndex), NormalMode, request.userAnswers))
