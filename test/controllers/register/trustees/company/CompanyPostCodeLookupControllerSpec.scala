@@ -18,7 +18,8 @@ package controllers.register.trustees.company
 
 import base.CSRFRequest
 import config.FrontendAppConfig
-import connectors.{AddressLookupConnector, UserAnswersCacheConnector, FakeUserAnswersCacheConnector}
+import connectors.{AddressLookupConnector}
+import services.{UserAnswersService, FakeUserAnswersService}
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.address.PostCodeLookupFormProvider
@@ -67,12 +68,12 @@ class CompanyPostCodeLookupControllerSpec extends ControllerSpecBase with CSRFRe
 
     "render postcodeLookup from GET request" in {
 
-      val cacheConnector: UserAnswersCacheConnector = mock[UserAnswersCacheConnector]
+      val cacheConnector: UserAnswersService = mock[UserAnswersService]
 
       running(_.overrides(
         bind[FrontendAppConfig].to(frontendAppConfig),
         bind[Navigator].toInstance(FakeNavigator),
-        bind[UserAnswersCacheConnector].toInstance(cacheConnector),
+        bind[UserAnswersService].toInstance(cacheConnector),
         bind[AddressLookupConnector].toInstance(fakeAddressLookupConnector),
         bind[AuthAction].to(FakeAuthAction),
         bind[DataRetrievalAction].to(retrieval)
@@ -121,7 +122,7 @@ class CompanyPostCodeLookupControllerSpec extends ControllerSpecBase with CSRFRe
         running(_.overrides(
           bind[FrontendAppConfig].to(frontendAppConfig),
           bind[MessagesApi].to(messagesApi),
-          bind[UserAnswersCacheConnector].toInstance(FakeUserAnswersCacheConnector),
+          bind[UserAnswersService].toInstance(FakeUserAnswersService),
           bind[AddressLookupConnector].toInstance(fakeAddressLookupConnector),
           bind[AuthAction].to(FakeAuthAction),
           bind[DataRetrievalAction].to(retrieval),

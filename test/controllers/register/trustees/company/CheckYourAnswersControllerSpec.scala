@@ -160,7 +160,6 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase {
       FakeAuthAction,
       dataRetrievalAction,
       new DataRequiredActionImpl,
-      new CheckYourAnswersFactory(fakeCountryOptions),
       fakeCountryOptions,
       new FakeNavigator(onwardRoute),
       FakeSectionComplete

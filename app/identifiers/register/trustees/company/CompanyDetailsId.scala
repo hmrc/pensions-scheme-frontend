@@ -19,6 +19,7 @@ package identifiers.register.trustees.company
 import identifiers.TypedIdentifier
 import identifiers.register.trustees.{MoreThanTenTrusteesId, TrusteesId}
 import models.CompanyDetails
+import play.api.i18n.Messages
 import play.api.libs.json.{JsPath, JsResult}
 import utils.UserAnswers
 import utils.checkyouranswers.{CheckYourAnswers, CompanyDetailsCYA}
@@ -37,7 +38,7 @@ case class CompanyDetailsId(index: Int) extends TypedIdentifier[CompanyDetails] 
 object CompanyDetailsId {
   override lazy val toString: String = "companyDetails"
 
-  implicit val cya: CheckYourAnswers[CompanyDetailsId] = CompanyDetailsCYA(
-    changeVat = "messages__visuallyhidden__trustee__vat_number",
-    changePaye = "messages__visuallyhidden__trustee__paye_number")()
+  implicit def cya(implicit messages: Messages): CheckYourAnswers[CompanyDetailsId] =
+    CompanyDetailsCYA(changeVat = "messages__visuallyhidden__trustee__vat_number",
+      changePaye = "messages__visuallyhidden__trustee__paye_number")()
 }

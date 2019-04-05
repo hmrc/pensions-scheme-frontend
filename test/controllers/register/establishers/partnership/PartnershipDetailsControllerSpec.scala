@@ -16,7 +16,7 @@
 
 package controllers.register.establishers.partnership
 
-import connectors.FakeUserAnswersCacheConnector
+import services.FakeUserAnswersService
 import controllers.ControllerSpecBase
 import controllers.actions.{DataRequiredActionImpl, DataRetrievalAction, FakeAuthAction, FakeDataRetrievalAction}
 import forms.register.PartnershipDetailsFormProvider
@@ -41,7 +41,7 @@ class PartnershipDetailsControllerSpec extends ControllerSpecBase {
   val schemeName = "Test Scheme Name"
 
   def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): PartnershipDetailsController =
-    new PartnershipDetailsController(frontendAppConfig, messagesApi, FakeUserAnswersCacheConnector,
+    new PartnershipDetailsController(frontendAppConfig, messagesApi, FakeUserAnswersService,
       new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
       dataRetrievalAction, new DataRequiredActionImpl, formProvider)
   val submitUrl = controllers.register.establishers.partnership.routes.PartnershipDetailsController.onSubmit(NormalMode, firstIndex, None)

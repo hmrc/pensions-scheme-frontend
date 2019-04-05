@@ -49,8 +49,9 @@ trait FakeUserAnswersService extends UserAnswersService with Matchers {
     Future.successful(Json.obj())
   }
 
-  def upsert(cacheId: String, value: JsValue)
-            (implicit ec: ExecutionContext, hc: HeaderCarrier): Future[JsValue] = {
+  override def upsert(mode: Mode, srn: Option[String], value: JsValue)
+            (implicit ec: ExecutionContext, hc: HeaderCarrier,
+             request: DataRequest[AnyContent]): Future[JsValue] = {
     Future.successful(value)
   }
 

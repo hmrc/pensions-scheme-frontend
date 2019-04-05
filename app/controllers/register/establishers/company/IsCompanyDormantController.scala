@@ -18,11 +18,9 @@ package controllers.register.establishers.company
 
 import com.google.inject.Inject
 import config.FrontendAppConfig
-import connectors.UserAnswersCacheConnector
 import controllers.Retrievals
 import controllers.actions.{AuthAction, DataRequiredAction, DataRetrievalAction}
 import forms.register.establishers.IsDormantFormProvider
-import identifiers.register.DeclarationDormantId
 import identifiers.register.establishers.company.IsCompanyDormantId
 import models.register.DeclarationDormant
 import models.register.DeclarationDormant._
@@ -30,6 +28,7 @@ import models.{Mode, NormalMode}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Call}
+import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.EstablishersCompany
 import utils.{Enumerable, Navigator, UserAnswers}
@@ -39,12 +38,13 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class IsCompanyDormantController @Inject()(appConfig: FrontendAppConfig,
                                  override val messagesApi: MessagesApi,
-                                 dataCacheConnector: UserAnswersCacheConnector,
+                                 userAnswersService: UserAnswersService,
                                  @EstablishersCompany navigator: Navigator,
                                  authenticate: AuthAction,
                                  getData: DataRetrievalAction,
                                  requireData: DataRequiredAction,
-                                 formProvider: IsDormantFormProvider)(implicit val ec: ExecutionContext) extends FrontendController with Enumerable.Implicits with I18nSupport with Retrievals {
+                                 formProvider: IsDormantFormProvider
+                                 )(implicit val ec: ExecutionContext) extends FrontendController with Enumerable.Implicits with I18nSupport with Retrievals {
 
   private val form: Form[DeclarationDormant] = formProvider()
   private def postCall(mode: Mode, srn: Option[String], index: Int): Call = routes.IsCompanyDormantController.onSubmit(mode, srn, index )
@@ -66,11 +66,11 @@ class IsCompanyDormantController @Inject()(appConfig: FrontendAppConfig,
             Future.successful(BadRequest(isDormant(appConfig, formWithErrors, companyName, postCall(mode, srn, index), existingSchemeName))),
           {
             case Yes =>
-              dataCacheConnector.save(request.externalId, IsCompanyDormantId(index), DeclarationDormant.values(0)).map { cacheMap =>
+              userAnswersService.save(mode, srn, IsCompanyDormantId(index), DeclarationDormant.values(0)).map { cacheMap =>
                  Redirect(navigator.nextPage(IsCompanyDormantId(index), NormalMode, UserAnswers(cacheMap)))
              }
             case No =>
-              dataCacheConnector.save(request.externalId, IsCompanyDormantId(index), DeclarationDormant.values(1)).map(cacheMap =>
+              userAnswersService.save(mode, srn, IsCompanyDormantId(index), DeclarationDormant.values(1)).map(cacheMap =>
                 Redirect(navigator.nextPage(IsCompanyDormantId(index), mode, UserAnswers(cacheMap))))
 
           }

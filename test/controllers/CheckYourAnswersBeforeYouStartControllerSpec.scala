@@ -19,7 +19,7 @@ package controllers
 import controllers.actions._
 import identifiers.register.trustees.HaveAnyTrusteesId
 import identifiers.{EstablishedCountryId, IsBeforeYouStartCompleteId, SchemeNameId, SchemeTypeId}
-import models.CheckMode
+import models.{CheckMode, Link}
 import models.register.SchemeType
 import play.api.libs.json.Json
 import play.api.test.Helpers._
@@ -107,36 +107,36 @@ object CheckYourAnswersBeforeYouStartControllerSpec extends ControllerSpecBase {
         "schemeName.checkYourAnswersLabel",
         Seq("Test Scheme"),
         answerIsMessageKey = false,
-        Some(routes.SchemeNameController.onPageLoad(CheckMode).url),
-        "messages__visuallyhidden__schemeName"
+        Some(Link("site.change", routes.SchemeNameController.onPageLoad(CheckMode).url,
+          Some(messages("messages__visuallyhidden__schemeName"))))
       ),
       AnswerRow(
         messages("schemeType.checkYourAnswersLabel", "Test Scheme"),
         Seq(s"messages__scheme_type_${SchemeType.SingleTrust}"),
         answerIsMessageKey = true,
-        Some(routes.SchemeTypeController.onPageLoad(CheckMode).url),
-        messages("messages__visuallyhidden__schemeType", "Test Scheme")
+        Some(Link("site.change", routes.SchemeTypeController.onPageLoad(CheckMode).url,
+          Some(messages("messages__visuallyhidden__schemeType", "Test Scheme"))))
       ),
       AnswerRow(
         messages("haveAnyTrustees.checkYourAnswersLabel", "Test Scheme"),
         Seq("site.yes"),
         answerIsMessageKey = true,
-        Some(routes.HaveAnyTrusteesController.onPageLoad(CheckMode).url),
-        messages("messages__visuallyhidden__haveAnyTrustees", "Test Scheme")
+        Some(Link("site.change", routes.HaveAnyTrusteesController.onPageLoad(CheckMode).url,
+          Some(messages("messages__visuallyhidden__haveAnyTrustees", "Test Scheme"))))
       ),
       AnswerRow(
         messages("schemeEstablishedCountry.hns_checkYourAnswersLabel", "Test Scheme"),
         Seq("Country of GB"),
         answerIsMessageKey = false,
-        Some(routes.EstablishedCountryController.onPageLoad(CheckMode).url),
-        messages("messages__visuallyhidden__hns_schemeEstablishedCountry", "Test Scheme")
+        Some(Link("site.change", routes.EstablishedCountryController.onPageLoad(CheckMode).url,
+          Some(messages("messages__visuallyhidden__hns_schemeEstablishedCountry", "Test Scheme"))))
       ),
       AnswerRow(
         "messages__workingKnowledge__title",
         Seq("site.no"),
         answerIsMessageKey = true,
-        Some(routes.WorkingKnowledgeController.onPageLoad(CheckMode).url),
-        "messages__visuallyhidden__declarationDuties"
+        Some(Link("site.change", routes.WorkingKnowledgeController.onPageLoad(CheckMode).url,
+          Some("messages__visuallyhidden__declarationDuties")))
       )
     )
   )

@@ -17,7 +17,6 @@
 package controllers.address
 
 import config.FrontendAppConfig
-import connectors.UserAnswersCacheConnector
 import controllers.Retrievals
 import identifiers.TypedIdentifier
 import models.requests.DataRequest
@@ -25,8 +24,9 @@ import models.{AddressYears, Mode}
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{AnyContent, Result}
+import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import utils.{Navigator}
+import utils.{Navigator, UserAnswers}
 import viewmodels.address.AddressYearsViewModel
 import views.html.address.addressYears
 
@@ -38,7 +38,7 @@ trait AddressYearsController extends FrontendController with Retrievals with I18
 
   protected def appConfig: FrontendAppConfig
 
-  protected def cacheConnector: UserAnswersCacheConnector
+  protected def userAnswersService: UserAnswersService
 
   protected def navigator: Navigator
 
@@ -61,9 +61,9 @@ trait AddressYearsController extends FrontendController with Retrievals with I18
       formWithErrors =>
         Future.successful(BadRequest(addressYears(appConfig, formWithErrors, viewmodel, existingSchemeName))),
       addressYears =>
-        cacheConnector.save(id, addressYears).map {
+        userAnswersService.save(mode, viewmodel.srn, id, addressYears).map {
           answers =>
-            Redirect(navigator.nextPage(id, mode, answers))
+            Redirect(navigator.nextPage(id, mode, UserAnswers(answers)))
         }
     )
   }

@@ -27,6 +27,7 @@ import models.{Index, Mode, Paye}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
+import services.UserAnswersService
 import utils.Navigator
 import utils.annotations.TrusteesCompany
 import viewmodels.{Message, PayeViewModel}
@@ -34,7 +35,7 @@ import viewmodels.{Message, PayeViewModel}
 class CompanyPayeController @Inject()(
                                        val appConfig: FrontendAppConfig,
                                        override val messagesApi: MessagesApi,
-                                       override val cacheConnector: UserAnswersCacheConnector,
+                                       override val userAnswersService: UserAnswersService,
                                        @TrusteesCompany val navigator: Navigator,
                                        authenticate: AuthAction,
                                        getData: DataRetrievalAction,

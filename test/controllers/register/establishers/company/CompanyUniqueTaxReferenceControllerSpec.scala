@@ -16,7 +16,7 @@
 
 package controllers.register.establishers.company
 
-import connectors.FakeUserAnswersCacheConnector
+import services.FakeUserAnswersService
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.register.establishers.company.CompanyUniqueTaxReferenceFormProvider
@@ -59,7 +59,7 @@ class CompanyUniqueTaxReferenceControllerSpec extends ControllerSpecBase {
     new CompanyUniqueTaxReferenceController(
       frontendAppConfig,
       messagesApi,
-      FakeUserAnswersCacheConnector,
+      FakeUserAnswersService,
       new FakeNavigator(desiredRoute = onwardRoute),
       FakeAuthAction,
       dataRetrievalAction,
@@ -91,13 +91,6 @@ class CompanyUniqueTaxReferenceControllerSpec extends ControllerSpecBase {
       val result = controller(getRelevantData).onPageLoad(NormalMode, None, firstIndex)(fakeRequest)
 
       contentAsString(result) mustBe viewAsString(form.fill(UniqueTaxReference.Yes("1234567891")))
-    }
-
-    "redirect to Session Expired page when the index is not valid" in {
-      val getRelevantData = new FakeDataRetrievalAction(Some(validData))
-      val result = controller(getRelevantData).onPageLoad(NormalMode, None, Index(2))(fakeRequest)
-      status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
     }
 
     "redirect to the next page when valid data is submitted" in {

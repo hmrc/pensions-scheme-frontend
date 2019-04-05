@@ -40,7 +40,6 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
                                            authenticate: AuthAction,
                                            getData: DataRetrievalAction,
                                            requiredData: DataRequiredAction,
-                                           checkYourAnswersFactory: CheckYourAnswersFactory,
                                            implicit val countryOptions: CountryOptions,
                                            @TrusteesCompany navigator: Navigator,
                                            sectionComplete: SectionComplete

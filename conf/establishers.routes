@@ -65,10 +65,10 @@ POST       /:index/individual/change/establishers-address-results               
 GET        /:index/individual/:mode/establishers-address-results/:srn                                       controllers.register.establishers.individual.AddressListController.onPageLoad(mode: Mode, index: Index, srn: Option[String])
 POST       /:index/individual/:mode/establishers-address-results/:srn                                       controllers.register.establishers.individual.AddressListController.onSubmit(mode: Mode, index: Index, srn: Option[String])
 
-GET        /:index/what-kind-of-establisher                                                                 controllers.register.establishers.EstablisherKindController.onPageLoad(mode: Mode = NormalMode,index:Index)
-POST       /:index/what-kind-of-establisher                                                                 controllers.register.establishers.EstablisherKindController.onSubmit(mode: Mode = NormalMode,index:Index)
-GET        /:index/:mode/kind-of-establisher                                                                controllers.register.establishers.EstablisherKindController.onPageLoad(mode: Mode,index:Index)
-POST       /:index/:mode/kind-of-establisher                                                                controllers.register.establishers.EstablisherKindController.onSubmit(mode: Mode,index:Index)
+GET        /:index/what-kind-of-establisher                                                                 controllers.register.establishers.EstablisherKindController.onPageLoad(mode: Mode = NormalMode,index:Index, srn: Option[String] = None)
+POST       /:index/what-kind-of-establisher                                                                 controllers.register.establishers.EstablisherKindController.onSubmit(mode: Mode = NormalMode,index:Index, srn: Option[String] = None)
+GET        /:index/:mode/kind-of-establisher/:srn                                                                controllers.register.establishers.EstablisherKindController.onPageLoad(mode: Mode,index:Index, srn: Option[String])
+POST       /:index/:mode/kind-of-establisher/:srn                                                                controllers.register.establishers.EstablisherKindController.onSubmit(mode: Mode,index:Index, srn: Option[String])
 
 GET        /:index/individual/contact-details                                                               controllers.register.establishers.individual.ContactDetailsController.onPageLoad(mode: Mode = NormalMode, index: Index, srn: Option[String] = None)
 POST       /:index/individual/contact-details                                                               controllers.register.establishers.individual.ContactDetailsController.onSubmit(mode: Mode = NormalMode, index: Index, srn: Option[String] = None)

@@ -16,7 +16,7 @@
 
 package controllers.register.establishers.company.director
 
-import connectors.FakeUserAnswersCacheConnector
+import services.FakeUserAnswersService
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.register.establishers.company.director.DirectorUniqueTaxReferenceFormProvider
@@ -93,7 +93,7 @@ class DirectorUniqueTaxReferenceControllerSpec extends ControllerSpecBase {
     new DirectorUniqueTaxReferenceController(
       frontendAppConfig,
       messagesApi,
-      FakeUserAnswersCacheConnector,
+      FakeUserAnswersService,
       new FakeNavigator(desiredRoute = onwardRoute),
       FakeAuthAction,
       dataRetrievalAction,
@@ -173,15 +173,6 @@ class DirectorUniqueTaxReferenceControllerSpec extends ControllerSpecBase {
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
     }
 
-    "redirect to Session Expired for a GET if no director data is found" in {
-      val getRelevantData = new FakeDataRetrievalAction(Some(validDataNoDirectorDetails))
-      val result = controller(getRelevantData).onPageLoad(NormalMode, establisherIndex, directorIndex, None)(fakeRequest)
-
-      status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
-    }
-
-
     "redirect to Session Expired for a POST if no existing data is found" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "invalid"))
       val result = controller(dontGetAnyData).onSubmit(NormalMode, establisherIndex, directorIndex, None)(postRequest)
@@ -190,13 +181,6 @@ class DirectorUniqueTaxReferenceControllerSpec extends ControllerSpecBase {
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
     }
 
-    "redirect to Session Expired for a POST if no director data is found" in {
-      val getRelevantData = new FakeDataRetrievalAction(Some(validDataNoDirectorDetails))
-      val result = controller(getRelevantData).onSubmit(NormalMode, establisherIndex, directorIndex, None)(fakeRequest)
-
-      status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
-    }
   }
 }
 

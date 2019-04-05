@@ -21,6 +21,7 @@ import identifiers.register.establishers.{EstablishersId, IsEstablisherCompleteI
 import models.AddressYears
 import play.api.libs.json._
 import utils.UserAnswers
+import utils.checkyouranswers.{AddressYearsCYA, CheckYourAnswers}
 
 case class AddressYearsId(index: Int) extends TypedIdentifier[AddressYears] {
 
@@ -42,4 +43,7 @@ case class AddressYearsId(index: Int) extends TypedIdentifier[AddressYears] {
 
 object AddressYearsId {
   override lazy val toString: String = "addressYears"
+  implicit val cya: CheckYourAnswers[AddressYearsId] = AddressYearsCYA[AddressYearsId](
+    label = "messages__establisher_individual_address_years_cya_label",
+    changeAddressYears = "messages__visuallyhidden__establisher__address_years")()
 }

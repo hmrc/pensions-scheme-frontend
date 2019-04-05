@@ -16,7 +16,7 @@
 
 package controllers.register.trustees.company
 
-import connectors.FakeUserAnswersCacheConnector
+import services.FakeUserAnswersService
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.CompanyRegistrationNumberFormProvider
@@ -65,7 +65,7 @@ class CompanyRegistrationNumberControllerSpec extends ControllerSpecBase {
     new CompanyRegistrationNumberController(
       frontendAppConfig,
       messagesApi,
-      FakeUserAnswersCacheConnector,
+      FakeUserAnswersService,
       new FakeNavigator(desiredRoute = onwardRoute),
       FakeAuthAction,
       dataRetrievalAction,

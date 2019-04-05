@@ -16,6 +16,7 @@
 
 package viewmodels
 
+import models.Link
 import play.api.libs.json.{Json, OFormat}
 
 case class SchemeDetailsTaskList(beforeYouStart: SchemeDetailsTaskListSection,
@@ -43,8 +44,3 @@ object SchemeDetailsTaskListSection {
   implicit val formats: OFormat[SchemeDetailsTaskListSection] = Json.format[SchemeDetailsTaskListSection]
 }
 
-case class Link(text: String, target: String)
-
-object Link {
-  implicit val formats: OFormat[Link] = Json.format[Link]
-}

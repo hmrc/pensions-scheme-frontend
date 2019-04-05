@@ -17,9 +17,9 @@
 package utils
 
 import identifiers.{DeclarationDutiesId, IsAboutBenefitsAndInsuranceCompleteId, IsAboutMembersCompleteId, SchemeNameId}
-import models.NormalMode
+import models.{Link, NormalMode}
 import utils.behaviours.HsTaskListHelperBehaviour
-import viewmodels.{Link, SchemeDetailsTaskListSection}
+import viewmodels.SchemeDetailsTaskListSection
 
 class HsTaskListHelperVariationsSpec extends HsTaskListHelperBehaviour {
   "h1" must {
