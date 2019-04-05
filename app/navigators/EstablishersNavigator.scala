@@ -32,7 +32,7 @@ class EstablishersNavigator @Inject()(val dataCacheConnector: UserAnswersCacheCo
       case AddEstablisherId(value) => addEstablisherRoutes(value, from.userAnswers)
       case EstablisherKindId(index) => establisherKindRoutes(index, from.userAnswers)
       case ConfirmDeleteEstablisherId =>
-        NavigateTo.save(controllers.register.establishers.routes.AddEstablisherController.onPageLoad(NormalMode))
+        NavigateTo.save(controllers.register.establishers.routes.AddEstablisherController.onPageLoad(NormalMode, None))
       case _ => None
     }
 

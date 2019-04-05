@@ -48,7 +48,7 @@ class BenefitsSecuredByInsuranceController @Inject()(appConfig: FrontendAppConfi
 
   val postCall: (Mode,Option[String]) => Call = routes.BenefitsSecuredByInsuranceController.onSubmit
 
-  def onPageLoad(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onPageLoad(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
       val preparedForm = request.userAnswers.get(BenefitsSecuredByInsuranceId) match {
         case None => form
@@ -57,7 +57,7 @@ class BenefitsSecuredByInsuranceController @Inject()(appConfig: FrontendAppConfi
       Future.successful(Ok(benefitsSecuredByInsurance(appConfig, preparedForm, mode, existingSchemeName, postCall(mode, srn))))
   }
 
-  def onSubmit(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) =>

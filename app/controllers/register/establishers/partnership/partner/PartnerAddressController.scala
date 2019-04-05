@@ -56,7 +56,7 @@ class PartnerAddressController @Inject()(
   protected val form: Form[Address] = formProvider()
 
   def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData andThen requireData).async {
+    (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
       viewmodel(establisherIndex, partnerIndex, mode, srn).retrieve.right.map {
         vm =>
@@ -65,7 +65,7 @@ class PartnerAddressController @Inject()(
   }
 
   def onSubmit(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData andThen requireData).async {
+    (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
       viewmodel(establisherIndex, partnerIndex, mode, srn).retrieve.right.map {
         vm =>

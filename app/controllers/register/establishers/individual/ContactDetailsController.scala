@@ -42,14 +42,14 @@ class ContactDetailsController @Inject()(
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
       retrieveEstablisherName(index) { establisherName =>
           get(ContactDetailsId(index), form, viewmodel(mode, index, establisherName, srn))
       }
   }
 
-  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
       retrieveEstablisherName(index) { establisherName =>
           post(ContactDetailsId(index), mode, form, viewmodel(mode, index, establisherName, srn))

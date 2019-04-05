@@ -33,7 +33,7 @@ class WhatYouWillNeedBankDetailsController @Inject()(appConfig: FrontendAppConfi
                                                      getData: DataRetrievalAction
                                                     ) extends FrontendController with I18nSupport with Retrievals {
 
-  def onPageLoad: Action[AnyContent] = (authenticate andThen getData).async {
+  def onPageLoad: Action[AnyContent] = (authenticate andThen getData()).async {
     implicit request =>
       Future.successful(Ok(whatYouWillNeedBankDetails(appConfig, existingSchemeName)))
   }

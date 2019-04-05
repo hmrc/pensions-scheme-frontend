@@ -70,7 +70,7 @@ class PartnerPreviousAddressController @Inject()(
     }
 
   def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData andThen requireData).async {
+    (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
       viewmodel(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn).retrieve.right.map {
         vm =>
@@ -79,7 +79,7 @@ class PartnerPreviousAddressController @Inject()(
   }
 
   def onSubmit(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData andThen requireData).async {
+    (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
       viewmodel(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn).retrieve.right.map {
         vm =>

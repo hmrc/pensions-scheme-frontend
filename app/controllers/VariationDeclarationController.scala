@@ -22,7 +22,7 @@ import controllers.actions._
 import forms.register.DeclarationFormProvider
 import identifiers.{SchemeNameId, SchemeTypeId, VariationDeclarationId}
 import javax.inject.Inject
-import models.UpdateMode
+import models.{Mode, NormalMode, UpdateMode}
 import models.register.SchemeType.MasterTrust
 import models.requests.DataRequest
 import play.api.data.Form
@@ -49,12 +49,12 @@ class VariationDeclarationController @Inject()(
 
   private val form = formProvider()
 
-  def onPageLoad: Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onPageLoad(mode: Mode = NormalMode): Action[AnyContent] = (authenticate andThen getData(mode) andThen requireData).async {
     implicit request =>
         Future.successful(Ok(variationDeclaration(appConfig, form, request.userAnswers.get(SchemeNameId))))
   }
 
-  def onSubmit: Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode = NormalMode): Action[AnyContent] = (authenticate andThen getData(mode) andThen requireData).async {
     implicit request =>
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) =>
