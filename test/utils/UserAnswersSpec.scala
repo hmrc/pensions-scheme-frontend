@@ -17,53 +17,43 @@
 package utils
 
 import identifiers.register.establishers.company.director.{DirectorDetailsId, IsDirectorCompleteId}
-import identifiers.register.establishers.company.{CompanyDetailsId => EstablisherCompanyDetailsId}
+import identifiers.register.establishers.company.{CompanyDetailsId => EstablisherCompanyDetailsId, CompanyPayeId => EstablisherCompanyPayeId, CompanyVatId => EstablisherCompanyVatId}
 import identifiers.register.establishers.individual.EstablisherDetailsId
 import identifiers.register.establishers.partnership.PartnershipDetailsId
 import identifiers.register.establishers.{EstablisherKindId, EstablishersId, IsEstablisherCompleteId}
-import identifiers.register.trustees.company.{CompanyDetailsId => TrusteeCompanyDetailsId}
+import identifiers.register.trustees.company.{CompanyPayeId, CompanyVatId, CompanyDetailsId => TrusteeCompanyDetailsId}
 import identifiers.register.trustees.individual.TrusteeDetailsId
 import identifiers.register.trustees.{IsTrusteeCompleteId, TrusteeKindId, TrusteesId, partnership}
+import models._
 import models.person.PersonDetails
 import models.register._
 import models.register.establishers.EstablisherKind
 import models.register.establishers.EstablisherKind.{Company, Indivdual, Partnership}
 import models.register.trustees.TrusteeKind
-import models.{CompanyDetails, PartnershipDetails, details}
 import org.joda.time.LocalDate
 import org.scalatest.{MustMatchers, OptionValues, WordSpec}
 import play.api.libs.json._
 
-class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues {
+class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues with Enumerable.Implicits {
 
   import UserAnswersSpec._
 
   ".allEstablishers" must {
     "return a sequence of establishers names, edit links and delete links" in {
-      val json = Json.obj(
-        EstablishersId.toString -> Json.arr(
-          Json.obj(
-            EstablisherCompanyDetailsId.toString ->
-              CompanyDetails("my company", None, None),
-            IsEstablisherCompleteId.toString -> true
-          ),
-          Json.obj(
-            EstablisherDetailsId.toString ->
-              PersonDetails("my", None, "name", LocalDate.now),
-            IsEstablisherCompleteId.toString -> false
-          ),
-          Json.obj(
-            PartnershipDetailsId.toString ->
-              PartnershipDetails("my partnership name"),
-            IsEstablisherCompleteId.toString -> false
-          ),
-          Json.obj(
-            EstablisherKindId.toString ->
-              EstablisherKind.Company.toString
-          )
-        )
-      )
-      val userAnswers = UserAnswers(json)
+      val userAnswers = UserAnswers().set(
+        EstablisherCompanyDetailsId(0))(CompanyDetails("my company")).flatMap(
+        _.set(IsEstablisherCompleteId(0))(true).flatMap(
+          _.set(EstablisherKindId(0))(EstablisherKind.Company).flatMap(
+            _.set(EstablisherCompanyVatId(0))(Vat.No).flatMap(
+              _.set(EstablisherCompanyPayeId(0))(Paye.No).flatMap(
+                _.set(EstablisherDetailsId(1))(PersonDetails("my", None, "name", LocalDate.now)).flatMap(
+                  _.set(IsEstablisherCompleteId(1))(false).flatMap(
+                    _.set(EstablisherKindId(1))(EstablisherKind.Indivdual).flatMap(
+                      _.set(PartnershipDetailsId(2))(PartnershipDetails("my partnership name", false)).flatMap(
+                        _.set(EstablisherKindId(2))(EstablisherKind.Partnership).flatMap(
+                          _.set(IsEstablisherCompleteId(2))(false).flatMap(
+                            _.set(EstablisherKindId(3))(EstablisherKind.Company)
+                          ))))))))))).asOpt.value
 
       val allEstablisherEntities: Seq[Establisher[_]] = Seq(
         establisherEntity("my company", 0, Company, isComplete = true),
@@ -107,7 +97,7 @@ class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues {
           ),
           Json.obj(
             EstablisherCompanyDetailsId.toString ->
-              CompanyDetails("my company 2", None, None, isDeleted = true)
+              CompanyDetails("my company 2", isDeleted = true)
           ),
           Json.obj(
             EstablisherDetailsId.toString ->
@@ -139,8 +129,10 @@ class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues {
           ),
           Json.obj(
             TrusteeCompanyDetailsId.toString ->
-              CompanyDetails("My Company", None, None),
-            IsTrusteeCompleteId.toString -> false
+              CompanyDetails("My Company"),
+            CompanyVatId.toString -> Vat.No,
+            CompanyPayeId.toString -> Paye.No,
+            IsTrusteeCompleteId.toString -> true
           ),
           Json.obj(
             partnership.PartnershipDetailsId.toString ->
@@ -154,7 +146,7 @@ class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues {
 
       val allTrusteesEntities: Seq[Trustee[_]] = Seq(
         trusteeEntity("First Last", 0, TrusteeKind.Individual, isComplete = true),
-        trusteeEntity("My Company", 1, TrusteeKind.Company),
+        trusteeEntity("My Company", 1, TrusteeKind.Company, isComplete = true),
         trusteeEntity("My Partnership", 2, TrusteeKind.Partnership),
         TrusteeSkeletonEntity(TrusteeKindId(3))
       )
@@ -195,7 +187,7 @@ class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues {
             TrusteeDetailsId.toString -> PersonDetails("First", None, "Last", LocalDate.now, isDeleted = true)
           ),
           Json.obj(
-            identifiers.register.trustees.company.CompanyDetailsId.toString -> CompanyDetails("My Company", None, None)
+            identifiers.register.trustees.company.CompanyDetailsId.toString -> CompanyDetails("My Company")
           ),
           Json.obj(
             TrusteeKindId.toString -> TrusteeKind.Company.toString
@@ -256,7 +248,7 @@ class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues {
         EstablishersId.toString -> Json.arr(
           Json.obj(
             EstablisherCompanyDetailsId.toString ->
-              CompanyDetails("my company", None, None)
+              CompanyDetails("my company")
           ),
           Json.obj(
             EstablisherDetailsId.toString ->
@@ -280,7 +272,7 @@ class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues {
     "return the count of all trustees irrespective of whether they are deleted or not" in {
       val userAnswers = UserAnswers()
         .set(TrusteeDetailsId(0))(PersonDetails("First", None, "Last", LocalDate.now, isDeleted = true))
-        .flatMap(_.set(identifiers.register.trustees.company.CompanyDetailsId(1))(CompanyDetails("My Company", None, None))).get
+        .flatMap(_.set(identifiers.register.trustees.company.CompanyDetailsId(1))(CompanyDetails("My Company"))).get
 
       val result = userAnswers.trusteesCount
       result mustEqual 2
@@ -440,7 +432,7 @@ object UserAnswersSpec {
     )
   )
 
-  private val company = CompanyDetails("test-company-name", None, None)
+  private val company = CompanyDetails("test-company-name")
   private val person = PersonDetails("test-first-name", None, "test-last-name", LocalDate.now())
   private val partnershipDetails = PartnershipDetails("test-first-name")
 }

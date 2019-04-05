@@ -39,9 +39,7 @@ class AddEstablisherViewSpec extends QuestionViewBehaviours[Option[Boolean]] wit
 
 
   private val companyDetails = CompanyDetails(
-    "Establisher Company",
-    None,
-    None
+    "Establisher Company"
   )
 
   private val individualDetails = PersonDetails(

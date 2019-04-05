@@ -69,7 +69,7 @@ class CompanyPostCodeLookupControllerSpec extends ControllerSpecBase with Mockit
   val companyName: String = "test company name"
 
 
-  val company = CompanyDetails(companyName, None, None)
+  val company = CompanyDetails(companyName)
 
   lazy val viewModel = PostcodeLookupViewModel(
     postCall = routes.CompanyPostCodeLookupController.onSubmit(NormalMode, None, firstIndex),

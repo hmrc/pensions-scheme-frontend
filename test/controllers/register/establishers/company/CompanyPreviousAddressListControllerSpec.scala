@@ -60,7 +60,7 @@ class CompanyPreviousAddressListControllerSpec extends ControllerSpecBase {
   val validData: JsObject = Json.obj(
     EstablishersId.toString -> Json.arr(
       Json.obj(
-        "companyDetails" -> CompanyDetails(companyName, None, None),
+        "companyDetails" -> CompanyDetails(companyName),
         CompanyPreviousAddressPostcodeLookupId.toString -> addresses
       )
     )

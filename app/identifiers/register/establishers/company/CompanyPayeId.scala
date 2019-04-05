@@ -19,7 +19,9 @@ package identifiers.register.establishers.company
 import identifiers._
 import identifiers.register.establishers.EstablishersId
 import models.Paye
-import play.api.libs.json.JsPath
+import play.api.libs.json.{JsPath, Reads}
+import utils.checkyouranswers.CheckYourAnswers
+import utils.checkyouranswers.CheckYourAnswers.PayeCYA
 
 case class CompanyPayeId(index: Int) extends TypedIdentifier[Paye] {
   override def path: JsPath = EstablishersId(index).path \ CompanyPayeId.toString
@@ -27,6 +29,11 @@ case class CompanyPayeId(index: Int) extends TypedIdentifier[Paye] {
 
 object CompanyPayeId {
   override def toString: String = "companyPaye"
+
+  implicit def cya(implicit r: Reads[Paye]): CheckYourAnswers[CompanyPayeId] =
+    PayeCYA(labelYesNo = Some("messages__company__cya__paye_yes_no"),
+      hiddenLabelYesNo = "messages__visuallyhidden__establisher__paye_yes_no",
+      hiddenLabelPaye = "messages__visuallyhidden__establisher__paye_number")()
 }
 
 

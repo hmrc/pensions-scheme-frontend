@@ -53,7 +53,7 @@ class CompanyPreviousAddressControllerSpec extends ControllerSpecBase with Mocki
   val firstIndex = Index(0)
 
   val formProvider = new AddressFormProvider(FakeCountryOptions())
-  val companyDetails = CompanyDetails("companyName", None, None)
+  val companyDetails = CompanyDetails("companyName")
 
   val fakeAuditService = new StubSuccessfulAuditService()
 

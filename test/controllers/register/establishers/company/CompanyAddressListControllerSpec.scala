@@ -36,7 +36,7 @@ import views.html.address.addressList
 
 class CompanyAddressListControllerSpec extends ControllerSpecBase with CSRFRequest with OptionValues {
 
-  private val companyDetails = CompanyDetails("test company name", None, None)
+  private val companyDetails = CompanyDetails("test company name")
 
   private val addresses = Seq(
     TolerantAddress(
