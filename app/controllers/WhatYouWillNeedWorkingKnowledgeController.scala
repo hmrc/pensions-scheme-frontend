@@ -34,7 +34,7 @@ class WhatYouWillNeedWorkingKnowledgeController @Inject()(appConfig: FrontendApp
                                                           getData: DataRetrievalAction
                                                          ) extends FrontendController with I18nSupport with Retrievals {
 
-  def onPageLoad: Action[AnyContent] = (authenticate andThen getData).async {
+  def onPageLoad: Action[AnyContent] = (authenticate andThen getData()).async {
     implicit request =>
       Future.successful(Ok(whatYouWillNeedWorkingKnowledge(appConfig, existingSchemeName)))
   }

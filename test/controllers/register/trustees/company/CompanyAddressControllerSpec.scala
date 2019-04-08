@@ -19,7 +19,6 @@ package controllers.register.trustees.company
 import audit.testdoubles.StubSuccessfulAuditService
 import audit.{AddressAction, AddressEvent, AuditService}
 import config.FrontendAppConfig
-import connectors.{FakeUserAnswersCacheConnector, UserAnswersCacheConnector}
 import controllers.actions._
 import controllers.behaviours.ControllerBehaviours
 import identifiers.register.trustees.TrusteesId
@@ -41,7 +40,7 @@ class CompanyAddressControllerSpec extends ControllerBehaviours {
 
   val firstIndex = Index(0)
 
-  val companyDetails = CompanyDetails("companyName", None, None)
+  val companyDetails = CompanyDetails("companyName")
 
   val countryOptions = new CountryOptions(
     Seq(InputOption("GB", "GB"))

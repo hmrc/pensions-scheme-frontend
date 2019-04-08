@@ -62,7 +62,7 @@ object RegisterNavigatorSpec extends OptionValues{
   private val emptyAnswers = UserAnswers(Json.obj())
   private val ukBankAccountTrue = UserAnswers().ukBankAccount(true)
   private val ukBankAccountFalse = UserAnswers().ukBankAccount(false)
-  private val hasCompanies = UserAnswers().establisherCompanyDetails(0, CompanyDetails("test-company-name", None, None))
+  private val hasCompanies = UserAnswers().establisherCompanyDetails(0, CompanyDetails("test-company-name"))
   private val hasPartnership = UserAnswers().establisherPartnershipDetails(0, models.PartnershipDetails("test-company-name"))
   private val hasEstablishers = hasCompanies.schemeName("test-scheme-name").schemeType(SchemeType.GroupLifeDeath)
   private val savedLastPage = UserAnswers().lastPage(LastPage(lastPage.method, lastPage.url))
@@ -70,8 +70,6 @@ object RegisterNavigatorSpec extends OptionValues{
   private val beforeYouStartInProgress = UserAnswers().set(IsBeforeYouStartCompleteId)(false).asOpt.value
 
   private def schemeSuccess = controllers.register.routes.SchemeSuccessController.onPageLoad()
-
-  private def whatYouWillNeed = controllers.routes.WhatYouWillNeedController.onPageLoad()
 
   private def beforeYouStart = controllers.routes.BeforeYouStartController.onPageLoad()
 

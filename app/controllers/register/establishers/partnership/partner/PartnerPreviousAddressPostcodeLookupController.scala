@@ -17,7 +17,7 @@
 package controllers.register.establishers.partnership.partner
 
 import config.FrontendAppConfig
-import connectors.{AddressLookupConnector, UserAnswersCacheConnector}
+import connectors.AddressLookupConnector
 import controllers.actions.{AuthAction, DataRequiredAction, DataRetrievalAction}
 import controllers.address.PostcodeLookupController
 import forms.address.PostCodeLookupFormProvider
@@ -27,6 +27,7 @@ import models.{Index, Mode}
 import play.api.data.Form
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent}
+import services.UserAnswersService
 import utils.Navigator
 import utils.annotations.EstablishersPartner
 import viewmodels.Message
@@ -35,7 +36,7 @@ import viewmodels.address.PostcodeLookupViewModel
 class PartnerPreviousAddressPostcodeLookupController @Inject()(
                                                                 override val appConfig: FrontendAppConfig,
                                                                 override val messagesApi: MessagesApi,
-                                                                override val cacheConnector: UserAnswersCacheConnector,
+                                                                val userAnswersService: UserAnswersService,
                                                                 override val addressLookupConnector: AddressLookupConnector,
                                                                 @EstablishersPartner override val navigator: Navigator,
                                                                 authenticate: AuthAction,
@@ -61,7 +62,7 @@ class PartnerPreviousAddressPostcodeLookupController @Inject()(
   }
 
   def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData andThen requireData).async {
+    (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
       viewmodel(mode, establisherIndex, partnerIndex, srn).retrieve.right.map(
         vm =>
@@ -70,7 +71,7 @@ class PartnerPreviousAddressPostcodeLookupController @Inject()(
   }
 
   def onSubmit(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData andThen requireData).async {
+    (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
       viewmodel(mode, establisherIndex, partnerIndex, srn).retrieve.right.map(
         vm =>

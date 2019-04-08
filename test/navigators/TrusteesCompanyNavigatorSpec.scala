@@ -37,7 +37,9 @@ class TrusteesCompanyNavigatorSpec extends SpecBase with MustMatchers with Navig
   private def routesTrusteeCompany: TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = Table(
 
     ("Id", "UserAnswers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (CheckMode)", "Save (CM)"),
-    (CompanyDetailsId(0), emptyAnswers, companyRegistrationNumber(NormalMode), true, Some(checkYourAnswers), true),
+    (CompanyDetailsId(0), emptyAnswers, companyVat(NormalMode), true, Some(checkYourAnswers), true),
+    (CompanyVatId(0), emptyAnswers, companyPaye(NormalMode), true, Some(checkYourAnswers), true),
+    (CompanyPayeId(0), emptyAnswers, companyRegistrationNumber(NormalMode), true, Some(checkYourAnswers), true),
     (CompanyRegistrationNumberId(0), emptyAnswers, companyUTR(NormalMode), true, Some(checkYourAnswers), true),
     (CompanyUniqueTaxReferenceId(0), emptyAnswers, companyPostCodeLookup(NormalMode), true, Some(checkYourAnswers), true),
     (CompanyPostcodeLookupId(0), emptyAnswers, companyAddressList(NormalMode), true, Some(companyAddressList(CheckMode)), true),
@@ -72,6 +74,12 @@ object TrusteesCompanyNavigatorSpec extends OptionValues {
 
   private def companyRegistrationNumber(mode: Mode): Call =
     controllers.register.trustees.company.routes.CompanyRegistrationNumberController.onPageLoad(mode, 0, None)
+
+  private def companyVat(mode: Mode): Call =
+    controllers.register.trustees.company.routes.CompanyVatController.onPageLoad(mode, 0, None)
+
+  private def companyPaye(mode: Mode): Call =
+    controllers.register.trustees.company.routes.CompanyPayeController.onPageLoad(mode, 0, None)
 
   private def companyUTR(mode: Mode): Call =
     controllers.register.trustees.company.routes.CompanyUniqueTaxReferenceController.onPageLoad(mode, 0, None)

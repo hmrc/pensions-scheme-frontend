@@ -27,8 +27,9 @@ import models.{Index, Mode, Nino}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
+import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import utils.{Navigator}
+import utils.{Navigator, UserAnswers}
 import utils.annotations.TrusteesIndividual
 import views.html.register.trustees.individual.trusteeNino
 
@@ -40,12 +41,12 @@ class TrusteeNinoController @Inject()(appConfig: FrontendAppConfig,
                                       getData: DataRetrievalAction,
                                       requireData: DataRequiredAction,
                                       @TrusteesIndividual navigator: Navigator,
-                                      dataCacheConnector: UserAnswersCacheConnector) (implicit val ec: ExecutionContext)
+                                      userAnswersService: UserAnswersService) (implicit val ec: ExecutionContext)
   extends FrontendController with I18nSupport with Retrievals {
 
   private val form: Form[Nino] = new TrusteeNinoFormProvider()()
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
       TrusteeDetailsId(index).retrieve.right.map { trusteeDetails =>
         val filledForm = request.userAnswers.get(TrusteeNinoId(index)).fold(form)(form.fill)
@@ -54,15 +55,15 @@ class TrusteeNinoController @Inject()(appConfig: FrontendAppConfig,
       }
   }
 
-  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
       form.bindFromRequest().fold(
         errors => TrusteeDetailsId(index).retrieve.right.map { trusteeDetails =>
           val submitUrl = controllers.register.trustees.individual.routes.TrusteeNinoController.onSubmit(mode, index, srn)
           Future.successful(BadRequest(trusteeNino(appConfig, errors, mode, index, existingSchemeName, submitUrl)))
         },
-        nino => dataCacheConnector.save(TrusteeNinoId(index), nino).map { userAnswers =>
-          Redirect(navigator.nextPage(TrusteeNinoId(index), mode, userAnswers))
+        nino => userAnswersService.save(mode, srn, TrusteeNinoId(index), nino).map { answers =>
+          Redirect(navigator.nextPage(TrusteeNinoId(index), mode, UserAnswers(answers)))
         }
       )
   }

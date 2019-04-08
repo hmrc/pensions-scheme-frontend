@@ -44,33 +44,34 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
                                            @EstablishersIndividual navigator: Navigator)(implicit val ec: ExecutionContext)
   extends FrontendController with Retrievals with I18nSupport {
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData andThen requiredData).async {
+  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requiredData).async {
     implicit request =>
 
       val sections = Seq(
         AnswerSection(None,
           EstablisherDetailsId(index).row(
-            controllers.register.establishers.individual.routes.EstablisherDetailsController.onPageLoad(CheckMode, index, srn).url) ++
+            controllers.register.establishers.individual.routes.EstablisherDetailsController.onPageLoad(CheckMode, index, srn).url, mode) ++
             EstablisherNinoId(index).row(
-              controllers.register.establishers.individual.routes.EstablisherNinoController.onPageLoad(CheckMode, index, srn).url) ++
+              controllers.register.establishers.individual.routes.EstablisherNinoController.onPageLoad(CheckMode, index, srn).url, mode) ++
             UniqueTaxReferenceId(index).row(
-              routes.UniqueTaxReferenceController.onPageLoad(CheckMode, Index(index), srn).url) ++
+              routes.UniqueTaxReferenceController.onPageLoad(CheckMode, Index(index), srn).url, mode) ++
             AddressId(index).row(
-              controllers.register.establishers.individual.routes.AddressController.onPageLoad(CheckMode, index, srn).url) ++
+              controllers.register.establishers.individual.routes.AddressController.onPageLoad(CheckMode, index, srn).url, mode) ++
             AddressYearsId(index).row(
-              controllers.register.establishers.individual.routes.AddressYearsController.onPageLoad(CheckMode, index, srn).url) ++
+              controllers.register.establishers.individual.routes.AddressYearsController.onPageLoad(CheckMode, index, srn).url, mode) ++
             PreviousAddressId(index).row(
-              controllers.register.establishers.individual.routes.PreviousAddressController.onPageLoad(CheckMode, index, srn).url
+              controllers.register.establishers.individual.routes.PreviousAddressController.onPageLoad(CheckMode, index, srn).url, mode
             ) ++
             ContactDetailsId(index).row(
-              controllers.register.establishers.individual.routes.ContactDetailsController.onPageLoad(CheckMode, index, srn).url
+              controllers.register.establishers.individual.routes.ContactDetailsController.onPageLoad(CheckMode, index, srn).url, mode
             )
         )
       )
-      Future.successful(Ok(check_your_answers(appConfig, sections, routes.CheckYourAnswersController.onSubmit(mode, index, srn), existingSchemeName)))
+      Future.successful(Ok(check_your_answers(
+        appConfig, sections, routes.CheckYourAnswersController.onSubmit(mode, index, srn), existingSchemeName, mode = mode)))
   }
 
-  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData andThen requiredData).async {
+  def onSubmit(mode: Mode,index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requiredData).async {
     implicit request =>
       sectionComplete.setCompleteFlag(request.externalId, IsEstablisherCompleteId(index), request.userAnswers, true).map { _ =>
         Redirect(navigator.nextPage(CheckYourAnswersId, NormalMode, request.userAnswers))

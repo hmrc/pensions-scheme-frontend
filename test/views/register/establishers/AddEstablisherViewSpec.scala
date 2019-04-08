@@ -16,6 +16,7 @@
 
 package views.register.establishers
 
+import controllers.register.establishers.routes
 import forms.register.establishers.AddEstablisherFormProvider
 import identifiers.register.establishers.company.CompanyDetailsId
 import identifiers.register.establishers.individual.EstablisherDetailsId
@@ -34,12 +35,11 @@ class AddEstablisherViewSpec extends QuestionViewBehaviours[Option[Boolean]] wit
   private def companyUrl(index: Int) = controllers.register.establishers.company.routes.CompanyDetailsController.onPageLoad(NormalMode, None, index).url
 
   private val messageKeyPrefix = "establishers__add"
+  private val postCall = routes.AddEstablisherController.onSubmit _
 
 
   private val companyDetails = CompanyDetails(
-    "Establisher Company",
-    None,
-    None
+    "Establisher Company"
   )
 
   private val individualDetails = PersonDetails(
@@ -64,10 +64,10 @@ class AddEstablisherViewSpec extends QuestionViewBehaviours[Option[Boolean]] wit
   val form: Form[Option[Boolean]] = new AddEstablisherFormProvider()(establishers)
 
   private def createView: () => HtmlFormat.Appendable = () =>
-    addEstablisher(frontendAppConfig, form, NormalMode, Seq.empty, None)(fakeRequest, messages)
+    addEstablisher(frontendAppConfig, form, NormalMode, Seq.empty, None, postCall(NormalMode, None))(fakeRequest, messages)
 
   private def createView(establishers: Seq[Establisher[_]] = Seq.empty): () => HtmlFormat.Appendable = () =>
-    addEstablisher(frontendAppConfig, form, NormalMode, establishers, None)(fakeRequest, messages)
+    addEstablisher(frontendAppConfig, form, NormalMode, establishers, None, postCall(NormalMode, None))(fakeRequest, messages)
 
   "AddEstablisher view" must {
     behave like normalPage(createView(), messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"))

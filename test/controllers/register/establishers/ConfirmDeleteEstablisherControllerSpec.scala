@@ -16,7 +16,7 @@
 
 package controllers.register.establishers
 
-import connectors.FakeUserAnswersCacheConnector
+import services.FakeUserAnswersService
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.register.establishers.ConfirmDeleteEstablisherFormProvider
@@ -98,16 +98,16 @@ class ConfirmDeleteEstablisherControllerSpec extends ControllerSpecBase {
       val result = controller(data).onSubmit(NormalMode, establisherIndex, establisherKind, None)(postRequest)
 
       status(result) mustBe SEE_OTHER
-      fakeUserAnswersCacheConnector.verify(EstablisherDetailsId(establisherIndex), personDetails.copy(isDeleted = true))
+      FakeUserAnswersService.verify(EstablisherDetailsId(establisherIndex), personDetails.copy(isDeleted = true))
     }
 
     "dont delete the establisher individual on a POST if selcted NO" in {
-      fakeUserAnswersCacheConnector.reset()
+      FakeUserAnswersService.reset()
       val data = new FakeDataRetrievalAction(Some(testData))
       val result = controller(data).onSubmit(NormalMode, establisherIndex, establisherKind, None)(postRequestForCancle)
 
       status(result) mustBe SEE_OTHER
-      fakeUserAnswersCacheConnector.verifyNot(EstablisherDetailsId(establisherIndex))
+      FakeUserAnswersService.verifyNot(EstablisherDetailsId(establisherIndex))
     }
 
     "delete the establisher company on a POST" in {
@@ -115,16 +115,16 @@ class ConfirmDeleteEstablisherControllerSpec extends ControllerSpecBase {
       val result = controller(data).onSubmit(NormalMode, Index(1), EstablisherKind.Company, None)(postRequest)
 
       status(result) mustBe SEE_OTHER
-      fakeUserAnswersCacheConnector.verify(CompanyDetailsId(Index(1)), companyDetails.copy(isDeleted = true))
+      FakeUserAnswersService.verify(CompanyDetailsId(Index(1)), companyDetails.copy(isDeleted = true))
     }
 
     "dont delete the establisher company on a POST if selected NO" in {
-      fakeUserAnswersCacheConnector.reset()
+      FakeUserAnswersService.reset()
       val data = new FakeDataRetrievalAction(Some(testData))
       val result = controller(data).onSubmit(NormalMode, Index(1), EstablisherKind.Company, None)(postRequestForCancle)
 
       status(result) mustBe SEE_OTHER
-      fakeUserAnswersCacheConnector.verifyNot(CompanyDetailsId(Index(1)))
+      FakeUserAnswersService.verifyNot(CompanyDetailsId(Index(1)))
     }
 
     "delete the establisher partnership on a POST" in {
@@ -132,16 +132,16 @@ class ConfirmDeleteEstablisherControllerSpec extends ControllerSpecBase {
       val result = controller(data).onSubmit(NormalMode, Index(2), EstablisherKind.Partnership, None)(postRequest)
 
       status(result) mustBe SEE_OTHER
-      fakeUserAnswersCacheConnector.verify(PartnershipDetailsId(Index(2)), partnershipDetails.copy(isDeleted = true))
+      FakeUserAnswersService.verify(PartnershipDetailsId(Index(2)), partnershipDetails.copy(isDeleted = true))
     }
 
     "dont delete the establisher partnership on a POST if selected No" in {
-      fakeUserAnswersCacheConnector.reset()
+      FakeUserAnswersService.reset()
       val data = new FakeDataRetrievalAction(Some(testData))
       val result = controller(data).onSubmit(NormalMode, Index(2), EstablisherKind.Partnership, None)(postRequestForCancle)
 
       status(result) mustBe SEE_OTHER
-      fakeUserAnswersCacheConnector.verifyNot(PartnershipDetailsId(Index(2)))
+      FakeUserAnswersService.verifyNot(PartnershipDetailsId(Index(2)))
     }
 
     "redirect to the next page on a successful POST" in {
@@ -179,9 +179,9 @@ object ConfirmDeleteEstablisherControllerSpec extends ControllerSpecBase {
   private val month = LocalDate.now().getMonthOfYear
   private val year = LocalDate.now().getYear - 20
   private lazy val postCall = routes.ConfirmDeleteEstablisherController.onSubmit(NormalMode, establisherIndex, establisherKind, None)
-  private lazy val cancelCall = routes.AddEstablisherController.onPageLoad(NormalMode)
+  private lazy val cancelCall = routes.AddEstablisherController.onPageLoad(NormalMode, None)
   private val personDetails = PersonDetails("John", None, "Doe", new LocalDate(year, month, day))
-  private val companyDetails = CompanyDetails("Test Ltd", None, None)
+  private val companyDetails = CompanyDetails("Test Ltd")
   private val partnershipDetails = PartnershipDetails("Test Partnership Ltd")
   private val deletedEstablisher = personDetails.copy(isDeleted = true)
 
@@ -213,13 +213,11 @@ object ConfirmDeleteEstablisherControllerSpec extends ControllerSpecBase {
 
   private def onwardRoute = controllers.routes.IndexController.onPageLoad()
 
-  private val fakeUserAnswersCacheConnector = FakeUserAnswersCacheConnector
-
   private def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData) =
     new ConfirmDeleteEstablisherController(
       frontendAppConfig,
       messagesApi,
-      fakeUserAnswersCacheConnector,
+      FakeUserAnswersService,
       new FakeNavigator(desiredRoute = onwardRoute),
       FakeAuthAction,
       dataRetrievalAction,

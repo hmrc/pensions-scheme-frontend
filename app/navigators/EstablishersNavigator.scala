@@ -32,7 +32,7 @@ class EstablishersNavigator @Inject()(val dataCacheConnector: UserAnswersCacheCo
       case AddEstablisherId(value) => addEstablisherRoutes(value, from.userAnswers)
       case EstablisherKindId(index) => establisherKindRoutes(index, from.userAnswers)
       case ConfirmDeleteEstablisherId =>
-        NavigateTo.save(controllers.register.establishers.routes.AddEstablisherController.onPageLoad(NormalMode))
+        NavigateTo.save(controllers.register.establishers.routes.AddEstablisherController.onPageLoad(NormalMode, None))
       case _ => None
     }
 
@@ -43,9 +43,9 @@ class EstablishersNavigator @Inject()(val dataCacheConnector: UserAnswersCacheCo
       case Some(false) =>
         NavigateTo.dontSave(controllers.routes.SchemeTaskListController.onPageLoad())
       case Some(true) =>
-        NavigateTo.save(controllers.register.establishers.routes.EstablisherKindController.onPageLoad(NormalMode, answers.establishersCount))
+        NavigateTo.save(controllers.register.establishers.routes.EstablisherKindController.onPageLoad(NormalMode, answers.establishersCount, None))
       case None =>
-        NavigateTo.save(controllers.register.establishers.routes.EstablisherKindController.onPageLoad(NormalMode, answers.establishersCount))
+        NavigateTo.save(controllers.register.establishers.routes.EstablisherKindController.onPageLoad(NormalMode, answers.establishersCount, None))
     }
   }
 

@@ -16,7 +16,7 @@
 
 package controllers.register.trustees.individual
 
-import connectors.FakeUserAnswersCacheConnector
+import services.FakeUserAnswersService
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.register.trustees.individual.UniqueTaxReferenceFormProvider
@@ -52,7 +52,7 @@ class UniqueTaxReferenceControllerSpec extends ControllerSpecBase {
   )
 
   def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryTrustee): UniqueTaxReferenceController =
-    new UniqueTaxReferenceController(frontendAppConfig, messagesApi, FakeUserAnswersCacheConnector,
+    new UniqueTaxReferenceController(frontendAppConfig, messagesApi, FakeUserAnswersService,
       new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
       dataRetrievalAction, new DataRequiredActionImpl, formProvider)
 

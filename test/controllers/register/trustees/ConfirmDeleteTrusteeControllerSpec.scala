@@ -16,7 +16,7 @@
 
 package controllers.register.trustees
 
-import connectors.FakeUserAnswersCacheConnector
+import services.FakeUserAnswersService
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.register.trustees.ConfirmDeleteTrusteeFormProvider
@@ -83,29 +83,29 @@ class ConfirmDeleteTrusteeControllerSpec extends ControllerSpecBase {
       val result = controller(testData(companyId)(companyTrustee)).onSubmit(NormalMode, 0, Company, None)(postRequest)
 
       status(result) mustBe SEE_OTHER
-      FakeUserAnswersCacheConnector.verify(companyId, companyTrustee.copy(isDeleted = true))
+      FakeUserAnswersService.verify(companyId, companyTrustee.copy(isDeleted = true))
     }
 
     "remove the trustee in a POST request for an individual trustee" in {
       val result = controller(testData(individualId)(individualTrustee)).onSubmit(NormalMode, 0, Individual, None)(postRequest)
 
       status(result) mustBe SEE_OTHER
-      FakeUserAnswersCacheConnector.verify(individualId, individualTrustee.copy(isDeleted = true))
+      FakeUserAnswersService.verify(individualId, individualTrustee.copy(isDeleted = true))
     }
 
     "remove the trustee in a POST request for a partnership trustee" in {
       val result = controller(testData(partnershipId)(partnershipTrustee)).onSubmit(NormalMode, 0, Partnership, None)(postRequest)
 
       status(result) mustBe SEE_OTHER
-      FakeUserAnswersCacheConnector.verify(partnershipId, partnershipTrustee.copy(isDeleted = true))
+      FakeUserAnswersService.verify(partnershipId, partnershipTrustee.copy(isDeleted = true))
     }
 
     "redirect to the next page following a POST request when selected no" in {
-      FakeUserAnswersCacheConnector.reset()
+      FakeUserAnswersService.reset()
       val result = controller(testData(partnershipId)(partnershipTrustee)).onSubmit(NormalMode, 0, Partnership, None)(postRequestForCancle)
 
       status(result) mustBe SEE_OTHER
-      FakeUserAnswersCacheConnector.verifyNot(partnershipId)
+      FakeUserAnswersService.verifyNot(partnershipId)
     }
 
     "redirect to the next page following a POST request" in {
@@ -149,9 +149,7 @@ object ConfirmDeleteTrusteeControllerSpec extends ControllerSpecBase {
   )
 
   private val companyTrustee = CompanyDetails(
-    "test-company-name",
-    None,
-    None
+    "test-company-name"
   )
 
   private val partnershipTrustee = PartnershipDetails(
@@ -171,7 +169,7 @@ object ConfirmDeleteTrusteeControllerSpec extends ControllerSpecBase {
       dataRetrievalAction,
       new DataRequiredActionImpl,
       new FakeNavigator(onwardRoute),
-      FakeUserAnswersCacheConnector,
+      FakeUserAnswersService,
       formProvider
     )
 

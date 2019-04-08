@@ -17,7 +17,6 @@
 package controllers.register.trustees.partnership
 
 import config.FrontendAppConfig
-import connectors.UserAnswersCacheConnector
 import controllers.Retrievals
 import controllers.actions._
 import controllers.address.AddressListController
@@ -27,6 +26,7 @@ import models._
 import models.requests.DataRequest
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, Result}
+import services.UserAnswersService
 import utils.Navigator
 import utils.annotations.TrusteesPartnership
 import viewmodels.Message
@@ -37,7 +37,7 @@ import scala.concurrent.Future
 class PartnershipPreviousAddressListController @Inject()(
                                                           val appConfig: FrontendAppConfig,
                                                           val messagesApi: MessagesApi,
-                                                          val cacheConnector: UserAnswersCacheConnector,
+                                                          val userAnswersService: UserAnswersService,
                                                           @TrusteesPartnership val navigator: Navigator,
                                                           authenticate: AuthAction,
                                                           getData: DataRetrievalAction,
@@ -45,12 +45,12 @@ class PartnershipPreviousAddressListController @Inject()(
                                                         ) extends AddressListController with Retrievals {
 
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
       viewmodel(mode, index, srn).right.map(get)
   }
 
-  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
       viewmodel(mode, index, srn).right.map(vm => post(vm, PartnershipPreviousAddressListId(index), PartnershipPreviousAddressId(index), mode))
   }

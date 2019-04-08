@@ -33,7 +33,7 @@ class WhatYouWillNeedMembersController @Inject()(appConfig: FrontendAppConfig,
                                                  getData: DataRetrievalAction
                                                 ) extends FrontendController with I18nSupport with Retrievals {
 
-  def onPageLoad: Action[AnyContent] = (authenticate andThen getData).async {
+  def onPageLoad: Action[AnyContent] = (authenticate andThen getData()).async {
     implicit request =>
       Future.successful(Ok(whatYouWillNeedMembers(appConfig, existingSchemeName)))
   }

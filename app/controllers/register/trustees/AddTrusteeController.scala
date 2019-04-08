@@ -39,7 +39,6 @@ import scala.concurrent.{ExecutionContext, Future}
 class AddTrusteeController @Inject()(
                                       appConfig: FrontendAppConfig,
                                       override val messagesApi: MessagesApi,
-                                      dataCacheConnector: UserAnswersCacheConnector,
                                       @Trustees navigator: Navigator,
                                       authenticate: AuthAction,
                                       getData: DataRetrievalAction,
@@ -49,14 +48,14 @@ class AddTrusteeController @Inject()(
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onPageLoad(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
       val trustees = request.userAnswers.allTrusteesAfterDelete
       val submitUrl = controllers.register.trustees.routes.AddTrusteeController.onSubmit(mode, srn)
       Future.successful(Ok(addTrustee(appConfig, form, mode, trustees, existingSchemeName, submitUrl)))
   }
 
-  def onSubmit(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
 
       val trustees = request.userAnswers.allTrusteesAfterDelete

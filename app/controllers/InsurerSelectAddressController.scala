@@ -17,7 +17,6 @@
 package controllers
 
 import config.FrontendAppConfig
-import connectors.UserAnswersCacheConnector
 import controllers.actions._
 import controllers.address.AddressListController
 import identifiers._
@@ -26,27 +25,28 @@ import models.Mode
 import models.requests.DataRequest
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, Result}
+import services.UserAnswersService
 import utils.Navigator
-import utils.annotations.AboutBenefitsAndInsurance
+import utils.annotations.{AboutBenefitsAndInsurance, InsuranceService}
 import viewmodels.address.AddressListViewModel
 
 import scala.concurrent.Future
 
 class InsurerSelectAddressController @Inject()(override val appConfig: FrontendAppConfig,
                                                override val messagesApi: MessagesApi,
-                                               override val cacheConnector: UserAnswersCacheConnector,
+                                               @InsuranceService val userAnswersService: UserAnswersService,
                                                @AboutBenefitsAndInsurance override val navigator: Navigator,
                                                authenticate: AuthAction,
                                                getData: DataRetrievalAction,
                                                requireData: DataRequiredAction) extends AddressListController with Retrievals {
 
 
-  def onPageLoad(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onPageLoad(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
       viewModel(mode, srn).right.map(get)
   }
 
-  def onSubmit(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
       viewModel(mode, srn).right.map {
         vm =>

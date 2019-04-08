@@ -17,7 +17,7 @@
 package controllers.register.trustees.individual
 
 import config.FrontendAppConfig
-import connectors.{AddressLookupConnector, UserAnswersCacheConnector}
+import connectors.AddressLookupConnector
 import controllers.actions._
 import controllers.address.PostcodeLookupController
 import forms.address.PostCodeLookupFormProvider
@@ -27,6 +27,7 @@ import models.{Index, Mode}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
+import services.UserAnswersService
 import utils.Navigator
 import utils.annotations.TrusteesIndividual
 import viewmodels.Message
@@ -35,7 +36,7 @@ import viewmodels.address.PostcodeLookupViewModel
 class IndividualPreviousAddressPostcodeLookupController @Inject()(
                                                                    val appConfig: FrontendAppConfig,
                                                                    override val messagesApi: MessagesApi,
-                                                                   val cacheConnector: UserAnswersCacheConnector,
+                                                                   val userAnswersService: UserAnswersService,
                                                                    @TrusteesIndividual val navigator: Navigator,
                                                                    authenticate: AuthAction,
                                                                    getData: DataRetrievalAction,
@@ -62,12 +63,12 @@ class IndividualPreviousAddressPostcodeLookupController @Inject()(
         }
     }
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
       viewmodel(index, mode, srn).retrieve.right map get
   }
 
-  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
       viewmodel(index, mode, srn).retrieve.right.map { vm =>
         post(IndividualPreviousAddressPostCodeLookupId(index), vm, mode)

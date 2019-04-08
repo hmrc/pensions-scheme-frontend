@@ -18,7 +18,6 @@ package controllers.register.trustees.individual
 
 import com.google.inject.{Inject, Singleton}
 import config.FrontendAppConfig
-import connectors.UserAnswersCacheConnector
 import controllers.Retrievals
 import controllers.actions.{AuthAction, DataRequiredAction, DataRetrievalAction}
 import controllers.address.AddressYearsController
@@ -27,6 +26,7 @@ import identifiers.register.trustees.individual.{TrusteeAddressYearsId, TrusteeD
 import models.{Index, Mode}
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent}
+import services.UserAnswersService
 import utils.Navigator
 import utils.annotations.TrusteesIndividual
 import viewmodels.Message
@@ -35,7 +35,7 @@ import viewmodels.address.AddressYearsViewModel
 @Singleton
 class TrusteeAddressYearsController @Inject()(
                                                override val appConfig: FrontendAppConfig,
-                                               override val cacheConnector: UserAnswersCacheConnector,
+                                               val userAnswersService: UserAnswersService,
                                                @TrusteesIndividual override val navigator: Navigator,
                                                override val messagesApi: MessagesApi,
                                                authenticate: AuthAction,
@@ -45,14 +45,14 @@ class TrusteeAddressYearsController @Inject()(
 
   private val form = new AddressYearsFormProvider()(Message("messages__trusteeAddressYears__error_required"))
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
       TrusteeDetailsId(index).retrieve.right.map { trusteeDetails =>
         get(TrusteeAddressYearsId(index), form, viewModel(mode, index, trusteeDetails.fullName, srn))
       }
   }
 
-  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
       TrusteeDetailsId(index).retrieve.right.map { trusteeDetails =>
         post(TrusteeAddressYearsId(index), mode, form, viewModel(mode, index, trusteeDetails.fullName, srn))

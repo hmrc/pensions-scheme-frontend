@@ -87,11 +87,9 @@ class CheckYourAnswersSpec extends SpecBase with MustMatchers with PropertyCheck
           Some(Link("site.change", onwardUrl, Some("messages__visuallyhidden__testId"))))))
       }
 
-      "companyDetails" when {
+      "companyDetails" in {
 
-        "only name exists" in {
-
-          val companyDetails = CompanyDetails("Company Name", None, None)
+          val companyDetails = CompanyDetails("Company Name")
 
           implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(Json.obj(
             "testId" -> companyDetails
@@ -103,83 +101,6 @@ class CheckYourAnswersSpec extends SpecBase with MustMatchers with PropertyCheck
             false,
             Some(Link("site.change", onwardUrl, Some(Message("messages__visuallyhidden__common__name", "Company Name"))))
           )))
-        }
-        "vat number exists" in {
-
-          val companyDetails = CompanyDetails("Company Name", Some("VAT123"), None)
-
-          implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(Json.obj(
-            "testId" -> companyDetails
-          )), PsaId("A0000000"))
-
-          testIdentifier[CompanyDetails].row(onwardUrl) must equal(Seq(
-            AnswerRow(
-              "messages__common__cya__name",
-              Seq(s"${companyDetails.companyName}"),
-              false,
-              Some(Link("site.change", onwardUrl, Some(Message("messages__visuallyhidden__common__name", "Company Name"))))
-            ),
-            AnswerRow(
-              "messages__common__cya__vat",
-              Seq(s"${companyDetails.vatNumber.get}"),
-              false,
-              Some(Link("site.change", onwardUrl, Some("messages__visuallyhidden__establisher__vat_number")))
-            )))
-
-        }
-        "paye ref exists" in {
-
-          val companyDetails = CompanyDetails("Company Name", None, Some("PAYE/123"))
-
-          implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(Json.obj(
-            "testId" -> companyDetails
-          )), PsaId("A0000000"))
-
-          testIdentifier[CompanyDetails].row(onwardUrl) must equal(Seq(
-            AnswerRow(
-              "messages__common__cya__name",
-              Seq(s"${companyDetails.companyName}"),
-              false,
-              Some(Link("site.change", onwardUrl, Some(Message("messages__visuallyhidden__common__name", "Company Name"))))
-            ),
-            AnswerRow(
-              "messages__common__cya__paye",
-              Seq(s"${companyDetails.payeNumber.get}"),
-              false,
-              Some(Link("site.change", onwardUrl, Some("messages__visuallyhidden__establisher__paye_number")))
-            )))
-
-        }
-
-        "all values exist" in {
-
-          val companyDetails = CompanyDetails("Company Name", Some("VAT123"), Some("PAYE/123"))
-
-          implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(Json.obj(
-            "testId" -> companyDetails
-          )), PsaId("A0000000"))
-
-          testIdentifier[CompanyDetails].row(onwardUrl) must equal(Seq(
-            AnswerRow(
-              "messages__common__cya__name",
-              Seq(s"${companyDetails.companyName}"),
-              false,
-              Some(Link("site.change", onwardUrl, Some(Message("messages__visuallyhidden__common__name", "Company Name"))))
-            ),
-            AnswerRow(
-              "messages__common__cya__vat",
-              Seq(s"${companyDetails.vatNumber.get}"),
-              false,
-              Some(Link("site.change", onwardUrl, Some("messages__visuallyhidden__establisher__vat_number")))
-            ),
-            AnswerRow(
-              "messages__common__cya__paye",
-              Seq(s"${companyDetails.payeNumber.get}"),
-              false,
-              Some(Link("site.change", onwardUrl, Some("messages__visuallyhidden__establisher__paye_number")))
-            )))
-
-        }
       }
 
       "CRN" when {
@@ -446,7 +367,7 @@ class CheckYourAnswersSpec extends SpecBase with MustMatchers with PropertyCheck
             Seq(s"${partnershipDetails.name}"),
             false,
             Some(Link("site.change", onwardUrl, Some(Message("messages__visuallyhidden__common__name", partnershipDetails.name).resolve))
-            ))))
+          ))))
       }
 
       "VAT" when {
@@ -576,15 +497,6 @@ class CheckYourAnswersSpec extends SpecBase with MustMatchers with PropertyCheck
           )))
       }
 
-      "no address years" in {
-
-        val addressYears = AddressYears.values.head
-
-        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(Json.obj("testId" -> addressYears)), PsaId("A0000000"))
-
-        testIdentifier[AddressYears].row(onwardUrl, UpdateMode) must equal(Nil)
-      }
-
       "no dormant question" in {
 
         val dormant = DeclarationDormant.Yes.toString
@@ -592,6 +504,15 @@ class CheckYourAnswersSpec extends SpecBase with MustMatchers with PropertyCheck
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(Json.obj("testId" -> dormant)), PsaId("A0000000"))
 
         testIdentifier[DeclarationDormant].row(onwardUrl, UpdateMode) must equal(Nil)
+      }
+
+      "no address years" in {
+
+        val addressYears = AddressYears.values.head
+
+        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(Json.obj("testId" -> addressYears)), PsaId("A0000000"))
+
+        testIdentifier[AddressYears].row(onwardUrl, UpdateMode) must equal(Nil)
       }
 
       "Nino" when {
@@ -615,6 +536,43 @@ class CheckYourAnswersSpec extends SpecBase with MustMatchers with PropertyCheck
               Some(Link("site.add", onwardUrl, Some("messages__visuallyhidden__trustee__nino_add")))
             )))
         }
+      }
+
+      "UTR" when {
+
+        "yes will have no change url" in {
+          val utr = UniqueTaxReference.Yes("7654321244")
+          implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(Json.obj("testId" -> utr)), PsaId("A0000000"))
+          testIdentifier[UniqueTaxReference].row(onwardUrl, UpdateMode) must equal(Seq(
+            AnswerRow(
+              "messages__establisher_individual_utr_cya_label",
+              Seq({
+                utr.utr
+              }),
+              false,
+              None
+            )
+          ))
+        }
+
+        "no will have not entered with no change url" in {
+          val utr = UniqueTaxReference.No("Not sure")
+          implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(Json.obj("testId" -> utr)), PsaId("A0000000"))
+          testIdentifier[UniqueTaxReference].row(onwardUrl, UpdateMode) must equal(Seq(
+            AnswerRow(
+              "messages__establisher_individual_utr_cya_label",
+              Seq("site.not_entered"),
+              true,
+              None
+            )
+          ))
+        }
+      }
+
+      "boolean without change url" in {
+        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(Json.obj("testId" -> true)), PsaId("A0000000"))
+
+        testIdentifier[Boolean].row(onwardUrl, UpdateMode) must equal(Seq(AnswerRow("testId.checkYourAnswersLabel", Seq("site.yes"), true, None)))
       }
 
       "VAT" when {
@@ -713,30 +671,22 @@ class CheckYourAnswersSpec extends SpecBase with MustMatchers with PropertyCheck
             )))
         }
 
-      }
+        "companyDetails without change url" in {
 
-      "UTR" when {
+          val companyDetails = CompanyDetails("Company Name")
 
-        "yes will have no change url" in {
-          val utr = UniqueTaxReference.Yes("7654321244")
-          implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(Json.obj("testId" -> utr)), PsaId("A0000000"))
-          testIdentifier[UniqueTaxReference].row(onwardUrl, UpdateMode) must equal(Seq(
-            AnswerRow(
-              "messages__establisher_individual_utr_cya_label",
-              Seq({
-                utr.utr
-              }),
-              false,
-              None
-            )
-          ))
+          implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(Json.obj(
+            "testId" -> companyDetails
+          )), PsaId("A0000000"))
+
+          testIdentifier[CompanyDetails].row("onwardUrl", UpdateMode) must equal(Seq(AnswerRow(
+            "messages__common__cya__name",
+            Seq(companyDetails.companyName),
+            false,
+            None
+          )))
         }
 
-        "no will not have any row" in {
-          val utr = UniqueTaxReference.No("Not sure")
-          implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(Json.obj("testId" -> utr)), PsaId("A0000000"))
-          testIdentifier[UniqueTaxReference].row(onwardUrl, UpdateMode) must equal(Nil)
-        }
       }
     }
   }

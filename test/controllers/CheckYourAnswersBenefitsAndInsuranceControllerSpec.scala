@@ -19,7 +19,8 @@ package controllers
 import controllers.actions.{DataRequiredActionImpl, DataRetrievalAction, FakeAuthAction}
 import identifiers.IsAboutBenefitsAndInsuranceCompleteId
 import models.address.Address
-import models.{CheckMode, Link, NormalMode, TypeOfBenefits}
+import models._
+import models.Mode._
 import org.scalatest.OptionValues
 import play.api.test.Helpers._
 import utils.{FakeCountryOptions, FakeSectionComplete, UserAnswers}
@@ -41,6 +42,24 @@ class CheckYourAnswersBenefitsAndInsuranceControllerSpec extends ControllerSpecB
       }
     }
 
+    "onPageLoad() is called with UpdateMode" must {
+      "return OK and the correct view" in {
+        val result = controller(data).onPageLoad(UpdateMode, None)(fakeRequest)
+
+        status(result) mustBe OK
+        contentAsString(result) mustBe viewAsString(UpdateMode)
+      }
+    }
+
+    "onPageLoad() is called with UpdateMode with less data" must {
+      "return OK and the correct view" in {
+        val result = controller(updateData).onPageLoad(UpdateMode, None)(fakeRequest)
+
+        status(result) mustBe OK
+        contentAsString(result) mustBe viewAsStringWithLessData(UpdateMode)
+      }
+    }
+
     "onSubmit is called" must {
       "redirect to next page" in {
         val result = controller().onSubmit(NormalMode, None)(fakeRequest)
@@ -57,11 +76,15 @@ object CheckYourAnswersBenefitsAndInsuranceControllerSpec extends ControllerSpec
 
   private val insuranceCompanyName = "Test company Name"
   private val policyNumber = "Test policy number"
-  private val postUrl = routes.CheckYourAnswersBenefitsAndInsuranceController.onSubmit(NormalMode, None)
+  private def postUrl(mode : Mode = NormalMode) = routes.CheckYourAnswersBenefitsAndInsuranceController.onSubmit(mode, None)
   private val insurerAddress = Address("addr1", "addr2", Some("addr3"), Some("addr4"), Some("xxx"), "GB")
   private val data = UserAnswers().investmentRegulated(true).occupationalPensionScheme(true).
     typeOfBenefits(TypeOfBenefits.Defined).benefitsSecuredByInsurance(true).insuranceCompanyName(insuranceCompanyName).
     insurancePolicyNumber(policyNumber).insurerConfirmAddress(insurerAddress).dataRetrievalAction
+
+  private val updateData = UserAnswers().investmentRegulated(true).occupationalPensionScheme(true).
+    typeOfBenefits(TypeOfBenefits.Defined).benefitsSecuredByInsurance(true)
+    .insuranceCompanyName(insuranceCompanyName).dataRetrievalAction
 
   private def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): CheckYourAnswersBenefitsAndInsuranceController =
     new CheckYourAnswersBenefitsAndInsuranceController(
@@ -74,49 +97,14 @@ object CheckYourAnswersBenefitsAndInsuranceControllerSpec extends ControllerSpec
       new FakeCountryOptions
     )
 
-  private val benefitsAndInsuranceSection = AnswerSection(
+  private def benefitsAndInsuranceSection(mode : Mode) = AnswerSection(
     None,
-    Seq(
-      AnswerRow(
-        messages("investmentRegulated.checkYourAnswersLabel"),
-        Seq("site.yes"),
-        answerIsMessageKey = true,
-        Some(Link("site.change", routes.InvestmentRegulatedSchemeController.onPageLoad(CheckMode).url,
-          Some(messages("messages__visuallyhidden__investmentRegulated"))))
-      ),
-      AnswerRow(
-        messages("occupationalPensionScheme.checkYourAnswersLabel"),
-        Seq("site.yes"),
-        answerIsMessageKey = true,
-        Some(Link("site.change", routes.OccupationalPensionSchemeController.onPageLoad(CheckMode).url,
-          Some(messages("messages__visuallyhidden__occupationalPensionScheme"))))
-      ),
-      AnswerRow(
-        messages("messages__type_of_benefits_cya_label"),
-        Seq(s"messages__type_of_benefits__${TypeOfBenefits.Defined}"),
-        answerIsMessageKey = true,
-        Some(Link("site.change", routes.TypeOfBenefitsController.onPageLoad(CheckMode).url,
-          Some(messages("messages__visuallyhidden__type_of_benefits_change"))))
-      ),
-      AnswerRow(
-        messages("securedBenefits.checkYourAnswersLabel"),
-        Seq("site.yes"),
-        answerIsMessageKey = true,
-        Some(Link("site.change", routes.BenefitsSecuredByInsuranceController.onPageLoad(CheckMode, None).url,
-          Some(messages("messages__visuallyhidden__securedBenefits"))))
-      ),
-      AnswerRow(
-        messages("insuranceCompanyName.checkYourAnswersLabel"),
-        Seq(insuranceCompanyName),
-        answerIsMessageKey = false,
-        Some(Link("site.change", routes.InsuranceCompanyNameController.onPageLoad(CheckMode, None).url,
-          Some(messages("messages__visuallyhidden__insuranceCompanyName"))))
-      ),
+    commonRows(mode) ++  Seq(
       AnswerRow(
         messages("messages__insurance_policy_number_cya_label", insuranceCompanyName),
         Seq(policyNumber),
         answerIsMessageKey = false,
-        Some(Link("site.change", routes.InsurancePolicyNumberController.onPageLoad(CheckMode, None).url,
+        Some(Link("site.change", routes.InsurancePolicyNumberController.onPageLoad(checkMode(mode), None).url,
           Some(messages("messages__visuallyhidden__insurance_policy_number", insuranceCompanyName))))
       ),
       AnswerRow(
@@ -129,18 +117,96 @@ object CheckYourAnswersBenefitsAndInsuranceControllerSpec extends ControllerSpec
           insurerAddress.postcode.get,
           "Country of GB"),
         answerIsMessageKey = false,
-        Some(Link("site.change", routes.InsurerConfirmAddressController.onPageLoad(CheckMode, None).url,
+        Some(Link("site.change", routes.InsurerConfirmAddressController.onPageLoad(checkMode(mode), None).url,
           Some(messages("messages__visuallyhidden__insurer_confirm_address")))))
     )
   )
 
-  private def viewAsString(): String = check_your_answers(
+  private def updateBenefitsAndInsuranceSection(mode : Mode) = AnswerSection(
+    None,
+    commonRows(mode) ++ Seq(
+      AnswerRow(
+        messages("messages__insurance_policy_number_cya_label", insuranceCompanyName),
+        Seq("site.not_entered"),
+        answerIsMessageKey = true,
+        Some(Link("site.add", routes.InsurancePolicyNumberController.onPageLoad(checkMode(mode), None).url,
+          Some(messages("messages__visuallyhidden__insurance_policy_number", insuranceCompanyName))))
+      ),
+      AnswerRow(
+        messages("messages__insurer_confirm_address_cya_label"),
+        Seq("site.not_entered"),
+        answerIsMessageKey = true,
+        Some(Link("site.add", routes.InsurerConfirmAddressController.onPageLoad(checkMode(mode), None).url,
+          Some(messages("messages__visuallyhidden__add_insurer_confirm_address")))))
+    )
+  )
+
+  private def commonRows(mode : Mode):  Seq[AnswerRow] ={
+    Seq(
+      AnswerRow(
+        messages("investmentRegulated.checkYourAnswersLabel"),
+        Seq("site.yes"),
+        answerIsMessageKey = true,
+        if(mode==UpdateMode) { None } else {
+          Some(Link("site.change", routes.InvestmentRegulatedSchemeController.onPageLoad(checkMode(mode)).url,
+            Some(messages("messages__visuallyhidden__investmentRegulated"))))
+        }
+      ),
+      AnswerRow(
+        messages("occupationalPensionScheme.checkYourAnswersLabel"),
+        Seq("site.yes"),
+        answerIsMessageKey = true,
+        if(mode==UpdateMode) { None } else {
+          Some(Link("site.change", routes.OccupationalPensionSchemeController.onPageLoad(checkMode(mode)).url,
+            Some(messages("messages__visuallyhidden__occupationalPensionScheme"))))
+        }
+      ),
+      AnswerRow(
+        messages("messages__type_of_benefits_cya_label"),
+        Seq(s"messages__type_of_benefits__${TypeOfBenefits.Defined}"),
+        answerIsMessageKey = true,
+        if(mode==UpdateMode) { None } else {
+          Some(Link("site.change", controllers.routes.TypeOfBenefitsController.onPageLoad(checkMode(mode)).url,
+            Some(messages("messages__visuallyhidden__type_of_benefits_change"))))
+        }
+      ),
+      AnswerRow(
+        messages("securedBenefits.checkYourAnswersLabel"),
+        Seq("site.yes"),
+        answerIsMessageKey = true,
+        Some(Link("site.change", routes.BenefitsSecuredByInsuranceController.onPageLoad(checkMode(mode), None).url,
+          Some(messages("messages__visuallyhidden__securedBenefits"))))
+      ),
+      AnswerRow(
+        messages("insuranceCompanyName.checkYourAnswersLabel"),
+        Seq(insuranceCompanyName),
+        answerIsMessageKey = false,
+        Some(Link("site.change", routes.InsuranceCompanyNameController.onPageLoad(checkMode(mode), None).url,
+          Some(messages("messages__visuallyhidden__insuranceCompanyName"))))
+      )
+    )
+  }
+
+  private def viewAsString(mode : Mode = NormalMode): String = check_your_answers(
     frontendAppConfig,
     Seq(
-      benefitsAndInsuranceSection
+      benefitsAndInsuranceSection(mode)
     ),
-    postUrl,
-    None
+    postUrl(mode),
+    None,
+    false,
+    mode
+  )(fakeRequest, messages).toString
+
+  private def viewAsStringWithLessData(mode : Mode = CheckMode): String = check_your_answers(
+    frontendAppConfig,
+    Seq(
+      updateBenefitsAndInsuranceSection(mode)
+    ),
+    postUrl(mode),
+    None,
+    false,
+    mode
   )(fakeRequest, messages).toString
 
 }

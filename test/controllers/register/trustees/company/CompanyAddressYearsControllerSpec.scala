@@ -16,7 +16,7 @@
 
 package controllers.register.trustees.company
 
-import connectors.FakeUserAnswersCacheConnector
+import services.FakeUserAnswersService
 import controllers.ControllerSpecBase
 import controllers.actions._
 import identifiers.register.trustees.TrusteesId
@@ -41,7 +41,7 @@ class CompanyAddressYearsControllerSpec extends ControllerSpecBase {
   val form = formProvider(Message("messages__common_error__current_address_years"))
   val firstIndex = Index(0)
   val invalidIndex = Index(10)
-  val companyDetails = CompanyDetails("companyName", None, None)
+  val companyDetails = CompanyDetails("companyName")
   val questionText = "messages__company_address_years__title"
   val retrieval = new FakeDataRetrievalAction(Some(Json.obj(
     TrusteesId.toString -> Json.arr(Json.obj(CompanyDetailsId.toString -> companyDetails))
@@ -56,7 +56,7 @@ class CompanyAddressYearsControllerSpec extends ControllerSpecBase {
   )
 
   def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): CompanyAddressYearsController =
-    new CompanyAddressYearsController(frontendAppConfig, messagesApi, new FakeNavigator(desiredRoute = onwardRoute), FakeUserAnswersCacheConnector, FakeAuthAction,
+    new CompanyAddressYearsController(frontendAppConfig, messagesApi, new FakeNavigator(desiredRoute = onwardRoute), FakeUserAnswersService, FakeAuthAction,
       dataRetrievalAction, new DataRequiredActionImpl, formProvider)
 
   def viewAsString(form: Form[_] = form): String = addressYears(frontendAppConfig, form, viewmodel, None)(fakeRequest, messages).toString
