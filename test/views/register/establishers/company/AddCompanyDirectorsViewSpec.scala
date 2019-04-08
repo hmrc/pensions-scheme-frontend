@@ -44,7 +44,7 @@ class AddCompanyDirectorsViewSpec extends YesNoViewBehaviours with EntityListBeh
   private val johnDoeEntity = DirectorEntity(DirectorDetailsId(0, 0), johnDoe.fullName, isDeleted = false, isCompleted = false)
   private val joeBloggsEntity = DirectorEntity(DirectorDetailsId(0, 1), joeBloggs.fullName, isDeleted = false, isCompleted = true)
 
-  private def createView(directors: Seq[DirectorEntity] = Nil, readOnly: Boolean = false) =
+  private def createView(directors: Seq[DirectorEntity] = Nil, viewOnly: Boolean = false) =
     () =>
       addCompanyDirectors(
         frontendAppConfig,
@@ -52,10 +52,10 @@ class AddCompanyDirectorsViewSpec extends YesNoViewBehaviours with EntityListBeh
         directors,
         None,
         postCall(NormalMode, None, establisherIndex),
-        readOnly
+        viewOnly
       )(fakeRequest, messages)
 
-  private def createViewUsingForm(directors: Seq[DirectorEntity] = Nil, readOnly: Boolean = false) =
+  private def createViewUsingForm(directors: Seq[DirectorEntity] = Nil, viewOnly: Boolean = false) =
     (form: Form[_]) =>
       addCompanyDirectors(
         frontendAppConfig,
@@ -63,7 +63,7 @@ class AddCompanyDirectorsViewSpec extends YesNoViewBehaviours with EntityListBeh
         directors,
         None,
         postCall(NormalMode, None, establisherIndex),
-        readOnly
+        viewOnly
       )(fakeRequest, messages)
 
   "AddCompanyDirectors view" must {
@@ -122,19 +122,19 @@ class AddCompanyDirectorsViewSpec extends YesNoViewBehaviours with EntityListBeh
       doc must haveDynamicText("messages__addCompanyDirectorsOrPartners_tell_us_if_you_have_more")
     }
 
-    "not show the Submit button in readOnly mode" in {
-      val doc = asDocument(createViewUsingForm(Seq(johnDoeEntity), readOnly = true)(form))
+    "not show the Submit button in viewOnly mode" in {
+      val doc = asDocument(createViewUsingForm(Seq(johnDoeEntity), viewOnly = true)(form))
       val submit = doc.select("button#submit")
       submit.size() mustBe 0
     }
 
-    "not show the yes no inputs for readOnly mode" in {
-      val doc = asDocument(createViewUsingForm(directors, readOnly = true)(form))
+    "not show the yes no inputs for viewOnly mode" in {
+      val doc = asDocument(createViewUsingForm(directors, viewOnly = true)(form))
       doc.select("legend > span").size() mustBe 0
     }
 
-    "not show delete, edit links or incomplete lozenge, but show view links in readOnly mode" in {
-      val doc = asDocument(createViewUsingForm(Seq(johnDoeEntity), readOnly = true)(form))
+    "not show delete, edit links or incomplete lozenge, but show view links in viewOnly mode" in {
+      val doc = asDocument(createViewUsingForm(Seq(johnDoeEntity), viewOnly = true)(form))
       val editLink = doc.select(s"a[id=person-0-edit]")
       val deleteLink = doc.select(s"a[id=person-0-delete]")
       val viewLink = doc.select(s"a[id=person-0-view]")
@@ -145,8 +145,8 @@ class AddCompanyDirectorsViewSpec extends YesNoViewBehaviours with EntityListBeh
       incompleteLozenge.size() mustBe 0
     }
 
-    "show delete and edit links and incomplete lozenge, but not show view links when readOnly is false" in {
-      val doc = asDocument(createViewUsingForm(Seq(johnDoeEntity), readOnly = false)(form))
+    "show delete and edit links and incomplete lozenge, but not show view links when viewOnly is false" in {
+      val doc = asDocument(createViewUsingForm(Seq(johnDoeEntity), viewOnly = false)(form))
       println(doc)
       val editLink = doc.select(s"a[id=person-0-edit]")
       val deleteLink = doc.select(s"a[id=person-0-delete]")

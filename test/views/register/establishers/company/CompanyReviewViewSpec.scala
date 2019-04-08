@@ -40,8 +40,8 @@ class CompanyReviewViewSpec extends ViewBehaviours {
     DirectorDetailsId.toString -> PersonDetails("director", None, lastName, LocalDate.now())
   )
 
-  def createView(readOnly: Boolean = false): () => HtmlFormat.Appendable = () =>
-    companyReview(frontendAppConfig, index, companyName, directors, None, NormalMode, None, readOnly)(fakeRequest, messages)
+  def createView(viewOnly: Boolean = false): () => HtmlFormat.Appendable = () =>
+    companyReview(frontendAppConfig, index, companyName, directors, None, NormalMode, None, viewOnly)(fakeRequest, messages)
 
   def createSecView: () => HtmlFormat.Appendable = () => companyReview(frontendAppConfig, index, companyName, tenDirectors, None, NormalMode, None, false)(fakeRequest, messages)
 
@@ -62,7 +62,7 @@ class CompanyReviewViewSpec extends ViewBehaviours {
       )
     }
 
-    "have link to view company details when readOnly flag is true" in {
+    "have link to view company details when viewOnly flag is true" in {
       Jsoup.parse(createView()().toString).select("a[id=edit-company-details]") must haveLink(
         routes.CheckYourAnswersController.onPageLoad(NormalMode, None, index).url
       )
@@ -84,7 +84,7 @@ class CompanyReviewViewSpec extends ViewBehaviours {
       Jsoup.parse(createSecView().toString) must haveDynamicText("messages__companyReview__directors__changeLink")
     }
 
-    "have link to view directors when readOnly flag is true" in {
+    "have link to view directors when viewOnly flag is true" in {
       Jsoup.parse(createView()().toString).select("a[id=edit-director-details]") must haveLink(
         routes.AddCompanyDirectorsController.onPageLoad(NormalMode, None, index).url
       )

@@ -19,7 +19,7 @@
 @import models.requests.DataRequest
 @import models.register.Entity
 
-@(entities: Seq[Entity[_]], readOnly:Boolean = false)(implicit messages: Messages)
+@(entities: Seq[Entity[_]], viewOnly:Boolean = false)(implicit messages: Messages)
 
 <div class="form-group">
     <ul id="items" class="govuk-check-your-answers form-group cya-questions-long">
@@ -28,7 +28,7 @@
             <div class="cya-question">
                 <h2 id="person-@{entity.index}" class="bold std-text">@entity.name</h2>
             </div>
-            @if(!readOnly){
+            @if(!viewOnly){
                 <div id="person-@{entity.index}-status" class="cya-status status">
                     @if(entity.isCompleted){
                         <span class="complete">COMPLETE</span>

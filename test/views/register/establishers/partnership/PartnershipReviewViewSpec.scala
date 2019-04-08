@@ -40,7 +40,7 @@ class PartnershipReviewViewSpec extends ViewBehaviours {
     PartnerDetailsId.toString -> PersonDetails("partner", None, lastName, LocalDate.now())
   )
 
-  def createView(readOnly: Boolean = false): () => HtmlFormat.Appendable = () => partnershipReview(
+  def createView(viewOnly: Boolean = false): () => HtmlFormat.Appendable = () => partnershipReview(
     frontendAppConfig,
     index,
     partnershipName,
@@ -48,7 +48,7 @@ class PartnershipReviewViewSpec extends ViewBehaviours {
     None,
     None,
     NormalMode,
-    readOnly
+    viewOnly
   )(fakeRequest, messages)
 
   def createSecView: () => HtmlFormat.Appendable = () => partnershipReview(
@@ -79,7 +79,7 @@ class PartnershipReviewViewSpec extends ViewBehaviours {
       )
     }
 
-    "have link to view partnership details when readOnly flag is true" in {
+    "have link to view partnership details when viewOnly flag is true" in {
       Jsoup.parse(createView()().toString).select("a[id=edit-partnership-details]") must haveLink(
         routes.CheckYourAnswersController.onPageLoad(NormalMode, index, None).url
       )
@@ -101,7 +101,7 @@ class PartnershipReviewViewSpec extends ViewBehaviours {
       Jsoup.parse(createSecView().toString) must haveDynamicText("messages__partnershipReview__partners__changeLink")
     }
 
-    "have link to view partner details when readOnly flag is true" in {
+    "have link to view partner details when viewOnly flag is true" in {
       Jsoup.parse(createView()().toString).select("a[id=edit-partner-details]") must haveLink(
         routes.AddPartnersController.onPageLoad(NormalMode, index, None).url
       )

@@ -20,7 +20,7 @@
 @import controllers.register.establishers.company.routes
 @import play.api.mvc.Call
 
-@(appConfig: FrontendAppConfig, index: Index, companyName: String, directors: Seq[String], schemeName: Option[String], mode: Mode, srn: Option[String], readOnly:Boolean)(implicit request: Request[_], messages: Messages)
+@(appConfig: FrontendAppConfig, index: Index, companyName: String, directors: Seq[String], schemeName: Option[String], mode: Mode, srn: Option[String], viewOnly:Boolean)(implicit request: Request[_], messages: Messages)
 
 @main_template(
     title = messages("messages__companyReview__title"),
@@ -33,7 +33,7 @@
 
     @components.review_section(
         heading = companyName,
-        linkMessage = if(readOnly){
+        linkMessage = if(viewOnly){
             "messages__companyReview__company__viewLink"
         } else {
             "messages__companyReview__company__editLink"
@@ -44,7 +44,7 @@
 
     @components.review_section(
         heading = messages("messages__companyReview__directors__heading"),
-        linkMessage = if(readOnly){
+        linkMessage = if(viewOnly){
             "messages__companyReview__directors__viewLink"
         } else if(directors.lengthCompare(10)<0){
             "messages__companyReview__directors__editLink"
