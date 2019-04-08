@@ -17,7 +17,7 @@
 package controllers
 
 import config.FrontendAppConfig
-import connectors.{AddressLookupConnector, UserAnswersCacheConnector}
+import connectors.AddressLookupConnector
 import controllers.actions._
 import controllers.address.PostcodeLookupController
 import forms.address.PostCodeLookupFormProvider
@@ -27,13 +27,14 @@ import models.Mode
 import play.api.data.Form
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Call}
+import services.UserAnswersService
 import utils.Navigator
-import utils.annotations.AboutBenefitsAndInsurance
+import utils.annotations.{AboutBenefitsAndInsurance, InsuranceService}
 import viewmodels.address.PostcodeLookupViewModel
 
 class InsurerEnterPostcodeController @Inject()(val appConfig: FrontendAppConfig,
                                                override val messagesApi: MessagesApi,
-                                               val cacheConnector: UserAnswersCacheConnector,
+                                               @InsuranceService val userAnswersService: UserAnswersService,
                                                val addressLookupConnector: AddressLookupConnector,
                                                @AboutBenefitsAndInsurance val navigator: Navigator,
                                                authenticate: AuthAction,

@@ -16,7 +16,7 @@
 
 package controllers.register.trustees.company
 
-import connectors.FakeUserAnswersCacheConnector
+import services.FakeUserAnswersService
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.CompanyRegistrationNumberFormProvider
@@ -44,7 +44,7 @@ class CompanyRegistrationNumberControllerSpec extends ControllerSpecBase {
       TrusteesId.toString -> Json.arr(
         Json.obj(
           CompanyDetailsId.toString ->
-            CompanyDetails("Test company name", Some("123456"), Some("abcd"))
+            CompanyDetails("Test company name")
         )
       )
     ))
@@ -54,7 +54,7 @@ class CompanyRegistrationNumberControllerSpec extends ControllerSpecBase {
     TrusteesId.toString -> Json.arr(
       Json.obj(
         CompanyDetailsId.toString ->
-          CompanyDetails("Test company name", Some("123456"), Some("abcd")),
+          CompanyDetails("Test company name"),
         CompanyRegistrationNumberId.toString ->
           CompanyRegistrationNumber.Yes("1234567")
       )
@@ -65,7 +65,7 @@ class CompanyRegistrationNumberControllerSpec extends ControllerSpecBase {
     new CompanyRegistrationNumberController(
       frontendAppConfig,
       messagesApi,
-      FakeUserAnswersCacheConnector,
+      FakeUserAnswersService,
       new FakeNavigator(desiredRoute = onwardRoute),
       FakeAuthAction,
       dataRetrievalAction,

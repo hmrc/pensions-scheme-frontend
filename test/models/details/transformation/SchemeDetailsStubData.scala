@@ -94,54 +94,54 @@ trait SchemeDetailsStubData {
       List(psaDetails1, psaDetails2))
 
   val indidualAnswerRows = Seq(
-    AnswerRow("messages__psaSchemeDetails__individual_date_of_birth", Seq("29 March 1955"), answerIsMessageKey = false, None),
-    AnswerRow("messages__psaSchemeDetails__individual_nino", Seq("AA999999A"), answerIsMessageKey = false, None),
-    AnswerRow("messages__psaSchemeDetails__individual_utr", Seq("1234567892"), answerIsMessageKey = false, None),
+    AnswerRow("messages__psaSchemeDetails__individual_date_of_birth", Seq("29 March 1955"), answerIsMessageKey = false, changeUrl = None),
+    AnswerRow("messages__psaSchemeDetails__individual_nino", Seq("AA999999A"), answerIsMessageKey = false, changeUrl = None),
+    AnswerRow("messages__psaSchemeDetails__individual_utr", Seq("1234567892"), answerIsMessageKey = false, changeUrl = None),
     AnswerRow("messages__psaSchemeDetails__individual_address", Seq(
-      "address line 1,", "address line 2,", "address line 3,", "AB1 1AB,", "Country of GB"), answerIsMessageKey = false, None),
-    AnswerRow("messages__psaSchemeDetails__individual_less_than_12months", Seq("companyAddressYears.under_a_year"), answerIsMessageKey = true, None),
+      "address line 1,", "address line 2,", "address line 3,", "AB1 1AB,", "Country of GB"), answerIsMessageKey = false, changeUrl = None),
+    AnswerRow("messages__psaSchemeDetails__individual_less_than_12months", Seq("companyAddressYears.under_a_year"), answerIsMessageKey = true, changeUrl = None),
     AnswerRow("messages__psaSchemeDetails__individual_previous_address", Seq(
-      "address line 1,", "address line 2,", "address line 3,", "AB1 1AB,", "Country of GB"), answerIsMessageKey = false, None),
-    AnswerRow("messages__psaSchemeDetails__individual_email", Seq("test@test.com"), answerIsMessageKey = false, None),
-    AnswerRow("messages__psaSchemeDetails__individual_phone", Seq("07592113"), answerIsMessageKey = false, None)
+      "address line 1,", "address line 2,", "address line 3,", "AB1 1AB,", "Country of GB"), answerIsMessageKey = false, changeUrl = None),
+    AnswerRow("messages__psaSchemeDetails__individual_email", Seq("test@test.com"), answerIsMessageKey = false, changeUrl = None),
+    AnswerRow("messages__psaSchemeDetails__individual_phone", Seq("07592113"), answerIsMessageKey = false, changeUrl = None)
   )
 
   val companyAnswerRows = Seq(
-    AnswerRow("messages__psaSchemeDetails__company_vat", Seq("789770000"), answerIsMessageKey = false, None),
-    AnswerRow("messages__psaSchemeDetails__company_paye", Seq("9999"), answerIsMessageKey = false, None),
-    AnswerRow("messages__psaSchemeDetails__company_crn", Seq("AA999999A"), answerIsMessageKey = false, None),
-    AnswerRow("messages__psaSchemeDetails__company_utr", Seq("7897700000"), answerIsMessageKey = false, None),
+    AnswerRow("messages__psaSchemeDetails__company_vat", Seq("789770000"), answerIsMessageKey = false, changeUrl = None),
+    AnswerRow("messages__psaSchemeDetails__company_paye", Seq("9999"), answerIsMessageKey = false, changeUrl = None),
+    AnswerRow("messages__psaSchemeDetails__company_crn", Seq("AA999999A"), answerIsMessageKey = false, changeUrl = None),
+    AnswerRow("messages__psaSchemeDetails__company_utr", Seq("7897700000"), answerIsMessageKey = false, changeUrl = None),
     AnswerRow("messages__psaSchemeDetails__company_address", Seq(
-      "address line 1,", "address line 2,", "address line 3,", "AB1 1AB,", "Country of GB"), answerIsMessageKey = false, None),
-    AnswerRow("messages__psaSchemeDetails__company_less_than_12months", Seq("companyAddressYears.under_a_year"), answerIsMessageKey = true, None),
+      "address line 1,", "address line 2,", "address line 3,", "AB1 1AB,", "Country of GB"), answerIsMessageKey = false, changeUrl = None),
+    AnswerRow("messages__psaSchemeDetails__company_less_than_12months", Seq("companyAddressYears.under_a_year"), answerIsMessageKey = true, changeUrl = None),
     AnswerRow("messages__psaSchemeDetails__company_previous_address", Seq(
-      "address line 1,", "address line 2,", "address line 3,", "AB1 1AB,", "Country of GB"), answerIsMessageKey = false, None),
-    AnswerRow("messages__psaSchemeDetails__company_email", Seq("test@test.com"), answerIsMessageKey = false, None),
-    AnswerRow("messages__psaSchemeDetails__company_phone", Seq("07592113"), answerIsMessageKey = false, None)
+      "address line 1,", "address line 2,", "address line 3,", "AB1 1AB,", "Country of GB"), answerIsMessageKey = false, changeUrl = None),
+    AnswerRow("messages__psaSchemeDetails__company_email", Seq("test@test.com"), answerIsMessageKey = false, changeUrl = None),
+    AnswerRow("messages__psaSchemeDetails__company_phone", Seq("07592113"), answerIsMessageKey = false, changeUrl = None)
   )
 
   val partnershipAnswerRows = Seq(
-    AnswerRow("messages__psaSchemeDetails__partnership_vat", Seq("789770000"), answerIsMessageKey = false, None),
-    AnswerRow("messages__psaSchemeDetails__partnership_paye", Seq("9999"), answerIsMessageKey = false, None),
-    AnswerRow("messages__psaSchemeDetails__partnership_utr", Seq("7897700000"), answerIsMessageKey = false, None),
+    AnswerRow("messages__psaSchemeDetails__partnership_vat", Seq("789770000"), answerIsMessageKey = false, changeUrl = None),
+    AnswerRow("messages__psaSchemeDetails__partnership_paye", Seq("9999"), answerIsMessageKey = false, changeUrl = None),
+    AnswerRow("messages__psaSchemeDetails__partnership_utr", Seq("7897700000"), answerIsMessageKey = false, changeUrl = None),
     AnswerRow("messages__psaSchemeDetails__partnership_address", Seq(
-      "address line 1,", "address line 2,", "address line 3,", "AB1 1AB,", "Country of GB"), answerIsMessageKey = false, None),
-    AnswerRow("messages__psaSchemeDetails__partnership_less_than_12months", Seq("companyAddressYears.under_a_year"), answerIsMessageKey = true, None),
+      "address line 1,", "address line 2,", "address line 3,", "AB1 1AB,", "Country of GB"), answerIsMessageKey = false, changeUrl = None),
+    AnswerRow("messages__psaSchemeDetails__partnership_less_than_12months", Seq("companyAddressYears.under_a_year"), answerIsMessageKey = true, changeUrl = None),
     AnswerRow("messages__psaSchemeDetails__partnership_previous_address", Seq(
-      "address line 1,", "address line 2,", "address line 3,", "AB1 1AB,", "Country of GB"), answerIsMessageKey = false, None),
-    AnswerRow("messages__psaSchemeDetails__partnership_email", Seq("test@test.com"), answerIsMessageKey = false, None),
-    AnswerRow("messages__psaSchemeDetails__partnership_phone", Seq("07592113"), answerIsMessageKey = false, None)
+      "address line 1,", "address line 2,", "address line 3,", "AB1 1AB,", "Country of GB"), answerIsMessageKey = false, changeUrl = None),
+    AnswerRow("messages__psaSchemeDetails__partnership_email", Seq("test@test.com"), answerIsMessageKey = false, changeUrl = None),
+    AnswerRow("messages__psaSchemeDetails__partnership_phone", Seq("07592113"), answerIsMessageKey = false, changeUrl = None)
   )
 
 
   val expectedSchemeDetailsRows = Seq(
-    AnswerRow("messages__psaSchemeDetails__country_established", Seq("Country of GB"), answerIsMessageKey = false, None),
-    AnswerRow("messages__psaSchemeDetails__current_scheme_members", Seq("1"), answerIsMessageKey = false, None),
-    AnswerRow("messages__psaSchemeDetails__future_scheme_members", Seq("2 to 11"), answerIsMessageKey = false, None),
-    AnswerRow("messages__psaSchemeDetails__is_investment_regulated", Seq("site.no"), answerIsMessageKey = true, None),
-    AnswerRow("messages__psaSchemeDetails__is_occupational", Seq("site.no"), answerIsMessageKey = true, None),
-    AnswerRow("messages__psaSchemeDetails__benefits", Seq("Defined benefits only"), answerIsMessageKey = false, None),
-    AnswerRow("messages__psaSchemeDetails__are_benefits_secured", Seq("site.no"), answerIsMessageKey = true, None)
+    AnswerRow("messages__psaSchemeDetails__country_established", Seq("Country of GB"), answerIsMessageKey = false, changeUrl = None),
+    AnswerRow("messages__psaSchemeDetails__current_scheme_members", Seq("1"), answerIsMessageKey = false, changeUrl = None),
+    AnswerRow("messages__psaSchemeDetails__future_scheme_members", Seq("2 to 11"), answerIsMessageKey = false, changeUrl = None),
+    AnswerRow("messages__psaSchemeDetails__is_investment_regulated", Seq("site.no"), answerIsMessageKey = true, changeUrl = None),
+    AnswerRow("messages__psaSchemeDetails__is_occupational", Seq("site.no"), answerIsMessageKey = true, changeUrl = None),
+    AnswerRow("messages__psaSchemeDetails__benefits", Seq("Defined benefits only"), answerIsMessageKey = false, changeUrl = None),
+    AnswerRow("messages__psaSchemeDetails__are_benefits_secured", Seq("site.no"), answerIsMessageKey = true, changeUrl = None)
   )
 
   val individualAnswerRow = AnswerSection(Some("fName mName lName"), indidualAnswerRows)

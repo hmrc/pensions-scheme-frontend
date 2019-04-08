@@ -20,11 +20,19 @@ import identifiers._
 import identifiers.register.establishers.EstablishersId
 import models.UniqueTaxReference
 import play.api.libs.json.JsPath
+import utils.checkyouranswers.{CheckYourAnswers, UniqueTaxReferenceCYA}
 
 case class DirectorUniqueTaxReferenceId(establisherIndex: Int, directorIndex: Int) extends TypedIdentifier[UniqueTaxReference] {
   override def path: JsPath = EstablishersId(establisherIndex).path \ "director" \ directorIndex \ DirectorUniqueTaxReferenceId.toString
 }
 
 object DirectorUniqueTaxReferenceId {
+  implicit val cya: CheckYourAnswers[DirectorUniqueTaxReferenceId] =
+    UniqueTaxReferenceCYA(
+      label = "messages__director__cya__utr_yes_no",
+      changeHasUtr = "messages__visuallyhidden__director__utr_yes_no",
+      changeUtr = "messages__visuallyhidden__director__utr",
+      changeNoUtr = "messages__visuallyhidden__director__utr_no"
+    )()
   override def toString: String = "directorUniqueTaxReference"
 }

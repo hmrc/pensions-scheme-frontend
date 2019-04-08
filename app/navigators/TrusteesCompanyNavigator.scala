@@ -30,6 +30,12 @@ class TrusteesCompanyNavigator @Inject()(val dataCacheConnector: UserAnswersCach
   override protected def routeMap(from: NavigateFrom): Option[NavigateTo] = {
     from.id match {
       case CompanyDetailsId(index) =>
+        NavigateTo.save(controllers.register.trustees.company.routes.CompanyVatController.onPageLoad(NormalMode, index, None))
+
+      case CompanyVatId(index) =>
+        NavigateTo.save(controllers.register.trustees.company.routes.CompanyPayeController.onPageLoad(NormalMode, index, None))
+
+      case CompanyPayeId(index) =>
         NavigateTo.save(controllers.register.trustees.company.routes.CompanyRegistrationNumberController.onPageLoad(NormalMode, index, None))
 
       case CompanyRegistrationNumberId(index) =>
@@ -71,6 +77,12 @@ class TrusteesCompanyNavigator @Inject()(val dataCacheConnector: UserAnswersCach
   override protected def editRouteMap(from: NavigateFrom): Option[NavigateTo] = {
     from.id match {
       case CompanyDetailsId(index) =>
+        checkYourAnswers(index, from.userAnswers)
+
+      case CompanyVatId(index) =>
+        checkYourAnswers(index, from.userAnswers)
+
+      case CompanyPayeId(index) =>
         checkYourAnswers(index, from.userAnswers)
 
       case CompanyRegistrationNumberId(index) =>

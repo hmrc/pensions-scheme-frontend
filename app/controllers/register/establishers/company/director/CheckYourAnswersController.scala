@@ -19,15 +19,15 @@ package controllers.register.establishers.company.director
 import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions._
-import controllers.register.establishers.company
-import identifiers.register.establishers.company.director.{CheckYourAnswersId, IsDirectorCompleteId}
+import identifiers.register.establishers.company.director._
 import javax.inject.Inject
-import models.{Index, Mode, NormalMode}
+import models.{CheckMode, Index, Mode, NormalMode}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.EstablishersCompanyDirector
-import utils.{CheckYourAnswersFactory, Navigator, SectionComplete}
+import utils.checkyouranswers.Ops._
+import utils.{CountryOptions, Navigator, SectionComplete}
 import viewmodels.AnswerSection
 import views.html.check_your_answers
 
@@ -35,42 +35,54 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
                                            override val messagesApi: MessagesApi,
-                                           @EstablishersCompanyDirector navigator: Navigator,
                                            authenticate: AuthAction,
                                            getData: DataRetrievalAction,
-                                           requireData: DataRequiredAction,
-                                           checkYourAnswersFactory: CheckYourAnswersFactory,
-                                           sectionComplete: SectionComplete)(implicit val ec: ExecutionContext)
-  extends FrontendController with Retrievals with I18nSupport {
+                                           requiredData: DataRequiredAction,
+                                           sectionComplete: SectionComplete,
+                                           @EstablishersCompanyDirector navigator: Navigator,
+                                           implicit val countryOptions: CountryOptions
+                                          )(implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport {
 
-  def onPageLoad(companyIndex: Index, directorIndex: Index, mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
+  def onPageLoad(companyIndex: Index, directorIndex: Index, mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requiredData).async {
     implicit request =>
-      val checkYourAnswersHelper = checkYourAnswersFactory.checkYourAnswersHelper(request.userAnswers)
-
       val companyDirectorDetails = AnswerSection(
         Some("messages__director__cya__details_heading"),
-        checkYourAnswersHelper.directorDetails(companyIndex.id, directorIndex.id) ++
-          checkYourAnswersHelper.directorNino(companyIndex.id, directorIndex.id) ++
-          checkYourAnswersHelper.directorUniqueTaxReference(companyIndex.id, directorIndex.id)
+        Seq(
+          DirectorDetailsId(companyIndex, directorIndex).
+            row(routes.DirectorDetailsController.onPageLoad(CheckMode, companyIndex, directorIndex, srn).url, mode),
+          DirectorNinoId(companyIndex, directorIndex).
+            row(routes.DirectorNinoController.onPageLoad(CheckMode, companyIndex, directorIndex, srn).url, mode),
+          DirectorUniqueTaxReferenceId(companyIndex, directorIndex).
+            row(routes.DirectorUniqueTaxReferenceController.onPageLoad(CheckMode, companyIndex, directorIndex, srn).url, mode)
+        ).flatten
       )
 
       val companyDirectorContactDetails = AnswerSection(
         Some("messages__director__cya__contact__details_heading"),
-        checkYourAnswersHelper.directorAddress(companyIndex.id, directorIndex.id) ++
-          checkYourAnswersHelper.directorAddressYears(companyIndex.id, directorIndex.id) ++
-          checkYourAnswersHelper.directorPreviousAddress(companyIndex.id, directorIndex.id) ++
-          checkYourAnswersHelper.directorContactDetails(companyIndex.id, directorIndex.id)
+        Seq(
+          DirectorAddressId(companyIndex, directorIndex).
+            row(routes.DirectorAddressController.onPageLoad(CheckMode, companyIndex, directorIndex, srn).url),
+          DirectorAddressYearsId(companyIndex, directorIndex).
+            row(routes.DirectorAddressYearsController.onPageLoad(CheckMode, companyIndex, directorIndex, srn).url, mode),
+          DirectorPreviousAddressId(companyIndex, directorIndex).
+            row(routes.DirectorPreviousAddressController.onPageLoad(CheckMode, companyIndex, directorIndex, srn).url, mode),
+          DirectorContactDetailsId(companyIndex, directorIndex).
+            row(routes.DirectorContactDetailsController.onPageLoad(CheckMode, companyIndex, directorIndex, srn).url)
+        ).flatten
       )
 
       Future.successful(Ok(check_your_answers(
         appConfig,
         Seq(companyDirectorDetails, companyDirectorContactDetails),
-        company.director.routes.CheckYourAnswersController.onSubmit(companyIndex, directorIndex, mode, srn),
-        existingSchemeName))
-      )
-  }
+        routes.CheckYourAnswersController.onSubmit(companyIndex, directorIndex, mode, srn),
+        existingSchemeName,
+        mode = mode
+      )))
 
-  def onSubmit(companyIndex: Index, directorIndex: Index, mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
+    }
+
+  def onSubmit(companyIndex: Index, directorIndex: Index, mode: Mode, srn: Option[String]): Action[AnyContent] = (
+    authenticate andThen getData(mode, srn) andThen requiredData).async {
     implicit request =>
       sectionComplete.setCompleteFlag(request.externalId, IsDirectorCompleteId(companyIndex, directorIndex), request.userAnswers, true).map { _ =>
         Redirect(navigator.nextPage(CheckYourAnswersId(companyIndex, directorIndex), NormalMode, request.userAnswers))

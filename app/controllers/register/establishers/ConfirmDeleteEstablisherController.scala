@@ -17,7 +17,6 @@
 package controllers.register.establishers
 
 import config.FrontendAppConfig
-import connectors.UserAnswersCacheConnector
 import controllers.Retrievals
 import controllers.actions._
 import forms.register.establishers.ConfirmDeleteEstablisherFormProvider
@@ -26,6 +25,7 @@ import identifiers.register.establishers.company.CompanyDetailsId
 import identifiers.register.establishers.individual.EstablisherDetailsId
 import identifiers.register.establishers.partnership.PartnershipDetailsId
 import javax.inject.Inject
+import models._
 import models.person.PersonDetails
 import models.register.establishers.EstablisherKind
 import models.register.establishers.EstablisherKind._
@@ -34,6 +34,7 @@ import models._
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Result}
+import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.Establishers
 import utils.{Navigator, UserAnswers}
@@ -44,7 +45,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class ConfirmDeleteEstablisherController @Inject()(
                                                     appConfig: FrontendAppConfig,
                                                     override val messagesApi: MessagesApi,
-                                                    dataCacheConnector: UserAnswersCacheConnector,
+                                                    val userAnswersService: UserAnswersService,
                                                     @Establishers navigator: Navigator,
                                                     authenticate: AuthAction,
                                                     getData: DataRetrievalAction,
@@ -131,18 +132,18 @@ class ConfirmDeleteEstablisherController @Inject()(
       value => {
         val deletionResult = if (value) {
           establisherKind match {
-            case Company => companyDetails.fold(Future.successful(dataRequest.userAnswers))(
-              company => dataCacheConnector.save(CompanyDetailsId(establisherIndex), company.copy(isDeleted = true)))
-            case Indivdual => establisherDetails.fold(Future.successful(dataRequest.userAnswers))(
-              trustee => dataCacheConnector.save(EstablisherDetailsId(establisherIndex), trustee.copy(isDeleted = true)))
-            case Partnership => partnershipDetails.fold(Future.successful(dataRequest.userAnswers))(
-              partnership => dataCacheConnector.save(PartnershipDetailsId(establisherIndex), partnership.copy(isDeleted = true)))
+            case Company => companyDetails.fold(Future.successful(dataRequest.userAnswers.json))(
+              company => userAnswersService.save(mode, srn, CompanyDetailsId(establisherIndex), company.copy(isDeleted = true)))
+            case Indivdual => establisherDetails.fold(Future.successful(dataRequest.userAnswers.json))(
+              trustee => userAnswersService.save(mode, srn, EstablisherDetailsId(establisherIndex), trustee.copy(isDeleted = true)))
+            case Partnership => partnershipDetails.fold(Future.successful(dataRequest.userAnswers.json))(
+              partnership => userAnswersService.save(mode, srn, PartnershipDetailsId(establisherIndex), partnership.copy(isDeleted = true)))
           }
         } else {
-          Future.successful(dataRequest.userAnswers)
+          Future.successful(dataRequest.userAnswers.json)
         }
-        deletionResult.flatMap { userAnswers =>
-          Future.successful(Redirect(navigator.nextPage(ConfirmDeleteEstablisherId, NormalMode, userAnswers)))
+        deletionResult.flatMap { answers =>
+          Future.successful(Redirect(navigator.nextPage(ConfirmDeleteEstablisherId, NormalMode, UserAnswers(answers))))
         }
       }
     )

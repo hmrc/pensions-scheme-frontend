@@ -16,7 +16,7 @@
 
 package controllers.register.establishers.company
 
-import connectors.FakeUserAnswersCacheConnector
+import services.FakeUserAnswersService
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.register.establishers.IsDormantFormProvider
@@ -42,7 +42,7 @@ class IsCompanyDormantControllerSpec extends ControllerSpecBase {
     new IsCompanyDormantController(
       frontendAppConfig,
       messagesApi,
-      FakeUserAnswersCacheConnector,
+      FakeUserAnswersService,
       new FakeNavigator(desiredRoute = onwardRoute),
       FakeAuthAction,
       dataRetrievalAction,
@@ -58,7 +58,7 @@ class IsCompanyDormantControllerSpec extends ControllerSpecBase {
       EstablishersId.toString -> Json.arr(
         Json.obj(
           CompanyDetailsId.toString ->
-            CompanyDetails("test company name", Some("123456"), Some("abcd")),
+            CompanyDetails("test company name"),
           IsCompanyDormantId.toString -> DeclarationDormant.values.head.toString
         )
       )

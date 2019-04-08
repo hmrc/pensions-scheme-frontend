@@ -22,7 +22,7 @@ import models.CompanyDetails
 import play.api.data.Form
 import play.api.data.Forms._
 
-class CompanyDetailsFormProvider @Inject() extends Mappings with PayeMappingString with VatMappingString with Transforms {
+class CompanyDetailsFormProvider @Inject() extends Mappings with Transforms {
 
   val companyNameLength: Int = 160
 
@@ -37,18 +37,7 @@ class CompanyDetailsFormProvider @Inject() extends Mappings with PayeMappingStri
             ),
             safeText("messages__error__company_name_invalid")
           )
-        ),
-      "vatNumber" -> optional(
-        vatMapping(
-          "messages__error__vat_length",
-          "messages__error__vat_invalid"
-        )),
-      "payeNumber" -> optional(
-        payeMapping(
-          "messages__company__paye_error_length",
-          "messages__company__paye_error_invalid"
         )
-      )
     )(CompanyDetails.applyDelete)(CompanyDetails.unapplyDelete)
   )
 }

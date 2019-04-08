@@ -19,7 +19,7 @@ package controllers.address
 import akka.stream.Materializer
 import com.google.inject.Inject
 import config.FrontendAppConfig
-import connectors.{AddressLookupConnector, UserAnswersCacheConnector}
+import connectors.AddressLookupConnector
 import forms.address.PostCodeLookupFormProvider
 import identifiers.TypedIdentifier
 import models.NormalMode
@@ -37,6 +37,7 @@ import play.api.libs.json.Json
 import play.api.mvc._
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import services.UserAnswersService
 import uk.gov.hmrc.domain.PsaId
 import uk.gov.hmrc.http.HttpException
 import utils.{FakeNavigator, Navigator, UserAnswers}
@@ -56,7 +57,7 @@ object PostcodeLookupControllerSpec {
   class TestController @Inject()(
                                   override val appConfig: FrontendAppConfig,
                                   override val messagesApi: MessagesApi,
-                                  override val cacheConnector: UserAnswersCacheConnector,
+                                  override val userAnswersService: UserAnswersService,
                                   override val addressLookupConnector: AddressLookupConnector,
                                   override val navigator: Navigator,
                                   formProvider: PostCodeLookupFormProvider
@@ -113,7 +114,7 @@ class PostcodeLookupControllerSpec extends WordSpec with MustMatchers with Mocki
 
     "return a redirect on successful submission" in {
 
-      val cacheConnector: UserAnswersCacheConnector = mock[UserAnswersCacheConnector]
+      val userAnswersService: UserAnswersService = mock[UserAnswersService]
       val addressConnector: AddressLookupConnector = mock[AddressLookupConnector]
 
       val address = TolerantAddress(Some(""), Some(""), None, None, None, Some("GB"))
@@ -122,13 +123,13 @@ class PostcodeLookupControllerSpec extends WordSpec with MustMatchers with Mocki
         Seq(address)
       }
 
-      when(cacheConnector.save(eqTo("cacheId"), eqTo(FakeIdentifier), eqTo(Seq(address)))(any(), any(), any())) thenReturn Future.successful {
+      when(userAnswersService.save(eqTo(NormalMode), eqTo(None), eqTo(FakeIdentifier), eqTo(Seq(address)))(any(), any(), any(), any())) thenReturn Future.successful {
         Json.obj()
       }
 
       running(_.overrides(
         bind[Navigator].toInstance(FakeNavigator),
-        bind[UserAnswersCacheConnector].toInstance(cacheConnector),
+        bind[UserAnswersService].toInstance(userAnswersService),
         bind[AddressLookupConnector].toInstance(addressConnector)
       )) {
         app =>
@@ -147,7 +148,7 @@ class PostcodeLookupControllerSpec extends WordSpec with MustMatchers with Mocki
     "return a bad request" when {
       "the postcode look fails to return result" in {
 
-        val cacheConnector: UserAnswersCacheConnector = mock[UserAnswersCacheConnector]
+        val userAnswersService: UserAnswersService = mock[UserAnswersService]
         val addressConnector: AddressLookupConnector = mock[AddressLookupConnector]
 
         when(addressConnector.addressLookupByPostCode(eqTo("ZZ1 1ZZ"))(any(), any())) thenReturn
@@ -155,7 +156,7 @@ class PostcodeLookupControllerSpec extends WordSpec with MustMatchers with Mocki
 
         running(_.overrides(
           bind[Navigator].toInstance(FakeNavigator),
-          bind[UserAnswersCacheConnector].toInstance(cacheConnector),
+          bind[UserAnswersService].toInstance(userAnswersService),
           bind[AddressLookupConnector].toInstance(addressConnector)
         )) {
           app =>
@@ -177,14 +178,14 @@ class PostcodeLookupControllerSpec extends WordSpec with MustMatchers with Mocki
 
         val invalidPostcode = "*" * 10
 
-        val cacheConnector: UserAnswersCacheConnector = mock[UserAnswersCacheConnector]
+        val userAnswersService: UserAnswersService = mock[UserAnswersService]
         val addressConnector: AddressLookupConnector = mock[AddressLookupConnector]
 
         verifyZeroInteractions(addressConnector)
 
         running(_.overrides(
           bind[Navigator].toInstance(FakeNavigator),
-          bind[UserAnswersCacheConnector].toInstance(cacheConnector),
+          bind[UserAnswersService].toInstance(userAnswersService),
           bind[AddressLookupConnector].toInstance(addressConnector)
         )) {
           app =>
@@ -210,7 +211,7 @@ class PostcodeLookupControllerSpec extends WordSpec with MustMatchers with Mocki
       "the postcode returns no results" which {
         "presents with form errors" in {
 
-          val cacheConnector: UserAnswersCacheConnector = mock[UserAnswersCacheConnector]
+          val userAnswersService: UserAnswersService = mock[UserAnswersService]
           val addressConnector: AddressLookupConnector = mock[AddressLookupConnector]
 
           when(addressConnector.addressLookupByPostCode(eqTo("ZZ1 1ZZ"))(any(), any())) thenReturn Future.successful {
@@ -219,7 +220,7 @@ class PostcodeLookupControllerSpec extends WordSpec with MustMatchers with Mocki
 
           running(_.overrides(
             bind[Navigator].toInstance(FakeNavigator),
-            bind[UserAnswersCacheConnector].toInstance(cacheConnector),
+            bind[UserAnswersService].toInstance(userAnswersService),
             bind[AddressLookupConnector].toInstance(addressConnector)
           )) {
             app =>

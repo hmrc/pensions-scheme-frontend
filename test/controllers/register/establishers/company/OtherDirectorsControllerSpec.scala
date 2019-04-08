@@ -16,7 +16,7 @@
 
 package controllers.register.establishers.company
 
-import connectors.FakeUserAnswersCacheConnector
+import services.FakeUserAnswersService
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.register.establishers.company.OtherDirectorsFormProvider
@@ -49,7 +49,7 @@ class OtherDirectorsControllerSpec extends ControllerSpecBase {
   val validData: JsObject = Json.obj(
     EstablishersId.toString -> Json.arr(
       Json.obj(
-        CompanyDetailsId.toString -> CompanyDetails("test company name", Some("123456"), Some("abcd")),
+        CompanyDetailsId.toString -> CompanyDetails("test company name"),
         OtherDirectorsId.toString -> true
       )
     )
@@ -59,7 +59,7 @@ class OtherDirectorsControllerSpec extends ControllerSpecBase {
     new OtherDirectorsController(
       frontendAppConfig,
       messagesApi,
-      FakeUserAnswersCacheConnector,
+      FakeUserAnswersService,
       new FakeNavigator(desiredRoute = onwardRoute),
       FakeAuthAction,
       dataRetrievalAction,

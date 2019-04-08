@@ -21,6 +21,7 @@ import models._
 import models.address.Address
 import models.person.PersonDetails
 import models.register._
+import play.api.i18n.Messages
 import play.api.libs.json.Reads
 import utils.{CountryOptions, DateHelper, UserAnswers}
 import viewmodels.{AnswerRow, Message}
@@ -49,7 +50,8 @@ object CheckYourAnswers {
 
   implicit def dormant[I <: TypedIdentifier[DeclarationDormant]](implicit rds: Reads[DeclarationDormant]): CheckYourAnswers[I] = IsDormantCYA()()
 
-  implicit def companyDetails[I <: TypedIdentifier[CompanyDetails]](implicit rds: Reads[CompanyDetails]): CheckYourAnswers[I] = CompanyDetailsCYA()()
+  implicit def companyDetails[I <: TypedIdentifier[CompanyDetails]]
+  (implicit rds: Reads[CompanyDetails], messages: Messages): CheckYourAnswers[I] = CompanyDetailsCYA()()
 
   implicit def contactDetails[I <: TypedIdentifier[ContactDetails]](implicit rds: Reads[ContactDetails]): CheckYourAnswers[I] = ContactDetailsCYA()()
 
@@ -58,6 +60,10 @@ object CheckYourAnswers {
   implicit def boolean[I <: TypedIdentifier[Boolean]](implicit rds: Reads[Boolean]): CheckYourAnswers[I] = BooleanCYA()()
 
   implicit def members[I <: TypedIdentifier[Members]](implicit rds: Reads[Members]): CheckYourAnswers[I] = MembersCYA()()
+
+  implicit def paye[I <: TypedIdentifier[Paye]](implicit r: Reads[Paye]): CheckYourAnswers[I] = PayeCYA()()
+
+  implicit def vat[I <: TypedIdentifier[Vat]](implicit r: Reads[Vat]): CheckYourAnswers[I] = VatCYA()()
 
   case class StringCYA[I <: TypedIdentifier[String]](label: Option[String] = None, hiddenLabel: Option[String] = None) {
 
@@ -70,8 +76,8 @@ object CheckYourAnswers {
                 label.fold(s"${id.toString}.checkYourAnswersLabel")(customLabel => customLabel),
                 Seq(retrieveStringAnswer(id, string)),
                 answerIsMessageKey = false,
-                Some(changeUrl),
-                hiddenLabel.fold(s"messages__visuallyhidden__${id.toString}")(customHiddenLabel => customHiddenLabel)
+                Some(Link("site.change", changeUrl,
+                  Some(hiddenLabel.fold(s"messages__visuallyhidden__${id.toString}")(customHiddenLabel => customHiddenLabel))))
               ))
           }.getOrElse(Seq.empty[AnswerRow])
 
@@ -84,21 +90,24 @@ object CheckYourAnswers {
 
     def apply()(implicit rds: Reads[Boolean]): CheckYourAnswers[I] = {
       new CheckYourAnswers[I] {
-        private def booleanCYARow(id: I, userAnswers: UserAnswers, changeUrl: Option[String]): Seq[AnswerRow] = {
+        private def booleanCYARow(id: I, changeUrl: Option[Link], userAnswers: UserAnswers): Seq[AnswerRow] = {
           userAnswers.get(id).map {
             flag =>
               Seq(AnswerRow(
                 label.fold(s"${id.toString}.checkYourAnswersLabel")(customLabel => customLabel),
                 Seq(if (flag) "site.yes" else "site.no"),
                 answerIsMessageKey = true,
-                changeUrl,
-                hiddenLabel.fold(s"messages__visuallyhidden__${id.toString}")(customHiddenLabel => customHiddenLabel)
+                changeUrl
               ))
           }.getOrElse(Seq.empty[AnswerRow])
         }
-        override def row(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = booleanCYARow(id, userAnswers, Some(changeUrl))
 
-        override def updateRow(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = booleanCYARow(id, userAnswers, None)
+        override def row(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = booleanCYARow(id,
+          Some(Link("site.change", changeUrl,
+            Some(hiddenLabel.fold(s"messages__visuallyhidden__${id.toString}")(customHiddenLabel => customHiddenLabel)))),
+          userAnswers)
+
+        override def updateRow(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = booleanCYARow(id, None, userAnswers)
       }
     }
   }
@@ -114,8 +123,8 @@ object CheckYourAnswers {
                 label.fold(s"${id.toString}.checkYourAnswersLabel")(customLabel => customLabel),
                 Seq(s"messages__scheme_type_${schemeType.toString}"),
                 answerIsMessageKey = true,
-                Some(changeUrl),
-                hiddenLabel.fold(s"messages__visuallyhidden__${id.toString}")(customHiddenLabel => customHiddenLabel)
+                Some(Link("site.change", changeUrl,
+                  Some(hiddenLabel.fold(s"messages__visuallyhidden__${id.toString}")(customHiddenLabel => customHiddenLabel))))
               ))
           }.getOrElse(Seq.empty[AnswerRow])
 
@@ -126,7 +135,7 @@ object CheckYourAnswers {
 
   implicit def typeOfBenefitsCYA[I <: TypedIdentifier[TypeOfBenefits]](implicit rds: Reads[TypeOfBenefits]): CheckYourAnswers[I] = {
     new CheckYourAnswers[I] {
-      private def typeOfBenefitsCYARow(id: I, userAnswers: UserAnswers, changeUrl: Option[String]) = {
+      private def typeOfBenefitsCYARow(id: I, userAnswers: UserAnswers, changeUrl: Option[Link]): Seq[AnswerRow] = {
         userAnswers.get(id).map {
           typeOfBenefits =>
             Seq(
@@ -134,14 +143,14 @@ object CheckYourAnswers {
                 "messages__type_of_benefits_cya_label",
                 Seq(s"messages__type_of_benefits__$typeOfBenefits"),
                 answerIsMessageKey = true,
-                changeUrl,
-                "messages__visuallyhidden__type_of_benefits_change"
+                changeUrl
               )
             )
         }.getOrElse(Seq.empty[AnswerRow])
       }
 
-      override def row(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = typeOfBenefitsCYARow(id, userAnswers, Some(changeUrl))
+      override def row(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = typeOfBenefitsCYARow(id, userAnswers,
+        Some(Link("site.change", changeUrl, Some("messages__visuallyhidden__type_of_benefits_change"))))
 
       override def updateRow(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = typeOfBenefitsCYARow(id, userAnswers, None)
     }
@@ -159,15 +168,15 @@ object CheckYourAnswers {
                 "messages__common__email",
                 Seq(s"${contactDetails.emailAddress}"),
                 answerIsMessageKey = false,
-                Some(changeUrl),
-                changeEmailAddress
+                Some(Link("site.change", changeUrl,
+                  Some(changeEmailAddress)))
               ),
               AnswerRow(
                 "messages__common__phone",
                 Seq(s"${contactDetails.phoneNumber}"),
                 answerIsMessageKey = false,
-                Some(changeUrl),
-                changePhoneNumber
+                Some(Link("site.change", changeUrl,
+                  Some(changePhoneNumber)))
               ))
         }.getOrElse(Seq.empty[AnswerRow])
 
@@ -176,28 +185,27 @@ object CheckYourAnswers {
     }
   }
 
-  implicit def personDetails[I <: TypedIdentifier[PersonDetails]](implicit rds: Reads[PersonDetails]): CheckYourAnswers[I] = {
+  implicit def personDetails[I <: TypedIdentifier[PersonDetails]](implicit rds: Reads[PersonDetails], messages: Messages): CheckYourAnswers[I] = {
     new CheckYourAnswers[I] {
-      override def row(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = userAnswers.get(id).map {
-        personDetails =>
-          Seq(
-            AnswerRow(
-              "messages__common__cya__name",
-              Seq(personDetails.fullName),
-              answerIsMessageKey = false,
-              Some(changeUrl),
-              Message("messages__visuallyhidden__common__name", personDetails.fullName)
-            ),
-            AnswerRow(
-              "messages__common__dob",
-              Seq(DateHelper.formatDate(personDetails.date)),
-              answerIsMessageKey = false,
-              Some(changeUrl),
-              Message("messages__visuallyhidden__common__dob", personDetails.fullName)
-            ))
+
+      private def personDetailsCYARow(personDetails: PersonDetails, changeUrlName: Option[Link], changeUrlDob: Option[Link]): Seq[AnswerRow] = {
+        Seq(
+          AnswerRow("messages__common__cya__name", Seq(personDetails.fullName), answerIsMessageKey = false, changeUrlName),
+          AnswerRow("messages__common__dob", Seq(DateHelper.formatDate(personDetails.date)), answerIsMessageKey = false, changeUrlDob)
+        )
+      }
+
+      override def row(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = userAnswers.get(id).map { personDetails =>
+        personDetailsCYARow(personDetails, Some(Link("site.change", changeUrl,
+          Some(Message("messages__visuallyhidden__common__name", personDetails.fullName).resolve))),
+          Some(Link("site.change", changeUrl,
+            Some(Message("messages__visuallyhidden__common__dob", personDetails.fullName).resolve)))
+        )
       }.getOrElse(Seq.empty[AnswerRow])
 
-      override def updateRow(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = row(id)(changeUrl, userAnswers)
+      override def updateRow(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = userAnswers.get(id).map { personDetails =>
+        personDetailsCYARow(personDetails, None, None)
+      }.getOrElse(Seq.empty[AnswerRow])
     }
   }
 
@@ -207,108 +215,95 @@ object CheckYourAnswers {
     def apply()(implicit rds: Reads[Members]): CheckYourAnswers[I] = {
       new CheckYourAnswers[I] {
 
-        private def memberCYARow(id: I, userAnswers: UserAnswers, changeUrl: Option[String]): Seq[AnswerRow] = {
+        private def memberCYARow(id: I, userAnswers: UserAnswers, changeUrl: Option[Link]): Seq[AnswerRow] = {
           userAnswers.get(id).map { members =>
             Seq(AnswerRow(
               label.fold(s"${id.toString}.checkYourAnswersLabel")(customLabel => customLabel),
               Seq(s"messages__members__$members"),
               answerIsMessageKey = true,
-              changeUrl,
-              hiddenLabel.fold(s"messages__visuallyhidden__${id.toString}")(customHiddenLabel => customHiddenLabel)
+              changeUrl
             ))
           }.getOrElse(Seq.empty[AnswerRow])
         }
 
-        override def row(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = memberCYARow(id, userAnswers, Some(changeUrl))
+        override def row(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = memberCYARow(id, userAnswers,
+          Some(Link("site.change", changeUrl,
+            Some(hiddenLabel.fold(s"messages__visuallyhidden__${id.toString}")(customHiddenLabel => customHiddenLabel)))))
 
         override def updateRow(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = memberCYARow(id, userAnswers, None)
       }
     }
   }
 
-  implicit def partnershipDetails[I <: TypedIdentifier[PartnershipDetails]](implicit rds: Reads[PartnershipDetails]): CheckYourAnswers[I] = {
+  implicit def partnershipDetails[I <: TypedIdentifier[PartnershipDetails]](implicit rds: Reads[PartnershipDetails],
+                                                                            messages: Messages): CheckYourAnswers[I] = {
     new CheckYourAnswers[I] {
       override def row(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = userAnswers.get(id).map { partnershipDetails =>
-        Seq(
-          AnswerRow(
-            "messages__common__cya__name",
-            Seq(partnershipDetails.name),
-            answerIsMessageKey = false,
-            Some(changeUrl),
-            Message("messages__visuallyhidden__common__name", partnershipDetails.name)
-          )
-        )
+        Seq(AnswerRow("messages__common__cya__name", Seq(partnershipDetails.name), answerIsMessageKey = false,
+          Some(Link("site.change", changeUrl, Some(Message("messages__visuallyhidden__common__name", partnershipDetails.name).resolve)))))
       } getOrElse Seq.empty[AnswerRow]
 
-      override def updateRow(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = row(id)(changeUrl, userAnswers)
+      override def updateRow(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = userAnswers.get(id).map { partnershipDetails =>
+        Seq(AnswerRow("messages__common__cya__name", Seq(partnershipDetails.name), answerIsMessageKey = false, None))
+      } getOrElse Seq.empty[AnswerRow]
     }
   }
 
-  implicit def vat[I <: TypedIdentifier[Vat]](implicit r: Reads[Vat]): CheckYourAnswers[I] = {
-    new CheckYourAnswers[I] {
-      override def row(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        userAnswers.get(id).map {
-          case Vat.Yes(vat) => Seq(
-            AnswerRow(
-              "messages__partnership__checkYourAnswers__vat",
-              Seq("site.yes"),
-              answerIsMessageKey = true,
-              Some(changeUrl),
-              "messages__visuallyhidden__partnership__vat_yes_no"
-            ),
-            AnswerRow(
-              "messages__common__cya__vat",
-              Seq(vat),
-              answerIsMessageKey = false,
-              Some(changeUrl),
-              "messages__visuallyhidden__partnership__vat_number"
-            )
-          )
-          case Vat.No => Seq(
-            AnswerRow(
-              "messages__partnership__checkYourAnswers__vat",
-              Seq("site.no"),
-              answerIsMessageKey = true,
-              Some(changeUrl),
-              "messages__visuallyhidden__partnership__vat_yes_no"
-            ))
-        } getOrElse Seq.empty[AnswerRow]
+  case class VatCYA[I <: TypedIdentifier[Vat]](labelYesNo: Option[String] = Some("messages__partnership__checkYourAnswers__vat"),
+                                               hiddenLabelYesNo: String = "messages__visuallyhidden__partnership__vat_yes_no",
+                                               hiddenLabelVat: String = "messages__visuallyhidden__partnership__vat_number") {
+    def apply()(implicit rds: Reads[Vat]): CheckYourAnswers[I] = {
+      new CheckYourAnswers[I] {
 
-      override def updateRow(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = row(id)(changeUrl, userAnswers)
+        override def row(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+          userAnswers.get(id).map {
+            case Vat.Yes(vat) => Seq(
+              AnswerRow(labelYesNo.fold(s"${id.toString}.checkYourAnswersLabel")(customLabel => customLabel),
+                Seq("site.yes"), answerIsMessageKey = true, Some(Link("site.change", changeUrl, Some(hiddenLabelYesNo)))),
+              AnswerRow("messages__common__cya__vat", Seq(vat), answerIsMessageKey = false,
+                Some(Link("site.change", changeUrl, Some(hiddenLabelVat))))
+            )
+            case Vat.No => Seq(
+              AnswerRow(labelYesNo.fold(s"${id.toString}.checkYourAnswersLabel")(customLabel => customLabel),
+                Seq("site.no"), answerIsMessageKey = true, Some(Link("site.change", changeUrl, Some(hiddenLabelYesNo))))
+            )
+          } getOrElse Seq.empty[AnswerRow]
+
+        override def updateRow(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+          userAnswers.get(id).map {
+            case Vat.Yes(vat) => Seq(AnswerRow("messages__common__cya__vat", Seq(vat), answerIsMessageKey = false, None))
+            case Vat.No => Seq(AnswerRow("messages__common__cya__vat", Seq("site.not_entered"), answerIsMessageKey = true,
+              Some(Link("site.add", changeUrl, Some(s"${hiddenLabelVat}_add")))))
+          } getOrElse Seq.empty[AnswerRow]
+      }
     }
   }
 
-  implicit def paye[I <: TypedIdentifier[Paye]](implicit r: Reads[Paye]): CheckYourAnswers[I] = {
-    new CheckYourAnswers[I] {
-      override def row(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        userAnswers.get(id).map {
-          case Paye.Yes(paye) => Seq(
-            AnswerRow(
-              "messages__partnership__checkYourAnswers__paye",
-              Seq("site.yes"),
-              answerIsMessageKey = true,
-              Some(changeUrl),
-              "messages__visuallyhidden__partnership__paye_yes_no"
-            ),
-            AnswerRow(
-              "messages__common__cya__paye",
-              Seq(paye),
-              answerIsMessageKey = false,
-              Some(changeUrl),
-              "messages__visuallyhidden__partnership__paye_number"
+  case class PayeCYA[I <: TypedIdentifier[Paye]](labelYesNo: Option[String] = Some("messages__partnership__checkYourAnswers__paye"),
+                                                 hiddenLabelYesNo: String = "messages__visuallyhidden__partnership__paye_yes_no",
+                                                 hiddenLabelPaye: String = "messages__visuallyhidden__partnership__paye_number") {
+    def apply()(implicit rds: Reads[Paye]): CheckYourAnswers[I] = {
+      new CheckYourAnswers[I] {
+        override def row(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+          userAnswers.get(id).map {
+            case Paye.Yes(paye) => Seq(
+              AnswerRow(labelYesNo.fold(s"${id.toString}.checkYourAnswersLabel")(customLabel => customLabel),
+                Seq("site.yes"), answerIsMessageKey = true, Some(Link("site.change", changeUrl, Some(hiddenLabelYesNo)))),
+              AnswerRow("messages__common__cya__paye", Seq(paye), answerIsMessageKey = false,
+                Some(Link("site.change", changeUrl, Some(hiddenLabelPaye))))
             )
-          )
-          case Paye.No => Seq(
-            AnswerRow(
-              "messages__partnership__checkYourAnswers__paye",
-              Seq("site.no"),
-              answerIsMessageKey = true,
-              Some(changeUrl),
-              "messages__visuallyhidden__partnership__paye_yes_no"
-            ))
-        } getOrElse Seq.empty[AnswerRow]
+            case Paye.No => Seq(
+              AnswerRow(labelYesNo.fold(s"${id.toString}.checkYourAnswersLabel")(customLabel => customLabel),
+                Seq("site.no"), answerIsMessageKey = true, Some(Link("site.change", changeUrl, Some(hiddenLabelYesNo)))))
+          } getOrElse Seq.empty[AnswerRow]
 
-      override def updateRow(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = row(id)(changeUrl, userAnswers)
+        override def updateRow(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+          userAnswers.get(id).map {
+            case Paye.Yes(paye) => Seq(AnswerRow("messages__common__cya__paye", Seq(paye), answerIsMessageKey = false, None))
+            case Paye.No => Seq(AnswerRow("messages__common__cya__paye", Seq("site.not_entered"), answerIsMessageKey = true,
+              Some(Link("site.add", changeUrl, Some(s"${hiddenLabelPaye}_add")))))
+          } getOrElse Seq.empty[AnswerRow]
+      }
     }
   }
 
@@ -331,45 +326,29 @@ case class NinoCYA[I <: TypedIdentifier[Nino]](
 
   def apply()(implicit rds: Reads[Nino]): CheckYourAnswers[I] = {
     new CheckYourAnswers[I] {
+
       override def row(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
         userAnswers.get(id) match {
           case Some(Nino.Yes(nino)) => Seq(
-            AnswerRow(
-              label,
-              Seq(s"${Nino.Yes}"),
-              answerIsMessageKey = false,
-              Some(changeUrl),
-              changeHasNino
-            ),
-            AnswerRow(
-              "messages__trusteeNino_nino_cya_label",
-              Seq(nino),
-              answerIsMessageKey = false,
-              Some(changeUrl),
-              changeNino
-            )
+            AnswerRow(label, Seq(s"${Nino.Yes}"), answerIsMessageKey = false, Some(Link("site.change", changeUrl, Some(changeHasNino)))),
+            AnswerRow("messages__common__nino", Seq(nino), answerIsMessageKey = false,
+              Some(Link("site.change", changeUrl, Some(changeNino))))
           )
           case Some(Nino.No(reason)) => Seq(
-            AnswerRow(
-              label,
-              Seq(s"${Nino.No}"),
-              answerIsMessageKey = false, Some(changeUrl),
-              changeHasNino
-            ),
-            AnswerRow(
-              "messages__trusteeNino_reason_cya_label",
-              Seq(reason),
-              answerIsMessageKey = false,
-              Some(changeUrl),
-              changeNoNino
-            ))
+            AnswerRow(label, Seq(s"${Nino.No}"), answerIsMessageKey = false, Some(Link("site.change", changeUrl, Some(changeHasNino)))),
+            AnswerRow("messages__common__reason", Seq(reason), answerIsMessageKey = false,
+              Some(Link("site.change", changeUrl, Some(changeNoNino)))))
           case _ => Seq.empty[AnswerRow]
         }
 
-      override def updateRow(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = row(id)(changeUrl, userAnswers)
+      override def updateRow(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = userAnswers.get(id) match {
+        case Some(Nino.Yes(nino)) => Seq(AnswerRow("messages__common__nino", Seq(nino), answerIsMessageKey = false, None))
+        case Some(Nino.No(_)) => Seq(AnswerRow("messages__common__nino", Seq("site.not_entered"), answerIsMessageKey = true,
+          Some(Link("site.add", changeUrl, Some(s"${changeNino}_add")))))
+        case _ => Seq.empty[AnswerRow]
+      }
     }
   }
-
 }
 
 case class CompanyRegistrationNumberCYA[I <: TypedIdentifier[CompanyRegistrationNumber]](
@@ -383,43 +362,35 @@ case class CompanyRegistrationNumberCYA[I <: TypedIdentifier[CompanyRegistration
   def apply()(implicit rds: Reads[CompanyRegistrationNumber]): CheckYourAnswers[I] = {
     new CheckYourAnswers[I] {
       override def row(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
-
         userAnswers.get(id) match {
           case Some(CompanyRegistrationNumber.Yes(crn)) => Seq(
-            AnswerRow(
-              label,
-              Seq(s"${CompanyRegistrationNumber.Yes}"),
-              answerIsMessageKey = true,
-              Some(changeUrl),
-              changeHasCrn
-            ),
-            AnswerRow(
-              "messages__common__crn",
-              Seq(s"$crn"),
-              answerIsMessageKey = true,
-              Some(changeUrl),
-              changeCrn
-            ))
+            AnswerRow(label, Seq(s"${CompanyRegistrationNumber.Yes}"), answerIsMessageKey = true,
+              Some(Link("site.change", changeUrl, Some(changeHasCrn)))),
+            AnswerRow("messages__common__crn", Seq(s"$crn"), answerIsMessageKey = false,
+              Some(Link("site.change", changeUrl, Some(changeCrn))))
+          )
           case Some(CompanyRegistrationNumber.No(reason)) => Seq(
-            AnswerRow(
-              label,
-              Seq(s"${CompanyRegistrationNumber.No}"),
-              answerIsMessageKey = true,
-              Some(changeUrl),
-              changeHasCrn
-            ),
-            AnswerRow(
-              "messages__company__cya__crn_no_reason",
-              Seq(s"$reason"),
-              answerIsMessageKey = true,
-              Some(changeUrl),
-              changeNoCrn
-            ))
+            AnswerRow(label, Seq(s"${CompanyRegistrationNumber.No}"), answerIsMessageKey = true,
+              Some(Link("site.change", changeUrl, Some(changeHasCrn)))),
+            AnswerRow("messages__company__cya__crn_no_reason", Seq(s"$reason"), answerIsMessageKey = false,
+              Some(Link("site.change", changeUrl, Some(changeNoCrn))))
+          )
           case _ => Seq.empty[AnswerRow]
         }
       }
 
-      override def updateRow(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = row(id)(changeUrl, userAnswers)
+      override def updateRow(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+        userAnswers.get(id) match {
+          case Some(CompanyRegistrationNumber.Yes(crn)) => Seq(
+            AnswerRow("messages__common__crn", Seq(s"$crn"), answerIsMessageKey = false,
+              Some(Link("site.change", changeUrl, Some(changeCrn))))
+          )
+          case Some(CompanyRegistrationNumber.No(reason)) => Seq(
+            AnswerRow("messages__common__crn", Seq("site.not_entered"), answerIsMessageKey = true,
+              Some(Link("site.add", changeUrl, Some(s"${changeCrn}_add"))))
+          )
+          case _ => Seq.empty[AnswerRow]
+        }
     }
   }
 
@@ -439,8 +410,8 @@ case class BankDetailsHnSCYA[I <: TypedIdentifier[BankAccountDetails]](label: Op
                 s"${bankDetails.sortCode.first}-${bankDetails.sortCode.second}-${bankDetails.sortCode.third}",
                 bankDetails.accountNumber),
               answerIsMessageKey = false,
-              Some(changeUrl),
-              hiddenLabel.fold(s"messages__visuallyhidden__${id.toString}")(customHiddenLabel => customHiddenLabel)
+              Some(Link("site.change", changeUrl,
+                Some(hiddenLabel.fold(s"messages__visuallyhidden__${id.toString}")(customHiddenLabel => customHiddenLabel))))
             ))
         }.getOrElse(Seq.empty[AnswerRow])
 
@@ -459,11 +430,11 @@ case class AddressYearsCYA[I <: TypedIdentifier[AddressYears]](label: String = "
           label,
           Seq(s"messages__common__$addressYears"),
           answerIsMessageKey = true,
-          Some(changeUrl),
-          changeAddressYears
+          Some(Link("site.change", changeUrl,
+            Some(changeAddressYears)))
         ))).getOrElse(Seq.empty[AnswerRow])
 
-      override def updateRow(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = row(id)(changeUrl, userAnswers)
+      override def updateRow(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = Nil
     }
   }
 
@@ -478,24 +449,13 @@ case class AddressCYA[I <: TypedIdentifier[Address]](
     new CheckYourAnswers[I] {
       override def row(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
 
-        def addressAnswer(address: Address): Seq[String] = {
-          val country = countryOptions.options.find(_.value == address.country).map(_.label).getOrElse(address.country)
-          Seq(
-            Some(address.addressLine1),
-            Some(address.addressLine2),
-            address.addressLine3,
-            address.addressLine4,
-            address.postcode,
-            Some(country)
-          ).flatten
-        }
-
         userAnswers.get(id).map { address =>
           Seq(AnswerRow(
             label,
-            addressAnswer(address),
-            answerIsMessageKey = false, Some(changeUrl),
-            changeAddress
+            userAnswers.addressAnswer(address),
+            answerIsMessageKey = false,
+            Some(Link("site.change", changeUrl,
+              Some(changeAddress)))
           ))
         }.getOrElse(Seq.empty[AnswerRow])
       }
@@ -520,39 +480,26 @@ case class UniqueTaxReferenceCYA[I <: TypedIdentifier[UniqueTaxReference]](
       override def row(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
         userAnswers.get(id) match {
           case Some(UniqueTaxReference.Yes(utr)) => Seq(
-            AnswerRow(
-              label,
-              Seq(s"${UniqueTaxReference.Yes}"),
-              answerIsMessageKey = false,
-              Some(changeUrl),
-              changeHasUtr
-            ),
-            AnswerRow(
-              utrLabel,
-              Seq(utr),
-              answerIsMessageKey = false,
-              Some(changeUrl),
-              changeUtr
-            )
+            AnswerRow(label, Seq(s"${UniqueTaxReference.Yes}"), answerIsMessageKey = false,
+              Some(Link("site.change", changeUrl, Some(changeHasUtr)))),
+            AnswerRow(utrLabel, Seq(utr), answerIsMessageKey = false,
+              Some(Link("site.change", changeUrl, Some(changeUtr))))
           )
           case Some(UniqueTaxReference.No(reason)) => Seq(
-            AnswerRow(
-              label,
-              Seq(s"${UniqueTaxReference.No}"),
-              answerIsMessageKey = false, Some(changeUrl),
-              changeHasUtr
-            ),
-            AnswerRow(
-              reasonLabel,
-              Seq(reason),
-              answerIsMessageKey = false,
-              Some(changeUrl),
-              changeNoUtr
-            ))
+            AnswerRow(label, Seq(s"${UniqueTaxReference.No}"), answerIsMessageKey = false,
+              Some(Link("site.change", changeUrl, Some(changeHasUtr)))),
+            AnswerRow(reasonLabel, Seq(reason), answerIsMessageKey = false,
+              Some(Link("site.change", changeUrl, Some(changeNoUtr))))
+          )
           case _ => Seq.empty[AnswerRow]
         }
 
-      override def updateRow(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = row(id)(changeUrl, userAnswers)
+      override def updateRow(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+        userAnswers.get(id) match {
+          case Some(UniqueTaxReference.Yes(utr)) => Seq(AnswerRow(utrLabel, Seq(utr), answerIsMessageKey = false, None))
+          case Some(UniqueTaxReference.No(_)) => Seq(AnswerRow(utrLabel, Seq("site.not_entered"), answerIsMessageKey = true, None))
+          case _ => Seq.empty[AnswerRow]
+        }
     }
   }
 }
@@ -571,8 +518,8 @@ case class IsDormantCYA[I <: TypedIdentifier[DeclarationDormant]](
               label,
               Seq("site.yes"),
               answerIsMessageKey = true,
-              Some(changeUrl),
-              changeIsDormant
+              Some(Link("site.change", changeUrl,
+                Some(changeIsDormant)))
             )
           )
           case Some(DeclarationDormant.No) => Seq(
@@ -580,13 +527,13 @@ case class IsDormantCYA[I <: TypedIdentifier[DeclarationDormant]](
               label,
               Seq("site.no"),
               answerIsMessageKey = true,
-              Some(changeUrl),
-              changeIsDormant
+              Some(Link("site.change", changeUrl,
+                Some(changeIsDormant)))
             ))
           case _ => Seq.empty[AnswerRow]
         }
 
-      override def updateRow(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = row(id)(changeUrl, userAnswers)
+      override def updateRow(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = Nil
     }
   }
 
@@ -599,43 +546,21 @@ case class CompanyDetailsCYA[I <: TypedIdentifier[CompanyDetails]](
                                                                     payeLabel: String = "messages__common__cya__paye",
                                                                     changePaye: String = "messages__visuallyhidden__establisher__paye_number") {
 
-  def apply()(implicit rds: Reads[CompanyDetails]): CheckYourAnswers[I] = {
+  def apply()(implicit rds: Reads[CompanyDetails], messages: Messages): CheckYourAnswers[I] = {
     new CheckYourAnswers[I] {
+
       override def row(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        userAnswers.get(id).map {
-          companyDetails =>
-
-            val nameRow = AnswerRow(
-              nameLabel,
-              Seq(s"${companyDetails.companyName}"),
-              answerIsMessageKey = false,
-              Some(changeUrl),
-              Message("messages__visuallyhidden__common__name", companyDetails.companyName)
-            )
-
-            val withVat = companyDetails.vatNumber.fold(Seq(nameRow)) { vat =>
-              Seq(nameRow, AnswerRow(
-                vatLabel,
-                Seq(s"$vat"),
-                answerIsMessageKey = false,
-                Some(changeUrl),
-                changeVat
-              ))
-            }
-
-            companyDetails.payeNumber.fold(withVat) { paye =>
-              withVat :+ AnswerRow(
-                payeLabel,
-                Seq(s"$paye"),
-                answerIsMessageKey = false,
-                Some(changeUrl),
-                changePaye
-              )
-            }
-
+        userAnswers.get(id).map { companyDetails =>
+          Seq(AnswerRow(nameLabel, Seq(s"${companyDetails.companyName}"), answerIsMessageKey = false,
+            Some(Link("site.change", changeUrl, Some(Message("messages__visuallyhidden__common__name", companyDetails.companyName))))
+          ))
         }.getOrElse(Seq.empty[AnswerRow])
 
-      override def updateRow(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = row(id)(changeUrl, userAnswers)
+      override def updateRow(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+        userAnswers.get(id).map { companyDetails =>
+          Seq(AnswerRow(nameLabel, Seq(s"${companyDetails.companyName}"), answerIsMessageKey = false, None))
+        }.getOrElse(Seq.empty[AnswerRow])
     }
   }
+
 }

@@ -17,16 +17,16 @@
 package controllers.register.establishers.company.director
 
 import config.FrontendAppConfig
-import connectors.UserAnswersCacheConnector
 import controllers.Retrievals
 import controllers.actions._
 import forms.register.establishers.company.director.DirectorUniqueTaxReferenceFormProvider
-import identifiers.register.establishers.company.director.{DirectorDetailsId, DirectorUniqueTaxReferenceId}
+import identifiers.register.establishers.company.director.DirectorUniqueTaxReferenceId
 import javax.inject.Inject
 import models.{Index, Mode, UniqueTaxReference}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Call}
+import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.EstablishersCompanyDirector
 import utils.{Enumerable, Navigator, UserAnswers}
@@ -37,7 +37,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class DirectorUniqueTaxReferenceController @Inject()(
                                                       appConfig: FrontendAppConfig,
                                                       override val messagesApi: MessagesApi,
-                                                      dataCacheConnector: UserAnswersCacheConnector,
+                                                      userAnswersService: UserAnswersService,
                                                       @EstablishersCompanyDirector navigator: Navigator,
                                                       authenticate: AuthAction,
                                                       getData: DataRetrievalAction,
@@ -51,7 +51,6 @@ class DirectorUniqueTaxReferenceController @Inject()(
   def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
-      DirectorDetailsId(establisherIndex, directorIndex).retrieve.right.flatMap { director =>
         DirectorUniqueTaxReferenceId(establisherIndex, directorIndex).retrieve.right.map { value =>
           Future.successful(Ok(directorUniqueTaxReference(
             appConfig, form.fill(value), mode, establisherIndex, directorIndex, existingSchemeName, postCall(mode, establisherIndex, directorIndex, srn))))
@@ -59,21 +58,20 @@ class DirectorUniqueTaxReferenceController @Inject()(
           Future.successful(Ok(directorUniqueTaxReference(
             appConfig, form, mode, establisherIndex, directorIndex, existingSchemeName, postCall(mode, establisherIndex, directorIndex, srn))))
         }
-      }
   }
 
 
   def onSubmit(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
-      DirectorDetailsId(establisherIndex, directorIndex).retrieve.right.map { director =>
         form.bindFromRequest().fold(
           (formWithErrors: Form[_]) =>
             Future.successful(BadRequest(directorUniqueTaxReference(
               appConfig, formWithErrors, mode, establisherIndex, directorIndex, existingSchemeName, postCall(mode, establisherIndex, directorIndex, srn)))),
           (value) =>
-            dataCacheConnector.save(
-              request.externalId,
+            userAnswersService.save(
+              mode,
+              srn,
               DirectorUniqueTaxReferenceId(establisherIndex, directorIndex),
               value
             ).map {
@@ -81,7 +79,6 @@ class DirectorUniqueTaxReferenceController @Inject()(
                 Redirect(navigator.nextPage(DirectorUniqueTaxReferenceId(establisherIndex, directorIndex), mode, new UserAnswers(json)))
             }
         )
-      }
   }
 
 }
