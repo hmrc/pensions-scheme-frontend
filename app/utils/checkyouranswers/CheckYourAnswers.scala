@@ -385,7 +385,7 @@ case class CompanyRegistrationNumberCYA[I <: TypedIdentifier[CompanyRegistration
             AnswerRow("messages__common__crn", Seq(s"$crn"), answerIsMessageKey = false,
               Some(Link("site.change", changeUrl, Some(changeCrn))))
           )
-          case Some(CompanyRegistrationNumber.No(reason)) => Seq(
+          case Some(CompanyRegistrationNumber.No(_)) => Seq(
             AnswerRow("messages__common__crn", Seq("site.not_entered"), answerIsMessageKey = true,
               Some(Link("site.add", changeUrl, Some(s"${changeCrn}_add"))))
           )

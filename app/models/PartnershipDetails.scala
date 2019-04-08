@@ -17,11 +17,17 @@
 package models
 
 import play.api.libs.json._
+import play.api.libs.functional.syntax._
 
 case class PartnershipDetails(name: String, isDeleted: Boolean = false)
 
 object PartnershipDetails {
-  implicit val format: OFormat[PartnershipDetails] = Json.format[PartnershipDetails]
+  implicit val reads: Reads[PartnershipDetails] =
+    ((JsPath \ "name").read[String] and
+      ((JsPath \ "isDeleted").read[Boolean] orElse Reads.pure(false))
+      ) (PartnershipDetails.apply _)
+
+  implicit val writes: Writes[PartnershipDetails] = Json.writes[PartnershipDetails]
 
   def applyDelete(name: String): PartnershipDetails = {
     PartnershipDetails(name)

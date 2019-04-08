@@ -18,12 +18,10 @@ package identifiers.register.trustees.individual
 
 import identifiers._
 import identifiers.register.trustees.TrusteesId
-import models.Link
 import models.address.Address
 import play.api.libs.json.JsPath
-import utils.checkyouranswers.CheckYourAnswers
-import utils.{CountryOptions, UserAnswers}
-import viewmodels.AnswerRow
+import utils.CountryOptions
+import utils.checkyouranswers.{AddressCYA, CheckYourAnswers}
 
 case class TrusteePreviousAddressId(index: Int) extends TypedIdentifier[Address] {
   override def path: JsPath = TrusteesId(index).path \ TrusteePreviousAddressId.toString
@@ -33,22 +31,8 @@ object TrusteePreviousAddressId {
   override def toString: String = "trusteePreviousAddress"
 
   implicit def cya(implicit countryOptions: CountryOptions): CheckYourAnswers[TrusteePreviousAddressId] =
-    new CheckYourAnswers[TrusteePreviousAddressId] {
-      def previousAddressRow(userAnswers: UserAnswers, changeLink: Option[Link], id: TrusteePreviousAddressId): Seq[AnswerRow] =
-        userAnswers.get(id).map { address =>
-          Seq(AnswerRow(
-            "messages__common__cya__previous_address",
-            userAnswers.addressAnswer(address),
-            answerIsMessageKey = false,
-            changeLink
-          ))
-        }.getOrElse(Seq.empty[AnswerRow])
-
-      override def row(id: TrusteePreviousAddressId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        previousAddressRow(userAnswers, Some(Link("site.change", changeUrl,
-          Some("messages__visuallyhidden__trustee__previous_address"))), id)
-
-      override def updateRow(id: TrusteePreviousAddressId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        previousAddressRow(userAnswers, None, id)
-    }
+    AddressCYA(
+      label = "messages__common__cya__previous_address",
+      changeAddress = "messages__visuallyhidden__trustee__previous_address"
+    )()
 }
