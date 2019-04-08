@@ -25,7 +25,7 @@
     partners: Seq[PartnerEntity],
     postUrl: Call,
     schemeName: Option[String],
-    readOnly: Boolean
+    viewOnly: Boolean
 )(implicit request: Request[_], messages: Messages)
 
 @disableSubmission = @{
@@ -50,9 +50,9 @@
             @components.submit_button("messages__addPartners_add_partner")
         } else {
 
-            @components.entity_list(partners, readOnly)
+            @components.entity_list(partners, viewOnly)
 
-            @if(!readOnly){
+            @if(!viewOnly){
                 @if(partners.size < appConfig.maxPartners) {
                     @components.input_yes_no(
                         field = form("value"),

@@ -45,7 +45,7 @@ class AddPartnersViewSpec extends YesNoViewBehaviours with EntityListBehaviours 
   private val johnDoeEntity = PartnerEntity(PartnerDetailsId(0, 0), johnDoe.fullName, isDeleted = false, isCompleted = false)
   private val joeBloggsEntity = PartnerEntity(PartnerDetailsId(0, 1), joeBloggs.fullName, isDeleted = false, isCompleted = true)
 
-  private def createView(partners: Seq[PartnerEntity] = Nil, readOnly: Boolean = false) =
+  private def createView(partners: Seq[PartnerEntity] = Nil, viewOnly: Boolean = false) =
     () =>
       addPartners(
         frontendAppConfig,
@@ -53,10 +53,10 @@ class AddPartnersViewSpec extends YesNoViewBehaviours with EntityListBehaviours 
         partners,
         postUrl,
         None,
-        readOnly
+        viewOnly
       )(fakeRequest, messages)
 
-  private def createViewUsingForm(partners: Seq[PartnerEntity] = Nil, readOnly: Boolean = false) =
+  private def createViewUsingForm(partners: Seq[PartnerEntity] = Nil, viewOnly: Boolean = false) =
     (form: Form[_]) =>
       addPartners(
         frontendAppConfig,
@@ -64,7 +64,7 @@ class AddPartnersViewSpec extends YesNoViewBehaviours with EntityListBehaviours 
         partners,
         postUrl,
         None,
-        readOnly
+        viewOnly
       )(fakeRequest, messages)
 
   "AddPartnershipPartners view" must {
@@ -123,19 +123,19 @@ class AddPartnersViewSpec extends YesNoViewBehaviours with EntityListBehaviours 
       doc must haveDynamicText("messages__addCompanyDirectorsOrPartners_tell_us_if_you_have_more")
     }
 
-    "not show the yes no inputs in readOnly mode" in {
-      val doc = asDocument(createView(partners, readOnly = true)())
+    "not show the yes no inputs in viewOnly mode" in {
+      val doc = asDocument(createView(partners, viewOnly = true)())
       doc.select("legend > span").size() mustBe 0
     }
 
-    "not show the Submit button in readOnly mode" in {
-      val doc = asDocument(createViewUsingForm(Seq(johnDoeEntity), readOnly = true)(form))
+    "not show the Submit button in viewOnly mode" in {
+      val doc = asDocument(createViewUsingForm(Seq(johnDoeEntity), viewOnly = true)(form))
       val submit = doc.select("button#submit")
       submit.size() mustBe 0
     }
 
-    "not show delete, edit links or incomplete lozenge, but show view links in readOnly mode" in {
-      val doc = asDocument(createViewUsingForm(Seq(johnDoeEntity), readOnly = true)(form))
+    "not show delete, edit links or incomplete lozenge, but show view links in viewOnly mode" in {
+      val doc = asDocument(createViewUsingForm(Seq(johnDoeEntity), viewOnly = true)(form))
       val editLink = doc.select(s"a[id=person-0-edit]")
       val deleteLink = doc.select(s"a[id=person-0-delete]")
       val viewLink = doc.select(s"a[id=person-0-view]")
@@ -146,8 +146,8 @@ class AddPartnersViewSpec extends YesNoViewBehaviours with EntityListBehaviours 
       incompleteLozenge.size() mustBe 0
     }
 
-    "show delete and edit links and incomplete lozenge, but not show view links when readOnly is false" in {
-      val doc = asDocument(createViewUsingForm(Seq(johnDoeEntity), readOnly = false)(form))
+    "show delete and edit links and incomplete lozenge, but not show view links when viewOnly is false" in {
+      val doc = asDocument(createViewUsingForm(Seq(johnDoeEntity), viewOnly = false)(form))
       println(doc)
       val editLink = doc.select(s"a[id=person-0-edit]")
       val deleteLink = doc.select(s"a[id=person-0-delete]")

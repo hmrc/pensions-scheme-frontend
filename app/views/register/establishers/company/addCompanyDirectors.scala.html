@@ -27,7 +27,7 @@
     directors: Seq[DirectorEntity],
     schemeName: Option[String],
     postCall: Call,
-    readOnly: Boolean
+    viewOnly: Boolean
 )(implicit request: Request[_], messages: Messages)
 
 @disableSubmission = @{
@@ -52,9 +52,9 @@
             @components.submit_button("messages__addCompanyDirectors_add_director")
         } else {
 
-            @components.entity_list(directors, readOnly)
+            @components.entity_list(directors, viewOnly)
 
-            @if(!readOnly){
+            @if(!viewOnly){
                 @if(directors.size < appConfig.maxDirectors) {
                     @components.input_yes_no(
                         field = form("value"),
