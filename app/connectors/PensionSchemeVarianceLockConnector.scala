@@ -36,6 +36,8 @@ trait PensionSchemeVarianceLockConnector {
 
   def getLock(psaId: String, srn: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[SchemeVariance]]
 
+  def isLockByPsaIdOrSchemeId(psaId: String, srn: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[Lock]]
+
   def releaseLock(psaId: String, srn: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Unit]
 
 }
@@ -80,6 +82,33 @@ class PensionSchemeVarianceLockConnectorImpl @Inject()(http: HttpClient, config:
           None
         case OK =>
           Json.parse(response.body).validate[SchemeVariance] match {
+            case JsSuccess(value, _) => Some(value)
+            case JsError(errors) => throw JsResultException(errors)
+          }
+        case _ =>
+          throw new HttpException(response.body, response.status)
+      }
+    } andThen logExceptions("Unable to find the lock")
+  }
+
+  override def isLockByPsaIdOrSchemeId(psaId: String, srn: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[Lock]] = {
+
+    implicit val rds: HttpReads[HttpResponse] = new HttpReads[HttpResponse] {
+      override def read(method: String, url: String, response: HttpResponse): HttpResponse = response
+    }
+
+    implicit val headerCarrier: HeaderCarrier = hc.withExtraHeaders("psaId" -> psaId, "srn" -> srn)
+
+    val url = s"${config.updateSchemeDetailsUrl}/isLockByPsaOrScheme"
+
+    http.GET[HttpResponse](url)(implicitly, headerCarrier, implicitly).map { response =>
+
+      response.status match {
+        case NOT_FOUND =>
+          None
+        case OK if response.body.isEmpty => None
+        case OK =>
+          Json.parse(response.body).validate[Lock] match {
             case JsSuccess(value, _) => Some(value)
             case JsError(errors) => throw JsResultException(errors)
           }

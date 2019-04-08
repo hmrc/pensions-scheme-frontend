@@ -47,6 +47,7 @@ object Lock extends Enumerable.Implicits {
         case JsString("SuccessfulVarianceLock") => JsSuccess(VarianceLock)
         case JsString("PsaHasLockedAnotherScheme") => JsSuccess(PsaLock)
         case JsString("AnotherPsaHasLockedScheme") => JsSuccess(SchemeLock)
+        case JsString("PsaAndSchemeHasAlreadyLocked") => JsSuccess(BothLock)
         case _ => JsError("cannot parse it")
       }
 

@@ -94,7 +94,8 @@ object CheckYourAnswersMembersControllerSpec extends ControllerSpecBase {
       membersSection
     ),
     postUrl,
-    Some(schemeName)
+    Some(schemeName),
+    viewOnly = false
   )(fakeRequest, messages).toString
 
 }

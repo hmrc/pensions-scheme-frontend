@@ -17,12 +17,12 @@
 @import viewmodels.RepeaterAnswerSection
 @import views.html._
 
-@(answerSection: RepeaterAnswerSection, idPath: String)(implicit messages: Messages)
+@(answerSection: RepeaterAnswerSection, idPath: String, viewOnly:Boolean = false)(implicit messages: Messages)
 
 <h2 id="cya-@idPath-heading">@messages(answerSection.headingKey)</h2>
 
 <ul role="list" class="tabular-data tabular-data--list">
-    @components.answer_row(answerSection.relevanceRow, s"$idPath-relevance")
+    @components.answer_row(answerSection.relevanceRow, s"$idPath-relevance", viewOnly)
 @for((row, i) <- answerSection.rows.zipWithIndex){
     <li class="tabular-data__entry tabular-data__entry--grouped divider--bottom">
         <div id="cya-@idPath-@i-answer" class="tabular-data__data tabular-data__data--6-12">@row.answer</div>
