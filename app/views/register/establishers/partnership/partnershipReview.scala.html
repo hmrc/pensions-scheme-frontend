@@ -19,7 +19,7 @@
 @import models.{Mode, CheckMode}
 @import controllers.register.establishers.partnership.routes
 
-@(appConfig: FrontendAppConfig, index: Index, partnershipName: String, partners: Seq[String], schemeName: Option[String], srn: Option[String], mode: Mode)(implicit request: Request[_], messages: Messages)
+@(appConfig: FrontendAppConfig, index: Index, partnershipName: String, partners: Seq[String], schemeName: Option[String], srn: Option[String], mode: Mode, viewOnly: Boolean)(implicit request: Request[_], messages: Messages)
 
 @main_template(
     title = messages("messages__partnershipReview__title"),
@@ -32,14 +32,20 @@
 
     @components.review_section(
         heading = partnershipName,
-        linkMessage = "messages__partnershipReview__partnership__editLink",
+        linkMessage = if(viewOnly){
+            "messages__partnershipReview__partnership__viewLink"
+        } else {
+            "messages__partnershipReview__partnership__editLink"
+        },
         linkId = "edit-partnership-details",
         link = routes.CheckYourAnswersController.onPageLoad(mode, index, srn)
     )
 
     @components.review_section(
         heading = messages("messages__partnershipReview__partners__heading"),
-        linkMessage = if(partners.lengthCompare(10)<0){
+        linkMessage = if(viewOnly){
+            "messages__partnershipReview__partners__viewLink"
+        } else if(partners.lengthCompare(10)<0){
             "messages__partnershipReview__partners__editLink"
         } else {
             "messages__partnershipReview__partners__changeLink"

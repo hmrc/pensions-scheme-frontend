@@ -89,18 +89,18 @@ class CheckYourAnswersSpec extends SpecBase with MustMatchers with PropertyCheck
 
       "companyDetails" in {
 
-          val companyDetails = CompanyDetails("Company Name")
+        val companyDetails = CompanyDetails("Company Name")
 
-          implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(Json.obj(
-            "testId" -> companyDetails
-          )), PsaId("A0000000"))
+        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(Json.obj(
+          "testId" -> companyDetails
+        )), PsaId("A0000000"))
 
-          testIdentifier[CompanyDetails].row("onwardUrl") must equal(Seq(AnswerRow(
-            "messages__common__cya__name",
-            Seq(companyDetails.companyName),
-            false,
-            Some(Link("site.change", onwardUrl, Some(Message("messages__visuallyhidden__common__name", "Company Name"))))
-          )))
+        testIdentifier[CompanyDetails].row("onwardUrl") must equal(Seq(AnswerRow(
+          "messages__common__cya__name",
+          Seq(companyDetails.companyName),
+          false,
+          Some(Link("site.change", onwardUrl, Some(Message("messages__visuallyhidden__common__name", "Company Name"))))
+        )))
       }
 
       "CRN" when {
@@ -367,7 +367,7 @@ class CheckYourAnswersSpec extends SpecBase with MustMatchers with PropertyCheck
             Seq(s"${partnershipDetails.name}"),
             false,
             Some(Link("site.change", onwardUrl, Some(Message("messages__visuallyhidden__common__name", partnershipDetails.name).resolve))
-          ))))
+            ))))
       }
 
       "VAT" when {

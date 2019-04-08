@@ -27,8 +27,9 @@ import views.html.register.establishers.establisherKind
 class EstablisherKindViewSpec extends ViewBehaviours {
 
   private val messageKeyPrefix = "establishers__add"
-  private val form = new EstablisherKindFormProvider()()
   private val postCall = routes.EstablisherKindController.onSubmit _
+
+  private val form = new EstablisherKindFormProvider()()
 
   private def createView() = () =>
     establisherKind(frontendAppConfig, form, NormalMode, Index(1), None, postCall(NormalMode, Index(1), None))(fakeRequest, messages)
