@@ -23,5 +23,5 @@ import utils.UserAnswers
 case class OptionalDataRequest[A](request: Request[A], externalId: String, userAnswers: Option[UserAnswers], psaId: PsaId, readOnly: Boolean = false)
   extends WrappedRequest[A](request) with IdentifiedRequest
 
-case class DataRequest[A](request: Request[A], externalId: String, userAnswers: UserAnswers, psaId: PsaId, readOnly: Boolean = false)
+case class DataRequest[A](request: Request[A], externalId: String, userAnswers: UserAnswers, psaId: PsaId, viewOnly: Boolean = false)
   extends WrappedRequest[A](request) with IdentifiedRequest

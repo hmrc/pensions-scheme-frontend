@@ -53,10 +53,10 @@ class DataRetrievalImpl(dataConnector: UserAnswersCacheConnector,
     }
   }
 
-  def getOptionalRequest[A](f: Future[Option[JsValue]], readOnly: Boolean = false)(implicit request: AuthenticatedRequest[A]): Future[OptionalDataRequest[A]] =
+  def getOptionalRequest[A](f: Future[Option[JsValue]], viewOnly: Boolean = false)(implicit request: AuthenticatedRequest[A]): Future[OptionalDataRequest[A]] =
     f.map {
-      case None => OptionalDataRequest(request.request, request.externalId, None, request.psaId, readOnly)
-      case Some(data) => OptionalDataRequest(request.request, request.externalId, Some(UserAnswers(data)), request.psaId, readOnly)
+      case None => OptionalDataRequest(request.request, request.externalId, None, request.psaId, viewOnly)
+      case Some(data) => OptionalDataRequest(request.request, request.externalId, Some(UserAnswers(data)), request.psaId, viewOnly)
     }
 }
 
