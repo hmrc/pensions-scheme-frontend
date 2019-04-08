@@ -16,7 +16,6 @@
 
 package controllers.register.establishers.individual
 
-import connectors.{FakeUserAnswersCacheConnector, UserAnswersCacheConnector}
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.address.AddressListFormProvider
@@ -30,6 +29,7 @@ import play.api.data.Form
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
 import play.api.test.Helpers._
+import services.{FakeUserAnswersService, UserAnswersService}
 import utils.{Enumerable, FakeNavigator, MapFormats}
 import viewmodels.address.AddressListViewModel
 import views.html.address.addressList
@@ -50,7 +50,7 @@ class AddressListControllerSpec extends ControllerSpecBase with Enumerable.Impli
 
   def controller(
                   dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisher,
-                  dataCacheConnector: UserAnswersCacheConnector = FakeUserAnswersCacheConnector
+                  dataCacheConnector: UserAnswersService = FakeUserAnswersService
                 ): AddressListController =
     new AddressListController(
       frontendAppConfig, messagesApi,
@@ -129,11 +129,11 @@ class AddressListControllerSpec extends ControllerSpecBase with Enumerable.Impli
     "update the country of the chosen address to `GB`" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody("value" -> "0")
 
-      val result = controller(new FakeDataRetrievalAction(Some(validData)), FakeUserAnswersCacheConnector)
+      val result = controller(new FakeDataRetrievalAction(Some(validData)), FakeUserAnswersService)
         .onSubmit(NormalMode, firstIndex, None)(postRequest)
 
       status(result) mustEqual SEE_OTHER
-      FakeUserAnswersCacheConnector.verify(AddressListId(firstIndex), addresses.head.copy(country = Some("GB")))
+      FakeUserAnswersService.verify(AddressListId(firstIndex), addresses.head.copy(country = Some("GB")))
     }
 
     "return a Bad Request and errors when no data is submitted" in {

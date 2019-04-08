@@ -17,7 +17,7 @@
 package controllers.register.trustees.company
 
 import base.CSRFRequest
-import connectors.{UserAnswersCacheConnector, FakeUserAnswersCacheConnector}
+import services.{UserAnswersService, FakeUserAnswersService}
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.address.AddressListFormProvider
@@ -35,7 +35,7 @@ import views.html.address.addressList
 
 class CompanyAddressListControllerSpec extends ControllerSpecBase with CSRFRequest {
 
-  private val companyDetails = CompanyDetails("Test company name", None, None)
+  private val companyDetails = CompanyDetails("Test company name")
 
   private val addresses = Seq(
     TolerantAddress(
@@ -70,7 +70,7 @@ class CompanyAddressListControllerSpec extends ControllerSpecBase with CSRFReque
 
       running(_.overrides(
         bind[AuthAction].to(FakeAuthAction),
-        bind[UserAnswersCacheConnector].toInstance(FakeUserAnswersCacheConnector),
+        bind[UserAnswersService].toInstance(FakeUserAnswersService),
         bind[DataRetrievalAction].toInstance(dataRetrievalAction)
       )) { implicit app =>
         val request = addToken(FakeRequest(routes.CompanyAddressListController.onPageLoad(NormalMode, Index(0), None)))
@@ -90,7 +90,7 @@ class CompanyAddressListControllerSpec extends ControllerSpecBase with CSRFReque
 
       running(_.overrides(
         bind[AuthAction].to(FakeAuthAction),
-        bind[UserAnswersCacheConnector].toInstance(FakeUserAnswersCacheConnector),
+        bind[UserAnswersService].toInstance(FakeUserAnswersService),
         bind[DataRetrievalAction].toInstance(getEmptyData)
       )) { implicit app =>
         val request = addToken(FakeRequest(routes.CompanyAddressListController.onPageLoad(NormalMode, Index(0), None)))
@@ -106,7 +106,7 @@ class CompanyAddressListControllerSpec extends ControllerSpecBase with CSRFReque
 
       running(_.overrides(
         bind[AuthAction].to(FakeAuthAction),
-        bind[UserAnswersCacheConnector].toInstance(FakeUserAnswersCacheConnector),
+        bind[UserAnswersService].toInstance(FakeUserAnswersService),
         bind[DataRetrievalAction].toInstance(dontGetAnyData)
       )) { implicit app =>
         val request = addToken(FakeRequest(routes.CompanyAddressListController.onPageLoad(NormalMode, Index(0), None)))
@@ -122,7 +122,7 @@ class CompanyAddressListControllerSpec extends ControllerSpecBase with CSRFReque
 
       running(_.overrides(
         bind[AuthAction].to(FakeAuthAction),
-        bind[UserAnswersCacheConnector].toInstance(FakeUserAnswersCacheConnector),
+        bind[UserAnswersService].toInstance(FakeUserAnswersService),
         bind[DataRetrievalAction].toInstance(dataRetrievalAction)
       )) { implicit app =>
         val request =
@@ -143,7 +143,7 @@ class CompanyAddressListControllerSpec extends ControllerSpecBase with CSRFReque
 
       running(_.overrides(
         bind[AuthAction].to(FakeAuthAction),
-        bind[UserAnswersCacheConnector].toInstance(FakeUserAnswersCacheConnector),
+        bind[UserAnswersService].toInstance(FakeUserAnswersService),
         bind[DataRetrievalAction].toInstance(dontGetAnyData)
       )) { implicit app =>
         val request =
@@ -164,7 +164,7 @@ class CompanyAddressListControllerSpec extends ControllerSpecBase with CSRFReque
 
       running(_.overrides(
         bind[AuthAction].to(FakeAuthAction),
-        bind[UserAnswersCacheConnector].toInstance(FakeUserAnswersCacheConnector),
+        bind[UserAnswersService].toInstance(FakeUserAnswersService),
         bind[DataRetrievalAction].toInstance(getEmptyData)
       )) { implicit app =>
         val request =

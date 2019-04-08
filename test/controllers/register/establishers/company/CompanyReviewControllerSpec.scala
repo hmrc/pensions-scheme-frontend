@@ -121,7 +121,7 @@ object CompanyReviewControllerSpec {
   val schemeName = "Test Scheme Name"
   val companyName = "test company name"
   val directorNames = Seq("director a", "director b", "director c")
-  val companyDetails = CompanyDetails(companyName, Some("123456"), Some("abcd"))
+  val companyDetails = CompanyDetails(companyName)
 
   def director(lastName: String, isComplete: Boolean = true): JsObject = Json.obj(
     DirectorDetailsId.toString -> PersonDetails("director", None, lastName, LocalDate.now()),

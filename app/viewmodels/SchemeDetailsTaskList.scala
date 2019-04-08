@@ -16,6 +16,7 @@
 
 package viewmodels
 
+import models.Link
 import play.api.libs.json.{Json, OFormat}
 
 case class SchemeDetailsTaskList(beforeYouStart: SchemeDetailsTaskListSection,
@@ -25,7 +26,10 @@ case class SchemeDetailsTaskList(beforeYouStart: SchemeDetailsTaskListSection,
                                  establishers: Seq[SchemeDetailsTaskListSection],
                                  addTrusteeHeader : Option[SchemeDetailsTaskListSection],
                                  trustees: Seq[SchemeDetailsTaskListSection],
-                                 declaration: Option[Link] = None
+                                 declaration: Option[Link] = None,
+                                 h1: String,
+                                 h2: String,
+                                 pageTitle: String
                                 ) {
 
 }
@@ -40,8 +44,3 @@ object SchemeDetailsTaskListSection {
   implicit val formats: OFormat[SchemeDetailsTaskListSection] = Json.format[SchemeDetailsTaskListSection]
 }
 
-case class Link(text: String, target: String)
-
-object Link {
-  implicit val formats: OFormat[Link] = Json.format[Link]
-}

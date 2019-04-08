@@ -16,7 +16,7 @@
 
 package controllers.register.establishers
 
-import connectors.FakeUserAnswersCacheConnector
+import services.FakeUserAnswersService
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.register.establishers.AddEstablisherFormProvider
@@ -127,7 +127,6 @@ object AddEstablisherControllerSpec extends AddEstablisherControllerSpec {
     new AddEstablisherController(
       frontendAppConfig,
       messagesApi,
-      FakeUserAnswersCacheConnector,
       new FakeNavigator(desiredRoute = onwardRoute),
       FakeAuthAction,
       dataRetrievalAction,
@@ -157,7 +156,7 @@ object AddEstablisherControllerSpec extends AddEstablisherControllerSpec {
     false
   )
 
-  private val companyDetails = CompanyDetails("Test Ltd", None, None)
+  private val companyDetails = CompanyDetails("Test Ltd")
   private val testLtd = EstablisherCompanyEntity(
     CompanyDetailsId(1),
     "Test Ltd",

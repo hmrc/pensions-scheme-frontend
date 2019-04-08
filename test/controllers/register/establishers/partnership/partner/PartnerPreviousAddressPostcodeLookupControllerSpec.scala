@@ -18,7 +18,8 @@ package controllers.register.establishers.partnership.partner
 
 import base.CSRFRequest
 import config.FrontendAppConfig
-import connectors.{AddressLookupConnector, UserAnswersCacheConnector, FakeUserAnswersCacheConnector}
+import connectors.{AddressLookupConnector}
+import services.{UserAnswersService, FakeUserAnswersService}
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.address.PostCodeLookupFormProvider
@@ -56,7 +57,7 @@ class PartnerPreviousAddressPostcodeLookupControllerSpec extends ControllerSpecB
 
   private val form = formProvider()
   private val fakeAddressLookupConnector: AddressLookupConnector = mock[AddressLookupConnector]
-  private val fakeCacheConnector: UserAnswersCacheConnector = mock[UserAnswersCacheConnector]
+  private val fakeCacheConnector: UserAnswersService = mock[UserAnswersService]
 
 
   lazy val viewmodel = PostcodeLookupViewModel(
@@ -76,7 +77,7 @@ class PartnerPreviousAddressPostcodeLookupControllerSpec extends ControllerSpecB
       running(_.overrides(
         bind[FrontendAppConfig].to(frontendAppConfig),
         bind[Navigator].toInstance(FakeNavigator),
-        bind[UserAnswersCacheConnector].toInstance(fakeCacheConnector),
+        bind[UserAnswersService].toInstance(fakeCacheConnector),
         bind[AddressLookupConnector].toInstance(fakeAddressLookupConnector),
         bind[AuthAction].to(FakeAuthAction),
         bind[DataRetrievalAction].to(getMandatoryEstablisherPartner)
@@ -115,7 +116,7 @@ class PartnerPreviousAddressPostcodeLookupControllerSpec extends ControllerSpecB
         bind[FrontendAppConfig].to(frontendAppConfig),
         bind[MessagesApi].to(messagesApi),
         bind[Navigator].toInstance(new FakeNavigator(desiredRoute = onwardRoute)),
-        bind[UserAnswersCacheConnector].toInstance(FakeUserAnswersCacheConnector),
+        bind[UserAnswersService].toInstance(FakeUserAnswersService),
         bind[AddressLookupConnector].toInstance(fakeAddressLookupConnector),
         bind[AuthAction].to(FakeAuthAction),
         bind[DataRetrievalAction].to(getMandatoryEstablisherPartner),

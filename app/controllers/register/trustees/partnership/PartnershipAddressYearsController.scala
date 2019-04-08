@@ -18,7 +18,6 @@ package controllers.register.trustees.partnership
 
 import com.google.inject.Inject
 import config.FrontendAppConfig
-import connectors.UserAnswersCacheConnector
 import controllers.Retrievals
 import controllers.actions.{AuthAction, DataRequiredAction, DataRetrievalAction}
 import controllers.address.AddressYearsController
@@ -27,6 +26,7 @@ import identifiers.register.trustees.partnership.{PartnershipAddressYearsId, Par
 import models.{Index, Mode}
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent}
+import services.UserAnswersService
 import utils.Navigator
 import utils.annotations.TrusteesPartnership
 import viewmodels.Message
@@ -34,7 +34,7 @@ import viewmodels.address.AddressYearsViewModel
 
 class PartnershipAddressYearsController @Inject()(
                                                    override val appConfig: FrontendAppConfig,
-                                                   override val cacheConnector: UserAnswersCacheConnector,
+                                                   val userAnswersService: UserAnswersService,
                                                    @TrusteesPartnership override val navigator: Navigator,
                                                    override val messagesApi: MessagesApi,
                                                    authenticate: AuthAction,

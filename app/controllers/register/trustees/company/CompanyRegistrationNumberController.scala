@@ -27,6 +27,7 @@ import models.{Index, Mode}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
+import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.TrusteesCompany
 import utils.{Navigator, UserAnswers}
@@ -37,7 +38,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class CompanyRegistrationNumberController @Inject()(
                                                      appConfig: FrontendAppConfig,
                                                      override val messagesApi: MessagesApi,
-                                                     dataCacheConnector: UserAnswersCacheConnector,
+                                                     userAnswersService: UserAnswersService,
                                                      @TrusteesCompany navigator: Navigator,
                                                      authenticate: AuthAction,
                                                      getData: DataRetrievalAction,
@@ -65,7 +66,7 @@ class CompanyRegistrationNumberController @Inject()(
             Future.successful(BadRequest(companyRegistrationNumber(appConfig, formWithErrors, mode, index, existingSchemeName, submitUrl)))
           },
           (value) =>
-            dataCacheConnector.save(request.externalId, CompanyRegistrationNumberId(index), value).map(cacheMap =>
+            userAnswersService.save(mode, srn, CompanyRegistrationNumberId(index), value).map(cacheMap =>
               Redirect(navigator.nextPage(CompanyRegistrationNumberId(index), mode, UserAnswers(cacheMap))))
         )
       }

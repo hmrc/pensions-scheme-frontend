@@ -16,7 +16,7 @@
 
 package controllers.register.trustees.company
 
-import connectors.FakeUserAnswersCacheConnector
+import services.FakeUserAnswersService
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.ContactDetailsFormProvider
@@ -58,7 +58,7 @@ class CompanyContactDetailsControllerSpec extends ControllerSpecBase {
       new FakeNavigator(desiredRoute = onwardRoute),
       frontendAppConfig,
       messagesApi,
-      FakeUserAnswersCacheConnector,
+      FakeUserAnswersService,
       FakeAuthAction,
       dataRetrievalAction,
       new DataRequiredActionImpl,
@@ -78,13 +78,13 @@ class CompanyContactDetailsControllerSpec extends ControllerSpecBase {
     TrusteesId.toString -> Json.arr(
       Json.obj(
         CompanyDetailsId.toString ->
-          CompanyDetails("test company name", Some("123456"), Some("abcd")),
+          CompanyDetails("test company name"),
         CompanyContactDetailsId.toString ->
           ContactDetails("test@test.com", "123456789")
       ),
       Json.obj(
         CompanyDetailsId.toString ->
-          CompanyDetails("test", Some("654321"), Some("bcda"))
+          CompanyDetails("test")
       )
     )
   )

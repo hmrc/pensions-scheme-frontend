@@ -19,23 +19,21 @@ package models
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
 
-case class CompanyDetails(companyName: String, vatNumber: Option[String], payeNumber: Option[String], isDeleted: Boolean = false)
+case class CompanyDetails(companyName: String, isDeleted: Boolean = false)
 
 object CompanyDetails {
   implicit val reads: Reads[CompanyDetails] =
     ((JsPath \ "companyName").read[String] and
-      (JsPath \ "vatNumber").readNullable[String] and
-      (JsPath \ "payeNumber").readNullable[String] and
       ((JsPath \ "isDeleted").read[Boolean] orElse (Reads.pure(false)))
       ) (CompanyDetails.apply _)
 
   implicit val writes: Writes[CompanyDetails] = Json.writes[CompanyDetails]
 
-  def applyDelete(companyName: String, vatNumber: Option[String], payeNumber: Option[String]): CompanyDetails = {
-    CompanyDetails(companyName, vatNumber, payeNumber, false)
+  def applyDelete(companyName: String): CompanyDetails = {
+    CompanyDetails(companyName, false)
   }
 
-  def unapplyDelete(companyDetails: CompanyDetails): Option[(String, Option[String], Option[String])] = {
-    Some((companyDetails.companyName, companyDetails.vatNumber, companyDetails.payeNumber))
+  def unapplyDelete(companyDetails: CompanyDetails): Option[String] = {
+    Some(companyDetails.companyName)
   }
 }

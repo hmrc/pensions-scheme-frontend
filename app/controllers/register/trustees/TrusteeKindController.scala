@@ -27,6 +27,7 @@ import models.{Index, Mode}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
+import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.Trustees
 import utils.{Enumerable, Navigator, UserAnswers}
@@ -37,7 +38,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class TrusteeKindController @Inject()(
                                        appConfig: FrontendAppConfig,
                                        override val messagesApi: MessagesApi,
-                                       dataCacheConnector: UserAnswersCacheConnector,
+                                       userAnswersService: UserAnswersService,
                                        @Trustees navigator: Navigator,
                                        authenticate: AuthAction,
                                        getData: DataRetrievalAction,
@@ -65,7 +66,7 @@ class TrusteeKindController @Inject()(
           Future.successful(BadRequest(trusteeKind(appConfig, formWithErrors, mode, index, existingSchemeName, submitUrl)))
         },
         value =>
-          dataCacheConnector.save(request.externalId, TrusteeKindId(index), value).map { userAnswers =>
+          userAnswersService.save(mode, srn, TrusteeKindId(index), value).map { userAnswers =>
             Redirect(navigator.nextPage(TrusteeKindId(index), mode, UserAnswers(userAnswers)))
           }
       )

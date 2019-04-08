@@ -17,7 +17,7 @@
 package controllers.address
 
 import config.FrontendAppConfig
-import connectors.{AddressLookupConnector, UserAnswersCacheConnector}
+import connectors.AddressLookupConnector
 import controllers.Retrievals
 import identifiers.TypedIdentifier
 import models.Mode
@@ -26,6 +26,7 @@ import models.requests.DataRequest
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc._
+import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.{Navigator, UserAnswers}
 import viewmodels.Message
@@ -40,7 +41,7 @@ trait PostcodeLookupController extends FrontendController with Retrievals with I
 
   protected def appConfig: FrontendAppConfig
 
-  protected def cacheConnector: UserAnswersCacheConnector
+  protected def userAnswersService: UserAnswersService
 
   protected def addressLookupConnector: AddressLookupConnector
 
@@ -79,14 +80,14 @@ trait PostcodeLookupController extends FrontendController with Retrievals with I
                               noResults: Message,
                               mode: Mode
                             )(postcode: String)(implicit request: DataRequest[AnyContent]): Future[Result] = {
-
     addressLookupConnector.addressLookupByPostCode(postcode).flatMap {
 
       case Nil => Future.successful(Ok(postcodeLookup(appConfig, formWithError(noResults), viewmodel, existingSchemeName)))
 
       case addresses =>
-        cacheConnector.save(
-          request.externalId,
+        userAnswersService.save(
+          mode,
+          viewmodel.srn,
           id,
           addresses
         ).map {

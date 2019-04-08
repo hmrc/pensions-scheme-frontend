@@ -16,7 +16,7 @@
 
 package controllers.register.establishers.company.director
 
-import connectors.FakeUserAnswersCacheConnector
+import services.FakeUserAnswersService
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.ContactDetailsFormProvider
@@ -62,7 +62,7 @@ class DirectorContactDetailsControllerSpec extends ControllerSpecBase {
       new FakeNavigator(desiredRoute = onwardRoute),
       frontendAppConfig,
       messagesApi,
-      FakeUserAnswersCacheConnector,
+      FakeUserAnswersService,
       FakeAuthAction,
       dataRetrievalAction,
       new DataRequiredActionImpl,
@@ -79,7 +79,7 @@ class DirectorContactDetailsControllerSpec extends ControllerSpecBase {
   val validData: JsObject = Json.obj(
     EstablishersId.toString -> Json.arr(
       Json.obj(
-        CompanyDetailsId.toString -> CompanyDetails(companyName, Some("123456"), Some("abcd")),
+        CompanyDetailsId.toString -> CompanyDetails(companyName),
         "director" -> Json.arr(
           Json.obj(
             DirectorDetailsId.toString ->
@@ -94,7 +94,7 @@ class DirectorContactDetailsControllerSpec extends ControllerSpecBase {
   val validDataNoPreviousAnswer: JsObject = Json.obj(
     EstablishersId.toString -> Json.arr(
       Json.obj(
-        CompanyDetailsId.toString -> CompanyDetails(companyName, Some("123456"), Some("abcd")),
+        CompanyDetailsId.toString -> CompanyDetails(companyName),
         "director" -> Json.arr(
           Json.obj(
             DirectorDetailsId.toString ->
@@ -108,7 +108,7 @@ class DirectorContactDetailsControllerSpec extends ControllerSpecBase {
   val validDataNoDirectorDetails: JsObject = Json.obj(
     EstablishersId.toString -> Json.arr(
       Json.obj(
-        CompanyDetailsId.toString -> CompanyDetails(companyName, Some("123456"), Some("abcd")),
+        CompanyDetailsId.toString -> CompanyDetails(companyName),
         "director" -> Json.arr()
       )
     )

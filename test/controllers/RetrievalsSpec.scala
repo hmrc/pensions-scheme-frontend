@@ -80,7 +80,7 @@ class RetrievalsSpec extends ControllerSpecBase with FrontendController with Ret
       val validData = Json.obj(
         EstablishersId.toString -> Json.arr(
           Json.obj(
-            CompanyDetailsId.toString -> CompanyDetails("companyName", Some("123456"), Some("abcd"))
+            CompanyDetailsId.toString -> CompanyDetails("companyName")
           ))
       )
 

@@ -16,7 +16,7 @@
 
 package controllers.register.establishers.company
 
-import connectors.FakeUserAnswersCacheConnector
+import services.FakeUserAnswersService
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.register.establishers.company.AddressYearsFormProvider
@@ -47,7 +47,7 @@ class CompanyAddressYearsControllerSpec extends ControllerSpecBase {
   def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): CompanyAddressYearsController =
     new CompanyAddressYearsController(
       frontendAppConfig,
-      FakeUserAnswersCacheConnector,
+      FakeUserAnswersService,
       new FakeNavigator(desiredRoute = onwardRoute),
       messagesApi,
       FakeAuthAction,
@@ -72,7 +72,7 @@ class CompanyAddressYearsControllerSpec extends ControllerSpecBase {
   val validData: JsObject = Json.obj(
     EstablishersId.toString -> Json.arr(
       Json.obj(
-        CompanyDetailsId.toString -> CompanyDetails(companyName, Some("123456"), Some("abcd"))
+        CompanyDetailsId.toString -> CompanyDetails(companyName)
       )
     )
   )
@@ -91,7 +91,7 @@ class CompanyAddressYearsControllerSpec extends ControllerSpecBase {
       val previousAnsweredValidData = Json.obj(
         EstablishersId.toString -> Json.arr(
           Json.obj(
-            CompanyDetailsId.toString -> CompanyDetails(companyName, Some("123456"), Some("abcd")),
+            CompanyDetailsId.toString -> CompanyDetails(companyName),
             CompanyAddressYearsId.toString -> AddressYears.options.head.value.toString
           )
         )

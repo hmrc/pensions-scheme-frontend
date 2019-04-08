@@ -30,6 +30,7 @@ import play.api.libs.json.Json
 import play.api.mvc.{Call, Request, Result}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{contentAsString, _}
+import services.{FakeUserAnswersService, UserAnswersService}
 import utils.annotations.Adviser
 import utils.{FakeNavigator, Navigator, UserAnswers}
 import viewmodels.Message
@@ -160,7 +161,7 @@ object AdviserAddressListControllerSpec extends ControllerSpecBase {
     running(
       _.overrides(
         bind[AuthAction].to(FakeAuthAction),
-        bind[UserAnswersCacheConnector].to(FakeUserAnswersCacheConnector),
+        bind[UserAnswersService].to(FakeUserAnswersService),
         bind[DataRetrievalAction].to(data),
         bind(classOf[Navigator]).qualifiedWith(classOf[Adviser]).to(new FakeNavigator(onwardRoute))
       )

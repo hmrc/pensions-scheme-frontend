@@ -16,10 +16,15 @@
 
 package identifiers
 
+import play.api.i18n.Messages
 import play.api.libs.json.JsResult
-import utils.UserAnswers
+import utils.checkyouranswers.CheckYourAnswers
+import utils.checkyouranswers.CheckYourAnswers.BooleanCYA
+import utils.{CountryOptions, UserAnswers}
+import viewmodels.AnswerRow
 
 case object BenefitsSecuredByInsuranceId extends TypedIdentifier[Boolean] {
+  self =>
   override def toString: String = "securedBenefits"
 
   override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): JsResult[UserAnswers] = {
@@ -28,6 +33,23 @@ case object BenefitsSecuredByInsuranceId extends TypedIdentifier[Boolean] {
         InsurerEnterPostCodeId, InsurerSelectAddressId, InsurerConfirmAddressId))
       case Some(true) => userAnswers.set(IsAboutBenefitsAndInsuranceCompleteId)(false)
       case _ => super.cleanup(value, userAnswers)
+    }
+  }
+
+  implicit def cya(implicit userAnswers: UserAnswers, messages: Messages, countryOptions: CountryOptions): CheckYourAnswers[self.type] = {
+
+    new CheckYourAnswers[self.type] {
+
+      override def row(id: self.type)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
+        BooleanCYA[self.type]()().row(id)(changeUrl, userAnswers)
+      }
+
+      override def updateRow(id: self.type)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
+        userAnswers.get(id) match {
+          case Some(_) => row(id)(changeUrl, userAnswers)
+          case _ => Seq.empty[AnswerRow]
+        }
+      }
     }
   }
 }

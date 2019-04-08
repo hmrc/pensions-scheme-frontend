@@ -35,7 +35,6 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class AddEstablisherController @Inject()(appConfig: FrontendAppConfig,
                                          override val messagesApi: MessagesApi,
-                                         dataCacheConnector: UserAnswersCacheConnector,
                                          @Establishers navigator: Navigator,
                                          authenticate: AuthAction,
                                          getData: DataRetrievalAction,

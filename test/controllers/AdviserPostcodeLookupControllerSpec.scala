@@ -33,6 +33,7 @@ import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{OK, SEE_OTHER, contentAsString, redirectLocation, route, running, status, _}
+import services.{FakeUserAnswersService, UserAnswersService}
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.annotations.Adviser
 import utils.{FakeNavigator, Navigator}
@@ -120,7 +121,7 @@ class AdviserPostcodeLookupControllerSpec extends ControllerSpecBase with Mockit
       running(_.overrides(
         bind[FrontendAppConfig].to(frontendAppConfig),
         bind[MessagesApi].to(messagesApi),
-        bind[UserAnswersCacheConnector].toInstance(FakeUserAnswersCacheConnector),
+        bind[UserAnswersService].toInstance(FakeUserAnswersService),
         bind[AddressLookupConnector].toInstance(fakeAddressLookupConnector),
         bind[AuthAction].to(FakeAuthAction),
         bind[DataRetrievalAction].to(getMandatoryWorkingKnowledgePerson),

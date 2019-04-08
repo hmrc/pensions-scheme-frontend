@@ -17,7 +17,7 @@
 package controllers
 
 import config.FrontendAppConfig
-import connectors.{AddressLookupConnector, UserAnswersCacheConnector}
+import connectors.AddressLookupConnector
 import controllers.actions.{AuthAction, DataRequiredAction, DataRetrievalAction}
 import controllers.address.PostcodeLookupController
 import forms.address.PostCodeLookupFormProvider
@@ -27,6 +27,7 @@ import models.Mode
 import play.api.data.Form
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent}
+import services.UserAnswersService
 import utils.Navigator
 import utils.annotations.WorkingKnowledge
 import viewmodels.Message
@@ -35,7 +36,7 @@ import viewmodels.address.PostcodeLookupViewModel
 class AdviserPostCodeLookupController @Inject()(
                                                  override val appConfig: FrontendAppConfig,
                                                  override val messagesApi: MessagesApi,
-                                                 override val cacheConnector: UserAnswersCacheConnector,
+                                                 val userAnswersService: UserAnswersService,
                                                  override val addressLookupConnector: AddressLookupConnector,
                                                  @WorkingKnowledge override val navigator: Navigator,
                                                  authenticate: AuthAction,

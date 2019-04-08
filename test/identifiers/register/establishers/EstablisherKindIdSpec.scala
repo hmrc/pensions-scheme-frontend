@@ -188,7 +188,7 @@ class EstablisherKindIdSpec extends WordSpec with MustMatchers with OptionValues
 object EstablisherKindIdSpec extends OptionValues with Enumerable.Implicits {
   val establisherCompany = UserAnswers(Json.obj())
     .set(EstablisherKindId(0))(EstablisherKind.Company)
-    .flatMap(_.set(CompanyDetailsId(0))(CompanyDetails("", None, None)))
+    .flatMap(_.set(CompanyDetailsId(0))(CompanyDetails("")))
     .flatMap(_.set(CompanyRegistrationNumberId(0))(CompanyRegistrationNumber.No("")))
     .flatMap(_.set(CompanyUniqueTaxReferenceId(0))(UniqueTaxReference.No("")))
     .flatMap(_.set(CompanyPostCodeLookupId(0))(Seq.empty))
@@ -214,7 +214,7 @@ object EstablisherKindIdSpec extends OptionValues with Enumerable.Implicits {
     .flatMap(_.set(PreviousPostCodeLookupId(0))(Seq.empty))
     .flatMap(_.set(PreviousAddressId(0))(Address("", "", None, None, None, "")))
     .flatMap(_.set(ContactDetailsId(0))(ContactDetails("", "")))
-    .flatMap(_.set(CompanyDetailsId(0))(CompanyDetails("", None, None)))
+    .flatMap(_.set(CompanyDetailsId(0))(CompanyDetails("")))
     .asOpt.value
 
   val establisherPartnership = UserAnswers(Json.obj())

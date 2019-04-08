@@ -17,7 +17,6 @@
 package controllers.register.trustees
 
 import config.FrontendAppConfig
-import connectors.UserAnswersCacheConnector
 import controllers.Retrievals
 import controllers.actions._
 import forms.register.trustees.ConfirmDeleteTrusteeFormProvider
@@ -26,6 +25,7 @@ import identifiers.register.trustees.company.CompanyDetailsId
 import identifiers.register.trustees.individual.TrusteeDetailsId
 import identifiers.register.trustees.partnership.PartnershipDetailsId
 import javax.inject.Inject
+import models._
 import models.person.PersonDetails
 import models.register.trustees.TrusteeKind
 import models.register.trustees.TrusteeKind.{Company, Individual, Partnership}
@@ -34,6 +34,7 @@ import models._
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Result}
+import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.Trustees
 import utils.{Navigator, UserAnswers}
@@ -47,7 +48,7 @@ class ConfirmDeleteTrusteeController @Inject()(appConfig: FrontendAppConfig,
                                                getData: DataRetrievalAction,
                                                requireData: DataRequiredAction,
                                                @Trustees navigator: Navigator,
-                                               dataCacheConnector: UserAnswersCacheConnector,
+                                               userAnswersService: UserAnswersService,
                                                formProvider: ConfirmDeleteTrusteeFormProvider)(implicit val ec: ExecutionContext)
   extends FrontendController with I18nSupport with Retrievals {
 
@@ -117,18 +118,18 @@ class ConfirmDeleteTrusteeController @Inject()(appConfig: FrontendAppConfig,
       value => {
         val deletionResult = if (value) {
           trusteeKind match {
-            case Company => companyDetails.fold(Future.successful(dataRequest.userAnswers))(
-              company => dataCacheConnector.save(CompanyDetailsId(trusteeIndex), company.copy(isDeleted = true)))
-            case Individual => trusteeDetails.fold(Future.successful(dataRequest.userAnswers))(
-              trustee => dataCacheConnector.save(TrusteeDetailsId(trusteeIndex), trustee.copy(isDeleted = true)))
-            case Partnership => partnershipDetails.fold(Future.successful(dataRequest.userAnswers))(
-              partnership => dataCacheConnector.save(PartnershipDetailsId(trusteeIndex), partnership.copy(isDeleted = true)))
+            case Company => companyDetails.fold(Future.successful(dataRequest.userAnswers.json))(
+              company => userAnswersService.save(mode, srn, CompanyDetailsId(trusteeIndex), company.copy(isDeleted = true)))
+            case Individual => trusteeDetails.fold(Future.successful(dataRequest.userAnswers.json))(
+              trustee => userAnswersService.save(mode, srn, TrusteeDetailsId(trusteeIndex), trustee.copy(isDeleted = true)))
+            case Partnership => partnershipDetails.fold(Future.successful(dataRequest.userAnswers.json))(
+              partnership => userAnswersService.save(mode, srn, PartnershipDetailsId(trusteeIndex), partnership.copy(isDeleted = true)))
           }
         } else {
-          Future.successful(dataRequest.userAnswers)
+          Future.successful(dataRequest.userAnswers.json)
         }
-        deletionResult.flatMap { userAnswers =>
-          Future.successful(Redirect(navigator.nextPage(ConfirmDeleteTrusteeId, NormalMode, userAnswers)))
+        deletionResult.flatMap { answers =>
+          Future.successful(Redirect(navigator.nextPage(ConfirmDeleteTrusteeId, NormalMode, UserAnswers(answers))))
         }
       }
     )
