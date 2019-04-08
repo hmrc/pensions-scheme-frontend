@@ -121,15 +121,15 @@ trait HsTaskListHelperBehaviour extends SpecBase with MustMatchers with OptionVa
       _.set(IsEstablisherCompleteId(0))(isCompleteEstablisher).flatMap(
         _.set(CompanyVatId(0))(Vat.No).flatMap(
           _.set(CompanyPayeId(0))(Paye.No).flatMap(
-        _.set(EstablisherCompanyDetailsId(1))(CompanyDetails("test company", false)).flatMap(
-          _.set(CompanyVatId(1))(Vat.No).flatMap(
-            _.set(CompanyPayeId(1))(Paye.No).flatMap(
-          _.set(IsEstablisherCompleteId(1))(isCompleteEstablisher).flatMap(
-            _.set(EstablisherPartnershipDetailsId(2))(PartnershipDetails("test partnership", false)).flatMap(
-              _.set(CompanyVatId(2))(Vat.No).flatMap(
-                _.set(CompanyPayeId(2))(Paye.No).flatMap(
-              _.set(IsEstablisherCompleteId(2))(isCompleteEstablisher)
-            ))))))))))).asOpt.value
+            _.set(EstablisherCompanyDetailsId(1))(CompanyDetails("test company", false)).flatMap(
+              _.set(CompanyVatId(1))(Vat.No).flatMap(
+                _.set(CompanyPayeId(1))(Paye.No).flatMap(
+                  _.set(IsEstablisherCompleteId(1))(isCompleteEstablisher).flatMap(
+                    _.set(EstablisherPartnershipDetailsId(2))(PartnershipDetails("test partnership", false)).flatMap(
+                      _.set(CompanyVatId(2))(Vat.No).flatMap(
+                        _.set(CompanyPayeId(2))(Paye.No).flatMap(
+                          _.set(IsEstablisherCompleteId(2))(isCompleteEstablisher)
+                        ))))))))))).asOpt.value
   }
 
   protected def allTrustees(isCompleteTrustees: Boolean = true): UserAnswers = {
@@ -137,15 +137,15 @@ trait HsTaskListHelperBehaviour extends SpecBase with MustMatchers with OptionVa
       _.set(IsTrusteeCompleteId(0))(isCompleteTrustees).flatMap(
         _.set(TrusteeCompanyVatId(0))(Vat.No).flatMap(
           _.set(TrusteeCompanyPayeId(0))(Paye.No).flatMap(
-        _.set(TrusteeCompanyDetailsId(1))(CompanyDetails("test company", false)).flatMap(
-          _.set(TrusteeCompanyVatId(1))(Vat.No).flatMap(
-            _.set(TrusteeCompanyPayeId(1))(Paye.No).flatMap(
-          _.set(IsTrusteeCompleteId(1))(isCompleteTrustees).flatMap(
-            _.set(TrusteePartnershipDetailsId(2))(PartnershipDetails("test partnership", false)).flatMap(
-              _.set(TrusteeCompanyVatId(2))(Vat.No).flatMap(
-                _.set(TrusteeCompanyPayeId(2))(Paye.No).flatMap(
-              _.set(IsPartnershipCompleteId(2))(isCompleteTrustees)
-            ))))))))))).asOpt.value
+            _.set(TrusteeCompanyDetailsId(1))(CompanyDetails("test company", false)).flatMap(
+              _.set(TrusteeCompanyVatId(1))(Vat.No).flatMap(
+                _.set(TrusteeCompanyPayeId(1))(Paye.No).flatMap(
+                  _.set(IsTrusteeCompleteId(1))(isCompleteTrustees).flatMap(
+                    _.set(TrusteePartnershipDetailsId(2))(PartnershipDetails("test partnership", false)).flatMap(
+                      _.set(TrusteeCompanyVatId(2))(Vat.No).flatMap(
+                        _.set(TrusteeCompanyPayeId(2))(Paye.No).flatMap(
+                          _.set(IsPartnershipCompleteId(2))(isCompleteTrustees)
+                        ))))))))))).asOpt.value
   }
 
   def beforeYouStartSection(): Unit = {
