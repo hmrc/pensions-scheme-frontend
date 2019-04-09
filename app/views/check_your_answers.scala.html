@@ -23,7 +23,7 @@
 @import models.{NormalMode, Mode}
 
 @(appConfig: FrontendAppConfig, answerSections: Seq[Section], postUrl: Call, schemeName: Option[String],
-    returnOverview: Boolean = false, mode: Mode = NormalMode)(implicit request: Request[_], messages: Messages)
+    returnOverview: Boolean = false, mode: Mode = NormalMode, srn: Option[String] = None)(implicit request: Request[_], messages: Messages)
 
 @returnMessage=@{
     schemeName.fold(messages("messages__complete__return"))(name=>messages("messages__psaSchemeDetails__return_link", name))
@@ -55,7 +55,7 @@
         @if(returnOverview){
             @components.return_link("messages__complete__return", schemeName, Some(appConfig.managePensionsSchemeOverviewUrl))
         } else {
-            @components.return_link("messages__schemeTaskList__returnlink", schemeName)
+            @components.return_link("messages__schemeTaskList__returnlink", schemeName, None, mode, srn)
         }
 
     }

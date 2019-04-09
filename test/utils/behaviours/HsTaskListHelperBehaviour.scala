@@ -160,7 +160,7 @@ trait HsTaskListHelperBehaviour extends SpecBase with MustMatchers with OptionVa
       val userAnswers = UserAnswers().set(IsBeforeYouStartCompleteId)(true).asOpt.value
       val helper = new HsTaskListHelperRegistration(userAnswers)
       helper.beforeYouStartSection(userAnswers).link mustBe beforeYouStartLink(
-        controllers.routes.CheckYourAnswersBeforeYouStartController.onPageLoad().url
+        controllers.routes.CheckYourAnswersBeforeYouStartController.onPageLoad(NormalMode, None).url
       )
     }
   }
