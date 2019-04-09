@@ -23,8 +23,8 @@ import play.api.data.Form
 
 class PayeFormProvider @Inject() extends PayeMapping {
 
-  def apply(): Form[Paye] =
+  def apply(requiredKeyMsg: String = "messages__error__has_paye_establisher"): Form[Paye] =
     Form(
-      "paye" -> payeMapping()
+      "paye" -> payeMapping(requiredKey = requiredKeyMsg)
     )
 }

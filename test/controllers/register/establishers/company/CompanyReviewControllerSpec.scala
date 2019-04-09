@@ -40,7 +40,7 @@ class CompanyReviewControllerSpec extends ControllerSpecBase {
     new CompanyReviewController(frontendAppConfig, messagesApi, new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
       dataRetrievalAction, new DataRequiredActionImpl, FakeSectionComplete)
 
-  def viewAsString(): String = companyReview(frontendAppConfig, index, companyName, directorNames, None, NormalMode, None)(fakeRequest, messages).toString
+  def viewAsString(): String = companyReview(frontendAppConfig, index, companyName, directorNames, None, NormalMode, None, false)(fakeRequest, messages).toString
 
   "CompanyReview Controller" must {
 
@@ -121,7 +121,7 @@ object CompanyReviewControllerSpec {
   val schemeName = "Test Scheme Name"
   val companyName = "test company name"
   val directorNames = Seq("director a", "director b", "director c")
-  val companyDetails = CompanyDetails(companyName, Some("123456"), Some("abcd"))
+  val companyDetails = CompanyDetails(companyName)
 
   def director(lastName: String, isComplete: Boolean = true): JsObject = Json.obj(
     DirectorDetailsId.toString -> PersonDetails("director", None, lastName, LocalDate.now()),

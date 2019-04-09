@@ -40,16 +40,19 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
                                            authenticate: AuthAction,
                                            getData: DataRetrievalAction,
                                            requiredData: DataRequiredAction,
-                                           checkYourAnswersFactory: CheckYourAnswersFactory,
                                            implicit val countryOptions: CountryOptions,
                                            @TrusteesCompany navigator: Navigator,
                                            sectionComplete: SectionComplete
                                           )(implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport {
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData andThen requiredData).async {
+  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requiredData).async {
     implicit request =>
 
       val companyDetailsRow = CompanyDetailsId(index).row(routes.CompanyDetailsController.onPageLoad(CheckMode, index, None).url)
+
+      val companyVatRow = CompanyVatId(index).row(routes.CompanyVatController.onPageLoad(CheckMode, index, None).url)
+
+      val companyPayeRow = CompanyPayeId(index).row(routes.CompanyPayeController.onPageLoad(CheckMode, index, None).url)
 
       val companyRegistrationNumber = CompanyRegistrationNumberId(index).row(
         routes.CompanyRegistrationNumberController.onPageLoad(CheckMode, index, None).url
@@ -61,7 +64,7 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
 
       val companyDetailsSection = AnswerSection(
         Some("messages__checkYourAnswers__section__company_details"),
-        companyDetailsRow ++ companyRegistrationNumber ++ companyUtr
+        companyDetailsRow ++ companyVatRow ++ companyPayeRow ++ companyRegistrationNumber ++ companyUtr
       )
 
       val companyAddress = CompanyAddressId(index).row(
@@ -93,7 +96,7 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
       )))
   }
 
-  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData andThen requiredData).async {
+  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requiredData).async {
     implicit request =>
       sectionComplete.setCompleteFlag(request.externalId, IsTrusteeCompleteId(index), request.userAnswers, true).map { _ =>
         Redirect(navigator.nextPage(CheckYourAnswersId, NormalMode, request.userAnswers))

@@ -17,65 +17,126 @@
 package utils
 
 import base.SpecBase
-import identifiers.{IsWorkingKnowledgeCompleteId, _}
+import identifiers._
 import identifiers.register.establishers.IsEstablisherCompleteId
-import identifiers.register.establishers.company.{CompanyDetailsId => EstablisherCompanyDetailsId}
 import identifiers.register.establishers.individual.EstablisherDetailsId
-import identifiers.register.establishers.partnership.{PartnershipDetailsId => EstablisherPartnershipDetailsId}
 import identifiers.register.trustees.IsTrusteeCompleteId
-import identifiers.register.trustees.company.{CompanyDetailsId => TrusteeCompanyDetailsId}
 import identifiers.register.trustees.individual.TrusteeDetailsId
-import identifiers.register.trustees.partnership.{IsPartnershipCompleteId, PartnershipDetailsId => TrusteePartnershipDetailsId}
 import models.person.PersonDetails
-import models.{CompanyDetails, PartnershipDetails}
+import models.{Link, NormalMode}
 import org.joda.time.LocalDate
-import org.scalatest.{MustMatchers, OptionValues, WordSpec}
 import play.api.libs.json.JsResult
-import viewmodels._
+import utils.behaviours.HsTaskListHelperBehaviour
+import viewmodels.SchemeDetailsTaskListSection
 
-class HsTaskListHelperVariationsSpec extends WordSpec with MustMatchers with OptionValues  {
+class HsTaskListHelperVariationsSpec extends HsTaskListHelperBehaviour {
+  "h1" must {
+    "have the name of the scheme" in {
+      val name = "scheme name 1"
+      val userAnswers = UserAnswers().set(SchemeNameId)(name).asOpt.value
+      val helper = new HsTaskListHelperVariations(userAnswers)
+      helper.taskList.h1 mustBe name
+    }
+  }
 
-  import HsTaskListHelperVariationsSpec._
+  "h2" must {
+    "display \"Scheme details\"" in {
+      val userAnswers = UserAnswers()
+      val helper = new HsTaskListHelperVariations(userAnswers)
+      helper.taskList.h2 mustBe messages("messages__scheme_details__title")
+    }
+  }
+
+  "page title" must {
+    "display \"Scheme details\"" in {
+      val userAnswers = UserAnswers()
+      val helper = new HsTaskListHelperVariations(userAnswers)
+      helper.taskList.pageTitle mustBe messages("messages__scheme_details__title")
+    }
+  }
+
+  "beforeYouStartSection " must {
+    behave like beforeYouStartSection()
+  }
+
+  "aboutSection " must {
+    "return the the Seq of members and benefits section with " +
+      "links of the first pages of individual sub sections when not completed " in {
+      val userAnswers = UserAnswers().set(IsAboutMembersCompleteId)(false).flatMap(
+          _.set(IsAboutBenefitsAndInsuranceCompleteId)(false)
+      ).asOpt.value
+      val helper = new HsTaskListHelperVariations(userAnswers)
+      helper.aboutSection(userAnswers) mustBe
+        Seq(
+          SchemeDetailsTaskListSection(Some(false), Link(aboutMembersLinkText,
+            controllers.routes.WhatYouWillNeedMembersController.onPageLoad().url), None),
+          SchemeDetailsTaskListSection(Some(false), Link(aboutBenefitsAndInsuranceLinkText,
+            controllers.routes.WhatYouWillNeedBenefitsInsuranceController.onPageLoad().url), None)
+        )
+    }
+
+    "return the the Seq of members and benefits section with " +
+      "links of the cya pages of individual sub sections when completed " in {
+      val userAnswers = UserAnswers().set(IsAboutMembersCompleteId)(true).flatMap(
+          _.set(IsAboutBenefitsAndInsuranceCompleteId)(true)
+      ).asOpt.value
+      val helper = new HsTaskListHelperVariations(userAnswers)
+      helper.aboutSection(userAnswers) mustBe
+        Seq(
+          SchemeDetailsTaskListSection(Some(true), Link(aboutMembersLinkText,
+            controllers.routes.CheckYourAnswersMembersController.onPageLoad(NormalMode, None).url), None),
+          SchemeDetailsTaskListSection(Some(true), Link(aboutBenefitsAndInsuranceLinkText,
+            controllers.routes.CheckYourAnswersBenefitsAndInsuranceController.onPageLoad(NormalMode, None).url), None)
+        )
+    }
+  }
+
+  "workingKnowledgeSection " must {
+    "not display when do you have working knowledge is false " in {
+      val userAnswers = UserAnswers().set(DeclarationDutiesId)(false).asOpt.value
+      val helper = new HsTaskListHelperVariations(userAnswers)
+      helper.taskList.workingKnowledge mustBe None
+    }
+
+    "not display when do you have working knowledge is true " in {
+      val userAnswers = UserAnswers().set(DeclarationDutiesId)(true).asOpt.value
+      val helper = new HsTaskListHelperVariations(userAnswers)
+      helper.taskList.workingKnowledge mustBe None
+    }
+  }
+
+  "addEstablisherHeader " must {
+
+    behave like addEstablisherHeader()
+  }
+
+  "addTrusteeHeader " must {
+
+    behave like addTrusteeHeader()
+  }
+
+  "establishers" must {
+
+    behave like establishersSection()
+  }
+
+  "trustees" must {
+
+    behave like trusteesSection()
+  }
 
   "declarationEnabled" must {
 
-    "return true when all the sections are completed with trustees and atleast one change flag is true" in {
-      val userAnswers = answersData().asOpt.value
-      val helper = new HsTaskListHelperVariations(userAnswers)
-      helper.declarationEnabled(userAnswers) mustBe true
-    }
-
-    "return false when all the sections are completed with trustees but none of the change flags is true" in {
-      val userAnswers = answersData(isChangedInsuranceDetails = false, isChangedEstablishersTrustees = false).asOpt.value
-      val helper = new HsTaskListHelperVariations(userAnswers)
-      helper.declarationEnabled(userAnswers) mustBe false
-    }
+    behave like declarationEnabled()
   }
 
+  "declarationLink" must {
 
+    behave like declarationLink()
+  }
 }
 
 object HsTaskListHelperVariationsSpec extends SpecBase {
-  private lazy val beforeYouStartLinkText = messages("messages__schemeTaskList__before_you_start_link_text")
-  private lazy val aboutMembersLinkText = messages("messages__schemeTaskList__about_members_link_text")
-  private lazy val aboutBenefitsAndInsuranceLinkText = messages("messages__schemeTaskList__about_benefits_and_insurance_link_text")
-  private lazy val aboutBankDetailsLinkText = messages("messages__schemeTaskList__about_bank_details_link_text")
-  private lazy val workingKnowledgeLinkText = messages("messages__schemeTaskList__working_knowledge_link_text")
-  private lazy val addEstablisherLinkText = messages("messages__schemeTaskList__sectionEstablishers_add_link")
-  private lazy val changeEstablisherLinkText = messages("messages__schemeTaskList__sectionEstablishers_change_link")
-  private lazy val companyLinkText = messages("messages__schemeTaskList__company_link")
-  private lazy val individualLinkText = messages("messages__schemeTaskList__individual_link")
-  private lazy val partnershipLinkText = messages("messages__schemeTaskList__partnership_link")
-  private lazy val addTrusteesLinkText = messages("messages__schemeTaskList__sectionTrustees_add_link")
-  private lazy val changeTrusteesLinkText = messages("messages__schemeTaskList__sectionTrustees_change_link")
-  private lazy val declarationLinkText = messages("messages__schemeTaskList__declaration_link")
-
-  private def beforeYouStartLink(link: String) = {
-    Link(
-      messages(beforeYouStartLinkText),
-      link
-    )
-  }
 
   private def answersData(isCompleteBeforeStart: Boolean = true,
                           isCompleteAboutMembers: Boolean = true,
@@ -107,3 +168,4 @@ object HsTaskListHelperVariationsSpec extends SpecBase {
   }
 
 }
+

@@ -41,7 +41,7 @@ class SchemeSuccessController @Inject()(appConfig: FrontendAppConfig,
                                         requireData: DataRequiredAction)
                                        (implicit val ec: ExecutionContext) extends FrontendController with I18nSupport with Retrievals {
 
-  def onPageLoad: Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onPageLoad: Action[AnyContent] = (authenticate andThen getData() andThen requireData).async {
     implicit request =>
 
       SubmissionReferenceNumberId.retrieve.right.map {

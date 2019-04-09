@@ -18,25 +18,25 @@ package controllers.register.establishers.partnership.partner
 
 import com.google.inject.Inject
 import config.FrontendAppConfig
-import connectors.UserAnswersCacheConnector
 import controllers.Retrievals
 import controllers.actions.{AuthAction, DataRequiredAction, DataRetrievalAction}
 import controllers.address.AddressListController
-import identifiers.register.establishers.partnership.partner.{PartnerDetailsId, PartnerPreviousAddressId, PartnerPreviousAddressListId, PartnerPreviousAddressPostcodeLookupId}
+import identifiers.register.establishers.partnership.partner._
 import models.requests.DataRequest
 import models.{Index, Mode}
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, Result}
+import services.UserAnswersService
 import utils.Navigator
 import utils.annotations.EstablishersPartner
 import viewmodels.Message
 import viewmodels.address.AddressListViewModel
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.Future
 
 class PartnerPreviousAddressListController @Inject()(
                                                       override val appConfig: FrontendAppConfig,
-                                                      override val cacheConnector: UserAnswersCacheConnector,
+                                                      val userAnswersService: UserAnswersService,
                                                       @EstablishersPartner override val navigator: Navigator,
                                                       override val messagesApi: MessagesApi,
                                                       authenticate: AuthAction,
@@ -45,12 +45,12 @@ class PartnerPreviousAddressListController @Inject()(
                                                     ) extends AddressListController with Retrievals {
 
   def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData andThen requireData).async { implicit request =>
+    (authenticate andThen getData(mode, srn) andThen requireData).async { implicit request =>
       viewmodel(mode, establisherIndex, partnerIndex, srn).right.map(get)
     }
 
   def onSubmit(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData andThen requireData).async { implicit request =>
+    (authenticate andThen getData(mode, srn) andThen requireData).async { implicit request =>
       viewmodel(mode, establisherIndex, partnerIndex, srn).right.map {
         vm =>
           post(
@@ -74,7 +74,8 @@ class PartnerPreviousAddressListController @Inject()(
           addresses = addresses,
           title = Message("messages__select_the_previous_address__title"),
           heading = Message("messages__select_the_previous_address__heading"),
-          subHeading = Some(Message(partnerDetails.fullName))
+          subHeading = Some(Message(partnerDetails.fullName)),
+          srn = srn
         )
     }.left.map(_ => Future.successful(Redirect(
       routes.PartnerPreviousAddressPostcodeLookupController.onPageLoad(mode, establisherIndex, directorIndex, srn))))

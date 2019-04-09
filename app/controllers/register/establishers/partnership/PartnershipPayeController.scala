@@ -18,7 +18,6 @@ package controllers.register.establishers.partnership
 
 import com.google.inject.Inject
 import config.FrontendAppConfig
-import connectors.UserAnswersCacheConnector
 import controllers.PayeController
 import controllers.actions.{AuthAction, DataRequiredAction, DataRetrievalAction}
 import forms.PayeFormProvider
@@ -27,6 +26,7 @@ import models.{Index, Mode, Paye}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
+import services.UserAnswersService
 import utils.Navigator
 import utils.annotations.EstablisherPartnership
 import viewmodels.{Message, PayeViewModel}
@@ -34,7 +34,7 @@ import viewmodels.{Message, PayeViewModel}
 class PartnershipPayeController @Inject()(
                                            val appConfig: FrontendAppConfig,
                                            override val messagesApi: MessagesApi,
-                                           override val cacheConnector: UserAnswersCacheConnector,
+                                           val userAnswersService: UserAnswersService,
                                            @EstablisherPartnership val navigator: Navigator,
                                            authenticate: AuthAction,
                                            getData: DataRetrievalAction,
@@ -54,12 +54,13 @@ class PartnershipPayeController @Inject()(
               title = Message("messages__partnershipPaye__title"),
               heading = Message("messages__partnershipPaye__heading"),
               hint = Some(Message("messages__common__paye_hint")),
-              subHeading = Some(details.name)
+              subHeading = Some(details.name),
+              srn = srn
             )
         }
     }
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
       viewmodel(mode, index, srn).retrieve.right.map {
         vm =>
@@ -67,7 +68,7 @@ class PartnershipPayeController @Inject()(
       }
   }
 
-  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
       viewmodel(mode, index, srn).retrieve.right.map {
         vm =>

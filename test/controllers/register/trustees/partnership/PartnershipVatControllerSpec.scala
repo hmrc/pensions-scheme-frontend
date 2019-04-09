@@ -17,7 +17,7 @@
 package controllers.register.trustees.partnership
 
 import base.CSRFRequest
-import connectors.{UserAnswersCacheConnector, FakeUserAnswersCacheConnector}
+import services.{UserAnswersService, FakeUserAnswersService}
 import controllers.ControllerSpecBase
 import controllers.actions.{AuthAction, DataRetrievalAction, FakeAuthAction}
 import forms.VatFormProvider
@@ -87,7 +87,7 @@ object PartnershipVatControllerSpec extends PartnershipVatControllerSpec {
       bind[AuthAction].to(FakeAuthAction),
       bind[DataRetrievalAction].toInstance(getMandatoryTrusteePartnership),
       bind(classOf[Navigator]).qualifiedWith(classOf[TrusteesPartnership]).toInstance(new FakeNavigator(onwardRoute)),
-      bind[UserAnswersCacheConnector].toInstance(FakeUserAnswersCacheConnector)
+      bind[UserAnswersService].toInstance(FakeUserAnswersService)
     )) {
       app =>
         val req = request(app)

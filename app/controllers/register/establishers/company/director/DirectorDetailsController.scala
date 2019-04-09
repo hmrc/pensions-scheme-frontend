@@ -17,7 +17,6 @@
 package controllers.register.establishers.company.director
 
 import config.FrontendAppConfig
-import connectors.UserAnswersCacheConnector
 import controllers.Retrievals
 import controllers.actions._
 import forms.register.PersonDetailsFormProvider
@@ -30,6 +29,7 @@ import models.{Index, Mode}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Call}
+import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.EstablishersCompanyDirector
 import utils.{Navigator, SectionComplete, UserAnswers}
@@ -40,7 +40,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class DirectorDetailsController @Inject()(
                                            appConfig: FrontendAppConfig,
                                            override val messagesApi: MessagesApi,
-                                           dataCacheConnector: UserAnswersCacheConnector,
+                                           userAnswersService: UserAnswersService,
                                            @EstablishersCompanyDirector navigator: Navigator,
                                            authenticate: AuthAction,
                                            getData: DataRetrievalAction,
@@ -54,28 +54,26 @@ class DirectorDetailsController @Inject()(
   private def postCall: (Mode, Index, Index, Option[String]) => Call = routes.DirectorDetailsController.onSubmit _
 
   def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData andThen requireData).async {
+    (authenticate andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
-        CompanyDetailsId(establisherIndex).retrieve.right.map { companyDetails =>
           val preparedForm = request.userAnswers.get[PersonDetails](DirectorDetailsId(establisherIndex, directorIndex)) match {
             case None => form
             case Some(value) => form.fill(value)
           }
           Future.successful(Ok(directorDetails(
             appConfig, preparedForm, mode, establisherIndex, directorIndex, existingSchemeName, postCall(mode, establisherIndex, directorIndex, srn))))
-        }
     }
 
   def onSubmit(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData andThen requireData).async {
+    (authenticate andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
-        CompanyDetailsId(establisherIndex).retrieve.right.map { companyDetails =>
           form.bindFromRequest().fold(
             (formWithErrors: Form[_]) =>
-              Future.successful(BadRequest(directorDetails(appConfig, formWithErrors, mode, establisherIndex, directorIndex, existingSchemeName, postCall(mode, establisherIndex, directorIndex, srn))))
+              Future.successful(BadRequest(directorDetails(
+                appConfig, formWithErrors, mode, establisherIndex, directorIndex, existingSchemeName, postCall(mode, establisherIndex, directorIndex, srn))))
             ,
             value =>
-              dataCacheConnector.save(request.externalId, DirectorDetailsId(establisherIndex, directorIndex), value).flatMap {
+              userAnswersService.save(mode, srn, DirectorDetailsId(establisherIndex, directorIndex), value).flatMap {
                 cacheMap =>
                   val userAnswers = UserAnswers(cacheMap)
                   val allDirectors = userAnswers.allDirectorsAfterDelete(establisherIndex)
@@ -90,7 +88,6 @@ class DirectorDetailsController @Inject()(
                   }
               }
           )
-        }
     }
 }
 

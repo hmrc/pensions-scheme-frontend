@@ -14,14 +14,12 @@
  * limitations under the License.
  */
 
-package utils
+package connectors
 
-import com.google.inject.Inject
+import base.SpecBase
+import play.api.libs.ws.WSClient
 
-class CheckYourAnswersFactory @Inject()(countryOptions: CountryOptions) {
-
-  def checkYourAnswersHelper(userAnswers: UserAnswers): CheckYourAnswersHelper = {
-    new CheckYourAnswersHelper(userAnswers, countryOptions)
-  }
+object FakeSubscriptionCacheConnector extends SpecBase {
+  def getConnector: SubscriptionCacheConnector =
+    new SubscriptionCacheConnector(frontendAppConfig, injector.instanceOf[WSClient])
 }
-

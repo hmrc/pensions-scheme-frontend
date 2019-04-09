@@ -17,7 +17,6 @@
 package controllers.register.establishers.partnership
 
 import config.FrontendAppConfig
-import connectors.UserAnswersCacheConnector
 import controllers.actions._
 import forms.ContactDetailsFormProvider
 import identifiers.register.establishers.partnership.{PartnershipContactDetailsId, PartnershipDetailsId}
@@ -25,6 +24,7 @@ import javax.inject.Inject
 import models.{Index, Mode}
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent}
+import services.UserAnswersService
 import utils._
 import utils.annotations.EstablisherPartnership
 import viewmodels.{ContactDetailsViewModel, Message}
@@ -33,7 +33,7 @@ class PartnershipContactDetailsController @Inject()(
                                                      @EstablisherPartnership override val navigator: Navigator,
                                                      override val appConfig: FrontendAppConfig,
                                                      override val messagesApi: MessagesApi,
-                                                     override val cacheConnector: UserAnswersCacheConnector,
+                                                     val userAnswersService: UserAnswersService,
                                                      authenticate: AuthAction,
                                                      getData: DataRetrievalAction,
                                                      requireData: DataRequiredAction,
@@ -43,7 +43,7 @@ class PartnershipContactDetailsController @Inject()(
   private val form = formProvider()
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData andThen requireData).async {
+    (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
       PartnershipDetailsId(index).retrieve.right.map {
         partnershipDetails =>
@@ -52,7 +52,7 @@ class PartnershipContactDetailsController @Inject()(
   }
 
   def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData andThen requireData).async {
+    (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
       PartnershipDetailsId(index).retrieve.right.map {
         partnershipDetails =>

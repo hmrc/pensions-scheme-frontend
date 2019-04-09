@@ -20,13 +20,15 @@
 @import models.Mode
 @import utils.Constants._
 @import models.register.Establisher
+@import play.api.mvc.Call
 
 @(
     appConfig: FrontendAppConfig,
     form: Form[_],
     mode: Mode,
     establishers: Seq[Establisher[_]],
-    schemeName: Option[String]
+    schemeName: Option[String],
+    postCall: Call
 )(implicit request: Request[_], messages: Messages)
 
 @disableSubmission = @{
@@ -38,7 +40,7 @@
     appConfig = appConfig,
     bodyClasses = None) {
 
-    @helpers.form(action = routes.AddEstablisherController.onSubmit(mode), 'autoComplete -> "off") {
+    @helpers.form(action = postCall, 'autoComplete -> "off") {
 
         @if(establishers.isEmpty) {
 

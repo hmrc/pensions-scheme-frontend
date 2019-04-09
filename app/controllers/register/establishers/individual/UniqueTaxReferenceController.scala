@@ -27,6 +27,7 @@ import models.{Index, Mode, UniqueTaxReference}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
+import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.EstablishersIndividual
 import utils.{Enumerable, Navigator, UserAnswers}
@@ -37,17 +38,17 @@ import scala.concurrent.{ExecutionContext, Future}
 class UniqueTaxReferenceController @Inject()(
                                               appConfig: FrontendAppConfig,
                                               override val messagesApi: MessagesApi,
-                                              dataCacheConnector: UserAnswersCacheConnector,
+                                              userAnswersService: UserAnswersService,
                                               @EstablishersIndividual navigator: Navigator,
                                               authenticate: AuthAction,
                                               getData: DataRetrievalAction,
                                               requireData: DataRequiredAction,
-                                              formProvider: UniqueTaxReferenceFormProvider
-                                            )(implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
+                                              formProvider: UniqueTaxReferenceFormProvider)(
+  implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
 
   private val form: Form[UniqueTaxReference] = formProvider()
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
       retrieveEstablisherName(index) { _ =>
         val preparedForm = request.userAnswers.get(UniqueTaxReferenceId(index)).fold(form)(form.fill)
@@ -56,7 +57,7 @@ class UniqueTaxReferenceController @Inject()(
       }
   }
 
-  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
       retrieveEstablisherName(index) {
         establisherName =>
@@ -66,8 +67,9 @@ class UniqueTaxReferenceController @Inject()(
               Future.successful(BadRequest(uniqueTaxReference(appConfig, formWithErrors, mode, index, existingSchemeName, submitUrl)))
             },
             (value) =>
-              dataCacheConnector.save(
-                request.externalId,
+              userAnswersService.save(
+                mode,
+                srn,
                 UniqueTaxReferenceId(index),
                 value
               ).map {

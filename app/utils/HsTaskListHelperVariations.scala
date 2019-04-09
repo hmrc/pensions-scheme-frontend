@@ -16,22 +16,43 @@
 
 package utils
 
-import identifiers.{HaveAnyTrusteesId, IsAboutBankDetailsCompleteId, IsAboutBenefitsAndInsuranceCompleteId, IsAboutMembersCompleteId, IsBeforeYouStartCompleteId, IsWorkingKnowledgeCompleteId}
+import identifiers._
+import models.{Link, NormalMode}
 import play.api.i18n.Messages
 import viewmodels._
 
 class HsTaskListHelperVariations(answers: UserAnswers)(implicit messages: Messages) extends HsTaskListHelper(answers) {
 
+  override protected[utils] def aboutSection(userAnswers: UserAnswers): Seq[SchemeDetailsTaskListSection] = {
+    val membersLink = userAnswers.get(IsAboutMembersCompleteId) match {
+      case Some(true) => Link(aboutMembersLinkText, controllers.routes.CheckYourAnswersMembersController.onPageLoad(NormalMode, None).url)
+      case _ => Link(aboutMembersLinkText, controllers.routes.WhatYouWillNeedMembersController.onPageLoad().url)
+    }
+
+    val benefitsAndInsuranceLink = userAnswers.get(IsAboutBenefitsAndInsuranceCompleteId) match {
+      case Some(true) => Link(aboutBenefitsAndInsuranceLinkText,
+        controllers.routes.CheckYourAnswersBenefitsAndInsuranceController.onPageLoad(NormalMode, None).url)
+      case _ => Link(aboutBenefitsAndInsuranceLinkText,
+        controllers.routes.WhatYouWillNeedBenefitsInsuranceController.onPageLoad().url)
+    }
+
+    Seq(SchemeDetailsTaskListSection(userAnswers.get(IsAboutMembersCompleteId), membersLink, None),
+      SchemeDetailsTaskListSection(userAnswers.get(IsAboutBenefitsAndInsuranceCompleteId), benefitsAndInsuranceLink, None))
+  }
+
   def taskList: SchemeDetailsTaskList = {
     SchemeDetailsTaskList(
       beforeYouStartSection(answers),
       aboutSection(answers),
-      workingKnowledgeSection(answers),
+      None,
       addEstablisherHeader(answers),
       establishers(answers),
       addTrusteeHeader(answers),
       trustees(answers),
-      declarationLink(answers)
+      declarationLink(answers),
+      answers.get(SchemeNameId).getOrElse(""),
+      messages("messages__scheme_details__title"),
+      messages("messages__scheme_details__title")
     )
   }
 

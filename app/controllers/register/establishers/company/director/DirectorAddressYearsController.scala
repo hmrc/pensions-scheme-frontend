@@ -17,7 +17,6 @@
 package controllers.register.establishers.company.director
 
 import config.FrontendAppConfig
-import connectors.UserAnswersCacheConnector
 import controllers.Retrievals
 import controllers.actions._
 import controllers.address.AddressYearsController
@@ -27,6 +26,7 @@ import javax.inject.Inject
 import models.{Index, Mode}
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent}
+import services.UserAnswersService
 import utils.Navigator
 import utils.annotations.EstablishersCompanyDirector
 import viewmodels.Message
@@ -34,7 +34,8 @@ import viewmodels.address.AddressYearsViewModel
 
 class DirectorAddressYearsController @Inject()(
                                                 val appConfig: FrontendAppConfig,
-                                                val cacheConnector: UserAnswersCacheConnector,
+
+                                                val userAnswersService: UserAnswersService,
                                                 @EstablishersCompanyDirector val navigator: Navigator,
                                                 val messagesApi: MessagesApi,
                                                 authenticate: AuthAction,
@@ -45,7 +46,7 @@ class DirectorAddressYearsController @Inject()(
   private val form = new AddressYearsFormProvider()(Message("messages__common_error__current_address_years"))
 
   def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData andThen requireData).async {
+    (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
       DirectorDetailsId(establisherIndex, directorIndex).retrieve.right.map { directorDetails =>
         get(DirectorAddressYearsId(establisherIndex, directorIndex), form, viewModel(mode, establisherIndex, directorIndex, directorDetails.fullName, srn))
@@ -53,7 +54,7 @@ class DirectorAddressYearsController @Inject()(
   }
 
   def onSubmit(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData andThen requireData).async {
+    (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
       DirectorDetailsId(establisherIndex, directorIndex).retrieve.right.map { directorDetails =>
         post(

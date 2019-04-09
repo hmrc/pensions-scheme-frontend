@@ -18,7 +18,7 @@ package controllers.register.establishers.company
 
 import audit.testdoubles.StubSuccessfulAuditService
 import audit.{AddressAction, AddressEvent}
-import connectors.FakeUserAnswersCacheConnector
+import services.FakeUserAnswersService
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.address.AddressFormProvider
@@ -56,7 +56,7 @@ class CompanyPreviousAddressControllerSpec extends ControllerSpecBase with Scala
   private val validData = Json.obj(
     EstablishersId.toString -> Json.arr(
       Json.obj(
-        CompanyDetailsId.toString -> CompanyDetails(companyName, Some("123456"), Some("abcd")),
+        CompanyDetailsId.toString -> CompanyDetails(companyName),
         CompanyPreviousAddressId.toString -> address
       )
     )

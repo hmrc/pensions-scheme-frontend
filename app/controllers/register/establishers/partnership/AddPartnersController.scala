@@ -17,7 +17,6 @@
 package controllers.register.establishers.partnership
 
 import config.FrontendAppConfig
-import connectors.UserAnswersCacheConnector
 import controllers.Retrievals
 import controllers.actions._
 import forms.register.AddPartnersFormProvider
@@ -39,7 +38,6 @@ import scala.concurrent.{ExecutionContext, Future}
 class AddPartnersController @Inject()(
                                        appConfig: FrontendAppConfig,
                                        override val messagesApi: MessagesApi,
-                                       dataCacheConnector: UserAnswersCacheConnector,
                                        @EstablishersPartner navigator: Navigator,
                                        authenticate: AuthAction,
                                        getData: DataRetrievalAction,
@@ -51,15 +49,15 @@ class AddPartnersController @Inject()(
 
   private def postUrl(index: Int, mode: Mode, srn: Option[String]): Call = routes.AddPartnersController.onSubmit(mode, index, srn)
 
-  def onPageLoad(mode: Mode, index: Int, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onPageLoad(mode: Mode, index: Int, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
       retrievePartnershipName(index) {_ =>
           val partners = request.userAnswers.allPartnersAfterDelete(index)
-          Future.successful(Ok(addPartners(appConfig, form, index, partners, postUrl(index, mode, srn), existingSchemeName)))
+          Future.successful(Ok(addPartners(appConfig, form, partners, postUrl(index, mode, srn), existingSchemeName, request.viewOnly)))
       }
   }
 
-  def onSubmit(mode: Mode, index: Int, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode, index: Int, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
       val partners = request.userAnswers.allPartnersAfterDelete(index)
       if (partners.isEmpty || partners.lengthCompare(appConfig.maxPartners) >= 0) {
@@ -76,10 +74,10 @@ class AddPartnersController @Inject()(
                     addPartners(
                       appConfig,
                       formWithErrors,
-                      index,
                       partners,
                       postUrl(index, mode, srn),
-                      existingSchemeName
+                      existingSchemeName,
+                      request.viewOnly
                     )
                   )
                 )

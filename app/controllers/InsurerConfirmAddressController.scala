@@ -63,12 +63,12 @@ class InsurerConfirmAddressController @Inject()(val appConfig: FrontendAppConfig
       srn = srn
     )
 
-  def onPageLoad(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onPageLoad(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
       get(InsurerConfirmAddressId, InsurerSelectAddressId, viewmodel(mode, srn))
   }
 
-  def onSubmit(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
       post(InsurerConfirmAddressId, InsurerSelectAddressId, viewmodel(mode, srn), mode, "Insurer Address", InsurerEnterPostCodeId)
   }

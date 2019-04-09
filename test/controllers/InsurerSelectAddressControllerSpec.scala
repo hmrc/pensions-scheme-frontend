@@ -27,6 +27,7 @@ import play.api.data.Form
 import play.api.libs.json._
 import play.api.mvc.Call
 import play.api.test.Helpers._
+import services.{FakeUserAnswersService, UserAnswersService}
 import utils.{Enumerable, FakeNavigator, MapFormats}
 import viewmodels.address.AddressListViewModel
 import views.html.address.addressList
@@ -48,11 +49,11 @@ class InsurerSelectAddressControllerSpec extends ControllerSpecBase with Mockito
 
   def controller(
                   dataRetrievalAction: DataRetrievalAction = getMandatorySchemeNameHs,
-                  dataCacheConnector: UserAnswersCacheConnector = FakeUserAnswersCacheConnector
+                  userAnswersService: UserAnswersService = FakeUserAnswersService
                 ): InsurerSelectAddressController =
     new InsurerSelectAddressController(
       frontendAppConfig, messagesApi,
-      dataCacheConnector,
+      userAnswersService,
       new FakeNavigator(desiredRoute = onwardRoute),
       FakeAuthAction,
       dataRetrievalAction,
@@ -131,11 +132,11 @@ class InsurerSelectAddressControllerSpec extends ControllerSpecBase with Mockito
     "update the country of the chosen address to `GB`" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody("value" -> "0")
 
-      val result = controller(new FakeDataRetrievalAction(Some(addressObject)), FakeUserAnswersCacheConnector)
+      val result = controller(new FakeDataRetrievalAction(Some(addressObject)), FakeUserAnswersService)
         .onSubmit(NormalMode, None)(postRequest)
 
       status(result) mustEqual SEE_OTHER
-      FakeUserAnswersCacheConnector.verify(InsurerSelectAddressId, addresses.head.copy(country = Some("GB")))
+      FakeUserAnswersService.verify(InsurerSelectAddressId, addresses.head.copy(country = Some("GB")))
     }
 
     "return a Bad Request and errors when invalid data is submitted" in {

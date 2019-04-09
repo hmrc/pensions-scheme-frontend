@@ -16,7 +16,7 @@
 
 package controllers.register.establishers.company
 
-import connectors.FakeUserAnswersCacheConnector
+import services.FakeUserAnswersService
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.address.AddressListFormProvider
@@ -60,7 +60,7 @@ class CompanyPreviousAddressListControllerSpec extends ControllerSpecBase {
   val validData: JsObject = Json.obj(
     EstablishersId.toString -> Json.arr(
       Json.obj(
-        "companyDetails" -> CompanyDetails(companyName, None, None),
+        "companyDetails" -> CompanyDetails(companyName),
         CompanyPreviousAddressPostcodeLookupId.toString -> addresses
       )
     )
@@ -70,7 +70,7 @@ class CompanyPreviousAddressListControllerSpec extends ControllerSpecBase {
     new CompanyPreviousAddressListController(
       frontendAppConfig,
       messagesApi,
-      FakeUserAnswersCacheConnector,
+      FakeUserAnswersService,
       new FakeNavigator(desiredRoute = onwardRoute),
       FakeAuthAction,
       dataRetrievalAction, new DataRequiredActionImpl

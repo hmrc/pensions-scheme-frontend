@@ -54,7 +54,8 @@ class PartnershipReviewControllerSpec extends ControllerSpecBase {
     partnerNames,
     None,
     None,
-    NormalMode
+    NormalMode,
+    false
   )(fakeRequest, messages).toString
 
   "PartnershipReview Controller" must {

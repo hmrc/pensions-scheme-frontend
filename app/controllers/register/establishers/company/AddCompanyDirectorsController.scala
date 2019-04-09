@@ -17,7 +17,6 @@
 package controllers.register.establishers.company
 
 import config.FrontendAppConfig
-import connectors.UserAnswersCacheConnector
 import controllers.Retrievals
 import controllers.actions._
 import forms.register.establishers.company.AddCompanyDirectorsFormProvider
@@ -39,7 +38,6 @@ import scala.concurrent.{ExecutionContext, Future}
 class AddCompanyDirectorsController @Inject()(
                                                appConfig: FrontendAppConfig,
                                                override val messagesApi: MessagesApi,
-                                               dataCacheConnector: UserAnswersCacheConnector,
                                                @EstablishersCompany navigator: Navigator,
                                                authenticate: AuthAction,
                                                getData: DataRetrievalAction,
@@ -50,16 +48,13 @@ class AddCompanyDirectorsController @Inject()(
   private val form: Form[Boolean] = formProvider()
   private def postCall: (Mode, Option[String], Index) => Call = routes.AddCompanyDirectorsController.onSubmit _
 
-  def onPageLoad(mode: Mode, srn: Option[String], index: Int): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onPageLoad(mode: Mode, srn: Option[String], index: Int): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
-      retrieveCompanyName(index) {
-        companyName =>
           val directors = request.userAnswers.allDirectorsAfterDelete(index)
-          Future.successful(Ok(addCompanyDirectors(appConfig, form, mode, index, directors, existingSchemeName, postCall(mode, srn, index))))
-      }
+          Future.successful(Ok(addCompanyDirectors(appConfig, form, directors, existingSchemeName, postCall(mode, srn, index), request.viewOnly)))
   }
 
-  def onSubmit(mode: Mode, srn: Option[String], index: Int): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode, srn: Option[String], index: Int): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
       val directors = request.userAnswers.allDirectorsAfterDelete(index)
       if (directors.isEmpty || directors.lengthCompare(appConfig.maxDirectors) >= 0) {
@@ -69,22 +64,18 @@ class AddCompanyDirectorsController @Inject()(
 
         form.bindFromRequest().fold(
           (formWithErrors: Form[_]) =>
-            retrieveCompanyName(index) {
-              companyName =>
                 Future.successful(
                   BadRequest(
                     addCompanyDirectors(
                       appConfig,
                       formWithErrors,
-                      mode,
-                      index,
                       directors,
                       existingSchemeName,
-                      postCall(mode, srn, index)
+                      postCall(mode, srn, index),
+                      request.viewOnly
                     )
                   )
-                )
-            },
+                ),
           value =>
             request.userAnswers.set(AddCompanyDirectorsId(index))(value).fold(
               errors => {

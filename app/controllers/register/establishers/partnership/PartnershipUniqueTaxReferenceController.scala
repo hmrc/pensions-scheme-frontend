@@ -17,7 +17,6 @@
 package controllers.register.establishers.partnership
 
 import config.FrontendAppConfig
-import connectors.UserAnswersCacheConnector
 import controllers.Retrievals
 import controllers.actions._
 import forms.register.establishers.partnership.PartnershipUniqueTaxReferenceFormProvider
@@ -27,6 +26,7 @@ import models.{Index, Mode, UniqueTaxReference}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
+import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.EstablisherPartnership
 import utils.{Enumerable, Navigator, UserAnswers}
@@ -37,7 +37,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class PartnershipUniqueTaxReferenceController @Inject()(
                                                          appConfig: FrontendAppConfig,
                                                          override val messagesApi: MessagesApi,
-                                                         dataCacheConnector: UserAnswersCacheConnector,
+                                                         val userAnswersService: UserAnswersService,
                                                          authenticate: AuthAction,
                                                          @EstablisherPartnership navigator: Navigator,
                                                          getData: DataRetrievalAction,
@@ -47,7 +47,7 @@ class PartnershipUniqueTaxReferenceController @Inject()(
 
   private val form: Form[UniqueTaxReference] = formProvider()
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
       retrievePartnershipName(index) { _ =>
         val preparedForm = request.userAnswers.get(PartnershipUniqueTaxReferenceID(index)).fold(form)(form.fill)
@@ -56,7 +56,7 @@ class PartnershipUniqueTaxReferenceController @Inject()(
       }
   }
 
-  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
       retrievePartnershipName(index) {
         partnershipName =>
@@ -66,8 +66,9 @@ class PartnershipUniqueTaxReferenceController @Inject()(
               Future.successful(BadRequest(partnershipUniqueTaxReference(appConfig, formWithErrors, mode, index, existingSchemeName, submitUrl)))
             },
             value =>
-              dataCacheConnector.save(
-                request.externalId,
+              userAnswersService.save(
+                mode,
+                srn,
                 PartnershipUniqueTaxReferenceID(index),
                 value
               ).map {

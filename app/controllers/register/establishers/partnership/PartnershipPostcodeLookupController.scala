@@ -17,7 +17,7 @@
 package controllers.register.establishers.partnership
 
 import config.FrontendAppConfig
-import connectors.{AddressLookupConnector, UserAnswersCacheConnector}
+import connectors.AddressLookupConnector
 import controllers.actions.{AuthAction, DataRequiredAction, DataRetrievalAction}
 import controllers.address.PostcodeLookupController
 import forms.address.PostCodeLookupFormProvider
@@ -27,6 +27,7 @@ import models.{Index, Mode}
 import play.api.data.Form
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent}
+import services.UserAnswersService
 import utils.Navigator
 import utils.annotations.EstablisherPartnership
 import viewmodels.Message
@@ -35,7 +36,7 @@ import viewmodels.address.PostcodeLookupViewModel
 class PartnershipPostcodeLookupController @Inject()(
                                                      override val appConfig: FrontendAppConfig,
                                                      override val messagesApi: MessagesApi,
-                                                     override val cacheConnector: UserAnswersCacheConnector,
+                                                     val userAnswersService: UserAnswersService,
                                                      override val addressLookupConnector: AddressLookupConnector,
                                                      @EstablisherPartnership override val navigator: Navigator,
                                                      authenticate: AuthAction,
@@ -67,13 +68,13 @@ class PartnershipPostcodeLookupController @Inject()(
     }
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData andThen requireData).async {
+    (authenticate andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
         viewmodel(index, mode, srn).retrieve.right map get
     }
 
   def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData andThen requireData).async {
+    (authenticate andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
         viewmodel(index, mode, srn).retrieve.right.map {
           vm =>

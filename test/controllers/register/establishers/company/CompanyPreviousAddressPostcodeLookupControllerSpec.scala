@@ -16,7 +16,7 @@
 
 package controllers.register.establishers.company
 
-import connectors.{AddressLookupConnector, FakeUserAnswersCacheConnector}
+import connectors.AddressLookupConnector
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.address.PostCodeLookupFormProvider
@@ -31,6 +31,7 @@ import play.api.data.Form
 import play.api.libs.json._
 import play.api.mvc.Call
 import play.api.test.Helpers._
+import services.FakeUserAnswersService
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.FakeNavigator
 import viewmodels.Message
@@ -68,13 +69,13 @@ class CompanyPreviousAddressPostcodeLookupControllerSpec extends ControllerSpecB
     EstablishersId.toString -> Json.arr(
       Json.obj(
         CompanyDetailsId.toString ->
-          CompanyDetails("test company name", Some("123456"), Some("abcd")),
+          CompanyDetails("test company name"),
         CompanyPreviousAddressPostcodeLookupId.toString ->
           Seq(fakeAddress(testAnswer))
       ),
       Json.obj(
         CompanyDetailsId.toString ->
-          CompanyDetails("test", Some("654321"), Some("bcda"))
+          CompanyDetails("test")
       )
     )
   )
@@ -83,7 +84,7 @@ class CompanyPreviousAddressPostcodeLookupControllerSpec extends ControllerSpecB
     new CompanyPreviousAddressPostcodeLookupController(
       frontendAppConfig,
       messagesApi,
-      FakeUserAnswersCacheConnector,
+      FakeUserAnswersService,
       fakeAddressLookupConnector,
       new FakeNavigator(desiredRoute = onwardRoute),
       FakeAuthAction,

@@ -17,7 +17,6 @@
 package controllers.register.establishers.partnership.partner
 
 import config.FrontendAppConfig
-import connectors.UserAnswersCacheConnector
 import controllers.Retrievals
 import controllers.actions._
 import controllers.address.AddressYearsController
@@ -27,6 +26,7 @@ import javax.inject.Inject
 import models.{Index, Mode}
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent}
+import services.UserAnswersService
 import utils.Navigator
 import utils.annotations.EstablishersPartner
 import viewmodels.Message
@@ -34,7 +34,7 @@ import viewmodels.address.AddressYearsViewModel
 
 class PartnerAddressYearsController @Inject()(
                                                val appConfig: FrontendAppConfig,
-                                               val cacheConnector: UserAnswersCacheConnector,
+                                               val userAnswersService: UserAnswersService,
                                                @EstablishersPartner val navigator: Navigator,
                                                val messagesApi: MessagesApi,
                                                authenticate: AuthAction,
@@ -45,7 +45,7 @@ class PartnerAddressYearsController @Inject()(
   private val form = new AddressYearsFormProvider()(Message("messages__common_error__current_address_years"))
 
   def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData andThen requireData).async {
+    (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
       PartnerDetailsId(establisherIndex, partnerIndex).retrieve.right.map { partnerDetails =>
         get(PartnerAddressYearsId(establisherIndex, partnerIndex), form,
@@ -54,7 +54,7 @@ class PartnerAddressYearsController @Inject()(
   }
 
   def onSubmit(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData andThen requireData).async {
+    (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
       PartnerDetailsId(establisherIndex, partnerIndex).retrieve.right.map { partnerDetails =>
         post(

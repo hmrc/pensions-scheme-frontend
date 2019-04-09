@@ -17,7 +17,6 @@
 package controllers.register.trustees.individual
 
 import config.FrontendAppConfig
-import connectors.UserAnswersCacheConnector
 import controllers.Retrievals
 import controllers.actions._
 import forms.register.PersonDetailsFormProvider
@@ -29,6 +28,7 @@ import models.{Index, Mode}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
+import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.TrusteesIndividual
 import utils.{Enumerable, Navigator, UserAnswers}
@@ -39,7 +39,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class TrusteeDetailsController @Inject()(
                                           appConfig: FrontendAppConfig,
                                           override val messagesApi: MessagesApi,
-                                          dataCacheConnector: UserAnswersCacheConnector,
+                                          userAnswersService: UserAnswersService,
                                           @TrusteesIndividual navigator: Navigator,
                                           authenticate: AuthAction,
                                           getData: DataRetrievalAction,
@@ -49,14 +49,14 @@ class TrusteeDetailsController @Inject()(
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
       val submitUrl = controllers.register.trustees.individual.routes.TrusteeDetailsController.onSubmit(mode, index, srn)
       val updatedForm = request.userAnswers.get(TrusteeDetailsId(index)).fold(form)(form.fill)
       Future.successful(Ok(trusteeDetails(appConfig, updatedForm, mode, index, existingSchemeName, submitUrl)))
   }
 
-  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) => {
@@ -66,7 +66,7 @@ class TrusteeDetailsController @Inject()(
         value =>
           request.userAnswers.upsert(TrusteeDetailsId(index))(value) {
             _.upsert(TrusteeKindId(index))(Individual) { answers =>
-              dataCacheConnector.upsert(request.externalId, answers.json).map { cacheMap =>
+              userAnswersService.upsert(mode, srn, answers.json).map { cacheMap =>
                 Redirect(navigator.nextPage(TrusteeDetailsId(index), mode, new UserAnswers(cacheMap)))
               }
             }

@@ -27,6 +27,7 @@ import models.requests.DataRequest
 import models.{Index, Mode}
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, Result}
+import services.UserAnswersService
 import utils.Navigator
 import utils.annotations.EstablishersCompanyDirector
 import viewmodels.Message
@@ -36,7 +37,7 @@ import scala.concurrent.Future
 
 class DirectorPreviousAddressListController @Inject()(
                                                        override val appConfig: FrontendAppConfig,
-                                                       override val cacheConnector: UserAnswersCacheConnector,
+                                                       val userAnswersService: UserAnswersService,
                                                        @EstablishersCompanyDirector override val navigator: Navigator,
                                                        override val messagesApi: MessagesApi,
                                                        authenticate: AuthAction,
@@ -45,12 +46,12 @@ class DirectorPreviousAddressListController @Inject()(
                                                      ) extends AddressListController with Retrievals {
 
   def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData andThen requireData).async { implicit request =>
+    (authenticate andThen getData(mode, srn) andThen requireData).async { implicit request =>
       viewmodel(mode, establisherIndex, directorIndex, srn).right.map(get)
     }
 
   def onSubmit(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData andThen requireData).async { implicit request =>
+    (authenticate andThen getData(mode, srn) andThen requireData).async { implicit request =>
       viewmodel(mode, establisherIndex, directorIndex, srn).right.map {
         vm =>
           post(vm, DirectorPreviousAddressListId(establisherIndex, directorIndex), DirectorPreviousAddressId(establisherIndex, directorIndex), mode)

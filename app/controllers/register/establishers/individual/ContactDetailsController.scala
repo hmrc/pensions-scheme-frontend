@@ -17,7 +17,6 @@
 package controllers.register.establishers.individual
 
 import config.FrontendAppConfig
-import connectors.UserAnswersCacheConnector
 import controllers.actions._
 import forms.ContactDetailsFormProvider
 import identifiers.register.establishers.individual.ContactDetailsId
@@ -25,6 +24,7 @@ import javax.inject.Inject
 import models.{Index, Mode}
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent}
+import services.UserAnswersService
 import utils.Navigator
 import utils.annotations.EstablishersIndividual
 import viewmodels.{ContactDetailsViewModel, Message}
@@ -33,7 +33,7 @@ class ContactDetailsController @Inject()(
                                           @EstablishersIndividual override val navigator: Navigator,
                                           override val appConfig: FrontendAppConfig,
                                           override val messagesApi: MessagesApi,
-                                          override val cacheConnector: UserAnswersCacheConnector,
+                                          val userAnswersService: UserAnswersService,
                                           authenticate: AuthAction,
                                           getData: DataRetrievalAction,
                                           requireData: DataRequiredAction,
@@ -42,14 +42,14 @@ class ContactDetailsController @Inject()(
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
       retrieveEstablisherName(index) { establisherName =>
           get(ContactDetailsId(index), form, viewmodel(mode, index, establisherName, srn))
       }
   }
 
-  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
       retrieveEstablisherName(index) { establisherName =>
           post(ContactDetailsId(index), mode, form, viewmodel(mode, index, establisherName, srn))

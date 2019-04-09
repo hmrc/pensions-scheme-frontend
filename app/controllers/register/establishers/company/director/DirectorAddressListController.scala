@@ -27,6 +27,7 @@ import models.requests.DataRequest
 import models.{Index, Mode}
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, Result}
+import services.UserAnswersService
 import utils.Navigator
 import utils.annotations.EstablishersCompanyDirector
 import viewmodels.Message
@@ -36,7 +37,7 @@ import scala.concurrent.Future
 
 class DirectorAddressListController @Inject()(
                                                override val appConfig: FrontendAppConfig,
-                                               override val cacheConnector: UserAnswersCacheConnector,
+                                               val userAnswersService: UserAnswersService,
                                                @EstablishersCompanyDirector override val navigator: Navigator,
                                                override val messagesApi: MessagesApi,
                                                authenticate: AuthAction,
@@ -45,12 +46,12 @@ class DirectorAddressListController @Inject()(
                                              ) extends AddressListController with Retrievals {
 
   def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData andThen requireData).async { implicit request =>
+    (authenticate andThen getData(mode, srn) andThen requireData).async { implicit request =>
       viewmodel(mode, establisherIndex, directorIndex, srn).right.map(get)
     }
 
   def onSubmit(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData andThen requireData).async { implicit request =>
+    (authenticate andThen getData(mode, srn) andThen requireData).async { implicit request =>
       viewmodel(mode, establisherIndex, directorIndex, srn).right.map {
         vm =>
           post(vm, DirectorAddressListId(establisherIndex, directorIndex), DirectorAddressId(establisherIndex, directorIndex), mode)
@@ -67,7 +68,8 @@ class DirectorAddressListController @Inject()(
           postCall = routes.DirectorAddressListController.onSubmit(mode, establisherIndex, directorIndex, srn),
           manualInputCall = routes.DirectorAddressController.onPageLoad(mode, establisherIndex, directorIndex, srn),
           addresses = addresses,
-          subHeading = Some(Message(directorDetails.fullName))
+          subHeading = Some(Message(directorDetails.fullName)),
+          srn = srn
         )
     }.left.map(_ => Future.successful(Redirect(routes.DirectorAddressPostcodeLookupController.onPageLoad(mode, establisherIndex, directorIndex, srn))))
   }

@@ -16,7 +16,7 @@
 
 package controllers.register.trustees
 
-import connectors.FakeUserAnswersCacheConnector
+import services.FakeUserAnswersService
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.register.trustees.AddTrusteeFormProvider
@@ -62,10 +62,10 @@ class AddTrusteeControllerSpec extends ControllerSpecBase {
     Json.obj(
       TrusteesId.toString -> Json.arr(
         Json.obj(
-          CompanyDetailsId.toString -> CompanyDetails("Trustee Company A", None, None)
+          CompanyDetailsId.toString -> CompanyDetails("Trustee Company A")
         ),
         Json.obj(
-          CompanyDetailsId.toString -> CompanyDetails("Trustee Company B", None, None)
+          CompanyDetailsId.toString -> CompanyDetails("Trustee Company B")
         ),
         Json.obj(
           TrusteeDetailsId.toString -> PersonDetails("Trustee", None, "Individual", LocalDate.now())
@@ -77,7 +77,7 @@ class AddTrusteeControllerSpec extends ControllerSpecBase {
   val form = formProvider()
 
   def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): AddTrusteeController =
-    new AddTrusteeController(frontendAppConfig, messagesApi, FakeUserAnswersCacheConnector, new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
+    new AddTrusteeController(frontendAppConfig, messagesApi, new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
       dataRetrievalAction, new DataRequiredActionImpl, formProvider)
 
   val submitUrl = controllers.register.trustees.routes.AddTrusteeController.onSubmit(NormalMode, None)

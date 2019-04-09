@@ -41,17 +41,17 @@ class PartnershipReviewController @Inject()(appConfig: FrontendAppConfig,
                                             sectionComplete: SectionComplete) (implicit val ec: ExecutionContext)
   extends FrontendController with I18nSupport with Retrievals {
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
       PartnershipDetailsId(index).retrieve.right.map {
         case partnershipDetails =>
           val partners: Seq[String] = request.userAnswers.allPartnersAfterDelete(index).map(_.name)
 
-          Future.successful(Ok(partnershipReview(appConfig, index, partnershipDetails.name, partners, existingSchemeName, srn, mode)))
+          Future.successful(Ok(partnershipReview(appConfig, index, partnershipDetails.name, partners, existingSchemeName, srn, mode, request.viewOnly)))
       }
   }
 
-  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
       val allPartners = request.userAnswers.allPartnersAfterDelete(index)
       val allPartnersCompleted = allPartners.nonEmpty & (allPartners.count(!_.isCompleted) == 0)

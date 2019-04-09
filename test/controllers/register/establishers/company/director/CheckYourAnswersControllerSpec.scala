@@ -18,65 +18,103 @@ package controllers.register.establishers.company.director
 
 import controllers.ControllerSpecBase
 import controllers.actions._
-import controllers.register.establishers.company._
-import identifiers.register.establishers.company.director.IsDirectorCompleteId
-import models.{CheckMode, Index, NormalMode}
+import identifiers.register.establishers.company.director._
+import models._
+import models.address.Address
+import models.person.PersonDetails
 import org.joda.time.LocalDate
-import play.api.mvc.Call
+import org.scalatest.OptionValues
 import play.api.test.Helpers._
-import utils.{CheckYourAnswersFactory, CountryOptions, DateHelper, FakeNavigator, FakeSectionComplete, InputOption}
-import viewmodels.{AnswerRow, AnswerSection, Message}
+import utils.checkyouranswers.Ops._
+import utils.{FakeCountryOptions, FakeDataRequest, FakeNavigator, FakeSectionComplete, UserAnswers}
+import viewmodels.AnswerSection
 import views.html.check_your_answers
 
 class CheckYourAnswersControllerSpec extends ControllerSpecBase {
 
-  val countryOptions: CountryOptions = new CountryOptions(Seq(InputOption("GB", "United Kingdom")))
-  val establisherIndex = Index(0)
-  val directorIndex = Index(0)
-  val testSchemeName = "Test Scheme Name"
+  import CheckYourAnswersControllerSpec._
 
-  val checkYourAnswersFactory = new CheckYourAnswersFactory(countryOptions)
+  implicit val countryOptions = new FakeCountryOptions()
+  implicit val request = FakeDataRequest(directorAnswers)
 
-  def postUrl: Call = director.routes.CheckYourAnswersController.onSubmit(establisherIndex, directorIndex, NormalMode, None)
-
-  lazy val answersDirectorDetails: Seq[AnswerRow] =
-    Seq(
-      AnswerRow("messages__common__cya__name", Seq("first middle last"), false,
-        Some(director.routes.DirectorDetailsController.onPageLoad(CheckMode, Index(establisherIndex), Index(directorIndex), None).url),
-        Message("messages__visuallyhidden__common__name", "first middle last")
-      ),
-      AnswerRow("messages__common__dob", Seq(DateHelper.formatDate(new LocalDate(1990, 2, 2))), false,
-        Some(director.routes.DirectorDetailsController.onPageLoad(CheckMode, Index(establisherIndex), Index(directorIndex), None).url),
-        Message("messages__visuallyhidden__common__dob", "first middle last")
-      )
+  private def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): CheckYourAnswersController =
+    new CheckYourAnswersController(
+      frontendAppConfig,
+      messagesApi,
+      FakeAuthAction,
+      dataRetrievalAction,
+      new DataRequiredActionImpl,
+      FakeSectionComplete,
+      new FakeNavigator(desiredRoute),
+      countryOptions
     )
 
-  lazy val answers = Seq(
-    AnswerSection(Some("messages__director__cya__details_heading"), answersDirectorDetails),
-    AnswerSection(Some("messages__director__cya__contact__details_heading"), Seq.empty[AnswerRow])
-  )
-  val onwardRoute = controllers.register.establishers.company.routes.AddCompanyDirectorsController.onPageLoad(NormalMode, None, 0)
+  "CheckYourAnswersController" when {
+    "onPageLoad" must {
+      "return OK and display all the answers" in {
+        val directorDetails = AnswerSection(
+          Some("messages__director__cya__details_heading"),
+          Seq(
+            DirectorDetailsId(firstIndex, firstIndex).
+              row(routes.DirectorDetailsController.onPageLoad(CheckMode, firstIndex, firstIndex, None).url),
+            DirectorNinoId(firstIndex, firstIndex).
+              row(routes.DirectorNinoController.onPageLoad(CheckMode, firstIndex, firstIndex, None).url),
+            DirectorUniqueTaxReferenceId(firstIndex, firstIndex).
+              row(routes.DirectorUniqueTaxReferenceController.onPageLoad(CheckMode, firstIndex, firstIndex, None).url)
+          ).flatten
+        )
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisherCompany): CheckYourAnswersController =
-    new director.CheckYourAnswersController(frontendAppConfig, messagesApi, new FakeNavigator(onwardRoute), FakeAuthAction,
-      dataRetrievalAction, new DataRequiredActionImpl, checkYourAnswersFactory, FakeSectionComplete)
+        val directorContactDetails = AnswerSection(
+          Some("messages__director__cya__contact__details_heading"),
+          Seq(
+            DirectorAddressId(firstIndex, firstIndex).
+              row(routes.DirectorAddressController.onPageLoad(CheckMode, firstIndex, firstIndex, None).url),
+            DirectorAddressYearsId(firstIndex, firstIndex).
+              row(routes.DirectorAddressYearsController.onPageLoad(CheckMode, firstIndex, firstIndex, None).url),
+            DirectorPreviousAddressId(firstIndex, firstIndex).
+              row(routes.DirectorPreviousAddressController.onPageLoad(CheckMode, firstIndex, firstIndex, None).url),
+            DirectorContactDetailsId(firstIndex, firstIndex).
+              row(routes.DirectorContactDetailsController.onPageLoad(CheckMode, firstIndex, firstIndex, None).url)
+          ).flatten
+        )
 
-  def viewAsString(): String = check_your_answers(frontendAppConfig, answers, postUrl, None)(fakeRequest, messages).toString
+        val viewAsString = check_your_answers(
+          frontendAppConfig,
+          Seq(directorDetails, directorContactDetails),
+          routes.CheckYourAnswersController.onSubmit(firstIndex, firstIndex, NormalMode, None),
+          None
+        )(fakeRequest, messages).toString
 
-  "CheckYourAnswers Controller" must {
-
-    "return OK and the correct view for a GET" in {
-      val result = controller(getMandatoryEstablisherCompanyDirector).onPageLoad(establisherIndex, directorIndex, NormalMode, None)(fakeRequest)
-
-      status(result) mustBe OK
-      contentAsString(result) mustBe viewAsString()
+        val result = controller(directorAnswers.dataRetrievalAction).onPageLoad(firstIndex, firstIndex, NormalMode, None)(request)
+        status(result) mustBe OK
+        contentAsString(result) mustBe viewAsString
+      }
     }
 
-    "mark director as complete on submit" in {
-      val result = controller().onSubmit(establisherIndex, directorIndex, NormalMode, None)(fakeRequest)
-      status(result) mustBe SEE_OTHER
-      redirectLocation(result).value mustEqual onwardRoute.url
-      FakeSectionComplete.verify(IsDirectorCompleteId(establisherIndex, directorIndex), true)
+    "onSubmit" must {
+      "mark the section as complete and redirect to the next page" in {
+        val result = controller().onSubmit(firstIndex, firstIndex, NormalMode, None)(request)
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result) mustBe Some(desiredRoute.url)
+
+        FakeSectionComplete.verify(IsDirectorCompleteId(firstIndex, firstIndex), true)
+      }
     }
   }
+}
+
+object CheckYourAnswersControllerSpec extends OptionValues {
+  val firstIndex = Index(0)
+  val schemeName = "test scheme name"
+  val desiredRoute = controllers.routes.IndexController.onPageLoad()
+
+  val directorAnswers = UserAnswers()
+    .set(DirectorDetailsId(firstIndex, firstIndex))(PersonDetails("first name", None, "last name", LocalDate.now(), false))
+    .flatMap(_.set(DirectorNinoId(firstIndex, firstIndex))(Nino.Yes("AB100100A")))
+    .flatMap(_.set(DirectorUniqueTaxReferenceId(firstIndex, firstIndex))(UniqueTaxReference.Yes("1234567890")))
+    .flatMap(_.set(DirectorAddressId(firstIndex, firstIndex))(Address("Address 1", "Address 2", None, None, None, "GB")))
+    .flatMap(_.set(DirectorAddressYearsId(firstIndex, firstIndex))(AddressYears.UnderAYear))
+    .flatMap(_.set(DirectorPreviousAddressId(firstIndex, firstIndex))(Address("Previous Address 1", "Previous Address 2", None, None, None, "GB")))
+    .flatMap(_.set(DirectorContactDetailsId(firstIndex, firstIndex))(ContactDetails("test@test.com", "123456789")))
+    .asOpt.value
 }

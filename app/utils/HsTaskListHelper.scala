@@ -16,16 +16,16 @@
 
 package utils
 
-import identifiers._
 import identifiers.register.establishers.company.{CompanyDetailsId => EstablisherCompanyDetailsId}
 import identifiers.register.establishers.individual.EstablisherDetailsId
 import identifiers.register.establishers.partnership.{PartnershipDetailsId => EstablisherPartnershipDetailsId}
+import identifiers.register.trustees.MoreThanTenTrusteesId
 import identifiers.register.trustees.company.{CompanyDetailsId => TrusteeCompanyDetailsId}
 import identifiers.register.trustees.individual.TrusteeDetailsId
 import identifiers.register.trustees.partnership.{PartnershipDetailsId => TrusteePartnershipDetailsId}
-import identifiers.{DeclarationDutiesId, IsWorkingKnowledgeCompleteId}
-import models.NormalMode
+import identifiers.{DeclarationDutiesId, IsWorkingKnowledgeCompleteId, _}
 import models.register.Entity
+import models.{Link, NormalMode}
 import play.api.i18n.Messages
 import viewmodels._
 
@@ -47,6 +47,8 @@ abstract class HsTaskListHelper(answers: UserAnswers)(implicit messages: Message
 
   def taskList: SchemeDetailsTaskList
 
+  protected[utils] def aboutSection(userAnswers: UserAnswers): Seq[SchemeDetailsTaskListSection]
+
   private[utils] def beforeYouStartSection(userAnswers: UserAnswers): SchemeDetailsTaskListSection = {
     val link = userAnswers.get(IsBeforeYouStartCompleteId) match {
       case Some(true) => Link(beforeYouStartLinkText, controllers.routes.CheckYourAnswersBeforeYouStartController.onPageLoad().url)
@@ -55,33 +57,12 @@ abstract class HsTaskListHelper(answers: UserAnswers)(implicit messages: Message
     SchemeDetailsTaskListSection(userAnswers.get(IsBeforeYouStartCompleteId), link, None)
   }
 
-  private[utils] def aboutSection(userAnswers: UserAnswers): Seq[SchemeDetailsTaskListSection] = {
-    val membersLink = userAnswers.get(IsAboutMembersCompleteId) match {
-      case Some(true) => Link(aboutMembersLinkText, controllers.routes.CheckYourAnswersMembersController.onPageLoad(NormalMode, None).url)
-      case _ => Link(aboutMembersLinkText, controllers.routes.WhatYouWillNeedMembersController.onPageLoad.url)
-    }
-
-    val benefitsAndInsuranceLink = userAnswers.get(IsAboutBenefitsAndInsuranceCompleteId) match {
-      case Some(true) => Link(aboutBenefitsAndInsuranceLinkText, controllers.routes.CheckYourAnswersBenefitsAndInsuranceController.onPageLoad(NormalMode, None).url)
-      case _ => Link(aboutBenefitsAndInsuranceLinkText, controllers.routes.WhatYouWillNeedBenefitsInsuranceController.onPageLoad.url)
-    }
-
-    val bankDetailsLink = userAnswers.get(IsAboutBankDetailsCompleteId) match {
-      case Some(true) => Link(aboutBankDetailsLinkText, controllers.routes.CheckYourAnswersBankDetailsController.onPageLoad().url)
-      case _ => Link(aboutBankDetailsLinkText, controllers.routes.WhatYouWillNeedBankDetailsController.onPageLoad.url)
-    }
-
-    Seq(SchemeDetailsTaskListSection(userAnswers.get(IsAboutMembersCompleteId), membersLink, None),
-      SchemeDetailsTaskListSection(userAnswers.get(IsAboutBenefitsAndInsuranceCompleteId), benefitsAndInsuranceLink, None),
-      SchemeDetailsTaskListSection(userAnswers.get(IsAboutBankDetailsCompleteId), bankDetailsLink, None))
-  }
-
   private[utils] def workingKnowledgeSection(userAnswers: UserAnswers): Option[SchemeDetailsTaskListSection] = {
     userAnswers.get(DeclarationDutiesId) match {
       case Some(false) =>
         val wkLink = userAnswers.get(IsWorkingKnowledgeCompleteId) match {
           case Some(true) => Link(workingKnowledgeLinkText, controllers.routes.AdviserCheckYourAnswersController.onPageLoad().url)
-          case _ => Link(workingKnowledgeLinkText, controllers.routes.WhatYouWillNeedWorkingKnowledgeController.onPageLoad.url)
+          case _ => Link(workingKnowledgeLinkText, controllers.routes.WhatYouWillNeedWorkingKnowledgeController.onPageLoad().url)
         }
         Some(SchemeDetailsTaskListSection(userAnswers.get(IsWorkingKnowledgeCompleteId), wkLink, None))
       case _ =>
@@ -92,10 +73,10 @@ abstract class HsTaskListHelper(answers: UserAnswers)(implicit messages: Message
   private[utils] def addEstablisherHeader(userAnswers: UserAnswers): SchemeDetailsTaskListSection = {
     if (userAnswers.allEstablishersAfterDelete.isEmpty) {
       SchemeDetailsTaskListSection(None, Link(addEstablisherLinkText,
-        controllers.register.establishers.routes.EstablisherKindController.onPageLoad(NormalMode, userAnswers.allEstablishers.size).url), None)
+        controllers.register.establishers.routes.EstablisherKindController.onPageLoad(NormalMode, userAnswers.allEstablishers.size, None).url), None)
     } else {
       SchemeDetailsTaskListSection(None, Link(changeEstablisherLinkText,
-        controllers.register.establishers.routes.AddEstablisherController.onPageLoad(NormalMode).url), None)
+        controllers.register.establishers.routes.AddEstablisherController.onPageLoad(NormalMode, None).url), None)
     }
   }
 
@@ -109,14 +90,16 @@ abstract class HsTaskListHelper(answers: UserAnswers)(implicit messages: Message
           Some(
             SchemeDetailsTaskListSection(
               Some(isAllTrusteesCompleted(userAnswers)),
-              Link(changeTrusteesLinkText, controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode, None).url),
+              Link(changeTrusteesLinkText,
+                controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode, None).url),
               None
             )
           )
         } else {
           Some(
             SchemeDetailsTaskListSection(None,
-              Link(addTrusteesLinkText, controllers.register.trustees.routes.TrusteeKindController.onPageLoad(NormalMode, userAnswers.allTrustees.size, None).url),
+              Link(addTrusteesLinkText,
+                controllers.register.trustees.routes.TrusteeKindController.onPageLoad(NormalMode, userAnswers.allTrustees.size, None).url),
               None
             )
           )
@@ -138,7 +121,8 @@ abstract class HsTaskListHelper(answers: UserAnswers)(implicit messages: Message
       userAnswers.get(IsAboutBenefitsAndInsuranceCompleteId),
       userAnswers.get(IsWorkingKnowledgeCompleteId),
       Some(isAllEstablishersCompleted(userAnswers)),
-      Some(isTrusteeOptional | isAllTrusteesCompleted(userAnswers))
+      Some(isTrusteeOptional | isAllTrusteesCompleted(userAnswers)),
+      Some(userAnswers.allTrusteesAfterDelete.size < 10 || userAnswers.get(MoreThanTenTrusteesId).isDefined)
     ).forall(_.contains(true))
   }
 

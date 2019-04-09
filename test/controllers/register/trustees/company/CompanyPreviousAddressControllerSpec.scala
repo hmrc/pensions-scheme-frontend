@@ -20,7 +20,6 @@ import audit.testdoubles.StubSuccessfulAuditService
 import audit.{AddressAction, AddressEvent, AuditService}
 import base.CSRFRequest
 import config.FrontendAppConfig
-import connectors.{FakeUserAnswersCacheConnector, UserAnswersCacheConnector}
 import controllers.ControllerSpecBase
 import controllers.actions._
 import controllers.register.trustees.company.routes._
@@ -54,7 +53,7 @@ class CompanyPreviousAddressControllerSpec extends ControllerSpecBase with Mocki
   val firstIndex = Index(0)
 
   val formProvider = new AddressFormProvider(FakeCountryOptions())
-  val companyDetails = CompanyDetails("companyName", None, None)
+  val companyDetails = CompanyDetails("companyName")
 
   val fakeAuditService = new StubSuccessfulAuditService()
 

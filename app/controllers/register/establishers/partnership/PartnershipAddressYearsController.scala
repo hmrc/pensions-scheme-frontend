@@ -18,7 +18,6 @@ package controllers.register.establishers.partnership
 
 import com.google.inject.Inject
 import config.FrontendAppConfig
-import connectors.UserAnswersCacheConnector
 import controllers.Retrievals
 import controllers.actions.{AuthAction, DataRequiredAction, DataRetrievalAction}
 import controllers.address.AddressYearsController
@@ -27,6 +26,7 @@ import identifiers.register.establishers.partnership.{PartnershipAddressYearsId,
 import models.{Index, Mode}
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent}
+import services.UserAnswersService
 import utils.Navigator
 import utils.annotations.EstablisherPartnership
 import viewmodels.Message
@@ -34,7 +34,7 @@ import viewmodels.address.AddressYearsViewModel
 
 class PartnershipAddressYearsController @Inject()(
                                                    override val appConfig: FrontendAppConfig,
-                                                   override val cacheConnector: UserAnswersCacheConnector,
+                                                   val userAnswersService: UserAnswersService,
                                                    @EstablisherPartnership override val navigator: Navigator,
                                                    override val messagesApi: MessagesApi,
                                                    authenticate: AuthAction,
@@ -45,7 +45,7 @@ class PartnershipAddressYearsController @Inject()(
   private val form = new AddressYearsFormProvider()(Message("messages__partnershipAddressYears__error"))
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData andThen requireData).async {
+    (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
       PartnershipDetailsId(index).retrieve.right.map { partnershipDetails =>
         get(PartnershipAddressYearsId(index), form, viewModel(mode, index, partnershipDetails.name, srn))
@@ -53,7 +53,7 @@ class PartnershipAddressYearsController @Inject()(
   }
 
   def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData andThen requireData).async {
+    (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
       PartnershipDetailsId(index).retrieve.right.map { partnershipDetails =>
         post(PartnershipAddressYearsId(index), mode, form, viewModel(mode, index, partnershipDetails.name, srn))
