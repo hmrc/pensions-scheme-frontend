@@ -106,7 +106,6 @@ class PensionSchemeVarianceLockConnectorImpl @Inject()(http: HttpClient, config:
       response.status match {
         case NOT_FOUND =>
           None
-        case OK if response.body.isEmpty => None
         case OK =>
           Json.parse(response.body).validate[Lock] match {
             case JsSuccess(value, _) => Some(value)
