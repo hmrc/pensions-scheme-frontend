@@ -16,8 +16,16 @@
 
 package utils
 
-import identifiers.{DeclarationDutiesId, IsAboutBenefitsAndInsuranceCompleteId, IsAboutMembersCompleteId, SchemeNameId}
+import base.SpecBase
+import identifiers._
+import identifiers.register.establishers.IsEstablisherCompleteId
+import identifiers.register.establishers.individual.EstablisherDetailsId
+import identifiers.register.trustees.IsTrusteeCompleteId
+import identifiers.register.trustees.individual.TrusteeDetailsId
+import models.person.PersonDetails
 import models.{Link, NormalMode}
+import org.joda.time.LocalDate
+import play.api.libs.json.JsResult
 import utils.behaviours.HsTaskListHelperBehaviour
 import viewmodels.SchemeDetailsTaskListSection
 
@@ -126,5 +134,38 @@ class HsTaskListHelperVariationsSpec extends HsTaskListHelperBehaviour {
 
     behave like declarationLink()
   }
+}
+
+object HsTaskListHelperVariationsSpec extends SpecBase {
+
+  private def answersData(isCompleteBeforeStart: Boolean = true,
+                          isCompleteAboutMembers: Boolean = true,
+                          isCompleteAboutBank: Boolean = true,
+                          isCompleteAboutBenefits: Boolean = true,
+                          isCompleteWk: Boolean = true,
+                          isCompleteEstablishers: Boolean = true,
+                          isCompleteTrustees: Boolean = true,
+                          isChangedInsuranceDetails: Boolean = true,
+                          isChangedEstablishersTrustees: Boolean = true
+                         ): JsResult[UserAnswers] = {
+    UserAnswers().set(IsBeforeYouStartCompleteId)(isCompleteBeforeStart).flatMap(
+      _.set(IsAboutMembersCompleteId)(isCompleteAboutMembers).flatMap(
+        _.set(IsAboutBankDetailsCompleteId)(isCompleteAboutBank).flatMap(
+          _.set(IsAboutBenefitsAndInsuranceCompleteId)(isCompleteAboutBenefits).flatMap(
+            _.set(IsWorkingKnowledgeCompleteId)(isCompleteWk).flatMap(
+              _.set(EstablisherDetailsId(0))(PersonDetails("firstName", None, "lastName", LocalDate.now())).flatMap(
+                _.set(IsEstablisherCompleteId(0))(isCompleteEstablishers)).flatMap(
+                _.set(TrusteeDetailsId(0))(PersonDetails("firstName", None, "lastName", LocalDate.now())).flatMap(
+                  _.set(IsTrusteeCompleteId(0))(isCompleteTrustees)).flatMap(
+                  _.set(InsuranceDetailsChangedId)(isChangedInsuranceDetails)).flatMap(
+                  _.set(InsuranceDetailsChangedId)(isChangedEstablishersTrustees))
+              )
+            )
+          )
+        )
+      )
+    )
+  }
+
 }
 
