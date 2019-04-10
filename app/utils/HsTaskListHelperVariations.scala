@@ -91,5 +91,4 @@ class HsTaskListHelperVariations(answers: UserAnswers)(implicit messages: Messag
         Some(isTrusteeOptional | isAllTrusteesCompleted(userAnswers))
       ).forall(_.contains(true)) && userAnswers.isUserAnswerUpdated()
     }
-
 }
