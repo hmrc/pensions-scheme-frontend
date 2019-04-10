@@ -21,8 +21,9 @@ import connectors.{SchemeDetailsConnector, UserAnswersCacheConnector}
 import controllers.actions._
 import handlers.ErrorHandler
 import javax.inject.Inject
+import models.UpdateMode
 import models.details.transformation.SchemeDetailsMasterSection
-import models.requests.AuthenticatedRequest
+import models.requests.OptionalDataRequest
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Result}
 import uk.gov.hmrc.http.HeaderCarrier
@@ -39,12 +40,13 @@ class PSASchemeDetailsController @Inject()(appConfig: FrontendAppConfig,
                                            schemeDetailsConnector: SchemeDetailsConnector,
                                            schemeTransformer: SchemeDetailsMasterSection,
                                            authenticate: AuthAction,
+                                           getData: DataRetrievalAction,
                                            errorHandler: ErrorHandler,
                                            featureSwitchManagementService: FeatureSwitchManagementService,
                                            @SchemeDetailsReadOnly schemeDetailsReadOnlyCacheConnector: UserAnswersCacheConnector
                                           )(implicit val ec: ExecutionContext) extends FrontendController with I18nSupport {
 
-  def onPageLoad(srn: String): Action[AnyContent] = authenticate.async {
+  def onPageLoad(srn: String): Action[AnyContent] = (authenticate andThen getData(UpdateMode, Some(srn))).async {
     implicit request =>
       if (featureSwitchManagementService.get(Toggles.isVariationsEnabled)) {
         onPageLoadVariationsToggledOn(srn)
@@ -54,7 +56,7 @@ class PSASchemeDetailsController @Inject()(appConfig: FrontendAppConfig,
   }
 
   private def onPageLoadVariationsToggledOff(srn: String)(implicit
-                                                          request: AuthenticatedRequest[AnyContent],
+                                                          request: OptionalDataRequest[AnyContent],
                                                           hc: HeaderCarrier): Future[Result] = {
     schemeDetailsConnector.getSchemeDetails(request.psaId.id, schemeIdType = "srn", srn).flatMap { scheme =>
       val schemeDetailMasterSection = schemeTransformer.transformMasterSection(scheme)
@@ -63,10 +65,10 @@ class PSASchemeDetailsController @Inject()(appConfig: FrontendAppConfig,
   }
 
   private def onPageLoadVariationsToggledOn(srn: String)(implicit
-                                                         request: AuthenticatedRequest[AnyContent],
+                                                         request: OptionalDataRequest[AnyContent],
                                                           hc: HeaderCarrier): Future[Result] = {
     schemeDetailsConnector.getSchemeDetailsVariations(request.psaId.id, schemeIdType = "srn", srn).flatMap { userAnswers =>
-      val taskList: SchemeDetailsTaskList = new HsTaskListHelperVariations(userAnswers).taskList
+      val taskList: SchemeDetailsTaskList = new HsTaskListHelperVariations(userAnswers, request.viewOnly).taskList
       schemeDetailsReadOnlyCacheConnector.upsert(request.externalId, userAnswers.json).map( _ =>
         Ok(schemeDetailsTaskList(appConfig, taskList, isVariations = true))
       )

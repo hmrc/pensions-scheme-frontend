@@ -34,12 +34,12 @@ import utils.behaviours.HsTaskListHelperBehaviour
 import viewmodels.SchemeDetailsTaskListSection
 
 class HsTaskListHelperVariationsSpec extends HsTaskListHelperBehaviour {
-  override val createTaskListHelper:UserAnswers => HsTaskListHelper = ua => new HsTaskListHelperVariations(ua)
+  override val createTaskListHelper:UserAnswers => HsTaskListHelper = ua => new HsTaskListHelperVariations(ua, viewOnly = false)
   "h1" must {
     "have the name of the scheme" in {
       val name = "scheme name 1"
       val userAnswers = UserAnswers().set(SchemeNameId)(name).asOpt.value
-      val helper = new HsTaskListHelperVariations(userAnswers)
+      val helper = new HsTaskListHelperVariations(userAnswers, viewOnly = false)
       helper.taskList.h1 mustBe name
     }
   }
@@ -47,14 +47,14 @@ class HsTaskListHelperVariationsSpec extends HsTaskListHelperBehaviour {
   "h2" must {
     "display \"Scheme details\"" in {
       val userAnswers = UserAnswers()
-      val helper = new HsTaskListHelperVariations(userAnswers)
+      val helper = new HsTaskListHelperVariations(userAnswers, viewOnly = false)
       helper.taskList.h2 mustBe messages("messages__scheme_details__title")
     }
   }
   "h3" must {
     "display \"Scheme Information\"" in {
       val userAnswers = UserAnswers()
-      val helper = new HsTaskListHelperVariations(userAnswers)
+      val helper = new HsTaskListHelperVariations(userAnswers, viewOnly = false)
       helper.taskList.h3 mustBe Some(messages("messages__schemeTaskList__scheme_information_link_text"))
     }
   }
@@ -63,7 +63,7 @@ class HsTaskListHelperVariationsSpec extends HsTaskListHelperBehaviour {
     "display \"About\" with Pension scheme Name" in {
       val schemeName = "test scheme"
       val userAnswers = UserAnswers().set(SchemeNameId)(schemeName).asOpt.value
-      val helper = new HsTaskListHelperVariations(userAnswers)
+      val helper = new HsTaskListHelperVariations(userAnswers, viewOnly = false)
       helper.taskList.aboutHeader mustBe messages("messages__schemeTaskList__about_scheme_header", schemeName)
     }
   }
@@ -71,14 +71,14 @@ class HsTaskListHelperVariationsSpec extends HsTaskListHelperBehaviour {
   "page title" must {
     "display \"Scheme details\"" in {
       val userAnswers = UserAnswers()
-      val helper = new HsTaskListHelperVariations(userAnswers)
+      val helper = new HsTaskListHelperVariations(userAnswers, viewOnly = false)
       helper.taskList.pageTitle mustBe messages("messages__scheme_details__title")
     }
   }
 
   "schemeInfoSection " must {
     behave like beforeYouStartSection(
-      new HsTaskListHelperVariations(_),
+      new HsTaskListHelperVariations(_, viewOnly = false),
       schemeInfoLinkText,
       NormalMode,
       None
@@ -91,7 +91,7 @@ class HsTaskListHelperVariationsSpec extends HsTaskListHelperBehaviour {
       val userAnswers = UserAnswers().set(IsAboutMembersCompleteId)(false).flatMap(
           _.set(IsAboutBenefitsAndInsuranceCompleteId)(false)
       ).asOpt.value
-      val helper = new HsTaskListHelperVariations(userAnswers)
+      val helper = new HsTaskListHelperVariations(userAnswers, viewOnly = false)
       helper.aboutSection(userAnswers) mustBe
         Seq(
           SchemeDetailsTaskListSection(Some(false), Link(aboutMembersLinkText,
@@ -106,7 +106,7 @@ class HsTaskListHelperVariationsSpec extends HsTaskListHelperBehaviour {
       val userAnswers = UserAnswers().set(IsAboutMembersCompleteId)(true).flatMap(
           _.set(IsAboutBenefitsAndInsuranceCompleteId)(true)
       ).asOpt.value
-      val helper = new HsTaskListHelperVariations(userAnswers)
+      val helper = new HsTaskListHelperVariations(userAnswers, viewOnly = false)
       helper.aboutSection(userAnswers) mustBe
         Seq(
           SchemeDetailsTaskListSection(Some(true), Link(aboutMembersLinkText,
@@ -120,13 +120,13 @@ class HsTaskListHelperVariationsSpec extends HsTaskListHelperBehaviour {
   "workingKnowledgeSection " must {
     "not display when do you have working knowledge is false " in {
       val userAnswers = UserAnswers().set(DeclarationDutiesId)(false).asOpt.value
-      val helper = new HsTaskListHelperVariations(userAnswers)
+      val helper = new HsTaskListHelperVariations(userAnswers, viewOnly = false)
       helper.taskList.workingKnowledge mustBe None
     }
 
     "not display when do you have working knowledge is true " in {
       val userAnswers = UserAnswers().set(DeclarationDutiesId)(true).asOpt.value
-      val helper = new HsTaskListHelperVariations(userAnswers)
+      val helper = new HsTaskListHelperVariations(userAnswers, viewOnly = false)
       helper.taskList.workingKnowledge mustBe None
     }
   }
@@ -155,7 +155,7 @@ class HsTaskListHelperVariationsSpec extends HsTaskListHelperBehaviour {
 
     "return the seq of establishers sub sections for non deleted establishers which are all completed" in {
       val userAnswers = allEstablishers()
-      val helper = new HsTaskListHelperVariations(userAnswers)
+      val helper = new HsTaskListHelperVariations(userAnswers, viewOnly = false)
       helper.establishers(userAnswers) mustBe
         Seq(SchemeDetailsTaskListSection(Some(true), Link(messages("messages__schemeTaskList__persons_details__link_text", "firstName lastName"),
           controllers.register.establishers.individual.routes.CheckYourAnswersController.onPageLoad(NormalMode, 0, None).url), None),
@@ -168,7 +168,7 @@ class HsTaskListHelperVariationsSpec extends HsTaskListHelperBehaviour {
 
     "return the seq of establishers sub sections for non deleted establishers which are not completed" in {
       val userAnswers = allEstablishers(isCompleteEstablisher = false)
-      val helper = new HsTaskListHelperVariations(userAnswers)
+      val helper = new HsTaskListHelperVariations(userAnswers, viewOnly = false)
       helper.establishers(userAnswers) mustBe
         Seq(SchemeDetailsTaskListSection(Some(false), Link(messages("messages__schemeTaskList__persons_details__link_text", "firstName lastName"),
           controllers.register.establishers.individual.routes.EstablisherDetailsController.onPageLoad(NormalMode, 0, None).url), None),
@@ -187,7 +187,7 @@ class HsTaskListHelperVariationsSpec extends HsTaskListHelperBehaviour {
               _.set(EstablisherPartnershipDetailsId(2))(PartnershipDetails("test partnership", false)).flatMap(
                 _.set(IsEstablisherCompleteId(2))(false)
               ))))).asOpt.value
-      val helper = new HsTaskListHelperVariations(userAnswers)
+      val helper = new HsTaskListHelperVariations(userAnswers, viewOnly = false)
       helper.establishers(userAnswers) mustBe
         Seq(SchemeDetailsTaskListSection(Some(false), Link(messages("messages__schemeTaskList__persons_details__link_text", "firstName lastName"),
           controllers.register.establishers.individual.routes.EstablisherDetailsController.onPageLoad(NormalMode, 0, None).url), None),

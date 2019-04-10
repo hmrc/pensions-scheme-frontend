@@ -22,7 +22,7 @@ import models.{Link, NormalMode}
 import play.api.i18n.Messages
 import viewmodels._
 
-class HsTaskListHelperVariations(answers: UserAnswers)(implicit messages: Messages) extends HsTaskListHelper(answers) {
+class HsTaskListHelperVariations(answers: UserAnswers, viewOnly:Boolean)(implicit messages: Messages) extends HsTaskListHelper(answers) {
 
   override protected lazy val beforeYouStartLinkText = messages("messages__schemeTaskList__scheme_info_link_text")
 
@@ -44,6 +44,10 @@ class HsTaskListHelperVariations(answers: UserAnswers)(implicit messages: Messag
   }
 
   def taskList: SchemeDetailsTaskList = {
+
+
+    // TODO: Need new attrib on view model to tell view whether to display declaration section - based on viewOnly attribute
+
     val schemeName = answers.get(SchemeNameId).getOrElse("")
     SchemeDetailsTaskList(
       beforeYouStartSection(answers),
