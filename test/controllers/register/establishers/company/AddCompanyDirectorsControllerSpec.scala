@@ -63,11 +63,10 @@ class AddCompanyDirectorsControllerSpec extends ControllerSpecBase {
     addCompanyDirectors(
       frontendAppConfig,
       form,
-      NormalMode,
-      establisherIndex,
       directors,
       None,
-      postCall(NormalMode, None, establisherIndex)
+      postCall(NormalMode, None, establisherIndex),
+      false
     )(fakeRequest, messages).toString
 
   private val establisherIndex = 0
@@ -84,7 +83,7 @@ class AddCompanyDirectorsControllerSpec extends ControllerSpecBase {
     Json.obj(
       EstablishersId.toString -> Json.arr(
         Json.obj(
-          CompanyDetailsId.toString -> CompanyDetails(companyName, None, None),
+          CompanyDetailsId.toString -> CompanyDetails(companyName),
           "director" -> directors.map(d => Json.obj(DirectorDetailsId.toString -> Json.toJson(d)))
         )
       )

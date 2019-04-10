@@ -35,9 +35,7 @@ class CompanyDetailsIdSpec extends WordSpec with MustMatchers with OptionValues 
   )
 
   private def companyTrustee(index: Int) = CompanyDetails(
-    s"test-company-$index",
-    None,
-    None
+    s"test-company-$index"
   )
 
   "Cleanup" must {

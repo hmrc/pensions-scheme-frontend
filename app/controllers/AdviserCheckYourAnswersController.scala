@@ -45,7 +45,7 @@ class AdviserCheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
                                                   sectionComplete: SectionComplete
                                           )(implicit val ec: ExecutionContext) extends FrontendController with I18nSupport with Retrievals {
 
-  def onPageLoad: Action[AnyContent] = (authenticate andThen getData andThen requireData) {
+  def onPageLoad: Action[AnyContent] = (authenticate andThen getData() andThen requireData) {
     implicit request =>
       implicit val userAnswers = request.userAnswers
 
@@ -61,12 +61,13 @@ class AdviserCheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
           appConfig,
           seqAnswerSection,
           controllers.routes.AdviserCheckYourAnswersController.onSubmit(),
-          existingSchemeName
+          existingSchemeName,
+          viewOnly = request.viewOnly
         )
       )
   }
 
-  def onSubmit: Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onSubmit: Action[AnyContent] = (authenticate andThen getData() andThen requireData).async {
     implicit request =>
       sectionComplete.setCompleteFlag(request.externalId, IsWorkingKnowledgeCompleteId, request.userAnswers, value = true).map { _ =>
         Redirect(navigator.nextPage(AdviserCheckYourAnswersId, NormalMode, request.userAnswers))

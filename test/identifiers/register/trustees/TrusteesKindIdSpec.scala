@@ -72,7 +72,7 @@ object TrusteesKindIdSpec extends OptionValues with Enumerable.Implicits {
 
   val trusteeCompany = UserAnswers()
     .set(TrusteeKindId(0))(TrusteeKind.Company)
-    .flatMap(_.set(CompanyDetailsId(0))(CompanyDetails("", None, None)))
+    .flatMap(_.set(CompanyDetailsId(0))(CompanyDetails("")))
     .flatMap(_.set(CompanyRegistrationNumberId(0))(CompanyRegistrationNumber.No("")))
     .flatMap(_.set(CompanyUniqueTaxReferenceId(0))(UniqueTaxReference.No("")))
     .flatMap(_.set(CompanyPostcodeLookupId(0))(Seq.empty))

@@ -19,7 +19,9 @@ package identifiers.register.trustees.company
 import identifiers.TypedIdentifier
 import identifiers.register.trustees.TrusteesId
 import models.Vat
-import play.api.libs.json.JsPath
+import play.api.libs.json.{JsPath, Reads}
+import utils.checkyouranswers.CheckYourAnswers
+import utils.checkyouranswers.CheckYourAnswers.VatCYA
 
 case class CompanyVatId(index: Int) extends TypedIdentifier[Vat] {
   override def path: JsPath = TrusteesId(index).path \ CompanyVatId.toString
@@ -27,5 +29,10 @@ case class CompanyVatId(index: Int) extends TypedIdentifier[Vat] {
 
 object CompanyVatId {
   override def toString: String = "companyVat"
+
+  implicit def cya(implicit r: Reads[Vat]): CheckYourAnswers[CompanyVatId] =
+    VatCYA(labelYesNo = Some("messages__checkYourAnswers__trustees__company__vat"),
+      hiddenLabelYesNo = "messages__visuallyhidden__trustee__vat_yes_no",
+      hiddenLabelVat = "messages__visuallyhidden__trustee__vat_number")()
 }
 

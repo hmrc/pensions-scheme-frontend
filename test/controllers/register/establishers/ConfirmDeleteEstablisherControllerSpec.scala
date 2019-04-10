@@ -179,9 +179,9 @@ object ConfirmDeleteEstablisherControllerSpec extends ControllerSpecBase {
   private val month = LocalDate.now().getMonthOfYear
   private val year = LocalDate.now().getYear - 20
   private lazy val postCall = routes.ConfirmDeleteEstablisherController.onSubmit(NormalMode, establisherIndex, establisherKind, None)
-  private lazy val cancelCall = routes.AddEstablisherController.onPageLoad(NormalMode)
+  private lazy val cancelCall = routes.AddEstablisherController.onPageLoad(NormalMode, None)
   private val personDetails = PersonDetails("John", None, "Doe", new LocalDate(year, month, day))
-  private val companyDetails = CompanyDetails("Test Ltd", None, None)
+  private val companyDetails = CompanyDetails("Test Ltd")
   private val partnershipDetails = PartnershipDetails("Test Partnership Ltd")
   private val deletedEstablisher = personDetails.copy(isDeleted = true)
 

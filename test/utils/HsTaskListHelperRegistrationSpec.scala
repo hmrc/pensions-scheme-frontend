@@ -68,7 +68,9 @@ class HsTaskListHelperRegistrationSpec extends HsTaskListHelperBehaviour {
   "beforeYouStartSection " must {
     behave like beforeYouStartSection(
       new HsTaskListHelperRegistration(_),
-      beforeYouStartLinkText
+      beforeYouStartLinkText,
+      NormalMode,
+      None
     )
   }
 

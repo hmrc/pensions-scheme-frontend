@@ -42,7 +42,7 @@ class CheckYourAnswersBenefitsAndInsuranceController @Inject()(appConfig: Fronte
                                                               )(implicit val ec: ExecutionContext) extends FrontendController
   with Enumerable.Implicits with I18nSupport with Retrievals {
 
-  def onPageLoad(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData andThen requireData) {
+  def onPageLoad(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData) {
     implicit request =>
       implicit val userAnswers = request.userAnswers
       val benefitsAndInsuranceSection = AnswerSection(
@@ -55,16 +55,18 @@ class CheckYourAnswersBenefitsAndInsuranceController @Inject()(appConfig: Fronte
           InsurancePolicyNumberId.row(routes.InsurancePolicyNumberController.onPageLoad(checkMode(mode), srn).url, mode) ++
           InsurerConfirmAddressId.row(routes.InsurerConfirmAddressController.onPageLoad(checkMode(mode), srn).url, mode)
       )
+
       Ok(check_your_answers(
         appConfig,
         Seq(benefitsAndInsuranceSection),
         routes.CheckYourAnswersBenefitsAndInsuranceController.onSubmit(mode, srn),
         existingSchemeName,
-        mode = mode
+        mode = mode,
+        viewOnly = request.viewOnly
       ))
   }
 
-  def onSubmit(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
       sectionComplete.setCompleteFlag(request.externalId, IsAboutBenefitsAndInsuranceCompleteId, request.userAnswers, value = true) map { _ =>
         Redirect(controllers.routes.SchemeTaskListController.onPageLoad())

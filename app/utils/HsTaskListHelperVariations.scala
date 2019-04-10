@@ -16,7 +16,7 @@
 
 package utils
 
-import identifiers.{IsAboutBenefitsAndInsuranceCompleteId, IsAboutMembersCompleteId, SchemeNameId}
+import identifiers.{IsAboutBenefitsAndInsuranceCompleteId, IsAboutMembersCompleteId, SchemeNameId, _}
 import models.register.Entity
 import models.{Link, NormalMode}
 import play.api.i18n.Messages
@@ -80,5 +80,16 @@ class HsTaskListHelperVariations(answers: UserAnswers)(implicit messages: Messag
 
   override protected[utils] def trustees(userAnswers: UserAnswers): Seq[SchemeDetailsTaskListSection] =
     listOfSectionNameAsLink(userAnswers.allTrustees, userAnswers)
+
+  override def declarationEnabled(userAnswers: UserAnswers): Boolean = {
+      val isTrusteeOptional = userAnswers.get(HaveAnyTrusteesId).contains(false)
+      Seq(
+        userAnswers.get(IsBeforeYouStartCompleteId),
+        userAnswers.get(IsAboutMembersCompleteId),
+        userAnswers.get(IsAboutBenefitsAndInsuranceCompleteId),
+        Some(isAllEstablishersCompleted(userAnswers)),
+        Some(isTrusteeOptional | isAllTrusteesCompleted(userAnswers))
+      ).forall(_.contains(true)) && userAnswers.isUserAnswerUpdated()
+    }
 
 }

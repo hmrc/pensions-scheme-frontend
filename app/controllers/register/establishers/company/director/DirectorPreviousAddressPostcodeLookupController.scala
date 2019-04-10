@@ -62,7 +62,7 @@ class DirectorPreviousAddressPostcodeLookupController @Inject()(
       )
   }
 
-  def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
       viewmodel(mode, establisherIndex, directorIndex, srn).retrieve.right.map(
         vm =>
@@ -70,7 +70,7 @@ class DirectorPreviousAddressPostcodeLookupController @Inject()(
       )
   }
 
-  def onSubmit(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
       viewmodel(mode, establisherIndex, directorIndex, srn).retrieve.right.map(
         vm =>

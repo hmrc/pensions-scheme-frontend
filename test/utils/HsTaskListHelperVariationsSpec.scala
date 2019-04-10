@@ -16,6 +16,7 @@
 
 package utils
 
+import base.SpecBase
 import identifiers.register.establishers.IsEstablisherCompleteId
 import identifiers.register.establishers.company.{CompanyDetailsId => EstablisherCompanyDetailsId}
 import identifiers.register.establishers.individual.EstablisherDetailsId
@@ -24,10 +25,11 @@ import identifiers.register.trustees.IsTrusteeCompleteId
 import identifiers.register.trustees.company.{CompanyDetailsId => TrusteeCompanyDetailsId}
 import identifiers.register.trustees.individual.TrusteeDetailsId
 import identifiers.register.trustees.partnership.{IsPartnershipCompleteId, PartnershipDetailsId => TrusteePartnershipDetailsId}
-import identifiers.{DeclarationDutiesId, IsAboutBenefitsAndInsuranceCompleteId, IsAboutMembersCompleteId, SchemeNameId}
+import identifiers.{DeclarationDutiesId, IsAboutBenefitsAndInsuranceCompleteId, IsAboutMembersCompleteId, SchemeNameId, _}
 import models.person.PersonDetails
 import models.{CompanyDetails, Link, NormalMode, PartnershipDetails}
 import org.joda.time.LocalDate
+import play.api.libs.json.JsResult
 import utils.behaviours.HsTaskListHelperBehaviour
 import viewmodels.SchemeDetailsTaskListSection
 
@@ -77,7 +79,9 @@ class HsTaskListHelperVariationsSpec extends HsTaskListHelperBehaviour {
   "schemeInfoSection " must {
     behave like beforeYouStartSection(
       new HsTaskListHelperVariations(_),
-      schemeInfoLinkText
+      schemeInfoLinkText,
+      NormalMode,
+      None
     )
   }
 
@@ -147,15 +151,6 @@ class HsTaskListHelperVariationsSpec extends HsTaskListHelperBehaviour {
     behave like trusteesSection()
   }
 
-  "declarationEnabled" must {
-
-    behave like declarationEnabled()
-  }
-
-  "declarationLink" must {
-    behave like declarationLink()
-  }
-
   override def establishersSection(): Unit = {
 
     "return the seq of establishers sub sections for non deleted establishers which are all completed" in {
@@ -187,7 +182,7 @@ class HsTaskListHelperVariationsSpec extends HsTaskListHelperBehaviour {
     "return the seq of establishers sub sections after filtering out deleted establishers" in {
       val userAnswers = UserAnswers().set(EstablisherDetailsId(0))(PersonDetails("firstName", None, "lastName", LocalDate.now())).flatMap(
         _.set(IsEstablisherCompleteId(0))(false).flatMap(
-          _.set(EstablisherCompanyDetailsId(1))(CompanyDetails("test company", None, None, true)).flatMap(
+          _.set(EstablisherCompanyDetailsId(1))(CompanyDetails("test company", true)).flatMap(
             _.set(IsEstablisherCompleteId(1))(true).flatMap(
               _.set(EstablisherPartnershipDetailsId(2))(PartnershipDetails("test partnership", false)).flatMap(
                 _.set(IsEstablisherCompleteId(2))(false)
@@ -233,7 +228,7 @@ class HsTaskListHelperVariationsSpec extends HsTaskListHelperBehaviour {
     "return the seq of trustees sub sections after filtering out deleted trustees" in {
       val userAnswers = UserAnswers().set(TrusteeDetailsId(0))(PersonDetails("firstName", None, "lastName", LocalDate.now())).flatMap(
         _.set(IsTrusteeCompleteId(0))(false).flatMap(
-          _.set(TrusteeCompanyDetailsId(1))(CompanyDetails("test company", None, None, true)).flatMap(
+          _.set(TrusteeCompanyDetailsId(1))(CompanyDetails("test company", true)).flatMap(
             _.set(IsTrusteeCompleteId(1))(false).flatMap(
               _.set(TrusteePartnershipDetailsId(2))(PartnershipDetails("test partnership", false)).flatMap(
                 _.set(IsPartnershipCompleteId(2))(false)
@@ -247,5 +242,38 @@ class HsTaskListHelperVariationsSpec extends HsTaskListHelperBehaviour {
         )
     }
   }
+}
+
+object HsTaskListHelperVariationsSpec extends SpecBase {
+
+  private def answersData(isCompleteBeforeStart: Boolean = true,
+                          isCompleteAboutMembers: Boolean = true,
+                          isCompleteAboutBank: Boolean = true,
+                          isCompleteAboutBenefits: Boolean = true,
+                          isCompleteWk: Boolean = true,
+                          isCompleteEstablishers: Boolean = true,
+                          isCompleteTrustees: Boolean = true,
+                          isChangedInsuranceDetails: Boolean = true,
+                          isChangedEstablishersTrustees: Boolean = true
+                         ): JsResult[UserAnswers] = {
+    UserAnswers().set(IsBeforeYouStartCompleteId)(isCompleteBeforeStart).flatMap(
+      _.set(IsAboutMembersCompleteId)(isCompleteAboutMembers).flatMap(
+        _.set(IsAboutBankDetailsCompleteId)(isCompleteAboutBank).flatMap(
+          _.set(IsAboutBenefitsAndInsuranceCompleteId)(isCompleteAboutBenefits).flatMap(
+            _.set(IsWorkingKnowledgeCompleteId)(isCompleteWk).flatMap(
+              _.set(EstablisherDetailsId(0))(PersonDetails("firstName", None, "lastName", LocalDate.now())).flatMap(
+                _.set(IsEstablisherCompleteId(0))(isCompleteEstablishers)).flatMap(
+                _.set(TrusteeDetailsId(0))(PersonDetails("firstName", None, "lastName", LocalDate.now())).flatMap(
+                  _.set(IsTrusteeCompleteId(0))(isCompleteTrustees)).flatMap(
+                  _.set(InsuranceDetailsChangedId)(isChangedInsuranceDetails)).flatMap(
+                  _.set(InsuranceDetailsChangedId)(isChangedEstablishersTrustees))
+              )
+            )
+          )
+        )
+      )
+    )
+  }
+
 }
 

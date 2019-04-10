@@ -195,7 +195,8 @@ object CheckYourAnswersBenefitsAndInsuranceControllerSpec extends ControllerSpec
     postUrl(mode),
     None,
     false,
-    mode
+    mode,
+    viewOnly = false
   )(fakeRequest, messages).toString
 
   private def viewAsStringWithLessData(mode : Mode = CheckMode): String = check_your_answers(
@@ -206,7 +207,8 @@ object CheckYourAnswersBenefitsAndInsuranceControllerSpec extends ControllerSpec
     postUrl(mode),
     None,
     false,
-    mode
+    mode,
+    viewOnly = false
   )(fakeRequest, messages).toString
 
 }
