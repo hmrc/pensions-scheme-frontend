@@ -61,7 +61,8 @@ class AdviserCheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
           appConfig,
           seqAnswerSection,
           controllers.routes.AdviserCheckYourAnswersController.onSubmit(),
-          existingSchemeName
+          existingSchemeName,
+          viewOnly = request.viewOnly
         )
       )
   }

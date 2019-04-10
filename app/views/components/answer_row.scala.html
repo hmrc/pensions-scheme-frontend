@@ -16,7 +16,7 @@
 
 @import viewmodels.AnswerRow
 
-@(row: AnswerRow, idPath: String)(implicit messages: Messages)
+@(row: AnswerRow, idPath: String, viewOnly:Boolean = false)(implicit messages: Messages)
 
 <li>
     <div id="cya-@idPath-question" class="cya-question">
@@ -34,16 +34,18 @@
         </p>
     </div>
 
-    <div class="cya-change">
+    @if(!viewOnly){
         @row.changeUrl.map{ changeUrl =>
-        <a id="cya-@idPath-change" href='@changeUrl.target'>
-            <span aria-hidden="true">@messages(changeUrl.text)</span>
-            @changeUrl.visuallyHiddenText.map { visuallyHiddenText =>
-            <span class="visually-hidden">@messages(visuallyHiddenText, messages(row.label))</span>
-            }.getOrElse {
-            <span class="visually-hidden">@messages("site.hidden-edit")</span>
-            }
-        </a>
+            <div class="cya-change">
+                <a id="cya-@idPath-change" href='@changeUrl.target'>
+                    <span aria-hidden="true">@messages(changeUrl.text)</span>
+                    @changeUrl.visuallyHiddenText.map { visuallyHiddenText =>
+                    <span class="visually-hidden">@messages(visuallyHiddenText, messages(row.label))</span>
+                    }.getOrElse {
+                    <span class="visually-hidden">@messages("site.hidden-edit")</span>
+                    }
+                </a>
+            </div>
         }
-    </div>
+    }
 </li>

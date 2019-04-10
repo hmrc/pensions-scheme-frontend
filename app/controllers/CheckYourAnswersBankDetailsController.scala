@@ -55,7 +55,9 @@ class CheckYourAnswersBankDetailsController @Inject()(appConfig: FrontendAppConf
         appConfig,
         Seq(bankAccountSection),
         controllers.routes.CheckYourAnswersBankDetailsController.onSubmit(),
-        existingSchemeName))
+        existingSchemeName,
+        viewOnly = request.viewOnly
+      ))
   }
 
   def onSubmit: Action[AnyContent] = (authenticate andThen getData() andThen requireData).async {

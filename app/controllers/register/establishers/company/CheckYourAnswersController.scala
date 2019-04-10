@@ -70,7 +70,8 @@ class CheckYourAnswersController @Inject()(
         Seq(companyDetails, companyContactDetails),
         routes.CheckYourAnswersController.onSubmit(mode, srn, index),
         existingSchemeName,
-        mode = mode))
+        mode = mode,
+        viewOnly = request.viewOnly))
       )
   }
 

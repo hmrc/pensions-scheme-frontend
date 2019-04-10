@@ -175,7 +175,8 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase with Enumerable
       frontendAppConfig,
       answerSections,
       postUrl,
-      None
+      None,
+      viewOnly = false
     )(fakeRequest, messages).toString
 
 }

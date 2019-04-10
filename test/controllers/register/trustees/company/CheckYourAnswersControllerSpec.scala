@@ -150,7 +150,8 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase {
     frontendAppConfig,
     answerSections,
     postUrl,
-    None
+    None,
+    viewOnly = false
   )(fakeRequest, messages).toString
 
   private def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): CheckYourAnswersController =
