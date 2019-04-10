@@ -17,24 +17,18 @@
 package utils
 
 import identifiers._
-import models.{Link, NormalMode}
+import models.{Link, UpdateMode}
 import play.api.i18n.Messages
 import viewmodels._
 
-class HsTaskListHelperVariations(answers: UserAnswers)(implicit messages: Messages) extends HsTaskListHelper(answers) {
+class HsTaskListHelperVariations(answers: UserAnswers, srn: String)(implicit messages: Messages) extends HsTaskListHelper(answers) {
 
   override protected[utils] def aboutSection(userAnswers: UserAnswers): Seq[SchemeDetailsTaskListSection] = {
-    val membersLink = userAnswers.get(IsAboutMembersCompleteId) match {
-      case Some(true) => Link(aboutMembersLinkText, controllers.routes.CheckYourAnswersMembersController.onPageLoad(NormalMode, None).url)
-      case _ => Link(aboutMembersLinkText, controllers.routes.WhatYouWillNeedMembersController.onPageLoad().url)
-    }
 
-    val benefitsAndInsuranceLink = userAnswers.get(IsAboutBenefitsAndInsuranceCompleteId) match {
-      case Some(true) => Link(aboutBenefitsAndInsuranceLinkText,
-        controllers.routes.CheckYourAnswersBenefitsAndInsuranceController.onPageLoad(NormalMode, None).url)
-      case _ => Link(aboutBenefitsAndInsuranceLinkText,
-        controllers.routes.WhatYouWillNeedBenefitsInsuranceController.onPageLoad().url)
-    }
+    val membersLink = Link(aboutMembersLinkText, controllers.routes.CheckYourAnswersMembersController.onPageLoad(UpdateMode, Some(srn)).url)
+
+    val benefitsAndInsuranceLink = Link(aboutBenefitsAndInsuranceLinkText,
+      controllers.routes.CheckYourAnswersBenefitsAndInsuranceController.onPageLoad(UpdateMode, Some(srn)).url)
 
     Seq(SchemeDetailsTaskListSection(userAnswers.get(IsAboutMembersCompleteId), membersLink, None),
       SchemeDetailsTaskListSection(userAnswers.get(IsAboutBenefitsAndInsuranceCompleteId), benefitsAndInsuranceLink, None))
@@ -42,13 +36,13 @@ class HsTaskListHelperVariations(answers: UserAnswers)(implicit messages: Messag
 
   def taskList: SchemeDetailsTaskList = {
     SchemeDetailsTaskList(
-      beforeYouStartSection(answers),
+      beforeYouStartSection(answers, UpdateMode, Some(srn)),
       aboutSection(answers),
       None,
-      addEstablisherHeader(answers),
-      establishers(answers),
-      addTrusteeHeader(answers),
-      trustees(answers),
+      addEstablisherHeader(answers, UpdateMode, Some(srn)),
+      establishers(answers, UpdateMode, Some(srn)),
+      addTrusteeHeader(answers, UpdateMode, Some(srn)),
+      trustees(answers, UpdateMode, Some(srn)),
       declarationLink(answers),
       answers.get(SchemeNameId).getOrElse(""),
       messages("messages__scheme_details__title"),
@@ -57,14 +51,14 @@ class HsTaskListHelperVariations(answers: UserAnswers)(implicit messages: Messag
   }
 
   override def declarationEnabled(userAnswers: UserAnswers): Boolean = {
-      val isTrusteeOptional = userAnswers.get(HaveAnyTrusteesId).contains(false)
-      Seq(
-        userAnswers.get(IsBeforeYouStartCompleteId),
-        userAnswers.get(IsAboutMembersCompleteId),
-        userAnswers.get(IsAboutBenefitsAndInsuranceCompleteId),
-        Some(isAllEstablishersCompleted(userAnswers)),
-        Some(isTrusteeOptional | isAllTrusteesCompleted(userAnswers))
-      ).forall(_.contains(true)) && userAnswers.isUserAnswerUpdated()
-    }
+    val isTrusteeOptional = userAnswers.get(HaveAnyTrusteesId).contains(false)
+    Seq(
+      userAnswers.get(IsBeforeYouStartCompleteId),
+      userAnswers.get(IsAboutMembersCompleteId),
+      userAnswers.get(IsAboutBenefitsAndInsuranceCompleteId),
+      Some(isAllEstablishersCompleted(userAnswers, UpdateMode)),
+      Some(isTrusteeOptional | isAllTrusteesCompleted(userAnswers, UpdateMode))
+    ).forall(_.contains(true)) && userAnswers.isUserAnswerUpdated()
+  }
 
 }
