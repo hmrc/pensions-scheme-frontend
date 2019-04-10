@@ -209,26 +209,22 @@
             <h2 id="section-declaration-header" class="heading-large">
                 @messages("messages__schemeTaskList__sectionDeclaration_header")
             </h2>
-            <ol class="tasklist">
-                <ul class="task-list-items">
-                    <li class="task-list-item">
-                        @if(taskSections.declaration.isDefined){
-                        @taskSections.declaration.map{ link =>
+            <p class="tasklist">
+                @if(taskSections.declaration.isDefined){
+                    @taskSections.declaration.map{ link =>
                         <a id= "section-declaration-link" href="@link.target">
                             @messages(link.text)
                         </a>
-                        }
-                        }else{
-                        <span id="section-declaration-text">@messages("messages__schemeTaskList__sectionDeclaration_incomplete")</span>
-                        }
-                    </li>
-                </ul>
-            </ol>
+                    }
+                }else{
+                    <span id="section-declaration-text">@messages("messages__schemeTaskList__sectionDeclaration_incomplete")</span>
+                }
+            </p>
         </li>
 
     </ol>
 
-    <br>
+    <hr>
     <a id= "save-and-return" class="task-name" href="@appConfig.managePensionsSchemeOverviewUrl.url">
         @messages("messages__complete__saveAndReturnToManagePensionSchemes")
     </a>
