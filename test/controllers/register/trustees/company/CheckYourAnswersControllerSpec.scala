@@ -78,7 +78,7 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase {
   private implicit val fakeCountryOptions: CountryOptions = new FakeCountryOptions
 
   private val schemeName = "test-scheme-name"
-  private val companyDetails = CompanyDetails("test-company-name", Some("test-vat"), Some("test-paye"))
+  private val companyDetails = CompanyDetails("test-company-name")
   private val crn = CompanyRegistrationNumber.Yes("test-crn")
   private val utr = UniqueTaxReference.Yes("test-utr")
   private val address = Address("address-1-line-1", "address-1-line-2", None, None, Some("post-code-1"), "country-1")
@@ -150,7 +150,8 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase {
     frontendAppConfig,
     answerSections,
     postUrl,
-    None
+    None,
+    viewOnly = false
   )(fakeRequest, messages).toString
 
   private def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): CheckYourAnswersController =

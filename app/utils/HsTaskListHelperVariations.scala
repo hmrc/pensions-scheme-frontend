@@ -18,6 +18,7 @@ package utils
 
 import identifiers.{IsAboutBenefitsAndInsuranceCompleteId, IsAboutMembersCompleteId, SchemeNameId}
 import models.register.Entity
+import identifiers._
 import models.{Link, NormalMode}
 import play.api.i18n.Messages
 import viewmodels._
@@ -61,6 +62,17 @@ class HsTaskListHelperVariations(answers: UserAnswers)(implicit messages: Messag
       messages("messages__scheme_details__title")
     )
   }
+
+  override def declarationEnabled(userAnswers: UserAnswers): Boolean = {
+      val isTrusteeOptional = userAnswers.get(HaveAnyTrusteesId).contains(false)
+      Seq(
+        userAnswers.get(IsBeforeYouStartCompleteId),
+        userAnswers.get(IsAboutMembersCompleteId),
+        userAnswers.get(IsAboutBenefitsAndInsuranceCompleteId),
+        Some(isAllEstablishersCompleted(userAnswers)),
+        Some(isTrusteeOptional | isAllTrusteesCompleted(userAnswers))
+      ).forall(_.contains(true)) && userAnswers.isUserAnswerUpdated()
+    }
 
   private def listOfSectionNameAsLink(sections: Seq[Entity[_]], userAnswers: UserAnswers): Seq[SchemeDetailsTaskListSection] = {
     val notDeletedElements = for ((section, index) <- sections.zipWithIndex) yield {

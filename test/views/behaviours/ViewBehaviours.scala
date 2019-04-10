@@ -132,6 +132,20 @@ trait ViewBehaviours extends ViewSpecBase {
     }
   }
 
+  def pageWithReturnChangeLink(view: () => HtmlFormat.Appendable): Unit = {
+    s"have a change link" in {
+      val doc = asDocument(view())
+      assertRenderedByCssSelector(doc, ".cya-change")
+    }
+  }
+
+  def pageWithoutReturnChangeLink(view: () => HtmlFormat.Appendable): Unit = {
+    s"dont have a return link" in {
+      val doc = asDocument(view())
+      assertNotRenderedByCssSelector(doc, ".cya-change")
+    }
+  }
+
   def pageWithDateFields(view: Form[_] => HtmlFormat.Appendable, form: Form[_]): Unit = {
 
     val day = LocalDate.now().getDayOfMonth

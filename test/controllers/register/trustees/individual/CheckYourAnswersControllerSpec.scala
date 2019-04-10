@@ -102,6 +102,7 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase {
       contactDetailsSection
     ),
     postUrl,
-    None
+    None,
+    viewOnly = false
   )(fakeRequest, messages).toString
 }

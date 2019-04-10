@@ -69,7 +69,7 @@ object EstablishersNavigatorSpec extends OptionValues with Enumerable.Implicits 
 
   private def establisherKind = controllers.register.establishers.routes.EstablisherKindController.onPageLoad(NormalMode, 0, None)
 
-  private def addEstablisher = controllers.register.establishers.routes.AddEstablisherController.onPageLoad(NormalMode)
+  private def addEstablisher = controllers.register.establishers.routes.AddEstablisherController.onPageLoad(NormalMode, None)
 
   private def expired = controllers.routes.SessionExpiredController.onPageLoad()
 

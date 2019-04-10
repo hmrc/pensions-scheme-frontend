@@ -23,7 +23,7 @@
 @import models.{NormalMode, Mode}
 
 @(appConfig: FrontendAppConfig, answerSections: Seq[Section], postUrl: Call, schemeName: Option[String],
-    returnOverview: Boolean = false, mode: Mode = NormalMode)(implicit request: Request[_], messages: Messages)
+    returnOverview: Boolean = false, mode: Mode = NormalMode, viewOnly:Boolean)(implicit request: Request[_], messages: Messages)
 
 @returnMessage=@{
     schemeName.fold(messages("messages__complete__return"))(name=>messages("messages__psaSchemeDetails__return_link", name))
@@ -42,8 +42,8 @@
         @for((section, i) <- answerSections.zipWithIndex){
             @{
                 section match {
-                    case a: AnswerSection => components.answer_section(a, i.toString)
-                    case r: RepeaterAnswerSection => components.repeater_answer_section(r, i.toString)
+                    case a: AnswerSection => components.answer_section(a, i.toString, viewOnly)
+                    case r: RepeaterAnswerSection => components.repeater_answer_section(r, i.toString, viewOnly)
                 }
             }
         }

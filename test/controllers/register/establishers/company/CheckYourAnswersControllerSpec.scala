@@ -69,7 +69,7 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase with Enumerable
   private implicit val fakeCountryOptions: CountryOptions = new FakeCountryOptions
   val index = Index(0)
   val testSchemeName = "Test Scheme Name"
-  private val companyDetails = CompanyDetails("test company", Some("vat"), Some("paye"))
+  private val companyDetails = CompanyDetails("test company")
   private val companyRegNoYes = CompanyRegistrationNumber.Yes("crn")
   private val utrYes = UniqueTaxReference.Yes("utr")
   private val address = Address("address-1-line-1", "address-1-line-2", None, None, Some("post-code-1"), "country-1")
@@ -175,7 +175,8 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase with Enumerable
       frontendAppConfig,
       answerSections,
       postUrl,
-      None
+      None,
+      viewOnly = false
     )(fakeRequest, messages).toString
 
 }

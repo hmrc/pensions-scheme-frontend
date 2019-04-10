@@ -45,26 +45,26 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
                                           )(implicit val ec: ExecutionContext) extends FrontendController
   with Retrievals with I18nSupport with Enumerable.Implicits {
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData andThen requiredData).async {
+  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requiredData).async {
     implicit request =>
       val partnershipDetails = AnswerSection(
         Some("messages__partnership__checkYourAnswers__partnership_details"),
         Seq(
-          PartnershipDetailsId(index).row(routes.PartnershipDetailsController.onPageLoad(CheckMode, index, None).url),
-          PartnershipVatId(index).row(routes.PartnershipVatController.onPageLoad(CheckMode, index, None).url),
-          PartnershipPayeId(index).row(routes.PartnershipPayeController.onPageLoad(CheckMode, index, None).url),
-          PartnershipUniqueTaxReferenceID(index).row(routes.PartnershipUniqueTaxReferenceController.onPageLoad(CheckMode, index, None).url),
-          IsPartnershipDormantId(index).row(routes.IsPartnershipDormantController.onPageLoad(CheckMode, index, None).url)
+          PartnershipDetailsId(index).row(routes.PartnershipDetailsController.onPageLoad(CheckMode, index, None).url, mode),
+          PartnershipVatId(index).row(routes.PartnershipVatController.onPageLoad(CheckMode, index, None).url, mode),
+          PartnershipPayeId(index).row(routes.PartnershipPayeController.onPageLoad(CheckMode, index, None).url, mode),
+          PartnershipUniqueTaxReferenceID(index).row(routes.PartnershipUniqueTaxReferenceController.onPageLoad(CheckMode, index, None).url, mode),
+          IsPartnershipDormantId(index).row(routes.IsPartnershipDormantController.onPageLoad(CheckMode, index, None).url, mode)
         ).flatten
       )
 
       val partnershipContactDetails = AnswerSection(
         Some("messages__partnership__checkYourAnswers__partnership_contact_details"),
         Seq(
-          PartnershipAddressId(index).row(routes.PartnershipAddressController.onPageLoad(CheckMode, index, None).url),
-          PartnershipAddressYearsId(index).row(routes.PartnershipAddressYearsController.onPageLoad(CheckMode, index, None).url),
-          PartnershipPreviousAddressId(index).row(routes.PartnershipPreviousAddressController.onPageLoad(CheckMode, index, None).url),
-          PartnershipContactDetailsId(index).row(routes.PartnershipContactDetailsController.onPageLoad(CheckMode, index, None).url)
+          PartnershipAddressId(index).row(routes.PartnershipAddressController.onPageLoad(CheckMode, index, None).url, mode),
+          PartnershipAddressYearsId(index).row(routes.PartnershipAddressYearsController.onPageLoad(CheckMode, index, None).url, mode),
+          PartnershipPreviousAddressId(index).row(routes.PartnershipPreviousAddressController.onPageLoad(CheckMode, index, None).url, mode),
+          PartnershipContactDetailsId(index).row(routes.PartnershipContactDetailsController.onPageLoad(CheckMode, index, None).url, mode)
         ).flatten
       )
 
@@ -72,11 +72,13 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
         appConfig,
         Seq(partnershipDetails, partnershipContactDetails),
         routes.CheckYourAnswersController.onSubmit(mode, index, srn),
-        existingSchemeName
+        existingSchemeName,
+        mode = mode,
+        viewOnly = request.viewOnly
       )))
   }
 
-  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData andThen requiredData).async {
+  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requiredData).async {
     implicit request =>
       sectionComplete.setCompleteFlag(request.externalId, IsPartnershipCompleteId(index), request.userAnswers, value = true) map { _ =>
         Redirect(navigator.nextPage(CheckYourAnswersId(index), NormalMode, request.userAnswers))

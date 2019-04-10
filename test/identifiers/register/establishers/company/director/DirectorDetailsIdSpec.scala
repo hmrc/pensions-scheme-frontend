@@ -29,7 +29,7 @@ class DirectorDetailsIdSpec extends WordSpec with MustMatchers with OptionValues
   val userAnswersWithTenDirectors = UserAnswers(Json.obj(
     EstablishersId.toString -> Json.arr(
       Json.obj(
-        CompanyDetailsId.toString -> CompanyDetails("TestCompanyName", Some("123456"), Some("abcd")),
+        CompanyDetailsId.toString -> CompanyDetails("TestCompanyName"),
         "director" -> Json.arr(
           Json.obj(DirectorDetailsId.toString -> PersonDetails("John", None, "One", LocalDate.now())),
           Json.obj(DirectorDetailsId.toString -> PersonDetails("John", None, "Two", LocalDate.now())),
@@ -50,7 +50,7 @@ class DirectorDetailsIdSpec extends WordSpec with MustMatchers with OptionValues
   val userAnswersWithOneDirector = UserAnswers(Json.obj(
     EstablishersId.toString -> Json.arr(
       Json.obj(
-        CompanyDetailsId.toString -> CompanyDetails("TestCompanyName", Some("123456"), Some("abcd")),
+        CompanyDetailsId.toString -> CompanyDetails("TestCompanyName"),
         "director" -> Json.arr(
           Json.obj(DirectorDetailsId.toString -> PersonDetails("John", None, "One", LocalDate.now()))
         )

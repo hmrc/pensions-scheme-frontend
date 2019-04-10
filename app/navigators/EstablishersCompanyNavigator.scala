@@ -29,6 +29,10 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
   override protected def routeMap(from: NavigateFrom): Option[NavigateTo] =
     from.id match {
       case CompanyDetailsId(index) =>
+        NavigateTo.save(controllers.register.establishers.company.routes.CompanyVatController.onPageLoad(NormalMode, index, None))
+      case CompanyVatId(index) =>
+        NavigateTo.save(controllers.register.establishers.company.routes.CompanyPayeController.onPageLoad(NormalMode, index, None))
+      case CompanyPayeId(index) =>
         NavigateTo.save(controllers.register.establishers.company.routes.CompanyRegistrationNumberController.onPageLoad(NormalMode, None, index))
       case CompanyRegistrationNumberId(index) =>
         NavigateTo.save(controllers.register.establishers.company.routes.CompanyUniqueTaxReferenceController.onPageLoad(NormalMode, None, index))
@@ -57,7 +61,7 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
       case OtherDirectorsId(index) =>
         NavigateTo.save(controllers.register.establishers.company.routes.CompanyReviewController.onPageLoad(NormalMode, None, index))
       case CompanyReviewId(_) =>
-        NavigateTo.dontSave(controllers.register.establishers.routes.AddEstablisherController.onPageLoad(NormalMode))
+        NavigateTo.dontSave(controllers.register.establishers.routes.AddEstablisherController.onPageLoad(NormalMode, None))
       case CheckYourAnswersId(index) =>
         NavigateTo.save(controllers.register.establishers.company.routes.AddCompanyDirectorsController.onPageLoad(NormalMode, None, index))
       case _ => None
@@ -66,6 +70,10 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
   override protected def editRouteMap(from: NavigateFrom): Option[NavigateTo] =
     from.id match {
       case CompanyDetailsId(index) =>
+        checkYourAnswers(index, from.userAnswers)
+      case CompanyVatId(index) =>
+        checkYourAnswers(index, from.userAnswers)
+      case CompanyPayeId(index) =>
         checkYourAnswers(index, from.userAnswers)
       case CompanyRegistrationNumberId(index) =>
         checkYourAnswers(index, from.userAnswers)

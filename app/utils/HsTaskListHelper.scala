@@ -62,7 +62,7 @@ abstract class HsTaskListHelper(answers: UserAnswers)(implicit messages: Message
       case Some(false) =>
         val wkLink = userAnswers.get(IsWorkingKnowledgeCompleteId) match {
           case Some(true) => Link(workingKnowledgeLinkText, controllers.routes.AdviserCheckYourAnswersController.onPageLoad().url)
-          case _ => Link(workingKnowledgeLinkText, controllers.routes.WhatYouWillNeedWorkingKnowledgeController.onPageLoad.url)
+          case _ => Link(workingKnowledgeLinkText, controllers.routes.WhatYouWillNeedWorkingKnowledgeController.onPageLoad().url)
         }
         Some(SchemeDetailsTaskListSection(userAnswers.get(IsWorkingKnowledgeCompleteId), wkLink, None))
       case _ =>
@@ -76,7 +76,7 @@ abstract class HsTaskListHelper(answers: UserAnswers)(implicit messages: Message
         controllers.register.establishers.routes.EstablisherKindController.onPageLoad(NormalMode, userAnswers.allEstablishers.size, None).url), None)
     } else {
       SchemeDetailsTaskListSection(None, Link(changeEstablisherLinkText,
-        controllers.register.establishers.routes.AddEstablisherController.onPageLoad(NormalMode).url), None)
+        controllers.register.establishers.routes.AddEstablisherController.onPageLoad(NormalMode, None).url), None)
     }
   }
 
@@ -90,14 +90,16 @@ abstract class HsTaskListHelper(answers: UserAnswers)(implicit messages: Message
           Some(
             SchemeDetailsTaskListSection(
               Some(isAllTrusteesCompleted(userAnswers)),
-              Link(changeTrusteesLinkText, controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode, None).url),
+              Link(changeTrusteesLinkText,
+                controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode, None).url),
               None
             )
           )
         } else {
           Some(
             SchemeDetailsTaskListSection(None,
-              Link(addTrusteesLinkText, controllers.register.trustees.routes.TrusteeKindController.onPageLoad(NormalMode, userAnswers.allTrustees.size, None).url),
+              Link(addTrusteesLinkText,
+                controllers.register.trustees.routes.TrusteeKindController.onPageLoad(NormalMode, userAnswers.allTrustees.size, None).url),
               None
             )
           )
