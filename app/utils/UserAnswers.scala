@@ -16,7 +16,7 @@
 
 package utils
 
-import identifiers.TypedIdentifier
+import identifiers.{EstablishersOrTrusteesChangedId, InsuranceDetailsChangedId, TypedIdentifier}
 import identifiers.register.establishers.company.director.{DirectorDetailsId, IsDirectorCompleteId}
 import identifiers.register.establishers.company.{CompanyDetailsId => EstablisherCompanyDetailsId}
 import identifiers.register.establishers.company.{CompanyVatId => EstablisherCompanyVatId}
@@ -348,6 +348,13 @@ case class UserAnswers(json: JsValue = Json.obj()) {
         },
         userAnswers => fn(userAnswers)
       )
+  }
+
+  def isUserAnswerUpdated(): Boolean = {
+    List(
+      get[Boolean](InsuranceDetailsChangedId),
+      get[Boolean](EstablishersOrTrusteesChangedId)
+    ).flatten.contains(true)
   }
 
   def addressAnswer(address: Address)(implicit countryOptions: CountryOptions): Seq[String] = {

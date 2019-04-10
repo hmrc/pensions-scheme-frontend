@@ -68,7 +68,9 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
         )
       )
       Future.successful(Ok(check_your_answers(
-        appConfig, sections, routes.CheckYourAnswersController.onSubmit(mode, index, srn), existingSchemeName, mode = mode)))
+        appConfig, sections, routes.CheckYourAnswersController.onSubmit(mode, index, srn),
+        existingSchemeName, mode = mode,
+        viewOnly = request.viewOnly)))
   }
 
   def onSubmit(mode: Mode,index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requiredData).async {

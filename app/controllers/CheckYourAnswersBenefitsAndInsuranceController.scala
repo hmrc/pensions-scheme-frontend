@@ -55,12 +55,14 @@ class CheckYourAnswersBenefitsAndInsuranceController @Inject()(appConfig: Fronte
           InsurancePolicyNumberId.row(routes.InsurancePolicyNumberController.onPageLoad(checkMode(mode), srn).url, mode) ++
           InsurerConfirmAddressId.row(routes.InsurerConfirmAddressController.onPageLoad(checkMode(mode), srn).url, mode)
       )
+
       Ok(check_your_answers(
         appConfig,
         Seq(benefitsAndInsuranceSection),
         routes.CheckYourAnswersBenefitsAndInsuranceController.onSubmit(mode, srn),
         existingSchemeName,
-        mode = mode
+        mode = mode,
+        viewOnly = request.viewOnly
       ))
   }
 

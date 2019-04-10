@@ -60,7 +60,8 @@ class CheckYourAnswersBeforeYouStartController @Inject()(appConfig: FrontendAppC
         Seq(beforeYouStart),
         routes.CheckYourAnswersBeforeYouStartController.onSubmit(mode, srn),
         existingSchemeName,
-        returnOverview = !userAnswers.get(IsBeforeYouStartCompleteId).getOrElse(false), mode, srn))
+        returnOverview = !userAnswers.get(IsBeforeYouStartCompleteId).getOrElse(false),
+        mode, viewOnly = request.viewOnly, srn))
   }
 
   def onSubmit(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData() andThen requireData).async {
