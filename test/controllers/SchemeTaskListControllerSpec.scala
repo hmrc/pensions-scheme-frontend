@@ -43,7 +43,7 @@ class SchemeTaskListControllerSpec extends ControllerSpecBase {
       val result = controller(UserAnswers().dataRetrievalAction).onPageLoad()(fakeRequest)
 
       status(result) mustBe OK
-      contentAsString(result) mustBe schemeDetailsTaskList(frontendAppConfig, schemeDetailsTL)(fakeRequest, messages).toString()
+      contentAsString(result) mustBe schemeDetailsTaskList(frontendAppConfig, schemeDetailsTL, isVariations = false)(fakeRequest, messages).toString()
     }
   }
 }
@@ -61,6 +61,7 @@ object SchemeTaskListControllerSpec extends SpecBase with JsonFileReader {
 
   private val schemeDetailsTL = SchemeDetailsTaskList(
     SchemeDetailsTaskListSection(None, Link(beforeYouStartLinkText, controllers.routes.SchemeNameController.onPageLoad(NormalMode).url)),
+    messages("messages__schemeTaskList__about_header"),
     Seq(SchemeDetailsTaskListSection(None, Link(aboutMembersLinkText, controllers.routes.WhatYouWillNeedMembersController.onPageLoad.url), None),
       SchemeDetailsTaskListSection(None, Link(aboutBenefitsAndInsuranceLinkText,
         controllers.routes.WhatYouWillNeedBenefitsInsuranceController.onPageLoad.url), None),
@@ -76,6 +77,7 @@ object SchemeTaskListControllerSpec extends SpecBase with JsonFileReader {
     None,
     messages("messages__schemeTaskList__heading"),
     messages("messages__schemeTaskList__before_you_start_header"),
+    None,
     messages("messages__schemeTaskList__title")
   )
 
