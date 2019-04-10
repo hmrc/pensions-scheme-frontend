@@ -19,7 +19,7 @@ package controllers
 import controllers.actions._
 import identifiers.register.trustees.HaveAnyTrusteesId
 import identifiers.{EstablishedCountryId, IsBeforeYouStartCompleteId, SchemeNameId, SchemeTypeId}
-import models.{CheckMode, Link}
+import models.{CheckMode, Link, NormalMode}
 import models.register.SchemeType
 import play.api.libs.json.Json
 import play.api.test.Helpers._
@@ -35,14 +35,14 @@ class CheckYourAnswersBeforeYouStartControllerSpec extends ControllerSpecBase {
 
     "onPageLoad() is called" must {
       "return OK and the correct view with return to tasklist" in {
-        val result = controller(schemeInfoWithCompleteFlag).onPageLoad(fakeRequest)
+        val result = controller(schemeInfoWithCompleteFlag).onPageLoad(NormalMode, None)(fakeRequest)
 
         status(result) mustBe OK
         contentAsString(result) mustBe viewAsString()
       }
 
       "return OK and the correct view with return to Manage" in {
-        val result = controller(schemeInfo).onPageLoad(fakeRequest)
+        val result = controller(schemeInfo).onPageLoad(NormalMode, None)(fakeRequest)
 
         status(result) mustBe OK
         contentAsString(result) mustBe viewAsStringWithReturnToManage()
@@ -51,7 +51,7 @@ class CheckYourAnswersBeforeYouStartControllerSpec extends ControllerSpecBase {
 
     "onSubmit is called" must {
       "redirect to next page" in {
-        val result = controller().onSubmit(fakeRequest)
+        val result = controller().onSubmit(NormalMode, None)(fakeRequest)
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(onwardRoute.url)
@@ -77,7 +77,7 @@ object CheckYourAnswersBeforeYouStartControllerSpec extends ControllerSpecBase {
       FakeSectionComplete
     )
 
-  private val postUrl = routes.CheckYourAnswersBeforeYouStartController.onSubmit()
+  private val postUrl = routes.CheckYourAnswersBeforeYouStartController.onSubmit(NormalMode, None)
 
   private val schemeInfo = new FakeDataRetrievalAction(
     Some(Json.obj(
