@@ -333,8 +333,7 @@ trait HsTaskListHelperBehaviour extends SpecBase with MustMatchers with OptionVa
       val userAnswers = answersData().asOpt.value
       mustHaveLink(createTaskListHelper(userAnswers), userAnswers)
     }
-
-    //
+    
     "have link when all the sections are completed without trustees and do you have trustees is false " in {
       val userAnswers = UserAnswers().set(IsBeforeYouStartCompleteId)(true).flatMap(
         _.set(IsAboutMembersCompleteId)(true).flatMap(
