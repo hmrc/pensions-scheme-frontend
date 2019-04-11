@@ -23,7 +23,7 @@ import models.{Link, NormalMode}
 import play.api.i18n.Messages
 import viewmodels._
 
-class HsTaskListHelperVariations(answers: UserAnswers, viewOnly:Boolean)(implicit messages: Messages) extends HsTaskListHelper(answers) {
+class HsTaskListHelperVariations(answers: UserAnswers, viewOnly: Boolean)(implicit messages: Messages) extends HsTaskListHelper(answers) {
 
   override protected lazy val beforeYouStartLinkText = messages("messages__schemeTaskList__scheme_info_link_text")
 
@@ -70,24 +70,7 @@ class HsTaskListHelperVariations(answers: UserAnswers, viewOnly:Boolean)(implici
   override protected[utils] def trustees(userAnswers: UserAnswers): Seq[SchemeDetailsTaskListSection] =
     listOfSectionNameAsLink(userAnswers.allTrustees, userAnswers)
 
-  /*
-    private[utils] def declarationEnabled(userAnswers: UserAnswers): Boolean = {
-    val isTrusteeOptional = userAnswers.get(HaveAnyTrusteesId).contains(false)
-    Seq(
-      userAnswers.get(IsBeforeYouStartCompleteId),
-      userAnswers.get(IsAboutMembersCompleteId),
-      userAnswers.get(IsAboutBankDetailsCompleteId),
-      userAnswers.get(IsAboutBenefitsAndInsuranceCompleteId),
-      userAnswers.get(IsWorkingKnowledgeCompleteId),
-      Some(isAllEstablishersCompleted(userAnswers)),
-      Some(isTrusteeOptional | isAllTrusteesCompleted(userAnswers)),
-      Some(userAnswers.allTrusteesAfterDelete.size < 10 || userAnswers.get(MoreThanTenTrusteesId).isDefined)
-    ).forall(_.contains(true))
-  }
-
-   */
-
-    override def declarationEnabled(userAnswers: UserAnswers): Boolean = {
+  override def declarationEnabled(userAnswers: UserAnswers): Boolean = {
     val isTrusteeOptional = userAnswers.get(HaveAnyTrusteesId).contains(false)
     Seq(
       userAnswers.get(IsBeforeYouStartCompleteId),
@@ -110,7 +93,7 @@ class HsTaskListHelperVariations(answers: UserAnswers, viewOnly:Boolean)(implici
       establishers(answers),
       addTrusteeHeader(answers),
       trustees(answers),
-      if(viewOnly) None else Some(SchemeDetailsTaskListDeclarationSection(declarationLink(answers))),
+      if (viewOnly) None else Some(SchemeDetailsTaskListDeclarationSection(declarationLink(answers))),
       answers.get(SchemeNameId).getOrElse(""),
       messages("messages__scheme_details__title"),
       Some(messages("messages__schemeTaskList__scheme_information_link_text")),
