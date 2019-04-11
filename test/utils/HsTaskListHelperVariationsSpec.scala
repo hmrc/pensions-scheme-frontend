@@ -157,12 +157,6 @@ class HsTaskListHelperVariationsSpec extends HsTaskListHelperBehaviour {
       val helper = createTaskListHelper(userAnswers)
       helper.declarationSection(userAnswers).isDefined mustBe true
     }
-
-    "NOT have a declaration section when viewonly is true" in {
-      val userAnswers = answersData().asOpt.value
-      val helper = createTaskListHelper(userAnswers)
-      helper.declarationSection(userAnswers).isDefined mustBe false
-    }
   }
 
   override def establishersSection(): Unit = {
@@ -254,6 +248,17 @@ class HsTaskListHelperVariationsSpec extends HsTaskListHelperBehaviour {
           SchemeDetailsTaskListSection(Some(false), Link(messages("messages__schemeTaskList__persons_details__link_text", "test partnership"),
             controllers.register.trustees.partnership.routes.TrusteeDetailsController.onPageLoad(NormalMode, 2, None).url), None)
         )
+    }
+  }
+}
+
+class HsTaskListHelperVariationsViewOnlySpec extends HsTaskListHelperBehaviour {
+  override val createTaskListHelper: UserAnswers => HsTaskListHelper = ua => new HsTaskListHelperVariations(ua, viewOnly = true)
+  "declaration" must {
+    "NOT have a declaration section when viewonly is true" in {
+      val userAnswers = answersData().asOpt.value
+      val helper = createTaskListHelper(userAnswers)
+      helper.declarationSection(userAnswers).isDefined mustBe false
     }
   }
 }
