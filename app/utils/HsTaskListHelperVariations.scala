@@ -54,7 +54,7 @@ class HsTaskListHelperVariations(answers: UserAnswers, viewOnly:Boolean)(implici
       establishers(answers),
       addTrusteeHeader(answers),
       trustees(answers),
-      Some(SchemeDetailsTaskListDeclarationSection(declarationLink(answers))),
+      if(viewOnly) None else Some(SchemeDetailsTaskListDeclarationSection(declarationLink(answers))),
       answers.get(SchemeNameId).getOrElse(""),
       messages("messages__scheme_details__title"),
       Some(messages("messages__schemeTaskList__scheme_information_link_text")),

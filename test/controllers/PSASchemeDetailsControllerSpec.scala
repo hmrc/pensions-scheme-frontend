@@ -77,7 +77,31 @@ class PSASchemeDetailsControllerSpec extends ControllerSpecBase {
       status(result) mustBe OK
       verify(fakeSchemeDetailsReadOnlyCacheConnector, times(1)).upsert(any(), Matchers.eq(userAnswersResponse.json))(any(), any())
 
-      contentAsString(result).contains(messages("messages__scheme_details__title")) mustBe true
+      val content = contentAsString(result)
+      content.contains(messages("messages__scheme_details__title")) mustBe true
+      content.contains(messages("messages__schemeTaskList__sectionDeclaration_header")) mustBe true
+    }
+
+    "return OK and no declaration section where request has viewOnly flag set to true" in {
+
+      val userAnswersResponse = UserAnswers(Json.obj(
+        "test attribute" -> "test value"
+      ))
+
+      reset(fakeSchemeDetailsConnector)
+      when(fakeSchemeDetailsConnector.getSchemeDetailsVariations(Matchers.any(), Matchers.any(), Matchers.any())(Matchers.any(), Matchers.any()))
+        .thenReturn(Future.successful(userAnswersResponse))
+      when(fakeSchemeTransformer.transformMasterSection(Matchers.any())).thenReturn(masterSections)
+      when(fakeSchemeDetailsReadOnlyCacheConnector.upsert(Matchers.any(), Matchers.any())(Matchers.any(), Matchers.any()))
+        .thenReturn(Future.successful(JsNull))
+
+      val result = controller(isVariationsEnabled = true, dataRetrievalAction = dontGetAnyDataViewonly)
+        .onPageLoad(srn)(fakeRequest)
+
+      status(result) mustBe OK
+
+      val content = contentAsString(result)
+      content.contains(messages("messages__schemeTaskList__sectionDeclaration_header")) mustBe false
     }
   }
 }
