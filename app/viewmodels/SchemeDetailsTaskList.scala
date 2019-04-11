@@ -20,6 +20,7 @@ import models.Link
 import play.api.libs.json.{Json, OFormat}
 
 case class SchemeDetailsTaskList(beforeYouStart: SchemeDetailsTaskListSection,
+                                 aboutHeader:String,
                                  about: Seq[SchemeDetailsTaskListSection],
                                  workingKnowledge: Option[SchemeDetailsTaskListSection],
                                  addEstablisherHeader : SchemeDetailsTaskListSection,
@@ -29,9 +30,9 @@ case class SchemeDetailsTaskList(beforeYouStart: SchemeDetailsTaskListSection,
                                  declaration: Option[Link] = None,
                                  h1: String,
                                  h2: String,
+                                 h3: Option[String],
                                  pageTitle: String
                                 ) {
-
 }
 
 object SchemeDetailsTaskList {

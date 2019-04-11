@@ -31,7 +31,7 @@ import viewmodels._
 
 abstract class HsTaskListHelper(answers: UserAnswers)(implicit messages: Messages) extends Enumerable.Implicits {
 
-  protected lazy val beforeYouStartLinkText = messages("messages__schemeTaskList__before_you_start_link_text")
+  protected val beforeYouStartLinkText: String
   protected lazy val aboutMembersLinkText = messages("messages__schemeTaskList__about_members_link_text")
   protected lazy val aboutBenefitsAndInsuranceLinkText = messages("messages__schemeTaskList__about_benefits_and_insurance_link_text")
   protected lazy val aboutBankDetailsLinkText = messages("messages__schemeTaskList__about_bank_details_link_text")
@@ -80,7 +80,7 @@ abstract class HsTaskListHelper(answers: UserAnswers)(implicit messages: Message
     }
   }
 
-  private[utils] def establishers(userAnswers: UserAnswers): Seq[SchemeDetailsTaskListSection] =
+  protected[utils] def establishers(userAnswers: UserAnswers): Seq[SchemeDetailsTaskListSection] =
     listOf(userAnswers.allEstablishers, userAnswers)
 
   private[utils] def addTrusteeHeader(userAnswers: UserAnswers): Option[SchemeDetailsTaskListSection] = {
@@ -109,7 +109,7 @@ abstract class HsTaskListHelper(answers: UserAnswers)(implicit messages: Message
     }
   }
 
-  private[utils] def trustees(userAnswers: UserAnswers): Seq[SchemeDetailsTaskListSection] =
+  protected[utils] def trustees(userAnswers: UserAnswers): Seq[SchemeDetailsTaskListSection] =
     listOf(userAnswers.allTrustees, userAnswers)
 
   private[utils] def declarationEnabled(userAnswers: UserAnswers): Boolean = {
