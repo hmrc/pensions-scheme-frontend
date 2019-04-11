@@ -152,10 +152,16 @@ class HsTaskListHelperVariationsSpec extends HsTaskListHelperBehaviour {
   }
 
   "declaration" must {
-    "have a declaration link when viewonly is false" in {
+    "have a declaration section when viewonly is false" in {
       val userAnswers = answersData().asOpt.value
       val helper = createTaskListHelper(userAnswers)
-      //helper.declarationLink(userAnswers).value mustBe Link(declarationLinkText, controllers.register.routes.DeclarationController.onPageLoad().url)
+      helper.declarationSection(userAnswers).isDefined mustBe true
+    }
+
+    "NOT have a declaration section when viewonly is true" in {
+      val userAnswers = answersData().asOpt.value
+      val helper = createTaskListHelper(userAnswers)
+      helper.declarationSection(userAnswers).isDefined mustBe false
     }
   }
 

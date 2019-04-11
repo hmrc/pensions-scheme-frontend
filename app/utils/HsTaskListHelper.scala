@@ -126,6 +126,9 @@ abstract class HsTaskListHelper(answers: UserAnswers)(implicit messages: Message
     ).forall(_.contains(true))
   }
 
+  protected[utils] def declarationSection(userAnswers: UserAnswers): Option[SchemeDetailsTaskListDeclarationSection]
+
+
   private[utils] def declarationLink(userAnswers: UserAnswers): Option[Link] = {
     if (declarationEnabled(userAnswers))
       Some(Link(declarationLinkText, controllers.register.routes.DeclarationController.onPageLoad().url))

@@ -46,6 +46,9 @@ class HsTaskListHelperRegistration(answers: UserAnswers)(implicit messages: Mess
       SchemeDetailsTaskListSection(userAnswers.get(IsAboutBankDetailsCompleteId), bankDetailsLink, None))
   }
 
+  protected[utils] def declarationSection(userAnswers: UserAnswers): Option[SchemeDetailsTaskListDeclarationSection] =
+    Some(SchemeDetailsTaskListDeclarationSection(None))
+
   def taskList: SchemeDetailsTaskList = {
     SchemeDetailsTaskList(
       beforeYouStartSection(answers),
