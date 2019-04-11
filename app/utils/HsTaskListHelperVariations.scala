@@ -44,25 +44,6 @@ class HsTaskListHelperVariations(answers: UserAnswers, viewOnly:Boolean)(implici
       SchemeDetailsTaskListSection(userAnswers.get(IsAboutBenefitsAndInsuranceCompleteId), benefitsAndInsuranceLink, None))
   }
 
-  def taskList: SchemeDetailsTaskList = {
-    val schemeName = answers.get(SchemeNameId).getOrElse("")
-    SchemeDetailsTaskList(
-      beforeYouStartSection(answers),
-      messages("messages__schemeTaskList__about_scheme_header", schemeName),
-      aboutSection(answers),
-      None,
-      addEstablisherHeader(answers),
-      establishers(answers),
-      addTrusteeHeader(answers),
-      trustees(answers),
-      if(viewOnly) None else Some(SchemeDetailsTaskListDeclarationSection(declarationLink(answers))),
-      answers.get(SchemeNameId).getOrElse(""),
-      messages("messages__scheme_details__title"),
-      Some(messages("messages__schemeTaskList__scheme_information_link_text")),
-      messages("messages__scheme_details__title")
-    )
-  }
-
   protected[utils] def declarationSection(userAnswers: UserAnswers): Option[SchemeDetailsTaskListDeclarationSection] =
     if (viewOnly) {
       None
@@ -89,6 +70,23 @@ class HsTaskListHelperVariations(answers: UserAnswers, viewOnly:Boolean)(implici
   override protected[utils] def trustees(userAnswers: UserAnswers): Seq[SchemeDetailsTaskListSection] =
     listOfSectionNameAsLink(userAnswers.allTrustees, userAnswers)
 
+  /*
+    private[utils] def declarationEnabled(userAnswers: UserAnswers): Boolean = {
+    val isTrusteeOptional = userAnswers.get(HaveAnyTrusteesId).contains(false)
+    Seq(
+      userAnswers.get(IsBeforeYouStartCompleteId),
+      userAnswers.get(IsAboutMembersCompleteId),
+      userAnswers.get(IsAboutBankDetailsCompleteId),
+      userAnswers.get(IsAboutBenefitsAndInsuranceCompleteId),
+      userAnswers.get(IsWorkingKnowledgeCompleteId),
+      Some(isAllEstablishersCompleted(userAnswers)),
+      Some(isTrusteeOptional | isAllTrusteesCompleted(userAnswers)),
+      Some(userAnswers.allTrusteesAfterDelete.size < 10 || userAnswers.get(MoreThanTenTrusteesId).isDefined)
+    ).forall(_.contains(true))
+  }
+
+   */
+
     override def declarationEnabled(userAnswers: UserAnswers): Boolean = {
     val isTrusteeOptional = userAnswers.get(HaveAnyTrusteesId).contains(false)
     Seq(
@@ -98,6 +96,25 @@ class HsTaskListHelperVariations(answers: UserAnswers, viewOnly:Boolean)(implici
       Some(isAllEstablishersCompleted(userAnswers)),
       Some(isTrusteeOptional | isAllTrusteesCompleted(userAnswers)),
       Some(userAnswers.allTrusteesAfterDelete.size < 10 || userAnswers.get(MoreThanTenTrusteesId).isDefined)
-    ).forall(_.contains(true))
+    ).forall(_.contains(true)) && userAnswers.isUserAnswerUpdated()
+  }
+
+  def taskList: SchemeDetailsTaskList = {
+    val schemeName = answers.get(SchemeNameId).getOrElse("")
+    SchemeDetailsTaskList(
+      beforeYouStartSection(answers),
+      messages("messages__schemeTaskList__about_scheme_header", schemeName),
+      aboutSection(answers),
+      None,
+      addEstablisherHeader(answers),
+      establishers(answers),
+      addTrusteeHeader(answers),
+      trustees(answers),
+      if(viewOnly) None else Some(SchemeDetailsTaskListDeclarationSection(declarationLink(answers))),
+      answers.get(SchemeNameId).getOrElse(""),
+      messages("messages__scheme_details__title"),
+      Some(messages("messages__schemeTaskList__scheme_information_link_text")),
+      messages("messages__scheme_details__title")
+    )
   }
 }

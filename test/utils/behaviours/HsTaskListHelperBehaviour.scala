@@ -62,7 +62,9 @@ trait HsTaskListHelperBehaviour extends SpecBase with MustMatchers with OptionVa
                             isCompleteAboutBenefits: Boolean = true,
                             isCompleteWk: Boolean = true,
                             isCompleteEstablishers: Boolean = true,
-                            isCompleteTrustees: Boolean = true
+                            isCompleteTrustees: Boolean = true,
+                            isChangedInsuranceDetails: Boolean = true,
+                            isChangedEstablishersTrustees: Boolean = true
                            ): JsResult[UserAnswers] = {
     UserAnswers().set(IsBeforeYouStartCompleteId)(isCompleteBeforeStart).flatMap(
       _.set(IsAboutMembersCompleteId)(isCompleteAboutMembers).flatMap(
@@ -327,13 +329,12 @@ trait HsTaskListHelperBehaviour extends SpecBase with MustMatchers with OptionVa
 
   //scalastyle:off method.length
   def declarationSection(): Unit = {
-
-
     "have link when all the sections are completed with trustees" in {
       val userAnswers = answersData().asOpt.value
       mustHaveLink(createTaskListHelper(userAnswers), userAnswers)
     }
 
+    //
     "have link when all the sections are completed without trustees and do you have trustees is false " in {
       val userAnswers = UserAnswers().set(IsBeforeYouStartCompleteId)(true).flatMap(
         _.set(IsAboutMembersCompleteId)(true).flatMap(
@@ -342,7 +343,8 @@ trait HsTaskListHelperBehaviour extends SpecBase with MustMatchers with OptionVa
               _.set(IsWorkingKnowledgeCompleteId)(true).flatMap(
                 _.set(EstablisherDetailsId(0))(PersonDetails("firstName", None, "lastName", LocalDate.now())).flatMap(
                   _.set(IsEstablisherCompleteId(0))(true)).flatMap(
-                  _.set(HaveAnyTrusteesId)(false))
+                  _.set(HaveAnyTrusteesId)(false)).flatMap(
+                  _.set(InsuranceDetailsChangedId)(true))
               )
             )
           )
@@ -405,12 +407,12 @@ trait HsTaskListHelperBehaviour extends SpecBase with MustMatchers with OptionVa
       mustHaveNoLink(createTaskListHelper(userAnswers), userAnswers)
     }
 
-    "return the link when all the sections are completed" in {
+    "have link when all the sections are completed" in {
       val userAnswers = answersData().asOpt.value
       mustHaveLink(createTaskListHelper(userAnswers), userAnswers)
     }
 
-    "return None when all the sections are not completed" in {
+    "have no link when all the sections are not completed" in {
       val userAnswers = answersData(isCompleteBeforeStart = false).asOpt.value
       mustHaveNoLink(createTaskListHelper(userAnswers), userAnswers)
     }
