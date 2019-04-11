@@ -318,15 +318,21 @@ trait HsTaskListHelperBehaviour extends SpecBase with MustMatchers with OptionVa
     }
   }
 
-  def declarationEnabled(): Unit = {
+  //scalastyle:off method.length
+  def declarationSection(): Unit = {
+    def mustHaveLink(helper:HsTaskListHelper, userAnswers:UserAnswers):Unit =
+      helper.declarationSection(userAnswers).foreach(_.declarationLink mustBe
+        Some(Link(declarationLinkText, controllers.register.routes.DeclarationController.onPageLoad().url)) )
 
-    "return true when all the sections are completed with trustees" in {
+    def mustHaveNoLink(helper:HsTaskListHelper, userAnswers:UserAnswers):Unit =
+      helper.declarationSection(userAnswers).foreach(_.declarationLink mustBe None )
+
+    "have link when all the sections are completed with trustees" in {
       val userAnswers = answersData().asOpt.value
-      val helper = createTaskListHelper(userAnswers)
-      helper.declarationEnabled(userAnswers) mustBe true
+      mustHaveLink(createTaskListHelper(userAnswers), userAnswers)
     }
 
-    "return true when all the sections are completed without trustees and do you have trustees is false " in {
+    "have link when all the sections are completed without trustees and do you have trustees is false " in {
       val userAnswers = UserAnswers().set(IsBeforeYouStartCompleteId)(true).flatMap(
         _.set(IsAboutMembersCompleteId)(true).flatMap(
           _.set(IsAboutBankDetailsCompleteId)(true).flatMap(
@@ -340,67 +346,57 @@ trait HsTaskListHelperBehaviour extends SpecBase with MustMatchers with OptionVa
           )
         )
       ).asOpt.value
-      val helper = createTaskListHelper(userAnswers)
-      helper.declarationEnabled(userAnswers) mustBe true
+      mustHaveLink(createTaskListHelper(userAnswers), userAnswers)
     }
 
-    "return false when all the sections are completed with 10 trustees but the more than ten question has not been answered" in {
+    "not have link when all the sections are completed with 10 trustees but the more than ten question has not been answered" in {
       val userAnswers = answersDataWithTenTrustees().asOpt.value
-      val helper = createTaskListHelper(userAnswers)
-      helper.declarationEnabled(userAnswers) mustBe false
+      mustHaveNoLink(createTaskListHelper(userAnswers), userAnswers)
     }
 
-    "return true when all the sections are completed with 10 trustees and the more than ten question has been answered" in {
+    "have link when all the sections are completed with 10 trustees and the more than ten question has been answered" in {
       val userAnswers = answersDataWithTenTrustees().flatMap(
         _.set(MoreThanTenTrusteesId)(true)
       ).asOpt.value
-      val helper = createTaskListHelper(userAnswers)
-      helper.declarationEnabled(userAnswers) mustBe true
+      mustHaveLink(createTaskListHelper(userAnswers), userAnswers)
     }
 
-    "return false when about you start section not completed" in {
+    "not have link when about you start section not completed" in {
       val userAnswers = answersData(isCompleteBeforeStart = false).asOpt.value
-      val helper = createTaskListHelper(userAnswers)
-      helper.declarationEnabled(userAnswers) mustBe false
+      mustHaveNoLink(createTaskListHelper(userAnswers), userAnswers)
     }
 
-    "return false when about members section not completed" in {
+    "not have link when about members section not completed" in {
       val userAnswers = answersData(isCompleteAboutMembers = false).asOpt.value
-      val helper = createTaskListHelper(userAnswers)
-      helper.declarationEnabled(userAnswers) mustBe false
+      mustHaveNoLink(createTaskListHelper(userAnswers), userAnswers)
     }
 
-    "return false when about bank details section not completed" in {
+    "not have link when about bank details section not completed" in {
       val userAnswers = answersData(isCompleteAboutBank = false).asOpt.value
-      val helper = createTaskListHelper(userAnswers)
-      helper.declarationEnabled(userAnswers) mustBe false
+      mustHaveNoLink(createTaskListHelper(userAnswers), userAnswers)
     }
 
-    "return false when about benefits and insurance section not completed" in {
+    "not have link when about benefits and insurance section not completed" in {
       val userAnswers = answersData(isCompleteAboutBenefits = false).asOpt.value
-      val helper = createTaskListHelper(userAnswers)
-      helper.declarationEnabled(userAnswers) mustBe false
+      mustHaveNoLink(createTaskListHelper(userAnswers), userAnswers)
     }
 
-    "return false when working knowledge section not completed" in {
+    "not have link when working knowledge section not completed" in {
       val userAnswers = answersData(isCompleteWk = false).asOpt.value
-      val helper = createTaskListHelper(userAnswers)
-      helper.declarationEnabled(userAnswers) mustBe false
+      mustHaveNoLink(createTaskListHelper(userAnswers), userAnswers)
     }
 
-    "return false when establishers section not completed" in {
+    "not have link when establishers section not completed" in {
       val userAnswers = answersData(isCompleteEstablishers = false).asOpt.value
-      val helper = createTaskListHelper(userAnswers)
-      helper.declarationEnabled(userAnswers) mustBe false
+      mustHaveNoLink(createTaskListHelper(userAnswers), userAnswers)
     }
 
-    "return false when trustees section not completed" in {
+    "not have link when trustees section not completed" in {
       val userAnswers = answersData(isCompleteTrustees = false).asOpt.value
-      val helper = createTaskListHelper(userAnswers)
-      helper.declarationEnabled(userAnswers) mustBe false
+      mustHaveNoLink(createTaskListHelper(userAnswers), userAnswers)
     }
 
-    "return false when do you have any trustees is true but no trustees are added" in {
+    "not have link when do you have any trustees is true but no trustees are added" in {
       val userAnswers = UserAnswers().set(IsBeforeYouStartCompleteId)(true).flatMap(
         _.set(IsAboutMembersCompleteId)(true).flatMap(
           _.set(IsAboutBankDetailsCompleteId)(true).flatMap(
@@ -414,22 +410,17 @@ trait HsTaskListHelperBehaviour extends SpecBase with MustMatchers with OptionVa
           )
         )
       ).asOpt.value
-      val helper = createTaskListHelper(userAnswers)
-      helper.declarationEnabled(userAnswers) mustBe false
+      mustHaveNoLink(createTaskListHelper(userAnswers), userAnswers)
     }
-  }
 
-  def declarationLink(): Unit = {
     "return the link when all the sections are completed" in {
       val userAnswers = answersData().asOpt.value
-      val helper = createTaskListHelper(userAnswers)
-      helper.declarationLink(userAnswers).value mustBe Link(declarationLinkText, controllers.register.routes.DeclarationController.onPageLoad().url)
+      mustHaveLink(createTaskListHelper(userAnswers), userAnswers)
     }
 
     "return None when all the sections are not completed" in {
       val userAnswers = answersData(isCompleteBeforeStart = false).asOpt.value
-      val helper = createTaskListHelper(userAnswers)
-      helper.declarationLink(userAnswers) mustBe None
+      mustHaveNoLink(createTaskListHelper(userAnswers), userAnswers)
     }
   }
 }

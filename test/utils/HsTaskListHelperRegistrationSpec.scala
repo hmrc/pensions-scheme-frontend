@@ -158,18 +158,16 @@ class HsTaskListHelperRegistrationSpec extends HsTaskListHelperBehaviour {
   }
 
   "trustees" must {
-
     behave like trusteesSection()
   }
 
-  "declarationEnabled" must {
+  "declaration" must {
+    "have a declaration section" in {
+      val userAnswers = answersData().asOpt.value
+      val helper = createTaskListHelper(userAnswers)
+      helper.declarationSection(userAnswers).isDefined mustBe true
+    }
 
-    behave like declarationEnabled()
-  }
-
-  "declarationLink" must {
-
-    behave like declarationLink()
+    behave like declarationSection()
   }
 }
-

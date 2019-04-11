@@ -16,7 +16,6 @@
 
 package utils
 
-import base.SpecBase
 import identifiers.register.establishers.IsEstablisherCompleteId
 import identifiers.register.establishers.company.{CompanyDetailsId => EstablisherCompanyDetailsId}
 import identifiers.register.establishers.individual.EstablisherDetailsId
@@ -25,16 +24,15 @@ import identifiers.register.trustees.IsTrusteeCompleteId
 import identifiers.register.trustees.company.{CompanyDetailsId => TrusteeCompanyDetailsId}
 import identifiers.register.trustees.individual.TrusteeDetailsId
 import identifiers.register.trustees.partnership.{IsPartnershipCompleteId, PartnershipDetailsId => TrusteePartnershipDetailsId}
-import identifiers.{DeclarationDutiesId, IsAboutBenefitsAndInsuranceCompleteId, IsAboutMembersCompleteId, SchemeNameId, _}
+import identifiers.{DeclarationDutiesId, IsAboutBenefitsAndInsuranceCompleteId, IsAboutMembersCompleteId, SchemeNameId}
 import models.person.PersonDetails
 import models.{CompanyDetails, Link, NormalMode, PartnershipDetails}
 import org.joda.time.LocalDate
-import play.api.libs.json.JsResult
 import utils.behaviours.HsTaskListHelperBehaviour
 import viewmodels.SchemeDetailsTaskListSection
 
 class HsTaskListHelperVariationsSpec extends HsTaskListHelperBehaviour {
-  override val createTaskListHelper:UserAnswers => HsTaskListHelper = ua => new HsTaskListHelperVariations(ua, viewOnly = false)
+  override val createTaskListHelper: UserAnswers => HsTaskListHelper = ua => new HsTaskListHelperVariations(ua, viewOnly = false)
   "h1" must {
     "have the name of the scheme" in {
       val name = "scheme name 1"
@@ -89,7 +87,7 @@ class HsTaskListHelperVariationsSpec extends HsTaskListHelperBehaviour {
     "return the the Seq of members and benefits section with " +
       "links of the first pages of individual sub sections when not completed " in {
       val userAnswers = UserAnswers().set(IsAboutMembersCompleteId)(false).flatMap(
-          _.set(IsAboutBenefitsAndInsuranceCompleteId)(false)
+        _.set(IsAboutBenefitsAndInsuranceCompleteId)(false)
       ).asOpt.value
       val helper = new HsTaskListHelperVariations(userAnswers, viewOnly = false)
       helper.aboutSection(userAnswers) mustBe
@@ -104,7 +102,7 @@ class HsTaskListHelperVariationsSpec extends HsTaskListHelperBehaviour {
     "return the the Seq of members and benefits section with " +
       "links of the cya pages of individual sub sections when completed " in {
       val userAnswers = UserAnswers().set(IsAboutMembersCompleteId)(true).flatMap(
-          _.set(IsAboutBenefitsAndInsuranceCompleteId)(true)
+        _.set(IsAboutBenefitsAndInsuranceCompleteId)(true)
       ).asOpt.value
       val helper = new HsTaskListHelperVariations(userAnswers, viewOnly = false)
       helper.aboutSection(userAnswers) mustBe
@@ -263,36 +261,4 @@ class HsTaskListHelperVariationsViewOnlySpec extends HsTaskListHelperBehaviour {
   }
 }
 
-object HsTaskListHelperVariationsSpec extends SpecBase {
-
-  private def answersData(isCompleteBeforeStart: Boolean = true,
-                          isCompleteAboutMembers: Boolean = true,
-                          isCompleteAboutBank: Boolean = true,
-                          isCompleteAboutBenefits: Boolean = true,
-                          isCompleteWk: Boolean = true,
-                          isCompleteEstablishers: Boolean = true,
-                          isCompleteTrustees: Boolean = true,
-                          isChangedInsuranceDetails: Boolean = true,
-                          isChangedEstablishersTrustees: Boolean = true
-                         ): JsResult[UserAnswers] = {
-    UserAnswers().set(IsBeforeYouStartCompleteId)(isCompleteBeforeStart).flatMap(
-      _.set(IsAboutMembersCompleteId)(isCompleteAboutMembers).flatMap(
-        _.set(IsAboutBankDetailsCompleteId)(isCompleteAboutBank).flatMap(
-          _.set(IsAboutBenefitsAndInsuranceCompleteId)(isCompleteAboutBenefits).flatMap(
-            _.set(IsWorkingKnowledgeCompleteId)(isCompleteWk).flatMap(
-              _.set(EstablisherDetailsId(0))(PersonDetails("firstName", None, "lastName", LocalDate.now())).flatMap(
-                _.set(IsEstablisherCompleteId(0))(isCompleteEstablishers)).flatMap(
-                _.set(TrusteeDetailsId(0))(PersonDetails("firstName", None, "lastName", LocalDate.now())).flatMap(
-                  _.set(IsTrusteeCompleteId(0))(isCompleteTrustees)).flatMap(
-                  _.set(InsuranceDetailsChangedId)(isChangedInsuranceDetails)).flatMap(
-                  _.set(InsuranceDetailsChangedId)(isChangedEstablishersTrustees))
-              )
-            )
-          )
-        )
-      )
-    )
-  }
-
-}
 

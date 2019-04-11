@@ -126,14 +126,13 @@ abstract class HsTaskListHelper(answers: UserAnswers)(implicit messages: Message
     ).forall(_.contains(true))
   }
 
-  protected[utils] def declarationSection(userAnswers: UserAnswers): Option[SchemeDetailsTaskListDeclarationSection]
-
-
   private[utils] def declarationLink(userAnswers: UserAnswers): Option[Link] = {
     if (declarationEnabled(userAnswers))
       Some(Link(declarationLinkText, controllers.register.routes.DeclarationController.onPageLoad().url))
     else None
   }
+
+  protected[utils] def declarationSection(userAnswers: UserAnswers): Option[SchemeDetailsTaskListDeclarationSection]
 
   protected def linkText(item: Entity[_]): String = item.id match {
     case EstablisherCompanyDetailsId(_) | TrusteeCompanyDetailsId(_) => companyLinkText
