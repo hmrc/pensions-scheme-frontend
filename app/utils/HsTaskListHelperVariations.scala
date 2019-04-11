@@ -16,6 +16,7 @@
 
 package utils
 
+import identifiers.register.trustees.MoreThanTenTrusteesId
 import identifiers.{IsAboutBenefitsAndInsuranceCompleteId, IsAboutMembersCompleteId, SchemeNameId, _}
 import models.register.Entity
 import models.{Link, NormalMode}
@@ -88,14 +89,15 @@ class HsTaskListHelperVariations(answers: UserAnswers, viewOnly:Boolean)(implici
   override protected[utils] def trustees(userAnswers: UserAnswers): Seq[SchemeDetailsTaskListSection] =
     listOfSectionNameAsLink(userAnswers.allTrustees, userAnswers)
 
-//  override def declarationEnabled(userAnswers: UserAnswers): Boolean = {
-//      val isTrusteeOptional = userAnswers.get(HaveAnyTrusteesId).contains(false)
-//      Seq(
-//        userAnswers.get(IsBeforeYouStartCompleteId),
-//        userAnswers.get(IsAboutMembersCompleteId),
-//        userAnswers.get(IsAboutBenefitsAndInsuranceCompleteId),
-//        Some(isAllEstablishersCompleted(userAnswers)),
-//        Some(isTrusteeOptional | isAllTrusteesCompleted(userAnswers))
-//      ).forall(_.contains(true)) && userAnswers.isUserAnswerUpdated()
-//    }
+    override def declarationEnabled(userAnswers: UserAnswers): Boolean = {
+    val isTrusteeOptional = userAnswers.get(HaveAnyTrusteesId).contains(false)
+    Seq(
+      userAnswers.get(IsBeforeYouStartCompleteId),
+      userAnswers.get(IsAboutMembersCompleteId),
+      userAnswers.get(IsAboutBenefitsAndInsuranceCompleteId),
+      Some(isAllEstablishersCompleted(userAnswers)),
+      Some(isTrusteeOptional | isAllTrusteesCompleted(userAnswers)),
+      Some(userAnswers.allTrusteesAfterDelete.size < 10 || userAnswers.get(MoreThanTenTrusteesId).isDefined)
+    ).forall(_.contains(true))
+  }
 }

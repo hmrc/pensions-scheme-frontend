@@ -140,7 +140,7 @@ abstract class HsTaskListHelper(answers: UserAnswers)(implicit messages: Message
     case EstablisherPartnershipDetailsId(_) | TrusteePartnershipDetailsId(_) => partnershipLinkText
   }
 
-  protected def linkTarget(item: Entity[_], index: Int, userAnswers: UserAnswers) = {
+  protected def linkTarget(item: Entity[_], index: Int, userAnswers: UserAnswers):String = {
     item match {
       case models.register.EstablisherCompanyEntity(_, _, _, true) =>
         controllers.register.establishers.company.routes.CompanyReviewController.onPageLoad(NormalMode, None, index).url

@@ -318,14 +318,16 @@ trait HsTaskListHelperBehaviour extends SpecBase with MustMatchers with OptionVa
     }
   }
 
+  protected def mustHaveLink(helper:HsTaskListHelper, userAnswers:UserAnswers):Unit =
+    helper.declarationSection(userAnswers).foreach(_.declarationLink mustBe
+      Some(Link(declarationLinkText, controllers.register.routes.DeclarationController.onPageLoad().url)) )
+
+  protected def mustHaveNoLink(helper:HsTaskListHelper, userAnswers:UserAnswers):Unit =
+    helper.declarationSection(userAnswers).foreach(_.declarationLink mustBe None )
+
   //scalastyle:off method.length
   def declarationSection(): Unit = {
-    def mustHaveLink(helper:HsTaskListHelper, userAnswers:UserAnswers):Unit =
-      helper.declarationSection(userAnswers).foreach(_.declarationLink mustBe
-        Some(Link(declarationLinkText, controllers.register.routes.DeclarationController.onPageLoad().url)) )
 
-    def mustHaveNoLink(helper:HsTaskListHelper, userAnswers:UserAnswers):Unit =
-      helper.declarationSection(userAnswers).foreach(_.declarationLink mustBe None )
 
     "have link when all the sections are completed with trustees" in {
       val userAnswers = answersData().asOpt.value
@@ -371,18 +373,8 @@ trait HsTaskListHelperBehaviour extends SpecBase with MustMatchers with OptionVa
       mustHaveNoLink(createTaskListHelper(userAnswers), userAnswers)
     }
 
-    "not have link when about bank details section not completed" in {
-      val userAnswers = answersData(isCompleteAboutBank = false).asOpt.value
-      mustHaveNoLink(createTaskListHelper(userAnswers), userAnswers)
-    }
-
     "not have link when about benefits and insurance section not completed" in {
       val userAnswers = answersData(isCompleteAboutBenefits = false).asOpt.value
-      mustHaveNoLink(createTaskListHelper(userAnswers), userAnswers)
-    }
-
-    "not have link when working knowledge section not completed" in {
-      val userAnswers = answersData(isCompleteWk = false).asOpt.value
       mustHaveNoLink(createTaskListHelper(userAnswers), userAnswers)
     }
 

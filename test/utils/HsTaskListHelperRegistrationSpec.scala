@@ -169,5 +169,15 @@ class HsTaskListHelperRegistrationSpec extends HsTaskListHelperBehaviour {
     }
 
     behave like declarationSection()
+
+    "not have link when about bank details section not completed" in {
+      val userAnswers = answersData(isCompleteAboutBank = false).asOpt.value
+      mustHaveNoLink(createTaskListHelper(userAnswers), userAnswers)
+    }
+
+    "not have link when working knowledge section not completed" in {
+      val userAnswers = answersData(isCompleteWk = false).asOpt.value
+      mustHaveNoLink(createTaskListHelper(userAnswers), userAnswers)
+    }
   }
 }
