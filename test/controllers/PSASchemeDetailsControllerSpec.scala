@@ -95,7 +95,7 @@ class PSASchemeDetailsControllerSpec extends ControllerSpecBase {
       when(fakeSchemeDetailsReadOnlyCacheConnector.upsert(Matchers.any(), Matchers.any())(Matchers.any(), Matchers.any()))
         .thenReturn(Future.successful(JsNull))
 
-      val result = controller(isVariationsEnabled = true, dataRetrievalAction = dontGetAnyDataViewonly)
+      val result = controller(isVariationsEnabled = true, dataRetrievalAction = dontGetAnyDataViewOnly)
         .onPageLoad(srn)(fakeRequest)
 
       status(result) mustBe OK
