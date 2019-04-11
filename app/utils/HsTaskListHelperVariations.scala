@@ -44,10 +44,6 @@ class HsTaskListHelperVariations(answers: UserAnswers, viewOnly:Boolean)(implici
   }
 
   def taskList: SchemeDetailsTaskList = {
-
-
-    // TODO: Need new attrib on view model to tell view whether to display declaration section - based on viewOnly attribute
-
     val schemeName = answers.get(SchemeNameId).getOrElse("")
     SchemeDetailsTaskList(
       beforeYouStartSection(answers),
@@ -58,7 +54,7 @@ class HsTaskListHelperVariations(answers: UserAnswers, viewOnly:Boolean)(implici
       establishers(answers),
       addTrusteeHeader(answers),
       trustees(answers),
-      declarationLink(answers),
+      Some(SchemeDetailsTaskListDeclarationSection(declarationLink(answers))),
       answers.get(SchemeNameId).getOrElse(""),
       messages("messages__scheme_details__title"),
       Some(messages("messages__schemeTaskList__scheme_information_link_text")),

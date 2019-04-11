@@ -210,14 +210,16 @@
                 @messages("messages__schemeTaskList__sectionDeclaration_header")
             </h2>
             <p class="tasklist">
-                @if(taskSections.declaration.isDefined){
-                    @taskSections.declaration.map{ link =>
-                        <a id= "section-declaration-link" href="@link.target">
-                            @messages(link.text)
-                        </a>
+                @taskSections.declaration.map{declarationSection=>
+                    @if(declarationSection.declarationLink.isDefined){
+                        @declarationSection.declarationLink.map{ link =>
+                            <a id= "section-declaration-link" href="@link.target">
+                                @messages(link.text)
+                            </a>
+                        }
+                    }else{
+                        <span id="section-declaration-text">@messages("messages__schemeTaskList__sectionDeclaration_incomplete")</span>
                     }
-                }else{
-                    <span id="section-declaration-text">@messages("messages__schemeTaskList__sectionDeclaration_incomplete")</span>
                 }
             </p>
         </li>

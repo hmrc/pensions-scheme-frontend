@@ -264,7 +264,7 @@ class SchemeDetailsTaskListViewSpec extends ViewBehaviours {
     }
 
     "display correct link and no text for the Declaration section where there is a link" in {
-      val completed = schemeDetailsTaskListData.copy(declaration = Some(Link(text = "text", target = "target")))
+      val completed = schemeDetailsTaskListData.copy(declaration = Some(SchemeDetailsTaskListDeclarationSection(Some(Link(text = "text", target = "target")))))
       val doc = asDocument(createView(completed)())
 
       assertNotRenderedById(doc, id = "section-declaration-text")

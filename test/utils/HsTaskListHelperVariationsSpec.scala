@@ -151,6 +151,14 @@ class HsTaskListHelperVariationsSpec extends HsTaskListHelperBehaviour {
     behave like trusteesSection()
   }
 
+  "declaration" must {
+    "have a declaration link when viewonly is false" in {
+      val userAnswers = answersData().asOpt.value
+      val helper = createTaskListHelper(userAnswers)
+      //helper.declarationLink(userAnswers).value mustBe Link(declarationLinkText, controllers.register.routes.DeclarationController.onPageLoad().url)
+    }
+  }
+
   override def establishersSection(): Unit = {
 
     "return the seq of establishers sub sections for non deleted establishers which are all completed" in {

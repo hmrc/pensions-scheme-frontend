@@ -27,12 +27,18 @@ case class SchemeDetailsTaskList(beforeYouStart: SchemeDetailsTaskListSection,
                                  establishers: Seq[SchemeDetailsTaskListSection],
                                  addTrusteeHeader : Option[SchemeDetailsTaskListSection],
                                  trustees: Seq[SchemeDetailsTaskListSection],
-                                 declaration: Option[Link] = None,
+                                 declaration: Option[SchemeDetailsTaskListDeclarationSection] = None,
                                  h1: String,
                                  h2: String,
                                  h3: Option[String],
                                  pageTitle: String
                                 ) {
+}
+
+case class SchemeDetailsTaskListDeclarationSection(declarationLink: Option[Link])
+
+object SchemeDetailsTaskListDeclarationSection {
+  implicit val formats: OFormat[SchemeDetailsTaskListDeclarationSection] = Json.format[SchemeDetailsTaskListDeclarationSection]
 }
 
 object SchemeDetailsTaskList {
