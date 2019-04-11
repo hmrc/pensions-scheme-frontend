@@ -37,13 +37,13 @@
                     }
                 </div>
 
-
-                <div>
-                    <a id="person-@{entity.index}-delete" href="@entity.deleteLink">
-                        @messages("site.delete")
-                    </a>
-                </div>
-
+                @if(entities.length > 1) {
+                    <div>
+                        <a id="person-@{entity.index}-delete" href="@entity.deleteLink">
+                            @messages("site.delete")
+                        </a>
+                    </div>
+                }
 
             <div>
                 <a id="person-@{entity.index}-edit" href="@entity.editLink">
