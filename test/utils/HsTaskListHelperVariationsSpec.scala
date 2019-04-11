@@ -155,6 +155,8 @@ class HsTaskListHelperVariationsSpec extends HsTaskListHelperBehaviour {
       val helper = createTaskListHelper(userAnswers)
       helper.declarationSection(userAnswers).isDefined mustBe true
     }
+
+    behave like declarationSection()
   }
 
   override def establishersSection(): Unit = {

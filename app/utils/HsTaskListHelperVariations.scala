@@ -66,7 +66,7 @@ class HsTaskListHelperVariations(answers: UserAnswers, viewOnly:Boolean)(implici
     if (viewOnly) {
       None
     } else {
-      Some(SchemeDetailsTaskListDeclarationSection(None))
+      Some(SchemeDetailsTaskListDeclarationSection(declarationLink(userAnswers)))
     }
 
   private def listOfSectionNameAsLink(sections: Seq[Entity[_]], userAnswers: UserAnswers): Seq[SchemeDetailsTaskListSection] = {
@@ -88,14 +88,14 @@ class HsTaskListHelperVariations(answers: UserAnswers, viewOnly:Boolean)(implici
   override protected[utils] def trustees(userAnswers: UserAnswers): Seq[SchemeDetailsTaskListSection] =
     listOfSectionNameAsLink(userAnswers.allTrustees, userAnswers)
 
-  override def declarationEnabled(userAnswers: UserAnswers): Boolean = {
-      val isTrusteeOptional = userAnswers.get(HaveAnyTrusteesId).contains(false)
-      Seq(
-        userAnswers.get(IsBeforeYouStartCompleteId),
-        userAnswers.get(IsAboutMembersCompleteId),
-        userAnswers.get(IsAboutBenefitsAndInsuranceCompleteId),
-        Some(isAllEstablishersCompleted(userAnswers)),
-        Some(isTrusteeOptional | isAllTrusteesCompleted(userAnswers))
-      ).forall(_.contains(true)) && userAnswers.isUserAnswerUpdated()
-    }
+//  override def declarationEnabled(userAnswers: UserAnswers): Boolean = {
+//      val isTrusteeOptional = userAnswers.get(HaveAnyTrusteesId).contains(false)
+//      Seq(
+//        userAnswers.get(IsBeforeYouStartCompleteId),
+//        userAnswers.get(IsAboutMembersCompleteId),
+//        userAnswers.get(IsAboutBenefitsAndInsuranceCompleteId),
+//        Some(isAllEstablishersCompleted(userAnswers)),
+//        Some(isTrusteeOptional | isAllTrusteesCompleted(userAnswers))
+//      ).forall(_.contains(true)) && userAnswers.isUserAnswerUpdated()
+//    }
 }
