@@ -40,7 +40,7 @@ class HsTaskListHelperRegistrationSpec extends HsTaskListHelperBehaviour {
   }
 
   "page title" must {
-    "display \"Pension scheme details\"" in {
+    "display Pension scheme details" in {
       val userAnswers = UserAnswers()
       val helper = new HsTaskListHelperRegistration(userAnswers)
       helper.taskList.pageTitle mustBe messages("messages__schemeTaskList__title")
@@ -121,22 +121,22 @@ class HsTaskListHelperRegistrationSpec extends HsTaskListHelperBehaviour {
 
   "addEstablisherHeader " must {
 
-    behave like addEstablisherHeader()
+    behave like addEstablisherHeader(NormalMode, None)
   }
 
   "addTrusteeHeader " must {
 
-    behave like addTrusteeHeader()
+    behave like addTrusteeHeader(NormalMode, None)
   }
 
   "establishers" must {
 
-    behave like establishersSection()
+    behave like establishersSection(NormalMode, None)
   }
 
   "trustees" must {
 
-    behave like trusteesSection()
+    behave like trusteesSection(NormalMode, None)
   }
 
   "declarationEnabled" must {

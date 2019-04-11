@@ -70,7 +70,7 @@ abstract class HsTaskListHelper(answers: UserAnswers)(implicit messages: Message
     }
   }
 
-  private[utils] def addEstablisherHeader(userAnswers: UserAnswers, mode: Mode = NormalMode, srn: Option[String] = None): SchemeDetailsTaskListSection = {
+  private[utils] def addEstablisherHeader(userAnswers: UserAnswers, mode: Mode, srn: Option[String]): SchemeDetailsTaskListSection = {
     if (userAnswers.allEstablishersAfterDelete.isEmpty) {
       SchemeDetailsTaskListSection(None, Link(addEstablisherLinkText,
         controllers.register.establishers.routes.EstablisherKindController.onPageLoad(mode,
@@ -81,10 +81,10 @@ abstract class HsTaskListHelper(answers: UserAnswers)(implicit messages: Message
     }
   }
 
-  private[utils] def establishers(userAnswers: UserAnswers, mode: Mode = NormalMode, srn: Option[String] = None): Seq[SchemeDetailsTaskListSection] =
+  private[utils] def establishers(userAnswers: UserAnswers, mode: Mode, srn: Option[String]): Seq[SchemeDetailsTaskListSection] =
     listOf(userAnswers.allEstablishers, mode, srn)
 
-  private[utils] def addTrusteeHeader(userAnswers: UserAnswers, mode: Mode = NormalMode, srn: Option[String] = None): Option[SchemeDetailsTaskListSection] = {
+  private[utils] def addTrusteeHeader(userAnswers: UserAnswers, mode: Mode, srn: Option[String]): Option[SchemeDetailsTaskListSection] = {
     userAnswers.get(HaveAnyTrusteesId) match {
       case None | Some(true) =>
         if (userAnswers.allTrusteesAfterDelete.nonEmpty) {
@@ -110,7 +110,7 @@ abstract class HsTaskListHelper(answers: UserAnswers)(implicit messages: Message
     }
   }
 
-  private[utils] def trustees(userAnswers: UserAnswers, mode: Mode = NormalMode, srn: Option[String] = None): Seq[SchemeDetailsTaskListSection] =
+  private[utils] def trustees(userAnswers: UserAnswers, mode: Mode, srn: Option[String]): Seq[SchemeDetailsTaskListSection] =
     listOf(userAnswers.allTrustees, mode, srn)
 
   private[utils] def declarationEnabled(userAnswers: UserAnswers): Boolean = {

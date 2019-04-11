@@ -64,10 +64,10 @@ class AddEstablisherViewSpec extends QuestionViewBehaviours[Option[Boolean]] wit
   val form: Form[Option[Boolean]] = new AddEstablisherFormProvider()(establishers)
 
   private def createView: () => HtmlFormat.Appendable = () =>
-    addEstablisher(frontendAppConfig, form, NormalMode, Seq.empty, None, postCall(NormalMode, None))(fakeRequest, messages)
+    addEstablisher(frontendAppConfig, form, NormalMode, Seq.empty, None, None)(fakeRequest, messages)
 
   private def createView(establishers: Seq[Establisher[_]] = Seq.empty): () => HtmlFormat.Appendable = () =>
-    addEstablisher(frontendAppConfig, form, NormalMode, establishers, None, postCall(NormalMode, None))(fakeRequest, messages)
+    addEstablisher(frontendAppConfig, form, NormalMode, establishers, None, None)(fakeRequest, messages)
 
   "AddEstablisher view" must {
     behave like normalPage(createView(), messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"))

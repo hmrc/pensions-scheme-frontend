@@ -17,7 +17,7 @@
 package utils
 
 import identifiers._
-import models.{Link, UpdateMode}
+import models.{Link, Mode, UpdateMode}
 import play.api.i18n.Messages
 import viewmodels._
 
@@ -32,6 +32,13 @@ class HsTaskListHelperVariations(answers: UserAnswers, srn: String)(implicit mes
 
     Seq(SchemeDetailsTaskListSection(userAnswers.get(IsAboutMembersCompleteId), membersLink, None),
       SchemeDetailsTaskListSection(userAnswers.get(IsAboutBenefitsAndInsuranceCompleteId), benefitsAndInsuranceLink, None))
+  }
+
+  override protected[utils] def beforeYouStartSection(userAnswers: UserAnswers, mode: Mode, srn: Option[String]): SchemeDetailsTaskListSection = {
+    val beforeYouStartLinkText = messages("messages__variations_schemeTaskList__before_you_start_link_text")
+    SchemeDetailsTaskListSection(userAnswers.get(IsBeforeYouStartCompleteId),
+      Link(beforeYouStartLinkText, controllers.routes.CheckYourAnswersBeforeYouStartController.onPageLoad(mode, srn).url),
+      None)
   }
 
   def taskList: SchemeDetailsTaskList = {

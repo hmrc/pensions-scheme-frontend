@@ -23,7 +23,7 @@ import identifiers.register.establishers.individual.EstablisherDetailsId
 import identifiers.register.trustees.IsTrusteeCompleteId
 import identifiers.register.trustees.individual.TrusteeDetailsId
 import models.person.PersonDetails
-import models.{Link, NormalMode}
+import models.{Link, NormalMode, UpdateMode}
 import org.joda.time.LocalDate
 import play.api.libs.json.JsResult
 import utils.behaviours.HsTaskListHelperBehaviour
@@ -34,23 +34,23 @@ class HsTaskListHelperVariationsSpec extends HsTaskListHelperBehaviour {
     "have the name of the scheme" in {
       val name = "scheme name 1"
       val userAnswers = UserAnswers().set(SchemeNameId)(name).asOpt.value
-      val helper = new HsTaskListHelperVariations(userAnswers)
+      val helper = new HsTaskListHelperVariations(userAnswers, "test srn")
       helper.taskList.h1 mustBe name
     }
   }
 
   "h2" must {
-    "display \"Scheme details\"" in {
+    "display Scheme details" in {
       val userAnswers = UserAnswers()
-      val helper = new HsTaskListHelperVariations(userAnswers)
+      val helper = new HsTaskListHelperVariations(userAnswers, "test srn")
       helper.taskList.h2 mustBe messages("messages__scheme_details__title")
     }
   }
 
   "page title" must {
-    "display \"Scheme details\"" in {
+    "display Scheme details" in {
       val userAnswers = UserAnswers()
-      val helper = new HsTaskListHelperVariations(userAnswers)
+      val helper = new HsTaskListHelperVariations(userAnswers, "test srn")
       helper.taskList.pageTitle mustBe messages("messages__scheme_details__title")
     }
   }
@@ -60,33 +60,19 @@ class HsTaskListHelperVariationsSpec extends HsTaskListHelperBehaviour {
   }
 
   "aboutSection " must {
-    "return the the Seq of members and benefits section with " +
-      "links of the first pages of individual sub sections when not completed " in {
-      val userAnswers = UserAnswers().set(IsAboutMembersCompleteId)(false).flatMap(
-          _.set(IsAboutBenefitsAndInsuranceCompleteId)(false)
-      ).asOpt.value
-      val helper = new HsTaskListHelperVariations(userAnswers)
-      helper.aboutSection(userAnswers) mustBe
-        Seq(
-          SchemeDetailsTaskListSection(Some(false), Link(aboutMembersLinkText,
-            controllers.routes.WhatYouWillNeedMembersController.onPageLoad().url), None),
-          SchemeDetailsTaskListSection(Some(false), Link(aboutBenefitsAndInsuranceLinkText,
-            controllers.routes.WhatYouWillNeedBenefitsInsuranceController.onPageLoad().url), None)
-        )
-    }
 
     "return the the Seq of members and benefits section with " +
-      "links of the cya pages of individual sub sections when completed " in {
+      "links of the cya pages of individual sub sections " in {
       val userAnswers = UserAnswers().set(IsAboutMembersCompleteId)(true).flatMap(
           _.set(IsAboutBenefitsAndInsuranceCompleteId)(true)
       ).asOpt.value
-      val helper = new HsTaskListHelperVariations(userAnswers)
+      val helper = new HsTaskListHelperVariations(userAnswers, "test srn")
       helper.aboutSection(userAnswers) mustBe
         Seq(
           SchemeDetailsTaskListSection(Some(true), Link(aboutMembersLinkText,
-            controllers.routes.CheckYourAnswersMembersController.onPageLoad(NormalMode, None).url), None),
+            controllers.routes.CheckYourAnswersMembersController.onPageLoad(UpdateMode, Some("test srn")).url), None),
           SchemeDetailsTaskListSection(Some(true), Link(aboutBenefitsAndInsuranceLinkText,
-            controllers.routes.CheckYourAnswersBenefitsAndInsuranceController.onPageLoad(NormalMode, None).url), None)
+            controllers.routes.CheckYourAnswersBenefitsAndInsuranceController.onPageLoad(UpdateMode, Some("test srn")).url), None)
         )
     }
   }
@@ -94,35 +80,35 @@ class HsTaskListHelperVariationsSpec extends HsTaskListHelperBehaviour {
   "workingKnowledgeSection " must {
     "not display when do you have working knowledge is false " in {
       val userAnswers = UserAnswers().set(DeclarationDutiesId)(false).asOpt.value
-      val helper = new HsTaskListHelperVariations(userAnswers)
+      val helper = new HsTaskListHelperVariations(userAnswers, "test srn")
       helper.taskList.workingKnowledge mustBe None
     }
 
     "not display when do you have working knowledge is true " in {
       val userAnswers = UserAnswers().set(DeclarationDutiesId)(true).asOpt.value
-      val helper = new HsTaskListHelperVariations(userAnswers)
+      val helper = new HsTaskListHelperVariations(userAnswers, "test srn")
       helper.taskList.workingKnowledge mustBe None
     }
   }
 
   "addEstablisherHeader " must {
 
-    behave like addEstablisherHeader()
+    behave like addEstablisherHeader(UpdateMode, Some("test-srn"))
   }
 
   "addTrusteeHeader " must {
 
-    behave like addTrusteeHeader()
+    behave like addTrusteeHeader(UpdateMode, Some("test-srn"))
   }
 
   "establishers" must {
 
-    behave like establishersSection()
+    behave like establishersSection(UpdateMode, Some("test-srn"))
   }
 
   "trustees" must {
 
-    behave like trusteesSection()
+    behave like trusteesSection(UpdateMode, Some("test-srn"))
   }
 
   "declarationEnabled" must {

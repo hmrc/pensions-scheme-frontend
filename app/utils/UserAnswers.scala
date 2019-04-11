@@ -159,17 +159,23 @@ case class UserAnswers(json: JsValue = Json.obj()) {
         (JsPath \ EstablisherCompanyVatId.toString).readNullable[Vat] and
         (JsPath \ EstablisherCompanyPayeId.toString).readNullable[Paye] and
         (JsPath \ IsEstablisherCompleteId.toString).readNullable[Boolean]
-      ) ((details, vat, paye, isComplete) =>
+      ) ((details, vat, paye, isComplete) => {
       EstablisherCompanyEntity(EstablisherCompanyDetailsId(index),
         details.companyName, details.isDeleted, isCompanyComplete(vat, paye, isComplete).getOrElse(false))
+    }
     )
 
-    private def readsPartnership(index: Int): Reads[Establisher[_]] = (
-      (JsPath \ PartnershipDetailsId.toString).read[PartnershipDetails] and
-        (JsPath \ IsEstablisherCompleteId.toString).readNullable[Boolean]
-      ) ((details, isComplete) =>
-      EstablisherPartnershipEntity(PartnershipDetailsId(index), details.name, details.isDeleted, isComplete.getOrElse(false))
-    )
+    private def readsPartnership(index: Int): Reads[Establisher[_]] = {
+      println("\n\n\n readsPartnership ")
+      (
+        (JsPath \ PartnershipDetailsId.toString).read[PartnershipDetails] and
+          (JsPath \ IsEstablisherCompleteId.toString).readNullable[Boolean]
+        ) ((details, isComplete) => {
+        println("\n\n\n details partnership")
+        EstablisherPartnershipEntity(PartnershipDetailsId(index), details.name, details.isDeleted, isComplete.getOrElse(false))
+      }
+      )
+    }
 
     private def readsSkeleton(index: Int): Reads[Establisher[_]] = new Reads[Establisher[_]] {
       override def reads(json: JsValue): JsResult[Establisher[_]] = {
@@ -182,6 +188,7 @@ case class UserAnswers(json: JsValue = Json.obj()) {
     override def reads(json: JsValue): JsResult[Seq[Establisher[_]]] = {
       json \ EstablishersId.toString match {
         case JsDefined(JsArray(establishers)) =>
+          println("\n\n\n establishers : "+establishers)
           readEntities(
             establishers,
             index => readsIndividual(index)
