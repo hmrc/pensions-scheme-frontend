@@ -51,7 +51,7 @@ abstract class HsTaskListHelper(answers: UserAnswers)(implicit messages: Message
 
   private[utils] def beforeYouStartSection(userAnswers: UserAnswers): SchemeDetailsTaskListSection = {
     val link = userAnswers.get(IsBeforeYouStartCompleteId) match {
-      case Some(true) => Link(beforeYouStartLinkText, controllers.routes.CheckYourAnswersBeforeYouStartController.onPageLoad().url)
+      case Some(true) => Link(beforeYouStartLinkText, controllers.routes.CheckYourAnswersBeforeYouStartController.onPageLoad(NormalMode, None).url)
       case _ => Link(beforeYouStartLinkText, controllers.routes.SchemeNameController.onPageLoad(NormalMode).url)
     }
     SchemeDetailsTaskListSection(userAnswers.get(IsBeforeYouStartCompleteId), link, None)

@@ -90,7 +90,8 @@ class AdviserCheckYourAnswersControllerSpec extends ControllerSpecBase with Scal
         frontendAppConfig,
         Seq(adviserSection),
         postUrl,
-        None
+        None,
+        viewOnly = false
       )(fakeRequest, messages).toString
 
       status(result) mustBe OK
@@ -161,7 +162,8 @@ object AdviserCheckYourAnswersControllerSpec extends ControllerSpecBase with Moc
     frontendAppConfig,
     Seq(adviserSection),
     postUrl,
-    None
+    None,
+    viewOnly = false
   )(fakeRequest, messages).toString
 
 }

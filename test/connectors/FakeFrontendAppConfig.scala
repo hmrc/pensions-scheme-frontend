@@ -1,4 +1,4 @@
-@*
+/*
  * Copyright 2019 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,19 +12,13 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *@
+ */
 
-@import viewmodels.AnswerSection
-@import views.html._
+package connectors
 
-@(answerSection: AnswerSection, idPath: String, viewOnly:Boolean = false)(implicit messages: Messages)
+import base.SpecBase
+import config.FrontendAppConfig
 
-@if(answerSection.headingKey.isDefined){
-    <h2 id="cya-@idPath-heading" class="bold">@messages(answerSection.headingKey.get)</h2>
+object FakeFrontendAppConfig extends SpecBase {
+  def getConfig: FrontendAppConfig = frontendAppConfig
 }
-
-<ul class="govuk-check-your-answers form-group cya-questions-long">
-    @for((row, i) <- answerSection.rows.zipWithIndex){
-        @components.answer_row(row, idPath + "-" + i.toString, viewOnly)
-    }
-</ul>

@@ -17,9 +17,11 @@
 package views
 
 import controllers.routes
-import models.Mode
+import models.{Mode, NormalMode, UpdateMode}
+import models.Mode.checkMode
+import models.{Link, Mode, NormalMode}
 import play.twirl.api.HtmlFormat
-import viewmodels.Section
+import viewmodels.{AnswerRow, AnswerSection, Section}
 import views.behaviours.{CheckYourAnswersBehaviours, ViewBehaviours}
 import views.html.check_your_answers
 
@@ -27,15 +29,28 @@ class CheckYourAnswersViewSpec extends CheckYourAnswersBehaviours with ViewBehav
 
   private val messageKeyPrefix = "checkYourAnswers"
 
-  private def emptyAnswerSections: Seq[Section] = Nil
+  private def emptyAnswerSections: Seq[AnswerSection] = Seq(AnswerSection(None, Seq(
+    AnswerRow(
+      messages("investmentRegulated.checkYourAnswersLabel"),
+      Seq("site.yes"),
+      answerIsMessageKey = true,
+      Some(Link("site.change", routes.InvestmentRegulatedSchemeController.onPageLoad(checkMode(NormalMode)).url,
+        Some(messages("messages__visuallyhidden__investmentRegulated"))))
+    )
+  )))
 
-  def createView(returnOverview: Boolean = false): () => HtmlFormat.Appendable = () =>
+  private val srn = "S123"
+
+  def createView(returnOverview: Boolean = false, mode: Mode = NormalMode, viewOnly: Boolean = false, srn: Option[String] = None): () => HtmlFormat.Appendable = () =>
     check_your_answers(
       frontendAppConfig,
       emptyAnswerSections,
       routes.IndexController.onPageLoad(),
       None,
-      returnOverview
+      returnOverview,
+      mode,
+      viewOnly,
+      srn
     )(fakeRequest, messages)
 
   def createViewWithData: (Seq[Section], Mode) => HtmlFormat.Appendable = (sections, mode) =>
@@ -44,16 +59,24 @@ class CheckYourAnswersViewSpec extends CheckYourAnswersBehaviours with ViewBehav
       sections,
       routes.IndexController.onPageLoad(),
       None,
-      mode = mode
+      mode = mode,
+      viewOnly = false
     )(fakeRequest, messages)
 
   "check_your_answers view" must {
 
     behave like normalPageWithTitle(createView(), messageKeyPrefix, messages("checkYourAnswers.hs.title"), messages("checkYourAnswers.hs.heading"))
 
+    behave like pageWithReturnChangeLink(createView())
+
+    behave like pageWithoutReturnChangeLink(createView(viewOnly = true))
+
     behave like pageWithReturnLink(createView(), (controllers.routes.SchemeTaskListController.onPageLoad().url))
 
     behave like pageWithReturnLink(createView(returnOverview = true), frontendAppConfig.managePensionsSchemeOverviewUrl.url)
+
+    behave like pageWithReturnLink(createView(returnOverview = false, UpdateMode, false, Some(srn)),
+      controllers.routes.PSASchemeDetailsController.onPageLoad(srn).url)
 
     behave like checkYourAnswersPage(createViewWithData)
   }
