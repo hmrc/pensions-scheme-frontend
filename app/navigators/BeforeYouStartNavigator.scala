@@ -28,7 +28,7 @@ import utils.{Navigator, UserAnswers}
 class BeforeYouStartNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector, frontendAppConfig: FrontendAppConfig) extends Navigator {
 
   private def checkYourAnswers: Option[NavigateTo] =
-    NavigateTo.dontSave(controllers.routes.CheckYourAnswersBeforeYouStartController.onPageLoad())
+    NavigateTo.dontSave(controllers.routes.CheckYourAnswersBeforeYouStartController.onPageLoad(NormalMode, None))
 
 
   override protected def routeMap(from: NavigateFrom): Option[NavigateTo] = from.id match {

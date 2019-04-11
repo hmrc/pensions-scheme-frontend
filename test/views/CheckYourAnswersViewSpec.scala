@@ -17,6 +17,7 @@
 package views
 
 import controllers.routes
+import models.{Mode, NormalMode, UpdateMode}
 import models.Mode.checkMode
 import models.{Link, Mode, NormalMode}
 import play.twirl.api.HtmlFormat
@@ -38,14 +39,18 @@ class CheckYourAnswersViewSpec extends CheckYourAnswersBehaviours with ViewBehav
     )
   )))
 
-  def createView(returnOverview: Boolean = false, viewOnly: Boolean = false): () => HtmlFormat.Appendable = () =>
+  private val srn = "S123"
+
+  def createView(returnOverview: Boolean = false, mode: Mode = NormalMode, viewOnly: Boolean = false, srn: Option[String] = None): () => HtmlFormat.Appendable = () =>
     check_your_answers(
       frontendAppConfig,
       emptyAnswerSections,
       routes.IndexController.onPageLoad(),
       None,
       returnOverview,
-      viewOnly = viewOnly
+      mode,
+      viewOnly,
+      srn
     )(fakeRequest, messages)
 
   def createViewWithData: (Seq[Section], Mode) => HtmlFormat.Appendable = (sections, mode) =>
@@ -69,6 +74,9 @@ class CheckYourAnswersViewSpec extends CheckYourAnswersBehaviours with ViewBehav
     behave like pageWithReturnLink(createView(), (controllers.routes.SchemeTaskListController.onPageLoad().url))
 
     behave like pageWithReturnLink(createView(returnOverview = true), frontendAppConfig.managePensionsSchemeOverviewUrl.url)
+
+    behave like pageWithReturnLink(createView(returnOverview = false, UpdateMode, false, Some(srn)),
+      controllers.routes.PSASchemeDetailsController.onPageLoad(srn).url)
 
     behave like checkYourAnswersPage(createViewWithData)
   }

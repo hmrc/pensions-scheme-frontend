@@ -68,7 +68,7 @@ class PSASchemeDetailsController @Inject()(appConfig: FrontendAppConfig,
     schemeDetailsConnector.getSchemeDetailsVariations(request.psaId.id, schemeIdType = "srn", srn).flatMap { userAnswers =>
       val taskList: SchemeDetailsTaskList = new HsTaskListHelperVariations(userAnswers).taskList
       schemeDetailsReadOnlyCacheConnector.upsert(request.externalId, userAnswers.json).map( _ =>
-        Ok(schemeDetailsTaskList(appConfig, taskList))
+        Ok(schemeDetailsTaskList(appConfig, taskList, isVariations = true))
       )
     }
   }

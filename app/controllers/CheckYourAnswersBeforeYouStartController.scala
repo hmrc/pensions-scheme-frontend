@@ -20,7 +20,7 @@ import config.FrontendAppConfig
 import controllers.actions._
 import identifiers.{DeclarationDutiesId, _}
 import javax.inject.Inject
-import models.CheckMode
+import models.{CheckMode, Mode}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
@@ -41,7 +41,7 @@ class CheckYourAnswersBeforeYouStartController @Inject()(appConfig: FrontendAppC
                                                         )(implicit val ec: ExecutionContext) extends FrontendController
   with Enumerable.Implicits with I18nSupport with Retrievals {
 
-  def onPageLoad: Action[AnyContent] = (authenticate andThen getData() andThen requireData) {
+  def onPageLoad(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData() andThen requireData) {
     implicit request =>
 
       implicit val userAnswers = request.userAnswers
@@ -58,13 +58,13 @@ class CheckYourAnswersBeforeYouStartController @Inject()(appConfig: FrontendAppC
       Ok(check_your_answers(
         appConfig,
         Seq(beforeYouStart),
-        routes.CheckYourAnswersBeforeYouStartController.onSubmit(),
+        routes.CheckYourAnswersBeforeYouStartController.onSubmit(mode, srn),
         existingSchemeName,
         returnOverview = !userAnswers.get(IsBeforeYouStartCompleteId).getOrElse(false),
-        viewOnly = request.viewOnly))
+        mode, viewOnly = request.viewOnly, srn))
   }
 
-  def onSubmit: Action[AnyContent] = (authenticate andThen getData() andThen requireData).async {
+  def onSubmit(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData() andThen requireData).async {
     implicit request =>
       sectionComplete.setCompleteFlag(request.externalId, IsBeforeYouStartCompleteId, request.userAnswers, value = true) map { _ =>
         Redirect(controllers.routes.SchemeTaskListController.onPageLoad())
