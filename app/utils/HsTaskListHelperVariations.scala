@@ -16,56 +16,80 @@
 
 package utils
 
-import identifiers._
-import models.{Link, Mode, UpdateMode}
+import identifiers.{IsAboutBenefitsAndInsuranceCompleteId, IsAboutMembersCompleteId, SchemeNameId, _}
+import models.register.Entity
+import models.{Link, UpdateMode}
 import play.api.i18n.Messages
 import viewmodels._
 
-class HsTaskListHelperVariations(answers: UserAnswers, srn: String)(implicit messages: Messages) extends HsTaskListHelper(answers) {
+class HsTaskListHelperVariations(answers: UserAnswers, srn: Option[String])(implicit messages: Messages) extends HsTaskListHelper(answers) {
+
+  override protected lazy val beforeYouStartLinkText = messages("messages__schemeTaskList__scheme_info_link_text")
 
   override protected[utils] def aboutSection(userAnswers: UserAnswers): Seq[SchemeDetailsTaskListSection] = {
+    val membersLink = userAnswers.get(IsAboutMembersCompleteId) match {
+      case Some(true) => Link(aboutMembersLinkText, controllers.routes.CheckYourAnswersMembersController.onPageLoad(UpdateMode, srn).url)
+      case _ => Link(aboutMembersLinkText, controllers.routes.WhatYouWillNeedMembersController.onPageLoad().url)
+    }
 
-    val membersLink = Link(aboutMembersLinkText, controllers.routes.CheckYourAnswersMembersController.onPageLoad(UpdateMode, Some(srn)).url)
-
-    val benefitsAndInsuranceLink = Link(aboutBenefitsAndInsuranceLinkText,
-      controllers.routes.CheckYourAnswersBenefitsAndInsuranceController.onPageLoad(UpdateMode, Some(srn)).url)
+    val benefitsAndInsuranceLink = userAnswers.get(IsAboutBenefitsAndInsuranceCompleteId) match {
+      case Some(true) => Link(aboutBenefitsAndInsuranceLinkText,
+        controllers.routes.CheckYourAnswersBenefitsAndInsuranceController.onPageLoad(UpdateMode, srn).url)
+      case _ => Link(aboutBenefitsAndInsuranceLinkText,
+        controllers.routes.WhatYouWillNeedBenefitsInsuranceController.onPageLoad().url)
+    }
 
     Seq(SchemeDetailsTaskListSection(userAnswers.get(IsAboutMembersCompleteId), membersLink, None),
       SchemeDetailsTaskListSection(userAnswers.get(IsAboutBenefitsAndInsuranceCompleteId), benefitsAndInsuranceLink, None))
   }
 
-  override protected[utils] def beforeYouStartSection(userAnswers: UserAnswers, mode: Mode, srn: Option[String]): SchemeDetailsTaskListSection = {
-    val beforeYouStartLinkText = messages("messages__variations_schemeTaskList__before_you_start_link_text")
-    SchemeDetailsTaskListSection(userAnswers.get(IsBeforeYouStartCompleteId),
-      Link(beforeYouStartLinkText, controllers.routes.CheckYourAnswersBeforeYouStartController.onPageLoad(mode, srn).url),
-      None)
-  }
-
   def taskList: SchemeDetailsTaskList = {
+    val schemeName = answers.get(SchemeNameId).getOrElse("")
     SchemeDetailsTaskList(
-      beforeYouStartSection(answers, UpdateMode, Some(srn)),
+      beforeYouStartSection(answers, UpdateMode, srn),
+      messages("messages__schemeTaskList__about_scheme_header", schemeName),
       aboutSection(answers),
       None,
-      addEstablisherHeader(answers, UpdateMode, Some(srn)),
-      establishers(answers, UpdateMode, Some(srn)),
-      addTrusteeHeader(answers, UpdateMode, Some(srn)),
-      trustees(answers, UpdateMode, Some(srn)),
+      addEstablisherHeader(answers, UpdateMode, srn),
+      establishers(answers),
+      addTrusteeHeader(answers, UpdateMode, srn),
+      trustees(answers),
       declarationLink(answers),
       answers.get(SchemeNameId).getOrElse(""),
       messages("messages__scheme_details__title"),
+      Some(messages("messages__schemeTaskList__scheme_information_link_text")),
       messages("messages__scheme_details__title")
     )
   }
 
-  override def declarationEnabled(userAnswers: UserAnswers): Boolean = {
-    val isTrusteeOptional = userAnswers.get(HaveAnyTrusteesId).contains(false)
-    Seq(
-      userAnswers.get(IsBeforeYouStartCompleteId),
-      userAnswers.get(IsAboutMembersCompleteId),
-      userAnswers.get(IsAboutBenefitsAndInsuranceCompleteId),
-      Some(isAllEstablishersCompleted(userAnswers, UpdateMode)),
-      Some(isTrusteeOptional | isAllTrusteesCompleted(userAnswers, UpdateMode))
-    ).forall(_.contains(true)) && userAnswers.isUserAnswerUpdated()
+  private def listOfSectionNameAsLink(sections: Seq[Entity[_]]): Seq[SchemeDetailsTaskListSection] = {
+    val notDeletedElements = for ((section, index) <- sections.zipWithIndex) yield {
+      if (section.isDeleted) None else {
+        Some(SchemeDetailsTaskListSection(
+          Some(section.isCompleted),
+          Link(messages("messages__schemeTaskList__persons_details__link_text", section.name),
+            linkTarget(section, index, UpdateMode, srn)),
+          None)
+        )
+      }
+    }
+    notDeletedElements.flatten
   }
 
+  protected[utils] def establishers(userAnswers: UserAnswers): Seq[SchemeDetailsTaskListSection] =
+    listOfSectionNameAsLink(userAnswers.allEstablishers)
+
+  protected[utils] def trustees(userAnswers: UserAnswers): Seq[SchemeDetailsTaskListSection] =
+    listOfSectionNameAsLink(userAnswers.allTrustees)
+
+  override def declarationEnabled(userAnswers: UserAnswers): Boolean = {
+      val isTrusteeOptional = userAnswers.get(HaveAnyTrusteesId).contains(false)
+      Seq(
+        userAnswers.get(IsBeforeYouStartCompleteId),
+        userAnswers.get(IsAboutMembersCompleteId),
+        userAnswers.get(IsAboutBenefitsAndInsuranceCompleteId),
+        Some(isAllEstablishersCompleted(userAnswers)),
+        Some(isTrusteeOptional | isAllTrusteesCompleted(userAnswers))
+      ).forall(_.contains(true)) && userAnswers.isUserAnswerUpdated()
+    }
 }
