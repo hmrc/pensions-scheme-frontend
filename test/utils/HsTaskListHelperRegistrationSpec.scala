@@ -22,6 +22,7 @@ import utils.behaviours.HsTaskListHelperBehaviour
 import viewmodels.SchemeDetailsTaskListSection
 
 class HsTaskListHelperRegistrationSpec extends HsTaskListHelperBehaviour {
+  override val createTaskListHelper:UserAnswers => HsTaskListHelper = ua => new HsTaskListHelperRegistration(ua)
 
   "h1" must {
     "display appropriate heading" in {
@@ -39,6 +40,23 @@ class HsTaskListHelperRegistrationSpec extends HsTaskListHelperBehaviour {
     }
   }
 
+  "h3" must {
+    "not display \"Scheme Information\"" in {
+      val userAnswers = UserAnswers()
+      val helper = new HsTaskListHelperRegistration(userAnswers)
+      helper.taskList.h3 mustBe None
+    }
+  }
+
+  "about header" must {
+    "display \"About\"" in {
+      val userAnswers = UserAnswers()
+      val helper = new HsTaskListHelperRegistration(userAnswers)
+      helper.taskList.aboutHeader mustBe messages("messages__schemeTaskList__about_header")
+    }
+  }
+
+
   "page title" must {
     "display \"Pension scheme details\"" in {
       val userAnswers = UserAnswers()
@@ -48,7 +66,12 @@ class HsTaskListHelperRegistrationSpec extends HsTaskListHelperBehaviour {
   }
 
   "beforeYouStartSection " must {
-    behave like beforeYouStartSection()
+    behave like beforeYouStartSection(
+      new HsTaskListHelperRegistration(_),
+      beforeYouStartLinkText,
+      NormalMode,
+      None
+    )
   }
 
   "aboutSection " must {

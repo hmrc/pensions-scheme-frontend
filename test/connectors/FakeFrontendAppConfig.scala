@@ -14,14 +14,11 @@
  * limitations under the License.
  */
 
-package models.requests
+package connectors
 
-import play.api.mvc.{Request, WrappedRequest}
-import uk.gov.hmrc.domain.PsaId
-import utils.UserAnswers
+import base.SpecBase
+import config.FrontendAppConfig
 
-case class OptionalDataRequest[A](request: Request[A], externalId: String, userAnswers: Option[UserAnswers], psaId: PsaId, viewOnly: Boolean = false)
-  extends WrappedRequest[A](request) with IdentifiedRequest
-
-case class DataRequest[A](request: Request[A], externalId: String, userAnswers: UserAnswers, psaId: PsaId, viewOnly: Boolean = false)
-  extends WrappedRequest[A](request) with IdentifiedRequest
+object FakeFrontendAppConfig extends SpecBase {
+  def getConfig: FrontendAppConfig = frontendAppConfig
+}

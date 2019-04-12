@@ -35,49 +35,29 @@ class DataRetrievalImpl(dataConnector: UserAnswersCacheConnector,
                         updateConnector: UpdateSchemeCacheConnector,
                         lockConnector: PensionSchemeVarianceLockConnector,
                         mode: Mode,
-                        srn: Option[String],
-                        disableLock: Boolean) extends DataRetrieval {
+                        srn: Option[String]) extends DataRetrieval {
 
   override protected def transform[A](request: AuthenticatedRequest[A]): Future[OptionalDataRequest[A]] = {
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
     mode match {
-      case NormalMode | CheckMode => getOptionalRequest(dataConnector.fetch(request.externalId))(request)
+      case NormalMode | CheckMode => getOptionalRequest(dataConnector.fetch(request.externalId), viewOnly = false)(request)
 
       case UpdateMode | CheckUpdateMode =>
         srn.map { srn =>
-          lockConnector.getLock(request.psaId.id, srn).flatMap {
-            case Some(_) => getOptionalRequest(updateConnector.fetch(srn))(request)
-            case None if disableLock => getOptionalRequest(viewConnector.fetch(request.externalId))(request)
-            case None => placeLockAndGetRequest(srn)(request, implicitly)
+          lockConnector.isLockByPsaIdOrSchemeId(request.psaId.id, srn).flatMap {
+            case Some(VarianceLock) => getOptionalRequest(updateConnector.fetch(srn), viewOnly = false)(request)
+            case Some(_) => getOptionalRequest(viewConnector.fetch(request.externalId), viewOnly = true)(request)
+            case None => getOptionalRequest(viewConnector.fetch(request.externalId), viewOnly = false)(request)
           }
-        }.getOrElse(Future(emptyDataRequest(request)))
+        }.getOrElse(Future(OptionalDataRequest(request.request, request.externalId, None, request.psaId, false)))
     }
   }
 
-  def placeLockAndGetRequest[A](srn: String)(implicit request: AuthenticatedRequest[A], hc: HeaderCarrier): Future[OptionalDataRequest[A]] =
-    viewConnector.fetch(request.externalId).flatMap {
-      case Some(data) =>
-        lockConnector.lock(request.psaId.id, srn).flatMap {
-          case VarianceLock => updateConnector.upsert(srn, UserAnswers(data).json).map(_ => validDataRequest(data))
-          case _ => Future(validDataRequest(data))
-        }
-      case None => Future(emptyDataRequest)
-    }
-
-
-
-
-  def getOptionalRequest[A](f: Future[Option[JsValue]])(implicit request: AuthenticatedRequest[A]): Future[OptionalDataRequest[A]] =
+  def getOptionalRequest[A](f: Future[Option[JsValue]], viewOnly: Boolean)(implicit request: AuthenticatedRequest[A]): Future[OptionalDataRequest[A]] =
     f.map {
-      case None => emptyDataRequest
-      case Some(data) => validDataRequest(data)
+      case None => OptionalDataRequest(request.request, request.externalId, None, request.psaId, viewOnly)
+      case Some(data) => OptionalDataRequest(request.request, request.externalId, Some(UserAnswers(data)), request.psaId, viewOnly)
     }
-
-  private def emptyDataRequest[A](implicit request: AuthenticatedRequest[A]) =
-    OptionalDataRequest(request.request, request.externalId, None, request.psaId)
-
-  private def validDataRequest[A](data:JsValue)(implicit request: AuthenticatedRequest[A]) =
-    OptionalDataRequest(request.request, request.externalId, Some(UserAnswers(data)), request.psaId)
 }
 
 @ImplementedBy(classOf[DataRetrievalImpl])
@@ -89,7 +69,7 @@ class DataRetrievalActionImpl @Inject()(dataConnector: UserAnswersCacheConnector
                                         lockConnector: PensionSchemeVarianceLockConnector
                                        ) extends DataRetrievalAction {
   override def apply(mode: Mode, srn: Option[String]): DataRetrieval =
-    new DataRetrievalImpl(dataConnector, viewConnector, updateConnector, lockConnector, mode, srn, false)
+    new DataRetrievalImpl(dataConnector, viewConnector, updateConnector, lockConnector, mode, srn)
 }
 
 @ImplementedBy(classOf[DataRetrievalActionImpl])

@@ -23,6 +23,8 @@ import viewmodels._
 
 class HsTaskListHelperRegistration(answers: UserAnswers)(implicit messages: Messages) extends HsTaskListHelper(answers) {
 
+  override protected lazy val beforeYouStartLinkText = messages("messages__schemeTaskList__before_you_start_link_text")
+
   override protected[utils] def aboutSection(userAnswers: UserAnswers): Seq[SchemeDetailsTaskListSection] = {
     val membersLink = userAnswers.get(IsAboutMembersCompleteId) match {
       case Some(true) => Link(aboutMembersLinkText, controllers.routes.CheckYourAnswersMembersController.onPageLoad(NormalMode, None).url)
@@ -47,6 +49,7 @@ class HsTaskListHelperRegistration(answers: UserAnswers)(implicit messages: Mess
   def taskList: SchemeDetailsTaskList = {
     SchemeDetailsTaskList(
       beforeYouStartSection(answers),
+      messages("messages__schemeTaskList__about_header"),
       aboutSection(answers),
       workingKnowledgeSection(answers),
       addEstablisherHeader(answers),
@@ -56,6 +59,7 @@ class HsTaskListHelperRegistration(answers: UserAnswers)(implicit messages: Mess
       declarationLink(answers),
       messages("messages__schemeTaskList__heading"),
       messages("messages__schemeTaskList__before_you_start_header"),
+      None,
       messages("messages__schemeTaskList__title")
     )
   }

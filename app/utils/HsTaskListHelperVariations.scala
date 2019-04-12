@@ -16,12 +16,15 @@
 
 package utils
 
-import identifiers.{IsAboutBenefitsAndInsuranceCompleteId, IsAboutMembersCompleteId, SchemeNameId}
+import identifiers.{IsAboutBenefitsAndInsuranceCompleteId, IsAboutMembersCompleteId, SchemeNameId, _}
+import models.register.Entity
 import models.{Link, NormalMode}
 import play.api.i18n.Messages
 import viewmodels._
 
 class HsTaskListHelperVariations(answers: UserAnswers)(implicit messages: Messages) extends HsTaskListHelper(answers) {
+
+  override protected lazy val beforeYouStartLinkText = messages("messages__schemeTaskList__scheme_info_link_text")
 
   override protected[utils] def aboutSection(userAnswers: UserAnswers): Seq[SchemeDetailsTaskListSection] = {
     val membersLink = userAnswers.get(IsAboutMembersCompleteId) match {
@@ -41,8 +44,10 @@ class HsTaskListHelperVariations(answers: UserAnswers)(implicit messages: Messag
   }
 
   def taskList: SchemeDetailsTaskList = {
+    val schemeName = answers.get(SchemeNameId).getOrElse("")
     SchemeDetailsTaskList(
       beforeYouStartSection(answers),
+      messages("messages__schemeTaskList__about_scheme_header", schemeName),
       aboutSection(answers),
       None,
       addEstablisherHeader(answers),
@@ -52,8 +57,38 @@ class HsTaskListHelperVariations(answers: UserAnswers)(implicit messages: Messag
       declarationLink(answers),
       answers.get(SchemeNameId).getOrElse(""),
       messages("messages__scheme_details__title"),
+      Some(messages("messages__schemeTaskList__scheme_information_link_text")),
       messages("messages__scheme_details__title")
     )
   }
 
+  private def listOfSectionNameAsLink(sections: Seq[Entity[_]], userAnswers: UserAnswers): Seq[SchemeDetailsTaskListSection] = {
+    val notDeletedElements = for ((section, index) <- sections.zipWithIndex) yield {
+      if (section.isDeleted) None else {
+        Some(SchemeDetailsTaskListSection(
+          Some(section.isCompleted),
+          Link(messages("messages__schemeTaskList__persons_details__link_text", section.name), linkTarget(section, index, userAnswers)),
+          None)
+        )
+      }
+    }
+    notDeletedElements.flatten
+  }
+
+  override protected[utils] def establishers(userAnswers: UserAnswers): Seq[SchemeDetailsTaskListSection] =
+    listOfSectionNameAsLink(userAnswers.allEstablishers, userAnswers)
+
+  override protected[utils] def trustees(userAnswers: UserAnswers): Seq[SchemeDetailsTaskListSection] =
+    listOfSectionNameAsLink(userAnswers.allTrustees, userAnswers)
+
+  override def declarationEnabled(userAnswers: UserAnswers): Boolean = {
+      val isTrusteeOptional = userAnswers.get(HaveAnyTrusteesId).contains(false)
+      Seq(
+        userAnswers.get(IsBeforeYouStartCompleteId),
+        userAnswers.get(IsAboutMembersCompleteId),
+        userAnswers.get(IsAboutBenefitsAndInsuranceCompleteId),
+        Some(isAllEstablishersCompleted(userAnswers)),
+        Some(isTrusteeOptional | isAllTrusteesCompleted(userAnswers))
+      ).forall(_.contains(true)) && userAnswers.isUserAnswerUpdated()
+    }
 }

@@ -82,7 +82,8 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase {
           frontendAppConfig,
           Seq(partnerDetails, partnerContactDetails),
           routes.CheckYourAnswersController.onSubmit(NormalMode, firstIndex, firstIndex, None),
-          None
+          None,
+          viewOnly = false
         )(fakeRequest, messages).toString
 
         val result = controller(partnerAnswers.dataRetrievalAction).onPageLoad(NormalMode, firstIndex, firstIndex, None)(request)

@@ -45,26 +45,26 @@ class AddPartnersViewSpec extends YesNoViewBehaviours with EntityListBehaviours 
   private val johnDoeEntity = PartnerEntity(PartnerDetailsId(0, 0), johnDoe.fullName, isDeleted = false, isCompleted = false)
   private val joeBloggsEntity = PartnerEntity(PartnerDetailsId(0, 1), joeBloggs.fullName, isDeleted = false, isCompleted = true)
 
-  private def createView(partners: Seq[PartnerEntity] = Nil) =
+  private def createView(partners: Seq[PartnerEntity] = Nil, viewOnly: Boolean = false) =
     () =>
       addPartners(
         frontendAppConfig,
         form,
-        establisherIndex,
         partners,
         postUrl,
-        None
+        None,
+        viewOnly
       )(fakeRequest, messages)
 
-  private def createViewUsingForm(partners: Seq[PartnerEntity] = Nil) =
+  private def createViewUsingForm(partners: Seq[PartnerEntity] = Nil, viewOnly: Boolean = false) =
     (form: Form[_]) =>
       addPartners(
         frontendAppConfig,
         form,
-        establisherIndex,
         partners,
         postUrl,
-        None
+        None,
+        viewOnly
       )(fakeRequest, messages)
 
   "AddPartnershipPartners view" must {
@@ -121,6 +121,42 @@ class AddPartnersViewSpec extends YesNoViewBehaviours with EntityListBehaviours 
       val doc = asDocument(createView(Seq.fill(maxPartners)(johnDoeEntity))())
       doc must haveDynamicText("messages__addPartners_at_maximum")
       doc must haveDynamicText("messages__addCompanyDirectorsOrPartners_tell_us_if_you_have_more")
+    }
+
+    "not show the yes no inputs in viewOnly mode" in {
+      val doc = asDocument(createView(partners, viewOnly = true)())
+      doc.select("legend > span").size() mustBe 0
+    }
+
+    "not show the Submit button in viewOnly mode" in {
+      val doc = asDocument(createViewUsingForm(Seq(johnDoeEntity), viewOnly = true)(form))
+      val submit = doc.select("button#submit")
+      submit.size() mustBe 0
+    }
+
+    "not show delete, edit links or incomplete lozenge, but show view links in viewOnly mode" in {
+      val doc = asDocument(createViewUsingForm(Seq(johnDoeEntity), viewOnly = true)(form))
+      val editLink = doc.select(s"a[id=person-0-edit]")
+      val deleteLink = doc.select(s"a[id=person-0-delete]")
+      val viewLink = doc.select(s"a[id=person-0-view]")
+      val incompleteLozenge = doc.select(s"span[class=rejected]")
+      deleteLink.size() mustBe 0
+      editLink.size() mustBe 0
+      viewLink.size() mustBe 1
+      incompleteLozenge.size() mustBe 0
+    }
+
+    "show delete and edit links and incomplete lozenge, but not show view links when viewOnly is false" in {
+      val doc = asDocument(createViewUsingForm(Seq(johnDoeEntity), viewOnly = false)(form))
+      println(doc)
+      val editLink = doc.select(s"a[id=person-0-edit]")
+      val deleteLink = doc.select(s"a[id=person-0-delete]")
+      val viewLink = doc.select(s"a[id=person-0-view]")
+      val incompleteLozenge = doc.select(s"span[class=rejected]")
+      deleteLink.size() mustBe 1
+      editLink.size() mustBe 1
+      viewLink.size() mustBe 0
+      incompleteLozenge.size() mustBe 1
     }
 
     behave like pageWithReturnLink(createView(), getReturnLink)

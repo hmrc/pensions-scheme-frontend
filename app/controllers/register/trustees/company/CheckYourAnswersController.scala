@@ -95,7 +95,8 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
         Seq(companyDetailsSection, contactDetailsSection),
         routes.CheckYourAnswersController.onSubmit(mode, index, None),
         existingSchemeName,
-        mode = mode
+        mode = mode,
+        viewOnly = request.viewOnly
       )))
   }
 

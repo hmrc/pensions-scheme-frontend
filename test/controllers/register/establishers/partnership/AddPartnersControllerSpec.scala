@@ -67,10 +67,10 @@ class AddPartnersControllerSpec extends ControllerSpecBase {
     addPartners(
       frontendAppConfig,
       form,
-      establisherIndex,
       partners,
       postUrl,
-      None
+      None,
+      false
     )(fakeRequest, messages).toString
 
   private val partnershipName = "MyCo Ltd"

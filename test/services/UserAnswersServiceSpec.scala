@@ -16,119 +16,97 @@
 
 package services
 
-import com.github.tomakehurst.wiremock.client.WireMock._
+import base.SpecBase
+import com.google.inject.Inject
+import config.FrontendAppConfig
+import connectors.{PensionSchemeVarianceLockConnector, SubscriptionCacheConnector, UpdateSchemeCacheConnector}
 import identifiers.TypedIdentifier
-import models.{CheckMode, NormalMode, UpdateMode}
+import models._
 import models.requests.DataRequest
+import org.mockito.Matchers.any
+import org.mockito.Mockito._
+import org.scalatest.mockito.MockitoSugar
 import org.scalatest.{AsyncWordSpec, MustMatchers}
-import play.api.libs.json.{JsBoolean, Json}
+import play.api.libs.json.{Format, JsValue, Json}
 import play.api.mvc.AnyContent
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.{FakeDataRequest, UserAnswers, WireMockHelper}
+import utils.{FakeDataRequest, UserAnswers}
 
-class UserAnswersServiceSpec extends AsyncWordSpec with MustMatchers with WireMockHelper {
+import scala.concurrent.{ExecutionContext, Future}
 
-  protected object FakeIdentifier extends TypedIdentifier[String] {
-    override def toString: String = "fake-identifier"
-  }
+class UserAnswersServiceSpec extends AsyncWordSpec with MustMatchers with MockitoSugar {
 
-  override protected def portConfigKey: String = "microservice.services.pensions-scheme.port"
-
-  protected implicit val hc: HeaderCarrier = HeaderCarrier()
-  protected implicit val request: DataRequest[AnyContent] = FakeDataRequest(UserAnswers(Json.obj()))
-  private val id = "test-external-id"
-  private val srn = "S1234567890"
-
-  protected def urlNormal(id: String): String = s"/pensions-scheme/journey-cache/scheme/$id"
-  protected def urlUpdate(id: String): String = s"/pensions-scheme/journey-cache/update-scheme/$id"
-
-  protected def lastUpdatedUrl(id: String) = s"/pensions-scheme/journey-cache/scheme/$id/lastUpdated"
-
-  protected lazy val service: UserAnswersService = injector.instanceOf[UserAnswersService]
-
+  import UserAnswersServiceSpec._
 
   ".save" must {
 
-    "save data with userAnswersCacheConnector in NormalMode" in {
+    "save data with subscriptionConnector in NormalMode" in {
 
-      val json = Json.obj(
-        "fake-identifier" -> "foobar"
-      )
-      val value = Json.stringify(json)
+      when(subscriptionConnector.save(any(), any(), any())(any(), any(), any()))
+        .thenReturn(Future(json))
 
-      server.stubFor(
-        get(urlEqualTo(urlNormal(id)))
-          .willReturn(
-            notFound
-          )
-      )
-
-      server.stubFor(
-        post(urlEqualTo(urlNormal(id)))
-          .withRequestBody(equalTo(value))
-          .willReturn(
-            ok
-          )
-      )
-
-      service.save(NormalMode, None, FakeIdentifier, "foobar") map {
+      testService.save(NormalMode, None, FakeIdentifier, "foobar") map {
         _ mustEqual json
       }
     }
 
-    "save data with userAnswersCacheConnector in CheckMode" in {
+    "save data with updateSchemeCacheConnector in UpdateMode when logged in User holds the lock" in {
 
-      val json = Json.obj(
-        "fake-identifier" -> "foobar"
-      )
-      val value = Json.stringify(json)
+      when(lockConnector.lock(any(), any())(any(), any()))
+        .thenReturn(Future(VarianceLock))
 
-      server.stubFor(
-        get(urlEqualTo(urlNormal(id)))
-          .willReturn(
-            notFound
-          )
-      )
+      when(updateConnector.upsert(any(), any())(any(), any()))
+        .thenReturn(Future(json))
 
-      server.stubFor(
-        post(urlEqualTo(urlNormal(id)))
-          .withRequestBody(equalTo(value))
-          .willReturn(
-            ok
-          )
-      )
-
-      service.save(CheckMode, None, FakeIdentifier, "foobar") map {
-        _ mustEqual json
-      }
-    }
-
-    "save data with updateSchemeCacheConnector in UpdateMode" in {
-
-      val json = Json.obj(
-        "fake-identifier" -> "foobar",
-        "changeOfEstablisherOrTrustDetails" -> true
-      )
-
-      val value = Json.stringify(json)
-
-      server.stubFor(
-        get(urlEqualTo(urlUpdate(srn)))
-          .willReturn(
-            notFound()
-          )
-      )
-
-      server.stubFor(
-        post(urlEqualTo(urlUpdate(srn)))
-          .withRequestBody(equalTo(value))
-          .willReturn(
-            ok
-          )
-      )
-
-      service.save(UpdateMode, Some(srn), FakeIdentifier, "foobar") map {result =>
+      testService.save(UpdateMode, Some(srn), FakeIdentifier, "foobar") map {result =>
         result mustEqual json
+      }
+    }
+
+    "not perform any action UpdateMode/ CheckUpdateMode when user does not hold the lock" in {
+
+      when(lockConnector.lock(any(), any())(any(), any()))
+        .thenReturn(Future(SchemeLock))
+
+      testService.save(UpdateMode, Some(srn), FakeIdentifier, "foobar") map {result =>
+        result mustEqual Json.obj()
+      }
+    }
+
+  }
+
+  ".upsert" must {
+
+    "upsert data with subscriptionConnector in CheckMode" in {
+
+      when(subscriptionConnector.upsert(any(), any())(any(), any()))
+        .thenReturn(Future(json))
+
+      testService.upsert(CheckMode, None, json) map {
+        _ mustEqual json
+      }
+    }
+
+    "upsert data with updateSchemeCacheConnector in UpdateMode when logged in User holds the lock" in {
+
+      when(lockConnector.lock(any(), any())(any(), any()))
+        .thenReturn(Future(VarianceLock))
+
+      when(updateConnector.upsert(any(), any())(any(), any()))
+        .thenReturn(Future(json))
+
+      testService.upsert(UpdateMode, Some(srn), json) map {result =>
+        result mustEqual json
+      }
+    }
+
+    "not perform any action UpdateMode/ CheckUpdateMode when user does not hold the lock" in {
+
+      when(lockConnector.lock(any(), any())(any(), any()))
+        .thenReturn(Future(SchemeLock))
+
+      testService.upsert(UpdateMode, Some(srn), json) map { result =>
+        result mustEqual Json.obj()
       }
     }
 
@@ -136,71 +114,83 @@ class UserAnswersServiceSpec extends AsyncWordSpec with MustMatchers with WireMo
 
   ".remove" must {
     "remove existing data in NormalMode" in {
-      val json = Json.obj(
-        FakeIdentifier.toString -> "fake value",
-        "other-key" -> "meh"
-      )
+
+      when(subscriptionConnector.remove(any(), any())(any(), any()))
+        .thenReturn(Future(json))
+
+      testService.remove(NormalMode, None, FakeIdentifier) map {
+        _ mustEqual json
+      }
+    }
+
+    "remove existing data in UpdateMode/ CheckUpdateMode when user holds the lock" in {
 
       val updatedJson = Json.obj(
         "other-key" -> "meh"
       )
 
-      val value = Json.stringify(json)
-      val updatedValue = Json.stringify(updatedJson)
+      when(lockConnector.lock(any(), any())(any(), any()))
+        .thenReturn(Future(VarianceLock))
 
-      server.stubFor(
-        get(urlEqualTo(urlNormal(id)))
-          .willReturn(
-            ok(value)
-          )
-      )
+      when(updateConnector.remove(any(), any())(any(), any()))
+        .thenReturn(Future(updatedJson))
 
-      server.stubFor(
-        post(urlEqualTo(urlNormal(id)))
-          .withRequestBody(equalTo(updatedValue))
-          .willReturn(
-            ok
-          )
-      )
+        testService.remove(UpdateMode, Some(srn), FakeIdentifier) map {
+          _ mustEqual updatedJson
+        }
+      }
 
-      service.remove(NormalMode, None, FakeIdentifier) map {
-        _ mustEqual updatedJson
+    "not perform any action UpdateMode/ CheckUpdateMode when user does not hold the lock" in {
+      when(lockConnector.lock(any(), any())(any(), any()))
+        .thenReturn(Future(SchemeLock))
+
+      testService.remove(UpdateMode, Some(srn), FakeIdentifier) map {
+        _ mustEqual Json.obj()
       }
     }
-
-    "remove existing data in UpdateMode/ CheckUpdateMode" in {
-      val json = Json.obj(
-        FakeIdentifier.toString -> "fake value",
-        "other-key" -> "meh"
-      )
-
-      val updatedJson = Json.obj(
-        "other-key" -> "meh"
-      )
-
-      val value = Json.stringify(json)
-      val updatedValue = Json.stringify(updatedJson)
-
-      server.stubFor(
-        get(urlEqualTo(urlUpdate(srn)))
-          .willReturn(
-            ok(value)
-          )
-      )
-
-      server.stubFor(
-        post(urlEqualTo(urlUpdate(srn)))
-          .withRequestBody(equalTo(updatedValue))
-          .willReturn(
-            ok
-          )
-      )
-
-      service.remove(UpdateMode, Some(srn), FakeIdentifier) map {
-        _ mustEqual updatedJson
-      }
     }
+
+
+}
+
+object UserAnswersServiceSpec extends SpecBase with MockitoSugar {
+
+  protected object FakeIdentifier extends TypedIdentifier[String] {
+    override def toString: String = "fake-identifier"
   }
+
+  protected object FakeChangeIdentifier extends TypedIdentifier[Boolean] {
+    override def toString: String = "fake-change-identifier"
+  }
+
+  protected implicit val hc: HeaderCarrier = HeaderCarrier()
+  implicit val request: DataRequest[AnyContent] = FakeDataRequest(UserAnswers(Json.obj()))
+  private val srn = "S1234567890"
+
+  val json = Json.obj(
+    FakeIdentifier.toString -> "fake value",
+    "other-key" -> "meh"
+  )
+
+  class TestService @Inject()(override val subscriptionCacheConnector: SubscriptionCacheConnector,
+                              override val updateSchemeCacheConnector: UpdateSchemeCacheConnector,
+                              override val lockConnector: PensionSchemeVarianceLockConnector,
+                              override val appConfig: FrontendAppConfig
+                             ) extends UserAnswersService {
+
+    override def save[A, I <: TypedIdentifier[A]](mode: Mode, srn: Option[String], id: I, value: A)
+                                                 (implicit fmt: Format[A], ec: ExecutionContext, hc: HeaderCarrier,
+                                                  request: DataRequest[AnyContent]): Future[JsValue] =
+      save(mode, srn, id, value, FakeChangeIdentifier)
+  }
+
+  protected val subscriptionConnector: SubscriptionCacheConnector = mock[SubscriptionCacheConnector]
+  protected val updateConnector: UpdateSchemeCacheConnector = mock[UpdateSchemeCacheConnector]
+  protected val lockConnector: PensionSchemeVarianceLockConnector = mock[PensionSchemeVarianceLockConnector]
+
+
+  protected lazy val testService: UserAnswersService = new TestService(subscriptionConnector,
+    updateConnector, lockConnector, frontendAppConfig)
 
 
 }

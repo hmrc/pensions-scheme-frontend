@@ -17,19 +17,14 @@
 package controllers
 
 import config.FrontendAppConfig
-import connectors._
 import controllers.actions._
 import forms.register.DeclarationFormProvider
-import identifiers.{SchemeNameId, SchemeTypeId, VariationDeclarationId}
+import identifiers.{SchemeNameId, VariationDeclarationId}
 import javax.inject.Inject
-import models.{Mode, NormalMode, UpdateMode}
-import models.register.SchemeType.MasterTrust
-import models.requests.DataRequest
+import models.UpdateMode
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, Result}
-import play.twirl.api.HtmlFormat
-import uk.gov.hmrc.crypto.ApplicationCrypto
+import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.Register
 import utils.{Enumerable, Navigator, UserAnswers}
@@ -49,12 +44,12 @@ class VariationDeclarationController @Inject()(
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode = NormalMode): Action[AnyContent] = (authenticate andThen getData(mode) andThen requireData).async {
+  def onPageLoad: Action[AnyContent] = (authenticate andThen getData(UpdateMode) andThen requireData).async {
     implicit request =>
         Future.successful(Ok(variationDeclaration(appConfig, form, request.userAnswers.get(SchemeNameId))))
   }
 
-  def onSubmit(mode: Mode = NormalMode): Action[AnyContent] = (authenticate andThen getData(mode) andThen requireData).async {
+  def onSubmit: Action[AnyContent] = (authenticate andThen getData(UpdateMode) andThen requireData).async {
     implicit request =>
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) =>
