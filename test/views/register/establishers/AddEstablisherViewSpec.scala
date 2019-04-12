@@ -56,8 +56,8 @@ class AddEstablisherViewSpec extends QuestionViewBehaviours[Option[Boolean]] wit
       .asOpt
       .value
 
-  private val johnDoe = EstablisherIndividualEntity(EstablisherDetailsId(0), "John Doe", false, false)
-  private val testCompany = EstablisherCompanyEntity(CompanyDetailsId(1), "Establisher Company", false, true)
+  private val johnDoe = EstablisherIndividualEntity(EstablisherDetailsId(0), "John Doe", false, false, true)
+  private val testCompany = EstablisherCompanyEntity(CompanyDetailsId(1), "Establisher Company", false, true, true)
 
   private val establishers = Seq(johnDoe, testCompany)
 
