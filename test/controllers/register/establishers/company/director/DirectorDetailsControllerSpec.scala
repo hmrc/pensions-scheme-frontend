@@ -110,7 +110,7 @@ class DirectorDetailsControllerSpec extends ControllerSpecBase {
         )
       )
 
-      when(mockUserAnswersService.save(any(), any(), any(), any())(any(), any(), any(), any())).thenReturn(Future.successful(validData))
+      when(mockUserAnswersService.upsert(any(), any(), any())(any(), any(), any())).thenReturn(Future.successful(validData))
 
       val result = controller().onSubmit(NormalMode, firstEstablisherIndex, firstDirectorIndex, None)(postRequest)
       status(result) mustBe SEE_OTHER

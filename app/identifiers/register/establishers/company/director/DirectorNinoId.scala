@@ -19,8 +19,10 @@ package identifiers.register.establishers.company.director
 import identifiers._
 import identifiers.register.establishers.EstablishersId
 import models.Nino
-import play.api.libs.json.JsPath
+import play.api.libs.json.{JsPath, Reads}
+import utils.UserAnswers
 import utils.checkyouranswers.{CheckYourAnswers, NinoCYA}
+import viewmodels.AnswerRow
 
 case class DirectorNinoId(establisherIndex: Int, directorIndex: Int) extends TypedIdentifier[Nino] {
   override def path: JsPath = EstablishersId(establisherIndex).path \ "director" \ directorIndex \ DirectorNinoId.toString
@@ -29,11 +31,23 @@ case class DirectorNinoId(establisherIndex: Int, directorIndex: Int) extends Typ
 object DirectorNinoId {
   override lazy val toString: String = "directorNino"
 
-  implicit val cya: CheckYourAnswers[DirectorNinoId] =
-    NinoCYA(
-      label = "messages__director_nino_question_cya_label",
-      changeHasNino = "messages__visuallyhidden__director__nino_yes_no",
-      changeNino = "messages__visuallyhidden__director__nino",
-      changeNoNino = "messages__visuallyhidden__director__nino_no"
-    )()
+  implicit def nino(implicit rds: Reads[Nino]): CheckYourAnswers[DirectorNinoId] = {
+    val label = "messages__director_nino_question_cya_label"
+    val changeHasNino = "messages__visuallyhidden__director__nino_yes_no"
+    val changeNino = "messages__visuallyhidden__director__nino"
+    val changeNoNino = "messages__visuallyhidden__director__nino_no"
+
+    new CheckYourAnswers[DirectorNinoId] {
+
+      override def row(id: DirectorNinoId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+        NinoCYA[DirectorNinoId](label, changeHasNino, changeNino, changeNoNino)().row(id)(changeUrl, userAnswers)
+
+      override def updateRow(id: DirectorNinoId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
+        userAnswers.get(IsNewDirectorId(id.establisherIndex, id.directorIndex)) match {
+          case Some(true) => NinoCYA[DirectorNinoId](label, changeHasNino, changeNino, changeNoNino)().row(id)(changeUrl, userAnswers)
+          case _ => NinoCYA[DirectorNinoId](label, changeHasNino, changeNino, changeNoNino)().updateRow(id)(changeUrl, userAnswers)
+        }
+      }
+    }
+  }
 }

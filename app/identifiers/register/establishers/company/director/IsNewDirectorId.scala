@@ -24,6 +24,10 @@ case class IsNewDirectorId(establisherIndex: Int, directorIndex: Int) extends Ty
   override def path: JsPath = EstablishersId(establisherIndex).path \ "director" \ directorIndex \ IsNewDirectorId.toString
 }
 
+object IsNewDirectorId {
+  override def toString: String = "isNewDirector"
+}
+
 
 
 

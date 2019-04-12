@@ -151,7 +151,6 @@ class AddCompanyDirectorsViewSpec extends YesNoViewBehaviours with EntityListBeh
 
     "show delete and edit links and incomplete lozenge, but not show view links when viewOnly is false" in {
       val doc = asDocument(createViewUsingForm(Seq(johnDoeEntity), viewOnly = false)(form))
-      println(doc)
       val editLink = doc.select(s"a[id=person-0-edit]")
       val deleteLink = doc.select(s"a[id=person-0-delete]")
       val viewLink = doc.select(s"a[id=person-0-view]")
