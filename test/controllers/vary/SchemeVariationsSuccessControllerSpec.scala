@@ -16,7 +16,7 @@
 
 package controllers.vary
 
-import connectors.UserAnswersCacheConnector
+import connectors.UpdateSchemeCacheConnector
 import controllers.ControllerSpecBase
 import controllers.actions._
 import identifiers.SchemeNameId
@@ -31,7 +31,7 @@ import views.html.vary.schemeVariationsSuccess
 import scala.concurrent.Future
 
 class SchemeVariationsSuccessControllerSpec extends ControllerSpecBase with MockitoSugar {
-  private val fakeUserAnswersCacheConnector = mock[UserAnswersCacheConnector]
+  private val fakeUserAnswersCacheConnector = mock[UpdateSchemeCacheConnector]
 
   val schemeName = "scheme"
   val srn = "srn"
