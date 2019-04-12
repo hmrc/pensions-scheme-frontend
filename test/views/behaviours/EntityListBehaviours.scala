@@ -72,7 +72,7 @@ trait EntityListBehaviours {
           val link = doc.select(s"#person-${item.index}-delete")
           link.size mustBe 1
           link.first.text mustBe messages("site.delete")
-          link.first.attr("href") mustBe item.deleteLink
+          link.first.attr("href") mustBe item.deleteLink.get
         }
       }
 
@@ -82,7 +82,7 @@ trait EntityListBehaviours {
           val link = doc.select(s"#person-${item.index}-edit")
           link.size mustBe 1
           link.first.text mustBe messages("site.edit")
-          link.first.attr("href") mustBe item.editLink
+          link.first.attr("href") mustBe item.editLink.get
         }
       }
     }
