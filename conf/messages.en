@@ -134,6 +134,7 @@ site.agree_and_continue = Agree and continue
 site.go_back = Go back
 site.signOut = Sign out
 site.printThisPage = Print this page
+site.saveOrPrint = Save or print
 site.return_to = Return to {0}
 
 messages__unauthorised__title = You can’t access this service with this account
@@ -1401,3 +1402,7 @@ messages__companyVat__error__required = Select yes if the company has a VAT numb
 
 messages__companyName__title = What is the company’s name?
 messages__companyName__heading = What is the company’s name?
+
+messages__variations_complete__title = The pension scheme details have been updated
+messages__variations_complete__heading = The pension scheme details have been updated
+
