@@ -16,29 +16,44 @@
 
 package controllers
 
+import connectors.{PensionSchemeVarianceLockConnector, PensionsSchemeConnector, UpdateSchemeCacheConnector}
 import controllers.actions._
 import forms.register.DeclarationFormProvider
+import identifiers.{PstrId, SchemeNameId}
+import org.scalatest.mockito.MockitoSugar
+import play.api.libs.json.Json
 import play.api.test.Helpers._
 import utils.FakeNavigator
 import views.html.variationDeclaration
 
-class VariationDeclarationControllerSpec extends ControllerSpecBase {
+class VariationDeclarationControllerSpec extends ControllerSpecBase with MockitoSugar {
 
   private val formProvider = new DeclarationFormProvider()
   private val form = formProvider()
   val schemeName = "Test Scheme Name"
+  val srnNumber = "S12345"
+  val srn = Some("S12345")
   private val onwardRoute = controllers.routes.IndexController.onPageLoad()
+  val postCall = routes.VariationDeclarationController.onSubmit(srn)
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getMandatorySchemeNameHs): VariationDeclarationController =
+  def validData: FakeDataRetrievalAction = new FakeDataRetrievalAction(Some(Json.obj(
+    SchemeNameId.toString -> "Test Scheme Name",
+    PstrId.toString -> "pstr")))
+
+  val pensionsSchemeConnector: PensionsSchemeConnector = mock[PensionsSchemeConnector]
+  val lockConnector: PensionSchemeVarianceLockConnector = mock[PensionSchemeVarianceLockConnector]
+  val updateSchemeCacheConnector: UpdateSchemeCacheConnector = mock[UpdateSchemeCacheConnector]
+
+  def controller(dataRetrievalAction: DataRetrievalAction = validData): VariationDeclarationController =
     new VariationDeclarationController(frontendAppConfig, messagesApi, new FakeNavigator(onwardRoute), FakeAuthAction,
-      dataRetrievalAction, new DataRequiredActionImpl, formProvider)
+      dataRetrievalAction, new DataRequiredActionImpl, formProvider, pensionsSchemeConnector, lockConnector, updateSchemeCacheConnector)
 
-  private def viewAsString() = variationDeclaration(frontendAppConfig, form, Some(schemeName))(fakeRequest, messages).toString
+  private def viewAsString() = variationDeclaration(frontendAppConfig, form, Some(schemeName), postCall)(fakeRequest, messages).toString
 
   "VariationDeclarationController" must {
 
     "return OK and the correct view for a GET" in {
-      val result = controller().onPageLoad(fakeRequest)
+      val result = controller().onPageLoad(srn)(fakeRequest)
 
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString()
@@ -46,7 +61,7 @@ class VariationDeclarationControllerSpec extends ControllerSpecBase {
 
       "redirect to the next page for a POST" in {
         val postRequest = fakeRequest.withFormUrlEncodedBody(("agree", "agreed"))
-        val result = controller().onSubmit()(postRequest)
+        val result = controller().onSubmit(srn)(postRequest)
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(onwardRoute.url)

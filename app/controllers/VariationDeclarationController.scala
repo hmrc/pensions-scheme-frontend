@@ -17,9 +17,10 @@
 package controllers
 
 import config.FrontendAppConfig
+import connectors.{PensionAdministratorConnector, PensionSchemeVarianceLockConnector, PensionsSchemeConnector, UpdateSchemeCacheConnector}
 import controllers.actions._
 import forms.register.DeclarationFormProvider
-import identifiers.{SchemeNameId, VariationDeclarationId}
+import identifiers.{PstrId, SchemeNameId, VariationDeclarationId}
 import javax.inject.Inject
 import models.UpdateMode
 import play.api.data.Form
@@ -39,23 +40,40 @@ class VariationDeclarationController @Inject()(
                                        authenticate: AuthAction,
                                        getData: DataRetrievalAction,
                                        requireData: DataRequiredAction,
-                                       formProvider: DeclarationFormProvider
+                                       formProvider: DeclarationFormProvider,
+                                       pensionsSchemeConnector: PensionsSchemeConnector,
+                                       lockConnector: PensionSchemeVarianceLockConnector,
+                                       updateSchemeCacheConnector: UpdateSchemeCacheConnector
        )(implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
 
   private val form = formProvider()
+  val postCall = routes.VariationDeclarationController.onSubmit _
 
-  def onPageLoad: Action[AnyContent] = (authenticate andThen getData(UpdateMode) andThen requireData).async {
+  def onPageLoad(srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(UpdateMode) andThen requireData).async {
     implicit request =>
-        Future.successful(Ok(variationDeclaration(appConfig, form, request.userAnswers.get(SchemeNameId))))
+      Future.successful(Ok(variationDeclaration(appConfig, form, request.userAnswers.get(SchemeNameId), postCall(srn))))
   }
 
-  def onSubmit: Action[AnyContent] = (authenticate andThen getData(UpdateMode) andThen requireData).async {
+  def onSubmit(srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(UpdateMode) andThen requireData).async {
     implicit request =>
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) =>
-          Future.successful(BadRequest(variationDeclaration(appConfig, formWithErrors, request.userAnswers.get(SchemeNameId)))),
-        _ =>
-          Future.successful(Redirect(navigator.nextPage(VariationDeclarationId, UpdateMode, UserAnswers())))
+          Future.successful(BadRequest(variationDeclaration(appConfig, formWithErrors, request.userAnswers.get(SchemeNameId), postCall(srn)))),
+        _ => {
+          srn.flatMap { srnId =>
+            request.userAnswers.get(PstrId).map {
+            pstr =>
+              for {
+                _ <- pensionsSchemeConnector.updateSchemeDetails(request.psaId.id, pstr, request.userAnswers)
+                _ <- updateSchemeCacheConnector.removeAll(srnId)
+                _ <- lockConnector.releaseLock(request.psaId.id, srnId)
+              } yield {
+                Redirect(navigator.nextPage(VariationDeclarationId, UpdateMode, UserAnswers()))
+              }
+            }
+          }.getOrElse(Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad)))
+
+        }
       )
   }
 
