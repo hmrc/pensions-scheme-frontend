@@ -53,7 +53,8 @@ class AddPartnersViewSpec extends YesNoViewBehaviours with EntityListBehaviours 
         partners,
         postUrl,
         None,
-        viewOnly
+        viewOnly,
+        true
       )(fakeRequest, messages)
 
   private def createViewUsingForm(partners: Seq[PartnerEntity] = Nil, viewOnly: Boolean = false) =
@@ -64,7 +65,8 @@ class AddPartnersViewSpec extends YesNoViewBehaviours with EntityListBehaviours 
         partners,
         postUrl,
         None,
-        viewOnly
+        viewOnly,
+        true
       )(fakeRequest, messages)
 
   "AddPartnershipPartners view" must {
@@ -146,19 +148,21 @@ class AddPartnersViewSpec extends YesNoViewBehaviours with EntityListBehaviours 
       incompleteLozenge.size() mustBe 0
     }
 
-    "show delete and edit links and incomplete lozenge, but not show view links when viewOnly is false" in {
+    "show edit links and incomplete lozenge, but not show view links when viewOnly is false" in {
       val doc = asDocument(createViewUsingForm(Seq(johnDoeEntity), viewOnly = false)(form))
       val editLink = doc.select(s"a[id=person-0-edit]")
-      val deleteLink = doc.select(s"a[id=person-0-delete]")
       val viewLink = doc.select(s"a[id=person-0-view]")
       val incompleteLozenge = doc.select(s"span[class=rejected]")
-      deleteLink.size() mustBe 1
       editLink.size() mustBe 1
       viewLink.size() mustBe 0
       incompleteLozenge.size() mustBe 1
     }
 
     behave like pageWithReturnLink(createView(), getReturnLink)
+
+    behave like entityListWithSingleRecord(createView(), createView(Seq(johnDoeEntity)), Seq(johnDoeEntity), frontendAppConfig)
+
+    behave like entityListWithMultipleRecords(createView(), createView(partners), partners, frontendAppConfig)
 
   }
 

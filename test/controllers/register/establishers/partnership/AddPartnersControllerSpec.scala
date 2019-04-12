@@ -70,7 +70,8 @@ class AddPartnersControllerSpec extends ControllerSpecBase {
       partners,
       postUrl,
       None,
-      false
+      false,
+      true
     )(fakeRequest, messages).toString
 
   private val partnershipName = "MyCo Ltd"

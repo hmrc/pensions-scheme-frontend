@@ -53,7 +53,7 @@ class AddPartnersController @Inject()(
     implicit request =>
       retrievePartnershipName(index) {_ =>
           val partners = request.userAnswers.allPartnersAfterDelete(index)
-          Future.successful(Ok(addPartners(appConfig, form, partners, postUrl(index, mode, srn), existingSchemeName, request.viewOnly)))
+          Future.successful(Ok(addPartners(appConfig, form, partners, postUrl(index, mode, srn), existingSchemeName, request.viewOnly, true)))
       }
   }
 
@@ -77,7 +77,8 @@ class AddPartnersController @Inject()(
                       partners,
                       postUrl(index, mode, srn),
                       existingSchemeName,
-                      request.viewOnly
+                      request.viewOnly,
+                      true
                     )
                   )
                 )

@@ -25,7 +25,8 @@
     partners: Seq[PartnerEntity],
     postUrl: Call,
     schemeName: Option[String],
-    viewOnly: Boolean
+    viewOnly: Boolean,
+    hideDeleteOnSingleRecord: Boolean = false
 )(implicit request: Request[_], messages: Messages)
 
 @disableSubmission = @{
@@ -50,7 +51,7 @@
             @components.submit_button("messages__addPartners_add_partner")
         } else {
 
-            @components.entity_list(partners, viewOnly)
+            @components.entity_list(partners, viewOnly, hideDeleteOnSingleRecord = hideDeleteOnSingleRecord)
 
             @if(!viewOnly){
                 @if(partners.size < appConfig.maxPartners) {
