@@ -23,13 +23,14 @@ class StillNeedDetailsViewSpec extends ViewBehaviours {
 
   val messageKeyPrefix = "stillNeedDetails"
   val schemeName = "schemeName"
-  private def createView() = () => stillNeedDetails(frontendAppConfig,Some(schemeName))(fakeRequest, messages)
+  val srn = "A232322"
+  private def createView() = () => stillNeedDetails(frontendAppConfig,Some(srn),Some(schemeName))(fakeRequest, messages)
 
   "StillNeedDetails view" must {
 
     behave like normalPage(createView(), messageKeyPrefix, messages("messages__stillNeedDetails__heading"), "_p1", "_p2")
 
 
-    behave like pageWithReturnLink(createView(), getReturnLink)
+    behave like pageWithReturnLink(createView(), controllers.routes.PSASchemeDetailsController.onPageLoad(srn).url)
   }
 }

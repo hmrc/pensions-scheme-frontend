@@ -1402,7 +1402,7 @@ messages__companyVat__error__required = Select yes if the company has a VAT numb
 messages__companyName__title = What is the company’s name?
 messages__companyName__heading = What is the company’s name?
 
-messages__stillNeedDetails__title = You have not completed your pension scheme changes
+messages__stillNeedDetails__title =  You still need to provide some details
 messages__stillNeedDetails__heading = You still need to provide some details
 messages__stillNeedDetails__p1 = There are some details that are incomplete.
 messages__stillNeedDetails__p2 = You need to complete the missing details before you can submit the changes.
