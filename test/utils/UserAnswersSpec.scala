@@ -136,7 +136,7 @@ class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues with 
           ),
           Json.obj(
             partnership.PartnershipDetailsId.toString ->
-              PartnershipDetails("My Partnership", false)
+              PartnershipDetails("My Partnership", isDeleted = false)
           ),
           Json.obj(
             TrusteeKindId.toString -> TrusteeKind.Individual.toString
@@ -215,8 +215,8 @@ class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues with 
         .flatMap(_.set(DirectorDetailsId(0, 1))(PersonDetails("First1", None, "Last1", LocalDate.now))).get
 
       val directorEntities = Seq(
-        DirectorEntity(DirectorDetailsId(0, 0), "First Last", isDeleted = false, isCompleted = true),
-        DirectorEntity(DirectorDetailsId(0, 1), "First1 Last1", isDeleted = false, isCompleted = false))
+        DirectorEntity(DirectorDetailsId(0, 0), "First Last", isDeleted = false, isCompleted = true, isNewEntity = true),
+        DirectorEntity(DirectorDetailsId(0, 1), "First1 Last1", isDeleted = false, isCompleted = false, isNewEntity = true))
 
       val result = userAnswers.allDirectors(0)
 
@@ -233,7 +233,7 @@ class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues with 
         .flatMap(_.set(DirectorDetailsId(0, 1))(PersonDetails("First1", None, "Last1", LocalDate.now))).get
 
       val directorEntities = Seq(
-        DirectorEntity(DirectorDetailsId(0, 1), "First1 Last1", isDeleted = false, isCompleted = false))
+        DirectorEntity(DirectorDetailsId(0, 1), "First1 Last1", isDeleted = false, isCompleted = false, isNewEntity = true))
       val result = userAnswers.allDirectorsAfterDelete(0)
 
       result.size mustEqual 1
@@ -402,22 +402,22 @@ object UserAnswersSpec {
   private def establisherEntity(name: String, index: Int, establisherKind: EstablisherKind, isComplete: Boolean = false): Establisher[_] = {
     establisherKind match {
       case Indivdual =>
-        EstablisherIndividualEntity(EstablisherDetailsId(index), name, isDeleted = false, isCompleted = isComplete)
+        EstablisherIndividualEntity(EstablisherDetailsId(index), name, isDeleted = false, isCompleted = isComplete, isNewEntity = true)
       case Company =>
-        EstablisherCompanyEntity(EstablisherCompanyDetailsId(index), name, isDeleted = false, isCompleted = isComplete)
+        EstablisherCompanyEntity(EstablisherCompanyDetailsId(index), name, isDeleted = false, isCompleted = isComplete, isNewEntity = true)
       case _ =>
-        EstablisherPartnershipEntity(PartnershipDetailsId(index), name, isDeleted = false, isCompleted = isComplete)
+        EstablisherPartnershipEntity(PartnershipDetailsId(index), name, isDeleted = false, isCompleted = isComplete, isNewEntity = true)
     }
   }
 
   private def trusteeEntity(name: String, index: Int, trusteeKind: TrusteeKind, isComplete: Boolean = false): Trustee[_] = {
     trusteeKind match {
       case TrusteeKind.Individual =>
-        TrusteeIndividualEntity(TrusteeDetailsId(index), name, isDeleted = false, isCompleted = isComplete)
+        TrusteeIndividualEntity(TrusteeDetailsId(index), name, isDeleted = false, isCompleted = isComplete, isNewEntity = true)
       case TrusteeKind.Company =>
-        TrusteeCompanyEntity(TrusteeCompanyDetailsId(index), name, isDeleted = false, isCompleted = isComplete)
+        TrusteeCompanyEntity(TrusteeCompanyDetailsId(index), name, isDeleted = false, isCompleted = isComplete, isNewEntity = true)
       case _ =>
-        TrusteePartnershipEntity(partnership.PartnershipDetailsId(index), name, isDeleted = false, isCompleted = isComplete)
+        TrusteePartnershipEntity(partnership.PartnershipDetailsId(index), name, isDeleted = false, isCompleted = isComplete, isNewEntity = true)
     }
   }
 
