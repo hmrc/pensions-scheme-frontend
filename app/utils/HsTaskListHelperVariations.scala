@@ -18,23 +18,23 @@ package utils
 
 import identifiers.{IsAboutBenefitsAndInsuranceCompleteId, IsAboutMembersCompleteId, SchemeNameId, _}
 import models.register.Entity
-import models.{Link, NormalMode}
+import models.{Link, UpdateMode}
 import play.api.i18n.Messages
 import viewmodels._
 
-class HsTaskListHelperVariations(answers: UserAnswers)(implicit messages: Messages) extends HsTaskListHelper(answers) {
+class HsTaskListHelperVariations(answers: UserAnswers, srn: Option[String])(implicit messages: Messages) extends HsTaskListHelper(answers) {
 
   override protected lazy val beforeYouStartLinkText = messages("messages__schemeTaskList__scheme_info_link_text")
 
   override protected[utils] def aboutSection(userAnswers: UserAnswers): Seq[SchemeDetailsTaskListSection] = {
     val membersLink = userAnswers.get(IsAboutMembersCompleteId) match {
-      case Some(true) => Link(aboutMembersLinkText, controllers.routes.CheckYourAnswersMembersController.onPageLoad(NormalMode, None).url)
+      case Some(true) => Link(aboutMembersLinkText, controllers.routes.CheckYourAnswersMembersController.onPageLoad(UpdateMode, srn).url)
       case _ => Link(aboutMembersLinkText, controllers.routes.WhatYouWillNeedMembersController.onPageLoad().url)
     }
 
     val benefitsAndInsuranceLink = userAnswers.get(IsAboutBenefitsAndInsuranceCompleteId) match {
       case Some(true) => Link(aboutBenefitsAndInsuranceLinkText,
-        controllers.routes.CheckYourAnswersBenefitsAndInsuranceController.onPageLoad(NormalMode, None).url)
+        controllers.routes.CheckYourAnswersBenefitsAndInsuranceController.onPageLoad(UpdateMode, srn).url)
       case _ => Link(aboutBenefitsAndInsuranceLinkText,
         controllers.routes.WhatYouWillNeedBenefitsInsuranceController.onPageLoad().url)
     }
@@ -46,13 +46,13 @@ class HsTaskListHelperVariations(answers: UserAnswers)(implicit messages: Messag
   def taskList: SchemeDetailsTaskList = {
     val schemeName = answers.get(SchemeNameId).getOrElse("")
     SchemeDetailsTaskList(
-      beforeYouStartSection(answers),
+      beforeYouStartSection(answers, UpdateMode, srn),
       messages("messages__schemeTaskList__about_scheme_header", schemeName),
       aboutSection(answers),
       None,
-      addEstablisherHeader(answers),
+      addEstablisherHeader(answers, UpdateMode, srn),
       establishers(answers),
-      addTrusteeHeader(answers),
+      addTrusteeHeader(answers, UpdateMode, srn),
       trustees(answers),
       declarationLink(answers),
       answers.get(SchemeNameId).getOrElse(""),
@@ -62,12 +62,13 @@ class HsTaskListHelperVariations(answers: UserAnswers)(implicit messages: Messag
     )
   }
 
-  private def listOfSectionNameAsLink(sections: Seq[Entity[_]], userAnswers: UserAnswers): Seq[SchemeDetailsTaskListSection] = {
+  private def listOfSectionNameAsLink(sections: Seq[Entity[_]]): Seq[SchemeDetailsTaskListSection] = {
     val notDeletedElements = for ((section, index) <- sections.zipWithIndex) yield {
       if (section.isDeleted) None else {
         Some(SchemeDetailsTaskListSection(
           Some(section.isCompleted),
-          Link(messages("messages__schemeTaskList__persons_details__link_text", section.name), linkTarget(section, index, userAnswers)),
+          Link(messages("messages__schemeTaskList__persons_details__link_text", section.name),
+            linkTarget(section, index, UpdateMode, srn)),
           None)
         )
       }
@@ -75,11 +76,11 @@ class HsTaskListHelperVariations(answers: UserAnswers)(implicit messages: Messag
     notDeletedElements.flatten
   }
 
-  override protected[utils] def establishers(userAnswers: UserAnswers): Seq[SchemeDetailsTaskListSection] =
-    listOfSectionNameAsLink(userAnswers.allEstablishers, userAnswers)
+  protected[utils] def establishers(userAnswers: UserAnswers): Seq[SchemeDetailsTaskListSection] =
+    listOfSectionNameAsLink(userAnswers.allEstablishers)
 
-  override protected[utils] def trustees(userAnswers: UserAnswers): Seq[SchemeDetailsTaskListSection] =
-    listOfSectionNameAsLink(userAnswers.allTrustees, userAnswers)
+  protected[utils] def trustees(userAnswers: UserAnswers): Seq[SchemeDetailsTaskListSection] =
+    listOfSectionNameAsLink(userAnswers.allTrustees)
 
   override def declarationEnabled(userAnswers: UserAnswers): Boolean = {
       val isTrusteeOptional = userAnswers.get(HaveAnyTrusteesId).contains(false)

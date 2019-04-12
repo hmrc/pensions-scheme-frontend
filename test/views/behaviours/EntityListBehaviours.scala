@@ -17,6 +17,7 @@
 package views.behaviours
 
 import config.FrontendAppConfig
+import models.NormalMode
 import models.register.Entity
 import views.ViewSpecBase
 
@@ -72,7 +73,7 @@ trait EntityListBehaviours {
           val link = doc.select(s"#person-${item.index}-delete")
           link.size mustBe 1
           link.first.text mustBe messages("site.delete")
-          link.first.attr("href") mustBe item.deleteLink.get
+          link.first.attr("href") mustBe item.deleteLink(NormalMode, None).get
         }
       }
 
@@ -82,7 +83,7 @@ trait EntityListBehaviours {
           val link = doc.select(s"#person-${item.index}-edit")
           link.size mustBe 1
           link.first.text mustBe messages("site.edit")
-          link.first.attr("href") mustBe item.editLink.get
+          link.first.attr("href") mustBe item.editLink(NormalMode, None).get
         }
       }
     }

@@ -19,7 +19,7 @@
 @import models.requests.DataRequest
 @import models.register.Entity
 
-@(entities: Seq[Entity[_]], viewOnly:Boolean = false)(implicit messages: Messages)
+@(entities: Seq[Entity[_]], viewOnly:Boolean = false, mode: Mode, srn: Option[String])(implicit messages: Messages)
 
 <div class="form-group">
     <ul id="items" class="govuk-check-your-answers form-group cya-questions-long">
@@ -37,7 +37,7 @@
                     }
                 </div>
 
-                @entity.deleteLink.map{ deleteLink=>
+                @entity.deleteLink(mode, srn).map{ deleteLink=>
                     <div>
                         <a id="person-@{entity.index}-delete" href="@deleteLink">
                             @messages("site.delete")
@@ -45,7 +45,7 @@
                     </div>
                 }
 
-                @entity.editLink.map{ editLink=>
+                @entity.editLink(mode, srn).map{ editLink=>
                     <div>
                         <a id="person-@{entity.index}-edit" href="@editLink">
                             @messages("site.edit")
@@ -53,7 +53,7 @@
                     </div>
                 }
             } else {
-                @entity.editLink.map{ editLink=>
+                @entity.editLink(mode, srn).map{ editLink=>
                     <div>
                         <a id="person-@{entity.index}-view" href="@editLink">
                             @messages("site.view")

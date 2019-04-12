@@ -21,15 +21,13 @@ import identifiers.register.establishers.IsEstablisherCompleteId
 import identifiers.register.establishers.company.{CompanyPayeId, CompanyVatId, CompanyDetailsId => EstablisherCompanyDetailsId}
 import identifiers.register.establishers.individual.EstablisherDetailsId
 import identifiers.register.establishers.partnership.{PartnershipDetailsId => EstablisherPartnershipDetailsId}
-import identifiers.register.trustees.{IsTrusteeCompleteId, MoreThanTenTrusteesId}
-import identifiers.register.trustees.company.{CompanyDetailsId => TrusteeCompanyDetailsId}
-import identifiers.register.trustees.company.{CompanyVatId => TrusteeCompanyVatId}
-import identifiers.register.trustees.company.{CompanyPayeId => TrusteeCompanyPayeId}
+import identifiers.register.trustees.company.{CompanyDetailsId => TrusteeCompanyDetailsId, CompanyPayeId => TrusteeCompanyPayeId, CompanyVatId => TrusteeCompanyVatId}
 import identifiers.register.trustees.individual.TrusteeDetailsId
 import identifiers.register.trustees.partnership.{IsPartnershipCompleteId, PartnershipDetailsId => TrusteePartnershipDetailsId}
+import identifiers.register.trustees.{IsTrusteeCompleteId, MoreThanTenTrusteesId}
 import identifiers.{IsWorkingKnowledgeCompleteId, _}
-import models.person.PersonDetails
 import models._
+import models.person.PersonDetails
 import org.joda.time.LocalDate
 import org.scalatest.{MustMatchers, OptionValues}
 import play.api.libs.json.JsResult
@@ -153,54 +151,54 @@ trait HsTaskListHelperBehaviour extends SpecBase with MustMatchers with OptionVa
     "return the link to scheme name page when not completed " in {
       val userAnswers = UserAnswers().set(IsBeforeYouStartCompleteId)(false).asOpt.value
       val helper = createTaskListHelper(userAnswers)
-      helper.beforeYouStartSection(userAnswers).link mustBe
+      helper.beforeYouStartSection(userAnswers, mode, srn).link mustBe
         link(controllers.routes.SchemeNameController.onPageLoad(NormalMode).url)
     }
 
     "return the link to cya page when completed " in {
       val userAnswers = UserAnswers().set(IsBeforeYouStartCompleteId)(true).asOpt.value
       val helper = createTaskListHelper(userAnswers)
-      helper.beforeYouStartSection(userAnswers).link mustBe link(
+      helper.beforeYouStartSection(userAnswers, mode, srn).link mustBe link(
         controllers.routes.CheckYourAnswersBeforeYouStartController.onPageLoad(mode, srn).url
       )
     }
   }
 
 
-  def addEstablisherHeader(): Unit = {
+  def addEstablisherHeader(mode: Mode , srn: Option[String]): Unit = {
 
     "return the link to establisher kind page when no establishers are added " in {
       val userAnswers = UserAnswers()
       val helper = createTaskListHelper(userAnswers)
-      helper.addEstablisherHeader(userAnswers) mustBe
+      helper.addEstablisherHeader(userAnswers, mode, srn) mustBe
         SchemeDetailsTaskListSection(None, Link(addEstablisherLinkText,
-          controllers.register.establishers.routes.EstablisherKindController.onPageLoad(NormalMode, userAnswers.allEstablishers.size, None).url), None)
+          controllers.register.establishers.routes.EstablisherKindController.onPageLoad(mode, userAnswers.allEstablishers.size, srn).url), None)
     }
 
     "return the link to add establisher page when establishers are added " in {
       val userAnswers = UserAnswers().set(EstablisherDetailsId(0))(PersonDetails("firstName", None, "lastName", LocalDate.now())).asOpt.value
         .set(IsEstablisherCompleteId(0))(true).asOpt.value
       val helper = createTaskListHelper(userAnswers)
-      helper.addEstablisherHeader(userAnswers) mustBe
+      helper.addEstablisherHeader(userAnswers, mode, srn) mustBe
         SchemeDetailsTaskListSection(None, Link(changeEstablisherLinkText,
-          controllers.register.establishers.routes.AddEstablisherController.onPageLoad(NormalMode, None).url), None)
+          controllers.register.establishers.routes.AddEstablisherController.onPageLoad(mode, srn).url), None)
     }
   }
 
-  def addTrusteeHeader(): Unit = {
+  def addTrusteeHeader(mode: Mode , srn: Option[String]): Unit = {
 
     "not display when do you have any trustees is false " in {
       val userAnswers = UserAnswers().set(HaveAnyTrusteesId)(false).asOpt.value
       val helper = createTaskListHelper(userAnswers)
-      helper.addTrusteeHeader(userAnswers) mustBe None
+      helper.addTrusteeHeader(userAnswers, mode, srn) mustBe None
     }
 
     "display and link should go to trustee kind page when do you have any trustees is true and no trustees are added " in {
       val userAnswers = UserAnswers().set(HaveAnyTrusteesId)(true).asOpt.value
       val helper = createTaskListHelper(userAnswers)
-      helper.addTrusteeHeader(userAnswers).value mustBe
+      helper.addTrusteeHeader(userAnswers, mode, srn).value mustBe
         SchemeDetailsTaskListSection(None, Link(addTrusteesLinkText,
-          controllers.register.trustees.routes.TrusteeKindController.onPageLoad(NormalMode, userAnswers.allTrustees.size, None).url), None)
+          controllers.register.trustees.routes.TrusteeKindController.onPageLoad(mode, userAnswers.allTrustees.size, srn).url), None)
     }
 
     "display and link should go to add trustees page and status is completed when do you have any trustees is not present" +
@@ -209,9 +207,9 @@ trait HsTaskListHelperBehaviour extends SpecBase with MustMatchers with OptionVa
         _.set(IsTrusteeCompleteId(0))(true)
       ).asOpt.value
       val helper = createTaskListHelper(userAnswers)
-      helper.addTrusteeHeader(userAnswers).value mustBe
+      helper.addTrusteeHeader(userAnswers, mode, srn).value mustBe
         SchemeDetailsTaskListSection(Some(true), Link(changeTrusteesLinkText,
-          controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode, None).url), None)
+          controllers.register.trustees.routes.AddTrusteeController.onPageLoad(mode, srn).url), None)
     }
 
     "display and link should go to add trustees page and status is not completed when do you have any trustees is not present" +
@@ -220,101 +218,9 @@ trait HsTaskListHelperBehaviour extends SpecBase with MustMatchers with OptionVa
         _.set(IsTrusteeCompleteId(0))(false)
       ).asOpt.value
       val helper = createTaskListHelper(userAnswers)
-      helper.addTrusteeHeader(userAnswers).value mustBe
+      helper.addTrusteeHeader(userAnswers, mode, srn).value mustBe
         SchemeDetailsTaskListSection(Some(false), Link(changeTrusteesLinkText,
-          controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode, None).url), None)
-    }
-  }
-
-  def establishersSection(): Unit = {
-
-    "return the seq of establishers sub sections for non deleted establishers which are all completed" in {
-      val userAnswers = allEstablishers()
-      val helper = createTaskListHelper(userAnswers)
-      helper.establishers(userAnswers) mustBe
-        Seq(SchemeDetailsTaskListSection(Some(true), Link(individualLinkText,
-          controllers.register.establishers.individual.routes.CheckYourAnswersController.onPageLoad(NormalMode, 0, None).url), Some("firstName lastName")),
-          SchemeDetailsTaskListSection(Some(true), Link(companyLinkText,
-            controllers.register.establishers.company.routes.CompanyReviewController.onPageLoad(NormalMode, None, 1).url), Some("test company")),
-          SchemeDetailsTaskListSection(Some(true), Link(partnershipLinkText,
-            controllers.register.establishers.partnership.routes.PartnershipReviewController.onPageLoad(NormalMode, 2, None).url), Some("test partnership"))
-        )
-    }
-
-    "return the seq of establishers sub sections for non deleted establishers which are not completed" in {
-      val userAnswers = allEstablishers(isCompleteEstablisher = false)
-      val helper = createTaskListHelper(userAnswers)
-      helper.establishers(userAnswers) mustBe
-        Seq(SchemeDetailsTaskListSection(Some(false), Link(individualLinkText,
-          controllers.register.establishers.individual.routes.EstablisherDetailsController.onPageLoad(NormalMode, 0, None).url), Some("firstName lastName")),
-          SchemeDetailsTaskListSection(Some(false), Link(companyLinkText,
-            controllers.register.establishers.company.routes.CompanyDetailsController.onPageLoad(NormalMode, None, 1).url), Some("test company")),
-          SchemeDetailsTaskListSection(Some(false), Link(partnershipLinkText,
-            controllers.register.establishers.partnership.routes.PartnershipDetailsController.onPageLoad(NormalMode, 2, None).url), Some("test partnership"))
-        )
-    }
-
-    "return the seq of establishers sub sections after filtering out deleted establishers" in {
-      val userAnswers = UserAnswers().set(EstablisherDetailsId(0))(PersonDetails("firstName", None, "lastName", LocalDate.now())).flatMap(
-        _.set(IsEstablisherCompleteId(0))(false).flatMap(
-          _.set(EstablisherCompanyDetailsId(1))(CompanyDetails("test company", true)).flatMap(
-            _.set(IsEstablisherCompleteId(1))(true).flatMap(
-              _.set(EstablisherPartnershipDetailsId(2))(PartnershipDetails("test partnership", false)).flatMap(
-                _.set(IsEstablisherCompleteId(2))(false)
-              ))))).asOpt.value
-      val helper = createTaskListHelper(userAnswers)
-      helper.establishers(userAnswers) mustBe
-        Seq(SchemeDetailsTaskListSection(Some(false), Link(individualLinkText,
-          controllers.register.establishers.individual.routes.EstablisherDetailsController.onPageLoad(NormalMode, 0, None).url), Some("firstName lastName")),
-          SchemeDetailsTaskListSection(Some(false), Link(partnershipLinkText,
-            controllers.register.establishers.partnership.routes.PartnershipDetailsController.onPageLoad(NormalMode, 2, None).url), Some("test partnership"))
-        )
-    }
-  }
-
-  def trusteesSection(): Unit = {
-
-    "return the seq of trustees sub sections for non deleted trustees which are all completed" in {
-      val userAnswers = allTrustees()
-      val helper = createTaskListHelper(userAnswers)
-      helper.trustees(userAnswers) mustBe
-        Seq(SchemeDetailsTaskListSection(Some(true), Link(individualLinkText,
-          controllers.register.trustees.individual.routes.CheckYourAnswersController.onPageLoad(NormalMode, 0, None).url), Some("firstName lastName")),
-          SchemeDetailsTaskListSection(Some(true), Link(companyLinkText,
-            controllers.register.trustees.company.routes.CheckYourAnswersController.onPageLoad(NormalMode, 1, None).url), Some("test company")),
-          SchemeDetailsTaskListSection(Some(true), Link(partnershipLinkText,
-            controllers.register.trustees.partnership.routes.CheckYourAnswersController.onPageLoad(NormalMode, 2, None).url), Some("test partnership"))
-        )
-    }
-
-    "return the seq of trustees sub sections for non deleted trustees which are not completed" in {
-      val userAnswers = allTrustees(isCompleteTrustees = false)
-      val helper = createTaskListHelper(userAnswers)
-      helper.trustees(userAnswers) mustBe
-        Seq(SchemeDetailsTaskListSection(Some(false), Link(individualLinkText,
-          controllers.register.trustees.individual.routes.TrusteeDetailsController.onPageLoad(NormalMode, 0, None).url), Some("firstName lastName")),
-          SchemeDetailsTaskListSection(Some(false), Link(companyLinkText,
-            controllers.register.trustees.company.routes.CompanyDetailsController.onPageLoad(NormalMode, 1, None).url), Some("test company")),
-          SchemeDetailsTaskListSection(Some(false), Link(partnershipLinkText,
-            controllers.register.trustees.partnership.routes.TrusteeDetailsController.onPageLoad(NormalMode, 2, None).url), Some("test partnership"))
-        )
-    }
-
-    "return the seq of trustees sub sections after filtering out deleted trustees" in {
-      val userAnswers = UserAnswers().set(TrusteeDetailsId(0))(PersonDetails("firstName", None, "lastName", LocalDate.now())).flatMap(
-        _.set(IsTrusteeCompleteId(0))(false).flatMap(
-          _.set(TrusteeCompanyDetailsId(1))(CompanyDetails("test company", true)).flatMap(
-            _.set(IsTrusteeCompleteId(1))(false).flatMap(
-              _.set(TrusteePartnershipDetailsId(2))(PartnershipDetails("test partnership", false)).flatMap(
-                _.set(IsPartnershipCompleteId(2))(false)
-              ))))).asOpt.value
-      val helper = createTaskListHelper(userAnswers)
-      helper.trustees(userAnswers) mustBe
-        Seq(SchemeDetailsTaskListSection(Some(false), Link(individualLinkText,
-          controllers.register.trustees.individual.routes.TrusteeDetailsController.onPageLoad(NormalMode, 0, None).url), Some("firstName lastName")),
-          SchemeDetailsTaskListSection(Some(false), Link(partnershipLinkText,
-            controllers.register.trustees.partnership.routes.TrusteeDetailsController.onPageLoad(NormalMode, 2, None).url), Some("test partnership"))
-        )
+          controllers.register.trustees.routes.AddTrusteeController.onPageLoad(mode, srn).url), None)
     }
   }
 
