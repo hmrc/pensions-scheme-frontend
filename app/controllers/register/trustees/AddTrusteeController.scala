@@ -51,8 +51,7 @@ class AddTrusteeController @Inject()(
   def onPageLoad(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
       val trustees = request.userAnswers.allTrusteesAfterDelete
-      val submitUrl = controllers.register.trustees.routes.AddTrusteeController.onSubmit(mode, srn)
-      Future.successful(Ok(addTrustee(appConfig, form, mode, trustees, existingSchemeName, submitUrl)))
+      Future.successful(Ok(addTrustee(appConfig, form, mode, trustees, existingSchemeName, srn)))
   }
 
   def onSubmit(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
@@ -65,8 +64,7 @@ class AddTrusteeController @Inject()(
       else {
         form.bindFromRequest().fold(
           (formWithErrors: Form[_]) => {
-            val submitUrl = controllers.register.trustees.routes.AddTrusteeController.onSubmit(mode, srn)
-            Future.successful(BadRequest(addTrustee(appConfig, formWithErrors, mode, trustees, existingSchemeName, submitUrl)))
+            Future.successful(BadRequest(addTrustee(appConfig, formWithErrors, mode, trustees, existingSchemeName, srn)))
           },
           value =>
             request.userAnswers.set(AddTrusteeId)(value).fold(
