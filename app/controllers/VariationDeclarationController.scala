@@ -49,12 +49,12 @@ class VariationDeclarationController @Inject()(
   private val form = formProvider()
   val postCall = routes.VariationDeclarationController.onSubmit _
 
-  def onPageLoad(srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(UpdateMode) andThen requireData).async {
+  def onPageLoad(srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(UpdateMode, srn) andThen requireData).async {
     implicit request =>
       Future.successful(Ok(variationDeclaration(appConfig, form, request.userAnswers.get(SchemeNameId), postCall(srn))))
   }
 
-  def onSubmit(srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(UpdateMode) andThen requireData).async {
+  def onSubmit(srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(UpdateMode, srn) andThen requireData).async {
     implicit request =>
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) =>
