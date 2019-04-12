@@ -17,7 +17,7 @@
 package controllers.vary
 
 import config.FrontendAppConfig
-import connectors.UserAnswersCacheConnector
+import connectors.UpdateSchemeCacheConnector
 import controllers.Retrievals
 import controllers.actions._
 import javax.inject.Inject
@@ -31,7 +31,7 @@ import scala.concurrent.ExecutionContext
 
 class SchemeVariationsSuccessController @Inject()(appConfig: FrontendAppConfig,
                                                   override val messagesApi: MessagesApi,
-                                                  cacheConnector: UserAnswersCacheConnector,
+                                                  cacheConnector: UpdateSchemeCacheConnector,
                                                   authenticate: AuthAction,
                                                   getData: DataRetrievalAction)
                                                  (implicit val ec: ExecutionContext) extends FrontendController with I18nSupport with Retrievals {
@@ -39,7 +39,7 @@ class SchemeVariationsSuccessController @Inject()(appConfig: FrontendAppConfig,
   def onPageLoad(srn: String): Action[AnyContent] = (authenticate andThen getData(UpdateMode, Some(srn))).async {
     implicit request =>
       val schemeName = existingSchemeName
-      cacheConnector.removeAll(request.externalId).map { _ =>
+      cacheConnector.removeAll(srn).map { _ =>
         Ok(
           schemeVariationsSuccess(
             appConfig, schemeName, Some(srn)
