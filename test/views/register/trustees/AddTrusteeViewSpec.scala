@@ -51,7 +51,8 @@ class AddTrusteeViewSpec extends YesNoViewBehaviours with EntityListBehaviours {
       .value
 
   private val trustees = userAnswers.allTrustees
-  private val fullTrustees = (0 to 9).map(index => TrusteeIndividualEntity(TrusteeDetailsId(index), "trustee name", isDeleted = false, isCompleted = false))
+  private val fullTrustees = (0 to 9).map(index => TrusteeIndividualEntity(
+    TrusteeDetailsId(index), "trustee name", isDeleted = false, isCompleted = false, isNewEntity = true))
 
   val form = new AddTrusteeFormProvider()()
   private def createView(trustees: Seq[Trustee[_]] = Seq.empty) = () =>

@@ -16,11 +16,8 @@
 
 package utils
 
-import identifiers.{EstablishersOrTrusteesChangedId, InsuranceDetailsChangedId, TypedIdentifier}
 import identifiers.register.establishers.company.director.{DirectorDetailsId, IsDirectorCompleteId}
-import identifiers.register.establishers.company.{CompanyDetailsId => EstablisherCompanyDetailsId}
-import identifiers.register.establishers.company.{CompanyVatId => EstablisherCompanyVatId}
-import identifiers.register.establishers.company.{CompanyPayeId => EstablisherCompanyPayeId}
+import identifiers.register.establishers.company.{CompanyDetailsId => EstablisherCompanyDetailsId, CompanyPayeId => EstablisherCompanyPayeId, CompanyVatId => EstablisherCompanyVatId}
 import identifiers.register.establishers.individual.EstablisherDetailsId
 import identifiers.register.establishers.partnership.PartnershipDetailsId
 import identifiers.register.establishers.partnership.partner.{IsPartnerCompleteId, PartnerDetailsId}
@@ -29,6 +26,7 @@ import identifiers.register.trustees.company.{CompanyDetailsId, CompanyPayeId, C
 import identifiers.register.trustees.individual.TrusteeDetailsId
 import identifiers.register.trustees.partnership.{IsPartnershipCompleteId, PartnershipDetailsId => TrusteePartnershipDetailsId}
 import identifiers.register.trustees.{IsTrusteeCompleteId, TrusteeKindId, TrusteesId}
+import identifiers.{EstablishersOrTrusteesChangedId, InsuranceDetailsChangedId, TypedIdentifier}
 import models.address.Address
 import models.person.PersonDetails
 import models.register._
@@ -43,6 +41,7 @@ import scala.annotation.tailrec
 import scala.concurrent.Future
 import scala.language.implicitConversions
 
+//scalastyle:off number.of.methods
 case class UserAnswers(json: JsValue = Json.obj()) {
 
   def get[A](id: TypedIdentifier[A])(implicit rds: Reads[A]): Option[A] = {
@@ -149,7 +148,8 @@ case class UserAnswers(json: JsValue = Json.obj()) {
       (JsPath \ EstablisherDetailsId.toString).read[PersonDetails] and
         (JsPath \ IsEstablisherCompleteId.toString).readNullable[Boolean]
       ) ((details, isComplete) =>
-      EstablisherIndividualEntity(EstablisherDetailsId(index), details.fullName, details.isDeleted, isComplete.getOrElse(false))
+      EstablisherIndividualEntity(
+        EstablisherDetailsId(index), details.fullName, details.isDeleted, isComplete.getOrElse(false), isNewEntity = true)
     )
 
     /*TODO: This logic for vat and paye is done to handle the partial data with vat and paye in company details
@@ -161,14 +161,14 @@ case class UserAnswers(json: JsValue = Json.obj()) {
         (JsPath \ IsEstablisherCompleteId.toString).readNullable[Boolean]
       ) ((details, vat, paye, isComplete) =>
       EstablisherCompanyEntity(EstablisherCompanyDetailsId(index),
-        details.companyName, details.isDeleted, isCompanyComplete(vat, paye, isComplete).getOrElse(false))
+        details.companyName, details.isDeleted, isCompanyComplete(vat, paye, isComplete).getOrElse(false), isNewEntity =true)
     )
 
     private def readsPartnership(index: Int): Reads[Establisher[_]] = (
       (JsPath \ PartnershipDetailsId.toString).read[PartnershipDetails] and
         (JsPath \ IsEstablisherCompleteId.toString).readNullable[Boolean]
       ) ((details, isComplete) =>
-      EstablisherPartnershipEntity(PartnershipDetailsId(index), details.name, details.isDeleted, isComplete.getOrElse(false))
+      EstablisherPartnershipEntity(PartnershipDetailsId(index), details.name, details.isDeleted, isComplete.getOrElse(false), isNewEntity = true)
     )
 
     private def readsSkeleton(index: Int): Reads[Establisher[_]] = new Reads[Establisher[_]] {
@@ -218,7 +218,8 @@ case class UserAnswers(json: JsValue = Json.obj()) {
             DirectorDetailsId(establisherIndex, directorIndex),
             director.fullName,
             director.isDeleted,
-            isComplete
+            isComplete,
+            isNewEntity = true
           )
         }
     }.getOrElse(Seq.empty)
@@ -238,7 +239,8 @@ case class UserAnswers(json: JsValue = Json.obj()) {
             PartnerDetailsId(establisherIndex, partnerIndex),
             partner.fullName,
             partner.isDeleted,
-            isComplete
+            isComplete,
+            isNewEntity = true
           )
         }
     }.getOrElse(Seq.empty)
@@ -253,7 +255,8 @@ case class UserAnswers(json: JsValue = Json.obj()) {
       (JsPath \ TrusteeDetailsId.toString).read[PersonDetails] and
         (JsPath \ IsTrusteeCompleteId.toString).readNullable[Boolean]
       ) ((details, isComplete) =>
-      TrusteeIndividualEntity(TrusteeDetailsId(index), details.fullName, details.isDeleted, isComplete.getOrElse(false))
+      TrusteeIndividualEntity(
+        TrusteeDetailsId(index), details.fullName, details.isDeleted, isComplete.getOrElse(false), isNewEntity = true)
     )
 
     /*TODO: This logic for vat and paye is done to handle the partial data with vat and paye in company details
@@ -265,14 +268,15 @@ case class UserAnswers(json: JsValue = Json.obj()) {
         (JsPath \ IsTrusteeCompleteId.toString).readNullable[Boolean]
       ) ((details, vat, paye, isComplete) => {
       TrusteeCompanyEntity(CompanyDetailsId(index), details.companyName, details.isDeleted,
-        isCompanyComplete(vat, paye, isComplete).getOrElse(false))
+        isCompanyComplete(vat, paye, isComplete).getOrElse(false), true)
     }
     )
 
     private def readsPartnership(index: Int): Reads[Trustee[_]] = (
       (JsPath \ TrusteePartnershipDetailsId.toString).read[PartnershipDetails] and
         (JsPath \ IsPartnershipCompleteId.toString).readNullable[Boolean]
-      ) ((details, isComplete) => TrusteePartnershipEntity(TrusteePartnershipDetailsId(index), details.name, details.isDeleted, isComplete.getOrElse(false))
+      ) ((details, isComplete) => TrusteePartnershipEntity(
+      TrusteePartnershipDetailsId(index), details.name, details.isDeleted, isComplete.getOrElse(false), isNewEntity = true)
     )
 
     private def readsSkeleton(index: Int): Reads[Trustee[_]] = new Reads[Trustee[_]] {
