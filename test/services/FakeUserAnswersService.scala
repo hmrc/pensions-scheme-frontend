@@ -16,7 +16,8 @@
 
 package services
 
-import connectors.{FakeSubscriptionCacheConnector, FakeUpdateCacheConnector, SubscriptionCacheConnector, UpdateSchemeCacheConnector}
+import config.FrontendAppConfig
+import connectors.{FakeFrontendAppConfig, FakeLockConnector, FakeSubscriptionCacheConnector, FakeUpdateCacheConnector, PensionSchemeVarianceLockConnector, SubscriptionCacheConnector, UpdateSchemeCacheConnector}
 import identifiers.TypedIdentifier
 import models.Mode
 import models.requests.DataRequest
@@ -33,6 +34,8 @@ trait FakeUserAnswersService extends UserAnswersService with Matchers {
 
   override protected def subscriptionCacheConnector: SubscriptionCacheConnector = FakeSubscriptionCacheConnector.getConnector
   override protected def updateSchemeCacheConnector: UpdateSchemeCacheConnector = FakeUpdateCacheConnector.getConnector
+  override protected def lockConnector: PensionSchemeVarianceLockConnector = FakeLockConnector.getConnector
+    override val appConfig: FrontendAppConfig =  FakeFrontendAppConfig.getConfig
 
   private val data: mutable.HashMap[String, JsValue] = mutable.HashMap()
   private val removed: mutable.ListBuffer[String] = mutable.ListBuffer()
