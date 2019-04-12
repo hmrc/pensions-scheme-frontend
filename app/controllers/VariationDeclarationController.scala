@@ -17,7 +17,7 @@
 package controllers
 
 import config.FrontendAppConfig
-import connectors.{PensionAdministratorConnector, PensionSchemeVarianceLockConnector, PensionsSchemeConnector, UpdateSchemeCacheConnector}
+import connectors.{PensionSchemeVarianceLockConnector, PensionsSchemeConnector, UpdateSchemeCacheConnector}
 import controllers.actions._
 import forms.register.DeclarationFormProvider
 import identifiers.{PstrId, SchemeNameId, VariationDeclarationId}

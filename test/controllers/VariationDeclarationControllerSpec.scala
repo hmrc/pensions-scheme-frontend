@@ -21,10 +21,18 @@ import controllers.actions._
 import forms.register.DeclarationFormProvider
 import identifiers.{PstrId, SchemeNameId}
 import org.scalatest.mockito.MockitoSugar
+import org.mockito.Matchers.any
+import org.mockito.Mockito._
+import org.scalatest.mockito.MockitoSugar
+import org.scalatest.{AsyncWordSpec, MustMatchers}
 import play.api.libs.json.Json
+import play.api.mvc.Call
+import play.api.mvc.Results.Ok
 import play.api.test.Helpers._
 import utils.FakeNavigator
 import views.html.variationDeclaration
+
+import scala.concurrent.Future
 
 class VariationDeclarationControllerSpec extends ControllerSpecBase with MockitoSugar {
 
@@ -34,10 +42,10 @@ class VariationDeclarationControllerSpec extends ControllerSpecBase with Mockito
   val srnNumber = "S12345"
   val srn = Some("S12345")
   private val onwardRoute = controllers.routes.IndexController.onPageLoad()
-  val postCall = routes.VariationDeclarationController.onSubmit(srn)
+  def postCall: Call = routes.VariationDeclarationController.onSubmit(srn)
 
   def validData: FakeDataRetrievalAction = new FakeDataRetrievalAction(Some(Json.obj(
-    SchemeNameId.toString -> "Test Scheme Name",
+    SchemeNameId.toString -> schemeName,
     PstrId.toString -> "pstr")))
 
   val pensionsSchemeConnector: PensionsSchemeConnector = mock[PensionsSchemeConnector]
@@ -61,6 +69,13 @@ class VariationDeclarationControllerSpec extends ControllerSpecBase with Mockito
 
       "redirect to the next page for a POST" in {
         val postRequest = fakeRequest.withFormUrlEncodedBody(("agree", "agreed"))
+        when(pensionsSchemeConnector.updateSchemeDetails(any(), any(), any())(any(), any()))
+          .thenReturn(Future.successful((): Unit))
+        when(updateSchemeCacheConnector.removeAll(any())(any(), any()))
+          .thenReturn(Future.successful(Ok))
+        when(lockConnector.releaseLock(any(), any())(any(), any()))
+          .thenReturn(Future.successful((): Unit))
+
         val result = controller().onSubmit(srn)(postRequest)
 
         status(result) mustBe SEE_OTHER
