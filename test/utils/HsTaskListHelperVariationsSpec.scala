@@ -21,7 +21,7 @@ import identifiers.register.establishers.IsEstablisherCompleteId
 import identifiers.register.establishers.company.{CompanyDetailsId => EstablisherCompanyDetailsId}
 import identifiers.register.establishers.individual.EstablisherDetailsId
 import identifiers.register.establishers.partnership.{PartnershipDetailsId => EstablisherPartnershipDetailsId}
-import identifiers.register.trustees.IsTrusteeCompleteId
+import identifiers.register.trustees.{IsTrusteeCompleteId, IsTrusteeNewId}
 import identifiers.register.trustees.company.{CompanyDetailsId => TrusteeCompanyDetailsId}
 import identifiers.register.trustees.individual.TrusteeDetailsId
 import identifiers.register.trustees.partnership.{IsPartnershipCompleteId, PartnershipDetailsId => TrusteePartnershipDetailsId}
@@ -228,11 +228,12 @@ class HsTaskListHelperVariationsSpec extends HsTaskListHelperBehaviour {
     "return the seq of trustees sub sections after filtering out deleted trustees" in {
       val userAnswers = UserAnswers().set(TrusteeDetailsId(0))(PersonDetails("firstName", None, "lastName", LocalDate.now())).flatMap(
         _.set(IsTrusteeCompleteId(0))(false).flatMap(
-          _.set(TrusteeCompanyDetailsId(1))(CompanyDetails("test company", true)).flatMap(
+          _.set(IsTrusteeNewId(0))(true).flatMap(
+           _.set(TrusteeCompanyDetailsId(1))(CompanyDetails("test company", true)).flatMap(
             _.set(IsTrusteeCompleteId(1))(false).flatMap(
               _.set(TrusteePartnershipDetailsId(2))(PartnershipDetails("test partnership", false)).flatMap(
                 _.set(IsPartnershipCompleteId(2))(false)
-              ))))).asOpt.value
+              )))))).asOpt.value
       val helper = createTaskListHelper(userAnswers)
       helper.trustees(userAnswers) mustBe
         Seq(SchemeDetailsTaskListSection(Some(false), Link(messages("messages__schemeTaskList__persons_details__link_text", "firstName lastName"),

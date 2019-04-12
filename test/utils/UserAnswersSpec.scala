@@ -23,7 +23,7 @@ import identifiers.register.establishers.partnership.PartnershipDetailsId
 import identifiers.register.establishers.{EstablisherKindId, EstablishersId, IsEstablisherCompleteId}
 import identifiers.register.trustees.company.{CompanyPayeId, CompanyVatId, CompanyDetailsId => TrusteeCompanyDetailsId}
 import identifiers.register.trustees.individual.TrusteeDetailsId
-import identifiers.register.trustees.{IsTrusteeCompleteId, TrusteeKindId, TrusteesId, partnership}
+import identifiers.register.trustees.{company => _, _}
 import models._
 import models.person.PersonDetails
 import models.register._
@@ -125,14 +125,16 @@ class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues with 
           Json.obj(
             TrusteeDetailsId.toString ->
               PersonDetails("First", None, "Last", LocalDate.now),
-            IsTrusteeCompleteId.toString -> true
+            IsTrusteeCompleteId.toString -> true,
+            IsTrusteeNewId.toString -> true
           ),
           Json.obj(
             TrusteeCompanyDetailsId.toString ->
               CompanyDetails("My Company"),
             CompanyVatId.toString -> Vat.No,
             CompanyPayeId.toString -> Paye.No,
-            IsTrusteeCompleteId.toString -> true
+            IsTrusteeCompleteId.toString -> true,
+            IsTrusteeNewId.toString -> true
           ),
           Json.obj(
             partnership.PartnershipDetailsId.toString ->

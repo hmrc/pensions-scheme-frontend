@@ -21,7 +21,7 @@ import identifiers.register.establishers.IsEstablisherCompleteId
 import identifiers.register.establishers.company.{CompanyPayeId, CompanyVatId, CompanyDetailsId => EstablisherCompanyDetailsId}
 import identifiers.register.establishers.individual.EstablisherDetailsId
 import identifiers.register.establishers.partnership.{PartnershipDetailsId => EstablisherPartnershipDetailsId}
-import identifiers.register.trustees.{IsTrusteeCompleteId, MoreThanTenTrusteesId}
+import identifiers.register.trustees.{IsTrusteeCompleteId, IsTrusteeNewId, MoreThanTenTrusteesId}
 import identifiers.register.trustees.company.{CompanyDetailsId => TrusteeCompanyDetailsId}
 import identifiers.register.trustees.company.{CompanyVatId => TrusteeCompanyVatId}
 import identifiers.register.trustees.company.{CompanyPayeId => TrusteeCompanyPayeId}
@@ -132,17 +132,18 @@ trait HsTaskListHelperBehaviour extends SpecBase with MustMatchers with OptionVa
   protected def allTrustees(isCompleteTrustees: Boolean = true): UserAnswers = {
     UserAnswers().set(TrusteeDetailsId(0))(PersonDetails("firstName", None, "lastName", LocalDate.now())).flatMap(
       _.set(IsTrusteeCompleteId(0))(isCompleteTrustees).flatMap(
-        _.set(TrusteeCompanyVatId(0))(Vat.No).flatMap(
-          _.set(TrusteeCompanyPayeId(0))(Paye.No).flatMap(
-            _.set(TrusteeCompanyDetailsId(1))(CompanyDetails("test company", false)).flatMap(
-              _.set(TrusteeCompanyVatId(1))(Vat.No).flatMap(
-                _.set(TrusteeCompanyPayeId(1))(Paye.No).flatMap(
-                  _.set(IsTrusteeCompleteId(1))(isCompleteTrustees).flatMap(
-                    _.set(TrusteePartnershipDetailsId(2))(PartnershipDetails("test partnership", false)).flatMap(
-                      _.set(TrusteeCompanyVatId(2))(Vat.No).flatMap(
-                        _.set(TrusteeCompanyPayeId(2))(Paye.No).flatMap(
-                          _.set(IsPartnershipCompleteId(2))(isCompleteTrustees)
-                        ))))))))))).asOpt.value
+        _.set(IsTrusteeNewId(0))(true).flatMap(
+          _.set(TrusteeCompanyVatId(0))(Vat.No).flatMap(
+            _.set(TrusteeCompanyPayeId(0))(Paye.No).flatMap(
+              _.set(TrusteeCompanyDetailsId(1))(CompanyDetails("test company", false)).flatMap(
+                _.set(TrusteeCompanyVatId(1))(Vat.No).flatMap(
+                  _.set(TrusteeCompanyPayeId(1))(Paye.No).flatMap(
+                    _.set(IsTrusteeCompleteId(1))(isCompleteTrustees).flatMap(
+                      _.set(TrusteePartnershipDetailsId(2))(PartnershipDetails("test partnership", false)).flatMap(
+                        _.set(TrusteeCompanyVatId(2))(Vat.No).flatMap(
+                          _.set(TrusteeCompanyPayeId(2))(Paye.No).flatMap(
+                            _.set(IsPartnershipCompleteId(2))(isCompleteTrustees)
+                          )))))))))))).asOpt.value
   }
 
 
@@ -303,11 +304,12 @@ trait HsTaskListHelperBehaviour extends SpecBase with MustMatchers with OptionVa
     "return the seq of trustees sub sections after filtering out deleted trustees" in {
       val userAnswers = UserAnswers().set(TrusteeDetailsId(0))(PersonDetails("firstName", None, "lastName", LocalDate.now())).flatMap(
         _.set(IsTrusteeCompleteId(0))(false).flatMap(
-          _.set(TrusteeCompanyDetailsId(1))(CompanyDetails("test company", true)).flatMap(
-            _.set(IsTrusteeCompleteId(1))(false).flatMap(
-              _.set(TrusteePartnershipDetailsId(2))(PartnershipDetails("test partnership", false)).flatMap(
-                _.set(IsPartnershipCompleteId(2))(false)
-              ))))).asOpt.value
+          _.set(IsTrusteeNewId(0))(true).flatMap(
+            _.set(TrusteeCompanyDetailsId(1))(CompanyDetails("test company", true)).flatMap(
+              _.set(IsTrusteeCompleteId(1))(false).flatMap(
+                _.set(TrusteePartnershipDetailsId(2))(PartnershipDetails("test partnership", false)).flatMap(
+                  _.set(IsPartnershipCompleteId(2))(false)
+                )))))).asOpt.value
       val helper = createTaskListHelper(userAnswers)
       helper.trustees(userAnswers) mustBe
         Seq(SchemeDetailsTaskListSection(Some(false), Link(individualLinkText,

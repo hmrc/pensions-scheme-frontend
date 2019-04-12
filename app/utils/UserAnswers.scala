@@ -25,7 +25,7 @@ import identifiers.register.establishers.{EstablisherKindId, EstablishersId, IsE
 import identifiers.register.trustees.company.{CompanyDetailsId, CompanyPayeId, CompanyVatId}
 import identifiers.register.trustees.individual.TrusteeDetailsId
 import identifiers.register.trustees.partnership.{IsPartnershipCompleteId, PartnershipDetailsId => TrusteePartnershipDetailsId}
-import identifiers.register.trustees.{IsTrusteeCompleteId, TrusteeKindId, TrusteesId}
+import identifiers.register.trustees.{IsTrusteeCompleteId, IsTrusteeNewId, TrusteeKindId, TrusteesId}
 import identifiers.{EstablishersOrTrusteesChangedId, InsuranceDetailsChangedId, TypedIdentifier}
 import models.address.Address
 import models.person.PersonDetails
@@ -253,10 +253,11 @@ case class UserAnswers(json: JsValue = Json.obj()) {
   val readTrustees: Reads[Seq[Trustee[_]]] = new Reads[Seq[Trustee[_]]] {
     private def readsIndividual(index: Int): Reads[Trustee[_]] = (
       (JsPath \ TrusteeDetailsId.toString).read[PersonDetails] and
-        (JsPath \ IsTrusteeCompleteId.toString).readNullable[Boolean]
-      ) ((details, isComplete) =>
+        (JsPath \ IsTrusteeCompleteId.toString).readNullable[Boolean] and
+        (JsPath \ IsTrusteeNewId.toString).readNullable[Boolean]
+      ) ((details, isComplete, isNew) =>
       TrusteeIndividualEntity(
-        TrusteeDetailsId(index), details.fullName, details.isDeleted, isComplete.getOrElse(false), isNewEntity = true)
+        TrusteeDetailsId(index), details.fullName, details.isDeleted, isComplete.getOrElse(false), isNew.fold(false)(identity))
     )
 
     /*TODO: This logic for vat and paye is done to handle the partial data with vat and paye in company details

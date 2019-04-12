@@ -18,6 +18,7 @@ package views.register.trustees
 
 import controllers.register.trustees.routes
 import forms.register.trustees.AddTrusteeFormProvider
+import identifiers.register.trustees.IsTrusteeNewId
 import identifiers.register.trustees.company.CompanyDetailsId
 import identifiers.register.trustees.individual.TrusteeDetailsId
 import models.person.PersonDetails
@@ -47,6 +48,7 @@ class AddTrusteeViewSpec extends YesNoViewBehaviours with EntityListBehaviours {
     UserAnswers()
       .set(CompanyDetailsId(0))(companyDetails)
       .flatMap(_.set(TrusteeDetailsId(1))(trusteeDetails))
+      .flatMap(_.set(IsTrusteeNewId(1))(true))
       .asOpt
       .value
 

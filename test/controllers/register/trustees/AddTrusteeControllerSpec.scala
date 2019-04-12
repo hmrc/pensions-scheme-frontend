@@ -20,7 +20,7 @@ import services.FakeUserAnswersService
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.register.trustees.AddTrusteeFormProvider
-import identifiers.register.trustees.TrusteesId
+import identifiers.register.trustees.{IsTrusteeNewId, TrusteesId}
 import identifiers.register.trustees.company.CompanyDetailsId
 import identifiers.register.trustees.individual.TrusteeDetailsId
 import models.person.PersonDetails
@@ -70,7 +70,8 @@ class AddTrusteeControllerSpec extends ControllerSpecBase {
           CompanyDetailsId.toString -> CompanyDetails("Trustee Company B")
         ),
         Json.obj(
-          TrusteeDetailsId.toString -> PersonDetails("Trustee", None, "Individual", LocalDate.now())
+          TrusteeDetailsId.toString -> PersonDetails("Trustee", None, "Individual", LocalDate.now()),
+          IsTrusteeNewId.toString -> true
         )
       )
     )

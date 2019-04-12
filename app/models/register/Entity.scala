@@ -48,14 +48,12 @@ sealed trait Entity[ID] {
 
 case class DirectorEntity(id: DirectorDetailsId, name: String, isDeleted: Boolean,
                           isCompleted: Boolean, isNewEntity: Boolean) extends Entity[DirectorDetailsId] {
-  override def editLink: Option[String] = {
-    (isNewEntity, isCompleted) match {
-      case (false, _) => None
-      case (_, true) => Some(controllers.register.establishers.company.director.routes.CheckYourAnswersController.onPageLoad(
-        id.establisherIndex, id.directorIndex, NormalMode, None).url)
-      case (_, false) => Some(controllers.register.establishers.company.director.routes.DirectorDetailsController.onPageLoad(
-        NormalMode, id.establisherIndex, id.directorIndex, None).url)
-    }
+  override def editLink: Option[String] = (isNewEntity, isCompleted) match {
+    case (false, _) => None
+    case (_, true) => Some(controllers.register.establishers.company.director.routes.CheckYourAnswersController.onPageLoad(
+      id.establisherIndex, id.directorIndex, NormalMode, None).url)
+    case (_, false) => Some(controllers.register.establishers.company.director.routes.DirectorDetailsController.onPageLoad(
+      NormalMode, id.establisherIndex, id.directorIndex, None).url)
   }
 
   override def deleteLink: Option[String] =
@@ -67,14 +65,12 @@ case class DirectorEntity(id: DirectorDetailsId, name: String, isDeleted: Boolea
 
 case class PartnerEntity(id: PartnerDetailsId, name: String, isDeleted: Boolean,
                          isCompleted: Boolean, isNewEntity: Boolean) extends Entity[PartnerDetailsId] {
-  override def editLink: Option[String] = {
-    (isNewEntity, isCompleted) match {
-      case (false, _) => None
-      case (_, true) => Some(controllers.register.establishers.partnership.partner.routes.CheckYourAnswersController.onPageLoad(
-        NormalMode, id.establisherIndex, id.partnerIndex, None).url)
-      case (_, false) => Some(controllers.register.establishers.partnership.partner.routes.PartnerDetailsController.onPageLoad(
-        NormalMode, id.establisherIndex, id.partnerIndex, None).url)
-    }
+  override def editLink: Option[String] = (isNewEntity, isCompleted) match {
+    case (false, _) => None
+    case (_, true) => Some(controllers.register.establishers.partnership.partner.routes.CheckYourAnswersController.onPageLoad(
+      NormalMode, id.establisherIndex, id.partnerIndex, None).url)
+    case (_, false) => Some(controllers.register.establishers.partnership.partner.routes.PartnerDetailsController.onPageLoad(
+      NormalMode, id.establisherIndex, id.partnerIndex, None).url)
   }
 
   override def deleteLink: Option[String] =
