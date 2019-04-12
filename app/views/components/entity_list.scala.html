@@ -17,9 +17,9 @@
 @import play.api.mvc.AnyContent
 @import config.FrontendAppConfig
 @import models.requests.DataRequest
-@import models.register.Entity
+@import models.register.{Entity, Establisher}
 
-@(entities: Seq[Entity[_]], viewOnly:Boolean = false)(implicit messages: Messages)
+@(entities: Seq[Entity[_]], viewOnly:Boolean = false, hideDeleteOnSingleRecord: Boolean = false)(implicit messages: Messages)
 
 <div class="form-group">
     <ul id="items" class="govuk-check-your-answers form-group cya-questions-long">
@@ -37,7 +37,7 @@
                     }
                 </div>
 
-                @if(entities.length > 1) {
+                @if((entities.length > 1 && hideDeleteOnSingleRecord) || hideDeleteOnSingleRecord == false) {
                     <div>
                         <a id="person-@{entity.index}-delete" href="@entity.deleteLink">
                             @messages("site.delete")

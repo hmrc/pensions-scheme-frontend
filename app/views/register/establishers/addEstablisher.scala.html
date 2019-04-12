@@ -28,7 +28,8 @@
     mode: Mode,
     establishers: Seq[Establisher[_]],
     schemeName: Option[String],
-    postCall: Call
+    postCall: Call,
+    hideDeleteOnSingleRecord: Boolean = false
 )(implicit request: Request[_], messages: Messages)
 
 @disableSubmission = @{
@@ -58,7 +59,7 @@
                 headingKey=messages("messages__establishers__add__title")
             )
 
-            @components.entity_list(establishers)
+            @components.entity_list(establishers, hideDeleteOnSingleRecord = hideDeleteOnSingleRecord)
 
             @components.input_yes_no(
                 field = form("value"),

@@ -140,7 +140,8 @@ object AddEstablisherControllerSpec extends AddEstablisherControllerSpec {
       NormalMode,
       allEstablishers,
       None,
-      routes.AddEstablisherController.onSubmit(NormalMode, None)
+      routes.AddEstablisherController.onSubmit(NormalMode, None),
+      true
     )(fakeRequest, messages).toString
 
   private val day = LocalDate.now().getDayOfMonth
