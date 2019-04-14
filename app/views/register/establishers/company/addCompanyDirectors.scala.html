@@ -27,7 +27,8 @@
     directors: Seq[DirectorEntity],
     schemeName: Option[String],
     postCall: Call,
-    viewOnly: Boolean
+    viewOnly: Boolean,
+    hideDeleteOnSingleRecord: Boolean = false
 )(implicit request: Request[_], messages: Messages)
 
 @disableSubmission = @{
@@ -52,7 +53,7 @@
             @components.submit_button("messages__addCompanyDirectors_add_director")
         } else {
 
-            @components.entity_list(directors, viewOnly)
+            @components.entity_list(directors, viewOnly, hideDeleteOnSingleRecord = hideDeleteOnSingleRecord)
 
             @if(!viewOnly){
                 @if(directors.size < appConfig.maxDirectors) {

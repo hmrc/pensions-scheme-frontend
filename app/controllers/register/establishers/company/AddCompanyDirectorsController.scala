@@ -51,7 +51,7 @@ class AddCompanyDirectorsController @Inject()(
   def onPageLoad(mode: Mode, srn: Option[String], index: Int): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
           val directors = request.userAnswers.allDirectorsAfterDelete(index)
-          Future.successful(Ok(addCompanyDirectors(appConfig, form, directors, existingSchemeName, postCall(mode, srn, index), request.viewOnly)))
+          Future.successful(Ok(addCompanyDirectors(appConfig, form, directors, existingSchemeName, postCall(mode, srn, index), request.viewOnly, true)))
   }
 
   def onSubmit(mode: Mode, srn: Option[String], index: Int): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
@@ -72,7 +72,8 @@ class AddCompanyDirectorsController @Inject()(
                       directors,
                       existingSchemeName,
                       postCall(mode, srn, index),
-                      request.viewOnly
+                      request.viewOnly,
+                      true
                     )
                   )
                 ),
