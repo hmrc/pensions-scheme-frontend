@@ -21,7 +21,7 @@ import identifiers.register.establishers.company.{CompanyDetailsId => Establishe
 import identifiers.register.establishers.individual.EstablisherDetailsId
 import identifiers.register.establishers.partnership.PartnershipDetailsId
 import identifiers.register.establishers.partnership.partner.{IsPartnerCompleteId, PartnerDetailsId}
-import identifiers.register.establishers.{EstablisherKindId, EstablishersId, IsEstablisherCompleteId}
+import identifiers.register.establishers.{EstablisherKindId, EstablishersId, IsEstablisherCompleteId, IsEstablisherNewId}
 import identifiers.register.trustees.company.{CompanyDetailsId, CompanyPayeId, CompanyVatId}
 import identifiers.register.trustees.individual.TrusteeDetailsId
 import identifiers.register.trustees.partnership.{IsPartnershipCompleteId, PartnershipDetailsId => TrusteePartnershipDetailsId}
@@ -33,6 +33,7 @@ import models.register._
 import models.{CompanyDetails, PartnershipDetails, Paye, Vat}
 import play.api.Logger
 import play.api.libs.functional.syntax._
+import play.api.libs.json.Reads._
 import play.api.libs.json._
 import play.api.mvc.Result
 import play.api.mvc.Results._
@@ -143,13 +144,32 @@ case class UserAnswers(json: JsValue = Json.obj()) {
     }
   }
 
+
+  val doNothing: Reads[JsBoolean] = {
+    __.read(JsBoolean(false))
+  }
+
   val readEstablishers: Reads[Seq[Establisher[_]]] = new Reads[Seq[Establisher[_]]] {
+
+    def noOfRecords : Int = json.validate((__ \ 'establishers).readNullable(__.read(
+      Reads.seq((__ \ 'establisherKind).read[String].flatMap {
+        case "individual" => (__ \ 'establisherDetails ).read[JsObject].flatMap(_=> (__ \ "isDeleted").json.pick[JsBoolean]) orElse doNothing
+        case "company" => (__ \ 'companyDetails ).read[JsObject].flatMap(_=> (__ \ "isDeleted").json.pick[JsBoolean]) orElse doNothing
+        case "partnership" => (__ \ 'partnershipDetails ).read[JsObject].flatMap(_=> (__ \ "isDeleted").json.pick[JsBoolean]) orElse doNothing
+      }).map(x=> x.count(deleted => deleted == JsBoolean(false)))))) match {
+      case JsSuccess(Some(ele), _) => ele
+      case _ => 0
+    }
+
+
     private def readsIndividual(index: Int): Reads[Establisher[_]] = (
       (JsPath \ EstablisherDetailsId.toString).read[PersonDetails] and
-        (JsPath \ IsEstablisherCompleteId.toString).readNullable[Boolean]
-      ) ((details, isComplete) =>
+        (JsPath \ IsEstablisherCompleteId.toString).readNullable[Boolean] and
+        (JsPath \ IsEstablisherNewId.toString).readNullable[Boolean]
+      ) ((details, isComplete, isNew) =>
       EstablisherIndividualEntity(
-        EstablisherDetailsId(index), details.fullName, details.isDeleted, isComplete.getOrElse(false), isNewEntity = true)
+        EstablisherDetailsId(index), details.fullName, details.isDeleted,
+        isComplete.getOrElse(false), isNew.fold(false)(identity), noOfRecords)
     )
 
     /*TODO: This logic for vat and paye is done to handle the partial data with vat and paye in company details
@@ -158,17 +178,20 @@ case class UserAnswers(json: JsValue = Json.obj()) {
       (JsPath \ EstablisherCompanyDetailsId.toString).read[CompanyDetails] and
         (JsPath \ EstablisherCompanyVatId.toString).readNullable[Vat] and
         (JsPath \ EstablisherCompanyPayeId.toString).readNullable[Paye] and
-        (JsPath \ IsEstablisherCompleteId.toString).readNullable[Boolean]
-      ) ((details, vat, paye, isComplete) =>
+        (JsPath \ IsEstablisherCompleteId.toString).readNullable[Boolean] and
+        (JsPath \ IsEstablisherNewId.toString).readNullable[Boolean]
+      ) ((details, vat, paye, isComplete, isNew) =>
       EstablisherCompanyEntity(EstablisherCompanyDetailsId(index),
-        details.companyName, details.isDeleted, isCompanyComplete(vat, paye, isComplete).getOrElse(false), isNewEntity =true)
+        details.companyName, details.isDeleted, isCompanyComplete(vat, paye, isComplete).getOrElse(false), isNew.fold(false)(identity), noOfRecords)
     )
 
     private def readsPartnership(index: Int): Reads[Establisher[_]] = (
       (JsPath \ PartnershipDetailsId.toString).read[PartnershipDetails] and
-        (JsPath \ IsEstablisherCompleteId.toString).readNullable[Boolean]
-      ) ((details, isComplete) =>
-      EstablisherPartnershipEntity(PartnershipDetailsId(index), details.name, details.isDeleted, isComplete.getOrElse(false), isNewEntity = true)
+        (JsPath \ IsEstablisherCompleteId.toString).readNullable[Boolean] and
+        (JsPath \ IsEstablisherNewId.toString).readNullable[Boolean]
+      ) ((details, isComplete, isNew) =>
+      EstablisherPartnershipEntity(PartnershipDetailsId(index),
+        details.name, details.isDeleted, isComplete.getOrElse(false), isNew.fold(false)(identity), noOfRecords)
     )
 
     private def readsSkeleton(index: Int): Reads[Establisher[_]] = new Reads[Establisher[_]] {
@@ -194,7 +217,10 @@ case class UserAnswers(json: JsValue = Json.obj()) {
     }
   }
 
+
+
   def allEstablishers: Seq[Establisher[_]] = {
+
     json.validate[Seq[Establisher[_]]](readEstablishers) match {
       case JsSuccess(establishers, _) =>
         establishers
@@ -209,6 +235,7 @@ case class UserAnswers(json: JsValue = Json.obj()) {
   }
 
   def allDirectors(establisherIndex: Int): Seq[DirectorEntity] = {
+
     getAllRecursive[PersonDetails](DirectorDetailsId.collectionPath(establisherIndex)).map {
       details =>
         details.map { director =>
@@ -219,7 +246,8 @@ case class UserAnswers(json: JsValue = Json.obj()) {
             director.fullName,
             director.isDeleted,
             isComplete,
-            isNewEntity = true
+            isNewEntity = true,
+            details.count(_.isDeleted==false)
           )
         }
     }.getOrElse(Seq.empty)
@@ -240,7 +268,8 @@ case class UserAnswers(json: JsValue = Json.obj()) {
             partner.fullName,
             partner.isDeleted,
             isComplete,
-            isNewEntity = true
+            isNewEntity = true,
+            details.count(_.isDeleted==false)
           )
         }
     }.getOrElse(Seq.empty)
@@ -251,13 +280,25 @@ case class UserAnswers(json: JsValue = Json.obj()) {
   }
 
   val readTrustees: Reads[Seq[Trustee[_]]] = new Reads[Seq[Trustee[_]]] {
+
+    val noOfRecords : Int = json.validate((__ \ 'trustees).readNullable(__.read(
+      Reads.seq((__ \ 'trusteeKind).read[String].flatMap {
+        case "individual" => (__ \ 'trusteeDetails ).read[JsObject].flatMap(_=> (__ \ "isDeleted").json.pick[JsBoolean]) orElse doNothing
+        case "company" => (__ \ 'companyDetails ).read[JsObject].flatMap(_=> (__ \ "isDeleted").json.pick[JsBoolean]) orElse doNothing
+        case "partnership" => (__ \ 'partnershipDetails ).read[JsObject].flatMap(_=> (__ \ "isDeleted").json.pick[JsBoolean]) orElse doNothing
+      }).map(x=> x.count(deleted => deleted == JsBoolean(false)))))) match {
+      case JsSuccess(Some(ele), _) => ele
+      case _ => 0
+    }
+
     private def readsIndividual(index: Int): Reads[Trustee[_]] = (
       (JsPath \ TrusteeDetailsId.toString).read[PersonDetails] and
         (JsPath \ IsTrusteeCompleteId.toString).readNullable[Boolean] and
         (JsPath \ IsTrusteeNewId.toString).readNullable[Boolean]
       ) ((details, isComplete, isNew) =>
       TrusteeIndividualEntity(
-        TrusteeDetailsId(index), details.fullName, details.isDeleted, isComplete.getOrElse(false), isNew.fold(false)(identity))
+        TrusteeDetailsId(index), details.fullName, details.isDeleted,
+        isComplete.getOrElse(false), isNew.fold(false)(identity), noOfRecords)
     )
 
     /*TODO: This logic for vat and paye is done to handle the partial data with vat and paye in company details
@@ -266,18 +307,21 @@ case class UserAnswers(json: JsValue = Json.obj()) {
       (JsPath \ CompanyDetailsId.toString).read[CompanyDetails] and
         (JsPath \ CompanyVatId.toString).readNullable[Vat] and
         (JsPath \ CompanyPayeId.toString).readNullable[Paye] and
-        (JsPath \ IsTrusteeCompleteId.toString).readNullable[Boolean]
-      ) ((details, vat, paye, isComplete) => {
+        (JsPath \ IsTrusteeCompleteId.toString).readNullable[Boolean] and
+        (JsPath \ IsTrusteeNewId.toString).readNullable[Boolean]
+      ) ((details, vat, paye, isComplete, isNew) => {
       TrusteeCompanyEntity(CompanyDetailsId(index), details.companyName, details.isDeleted,
-        isCompanyComplete(vat, paye, isComplete).getOrElse(false), true)
+        isCompanyComplete(vat, paye, isComplete).getOrElse(false), isNew.fold(false)(identity), noOfRecords)
     }
     )
 
     private def readsPartnership(index: Int): Reads[Trustee[_]] = (
       (JsPath \ TrusteePartnershipDetailsId.toString).read[PartnershipDetails] and
-        (JsPath \ IsPartnershipCompleteId.toString).readNullable[Boolean]
-      ) ((details, isComplete) => TrusteePartnershipEntity(
-      TrusteePartnershipDetailsId(index), details.name, details.isDeleted, isComplete.getOrElse(false), isNewEntity = true)
+        (JsPath \ IsPartnershipCompleteId.toString).readNullable[Boolean] and
+        (JsPath \ IsTrusteeNewId.toString).readNullable[Boolean]
+      ) ((details, isComplete, isNew) => TrusteePartnershipEntity(
+      TrusteePartnershipDetailsId(index), details.name, details.isDeleted,
+      isComplete.getOrElse(false), isNew.fold(false)(identity), noOfRecords)
     )
 
     private def readsSkeleton(index: Int): Reads[Trustee[_]] = new Reads[Trustee[_]] {
@@ -305,6 +349,7 @@ case class UserAnswers(json: JsValue = Json.obj()) {
   }
 
   def allTrustees: Seq[Trustee[_]] = {
+
     json.validate[Seq[Trustee[_]]](readTrustees) match {
       case JsSuccess(trustees, _) =>
         trustees

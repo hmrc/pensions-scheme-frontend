@@ -17,7 +17,7 @@
 package utils
 
 import base.SpecBase
-import identifiers.register.establishers.IsEstablisherCompleteId
+import identifiers.register.establishers.{IsEstablisherCompleteId, IsEstablisherNewId}
 import identifiers.register.establishers.company.{CompanyDetailsId => EstablisherCompanyDetailsId}
 import identifiers.register.establishers.individual.EstablisherDetailsId
 import identifiers.register.establishers.partnership.{PartnershipDetailsId => EstablisherPartnershipDetailsId}
@@ -182,11 +182,14 @@ class HsTaskListHelperVariationsSpec extends HsTaskListHelperBehaviour {
     "return the seq of establishers sub sections after filtering out deleted establishers" in {
       val userAnswers = UserAnswers().set(EstablisherDetailsId(0))(PersonDetails("firstName", None, "lastName", LocalDate.now())).flatMap(
         _.set(IsEstablisherCompleteId(0))(false).flatMap(
+        _.set(IsEstablisherNewId(0))(true).flatMap(
           _.set(EstablisherCompanyDetailsId(1))(CompanyDetails("test company", true)).flatMap(
             _.set(IsEstablisherCompleteId(1))(true).flatMap(
+            _.set(IsEstablisherNewId(1))(true).flatMap(
               _.set(EstablisherPartnershipDetailsId(2))(PartnershipDetails("test partnership", false)).flatMap(
+                _.set(IsEstablisherNewId(2))(true)).flatMap(
                 _.set(IsEstablisherCompleteId(2))(false)
-              ))))).asOpt.value
+              ))))))).asOpt.value
       val helper = new HsTaskListHelperVariations(userAnswers)
       helper.establishers(userAnswers) mustBe
         Seq(SchemeDetailsTaskListSection(Some(false), Link(messages("messages__schemeTaskList__persons_details__link_text", "firstName lastName"),
@@ -231,8 +234,10 @@ class HsTaskListHelperVariationsSpec extends HsTaskListHelperBehaviour {
           _.set(IsTrusteeNewId(0))(true).flatMap(
            _.set(TrusteeCompanyDetailsId(1))(CompanyDetails("test company", true)).flatMap(
             _.set(IsTrusteeCompleteId(1))(false).flatMap(
-              _.set(TrusteePartnershipDetailsId(2))(PartnershipDetails("test partnership", false)).flatMap(
-                _.set(IsPartnershipCompleteId(2))(false)
+              _.set(IsTrusteeNewId(1))(true).flatMap(
+                _.set(TrusteePartnershipDetailsId(2))(PartnershipDetails("test partnership", false)).flatMap(
+                  _.set(IsTrusteeNewId(2))(true)).flatMap(
+                    _.set(IsPartnershipCompleteId(2))(false))
               )))))).asOpt.value
       val helper = createTaskListHelper(userAnswers)
       helper.trustees(userAnswers) mustBe
@@ -264,10 +269,12 @@ object HsTaskListHelperVariationsSpec extends SpecBase {
             _.set(IsWorkingKnowledgeCompleteId)(isCompleteWk).flatMap(
               _.set(EstablisherDetailsId(0))(PersonDetails("firstName", None, "lastName", LocalDate.now())).flatMap(
                 _.set(IsEstablisherCompleteId(0))(isCompleteEstablishers)).flatMap(
-                _.set(TrusteeDetailsId(0))(PersonDetails("firstName", None, "lastName", LocalDate.now())).flatMap(
-                  _.set(IsTrusteeCompleteId(0))(isCompleteTrustees)).flatMap(
-                  _.set(InsuranceDetailsChangedId)(isChangedInsuranceDetails)).flatMap(
-                  _.set(InsuranceDetailsChangedId)(isChangedEstablishersTrustees))
+                  _.set(IsEstablisherNewId(0))(true)).flatMap(
+                    _.set(TrusteeDetailsId(0))(PersonDetails("firstName", None, "lastName", LocalDate.now())).flatMap(
+                      _.set(IsTrusteeCompleteId(0))(isCompleteTrustees)).flatMap(
+                        _.set(IsTrusteeNewId(0))(true)).flatMap(
+                          _.set(InsuranceDetailsChangedId)(isChangedInsuranceDetails)).flatMap(
+                            _.set(InsuranceDetailsChangedId)(isChangedEstablishersTrustees))
               )
             )
           )

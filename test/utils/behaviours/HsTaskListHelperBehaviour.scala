@@ -17,7 +17,7 @@
 package utils.behaviours
 
 import base.SpecBase
-import identifiers.register.establishers.IsEstablisherCompleteId
+import identifiers.register.establishers.{IsEstablisherCompleteId, IsEstablisherNewId}
 import identifiers.register.establishers.company.{CompanyPayeId, CompanyVatId, CompanyDetailsId => EstablisherCompanyDetailsId}
 import identifiers.register.establishers.individual.EstablisherDetailsId
 import identifiers.register.establishers.partnership.{PartnershipDetailsId => EstablisherPartnershipDetailsId}
@@ -116,17 +116,20 @@ trait HsTaskListHelperBehaviour extends SpecBase with MustMatchers with OptionVa
   protected def allEstablishers(isCompleteEstablisher: Boolean = true): UserAnswers = {
     UserAnswers().set(EstablisherDetailsId(0))(PersonDetails("firstName", None, "lastName", LocalDate.now())).flatMap(
       _.set(IsEstablisherCompleteId(0))(isCompleteEstablisher).flatMap(
-        _.set(CompanyVatId(0))(Vat.No).flatMap(
-          _.set(CompanyPayeId(0))(Paye.No).flatMap(
-            _.set(EstablisherCompanyDetailsId(1))(CompanyDetails("test company", false)).flatMap(
-              _.set(CompanyVatId(1))(Vat.No).flatMap(
-                _.set(CompanyPayeId(1))(Paye.No).flatMap(
-                  _.set(IsEstablisherCompleteId(1))(isCompleteEstablisher).flatMap(
-                    _.set(EstablisherPartnershipDetailsId(2))(PartnershipDetails("test partnership", false)).flatMap(
-                      _.set(CompanyVatId(2))(Vat.No).flatMap(
-                        _.set(CompanyPayeId(2))(Paye.No).flatMap(
-                          _.set(IsEstablisherCompleteId(2))(isCompleteEstablisher)
-                        ))))))))))).asOpt.value
+        _.set(IsEstablisherNewId(0))(true).flatMap(
+          _.set(CompanyVatId(0))(Vat.No).flatMap(
+            _.set(CompanyPayeId(0))(Paye.No).flatMap(
+      _.set(EstablisherCompanyDetailsId(1))(CompanyDetails("test company", false)).flatMap(
+        _.set(IsEstablisherNewId(1))(true).flatMap(
+          _.set(CompanyVatId(1))(Vat.No).flatMap(
+            _.set(CompanyPayeId(1))(Paye.No).flatMap(
+              _.set(IsEstablisherCompleteId(1))(isCompleteEstablisher).flatMap(
+      _.set(EstablisherPartnershipDetailsId(2))(PartnershipDetails("test partnership", false)).flatMap(
+        _.set(IsEstablisherNewId(2))(true).flatMap(
+        _.set(CompanyVatId(2))(Vat.No).flatMap(
+          _.set(CompanyPayeId(2))(Paye.No).flatMap(
+            _.set(IsEstablisherCompleteId(2))(isCompleteEstablisher)
+          )))))))))))))).asOpt.value
   }
 
   protected def allTrustees(isCompleteTrustees: Boolean = true): UserAnswers = {
@@ -135,15 +138,17 @@ trait HsTaskListHelperBehaviour extends SpecBase with MustMatchers with OptionVa
         _.set(IsTrusteeNewId(0))(true).flatMap(
           _.set(TrusteeCompanyVatId(0))(Vat.No).flatMap(
             _.set(TrusteeCompanyPayeId(0))(Paye.No).flatMap(
-              _.set(TrusteeCompanyDetailsId(1))(CompanyDetails("test company", false)).flatMap(
-                _.set(TrusteeCompanyVatId(1))(Vat.No).flatMap(
-                  _.set(TrusteeCompanyPayeId(1))(Paye.No).flatMap(
-                    _.set(IsTrusteeCompleteId(1))(isCompleteTrustees).flatMap(
-                      _.set(TrusteePartnershipDetailsId(2))(PartnershipDetails("test partnership", false)).flatMap(
-                        _.set(TrusteeCompanyVatId(2))(Vat.No).flatMap(
-                          _.set(TrusteeCompanyPayeId(2))(Paye.No).flatMap(
-                            _.set(IsPartnershipCompleteId(2))(isCompleteTrustees)
-                          )))))))))))).asOpt.value
+      _.set(TrusteeCompanyDetailsId(1))(CompanyDetails("test company", false)).flatMap(
+        _.set(IsTrusteeNewId(1))(true).flatMap(
+          _.set(TrusteeCompanyVatId(1))(Vat.No).flatMap(
+            _.set(TrusteeCompanyPayeId(1))(Paye.No).flatMap(
+              _.set(IsTrusteeCompleteId(1))(isCompleteTrustees).flatMap(
+      _.set(TrusteePartnershipDetailsId(2))(PartnershipDetails("test partnership", false)).flatMap(
+        _.set(IsTrusteeNewId(2))(true).flatMap(
+          _.set(TrusteeCompanyVatId(2))(Vat.No).flatMap(
+            _.set(TrusteeCompanyPayeId(2))(Paye.No).flatMap(
+              _.set(IsPartnershipCompleteId(2))(isCompleteTrustees)
+          )))))))))))))).asOpt.value
   }
 
 
@@ -258,11 +263,14 @@ trait HsTaskListHelperBehaviour extends SpecBase with MustMatchers with OptionVa
     "return the seq of establishers sub sections after filtering out deleted establishers" in {
       val userAnswers = UserAnswers().set(EstablisherDetailsId(0))(PersonDetails("firstName", None, "lastName", LocalDate.now())).flatMap(
         _.set(IsEstablisherCompleteId(0))(false).flatMap(
-          _.set(EstablisherCompanyDetailsId(1))(CompanyDetails("test company", true)).flatMap(
-            _.set(IsEstablisherCompleteId(1))(true).flatMap(
-              _.set(EstablisherPartnershipDetailsId(2))(PartnershipDetails("test partnership", false)).flatMap(
-                _.set(IsEstablisherCompleteId(2))(false)
-              ))))).asOpt.value
+          _.set(IsEstablisherNewId(0))(true).flatMap(
+            _.set(EstablisherCompanyDetailsId(1))(CompanyDetails("test company", true)).flatMap(
+              _.set(IsEstablisherCompleteId(1))(true).flatMap(
+                _.set(IsEstablisherNewId(1))(true).flatMap(
+                  _.set(EstablisherPartnershipDetailsId(2))(PartnershipDetails("test partnership", false)).flatMap(
+                    _.set(IsEstablisherCompleteId(2))(false)).flatMap(
+                      _.set(IsEstablisherNewId(2))(true)
+              ))))))).asOpt.value
       val helper = createTaskListHelper(userAnswers)
       helper.establishers(userAnswers) mustBe
         Seq(SchemeDetailsTaskListSection(Some(false), Link(individualLinkText,
@@ -305,11 +313,13 @@ trait HsTaskListHelperBehaviour extends SpecBase with MustMatchers with OptionVa
       val userAnswers = UserAnswers().set(TrusteeDetailsId(0))(PersonDetails("firstName", None, "lastName", LocalDate.now())).flatMap(
         _.set(IsTrusteeCompleteId(0))(false).flatMap(
           _.set(IsTrusteeNewId(0))(true).flatMap(
-            _.set(TrusteeCompanyDetailsId(1))(CompanyDetails("test company", true)).flatMap(
-              _.set(IsTrusteeCompleteId(1))(false).flatMap(
-                _.set(TrusteePartnershipDetailsId(2))(PartnershipDetails("test partnership", false)).flatMap(
-                  _.set(IsPartnershipCompleteId(2))(false)
-                )))))).asOpt.value
+        _.set(TrusteeCompanyDetailsId(1))(CompanyDetails("test company", true)).flatMap(
+          _.set(IsTrusteeCompleteId(1))(false).flatMap(
+            _.set(IsTrusteeNewId(1))(true).flatMap(
+        _.set(TrusteePartnershipDetailsId(2))(PartnershipDetails("test partnership", false)).flatMap(
+          _.set(IsTrusteeNewId(2))(true).flatMap(
+            _.set(IsPartnershipCompleteId(2))(false)
+                )))))))).asOpt.value
       val helper = createTaskListHelper(userAnswers)
       helper.trustees(userAnswers) mustBe
         Seq(SchemeDetailsTaskListSection(Some(false), Link(individualLinkText,

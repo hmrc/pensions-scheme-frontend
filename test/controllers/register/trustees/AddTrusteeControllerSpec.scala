@@ -16,13 +16,12 @@
 
 package controllers.register.trustees
 
-import services.FakeUserAnswersService
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.register.trustees.AddTrusteeFormProvider
-import identifiers.register.trustees.{IsTrusteeNewId, TrusteesId}
 import identifiers.register.trustees.company.CompanyDetailsId
 import identifiers.register.trustees.individual.TrusteeDetailsId
+import identifiers.register.trustees.{IsTrusteeNewId, TrusteeKindId, TrusteesId}
 import models.person.PersonDetails
 import models.register._
 import models.register.trustees.TrusteeKind
@@ -52,11 +51,11 @@ class AddTrusteeControllerSpec extends ControllerSpecBase {
   val schemeName = "Test Scheme Name"
 
   lazy val trusteeCompanyA: TrusteeCompanyEntity = TrusteeCompanyEntity(
-    CompanyDetailsId(0), "Trustee Company A", isDeleted = false, isCompleted = false, isNewEntity = true)
+    CompanyDetailsId(0), "Trustee Company A", isDeleted = false, isCompleted = false, isNewEntity = true, 3)
   lazy val trusteeCompanyB: TrusteeCompanyEntity = TrusteeCompanyEntity(
-    CompanyDetailsId(1), "Trustee Company B", isDeleted = false, isCompleted = false, isNewEntity = true)
+    CompanyDetailsId(1), "Trustee Company B", isDeleted = false, isCompleted = false, isNewEntity = true, 3)
   lazy val trusteeIndividual: TrusteeIndividualEntity = TrusteeIndividualEntity(
-    TrusteeDetailsId(2), "Trustee Individual", isDeleted = false, isCompleted = false, isNewEntity = true)
+    TrusteeDetailsId(2), "Trustee Individual", isDeleted = false, isCompleted = false, isNewEntity = true, 3)
 
   lazy val allTrustees = Seq(trusteeCompanyA, trusteeCompanyB, trusteeIndividual)
 
@@ -64,12 +63,17 @@ class AddTrusteeControllerSpec extends ControllerSpecBase {
     Json.obj(
       TrusteesId.toString -> Json.arr(
         Json.obj(
-          CompanyDetailsId.toString -> CompanyDetails("Trustee Company A")
+          TrusteeKindId.toString -> TrusteeKind.Company.toString,
+          CompanyDetailsId.toString -> CompanyDetails("Trustee Company A"),
+          IsTrusteeNewId.toString -> true
         ),
         Json.obj(
-          CompanyDetailsId.toString -> CompanyDetails("Trustee Company B")
+          TrusteeKindId.toString -> TrusteeKind.Company.toString,
+          CompanyDetailsId.toString -> CompanyDetails("Trustee Company B"),
+          IsTrusteeNewId.toString -> true
         ),
         Json.obj(
+          TrusteeKindId.toString -> TrusteeKind.Individual.toString,
           TrusteeDetailsId.toString -> PersonDetails("Trustee", None, "Individual", LocalDate.now()),
           IsTrusteeNewId.toString -> true
         )

@@ -20,7 +20,7 @@ import identifiers.register.establishers.company.director.{DirectorDetailsId, Is
 import identifiers.register.establishers.company.{CompanyDetailsId => EstablisherCompanyDetailsId, CompanyPayeId => EstablisherCompanyPayeId, CompanyVatId => EstablisherCompanyVatId}
 import identifiers.register.establishers.individual.EstablisherDetailsId
 import identifiers.register.establishers.partnership.PartnershipDetailsId
-import identifiers.register.establishers.{EstablisherKindId, EstablishersId, IsEstablisherCompleteId}
+import identifiers.register.establishers.{EstablisherKindId, EstablishersId, IsEstablisherCompleteId, IsEstablisherNewId}
 import identifiers.register.trustees.company.{CompanyPayeId, CompanyVatId, CompanyDetailsId => TrusteeCompanyDetailsId}
 import identifiers.register.trustees.individual.TrusteeDetailsId
 import identifiers.register.trustees.{company => _, _}
@@ -44,16 +44,20 @@ class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues with 
         EstablisherCompanyDetailsId(0))(CompanyDetails("my company")).flatMap(
         _.set(IsEstablisherCompleteId(0))(true).flatMap(
           _.set(EstablisherKindId(0))(EstablisherKind.Company).flatMap(
-            _.set(EstablisherCompanyVatId(0))(Vat.No).flatMap(
-              _.set(EstablisherCompanyPayeId(0))(Paye.No).flatMap(
-                _.set(EstablisherDetailsId(1))(PersonDetails("my", None, "name", LocalDate.now)).flatMap(
-                  _.set(IsEstablisherCompleteId(1))(false).flatMap(
-                    _.set(EstablisherKindId(1))(EstablisherKind.Indivdual).flatMap(
-                      _.set(PartnershipDetailsId(2))(PartnershipDetails("my partnership name", false)).flatMap(
-                        _.set(EstablisherKindId(2))(EstablisherKind.Partnership).flatMap(
-                          _.set(IsEstablisherCompleteId(2))(false).flatMap(
-                            _.set(EstablisherKindId(3))(EstablisherKind.Company)
-                          ))))))))))).asOpt.value
+            _.set(IsEstablisherNewId(0))(true).flatMap(
+              _.set(EstablisherCompanyVatId(0))(Vat.No).flatMap(
+                _.set(EstablisherCompanyPayeId(0))(Paye.No).flatMap(
+        _.set(EstablisherDetailsId(1))(PersonDetails("my", None, "name", LocalDate.now)).flatMap(
+          _.set(IsEstablisherNewId(1))(true).flatMap(
+            _.set(IsEstablisherCompleteId(1))(false).flatMap(
+              _.set(EstablisherKindId(1))(EstablisherKind.Indivdual).flatMap(
+        _.set(PartnershipDetailsId(2))(PartnershipDetails("my partnership name", false)).flatMap(
+          _.set(IsEstablisherNewId(2))(true).flatMap(
+            _.set(EstablisherKindId(2))(EstablisherKind.Partnership).flatMap(
+              _.set(IsEstablisherCompleteId(2))(false).flatMap(
+        _.set(EstablisherKindId(3))(EstablisherKind.Company)).flatMap(
+          _.set(IsEstablisherNewId(0))(true)
+                          )))))))))))))).asOpt.value
 
       val allEstablisherEntities: Seq[Establisher[_]] = Seq(
         establisherEntity("my company", 0, Company, isComplete = true),
@@ -93,19 +97,25 @@ class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues with 
         EstablishersId.toString -> Json.arr(
           Json.obj(
             EstablisherDetailsId.toString ->
-              PersonDetails("my", None, "name 1", LocalDate.now)
+              PersonDetails("my", None, "name 1", LocalDate.now),
+            IsEstablisherNewId.toString -> true,
+            EstablisherKindId.toString -> EstablisherKind.Indivdual.toString
           ),
           Json.obj(
             EstablisherCompanyDetailsId.toString ->
-              CompanyDetails("my company 2", isDeleted = true)
+              CompanyDetails("my company 2", isDeleted = true),
+            IsEstablisherNewId.toString -> true,
+            EstablisherKindId.toString -> EstablisherKind.Company.toString
           ),
           Json.obj(
             EstablisherDetailsId.toString ->
-              PersonDetails("my", None, "name 3", LocalDate.now)
+              PersonDetails("my", None, "name 3", LocalDate.now),
+            IsEstablisherNewId.toString -> true,
+            EstablisherKindId.toString -> EstablisherKind.Indivdual.toString
           ),
           Json.obj(
-            EstablisherKindId.toString ->
-              EstablisherKind.Company.toString
+            EstablisherKindId.toString -> EstablisherKind.Company.toString,
+            IsEstablisherNewId.toString -> true
           )
         )
       )
@@ -123,12 +133,14 @@ class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues with 
       val userAnswers = UserAnswers(Json.obj(
         TrusteesId.toString -> Json.arr(
           Json.obj(
+            TrusteeKindId.toString -> TrusteeKind.Individual.toString,
             TrusteeDetailsId.toString ->
               PersonDetails("First", None, "Last", LocalDate.now),
             IsTrusteeCompleteId.toString -> true,
             IsTrusteeNewId.toString -> true
           ),
           Json.obj(
+            TrusteeKindId.toString -> TrusteeKind.Company.toString,
             TrusteeCompanyDetailsId.toString ->
               CompanyDetails("My Company"),
             CompanyVatId.toString -> Vat.No,
@@ -137,11 +149,14 @@ class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues with 
             IsTrusteeNewId.toString -> true
           ),
           Json.obj(
+            TrusteeKindId.toString -> TrusteeKind.Partnership.toString,
             partnership.PartnershipDetailsId.toString ->
-              PartnershipDetails("My Partnership", isDeleted = false)
+              PartnershipDetails("My Partnership", isDeleted = false),
+            IsTrusteeNewId.toString -> true
           ),
           Json.obj(
-            TrusteeKindId.toString -> TrusteeKind.Individual.toString
+            TrusteeKindId.toString -> TrusteeKind.Individual.toString,
+            IsTrusteeNewId.toString -> true
           )
         )
       ))
@@ -186,13 +201,23 @@ class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues with 
       val json = Json.obj(
         TrusteesId.toString -> Json.arr(
           Json.obj(
-            TrusteeDetailsId.toString -> PersonDetails("First", None, "Last", LocalDate.now, isDeleted = true)
+            TrusteeKindId.toString -> TrusteeKind.Individual.toString,
+            TrusteeDetailsId.toString -> PersonDetails("First", None, "Last", LocalDate.now, isDeleted = true),
+            IsTrusteeNewId.toString -> true
           ),
           Json.obj(
-            identifiers.register.trustees.company.CompanyDetailsId.toString -> CompanyDetails("My Company")
+            TrusteeKindId.toString -> TrusteeKind.Company.toString,
+            identifiers.register.trustees.company.CompanyDetailsId.toString -> CompanyDetails("My Company"),
+            IsTrusteeNewId.toString -> true
           ),
           Json.obj(
-            TrusteeKindId.toString -> TrusteeKind.Company.toString
+            TrusteeKindId.toString -> TrusteeKind.Individual.toString,
+            TrusteeDetailsId.toString -> PersonDetails("FName", None, "LName", LocalDate.now, isDeleted = true),
+            IsTrusteeNewId.toString -> true
+          ),
+          Json.obj(
+            TrusteeKindId.toString -> TrusteeKind.Company.toString,
+            IsTrusteeNewId.toString -> true
           )
         )
       )
@@ -217,8 +242,8 @@ class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues with 
         .flatMap(_.set(DirectorDetailsId(0, 1))(PersonDetails("First1", None, "Last1", LocalDate.now))).get
 
       val directorEntities = Seq(
-        DirectorEntity(DirectorDetailsId(0, 0), "First Last", isDeleted = false, isCompleted = true, isNewEntity = true),
-        DirectorEntity(DirectorDetailsId(0, 1), "First1 Last1", isDeleted = false, isCompleted = false, isNewEntity = true))
+        DirectorEntity(DirectorDetailsId(0, 0), "First Last", isDeleted = false, isCompleted = true, isNewEntity = true, 2),
+        DirectorEntity(DirectorDetailsId(0, 1), "First1 Last1", isDeleted = false, isCompleted = false, isNewEntity = true, 2))
 
       val result = userAnswers.allDirectors(0)
 
@@ -235,7 +260,7 @@ class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues with 
         .flatMap(_.set(DirectorDetailsId(0, 1))(PersonDetails("First1", None, "Last1", LocalDate.now))).get
 
       val directorEntities = Seq(
-        DirectorEntity(DirectorDetailsId(0, 1), "First1 Last1", isDeleted = false, isCompleted = false, isNewEntity = true))
+        DirectorEntity(DirectorDetailsId(0, 1), "First1 Last1", isDeleted = false, isCompleted = false, isNewEntity = true, 1))
       val result = userAnswers.allDirectorsAfterDelete(0)
 
       result.size mustEqual 1
@@ -404,22 +429,22 @@ object UserAnswersSpec {
   private def establisherEntity(name: String, index: Int, establisherKind: EstablisherKind, isComplete: Boolean = false): Establisher[_] = {
     establisherKind match {
       case Indivdual =>
-        EstablisherIndividualEntity(EstablisherDetailsId(index), name, isDeleted = false, isCompleted = isComplete, isNewEntity = true)
+        EstablisherIndividualEntity(EstablisherDetailsId(index), name, isDeleted = false, isCompleted = isComplete, isNewEntity = true, 4)
       case Company =>
-        EstablisherCompanyEntity(EstablisherCompanyDetailsId(index), name, isDeleted = false, isCompleted = isComplete, isNewEntity = true)
+        EstablisherCompanyEntity(EstablisherCompanyDetailsId(index), name, isDeleted = false, isCompleted = isComplete, isNewEntity = true, 4)
       case _ =>
-        EstablisherPartnershipEntity(PartnershipDetailsId(index), name, isDeleted = false, isCompleted = isComplete, isNewEntity = true)
+        EstablisherPartnershipEntity(PartnershipDetailsId(index), name, isDeleted = false, isCompleted = isComplete, isNewEntity = true, 4)
     }
   }
 
   private def trusteeEntity(name: String, index: Int, trusteeKind: TrusteeKind, isComplete: Boolean = false): Trustee[_] = {
     trusteeKind match {
       case TrusteeKind.Individual =>
-        TrusteeIndividualEntity(TrusteeDetailsId(index), name, isDeleted = false, isCompleted = isComplete, isNewEntity = true)
+        TrusteeIndividualEntity(TrusteeDetailsId(index), name, isDeleted = false, isCompleted = isComplete, isNewEntity = true, 4)
       case TrusteeKind.Company =>
-        TrusteeCompanyEntity(TrusteeCompanyDetailsId(index), name, isDeleted = false, isCompleted = isComplete, isNewEntity = true)
+        TrusteeCompanyEntity(TrusteeCompanyDetailsId(index), name, isDeleted = false, isCompleted = isComplete, isNewEntity = true, 4)
       case _ =>
-        TrusteePartnershipEntity(partnership.PartnershipDetailsId(index), name, isDeleted = false, isCompleted = isComplete, isNewEntity = true)
+        TrusteePartnershipEntity(partnership.PartnershipDetailsId(index), name, isDeleted = false, isCompleted = isComplete, isNewEntity = true, 4)
     }
   }
 

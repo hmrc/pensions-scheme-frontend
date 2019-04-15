@@ -108,7 +108,7 @@ class AddCompanyDirectorsControllerSpec extends ControllerSpecBase {
           val result = controller(getRelevantData).onPageLoad(NormalMode, None, establisherIndex)(fakeRequest)
 
           contentAsString(result) mustBe viewAsString(form,
-            Seq(DirectorEntity(DirectorDetailsId(0, 0), johnDoe.fullName, isDeleted = false, isCompleted = false, isNewEntity = true)))
+            Seq(DirectorEntity(DirectorDetailsId(0, 0), johnDoe.fullName, isDeleted = false, isCompleted = false, isNewEntity = true, 1)))
         }
     }
 
@@ -137,7 +137,7 @@ class AddCompanyDirectorsControllerSpec extends ControllerSpecBase {
 
       status(result) mustBe BAD_REQUEST
       contentAsString(result) mustBe viewAsString(boundForm,
-        Seq(DirectorEntity(DirectorDetailsId(0, 0), johnDoe.fullName, isDeleted = false, isCompleted = false, isNewEntity = true)))
+        Seq(DirectorEntity(DirectorDetailsId(0, 0), johnDoe.fullName, isDeleted = false, isCompleted = false, isNewEntity = true, 0)))
     }
 
     "not save the answer when directors exist and valid data is submitted" in {
@@ -170,8 +170,8 @@ class AddCompanyDirectorsControllerSpec extends ControllerSpecBase {
     "populate the view with directors when they exist" in {
       val directors = Seq(johnDoe, joeBloggs)
       val directorsViewModel = Seq(
-        DirectorEntity(DirectorDetailsId(0, 0), johnDoe.fullName, isDeleted = false, isCompleted = false, isNewEntity = true),
-        DirectorEntity(DirectorDetailsId(0, 1), joeBloggs.fullName, isDeleted = false, isCompleted = false, isNewEntity = true))
+        DirectorEntity(DirectorDetailsId(0, 0), johnDoe.fullName, isDeleted = false, isCompleted = false, isNewEntity = true, 2),
+        DirectorEntity(DirectorDetailsId(0, 1), joeBloggs.fullName, isDeleted = false, isCompleted = false, isNewEntity = true, 3))
       val getRelevantData = new FakeDataRetrievalAction(Some(validData(directors: _*)))
       val result = controller(getRelevantData).onPageLoad(NormalMode, None, establisherIndex)(fakeRequest)
 
