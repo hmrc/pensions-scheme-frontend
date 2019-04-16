@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers.vary
+package controllers.register
 
 import config.FrontendAppConfig
 import connectors.UpdateSchemeCacheConnector
@@ -25,7 +25,7 @@ import models.UpdateMode
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import views.html.vary.schemeVariationsSuccess
+import views.html.register.schemeVariationsSuccess
 
 import scala.concurrent.ExecutionContext
 

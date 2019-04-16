@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package views.vary
+package views.register
 
 import org.jsoup.Jsoup
 import play.twirl.api.HtmlFormat
 import views.behaviours.ViewBehaviours
-import views.html.vary.schemeVariationsSuccess
+import views.html.register.schemeVariationsSuccess
 
 class SchemeVariationsSuccessViewSpec extends ViewBehaviours {
 
