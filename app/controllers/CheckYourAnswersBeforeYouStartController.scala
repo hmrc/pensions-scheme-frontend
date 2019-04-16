@@ -41,18 +41,18 @@ class CheckYourAnswersBeforeYouStartController @Inject()(appConfig: FrontendAppC
                                                         )(implicit val ec: ExecutionContext) extends FrontendController
   with Enumerable.Implicits with I18nSupport with Retrievals {
 
-  def onPageLoad(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData() andThen requireData) {
+  def onPageLoad(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData) {
     implicit request =>
 
       implicit val userAnswers = request.userAnswers
 
       val beforeYouStart = AnswerSection(
         None,
-        SchemeNameId.row(routes.SchemeNameController.onPageLoad(CheckMode).url) ++
-        SchemeTypeId.row(routes.SchemeTypeController.onPageLoad(CheckMode).url) ++
-        HaveAnyTrusteesId.row(routes.HaveAnyTrusteesController.onPageLoad(CheckMode).url) ++
-        EstablishedCountryId.row(routes.EstablishedCountryController.onPageLoad(CheckMode).url) ++
-        DeclarationDutiesId.row(routes.WorkingKnowledgeController.onPageLoad(CheckMode).url)
+        SchemeNameId.row(routes.SchemeNameController.onPageLoad(CheckMode).url, mode) ++
+        SchemeTypeId.row(routes.SchemeTypeController.onPageLoad(CheckMode).url, mode) ++
+        HaveAnyTrusteesId.row(routes.HaveAnyTrusteesController.onPageLoad(CheckMode).url, mode) ++
+        EstablishedCountryId.row(routes.EstablishedCountryController.onPageLoad(CheckMode).url, mode) ++
+        DeclarationDutiesId.row(routes.WorkingKnowledgeController.onPageLoad(CheckMode).url, mode)
       )
 
       Ok(check_your_answers(

@@ -17,6 +17,7 @@
 package utils
 
 import identifiers.{IsAboutBankDetailsCompleteId, IsAboutBenefitsAndInsuranceCompleteId, IsAboutMembersCompleteId}
+import models.register.Entity
 import models.{Link, NormalMode}
 import play.api.i18n.Messages
 import viewmodels._
@@ -28,17 +29,18 @@ class HsTaskListHelperRegistration(answers: UserAnswers)(implicit messages: Mess
   override protected[utils] def aboutSection(userAnswers: UserAnswers): Seq[SchemeDetailsTaskListSection] = {
     val membersLink = userAnswers.get(IsAboutMembersCompleteId) match {
       case Some(true) => Link(aboutMembersLinkText, controllers.routes.CheckYourAnswersMembersController.onPageLoad(NormalMode, None).url)
-      case _ => Link(aboutMembersLinkText, controllers.routes.WhatYouWillNeedMembersController.onPageLoad.url)
+      case _ => Link(aboutMembersLinkText, controllers.routes.WhatYouWillNeedMembersController.onPageLoad().url)
     }
 
     val benefitsAndInsuranceLink = userAnswers.get(IsAboutBenefitsAndInsuranceCompleteId) match {
-      case Some(true) => Link(aboutBenefitsAndInsuranceLinkText, controllers.routes.CheckYourAnswersBenefitsAndInsuranceController.onPageLoad(NormalMode, None).url)
+      case Some(true) => Link(aboutBenefitsAndInsuranceLinkText,
+        controllers.routes.CheckYourAnswersBenefitsAndInsuranceController.onPageLoad(NormalMode, None).url)
       case _ => Link(aboutBenefitsAndInsuranceLinkText, controllers.routes.WhatYouWillNeedBenefitsInsuranceController.onPageLoad.url)
     }
 
     val bankDetailsLink = userAnswers.get(IsAboutBankDetailsCompleteId) match {
       case Some(true) => Link(aboutBankDetailsLinkText, controllers.routes.CheckYourAnswersBankDetailsController.onPageLoad().url)
-      case _ => Link(aboutBankDetailsLinkText, controllers.routes.WhatYouWillNeedBankDetailsController.onPageLoad.url)
+      case _ => Link(aboutBankDetailsLinkText, controllers.routes.WhatYouWillNeedBankDetailsController.onPageLoad().url)
     }
 
     Seq(SchemeDetailsTaskListSection(userAnswers.get(IsAboutMembersCompleteId), membersLink, None),
@@ -46,17 +48,39 @@ class HsTaskListHelperRegistration(answers: UserAnswers)(implicit messages: Mess
       SchemeDetailsTaskListSection(userAnswers.get(IsAboutBankDetailsCompleteId), bankDetailsLink, None))
   }
 
+  protected[utils] def declarationSection(userAnswers: UserAnswers): Option[SchemeDetailsTaskListDeclarationSection] =
+    Some(SchemeDetailsTaskListDeclarationSection(declarationLink(userAnswers)))
+
+  protected def listOf(sections: Seq[Entity[_]], userAnswers: UserAnswers): Seq[SchemeDetailsTaskListSection] = {
+    val notDeletedElements = for ((section, index) <- sections.zipWithIndex) yield {
+      if (section.isDeleted) None else {
+        Some(SchemeDetailsTaskListSection(
+          Some(section.isCompleted),
+          Link(linkText(section), linkTarget(section, index, NormalMode, None)),
+          Some(section.name))
+        )
+      }
+    }
+    notDeletedElements.flatten
+  }
+
+  protected[utils] def establishers(userAnswers: UserAnswers): Seq[SchemeDetailsTaskListSection] =
+    listOf(userAnswers.allEstablishers, userAnswers)
+
+  protected[utils] def trustees(userAnswers: UserAnswers): Seq[SchemeDetailsTaskListSection] =
+    listOf(userAnswers.allTrustees, userAnswers)
+
   def taskList: SchemeDetailsTaskList = {
     SchemeDetailsTaskList(
-      beforeYouStartSection(answers),
+      beforeYouStartSection(answers, NormalMode, None),
       messages("messages__schemeTaskList__about_header"),
       aboutSection(answers),
       workingKnowledgeSection(answers),
-      addEstablisherHeader(answers),
+      addEstablisherHeader(answers, NormalMode, None),
       establishers(answers),
-      addTrusteeHeader(answers),
+      addTrusteeHeader(answers, NormalMode, None),
       trustees(answers),
-      declarationLink(answers),
+      declarationSection(answers),
       messages("messages__schemeTaskList__heading"),
       messages("messages__schemeTaskList__before_you_start_header"),
       None,
