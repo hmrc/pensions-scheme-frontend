@@ -175,7 +175,7 @@ class EntitySpec extends WordSpecLike with MustMatchers with OptionValues {
       isCompleted = false,
       isNewEntity = true,
       2,
-      SingleTrust.toString
+      Some(SingleTrust.toString)
     )
 
     "have correct company index" in {
@@ -195,7 +195,7 @@ class EntitySpec extends WordSpecLike with MustMatchers with OptionValues {
         isCompleted = true,
         isNewEntity = true,
         2,
-        SingleTrust.toString
+        Some(SingleTrust.toString)
       )
 
       val expectedEditLink = controllers.register.trustees.company.routes.CheckYourAnswersController.onPageLoad(NormalMode, 1, None).url
@@ -216,7 +216,7 @@ class EntitySpec extends WordSpecLike with MustMatchers with OptionValues {
       isCompleted = false,
       isNewEntity = true,
       2,
-      SingleTrust.toString
+      Some(SingleTrust.toString)
     )
 
     "have correct individual index" in {
@@ -236,7 +236,7 @@ class EntitySpec extends WordSpecLike with MustMatchers with OptionValues {
         isCompleted = true,
         isNewEntity = true,
         2,
-        SingleTrust.toString
+        Some(SingleTrust.toString)
       )
 
       val expectedEditLink = controllers.register.trustees.individual.routes.CheckYourAnswersController.onPageLoad(NormalMode, 1, None).url

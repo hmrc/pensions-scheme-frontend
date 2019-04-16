@@ -61,7 +61,7 @@ class AddTrusteeViewSpec extends YesNoViewBehaviours with EntityListBehaviours w
 
   private val trustees = userAnswers.allTrustees
   private val fullTrustees = (0 to 9).map(index => TrusteeIndividualEntity(
-    TrusteeDetailsId(index), "trustee name", isDeleted = false, isCompleted = false, isNewEntity = true, 10, SingleTrust.toString))
+    TrusteeDetailsId(index), "trustee name", isDeleted = false, isCompleted = false, isNewEntity = true, 10, Some(SingleTrust.toString)))
 
   val form = new AddTrusteeFormProvider()()
   val submitUrl = controllers.register.trustees.routes.AddTrusteeController.onSubmit(NormalMode, None)

@@ -52,11 +52,11 @@ class AddTrusteeControllerSpec extends ControllerSpecBase {
   val schemeName = "Test Scheme Name"
 
   lazy val trusteeCompanyA: TrusteeCompanyEntity = TrusteeCompanyEntity(
-    CompanyDetailsId(0), "Trustee Company A", isDeleted = false, isCompleted = false, isNewEntity = true, 3, SingleTrust.toString)
+    CompanyDetailsId(0), "Trustee Company A", isDeleted = false, isCompleted = false, isNewEntity = true, 3, Some(SingleTrust.toString))
   lazy val trusteeCompanyB: TrusteeCompanyEntity = TrusteeCompanyEntity(
-    CompanyDetailsId(1), "Trustee Company B", isDeleted = false, isCompleted = false, isNewEntity = true, 3, SingleTrust.toString)
+    CompanyDetailsId(1), "Trustee Company B", isDeleted = false, isCompleted = false, isNewEntity = true, 3, Some(SingleTrust.toString))
   lazy val trusteeIndividual: TrusteeIndividualEntity = TrusteeIndividualEntity(
-    TrusteeDetailsId(2), "Trustee Individual", isDeleted = false, isCompleted = false, isNewEntity = true, 3, SingleTrust.toString)
+    TrusteeDetailsId(2), "Trustee Individual", isDeleted = false, isCompleted = false, isNewEntity = true, 3, Some(SingleTrust.toString))
 
   lazy val allTrustees = Seq(trusteeCompanyA, trusteeCompanyB, trusteeIndividual)
 

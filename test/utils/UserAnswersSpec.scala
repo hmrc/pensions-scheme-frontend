@@ -443,11 +443,11 @@ object UserAnswersSpec {
   private def trusteeEntity(name: String, index: Int, trusteeKind: TrusteeKind, isComplete: Boolean = false): Trustee[_] = {
     trusteeKind match {
       case TrusteeKind.Individual =>
-        TrusteeIndividualEntity(TrusteeDetailsId(index), name, isDeleted = false, isCompleted = isComplete, isNewEntity = true, 4, SingleTrust.toString)
+        TrusteeIndividualEntity(TrusteeDetailsId(index), name, isDeleted = false, isCompleted = isComplete, isNewEntity = true, 4, Some(SingleTrust.toString))
       case TrusteeKind.Company =>
-        TrusteeCompanyEntity(TrusteeCompanyDetailsId(index), name, isDeleted = false, isCompleted = isComplete, isNewEntity = true, 4, SingleTrust.toString)
+        TrusteeCompanyEntity(TrusteeCompanyDetailsId(index), name, isDeleted = false, isCompleted = isComplete, isNewEntity = true, 4, Some(SingleTrust.toString))
       case _ =>
-        TrusteePartnershipEntity(partnership.PartnershipDetailsId(index), name, isDeleted = false, isCompleted = isComplete, isNewEntity = true, 4, SingleTrust.toString)
+        TrusteePartnershipEntity(partnership.PartnershipDetailsId(index), name, isDeleted = false, isCompleted = isComplete, isNewEntity = true, 4, Some(SingleTrust.toString))
     }
   }
 

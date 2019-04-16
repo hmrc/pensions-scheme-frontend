@@ -291,9 +291,9 @@ case class UserAnswers(json: JsValue = Json.obj()) {
       case _ => 0
     }
 
-    private def schemeType : String = json.transform((__ \ 'schemeType \ 'name).json.pick[JsString]) match {
-      case JsSuccess(scheme, _) => scheme.value
-      case JsError(errors) => ""
+    private def schemeType : Option[String] = json.transform((__ \ 'schemeType \ 'name).json.pick[JsString]) match {
+      case JsSuccess(scheme, _) => Some(scheme.value)
+      case JsError(errors) => None
     }
 
     private def readsIndividual(index: Int): Reads[Trustee[_]] = (
