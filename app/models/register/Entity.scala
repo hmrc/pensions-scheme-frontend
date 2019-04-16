@@ -26,7 +26,7 @@ import identifiers.register.trustees.TrusteeKindId
 import identifiers.register.trustees.company.{CompanyDetailsId => TrusteeCompanyDetailsId}
 import identifiers.register.trustees.individual.TrusteeDetailsId
 import identifiers.register.trustees.partnership.{PartnershipDetailsId => TrusteePartnershipDetailsId}
-import models.NormalMode
+import models._
 import models.register.establishers.EstablisherKind
 import models.register.trustees.TrusteeKind
 
@@ -159,10 +159,16 @@ case class TrusteeCompanyEntity(id: TrusteeCompanyDetailsId, name: String, isDel
     case (_, false) => Some(controllers.register.trustees.company.routes.CompanyDetailsController.onPageLoad(NormalMode, id.index, None).url)
   }
 
-  override def deleteLink: Option[String] =
-    if(noOfRecords>1 && schemeType.fold(false)(scheme=>Seq("single", "master").exists(_.equals(scheme))))
-      Some(controllers.register.trustees.routes.ConfirmDeleteTrusteeController.onPageLoad(NormalMode, id.index, TrusteeKind.Company, None).url)
-    else None
+  override def deleteLink: Option[String] = {
+    val mode : Mode = NormalMode
+    mode match {
+      case NormalMode | CheckMode =>
+        Some(controllers.register.trustees.routes.ConfirmDeleteTrusteeController.onPageLoad(mode, id.index, TrusteeKind.Company, None).url)
+      case UpdateMode | CheckUpdateMode if (noOfRecords > 1 && schemeType.fold(false)(scheme => Seq("single", "master").exists(_.equals(scheme)))) =>
+        Some(controllers.register.trustees.routes.ConfirmDeleteTrusteeController.onPageLoad(mode, id.index, TrusteeKind.Company, None).url)
+      case _ => None
+    }
+  }
   override def index: Int = id.index
 }
 
@@ -174,10 +180,16 @@ case class TrusteeIndividualEntity(id: TrusteeDetailsId, name: String, isDeleted
     case (_, false) => Some(controllers.register.trustees.individual.routes.TrusteeDetailsController.onPageLoad(NormalMode, id.index, None).url)
   }
 
-  override def deleteLink: Option[String] =
-    if(noOfRecords>1 && schemeType.fold(false)(scheme=>Seq("single", "master").exists(_.equals(scheme))))
-      Some(controllers.register.trustees.routes.ConfirmDeleteTrusteeController.onPageLoad(NormalMode, id.index, TrusteeKind.Individual, None).url)
-    else None
+  override def deleteLink: Option[String] = {
+    val mode : Mode = NormalMode
+    mode match {
+      case NormalMode | CheckMode =>
+        Some(controllers.register.trustees.routes.ConfirmDeleteTrusteeController.onPageLoad(mode, id.index, TrusteeKind.Individual, None).url)
+      case UpdateMode | CheckUpdateMode if (noOfRecords > 1 && schemeType.fold(false)(scheme => Seq("single", "master").exists(_.equals(scheme)))) =>
+        Some(controllers.register.trustees.routes.ConfirmDeleteTrusteeController.onPageLoad(mode, id.index, TrusteeKind.Individual, None).url)
+      case _ => None
+    }
+  }
   override def index: Int = id.index
 }
 
@@ -189,10 +201,16 @@ case class TrusteePartnershipEntity(id: TrusteePartnershipDetailsId, name: Strin
     case (_, false) => Some(controllers.register.trustees.partnership.routes.TrusteeDetailsController.onPageLoad(NormalMode, id.index, None).url)
   }
 
-  override def deleteLink: Option[String] =
-    if(noOfRecords>1 && schemeType.fold(false)(scheme=>Seq("single", "master").exists(_.equals(scheme))))
-      Some(controllers.register.trustees.routes.ConfirmDeleteTrusteeController.onPageLoad(NormalMode, id.index, TrusteeKind.Partnership, None).url)
-    else None
+  override def deleteLink: Option[String] = {
+    val mode : Mode = NormalMode
+    mode match {
+      case NormalMode | CheckMode =>
+        Some(controllers.register.trustees.routes.ConfirmDeleteTrusteeController.onPageLoad(mode, id.index, TrusteeKind.Partnership, None).url)
+      case UpdateMode | CheckUpdateMode if (noOfRecords > 1 && schemeType.fold(false)(scheme => Seq("single", "master").exists(_.equals(scheme)))) =>
+        Some(controllers.register.trustees.routes.ConfirmDeleteTrusteeController.onPageLoad(mode, id.index, TrusteeKind.Partnership, None).url)
+      case _ => None
+    }
+  }
   override def index: Int = id.index
 }
 
