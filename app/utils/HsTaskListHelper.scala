@@ -128,13 +128,15 @@ abstract class HsTaskListHelper(answers: UserAnswers)(implicit messages: Message
     else None
   }
 
+  protected[utils] def declarationSection(userAnswers: UserAnswers): Option[SchemeDetailsTaskListDeclarationSection]
+
   protected def linkText(item: Entity[_]): String = item.id match {
     case EstablisherCompanyDetailsId(_) | TrusteeCompanyDetailsId(_) => companyLinkText
     case EstablisherDetailsId(_) | TrusteeDetailsId(_) => individualLinkText
     case EstablisherPartnershipDetailsId(_) | TrusteePartnershipDetailsId(_) => partnershipLinkText
   }
 
-  protected def linkTarget(item: Entity[_], index: Int, mode: Mode, srn: Option[String]): String = {
+    protected def linkTarget(item: Entity[_], index: Int, mode: Mode, srn: Option[String]): String = {
     item match {
       case models.register.EstablisherCompanyEntity(_, _, _, true, _) =>
         controllers.register.establishers.company.routes.CompanyReviewController.onPageLoad(mode, srn, index).url
