@@ -263,6 +263,11 @@ class EntitySpec extends WordSpecLike with MustMatchers with OptionValues {
       individualEntity.deleteLink(UpdateMode, None) mustBe None
     }
 
+    "have delete link with update mode and other schemeType" in {
+      val expectedDeleteLink = controllers.register.trustees.routes.ConfirmDeleteTrusteeController.onPageLoad(UpdateMode, 1, TrusteeKind.Individual, None).url
+      individualEntity.copy(schemeType = Some(SchemeType.GroupLifeDeath.toString)).deleteLink(UpdateMode, None) mustBe Some(expectedDeleteLink)
+    }
+
     "have correct delete link with update mode" in {
       val expectedDeleteLink = controllers.register.trustees.routes.ConfirmDeleteTrusteeController.onPageLoad(UpdateMode, 1, TrusteeKind.Individual, None).url
       individualEntity.copy(noOfRecords = 2).deleteLink(UpdateMode, None) mustBe Some(expectedDeleteLink)

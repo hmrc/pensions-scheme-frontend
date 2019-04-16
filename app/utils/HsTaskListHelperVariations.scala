@@ -16,13 +16,14 @@
 
 package utils
 
+import identifiers.register.trustees.MoreThanTenTrusteesId
 import identifiers.{IsAboutBenefitsAndInsuranceCompleteId, IsAboutMembersCompleteId, SchemeNameId, _}
 import models.register.Entity
 import models.{Link, UpdateMode}
 import play.api.i18n.Messages
 import viewmodels._
 
-class HsTaskListHelperVariations(answers: UserAnswers, srn: Option[String])(implicit messages: Messages) extends HsTaskListHelper(answers) {
+class HsTaskListHelperVariations(answers: UserAnswers, viewOnly: Boolean, srn: Option[String])(implicit messages: Messages) extends HsTaskListHelper(answers) {
 
   override protected lazy val beforeYouStartLinkText = messages("messages__schemeTaskList__scheme_info_link_text")
 
@@ -43,24 +44,12 @@ class HsTaskListHelperVariations(answers: UserAnswers, srn: Option[String])(impl
       SchemeDetailsTaskListSection(userAnswers.get(IsAboutBenefitsAndInsuranceCompleteId), benefitsAndInsuranceLink, None))
   }
 
-  def taskList: SchemeDetailsTaskList = {
-    val schemeName = answers.get(SchemeNameId).getOrElse("")
-    SchemeDetailsTaskList(
-      beforeYouStartSection(answers, UpdateMode, srn),
-      messages("messages__schemeTaskList__about_scheme_header", schemeName),
-      aboutSection(answers),
-      None,
-      addEstablisherHeader(answers, UpdateMode, srn),
-      establishers(answers),
-      addTrusteeHeader(answers, UpdateMode, srn),
-      trustees(answers),
-      declarationLink(answers),
-      answers.get(SchemeNameId).getOrElse(""),
-      messages("messages__scheme_details__title"),
-      Some(messages("messages__schemeTaskList__scheme_information_link_text")),
-      messages("messages__scheme_details__title")
-    )
-  }
+  protected[utils] def declarationSection(userAnswers: UserAnswers): Option[SchemeDetailsTaskListDeclarationSection] =
+    if (viewOnly) {
+      None
+    } else {
+      Some(SchemeDetailsTaskListDeclarationSection(declarationLink(userAnswers)))
+    }
 
   private def listOfSectionNameAsLink(sections: Seq[Entity[_]]): Seq[SchemeDetailsTaskListSection] = {
     val notDeletedElements = for ((section, index) <- sections.zipWithIndex) yield {
@@ -83,13 +72,34 @@ class HsTaskListHelperVariations(answers: UserAnswers, srn: Option[String])(impl
     listOfSectionNameAsLink(userAnswers.allTrustees)
 
   override def declarationEnabled(userAnswers: UserAnswers): Boolean = {
-      val isTrusteeOptional = userAnswers.get(HaveAnyTrusteesId).contains(false)
-      Seq(
-        userAnswers.get(IsBeforeYouStartCompleteId),
-        userAnswers.get(IsAboutMembersCompleteId),
-        userAnswers.get(IsAboutBenefitsAndInsuranceCompleteId),
-        Some(isAllEstablishersCompleted(userAnswers)),
-        Some(isTrusteeOptional | isAllTrusteesCompleted(userAnswers))
-      ).forall(_.contains(true)) && userAnswers.isUserAnswerUpdated()
-    }
+    val isTrusteeOptional = userAnswers.get(HaveAnyTrusteesId).contains(false)
+    Seq(
+      userAnswers.get(IsBeforeYouStartCompleteId),
+      userAnswers.get(IsAboutMembersCompleteId),
+      userAnswers.get(IsAboutBenefitsAndInsuranceCompleteId),
+      Some(isAllEstablishersCompleted(userAnswers)),
+      Some(isTrusteeOptional | isAllTrusteesCompleted(userAnswers)),
+      Some(userAnswers.allTrusteesAfterDelete.size < 10 || userAnswers.get(MoreThanTenTrusteesId).isDefined)
+    ).forall(_.contains(true)) && userAnswers.isUserAnswerUpdated()
+  }
+
+  def taskList: SchemeDetailsTaskList = {
+    val schemeName = answers.get(SchemeNameId).getOrElse("")
+    SchemeDetailsTaskList(
+      beforeYouStartSection(answers, UpdateMode, srn),
+      messages("messages__schemeTaskList__about_scheme_header", schemeName),
+      aboutSection(answers),
+      None,
+      addEstablisherHeader(answers, UpdateMode, srn),
+      establishers(answers),
+      addTrusteeHeader(answers, UpdateMode, srn),
+      trustees(answers),
+      declarationSection(answers),
+      answers.get(SchemeNameId).getOrElse(""),
+      messages("messages__scheme_details__title"),
+      Some(messages("messages__schemeTaskList__scheme_information_link_text")),
+      messages("messages__scheme_details__title")
+    )
+
+  }
 }

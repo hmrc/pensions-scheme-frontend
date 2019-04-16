@@ -204,23 +204,24 @@
                 </ol>
             </li>
         }
-
-        <li>
-            <h2 id="section-declaration-header" class="heading-large">
-                @messages("messages__schemeTaskList__sectionDeclaration_header")
-            </h2>
-            <p class="tasklist">
-                @if(taskSections.declaration.isDefined){
-                    @taskSections.declaration.map{ link =>
-                        <a id= "section-declaration-link" href="@link.target">
-                            @messages(link.text)
-                        </a>
-                    }
-                }else{
-                    <span id="section-declaration-text">@messages("messages__schemeTaskList__sectionDeclaration_incomplete")</span>
-                }
-            </p>
-        </li>
+        @taskSections.declaration.map{declarationSection=>
+            <li>
+                <h2 id="section-declaration-header" class="heading-large">
+                    @messages("messages__schemeTaskList__sectionDeclaration_header")
+                </h2>
+                <p class="tasklist">
+                        @if(declarationSection.declarationLink.isDefined){
+                            @declarationSection.declarationLink.map{ link =>
+                                <a id= "section-declaration-link" href="@link.target">
+                                    @messages(link.text)
+                                </a>
+                            }
+                        }else{
+                            <span id="section-declaration-text">@messages("messages__schemeTaskList__sectionDeclaration_incomplete")</span>
+                        }
+                </p>
+            </li>
+        }
 
     </ol>
 
