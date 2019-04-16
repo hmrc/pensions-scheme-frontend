@@ -17,6 +17,7 @@
 package utils
 
 import identifiers.{IsAboutBankDetailsCompleteId, IsAboutBenefitsAndInsuranceCompleteId, IsAboutMembersCompleteId}
+import models.register.Entity
 import models.{Link, NormalMode}
 import play.api.i18n.Messages
 import viewmodels._
@@ -32,10 +33,9 @@ class HsTaskListHelperRegistration(answers: UserAnswers)(implicit messages: Mess
     }
 
     val benefitsAndInsuranceLink = userAnswers.get(IsAboutBenefitsAndInsuranceCompleteId) match {
-      case Some(true) => Link(aboutBenefitsAndInsuranceLinkText, controllers.routes.CheckYourAnswersBenefitsAndInsuranceController
-        .onPageLoad(NormalMode, None).url)
-      case _ => Link(aboutBenefitsAndInsuranceLinkText, controllers.routes.WhatYouWillNeedBenefitsInsuranceController
-        .onPageLoad().url)
+      case Some(true) => Link(aboutBenefitsAndInsuranceLinkText,
+        controllers.routes.CheckYourAnswersBenefitsAndInsuranceController.onPageLoad(NormalMode, None).url)
+      case _ => Link(aboutBenefitsAndInsuranceLinkText, controllers.routes.WhatYouWillNeedBenefitsInsuranceController.onPageLoad.url)
     }
 
     val bankDetailsLink = userAnswers.get(IsAboutBankDetailsCompleteId) match {
@@ -51,15 +51,34 @@ class HsTaskListHelperRegistration(answers: UserAnswers)(implicit messages: Mess
   protected[utils] def declarationSection(userAnswers: UserAnswers): Option[SchemeDetailsTaskListDeclarationSection] =
     Some(SchemeDetailsTaskListDeclarationSection(declarationLink(userAnswers)))
 
+  protected def listOf(sections: Seq[Entity[_]], userAnswers: UserAnswers): Seq[SchemeDetailsTaskListSection] = {
+    val notDeletedElements = for ((section, index) <- sections.zipWithIndex) yield {
+      if (section.isDeleted) None else {
+        Some(SchemeDetailsTaskListSection(
+          Some(section.isCompleted),
+          Link(linkText(section), linkTarget(section, index, NormalMode, None)),
+          Some(section.name))
+        )
+      }
+    }
+    notDeletedElements.flatten
+  }
+
+  protected[utils] def establishers(userAnswers: UserAnswers): Seq[SchemeDetailsTaskListSection] =
+    listOf(userAnswers.allEstablishers, userAnswers)
+
+  protected[utils] def trustees(userAnswers: UserAnswers): Seq[SchemeDetailsTaskListSection] =
+    listOf(userAnswers.allTrustees, userAnswers)
+
   def taskList: SchemeDetailsTaskList = {
     SchemeDetailsTaskList(
-      beforeYouStartSection(answers),
+      beforeYouStartSection(answers, NormalMode, None),
       messages("messages__schemeTaskList__about_header"),
       aboutSection(answers),
       workingKnowledgeSection(answers),
-      addEstablisherHeader(answers),
+      addEstablisherHeader(answers, NormalMode, None),
       establishers(answers),
-      addTrusteeHeader(answers),
+      addTrusteeHeader(answers, NormalMode, None),
       trustees(answers),
       declarationSection(answers),
       messages("messages__schemeTaskList__heading"),
