@@ -3,4 +3,3 @@
 GET        /make-more-changes    controllers.vary.AnyMoreChangesController.onPageLoad()
 POST       /make-more-changes    controllers.vary.AnyMoreChangesController.onSubmit()
 
-GET        /you-still-have-changes/:srn    controllers.vary.StillNeedDetailsController.onPageLoad(srn)

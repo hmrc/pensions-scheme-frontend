@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package controllers.vary
+package controllers.register
 
 import controllers.ControllerSpecBase
 import controllers.actions._
 import identifiers.register.trustees.MoreThanTenTrusteesId
 import play.api.libs.json._
 import play.api.test.Helpers._
-import views.html.vary.stillNeedDetails
+import views.html.register.stillNeedDetails
 
 class StillNeedDetailsControllerSpec extends ControllerSpecBase {
   appRunning()

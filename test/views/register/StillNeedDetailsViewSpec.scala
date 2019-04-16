@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package views.vary
+package views.register
 
 import views.behaviours.ViewBehaviours
-import views.html.vary.stillNeedDetails
+import views.html.register.stillNeedDetails
 
 class StillNeedDetailsViewSpec extends ViewBehaviours {
 
