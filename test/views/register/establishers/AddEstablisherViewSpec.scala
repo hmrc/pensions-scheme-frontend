@@ -56,8 +56,8 @@ class AddEstablisherViewSpec extends QuestionViewBehaviours[Option[Boolean]] wit
       .asOpt
       .value
 
-  private val johnDoe = EstablisherIndividualEntity(EstablisherDetailsId(0), "John Doe", false, false)
-  private val testCompany = EstablisherCompanyEntity(CompanyDetailsId(1), "Establisher Company", false, true)
+  private val johnDoe = EstablisherIndividualEntity(EstablisherDetailsId(0), "John Doe", false, false, true, 2)
+  private val testCompany = EstablisherCompanyEntity(CompanyDetailsId(1), "Establisher Company", false, true, true, 2)
 
   private val establishers = Seq(johnDoe, testCompany)
   private val establisher = Seq(johnDoe)
@@ -65,10 +65,10 @@ class AddEstablisherViewSpec extends QuestionViewBehaviours[Option[Boolean]] wit
   val form: Form[Option[Boolean]] = new AddEstablisherFormProvider()(establishers)
 
   private def createView: () => HtmlFormat.Appendable = () =>
-    addEstablisher(frontendAppConfig, form, NormalMode, Seq.empty, None, postCall(NormalMode, None))(fakeRequest, messages)
+    addEstablisher(frontendAppConfig, form, NormalMode, Seq.empty, None, None)(fakeRequest, messages)
 
   private def createView(establishers: Seq[Establisher[_]] = Seq.empty): () => HtmlFormat.Appendable = () =>
-    addEstablisher(frontendAppConfig, form, NormalMode, establishers, None, postCall(NormalMode, None))(fakeRequest, messages)
+    addEstablisher(frontendAppConfig, form, NormalMode, establishers, None, None)(fakeRequest, messages)
 
   "AddEstablisher view" must {
     behave like normalPage(createView(), messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"))

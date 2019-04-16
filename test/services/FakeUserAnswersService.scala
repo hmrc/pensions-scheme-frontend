@@ -16,15 +16,17 @@
 
 package services
 
-import connectors.{FakeSubscriptionCacheConnector, FakeUpdateCacheConnector, SubscriptionCacheConnector, UpdateSchemeCacheConnector}
+import config.FrontendAppConfig
+import connectors.{FakeFrontendAppConfig, FakeLockConnector, FakeSubscriptionCacheConnector, FakeUpdateCacheConnector, PensionSchemeVarianceLockConnector, SubscriptionCacheConnector, UpdateSchemeCacheConnector}
 import identifiers.TypedIdentifier
 import models.Mode
 import models.requests.DataRequest
 import org.scalatest.Matchers
-import play.api.libs.json.{Format, JsValue, Json}
+import play.api.libs.json.{Format, JsObject, JsValue, Json}
 import play.api.mvc.Results.Ok
 import play.api.mvc.{AnyContent, Result}
 import uk.gov.hmrc.http.HeaderCarrier
+import utils.UserAnswers
 
 import scala.collection.mutable
 import scala.concurrent.{ExecutionContext, Future}
@@ -33,6 +35,8 @@ trait FakeUserAnswersService extends UserAnswersService with Matchers {
 
   override protected def subscriptionCacheConnector: SubscriptionCacheConnector = FakeSubscriptionCacheConnector.getConnector
   override protected def updateSchemeCacheConnector: UpdateSchemeCacheConnector = FakeUpdateCacheConnector.getConnector
+  override protected def lockConnector: PensionSchemeVarianceLockConnector = FakeLockConnector.getConnector
+    override val appConfig: FrontendAppConfig =  FakeFrontendAppConfig.getConfig
 
   private val data: mutable.HashMap[String, JsValue] = mutable.HashMap()
   private val removed: mutable.ListBuffer[String] = mutable.ListBuffer()
@@ -48,6 +52,7 @@ trait FakeUserAnswersService extends UserAnswersService with Matchers {
   override def upsert(mode: Mode, srn: Option[String], value: JsValue)
             (implicit ec: ExecutionContext, hc: HeaderCarrier,
              request: DataRequest[AnyContent]): Future[JsValue] = {
+    data += ("userAnswer" -> Json.toJson(value))
     Future.successful(value)
   }
 
@@ -75,6 +80,10 @@ trait FakeUserAnswersService extends UserAnswersService with Matchers {
   ): Future[Option[JsValue]] = {
 
     Future.successful(Some(Json.obj()))
+  }
+
+  def userAnswer: UserAnswers = {
+    UserAnswers(data.get("userAnswer").getOrElse(Json.obj()))
   }
 
   def verify[A, I <: TypedIdentifier[A]](id: I, value: A)(implicit fmt: Format[A]): Unit = {

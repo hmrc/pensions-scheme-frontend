@@ -41,8 +41,8 @@ class AddCompanyDirectorsViewSpec extends YesNoViewBehaviours with EntityListBeh
   private val postCall = routes.AddCompanyDirectorsController.onSubmit _
 
   val form = new AddCompanyDirectorsFormProvider()()
-  private val johnDoeEntity = DirectorEntity(DirectorDetailsId(0, 0), johnDoe.fullName, isDeleted = false, isCompleted = false)
-  private val joeBloggsEntity = DirectorEntity(DirectorDetailsId(0, 1), joeBloggs.fullName, isDeleted = false, isCompleted = true)
+  private val johnDoeEntity = DirectorEntity(DirectorDetailsId(0, 0), johnDoe.fullName, isDeleted = false, isCompleted = false, true, 2)
+  private val joeBloggsEntity = DirectorEntity(DirectorDetailsId(0, 1), joeBloggs.fullName, isDeleted = false, isCompleted = true, true, 2)
 
   private def createView(directors: Seq[DirectorEntity] = Nil, viewOnly: Boolean = false) =
     () =>
@@ -53,7 +53,8 @@ class AddCompanyDirectorsViewSpec extends YesNoViewBehaviours with EntityListBeh
         None,
         postCall(NormalMode, None, establisherIndex),
         viewOnly,
-        true
+        NormalMode,
+        None
       )(fakeRequest, messages)
 
   private def createViewUsingForm(directors: Seq[DirectorEntity] = Nil, viewOnly: Boolean = false) =
@@ -65,7 +66,8 @@ class AddCompanyDirectorsViewSpec extends YesNoViewBehaviours with EntityListBeh
         None,
         postCall(NormalMode, None, establisherIndex),
         viewOnly,
-        true
+        NormalMode,
+        None
       )(fakeRequest, messages)
 
   "AddCompanyDirectors view" must {

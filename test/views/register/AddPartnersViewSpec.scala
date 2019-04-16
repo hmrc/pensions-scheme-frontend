@@ -42,8 +42,8 @@ class AddPartnersViewSpec extends YesNoViewBehaviours with EntityListBehaviours 
   private val postUrl: Call = routes.AddPartnersController.onSubmit(NormalMode, establisherIndex, None)
 
   val form = new AddPartnersFormProvider()()
-  private val johnDoeEntity = PartnerEntity(PartnerDetailsId(0, 0), johnDoe.fullName, isDeleted = false, isCompleted = false)
-  private val joeBloggsEntity = PartnerEntity(PartnerDetailsId(0, 1), joeBloggs.fullName, isDeleted = false, isCompleted = true)
+  private val johnDoeEntity = PartnerEntity(PartnerDetailsId(0, 0), johnDoe.fullName, isDeleted = false, isCompleted = false, true, 2)
+  private val joeBloggsEntity = PartnerEntity(PartnerDetailsId(0, 1), joeBloggs.fullName, isDeleted = false, isCompleted = true, true, 2)
 
   private def createView(partners: Seq[PartnerEntity] = Nil, viewOnly: Boolean = false) =
     () =>
@@ -54,7 +54,8 @@ class AddPartnersViewSpec extends YesNoViewBehaviours with EntityListBehaviours 
         postUrl,
         None,
         viewOnly,
-        true
+        NormalMode,
+        None
       )(fakeRequest, messages)
 
   private def createViewUsingForm(partners: Seq[PartnerEntity] = Nil, viewOnly: Boolean = false) =
@@ -66,7 +67,8 @@ class AddPartnersViewSpec extends YesNoViewBehaviours with EntityListBehaviours 
         postUrl,
         None,
         viewOnly,
-        true
+        NormalMode,
+        None
       )(fakeRequest, messages)
 
   "AddPartnershipPartners view" must {

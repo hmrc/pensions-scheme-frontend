@@ -24,6 +24,7 @@ import identifiers.register.trustees.TrusteeKindId
 import identifiers.register.trustees.company.CompanyDetailsId
 import identifiers.register.trustees.individual.TrusteeDetailsId
 import models.NormalMode
+import models.register.SchemeType.SingleTrust
 import models.register.establishers.EstablisherKind
 import models.register.trustees.TrusteeKind
 import org.scalatest.{MustMatchers, OptionValues, WordSpecLike}
@@ -35,7 +36,9 @@ class EntitySpec extends WordSpecLike with MustMatchers with OptionValues {
       DirectorDetailsId(establisherIndex = 0, directorIndex = 1),
       name = "test name",
       isDeleted = false,
-      isCompleted = false
+      isCompleted = false,
+      isNewEntity = true,
+      2
     )
 
     "have correct director index" in {
@@ -44,7 +47,7 @@ class EntitySpec extends WordSpecLike with MustMatchers with OptionValues {
 
     "have correct edit link when the director is incomplete" in {
       val expectedEditLink = controllers.register.establishers.company.director.routes.DirectorDetailsController.onPageLoad(NormalMode, 0, 1, None).url
-      directorEntity.editLink mustEqual expectedEditLink
+      directorEntity.editLink(NormalMode, None)  mustBe Some(expectedEditLink)
     }
 
     "have correct edit link when the director is completed" in {
@@ -52,18 +55,20 @@ class EntitySpec extends WordSpecLike with MustMatchers with OptionValues {
         DirectorDetailsId(establisherIndex = 0, directorIndex = 0),
         name = "test name",
         isDeleted = false,
-        isCompleted = true
+        isCompleted = true,
+        isNewEntity = true,
+        2
       )
 
       val expectedEditLink =
         controllers.register.establishers.company.director.routes.CheckYourAnswersController.onPageLoad(
           establisherIndex = 0, directorIndex = 0, NormalMode, None).url
-      completedDirectorEntity.editLink mustEqual expectedEditLink
+      completedDirectorEntity.editLink(NormalMode, None) mustBe Some(expectedEditLink)
     }
 
     "have correct delete link" in {
       val expectedDeleteLink = controllers.register.establishers.company.director.routes.ConfirmDeleteDirectorController.onPageLoad(0, 1, NormalMode, None).url
-      directorEntity.deleteLink mustEqual expectedDeleteLink
+      directorEntity.deleteLink(NormalMode, None) mustBe Some(expectedDeleteLink)
     }
   }
 
@@ -72,7 +77,9 @@ class EntitySpec extends WordSpecLike with MustMatchers with OptionValues {
       EstablisherCompanyDetailsId(index = 1),
       name = "test name",
       isDeleted = false,
-      isCompleted = false
+      isCompleted = false,
+      isNewEntity = true,
+      2
     )
 
     "have correct company index" in {
@@ -81,7 +88,7 @@ class EntitySpec extends WordSpecLike with MustMatchers with OptionValues {
 
     "have correct edit link when company is incomplete" in {
       val expectedEditLink = controllers.register.establishers.company.routes.CompanyDetailsController.onPageLoad(NormalMode, None, 1).url
-      companyEntity.editLink mustEqual expectedEditLink
+      companyEntity.editLink(NormalMode, None) mustBe Some(expectedEditLink)
     }
 
     "have correct edit link when company is completed" in {
@@ -89,15 +96,17 @@ class EntitySpec extends WordSpecLike with MustMatchers with OptionValues {
         EstablisherCompanyDetailsId(index = 1),
         name = "test name",
         isDeleted = false,
-        isCompleted = true
+        isCompleted = true,
+        isNewEntity = true,
+        2
       )
       val expectedEditLink = controllers.register.establishers.company.routes.CheckYourAnswersController.onPageLoad(NormalMode, None, 1).url
-      completedCompanyEntity.editLink mustEqual expectedEditLink
+      completedCompanyEntity.editLink(NormalMode, None) mustBe Some(expectedEditLink)
     }
 
     "have correct delete link" in {
       val expectedDeleteLink = controllers.register.establishers.routes.ConfirmDeleteEstablisherController.onPageLoad(NormalMode, 1, EstablisherKind.Company, None).url
-      companyEntity.deleteLink mustEqual expectedDeleteLink
+      companyEntity.deleteLink(NormalMode, None) mustBe Some(expectedDeleteLink)
     }
   }
 
@@ -106,7 +115,9 @@ class EntitySpec extends WordSpecLike with MustMatchers with OptionValues {
       EstablisherDetailsId(index = 1),
       name = "test name",
       isDeleted = false,
-      isCompleted = false
+      isCompleted = false,
+      isNewEntity = true,
+      2
     )
 
     "have correct individual index" in {
@@ -115,7 +126,7 @@ class EntitySpec extends WordSpecLike with MustMatchers with OptionValues {
 
     "have correct edit link when individual is incomplete" in {
       val expectedEditLink = controllers.register.establishers.individual.routes.EstablisherDetailsController.onPageLoad(NormalMode, 1, None).url
-      individualEntity.editLink mustEqual expectedEditLink
+      individualEntity.editLink(NormalMode, None) mustBe Some(expectedEditLink)
     }
 
     "have correct edit link when individual is complete" in {
@@ -123,16 +134,18 @@ class EntitySpec extends WordSpecLike with MustMatchers with OptionValues {
         EstablisherDetailsId(index = 1),
         name = "test name",
         isDeleted = false,
-        isCompleted = true
+        isCompleted = true,
+        isNewEntity = true,
+        2
       )
 
       val expectedEditLink = controllers.register.establishers.individual.routes.CheckYourAnswersController.onPageLoad(NormalMode, 1, None).url
-      completeIndividualEntity.editLink mustEqual expectedEditLink
+      completeIndividualEntity.editLink(NormalMode, None) mustBe Some(expectedEditLink)
     }
 
     "have correct delete link" in {
       val expectedDeleteLink = controllers.register.establishers.routes.ConfirmDeleteEstablisherController.onPageLoad(NormalMode, 1, EstablisherKind.Indivdual, None).url
-      individualEntity.deleteLink mustEqual expectedDeleteLink
+      individualEntity.deleteLink(NormalMode, None) mustBe Some(expectedDeleteLink)
     }
   }
 
@@ -159,7 +172,10 @@ class EntitySpec extends WordSpecLike with MustMatchers with OptionValues {
       CompanyDetailsId(index = 1),
       name = "test name",
       isDeleted = false,
-      isCompleted = false
+      isCompleted = false,
+      isNewEntity = true,
+      2,
+      Some(SingleTrust.toString)
     )
 
     "have correct company index" in {
@@ -168,7 +184,7 @@ class EntitySpec extends WordSpecLike with MustMatchers with OptionValues {
 
     "have correct edit link when company is incomplete" in {
       val expectedEditLink = controllers.register.trustees.company.routes.CompanyDetailsController.onPageLoad(NormalMode, 1, None).url
-      companyEntity.editLink mustEqual expectedEditLink
+      companyEntity.editLink(NormalMode, None) mustBe Some(expectedEditLink)
     }
 
     "have correct edit link when company is complete" in {
@@ -176,16 +192,19 @@ class EntitySpec extends WordSpecLike with MustMatchers with OptionValues {
         CompanyDetailsId(index = 1),
         name = "test name",
         isDeleted = false,
-        isCompleted = true
+        isCompleted = true,
+        isNewEntity = true,
+        2,
+        Some(SingleTrust.toString)
       )
 
       val expectedEditLink = controllers.register.trustees.company.routes.CheckYourAnswersController.onPageLoad(NormalMode, 1, None).url
-      completeCompanyEntity.editLink mustEqual expectedEditLink
+      completeCompanyEntity.editLink(NormalMode, None) mustBe Some(expectedEditLink)
     }
 
     "have correct delete link" in {
       val expectedDeleteLink = controllers.register.trustees.routes.ConfirmDeleteTrusteeController.onPageLoad(NormalMode, 1, TrusteeKind.Company, None).url
-      companyEntity.deleteLink mustEqual expectedDeleteLink
+      companyEntity.deleteLink(NormalMode, None) mustBe Some(expectedDeleteLink)
     }
   }
 
@@ -194,7 +213,11 @@ class EntitySpec extends WordSpecLike with MustMatchers with OptionValues {
       TrusteeDetailsId(index = 1),
       name = "test name",
       isDeleted = false,
-      isCompleted = false)
+      isCompleted = false,
+      isNewEntity = true,
+      2,
+      Some(SingleTrust.toString)
+    )
 
     "have correct individual index" in {
       individualEntity.index mustEqual 1
@@ -202,7 +225,7 @@ class EntitySpec extends WordSpecLike with MustMatchers with OptionValues {
 
     "have correct edit link when individual is incomplete" in {
       val expectedEditLink = controllers.register.trustees.individual.routes.TrusteeDetailsController.onPageLoad(NormalMode, 1, None).url
-      individualEntity.editLink mustEqual expectedEditLink
+      individualEntity.editLink(NormalMode, None) mustBe Some(expectedEditLink)
     }
 
     "have correct edit link when individual is complete" in {
@@ -210,16 +233,19 @@ class EntitySpec extends WordSpecLike with MustMatchers with OptionValues {
         TrusteeDetailsId(index = 1),
         name = "test name",
         isDeleted = false,
-        isCompleted = true
+        isCompleted = true,
+        isNewEntity = true,
+        2,
+        Some(SingleTrust.toString)
       )
 
       val expectedEditLink = controllers.register.trustees.individual.routes.CheckYourAnswersController.onPageLoad(NormalMode, 1, None).url
-      completeIndividualEntity.editLink mustEqual expectedEditLink
+      completeIndividualEntity.editLink(NormalMode, None) mustBe Some(expectedEditLink)
     }
 
     "have correct delete link" in {
       val expectedDeleteLink = controllers.register.trustees.routes.ConfirmDeleteTrusteeController.onPageLoad(NormalMode, 1, TrusteeKind.Individual, None).url
-      individualEntity.deleteLink mustEqual expectedDeleteLink
+      individualEntity.deleteLink(NormalMode, None) mustBe Some(expectedDeleteLink)
     }
   }
 

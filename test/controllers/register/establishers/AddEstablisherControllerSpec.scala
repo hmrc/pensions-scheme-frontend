@@ -19,9 +19,9 @@ package controllers.register.establishers
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.register.establishers.AddEstablisherFormProvider
-import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.company.CompanyDetailsId
 import identifiers.register.establishers.individual.EstablisherDetailsId
+import identifiers.register.establishers.{EstablishersId, IsEstablisherNewId}
 import models.person.PersonDetails
 import models.register.{Establisher, EstablisherCompanyEntity, EstablisherIndividualEntity}
 import models.{CompanyDetails, NormalMode}
@@ -140,8 +140,7 @@ object AddEstablisherControllerSpec extends AddEstablisherControllerSpec {
       NormalMode,
       allEstablishers,
       None,
-      routes.AddEstablisherController.onSubmit(NormalMode, None),
-      true
+      None
     )(fakeRequest, messages).toString
 
   private val day = LocalDate.now().getDayOfMonth
@@ -153,7 +152,9 @@ object AddEstablisherControllerSpec extends AddEstablisherControllerSpec {
     EstablisherDetailsId(0),
     "John Doe",
     false,
-    false
+    false,
+    true,
+    1
   )
 
   private val companyDetails = CompanyDetails("Test Ltd")
@@ -161,7 +162,9 @@ object AddEstablisherControllerSpec extends AddEstablisherControllerSpec {
     CompanyDetailsId(1),
     "Test Ltd",
     false,
-    false
+    false,
+    true,
+    1
   )
 
   private val deletedEstablisher = personDetails.copy(isDeleted = true)
@@ -170,7 +173,8 @@ object AddEstablisherControllerSpec extends AddEstablisherControllerSpec {
     val validData = Json.obj(
       EstablishersId.toString -> Json.arr(
         Json.obj(
-          EstablisherDetailsId.toString -> personDetails
+          EstablisherDetailsId.toString -> personDetails,
+          IsEstablisherNewId.toString -> true
         )
       )
     )
@@ -181,13 +185,16 @@ object AddEstablisherControllerSpec extends AddEstablisherControllerSpec {
     val validData = Json.obj(
       EstablishersId.toString -> Json.arr(
         Json.obj(
-          EstablisherDetailsId.toString -> personDetails
+          EstablisherDetailsId.toString -> personDetails,
+          IsEstablisherNewId.toString -> true
         ),
         Json.obj(
-          CompanyDetailsId.toString -> companyDetails
+          CompanyDetailsId.toString -> companyDetails,
+          IsEstablisherNewId.toString -> true
         ),
         Json.obj(
-          EstablisherDetailsId.toString -> deletedEstablisher
+          EstablisherDetailsId.toString -> deletedEstablisher,
+          IsEstablisherNewId.toString -> true
         )
       )
     )
