@@ -18,12 +18,14 @@ package views.register.trustees
 
 import controllers.register.trustees.routes
 import forms.register.trustees.AddTrusteeFormProvider
+import identifiers.SchemeTypeId
 import identifiers.register.trustees.{IsTrusteeNewId, TrusteeKindId}
 import identifiers.register.trustees.company.CompanyDetailsId
 import identifiers.register.trustees.individual.TrusteeDetailsId
 import models.person.PersonDetails
+import models.register.SchemeType.SingleTrust
 import models.register.trustees.TrusteeKind
-import models.register.{Trustee, TrusteeIndividualEntity}
+import models.register.{SchemeType, Trustee, TrusteeIndividualEntity}
 import models.{CompanyDetails, NormalMode}
 import org.joda.time.LocalDate
 import play.api.data.Form
@@ -48,6 +50,7 @@ class AddTrusteeViewSpec extends YesNoViewBehaviours with EntityListBehaviours w
   private val userAnswers =
     UserAnswers()
       .set(CompanyDetailsId(0))(companyDetails)
+      .flatMap(_.set(SchemeTypeId)(SchemeType.SingleTrust))
       .flatMap(_.set(IsTrusteeNewId(0))(true))
       .flatMap(_.set(TrusteeKindId(0))(TrusteeKind.Company))
       .flatMap(_.set(TrusteeDetailsId(1))(trusteeDetails))
@@ -58,7 +61,7 @@ class AddTrusteeViewSpec extends YesNoViewBehaviours with EntityListBehaviours w
 
   private val trustees = userAnswers.allTrustees
   private val fullTrustees = (0 to 9).map(index => TrusteeIndividualEntity(
-    TrusteeDetailsId(index), "trustee name", isDeleted = false, isCompleted = false, isNewEntity = true, 10))
+    TrusteeDetailsId(index), "trustee name", isDeleted = false, isCompleted = false, isNewEntity = true, 10, SingleTrust.toString))
 
   val form = new AddTrusteeFormProvider()()
   val submitUrl = controllers.register.trustees.routes.AddTrusteeController.onSubmit(NormalMode, None)

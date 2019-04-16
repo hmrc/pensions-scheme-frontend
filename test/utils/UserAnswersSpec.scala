@@ -26,6 +26,7 @@ import identifiers.register.trustees.individual.TrusteeDetailsId
 import identifiers.register.trustees.{company => _, _}
 import models._
 import models.person.PersonDetails
+import models.register.SchemeType.SingleTrust
 import models.register._
 import models.register.establishers.EstablisherKind
 import models.register.establishers.EstablisherKind.{Company, Indivdual, Partnership}
@@ -131,6 +132,7 @@ class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues with 
 
     "return a map of trustee names, edit links, delete links and isComplete flag" in {
       val userAnswers = UserAnswers(Json.obj(
+        "schemeType"-> Json.obj("name"-> "single"),
         TrusteesId.toString -> Json.arr(
           Json.obj(
             TrusteeKindId.toString -> TrusteeKind.Individual.toString,
@@ -199,6 +201,7 @@ class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues with 
 
     "return a map of trustee names, edit links and delete links when one of the trustee is deleted" in {
       val json = Json.obj(
+        "schemeType"-> Json.obj("name"-> "single"),
         TrusteesId.toString -> Json.arr(
           Json.obj(
             TrusteeKindId.toString -> TrusteeKind.Individual.toString,
@@ -440,11 +443,11 @@ object UserAnswersSpec {
   private def trusteeEntity(name: String, index: Int, trusteeKind: TrusteeKind, isComplete: Boolean = false): Trustee[_] = {
     trusteeKind match {
       case TrusteeKind.Individual =>
-        TrusteeIndividualEntity(TrusteeDetailsId(index), name, isDeleted = false, isCompleted = isComplete, isNewEntity = true, 4)
+        TrusteeIndividualEntity(TrusteeDetailsId(index), name, isDeleted = false, isCompleted = isComplete, isNewEntity = true, 4, SingleTrust.toString)
       case TrusteeKind.Company =>
-        TrusteeCompanyEntity(TrusteeCompanyDetailsId(index), name, isDeleted = false, isCompleted = isComplete, isNewEntity = true, 4)
+        TrusteeCompanyEntity(TrusteeCompanyDetailsId(index), name, isDeleted = false, isCompleted = isComplete, isNewEntity = true, 4, SingleTrust.toString)
       case _ =>
-        TrusteePartnershipEntity(partnership.PartnershipDetailsId(index), name, isDeleted = false, isCompleted = isComplete, isNewEntity = true, 4)
+        TrusteePartnershipEntity(partnership.PartnershipDetailsId(index), name, isDeleted = false, isCompleted = isComplete, isNewEntity = true, 4, SingleTrust.toString)
     }
   }
 

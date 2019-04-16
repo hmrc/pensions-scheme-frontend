@@ -24,6 +24,7 @@ import identifiers.register.trustees.TrusteeKindId
 import identifiers.register.trustees.company.CompanyDetailsId
 import identifiers.register.trustees.individual.TrusteeDetailsId
 import models.NormalMode
+import models.register.SchemeType.SingleTrust
 import models.register.establishers.EstablisherKind
 import models.register.trustees.TrusteeKind
 import org.scalatest.{MustMatchers, OptionValues, WordSpecLike}
@@ -173,7 +174,8 @@ class EntitySpec extends WordSpecLike with MustMatchers with OptionValues {
       isDeleted = false,
       isCompleted = false,
       isNewEntity = true,
-      2
+      2,
+      SingleTrust.toString
     )
 
     "have correct company index" in {
@@ -192,7 +194,8 @@ class EntitySpec extends WordSpecLike with MustMatchers with OptionValues {
         isDeleted = false,
         isCompleted = true,
         isNewEntity = true,
-        2
+        2,
+        SingleTrust.toString
       )
 
       val expectedEditLink = controllers.register.trustees.company.routes.CheckYourAnswersController.onPageLoad(NormalMode, 1, None).url
@@ -212,7 +215,9 @@ class EntitySpec extends WordSpecLike with MustMatchers with OptionValues {
       isDeleted = false,
       isCompleted = false,
       isNewEntity = true,
-      2)
+      2,
+      SingleTrust.toString
+    )
 
     "have correct individual index" in {
       individualEntity.index mustEqual 1
@@ -230,7 +235,8 @@ class EntitySpec extends WordSpecLike with MustMatchers with OptionValues {
         isDeleted = false,
         isCompleted = true,
         isNewEntity = true,
-        2
+        2,
+        SingleTrust.toString
       )
 
       val expectedEditLink = controllers.register.trustees.individual.routes.CheckYourAnswersController.onPageLoad(NormalMode, 1, None).url

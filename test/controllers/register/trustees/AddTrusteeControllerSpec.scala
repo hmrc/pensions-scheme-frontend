@@ -23,6 +23,7 @@ import identifiers.register.trustees.company.CompanyDetailsId
 import identifiers.register.trustees.individual.TrusteeDetailsId
 import identifiers.register.trustees.{IsTrusteeNewId, TrusteeKindId, TrusteesId}
 import models.person.PersonDetails
+import models.register.SchemeType.SingleTrust
 import models.register._
 import models.register.trustees.TrusteeKind
 import models.{CompanyDetails, NormalMode}
@@ -51,16 +52,17 @@ class AddTrusteeControllerSpec extends ControllerSpecBase {
   val schemeName = "Test Scheme Name"
 
   lazy val trusteeCompanyA: TrusteeCompanyEntity = TrusteeCompanyEntity(
-    CompanyDetailsId(0), "Trustee Company A", isDeleted = false, isCompleted = false, isNewEntity = true, 3)
+    CompanyDetailsId(0), "Trustee Company A", isDeleted = false, isCompleted = false, isNewEntity = true, 3, SingleTrust.toString)
   lazy val trusteeCompanyB: TrusteeCompanyEntity = TrusteeCompanyEntity(
-    CompanyDetailsId(1), "Trustee Company B", isDeleted = false, isCompleted = false, isNewEntity = true, 3)
+    CompanyDetailsId(1), "Trustee Company B", isDeleted = false, isCompleted = false, isNewEntity = true, 3, SingleTrust.toString)
   lazy val trusteeIndividual: TrusteeIndividualEntity = TrusteeIndividualEntity(
-    TrusteeDetailsId(2), "Trustee Individual", isDeleted = false, isCompleted = false, isNewEntity = true, 3)
+    TrusteeDetailsId(2), "Trustee Individual", isDeleted = false, isCompleted = false, isNewEntity = true, 3, SingleTrust.toString)
 
   lazy val allTrustees = Seq(trusteeCompanyA, trusteeCompanyB, trusteeIndividual)
 
   private def validData = {
     Json.obj(
+        "schemeType"-> Json.obj("name"-> "single"),
       TrusteesId.toString -> Json.arr(
         Json.obj(
           TrusteeKindId.toString -> TrusteeKind.Company.toString,
