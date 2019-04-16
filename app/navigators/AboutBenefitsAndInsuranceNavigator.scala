@@ -19,9 +19,10 @@ package navigators
 import com.google.inject.Inject
 import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
-import identifiers._
 import controllers.routes._
-import models.{CheckMode, Mode, NormalMode}
+import identifiers._
+import models.Mode.journeyMode
+import models.{CheckMode, CheckUpdateMode, Mode, NormalMode, UpdateMode}
 import utils.{Navigator, UserAnswers}
 
 class AboutBenefitsAndInsuranceNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector, appConfig: FrontendAppConfig) extends Navigator {
@@ -33,39 +34,62 @@ class AboutBenefitsAndInsuranceNavigator @Inject()(val dataCacheConnector: UserA
       case InvestmentRegulatedSchemeId => NavigateTo.dontSave(OccupationalPensionSchemeController.onPageLoad(NormalMode))
       case OccupationalPensionSchemeId => NavigateTo.dontSave(TypeOfBenefitsController.onPageLoad(NormalMode))
       case TypeOfBenefitsId => NavigateTo.dontSave(BenefitsSecuredByInsuranceController.onPageLoad(NormalMode, None))
-      case BenefitsSecuredByInsuranceId => benefitsSecuredRoutes(from.userAnswers)
+      case BenefitsSecuredByInsuranceId => benefitsSecuredRoutes(from.userAnswers, NormalMode)
       case InsuranceCompanyNameId => NavigateTo.dontSave(InsurancePolicyNumberController.onPageLoad(NormalMode, None))
       case InsurancePolicyNumberId => NavigateTo.dontSave(InsurerEnterPostcodeController.onPageLoad(NormalMode, None))
       case InsurerEnterPostCodeId => NavigateTo.dontSave(InsurerSelectAddressController.onPageLoad(NormalMode, None))
       case InsurerSelectAddressId => NavigateTo.dontSave(InsurerConfirmAddressController.onPageLoad(NormalMode, None))
-      case InsurerConfirmAddressId => checkYourAnswers
+      case InsurerConfirmAddressId => checkYourAnswers(NormalMode)
       case _ => None
     }
   }
 
-  override protected def editRouteMap(from: NavigateFrom): Option[NavigateTo] = {
+  override protected def editRouteMap(from: NavigateFrom): Option[NavigateTo] =
     from.id match {
-      case InvestmentRegulatedSchemeId => checkYourAnswers
-      case OccupationalPensionSchemeId => checkYourAnswers
-      case TypeOfBenefitsId => checkYourAnswers
-      case BenefitsSecuredByInsuranceId => benefitsSecuredRoutes(from.userAnswers)
-      case InsuranceCompanyNameId => checkYourAnswers
-      case InsurancePolicyNumberId => checkYourAnswers
-      case InsurerConfirmAddressId => checkYourAnswers
+      case InvestmentRegulatedSchemeId => checkYourAnswers(NormalMode)
+      case OccupationalPensionSchemeId => checkYourAnswers(NormalMode)
+      case TypeOfBenefitsId => checkYourAnswers(NormalMode)
+      case BenefitsSecuredByInsuranceId => benefitsSecuredEditRoutes(from.userAnswers, CheckMode)
+      case InsuranceCompanyNameId => checkYourAnswers(NormalMode)
+      case InsurancePolicyNumberId => checkYourAnswers(NormalMode)
+      case InsurerConfirmAddressId => checkYourAnswers(NormalMode)
+      case _ => None
+    }
+
+  protected def updateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] = from.id match {
+    case InsurancePolicyNumberId => NavigateTo.dontSave(InsurerEnterPostcodeController.onPageLoad(CheckUpdateMode, srn))
+  }
+
+  protected def checkUpdateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] = {
+    from.id match {
+      case BenefitsSecuredByInsuranceId => benefitsSecuredEditRoutes(from.userAnswers, CheckUpdateMode, srn)
+      case InsuranceCompanyNameId => NavigateTo.dontSave(InsurancePolicyNumberController.onPageLoad(UpdateMode, srn))
+      case InsurancePolicyNumberId => checkYourAnswers(UpdateMode, srn)
+      case InsurerEnterPostCodeId => NavigateTo.dontSave(InsurerSelectAddressController.onPageLoad(CheckUpdateMode, srn))
+      case InsurerSelectAddressId => NavigateTo.dontSave(InsurerConfirmAddressController.onPageLoad(CheckUpdateMode, srn))
+      case InsurerConfirmAddressId => checkYourAnswers(UpdateMode, srn)
       case _ => None
     }
   }
 
-  private def benefitsSecuredRoutes(userAnswers: UserAnswers): Option[NavigateTo] = {
+  private def benefitsSecuredRoutes(userAnswers: UserAnswers, mode: Mode): Option[NavigateTo] = {
     userAnswers.get(BenefitsSecuredByInsuranceId) match {
-      case Some(true) => NavigateTo.dontSave(InsuranceCompanyNameController.onPageLoad(NormalMode, None))
-      case Some(false) => checkYourAnswers
+      case Some(true) => NavigateTo.dontSave(InsuranceCompanyNameController.onPageLoad(mode, None))
+      case Some(false) => checkYourAnswers(mode)
       case _ => NavigateTo.dontSave(controllers.routes.SessionExpiredController.onPageLoad())
     }
   }
 
-  private def checkYourAnswers: Option[NavigateTo] =
-    NavigateTo.dontSave(controllers.routes.CheckYourAnswersBenefitsAndInsuranceController.onPageLoad(NormalMode, None))
+  private def benefitsSecuredEditRoutes(userAnswers: UserAnswers, mode: Mode, srn: Option[String] = None): Option[NavigateTo] = {
+    userAnswers.get(BenefitsSecuredByInsuranceId) match {
+      case Some(true) => NavigateTo.dontSave(InsuranceCompanyNameController.onPageLoad(mode, srn))
+      case Some(false) => checkYourAnswers(journeyMode(mode))
+      case _ => NavigateTo.dontSave(controllers.routes.SessionExpiredController.onPageLoad())
+    }
+  }
+
+  private def checkYourAnswers(mode: Mode, srn: Option[String] = None): Option[NavigateTo] =
+    NavigateTo.dontSave(controllers.routes.CheckYourAnswersBenefitsAndInsuranceController.onPageLoad(mode, srn))
 }
 
 

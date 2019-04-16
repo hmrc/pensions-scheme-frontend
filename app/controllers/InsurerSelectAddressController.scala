@@ -54,13 +54,18 @@ class InsurerSelectAddressController @Inject()(override val appConfig: FrontendA
       }
   }
 
+  def onClick(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
+    implicit request =>
+      clear(InsurerConfirmAddressId, InsurerSelectAddressId, mode, srn, routes.InsurerConfirmAddressController.onPageLoad(mode, srn))
+  }
+
   private def viewModel(mode: Mode, srn: Option[String])(implicit request: DataRequest[AnyContent]): Either[Future[Result],
     AddressListViewModel] = {
     (InsurerEnterPostCodeId).retrieve.right.map {
       case addresses =>
         AddressListViewModel(
           postCall = routes.InsurerSelectAddressController.onSubmit(mode, srn),
-          manualInputCall = routes.InsurerConfirmAddressController.onPageLoad(mode, srn),
+          manualInputCall = routes.InsurerSelectAddressController.onClick(mode, srn),
           addresses = addresses,
           srn = srn
         )

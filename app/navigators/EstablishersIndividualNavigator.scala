@@ -20,7 +20,7 @@ import com.google.inject.{Inject, Singleton}
 import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
 import identifiers.register.establishers.individual._
-import models.{AddressYears, CheckMode, NormalMode}
+import models.{AddressYears, CheckMode, Mode, NormalMode}
 import utils.{Navigator, UserAnswers}
 
 @Singleton
@@ -88,6 +88,10 @@ class EstablishersIndividualNavigator @Inject()(
         checkYourAnswers(index)(from.userAnswers)
     }
   }
+
+  protected def updateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] = None
+
+  protected def checkUpdateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] = None
 
   private def addressYearsRoutes(index: Int)(answers: UserAnswers): Option[NavigateTo] = {
     answers.get(AddressYearsId(index)) match {

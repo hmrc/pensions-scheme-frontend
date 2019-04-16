@@ -91,6 +91,10 @@ class EstablishersPartnerNavigator @Inject()(val dataCacheConnector: UserAnswers
     case _ => None
   }
 
+  protected def updateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] = None
+
+  protected def checkUpdateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] = None
+
   private def addressYearsRoutes(establisherIndex: Int, partnerIndex: Int)(answers: UserAnswers): Option[NavigateTo] = {
     answers.get(PartnerAddressYearsId(establisherIndex, partnerIndex)) match {
       case Some(AddressYears.UnderAYear) =>

@@ -41,7 +41,7 @@ class FakeNavigator(desiredRoute: Call, mode: Mode = NormalMode) extends Navigat
 
   override protected def routeMap(from: NavigateFrom): Option[NavigateTo] = None
 
-  override protected def editRouteMap(from: NavigateFrom): Option[NavigateTo] = None
+  override protected def editRouteMap(from: NavigateFrom, mode: Mode): Option[NavigateTo] = None
 
 }
 

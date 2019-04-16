@@ -20,7 +20,7 @@ import com.google.inject.Inject
 import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
 import identifiers.register.trustees.company._
-import models.{AddressYears, CheckMode, NormalMode}
+import models.{AddressYears, CheckMode, Mode, NormalMode}
 import utils.{Navigator, UserAnswers}
 
 class TrusteesCompanyNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector,
@@ -117,6 +117,10 @@ class TrusteesCompanyNavigator @Inject()(val dataCacheConnector: UserAnswersCach
       case _ => None
     }
   }
+
+  protected def updateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] = None
+
+  protected def checkUpdateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] = None
 
   private def checkYourAnswers(index: Int, answers: UserAnswers): Option[NavigateTo] = {
     NavigateTo.save(controllers.register.trustees.company.routes.CheckYourAnswersController.onPageLoad(NormalMode, index, None))
