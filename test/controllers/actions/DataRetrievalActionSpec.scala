@@ -84,20 +84,6 @@ class DataRetrievalActionSpec extends SpecBase with MockitoSugar with ScalaFutur
       }
     }
 
-    "there is no data in the update cache in UpdateMode and lock is held by psa" must {
-      "set userAnswers to 'None' in the request" in {
-        when(lockRepoConnector.isLockByPsaIdOrSchemeId(eqTo(psa), eqTo(srn))(any(), any())).thenReturn(Future(Some(VarianceLock)))
-        when(updateCacheConnector.fetch(eqTo(srn))(any(), any())) thenReturn Future(None)
-        val action = new Harness(updateConnector = updateCacheConnector, lockConnector = lockRepoConnector, mode = UpdateMode, srn = srnOpt)
-
-        val futureResult = action.callTransform(authRequest)
-
-        whenReady(futureResult) { result =>
-          result.userAnswers.isEmpty mustBe true
-        }
-      }
-    }
-
     "there is data in the update cache in UpdateMode and lock is held by psa" must {
       "build a userAnswers object and add it to the request" in {
 

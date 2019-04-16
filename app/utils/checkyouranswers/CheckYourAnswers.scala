@@ -69,19 +69,22 @@ object CheckYourAnswers {
 
     def apply()(implicit rds: Reads[String], countryOptions: CountryOptions): CheckYourAnswers[I] = {
       new CheckYourAnswers[I] {
-        override def row(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+        private def stringCYARow(id: I, changeUrl: Option[Link], userAnswers: UserAnswers): Seq[AnswerRow] = {
           userAnswers.get(id).map {
             string =>
               Seq(AnswerRow(
                 label.fold(s"${id.toString}.checkYourAnswersLabel")(customLabel => customLabel),
                 Seq(retrieveStringAnswer(id, string)),
                 answerIsMessageKey = false,
-                Some(Link("site.change", changeUrl,
-                  Some(hiddenLabel.fold(s"messages__visuallyhidden__${id.toString}")(customHiddenLabel => customHiddenLabel))))
+                changeUrl
               ))
           }.getOrElse(Seq.empty[AnswerRow])
+        }
+        override def row(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+          stringCYARow(id, Some(Link("site.change", changeUrl,
+            Some(hiddenLabel.fold(s"messages__visuallyhidden__${id.toString}")(customHiddenLabel => customHiddenLabel)))), userAnswers)
 
-        override def updateRow(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = row(id)(changeUrl, userAnswers)
+        override def updateRow(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = stringCYARow(id, None, userAnswers)
       }
     }
   }
@@ -116,19 +119,22 @@ object CheckYourAnswers {
 
     def apply()(implicit rds: Reads[SchemeType]): CheckYourAnswers[I] = {
       new CheckYourAnswers[I] {
-        override def row(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+        private def schemeTypeCYARow(id: I, changeUrl: Option[Link], userAnswers: UserAnswers): Seq[AnswerRow] = {
           userAnswers.get(id).map {
             schemeType =>
               Seq(AnswerRow(
                 label.fold(s"${id.toString}.checkYourAnswersLabel")(customLabel => customLabel),
                 Seq(s"messages__scheme_type_${schemeType.toString}"),
                 answerIsMessageKey = true,
-                Some(Link("site.change", changeUrl,
-                  Some(hiddenLabel.fold(s"messages__visuallyhidden__${id.toString}")(customHiddenLabel => customHiddenLabel))))
+                changeUrl
               ))
           }.getOrElse(Seq.empty[AnswerRow])
+        }
+        override def row(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+          schemeTypeCYARow(id, Some(Link("site.change", changeUrl,
+            Some(hiddenLabel.fold(s"messages__visuallyhidden__${id.toString}")(customHiddenLabel => customHiddenLabel)))), userAnswers)
 
-        override def updateRow(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = row(id)(changeUrl, userAnswers)
+        override def updateRow(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = schemeTypeCYARow(id, None, userAnswers)
       }
     }
   }

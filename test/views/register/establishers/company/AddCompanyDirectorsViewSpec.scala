@@ -52,7 +52,9 @@ class AddCompanyDirectorsViewSpec extends YesNoViewBehaviours with EntityListBeh
         directors,
         None,
         postCall(NormalMode, None, establisherIndex),
-        viewOnly
+        viewOnly,
+        NormalMode,
+        None
       )(fakeRequest, messages)
 
   private def createViewUsingForm(directors: Seq[DirectorEntity] = Nil, viewOnly: Boolean = false) =
@@ -63,7 +65,9 @@ class AddCompanyDirectorsViewSpec extends YesNoViewBehaviours with EntityListBeh
         directors,
         None,
         postCall(NormalMode, None, establisherIndex),
-        viewOnly
+        viewOnly,
+        NormalMode,
+        None
       )(fakeRequest, messages)
 
   "AddCompanyDirectors view" must {
