@@ -173,14 +173,24 @@ class HsTaskListHelperRegistrationSpec extends HsTaskListHelperBehaviour {
     behave like trusteesSection(NormalMode, None)
   }
 
-  "declarationEnabled" must {
+  "declaration" must {
+    "have a declaration section" in {
+      val userAnswers = answersData().asOpt.value
+      val helper = createTaskListHelper(userAnswers)
+      helper.declarationSection(userAnswers).isDefined mustBe true
+    }
 
-    behave like declarationEnabled()
-  }
+    behave like declarationSection()
 
-  "declarationLink" must {
+    "not have link when about bank details section not completed" in {
+      val userAnswers = answersData(isCompleteAboutBank = false).asOpt.value
+      mustHaveNoLink(createTaskListHelper(userAnswers), userAnswers)
+    }
 
-    behave like declarationLink()
+    "not have link when working knowledge section not completed" in {
+      val userAnswers = answersData(isCompleteWk = false).asOpt.value
+      mustHaveNoLink(createTaskListHelper(userAnswers), userAnswers)
+    }
   }
 
   def establishersSection(mode: Mode, srn: Option[String]): Unit = {
@@ -275,5 +285,4 @@ class HsTaskListHelperRegistrationSpec extends HsTaskListHelperBehaviour {
     }
   }
 }
-
 
