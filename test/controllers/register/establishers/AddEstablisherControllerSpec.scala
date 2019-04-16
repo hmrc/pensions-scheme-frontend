@@ -141,7 +141,7 @@ object AddEstablisherControllerSpec extends AddEstablisherControllerSpec {
       NormalMode,
       allEstablishers,
       None,
-      routes.AddEstablisherController.onSubmit(NormalMode, None)
+      None
     )(fakeRequest, messages).toString
 
   private val day = LocalDate.now().getDayOfMonth
@@ -153,7 +153,8 @@ object AddEstablisherControllerSpec extends AddEstablisherControllerSpec {
     EstablisherDetailsId(0),
     "John Doe",
     false,
-    false
+    false,
+    true
   )
 
   private val companyDetails = CompanyDetails("Test Ltd")
@@ -161,7 +162,8 @@ object AddEstablisherControllerSpec extends AddEstablisherControllerSpec {
     CompanyDetailsId(1),
     "Test Ltd",
     false,
-    false
+    false,
+    true
   )
 
   private val deletedEstablisher = personDetails.copy(isDeleted = true)

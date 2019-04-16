@@ -51,10 +51,12 @@ class AddTrusteeControllerSpec extends ControllerSpecBase {
   val formProvider = new AddTrusteeFormProvider()
   val schemeName = "Test Scheme Name"
 
-  lazy val trusteeCompanyA: TrusteeCompanyEntity = TrusteeCompanyEntity(CompanyDetailsId(0), "Trustee Company A", isDeleted = false, isCompleted = false)
-  lazy val trusteeCompanyB: TrusteeCompanyEntity = TrusteeCompanyEntity(CompanyDetailsId(1), "Trustee Company B", isDeleted = false, isCompleted = false)
-  lazy val trusteeIndividual: TrusteeIndividualEntity = TrusteeIndividualEntity(TrusteeDetailsId(2), "Trustee Individual",
-    isDeleted = false, isCompleted = false)
+  lazy val trusteeCompanyA: TrusteeCompanyEntity = TrusteeCompanyEntity(
+    CompanyDetailsId(0), "Trustee Company A", isDeleted = false, isCompleted = false, isNewEntity = true)
+  lazy val trusteeCompanyB: TrusteeCompanyEntity = TrusteeCompanyEntity(
+    CompanyDetailsId(1), "Trustee Company B", isDeleted = false, isCompleted = false, isNewEntity = true)
+  lazy val trusteeIndividual: TrusteeIndividualEntity = TrusteeIndividualEntity(
+    TrusteeDetailsId(2), "Trustee Individual", isDeleted = false, isCompleted = false, isNewEntity = true)
 
   lazy val allTrustees = Seq(trusteeCompanyA, trusteeCompanyB, trusteeIndividual)
 
@@ -82,7 +84,7 @@ class AddTrusteeControllerSpec extends ControllerSpecBase {
 
   val submitUrl = controllers.register.trustees.routes.AddTrusteeController.onSubmit(NormalMode, None)
   def viewAsString(form: Form[_] = form, trustees: Seq[Trustee[_]] = Seq.empty): String =
-    addTrustee(frontendAppConfig, form, NormalMode, trustees, None, submitUrl)(fakeRequest, messages).toString
+    addTrustee(frontendAppConfig, form, NormalMode, trustees, None, None)(fakeRequest, messages).toString
 
   val testAnswer = "answer"
 

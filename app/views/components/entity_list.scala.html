@@ -19,7 +19,7 @@
 @import models.requests.DataRequest
 @import models.register.Entity
 
-@(entities: Seq[Entity[_]], viewOnly:Boolean = false)(implicit messages: Messages)
+@(entities: Seq[Entity[_]], viewOnly:Boolean = false, mode: Mode, srn: Option[String])(implicit messages: Messages)
 
 <div class="form-group">
     <ul id="items" class="govuk-check-your-answers form-group cya-questions-long">
@@ -31,31 +31,35 @@
             @if(!viewOnly){
                 <div id="person-@{entity.index}-status" class="cya-status status">
                     @if(entity.isCompleted){
-                        <span class="complete">COMPLETE</span>
+                        <span class="complete">@messages("site.complete")</span>
                     } else {
-                        <span class="rejected">INCOMPLETE</span>
+                        <span class="rejected">@messages("site.incomplete")</span>
                     }
                 </div>
 
+                @entity.deleteLink(mode, srn).map{ deleteLink=>
+                    <div>
+                        <a id="person-@{entity.index}-delete" href="@deleteLink">
+                            @messages("site.delete")
+                        </a>
+                    </div>
+                }
 
-                <div>
-                    <a id="person-@{entity.index}-delete" href="@entity.deleteLink">
-                        @messages("site.delete")
-                    </a>
-                </div>
-
-
-            <div>
-                <a id="person-@{entity.index}-edit" href="@entity.editLink">
-                    @messages("site.edit")
-                </a>
-            </div>
+                @entity.editLink(mode, srn).map{ editLink=>
+                    <div>
+                        <a id="person-@{entity.index}-edit" href="@editLink">
+                            @messages("site.edit")
+                        </a>
+                    </div>
+                }
             } else {
-            <div>
-                <a id="person-@{entity.index}-view" href="@entity.editLink">
-                    @messages("site.view")
-                </a>
-            </div>
+                @entity.editLink(mode, srn).map{ editLink=>
+                    <div>
+                        <a id="person-@{entity.index}-view" href="@editLink">
+                            @messages("site.view")
+                        </a>
+                    </div>
+                }
             }
         </li>
         }
