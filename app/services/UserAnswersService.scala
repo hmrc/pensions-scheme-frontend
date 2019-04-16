@@ -98,8 +98,7 @@ trait UserAnswersService {
                                                                      request: DataRequest[AnyContent]
   ): Future[JsValue] = srn match {
     case Some(srnId) => lockConnector.lock(request.psaId.id, srnId).flatMap {
-          case VarianceLock => println(">>>>>>>>>>>>>>>>3")
-            f(srnId)
+          case VarianceLock => f(srnId)
           case _ => Future(Json.obj())
       }
 

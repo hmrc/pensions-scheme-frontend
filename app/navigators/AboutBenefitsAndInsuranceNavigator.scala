@@ -84,7 +84,7 @@ class AboutBenefitsAndInsuranceNavigator @Inject()(val dataCacheConnector: UserA
   private def benefitsSecuredEditRoutes(userAnswers: UserAnswers, mode: Mode, srn: Option[String] = None): Option[NavigateTo] = {
     userAnswers.get(BenefitsSecuredByInsuranceId) match {
       case Some(true) => NavigateTo.dontSave(InsuranceCompanyNameController.onPageLoad(mode, srn))
-      case Some(false) => checkYourAnswers(journeyMode(mode))
+      case Some(false) => checkYourAnswers(journeyMode(mode), srn)
       case _ => NavigateTo.dontSave(controllers.routes.SessionExpiredController.onPageLoad())
     }
   }
