@@ -25,7 +25,7 @@ import identifiers.register.trustees.individual.TrusteeDetailsId
 import identifiers.register.trustees.partnership.{PartnershipDetailsId => TrusteePartnershipDetailsId}
 import identifiers.{DeclarationDutiesId, IsWorkingKnowledgeCompleteId, _}
 import models.register.Entity
-import models.{Link, NormalMode}
+import models.{Link, Mode, NormalMode}
 import play.api.i18n.Messages
 import viewmodels._
 
@@ -49,9 +49,9 @@ abstract class HsTaskListHelper(answers: UserAnswers)(implicit messages: Message
 
   protected[utils] def aboutSection(userAnswers: UserAnswers): Seq[SchemeDetailsTaskListSection]
 
-  private[utils] def beforeYouStartSection(userAnswers: UserAnswers): SchemeDetailsTaskListSection = {
+  private[utils] def beforeYouStartSection(userAnswers: UserAnswers, mode: Mode, srn: Option[String]): SchemeDetailsTaskListSection = {
     val link = userAnswers.get(IsBeforeYouStartCompleteId) match {
-      case Some(true) => Link(beforeYouStartLinkText, controllers.routes.CheckYourAnswersBeforeYouStartController.onPageLoad(NormalMode, None).url)
+      case Some(true) => Link(beforeYouStartLinkText, controllers.routes.CheckYourAnswersBeforeYouStartController.onPageLoad(mode, srn).url)
       case _ => Link(beforeYouStartLinkText, controllers.routes.SchemeNameController.onPageLoad(NormalMode).url)
     }
     SchemeDetailsTaskListSection(userAnswers.get(IsBeforeYouStartCompleteId), link, None)
@@ -70,20 +70,18 @@ abstract class HsTaskListHelper(answers: UserAnswers)(implicit messages: Message
     }
   }
 
-  private[utils] def addEstablisherHeader(userAnswers: UserAnswers): SchemeDetailsTaskListSection = {
+  private[utils] def addEstablisherHeader(userAnswers: UserAnswers, mode: Mode, srn: Option[String]): SchemeDetailsTaskListSection = {
     if (userAnswers.allEstablishersAfterDelete.isEmpty) {
       SchemeDetailsTaskListSection(None, Link(addEstablisherLinkText,
-        controllers.register.establishers.routes.EstablisherKindController.onPageLoad(NormalMode, userAnswers.allEstablishers.size, None).url), None)
+        controllers.register.establishers.routes.EstablisherKindController.onPageLoad(mode,
+          userAnswers.allEstablishers.size, srn).url), None)
     } else {
       SchemeDetailsTaskListSection(None, Link(changeEstablisherLinkText,
-        controllers.register.establishers.routes.AddEstablisherController.onPageLoad(NormalMode, None).url), None)
+        controllers.register.establishers.routes.AddEstablisherController.onPageLoad(mode, srn).url), None)
     }
   }
 
-  protected[utils] def establishers(userAnswers: UserAnswers): Seq[SchemeDetailsTaskListSection] =
-    listOf(userAnswers.allEstablishers, userAnswers)
-
-  private[utils] def addTrusteeHeader(userAnswers: UserAnswers): Option[SchemeDetailsTaskListSection] = {
+  private[utils] def addTrusteeHeader(userAnswers: UserAnswers, mode: Mode, srn: Option[String]): Option[SchemeDetailsTaskListSection] = {
     userAnswers.get(HaveAnyTrusteesId) match {
       case None | Some(true) =>
         if (userAnswers.allTrusteesAfterDelete.nonEmpty) {
@@ -91,7 +89,7 @@ abstract class HsTaskListHelper(answers: UserAnswers)(implicit messages: Message
             SchemeDetailsTaskListSection(
               Some(isAllTrusteesCompleted(userAnswers)),
               Link(changeTrusteesLinkText,
-                controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode, None).url),
+                controllers.register.trustees.routes.AddTrusteeController.onPageLoad(mode, srn).url),
               None
             )
           )
@@ -99,7 +97,7 @@ abstract class HsTaskListHelper(answers: UserAnswers)(implicit messages: Message
           Some(
             SchemeDetailsTaskListSection(None,
               Link(addTrusteesLinkText,
-                controllers.register.trustees.routes.TrusteeKindController.onPageLoad(NormalMode, userAnswers.allTrustees.size, None).url),
+                controllers.register.trustees.routes.TrusteeKindController.onPageLoad(mode, userAnswers.allTrustees.size, srn).url),
               None
             )
           )
@@ -109,8 +107,6 @@ abstract class HsTaskListHelper(answers: UserAnswers)(implicit messages: Message
     }
   }
 
-  protected[utils] def trustees(userAnswers: UserAnswers): Seq[SchemeDetailsTaskListSection] =
-    listOf(userAnswers.allTrustees, userAnswers)
 
   private[utils] def declarationEnabled(userAnswers: UserAnswers): Boolean = {
     val isTrusteeOptional = userAnswers.get(HaveAnyTrusteesId).contains(false)
@@ -132,34 +128,24 @@ abstract class HsTaskListHelper(answers: UserAnswers)(implicit messages: Message
     else None
   }
 
+  protected[utils] def declarationSection(userAnswers: UserAnswers): Option[SchemeDetailsTaskListDeclarationSection]
+
   protected def linkText(item: Entity[_]): String = item.id match {
     case EstablisherCompanyDetailsId(_) | TrusteeCompanyDetailsId(_) => companyLinkText
     case EstablisherDetailsId(_) | TrusteeDetailsId(_) => individualLinkText
     case EstablisherPartnershipDetailsId(_) | TrusteePartnershipDetailsId(_) => partnershipLinkText
   }
 
-  protected def linkTarget(item: Entity[_], index: Int, userAnswers: UserAnswers) = {
+    protected def linkTarget(item: Entity[_], index: Int, mode: Mode, srn: Option[String]): String = {
     item match {
       case models.register.EstablisherCompanyEntity(_, _, _, true, _) =>
-        controllers.register.establishers.company.routes.CompanyReviewController.onPageLoad(NormalMode, None, index).url
+        controllers.register.establishers.company.routes.CompanyReviewController.onPageLoad(mode, srn, index).url
       case models.register.EstablisherPartnershipEntity(_, _, _, true, _) =>
-        controllers.register.establishers.partnership.routes.PartnershipReviewController.onPageLoad(NormalMode, index, None).url
-      case _ => item.editLink.getOrElse(controllers.routes.SessionExpiredController.onPageLoad().url)
+        controllers.register.establishers.partnership.routes.PartnershipReviewController.onPageLoad(mode, index, srn).url
+      case _ => item.editLink(mode, srn).getOrElse(controllers.routes.SessionExpiredController.onPageLoad().url)
     }
   }
 
-  protected def listOf(sections: Seq[Entity[_]], userAnswers: UserAnswers): Seq[SchemeDetailsTaskListSection] = {
-    val notDeletedElements = for ((section, index) <- sections.zipWithIndex) yield {
-      if (section.isDeleted) None else {
-        Some(SchemeDetailsTaskListSection(
-          Some(section.isCompleted),
-          Link(linkText(section), linkTarget(section, index, userAnswers)),
-          Some(section.name))
-        )
-      }
-    }
-    notDeletedElements.flatten
-  }
 
   protected def isAllTrusteesCompleted(userAnswers: UserAnswers): Boolean = {
     userAnswers.allTrusteesAfterDelete.nonEmpty && userAnswers.allTrusteesAfterDelete.forall(_.isCompleted)

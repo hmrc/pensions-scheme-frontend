@@ -84,7 +84,7 @@ class AddTrusteeControllerSpec extends ControllerSpecBase {
 
   val submitUrl = controllers.register.trustees.routes.AddTrusteeController.onSubmit(NormalMode, None)
   def viewAsString(form: Form[_] = form, trustees: Seq[Trustee[_]] = Seq.empty): String =
-    addTrustee(frontendAppConfig, form, NormalMode, trustees, None, submitUrl)(fakeRequest, messages).toString
+    addTrustee(frontendAppConfig, form, NormalMode, trustees, None, None)(fakeRequest, messages).toString
 
   val testAnswer = "answer"
 

@@ -24,7 +24,7 @@ case class PartnershipDetails(name: String, isDeleted: Boolean = false)
 object PartnershipDetails {
   implicit val reads: Reads[PartnershipDetails] =
     ((JsPath \ "name").read[String] and
-      ((JsPath \ "isDeleted").read[Boolean] orElse Reads.pure(false))
+      ((JsPath \ "isDeleted").read[Boolean] orElse (Reads.pure(false)))
       ) (PartnershipDetails.apply _)
 
   implicit val writes: Writes[PartnershipDetails] = Json.writes[PartnershipDetails]

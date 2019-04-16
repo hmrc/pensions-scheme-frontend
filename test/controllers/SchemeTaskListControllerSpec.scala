@@ -74,7 +74,7 @@ object SchemeTaskListControllerSpec extends SpecBase with JsonFileReader {
       None
     )),
     Seq.empty,
-    None,
+    Some(SchemeDetailsTaskListDeclarationSection(None)),
     messages("messages__schemeTaskList__heading"),
     messages("messages__schemeTaskList__before_you_start_header"),
     None,
