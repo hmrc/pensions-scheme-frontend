@@ -48,17 +48,17 @@ class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues with 
             _.set(IsEstablisherNewId(0))(true).flatMap(
               _.set(EstablisherCompanyVatId(0))(Vat.No).flatMap(
                 _.set(EstablisherCompanyPayeId(0))(Paye.No).flatMap(
-        _.set(EstablisherDetailsId(1))(PersonDetails("my", None, "name", LocalDate.now)).flatMap(
-          _.set(IsEstablisherNewId(1))(true).flatMap(
-            _.set(IsEstablisherCompleteId(1))(false).flatMap(
-              _.set(EstablisherKindId(1))(EstablisherKind.Indivdual).flatMap(
-        _.set(PartnershipDetailsId(2))(PartnershipDetails("my partnership name", false)).flatMap(
-          _.set(IsEstablisherNewId(2))(true).flatMap(
-            _.set(EstablisherKindId(2))(EstablisherKind.Partnership).flatMap(
-              _.set(IsEstablisherCompleteId(2))(false).flatMap(
-        _.set(EstablisherKindId(3))(EstablisherKind.Company)).flatMap(
-          _.set(IsEstablisherNewId(0))(true)
-                          )))))))))))))).asOpt.value
+                  _.set(EstablisherDetailsId(1))(PersonDetails("my", None, "name", LocalDate.now)).flatMap(
+                    _.set(IsEstablisherNewId(1))(true).flatMap(
+                      _.set(IsEstablisherCompleteId(1))(false).flatMap(
+                        _.set(EstablisherKindId(1))(EstablisherKind.Indivdual).flatMap(
+                          _.set(PartnershipDetailsId(2))(PartnershipDetails("my partnership name", false)).flatMap(
+                            _.set(IsEstablisherNewId(2))(true).flatMap(
+                              _.set(EstablisherKindId(2))(EstablisherKind.Partnership).flatMap(
+                                _.set(IsEstablisherCompleteId(2))(false).flatMap(
+                                  _.set(EstablisherKindId(3))(EstablisherKind.Company)).flatMap(
+                                  _.set(IsEstablisherNewId(0))(true)
+                                )))))))))))))).asOpt.value
 
       val allEstablisherEntities: Seq[Establisher[_]] = Seq(
         establisherEntity("my company", 0, Company, isComplete = true),
