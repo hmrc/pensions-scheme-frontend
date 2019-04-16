@@ -16,7 +16,6 @@
 
 package controllers
 
-import connectors.{FakeUserAnswersCacheConnector, UserAnswersCacheConnector}
 import controllers.actions._
 import forms.address.AddressListFormProvider
 import identifiers.{InsurerEnterPostCodeId, InsurerSelectAddressId}
@@ -66,7 +65,7 @@ class InsurerSelectAddressControllerSpec extends ControllerSpecBase with Mockito
       form,
       AddressListViewModel(
         routes.InsurerSelectAddressController.onSubmit(NormalMode, None),
-        routes.InsurerConfirmAddressController.onPageLoad(NormalMode, None),
+        routes.InsurerSelectAddressController.onClick(NormalMode, None),
         addresses,
         subHeading = Some(schemeName)
       ),

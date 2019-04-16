@@ -117,7 +117,7 @@ object CheckYourAnswersBenefitsAndInsuranceControllerSpec extends ControllerSpec
           insurerAddress.postcode.get,
           "Country of GB"),
         answerIsMessageKey = false,
-        Some(Link("site.change", routes.InsurerConfirmAddressController.onPageLoad(checkMode(mode), None).url,
+        Some(Link("site.change", routes.InsurerEnterPostcodeController.onPageLoad(checkMode(mode), None).url,
           Some(messages("messages__visuallyhidden__insurer_confirm_address")))))
     )
   )
@@ -136,7 +136,7 @@ object CheckYourAnswersBenefitsAndInsuranceControllerSpec extends ControllerSpec
         messages("messages__insurer_confirm_address_cya_label"),
         Seq("site.not_entered"),
         answerIsMessageKey = true,
-        Some(Link("site.add", routes.InsurerConfirmAddressController.onPageLoad(checkMode(mode), None).url,
+        Some(Link("site.add", routes.InsurerEnterPostcodeController.onPageLoad(checkMode(mode), None).url,
           Some(messages("messages__visuallyhidden__add_insurer_confirm_address")))))
     )
   )
