@@ -10,3 +10,5 @@ GET        /declaration                                 controllers.register.Dec
 POST       /declaration                                 controllers.register.DeclarationController.onSubmit
 GET        /change-declaration                          controllers.register.DeclarationController.onPageLoad
 POST       /change-declaration                          controllers.register.DeclarationController.onSubmit
+
+GET        /details-updated/:srn                        controllers.register.SchemeVariationsSuccessController.onPageLoad(srn)
