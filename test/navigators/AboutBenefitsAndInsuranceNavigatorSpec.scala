@@ -47,12 +47,12 @@ class AboutBenefitsAndInsuranceNavigatorSpec extends SpecBase with NavigatorBeha
   private def updateRoutes() = Table(
     ("Id", "User Answers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (Check Mode)", "Save (CM)"),
     (BenefitsSecuredByInsuranceId, benefitsSecuredYes, none, false, Some(insuranceCompanyName(CheckUpdateMode)), false),
-    (BenefitsSecuredByInsuranceId, benefitsSecuredNo, none, false, Some(checkYouAnswers(UpdateMode)), false),
+    (BenefitsSecuredByInsuranceId, benefitsSecuredNo, none, false, Some(anyMoreChanges), false),
     (InsuranceCompanyNameId, emptyAnswers, none, false, Some(policyNumber(UpdateMode)), false),
-    (InsurancePolicyNumberId, emptyAnswers, insurerPostcode(CheckUpdateMode), false, Some(checkYouAnswers(UpdateMode)), false),
+    (InsurancePolicyNumberId, emptyAnswers, insurerPostcode(CheckUpdateMode), false, Some(anyMoreChanges), false),
     (InsurerEnterPostCodeId, emptyAnswers, none, false, Some(insurerAddressList(CheckUpdateMode)), false),
     (InsurerSelectAddressId, emptyAnswers, none, false, Some(insurerAddress(CheckUpdateMode)), false),
-    (InsurerConfirmAddressId, emptyAnswers, none, false, Some(checkYouAnswers(UpdateMode)), false)
+    (InsurerConfirmAddressId, emptyAnswers, none, false, Some(anyMoreChanges), false)
   )
 
   "AboutBenefitsAndInsuranceNavigator" must {
@@ -81,6 +81,7 @@ object AboutBenefitsAndInsuranceNavigatorSpec extends OptionValues {
   private def insurerAddressList(mode: Mode = NormalMode): Call = InsurerSelectAddressController.onPageLoad(mode, None)
   private def insurerAddress(mode: Mode = NormalMode): Call = InsurerConfirmAddressController.onPageLoad(mode, None)
   private def checkYouAnswers(mode: Mode = NormalMode): Call = CheckYourAnswersBenefitsAndInsuranceController.onPageLoad(mode, None)
+  private def anyMoreChanges: Call = controllers.vary.routes.AnyMoreChangesController.onPageLoad(None)
 
   private def dataDescriber(answers: UserAnswers): String = answers.toString
 }

@@ -23,14 +23,15 @@ import controllers.actions._
 import forms.vary.AnyMoreChangesFormProvider
 import identifiers.vary.AnyMoreChangesId
 import javax.inject.Inject
-import models.NormalMode
+import models.{NormalMode, UpdateMode}
 import org.joda.time.LocalDate
 import org.joda.time.format.DateTimeFormat
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent}
+import play.api.mvc.{Action, AnyContent, Call}
+import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import utils.annotations.Variations
+import utils.annotations.{NoChangeFlagService, Variations}
 import utils.{Navigator, UserAnswers}
 import views.html.vary.anyMoreChanges
 
@@ -38,7 +39,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class AnyMoreChangesController @Inject()(appConfig: FrontendAppConfig,
                                          override val messagesApi: MessagesApi,
-                                         dataCacheConnector: UserAnswersCacheConnector,
+                                         @NoChangeFlagService userAnswersService: UserAnswersService,
                                          @Variations navigator: Navigator,
                                          authenticate: AuthAction,
                                          getData: DataRetrievalAction,
@@ -47,20 +48,21 @@ class AnyMoreChangesController @Inject()(appConfig: FrontendAppConfig,
   extends FrontendController with Retrievals with I18nSupport {
 
   private val form: Form[Boolean] = formProvider()
+  private val postCall = controllers.vary.routes.AnyMoreChangesController.onSubmit _
 
-  def onPageLoad: Action[AnyContent] = (authenticate andThen getData() andThen requireData).async {
+  def onPageLoad(srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(UpdateMode, srn) andThen requireData).async {
     implicit request =>
-      Future.successful(Ok(anyMoreChanges(appConfig, form, existingSchemeName, dateToCompleteDeclaration)))
+      Future.successful(Ok(anyMoreChanges(appConfig, form, existingSchemeName, dateToCompleteDeclaration, postCall(srn))))
   }
 
-  def onSubmit: Action[AnyContent] = (authenticate andThen getData() andThen requireData).async {
+  def onSubmit(srn: Option[String]): Action[AnyContent] = (authenticate andThen getData() andThen requireData).async {
     implicit request =>
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) =>
-          Future.successful(BadRequest(anyMoreChanges(appConfig, formWithErrors, existingSchemeName, dateToCompleteDeclaration))),
+          Future.successful(BadRequest(anyMoreChanges(appConfig, formWithErrors, existingSchemeName, dateToCompleteDeclaration, postCall(srn)))),
         value =>
-          dataCacheConnector.save(request.externalId, AnyMoreChangesId, value).map(cacheMap =>
-            Redirect(navigator.nextPage(AnyMoreChangesId, NormalMode, UserAnswers(cacheMap))))
+          userAnswersService.save(UpdateMode, srn, AnyMoreChangesId, value).map(cacheMap =>
+            Redirect(navigator.nextPage(AnyMoreChangesId, NormalMode, UserAnswers(cacheMap), srn)))
       )
   }
 

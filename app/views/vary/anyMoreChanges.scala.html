@@ -18,12 +18,14 @@
 @import uk.gov.hmrc.play.views.html._
 @import controllers.vary.routes._
 @import utils.Constants._
+@import play.api.mvc.Call
 
 @(
     appConfig: FrontendAppConfig,
     form: Form[_],
     schemeName:Option[String],
-    dateToComplete: String
+    dateToComplete: String,
+    postCall: Call
 )(implicit request: Request[_], messages: Messages)
 
 @main_template(
@@ -31,7 +33,7 @@
     appConfig = appConfig,
     bodyClasses = None) {
 
-    @helpers.form(action = AnyMoreChangesController.onSubmit(), 'autoComplete -> "off") {
+    @helpers.form(action = postCall, 'autoComplete -> "off") {
 
         @components.error_summary(form.errors)
 

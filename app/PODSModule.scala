@@ -16,9 +16,8 @@
 
 import com.google.inject.AbstractModule
 import connectors.{SchemeDetailsReadOnlyCacheConnector, SubscriptionCacheConnector, UserAnswersCacheConnector}
-import controllers.actions.{DataRetrievalAction, DataRetrievalActionImpl}
 import navigators._
-import services.{UserAnswersService, UserAnswersServiceImpl, UserAnswersServiceInsuranceImpl}
+import services.{UserAnswersService, UserAnswersServiceEstablishersAndTrusteesImpl, UserAnswersServiceImpl, UserAnswersServiceInsuranceImpl}
 import utils.Navigator
 import utils.annotations.{EstablishersPartner, _}
 
@@ -31,6 +30,11 @@ class PODSModule extends AbstractModule {
       .annotatedWith(classOf[InsuranceService])
       .to(classOf[UserAnswersServiceInsuranceImpl])
 
+
+    bind(classOf[UserAnswersService])
+      .annotatedWith(classOf[NoChangeFlagService])
+      .to(classOf[UserAnswersServiceImpl])
+
     bind(classOf[UserAnswersCacheConnector])
       .to(classOf[SubscriptionCacheConnector])
 
@@ -40,7 +44,7 @@ class PODSModule extends AbstractModule {
       .to(classOf[SchemeDetailsReadOnlyCacheConnector])
 
     bind(classOf[UserAnswersService])
-      .to(classOf[UserAnswersServiceImpl])
+      .to(classOf[UserAnswersServiceEstablishersAndTrusteesImpl])
 
     bind(classOf[Navigator])
       .annotatedWith(classOf[AboutMembers])

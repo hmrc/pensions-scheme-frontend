@@ -24,6 +24,7 @@ import org.joda.time.LocalDate
 import org.joda.time.format.DateTimeFormat
 import play.api.data.Form
 import play.api.test.Helpers._
+import services.FakeUserAnswersService
 import utils.FakeNavigator
 import views.html.vary.anyMoreChanges
 
@@ -34,12 +35,14 @@ class AnyMoreChangesControllerSpec extends ControllerSpecBase {
   val formProvider = new AnyMoreChangesFormProvider()
   val form = formProvider()
   val date: String = LocalDate.now().plusDays(28).toString(DateTimeFormat.forPattern("dd MMMM YYYY"))
+  private val postCall = controllers.vary.routes.AnyMoreChangesController.onSubmit _
+  val srn = Some("123")
 
   def controller(dataRetrievalAction: DataRetrievalAction = getMandatorySchemeNameHs): AnyMoreChangesController =
     new AnyMoreChangesController(
       frontendAppConfig,
       messagesApi,
-      FakeUserAnswersCacheConnector,
+      FakeUserAnswersService,
       new FakeNavigator(desiredRoute = onwardRoute),
       FakeAuthAction,
       dataRetrievalAction,
@@ -47,12 +50,12 @@ class AnyMoreChangesControllerSpec extends ControllerSpecBase {
       formProvider
     )
 
-  private def viewAsString(form: Form[_] = form) = anyMoreChanges(frontendAppConfig, form, schemeName, date)(fakeRequest, messages).toString
+  private def viewAsString(form: Form[_] = form) = anyMoreChanges(frontendAppConfig, form, schemeName, date, postCall(srn))(fakeRequest, messages).toString
 
   "AnyMoreChangesController" must {
 
     "return OK and the correct view for a GET" in {
-      val result = controller().onPageLoad()(fakeRequest)
+      val result = controller().onPageLoad(srn)(fakeRequest)
 
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString()
@@ -61,7 +64,7 @@ class AnyMoreChangesControllerSpec extends ControllerSpecBase {
     "redirect to the next page when valid data is submitted for true" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "true"))
 
-      val result = controller().onSubmit()(postRequest)
+      val result = controller().onSubmit(srn)(postRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
@@ -71,7 +74,7 @@ class AnyMoreChangesControllerSpec extends ControllerSpecBase {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "invalid value"))
       val boundForm = form.bind(Map("value" -> "invalid value"))
 
-      val result = controller().onSubmit()(postRequest)
+      val result = controller().onSubmit(srn)(postRequest)
 
       status(result) mustBe BAD_REQUEST
       contentAsString(result) mustBe viewAsString(boundForm)
