@@ -65,6 +65,8 @@ object CheckYourAnswers {
 
   implicit def vat[I <: TypedIdentifier[Vat]](implicit r: Reads[Vat]): CheckYourAnswers[I] = VatCYA()()
 
+  implicit def personDetails[I <: TypedIdentifier[PersonDetails]](implicit rds: Reads[PersonDetails], messages: Messages): CheckYourAnswers[I] = PersonalDetailsCYA()()
+
   case class StringCYA[I <: TypedIdentifier[String]](label: Option[String] = None, hiddenLabel: Option[String] = None) {
 
     def apply()(implicit rds: Reads[String], countryOptions: CountryOptions): CheckYourAnswers[I] = {
@@ -80,6 +82,7 @@ object CheckYourAnswers {
               ))
           }.getOrElse(Seq.empty[AnswerRow])
         }
+
         override def row(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
           stringCYARow(id, Some(Link("site.change", changeUrl,
             Some(hiddenLabel.fold(s"messages__visuallyhidden__${id.toString}")(customHiddenLabel => customHiddenLabel)))), userAnswers)
@@ -130,6 +133,7 @@ object CheckYourAnswers {
               ))
           }.getOrElse(Seq.empty[AnswerRow])
         }
+
         override def row(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
           schemeTypeCYARow(id, Some(Link("site.change", changeUrl,
             Some(hiddenLabel.fold(s"messages__visuallyhidden__${id.toString}")(customHiddenLabel => customHiddenLabel)))), userAnswers)
@@ -191,27 +195,30 @@ object CheckYourAnswers {
     }
   }
 
-  implicit def personDetails[I <: TypedIdentifier[PersonDetails]](implicit rds: Reads[PersonDetails], messages: Messages): CheckYourAnswers[I] = {
-    new CheckYourAnswers[I] {
+  case class PersonalDetailsCYA[I <: TypedIdentifier[PersonDetails]]() {
 
-      private def personDetailsCYARow(personDetails: PersonDetails, changeUrlName: Option[Link], changeUrlDob: Option[Link]): Seq[AnswerRow] = {
-        Seq(
-          AnswerRow("messages__common__cya__name", Seq(personDetails.fullName), answerIsMessageKey = false, changeUrlName),
-          AnswerRow("messages__common__dob", Seq(DateHelper.formatDate(personDetails.date)), answerIsMessageKey = false, changeUrlDob)
-        )
+    def apply()(implicit rds: Reads[PersonDetails], messages: Messages): CheckYourAnswers[I] = {
+      new CheckYourAnswers[I] {
+
+        private def personDetailsCYARow(personDetails: PersonDetails, changeUrlName: Option[Link], changeUrlDob: Option[Link]): Seq[AnswerRow] = {
+          Seq(
+            AnswerRow("messages__common__cya__name", Seq(personDetails.fullName), answerIsMessageKey = false, changeUrlName),
+            AnswerRow("messages__common__dob", Seq(DateHelper.formatDate(personDetails.date)), answerIsMessageKey = false, changeUrlDob)
+          )
+        }
+
+        override def row(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = userAnswers.get(id).map { personDetails =>
+          personDetailsCYARow(personDetails, Some(Link("site.change", changeUrl,
+            Some(Message("messages__visuallyhidden__common__name", personDetails.fullName).resolve))),
+            Some(Link("site.change", changeUrl,
+              Some(Message("messages__visuallyhidden__common__dob", personDetails.fullName).resolve)))
+          )
+        }.getOrElse(Seq.empty[AnswerRow])
+
+        override def updateRow(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = userAnswers.get(id).map { personDetails =>
+          personDetailsCYARow(personDetails, None, None)
+        }.getOrElse(Seq.empty[AnswerRow])
       }
-
-      override def row(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = userAnswers.get(id).map { personDetails =>
-        personDetailsCYARow(personDetails, Some(Link("site.change", changeUrl,
-          Some(Message("messages__visuallyhidden__common__name", personDetails.fullName).resolve))),
-          Some(Link("site.change", changeUrl,
-            Some(Message("messages__visuallyhidden__common__dob", personDetails.fullName).resolve)))
-        )
-      }.getOrElse(Seq.empty[AnswerRow])
-
-      override def updateRow(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = userAnswers.get(id).map { personDetails =>
-        personDetailsCYARow(personDetails, None, None)
-      }.getOrElse(Seq.empty[AnswerRow])
     }
   }
 
