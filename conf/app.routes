@@ -204,5 +204,5 @@ POST       /:mode/who-has-working-knowledge    controllers.AdviserNameController
 GET        /check-adviser-answers               controllers.AdviserCheckYourAnswersController.onPageLoad()
 POST       /check-adviser-answers               controllers.AdviserCheckYourAnswersController.onSubmit()
 
-GET        /declare-after-changing-details      controllers.VariationDeclarationController.onPageLoad()
-POST       /declare-after-changing-details      controllers.VariationDeclarationController.onSubmit()
+GET        /declare-after-changing-details/:srn      controllers.VariationDeclarationController.onPageLoad(srn: Option[String])
+POST       /declare-after-changing-details/:srn      controllers.VariationDeclarationController.onSubmit(srn: Option[String])

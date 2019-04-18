@@ -243,7 +243,7 @@ object PensionSchemeVarianceLockConnectorSpec {
 
   private val lockUrl = s"/pensions-scheme/update-scheme/lock"
   private val getLockUrl = s"/pensions-scheme/update-scheme/getLock"
-  private val releaseLockUrl = s"/pensions-scheme/update-scheme/releaseLock"
+  private val releaseLockUrl = s"/pensions-scheme/update-scheme/release-lock"
   private val isLockByPsaOrSchemeUrl = s"/pensions-scheme/update-scheme/isLockByPsaOrScheme"
 
   val schemeVarianceLockResponse = SchemeVariance("A2100005", "00000000AA")
