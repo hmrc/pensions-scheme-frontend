@@ -16,7 +16,6 @@
 
 package models.register
 
-import play.api.libs.json.{Json, OFormat}
 import utils.{Enumerable, InputOption, WithName}
 
 sealed trait DeclarationDormant
@@ -38,7 +37,5 @@ object DeclarationDormant {
 
   implicit val enumerable: Enumerable[DeclarationDormant] =
     Enumerable(values.map(v => v.toString -> v): _*)
-
-  implicit val format : OFormat[DeclarationDormant] = Json.format[DeclarationDormant]
 
 }

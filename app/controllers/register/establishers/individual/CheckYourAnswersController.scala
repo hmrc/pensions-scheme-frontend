@@ -47,7 +47,9 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requiredData).async {
     implicit request =>
+
       implicit val userAnswers = request.userAnswers
+
       val sections = Seq(
         AnswerSection(None,
           EstablisherDetailsId(index).row(

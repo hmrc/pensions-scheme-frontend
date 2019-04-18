@@ -23,7 +23,7 @@ import models.register.DeclarationDormant
 import models.register.DeclarationDormant._
 import play.api.i18n.Messages
 import play.api.libs.json.JsPath
-import utils.UserAnswers
+import utils.{Enumerable, UserAnswers}
 import utils.checkyouranswers.{CheckYourAnswers, IsDormantCYA}
 import viewmodels.AnswerRow
 
@@ -31,7 +31,7 @@ case class IsCompanyDormantId(index: Int) extends TypedIdentifier[DeclarationDor
   override def path: JsPath = EstablishersId(index).path \ IsCompanyDormantId.toString
 }
 
-object IsCompanyDormantId {
+object IsCompanyDormantId extends Enumerable.Implicits {
 
   override def toString: String = "isCompanyDormant"
 
@@ -43,7 +43,7 @@ object IsCompanyDormantId {
     new CheckYourAnswers[IsCompanyDormantId] {
 
       override def row(id: IsCompanyDormantId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
-        IsDormantCYA()().row(id)(changeUrl, userAnswers)
+        IsDormantCYA(label, changeIsDormant)().row(id)(changeUrl, userAnswers)
       }
 
       override def updateRow(id: IsCompanyDormantId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =

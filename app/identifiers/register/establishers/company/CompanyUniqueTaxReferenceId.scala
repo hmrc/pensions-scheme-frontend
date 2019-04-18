@@ -58,7 +58,11 @@ object CompanyUniqueTaxReferenceId {
               )
               case _  => Seq(AnswerRow(utrLabel, Seq(utr), answerIsMessageKey = false, None))
             }
-          case Some(UniqueTaxReference.No(_)) => Seq(AnswerRow(utrLabel, Seq("site.not_entered"), answerIsMessageKey = true, None))
+          case Some(UniqueTaxReference.No(_)) =>userAnswers.get(IsEstablisherNewId(id.index)) match {
+            case Some(true) =>  Seq(AnswerRow(utrLabel, Seq("site.not_entered"), answerIsMessageKey = true,
+              Some(Link("site.add", changeUrl, Some(changeUtr)))))
+            case _  =>  Seq(AnswerRow(utrLabel, Seq("site.not_entered"), answerIsMessageKey = true, None))
+          }
           case _ => Seq.empty[AnswerRow]
         }
     }

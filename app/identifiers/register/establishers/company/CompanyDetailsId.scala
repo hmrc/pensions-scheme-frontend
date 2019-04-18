@@ -20,7 +20,7 @@ import identifiers.TypedIdentifier
 import identifiers.register.establishers.{EstablishersId, IsEstablisherNewId}
 import models.{CompanyDetails, Link}
 import play.api.i18n.Messages
-import play.api.libs.json.{JsPath, Reads}
+import play.api.libs.json.JsPath
 import utils.UserAnswers
 import utils.checkyouranswers.{CheckYourAnswers, CompanyDetailsCYA}
 import viewmodels.AnswerRow

@@ -18,7 +18,6 @@ package identifiers.register.establishers.partnership
 
 import identifiers.TypedIdentifier
 import identifiers.register.establishers.{EstablishersId, IsEstablisherNewId}
-import identifiers.register.establishers.company.CompanyUniqueTaxReferenceId
 import models.{Link, UniqueTaxReference}
 import play.api.i18n.Messages
 import play.api.libs.json.JsPath
@@ -39,14 +38,14 @@ object PartnershipUniqueTaxReferenceID {
   val changeUtr = "messages__visuallyhidden__partnership__utr"
   val changeNoUtr = "messages__visuallyhidden__partnership__utr_no"
 
-  implicit def cya(implicit userAnswers: UserAnswers, messages: Messages): CheckYourAnswers[CompanyUniqueTaxReferenceId] = {
+  implicit def cya(implicit userAnswers: UserAnswers, messages: Messages): CheckYourAnswers[PartnershipUniqueTaxReferenceID] = {
 
-    new CheckYourAnswers[CompanyUniqueTaxReferenceId] {
-      override def row(id: CompanyUniqueTaxReferenceId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
+    new CheckYourAnswers[PartnershipUniqueTaxReferenceID] {
+      override def row(id: PartnershipUniqueTaxReferenceID)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
         UniqueTaxReferenceCYA()().row(id)(changeUrl, userAnswers)
       }
 
-      override def updateRow(id: CompanyUniqueTaxReferenceId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+      override def updateRow(id: PartnershipUniqueTaxReferenceID)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
         userAnswers.get(id) match {
           case Some(UniqueTaxReference.Yes(utr)) =>
             userAnswers.get(IsEstablisherNewId(id.index)) match {
@@ -58,7 +57,11 @@ object PartnershipUniqueTaxReferenceID {
               )
               case _  => Seq(AnswerRow(utrLabel, Seq(utr), answerIsMessageKey = false, None))
             }
-          case Some(UniqueTaxReference.No(_)) => Seq(AnswerRow(utrLabel, Seq("site.not_entered"), answerIsMessageKey = true, None))
+          case Some(UniqueTaxReference.No(_)) =>userAnswers.get(IsEstablisherNewId(id.index)) match {
+            case Some(true) => Seq(AnswerRow(utrLabel, Seq("site.not_entered"), answerIsMessageKey = true,
+              Some(Link("site.add", changeUrl, Some(changeUtr)))))
+            case _  => Seq(AnswerRow(utrLabel, Seq("site.not_entered"), answerIsMessageKey = true, None))
+          }
           case _ => Seq.empty[AnswerRow]
         }
     }

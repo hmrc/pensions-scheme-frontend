@@ -39,13 +39,21 @@ object UniqueTaxReferenceId {
 
       override def updateRow(id: UniqueTaxReferenceId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
         userAnswers.get(id) match {
+
           case Some(UniqueTaxReference.Yes(utr)) =>
             userAnswers.get(IsEstablisherNewId(id.index)) match {
               case Some(true) => Seq(AnswerRow("messages__common__nino", Seq(utr), answerIsMessageKey = false,
                 Some(Link("site.change", changeUrl, Some("messages__visuallyhidden__establisher__utr_yes_no")))))
               case _  => Seq(AnswerRow("messages__establisher_individual_utr_cya_label", Seq(utr), answerIsMessageKey = false, None))
             }
-          case Some(UniqueTaxReference.No(_)) => Seq(AnswerRow("messages__establisher_individual_utr_cya_label", Seq("site.not_entered"), answerIsMessageKey = true, None))
+
+          case Some(UniqueTaxReference.No(_)) =>
+            userAnswers.get(IsEstablisherNewId(id.index)) match {
+              case Some(true) => Seq(AnswerRow("messages__establisher_individual_utr_cya_label", Seq("site.not_entered"), answerIsMessageKey = true,
+                Some(Link("site.add", changeUrl, Some("messages__visuallyhidden__establisher__utr_yes_no")))))
+              case _  => Seq(AnswerRow("messages__establisher_individual_utr_cya_label", Seq("site.not_entered"), answerIsMessageKey = true, None))
+            }
+
           case _ => Seq.empty[AnswerRow]
         }
     }

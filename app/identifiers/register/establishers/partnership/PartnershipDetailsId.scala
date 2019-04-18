@@ -18,13 +18,12 @@ package identifiers.register.establishers.partnership
 
 import identifiers.TypedIdentifier
 import identifiers.register.establishers.{EstablishersId, IsEstablisherNewId}
-import identifiers.register.establishers.company.CompanyDetailsId
 import models.{Link, PartnershipDetails}
 import play.api.i18n.Messages
 import play.api.libs.json.JsPath
 import utils.UserAnswers
-import utils.checkyouranswers.{CheckYourAnswers, CompanyDetailsCYA}
-import viewmodels.AnswerRow
+import utils.checkyouranswers.CheckYourAnswers
+import viewmodels.{AnswerRow, Message}
 
 case class PartnershipDetailsId(index: Int) extends TypedIdentifier[PartnershipDetails] {
   override def path: JsPath = EstablishersId(index).path \ PartnershipDetailsId.toString
@@ -33,18 +32,22 @@ case class PartnershipDetailsId(index: Int) extends TypedIdentifier[PartnershipD
 object PartnershipDetailsId {
   override lazy val toString: String = "partnershipDetails"
 
-  implicit def cya(implicit userAnswers: UserAnswers, messages: Messages): CheckYourAnswers[PartnershipDetails] = {
-    new CheckYourAnswers[PartnershipDetails] {
+  implicit def cya(implicit userAnswers: UserAnswers, messages: Messages): CheckYourAnswers[PartnershipDetailsId] = {
 
-      override def row(id: PartnershipDetails)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        CompanyDetailsCYA()().row(id)(changeUrl, userAnswers)
+    new CheckYourAnswers[PartnershipDetailsId] {
 
-      override def updateRow(id: CompanyDetailsId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+      override def row(id: PartnershipDetailsId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+        userAnswers.get(id).map { partnershipDetails =>
+          Seq(AnswerRow("messages__common__cya__name", Seq(partnershipDetails.name), answerIsMessageKey = false,
+            Some(Link("site.change", changeUrl, Some(Message("messages__visuallyhidden__common__name", partnershipDetails.name).resolve)))))
+        } getOrElse Seq.empty[AnswerRow]
+
+      override def updateRow(id: PartnershipDetailsId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
         userAnswers.get(id) match {
-          case Some(companyDetails) => userAnswers.get(IsEstablisherNewId(id.index)) match {
-            case Some(true) => Seq(AnswerRow("messages__common__cya__name", Seq(s"${companyDetails.companyName}"), answerIsMessageKey = false,
+          case Some(partnershipDetails) => userAnswers.get(IsEstablisherNewId(id.index)) match {
+            case Some(true) => Seq(AnswerRow("messages__common__cya__name", Seq(s"${partnershipDetails.name}"), answerIsMessageKey = false,
               Some(Link("site.change", changeUrl, Some("messages__visuallyhidden__common__name")))))
-            case _  => Seq(AnswerRow("messages__common__cya__name", Seq(s"${companyDetails.companyName}"), answerIsMessageKey = false, None))
+            case _  => Seq(AnswerRow("messages__common__cya__name", Seq(s"${partnershipDetails.name}"), answerIsMessageKey = false, None))
           }
           case _ => Seq.empty[AnswerRow]
         }

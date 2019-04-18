@@ -22,6 +22,7 @@ import controllers.actions._
 import identifiers.register.establishers.company._
 import javax.inject.Inject
 import models.{CheckMode, Index, Mode, NormalMode}
+import models.Mode._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
@@ -47,22 +48,25 @@ class CheckYourAnswersController @Inject()(
 
   def onPageLoad(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
+
+      implicit val userAnswers = request.userAnswers
+
       val companyDetails = AnswerSection(
         Some("messages__common__company_details__title"),
-        CompanyDetailsId(index).row(routes.CompanyDetailsController.onPageLoad(CheckMode, srn, index).url, mode) ++
-          CompanyVatId(index).row(routes.CompanyVatController.onPageLoad(CheckMode, index, srn).url, mode) ++
-          CompanyPayeId(index).row(routes.CompanyPayeController.onPageLoad(CheckMode, index, srn).url, mode) ++
-          CompanyRegistrationNumberId(index).row(routes.CompanyRegistrationNumberController.onPageLoad(CheckMode, srn, Index(index)).url, mode) ++
-          CompanyUniqueTaxReferenceId(index).row(routes.CompanyUniqueTaxReferenceController.onPageLoad(CheckMode, srn, Index(index)).url, mode) ++
-          IsCompanyDormantId(index).row(routes.IsCompanyDormantController.onPageLoad(CheckMode, srn, Index(index)).url, mode)
+        CompanyDetailsId(index).row(routes.CompanyDetailsController.onPageLoad(checkMode(mode), srn, index).url, mode) ++
+          CompanyVatId(index).row(routes.CompanyVatController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
+          CompanyPayeId(index).row(routes.CompanyPayeController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
+          CompanyRegistrationNumberId(index).row(routes.CompanyRegistrationNumberController.onPageLoad(checkMode(mode), srn, Index(index)).url, mode) ++
+          CompanyUniqueTaxReferenceId(index).row(routes.CompanyUniqueTaxReferenceController.onPageLoad(checkMode(mode), srn, Index(index)).url, mode) ++
+          IsCompanyDormantId(index).row(routes.IsCompanyDormantController.onPageLoad(checkMode(mode), srn, Index(index)).url, mode)
       )
 
       val companyContactDetails = AnswerSection(
         Some("messages__establisher_company_contact_details__title"),
-        CompanyAddressId(index).row(routes.CompanyAddressController.onPageLoad(CheckMode, srn, Index(index)).url, mode) ++
-          CompanyAddressYearsId(index).row(routes.CompanyAddressYearsController.onPageLoad(CheckMode, srn, index).url, mode) ++
-          CompanyPreviousAddressId(index).row(routes.CompanyPreviousAddressController.onPageLoad(CheckMode, srn, index).url, mode) ++
-          CompanyContactDetailsId(index).row(routes.CompanyContactDetailsController.onPageLoad(CheckMode, srn, index).url, mode)
+        CompanyAddressId(index).row(routes.CompanyAddressController.onPageLoad(checkMode(mode), srn, Index(index)).url, mode) ++
+          CompanyAddressYearsId(index).row(routes.CompanyAddressYearsController.onPageLoad(checkMode(mode), srn, index).url, mode) ++
+          CompanyPreviousAddressId(index).row(routes.CompanyPreviousAddressController.onPageLoad(checkMode(mode), srn, index).url, mode) ++
+          CompanyContactDetailsId(index).row(routes.CompanyContactDetailsController.onPageLoad(checkMode(mode), srn, index).url, mode)
       )
 
       Future.successful(Ok(check_your_answers(
