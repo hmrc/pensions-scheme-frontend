@@ -22,7 +22,7 @@ import controllers.actions._
 import forms.register.PersonDetailsFormProvider
 import identifiers.register.establishers.IsEstablisherCompleteId
 import identifiers.register.establishers.company.CompanyDetailsId
-import identifiers.register.establishers.company.director.DirectorDetailsId
+import identifiers.register.establishers.company.director.{DirectorDetailsId, IsNewDirectorId}
 import javax.inject.Inject
 import models.person.PersonDetails
 import models.{Index, Mode}
@@ -56,37 +56,40 @@ class DirectorDetailsController @Inject()(
   def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
-          val preparedForm = request.userAnswers.get[PersonDetails](DirectorDetailsId(establisherIndex, directorIndex)) match {
-            case None => form
-            case Some(value) => form.fill(value)
-          }
-          Future.successful(Ok(directorDetails(
-            appConfig, preparedForm, mode, establisherIndex, directorIndex, existingSchemeName, postCall(mode, establisherIndex, directorIndex, srn))))
+        val preparedForm = request.userAnswers.get[PersonDetails](DirectorDetailsId(establisherIndex, directorIndex)) match {
+          case None => form
+          case Some(value) => form.fill(value)
+        }
+        Future.successful(Ok(directorDetails(
+          appConfig, preparedForm, mode, establisherIndex, directorIndex, existingSchemeName, postCall(mode, establisherIndex, directorIndex, srn))))
     }
 
   def onSubmit(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
-          form.bindFromRequest().fold(
-            (formWithErrors: Form[_]) =>
-              Future.successful(BadRequest(directorDetails(
-                appConfig, formWithErrors, mode, establisherIndex, directorIndex, existingSchemeName, postCall(mode, establisherIndex, directorIndex, srn))))
-            ,
-            value =>
-              userAnswersService.save(mode, srn, DirectorDetailsId(establisherIndex, directorIndex), value).flatMap {
-                cacheMap =>
-                  val userAnswers = UserAnswers(cacheMap)
-                  val allDirectors = userAnswers.allDirectorsAfterDelete(establisherIndex)
-                  val allDirectorsCompleted = allDirectors.count(_.isCompleted) == allDirectors.size
+        form.bindFromRequest().fold(
+          (formWithErrors: Form[_]) =>
+            Future.successful(BadRequest(directorDetails(
+              appConfig, formWithErrors, mode, establisherIndex, directorIndex, existingSchemeName, postCall(mode, establisherIndex, directorIndex, srn))))
+          ,
+          value => {
+            val answers = request.userAnswers.set(IsNewDirectorId(establisherIndex, directorIndex))(true).flatMap(
+              _.set(DirectorDetailsId(establisherIndex, directorIndex))(value)).asOpt.getOrElse(request.userAnswers)
+            userAnswersService.upsert(mode, srn, answers.json).flatMap {
+              cacheMap =>
+                val userAnswers = UserAnswers(cacheMap)
+                val allDirectors = userAnswers.allDirectorsAfterDelete(establisherIndex)
+                val allDirectorsCompleted = allDirectors.count(_.isCompleted) == allDirectors.size
 
-                  if (allDirectorsCompleted) {
-                    Future.successful(Redirect(navigator.nextPage(DirectorDetailsId(establisherIndex, directorIndex), mode, userAnswers)))
-                  } else {
-                    userAnswersService.setCompleteFlag(mode, srn, IsEstablisherCompleteId(establisherIndex), userAnswers, value = false).map { _ =>
-                      Redirect(navigator.nextPage(DirectorDetailsId(establisherIndex, directorIndex), mode, userAnswers))
-                    }
+                if (allDirectorsCompleted) {
+                  Future.successful(Redirect(navigator.nextPage(DirectorDetailsId(establisherIndex, directorIndex), mode, userAnswers)))
+                } else {
+                  userAnswersService.setCompleteFlag(mode, srn, IsEstablisherCompleteId(establisherIndex), userAnswers, value = false).map { _ =>
+                    Redirect(navigator.nextPage(DirectorDetailsId(establisherIndex, directorIndex), mode, userAnswers))
                   }
-              }
+                }
+            }
+          }
           )
     }
 }

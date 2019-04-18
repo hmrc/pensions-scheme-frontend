@@ -16,16 +16,22 @@
 
 package identifiers.register.establishers.partnership.partner
 
+import base.SpecBase
 import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.partnership.{OtherPartnersId, PartnershipDetailsId}
-import models.PartnershipDetails
 import models.person.PersonDetails
+import models.requests.DataRequest
+import models.{Link, NormalMode, PartnershipDetails, UpdateMode}
 import org.joda.time.LocalDate
-import org.scalatest.{MustMatchers, OptionValues, WordSpec}
 import play.api.libs.json.Json
-import utils.UserAnswers
+import play.api.mvc.AnyContent
+import play.api.test.FakeRequest
+import uk.gov.hmrc.domain.PsaId
+import utils.checkyouranswers.Ops._
+import utils.{DateHelper, UserAnswers}
+import viewmodels.{AnswerRow, Message}
 
-class PartnerDetailsIdSpec extends WordSpec with MustMatchers with OptionValues {
+class PartnerDetailsIdSpec extends SpecBase {
   val userAnswersWithTenPartners = UserAnswers(Json.obj(
     EstablishersId.toString -> Json.arr(
       Json.obj(
@@ -58,7 +64,7 @@ class PartnerDetailsIdSpec extends WordSpec with MustMatchers with OptionValues 
 
   "Cleanup" must {
 
-    "remove MoreThanTenDirectorsId" when {
+    "remove MoreThanTenpartnersId" when {
 
       "there are fewer than 10 partners" in {
 
@@ -82,5 +88,54 @@ class PartnerDetailsIdSpec extends WordSpec with MustMatchers with OptionValues 
 
     }
 
+  }
+
+  "cya" when {
+    val onwardUrl = "onwardUrl"
+    val personDetails = PersonDetails("firstName", None, "last", LocalDate.now)
+    val answers = UserAnswers(Json.obj())
+      .set(PartnerDetailsId(0, 0))(personDetails)
+      .asOpt.value
+    implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
+
+    "in update mode for new partners" must {
+
+      "return answers rows with change links" in {
+        val answers = UserAnswers(Json.obj()).set(PartnerDetailsId(0, 0))(personDetails).flatMap(
+          _.set(IsNewPartnerId(0, 0))(true)
+        ).asOpt.value
+
+        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
+
+        PartnerDetailsId(0, 0).row(onwardUrl, UpdateMode) must equal(Seq(
+          AnswerRow("messages__common__cya__name", Seq(s"${personDetails.fullName}"), false,
+            Some(Link("site.change", onwardUrl, Some(Message("messages__visuallyhidden__common__name", personDetails.fullName))))),
+          AnswerRow("messages__common__dob", Seq(s"${DateHelper.formatDate(personDetails.date)}"),
+            false, Some(Link("site.change", onwardUrl, Some(Message("messages__visuallyhidden__common__dob", personDetails.fullName)))))
+        ))
+      }
+    }
+
+    "in update mode for existing partners" must {
+
+      "return answers rows without change links" in {
+        PartnerDetailsId(0, 0).row(onwardUrl, UpdateMode) must equal(Seq(
+          AnswerRow("messages__common__cya__name", Seq(s"${personDetails.fullName}"), false, None),
+          AnswerRow("messages__common__dob", Seq(s"${DateHelper.formatDate(personDetails.date)}"), false, None)
+        ))
+      }
+    }
+
+    "in normal mode " must {
+
+      "return answers rows with change links" in {
+        PartnerDetailsId(0, 0).row(onwardUrl, NormalMode) must equal(Seq(
+          AnswerRow("messages__common__cya__name", Seq(s"${personDetails.fullName}"), false,
+            Some(Link("site.change", onwardUrl, Some(Message("messages__visuallyhidden__common__name", personDetails.fullName))))),
+          AnswerRow("messages__common__dob", Seq(s"${DateHelper.formatDate(personDetails.date)}"),
+            false, Some(Link("site.change", onwardUrl, Some(Message("messages__visuallyhidden__common__dob", personDetails.fullName)))))
+        ))
+      }
+    }
   }
 }

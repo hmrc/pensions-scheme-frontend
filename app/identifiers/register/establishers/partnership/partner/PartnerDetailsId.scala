@@ -20,8 +20,12 @@ import identifiers._
 import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.partnership.OtherPartnersId
 import models.person.PersonDetails
-import play.api.libs.json.{JsPath, JsResult}
+import play.api.i18n.Messages
+import play.api.libs.json.{JsPath, JsResult, Reads}
 import utils.UserAnswers
+import utils.checkyouranswers.CheckYourAnswers
+import utils.checkyouranswers.CheckYourAnswers.PersonalDetailsCYA
+import viewmodels.AnswerRow
 
 case class PartnerDetailsId(establisherIndex: Int, partnerIndex: Int) extends TypedIdentifier[PersonDetails] {
   override def path: JsPath = EstablishersId(establisherIndex).path \ "partner" \ partnerIndex \ PartnerDetailsId.toString
@@ -39,4 +43,19 @@ object PartnerDetailsId {
     EstablishersId(establisherIndex).path \ "partner" \\ PartnerDetailsId.toString
 
   override def toString: String = "partnerDetails"
+
+  implicit def personDetails(implicit rds: Reads[PersonDetails], messages: Messages): CheckYourAnswers[PartnerDetailsId] = {
+    new CheckYourAnswers[PartnerDetailsId] {
+
+      override def row(id: PartnerDetailsId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+        PersonalDetailsCYA[PartnerDetailsId]()().row(id)(changeUrl, userAnswers)
+
+      override def updateRow(id: PartnerDetailsId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
+        userAnswers.get(IsNewPartnerId(id.establisherIndex, id.partnerIndex)) match {
+          case Some(true) => PersonalDetailsCYA[PartnerDetailsId]()().row(id)(changeUrl, userAnswers)
+          case _ => PersonalDetailsCYA[PartnerDetailsId]()().updateRow(id)(changeUrl, userAnswers)
+        }
+      }
+    }
+  }
 }

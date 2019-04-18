@@ -21,6 +21,7 @@ import controllers.Retrievals
 import controllers.actions.{AuthAction, DataRequiredAction, DataRetrievalAction}
 import identifiers.register.establishers.partnership.partner._
 import javax.inject.Inject
+import models.Mode.checkMode
 import models.{CheckMode, Index, Mode, NormalMode}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
@@ -51,11 +52,11 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
         Some("messages__partner__cya__details_heading"),
         Seq(
           PartnerDetailsId(establisherIndex, partnerIndex).
-            row(routes.PartnerDetailsController.onPageLoad(CheckMode, establisherIndex, partnerIndex, srn).url, mode),
+            row(routes.PartnerDetailsController.onPageLoad(checkMode(mode), establisherIndex, partnerIndex, srn).url, mode),
           PartnerNinoId(establisherIndex, partnerIndex).
-            row(routes.PartnerNinoController.onPageLoad(CheckMode, establisherIndex, partnerIndex, srn).url, mode),
+            row(routes.PartnerNinoController.onPageLoad(checkMode(mode), establisherIndex, partnerIndex, srn).url, mode),
           PartnerUniqueTaxReferenceId(establisherIndex, partnerIndex).
-            row(routes.PartnerUniqueTaxReferenceController.onPageLoad(CheckMode, establisherIndex, partnerIndex, srn).url, mode)
+            row(routes.PartnerUniqueTaxReferenceController.onPageLoad(checkMode(mode), establisherIndex, partnerIndex, srn).url, mode)
         ).flatten
       )
 
@@ -63,13 +64,13 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
         Some("messages__partner__cya__contact__details_heading"),
         Seq(
           PartnerAddressId(establisherIndex, partnerIndex).
-            row(routes.PartnerAddressController.onPageLoad(CheckMode, establisherIndex, partnerIndex, srn).url),
+            row(routes.PartnerAddressController.onPageLoad(checkMode(mode), establisherIndex, partnerIndex, srn).url),
           PartnerAddressYearsId(establisherIndex, partnerIndex).
-            row(routes.PartnerAddressYearsController.onPageLoad(CheckMode, establisherIndex, partnerIndex, srn).url, mode),
+            row(routes.PartnerAddressYearsController.onPageLoad(checkMode(mode), establisherIndex, partnerIndex, srn).url, mode),
           PartnerPreviousAddressId(establisherIndex, partnerIndex).
-            row(routes.PartnerPreviousAddressController.onPageLoad(CheckMode, establisherIndex, partnerIndex, srn).url, mode),
+            row(routes.PartnerPreviousAddressController.onPageLoad(checkMode(mode), establisherIndex, partnerIndex, srn).url, mode),
           PartnerContactDetailsId(establisherIndex, partnerIndex).
-            row(routes.PartnerContactDetailsController.onPageLoad(CheckMode, establisherIndex, partnerIndex, srn).url)
+            row(routes.PartnerContactDetailsController.onPageLoad(checkMode(mode), establisherIndex, partnerIndex, srn).url)
         ).flatten
       )
 
