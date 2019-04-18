@@ -16,6 +16,7 @@
 
 package views
 
+import controllers.routes
 import forms.register.DeclarationFormProvider
 import org.jsoup.Jsoup
 import play.api.data.Form
@@ -29,8 +30,10 @@ class VariationDeclarationViewSpec extends QuestionViewBehaviours[Boolean] {
   val schemeName = "Test Scheme Name"
   val form: Form[Boolean] = new DeclarationFormProvider()()
 
+  val postCall = routes.VariationDeclarationController.onSubmit _
+
   def createView: () => HtmlFormat.Appendable = () => variationDeclaration(frontendAppConfig,
-    form, Some(schemeName))(fakeRequest, messages)
+    form, Some(schemeName), postCall(Some("123")))(fakeRequest, messages)
 
   "Declaration view where no working knowledge" must {
 

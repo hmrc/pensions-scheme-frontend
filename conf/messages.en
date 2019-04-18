@@ -1408,3 +1408,7 @@ messages__companyName__heading = What is the company’s name?
 messages__variations_complete__title = The pension scheme details have been updated
 messages__variations_complete__heading = The pension scheme details have been updated
 
+messages__stillNeedDetails__title =  You still need to provide some details
+messages__stillNeedDetails__heading = You still need to provide some details
+messages__stillNeedDetails__p1 = There are some details that are incomplete.
+messages__stillNeedDetails__p2 = You need to complete the missing details before you can submit the changes.

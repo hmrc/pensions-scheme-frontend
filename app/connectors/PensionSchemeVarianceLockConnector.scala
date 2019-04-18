@@ -125,7 +125,7 @@ class PensionSchemeVarianceLockConnectorImpl @Inject()(http: HttpClient, config:
 
     implicit val headerCarrier: HeaderCarrier = hc.withExtraHeaders("psaId" -> psaId, "srn" -> srn)
 
-    val url = s"${config.updateSchemeDetailsUrl}/releaseLock"
+    val url = s"${config.updateSchemeDetailsUrl}/release-lock"
 
     http.DELETE[HttpResponse](url)(implicitly, headerCarrier, implicitly).map { response =>
 
