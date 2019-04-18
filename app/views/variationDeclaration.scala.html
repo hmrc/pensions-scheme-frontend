@@ -18,16 +18,17 @@
 @import uk.gov.hmrc.play.views.html._
 @import controllers.routes._
 @import models.Mode
+@import play.api.mvc.Call
 
 @(appConfig: FrontendAppConfig, form: Form[_],
-    schemeName: Option[String])(implicit request: Request[_], messages: Messages)
+    schemeName: Option[String], postCall: Call)(implicit request: Request[_], messages: Messages)
 
 @main_template(
     title = messages("messages__variationDeclaration__title"),
     appConfig = appConfig,
     bodyClasses = None) {
 
-    @helpers.form(action = VariationDeclarationController.onSubmit(), 'autoComplete -> "off") {
+    @helpers.form(action = postCall, 'autoComplete -> "off") {
 
         @components.error_summary(form.errors)
 

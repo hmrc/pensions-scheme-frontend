@@ -278,8 +278,8 @@ class HsTaskListHelperVariationsSpec extends HsTaskListHelperBehaviour {
                 _.set(TrusteePartnershipDetailsId(2))(PartnershipDetails("test partnership", false)).flatMap(
                   _.set(IsTrusteeNewId(2))(true)).flatMap(
                   _.set(IsPartnershipCompleteId(2))(false)
-              ))))))).asOpt.value
-      val helper = new HsTaskListHelperVariations(userAnswers, viewOnly = false, Some("test-srn"))
+                ))))))).asOpt.value
+      val helper = new HsTaskListHelperVariations(userAnswers, viewOnly = false, srn = Some("test-srn"))
       helper.trustees(userAnswers) mustBe
         Seq(SchemeDetailsTaskListSection(Some(false), Link(messages("messages__schemeTaskList__persons_details__link_text", "firstName lastName"),
           controllers.register.trustees.individual.routes.TrusteeDetailsController.onPageLoad(UpdateMode, 0, srn).url), None),
@@ -290,37 +290,15 @@ class HsTaskListHelperVariationsSpec extends HsTaskListHelperBehaviour {
   }
 }
 
-object HsTaskListHelperVariationsSpec extends SpecBase {
-
-  private def answersData(isCompleteBeforeStart: Boolean = true,
-                          isCompleteAboutMembers: Boolean = true,
-                          isCompleteAboutBank: Boolean = true,
-                          isCompleteAboutBenefits: Boolean = true,
-                          isCompleteWk: Boolean = true,
-                          isCompleteEstablishers: Boolean = true,
-                          isCompleteTrustees: Boolean = true,
-                          isChangedInsuranceDetails: Boolean = true,
-                          isChangedEstablishersTrustees: Boolean = true
-                         ): JsResult[UserAnswers] = {
-    UserAnswers().set(IsBeforeYouStartCompleteId)(isCompleteBeforeStart).flatMap(
-      _.set(IsAboutMembersCompleteId)(isCompleteAboutMembers).flatMap(
-        _.set(IsAboutBankDetailsCompleteId)(isCompleteAboutBank).flatMap(
-          _.set(IsAboutBenefitsAndInsuranceCompleteId)(isCompleteAboutBenefits).flatMap(
-            _.set(IsWorkingKnowledgeCompleteId)(isCompleteWk).flatMap(
-              _.set(EstablisherDetailsId(0))(PersonDetails("firstName", None, "lastName", LocalDate.now())).flatMap(
-                _.set(IsEstablisherCompleteId(0))(isCompleteEstablishers)).flatMap(
-                  _.set(IsEstablisherNewId(0))(true)).flatMap(
-                    _.set(TrusteeDetailsId(0))(PersonDetails("firstName", None, "lastName", LocalDate.now())).flatMap(
-                      _.set(IsTrusteeCompleteId(0))(isCompleteTrustees)).flatMap(
-                        _.set(IsTrusteeNewId(0))(true)).flatMap(
-                          _.set(InsuranceDetailsChangedId)(isChangedInsuranceDetails)).flatMap(
-                            _.set(InsuranceDetailsChangedId)(isChangedEstablishersTrustees))
-              )
-            )
-          )
-        )
-      )
-    )
+class HsTaskListHelperVariationsViewOnlySpec extends HsTaskListHelperBehaviour {
+  private val srn = Some("test-srn")
+  override val createTaskListHelper: UserAnswers => HsTaskListHelper = ua => new HsTaskListHelperVariations(ua, viewOnly = true, srn = srn)
+  "declaration" must {
+    "NOT have a declaration section when viewonly is true" in {
+      val userAnswers = answersData().asOpt.value
+      val helper = createTaskListHelper(userAnswers)
+      helper.declarationSection(userAnswers).isDefined mustBe false
+    }
   }
 }
 
