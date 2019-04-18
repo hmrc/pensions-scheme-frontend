@@ -17,7 +17,6 @@
 package utils
 
 import base.SpecBase
-import identifiers.register.establishers.IsEstablisherCompleteId
 import identifiers.register.establishers.{IsEstablisherCompleteId, IsEstablisherNewId}
 import identifiers.register.establishers.company.{CompanyDetailsId => EstablisherCompanyDetailsId}
 import identifiers.register.establishers.individual.EstablisherDetailsId
