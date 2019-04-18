@@ -67,16 +67,6 @@ trait EntityListBehaviours {
         doc.getElementById("submit").hasAttr("disabled") mustBe true
       }
 
-      "display the delete link for each person" in {
-        val doc = asDocument(nonEmptyView())
-        items.foreach { item =>
-          val link = doc.select(s"#person-${item.index}-delete")
-          link.size mustBe 1
-          link.first.text mustBe messages("site.delete")
-          link.first.attr("href") mustBe item.deleteLink(NormalMode, None).get
-        }
-      }
-
       "display the edit link for each person" in {
         val doc = asDocument(nonEmptyView())
         items.foreach { item =>
@@ -85,6 +75,39 @@ trait EntityListBehaviours {
           link.first.text mustBe messages("site.edit")
           link.first.attr("href") mustBe item.editLink(NormalMode, None).get
         }
+      }
+    }
+  }
+
+  def entityListWithMultipleRecords(emptyView: View, nonEmptyView: View, items: Seq[Entity[_]], appConfig: FrontendAppConfig): Unit = {
+    entityListMultipleLinks(emptyView: View, nonEmptyView: View, items: Seq[Entity[_]], appConfig: FrontendAppConfig)
+  }
+
+  def entityListWithSingleRecord(emptyView: View, nonEmptyView: View, items: Seq[Entity[_]], appConfig: FrontendAppConfig): Unit = {
+    entityListSingleLink(emptyView: View, nonEmptyView: View, items: Seq[Entity[_]], appConfig: FrontendAppConfig)
+  }
+
+  private def entityListMultipleLinks(emptyView: View, nonEmptyView: View, items: Seq[Entity[_]], appConfig: FrontendAppConfig): Unit = {
+
+    "show delete links " when {
+      "multiple records exist" in {
+        val doc = asDocument(nonEmptyView())
+        items.foreach { item =>
+          val link = doc.select(s"#person-${item.index}-delete")
+          link.size mustBe 1
+          link.first.text mustBe messages("site.delete")
+          link.first.attr("href") mustBe item.deleteLink(NormalMode, None).get
+        }
+      }
+    }
+  }
+
+  private def entityListSingleLink(emptyView: View, nonEmptyView: View, items: Seq[Entity[_]], appConfig: FrontendAppConfig): Unit = {
+
+    "not show delete link" when {
+      "only 1 record exists" in {
+        val doc = asDocument(nonEmptyView())
+        doc.getElementById("person-1-delete") == null mustBe true
       }
     }
   }
