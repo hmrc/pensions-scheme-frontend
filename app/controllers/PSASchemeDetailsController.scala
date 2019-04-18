@@ -20,6 +20,7 @@ import config.{FeatureSwitchManagementService, FrontendAppConfig}
 import connectors._
 import controllers.actions._
 import handlers.ErrorHandler
+import identifiers.MinimalPsaDetailsId
 import javax.inject.Inject
 import models._
 import models.details.transformation.SchemeDetailsMasterSection
@@ -85,7 +86,7 @@ class PSASchemeDetailsController @Inject()(appConfig: FrontendAppConfig,
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
     minimalPsaConnector.getMinimalPsaDetails(request.psaId.id).flatMap { minimalDetails =>
       val json = Json.obj(
-        "minimalPsaDetails" -> Json.toJson(minimalDetails)
+        MinimalPsaDetailsId.toString -> Json.toJson(minimalDetails)
       ) ++ userAnswers.json.as[JsObject]
       lockConnector.isLockByPsaIdOrSchemeId(request.psaId.id, srn).flatMap { optionLock =>
         val futureJsValue = optionLock match {

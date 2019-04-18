@@ -20,9 +20,10 @@ import config.FeatureSwitchManagementService
 import connectors.{PensionSchemeVarianceLockConnector, _}
 import controllers.actions.{DataRetrievalAction, _}
 import handlers.ErrorHandler
-import models.{IndividualDetails, Lock, MinimalPSA, VarianceLock}
+import identifiers.MinimalPsaDetailsId
 import models.details.transformation.{SchemeDetailsMasterSection, SchemeDetailsStubData}
 import models.details.{Name, PsaDetails}
+import models.{IndividualDetails, Lock, MinimalPSA, VarianceLock}
 import org.mockito.Matchers
 import org.mockito.Mockito.{reset, times, verify, when}
 import org.scalatest.mockito.MockitoSugar
@@ -78,7 +79,7 @@ class PSASchemeDetailsControllerSpec extends ControllerSpecBase {
       prepareLockAndCacheMocks()
 
       val expectedSavedJson = Json.obj(
-        "minimalPsaDetails" -> Json.toJson(minimalPSA)
+        MinimalPsaDetailsId.toString -> Json.toJson(minimalPSA)
       ) ++ userAnswersResponse.json.as[JsObject]
 
       val result = controller(isVariationsEnabled = true).onPageLoad(srn)(fakeRequest)
@@ -108,7 +109,7 @@ class PSASchemeDetailsControllerSpec extends ControllerSpecBase {
       prepareLockAndCacheMocks(lock = Some(VarianceLock))
 
       val expectedSavedJson = Json.obj(
-        "minimalPsaDetails" -> Json.toJson(minimalPSA)
+        MinimalPsaDetailsId.toString -> Json.toJson(minimalPSA)
       ) ++ userAnswersResponse.json.as[JsObject]
 
       val result = controller(isVariationsEnabled = true).onPageLoad(srn)(fakeRequest)
