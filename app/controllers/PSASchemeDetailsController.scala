@@ -25,7 +25,7 @@ import models._
 import models.details.transformation.SchemeDetailsMasterSection
 import models.requests.OptionalDataRequest
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.libs.json.JsValue
+import play.api.libs.json.{JsObject, JsValue, Json}
 import play.api.mvc.{Action, AnyContent, Result}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.HeaderCarrierConverter
@@ -47,7 +47,8 @@ class PSASchemeDetailsController @Inject()(appConfig: FrontendAppConfig,
                                            featureSwitchManagementService: FeatureSwitchManagementService,
                                            @SchemeDetailsReadOnly schemeDetailsReadOnlyCacheConnector: UserAnswersCacheConnector,
                                            lockConnector: PensionSchemeVarianceLockConnector,
-                                           updateConnector: UpdateSchemeCacheConnector
+                                           updateConnector: UpdateSchemeCacheConnector,
+                                           minimalPsaConnector: MinimalPsaConnector
                                           )(implicit val ec: ExecutionContext) extends FrontendController with I18nSupport {
 
   def onPageLoad(srn: String): Action[AnyContent] = (authenticate andThen getData(UpdateMode, Some(srn))).async {
@@ -82,13 +83,17 @@ class PSASchemeDetailsController @Inject()(appConfig: FrontendAppConfig,
 
   private def updateMinimalDetailsInCache(srn: String, userAnswers:UserAnswers)(implicit request: OptionalDataRequest[AnyContent]): Future[UserAnswers] = {
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
-    val json = userAnswers.json // TODO: Add/update min details here
-    lockConnector.isLockByPsaIdOrSchemeId(request.psaId.id, srn).flatMap { optionLock =>
-      val futureJsValue = optionLock match {
-        case Some(VarianceLock) => updateConnector.upsert(srn, json)
-        case _ => schemeDetailsReadOnlyCacheConnector.upsert(request.externalId, json)
+    minimalPsaConnector.getMinimalPsaDetails(request.psaId.id).flatMap { minimalDetails =>
+      val json = Json.obj(
+        "minimalPsaDetails" -> Json.toJson(minimalDetails)
+      ) ++ userAnswers.json.as[JsObject]
+      lockConnector.isLockByPsaIdOrSchemeId(request.psaId.id, srn).flatMap { optionLock =>
+        val futureJsValue = optionLock match {
+          case Some(VarianceLock) => updateConnector.upsert(srn, json)
+          case _ => schemeDetailsReadOnlyCacheConnector.upsert(request.externalId, json)
+        }
+        futureJsValue.map(UserAnswers)
       }
-      futureJsValue.map(UserAnswers)
     }
   }
 }
