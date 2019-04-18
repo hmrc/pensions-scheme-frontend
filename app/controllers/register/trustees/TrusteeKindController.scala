@@ -17,11 +17,10 @@
 package controllers.register.trustees
 
 import config.FrontendAppConfig
-import connectors.UserAnswersCacheConnector
 import controllers.Retrievals
 import controllers.actions._
 import forms.register.trustees.TrusteeKindFormProvider
-import identifiers.register.trustees.TrusteeKindId
+import identifiers.register.trustees.{IsTrusteeNewId, TrusteeKindId}
 import javax.inject.Inject
 import models.{Index, Mode}
 import play.api.data.Form
@@ -65,10 +64,18 @@ class TrusteeKindController @Inject()(
           val submitUrl = controllers.register.trustees.routes.TrusteeKindController.onSubmit(mode, index, srn)
           Future.successful(BadRequest(trusteeKind(appConfig, formWithErrors, mode, index, existingSchemeName, submitUrl)))
         },
-        value =>
-          userAnswersService.save(mode, srn, TrusteeKindId(index), value).map { userAnswers =>
-            Redirect(navigator.nextPage(TrusteeKindId(index), mode, UserAnswers(userAnswers)))
+        value => {
+
+          request.userAnswers.upsert(IsTrusteeNewId(index))(value = true) {
+            _.upsert(TrusteeKindId(index))(value) { answers =>
+              userAnswersService.upsert(mode, srn, answers.json).map {
+                json =>
+                  Redirect(navigator.nextPage(TrusteeKindId(index), mode, UserAnswers(json)))
+              }
+            }
           }
+
+        }
       )
   }
 }

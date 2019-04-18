@@ -17,21 +17,22 @@
 package utils
 
 import identifiers._
-import identifiers.register.establishers.IsEstablisherCompleteId
+import identifiers.register.establishers.{IsEstablisherCompleteId, IsEstablisherNewId}
 import identifiers.register.establishers.company.{CompanyDetailsId => EstablisherCompanyDetailsId}
 import identifiers.register.establishers.individual.EstablisherDetailsId
 import identifiers.register.establishers.partnership.{PartnershipDetailsId => EstablisherPartnershipDetailsId}
-import identifiers.register.trustees.IsTrusteeCompleteId
+import identifiers.register.trustees.{IsTrusteeCompleteId, IsTrusteeNewId, TrusteeKindId}
 import identifiers.register.trustees.company.{CompanyDetailsId => TrusteeCompanyDetailsId}
 import identifiers.register.trustees.individual.TrusteeDetailsId
 import identifiers.register.trustees.partnership.{IsPartnershipCompleteId, PartnershipDetailsId => TrusteePartnershipDetailsId}
 import models._
 import models.person.PersonDetails
+import models.register.trustees.TrusteeKind
 import org.joda.time.LocalDate
 import utils.behaviours.HsTaskListHelperBehaviour
 import viewmodels.SchemeDetailsTaskListSection
 
-class HsTaskListHelperRegistrationSpec extends HsTaskListHelperBehaviour {
+class HsTaskListHelperRegistrationSpec extends HsTaskListHelperBehaviour with Enumerable.Implicits {
 
   override val createTaskListHelper: UserAnswers => HsTaskListHelper = ua => new HsTaskListHelperRegistration(ua)
 
@@ -173,14 +174,24 @@ class HsTaskListHelperRegistrationSpec extends HsTaskListHelperBehaviour {
     behave like trusteesSection(NormalMode, None)
   }
 
-  "declarationEnabled" must {
+  "declaration" must {
+    "have a declaration section" in {
+      val userAnswers = answersData().asOpt.value
+      val helper = createTaskListHelper(userAnswers)
+      helper.declarationSection(userAnswers).isDefined mustBe true
+    }
 
-    behave like declarationEnabled()
-  }
+    behave like declarationSection()
 
-  "declarationLink" must {
+    "not have link when about bank details section not completed" in {
+      val userAnswers = answersData(isCompleteAboutBank = false).asOpt.value
+      mustHaveNoLink(createTaskListHelper(userAnswers), userAnswers)
+    }
 
-    behave like declarationLink()
+    "not have link when working knowledge section not completed" in {
+      val userAnswers = answersData(isCompleteWk = false).asOpt.value
+      mustHaveNoLink(createTaskListHelper(userAnswers), userAnswers)
+    }
   }
 
   def establishersSection(mode: Mode, srn: Option[String]): Unit = {
@@ -214,11 +225,14 @@ class HsTaskListHelperRegistrationSpec extends HsTaskListHelperBehaviour {
     "return the seq of establishers sub sections after filtering out deleted establishers" in {
       val userAnswers = UserAnswers().set(EstablisherDetailsId(0))(PersonDetails("firstName", None, "lastName", LocalDate.now())).flatMap(
         _.set(IsEstablisherCompleteId(0))(false).flatMap(
+          _.set(IsEstablisherNewId(0))(true).flatMap(
           _.set(EstablisherCompanyDetailsId(1))(CompanyDetails("test company", true)).flatMap(
             _.set(IsEstablisherCompleteId(1))(true).flatMap(
+              _.set(IsEstablisherNewId(1))(true).flatMap(
               _.set(EstablisherPartnershipDetailsId(2))(PartnershipDetails("test partnership", false)).flatMap(
+                _.set(IsEstablisherNewId(2))(true).flatMap(
                 _.set(IsEstablisherCompleteId(2))(false)
-              ))))).asOpt.value
+              )))))))).asOpt.value
       val helper = new HsTaskListHelperRegistration(userAnswers)
       helper.establishers(userAnswers) mustBe
         Seq(SchemeDetailsTaskListSection(Some(false), Link(individualLinkText,
@@ -260,11 +274,17 @@ class HsTaskListHelperRegistrationSpec extends HsTaskListHelperBehaviour {
     "return the seq of trustees sub sections after filtering out deleted trustees" in {
       val userAnswers = UserAnswers().set(TrusteeDetailsId(0))(PersonDetails("firstName", None, "lastName", LocalDate.now())).flatMap(
         _.set(IsTrusteeCompleteId(0))(false).flatMap(
+          _.set(IsTrusteeNewId(0))(true).flatMap(
+        _.set(TrusteeKindId(0))(TrusteeKind.Individual).flatMap(
           _.set(TrusteeCompanyDetailsId(1))(CompanyDetails("test company", true)).flatMap(
             _.set(IsTrusteeCompleteId(1))(false).flatMap(
+              _.set(IsTrusteeNewId(1))(true).flatMap(
+              _.set(TrusteeKindId(1))(TrusteeKind.Company).flatMap(
               _.set(TrusteePartnershipDetailsId(2))(PartnershipDetails("test partnership", false)).flatMap(
+                _.set(TrusteeKindId(2))(TrusteeKind.Partnership).flatMap(
+                  _.set(IsTrusteeNewId(2))(true).flatMap(
                 _.set(IsPartnershipCompleteId(2))(false)
-              ))))).asOpt.value
+              ))))))))))).asOpt.value
       val helper = new HsTaskListHelperRegistration(userAnswers)
       helper.trustees(userAnswers) mustBe
         Seq(SchemeDetailsTaskListSection(Some(false), Link(individualLinkText,
@@ -275,5 +295,4 @@ class HsTaskListHelperRegistrationSpec extends HsTaskListHelperBehaviour {
     }
   }
 }
-
 

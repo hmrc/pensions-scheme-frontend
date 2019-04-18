@@ -17,11 +17,11 @@
 package utils
 
 import base.SpecBase
-import identifiers.register.establishers.IsEstablisherCompleteId
+import identifiers.register.establishers.{IsEstablisherCompleteId, IsEstablisherNewId}
 import identifiers.register.establishers.company.{CompanyDetailsId => EstablisherCompanyDetailsId}
 import identifiers.register.establishers.individual.EstablisherDetailsId
 import identifiers.register.establishers.partnership.{PartnershipDetailsId => EstablisherPartnershipDetailsId}
-import identifiers.register.trustees.IsTrusteeCompleteId
+import identifiers.register.trustees.{IsTrusteeCompleteId, IsTrusteeNewId}
 import identifiers.register.trustees.company.{CompanyDetailsId => TrusteeCompanyDetailsId}
 import identifiers.register.trustees.individual.TrusteeDetailsId
 import identifiers.register.trustees.partnership.{IsPartnershipCompleteId, PartnershipDetailsId => TrusteePartnershipDetailsId}
@@ -35,12 +35,41 @@ import viewmodels.SchemeDetailsTaskListSection
 
 class HsTaskListHelperVariationsSpec extends HsTaskListHelperBehaviour {
   private val srn = Some("test-srn")
-  override val createTaskListHelper:UserAnswers => HsTaskListHelper = ua => new HsTaskListHelperVariations(ua, srn)
+  override val createTaskListHelper:UserAnswers => HsTaskListHelper = ua => new HsTaskListHelperVariations(ua, viewOnly = false, srn = srn)
+  override def answersData(isCompleteBeforeStart: Boolean = true,
+                           isCompleteAboutMembers: Boolean = true,
+                           isCompleteAboutBank: Boolean = true,
+                           isCompleteAboutBenefits: Boolean = true,
+                           isCompleteWk: Boolean = true,
+                           isCompleteEstablishers: Boolean = true,
+                           isCompleteTrustees: Boolean = true,
+                           isChangedInsuranceDetails: Boolean = true,
+                           isChangedEstablishersTrustees: Boolean = true
+                          ): JsResult[UserAnswers] = {
+    UserAnswers().set(IsBeforeYouStartCompleteId)(isCompleteBeforeStart).flatMap(
+      _.set(IsAboutMembersCompleteId)(isCompleteAboutMembers).flatMap(
+        _.set(IsAboutBankDetailsCompleteId)(isCompleteAboutBank).flatMap(
+          _.set(IsAboutBenefitsAndInsuranceCompleteId)(isCompleteAboutBenefits).flatMap(
+            _.set(IsWorkingKnowledgeCompleteId)(isCompleteWk).flatMap(
+              _.set(EstablisherDetailsId(0))(PersonDetails("firstName", None, "lastName", LocalDate.now())).flatMap(
+                _.set(IsEstablisherCompleteId(0))(isCompleteEstablishers)).flatMap(
+                _.set(TrusteeDetailsId(0))(PersonDetails("firstName", None, "lastName", LocalDate.now())).flatMap(
+                  _.set(IsTrusteeCompleteId(0))(isCompleteTrustees)).flatMap(
+                  _.set(InsuranceDetailsChangedId)(isChangedInsuranceDetails)).flatMap(
+                  _.set(InsuranceDetailsChangedId)(isChangedEstablishersTrustees))
+              )
+            )
+          )
+        )
+      )
+    )
+  }
+
   "h1" must {
     "have the name of the scheme" in {
       val name = "scheme name 1"
       val userAnswers = UserAnswers().set(SchemeNameId)(name).asOpt.value
-      val helper = new HsTaskListHelperVariations(userAnswers, srn)
+      val helper = new HsTaskListHelperVariations(userAnswers, viewOnly = false, srn)
       helper.taskList.h1 mustBe name
     }
   }
@@ -48,14 +77,14 @@ class HsTaskListHelperVariationsSpec extends HsTaskListHelperBehaviour {
   "h2" must {
     "display \"Scheme details\"" in {
       val userAnswers = UserAnswers()
-      val helper = new HsTaskListHelperVariations(userAnswers, srn)
+      val helper = new HsTaskListHelperVariations(userAnswers, viewOnly = false, srn)
       helper.taskList.h2 mustBe messages("messages__scheme_details__title")
     }
   }
   "h3" must {
     "display \"Scheme Information\"" in {
       val userAnswers = UserAnswers()
-      val helper = new HsTaskListHelperVariations(userAnswers, srn)
+      val helper = new HsTaskListHelperVariations(userAnswers, viewOnly = false, srn)
       helper.taskList.h3 mustBe Some(messages("messages__schemeTaskList__scheme_information_link_text"))
     }
   }
@@ -64,7 +93,7 @@ class HsTaskListHelperVariationsSpec extends HsTaskListHelperBehaviour {
     "display \"About\" with Pension scheme Name" in {
       val schemeName = "test scheme"
       val userAnswers = UserAnswers().set(SchemeNameId)(schemeName).asOpt.value
-      val helper = new HsTaskListHelperVariations(userAnswers, srn)
+      val helper = new HsTaskListHelperVariations(userAnswers, viewOnly = false, srn)
       helper.taskList.aboutHeader mustBe messages("messages__schemeTaskList__about_scheme_header", schemeName)
     }
   }
@@ -72,14 +101,14 @@ class HsTaskListHelperVariationsSpec extends HsTaskListHelperBehaviour {
   "page title" must {
     "display \"Scheme details\"" in {
       val userAnswers = UserAnswers()
-      val helper = new HsTaskListHelperVariations(userAnswers, srn)
+      val helper = new HsTaskListHelperVariations(userAnswers, viewOnly = false, srn)
       helper.taskList.pageTitle mustBe messages("messages__scheme_details__title")
     }
   }
 
   "schemeInfoSection " must {
     behave like beforeYouStartSection(
-      new HsTaskListHelperVariations(_, srn),
+      new HsTaskListHelperVariations(_, viewOnly = false, srn),
       schemeInfoLinkText,
       UpdateMode,
       None
@@ -92,7 +121,7 @@ class HsTaskListHelperVariationsSpec extends HsTaskListHelperBehaviour {
       val userAnswers = UserAnswers().set(IsAboutMembersCompleteId)(false).flatMap(
         _.set(IsAboutBenefitsAndInsuranceCompleteId)(false)
       ).asOpt.value
-      val helper = new HsTaskListHelperVariations(userAnswers, srn)
+      val helper = new HsTaskListHelperVariations(userAnswers, viewOnly = false, srn)
       helper.aboutSection(userAnswers) mustBe
         Seq(
           SchemeDetailsTaskListSection(Some(false), Link(aboutMembersLinkText,
@@ -107,7 +136,7 @@ class HsTaskListHelperVariationsSpec extends HsTaskListHelperBehaviour {
       val userAnswers = UserAnswers().set(IsAboutMembersCompleteId)(true).flatMap(
         _.set(IsAboutBenefitsAndInsuranceCompleteId)(true)
       ).asOpt.value
-      val helper = new HsTaskListHelperVariations(userAnswers, srn)
+      val helper = new HsTaskListHelperVariations(userAnswers, viewOnly = false, srn)
       helper.aboutSection(userAnswers) mustBe
         Seq(
           SchemeDetailsTaskListSection(Some(true), Link(aboutMembersLinkText,
@@ -121,13 +150,13 @@ class HsTaskListHelperVariationsSpec extends HsTaskListHelperBehaviour {
   "workingKnowledgeSection " must {
     "not display when do you have working knowledge is false " in {
       val userAnswers = UserAnswers().set(DeclarationDutiesId)(false).asOpt.value
-      val helper = new HsTaskListHelperVariations(userAnswers, srn)
+      val helper = new HsTaskListHelperVariations(userAnswers, viewOnly = false, srn)
       helper.taskList.workingKnowledge mustBe None
     }
 
     "not display when do you have working knowledge is true " in {
       val userAnswers = UserAnswers().set(DeclarationDutiesId)(true).asOpt.value
-      val helper = new HsTaskListHelperVariations(userAnswers, srn)
+      val helper = new HsTaskListHelperVariations(userAnswers, viewOnly = false, srn)
       helper.taskList.workingKnowledge mustBe None
     }
   }
@@ -152,11 +181,21 @@ class HsTaskListHelperVariationsSpec extends HsTaskListHelperBehaviour {
     behave like trusteesSection()
   }
 
+  "declaration" must {
+    "have a declaration section when viewonly is false" in {
+      val userAnswers = answersData().asOpt.value
+      val helper = createTaskListHelper(userAnswers)
+      helper.declarationSection(userAnswers).isDefined mustBe true
+    }
+
+    behave like declarationSection()
+  }
+
   def establishersSection(): Unit = {
 
     "return the seq of establishers sub sections for non deleted establishers which are all completed" in {
       val userAnswers = allEstablishers()
-      val helper = new HsTaskListHelperVariations(userAnswers, Some("test-srn"))
+      val helper = new HsTaskListHelperVariations(userAnswers, viewOnly = false, Some("test-srn"))
       helper.establishers(userAnswers) mustBe
         Seq(SchemeDetailsTaskListSection(Some(true), Link(messages("messages__schemeTaskList__persons_details__link_text", "firstName lastName"),
           controllers.register.establishers.individual.routes.CheckYourAnswersController.onPageLoad(UpdateMode, 0, srn).url), None),
@@ -169,7 +208,7 @@ class HsTaskListHelperVariationsSpec extends HsTaskListHelperBehaviour {
 
     "return the seq of establishers sub sections for non deleted establishers which are not completed" in {
       val userAnswers = allEstablishers(isCompleteEstablisher = false)
-      val helper = new HsTaskListHelperVariations(userAnswers, Some("test-srn"))
+      val helper = new HsTaskListHelperVariations(userAnswers, viewOnly = false, Some("test-srn"))
       helper.establishers(userAnswers) mustBe
         Seq(SchemeDetailsTaskListSection(Some(false), Link(messages("messages__schemeTaskList__persons_details__link_text", "firstName lastName"),
           controllers.register.establishers.individual.routes.EstablisherDetailsController.onPageLoad(UpdateMode, 0, srn).url), None),
@@ -183,12 +222,15 @@ class HsTaskListHelperVariationsSpec extends HsTaskListHelperBehaviour {
     "return the seq of establishers sub sections after filtering out deleted establishers" in {
       val userAnswers = UserAnswers().set(EstablisherDetailsId(0))(PersonDetails("firstName", None, "lastName", LocalDate.now())).flatMap(
         _.set(IsEstablisherCompleteId(0))(false).flatMap(
+        _.set(IsEstablisherNewId(0))(true).flatMap(
           _.set(EstablisherCompanyDetailsId(1))(CompanyDetails("test company", true)).flatMap(
             _.set(IsEstablisherCompleteId(1))(true).flatMap(
+            _.set(IsEstablisherNewId(1))(true).flatMap(
               _.set(EstablisherPartnershipDetailsId(2))(PartnershipDetails("test partnership", false)).flatMap(
+                _.set(IsEstablisherNewId(2))(true)).flatMap(
                 _.set(IsEstablisherCompleteId(2))(false)
-              ))))).asOpt.value
-      val helper = new HsTaskListHelperVariations(userAnswers, Some("test-srn"))
+              ))))))).asOpt.value
+      val helper = new HsTaskListHelperVariations(userAnswers, viewOnly = false, Some("test-srn"))
       helper.establishers(userAnswers) mustBe
         Seq(SchemeDetailsTaskListSection(Some(false), Link(messages("messages__schemeTaskList__persons_details__link_text", "firstName lastName"),
           controllers.register.establishers.individual.routes.EstablisherDetailsController.onPageLoad(UpdateMode, 0, srn).url), None),
@@ -202,7 +244,7 @@ class HsTaskListHelperVariationsSpec extends HsTaskListHelperBehaviour {
 
     "return the seq of trustees sub sections for non deleted trustees which are all completed" in {
       val userAnswers = allTrustees()
-      val helper = new HsTaskListHelperVariations(userAnswers, Some("test-srn"))
+      val helper = new HsTaskListHelperVariations(userAnswers, viewOnly = false, srn = Some("test-srn"))
       helper.trustees(userAnswers) mustBe
         Seq(SchemeDetailsTaskListSection(Some(true), Link(messages("messages__schemeTaskList__persons_details__link_text", "firstName lastName"),
           controllers.register.trustees.individual.routes.CheckYourAnswersController.onPageLoad(UpdateMode, 0, srn).url), None),
@@ -215,7 +257,7 @@ class HsTaskListHelperVariationsSpec extends HsTaskListHelperBehaviour {
 
     "return the seq of trustees sub sections for non deleted trustees which are not completed" in {
       val userAnswers = allTrustees(isCompleteTrustees = false)
-      val helper = new HsTaskListHelperVariations(userAnswers, Some("test-srn"))
+      val helper = new HsTaskListHelperVariations(userAnswers, viewOnly = false, srn = Some("test-srn"))
       helper.trustees(userAnswers) mustBe
         Seq(SchemeDetailsTaskListSection(Some(false), Link(messages("messages__schemeTaskList__persons_details__link_text", "firstName lastName"),
           controllers.register.trustees.individual.routes.TrusteeDetailsController.onPageLoad(UpdateMode, 0, srn).url), None),
@@ -229,12 +271,15 @@ class HsTaskListHelperVariationsSpec extends HsTaskListHelperBehaviour {
     "return the seq of trustees sub sections after filtering out deleted trustees" in {
       val userAnswers = UserAnswers().set(TrusteeDetailsId(0))(PersonDetails("firstName", None, "lastName", LocalDate.now())).flatMap(
         _.set(IsTrusteeCompleteId(0))(false).flatMap(
-          _.set(TrusteeCompanyDetailsId(1))(CompanyDetails("test company", true)).flatMap(
+          _.set(IsTrusteeNewId(0))(true).flatMap(
+           _.set(TrusteeCompanyDetailsId(1))(CompanyDetails("test company", true)).flatMap(
             _.set(IsTrusteeCompleteId(1))(false).flatMap(
-              _.set(TrusteePartnershipDetailsId(2))(PartnershipDetails("test partnership", false)).flatMap(
-                _.set(IsPartnershipCompleteId(2))(false)
-              ))))).asOpt.value
-      val helper = new HsTaskListHelperVariations(userAnswers, Some("test-srn"))
+              _.set(IsTrusteeNewId(1))(true).flatMap(
+                _.set(TrusteePartnershipDetailsId(2))(PartnershipDetails("test partnership", false)).flatMap(
+                  _.set(IsTrusteeNewId(2))(true)).flatMap(
+                  _.set(IsPartnershipCompleteId(2))(false)
+                ))))))).asOpt.value
+      val helper = new HsTaskListHelperVariations(userAnswers, viewOnly = false, srn = Some("test-srn"))
       helper.trustees(userAnswers) mustBe
         Seq(SchemeDetailsTaskListSection(Some(false), Link(messages("messages__schemeTaskList__persons_details__link_text", "firstName lastName"),
           controllers.register.trustees.individual.routes.TrusteeDetailsController.onPageLoad(UpdateMode, 0, srn).url), None),
@@ -245,36 +290,16 @@ class HsTaskListHelperVariationsSpec extends HsTaskListHelperBehaviour {
   }
 }
 
-object HsTaskListHelperVariationsSpec extends SpecBase {
-
-  private def answersData(isCompleteBeforeStart: Boolean = true,
-                          isCompleteAboutMembers: Boolean = true,
-                          isCompleteAboutBank: Boolean = true,
-                          isCompleteAboutBenefits: Boolean = true,
-                          isCompleteWk: Boolean = true,
-                          isCompleteEstablishers: Boolean = true,
-                          isCompleteTrustees: Boolean = true,
-                          isChangedInsuranceDetails: Boolean = true,
-                          isChangedEstablishersTrustees: Boolean = true
-                         ): JsResult[UserAnswers] = {
-    UserAnswers().set(IsBeforeYouStartCompleteId)(isCompleteBeforeStart).flatMap(
-      _.set(IsAboutMembersCompleteId)(isCompleteAboutMembers).flatMap(
-        _.set(IsAboutBankDetailsCompleteId)(isCompleteAboutBank).flatMap(
-          _.set(IsAboutBenefitsAndInsuranceCompleteId)(isCompleteAboutBenefits).flatMap(
-            _.set(IsWorkingKnowledgeCompleteId)(isCompleteWk).flatMap(
-              _.set(EstablisherDetailsId(0))(PersonDetails("firstName", None, "lastName", LocalDate.now())).flatMap(
-                _.set(IsEstablisherCompleteId(0))(isCompleteEstablishers)).flatMap(
-                _.set(TrusteeDetailsId(0))(PersonDetails("firstName", None, "lastName", LocalDate.now())).flatMap(
-                  _.set(IsTrusteeCompleteId(0))(isCompleteTrustees)).flatMap(
-                  _.set(InsuranceDetailsChangedId)(isChangedInsuranceDetails)).flatMap(
-                  _.set(InsuranceDetailsChangedId)(isChangedEstablishersTrustees))
-              )
-            )
-          )
-        )
-      )
-    )
+class HsTaskListHelperVariationsViewOnlySpec extends HsTaskListHelperBehaviour {
+  private val srn = Some("test-srn")
+  override val createTaskListHelper: UserAnswers => HsTaskListHelper = ua => new HsTaskListHelperVariations(ua, viewOnly = true, srn = srn)
+  "declaration" must {
+    "NOT have a declaration section when viewonly is true" in {
+      val userAnswers = answersData().asOpt.value
+      val helper = createTaskListHelper(userAnswers)
+      helper.declarationSection(userAnswers).isDefined mustBe false
+    }
   }
-
 }
+
 

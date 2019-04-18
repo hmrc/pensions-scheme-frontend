@@ -29,7 +29,7 @@ class HsTaskListHelperRegistration(answers: UserAnswers)(implicit messages: Mess
   override protected[utils] def aboutSection(userAnswers: UserAnswers): Seq[SchemeDetailsTaskListSection] = {
     val membersLink = userAnswers.get(IsAboutMembersCompleteId) match {
       case Some(true) => Link(aboutMembersLinkText, controllers.routes.CheckYourAnswersMembersController.onPageLoad(NormalMode, None).url)
-      case _ => Link(aboutMembersLinkText, controllers.routes.WhatYouWillNeedMembersController.onPageLoad.url)
+      case _ => Link(aboutMembersLinkText, controllers.routes.WhatYouWillNeedMembersController.onPageLoad().url)
     }
 
     val benefitsAndInsuranceLink = userAnswers.get(IsAboutBenefitsAndInsuranceCompleteId) match {
@@ -40,13 +40,16 @@ class HsTaskListHelperRegistration(answers: UserAnswers)(implicit messages: Mess
 
     val bankDetailsLink = userAnswers.get(IsAboutBankDetailsCompleteId) match {
       case Some(true) => Link(aboutBankDetailsLinkText, controllers.routes.CheckYourAnswersBankDetailsController.onPageLoad().url)
-      case _ => Link(aboutBankDetailsLinkText, controllers.routes.WhatYouWillNeedBankDetailsController.onPageLoad.url)
+      case _ => Link(aboutBankDetailsLinkText, controllers.routes.WhatYouWillNeedBankDetailsController.onPageLoad().url)
     }
 
     Seq(SchemeDetailsTaskListSection(userAnswers.get(IsAboutMembersCompleteId), membersLink, None),
       SchemeDetailsTaskListSection(userAnswers.get(IsAboutBenefitsAndInsuranceCompleteId), benefitsAndInsuranceLink, None),
       SchemeDetailsTaskListSection(userAnswers.get(IsAboutBankDetailsCompleteId), bankDetailsLink, None))
   }
+
+  protected[utils] def declarationSection(userAnswers: UserAnswers): Option[SchemeDetailsTaskListDeclarationSection] =
+    Some(SchemeDetailsTaskListDeclarationSection(declarationLink(userAnswers)))
 
   protected def listOf(sections: Seq[Entity[_]], userAnswers: UserAnswers): Seq[SchemeDetailsTaskListSection] = {
     val notDeletedElements = for ((section, index) <- sections.zipWithIndex) yield {
@@ -77,7 +80,7 @@ class HsTaskListHelperRegistration(answers: UserAnswers)(implicit messages: Mess
       establishers(answers),
       addTrusteeHeader(answers, NormalMode, None),
       trustees(answers),
-      declarationLink(answers),
+      declarationSection(answers),
       messages("messages__schemeTaskList__heading"),
       messages("messages__schemeTaskList__before_you_start_header"),
       None,
