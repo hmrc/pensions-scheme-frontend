@@ -17,19 +17,21 @@
 package controllers
 
 import config.{FeatureSwitchManagementService, FrontendAppConfig}
-import connectors.{SchemeDetailsConnector, UserAnswersCacheConnector}
+import connectors._
 import controllers.actions._
 import handlers.ErrorHandler
 import javax.inject.Inject
-import models.UpdateMode
+import models._
 import models.details.transformation.SchemeDetailsMasterSection
 import models.requests.OptionalDataRequest
 import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.libs.json.JsValue
 import play.api.mvc.{Action, AnyContent, Result}
 import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.play.HeaderCarrierConverter
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import utils.{HsTaskListHelperVariations, Toggles}
 import utils.annotations.SchemeDetailsReadOnly
+import utils.{HsTaskListHelperVariations, Toggles, UserAnswers}
 import viewmodels.SchemeDetailsTaskList
 import views.html.{psa_scheme_details, schemeDetailsTaskList}
 
@@ -43,7 +45,9 @@ class PSASchemeDetailsController @Inject()(appConfig: FrontendAppConfig,
                                            getData: DataRetrievalAction,
                                            errorHandler: ErrorHandler,
                                            featureSwitchManagementService: FeatureSwitchManagementService,
-                                           @SchemeDetailsReadOnly schemeDetailsReadOnlyCacheConnector: UserAnswersCacheConnector
+                                           @SchemeDetailsReadOnly schemeDetailsReadOnlyCacheConnector: UserAnswersCacheConnector,
+                                           lockConnector: PensionSchemeVarianceLockConnector,
+                                           updateConnector: UpdateSchemeCacheConnector
                                           )(implicit val ec: ExecutionContext) extends FrontendController with I18nSupport {
 
   def onPageLoad(srn: String): Action[AnyContent] = (authenticate andThen getData(UpdateMode, Some(srn))).async {
@@ -66,12 +70,25 @@ class PSASchemeDetailsController @Inject()(appConfig: FrontendAppConfig,
 
   private def onPageLoadVariationsToggledOn(srn: String)(implicit
                                                          request: OptionalDataRequest[AnyContent],
-                                                          hc: HeaderCarrier): Future[Result] = {
-    schemeDetailsConnector.getSchemeDetailsVariations(request.psaId.id, schemeIdType = "srn", srn).flatMap { userAnswers =>
-      val taskList: SchemeDetailsTaskList = new HsTaskListHelperVariations(userAnswers, request.viewOnly, Some(srn)).taskList
-      schemeDetailsReadOnlyCacheConnector.upsert(request.externalId, userAnswers.json).map( _ =>
+                                                         hc: HeaderCarrier): Future[Result] = {
+    // TODO: Change this to get from update cache if there is anything there
+    schemeDetailsConnector.getSchemeDetailsVariations(request.psaId.id, schemeIdType = "srn", srn).flatMap(
+      updateMinimalDetailsInCache(srn, _).map { userAnswers =>
+        val taskList: SchemeDetailsTaskList = new HsTaskListHelperVariations(userAnswers, request.viewOnly, Some(srn)).taskList
         Ok(schemeDetailsTaskList(appConfig, taskList, isVariations = true))
-      )
+      }
+    )
+  }
+
+  private def updateMinimalDetailsInCache(srn: String, userAnswers:UserAnswers)(implicit request: OptionalDataRequest[AnyContent]): Future[UserAnswers] = {
+    implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
+    val json = userAnswers.json // TODO: Add/update min details here
+    lockConnector.isLockByPsaIdOrSchemeId(request.psaId.id, srn).flatMap { optionLock =>
+      val futureJsValue = optionLock match {
+        case Some(VarianceLock) => updateConnector.upsert(srn, json)
+        case _ => schemeDetailsReadOnlyCacheConnector.upsert(request.externalId, json)
+      }
+      futureJsValue.map(UserAnswers)
     }
   }
 }

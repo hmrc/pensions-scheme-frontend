@@ -17,16 +17,16 @@
 package controllers
 
 import config.FeatureSwitchManagementService
-import connectors._
+import connectors.{PensionSchemeVarianceLockConnector, _}
 import controllers.actions.{DataRetrievalAction, _}
 import handlers.ErrorHandler
+import models.{Lock, VarianceLock}
 import models.details.transformation.{SchemeDetailsMasterSection, SchemeDetailsStubData}
 import models.details.{Name, PsaDetails}
 import org.mockito.Matchers
-import org.mockito.Matchers.any
 import org.mockito.Mockito.{reset, times, verify, when}
 import org.scalatest.mockito.MockitoSugar
-import play.api.libs.json.{JsNull, Json}
+import play.api.libs.json.{JsNull, JsValue, Json}
 import play.api.test.Helpers.{contentAsString, _}
 import utils.UserAnswers
 import views.html.psa_scheme_details
@@ -38,7 +38,6 @@ class PSASchemeDetailsControllerSpec extends ControllerSpecBase {
   import PSASchemeDetailsControllerSpec._
 
   "SchemeDetailsController when isVariationsEnabled toggle switched off" must {
-
     "return OK and the correct view for a GET" in {
       val psaDetails3 = PsaDetails("A0000000", Some("org name test zero"), Some(Name(Some("Minnie"), Some("m"), Some("Mouse"))))
       val psaSchemeDetailsSampleAdministeredByLoggedInUser = psaSchemeDetailsSample copy (
@@ -50,17 +49,20 @@ class PSASchemeDetailsControllerSpec extends ControllerSpecBase {
         .thenReturn(Future.successful(psaSchemeDetailsSampleAdministeredByLoggedInUser))
       when(fakeSchemeTransformer.transformMasterSection(Matchers.any())).thenReturn(masterSections)
 
+      prepareLockAndCacheMocks()
+
       val result = controller(isVariationsEnabled = false).onPageLoad(srn)(fakeRequest)
 
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString()
+
+      verifyLockAndCacheMocks()
     }
   }
 
   "SchemeDetailsController when isVariationsEnabled toggle switched on" must {
-
-    "return OK and the correct view for a GET" in {
-
+    "where no scheme is currently locked return OK and the correct view for a GET and verify that lock is checked and view cache only is updated" in {
+      resetLockAndCacheMocks()
       val userAnswersResponse = UserAnswers(Json.obj(
         "test attribute" -> "test value"
       ))
@@ -71,19 +73,22 @@ class PSASchemeDetailsControllerSpec extends ControllerSpecBase {
       when(fakeSchemeTransformer.transformMasterSection(Matchers.any())).thenReturn(masterSections)
       when(fakeSchemeDetailsReadOnlyCacheConnector.upsert(Matchers.any(), Matchers.any())(Matchers.any(), Matchers.any()))
         .thenReturn(Future.successful(JsNull))
+
+      prepareLockAndCacheMocks()
 
       val result = controller(isVariationsEnabled = true).onPageLoad(srn)(fakeRequest)
 
       status(result) mustBe OK
-      verify(fakeSchemeDetailsReadOnlyCacheConnector, times(1)).upsert(any(), Matchers.eq(userAnswersResponse.json))(any(), any())
 
       val content = contentAsString(result)
       content.contains(messages("messages__scheme_details__title")) mustBe true
       content.contains(messages("messages__schemeTaskList__sectionDeclaration_header")) mustBe true
+
+      verifyLockAndCacheMocks(lockTimes = 1, viewTimes = 1)
     }
 
-    "return OK and no declaration section where request has viewOnly flag set to true" in {
-
+    "where the scheme is currently locked verify that lock is checked and update cache only is updated" in {
+      resetLockAndCacheMocks()
       val userAnswersResponse = UserAnswers(Json.obj(
         "test attribute" -> "test value"
       ))
@@ -94,6 +99,34 @@ class PSASchemeDetailsControllerSpec extends ControllerSpecBase {
       when(fakeSchemeTransformer.transformMasterSection(Matchers.any())).thenReturn(masterSections)
       when(fakeSchemeDetailsReadOnlyCacheConnector.upsert(Matchers.any(), Matchers.any())(Matchers.any(), Matchers.any()))
         .thenReturn(Future.successful(JsNull))
+
+      prepareLockAndCacheMocks(lock = Some(VarianceLock))
+
+      val result = controller(isVariationsEnabled = true).onPageLoad(srn)(fakeRequest)
+
+      status(result) mustBe OK
+
+      val content = contentAsString(result)
+      content.contains(messages("messages__scheme_details__title")) mustBe true
+      content.contains(messages("messages__schemeTaskList__sectionDeclaration_header")) mustBe true
+
+      verifyLockAndCacheMocks(lockTimes = 1, updateTimes = 1)
+    }
+
+    "return OK and no declaration section where request has viewOnly flag set to true" in {
+      resetLockAndCacheMocks()
+      val userAnswersResponse = UserAnswers(Json.obj(
+        "test attribute" -> "test value"
+      ))
+
+      reset(fakeSchemeDetailsConnector)
+      when(fakeSchemeDetailsConnector.getSchemeDetailsVariations(Matchers.any(), Matchers.any(), Matchers.any())(Matchers.any(), Matchers.any()))
+        .thenReturn(Future.successful(userAnswersResponse))
+      when(fakeSchemeTransformer.transformMasterSection(Matchers.any())).thenReturn(masterSections)
+      when(fakeSchemeDetailsReadOnlyCacheConnector.upsert(Matchers.any(), Matchers.any())(Matchers.any(), Matchers.any()))
+        .thenReturn(Future.successful(JsNull))
+
+      prepareLockAndCacheMocks()
 
       val result = controller(isVariationsEnabled = true, dataRetrievalAction = dontGetAnyDataViewOnly)
         .onPageLoad(srn)(fakeRequest)
@@ -120,6 +153,9 @@ private object PSASchemeDetailsControllerSpec extends ControllerSpecBase with Mo
     override def reset(name: String): Unit = ???
   }
 
+  val lockConnector: PensionSchemeVarianceLockConnector = mock[PensionSchemeVarianceLockConnector]
+  val updateConnector: UpdateSchemeCacheConnector = mock[UpdateSchemeCacheConnector]
+
   def controller(dataRetrievalAction: DataRetrievalAction = dontGetAnyData, isVariationsEnabled: Boolean): PSASchemeDetailsController =
     new PSASchemeDetailsController(frontendAppConfig,
       messagesApi,
@@ -129,7 +165,10 @@ private object PSASchemeDetailsControllerSpec extends ControllerSpecBase with Mo
       dataRetrievalAction,
       new ErrorHandler(frontendAppConfig, messagesApi),
       featureSwitchManagementService(isVariationsEnabled),
-      fakeSchemeDetailsReadOnlyCacheConnector)
+      fakeSchemeDetailsReadOnlyCacheConnector,
+      lockConnector,
+      updateConnector
+    )
 
   val masterSections = Seq(individualMasterSection)
   val srn = "S1000000456"
@@ -138,4 +177,25 @@ private object PSASchemeDetailsControllerSpec extends ControllerSpecBase with Mo
     psa_scheme_details(
       frontendAppConfig, masterSections, psaSchemeDetailsSample.schemeDetails.name, srn
     )(fakeRequest, messages).toString()
+
+  def prepareLockAndCacheMocks(lock:Option[Lock] = None, viewJsValue:JsValue = JsNull, updateJsValue:JsValue = JsNull):Unit = {
+    when(lockConnector.isLockByPsaIdOrSchemeId(Matchers.any(),Matchers.any())(Matchers.any(), Matchers.any()))
+      .thenReturn(Future.successful(lock))
+    when(fakeSchemeDetailsReadOnlyCacheConnector.upsert(Matchers.any(),Matchers.any())(Matchers.any(), Matchers.any()))
+      .thenReturn(Future.successful(viewJsValue))
+    when(updateConnector.upsert(Matchers.any(),Matchers.any())(Matchers.any(), Matchers.any()))
+      .thenReturn(Future.successful(updateJsValue))
+  }
+
+  def verifyLockAndCacheMocks(lockTimes:Int = 0, viewTimes:Int = 0, updateTimes:Int = 0):Unit = {
+    verify(lockConnector, times(lockTimes)).isLockByPsaIdOrSchemeId(Matchers.any(),Matchers.any())(Matchers.any(), Matchers.any())
+    verify(fakeSchemeDetailsReadOnlyCacheConnector, times(viewTimes)).upsert(Matchers.any(),Matchers.any())(Matchers.any(), Matchers.any())
+    verify(updateConnector, times(updateTimes)).upsert(Matchers.any(),Matchers.any())(Matchers.any(), Matchers.any())
+  }
+
+  def resetLockAndCacheMocks():Unit = {
+    reset(lockConnector)
+    reset(fakeSchemeDetailsReadOnlyCacheConnector)
+    reset(updateConnector)
+  }
 }
