@@ -26,7 +26,7 @@ import models._
 import models.details.transformation.SchemeDetailsMasterSection
 import models.requests.OptionalDataRequest
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.libs.json.{JsObject, JsValue, Json}
+import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.{Action, AnyContent, Result}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.HeaderCarrierConverter
@@ -73,17 +73,29 @@ class PSASchemeDetailsController @Inject()(appConfig: FrontendAppConfig,
   private def onPageLoadVariationsToggledOn(srn: String)(implicit
                                                          request: OptionalDataRequest[AnyContent],
                                                          hc: HeaderCarrier): Future[Result] = {
-    // TODO: Change this to get from update cache if there is anything there
-    schemeDetailsConnector.getSchemeDetailsVariations(request.psaId.id, schemeIdType = "srn", srn).flatMap(
-      updateMinimalDetailsInCache(srn, _).map { userAnswers =>
+    getSchemeDetailsVariations(request.psaId.id, srn).flatMap(
+      saveUserAnswersWithPSAMinimalDetails(srn, _).map { userAnswers =>
         val taskList: SchemeDetailsTaskList = new HsTaskListHelperVariations(userAnswers, request.viewOnly, Some(srn)).taskList
         Ok(schemeDetailsTaskList(appConfig, taskList, isVariations = true))
       }
     )
   }
 
-  private def updateMinimalDetailsInCache(srn: String, userAnswers:UserAnswers)(implicit request: OptionalDataRequest[AnyContent]): Future[UserAnswers] = {
-    implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
+  private def getSchemeDetailsVariations(psaId: String,
+                                         srn: String)(implicit request: OptionalDataRequest[AnyContent],
+                                                      hc: HeaderCarrier): Future[UserAnswers] = {
+    // TODO: If scheme locked by this PSA then get from update repository, if in readonly repository then get from there else get from ETMP
+//    lockConnector.isLockByPsaIdOrSchemeId(request.psaId.id, srn).flatMap { optionLock =>
+//
+//    }
+
+
+    schemeDetailsConnector.getSchemeDetailsVariations(psaId, schemeIdType = "srn", srn)
+  }
+
+  private def saveUserAnswersWithPSAMinimalDetails(srn: String, userAnswers: UserAnswers)(implicit
+                                                                                          request: OptionalDataRequest[AnyContent],
+                                                                             hc: HeaderCarrier): Future[UserAnswers] = {
     minimalPsaConnector.getMinimalPsaDetails(request.psaId.id).flatMap { minimalDetails =>
       val json = Json.obj(
         MinimalPsaDetailsId.toString -> Json.toJson(minimalDetails)
