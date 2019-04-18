@@ -56,13 +56,6 @@ object PostcodeLookupControllerSpec {
 
   val postCall: Call = Call("POST", "www.example.com")
   val manualCall: Call = Call("GET", "www.example.com")
-  val validPostcode = "ZZ1 1ZZ"
-  val tolerantAddress = TolerantAddress(Some("address line 1"), Some("address line 2"), None, None, Some(validPostcode), Some("GB"))
-  val address = Address("address line 1", "address line 2", None, None, Some(validPostcode), "GB")
-
-  val answers =  Json.obj(FakeAddressIdentifier.toString -> address,
-    FakeSelectedAddressIdentifier.toString -> tolerantAddress)
-  val preSavedAddress = new FakeDataRetrievalAction(Some(answers))
 
   class TestController @Inject()(
                                   override val appConfig: FrontendAppConfig,
@@ -79,10 +72,6 @@ object PostcodeLookupControllerSpec {
     def onSubmit(viewmodel: PostcodeLookupViewModel, answers: UserAnswers, request: Request[AnyContent] = FakeRequest()): Future[Result] =
       post(FakeIdentifier, viewmodel, NormalMode, invalidError, noResultError)(DataRequest(request, "cacheId", answers, PsaId("A0000000")))
 
-    def onClick(mode: Mode, answers: UserAnswers, request: Request[AnyContent] = FakeRequest()): Future[Result] =
-        clear(FakeAddressIdentifier, FakeSelectedAddressIdentifier, mode, srn, manualCall)(DataRequest(request, "cacheId", answers, PsaId("A0000000")))
-
-    private val srn = Some("123")
     private val invalidError: Message = "foo"
 
     private val noResultError: Message = "bar"
@@ -251,33 +240,6 @@ class PostcodeLookupControllerSpec extends WordSpec with MustMatchers with Mocki
               status(result) mustEqual OK
               contentAsString(result) mustEqual postcodeLookup(appConfig, formProvider().withError("value", "bar"), viewmodel, None)(request, messages).toString
           }
-        }
-      }
-    }
-
-    "clear saved address and selected address in list" when {
-      "user clicks on manual entry link" in {
-        val userAnswersService: UserAnswersService = mock[UserAnswersService]
-
-        when(userAnswersService.remove(any(), any(), any())(any(), any(), any()))
-            .thenReturn(Future.successful(Json.obj()))
-
-        running(_.overrides(
-          bind[Navigator].toInstance(FakeNavigator),
-          bind[DataRetrievalAction].toInstance(preSavedAddress),
-          bind[DataRequiredAction].to(new DataRequiredActionImpl),
-          bind[UserAnswersService].toInstance(userAnswersService)
-        )) {
-          app =>
-
-            implicit val mat: Materializer = app.materializer
-
-            val request = FakeRequest()
-            val controller = app.injector.instanceOf[TestController]
-            val result = controller.onClick(CheckUpdateMode, UserAnswers(answers), request)
-
-            status(result) mustEqual SEE_OTHER
-            redirectLocation(result) mustBe Some(manualCall.url)
         }
       }
     }

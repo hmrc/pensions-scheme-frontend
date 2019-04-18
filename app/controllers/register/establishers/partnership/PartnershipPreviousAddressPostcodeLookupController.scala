@@ -60,7 +60,8 @@ class PartnershipPreviousAddressPostcodeLookupController @Inject()(
               routes.PartnershipPreviousAddressController.onPageLoad(mode, index, srn),
               title = Message(title),
               heading = Message(heading),
-              subHeading = Some(details.name)
+              subHeading = Some(details.name),
+              srn = srn
             )
         }
     }

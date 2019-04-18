@@ -16,29 +16,52 @@
 
 package controllers
 
+import connectors.{PensionSchemeVarianceLockConnector, PensionsSchemeConnector, UpdateSchemeCacheConnector}
 import controllers.actions._
 import forms.register.DeclarationFormProvider
+import identifiers.{PstrId, SchemeNameId}
+import org.scalatest.mockito.MockitoSugar
+import org.mockito.Matchers.any
+import org.mockito.Mockito._
+import org.scalatest.mockito.MockitoSugar
+import org.scalatest.{AsyncWordSpec, MustMatchers}
+import play.api.libs.json.Json
+import play.api.mvc.Call
+import play.api.mvc.Results.Ok
 import play.api.test.Helpers._
 import utils.FakeNavigator
 import views.html.variationDeclaration
 
-class VariationDeclarationControllerSpec extends ControllerSpecBase {
+import scala.concurrent.Future
+
+class VariationDeclarationControllerSpec extends ControllerSpecBase with MockitoSugar {
 
   private val formProvider = new DeclarationFormProvider()
   private val form = formProvider()
   val schemeName = "Test Scheme Name"
+  val srnNumber = "S12345"
+  val srn = Some("S12345")
   private val onwardRoute = controllers.routes.IndexController.onPageLoad()
+  def postCall: Call = routes.VariationDeclarationController.onSubmit(srn)
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getMandatorySchemeNameHs): VariationDeclarationController =
+  def validData: FakeDataRetrievalAction = new FakeDataRetrievalAction(Some(Json.obj(
+    SchemeNameId.toString -> schemeName,
+    PstrId.toString -> "pstr")))
+
+  val pensionsSchemeConnector: PensionsSchemeConnector = mock[PensionsSchemeConnector]
+  val lockConnector: PensionSchemeVarianceLockConnector = mock[PensionSchemeVarianceLockConnector]
+  val updateSchemeCacheConnector: UpdateSchemeCacheConnector = mock[UpdateSchemeCacheConnector]
+
+  def controller(dataRetrievalAction: DataRetrievalAction = validData): VariationDeclarationController =
     new VariationDeclarationController(frontendAppConfig, messagesApi, new FakeNavigator(onwardRoute), FakeAuthAction,
-      dataRetrievalAction, new DataRequiredActionImpl, formProvider)
+      dataRetrievalAction, new DataRequiredActionImpl, formProvider, pensionsSchemeConnector, lockConnector, updateSchemeCacheConnector)
 
-  private def viewAsString() = variationDeclaration(frontendAppConfig, form, Some(schemeName))(fakeRequest, messages).toString
+  private def viewAsString() = variationDeclaration(frontendAppConfig, form, Some(schemeName), postCall)(fakeRequest, messages).toString
 
   "VariationDeclarationController" must {
 
     "return OK and the correct view for a GET" in {
-      val result = controller().onPageLoad(fakeRequest)
+      val result = controller().onPageLoad(srn)(fakeRequest)
 
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString()
@@ -46,7 +69,14 @@ class VariationDeclarationControllerSpec extends ControllerSpecBase {
 
       "redirect to the next page for a POST" in {
         val postRequest = fakeRequest.withFormUrlEncodedBody(("agree", "agreed"))
-        val result = controller().onSubmit()(postRequest)
+        when(pensionsSchemeConnector.updateSchemeDetails(any(), any(), any())(any(), any()))
+          .thenReturn(Future.successful((): Unit))
+        when(updateSchemeCacheConnector.removeAll(any())(any(), any()))
+          .thenReturn(Future.successful(Ok))
+        when(lockConnector.releaseLock(any(), any())(any(), any()))
+          .thenReturn(Future.successful((): Unit))
+
+        val result = controller().onSubmit(srn)(postRequest)
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(onwardRoute.url)

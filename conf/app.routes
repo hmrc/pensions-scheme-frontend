@@ -137,7 +137,6 @@ GET        /change/enter-postcode                              controllers.Insur
 POST       /change/enter-postcode                              controllers.InsurerEnterPostcodeController.onSubmit(mode: Mode = CheckMode, srn: Option[String] = None)
 GET        /:mode/enter-postcode/:srn                       controllers.InsurerEnterPostcodeController.onPageLoad(mode: Mode, srn: Option[String])
 POST       /:mode/enter-postcode/:srn                       controllers.InsurerEnterPostcodeController.onSubmit(mode: Mode, srn: Option[String])
-GET        /:mode/postcode-manual-entry/:srn                       controllers.InsurerEnterPostcodeController.onClick(mode: Mode, srn: Option[String])
 
 GET        /select-address                              controllers.InsurerSelectAddressController.onPageLoad(mode: Mode = NormalMode, srn: Option[String] = None)
 POST       /select-address                              controllers.InsurerSelectAddressController.onSubmit(mode: Mode = NormalMode, srn: Option[String] = None)
@@ -145,7 +144,6 @@ GET        /change/select-address                              controllers.Insur
 POST       /change/select-address                              controllers.InsurerSelectAddressController.onSubmit(mode: Mode = CheckMode, srn: Option[String] = None)
 GET        /:mode/select-address/:srn                       controllers.InsurerSelectAddressController.onPageLoad(mode: Mode, srn: Option[String])
 POST       /:mode/select-address/:srn                       controllers.InsurerSelectAddressController.onSubmit(mode: Mode, srn: Option[String])
-GET        /:mode/select-manual-entry/:srn                       controllers.InsurerSelectAddressController.onClick(mode: Mode, srn: Option[String])
 
 GET        /confirm-address                             controllers.InsurerConfirmAddressController.onPageLoad(mode: Mode = NormalMode, srn: Option[String] = None)
 POST       /confirm-address                             controllers.InsurerConfirmAddressController.onSubmit(mode: Mode = NormalMode, srn: Option[String] = None)
@@ -153,6 +151,7 @@ GET        /change/confirm-address                             controllers.Insur
 POST       /change/confirm-address                             controllers.InsurerConfirmAddressController.onSubmit(mode: Mode = CheckMode, srn: Option[String] = None)
 GET        /:mode/confirm-address/:srn                      controllers.InsurerConfirmAddressController.onPageLoad(mode: Mode, srn: Option[String])
 POST       /:mode/confirm-address/:srn                      controllers.InsurerConfirmAddressController.onSubmit(mode: Mode, srn: Option[String])
+GET       /:mode/confirm-address-link/:srn                      controllers.InsurerConfirmAddressController.onClick(mode: Mode, srn: Option[String])
 
 GET        /check-your-answers-before-start             controllers.CheckYourAnswersBeforeYouStartController.onPageLoad(mode: Mode = NormalMode, srn: Option[String] = None)
 POST       /check-your-answers-before-start             controllers.CheckYourAnswersBeforeYouStartController.onSubmit(mode: Mode = NormalMode, srn: Option[String] = None)
@@ -206,5 +205,5 @@ POST       /:mode/who-has-working-knowledge    controllers.AdviserNameController
 GET        /check-adviser-answers               controllers.AdviserCheckYourAnswersController.onPageLoad()
 POST       /check-adviser-answers               controllers.AdviserCheckYourAnswersController.onSubmit()
 
-GET        /declare-after-changing-details      controllers.VariationDeclarationController.onPageLoad()
-POST       /declare-after-changing-details      controllers.VariationDeclarationController.onSubmit()
+GET        /declare-after-changing-details/:srn      controllers.VariationDeclarationController.onPageLoad(srn: Option[String])
+POST       /declare-after-changing-details/:srn      controllers.VariationDeclarationController.onSubmit(srn: Option[String])

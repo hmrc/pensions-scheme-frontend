@@ -31,15 +31,16 @@ class AnyMoreChangesViewSpec extends YesNoViewBehaviours {
   val date: String = "27 February 2019"
 
   val form = new AnyMoreChangesFormProvider()()
+  private val postCall = controllers.vary.routes.AnyMoreChangesController.onSubmit(Some("123"))
 
   def createView: () => HtmlFormat.Appendable = () =>
-    anyMoreChanges(frontendAppConfig, form, schemeName, date)(fakeRequest, messages)
+    anyMoreChanges(frontendAppConfig, form, schemeName, date, postCall)(fakeRequest, messages)
 
   def createViewInCheckMode: () => HtmlFormat.Appendable = () =>
-    anyMoreChanges(frontendAppConfig, form, schemeName, date)(fakeRequest, messages)
+    anyMoreChanges(frontendAppConfig, form, schemeName, date, postCall)(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) =>
-    anyMoreChanges(frontendAppConfig, form, schemeName, date)(fakeRequest, messages)
+    anyMoreChanges(frontendAppConfig, form, schemeName, date, postCall)(fakeRequest, messages)
 
   "Any More Changes view" must {
 
@@ -52,7 +53,7 @@ class AnyMoreChangesViewSpec extends YesNoViewBehaviours {
     behave like yesNoPage(
       createView = createViewUsingForm,
       messageKeyPrefix = messageKeyPrefix,
-      expectedFormAction = routes.AnyMoreChangesController.onSubmit().url
+      expectedFormAction = routes.AnyMoreChangesController.onSubmit(Some("123")).url
     )
 
     behave like pageWithSubmitButton(createView)

@@ -72,7 +72,7 @@ class CompanyUniqueTaxReferenceController @Inject()(
                 value
               ).map {
                 json =>
-                  Redirect(navigator.nextPage(CompanyUniqueTaxReferenceId(index), mode, UserAnswers(json)))
+                  Redirect(navigator.nextPage(CompanyUniqueTaxReferenceId(index), mode, UserAnswers(json), srn))
               }
           )
   }

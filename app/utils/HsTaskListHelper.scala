@@ -138,9 +138,9 @@ abstract class HsTaskListHelper(answers: UserAnswers)(implicit messages: Message
 
     protected def linkTarget(item: Entity[_], index: Int, mode: Mode, srn: Option[String]): String = {
     item match {
-      case models.register.EstablisherCompanyEntity(_, _, _, true, _) =>
+      case models.register.EstablisherCompanyEntity(_, _, _, true, _, _) =>
         controllers.register.establishers.company.routes.CompanyReviewController.onPageLoad(mode, srn, index).url
-      case models.register.EstablisherPartnershipEntity(_, _, _, true, _) =>
+      case models.register.EstablisherPartnershipEntity(_, _, _, true, _, _) =>
         controllers.register.establishers.partnership.routes.PartnershipReviewController.onPageLoad(mode, index, srn).url
       case _ => item.editLink(mode, srn).getOrElse(controllers.routes.SessionExpiredController.onPageLoad().url)
     }

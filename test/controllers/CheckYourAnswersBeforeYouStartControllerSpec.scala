@@ -23,6 +23,7 @@ import models.{CheckMode, Link, NormalMode}
 import models.register.SchemeType
 import play.api.libs.json.Json
 import play.api.test.Helpers._
+import services.FakeUserAnswersService
 import utils.{FakeCountryOptions, FakeSectionComplete}
 import viewmodels.{AnswerRow, AnswerSection}
 import views.html.check_your_answers
@@ -55,7 +56,7 @@ class CheckYourAnswersBeforeYouStartControllerSpec extends ControllerSpecBase {
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(onwardRoute.url)
-        FakeSectionComplete.verify(IsBeforeYouStartCompleteId, true)
+        FakeUserAnswersService.verify(IsBeforeYouStartCompleteId, true)
       }
     }
 
@@ -74,7 +75,7 @@ object CheckYourAnswersBeforeYouStartControllerSpec extends ControllerSpecBase {
       dataRetrievalAction,
       new DataRequiredActionImpl,
       new FakeCountryOptions,
-      FakeSectionComplete
+      FakeUserAnswersService
     )
 
   private val postUrl = routes.CheckYourAnswersBeforeYouStartController.onSubmit(NormalMode, None)

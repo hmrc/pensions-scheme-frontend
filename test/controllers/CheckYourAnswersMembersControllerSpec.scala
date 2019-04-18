@@ -21,6 +21,7 @@ import identifiers.IsAboutMembersCompleteId
 import models.{CheckMode, Link, Members, NormalMode}
 import org.scalatest.OptionValues
 import play.api.test.Helpers._
+import services.FakeUserAnswersService
 import utils.{FakeSectionComplete, UserAnswers}
 import viewmodels.{AnswerRow, AnswerSection}
 import views.html.check_your_answers
@@ -46,7 +47,7 @@ class CheckYourAnswersMembersControllerSpec extends ControllerSpecBase with Opti
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result).value mustBe controllers.routes.SchemeTaskListController.onPageLoad().url
-        FakeSectionComplete.verify(IsAboutMembersCompleteId, true)
+        FakeUserAnswersService.verify(IsAboutMembersCompleteId, true)
       }
     }
   }
@@ -65,7 +66,7 @@ object CheckYourAnswersMembersControllerSpec extends ControllerSpecBase {
       FakeAuthAction,
       dataRetrievalAction,
       new DataRequiredActionImpl,
-      FakeSectionComplete
+      FakeUserAnswersService
     )
 
   private val membersSection = AnswerSection(

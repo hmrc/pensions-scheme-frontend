@@ -41,8 +41,8 @@ class AddCompanyDirectorsViewSpec extends YesNoViewBehaviours with EntityListBeh
   private val postCall = routes.AddCompanyDirectorsController.onSubmit _
 
   val form = new AddCompanyDirectorsFormProvider()()
-  private val johnDoeEntity = DirectorEntity(DirectorDetailsId(0, 0), johnDoe.fullName, isDeleted = false, isCompleted = false, true)
-  private val joeBloggsEntity = DirectorEntity(DirectorDetailsId(0, 1), joeBloggs.fullName, isDeleted = false, isCompleted = true, true)
+  private val johnDoeEntity = DirectorEntity(DirectorDetailsId(0, 0), johnDoe.fullName, isDeleted = false, isCompleted = false, true, 2)
+  private val joeBloggsEntity = DirectorEntity(DirectorDetailsId(0, 1), joeBloggs.fullName, isDeleted = false, isCompleted = true, true, 2)
 
   private def createView(directors: Seq[DirectorEntity] = Nil, viewOnly: Boolean = false) =
     () =>
@@ -149,19 +149,20 @@ class AddCompanyDirectorsViewSpec extends YesNoViewBehaviours with EntityListBeh
       incompleteLozenge.size() mustBe 0
     }
 
-    "show delete and edit links and incomplete lozenge, but not show view links when viewOnly is false" in {
+    "show edit links and incomplete lozenge, but not show view links when viewOnly is false" in {
       val doc = asDocument(createViewUsingForm(Seq(johnDoeEntity), viewOnly = false)(form))
-      println(doc)
       val editLink = doc.select(s"a[id=person-0-edit]")
-      val deleteLink = doc.select(s"a[id=person-0-delete]")
       val viewLink = doc.select(s"a[id=person-0-view]")
       val incompleteLozenge = doc.select(s"span[class=rejected]")
-      deleteLink.size() mustBe 1
       editLink.size() mustBe 1
       viewLink.size() mustBe 0
       incompleteLozenge.size() mustBe 1
     }
 
     behave like pageWithReturnLink(createView(), getReturnLink)
+
+    behave like entityListWithSingleRecord(createView(), createView(Seq(johnDoeEntity)), Seq(johnDoeEntity), frontendAppConfig)
+
+    behave like entityListWithMultipleRecords(createView(), createView(directors), directors, frontendAppConfig)
   }
 }

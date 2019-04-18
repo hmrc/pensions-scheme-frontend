@@ -143,7 +143,7 @@ class ConfirmDeleteEstablisherController @Inject()(
           Future.successful(dataRequest.userAnswers.json)
         }
         deletionResult.flatMap { answers =>
-          Future.successful(Redirect(navigator.nextPage(ConfirmDeleteEstablisherId, NormalMode, UserAnswers(answers))))
+          Future.successful(Redirect(navigator.nextPage(ConfirmDeleteEstablisherId, mode, UserAnswers(answers), srn)))
         }
       }
     )

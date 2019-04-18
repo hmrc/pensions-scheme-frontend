@@ -23,6 +23,7 @@ import models.{CheckMode, Index, Link, NormalMode}
 import org.joda.time.LocalDate
 import play.api.mvc.Call
 import play.api.test.Helpers._
+import services.FakeUserAnswersService
 import utils._
 import viewmodels.{AnswerRow, AnswerSection, Message}
 import views.html.check_your_answers
@@ -49,7 +50,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase {
       "mark trustee individual as complete" in {
         val result = controller().onSubmit(NormalMode, firstIndex, None)(fakeRequest)
         status(result) mustBe SEE_OTHER
-        FakeSectionComplete.verify(IsTrusteeCompleteId(firstIndex), true)
+        FakeUserAnswersService.verify(IsTrusteeCompleteId(firstIndex), true)
       }
     }
   }
@@ -91,7 +92,7 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase {
       FakeAuthAction,
       dataRetrievalAction,
       new DataRequiredActionImpl,
-      FakeSectionComplete,
+      FakeUserAnswersService,
       new FakeCountryOptions
     )
 

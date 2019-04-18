@@ -25,6 +25,7 @@ import models.address.Address
 import models.requests.DataRequest
 import play.api.mvc.AnyContent
 import play.api.test.Helpers._
+import services.FakeUserAnswersService
 import utils._
 import utils.checkyouranswers.Ops._
 import utils.checkyouranswers.{AddressYearsCYA, CompanyRegistrationNumberCYA, UniqueTaxReferenceCYA}
@@ -62,7 +63,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase {
       "mark trustee company as complete" in {
         val result = controller().onSubmit(NormalMode, index, None)(fakeRequest)
         status(result) mustBe SEE_OTHER
-        FakeSectionComplete.verify(IsTrusteeCompleteId(index), true)
+        FakeUserAnswersService.verify(IsTrusteeCompleteId(index), true)
       }
     }
 
@@ -163,7 +164,7 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase {
       new DataRequiredActionImpl,
       fakeCountryOptions,
       new FakeNavigator(onwardRoute),
-      FakeSectionComplete
+      FakeUserAnswersService
     )
 
 }

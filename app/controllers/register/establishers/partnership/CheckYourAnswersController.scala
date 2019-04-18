@@ -21,9 +21,11 @@ import controllers.Retrievals
 import controllers.actions.{AuthAction, DataRequiredAction, DataRetrievalAction}
 import identifiers.register.establishers.partnership._
 import javax.inject.{Inject, Singleton}
-import models.{CheckMode, Index, Mode, NormalMode}
+import models.{Index, Mode, NormalMode}
+import models.Mode.checkMode
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
+import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.EstablisherPartnership
 import utils.checkyouranswers.Ops._
@@ -39,7 +41,7 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
                                            authenticate: AuthAction,
                                            getData: DataRetrievalAction,
                                            requiredData: DataRequiredAction,
-                                           sectionComplete: SectionComplete,
+                                           userAnswersService: UserAnswersService,
                                            @EstablisherPartnership navigator: Navigator,
                                            implicit val countryOptions: CountryOptions
                                           )(implicit val ec: ExecutionContext) extends FrontendController
@@ -50,21 +52,21 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
       val partnershipDetails = AnswerSection(
         Some("messages__partnership__checkYourAnswers__partnership_details"),
         Seq(
-          PartnershipDetailsId(index).row(routes.PartnershipDetailsController.onPageLoad(CheckMode, index, None).url, mode),
-          PartnershipVatId(index).row(routes.PartnershipVatController.onPageLoad(CheckMode, index, None).url, mode),
-          PartnershipPayeId(index).row(routes.PartnershipPayeController.onPageLoad(CheckMode, index, None).url, mode),
-          PartnershipUniqueTaxReferenceID(index).row(routes.PartnershipUniqueTaxReferenceController.onPageLoad(CheckMode, index, None).url, mode),
-          IsPartnershipDormantId(index).row(routes.IsPartnershipDormantController.onPageLoad(CheckMode, index, None).url, mode)
+          PartnershipDetailsId(index).row(routes.PartnershipDetailsController.onPageLoad(checkMode(mode), index, None).url, mode),
+          PartnershipVatId(index).row(routes.PartnershipVatController.onPageLoad(checkMode(mode), index, None).url, mode),
+          PartnershipPayeId(index).row(routes.PartnershipPayeController.onPageLoad(checkMode(mode), index, None).url, mode),
+          PartnershipUniqueTaxReferenceID(index).row(routes.PartnershipUniqueTaxReferenceController.onPageLoad(checkMode(mode), index, None).url, mode),
+          IsPartnershipDormantId(index).row(routes.IsPartnershipDormantController.onPageLoad(checkMode(mode), index, None).url, mode)
         ).flatten
       )
 
       val partnershipContactDetails = AnswerSection(
         Some("messages__partnership__checkYourAnswers__partnership_contact_details"),
         Seq(
-          PartnershipAddressId(index).row(routes.PartnershipAddressController.onPageLoad(CheckMode, index, None).url, mode),
-          PartnershipAddressYearsId(index).row(routes.PartnershipAddressYearsController.onPageLoad(CheckMode, index, None).url, mode),
-          PartnershipPreviousAddressId(index).row(routes.PartnershipPreviousAddressController.onPageLoad(CheckMode, index, None).url, mode),
-          PartnershipContactDetailsId(index).row(routes.PartnershipContactDetailsController.onPageLoad(CheckMode, index, None).url, mode)
+          PartnershipAddressId(index).row(routes.PartnershipAddressController.onPageLoad(checkMode(mode), index, None).url, mode),
+          PartnershipAddressYearsId(index).row(routes.PartnershipAddressYearsController.onPageLoad(checkMode(mode), index, None).url, mode),
+          PartnershipPreviousAddressId(index).row(routes.PartnershipPreviousAddressController.onPageLoad(checkMode(mode), index, None).url, mode),
+          PartnershipContactDetailsId(index).row(routes.PartnershipContactDetailsController.onPageLoad(checkMode(mode), index, None).url, mode)
         ).flatten
       )
 
@@ -80,8 +82,8 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
 
   def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requiredData).async {
     implicit request =>
-      sectionComplete.setCompleteFlag(request.externalId, IsPartnershipCompleteId(index), request.userAnswers, value = true) map { _ =>
-        Redirect(navigator.nextPage(CheckYourAnswersId(index), NormalMode, request.userAnswers))
+      userAnswersService.setCompleteFlag(mode, srn, IsPartnershipCompleteId(index), request.userAnswers, value = true) map { _ =>
+        Redirect(navigator.nextPage(CheckYourAnswersId(index), NormalMode, request.userAnswers, srn))
       }
   }
 

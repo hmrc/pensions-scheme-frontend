@@ -108,7 +108,7 @@ class AddressListControllerSpec extends WordSpec with Matchers {
         val result = controller.onSubmit(viewModel, 0)
 
         status(result) shouldBe SEE_OTHER
-        FakeUserAnswersService.verify(fakeAddressListId, viewModel.addresses.head)
+        FakeUserAnswersService.verify(FakeSelectedAddressIdentifier, viewModel.addresses.head)
       }
 
     }
@@ -121,7 +121,7 @@ class AddressListControllerSpec extends WordSpec with Matchers {
         val result = controller.onSubmit(viewModel, 0)
 
         status(result) shouldBe SEE_OTHER
-        FakeUserAnswersService.verifyNot(fakeAddressId)
+        FakeUserAnswersService.verifyNot(FakeAddressIdentifier)
       }
 
     }
@@ -138,27 +138,6 @@ class AddressListControllerSpec extends WordSpec with Matchers {
       }
 
     }
-
-    "clear saved address and selected address in list" when {
-      "user clicks on manual entry link" in {
-        running(_.overrides(
-          bind[DataRetrievalAction].toInstance(preSavedAddress)
-        )) {
-          app =>
-
-            implicit val mat: Materializer = app.materializer
-
-            val request = FakeRequest()
-            val controller = app.injector.instanceOf[TestController]
-            val result = controller.onClick(CheckUpdateMode, UserAnswers(answers), request)
-
-            status(result) shouldBe SEE_OTHER
-            redirectLocation(result) shouldBe Some(manualInputCall.url)
-            FakeUserAnswersService.verifyNot(fakeAddressId)
-        }
-      }
-    }
-
   }
 
 }
@@ -188,32 +167,18 @@ object AddressListControllerSpec {
 
       post(
         viewModel,
-        fakeAddressListId,
-        fakeAddressId,
+        FakeSelectedAddressIdentifier,
+        FakeAddressIdentifier,
         NormalMode
       )(DataRequest(request, "cacheId", UserAnswers(), PsaId("A0000000")))
 
     }
-
-    def onClick(mode: Mode, answers: UserAnswers, request: Request[AnyContent] = FakeRequest()): Future[Result] =
-      clear(fakeAddressId, fakeAddressListId, mode, srn, manualInputCall)(DataRequest(request, "cacheId", answers, PsaId("A0000000")))
-
-
   }
 
-  object fakeAddressId extends TypedIdentifier[Address]
-  object fakeAddressListId extends TypedIdentifier[TolerantAddress]
   val tolerantAddress = TolerantAddress(Some("address line 1"), Some("address line 2"), None, None, Some("ZZ1 1ZZ"), Some("GB"))
   val address = Address("address line 1", "address line 2", None, None, Some("ZZ1 1ZZ"), "GB")
   object FakeAddressIdentifier extends TypedIdentifier[Address]
   object FakeSelectedAddressIdentifier extends TypedIdentifier[TolerantAddress]
-
-  private val answers = Json.obj(fakeAddressId.toString -> address,
-    fakeAddressListId.toString -> tolerantAddress)
-  val preSavedAddress = new FakeDataRetrievalAction(Some(answers))
-
-
-  private val srn = Some("123")
 
   val onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 

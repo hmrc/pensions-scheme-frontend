@@ -73,4 +73,8 @@ class InsurerConfirmAddressController @Inject()(val appConfig: FrontendAppConfig
       post(InsurerConfirmAddressId, InsurerSelectAddressId, viewmodel(mode, srn), mode, "Insurer Address", InsurerEnterPostCodeId)
   }
 
+  def onClick(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
+    implicit request =>
+      clear(InsurerConfirmAddressId, InsurerSelectAddressId, mode, srn, routes.InsurerConfirmAddressController.onPageLoad(mode, srn))
+  }
 }

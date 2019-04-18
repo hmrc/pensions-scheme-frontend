@@ -22,9 +22,11 @@ import controllers.actions.{AuthAction, DataRequiredAction, DataRetrievalAction}
 import identifiers.register.establishers.IsEstablisherCompleteId
 import identifiers.register.establishers.individual._
 import javax.inject.Inject
-import models.{CheckMode, Index, Mode, NormalMode}
+import models.{Index, Mode, NormalMode}
+import models.Mode.checkMode
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
+import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.EstablishersIndividual
 import utils.checkyouranswers.Ops._
@@ -39,7 +41,7 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
                                            authenticate: AuthAction,
                                            getData: DataRetrievalAction,
                                            requiredData: DataRequiredAction,
-                                           sectionComplete: SectionComplete,
+                                           userAnswersService: UserAnswersService,
                                            implicit val countryOptions: CountryOptions,
                                            @EstablishersIndividual navigator: Navigator)(implicit val ec: ExecutionContext)
   extends FrontendController with Retrievals with I18nSupport {
@@ -50,20 +52,20 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
       val sections = Seq(
         AnswerSection(None,
           EstablisherDetailsId(index).row(
-            controllers.register.establishers.individual.routes.EstablisherDetailsController.onPageLoad(CheckMode, index, srn).url, mode) ++
+            controllers.register.establishers.individual.routes.EstablisherDetailsController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
             EstablisherNinoId(index).row(
-              controllers.register.establishers.individual.routes.EstablisherNinoController.onPageLoad(CheckMode, index, srn).url, mode) ++
+              controllers.register.establishers.individual.routes.EstablisherNinoController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
             UniqueTaxReferenceId(index).row(
-              routes.UniqueTaxReferenceController.onPageLoad(CheckMode, Index(index), srn).url, mode) ++
+              routes.UniqueTaxReferenceController.onPageLoad(checkMode(mode), Index(index), srn).url, mode) ++
             AddressId(index).row(
-              controllers.register.establishers.individual.routes.AddressController.onPageLoad(CheckMode, index, srn).url, mode) ++
+              controllers.register.establishers.individual.routes.AddressController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
             AddressYearsId(index).row(
-              controllers.register.establishers.individual.routes.AddressYearsController.onPageLoad(CheckMode, index, srn).url, mode) ++
+              controllers.register.establishers.individual.routes.AddressYearsController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
             PreviousAddressId(index).row(
-              controllers.register.establishers.individual.routes.PreviousAddressController.onPageLoad(CheckMode, index, srn).url, mode
+              controllers.register.establishers.individual.routes.PreviousAddressController.onPageLoad(checkMode(mode), index, srn).url, mode
             ) ++
             ContactDetailsId(index).row(
-              controllers.register.establishers.individual.routes.ContactDetailsController.onPageLoad(CheckMode, index, srn).url, mode
+              controllers.register.establishers.individual.routes.ContactDetailsController.onPageLoad(checkMode(mode), index, srn).url, mode
             )
         )
       )
@@ -75,8 +77,8 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
 
   def onSubmit(mode: Mode,index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requiredData).async {
     implicit request =>
-      sectionComplete.setCompleteFlag(request.externalId, IsEstablisherCompleteId(index), request.userAnswers, true).map { _ =>
-        Redirect(navigator.nextPage(CheckYourAnswersId, NormalMode, request.userAnswers))
+      userAnswersService.setCompleteFlag(mode, srn, IsEstablisherCompleteId(index), request.userAnswers, true).map { _ =>
+        Redirect(navigator.nextPage(CheckYourAnswersId, mode, request.userAnswers, srn))
       }
   }
 

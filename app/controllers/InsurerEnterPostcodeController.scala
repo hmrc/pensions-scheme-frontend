@@ -44,8 +44,7 @@ class InsurerEnterPostcodeController @Inject()(val appConfig: FrontendAppConfig,
                                               ) extends PostcodeLookupController {
 
   val postCall: (Mode, Option[String]) => Call = routes.InsurerEnterPostcodeController.onSubmit
-  val manualCall: (Mode, Option[String]) => Call = routes.InsurerConfirmAddressController.onPageLoad
-  val clickCall: (Mode, Option[String]) => Call = routes.InsurerEnterPostcodeController.onClick
+  val manualCall: (Mode, Option[String]) => Call = routes.InsurerConfirmAddressController.onClick
 
   val form: Form[String] = formProvider()
 
@@ -56,7 +55,7 @@ class InsurerEnterPostcodeController @Inject()(val appConfig: FrontendAppConfig,
   def viewModel(mode: Mode, srn: Option[String]): PostcodeLookupViewModel =
     PostcodeLookupViewModel(
       postCall(mode, srn),
-      clickCall(mode, srn),
+      manualCall(mode, srn),
       Messages("messages__insurer_enter_postcode__title"),
       "messages__insurer_enter_postcode__h1",
       None,
@@ -72,11 +71,6 @@ class InsurerEnterPostcodeController @Inject()(val appConfig: FrontendAppConfig,
   def onSubmit(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
       post(InsurerEnterPostCodeId, viewModel(mode, srn), mode)
-  }
-
-  def onClick(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
-    implicit request =>
-      clear(InsurerConfirmAddressId, InsurerSelectAddressId, mode, srn, manualCall(mode, srn))
   }
 
 }

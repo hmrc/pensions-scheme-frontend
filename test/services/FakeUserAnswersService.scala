@@ -22,10 +22,11 @@ import identifiers.TypedIdentifier
 import models.Mode
 import models.requests.DataRequest
 import org.scalatest.Matchers
-import play.api.libs.json.{Format, JsValue, Json}
+import play.api.libs.json.{Format, JsObject, JsValue, Json}
 import play.api.mvc.Results.Ok
 import play.api.mvc.{AnyContent, Result}
 import uk.gov.hmrc.http.HeaderCarrier
+import utils.UserAnswers
 
 import scala.collection.mutable
 import scala.concurrent.{ExecutionContext, Future}
@@ -48,9 +49,18 @@ trait FakeUserAnswersService extends UserAnswersService with Matchers {
     Future.successful(Json.obj())
   }
 
+  override def setCompleteFlag(mode: Mode, srn: Option[String], id: TypedIdentifier[Boolean], userAnswers: UserAnswers, value: Boolean)
+                                               (implicit fmt: Format[Boolean], ec: ExecutionContext, hc: HeaderCarrier,
+                                                request: DataRequest[AnyContent]): Future[UserAnswers] =
+  {
+    data += (id.toString -> Json.toJson(value))
+    Future.successful(UserAnswers())
+  }
+
   override def upsert(mode: Mode, srn: Option[String], value: JsValue)
             (implicit ec: ExecutionContext, hc: HeaderCarrier,
              request: DataRequest[AnyContent]): Future[JsValue] = {
+    data += ("userAnswer" -> Json.toJson(value))
     Future.successful(value)
   }
 
@@ -78,6 +88,10 @@ trait FakeUserAnswersService extends UserAnswersService with Matchers {
   ): Future[Option[JsValue]] = {
 
     Future.successful(Some(Json.obj()))
+  }
+
+  def userAnswer: UserAnswers = {
+    UserAnswers(data.get("userAnswer").getOrElse(Json.obj()))
   }
 
   def verify[A, I <: TypedIdentifier[A]](id: I, value: A)(implicit fmt: Format[A]): Unit = {

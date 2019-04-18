@@ -20,12 +20,12 @@ import audit.{AddressEvent, AuditService}
 import config.FrontendAppConfig
 import controllers.Retrievals
 import identifiers.TypedIdentifier
-import models.Mode
+import models.{CheckUpdateMode, Mode, UpdateMode}
 import models.address.{Address, TolerantAddress}
 import models.requests.DataRequest
 import play.api.data.Form
 import play.api.i18n.I18nSupport
-import play.api.mvc.{AnyContent, Result}
+import play.api.mvc.{AnyContent, Call, Result}
 import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.{Navigator, UserAnswers}
@@ -90,5 +90,16 @@ trait ManualAddressController extends FrontendController with Retrievals with I1
       }
     )
   }
+
+  protected def clear(id: TypedIdentifier[Address],
+                      selectedId: TypedIdentifier[TolerantAddress],
+                      mode: Mode, srn: Option[String], manualCall: Call)(implicit request: DataRequest[AnyContent]): Future[Result] =
+    if (mode == CheckUpdateMode || mode == UpdateMode) {
+      userAnswersService.remove(mode, srn, id).flatMap (_ =>
+        userAnswersService.remove(mode, srn, selectedId).map (_ =>
+          Redirect(manualCall)))
+    } else {
+      Future.successful(Redirect(manualCall))
+    }
 
 }

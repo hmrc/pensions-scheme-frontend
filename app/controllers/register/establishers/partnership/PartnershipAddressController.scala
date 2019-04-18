@@ -65,7 +65,8 @@ class PartnershipAddressController @Inject()(
               title = Message(title),
               heading = Message(heading),
               hint = Some(Message(hint)),
-              secondaryHeader = Some(details.name)
+              secondaryHeader = Some(details.name),
+              srn = srn
             )
         }
     }
@@ -84,6 +85,11 @@ class PartnershipAddressController @Inject()(
         vm =>
           post(PartnershipAddressId(index), PartnershipAddressListId(index), vm, mode, context(vm), PartnershipPostcodeLookupId(index))
       }
+  }
+
+  def onClick(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
+    implicit request =>
+      clear(PartnershipAddressId(index), PartnershipAddressListId(index), mode, srn, routes.PartnershipAddressController.onPageLoad(mode, index, srn))
   }
 
   private def context(viewModel: ManualAddressViewModel): String = {

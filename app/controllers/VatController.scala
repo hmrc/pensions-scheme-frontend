@@ -56,7 +56,7 @@ trait VatController extends FrontendController with Retrievals with I18nSupport 
         Future.successful(BadRequest(vat(appConfig, formWithErrors, viewmodel, existingSchemeName))),
       value =>
         userAnswersService.save(mode, viewmodel.srn, id, value).map(cacheMap =>
-          Redirect(navigator.nextPage(id, mode, UserAnswers(cacheMap))))
+          Redirect(navigator.nextPage(id, mode, UserAnswers(cacheMap), viewmodel.srn)))
     )
   }
 }

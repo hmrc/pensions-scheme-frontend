@@ -58,7 +58,7 @@ class InsurerEnterPostCodeControllerSpec extends ControllerSpecBase with CSRFReq
 
           val viewModel = PostcodeLookupViewModel(
             routes.InsurerEnterPostcodeController.onSubmit(NormalMode, None),
-            routes.InsurerEnterPostcodeController.onClick(NormalMode, None),
+            routes.InsurerConfirmAddressController.onClick(NormalMode, None),
             Messages("messages__insurer_enter_postcode__title"),
             "messages__insurer_enter_postcode__h1",
             None,
@@ -87,7 +87,7 @@ class InsurerEnterPostCodeControllerSpec extends ControllerSpecBase with CSRFReq
     "clear saved address and selected address in list" when {
       "user clicks on manual entry link" in {
         requestResult(
-          implicit app => addToken(FakeRequest(routes.InsurerEnterPostcodeController.onClick(CheckUpdateMode, srn))),
+          implicit app => addToken(FakeRequest(routes.InsurerConfirmAddressController.onClick(CheckUpdateMode, srn))),
           (_, result) => {
             status(result) mustBe SEE_OTHER
             redirectLocation(result) mustBe Some(routes.InsurerConfirmAddressController.onPageLoad(CheckUpdateMode, srn).url)
