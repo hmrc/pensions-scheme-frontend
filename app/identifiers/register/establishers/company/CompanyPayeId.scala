@@ -18,12 +18,12 @@ package identifiers.register.establishers.company
 
 import identifiers._
 import identifiers.register.establishers.{EstablishersId, IsEstablisherNewId}
-import models.{Link, Paye, Vat}
+import models.{Link, Paye}
 import play.api.i18n.Messages
-import play.api.libs.json.{JsPath, Reads}
+import play.api.libs.json.JsPath
 import utils.UserAnswers
 import utils.checkyouranswers.CheckYourAnswers
-import utils.checkyouranswers.CheckYourAnswers.{PayeCYA, VatCYA}
+import utils.checkyouranswers.CheckYourAnswers.PayeCYA
 import viewmodels.AnswerRow
 
 case class CompanyPayeId(index: Int) extends TypedIdentifier[Paye] {
@@ -33,7 +33,7 @@ case class CompanyPayeId(index: Int) extends TypedIdentifier[Paye] {
 object CompanyPayeId {
   override def toString: String = "companyPaye"
 
-  val labelYesNo = "messages__company__cya__paye_yes_no"
+  val labelYesNo = "messages__partnership__checkYourAnswers__paye"
   val hiddenLabelYesNo = "messages__visuallyhidden__establisher__paye_yes_no"
   val hiddenLabelVat = "messages__visuallyhidden__establisher__paye_number"
 
