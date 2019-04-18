@@ -20,7 +20,7 @@ import services.FakeUserAnswersService
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.register.trustees.TrusteeKindFormProvider
-import identifiers.register.trustees.TrusteeKindId
+import identifiers.register.trustees.{IsTrusteeNewId, TrusteeKindId}
 import models.register.trustees.TrusteeKind
 import models.{Index, NormalMode}
 import play.api.data.Form
@@ -71,7 +71,17 @@ class TrusteeKindControllerSpec extends ControllerSpecBase {
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
-      FakeUserAnswersService.verify(TrusteeKindId(0), TrusteeKind.values.head)
+      FakeUserAnswersService.userAnswer.get(TrusteeKindId(0)) mustBe Some(TrusteeKind.values.head)
+    }
+
+    "save IsTrusteeNewId flag and redirect to the next page when valid data is submitted" in {
+      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", TrusteeKind.options.head.value))
+
+      val result = controller().onSubmit(NormalMode, index, None)(postRequest)
+
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result) mustBe Some(onwardRoute.url)
+      FakeUserAnswersService.userAnswer.get(IsTrusteeNewId(0)) mustBe Some(true)
     }
 
     "return a Bad Request and errors when invalid data is submitted" in {

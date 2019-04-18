@@ -18,18 +18,22 @@ package views.register.trustees
 
 import controllers.register.trustees.routes
 import forms.register.trustees.AddTrusteeFormProvider
+import identifiers.SchemeTypeId
+import identifiers.register.trustees.{IsTrusteeNewId, TrusteeKindId}
 import identifiers.register.trustees.company.CompanyDetailsId
 import identifiers.register.trustees.individual.TrusteeDetailsId
 import models.person.PersonDetails
-import models.register.{Trustee, TrusteeIndividualEntity}
+import models.register.SchemeType.SingleTrust
+import models.register.trustees.TrusteeKind
+import models.register.{SchemeType, Trustee, TrusteeIndividualEntity}
 import models.{CompanyDetails, NormalMode}
 import org.joda.time.LocalDate
 import play.api.data.Form
-import utils.UserAnswers
+import utils.{Enumerable, UserAnswers}
 import views.behaviours.{EntityListBehaviours, YesNoViewBehaviours}
 import views.html.register.trustees.addTrustee
 
-class AddTrusteeViewSpec extends YesNoViewBehaviours with EntityListBehaviours {
+class AddTrusteeViewSpec extends YesNoViewBehaviours with EntityListBehaviours with Enumerable.Implicits {
 
   private val messageKeyPrefix = "addTrustee"
   private val companyDetails = CompanyDetails(
@@ -46,13 +50,18 @@ class AddTrusteeViewSpec extends YesNoViewBehaviours with EntityListBehaviours {
   private val userAnswers =
     UserAnswers()
       .set(CompanyDetailsId(0))(companyDetails)
+      .flatMap(_.set(SchemeTypeId)(SchemeType.SingleTrust))
+      .flatMap(_.set(IsTrusteeNewId(0))(true))
+      .flatMap(_.set(TrusteeKindId(0))(TrusteeKind.Company))
       .flatMap(_.set(TrusteeDetailsId(1))(trusteeDetails))
+      .flatMap(_.set(TrusteeKindId(1))(TrusteeKind.Individual))
+      .flatMap(_.set(IsTrusteeNewId(1))(true))
       .asOpt
       .value
 
   private val trustees = userAnswers.allTrustees
   private val fullTrustees = (0 to 9).map(index => TrusteeIndividualEntity(
-    TrusteeDetailsId(index), "trustee name", isDeleted = false, isCompleted = false, isNewEntity = true))
+    TrusteeDetailsId(index), "trustee name", isDeleted = false, isCompleted = false, isNewEntity = true, 10, Some(SingleTrust.toString)))
 
   val form = new AddTrusteeFormProvider()()
   private def createView(trustees: Seq[Trustee[_]] = Seq.empty) = () =>
