@@ -19,8 +19,9 @@ package controllers.register.establishers.individual
 import controllers.ControllerSpecBase
 import controllers.actions.{DataRequiredActionImpl, DataRetrievalAction, FakeAuthAction}
 import identifiers.register.establishers.individual._
-import identifiers.register.establishers.{IsEstablisherCompleteId, individual}
+import identifiers.register.establishers.{IsEstablisherCompleteId, IsEstablisherNewId, individual}
 import models._
+import models.Mode._
 import models.address.Address
 import models.person.PersonDetails
 import org.joda.time.LocalDate
@@ -83,6 +84,41 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase {
         )(fakeRequest, messages).toString
 
         val result = controller(individualAnswers.dataRetrievalAction).onPageLoad(NormalMode, firstIndex, None)(request)
+        status(result) mustBe OK
+        contentAsString(result) mustBe viewAsString
+      }
+
+      "return OK and display all the answers with change link when new" in {
+        val individualDetails = AnswerSection(
+          None,
+          EstablisherDetailsId(firstIndex).row(
+            controllers.register.establishers.individual.routes.EstablisherDetailsController.onPageLoad(checkMode(UpdateMode), firstIndex, None).url) ++
+            EstablisherNinoId(firstIndex).row(
+              controllers.register.establishers.individual.routes.EstablisherNinoController.onPageLoad(checkMode(UpdateMode), firstIndex, None).url) ++
+            UniqueTaxReferenceId(firstIndex).row(
+              routes.UniqueTaxReferenceController.onPageLoad(CheckMode, firstIndex, None).url) ++
+            AddressId(firstIndex).row(
+              controllers.register.establishers.individual.routes.AddressController.onPageLoad(checkMode(UpdateMode), firstIndex, None).url) ++
+            AddressYearsId(firstIndex).row(
+              controllers.register.establishers.individual.routes.AddressYearsController.onPageLoad(checkMode(UpdateMode), firstIndex, None).url) ++
+            PreviousAddressId(firstIndex).row(
+              controllers.register.establishers.individual.routes.PreviousAddressController.onPageLoad(checkMode(UpdateMode), firstIndex, None).url
+            ) ++
+            ContactDetailsId(firstIndex).row(
+              controllers.register.establishers.individual.routes.ContactDetailsController.onPageLoad(checkMode(UpdateMode), firstIndex, None).url
+            )
+        )
+
+        val individualAnswersNew = individualAnswers.set(IsEstablisherNewId(firstIndex))(true).asOpt.value
+        val viewAsString = check_your_answers(
+          frontendAppConfig,
+          Seq(individualDetails),
+          routes.CheckYourAnswersController.onSubmit(UpdateMode, firstIndex, None),
+          None,
+          viewOnly = false
+        )(fakeRequest, messages).toString
+
+        val result = controller(individualAnswersNew.dataRetrievalAction).onPageLoad(UpdateMode, firstIndex, None)(request)
         status(result) mustBe OK
         contentAsString(result) mustBe viewAsString
       }

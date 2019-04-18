@@ -17,11 +17,16 @@
 package identifiers.register.establishers.individual
 
 import identifiers.TypedIdentifier
-import identifiers.register.establishers.{EstablishersId, IsEstablisherCompleteId}
+import identifiers.register.establishers.{EstablishersId, IsEstablisherCompleteId, IsEstablisherNewId}
+import models.Link
 import models.person.PersonDetails
 import models.requests.DataRequest
+import play.api.i18n.Messages
 import play.api.libs.json.JsPath
 import play.api.mvc.AnyContent
+import utils.checkyouranswers.CheckYourAnswers
+import utils.{DateHelper, UserAnswers}
+import viewmodels.{AnswerRow, Message}
 
 case class EstablisherDetailsId(index: Int) extends TypedIdentifier[PersonDetails] {
   override def path: JsPath = EstablishersId(index).path \ EstablisherDetailsId.toString
@@ -32,4 +37,35 @@ object EstablisherDetailsId {
 
   def isComplete(index: Int)(implicit request: DataRequest[AnyContent]): Option[Boolean] =
     request.userAnswers.get[Boolean](JsPath \ EstablishersId(index) \ IsEstablisherCompleteId.toString)
+
+  implicit def cya(implicit userAnswers: UserAnswers, messages: Messages): CheckYourAnswers[EstablisherDetailsId] = {
+    new CheckYourAnswers[EstablisherDetailsId] {
+
+      private def personDetailsCYARow(personDetails: PersonDetails, changeUrlName: Option[Link], changeUrlDob: Option[Link]): Seq[AnswerRow] = {
+        Seq(
+          AnswerRow("messages__common__cya__name", Seq(personDetails.fullName), answerIsMessageKey = false, changeUrlName),
+          AnswerRow("messages__common__dob", Seq(DateHelper.formatDate(personDetails.date)), answerIsMessageKey = false, changeUrlDob)
+        )
+      }
+
+      override def row(id: EstablisherDetailsId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = userAnswers.get(id).map { personDetails =>
+        personDetailsCYARow(personDetails,
+          Some(Link("site.change", changeUrl, Some(Message("messages__visuallyhidden__common__name", personDetails.fullName).resolve))),
+          Some(Link("site.change", changeUrl, Some(Message("messages__visuallyhidden__common__dob", personDetails.fullName).resolve)))
+        )
+      }.getOrElse(Seq.empty[AnswerRow])
+
+      override def updateRow(id: EstablisherDetailsId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = userAnswers.get(id).map {
+        personDetails =>
+          userAnswers.get(IsEstablisherNewId(id.index)) match {
+            case Some(true) => personDetailsCYARow(personDetails,
+              Some(Link("site.change", changeUrl, Some(Message("messages__visuallyhidden__common__name", personDetails.fullName).resolve))),
+              Some(Link("site.change", changeUrl, Some(Message("messages__visuallyhidden__common__dob", personDetails.fullName).resolve)))
+            )
+            case _  => personDetailsCYARow(personDetails, None, None)
+          }
+
+      }.getOrElse(Seq.empty[AnswerRow])
+    }
+  }
 }

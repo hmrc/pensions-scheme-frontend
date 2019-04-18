@@ -22,7 +22,8 @@ import controllers.actions.{AuthAction, DataRequiredAction, DataRetrievalAction}
 import identifiers.register.establishers.IsEstablisherCompleteId
 import identifiers.register.establishers.individual._
 import javax.inject.Inject
-import models.{CheckMode, Index, Mode, NormalMode}
+import models.{Index, Mode, NormalMode}
+import models.Mode._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
@@ -46,25 +47,25 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requiredData).async {
     implicit request =>
-
+      implicit val userAnswers = request.userAnswers
       val sections = Seq(
         AnswerSection(None,
           EstablisherDetailsId(index).row(
-            controllers.register.establishers.individual.routes.EstablisherDetailsController.onPageLoad(CheckMode, index, srn).url, mode) ++
-            EstablisherNinoId(index).row(
-              controllers.register.establishers.individual.routes.EstablisherNinoController.onPageLoad(CheckMode, index, srn).url, mode) ++
-            UniqueTaxReferenceId(index).row(
-              routes.UniqueTaxReferenceController.onPageLoad(CheckMode, Index(index), srn).url, mode) ++
-            AddressId(index).row(
-              controllers.register.establishers.individual.routes.AddressController.onPageLoad(CheckMode, index, srn).url, mode) ++
-            AddressYearsId(index).row(
-              controllers.register.establishers.individual.routes.AddressYearsController.onPageLoad(CheckMode, index, srn).url, mode) ++
-            PreviousAddressId(index).row(
-              controllers.register.establishers.individual.routes.PreviousAddressController.onPageLoad(CheckMode, index, srn).url, mode
-            ) ++
-            ContactDetailsId(index).row(
-              controllers.register.establishers.individual.routes.ContactDetailsController.onPageLoad(CheckMode, index, srn).url, mode
-            )
+            controllers.register.establishers.individual.routes.EstablisherDetailsController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
+          EstablisherNinoId(index).row(
+            controllers.register.establishers.individual.routes.EstablisherNinoController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
+          UniqueTaxReferenceId(index).row(
+            routes.UniqueTaxReferenceController.onPageLoad(checkMode(mode), Index(index), srn).url, mode) ++
+          AddressId(index).row(
+            controllers.register.establishers.individual.routes.AddressController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
+          AddressYearsId(index).row(
+            controllers.register.establishers.individual.routes.AddressYearsController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
+          PreviousAddressId(index).row(
+            controllers.register.establishers.individual.routes.PreviousAddressController.onPageLoad(checkMode(mode), index, srn).url, mode
+          ) ++
+          ContactDetailsId(index).row(
+            controllers.register.establishers.individual.routes.ContactDetailsController.onPageLoad(checkMode(mode), index, srn).url, mode
+          )
         )
       )
       Future.successful(Ok(check_your_answers(

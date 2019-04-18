@@ -17,23 +17,48 @@
 package identifiers.register.establishers.individual
 
 import identifiers._
-import identifiers.register.establishers.EstablishersId
-import models.Nino
+import identifiers.register.establishers.{EstablishersId, IsEstablisherNewId}
+import models.{Link, Nino}
+import play.api.i18n.Messages
 import play.api.libs.json.JsPath
-import utils.checkyouranswers.{CheckYourAnswers, NinoCYA}
+import utils.UserAnswers
+import utils.checkyouranswers.CheckYourAnswers
+import utils.checkyouranswers.CheckYourAnswers.NinoCYA
+import viewmodels.AnswerRow
+
 
 case class EstablisherNinoId(index: Int) extends TypedIdentifier[Nino] {
+  self =>
   override def path: JsPath = EstablishersId(index).path \ EstablisherNinoId.toString
 }
 
 object EstablisherNinoId {
+  self =>
+
   override lazy val toString: String = "establisherNino"
 
-  implicit val cya: CheckYourAnswers[EstablisherNinoId] =
-    NinoCYA(
-      label = "messages__establisher_individual_nino_question_cya_label",
-      changeHasNino = "messages__visuallyhidden__establisher__nino_yes_no",
-      changeNino = "messages__visuallyhidden__establisher__nino",
-      changeNoNino = "messages__visuallyhidden__establisher__nino_no"
-    )()
+  implicit def cya(implicit userAnswers: UserAnswers, messages: Messages): CheckYourAnswers[EstablisherNinoId] = {
+    new CheckYourAnswers[EstablisherNinoId] {
+      override def row(id: EstablisherNinoId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
+        NinoCYA[EstablisherNinoId](
+          label = "messages__establisher_individual_nino_question_cya_label",
+          changeHasNino = "messages__visuallyhidden__establisher__nino_yes_no",
+          changeNino = "messages__visuallyhidden__establisher__nino",
+          changeNoNino = "messages__visuallyhidden__establisher__nino_no")().row(id)(changeUrl, userAnswers)
+      }
+
+      override def updateRow(id: EstablisherNinoId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
+        userAnswers.get(id) match {
+          case Some(Nino.Yes(nino)) =>  userAnswers.get(IsEstablisherNewId(id.index)) match {
+            case Some(true) => Seq(AnswerRow("messages__establisher_individual_nino_question_cya_label", Seq(nino), answerIsMessageKey = false,
+              Some(Link("site.change", changeUrl, Some("messages__visuallyhidden__establisher__nino_yes_no")))))
+            case _  => Seq(AnswerRow("messages__common__nino", Seq(nino), answerIsMessageKey = false, None))
+          }
+          case Some(Nino.No(_)) => Seq(AnswerRow("messages__establisher_individual_nino_question_cya_label", Seq("site.not_entered"), answerIsMessageKey = true,
+            Some(Link("site.add", changeUrl, Some(s"messages__visuallyhidden__establisher__nino_add")))))
+          case _ => Seq.empty[AnswerRow]
+        }
+      }
+    }
+  }
 }

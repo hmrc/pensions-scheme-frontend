@@ -20,7 +20,8 @@ import identifiers._
 import identifiers.register.establishers.EstablishersId
 import models.Nino
 import play.api.libs.json.JsPath
-import utils.checkyouranswers.{CheckYourAnswers, NinoCYA}
+import utils.checkyouranswers.CheckYourAnswers
+import utils.checkyouranswers.CheckYourAnswers.NinoCYA
 
 case class DirectorNinoId(establisherIndex: Int, directorIndex: Int) extends TypedIdentifier[Nino] {
   override def path: JsPath = EstablishersId(establisherIndex).path \ "director" \ directorIndex \ DirectorNinoId.toString
