@@ -114,8 +114,8 @@ POST       /:index/company/:mode/company-registration-number/:srn       controll
 
 GET        /:index/company/check-your-answers                           controllers.register.trustees.company.CheckYourAnswersController.onPageLoad(mode: Mode = NormalMode, index: Index, srn: Option[String] = None)
 POST       /:index/company/check-your-answers                           controllers.register.trustees.company.CheckYourAnswersController.onSubmit(mode: Mode = NormalMode, index: Index, srn: Option[String] = None)
-GET        /:index/:mode/company/check-your-answers/:srn                controllers.register.trustees.company.CheckYourAnswersController.onPageLoad(mode: Mode,index: Index, srn: Option[String])
-POST       /:index/:mode/company/check-your-answers/:srn                controllers.register.trustees.company.CheckYourAnswersController.onSubmit(mode: Mode,index: Index, srn: Option[String])
+GET        /:index/company/:mode/check-your-answers/:srn                controllers.register.trustees.company.CheckYourAnswersController.onPageLoad(mode: Mode,index: Index, srn: Option[String])
+POST       /:index/company/:mode/check-your-answers/:srn                controllers.register.trustees.company.CheckYourAnswersController.onSubmit(mode: Mode,index: Index, srn: Option[String])
 
 GET        /:index/what-kind-of-trustee                                 controllers.register.trustees.TrusteeKindController.onPageLoad(mode: Mode = NormalMode, index: Index, srn: Option[String] = None)
 POST       /:index/what-kind-of-trustee                                 controllers.register.trustees.TrusteeKindController.onSubmit(mode: Mode = NormalMode, index: Index, srn: Option[String] = None)
