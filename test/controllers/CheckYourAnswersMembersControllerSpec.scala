@@ -19,7 +19,7 @@ package controllers
 import connectors.{PensionSchemeVarianceLockConnector, UpdateSchemeCacheConnector, UserAnswersCacheConnector}
 import controllers.actions._
 import identifiers.IsAboutMembersCompleteId
-import models.requests.AuthenticatedRequest
+import models.requests.{AuthenticatedRequest, OptionalDataRequest}
 import models.{CheckMode, Link, Members, NormalMode}
 import org.scalatest.OptionValues
 import play.api.test.Helpers._
@@ -73,10 +73,8 @@ object CheckYourAnswersMembersControllerSpec extends ControllerSpecBase with Moc
     val updateConnector: UpdateSchemeCacheConnector = mock[UpdateSchemeCacheConnector]
     val optionSRN: Option[String] = None
 
-    override def apply(srn: Option[String]): AllowAccessForNonSuspendedUsersAction = new AllowAccessForNonSuspendedUsersAction(lockConnector,
-      schemeDetailsReadOnlyCacheConnector,
-      updateConnector, srn) {
-      override protected def filter[A](request: AuthenticatedRequest[A]): Future[Option[Result]] = Future.successful(None)
+    override def apply(srn: Option[String]): AllowAccessForNonSuspendedUsersAction = new AllowAccessForNonSuspendedUsersAction(srn) {
+      override protected def filter[A](request: OptionalDataRequest[A]): Future[Option[Result]] = Future.successful(None)
     }
   }
 

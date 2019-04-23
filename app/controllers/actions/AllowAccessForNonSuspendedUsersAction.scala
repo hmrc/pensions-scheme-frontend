@@ -19,51 +19,32 @@ package controllers.actions
 import com.google.inject.Inject
 import connectors.{PensionSchemeVarianceLockConnector, UpdateSchemeCacheConnector, UserAnswersCacheConnector}
 import identifiers.MinimalPsaDetailsId
-import models.VarianceLock
-import models.requests.AuthenticatedRequest
+import models.requests.OptionalDataRequest
 import play.api.mvc.Results._
 import play.api.mvc.{ActionFilter, Result}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.HeaderCarrierConverter
-import utils.UserAnswers
 import utils.annotations.SchemeDetailsReadOnly
 
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 class AllowAccessForNonSuspendedUsersAction(
-                                             lockConnector: PensionSchemeVarianceLockConnector,
-                                             @SchemeDetailsReadOnly schemeDetailsReadOnlyCacheConnector: UserAnswersCacheConnector,
-                                             updateConnector: UpdateSchemeCacheConnector,
                                              optionSRN: Option[String]
-                                           ) extends ActionFilter[AuthenticatedRequest] {
+                                           ) extends ActionFilter[OptionalDataRequest] {
 
-  override protected def filter[A](request: AuthenticatedRequest[A]): Future[Option[Result]] = {
+  override protected def filter[A](request: OptionalDataRequest[A]): Future[Option[Result]] = {
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
     optionSRN.fold(Future.successful(Option(Redirect(controllers.routes.SessionExpiredController.onPageLoad())))) { srn =>
-      def errorOptionResult: Option[Result] = Some(Redirect(controllers.routes.PSASchemeDetailsController.onPageLoad(srn)))
-
-      lockConnector.isLockByPsaIdOrSchemeId(request.psaId.id, srn).flatMap { optionLock =>
-        val futureJsValue = optionLock match {
-          case Some(VarianceLock) =>
-            updateConnector.fetch(srn)
-          case _ => schemeDetailsReadOnlyCacheConnector.fetch(request.externalId)
-        }
-
-        futureJsValue.map {
-          case None => errorOptionResult
-          case Some(ua) =>
-            UserAnswers(ua).get(MinimalPsaDetailsId) match {
-              case None => errorOptionResult
-              case Some(md) =>
-                if (md.isPsaSuspended) {
-                  Some(Redirect(controllers.register.routes.CannotMakeChangesController.onPageLoad(srn)))
-                } else {
-                  None
-                }
+      Future.successful(
+        request.userAnswers.flatMap(_.get(MinimalPsaDetailsId))
+          .fold(Option(Redirect(controllers.routes.PSASchemeDetailsController.onPageLoad(srn)))) { md =>
+            if (md.isPsaSuspended) {
+              Some(Redirect(controllers.register.routes.CannotMakeChangesController.onPageLoad(srn)))
+            } else {
+              None
             }
-        }
-      }
+          }
+      )
     }
   }
 }
@@ -72,12 +53,9 @@ class AllowAccessForNonSuspendedUsersActionProviderImpl @Inject()(lockConnector:
                                                                   @SchemeDetailsReadOnly schemeDetailsReadOnlyCacheConnector: UserAnswersCacheConnector,
                                                                   updateConnector: UpdateSchemeCacheConnector)
   extends AllowAccessForNonSuspendedUsersActionProvider {
-  def apply(srn: Option[String]): AllowAccessForNonSuspendedUsersAction = new AllowAccessForNonSuspendedUsersAction(lockConnector,
-    schemeDetailsReadOnlyCacheConnector,
-    updateConnector, srn)
+  def apply(srn: Option[String]): AllowAccessForNonSuspendedUsersAction = new AllowAccessForNonSuspendedUsersAction(srn)
 }
 
 trait AllowAccessForNonSuspendedUsersActionProvider {
   def apply(srn: Option[String]): AllowAccessForNonSuspendedUsersAction
 }
-

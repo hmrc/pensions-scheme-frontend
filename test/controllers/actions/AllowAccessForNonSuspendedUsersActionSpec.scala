@@ -17,32 +17,23 @@
 package controllers.actions
 
 import base.SpecBase
-import connectors._
 import identifiers.MinimalPsaDetailsId
-import models._
-import models.requests.AuthenticatedRequest
-import org.mockito.Matchers
-import org.mockito.Matchers._
-import org.mockito.Mockito._
+import models.requests.OptionalDataRequest
+import models.{requests, _}
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.mockito.MockitoSugar
 import play.api.libs.json.Json
 import play.api.mvc.Results.Redirect
 import play.api.mvc.{AnyContent, Result}
 import uk.gov.hmrc.domain.PsaId
+import utils.UserAnswers
 
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 class AllowAccessForNonSuspendedUsersActionSpec extends SpecBase with MockitoSugar with ScalaFutures {
 
   private val srn = "123"
   private val psa = "A0000000"
-  private val authRequest: AuthenticatedRequest[AnyContent] = AuthenticatedRequest(fakeRequest, "id", PsaId(psa))
-
-  private val viewCacheConnector = mock[SchemeDetailsReadOnlyCacheConnector]
-  private val updateCacheConnector = mock[UpdateSchemeCacheConnector]
-  private val lockRepoConnector = mock[PensionSchemeVarianceLockConnector]
 
   private def minimalPSA(isSuspended: Boolean) = MinimalPSA(email = "",
     isPsaSuspended = isSuspended,
@@ -52,73 +43,39 @@ class AllowAccessForNonSuspendedUsersActionSpec extends SpecBase with MockitoSug
 
   private def testData(isSuspended: Boolean) = Json.obj(MinimalPsaDetailsId.toString -> minimalPSA(isSuspended = isSuspended))
 
+  private def optionUserAnswers(isSuspended: Boolean) = Some(UserAnswers(testData(isSuspended)))
 
-  class Harness(lockConnector: PensionSchemeVarianceLockConnector,
-                schemeDetailsReadOnlyCacheConnector: UserAnswersCacheConnector,
-                updateConnector: UpdateSchemeCacheConnector, optionSRN: Option[String]) extends AllowAccessForNonSuspendedUsersAction(
-    lockConnector,
-    schemeDetailsReadOnlyCacheConnector,
-    updateConnector,
+  private def authRequest(isSuspended: Boolean): OptionalDataRequest[AnyContent] =
+    requests.OptionalDataRequest(fakeRequest, "id", optionUserAnswers(isSuspended = isSuspended), PsaId(psa))
+
+  private def authRequestNoData: OptionalDataRequest[AnyContent] =
+    requests.OptionalDataRequest(fakeRequest, "id", None, PsaId(psa))
+
+  class Harness(optionSRN: Option[String]) extends AllowAccessForNonSuspendedUsersAction(
     optionSRN) {
-    def callFilter[A](request: AuthenticatedRequest[A]): Future[Option[Result]] = filter(request)
+    def callFilter[A](request: OptionalDataRequest[A]): Future[Option[Result]] = filter(request)
   }
 
   "AllowAccessForNonSuspendedUsersActionSpec" must {
-    "respond with None when there is no lock and the minimal details are in the readonly cache and the suspended flag is false" in {
-      when(lockRepoConnector.isLockByPsaIdOrSchemeId(Matchers.any(), Matchers.any())(any(), any())).thenReturn(Future(None))
-      when(viewCacheConnector.fetch(Matchers.any())(any(), any())) thenReturn Future.successful(Some(testData(isSuspended = false)))
-      reset(updateCacheConnector)
-      val action = new Harness(lockRepoConnector, viewCacheConnector, updateCacheConnector, Some(srn))
-      whenReady(action.callFilter(authRequest))(_ mustBe None)
+    "respond with None when the minimal details are in the cache and the suspended flag is false" in {
+      val action = new Harness(Some(srn))
+      whenReady(action.callFilter(authRequest(isSuspended = false)))(_ mustBe None)
     }
 
-    "respond with suspended page when there is no lock and the minimal details are in the readonly cache and the suspended flag is true" in {
-      when(lockRepoConnector.isLockByPsaIdOrSchemeId(Matchers.any(), Matchers.any())(any(), any())).thenReturn(Future(None))
-      when(viewCacheConnector.fetch(Matchers.any())(any(), any())) thenReturn Future.successful(Some(testData(isSuspended = true)))
-      reset(updateCacheConnector)
-      val action = new Harness(lockRepoConnector, viewCacheConnector, updateCacheConnector, Some(srn))
-      whenReady(action.callFilter(authRequest))(_ mustBe Some(Redirect(controllers.register.routes.CannotMakeChangesController.onPageLoad(srn))))
-    }
-
-    "respond with None when there is a lock and the minimal details are in the update cache and the suspended flag is false" in {
-      when(lockRepoConnector.isLockByPsaIdOrSchemeId(Matchers.any(), Matchers.any())(any(), any())).thenReturn(Future.successful(Some(VarianceLock)))
-      when(updateCacheConnector.fetch(Matchers.any())(any(), any())) thenReturn Future.successful(Some(testData(isSuspended = false)))
-      reset(viewCacheConnector)
-      val action = new Harness(lockRepoConnector, viewCacheConnector, updateCacheConnector, Some(srn))
-      whenReady(action.callFilter(authRequest))(_ mustBe None)
-    }
-
-    "respond with suspended page when there is a lock and the minimal details are in the update cache and the suspended flag is true" in {
-      when(lockRepoConnector.isLockByPsaIdOrSchemeId(Matchers.any(), Matchers.any())(any(), any())).thenReturn(Future.successful(Some(VarianceLock)))
-      when(updateCacheConnector.fetch(Matchers.any())(any(), any())) thenReturn Future.successful(Some(testData(isSuspended = true)))
-      reset(viewCacheConnector)
-      val action = new Harness(lockRepoConnector, viewCacheConnector, updateCacheConnector, Some(srn))
-      whenReady(action.callFilter(authRequest))(_ mustBe Some(Redirect(controllers.register.routes.CannotMakeChangesController.onPageLoad(srn))))
+    "respond with suspended page when the minimal details are in the cache and the suspended flag is true" in {
+      val action = new Harness(Some(srn))
+      whenReady(action.callFilter(authRequest(isSuspended = true)))(
+        _ mustBe Some(Redirect(controllers.register.routes.CannotMakeChangesController.onPageLoad(srn))))
     }
 
     "respond with redirect to PSA scheme details controller when there is no lock and the minimal details are NOT in the readonly cache" in {
-      when(lockRepoConnector.isLockByPsaIdOrSchemeId(Matchers.any(), Matchers.any())(any(), any())).thenReturn(Future(None))
-      when(viewCacheConnector.fetch(Matchers.any())(any(), any())) thenReturn Future.successful(None)
-      reset(updateCacheConnector)
-      val action = new Harness(lockRepoConnector, viewCacheConnector, updateCacheConnector, Some(srn))
-      whenReady(action.callFilter(authRequest))(_ mustBe Some(Redirect(controllers.routes.PSASchemeDetailsController.onPageLoad(srn))))
-    }
-
-    "respond with redirect to PSA scheme details controller when there is a lock and the minimal details are NOT in the update cache" in {
-      when(lockRepoConnector.isLockByPsaIdOrSchemeId(Matchers.any(), Matchers.any())(any(), any())).thenReturn(Future.successful(Some(VarianceLock)))
-      when(updateCacheConnector.fetch(Matchers.any())(any(), any())) thenReturn Future.successful(None)
-      reset(viewCacheConnector)
-      val action = new Harness(lockRepoConnector, viewCacheConnector, updateCacheConnector, Some(srn))
-      whenReady(action.callFilter(authRequest))(_ mustBe Some(Redirect(controllers.routes.PSASchemeDetailsController.onPageLoad(srn))))
+      val action = new Harness(Some(srn))
+      whenReady(action.callFilter(authRequestNoData))(_ mustBe Some(Redirect(controllers.routes.PSASchemeDetailsController.onPageLoad(srn))))
     }
 
     "respond with redirect to session expired controller when there is no SRN" in {
-      reset(lockRepoConnector)
-      reset(viewCacheConnector)
-      reset(updateCacheConnector)
-      val action = new Harness(lockRepoConnector, viewCacheConnector, updateCacheConnector, None)
-      whenReady(action.callFilter(authRequest))(_ mustBe Some(Redirect(controllers.routes.SessionExpiredController.onPageLoad())))
+      val action = new Harness(None)
+      whenReady(action.callFilter(authRequestNoData))(_ mustBe Some(Redirect(controllers.routes.SessionExpiredController.onPageLoad())))
     }
   }
-
 }

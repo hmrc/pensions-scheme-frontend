@@ -89,6 +89,13 @@ class PSASchemeDetailsController @Inject()(appConfig: FrontendAppConfig,
 //    }
 
 
+//      lockConnector.isLockByPsaIdOrSchemeId(request.psaId.id, srn).flatMap {
+//        case Some(VarianceLock) => getOptionalRequest(updateConnector.fetch(srn), viewOnly = false)(request)
+//        case Some(_) => getOptionalRequest(viewConnector.fetch(request.externalId), viewOnly = true)(request)
+//        case None => getOptionalRequest(viewConnector.fetch(request.externalId), viewOnly = false)(request)
+//      }
+
+
     schemeDetailsConnector.getSchemeDetailsVariations(psaId, schemeIdType = "srn", srn)
   }
 
