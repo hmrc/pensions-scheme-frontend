@@ -43,19 +43,14 @@ object CompanyUniqueTaxReferenceId {
 
     new CheckYourAnswers[CompanyUniqueTaxReferenceId] {
       override def row(id: CompanyUniqueTaxReferenceId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
-        UniqueTaxReferenceCYA()().row(id)(changeUrl, userAnswers)
+        UniqueTaxReferenceCYA(label, utrLabel, reasonLabel, changeHasUtr, changeUtr, changeNoUtr)().row(id)(changeUrl, userAnswers)
       }
 
       override def updateRow(id: CompanyUniqueTaxReferenceId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
         userAnswers.get(id) match {
           case Some(UniqueTaxReference.Yes(utr)) =>
             userAnswers.get(IsEstablisherNewId(id.index)) match {
-              case Some(true) => Seq(
-                AnswerRow(label, Seq(s"${UniqueTaxReference.Yes}"), answerIsMessageKey = false,
-                  Some(Link("site.change", changeUrl, Some(changeHasUtr)))),
-                AnswerRow(utrLabel, Seq(utr), answerIsMessageKey = false,
-                  Some(Link("site.change", changeUrl, Some(changeUtr))))
-              )
+              case Some(true) => UniqueTaxReferenceCYA(label, utrLabel, reasonLabel, changeHasUtr, changeUtr, changeNoUtr)().row(id)(changeUrl, userAnswers)
               case _  => Seq(AnswerRow(utrLabel, Seq(utr), answerIsMessageKey = false, None))
             }
           case Some(UniqueTaxReference.No(_)) =>userAnswers.get(IsEstablisherNewId(id.index)) match {

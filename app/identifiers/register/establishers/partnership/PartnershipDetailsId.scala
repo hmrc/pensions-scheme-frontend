@@ -45,8 +45,8 @@ object PartnershipDetailsId {
       override def updateRow(id: PartnershipDetailsId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
         userAnswers.get(id) match {
           case Some(partnershipDetails) => userAnswers.get(IsEstablisherNewId(id.index)) match {
-            case Some(true) => Seq(AnswerRow("messages__common__cya__name", Seq(s"${partnershipDetails.name}"), answerIsMessageKey = false,
-              Some(Link("site.change", changeUrl, Some("messages__visuallyhidden__common__name")))))
+            case Some(true) =>  Seq(AnswerRow("messages__common__cya__name", Seq(partnershipDetails.name), answerIsMessageKey = false,
+              Some(Link("site.change", changeUrl, Some(Message("messages__visuallyhidden__common__name", partnershipDetails.name).resolve)))))
             case _  => Seq(AnswerRow("messages__common__cya__name", Seq(s"${partnershipDetails.name}"), answerIsMessageKey = false, None))
           }
           case _ => Seq.empty[AnswerRow]

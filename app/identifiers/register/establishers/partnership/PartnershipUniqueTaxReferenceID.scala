@@ -41,25 +41,18 @@ object PartnershipUniqueTaxReferenceID {
   implicit def cya(implicit userAnswers: UserAnswers, messages: Messages): CheckYourAnswers[PartnershipUniqueTaxReferenceID] = {
 
     new CheckYourAnswers[PartnershipUniqueTaxReferenceID] {
-      override def row(id: PartnershipUniqueTaxReferenceID)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
-        UniqueTaxReferenceCYA()().row(id)(changeUrl, userAnswers)
-      }
+      override def row(id: PartnershipUniqueTaxReferenceID)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+        UniqueTaxReferenceCYA(label, utrLabel, changeHasUtr, changeUtr, changeNoUtr)().row(id)(changeUrl, userAnswers)
 
       override def updateRow(id: PartnershipUniqueTaxReferenceID)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
         userAnswers.get(id) match {
           case Some(UniqueTaxReference.Yes(utr)) =>
             userAnswers.get(IsEstablisherNewId(id.index)) match {
-              case Some(true) => Seq(
-                AnswerRow(label, Seq(s"${UniqueTaxReference.Yes}"), answerIsMessageKey = false,
-                  Some(Link("site.change", changeUrl, Some(changeHasUtr)))),
-                AnswerRow(utrLabel, Seq(utr), answerIsMessageKey = false,
-                  Some(Link("site.change", changeUrl, Some(changeUtr))))
-              )
+              case Some(true) => UniqueTaxReferenceCYA(label, utrLabel, changeHasUtr, changeUtr, changeNoUtr)().row(id)(changeUrl, userAnswers)
               case _  => Seq(AnswerRow(utrLabel, Seq(utr), answerIsMessageKey = false, None))
             }
           case Some(UniqueTaxReference.No(_)) =>userAnswers.get(IsEstablisherNewId(id.index)) match {
-            case Some(true) => Seq(AnswerRow(utrLabel, Seq("site.not_entered"), answerIsMessageKey = true,
-              Some(Link("site.add", changeUrl, Some(changeUtr)))))
+            case Some(true) => UniqueTaxReferenceCYA(label, utrLabel, changeHasUtr, changeUtr, changeNoUtr)().row(id)(changeUrl, userAnswers)
             case _  => Seq(AnswerRow(utrLabel, Seq("site.not_entered"), answerIsMessageKey = true, None))
           }
           case _ => Seq.empty[AnswerRow]

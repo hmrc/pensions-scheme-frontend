@@ -50,15 +50,20 @@ object CompanyRegistrationNumberId {
         userAnswers.get(id) match {
           case Some(CompanyRegistrationNumber.Yes(crn)) =>
             userAnswers.get(IsEstablisherNewId(id.index)) match {
-              case Some(true) => Seq(AnswerRow("messages__common__crn", Seq(s"$crn"), answerIsMessageKey = false,
-                Some(Link("site.change", changeUrl, Some(changeCrn)))))
-              case _  => Seq(AnswerRow("messages__common__crn", Seq(s"$crn"), answerIsMessageKey = false,
-                Some(Link("site.change", changeUrl, None))))
+              case Some(true) => CompanyRegistrationNumberCYA()().row(id)(changeUrl, userAnswers)
+              case _  => Seq(
+                AnswerRow(label, Seq(s"${CompanyRegistrationNumber.Yes}"), answerIsMessageKey = true, None),
+                AnswerRow("messages__common__crn", Seq(s"$crn"), answerIsMessageKey = false, None)
+              )
             }
-          case Some(CompanyRegistrationNumber.No(reason)) => Seq(
-            AnswerRow("messages__common__crn", Seq("site.not_entered"), answerIsMessageKey = true,
-              Some(Link("site.add", changeUrl, Some(s"${changeCrn}_add"))))
-          )
+          case Some(CompanyRegistrationNumber.No(reason)) =>
+            userAnswers.get(IsEstablisherNewId(id.index)) match {
+              case Some(true) => CompanyRegistrationNumberCYA()().row(id)(changeUrl, userAnswers)
+              case _  =>  Seq(
+                AnswerRow("messages__common__crn", Seq("site.not_entered"), answerIsMessageKey = true,
+                  Some(Link("site.add", changeUrl, Some(s"${changeCrn}_add"))))
+              )
+            }
           case _ => Seq.empty[AnswerRow]
         }
     }

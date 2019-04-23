@@ -19,9 +19,10 @@ package identifiers.register.establishers.partnership.partner
 import identifiers._
 import identifiers.register.establishers.EstablishersId
 import models.Nino
-import play.api.libs.json.JsPath
-import utils.checkyouranswers.CheckYourAnswers
-import utils.checkyouranswers.CheckYourAnswers.NinoCYA
+import play.api.libs.json.{JsPath, Reads}
+import utils.UserAnswers
+import utils.checkyouranswers.{CheckYourAnswers, NinoCYA}
+import viewmodels.AnswerRow
 
 case class PartnerNinoId(establisherIndex: Int, partnerIndex: Int) extends TypedIdentifier[Nino] {
   override def path: JsPath = EstablishersId(establisherIndex).path \ "partner" \ partnerIndex \ PartnerNinoId.toString
@@ -30,11 +31,22 @@ case class PartnerNinoId(establisherIndex: Int, partnerIndex: Int) extends Typed
 object PartnerNinoId {
   override lazy val toString: String = "partnerNino"
 
-  implicit val cya: CheckYourAnswers[PartnerNinoId] =
-    NinoCYA(
-      label = "messages__partner_nino_question_cya_label",
-      changeHasNino = "messages__visuallyhidden__partner__nino_yes_no",
-      changeNino = "messages__visuallyhidden__partner__nino",
-      changeNoNino = "messages__visuallyhidden__partner__nino_no"
-  )()
+  implicit def nino(implicit rds: Reads[Nino]): CheckYourAnswers[PartnerNinoId] = {
+    val label = "messages__partner_nino_question_cya_label"
+    val changeHasNino = "messages__visuallyhidden__partner__nino_yes_no"
+    val changeNino = "messages__visuallyhidden__partner__nino"
+    val changeNoNino = "messages__visuallyhidden__partner__nino_no"
+
+    new CheckYourAnswers[PartnerNinoId] {
+      override def row(id: PartnerNinoId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+        NinoCYA[PartnerNinoId](label, changeHasNino, changeNino, changeNoNino)().row(id)(changeUrl, userAnswers)
+
+      override def updateRow(id: PartnerNinoId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
+        userAnswers.get(IsNewPartnerId(id.establisherIndex, id.partnerIndex)) match {
+          case Some(true) => NinoCYA[PartnerNinoId](label, changeHasNino, changeNino, changeNoNino)().row(id)(changeUrl, userAnswers)
+          case _ => NinoCYA[PartnerNinoId](label, changeHasNino, changeNino, changeNoNino)().updateRow(id)(changeUrl, userAnswers)
+        }
+      }
+    }
+  }
 }

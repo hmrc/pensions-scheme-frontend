@@ -21,6 +21,7 @@ import controllers.Retrievals
 import controllers.actions._
 import identifiers.register.establishers.company.director._
 import javax.inject.Inject
+import models.Mode.checkMode
 import models.{CheckMode, Index, Mode, NormalMode}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
@@ -49,11 +50,11 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
         Some("messages__director__cya__details_heading"),
         Seq(
           DirectorDetailsId(companyIndex, directorIndex).
-            row(routes.DirectorDetailsController.onPageLoad(CheckMode, companyIndex, directorIndex, srn).url, mode),
+            row(routes.DirectorDetailsController.onPageLoad(checkMode(mode), companyIndex, directorIndex, srn).url, mode),
           DirectorNinoId(companyIndex, directorIndex).
-            row(routes.DirectorNinoController.onPageLoad(CheckMode, companyIndex, directorIndex, srn).url, mode),
+            row(routes.DirectorNinoController.onPageLoad(checkMode(mode), companyIndex, directorIndex, srn).url, mode),
           DirectorUniqueTaxReferenceId(companyIndex, directorIndex).
-            row(routes.DirectorUniqueTaxReferenceController.onPageLoad(CheckMode, companyIndex, directorIndex, srn).url, mode)
+            row(routes.DirectorUniqueTaxReferenceController.onPageLoad(checkMode(mode), companyIndex, directorIndex, srn).url, mode)
         ).flatten
       )
 
@@ -61,13 +62,13 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
         Some("messages__director__cya__contact__details_heading"),
         Seq(
           DirectorAddressId(companyIndex, directorIndex).
-            row(routes.DirectorAddressController.onPageLoad(CheckMode, companyIndex, directorIndex, srn).url),
+            row(routes.DirectorAddressController.onPageLoad(checkMode(mode), companyIndex, directorIndex, srn).url),
           DirectorAddressYearsId(companyIndex, directorIndex).
-            row(routes.DirectorAddressYearsController.onPageLoad(CheckMode, companyIndex, directorIndex, srn).url, mode),
+            row(routes.DirectorAddressYearsController.onPageLoad(checkMode(mode), companyIndex, directorIndex, srn).url, mode),
           DirectorPreviousAddressId(companyIndex, directorIndex).
-            row(routes.DirectorPreviousAddressController.onPageLoad(CheckMode, companyIndex, directorIndex, srn).url, mode),
+            row(routes.DirectorPreviousAddressController.onPageLoad(checkMode(mode), companyIndex, directorIndex, srn).url, mode),
           DirectorContactDetailsId(companyIndex, directorIndex).
-            row(routes.DirectorContactDetailsController.onPageLoad(CheckMode, companyIndex, directorIndex, srn).url)
+            row(routes.DirectorContactDetailsController.onPageLoad(checkMode(mode), companyIndex, directorIndex, srn).url)
         ).flatten
       )
 

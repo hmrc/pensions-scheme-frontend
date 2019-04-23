@@ -21,7 +21,7 @@ import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.register.PersonDetailsFormProvider
 import identifiers.register.establishers.company.CompanyDetailsId
-import identifiers.register.establishers.company.director.DirectorDetailsId
+import identifiers.register.establishers.company.director.{DirectorDetailsId, IsDirectorCompleteId, IsNewDirectorId}
 import identifiers.register.establishers.{EstablishersId, IsEstablisherCompleteId}
 import models.person.PersonDetails
 import models.{CompanyDetails, Index, NormalMode}
@@ -110,7 +110,7 @@ class DirectorDetailsControllerSpec extends ControllerSpecBase {
         )
       )
 
-      when(mockUserAnswersService.save(any(), any(), any(), any())(any(), any(), any(), any())).thenReturn(Future.successful(validData))
+      when(mockUserAnswersService.upsert(any(), any(), any())(any(), any(), any())).thenReturn(Future.successful(validData))
 
       val result = controller().onSubmit(NormalMode, firstEstablisherIndex, firstDirectorIndex, None)(postRequest)
       status(result) mustBe SEE_OTHER
@@ -141,32 +141,25 @@ class DirectorDetailsControllerSpec extends ControllerSpecBase {
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
     }
 
-    "set the establisher as not complete when the new director is being added" in {
-      reset(mockSectionComplete)
-      val validData =
-        Json.obj(
-          EstablishersId.toString -> Json.arr(
-            Json.obj(
-              CompanyDetailsId.toString ->
-                CompanyDetails("test company name"),
-              "director" -> Json.arr(
-                Json.obj(
-                  DirectorDetailsId.toString ->
-                    PersonDetails("First Name", Some("Middle Name"), "Last Name", new LocalDate(year, month, day))
-                )
-              )
-            )
-          )
+    "save the isNewDirector flag and set the establisher as not complete when the new director is being added" in {
+      reset(mockSectionComplete, mockUserAnswersService)
+      val validData = UserAnswers().set(CompanyDetailsId(firstEstablisherIndex))(CompanyDetails("test company name")).flatMap(
+        _.set(DirectorDetailsId(firstEstablisherIndex, firstDirectorIndex))(
+          PersonDetails("testFirstName", None, "testLastName", new LocalDate(year, month, day))).flatMap(
+          _.set(IsNewDirectorId(firstEstablisherIndex, firstDirectorIndex))(true)
         )
+      ).asOpt.value.json
+
       val getRelevantData = new FakeDataRetrievalAction(Some(validData))
       val userAnswers = UserAnswers(validData)
-      when(mockUserAnswersService.save(any(), any(), any(), any())(any(), any(), any(), any())).thenReturn(Future.successful(validData))
+      when(mockUserAnswersService.upsert(any(), any(), any())(any(), any(), any())).thenReturn(Future.successful(validData))
       when(mockSectionComplete.setCompleteFlag(any(), eqTo(IsEstablisherCompleteId(0)),
         eqTo(userAnswers), eqTo(false))(any(), any())).thenReturn(Future.successful(userAnswers))
 
       val result = controller(getRelevantData).onSubmit(NormalMode, firstEstablisherIndex, firstDirectorIndex, None)(postRequest)
       status(result) mustBe SEE_OTHER
       verify(mockSectionComplete, times(1)).setCompleteFlag(any(), eqTo(IsEstablisherCompleteId(0)), eqTo(userAnswers), eqTo(false))(any(), any())
+      verify(mockUserAnswersService, times(1)).upsert(any(), any(), eqTo(validData))(any(), any(), any())
     }
   }
 }

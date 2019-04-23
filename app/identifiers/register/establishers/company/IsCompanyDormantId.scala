@@ -48,16 +48,14 @@ object IsCompanyDormantId extends Enumerable.Implicits {
 
       override def updateRow(id: IsCompanyDormantId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
         userAnswers.get(id) match {
-          case Some(DeclarationDormant.Yes) =>
-            userAnswers.get(IsEstablisherNewId(id.index)) match {
-              case Some(true) =>  Seq(AnswerRow(label, Seq("site.yes"), answerIsMessageKey = true,
-                Some(Link("site.change", changeUrl, Some(changeIsDormant)))))
-              case _  =>  Seq(AnswerRow(label, Seq("site.yes"), answerIsMessageKey = true,
-                Some(Link("site.change", changeUrl, None))))
+          case Some(DeclarationDormant.Yes) => userAnswers.get(IsEstablisherNewId(id.index)) match {
+              case Some(true) =>  IsDormantCYA(label, changeIsDormant)().row(id)(changeUrl, userAnswers)
+              case _  =>  Seq(AnswerRow(label, Seq("site.yes"), answerIsMessageKey = true, None))
             }
-          case Some(DeclarationDormant.No) => Seq(AnswerRow(label, Seq("site.no"), answerIsMessageKey = true,
-            Some(Link("site.change", changeUrl, Some(changeIsDormant)))))
-
+          case Some(DeclarationDormant.No) => userAnswers.get(IsEstablisherNewId(id.index)) match {
+            case Some(true) =>  IsDormantCYA(label, changeIsDormant)().row(id)(changeUrl, userAnswers)
+            case _  =>  Seq(AnswerRow(label, Seq("site.no"), answerIsMessageKey = true, None))
+          }
           case _ => Seq.empty[AnswerRow]
         }
     }

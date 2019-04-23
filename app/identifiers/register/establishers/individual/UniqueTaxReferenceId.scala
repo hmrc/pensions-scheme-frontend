@@ -42,15 +42,13 @@ object UniqueTaxReferenceId {
 
           case Some(UniqueTaxReference.Yes(utr)) =>
             userAnswers.get(IsEstablisherNewId(id.index)) match {
-              case Some(true) => Seq(AnswerRow("messages__common__nino", Seq(utr), answerIsMessageKey = false,
-                Some(Link("site.change", changeUrl, Some("messages__visuallyhidden__establisher__utr_yes_no")))))
+              case Some(true) => UniqueTaxReferenceCYA()().row(id)(changeUrl, userAnswers)
               case _  => Seq(AnswerRow("messages__establisher_individual_utr_cya_label", Seq(utr), answerIsMessageKey = false, None))
             }
 
           case Some(UniqueTaxReference.No(_)) =>
             userAnswers.get(IsEstablisherNewId(id.index)) match {
-              case Some(true) => Seq(AnswerRow("messages__establisher_individual_utr_cya_label", Seq("site.not_entered"), answerIsMessageKey = true,
-                Some(Link("site.add", changeUrl, Some("messages__visuallyhidden__establisher__utr_yes_no")))))
+              case Some(true) => UniqueTaxReferenceCYA()().row(id)(changeUrl, userAnswers)
               case _  => Seq(AnswerRow("messages__establisher_individual_utr_cya_label", Seq("site.not_entered"), answerIsMessageKey = true, None))
             }
 

@@ -18,13 +18,11 @@ package identifiers.register.establishers.partnership
 
 import identifiers.TypedIdentifier
 import identifiers.register.establishers.{EstablishersId, IsEstablisherNewId}
-import identifiers.register.establishers.company.IsCompanyDormantId
-import models.Link
 import models.register.DeclarationDormant
 import play.api.i18n.Messages
 import play.api.libs.json.JsPath
-import utils.{Enumerable, UserAnswers}
 import utils.checkyouranswers.{CheckYourAnswers, IsDormantCYA}
+import utils.{Enumerable, UserAnswers}
 import viewmodels.AnswerRow
 
 case class IsPartnershipDormantId(index: Int) extends TypedIdentifier[DeclarationDormant] {
@@ -37,26 +35,23 @@ object IsPartnershipDormantId extends Enumerable.Implicits {
   val label: String = "messages__partnership__checkYourAnswers__isDormant"
   val changeIsDormant: String = "messages__visuallyhidden__partnership__dormant"
 
-  implicit def cya(implicit userAnswers: UserAnswers, messages: Messages): CheckYourAnswers[IsCompanyDormantId] = {
+  implicit def cya(implicit userAnswers: UserAnswers, messages: Messages): CheckYourAnswers[IsPartnershipDormantId] = {
 
-    new CheckYourAnswers[IsCompanyDormantId] {
+    new CheckYourAnswers[IsPartnershipDormantId] {
 
-      override def row(id: IsCompanyDormantId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
-        IsDormantCYA()().row(id)(changeUrl, userAnswers)
-      }
+      override def row(id: IsPartnershipDormantId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+        IsDormantCYA(label, changeIsDormant)().row(id)(changeUrl, userAnswers)
 
-      override def updateRow(id: IsCompanyDormantId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+      override def updateRow(id: IsPartnershipDormantId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
         userAnswers.get(id) match {
-          case Some(DeclarationDormant.Yes) =>
-            userAnswers.get(IsEstablisherNewId(id.index)) match {
-              case Some(true) =>  Seq(AnswerRow(label, Seq("site.yes"), answerIsMessageKey = true,
-                Some(Link("site.change", changeUrl, Some(changeIsDormant)))))
-              case _  =>  Seq(AnswerRow(label, Seq("site.yes"), answerIsMessageKey = true,
-                Some(Link("site.change", changeUrl, None))))
+          case Some(DeclarationDormant.Yes) => userAnswers.get(IsEstablisherNewId(id.index)) match {
+              case Some(true) =>  IsDormantCYA(label, changeIsDormant)().row(id)(changeUrl, userAnswers)
+              case _  =>  Seq(AnswerRow(label, Seq("site.yes"), answerIsMessageKey = true, None))
             }
-          case Some(DeclarationDormant.No) => Seq(AnswerRow(label, Seq("site.no"), answerIsMessageKey = true,
-            Some(Link("site.change", changeUrl, Some(changeIsDormant)))))
-
+          case Some(DeclarationDormant.No) => userAnswers.get(IsEstablisherNewId(id.index)) match {
+            case Some(true) =>  IsDormantCYA(label, changeIsDormant)().row(id)(changeUrl, userAnswers)
+            case _  =>  Seq(AnswerRow(label, Seq("site.no"), answerIsMessageKey = true, None))
+          }
           case _ => Seq.empty[AnswerRow]
         }
     }
