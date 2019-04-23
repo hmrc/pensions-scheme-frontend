@@ -142,6 +142,8 @@ abstract class HsTaskListHelper(answers: UserAnswers)(implicit messages: Message
         controllers.register.establishers.company.routes.CompanyReviewController.onPageLoad(mode, srn, index).url
       case models.register.EstablisherPartnershipEntity(_, _, _, true, _, _) =>
         controllers.register.establishers.partnership.routes.PartnershipReviewController.onPageLoad(mode, index, srn).url
+      case models.register.EstablisherIndividualEntity(_, _, _, true, _, _) =>
+        controllers.register.establishers.individual.routes.CheckYourAnswersController.onPageLoad(mode, index, srn).url
       case _ => item.editLink(mode, srn).getOrElse(controllers.routes.SessionExpiredController.onPageLoad().url)
     }
   }

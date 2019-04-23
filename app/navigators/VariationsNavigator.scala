@@ -19,20 +19,26 @@ package navigators
 import com.google.inject.Inject
 import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
-import models.Mode
+import identifiers.vary.AnyMoreChangesId
 import utils.{Enumerable, Navigator}
 
 class VariationsNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector,
                                     config: FrontendAppConfig)extends Navigator with Enumerable.Implicits {
 
-  override protected def routeMap(from: NavigateFrom): Option[NavigateTo] =
-    from.id match {
-      case _ => None
-    }
+  override protected def routeMap(from: NavigateFrom): Option[NavigateTo] = None
 
   override protected def editRouteMap(from: NavigateFrom): Option[NavigateTo] = None
 
-  protected def updateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] = None
+  protected def updateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] =
+    from.id match {
+      case AnyMoreChangesId => (from.userAnswers.get(AnyMoreChangesId), srn) match {
+        case (Some(true), Some(srn)) => NavigateTo.dontSave(controllers.routes.PSASchemeDetailsController.onPageLoad(srn))
+        case (Some(false), Some(srn)) => //todo - change to incomplete logic controller after PODS-2437 is done
+         NavigateTo.dontSave(controllers.routes.PSASchemeDetailsController.onPageLoad(srn))
+        case _ => NavigateTo.dontSave(controllers.routes.SessionExpiredController.onPageLoad)
+      }
+      case _ => None
+    }
 
   protected def checkUpdateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] = None
 
