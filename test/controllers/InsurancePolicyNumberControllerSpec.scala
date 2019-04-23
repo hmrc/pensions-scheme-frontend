@@ -24,8 +24,9 @@ import identifiers.InsurancePolicyNumberId
 import models.NormalMode
 import models.requests.OptionalDataRequest
 import play.api.data.Form
-import play.api.mvc.{Action, AnyContent, AnyContentAsFormUrlEncoded, Result}
+import play.api.mvc._
 import play.api.test.FakeRequest
+import play.api.test.Helpers.{contentAsString, status, _}
 import services.{FakeUserAnswersService, UserAnswersService}
 import utils.{FakeNavigator, Navigator, UserAnswers}
 import views.html.insurancePolicyNumber
@@ -67,6 +68,13 @@ class InsurancePolicyNumberControllerSpec extends ControllerWithQuestionPageBeha
       InsurancePolicyNumberId,
       policyNumber
     )
+
+    "behave correctly when disallowed for a GET" in {
+      val result = onPageLoadActionSuspended(this)(mandatoryData.dataRetrievalAction, FakeAuthAction)(fakeRequest)
+
+      status(result) mustBe OK
+      contentAsString(result).contains("Disallowed") mustBe true
+    }
   }
 }
 
@@ -93,11 +101,18 @@ object InsurancePolicyNumberControllerSpec {
     }
   }
 
+  private val disAllowAccess: AllowAccessForNonSuspendedUsersActionProvider = new AllowAccessForNonSuspendedUsersActionProvider {
+    override def apply(srn: Option[String]): AllowAccessForNonSuspendedUsersAction = new AllowAccessForNonSuspendedUsersAction(srn) {
+      override protected def filter[A](request: OptionalDataRequest[A]): Future[Option[Result]] = Future.successful(Some(Results.Ok("Disallowed")))
+    }
+  }
+
   private def controller(base: ControllerSpecBase)(
     dataRetrievalAction: DataRetrievalAction = base.getEmptyData,
     authAction: AuthAction = FakeAuthAction,
     navigator: Navigator = FakeNavigator,
-    cache: UserAnswersService = FakeUserAnswersService
+    cache: UserAnswersService = FakeUserAnswersService,
+    allowAccess:AllowAccessForNonSuspendedUsersActionProvider = allowAccess
   ): InsurancePolicyNumberController =
     new InsurancePolicyNumberController(
       base.frontendAppConfig,
@@ -113,6 +128,9 @@ object InsurancePolicyNumberControllerSpec {
 
   private def onPageLoadAction(base: ControllerSpecBase)(dataRetrievalAction: DataRetrievalAction, authAction: AuthAction): Action[AnyContent] =
     controller(base)(dataRetrievalAction, authAction).onPageLoad(NormalMode, None)
+
+  private def onPageLoadActionSuspended(base: ControllerSpecBase)(dataRetrievalAction: DataRetrievalAction, authAction: AuthAction): Action[AnyContent] =
+    controller(base)(dataRetrievalAction, authAction, allowAccess = disAllowAccess).onPageLoad(NormalMode, None)
 
   private def onSubmitAction(base: ControllerSpecBase, navigator: Navigator)(dataRetrievalAction: DataRetrievalAction,
                                                                              authAction: AuthAction): Action[AnyContent] =
