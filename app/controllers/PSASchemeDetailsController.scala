@@ -83,20 +83,10 @@ class PSASchemeDetailsController @Inject()(appConfig: FrontendAppConfig,
   private def getSchemeDetailsVariations(psaId: String,
                                          srn: String)(implicit request: OptionalDataRequest[AnyContent],
                                                       hc: HeaderCarrier): Future[UserAnswers] = {
-    // TODO: If scheme locked by this PSA then get from update repository, if in readonly repository then get from there else get from ETMP
-//    lockConnector.isLockByPsaIdOrSchemeId(request.psaId.id, srn).flatMap { optionLock =>
-//
-//    }
-
-
-//      lockConnector.isLockByPsaIdOrSchemeId(request.psaId.id, srn).flatMap {
-//        case Some(VarianceLock) => getOptionalRequest(updateConnector.fetch(srn), viewOnly = false)(request)
-//        case Some(_) => getOptionalRequest(viewConnector.fetch(request.externalId), viewOnly = true)(request)
-//        case None => getOptionalRequest(viewConnector.fetch(request.externalId), viewOnly = false)(request)
-//      }
-
-
-    schemeDetailsConnector.getSchemeDetailsVariations(psaId, schemeIdType = "srn", srn)
+    request.userAnswers match {
+      case Some(ua) => Future.successful(ua)
+      case _ => schemeDetailsConnector.getSchemeDetailsVariations(psaId, schemeIdType = "srn", srn)
+    }
   }
 
   private def saveUserAnswersWithPSAMinimalDetails(srn: String, userAnswers: UserAnswers)(implicit

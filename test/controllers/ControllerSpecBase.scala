@@ -26,7 +26,7 @@ import identifiers.register.establishers.partnership.PartnershipDetailsId
 import identifiers.register.establishers.partnership.partner.PartnerDetailsId
 import identifiers.register.trustees.TrusteesId
 import identifiers.register.trustees.individual.TrusteeDetailsId
-import identifiers.{AdviserNameId, SchemeNameId}
+import identifiers.{AdviserNameId, MinimalPsaDetailsId, SchemeNameId}
 import models.person.PersonDetails
 import models.{CompanyDetails, PartnershipDetails}
 import org.joda.time.LocalDate
@@ -156,7 +156,7 @@ trait ControllerSpecBase extends SpecBase with Enumerable.Implicits with MapForm
 
   def getMandatoryWorkingKnowledgePerson: FakeDataRetrievalAction = new FakeDataRetrievalAction(
     Some(Json.obj(AdviserNameId.toString ->
-        "name"
+      "name"
     ))
   )
 }
