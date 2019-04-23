@@ -147,13 +147,20 @@ class PSASchemeDetailsControllerSpec extends ControllerSpecBase {
 
 
 
-  "SchemeDetailsController when isVariationsEnabled toggle switched on and data in user answers" must {
+  "SchemeDetailsController when isVariationsEnabled toggle switched on and data in user answers but get min details returns something different" must {
     "where no scheme is currently locked return OK, the correct view for a GET and verify " +
       "that lock is checked and view cache only is updated with correct json" in {
       resetLockAndCacheMocks()
       val userAnswersResponse = UserAnswers(Json.obj(
-        "test attribute" -> "test value"
+        "test attribute" -> "test value",
+        MinimalPsaDetailsId.toString -> Json.toJson(minimalPSA)
       ))
+
+      val minimalPSA2 = MinimalPSA(email = "",
+        isPsaSuspended = true,
+        organisationName = Some("org"),
+        individualDetails = Some(individualDetails)
+      )
 
       reset(fakeSchemeDetailsConnector)
       when(fakeSchemeDetailsConnector.getSchemeDetailsVariations(Matchers.any(), Matchers.any(), Matchers.any())(Matchers.any(), Matchers.any()))
@@ -162,11 +169,11 @@ class PSASchemeDetailsControllerSpec extends ControllerSpecBase {
       when(fakeSchemeDetailsReadOnlyCacheConnector.upsert(Matchers.any(), Matchers.any())(Matchers.any(), Matchers.any()))
         .thenReturn(Future.successful(JsNull))
 
-      prepareLockAndCacheMocks()
+      prepareLockAndCacheMocks(minimalPSA = minimalPSA2)
 
-      val expectedSavedJson = Json.obj(
-        MinimalPsaDetailsId.toString -> Json.toJson(minimalPSA)
-      ) ++ userAnswersResponse.json.as[JsObject]
+      val expectedSavedJson = userAnswersResponse.json.as[JsObject] ++ Json.obj(
+        MinimalPsaDetailsId.toString -> Json.toJson(minimalPSA2)
+      )
 
       val result = controller(isVariationsEnabled = true, dataRetrievalAction = getDataWithMinDetails).onPageLoad(srn)(fakeRequest)
 

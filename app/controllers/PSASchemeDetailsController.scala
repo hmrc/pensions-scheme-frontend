@@ -93,9 +93,9 @@ class PSASchemeDetailsController @Inject()(appConfig: FrontendAppConfig,
                                                                                           request: OptionalDataRequest[AnyContent],
                                                                              hc: HeaderCarrier): Future[UserAnswers] = {
     minimalPsaConnector.getMinimalPsaDetails(request.psaId.id).flatMap { minimalDetails =>
-      val json = Json.obj(
+      val json = userAnswers.json.as[JsObject] ++ Json.obj(
         MinimalPsaDetailsId.toString -> Json.toJson(minimalDetails)
-      ) ++ userAnswers.json.as[JsObject]
+      )
       lockConnector.isLockByPsaIdOrSchemeId(request.psaId.id, srn).flatMap { optionLock =>
         val futureJsValue = optionLock match {
           case Some(VarianceLock) => updateConnector.upsert(srn, json)
