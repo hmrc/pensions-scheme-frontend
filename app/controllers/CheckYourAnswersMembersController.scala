@@ -36,11 +36,12 @@ class CheckYourAnswersMembersController @Inject()(appConfig: FrontendAppConfig,
                                                   authenticate: AuthAction,
                                                   getData: DataRetrievalAction,
                                                   requireData: DataRequiredAction,
-                                                  sectionComplete: SectionComplete
+                                                  sectionComplete: SectionComplete,
+                                                  allowAccess:AllowAccessForNonSuspendedUsersActionProvider
                                                  )(implicit val ec: ExecutionContext) extends FrontendController
   with Enumerable.Implicits with I18nSupport with Retrievals {
 
-  def onPageLoad(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData) {
+  def onPageLoad(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate andThen allowAccess(srn) andThen getData(mode, srn) andThen requireData) {
     implicit request =>
       implicit val userAnswers = request.userAnswers
       val membersSection = AnswerSection(
