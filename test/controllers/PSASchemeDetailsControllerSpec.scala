@@ -157,7 +157,7 @@ class PSASchemeDetailsControllerSpec extends ControllerSpecBase {
         MinimalPsaDetailsId.toString -> Json.toJson(minimalPSA)
       ))
 
-      val minimalPSA2 = MinimalPSA(email = "",
+      val minimalPSAAmended = MinimalPSA(email = "",
         isPsaSuspended = true,
         organisationName = Some("org"),
         individualDetails = Some(individualDetails)
@@ -170,10 +170,10 @@ class PSASchemeDetailsControllerSpec extends ControllerSpecBase {
       when(fakeSchemeDetailsReadOnlyCacheConnector.upsert(Matchers.any(), Matchers.any())(Matchers.any(), Matchers.any()))
         .thenReturn(Future.successful(JsNull))
 
-      prepareLockAndCacheMocks(minimalPSA = minimalPSA2)
+      prepareLockAndCacheMocks(minimalPSA = minimalPSAAmended)
 
       val expectedSavedJson = userAnswersResponse.json.as[JsObject] ++ Json.obj(
-        MinimalPsaDetailsId.toString -> Json.toJson(minimalPSA2)
+        MinimalPsaDetailsId.toString -> Json.toJson(minimalPSAAmended)
       )
 
       val result = controller(isVariationsEnabled = true, dataRetrievalAction = getDataWithMinDetails).onPageLoad(srn)(fakeRequest)
