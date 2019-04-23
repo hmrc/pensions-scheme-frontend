@@ -41,7 +41,7 @@ class AllowAccessForNonSuspendedUsersAction(
   override protected def filter[A](request: AuthenticatedRequest[A]): Future[Option[Result]] = {
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
 
-    def errorOptionResult = Option(Ok(controllers.routes.PSASchemeDetailsController.onPageLoad(srn)))
+    def errorOptionResult:Option[Result] = Some(Redirect(controllers.routes.PSASchemeDetailsController.onPageLoad(srn)))
 
     lockConnector.isLockByPsaIdOrSchemeId(request.psaId.id, srn).flatMap { optionLock =>
       val futureJsValue = optionLock match {
@@ -57,7 +57,7 @@ class AllowAccessForNonSuspendedUsersAction(
             case None => errorOptionResult
             case Some(md) =>
               if (md.isPsaSuspended) {
-                Some(Ok(controllers.register.routes.CannotMakeChangesController.onPageLoad(srn)))
+                Some(Redirect(controllers.register.routes.CannotMakeChangesController.onPageLoad(srn)))
               } else {
                 None
               }
