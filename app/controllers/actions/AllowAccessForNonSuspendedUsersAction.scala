@@ -16,15 +16,12 @@
 
 package controllers.actions
 
-import com.google.inject.Inject
-import connectors.{PensionSchemeVarianceLockConnector, UpdateSchemeCacheConnector, UserAnswersCacheConnector}
 import identifiers.MinimalPsaDetailsId
 import models.requests.OptionalDataRequest
 import play.api.mvc.Results._
 import play.api.mvc.{ActionFilter, Result}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.HeaderCarrierConverter
-import utils.annotations.SchemeDetailsReadOnly
 
 import scala.concurrent.Future
 
@@ -49,9 +46,7 @@ class AllowAccessForNonSuspendedUsersAction(
   }
 }
 
-class AllowAccessForNonSuspendedUsersActionProviderImpl @Inject()(lockConnector: PensionSchemeVarianceLockConnector,
-                                                                  @SchemeDetailsReadOnly schemeDetailsReadOnlyCacheConnector: UserAnswersCacheConnector,
-                                                                  updateConnector: UpdateSchemeCacheConnector)
+class AllowAccessForNonSuspendedUsersActionProviderImpl
   extends AllowAccessForNonSuspendedUsersActionProvider {
   def apply(srn: Option[String]): AllowAccessForNonSuspendedUsersAction = new AllowAccessForNonSuspendedUsersAction(srn)
 }

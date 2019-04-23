@@ -236,8 +236,8 @@ private object PSASchemeDetailsControllerSpec extends ControllerSpecBase with Mo
       dataRetrievalAction,
       new ErrorHandler(frontendAppConfig, messagesApi),
       featureSwitchManagementService(isVariationsEnabled),
-      fakeSchemeDetailsReadOnlyCacheConnector,
       lockConnector,
+      fakeSchemeDetailsReadOnlyCacheConnector,
       updateConnector,
       minimalPsaConnector
     )

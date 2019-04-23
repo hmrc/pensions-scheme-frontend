@@ -30,7 +30,7 @@ import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.{Action, AnyContent, Result}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import utils.annotations.SchemeDetailsReadOnly
+import utils.annotations.{SchemeDetailsReadOnly, SchemeDetailsUpdate}
 import utils.{HsTaskListHelperVariations, Toggles, UserAnswers}
 import viewmodels.SchemeDetailsTaskList
 import views.html.{psa_scheme_details, schemeDetailsTaskList}
@@ -45,9 +45,9 @@ class PSASchemeDetailsController @Inject()(appConfig: FrontendAppConfig,
                                            getData: DataRetrievalAction,
                                            errorHandler: ErrorHandler,
                                            featureSwitchManagementService: FeatureSwitchManagementService,
-                                           @SchemeDetailsReadOnly schemeDetailsReadOnlyCacheConnector: UserAnswersCacheConnector,
                                            lockConnector: PensionSchemeVarianceLockConnector,
-                                           updateConnector: UpdateSchemeCacheConnector,
+                                           @SchemeDetailsReadOnly schemeDetailsReadOnlyCacheConnector: UserAnswersCacheConnector,
+                                           @SchemeDetailsUpdate updateConnector: UserAnswersCacheConnector,
                                            minimalPsaConnector: MinimalPsaConnector
                                           )(implicit val ec: ExecutionContext) extends FrontendController with I18nSupport {
 
