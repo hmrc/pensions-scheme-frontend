@@ -1416,3 +1416,8 @@ messages__stillNeedDetails__title =  You still need to provide some details
 messages__stillNeedDetails__heading = You still need to provide some details
 messages__stillNeedDetails__p1 = There are some details that are incomplete.
 messages__stillNeedDetails__p2 = You need to complete the missing details before you can submit the changes.
+messages__cannot_Make_Changes__title = Details cannot be changed
+messages__cannot_Make_Changes__heading = Details cannot be changed
+messages__cannot_Make_Changes__p1 = You cannot make any changes to {0} at the moment.
+messages__cannot_Make_Changes__p2 = You need to phone Pension Scheme Services on 0300 123 1079.
+
