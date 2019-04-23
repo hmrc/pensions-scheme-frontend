@@ -31,18 +31,14 @@ class AllowAccessForNonSuspendedUsersAction(
 
   override protected def filter[A](request: OptionalDataRequest[A]): Future[Option[Result]] = {
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
-    optionSRN.fold(Future.successful(Option(Redirect(controllers.routes.SessionExpiredController.onPageLoad())))) { srn =>
-      Future.successful(
-        request.userAnswers.flatMap(_.get(MinimalPsaDetailsId))
-          .fold(Option(Redirect(controllers.routes.PSASchemeDetailsController.onPageLoad(srn)))) { md =>
-            if (md.isPsaSuspended) {
-              Some(Redirect(controllers.register.routes.CannotMakeChangesController.onPageLoad(srn)))
-            } else {
-              None
-            }
-          }
-      )
-    }
+    Future.successful(
+      (optionSRN, request.userAnswers.flatMap(_.get(MinimalPsaDetailsId))) match {
+        case (None, _) => Option(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
+        case (Some(srn), None) => Option(Redirect(controllers.routes.PSASchemeDetailsController.onPageLoad(srn)))
+        case (Some(srn), Some(md)) if md.isPsaSuspended => Some(Redirect(controllers.register.routes.CannotMakeChangesController.onPageLoad(srn)))
+        case _ => None
+      }
+    )
   }
 }
 

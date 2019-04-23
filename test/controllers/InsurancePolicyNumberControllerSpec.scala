@@ -17,8 +17,6 @@
 package controllers
 
 import base.SpecBase
-import connectors.{FakeUserAnswersCacheConnector, PensionSchemeVarianceLockConnector, UpdateSchemeCacheConnector, UserAnswersCacheConnector}
-import controllers.CheckYourAnswersMembersControllerSpec.mock
 import controllers.actions._
 import controllers.behaviours.ControllerWithQuestionPageBehaviours
 import forms.InsurancePolicyNumberFormProvider
