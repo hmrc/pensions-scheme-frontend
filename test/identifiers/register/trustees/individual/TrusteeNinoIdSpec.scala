@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package identifiers.register.establishers.individual
+package identifiers.register.trustees.individual
 
 import base.SpecBase
-import identifiers.register.establishers.IsEstablisherNewId
-import models.UniqueTaxReference._
+import identifiers.register.trustees.IsTrusteeNewId
+import models.Nino._
 import models._
 import models.requests.DataRequest
 import play.api.mvc.AnyContent
@@ -28,50 +28,51 @@ import utils.UserAnswers
 import viewmodels.AnswerRow
 import utils.checkyouranswers.Ops._
 
-class UniqueTaxReferenceIdSpec extends SpecBase {
+
+class TrusteeNinoIdSpec extends SpecBase {
 
   "cya" when {
     
     val onwardUrl = "onwardUrl"
 
-    def answers = UserAnswers().set(UniqueTaxReferenceId(0))(Yes("utr")).asOpt.get
+    def answers = UserAnswers().set(TrusteeNinoId(0))(Yes("nino")).asOpt.get
 
-    "in normal mode" must {
+    "in normal mode individual nino" must {
 
       "return answers rows with change links" in {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
         implicit val userAnswers = request.userAnswers
-        UniqueTaxReferenceId(0).row(onwardUrl, NormalMode) must equal(Seq(
-          AnswerRow("messages__establisher_individual_utr_question_cya_label",List("Yes"),false,
-            Some(Link("site.change",onwardUrl,Some("messages__visuallyhidden__establisher__utr_yes_no")))),
-          AnswerRow("messages__establisher_individual_utr_cya_label",List("utr"),false,
-            Some(Link("site.change",onwardUrl,Some("messages__visuallyhidden__establisher__utr"))))
+        TrusteeNinoId(0).row(onwardUrl, NormalMode) must equal(Seq(
+          AnswerRow("messages__trusteeNino_question_cya_label",List("Yes"),false,
+            Some(Link("site.change",onwardUrl,Some("messages__visuallyhidden__trustee__nino_yes_no")))),
+          AnswerRow("messages__common__nino",List("nino"),false,
+            Some(Link("site.change",onwardUrl,Some("messages__visuallyhidden__trustee__nino"))))
         ))
       }
     }
 
-    "in update mode for new establisher - individual utr" must {
+    "in update mode for new trustee - individual nino" must {
 
-      def answersNew: UserAnswers = answers.set(IsEstablisherNewId(0))(true).asOpt.value
+      def answersNew: UserAnswers = answers.set(IsTrusteeNewId(0))(true).asOpt.value
 
       "return answers rows with change links" in {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answersNew, PsaId("A0000000"))
         implicit val userAnswers = request.userAnswers
-        UniqueTaxReferenceId(0).row(onwardUrl, UpdateMode) must equal(Seq(
-          AnswerRow("messages__establisher_individual_utr_cya_label",List("utr"),false,
-            Some(Link("site.change",onwardUrl,Some("messages__visuallyhidden__establisher__utr_yes_no"))))
+        TrusteeNinoId(0).row(onwardUrl, UpdateMode) must equal(Seq(
+          AnswerRow("messages__common__nino",List("nino"),false,
+            Some(Link("site.change",onwardUrl,Some("messages__visuallyhidden__trustee__nino_yes_no"))))
         ))
       }
     }
 
-    "in update mode for existing establisher - individual utr" must {
+    "in update mode for existing trustee - individual nino" must {
 
       "return answers rows without change links" in {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
         implicit val userAnswers = request.userAnswers
 
-        UniqueTaxReferenceId(0).row(onwardUrl, UpdateMode) must equal(Seq(
-          AnswerRow("messages__establisher_individual_utr_cya_label",List("utr"),false,None)
+        TrusteeNinoId(0).row(onwardUrl, UpdateMode) must equal(Seq(
+          AnswerRow("messages__common__nino",List("nino"),false, None)
         ))
       }
     }

@@ -17,10 +17,13 @@
 package identifiers.register.trustees.individual
 
 import identifiers._
-import identifiers.register.trustees.TrusteesId
-import models.UniqueTaxReference
+import identifiers.register.trustees.{IsTrusteeNewId, TrusteesId}
+import models.{Link, UniqueTaxReference}
+import play.api.i18n.Messages
 import play.api.libs.json.JsPath
+import utils.UserAnswers
 import utils.checkyouranswers.{CheckYourAnswers, UniqueTaxReferenceCYA}
+import viewmodels.AnswerRow
 
 case class UniqueTaxReferenceId(index: Int) extends TypedIdentifier[UniqueTaxReference] {
   override def path: JsPath = TrusteesId(index).path \ UniqueTaxReferenceId.toString
@@ -29,11 +32,37 @@ case class UniqueTaxReferenceId(index: Int) extends TypedIdentifier[UniqueTaxRef
 object UniqueTaxReferenceId {
   override def toString: String = "uniqueTaxReference"
 
-  implicit val cya: CheckYourAnswers[UniqueTaxReferenceId] =
-    UniqueTaxReferenceCYA(
-      label = "messages__trusteeUtr_question_cya_label",
-      changeHasUtr = "messages__visuallyhidden__trustee__utr_yes_no",
-      changeUtr = "messages__visuallyhidden__trustee__utr",
-      changeNoUtr = "messages__visuallyhidden__trustee__utr_no"
-    )()
+  val label = "messages__trusteeUtr_question_cya_label"
+  val utrLabel = "messages__trustee_individual_utr_cya_label"
+  val reasonLabel = "messages__trustee_individual_utr_reason_cya_label"
+  val changeHasUtr = "messages__visuallyhidden__trustee__utr_yes_no"
+  val changeUtr = "messages__visuallyhidden__trustee__utr"
+  val changeNoUtr = "messages__visuallyhidden__trustee__utr_no"
+
+  implicit def cya(implicit userAnswers: UserAnswers, messages: Messages): CheckYourAnswers[UniqueTaxReferenceId] = {
+    new CheckYourAnswers[UniqueTaxReferenceId] {
+      override def row(id: UniqueTaxReferenceId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+        UniqueTaxReferenceCYA(label, utrLabel, reasonLabel, changeHasUtr, changeUtr, changeNoUtr)().row(id)(changeUrl, userAnswers)
+
+      override def updateRow(id: UniqueTaxReferenceId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+        userAnswers.get(id) match {
+
+          case Some(UniqueTaxReference.Yes(utr)) =>
+            userAnswers.get(IsTrusteeNewId(id.index)) match {
+              case Some(true) => Seq(AnswerRow(utrLabel, Seq(utr), answerIsMessageKey = false,
+                Some(Link("site.change", changeUrl, Some(changeHasUtr)))))
+              case _  => Seq(AnswerRow(utrLabel, Seq(utr), answerIsMessageKey = false, None))
+            }
+
+          case Some(UniqueTaxReference.No(_)) =>
+            userAnswers.get(IsTrusteeNewId(id.index)) match {
+              case Some(true) => Seq(AnswerRow(utrLabel, Seq("site.not_entered"), answerIsMessageKey = true,
+                Some(Link("site.add", changeUrl, Some(changeHasUtr)))))
+              case _  => Seq(AnswerRow(utrLabel, Seq("site.not_entered"), answerIsMessageKey = true, None))
+            }
+
+          case _ => Seq.empty[AnswerRow]
+        }
+    }
+  }
 }

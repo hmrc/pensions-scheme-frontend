@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package identifiers.register.establishers.individual
+package identifiers.register.trustees.individual
 
 import base.SpecBase
-import identifiers.register.establishers.IsEstablisherNewId
+import identifiers.register.trustees.IsTrusteeNewId
 import models.UniqueTaxReference._
 import models._
 import models.requests.DataRequest
@@ -25,8 +25,8 @@ import play.api.mvc.AnyContent
 import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.PsaId
 import utils.UserAnswers
-import viewmodels.AnswerRow
 import utils.checkyouranswers.Ops._
+import viewmodels.AnswerRow
 
 class UniqueTaxReferenceIdSpec extends SpecBase {
 
@@ -42,36 +42,36 @@ class UniqueTaxReferenceIdSpec extends SpecBase {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
         implicit val userAnswers = request.userAnswers
         UniqueTaxReferenceId(0).row(onwardUrl, NormalMode) must equal(Seq(
-          AnswerRow("messages__establisher_individual_utr_question_cya_label",List("Yes"),false,
-            Some(Link("site.change",onwardUrl,Some("messages__visuallyhidden__establisher__utr_yes_no")))),
-          AnswerRow("messages__establisher_individual_utr_cya_label",List("utr"),false,
-            Some(Link("site.change",onwardUrl,Some("messages__visuallyhidden__establisher__utr"))))
+          AnswerRow("messages__trusteeUtr_question_cya_label",List("Yes"),false,
+            Some(Link("site.change",onwardUrl,Some("messages__visuallyhidden__trustee__utr_yes_no")))),
+          AnswerRow("messages__trustee_individual_utr_cya_label",List("utr"),false,
+            Some(Link("site.change",onwardUrl,Some("messages__visuallyhidden__trustee__utr"))))
         ))
       }
     }
 
-    "in update mode for new establisher - individual utr" must {
+    "in update mode for new trustee - individual utr" must {
 
-      def answersNew: UserAnswers = answers.set(IsEstablisherNewId(0))(true).asOpt.value
+      def answersNew: UserAnswers = answers.set(IsTrusteeNewId(0))(true).asOpt.value
 
       "return answers rows with change links" in {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answersNew, PsaId("A0000000"))
         implicit val userAnswers = request.userAnswers
         UniqueTaxReferenceId(0).row(onwardUrl, UpdateMode) must equal(Seq(
-          AnswerRow("messages__establisher_individual_utr_cya_label",List("utr"),false,
-            Some(Link("site.change",onwardUrl,Some("messages__visuallyhidden__establisher__utr_yes_no"))))
+          AnswerRow("messages__trustee_individual_utr_cya_label",List("utr"),false,
+            Some(Link("site.change",onwardUrl,Some("messages__visuallyhidden__trustee__utr_yes_no"))))
         ))
       }
     }
 
-    "in update mode for existing establisher - individual utr" must {
+    "in update mode for existing trustee - individual utr" must {
 
       "return answers rows without change links" in {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
         implicit val userAnswers = request.userAnswers
 
         UniqueTaxReferenceId(0).row(onwardUrl, UpdateMode) must equal(Seq(
-          AnswerRow("messages__establisher_individual_utr_cya_label",List("utr"),false,None)
+          AnswerRow("messages__trustee_individual_utr_cya_label",List("utr"),false,None)
         ))
       }
     }

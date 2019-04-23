@@ -1097,6 +1097,7 @@ messages__visuallyhidden__partner__phone_number = Change the partner’s phone n
 messages__visuallyhidden__trustee__nino_yes_no = Change whether the trustee has a National Insurance number
 messages__visuallyhidden__trustee__nino_no = Change why the trustee does not have a National Insurance number
 messages__visuallyhidden__trustee__nino = Change the trustee’s National Insurance number
+messages__visuallyhidden__trustee__nino_add = Add the trustee’s National Insurance number
 messages__visuallyhidden__trustee__vat_number = Change the trustee’s VAT registration number
 messages__visuallyhidden__trustee__paye_number = Change the trustee’s PAYE employer reference number
 messages__visuallyhidden__trustee__crn_yes_no = Change whether the trustee has a Company Registration number
