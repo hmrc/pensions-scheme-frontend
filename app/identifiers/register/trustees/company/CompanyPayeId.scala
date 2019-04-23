@@ -17,11 +17,14 @@
 package identifiers.register.trustees.company
 
 import identifiers.TypedIdentifier
-import identifiers.register.trustees.TrusteesId
-import models.Paye
-import play.api.libs.json.{JsPath, Reads}
+import identifiers.register.trustees.{IsTrusteeNewId, TrusteesId}
+import models.{Link, Paye}
+import play.api.i18n.Messages
+import play.api.libs.json.JsPath
+import utils.UserAnswers
 import utils.checkyouranswers.CheckYourAnswers
 import utils.checkyouranswers.CheckYourAnswers.PayeCYA
+import viewmodels.AnswerRow
 
 case class CompanyPayeId(index: Int) extends TypedIdentifier[Paye] {
   override def path: JsPath = TrusteesId(index).path \ CompanyPayeId.toString
@@ -30,11 +33,29 @@ case class CompanyPayeId(index: Int) extends TypedIdentifier[Paye] {
 object CompanyPayeId {
   override def toString: String = "companyPaye"
 
-  implicit def cya(implicit r: Reads[Paye]): CheckYourAnswers[CompanyPayeId] =
-    PayeCYA(labelYesNo = Some("messages__checkYourAnswers__trustees__company__paye"),
-      hiddenLabelYesNo = "messages__visuallyhidden__trustee__paye_yes_no",
-      hiddenLabelPaye = "messages__visuallyhidden__trustee__paye_number"
-      )()
+  val labelYesNo = "messages__checkYourAnswers__trustees__company__paye"
+  val hiddenLabelYesNo = "messages__visuallyhidden__trustee__paye_yes_no"
+  val hiddenLabelPaye = "messages__visuallyhidden__trustee__paye_number"
+
+  implicit def cya(implicit userAnswers: UserAnswers, messages: Messages): CheckYourAnswers[CompanyPayeId] = {
+    new CheckYourAnswers[CompanyPayeId] {
+
+      override def row(id: CompanyPayeId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+        PayeCYA(Some(labelYesNo), hiddenLabelYesNo, hiddenLabelPaye)().row(id)(changeUrl, userAnswers)
+
+      override def updateRow(id: CompanyPayeId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+        userAnswers.get(id) match {
+          case Some(Paye.Yes(paye)) => userAnswers.get(IsTrusteeNewId(id.index)) match {
+            case Some(true) => Seq(AnswerRow("messages__common__cya__paye", Seq(paye), answerIsMessageKey = false,
+              Some(Link("site.change", changeUrl, Some(hiddenLabelPaye)))))
+            case _  => Seq(AnswerRow("messages__common__cya__paye", Seq(paye), answerIsMessageKey = false, None))
+          }
+          case Some(Paye.No) => Seq(AnswerRow("messages__common__cya__paye", Seq("site.not_entered"), answerIsMessageKey = true,
+            Some(Link("site.add", changeUrl, Some(s"${hiddenLabelPaye}_add")))))
+          case _ => Seq.empty[AnswerRow]
+        }
+    }
+  }
 }
 
 

@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package identifiers.register.establishers.company
+package identifiers.register.trustees.company
 
 import base.SpecBase
-import identifiers.register.establishers.IsEstablisherNewId
-import models.UniqueTaxReference._
+import identifiers.register.trustees.IsTrusteeNewId
+import models.Vat._
 import models._
 import models.requests.DataRequest
 import play.api.mvc.AnyContent
@@ -28,50 +28,50 @@ import utils.UserAnswers
 import utils.checkyouranswers.Ops._
 import viewmodels.AnswerRow
 
-class CompanyUniqueTaxReferenceIdSpec extends SpecBase {
+class CompanyVatIdSpec extends SpecBase {
 
   "cya" when {
     
     val onwardUrl = "onwardUrl"
 
-    def answers = UserAnswers().set(CompanyUniqueTaxReferenceId(0))(Yes("utr")).asOpt.get
+    def answers = UserAnswers().set(CompanyVatId(0))(Yes("vat")).asOpt.get
 
     "in normal mode" must {
 
       "return answers rows with change links" in {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
         implicit val userAnswers = request.userAnswers
-        CompanyUniqueTaxReferenceId(0).row(onwardUrl, NormalMode) must equal(Seq(
-          AnswerRow("messages__company__cya__utr_yes_no",List("Yes"),false,
-            Some(Link("site.change",onwardUrl,Some("messages__visuallyhidden__establisher__utr_yes_no")))),
-          AnswerRow("messages__company__cya__utr",List("utr"),false,
-            Some(Link("site.change",onwardUrl,Some("messages__visuallyhidden__establisher__utr"))))
+        CompanyVatId(0).row(onwardUrl, NormalMode) must equal(Seq(
+          AnswerRow("messages__checkYourAnswers__trustees__company__vat",List("site.yes"),true,
+            Some(Link("site.change",onwardUrl,Some("messages__visuallyhidden__trustee__vat_yes_no")))),
+          AnswerRow("messages__common__cya__vat",List("vat"),false,Some(Link("site.change",onwardUrl,
+            Some("messages__visuallyhidden__trustee__vat_number"))))
         ))
       }
     }
 
-    "in update mode for new establisher - company utr" must {
+    "in update mode for new trustee - company vat" must {
 
-      def answersNew: UserAnswers = answers.set(IsEstablisherNewId(0))(true).asOpt.value
+      def answersNew: UserAnswers = answers.set(IsTrusteeNewId(0))(true).asOpt.value
 
       "return answers rows with change links" in {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answersNew, PsaId("A0000000"))
         implicit val userAnswers = request.userAnswers
-        CompanyUniqueTaxReferenceId(0).row(onwardUrl, UpdateMode) must equal(Seq(
-          AnswerRow("messages__company__cya__utr",List("utr"),false,
-            Some(Link("site.change",onwardUrl,Some("messages__visuallyhidden__establisher__utr"))))
+        CompanyVatId(0).row(onwardUrl, UpdateMode) must equal(Seq(
+          AnswerRow("messages__common__cya__vat",List("vat"),false,Some(Link("site.change",onwardUrl,
+            Some("messages__visuallyhidden__trustee__vat_number"))))
         ))
       }
     }
 
-    "in update mode for existing establisher - company utr" must {
+    "in update mode for existing trustee - company vat" must {
 
       "return answers rows without change links" in {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
         implicit val userAnswers = request.userAnswers
 
-        CompanyUniqueTaxReferenceId(0).row(onwardUrl, UpdateMode) must equal(Seq(
-          AnswerRow("messages__company__cya__utr",List("utr"),false,None)
+        CompanyVatId(0).row(onwardUrl, UpdateMode) must equal(Seq(
+          AnswerRow("messages__common__cya__vat",List("vat"),false,None)
         ))
       }
     }

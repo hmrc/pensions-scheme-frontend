@@ -48,6 +48,8 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requiredData).async {
     implicit request =>
 
+      implicit val userAnswers = request.userAnswers
+
       val companyDetailsRow = CompanyDetailsId(index).row(routes.CompanyDetailsController.onPageLoad(CheckMode, index, None).url)
 
       val companyVatRow = CompanyVatId(index).row(routes.CompanyVatController.onPageLoad(CheckMode, index, None).url)

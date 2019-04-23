@@ -33,7 +33,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase {
   val firstIndex = Index(0)
   val partnershipName = "PartnershipName"
   val schemeName = "testScheme"
-  val partnershipAnswers = UserAnswers()
+  implicit val partnershipAnswers = UserAnswers()
     .set(PartnershipDetailsId(firstIndex))(PartnershipDetails(partnershipName))
     .flatMap(_.set(PartnershipVatId(firstIndex))(Vat.No))
     .flatMap(_.set(PartnershipUniqueTaxReferenceId(firstIndex))(UniqueTaxReference.Yes("0987654321")))

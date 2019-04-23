@@ -50,7 +50,8 @@ object CompanyUniqueTaxReferenceId {
         userAnswers.get(id) match {
           case Some(UniqueTaxReference.Yes(utr)) =>
             userAnswers.get(IsEstablisherNewId(id.index)) match {
-              case Some(true) => UniqueTaxReferenceCYA(label, utrLabel, reasonLabel, changeHasUtr, changeUtr, changeNoUtr)().row(id)(changeUrl, userAnswers)
+              case Some(true) => Seq(AnswerRow(utrLabel, Seq(utr), answerIsMessageKey = false,
+                Some(Link("site.change", changeUrl, Some(changeUtr)))))
               case _  => Seq(AnswerRow(utrLabel, Seq(utr), answerIsMessageKey = false, None))
             }
           case Some(UniqueTaxReference.No(_)) =>userAnswers.get(IsEstablisherNewId(id.index)) match {

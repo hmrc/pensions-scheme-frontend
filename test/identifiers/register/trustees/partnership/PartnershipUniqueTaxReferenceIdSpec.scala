@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package identifiers.register.establishers.company
+package identifiers.register.trustees.partnership
 
 import base.SpecBase
-import identifiers.register.establishers.IsEstablisherNewId
+import identifiers.register.trustees.IsTrusteeNewId
 import models.UniqueTaxReference._
 import models._
 import models.requests.DataRequest
@@ -28,50 +28,50 @@ import utils.UserAnswers
 import utils.checkyouranswers.Ops._
 import viewmodels.AnswerRow
 
-class CompanyUniqueTaxReferenceIdSpec extends SpecBase {
+class PartnershipUniqueTaxReferenceIdSpec extends SpecBase {
 
   "cya" when {
     
     val onwardUrl = "onwardUrl"
 
-    def answers = UserAnswers().set(CompanyUniqueTaxReferenceId(0))(Yes("utr")).asOpt.get
+    def answers = UserAnswers().set(PartnershipUniqueTaxReferenceId(0))(Yes("utr")).asOpt.get
 
     "in normal mode" must {
 
       "return answers rows with change links" in {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
         implicit val userAnswers = request.userAnswers
-        CompanyUniqueTaxReferenceId(0).row(onwardUrl, NormalMode) must equal(Seq(
-          AnswerRow("messages__company__cya__utr_yes_no",List("Yes"),false,
-            Some(Link("site.change",onwardUrl,Some("messages__visuallyhidden__establisher__utr_yes_no")))),
-          AnswerRow("messages__company__cya__utr",List("utr"),false,
-            Some(Link("site.change",onwardUrl,Some("messages__visuallyhidden__establisher__utr"))))
+        PartnershipUniqueTaxReferenceId(0).row(onwardUrl, NormalMode) must equal(Seq(
+          AnswerRow("messages__partnership__checkYourAnswers__utr",List("Yes"),false,
+            Some(Link("site.change",onwardUrl,Some("messages__visuallyhidden__partnership__utr")))),
+          AnswerRow("messages__trustee_individual_utr_cya_label",List("utr"),false,Some(Link("site.change",onwardUrl,
+            Some("messages__visuallyhidden__partnership__utr_no"))))
         ))
       }
     }
 
-    "in update mode for new establisher - company utr" must {
+    "in update mode for new trustee - partnership utr" must {
 
-      def answersNew: UserAnswers = answers.set(IsEstablisherNewId(0))(true).asOpt.value
+      def answersNew: UserAnswers = answers.set(IsTrusteeNewId(0))(true).asOpt.value
 
       "return answers rows with change links" in {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answersNew, PsaId("A0000000"))
         implicit val userAnswers = request.userAnswers
-        CompanyUniqueTaxReferenceId(0).row(onwardUrl, UpdateMode) must equal(Seq(
-          AnswerRow("messages__company__cya__utr",List("utr"),false,
-            Some(Link("site.change",onwardUrl,Some("messages__visuallyhidden__establisher__utr"))))
+        PartnershipUniqueTaxReferenceId(0).row(onwardUrl, UpdateMode) must equal(Seq(
+          AnswerRow("messages__trustee_individual_utr_cya_label",List("utr"),false,Some(Link("site.change",onwardUrl,
+            Some("messages__visuallyhidden__partnership__utr"))))
         ))
       }
     }
 
-    "in update mode for existing establisher - company utr" must {
+    "in update mode for existing trustee - partnership utr" must {
 
       "return answers rows without change links" in {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
         implicit val userAnswers = request.userAnswers
 
-        CompanyUniqueTaxReferenceId(0).row(onwardUrl, UpdateMode) must equal(Seq(
-          AnswerRow("messages__company__cya__utr",List("utr"),false,None)
+        PartnershipUniqueTaxReferenceId(0).row(onwardUrl, UpdateMode) must equal(Seq(
+          AnswerRow("messages__trustee_individual_utr_cya_label",List("utr"),false,None)
         ))
       }
     }
