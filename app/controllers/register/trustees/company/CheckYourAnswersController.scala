@@ -19,7 +19,7 @@ package controllers.register.trustees.company
 import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions.{AuthAction, DataRequiredAction, DataRetrievalAction}
-import identifiers.register.trustees.IsTrusteeCompleteId
+import identifiers.register.trustees.{IsTrusteeCompleteId, IsTrusteeNewId}
 import identifiers.register.trustees.company._
 import javax.inject.Inject
 import models.{CheckMode, Index, Mode, NormalMode}
@@ -95,7 +95,7 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
         Seq(companyDetailsSection, contactDetailsSection),
         routes.CheckYourAnswersController.onSubmit(mode, index, None),
         existingSchemeName,
-        viewOnly = request.viewOnly
+        viewOnly = request.viewOnly && userAnswers.get(IsTrusteeNewId(index)).getOrElse(false)
       )))
   }
 

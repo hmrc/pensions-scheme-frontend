@@ -19,6 +19,7 @@ package controllers.register.trustees.partnership
 import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions.{AuthAction, DataRequiredAction, DataRetrievalAction}
+import identifiers.register.trustees.IsTrusteeNewId
 import identifiers.register.trustees.partnership._
 import javax.inject.{Inject, Singleton}
 import models.{CheckMode, Index, Mode, NormalMode}
@@ -74,7 +75,7 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
         Seq(partnershipDetails, partnershipContactDetails),
         routes.CheckYourAnswersController.onSubmit(mode, index, srn),
         existingSchemeName,
-        viewOnly = request.viewOnly
+        viewOnly = request.viewOnly && userAnswers.get(IsTrusteeNewId(index)).getOrElse(false)
       )))
   }
 
