@@ -24,7 +24,7 @@ import views.ViewSpecBase
 trait CheckYourAnswersBehaviours extends ViewSpecBase {
 
   // scalastyle:off method.length
-  def checkYourAnswersPage(view: (Seq[Section], Mode) => HtmlFormat.Appendable, viewOnly: Boolean): Unit = {
+  def checkYourAnswersPage(view: (Seq[Section], Mode, Boolean) => HtmlFormat.Appendable): Unit = {
     "behave like a Check your Answers page" when {
       "there are answers to render" must {
         "correctly display an AnswerSection in NormalMode" in {
@@ -42,7 +42,7 @@ trait CheckYourAnswersBehaviours extends ViewSpecBase {
             )
           )
 
-          val doc = asDocument(view(Seq(section), NormalMode))
+          val doc = asDocument(view(Seq(section), NormalMode, false))
 
           assertRenderedByIdWithText(doc, "cya-0-heading", headingKey)
           assertRenderedByIdWithText(doc, "cya-0-0-question", answerRow.label)
@@ -64,11 +64,30 @@ trait CheckYourAnswersBehaviours extends ViewSpecBase {
             )
           )
 
-          val doc = asDocument(view(Seq(section), UpdateMode))
+          val doc = asDocument(view(Seq(section), UpdateMode, true))
 
           assertRenderedByIdWithText(doc, "cya-0-0-0-answer", "Day")
           assertNotRenderedById(doc, "cya-0-0-change")
-          if(viewOnly) assertNotRenderedById(doc, "submit") else assertRenderedById(doc, "submit")
+          assertNotRenderedById(doc, "submit")
+        }
+
+        "correctly display an submit in UpdateMode if new" in {
+          val headingKey = "test-headingKey"
+
+          val answerRow = AnswerRow("test-label", Seq("date.day"), answerIsMessageKey = true, None)
+
+          val section = AnswerSection(
+            Some(headingKey),
+            Seq(
+              answerRow
+            )
+          )
+
+          val doc = asDocument(view(Seq(section), UpdateMode, false))
+
+          assertRenderedByIdWithText(doc, "cya-0-0-0-answer", "Day")
+          assertNotRenderedById(doc, "cya-0-0-change")
+          assertRenderedById(doc, "submit")
         }
 
         "correctly display a RepeaterAnswerSection" in {
@@ -87,7 +106,7 @@ trait CheckYourAnswersBehaviours extends ViewSpecBase {
 
           val section = RepeaterAnswerSection("test-headingKey", relevanceRow, Seq(answerRow), "test-add-link-key", "test-add-link-url")
 
-          val doc = asDocument(view(Seq(section), NormalMode))
+          val doc = asDocument(view(Seq(section), NormalMode, false))
 
           assertRenderedByIdWithText(doc, "cya-0-heading", section.headingKey)
 
@@ -112,7 +131,7 @@ trait CheckYourAnswersBehaviours extends ViewSpecBase {
             )
           )
 
-          val doc = asDocument(view(Seq(section, section), NormalMode))
+          val doc = asDocument(view(Seq(section, section), NormalMode, false))
 
           assertRenderedById(doc, "cya-0-heading")
           assertRenderedById(doc, "cya-1-heading")

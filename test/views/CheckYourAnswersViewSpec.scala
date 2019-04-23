@@ -53,14 +53,14 @@ class CheckYourAnswersViewSpec extends CheckYourAnswersBehaviours with ViewBehav
       srn
     )(fakeRequest, messages)
 
-  def createViewWithData: (Seq[Section], Mode) => HtmlFormat.Appendable = (sections, mode) =>
+  def createViewWithData: (Seq[Section], Mode, Boolean) => HtmlFormat.Appendable = (sections, mode, viewOnly) =>
     check_your_answers(
       frontendAppConfig,
       sections,
       routes.IndexController.onPageLoad(),
       None,
       mode = mode,
-      viewOnly = false
+      viewOnly = viewOnly
     )(fakeRequest, messages)
 
   "check_your_answers view" must {
@@ -78,6 +78,6 @@ class CheckYourAnswersViewSpec extends CheckYourAnswersBehaviours with ViewBehav
     behave like pageWithReturnLink(createView(returnOverview = false, UpdateMode, false, Some(srn)),
       controllers.routes.PSASchemeDetailsController.onPageLoad(srn).url)
 
-    behave like checkYourAnswersPage(createViewWithData, false)
+    behave like checkYourAnswersPage(createViewWithData)
   }
 }
