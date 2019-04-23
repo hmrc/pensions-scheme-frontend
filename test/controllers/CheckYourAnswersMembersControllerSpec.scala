@@ -16,24 +16,16 @@
 
 package controllers
 
-import connectors.{PensionSchemeVarianceLockConnector, UpdateSchemeCacheConnector, UserAnswersCacheConnector}
 import controllers.actions._
 import identifiers.IsAboutMembersCompleteId
-import models.requests.{AuthenticatedRequest, OptionalDataRequest}
 import models.{CheckMode, Link, Members, NormalMode}
 import org.scalatest.OptionValues
 import play.api.test.Helpers._
 import utils.{FakeSectionComplete, UserAnswers}
 import viewmodels.{AnswerRow, AnswerSection}
 import views.html.check_your_answers
-import org.mockito.Matchers.any
-import org.mockito.Mockito._
-import org.scalatest.mockito.MockitoSugar
-import play.api.mvc.{ActionFilter, Result}
 
-import scala.concurrent.Future
-
-class CheckYourAnswersMembersControllerSpec extends ControllerSpecBase with OptionValues with MockitoSugar{
+class CheckYourAnswersMembersControllerSpec extends ControllerSpecBase with OptionValues {
 
   import CheckYourAnswersMembersControllerSpec._
 
@@ -60,23 +52,11 @@ class CheckYourAnswersMembersControllerSpec extends ControllerSpecBase with Opti
   }
 }
 
-object CheckYourAnswersMembersControllerSpec extends ControllerSpecBase with MockitoSugar {
+object CheckYourAnswersMembersControllerSpec extends ControllerSpecBase {
 
   private val schemeName = "Test Scheme Name"
   private val postUrl = routes.CheckYourAnswersMembersController.onSubmit(NormalMode, None)
   private val data = UserAnswers().schemeName(schemeName).currentMembers(Members.One).futureMembers(Members.None).dataRetrievalAction
-
-  private val allowAccess: AllowAccessForNonSuspendedUsersActionProvider = new AllowAccessForNonSuspendedUsersActionProvider {
-
-    val lockConnector: PensionSchemeVarianceLockConnector = mock[PensionSchemeVarianceLockConnector]
-    val schemeDetailsReadOnlyCacheConnector: UserAnswersCacheConnector = mock[UserAnswersCacheConnector]
-    val updateConnector: UpdateSchemeCacheConnector = mock[UpdateSchemeCacheConnector]
-    val optionSRN: Option[String] = None
-
-    override def apply(srn: Option[String]): AllowAccessForNonSuspendedUsersAction = new AllowAccessForNonSuspendedUsersAction(srn) {
-      override protected def filter[A](request: OptionalDataRequest[A]): Future[Option[Result]] = Future.successful(None)
-    }
-  }
 
   private def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): CheckYourAnswersMembersController =
     new CheckYourAnswersMembersController(
@@ -85,8 +65,7 @@ object CheckYourAnswersMembersControllerSpec extends ControllerSpecBase with Moc
       FakeAuthAction,
       dataRetrievalAction,
       new DataRequiredActionImpl,
-      FakeSectionComplete,
-      allowAccess
+      FakeSectionComplete
     )
 
   private val membersSection = AnswerSection(

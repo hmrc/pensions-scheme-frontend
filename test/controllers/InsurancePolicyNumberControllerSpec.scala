@@ -17,20 +17,23 @@
 package controllers
 
 import base.SpecBase
-import connectors.{FakeUserAnswersCacheConnector, UserAnswersCacheConnector}
-import controllers.actions.{AuthAction, DataRequiredActionImpl, DataRetrievalAction, FakeAuthAction}
+import connectors.{FakeUserAnswersCacheConnector, PensionSchemeVarianceLockConnector, UpdateSchemeCacheConnector, UserAnswersCacheConnector}
+import controllers.CheckYourAnswersMembersControllerSpec.mock
+import controllers.actions._
 import controllers.behaviours.ControllerWithQuestionPageBehaviours
 import forms.InsurancePolicyNumberFormProvider
 import identifiers.InsurancePolicyNumberId
 import models.NormalMode
+import models.requests.OptionalDataRequest
 import play.api.data.Form
-import play.api.mvc.{Action, AnyContent, AnyContentAsFormUrlEncoded}
+import play.api.mvc.{Action, AnyContent, AnyContentAsFormUrlEncoded, Result}
 import play.api.test.FakeRequest
 import services.{FakeUserAnswersService, UserAnswersService}
 import utils.{FakeNavigator, Navigator, UserAnswers}
 import views.html.insurancePolicyNumber
 
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 
 class InsurancePolicyNumberControllerSpec extends ControllerWithQuestionPageBehaviours {
 
@@ -68,6 +71,7 @@ class InsurancePolicyNumberControllerSpec extends ControllerWithQuestionPageBeha
     )
   }
 }
+
 object InsurancePolicyNumberControllerSpec {
 
   val policyNumber = "test policy number"
@@ -85,6 +89,12 @@ object InsurancePolicyNumberControllerSpec {
   private def viewAsString(base: SpecBase)(form: Form[_] = form): Form[_] => String = form =>
     insurancePolicyNumber(base.frontendAppConfig, form, NormalMode, companyName, None, postUrl)(base.fakeRequest, base.messages).toString()
 
+  private val allowAccess: AllowAccessForNonSuspendedUsersActionProvider = new AllowAccessForNonSuspendedUsersActionProvider {
+    override def apply(srn: Option[String]): AllowAccessForNonSuspendedUsersAction = new AllowAccessForNonSuspendedUsersAction(srn) {
+      override protected def filter[A](request: OptionalDataRequest[A]): Future[Option[Result]] = Future.successful(None)
+    }
+  }
+
   private def controller(base: ControllerSpecBase)(
     dataRetrievalAction: DataRetrievalAction = base.getEmptyData,
     authAction: AuthAction = FakeAuthAction,
@@ -99,7 +109,8 @@ object InsurancePolicyNumberControllerSpec {
       authAction,
       dataRetrievalAction,
       new DataRequiredActionImpl(),
-      formProvider
+      formProvider,
+      allowAccess
     )
 
   private def onPageLoadAction(base: ControllerSpecBase)(dataRetrievalAction: DataRetrievalAction, authAction: AuthAction): Action[AnyContent] =
@@ -112,6 +123,3 @@ object InsurancePolicyNumberControllerSpec {
   private def saveAction(base: ControllerSpecBase)(cache: UserAnswersService): Action[AnyContent] =
     controller(base)(cache = cache).onSubmit(NormalMode, None)
 }
-
-
-
