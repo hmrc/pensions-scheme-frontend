@@ -44,7 +44,7 @@ class PartnershipUniqueTaxReferenceIdSpec extends SpecBase {
         PartnershipUniqueTaxReferenceID(0).row(onwardUrl, NormalMode) must equal(Seq(
           AnswerRow("messages__partnership__checkYourAnswers__utr",List("Yes"),false,
             Some(Link("site.change",onwardUrl,Some("messages__visuallyhidden__partnership__utr")))),
-          AnswerRow("messages__visuallyhidden__partnership__utr_yes_no",List("utr"),false,Some(Link("site.change",onwardUrl,
+          AnswerRow("messages__establisher_individual_utr_cya_label",List("utr"),false,Some(Link("site.change",onwardUrl,
             Some("messages__visuallyhidden__partnership__utr_no"))))
         ))
       }
@@ -58,10 +58,8 @@ class PartnershipUniqueTaxReferenceIdSpec extends SpecBase {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answersNew, PsaId("A0000000"))
         implicit val userAnswers = request.userAnswers
         PartnershipUniqueTaxReferenceID(0).row(onwardUrl, UpdateMode) must equal(Seq(
-          AnswerRow("messages__partnership__checkYourAnswers__utr",List("Yes"),false,
-            Some(Link("site.change",onwardUrl,Some("messages__visuallyhidden__partnership__utr")))),
-          AnswerRow("messages__visuallyhidden__partnership__utr_yes_no",List("utr"),false,Some(Link("site.change",onwardUrl,
-            Some("messages__visuallyhidden__partnership__utr_no"))))
+          AnswerRow("messages__establisher_individual_utr_cya_label",List("utr"),false,Some(Link("site.change",onwardUrl,
+            Some("messages__visuallyhidden__partnership__utr"))))
         ))
       }
     }
@@ -73,7 +71,7 @@ class PartnershipUniqueTaxReferenceIdSpec extends SpecBase {
         implicit val userAnswers = request.userAnswers
 
         PartnershipUniqueTaxReferenceID(0).row(onwardUrl, UpdateMode) must equal(Seq(
-          AnswerRow("messages__visuallyhidden__partnership__utr_yes_no",List("utr"),false,None)
+          AnswerRow("messages__establisher_individual_utr_cya_label",List("utr"),false,None)
         ))
       }
     }

@@ -24,7 +24,7 @@ import views.ViewSpecBase
 trait CheckYourAnswersBehaviours extends ViewSpecBase {
 
   // scalastyle:off method.length
-  def checkYourAnswersPage(view: (Seq[Section], Mode) => HtmlFormat.Appendable): Unit = {
+  def checkYourAnswersPage(view: (Seq[Section], Mode) => HtmlFormat.Appendable, viewOnly: Boolean): Unit = {
     "behave like a Check your Answers page" when {
       "there are answers to render" must {
         "correctly display an AnswerSection in NormalMode" in {
@@ -68,7 +68,7 @@ trait CheckYourAnswersBehaviours extends ViewSpecBase {
 
           assertRenderedByIdWithText(doc, "cya-0-0-0-answer", "Day")
           assertNotRenderedById(doc, "cya-0-0-change")
-          assertNotRenderedById(doc, "submit")
+          if(viewOnly) assertNotRenderedById(doc, "submit") else assertRenderedById(doc, "submit")
         }
 
         "correctly display a RepeaterAnswerSection" in {

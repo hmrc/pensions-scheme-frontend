@@ -78,6 +78,6 @@ class CheckYourAnswersViewSpec extends CheckYourAnswersBehaviours with ViewBehav
     behave like pageWithReturnLink(createView(returnOverview = false, UpdateMode, false, Some(srn)),
       controllers.routes.PSASchemeDetailsController.onPageLoad(srn).url)
 
-    behave like checkYourAnswersPage(createViewWithData)
+    behave like checkYourAnswersPage(createViewWithData, false)
   }
 }

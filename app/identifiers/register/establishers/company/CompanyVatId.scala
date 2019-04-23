@@ -46,14 +46,12 @@ object CompanyVatId {
       override def updateRow(id: CompanyVatId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
         userAnswers.get(id) match {
           case Some(Vat.Yes(vat)) => userAnswers.get(IsEstablisherNewId(id.index)) match {
-            case Some(true) => VatCYA(Some(labelYesNo), hiddenLabelYesNo, hiddenLabelVat)().row(id)(changeUrl, userAnswers)
+            case Some(true) =>  Seq(AnswerRow("messages__common__cya__vat", Seq(vat), answerIsMessageKey = false,
+              Some(Link("site.change", changeUrl, Some(hiddenLabelVat)))))
             case _  => Seq(AnswerRow("messages__common__cya__vat", Seq(vat), answerIsMessageKey = false, None))
           }
-          case Some(Vat.No) => userAnswers.get(IsEstablisherNewId(id.index)) match {
-            case Some(true) => VatCYA(Some(labelYesNo), hiddenLabelYesNo, hiddenLabelVat)().row(id)(changeUrl, userAnswers)
-            case _  => Seq(AnswerRow("messages__common__cya__vat", Seq("site.not_entered"), answerIsMessageKey = true,
-              Some(Link("site.add", changeUrl, Some(s"${hiddenLabelVat}_add")))))
-          }
+          case Some(Vat.No) => Seq(AnswerRow("messages__common__cya__vat", Seq("site.not_entered"), answerIsMessageKey = true,
+            Some(Link("site.add", changeUrl, Some(s"${hiddenLabelVat}_add")))))
           case _ => Seq.empty[AnswerRow]
         }
     }

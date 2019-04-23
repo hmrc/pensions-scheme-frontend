@@ -23,7 +23,7 @@ import play.api.i18n.Messages
 import play.api.libs.json.JsPath
 import utils.UserAnswers
 import utils.checkyouranswers.{CheckYourAnswers, CompanyDetailsCYA}
-import viewmodels.AnswerRow
+import viewmodels.{AnswerRow, Message}
 
 case class CompanyDetailsId(index: Int) extends TypedIdentifier[CompanyDetails] {
   override def path: JsPath = EstablishersId(index).path \ CompanyDetailsId.toString
@@ -41,7 +41,8 @@ object CompanyDetailsId {
       override def updateRow(id: CompanyDetailsId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
         userAnswers.get(id) match {
           case Some(companyDetails) => userAnswers.get(IsEstablisherNewId(id.index)) match {
-            case Some(true) => CompanyDetailsCYA()().row(id)(changeUrl, userAnswers)
+            case Some(true) => Seq(AnswerRow("messages__common__cya__name", Seq(s"${companyDetails.companyName}"), answerIsMessageKey = false,
+              Some(Link("site.change", changeUrl, Some(Message("messages__visuallyhidden__common__name", companyDetails.companyName))))))
             case _  => Seq(AnswerRow("messages__common__cya__name", Seq(s"${companyDetails.companyName}"), answerIsMessageKey = false, None))
           }
           case _ => Seq.empty[AnswerRow]

@@ -46,14 +46,12 @@ object PartnershipVatId {
       override def updateRow(id: PartnershipVatId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
         userAnswers.get(id) match {
           case Some(Vat.Yes(vat)) => userAnswers.get(IsEstablisherNewId(id.index)) match {
-            case Some(true) => VatCYA(Some(labelYesNo), hiddenLabelYesNo, hiddenLabelVat)().row(id)(changeUrl, userAnswers)
-            case _  => Seq(AnswerRow(labelYesNo, Seq("site.yes"), answerIsMessageKey = true, None))
+            case Some(true) => Seq(AnswerRow("messages__common__cya__vat", Seq("site.yes"), answerIsMessageKey = true,
+              Some(Link("site.change", changeUrl, Some(hiddenLabelYesNo)))))
+            case _  => Seq(AnswerRow("messages__common__cya__vat", Seq("site.yes"), answerIsMessageKey = true, None))
           }
-          case Some(Vat.No) => userAnswers.get(IsEstablisherNewId(id.index)) match {
-            case Some(true) => VatCYA(Some(labelYesNo), hiddenLabelYesNo, hiddenLabelVat)().row(id)(changeUrl, userAnswers)
-            case _  => Seq(AnswerRow("messages__common__cya__vat", Seq("site.not_entered"), answerIsMessageKey = true,
-              Some(Link("site.add", changeUrl, Some(s"${hiddenLabelVat}_add")))))
-          }
+          case Some(Vat.No) => Seq(AnswerRow("messages__common__cya__vat", Seq("site.not_entered"), answerIsMessageKey = true,
+            Some(Link("site.add", changeUrl, Some(s"${hiddenLabelVat}_add")))))
 
           case _ => Seq.empty[AnswerRow]
         }

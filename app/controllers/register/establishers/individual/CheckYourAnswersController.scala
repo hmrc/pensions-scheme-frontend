@@ -19,7 +19,7 @@ package controllers.register.establishers.individual
 import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions.{AuthAction, DataRequiredAction, DataRetrievalAction}
-import identifiers.register.establishers.IsEstablisherCompleteId
+import identifiers.register.establishers.{IsEstablisherCompleteId, IsEstablisherNewId}
 import identifiers.register.establishers.individual._
 import javax.inject.Inject
 import models.{Index, Mode, NormalMode}
@@ -73,7 +73,7 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
       Future.successful(Ok(check_your_answers(
         appConfig, sections, routes.CheckYourAnswersController.onSubmit(mode, index, srn),
         existingSchemeName, mode = mode,
-        viewOnly = request.viewOnly)))
+        viewOnly = request.viewOnly  && userAnswers.get(IsEstablisherNewId(index)).getOrElse(false))))
   }
 
   def onSubmit(mode: Mode,index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requiredData).async {

@@ -58,10 +58,8 @@ class EstablisherNinoIdSpec extends SpecBase {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answersNew, PsaId("A0000000"))
         implicit val userAnswers = request.userAnswers
         EstablisherNinoId(0).row(onwardUrl, UpdateMode) must equal(Seq(
-          AnswerRow("messages__establisher_individual_nino_question_cya_label",List("Yes"),false,
-            Some(Link("site.change",onwardUrl,Some("messages__visuallyhidden__establisher__nino_yes_no")))),
           AnswerRow("messages__common__nino",List("nino"),false,
-            Some(Link("site.change",onwardUrl,Some("messages__visuallyhidden__establisher__nino"))))
+            Some(Link("site.change",onwardUrl,Some("messages__visuallyhidden__establisher__nino_yes_no"))))
         ))
       }
     }
@@ -73,7 +71,6 @@ class EstablisherNinoIdSpec extends SpecBase {
         implicit val userAnswers = request.userAnswers
 
         EstablisherNinoId(0).row(onwardUrl, UpdateMode) must equal(Seq(
-          AnswerRow("messages__establisher_individual_nino_question_cya_label",List("Yes"),false, None),
           AnswerRow("messages__common__nino",List("nino"),false, None)
         ))
       }

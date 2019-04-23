@@ -58,8 +58,6 @@ class PartnershipPayeIdSpec extends SpecBase {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answersNew, PsaId("A0000000"))
         implicit val userAnswers = request.userAnswers
         PartnershipPayeId(0).row(onwardUrl, UpdateMode) must equal(Seq(
-          AnswerRow("messages__partnership__checkYourAnswers__paye",List("site.yes"),true,
-            Some(Link("site.change",onwardUrl,Some("messages__visuallyhidden__partnership__paye_yes_no")))),
           AnswerRow("messages__common__cya__paye",List("paye"),false,Some(Link("site.change",onwardUrl,
             Some("messages__visuallyhidden__partnership__paye_number"))))
         ))
@@ -73,7 +71,7 @@ class PartnershipPayeIdSpec extends SpecBase {
         implicit val userAnswers = request.userAnswers
 
         PartnershipPayeId(0).row(onwardUrl, UpdateMode) must equal(Seq(
-          AnswerRow("messages__partnership__checkYourAnswers__paye",List("paye"),false,None)
+          AnswerRow("messages__common__cya__paye",List("paye"),false,None)
         ))
       }
     }

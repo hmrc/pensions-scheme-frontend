@@ -46,16 +46,13 @@ object EstablisherNinoId {
 
       override def updateRow(id: EstablisherNinoId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
         userAnswers.get(id) match {
-          case Some(Nino.Yes(nino)) => userAnswers.get(IsEstablisherNewId(id.index)) match {
-            case Some(true) => NinoCYA(label, changeHasNino, changeNino, changeNoNino)().row(id)(changeUrl, userAnswers)
-            case _  => Seq(AnswerRow(label, Seq(s"${Nino.Yes}"), answerIsMessageKey = false, None),
-              AnswerRow("messages__common__nino", Seq(nino), answerIsMessageKey = false,None))
+          case Some(Nino.Yes(nino)) =>  userAnswers.get(IsEstablisherNewId(id.index)) match {
+            case Some(true) => Seq(AnswerRow("messages__common__nino", Seq(nino), answerIsMessageKey = false,
+              Some(Link("site.change", changeUrl, Some(changeHasNino)))))
+            case _  => Seq(AnswerRow("messages__common__nino", Seq(nino), answerIsMessageKey = false, None))
           }
-          case Some(Nino.No(_)) => userAnswers.get(IsEstablisherNewId(id.index)) match {
-            case Some(true) => NinoCYA(label, changeHasNino, changeNino, changeNoNino)().row(id)(changeUrl, userAnswers)
-            case _  => Seq(AnswerRow(label, Seq("site.not_entered"), answerIsMessageKey = true,
-              Some(Link("site.add", changeUrl, Some(s"messages__visuallyhidden__establisher__nino_add")))))
-          }
+          case Some(Nino.No(_)) => Seq(AnswerRow("messages__common__nino", Seq("site.not_entered"), answerIsMessageKey = true,
+            Some(Link("site.add", changeUrl, Some(s"messages__visuallyhidden__establisher__nino_add")))))
           case _ => Seq.empty[AnswerRow]
         }
       }

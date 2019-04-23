@@ -19,6 +19,7 @@ package controllers.register.establishers.partnership
 import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions.{AuthAction, DataRequiredAction, DataRetrievalAction}
+import identifiers.register.establishers.IsEstablisherNewId
 import identifiers.register.establishers.partnership._
 import javax.inject.{Inject, Singleton}
 import models.{CheckMode, Index, Mode, NormalMode}
@@ -78,7 +79,7 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
         routes.CheckYourAnswersController.onSubmit(mode, index, srn),
         existingSchemeName,
         mode = mode,
-        viewOnly = request.viewOnly
+        viewOnly = request.viewOnly && userAnswers.get(IsEstablisherNewId(index)).getOrElse(false)
       )))
   }
 
