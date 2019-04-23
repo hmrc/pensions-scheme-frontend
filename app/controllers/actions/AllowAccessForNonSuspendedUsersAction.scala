@@ -41,6 +41,8 @@ class AllowAccessForNonSuspendedUsersAction(
   override protected def filter[A](request: AuthenticatedRequest[A]): Future[Option[Result]] = {
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
 
+    def errorOptionResult = Option(Ok(controllers.routes.PSASchemeDetailsController.onPageLoad(srn)))
+
     lockConnector.isLockByPsaIdOrSchemeId(request.psaId.id, srn).flatMap { optionLock =>
       val futureJsValue = optionLock match {
         case Some(VarianceLock) =>
@@ -49,32 +51,32 @@ class AllowAccessForNonSuspendedUsersAction(
       }
 
       futureJsValue.map {
-        case None => Some(Ok(controllers.routes.PSASchemeDetailsController.onPageLoad(srn)))
+        case None => errorOptionResult
         case Some(ua) =>
           UserAnswers(ua).get(MinimalPsaDetailsId) match {
-            case None => Some(Ok(controllers.routes.PSASchemeDetailsController.onPageLoad(srn)))
+            case None => errorOptionResult
             case Some(md) =>
               if (md.isPsaSuspended) {
-                Some(Ok(controllers.routes.PSASchemeDetailsController.onPageLoad(srn)))
+                Some(Ok(controllers.register.routes.CannotMakeChangesController.onPageLoad(srn)))
               } else {
-                Some(Ok(controllers.routes.PSASchemeDetailsController.onPageLoad(srn)))
+                None
               }
           }
       }
     }
   }
-
-  class AllowAccessForNonSuspendedUsersActionProviderImpl @Inject()(lockConnector: PensionSchemeVarianceLockConnector,
-                                                                    @SchemeDetailsReadOnly schemeDetailsReadOnlyCacheConnector: UserAnswersCacheConnector,
-                                                                    updateConnector: UpdateSchemeCacheConnector)
-    extends AllowAccessForNonSuspendedUsersActionProvider {
-    def apply(srn: String): AllowAccessForNonSuspendedUsersAction = new AllowAccessForNonSuspendedUsersAction(lockConnector,
-      schemeDetailsReadOnlyCacheConnector,
-      updateConnector, srn)
-  }
-
-  trait AllowAccessForNonSuspendedUsersActionProvider {
-    def apply(srn: String): AllowAccessForNonSuspendedUsersAction
-  }
-
 }
+
+class AllowAccessForNonSuspendedUsersActionProviderImpl @Inject()(lockConnector: PensionSchemeVarianceLockConnector,
+                                                                  @SchemeDetailsReadOnly schemeDetailsReadOnlyCacheConnector: UserAnswersCacheConnector,
+                                                                  updateConnector: UpdateSchemeCacheConnector)
+  extends AllowAccessForNonSuspendedUsersActionProvider {
+  def apply(srn: String): AllowAccessForNonSuspendedUsersAction = new AllowAccessForNonSuspendedUsersAction(lockConnector,
+    schemeDetailsReadOnlyCacheConnector,
+    updateConnector, srn)
+}
+
+trait AllowAccessForNonSuspendedUsersActionProvider {
+  def apply(srn: String): AllowAccessForNonSuspendedUsersAction
+}
+
