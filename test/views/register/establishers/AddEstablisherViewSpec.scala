@@ -56,10 +56,11 @@ class AddEstablisherViewSpec extends QuestionViewBehaviours[Option[Boolean]] wit
       .asOpt
       .value
 
-  private val johnDoe = EstablisherIndividualEntity(EstablisherDetailsId(0), "John Doe", false, false, true)
-  private val testCompany = EstablisherCompanyEntity(CompanyDetailsId(1), "Establisher Company", false, true, true)
+  private val johnDoe = EstablisherIndividualEntity(EstablisherDetailsId(0), "John Doe", false, false, true, 2)
+  private val testCompany = EstablisherCompanyEntity(CompanyDetailsId(1), "Establisher Company", false, true, true, 2)
 
   private val establishers = Seq(johnDoe, testCompany)
+  private val establisher = Seq(johnDoe)
 
   val form: Form[Option[Boolean]] = new AddEstablisherFormProvider()(establishers)
 
@@ -91,6 +92,10 @@ class AddEstablisherViewSpec extends QuestionViewBehaviours[Option[Boolean]] wit
     }
 
     behave like entityList(createView(), createView(establishers), establishers, frontendAppConfig)
+
+    behave like entityListWithMultipleRecords(createView(), createView(establishers), establishers, frontendAppConfig)
+
+    behave like entityListWithSingleRecord(createView(), createView(establisher), establisher, frontendAppConfig)
 
     "display all the partially added establisher names with yes/No buttons" in {
       val doc = asDocument(createView(establishers)())
