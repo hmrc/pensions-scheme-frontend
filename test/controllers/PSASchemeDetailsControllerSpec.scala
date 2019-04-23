@@ -147,8 +147,9 @@ class PSASchemeDetailsControllerSpec extends ControllerSpecBase {
 
 
 
-  "SchemeDetailsController when isVariationsEnabled toggle switched on and data in user answers but get min details returns something different" must {
-    "where no scheme is currently locked return OK, the correct view for a GET and verify " +
+  "SchemeDetailsController when isVariationsEnabled toggle switched on and data in user answers" must {
+    "where no scheme is currently locked and get min details returns something different from what's in user answers " +
+      "return the correct view for a GET and verify " +
       "that lock is checked and view cache only is updated with correct json" in {
       resetLockAndCacheMocks()
       val userAnswersResponse = UserAnswers(Json.obj(
