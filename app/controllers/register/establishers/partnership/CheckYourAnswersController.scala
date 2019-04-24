@@ -19,6 +19,7 @@ package controllers.register.establishers.partnership
 import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions.{AuthAction, DataRequiredAction, DataRetrievalAction}
+import identifiers.register.establishers.IsEstablisherNewId
 import identifiers.register.establishers.partnership._
 import javax.inject.{Inject, Singleton}
 import models.{Index, Mode, NormalMode}
@@ -49,24 +50,27 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requiredData).async {
     implicit request =>
+
+      implicit val userAnswers = request.userAnswers
+
       val partnershipDetails = AnswerSection(
         Some("messages__partnership__checkYourAnswers__partnership_details"),
         Seq(
-          PartnershipDetailsId(index).row(routes.PartnershipDetailsController.onPageLoad(checkMode(mode), index, None).url, mode),
-          PartnershipVatId(index).row(routes.PartnershipVatController.onPageLoad(checkMode(mode), index, None).url, mode),
-          PartnershipPayeId(index).row(routes.PartnershipPayeController.onPageLoad(checkMode(mode), index, None).url, mode),
-          PartnershipUniqueTaxReferenceID(index).row(routes.PartnershipUniqueTaxReferenceController.onPageLoad(checkMode(mode), index, None).url, mode),
-          IsPartnershipDormantId(index).row(routes.IsPartnershipDormantController.onPageLoad(checkMode(mode), index, None).url, mode)
+          PartnershipDetailsId(index).row(routes.PartnershipDetailsController.onPageLoad(checkMode(mode), index, srn).url, mode),
+          PartnershipVatId(index).row(routes.PartnershipVatController.onPageLoad(checkMode(mode), index, srn).url, mode),
+          PartnershipPayeId(index).row(routes.PartnershipPayeController.onPageLoad(checkMode(mode), index, srn).url, mode),
+          PartnershipUniqueTaxReferenceID(index).row(routes.PartnershipUniqueTaxReferenceController.onPageLoad(checkMode(mode), index, srn).url, mode),
+          IsPartnershipDormantId(index).row(routes.IsPartnershipDormantController.onPageLoad(checkMode(mode), index, srn).url, mode)
         ).flatten
       )
 
       val partnershipContactDetails = AnswerSection(
         Some("messages__partnership__checkYourAnswers__partnership_contact_details"),
         Seq(
-          PartnershipAddressId(index).row(routes.PartnershipAddressController.onPageLoad(checkMode(mode), index, None).url, mode),
-          PartnershipAddressYearsId(index).row(routes.PartnershipAddressYearsController.onPageLoad(checkMode(mode), index, None).url, mode),
-          PartnershipPreviousAddressId(index).row(routes.PartnershipPreviousAddressController.onPageLoad(checkMode(mode), index, None).url, mode),
-          PartnershipContactDetailsId(index).row(routes.PartnershipContactDetailsController.onPageLoad(checkMode(mode), index, None).url, mode)
+          PartnershipAddressId(index).row(routes.PartnershipAddressController.onPageLoad(checkMode(mode), index, srn).url, mode),
+          PartnershipAddressYearsId(index).row(routes.PartnershipAddressYearsController.onPageLoad(checkMode(mode), index, srn).url, mode),
+          PartnershipPreviousAddressId(index).row(routes.PartnershipPreviousAddressController.onPageLoad(checkMode(mode), index, srn).url, mode),
+          PartnershipContactDetailsId(index).row(routes.PartnershipContactDetailsController.onPageLoad(checkMode(mode), index, srn).url, mode)
         ).flatten
       )
 
@@ -76,7 +80,7 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
         routes.CheckYourAnswersController.onSubmit(mode, index, srn),
         existingSchemeName,
         mode = mode,
-        viewOnly = request.viewOnly
+        viewOnly = request.viewOnly && userAnswers.get(IsEstablisherNewId(index)).getOrElse(false)
       )))
   }
 

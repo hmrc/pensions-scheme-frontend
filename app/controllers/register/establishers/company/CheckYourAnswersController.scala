@@ -19,6 +19,7 @@ package controllers.register.establishers.company
 import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions._
+import identifiers.register.establishers.IsEstablisherNewId
 import identifiers.register.establishers.company._
 import javax.inject.Inject
 import models.{Index, Mode, NormalMode}
@@ -49,6 +50,9 @@ class CheckYourAnswersController @Inject()(
 
   def onPageLoad(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
+
+      implicit val userAnswers = request.userAnswers
+
       val companyDetails = AnswerSection(
         Some("messages__common__company_details__title"),
         CompanyDetailsId(index).row(routes.CompanyDetailsController.onPageLoad(checkMode(mode), srn, index).url, mode) ++
@@ -73,7 +77,7 @@ class CheckYourAnswersController @Inject()(
         routes.CheckYourAnswersController.onSubmit(mode, srn, index),
         existingSchemeName,
         mode = mode,
-        viewOnly = request.viewOnly))
+        viewOnly = request.viewOnly  && userAnswers.get(IsEstablisherNewId(index)).getOrElse(false)))
       )
   }
 

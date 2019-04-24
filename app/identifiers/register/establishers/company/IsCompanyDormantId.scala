@@ -16,15 +16,48 @@
 
 package identifiers.register.establishers.company
 
-import identifiers.TypedIdentifier
-import identifiers.register.establishers.EstablishersId
+import identifiers._
+import identifiers.register.establishers.{EstablishersId, IsEstablisherNewId}
+import models.Link
 import models.register.DeclarationDormant
+import models.register.DeclarationDormant._
+import play.api.i18n.Messages
 import play.api.libs.json.JsPath
+import utils.{Enumerable, UserAnswers}
+import utils.checkyouranswers.{CheckYourAnswers, IsDormantCYA}
+import viewmodels.AnswerRow
 
 case class IsCompanyDormantId(index: Int) extends TypedIdentifier[DeclarationDormant] {
   override def path: JsPath = EstablishersId(index).path \ IsCompanyDormantId.toString
 }
 
-object IsCompanyDormantId {
+object IsCompanyDormantId extends Enumerable.Implicits {
+
   override def toString: String = "isCompanyDormant"
+
+  val label: String = "messages__company__cya__dormant"
+  val changeIsDormant: String = "messages__visuallyhidden__establisher__dormant"
+
+  implicit def cya(implicit userAnswers: UserAnswers, messages: Messages): CheckYourAnswers[IsCompanyDormantId] = {
+
+    new CheckYourAnswers[IsCompanyDormantId] {
+
+      override def row(id: IsCompanyDormantId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
+        IsDormantCYA(label, changeIsDormant)().row(id)(changeUrl, userAnswers)
+      }
+
+      override def updateRow(id: IsCompanyDormantId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+        userAnswers.get(id) match {
+          case Some(DeclarationDormant.Yes) => userAnswers.get(IsEstablisherNewId(id.index)) match {
+              case Some(true) =>  IsDormantCYA(label, changeIsDormant)().row(id)(changeUrl, userAnswers)
+              case _  =>  Seq(AnswerRow(label, Seq("site.yes"), answerIsMessageKey = true, None))
+            }
+          case Some(DeclarationDormant.No) => userAnswers.get(IsEstablisherNewId(id.index)) match {
+            case Some(true) =>  IsDormantCYA(label, changeIsDormant)().row(id)(changeUrl, userAnswers)
+            case _  =>  Seq(AnswerRow(label, Seq("site.no"), answerIsMessageKey = true, None))
+          }
+          case _ => Seq.empty[AnswerRow]
+        }
+    }
+  }
 }

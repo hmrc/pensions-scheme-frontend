@@ -327,7 +327,6 @@ object CheckYourAnswers {
       case _ => stringValue
     }
   }
-
 }
 
 case class NinoCYA[I <: TypedIdentifier[Nino]](
@@ -340,7 +339,7 @@ case class NinoCYA[I <: TypedIdentifier[Nino]](
   def apply()(implicit rds: Reads[Nino]): CheckYourAnswers[I] = {
     new CheckYourAnswers[I] {
 
-      override def row(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+      override def row(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
         userAnswers.get(id) match {
           case Some(Nino.Yes(nino)) => Seq(
             AnswerRow(label, Seq(s"${Nino.Yes}"), answerIsMessageKey = false, Some(Link("site.change", changeUrl, Some(changeHasNino)))),
@@ -353,12 +352,15 @@ case class NinoCYA[I <: TypedIdentifier[Nino]](
               Some(Link("site.change", changeUrl, Some(changeNoNino)))))
           case _ => Seq.empty[AnswerRow]
         }
+      }
 
-      override def updateRow(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = userAnswers.get(id) match {
-        case Some(Nino.Yes(nino)) => Seq(AnswerRow("messages__common__nino", Seq(nino), answerIsMessageKey = false, None))
-        case Some(Nino.No(_)) => Seq(AnswerRow("messages__common__nino", Seq("site.not_entered"), answerIsMessageKey = true,
-          Some(Link("site.add", changeUrl, Some(s"${changeNino}_add")))))
-        case _ => Seq.empty[AnswerRow]
+      override def updateRow(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
+        userAnswers.get(id) match {
+          case Some(Nino.Yes(nino)) => Seq(AnswerRow("messages__common__nino", Seq(nino), answerIsMessageKey = false, None))
+          case Some(Nino.No(_)) => Seq(AnswerRow("messages__common__nino", Seq("site.not_entered"), answerIsMessageKey = true,
+            Some(Link("site.add", changeUrl, Some(s"${changeNino}_add")))))
+          case _ => Seq.empty[AnswerRow]
+        }
       }
     }
   }
