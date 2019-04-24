@@ -65,8 +65,7 @@ class IsCompanyDormantIdSpec extends SpecBase with Enumerable.Implicits {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
         implicit val userAnswers = request.userAnswers
 
-        IsCompanyDormantId(0).row(onwardUrl, UpdateMode) must equal(Seq()
-        ))
+        IsCompanyDormantId(0).row(onwardUrl, UpdateMode) must equal(Seq())
       }
     }
   }
