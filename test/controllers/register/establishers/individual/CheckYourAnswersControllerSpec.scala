@@ -36,6 +36,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase {
 
   implicit val countryOptions = new FakeCountryOptions()
   implicit val request = FakeDataRequest(individualAnswers)
+  implicit val userAnswers = request.userAnswers
   val firstIndex = Index(0)
 
   private val onwardRoute = controllers.routes.IndexController.onPageLoad()

@@ -17,14 +17,49 @@
 package identifiers.register.establishers.company
 
 import identifiers.TypedIdentifier
-import identifiers.register.establishers.EstablishersId
-import models.CompanyRegistrationNumber
+import identifiers.register.establishers.{EstablishersId, IsEstablisherNewId}
+import models.{CompanyRegistrationNumber, Link}
+import play.api.i18n.Messages
 import play.api.libs.json.JsPath
+import utils.UserAnswers
+import utils.checkyouranswers.{CheckYourAnswers, CompanyRegistrationNumberCYA}
+import viewmodels.AnswerRow
 
 case class CompanyRegistrationNumberId(index: Int) extends TypedIdentifier[CompanyRegistrationNumber] {
   override def path: JsPath = EstablishersId(index).path \ CompanyRegistrationNumberId.toString
 }
 
 object CompanyRegistrationNumberId {
+
   override def toString: String = "companyRegistrationNumber"
+
+  val label: String = "messages__company__cya__crn_yes_no"
+  val changeHasCrn: String = "messages__visuallyhidden__establisher__crn_yes_no"
+  val changeCrn: String = "messages__visuallyhidden__establisher__crn"
+  val changeNoCrn: String = "messages__visuallyhidden__establisher__crn_no"
+
+
+  implicit def cya(implicit userAnswers: UserAnswers, messages: Messages): CheckYourAnswers[CompanyRegistrationNumberId] = {
+
+    new CheckYourAnswers[CompanyRegistrationNumberId] {
+      override def row(id: CompanyRegistrationNumberId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
+        CompanyRegistrationNumberCYA()().row(id)(changeUrl, userAnswers)
+      }
+
+      override def updateRow(id: CompanyRegistrationNumberId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+        userAnswers.get(id) match {
+          case Some(CompanyRegistrationNumber.Yes(crn)) =>
+            userAnswers.get(IsEstablisherNewId(id.index)) match {
+              case Some(true) => Seq(AnswerRow("messages__common__crn", Seq(crn), answerIsMessageKey = false,
+                Some(Link("site.change", changeUrl, Some(changeCrn)))))
+              case _  => Seq(AnswerRow("messages__common__crn", Seq(crn), answerIsMessageKey = false, None))
+            }
+          case Some(CompanyRegistrationNumber.No(reason)) =>Seq(
+            AnswerRow("messages__common__crn", Seq("site.not_entered"), answerIsMessageKey = true,
+              Some(Link("site.add", changeUrl, Some(s"${changeCrn}_add"))))
+          )
+          case _ => Seq.empty[AnswerRow]
+        }
+    }
+  }
 }

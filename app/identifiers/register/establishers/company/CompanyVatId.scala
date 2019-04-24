@@ -17,11 +17,14 @@
 package identifiers.register.establishers.company
 
 import identifiers._
-import identifiers.register.establishers.EstablishersId
-import models.Vat
-import play.api.libs.json.{JsPath, Reads}
+import identifiers.register.establishers.{EstablishersId, IsEstablisherNewId}
+import models.{Link, Vat}
+import play.api.i18n.Messages
+import play.api.libs.json.JsPath
+import utils.UserAnswers
 import utils.checkyouranswers.CheckYourAnswers
 import utils.checkyouranswers.CheckYourAnswers.VatCYA
+import viewmodels.AnswerRow
 
 case class CompanyVatId(index: Int) extends TypedIdentifier[Vat] {
   override def path: JsPath = EstablishersId(index).path \ CompanyVatId.toString
@@ -30,10 +33,29 @@ case class CompanyVatId(index: Int) extends TypedIdentifier[Vat] {
 object CompanyVatId {
   override def toString: String = "companyVat"
 
-  implicit def cya(implicit r: Reads[Vat]): CheckYourAnswers[CompanyVatId] =
-    VatCYA(labelYesNo = Some("messages__company__cya__vat_yes_no"),
-      hiddenLabelYesNo = "messages__visuallyhidden__establisher__vat_yes_no",
-      hiddenLabelVat = "messages__visuallyhidden__establisher__vat_number")()
+  val labelYesNo = "messages__company__cya__vat_yes_no"
+  val hiddenLabelYesNo = "messages__visuallyhidden__establisher__vat_yes_no"
+  val hiddenLabelVat = "messages__visuallyhidden__establisher__vat_number"
+
+  implicit def cya(implicit userAnswers: UserAnswers, messages: Messages): CheckYourAnswers[CompanyVatId] = {
+    new CheckYourAnswers[CompanyVatId] {
+
+      override def row(id: CompanyVatId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+        VatCYA(Some(labelYesNo), hiddenLabelYesNo, hiddenLabelVat)().row(id)(changeUrl, userAnswers)
+
+      override def updateRow(id: CompanyVatId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+        userAnswers.get(id) match {
+          case Some(Vat.Yes(vat)) => userAnswers.get(IsEstablisherNewId(id.index)) match {
+            case Some(true) =>  Seq(AnswerRow("messages__common__cya__vat", Seq(vat), answerIsMessageKey = false,
+              Some(Link("site.change", changeUrl, Some(hiddenLabelVat)))))
+            case _  => Seq(AnswerRow("messages__common__cya__vat", Seq(vat), answerIsMessageKey = false, None))
+          }
+          case Some(Vat.No) => Seq(AnswerRow("messages__common__cya__vat", Seq("site.not_entered"), answerIsMessageKey = true,
+            Some(Link("site.add", changeUrl, Some(s"${hiddenLabelVat}_add")))))
+          case _ => Seq.empty[AnswerRow]
+        }
+    }
+  }
 }
 
 

@@ -616,7 +616,7 @@ messages__trusteeNino__heading = Does the trustee have a National Insurance numb
 messages__trusteeNino__error__required = Select yes if the trustee has a National Insurance number
 messages__trusteeNino__error__nino_reason_required = You need to tell us why the trustee does not have a National Insurance number
 messages__trusteeNino__no_nino = Tell us why the trustee does not have a National Insurance number
-messages__trusteeNino__nino_question_cya_label = Does the establisher have a National Insurance number?
+messages__trusteeNino__nino_question_cya_label = Does the trustee have a National Insurance number?
 messages__trusteeNino__nino_cya_label = National Insurance number
 messages__trusteeNino__nino_reason_cya_label = Reason
 

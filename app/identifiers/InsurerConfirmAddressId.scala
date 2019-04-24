@@ -18,9 +18,8 @@ package identifiers
 
 import models.Link
 import models.address.Address
-import utils.checkyouranswers.CheckYourAnswers.StringCYA
-import utils.{CountryOptions, UserAnswers}
 import utils.checkyouranswers.{AddressCYA, CheckYourAnswers}
+import utils.{CountryOptions, UserAnswers}
 import viewmodels.AnswerRow
 
 case object InsurerConfirmAddressId extends TypedIdentifier[Address] {

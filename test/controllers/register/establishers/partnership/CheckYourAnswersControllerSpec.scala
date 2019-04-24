@@ -24,7 +24,7 @@ import models._
 import models.address.Address
 import models.register.DeclarationDormant
 import play.api.test.Helpers._
-import utils._
+import utils.{UserAnswers, _}
 import utils.checkyouranswers.Ops._
 import viewmodels.AnswerSection
 import views.html.check_your_answers
@@ -46,6 +46,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase {
     .asOpt.value
 
   implicit val request = FakeDataRequest(partnershipAnswers)
+  implicit val userAnswers = request.userAnswers
   implicit val countryOptions = new FakeCountryOptions()
   private val onwardRoute = routes.AddPartnersController.onPageLoad(NormalMode, firstIndex, None)
 
