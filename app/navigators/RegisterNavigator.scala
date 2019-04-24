@@ -21,6 +21,7 @@ import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
 import identifiers.register._
 import identifiers.{IsBeforeYouStartCompleteId, UserResearchDetailsId}
+import models.Mode
 import utils.{Navigator, UserAnswers}
 
 //scalastyle:off cyclomatic.complexity
@@ -43,6 +44,10 @@ class RegisterNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnec
     from.id match {
       case _ => None
     }
+
+  protected def updateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] = None
+
+  protected def checkUpdateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] = None
 
   private def continueRegistration(userAnswers: UserAnswers): Option[NavigateTo] =
     userAnswers.get(IsBeforeYouStartCompleteId) match {

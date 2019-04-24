@@ -104,6 +104,10 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
       case _ => None
     }
 
+  protected def updateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] = None
+
+  protected def checkUpdateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] = None
+
   private def checkYourAnswers(index: Int, answers: UserAnswers): Option[NavigateTo] =
     NavigateTo.save(controllers.register.establishers.company.routes.CheckYourAnswersController.onPageLoad(NormalMode, None, index))
 

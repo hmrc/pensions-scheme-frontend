@@ -20,7 +20,7 @@ import com.google.inject.Inject
 import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
 import identifiers.{BankAccountDetailsId, UKBankAccountId}
-import models.NormalMode
+import models.{Mode, NormalMode}
 import controllers.routes._
 import utils.{Navigator, UserAnswers}
 
@@ -32,6 +32,9 @@ class AboutBankDetailsNavigator @Inject()(val dataCacheConnector: UserAnswersCac
   override protected def routeMap(from: NavigateFrom): Option[NavigateTo] = navRouteMap(from)
 
   override protected def editRouteMap(from: NavigateFrom): Option[NavigateTo] = navRouteMap(from)
+
+  protected def updateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] = None
+  protected def checkUpdateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] = None
 
   private def navRouteMap(from: NavigateFrom): Option[NavigateTo] = {
     from.id match {

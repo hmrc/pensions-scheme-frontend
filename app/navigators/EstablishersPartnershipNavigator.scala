@@ -21,7 +21,7 @@ import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
 import controllers.register.establishers.partnership._
 import identifiers.register.establishers.partnership._
-import models.{AddressYears, CheckMode, NormalMode}
+import models.{AddressYears, CheckMode, Mode, NormalMode}
 import utils.{Navigator, UserAnswers}
 
 class EstablishersPartnershipNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector, appConfig: FrontendAppConfig) extends Navigator {
@@ -99,6 +99,10 @@ class EstablishersPartnershipNavigator @Inject()(val dataCacheConnector: UserAns
     case _ =>
       None
   }
+
+  protected def updateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] = None
+
+  protected def checkUpdateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] = None
 
   private def addressYearsRoutes(index: Int)(answers: UserAnswers): Option[NavigateTo] = {
     answers.get(PartnershipAddressYearsId(index)) match {

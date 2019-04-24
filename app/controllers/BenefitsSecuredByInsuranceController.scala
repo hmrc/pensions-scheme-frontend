@@ -64,7 +64,7 @@ class BenefitsSecuredByInsuranceController @Inject()(appConfig: FrontendAppConfi
           Future.successful(BadRequest(benefitsSecuredByInsurance(appConfig, formWithErrors, mode, existingSchemeName, postCall(mode, srn)))),
         value =>
           userAnswersService.save(mode, srn, BenefitsSecuredByInsuranceId, value).map(cacheMap =>
-            Redirect(navigator.nextPage(BenefitsSecuredByInsuranceId, mode, UserAnswers(cacheMap))))
+            Redirect(navigator.nextPage(BenefitsSecuredByInsuranceId, mode, UserAnswers(cacheMap), srn)))
       )
   }
 }

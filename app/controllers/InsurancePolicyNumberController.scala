@@ -68,7 +68,7 @@ class InsurancePolicyNumberController @Inject()(appConfig: FrontendAppConfig,
           },
         value =>
           userAnswersService.save(mode, srn, InsurancePolicyNumberId, value).map(cacheMap =>
-            Redirect(navigator.nextPage(InsurancePolicyNumberId, mode, UserAnswers(cacheMap))))
+            Redirect(navigator.nextPage(InsurancePolicyNumberId, mode, UserAnswers(cacheMap), srn)))
       )
   }
 }

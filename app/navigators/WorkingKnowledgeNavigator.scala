@@ -20,7 +20,7 @@ import com.google.inject.Inject
 import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
 import identifiers._
-import models.{CheckMode, NormalMode}
+import models.{CheckMode, Mode, NormalMode}
 import utils.Navigator
 
 class WorkingKnowledgeNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector, appConfig: FrontendAppConfig) extends Navigator {
@@ -62,4 +62,8 @@ class WorkingKnowledgeNavigator @Inject()(val dataCacheConnector: UserAnswersCac
       case _ => None
     }
   }
+
+  protected def updateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] = None
+
+  protected def checkUpdateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] = None
 }
