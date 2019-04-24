@@ -45,7 +45,9 @@ class PartnershipReviewViewSpec extends ViewBehaviours {
     index,
     partnershipName,
     partners,
-    None
+    None,
+    None,
+    NormalMode
   )(fakeRequest, messages)
 
   def createSecView: () => HtmlFormat.Appendable = () => partnershipReview(
@@ -53,7 +55,9 @@ class PartnershipReviewViewSpec extends ViewBehaviours {
     index,
     partnershipName,
     tenPartners,
-    None
+    None,
+    None,
+    NormalMode
   )(fakeRequest, messages)
 
   "PartnershipReview view" must {
@@ -69,13 +73,13 @@ class PartnershipReviewViewSpec extends ViewBehaviours {
 
     "have link to edit partnership details" in {
       Jsoup.parse(createView()().toString).select("a[id=edit-partnership-details]") must haveLink(
-        routes.CheckYourAnswersController.onPageLoad(index).url
+        routes.CheckYourAnswersController.onPageLoad(NormalMode, index, None).url
       )
     }
 
     "have link to edit partner details when there are less than 10 partners" in {
       Jsoup.parse(createView()().toString).select("a[id=edit-partner-details]") must haveLink(
-        routes.AddPartnersController.onPageLoad(NormalMode, index).url
+        routes.AddPartnersController.onPageLoad(NormalMode, index, None).url
       )
       Jsoup.parse(createView()().toString) must haveDynamicText("messages__partnershipReview__partners__editLink")
 
@@ -83,7 +87,7 @@ class PartnershipReviewViewSpec extends ViewBehaviours {
 
     "have link to edit partners when there are 10 partners" in {
       Jsoup.parse(createView()().toString).select("a[id=edit-partner-details]") must haveLink(
-        routes.AddPartnersController.onPageLoad(NormalMode, index).url
+        routes.AddPartnersController.onPageLoad(NormalMode, index, None).url
       )
       Jsoup.parse(createSecView().toString) must haveDynamicText("messages__partnershipReview__partners__changeLink")
     }

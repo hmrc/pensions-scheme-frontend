@@ -29,12 +29,12 @@ class EstablisherNinoViewSpec extends ViewBehaviours {
   val index = Index(1)
 
   val form = new EstablisherNinoFormProvider()()
-
+  val submitUrl = controllers.register.establishers.individual.routes.EstablisherNinoController.onSubmit(NormalMode, index, None)
   def createView(): () => HtmlFormat.Appendable = () =>
-    establisherNino(frontendAppConfig, form, NormalMode, index, None)(fakeRequest, messages)
+    establisherNino(frontendAppConfig, form, NormalMode, index, None, submitUrl)(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) => establisherNino(frontendAppConfig, form, NormalMode,
-    index, None)(fakeRequest, messages)
+    index, None, submitUrl)(fakeRequest, messages)
 
   "EstablisherNino view" when {
     "rendered" must {

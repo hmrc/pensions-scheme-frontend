@@ -114,7 +114,7 @@ class PartnershipPreviousAddressListControllerSpec extends ControllerSpecBase {
       val result = controller().onPageLoad(NormalMode, 0)(fakeRequest)
       status(result) mustEqual SEE_OTHER
       redirectLocation(result).value mustEqual
-        controllers.register.establishers.partnership.routes.PartnershipPreviousAddressPostcodeLookupController.onPageLoad(NormalMode, 0).url
+        controllers.register.establishers.partnership.routes.PartnershipPreviousAddressPostcodeLookupController.onPageLoad(NormalMode, 0, None).url
     }
 
     "redirect to postcode lookup when no address results exist (post)" in {
@@ -122,7 +122,7 @@ class PartnershipPreviousAddressListControllerSpec extends ControllerSpecBase {
       val result = controller().onSubmit(NormalMode, 0)(postRequest)
       status(result) mustEqual SEE_OTHER
       redirectLocation(result).value mustEqual
-        controllers.register.establishers.partnership.routes.PartnershipPreviousAddressPostcodeLookupController.onPageLoad(NormalMode, 0).url
+        controllers.register.establishers.partnership.routes.PartnershipPreviousAddressPostcodeLookupController.onPageLoad(NormalMode, 0, None).url
     }
 
     "return a Bad Request and errors when invalid data is submitted" in {

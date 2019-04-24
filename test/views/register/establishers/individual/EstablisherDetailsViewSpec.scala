@@ -31,12 +31,12 @@ class EstablisherDetailsViewSpec extends QuestionViewBehaviours[PersonDetails] {
   val messageKeyPrefix = "establisher_individual"
 
   override val form = new PersonDetailsFormProvider()()
-
+  val submitUrl = controllers.register.establishers.individual.routes.EstablisherDetailsController.onSubmit(NormalMode, Index(1), None)
   def createView(): () => HtmlFormat.Appendable = () =>
-    establisherDetails(frontendAppConfig, form, NormalMode, Index(1), None)(fakeRequest, messages)
+    establisherDetails(frontendAppConfig, form, NormalMode, Index(1), None, submitUrl)(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) =>
-    establisherDetails(frontendAppConfig, form, NormalMode, Index(1), None)(fakeRequest, messages)
+    establisherDetails(frontendAppConfig, form, NormalMode, Index(1), None, submitUrl)(fakeRequest, messages)
 
   val day = LocalDate.now().getDayOfMonth
   val year = LocalDate.now().getYear
@@ -58,7 +58,7 @@ class EstablisherDetailsViewSpec extends QuestionViewBehaviours[PersonDetails] {
     behave like pageWithTextFields(
       createViewUsingForm,
       messageKeyPrefix,
-      routes.EstablisherDetailsController.onSubmit(NormalMode, Index(0)).url,
+      routes.EstablisherDetailsController.onSubmit(NormalMode, Index(0), None).url,
       "firstName", "middleName", "lastName"
     )
 

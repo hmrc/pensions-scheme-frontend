@@ -81,11 +81,11 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase {
         val viewAsString = check_your_answers(
           frontendAppConfig,
           Seq(partnerDetails, partnerContactDetails),
-          routes.CheckYourAnswersController.onSubmit(firstIndex, firstIndex),
+          routes.CheckYourAnswersController.onSubmit(NormalMode, firstIndex, firstIndex, None),
           None
         )(fakeRequest, messages).toString
 
-        val result = controller(partnerAnswers.dataRetrievalAction).onPageLoad(firstIndex, firstIndex)(request)
+        val result = controller(partnerAnswers.dataRetrievalAction).onPageLoad(NormalMode, firstIndex, firstIndex, None)(request)
         status(result) mustBe OK
         contentAsString(result) mustBe viewAsString
       }
@@ -93,7 +93,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase {
 
     "onSubmit" must {
       "mark the section as complete and redirect to the next page" in {
-        val result = controller().onSubmit(firstIndex, firstIndex)(request)
+        val result = controller().onSubmit(NormalMode, firstIndex, firstIndex, None)(request)
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(desiredRoute.url)
 

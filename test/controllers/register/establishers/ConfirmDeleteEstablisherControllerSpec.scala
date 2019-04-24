@@ -112,7 +112,7 @@ class ConfirmDeleteEstablisherControllerSpec extends ControllerSpecBase {
 
     "delete the establisher company on a POST" in {
       val data = new FakeDataRetrievalAction(Some(testData))
-      val result = controller(data).onSubmit(NormalMode, NormalMode, Index(1), EstablisherKind.Company, None, None)(postRequest)
+      val result = controller(data).onSubmit(NormalMode, Index(1), EstablisherKind.Company, None)(postRequest)
 
       status(result) mustBe SEE_OTHER
       fakeUserAnswersCacheConnector.verify(CompanyDetailsId(Index(1)), companyDetails.copy(isDeleted = true))

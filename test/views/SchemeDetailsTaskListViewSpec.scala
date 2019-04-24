@@ -353,9 +353,9 @@ object SchemeDetailsTaskListViewSpec extends ViewSpecBase {
 
   private def establishers: Seq[SchemeDetailsTaskListSection] = {
     Seq(SchemeDetailsTaskListSection(Some(false), Link(individualLinkText,
-      controllers.register.establishers.individual.routes.EstablisherDetailsController.onPageLoad(NormalMode, 0).url), Some("firstName lastName")),
+      controllers.register.establishers.individual.routes.EstablisherDetailsController.onPageLoad(NormalMode, 0, None).url), Some("firstName lastName")),
       SchemeDetailsTaskListSection(Some(true), Link(individualLinkText,
-        controllers.register.establishers.individual.routes.CheckYourAnswersController.onPageLoad(1).url), Some("firstName lastName")))
+        controllers.register.establishers.individual.routes.CheckYourAnswersController.onPageLoad(NormalMode, 1, None).url), Some("firstName lastName")))
   }
 
   private def trustees: Seq[SchemeDetailsTaskListSection] = {

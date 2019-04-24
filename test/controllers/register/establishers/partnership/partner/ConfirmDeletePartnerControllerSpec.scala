@@ -40,7 +40,7 @@ class ConfirmDeletePartnerControllerSpec extends ControllerSpecBase {
   "ConfirmDeletePartner Controller" must {
     "return OK and the correct view for a GET" in {
       val data = new FakeDataRetrievalAction(Some(testData()))
-      val result = controller(data).onPageLoad(establisherIndex, partnerIndex)(fakeRequest)
+      val result = controller(data).onPageLoad(NormalMode, establisherIndex, partnerIndex, None)(fakeRequest)
 
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString()
@@ -48,7 +48,7 @@ class ConfirmDeletePartnerControllerSpec extends ControllerSpecBase {
 
     "redirect to already deleted view for a GET if the partner was already deleted" in {
       val data = new FakeDataRetrievalAction(Some(testData(partnerDeleted)))
-      val result = controller(data).onPageLoad(establisherIndex, partnerIndex)(fakeRequest)
+      val result = controller(data).onPageLoad(NormalMode, establisherIndex, partnerIndex, None)(fakeRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(routes.AlreadyDeletedController.onPageLoad(NormalMode, establisherIndex, partnerIndex, None).url)
@@ -59,7 +59,7 @@ class ConfirmDeletePartnerControllerSpec extends ControllerSpecBase {
       val result = controller(data).onSubmit(NormalMode, establisherIndex, partnerIndex, None)(postRequest)
 
       status(result) mustBe SEE_OTHER
-      FakeUserAnswersCacheConnector.verify(PartnerDetailsId(NormalMode, establisherIndex, partnerIndex, None), partnerDetails.copy(isDeleted = true))
+      FakeUserAnswersCacheConnector.verify(PartnerDetailsId(establisherIndex, partnerIndex), partnerDetails.copy(isDeleted = true))
     }
 
     "never delete the partner on a POST if selected No" in {
@@ -68,7 +68,7 @@ class ConfirmDeletePartnerControllerSpec extends ControllerSpecBase {
       val result = controller(data).onSubmit(NormalMode, establisherIndex, partnerIndex, None)(postRequestForCancle)
 
       status(result) mustBe SEE_OTHER
-      FakeUserAnswersCacheConnector.verifyNot(PartnerDetailsId(NormalMode, establisherIndex, partnerIndex, None))
+      FakeUserAnswersCacheConnector.verifyNot(PartnerDetailsId(establisherIndex, partnerIndex))
     }
 
     "redirect to the next page on a successful POST" in {

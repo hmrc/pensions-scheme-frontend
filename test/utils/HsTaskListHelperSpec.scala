@@ -189,11 +189,11 @@ class HsTaskListHelperSpec extends WordSpec with MustMatchers with OptionValues 
       val helper = new HsTaskListHelper(userAnswers)
       helper.establishers(userAnswers) mustBe
         Seq(SchemeDetailsTaskListSection(Some(true), Link(individualLinkText,
-          controllers.register.establishers.individual.routes.CheckYourAnswersController.onPageLoad(0).url), Some("firstName lastName")),
+          controllers.register.establishers.individual.routes.CheckYourAnswersController.onPageLoad(NormalMode, 0, None).url), Some("firstName lastName")),
           SchemeDetailsTaskListSection(Some(true), Link(companyLinkText,
             controllers.register.establishers.company.routes.CompanyReviewController.onPageLoad(NormalMode, None, 1).url), Some("test company")),
           SchemeDetailsTaskListSection(Some(true), Link(partnershipLinkText,
-            controllers.register.establishers.partnership.routes.PartnershipReviewController.onPageLoad(2).url), Some("test partnership"))
+            controllers.register.establishers.partnership.routes.PartnershipReviewController.onPageLoad(NormalMode,2, None).url), Some("test partnership"))
         )
     }
 
@@ -202,11 +202,11 @@ class HsTaskListHelperSpec extends WordSpec with MustMatchers with OptionValues 
       val helper = new HsTaskListHelper(userAnswers)
       helper.establishers(userAnswers) mustBe
         Seq(SchemeDetailsTaskListSection(Some(false), Link(individualLinkText,
-          controllers.register.establishers.individual.routes.EstablisherDetailsController.onPageLoad(NormalMode, 0).url), Some("firstName lastName")),
+          controllers.register.establishers.individual.routes.EstablisherDetailsController.onPageLoad(NormalMode, 0, None).url), Some("firstName lastName")),
           SchemeDetailsTaskListSection(Some(false), Link(companyLinkText,
             controllers.register.establishers.company.routes.CompanyDetailsController.onPageLoad(NormalMode, None, 1).url), Some("test company")),
           SchemeDetailsTaskListSection(Some(false), Link(partnershipLinkText,
-            controllers.register.establishers.partnership.routes.PartnershipDetailsController.onPageLoad(NormalMode, 2).url), Some("test partnership"))
+            controllers.register.establishers.partnership.routes.PartnershipDetailsController.onPageLoad(NormalMode, 2, None).url), Some("test partnership"))
         )
     }
 
@@ -221,9 +221,9 @@ class HsTaskListHelperSpec extends WordSpec with MustMatchers with OptionValues 
       val helper = new HsTaskListHelper(userAnswers)
       helper.establishers(userAnswers) mustBe
         Seq(SchemeDetailsTaskListSection(Some(false), Link(individualLinkText,
-          controllers.register.establishers.individual.routes.EstablisherDetailsController.onPageLoad(NormalMode, 0).url), Some("firstName lastName")),
+          controllers.register.establishers.individual.routes.EstablisherDetailsController.onPageLoad(NormalMode, 0, None).url), Some("firstName lastName")),
           SchemeDetailsTaskListSection(Some(false), Link(partnershipLinkText,
-            controllers.register.establishers.partnership.routes.PartnershipDetailsController.onPageLoad(NormalMode, 2).url), Some("test partnership"))
+            controllers.register.establishers.partnership.routes.PartnershipDetailsController.onPageLoad(NormalMode, 2, None).url), Some("test partnership"))
         )
     }
   }

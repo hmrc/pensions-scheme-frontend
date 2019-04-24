@@ -61,7 +61,7 @@ class PartnershipReviewControllerSpec extends ControllerSpecBase {
 
     "return OK and the correct view for a GET" in {
       val getRelevantData = new FakeDataRetrievalAction(Some(validData()))
-      val result = controller(getRelevantData).onPageLoad(index)(fakeRequest)
+      val result = controller(getRelevantData).onPageLoad(NormalMode, index, None)(fakeRequest)
 
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString()
@@ -69,7 +69,7 @@ class PartnershipReviewControllerSpec extends ControllerSpecBase {
 
     "redirect to session expired page on a GET when the index is not valid" in {
       val getRelevantData = new FakeDataRetrievalAction(Some(validData()))
-      val result = controller(getRelevantData).onPageLoad(invalidIndex)(fakeRequest)
+      val result = controller(getRelevantData).onPageLoad(NormalMode, invalidIndex)(fakeRequest)
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
     }

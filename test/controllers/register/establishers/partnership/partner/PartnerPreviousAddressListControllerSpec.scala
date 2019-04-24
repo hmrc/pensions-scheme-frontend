@@ -78,7 +78,7 @@ class PartnerPreviousAddressListControllerSpec extends ControllerSpecBase with C
         bind[UserAnswersCacheConnector].toInstance(FakeUserAnswersCacheConnector),
         bind[DataRetrievalAction].toInstance(dataRetrievalAction)
       )) { implicit app =>
-        val request = addToken(FakeRequest(routes.PartnerPreviousAddressListController.onPageLoad(NormalMode, Index(0), Index(0), None, None)))
+        val request = addToken(FakeRequest(routes.PartnerPreviousAddressListController.onPageLoad(NormalMode, Index(0), Index(0), None)))
         val result = route(app, request).value
 
         status(result) mustBe OK
