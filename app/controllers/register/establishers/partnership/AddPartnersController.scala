@@ -91,7 +91,7 @@ class AddPartnersController @Inject()(
                 Future.successful(InternalServerError)
               },
               userAnswers => {
-                Future.successful(Redirect(navigator.nextPage(AddPartnersId(index), NormalMode, userAnswers)))
+                Future.successful(Redirect(navigator.nextPage(AddPartnersId(index), NormalMode, userAnswers, srn)))
               }
             )
         )

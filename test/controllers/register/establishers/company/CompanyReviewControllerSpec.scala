@@ -27,6 +27,7 @@ import org.joda.time.LocalDate
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
 import play.api.test.Helpers._
+import services.FakeUserAnswersService
 import utils.{FakeNavigator, FakeSectionComplete}
 import views.html.register.establishers.company.companyReview
 
@@ -38,7 +39,7 @@ class CompanyReviewControllerSpec extends ControllerSpecBase {
 
   def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisherCompany): CompanyReviewController =
     new CompanyReviewController(frontendAppConfig, messagesApi, new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
-      dataRetrievalAction, new DataRequiredActionImpl, FakeSectionComplete)
+      dataRetrievalAction, new DataRequiredActionImpl, FakeUserAnswersService)
 
   def viewAsString(): String = companyReview(frontendAppConfig, index, companyName, directorNames, None, NormalMode, None, false)(fakeRequest, messages).toString
 
@@ -69,11 +70,11 @@ class CompanyReviewControllerSpec extends ControllerSpecBase {
       val getRelevantData = new FakeDataRetrievalAction(Some(validData()))
       val result = controller(getRelevantData).onSubmit(NormalMode, None, index)(fakeRequest)
       status(result) mustBe SEE_OTHER
-      FakeSectionComplete.verify(IsEstablisherCompleteId(0), true)
+      FakeUserAnswersService.verify(IsEstablisherCompleteId(0), true)
     }
 
     "not set establisher as complete when company is not complete but directors are completed" in {
-      FakeSectionComplete.reset()
+      FakeUserAnswersService.reset()
       val validData: JsObject = Json.obj(
         EstablishersId.toString -> Json.arr(
           Json.obj(
@@ -85,19 +86,19 @@ class CompanyReviewControllerSpec extends ControllerSpecBase {
       val getRelevantData = new FakeDataRetrievalAction(Some(validData))
       val result = controller(getRelevantData).onSubmit(NormalMode, None, index)(fakeRequest)
       status(result) mustBe SEE_OTHER
-      FakeSectionComplete.verifyNot(IsEstablisherCompleteId(0))
+      FakeUserAnswersService.verifyNot(IsEstablisherCompleteId(0))
     }
 
     "not set establisher as complete when company is complete but directors are not complete" in {
-      FakeSectionComplete.reset()
+      FakeUserAnswersService.reset()
       val getRelevantData = new FakeDataRetrievalAction(Some(validData(Seq(director("a"), director("b"), director("c", isComplete = false)))))
       val result = controller(getRelevantData).onSubmit(NormalMode, None, index)(fakeRequest)
       status(result) mustBe SEE_OTHER
-      FakeSectionComplete.verifyNot(IsEstablisherCompleteId(0))
+      FakeUserAnswersService.verifyNot(IsEstablisherCompleteId(0))
     }
 
     "not set establisher as complete when company is complete but directors are not present" in {
-      FakeSectionComplete.reset()
+      FakeUserAnswersService.reset()
       val validData: JsObject = Json.obj(
         EstablishersId.toString -> Json.arr(
           Json.obj(
@@ -109,7 +110,7 @@ class CompanyReviewControllerSpec extends ControllerSpecBase {
       val getRelevantData = new FakeDataRetrievalAction(Some(validData))
       val result = controller(getRelevantData).onSubmit(NormalMode, None, index)(fakeRequest)
       status(result) mustBe SEE_OTHER
-      FakeSectionComplete.verifyNot(IsEstablisherCompleteId(0))
+      FakeUserAnswersService.verifyNot(IsEstablisherCompleteId(0))
     }
   }
 }

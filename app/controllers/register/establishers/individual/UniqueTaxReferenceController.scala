@@ -74,7 +74,7 @@ class UniqueTaxReferenceController @Inject()(
                 value
               ).map {
                 json =>
-                  Redirect(navigator.nextPage(UniqueTaxReferenceId(index), mode, new UserAnswers(json)))
+                  Redirect(navigator.nextPage(UniqueTaxReferenceId(index), mode, new UserAnswers(json), srn))
               }
           )
       }

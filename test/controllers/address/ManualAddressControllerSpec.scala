@@ -16,16 +16,20 @@
 
 package controllers.address
 
+import akka.stream.Materializer
 import audit.testdoubles.StubSuccessfulAuditService
 import audit.{AddressAction, AddressEvent, AuditService}
 import com.google.inject.Inject
 import config.FrontendAppConfig
 import connectors.{FakeUserAnswersCacheConnector, UserAnswersCacheConnector}
+import controllers.actions.{DataRequiredAction, DataRequiredActionImpl, DataRetrievalAction, FakeDataRetrievalAction}
 import forms.address.AddressFormProvider
 import identifiers.TypedIdentifier
 import models._
 import models.address.{Address, TolerantAddress}
 import models.requests.DataRequest
+import org.mockito.Matchers.any
+import org.mockito.Mockito.when
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.mockito.MockitoSugar
 import org.scalatest.{MustMatchers, OptionValues, WordSpec}
@@ -60,6 +64,17 @@ object ManualAddressControllerSpec {
     override def toString = "abc"
   }
 
+  val tolerantAddress = TolerantAddress(Some("address line 1"), Some("address line 2"), None, None, Some("ZZ1 1ZZ"), Some("GB"))
+  val address = Address("address line 1", "address line 2", None, None, Some("ZZ1 1ZZ"), "GB")
+  object FakeAddressIdentifier extends TypedIdentifier[Address]
+  object FakeSelectedAddressIdentifier extends TypedIdentifier[TolerantAddress]
+
+  private val answers = Json.obj(fakeAddressId.toString -> address,
+    fakeAddressListId.toString -> tolerantAddress)
+  val preSavedAddress = new FakeDataRetrievalAction(Some(answers))
+  private val srn = Some("123")
+  private lazy val manualCall = controllers.routes.SessionExpiredController.onPageLoad()
+
   private val psaId = PsaId("A0000000")
 
   class TestController @Inject()(
@@ -77,6 +92,11 @@ object ManualAddressControllerSpec {
     def onSubmit(viewModel: ManualAddressViewModel, answers: UserAnswers, request: Request[AnyContent] = FakeRequest()): Future[Result] =
       post(fakeAddressId, fakeAddressListId, viewModel, NormalMode, "test-context", fakeSeqTolerantAddressId)(
         DataRequest(request, externalId, answers, psaId))
+
+    def onClick(mode: Mode, answers: UserAnswers, request: Request[AnyContent] = FakeRequest()): Future[Result] =
+      clear(FakeAddressIdentifier, FakeSelectedAddressIdentifier, mode, srn, manualCall)(DataRequest(request, "cacheId", answers, PsaId("A0000000")))
+
+
 
     override protected val form: Form[Address] = formProvider()
   }
@@ -328,6 +348,33 @@ class ManualAddressControllerSpec extends WordSpec with MustMatchers with Mockit
           contentAsString(result) mustEqual manualAddress(appConfig, form, viewModel, None)(request, messages).toString
       }
 
+    }
+
+    "clear saved address and selected address in list" when {
+      "user clicks on manual entry link" in {
+        val userAnswersService: UserAnswersService = mock[UserAnswersService]
+
+        when(userAnswersService.remove(any(), any(), any())(any(), any(), any()))
+          .thenReturn(Future.successful(Json.obj()))
+
+        running(_.overrides(
+          bind[Navigator].toInstance(FakeNavigator),
+          bind[DataRetrievalAction].toInstance(preSavedAddress),
+          bind[DataRequiredAction].to(new DataRequiredActionImpl),
+          bind[UserAnswersService].toInstance(userAnswersService)
+        )) {
+          app =>
+
+            implicit val mat: Materializer = app.materializer
+
+            val request = FakeRequest()
+            val controller = app.injector.instanceOf[TestController]
+            val result = controller.onClick(CheckUpdateMode, UserAnswers(answers), request)
+
+            status(result) mustEqual SEE_OTHER
+            redirectLocation(result) mustBe Some(manualCall.url)
+        }
+      }
     }
 
   }

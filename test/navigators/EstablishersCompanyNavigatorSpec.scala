@@ -22,6 +22,7 @@ import identifiers.Identifier
 import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.company._
 import identifiers.register.establishers.company.director.DirectorDetailsId
+import models.Mode.checkMode
 import models._
 import models.person.PersonDetails
 import org.joda.time.LocalDate
@@ -38,32 +39,52 @@ class EstablishersCompanyNavigatorSpec extends SpecBase with MustMatchers with N
 
   import EstablishersCompanyNavigatorSpec._
 
-  private def routes: TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = Table(
+  private def routes(mode: Mode): TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = Table(
     ("Id",                                      "User Answers",                   "Next Page (Normal Mode)",                "Save (NM)",    "Next Page (Check Mode)",                 "Save (CM)"),
-    (CompanyDetailsId(0),                         emptyAnswers,                     companyVat(NormalMode),    true,           Some(checkYourAnswers),                   true),
-    (CompanyVatId(0),                             emptyAnswers,                     companyPaye(NormalMode),    true,           Some(checkYourAnswers),                   true),
-    (CompanyPayeId(0),                            emptyAnswers,                     companyRegistrationNumber(NormalMode),    true,           Some(checkYourAnswers),                   true),
-    (CompanyRegistrationNumberId(0),              emptyAnswers,                     companyUTR(NormalMode),                   true,           Some(checkYourAnswers),                   true),
-    (CompanyUniqueTaxReferenceId(0),              emptyAnswers,                     companyPostCodeLookup(NormalMode),        true,           Some(checkYourAnswers),                   true),
-    (CompanyPostCodeLookupId(0),                  emptyAnswers,                     companyAddressList(NormalMode),           true,           Some(companyAddressList(CheckMode)),      true),
-    (CompanyAddressListId(0),                     emptyAnswers,                     companyManualAddress(NormalMode),         true,           Some(companyManualAddress(CheckMode)),    true),
-    (CompanyAddressId(0),                         emptyAnswers,                     companyAddressYears(NormalMode),          true,           Some(checkYourAnswers),                   true),
-    (CompanyAddressYearsId(0),                    addressYearsOverAYear,            companyContactDetails,                    true,           Some(checkYourAnswers),                   true),
-    (CompanyAddressYearsId(0),                    addressYearsUnderAYear,           prevAddPostCodeLookup(NormalMode),        true,           Some(prevAddPostCodeLookup(CheckMode)),   true),
-    (CompanyAddressYearsId(0),                    emptyAnswers,                     sessionExpired,                           false,          Some(sessionExpired),                     false),
-    (CompanyPreviousAddressPostcodeLookupId(0),   emptyAnswers,                     companyPaList(NormalMode),                true,           Some(companyPaList(CheckMode)),           true),
-    (CompanyPreviousAddressListId(0),             emptyAnswers,                     companyPreviousAddress(NormalMode),       true,           Some(companyPreviousAddress(CheckMode)),  true),
-    (CompanyPreviousAddressId(0),                 emptyAnswers,                     companyContactDetails,                    true,           Some(checkYourAnswers),                   true),
-    (CompanyContactDetailsId(0),                  emptyAnswers,                     isDormant(NormalMode),                    true,           Some(checkYourAnswers),                   true),
-    (IsCompanyDormantId(0),                       emptyAnswers,                     checkYourAnswers,                         true,           Some(checkYourAnswers),                   true),
-    (AddCompanyDirectorsId(0),                    emptyAnswers,                     directorDetails(0, NormalMode),    true,           Some(directorDetails(0, CheckMode)), true),
-    (AddCompanyDirectorsId(0),                    addCompanyDirectorsTrue,          directorDetails(1, NormalMode),    true,           Some(directorDetails(1, CheckMode)), true),
-    (AddCompanyDirectorsId(0),                    addCompanyDirectorsFalse,         companyReview,                            true,           Some(companyReview),                       true),
-    (AddCompanyDirectorsId(0),                    addOneCompanyDirectors,           sessionExpired,                           false,          Some(sessionExpired),                      false),
-    (AddCompanyDirectorsId(0),                    addCompanyDirectorsMoreThan10,    otherDirectors(NormalMode),               true,           Some(otherDirectors(CheckMode)),           true),
-    (OtherDirectorsId(0),                         emptyAnswers,                     companyReview,                            true,           Some(companyReview),                       true),
-    (CompanyReviewId(0),                          emptyAnswers,                     addEstablisher,                           false,           None,                                      false),
-    (CheckYourAnswersId(0),                       emptyAnswers,                     addCompanyDirectors(0, NormalMode),true,           None,                                      false)
+    (CompanyDetailsId(0),                         emptyAnswers,                     companyVat(mode),                   true,           Some(exitJourney(mode)),                   true),
+    (CompanyVatId(0),                             emptyAnswers,                     companyPaye(mode),                  true,           Some(exitJourney(mode)),                   true),
+    (CompanyPayeId(0),                            emptyAnswers,                     companyRegistrationNumber(mode),    true,           Some(exitJourney(mode)),                   true),
+    (CompanyRegistrationNumberId(0),              emptyAnswers,                     companyUTR(mode),                   true,           Some(exitJourney(mode)),                   true),
+    (CompanyUniqueTaxReferenceId(0),              emptyAnswers,                     companyPostCodeLookup(mode),        true,           Some(exitJourney(mode)),                   true),
+    (CompanyPostCodeLookupId(0),                  emptyAnswers,                     companyAddressList(mode),           true,           Some(companyAddressList(checkMode(mode))),      true),
+    (CompanyAddressListId(0),                     emptyAnswers,                     companyManualAddress(mode),         true,           Some(companyManualAddress(checkMode(mode))),    true),
+    (CompanyAddressId(0),                         emptyAnswers,                     companyAddressYears(mode),          true,           Some(exitJourney(mode)),                   true),
+    (CompanyAddressYearsId(0),                    addressYearsOverAYear,            companyContactDetails(mode),        true,           Some(exitJourney(mode)),                   true),
+    (CompanyAddressYearsId(0),                    addressYearsUnderAYear,           prevAddPostCodeLookup(mode),        true,           Some(prevAddPostCodeLookup(checkMode(mode))),   true),
+    (CompanyAddressYearsId(0),                    emptyAnswers,                     sessionExpired,                     false,          Some(sessionExpired),                           false),
+    (CompanyPreviousAddressPostcodeLookupId(0),   emptyAnswers,                     companyPaList(mode),                true,           Some(companyPaList(checkMode(mode))),           true),
+    (CompanyPreviousAddressListId(0),             emptyAnswers,                     companyPreviousAddress(mode),       true,           Some(companyPreviousAddress(checkMode(mode))),  true),
+    (CompanyPreviousAddressId(0),                 emptyAnswers,                     companyContactDetails(mode),        true,           Some(exitJourney(mode)),                   true),
+    (AddCompanyDirectorsId(0),                    emptyAnswers,                     directorDetails(0, mode),     true,           None,                                           true),
+    (AddCompanyDirectorsId(0),                    addCompanyDirectorsTrue,          directorDetails(1, mode),     true,           None,                                           true),
+    (AddCompanyDirectorsId(0),                    addCompanyDirectorsFalse,         companyReview(mode),                true,           None,                                           true),
+    (AddCompanyDirectorsId(0),                    addOneCompanyDirectors,           sessionExpired,                     false,          None,                                           false),
+    (AddCompanyDirectorsId(0),                    addCompanyDirectorsMoreThan10,    otherDirectors(mode),               true,           None,                                           true),
+    (OtherDirectorsId(0),                         emptyAnswers,                     companyReview(mode),                true,           Some(companyReview(mode)),                       true),
+    (CompanyReviewId(0),                          emptyAnswers,                     addEstablisher(mode),               false,          None,                                           false),
+    (CheckYourAnswersId(0),                       emptyAnswers,                     addCompanyDirectors(0, mode), true,           None,                                           false)
+  )
+
+
+  private def normalOnlyRoutes: TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = Table(
+    ("Id",                                          "User Answers",               "Next Page (Normal Mode)",                "Save (NM)",  "Next Page (Check Mode)",         "Save (CM)"),
+    (CompanyContactDetailsId(0),                  emptyAnswers,                 isDormant(NormalMode),                                true,         Some(checkYourAnswers(NormalMode)),               true),
+    (IsCompanyDormantId(0),                       emptyAnswers,                 checkYourAnswers(NormalMode),             true,         Some(checkYourAnswers(NormalMode)),               true)
+  )
+
+  private def updateOnlyRoutes: TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = Table(
+    ("Id",                                          "User Answers",               "Next Page (Normal Mode)",                "Save (NM)",  "Next Page (Check Mode)",         "Save (CM)"),
+    (CompanyContactDetailsId(0),                  emptyAnswers,                 checkYourAnswers(UpdateMode),             true,         Some(anyMoreChanges),               true)
+  )
+
+  private def normalRoutes = Table(
+    ("Id",                                          "User Answers",               "Next Page (Normal Mode)",                "Save (NM)",  "Next Page (Check Mode)",         "Save (CM)"),
+    routes(NormalMode) ++ normalOnlyRoutes: _*
+  )
+
+  private def updateRoutes = Table(
+    ("Id",                                          "User Answers",               "Next Page (Normal Mode)",                "Save (NM)",  "Next Page (Check Mode)",         "Save (CM)"),
+    routes(UpdateMode) ++ updateOnlyRoutes: _*
   )
 
   private val navigator: EstablishersCompanyNavigator =
@@ -71,7 +92,8 @@ class EstablishersCompanyNavigatorSpec extends SpecBase with MustMatchers with N
 
   s"${navigator.getClass.getSimpleName}" must {
     appRunning()
-    behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, routes, dataDescriber)
+    behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, normalRoutes, dataDescriber)
+    behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, updateRoutes, dataDescriber, UpdateMode)
     behave like nonMatchingNavigator(navigator)
   }
 }
@@ -123,18 +145,22 @@ object EstablishersCompanyNavigatorSpec extends OptionValues {
   private def companyPreviousAddress(mode: Mode) =
     controllers.register.establishers.company.routes.CompanyPreviousAddressController.onPageLoad(mode, None, 0)
 
-  private def companyContactDetails = controllers.register.establishers.company.routes.CompanyContactDetailsController.onPageLoad(NormalMode, None, 0)
+  private def companyContactDetails(mode: Mode) = controllers.register.establishers.company.routes.CompanyContactDetailsController.onPageLoad(mode, None, 0)
 
   private def directorDetails(index: Index, mode: Mode) =
     controllers.register.establishers.company.director.routes.DirectorDetailsController.onPageLoad(mode, 0, index, None)
 
-  private def companyReview = controllers.register.establishers.company.routes.CompanyReviewController.onPageLoad(NormalMode, None, 0)
+  private def companyReview(mode: Mode) = controllers.register.establishers.company.routes.CompanyReviewController.onPageLoad(mode, None, 0)
 
   private def otherDirectors(mode: Mode) = controllers.register.establishers.company.routes.OtherDirectorsController.onPageLoad(mode, None, 0)
 
-  private def checkYourAnswers = controllers.register.establishers.company.routes.CheckYourAnswersController.onPageLoad(NormalMode, None, 0)
+  private def checkYourAnswers(mode: Mode) = controllers.register.establishers.company.routes.CheckYourAnswersController.onPageLoad(mode, None, 0)
 
-  private def addEstablisher = controllers.register.establishers.routes.AddEstablisherController.onPageLoad(NormalMode, None)
+  private def anyMoreChanges = controllers.vary.routes.AnyMoreChangesController.onPageLoad(None)
+
+  private def exitJourney(mode: Mode) = if (mode == NormalMode) checkYourAnswers(mode) else anyMoreChanges
+
+  private def addEstablisher(mode: Mode) = controllers.register.establishers.routes.AddEstablisherController.onPageLoad(mode, None)
 
   private def addCompanyDirectors(index: Int, mode: Mode) = controllers.register.establishers.company.routes.AddCompanyDirectorsController.onPageLoad(mode, None, index)
 

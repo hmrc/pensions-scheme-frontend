@@ -48,15 +48,15 @@ class AlreadyDeletedController @Inject()(
     implicit request =>
       establisherName(index, establisherKind) match {
         case Right(establisherName) =>
-          Future.successful(Ok(alreadyDeleted(appConfig, vm(establisherName, srn))))
+          Future.successful(Ok(alreadyDeleted(appConfig, vm(establisherName, mode, srn))))
         case Left(result) => result
       }
   }
 
-  private def vm(establisherName: String, srn: Option[String]) = AlreadyDeletedViewModel(
+  private def vm(establisherName: String, mode: Mode, srn: Option[String]) = AlreadyDeletedViewModel(
     title = Message("messages__alreadyDeleted__establisher_title"),
     deletedEntity = establisherName,
-    returnCall = controllers.register.establishers.routes.AddEstablisherController.onPageLoad(NormalMode, srn)
+    returnCall = controllers.register.establishers.routes.AddEstablisherController.onPageLoad(mode, srn)
   )
 
   private def establisherName(index: Index, establisherKind: EstablisherKind)(implicit dataRequest: DataRequest[AnyContent]): Either[Future[Result], String] = {

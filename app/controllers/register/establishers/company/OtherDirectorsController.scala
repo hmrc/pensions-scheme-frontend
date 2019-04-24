@@ -66,7 +66,7 @@ class OtherDirectorsController @Inject()(
                 otherDirectors(appConfig, formWithErrors, mode, establisherIndex, existingSchemeName, postCall(mode, srn, establisherIndex)))),
             value =>
               userAnswersService.save(mode, srn, OtherDirectorsId(establisherIndex), value).map(cacheMap =>
-                Redirect(navigator.nextPage(OtherDirectorsId(establisherIndex), mode, UserAnswers(cacheMap))))
+                Redirect(navigator.nextPage(OtherDirectorsId(establisherIndex), mode, UserAnswers(cacheMap), srn)))
           )
   }
 }

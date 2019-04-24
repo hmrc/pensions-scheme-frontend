@@ -49,6 +49,14 @@ trait FakeUserAnswersService extends UserAnswersService with Matchers {
     Future.successful(Json.obj())
   }
 
+  override def setCompleteFlag(mode: Mode, srn: Option[String], id: TypedIdentifier[Boolean], userAnswers: UserAnswers, value: Boolean)
+                                               (implicit fmt: Format[Boolean], ec: ExecutionContext, hc: HeaderCarrier,
+                                                request: DataRequest[AnyContent]): Future[UserAnswers] =
+  {
+    data += (id.toString -> Json.toJson(value))
+    Future.successful(UserAnswers())
+  }
+
   override def upsert(mode: Mode, srn: Option[String], value: JsValue)
             (implicit ec: ExecutionContext, hc: HeaderCarrier,
              request: DataRequest[AnyContent]): Future[JsValue] = {

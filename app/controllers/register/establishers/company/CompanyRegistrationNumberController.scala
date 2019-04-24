@@ -71,7 +71,7 @@ class CompanyRegistrationNumberController @Inject()(
               Future.successful(BadRequest(companyRegistrationNumber(appConfig, formWithErrors, mode, index, existingSchemeName, postCall(mode, srn, index)))),
             value =>
               userAnswersService.save(mode, srn, CompanyRegistrationNumberId(index), value).map(cacheMap =>
-                Redirect(navigator.nextPage(CompanyRegistrationNumberId(index), mode, UserAnswers(cacheMap))))
+                Redirect(navigator.nextPage(CompanyRegistrationNumberId(index), mode, UserAnswers(cacheMap), srn)))
           )
   }
 

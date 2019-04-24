@@ -85,7 +85,7 @@ class PartnerDetailsController @Inject()(
                   if (allPartnersCompleted) {
                     Future.successful(Redirect(navigator.nextPage(PartnerDetailsId(establisherIndex, partnerIndex), mode, userAnswers)))
                   } else {
-                    sectionComplete.setCompleteFlag(request.externalId, IsEstablisherCompleteId(establisherIndex), userAnswers, value = false).map { _ =>
+                    userAnswersService.setCompleteFlag(mode, srn, IsEstablisherCompleteId(establisherIndex), userAnswers, value = false).map { _ =>
                       Redirect(navigator.nextPage(PartnerDetailsId(establisherIndex, partnerIndex), mode, userAnswers))
                     }
                   }

@@ -69,7 +69,7 @@ class OtherPartnersController @Inject()(
             },
             value =>
               userAnswersService.save(mode, srn, OtherPartnersId(establisherIndex), value).map(cacheMap =>
-                Redirect(navigator.nextPage(OtherPartnersId(establisherIndex), mode, UserAnswers(cacheMap))))
+                Redirect(navigator.nextPage(OtherPartnersId(establisherIndex), mode, UserAnswers(cacheMap), srn)))
           )
       }
   }

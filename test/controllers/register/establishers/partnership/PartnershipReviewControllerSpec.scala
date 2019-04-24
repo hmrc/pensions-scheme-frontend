@@ -27,7 +27,8 @@ import org.joda.time.LocalDate
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
 import play.api.test.Helpers._
-import utils.{FakeNavigator, FakeSectionComplete}
+import services.FakeUserAnswersService
+import utils.FakeNavigator
 import views.html.register.establishers.partnership.partnershipReview
 
 class PartnershipReviewControllerSpec extends ControllerSpecBase {
@@ -44,7 +45,7 @@ class PartnershipReviewControllerSpec extends ControllerSpecBase {
       FakeAuthAction,
       dataRetrievalAction,
       new DataRequiredActionImpl,
-      FakeSectionComplete
+      FakeUserAnswersService
     )
 
   def viewAsString(): String = partnershipReview(
@@ -85,11 +86,11 @@ class PartnershipReviewControllerSpec extends ControllerSpecBase {
       val getRelevantData = new FakeDataRetrievalAction(Some(validData()))
       val result = controller(getRelevantData).onSubmit(NormalMode, index, None)(fakeRequest)
       status(result) mustBe SEE_OTHER
-      FakeSectionComplete.verify(IsEstablisherCompleteId(0), true)
+      FakeUserAnswersService.verify(IsEstablisherCompleteId(0), true)
     }
 
     "not set establisher as complete when partner is not complete but partners are completed" in {
-      FakeSectionComplete.reset()
+      FakeUserAnswersService.reset()
       val validData: JsObject = Json.obj(
         EstablishersId.toString -> Json.arr(
           Json.obj(
@@ -101,19 +102,19 @@ class PartnershipReviewControllerSpec extends ControllerSpecBase {
       val getRelevantData = new FakeDataRetrievalAction(Some(validData))
       val result = controller(getRelevantData).onSubmit(NormalMode, index, None)(fakeRequest)
       status(result) mustBe SEE_OTHER
-      FakeSectionComplete.verifyNot(IsEstablisherCompleteId(0))
+      FakeUserAnswersService.verifyNot(IsEstablisherCompleteId(0))
     }
 
     "not set establisher as complete when partnership is complete but partners are not complete" in {
-      FakeSectionComplete.reset()
+      FakeUserAnswersService.reset()
       val getRelevantData = new FakeDataRetrievalAction(Some(validData(Seq(partner("a"), partner("b"), partner("c", isComplete = false)))))
       val result = controller(getRelevantData).onSubmit(NormalMode, index, None)(fakeRequest)
       status(result) mustBe SEE_OTHER
-      FakeSectionComplete.verifyNot(IsEstablisherCompleteId(0))
+      FakeUserAnswersService.verifyNot(IsEstablisherCompleteId(0))
     }
 
     "not set establisher as complete when partnership is complete but partners are not present" in {
-      FakeSectionComplete.reset()
+      FakeUserAnswersService.reset()
       val validData: JsObject = Json.obj(
         EstablishersId.toString -> Json.arr(
           Json.obj(
@@ -125,7 +126,7 @@ class PartnershipReviewControllerSpec extends ControllerSpecBase {
       val getRelevantData = new FakeDataRetrievalAction(Some(validData))
       val result = controller(getRelevantData).onSubmit(NormalMode, index, None)(fakeRequest)
       status(result) mustBe SEE_OTHER
-      FakeSectionComplete.verifyNot(IsEstablisherCompleteId(0))
+      FakeUserAnswersService.verifyNot(IsEstablisherCompleteId(0))
     }
   }
 }

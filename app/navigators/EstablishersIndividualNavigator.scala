@@ -20,7 +20,8 @@ import com.google.inject.{Inject, Singleton}
 import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
 import identifiers.register.establishers.individual._
-import models.{AddressYears, CheckMode, Mode, NormalMode}
+import models.{AddressYears, CheckMode, CheckUpdateMode, Index, Mode, NormalMode, UpdateMode}
+import models.Mode.journeyMode
 import utils.{Navigator, UserAnswers}
 
 @Singleton
@@ -29,87 +30,118 @@ class EstablishersIndividualNavigator @Inject()(
                                                  val dataCacheConnector: UserAnswersCacheConnector
                                                ) extends Navigator {
 
-  private def checkYourAnswers(index: Int)(answers: UserAnswers): Option[NavigateTo] =
-    NavigateTo.save(controllers.register.establishers.individual.routes.CheckYourAnswersController.onPageLoad(NormalMode, index, None))
+  private def checkYourAnswers(index: Int, mode: Mode, srn: Option[String]): Option[NavigateTo] =
+    NavigateTo.save(controllers.register.establishers.individual.routes.CheckYourAnswersController.onPageLoad(mode, index, srn))
+
+  private def exitMiniJourney(index: Index, mode: Mode, srn: Option[String]): Option[NavigateTo] =
+    if(mode == CheckMode || mode == NormalMode){
+      checkYourAnswers(index, journeyMode(mode), srn)
+    } else {
+      anyMoreChanges(srn)
+    }
+
+  private def anyMoreChanges(srn: Option[String]): Option[NavigateTo] =
+    NavigateTo.save(controllers.vary.routes.AnyMoreChangesController.onPageLoad(srn))
 
   //scalastyle:off cyclomatic.complexity
-  override protected def routeMap(from: NavigateFrom): Option[NavigateTo] = {
+  protected def routes(from: NavigateFrom, mode: Mode, srn: Option[String]): Option[NavigateTo] = {
     from.id match {
       case EstablisherDetailsId(index) =>
-        NavigateTo.save(controllers.register.establishers.individual.routes.EstablisherNinoController.onPageLoad(NormalMode, index, None))
+        NavigateTo.save(controllers.register.establishers.individual.routes.EstablisherNinoController.onPageLoad(mode, index, srn))
+
       case EstablisherNinoId(index) =>
-        NavigateTo.save(controllers.register.establishers.individual.routes.UniqueTaxReferenceController.onPageLoad(NormalMode, index, None))
+        NavigateTo.save(controllers.register.establishers.individual.routes.UniqueTaxReferenceController.onPageLoad(mode, index, srn))
+
       case UniqueTaxReferenceId(index) =>
-        NavigateTo.save(controllers.register.establishers.individual.routes.PostCodeLookupController.onPageLoad(NormalMode, index, None))
+        NavigateTo.save(controllers.register.establishers.individual.routes.PostCodeLookupController.onPageLoad(mode, index, srn))
+
       case PostCodeLookupId(index) =>
-        NavigateTo.save(controllers.register.establishers.individual.routes.AddressListController.onPageLoad(NormalMode, index, None))
+        NavigateTo.save(controllers.register.establishers.individual.routes.AddressListController.onPageLoad(mode, index, srn))
+
       case AddressListId(index) =>
-        NavigateTo.save(controllers.register.establishers.individual.routes.AddressController.onPageLoad(NormalMode, index, None))
+        NavigateTo.save(controllers.register.establishers.individual.routes.AddressController.onPageLoad(mode, index, srn))
+
       case AddressId(index) =>
-        NavigateTo.save(controllers.register.establishers.individual.routes.AddressYearsController.onPageLoad(NormalMode, index, None))
+        NavigateTo.save(controllers.register.establishers.individual.routes.AddressYearsController.onPageLoad(mode, index, srn))
+
       case AddressYearsId(index) =>
-        addressYearsRoutes(index)(from.userAnswers)
+        addressYearsRoutes(index, mode, srn)(from.userAnswers)
+
       case PreviousPostCodeLookupId(index) =>
-        NavigateTo.save(controllers.register.establishers.individual.routes.PreviousAddressListController.onPageLoad(NormalMode, index, None))
+        NavigateTo.save(controllers.register.establishers.individual.routes.PreviousAddressListController.onPageLoad(mode, index, srn))
+
       case PreviousAddressListId(index) =>
-        NavigateTo.save(controllers.register.establishers.individual.routes.PreviousAddressController.onPageLoad(NormalMode, index, None))
+        NavigateTo.save(controllers.register.establishers.individual.routes.PreviousAddressController.onPageLoad(mode, index, srn))
+
       case PreviousAddressId(index) =>
-        NavigateTo.save(controllers.register.establishers.individual.routes.ContactDetailsController.onPageLoad(NormalMode, index, None))
+        NavigateTo.save(controllers.register.establishers.individual.routes.ContactDetailsController.onPageLoad(mode, index, srn))
+
       case ContactDetailsId(index) =>
-        checkYourAnswers(index)(from.userAnswers)
+        checkYourAnswers(index, mode, srn)
+
       case CheckYourAnswersId =>
-        NavigateTo.dontSave(controllers.register.establishers.routes.AddEstablisherController.onPageLoad(NormalMode, None))
+        NavigateTo.dontSave(controllers.register.establishers.routes.AddEstablisherController.onPageLoad(mode, srn))
     }
   }
 
-  override protected def editRouteMap(from: NavigateFrom): Option[NavigateTo] = {
+  override protected def routeMap(from: NavigateFrom): Option[NavigateTo] = routes(from, NormalMode, None)
+  protected def updateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] = routes(from, UpdateMode, srn)
+
+  protected def editRoutes(from: NavigateFrom, mode: Mode, srn: Option[String]): Option[NavigateTo] = {
     from.id match {
-      case EstablisherDetailsId(index) =>
-        checkYourAnswers(index)(from.userAnswers)
-      case EstablisherNinoId(index) =>
-        checkYourAnswers(index)(from.userAnswers)
-      case UniqueTaxReferenceId(index) =>
-        checkYourAnswers(index)(from.userAnswers)
+      case EstablisherDetailsId(index) =>       exitMiniJourney(index, mode, srn)
+      case EstablisherNinoId(index) =>          exitMiniJourney(index, mode, srn)
+      case UniqueTaxReferenceId(index) =>       exitMiniJourney(index, mode, srn)
+
       case PostCodeLookupId(index) =>
-        NavigateTo.save(controllers.register.establishers.individual.routes.AddressListController.onPageLoad(CheckMode, index, None))
+        NavigateTo.save(controllers.register.establishers.individual.routes.AddressListController.onPageLoad(mode, index, srn))
+
       case AddressListId(index) =>
-        NavigateTo.save(controllers.register.establishers.individual.routes.AddressController.onPageLoad(CheckMode, index, None))
-      case AddressId(index) =>
-        checkYourAnswers(index)(from.userAnswers)
+        NavigateTo.save(controllers.register.establishers.individual.routes.AddressController.onPageLoad(mode, index, srn))
+
+      case AddressId(index) =>                  exitMiniJourney(index, mode, srn)
+
       case AddressYearsId(index) =>
-        addressYearsEditRoutes(index)(from.userAnswers)
+        addressYearsEditRoutes(index, mode, srn)(from.userAnswers)
+
       case PreviousPostCodeLookupId(index) =>
-        NavigateTo.save(controllers.register.establishers.individual.routes.PreviousAddressListController.onPageLoad(CheckMode, index, None))
+        NavigateTo.save(controllers.register.establishers.individual.routes.PreviousAddressListController.onPageLoad(mode, index, srn))
+
       case PreviousAddressListId(index) =>
-        NavigateTo.save(controllers.register.establishers.individual.routes.PreviousAddressController.onPageLoad(CheckMode, index, None))
-      case PreviousAddressId(index) =>
-        checkYourAnswers(index)(from.userAnswers)
-      case ContactDetailsId(index) =>
-        checkYourAnswers(index)(from.userAnswers)
+        NavigateTo.save(controllers.register.establishers.individual.routes.PreviousAddressController.onPageLoad(mode, index, srn))
+
+      case PreviousAddressId(index) =>          exitMiniJourney(index, mode, srn)
+      case ContactDetailsId(index) =>           exitMiniJourney(index, mode, srn)
     }
   }
 
-  protected def updateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] = None
 
-  protected def checkUpdateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] = None
+  override protected def editRouteMap(from: NavigateFrom): Option[NavigateTo] = editRoutes(from, CheckMode, None)
+  protected def checkUpdateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] = editRoutes(from, CheckUpdateMode, srn)
 
-  private def addressYearsRoutes(index: Int)(answers: UserAnswers): Option[NavigateTo] = {
+  private def addressYearsRoutes(index: Int, mode: Mode, srn: Option[String])(answers: UserAnswers): Option[NavigateTo] = {
     answers.get(AddressYearsId(index)) match {
+
       case Some(AddressYears.UnderAYear) =>
-        NavigateTo.save(controllers.register.establishers.individual.routes.PreviousAddressPostCodeLookupController.onPageLoad(NormalMode, index, None))
+        NavigateTo.save(controllers.register.establishers.individual.routes.PreviousAddressPostCodeLookupController.onPageLoad(mode, index, srn))
+
       case Some(AddressYears.OverAYear) =>
-        NavigateTo.save(controllers.register.establishers.individual.routes.ContactDetailsController.onPageLoad(NormalMode, index, None))
+        NavigateTo.save(controllers.register.establishers.individual.routes.ContactDetailsController.onPageLoad(mode, index, srn))
+
       case None =>
         NavigateTo.dontSave(controllers.routes.SessionExpiredController.onPageLoad())
+
     }
   }
 
-  private def addressYearsEditRoutes(index: Int)(answers: UserAnswers): Option[NavigateTo] = {
+  private def addressYearsEditRoutes(index: Int, mode: Mode, srn: Option[String])(answers: UserAnswers): Option[NavigateTo] = {
     answers.get(AddressYearsId(index)) match {
+
       case Some(AddressYears.UnderAYear) =>
-        NavigateTo.save(controllers.register.establishers.individual.routes.PreviousAddressPostCodeLookupController.onPageLoad(CheckMode, index, None))
-      case Some(AddressYears.OverAYear) =>
-        NavigateTo.save(controllers.register.establishers.individual.routes.CheckYourAnswersController.onPageLoad(NormalMode, index, None))
+        NavigateTo.save(controllers.register.establishers.individual.routes.PreviousAddressPostCodeLookupController.onPageLoad(mode, index, srn))
+
+      case Some(AddressYears.OverAYear) => exitMiniJourney(index, mode, srn)
+
       case None =>
         NavigateTo.dontSave(controllers.routes.SessionExpiredController.onPageLoad())
     }

@@ -57,7 +57,7 @@ class AddEstablisherController @Inject()(appConfig: FrontendAppConfig,
           Future.successful(BadRequest(addEstablisher(appConfig, formWithErrors, mode,
             establishers, existingSchemeName, srn))),
         value =>
-          Future.successful(Redirect(navigator.nextPage(AddEstablisherId(value), mode, request.userAnswers)))
+          Future.successful(Redirect(navigator.nextPage(AddEstablisherId(value), mode, request.userAnswers, srn)))
       )
   }
 }

@@ -21,7 +21,7 @@ import connectors.AddressLookupConnector
 import controllers.actions.{AuthAction, DataRequiredAction, DataRetrievalAction}
 import controllers.address.PostcodeLookupController
 import forms.address.PostCodeLookupFormProvider
-import identifiers.register.establishers.company.{CompanyDetailsId, CompanyPostCodeLookupId}
+import identifiers.register.establishers.company.{CompanyAddressId, CompanyAddressListId, CompanyDetailsId, CompanyPostCodeLookupId}
 import javax.inject.Inject
 import models.{Index, Mode}
 import play.api.data.Form
@@ -58,7 +58,7 @@ class CompanyPostCodeLookupController @Inject()(
           details =>
             PostcodeLookupViewModel(
               routes.CompanyPostCodeLookupController.onSubmit(mode, srn, index),
-              routes.CompanyAddressController.onPageLoad(mode, srn, index),
+              routes.CompanyAddressController.onClick(mode, srn, index),
               title = Message(title),
               heading = Message(heading),
               subHeading = Some(details.companyName),

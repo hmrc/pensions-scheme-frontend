@@ -23,6 +23,7 @@ import models._
 import models.Mode._
 import org.scalatest.OptionValues
 import play.api.test.Helpers._
+import services.FakeUserAnswersService
 import utils.{FakeCountryOptions, FakeSectionComplete, UserAnswers}
 import viewmodels.{AnswerRow, AnswerSection}
 import views.html.check_your_answers
@@ -66,7 +67,7 @@ class CheckYourAnswersBenefitsAndInsuranceControllerSpec extends ControllerSpecB
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result).value mustBe controllers.routes.SchemeTaskListController.onPageLoad().url
-        FakeSectionComplete.verify(IsAboutBenefitsAndInsuranceCompleteId, true)
+        FakeUserAnswersService.verify(IsAboutBenefitsAndInsuranceCompleteId, true)
       }
     }
   }
@@ -93,7 +94,7 @@ object CheckYourAnswersBenefitsAndInsuranceControllerSpec extends ControllerSpec
       FakeAuthAction,
       dataRetrievalAction,
       new DataRequiredActionImpl,
-      FakeSectionComplete,
+      FakeUserAnswersService,
       new FakeCountryOptions
     )
 

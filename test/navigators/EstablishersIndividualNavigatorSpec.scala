@@ -22,6 +22,7 @@ import identifiers.Identifier
 import identifiers.register.establishers.individual._
 import identifiers.register.trustees.HaveAnyTrusteesId
 import models._
+import models.Mode.checkMode
 import models.register.SchemeType
 import org.scalatest.prop.TableFor6
 import org.scalatest.{MustMatchers, OptionValues}
@@ -33,21 +34,21 @@ class EstablishersIndividualNavigatorSpec extends SpecBase with MustMatchers wit
 
   import EstablishersIndividualNavigatorSpec._
 
-  private def routes: TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = Table(
+  private def routes(mode: Mode): TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = Table(
     ("Id", "User Answers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (Check Mode)", "Save (CM)"),
-    (EstablisherDetailsId(0), emptyAnswers, establisherNino(NormalMode), true, Some(checkYourAnswers), true),
-    (EstablisherNinoId(0), emptyAnswers, establisherUtr(NormalMode), true, Some(checkYourAnswers), true),
-    (UniqueTaxReferenceId(0), emptyAnswers, postCodeLookup(NormalMode), true, Some(checkYourAnswers), true),
-    (PostCodeLookupId(0), emptyAnswers, addressList(NormalMode), true, Some(addressList(CheckMode)), true),
-    (AddressListId(0), emptyAnswers, address(NormalMode), true, Some(address(CheckMode)), true),
-    (AddressId(0), emptyAnswers, addressYears(NormalMode), true, Some(checkYourAnswers), true),
-    (AddressYearsId(0), addressYearsOverAYear, contactDetails, true, Some(checkYourAnswers), true),
-    (AddressYearsId(0), addressYearsUnderAYear, previousAddressPostCodeLookup(NormalMode), true, Some(previousAddressPostCodeLookup(CheckMode)), true),
+    (EstablisherDetailsId(0), emptyAnswers, establisherNino(mode), true, Some(exitJourney(mode)), true),
+    (EstablisherNinoId(0), emptyAnswers, establisherUtr(mode), true, Some(exitJourney(mode)), true),
+    (UniqueTaxReferenceId(0), emptyAnswers, postCodeLookup(mode), true, Some(exitJourney(mode)), true),
+    (PostCodeLookupId(0), emptyAnswers, addressList(mode), true, Some(addressList(checkMode(mode))), true),
+    (AddressListId(0), emptyAnswers, address(mode), true, Some(address(checkMode(mode))), true),
+    (AddressId(0), emptyAnswers, addressYears(mode), true, Some(exitJourney(mode)), true),
+    (AddressYearsId(0), addressYearsOverAYear, contactDetails(mode), true, Some(exitJourney(mode)), true),
+    (AddressYearsId(0), addressYearsUnderAYear, previousAddressPostCodeLookup(mode), true, Some(previousAddressPostCodeLookup(checkMode(mode))), true),
     (AddressYearsId(0), emptyAnswers, sessionExpired, false, Some(sessionExpired), false),
-    (PreviousPostCodeLookupId(0), emptyAnswers, previousAddressAddressList(NormalMode), true, Some(previousAddressAddressList(CheckMode)), true),
-    (PreviousAddressListId(0), emptyAnswers, previousAddress(NormalMode), true, Some(previousAddress(CheckMode)), true),
-    (PreviousAddressId(0), emptyAnswers, contactDetails, true, Some(checkYourAnswers), true),
-    (CheckYourAnswersId, emptyAnswers, addEstablisher, false, None, true)
+    (PreviousPostCodeLookupId(0), emptyAnswers, previousAddressAddressList(mode), true, Some(previousAddressAddressList(checkMode(mode))), true),
+    (PreviousAddressListId(0), emptyAnswers, previousAddress(mode), true, Some(previousAddress(checkMode(mode))), true),
+    (PreviousAddressId(0), emptyAnswers, contactDetails(mode), true, Some(exitJourney(mode)), true),
+    (CheckYourAnswersId, emptyAnswers, addEstablisher(mode), false, None, true)
   )
 
   private val navigator: EstablishersIndividualNavigator =
@@ -55,7 +56,8 @@ class EstablishersIndividualNavigatorSpec extends SpecBase with MustMatchers wit
 
   s"${navigator.getClass.getSimpleName}" must {
     appRunning()
-    behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, routes, dataDescriber)
+    behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, routes(NormalMode), dataDescriber)
+    behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, routes(UpdateMode), dataDescriber, UpdateMode)
   }
 }
 
@@ -84,26 +86,32 @@ object EstablishersIndividualNavigatorSpec extends OptionValues {
 
   private def addressYears(mode: Mode) = controllers.register.establishers.individual.routes.AddressYearsController.onPageLoad(mode, 0, None)
 
-  private def checkYourAnswers = controllers.register.establishers.individual.routes.CheckYourAnswersController.onPageLoad(NormalMode, 0, None)
-
-  private def contactDetails = controllers.register.establishers.individual.routes.ContactDetailsController.onPageLoad(NormalMode, 0, None)
+  private def contactDetails(mode: Mode) = controllers.register.establishers.individual.routes.ContactDetailsController.onPageLoad(mode, 0, None)
 
   private def previousAddressPostCodeLookup(mode: Mode) =
     controllers.register.establishers.individual.routes.PreviousAddressPostCodeLookupController.onPageLoad(mode, 0, None)
 
-  private def previousAddressAddressList(mode: Mode) = controllers.register.establishers.individual.routes.PreviousAddressListController.onPageLoad(mode, 0, None)
+  private def previousAddressAddressList(mode: Mode) =
+    controllers.register.establishers.individual.routes.PreviousAddressListController.onPageLoad(mode, 0, None)
 
   private def previousAddress(mode: Mode) = controllers.register.establishers.individual.routes.PreviousAddressController.onPageLoad(mode, 0, None)
 
   private def haveAnyTrustees = controllers.register.trustees.routes.HaveAnyTrusteesController.onPageLoad(NormalMode, None)
 
-  private def addTrustees = controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode, None)
+  private def addTrustees(mode: Mode) = controllers.register.trustees.routes.AddTrusteeController.onPageLoad(mode, None)
 
-  private def addEstablisher = controllers.register.establishers.routes.AddEstablisherController.onPageLoad(NormalMode, None)
+  private def addEstablisher(mode: Mode) = controllers.register.establishers.routes.AddEstablisherController.onPageLoad(mode, None)
 
   private def dataDescriber(answers: UserAnswers): String = answers.toString
 
   private def sessionExpired = controllers.routes.SessionExpiredController.onPageLoad()
+
+  private def checkYourAnswers(mode: Mode) = controllers.register.establishers.individual.routes.CheckYourAnswersController.onPageLoad(mode, 0, None)
+
+  private def anyMoreChanges = controllers.vary.routes.AnyMoreChangesController.onPageLoad(None)
+
+  private def exitJourney(mode: Mode) = if (mode == NormalMode) checkYourAnswers(mode) else anyMoreChanges
+
 }
 
 

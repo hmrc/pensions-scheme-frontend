@@ -66,7 +66,8 @@ class AddressController @Inject()(
               title = Message(title),
               heading = Message(heading),
               hint = Some(Message(hint)),
-              secondaryHeader = Some(details.fullName)
+              secondaryHeader = Some(details.fullName),
+              srn = srn
             )
         }
     }
@@ -87,6 +88,11 @@ class AddressController @Inject()(
             PostCodeLookupId(index)
           )
       }
+  }
+
+  def onClick(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
+    implicit request =>
+      clear(AddressId(index), AddressListId(index), mode, srn, routes.AddressController.onPageLoad(mode, index, srn))
   }
 
   private def context(viewModel: ManualAddressViewModel): String = {
