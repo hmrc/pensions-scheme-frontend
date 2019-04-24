@@ -22,7 +22,7 @@ import connectors.UserAnswersCacheConnector
 import controllers.routes._
 import identifiers._
 import models.register.SchemeType
-import models.{CheckMode, NormalMode}
+import models.{CheckMode, Mode, NormalMode}
 import utils.{Navigator, UserAnswers}
 
 class BeforeYouStartNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector, frontendAppConfig: FrontendAppConfig) extends Navigator {
@@ -48,6 +48,10 @@ class BeforeYouStartNavigator @Inject()(val dataCacheConnector: UserAnswersCache
     case DeclarationDutiesId => checkYourAnswers
     case _ => None
   }
+
+  protected def updateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] = None
+
+  protected def checkUpdateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] = None
 
   private def schemeTypeRoutes(answers: UserAnswers): Option[NavigateTo] = {
     answers.get(SchemeTypeId) match {

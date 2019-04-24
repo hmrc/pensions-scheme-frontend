@@ -16,8 +16,10 @@
 
 package controllers.address
 
+import akka.stream.Materializer
 import com.google.inject.Inject
 import config.FrontendAppConfig
+import controllers.actions.{DataRetrievalAction, FakeDataRetrievalAction}
 import forms.address.AddressListFormProvider
 import identifiers.TypedIdentifier
 import models._
@@ -26,7 +28,9 @@ import models.requests.DataRequest
 import org.scalatest.{Matchers, WordSpec}
 import play.api.Application
 import play.api.i18n.MessagesApi
-import play.api.mvc.{Call, Result}
+import play.api.inject.bind
+import play.api.libs.json.Json
+import play.api.mvc.{AnyContent, Call, Request, Result}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.{FakeUserAnswersService, UserAnswersService}
@@ -135,6 +139,26 @@ class AddressListControllerSpec extends WordSpec with Matchers {
 
     }
 
+    "clear saved address and selected address in list" when {
+      "user clicks on manual entry link" in {
+        running(_.overrides(
+          bind[DataRetrievalAction].toInstance(preSavedAddress)
+        )) {
+          app =>
+
+            implicit val mat: Materializer = app.materializer
+
+            val request = FakeRequest()
+            val controller = app.injector.instanceOf[TestController]
+            val result = controller.onClick(CheckUpdateMode, UserAnswers(answers), request)
+
+            status(result) shouldBe SEE_OTHER
+            redirectLocation(result) shouldBe Some(manualInputCall.url)
+            FakeUserAnswersService.verifyNot(fakeAddressId)
+        }
+      }
+    }
+
   }
 
 }
@@ -171,12 +195,28 @@ object AddressListControllerSpec {
 
     }
 
+    def onClick(mode: Mode, answers: UserAnswers, request: Request[AnyContent] = FakeRequest()): Future[Result] =
+      clear(fakeAddressId, fakeAddressListId, mode, srn, manualInputCall)(DataRequest(request, "cacheId", answers, PsaId("A0000000")))
+
+
   }
+
+  object fakeAddressId extends TypedIdentifier[Address]
+  object fakeAddressListId extends TypedIdentifier[TolerantAddress]
+  val tolerantAddress = TolerantAddress(Some("address line 1"), Some("address line 2"), None, None, Some("ZZ1 1ZZ"), Some("GB"))
+  val address = Address("address line 1", "address line 2", None, None, Some("ZZ1 1ZZ"), "GB")
+  object FakeAddressIdentifier extends TypedIdentifier[Address]
+  object FakeSelectedAddressIdentifier extends TypedIdentifier[TolerantAddress]
+
+  private val answers = Json.obj(fakeAddressId.toString -> address,
+    fakeAddressListId.toString -> tolerantAddress)
+  val preSavedAddress = new FakeDataRetrievalAction(Some(answers))
+
+
+  private val srn = Some("123")
 
   val onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
-  val fakeAddressListId: TypedIdentifier[TolerantAddress] = new TypedIdentifier[TolerantAddress]() {}
-  val fakeAddressId: TypedIdentifier[Address] = new TypedIdentifier[Address]() {}
 
   private lazy val postCall = controllers.routes.IndexController.onPageLoad()
   private lazy val manualInputCall = controllers.routes.SessionExpiredController.onPageLoad()

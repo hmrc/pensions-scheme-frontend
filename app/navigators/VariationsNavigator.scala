@@ -19,6 +19,7 @@ package navigators
 import com.google.inject.Inject
 import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
+import models.Mode
 import utils.{Enumerable, Navigator}
 
 class VariationsNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector,
@@ -30,5 +31,9 @@ class VariationsNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConn
     }
 
   override protected def editRouteMap(from: NavigateFrom): Option[NavigateTo] = None
+
+  protected def updateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] = None
+
+  protected def checkUpdateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] = None
 
 }

@@ -16,37 +16,15 @@
 
 package identifiers.register.establishers.company
 
-import identifiers._
-import identifiers.register.establishers.{EstablishersId, IsEstablisherNewId}
-import models.Link
+import identifiers.TypedIdentifier
+import identifiers.register.establishers.EstablishersId
 import models.register.DeclarationDormant
-import models.register.DeclarationDormant._
-import play.api.i18n.Messages
 import play.api.libs.json.JsPath
-import utils.{Enumerable, UserAnswers}
-import utils.checkyouranswers.{CheckYourAnswers, IsDormantCYA}
-import viewmodels.AnswerRow
 
 case class IsCompanyDormantId(index: Int) extends TypedIdentifier[DeclarationDormant] {
   override def path: JsPath = EstablishersId(index).path \ IsCompanyDormantId.toString
 }
 
-object IsCompanyDormantId extends Enumerable.Implicits {
-
+object IsCompanyDormantId {
   override def toString: String = "isCompanyDormant"
-
-  val label: String = "messages__company__cya__dormant"
-  val changeIsDormant: String = "messages__visuallyhidden__establisher__dormant"
-
-  implicit def cya(implicit userAnswers: UserAnswers, messages: Messages): CheckYourAnswers[IsCompanyDormantId] = {
-
-    new CheckYourAnswers[IsCompanyDormantId] {
-
-      override def row(id: IsCompanyDormantId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        IsDormantCYA(label, changeIsDormant)().row(id)(changeUrl, userAnswers)
-
-      override def updateRow(id: IsCompanyDormantId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        IsDormantCYA(label, changeIsDormant, userAnswers.get(IsEstablisherNewId(id.index)))().updateRow(id)(changeUrl, userAnswers)
-    }
-  }
 }

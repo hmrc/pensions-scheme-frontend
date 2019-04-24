@@ -20,7 +20,7 @@ import com.google.inject.Inject
 import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
 import identifiers.register.establishers.{AddEstablisherId, ConfirmDeleteEstablisherId, EstablisherKindId}
-import models.NormalMode
+import models.{Mode, NormalMode}
 import models.register.establishers.EstablisherKind
 import utils.{Enumerable, Navigator, UserAnswers}
 
@@ -48,6 +48,10 @@ class EstablishersNavigator @Inject()(val dataCacheConnector: UserAnswersCacheCo
         NavigateTo.save(controllers.register.establishers.routes.EstablisherKindController.onPageLoad(NormalMode, answers.establishersCount, None))
     }
   }
+
+  protected def updateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] = None
+
+  protected def checkUpdateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] = None
 
   private def establisherKindRoutes(index: Int, answers: UserAnswers): Option[NavigateTo] = {
     answers.get(EstablisherKindId(index)) match {

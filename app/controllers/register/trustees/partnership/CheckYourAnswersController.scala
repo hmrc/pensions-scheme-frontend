@@ -23,6 +23,7 @@ import identifiers.register.trustees.IsTrusteeNewId
 import identifiers.register.trustees.partnership._
 import javax.inject.{Inject, Singleton}
 import models.{CheckMode, Index, Mode, NormalMode}
+import models.Mode._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
@@ -53,20 +54,20 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
       val partnershipDetails = AnswerSection(
         Some("messages__partnership__checkYourAnswers__partnership_details"),
         Seq(
-          PartnershipDetailsId(index).row(routes.TrusteeDetailsController.onPageLoad(CheckMode, index, None).url, mode),
-          PartnershipVatId(index).row(routes.PartnershipVatController.onPageLoad(CheckMode, index, None).url, mode),
-          PartnershipPayeId(index).row(routes.PartnershipPayeController.onPageLoad(CheckMode, index, None).url, mode),
-          PartnershipUniqueTaxReferenceId(index).row(routes.PartnershipUniqueTaxReferenceController.onPageLoad(CheckMode, index, None).url, mode)
+          PartnershipDetailsId(index).row(routes.TrusteeDetailsController.onPageLoad(checkMode(mode), index, srn).url, mode),
+          PartnershipVatId(index).row(routes.PartnershipVatController.onPageLoad(checkMode(mode), index, srn).url, mode),
+          PartnershipPayeId(index).row(routes.PartnershipPayeController.onPageLoad(checkMode(mode), index, srn).url, mode),
+          PartnershipUniqueTaxReferenceId(index).row(routes.PartnershipUniqueTaxReferenceController.onPageLoad(checkMode(mode), index, srn).url, mode)
         ).flatten
       )
 
       val partnershipContactDetails = AnswerSection(
         Some("messages__partnership__checkYourAnswers__partnership_contact_details"),
         Seq(
-          PartnershipAddressId(index).row(routes.PartnershipAddressController.onPageLoad(CheckMode, index, None).url),
-          PartnershipAddressYearsId(index).row(routes.PartnershipAddressYearsController.onPageLoad(CheckMode, index, None).url, mode),
-          PartnershipPreviousAddressId(index).row(routes.PartnershipPreviousAddressController.onPageLoad(CheckMode, index, None).url, mode),
-          PartnershipContactDetailsId(index).row(routes.PartnershipContactDetailsController.onPageLoad(CheckMode, index, None).url)
+          PartnershipAddressId(index).row(routes.PartnershipAddressController.onPageLoad(checkMode(mode), index, srn).url),
+          PartnershipAddressYearsId(index).row(routes.PartnershipAddressYearsController.onPageLoad(checkMode(mode), index, srn).url, mode),
+          PartnershipPreviousAddressId(index).row(routes.PartnershipPreviousAddressController.onPageLoad(checkMode(mode), index, srn).url, mode),
+          PartnershipContactDetailsId(index).row(routes.PartnershipContactDetailsController.onPageLoad(checkMode(mode), index, srn).url)
         ).flatten
       )
 

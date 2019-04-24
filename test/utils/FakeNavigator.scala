@@ -33,7 +33,7 @@ class FakeNavigator(desiredRoute: Call, mode: Mode = NormalMode) extends Navigat
 
   override protected def dataCacheConnector: UserAnswersCacheConnector = FakeUserAnswersCacheConnector
 
-  override def nextPage(id: Identifier, mode: Mode, answers: UserAnswers)
+  override def nextPage(id: Identifier, mode: Mode, answers: UserAnswers, srn: Option[String])
                        (implicit ex: IdentifiedRequest, ec: ExecutionContext, hc: HeaderCarrier): Call = {
     userAnswers = Some(answers)
     desiredRoute
@@ -43,6 +43,9 @@ class FakeNavigator(desiredRoute: Call, mode: Mode = NormalMode) extends Navigat
 
   override protected def editRouteMap(from: NavigateFrom): Option[NavigateTo] = None
 
+  override protected def updateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] = None
+
+  override protected def checkUpdateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] = None
 }
 
 object FakeNavigator extends FakeNavigator(Call("GET", "www.example.com"), NormalMode)
