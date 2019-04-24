@@ -14,3 +14,4 @@ POST       /change-declaration                          controllers.register.Dec
 GET        /details-updated/:srn                        controllers.register.SchemeVariationsSuccessController.onPageLoad(srn)
 
 GET        /you-still-have-changes/:srn                 controllers.register.StillNeedDetailsController.onPageLoad(srn)
+GET        /cannot-make-changes/:srn                    controllers.register.CannotMakeChangesController.onPageLoad(srn)
