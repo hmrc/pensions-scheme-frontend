@@ -34,6 +34,7 @@ object PartnershipUniqueTaxReferenceID {
 
   val label = "messages__partnership__checkYourAnswers__utr"
   val utrLabel = "messages__establisher_individual_utr_cya_label"
+  val reasonLabel = "messages__establisher_individual_utr_reason_cya_label"
   val changeHasUtr = "messages__visuallyhidden__partnership__utr_yes_no"
   val changeUtr = "messages__visuallyhidden__partnership__utr"
   val changeNoUtr = "messages__visuallyhidden__partnership__utr_no"
@@ -45,20 +46,8 @@ object PartnershipUniqueTaxReferenceID {
         UniqueTaxReferenceCYA(label, utrLabel, changeHasUtr, changeUtr, changeNoUtr)().row(id)(changeUrl, userAnswers)
 
       override def updateRow(id: PartnershipUniqueTaxReferenceID)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        userAnswers.get(id) match {
-          case Some(UniqueTaxReference.Yes(utr)) =>
-            userAnswers.get(IsEstablisherNewId(id.index)) match {
-              case Some(true) => Seq(AnswerRow(utrLabel, Seq(utr), answerIsMessageKey = false,
-                Some(Link("site.change", changeUrl, Some(changeUtr)))))
-              case _  => Seq(AnswerRow(utrLabel, Seq(utr), answerIsMessageKey = false, None))
-            }
-          case Some(UniqueTaxReference.No(_)) =>userAnswers.get(IsEstablisherNewId(id.index)) match {
-            case Some(true) => Seq(AnswerRow(utrLabel, Seq("site.not_entered"), answerIsMessageKey = true,
-              Some(Link("site.add", changeUrl, Some(changeHasUtr)))))
-            case _  => Seq(AnswerRow(utrLabel, Seq("site.not_entered"), answerIsMessageKey = true, None))
-          }
-          case _ => Seq.empty[AnswerRow]
-        }
+        UniqueTaxReferenceCYA(label, utrLabel, reasonLabel, changeHasUtr, changeUtr, changeNoUtr, userAnswers.get(IsEstablisherNewId(id.index)))()
+          .updateRow(id)(changeUrl, userAnswers)
     }
   }
 }

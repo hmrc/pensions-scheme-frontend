@@ -42,22 +42,11 @@ object IsCompanyDormantId extends Enumerable.Implicits {
 
     new CheckYourAnswers[IsCompanyDormantId] {
 
-      override def row(id: IsCompanyDormantId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
+      override def row(id: IsCompanyDormantId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
         IsDormantCYA(label, changeIsDormant)().row(id)(changeUrl, userAnswers)
-      }
 
       override def updateRow(id: IsCompanyDormantId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        userAnswers.get(id) match {
-          case Some(DeclarationDormant.Yes) => userAnswers.get(IsEstablisherNewId(id.index)) match {
-              case Some(true) =>  IsDormantCYA(label, changeIsDormant)().row(id)(changeUrl, userAnswers)
-              case _  =>  Seq(AnswerRow(label, Seq("site.yes"), answerIsMessageKey = true, None))
-            }
-          case Some(DeclarationDormant.No) => userAnswers.get(IsEstablisherNewId(id.index)) match {
-            case Some(true) =>  IsDormantCYA(label, changeIsDormant)().row(id)(changeUrl, userAnswers)
-            case _  =>  Seq(AnswerRow(label, Seq("site.no"), answerIsMessageKey = true, None))
-          }
-          case _ => Seq.empty[AnswerRow]
-        }
+        IsDormantCYA(label, changeIsDormant, userAnswers.get(IsEstablisherNewId(id.index)))().updateRow(id)(changeUrl, userAnswers)
     }
   }
 }

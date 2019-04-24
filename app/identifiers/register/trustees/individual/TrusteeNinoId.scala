@@ -18,7 +18,7 @@ package identifiers.register.trustees.individual
 
 import identifiers.TypedIdentifier
 import identifiers.register.trustees.{IsTrusteeNewId, TrusteesId}
-import models.{Link, Nino}
+import models.Nino
 import play.api.i18n.Messages
 import play.api.libs.json.JsPath
 import utils.UserAnswers
@@ -30,26 +30,21 @@ case class TrusteeNinoId(index: Int) extends TypedIdentifier[Nino] {
 }
 
 object TrusteeNinoId {
+
   override def toString: String = "trusteeNino"
+
+  val label = "messages__trusteeNino_question_cya_label"
+  val changeHasNino = "messages__visuallyhidden__trustee__nino_yes_no"
+  val changeNino = "messages__visuallyhidden__trustee__nino"
+  val changeNoNino = "messages__visuallyhidden__trustee__nino_no"
 
   implicit def cya(implicit userAnswers: UserAnswers, messages: Messages): CheckYourAnswers[TrusteeNinoId] = {
     new CheckYourAnswers[TrusteeNinoId] {
-      override def row(id: TrusteeNinoId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
-        NinoCYA()().row(id)(changeUrl, userAnswers)
-      }
+      override def row(id: TrusteeNinoId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+        NinoCYA(label, changeHasNino, changeNino, changeNoNino)().row(id)(changeUrl, userAnswers)
 
-      override def updateRow(id: TrusteeNinoId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
-        userAnswers.get(id) match {
-          case Some(Nino.Yes(nino)) =>  userAnswers.get(IsTrusteeNewId(id.index)) match {
-            case Some(true) => Seq(AnswerRow("messages__common__nino", Seq(nino), answerIsMessageKey = false,
-              Some(Link("site.change", changeUrl, Some("messages__visuallyhidden__trustee__nino_yes_no")))))
-            case _  => Seq(AnswerRow("messages__common__nino", Seq(nino), answerIsMessageKey = false, None))
-          }
-          case Some(Nino.No(_)) => Seq(AnswerRow("messages__common__nino", Seq("site.not_entered"), answerIsMessageKey = true,
-            Some(Link("site.add", changeUrl, Some(s"messages__visuallyhidden__trustee__nino_add")))))
-          case _ => Seq.empty[AnswerRow]
-        }
-      }
+      override def updateRow(id: TrusteeNinoId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+        NinoCYA(label, changeHasNino, changeNino, changeNoNino, userAnswers.get(IsTrusteeNewId(id.index)))().updateRow(id)(changeUrl, userAnswers)
     }
   }
 }

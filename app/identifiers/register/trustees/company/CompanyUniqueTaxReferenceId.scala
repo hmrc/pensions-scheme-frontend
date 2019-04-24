@@ -18,7 +18,7 @@ package identifiers.register.trustees.company
 
 import identifiers._
 import identifiers.register.trustees.{IsTrusteeNewId, TrusteesId}
-import models.{Link, UniqueTaxReference}
+import models.UniqueTaxReference
 import play.api.i18n.Messages
 import play.api.libs.json.JsPath
 import utils.UserAnswers
@@ -47,20 +47,8 @@ object CompanyUniqueTaxReferenceId {
       }
 
       override def updateRow(id: CompanyUniqueTaxReferenceId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        userAnswers.get(id) match {
-          case Some(UniqueTaxReference.Yes(utr)) =>
-            userAnswers.get(IsTrusteeNewId(id.index)) match {
-              case Some(true) => Seq(AnswerRow(utrLabel, Seq(utr), answerIsMessageKey = false,
-                  Some(Link("site.change", changeUrl, Some(changeUtr)))))
-              case _  => Seq(AnswerRow(utrLabel, Seq(utr), answerIsMessageKey = false, None))
-            }
-          case Some(UniqueTaxReference.No(_)) =>userAnswers.get(IsTrusteeNewId(id.index)) match {
-            case Some(true) =>  Seq(AnswerRow(utrLabel, Seq("site.not_entered"), answerIsMessageKey = true,
-              Some(Link("site.add", changeUrl, Some(changeUtr)))))
-            case _  =>  Seq(AnswerRow(utrLabel, Seq("site.not_entered"), answerIsMessageKey = true, None))
-          }
-          case _ => Seq.empty[AnswerRow]
-        }
+        UniqueTaxReferenceCYA(label, utrLabel, reasonLabel, changeHasUtr, changeUtr, changeNoUtr, userAnswers.get(IsTrusteeNewId(id.index)))()
+          .updateRow(id)(changeUrl, userAnswers)
     }
   }
 }

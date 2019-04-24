@@ -18,7 +18,7 @@ package identifiers.register.trustees.partnership
 
 import identifiers.TypedIdentifier
 import identifiers.register.trustees.{IsTrusteeNewId, TrusteesId}
-import models.{Link, Vat}
+import models.Vat
 import play.api.i18n.Messages
 import play.api.libs.json.JsPath
 import utils.UserAnswers
@@ -44,17 +44,7 @@ object PartnershipVatId {
         VatCYA(Some(labelYesNo), hiddenLabelYesNo, hiddenLabelVat)().row(id)(changeUrl, userAnswers)
 
       override def updateRow(id: PartnershipVatId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        userAnswers.get(id) match {
-          case Some(Vat.Yes(vat)) => userAnswers.get(IsTrusteeNewId(id.index)) match {
-            case Some(true) => Seq(AnswerRow("messages__common__cya__vat", Seq("site.yes"), answerIsMessageKey = true,
-              Some(Link("site.change", changeUrl, Some(hiddenLabelYesNo)))))
-            case _  => Seq(AnswerRow("messages__common__cya__vat", Seq("site.yes"), answerIsMessageKey = true, None))
-          }
-          case Some(Vat.No) => Seq(AnswerRow("messages__common__cya__vat", Seq("site.not_entered"), answerIsMessageKey = true,
-            Some(Link("site.add", changeUrl, Some(s"${hiddenLabelVat}_add")))))
-
-          case _ => Seq.empty[AnswerRow]
-        }
+        VatCYA(Some(labelYesNo), hiddenLabelYesNo, hiddenLabelVat, userAnswers.get(IsTrusteeNewId(id.index)))().updateRow(id)(changeUrl, userAnswers)
     }
   }
 }

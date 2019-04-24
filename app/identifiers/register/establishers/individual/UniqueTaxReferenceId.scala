@@ -18,7 +18,7 @@ package identifiers.register.establishers.individual
 
 import identifiers._
 import identifiers.register.establishers.{EstablishersId, IsEstablisherNewId}
-import models.{Link, UniqueTaxReference}
+import models.UniqueTaxReference
 import play.api.i18n.Messages
 import play.api.libs.json.JsPath
 import utils.UserAnswers
@@ -38,24 +38,8 @@ object UniqueTaxReferenceId {
         UniqueTaxReferenceCYA()().row(id)(changeUrl, userAnswers)
 
       override def updateRow(id: UniqueTaxReferenceId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        userAnswers.get(id) match {
-
-          case Some(UniqueTaxReference.Yes(utr)) =>
-            userAnswers.get(IsEstablisherNewId(id.index)) match {
-              case Some(true) => Seq(AnswerRow("messages__establisher_individual_utr_cya_label", Seq(utr), answerIsMessageKey = false,
-                Some(Link("site.change", changeUrl, Some("messages__visuallyhidden__establisher__utr_yes_no")))))
-              case _  => Seq(AnswerRow("messages__establisher_individual_utr_cya_label", Seq(utr), answerIsMessageKey = false, None))
-            }
-
-          case Some(UniqueTaxReference.No(_)) =>
-            userAnswers.get(IsEstablisherNewId(id.index)) match {
-              case Some(true) => Seq(AnswerRow("messages__establisher_individual_utr_cya_label", Seq("site.not_entered"), answerIsMessageKey = true,
-                Some(Link("site.add", changeUrl, Some("messages__visuallyhidden__establisher__utr_yes_no")))))
-              case _  => Seq(AnswerRow("messages__establisher_individual_utr_cya_label", Seq("site.not_entered"), answerIsMessageKey = true, None))
-            }
-
-          case _ => Seq.empty[AnswerRow]
-        }
+        UniqueTaxReferenceCYA(isNew = userAnswers.get(IsEstablisherNewId(id.index)))()
+          .updateRow(id)(changeUrl, userAnswers)
     }
   }
 }

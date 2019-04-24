@@ -18,7 +18,7 @@ package identifiers.register.establishers.company
 
 import identifiers.TypedIdentifier
 import identifiers.register.establishers.{EstablishersId, IsEstablisherNewId}
-import models.{Link, UniqueTaxReference}
+import models.UniqueTaxReference
 import play.api.i18n.Messages
 import play.api.libs.json.JsPath
 import utils.UserAnswers
@@ -42,25 +42,12 @@ object CompanyUniqueTaxReferenceId {
   implicit def cya(implicit userAnswers: UserAnswers, messages: Messages): CheckYourAnswers[CompanyUniqueTaxReferenceId] = {
 
     new CheckYourAnswers[CompanyUniqueTaxReferenceId] {
-      override def row(id: CompanyUniqueTaxReferenceId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
+      override def row(id: CompanyUniqueTaxReferenceId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
         UniqueTaxReferenceCYA(label, utrLabel, reasonLabel, changeHasUtr, changeUtr, changeNoUtr)().row(id)(changeUrl, userAnswers)
-      }
 
       override def updateRow(id: CompanyUniqueTaxReferenceId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        userAnswers.get(id) match {
-          case Some(UniqueTaxReference.Yes(utr)) =>
-            userAnswers.get(IsEstablisherNewId(id.index)) match {
-              case Some(true) => Seq(AnswerRow(utrLabel, Seq(utr), answerIsMessageKey = false,
-                Some(Link("site.change", changeUrl, Some(changeUtr)))))
-              case _  => Seq(AnswerRow(utrLabel, Seq(utr), answerIsMessageKey = false, None))
-            }
-          case Some(UniqueTaxReference.No(_)) =>userAnswers.get(IsEstablisherNewId(id.index)) match {
-            case Some(true) =>  Seq(AnswerRow(utrLabel, Seq("site.not_entered"), answerIsMessageKey = true,
-              Some(Link("site.add", changeUrl, Some(changeUtr)))))
-            case _  =>  Seq(AnswerRow(utrLabel, Seq("site.not_entered"), answerIsMessageKey = true, None))
-          }
-          case _ => Seq.empty[AnswerRow]
-        }
+        UniqueTaxReferenceCYA(label, utrLabel, reasonLabel, changeHasUtr, changeUtr, changeNoUtr, userAnswers.get(IsEstablisherNewId(id.index)))()
+          .updateRow(id)(changeUrl, userAnswers)
     }
   }
 }

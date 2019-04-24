@@ -59,7 +59,7 @@ class UniqueTaxReferenceIdSpec extends SpecBase {
         implicit val userAnswers = request.userAnswers
         UniqueTaxReferenceId(0).row(onwardUrl, UpdateMode) must equal(Seq(
           AnswerRow("messages__trustee_individual_utr_cya_label",List("utr"),false,
-            Some(Link("site.change",onwardUrl,Some("messages__visuallyhidden__trustee__utr_yes_no"))))
+            Some(Link("site.change",onwardUrl,Some("messages__visuallyhidden__trustee__utr"))))
         ))
       }
     }

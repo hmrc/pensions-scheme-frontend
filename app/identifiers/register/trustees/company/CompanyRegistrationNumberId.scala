@@ -18,7 +18,7 @@ package identifiers.register.trustees.company
 
 import identifiers._
 import identifiers.register.trustees.{IsTrusteeNewId, TrusteesId}
-import models.{CompanyRegistrationNumber, Link}
+import models.CompanyRegistrationNumber
 import play.api.i18n.Messages
 import play.api.libs.json.JsPath
 import utils.UserAnswers
@@ -41,24 +41,11 @@ object CompanyRegistrationNumberId {
   implicit def cya(implicit userAnswers: UserAnswers, messages: Messages): CheckYourAnswers[CompanyRegistrationNumberId] = {
 
     new CheckYourAnswers[CompanyRegistrationNumberId] {
-      override def row(id: CompanyRegistrationNumberId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
+      override def row(id: CompanyRegistrationNumberId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
         CompanyRegistrationNumberCYA(label, changeHasCrn, changeCrn, changeNoCrn)().row(id)(changeUrl, userAnswers)
-      }
 
       override def updateRow(id: CompanyRegistrationNumberId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        userAnswers.get(id) match {
-          case Some(CompanyRegistrationNumber.Yes(crn)) =>
-            userAnswers.get(IsTrusteeNewId(id.index)) match {
-              case Some(true) => Seq(AnswerRow("messages__common__crn", Seq(crn), answerIsMessageKey = false,
-                Some(Link("site.change", changeUrl, Some(changeCrn)))))
-              case _  => Seq(AnswerRow("messages__common__crn", Seq(crn), answerIsMessageKey = false, None))
-            }
-          case Some(CompanyRegistrationNumber.No(reason)) =>Seq(
-            AnswerRow("messages__common__crn", Seq("site.not_entered"), answerIsMessageKey = true,
-              Some(Link("site.add", changeUrl, Some(s"${changeCrn}_add"))))
-          )
-          case _ => Seq.empty[AnswerRow]
-        }
+        CompanyRegistrationNumberCYA(label, changeHasCrn, changeCrn, changeNoCrn)().updateRow(id)(changeUrl, userAnswers)
     }
   }
 }

@@ -100,12 +100,7 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase with Enumerable
   def postUrl: Call = routes.CheckYourAnswersController.onSubmit(NormalMode, None, index)
 
   private def companyDetailsSection(implicit request: DataRequest[AnyContent]): AnswerSection = {
-    val companyDetailsRow = CompanyDetailsCYA(
-      nameLabel = "messages__common__cya__name",
-      vatLabel = "messages__common__cya__vat",
-      changeVat = "messages__visuallyhidden__establisher__vat_number",
-      payeLabel = "messages__common__cya__paye",
-      changePaye = "messages__visuallyhidden__establisher__paye_number")().row(CompanyDetailsId(index))(companyDetailsRoute, request.userAnswers)
+    val companyDetailsRow = CompanyDetailsCYA()().row(CompanyDetailsId(index))(companyDetailsRoute, request.userAnswers)
 
     val crnRows = CompanyRegistrationNumberCYA[CompanyRegistrationNumberId](
       label = "messages__company__cya__crn_yes_no",
