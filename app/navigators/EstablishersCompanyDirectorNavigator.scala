@@ -20,7 +20,7 @@ import com.google.inject.{Inject, Singleton}
 import connectors.UserAnswersCacheConnector
 import controllers.register.establishers.company.director.routes
 import identifiers.register.establishers.company.director._
-import models.{AddressYears, CheckMode, NormalMode}
+import models.{AddressYears, CheckMode, Mode, NormalMode}
 import utils.{Navigator, UserAnswers}
 
 @Singleton
@@ -89,6 +89,10 @@ class EstablishersCompanyDirectorNavigator @Inject()(val dataCacheConnector: Use
       case _ => None
     }
   }
+
+  protected def updateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] = None
+
+  protected def checkUpdateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] = None
 
   private def addressYearsRoutes(establisherIndex: Int, directorIndex: Int)(answers: UserAnswers): Option[NavigateTo] = {
     answers.get(DirectorAddressYearsId(establisherIndex, directorIndex)) match {

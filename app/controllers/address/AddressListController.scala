@@ -21,11 +21,11 @@ import connectors.UserAnswersCacheConnector
 import controllers.Retrievals
 import forms.address.AddressListFormProvider
 import identifiers.TypedIdentifier
-import models.Mode
+import models.{CheckUpdateMode, Mode, UpdateMode}
 import models.address.{Address, TolerantAddress}
 import models.requests.DataRequest
 import play.api.i18n.I18nSupport
-import play.api.mvc.{AnyContent, Result}
+import play.api.mvc.{AnyContent, Call, Result}
 import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.{Navigator, UserAnswers}
@@ -66,12 +66,23 @@ trait AddressListController extends FrontendController with Retrievals  with I18
           _ =>
             userAnswersService.save(mode, viewModel.srn, navigatorId, address).map {
               json =>
-                Redirect(navigator.nextPage(navigatorId, mode, UserAnswers(json)))
+                Redirect(navigator.nextPage(navigatorId, mode, UserAnswers(json), viewModel.srn))
             }
         }
       }
     )
 
   }
+
+  protected def clear(id: TypedIdentifier[Address],
+                      selectedId: TypedIdentifier[TolerantAddress],
+                      mode: Mode, srn: Option[String], manualCall: Call)(implicit request: DataRequest[AnyContent]): Future[Result] =
+    if (mode == CheckUpdateMode || mode == UpdateMode) {
+      userAnswersService.remove(mode, srn, id).flatMap (_ =>
+        userAnswersService.remove(mode, srn, selectedId).map (_ =>
+          Redirect(manualCall)))
+    } else {
+      Future.successful(Redirect(manualCall))
+    }
 
 }

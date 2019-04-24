@@ -16,10 +16,10 @@
 
 package utils
 
-import connectors.{UserAnswersCacheConnector, FakeUserAnswersCacheConnector}
+import connectors.{FakeUserAnswersCacheConnector, UserAnswersCacheConnector}
 import identifiers.{LastPageId, TypedIdentifier}
 import models.requests.IdentifiedRequest
-import models.{CheckMode, LastPage, NormalMode}
+import models.{CheckMode, CheckUpdateMode, LastPage, NormalMode, UpdateMode}
 import org.scalatest.{MustMatchers, WordSpec}
 import play.api.mvc.Call
 import uk.gov.hmrc.http.HeaderCarrier
@@ -60,6 +60,34 @@ class NavigatorSpec extends WordSpec with MustMatchers {
       }
     }
 
+    "in Update mode" must {
+      "go to the specified page for an identifier that does exist in the route map" in {
+        val fixture = testFixture()
+        val result = fixture.navigator.nextPage(testExistId, UpdateMode, UserAnswers())
+        result mustBe testExistUpdateModeCall
+      }
+
+      "go to Index from an identifier that doesn't exist in the edit route map" in {
+        val fixture = testFixture()
+        val result = fixture.navigator.nextPage(testNotExistId, UpdateMode, UserAnswers())
+        result mustBe controllers.routes.IndexController.onPageLoad()
+      }
+    }
+
+    "in CheckUpdate mode" must {
+      "go to the specified page for an identifier that does exist in the route map" in {
+        val fixture = testFixture()
+        val result = fixture.navigator.nextPage(testExistId, CheckUpdateMode, UserAnswers())
+        result mustBe testExistCheckUpdateModeCall
+      }
+
+      "go to Index from an identifier that doesn't exist in the edit route map" in {
+        val fixture = testFixture()
+        val result = fixture.navigator.nextPage(testNotExistId, CheckUpdateMode, UserAnswers())
+        result mustBe controllers.routes.IndexController.onPageLoad()
+      }
+    }
+
     "in either mode" must {
       "not save the last page when configured not to" in {
         val fixture = testFixture()
@@ -86,6 +114,8 @@ object NavigatorSpec {
   val testNotExistCall: Call = Call("GET", "http://www.test.com/not-exist")
   val testExistNormalModeCall: Call = Call("GET", "http://www.test.com/exist/normal-mode")
   val testExistCheckModeCall: Call = Call("GET", "http://www.test.com/exist/check-mode")
+  val testExistUpdateModeCall: Call = Call("GET", "http://www.test.com/exist/update-mode")
+  val testExistCheckUpdateModeCall: Call = Call("GET", "http://www.test.com/exist/check-update-mode")
   val testSaveCall: Call = Call("GET", "http://www.test.com/save")
   val testNotSaveCall: Call = Call("GET", "http://www.test.com/not-save")
 
@@ -110,6 +140,17 @@ object NavigatorSpec {
         case _ => None
       }
 
+    override protected def updateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] =  from.id match {
+      case `testExistId` => NavigateTo.dontSave(testExistUpdateModeCall)
+      case `testSaveId` => NavigateTo.save(testSaveCall)
+      case `testNotSaveId` => NavigateTo.dontSave(testNotSaveCall)
+      case _ => None
+    }
+
+    override protected def checkUpdateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] =  from.id match {
+      case `testExistId` => NavigateTo.dontSave(testExistCheckUpdateModeCall)
+      case _ => None
+    }
   }
 
   trait TestFixture {

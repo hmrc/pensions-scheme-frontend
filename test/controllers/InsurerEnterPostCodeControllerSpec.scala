@@ -20,9 +20,9 @@ import base.CSRFRequest
 import connectors.{AddressLookupConnector, FakeUserAnswersCacheConnector, UserAnswersCacheConnector}
 import controllers.actions._
 import forms.address.PostCodeLookupFormProvider
-import identifiers.SchemeNameId
-import models.NormalMode
-import models.address.TolerantAddress
+import identifiers.{InsurerConfirmAddressId, InsurerSelectAddressId, SchemeNameId}
+import models.{CheckUpdateMode, NormalMode}
+import models.address.{Address, TolerantAddress}
 import models.person.PersonDetails
 import org.joda.time.LocalDate
 import org.scalatest.OptionValues
@@ -58,7 +58,7 @@ class InsurerEnterPostCodeControllerSpec extends ControllerSpecBase with CSRFReq
 
           val viewModel = PostcodeLookupViewModel(
             routes.InsurerEnterPostcodeController.onSubmit(NormalMode, None),
-            routes.InsurerConfirmAddressController.onSubmit(NormalMode, None),
+            routes.InsurerEnterPostcodeController.onClick(NormalMode, None),
             Messages("messages__insurer_enter_postcode__title"),
             "messages__insurer_enter_postcode__h1",
             None,
@@ -83,6 +83,18 @@ class InsurerEnterPostCodeControllerSpec extends ControllerSpecBase with CSRFReq
         )
       }
     }
+
+    "clear saved address and selected address in list" when {
+      "user clicks on manual entry link" in {
+        requestResult(
+          implicit app => addToken(FakeRequest(routes.InsurerEnterPostcodeController.onClick(CheckUpdateMode, srn))),
+          (_, result) => {
+            status(result) mustBe SEE_OTHER
+            redirectLocation(result) mustBe Some(routes.InsurerConfirmAddressController.onPageLoad(CheckUpdateMode, srn).url)
+          }, preSavedAddress
+        )
+      }
+    }
   }
 }
 
@@ -95,23 +107,31 @@ object InsurerEnterPostCodeControllerSpec extends OptionValues {
   val personDetails = PersonDetails("Firstname", Some("Middle"), "Last", LocalDate.now())
   val validPostcode = "ZZ1 1ZZ"
   val fakeNavigator = new FakeNavigator(desiredRoute = onwardRoute)
-  val address = TolerantAddress(Some("address line 1"), Some("address line 2"), None, None, Some(validPostcode), Some("GB"))
+  val tolerantAddress = TolerantAddress(Some("address line 1"), Some("address line 2"), None, None, Some(validPostcode), Some("GB"))
+  val address = Address("address line 1", "address line 2", None, None, Some(validPostcode), "GB")
+  val srn = Some("123")
 
   val retrieval = new FakeDataRetrievalAction(Some(
     Json.obj(SchemeNameId.toString -> "Test Scheme Name")
   ))
 
+  val preSavedAddress = new FakeDataRetrievalAction(Some(
+    Json.obj(InsurerConfirmAddressId.toString -> address,
+      InsurerSelectAddressId.toString -> tolerantAddress)
+  ))
+
   private val fakeAddressLookupConnector = new AddressLookupConnector {
     override def addressLookupByPostCode(postcode: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Seq[TolerantAddress]] = {
-      Future.successful(Seq(address))
+      Future.successful(Seq(tolerantAddress))
     }
   }
 
-  private def requestResult[T](request: Application => Request[T], test: (Request[_], Future[Result]) => Unit)
+  private def requestResult[T](request: Application => Request[T], test: (Request[_], Future[Result]) => Unit,
+                               data: DataRetrievalAction = retrieval)
                               (implicit writeable: Writeable[T]): Unit = {
     running(_.overrides(
       bind[AuthAction].to(FakeAuthAction),
-      bind[DataRetrievalAction].toInstance(retrieval),
+      bind[DataRetrievalAction].toInstance(data),
       bind[DataRequiredAction].to(new DataRequiredActionImpl),
       bind[AddressLookupConnector].toInstance(fakeAddressLookupConnector),
       bind(classOf[Navigator]).qualifiedWith(classOf[AboutBenefitsAndInsurance]).toInstance(fakeNavigator),

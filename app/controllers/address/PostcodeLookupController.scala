@@ -20,8 +20,8 @@ import config.FrontendAppConfig
 import connectors.AddressLookupConnector
 import controllers.Retrievals
 import identifiers.TypedIdentifier
-import models.Mode
-import models.address.TolerantAddress
+import models.{CheckUpdateMode, Mode, UpdateMode}
+import models.address.{Address, TolerantAddress}
 import models.requests.DataRequest
 import play.api.data.Form
 import play.api.i18n.I18nSupport
@@ -73,6 +73,17 @@ trait PostcodeLookupController extends FrontendController with Retrievals with I
     )
   }
 
+  protected def clear(id: TypedIdentifier[Address],
+                      selectedId: TypedIdentifier[TolerantAddress],
+                      mode: Mode, srn: Option[String], manualCall: Call)(implicit request: DataRequest[AnyContent]): Future[Result] =
+      if (mode == CheckUpdateMode || mode == UpdateMode) {
+        userAnswersService.remove(mode, srn, id).flatMap (_ =>
+          userAnswersService.remove(mode, srn, selectedId).map (_ =>
+            Redirect(manualCall)))
+      } else {
+        Future.successful(Redirect(manualCall))
+      }
+
   private def lookupPostcode(
                               id: TypedIdentifier[Seq[TolerantAddress]],
                               viewmodel: PostcodeLookupViewModel,
@@ -92,7 +103,7 @@ trait PostcodeLookupController extends FrontendController with Retrievals with I
           addresses
         ).map {
           json =>
-            Redirect(navigator.nextPage(id, mode, UserAnswers(json)))
+            Redirect(navigator.nextPage(id, mode, UserAnswers(json), viewmodel.srn))
         }
 
     } recoverWith {

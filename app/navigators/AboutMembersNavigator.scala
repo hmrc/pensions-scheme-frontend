@@ -20,7 +20,7 @@ import com.google.inject.Inject
 import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
 import identifiers.{CurrentMembersId, FutureMembersId, MembershipPensionRegulatorId}
-import models.{CheckMode, Members, NormalMode}
+import models.{CheckMode, Members, Mode, NormalMode}
 import utils.{Enumerable, Navigator, UserAnswers}
 
 class AboutMembersNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector,
@@ -51,6 +51,10 @@ class AboutMembersNavigator @Inject()(val dataCacheConnector: UserAnswersCacheCo
         None
     }
   }
+
+  protected def updateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] = None
+
+  protected def checkUpdateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] = None
 
   private def currentMembersNavigationRoutes(userAnswers: UserAnswers): Option[NavigateTo] = {
     userAnswers.get(CurrentMembersId) match {

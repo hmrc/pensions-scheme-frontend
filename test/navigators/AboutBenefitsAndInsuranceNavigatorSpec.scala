@@ -20,7 +20,7 @@ import base.SpecBase
 import connectors.FakeUserAnswersCacheConnector
 import controllers.routes._
 import identifiers._
-import models.NormalMode
+import models.{CheckMode, CheckUpdateMode, Mode, NormalMode, UpdateMode}
 import org.scalatest.OptionValues
 import play.api.libs.json.Json
 import play.api.mvc.Call
@@ -32,22 +32,34 @@ class AboutBenefitsAndInsuranceNavigatorSpec extends SpecBase with NavigatorBeha
 
   private def routes() = Table(
     ("Id", "User Answers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (Check Mode)", "Save (CM)"),
-    (InvestmentRegulatedSchemeId, emptyAnswers, occupationalPension, false, Some(checkYouAnswers), false),
-    (OccupationalPensionSchemeId, emptyAnswers, typesofBenefits, false, Some(checkYouAnswers), false),
-    (TypeOfBenefitsId, emptyAnswers, benefitsSecured, false, Some(checkYouAnswers), false),
-    (BenefitsSecuredByInsuranceId, benefitsSecuredYes, insuranceCompanyName, false, Some(insuranceCompanyName), false),
-    (BenefitsSecuredByInsuranceId, benefitsSecuredNo, checkYouAnswers, false, Some(checkYouAnswers), false),
-    (InsuranceCompanyNameId, emptyAnswers, policyNumber, false, Some(checkYouAnswers), false),
-    (InsurancePolicyNumberId, emptyAnswers, insurerPostcode, false, None, false),
-    (InsurerEnterPostCodeId, emptyAnswers, insurerAddressList, false, None, false),
-    (InsurerSelectAddressId, emptyAnswers, insurerAddress, false, None, false),
-    (InsurerConfirmAddressId, emptyAnswers, checkYouAnswers, false, None, false)
+    (InvestmentRegulatedSchemeId, emptyAnswers, occupationalPension, false, Some(checkYouAnswers()), false),
+    (OccupationalPensionSchemeId, emptyAnswers, typesofBenefits, false, Some(checkYouAnswers()), false),
+    (TypeOfBenefitsId, emptyAnswers, benefitsSecured, false, Some(checkYouAnswers()), false),
+    (BenefitsSecuredByInsuranceId, benefitsSecuredYes, insuranceCompanyName(NormalMode), false, Some(insuranceCompanyName(CheckMode)), false),
+    (BenefitsSecuredByInsuranceId, benefitsSecuredNo, checkYouAnswers(), false, Some(checkYouAnswers()), false),
+    (InsuranceCompanyNameId, emptyAnswers, policyNumber(), false, Some(checkYouAnswers()), false),
+    (InsurancePolicyNumberId, emptyAnswers, insurerPostcode(), false, None, false),
+    (InsurerEnterPostCodeId, emptyAnswers, insurerAddressList(), false, None, false),
+    (InsurerSelectAddressId, emptyAnswers, insurerAddress(), false, None, false),
+    (InsurerConfirmAddressId, emptyAnswers, checkYouAnswers(), false, None, false)
+  )
+
+  private def updateRoutes() = Table(
+    ("Id", "User Answers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (Check Mode)", "Save (CM)"),
+    (BenefitsSecuredByInsuranceId, benefitsSecuredYes, none, false, Some(insuranceCompanyName(CheckUpdateMode)), false),
+    (BenefitsSecuredByInsuranceId, benefitsSecuredNo, none, false, Some(anyMoreChanges), false),
+    (InsuranceCompanyNameId, emptyAnswers, none, false, Some(policyNumber(UpdateMode)), false),
+    (InsurancePolicyNumberId, emptyAnswers, insurerPostcode(CheckUpdateMode), false, Some(anyMoreChanges), false),
+    (InsurerEnterPostCodeId, emptyAnswers, none, false, Some(insurerAddressList(CheckUpdateMode)), false),
+    (InsurerSelectAddressId, emptyAnswers, none, false, Some(insurerAddress(CheckUpdateMode)), false),
+    (InsurerConfirmAddressId, emptyAnswers, none, false, Some(anyMoreChanges), false)
   )
 
   "AboutBenefitsAndInsuranceNavigator" must {
     val navigator = new AboutBenefitsAndInsuranceNavigator(FakeUserAnswersCacheConnector, frontendAppConfig)
 
     behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, routes(), dataDescriber)
+    behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, updateRoutes, dataDescriber, UpdateMode)
     behave like nonMatchingNavigator(navigator)
   }
 }
@@ -59,15 +71,17 @@ object AboutBenefitsAndInsuranceNavigatorSpec extends OptionValues {
   private val benefitsSecuredNo = UserAnswers(Json.obj()).set(BenefitsSecuredByInsuranceId)(false).asOpt.value
 
 
+  private def none: Call = controllers.routes.IndexController.onPageLoad()
   private def occupationalPension: Call = OccupationalPensionSchemeController.onPageLoad(NormalMode)
   private def typesofBenefits: Call = TypeOfBenefitsController.onPageLoad(NormalMode)
   private def benefitsSecured: Call = BenefitsSecuredByInsuranceController.onPageLoad(NormalMode, None)
-  private def insuranceCompanyName: Call = InsuranceCompanyNameController.onPageLoad(NormalMode, None)
-  private def policyNumber: Call = InsurancePolicyNumberController.onPageLoad(NormalMode, None)
-  private def insurerPostcode: Call = InsurerEnterPostcodeController.onPageLoad(NormalMode, None)
-  private def insurerAddressList: Call = InsurerSelectAddressController.onPageLoad(NormalMode, None)
-  private def insurerAddress: Call = InsurerConfirmAddressController.onPageLoad(NormalMode, None)
-  private def checkYouAnswers: Call = CheckYourAnswersBenefitsAndInsuranceController.onPageLoad(NormalMode, None)
+  private def insuranceCompanyName(mode: Mode): Call = InsuranceCompanyNameController.onPageLoad(mode, None)
+  private def policyNumber(mode: Mode = NormalMode): Call = InsurancePolicyNumberController.onPageLoad(mode, None)
+  private def insurerPostcode(mode: Mode = NormalMode): Call = InsurerEnterPostcodeController.onPageLoad(mode, None)
+  private def insurerAddressList(mode: Mode = NormalMode): Call = InsurerSelectAddressController.onPageLoad(mode, None)
+  private def insurerAddress(mode: Mode = NormalMode): Call = InsurerConfirmAddressController.onPageLoad(mode, None)
+  private def checkYouAnswers(mode: Mode = NormalMode): Call = CheckYourAnswersBenefitsAndInsuranceController.onPageLoad(mode, None)
+  private def anyMoreChanges: Call = controllers.vary.routes.AnyMoreChangesController.onPageLoad(None)
 
   private def dataDescriber(answers: UserAnswers): String = answers.toString
 }
