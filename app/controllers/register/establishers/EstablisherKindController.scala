@@ -68,7 +68,7 @@ class EstablisherKindController @Inject()(
             value
           ).map {
             json =>
-              Redirect(navigator.nextPage(EstablisherKindId(index), mode, UserAnswers(json)))
+              Redirect(navigator.nextPage(EstablisherKindId(index), mode, UserAnswers(json), srn))
           }
       )
   }

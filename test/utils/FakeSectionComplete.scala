@@ -18,8 +18,6 @@ package utils
 
 import connectors.FakeUserAnswersCacheConnector
 import identifiers.TypedIdentifier
-import models.requests.DataRequest
-import play.api.mvc.AnyContent
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -30,5 +28,4 @@ object FakeSectionComplete extends SectionComplete with FakeUserAnswersCacheConn
                               (implicit ec: ExecutionContext, hc: HeaderCarrier): Future[UserAnswers] = {
     save("cacheId", id, value) map UserAnswers
   }
-
 }

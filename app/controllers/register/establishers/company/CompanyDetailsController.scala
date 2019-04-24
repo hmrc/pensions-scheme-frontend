@@ -67,7 +67,7 @@ class CompanyDetailsController @Inject()(
             value
           ).map {
             json =>
-              Redirect(navigator.nextPage(CompanyDetailsId(index), mode, UserAnswers(json)))
+              Redirect(navigator.nextPage(CompanyDetailsId(index), mode, UserAnswers(json), srn))
           }
       )
   }

@@ -29,6 +29,8 @@ import utils.checkyouranswers.Ops._
 import utils.{CountryOptions, Enumerable, SectionComplete}
 import viewmodels.AnswerSection
 import views.html.check_your_answers
+import models.Mode._
+import services.UserAnswersService
 
 import scala.concurrent.ExecutionContext
 
@@ -37,7 +39,7 @@ class CheckYourAnswersBenefitsAndInsuranceController @Inject()(appConfig: Fronte
                                                                authenticate: AuthAction,
                                                                getData: DataRetrievalAction,
                                                                requireData: DataRequiredAction,
-                                                               sectionComplete: SectionComplete,
+                                                               userAnswersService: UserAnswersService,
                                                                implicit val countryOptions: CountryOptions
                                                               )(implicit val ec: ExecutionContext) extends FrontendController
   with Enumerable.Implicits with I18nSupport with Retrievals {
@@ -68,7 +70,7 @@ class CheckYourAnswersBenefitsAndInsuranceController @Inject()(appConfig: Fronte
 
   def onSubmit(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
-      sectionComplete.setCompleteFlag(request.externalId, IsAboutBenefitsAndInsuranceCompleteId, request.userAnswers, value = true) map { _ =>
+      userAnswersService.setCompleteFlag(mode, srn, IsAboutBenefitsAndInsuranceCompleteId, request.userAnswers, value = true) map { _ =>
         Redirect(controllers.routes.SchemeTaskListController.onPageLoad())
       }
   }

@@ -20,47 +20,47 @@ import com.google.inject.Inject
 import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
 import identifiers.register.establishers.{AddEstablisherId, ConfirmDeleteEstablisherId, EstablisherKindId}
-import models.{Mode, NormalMode}
+import models.{Mode, NormalMode, UpdateMode}
 import models.register.establishers.EstablisherKind
 import utils.{Enumerable, Navigator, UserAnswers}
 
 class EstablishersNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector,
                                       config: FrontendAppConfig)extends Navigator with Enumerable.Implicits {
 
-  override protected def routeMap(from: NavigateFrom): Option[NavigateTo] =
+  protected def routes(from: NavigateFrom, mode: Mode, srn: Option[String]): Option[NavigateTo] =
     from.id match {
-      case AddEstablisherId(value) => addEstablisherRoutes(value, from.userAnswers)
-      case EstablisherKindId(index) => establisherKindRoutes(index, from.userAnswers)
+      case AddEstablisherId(value) => addEstablisherRoutes(value, from.userAnswers, mode, srn)
+      case EstablisherKindId(index) => establisherKindRoutes(index, from.userAnswers, mode, srn)
       case ConfirmDeleteEstablisherId =>
-        NavigateTo.save(controllers.register.establishers.routes.AddEstablisherController.onPageLoad(NormalMode, None))
+        NavigateTo.save(controllers.register.establishers.routes.AddEstablisherController.onPageLoad(mode, srn))
       case _ => None
     }
 
-  override protected def editRouteMap(from: NavigateFrom): Option[NavigateTo] = None
+  override protected def routeMap(from: NavigateFrom): Option[NavigateTo] = routes(from, NormalMode, None)
+  override protected def updateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] = routes(from, UpdateMode, srn)
 
-  private def addEstablisherRoutes(value: Option[Boolean], answers: UserAnswers): Option[NavigateTo] = {
+  override protected def editRouteMap(from: NavigateFrom): Option[NavigateTo] = None
+  override protected def checkUpdateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] = None
+
+  private def addEstablisherRoutes(value: Option[Boolean], answers: UserAnswers, mode: Mode, srn: Option[String]): Option[NavigateTo] = {
     value match {
       case Some(false) =>
         NavigateTo.dontSave(controllers.routes.SchemeTaskListController.onPageLoad())
       case Some(true) =>
-        NavigateTo.save(controllers.register.establishers.routes.EstablisherKindController.onPageLoad(NormalMode, answers.establishersCount, None))
+        NavigateTo.save(controllers.register.establishers.routes.EstablisherKindController.onPageLoad(mode, answers.establishersCount, srn))
       case None =>
-        NavigateTo.save(controllers.register.establishers.routes.EstablisherKindController.onPageLoad(NormalMode, answers.establishersCount, None))
+        NavigateTo.save(controllers.register.establishers.routes.EstablisherKindController.onPageLoad(mode, answers.establishersCount, srn))
     }
   }
 
-  protected def updateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] = None
-
-  protected def checkUpdateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] = None
-
-  private def establisherKindRoutes(index: Int, answers: UserAnswers): Option[NavigateTo] = {
+  private def establisherKindRoutes(index: Int, answers: UserAnswers, mode: Mode, srn: Option[String]): Option[NavigateTo] = {
     answers.get(EstablisherKindId(index)) match {
       case Some(EstablisherKind.Company) =>
-        NavigateTo.save(controllers.register.establishers.company.routes.CompanyDetailsController.onPageLoad(NormalMode, None, index))
+        NavigateTo.save(controllers.register.establishers.company.routes.CompanyDetailsController.onPageLoad(mode, srn, index))
       case Some(EstablisherKind.Indivdual) =>
-        NavigateTo.save(controllers.register.establishers.individual.routes.EstablisherDetailsController.onPageLoad(NormalMode, index, None))
+        NavigateTo.save(controllers.register.establishers.individual.routes.EstablisherDetailsController.onPageLoad(mode, index, srn))
       case Some(EstablisherKind.Partnership) =>
-        NavigateTo.save(controllers.register.establishers.partnership.routes.PartnershipDetailsController.onPageLoad(NormalMode, index, None))
+        NavigateTo.save(controllers.register.establishers.partnership.routes.PartnershipDetailsController.onPageLoad(mode, index, srn))
       case _ =>
         NavigateTo.dontSave(controllers.routes.SessionExpiredController.onPageLoad())
     }

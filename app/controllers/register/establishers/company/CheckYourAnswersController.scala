@@ -22,10 +22,11 @@ import controllers.actions._
 import identifiers.register.establishers.IsEstablisherNewId
 import identifiers.register.establishers.company._
 import javax.inject.Inject
-import models.{CheckMode, Index, Mode, NormalMode}
-import models.Mode._
+import models.{Index, Mode, NormalMode}
+import models.Mode.checkMode
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
+import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils._
 import utils.annotations.EstablishersCompany
@@ -43,7 +44,7 @@ class CheckYourAnswersController @Inject()(
                                             requireData: DataRequiredAction,
                                             implicit val countryOptions: CountryOptions,
                                             @EstablishersCompany navigator: Navigator,
-                                            sectionComplete: SectionComplete
+                                            userAnswersService: UserAnswersService
                                           )(implicit val ec: ExecutionContext) extends FrontendController
   with Retrievals with I18nSupport with Enumerable.Implicits {
 
@@ -83,8 +84,8 @@ class CheckYourAnswersController @Inject()(
   def onSubmit(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] = (
     authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
-      sectionComplete.setCompleteFlag(request.externalId, IsCompanyCompleteId(index), request.userAnswers, true).map { _ =>
-        Redirect(navigator.nextPage(CheckYourAnswersId(index), NormalMode, request.userAnswers))
+      userAnswersService.setCompleteFlag(mode, srn, IsCompanyCompleteId(index), request.userAnswers, true).map { _ =>
+        Redirect(navigator.nextPage(CheckYourAnswersId(index), mode, request.userAnswers, srn))
       }
   }
 

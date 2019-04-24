@@ -66,7 +66,8 @@ class PreviousAddressListController @Inject()(
         addresses = addresses,
         title = Message("messages__select_the_previous_address__title"),
         heading = Message("messages__select_the_previous_address__title"),
-        subHeading = Some(Message(establisherDetails.fullName))
+        subHeading = Some(Message(establisherDetails.fullName)),
+        srn  = srn
       )
     }.left.map(_ =>
       Future.successful(Redirect(routes.PreviousAddressPostCodeLookupController.onPageLoad(mode, index, srn))))

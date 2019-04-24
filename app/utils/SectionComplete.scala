@@ -18,9 +18,10 @@ package utils
 
 import com.google.inject.{ImplementedBy, Inject}
 import config.FrontendAppConfig
-import connectors.UserAnswersCacheConnector
+import connectors.{PensionSchemeVarianceLockConnector, UserAnswersCacheConnector}
 import identifiers.TypedIdentifier
 import play.api.libs.json.JsResultException
+import services.UserAnswersService
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent._
@@ -32,7 +33,10 @@ trait SectionComplete {
                      (implicit ec: ExecutionContext, hc: HeaderCarrier): Future[UserAnswers]
 }
 
-class SectionCompleteImpl @Inject()(dataCacheConnector: UserAnswersCacheConnector, appConfig: FrontendAppConfig) extends SectionComplete {
+class SectionCompleteImpl @Inject()(dataCacheConnector: UserAnswersCacheConnector,
+                                    userAnswersService: UserAnswersService,
+                                    lockConnector: PensionSchemeVarianceLockConnector,
+                                    appConfig: FrontendAppConfig) extends SectionComplete {
 
   override def setCompleteFlag(cacheId: String, id: TypedIdentifier[Boolean], userAnswers: UserAnswers, value: Boolean)
                               (implicit ec: ExecutionContext, hc: HeaderCarrier): Future[UserAnswers] = {

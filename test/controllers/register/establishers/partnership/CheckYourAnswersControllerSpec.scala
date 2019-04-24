@@ -24,7 +24,8 @@ import models._
 import models.address.Address
 import models.register.DeclarationDormant
 import play.api.test.Helpers._
-import utils.{UserAnswers, _}
+import services.FakeUserAnswersService
+import utils._
 import utils.checkyouranswers.Ops._
 import viewmodels.AnswerSection
 import views.html.check_your_answers
@@ -57,7 +58,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase {
       FakeAuthAction,
       dataRetrievalAction,
       new DataRequiredActionImpl,
-      FakeSectionComplete,
+      FakeUserAnswersService,
       new FakeNavigator(onwardRoute),
       countryOptions
     )
@@ -109,7 +110,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase {
         status(result) mustBe 303
         redirectLocation(result) mustBe Some(onwardRoute.url)
 
-        FakeSectionComplete.verify(IsPartnershipCompleteId(firstIndex), true)
+        FakeUserAnswersService.verify(IsPartnershipCompleteId(firstIndex), true)
       }
     }
   }

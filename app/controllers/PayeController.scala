@@ -62,7 +62,7 @@ trait PayeController extends FrontendController with Retrievals with I18nSupport
       paye =>
         userAnswersService.save(mode, viewmodel.srn, id, paye).map {
           answers =>
-            Redirect(navigator.nextPage(id, mode, UserAnswers(answers)))
+            Redirect(navigator.nextPage(id, mode, UserAnswers(answers), viewmodel.srn))
         }
     )
   }

@@ -63,7 +63,7 @@ trait ContactDetailsController extends FrontendController with Retrievals with I
       contactDetails =>
         userAnswersService.save(mode, viewmodel.srn, id, contactDetails).map {
           answers =>
-            Redirect(navigator.nextPage(id, mode, UserAnswers(answers)))
+            Redirect(navigator.nextPage(id, mode, UserAnswers(answers), viewmodel.srn))
         }
     )
   }

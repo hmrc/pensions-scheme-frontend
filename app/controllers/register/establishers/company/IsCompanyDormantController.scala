@@ -67,11 +67,11 @@ class IsCompanyDormantController @Inject()(appConfig: FrontendAppConfig,
           {
             case Yes =>
               userAnswersService.save(mode, srn, IsCompanyDormantId(index), DeclarationDormant.values(0)).map { cacheMap =>
-                 Redirect(navigator.nextPage(IsCompanyDormantId(index), NormalMode, UserAnswers(cacheMap)))
+                 Redirect(navigator.nextPage(IsCompanyDormantId(index), mode, UserAnswers(cacheMap), srn))
              }
             case No =>
               userAnswersService.save(mode, srn, IsCompanyDormantId(index), DeclarationDormant.values(1)).map(cacheMap =>
-                Redirect(navigator.nextPage(IsCompanyDormantId(index), mode, UserAnswers(cacheMap))))
+                Redirect(navigator.nextPage(IsCompanyDormantId(index), mode, UserAnswers(cacheMap), srn)))
 
           }
 

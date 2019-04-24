@@ -25,6 +25,7 @@ import models.register.DeclarationDormant
 import models.requests.DataRequest
 import play.api.mvc.{AnyContent, Call}
 import play.api.test.Helpers._
+import services.FakeUserAnswersService
 import utils.checkyouranswers.CheckYourAnswers.ContactDetailsCYA
 import utils.checkyouranswers._
 import utils.{CountryOptions, FakeCountryOptions, FakeNavigator, FakeSectionComplete, UserAnswers, _}
@@ -56,7 +57,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase {
       val result = controller().onSubmit(NormalMode, None, index)(fakeRequest)
       status(result) mustBe SEE_OTHER
       redirectLocation(result).value mustEqual onwardRoute.url
-      FakeSectionComplete.verify(IsCompanyCompleteId(index), true)
+      FakeUserAnswersService.verify(IsCompanyCompleteId(index), true)
     }
   }
 
@@ -162,7 +163,7 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase with Enumerable
       new DataRequiredActionImpl,
       fakeCountryOptions,
       new FakeNavigator(onwardRoute),
-      FakeSectionComplete
+      FakeUserAnswersService
     )
 
   def viewAsString(answerSections: Seq[AnswerSection]): String =

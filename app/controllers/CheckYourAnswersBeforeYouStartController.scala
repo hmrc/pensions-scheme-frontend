@@ -23,6 +23,7 @@ import javax.inject.Inject
 import models.{CheckMode, Mode}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
+import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils._
 import utils.checkyouranswers.Ops._
@@ -37,7 +38,7 @@ class CheckYourAnswersBeforeYouStartController @Inject()(appConfig: FrontendAppC
                                                          getData: DataRetrievalAction,
                                                          requireData: DataRequiredAction,
                                                          implicit val countryOptions: CountryOptions,
-                                                         sectionComplete: SectionComplete
+                                                         userAnswersService: UserAnswersService
                                                         )(implicit val ec: ExecutionContext) extends FrontendController
   with Enumerable.Implicits with I18nSupport with Retrievals {
 
@@ -66,7 +67,7 @@ class CheckYourAnswersBeforeYouStartController @Inject()(appConfig: FrontendAppC
 
   def onSubmit(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData() andThen requireData).async {
     implicit request =>
-      sectionComplete.setCompleteFlag(request.externalId, IsBeforeYouStartCompleteId, request.userAnswers, value = true) map { _ =>
+      userAnswersService.setCompleteFlag(mode, srn, IsBeforeYouStartCompleteId, request.userAnswers, value = true) map { _ =>
         Redirect(controllers.routes.SchemeTaskListController.onPageLoad())
       }
   }

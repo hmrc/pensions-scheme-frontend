@@ -98,7 +98,7 @@ class ConfirmDeleteDirectorController @Inject()(
                 jsValue =>
                   val userAnswers = UserAnswers(jsValue)
                   if (userAnswers.allDirectorsAfterDelete(establisherIndex).isEmpty) {
-                    sectionComplete.setCompleteFlag(request.externalId, IsEstablisherCompleteId(establisherIndex), request.userAnswers, false).map { _ =>
+                    userAnswersService.setCompleteFlag(mode, srn, IsEstablisherCompleteId(establisherIndex), request.userAnswers, false).map { _ =>
                       Redirect(navigator.nextPage(ConfirmDeleteDirectorId(establisherIndex), NormalMode, userAnswers))
                     }
                   } else {

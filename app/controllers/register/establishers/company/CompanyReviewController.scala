@@ -25,6 +25,7 @@ import javax.inject.Inject
 import models.{Index, Mode, NormalMode}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
+import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.EstablishersCompany
 import utils.{Navigator, SectionComplete}
@@ -38,7 +39,8 @@ class CompanyReviewController @Inject()(appConfig: FrontendAppConfig,
                                         authenticate: AuthAction,
                                         getData: DataRetrievalAction,
                                         requireData: DataRequiredAction,
-                                        sectionComplete: SectionComplete)(implicit val ec: ExecutionContext) extends FrontendController with I18nSupport with Retrievals {
+                                        userAnswersService: UserAnswersService
+                                       )(implicit val ec: ExecutionContext) extends FrontendController with I18nSupport with Retrievals {
 
   def onPageLoad(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
@@ -58,12 +60,12 @@ class CompanyReviewController @Inject()(appConfig: FrontendAppConfig,
       val isCompanyComplete = request.userAnswers.get(IsCompanyCompleteId(index)).getOrElse(false)
 
       if (allDirectorsCompleted & isCompanyComplete) {
-        sectionComplete.setCompleteFlag(request.externalId, IsEstablisherCompleteId(index), request.userAnswers, value = true).map { _ =>
-          Redirect(navigator.nextPage(CompanyReviewId(index), NormalMode, request.userAnswers))
+        userAnswersService.setCompleteFlag(mode, srn, IsEstablisherCompleteId(index), request.userAnswers, value = true).map { _ =>
+          Redirect(navigator.nextPage(CompanyReviewId(index), NormalMode, request.userAnswers, srn))
         }
       }
       else {
-        Future.successful(Redirect(navigator.nextPage(CompanyReviewId(index), NormalMode, request.userAnswers)))
+        Future.successful(Redirect(navigator.nextPage(CompanyReviewId(index), NormalMode, request.userAnswers, srn)))
       }
   }
 

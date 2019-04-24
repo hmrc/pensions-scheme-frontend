@@ -63,7 +63,7 @@ trait AddressYearsController extends FrontendController with Retrievals with I18
       addressYears =>
         userAnswersService.save(mode, viewmodel.srn, id, addressYears).map {
           answers =>
-            Redirect(navigator.nextPage(id, mode, UserAnswers(answers)))
+            Redirect(navigator.nextPage(id, mode, UserAnswers(answers), viewmodel.srn))
         }
     )
   }

@@ -26,6 +26,7 @@ import models.person.PersonDetails
 import org.joda.time.LocalDate
 import org.scalatest.OptionValues
 import play.api.test.Helpers.{contentAsString, redirectLocation, status, _}
+import services.FakeUserAnswersService
 import utils._
 import utils.checkyouranswers.Ops._
 import viewmodels.AnswerSection
@@ -47,7 +48,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase {
       FakeAuthAction,
       dataRetrievalAction,
       new DataRequiredActionImpl,
-      FakeSectionComplete,
+      FakeUserAnswersService,
       countryOptions,
       new FakeNavigator(onwardRoute)
     )
@@ -95,7 +96,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase {
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(desiredRoute.url)
 
-        FakeSectionComplete.verify(IsEstablisherCompleteId(firstIndex), true)
+        FakeUserAnswersService.verify(IsEstablisherCompleteId(firstIndex), true)
       }
     }
   }

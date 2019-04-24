@@ -61,6 +61,7 @@ class ContactDetailsController @Inject()(
     title = Message("messages__establisher_individual_contact_details__title"),
     heading = Message("messages__establisher_individual_contact_details__heading"),
     body = Message("messages__contact_details__body"),
-    subHeading = Some(establisherName)
+    subHeading = Some(establisherName),
+    srn = srn
   )
 }

@@ -74,7 +74,7 @@ class EstablisherNinoController @Inject()(
                 value
               ).map {
                 json =>
-                  Redirect(navigator.nextPage(EstablisherNinoId(index), mode, new UserAnswers(json)))
+                  Redirect(navigator.nextPage(EstablisherNinoId(index), mode, new UserAnswers(json), srn))
               }
           )
       }
