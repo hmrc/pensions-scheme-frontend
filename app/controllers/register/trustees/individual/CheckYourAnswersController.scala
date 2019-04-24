@@ -22,6 +22,7 @@ import controllers.actions.{AuthAction, DataRequiredAction, DataRetrievalAction}
 import identifiers.register.trustees.{IsTrusteeCompleteId, IsTrusteeNewId}
 import identifiers.register.trustees.individual._
 import javax.inject.Inject
+import models.Mode.checkMode
 import models.{CheckMode, Index, Mode, NormalMode}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
@@ -50,15 +51,15 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
 
       val userAnswers = request.userAnswers
 
-      val trusteeDetailsRow = TrusteeDetailsId(index).row(routes.TrusteeDetailsController.onPageLoad(CheckMode, index, None).url)
-      val trusteeNinoRow = TrusteeNinoId(index).row(routes.TrusteeNinoController.onPageLoad(CheckMode, index, None).url)
-      val trusteeUtrRow = UniqueTaxReferenceId(index).row(routes.UniqueTaxReferenceController.onPageLoad(CheckMode, index, None).url)
-      val trusteeAddressRow = TrusteeAddressId(index).row(routes.TrusteeAddressController.onPageLoad(CheckMode, index, None).url)
+      val trusteeDetailsRow = TrusteeDetailsId(index).row(routes.TrusteeDetailsController.onPageLoad(checkMode(mode), index, None).url, mode)
+      val trusteeNinoRow = TrusteeNinoId(index).row(routes.TrusteeNinoController.onPageLoad(checkMode(mode), index, None).url, mode)
+      val trusteeUtrRow = UniqueTaxReferenceId(index).row(routes.UniqueTaxReferenceController.onPageLoad(checkMode(mode), index, None).url, mode)
+      val trusteeAddressRow = TrusteeAddressId(index).row(routes.TrusteeAddressController.onPageLoad(checkMode(mode), index, None).url, mode)
       val trusteeAddressYearsRow = TrusteeAddressYearsId(index).row(
-        routes.TrusteeAddressYearsController.onPageLoad(CheckMode, index, None).url)
-      val trusteePreviousAddressRow = TrusteePreviousAddressId(index).row(routes.TrusteePreviousAddressController.onPageLoad(CheckMode,
-        index, None).url)
-      val trusteeContactDetails = TrusteeContactDetailsId(index).row(routes.TrusteeContactDetailsController.onPageLoad(CheckMode, index, None).url)
+        routes.TrusteeAddressYearsController.onPageLoad(checkMode(mode), index, None).url, mode)
+      val trusteePreviousAddressRow = TrusteePreviousAddressId(index).row(routes.TrusteePreviousAddressController.onPageLoad(checkMode(mode),
+        index, None).url, mode)
+      val trusteeContactDetails = TrusteeContactDetailsId(index).row(routes.TrusteeContactDetailsController.onPageLoad(checkMode(mode), index, None).url, mode)
 
       val trusteeDetailsSection = AnswerSection(None,
         trusteeDetailsRow ++ trusteeNinoRow ++ trusteeUtrRow
@@ -73,6 +74,7 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
         Seq(trusteeDetailsSection, contactDetailsSection),
         routes.CheckYourAnswersController.onSubmit(mode, index, srn),
         existingSchemeName,
+        mode = mode,
         viewOnly = request.viewOnly && userAnswers.get(IsTrusteeNewId(index)).getOrElse(false)
       )))
   }
