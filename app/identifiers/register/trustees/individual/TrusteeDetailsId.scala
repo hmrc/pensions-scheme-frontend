@@ -17,10 +17,14 @@
 package identifiers.register.trustees.individual
 
 import identifiers.TypedIdentifier
-import identifiers.register.trustees.{MoreThanTenTrusteesId, TrusteesId}
+import identifiers.register.trustees.{IsTrusteeNewId, MoreThanTenTrusteesId, TrusteesId}
 import models.person.PersonDetails
+import play.api.i18n.Messages
 import play.api.libs.json.{JsPath, JsResult}
 import utils.UserAnswers
+import utils.checkyouranswers.CheckYourAnswers
+import utils.checkyouranswers.CheckYourAnswers.PersonalDetailsCYA
+import viewmodels.AnswerRow
 
 case class TrusteeDetailsId(index: Int) extends TypedIdentifier[PersonDetails] {
   override def path: JsPath = TrusteesId(index).path \ TrusteeDetailsId.toString
@@ -35,4 +39,15 @@ case class TrusteeDetailsId(index: Int) extends TypedIdentifier[PersonDetails] {
 
 object TrusteeDetailsId {
   override lazy val toString: String = "trusteeDetails"
+
+  implicit def cya(implicit userAnswers: UserAnswers, messages: Messages): CheckYourAnswers[TrusteeDetailsId] = {
+    new CheckYourAnswers[TrusteeDetailsId] {
+
+      override def row(id: TrusteeDetailsId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+        PersonalDetailsCYA()().row(id)(changeUrl, userAnswers)
+
+      override def updateRow(id: TrusteeDetailsId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+        PersonalDetailsCYA(userAnswers.get(IsTrusteeNewId(id.index)))().updateRow(id)(changeUrl, userAnswers)
+    }
+  }
 }

@@ -18,7 +18,7 @@ package identifiers.register.establishers.partnership
 
 import identifiers._
 import identifiers.register.establishers.{EstablishersId, IsEstablisherNewId}
-import models.{Link, Paye}
+import models.Paye
 import play.api.i18n.Messages
 import play.api.libs.json.JsPath
 import utils.UserAnswers
@@ -44,16 +44,7 @@ object PartnershipPayeId {
         PayeCYA(Some(labelYesNo), hiddenLabelYesNo, hiddenLabelVat)().row(id)(changeUrl, userAnswers)
 
       override def updateRow(id: PartnershipPayeId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        userAnswers.get(id) match {
-          case Some(Paye.Yes(paye)) => userAnswers.get(IsEstablisherNewId(id.index)) match {
-            case Some(true) => Seq(AnswerRow("messages__common__cya__paye", Seq(paye), answerIsMessageKey = false,
-              Some(Link("site.change", changeUrl, Some(hiddenLabelVat)))))
-            case _  => Seq(AnswerRow("messages__common__cya__paye", Seq(paye), answerIsMessageKey = false, None))
-          }
-          case Some(Paye.No) => Seq(AnswerRow("messages__common__cya__paye", Seq("site.not_entered"), answerIsMessageKey = true,
-            Some(Link("site.add", changeUrl, Some(s"${hiddenLabelVat}_add")))))
-          case _ => Seq.empty[AnswerRow]
-        }
+        PayeCYA(Some(labelYesNo), hiddenLabelYesNo, hiddenLabelVat, userAnswers.get(IsEstablisherNewId(id.index)))().updateRow(id)(changeUrl, userAnswers)
     }
   }
 }
