@@ -57,8 +57,8 @@ class TrusteesPartnershipNavigator @Inject()(val dataCacheConnector: UserAnswers
       NavigateTo.save(routes.PartnershipContactDetailsController.onPageLoad(mode, index, srn))
     case PartnershipContactDetailsId(index) =>
       NavigateTo.save(routes.CheckYourAnswersController.onPageLoad(mode, index, srn))
-    case CheckYourAnswersId(index) =>
-      NavigateTo.dontSave(controllers.register.trustees.routes.AddTrusteeController.onPageLoad(mode, None))
+    case CheckYourAnswersId(_) =>
+      NavigateTo.dontSave(controllers.register.trustees.routes.AddTrusteeController.onPageLoad(mode, srn))
     case _ =>
       None
   }
