@@ -98,7 +98,7 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
         routes.CheckYourAnswersController.onSubmit(mode, index, None),
         existingSchemeName,
         mode = mode,
-        viewOnly = request.viewOnly && userAnswers.get(IsTrusteeNewId(index)).getOrElse(false)
+        viewOnly = request.viewOnly || !userAnswers.get(IsTrusteeNewId(index)).getOrElse(true)
       )))
   }
 

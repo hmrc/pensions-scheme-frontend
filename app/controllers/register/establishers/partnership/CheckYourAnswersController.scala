@@ -80,7 +80,7 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
         routes.CheckYourAnswersController.onSubmit(mode, index, srn),
         existingSchemeName,
         mode = mode,
-        viewOnly = request.viewOnly && userAnswers.get(IsEstablisherNewId(index)).getOrElse(false)
+        viewOnly = request.viewOnly || !userAnswers.get(IsEstablisherNewId(index)).getOrElse(true)
       )))
   }
 
