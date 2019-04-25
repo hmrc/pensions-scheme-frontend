@@ -38,7 +38,7 @@ class EstablishersPartnershipNavigator @Inject()(val dataCacheConnector: UserAns
     }
 
   private def anyMoreChanges(srn: Option[String]): Option[NavigateTo] =
-    NavigateTo.save(controllers.vary.routes.AnyMoreChangesController.onPageLoad(srn))
+    NavigateTo.save(controllers.routes.AnyMoreChangesController.onPageLoad(srn))
 
   //scalastyle:off cyclomatic.complexity
   protected def route(from: NavigateFrom, mode: Mode, srn: Option[String]): Option[NavigateTo] = from.id match {

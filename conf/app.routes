@@ -207,3 +207,6 @@ POST       /check-adviser-answers               controllers.AdviserCheckYourAnsw
 
 GET        /declare-after-changing-details/:srn      controllers.VariationDeclarationController.onPageLoad(srn: Option[String])
 POST       /declare-after-changing-details/:srn      controllers.VariationDeclarationController.onSubmit(srn: Option[String])
+
+GET        /make-more-changes/:srn    controllers.AnyMoreChangesController.onPageLoad(srn: Option[String])
+POST       /make-more-changes/:srn    controllers.AnyMoreChangesController.onSubmit(srn: Option[String])

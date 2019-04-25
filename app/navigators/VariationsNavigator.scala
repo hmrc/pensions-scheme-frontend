@@ -19,7 +19,7 @@ package navigators
 import com.google.inject.Inject
 import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
-import identifiers.vary.AnyMoreChangesId
+import identifiers.AnyMoreChangesId
 import utils.{Enumerable, Navigator}
 
 class VariationsNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector,

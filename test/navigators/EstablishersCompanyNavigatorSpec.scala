@@ -156,7 +156,7 @@ object EstablishersCompanyNavigatorSpec extends OptionValues {
 
   private def checkYourAnswers(mode: Mode) = controllers.register.establishers.company.routes.CheckYourAnswersController.onPageLoad(mode, None, 0)
 
-  private def anyMoreChanges = controllers.vary.routes.AnyMoreChangesController.onPageLoad(None)
+  private def anyMoreChanges = controllers.routes.AnyMoreChangesController.onPageLoad(None)
 
   private def exitJourney(mode: Mode) = if (mode == NormalMode) checkYourAnswers(mode) else anyMoreChanges
 
