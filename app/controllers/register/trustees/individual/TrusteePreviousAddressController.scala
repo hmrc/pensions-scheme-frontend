@@ -64,7 +64,8 @@ class TrusteePreviousAddressController @Inject()(
               countryOptions.options,
               title = Message(title),
               heading = Message(heading),
-              secondaryHeader = Some(details.fullName)
+              secondaryHeader = Some(details.fullName),
+              srn = srn
             )
         }
     }

@@ -64,7 +64,7 @@ class MoreThanTenTrusteesController @Inject()(
         },
         value =>
           userAnswersService.save(mode, srn, MoreThanTenTrusteesId, value).map(cacheMap =>
-            Redirect(navigator.nextPage(MoreThanTenTrusteesId, mode, UserAnswers(cacheMap))))
+            Redirect(navigator.nextPage(MoreThanTenTrusteesId, mode, UserAnswers(cacheMap), srn)))
       )
   }
 }

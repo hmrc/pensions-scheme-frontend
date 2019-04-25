@@ -80,7 +80,7 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
   def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requiredData).async {
     implicit request =>
       userAnswersService.setCompleteFlag(mode, srn, IsPartnershipCompleteId(index), request.userAnswers, value = true) map { _ =>
-        Redirect(navigator.nextPage(CheckYourAnswersId(index), NormalMode, request.userAnswers))
+        Redirect(navigator.nextPage(CheckYourAnswersId(index), NormalMode, request.userAnswers, srn))
       }
   }
 

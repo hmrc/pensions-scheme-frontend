@@ -63,7 +63,8 @@ class PartnershipPreviousAddressController @Inject()(
               countryOptions.options,
               title = Message(title),
               heading = Message(heading),
-              secondaryHeader = Some(details.name)
+              secondaryHeader = Some(details.name),
+              srn = srn
             )
         }
     }

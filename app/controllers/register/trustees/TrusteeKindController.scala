@@ -70,7 +70,7 @@ class TrusteeKindController @Inject()(
             _.upsert(TrusteeKindId(index))(value) { answers =>
               userAnswersService.upsert(mode, srn, answers.json).map {
                 json =>
-                  Redirect(navigator.nextPage(TrusteeKindId(index), mode, UserAnswers(json)))
+                  Redirect(navigator.nextPage(TrusteeKindId(index), mode, UserAnswers(json), srn))
               }
             }
           }

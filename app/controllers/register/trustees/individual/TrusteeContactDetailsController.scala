@@ -63,6 +63,7 @@ class TrusteeContactDetailsController @Inject()(
     title = Message("messages__trustee_contact_details__title"),
     heading = Message("messages__trustee_contact_details__heading"),
     body = Message("messages__contact_details__body"),
-    subHeading = Some(trusteeName)
+    subHeading = Some(trusteeName),
+    srn = srn
   )
 }

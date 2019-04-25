@@ -129,7 +129,7 @@ class ConfirmDeleteTrusteeController @Inject()(appConfig: FrontendAppConfig,
           Future.successful(dataRequest.userAnswers.json)
         }
         deletionResult.flatMap { answers =>
-          Future.successful(Redirect(navigator.nextPage(ConfirmDeleteTrusteeId, NormalMode, UserAnswers(answers))))
+          Future.successful(Redirect(navigator.nextPage(ConfirmDeleteTrusteeId, NormalMode, UserAnswers(answers), srn)))
         }
       }
     )

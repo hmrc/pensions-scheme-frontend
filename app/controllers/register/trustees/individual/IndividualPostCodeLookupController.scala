@@ -58,7 +58,8 @@ class IndividualPostCodeLookupController @Inject()(
               heading = Message("messages__individualPostCodeLookup__heading"),
               subHeading = Some(details.fullName),
               hint = Some(Message("messages__common_individual_postCode_lookup__lede")),
-              enterPostcode = Message("messages__trustee_individualPostCodeLookup__enter_postcode")
+              enterPostcode = Message("messages__trustee_individualPostCodeLookup__enter_postcode"),
+              srn= srn
             )
         }
     }
