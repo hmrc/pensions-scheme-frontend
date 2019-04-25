@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-package views.vary
+package views
 
-import controllers.vary.routes
-import forms.vary.AnyMoreChangesFormProvider
+import controllers.routes
+import forms.AnyMoreChangesFormProvider
 import org.jsoup.Jsoup
 import play.api.data.Form
 import play.twirl.api.HtmlFormat
 import viewmodels.Message
 import views.behaviours.YesNoViewBehaviours
-import views.html.vary.anyMoreChanges
+import views.html.anyMoreChanges
 
 class AnyMoreChangesViewSpec extends YesNoViewBehaviours {
   val schemeName = Some("Scheme x")
@@ -31,7 +31,7 @@ class AnyMoreChangesViewSpec extends YesNoViewBehaviours {
   val date: String = "27 February 2019"
 
   val form = new AnyMoreChangesFormProvider()()
-  private val postCall = controllers.vary.routes.AnyMoreChangesController.onSubmit(Some("123"))
+  private val postCall = controllers.routes.AnyMoreChangesController.onSubmit(Some("123"))
 
   def createView: () => HtmlFormat.Appendable = () =>
     anyMoreChanges(frontendAppConfig, form, schemeName, date, postCall)(fakeRequest, messages)

@@ -14,19 +14,17 @@
  * limitations under the License.
  */
 
-package controllers.vary
+package controllers
 
-import connectors.FakeUserAnswersCacheConnector
-import controllers.ControllerSpecBase
 import controllers.actions._
-import forms.vary.AnyMoreChangesFormProvider
+import forms.AnyMoreChangesFormProvider
 import org.joda.time.LocalDate
 import org.joda.time.format.DateTimeFormat
 import play.api.data.Form
 import play.api.test.Helpers._
 import services.FakeUserAnswersService
 import utils.FakeNavigator
-import views.html.vary.anyMoreChanges
+import views.html.anyMoreChanges
 
 
 class AnyMoreChangesControllerSpec extends ControllerSpecBase {
@@ -35,7 +33,7 @@ class AnyMoreChangesControllerSpec extends ControllerSpecBase {
   val formProvider = new AnyMoreChangesFormProvider()
   val form = formProvider()
   val date: String = LocalDate.now().plusDays(28).toString(DateTimeFormat.forPattern("dd MMMM YYYY"))
-  private val postCall = controllers.vary.routes.AnyMoreChangesController.onSubmit _
+  private val postCall = controllers.routes.AnyMoreChangesController.onSubmit _
   val srn = Some("123")
 
   def controller(dataRetrievalAction: DataRetrievalAction = getMandatorySchemeNameHs): AnyMoreChangesController =

@@ -126,7 +126,7 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
     NavigateTo.save(controllers.register.establishers.company.routes.CheckYourAnswersController.onPageLoad(mode, srn, index))
 
   private def anyMoreChanges(srn: Option[String]): Option[NavigateTo] =
-    NavigateTo.save(controllers.vary.routes.AnyMoreChangesController.onPageLoad(srn))
+    NavigateTo.save(controllers.routes.AnyMoreChangesController.onPageLoad(srn))
 
   private def addressYearsRoutes(index: Int, answers: UserAnswers, mode: Mode, srn: Option[String]): Option[NavigateTo] = {
     answers.get(CompanyAddressYearsId(index)) match {

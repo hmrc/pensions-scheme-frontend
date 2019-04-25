@@ -18,7 +18,7 @@ package navigators
 
 import base.SpecBase
 import connectors.FakeUserAnswersCacheConnector
-import identifiers.vary.AnyMoreChangesId
+import identifiers.AnyMoreChangesId
 import models.UpdateMode
 import org.scalatest.OptionValues
 import play.api.libs.json.Json
