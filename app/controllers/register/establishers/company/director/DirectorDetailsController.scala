@@ -75,6 +75,7 @@ class DirectorDetailsController @Inject()(
           value => {
             val answers = request.userAnswers.set(IsNewDirectorId(establisherIndex, directorIndex))(true).flatMap(
               _.set(DirectorDetailsId(establisherIndex, directorIndex))(value)).asOpt.getOrElse(request.userAnswers)
+
             userAnswersService.upsert(mode, srn, answers.json).flatMap {
               cacheMap =>
                 val userAnswers = UserAnswers(cacheMap)
@@ -82,10 +83,12 @@ class DirectorDetailsController @Inject()(
                 val allDirectorsCompleted = allDirectors.count(_.isCompleted) == allDirectors.size
 
                 if (allDirectorsCompleted) {
-                  Future.successful(Redirect(navigator.nextPage(DirectorDetailsId(establisherIndex, directorIndex), mode, userAnswers)))
+                  Future.successful(Redirect(navigator.nextPage(DirectorDetailsId(establisherIndex, directorIndex), mode, userAnswers, srn)))
                 } else {
-                  userAnswersService.setCompleteFlag(mode, srn, IsEstablisherCompleteId(establisherIndex), userAnswers, value = false).map { _ =>
-                    Redirect(navigator.nextPage(DirectorDetailsId(establisherIndex, directorIndex), mode, userAnswers))
+                  userAnswers.upsert(IsEstablisherCompleteId(establisherIndex))(false) { answers =>
+                    userAnswersService.upsert(mode, srn, answers.json).map { json =>
+                      Redirect(navigator.nextPage(DirectorDetailsId(establisherIndex, directorIndex), mode, UserAnswers(json), srn))
+                    }
                   }
                 }
             }

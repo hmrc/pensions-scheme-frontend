@@ -76,7 +76,7 @@ class DirectorUniqueTaxReferenceController @Inject()(
               value
             ).map {
               json =>
-                Redirect(navigator.nextPage(DirectorUniqueTaxReferenceId(establisherIndex, directorIndex), mode, new UserAnswers(json)))
+                Redirect(navigator.nextPage(DirectorUniqueTaxReferenceId(establisherIndex, directorIndex), mode, new UserAnswers(json), srn))
             }
         )
   }

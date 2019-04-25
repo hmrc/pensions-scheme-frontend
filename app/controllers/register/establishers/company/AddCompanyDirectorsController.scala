@@ -58,7 +58,7 @@ class AddCompanyDirectorsController @Inject()(
     implicit request =>
       val directors = request.userAnswers.allDirectorsAfterDelete(index)
       if (directors.isEmpty || directors.lengthCompare(appConfig.maxDirectors) >= 0) {
-        Future.successful(Redirect(navigator.nextPage(AddCompanyDirectorsId(index), mode, request.userAnswers)))
+        Future.successful(Redirect(navigator.nextPage(AddCompanyDirectorsId(index), mode, request.userAnswers, srn)))
       }
       else {
 
@@ -85,7 +85,7 @@ class AddCompanyDirectorsController @Inject()(
                 Future.successful(InternalServerError)
               },
               userAnswers => {
-                Future.successful(Redirect(navigator.nextPage(AddCompanyDirectorsId(index), mode, userAnswers)))
+                Future.successful(Redirect(navigator.nextPage(AddCompanyDirectorsId(index), mode, userAnswers, srn)))
               }
             )
         )

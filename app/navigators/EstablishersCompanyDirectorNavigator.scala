@@ -20,79 +20,102 @@ import com.google.inject.{Inject, Singleton}
 import connectors.UserAnswersCacheConnector
 import controllers.register.establishers.company.director.routes
 import identifiers.register.establishers.company.director._
-import models.{AddressYears, CheckMode, Mode, NormalMode}
+import models.Mode.journeyMode
+import models._
 import utils.{Navigator, UserAnswers}
 
 @Singleton
 class EstablishersCompanyDirectorNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector) extends Navigator {
 
-  private def checkYourAnswers(establisherIndex: Int, directorIndex: Int)(answers: UserAnswers): Option[NavigateTo] =
-    NavigateTo.save(routes.CheckYourAnswersController.onPageLoad(establisherIndex, directorIndex, NormalMode, None))
+  private def checkYourAnswers(establisherIndex: Int, directorIndex: Int, mode: Mode, srn: Option[String]): Option[NavigateTo] =
+    NavigateTo.dontSave(routes.CheckYourAnswersController.onPageLoad(establisherIndex, directorIndex, NormalMode, None))
 
-  override protected def routeMap(from: NavigateFrom): Option[NavigateTo] = {
+  private def anyMoreChanges(srn: Option[String]): Option[NavigateTo] =
+    NavigateTo.dontSave(controllers.routes.AnyMoreChangesController.onPageLoad(srn))
+
+  private def exitMiniJourney(establisherIndex: Int, directorIndex: Int, mode: Mode, srn: Option[String]): Option[NavigateTo] =
+    mode match {
+      case CheckMode | NormalMode =>
+        checkYourAnswers(establisherIndex, directorIndex, journeyMode(mode), srn)
+      case _ =>
+        anyMoreChanges(srn)
+    }
+
+  protected def localRroutes(from: NavigateFrom, mode: Mode, srn: Option[String]): Option[NavigateTo] =
     from.id match {
       case DirectorDetailsId(establisherIndex, directorIndex) =>
         NavigateTo.save(controllers.register.establishers.company.director.routes.
-          DirectorNinoController.onPageLoad(NormalMode, establisherIndex, directorIndex, None))
+          DirectorNinoController.onPageLoad(mode, establisherIndex, directorIndex, srn))
       case DirectorNinoId(establisherIndex, directorIndex) =>
-        NavigateTo.save(routes.DirectorUniqueTaxReferenceController.onPageLoad(NormalMode, establisherIndex, directorIndex, None))
+        NavigateTo.save(routes.DirectorUniqueTaxReferenceController.onPageLoad(mode, establisherIndex, directorIndex, srn))
       case DirectorUniqueTaxReferenceId(establisherIndex, directorIndex) =>
-        NavigateTo.save(routes.DirectorAddressPostcodeLookupController.onPageLoad(NormalMode, establisherIndex, directorIndex, None))
+        NavigateTo.save(routes.DirectorAddressPostcodeLookupController.onPageLoad(mode, establisherIndex, directorIndex, srn))
       case DirectorAddressPostcodeLookupId(establisherIndex, directorIndex) =>
-        NavigateTo.save(routes.DirectorAddressListController.onPageLoad(NormalMode, establisherIndex, directorIndex, None))
+        NavigateTo.save(routes.DirectorAddressListController.onPageLoad(mode, establisherIndex, directorIndex, srn))
       case DirectorAddressListId(establisherIndex, directorIndex) =>
-        NavigateTo.save(routes.DirectorAddressController.onPageLoad(NormalMode, establisherIndex, directorIndex, None))
+        NavigateTo.save(routes.DirectorAddressController.onPageLoad(mode, establisherIndex, directorIndex, srn))
       case DirectorAddressId(establisherIndex, directorIndex) =>
-        NavigateTo.save(routes.DirectorAddressYearsController.onPageLoad(NormalMode, establisherIndex, directorIndex, None))
+        NavigateTo.save(routes.DirectorAddressYearsController.onPageLoad(mode, establisherIndex, directorIndex, srn))
       case DirectorAddressYearsId(establisherIndex, directorIndex) =>
         addressYearsRoutes(establisherIndex, directorIndex)(from.userAnswers)
       case DirectorPreviousAddressPostcodeLookupId(establisherIndex, directorIndex) =>
-        NavigateTo.save(routes.DirectorPreviousAddressListController.onPageLoad(NormalMode, establisherIndex, directorIndex, None))
+        NavigateTo.save(routes.DirectorPreviousAddressListController.onPageLoad(mode, establisherIndex, directorIndex, srn))
       case DirectorPreviousAddressListId(establisherIndex, directorIndex) =>
-        NavigateTo.save(routes.DirectorPreviousAddressController.onPageLoad(NormalMode, establisherIndex, directorIndex, None))
+        NavigateTo.save(routes.DirectorPreviousAddressController.onPageLoad(mode, establisherIndex, directorIndex, srn))
       case DirectorPreviousAddressId(establisherIndex, directorIndex) =>
-        NavigateTo.save(routes.DirectorContactDetailsController.onPageLoad(NormalMode, establisherIndex, directorIndex, None))
+        NavigateTo.save(routes.DirectorContactDetailsController.onPageLoad(mode, establisherIndex, directorIndex, srn))
       case DirectorContactDetailsId(establisherIndex, directorIndex) =>
-        checkYourAnswers(establisherIndex, directorIndex)(from.userAnswers)
+        checkYourAnswers(establisherIndex, directorIndex, mode, srn)
+      case ConfirmDeleteDirectorId(establisherIndex) =>
+        NavigateTo.dontSave(controllers.register.establishers.company.routes.AddCompanyDirectorsController.onPageLoad(mode, srn, establisherIndex))
+      case CheckYourAnswersId(establisherIndex, directorIndex) =>
+        NavigateTo.save(controllers.register.establishers.company.routes.AddCompanyDirectorsController.onPageLoad(mode, srn, establisherIndex))
+    }
+
+  protected def editRoutes(from: NavigateFrom, mode: Mode, srn: Option[String]): Option[NavigateTo] =
+    from.id match {
+      case DirectorDetailsId(establisherIndex, directorIndex) =>
+        checkYourAnswers(establisherIndex, directorIndex, mode, srn)
+      case DirectorNinoId(establisherIndex, directorIndex)  =>
+        checkYourAnswers(establisherIndex, directorIndex, mode, srn)
+      case DirectorUniqueTaxReferenceId(establisherIndex, directorIndex) =>
+        checkYourAnswers(establisherIndex, directorIndex, mode, srn)
+      case DirectorAddressId(establisherIndex, directorIndex) =>
+        checkYourAnswers(establisherIndex, directorIndex, mode, srn)
+      case DirectorPreviousAddressId(establisherIndex, directorIndex) =>
+        checkYourAnswers(establisherIndex, directorIndex, mode, srn)
+      case DirectorContactDetailsId(establisherIndex, directorIndex) =>
+        checkYourAnswers(establisherIndex, directorIndex, mode, srn)
+      case DirectorAddressPostcodeLookupId(establisherIndex, directorIndex) =>
+        NavigateTo.save(routes.DirectorAddressListController.onPageLoad(mode, establisherIndex, directorIndex, srn))
+      case DirectorAddressListId(establisherIndex, directorIndex) =>
+        NavigateTo.save(routes.DirectorAddressController.onPageLoad(mode, establisherIndex, directorIndex, srn))
+      case DirectorAddressYearsId(establisherIndex, directorIndex) =>
+        addressYearsEditRoutes(establisherIndex, directorIndex)(from.userAnswers)
+      case DirectorPreviousAddressPostcodeLookupId(establisherIndex, directorIndex) =>
+        NavigateTo.save(routes.DirectorPreviousAddressListController.onPageLoad(mode, establisherIndex, directorIndex, srn))
+      case DirectorPreviousAddressListId(establisherIndex, directorIndex) =>
+        NavigateTo.save(routes.DirectorPreviousAddressController.onPageLoad(mode, establisherIndex, directorIndex, srn))
+      case _ => None
+    }
+
+  override protected def routeMap(from: NavigateFrom): Option[NavigateTo] = {
+    from.id match {
+      case DirectorContactDetailsId(establisherIndex, directorIndex) =>
+        checkYourAnswers(establisherIndex, directorIndex, NormalMode, None)
       case ConfirmDeleteDirectorId(establisherIndex) =>
         NavigateTo.dontSave(controllers.register.establishers.company.routes.AddCompanyDirectorsController.onPageLoad(NormalMode, None, establisherIndex))
       case CheckYourAnswersId(establisherIndex, directorIndex) =>
         NavigateTo.save(controllers.register.establishers.company.routes.AddCompanyDirectorsController.onPageLoad(NormalMode, None, establisherIndex))
-      case _ => None
+      case _ => localRroutes(from, NormalMode, None)
     }
   }
 
-  override protected def editRouteMap(from: NavigateFrom): Option[NavigateTo] = {
-    from.id match {
-      case DirectorDetailsId(establisherIndex, directorIndex) =>
-        checkYourAnswers(establisherIndex, directorIndex)(from.userAnswers)
-      case DirectorNinoId(establisherIndex, directorIndex) =>
-        checkYourAnswers(establisherIndex, directorIndex)(from.userAnswers)
-      case DirectorUniqueTaxReferenceId(establisherIndex, directorIndex) =>
-        checkYourAnswers(establisherIndex, directorIndex)(from.userAnswers)
-      case DirectorAddressPostcodeLookupId(establisherIndex, directorIndex) =>
-        NavigateTo.save(routes.DirectorAddressListController.onPageLoad(CheckMode, establisherIndex, directorIndex, None))
-      case DirectorAddressListId(establisherIndex, directorIndex) =>
-        NavigateTo.save(routes.DirectorAddressController.onPageLoad(CheckMode, establisherIndex, directorIndex, None))
-      case DirectorAddressId(establisherIndex, directorIndex) =>
-        checkYourAnswers(establisherIndex, directorIndex)(from.userAnswers)
-      case DirectorAddressYearsId(establisherIndex, directorIndex) =>
-        addressYearsEditRoutes(establisherIndex, directorIndex)(from.userAnswers)
-      case DirectorPreviousAddressPostcodeLookupId(establisherIndex, directorIndex) =>
-        NavigateTo.save(routes.DirectorPreviousAddressListController.onPageLoad(CheckMode, establisherIndex, directorIndex, None))
-      case DirectorPreviousAddressListId(establisherIndex, directorIndex) =>
-        NavigateTo.save(routes.DirectorPreviousAddressController.onPageLoad(CheckMode, establisherIndex, directorIndex, None))
-      case DirectorPreviousAddressId(establisherIndex, directorIndex) =>
-        checkYourAnswers(establisherIndex, directorIndex)(from.userAnswers)
-      case DirectorContactDetailsId(establisherIndex, directorIndex) =>
-        checkYourAnswers(establisherIndex, directorIndex)(from.userAnswers)
-      case _ => None
-    }
-  }
+  override protected def editRouteMap(from: NavigateFrom): Option[NavigateTo] = editRoutes(from, CheckMode, None)
 
-  protected def updateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] = None
+  override protected def updateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] = localRroutes(from, UpdateMode, srn)
 
-  protected def checkUpdateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] = None
+  override protected def checkUpdateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] = editRoutes(from, CheckUpdateMode, srn)
 
   private def addressYearsRoutes(establisherIndex: Int, directorIndex: Int)(answers: UserAnswers): Option[NavigateTo] = {
     answers.get(DirectorAddressYearsId(establisherIndex, directorIndex)) match {
@@ -115,4 +138,6 @@ class EstablishersCompanyDirectorNavigator @Inject()(val dataCacheConnector: Use
         NavigateTo.dontSave(controllers.routes.SessionExpiredController.onPageLoad())
     }
   }
+
+
 }

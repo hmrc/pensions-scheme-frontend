@@ -113,6 +113,7 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
     case _ => routes (from, UpdateMode, srn)
   }
   override protected def editRouteMap(from: NavigateFrom): Option[NavigateTo] = editRoutes(from, CheckMode, None)
+
   override protected def checkUpdateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] = editRoutes(from, CheckUpdateMode, srn)
 
   private def exitMiniJourney(index: Index, mode: Mode, srn: Option[String]): Option[NavigateTo] =
