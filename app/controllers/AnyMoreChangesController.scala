@@ -14,26 +14,24 @@
  * limitations under the License.
  */
 
-package controllers.vary
+package controllers
 
 import config.FrontendAppConfig
-import connectors.UserAnswersCacheConnector
-import controllers.Retrievals
 import controllers.actions._
-import forms.vary.AnyMoreChangesFormProvider
-import identifiers.vary.AnyMoreChangesId
+import forms.AnyMoreChangesFormProvider
+import identifiers.AnyMoreChangesId
 import javax.inject.Inject
 import models.{NormalMode, UpdateMode}
 import org.joda.time.LocalDate
 import org.joda.time.format.DateTimeFormat
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, Call}
+import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.{NoChangeFlagService, Variations}
 import utils.{Navigator, UserAnswers}
-import views.html.vary.anyMoreChanges
+import views.html.anyMoreChanges
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -48,7 +46,7 @@ class AnyMoreChangesController @Inject()(appConfig: FrontendAppConfig,
   extends FrontendController with Retrievals with I18nSupport {
 
   private val form: Form[Boolean] = formProvider()
-  private val postCall = controllers.vary.routes.AnyMoreChangesController.onSubmit _
+  private val postCall = controllers.routes.AnyMoreChangesController.onSubmit _
 
   def onPageLoad(srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(UpdateMode, srn) andThen requireData).async {
     implicit request =>

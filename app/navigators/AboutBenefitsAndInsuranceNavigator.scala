@@ -96,7 +96,7 @@ class AboutBenefitsAndInsuranceNavigator @Inject()(val dataCacheConnector: UserA
 
 
   private def anyMoreChanges(srn: Option[String]): Option[NavigateTo] =
-    NavigateTo.dontSave(controllers.vary.routes.AnyMoreChangesController.onPageLoad(srn))
+    NavigateTo.dontSave(controllers.routes.AnyMoreChangesController.onPageLoad(srn))
 }
 
 

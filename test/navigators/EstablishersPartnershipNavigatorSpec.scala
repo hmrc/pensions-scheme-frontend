@@ -92,7 +92,7 @@ object EstablishersPartnershipNavigatorSpec extends OptionValues {
 
   private def checkYourAnswers(mode: Mode) = routes.CheckYourAnswersController.onPageLoad(mode, 0, None)
 
-  private def anyMoreChanges = controllers.vary.routes.AnyMoreChangesController.onPageLoad(None)
+  private def anyMoreChanges = controllers.routes.AnyMoreChangesController.onPageLoad(None)
 
   private def exitJourney(mode: Mode) = if (mode == NormalMode) checkYourAnswers(mode) else anyMoreChanges
 
