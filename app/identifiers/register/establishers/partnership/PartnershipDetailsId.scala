@@ -18,18 +18,20 @@ package identifiers.register.establishers.partnership
 
 import identifiers.TypedIdentifier
 import identifiers.register.establishers.{EstablishersId, IsEstablisherNewId}
-import models.{Link, PartnershipDetails}
+import models.PartnershipDetails
 import play.api.i18n.Messages
 import play.api.libs.json.JsPath
 import utils.UserAnswers
 import utils.checkyouranswers.CheckYourAnswers
-import viewmodels.{AnswerRow, Message}
+import utils.checkyouranswers.CheckYourAnswers.PartnershipDetailsCYA
+import viewmodels.AnswerRow
 
 case class PartnershipDetailsId(index: Int) extends TypedIdentifier[PartnershipDetails] {
   override def path: JsPath = EstablishersId(index).path \ PartnershipDetailsId.toString
 }
 
 object PartnershipDetailsId {
+
   override lazy val toString: String = "partnershipDetails"
 
   implicit def cya(implicit userAnswers: UserAnswers, messages: Messages): CheckYourAnswers[PartnershipDetailsId] = {
@@ -37,20 +39,10 @@ object PartnershipDetailsId {
     new CheckYourAnswers[PartnershipDetailsId] {
 
       override def row(id: PartnershipDetailsId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        userAnswers.get(id).map { partnershipDetails =>
-          Seq(AnswerRow("messages__common__cya__name", Seq(partnershipDetails.name), answerIsMessageKey = false,
-            Some(Link("site.change", changeUrl, Some(Message("messages__visuallyhidden__common__name", partnershipDetails.name).resolve)))))
-        } getOrElse Seq.empty[AnswerRow]
+        PartnershipDetailsCYA()().row(id)(changeUrl, userAnswers)
 
       override def updateRow(id: PartnershipDetailsId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        userAnswers.get(id) match {
-          case Some(partnershipDetails) => userAnswers.get(IsEstablisherNewId(id.index)) match {
-            case Some(true) =>  Seq(AnswerRow("messages__common__cya__name", Seq(partnershipDetails.name), answerIsMessageKey = false,
-              Some(Link("site.change", changeUrl, Some(Message("messages__visuallyhidden__common__name", partnershipDetails.name).resolve)))))
-            case _  => Seq(AnswerRow("messages__common__cya__name", Seq(s"${partnershipDetails.name}"), answerIsMessageKey = false, None))
-          }
-          case _ => Seq.empty[AnswerRow]
-        }
+        PartnershipDetailsCYA(userAnswers.get(IsEstablisherNewId(id.index)))().updateRow(id)(changeUrl, userAnswers)
     }
   }
 }

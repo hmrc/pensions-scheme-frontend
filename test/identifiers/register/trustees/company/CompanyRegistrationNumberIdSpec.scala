@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package identifiers.register.establishers.company
+package identifiers.register.trustees.company
 
 import base.SpecBase
-import identifiers.register.establishers.IsEstablisherNewId
+import identifiers.register.trustees.IsTrusteeNewId
 import models.CompanyRegistrationNumber._
 import models._
 import models.requests.DataRequest
@@ -25,8 +25,8 @@ import play.api.mvc.AnyContent
 import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.PsaId
 import utils.UserAnswers
-import viewmodels.AnswerRow
 import utils.checkyouranswers.Ops._
+import viewmodels.AnswerRow
 
 class CompanyRegistrationNumberIdSpec extends SpecBase {
 
@@ -42,29 +42,29 @@ class CompanyRegistrationNumberIdSpec extends SpecBase {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
         implicit val userAnswers = request.userAnswers
         CompanyRegistrationNumberId(0).row(onwardUrl, NormalMode) must equal(Seq(
-          AnswerRow("messages__company__cya__crn_yes_no",List("Yes"),true,
-            Some(Link("site.change",onwardUrl,Some("messages__visuallyhidden__establisher__crn_yes_no")))),
+          AnswerRow("messages__checkYourAnswers__trustees__company__crn",List("Yes"),true,
+            Some(Link("site.change",onwardUrl,Some("messages__visuallyhidden__trustee__crn_yes_no")))),
           AnswerRow("messages__common__crn",List("crn"),false,
-            Some(Link("site.change",onwardUrl,Some("messages__visuallyhidden__establisher__crn"))))
+            Some(Link("site.change",onwardUrl,Some("messages__visuallyhidden__trustee__crn"))))
         ))
       }
     }
 
-    "in update mode for new establisher - company crn" must {
+    "in update mode for new trustee - company crn" must {
 
-      def answersNew: UserAnswers = answers.set(IsEstablisherNewId(0))(true).asOpt.value
+      def answersNew: UserAnswers = answers.set(IsTrusteeNewId(0))(true).asOpt.value
 
       "return answers rows with change links" in {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answersNew, PsaId("A0000000"))
         implicit val userAnswers = request.userAnswers
         CompanyRegistrationNumberId(0).row(onwardUrl, UpdateMode) must equal(Seq(
           AnswerRow("messages__common__crn",List("crn"),false,
-            Some(Link("site.change",onwardUrl,Some("messages__visuallyhidden__establisher__crn"))))
+            Some(Link("site.change",onwardUrl,Some("messages__visuallyhidden__trustee__crn"))))
         ))
       }
     }
 
-    "in update mode for existing establisher - company crn" must {
+    "in update mode for existing trustee - company crn" must {
 
       "return answers rows with change links" in {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
@@ -72,7 +72,7 @@ class CompanyRegistrationNumberIdSpec extends SpecBase {
 
         CompanyRegistrationNumberId(0).row(onwardUrl, UpdateMode) must equal(Seq(
           AnswerRow("messages__common__crn",List("crn"),false,
-            Some(Link("site.change",onwardUrl,Some("messages__visuallyhidden__establisher__crn"))))
+            Some(Link("site.change",onwardUrl,Some("messages__visuallyhidden__trustee__crn"))))
         ))
       }
     }

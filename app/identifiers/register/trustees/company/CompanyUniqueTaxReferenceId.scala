@@ -17,10 +17,13 @@
 package identifiers.register.trustees.company
 
 import identifiers._
-import identifiers.register.trustees.TrusteesId
+import identifiers.register.trustees.{IsTrusteeNewId, TrusteesId}
 import models.UniqueTaxReference
+import play.api.i18n.Messages
 import play.api.libs.json.JsPath
+import utils.UserAnswers
 import utils.checkyouranswers.{CheckYourAnswers, UniqueTaxReferenceCYA}
+import viewmodels.AnswerRow
 
 case class CompanyUniqueTaxReferenceId(index: Int) extends TypedIdentifier[UniqueTaxReference] {
   override def path: JsPath = TrusteesId(index).path \ CompanyUniqueTaxReferenceId.toString
@@ -29,11 +32,23 @@ case class CompanyUniqueTaxReferenceId(index: Int) extends TypedIdentifier[Uniqu
 object CompanyUniqueTaxReferenceId {
   override def toString: String = "companyUniqueTaxReference"
 
-  implicit val cya: CheckYourAnswers[CompanyUniqueTaxReferenceId] =
-    UniqueTaxReferenceCYA(
-      label = "messages__checkYourAnswers__trustees__company__utr",
-      changeHasUtr = "messages__visuallyhidden__trustee__utr_yes_no",
-      changeUtr = "messages__visuallyhidden__trustee__utr",
-      changeNoUtr = "messages__visuallyhidden__trustee__utr_no"
-    )()
+  val label = "messages__checkYourAnswers__trustees__company__utr"
+  val utrLabel = "messages__company__cya__utr"
+  val reasonLabel = "messages__company__cya__utr_no_reason"
+  val changeHasUtr = "messages__visuallyhidden__trustee__utr_yes_no"
+  val changeUtr = "messages__visuallyhidden__trustee__utr"
+  val changeNoUtr = "messages__visuallyhidden__trustee__utr_no"
+
+  implicit def cya(implicit userAnswers: UserAnswers, messages: Messages): CheckYourAnswers[CompanyUniqueTaxReferenceId] = {
+
+    new CheckYourAnswers[CompanyUniqueTaxReferenceId] {
+      override def row(id: CompanyUniqueTaxReferenceId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
+        UniqueTaxReferenceCYA(label, utrLabel, reasonLabel, changeHasUtr, changeUtr, changeNoUtr)().row(id)(changeUrl, userAnswers)
+      }
+
+      override def updateRow(id: CompanyUniqueTaxReferenceId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+        UniqueTaxReferenceCYA(label, utrLabel, reasonLabel, changeHasUtr, changeUtr, changeNoUtr, userAnswers.get(IsTrusteeNewId(id.index)))()
+          .updateRow(id)(changeUrl, userAnswers)
+    }
+  }
 }
