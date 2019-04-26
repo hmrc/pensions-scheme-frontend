@@ -78,7 +78,7 @@ class PartnerUniqueTaxReferenceController @Inject()(
               value
             ).map {
               json =>
-                Redirect(navigator.nextPage(PartnerUniqueTaxReferenceId(establisherIndex, partnerIndex), mode, new UserAnswers(json)))
+                Redirect(navigator.nextPage(PartnerUniqueTaxReferenceId(establisherIndex, partnerIndex), mode, new UserAnswers(json), srn))
             }
         )
       }

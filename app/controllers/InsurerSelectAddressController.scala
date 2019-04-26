@@ -60,7 +60,7 @@ class InsurerSelectAddressController @Inject()(override val appConfig: FrontendA
       case addresses =>
         AddressListViewModel(
           postCall = routes.InsurerSelectAddressController.onSubmit(mode, srn),
-          manualInputCall = routes.InsurerConfirmAddressController.onClick(mode, srn),
+          manualInputCall = routes.InsurerConfirmAddressController.onPageLoad(mode, srn),
           addresses = addresses,
           srn = srn
         )

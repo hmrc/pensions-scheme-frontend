@@ -61,11 +61,11 @@ class PartnershipReviewController @Inject()(appConfig: FrontendAppConfig,
 
       if (allPartnersCompleted & isPartnershipComplete) {
         userAnswersService.setCompleteFlag(mode, srn, IsEstablisherCompleteId(index), request.userAnswers, value = true).map { _ =>
-          Redirect(navigator.nextPage(PartnershipReviewId(index), NormalMode, request.userAnswers, srn))
+          Redirect(navigator.nextPage(PartnershipReviewId(index), mode, request.userAnswers, srn))
         }
       }
       else {
-        Future.successful(Redirect(navigator.nextPage(PartnershipReviewId(index), NormalMode, request.userAnswers, srn)))
+        Future.successful(Redirect(navigator.nextPage(PartnershipReviewId(index), mode, request.userAnswers, srn)))
       }
   }
 

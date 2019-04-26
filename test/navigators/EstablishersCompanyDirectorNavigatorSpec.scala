@@ -21,6 +21,7 @@ import connectors.FakeUserAnswersCacheConnector
 import controllers.register.establishers.company.director.routes
 import identifiers.Identifier
 import identifiers.register.establishers.company.director._
+import models.Mode.checkMode
 import models._
 import org.scalatest.OptionValues
 import org.scalatest.prop.TableFor6
@@ -32,28 +33,29 @@ class EstablishersCompanyDirectorNavigatorSpec extends SpecBase with NavigatorBe
 
   import EstablishersCompanyDirectorNavigatorSpec._
 
-  private def routes(): TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = Table(
+  private def commonRoutes(mode:Mode): TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = Table(
     ("Id", "User Answers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (Check Mode)", "Save (CM)"),
-    (DirectorDetailsId(0, 0), emptyAnswers, directorNino(NormalMode), true, Some(checkYourAnswers), true),
-    (DirectorNinoId(0, 0), emptyAnswers, directorUtr(NormalMode), true, Some(checkYourAnswers), true),
-    (DirectorUniqueTaxReferenceId(0, 0), emptyAnswers, directorAddressPostcode(NormalMode), true, Some(checkYourAnswers), true),
-    (DirectorAddressPostcodeLookupId(0, 0), emptyAnswers, directorAddressList(NormalMode), true, Some(directorAddressList(CheckMode)), true),
-    (DirectorAddressListId(0, 0), emptyAnswers, directorAddress(NormalMode), true, Some(directorAddress(CheckMode)), true),
-    (DirectorAddressId(0, 0), emptyAnswers, directorAddressYears(NormalMode), true, Some(checkYourAnswers), true),
-    (DirectorAddressYearsId(0, 0), addressYearsOverAYear, directorContactDetails(NormalMode), true, Some(checkYourAnswers), true),
-    (DirectorAddressYearsId(0, 0), addressYearsUnderAYear, directorPreviousAddPostcode(NormalMode), true, Some(directorPreviousAddPostcode(CheckMode)), true),
+    (DirectorDetailsId(0, 0), emptyAnswers, directorNino(mode), true, Some(exitJourney(mode)), true),
+    (DirectorNinoId(0, 0), emptyAnswers, directorUtr(mode), true, Some(exitJourney(mode)), true),
+    (DirectorUniqueTaxReferenceId(0, 0), emptyAnswers, directorAddressPostcode(mode), true, Some(exitJourney(mode)), true),
+    (DirectorAddressPostcodeLookupId(0, 0), emptyAnswers, directorAddressList(mode), true, Some(directorAddressList(checkMode(mode))), true),
+    (DirectorAddressListId(0, 0), emptyAnswers, directorAddress(mode), true, Some(directorAddress(checkMode(mode))), true),
+    (DirectorAddressId(0, 0), emptyAnswers, directorAddressYears(mode), true, Some(exitJourney(mode)), true),
+    (DirectorAddressYearsId(0, 0), addressYearsOverAYear, directorContactDetails(mode), true, Some(exitJourney(mode)), true),
+    (DirectorAddressYearsId(0, 0), addressYearsUnderAYear, directorPreviousAddPostcode(mode), true, Some(directorPreviousAddPostcode(checkMode(mode))), true),
     (DirectorAddressYearsId(0, 0), emptyAnswers, sessionExpired, false, Some(sessionExpired), false),
-    (DirectorPreviousAddressPostcodeLookupId(0, 0), emptyAnswers, directorPreviousAddList(NormalMode), true, Some(directorPreviousAddList(CheckMode)), true),
-    (DirectorPreviousAddressListId(0, 0), emptyAnswers, directorPreviousAddress(NormalMode), true, Some(directorPreviousAddress(CheckMode)), true),
-    (DirectorPreviousAddressId(0, 0), emptyAnswers, directorContactDetails(NormalMode), true, Some(checkYourAnswers), true),
-    (DirectorContactDetailsId(0, 0), emptyAnswers, checkYourAnswers, true, Some(checkYourAnswers), true),
-    (ConfirmDeleteDirectorId(0), emptyAnswers, addCompanyDirectors(NormalMode), false, None, false),
-    (CheckYourAnswersId(0, 0), emptyAnswers, addCompanyDirectors(NormalMode), true, None, true)
+    (DirectorPreviousAddressPostcodeLookupId(0, 0), emptyAnswers, directorPreviousAddList(mode), true, Some(directorPreviousAddList(checkMode(mode))), true),
+    (DirectorPreviousAddressListId(0, 0), emptyAnswers, directorPreviousAddress(mode), true, Some(directorPreviousAddress(checkMode(mode))), true),
+    (DirectorPreviousAddressId(0, 0), emptyAnswers, directorContactDetails(mode), true, Some(exitJourney(mode)), true),
+    (DirectorContactDetailsId(0, 0), emptyAnswers, checkYourAnswers(mode), true, Some(exitJourney(mode)), true),
+    (ConfirmDeleteDirectorId(0), emptyAnswers, addCompanyDirectors(mode), false, None, false),
+    (CheckYourAnswersId(0, 0), emptyAnswers, addCompanyDirectors(mode), true, None, true)
   )
 
   navigator.getClass.getSimpleName must {
     appRunning()
-    behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, routes(), dataDescriber)
+    behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, commonRoutes(NormalMode), dataDescriber)
+    behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, commonRoutes(UpdateMode), dataDescriber, UpdateMode)
     behave like nonMatchingNavigator(navigator)
   }
 
@@ -66,6 +68,10 @@ object EstablishersCompanyDirectorNavigatorSpec extends OptionValues {
   val establisherIndex = Index(0)
   val directorIndex = Index(0)
 
+  private def anyMoreChanges = controllers.routes.AnyMoreChangesController.onPageLoad(None)
+
+  private def exitJourney(mode: Mode) = if (mode == NormalMode) checkYourAnswers(mode) else anyMoreChanges
+  
   private def sessionExpired = controllers.routes.SessionExpiredController.onPageLoad()
 
   private def directorDetails(mode: Mode) = routes.DirectorDetailsController.onPageLoad(mode, directorIndex, establisherIndex, None)
@@ -90,7 +96,7 @@ object EstablishersCompanyDirectorNavigatorSpec extends OptionValues {
 
   private def directorPreviousAddress(mode: Mode) = routes.DirectorPreviousAddressController.onPageLoad(mode, directorIndex, establisherIndex, None)
 
-  private def checkYourAnswers = routes.CheckYourAnswersController.onPageLoad(directorIndex, establisherIndex, NormalMode, None)
+  private def checkYourAnswers(mode: Mode) = routes.CheckYourAnswersController.onPageLoad(directorIndex, establisherIndex, mode, None)
 
   private def addCompanyDirectors(mode: Mode) = controllers.register.establishers.company.routes.AddCompanyDirectorsController.onPageLoad(
     mode, None, establisherIndex)

@@ -24,7 +24,7 @@ import identifiers.register.establishers.IsEstablisherCompleteId
 import identifiers.register.establishers.company.CompanyDetailsId
 import identifiers.register.establishers.company.director.{ConfirmDeleteDirectorId, DirectorDetailsId}
 import javax.inject.Inject
-import models.{Index, Mode, NormalMode}
+import models.{CheckMode, Index, Mode, NormalMode}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
@@ -99,10 +99,20 @@ class ConfirmDeleteDirectorController @Inject()(
                   val userAnswers = UserAnswers(jsValue)
                   if (userAnswers.allDirectorsAfterDelete(establisherIndex).isEmpty) {
                     userAnswersService.setCompleteFlag(mode, srn, IsEstablisherCompleteId(establisherIndex), request.userAnswers, false).map { _ =>
-                      Redirect(navigator.nextPage(ConfirmDeleteDirectorId(establisherIndex), NormalMode, userAnswers))
+                      Redirect(navigator.nextPage(ConfirmDeleteDirectorId(establisherIndex), mode, userAnswers, srn))
                     }
                   } else {
-                    Future.successful(Redirect(navigator.nextPage(ConfirmDeleteDirectorId(establisherIndex), NormalMode, userAnswers)))
+                    mode match {
+                      case CheckMode | NormalMode =>
+                        Future.successful(Redirect(navigator.nextPage(ConfirmDeleteDirectorId(establisherIndex), mode, userAnswers, srn)))
+                      case _ =>
+                        userAnswers.upsert(IsEstablisherCompleteId(establisherIndex))(true) { result =>
+                          userAnswersService.upsert(mode, srn, result.json).map { json =>
+                            Redirect(navigator.nextPage(ConfirmDeleteDirectorId(establisherIndex), mode, userAnswers, srn))
+                          }
+                        }
+                    }
+
                   }
               }
             }

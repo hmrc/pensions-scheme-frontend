@@ -89,7 +89,7 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
     (authenticate andThen getData(mode, srn) andThen requiredData).async {
     implicit request =>
       userAnswersService.setCompleteFlag(mode, srn, IsPartnerCompleteId(establisherIndex, partnerIndex), request.userAnswers, value = true) map { _ =>
-        Redirect(navigator.nextPage(CheckYourAnswersId(establisherIndex, partnerIndex), NormalMode, request.userAnswers))
+        Redirect(navigator.nextPage(CheckYourAnswersId(establisherIndex, partnerIndex), mode, request.userAnswers, srn))
       }
   }
 }

@@ -19,6 +19,9 @@ package controllers.register.establishers.company.director
 import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions._
+import identifiers.AnyMoreChangesId
+import identifiers.register.establishers.{IsEstablisherCompleteId, IsEstablisherNewId}
+import identifiers.register.establishers.company.{CompanyReviewId, IsCompanyCompleteId}
 import identifiers.register.establishers.company.director._
 import javax.inject.Inject
 import models.Mode.checkMode
@@ -29,7 +32,7 @@ import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.EstablishersCompanyDirector
 import utils.checkyouranswers.Ops._
-import utils.{CountryOptions, Navigator, SectionComplete}
+import utils.{CountryOptions, Navigator, SectionComplete, UserAnswers}
 import viewmodels.AnswerSection
 import views.html.check_your_answers
 
@@ -47,6 +50,9 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
 
   def onPageLoad(companyIndex: Index, directorIndex: Index, mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requiredData).async {
     implicit request =>
+
+      implicit val userAnswers = request.userAnswers
+
       val companyDirectorDetails = AnswerSection(
         Some("messages__director__cya__details_heading"),
         Seq(
@@ -87,8 +93,28 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
   def onSubmit(companyIndex: Index, directorIndex: Index, mode: Mode, srn: Option[String]): Action[AnyContent] = (
     authenticate andThen getData(mode, srn) andThen requiredData).async {
     implicit request =>
-      userAnswersService.setCompleteFlag(mode, srn, IsDirectorCompleteId(companyIndex, directorIndex), request.userAnswers, true).map { _ =>
-        Redirect(navigator.nextPage(CheckYourAnswersId(companyIndex, directorIndex), NormalMode, request.userAnswers))
+      mode match{
+        case NormalMode | CheckMode =>
+          userAnswersService.setCompleteFlag(mode, srn, IsDirectorCompleteId(companyIndex, directorIndex), request.userAnswers, true).map { _ =>
+            Redirect(navigator.nextPage(CheckYourAnswersId(companyIndex, directorIndex), mode, request.userAnswers, srn))
+          }
+        case _ =>
+          val isEstablisherNew = request.userAnswers.get(IsEstablisherNewId(companyIndex)).getOrElse(false)
+          if (isEstablisherNew) {
+            userAnswersService.setCompleteFlag(mode, srn, IsDirectorCompleteId(companyIndex, directorIndex), request.userAnswers, value = true).map { result =>
+                Redirect(navigator.nextPage(CheckYourAnswersId(companyIndex, directorIndex), mode, request.userAnswers, srn))
+            }
+          }
+          else {
+            request.userAnswers.upsert(IsEstablisherCompleteId(companyIndex))(true) { answers =>
+              answers.upsert(IsDirectorCompleteId(companyIndex, directorIndex))(true) { updatedAnswers =>
+                userAnswersService.upsert(mode, srn, updatedAnswers.json).map { json =>
+                  Redirect(navigator.nextPage(AnyMoreChangesId, mode, UserAnswers(json), srn))
+                }
+              }
+            }
+          }
+
       }
   }
 }

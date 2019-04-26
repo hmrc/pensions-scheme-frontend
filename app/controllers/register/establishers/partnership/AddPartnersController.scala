@@ -61,7 +61,7 @@ class AddPartnersController @Inject()(
     implicit request =>
       val partners = request.userAnswers.allPartnersAfterDelete(index)
       if (partners.isEmpty || partners.lengthCompare(appConfig.maxPartners) >= 0) {
-        Future.successful(Redirect(navigator.nextPage(AddPartnersId(index), NormalMode, request.userAnswers)))
+        Future.successful(Redirect(navigator.nextPage(AddPartnersId(index), mode, request.userAnswers, srn)))
       }
       else {
 
@@ -91,7 +91,7 @@ class AddPartnersController @Inject()(
                 Future.successful(InternalServerError)
               },
               userAnswers => {
-                Future.successful(Redirect(navigator.nextPage(AddPartnersId(index), NormalMode, userAnswers, srn)))
+                Future.successful(Redirect(navigator.nextPage(AddPartnersId(index), mode, userAnswers, srn)))
               }
             )
         )

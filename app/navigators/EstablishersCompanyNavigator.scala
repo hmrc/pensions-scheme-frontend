@@ -19,6 +19,7 @@ package navigators
 import com.google.inject.Inject
 import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
+import identifiers.register.establishers.IsEstablisherNewId
 import identifiers.register.establishers.company._
 import models.{AddressYears, CheckMode, CheckUpdateMode, Index, Mode, NormalMode, UpdateMode}
 import models.Mode._
@@ -163,7 +164,12 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
           NavigateTo.save(controllers.register.establishers.company.director.routes.DirectorDetailsController
             .onPageLoad(mode, index, answers.allDirectors(index).size, srn))
         case Some(false) =>
-          NavigateTo.save(controllers.register.establishers.company.routes.CompanyReviewController.onPageLoad(mode, srn, index))
+          answers.get(IsEstablisherNewId(index)) match {
+            case Some(true) =>
+              anyMoreChanges(srn)
+            case _ =>
+              NavigateTo.save(controllers.register.establishers.company.routes.CompanyReviewController.onPageLoad(mode, srn, index))
+          }
         case _ => NavigateTo.dontSave(controllers.routes.SessionExpiredController.onPageLoad())
       }
     }

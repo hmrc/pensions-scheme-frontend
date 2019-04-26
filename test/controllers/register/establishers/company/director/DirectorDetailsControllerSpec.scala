@@ -158,9 +158,7 @@ class DirectorDetailsControllerSpec extends ControllerSpecBase {
 
       val result = controller(getRelevantData).onSubmit(NormalMode, firstEstablisherIndex, firstDirectorIndex, None)(postRequest)
       status(result) mustBe SEE_OTHER
-      verify(mockUserAnswersService, times(1)).upsert(any(), any(), eqTo(validData))(any(), any(), any())
-      verify(mockUserAnswersService, times(1))
-        .setCompleteFlag(any(), any(), eqTo(IsEstablisherCompleteId(0)), eqTo(userAnswers), eqTo(false))(any(), any(), any(), any())
+      verify(mockUserAnswersService, times(1)).upsert(eqTo(NormalMode), eqTo(None), eqTo(validData))(any(), any(), any())
     }
   }
 }
