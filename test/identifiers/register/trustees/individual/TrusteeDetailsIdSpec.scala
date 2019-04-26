@@ -16,16 +16,23 @@
 
 package identifiers.register.trustees.individual
 
-import identifiers.register.trustees.MoreThanTenTrusteesId
+import base.SpecBase
 import identifiers.register.trustees.company.CompanyDetailsId
-import models.CompanyDetails
+import identifiers.register.trustees.{IsTrusteeNewId, MoreThanTenTrusteesId}
 import models.person.PersonDetails
+import models.requests.DataRequest
+import models.{CompanyDetails, Link, NormalMode, UpdateMode}
 import org.joda.time.LocalDate
-import org.scalatest.{MustMatchers, OptionValues, WordSpec}
+import org.joda.time.format.DateTimeFormat
 import play.api.libs.json.Json
+import play.api.mvc.AnyContent
+import play.api.test.FakeRequest
+import uk.gov.hmrc.domain.PsaId
+import utils.checkyouranswers.Ops._
 import utils.{Enumerable, UserAnswers}
+import viewmodels.AnswerRow
 
-class TrusteeDetailsIdSpec extends WordSpec with MustMatchers with OptionValues with Enumerable.Implicits {
+class TrusteeDetailsIdSpec extends SpecBase with Enumerable.Implicits {
 
   private def individualTrustee(index: Int) = PersonDetails(
     s"test-trustee-$index",
@@ -57,6 +64,58 @@ class TrusteeDetailsIdSpec extends WordSpec with MustMatchers with OptionValues 
 
     }
 
+  }
+
+  "cya" when {
+
+    val onwardUrl = "onwardUrl"
+
+    val now = LocalDate.now()
+    val nowStr = DateTimeFormat.forPattern("d MMMM yyyy").print(now)
+    def answers = UserAnswers().set(TrusteeDetailsId(0))(PersonDetails("test-first-name", None, "test-last-name", now)).asOpt.get
+
+    "in normal mode individual details" must {
+
+      "return answers rows with change links" in {
+        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
+        implicit val userAnswers = request.userAnswers
+        TrusteeDetailsId(0).row(onwardUrl, NormalMode) must equal(Seq(
+          AnswerRow("messages__common__cya__name",List("test-first-name test-last-name"),false,
+            Some(Link("site.change",onwardUrl,Some("Change test-first-name test-last-name’s name")))),
+          AnswerRow("messages__common__dob",List(nowStr),false,
+            Some(Link("site.change",onwardUrl,Some("Change test-first-name test-last-name’s date of birth"))))
+        ))
+      }
+    }
+
+    "in update mode for new trustee - individual details" must {
+
+      def answersNew: UserAnswers = answers.set(IsTrusteeNewId(0))(true).asOpt.value
+
+      "return answers rows with change links" in {
+        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answersNew, PsaId("A0000000"))
+        implicit val userAnswers = request.userAnswers
+        TrusteeDetailsId(0).row(onwardUrl, UpdateMode) must equal(Seq(
+          AnswerRow("messages__common__cya__name",List("test-first-name test-last-name"),false,
+            Some(Link("site.change",onwardUrl,Some("Change test-first-name test-last-name’s name")))),
+          AnswerRow("messages__common__dob",List(nowStr),false,
+            Some(Link("site.change",onwardUrl,Some("Change test-first-name test-last-name’s date of birth"))))
+        ))
+      }
+    }
+
+    "in update mode for existing trustee - individual details" must {
+
+      "return answers rows without change links" in {
+        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
+        implicit val userAnswers = request.userAnswers
+
+        TrusteeDetailsId(0).row(onwardUrl, UpdateMode) must equal(Seq(
+          AnswerRow("messages__common__cya__name",List("test-first-name test-last-name"),false, None),
+          AnswerRow("messages__common__dob",List(nowStr),false, None)
+        ))
+      }
+    }
   }
 
 }

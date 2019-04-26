@@ -17,10 +17,13 @@
 package identifiers.register.trustees.company
 
 import identifiers._
-import identifiers.register.trustees.TrusteesId
+import identifiers.register.trustees.{IsTrusteeNewId, TrusteesId}
 import models.CompanyRegistrationNumber
+import play.api.i18n.Messages
 import play.api.libs.json.JsPath
+import utils.UserAnswers
 import utils.checkyouranswers.{CheckYourAnswers, CompanyRegistrationNumberCYA}
+import viewmodels.AnswerRow
 
 case class CompanyRegistrationNumberId(index: Int) extends TypedIdentifier[CompanyRegistrationNumber] {
   override def path: JsPath = TrusteesId(index).path \ CompanyRegistrationNumberId.toString
@@ -29,11 +32,20 @@ case class CompanyRegistrationNumberId(index: Int) extends TypedIdentifier[Compa
 object CompanyRegistrationNumberId {
   override def toString: String = "companyRegistrationNumber"
 
-  implicit val cya: CheckYourAnswers[CompanyRegistrationNumberId] =
-    CompanyRegistrationNumberCYA(
-      label = "messages__checkYourAnswers__trustees__company__crn",
-      changeHasCrn = "messages__visuallyhidden__trustee__crn_yes_no",
-      changeCrn = "messages__visuallyhidden__trustee__crn",
-      changeNoCrn = "messages__visuallyhidden__trustee__crn_no"
-    )()
+  val label: String = "messages__checkYourAnswers__trustees__company__crn"
+  val changeHasCrn: String = "messages__visuallyhidden__trustee__crn_yes_no"
+  val changeCrn: String = "messages__visuallyhidden__trustee__crn"
+  val changeNoCrn: String = "messages__visuallyhidden__trustee__crn_no"
+
+
+  implicit def cya(implicit userAnswers: UserAnswers, messages: Messages): CheckYourAnswers[CompanyRegistrationNumberId] = {
+
+    new CheckYourAnswers[CompanyRegistrationNumberId] {
+      override def row(id: CompanyRegistrationNumberId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+        CompanyRegistrationNumberCYA(label, changeHasCrn, changeCrn, changeNoCrn)().row(id)(changeUrl, userAnswers)
+
+      override def updateRow(id: CompanyRegistrationNumberId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+        CompanyRegistrationNumberCYA(label, changeHasCrn, changeCrn, changeNoCrn)().updateRow(id)(changeUrl, userAnswers)
+    }
+  }
 }

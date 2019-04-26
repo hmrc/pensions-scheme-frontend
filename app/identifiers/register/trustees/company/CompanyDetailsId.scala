@@ -17,12 +17,13 @@
 package identifiers.register.trustees.company
 
 import identifiers.TypedIdentifier
-import identifiers.register.trustees.{MoreThanTenTrusteesId, TrusteesId}
+import identifiers.register.trustees.{IsTrusteeNewId, MoreThanTenTrusteesId, TrusteesId}
 import models.CompanyDetails
 import play.api.i18n.Messages
 import play.api.libs.json.{JsPath, JsResult}
 import utils.UserAnswers
 import utils.checkyouranswers.{CheckYourAnswers, CompanyDetailsCYA}
+import viewmodels.AnswerRow
 
 case class CompanyDetailsId(index: Int) extends TypedIdentifier[CompanyDetails] {
   override def path: JsPath = TrusteesId(index).path \ CompanyDetailsId.toString
@@ -38,7 +39,14 @@ case class CompanyDetailsId(index: Int) extends TypedIdentifier[CompanyDetails] 
 object CompanyDetailsId {
   override lazy val toString: String = "companyDetails"
 
-  implicit def cya(implicit messages: Messages): CheckYourAnswers[CompanyDetailsId] =
-    CompanyDetailsCYA(changeVat = "messages__visuallyhidden__trustee__vat_number",
-      changePaye = "messages__visuallyhidden__trustee__paye_number")()
+  implicit def cya(implicit userAnswers: UserAnswers, messages: Messages): CheckYourAnswers[CompanyDetailsId] = {
+    new CheckYourAnswers[CompanyDetailsId] {
+
+      override def row(id: CompanyDetailsId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+        CompanyDetailsCYA()().row(id)(changeUrl, userAnswers)
+
+      override def updateRow(id: CompanyDetailsId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+        CompanyDetailsCYA(isNew = userAnswers.get(IsTrusteeNewId(id.index)))().updateRow(id)(changeUrl, userAnswers)
+    }
+  }
 }

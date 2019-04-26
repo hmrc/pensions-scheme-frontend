@@ -58,8 +58,6 @@ class CompanyUniqueTaxReferenceIdSpec extends SpecBase {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answersNew, PsaId("A0000000"))
         implicit val userAnswers = request.userAnswers
         CompanyUniqueTaxReferenceId(0).row(onwardUrl, UpdateMode) must equal(Seq(
-          AnswerRow("messages__company__cya__utr_yes_no",List("Yes"),false,
-            Some(Link("site.change",onwardUrl,Some("messages__visuallyhidden__establisher__utr_yes_no")))),
           AnswerRow("messages__company__cya__utr",List("utr"),false,
             Some(Link("site.change",onwardUrl,Some("messages__visuallyhidden__establisher__utr"))))
         ))

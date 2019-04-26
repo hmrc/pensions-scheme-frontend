@@ -17,16 +17,34 @@
 package identifiers.register.trustees.partnership
 
 import identifiers.TypedIdentifier
-import identifiers.register.trustees.TrusteesId
+import identifiers.register.trustees.{IsTrusteeNewId, TrusteesId}
 import models.PartnershipDetails
+import play.api.i18n.Messages
 import play.api.libs.json.JsPath
+import utils.UserAnswers
+import utils.checkyouranswers.CheckYourAnswers
+import utils.checkyouranswers.CheckYourAnswers.PartnershipDetailsCYA
+import viewmodels.AnswerRow
 
 case class PartnershipDetailsId(index: Int) extends TypedIdentifier[PartnershipDetails] {
   override def path: JsPath = TrusteesId(index).path \ PartnershipDetailsId.toString
 }
 
 object PartnershipDetailsId {
+
   override lazy val toString: String = "partnershipDetails"
+
+  implicit def cya(implicit userAnswers: UserAnswers, messages: Messages): CheckYourAnswers[PartnershipDetailsId] = {
+
+    new CheckYourAnswers[PartnershipDetailsId] {
+
+      override def row(id: PartnershipDetailsId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+        PartnershipDetailsCYA()().row(id)(changeUrl, userAnswers)
+
+      override def updateRow(id: PartnershipDetailsId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+        PartnershipDetailsCYA(userAnswers.get(IsTrusteeNewId(id.index)))().updateRow(id)(changeUrl, userAnswers)
+    }
+  }
 }
 
 
