@@ -64,7 +64,7 @@ class TrusteesPartnershipNavigatorSpec extends SpecBase with NavigatorBehaviour 
 
 object TrusteesPartnershipNavigatorSpec extends OptionValues {
 
-  private def taskList: Call = controllers.routes.SchemeTaskListController.onPageLoad()
+  private def taskList: Call = controllers.routes.SchemeTaskListController.onPageLoad(NormalMode, None)
 
   private val emptyAnswers = UserAnswers(Json.obj())
 

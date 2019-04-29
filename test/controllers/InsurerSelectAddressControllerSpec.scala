@@ -56,6 +56,7 @@ class InsurerSelectAddressControllerSpec extends ControllerSpecBase with Mockito
       new FakeNavigator(desiredRoute = onwardRoute),
       FakeAuthAction,
       dataRetrievalAction,
+      FakeAllowAccessProvider(),
       new DataRequiredActionImpl
     )
 

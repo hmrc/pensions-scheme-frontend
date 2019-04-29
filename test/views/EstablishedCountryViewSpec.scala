@@ -69,6 +69,6 @@ class EstablishedCountryViewSpec extends StringViewBehaviours {
   }
 
   "EstablishedCountry view in check mode" must {
-    behave like pageWithReturnLink(createViewInCheckMode, controllers.routes.SchemeTaskListController.onPageLoad().url)
+    behave like pageWithReturnLink(createViewInCheckMode, controllers.routes.SchemeTaskListController.onPageLoad(NormalMode, None).url)
   }
 }

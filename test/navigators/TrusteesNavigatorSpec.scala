@@ -104,7 +104,7 @@ object TrusteesNavigatorSpec extends OptionValues with Enumerable.Implicits {
 
   private def sessionExpired = controllers.routes.SessionExpiredController.onPageLoad()
 
-  private def taskList = controllers.routes.SchemeTaskListController.onPageLoad()
+  private def taskList = controllers.routes.SchemeTaskListController.onPageLoad(NormalMode, None)
 
   private def dataDescriber(answers: UserAnswers): String = {
     val haveAnyTrustees = answers.get(HaveAnyTrusteesId) map { value =>

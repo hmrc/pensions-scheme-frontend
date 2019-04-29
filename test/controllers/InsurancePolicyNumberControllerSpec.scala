@@ -18,7 +18,7 @@ package controllers
 
 import base.SpecBase
 import connectors.{FakeUserAnswersCacheConnector, UserAnswersCacheConnector}
-import controllers.actions.{AuthAction, DataRequiredActionImpl, DataRetrievalAction, FakeAuthAction}
+import controllers.actions.{AuthAction, DataRequiredActionImpl, DataRetrievalAction, FakeAllowAccessProvider, FakeAuthAction}
 import controllers.behaviours.ControllerWithQuestionPageBehaviours
 import forms.InsurancePolicyNumberFormProvider
 import identifiers.InsurancePolicyNumberId
@@ -98,6 +98,7 @@ object InsurancePolicyNumberControllerSpec {
       navigator,
       authAction,
       dataRetrievalAction,
+      FakeAllowAccessProvider(),
       new DataRequiredActionImpl(),
       formProvider
     )

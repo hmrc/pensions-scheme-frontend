@@ -39,6 +39,7 @@ class InsurancePolicyNumberController @Inject()(appConfig: FrontendAppConfig,
                                                 @AboutBenefitsAndInsurance navigator: Navigator,
                                                 authenticate: AuthAction,
                                                 getData: DataRetrievalAction,
+                                                allowAccess: AllowAccessActionProvider,
                                                 requireData: DataRequiredAction,
                                                 formProvider: InsurancePolicyNumberFormProvider
                                               )(implicit val ec: ExecutionContext) extends FrontendController with I18nSupport with Retrievals {
@@ -48,7 +49,8 @@ class InsurancePolicyNumberController @Inject()(appConfig: FrontendAppConfig,
 
   def postCall: (Mode,Option[String]) => Call = routes.InsurancePolicyNumberController.onSubmit
 
-  def onPageLoad(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
+  def onPageLoad(mode: Mode, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
     implicit request =>
       InsuranceCompanyNameId.retrieve.right.map { companyName =>
         val preparedForm = request.userAnswers.get(InsurancePolicyNumberId) match {

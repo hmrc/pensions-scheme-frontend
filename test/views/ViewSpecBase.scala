@@ -17,6 +17,7 @@
 package views
 
 import base.SpecBase
+import models.NormalMode
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
@@ -27,7 +28,7 @@ import play.twirl.api.{Html, HtmlFormat}
 trait ViewSpecBase extends SpecBase {
   type View = () => HtmlFormat.Appendable
 
-  def getReturnLink : String = controllers.routes.SchemeTaskListController.onPageLoad().url
+  def getReturnLink : String = controllers.routes.SchemeTaskListController.onPageLoad(NormalMode, None).url
 
   def haveLink(url: String): Matcher[Elements] = Matcher[Elements] {
     elements =>

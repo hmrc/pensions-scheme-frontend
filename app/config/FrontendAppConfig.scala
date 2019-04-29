@@ -68,6 +68,7 @@ class FrontendAppConfig @Inject()(override val runModeConfiguration: Configurati
   lazy val pensionsRegulatorLink = runModeConfiguration.underlying.getString("urls.pensionsRegulatorLink")
   lazy val getPSAEmail = runModeConfiguration.underlying.getString("urls.get-psa-email")
   lazy val getPSAName = runModeConfiguration.underlying.getString("urls.get-psa-name")
+  lazy val minimalPsaDetailsUrl: String = pensionsAdministratorUrl + runModeConfiguration.underlying.getString("urls.minimalPsaDetails")
 
   def languageMap: Map[String, Lang] = Map(
     "english" -> Lang("en"),

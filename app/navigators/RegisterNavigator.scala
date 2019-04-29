@@ -21,7 +21,7 @@ import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
 import identifiers.register._
 import identifiers.{IsBeforeYouStartCompleteId, UserResearchDetailsId}
-import models.Mode
+import models.NormalMode
 import utils.{Navigator, UserAnswers}
 
 //scalastyle:off cyclomatic.complexity
@@ -52,7 +52,7 @@ class RegisterNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnec
   private def continueRegistration(userAnswers: UserAnswers): Option[NavigateTo] =
     userAnswers.get(IsBeforeYouStartCompleteId) match {
       case Some(true) =>
-        NavigateTo.dontSave(controllers.routes.SchemeTaskListController.onPageLoad())
+        NavigateTo.dontSave(controllers.routes.SchemeTaskListController.onPageLoad(NormalMode, None))
       case _ =>
         NavigateTo.dontSave(controllers.routes.BeforeYouStartController.onPageLoad())
     }

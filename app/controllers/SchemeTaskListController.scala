@@ -16,14 +16,22 @@
 
 package controllers
 
-import config.FrontendAppConfig
+import config.{FeatureSwitchManagementService, FrontendAppConfig}
+import connectors.{MinimalPsaConnector, PensionSchemeVarianceLockConnector, SchemeDetailsConnector, SchemeDetailsReadOnlyCacheConnector}
 import controllers.actions._
+import handlers.ErrorHandler
+import identifiers.IsPsaSuspendedId
 import javax.inject.Inject
+import models.{Mode, VarianceLock}
+import models.details.transformation.SchemeDetailsMasterSection
+import models.requests.OptionalDataRequest
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent}
+import play.api.mvc.{Action, AnyContent, Result}
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import utils.HsTaskListHelperRegistration
-import views.html.schemeDetailsTaskList
+import utils.{HsTaskListHelperRegistration, HsTaskListHelperVariations, Toggles, UserAnswers}
+import viewmodels.SchemeDetailsTaskList
+import views.html.{psa_scheme_details, schemeDetailsTaskList}
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -31,11 +39,88 @@ class SchemeTaskListController @Inject()(appConfig: FrontendAppConfig,
                                          override val messagesApi: MessagesApi,
                                          authenticate: AuthAction,
                                          getData: DataRetrievalAction,
-                                         requireData: DataRequiredAction
+                                         schemeDetailsConnector: SchemeDetailsConnector,
+                                         schemeTransformer: SchemeDetailsMasterSection,
+                                         errorHandler: ErrorHandler,
+                                         featureSwitchManagementService: FeatureSwitchManagementService,
+                                         lockConnector: PensionSchemeVarianceLockConnector,
+                                         viewConnector: SchemeDetailsReadOnlyCacheConnector,
+                                         minimalPsaConnector: MinimalPsaConnector
                                         )(implicit val ec: ExecutionContext) extends FrontendController with I18nSupport with Retrievals {
 
-  def onPageLoad: Action[AnyContent] = (authenticate andThen getData() andThen requireData).async {
+  def onPageLoad(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn)).async {
     implicit request =>
-      Future.successful(Ok(schemeDetailsTaskList(appConfig, new HsTaskListHelperRegistration(request.userAnswers).taskList, isVariations = false)))
+      (srn, request.userAnswers) match {
+
+        case (None, Some(userAnswers)) =>
+          Future.successful(Ok(schemeDetailsTaskList(
+            appConfig,
+            new HsTaskListHelperRegistration(userAnswers).taskList,
+            isVariations = false)))
+
+        case (Some(srnValue), _) if !featureSwitchManagementService.get(Toggles.isVariationsEnabled) =>
+          onPageLoadVariationsToggledOff(srnValue)
+
+        case (Some(srnValue), optionUserAnswers) =>
+          onPageLoadVariationsToggledOn(srnValue, optionUserAnswers)
+      }
   }
+
+  private def onPageLoadVariationsToggledOff(srn: String)(implicit
+                                                          request: OptionalDataRequest[AnyContent],
+                                                          hc: HeaderCarrier): Future[Result] = {
+    schemeDetailsConnector.getSchemeDetails(request.psaId.id, schemeIdType = "srn", srn).flatMap { scheme =>
+      val schemeDetailMasterSection = schemeTransformer.transformMasterSection(scheme)
+      Future.successful(Ok(psa_scheme_details(appConfig, schemeDetailMasterSection, scheme.schemeDetails.name, srn)))
+    }
+  }
+
+  private def onPageLoadVariationsToggledOn(srn: String,
+                                            ua: Option[UserAnswers])(implicit request: OptionalDataRequest[AnyContent],
+                                                                              hc: HeaderCarrier): Future[Result] = {
+    lockConnector.isLockByPsaIdOrSchemeId(request.psaId.id, srn).flatMap {
+      case Some(VarianceLock) =>
+        ua match {
+          case Some(userAnswers) =>
+
+            getTaskList(srn, userAnswers).flatMap {details =>
+
+              Future.successful(Ok(schemeDetailsTaskList(appConfig, details.taskList, isVariations = true)))
+            }
+
+          case _ =>
+            Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
+        }
+
+      case _ =>
+        schemeDetailsConnector.getSchemeDetailsVariations(request.psaId.id, schemeIdType = "srn", srn)
+          .flatMap { userAnswers =>
+
+            getTaskList(srn, userAnswers).flatMap {details =>
+
+              viewConnector.upsert(request.externalId, details.userAnswers.json).flatMap { _ =>
+
+                Future.successful(Ok(schemeDetailsTaskList(appConfig, details.taskList, isVariations = true)))
+
+              }
+
+            }
+          }
+
+
+
+    }
+  }
+
+  private def getTaskList(srn: String, userAnswers: UserAnswers)(implicit request: OptionalDataRequest[AnyContent],
+                                                                          hc: HeaderCarrier): Future[TaskListDetails] =
+    minimalPsaConnector.isPsaSuspended(request.psaId.id).map { isSuspended =>
+      val updatedUserAnswers = userAnswers.set(IsPsaSuspendedId)(isSuspended).asOpt.getOrElse(userAnswers)
+      val taskList: SchemeDetailsTaskList = new HsTaskListHelperVariations(updatedUserAnswers, request.viewOnly, Some(srn)).taskList
+      TaskListDetails(updatedUserAnswers, taskList)
+    }
+
+  case class TaskListDetails(userAnswers: UserAnswers, taskList: SchemeDetailsTaskList)
+
+
 }

@@ -60,7 +60,7 @@ class TrusteesIndividualNavigatorSpec extends SpecBase with NavigatorBehaviour {
 
 object TrusteesIndividualNavigatorSpec {
 
-  private def taskList: Call = controllers.routes.SchemeTaskListController.onPageLoad()
+  private def taskList: Call = controllers.routes.SchemeTaskListController.onPageLoad(NormalMode, None)
 
   private val emptyAnswers = UserAnswers(Json.obj())
   val firstIndex = Index(0)

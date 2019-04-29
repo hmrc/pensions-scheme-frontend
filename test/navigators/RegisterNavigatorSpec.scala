@@ -79,6 +79,6 @@ object RegisterNavigatorSpec extends OptionValues{
 
   private def dataDescriber(answers: UserAnswers): String = answers.toString
 
-  private def taskList: Call = controllers.routes.SchemeTaskListController.onPageLoad()
+  private def taskList: Call = controllers.routes.SchemeTaskListController.onPageLoad(NormalMode, None)
 
 }
