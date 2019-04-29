@@ -23,6 +23,7 @@ import identifiers.Identifier
 import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.partnership.partner._
 import identifiers.register.establishers.partnership.{AddPartnersId, PartnershipDetailsId}
+import models.Mode.checkMode
 import models._
 import models.person.PersonDetails
 import org.joda.time.LocalDate
@@ -39,33 +40,45 @@ class EstablishersPartnerNavigatorSpec extends SpecBase with NavigatorBehaviour 
 
   private val navigator = new EstablishersPartnerNavigator(FakeUserAnswersCacheConnector, frontendAppConfig)
 
-  private def routes: TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = Table(
+  private def commonRoutes(mode: Mode): TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = Table(
     ("Id", "User Answers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (Check Mode)", "Save (CM)"),
-    (AddPartnersId(0), emptyAnswers, partnerDetails(0, NormalMode), true, Some(partnerDetails(0, CheckMode)), true),
-    (AddPartnersId(0), addPartnersTrue, partnerDetails(1, NormalMode), true, Some(partnerDetails(1, CheckMode)), true),
-    (AddPartnersId(0), addPartnersFalse, partnershipReview, true, Some(partnershipReview), true),
+    (AddPartnersId(0), emptyAnswers, partnerDetails(0, mode), true, Some(partnerDetails(0, checkMode(mode))), true),
+    (AddPartnersId(0), addPartnersTrue, partnerDetails(1, mode), true, Some(partnerDetails(1, checkMode(mode))), true),
+    (AddPartnersId(0), addPartnersFalse, partnershipReview(mode), true, Some(partnershipReview(checkMode(mode))), true),
     (AddPartnersId(0), addOnePartner, sessionExpired, false, Some(sessionExpired), false),
-    (AddPartnersId(0), addPartnersMoreThan10, otherPartners(NormalMode), true, Some(otherPartners(CheckMode)), true),
-    (PartnerDetailsId(0, 0), emptyAnswers, partnerNino(NormalMode), true, Some(checkYourAnswers), true),
-    (PartnerNinoId(0, 0), emptyAnswers, partnerUtr(NormalMode), true, Some(checkYourAnswers), true),
-    (PartnerUniqueTaxReferenceId(0, 0), emptyAnswers, partnerAddressPostcode(NormalMode), true, Some(checkYourAnswers), true),
-    (PartnerAddressPostcodeLookupId(0, 0), emptyAnswers, partnerAddressList(NormalMode), true, Some(partnerAddressList(CheckMode)), true),
-    (PartnerAddressListId(0, 0), emptyAnswers, partnerAddress(NormalMode), true, Some(partnerAddress(CheckMode)), true),
-    (PartnerAddressId(0, 0), emptyAnswers, partnerAddressYears(NormalMode), true, Some(checkYourAnswers), true),
-    (PartnerAddressYearsId(0, 0), addressYearsUnderAYear, partnerPreviousAddPostcode(NormalMode), true, Some(partnerPreviousAddPostcode(CheckMode)), true),
-    (PartnerAddressYearsId(0, 0), addressYearsOverAYear, partnerContactDetails(NormalMode), true, Some(checkYourAnswers), true),
+    (AddPartnersId(0), addPartnersMoreThan10, otherPartners(mode), true, Some(otherPartners(checkMode(mode))), true),
+    (PartnerDetailsId(0, 0), emptyAnswers, partnerNino(mode), true, Some(exitJourney(mode)), true),
+    (PartnerNinoId(0, 0), emptyAnswers, partnerUtr(mode), true, Some(exitJourney(mode)), true),
+    (PartnerUniqueTaxReferenceId(0, 0), emptyAnswers, partnerAddressPostcode(mode), true, Some(exitJourney(mode)), true),
+    (PartnerAddressPostcodeLookupId(0, 0), emptyAnswers, partnerAddressList(mode), true, Some(partnerAddressList(checkMode(mode))), true),
+    (PartnerAddressListId(0, 0), emptyAnswers, partnerAddress(mode), true, Some(partnerAddress(checkMode(mode))), true),
+    (PartnerAddressId(0, 0), emptyAnswers, partnerAddressYears(mode), true, Some(exitJourney(mode)), true),
+    (PartnerAddressYearsId(0, 0), addressYearsUnderAYear, partnerPreviousAddPostcode(mode), true, Some(partnerPreviousAddPostcode(checkMode(mode))), true),
+    (PartnerAddressYearsId(0, 0), addressYearsOverAYear, partnerContactDetails(mode), true, Some(exitJourney(mode)), true),
     (PartnerAddressYearsId(0, 0), emptyAnswers, sessionExpired, false, Some(sessionExpired), false),
-    (PartnerPreviousAddressPostcodeLookupId(0, 0), emptyAnswers, partnerPreviousAddList(NormalMode), true, Some(partnerPreviousAddList(CheckMode)), true),
-    (PartnerPreviousAddressListId(0, 0), emptyAnswers, partnerPreviousAddress(NormalMode), true, Some(partnerPreviousAddress(CheckMode)), true),
-    (PartnerPreviousAddressId(0, 0), emptyAnswers, partnerContactDetails(NormalMode), true, Some(checkYourAnswers), true),
-    (PartnerContactDetailsId(0, 0), emptyAnswers, checkYourAnswers, true, Some(checkYourAnswers), true),
-    (ConfirmDeletePartnerId(0), emptyAnswers, addPartners, false, None, false),
-    (CheckYourAnswersId(0, 0), emptyAnswers, addPartners, true, None, true)
+    (PartnerPreviousAddressPostcodeLookupId(0, 0), emptyAnswers, partnerPreviousAddList(mode), true, Some(partnerPreviousAddList(checkMode(mode))), true),
+    (PartnerPreviousAddressListId(0, 0), emptyAnswers, partnerPreviousAddress(mode), true, Some(partnerPreviousAddress(checkMode(mode))), true),
+    (PartnerPreviousAddressId(0, 0), emptyAnswers, partnerContactDetails(mode), true, Some(exitJourney(mode)), true),
+    (PartnerContactDetailsId(0, 0), emptyAnswers, checkYourAnswers(mode), true, Some(exitJourney(mode)), true)
+  )
+
+
+  private def normalRoutes(mode:Mode): TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = commonRoutes(mode) ++ Table(
+    ("Id", "User Answers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (Check Mode)", "Save (CM)"),
+    (ConfirmDeletePartnerId(0), emptyAnswers, addPartners(mode), false, None, false),
+    (CheckYourAnswersId(0, 0), emptyAnswers, addPartners(mode), true, None, true)
+  )
+
+  private def editRoutes(mode:Mode): TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = commonRoutes(mode) ++ Table(
+    ("Id", "User Answers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (Check Mode)", "Save (CM)"),
+    (ConfirmDeletePartnerId(0), emptyAnswers, anyMoreChanges, false, None, false),
+    (CheckYourAnswersId(0, 0), emptyAnswers, anyMoreChanges, true, None, true)
   )
 
   navigator.getClass.getSimpleName must {
     appRunning()
-    behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, routes, dataDescriber)
+    behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, normalRoutes(NormalMode), dataDescriber)
+    behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, editRoutes(UpdateMode), dataDescriber, UpdateMode)
     behave like nonMatchingNavigator(navigator)
   }
 
@@ -100,6 +113,10 @@ object EstablishersPartnerNavigatorSpec extends OptionValues {
   private val addPartnersMoreThan10 = UserAnswers(validData(Seq.fill(10)(johnDoe): _*))
   private val addOnePartner = UserAnswers(validData(johnDoe))
 
+  private def anyMoreChanges = controllers.routes.AnyMoreChangesController.onPageLoad(None)
+
+  private def exitJourney(mode: Mode) = if (mode == NormalMode) checkYourAnswers(mode) else anyMoreChanges
+
   private def partnerNino(mode: Mode) = routes.PartnerNinoController.onPageLoad(mode, establisherIndex, partnerIndex, None)
 
   private def partnerDetails(partnerIndex: Index = Index(0), mode: Mode) = routes.PartnerDetailsController.onPageLoad(mode, 0, partnerIndex, None)
@@ -122,13 +139,13 @@ object EstablishersPartnerNavigatorSpec extends OptionValues {
 
   private def partnerPreviousAddress(mode: Mode) = routes.PartnerPreviousAddressController.onPageLoad(mode, partnerIndex, establisherIndex, None)
 
-  private def checkYourAnswers = routes.CheckYourAnswersController.onPageLoad(NormalMode, establisherIndex, partnerIndex, None)
+  private def checkYourAnswers(mode: Mode) = routes.CheckYourAnswersController.onPageLoad(mode, establisherIndex, partnerIndex, None)
 
   private def sessionExpired = controllers.routes.SessionExpiredController.onPageLoad()
 
-  private def addPartners = controllers.register.establishers.partnership.routes.AddPartnersController.onPageLoad(NormalMode, establisherIndex, None)
+  private def addPartners(mode: Mode) = controllers.register.establishers.partnership.routes.AddPartnersController.onPageLoad(mode, establisherIndex, None)
 
-  private def partnershipReview = controllers.register.establishers.partnership.routes.PartnershipReviewController.onPageLoad(NormalMode, establisherIndex, None)
+  private def partnershipReview(mode: Mode) = controllers.register.establishers.partnership.routes.PartnershipReviewController.onPageLoad(mode, establisherIndex, None)
 
   private def otherPartners(mode: Mode) = controllers.register.establishers.partnership.routes.OtherPartnersController.onPageLoad(mode, 0, None)
 }

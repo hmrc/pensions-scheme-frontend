@@ -91,17 +91,17 @@ class EstablishersPartnerNavigator @Inject()(val dataCacheConnector: UserAnswers
     case PartnerUniqueTaxReferenceId(establisherIndex, partnerIndex) =>
       exitMiniJourney(establisherIndex, partnerIndex, mode, srn)
     case PartnerAddressPostcodeLookupId(establisherIndex, partnerIndex) =>
-      NavigateTo.save(routes.PartnerAddressListController.onPageLoad(CheckMode, establisherIndex, partnerIndex, srn))
+      NavigateTo.save(routes.PartnerAddressListController.onPageLoad(mode, establisherIndex, partnerIndex, srn))
     case PartnerAddressListId(establisherIndex, partnerIndex) =>
-      NavigateTo.save(routes.PartnerAddressController.onPageLoad(CheckMode, establisherIndex, partnerIndex, srn))
+      NavigateTo.save(routes.PartnerAddressController.onPageLoad(mode, establisherIndex, partnerIndex, srn))
     case PartnerAddressId(establisherIndex, partnerIndex) =>
       exitMiniJourney(establisherIndex, partnerIndex, mode, srn)
     case PartnerAddressYearsId(establisherIndex, partnerIndex) =>
       addressYearsEditRoutes(establisherIndex, partnerIndex, mode, srn)(from.userAnswers)
     case PartnerPreviousAddressPostcodeLookupId(establisherIndex, partnerIndex) =>
-      NavigateTo.save(routes.PartnerPreviousAddressListController.onPageLoad(CheckMode, establisherIndex, partnerIndex, srn))
+      NavigateTo.save(routes.PartnerPreviousAddressListController.onPageLoad(mode, establisherIndex, partnerIndex, srn))
     case PartnerPreviousAddressListId(establisherIndex, partnerIndex) =>
-      NavigateTo.save(routes.PartnerPreviousAddressController.onPageLoad(CheckMode, establisherIndex, partnerIndex, None))
+      NavigateTo.save(routes.PartnerPreviousAddressController.onPageLoad(mode, establisherIndex, partnerIndex, srn))
     case PartnerPreviousAddressId(establisherIndex, partnerIndex) =>
       exitMiniJourney(establisherIndex, partnerIndex, mode, srn)
     case PartnerContactDetailsId(establisherIndex, partnerIndex) =>
