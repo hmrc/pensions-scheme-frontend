@@ -63,7 +63,8 @@ class CompanyPreviousAddressPostcodeLookupController @Inject()(
               manualAddressCall(mode, index, srn),
               title = Message(title),
               heading = Message(heading),
-              subHeading = Some(details.companyName)
+              subHeading = Some(details.companyName),
+              srn= srn
             )
         }
     }

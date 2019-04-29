@@ -67,7 +67,7 @@ class CompanyRegistrationNumberController @Inject()(
           },
           (value) =>
             userAnswersService.save(mode, srn, CompanyRegistrationNumberId(index), value).map(cacheMap =>
-              Redirect(navigator.nextPage(CompanyRegistrationNumberId(index), mode, UserAnswers(cacheMap))))
+              Redirect(navigator.nextPage(CompanyRegistrationNumberId(index), mode, UserAnswers(cacheMap), srn)))
         )
       }
   }

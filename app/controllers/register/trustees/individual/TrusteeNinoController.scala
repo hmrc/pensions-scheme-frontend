@@ -63,7 +63,7 @@ class TrusteeNinoController @Inject()(appConfig: FrontendAppConfig,
           Future.successful(BadRequest(trusteeNino(appConfig, errors, mode, index, existingSchemeName, submitUrl)))
         },
         nino => userAnswersService.save(mode, srn, TrusteeNinoId(index), nino).map { answers =>
-          Redirect(navigator.nextPage(TrusteeNinoId(index), mode, UserAnswers(answers)))
+          Redirect(navigator.nextPage(TrusteeNinoId(index), mode, UserAnswers(answers), srn))
         }
       )
   }
