@@ -16,20 +16,21 @@
 
 package utils
 
-import identifiers.register.establishers.company.director.{DirectorDetailsId, IsDirectorCompleteId}
+import identifiers.register.establishers.company.director.{DirectorDetailsId, IsDirectorAddressCompleteId, IsDirectorCompleteId}
 import identifiers.register.establishers.company.{CompanyDetailsId => EstablisherCompanyDetailsId, CompanyPayeId => EstablisherCompanyPayeId, CompanyVatId => EstablisherCompanyVatId}
 import identifiers.register.establishers.individual.EstablisherDetailsId
 import identifiers.register.establishers.partnership.PartnershipDetailsId
-import identifiers.register.establishers.partnership.partner.{IsPartnerCompleteId, PartnerDetailsId}
-import identifiers.register.establishers.{EstablisherKindId, EstablishersId, IsEstablisherCompleteId, IsEstablisherNewId}
+import identifiers.register.establishers.partnership.partner.{IsPartnerAddressCompleteId, IsPartnerCompleteId, PartnerDetailsId}
+import identifiers.register.establishers._
 import identifiers.register.trustees.company.{CompanyDetailsId, CompanyPayeId, CompanyVatId}
 import identifiers.register.trustees.individual.TrusteeDetailsId
 import identifiers.register.trustees.partnership.{IsPartnershipCompleteId, PartnershipDetailsId => TrusteePartnershipDetailsId}
-import identifiers.register.trustees.{IsTrusteeCompleteId, IsTrusteeNewId, TrusteeKindId, TrusteesId}
+import identifiers.register.trustees._
 import identifiers._
 import models.address.Address
 import models.person.PersonDetails
 import models.register._
+import models.register.establishers.EstablisherKind
 import models.{CompanyDetails, PartnershipDetails, Paye, Vat}
 import play.api.Logger
 import play.api.libs.functional.syntax._
@@ -140,6 +141,8 @@ case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Implicits{
   private def isCompanyComplete(vat: Option[Vat], paye: Option[Paye], isComplete: Option[Boolean]): Option[Boolean] = {
     (vat, paye) match {
       case (None, None) => Some(false)
+      case (_, None) => Some(false)
+      case (None, _) => Some(false)
       case _ => isComplete
     }
   }
@@ -426,6 +429,19 @@ case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Implicits{
 
   def areChangesCompleted: Boolean = {
 
+    def isDirectorPartnerCompleted(establisherIndex:Int) = get(EstablisherKindId(establisherIndex)) match {
+      case Some(EstablisherKind.Company) =>
+        allDirectorsAfterDelete(establisherIndex).zipWithIndex.collect { case (item, directorPartnerIndex) =>
+          item.isCompleted && get(IsDirectorAddressCompleteId(establisherIndex, directorPartnerIndex)).fold(false)(_== true)
+        }.filter(_==false).isEmpty
+      case Some(EstablisherKind.Partnership) =>
+        allPartnersAfterDelete(establisherIndex).zipWithIndex.collect { case (item, directorPartnerIndex) =>
+        item.isCompleted && get(IsPartnerAddressCompleteId(establisherIndex, directorPartnerIndex)).fold(false)(_== true)
+      }.filter(_==false).isEmpty
+
+      case _ => true
+    }
+
     val isInsuranceCompleted = get(BenefitsSecuredByInsuranceId) match {
       case Some(true) => List(get(InvestmentRegulatedSchemeId), get(OccupationalPensionSchemeId), get(TypeOfBenefitsId),
         get(InsuranceCompanyNameId), get(InsurancePolicyNumberId), get(InsurerConfirmAddressId)).filter(_==None).isEmpty
@@ -434,13 +450,14 @@ case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Implicits{
     }
 
     val allTrusteesCompleted = allTrusteesAfterDelete.zipWithIndex.collect { case (item, index) =>
-      item.isCompleted}.filter(_==false).isEmpty
-
-    val allEstablishersCompleted = allEstablishersAfterDelete.zipWithIndex.collect { case (item, index) =>
-      item.isCompleted && allDirectorsAfterDelete(index).zipWithIndex.collect { case (item, index) =>
-        item.isCompleted}.filter(_==false).isEmpty
+      item.isCompleted && get(IsTrusteeAddressCompleteId(index)) == Some(true)
     }.filter(_==false).isEmpty
 
+    val allEstablishersCompleted = allEstablishersAfterDelete.zipWithIndex.collect { case (item, establisherIndex) =>
+      item.isCompleted &&
+        get(IsEstablisherAddressCompleteId(establisherIndex)).fold(false)(_== true) &&
+        isDirectorPartnerCompleted(establisherIndex)
+    }.filter(_==false).isEmpty
 
 
     isInsuranceCompleted && allTrusteesCompleted && allEstablishersCompleted
