@@ -26,7 +26,7 @@ import identifiers.register.trustees.company.{CompanyDetailsId, CompanyPayeId, C
 import identifiers.register.trustees.individual.TrusteeDetailsId
 import identifiers.register.trustees.partnership.{IsPartnershipCompleteId, PartnershipDetailsId => TrusteePartnershipDetailsId}
 import identifiers.register.trustees.{IsTrusteeCompleteId, IsTrusteeNewId, TrusteeKindId, TrusteesId}
-import identifiers.{EstablishersOrTrusteesChangedId, InsuranceDetailsChangedId, TypedIdentifier, register}
+import identifiers.{EstablishersOrTrusteesChangedId, InsuranceDetailsChangedId, TypedIdentifier}
 import models.address.Address
 import models.person.PersonDetails
 import models.register._
@@ -246,7 +246,7 @@ case class UserAnswers(json: JsValue = Json.obj()) {
             director.fullName,
             director.isDeleted,
             isComplete,
-            isNewEntity = get(IsEstablisherNewId(establisherIndex)).getOrElse(false),
+            isNewEntity = true,
             details.count(_.isDeleted==false)
           )
         }
@@ -268,7 +268,7 @@ case class UserAnswers(json: JsValue = Json.obj()) {
             partner.fullName,
             partner.isDeleted,
             isComplete,
-            isNewEntity = get(IsEstablisherNewId(establisherIndex)).getOrElse(false),
+            isNewEntity = true,
             details.count(_.isDeleted==false)
           )
         }
