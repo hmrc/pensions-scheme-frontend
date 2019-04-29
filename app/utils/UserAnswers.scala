@@ -26,7 +26,7 @@ import identifiers.register.trustees.company.{CompanyDetailsId, CompanyPayeId, C
 import identifiers.register.trustees.individual.TrusteeDetailsId
 import identifiers.register.trustees.partnership.{IsPartnershipCompleteId, PartnershipDetailsId => TrusteePartnershipDetailsId}
 import identifiers.register.trustees.{IsTrusteeCompleteId, IsTrusteeNewId, TrusteeKindId, TrusteesId}
-import identifiers.{EstablishersOrTrusteesChangedId, InsuranceDetailsChangedId, TypedIdentifier}
+import identifiers._
 import models.address.Address
 import models.person.PersonDetails
 import models.register._
@@ -43,7 +43,7 @@ import scala.concurrent.Future
 import scala.language.implicitConversions
 
 //scalastyle:off number.of.methods
-case class UserAnswers(json: JsValue = Json.obj()) {
+case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Implicits{
 
   def get[A](id: TypedIdentifier[A])(implicit rds: Reads[A]): Option[A] = {
     get[A](id.path)
@@ -422,5 +422,29 @@ case class UserAnswers(json: JsValue = Json.obj()) {
       address.postcode,
       Some(country)
     ).flatten
+  }
+
+  def areChangesCompleted: Boolean = {
+
+    val isInsuranceCompleted = get(BenefitsSecuredByInsuranceId) match {
+      case Some(true) => List(get(InvestmentRegulatedSchemeId), get(OccupationalPensionSchemeId), get(TypeOfBenefitsId),
+        get(InsuranceCompanyNameId), get(InsurancePolicyNumberId), get(InsurerConfirmAddressId)).filter(_==None).isEmpty
+      case Some(false) => true
+      case _ => false
+    }
+
+    val allTrusteesCompleted = allTrusteesAfterDelete.zipWithIndex.collect { case (item, index) =>
+      item.isCompleted}.filter(_==false).isEmpty
+
+    val allEstablishersCompleted = allEstablishersAfterDelete.zipWithIndex.collect { case (item, index) =>
+      item.isCompleted && allDirectorsAfterDelete(index).zipWithIndex.collect { case (item, index) =>
+        item.isCompleted}.filter(_==false).isEmpty
+    }.filter(_==false).isEmpty
+
+
+
+    isInsuranceCompleted && allTrusteesCompleted && allEstablishersCompleted
+
+
   }
 }

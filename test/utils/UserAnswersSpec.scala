@@ -16,7 +16,11 @@
 
 package utils
 
-import identifiers.register.establishers.company.director.{DirectorDetailsId, IsDirectorCompleteId}
+import controllers.register.establishers.company.CheckYourAnswersControllerSpec.{address, addressYears, companyDetails, companyRegNoYes, contactDetails, previousAddress, utrYes}
+import controllers.register.establishers.company.director.CheckYourAnswersControllerSpec.firstIndex
+import controllers.register.trustees.company.CheckYourAnswersControllerSpec.{address, addressYears, companyDetails, crn, index, previousAddress, utr}
+import controllers.routes
+import identifiers.register.establishers.company.director._
 import identifiers.register.establishers.company.{CompanyDetailsId => EstablisherCompanyDetailsId, CompanyPayeId => EstablisherCompanyPayeId, CompanyVatId => EstablisherCompanyVatId}
 import identifiers.register.establishers.individual.EstablisherDetailsId
 import identifiers.register.establishers.partnership.PartnershipDetailsId
@@ -24,7 +28,9 @@ import identifiers.register.establishers.{EstablisherKindId, EstablishersId, IsE
 import identifiers.register.trustees.company.{CompanyPayeId, CompanyVatId, CompanyDetailsId => TrusteeCompanyDetailsId}
 import identifiers.register.trustees.individual.TrusteeDetailsId
 import identifiers.register.trustees.{company => _, _}
+import models.Vat.Yes
 import models._
+import models.address.Address
 import models.person.PersonDetails
 import models.register.SchemeType.SingleTrust
 import models.register._
@@ -426,6 +432,62 @@ class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues with 
     }
   }
 
+  "areChangesCompleted" when {
+
+    "checking insurance company" must {
+       "return false if scheme have insurance and details are missing" in {
+         val insuranceCompanyDetails = UserAnswers().investmentRegulated(true)
+         insuranceCompanyDetails.areChangesCompleted mustBe false
+       }
+
+       "return false if scheme have insurance is not defined" in {
+         val insuranceCompanyDetails = UserAnswers()
+         insuranceCompanyDetails.areChangesCompleted mustBe false
+       }
+
+       "return true if scheme does not have insurance" in {
+         val insuranceCompanyDetails = UserAnswers().benefitsSecuredByInsurance(false)
+         insuranceCompanyDetails.areChangesCompleted mustBe true
+       }
+
+       "return true if scheme have insurance and all the details are present" in {
+         insuranceCompanyDetails.areChangesCompleted mustBe true
+       }
+     }
+
+    "checking trustees" must {
+      "return true if trustees are not defined" in {
+        insuranceCompanyDetails.areChangesCompleted mustBe true
+      }
+
+      "return false if trustees are not completed" in {
+        trustee.areChangesCompleted mustBe false
+      }
+
+      "return true if trustees are completed" in {
+        val trusteeCompleted = trustee.set(IsTrusteeCompleteId(0))(true).asOpt.get
+        trusteeCompleted.areChangesCompleted mustBe true
+      }
+    }
+
+    "checking establishers" must {
+      "return false if establishers are not completed" in {
+        establisher.areChangesCompleted mustBe false
+      }
+
+      "return false if establishers are completed but directors are not completed" in {
+        val establisherCompleted = establisher.set(IsEstablisherCompleteId(0))(true).asOpt.get
+        establisherCompleted.areChangesCompleted mustBe false
+      }
+
+      "return true if establishers are completed" in {
+        val establisherCompleted = establisher.set(IsEstablisherCompleteId(0))(true).flatMap(
+          _.set(IsDirectorCompleteId(0,0))(true)).asOpt.get
+        establisherCompleted.areChangesCompleted mustBe true
+      }
+    }
+  }
+
 }
 
 object UserAnswersSpec {
@@ -465,4 +527,45 @@ object UserAnswersSpec {
   private val company = CompanyDetails("test-company-name")
   private val person = PersonDetails("test-first-name", None, "test-last-name", LocalDate.now())
   private val partnershipDetails = PartnershipDetails("test-first-name")
+
+  private val policyNumber = "Test policy number"
+  private val insurerAddress = Address("addr1", "addr2", Some("addr3"), Some("addr4"), Some("xxx"), "GB")
+
+  private val crn = CompanyRegistrationNumber.Yes("test-crn")
+  private val utr = UniqueTaxReference.Yes("test-utr")
+  private val address = Address("address-1-line-1", "address-1-line-2", None, None, Some("post-code-1"), "country-1")
+  private val addressYears = AddressYears.UnderAYear
+  private val previousAddress = Address("address-2-line-1", "address-2-line-2", None, None, Some("post-code-2"), "country-2")
+  private val contactDetails = ContactDetails("test@test.com", "1234")
+
+  private val insuranceCompanyDetails = UserAnswers().investmentRegulated(true).occupationalPensionScheme(true).
+    typeOfBenefits(TypeOfBenefits.Defined).benefitsSecuredByInsurance(true).insuranceCompanyName(company.companyName).
+    insurancePolicyNumber(policyNumber).insurerConfirmAddress(insurerAddress)
+
+  private val trustee = insuranceCompanyDetails
+    .trusteesCompanyDetails(0, company)
+    .trusteesCompanyRegistrationNumber(0, crn)
+    .trusteesUniqueTaxReference(0, utr)
+    .trusteesCompanyAddress(0, address)
+    .trusteesCompanyAddressYears(0, addressYears)
+    .trusteesCompanyPreviousAddress(0, previousAddress).set(CompanyVatId(0))(Vat.Yes("vat")).flatMap(
+    _.set(CompanyPayeId(0))(Paye.Yes("vat"))).asOpt.get
+
+  private val establisher = trustee.set(IsTrusteeCompleteId(0))(true).asOpt.get.
+    establisherCompanyDetails(0, company).
+    establisherCompanyRegistrationNumber(0, crn).
+    establisherUniqueTaxReference(0, utr).
+    establisherCompanyDormant(0, DeclarationDormant.Yes).
+    establishersCompanyAddress(0, address).
+    establisherCompanyAddressYears(0, addressYears).
+    establishersCompanyPreviousAddress(0, previousAddress).
+    establishersCompanyContactDetails(0, contactDetails).set(EstablisherCompanyVatId(0))(Vat.Yes("vat"))
+    .flatMap(_.set(EstablisherCompanyPayeId(0))(Paye.Yes("vat")))
+    .flatMap(_.set(DirectorDetailsId(0, 0))(person))
+    .flatMap(_.set(DirectorNinoId(0, 0))(Nino.Yes("AB100100A")))
+    .flatMap(_.set(DirectorUniqueTaxReferenceId(0, 0))(utr))
+    .flatMap(_.set(DirectorAddressId(0, 0))(address))
+    .flatMap(_.set(DirectorAddressYearsId(0, 0))(AddressYears.UnderAYear))
+    .flatMap(_.set(DirectorPreviousAddressId(0, 0))(previousAddress))
+    .flatMap(_.set(DirectorContactDetailsId(0, 0))(contactDetails)).asOpt.get
 }
