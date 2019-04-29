@@ -48,6 +48,7 @@ class PensionAdministratorFeatureSwitchConnectorImpl @Inject()(http: HttpClient,
         Future.successful(false)
     }
   }
+
   override def reset(name: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Boolean] = {
     val url = appConfig.pensionsAdministratorUrl + s"/pension-administrator/test-only/reset/$name"
 
@@ -56,6 +57,18 @@ class PensionAdministratorFeatureSwitchConnectorImpl @Inject()(http: HttpClient,
     }.recoverWith {
       case _ =>
         Future.successful(false)
+    }
+  }
+
+  override def get(name: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[Boolean]] = {
+    val url = appConfig.pensionsAdministratorUrl + s"/pension-administrator/test-only/get/$name"
+
+    http.GET(url).map { value =>
+      val currentValue = value.json.as[Boolean]
+      Option(currentValue)
+    }.recoverWith {
+      case _ =>
+        Future.successful(None)
     }
   }
 }
