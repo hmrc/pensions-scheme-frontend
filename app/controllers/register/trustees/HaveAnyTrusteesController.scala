@@ -62,7 +62,7 @@ class HaveAnyTrusteesController @Inject()(
         },
         value =>
           dataCacheConnector.save(request.externalId, HaveAnyTrusteesId, value).map(cacheMap =>
-            Redirect(navigator.nextPage(HaveAnyTrusteesId, mode, UserAnswers(cacheMap))))
+            Redirect(navigator.nextPage(HaveAnyTrusteesId, mode, UserAnswers(cacheMap), srn)))
       )
   }
 }

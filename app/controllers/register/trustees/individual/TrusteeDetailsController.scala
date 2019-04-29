@@ -67,7 +67,7 @@ class TrusteeDetailsController @Inject()(
           request.userAnswers.upsert(TrusteeDetailsId(index))(value) {
             _.upsert(TrusteeKindId(index))(Individual) { answers =>
               userAnswersService.upsert(mode, srn, answers.json).map { cacheMap =>
-                Redirect(navigator.nextPage(TrusteeDetailsId(index), mode, new UserAnswers(cacheMap)))
+                Redirect(navigator.nextPage(TrusteeDetailsId(index), mode, new UserAnswers(cacheMap), srn))
               }
             }
           }

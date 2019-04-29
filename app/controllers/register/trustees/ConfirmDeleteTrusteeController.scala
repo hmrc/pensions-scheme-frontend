@@ -30,7 +30,6 @@ import models.person.PersonDetails
 import models.register.trustees.TrusteeKind
 import models.register.trustees.TrusteeKind.{Company, Individual, Partnership}
 import models.requests.DataRequest
-import models._
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Result}
@@ -129,7 +128,7 @@ class ConfirmDeleteTrusteeController @Inject()(appConfig: FrontendAppConfig,
           Future.successful(dataRequest.userAnswers.json)
         }
         deletionResult.flatMap { answers =>
-          Future.successful(Redirect(navigator.nextPage(ConfirmDeleteTrusteeId, NormalMode, UserAnswers(answers))))
+          Future.successful(Redirect(navigator.nextPage(ConfirmDeleteTrusteeId, mode, UserAnswers(answers), srn)))
         }
       }
     )
