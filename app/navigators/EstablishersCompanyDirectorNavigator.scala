@@ -100,7 +100,7 @@ class EstablishersCompanyDirectorNavigator @Inject()(val dataCacheConnector: Use
             anyMoreChanges(srn)
         }
       case CheckYourAnswersId(establisherIndex, directorIndex) =>
-        listOrAnyMoreChnage(establisherIndex, mode, srn)(from.userAnswers)
+        listOrAnyMoreChange(establisherIndex, mode, srn)(from.userAnswers)
       case AnyMoreChangesId => anyMoreChanges(srn)
       case _ => None
     }
@@ -135,7 +135,7 @@ class EstablishersCompanyDirectorNavigator @Inject()(val dataCacheConnector: Use
     }
   }
 
-  private def listOrAnyMoreChnage(establisherIndex: Int, mode: Mode, srn: Option[String])(answers: UserAnswers): Option[NavigateTo] = {
+  private def listOrAnyMoreChange(establisherIndex: Int, mode: Mode, srn: Option[String])(answers: UserAnswers): Option[NavigateTo] = {
     answers.get(IsEstablisherNewId(establisherIndex)) match {
       case Some(true) =>
         NavigateTo.save(controllers.register.establishers.company.routes.AddCompanyDirectorsController.onPageLoad(mode, srn, establisherIndex))

@@ -114,7 +114,6 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
               }
             }
           }
-
       }
   }
 }

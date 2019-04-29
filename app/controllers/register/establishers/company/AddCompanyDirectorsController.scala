@@ -20,14 +20,17 @@ import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions._
 import forms.register.establishers.company.AddCompanyDirectorsFormProvider
+import identifiers.register.establishers.IsEstablisherCompleteId
 import identifiers.register.establishers.company.AddCompanyDirectorsId
+import identifiers.register.establishers.company.director.ConfirmDeleteDirectorId
 import javax.inject.Inject
-import models.{Index, Mode}
+import models.{CheckMode, Index, Mode, NormalMode}
 import play.api.Logger
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.JsResultException
 import play.api.mvc.{Action, AnyContent, Call}
+import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.Navigator
 import utils.annotations.EstablishersCompany
@@ -38,6 +41,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class AddCompanyDirectorsController @Inject()(
                                                appConfig: FrontendAppConfig,
                                                override val messagesApi: MessagesApi,
+                                               userAnswersService: UserAnswersService,
                                                @EstablishersCompany navigator: Navigator,
                                                authenticate: AuthAction,
                                                getData: DataRetrievalAction,
@@ -85,7 +89,16 @@ class AddCompanyDirectorsController @Inject()(
                 Future.successful(InternalServerError)
               },
               userAnswers => {
-                Future.successful(Redirect(navigator.nextPage(AddCompanyDirectorsId(index), mode, userAnswers, srn)))
+                mode match {
+                  case CheckMode | NormalMode =>
+                    Future.successful(Redirect(navigator.nextPage(AddCompanyDirectorsId(index), mode, userAnswers, srn)))
+                  case _ =>
+                    userAnswers.upsert(IsEstablisherCompleteId(index))(true) { result =>
+                      userAnswersService.upsert(mode, srn, result.json).map { json =>
+                        Redirect(navigator.nextPage(AddCompanyDirectorsId(index), mode, userAnswers, srn))
+                      }
+                    }
+                }
               }
             )
         )

@@ -111,7 +111,7 @@ class ConfirmDeletePartnerControllerSpec extends ControllerSpecBase {
       val getRelevantData = new FakeDataRetrievalAction(Some(validData))
       val result = controller(getRelevantData).onSubmit(NormalMode, establisherIndex, partnerIndex, None)(postRequest)
       status(result) mustBe SEE_OTHER
-      FakeSectionComplete.verify(IsEstablisherCompleteId(0), false)
+      FakeUserAnswersService.userAnswer.get(IsEstablisherCompleteId(0)) mustBe Some(false)
     }
   }
 

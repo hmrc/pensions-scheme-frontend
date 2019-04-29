@@ -20,6 +20,7 @@ import com.google.inject.Inject
 import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
 import controllers.register.establishers.partnership.partner._
+import identifiers.register.establishers.IsEstablisherNewId
 import identifiers.register.establishers.partnership.AddPartnersId
 import identifiers.register.establishers.partnership.partner._
 import models.Mode.journeyMode
@@ -68,9 +69,14 @@ class EstablishersPartnerNavigator @Inject()(val dataCacheConnector: UserAnswers
     case PartnerContactDetailsId(establisherIndex, partnerIndex) =>
       checkYourAnswers(establisherIndex, partnerIndex, mode, srn)
     case ConfirmDeletePartnerId(establisherIndex) =>
-      NavigateTo.dontSave(controllers.register.establishers.partnership.routes.AddPartnersController.onPageLoad(mode, establisherIndex, srn))
+      mode match {
+        case CheckMode | NormalMode =>
+          NavigateTo.dontSave(controllers.register.establishers.partnership.routes.AddPartnersController.onPageLoad(mode, establisherIndex, srn))
+        case _ =>
+          anyMoreChanges(srn)
+      }
     case CheckYourAnswersId(establisherIndex, partnerIndex) =>
-      NavigateTo.save(controllers.register.establishers.partnership.routes.AddPartnersController.onPageLoad(mode, establisherIndex, srn))
+      listOrAnyMoreChange(establisherIndex, mode, srn)(from.userAnswers)
     case _ =>
       None
   }
@@ -145,8 +151,12 @@ class EstablishersPartnerNavigator @Inject()(val dataCacheConnector: UserAnswers
         case Some(true) =>
           NavigateTo.save(controllers.register.establishers.partnership.partner.routes.PartnerDetailsController.onPageLoad(mode,
             index, answers.allPartners(index).size, srn))
-        case Some(false) =>
-          NavigateTo.save(controllers.register.establishers.partnership.routes.PartnershipReviewController.onPageLoad(mode, index, srn))
+        case Some(false) =>answers.get(IsEstablisherNewId(index)) match {
+          case Some(true) =>
+            anyMoreChanges(srn)
+          case _ =>
+            NavigateTo.save(controllers.register.establishers.partnership.routes.PartnershipReviewController.onPageLoad(mode, index, srn))
+        }
         case _ => NavigateTo.dontSave(controllers.routes.SessionExpiredController.onPageLoad())
       }
     }
@@ -154,4 +164,14 @@ class EstablishersPartnerNavigator @Inject()(val dataCacheConnector: UserAnswers
       NavigateTo.save(controllers.register.establishers.partnership.routes.OtherPartnersController.onPageLoad(mode, index, srn))
     }
   }
+
+  private def listOrAnyMoreChange(establisherIndex: Int, mode: Mode, srn: Option[String])(answers: UserAnswers): Option[NavigateTo] = {
+    answers.get(IsEstablisherNewId(establisherIndex)) match {
+      case Some(true) =>
+        NavigateTo.save(controllers.register.establishers.partnership.routes.AddPartnersController.onPageLoad(mode, establisherIndex, srn))
+      case _ =>
+        anyMoreChanges(srn)
+    }
+  }
+
 }

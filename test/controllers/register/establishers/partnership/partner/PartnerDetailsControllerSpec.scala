@@ -170,14 +170,14 @@ class PartnerDetailsControllerSpec extends ControllerSpecBase {
         )
       val getRelevantData = new FakeDataRetrievalAction(Some(validData))
       val userAnswers = UserAnswers(validData)
+      val updatedUserAnswer = userAnswers.set(IsEstablisherCompleteId(0))(false).asOpt.get
       when(mockUserAnswersService.save(any(), any(), any(), any())(any(), any(), any(), any())).thenReturn(Future.successful(validData))
-      when(mockUserAnswersService.setCompleteFlag(any(), any(), eqTo(IsEstablisherCompleteId(0)),
-        eqTo(userAnswers), eqTo(false))(any(), any(), any(), any())).thenReturn(Future.successful(userAnswers))
+      when(mockUserAnswersService.upsert(any(), any(),eqTo(updatedUserAnswer.json))(any(), any(), any())).thenReturn(Future.successful(updatedUserAnswer.json))
 
       val result = controller(getRelevantData).onSubmit(NormalMode, firstEstablisherIndex, firstPartnerIndex, None)(postRequest)
       status(result) mustBe SEE_OTHER
       verify(mockUserAnswersService, times(1))
-        .setCompleteFlag(any(), any(), eqTo(IsEstablisherCompleteId(0)), eqTo(userAnswers), eqTo(false))(any(), any(), any(), any())
+        .upsert(any(), any(),eqTo(updatedUserAnswer.json))(any(), any(), any())
     }
   }
 }

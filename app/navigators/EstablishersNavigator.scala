@@ -20,7 +20,7 @@ import com.google.inject.Inject
 import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
 import identifiers.register.establishers.{AddEstablisherId, ConfirmDeleteEstablisherId, EstablisherKindId}
-import models.{Mode, NormalMode, UpdateMode}
+import models.{CheckMode, Mode, NormalMode, UpdateMode}
 import models.register.establishers.EstablisherKind
 import utils.{Enumerable, Navigator, UserAnswers}
 
@@ -32,7 +32,12 @@ class EstablishersNavigator @Inject()(val dataCacheConnector: UserAnswersCacheCo
       case AddEstablisherId(value) => addEstablisherRoutes(value, from.userAnswers, mode, srn)
       case EstablisherKindId(index) => establisherKindRoutes(index, from.userAnswers, mode, srn)
       case ConfirmDeleteEstablisherId =>
-        NavigateTo.save(controllers.register.establishers.routes.AddEstablisherController.onPageLoad(mode, srn))
+        mode match {
+          case CheckMode | NormalMode =>
+            NavigateTo.save(controllers.register.establishers.routes.AddEstablisherController.onPageLoad(mode, srn))
+          case _ =>
+            NavigateTo.dontSave(controllers.routes.AnyMoreChangesController.onPageLoad(srn))
+        }
       case _ => None
     }
 

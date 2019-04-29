@@ -39,7 +39,7 @@ class EstablishersNavigatorSpec extends SpecBase with MustMatchers with Navigato
     (EstablisherKindId(0), individual, individualDetails(mode), true, None, false),
     (EstablisherKindId(0), partnership, partnershipDetails(mode), true, None: Option[Call], false),
     (EstablisherKindId(0), emptyAnswers, expired, false, None, false),
-    (ConfirmDeleteEstablisherId, emptyAnswers, addEstablisher(mode), true, None, false)
+    (ConfirmDeleteEstablisherId, emptyAnswers, if(mode==UpdateMode) controllers.routes.AnyMoreChangesController.onPageLoad(None) else addEstablisher(mode), true, None, false)
   )
 
   private def normalRoutes = routes(NormalMode)

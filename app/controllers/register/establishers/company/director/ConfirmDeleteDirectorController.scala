@@ -98,8 +98,10 @@ class ConfirmDeleteDirectorController @Inject()(
                 jsValue =>
                   val userAnswers = UserAnswers(jsValue)
                   if (userAnswers.allDirectorsAfterDelete(establisherIndex).isEmpty) {
-                    userAnswersService.setCompleteFlag(mode, srn, IsEstablisherCompleteId(establisherIndex), request.userAnswers, false).map { _ =>
-                      Redirect(navigator.nextPage(ConfirmDeleteDirectorId(establisherIndex), mode, userAnswers, srn))
+                    userAnswers.upsert(IsEstablisherCompleteId(establisherIndex))(false) { result =>
+                      userAnswersService.upsert(mode, srn, result.json).map { json =>
+                        Redirect(navigator.nextPage(ConfirmDeleteDirectorId(establisherIndex), mode, userAnswers, srn))
+                      }
                     }
                   } else {
                     mode match {
@@ -112,7 +114,6 @@ class ConfirmDeleteDirectorController @Inject()(
                           }
                         }
                     }
-
                   }
               }
             }
