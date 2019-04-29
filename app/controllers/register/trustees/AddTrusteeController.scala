@@ -60,7 +60,7 @@ class AddTrusteeController @Inject()(
       val trustees = request.userAnswers.allTrusteesAfterDelete
 
       if (trustees.isEmpty || trustees.lengthCompare(appConfig.maxTrustees) >= 0)
-        Future.successful(Redirect(navigator.nextPage(AddTrusteeId, mode, request.userAnswers)))
+        Future.successful(Redirect(navigator.nextPage(AddTrusteeId, mode, request.userAnswers, srn)))
       else {
         form.bindFromRequest().fold(
           (formWithErrors: Form[_]) => {
@@ -73,7 +73,7 @@ class AddTrusteeController @Inject()(
                 Future.successful(InternalServerError)
               },
               userAnswers =>
-                Future.successful(Redirect(navigator.nextPage(AddTrusteeId, mode, userAnswers)))
+                Future.successful(Redirect(navigator.nextPage(AddTrusteeId, mode, userAnswers, srn)))
             )
         )
       }

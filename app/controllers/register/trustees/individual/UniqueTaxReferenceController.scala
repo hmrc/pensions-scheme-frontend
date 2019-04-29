@@ -67,7 +67,7 @@ class UniqueTaxReferenceController @Inject()(
           },
           value =>
             userAnswersService.save(mode, srn, UniqueTaxReferenceId(index), value).map(cacheMap =>
-              Redirect(navigator.nextPage(UniqueTaxReferenceId(index), mode, new UserAnswers(cacheMap))))
+              Redirect(navigator.nextPage(UniqueTaxReferenceId(index), mode, new UserAnswers(cacheMap), srn)))
         )
       }
   }

@@ -65,7 +65,7 @@ class TrusteeDetailsController @Inject()(
           userAnswersService.save(mode, srn, PartnershipDetailsId(index), value
           ).map {
             json =>
-              Redirect(navigator.nextPage(PartnershipDetailsId(index), mode, UserAnswers(json)))
+              Redirect(navigator.nextPage(PartnershipDetailsId(index), mode, UserAnswers(json), srn))
           }
       )
   }

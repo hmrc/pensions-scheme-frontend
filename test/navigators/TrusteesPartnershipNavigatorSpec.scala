@@ -21,7 +21,8 @@ import connectors.FakeUserAnswersCacheConnector
 import controllers.register.trustees.partnership.routes
 import identifiers.Identifier
 import identifiers.register.trustees.partnership._
-import models.{AddressYears, CheckMode, Mode, NormalMode}
+import models.{AddressYears, CheckMode, Mode, NormalMode, UpdateMode}
+import models.Mode.checkMode
 import org.scalatest.OptionValues
 import org.scalatest.prop.TableFor6
 import play.api.libs.json.Json
@@ -33,23 +34,23 @@ class TrusteesPartnershipNavigatorSpec extends SpecBase with NavigatorBehaviour 
 
   import TrusteesPartnershipNavigatorSpec._
 
-  private def routes: TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = Table(
+  private def routes(mode: Mode): TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = Table(
     ("Id", "User Answers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (Check Mode)", "Save (CM)"),
-    (PartnershipDetailsId(0), emptyAnswers, partnershipVat(NormalMode), true, Some(checkYourAnswers), true),
-    (PartnershipVatId(0), emptyAnswers, partnershipPaye(NormalMode), true, Some(checkYourAnswers), true),
-    (PartnershipPayeId(0), emptyAnswers, partnershipUtr(NormalMode), true, Some(checkYourAnswers), true),
-    (PartnershipUniqueTaxReferenceId(0), emptyAnswers, partnershipPostcodeLookup(NormalMode), true, Some(checkYourAnswers), true),
-    (PartnershipPostcodeLookupId(0), emptyAnswers, partnershipAddressList(NormalMode), true, Some(partnershipAddressList(CheckMode)), true),
-    (PartnershipAddressListId(0), emptyAnswers, partnershipAddress(NormalMode), true, Some(partnershipAddress(CheckMode)), true),
-    (PartnershipAddressId(0), emptyAnswers, partnershipAddressYears(NormalMode), true, Some(checkYourAnswers), true),
-    (PartnershipAddressYearsId(0), addressYearsOverAYear, partnershipContact(NormalMode), true, Some(checkYourAnswers), true),
-    (PartnershipAddressYearsId(0), addressYearsUnderAYear, partnershipPaPostCodeLookup(NormalMode), true, Some(partnershipPaPostCodeLookup(CheckMode)), true),
+    (PartnershipDetailsId(0), emptyAnswers, partnershipVat(mode), true, Some(checkYourAnswers(mode)), true),
+    (PartnershipVatId(0), emptyAnswers, partnershipPaye(mode), true, Some(checkYourAnswers(mode)), true),
+    (PartnershipPayeId(0), emptyAnswers, partnershipUtr(mode), true, Some(checkYourAnswers(mode)), true),
+    (PartnershipUniqueTaxReferenceId(0), emptyAnswers, partnershipPostcodeLookup(mode), true, Some(checkYourAnswers(mode)), true),
+    (PartnershipPostcodeLookupId(0), emptyAnswers, partnershipAddressList(mode), true, Some(partnershipAddressList(checkMode((mode)))), true),
+    (PartnershipAddressListId(0), emptyAnswers, partnershipAddress(mode), true, Some(partnershipAddress(checkMode((mode)))), true),
+    (PartnershipAddressId(0), emptyAnswers, partnershipAddressYears(mode), true, Some(checkYourAnswers(mode)), true),
+    (PartnershipAddressYearsId(0), addressYearsOverAYear, partnershipContact(mode), true, Some(checkYourAnswers(mode)), true),
+    (PartnershipAddressYearsId(0), addressYearsUnderAYear, partnershipPaPostCodeLookup(mode), true, Some(partnershipPaPostCodeLookup(checkMode((mode)))), true),
     (PartnershipAddressYearsId(0), emptyAnswers, sessionExpired, false, Some(sessionExpired), false),
-    (PartnershipPreviousAddressPostcodeLookupId(0), emptyAnswers, partnershipPaList(NormalMode), true, Some(partnershipPaList(CheckMode)), true),
-    (PartnershipPreviousAddressListId(0), emptyAnswers, partnershipPa(NormalMode), true, Some(partnershipPa(CheckMode)), true),
-    (PartnershipPreviousAddressId(0), emptyAnswers, partnershipContact(NormalMode), true, Some(checkYourAnswers), true),
-    (PartnershipContactDetailsId(0), emptyAnswers, checkYourAnswers, true, Some(checkYourAnswers), true),
-    (CheckYourAnswersId(0), emptyAnswers, addTrustee, false, None, true)
+    (PartnershipPreviousAddressPostcodeLookupId(0), emptyAnswers, partnershipPaList(mode), true, Some(partnershipPaList(checkMode((mode)))), true),
+    (PartnershipPreviousAddressListId(0), emptyAnswers, partnershipPa(mode), true, Some(partnershipPa(checkMode((mode)))), true),
+    (PartnershipPreviousAddressId(0), emptyAnswers, partnershipContact(mode), true, Some(checkYourAnswers(mode)), true),
+    (PartnershipContactDetailsId(0), emptyAnswers, checkYourAnswers(mode), true, Some(checkYourAnswers(mode)), true),
+    (CheckYourAnswersId(0), emptyAnswers, addTrustee(mode), false, None, true)
   )
 
   private val navigator: TrusteesPartnershipNavigator =
@@ -57,7 +58,8 @@ class TrusteesPartnershipNavigatorSpec extends SpecBase with NavigatorBehaviour 
 
   s"${navigator.getClass.getSimpleName}" must {
     appRunning()
-    behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, routes, dataDescriber)
+    behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, routes(NormalMode), dataDescriber)
+    behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, routes(UpdateMode), dataDescriber, UpdateMode)
     behave like nonMatchingNavigator(navigator)
   }
 }
@@ -70,7 +72,7 @@ object TrusteesPartnershipNavigatorSpec extends OptionValues {
 
   private def partnershipVat(mode: Mode) = routes.PartnershipVatController.onPageLoad(mode, 0, None)
 
-  private def checkYourAnswers = routes.CheckYourAnswersController.onPageLoad(NormalMode, 0, None)
+  private def checkYourAnswers(mode: Mode) = routes.CheckYourAnswersController.onPageLoad(mode, 0, None)
 
   private def partnershipPaye(mode: Mode) = routes.PartnershipPayeController.onPageLoad(mode, 0, None)
 
@@ -92,7 +94,7 @@ object TrusteesPartnershipNavigatorSpec extends OptionValues {
 
   private def partnershipPa(mode: Mode) = routes.PartnershipPreviousAddressController.onPageLoad(mode, 0, None)
 
-  private def addTrustee = controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode, None)
+  private def addTrustee(mode: Mode) = controllers.register.trustees.routes.AddTrusteeController.onPageLoad(mode, None)
 
   private def sessionExpired = controllers.routes.SessionExpiredController.onPageLoad()
 
