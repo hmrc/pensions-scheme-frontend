@@ -431,33 +431,34 @@ case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Implicits{
 
     def isDirectorPartnerCompleted(establisherIndex:Int) = get(EstablisherKindId(establisherIndex)) match {
       case Some(EstablisherKind.Company) =>
-        allDirectorsAfterDelete(establisherIndex).zipWithIndex.collect { case (item, directorPartnerIndex) =>
-          item.isCompleted && get(IsDirectorAddressCompleteId(establisherIndex, directorPartnerIndex)).fold(false)(_== true)
-        }.filter(_==false).isEmpty
+        !allDirectorsAfterDelete(establisherIndex).zipWithIndex.collect { case (item, directorPartnerIndex) =>
+          item.isCompleted && get(IsDirectorAddressCompleteId(establisherIndex, directorPartnerIndex)).fold(false)(_ == true)
+        }.contains(false)
+
       case Some(EstablisherKind.Partnership) =>
-        allPartnersAfterDelete(establisherIndex).zipWithIndex.collect { case (item, directorPartnerIndex) =>
-        item.isCompleted && get(IsPartnerAddressCompleteId(establisherIndex, directorPartnerIndex)).fold(false)(_== true)
-      }.filter(_==false).isEmpty
+        !allPartnersAfterDelete(establisherIndex).zipWithIndex.collect { case (item, directorPartnerIndex) =>
+          item.isCompleted && get(IsPartnerAddressCompleteId(establisherIndex, directorPartnerIndex)).fold(false)(_ == true)
+        }.contains(false)
 
       case _ => true
     }
 
     val isInsuranceCompleted = get(BenefitsSecuredByInsuranceId) match {
-      case Some(true) => List(get(InvestmentRegulatedSchemeId), get(OccupationalPensionSchemeId), get(TypeOfBenefitsId),
-        get(InsuranceCompanyNameId), get(InsurancePolicyNumberId), get(InsurerConfirmAddressId)).filter(_==None).isEmpty
+      case Some(true) => !List(get(InvestmentRegulatedSchemeId), get(OccupationalPensionSchemeId), get(TypeOfBenefitsId),
+        get(InsuranceCompanyNameId), get(InsurancePolicyNumberId), get(InsurerConfirmAddressId)).contains(None)
       case Some(false) => true
       case _ => false
     }
 
-    val allTrusteesCompleted = allTrusteesAfterDelete.zipWithIndex.collect { case (item, index) =>
-      item.isCompleted && get(IsTrusteeAddressCompleteId(index)) == Some(true)
-    }.filter(_==false).isEmpty
+    val allTrusteesCompleted = !allTrusteesAfterDelete.zipWithIndex.collect { case (item, index) =>
+      item.isCompleted && get(IsTrusteeAddressCompleteId(index)).contains(true)
+    }.contains(false)
 
-    val allEstablishersCompleted = allEstablishersAfterDelete.zipWithIndex.collect { case (item, establisherIndex) =>
+    val allEstablishersCompleted = !allEstablishersAfterDelete.zipWithIndex.collect { case (item, establisherIndex) =>
       item.isCompleted &&
-        get(IsEstablisherAddressCompleteId(establisherIndex)).fold(false)(_== true) &&
+        get(IsEstablisherAddressCompleteId(establisherIndex)).fold(false)(_ == true) &&
         isDirectorPartnerCompleted(establisherIndex)
-    }.filter(_==false).isEmpty
+    }.contains(false)
 
 
     isInsuranceCompleted && allTrusteesCompleted && allEstablishersCompleted
