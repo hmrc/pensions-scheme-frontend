@@ -151,11 +151,16 @@ class EstablishersPartnerNavigator @Inject()(val dataCacheConnector: UserAnswers
         case Some(true) =>
           NavigateTo.save(controllers.register.establishers.partnership.partner.routes.PartnerDetailsController.onPageLoad(mode,
             index, answers.allPartners(index).size, srn))
-        case Some(false) =>answers.get(IsEstablisherNewId(index)) match {
-          case Some(true) =>
-            anyMoreChanges(srn)
-          case _ =>
+        case Some(false) => mode match {
+          case CheckMode | NormalMode =>
             NavigateTo.save(controllers.register.establishers.partnership.routes.PartnershipReviewController.onPageLoad(mode, index, srn))
+          case _ =>
+            answers.get(IsEstablisherNewId(index)) match {
+              case Some(true) =>
+                anyMoreChanges(srn)
+              case _ =>
+                NavigateTo.save(controllers.register.establishers.partnership.routes.PartnershipReviewController.onPageLoad(mode, index, srn))
+            }
         }
         case _ => NavigateTo.dontSave(controllers.routes.SessionExpiredController.onPageLoad())
       }
@@ -166,11 +171,15 @@ class EstablishersPartnerNavigator @Inject()(val dataCacheConnector: UserAnswers
   }
 
   private def listOrAnyMoreChange(establisherIndex: Int, mode: Mode, srn: Option[String])(answers: UserAnswers): Option[NavigateTo] = {
-    answers.get(IsEstablisherNewId(establisherIndex)) match {
-      case Some(true) =>
+    mode match {
+      case CheckMode | NormalMode =>
         NavigateTo.save(controllers.register.establishers.partnership.routes.AddPartnersController.onPageLoad(mode, establisherIndex, srn))
-      case _ =>
-        anyMoreChanges(srn)
+      case _ => answers.get(IsEstablisherNewId(establisherIndex)) match {
+        case Some(true) =>
+          NavigateTo.save(controllers.register.establishers.partnership.routes.AddPartnersController.onPageLoad(mode, establisherIndex, srn))
+        case _ =>
+          anyMoreChanges(srn)
+      }
     }
   }
 

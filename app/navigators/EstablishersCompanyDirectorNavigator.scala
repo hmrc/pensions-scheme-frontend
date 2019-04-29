@@ -136,13 +136,15 @@ class EstablishersCompanyDirectorNavigator @Inject()(val dataCacheConnector: Use
   }
 
   private def listOrAnyMoreChange(establisherIndex: Int, mode: Mode, srn: Option[String])(answers: UserAnswers): Option[NavigateTo] = {
-    answers.get(IsEstablisherNewId(establisherIndex)) match {
-      case Some(true) =>
+    mode match {
+      case CheckMode | NormalMode =>
         NavigateTo.save(controllers.register.establishers.company.routes.AddCompanyDirectorsController.onPageLoad(mode, srn, establisherIndex))
-      case _ =>
-        anyMoreChanges(srn)
+      case _ => answers.get(IsEstablisherNewId(establisherIndex)) match {
+        case Some(true) if(mode == CheckMode || mode == NormalMode) =>
+          NavigateTo.save(controllers.register.establishers.company.routes.AddCompanyDirectorsController.onPageLoad(mode, srn, establisherIndex))
+        case _ =>
+          anyMoreChanges(srn)
+      }
     }
   }
-
-
 }

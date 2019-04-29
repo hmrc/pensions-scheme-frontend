@@ -164,11 +164,15 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
           NavigateTo.save(controllers.register.establishers.company.director.routes.DirectorDetailsController
             .onPageLoad(mode, index, answers.allDirectors(index).size, srn))
         case Some(false) =>
-          answers.get(IsEstablisherNewId(index)) match {
-            case Some(true) =>
-              anyMoreChanges(srn)
-            case _ =>
+          mode match {
+            case CheckMode | NormalMode =>
               NavigateTo.save(controllers.register.establishers.company.routes.CompanyReviewController.onPageLoad(mode, srn, index))
+            case _ => answers.get(IsEstablisherNewId(index)) match {
+              case Some(true) =>
+                anyMoreChanges(srn)
+              case _ =>
+                NavigateTo.save(controllers.register.establishers.company.routes.CompanyReviewController.onPageLoad(mode, srn, index))
+            }
           }
         case _ => NavigateTo.dontSave(controllers.routes.SessionExpiredController.onPageLoad())
       }
