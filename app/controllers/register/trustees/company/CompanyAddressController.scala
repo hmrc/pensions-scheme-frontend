@@ -66,7 +66,8 @@ class CompanyAddressController @Inject()(
               title = Message(title),
               heading = Message(heading),
               hint = Some(Message(hint)),
-              secondaryHeader = Some(details.companyName)
+              secondaryHeader = Some(details.companyName),
+              srn = srn
             )
         }
     }

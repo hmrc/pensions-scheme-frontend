@@ -17,9 +17,14 @@
 package identifiers.register.trustees.partnership
 
 import identifiers.TypedIdentifier
-import identifiers.register.trustees.TrusteesId
+import identifiers.register.trustees.{IsTrusteeNewId, TrusteesId}
 import models.Paye
+import play.api.i18n.Messages
 import play.api.libs.json.JsPath
+import utils.UserAnswers
+import utils.checkyouranswers.CheckYourAnswers
+import utils.checkyouranswers.CheckYourAnswers.PayeCYA
+import viewmodels.AnswerRow
 
 case class PartnershipPayeId(index: Int) extends TypedIdentifier[Paye] {
   override def path: JsPath = TrusteesId(index).path \ PartnershipPayeId.toString
@@ -27,4 +32,20 @@ case class PartnershipPayeId(index: Int) extends TypedIdentifier[Paye] {
 
 object PartnershipPayeId {
   override def toString: String = "partnershipPaye"
+
+  val labelYesNo = "messages__partnership__checkYourAnswers__paye"
+  val hiddenLabelYesNo = "messages__visuallyhidden__partnership__paye_yes_no"
+  val hiddenLabelVat = "messages__visuallyhidden__partnership__paye_number"
+
+  implicit def cya(implicit userAnswers: UserAnswers, messages: Messages): CheckYourAnswers[PartnershipPayeId] = {
+    new CheckYourAnswers[PartnershipPayeId] {
+
+      override def row(id: PartnershipPayeId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+        PayeCYA(Some(labelYesNo), hiddenLabelYesNo, hiddenLabelVat)().row(id)(changeUrl, userAnswers)
+
+      override def updateRow(id: PartnershipPayeId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+        PayeCYA(Some(labelYesNo), hiddenLabelYesNo, hiddenLabelVat, userAnswers.get(IsTrusteeNewId(id.index)))().updateRow(id)(changeUrl, userAnswers)
+
+    }
+  }
 }

@@ -620,6 +620,7 @@ messages__trusteeNino__nino_question_cya_label = Does the trustee have a Nationa
 messages__trusteeNino__nino_cya_label = National Insurance number
 messages__trusteeNino__nino_reason_cya_label = Reason
 
+
 messages__individualPostCodeLookup__title = Trustee’s address
 messages__individualPostCodeLookup__heading = Trustee’s address
 messages__individualPostCodeLookup__enter_postcode = Enter the postcode, or if you have an overseas address, {0} enter the address manually {1}
@@ -627,6 +628,7 @@ messages__trustee_individualPostCodeLookup__enter_postcode = Enter the postcode,
 
 messages__trustee_individual_previous_address__title = Previous address
 messages__trustee_individual_previous_address__heading = Previous address
+messages__trustee_individual_utr_cya_label = Unique Taxpayer Reference number
 
 messages__trustee__uniqueTaxReference__title = Does the trustee have a Self-Assessment Unique Taxpayer Reference number (SAUTR)?
 messages__trustee__uniqueTaxReference__heading = Does the trustee have a Self-Assessment Unique Taxpayer Reference number (SAUTR)?

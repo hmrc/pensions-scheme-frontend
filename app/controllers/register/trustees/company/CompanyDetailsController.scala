@@ -68,7 +68,7 @@ class CompanyDetailsController @Inject()(
             _.upsert(TrusteeKindId(index))(Company) { answers =>
               userAnswersService.upsert(mode, srn, answers.json).map {
                 json =>
-                  Redirect(navigator.nextPage(CompanyDetailsId(index), mode, UserAnswers(json)))
+                  Redirect(navigator.nextPage(CompanyDetailsId(index), mode, UserAnswers(json), srn))
               }
             }
           }
