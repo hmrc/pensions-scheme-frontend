@@ -140,6 +140,7 @@ object InsurerConfirmAddressControllerSpec {
       navigator,
       authAction,
       dataRetrievalAction,
+      FakeAllowAccessProvider(),
       new DataRequiredActionImpl(),
       formProvider,
       countryOptions,

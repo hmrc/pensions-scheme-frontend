@@ -38,6 +38,7 @@ class InsurerSelectAddressController @Inject()(override val appConfig: FrontendA
                                                @AboutBenefitsAndInsurance override val navigator: Navigator,
                                                authenticate: AuthAction,
                                                getData: DataRetrievalAction,
+                                               allowAccess: AllowAccessActionProvider,
                                                requireData: DataRequiredAction) extends AddressListController with Retrievals {
 
 
@@ -46,7 +47,8 @@ class InsurerSelectAddressController @Inject()(override val appConfig: FrontendA
       viewModel(mode, srn).right.map(get)
   }
 
-  def onSubmit(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
+  def onSubmit(mode: Mode, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
     implicit request =>
       viewModel(mode, srn).right.map {
         vm =>

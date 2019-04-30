@@ -38,11 +38,6 @@ class PODSModule extends AbstractModule {
     bind(classOf[UserAnswersCacheConnector])
       .to(classOf[SubscriptionCacheConnector])
 
-
-    bind(classOf[UserAnswersCacheConnector])
-      .annotatedWith(classOf[SchemeDetailsReadOnly])
-      .to(classOf[SchemeDetailsReadOnlyCacheConnector])
-
     bind(classOf[UserAnswersService])
       .to(classOf[UserAnswersServiceEstablishersAndTrusteesImpl])
 

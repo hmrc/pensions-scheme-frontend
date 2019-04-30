@@ -126,7 +126,7 @@ object EstablishersPartnershipNavigatorSpec extends OptionValues {
 
   private def isDormant = controllers.register.establishers.partnership.routes.IsPartnershipDormantController.onPageLoad(NormalMode, 0, None)
 
-  private def taskList: Call = controllers.routes.SchemeTaskListController.onPageLoad()
+  private def taskList: Call = controllers.routes.SchemeTaskListController.onPageLoad(NormalMode, None)
 
   private val addressYearsOverAYear = UserAnswers(Json.obj())
     .set(PartnershipAddressYearsId(0))(AddressYears.OverAYear).asOpt.value

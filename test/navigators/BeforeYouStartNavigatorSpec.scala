@@ -58,7 +58,7 @@ object BeforeYouStartNavigatorSpec {
   private val establishedCountryPage: Call = EstablishedCountryController.onPageLoad(NormalMode)
   private val workingKnowledgePage: Call = WorkingKnowledgeController.onPageLoad(NormalMode)
   private val checkYourAnswersPage: Call = controllers.routes.CheckYourAnswersBeforeYouStartController.onPageLoad(NormalMode, None)
-  private val taskListPage: Call = controllers.routes.SchemeTaskListController.onPageLoad()
+  private val taskListPage: Call = controllers.routes.SchemeTaskListController.onPageLoad(NormalMode, None)
 
   private val schemeTypeSingleTrust = UserAnswers(Json.obj(SchemeTypeId.toString -> SchemeType.SingleTrust))
   private val schemeTypeGroupLife = UserAnswers(Json.obj(SchemeTypeId.toString -> SchemeType.GroupLifeDeath))
