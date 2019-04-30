@@ -99,7 +99,7 @@ class EstablishersCompanyDirectorNavigator @Inject()(val dataCacheConnector: Use
           case _ =>
             anyMoreChanges(srn)
         }
-      case CheckYourAnswersId(establisherIndex, directorIndex) =>
+      case CheckYourAnswersId(establisherIndex, _) =>
         listOrAnyMoreChange(establisherIndex, mode, srn)(from.userAnswers)
       case AnyMoreChangesId => anyMoreChanges(srn)
       case _ => None
@@ -140,7 +140,7 @@ class EstablishersCompanyDirectorNavigator @Inject()(val dataCacheConnector: Use
       case CheckMode | NormalMode =>
         NavigateTo.save(controllers.register.establishers.company.routes.AddCompanyDirectorsController.onPageLoad(mode, srn, establisherIndex))
       case _ => answers.get(IsEstablisherNewId(establisherIndex)) match {
-        case Some(true) if(mode == CheckMode || mode == NormalMode) =>
+        case Some(true) if mode == CheckMode || mode == NormalMode =>
           NavigateTo.save(controllers.register.establishers.company.routes.AddCompanyDirectorsController.onPageLoad(mode, srn, establisherIndex))
         case _ =>
           anyMoreChanges(srn)

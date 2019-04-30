@@ -29,13 +29,7 @@ srn: Option[String] = None
 <div class="grid-row">
  <div class="column-two-thirds">
   <p class="govuk-margin-top-5">
-   @if(mode == NormalMode | mode == CheckMode) {
-   <a id="return-link" href="@anotherReturn.fold(controllers.routes.SchemeTaskListController.onPageLoad())(call=>call)">@returnMessage</a>
-   } else {
-    @srn.map { srnId =>
-     <a id="return-link" href="@anotherReturn.fold(controllers.routes.PSASchemeDetailsController.onPageLoad(srnId))(call=>call)">@returnMessage</a>
-    }
-   }
+   <a id="return-link" href="@anotherReturn.fold(controllers.routes.SchemeTaskListController.onPageLoad(mode, srn))(call=>call)">@returnMessage</a>
   </p>
  </div>
 </div>

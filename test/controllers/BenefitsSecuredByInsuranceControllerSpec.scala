@@ -17,7 +17,7 @@
 package controllers
 
 import base.SpecBase
-import controllers.actions.{AuthAction, DataRequiredActionImpl, DataRetrievalAction, FakeAuthAction}
+import controllers.actions.{AuthAction, DataRequiredActionImpl, DataRetrievalAction, FakeAllowAccessProvider, FakeAuthAction}
 import controllers.behaviours.ControllerWithQuestionPageBehaviours
 import forms.BenefitsSecuredByInsuranceFormProvider
 import identifiers.{BenefitsSecuredByInsuranceId, SchemeNameId}
@@ -89,6 +89,7 @@ object BenefitsSecuredByInsuranceControllerSpec {
       navigator,
       authAction,
       dataRetrievalAction,
+      FakeAllowAccessProvider(),
       new DataRequiredActionImpl(),
       formProvider
     )

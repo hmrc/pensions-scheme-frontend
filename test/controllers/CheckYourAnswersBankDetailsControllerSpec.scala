@@ -19,7 +19,7 @@ package controllers
 import controllers.actions.{DataRequiredActionImpl, DataRetrievalAction, FakeAuthAction, FakeDataRetrievalAction}
 import identifiers.{BankAccountDetailsId, IsAboutBankDetailsCompleteId, SchemeNameId, UKBankAccountId}
 import models.register._
-import models.{BankAccountDetails, CheckMode, Link}
+import models.{BankAccountDetails, CheckMode, Link, NormalMode}
 import play.api.libs.json.Json
 import play.api.test.Helpers._
 import utils.{FakeCountryOptions, FakeNavigator, FakeSectionComplete}
@@ -46,7 +46,7 @@ class CheckYourAnswersBankDetailsControllerSpec extends ControllerSpecBase {
         val result = controller().onSubmit(fakeRequest)
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(controllers.routes.SchemeTaskListController.onPageLoad().url)
+        redirectLocation(result) mustBe Some(controllers.routes.SchemeTaskListController.onPageLoad(NormalMode, None).url)
         FakeSectionComplete.verify(IsAboutBankDetailsCompleteId, true)
       }
     }

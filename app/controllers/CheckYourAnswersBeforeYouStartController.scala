@@ -68,7 +68,7 @@ class CheckYourAnswersBeforeYouStartController @Inject()(appConfig: FrontendAppC
   def onSubmit(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData() andThen requireData).async {
     implicit request =>
       userAnswersService.setCompleteFlag(mode, srn, IsBeforeYouStartCompleteId, request.userAnswers, value = true) map { _ =>
-        Redirect(controllers.routes.SchemeTaskListController.onPageLoad())
+        Redirect(controllers.routes.SchemeTaskListController.onPageLoad(mode, srn))
       }
   }
 

@@ -39,6 +39,7 @@ class InsurerEnterPostcodeController @Inject()(val appConfig: FrontendAppConfig,
                                                @AboutBenefitsAndInsurance val navigator: Navigator,
                                                authenticate: AuthAction,
                                                getData: DataRetrievalAction,
+                                               allowAccess: AllowAccessActionProvider,
                                                requireData: DataRequiredAction,
                                                formProvider: PostCodeLookupFormProvider
                                               ) extends PostcodeLookupController {
@@ -63,7 +64,8 @@ class InsurerEnterPostcodeController @Inject()(val appConfig: FrontendAppConfig,
       srn = srn
     )
 
-  def onPageLoad(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
+  def onPageLoad(mode: Mode, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
     implicit request =>
       get(viewModel(mode, srn))
   }
