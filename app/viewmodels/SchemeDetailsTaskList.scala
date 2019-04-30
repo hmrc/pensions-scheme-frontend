@@ -45,7 +45,7 @@ object SchemeDetailsTaskList {
   implicit val formats: OFormat[SchemeDetailsTaskList] = Json.format[SchemeDetailsTaskList]
 }
 
-case class SchemeDetailsTaskListSection(isCompleted: Option[Boolean] = None, link: Link, header: Option[String] = None, paragraphOne: Option[String] = None)
+  case class SchemeDetailsTaskListSection(isCompleted: Option[Boolean] = None, link: Link, header: Option[String] = None, p1: Option[String] = None)
 
 object SchemeDetailsTaskListSection {
   implicit val formats: OFormat[SchemeDetailsTaskListSection] = Json.format[SchemeDetailsTaskListSection]
