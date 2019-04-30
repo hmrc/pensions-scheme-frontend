@@ -16,6 +16,7 @@
 
 package views.register
 
+import models.UpdateMode
 import views.behaviours.ViewBehaviours
 import views.html.register.cannotMakeChanges
 
@@ -23,8 +24,8 @@ class CannotMakeChangesViewSpec extends ViewBehaviours {
 
   val messageKeyPrefix = "cannot_Make_Changes"
   val schemeName = "schemeName"
-  val srn = "A232322"
-  private def createView() = () => cannotMakeChanges(frontendAppConfig,Some(srn),Some(schemeName))(fakeRequest, messages)
+  val srn = Some("A232322")
+  private def createView() = () => cannotMakeChanges(frontendAppConfig, srn, Some(schemeName))(fakeRequest, messages)
 
   "CannotMakeChanges view" must {
 
@@ -34,6 +35,6 @@ class CannotMakeChangesViewSpec extends ViewBehaviours {
       val doc = asDocument(createView()())
       assertContainsText(doc, messages("messages__cannot_Make_Changes__p1",schemeName))
     }
-    behave like pageWithReturnLink(createView(), controllers.routes.PSASchemeDetailsController.onPageLoad(srn).url)
+    behave like pageWithReturnLink(createView(), controllers.routes.SchemeTaskListController.onPageLoad(UpdateMode, srn).url)
   }
 }

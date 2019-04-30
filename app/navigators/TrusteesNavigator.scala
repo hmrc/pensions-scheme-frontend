@@ -32,7 +32,7 @@ class TrusteesNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnec
         haveAnyTrusteesRoutes(from.userAnswers)
       case AddTrusteeId =>
         addTrusteeRoutes(from.userAnswers, mode, srn)
-      case MoreThanTenTrusteesId => returnToTaskList(mode, srn)
+      case MoreThanTenTrusteesId => NavigateTo.dontSave(controllers.routes.SchemeTaskListController.onPageLoad(mode, srn))
       case TrusteeKindId(index) =>
         trusteeKindRoutes(index, from.userAnswers, mode, srn)
       case ConfirmDeleteTrusteeId =>
@@ -57,7 +57,7 @@ class TrusteesNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnec
           NavigateTo.save(controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode, None))
         }
       case Some(false) =>
-        NavigateTo.dontSave(controllers.routes.SchemeTaskListController.onPageLoad())
+        NavigateTo.dontSave(controllers.routes.SchemeTaskListController.onPageLoad(NormalMode, None))
       case None =>
         NavigateTo.dontSave(controllers.routes.SessionExpiredController.onPageLoad())
     }
@@ -68,7 +68,7 @@ class TrusteesNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnec
     val trusteesLengthCompare = answers.allTrustees.lengthCompare(appConfig.maxTrustees)
 
     answers.get(AddTrusteeId) match {
-      case Some(false) => returnToTaskList(mode, srn)
+      case Some(false) => NavigateTo.dontSave(controllers.routes.SchemeTaskListController.onPageLoad(mode, srn))
       case Some(true) =>
         NavigateTo.save(TrusteeKindController.onPageLoad(mode, answers.trusteesCount, srn))
       case None if trusteesLengthCompare >= 0 =>
@@ -77,12 +77,6 @@ class TrusteesNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnec
         NavigateTo.save(TrusteeKindController.onPageLoad(mode, answers.trusteesCount, srn))
     }
   }
-
-  private def returnToTaskList(mode: Mode, srn: Option[String]) = if (mode == NormalMode)
-    NavigateTo.dontSave(controllers.routes.SchemeTaskListController.onPageLoad())
-  else
-    srn.map(srn => NavigateTo.dontSave(controllers.routes.PSASchemeDetailsController.onPageLoad(srn))
-    ).getOrElse(NavigateTo.dontSave(controllers.routes.SessionExpiredController.onPageLoad()))
 
   private def trusteeKindRoutes(index: Int, answers: UserAnswers, mode: Mode, srn: Option[String]): Option[NavigateTo] = {
     answers.get(TrusteeKindId(index)) match {

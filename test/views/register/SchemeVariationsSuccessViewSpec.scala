@@ -16,6 +16,7 @@
 
 package views.register
 
+import models.UpdateMode
 import org.jsoup.Jsoup
 import play.twirl.api.HtmlFormat
 import views.behaviours.ViewBehaviours
@@ -26,13 +27,13 @@ class SchemeVariationsSuccessViewSpec extends ViewBehaviours {
   val messageKeyPrefix = "variations_complete"
 
   val schemeName = Some("a scheme")
-  val srn = "srn"
+  val srn = Some("srn")
 
   def createView: () => HtmlFormat.Appendable = () =>
     schemeVariationsSuccess(
       frontendAppConfig,
       schemeName,
-      Some(srn)
+      srn
     )(fakeRequest, messages)
 
   "SchemeVariationsSuccess view" must {
@@ -43,7 +44,7 @@ class SchemeVariationsSuccessViewSpec extends ViewBehaviours {
       Jsoup.parse(createView().toString()) must haveLinkOnClick("window.print();return false;", "print-this-page-link")
     }
 
-    behave like pageWithReturnLink(createView, controllers.routes.PSASchemeDetailsController.onPageLoad(srn).url)
+    behave like pageWithReturnLink(createView, controllers.routes.SchemeTaskListController.onPageLoad(UpdateMode, srn).url)
   }
 
 }

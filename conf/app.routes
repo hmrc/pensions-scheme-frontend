@@ -4,7 +4,8 @@
 
 GET        /                                            controllers.BeforeYouStartController.onPageLoad()
 
-GET        /scheme-details                              controllers.SchemeTaskListController.onPageLoad
+GET        /scheme-details                              controllers.SchemeTaskListController.onPageLoad(mode: Mode = NormalMode, srn: Option[String] = None)
+GET        /scheme-details/:srn                         controllers.SchemeTaskListController.onPageLoad(mode: Mode = UpdateMode, srn: Option[String])
 
 GET        /what-you-will-need-before-start             controllers.BeforeYouStartController.onPageLoad()
 POST       /what-you-will-need-before-start             controllers.BeforeYouStartController.onSubmit()
@@ -29,8 +30,6 @@ GET        /continue-registration                       controllers.ContinueRegi
 
 GET        /user-research-details                       controllers.UserResearchDetailsController.onPageLoad()
 POST       /user-research-details                       controllers.UserResearchDetailsController.onSubmit()
-
-GET        /scheme-details/:srn                         controllers.PSASchemeDetailsController.onPageLoad(srn: String)
 
 GET        /what-you-will-need-members                  controllers.WhatYouWillNeedMembersController.onPageLoad
 POST       /what-you-will-need-members                  controllers.WhatYouWillNeedMembersController.onSubmit

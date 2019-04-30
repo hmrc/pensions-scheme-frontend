@@ -62,7 +62,7 @@ class EstablishersIndividualNavigatorSpec extends SpecBase with MustMatchers wit
 }
 
 object EstablishersIndividualNavigatorSpec extends OptionValues {
-  private def taskList: Call = controllers.routes.SchemeTaskListController.onPageLoad()
+  private def taskList: Call = controllers.routes.SchemeTaskListController.onPageLoad(NormalMode, None)
 
   private val emptyAnswers = UserAnswers(Json.obj())
   private val addressYearsOverAYear = UserAnswers(Json.obj())
