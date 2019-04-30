@@ -21,12 +21,20 @@ import com.google.inject.Inject
 import config.FrontendAppConfig
 import connectors.{PensionSchemeVarianceLockConnector, SubscriptionCacheConnector, UpdateSchemeCacheConnector}
 import identifiers.TypedIdentifier
+import identifiers.register.establishers.IsEstablisherAddressCompleteId
+import identifiers.register.establishers.individual.{AddressYearsId => EstablisherIndividualAddressYearsId, PreviousAddressId => EstablisherIndividualPreviousAddressId}
+import identifiers.register.establishers.partnership.partner.{IsPartnerAddressCompleteId, PartnerAddressYearsId, PartnerPreviousAddressId}
+import identifiers.register.trustees.IsTrusteeAddressCompleteId
+import identifiers.register.trustees.company.{CompanyAddressYearsId => TruesteeCompanyAddressYearsId, CompanyPreviousAddressId => TruesteeCompanyPreviousAddressId}
+import models.AddressYears.{OverAYear, UnderAYear}
 import models._
+import models.address.Address
 import models.requests.DataRequest
+import org.mockito.Matchers
 import org.mockito.Matchers.any
 import org.mockito.Mockito._
 import org.scalatest.mockito.MockitoSugar
-import org.scalatest.{AsyncWordSpec, MustMatchers}
+import org.scalatest.{AsyncWordSpec, BeforeAndAfter, MustMatchers}
 import play.api.libs.json.{Format, JsValue, Json}
 import play.api.mvc.AnyContent
 import uk.gov.hmrc.http.HeaderCarrier
@@ -34,9 +42,11 @@ import utils.{FakeDataRequest, UserAnswers}
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class UserAnswersServiceSpec extends AsyncWordSpec with MustMatchers with MockitoSugar {
+class UserAnswersServiceSpec extends AsyncWordSpec with MustMatchers with MockitoSugar with BeforeAndAfter{
 
   import UserAnswersServiceSpec._
+
+  before(reset(subscriptionConnector))
 
   ".save" must {
 
@@ -135,10 +145,10 @@ class UserAnswersServiceSpec extends AsyncWordSpec with MustMatchers with Mockit
       when(updateConnector.remove(any(), any())(any(), any()))
         .thenReturn(Future(updatedJson))
 
-        testService.remove(UpdateMode, Some(srn), FakeIdentifier) map {
-          _ mustEqual updatedJson
-        }
+      testService.remove(UpdateMode, Some(srn), FakeIdentifier) map {
+        _ mustEqual updatedJson
       }
+    }
 
     "not perform any action UpdateMode/ CheckUpdateMode when user does not hold the lock" in {
       when(lockConnector.lock(any(), any())(any(), any()))
@@ -148,9 +158,92 @@ class UserAnswersServiceSpec extends AsyncWordSpec with MustMatchers with Mockit
         _ mustEqual Json.obj()
       }
     }
+  }
+
+  ".setAddressCompleteFlagAfterAddressYear" must {
+
+    "save flag with correct id for TruesteeCompanyAddressYearsId" in {
+
+      when(subscriptionConnector.save[Boolean, TypedIdentifier[Boolean]](any(), Matchers.eq(IsTrusteeAddressCompleteId(0)), Matchers.eq(true))(any(), any(), any()))
+        .thenReturn(Future(json))
+
+      testService.setAddressCompleteFlagAfterAddressYear(NormalMode, None, TruesteeCompanyAddressYearsId(0), OverAYear, UserAnswers(json)) map {
+        _ mustEqual UserAnswers(json)
+      }
     }
 
+    "save flag with correct id for trustee EstablisherIndividualAddressYearsId" in {
 
+      when(subscriptionConnector.save[Boolean, TypedIdentifier[Boolean]](any(), Matchers.eq(IsEstablisherAddressCompleteId(0)), Matchers.eq(true))(any(), any(), any()))
+        .thenReturn(Future(json))
+
+      testService.setAddressCompleteFlagAfterAddressYear(NormalMode, None, EstablisherIndividualAddressYearsId(0), OverAYear, UserAnswers(json)) map {
+        _ mustEqual UserAnswers(json)
+      }
+    }
+
+    "save flag with correct id for establisher partner" in {
+
+      when(subscriptionConnector.save[Boolean, TypedIdentifier[Boolean]](any(), Matchers.eq(IsPartnerAddressCompleteId(0, 0)), Matchers.eq(true))(any(), any(), any()))
+        .thenReturn(Future(json))
+
+      testService.setAddressCompleteFlagAfterAddressYear(NormalMode, None, PartnerAddressYearsId(0, 0), OverAYear, UserAnswers(json)) map {
+        _ mustEqual UserAnswers(json)
+      }
+    }
+
+    "dont save flag with if under year selected" in {
+
+      testService.setAddressCompleteFlagAfterAddressYear(NormalMode, None, PartnerAddressYearsId(0, 0), UnderAYear, UserAnswers(json)) map { result =>
+        verify(subscriptionConnector, never).save(any(), any(), any())(any(), any(), any())
+        result mustEqual UserAnswers(json)
+      }
+    }
+
+  }
+
+  ".setAddressCompleteFlagAfterPreviousAddress" must {
+
+    "save flag with correct id for TruesteeCompanyPreviousAddressId" in {
+
+      when(subscriptionConnector.save[Boolean, TypedIdentifier[Boolean]](any(), Matchers.eq(IsTrusteeAddressCompleteId(0)), Matchers.eq(true))(any(), any(), any()))
+        .thenReturn(Future(json))
+
+      testService.setAddressCompleteFlagAfterPreviousAddress(NormalMode, None, TruesteeCompanyPreviousAddressId(0), UserAnswers(json)) map {
+        _ mustEqual UserAnswers(json)
+      }
+    }
+
+    "save flag with correct id for trustee EstablisherIndividualPreviousAddressId" in {
+
+      when(subscriptionConnector.save[Boolean, TypedIdentifier[Boolean]](any(), Matchers.eq(IsEstablisherAddressCompleteId(0)), Matchers.eq(true))(any(), any(), any()))
+        .thenReturn(Future(json))
+
+      testService.setAddressCompleteFlagAfterPreviousAddress(NormalMode, None, EstablisherIndividualPreviousAddressId(0), UserAnswers(json)) map {
+        _ mustEqual UserAnswers(json)
+      }
+    }
+
+    "save flag with correct id for establisher PartnerPreviousAddressId" in {
+
+      when(subscriptionConnector.save[Boolean, TypedIdentifier[Boolean]](any(), Matchers.eq(IsPartnerAddressCompleteId(0, 0)), Matchers.eq(true))(any(), any(), any()))
+        .thenReturn(Future(json))
+
+      testService.setAddressCompleteFlagAfterPreviousAddress(NormalMode, None, PartnerPreviousAddressId(0, 0), UserAnswers(json)) map {
+        _ mustEqual UserAnswers(json)
+      }
+    }
+
+    "dont save flag if not macthing addresss id" in {
+
+      case class TempAddressId() extends TypedIdentifier[Address]
+
+      testService.setAddressCompleteFlagAfterPreviousAddress(NormalMode, None, TempAddressId(), UserAnswers(json)) map { result =>
+        verify(subscriptionConnector, never).save(any(), any(), any())(any(), any(), any())
+        result mustEqual UserAnswers(json)
+      }
+    }
+  }
 }
 
 object UserAnswersServiceSpec extends SpecBase with MockitoSugar {
@@ -180,8 +273,9 @@ object UserAnswersServiceSpec extends SpecBase with MockitoSugar {
 
     override def save[A, I <: TypedIdentifier[A]](mode: Mode, srn: Option[String], id: I, value: A)
                                                  (implicit fmt: Format[A], ec: ExecutionContext, hc: HeaderCarrier,
-                                                  request: DataRequest[AnyContent]): Future[JsValue] =
+                                                  request: DataRequest[AnyContent]): Future[JsValue] = {
       save(mode, srn, id, value, FakeChangeIdentifier)
+    }
   }
 
   protected val subscriptionConnector: SubscriptionCacheConnector = mock[SubscriptionCacheConnector]

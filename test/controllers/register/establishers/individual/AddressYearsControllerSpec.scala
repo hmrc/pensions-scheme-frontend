@@ -20,7 +20,7 @@ import services.FakeUserAnswersService
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.address.AddressYearsFormProvider
-import identifiers.register.establishers.EstablishersId
+import identifiers.register.establishers.{EstablishersId, IsEstablisherAddressCompleteId}
 import identifiers.register.establishers.individual.{AddressYearsId, EstablisherDetailsId}
 import models.person.PersonDetails
 import models.{AddressYears, Index, NormalMode}
@@ -108,11 +108,22 @@ class AddressYearsControllerSpec extends ControllerSpecBase {
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
     }
 
-    "redirect to the next page when valid data is submitted" in {
+    "redirect to the next page when valid data is submitted with over_a_year" in {
+      FakeUserAnswersService.reset()
+      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", AddressYears.options.tail.head.value))
+      val result = controller().onSubmit(NormalMode, firstIndex, None)(postRequest)
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result) mustBe Some(onwardRoute.url)
+      FakeUserAnswersService.verify(IsEstablisherAddressCompleteId(firstIndex), true)
+    }
+
+    "redirect to the next page when valid data is submitted with under_a_year" in {
+      FakeUserAnswersService.reset()
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", AddressYears.options.head.value))
       val result = controller().onSubmit(NormalMode, firstIndex, None)(postRequest)
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
+      FakeUserAnswersService.verifyNot(IsEstablisherAddressCompleteId(firstIndex))
     }
 
     "return a Bad Request and errors when invalid data is submitted" in {

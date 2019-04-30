@@ -81,10 +81,13 @@ trait ManualAddressController extends FrontendController with Retrievals with I1
 
         userAnswersService.remove(mode, viewModel.srn, postCodeLookupIdForCleanup)
           .flatMap { _ =>
-            userAnswersService.save(mode, viewModel.srn, id, address).map {
+            userAnswersService.save(mode, viewModel.srn, id, address).flatMap {
               cacheMap =>
-                auditEvent.foreach(auditService.sendEvent(_))
-                Redirect(navigator.nextPage(id, mode, UserAnswers(cacheMap), viewModel.srn))
+                userAnswersService.setAddressCompleteFlagAfterPreviousAddress(mode, viewModel.srn, id, UserAnswers(cacheMap)).map {
+                  answers =>
+                    auditEvent.foreach(auditService.sendEvent(_))
+                    Redirect(navigator.nextPage(id, mode, answers, viewModel.srn))
+                }
             }
           }
       }

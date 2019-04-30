@@ -61,9 +61,12 @@ trait AddressYearsController extends FrontendController with Retrievals with I18
       formWithErrors =>
         Future.successful(BadRequest(addressYears(appConfig, formWithErrors, viewmodel, existingSchemeName))),
       addressYears =>
-        userAnswersService.save(mode, viewmodel.srn, id, addressYears).map {
-          answers =>
-            Redirect(navigator.nextPage(id, mode, UserAnswers(answers), viewmodel.srn))
+        userAnswersService.save(mode, viewmodel.srn, id, addressYears).flatMap {
+          json =>
+            userAnswersService.setAddressCompleteFlagAfterAddressYear(mode, viewmodel.srn, id, addressYears, UserAnswers(json)).map{
+              answers =>
+                Redirect(navigator.nextPage(id, mode, answers, viewmodel.srn))
+            }
         }
     )
   }
