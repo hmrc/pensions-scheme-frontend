@@ -18,7 +18,7 @@ package controllers
 
 import base.JsonFileReader
 import config.{FeatureSwitchManagementService, FeatureSwitchManagementServiceTestImpl}
-import connectors.{MinimalPsaConnector, PensionSchemeVarianceLockConnector, SchemeDetailsConnector, SchemeDetailsReadOnlyCacheConnector}
+import connectors.{MinimalPsaConnector, PensionSchemeVarianceLockConnector, SchemeDetailsConnector, SchemeDetailsReadOnlyCacheConnector, UpdateSchemeCacheConnector}
 import controllers.actions._
 import handlers.ErrorHandler
 import models.details.transformation.{SchemeDetailsMasterSection, SchemeDetailsStubData}
@@ -79,11 +79,13 @@ class SchemeTaskListControllerSpec extends ControllerSpecBase {
           .thenReturn(Future.successful(false))
         when(fakeSchemeTransformer.transformMasterSection(any())).thenReturn(masterSections)
         when(fakeLockConnector.isLockByPsaIdOrSchemeId(any(), any())(any(), any())).thenReturn(Future.successful(Some(VarianceLock)))
+        when(fakeUpdateCacheConnector.upsert(any(), any())(any(), any()))
+          .thenReturn(Future.successful(JsNull))
 
         val result = controller().onPageLoad(UpdateMode, srn)(fakeRequest)
 
         status(result) mustBe OK
-  contentAsString(result).contains(messages("messages__scheme_details__title")) mustBe true
+        contentAsString(result).contains(messages("messages__scheme_details__title")) mustBe true
         contentAsString(result).contains(messages("messages__schemeTaskList__sectionDeclaration_header")) mustBe true
       }
 
@@ -128,12 +130,14 @@ object SchemeTaskListControllerSpec extends ControllerSpecBase with MockitoSugar
       fs,
       fakeLockConnector,
       fakeSchemeDetailsReadOnlyCacheConnector,
+      fakeUpdateCacheConnector,
       fakeMinimalPsaConnector
     )
 
 
   val fakeSchemeDetailsConnector: SchemeDetailsConnector = mock[SchemeDetailsConnector]
   val fakeSchemeDetailsReadOnlyCacheConnector: SchemeDetailsReadOnlyCacheConnector = mock[SchemeDetailsReadOnlyCacheConnector]
+  val fakeUpdateCacheConnector: UpdateSchemeCacheConnector = mock[UpdateSchemeCacheConnector]
   val fakeSchemeTransformer: SchemeDetailsMasterSection = mock[SchemeDetailsMasterSection]
   val fakeLockConnector: PensionSchemeVarianceLockConnector = mock[PensionSchemeVarianceLockConnector]
   val fakeMinimalPsaConnector: MinimalPsaConnector = mock[MinimalPsaConnector]

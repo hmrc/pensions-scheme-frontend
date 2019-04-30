@@ -17,7 +17,7 @@
 package controllers
 
 import config.{FeatureSwitchManagementService, FrontendAppConfig}
-import connectors.{MinimalPsaConnector, PensionSchemeVarianceLockConnector, SchemeDetailsConnector, SchemeDetailsReadOnlyCacheConnector}
+import connectors.{MinimalPsaConnector, PensionSchemeVarianceLockConnector, SchemeDetailsConnector, SchemeDetailsReadOnlyCacheConnector, UpdateSchemeCacheConnector}
 import controllers.actions._
 import handlers.ErrorHandler
 import identifiers.IsPsaSuspendedId
@@ -26,6 +26,7 @@ import models.{Mode, VarianceLock}
 import models.details.transformation.SchemeDetailsMasterSection
 import models.requests.OptionalDataRequest
 import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.libs.json.JsValue
 import play.api.mvc.{Action, AnyContent, Result}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
@@ -45,6 +46,7 @@ class SchemeTaskListController @Inject()(appConfig: FrontendAppConfig,
                                          featureSwitchManagementService: FeatureSwitchManagementService,
                                          lockConnector: PensionSchemeVarianceLockConnector,
                                          viewConnector: SchemeDetailsReadOnlyCacheConnector,
+                                         updateConnector: UpdateSchemeCacheConnector,
                                          minimalPsaConnector: MinimalPsaConnector
                                         )(implicit val ec: ExecutionContext) extends FrontendController with I18nSupport with Retrievals {
 
@@ -69,55 +71,49 @@ class SchemeTaskListController @Inject()(appConfig: FrontendAppConfig,
   private def onPageLoadVariationsToggledOff(srn: String)(implicit
                                                           request: OptionalDataRequest[AnyContent],
                                                           hc: HeaderCarrier): Future[Result] = {
+
     schemeDetailsConnector.getSchemeDetails(request.psaId.id, schemeIdType = "srn", srn).flatMap { scheme =>
+
       val schemeDetailMasterSection = schemeTransformer.transformMasterSection(scheme)
       Future.successful(Ok(psa_scheme_details(appConfig, schemeDetailMasterSection, scheme.schemeDetails.name, srn)))
+
     }
   }
 
   private def onPageLoadVariationsToggledOn(srn: String,
                                             ua: Option[UserAnswers])(implicit request: OptionalDataRequest[AnyContent],
-                                                                              hc: HeaderCarrier): Future[Result] = {
+                                                                     hc: HeaderCarrier): Future[Result] = {
     lockConnector.isLockByPsaIdOrSchemeId(request.psaId.id, srn).flatMap {
       case Some(VarianceLock) =>
         ua match {
-          case Some(userAnswers) =>
+          case Some(userAnswers) => createViewWithSuspensionFlag(srn, userAnswers, updateConnector.upsert(srn, _))
 
-            getTaskList(srn, userAnswers).flatMap {details =>
-
-              Future.successful(Ok(schemeDetailsTaskList(appConfig, details.taskList, isVariations = true)))
-            }
-
-          case _ =>
-            Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
+          case _ => Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
         }
 
       case _ =>
         schemeDetailsConnector.getSchemeDetailsVariations(request.psaId.id, schemeIdType = "srn", srn)
           .flatMap { userAnswers =>
 
-            getTaskList(srn, userAnswers).flatMap {details =>
-
-              viewConnector.upsert(request.externalId, details.userAnswers.json).flatMap { _ =>
-
-                Future.successful(Ok(schemeDetailsTaskList(appConfig, details.taskList, isVariations = true)))
-
-              }
-
-            }
+            createViewWithSuspensionFlag(srn, userAnswers, viewConnector.upsert(request.externalId, _))
           }
-
 
 
     }
   }
 
-  private def getTaskList(srn: String, userAnswers: UserAnswers)(implicit request: OptionalDataRequest[AnyContent],
-                                                                          hc: HeaderCarrier): Future[TaskListDetails] =
-    minimalPsaConnector.isPsaSuspended(request.psaId.id).map { isSuspended =>
+  private def createViewWithSuspensionFlag(srn: String, userAnswers: UserAnswers,
+                                           f: JsValue => Future[JsValue])(implicit request: OptionalDataRequest[AnyContent],
+                                                                          hc: HeaderCarrier): Future[Result] =
+    minimalPsaConnector.isPsaSuspended(request.psaId.id).flatMap { isSuspended =>
+
       val updatedUserAnswers = userAnswers.set(IsPsaSuspendedId)(isSuspended).asOpt.getOrElse(userAnswers)
       val taskList: SchemeDetailsTaskList = new HsTaskListHelperVariations(updatedUserAnswers, request.viewOnly, Some(srn)).taskList
-      TaskListDetails(updatedUserAnswers, taskList)
+
+      f(updatedUserAnswers.json).flatMap { _ =>
+
+        Future.successful(Ok(schemeDetailsTaskList(appConfig, taskList, isVariations = true)))
+      }
     }
 
   case class TaskListDetails(userAnswers: UserAnswers, taskList: SchemeDetailsTaskList)
