@@ -71,6 +71,7 @@ class PartnerAddressYearsController @Inject()(
     title = Message("messages__partner_address_years__title"),
     heading = Message("messages__partner_address_years__heading"),
     legend = Message("messages__partner_address_years__heading"),
-    subHeading = Some(Message(partnerName))
+    subHeading = Some(Message(partnerName)),
+    srn = srn
   )
 }

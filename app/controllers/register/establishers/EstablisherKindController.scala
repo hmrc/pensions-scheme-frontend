@@ -21,7 +21,7 @@ import connectors.UserAnswersCacheConnector
 import controllers.Retrievals
 import controllers.actions._
 import forms.register.establishers.EstablisherKindFormProvider
-import identifiers.register.establishers.EstablisherKindId
+import identifiers.register.establishers.{EstablisherKindId, IsEstablisherNewId}
 import javax.inject.Inject
 import models.{Index, Mode}
 import play.api.data.Form
@@ -61,14 +61,14 @@ class EstablisherKindController @Inject()(
         (formWithErrors: Form[_]) =>
           Future.successful(BadRequest(establisherKind(appConfig, formWithErrors, mode, index, existingSchemeName, postCall(mode, index, srn)))),
         value =>
-          userAnswersService.save(
-            mode,
-            srn,
-            EstablisherKindId(index),
-            value
-          ).map {
-            json =>
-              Redirect(navigator.nextPage(EstablisherKindId(index), mode, UserAnswers(json), srn))
+
+          request.userAnswers.upsert(IsEstablisherNewId(index))(value = true) {
+            _.upsert(EstablisherKindId(index))(value) { answers =>
+              userAnswersService.upsert(mode, srn, answers.json).map {
+                json =>
+                  Redirect(navigator.nextPage(EstablisherKindId(index), mode, UserAnswers(json), srn))
+              }
+            }
           }
       )
   }

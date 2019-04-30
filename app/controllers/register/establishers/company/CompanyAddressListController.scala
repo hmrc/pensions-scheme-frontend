@@ -66,7 +66,7 @@ class CompanyAddressListController @Inject()(
       case companyDetails ~ addresses =>
         AddressListViewModel(
           postCall = routes.CompanyAddressListController.onSubmit(mode, srn, index),
-          manualInputCall = routes.CompanyAddressController.onClick(mode, srn, index),
+          manualInputCall = routes.CompanyAddressController.onPageLoad(mode, srn, index),
           addresses = addresses,
           subHeading = Some(Message(companyDetails.companyName)),
           srn = srn

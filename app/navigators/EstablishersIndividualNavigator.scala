@@ -80,11 +80,17 @@ class EstablishersIndividualNavigator @Inject()(
         checkYourAnswers(index, mode, srn)
 
       case CheckYourAnswersId =>
-        NavigateTo.dontSave(controllers.register.establishers.routes.AddEstablisherController.onPageLoad(mode, srn))
+        if(mode == CheckMode || mode == NormalMode){
+          NavigateTo.dontSave(controllers.register.establishers.routes.AddEstablisherController.onPageLoad(mode, srn))
+        } else {
+          anyMoreChanges(srn)
+        }
+
     }
   }
 
   override protected def routeMap(from: NavigateFrom): Option[NavigateTo] = routes(from, NormalMode, None)
+
   protected def updateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] = routes(from, UpdateMode, srn)
 
   protected def editRoutes(from: NavigateFrom, mode: Mode, srn: Option[String]): Option[NavigateTo] = {

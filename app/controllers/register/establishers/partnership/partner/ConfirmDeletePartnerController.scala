@@ -24,9 +24,10 @@ import identifiers.register.establishers.IsEstablisherCompleteId
 import identifiers.register.establishers.partnership.PartnershipDetailsId
 import identifiers.register.establishers.partnership.partner.{ConfirmDeletePartnerId, PartnerDetailsId}
 import javax.inject.Inject
-import models.{Index, Mode, NormalMode}
+import models.{CheckMode, Index, Mode, NormalMode}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
@@ -97,12 +98,13 @@ class ConfirmDeletePartnerController @Inject()(
                 jsValue =>
                   val userAnswers = UserAnswers(jsValue)
                   if (userAnswers.allDirectorsAfterDelete(establisherIndex).isEmpty) {
-                    sectionComplete.setCompleteFlag(
-                      request.externalId, IsEstablisherCompleteId(establisherIndex), request.userAnswers, value = false).map { _ =>
-                      Redirect(navigator.nextPage(ConfirmDeletePartnerId(establisherIndex), NormalMode, userAnswers))
+                    userAnswers.upsert(IsEstablisherCompleteId(establisherIndex))(false) { result =>
+                      userAnswersService.upsert(mode, srn, result.json).map { json =>
+                        Redirect(navigator.nextPage(ConfirmDeletePartnerId(establisherIndex), mode, userAnswers, srn))
+                      }
                     }
                   } else {
-                    Future.successful(Redirect(navigator.nextPage(ConfirmDeletePartnerId(establisherIndex), NormalMode, userAnswers)))
+                    Future.successful(Redirect(navigator.nextPage(ConfirmDeletePartnerId(establisherIndex), mode, userAnswers, srn)))
                   }
               }
             }

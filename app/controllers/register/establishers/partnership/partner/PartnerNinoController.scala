@@ -75,7 +75,7 @@ class PartnerNinoController @Inject()(
               PartnerNinoId(establisherIndex, partnerIndex),
               value
             ) map { json =>
-              Redirect(navigator.nextPage(PartnerNinoId(establisherIndex, partnerIndex), mode, new UserAnswers(json)))
+              Redirect(navigator.nextPage(PartnerNinoId(establisherIndex, partnerIndex), mode, new UserAnswers(json), srn))
             }
         )
       }

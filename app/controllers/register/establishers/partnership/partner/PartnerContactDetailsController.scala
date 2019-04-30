@@ -65,6 +65,7 @@ class PartnerContactDetailsController @Inject()(
     title = Message("messages__partner_contact__title"),
     heading = Message("messages__partner_contact__heading"),
     body = Message("messages__partner_contact__body"),
-    subHeading = Some(partnerName)
+    subHeading = Some(partnerName),
+    srn = srn
   )
 }

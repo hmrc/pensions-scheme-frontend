@@ -52,6 +52,7 @@ class AddCompanyDirectorsControllerSpec extends ControllerSpecBase {
     new AddCompanyDirectorsController(
       frontendAppConfig,
       messagesApi,
+      FakeUserAnswersService,
       navigator,
       FakeAuthAction,
       dataRetrievalAction,

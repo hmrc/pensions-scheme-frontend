@@ -58,7 +58,7 @@ class CompanyPostCodeLookupController @Inject()(
           details =>
             PostcodeLookupViewModel(
               routes.CompanyPostCodeLookupController.onSubmit(mode, srn, index),
-              routes.CompanyAddressController.onClick(mode, srn, index),
+              routes.CompanyAddressController.onPageLoad(mode, srn, index),
               title = Message(title),
               heading = Message(heading),
               subHeading = Some(details.companyName),

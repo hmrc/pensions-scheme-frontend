@@ -90,7 +90,8 @@ class DirectorAddressController @Inject()(
               title = Message(title),
               heading = Message(heading),
               hint = Some(Message(hint)),
-              secondaryHeader = Some(details.fullName)
+              secondaryHeader = Some(details.fullName),
+              srn = srn
             )
         }
     }
