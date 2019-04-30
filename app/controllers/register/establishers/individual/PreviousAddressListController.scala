@@ -41,21 +41,15 @@ class PreviousAddressListController @Inject()(
                                                @EstablishersIndividual override val navigator: Navigator,
                                                authenticate: AuthAction,
                                                getData: DataRetrievalAction,
+                                               allowAccess: AllowAccessActionProvider,
                                                requireData: DataRequiredAction
                                              ) extends GenericAddressListController with Retrievals {
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
-    implicit request =>
-      viewmodel(mode, index, srn).right.map(get)
-  }
-
-  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
-    implicit request =>
-      viewmodel(mode, index, srn).right.map {
-        vm =>
-          post(vm, PreviousAddressListId(index), PreviousAddressId(index), mode)
-      }
-  }
+  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+      implicit request =>
+        viewmodel(mode, index, srn).right.map(get)
+    }
 
   private def viewmodel(mode: Mode, index: Index, srn: Option[String])(implicit request: DataRequest[AnyContent]):
   Either[Future[Result], AddressListViewModel] = {
@@ -67,9 +61,17 @@ class PreviousAddressListController @Inject()(
         title = Message("messages__select_the_previous_address__title"),
         heading = Message("messages__select_the_previous_address__title"),
         subHeading = Some(Message(establisherDetails.fullName)),
-        srn  = srn
+        srn = srn
       )
     }.left.map(_ =>
       Future.successful(Redirect(routes.PreviousAddressPostCodeLookupController.onPageLoad(mode, index, srn))))
+  }
+
+  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
+    implicit request =>
+      viewmodel(mode, index, srn).right.map {
+        vm =>
+          post(vm, PreviousAddressListId(index), PreviousAddressId(index), mode)
+      }
   }
 }

@@ -41,6 +41,7 @@ class CompanyDetailsController @Inject()(
                                           @EstablishersCompany navigator: Navigator,
                                           authenticate: AuthAction,
                                           getData: DataRetrievalAction,
+                                          allowAccess: AllowAccessActionProvider,
                                           requireData: DataRequiredAction,
                                           formProvider: CompanyDetailsFormProvider
                                         )(implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
@@ -48,7 +49,8 @@ class CompanyDetailsController @Inject()(
   private val form = formProvider()
   private def postCall: (Mode, Option[String], Index) => Call = routes.CompanyDetailsController.onSubmit _
 
-  def onPageLoad(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
+  def onPageLoad(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
     implicit request =>
       val formWithData = request.userAnswers.get(CompanyDetailsId(index)).fold(form)(form.fill)
       Future.successful(Ok(companyDetails(appConfig, formWithData, mode, index, existingSchemeName, postCall(mode, srn, index))))

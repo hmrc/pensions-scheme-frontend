@@ -41,11 +41,21 @@ class DirectorPreviousAddressPostcodeLookupController @Inject()(
                                                                  @EstablishersCompanyDirector override val navigator: Navigator,
                                                                  authenticate: AuthAction,
                                                                  getData: DataRetrievalAction,
+                                                                 allowAccess: AllowAccessActionProvider,
                                                                  requireData: DataRequiredAction,
                                                                  formProvider: PostCodeLookupFormProvider
                                                                ) extends PostcodeLookupController {
 
   protected val form: Form[String] = formProvider()
+
+  def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+      implicit request =>
+        viewmodel(mode, establisherIndex, directorIndex, srn).retrieve.right.map(
+          vm =>
+            get(vm)
+        )
+    }
 
   private def viewmodel(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]) = Retrieval {
     implicit request =>
@@ -59,14 +69,6 @@ class DirectorPreviousAddressPostcodeLookupController @Inject()(
           Some(Message("messages__directorPreviousAddressPostcodeLookup__lede")),
           srn = srn
         )
-      )
-  }
-
-  def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
-    implicit request =>
-      viewmodel(mode, establisherIndex, directorIndex, srn).retrieve.right.map(
-        vm =>
-          get(vm)
       )
   }
 

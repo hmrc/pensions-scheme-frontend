@@ -89,6 +89,7 @@ class PartnershipPreviousAddressPostcodeLookupControllerSpec extends ControllerS
       new FakeNavigator(desiredRoute = onwardRoute),
       FakeAuthAction,
       dataRetrievalAction,
+      FakeAllowAccessProvider(),
       new DataRequiredActionImpl,
       formProvider
     )

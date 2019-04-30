@@ -39,32 +39,20 @@ class PartnerAddressYearsController @Inject()(
                                                val messagesApi: MessagesApi,
                                                authenticate: AuthAction,
                                                getData: DataRetrievalAction,
+                                               allowAccess: AllowAccessActionProvider,
                                                requireData: DataRequiredAction
                                              ) extends AddressYearsController with Retrievals {
 
   private val form = new AddressYearsFormProvider()(Message("messages__common_error__current_address_years"))
 
   def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen requireData).async {
-    implicit request =>
-      PartnerDetailsId(establisherIndex, partnerIndex).retrieve.right.map { partnerDetails =>
-        get(PartnerAddressYearsId(establisherIndex, partnerIndex), form,
-          viewModel(mode, establisherIndex, partnerIndex, partnerDetails.fullName, srn))
-      }
-  }
-
-  def onSubmit(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen requireData).async {
-    implicit request =>
-      PartnerDetailsId(establisherIndex, partnerIndex).retrieve.right.map { partnerDetails =>
-        post(
-          PartnerAddressYearsId(establisherIndex, partnerIndex),
-          mode,
-          form,
-          viewModel(mode, establisherIndex, partnerIndex, partnerDetails.fullName, srn)
-        )
-      }
-  }
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+      implicit request =>
+        PartnerDetailsId(establisherIndex, partnerIndex).retrieve.right.map { partnerDetails =>
+          get(PartnerAddressYearsId(establisherIndex, partnerIndex), form,
+            viewModel(mode, establisherIndex, partnerIndex, partnerDetails.fullName, srn))
+        }
+    }
 
   private def viewModel(mode: Mode, establisherIndex: Index, partnerIndex: Index, partnerName: String, srn: Option[String]) = AddressYearsViewModel(
     postCall = routes.PartnerAddressYearsController.onSubmit(mode, establisherIndex, partnerIndex, srn),
@@ -74,4 +62,17 @@ class PartnerAddressYearsController @Inject()(
     subHeading = Some(Message(partnerName)),
     srn = srn
   )
+
+  def onSubmit(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen requireData).async {
+      implicit request =>
+        PartnerDetailsId(establisherIndex, partnerIndex).retrieve.right.map { partnerDetails =>
+          post(
+            PartnerAddressYearsId(establisherIndex, partnerIndex),
+            mode,
+            form,
+            viewModel(mode, establisherIndex, partnerIndex, partnerDetails.fullName, srn)
+          )
+        }
+    }
 }

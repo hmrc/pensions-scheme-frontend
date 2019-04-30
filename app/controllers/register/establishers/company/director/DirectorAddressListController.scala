@@ -20,7 +20,7 @@ import com.google.inject.Inject
 import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
 import controllers.Retrievals
-import controllers.actions.{AuthAction, DataRequiredAction, DataRetrievalAction}
+import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRequiredAction, DataRetrievalAction}
 import controllers.address.AddressListController
 import identifiers.register.establishers.company.director.{DirectorAddressId, DirectorAddressListId, DirectorAddressPostcodeLookupId, DirectorDetailsId}
 import models.requests.DataRequest
@@ -42,11 +42,12 @@ class DirectorAddressListController @Inject()(
                                                override val messagesApi: MessagesApi,
                                                authenticate: AuthAction,
                                                getData: DataRetrievalAction,
+                                               allowAccess: AllowAccessActionProvider,
                                                requireData: DataRequiredAction
                                              ) extends AddressListController with Retrievals {
 
   def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen requireData).async { implicit request =>
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async { implicit request =>
       viewmodel(mode, establisherIndex, directorIndex, srn).right.map(get)
     }
 

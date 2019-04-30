@@ -17,7 +17,7 @@
 package controllers.register.trustees.company
 
 import config.FrontendAppConfig
-import controllers.actions.{AuthAction, DataRequiredAction, DataRetrievalAction}
+import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRequiredAction, DataRetrievalAction}
 import forms.address.AddressYearsFormProvider
 import identifiers.register.trustees.company.{CompanyAddressYearsId, CompanyDetailsId}
 import javax.inject.Inject
@@ -38,6 +38,7 @@ class CompanyAddressYearsController @Inject()(
                                                val userAnswersService: UserAnswersService,
                                                authenticate: AuthAction,
                                                getData: DataRetrievalAction,
+                                               allowAccess: AllowAccessActionProvider,
                                                requireData: DataRequiredAction,
                                                formProvider: AddressYearsFormProvider
                                              ) extends controllers.address.AddressYearsController {
@@ -62,7 +63,7 @@ class CompanyAddressYearsController @Inject()(
   private val form: Form[AddressYears] = formProvider(Message("messages__common_error__current_address_years"))
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen requireData).async {
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         viewmodel(index, mode, srn).retrieve.right.map {
           vm =>

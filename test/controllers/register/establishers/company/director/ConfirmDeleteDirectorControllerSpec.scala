@@ -161,6 +161,7 @@ object ConfirmDeleteDirectorControllerSpec extends ControllerSpecBase {
       new FakeNavigator(desiredRoute = onwardRoute),
       FakeAuthAction,
       dataRetrievalAction,
+      FakeAllowAccessProvider(),
       new DataRequiredActionImpl,
       FakeSectionComplete,
       formProvider

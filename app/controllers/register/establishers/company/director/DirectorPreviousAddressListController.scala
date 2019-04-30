@@ -18,9 +18,8 @@ package controllers.register.establishers.company.director
 
 import com.google.inject.Inject
 import config.FrontendAppConfig
-import connectors.UserAnswersCacheConnector
 import controllers.Retrievals
-import controllers.actions.{AuthAction, DataRequiredAction, DataRetrievalAction}
+import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRequiredAction, DataRetrievalAction}
 import controllers.address.AddressListController
 import identifiers.register.establishers.company.director._
 import models.requests.DataRequest
@@ -42,20 +41,13 @@ class DirectorPreviousAddressListController @Inject()(
                                                        override val messagesApi: MessagesApi,
                                                        authenticate: AuthAction,
                                                        getData: DataRetrievalAction,
+                                                       allowAccess: AllowAccessActionProvider,
                                                        requireData: DataRequiredAction
                                                      ) extends AddressListController with Retrievals {
 
   def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen requireData).async { implicit request =>
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async { implicit request =>
       viewmodel(mode, establisherIndex, directorIndex, srn).right.map(get)
-    }
-
-  def onSubmit(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen requireData).async { implicit request =>
-      viewmodel(mode, establisherIndex, directorIndex, srn).right.map {
-        vm =>
-          post(vm, DirectorPreviousAddressListId(establisherIndex, directorIndex), DirectorPreviousAddressId(establisherIndex, directorIndex), mode)
-      }
     }
 
   private def viewmodel(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String])
@@ -71,8 +63,16 @@ class DirectorPreviousAddressListController @Inject()(
           title = Message("messages__select_the_previous_address__title"),
           heading = Message("messages__select_the_previous_address__heading"),
           subHeading = Some(Message(directorDetails.fullName)),
-          srn  = srn
+          srn = srn
         )
     }.left.map(_ => Future.successful(Redirect(routes.DirectorPreviousAddressPostcodeLookupController.onPageLoad(mode, establisherIndex, directorIndex, srn))))
   }
+
+  def onSubmit(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen requireData).async { implicit request =>
+      viewmodel(mode, establisherIndex, directorIndex, srn).right.map {
+        vm =>
+          post(vm, DirectorPreviousAddressListId(establisherIndex, directorIndex), DirectorPreviousAddressId(establisherIndex, directorIndex), mode)
+      }
+    }
 }

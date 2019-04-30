@@ -19,7 +19,7 @@ package controllers.register.trustees.partnership
 import com.google.inject.Inject
 import config.FrontendAppConfig
 import controllers.PayeController
-import controllers.actions.{AuthAction, DataRequiredAction, DataRetrievalAction}
+import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRequiredAction, DataRetrievalAction}
 import forms.PayeFormProvider
 import identifiers.register.trustees.partnership.{PartnershipDetailsId, PartnershipPayeId}
 import models.{Index, Mode, Paye}
@@ -38,6 +38,7 @@ class PartnershipPayeController @Inject()(
                                            @TrusteesPartnership val navigator: Navigator,
                                            authenticate: AuthAction,
                                            getData: DataRetrievalAction,
+                                           allowAccess: AllowAccessActionProvider,
                                            requireData: DataRequiredAction,
                                            formProvider: PayeFormProvider
                                          ) extends PayeController with I18nSupport {
@@ -60,7 +61,8 @@ class PartnershipPayeController @Inject()(
         }
     }
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
+  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
     implicit request =>
       viewmodel(mode, index, srn).retrieve.right.map {
         vm =>

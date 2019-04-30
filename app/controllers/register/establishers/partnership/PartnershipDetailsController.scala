@@ -17,9 +17,8 @@
 package controllers.register.establishers.partnership
 
 import config.FrontendAppConfig
-import connectors.UserAnswersCacheConnector
 import controllers.Retrievals
-import controllers.actions.{AuthAction, DataRequiredAction, DataRetrievalAction}
+import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRequiredAction, DataRetrievalAction}
 import forms.register.PartnershipDetailsFormProvider
 import identifiers.register.establishers.partnership.PartnershipDetailsId
 import javax.inject.Inject
@@ -42,18 +41,20 @@ class PartnershipDetailsController @Inject()(
                                               @EstablisherPartnership navigator: Navigator,
                                               authenticate: AuthAction,
                                               getData: DataRetrievalAction,
+                                              allowAccess: AllowAccessActionProvider,
                                               requireData: DataRequiredAction,
                                               formProvider: PartnershipDetailsFormProvider
                                             )(implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
-    implicit request =>
-      val formWithData = request.userAnswers.get(PartnershipDetailsId(index)).fold(form)(form.fill)
-      val submitUrl = controllers.register.establishers.partnership.routes.PartnershipDetailsController.onSubmit(mode, index, srn)
-      Future.successful(Ok(partnershipDetails(appConfig, formWithData, mode, index, existingSchemeName, submitUrl)))
-  }
+  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+      implicit request =>
+        val formWithData = request.userAnswers.get(PartnershipDetailsId(index)).fold(form)(form.fill)
+        val submitUrl = controllers.register.establishers.partnership.routes.PartnershipDetailsController.onSubmit(mode, index, srn)
+        Future.successful(Ok(partnershipDetails(appConfig, formWithData, mode, index, existingSchemeName, submitUrl)))
+    }
 
   def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>

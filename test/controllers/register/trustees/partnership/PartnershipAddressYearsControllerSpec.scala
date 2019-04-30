@@ -18,7 +18,7 @@ package controllers.register.trustees.partnership
 
 import services.FakeUserAnswersService
 import controllers.ControllerSpecBase
-import controllers.actions.{DataRequiredActionImpl, DataRetrievalAction, FakeAuthAction, FakeDataRetrievalAction}
+import controllers.actions.{DataRequiredActionImpl, DataRetrievalAction, FakeAllowAccessProvider, FakeAuthAction, FakeDataRetrievalAction}
 import forms.address.AddressYearsFormProvider
 import identifiers.register.trustees.partnership.{PartnershipAddressYearsId, PartnershipDetailsId}
 import models.{AddressYears, Index, NormalMode, PartnershipDetails}
@@ -124,6 +124,7 @@ object PartnershipAddressYearsControllerSpec extends ControllerSpecBase {
       messagesApi,
       FakeAuthAction,
       dataRetrievalAction,
+      FakeAllowAccessProvider(),
       new DataRequiredActionImpl()
     )
 

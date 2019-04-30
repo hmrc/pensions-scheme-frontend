@@ -18,10 +18,10 @@ package controllers.register.establishers.company
 
 import config.FrontendAppConfig
 import connectors.AddressLookupConnector
-import controllers.actions.{AuthAction, DataRequiredAction, DataRetrievalAction}
+import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRequiredAction, DataRetrievalAction}
 import controllers.address.PostcodeLookupController
 import forms.address.PostCodeLookupFormProvider
-import identifiers.register.establishers.company.{CompanyAddressId, CompanyAddressListId, CompanyDetailsId, CompanyPostCodeLookupId}
+import identifiers.register.establishers.company.{CompanyDetailsId, CompanyPostCodeLookupId}
 import javax.inject.Inject
 import models.{Index, Mode}
 import play.api.data.Form
@@ -42,14 +42,20 @@ class CompanyPostCodeLookupController @Inject()(
                                                  override val navigator: Navigator,
                                                  authenticate: AuthAction,
                                                  getData: DataRetrievalAction,
+                                                 allowAccess: AllowAccessActionProvider,
                                                  requireData: DataRequiredAction,
                                                  formProvider: PostCodeLookupFormProvider
                                                ) extends PostcodeLookupController {
 
+  protected val form: Form[String] = formProvider()
   private val title: Message = "messages__companyAddress__title"
   private val heading: Message = "messages__companyAddress__heading"
 
-  protected val form: Form[String] = formProvider()
+  def onPageLoad(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+      implicit request =>
+        viewmodel(index, srn, mode).retrieve.right map get
+    }
 
   private def viewmodel(index: Int, srn: Option[String], mode: Mode): Retrieval[PostcodeLookupViewModel] =
     Retrieval {
@@ -65,12 +71,6 @@ class CompanyPostCodeLookupController @Inject()(
               srn = srn
             )
         }
-    }
-
-  def onPageLoad(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen requireData).async {
-      implicit request =>
-        viewmodel(index, srn, mode).retrieve.right map get
     }
 
   def onSubmit(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] =
