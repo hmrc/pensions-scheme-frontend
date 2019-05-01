@@ -18,11 +18,11 @@ package utils
 
 import identifiers._
 import identifiers.register.establishers._
-import identifiers.register.establishers.company.director.{DirectorDetailsId, IsDirectorAddressCompleteId, IsDirectorCompleteId}
+import identifiers.register.establishers.company.director.{DirectorDetailsId, IsDirectorAddressCompleteId, IsDirectorCompleteId, IsNewDirectorId}
 import identifiers.register.establishers.company.{CompanyDetailsId => EstablisherCompanyDetailsId, CompanyPayeId => EstablisherCompanyPayeId, CompanyVatId => EstablisherCompanyVatId}
 import identifiers.register.establishers.individual.EstablisherDetailsId
 import identifiers.register.establishers.partnership.PartnershipDetailsId
-import identifiers.register.establishers.partnership.partner.{IsPartnerAddressCompleteId, IsPartnerCompleteId, PartnerDetailsId}
+import identifiers.register.establishers.partnership.partner.{IsNewPartnerId, IsPartnerAddressCompleteId, IsPartnerCompleteId, PartnerDetailsId}
 import identifiers.register.trustees._
 import identifiers.register.trustees.company.{CompanyDetailsId, CompanyPayeId, CompanyVatId}
 import identifiers.register.trustees.individual.TrusteeDetailsId
@@ -146,9 +146,10 @@ case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Implicits{
       case _ => isComplete
     }
 
-  private def updateComplatedUsingAddress(isComplete: Option[Boolean], isAddressComplete: Option[Boolean]): Boolean =
-    (isComplete, isAddressComplete) match {
-      case (Some(true), Some(true)) => true
+  private def updateComplatedUsingAddress(isComplete: Option[Boolean], isAddressComplete: Option[Boolean], isNew: Option[Boolean]): Boolean =
+    (isComplete, isAddressComplete, isNew) match {
+      case (Some(true), None, None) => true
+      case (Some(true), Some(true), Some(true)) => true
       case _ => false
     }
 
@@ -175,7 +176,7 @@ case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Implicits{
       ) ((details, isComplete, isNew, isAddressComplete) =>
       EstablisherIndividualEntity(
         EstablisherDetailsId(index), details.fullName, details.isDeleted,
-        updateComplatedUsingAddress(isComplete, isAddressComplete), isNew.fold(false)(identity), noOfRecords)
+        updateComplatedUsingAddress(isComplete, isAddressComplete, isNew), isNew.fold(false)(identity), noOfRecords)
     )
 
     /*TODO: This logic for vat and paye is done to handle the partial data with vat and paye in company details
@@ -189,7 +190,7 @@ case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Implicits{
         (JsPath \ IsEstablisherAddressCompleteId.toString).readNullable[Boolean]
       ) ((details, vat, paye, isComplete, isNew, isAddressComplete) =>
       EstablisherCompanyEntity(EstablisherCompanyDetailsId(index),
-        details.companyName, details.isDeleted, updateComplatedUsingAddress(isCompanyComplete(vat, paye, isComplete), isAddressComplete), isNew.fold(false)(identity), noOfRecords)
+        details.companyName, details.isDeleted, updateComplatedUsingAddress(isCompanyComplete(vat, paye, isComplete), isAddressComplete, isNew), isNew.fold(false)(identity), noOfRecords)
     )
 
     private def readsPartnership(index: Int): Reads[Establisher[_]] = (
@@ -199,7 +200,7 @@ case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Implicits{
         (JsPath \ IsEstablisherAddressCompleteId.toString).readNullable[Boolean]
       ) ((details, isComplete, isNew, isAddressComplete) =>
       EstablisherPartnershipEntity(PartnershipDetailsId(index),
-        details.name, details.isDeleted, updateComplatedUsingAddress(isComplete, isAddressComplete), isNew.fold(false)(identity), noOfRecords)
+        details.name, details.isDeleted, updateComplatedUsingAddress(isComplete, isAddressComplete, isNew), isNew.fold(false)(identity), noOfRecords)
     )
 
     private def readsSkeleton(index: Int): Reads[Establisher[_]] = new Reads[Establisher[_]] {
@@ -248,7 +249,9 @@ case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Implicits{
       details =>
         details.map { director =>
           val directorIndex = details.indexOf(director)
-          val isComplete = updateComplatedUsingAddress(get(IsDirectorCompleteId(establisherIndex, directorIndex)), get(IsDirectorAddressCompleteId(establisherIndex, directorIndex)))
+          val isComplete = updateComplatedUsingAddress(get(IsDirectorCompleteId(establisherIndex, directorIndex)),
+            get(IsDirectorAddressCompleteId(establisherIndex, directorIndex)),
+            get(IsNewDirectorId(establisherIndex, directorIndex)))
           DirectorEntity(
             DirectorDetailsId(establisherIndex, directorIndex),
             director.fullName,
@@ -270,7 +273,9 @@ case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Implicits{
       details =>
         details.map { partner =>
           val partnerIndex = details.indexOf(partner)
-          val isComplete = updateComplatedUsingAddress(get(IsPartnerCompleteId(establisherIndex, partnerIndex)), get(IsPartnerAddressCompleteId(establisherIndex, partnerIndex)))
+          val isComplete = updateComplatedUsingAddress(get(IsPartnerCompleteId(establisherIndex, partnerIndex)),
+            get(IsPartnerAddressCompleteId(establisherIndex, partnerIndex)),
+            get(IsNewPartnerId(establisherIndex, partnerIndex)))
           PartnerEntity(
             PartnerDetailsId(establisherIndex, partnerIndex),
             partner.fullName,
@@ -312,7 +317,7 @@ case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Implicits{
       ) ((details, isComplete, isNew, isAddressComplete) =>
       TrusteeIndividualEntity(
         TrusteeDetailsId(index), details.fullName, details.isDeleted,
-        updateComplatedUsingAddress(isComplete, isAddressComplete), isNew.fold(false)(identity), noOfRecords, schemeType)
+        updateComplatedUsingAddress(isComplete, isAddressComplete, isNew), isNew.fold(false)(identity), noOfRecords, schemeType)
     )
 
     /*TODO: This logic for vat and paye is done to handle the partial data with vat and paye in company details
@@ -326,7 +331,7 @@ case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Implicits{
         (JsPath \ IsTrusteeAddressCompleteId.toString).readNullable[Boolean]
       ) ((details, vat, paye, isComplete, isNew, isAddressComplete) => {
       TrusteeCompanyEntity(CompanyDetailsId(index), details.companyName, details.isDeleted,
-        updateComplatedUsingAddress(isCompanyComplete(vat, paye, isComplete), isAddressComplete), isNew.fold(false)(identity), noOfRecords, schemeType)
+        updateComplatedUsingAddress(isCompanyComplete(vat, paye, isComplete), isAddressComplete, isNew), isNew.fold(false)(identity), noOfRecords, schemeType)
     }
     )
 
@@ -337,7 +342,7 @@ case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Implicits{
         (JsPath \ IsTrusteeAddressCompleteId.toString).readNullable[Boolean]
       ) ((details, isComplete, isNew, isAddressComplete) => TrusteePartnershipEntity(
       TrusteePartnershipDetailsId(index), details.name, details.isDeleted,
-      updateComplatedUsingAddress(isComplete, isAddressComplete), isNew.fold(false)(identity), noOfRecords, schemeType)
+      updateComplatedUsingAddress(isComplete, isAddressComplete, isNew), isNew.fold(false)(identity), noOfRecords, schemeType)
     )
 
     private def readsSkeleton(index: Int): Reads[Trustee[_]] = new Reads[Trustee[_]] {
