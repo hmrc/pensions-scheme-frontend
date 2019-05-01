@@ -187,21 +187,21 @@ class SchemeDetailsTaskListViewSpec extends ViewBehaviours {
 
     "no trustees" should {
 
-      val journeyTaskListNoTrustees: SchemeDetailsTaskList = SchemeDetailsTaskList(beforeYouStartSection,"test", Seq.empty, None,
+      def journeyTaskListNoTrustees(text: Option[String] = None): SchemeDetailsTaskList = SchemeDetailsTaskList(beforeYouStartSection, "test", Seq.empty, None,
         SchemeDetailsTaskListSection(
           None,
           Link(messages("messages__schemeTaskList__sectionEstablishers_add_link"),
             controllers.register.establishers.routes.EstablisherKindController.onPageLoad(NormalMode, 0, None).url),
-          None
-        ), Seq.empty,
+            None), Seq.empty,
         Some(SchemeDetailsTaskListSection(
           None,
           Link(messages("messages__schemeTaskList__sectionTrustees_add_link"),
             controllers.register.trustees.routes.TrusteeKindController.onPageLoad(NormalMode, 0, None).url),
-          None
-        )), Seq.empty, None, "h1", "h2",None, "pageTitle"
+            None,
+          text)), Seq.empty, None, "h1", "h2",None, "pageTitle"
       )
-      val view = createView(journeyTaskListNoTrustees)
+
+      val view = createView(journeyTaskListNoTrustees())
 
       "display correct header" in {
 
@@ -210,12 +210,21 @@ class SchemeDetailsTaskListViewSpec extends ViewBehaviours {
       }
 
       "display the correct link" in {
+        val doc = asDocument(view())
         view must haveLinkWithText(
           url = controllers.register.trustees.routes.TrusteeKindController.onPageLoad(NormalMode, 0, None).url,
           linkText = messages("messages__schemeTaskList__sectionTrustees_add_link"),
           linkId = "section-trustees-link"
         )
+        assertNotRenderedById(doc, id = "section-trustees-header-additional-text")
       }
+
+      "display additional text" in {
+        val view = createView(journeyTaskListNoTrustees(Some("additional text")))
+        val doc = asDocument(view())
+        assertRenderedByIdWithText(doc, id = "section-trustees-header-additional-text", text = "additional text")
+      }
+
     }
 
     "trustees defined and not completed" should {

@@ -170,9 +170,15 @@
                 </h2>
 
                 @variationsOnly("<p>")
+
+                <!--this is the add link-->
                 <a id= "section-trustees-link"  href="@{header.link.target}">
                     @messages(header.link.text)
                 </a>
+
+                @header.p1.map { text =>
+                    <p id="section-trustees-header-additional-text">@text</p>
+                }
 
                 @header.isCompleted.map{ isCompleted =>
                     <strong class="@statusClass(isCompleted)" id="section-trustees-status">@messages(status(isCompleted))</strong>

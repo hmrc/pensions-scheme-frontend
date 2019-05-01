@@ -19,12 +19,13 @@ package utils
 import identifiers.register.establishers.company.{CompanyDetailsId => EstablisherCompanyDetailsId}
 import identifiers.register.establishers.individual.EstablisherDetailsId
 import identifiers.register.establishers.partnership.{PartnershipDetailsId => EstablisherPartnershipDetailsId}
-import identifiers.register.trustees.MoreThanTenTrusteesId
+import identifiers.register.trustees.{MoreThanTenTrusteesId, TrusteeKindId}
 import identifiers.register.trustees.company.{CompanyDetailsId => TrusteeCompanyDetailsId}
 import identifiers.register.trustees.individual.TrusteeDetailsId
 import identifiers.register.trustees.partnership.{PartnershipDetailsId => TrusteePartnershipDetailsId}
 import identifiers.{DeclarationDutiesId, IsWorkingKnowledgeCompleteId, _}
-import models.register.Entity
+import models.register.{Entity, SchemeType}
+import models.register.SchemeType.{MasterTrust, SingleTrust}
 import models.{Link, Mode, NormalMode}
 import play.api.i18n.Messages
 import viewmodels._
@@ -42,7 +43,11 @@ abstract class HsTaskListHelper(answers: UserAnswers)(implicit messages: Message
   protected lazy val individualLinkText = messages("messages__schemeTaskList__individual_link")
   protected lazy val partnershipLinkText = messages("messages__schemeTaskList__partnership_link")
   protected lazy val addTrusteesLinkText = messages("messages__schemeTaskList__sectionTrustees_add_link")
+  protected lazy val addDeleteTrusteesLinkText = messages("messages__schemeTaskList__sectionTrustees_add_delete_link")
+  protected lazy val addTrusteesAdditionalInfo = messages("messages__schemeTaskList__sectionTrustees_add_additional_text")
   protected lazy val changeTrusteesLinkText = messages("messages__schemeTaskList__sectionTrustees_change_link")
+  protected lazy val deleteTrusteesLinkText = messages("messages__schemeTaskList__sectionTrustees_delete_link")
+  protected lazy val deleteTrusteesAdditionalInfo = messages("messages__schemeTaskList__sectionTrustees_delete_additional_text")
   protected lazy val declarationLinkText = messages("messages__schemeTaskList__declaration_link")
 
   def taskList: SchemeDetailsTaskList
@@ -82,31 +87,52 @@ abstract class HsTaskListHelper(answers: UserAnswers)(implicit messages: Message
   }
 
   private[utils] def addTrusteeHeader(userAnswers: UserAnswers, mode: Mode, srn: Option[String]): Option[SchemeDetailsTaskListSection] = {
-    userAnswers.get(HaveAnyTrusteesId) match {
-      case None | Some(true) =>
-        if (userAnswers.allTrusteesAfterDelete.nonEmpty) {
-          Some(
-            SchemeDetailsTaskListSection(
-              Some(isAllTrusteesCompleted(userAnswers)),
-              Link(changeTrusteesLinkText,
-                controllers.register.trustees.routes.AddTrusteeController.onPageLoad(mode, srn).url),
-              None
-            )
-          )
-        } else {
-          Some(
-            SchemeDetailsTaskListSection(None,
-              Link(addTrusteesLinkText,
-                controllers.register.trustees.routes.TrusteeKindController.onPageLoad(mode, userAnswers.allTrustees.size, srn).url),
-              None
-            )
-          )
-        }
+    (userAnswers.get(HaveAnyTrusteesId), userAnswers.allTrusteesAfterDelete.isEmpty) match {
+      case (None | Some(true), false) =>
+
+        val (linkText, additionalText): (String, Option[String]) =
+          getTrusteeHeaderText(userAnswers.allTrusteesAfterDelete.size, userAnswers.get(SchemeTypeId))
+
+        Some(
+          SchemeDetailsTaskListSection(
+            link = addTrusteeLink(linkText, srn, mode),
+            p1 = additionalText))
+
+      case (None | Some(true), true) =>
+
+        Some(
+          SchemeDetailsTaskListSection(
+            trusteeStatus(isAllTrusteesCompleted(userAnswers), trusteesMandatory(userAnswers.get(SchemeTypeId))),
+            typeOfTrusteeLink(addTrusteesLinkText, userAnswers.allTrustees.size, srn, mode)))
+
       case _ =>
         None
     }
+
   }
 
+  private def typeOfTrusteeLink(linkText: String, trusteeCount: Int, srn: Option[String], mode: Mode): Link =
+    Link(linkText, controllers.register.trustees.routes.TrusteeKindController.onPageLoad(mode, trusteeCount, srn).url)
+
+  private def addTrusteeLink(linkText: String, srn: Option[String], mode: Mode): Link =
+    Link(linkText, controllers.register.trustees.routes.AddTrusteeController.onPageLoad(mode, srn).url)
+
+  private[utils] def trusteeStatus(completed: Boolean, mandatory: Boolean): Option[Boolean] = (completed, mandatory) match {
+    case (true, _) => None
+    case (false, false) => None
+    case (false, true) => Some(false)
+  }
+
+  private[utils] def getTrusteeHeaderText(size: Int, schemeType: Option[SchemeType]): (String, Option[String]) = size match {
+    case `size` if size == 10 => (deleteTrusteesLinkText, Some(deleteTrusteesAdditionalInfo))
+    case `size` if size == 1 && trusteesMandatory(schemeType) => (addTrusteesLinkText, Some(addTrusteesAdditionalInfo))
+    case `size` if size > 1 && size < 10 => (addDeleteTrusteesLinkText, None)
+    case _ => (changeTrusteesLinkText, None)
+  }
+
+  private[utils] def trusteesMandatory(schemeType: Option[SchemeType]): Boolean = {
+    schemeType.contains(MasterTrust) || schemeType.contains(SingleTrust)
+  }
 
   private[utils] def declarationEnabled(userAnswers: UserAnswers): Boolean = {
     val isTrusteeOptional = userAnswers.get(HaveAnyTrusteesId).contains(false)
@@ -136,7 +162,7 @@ abstract class HsTaskListHelper(answers: UserAnswers)(implicit messages: Message
     case EstablisherPartnershipDetailsId(_) | TrusteePartnershipDetailsId(_) => partnershipLinkText
   }
 
-    protected def linkTarget(item: Entity[_], index: Int, mode: Mode, srn: Option[String]): String = {
+  protected def linkTarget(item: Entity[_], index: Int, mode: Mode, srn: Option[String]): String = {
     item match {
       case models.register.EstablisherCompanyEntity(_, _, _, true, _, _) =>
         controllers.register.establishers.company.routes.CompanyReviewController.onPageLoad(mode, srn, index).url
