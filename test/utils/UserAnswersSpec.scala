@@ -468,7 +468,8 @@ class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues with 
       }
 
       "return false if trustee details are completed but truestee address are incomplete" in {
-        val trusteeCompleted = trustee.set(IsTrusteeCompleteId(0))(true).asOpt.get
+        val trusteeCompleted = trustee.set(IsTrusteeCompleteId(0))(true).flatMap(
+          _.set(IsTrusteeAddressCompleteId(0))(false)).asOpt.get
         trusteeCompleted.areVariationChangesCompleted mustBe false
       }
 
@@ -491,14 +492,16 @@ class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues with 
 
       "return false if establishers are completed but directors address is not completed" in {
         val establisherCompleted = establisher.set(IsEstablisherCompleteId(0))(true).flatMap(
-          _.set(IsDirectorCompleteId(0,0))(true)).flatMap(
+          _.set(IsDirectorCompleteId(0,0))(false)).flatMap(
           _.set(IsEstablisherAddressCompleteId(0))(true)).asOpt.get
         establisherCompleted.areVariationChangesCompleted mustBe false
       }
 
       "return false if establishers are completed but establisher address is not completed" in {
         val establisherCompleted = establisher.set(IsEstablisherCompleteId(0))(true).flatMap(
-          _.set(IsDirectorCompleteId(0,0))(true)).asOpt.get
+          _.set(IsDirectorCompleteId(0,0))(true)).flatMap(
+          _.set(IsDirectorAddressCompleteId(0,0))(true)).flatMap(
+          _.set(IsEstablisherAddressCompleteId(0))(false)).asOpt.get
         establisherCompleted.areVariationChangesCompleted mustBe false
       }
 

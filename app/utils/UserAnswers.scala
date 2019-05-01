@@ -148,8 +148,9 @@ case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Implicits{
 
   private def updateComplatedUsingAddress(isComplete: Option[Boolean], isAddressComplete: Option[Boolean], isNew: Option[Boolean]): Boolean =
     (isComplete, isAddressComplete, isNew) match {
-      case (Some(true), None, None) => true
       case (Some(true), Some(true), Some(true)) => true
+      case (Some(true), Some(true), None) => true
+      case (Some(true), None, None) => true
       case _ => false
     }
 

@@ -32,6 +32,7 @@ import identifiers.{IsWorkingKnowledgeCompleteId, _}
 import models._
 import models.person.PersonDetails
 import models.register.SchemeType
+import models.register.SchemeType.SingleTrust
 import org.joda.time.LocalDate
 import org.scalatest.{MustMatchers, OptionValues}
 import play.api.libs.json.JsResult
@@ -378,6 +379,7 @@ trait HsTaskListHelperBehaviour extends SpecBase with MustMatchers with OptionVa
             _.set(IsAboutBenefitsAndInsuranceCompleteId)(true).flatMap(
               _.set(IsWorkingKnowledgeCompleteId)(true).flatMap(
                 _.set(EstablisherDetailsId(0))(PersonDetails("firstName", None, "lastName", LocalDate.now())).flatMap(
+                  _.set(SchemeTypeId)(SingleTrust)).flatMap(
                   _.set(IsEstablisherCompleteId(0))(true)).flatMap(
                   _.set(HaveAnyTrusteesId)(true))
               )
