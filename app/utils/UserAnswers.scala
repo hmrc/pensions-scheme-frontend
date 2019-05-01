@@ -455,7 +455,7 @@ case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Implicits{
     item.isCompleted && isDirectorPartnerCompleted(establisherIndex)
   }.contains(false)
 
-  def areChangesCompleted: Boolean = {
+  def areVariationChangesCompleted: Boolean = {
 
     val isInsuranceCompleted = get(BenefitsSecuredByInsuranceId) match {
       case Some(true) => !List(get(InvestmentRegulatedSchemeId), get(OccupationalPensionSchemeId), get(TypeOfBenefitsId),

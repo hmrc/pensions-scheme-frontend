@@ -50,14 +50,16 @@ class HsTaskListHelperVariationsSpec extends HsTaskListHelperBehaviour {
       _.set(IsAboutMembersCompleteId)(isCompleteAboutMembers).flatMap(
         _.set(IsAboutBankDetailsCompleteId)(isCompleteAboutBank).flatMap(
           _.set(IsAboutBenefitsAndInsuranceCompleteId)(isCompleteAboutBenefits).flatMap(
-            _.set(IsWorkingKnowledgeCompleteId)(isCompleteWk).flatMap(
-              _.set(EstablisherDetailsId(0))(PersonDetails("firstName", None, "lastName", LocalDate.now())).flatMap(
-                _.set(IsEstablisherCompleteId(0))(isCompleteEstablishers)).flatMap(
-                _.set(IsEstablisherAddressCompleteId(0))(isCompleteEstablishers)).flatMap(
-                _.set(TrusteeDetailsId(0))(PersonDetails("firstName", None, "lastName", LocalDate.now())).flatMap(
-                  _.set(IsTrusteeCompleteId(0))(isCompleteTrustees)).flatMap(
-                  _.set(IsTrusteeAddressCompleteId(0))(isCompleteTrustees)).flatMap(
-                  _.set(InsuranceDetailsChangedId)(isChangedInsuranceDetails))
+            _.set(BenefitsSecuredByInsuranceId)(!isCompleteAboutBenefits).flatMap(
+              _.set(IsWorkingKnowledgeCompleteId)(isCompleteWk).flatMap(
+                _.set(EstablisherDetailsId(0))(PersonDetails("firstName", None, "lastName", LocalDate.now())).flatMap(
+                  _.set(IsEstablisherCompleteId(0))(isCompleteEstablishers)).flatMap(
+                  _.set(IsEstablisherAddressCompleteId(0))(isCompleteEstablishers)).flatMap(
+                  _.set(TrusteeDetailsId(0))(PersonDetails("firstName", None, "lastName", LocalDate.now())).flatMap(
+                    _.set(IsTrusteeCompleteId(0))(isCompleteTrustees)).flatMap(
+                    _.set(IsTrusteeAddressCompleteId(0))(isCompleteTrustees)).flatMap(
+                    _.set(InsuranceDetailsChangedId)(isChangedInsuranceDetails))
+                )
               )
             )
           )
@@ -183,13 +185,43 @@ class HsTaskListHelperVariationsSpec extends HsTaskListHelperBehaviour {
   }
 
   "declaration" must {
+
     "have a declaration section when viewonly is false" in {
       val userAnswers = answersData().asOpt.value
       val helper = createTaskListHelper(userAnswers)
       helper.declarationSection(userAnswers).isDefined mustBe true
     }
 
-    behave like declarationSection()
+    "have incomplete link when about benefits and insurance section not completed" in {
+      val userAnswers = answersData(isCompleteAboutBenefits = false).asOpt.value
+      mustHaveLink(createTaskListHelper(userAnswers), userAnswers,
+        Some(controllers.register.routes.StillNeedDetailsController.onPageLoad(srn).url))
+    }
+
+    "have incomplete link when establishers section not completed" in {
+      val userAnswers = answersData(isCompleteEstablishers = false).asOpt.value
+      mustHaveLink(createTaskListHelper(userAnswers), userAnswers,
+        Some(controllers.register.routes.StillNeedDetailsController.onPageLoad(srn).url))
+    }
+
+    "have incomplete link when trustees section not completed" in {
+      val userAnswers = answersData(isCompleteTrustees = false).asOpt.value
+      mustHaveLink(createTaskListHelper(userAnswers), userAnswers,
+        Some(controllers.register.routes.StillNeedDetailsController.onPageLoad(srn).url))
+    }
+
+    "have link when all the sections are completed" in {
+      val userAnswers = answersData().asOpt.value
+      mustHaveLink(createTaskListHelper(userAnswers), userAnswers,
+        Some(controllers.routes.VariationDeclarationController.onPageLoad(srn).url))
+    }
+
+    "have no link when all the sections are not completed and no user answers updated" in {
+      val userAnswers = answersData(isChangedInsuranceDetails = false).asOpt.value
+      val helper = createTaskListHelper(userAnswers)
+      helper.declarationSection(userAnswers).isDefined mustBe true
+      mustHaveNoLink(helper, userAnswers)
+    }
   }
 
   def establishersSection(): Unit = {

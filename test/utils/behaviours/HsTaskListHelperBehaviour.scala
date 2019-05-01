@@ -301,9 +301,9 @@ trait HsTaskListHelperBehaviour extends SpecBase with MustMatchers with OptionVa
     }
   }
 
-  protected def mustHaveLink(helper:HsTaskListHelper, userAnswers:UserAnswers):Unit =
+  protected def mustHaveLink(helper:HsTaskListHelper, userAnswers:UserAnswers, url:Option[String]=None):Unit =
     helper.declarationSection(userAnswers).foreach(_.declarationLink mustBe
-      Some(Link(declarationLinkText, controllers.register.routes.DeclarationController.onPageLoad().url)) )
+      Some(Link(declarationLinkText, url.getOrElse(controllers.register.routes.DeclarationController.onPageLoad().url))))
 
   protected def mustHaveNoLink(helper:HsTaskListHelper, userAnswers:UserAnswers):Unit =
     helper.declarationSection(userAnswers).foreach(_.declarationLink mustBe None )

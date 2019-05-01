@@ -48,8 +48,23 @@ class HsTaskListHelperVariations(answers: UserAnswers, viewOnly: Boolean, srn: O
     if (viewOnly) {
       None
     } else {
-      Some(SchemeDetailsTaskListDeclarationSection(declarationLink(userAnswers)))
+      Some(SchemeDetailsTaskListDeclarationSection(
+        header = "messages__schemeTaskList__sectionDeclaration_header",
+        declarationLink = variationDeclarationLink(userAnswers, srn)))
     }
+
+  private[utils] def variationDeclarationLink(userAnswers: UserAnswers, srn:Option[String]): Option[Link] = {
+    if(userAnswers.isUserAnswerUpdated()) {
+      Some(Link(declarationLinkText,
+        if (userAnswers.areVariationChangesCompleted)
+          controllers.routes.VariationDeclarationController.onPageLoad(srn).url
+        else
+          controllers.register.routes.StillNeedDetailsController.onPageLoad(srn).url
+      ))
+    } else {
+      None
+    }
+  }
 
   private def listOfSectionNameAsLink(sections: Seq[Entity[_]]): Seq[SchemeDetailsTaskListSection] = {
     val notDeletedElements = for ((section, index) <- sections.zipWithIndex) yield {

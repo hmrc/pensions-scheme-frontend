@@ -435,71 +435,71 @@ class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues with 
     }
   }
 
-  "areChangesCompleted" when {
+  "areVariationChangesCompleted" when {
 
     "checking insurance company" must {
        "return false if scheme have insurance and details are missing" in {
          val insuranceCompanyDetails = UserAnswers().investmentRegulated(true)
-         insuranceCompanyDetails.areChangesCompleted mustBe false
+         insuranceCompanyDetails.areVariationChangesCompleted mustBe false
        }
 
        "return false if scheme have insurance is not defined" in {
          val insuranceCompanyDetails = UserAnswers()
-         insuranceCompanyDetails.areChangesCompleted mustBe false
+         insuranceCompanyDetails.areVariationChangesCompleted mustBe false
        }
 
        "return true if scheme does not have insurance" in {
          val insuranceCompanyDetails = UserAnswers().benefitsSecuredByInsurance(false)
-         insuranceCompanyDetails.areChangesCompleted mustBe true
+         insuranceCompanyDetails.areVariationChangesCompleted mustBe true
        }
 
        "return true if scheme have insurance and all the details are present" in {
-         insuranceCompanyDetails.areChangesCompleted mustBe true
+         insuranceCompanyDetails.areVariationChangesCompleted mustBe true
        }
      }
 
     "checking trustees" must {
       "return true if trustees are not defined" in {
-        insuranceCompanyDetails.areChangesCompleted mustBe true
+        insuranceCompanyDetails.areVariationChangesCompleted mustBe true
       }
 
       "return false if trustees are not completed" in {
-        trustee.areChangesCompleted mustBe false
+        trustee.areVariationChangesCompleted mustBe false
       }
 
       "return false if trustee details are completed but truestee address are incomplete" in {
         val trusteeCompleted = trustee.set(IsTrusteeCompleteId(0))(true).asOpt.get
-        trusteeCompleted.areChangesCompleted mustBe false
+        trusteeCompleted.areVariationChangesCompleted mustBe false
       }
 
       "return true if trustees and address details are completed" in {
         val trusteeCompleted = trustee.set(IsTrusteeCompleteId(0))(true).flatMap(
           _.set(IsTrusteeAddressCompleteId(0))(true)).asOpt.get
-        trusteeCompleted.areChangesCompleted mustBe true
+        trusteeCompleted.areVariationChangesCompleted mustBe true
       }
     }
 
     "checking establishers" must {
       "return false if establishers are not completed" in {
-        establisher.areChangesCompleted mustBe false
+        establisher.areVariationChangesCompleted mustBe false
       }
 
       "return false if establishers are completed but directors are not completed" in {
         val establisherCompleted = establisher.set(IsEstablisherCompleteId(0))(true).asOpt.get
-        establisherCompleted.areChangesCompleted mustBe false
+        establisherCompleted.areVariationChangesCompleted mustBe false
       }
 
       "return false if establishers are completed but directors address is not completed" in {
         val establisherCompleted = establisher.set(IsEstablisherCompleteId(0))(true).flatMap(
           _.set(IsDirectorCompleteId(0,0))(true)).flatMap(
           _.set(IsEstablisherAddressCompleteId(0))(true)).asOpt.get
-        establisherCompleted.areChangesCompleted mustBe false
+        establisherCompleted.areVariationChangesCompleted mustBe false
       }
 
       "return false if establishers are completed but establisher address is not completed" in {
         val establisherCompleted = establisher.set(IsEstablisherCompleteId(0))(true).flatMap(
           _.set(IsDirectorCompleteId(0,0))(true)).asOpt.get
-        establisherCompleted.areChangesCompleted mustBe false
+        establisherCompleted.areVariationChangesCompleted mustBe false
       }
 
       "return true if establishers company is completed" in {
@@ -507,7 +507,7 @@ class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues with 
           _.set(IsDirectorCompleteId(0,0))(true)).flatMap(
           _.set(IsDirectorAddressCompleteId(0,0))(true)).flatMap(
           _.set(IsEstablisherAddressCompleteId(0))(true)).asOpt.get
-        establisherCompleted.areChangesCompleted mustBe true
+        establisherCompleted.areVariationChangesCompleted mustBe true
       }
 
       "return true if establishers partnership is completed" in {
@@ -515,7 +515,7 @@ class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues with 
           _.set(IsPartnerCompleteId(0,0))(true)).flatMap(
           _.set(IsPartnerAddressCompleteId(0,0))(true)).flatMap(
           _.set(IsEstablisherAddressCompleteId(0))(true)).asOpt.get
-        establisherCompleted.areChangesCompleted mustBe true
+        establisherCompleted.areVariationChangesCompleted mustBe true
       }
     }
   }
