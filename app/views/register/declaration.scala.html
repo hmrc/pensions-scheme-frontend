@@ -39,7 +39,7 @@
             headingKey= messages("messages__declaration__heading")
         )
 
-        @components.paragraph_text(messages("messages__declaration__declare"))
+        @components.paragraph_text(messages("messages__declaration__declare"), para_id="declaration_start")
 
         <ol class="list-bullet">
             @if(isCompany){
@@ -54,38 +54,38 @@
                 }
             }
             <li>
-                @components.paragraph_text(messages("messages__declaration__statement2"))
+                @components.paragraph_text(messages("messages__declaration__statement2"), para_id="para2")
             </li>
             <li>
-                @components.paragraph_text(messages("messages__declaration__statement3"))
-            </li>
-
-            <li>
-                @components.paragraph_text(messages("messages__declaration__statement4"))
+                @components.paragraph_text(messages("messages__declaration__statement3"), para_id="para3")
             </li>
 
             <li>
-                @components.paragraph_text(messages("messages__declaration__statement5"))
+                @components.paragraph_text(messages("messages__declaration__statement4"), para_id="para4")
+            </li>
+
+            <li>
+                @components.paragraph_text(messages("messages__declaration__statement5"), para_id="para5")
             </li>
             <li>
-                @components.paragraph_text(messages("messages__declaration__statement6"))
+                @components.paragraph_text(messages("messages__declaration__statement6"), para_id="para6")
             </li>
             <li>
-                @components.paragraph_text(messages("messages__declaration__statement7"))
+                @components.paragraph_text(messages("messages__declaration__statement7"), para_id="para7")
             </li>
             <li>
                 @if(hasWorkingKnowledge){
-                        @components.paragraph_text(messages("messages__declaration__statement8_working_knowledge"))
+                        @components.paragraph_text(messages("messages__declaration__statement8_working_knowledge"), para_id="para8")
                 } else {
-                        @components.paragraph_text(messages("messages__declaration__statement8_no_working_knowledge"))
+                        @components.paragraph_text(messages("messages__declaration__statement8_no_working_knowledge"), para_id="para8")
                 }
             </li>
             <li>
-                @components.paragraph_text(messages("messages__declaration__statement9"))
+                @components.paragraph_text(messages("messages__declaration__statement9"), para_id="para9")
             </li>
             @if(showMasterTrustDeclaration){
                 <li>
-                    @components.paragraph_text(messages("messages__declaration__statement10"))
+                    @components.paragraph_text(messages("messages__declaration__statement10"), para_id="para10")
                 </li>
             }
         </ol>
