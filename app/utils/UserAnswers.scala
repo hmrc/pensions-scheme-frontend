@@ -150,6 +150,7 @@ case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Implicits{
     (isComplete, isAddressComplete, isNew) match {
       case (Some(true), Some(true), Some(true)) => true
       case (Some(true), Some(true), None) => true
+      case (Some(true), Some(false), None) => false
       case (Some(true), None, None) => true
       case _ => false
     }
@@ -461,14 +462,14 @@ case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Implicits{
     item.isCompleted && isDirectorPartnerCompleted(establisherIndex)
   }.contains(false)
 
-  def areVariationChangesCompleted: Boolean = {
+  def isInsuranceCompleted: Boolean = get(BenefitsSecuredByInsuranceId) match {
+    case Some(true) => !List(get(InvestmentRegulatedSchemeId), get(OccupationalPensionSchemeId), get(TypeOfBenefitsId),
+      get(InsuranceCompanyNameId), get(InsurancePolicyNumberId), get(InsurerConfirmAddressId)).contains(None)
+    case Some(false) => true
+    case _ => false
+  }
 
-    val isInsuranceCompleted = get(BenefitsSecuredByInsuranceId) match {
-      case Some(true) => !List(get(InvestmentRegulatedSchemeId), get(OccupationalPensionSchemeId), get(TypeOfBenefitsId),
-        get(InsuranceCompanyNameId), get(InsurancePolicyNumberId), get(InsurerConfirmAddressId)).contains(None)
-      case Some(false) => true
-      case _ => false
-    }
+  def areVariationChangesCompleted: Boolean = {
 
     isInsuranceCompleted && isAllTrusteesCompleted && allEstablishersCompleted
 

@@ -192,11 +192,13 @@ class UserAnswersServiceSpec extends AsyncWordSpec with MustMatchers with Mockit
       }
     }
 
-    "dont save flag with if under year selected" in {
+    "save flag with false if under year selected" in {
 
-      testService.setAddressCompleteFlagAfterAddressYear(NormalMode, None, PartnerAddressYearsId(0, 0), UnderAYear, UserAnswers(json)) map { result =>
-        verify(subscriptionConnector, never).save(any(), any(), any())(any(), any(), any())
-        result mustEqual UserAnswers(json)
+      when(subscriptionConnector.save[Boolean, TypedIdentifier[Boolean]](any(), Matchers.eq(IsPartnerAddressCompleteId(0, 0)), Matchers.eq(false))(any(), any(), any()))
+        .thenReturn(Future(json))
+
+      testService.setAddressCompleteFlagAfterAddressYear(NormalMode, None, PartnerAddressYearsId(0, 0), UnderAYear, UserAnswers(json)) map {
+        _ mustEqual UserAnswers(json)
       }
     }
 

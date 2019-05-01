@@ -130,14 +130,14 @@ class HsTaskListHelperVariationsSpec extends HsTaskListHelperBehaviour {
           SchemeDetailsTaskListSection(Some(false), Link(aboutMembersLinkText,
             controllers.routes.WhatYouWillNeedMembersController.onPageLoad().url), None),
           SchemeDetailsTaskListSection(Some(false), Link(aboutBenefitsAndInsuranceLinkText,
-            controllers.routes.WhatYouWillNeedBenefitsInsuranceController.onPageLoad().url), None)
+            controllers.routes.CheckYourAnswersBenefitsAndInsuranceController.onPageLoad(UpdateMode, srn).url), None)
         )
     }
 
     "return the the Seq of members and benefits section with " +
       "links of the cya pages of individual sub sections when completed " in {
       val userAnswers = UserAnswers().set(IsAboutMembersCompleteId)(true).flatMap(
-        _.set(IsAboutBenefitsAndInsuranceCompleteId)(true)
+        _.set(BenefitsSecuredByInsuranceId)(false)
       ).asOpt.value
       val helper = new HsTaskListHelperVariations(userAnswers, viewOnly = false, srn)
       helper.aboutSection(userAnswers) mustBe

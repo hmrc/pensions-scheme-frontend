@@ -162,7 +162,7 @@ trait UserAnswersService {
 
     addressYears match{
       case OverAYear => addressCompletedId.fold(Future.successful(userAnswers))(id => save(mode, srn, id, true).map(UserAnswers))
-      case UnderAYear => Future.successful(userAnswers)
+      case UnderAYear => addressCompletedId.fold(Future.successful(userAnswers))(id => save(mode, srn, id, false).map(UserAnswers))
     }
   }
 
