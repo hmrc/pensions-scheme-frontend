@@ -257,12 +257,6 @@ trait HsTaskListHelperBehaviour extends SpecBase with MustMatchers with OptionVa
           Some(deleteTrusteesAdditionalInfo))
     }
 
-    "not display when do you have any trustees is false " in {
-      val userAnswers = UserAnswers().set(HaveAnyTrusteesId)(false).asOpt.value
-      val helper = createTaskListHelper(userAnswers)
-      helper.addTrusteeHeader(userAnswers, mode, srn) mustBe None
-    }
-
     "display and link should go to trustee kind page when do you have any trustees is true and no trustees are added " in {
       val userAnswers = UserAnswers().set(HaveAnyTrusteesId)(true).asOpt.value
       val helper = createTaskListHelper(userAnswers)

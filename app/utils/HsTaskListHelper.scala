@@ -86,38 +86,15 @@ abstract class HsTaskListHelper(answers: UserAnswers)(implicit messages: Message
     }
   }
 
-  private[utils] def addTrusteeHeader(userAnswers: UserAnswers, mode: Mode, srn: Option[String]): Option[SchemeDetailsTaskListSection] = {
-    (userAnswers.get(HaveAnyTrusteesId), userAnswers.allTrusteesAfterDelete.isEmpty) match {
-      case (None | Some(true), false) =>
+  protected[utils] def addTrusteeHeader(userAnswers: UserAnswers, mode: Mode, srn: Option[String]): Option[SchemeDetailsTaskListSection]
 
-        val (linkText, additionalText): (String, Option[String]) =
-          getTrusteeHeaderText(userAnswers.allTrusteesAfterDelete.size, userAnswers.get(SchemeTypeId))
-
-        Some(
-          SchemeDetailsTaskListSection(
-            link = addTrusteeLink(linkText, srn, mode),
-            p1 = additionalText))
-
-      case (None | Some(true), true) =>
-
-        Some(
-          SchemeDetailsTaskListSection(
-            trusteeStatus(isAllTrusteesCompleted(userAnswers), trusteesMandatory(userAnswers.get(SchemeTypeId))),
-            typeOfTrusteeLink(addTrusteesLinkText, userAnswers.allTrustees.size, srn, mode)))
-
-      case _ =>
-        None
-    }
-
-  }
-
-  private def typeOfTrusteeLink(linkText: String, trusteeCount: Int, srn: Option[String], mode: Mode): Link =
+  protected def typeOfTrusteeLink(linkText: String, trusteeCount: Int, srn: Option[String], mode: Mode): Link =
     Link(linkText, controllers.register.trustees.routes.TrusteeKindController.onPageLoad(mode, trusteeCount, srn).url)
 
-  private def addTrusteeLink(linkText: String, srn: Option[String], mode: Mode): Link =
+  protected def addTrusteeLink(linkText: String, srn: Option[String], mode: Mode): Link =
     Link(linkText, controllers.register.trustees.routes.AddTrusteeController.onPageLoad(mode, srn).url)
 
-  private[utils] def trusteeStatus(completed: Boolean, mandatory: Boolean): Option[Boolean] = (completed, mandatory) match {
+  protected[utils] def trusteeStatus(completed: Boolean, mandatory: Boolean): Option[Boolean] = (completed, mandatory) match {
     case (true, _) => None
     case (false, false) => None
     case (false, true) => Some(false)

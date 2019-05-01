@@ -162,6 +162,13 @@ class HsTaskListHelperRegistrationSpec extends HsTaskListHelperBehaviour with En
   "addTrusteeHeader " must {
 
     behave like addTrusteeHeader(NormalMode, None)
+
+    "not display when do you have any trustees is false " in {
+      val userAnswers = UserAnswers().set(HaveAnyTrusteesId)(false).asOpt.value
+      val helper = createTaskListHelper(userAnswers)
+      helper.addTrusteeHeader(userAnswers, NormalMode, Some("srn")) mustBe None
+    }
+
   }
 
   "establishers" must {
