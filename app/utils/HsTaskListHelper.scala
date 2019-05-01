@@ -87,7 +87,7 @@ abstract class HsTaskListHelper(answers: UserAnswers)(implicit messages: Message
         if (userAnswers.allTrusteesAfterDelete.nonEmpty) {
           Some(
             SchemeDetailsTaskListSection(
-              Some(isAllTrusteesCompleted(userAnswers)),
+              Some(userAnswers.isAllTrusteesCompleted),
               Link(changeTrusteesLinkText,
                 controllers.register.trustees.routes.AddTrusteeController.onPageLoad(mode, srn).url),
               None
@@ -116,8 +116,8 @@ abstract class HsTaskListHelper(answers: UserAnswers)(implicit messages: Message
       userAnswers.get(IsAboutBankDetailsCompleteId),
       userAnswers.get(IsAboutBenefitsAndInsuranceCompleteId),
       userAnswers.get(IsWorkingKnowledgeCompleteId),
-      Some(isAllEstablishersCompleted(userAnswers)),
-      Some(isTrusteeOptional | isAllTrusteesCompleted(userAnswers)),
+      Some(userAnswers.allEstablishersCompleted),
+      Some(isTrusteeOptional | userAnswers.isAllTrusteesCompleted),
       Some(userAnswers.allTrusteesAfterDelete.size < 10 || userAnswers.get(MoreThanTenTrusteesId).isDefined)
     ).forall(_.contains(true))
   }
@@ -152,14 +152,5 @@ abstract class HsTaskListHelper(answers: UserAnswers)(implicit messages: Message
         controllers.register.trustees.individual.routes.CheckYourAnswersController.onPageLoad(mode, index, srn).url
       case _ => item.editLink(mode, srn).getOrElse(controllers.routes.SessionExpiredController.onPageLoad().url)
     }
-  }
-
-
-  protected def isAllTrusteesCompleted(userAnswers: UserAnswers): Boolean = {
-    userAnswers.allTrusteesAfterDelete.nonEmpty && userAnswers.allTrusteesAfterDelete.forall(_.isCompleted)
-  }
-
-  protected def isAllEstablishersCompleted(userAnswers: UserAnswers): Boolean = {
-    userAnswers.allEstablishersAfterDelete.nonEmpty && userAnswers.allEstablishersAfterDelete.forall(_.isCompleted)
   }
 }

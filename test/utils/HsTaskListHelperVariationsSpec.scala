@@ -17,11 +17,11 @@
 package utils
 
 import base.SpecBase
-import identifiers.register.establishers.{IsEstablisherCompleteId, IsEstablisherNewId}
+import identifiers.register.establishers.{IsEstablisherAddressCompleteId, IsEstablisherCompleteId, IsEstablisherNewId}
 import identifiers.register.establishers.company.{CompanyDetailsId => EstablisherCompanyDetailsId}
 import identifiers.register.establishers.individual.EstablisherDetailsId
 import identifiers.register.establishers.partnership.{PartnershipDetailsId => EstablisherPartnershipDetailsId}
-import identifiers.register.trustees.{IsTrusteeCompleteId, IsTrusteeNewId}
+import identifiers.register.trustees.{IsTrusteeAddressCompleteId, IsTrusteeCompleteId, IsTrusteeNewId}
 import identifiers.register.trustees.company.{CompanyDetailsId => TrusteeCompanyDetailsId}
 import identifiers.register.trustees.individual.TrusteeDetailsId
 import identifiers.register.trustees.partnership.{IsPartnershipCompleteId, PartnershipDetailsId => TrusteePartnershipDetailsId}
@@ -53,10 +53,11 @@ class HsTaskListHelperVariationsSpec extends HsTaskListHelperBehaviour {
             _.set(IsWorkingKnowledgeCompleteId)(isCompleteWk).flatMap(
               _.set(EstablisherDetailsId(0))(PersonDetails("firstName", None, "lastName", LocalDate.now())).flatMap(
                 _.set(IsEstablisherCompleteId(0))(isCompleteEstablishers)).flatMap(
+                _.set(IsEstablisherAddressCompleteId(0))(isCompleteEstablishers)).flatMap(
                 _.set(TrusteeDetailsId(0))(PersonDetails("firstName", None, "lastName", LocalDate.now())).flatMap(
                   _.set(IsTrusteeCompleteId(0))(isCompleteTrustees)).flatMap(
-                  _.set(InsuranceDetailsChangedId)(isChangedInsuranceDetails)).flatMap(
-                  _.set(InsuranceDetailsChangedId)(isChangedEstablishersTrustees))
+                  _.set(IsTrusteeAddressCompleteId(0))(isCompleteTrustees)).flatMap(
+                  _.set(InsuranceDetailsChangedId)(isChangedInsuranceDetails))
               )
             )
           )

@@ -17,18 +17,17 @@
 package utils.behaviours
 
 import base.SpecBase
-import identifiers.register.establishers.{IsEstablisherCompleteId, IsEstablisherNewId}
+import identifiers.register.establishers.{IsEstablisherAddressCompleteId, IsEstablisherCompleteId, IsEstablisherNewId}
 import identifiers.register.establishers.company.{CompanyPayeId, CompanyVatId, CompanyDetailsId => EstablisherCompanyDetailsId}
 import identifiers.register.establishers.individual.EstablisherDetailsId
 import identifiers.register.establishers.partnership.{PartnershipDetailsId => EstablisherPartnershipDetailsId}
 import identifiers.register.trustees.company.{CompanyDetailsId => TrusteeCompanyDetailsId, CompanyPayeId => TrusteeCompanyPayeId, CompanyVatId => TrusteeCompanyVatId}
-import identifiers.register.trustees.{IsTrusteeCompleteId, IsTrusteeNewId, MoreThanTenTrusteesId}
+import identifiers.register.trustees.{IsTrusteeAddressCompleteId, IsTrusteeCompleteId, IsTrusteeNewId, MoreThanTenTrusteesId}
 import identifiers.register.trustees.company.{CompanyDetailsId => TrusteeCompanyDetailsId}
 import identifiers.register.trustees.company.{CompanyVatId => TrusteeCompanyVatId}
 import identifiers.register.trustees.company.{CompanyPayeId => TrusteeCompanyPayeId}
 import identifiers.register.trustees.individual.TrusteeDetailsId
 import identifiers.register.trustees.partnership.{IsPartnershipCompleteId, PartnershipDetailsId => TrusteePartnershipDetailsId}
-import identifiers.register.trustees.{IsTrusteeCompleteId, MoreThanTenTrusteesId}
 import identifiers.{IsWorkingKnowledgeCompleteId, _}
 import models._
 import models.person.PersonDetails
@@ -75,8 +74,10 @@ trait HsTaskListHelperBehaviour extends SpecBase with MustMatchers with OptionVa
             _.set(IsWorkingKnowledgeCompleteId)(isCompleteWk).flatMap(
               _.set(EstablisherDetailsId(0))(PersonDetails("firstName", None, "lastName", LocalDate.now())).flatMap(
                 _.set(IsEstablisherCompleteId(0))(isCompleteEstablishers)).flatMap(
+                _.set(IsEstablisherAddressCompleteId(0))(isCompleteEstablishers)).flatMap(
                 _.set(TrusteeDetailsId(0))(PersonDetails("firstName", None, "lastName", LocalDate.now())).flatMap(
-                  _.set(IsTrusteeCompleteId(0))(isCompleteTrustees))
+                  _.set(IsTrusteeCompleteId(0))(isCompleteTrustees).flatMap(
+                    _.set(IsTrusteeAddressCompleteId(0))(isCompleteTrustees)))
               )
             )
           )
@@ -97,7 +98,7 @@ trait HsTaskListHelperBehaviour extends SpecBase with MustMatchers with OptionVa
 
     val addTrustee: (UserAnswers, Int) => JsResult[UserAnswers] = (ua, index) =>
       ua.set(TrusteeDetailsId(index))(PersonDetails(s"firstName$index", None, s"lastName$index", LocalDate.now())).flatMap(
-        _.set(IsTrusteeCompleteId(index))(isCompleteTrustees))
+        _.set(IsTrusteeCompleteId(index))(isCompleteTrustees)).flatMap(_.set(IsTrusteeAddressCompleteId(index))(isCompleteTrustees))
 
     answersData(isCompleteBeforeStart,
       isCompleteAboutMembers,
@@ -121,38 +122,44 @@ trait HsTaskListHelperBehaviour extends SpecBase with MustMatchers with OptionVa
     UserAnswers().set(EstablisherDetailsId(0))(PersonDetails("firstName", None, "lastName", LocalDate.now())).flatMap(
       _.set(IsEstablisherCompleteId(0))(isCompleteEstablisher).flatMap(
         _.set(IsEstablisherNewId(0))(true).flatMap(
-          _.set(CompanyVatId(0))(Vat.No).flatMap(
-            _.set(CompanyPayeId(0))(Paye.No).flatMap(
-              _.set(EstablisherCompanyDetailsId(1))(CompanyDetails("test company", false)).flatMap(
-                _.set(IsEstablisherNewId(1))(true).flatMap(
-                  _.set(CompanyVatId(1))(Vat.No).flatMap(
-                    _.set(CompanyPayeId(1))(Paye.No).flatMap(
-                      _.set(IsEstablisherCompleteId(1))(isCompleteEstablisher).flatMap(
-                        _.set(EstablisherPartnershipDetailsId(2))(PartnershipDetails("test partnership", false)).flatMap(
-                          _.set(IsEstablisherNewId(2))(true).flatMap(
-                            _.set(CompanyVatId(2))(Vat.No).flatMap(
-                              _.set(CompanyPayeId(2))(Paye.No).flatMap(
-                                _.set(IsEstablisherCompleteId(2))(isCompleteEstablisher)
-                              )))))))))))))).asOpt.value
+          _.set(IsEstablisherAddressCompleteId(0))(isCompleteEstablisher).flatMap(
+            _.set(CompanyVatId(0))(Vat.No).flatMap(
+              _.set(CompanyPayeId(0))(Paye.No).flatMap(
+                _.set(EstablisherCompanyDetailsId(1))(CompanyDetails("test company", false)).flatMap(
+                  _.set(IsEstablisherNewId(1))(true).flatMap(
+                    _.set(IsEstablisherAddressCompleteId(1))(isCompleteEstablisher).flatMap(
+                      _.set(CompanyVatId(1))(Vat.No).flatMap(
+                        _.set(CompanyPayeId(1))(Paye.No).flatMap(
+                          _.set(IsEstablisherCompleteId(1))(isCompleteEstablisher).flatMap(
+                            _.set(EstablisherPartnershipDetailsId(2))(PartnershipDetails("test partnership", false)).flatMap(
+                              _.set(IsEstablisherNewId(2))(true).flatMap(
+                                _.set(IsEstablisherAddressCompleteId(2))(isCompleteEstablisher).flatMap(
+                                  _.set(CompanyVatId(2))(Vat.No).flatMap(
+                                    _.set(CompanyPayeId(2))(Paye.No).flatMap(
+                                      _.set(IsEstablisherCompleteId(2))(isCompleteEstablisher)
+                                    ))))))))))))))))).asOpt.value
   }
 
   protected def allTrustees(isCompleteTrustees: Boolean = true): UserAnswers = {
     UserAnswers().set(TrusteeDetailsId(0))(PersonDetails("firstName", None, "lastName", LocalDate.now())).flatMap(
       _.set(IsTrusteeCompleteId(0))(isCompleteTrustees).flatMap(
         _.set(IsTrusteeNewId(0))(true).flatMap(
-          _.set(TrusteeCompanyVatId(0))(Vat.No).flatMap(
-            _.set(TrusteeCompanyPayeId(0))(Paye.No).flatMap(
-              _.set(TrusteeCompanyDetailsId(1))(CompanyDetails("test company", false)).flatMap(
-                _.set(IsTrusteeNewId(1))(true).flatMap(
-                  _.set(TrusteeCompanyVatId(1))(Vat.No).flatMap(
-                    _.set(TrusteeCompanyPayeId(1))(Paye.No).flatMap(
-                      _.set(IsTrusteeCompleteId(1))(isCompleteTrustees).flatMap(
-                        _.set(TrusteePartnershipDetailsId(2))(PartnershipDetails("test partnership", false)).flatMap(
-                          _.set(IsTrusteeNewId(2))(true).flatMap(
-                            _.set(TrusteeCompanyVatId(2))(Vat.No).flatMap(
-                              _.set(TrusteeCompanyPayeId(2))(Paye.No).flatMap(
-                                _.set(IsPartnershipCompleteId(2))(isCompleteTrustees)
-                              )))))))))))))).asOpt.value
+          _.set(IsTrusteeAddressCompleteId(0))(isCompleteTrustees).flatMap(
+            _.set(TrusteeCompanyVatId(0))(Vat.No).flatMap(
+              _.set(TrusteeCompanyPayeId(0))(Paye.No).flatMap(
+                _.set(TrusteeCompanyDetailsId(1))(CompanyDetails("test company", false)).flatMap(
+                  _.set(IsTrusteeNewId(1))(true).flatMap(
+                    _.set(IsTrusteeAddressCompleteId(1))(isCompleteTrustees).flatMap(
+                      _.set(TrusteeCompanyVatId(1))(Vat.No).flatMap(
+                        _.set(TrusteeCompanyPayeId(1))(Paye.No).flatMap(
+                          _.set(IsTrusteeCompleteId(1))(isCompleteTrustees).flatMap(
+                            _.set(TrusteePartnershipDetailsId(2))(PartnershipDetails("test partnership", false)).flatMap(
+                              _.set(IsTrusteeNewId(2))(true).flatMap(
+                                _.set(IsTrusteeAddressCompleteId(2))(isCompleteTrustees).flatMap(
+                                  _.set(TrusteeCompanyVatId(2))(Vat.No).flatMap(
+                                    _.set(TrusteeCompanyPayeId(2))(Paye.No).flatMap(
+                                      _.set(IsPartnershipCompleteId(2))(isCompleteTrustees)
+                                    ))))))))))))))))).asOpt.value
   }
 
 
@@ -216,7 +223,7 @@ trait HsTaskListHelperBehaviour extends SpecBase with MustMatchers with OptionVa
     "display and link should go to add trustees page and status is completed when do you have any trustees is not present" +
       "and trustees are added and completed" in {
       val userAnswers = UserAnswers().set(TrusteeDetailsId(0))(PersonDetails("firstName", None, "lastName", LocalDate.now())).flatMap(
-        _.set(IsTrusteeCompleteId(0))(true)
+        _.set(IsTrusteeCompleteId(0))(true).flatMap(_.set(IsTrusteeAddressCompleteId(0))(true))
       ).asOpt.value
       val helper = createTaskListHelper(userAnswers)
       helper.addTrusteeHeader(userAnswers, mode, srn).value mustBe
@@ -258,6 +265,7 @@ trait HsTaskListHelperBehaviour extends SpecBase with MustMatchers with OptionVa
               _.set(IsWorkingKnowledgeCompleteId)(true).flatMap(
                 _.set(EstablisherDetailsId(0))(PersonDetails("firstName", None, "lastName", LocalDate.now())).flatMap(
                   _.set(IsEstablisherCompleteId(0))(true)).flatMap(
+                  _.set(IsEstablisherAddressCompleteId(0))(true)).flatMap(
                   _.set(HaveAnyTrusteesId)(false)).flatMap(
                   _.set(InsuranceDetailsChangedId)(true))
               )

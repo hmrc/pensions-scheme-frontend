@@ -48,19 +48,23 @@ class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues with 
         _.set(IsEstablisherCompleteId(0))(true).flatMap(
           _.set(EstablisherKindId(0))(EstablisherKind.Company).flatMap(
             _.set(IsEstablisherNewId(0))(true).flatMap(
-              _.set(EstablisherCompanyVatId(0))(Vat.No).flatMap(
-                _.set(EstablisherCompanyPayeId(0))(Paye.No).flatMap(
-                  _.set(EstablisherDetailsId(1))(PersonDetails("my", None, "name", LocalDate.now)).flatMap(
-                    _.set(IsEstablisherNewId(1))(true).flatMap(
-                      _.set(IsEstablisherCompleteId(1))(false).flatMap(
-                        _.set(EstablisherKindId(1))(EstablisherKind.Indivdual).flatMap(
-                          _.set(PartnershipDetailsId(2))(PartnershipDetails("my partnership name", false)).flatMap(
-                            _.set(IsEstablisherNewId(2))(true).flatMap(
-                              _.set(EstablisherKindId(2))(EstablisherKind.Partnership).flatMap(
-                                _.set(IsEstablisherCompleteId(2))(false).flatMap(
-                                  _.set(EstablisherKindId(3))(EstablisherKind.Company)).flatMap(
-                                  _.set(IsEstablisherNewId(0))(true)
-                                )))))))))))))).asOpt.value
+              _.set(IsEstablisherAddressCompleteId(0))(true).flatMap(
+                _.set(EstablisherCompanyVatId(0))(Vat.No).flatMap(
+                  _.set(EstablisherCompanyPayeId(0))(Paye.No).flatMap(
+                    _.set(EstablisherDetailsId(1))(PersonDetails("my", None, "name", LocalDate.now)).flatMap(
+                      _.set(IsEstablisherNewId(1))(true).flatMap(
+                        _.set(IsEstablisherAddressCompleteId(1))(true).flatMap(
+                          _.set(IsEstablisherCompleteId(1))(false).flatMap(
+                            _.set(EstablisherKindId(1))(EstablisherKind.Indivdual).flatMap(
+                              _.set(PartnershipDetailsId(2))(PartnershipDetails("my partnership name", false)).flatMap(
+                                _.set(IsEstablisherNewId(2))(true).flatMap(
+                                  _.set(IsEstablisherAddressCompleteId(2))(true).flatMap(
+                                    _.set(EstablisherKindId(2))(EstablisherKind.Partnership).flatMap(
+                                      _.set(IsEstablisherCompleteId(2))(false).flatMap(
+                                        _.set(EstablisherKindId(3))(EstablisherKind.Company)).flatMap(
+                                        _.set(IsEstablisherNewId(3))(true).flatMap(
+                                          _.set(IsEstablisherAddressCompleteId(2))(true)
+                                        )))))))))))))))))).asOpt.value
 
       val allEstablisherEntities: Seq[Establisher[_]] = Seq(
         establisherEntity("my company", 0, Company, isComplete = true),
@@ -141,7 +145,8 @@ class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues with 
             TrusteeDetailsId.toString ->
               PersonDetails("First", None, "Last", LocalDate.now),
             IsTrusteeCompleteId.toString -> true,
-            IsTrusteeNewId.toString -> true
+            IsTrusteeNewId.toString -> true,
+            IsTrusteeAddressCompleteId.toString -> true
           ),
           Json.obj(
             TrusteeKindId.toString -> TrusteeKind.Company.toString,
@@ -150,7 +155,8 @@ class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues with 
             CompanyVatId.toString -> Vat.No,
             CompanyPayeId.toString -> Paye.No,
             IsTrusteeCompleteId.toString -> true,
-            IsTrusteeNewId.toString -> true
+            IsTrusteeNewId.toString -> true,
+            IsTrusteeAddressCompleteId.toString -> true
           ),
           Json.obj(
             TrusteeKindId.toString -> TrusteeKind.Partnership.toString,
@@ -243,6 +249,7 @@ class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues with 
       val userAnswers = UserAnswers()
         .set(DirectorDetailsId(0, 0))(PersonDetails("First", None, "Last", LocalDate.now))
         .flatMap(_.set(IsDirectorCompleteId(0, 0))(true))
+        .flatMap(_.set(IsDirectorAddressCompleteId(0, 0))(true))
         .flatMap(_.set(IsDirectorCompleteId(0, 1))(false))
         .flatMap(_.set(DirectorDetailsId(0, 1))(PersonDetails("First1", None, "Last1", LocalDate.now))).get
 

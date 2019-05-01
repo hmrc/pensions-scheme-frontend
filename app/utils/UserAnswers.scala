@@ -16,17 +16,17 @@
 
 package utils
 
+import identifiers._
+import identifiers.register.establishers._
 import identifiers.register.establishers.company.director.{DirectorDetailsId, IsDirectorAddressCompleteId, IsDirectorCompleteId}
 import identifiers.register.establishers.company.{CompanyDetailsId => EstablisherCompanyDetailsId, CompanyPayeId => EstablisherCompanyPayeId, CompanyVatId => EstablisherCompanyVatId}
 import identifiers.register.establishers.individual.EstablisherDetailsId
 import identifiers.register.establishers.partnership.PartnershipDetailsId
 import identifiers.register.establishers.partnership.partner.{IsPartnerAddressCompleteId, IsPartnerCompleteId, PartnerDetailsId}
-import identifiers.register.establishers._
+import identifiers.register.trustees._
 import identifiers.register.trustees.company.{CompanyDetailsId, CompanyPayeId, CompanyVatId}
 import identifiers.register.trustees.individual.TrusteeDetailsId
 import identifiers.register.trustees.partnership.{IsPartnershipCompleteId, PartnershipDetailsId => TrusteePartnershipDetailsId}
-import identifiers.register.trustees._
-import identifiers._
 import models.address.Address
 import models.person.PersonDetails
 import models.register._
@@ -138,19 +138,21 @@ case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Implicits{
     recur(JsSuccess(Nil), entities.zipWithIndex)
   }
 
-  private def isCompanyComplete(vat: Option[Vat], paye: Option[Paye], isComplete: Option[Boolean]): Option[Boolean] = {
+  private def isCompanyComplete(vat: Option[Vat], paye: Option[Paye], isComplete: Option[Boolean]): Option[Boolean] =
     (vat, paye) match {
       case (None, None) => Some(false)
       case (_, None) => Some(false)
       case (None, _) => Some(false)
       case _ => isComplete
     }
-  }
 
+  private def updateComplatedUsingAddress(isComplete: Option[Boolean], isAddressComplete: Option[Boolean]): Boolean =
+    (isComplete, isAddressComplete) match {
+      case (Some(true), Some(true)) => true
+      case _ => false
+    }
 
-  private def notDeleted: Reads[JsBoolean] = {
-    __.read(JsBoolean(false))
-  }
+  private def notDeleted: Reads[JsBoolean] = __.read(JsBoolean(false))
 
   def readEstablishers: Reads[Seq[Establisher[_]]] = new Reads[Seq[Establisher[_]]] {
 
@@ -168,11 +170,12 @@ case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Implicits{
     private def readsIndividual(index: Int): Reads[Establisher[_]] = (
       (JsPath \ EstablisherDetailsId.toString).read[PersonDetails] and
         (JsPath \ IsEstablisherCompleteId.toString).readNullable[Boolean] and
-        (JsPath \ IsEstablisherNewId.toString).readNullable[Boolean]
-      ) ((details, isComplete, isNew) =>
+        (JsPath \ IsEstablisherNewId.toString).readNullable[Boolean] and
+        (JsPath \ IsEstablisherAddressCompleteId.toString).readNullable[Boolean]
+      ) ((details, isComplete, isNew, isAddressComplete) =>
       EstablisherIndividualEntity(
         EstablisherDetailsId(index), details.fullName, details.isDeleted,
-        isComplete.getOrElse(false), isNew.fold(false)(identity), noOfRecords)
+        updateComplatedUsingAddress(isComplete, isAddressComplete), isNew.fold(false)(identity), noOfRecords)
     )
 
     /*TODO: This logic for vat and paye is done to handle the partial data with vat and paye in company details
@@ -182,19 +185,21 @@ case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Implicits{
         (JsPath \ EstablisherCompanyVatId.toString).readNullable[Vat] and
         (JsPath \ EstablisherCompanyPayeId.toString).readNullable[Paye] and
         (JsPath \ IsEstablisherCompleteId.toString).readNullable[Boolean] and
-        (JsPath \ IsEstablisherNewId.toString).readNullable[Boolean]
-      ) ((details, vat, paye, isComplete, isNew) =>
+        (JsPath \ IsEstablisherNewId.toString).readNullable[Boolean] and
+        (JsPath \ IsEstablisherAddressCompleteId.toString).readNullable[Boolean]
+      ) ((details, vat, paye, isComplete, isNew, isAddressComplete) =>
       EstablisherCompanyEntity(EstablisherCompanyDetailsId(index),
-        details.companyName, details.isDeleted, isCompanyComplete(vat, paye, isComplete).getOrElse(false), isNew.fold(false)(identity), noOfRecords)
+        details.companyName, details.isDeleted, updateComplatedUsingAddress(isCompanyComplete(vat, paye, isComplete), isAddressComplete), isNew.fold(false)(identity), noOfRecords)
     )
 
     private def readsPartnership(index: Int): Reads[Establisher[_]] = (
       (JsPath \ PartnershipDetailsId.toString).read[PartnershipDetails] and
         (JsPath \ IsEstablisherCompleteId.toString).readNullable[Boolean] and
-        (JsPath \ IsEstablisherNewId.toString).readNullable[Boolean]
-      ) ((details, isComplete, isNew) =>
+        (JsPath \ IsEstablisherNewId.toString).readNullable[Boolean] and
+        (JsPath \ IsEstablisherAddressCompleteId.toString).readNullable[Boolean]
+      ) ((details, isComplete, isNew, isAddressComplete) =>
       EstablisherPartnershipEntity(PartnershipDetailsId(index),
-        details.name, details.isDeleted, isComplete.getOrElse(false), isNew.fold(false)(identity), noOfRecords)
+        details.name, details.isDeleted, updateComplatedUsingAddress(isComplete, isAddressComplete), isNew.fold(false)(identity), noOfRecords)
     )
 
     private def readsSkeleton(index: Int): Reads[Establisher[_]] = new Reads[Establisher[_]] {
@@ -243,7 +248,7 @@ case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Implicits{
       details =>
         details.map { director =>
           val directorIndex = details.indexOf(director)
-          val isComplete = get(IsDirectorCompleteId(establisherIndex, directorIndex)).getOrElse(false)
+          val isComplete = updateComplatedUsingAddress(get(IsDirectorCompleteId(establisherIndex, directorIndex)), get(IsDirectorAddressCompleteId(establisherIndex, directorIndex)))
           DirectorEntity(
             DirectorDetailsId(establisherIndex, directorIndex),
             director.fullName,
@@ -265,7 +270,7 @@ case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Implicits{
       details =>
         details.map { partner =>
           val partnerIndex = details.indexOf(partner)
-          val isComplete = get(IsPartnerCompleteId(establisherIndex, partnerIndex)).getOrElse(false)
+          val isComplete = updateComplatedUsingAddress(get(IsPartnerCompleteId(establisherIndex, partnerIndex)), get(IsPartnerAddressCompleteId(establisherIndex, partnerIndex)))
           PartnerEntity(
             PartnerDetailsId(establisherIndex, partnerIndex),
             partner.fullName,
@@ -282,6 +287,11 @@ case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Implicits{
     allPartners(establisherIndex).filterNot(_.isDeleted)
   }
 
+  private def schemeType : Option[String] = json.transform((__ \ 'schemeType \ 'name).json.pick[JsString]) match {
+    case JsSuccess(scheme, _) => Some(scheme.value)
+    case JsError(errors) => None
+  }
+
   def readTrustees: Reads[Seq[Trustee[_]]] = new Reads[Seq[Trustee[_]]] {
 
     private def noOfRecords : Int = json.validate((__ \ 'trustees).readNullable(__.read(
@@ -294,19 +304,15 @@ case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Implicits{
       case _ => 0
     }
 
-    private def schemeType : Option[String] = json.transform((__ \ 'schemeType \ 'name).json.pick[JsString]) match {
-      case JsSuccess(scheme, _) => Some(scheme.value)
-      case JsError(errors) => None
-    }
-
     private def readsIndividual(index: Int): Reads[Trustee[_]] = (
       (JsPath \ TrusteeDetailsId.toString).read[PersonDetails] and
         (JsPath \ IsTrusteeCompleteId.toString).readNullable[Boolean] and
-        (JsPath \ IsTrusteeNewId.toString).readNullable[Boolean]
-      ) ((details, isComplete, isNew) =>
+        (JsPath \ IsTrusteeNewId.toString).readNullable[Boolean] and
+        (JsPath \ IsTrusteeAddressCompleteId.toString).readNullable[Boolean]
+      ) ((details, isComplete, isNew, isAddressComplete) =>
       TrusteeIndividualEntity(
         TrusteeDetailsId(index), details.fullName, details.isDeleted,
-        isComplete.getOrElse(false), isNew.fold(false)(identity), noOfRecords, schemeType)
+        updateComplatedUsingAddress(isComplete, isAddressComplete), isNew.fold(false)(identity), noOfRecords, schemeType)
     )
 
     /*TODO: This logic for vat and paye is done to handle the partial data with vat and paye in company details
@@ -316,20 +322,22 @@ case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Implicits{
         (JsPath \ CompanyVatId.toString).readNullable[Vat] and
         (JsPath \ CompanyPayeId.toString).readNullable[Paye] and
         (JsPath \ IsTrusteeCompleteId.toString).readNullable[Boolean] and
-        (JsPath \ IsTrusteeNewId.toString).readNullable[Boolean]
-      ) ((details, vat, paye, isComplete, isNew) => {
+        (JsPath \ IsTrusteeNewId.toString).readNullable[Boolean] and
+        (JsPath \ IsTrusteeAddressCompleteId.toString).readNullable[Boolean]
+      ) ((details, vat, paye, isComplete, isNew, isAddressComplete) => {
       TrusteeCompanyEntity(CompanyDetailsId(index), details.companyName, details.isDeleted,
-        isCompanyComplete(vat, paye, isComplete).getOrElse(false), isNew.fold(false)(identity), noOfRecords, schemeType)
+        updateComplatedUsingAddress(isCompanyComplete(vat, paye, isComplete), isAddressComplete), isNew.fold(false)(identity), noOfRecords, schemeType)
     }
     )
 
     private def readsPartnership(index: Int): Reads[Trustee[_]] = (
       (JsPath \ TrusteePartnershipDetailsId.toString).read[PartnershipDetails] and
         (JsPath \ IsPartnershipCompleteId.toString).readNullable[Boolean] and
-        (JsPath \ IsTrusteeNewId.toString).readNullable[Boolean]
-      ) ((details, isComplete, isNew) => TrusteePartnershipEntity(
+        (JsPath \ IsTrusteeNewId.toString).readNullable[Boolean] and
+        (JsPath \ IsTrusteeAddressCompleteId.toString).readNullable[Boolean]
+      ) ((details, isComplete, isNew, isAddressComplete) => TrusteePartnershipEntity(
       TrusteePartnershipDetailsId(index), details.name, details.isDeleted,
-      isComplete.getOrElse(false), isNew.fold(false)(identity), noOfRecords, schemeType)
+      updateComplatedUsingAddress(isComplete, isAddressComplete), isNew.fold(false)(identity), noOfRecords, schemeType)
     )
 
     private def readsSkeleton(index: Int): Reads[Trustee[_]] = new Reads[Trustee[_]] {
@@ -427,21 +435,27 @@ case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Implicits{
     ).flatten
   }
 
+  def isAllTrusteesCompleted: Boolean = {
+    val isSingleOrMaster = schemeType.fold(false)(scheme => Seq("single", "master").exists(_.equals(scheme)))
+
+    if(isSingleOrMaster)
+      allTrusteesAfterDelete.nonEmpty && allTrusteesAfterDelete.forall(_.isCompleted)
+    else
+      allTrusteesAfterDelete.forall(_.isCompleted)
+
+  }
+
+  def isDirectorPartnerCompleted(establisherIndex:Int) = get(EstablisherKindId(establisherIndex)) match {
+    case Some(EstablisherKind.Company) => allDirectorsAfterDelete(establisherIndex).forall(_.isCompleted)
+    case Some(EstablisherKind.Partnership) => allPartnersAfterDelete(establisherIndex).forall(_.isCompleted)
+    case _ => true
+  }
+
+  def allEstablishersCompleted = !allEstablishersAfterDelete.zipWithIndex.collect { case (item, establisherIndex) =>
+    item.isCompleted && isDirectorPartnerCompleted(establisherIndex)
+  }.contains(false)
+
   def areChangesCompleted: Boolean = {
-
-    def isDirectorPartnerCompleted(establisherIndex:Int) = get(EstablisherKindId(establisherIndex)) match {
-      case Some(EstablisherKind.Company) =>
-        !allDirectorsAfterDelete(establisherIndex).zipWithIndex.collect { case (item, directorPartnerIndex) =>
-          item.isCompleted && get(IsDirectorAddressCompleteId(establisherIndex, directorPartnerIndex)).fold(false)(_ == true)
-        }.contains(false)
-
-      case Some(EstablisherKind.Partnership) =>
-        !allPartnersAfterDelete(establisherIndex).zipWithIndex.collect { case (item, directorPartnerIndex) =>
-          item.isCompleted && get(IsPartnerAddressCompleteId(establisherIndex, directorPartnerIndex)).fold(false)(_ == true)
-        }.contains(false)
-
-      case _ => true
-    }
 
     val isInsuranceCompleted = get(BenefitsSecuredByInsuranceId) match {
       case Some(true) => !List(get(InvestmentRegulatedSchemeId), get(OccupationalPensionSchemeId), get(TypeOfBenefitsId),
@@ -450,19 +464,7 @@ case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Implicits{
       case _ => false
     }
 
-    val allTrusteesCompleted = !allTrusteesAfterDelete.zipWithIndex.collect { case (item, index) =>
-      item.isCompleted && get(IsTrusteeAddressCompleteId(index)).contains(true)
-    }.contains(false)
-
-    val allEstablishersCompleted = !allEstablishersAfterDelete.zipWithIndex.collect { case (item, establisherIndex) =>
-      item.isCompleted &&
-        get(IsEstablisherAddressCompleteId(establisherIndex)).fold(false)(_ == true) &&
-        isDirectorPartnerCompleted(establisherIndex)
-    }.contains(false)
-
-
-    isInsuranceCompleted && allTrusteesCompleted && allEstablishersCompleted
-
+    isInsuranceCompleted && isAllTrusteesCompleted && allEstablishersCompleted
 
   }
 }
