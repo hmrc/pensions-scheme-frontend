@@ -41,18 +41,20 @@ class EstablisherDetailsController @Inject()(
                                               @EstablishersIndividual navigator: Navigator,
                                               authenticate: AuthAction,
                                               getData: DataRetrievalAction,
+                                              allowAccess: AllowAccessActionProvider,
                                               requireData: DataRequiredAction,
                                               formProvider: PersonDetailsFormProvider
                                             )(implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
-    implicit request =>
-      val filledForm = request.userAnswers.get(EstablisherDetailsId(index)).fold(form)(form.fill)
-      val submitUrl = controllers.register.establishers.individual.routes.EstablisherDetailsController.onSubmit(mode, index, srn)
-      Future.successful(Ok(establisherDetails(appConfig, filledForm, mode, index, existingSchemeName, submitUrl)))
-  }
+  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+      implicit request =>
+        val filledForm = request.userAnswers.get(EstablisherDetailsId(index)).fold(form)(form.fill)
+        val submitUrl = controllers.register.establishers.individual.routes.EstablisherDetailsController.onSubmit(mode, index, srn)
+        Future.successful(Ok(establisherDetails(appConfig, filledForm, mode, index, existingSchemeName, submitUrl)))
+    }
 
   def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>

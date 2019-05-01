@@ -54,7 +54,7 @@ class UniqueTaxReferenceControllerSpec extends ControllerSpecBase {
   def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryTrustee): UniqueTaxReferenceController =
     new UniqueTaxReferenceController(frontendAppConfig, messagesApi, FakeUserAnswersService,
       new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
-      dataRetrievalAction, new DataRequiredActionImpl, formProvider)
+      dataRetrievalAction, FakeAllowAccessProvider(), new DataRequiredActionImpl, formProvider)
 
   private val submitUrl = controllers.register.trustees.individual.routes.UniqueTaxReferenceController.onSubmit(NormalMode, index, None)
 

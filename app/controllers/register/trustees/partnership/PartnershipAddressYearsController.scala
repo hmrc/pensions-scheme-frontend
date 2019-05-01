@@ -19,7 +19,7 @@ package controllers.register.trustees.partnership
 import com.google.inject.Inject
 import config.FrontendAppConfig
 import controllers.Retrievals
-import controllers.actions.{AuthAction, DataRequiredAction, DataRetrievalAction}
+import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRequiredAction, DataRetrievalAction}
 import controllers.address.AddressYearsController
 import forms.address.AddressYearsFormProvider
 import identifiers.register.trustees.partnership.{PartnershipAddressYearsId, PartnershipDetailsId}
@@ -39,12 +39,14 @@ class PartnershipAddressYearsController @Inject()(
                                                    override val messagesApi: MessagesApi,
                                                    authenticate: AuthAction,
                                                    getData: DataRetrievalAction,
+                                                   allowAccess: AllowAccessActionProvider,
                                                    requireData: DataRequiredAction
                                                  ) extends AddressYearsController with Retrievals {
 
   private val form = new AddressYearsFormProvider()(Message("messages__partnershipAddressYears__error"))
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
+  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
     implicit request =>
       PartnershipDetailsId(index).retrieve.right.map { partnershipDetails =>
         get(PartnershipAddressYearsId(index), form, viewModel(mode, index, partnershipDetails.name, srn))

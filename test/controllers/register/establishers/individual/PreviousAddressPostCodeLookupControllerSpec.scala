@@ -59,6 +59,7 @@ class PreviousAddressPostCodeLookupControllerSpec extends ControllerSpecBase wit
       new FakeNavigator(desiredRoute = onwardRoute),
       FakeAuthAction,
       dataRetrievalAction,
+      FakeAllowAccessProvider(),
       new DataRequiredActionImpl,
       formProvider
     )

@@ -89,6 +89,7 @@ class CompanyPreviousAddressPostcodeLookupControllerSpec extends ControllerSpecB
       new FakeNavigator(desiredRoute = onwardRoute),
       FakeAuthAction,
       dataRetrievalAction,
+      FakeAllowAccessProvider(),
       new DataRequiredActionImpl,
       formProvider
     )

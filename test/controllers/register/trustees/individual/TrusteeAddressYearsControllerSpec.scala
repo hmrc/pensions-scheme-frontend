@@ -18,7 +18,7 @@ package controllers.register.trustees.individual
 
 import services.FakeUserAnswersService
 import controllers.ControllerSpecBase
-import controllers.actions.{DataRequiredActionImpl, DataRetrievalAction, FakeAuthAction, FakeDataRetrievalAction}
+import controllers.actions.{DataRequiredActionImpl, DataRetrievalAction, FakeAllowAccessProvider, FakeAuthAction, FakeDataRetrievalAction}
 import forms.address.AddressYearsFormProvider
 import identifiers.register.trustees.individual.{TrusteeAddressYearsId, TrusteeDetailsId}
 import models.person.PersonDetails
@@ -129,6 +129,7 @@ object TrusteeAddressYearsControllerSpec extends ControllerSpecBase {
       messagesApi,
       FakeAuthAction,
       dataRetrievalAction,
+      FakeAllowAccessProvider(),
       new DataRequiredActionImpl()
     )
 

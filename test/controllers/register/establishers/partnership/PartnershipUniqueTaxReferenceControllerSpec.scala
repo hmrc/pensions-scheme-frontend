@@ -18,7 +18,7 @@ package controllers.register.establishers.partnership
 
 import services.FakeUserAnswersService
 import controllers.ControllerSpecBase
-import controllers.actions.{DataRequiredActionImpl, DataRetrievalAction, FakeAuthAction, FakeDataRetrievalAction}
+import controllers.actions.{DataRequiredActionImpl, DataRetrievalAction, FakeAllowAccessProvider, FakeAuthAction, FakeDataRetrievalAction}
 import forms.register.establishers.partnership.PartnershipUniqueTaxReferenceFormProvider
 import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.partnership.{PartnershipDetailsId, PartnershipUniqueTaxReferenceID}
@@ -62,6 +62,7 @@ class PartnershipUniqueTaxReferenceControllerSpec extends ControllerSpecBase {
       FakeAuthAction,
       new FakeNavigator(desiredRoute = onwardRoute),
       dataRetrievalAction,
+      FakeAllowAccessProvider(),
       new DataRequiredActionImpl,
       formProvider
     )

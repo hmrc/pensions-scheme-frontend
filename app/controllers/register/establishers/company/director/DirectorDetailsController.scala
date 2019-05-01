@@ -44,6 +44,7 @@ class DirectorDetailsController @Inject()(
                                            @EstablishersCompanyDirector navigator: Navigator,
                                            authenticate: AuthAction,
                                            getData: DataRetrievalAction,
+                                           allowAccess: AllowAccessActionProvider,
                                            requireData: DataRequiredAction,
                                            formProvider: PersonDetailsFormProvider,
                                            sectionComplete: SectionComplete
@@ -54,7 +55,7 @@ class DirectorDetailsController @Inject()(
   private def postCall: (Mode, Index, Index, Option[String]) => Call = routes.DirectorDetailsController.onSubmit _
 
   def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen requireData).async {
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         val preparedForm = request.userAnswers.get[PersonDetails](DirectorDetailsId(establisherIndex, directorIndex)) match {
           case None => form

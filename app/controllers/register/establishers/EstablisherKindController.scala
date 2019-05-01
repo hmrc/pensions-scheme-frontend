@@ -42,6 +42,7 @@ class EstablisherKindController @Inject()(
                                            @Establishers navigator: Navigator,
                                            authenticate: AuthAction,
                                            getData: DataRetrievalAction,
+                                           allowAccess: AllowAccessActionProvider,
                                            requireData: DataRequiredAction,
                                            formProvider: EstablisherKindFormProvider
                                          )(implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
@@ -49,7 +50,8 @@ class EstablisherKindController @Inject()(
   private val form = formProvider()
   private val postCall = routes.EstablisherKindController.onSubmit _
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
+  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
     implicit request =>
       val formWithData = request.userAnswers.get(EstablisherKindId(index)).fold(form)(form.fill)
       Future.successful(Ok(establisherKind(appConfig, formWithData, mode, index, existingSchemeName, postCall(mode, index, srn))))

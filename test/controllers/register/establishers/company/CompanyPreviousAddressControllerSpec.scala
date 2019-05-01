@@ -70,6 +70,7 @@ class CompanyPreviousAddressControllerSpec extends ControllerSpecBase with Scala
       new FakeNavigator(desiredRoute = onwardRoute),
       FakeAuthAction,
       dataRetrievalAction,
+      FakeAllowAccessProvider(),
       new DataRequiredActionImpl,
       formProvider,
       countryOptions,
