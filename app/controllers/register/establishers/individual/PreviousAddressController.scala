@@ -42,6 +42,7 @@ class PreviousAddressController @Inject()(
                                            @EstablishersIndividual val navigator: Navigator,
                                            authenticate: AuthAction,
                                            getData: DataRetrievalAction,
+                                           allowAccess: AllowAccessActionProvider,
                                            requireData: DataRequiredAction,
                                            val formProvider: AddressFormProvider,
                                            val countryOptions: CountryOptions,
@@ -72,7 +73,8 @@ class PreviousAddressController @Inject()(
         }
     }
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
+  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
     implicit request =>
       viewmodel(index, mode, srn).retrieve.right.map {
         vm =>

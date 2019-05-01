@@ -19,6 +19,8 @@ package controllers.register.establishers.partnership.partner
 import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions.{AuthAction, DataRequiredAction, DataRetrievalAction}
+import identifiers.AnyMoreChangesId
+import identifiers.register.establishers.{IsEstablisherCompleteId, IsEstablisherNewId}
 import identifiers.register.establishers.partnership.partner._
 import javax.inject.Inject
 import models.Mode.checkMode
@@ -29,7 +31,7 @@ import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.EstablishersPartner
 import utils.checkyouranswers.Ops._
-import utils.{CountryOptions, Navigator, SectionComplete}
+import utils.{CountryOptions, Navigator, SectionComplete, UserAnswers}
 import viewmodels.AnswerSection
 import views.html.check_your_answers
 
@@ -88,8 +90,27 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
   def onSubmit(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen requiredData).async {
     implicit request =>
-      userAnswersService.setCompleteFlag(mode, srn, IsPartnerCompleteId(establisherIndex, partnerIndex), request.userAnswers, value = true) map { _ =>
-        Redirect(navigator.nextPage(CheckYourAnswersId(establisherIndex, partnerIndex), NormalMode, request.userAnswers))
+      mode match{
+        case NormalMode | CheckMode =>
+          userAnswersService.setCompleteFlag(mode, srn, IsPartnerCompleteId(establisherIndex, partnerIndex), request.userAnswers, value = true) map { _ =>
+            Redirect(navigator.nextPage(CheckYourAnswersId(establisherIndex, partnerIndex), mode, request.userAnswers, srn))
+          }
+        case _ =>
+          val isEstablisherNew = request.userAnswers.get(IsEstablisherNewId(establisherIndex)).getOrElse(false)
+          if (isEstablisherNew) {
+            userAnswersService.setCompleteFlag(mode, srn, IsPartnerCompleteId(establisherIndex, partnerIndex), request.userAnswers, value = true).map { result =>
+              Redirect(navigator.nextPage(CheckYourAnswersId(establisherIndex, partnerIndex), mode, request.userAnswers, srn))
+            }
+          }
+          else {
+            request.userAnswers.upsert(IsEstablisherCompleteId(establisherIndex))(true) { answers =>
+              answers.upsert(IsPartnerCompleteId(establisherIndex, partnerIndex))(true) { updatedAnswers =>
+                userAnswersService.upsert(mode, srn, updatedAnswers.json).map { json =>
+                  Redirect(navigator.nextPage(CheckYourAnswersId(establisherIndex, partnerIndex), mode, request.userAnswers, srn))
+                }
+              }
+            }
+          }
       }
   }
 }

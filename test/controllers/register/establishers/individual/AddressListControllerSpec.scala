@@ -58,6 +58,7 @@ class AddressListControllerSpec extends ControllerSpecBase with Enumerable.Impli
       new FakeNavigator(desiredRoute = onwardRoute),
       FakeAuthAction,
       dataRetrievalAction,
+      FakeAllowAccessProvider(),
       new DataRequiredActionImpl
     )
 

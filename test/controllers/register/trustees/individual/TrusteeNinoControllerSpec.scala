@@ -120,6 +120,7 @@ object TrusteeNinoControllerSpec extends ControllerSpecBase {
       messagesApi,
       FakeAuthAction,
       dataRetrievalAction,
+      FakeAllowAccessProvider(),
       new DataRequiredActionImpl,
       fakeNavigator,
       FakeUserAnswersService

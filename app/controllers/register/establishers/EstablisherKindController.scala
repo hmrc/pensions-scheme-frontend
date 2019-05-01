@@ -21,7 +21,7 @@ import connectors.UserAnswersCacheConnector
 import controllers.Retrievals
 import controllers.actions._
 import forms.register.establishers.EstablisherKindFormProvider
-import identifiers.register.establishers.EstablisherKindId
+import identifiers.register.establishers.{EstablisherKindId, IsEstablisherNewId}
 import javax.inject.Inject
 import models.{Index, Mode}
 import play.api.data.Form
@@ -42,6 +42,7 @@ class EstablisherKindController @Inject()(
                                            @Establishers navigator: Navigator,
                                            authenticate: AuthAction,
                                            getData: DataRetrievalAction,
+                                           allowAccess: AllowAccessActionProvider,
                                            requireData: DataRequiredAction,
                                            formProvider: EstablisherKindFormProvider
                                          )(implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
@@ -49,7 +50,8 @@ class EstablisherKindController @Inject()(
   private val form = formProvider()
   private val postCall = routes.EstablisherKindController.onSubmit _
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
+  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
     implicit request =>
       val formWithData = request.userAnswers.get(EstablisherKindId(index)).fold(form)(form.fill)
       Future.successful(Ok(establisherKind(appConfig, formWithData, mode, index, existingSchemeName, postCall(mode, index, srn))))
@@ -61,14 +63,14 @@ class EstablisherKindController @Inject()(
         (formWithErrors: Form[_]) =>
           Future.successful(BadRequest(establisherKind(appConfig, formWithErrors, mode, index, existingSchemeName, postCall(mode, index, srn)))),
         value =>
-          userAnswersService.save(
-            mode,
-            srn,
-            EstablisherKindId(index),
-            value
-          ).map {
-            json =>
-              Redirect(navigator.nextPage(EstablisherKindId(index), mode, UserAnswers(json), srn))
+
+          request.userAnswers.upsert(IsEstablisherNewId(index))(value = true) {
+            _.upsert(EstablisherKindId(index))(value) { answers =>
+              userAnswersService.upsert(mode, srn, answers.json).map {
+                json =>
+                  Redirect(navigator.nextPage(EstablisherKindId(index), mode, UserAnswers(json), srn))
+              }
+            }
           }
       )
   }

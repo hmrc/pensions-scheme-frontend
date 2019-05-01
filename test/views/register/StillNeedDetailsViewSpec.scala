@@ -16,6 +16,7 @@
 
 package views.register
 
+import models.UpdateMode
 import views.behaviours.ViewBehaviours
 import views.html.register.stillNeedDetails
 
@@ -23,14 +24,14 @@ class StillNeedDetailsViewSpec extends ViewBehaviours {
 
   val messageKeyPrefix = "stillNeedDetails"
   val schemeName = "schemeName"
-  val srn = "A232322"
-  private def createView() = () => stillNeedDetails(frontendAppConfig,Some(srn),Some(schemeName))(fakeRequest, messages)
+  val srn = Some("A232322")
+  private def createView() = () => stillNeedDetails(frontendAppConfig, srn, Some(schemeName))(fakeRequest, messages)
 
   "StillNeedDetails view" must {
 
     behave like normalPage(createView(), messageKeyPrefix, messages("messages__stillNeedDetails__heading"), "_p1", "_p2")
 
 
-    behave like pageWithReturnLink(createView(), controllers.routes.PSASchemeDetailsController.onPageLoad(srn).url)
+    behave like pageWithReturnLink(createView(), controllers.routes.SchemeTaskListController.onPageLoad(UpdateMode, srn).url)
   }
 }

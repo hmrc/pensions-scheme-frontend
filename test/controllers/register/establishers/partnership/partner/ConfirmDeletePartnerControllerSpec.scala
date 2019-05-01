@@ -18,7 +18,7 @@ package controllers.register.establishers.partnership.partner
 
 import services.FakeUserAnswersService
 import controllers.ControllerSpecBase
-import controllers.actions.{DataRequiredActionImpl, DataRetrievalAction, FakeAuthAction, FakeDataRetrievalAction}
+import controllers.actions.{DataRequiredActionImpl, DataRetrievalAction, FakeAllowAccessProvider, FakeAuthAction, FakeDataRetrievalAction}
 import forms.register.establishers.partnership.partner.ConfirmDeletePartnerFormProvider
 import identifiers.register.establishers.partnership.PartnershipDetailsId
 import identifiers.register.establishers.partnership.partner.PartnerDetailsId
@@ -111,7 +111,7 @@ class ConfirmDeletePartnerControllerSpec extends ControllerSpecBase {
       val getRelevantData = new FakeDataRetrievalAction(Some(validData))
       val result = controller(getRelevantData).onSubmit(NormalMode, establisherIndex, partnerIndex, None)(postRequest)
       status(result) mustBe SEE_OTHER
-      FakeSectionComplete.verify(IsEstablisherCompleteId(0), false)
+      FakeUserAnswersService.userAnswer.get(IsEstablisherCompleteId(0)) mustBe Some(false)
     }
   }
 
@@ -161,6 +161,7 @@ object ConfirmDeletePartnerControllerSpec extends ControllerSpecBase {
       new FakeNavigator(desiredRoute = onwardRoute),
       FakeAuthAction,
       dataRetrievalAction,
+      FakeAllowAccessProvider(),
       new DataRequiredActionImpl,
       FakeSectionComplete,
       formProvider

@@ -18,7 +18,7 @@ package controllers.register.trustees.partnership
 
 import audit.AuditService
 import config.FrontendAppConfig
-import controllers.actions.{AuthAction, DataRequiredAction, DataRetrievalAction}
+import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRequiredAction, DataRetrievalAction}
 import controllers.address.ManualAddressController
 import forms.address.AddressFormProvider
 import identifiers.register.trustees.partnership.{PartnershipAddressId, PartnershipAddressListId, PartnershipDetailsId, PartnershipPostcodeLookupId}
@@ -41,6 +41,7 @@ class PartnershipAddressController @Inject()(
                                               @TrusteesPartnership val navigator: Navigator,
                                               authenticate: AuthAction,
                                               getData: DataRetrievalAction,
+                                              allowAccess: AllowAccessActionProvider,
                                               requireData: DataRequiredAction,
                                               val formProvider: AddressFormProvider,
                                               val countryOptions: CountryOptions,
@@ -65,12 +66,14 @@ class PartnershipAddressController @Inject()(
               title = Message(title),
               heading = Message(heading),
               hint = Some(Message(hint)),
-              secondaryHeader = Some(details.name)
+              secondaryHeader = Some(details.name),
+              srn = srn
             )
         }
     }
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
+  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
     implicit request =>
       viewmodel(index, mode, srn).retrieve.right.map {
         vm =>

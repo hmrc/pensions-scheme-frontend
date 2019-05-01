@@ -36,13 +36,15 @@ class PartnershipContactDetailsController @Inject()(
                                                      val userAnswersService: UserAnswersService,
                                                      authenticate: AuthAction,
                                                      getData: DataRetrievalAction,
+                                                     allowAccess: AllowAccessActionProvider,
                                                      requireData: DataRequiredAction,
                                                      formProvider: ContactDetailsFormProvider
                                                    ) extends controllers.ContactDetailsController {
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
+  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
     implicit request =>
       PartnershipDetailsId(index).retrieve.right.map {
         partnershipDetails =>
@@ -63,6 +65,7 @@ class PartnershipContactDetailsController @Inject()(
     title = Message("messages__partnership_contact_details__title"),
     heading = Message("messages__partnership_contact_details__heading"),
     body = Message("messages__partnership_contact_details__body"),
-    subHeading = Some(partnershipName)
+    subHeading = Some(partnershipName),
+    srn = srn
   )
 }

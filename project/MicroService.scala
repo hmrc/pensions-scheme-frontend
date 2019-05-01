@@ -39,6 +39,7 @@ trait MicroService {
         "models.Mode",
         "models.CheckMode",
         "models.NormalMode",
+        "models.UpdateMode",
         "models.register.trustees.TrusteeKind",
         "models.register.establishers.EstablisherKind",
         "models.OptionBinder._"

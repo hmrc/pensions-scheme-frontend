@@ -27,7 +27,7 @@ class CannotMakeChangesControllerSpec extends ControllerSpecBase {
   appRunning()
 
   val schemeName = "Test Scheme Name"
-  val srn = "A2343243"
+  val srn = Some("A2343243")
   val validData: JsObject = Json.obj(
     MoreThanTenTrusteesId.toString -> false
   )
@@ -36,7 +36,7 @@ class CannotMakeChangesControllerSpec extends ControllerSpecBase {
     new CannotMakeChangesController(frontendAppConfig, messagesApi,
       FakeAuthAction, dataRetrievalAction,new DataRequiredActionImpl)
 
-  def viewAsString(): String = cannotMakeChanges(frontendAppConfig,Some(srn), Some(schemeName))(fakeRequest, messages).toString
+  def viewAsString(): String = cannotMakeChanges(frontendAppConfig, srn, Some(schemeName))(fakeRequest, messages).toString
 
   "CannotMakeChanges Controller" must {
     "return OK and the correct view for a GET" in {

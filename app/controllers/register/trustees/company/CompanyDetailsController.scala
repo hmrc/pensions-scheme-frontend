@@ -43,13 +43,15 @@ class CompanyDetailsController @Inject()(
                                           @TrusteesCompany navigator: Navigator,
                                           authenticate: AuthAction,
                                           getData: DataRetrievalAction,
+                                          allowAccess: AllowAccessActionProvider,
                                           requireData: DataRequiredAction,
                                           formProvider: CompanyDetailsFormProvider
                                         )(implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
+  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
     implicit request =>
       val submitUrl = controllers.register.trustees.company.routes.CompanyDetailsController.onSubmit(mode, index, srn)
       val updatedForm = request.userAnswers.get(CompanyDetailsId(index)).fold(form)(form.fill)
@@ -68,7 +70,7 @@ class CompanyDetailsController @Inject()(
             _.upsert(TrusteeKindId(index))(Company) { answers =>
               userAnswersService.upsert(mode, srn, answers.json).map {
                 json =>
-                  Redirect(navigator.nextPage(CompanyDetailsId(index), mode, UserAnswers(json)))
+                  Redirect(navigator.nextPage(CompanyDetailsId(index), mode, UserAnswers(json), srn))
               }
             }
           }

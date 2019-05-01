@@ -39,7 +39,7 @@ class CheckYourAnswersViewSpec extends CheckYourAnswersBehaviours with ViewBehav
     )
   )))
 
-  private val srn = "S123"
+  private val srn = Some("S123")
 
   def createView(returnOverview: Boolean = false, mode: Mode = NormalMode, viewOnly: Boolean = false, srn: Option[String] = None): () => HtmlFormat.Appendable = () =>
     check_your_answers(
@@ -71,12 +71,12 @@ class CheckYourAnswersViewSpec extends CheckYourAnswersBehaviours with ViewBehav
 
     behave like pageWithoutReturnChangeLink(createView(viewOnly = true))
 
-    behave like pageWithReturnLink(createView(), (controllers.routes.SchemeTaskListController.onPageLoad().url))
+    behave like pageWithReturnLink(createView(), (controllers.routes.SchemeTaskListController.onPageLoad(NormalMode, None).url))
 
     behave like pageWithReturnLink(createView(returnOverview = true), frontendAppConfig.managePensionsSchemeOverviewUrl.url)
 
-    behave like pageWithReturnLink(createView(returnOverview = false, UpdateMode, false, Some(srn)),
-      controllers.routes.PSASchemeDetailsController.onPageLoad(srn).url)
+    behave like pageWithReturnLink(createView(returnOverview = false, UpdateMode, false, srn),
+      controllers.routes.SchemeTaskListController.onPageLoad(UpdateMode, srn).url)
 
     behave like checkYourAnswersPage(createViewWithData)
   }

@@ -41,14 +41,20 @@ class CompanyPreviousAddressPostcodeLookupController @Inject()(
                                                                 @EstablishersCompany override val navigator: Navigator,
                                                                 authenticate: AuthAction,
                                                                 getData: DataRetrievalAction,
+                                                                allowAccess: AllowAccessActionProvider,
                                                                 requireData: DataRequiredAction,
                                                                 formProvider: PostCodeLookupFormProvider
                                                               ) extends PostcodeLookupController {
 
+  protected val form: Form[String] = formProvider()
   private val title: Message = "messages__companyPreviousAddressPostcodeLookup__title"
   private val heading: Message = "messages__companyPreviousAddressPostcodeLookup__title"
 
-  protected val form: Form[String] = formProvider()
+  def onPageLoad(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+      implicit request =>
+        viewmodel(index, srn, mode).retrieve.right map get
+    }
 
   private def viewmodel(index: Int, srn: Option[String], mode: Mode): Retrieval[PostcodeLookupViewModel] =
     Retrieval {
@@ -64,12 +70,6 @@ class CompanyPreviousAddressPostcodeLookupController @Inject()(
               srn = srn
             )
         }
-    }
-
-  def onPageLoad(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen requireData).async {
-      implicit request =>
-        viewmodel(index, srn, mode).retrieve.right map get
     }
 
   def onSubmit(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] =

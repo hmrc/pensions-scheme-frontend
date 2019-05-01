@@ -41,6 +41,7 @@ class DirectorNinoController @Inject()(
                                         @EstablishersCompanyDirector navigator: Navigator,
                                         authenticate: AuthAction,
                                         getData: DataRetrievalAction,
+                                        allowAccess: AllowAccessActionProvider,
                                         requireData: DataRequiredAction,
                                         formProvider: DirectorNinoFormProvider
                                       )(implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
@@ -48,7 +49,8 @@ class DirectorNinoController @Inject()(
   private val form: Form[Nino] = formProvider()
   private def postCall: (Mode, Index, Index, Option[String]) => Call = routes.DirectorNinoController.onSubmit _
 
-  def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
+  def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
     implicit request =>
       DirectorDetailsId(establisherIndex, directorIndex).retrieve.right.flatMap { director =>
         DirectorNinoId(establisherIndex, directorIndex).retrieve.right.map { value =>
@@ -76,7 +78,7 @@ class DirectorNinoController @Inject()(
               DirectorNinoId(establisherIndex, directorIndex),
               value
             ) map { json =>
-              Redirect(navigator.nextPage(DirectorNinoId(establisherIndex, directorIndex), mode, new UserAnswers(json)))
+              Redirect(navigator.nextPage(DirectorNinoId(establisherIndex, directorIndex), mode, new UserAnswers(json), srn))
             }
         )
       }

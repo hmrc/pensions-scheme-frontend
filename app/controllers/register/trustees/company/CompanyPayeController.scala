@@ -20,7 +20,7 @@ import com.google.inject.Inject
 import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
 import controllers.PayeController
-import controllers.actions.{AuthAction, DataRequiredAction, DataRetrievalAction}
+import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRequiredAction, DataRetrievalAction}
 import forms.PayeFormProvider
 import identifiers.register.trustees.company.{CompanyDetailsId, CompanyPayeId}
 import models.{Index, Mode, Paye}
@@ -39,6 +39,7 @@ class CompanyPayeController @Inject()(
                                        @TrusteesCompany val navigator: Navigator,
                                        authenticate: AuthAction,
                                        getData: DataRetrievalAction,
+                                       allowAccess: AllowAccessActionProvider,
                                        requireData: DataRequiredAction,
                                        formProvider: PayeFormProvider
                                          ) extends PayeController with I18nSupport {
@@ -55,12 +56,14 @@ class CompanyPayeController @Inject()(
               title = Message("messages__companyPaye__title"),
               heading = Message("messages__companyPaye__heading", details.companyName),
               hint = Some(Message("messages__common__paye_hint")),
-              subHeading = None
+              subHeading = None,
+              srn= srn
             )
         }
     }
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
+  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
     implicit request =>
       viewmodel(mode, index, srn).retrieve.right.map {
         vm =>

@@ -40,6 +40,7 @@ class BenefitsSecuredByInsuranceController @Inject()(appConfig: FrontendAppConfi
                                                      @AboutBenefitsAndInsurance navigator: Navigator,
                                                      authenticate: AuthAction,
                                                      getData: DataRetrievalAction,
+                                                     allowAccess: AllowAccessActionProvider,
                                                      requireData: DataRequiredAction,
                                                      formProvider: BenefitsSecuredByInsuranceFormProvider
                                                     )(implicit val ec: ExecutionContext) extends FrontendController with I18nSupport with Retrievals {
@@ -48,7 +49,8 @@ class BenefitsSecuredByInsuranceController @Inject()(appConfig: FrontendAppConfi
 
   val postCall: (Mode,Option[String]) => Call = routes.BenefitsSecuredByInsuranceController.onSubmit
 
-  def onPageLoad(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
+  def onPageLoad(mode: Mode, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
     implicit request =>
       val preparedForm = request.userAnswers.get(BenefitsSecuredByInsuranceId) match {
         case None => form

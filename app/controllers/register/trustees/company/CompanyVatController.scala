@@ -39,6 +39,7 @@ class CompanyVatController @Inject()(
                                       @TrusteesCompany override val navigator: Navigator,
                                       authenticate: AuthAction,
                                       getData: DataRetrievalAction,
+                                      allowAccess: AllowAccessActionProvider,
                                       requireData: DataRequiredAction,
                                       formProvider: VatFormProvider
                                         ) extends VatController {
@@ -53,14 +54,16 @@ class CompanyVatController @Inject()(
               title = Message("messages__companyVat__title"),
               heading = Message("messages__companyVat__heading", details.companyName),
               hint = Message("messages__common__company_vat__hint", details.companyName),
-              subHeading = None
+              subHeading = None,
+              srn= srn
             )
         }
     }
 
   private val form = formProvider("messages__companyVat__error__required")
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
+  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
     implicit request =>
       viewmodel(mode, index, srn).retrieve.right.map {
         vm =>

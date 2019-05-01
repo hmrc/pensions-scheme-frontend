@@ -73,7 +73,7 @@ class CompanyPreviousAddressListControllerSpec extends ControllerSpecBase {
       FakeUserAnswersService,
       new FakeNavigator(desiredRoute = onwardRoute),
       FakeAuthAction,
-      dataRetrievalAction, new DataRequiredActionImpl
+      dataRetrievalAction, FakeAllowAccessProvider(), new DataRequiredActionImpl
     )
 
   def viewAsString(form: Form[_] = form): String =

@@ -41,47 +41,48 @@ class PartnerUniqueTaxReferenceController @Inject()(
                                                      @EstablishersPartner navigator: Navigator,
                                                      authenticate: AuthAction,
                                                      getData: DataRetrievalAction,
+                                                     allowAccess: AllowAccessActionProvider,
                                                      requireData: DataRequiredAction,
                                                      formProvider: PartnerUniqueTaxReferenceFormProvider
-                                                   ) (implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
+                                                   )(implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
 
   private val form: Form[UniqueTaxReference] = formProvider()
 
   def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen requireData).async {
-    implicit request =>
-      PartnerDetailsId(establisherIndex, partnerIndex).retrieve.right.map { _ =>
-        val preparedForm = request.userAnswers.get(PartnerUniqueTaxReferenceId(establisherIndex, partnerIndex)).fold(form)(form.fill)
-        val submitUrl = controllers.register.establishers.partnership.partner.routes.PartnerUniqueTaxReferenceController.onSubmit(
-          mode, establisherIndex, partnerIndex, srn)
-        Future.successful(Ok(partnerUniqueTaxReference(appConfig, preparedForm, mode, establisherIndex, partnerIndex, existingSchemeName, submitUrl)))
-      }
-  }
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+      implicit request =>
+        PartnerDetailsId(establisherIndex, partnerIndex).retrieve.right.map { _ =>
+          val preparedForm = request.userAnswers.get(PartnerUniqueTaxReferenceId(establisherIndex, partnerIndex)).fold(form)(form.fill)
+          val submitUrl = controllers.register.establishers.partnership.partner.routes.PartnerUniqueTaxReferenceController.onSubmit(
+            mode, establisherIndex, partnerIndex, srn)
+          Future.successful(Ok(partnerUniqueTaxReference(appConfig, preparedForm, mode, establisherIndex, partnerIndex, existingSchemeName, submitUrl)))
+        }
+    }
 
 
   def onSubmit(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen requireData).async {
-    implicit request =>
-      PartnerDetailsId(establisherIndex, partnerIndex).retrieve.right.map { partner =>
-        form.bindFromRequest().fold(
-          (formWithErrors: Form[_]) => {
-            val submitUrl = controllers.register.establishers.partnership.partner.routes.PartnerUniqueTaxReferenceController.onSubmit(
-              mode, establisherIndex, partnerIndex, srn)
-            Future.successful(BadRequest(partnerUniqueTaxReference(
-              appConfig, formWithErrors, mode, establisherIndex, partnerIndex, existingSchemeName, submitUrl)))
-          },
-          (value) =>
-            userAnswersService.save(
-              mode,
-              srn,
-              PartnerUniqueTaxReferenceId(establisherIndex, partnerIndex),
-              value
-            ).map {
-              json =>
-                Redirect(navigator.nextPage(PartnerUniqueTaxReferenceId(establisherIndex, partnerIndex), mode, new UserAnswers(json)))
-            }
-        )
-      }
-  }
+      implicit request =>
+        PartnerDetailsId(establisherIndex, partnerIndex).retrieve.right.map { partner =>
+          form.bindFromRequest().fold(
+            (formWithErrors: Form[_]) => {
+              val submitUrl = controllers.register.establishers.partnership.partner.routes.PartnerUniqueTaxReferenceController.onSubmit(
+                mode, establisherIndex, partnerIndex, srn)
+              Future.successful(BadRequest(partnerUniqueTaxReference(
+                appConfig, formWithErrors, mode, establisherIndex, partnerIndex, existingSchemeName, submitUrl)))
+            },
+            (value) =>
+              userAnswersService.save(
+                mode,
+                srn,
+                PartnerUniqueTaxReferenceId(establisherIndex, partnerIndex),
+                value
+              ).map {
+                json =>
+                  Redirect(navigator.nextPage(PartnerUniqueTaxReferenceId(establisherIndex, partnerIndex), mode, new UserAnswers(json), srn))
+              }
+          )
+        }
+    }
 
 }

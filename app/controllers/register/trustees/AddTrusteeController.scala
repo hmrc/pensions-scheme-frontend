@@ -42,13 +42,15 @@ class AddTrusteeController @Inject()(
                                       @Trustees navigator: Navigator,
                                       authenticate: AuthAction,
                                       getData: DataRetrievalAction,
+                                      allowAccess: AllowAccessActionProvider,
                                       requireData: DataRequiredAction,
                                       formProvider: AddTrusteeFormProvider
                                     )(implicit val ec: ExecutionContext) extends FrontendController with I18nSupport with Retrievals {
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
+  def onPageLoad(mode: Mode, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
     implicit request =>
       val trustees = request.userAnswers.allTrusteesAfterDelete
       Future.successful(Ok(addTrustee(appConfig, form, mode, trustees, existingSchemeName, srn)))
@@ -60,7 +62,7 @@ class AddTrusteeController @Inject()(
       val trustees = request.userAnswers.allTrusteesAfterDelete
 
       if (trustees.isEmpty || trustees.lengthCompare(appConfig.maxTrustees) >= 0)
-        Future.successful(Redirect(navigator.nextPage(AddTrusteeId, mode, request.userAnswers)))
+        Future.successful(Redirect(navigator.nextPage(AddTrusteeId, mode, request.userAnswers, srn)))
       else {
         form.bindFromRequest().fold(
           (formWithErrors: Form[_]) => {
@@ -73,7 +75,7 @@ class AddTrusteeController @Inject()(
                 Future.successful(InternalServerError)
               },
               userAnswers =>
-                Future.successful(Redirect(navigator.nextPage(AddTrusteeId, mode, userAnswers)))
+                Future.successful(Redirect(navigator.nextPage(AddTrusteeId, mode, userAnswers, srn)))
             )
         )
       }

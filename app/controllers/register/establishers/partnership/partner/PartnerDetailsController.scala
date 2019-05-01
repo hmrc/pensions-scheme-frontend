@@ -18,7 +18,7 @@ package controllers.register.establishers.partnership.partner
 
 import config.FrontendAppConfig
 import controllers.Retrievals
-import controllers.actions.{AuthAction, DataRequiredAction, DataRetrievalAction}
+import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRequiredAction, DataRetrievalAction}
 import forms.register.PersonDetailsFormProvider
 import identifiers.register.establishers.IsEstablisherCompleteId
 import identifiers.register.establishers.partnership.PartnershipDetailsId
@@ -44,6 +44,7 @@ class PartnerDetailsController @Inject()(
                                           @EstablishersPartner navigator: Navigator,
                                           authenticate: AuthAction,
                                           getData: DataRetrievalAction,
+                                          allowAccess: AllowAccessActionProvider,
                                           requireData: DataRequiredAction,
                                           formProvider: PersonDetailsFormProvider,
                                           sectionComplete: SectionComplete
@@ -52,7 +53,7 @@ class PartnerDetailsController @Inject()(
   private val form = formProvider()
 
   def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen requireData).async {
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         PartnershipDetailsId(establisherIndex).retrieve.right.map { _ =>
           val preparedForm = request.userAnswers.get[PersonDetails](PartnerDetailsId(establisherIndex, partnerIndex)) match {
@@ -85,8 +86,10 @@ class PartnerDetailsController @Inject()(
                   if (allPartnersCompleted) {
                     Future.successful(Redirect(navigator.nextPage(PartnerDetailsId(establisherIndex, partnerIndex), mode, userAnswers)))
                   } else {
-                    userAnswersService.setCompleteFlag(mode, srn, IsEstablisherCompleteId(establisherIndex), userAnswers, value = false).map { _ =>
-                      Redirect(navigator.nextPage(PartnerDetailsId(establisherIndex, partnerIndex), mode, userAnswers))
+                    userAnswers.upsert(IsEstablisherCompleteId(establisherIndex))(false) { answers =>
+                      userAnswersService.upsert(mode, srn, answers.json).map { json =>
+                        Redirect(navigator.nextPage(PartnerDetailsId(establisherIndex, partnerIndex), mode, UserAnswers(json), srn))
+                      }
                     }
                   }
               }

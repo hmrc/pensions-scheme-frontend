@@ -17,7 +17,7 @@
 package controllers
 
 import base.SpecBase
-import controllers.actions.{AuthAction, DataRequiredActionImpl, DataRetrievalAction, FakeAuthAction}
+import controllers.actions.{AuthAction, DataRequiredActionImpl, DataRetrievalAction, FakeAllowAccessProvider, FakeAuthAction}
 import controllers.behaviours.ControllerWithQuestionPageBehaviours
 import forms.InsuranceCompanyNameFormProvider
 import identifiers.InsuranceCompanyNameId
@@ -93,6 +93,7 @@ object InsuranceCompanyNameControllerSpec extends SpecBase {
       navigator,
       authAction,
       dataRetrievalAction,
+      FakeAllowAccessProvider(),
       new DataRequiredActionImpl(),
       formProvider
     )

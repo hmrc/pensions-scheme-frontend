@@ -63,6 +63,7 @@ class PartnershipAddressControllerSpec extends ControllerSpecBase with ScalaFutu
       new FakeNavigator(desiredRoute = onwardRoute),
       FakeAuthAction,
       dataRetrievalAction,
+      FakeAllowAccessProvider(),
       new DataRequiredActionImpl,
       formProvider,
       countryOptions,

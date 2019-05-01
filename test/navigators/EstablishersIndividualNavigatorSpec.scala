@@ -48,7 +48,7 @@ class EstablishersIndividualNavigatorSpec extends SpecBase with MustMatchers wit
     (PreviousPostCodeLookupId(0), emptyAnswers, previousAddressAddressList(mode), true, Some(previousAddressAddressList(checkMode(mode))), true),
     (PreviousAddressListId(0), emptyAnswers, previousAddress(mode), true, Some(previousAddress(checkMode(mode))), true),
     (PreviousAddressId(0), emptyAnswers, contactDetails(mode), true, Some(exitJourney(mode)), true),
-    (CheckYourAnswersId, emptyAnswers, addEstablisher(mode), false, None, true)
+    (CheckYourAnswersId, emptyAnswers, if(mode==UpdateMode) controllers.routes.AnyMoreChangesController.onPageLoad(None) else addEstablisher(mode), false, None, true)
   )
 
   private val navigator: EstablishersIndividualNavigator =
@@ -62,7 +62,7 @@ class EstablishersIndividualNavigatorSpec extends SpecBase with MustMatchers wit
 }
 
 object EstablishersIndividualNavigatorSpec extends OptionValues {
-  private def taskList: Call = controllers.routes.SchemeTaskListController.onPageLoad()
+  private def taskList: Call = controllers.routes.SchemeTaskListController.onPageLoad(NormalMode, None)
 
   private val emptyAnswers = UserAnswers(Json.obj())
   private val addressYearsOverAYear = UserAnswers(Json.obj())

@@ -54,7 +54,7 @@ object VariationsNavigatorSpec extends SpecBase with OptionValues {
 
   private def sessionExpired = controllers.routes.SessionExpiredController.onPageLoad()
 
-  private def variationsTaskList = controllers.routes.PSASchemeDetailsController.onPageLoad(srnValue)
+  private def variationsTaskList = controllers.routes.SchemeTaskListController.onPageLoad(UpdateMode, srn)
 
   private def none: Call = controllers.routes.IndexController.onPageLoad()
   val someMoreChanges = UserAnswers(Json.obj()).set(AnyMoreChangesId)(true).asOpt.value
