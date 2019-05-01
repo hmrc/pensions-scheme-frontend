@@ -151,12 +151,12 @@ case class UserAnswers(json: JsValue = Json.obj()) {
 
   def readEstablishers: Reads[Seq[Establisher[_]]] = new Reads[Seq[Establisher[_]]] {
 
-    private def noOfRecords : Int = json.validate((__ \ 'establishers).readNullable(__.read(
+    private def noOfRecords: Int = json.validate((__ \ 'establishers).readNullable(__.read(
       Reads.seq((__ \ 'establisherKind).read[String].flatMap {
-        case "individual" => (__ \ 'establisherDetails ).read[JsObject].flatMap(_=> (__ \ "isDeleted").json.pick[JsBoolean]) orElse notDeleted
-        case "company" => (__ \ 'companyDetails ).read[JsObject].flatMap(_=> (__ \ "isDeleted").json.pick[JsBoolean]) orElse notDeleted
-        case "partnership" => (__ \ 'partnershipDetails ).read[JsObject].flatMap(_=> (__ \ "isDeleted").json.pick[JsBoolean]) orElse notDeleted
-      }).map(x=> x.count(deleted => deleted == JsBoolean(false)))))) match {
+        case "individual" => (__ \ 'establisherDetails).read[JsObject].flatMap(_ => (__ \ "isDeleted").json.pick[JsBoolean]) orElse notDeleted
+        case "company" => (__ \ 'companyDetails).read[JsObject].flatMap(_ => (__ \ "isDeleted").json.pick[JsBoolean]) orElse notDeleted
+        case "partnership" => (__ \ 'partnershipDetails).read[JsObject].flatMap(_ => (__ \ "isDeleted").json.pick[JsBoolean]) orElse notDeleted
+      }).map(x => x.count(deleted => deleted == JsBoolean(false)))))) match {
       case JsSuccess(Some(ele), _) => ele
       case _ => 0
     }
@@ -218,7 +218,6 @@ case class UserAnswers(json: JsValue = Json.obj()) {
   }
 
 
-
   def allEstablishers: Seq[Establisher[_]] = {
 
     json.validate[Seq[Establisher[_]]](readEstablishers) match {
@@ -238,8 +237,7 @@ case class UserAnswers(json: JsValue = Json.obj()) {
 
     getAllRecursive[PersonDetails](DirectorDetailsId.collectionPath(establisherIndex)).map {
       details =>
-        details.map { director =>
-          val directorIndex = details.indexOf(director)
+        for ((director, directorIndex) <- details.zipWithIndex) yield {
           val isComplete = get(IsDirectorCompleteId(establisherIndex, directorIndex)).getOrElse(false)
           DirectorEntity(
             DirectorDetailsId(establisherIndex, directorIndex),
@@ -247,7 +245,7 @@ case class UserAnswers(json: JsValue = Json.obj()) {
             director.isDeleted,
             isComplete,
             isNewEntity = true,
-            details.count(_.isDeleted==false)
+            details.count(_.isDeleted == false)
           )
         }
     }.getOrElse(Seq.empty)
@@ -269,7 +267,7 @@ case class UserAnswers(json: JsValue = Json.obj()) {
             partner.isDeleted,
             isComplete,
             isNewEntity = true,
-            details.count(_.isDeleted==false)
+            details.count(_.isDeleted == false)
           )
         }
     }.getOrElse(Seq.empty)
@@ -281,17 +279,17 @@ case class UserAnswers(json: JsValue = Json.obj()) {
 
   def readTrustees: Reads[Seq[Trustee[_]]] = new Reads[Seq[Trustee[_]]] {
 
-    private def noOfRecords : Int = json.validate((__ \ 'trustees).readNullable(__.read(
+    private def noOfRecords: Int = json.validate((__ \ 'trustees).readNullable(__.read(
       Reads.seq((__ \ 'trusteeKind).read[String].flatMap {
-        case "individual" => (__ \ 'trusteeDetails ).read[JsObject].flatMap(_=> (__ \ "isDeleted").json.pick[JsBoolean]) orElse notDeleted
-        case "company" => (__ \ 'companyDetails ).read[JsObject].flatMap(_=> (__ \ "isDeleted").json.pick[JsBoolean]) orElse notDeleted
-        case "partnership" => (__ \ 'partnershipDetails ).read[JsObject].flatMap(_=> (__ \ "isDeleted").json.pick[JsBoolean]) orElse notDeleted
-      }).map(x=> x.count(deleted => deleted == JsBoolean(false)))))) match {
+        case "individual" => (__ \ 'trusteeDetails).read[JsObject].flatMap(_ => (__ \ "isDeleted").json.pick[JsBoolean]) orElse notDeleted
+        case "company" => (__ \ 'companyDetails).read[JsObject].flatMap(_ => (__ \ "isDeleted").json.pick[JsBoolean]) orElse notDeleted
+        case "partnership" => (__ \ 'partnershipDetails).read[JsObject].flatMap(_ => (__ \ "isDeleted").json.pick[JsBoolean]) orElse notDeleted
+      }).map(x => x.count(deleted => deleted == JsBoolean(false)))))) match {
       case JsSuccess(Some(ele), _) => ele
       case _ => 0
     }
 
-    private def schemeType : Option[String] = json.transform((__ \ 'schemeType \ 'name).json.pick[JsString]) match {
+    private def schemeType: Option[String] = json.transform((__ \ 'schemeType \ 'name).json.pick[JsString]) match {
       case JsSuccess(scheme, _) => Some(scheme.value)
       case JsError(errors) => None
     }
