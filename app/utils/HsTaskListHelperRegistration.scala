@@ -16,9 +16,9 @@
 
 package utils
 
-import identifiers.{IsAboutBankDetailsCompleteId, IsAboutBenefitsAndInsuranceCompleteId, IsAboutMembersCompleteId}
+import identifiers._
 import models.register.Entity
-import models.{Link, NormalMode}
+import models.{Link, Mode, NormalMode}
 import play.api.i18n.Messages
 import viewmodels._
 
@@ -69,6 +69,31 @@ class HsTaskListHelperRegistration(answers: UserAnswers)(implicit messages: Mess
 
   protected[utils] def trustees(userAnswers: UserAnswers): Seq[SchemeDetailsTaskListSection] =
     listOf(userAnswers.allTrustees, userAnswers)
+
+  protected[utils] override def addTrusteeHeader(userAnswers: UserAnswers, mode: Mode, srn: Option[String]): Option[SchemeDetailsTaskListSection] = {
+    (userAnswers.get(HaveAnyTrusteesId), userAnswers.allTrusteesAfterDelete.isEmpty) match {
+      case (None | Some(true), false) =>
+
+        val (linkText, additionalText): (String, Option[String]) =
+          getTrusteeHeaderText(userAnswers.allTrusteesAfterDelete.size, userAnswers.get(SchemeTypeId))
+
+        Some(
+          SchemeDetailsTaskListSection(
+            link = addTrusteeLink(linkText, srn, mode),
+            p1 = additionalText))
+
+      case (None | Some(true), true) =>
+
+        Some(
+          SchemeDetailsTaskListSection(
+            trusteeStatus(isAllTrusteesCompleted(userAnswers), trusteesMandatory(userAnswers.get(SchemeTypeId))),
+            typeOfTrusteeLink(addTrusteesLinkText, userAnswers.allTrustees.size, srn, mode)))
+
+      case _ =>
+        None
+    }
+
+  }
 
   def taskList: SchemeDetailsTaskList = {
     SchemeDetailsTaskList(
