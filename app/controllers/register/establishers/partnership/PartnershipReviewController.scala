@@ -22,13 +22,13 @@ import controllers.actions.{AuthAction, DataRequiredAction, DataRetrievalAction}
 import identifiers.register.establishers.IsEstablisherCompleteId
 import identifiers.register.establishers.partnership.{IsPartnershipCompleteId, PartnershipDetailsId, PartnershipReviewId}
 import javax.inject.Inject
-import models.{Index, Mode, NormalMode}
+import models.{Index, Mode}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import utils.Navigator
 import utils.annotations.EstablisherPartnership
-import utils.{Navigator, SectionComplete}
 import views.html.register.establishers.partnership.partnershipReview
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -39,7 +39,7 @@ class PartnershipReviewController @Inject()(appConfig: FrontendAppConfig,
                                             authenticate: AuthAction,
                                             getData: DataRetrievalAction,
                                             requireData: DataRequiredAction,
-                                            userAnswersService: UserAnswersService) (implicit val ec: ExecutionContext)
+                                            userAnswersService: UserAnswersService)(implicit val ec: ExecutionContext)
   extends FrontendController with I18nSupport with Retrievals {
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {

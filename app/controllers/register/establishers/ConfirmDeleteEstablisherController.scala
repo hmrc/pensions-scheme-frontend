@@ -30,7 +30,6 @@ import models.person.PersonDetails
 import models.register.establishers.EstablisherKind
 import models.register.establishers.EstablisherKind._
 import models.requests.DataRequest
-import models._
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Result}
@@ -49,24 +48,15 @@ class ConfirmDeleteEstablisherController @Inject()(
                                                     @Establishers navigator: Navigator,
                                                     authenticate: AuthAction,
                                                     getData: DataRetrievalAction,
+                                                    allowAccess: AllowAccessActionProvider,
                                                     requireData: DataRequiredAction,
                                                     formProvider: ConfirmDeleteEstablisherFormProvider
                                                   )(implicit val ec: ExecutionContext) extends FrontendController with I18nSupport with Retrievals {
 
   private val form: Form[Boolean] = formProvider()
 
-  private def getHintText(establisherKind: EstablisherKind): Option[String] = {
-    establisherKind match {
-      case EstablisherKind.Company =>
-        Some(Messages(s"messages__confirmDeleteEstablisher__companyHint"))
-      case EstablisherKind.Partnership =>
-        Some(Messages(s"messages__confirmDeleteEstablisher__partnershipHint"))
-      case _ => None
-    }
-  }
-
   def onPageLoad(mode: Mode, index: Index, establisherKind: EstablisherKind, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen requireData).async {
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         getDeletableEstablisher(index, establisherKind, request.userAnswers) map {
           establisher =>
@@ -89,6 +79,24 @@ class ConfirmDeleteEstablisherController @Inject()(
         } getOrElse Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
     }
 
+  private def getHintText(establisherKind: EstablisherKind): Option[String] = {
+    establisherKind match {
+      case EstablisherKind.Company =>
+        Some(Messages(s"messages__confirmDeleteEstablisher__companyHint"))
+      case EstablisherKind.Partnership =>
+        Some(Messages(s"messages__confirmDeleteEstablisher__partnershipHint"))
+      case _ => None
+    }
+  }
+
+  private def getDeletableEstablisher(index: Index, establisherKind: EstablisherKind, userAnswers: UserAnswers): Option[DeletableEstablisher] = {
+    establisherKind match {
+      case Indivdual => userAnswers.get(EstablisherDetailsId(index)).map(details => DeletableEstablisher(details.fullName, details.isDeleted))
+      case Company => userAnswers.get(CompanyDetailsId(index)).map(details => DeletableEstablisher(details.companyName, details.isDeleted))
+      case Partnership => userAnswers.get(PartnershipDetailsId(index)).map(details => DeletableEstablisher(details.name, details.isDeleted))
+      case _ => None
+    }
+  }
 
   def onSubmit(mode: Mode, establisherIndex: Index, establisherKind: EstablisherKind, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
@@ -150,13 +158,4 @@ class ConfirmDeleteEstablisherController @Inject()(
   }
 
   private case class DeletableEstablisher(name: String, isDeleted: Boolean)
-
-  private def getDeletableEstablisher(index: Index, establisherKind: EstablisherKind, userAnswers: UserAnswers): Option[DeletableEstablisher] = {
-    establisherKind match {
-      case Indivdual => userAnswers.get(EstablisherDetailsId(index)).map(details => DeletableEstablisher(details.fullName, details.isDeleted))
-      case Company => userAnswers.get(CompanyDetailsId(index)).map(details => DeletableEstablisher(details.companyName, details.isDeleted))
-      case Partnership => userAnswers.get(PartnershipDetailsId(index)).map(details => DeletableEstablisher(details.name, details.isDeleted))
-      case _ => None
-    }
-  }
 }

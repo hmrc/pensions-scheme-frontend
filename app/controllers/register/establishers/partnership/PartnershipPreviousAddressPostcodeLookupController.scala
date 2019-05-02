@@ -41,14 +41,29 @@ class PartnershipPreviousAddressPostcodeLookupController @Inject()(
                                                                     @EstablisherPartnership override val navigator: Navigator,
                                                                     authenticate: AuthAction,
                                                                     getData: DataRetrievalAction,
+                                                                    allowAccess: AllowAccessActionProvider,
                                                                     requireData: DataRequiredAction,
                                                                     formProvider: PostCodeLookupFormProvider
                                                                   ) extends PostcodeLookupController {
 
+  protected val form: Form[String] = formProvider()
   private val title: Message = "messages__partnershipPreviousAddressPostcodeLookup__title"
   private val heading: Message = "messages__partnershipPreviousAddressPostcodeLookup__title"
 
-  protected val form: Form[String] = formProvider()
+  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+      implicit request =>
+        viewmodel(index, mode, srn).retrieve.right map get
+    }
+
+  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen requireData).async {
+      implicit request =>
+        viewmodel(index, mode, srn).retrieve.right.map {
+          vm =>
+            post(PartnershipPreviousAddressPostcodeLookupId(index), vm, mode)
+        }
+    }
 
   private def viewmodel(index: Int, mode: Mode, srn: Option[String]): Retrieval[PostcodeLookupViewModel] =
     Retrieval {
@@ -63,21 +78,6 @@ class PartnershipPreviousAddressPostcodeLookupController @Inject()(
               subHeading = Some(details.name),
               srn = srn
             )
-        }
-    }
-
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen requireData).async {
-      implicit request =>
-        viewmodel(index, mode, srn).retrieve.right map get
-    }
-
-  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen requireData).async {
-      implicit request =>
-        viewmodel(index, mode, srn).retrieve.right.map {
-          vm =>
-            post(PartnershipPreviousAddressPostcodeLookupId(index), vm, mode)
         }
     }
 }

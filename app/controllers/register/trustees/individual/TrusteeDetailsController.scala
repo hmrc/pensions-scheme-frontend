@@ -43,13 +43,15 @@ class TrusteeDetailsController @Inject()(
                                           @TrusteesIndividual navigator: Navigator,
                                           authenticate: AuthAction,
                                           getData: DataRetrievalAction,
+                                          allowAccess: AllowAccessActionProvider,
                                           requireData: DataRequiredAction,
                                           formProvider: PersonDetailsFormProvider
                                         )(implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
+  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
     implicit request =>
       val submitUrl = controllers.register.trustees.individual.routes.TrusteeDetailsController.onSubmit(mode, index, srn)
       val updatedForm = request.userAnswers.get(TrusteeDetailsId(index)).fold(form)(form.fill)

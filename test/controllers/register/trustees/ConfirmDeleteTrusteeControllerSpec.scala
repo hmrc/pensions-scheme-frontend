@@ -167,6 +167,7 @@ object ConfirmDeleteTrusteeControllerSpec extends ControllerSpecBase {
       messagesApi,
       FakeAuthAction,
       dataRetrievalAction,
+      FakeAllowAccessProvider(),
       new DataRequiredActionImpl,
       new FakeNavigator(onwardRoute),
       FakeUserAnswersService,

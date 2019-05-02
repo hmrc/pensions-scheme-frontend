@@ -39,12 +39,14 @@ class AddressYearsController @Inject()(
                                         override val messagesApi: MessagesApi,
                                         authenticate: AuthAction,
                                         getData: DataRetrievalAction,
+                                        allowAccess: AllowAccessActionProvider,
                                         requireData: DataRequiredAction
                                       ) extends GenericAddressYearController with Retrievals {
 
   private val form = new AddressYearsFormProvider()(Message("messages__common_error__current_address_years"))
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
+  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
     implicit request =>
       EstablisherDetailsId(index).retrieve.right.map { establisherDetails =>
         get(AddressYearsId(index), form, viewModel(mode, index, establisherDetails.fullName, srn))

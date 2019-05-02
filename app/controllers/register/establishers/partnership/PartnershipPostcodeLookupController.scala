@@ -18,7 +18,7 @@ package controllers.register.establishers.partnership
 
 import config.FrontendAppConfig
 import connectors.AddressLookupConnector
-import controllers.actions.{AuthAction, DataRequiredAction, DataRetrievalAction}
+import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRequiredAction, DataRetrievalAction}
 import controllers.address.PostcodeLookupController
 import forms.address.PostCodeLookupFormProvider
 import identifiers.register.establishers.partnership.{PartnershipDetailsId, PartnershipPostcodeLookupId}
@@ -41,15 +41,30 @@ class PartnershipPostcodeLookupController @Inject()(
                                                      @EstablisherPartnership override val navigator: Navigator,
                                                      authenticate: AuthAction,
                                                      getData: DataRetrievalAction,
+                                                     allowAccess: AllowAccessActionProvider,
                                                      requireData: DataRequiredAction,
                                                      formProvider: PostCodeLookupFormProvider
                                                    ) extends PostcodeLookupController {
 
+  protected val form: Form[String] = formProvider()
   private val title: Message = "messages__partnershipPostcodeLookup__title"
   private val heading: Message = "messages__partnershipPostcodeLookup__heading"
   private val hint: Message = "messages__partnershipPostcodeLookup__hint"
 
-  protected val form: Form[String] = formProvider()
+  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+      implicit request =>
+        viewmodel(index, mode, srn).retrieve.right map get
+    }
+
+  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen requireData).async {
+      implicit request =>
+        viewmodel(index, mode, srn).retrieve.right.map {
+          vm =>
+            post(PartnershipPostcodeLookupId(index), vm, mode)
+        }
+    }
 
   private def viewmodel(index: Int, mode: Mode, srn: Option[String]): Retrieval[PostcodeLookupViewModel] =
     Retrieval {
@@ -65,21 +80,6 @@ class PartnershipPostcodeLookupController @Inject()(
               hint = Some(Message(hint)),
               srn = srn
             )
-        }
-    }
-
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen requireData).async {
-      implicit request =>
-        viewmodel(index, mode, srn).retrieve.right map get
-    }
-
-  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen requireData).async {
-      implicit request =>
-        viewmodel(index, mode, srn).retrieve.right.map {
-          vm =>
-            post(PartnershipPostcodeLookupId(index), vm, mode)
         }
     }
 }

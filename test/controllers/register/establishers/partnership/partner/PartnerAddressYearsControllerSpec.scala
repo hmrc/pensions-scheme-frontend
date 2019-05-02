@@ -56,6 +56,7 @@ class PartnerAddressYearsControllerSpec extends ControllerSpecBase {
       messagesApi,
       FakeAuthAction,
       dataRetrievalAction,
+      FakeAllowAccessProvider(),
       new DataRequiredActionImpl
     )
 

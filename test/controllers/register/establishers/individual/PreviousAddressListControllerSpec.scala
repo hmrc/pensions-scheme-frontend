@@ -60,6 +60,7 @@ class PreviousAddressListControllerSpec extends ControllerSpecBase with Enumerab
       new FakeNavigator(desiredRoute = onwardRoute),
       FakeAuthAction,
       dataRetrievalAction,
+      FakeAllowAccessProvider(),
       new DataRequiredActionImpl)
 
   def viewAsString(form: Form[_] = form, address: Seq[TolerantAddress] = previousAddresses): String =

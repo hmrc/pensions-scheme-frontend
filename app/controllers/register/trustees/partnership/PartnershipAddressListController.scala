@@ -18,7 +18,7 @@ package controllers.register.trustees.partnership
 
 import config.FrontendAppConfig
 import controllers.Retrievals
-import controllers.actions.{AuthAction, DataRequiredAction, DataRetrievalAction}
+import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRequiredAction, DataRetrievalAction}
 import controllers.address.AddressListController
 import identifiers.register.trustees.partnership.{PartnershipAddressId, PartnershipAddressListId, PartnershipDetailsId, PartnershipPostcodeLookupId}
 import javax.inject.Inject
@@ -40,9 +40,11 @@ class PartnershipAddressListController @Inject()(override val appConfig: Fronten
                                                  @TrusteesPartnership override val navigator: Navigator,
                                                  authenticate: AuthAction,
                                                  getData: DataRetrievalAction,
+                                                 allowAccess: AllowAccessActionProvider,
                                                  requireData: DataRequiredAction) extends AddressListController with Retrievals {
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
+  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
     implicit request =>
       viewmodel(mode, index, srn).right.map(get)
   }

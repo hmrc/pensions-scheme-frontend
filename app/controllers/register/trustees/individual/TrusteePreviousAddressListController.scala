@@ -40,6 +40,7 @@ class TrusteePreviousAddressListController @Inject()(override val appConfig: Fro
                                                      val userAnswersService: UserAnswersService,
                                                      authenticate: AuthAction,
                                                      getData: DataRetrievalAction,
+                                                     allowAccess: AllowAccessActionProvider,
                                                      requireData: DataRequiredAction) extends AddressListController with Retrievals with I18nSupport {
 
   def viewmodel(mode: Mode, index: Index, srn: Option[String])(implicit request: DataRequest[AnyContent]): Either[Future[Result], AddressListViewModel] = {
@@ -56,7 +57,8 @@ class TrusteePreviousAddressListController @Inject()(override val appConfig: Fro
     }.left.map(_ => Future.successful(Redirect(routes.IndividualPreviousAddressPostcodeLookupController.onPageLoad(mode, index, srn))))
   }
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
+  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
     implicit request =>
       viewmodel(mode, index, srn).right.map(get)
   }

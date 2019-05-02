@@ -133,6 +133,7 @@ object TrusteeContactDetailsControllerSpec extends ControllerSpecBase {
       FakeUserAnswersService,
       FakeAuthAction,
       dataRetrievalAction,
+      FakeAllowAccessProvider(),
       new DataRequiredActionImpl,
       formProvider
     )

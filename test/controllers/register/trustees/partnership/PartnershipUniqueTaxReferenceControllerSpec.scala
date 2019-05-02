@@ -18,7 +18,7 @@ package controllers.register.trustees.partnership
 
 import services.FakeUserAnswersService
 import controllers.ControllerSpecBase
-import controllers.actions.{DataRequiredActionImpl, DataRetrievalAction, FakeAuthAction, FakeDataRetrievalAction}
+import controllers.actions.{DataRequiredActionImpl, DataRetrievalAction, FakeAllowAccessProvider, FakeAuthAction, FakeDataRetrievalAction}
 import forms.register.trustees.partnership.PartnershipUniqueTaxReferenceFormProvider
 import identifiers.register.trustees.TrusteesId
 import identifiers.register.trustees.partnership.{PartnershipDetailsId, PartnershipUniqueTaxReferenceId}
@@ -62,6 +62,7 @@ class PartnershipUniqueTaxReferenceControllerSpec extends ControllerSpecBase {
       FakeAuthAction,
       new FakeNavigator(desiredRoute = onwardRoute),
       dataRetrievalAction,
+      FakeAllowAccessProvider(),
       new DataRequiredActionImpl,
       formProvider
     )

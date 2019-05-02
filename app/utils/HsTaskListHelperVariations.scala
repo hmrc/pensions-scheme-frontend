@@ -19,7 +19,7 @@ package utils
 import identifiers.register.trustees.MoreThanTenTrusteesId
 import identifiers.{IsAboutBenefitsAndInsuranceCompleteId, IsAboutMembersCompleteId, SchemeNameId, _}
 import models.register.Entity
-import models.{Link, UpdateMode}
+import models.{Link, Mode, UpdateMode}
 import play.api.i18n.Messages
 import viewmodels._
 
@@ -92,6 +92,24 @@ class HsTaskListHelperVariations(answers: UserAnswers, viewOnly: Boolean, srn: O
       Some(isTrusteeOptional | userAnswers.isAllTrusteesCompleted),
       Some(userAnswers.allTrusteesAfterDelete.size < 10 || userAnswers.get(MoreThanTenTrusteesId).isDefined)
     ).forall(_.contains(true)) && userAnswers.isUserAnswerUpdated()
+  }
+
+  protected[utils] override def addTrusteeHeader(userAnswers: UserAnswers, mode: Mode, srn: Option[String]): Option[SchemeDetailsTaskListSection] = {
+    if (userAnswers.allTrusteesAfterDelete.isEmpty) {
+      Some(
+        SchemeDetailsTaskListSection(
+          trusteeStatus(isAllTrusteesCompleted(userAnswers), trusteesMandatory(userAnswers.get(SchemeTypeId))),
+          typeOfTrusteeLink(addTrusteesLinkText, userAnswers.allTrustees.size, srn, mode)))
+    } else {
+      val (linkText, additionalText): (String, Option[String]) =
+        getTrusteeHeaderText(userAnswers.allTrusteesAfterDelete.size, userAnswers.get(SchemeTypeId))
+
+      Some(
+        SchemeDetailsTaskListSection(
+          link = addTrusteeLink(linkText, srn, mode),
+          p1 = additionalText))
+    }
+
   }
 
   def taskList: SchemeDetailsTaskList = {

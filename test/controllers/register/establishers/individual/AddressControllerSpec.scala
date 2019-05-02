@@ -61,6 +61,7 @@ class AddressControllerSpec extends ControllerSpecBase with ScalaFutures {
       new FakeNavigator(desiredRoute = onwardRoute),
       FakeAuthAction,
       dataRetrievalAction,
+      FakeAllowAccessProvider(),
       new DataRequiredActionImpl,
       formProvider,
       countryOptions,
