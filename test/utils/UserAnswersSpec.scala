@@ -237,20 +237,23 @@ class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues with 
 
   ".allDirectors" must {
 
-    "return a map of director names, edit links, delete links and isComplete flag" in {
+    "return a map of director names, edit links, delete links and isComplete flag including deleted items" in {
       val userAnswers = UserAnswers()
         .set(DirectorDetailsId(0, 0))(PersonDetails("First", None, "Last", LocalDate.now))
         .flatMap(_.set(IsDirectorCompleteId(0, 0))(true))
         .flatMap(_.set(IsDirectorCompleteId(0, 1))(false))
-        .flatMap(_.set(DirectorDetailsId(0, 1))(PersonDetails("First1", None, "Last1", LocalDate.now))).get
+        .flatMap(_.set(DirectorDetailsId(0, 1))(PersonDetails("First2", None, "Last2", LocalDate.now, isDeleted = true)))
+        .flatMap(_.set(DirectorDetailsId(0, 2))(PersonDetails("First3", None, "Last3", LocalDate.now)))
+        .get
 
       val directorEntities = Seq(
         DirectorEntity(DirectorDetailsId(0, 0), "First Last", isDeleted = false, isCompleted = true, isNewEntity = true, 2),
-        DirectorEntity(DirectorDetailsId(0, 1), "First1 Last1", isDeleted = false, isCompleted = false, isNewEntity = true, 2))
+        DirectorEntity(DirectorDetailsId(0, 1), "First2 Last2", isDeleted = true, isCompleted = false, isNewEntity = true, 2),
+        DirectorEntity(DirectorDetailsId(0, 2), "First3 Last3", isDeleted = false, isCompleted = false, isNewEntity = true, 2))
 
       val result = userAnswers.allDirectors(0)
 
-      result.size mustEqual 2
+      result.size mustEqual 3
       result mustBe directorEntities
     }
   }
