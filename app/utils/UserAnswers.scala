@@ -239,7 +239,7 @@ case class UserAnswers(json: JsValue = Json.obj()) {
         for ((director, directorIndex) <- details.zipWithIndex) yield {
           val isComplete = get(IsDirectorCompleteId(establisherIndex, directorIndex)).getOrElse(false)
           DirectorEntity(
-            DirectorDetailsId(establisherIndex, directorIndex),
+            DirectorDetailsId.apply(establisherIndex, directorIndex),
             director.fullName,
             director.isDeleted,
             isComplete,

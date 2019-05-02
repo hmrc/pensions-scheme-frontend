@@ -48,12 +48,14 @@ sealed trait Entity[ID] {
 
 case class DirectorEntity(id: DirectorDetailsId, name: String, isDeleted: Boolean,
                           isCompleted: Boolean, isNewEntity: Boolean, noOfRecords : Int) extends Entity[DirectorDetailsId] {
-  override def editLink(mode: Mode, srn: Option[String]): Option[String] = (isNewEntity, isCompleted) match {
-    case (false, _) => None
-    case (_, true) => Some(controllers.register.establishers.company.director.routes.CheckYourAnswersController.onPageLoad(
-      id.establisherIndex, id.directorIndex, mode, srn).url)
-    case (_, false) => Some(controllers.register.establishers.company.director.routes.DirectorDetailsController.onPageLoad(
-      mode, id.establisherIndex, id.directorIndex, srn).url)
+  override def editLink(mode: Mode, srn: Option[String]): Option[String] = {
+    (isNewEntity, isCompleted) match {
+      case (false, _) => None
+      case (_, true) => Some(controllers.register.establishers.company.director.routes.CheckYourAnswersController.onPageLoad(
+        id.establisherIndex, id.directorIndex, mode, srn).url)
+      case (_, false) => Some(controllers.register.establishers.company.director.routes.DirectorDetailsController.onPageLoad(
+        mode, id.establisherIndex, id.directorIndex, srn).url)
+    }
   }
 
   override def deleteLink(mode: Mode, srn: Option[String]): Option[String] = {
@@ -61,7 +63,7 @@ case class DirectorEntity(id: DirectorDetailsId, name: String, isDeleted: Boolea
       case NormalMode | CheckMode =>
         Some(controllers.register.establishers.company.director.routes.ConfirmDeleteDirectorController.onPageLoad(
           id.establisherIndex, id.directorIndex, mode, srn).url)
-      case UpdateMode | CheckUpdateMode if (noOfRecords > 1) =>
+      case UpdateMode | CheckUpdateMode if noOfRecords > 1 =>
         Some(controllers.register.establishers.company.director.routes.ConfirmDeleteDirectorController.onPageLoad(
           id.establisherIndex, id.directorIndex, mode, srn).url)
       case _ => None
