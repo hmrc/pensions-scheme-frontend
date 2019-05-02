@@ -257,8 +257,7 @@ case class UserAnswers(json: JsValue = Json.obj()) {
   def allPartners(establisherIndex: Int): Seq[PartnerEntity] = {
     getAllRecursive[PersonDetails](PartnerDetailsId.collectionPath(establisherIndex)).map {
       details =>
-        details.map { partner =>
-          val partnerIndex = details.indexOf(partner)
+        for ((partner, partnerIndex) <- details.zipWithIndex) yield {
           val isComplete = get(IsPartnerCompleteId(establisherIndex, partnerIndex)).getOrElse(false)
           PartnerEntity(
             PartnerDetailsId(establisherIndex, partnerIndex),
