@@ -42,13 +42,15 @@ class CompanyUniqueTaxReferenceController @Inject()(
                                                      @TrusteesCompany navigator: Navigator,
                                                      authenticate: AuthAction,
                                                      getData: DataRetrievalAction,
+                                                     allowAccess: AllowAccessActionProvider,
                                                      requireData: DataRequiredAction,
                                                      formProvider: CompanyUniqueTaxReferenceFormProvider
                                                    )(implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
+  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
     implicit request =>
       CompanyDetailsId(index).retrieve.right.map { companyDetails =>
         val submitUrl = controllers.register.trustees.company.routes.CompanyUniqueTaxReferenceController.onSubmit(mode, index, srn)
@@ -74,7 +76,7 @@ class CompanyUniqueTaxReferenceController @Inject()(
                 value
               ).map {
                 json =>
-                  Redirect(navigator.nextPage(CompanyUniqueTaxReferenceId(index), mode, UserAnswers(json)))
+                  Redirect(navigator.nextPage(CompanyUniqueTaxReferenceId(index), mode, UserAnswers(json), srn))
               }
           )
       }

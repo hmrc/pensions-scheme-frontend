@@ -60,6 +60,7 @@ class PreviousAddressControllerSpec extends ControllerSpecBase with ScalaFutures
       FakeUserAnswersService,
       new FakeNavigator(desiredRoute = onwardRoute),
       FakeAuthAction, dataRetrievalAction,
+      FakeAllowAccessProvider(),
       new DataRequiredActionImpl,
       formProvider,
       countryOptions,

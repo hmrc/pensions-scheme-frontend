@@ -46,7 +46,7 @@ class CompanyPostCodeLookupControllerSpec extends ControllerSpecBase with Mockit
 
   def onwardRoute: Call = routes.CompanyAddressListController.onPageLoad(NormalMode, None, firstIndex)
 
-  def manualInputCall: Call = routes.CompanyAddressController.onClick(NormalMode, None, firstIndex)
+  def manualInputCall: Call = routes.CompanyAddressController.onPageLoad(NormalMode, None, firstIndex)
 
   private def fakeAddress(postCode: String) = TolerantAddress(
     Some("Address Line 1"),

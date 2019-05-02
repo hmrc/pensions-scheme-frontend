@@ -42,13 +42,15 @@ class CompanyRegistrationNumberController @Inject()(
                                                      @TrusteesCompany navigator: Navigator,
                                                      authenticate: AuthAction,
                                                      getData: DataRetrievalAction,
+                                                     allowAccess: AllowAccessActionProvider,
                                                      requireData: DataRequiredAction,
                                                      formProvider: CompanyRegistrationNumberFormProvider
                                                    ) (implicit val ec: ExecutionContext) extends FrontendController with I18nSupport with Retrievals {
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
+  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
     implicit request =>
       CompanyDetailsId(index).retrieve.right.map { _ =>
         val submitUrl = controllers.register.trustees.company.routes.CompanyRegistrationNumberController.onSubmit(mode, index, srn)
@@ -67,7 +69,7 @@ class CompanyRegistrationNumberController @Inject()(
           },
           (value) =>
             userAnswersService.save(mode, srn, CompanyRegistrationNumberId(index), value).map(cacheMap =>
-              Redirect(navigator.nextPage(CompanyRegistrationNumberId(index), mode, UserAnswers(cacheMap))))
+              Redirect(navigator.nextPage(CompanyRegistrationNumberId(index), mode, UserAnswers(cacheMap), srn)))
         )
       }
   }

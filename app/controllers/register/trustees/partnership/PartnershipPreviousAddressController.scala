@@ -41,6 +41,7 @@ class PartnershipPreviousAddressController @Inject()(
                                                       @TrusteesPartnership val navigator: Navigator,
                                                       authenticate: AuthAction,
                                                       getData: DataRetrievalAction,
+                                                      allowAccess: AllowAccessActionProvider,
                                                       requireData: DataRequiredAction,
                                                       formProvider: AddressFormProvider,
                                                       val countryOptions: CountryOptions,
@@ -63,12 +64,14 @@ class PartnershipPreviousAddressController @Inject()(
               countryOptions.options,
               title = Message(title),
               heading = Message(heading),
-              secondaryHeader = Some(details.name)
+              secondaryHeader = Some(details.name),
+              srn = srn
             )
         }
     }
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
+  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
     implicit request =>
       viewmodel(index, mode, srn).retrieve.right.map {
         vm =>

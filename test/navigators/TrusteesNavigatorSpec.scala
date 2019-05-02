@@ -21,9 +21,9 @@ import connectors.FakeUserAnswersCacheConnector
 import identifiers.Identifier
 import identifiers.register.trustees._
 import identifiers.register.trustees.individual.TrusteeDetailsId
-import models.NormalMode
 import models.person.PersonDetails
 import models.register.trustees.TrusteeKind
+import models.{Mode, NormalMode, UpdateMode}
 import org.joda.time.LocalDate
 import org.scalatest.OptionValues
 import org.scalatest.prop.TableFor6
@@ -36,30 +36,41 @@ class TrusteesNavigatorSpec extends SpecBase with NavigatorBehaviour {
 
   import TrusteesNavigatorSpec._
 
-  private def routes: TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = Table(
+  private def routes(mode: Mode, srn: Option[String]): TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = Table(
     ("Id", "User Answers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (Check Mode)", "Save (CM)"),
-    (HaveAnyTrusteesId, haveAnyTrusteesTrueWithNoTrustees, trusteeKind(0), false, None, false),
-    (HaveAnyTrusteesId, haveAnyTrusteesTrueWithOneDeletedTrustee, trusteeKind(1), false, None, false),
-    (HaveAnyTrusteesId, haveAnyTrusteesTrueWithTrustees, addTrustee, true, None, false),
-    (HaveAnyTrusteesId, haveAnyTrusteesFalse, taskList, false, None, false),
-    (HaveAnyTrusteesId, emptyAnswers, sessionExpired, false, None, false),
-    (AddTrusteeId, addTrusteeTrue(0), trusteeKind(0), true, Some(trusteeKind(0)), true),
-    (AddTrusteeId, addTrusteeTrue(1), trusteeKind(1), true, Some(trusteeKind(1)), true),
-    (AddTrusteeId, emptyAnswers, trusteeKind(0), true, Some(trusteeKind(0)), true),
-    (AddTrusteeId, trustees(10), moreThanTenTrustees, true, Some(moreThanTenTrustees), true),
-    (AddTrusteeId, addTrusteeFalse, taskList, false, Some(taskList), false),
-    (MoreThanTenTrusteesId, emptyAnswers, taskList, false, None, false),
-    (TrusteeKindId(0), trusteeKindCompany, companyDetails, true, None, false),
-    (TrusteeKindId(0), trusteeKindIndividual, trusteeDetails, true, None, false),
+    (AddTrusteeId, addTrusteeTrue(0), trusteeKind(0, mode, srn), true, None, true),
+    (AddTrusteeId, addTrusteeTrue(1), trusteeKind(1, mode, srn), true, None, true),
+    (AddTrusteeId, emptyAnswers, trusteeKind(0, mode, srn), true, None, true),
+    (AddTrusteeId, trustees(10), moreThanTenTrustees(mode, srn), true, None, true),
+    (AddTrusteeId, addTrusteeFalse, taskList(mode, srn), false, None, false),
+    (MoreThanTenTrusteesId, emptyAnswers, taskList(mode, srn), false, None, false),
+    (TrusteeKindId(0), trusteeKindCompany, companyDetails(mode, srn), true, None, false),
+    (TrusteeKindId(0), trusteeKindIndividual, trusteeDetails(mode, srn), true, None, false),
     (TrusteeKindId(0), emptyAnswers, sessionExpired, false, None, false),
-    (ConfirmDeleteTrusteeId, emptyAnswers, addTrustee, true, None, false)
+    (ConfirmDeleteTrusteeId, emptyAnswers, addTrustee(mode, srn), true, None, false)
   )
+
+  private def normalOnlyRoutes: TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = Table(
+    ("Id", "User Answers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (Check Mode)", "Save (CM)"),
+    (HaveAnyTrusteesId, haveAnyTrusteesTrueWithNoTrustees, trusteeKind(0, NormalMode, None), false, None, false),
+    (HaveAnyTrusteesId, haveAnyTrusteesTrueWithOneDeletedTrustee, trusteeKind(1, NormalMode, None), false, None, false),
+    (HaveAnyTrusteesId, haveAnyTrusteesTrueWithTrustees, addTrustee(NormalMode, None), true, None, false),
+    (HaveAnyTrusteesId, haveAnyTrusteesFalse, taskList(NormalMode, None), false, None, false),
+    (HaveAnyTrusteesId, emptyAnswers, sessionExpired, false, None, false)
+  )
+
+  private def normalRoutes: TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = Table(
+    ("Id", "User Answers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (Check Mode)", "Save (CM)"),
+    normalOnlyRoutes ++ routes(NormalMode, None): _*
+  )
+
 
   private val navigator = new TrusteesNavigator(FakeUserAnswersCacheConnector, frontendAppConfig)
 
   s"${navigator.getClass.getSimpleName}" must {
     appRunning()
-    behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, routes, dataDescriber)
+    behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, normalRoutes, dataDescriber)
+    behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, routes(UpdateMode, srn), dataDescriber, UpdateMode, srn)
     behave like nonMatchingNavigator(navigator)
   }
 }
@@ -68,6 +79,8 @@ class TrusteesNavigatorSpec extends SpecBase with NavigatorBehaviour {
 object TrusteesNavigatorSpec extends OptionValues with Enumerable.Implicits {
 
   private val emptyAnswers = UserAnswers()
+  private val srnValue = "123"
+  private val srn = Some(srnValue)
 
   private def addTrusteeFalse = emptyAnswers.addTrustee(false)
 
@@ -92,19 +105,20 @@ object TrusteesNavigatorSpec extends OptionValues with Enumerable.Implicits {
 
   private def trusteeKindIndividual = emptyAnswers.trusteeKind(TrusteeKind.Individual)
 
-  private def addTrustee = controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode, None)
+  private def addTrustee(mode: Mode, srn: Option[String]) = controllers.register.trustees.routes.AddTrusteeController.onPageLoad(mode, srn)
 
-  private def companyDetails = controllers.register.trustees.company.routes.CompanyDetailsController.onPageLoad(NormalMode, 0, None)
+  private def companyDetails(mode: Mode, srn: Option[String]) = controllers.register.trustees.company.routes.CompanyDetailsController.onPageLoad(mode, 0, srn)
 
-  private def moreThanTenTrustees = controllers.register.trustees.routes.MoreThanTenTrusteesController.onPageLoad(NormalMode, None)
+  private def moreThanTenTrustees(mode: Mode, srn: Option[String]) = controllers.register.trustees.routes.MoreThanTenTrusteesController.onPageLoad(mode, srn)
 
-  private def trusteeDetails = controllers.register.trustees.individual.routes.TrusteeDetailsController.onPageLoad(NormalMode, 0, None)
+  private def trusteeDetails(mode: Mode, srn: Option[String]) =
+    controllers.register.trustees.individual.routes.TrusteeDetailsController.onPageLoad(mode, 0, srn)
 
-  private def trusteeKind(index: Int) = controllers.register.trustees.routes.TrusteeKindController.onPageLoad(NormalMode, index, None)
+  private def trusteeKind(index: Int, mode: Mode, srn: Option[String]) = controllers.register.trustees.routes.TrusteeKindController.onPageLoad(mode, index, srn)
 
   private def sessionExpired = controllers.routes.SessionExpiredController.onPageLoad()
 
-  private def taskList = controllers.routes.SchemeTaskListController.onPageLoad()
+  private def taskList(mode: Mode, srn: Option[String]) = controllers.routes.SchemeTaskListController.onPageLoad(mode, srn)
 
   private def dataDescriber(answers: UserAnswers): String = {
     val haveAnyTrustees = answers.get(HaveAnyTrusteesId) map { value =>

@@ -41,40 +41,43 @@ class CompanyUniqueTaxReferenceController @Inject()(
                                                      @EstablishersCompany navigator: Navigator,
                                                      authenticate: AuthAction,
                                                      getData: DataRetrievalAction,
+                                                     allowAccess: AllowAccessActionProvider,
                                                      requireData: DataRequiredAction,
                                                      formProvider: CompanyUniqueTaxReferenceFormProvider
                                                    )(implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
 
   private val form: Form[UniqueTaxReference] = formProvider()
-  private def postCall: (Mode, Option[String], Index) => Call = routes.CompanyUniqueTaxReferenceController.onSubmit _
 
-  def onPageLoad(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
-    implicit request =>
-          val redirectResult = request.userAnswers.get(CompanyUniqueTaxReferenceId(index)) match {
-            case None =>
-              Ok(companyUniqueTaxReference(appConfig, form, mode, index, existingSchemeName, postCall(mode, srn, index)))
-            case Some(value) =>
-              Ok(companyUniqueTaxReference(appConfig, form.fill(value), mode, index, existingSchemeName, postCall(mode, srn, index)))
-          }
-          Future.successful(redirectResult)
-  }
+  def onPageLoad(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+      implicit request =>
+        val redirectResult = request.userAnswers.get(CompanyUniqueTaxReferenceId(index)) match {
+          case None =>
+            Ok(companyUniqueTaxReference(appConfig, form, mode, index, existingSchemeName, postCall(mode, srn, index)))
+          case Some(value) =>
+            Ok(companyUniqueTaxReference(appConfig, form.fill(value), mode, index, existingSchemeName, postCall(mode, srn, index)))
+        }
+        Future.successful(redirectResult)
+    }
 
   def onSubmit(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
-          form.bindFromRequest().fold(
-            (formWithErrors: Form[_]) =>
-              Future.successful(BadRequest(companyUniqueTaxReference(appConfig, formWithErrors, mode, index, existingSchemeName, postCall(mode, srn, index)))),
-            value =>
-              userAnswersService.save(
-                mode,
-                srn,
-                CompanyUniqueTaxReferenceId(index),
-                value
-              ).map {
-                json =>
-                  Redirect(navigator.nextPage(CompanyUniqueTaxReferenceId(index), mode, UserAnswers(json), srn))
-              }
-          )
+      form.bindFromRequest().fold(
+        (formWithErrors: Form[_]) =>
+          Future.successful(BadRequest(companyUniqueTaxReference(appConfig, formWithErrors, mode, index, existingSchemeName, postCall(mode, srn, index)))),
+        value =>
+          userAnswersService.save(
+            mode,
+            srn,
+            CompanyUniqueTaxReferenceId(index),
+            value
+          ).map {
+            json =>
+              Redirect(navigator.nextPage(CompanyUniqueTaxReferenceId(index), mode, UserAnswers(json), srn))
+          }
+      )
   }
+
+  private def postCall: (Mode, Option[String], Index) => Call = routes.CompanyUniqueTaxReferenceController.onSubmit _
 
 }

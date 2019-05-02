@@ -43,6 +43,7 @@ class DirectorAddressController @Inject()(
                                            @EstablishersCompanyDirector val navigator: Navigator,
                                            authenticate: AuthAction,
                                            getData: DataRetrievalAction,
+                                           allowAccess: AllowAccessActionProvider,
                                            requireData: DataRequiredAction,
                                            val formProvider: AddressFormProvider,
                                            val countryOptions: CountryOptions,
@@ -56,7 +57,8 @@ class DirectorAddressController @Inject()(
 
   protected val form: Form[Address] = formProvider()
 
-  def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
+  def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
     implicit request =>
       viewmodel(establisherIndex, directorIndex, mode, srn).retrieve.right.map {
         vm =>
@@ -90,7 +92,8 @@ class DirectorAddressController @Inject()(
               title = Message(title),
               heading = Message(heading),
               hint = Some(Message(hint)),
-              secondaryHeader = Some(details.fullName)
+              secondaryHeader = Some(details.fullName),
+              srn = srn
             )
         }
     }

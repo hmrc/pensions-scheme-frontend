@@ -36,19 +36,21 @@ class CompanyContactDetailsController @Inject()(
                                                  val userAnswersService: UserAnswersService,
                                                  authenticate: AuthAction,
                                                  getData: DataRetrievalAction,
+                                                 allowAccess: AllowAccessActionProvider,
                                                  requireData: DataRequiredAction,
                                                  formProvider: ContactDetailsFormProvider
                                                ) extends controllers.ContactDetailsController {
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
-    implicit request =>
-      retrieveCompanyName(index) {
-        companyName =>
-          get(CompanyContactDetailsId(index), form, viewmodel(mode, srn, index, companyName))
-      }
-  }
+  def onPageLoad(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+      implicit request =>
+        retrieveCompanyName(index) {
+          companyName =>
+            get(CompanyContactDetailsId(index), form, viewmodel(mode, srn, index, companyName))
+        }
+    }
 
   def onSubmit(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>

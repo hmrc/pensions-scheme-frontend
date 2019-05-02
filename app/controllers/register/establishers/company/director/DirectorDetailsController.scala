@@ -44,6 +44,7 @@ class DirectorDetailsController @Inject()(
                                            @EstablishersCompanyDirector navigator: Navigator,
                                            authenticate: AuthAction,
                                            getData: DataRetrievalAction,
+                                           allowAccess: AllowAccessActionProvider,
                                            requireData: DataRequiredAction,
                                            formProvider: PersonDetailsFormProvider,
                                            sectionComplete: SectionComplete
@@ -54,7 +55,7 @@ class DirectorDetailsController @Inject()(
   private def postCall: (Mode, Index, Index, Option[String]) => Call = routes.DirectorDetailsController.onSubmit _
 
   def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen requireData).async {
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         val preparedForm = request.userAnswers.get[PersonDetails](DirectorDetailsId(establisherIndex, directorIndex)) match {
           case None => form
@@ -75,6 +76,7 @@ class DirectorDetailsController @Inject()(
           value => {
             val answers = request.userAnswers.set(IsNewDirectorId(establisherIndex, directorIndex))(true).flatMap(
               _.set(DirectorDetailsId(establisherIndex, directorIndex))(value)).asOpt.getOrElse(request.userAnswers)
+
             userAnswersService.upsert(mode, srn, answers.json).flatMap {
               cacheMap =>
                 val userAnswers = UserAnswers(cacheMap)
@@ -82,10 +84,12 @@ class DirectorDetailsController @Inject()(
                 val allDirectorsCompleted = allDirectors.count(_.isCompleted) == allDirectors.size
 
                 if (allDirectorsCompleted) {
-                  Future.successful(Redirect(navigator.nextPage(DirectorDetailsId(establisherIndex, directorIndex), mode, userAnswers)))
+                  Future.successful(Redirect(navigator.nextPage(DirectorDetailsId(establisherIndex, directorIndex), mode, userAnswers, srn)))
                 } else {
-                  userAnswersService.setCompleteFlag(mode, srn, IsEstablisherCompleteId(establisherIndex), userAnswers, value = false).map { _ =>
-                    Redirect(navigator.nextPage(DirectorDetailsId(establisherIndex, directorIndex), mode, userAnswers))
+                  userAnswers.upsert(IsEstablisherCompleteId(establisherIndex))(false) { answers =>
+                    userAnswersService.upsert(mode, srn, answers.json).map { json =>
+                      Redirect(navigator.nextPage(DirectorDetailsId(establisherIndex, directorIndex), mode, UserAnswers(json), srn))
+                    }
                   }
                 }
             }

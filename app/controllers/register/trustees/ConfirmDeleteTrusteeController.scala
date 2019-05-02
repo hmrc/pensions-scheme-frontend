@@ -30,7 +30,6 @@ import models.person.PersonDetails
 import models.register.trustees.TrusteeKind
 import models.register.trustees.TrusteeKind.{Company, Individual, Partnership}
 import models.requests.DataRequest
-import models._
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Result}
@@ -46,6 +45,7 @@ class ConfirmDeleteTrusteeController @Inject()(appConfig: FrontendAppConfig,
                                                override val messagesApi: MessagesApi,
                                                authenticate: AuthAction,
                                                getData: DataRetrievalAction,
+                                               allowAccess: AllowAccessActionProvider,
                                                requireData: DataRequiredAction,
                                                @Trustees navigator: Navigator,
                                                userAnswersService: UserAnswersService,
@@ -55,7 +55,7 @@ class ConfirmDeleteTrusteeController @Inject()(appConfig: FrontendAppConfig,
   private val form: Form[Boolean] = formProvider()
 
   def onPageLoad(mode: Mode, index: Index, trusteeKind: TrusteeKind, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen requireData).async {
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
     implicit request =>
       getDeletableTrustee(index, trusteeKind, request.userAnswers) map {
         trustee =>
@@ -129,7 +129,7 @@ class ConfirmDeleteTrusteeController @Inject()(appConfig: FrontendAppConfig,
           Future.successful(dataRequest.userAnswers.json)
         }
         deletionResult.flatMap { answers =>
-          Future.successful(Redirect(navigator.nextPage(ConfirmDeleteTrusteeId, NormalMode, UserAnswers(answers))))
+          Future.successful(Redirect(navigator.nextPage(ConfirmDeleteTrusteeId, mode, UserAnswers(answers), srn)))
         }
       }
     )

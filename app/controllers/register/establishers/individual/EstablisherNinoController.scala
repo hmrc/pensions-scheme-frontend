@@ -42,13 +42,15 @@ class EstablisherNinoController @Inject()(
                                            @EstablishersIndividual navigator: Navigator,
                                            authenticate: AuthAction,
                                            getData: DataRetrievalAction,
+                                           allowAccess: AllowAccessActionProvider,
                                            requireData: DataRequiredAction,
                                            formProvider: EstablisherNinoFormProvider
                                          )(implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
 
   private val form: Form[Nino] = formProvider()
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
+  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
     implicit request =>
       retrieveEstablisherName(index) { _ =>
         val preparedForm = request.userAnswers.get(EstablisherNinoId(index)).fold(form)(form.fill)

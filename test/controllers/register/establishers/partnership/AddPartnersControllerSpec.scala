@@ -54,6 +54,7 @@ class AddPartnersControllerSpec extends ControllerSpecBase {
     new AddPartnersController(
       frontendAppConfig,
       messagesApi,
+      FakeUserAnswersService,
       navigator,
       FakeAuthAction,
       dataRetrievalAction,

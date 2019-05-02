@@ -19,7 +19,7 @@ package controllers.register.establishers.company
 import com.google.inject.Inject
 import config.FrontendAppConfig
 import controllers.Retrievals
-import controllers.actions.{AuthAction, DataRequiredAction, DataRetrievalAction}
+import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRequiredAction, DataRetrievalAction}
 import controllers.address.AddressListController
 import controllers.register.establishers.company.routes._
 import identifiers.register.establishers.company.{CompanyAddressId, CompanyAddressListId, CompanyDetailsId, CompanyPostCodeLookupId}
@@ -42,21 +42,13 @@ class CompanyAddressListController @Inject()(
                                               override val messagesApi: MessagesApi,
                                               authenticate: AuthAction,
                                               getData: DataRetrievalAction,
+                                              allowAccess: AllowAccessActionProvider,
                                               requireData: DataRequiredAction
                                             ) extends AddressListController with Retrievals {
 
   def onPageLoad(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen requireData).async { implicit request =>
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async { implicit request =>
       viewmodel(mode, srn, index).right.map(get)
-    }
-
-  def onSubmit(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen requireData).async { implicit request =>
-
-      viewmodel(mode, srn, index).right.map {
-        vm =>
-          post(vm, CompanyAddressListId(index), CompanyAddressId(index), mode)
-      }
     }
 
   private def viewmodel(mode: Mode, srn: Option[String], index: Index)
@@ -66,11 +58,20 @@ class CompanyAddressListController @Inject()(
       case companyDetails ~ addresses =>
         AddressListViewModel(
           postCall = routes.CompanyAddressListController.onSubmit(mode, srn, index),
-          manualInputCall = routes.CompanyAddressController.onClick(mode, srn, index),
+          manualInputCall = routes.CompanyAddressController.onPageLoad(mode, srn, index),
           addresses = addresses,
           subHeading = Some(Message(companyDetails.companyName)),
           srn = srn
         )
     }.left.map(_ => Future.successful(Redirect(CompanyPostCodeLookupController.onPageLoad(mode, srn, index))))
   }
+
+  def onSubmit(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen requireData).async { implicit request =>
+
+      viewmodel(mode, srn, index).right.map {
+        vm =>
+          post(vm, CompanyAddressListId(index), CompanyAddressId(index), mode)
+      }
+    }
 }

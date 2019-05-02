@@ -41,9 +41,11 @@ class CompanyPreviousAddressListController @Inject()(
                                                       @TrusteesCompany override val navigator: Navigator,
                                                       authenticate: AuthAction,
                                                       getData: DataRetrievalAction,
+                                                      allowAccess: AllowAccessActionProvider,
                                                       requireData: DataRequiredAction) extends AddressListController with Retrievals {
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
+  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
     implicit request =>
       viewmodel(mode, index, srn).right.map(get)
   }
@@ -63,7 +65,8 @@ class CompanyPreviousAddressListController @Inject()(
           addresses = addresses,
           title = Message("messages__select_the_previous_address__title"),
           heading = Message("messages__select_the_previous_address__heading"),
-          subHeading = Some(companyDetails.companyName)
+          subHeading = Some(companyDetails.companyName),
+          srn= srn
         )
     }.left.map(_ => Future.successful(Redirect(routes.CompanyPreviousAddressPostcodeLookupController.onPageLoad(mode, index, srn))))
   }

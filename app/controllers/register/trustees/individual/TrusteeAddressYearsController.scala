@@ -19,7 +19,7 @@ package controllers.register.trustees.individual
 import com.google.inject.{Inject, Singleton}
 import config.FrontendAppConfig
 import controllers.Retrievals
-import controllers.actions.{AuthAction, DataRequiredAction, DataRetrievalAction}
+import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRequiredAction, DataRetrievalAction}
 import controllers.address.AddressYearsController
 import forms.address.AddressYearsFormProvider
 import identifiers.register.trustees.individual.{TrusteeAddressYearsId, TrusteeDetailsId}
@@ -40,12 +40,14 @@ class TrusteeAddressYearsController @Inject()(
                                                override val messagesApi: MessagesApi,
                                                authenticate: AuthAction,
                                                getData: DataRetrievalAction,
+                                               allowAccess: AllowAccessActionProvider,
                                                requireData: DataRequiredAction
                                              ) extends AddressYearsController with Retrievals {
 
   private val form = new AddressYearsFormProvider()(Message("messages__trusteeAddressYears__error_required"))
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
+  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
     implicit request =>
       TrusteeDetailsId(index).retrieve.right.map { trusteeDetails =>
         get(TrusteeAddressYearsId(index), form, viewModel(mode, index, trusteeDetails.fullName, srn))
@@ -64,7 +66,8 @@ class TrusteeAddressYearsController @Inject()(
     title = Message("messages__trusteeAddressYears__title"),
     heading = Message("messages__trusteeAddressYears__heading"),
     legend = Message("messages__trusteeAddressYears__title"),
-    subHeading = Some(Message(trusteeName))
+    subHeading = Some(Message(trusteeName)),
+    srn = srn
   )
 
 }

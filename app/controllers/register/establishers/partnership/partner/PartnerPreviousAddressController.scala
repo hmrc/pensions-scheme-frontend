@@ -19,7 +19,7 @@ package controllers.register.establishers.partnership.partner
 import audit.AuditService
 import config.FrontendAppConfig
 import controllers.Retrievals
-import controllers.actions.{AuthAction, DataRequiredAction, DataRetrievalAction}
+import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRequiredAction, DataRetrievalAction}
 import controllers.address.ManualAddressController
 import forms.address.AddressFormProvider
 import identifiers.register.establishers.partnership.partner._
@@ -42,17 +42,42 @@ class PartnerPreviousAddressController @Inject()(
                                                   @EstablishersPartner val navigator: Navigator,
                                                   authenticate: AuthAction,
                                                   getData: DataRetrievalAction,
+                                                  allowAccess: AllowAccessActionProvider,
                                                   requireData: DataRequiredAction,
                                                   val formProvider: AddressFormProvider,
                                                   val countryOptions: CountryOptions,
                                                   val auditService: AuditService
                                                 ) extends ManualAddressController with I18nSupport with Retrievals {
 
+  protected val form: Form[Address] = formProvider()
   private[controllers] val postCall = routes.PartnerPreviousAddressController.onSubmit _
   private[controllers] val title: Message = "messages__partnerPreviousAddress__title"
   private[controllers] val heading: Message = "messages__partnerPreviousAddress__heading"
 
-  protected val form: Form[Address] = formProvider()
+  def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+      implicit request =>
+        viewmodel(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn).retrieve.right.map {
+          vm =>
+            get(PartnerPreviousAddressId(establisherIndex, partnerIndex), PartnerPreviousAddressListId(establisherIndex, partnerIndex), vm)
+        }
+    }
+
+  def onSubmit(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen requireData).async {
+      implicit request =>
+        viewmodel(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn).retrieve.right.map {
+          vm =>
+            post(
+              PartnerPreviousAddressId(establisherIndex, partnerIndex),
+              PartnerPreviousAddressListId(establisherIndex, partnerIndex),
+              vm,
+              mode,
+              context(vm),
+              PartnerPreviousAddressPostcodeLookupId(establisherIndex, partnerIndex)
+            )
+        }
+    }
 
   private def viewmodel(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Retrieval[ManualAddressViewModel] =
     Retrieval {
@@ -64,35 +89,11 @@ class PartnerPreviousAddressController @Inject()(
               countryOptions.options,
               title = Message(title),
               heading = Message(heading),
-              secondaryHeader = Some(partner.fullName)
+              secondaryHeader = Some(partner.fullName),
+              srn = srn
             )
         }
     }
-
-  def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen requireData).async {
-    implicit request =>
-      viewmodel(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn).retrieve.right.map {
-        vm =>
-          get(PartnerPreviousAddressId(establisherIndex, partnerIndex), PartnerPreviousAddressListId(establisherIndex, partnerIndex), vm)
-      }
-  }
-
-  def onSubmit(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen requireData).async {
-    implicit request =>
-      viewmodel(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn).retrieve.right.map {
-        vm =>
-          post(
-            PartnerPreviousAddressId(establisherIndex, partnerIndex),
-            PartnerPreviousAddressListId(establisherIndex, partnerIndex),
-            vm,
-            mode,
-            context(vm),
-            PartnerPreviousAddressPostcodeLookupId(establisherIndex, partnerIndex)
-          )
-      }
-  }
 
   private def context(viewModel: ManualAddressViewModel): String = {
     viewModel.secondaryHeader match {

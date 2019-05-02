@@ -20,6 +20,7 @@ import base.SpecBase
 import connectors.FakeUserAnswersCacheConnector
 import identifiers.register.trustees.individual._
 import models._
+import models.Mode.checkMode
 import play.api.libs.json.Json
 import play.api.mvc.Call
 import utils.UserAnswers
@@ -28,22 +29,22 @@ class TrusteesIndividualNavigatorSpec extends SpecBase with NavigatorBehaviour {
 
   import TrusteesIndividualNavigatorSpec._
 
-  private def routes() = Table(
+  private def routes(mode: Mode) = Table(
     ("Id", "User Answers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (Check Mode)", "Save (CM)"),
-    (TrusteeDetailsId(0), emptyAnswers, nino(NormalMode), true, Some(checkYourAnswers), true),
-    (TrusteeNinoId(0), emptyAnswers, utr(NormalMode), true, Some(checkYourAnswers), true),
-    (UniqueTaxReferenceId(0), emptyAnswers, postcode(NormalMode), true, Some(checkYourAnswers), true),
-    (IndividualPostCodeLookupId(0), emptyAnswers, addressList(NormalMode), true, Some(addressList(CheckMode)), true),
-    (IndividualAddressListId(0), emptyAnswers, address(NormalMode), true, Some(address(CheckMode)), true),
-    (TrusteeAddressId(0), emptyAnswers, addressYears(NormalMode), true, Some(checkYourAnswers), true),
-    (TrusteeAddressYearsId(0), overAYear, contactDetails(NormalMode), true, Some(checkYourAnswers), true),
-    (TrusteeAddressYearsId(0), underAYear, previousAddressPostcode(NormalMode), true, Some(previousAddressPostcode(CheckMode)), true),
+    (TrusteeDetailsId(0), emptyAnswers, nino(mode), true, Some(checkYourAnswers(mode)), true),
+    (TrusteeNinoId(0), emptyAnswers, utr(mode), true, Some(checkYourAnswers(mode)), true),
+    (UniqueTaxReferenceId(0), emptyAnswers, postcode(mode), true, Some(checkYourAnswers(mode)), true),
+    (IndividualPostCodeLookupId(0), emptyAnswers, addressList(mode), true, Some(addressList(checkMode(mode))), true),
+    (IndividualAddressListId(0), emptyAnswers, address(mode), true, Some(address(checkMode(mode))), true),
+    (TrusteeAddressId(0), emptyAnswers, addressYears(mode), true, Some(checkYourAnswers(mode)), true),
+    (TrusteeAddressYearsId(0), overAYear, contactDetails(mode), true, Some(checkYourAnswers(mode)), true),
+    (TrusteeAddressYearsId(0), underAYear, previousAddressPostcode(mode), true, Some(previousAddressPostcode(checkMode(mode))), true),
     (TrusteeAddressYearsId(0), emptyAnswers, sessionExpired, false, Some(sessionExpired), false),
-    (IndividualPreviousAddressPostCodeLookupId(0), emptyAnswers, previousAddressList(NormalMode), true, Some(previousAddressList(CheckMode)), true),
-    (TrusteePreviousAddressListId(0), emptyAnswers, previousAddress(NormalMode), true, Some(previousAddress(CheckMode)), true),
-    (TrusteePreviousAddressId(0), emptyAnswers, contactDetails(NormalMode), true, Some(checkYourAnswers), true),
-    (TrusteeContactDetailsId(0), emptyAnswers, checkYourAnswers, true, None, true),
-    (CheckYourAnswersId, emptyAnswers, addTrustee(NormalMode), false, None, true)
+    (IndividualPreviousAddressPostCodeLookupId(0), emptyAnswers, previousAddressList(mode), true, Some(previousAddressList(checkMode(mode))), true),
+    (TrusteePreviousAddressListId(0), emptyAnswers, previousAddress(mode), true, Some(previousAddress(checkMode(mode))), true),
+    (TrusteePreviousAddressId(0), emptyAnswers, contactDetails(mode), true, Some(checkYourAnswers(mode)), true),
+    (TrusteeContactDetailsId(0), emptyAnswers, checkYourAnswers(mode), true, None, true),
+    (CheckYourAnswersId, emptyAnswers, addTrustee(mode), false, None, true)
   )
 
   private val navigator: TrusteesIndividualNavigator =
@@ -52,7 +53,8 @@ class TrusteesIndividualNavigatorSpec extends SpecBase with NavigatorBehaviour {
 
   s"${navigator.getClass.getSimpleName}" must {
     appRunning()
-    behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, routes(), dataDescriber)
+    behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, routes(NormalMode), dataDescriber)
+    behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, routes(UpdateMode), dataDescriber, UpdateMode)
     behave like nonMatchingNavigator(navigator)
   }
 
@@ -60,7 +62,7 @@ class TrusteesIndividualNavigatorSpec extends SpecBase with NavigatorBehaviour {
 
 object TrusteesIndividualNavigatorSpec {
 
-  private def taskList: Call = controllers.routes.SchemeTaskListController.onPageLoad()
+  private def taskList: Call = controllers.routes.SchemeTaskListController.onPageLoad(NormalMode, None)
 
   private val emptyAnswers = UserAnswers(Json.obj())
   val firstIndex = Index(0)
@@ -87,7 +89,7 @@ object TrusteesIndividualNavigatorSpec {
 
   private def contactDetails(mode: Mode) = controllers.register.trustees.individual.routes.TrusteeContactDetailsController.onPageLoad(mode, firstIndex, None)
 
-  private def checkYourAnswers = controllers.register.trustees.individual.routes.CheckYourAnswersController.onPageLoad(NormalMode, firstIndex, None)
+  private def checkYourAnswers(mode: Mode) = controllers.register.trustees.individual.routes.CheckYourAnswersController.onPageLoad(mode, firstIndex, None)
 
   private def addTrustee(mode: Mode) = controllers.register.trustees.routes.AddTrusteeController.onPageLoad(mode, None)
 

@@ -112,7 +112,7 @@ class ConfirmDeleteDirectorControllerSpec extends ControllerSpecBase {
       val getRelevantData = new FakeDataRetrievalAction(Some(validData))
       val result = controller(getRelevantData).onSubmit(establisherIndex, directorIndex, NormalMode, None)(postRequest)
       status(result) mustBe SEE_OTHER
-      FakeUserAnswersService.verify(IsEstablisherCompleteId(0), false)
+      FakeUserAnswersService.userAnswer.get(IsEstablisherCompleteId(0)) mustBe Some(false)
     }
   }
 
@@ -161,6 +161,7 @@ object ConfirmDeleteDirectorControllerSpec extends ControllerSpecBase {
       new FakeNavigator(desiredRoute = onwardRoute),
       FakeAuthAction,
       dataRetrievalAction,
+      FakeAllowAccessProvider(),
       new DataRequiredActionImpl,
       FakeSectionComplete,
       formProvider

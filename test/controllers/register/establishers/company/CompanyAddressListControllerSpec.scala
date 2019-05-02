@@ -187,7 +187,7 @@ class CompanyAddressListControllerSpec extends ControllerSpecBase with CSRFReque
   private def addressListViewModel(addresses: Seq[TolerantAddress]): AddressListViewModel = {
     AddressListViewModel(
       routes.CompanyAddressListController.onSubmit(NormalMode, None, Index(0)),
-      routes.CompanyAddressController.onClick(NormalMode, None, Index(0)),
+      routes.CompanyAddressController.onPageLoad(NormalMode, None, Index(0)),
       addresses,
       subHeading = Some(Message(companyDetails.companyName))
     )

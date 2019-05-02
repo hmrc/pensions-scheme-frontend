@@ -87,7 +87,7 @@ class AddTrusteeControllerSpec extends ControllerSpecBase {
 
   def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): AddTrusteeController =
     new AddTrusteeController(frontendAppConfig, messagesApi, new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
-      dataRetrievalAction, new DataRequiredActionImpl, formProvider)
+      dataRetrievalAction, FakeAllowAccessProvider(), new DataRequiredActionImpl, formProvider)
 
   val submitUrl = controllers.register.trustees.routes.AddTrusteeController.onSubmit(NormalMode, None)
   def viewAsString(form: Form[_] = form, trustees: Seq[Trustee[_]] = Seq.empty): String =

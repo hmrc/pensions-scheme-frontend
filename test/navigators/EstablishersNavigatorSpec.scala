@@ -34,12 +34,12 @@ class EstablishersNavigatorSpec extends SpecBase with MustMatchers with Navigato
     ("Id", "User Answers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (Check Mode)", "Save (CM)"),
     (AddEstablisherId(None), emptyAnswers, establisherKind(mode), true, None: Option[Call], false),
     (AddEstablisherId(Some(true)), addEstablishersTrue, establisherKind(mode), true, None: Option[Call], false),
-    (AddEstablisherId(Some(false)), addEstablishersFalse, taskList, false, None: Option[Call], false),
+    (AddEstablisherId(Some(false)), addEstablishersFalse, taskList(mode), false, None: Option[Call], false),
     (EstablisherKindId(0), company, companyDetails(mode), true, None: Option[Call], false),
     (EstablisherKindId(0), individual, individualDetails(mode), true, None, false),
     (EstablisherKindId(0), partnership, partnershipDetails(mode), true, None: Option[Call], false),
     (EstablisherKindId(0), emptyAnswers, expired, false, None, false),
-    (ConfirmDeleteEstablisherId, emptyAnswers, addEstablisher(mode), true, None, false)
+    (ConfirmDeleteEstablisherId, emptyAnswers, if(mode==UpdateMode) controllers.routes.AnyMoreChangesController.onPageLoad(None) else addEstablisher(mode), true, None, false)
   )
 
   private def normalRoutes = routes(NormalMode)
@@ -78,7 +78,7 @@ object EstablishersNavigatorSpec extends OptionValues with Enumerable.Implicits 
 
   private def expired = controllers.routes.SessionExpiredController.onPageLoad()
 
-  private def taskList = controllers.routes.SchemeTaskListController.onPageLoad()
+  private def taskList(mode: Mode) = controllers.routes.SchemeTaskListController.onPageLoad(mode, None)
 
   private def dataDescriber(answers: UserAnswers): String = answers.toString
 

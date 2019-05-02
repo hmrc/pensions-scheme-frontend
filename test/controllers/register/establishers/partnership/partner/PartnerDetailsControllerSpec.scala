@@ -18,7 +18,7 @@ package controllers.register.establishers.partnership.partner
 
 import services.UserAnswersService
 import controllers.ControllerSpecBase
-import controllers.actions.{DataRequiredActionImpl, DataRetrievalAction, FakeAuthAction, FakeDataRetrievalAction}
+import controllers.actions.{DataRequiredActionImpl, DataRetrievalAction, FakeAllowAccessProvider, FakeAuthAction, FakeDataRetrievalAction}
 import forms.register.PersonDetailsFormProvider
 import identifiers.register.establishers.partnership.PartnershipDetailsId
 import identifiers.register.establishers.partnership.partner.PartnerDetailsId
@@ -50,6 +50,7 @@ class PartnerDetailsControllerSpec extends ControllerSpecBase {
       new FakeNavigator(desiredRoute = onwardRoute),
       FakeAuthAction,
       dataRetrievalAction,
+      FakeAllowAccessProvider(),
       new DataRequiredActionImpl,
       formProvider,
       mockSectionComplete)
@@ -170,14 +171,14 @@ class PartnerDetailsControllerSpec extends ControllerSpecBase {
         )
       val getRelevantData = new FakeDataRetrievalAction(Some(validData))
       val userAnswers = UserAnswers(validData)
+      val updatedUserAnswer = userAnswers.set(IsEstablisherCompleteId(0))(false).asOpt.get
       when(mockUserAnswersService.save(any(), any(), any(), any())(any(), any(), any(), any())).thenReturn(Future.successful(validData))
-      when(mockUserAnswersService.setCompleteFlag(any(), any(), eqTo(IsEstablisherCompleteId(0)),
-        eqTo(userAnswers), eqTo(false))(any(), any(), any(), any())).thenReturn(Future.successful(userAnswers))
+      when(mockUserAnswersService.upsert(any(), any(),eqTo(updatedUserAnswer.json))(any(), any(), any())).thenReturn(Future.successful(updatedUserAnswer.json))
 
       val result = controller(getRelevantData).onSubmit(NormalMode, firstEstablisherIndex, firstPartnerIndex, None)(postRequest)
       status(result) mustBe SEE_OTHER
       verify(mockUserAnswersService, times(1))
-        .setCompleteFlag(any(), any(), eqTo(IsEstablisherCompleteId(0)), eqTo(userAnswers), eqTo(false))(any(), any(), any(), any())
+        .upsert(any(), any(),eqTo(updatedUserAnswer.json))(any(), any(), any())
     }
   }
 }

@@ -54,7 +54,7 @@ class EstablisherKindControllerSpec extends ControllerSpecBase {
 
   def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): EstablisherKindController =
     new EstablisherKindController(frontendAppConfig, messagesApi, FakeUserAnswersService, new FakeNavigator(desiredRoute = onwardRoute),
-      FakeAuthAction, dataRetrievalAction, new DataRequiredActionImpl, formProvider)
+      FakeAuthAction, dataRetrievalAction, FakeAllowAccessProvider(), new DataRequiredActionImpl, formProvider)
 
   def viewAsString(form: Form[_] = form): String = establisherKind(frontendAppConfig, form, NormalMode, firstIndex, None,
     postCall(NormalMode, firstIndex, None))(fakeRequest, messages).toString

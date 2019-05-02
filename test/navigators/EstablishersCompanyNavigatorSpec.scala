@@ -166,7 +166,7 @@ object EstablishersCompanyNavigatorSpec extends OptionValues {
 
   private def isDormant(mode: Mode) = controllers.register.establishers.company.routes.IsCompanyDormantController.onPageLoad(mode, None, 0)
 
-  private def taskList: Call = controllers.routes.SchemeTaskListController.onPageLoad()
+  private def taskList: Call = controllers.routes.SchemeTaskListController.onPageLoad(NormalMode, None)
 
   private val emptyAnswers = UserAnswers(Json.obj())
   private val addressYearsOverAYear = UserAnswers(Json.obj())

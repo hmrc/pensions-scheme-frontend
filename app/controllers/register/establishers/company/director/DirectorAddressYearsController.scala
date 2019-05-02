@@ -40,31 +40,32 @@ class DirectorAddressYearsController @Inject()(
                                                 val messagesApi: MessagesApi,
                                                 authenticate: AuthAction,
                                                 getData: DataRetrievalAction,
+                                                allowAccess: AllowAccessActionProvider,
                                                 requireData: DataRequiredAction
                                               ) extends AddressYearsController with Retrievals {
 
   private val form = new AddressYearsFormProvider()(Message("messages__common_error__current_address_years"))
 
   def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen requireData).async {
-    implicit request =>
-      DirectorDetailsId(establisherIndex, directorIndex).retrieve.right.map { directorDetails =>
-        get(DirectorAddressYearsId(establisherIndex, directorIndex), form, viewModel(mode, establisherIndex, directorIndex, directorDetails.fullName, srn))
-      }
-  }
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+      implicit request =>
+        DirectorDetailsId(establisherIndex, directorIndex).retrieve.right.map { directorDetails =>
+          get(DirectorAddressYearsId(establisherIndex, directorIndex), form, viewModel(mode, establisherIndex, directorIndex, directorDetails.fullName, srn))
+        }
+    }
 
   def onSubmit(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen requireData).async {
-    implicit request =>
-      DirectorDetailsId(establisherIndex, directorIndex).retrieve.right.map { directorDetails =>
-        post(
-          DirectorAddressYearsId(establisherIndex, directorIndex),
-          mode,
-          form,
-          viewModel(mode, establisherIndex, directorIndex, directorDetails.fullName, srn)
-        )
-      }
-  }
+      implicit request =>
+        DirectorDetailsId(establisherIndex, directorIndex).retrieve.right.map { directorDetails =>
+          post(
+            DirectorAddressYearsId(establisherIndex, directorIndex),
+            mode,
+            form,
+            viewModel(mode, establisherIndex, directorIndex, directorDetails.fullName, srn)
+          )
+        }
+    }
 
   private def viewModel(mode: Mode, establisherIndex: Index, directorIndex: Index, directorName: String, srn: Option[String]) = AddressYearsViewModel(
     postCall = routes.DirectorAddressYearsController.onSubmit(mode, establisherIndex, directorIndex, srn),

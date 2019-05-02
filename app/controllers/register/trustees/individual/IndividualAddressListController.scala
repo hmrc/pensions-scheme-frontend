@@ -18,7 +18,7 @@ package controllers.register.trustees.individual
 
 import config.FrontendAppConfig
 import controllers.Retrievals
-import controllers.actions.{AuthAction, DataRequiredAction, DataRetrievalAction}
+import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRequiredAction, DataRetrievalAction}
 import controllers.address.AddressListController
 import identifiers.register.trustees.individual._
 import javax.inject.Inject
@@ -40,9 +40,11 @@ class IndividualAddressListController @Inject()(override val appConfig: Frontend
                                                 @TrusteesIndividual override val navigator: Navigator,
                                                 authenticate: AuthAction,
                                                 getData: DataRetrievalAction,
+                                                allowAccess: AllowAccessActionProvider,
                                                 requireData: DataRequiredAction) extends AddressListController with Retrievals {
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
+  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
     implicit request =>
       viewmodel(mode, index, srn).right.map(get)
   }
@@ -62,7 +64,8 @@ class IndividualAddressListController @Inject()(override val appConfig: Frontend
         postCall = routes.IndividualAddressListController.onSubmit(mode, index, srn),
         manualInputCall = routes.TrusteeAddressController.onPageLoad(mode, index, srn),
         addresses = addresses,
-        subHeading = Some(Message(trusteeDetails.fullName))
+        subHeading = Some(Message(trusteeDetails.fullName)),
+        srn= srn
       )
     }.left.map(_ =>
       Future.successful(Redirect(routes.IndividualPostCodeLookupController.onPageLoad(mode, index, srn))))

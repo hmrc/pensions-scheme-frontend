@@ -39,6 +39,7 @@ class TrusteeNinoController @Inject()(appConfig: FrontendAppConfig,
                                       override val messagesApi: MessagesApi,
                                       authenticate: AuthAction,
                                       getData: DataRetrievalAction,
+                                      allowAccess: AllowAccessActionProvider,
                                       requireData: DataRequiredAction,
                                       @TrusteesIndividual navigator: Navigator,
                                       userAnswersService: UserAnswersService) (implicit val ec: ExecutionContext)
@@ -46,7 +47,8 @@ class TrusteeNinoController @Inject()(appConfig: FrontendAppConfig,
 
   private val form: Form[Nino] = new TrusteeNinoFormProvider()()
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
+  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
     implicit request =>
       TrusteeDetailsId(index).retrieve.right.map { trusteeDetails =>
         val filledForm = request.userAnswers.get(TrusteeNinoId(index)).fold(form)(form.fill)
@@ -63,7 +65,7 @@ class TrusteeNinoController @Inject()(appConfig: FrontendAppConfig,
           Future.successful(BadRequest(trusteeNino(appConfig, errors, mode, index, existingSchemeName, submitUrl)))
         },
         nino => userAnswersService.save(mode, srn, TrusteeNinoId(index), nino).map { answers =>
-          Redirect(navigator.nextPage(TrusteeNinoId(index), mode, UserAnswers(answers)))
+          Redirect(navigator.nextPage(TrusteeNinoId(index), mode, UserAnswers(answers), srn))
         }
       )
   }

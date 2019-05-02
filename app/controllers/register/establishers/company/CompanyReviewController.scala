@@ -61,11 +61,11 @@ class CompanyReviewController @Inject()(appConfig: FrontendAppConfig,
 
       if (allDirectorsCompleted & isCompanyComplete) {
         userAnswersService.setCompleteFlag(mode, srn, IsEstablisherCompleteId(index), request.userAnswers, value = true).map { _ =>
-          Redirect(navigator.nextPage(CompanyReviewId(index), NormalMode, request.userAnswers, srn))
+          Redirect(navigator.nextPage(CompanyReviewId(index), mode, request.userAnswers, srn))
         }
       }
       else {
-        Future.successful(Redirect(navigator.nextPage(CompanyReviewId(index), NormalMode, request.userAnswers, srn)))
+        Future.successful(Redirect(navigator.nextPage(CompanyReviewId(index), mode, request.userAnswers, srn)))
       }
   }
 

@@ -20,6 +20,7 @@ import com.google.inject.Inject
 import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
 import identifiers.AnyMoreChangesId
+import models.UpdateMode
 import utils.{Enumerable, Navigator}
 
 class VariationsNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector,
@@ -31,12 +32,17 @@ class VariationsNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConn
 
   protected def updateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] =
     from.id match {
-      case AnyMoreChangesId => (from.userAnswers.get(AnyMoreChangesId), srn) match {
-        case (Some(true), Some(srn)) => NavigateTo.dontSave(controllers.routes.PSASchemeDetailsController.onPageLoad(srn))
-        case (Some(false), Some(srn)) => //todo - change to incomplete logic controller after PODS-2437 is done
-         NavigateTo.dontSave(controllers.routes.PSASchemeDetailsController.onPageLoad(srn))
+      case AnyMoreChangesId => from.userAnswers.get(AnyMoreChangesId) match {
+
+        case Some(true) => NavigateTo.dontSave(controllers.routes.SchemeTaskListController.onPageLoad(UpdateMode, srn))
+
+        case Some(false) => //todo - change to incomplete logic controller after PODS-2437 is done
+          NavigateTo.dontSave(controllers.routes.SchemeTaskListController.onPageLoad(UpdateMode, srn))
+
         case _ => NavigateTo.dontSave(controllers.routes.SessionExpiredController.onPageLoad)
+
       }
+
       case _ => None
     }
 

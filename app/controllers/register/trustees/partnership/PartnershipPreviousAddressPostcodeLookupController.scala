@@ -41,6 +41,7 @@ class PartnershipPreviousAddressPostcodeLookupController @Inject()(
                                                                     @TrusteesPartnership override val navigator: Navigator,
                                                                     authenticate: AuthAction,
                                                                     getData: DataRetrievalAction,
+                                                                    allowAccess: AllowAccessActionProvider,
                                                                     requireData: DataRequiredAction,
                                                                     formProvider: PostCodeLookupFormProvider
                                                                   ) extends PostcodeLookupController {
@@ -60,13 +61,14 @@ class PartnershipPreviousAddressPostcodeLookupController @Inject()(
               routes.PartnershipPreviousAddressController.onPageLoad(mode, index, srn),
               title = Message(title),
               heading = Message(heading),
-              subHeading = Some(details.name)
+              subHeading = Some(details.name),
+              srn = srn
             )
         }
     }
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen requireData).async {
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         viewmodel(index, mode, srn).retrieve.right map get
     }

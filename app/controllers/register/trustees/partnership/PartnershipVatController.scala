@@ -38,6 +38,7 @@ class PartnershipVatController @Inject()(
                                           @TrusteesPartnership override val navigator: Navigator,
                                           authenticate: AuthAction,
                                           getData: DataRetrievalAction,
+                                          allowAccess: AllowAccessActionProvider,
                                           requireData: DataRequiredAction,
                                           formProvider: VatFormProvider
                                         ) extends VatController {
@@ -52,14 +53,16 @@ class PartnershipVatController @Inject()(
               title = Message("messages__partnershipVat__title"),
               heading = Message("messages__partnershipVat__heading"),
               hint = Message("messages__common__vat__hint"),
-              subHeading = Some(details.name)
+              subHeading = Some(details.name),
+              srn = srn
             )
         }
     }
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
+  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
     implicit request =>
       viewmodel(mode, index, srn).retrieve.right.map {
         vm =>

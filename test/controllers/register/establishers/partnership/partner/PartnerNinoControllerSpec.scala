@@ -95,7 +95,7 @@ class PartnerNinoControllerSpec extends ControllerSpecBase {
 
   def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisher): PartnerNinoController =
     new PartnerNinoController(frontendAppConfig, messagesApi, FakeUserAnswersService, new FakeNavigator(desiredRoute = onwardRoute),
-      FakeAuthAction, dataRetrievalAction, new DataRequiredActionImpl, formProvider)
+      FakeAuthAction, dataRetrievalAction, FakeAllowAccessProvider(), new DataRequiredActionImpl, formProvider)
   val submitUrl = controllers.register.establishers.partnership.partner.routes.
     PartnerNinoController.onSubmit(NormalMode, establisherIndex, partnerIndex, None)
   def viewAsString(form: Form[_] = form): String = partnerNino(frontendAppConfig, form, NormalMode,
