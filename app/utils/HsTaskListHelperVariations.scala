@@ -80,7 +80,7 @@ class HsTaskListHelperVariations(answers: UserAnswers, viewOnly: Boolean, srn: O
       Some(isAllEstablishersCompleted(userAnswers)),
       Some(isTrusteeOptional | isAllTrusteesCompleted(userAnswers)),
       Some(userAnswers.allTrusteesAfterDelete.size < 10 || userAnswers.get(MoreThanTenTrusteesId).isDefined)
-    ).forall(_.contains(true)) && userAnswers.isUserAnswerUpdated()
+    ).forall(_.contains(true)) && userAnswers.isUserAnswerUpdated
   }
 
   def taskList: SchemeDetailsTaskList = {
