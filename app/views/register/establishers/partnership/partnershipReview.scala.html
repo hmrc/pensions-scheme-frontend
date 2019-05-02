@@ -55,8 +55,10 @@
         list = Some(partners)
     )
 
-    @helpers.form(action = routes.PartnershipReviewController.onSubmit(mode, index, srn), 'autoComplete -> "off") {
-        @components.submit_button("site.confirm")
+    @if(!viewOnly) {
+        @helpers.form(action = routes.PartnershipReviewController.onSubmit(mode, index, srn), 'autoComplete -> "off") {
+            @components.submit_button("site.confirm")
+        }
     }
 
     @components.return_link("messages__schemeTaskList__returnlink", schemeName)
