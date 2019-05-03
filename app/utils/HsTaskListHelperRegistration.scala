@@ -70,7 +70,7 @@ class HsTaskListHelperRegistration(answers: UserAnswers)(implicit messages: Mess
   protected[utils] def trustees(userAnswers: UserAnswers): Seq[SchemeDetailsTaskListSection] =
     listOf(userAnswers.allTrustees, userAnswers)
 
-  protected[utils] override def addTrusteeHeader(userAnswers: UserAnswers, mode: Mode, srn: Option[String]): Option[SchemeDetailsTaskListSection] = {
+  protected[utils] override def addTrusteeHeader(userAnswers: UserAnswers, mode: Mode, srn: Option[String]): Option[SchemeDetailsTaskListHeader] = {
     (userAnswers.get(HaveAnyTrusteesId), userAnswers.allTrusteesAfterDelete.isEmpty) match {
       case (None | Some(true), false) =>
 
@@ -78,14 +78,14 @@ class HsTaskListHelperRegistration(answers: UserAnswers)(implicit messages: Mess
           getTrusteeHeaderText(userAnswers.allTrusteesAfterDelete.size, userAnswers.get(SchemeTypeId))
 
         Some(
-          SchemeDetailsTaskListSection(
+          SchemeDetailsTaskListHeader(
             link = addTrusteeLink(linkText, srn, mode),
             p1 = additionalText))
 
       case (None | Some(true), true) =>
 
         Some(
-          SchemeDetailsTaskListSection(
+          SchemeDetailsTaskListHeader(
             trusteeStatus(isAllTrusteesCompleted(userAnswers), trusteesMandatory(userAnswers.get(SchemeTypeId))),
             typeOfTrusteeLink(addTrusteesLinkText, userAnswers.allTrustees.size, srn, mode)))
 

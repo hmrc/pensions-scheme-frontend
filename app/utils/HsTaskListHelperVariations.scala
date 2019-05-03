@@ -83,18 +83,23 @@ class HsTaskListHelperVariations(answers: UserAnswers, viewOnly: Boolean, srn: O
     ).forall(_.contains(true)) && userAnswers.isUserAnswerUpdated()
   }
 
-  protected[utils] override def addTrusteeHeader(userAnswers: UserAnswers, mode: Mode, srn: Option[String]): Option[SchemeDetailsTaskListSection] = {
+  protected[utils] override def addTrusteeHeader(userAnswers: UserAnswers, mode: Mode, srn: Option[String]): Option[SchemeDetailsTaskListHeader] = {
     if (userAnswers.allTrusteesAfterDelete.isEmpty) {
-      Some(
-        SchemeDetailsTaskListSection(
-          trusteeStatus(isAllTrusteesCompleted(userAnswers), trusteesMandatory(userAnswers.get(SchemeTypeId))),
-          typeOfTrusteeLink(addTrusteesLinkText, userAnswers.allTrustees.size, srn, mode)))
+
+      if(viewOnly) {
+        Some(SchemeDetailsTaskListHeader(plainText = Some(messages("messages__schemeTaskList__sectionTrustees_no_trustees"))))
+      } else {
+        Some(
+          SchemeDetailsTaskListHeader(
+            trusteeStatus(isAllTrusteesCompleted(userAnswers), trusteesMandatory(userAnswers.get(SchemeTypeId))),
+            typeOfTrusteeLink(addTrusteesLinkText, userAnswers.allTrustees.size, srn, mode)))
+      }
     } else {
       val (linkText, additionalText): (String, Option[String]) =
         getTrusteeHeaderText(userAnswers.allTrusteesAfterDelete.size, userAnswers.get(SchemeTypeId))
 
       Some(
-        SchemeDetailsTaskListSection(
+        SchemeDetailsTaskListHeader(
           link = addTrusteeLink(linkText, srn, mode),
           p1 = additionalText))
     }

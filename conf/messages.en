@@ -1157,6 +1157,7 @@ messages__schemeTaskList__sectionTrustees_header = Trustees
 messages__schemeTaskList__sectionTrustees_add_link = Add a trustee
 messages__schemeTaskList__sectionTrustees_add_additional_text = There must be a minimum of 1 trustee. If you want to remove this trustee, you must first add a new one.
 messages__schemeTaskList__sectionTrustees_change_link = Change trustees
+messages__schemeTaskList__sectionTrustees_no_trustees = No trustees
 
 messages__schemeTaskList__sectionTrustees_add_delete_link = Add or delete a trustee
 messages__schemeTaskList__sectionTrustees_delete_link = Delete a trustee

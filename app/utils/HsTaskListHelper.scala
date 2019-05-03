@@ -86,13 +86,13 @@ abstract class HsTaskListHelper(answers: UserAnswers)(implicit messages: Message
     }
   }
 
-  protected[utils] def addTrusteeHeader(userAnswers: UserAnswers, mode: Mode, srn: Option[String]): Option[SchemeDetailsTaskListSection]
+  protected[utils] def addTrusteeHeader(userAnswers: UserAnswers, mode: Mode, srn: Option[String]): Option[SchemeDetailsTaskListHeader]
 
-  protected def typeOfTrusteeLink(linkText: String, trusteeCount: Int, srn: Option[String], mode: Mode): Link =
-    Link(linkText, controllers.register.trustees.routes.TrusteeKindController.onPageLoad(mode, trusteeCount, srn).url)
+  protected def typeOfTrusteeLink(linkText: String, trusteeCount: Int, srn: Option[String], mode: Mode): Option[Link] =
+    Some(Link(linkText, controllers.register.trustees.routes.TrusteeKindController.onPageLoad(mode, trusteeCount, srn).url))
 
-  protected def addTrusteeLink(linkText: String, srn: Option[String], mode: Mode): Link =
-    Link(linkText, controllers.register.trustees.routes.AddTrusteeController.onPageLoad(mode, srn).url)
+  protected def addTrusteeLink(linkText: String, srn: Option[String], mode: Mode): Option[Link] =
+    Some(Link(linkText, controllers.register.trustees.routes.AddTrusteeController.onPageLoad(mode, srn).url))
 
   protected[utils] def trusteeStatus(completed: Boolean, mandatory: Boolean): Option[Boolean] = (completed, mandatory) match {
     case (true, _) => None

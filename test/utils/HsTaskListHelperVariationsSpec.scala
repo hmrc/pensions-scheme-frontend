@@ -31,7 +31,7 @@ import models.person.PersonDetails
 import org.joda.time.LocalDate
 import play.api.libs.json.JsResult
 import utils.behaviours.HsTaskListHelperBehaviour
-import viewmodels.SchemeDetailsTaskListSection
+import viewmodels.{SchemeDetailsTaskListHeader, SchemeDetailsTaskListSection}
 
 class HsTaskListHelperVariationsSpec extends HsTaskListHelperBehaviour {
   private val srn = Some("test-srn")
@@ -169,6 +169,13 @@ class HsTaskListHelperVariationsSpec extends HsTaskListHelperBehaviour {
   "addTrusteeHeader " must {
 
     behave like addTrusteeHeader(UpdateMode, srn)
+
+    "display plain text when scheme is locked and no trustees exist" in {
+      val userAnswers = UserAnswers().set(DeclarationDutiesId)(true).asOpt.value
+      val helper = new HsTaskListHelperVariations(userAnswers, viewOnly = true, srn)
+      helper.taskList.addTrusteeHeader.value mustBe
+        SchemeDetailsTaskListHeader(None, None, None, None, Some(messages("messages__schemeTaskList__sectionTrustees_no_trustees")))
+    }
   }
 
   "establishers" must {
