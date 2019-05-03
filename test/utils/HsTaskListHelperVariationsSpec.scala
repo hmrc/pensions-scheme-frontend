@@ -176,6 +176,16 @@ class HsTaskListHelperVariationsSpec extends HsTaskListHelperBehaviour {
       helper.taskList.addTrusteeHeader.value mustBe
         SchemeDetailsTaskListHeader(None, None, None, None, Some(messages("messages__schemeTaskList__sectionTrustees_no_trustees")))
     }
+
+    "not display an add link when scheme is locked and trustees exist" in {
+      val userAnswers = UserAnswers()
+        .set(TrusteeDetailsId(0))(PersonDetails("firstName", None, "lastName", LocalDate.now())).flatMap(
+        _.set(IsTrusteeCompleteId(0))(true)).asOpt.value
+        .set(TrusteeDetailsId(1))(PersonDetails("firstName", None, "lastName", LocalDate.now())).flatMap(
+        _.set(IsTrusteeCompleteId(1))(true)).asOpt.value
+      val helper = new HsTaskListHelperVariations(userAnswers, viewOnly = true, srn)
+      helper.taskList.addTrusteeHeader mustBe None
+    }
   }
 
   "establishers" must {

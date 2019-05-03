@@ -95,13 +95,19 @@ class HsTaskListHelperVariations(answers: UserAnswers, viewOnly: Boolean, srn: O
             typeOfTrusteeLink(addTrusteesLinkText, userAnswers.allTrustees.size, srn, mode)))
       }
     } else {
-      val (linkText, additionalText): (String, Option[String]) =
-        getTrusteeHeaderText(userAnswers.allTrusteesAfterDelete.size, userAnswers.get(SchemeTypeId))
 
-      Some(
-        SchemeDetailsTaskListHeader(
-          link = addTrusteeLink(linkText, srn, mode),
-          p1 = additionalText))
+      if(viewOnly) {
+        None
+      } else {
+        val (linkText, additionalText): (String, Option[String]) =
+          getTrusteeHeaderText(userAnswers.allTrusteesAfterDelete.size, userAnswers.get(SchemeTypeId))
+
+        Some(
+          SchemeDetailsTaskListHeader(
+            link = addTrusteeLink(linkText, srn, mode),
+            p1 = additionalText))
+      }
+
     }
 
   }
