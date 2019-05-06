@@ -14,20 +14,21 @@
  * limitations under the License.
  */
 
-package utils
+package utils.hstasklisthelper
 
 import identifiers.register.establishers.company.{CompanyDetailsId => EstablisherCompanyDetailsId}
 import identifiers.register.establishers.individual.EstablisherDetailsId
 import identifiers.register.establishers.partnership.{PartnershipDetailsId => EstablisherPartnershipDetailsId}
-import identifiers.register.trustees.{MoreThanTenTrusteesId, TrusteeKindId}
+import identifiers.register.trustees.MoreThanTenTrusteesId
 import identifiers.register.trustees.company.{CompanyDetailsId => TrusteeCompanyDetailsId}
 import identifiers.register.trustees.individual.TrusteeDetailsId
 import identifiers.register.trustees.partnership.{PartnershipDetailsId => TrusteePartnershipDetailsId}
 import identifiers.{DeclarationDutiesId, IsWorkingKnowledgeCompleteId, _}
-import models.register.{Entity, SchemeType}
 import models.register.SchemeType.{MasterTrust, SingleTrust}
+import models.register.{Entity, SchemeType}
 import models.{Link, Mode, NormalMode}
 import play.api.i18n.Messages
+import utils.{Enumerable, UserAnswers}
 import viewmodels._
 
 abstract class HsTaskListHelper(answers: UserAnswers)(implicit messages: Messages) extends Enumerable.Implicits {
@@ -86,6 +87,12 @@ abstract class HsTaskListHelper(answers: UserAnswers)(implicit messages: Message
 
   protected def addTrusteeLink(linkText: String, srn: Option[String], mode: Mode): Option[Link] =
     Some(Link(linkText, controllers.register.trustees.routes.AddTrusteeController.onPageLoad(mode, srn).url))
+
+  protected def typeOfEstablisherLink(linkText: String, establisherCount: Int, srn: Option[String], mode: Mode): Option[Link] =
+    Some(Link(linkText, controllers.register.establishers.routes.EstablisherKindController.onPageLoad(mode, establisherCount, srn).url))
+
+  protected def addEstablisherLink(linkText: String, srn: Option[String], mode: Mode): Option[Link] =
+    Some(Link(linkText, controllers.register.establishers.routes.AddEstablisherController.onPageLoad(mode, srn).url))
 
   protected[utils] def trusteeStatus(completed: Boolean, mandatory: Boolean): Option[Boolean] = (completed, mandatory) match {
     case (true, _) => None

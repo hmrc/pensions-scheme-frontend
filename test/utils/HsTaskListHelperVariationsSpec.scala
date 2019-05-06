@@ -31,6 +31,7 @@ import models.person.PersonDetails
 import org.joda.time.LocalDate
 import play.api.libs.json.JsResult
 import utils.behaviours.HsTaskListHelperBehaviour
+import utils.hstasklisthelper.{HsTaskListHelper, HsTaskListHelperVariations}
 import viewmodels.{SchemeDetailsTaskListHeader, SchemeDetailsTaskListSection}
 
 class HsTaskListHelperVariationsSpec extends HsTaskListHelperBehaviour {

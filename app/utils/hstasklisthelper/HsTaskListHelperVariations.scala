@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
-package utils
+package utils.hstasklisthelper
 
 import identifiers.register.trustees.MoreThanTenTrusteesId
 import identifiers.{IsAboutBenefitsAndInsuranceCompleteId, IsAboutMembersCompleteId, SchemeNameId, _}
 import models.register.Entity
 import models.{Link, Mode, UpdateMode}
 import play.api.i18n.Messages
+import utils.UserAnswers
 import viewmodels._
 
 class HsTaskListHelperVariations(answers: UserAnswers, viewOnly: Boolean, srn: Option[String])(implicit messages: Messages) extends HsTaskListHelper(answers) {
@@ -83,30 +84,31 @@ class HsTaskListHelperVariations(answers: UserAnswers, viewOnly: Boolean, srn: O
     ).forall(_.contains(true)) && userAnswers.isUserAnswerUpdated()
   }
 
-  // scalastyle:off line.size.limit
-  protected[utils] def addEstablisherHeader(userAnswers: UserAnswers, mode: Mode, srn: Option[String]): Option[SchemeDetailsTaskListHeader] = (userAnswers.allEstablishersAfterDelete.isEmpty, viewOnly) match {
-    case (true, true ) => Some(SchemeDetailsTaskListHeader(plainText = Some(noEstablishersText)))
-    case (true, false) => Some(SchemeDetailsTaskListHeader(None, Some(Link(addEstablisherLinkText, controllers.register.establishers.routes.EstablisherKindController.onPageLoad(mode, userAnswers.allEstablishers.size, srn).url))))
-    case (false, false) => Some(SchemeDetailsTaskListHeader(None, Some(Link(changeEstablisherLinkText, controllers.register.establishers.routes.AddEstablisherController.onPageLoad(mode, srn).url))))
-    case (false, true) => None
+  protected[utils] def addEstablisherHeader(userAnswers: UserAnswers, mode: Mode, srn: Option[String]): Option[SchemeDetailsTaskListHeader] =
+    (userAnswers.allEstablishersAfterDelete.isEmpty, viewOnly) match {
+      case (true, true ) => Some(SchemeDetailsTaskListHeader(plainText = Some(noEstablishersText)))
+      case (true, false) => Some(SchemeDetailsTaskListHeader(link = typeOfEstablisherLink(addEstablisherLinkText, userAnswers.allEstablishers.size, srn, mode)))
+      case (false, false) => Some(SchemeDetailsTaskListHeader(link = addEstablisherLink(changeEstablisherLinkText, srn, mode)))
+      case (false, true) => None
   }
 
-  protected[utils] override def addTrusteeHeader(userAnswers: UserAnswers, mode: Mode, srn: Option[String]): Option[SchemeDetailsTaskListHeader] = (userAnswers.allTrusteesAfterDelete.isEmpty, viewOnly) match {
-    case (true, true) => Some(SchemeDetailsTaskListHeader(plainText = Some(noTrusteesText)))
-    case (true, false) => Some(SchemeDetailsTaskListHeader(
-      isCompleted = trusteeStatus(isAllTrusteesCompleted(userAnswers), trusteesMandatory(userAnswers.get(SchemeTypeId))),
-      link = typeOfTrusteeLink(addTrusteesLinkText, userAnswers.allTrustees.size, srn, mode)))
-    case (false, false) => {
+  protected[utils] override def addTrusteeHeader(userAnswers: UserAnswers, mode: Mode, srn: Option[String]): Option[SchemeDetailsTaskListHeader] =
+    (userAnswers.allTrusteesAfterDelete.isEmpty, viewOnly) match {
+      case (true, true) => Some(SchemeDetailsTaskListHeader(plainText = Some(noTrusteesText)))
+      case (true, false) => Some(SchemeDetailsTaskListHeader(
+        isCompleted = trusteeStatus(isAllTrusteesCompleted(userAnswers), trusteesMandatory(userAnswers.get(SchemeTypeId))),
+        link = typeOfTrusteeLink(addTrusteesLinkText, userAnswers.allTrustees.size, srn, mode)))
+      case (false, false) => {
 
-      val (linkText, additionalText): (String, Option[String]) =
-        getTrusteeHeaderText(userAnswers.allTrusteesAfterDelete.size, userAnswers.get(SchemeTypeId))
+        val (linkText, additionalText): (String, Option[String]) =
+          getTrusteeHeaderText(userAnswers.allTrusteesAfterDelete.size, userAnswers.get(SchemeTypeId))
 
-      Some(
-        SchemeDetailsTaskListHeader(
-          link = addTrusteeLink(linkText, srn, mode),
-          p1 = additionalText))
-    }
-    case (false, true) => None
+        Some(
+          SchemeDetailsTaskListHeader(
+            link = addTrusteeLink(linkText, srn, mode),
+            p1 = additionalText))
+      }
+      case (false, true) => None
   }
 
   def taskList: SchemeDetailsTaskList = {

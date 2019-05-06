@@ -14,12 +14,13 @@
  * limitations under the License.
  */
 
-package utils
+package utils.hstasklisthelper
 
 import identifiers._
 import models.register.Entity
 import models.{Link, Mode, NormalMode}
 import play.api.i18n.Messages
+import utils.UserAnswers
 import viewmodels._
 
 class HsTaskListHelperRegistration(answers: UserAnswers)(implicit messages: Messages) extends HsTaskListHelper(answers) {

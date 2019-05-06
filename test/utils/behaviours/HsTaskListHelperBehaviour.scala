@@ -36,7 +36,8 @@ import models.register.SchemeType
 import org.joda.time.LocalDate
 import org.scalatest.{MustMatchers, OptionValues}
 import play.api.libs.json.JsResult
-import utils.{HsTaskListHelper, UserAnswers}
+import utils.UserAnswers
+import utils.hstasklisthelper.HsTaskListHelper
 import viewmodels._
 
 trait HsTaskListHelperBehaviour extends SpecBase with MustMatchers with OptionValues {
