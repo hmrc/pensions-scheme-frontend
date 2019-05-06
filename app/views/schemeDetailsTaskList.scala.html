@@ -135,9 +135,21 @@
                 @messages("messages__schemeTaskList__sectionEstablishers_header")
             </h2>
                 @variationsOnly("<p>")
-                <a id= "section-establishers-link" href="@{taskSections.addEstablisherHeader.link.target}" >
-                    @messages(taskSections.addEstablisherHeader.link.text)
-                </a>
+
+                @taskSections.addEstablisherHeader.map { header =>
+
+                    @header.link.map { link =>
+                        <!--this is the add link-->
+                        <a id="section-establishers-link" href="@{link.target}" >
+                            @messages(link.text)
+                        </a>
+                    }
+
+                    @header.plainText.map { text =>
+                        <p>@messages(text)</p>
+                    }
+                }
+
                 @variationsOnly("</p>")
             <ol class="tasklist">
 

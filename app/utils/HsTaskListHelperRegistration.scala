@@ -95,6 +95,17 @@ class HsTaskListHelperRegistration(answers: UserAnswers)(implicit messages: Mess
 
   }
 
+  protected[utils] def addEstablisherHeader(userAnswers: UserAnswers, mode: Mode, srn: Option[String]): Option[SchemeDetailsTaskListHeader] = {
+    if (userAnswers.allEstablishersAfterDelete.isEmpty) {
+      Some(SchemeDetailsTaskListHeader(None, Some(Link(addEstablisherLinkText,
+        controllers.register.establishers.routes.EstablisherKindController.onPageLoad(mode,
+          userAnswers.allEstablishers.size, srn).url)), None))
+    } else {
+      Some(SchemeDetailsTaskListHeader(None, Some(Link(changeEstablisherLinkText,
+        controllers.register.establishers.routes.AddEstablisherController.onPageLoad(mode, srn).url)), None))
+    }
+  }
+
   def taskList: SchemeDetailsTaskList = {
     SchemeDetailsTaskList(
       beforeYouStartSection(answers, NormalMode, None),

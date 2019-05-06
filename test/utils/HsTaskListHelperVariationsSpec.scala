@@ -164,6 +164,20 @@ class HsTaskListHelperVariationsSpec extends HsTaskListHelperBehaviour {
   "addEstablisherHeader " must {
 
     behave like addEstablisherHeader(UpdateMode, srn)
+
+    "display plain text when scheme is locked and no establisher exists" in {
+      val userAnswers = UserAnswers().set(DeclarationDutiesId)(true).asOpt.value
+      val helper = new HsTaskListHelperVariations(userAnswers, viewOnly = true, srn)
+      helper.taskList.addEstablisherHeader.value mustBe
+        SchemeDetailsTaskListHeader(None, None, None, None, Some(messages("messages__schemeTaskList__sectionEstablishers_no_establishers")))
+    }
+
+    "not display an add link when scheme is locked and establishers exist" in {
+      val userAnswers = UserAnswers().set(EstablisherDetailsId(0))(PersonDetails("firstName", None, "lastName", LocalDate.now())).asOpt.value
+        .set(IsEstablisherCompleteId(0))(true).asOpt.value
+      val helper = new HsTaskListHelperVariations(userAnswers, viewOnly = true, srn)
+      helper.taskList.addEstablisherHeader mustBe None
+    }
   }
 
   "addTrusteeHeader " must {

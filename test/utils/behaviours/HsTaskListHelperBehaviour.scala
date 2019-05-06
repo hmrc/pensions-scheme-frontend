@@ -187,18 +187,18 @@ trait HsTaskListHelperBehaviour extends SpecBase with MustMatchers with OptionVa
     "return the link to establisher kind page when no establishers are added " in {
       val userAnswers = UserAnswers()
       val helper = createTaskListHelper(userAnswers)
-      helper.addEstablisherHeader(userAnswers, mode, srn) mustBe
-        SchemeDetailsTaskListSection(None, Link(addEstablisherLinkText,
-          controllers.register.establishers.routes.EstablisherKindController.onPageLoad(mode, userAnswers.allEstablishers.size, srn).url), None)
+      helper.addEstablisherHeader(userAnswers, mode, srn).value mustBe
+        SchemeDetailsTaskListHeader(None, Some(Link(addEstablisherLinkText,
+          controllers.register.establishers.routes.EstablisherKindController.onPageLoad(mode, userAnswers.allEstablishers.size, srn).url)), None)
     }
 
     "return the link to add establisher page when establishers are added " in {
       val userAnswers = UserAnswers().set(EstablisherDetailsId(0))(PersonDetails("firstName", None, "lastName", LocalDate.now())).asOpt.value
         .set(IsEstablisherCompleteId(0))(true).asOpt.value
       val helper = createTaskListHelper(userAnswers)
-      helper.addEstablisherHeader(userAnswers, mode, srn) mustBe
-        SchemeDetailsTaskListSection(None, Link(changeEstablisherLinkText,
-          controllers.register.establishers.routes.AddEstablisherController.onPageLoad(mode, srn).url), None)
+      helper.addEstablisherHeader(userAnswers, mode, srn).value mustBe
+        SchemeDetailsTaskListHeader(None, Some(Link(changeEstablisherLinkText,
+          controllers.register.establishers.routes.AddEstablisherController.onPageLoad(mode, srn).url)), None)
     }
   }
 

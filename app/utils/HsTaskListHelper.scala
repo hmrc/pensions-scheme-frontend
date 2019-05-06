@@ -49,6 +49,8 @@ abstract class HsTaskListHelper(answers: UserAnswers)(implicit messages: Message
   protected lazy val deleteTrusteesLinkText = messages("messages__schemeTaskList__sectionTrustees_delete_link")
   protected lazy val deleteTrusteesAdditionalInfo = messages("messages__schemeTaskList__sectionTrustees_delete_additional_text")
   protected lazy val declarationLinkText = messages("messages__schemeTaskList__declaration_link")
+  protected lazy val noEstablishersText = messages("messages__schemeTaskList__sectionEstablishers_no_establishers")
+  protected lazy val noTrusteesText = messages("messages__schemeTaskList__sectionTrustees_no_trustees")
 
   def taskList: SchemeDetailsTaskList
 
@@ -75,16 +77,7 @@ abstract class HsTaskListHelper(answers: UserAnswers)(implicit messages: Message
     }
   }
 
-  private[utils] def addEstablisherHeader(userAnswers: UserAnswers, mode: Mode, srn: Option[String]): SchemeDetailsTaskListSection = {
-    if (userAnswers.allEstablishersAfterDelete.isEmpty) {
-      SchemeDetailsTaskListSection(None, Link(addEstablisherLinkText,
-        controllers.register.establishers.routes.EstablisherKindController.onPageLoad(mode,
-          userAnswers.allEstablishers.size, srn).url), None)
-    } else {
-      SchemeDetailsTaskListSection(None, Link(changeEstablisherLinkText,
-        controllers.register.establishers.routes.AddEstablisherController.onPageLoad(mode, srn).url), None)
-    }
-  }
+  protected[utils] def addEstablisherHeader(userAnswers: UserAnswers, mode: Mode, srn: Option[String]): Option[SchemeDetailsTaskListHeader]
 
   protected[utils] def addTrusteeHeader(userAnswers: UserAnswers, mode: Mode, srn: Option[String]): Option[SchemeDetailsTaskListHeader]
 
