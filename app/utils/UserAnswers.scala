@@ -161,9 +161,9 @@ case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Implicits{
 
     private def noOfRecords : Int = json.validate((__ \ 'establishers).readNullable(__.read(
       Reads.seq((__ \ 'establisherKind).read[String].flatMap {
-        case "individual" => (__ \ 'establisherDetails ).read[JsObject].flatMap(_=> (__ \ "isDeleted").json.pick[JsBoolean]) orElse notDeleted
-        case "company" => (__ \ 'companyDetails ).read[JsObject].flatMap(_=> (__ \ "isDeleted").json.pick[JsBoolean]) orElse notDeleted
-        case "partnership" => (__ \ 'partnershipDetails ).read[JsObject].flatMap(_=> (__ \ "isDeleted").json.pick[JsBoolean]) orElse notDeleted
+        case "individual" => (__ \ 'establisherDetails \ "isDeleted").json.pick[JsBoolean] orElse notDeleted
+        case "company" => (__ \ 'companyDetails \ "isDeleted").json.pick[JsBoolean] orElse notDeleted
+        case "partnership" => (__ \ 'partnershipDetails \ "isDeleted").json.pick[JsBoolean] orElse notDeleted
       }).map(x=> x.count(deleted => deleted == JsBoolean(false)))))) match {
       case JsSuccess(Some(ele), _) => ele
       case _ => 0
@@ -303,9 +303,9 @@ case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Implicits{
 
     private def noOfRecords : Int = json.validate((__ \ 'trustees).readNullable(__.read(
       Reads.seq((__ \ 'trusteeKind).read[String].flatMap {
-        case "individual" => (__ \ 'trusteeDetails ).read[JsObject].flatMap(_=> (__ \ "isDeleted").json.pick[JsBoolean]) orElse notDeleted
-        case "company" => (__ \ 'companyDetails ).read[JsObject].flatMap(_=> (__ \ "isDeleted").json.pick[JsBoolean]) orElse notDeleted
-        case "partnership" => (__ \ 'partnershipDetails ).read[JsObject].flatMap(_=> (__ \ "isDeleted").json.pick[JsBoolean]) orElse notDeleted
+        case "individual" => (__ \ 'trusteeDetails \ "isDeleted").json.pick[JsBoolean] orElse notDeleted
+        case "company" => (__ \ 'companyDetails \ "isDeleted").json.pick[JsBoolean] orElse notDeleted
+        case "partnership" => (__ \ 'partnershipDetails \ "isDeleted").json.pick[JsBoolean] orElse notDeleted
       }).map(x=> x.count(deleted => deleted == JsBoolean(false)))))) match {
       case JsSuccess(Some(ele), _) => ele
       case _ => 0
