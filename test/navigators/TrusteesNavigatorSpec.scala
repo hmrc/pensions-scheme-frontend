@@ -47,7 +47,7 @@ class TrusteesNavigatorSpec extends SpecBase with NavigatorBehaviour {
     (TrusteeKindId(0), trusteeKindCompany, companyDetails(mode, srn), true, None, false),
     (TrusteeKindId(0), trusteeKindIndividual, trusteeDetails(mode, srn), true, None, false),
     (TrusteeKindId(0), emptyAnswers, sessionExpired, false, None, false),
-    (ConfirmDeleteTrusteeId, emptyAnswers, if(mode==UpdateMode) controllers.routes.AnyMoreChangesController.onPageLoad(None) else addTrustee(mode, srn), true, None, false)
+    (ConfirmDeleteTrusteeId, emptyAnswers, if(mode==UpdateMode) controllers.routes.AnyMoreChangesController.onPageLoad(srn) else addTrustee(mode, srn), true, None, false)
   )
 
   private def normalOnlyRoutes: TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = Table(
