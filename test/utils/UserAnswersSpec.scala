@@ -20,6 +20,7 @@ import identifiers.register.establishers.company.director.{DirectorDetailsId, Is
 import identifiers.register.establishers.company.{CompanyDetailsId => EstablisherCompanyDetailsId, CompanyPayeId => EstablisherCompanyPayeId, CompanyVatId => EstablisherCompanyVatId}
 import identifiers.register.establishers.individual.EstablisherDetailsId
 import identifiers.register.establishers.partnership.PartnershipDetailsId
+import identifiers.register.establishers.partnership.partner.{IsPartnerCompleteId, PartnerDetailsId}
 import identifiers.register.establishers.{EstablisherKindId, EstablishersId, IsEstablisherCompleteId, IsEstablisherNewId}
 import identifiers.register.trustees.company.{CompanyPayeId, CompanyVatId, CompanyDetailsId => TrusteeCompanyDetailsId}
 import identifiers.register.trustees.individual.TrusteeDetailsId
@@ -238,20 +239,23 @@ class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues with 
 
   ".allDirectors" must {
 
-    "return a map of director names, edit links, delete links and isComplete flag" in {
+    "return a map of director names, edit links, delete links and isComplete flag including deleted items where names are all the same" in {
       val userAnswers = UserAnswers()
         .set(DirectorDetailsId(0, 0))(PersonDetails("First", None, "Last", LocalDate.now))
         .flatMap(_.set(IsDirectorCompleteId(0, 0))(true))
         .flatMap(_.set(IsDirectorCompleteId(0, 1))(false))
-        .flatMap(_.set(DirectorDetailsId(0, 1))(PersonDetails("First1", None, "Last1", LocalDate.now))).get
+        .flatMap(_.set(DirectorDetailsId(0, 1))(PersonDetails("First", None, "Last", LocalDate.now, isDeleted = true)))
+        .flatMap(_.set(DirectorDetailsId(0, 2))(PersonDetails("First", None, "Last", LocalDate.now)))
+        .get
 
       val directorEntities = Seq(
         DirectorEntity(DirectorDetailsId(0, 0), "First Last", isDeleted = false, isCompleted = true, isNewEntity = true, 2),
-        DirectorEntity(DirectorDetailsId(0, 1), "First1 Last1", isDeleted = false, isCompleted = false, isNewEntity = true, 2))
+        DirectorEntity(DirectorDetailsId(0, 1), "First Last", isDeleted = true, isCompleted = false, isNewEntity = true, 2),
+        DirectorEntity(DirectorDetailsId(0, 2), "First Last", isDeleted = false, isCompleted = false, isNewEntity = true, 2))
 
       val result = userAnswers.allDirectors(0)
 
-      result.size mustEqual 2
+      result.size mustEqual 3
       result mustBe directorEntities
     }
   }
@@ -271,6 +275,29 @@ class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues with 
       result mustBe directorEntities
     }
   }
+
+  ".allPartners" must {
+
+    "return a map of partner names, edit links, delete links and isComplete flag including deleted items where names are all the same" in {
+      val userAnswers = UserAnswers()
+        .set(PartnerDetailsId(0, 0))(PersonDetails("First", None, "Last", LocalDate.now))
+        .flatMap(_.set(IsPartnerCompleteId(0, 0))(true))
+        .flatMap(_.set(IsPartnerCompleteId(0, 1))(false))
+        .flatMap(_.set(PartnerDetailsId(0, 1))(PersonDetails("First", None, "Last", LocalDate.now, isDeleted = true)))
+        .flatMap(_.set(PartnerDetailsId(0, 2))(PersonDetails("First", None, "Last", LocalDate.now)))
+        .get
+
+      val partnerEntities = Seq(
+        PartnerEntity(PartnerDetailsId(0, 0), "First Last", isDeleted = false, isCompleted = true, isNewEntity = true, 2),
+        PartnerEntity(PartnerDetailsId(0, 1), "First Last", isDeleted = true, isCompleted = false, isNewEntity = true, 2),
+        PartnerEntity(PartnerDetailsId(0, 2), "First Last", isDeleted = false, isCompleted = false, isNewEntity = true, 2))
+
+      val result = userAnswers.allPartners(0)
+
+      result.size mustEqual 3
+      result mustBe partnerEntities
+    }
+  }  
 
   ".establishersCount" must {
 

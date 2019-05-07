@@ -145,10 +145,9 @@ case class UserAnswers(json: JsValue = Json.obj()) {
   }
 
 
-  private def notDeleted: Reads[JsBoolean] = {
-    __.read(JsBoolean(false))
-  }
+  private def notDeleted: Reads[JsBoolean] = __.read(JsBoolean(false))
 
+  //scalastyle:off method.length
   def readEstablishers: Reads[Seq[Establisher[_]]] = new Reads[Seq[Establisher[_]]] {
 
     private def noOfRecords : Int = json.validate((__ \ 'establishers).readNullable(__.read(
@@ -218,7 +217,6 @@ case class UserAnswers(json: JsValue = Json.obj()) {
   }
 
 
-
   def allEstablishers: Seq[Establisher[_]] = {
 
     json.validate[Seq[Establisher[_]]](readEstablishers) match {
@@ -238,8 +236,7 @@ case class UserAnswers(json: JsValue = Json.obj()) {
 
     getAllRecursive[PersonDetails](DirectorDetailsId.collectionPath(establisherIndex)).map {
       details =>
-        details.map { director =>
-          val directorIndex = details.indexOf(director)
+        for ((director, directorIndex) <- details.zipWithIndex) yield {
           val isComplete = get(IsDirectorCompleteId(establisherIndex, directorIndex)).getOrElse(false)
           DirectorEntity(
             DirectorDetailsId(establisherIndex, directorIndex),
@@ -247,7 +244,7 @@ case class UserAnswers(json: JsValue = Json.obj()) {
             director.isDeleted,
             isComplete,
             isNewEntity = true,
-            details.count(_.isDeleted==false)
+            details.count(!_.isDeleted)
           )
         }
     }.getOrElse(Seq.empty)
@@ -260,8 +257,7 @@ case class UserAnswers(json: JsValue = Json.obj()) {
   def allPartners(establisherIndex: Int): Seq[PartnerEntity] = {
     getAllRecursive[PersonDetails](PartnerDetailsId.collectionPath(establisherIndex)).map {
       details =>
-        details.map { partner =>
-          val partnerIndex = details.indexOf(partner)
+        for ((partner, partnerIndex) <- details.zipWithIndex) yield {
           val isComplete = get(IsPartnerCompleteId(establisherIndex, partnerIndex)).getOrElse(false)
           PartnerEntity(
             PartnerDetailsId(establisherIndex, partnerIndex),
@@ -269,7 +265,7 @@ case class UserAnswers(json: JsValue = Json.obj()) {
             partner.isDeleted,
             isComplete,
             isNewEntity = true,
-            details.count(_.isDeleted==false)
+            details.count(!_.isDeleted)
           )
         }
     }.getOrElse(Seq.empty)
@@ -279,6 +275,7 @@ case class UserAnswers(json: JsValue = Json.obj()) {
     allPartners(establisherIndex).filterNot(_.isDeleted)
   }
 
+  //scalastyle:off method.length
   def readTrustees: Reads[Seq[Trustee[_]]] = new Reads[Seq[Trustee[_]]] {
 
     private def noOfRecords : Int = json.validate((__ \ 'trustees).readNullable(__.read(
@@ -295,7 +292,6 @@ case class UserAnswers(json: JsValue = Json.obj()) {
       case JsSuccess(scheme, _) => Some(scheme.value)
       case JsError(errors) => None
     }
-
     private def readsIndividual(index: Int): Reads[Trustee[_]] = (
       (JsPath \ TrusteeDetailsId.toString).read[PersonDetails] and
         (JsPath \ IsTrusteeCompleteId.toString).readNullable[Boolean] and
@@ -305,7 +301,6 @@ case class UserAnswers(json: JsValue = Json.obj()) {
         TrusteeDetailsId(index), details.fullName, details.isDeleted,
         isComplete.getOrElse(false), isNew.fold(false)(identity), noOfRecords, schemeType)
     )
-
     /*TODO: This logic for vat and paye is done to handle the partial data with vat and paye in company details
      this should be removed, may be after 28 days of putting this in production*/
     private def readsCompany(index: Int): Reads[Trustee[_]] = (
@@ -319,7 +314,6 @@ case class UserAnswers(json: JsValue = Json.obj()) {
         isCompanyComplete(vat, paye, isComplete).getOrElse(false), isNew.fold(false)(identity), noOfRecords, schemeType)
     }
     )
-
     private def readsPartnership(index: Int): Reads[Trustee[_]] = (
       (JsPath \ TrusteePartnershipDetailsId.toString).read[PartnershipDetails] and
         (JsPath \ IsPartnershipCompleteId.toString).readNullable[Boolean] and
@@ -328,7 +322,6 @@ case class UserAnswers(json: JsValue = Json.obj()) {
       TrusteePartnershipDetailsId(index), details.name, details.isDeleted,
       isComplete.getOrElse(false), isNew.fold(false)(identity), noOfRecords, schemeType)
     )
-
     private def readsSkeleton(index: Int): Reads[Trustee[_]] = new Reads[Trustee[_]] {
       override def reads(json: JsValue): JsResult[Trustee[_]] = {
         (json \ TrusteeKindId.toString)
@@ -336,7 +329,6 @@ case class UserAnswers(json: JsValue = Json.obj()) {
           .getOrElse(JsError(s"Trustee does not have element trusteeKind: index=$index"))
       }
     }
-
     override def reads(json: JsValue): JsResult[Seq[Trustee[_]]] = {
       json \ TrusteesId.toString match {
         case JsDefined(JsArray(trustees)) =>
@@ -405,12 +397,11 @@ case class UserAnswers(json: JsValue = Json.obj()) {
       )
   }
 
-  def isUserAnswerUpdated(): Boolean = {
+  def isUserAnswerUpdated: Boolean =
     List(
       get[Boolean](InsuranceDetailsChangedId),
       get[Boolean](EstablishersOrTrusteesChangedId)
     ).flatten.contains(true)
-  }
 
   def addressAnswer(address: Address)(implicit countryOptions: CountryOptions): Seq[String] = {
     val country = countryOptions.options.find(_.value == address.country).map(_.label).getOrElse(address.country)
