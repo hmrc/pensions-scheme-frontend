@@ -71,8 +71,11 @@ trait EntityListBehaviours {
         val doc = asDocument(nonEmptyView())
         items.foreach { item =>
           val link = doc.select(s"#person-${item.index}-edit")
+          val visibleText = doc.select(s"#person-${item.index}-edit span[aria-hidden=true]").first.text
+          val hiddenText = doc.select(s"#person-${item.index}-edit span[class=visually-hidden]").first.text
           link.size mustBe 1
-          link.first.text mustBe messages("site.edit")
+          visibleText mustBe messages("site.edit")
+          hiddenText mustBe s"${messages("site.edit")} ${item.name}"
           link.first.attr("href") mustBe item.editLink(NormalMode, None).get
         }
       }
@@ -94,8 +97,11 @@ trait EntityListBehaviours {
         val doc = asDocument(nonEmptyView())
         items.foreach { item =>
           val link = doc.select(s"#person-${item.index}-delete")
+          val visibleText = doc.select(s"#person-${item.index}-delete span[aria-hidden=true]").first.text
+          val hiddenText = doc.select(s"#person-${item.index}-delete span[class=visually-hidden]").first.text
           link.size mustBe 1
-          link.first.text mustBe messages("site.delete")
+          visibleText mustBe messages("site.delete")
+          hiddenText mustBe s"${messages("site.delete")} ${item.name}"
           link.first.attr("href") mustBe item.deleteLink(NormalMode, None).get
         }
       }

@@ -141,12 +141,14 @@ class AddCompanyDirectorsViewSpec extends YesNoViewBehaviours with EntityListBeh
       val doc = asDocument(createViewUsingForm(Seq(johnDoeEntity), viewOnly = true)(form))
       val editLink = doc.select(s"a[id=person-0-edit]")
       val deleteLink = doc.select(s"a[id=person-0-delete]")
-      val viewLink = doc.select(s"a[id=person-0-view]")
       val incompleteLozenge = doc.select(s"span[class=rejected]")
+      val visibleText = doc.select(s"#person-0-view span[aria-hidden=true]").first.text
+      val hiddenText = doc.select(s"#person-0-view span[class=visually-hidden]").first.text
       deleteLink.size() mustBe 0
       editLink.size() mustBe 0
-      viewLink.size() mustBe 1
       incompleteLozenge.size() mustBe 0
+      visibleText mustBe messages("site.view")
+      hiddenText mustBe s"${messages("site.view")} John Doe"
     }
 
     "show edit links and incomplete lozenge, but not show view links when viewOnly is false" in {
