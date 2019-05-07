@@ -91,6 +91,16 @@ class CompanyReviewViewSpec extends ViewBehaviours {
       Jsoup.parse(createView(true)().toString) must haveDynamicText("messages__companyReview__directors__viewLink")
     }
 
+    "not have confirm button when viewOnly flag is true" in {
+      val view = asDocument(createView(true)())
+      assertNotRenderedById(view, "submit")
+    }
+
+    "have confirm button when viewOnly flag is false" in {
+      val view = asDocument(createView()())
+      assertRenderedById(view, "submit")
+    }
+
     "contain list of directors" in {
       for (director <- directors)
         Jsoup.parse(createView()().toString) must haveDynamicText(director)

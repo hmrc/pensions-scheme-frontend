@@ -30,7 +30,8 @@ import play.api.libs.json.JsValue
 import play.api.mvc.{Action, AnyContent, Result}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import utils.{HsTaskListHelperRegistration, HsTaskListHelperVariations, Toggles, UserAnswers}
+import utils.hstasklisthelper.{HsTaskListHelperRegistration, HsTaskListHelperVariations}
+import utils.{Toggles, UserAnswers}
 import viewmodels.SchemeDetailsTaskList
 import views.html.{psa_scheme_details, schemeDetailsTaskList}
 

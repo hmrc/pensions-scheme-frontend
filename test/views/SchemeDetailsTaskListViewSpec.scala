@@ -118,16 +118,16 @@ class SchemeDetailsTaskListViewSpec extends ViewBehaviours {
 
     "no establishers" should {
       val journeyTaskListNoEstablisher: SchemeDetailsTaskList = SchemeDetailsTaskList(beforeYouStartSection,"test", Seq.empty, None,
-        SchemeDetailsTaskListSection(
+        Some(SchemeDetailsTaskListHeader(
           None,
-          Link(messages("messages__schemeTaskList__sectionEstablishers_add_link"),
-            controllers.register.establishers.routes.EstablisherKindController.onPageLoad(NormalMode, 0, None).url),
+          Some(Link(messages("messages__schemeTaskList__sectionEstablishers_add_link"),
+            controllers.register.establishers.routes.EstablisherKindController.onPageLoad(NormalMode, 0, None).url)),
           None
-        ), Seq.empty,
-        Some(SchemeDetailsTaskListSection(
+        )), Seq.empty,
+        Some(SchemeDetailsTaskListHeader(
           None,
-          Link(messages("messages__schemeTaskList__sectionTrustees_add_link"),
-            controllers.register.trustees.routes.TrusteeKindController.onPageLoad(NormalMode, 0, None).url),
+          Some(Link(messages("messages__schemeTaskList__sectionTrustees_add_link"),
+            controllers.register.trustees.routes.TrusteeKindController.onPageLoad(NormalMode, 0, None).url)),
           None
         )), Seq.empty, None, "h1", "h2",None, "pageTitle"
       )
@@ -188,15 +188,15 @@ class SchemeDetailsTaskListViewSpec extends ViewBehaviours {
     "no trustees" should {
 
       def journeyTaskListNoTrustees(text: Option[String] = None): SchemeDetailsTaskList = SchemeDetailsTaskList(beforeYouStartSection, "test", Seq.empty, None,
-        SchemeDetailsTaskListSection(
+        Some(SchemeDetailsTaskListHeader(
           None,
-          Link(messages("messages__schemeTaskList__sectionEstablishers_add_link"),
-            controllers.register.establishers.routes.EstablisherKindController.onPageLoad(NormalMode, 0, None).url),
-            None), Seq.empty,
-        Some(SchemeDetailsTaskListSection(
+          Some(Link(messages("messages__schemeTaskList__sectionEstablishers_add_link"),
+            controllers.register.establishers.routes.EstablisherKindController.onPageLoad(NormalMode, 0, None).url)),
+            None)), Seq.empty,
+        Some(SchemeDetailsTaskListHeader(
           None,
-          Link(messages("messages__schemeTaskList__sectionTrustees_add_link"),
-            controllers.register.trustees.routes.TrusteeKindController.onPageLoad(NormalMode, 0, None).url),
+          Some(Link(messages("messages__schemeTaskList__sectionTrustees_add_link"),
+            controllers.register.trustees.routes.TrusteeKindController.onPageLoad(NormalMode, 0, None).url)),
             None,
           text)), Seq.empty, None, "h1", "h2",None, "pageTitle"
       )
@@ -231,7 +231,7 @@ class SchemeDetailsTaskListViewSpec extends ViewBehaviours {
 
       val view = createView(schemeDetailsTaskListData)
 
-      "display the correct link" in {
+      "display the add link" in {
 
         view must haveLinkWithText(
           url = controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode, None).url,
@@ -362,14 +362,14 @@ object SchemeDetailsTaskListViewSpec extends ViewSpecBase {
       controllers.routes.WhatYouWillNeedWorkingKnowledgeController.onPageLoad().url), None)
   }
 
-  private def addEstablisherHeader(): SchemeDetailsTaskListSection = {
-    SchemeDetailsTaskListSection(None, Link(changeEstablisherLinkText,
-      controllers.register.establishers.routes.AddEstablisherController.onPageLoad(NormalMode, None).url), None)
+  private def addEstablisherHeader(): SchemeDetailsTaskListHeader = {
+    SchemeDetailsTaskListHeader(None, Some(Link(changeEstablisherLinkText,
+      controllers.register.establishers.routes.AddEstablisherController.onPageLoad(NormalMode, None).url)), None)
   }
 
-  private def addTrusteesHeader(): SchemeDetailsTaskListSection = {
-    SchemeDetailsTaskListSection(None, Link(changeTrusteesLinkText,
-      controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode, None).url), None)
+  private def addTrusteesHeader(): SchemeDetailsTaskListHeader = {
+    SchemeDetailsTaskListHeader(None, Some(Link(changeTrusteesLinkText,
+      controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode, None).url)), None)
   }
 
   private def establishers: Seq[SchemeDetailsTaskListSection] = {
@@ -390,7 +390,7 @@ object SchemeDetailsTaskListViewSpec extends ViewSpecBase {
 
   private val schemeDetailsTaskListData: SchemeDetailsTaskList = SchemeDetailsTaskList(
     beforeYouStartSection, testAboutHeader,aboutSection, Some(wkSection),
-    addEstablisherHeader(), establishers, Some(addTrusteesHeader()),
+    Some(addEstablisherHeader()), establishers, Some(addTrusteesHeader()),
     trustees, None, "h1", "h2",Some("h3"), "pageTitle" )
 
   private val pageHeader = messages("messages__schemeTaskList__title")
