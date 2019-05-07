@@ -109,6 +109,16 @@ class PartnershipReviewViewSpec extends ViewBehaviours {
 
     }
 
+    "not have confirm button when viewOnly flag is true" in {
+      val view = asDocument(createView(true)())
+      assertNotRenderedById(view, "submit")
+    }
+
+    "have confirm button when viewOnly flag is false" in {
+      val view = asDocument(createView()())
+      assertRenderedById(view, "submit")
+    }
+
     "contain list of partners" in {
       for (partner <- partners)
         Jsoup.parse(createView()().toString) must haveDynamicText(partner)

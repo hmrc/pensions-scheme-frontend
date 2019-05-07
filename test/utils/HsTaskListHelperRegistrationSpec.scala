@@ -30,6 +30,7 @@ import models.person.PersonDetails
 import models.register.trustees.TrusteeKind
 import org.joda.time.LocalDate
 import utils.behaviours.HsTaskListHelperBehaviour
+import utils.hstasklisthelper.{HsTaskListHelper, HsTaskListHelperRegistration}
 import viewmodels.SchemeDetailsTaskListSection
 
 class HsTaskListHelperRegistrationSpec extends HsTaskListHelperBehaviour with Enumerable.Implicits {
