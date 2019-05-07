@@ -36,19 +36,21 @@ class DirectorContactDetailsController @Inject()(
                                                   val userAnswersService: UserAnswersService,
                                                   authenticate: AuthAction,
                                                   getData: DataRetrievalAction,
+                                                  allowAccess: AllowAccessActionProvider,
                                                   requireData: DataRequiredAction,
                                                   formProvider: ContactDetailsFormProvider
                                                 ) extends controllers.ContactDetailsController {
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
-    implicit request =>
-      DirectorDetailsId(establisherIndex, directorIndex).retrieve.right.map {
-        director =>
-          get(DirectorContactDetailsId(establisherIndex, directorIndex), form, viewmodel(mode, establisherIndex, directorIndex, director.fullName, srn))
-      }
-  }
+  def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+      implicit request =>
+        DirectorDetailsId(establisherIndex, directorIndex).retrieve.right.map {
+          director =>
+            get(DirectorContactDetailsId(establisherIndex, directorIndex), form, viewmodel(mode, establisherIndex, directorIndex, director.fullName, srn))
+        }
+    }
 
   def onSubmit(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>

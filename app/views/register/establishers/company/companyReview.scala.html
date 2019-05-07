@@ -56,8 +56,10 @@
         list = Some(directors)
     )
 
-    @helpers.form(action = routes.CompanyReviewController.onSubmit(mode, srn, index), 'autoComplete -> "off") {
-        @components.submit_button("site.confirm")
+    @if(!viewOnly) {
+        @helpers.form(action = routes.CompanyReviewController.onSubmit(mode, srn, index), 'autoComplete -> "off") {
+            @components.submit_button("site.confirm")
+        }
     }
 
     @components.return_link("messages__schemeTaskList__returnlink", schemeName)

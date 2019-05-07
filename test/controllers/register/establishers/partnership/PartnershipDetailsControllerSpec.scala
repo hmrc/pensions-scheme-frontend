@@ -18,7 +18,7 @@ package controllers.register.establishers.partnership
 
 import services.FakeUserAnswersService
 import controllers.ControllerSpecBase
-import controllers.actions.{DataRequiredActionImpl, DataRetrievalAction, FakeAuthAction, FakeDataRetrievalAction}
+import controllers.actions.{DataRequiredActionImpl, DataRetrievalAction, FakeAllowAccessProvider, FakeAuthAction, FakeDataRetrievalAction}
 import forms.register.PartnershipDetailsFormProvider
 import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.partnership.PartnershipDetailsId
@@ -43,7 +43,7 @@ class PartnershipDetailsControllerSpec extends ControllerSpecBase {
   def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): PartnershipDetailsController =
     new PartnershipDetailsController(frontendAppConfig, messagesApi, FakeUserAnswersService,
       new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
-      dataRetrievalAction, new DataRequiredActionImpl, formProvider)
+      dataRetrievalAction, FakeAllowAccessProvider(), new DataRequiredActionImpl, formProvider)
   val submitUrl = controllers.register.establishers.partnership.routes.PartnershipDetailsController.onSubmit(NormalMode, firstIndex, None)
   def viewAsString(form: Form[_] = form): String = partnershipDetails(
     frontendAppConfig,

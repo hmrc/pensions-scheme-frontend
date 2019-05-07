@@ -41,6 +41,7 @@ class OtherPartnersController @Inject()(
                                          @EstablisherPartnership navigator: Navigator,
                                          authenticate: AuthAction,
                                          getData: DataRetrievalAction,
+                                         allowAccess: AllowAccessActionProvider,
                                          requireData: DataRequiredAction,
                                          formProvider: OtherPartnersFormProvider
                                        ) (implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport {
@@ -48,7 +49,7 @@ class OtherPartnersController @Inject()(
   private val form: Form[Boolean] = formProvider()
 
   def onPageLoad(mode: Mode, establisherIndex: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen requireData).async {
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
     implicit request =>
       retrievePartnershipName(establisherIndex) { _ =>
         val preparedForm = request.userAnswers.get(OtherPartnersId(establisherIndex)).fold(form)(form.fill)

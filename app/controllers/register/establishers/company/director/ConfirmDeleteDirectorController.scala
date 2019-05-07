@@ -43,41 +43,43 @@ class ConfirmDeleteDirectorController @Inject()(
                                                  @EstablishersCompanyDirector navigator: Navigator,
                                                  authenticate: AuthAction,
                                                  getData: DataRetrievalAction,
+                                                 allowAccess: AllowAccessActionProvider,
                                                  requireData: DataRequiredAction,
                                                  sectionComplete: SectionComplete,
                                                  formProvider: ConfirmDeleteDirectorFormProvider
-                                               ) (implicit val ec: ExecutionContext) extends FrontendController with I18nSupport with Retrievals {
+                                               )(implicit val ec: ExecutionContext) extends FrontendController with I18nSupport with Retrievals {
 
   private val form: Form[Boolean] = formProvider()
 
-  def onPageLoad(establisherIndex: Index, directorIndex: Index, mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
-    implicit request =>
-      (CompanyDetailsId(establisherIndex) and DirectorDetailsId(establisherIndex, directorIndex)).retrieve.right.map {
-        case company ~ director =>
-          director.isDeleted match {
-            case false =>
-              Future.successful(
-                Ok(
-                  confirmDeleteDirector(
-                    appConfig,
-                    form,
-                    director.fullName,
-                    routes.ConfirmDeleteDirectorController.onSubmit(establisherIndex, directorIndex, mode, srn),
-                    existingSchemeName
+  def onPageLoad(establisherIndex: Index, directorIndex: Index, mode: Mode, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+      implicit request =>
+        (CompanyDetailsId(establisherIndex) and DirectorDetailsId(establisherIndex, directorIndex)).retrieve.right.map {
+          case company ~ director =>
+            director.isDeleted match {
+              case false =>
+                Future.successful(
+                  Ok(
+                    confirmDeleteDirector(
+                      appConfig,
+                      form,
+                      director.fullName,
+                      routes.ConfirmDeleteDirectorController.onSubmit(establisherIndex, directorIndex, mode, srn),
+                      existingSchemeName
+                    )
                   )
                 )
-              )
-            case true =>
-              Future.successful(Redirect(routes.AlreadyDeletedController.onPageLoad(establisherIndex, directorIndex, srn)))
-          }
-      }
-  }
+              case true =>
+                Future.successful(Redirect(routes.AlreadyDeletedController.onPageLoad(establisherIndex, directorIndex, srn)))
+            }
+        }
+    }
 
   def onSubmit(establisherIndex: Index, directorIndex: Index, mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
 
       (DirectorDetailsId(establisherIndex, directorIndex)).retrieve.right.map {
-        case directorDetails  =>
+        case directorDetails =>
 
           form.bindFromRequest().fold(
             (formWithErrors: Form[_]) =>

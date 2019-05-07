@@ -41,17 +41,35 @@ class PartnershipPreviousAddressController @Inject()(
                                                       @EstablisherPartnership val navigator: Navigator,
                                                       authenticate: AuthAction,
                                                       getData: DataRetrievalAction,
+                                                      allowAccess: AllowAccessActionProvider,
                                                       requireData: DataRequiredAction,
                                                       formProvider: AddressFormProvider,
                                                       val countryOptions: CountryOptions,
                                                       val auditService: AuditService
                                                     ) extends ManualAddressController with I18nSupport {
 
+  protected val form: Form[Address] = formProvider()
   private[controllers] val postCall = routes.PartnershipPreviousAddressController.onSubmit _
   private[controllers] val title: Message = "messages__partnershipPreviousAddress__title"
   private[controllers] val heading: Message = "messages__partnershipPreviousAddress__heading"
 
-  protected val form: Form[Address] = formProvider()
+  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+      implicit request =>
+        viewmodel(index, mode, srn).retrieve.right.map {
+          vm =>
+            get(PartnershipPreviousAddressId(index), PartnershipPreviousAddressListId(index), vm)
+        }
+    }
+
+  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
+    implicit request =>
+      viewmodel(index, mode, srn).retrieve.right.map {
+        vm =>
+          post(PartnershipPreviousAddressId(index), PartnershipPreviousAddressListId(index), vm, mode, context(vm),
+            PartnershipPreviousAddressPostcodeLookupId(index))
+      }
+  }
 
   private def viewmodel(index: Int, mode: Mode, srn: Option[String]): Retrieval[ManualAddressViewModel] =
     Retrieval {
@@ -68,23 +86,6 @@ class PartnershipPreviousAddressController @Inject()(
             )
         }
     }
-
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
-    implicit request =>
-      viewmodel(index, mode, srn).retrieve.right.map {
-        vm =>
-          get(PartnershipPreviousAddressId(index), PartnershipPreviousAddressListId(index), vm)
-      }
-  }
-
-  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
-    implicit request =>
-      viewmodel(index, mode, srn).retrieve.right.map {
-        vm =>
-          post(PartnershipPreviousAddressId(index), PartnershipPreviousAddressListId(index), vm, mode, context(vm),
-            PartnershipPreviousAddressPostcodeLookupId(index))
-      }
-  }
 
   private def context(viewModel: ManualAddressViewModel): String = {
     viewModel.secondaryHeader match {

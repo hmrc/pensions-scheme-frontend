@@ -17,7 +17,6 @@
 package controllers.register.establishers.company
 
 import config.FrontendAppConfig
-import connectors.UserAnswersCacheConnector
 import controllers.Retrievals
 import controllers.actions._
 import forms.CompanyRegistrationNumberFormProvider
@@ -42,37 +41,40 @@ class CompanyRegistrationNumberController @Inject()(
                                                      @EstablishersCompany navigator: Navigator,
                                                      authenticate: AuthAction,
                                                      getData: DataRetrievalAction,
+                                                     allowAccess: AllowAccessActionProvider,
                                                      requireData: DataRequiredAction,
                                                      formProvider: CompanyRegistrationNumberFormProvider
                                                    )(implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits with MapFormats {
 
   val form = formProvider()
-  private def postCall: (Mode, Option[String], Index) => Call = routes.CompanyRegistrationNumberController.onSubmit _
 
-  def onPageLoad(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
-    implicit request =>
-          val redirectResult = request.userAnswers.get(CompanyRegistrationNumberId(index)) match {
-            case None =>
-              Ok(companyRegistrationNumber(appConfig, form, mode, index, existingSchemeName, postCall(mode, srn, index)))
-            case Some(value) =>
-              Ok(companyRegistrationNumber(appConfig, form.fill(value), mode, index, existingSchemeName, postCall(mode, srn, index)))
-          }
+  def onPageLoad(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+      implicit request =>
+        val redirectResult = request.userAnswers.get(CompanyRegistrationNumberId(index)) match {
+          case None =>
+            Ok(companyRegistrationNumber(appConfig, form, mode, index, existingSchemeName, postCall(mode, srn, index)))
+          case Some(value) =>
+            Ok(companyRegistrationNumber(appConfig, form.fill(value), mode, index, existingSchemeName, postCall(mode, srn, index)))
+        }
 
-          Future.successful(redirectResult)
+        Future.successful(redirectResult)
 
 
-  }
+    }
 
   def onSubmit(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
 
-          form.bindFromRequest().fold(
-            (formWithErrors: Form[_]) =>
-              Future.successful(BadRequest(companyRegistrationNumber(appConfig, formWithErrors, mode, index, existingSchemeName, postCall(mode, srn, index)))),
-            value =>
-              userAnswersService.save(mode, srn, CompanyRegistrationNumberId(index), value).map(cacheMap =>
-                Redirect(navigator.nextPage(CompanyRegistrationNumberId(index), mode, UserAnswers(cacheMap), srn)))
-          )
+      form.bindFromRequest().fold(
+        (formWithErrors: Form[_]) =>
+          Future.successful(BadRequest(companyRegistrationNumber(appConfig, formWithErrors, mode, index, existingSchemeName, postCall(mode, srn, index)))),
+        value =>
+          userAnswersService.save(mode, srn, CompanyRegistrationNumberId(index), value).map(cacheMap =>
+            Redirect(navigator.nextPage(CompanyRegistrationNumberId(index), mode, UserAnswers(cacheMap), srn)))
+      )
   }
+
+  private def postCall: (Mode, Option[String], Index) => Call = routes.CompanyRegistrationNumberController.onSubmit _
 
 }

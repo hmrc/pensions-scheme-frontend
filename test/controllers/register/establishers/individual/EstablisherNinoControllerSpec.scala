@@ -53,7 +53,7 @@ class EstablisherNinoControllerSpec extends ControllerSpecBase {
 
   def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisher): EstablisherNinoController =
     new EstablisherNinoController(frontendAppConfig, messagesApi, FakeUserAnswersService, new FakeNavigator(desiredRoute = onwardRoute),
-      FakeAuthAction, dataRetrievalAction, new DataRequiredActionImpl, formProvider)
+      FakeAuthAction, dataRetrievalAction, FakeAllowAccessProvider(), new DataRequiredActionImpl, formProvider)
 
   private val submitUrl = controllers.register.establishers.individual.routes.EstablisherNinoController.onSubmit(NormalMode, firstIndex, None)
   def viewAsString(form: Form[_] = form): String = establisherNino(frontendAppConfig, form, NormalMode,

@@ -14,12 +14,13 @@
  * limitations under the License.
  */
 
-package utils
+package utils.hstasklisthelper
 
-import identifiers.{IsAboutBankDetailsCompleteId, IsAboutBenefitsAndInsuranceCompleteId, IsAboutMembersCompleteId}
+import identifiers._
 import models.register.Entity
-import models.{Link, NormalMode}
+import models.{Link, Mode, NormalMode}
 import play.api.i18n.Messages
+import utils.UserAnswers
 import viewmodels._
 
 class HsTaskListHelperRegistration(answers: UserAnswers)(implicit messages: Messages) extends HsTaskListHelper(answers) {
@@ -69,6 +70,42 @@ class HsTaskListHelperRegistration(answers: UserAnswers)(implicit messages: Mess
 
   protected[utils] def trustees(userAnswers: UserAnswers): Seq[SchemeDetailsTaskListSection] =
     listOf(userAnswers.allTrustees, userAnswers)
+
+  protected[utils] override def addTrusteeHeader(userAnswers: UserAnswers, mode: Mode, srn: Option[String]): Option[SchemeDetailsTaskListHeader] = {
+    (userAnswers.get(HaveAnyTrusteesId), userAnswers.allTrusteesAfterDelete.isEmpty) match {
+      case (None | Some(true), false) =>
+
+        val (linkText, additionalText): (String, Option[String]) =
+          getTrusteeHeaderText(userAnswers.allTrusteesAfterDelete.size, userAnswers.get(SchemeTypeId))
+
+        Some(
+          SchemeDetailsTaskListHeader(
+            link = addTrusteeLink(linkText, srn, mode),
+            p1 = additionalText))
+
+      case (None | Some(true), true) =>
+
+        Some(
+          SchemeDetailsTaskListHeader(
+            trusteeStatus(isAllTrusteesCompleted(userAnswers), trusteesMandatory(userAnswers.get(SchemeTypeId))),
+            typeOfTrusteeLink(addTrusteesLinkText, userAnswers.allTrustees.size, srn, mode)))
+
+      case _ =>
+        None
+    }
+
+  }
+
+  protected[utils] def addEstablisherHeader(userAnswers: UserAnswers, mode: Mode, srn: Option[String]): Option[SchemeDetailsTaskListHeader] = {
+    if (userAnswers.allEstablishersAfterDelete.isEmpty) {
+      Some(SchemeDetailsTaskListHeader(None, Some(Link(addEstablisherLinkText,
+        controllers.register.establishers.routes.EstablisherKindController.onPageLoad(mode,
+          userAnswers.allEstablishers.size, srn).url)), None))
+    } else {
+      Some(SchemeDetailsTaskListHeader(None, Some(Link(changeEstablisherLinkText,
+        controllers.register.establishers.routes.AddEstablisherController.onPageLoad(mode, srn).url)), None))
+    }
+  }
 
   def taskList: SchemeDetailsTaskList = {
     SchemeDetailsTaskList(

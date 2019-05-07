@@ -59,6 +59,7 @@ class PostCodeLookupControllerSpec extends ControllerSpecBase with MockitoSugar 
       new FakeNavigator(desiredRoute = onwardRoute),
       FakeAuthAction,
       dataRetrievalAction,
+      FakeAllowAccessProvider(),
       new DataRequiredActionImpl,
       formProvider
     )

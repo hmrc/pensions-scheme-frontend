@@ -41,6 +41,7 @@ class PartnerNinoController @Inject()(
                                        @EstablishersPartner navigator: Navigator,
                                        authenticate: AuthAction,
                                        getData: DataRetrievalAction,
+                                       allowAccess: AllowAccessActionProvider,
                                        requireData: DataRequiredAction,
                                        formProvider: PartnerNinoFormProvider
                                      )(implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
@@ -48,7 +49,7 @@ class PartnerNinoController @Inject()(
   private val form: Form[Nino] = formProvider()
 
   def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen requireData).async {
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         PartnerDetailsId(establisherIndex, partnerIndex).retrieve.right.map { _ =>
           val preparedForm = request.userAnswers.get(PartnerNinoId(establisherIndex, partnerIndex)).fold(form)(form.fill)

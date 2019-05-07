@@ -30,6 +30,7 @@ import models.person.PersonDetails
 import models.register.trustees.TrusteeKind
 import org.joda.time.LocalDate
 import utils.behaviours.HsTaskListHelperBehaviour
+import utils.hstasklisthelper.{HsTaskListHelper, HsTaskListHelperRegistration}
 import viewmodels.SchemeDetailsTaskListSection
 
 class HsTaskListHelperRegistrationSpec extends HsTaskListHelperBehaviour with Enumerable.Implicits {
@@ -162,6 +163,13 @@ class HsTaskListHelperRegistrationSpec extends HsTaskListHelperBehaviour with En
   "addTrusteeHeader " must {
 
     behave like addTrusteeHeader(NormalMode, None)
+
+    "not display when do you have any trustees is false " in {
+      val userAnswers = UserAnswers().set(HaveAnyTrusteesId)(false).asOpt.value
+      val helper = createTaskListHelper(userAnswers)
+      helper.addTrusteeHeader(userAnswers, NormalMode, Some("srn")) mustBe None
+    }
+
   }
 
   "establishers" must {

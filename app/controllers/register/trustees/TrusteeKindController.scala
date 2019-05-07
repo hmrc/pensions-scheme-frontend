@@ -41,13 +41,15 @@ class TrusteeKindController @Inject()(
                                        @Trustees navigator: Navigator,
                                        authenticate: AuthAction,
                                        getData: DataRetrievalAction,
+                                       allowAccess: AllowAccessActionProvider,
                                        requireData: DataRequiredAction,
                                        formProvider: TrusteeKindFormProvider
                                      )(implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
+  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
     implicit request =>
       val preparedForm = request.userAnswers.get(TrusteeKindId(index)) match {
         case None => form

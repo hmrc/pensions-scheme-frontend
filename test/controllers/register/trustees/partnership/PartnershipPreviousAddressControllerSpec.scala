@@ -70,6 +70,7 @@ class PartnershipPreviousAddressControllerSpec extends ControllerSpecBase with S
       new FakeNavigator(desiredRoute = onwardRoute),
       FakeAuthAction,
       dataRetrievalAction,
+      FakeAllowAccessProvider(),
       new DataRequiredActionImpl,
       formProvider,
       countryOptions,

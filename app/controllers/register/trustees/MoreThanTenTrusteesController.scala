@@ -42,13 +42,15 @@ class MoreThanTenTrusteesController @Inject()(
                                                @Trustees navigator: Navigator,
                                                authenticate: AuthAction,
                                                getData: DataRetrievalAction,
+                                               allowAccess: AllowAccessActionProvider,
                                                requireData: DataRequiredAction,
                                                formProvider: MoreThanTenTrusteesFormProvider
                                              )(implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport {
 
   private val form: Form[Boolean] = formProvider()
 
-  def onPageLoad(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
+  def onPageLoad(mode: Mode, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
     implicit request =>
       val submitUrl = controllers.register.trustees.routes.MoreThanTenTrusteesController.onSubmit(mode, srn)
       val updatedForm = request.userAnswers.get(MoreThanTenTrusteesId).fold(form)(form.fill)

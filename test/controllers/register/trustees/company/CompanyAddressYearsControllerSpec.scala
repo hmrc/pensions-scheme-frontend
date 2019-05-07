@@ -57,7 +57,7 @@ class CompanyAddressYearsControllerSpec extends ControllerSpecBase {
 
   def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): CompanyAddressYearsController =
     new CompanyAddressYearsController(frontendAppConfig, messagesApi, new FakeNavigator(desiredRoute = onwardRoute), FakeUserAnswersService, FakeAuthAction,
-      dataRetrievalAction, new DataRequiredActionImpl, formProvider)
+      dataRetrievalAction, FakeAllowAccessProvider(), new DataRequiredActionImpl, formProvider)
 
   def viewAsString(form: Form[_] = form): String = addressYears(frontendAppConfig, form, viewmodel, None)(fakeRequest, messages).toString
 

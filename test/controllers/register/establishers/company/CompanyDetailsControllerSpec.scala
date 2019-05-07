@@ -43,7 +43,7 @@ class CompanyDetailsControllerSpec extends ControllerSpecBase {
 
   def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): CompanyDetailsController =
     new CompanyDetailsController(frontendAppConfig, messagesApi, FakeUserAnswersService, new FakeNavigator(desiredRoute = onwardRoute),
-      FakeAuthAction, dataRetrievalAction, new DataRequiredActionImpl, formProvider)
+      FakeAuthAction, dataRetrievalAction, FakeAllowAccessProvider(), new DataRequiredActionImpl, formProvider)
 
   def viewAsString(form: Form[_] = form): String = companyDetails(frontendAppConfig, form, NormalMode, firstIndex, None,
     postCall(NormalMode, None, 0))(fakeRequest, messages).toString

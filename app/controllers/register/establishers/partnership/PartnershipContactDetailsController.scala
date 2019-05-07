@@ -36,6 +36,7 @@ class PartnershipContactDetailsController @Inject()(
                                                      val userAnswersService: UserAnswersService,
                                                      authenticate: AuthAction,
                                                      getData: DataRetrievalAction,
+                                                     allowAccess: AllowAccessActionProvider,
                                                      requireData: DataRequiredAction,
                                                      formProvider: ContactDetailsFormProvider
                                                    ) extends controllers.ContactDetailsController {
@@ -43,22 +44,22 @@ class PartnershipContactDetailsController @Inject()(
   private val form = formProvider()
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen requireData).async {
-    implicit request =>
-      PartnershipDetailsId(index).retrieve.right.map {
-        partnershipDetails =>
-          get(PartnershipContactDetailsId(index), form, viewmodel(mode, index, partnershipDetails.name, srn))
-      }
-  }
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+      implicit request =>
+        PartnershipDetailsId(index).retrieve.right.map {
+          partnershipDetails =>
+            get(PartnershipContactDetailsId(index), form, viewmodel(mode, index, partnershipDetails.name, srn))
+        }
+    }
 
   def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen requireData).async {
-    implicit request =>
-      PartnershipDetailsId(index).retrieve.right.map {
-        partnershipDetails =>
-          post(PartnershipContactDetailsId(index), mode, form, viewmodel(mode, index, partnershipDetails.name, srn))
-      }
-  }
+      implicit request =>
+        PartnershipDetailsId(index).retrieve.right.map {
+          partnershipDetails =>
+            post(PartnershipContactDetailsId(index), mode, form, viewmodel(mode, index, partnershipDetails.name, srn))
+        }
+    }
 
   private def viewmodel(mode: Mode, index: Index, partnershipName: String, srn: Option[String]) = ContactDetailsViewModel(
     postCall = routes.PartnershipContactDetailsController.onSubmit(mode, index, srn),

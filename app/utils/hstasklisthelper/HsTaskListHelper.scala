@@ -14,20 +14,21 @@
  * limitations under the License.
  */
 
-package utils
+package utils.hstasklisthelper
 
 import identifiers.register.establishers.company.{CompanyDetailsId => EstablisherCompanyDetailsId}
 import identifiers.register.establishers.individual.EstablisherDetailsId
 import identifiers.register.establishers.partnership.{PartnershipDetailsId => EstablisherPartnershipDetailsId}
-import identifiers.register.trustees.{MoreThanTenTrusteesId, TrusteeKindId}
+import identifiers.register.trustees.MoreThanTenTrusteesId
 import identifiers.register.trustees.company.{CompanyDetailsId => TrusteeCompanyDetailsId}
 import identifiers.register.trustees.individual.TrusteeDetailsId
 import identifiers.register.trustees.partnership.{PartnershipDetailsId => TrusteePartnershipDetailsId}
 import identifiers.{DeclarationDutiesId, IsWorkingKnowledgeCompleteId, _}
-import models.register.{Entity, SchemeType}
 import models.register.SchemeType.{MasterTrust, SingleTrust}
+import models.register.{Entity, SchemeType}
 import models.{Link, Mode, NormalMode}
 import play.api.i18n.Messages
+import utils.{Enumerable, UserAnswers}
 import viewmodels._
 
 abstract class HsTaskListHelper(answers: UserAnswers)(implicit messages: Messages) extends Enumerable.Implicits {
@@ -49,6 +50,8 @@ abstract class HsTaskListHelper(answers: UserAnswers)(implicit messages: Message
   protected lazy val deleteTrusteesLinkText = messages("messages__schemeTaskList__sectionTrustees_delete_link")
   protected lazy val deleteTrusteesAdditionalInfo = messages("messages__schemeTaskList__sectionTrustees_delete_additional_text")
   protected lazy val declarationLinkText = messages("messages__schemeTaskList__declaration_link")
+  protected lazy val noEstablishersText = messages("messages__schemeTaskList__sectionEstablishers_no_establishers")
+  protected lazy val noTrusteesText = messages("messages__schemeTaskList__sectionTrustees_no_trustees")
 
   def taskList: SchemeDetailsTaskList
 
@@ -75,49 +78,23 @@ abstract class HsTaskListHelper(answers: UserAnswers)(implicit messages: Message
     }
   }
 
-  private[utils] def addEstablisherHeader(userAnswers: UserAnswers, mode: Mode, srn: Option[String]): SchemeDetailsTaskListSection = {
-    if (userAnswers.allEstablishersAfterDelete.isEmpty) {
-      SchemeDetailsTaskListSection(None, Link(addEstablisherLinkText,
-        controllers.register.establishers.routes.EstablisherKindController.onPageLoad(mode,
-          userAnswers.allEstablishers.size, srn).url), None)
-    } else {
-      SchemeDetailsTaskListSection(None, Link(changeEstablisherLinkText,
-        controllers.register.establishers.routes.AddEstablisherController.onPageLoad(mode, srn).url), None)
-    }
-  }
+  protected[utils] def addEstablisherHeader(userAnswers: UserAnswers, mode: Mode, srn: Option[String]): Option[SchemeDetailsTaskListHeader]
 
-  private[utils] def addTrusteeHeader(userAnswers: UserAnswers, mode: Mode, srn: Option[String]): Option[SchemeDetailsTaskListSection] = {
-    (userAnswers.get(HaveAnyTrusteesId), userAnswers.allTrusteesAfterDelete.isEmpty) match {
-      case (None | Some(true), false) =>
+  protected[utils] def addTrusteeHeader(userAnswers: UserAnswers, mode: Mode, srn: Option[String]): Option[SchemeDetailsTaskListHeader]
 
-        val (linkText, additionalText): (String, Option[String]) =
-          getTrusteeHeaderText(userAnswers.allTrusteesAfterDelete.size, userAnswers.get(SchemeTypeId))
+  protected def typeOfTrusteeLink(linkText: String, trusteeCount: Int, srn: Option[String], mode: Mode): Option[Link] =
+    Some(Link(linkText, controllers.register.trustees.routes.TrusteeKindController.onPageLoad(mode, trusteeCount, srn).url))
 
-        Some(
-          SchemeDetailsTaskListSection(
-            link = addTrusteeLink(linkText, srn, mode),
-            p1 = additionalText))
+  protected def addTrusteeLink(linkText: String, srn: Option[String], mode: Mode): Option[Link] =
+    Some(Link(linkText, controllers.register.trustees.routes.AddTrusteeController.onPageLoad(mode, srn).url))
 
-      case (None | Some(true), true) =>
+  protected def typeOfEstablisherLink(linkText: String, establisherCount: Int, srn: Option[String], mode: Mode): Option[Link] =
+    Some(Link(linkText, controllers.register.establishers.routes.EstablisherKindController.onPageLoad(mode, establisherCount, srn).url))
 
-        Some(
-          SchemeDetailsTaskListSection(
-            trusteeStatus(isAllTrusteesCompleted(userAnswers), trusteesMandatory(userAnswers.get(SchemeTypeId))),
-            typeOfTrusteeLink(addTrusteesLinkText, userAnswers.allTrustees.size, srn, mode)))
+  protected def addEstablisherLink(linkText: String, srn: Option[String], mode: Mode): Option[Link] =
+    Some(Link(linkText, controllers.register.establishers.routes.AddEstablisherController.onPageLoad(mode, srn).url))
 
-      case _ =>
-        None
-    }
-
-  }
-
-  private def typeOfTrusteeLink(linkText: String, trusteeCount: Int, srn: Option[String], mode: Mode): Link =
-    Link(linkText, controllers.register.trustees.routes.TrusteeKindController.onPageLoad(mode, trusteeCount, srn).url)
-
-  private def addTrusteeLink(linkText: String, srn: Option[String], mode: Mode): Link =
-    Link(linkText, controllers.register.trustees.routes.AddTrusteeController.onPageLoad(mode, srn).url)
-
-  private[utils] def trusteeStatus(completed: Boolean, mandatory: Boolean): Option[Boolean] = (completed, mandatory) match {
+  protected[utils] def trusteeStatus(completed: Boolean, mandatory: Boolean): Option[Boolean] = (completed, mandatory) match {
     case (true, _) => None
     case (false, false) => None
     case (false, true) => Some(false)

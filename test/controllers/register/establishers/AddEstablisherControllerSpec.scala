@@ -129,6 +129,7 @@ object AddEstablisherControllerSpec extends AddEstablisherControllerSpec {
       new FakeNavigator(desiredRoute = onwardRoute),
       FakeAuthAction,
       dataRetrievalAction,
+      FakeAllowAccessProvider(),
       new DataRequiredActionImpl,
       formProvider
     )

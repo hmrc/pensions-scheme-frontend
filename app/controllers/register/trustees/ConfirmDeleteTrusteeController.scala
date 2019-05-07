@@ -45,6 +45,7 @@ class ConfirmDeleteTrusteeController @Inject()(appConfig: FrontendAppConfig,
                                                override val messagesApi: MessagesApi,
                                                authenticate: AuthAction,
                                                getData: DataRetrievalAction,
+                                               allowAccess: AllowAccessActionProvider,
                                                requireData: DataRequiredAction,
                                                @Trustees navigator: Navigator,
                                                userAnswersService: UserAnswersService,
@@ -54,7 +55,7 @@ class ConfirmDeleteTrusteeController @Inject()(appConfig: FrontendAppConfig,
   private val form: Form[Boolean] = formProvider()
 
   def onPageLoad(mode: Mode, index: Index, trusteeKind: TrusteeKind, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen requireData).async {
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
     implicit request =>
       getDeletableTrustee(index, trusteeKind, request.userAnswers) map {
         trustee =>

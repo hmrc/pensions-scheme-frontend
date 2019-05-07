@@ -41,16 +41,16 @@ class DirectorUniqueTaxReferenceController @Inject()(
                                                       @EstablishersCompanyDirector navigator: Navigator,
                                                       authenticate: AuthAction,
                                                       getData: DataRetrievalAction,
+                                                      allowAccess: AllowAccessActionProvider,
                                                       requireData: DataRequiredAction,
                                                       formProvider: DirectorUniqueTaxReferenceFormProvider
                                                     )(implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
 
   private val form: Form[UniqueTaxReference] = formProvider()
-  private def postCall: (Mode, Index, Index, Option[String]) => Call = routes.DirectorUniqueTaxReferenceController.onSubmit _
 
   def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen requireData).async {
-    implicit request =>
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+      implicit request =>
         DirectorUniqueTaxReferenceId(establisherIndex, directorIndex).retrieve.right.map { value =>
           Future.successful(Ok(directorUniqueTaxReference(
             appConfig, form.fill(value), mode, establisherIndex, directorIndex, existingSchemeName, postCall(mode, establisherIndex, directorIndex, srn))))
@@ -58,12 +58,11 @@ class DirectorUniqueTaxReferenceController @Inject()(
           Future.successful(Ok(directorUniqueTaxReference(
             appConfig, form, mode, establisherIndex, directorIndex, existingSchemeName, postCall(mode, establisherIndex, directorIndex, srn))))
         }
-  }
-
+    }
 
   def onSubmit(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen requireData).async {
-    implicit request =>
+      implicit request =>
         form.bindFromRequest().fold(
           (formWithErrors: Form[_]) =>
             Future.successful(BadRequest(directorUniqueTaxReference(
@@ -79,6 +78,8 @@ class DirectorUniqueTaxReferenceController @Inject()(
                 Redirect(navigator.nextPage(DirectorUniqueTaxReferenceId(establisherIndex, directorIndex), mode, new UserAnswers(json), srn))
             }
         )
-  }
+    }
+
+  private def postCall: (Mode, Index, Index, Option[String]) => Call = routes.DirectorUniqueTaxReferenceController.onSubmit _
 
 }
