@@ -164,41 +164,44 @@ class UserAnswersServiceSpec extends AsyncWordSpec with MustMatchers with Mockit
 
     "save flag with correct id for TruesteeCompanyAddressYearsId" in {
 
-      when(subscriptionConnector.save[Boolean, TypedIdentifier[Boolean]](any(), Matchers.eq(IsTrusteeAddressCompleteId(0)), Matchers.eq(true))(any(), any(), any()))
-        .thenReturn(Future(json))
+      val updated = UserAnswers(json).set(IsTrusteeAddressCompleteId(0))(true).asOpt.get
+
+      when(subscriptionConnector.upsert(any(), Matchers.eq(updated.json))(any(), any()))
+        .thenReturn(Future(updated.json))
 
       testService.setAddressCompleteFlagAfterAddressYear(NormalMode, None, TruesteeCompanyAddressYearsId(0), OverAYear, UserAnswers(json)) map {
-        _ mustEqual UserAnswers(json)
+        _ mustEqual updated
       }
     }
 
     "save flag with correct id for trustee EstablisherIndividualAddressYearsId" in {
+      val updated = UserAnswers(json).set(IsEstablisherAddressCompleteId(0))(true).asOpt.get
 
-      when(subscriptionConnector.save[Boolean, TypedIdentifier[Boolean]](any(), Matchers.eq(IsEstablisherAddressCompleteId(0)), Matchers.eq(true))(any(), any(), any()))
-        .thenReturn(Future(json))
+      when(subscriptionConnector.upsert(any(), Matchers.eq(updated.json))(any(), any()))
+        .thenReturn(Future(updated.json))
 
       testService.setAddressCompleteFlagAfterAddressYear(NormalMode, None, EstablisherIndividualAddressYearsId(0), OverAYear, UserAnswers(json)) map {
-        _ mustEqual UserAnswers(json)
+        _ mustEqual updated
       }
     }
 
     "save flag with correct id for establisher partner" in {
+      val updated = UserAnswers(json).set(IsPartnerAddressCompleteId(0, 0))(true).asOpt.get
 
-      when(subscriptionConnector.save[Boolean, TypedIdentifier[Boolean]](any(), Matchers.eq(IsPartnerAddressCompleteId(0, 0)), Matchers.eq(true))(any(), any(), any()))
-        .thenReturn(Future(json))
+      when(subscriptionConnector.upsert(any(), Matchers.eq(updated.json))(any(), any()))
+        .thenReturn(Future(updated.json))
 
       testService.setAddressCompleteFlagAfterAddressYear(NormalMode, None, PartnerAddressYearsId(0, 0), OverAYear, UserAnswers(json)) map {
-        _ mustEqual UserAnswers(json)
+        _ mustEqual updated
       }
     }
 
     "save flag with false if under year selected" in {
 
-      when(subscriptionConnector.save[Boolean, TypedIdentifier[Boolean]](any(), Matchers.eq(IsPartnerAddressCompleteId(0, 0)), Matchers.eq(false))(any(), any(), any()))
-        .thenReturn(Future(json))
-
-      testService.setAddressCompleteFlagAfterAddressYear(NormalMode, None, PartnerAddressYearsId(0, 0), UnderAYear, UserAnswers(json)) map {
-        _ mustEqual UserAnswers(json)
+      testService.setAddressCompleteFlagAfterAddressYear(NormalMode, None, PartnerAddressYearsId(0, 0), UnderAYear, UserAnswers(json)).map{
+        result =>
+          verify(subscriptionConnector, never).upsert(any(), any())(any(), any())
+          result mustEqual UserAnswers(json)
       }
     }
 

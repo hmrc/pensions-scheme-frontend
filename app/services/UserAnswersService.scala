@@ -56,18 +56,19 @@ trait UserAnswersService {
                                        ec: ExecutionContext,
                                        hc: HeaderCarrier,
                                        request: DataRequest[AnyContent]
-                                      ): Future[JsValue] =
+                                      ): Future[JsValue] = {
     mode match {
       case NormalMode | CheckMode => subscriptionCacheConnector.save(request.externalId, id, value)
       case UpdateMode | CheckUpdateMode => lockAndCall(srn, updateSchemeCacheConnector.save(_, id, value))
     }
+  }
 
   def save[A, I <: TypedIdentifier[A]](mode: Mode, srn: Option[String], id: I, value: A,
                                        changeId: TypedIdentifier[Boolean])
                                       (implicit fmt: Format[A],
                                        ec: ExecutionContext,
                                        hc: HeaderCarrier,
-                                       request: DataRequest[AnyContent]): Future[JsValue] =
+                                       request: DataRequest[AnyContent]): Future[JsValue] = {
     mode match {
       case NormalMode | CheckMode => subscriptionCacheConnector.save(request.externalId, id, value)
       case UpdateMode | CheckUpdateMode =>
@@ -76,8 +77,9 @@ trait UserAnswersService {
           _.set(changeId)(true)
         }.asOpt.getOrElse(request.userAnswers)
 
-       lockAndCall(srn, updateSchemeCacheConnector.upsert(_, answers.json))
+        lockAndCall(srn, updateSchemeCacheConnector.upsert(_, answers.json))
     }
+  }
 
   def remove[I <: TypedIdentifier[_]](mode: Mode, srn: Option[String], id: I)
                                      (implicit
@@ -161,8 +163,12 @@ trait UserAnswersService {
     val addressCompletedId = getAddressId[AddressYears](id)
 
     addressYears match{
-      case OverAYear => addressCompletedId.fold(Future.successful(userAnswers))(id => save(mode, srn, id, true).map(UserAnswers))
-      case UnderAYear => addressCompletedId.fold(Future.successful(userAnswers))(id => save(mode, srn, id, false).map(UserAnswers))
+      case OverAYear => addressCompletedId.fold(Future.successful(userAnswers)) { changeId =>
+        val ua = userAnswers
+          .set(changeId)(true).asOpt.getOrElse(userAnswers)
+        upsert(mode, srn, ua.json).map(UserAnswers)
+      }
+      case UnderAYear => Future.successful(userAnswers)
     }
   }
 
@@ -175,7 +181,7 @@ trait UserAnswersService {
 
   }
 
-  protected def getAddressId[T](id: TypedIdentifier[T]):  Option[TypedIdentifier[Boolean]] = id match{
+  def getAddressId[T](id: TypedIdentifier[T]):  Option[TypedIdentifier[Boolean]] = id match{
     case TruesteeCompanyAddressYearsId(index) => Some(IsTrusteeAddressCompleteId(index))
     case TruesteePartnershipAddressYearsId(index) => Some(IsTrusteeAddressCompleteId(index))
     case TruesteeIndividualAddressYearsId(index) => Some(IsTrusteeAddressCompleteId(index))
