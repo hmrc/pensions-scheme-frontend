@@ -41,7 +41,7 @@ class EstablishersIndividualNavigator @Inject()(
     }
 
   private def anyMoreChanges(srn: Option[String]): Option[NavigateTo] =
-    NavigateTo.save(controllers.routes.AnyMoreChangesController.onPageLoad(srn))
+    NavigateTo.dontSave(controllers.routes.AnyMoreChangesController.onPageLoad(srn))
 
   //scalastyle:off cyclomatic.complexity
   protected def routes(from: NavigateFrom, mode: Mode, srn: Option[String]): Option[NavigateTo] = {
