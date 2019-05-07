@@ -114,6 +114,7 @@ class AddTrusteeViewSpec extends YesNoViewBehaviours with EntityListBehaviours w
     }
 
     behave like entityList(createView(), createView(trustees), trustees, frontendAppConfig)
+
     "display all the partially added trustee names with yes/No buttons if the maximum trustees are not added yet" in {
       val doc = asDocument(createView(trustees)())
       doc.select("#value-yes").size() mustEqual 1
