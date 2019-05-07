@@ -87,9 +87,10 @@ class SchemeTaskListControllerSpec extends ControllerSpecBase {
         status(result) mustBe OK
         contentAsString(result).contains(messages("messages__scheme_details__title")) mustBe true
         contentAsString(result).contains(messages("messages__schemeTaskList__sectionDeclaration_header")) mustBe true
+        contentAsString(result).contains(messages("messages__schemeTaskList__sectionTrustees_no_trustees")) mustBe false
       }
 
-      "return OK and no declaration section where request has viewOnly flag set to true" in {
+      "return OK and correct view when viewOnly flag set to true" in {
 
         val userAnswersResponse = UserAnswers(Json.obj(
           "test attribute" -> "test value"
@@ -109,6 +110,7 @@ class SchemeTaskListControllerSpec extends ControllerSpecBase {
         status(result) mustBe OK
 
         contentAsString(result).contains(messages("messages__schemeTaskList__sectionDeclaration_header")) mustBe false
+        contentAsString(result).contains(messages("messages__schemeTaskList__sectionTrustees_no_trustees")) mustBe true
       }
     }
 
@@ -172,11 +174,11 @@ object SchemeTaskListControllerSpec extends ControllerSpecBase with MockitoSugar
       SchemeDetailsTaskListSection(None, Link(aboutBenefitsAndInsuranceLinkText,
         controllers.routes.WhatYouWillNeedBenefitsInsuranceController.onPageLoad.url), None),
       SchemeDetailsTaskListSection(None, Link(aboutBankDetailsLinkText, controllers.routes.WhatYouWillNeedBankDetailsController.onPageLoad.url), None)), None,
-    SchemeDetailsTaskListSection(None, Link(addEstablisherLinkText,
-      controllers.register.establishers.routes.EstablisherKindController.onPageLoad(NormalMode, 0, None).url), None),
+    Some(SchemeDetailsTaskListHeader(None, Some(Link(addEstablisherLinkText,
+      controllers.register.establishers.routes.EstablisherKindController.onPageLoad(NormalMode, 0, None).url)), None)),
     Seq.empty,
-    Some(SchemeDetailsTaskListSection(None,
-      Link(addTrusteesLinkText, controllers.register.trustees.routes.TrusteeKindController.onPageLoad(NormalMode, 0, None).url),
+    Some(SchemeDetailsTaskListHeader(None,
+      Some(Link(addTrusteesLinkText, controllers.register.trustees.routes.TrusteeKindController.onPageLoad(NormalMode, 0, None).url)),
       None
     )),
     Seq.empty,
