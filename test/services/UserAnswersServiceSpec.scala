@@ -211,31 +211,37 @@ class UserAnswersServiceSpec extends AsyncWordSpec with MustMatchers with Mockit
 
     "save flag with correct id for TruesteeCompanyPreviousAddressId" in {
 
-      when(subscriptionConnector.save[Boolean, TypedIdentifier[Boolean]](any(), Matchers.eq(IsTrusteeAddressCompleteId(0)), Matchers.eq(true))(any(), any(), any()))
-        .thenReturn(Future(json))
+      val updated = UserAnswers(json).set(IsTrusteeAddressCompleteId(0))(true).asOpt.get
+
+      when(subscriptionConnector.upsert(any(), Matchers.eq(updated.json))(any(), any()))
+        .thenReturn(Future(updated.json))
 
       testService.setAddressCompleteFlagAfterPreviousAddress(NormalMode, None, TruesteeCompanyPreviousAddressId(0), UserAnswers(json)) map {
-        _ mustEqual UserAnswers(json)
+        _ mustEqual updated
       }
     }
 
     "save flag with correct id for trustee EstablisherIndividualPreviousAddressId" in {
 
-      when(subscriptionConnector.save[Boolean, TypedIdentifier[Boolean]](any(), Matchers.eq(IsEstablisherAddressCompleteId(0)), Matchers.eq(true))(any(), any(), any()))
-        .thenReturn(Future(json))
+      val updated = UserAnswers(json).set(IsEstablisherAddressCompleteId(0))(true).asOpt.get
+
+      when(subscriptionConnector.upsert(any(), Matchers.eq(updated.json))(any(), any()))
+        .thenReturn(Future(updated.json))
 
       testService.setAddressCompleteFlagAfterPreviousAddress(NormalMode, None, EstablisherIndividualPreviousAddressId(0), UserAnswers(json)) map {
-        _ mustEqual UserAnswers(json)
+        _ mustEqual updated
       }
     }
 
     "save flag with correct id for establisher PartnerPreviousAddressId" in {
 
-      when(subscriptionConnector.save[Boolean, TypedIdentifier[Boolean]](any(), Matchers.eq(IsPartnerAddressCompleteId(0, 0)), Matchers.eq(true))(any(), any(), any()))
-        .thenReturn(Future(json))
+      val updated = UserAnswers(json).set(IsPartnerAddressCompleteId(0, 0))(true).asOpt.get
+
+      when(subscriptionConnector.upsert(any(), Matchers.eq(updated.json))(any(), any()))
+        .thenReturn(Future(updated.json))
 
       testService.setAddressCompleteFlagAfterPreviousAddress(NormalMode, None, PartnerPreviousAddressId(0, 0), UserAnswers(json)) map {
-        _ mustEqual UserAnswers(json)
+        _ mustEqual updated
       }
     }
 

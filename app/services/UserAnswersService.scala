@@ -18,17 +18,17 @@ package services
 
 import config.FrontendAppConfig
 import connectors.{PensionSchemeVarianceLockConnector, SubscriptionCacheConnector, UpdateSchemeCacheConnector}
+import identifiers._
 import identifiers.register.establishers.IsEstablisherAddressCompleteId
+import identifiers.register.establishers.company.director.{DirectorAddressYearsId, DirectorPreviousAddressId, IsDirectorAddressCompleteId}
+import identifiers.register.establishers.company.{CompanyAddressYearsId => EstablisherCompanyAddressYearsId, CompanyPreviousAddressId => EstablisherCompanyPreviousAddressId}
+import identifiers.register.establishers.individual.{AddressYearsId => EstablisherIndividualAddressYearsId, PreviousAddressId => EstablisherIndividualPreviousAddressId}
+import identifiers.register.establishers.partnership.partner.{IsPartnerAddressCompleteId, PartnerAddressYearsId, PartnerPreviousAddressId}
+import identifiers.register.establishers.partnership.{PartnershipAddressYearsId => EstablisherPartnershipAddressYearsId, PartnershipPreviousAddressId => EstablisherPartnershipPreviousAddressId}
+import identifiers.register.trustees.IsTrusteeAddressCompleteId
 import identifiers.register.trustees.company.{CompanyAddressYearsId => TruesteeCompanyAddressYearsId, CompanyPreviousAddressId => TruesteeCompanyPreviousAddressId}
 import identifiers.register.trustees.individual.{TrusteeAddressYearsId => TruesteeIndividualAddressYearsId, TrusteePreviousAddressId => TruesteeIndividualPreviousAddressId}
 import identifiers.register.trustees.partnership.{PartnershipAddressYearsId => TruesteePartnershipAddressYearsId, PartnershipPreviousAddressId => TruesteePartnershipPreviousAddressId}
-import identifiers.register.establishers.company.{CompanyAddressYearsId => EstablisherCompanyAddressYearsId, CompanyPreviousAddressId => EstablisherCompanyPreviousAddressId}
-import identifiers.register.establishers.individual.{AddressYearsId => EstablisherIndividualAddressYearsId, PreviousAddressId => EstablisherIndividualPreviousAddressId}
-import identifiers.register.establishers.partnership.{PartnershipAddressYearsId => EstablisherPartnershipAddressYearsId, PartnershipPreviousAddressId => EstablisherPartnershipPreviousAddressId}
-import identifiers.register.establishers.partnership.partner.{IsPartnerAddressCompleteId, PartnerAddressYearsId, PartnerPreviousAddressId}
-import identifiers.register.establishers.company.director.{DirectorAddressYearsId, DirectorPreviousAddressId, IsDirectorAddressCompleteId}
-import identifiers.register.trustees.IsTrusteeAddressCompleteId
-import identifiers.{EstablishersOrTrusteesChangedId, InsuranceDetailsChangedId, TypedIdentifier}
 import javax.inject.{Inject, Singleton}
 import models.AddressYears.{OverAYear, UnderAYear}
 import models.address.Address
@@ -177,7 +177,11 @@ trait UserAnswersService {
 
     val addressCompletedId = getAddressId[Address](id)
 
-    addressCompletedId.fold(Future.successful(userAnswers))(id => save(mode, srn, id, true).map(UserAnswers))
+    addressCompletedId.fold(Future.successful(userAnswers)) { changeId =>
+      val ua = userAnswers
+        .set(changeId)(true).asOpt.getOrElse(userAnswers)
+      upsert(mode, srn, ua.json).map(UserAnswers)
+    }
 
   }
 
@@ -198,6 +202,7 @@ trait UserAnswersService {
     case EstablisherIndividualPreviousAddressId(index) => Some(IsEstablisherAddressCompleteId(index))
     case PartnerPreviousAddressId(establisherIndex, partnerIndex) => Some(IsPartnerAddressCompleteId(establisherIndex, partnerIndex))
     case DirectorPreviousAddressId(establisherIndex, directorIndex) => Some(IsDirectorAddressCompleteId(establisherIndex, directorIndex))
+    case InsurerConfirmAddressId => Some(IsAboutBenefitsAndInsuranceCompleteId)
     case _ => None
   }
 }
