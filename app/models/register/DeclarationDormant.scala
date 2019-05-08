@@ -20,7 +20,7 @@ import utils.{Enumerable, InputOption, WithName}
 
 sealed trait DeclarationDormant
 
-object DeclarationDormant {
+object DeclarationDormant extends Enumerable.Implicits {
 
   case object No extends WithName("no") with DeclarationDormant
 

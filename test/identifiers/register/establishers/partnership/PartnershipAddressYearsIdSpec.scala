@@ -16,12 +16,19 @@
 
 package identifiers.register.establishers.partnership
 
-import identifiers.register.establishers.IsEstablisherCompleteId
-import models.AddressYears
+import identifiers.register.establishers.{IsEstablisherCompleteId, IsEstablisherNewId}
+import models.{AddressYears, Link, NormalMode, UpdateMode}
+import models.AddressYears.UnderAYear
 import models.address.{Address, TolerantAddress}
+import models.requests.DataRequest
 import org.scalatest.{MustMatchers, OptionValues, WordSpec}
 import play.api.libs.json.Json
+import play.api.mvc.AnyContent
+import play.api.test.FakeRequest
+import uk.gov.hmrc.domain.PsaId
 import utils.{Enumerable, UserAnswers}
+import viewmodels.AnswerRow
+import utils.checkyouranswers.Ops._
 
 class PartnershipAddressYearsIdSpec extends WordSpec with MustMatchers with OptionValues with Enumerable.Implicits {
 
@@ -94,6 +101,57 @@ class PartnershipAddressYearsIdSpec extends WordSpec with MustMatchers with Opti
 
       "not remove the data for `PreviousAddressList`" in {
         result.get(PartnershipPreviousAddressListId(0)) mustBe defined
+      }
+    }
+  }
+
+  "cya" when {
+
+    val onwardUrl = "onwardUrl"
+
+    def answers = UserAnswers().set(PartnershipAddressYearsId(0))(UnderAYear).asOpt.get
+
+    "in normal mode" must {
+
+      "return answers rows with change links" in {
+        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
+        implicit val userAnswers = request.userAnswers
+        PartnershipAddressYearsId(0).row(onwardUrl, NormalMode) must equal(Seq(
+          AnswerRow(
+            "messages__partnership__checkYourAnswers__addressYears",
+            Seq(s"messages__common__under_a_year"),
+            answerIsMessageKey = true,
+            Some(Link("site.change", onwardUrl,
+              Some("messages__visuallyhidden__partnership__address_years")))
+          )))
+      }
+    }
+
+    "in update mode for new trustee - company paye" must {
+
+      def answersNew: UserAnswers = answers.set(IsEstablisherNewId(0))(true).asOpt.value
+
+      "return answers rows with change links" in {
+        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answersNew, PsaId("A0000000"))
+        implicit val userAnswers = request.userAnswers
+        PartnershipAddressYearsId(0).row(onwardUrl, UpdateMode) must equal(Seq(
+          AnswerRow(
+            "messages__partnership__checkYourAnswers__addressYears",
+            Seq(s"messages__common__under_a_year"),
+            answerIsMessageKey = true,
+            Some(Link("site.change", onwardUrl,
+              Some("messages__visuallyhidden__partnership__address_years")))
+          )))
+      }
+    }
+
+    "in update mode for existing trustee - company paye" must {
+
+      "return answers rows without change links" in {
+        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
+        implicit val userAnswers = request.userAnswers
+
+        PartnershipAddressYearsId(0).row(onwardUrl, UpdateMode) must equal(Nil)
       }
     }
   }

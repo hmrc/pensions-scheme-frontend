@@ -32,21 +32,23 @@ case class UniqueTaxReferenceId(index: Int) extends TypedIdentifier[UniqueTaxRef
 object UniqueTaxReferenceId {
   override def toString: String = "uniqueTaxReference"
 
-  val label = "messages__trusteeUtr_question_cya_label"
-  val utrLabel = "messages__trustee_individual_utr_cya_label"
-  val reasonLabel = "messages__trustee_individual_utr_reason_cya_label"
-  val changeHasUtr = "messages__visuallyhidden__trustee__utr_yes_no"
-  val changeUtr = "messages__visuallyhidden__trustee__utr"
-  val changeNoUtr = "messages__visuallyhidden__trustee__utr_no"
-
-  implicit def cya(implicit userAnswers: UserAnswers, messages: Messages): CheckYourAnswers[UniqueTaxReferenceId] = {
+  implicit val cya: CheckYourAnswers[UniqueTaxReferenceId] = {
     new CheckYourAnswers[UniqueTaxReferenceId] {
+      val label = "messages__trusteeUtr_question_cya_label"
+      val utrLabel = "messages__trustee_individual_utr_cya_label"
+      val reasonLabel = "messages__trustee_individual_utr_reason_cya_label"
+      val changeHasUtr = "messages__visuallyhidden__trustee__utr_yes_no"
+      val changeUtr = "messages__visuallyhidden__trustee__utr"
+      val changeNoUtr = "messages__visuallyhidden__trustee__utr_no"
+
       override def row(id: UniqueTaxReferenceId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
         UniqueTaxReferenceCYA(label, utrLabel, reasonLabel, changeHasUtr, changeUtr, changeNoUtr)().row(id)(changeUrl, userAnswers)
 
       override def updateRow(id: UniqueTaxReferenceId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        UniqueTaxReferenceCYA(label, utrLabel, reasonLabel, changeHasUtr, changeUtr, changeNoUtr, userAnswers.get(IsTrusteeNewId(id.index)))()
-          .updateRow(id)(changeUrl, userAnswers)
+        userAnswers.get(IsTrusteeNewId(id.index)) match {
+          case Some(true) => UniqueTaxReferenceCYA(label, utrLabel, reasonLabel, changeHasUtr, changeUtr, changeNoUtr)().row(id)(changeUrl, userAnswers)
+          case _ => UniqueTaxReferenceCYA(label, utrLabel, reasonLabel, changeHasUtr, changeUtr, changeNoUtr)().updateRow(id)(changeUrl, userAnswers)
+        }
     }
   }
 }

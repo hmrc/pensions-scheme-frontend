@@ -58,6 +58,8 @@ class CompanyRegistrationNumberIdSpec extends SpecBase {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answersNew, PsaId("A0000000"))
         implicit val userAnswers = request.userAnswers
         CompanyRegistrationNumberId(0).row(onwardUrl, UpdateMode) must equal(Seq(
+          AnswerRow("messages__checkYourAnswers__trustees__company__crn",List("Yes"),true,
+            Some(Link("site.change",onwardUrl,Some("messages__visuallyhidden__trustee__crn_yes_no")))),
           AnswerRow("messages__common__crn",List("crn"),false,
             Some(Link("site.change",onwardUrl,Some("messages__visuallyhidden__trustee__crn"))))
         ))
