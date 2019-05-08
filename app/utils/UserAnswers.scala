@@ -456,8 +456,7 @@ case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Implicits{
   }.contains(false)
 
   def isInsuranceCompleted: Boolean = get(BenefitsSecuredByInsuranceId) match {
-    case Some(true) => get(IsAboutBenefitsAndInsuranceCompleteId).getOrElse(false) |
-      !List(get(InvestmentRegulatedSchemeId), get(OccupationalPensionSchemeId), get(TypeOfBenefitsId),
+    case Some(true) => !List(get(InvestmentRegulatedSchemeId), get(OccupationalPensionSchemeId), get(TypeOfBenefitsId),
       get(InsuranceCompanyNameId), get(InsurancePolicyNumberId), get(InsurerConfirmAddressId)).contains(None)
     case Some(false) => true
     case _ => false
