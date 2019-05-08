@@ -51,7 +51,7 @@ class HsTaskListHelperVariations(answers: UserAnswers, viewOnly: Boolean, srn: O
     }
 
   private[utils] def variationDeclarationLink(userAnswers: UserAnswers, srn:Option[String]): Option[Link] = {
-    if(userAnswers.isUserAnswerUpdated()) {
+    if(userAnswers.isUserAnswerUpdated) {
       Some(Link(declarationLinkText,
         if (userAnswers.areVariationChangesCompleted)
           controllers.routes.VariationDeclarationController.onPageLoad(srn).url
@@ -92,7 +92,7 @@ class HsTaskListHelperVariations(answers: UserAnswers, viewOnly: Boolean, srn: O
       Some(userAnswers.allEstablishersCompleted),
       Some(isTrusteeOptional | userAnswers.isAllTrusteesCompleted),
       Some(userAnswers.allTrusteesAfterDelete.size < 10 || userAnswers.get(MoreThanTenTrusteesId).isDefined)
-    ).forall(_.contains(true)) && userAnswers.isUserAnswerUpdated()
+    ).forall(_.contains(true)) && userAnswers.isUserAnswerUpdated
   }
 
   protected[utils] def addEstablisherHeader(userAnswers: UserAnswers, mode: Mode, srn: Option[String]): Option[SchemeDetailsTaskListHeader] =

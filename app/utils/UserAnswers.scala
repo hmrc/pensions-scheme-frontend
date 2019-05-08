@@ -157,6 +157,7 @@ case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Implicits{
 
   private def notDeleted: Reads[JsBoolean] = __.read(JsBoolean(false))
 
+  //scalastyle:off method.length
   def readEstablishers: Reads[Seq[Establisher[_]]] = new Reads[Seq[Establisher[_]]] {
 
     private def noOfRecords : Int = json.validate((__ \ 'establishers).readNullable(__.read(
@@ -229,7 +230,6 @@ case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Implicits{
   }
 
 
-
   def allEstablishers: Seq[Establisher[_]] = {
 
     json.validate[Seq[Establisher[_]]](readEstablishers) match {
@@ -249,8 +249,7 @@ case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Implicits{
 
     getAllRecursive[PersonDetails](DirectorDetailsId.collectionPath(establisherIndex)).map {
       details =>
-        details.map { director =>
-          val directorIndex = details.indexOf(director)
+        for ((director, directorIndex) <- details.zipWithIndex) yield {
           val isComplete = updateComplatedUsingAddress(get(IsDirectorCompleteId(establisherIndex, directorIndex)),
             get(IsDirectorAddressCompleteId(establisherIndex, directorIndex)),
             get(IsNewDirectorId(establisherIndex, directorIndex)))
@@ -260,7 +259,7 @@ case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Implicits{
             director.isDeleted,
             isComplete,
             isNewEntity = true,
-            details.count(_.isDeleted==false)
+            details.count(!_.isDeleted)
           )
         }
     }.getOrElse(Seq.empty)
@@ -273,8 +272,7 @@ case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Implicits{
   def allPartners(establisherIndex: Int): Seq[PartnerEntity] = {
     getAllRecursive[PersonDetails](PartnerDetailsId.collectionPath(establisherIndex)).map {
       details =>
-        details.map { partner =>
-          val partnerIndex = details.indexOf(partner)
+        for ((partner, partnerIndex) <- details.zipWithIndex) yield {
           val isComplete = updateComplatedUsingAddress(get(IsPartnerCompleteId(establisherIndex, partnerIndex)),
             get(IsPartnerAddressCompleteId(establisherIndex, partnerIndex)),
             get(IsNewPartnerId(establisherIndex, partnerIndex)))
@@ -284,7 +282,7 @@ case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Implicits{
             partner.isDeleted,
             isComplete,
             isNewEntity = true,
-            details.count(_.isDeleted==false)
+            details.count(!_.isDeleted)
           )
         }
     }.getOrElse(Seq.empty)
@@ -321,7 +319,6 @@ case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Implicits{
         TrusteeDetailsId(index), details.fullName, details.isDeleted,
         updateComplatedUsingAddress(isComplete, isAddressComplete, isNew), isNew.fold(false)(identity), noOfRecords, schemeType)
     )
-
     /*TODO: This logic for vat and paye is done to handle the partial data with vat and paye in company details
      this should be removed, may be after 28 days of putting this in production*/
     private def readsCompany(index: Int): Reads[Trustee[_]] = (
@@ -336,7 +333,6 @@ case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Implicits{
         updateComplatedUsingAddress(isCompanyComplete(vat, paye, isComplete), isAddressComplete, isNew), isNew.fold(false)(identity), noOfRecords, schemeType)
     }
     )
-
     private def readsPartnership(index: Int): Reads[Trustee[_]] = (
       (JsPath \ TrusteePartnershipDetailsId.toString).read[PartnershipDetails] and
         (JsPath \ IsPartnershipCompleteId.toString).readNullable[Boolean] and
@@ -346,7 +342,6 @@ case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Implicits{
       TrusteePartnershipDetailsId(index), details.name, details.isDeleted,
       updateComplatedUsingAddress(isComplete, isAddressComplete, isNew), isNew.fold(false)(identity), noOfRecords, schemeType)
     )
-
     private def readsSkeleton(index: Int): Reads[Trustee[_]] = new Reads[Trustee[_]] {
       override def reads(json: JsValue): JsResult[Trustee[_]] = {
         (json \ TrusteeKindId.toString)
@@ -354,7 +349,6 @@ case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Implicits{
           .getOrElse(JsError(s"Trustee does not have element trusteeKind: index=$index"))
       }
     }
-
     override def reads(json: JsValue): JsResult[Seq[Trustee[_]]] = {
       json \ TrusteesId.toString match {
         case JsDefined(JsArray(trustees)) =>
@@ -423,12 +417,11 @@ case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Implicits{
       )
   }
 
-  def isUserAnswerUpdated(): Boolean = {
+  def isUserAnswerUpdated: Boolean =
     List(
       get[Boolean](InsuranceDetailsChangedId),
       get[Boolean](EstablishersOrTrusteesChangedId)
     ).flatten.contains(true)
-  }
 
   def addressAnswer(address: Address)(implicit countryOptions: CountryOptions): Seq[String] = {
     val country = countryOptions.options.find(_.value == address.country).map(_.label).getOrElse(address.country)
