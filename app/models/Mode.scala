@@ -68,9 +68,12 @@ object Mode {
     case _ => throw UnknownModeException()
   }
 
-  def journeyMode(mode: Mode): Mode = mode match  {
+  def journeyMode(mode: Mode): Mode = {
+    println("\n\n\nmode : "+mode.toString)
+    mode match {
     case CheckMode => NormalMode
     case CheckUpdateMode => UpdateMode
     case _ => throw UnknownModeException()
+  }
   }
 }
