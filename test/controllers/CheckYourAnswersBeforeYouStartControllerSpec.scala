@@ -155,14 +155,14 @@ object CheckYourAnswersBeforeYouStartControllerSpec extends ControllerSpecBase {
     )
   )
 
-  private def viewAsString(hideSaveAndContinueButton:Boolean = false, mode:Mode = NormalMode): String = check_your_answers(
+  private def viewAsString(): String = check_your_answers(
     frontendAppConfig,
     Seq(beforeYouStart),
-    postUrl(mode),
+    postUrl(NormalMode),
     Some("Test Scheme"),
     hideEditLinks = false,
-    hideSaveAndContinueButton = hideSaveAndContinueButton,
-    mode = mode
+    hideSaveAndContinueButton = false,
+    mode = NormalMode
   )(fakeRequest, messages).toString
 
   private def viewAsStringWithReturnToManage(): String = check_your_answers(
