@@ -43,13 +43,6 @@ class CheckYourAnswersBeforeYouStartController @Inject()(appConfig: FrontendAppC
                                                         )(implicit val ec: ExecutionContext) extends FrontendController
   with Enumerable.Implicits with I18nSupport with Retrievals {
 
-  private def hideSaveAndContinueButton(mode: Mode, request:DataRequest[AnyContent]):Boolean = {
-    mode match {
-      case UpdateMode | CheckUpdateMode => true
-      case _ => request.viewOnly
-    }
-  }
-
   def onPageLoad(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData) {
     implicit request =>
 
@@ -72,7 +65,7 @@ class CheckYourAnswersBeforeYouStartController @Inject()(appConfig: FrontendAppC
         returnOverview = !userAnswers.get(IsBeforeYouStartCompleteId).getOrElse(false),
         mode,
         hideEditLinks = request.viewOnly, srn,
-        hideSaveAndContinueButton = hideSaveAndContinueButton(mode, request)))
+        hideSaveAndContinueButton = mode == UpdateMode || mode == CheckUpdateMode))
   }
 
   def onSubmit(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData() andThen requireData).async {
