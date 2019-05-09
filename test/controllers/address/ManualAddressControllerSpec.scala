@@ -243,7 +243,8 @@ class ManualAddressControllerSpec extends WordSpec with MustMatchers with Mockit
 
             val controller = app.injector.instanceOf[TestController]
 
-            val result = controller.onSubmit(viewModel, UserAnswers(), FakeRequest().withFormUrlEncodedBody(
+            val result = controller.onSubmit(viewModel, UserAnswers().set(fakeSeqTolerantAddressId)(Seq(TolerantAddress(
+              None, None, None, None, None, None))).asOpt.value, FakeRequest().withFormUrlEncodedBody(
               ("addressLine1", "value 1"),
               ("addressLine2", "value 2"),
               ("postCode", "AB1 1AB"),
