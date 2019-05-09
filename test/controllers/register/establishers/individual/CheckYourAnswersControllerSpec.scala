@@ -19,7 +19,7 @@ package controllers.register.establishers.individual
 import controllers.ControllerSpecBase
 import controllers.actions.{DataRequiredActionImpl, DataRetrievalAction, FakeAuthAction}
 import identifiers.register.establishers.individual._
-import identifiers.register.establishers.{IsEstablisherCompleteId, individual}
+import identifiers.register.establishers.{IsEstablisherCompleteId, IsEstablisherNewId, individual}
 import models._
 import models.address.Address
 import models.person.PersonDetails
@@ -33,7 +33,8 @@ import viewmodels.AnswerSection
 import views.html.check_your_answers
 
 class CheckYourAnswersControllerSpec extends ControllerSpecBase {
- import CheckYourAnswersControllerSpec._
+
+  import CheckYourAnswersControllerSpec._
 
   implicit val countryOptions = new FakeCountryOptions()
   implicit val request = FakeDataRequest(individualAnswers)
@@ -41,6 +42,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase {
   val firstIndex = Index(0)
 
   private val onwardRoute = controllers.routes.IndexController.onPageLoad()
+
   private def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisherHns): CheckYourAnswersController =
     new CheckYourAnswersController(
       frontendAppConfig,
@@ -62,19 +64,19 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase {
             controllers.register.establishers.individual.routes.EstablisherDetailsController.onPageLoad(CheckMode, firstIndex, None).url) ++
             EstablisherNinoId(firstIndex).row(
               controllers.register.establishers.individual.routes.EstablisherNinoController.onPageLoad(CheckMode, firstIndex, None).url) ++
-              UniqueTaxReferenceId(firstIndex).row(
-                routes.UniqueTaxReferenceController.onPageLoad(CheckMode, firstIndex, None).url) ++
-              AddressId(firstIndex).row(
-                controllers.register.establishers.individual.routes.AddressController.onPageLoad(CheckMode, firstIndex, None).url) ++
-              AddressYearsId(firstIndex).row(
-                controllers.register.establishers.individual.routes.AddressYearsController.onPageLoad(CheckMode, firstIndex, None).url) ++
-              PreviousAddressId(firstIndex).row(
-                controllers.register.establishers.individual.routes.PreviousAddressController.onPageLoad(CheckMode, firstIndex, None).url
-              ) ++
-              ContactDetailsId(firstIndex).row(
-                controllers.register.establishers.individual.routes.ContactDetailsController.onPageLoad(CheckMode, firstIndex, None).url
-              )
-          )
+            UniqueTaxReferenceId(firstIndex).row(
+              routes.UniqueTaxReferenceController.onPageLoad(CheckMode, firstIndex, None).url) ++
+            AddressId(firstIndex).row(
+              controllers.register.establishers.individual.routes.AddressController.onPageLoad(CheckMode, firstIndex, None).url) ++
+            AddressYearsId(firstIndex).row(
+              controllers.register.establishers.individual.routes.AddressYearsController.onPageLoad(CheckMode, firstIndex, None).url) ++
+            PreviousAddressId(firstIndex).row(
+              controllers.register.establishers.individual.routes.PreviousAddressController.onPageLoad(CheckMode, firstIndex, None).url
+            ) ++
+            ContactDetailsId(firstIndex).row(
+              controllers.register.establishers.individual.routes.ContactDetailsController.onPageLoad(CheckMode, firstIndex, None).url
+            )
+        )
 
         val viewAsString = check_your_answers(
           frontendAppConfig,
@@ -88,6 +90,21 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase {
         val result = controller(individualAnswers.dataRetrievalAction).onPageLoad(NormalMode, firstIndex, None)(request)
         status(result) mustBe OK
         contentAsString(result) mustBe viewAsString
+        assertRenderedById(asDocument(contentAsString(result)), "submit")
+      }
+
+      "return OK and displays submit button when in UpdateMode and existing establisher" in {
+        val result = controller(individualAnswers.dataRetrievalAction).onPageLoad(UpdateMode, firstIndex, None)(request)
+        status(result) mustBe OK
+        assertNotRenderedById(asDocument(contentAsString(result)), "submit")
+      }
+
+      "return OK and displays submit button when in UpdateMode and newly added establisher" in {
+        val result = controller(individualAnswersWithNewlyAddedEstablisher.dataRetrievalAction)
+          .onPageLoad(UpdateMode, firstIndex, None)(FakeDataRequest(individualAnswersWithNewlyAddedEstablisher))
+
+        status(result) mustBe OK
+        assertRenderedById(asDocument(contentAsString(result)), "submit")
       }
     }
 
@@ -106,12 +123,18 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase {
 object CheckYourAnswersControllerSpec extends OptionValues {
   val firstIndex = Index(0)
   val desiredRoute = controllers.routes.IndexController.onPageLoad()
-  val individualAnswers = UserAnswers()
+
+  val commonAnswers = UserAnswers()
     .set(EstablisherDetailsId(firstIndex))(PersonDetails("first name", None, "last name", LocalDate.now(), false))
     .flatMap(_.set(EstablisherNinoId(firstIndex))(Nino.Yes("AB100100A")))
     .flatMap(_.set(UniqueTaxReferenceId(firstIndex))(UniqueTaxReference.Yes("1234567890")))
     .flatMap(_.set(AddressId(firstIndex))(Address("Address 1", "Address 2", None, None, None, "GB")))
     .flatMap(_.set(AddressYearsId(firstIndex))(AddressYears.UnderAYear))
     .flatMap(_.set(individual.PreviousAddressId(firstIndex))(Address("Previous Address 1", "Previous Address 2", None, None, None, "GB")))
-    .flatMap(_.set(individual.ContactDetailsId(firstIndex))(ContactDetails("test@test.com", "123456789"))).asOpt.value
+    .flatMap(_.set(individual.ContactDetailsId(firstIndex))(ContactDetails("test@test.com", "123456789")))
+
+  val individualAnswers = commonAnswers.asOpt.value
+  val individualAnswersWithNewlyAddedEstablisher = commonAnswers
+    .flatMap(_.set(IsEstablisherNewId(firstIndex))(true))
+    .asOpt.value
 }

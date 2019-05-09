@@ -19,11 +19,11 @@ package controllers.register.establishers.individual
 import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions.{AuthAction, DataRequiredAction, DataRetrievalAction}
-import identifiers.register.establishers.{IsEstablisherCompleteId, IsEstablisherNewId}
 import identifiers.register.establishers.individual._
+import identifiers.register.establishers.{IsEstablisherCompleteId, IsEstablisherNewId}
 import javax.inject.Inject
-import models._
 import models.Mode.checkMode
+import models._
 import models.requests.DataRequest
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
@@ -31,7 +31,7 @@ import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.EstablishersIndividual
 import utils.checkyouranswers.Ops._
-import utils.{CountryOptions, Navigator, SectionComplete, UserAnswers}
+import utils.{CountryOptions, Navigator, UserAnswers}
 import viewmodels.AnswerSection
 import views.html.check_your_answers
 
@@ -50,7 +50,7 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requiredData).async {
     implicit request =>
 
-      implicit val userAnswers:UserAnswers = request.userAnswers
+      implicit val userAnswers: UserAnswers = request.userAnswers
 
       val sections = Seq(
         AnswerSection(None,
@@ -73,7 +73,7 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
         )
       )
 
-      def hideItem(request:DataRequest[AnyContent], userAnswers:UserAnswers, hideIfExistingEstablisher:Boolean): Boolean =
+      def hideItem(request: DataRequest[AnyContent], userAnswers: UserAnswers, hideIfExistingEstablisher: Boolean): Boolean =
         request.viewOnly || !userAnswers.get(IsEstablisherNewId(index))
           .getOrElse(!hideIfExistingEstablisher)
 
