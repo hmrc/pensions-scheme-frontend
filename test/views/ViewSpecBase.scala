@@ -120,14 +120,6 @@ trait ViewSpecBase extends SpecBase {
     for (key <- expectedMessageKeys) assertContainsText(doc, messages(key))
   }
 
-  def assertRenderedById(doc: Document, id: String): Assertion = {
-    assert(doc.getElementById(id) != null, "\n\nElement " + id + " was not rendered on the page.\n")
-  }
-
-  def assertNotRenderedById(doc: Document, id: String): Assertion = {
-    assert(doc.getElementById(id) == null, "\n\nElement " + id + " was rendered on the page.\n")
-  }
-
   def assertRenderedByIdWithText(doc: Document, id: String, text: String): Assertion = {
     val element = doc.getElementById(id)
     assert(element != null, "\n\nElement " + id + " was not rendered on the page.\n")
