@@ -115,7 +115,7 @@ object EstablishersPartnerNavigatorSpec extends OptionValues {
 
   private def anyMoreChanges = controllers.routes.AnyMoreChangesController.onPageLoad(None)
 
-  private def exitJourney(mode: Mode) = if (mode == NormalMode) checkYourAnswers(mode) else anyMoreChanges
+  private def exitJourney(mode: Mode) = checkYourAnswers(mode)
 
   private def partnerNino(mode: Mode) = routes.PartnerNinoController.onPageLoad(mode, establisherIndex, partnerIndex, None)
 
