@@ -22,6 +22,7 @@ import models.AddressYears
 import play.api.libs.json.{JsPath, JsResult}
 import utils.UserAnswers
 import utils.checkyouranswers.{AddressYearsCYA, CheckYourAnswers}
+import viewmodels.AnswerRow
 
 case class PartnerAddressYearsId(establisherIndex: Int, partnerIndex: Int) extends TypedIdentifier[AddressYears] {
 
@@ -45,8 +46,20 @@ case class PartnerAddressYearsId(establisherIndex: Int, partnerIndex: Int) exten
 object PartnerAddressYearsId {
   override lazy val toString: String = "partnerAddressYears"
 
-  implicit val cya: CheckYourAnswers[PartnerAddressYearsId] = AddressYearsCYA[PartnerAddressYearsId](
-    label = "messages__partner_address_years_question_cya_label",
-    changeAddressYears = "messages__visuallyhidden__partner__address_years")()
+  implicit val cya: CheckYourAnswers[PartnerAddressYearsId] = {
+    val label: String = "messages__partner_address_years_question_cya_label"
+    val changeAddressYears: String = "messages__visuallyhidden__partner__address_years"
+
+    new CheckYourAnswers[PartnerAddressYearsId] {
+      override def row(id: PartnerAddressYearsId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+        AddressYearsCYA(label, changeAddressYears)().row(id)(changeUrl, userAnswers)
+
+      override def updateRow(id: PartnerAddressYearsId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+        userAnswers.get(IsNewPartnerId(id.establisherIndex, id.partnerIndex)) match {
+          case Some(true) => AddressYearsCYA(label, changeAddressYears)().row(id)(changeUrl, userAnswers)
+          case _ => AddressYearsCYA(label, changeAddressYears)().updateRow(id)(changeUrl, userAnswers)
+        }
+    }
+  }
 }
 

@@ -427,10 +427,10 @@ messages__establisher_individual_name_cya_label = Name
 messages__establisher_individual_dob_cya_label = Date of birth
 messages__establisher_individual_nino_question_cya_label = Does the establisher have a National Insurance number?
 messages__establisher_individual_nino_cya_label = National Insurance number
-messages__establisher_individual_nino_reason_cya_label = Reason
+messages__establisher_individual_nino_reason_cya_label = Why the establisher does not have a National Insurance number?
 messages__establisher_individual_utr_question_cya_label = Does the establisher have a Unique Taxpayer Reference number (UTR)?
 messages__establisher_individual_utr_cya_label = Unique Taxpayer Reference number
-messages__establisher_individual_utr_reason_cya_label = Reason
+messages__establisher_individual_utr_reason_cya_label = Why the establisher does not have a Unique Taxpayer Reference number?
 messages__establisher_individual_email_cya_label = Email address
 messages__establisher_individual_phone_cya_label = Phone number
 messages__establisher_individual_address_cya_label = Address
@@ -470,12 +470,12 @@ messages__companyPreviousAddress__heading = Previous address of the company
 messages__company__cya__vat = VAT registration number (optional)
 messages__company__cya__paye_ern = PAYE employer reference number
 messages__company__cya__crn_yes_no = Does the scheme establisher have a Company Registration number?
-messages__company__cya__crn_no_reason = Why the scheme establisher does not have a Company Registration number
+messages__company__cya__crn_no_reason = Why the scheme establisher does not have a Company Registration number?
 messages__company__cya__utr_yes_no = Does the scheme establisher have a Unique Taxpayer Reference number?
 messages__company__cya__vat_yes_no = Does the scheme establisher have a VAT registration number?
 messages__company__cya__paye_yes_no = Does the scheme establisher have a PAYE employer reference number?
 messages__company__cya__utr = UTR
-messages__company__cya__utr_no_reason = Why the scheme establisher does not have a Unique Taxpayer Reference number
+messages__company__cya__utr_no_reason = Why the scheme establisher does not have a Unique Taxpayer Reference number?
 messages__company__cya__dormant = Has the establisher been dormant in the last 12 months?
 messages__company__paye_error_length = The PAYE number cannot be more than 13 characters
 messages__company__paye_error_invalid = Enter a valid PAYE number
@@ -483,8 +483,8 @@ messages__company__paye_error_invalid = Enter a valid PAYE number
 messages__companyPreviousAddress__checkYourAnswersLabel = Previous Address
 
 messages__director_nino_question_cya_label = Does the director have a National Insurance number?
+messages__director_nino_reason_cya_label = Why the director does not have a National Insurance number?
 messages__director_nino_cya_label = National Insurance number
-messages__director_nino_reason_cya_label = Reason the director does not have a National Insurance number
 messages__director_nino__title = Does the director have a National Insurance number?
 messages__director_no_nino = Tell us why the director does not have a National Insurance number
 messages__error__has_nino_director = Select yes if the director has a National Insurance number
@@ -518,7 +518,7 @@ messages__director__cya__contact__details_heading = Contact details for director
 
 messages__director__cya__utr_yes_no = Does the director have a Self Assessment Unique Taxpayer Reference number?
 messages__director__cya__utr = Unique Taxpayer Reference number
-messages__director__cya__utr_no_reason = Why the director does not have a Self Assessment Unique Taxpayer Reference number
+messages__director__cya__utr_no_reason = Why the director does not have a Self Assessment Unique Taxpayer Reference number?
 
 messages__confirmDeleteDirector__title = Confirm deletion
 messages__confirmDeleteDirector__heading = Are you sure you want to delete {0}?
@@ -545,9 +545,11 @@ messages__checkYourAnswers__section__contact_details = Contact details
 messages__checkYourAnswers__section__company_details = Company details
 
 messages__checkYourAnswers__trustees__company__crn = Does the trustee have a Company Registration number?
+messages__checkYourAnswers__trustees__company__crn_no_reason = Why the trustee does not have a Company Registration number?
 messages__checkYourAnswers__trustees__company__vat = Does the trustee have a VAT registration number?
 messages__checkYourAnswers__trustees__company__paye = Does the trustee have a PAYE employer reference number?
 messages__checkYourAnswers__trustees__company__utr = Does the trustee have a Unique Taxpayer Reference number?
+messages__checkYourAnswers__trustees__company__utr_no_reason = Why the trustee does not have a Unique Taxpayer Reference number
 messages__checkYourAnswers__trustees__company__address_years = How long has the company been at this address?
 
 messages__directorPreviousAddressPostcodeLookup__title = Director’s previous address
@@ -645,10 +647,12 @@ messages__trusteeAddressYears__heading = How long has the trustee been at this a
 messages__trusteeAddressYears__error_required = Select how long they have been at the current address
 
 messages__trusteeAddressYears_cya_label = How long has the trustee been at this address?
+messages__trustee_individual_nino_reason_cya_label = Why the trustee does not have a National Insurance number?
 messages__trusteeNino_question_cya_label = Does the trustee have a National Insurance number?
 messages__trusteeNino_nino_cya_label = National Insurance number
 messages__trusteeNino_reason_cya_label = Reason
 messages__trusteeUtr_question_cya_label = Does the trustee have a Unique Taxpayer Reference number?
+messages__trustee_individual_utr_reason_cya_label = Why the trustee does not have a Unique Taxpayer Reference number?
 
 messages__trusteePreviousAddress__title = Trustee’s address
 messages__trusteePreviousAddress__heading = Trustee’s address
@@ -867,6 +871,7 @@ messages__partnership__checkYourAnswers__partnership_contact_details = Partnersh
 messages__partnership__checkYourAnswers__vat = Does the partnership have a VAT registration number?
 messages__partnership__checkYourAnswers__paye = Does the partnership have a PAYE employer reference number?
 messages__partnership__checkYourAnswers__utr = Does the partnership have a Self Assessment Unique Taxpayer Reference number?
+messages__partnership__checkYourAnswers__utr_no_reason = Why the partnership does not have a Self Assessment Unique Taxpayer Reference number?
 messages__partnership__checkYourAnswers__addressYears = How long has the partnership been at this address?
 messages__partnership__checkYourAnswers__isDormant = Has the partnership been dormant in the last 12 months?
 
@@ -930,7 +935,9 @@ messages__partnerAddress__lede = This is usually the residential address for thi
 messages__partner__cya__details_heading = Partnership partner details
 messages__partner__cya__contact__details_heading = Contact details for partner
 messages__partner_nino_question_cya_label = Does the partner have a National Insurance number?
+messages__partner_nino_reason_cya_label = Why the partner does not have a National Insurance number?
 messages__partner_utr_question_cya_label = Does the partner have a Self Assessment Unique Taxpayer Reference number?
+messages__partner__cya__utr_no_reason = Why the partner does not have a  Self Assessment Unique Taxpayer Reference number?
 messages__partner_address_years_question_cya_label = How long has the partner lived at this address?
 
 messages__confirmDeletePartner__title = Confirm deletion

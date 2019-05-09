@@ -55,7 +55,7 @@ class DirectorUniqueTaxReferenceIdSpec extends SpecBase {
           AnswerRow("messages__director__cya__utr_yes_no", Seq(s"${UniqueTaxReference.No}"), false,
             Some(Link("site.change", onwardUrl, Some("messages__visuallyhidden__director__utr_yes_no")))),
           AnswerRow(
-            "messages__establisher_individual_utr_reason_cya_label", Seq(utrNo.reason), false,
+            "messages__director__cya__utr_no_reason", Seq(utrNo.reason), false,
             Some(Link("site.change", onwardUrl, Some("messages__visuallyhidden__director__utr_no"))))
         ))
       }
@@ -81,7 +81,7 @@ class DirectorUniqueTaxReferenceIdSpec extends SpecBase {
           AnswerRow("messages__director__cya__utr_yes_no", Seq(s"${UniqueTaxReference.No}"), false,
             Some(Link("site.change", onwardUrl, Some("messages__visuallyhidden__director__utr_yes_no")))),
           AnswerRow(
-            "messages__establisher_individual_utr_reason_cya_label", Seq(utrNo.reason), false,
+            "messages__director__cya__utr_no_reason", Seq(utrNo.reason), false,
             Some(Link("site.change", onwardUrl, Some("messages__visuallyhidden__director__utr_no"))))
         ))
       }

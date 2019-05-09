@@ -54,7 +54,7 @@ class PartnerNinoIdSpec extends SpecBase {
           AnswerRow("messages__partner_nino_question_cya_label", Seq(s"${Nino.No}"), false,
             Some(Link("site.change", onwardUrl, Some("messages__visuallyhidden__partner__nino_yes_no")))),
           AnswerRow(
-            "messages__common__reason", Seq(ninoNo.reason), false,
+            "messages__partner_nino_reason_cya_label", Seq(ninoNo.reason), false,
             Some(Link("site.change", onwardUrl, Some("messages__visuallyhidden__partner__nino_no"))))
         ))
       }
@@ -80,7 +80,7 @@ class PartnerNinoIdSpec extends SpecBase {
           AnswerRow("messages__partner_nino_question_cya_label", Seq(s"${Nino.No}"), false,
             Some(Link("site.change", onwardUrl, Some("messages__visuallyhidden__partner__nino_yes_no")))),
           AnswerRow(
-            "messages__common__reason", Seq(ninoNo.reason), false,
+            "messages__partner_nino_reason_cya_label", Seq(ninoNo.reason), false,
             Some(Link("site.change", onwardUrl, Some("messages__visuallyhidden__partner__nino_no"))))
         ))
       }

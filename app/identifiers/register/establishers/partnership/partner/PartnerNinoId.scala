@@ -31,20 +31,21 @@ case class PartnerNinoId(establisherIndex: Int, partnerIndex: Int) extends Typed
 object PartnerNinoId {
   override lazy val toString: String = "partnerNino"
 
-  implicit def nino(implicit rds: Reads[Nino]): CheckYourAnswers[PartnerNinoId] = {
+  implicit val nino: CheckYourAnswers[PartnerNinoId] = {
     val label = "messages__partner_nino_question_cya_label"
+    val reasonLabel = "messages__partner_nino_reason_cya_label"
     val changeHasNino = "messages__visuallyhidden__partner__nino_yes_no"
     val changeNino = "messages__visuallyhidden__partner__nino"
     val changeNoNino = "messages__visuallyhidden__partner__nino_no"
 
     new CheckYourAnswers[PartnerNinoId] {
       override def row(id: PartnerNinoId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        NinoCYA[PartnerNinoId](label, changeHasNino, changeNino, changeNoNino)().row(id)(changeUrl, userAnswers)
+        NinoCYA[PartnerNinoId](label, reasonLabel, changeHasNino, changeNino, changeNoNino)().row(id)(changeUrl, userAnswers)
 
       override def updateRow(id: PartnerNinoId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
         userAnswers.get(IsNewPartnerId(id.establisherIndex, id.partnerIndex)) match {
-          case Some(true) => NinoCYA[PartnerNinoId](label, changeHasNino, changeNino, changeNoNino)().row(id)(changeUrl, userAnswers)
-          case _ => NinoCYA[PartnerNinoId](label, changeHasNino, changeNino, changeNoNino)().updateRow(id)(changeUrl, userAnswers)
+          case Some(true) => NinoCYA[PartnerNinoId](label, reasonLabel, changeHasNino, changeNino, changeNoNino)().row(id)(changeUrl, userAnswers)
+          case _ => NinoCYA[PartnerNinoId](label, reasonLabel, changeHasNino, changeNino, changeNoNino)().updateRow(id)(changeUrl, userAnswers)
         }
       }
     }
