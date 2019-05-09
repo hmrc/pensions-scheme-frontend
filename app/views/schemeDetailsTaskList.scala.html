@@ -231,7 +231,7 @@
         @taskSections.declaration.map{declarationSection=>
             <li>
                 <h2 id="section-declaration-header" class="heading-large">
-                    @messages("messages__schemeTaskList__sectionDeclaration_header")
+                    @messages(declarationSection.header)
                 </h2>
                 <p class="tasklist">
                         @if(declarationSection.declarationLink.isDefined){

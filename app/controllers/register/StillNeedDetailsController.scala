@@ -36,8 +36,8 @@ class StillNeedDetailsController @Inject()(
                                              )(implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport {
 
 
-  def onPageLoad(srn: String): Action[AnyContent] = (authenticate andThen getData(UpdateMode, Some(srn)) ).async {
+  def onPageLoad(srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(UpdateMode, srn) ).async {
     implicit request =>
-      Future.successful(Ok(stillNeedDetails(appConfig,Some(srn), existingSchemeName)))
+      Future.successful(Ok(stillNeedDetails(appConfig, srn, existingSchemeName)))
   }
 }
