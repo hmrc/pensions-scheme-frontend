@@ -31,43 +31,43 @@ class TrusteesCompanyNavigator @Inject()(val dataCacheConnector: UserAnswersCach
   protected def routes(from: NavigateFrom, mode: Mode, srn: Option[String]): Option[NavigateTo] = {
     from.id match {
       case CompanyDetailsId(index) =>
-        NavigateTo.save(controllers.register.trustees.company.routes.CompanyVatController.onPageLoad(mode, index, srn))
+        NavigateTo.dontSave(controllers.register.trustees.company.routes.CompanyVatController.onPageLoad(mode, index, srn))
 
       case CompanyVatId(index) =>
-        NavigateTo.save(controllers.register.trustees.company.routes.CompanyPayeController.onPageLoad(mode, index, srn))
+        NavigateTo.dontSave(controllers.register.trustees.company.routes.CompanyPayeController.onPageLoad(mode, index, srn))
 
       case CompanyPayeId(index) =>
-        NavigateTo.save(controllers.register.trustees.company.routes.CompanyRegistrationNumberController.onPageLoad(mode, index, srn))
+        NavigateTo.dontSave(controllers.register.trustees.company.routes.CompanyRegistrationNumberController.onPageLoad(mode, index, srn))
 
       case CompanyRegistrationNumberId(index) =>
-        NavigateTo.save(controllers.register.trustees.company.routes.CompanyUniqueTaxReferenceController.onPageLoad(mode, index, srn))
+        NavigateTo.dontSave(controllers.register.trustees.company.routes.CompanyUniqueTaxReferenceController.onPageLoad(mode, index, srn))
 
       case CompanyUniqueTaxReferenceId(index) =>
-        NavigateTo.save(controllers.register.trustees.company.routes.CompanyPostCodeLookupController.onPageLoad(mode, index, srn))
+        NavigateTo.dontSave(controllers.register.trustees.company.routes.CompanyPostCodeLookupController.onPageLoad(mode, index, srn))
 
       case CompanyPostcodeLookupId(index) =>
-        NavigateTo.save(controllers.register.trustees.company.routes.CompanyAddressListController.onPageLoad(mode, index, srn))
+        NavigateTo.dontSave(controllers.register.trustees.company.routes.CompanyAddressListController.onPageLoad(mode, index, srn))
 
       case CompanyAddressListId(index) =>
-        NavigateTo.save(controllers.register.trustees.company.routes.CompanyAddressController.onPageLoad(mode, index, srn))
+        NavigateTo.dontSave(controllers.register.trustees.company.routes.CompanyAddressController.onPageLoad(mode, index, srn))
 
       case CompanyAddressId(index) =>
-        NavigateTo.save(controllers.register.trustees.company.routes.CompanyAddressYearsController.onPageLoad(mode, index, srn))
+        NavigateTo.dontSave(controllers.register.trustees.company.routes.CompanyAddressYearsController.onPageLoad(mode, index, srn))
 
       case CompanyAddressYearsId(index) =>
         addressYearsRoutes(index, from.userAnswers, mode, srn)
 
       case CompanyPreviousAddressPostcodeLookupId(index) =>
-        NavigateTo.save(controllers.register.trustees.company.routes.CompanyPreviousAddressListController.onPageLoad(mode, index, srn))
+        NavigateTo.dontSave(controllers.register.trustees.company.routes.CompanyPreviousAddressListController.onPageLoad(mode, index, srn))
 
       case CompanyPreviousAddressListId(index) =>
-        NavigateTo.save(controllers.register.trustees.company.routes.CompanyPreviousAddressController.onPageLoad(mode, index, srn))
+        NavigateTo.dontSave(controllers.register.trustees.company.routes.CompanyPreviousAddressController.onPageLoad(mode, index, srn))
 
       case CompanyPreviousAddressId(index) =>
-        NavigateTo.save(controllers.register.trustees.company.routes.CompanyContactDetailsController.onPageLoad(mode, index, srn))
+        NavigateTo.dontSave(controllers.register.trustees.company.routes.CompanyContactDetailsController.onPageLoad(mode, index, srn))
 
       case CompanyContactDetailsId(index) =>
-        NavigateTo.save(controllers.register.trustees.company.routes.CheckYourAnswersController.onPageLoad(mode, index, srn))
+        NavigateTo.dontSave(controllers.register.trustees.company.routes.CheckYourAnswersController.onPageLoad(mode, index, srn))
 
       case CheckYourAnswersId =>
         NavigateTo.dontSave(controllers.register.trustees.routes.AddTrusteeController.onPageLoad(mode, srn))
@@ -93,10 +93,10 @@ class TrusteesCompanyNavigator @Inject()(val dataCacheConnector: UserAnswersCach
         checkYourAnswers(index, from.userAnswers, journeyMode(mode), srn)
 
       case CompanyPostcodeLookupId(index) =>
-        NavigateTo.save(controllers.register.trustees.company.routes.CompanyAddressListController.onPageLoad(mode, index, srn))
+        NavigateTo.dontSave(controllers.register.trustees.company.routes.CompanyAddressListController.onPageLoad(mode, index, srn))
 
       case CompanyAddressListId(index) =>
-        NavigateTo.save(controllers.register.trustees.company.routes.CompanyAddressController.onPageLoad(mode, index, srn))
+        NavigateTo.dontSave(controllers.register.trustees.company.routes.CompanyAddressController.onPageLoad(mode, index, srn))
 
       case CompanyAddressId(index) =>
         checkYourAnswers(index, from.userAnswers, journeyMode(mode), srn)
@@ -105,10 +105,10 @@ class TrusteesCompanyNavigator @Inject()(val dataCacheConnector: UserAnswersCach
         editAddressYearsRoutes(index, from.userAnswers, mode, srn)
 
       case CompanyPreviousAddressPostcodeLookupId(index) =>
-        NavigateTo.save(controllers.register.trustees.company.routes.CompanyPreviousAddressListController.onPageLoad(mode, index, srn))
+        NavigateTo.dontSave(controllers.register.trustees.company.routes.CompanyPreviousAddressListController.onPageLoad(mode, index, srn))
 
       case CompanyPreviousAddressListId(index) =>
-        NavigateTo.save(controllers.register.trustees.company.routes.CompanyPreviousAddressController.onPageLoad(mode, index, srn))
+        NavigateTo.dontSave(controllers.register.trustees.company.routes.CompanyPreviousAddressController.onPageLoad(mode, index, srn))
 
       case CompanyPreviousAddressId(index) =>
         checkYourAnswers(index, from.userAnswers, journeyMode(mode), srn)
@@ -125,15 +125,15 @@ class TrusteesCompanyNavigator @Inject()(val dataCacheConnector: UserAnswersCach
   protected def checkUpdateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] = editRoutes(from, CheckUpdateMode, srn)
 
   private def checkYourAnswers(index: Int, answers: UserAnswers, mode: Mode, srn: Option[String]): Option[NavigateTo] = {
-    NavigateTo.save(controllers.register.trustees.company.routes.CheckYourAnswersController.onPageLoad(mode, index, srn))
+    NavigateTo.dontSave(controllers.register.trustees.company.routes.CheckYourAnswersController.onPageLoad(mode, index, srn))
   }
 
   private def addressYearsRoutes(index: Int, answers: UserAnswers, mode: Mode, srn: Option[String]): Option[NavigateTo] = {
     answers.get(CompanyAddressYearsId(index)) match {
       case Some(AddressYears.UnderAYear) =>
-        NavigateTo.save(controllers.register.trustees.company.routes.CompanyPreviousAddressPostcodeLookupController.onPageLoad(mode, index, srn))
+        NavigateTo.dontSave(controllers.register.trustees.company.routes.CompanyPreviousAddressPostcodeLookupController.onPageLoad(mode, index, srn))
       case Some(AddressYears.OverAYear) =>
-        NavigateTo.save(controllers.register.trustees.company.routes.CompanyContactDetailsController.onPageLoad(mode, index, srn))
+        NavigateTo.dontSave(controllers.register.trustees.company.routes.CompanyContactDetailsController.onPageLoad(mode, index, srn))
       case None =>
         NavigateTo.dontSave(controllers.routes.SessionExpiredController.onPageLoad())
     }
@@ -142,9 +142,9 @@ class TrusteesCompanyNavigator @Inject()(val dataCacheConnector: UserAnswersCach
   private def editAddressYearsRoutes(index: Int, answers: UserAnswers, mode: Mode, srn: Option[String]): Option[NavigateTo] = {
     answers.get(CompanyAddressYearsId(index)) match {
       case Some(AddressYears.UnderAYear) =>
-        NavigateTo.save(controllers.register.trustees.company.routes.CompanyPreviousAddressPostcodeLookupController.onPageLoad(mode, index, srn))
+        NavigateTo.dontSave(controllers.register.trustees.company.routes.CompanyPreviousAddressPostcodeLookupController.onPageLoad(mode, index, srn))
       case Some(AddressYears.OverAYear) =>
-        NavigateTo.save(controllers.register.trustees.company.routes.CheckYourAnswersController.onPageLoad(journeyMode(mode), index, srn))
+        NavigateTo.dontSave(controllers.register.trustees.company.routes.CheckYourAnswersController.onPageLoad(journeyMode(mode), index, srn))
       case None =>
         NavigateTo.dontSave(controllers.routes.SessionExpiredController.onPageLoad())
     }
