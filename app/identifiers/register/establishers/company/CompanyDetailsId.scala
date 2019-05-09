@@ -32,14 +32,17 @@ case class CompanyDetailsId(index: Int) extends TypedIdentifier[CompanyDetails] 
 object CompanyDetailsId {
   override lazy val toString: String = "companyDetails"
 
-  implicit def cya(implicit userAnswers: UserAnswers, messages: Messages): CheckYourAnswers[CompanyDetailsId] = {
+  implicit def cya(implicit messages: Messages): CheckYourAnswers[CompanyDetailsId] = {
     new CheckYourAnswers[CompanyDetailsId] {
 
       override def row(id: CompanyDetailsId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
         CompanyDetailsCYA()().row(id)(changeUrl, userAnswers)
 
       override def updateRow(id: CompanyDetailsId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        CompanyDetailsCYA(isNew = userAnswers.get(IsEstablisherNewId(id.index)))().updateRow(id)(changeUrl, userAnswers)
+        userAnswers.get(IsEstablisherNewId(id.index)) match {
+          case Some(true) => CompanyDetailsCYA()().row(id)(changeUrl, userAnswers)
+          case _ => CompanyDetailsCYA()().updateRow(id)(changeUrl, userAnswers)
+        }
     }
   }
 }

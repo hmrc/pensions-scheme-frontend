@@ -32,20 +32,22 @@ case class CompanyRegistrationNumberId(index: Int) extends TypedIdentifier[Compa
 object CompanyRegistrationNumberId {
   override def toString: String = "companyRegistrationNumber"
 
-  val label: String = "messages__checkYourAnswers__trustees__company__crn"
-  val changeHasCrn: String = "messages__visuallyhidden__trustee__crn_yes_no"
-  val changeCrn: String = "messages__visuallyhidden__trustee__crn"
-  val changeNoCrn: String = "messages__visuallyhidden__trustee__crn_no"
-
-
-  implicit def cya(implicit userAnswers: UserAnswers, messages: Messages): CheckYourAnswers[CompanyRegistrationNumberId] = {
+  implicit val cya: CheckYourAnswers[CompanyRegistrationNumberId] = {
+    val label: String = "messages__checkYourAnswers__trustees__company__crn"
+    val reasonLabel: String = "messages__checkYourAnswers__trustees__company__crn_no_reason"
+    val changeHasCrn: String = "messages__visuallyhidden__trustee__crn_yes_no"
+    val changeCrn: String = "messages__visuallyhidden__trustee__crn"
+    val changeNoCrn: String = "messages__visuallyhidden__trustee__crn_no"
 
     new CheckYourAnswers[CompanyRegistrationNumberId] {
       override def row(id: CompanyRegistrationNumberId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        CompanyRegistrationNumberCYA(label, changeHasCrn, changeCrn, changeNoCrn)().row(id)(changeUrl, userAnswers)
+        CompanyRegistrationNumberCYA(label, reasonLabel, changeHasCrn, changeCrn, changeNoCrn)().row(id)(changeUrl, userAnswers)
 
       override def updateRow(id: CompanyRegistrationNumberId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        CompanyRegistrationNumberCYA(label, changeHasCrn, changeCrn, changeNoCrn)().updateRow(id)(changeUrl, userAnswers)
+        userAnswers.get(IsTrusteeNewId(id.index)) match {
+          case Some(true) => CompanyRegistrationNumberCYA(label, reasonLabel, changeHasCrn, changeCrn, changeNoCrn)().row(id)(changeUrl, userAnswers)
+          case _ => CompanyRegistrationNumberCYA(label, reasonLabel, changeHasCrn, changeCrn, changeNoCrn)().updateRow(id)(changeUrl, userAnswers)
+        }
     }
   }
 }

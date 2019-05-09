@@ -34,7 +34,7 @@ object PartnershipDetailsId {
 
   override lazy val toString: String = "partnershipDetails"
 
-  implicit def cya(implicit userAnswers: UserAnswers, messages: Messages): CheckYourAnswers[PartnershipDetailsId] = {
+  implicit def cya(implicit messages: Messages): CheckYourAnswers[PartnershipDetailsId] = {
 
     new CheckYourAnswers[PartnershipDetailsId] {
 
@@ -42,7 +42,10 @@ object PartnershipDetailsId {
         PartnershipDetailsCYA()().row(id)(changeUrl, userAnswers)
 
       override def updateRow(id: PartnershipDetailsId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        PartnershipDetailsCYA(userAnswers.get(IsTrusteeNewId(id.index)))().updateRow(id)(changeUrl, userAnswers)
+        userAnswers.get(IsTrusteeNewId(id.index)) match {
+          case Some(true) => PartnershipDetailsCYA()().row(id)(changeUrl, userAnswers)
+          case _ => PartnershipDetailsCYA()().updateRow(id)(changeUrl, userAnswers)
+        }
     }
   }
 }

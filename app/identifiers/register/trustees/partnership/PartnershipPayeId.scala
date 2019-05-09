@@ -33,19 +33,20 @@ case class PartnershipPayeId(index: Int) extends TypedIdentifier[Paye] {
 object PartnershipPayeId {
   override def toString: String = "partnershipPaye"
 
-  val labelYesNo = "messages__partnership__checkYourAnswers__paye"
-  val hiddenLabelYesNo = "messages__visuallyhidden__partnership__paye_yes_no"
-  val hiddenLabelVat = "messages__visuallyhidden__partnership__paye_number"
-
-  implicit def cya(implicit userAnswers: UserAnswers, messages: Messages): CheckYourAnswers[PartnershipPayeId] = {
+  implicit val cya: CheckYourAnswers[PartnershipPayeId] = {
     new CheckYourAnswers[PartnershipPayeId] {
+      val labelYesNo = "messages__partnership__checkYourAnswers__paye"
+      val hiddenLabelYesNo = "messages__visuallyhidden__partnership__paye_yes_no"
+      val hiddenLabelVat = "messages__visuallyhidden__partnership__paye_number"
 
       override def row(id: PartnershipPayeId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
         PayeCYA(Some(labelYesNo), hiddenLabelYesNo, hiddenLabelVat)().row(id)(changeUrl, userAnswers)
 
       override def updateRow(id: PartnershipPayeId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        PayeCYA(Some(labelYesNo), hiddenLabelYesNo, hiddenLabelVat, userAnswers.get(IsTrusteeNewId(id.index)))().updateRow(id)(changeUrl, userAnswers)
-
+        userAnswers.get(IsTrusteeNewId(id.index)) match {
+          case Some(true) => PayeCYA(Some(labelYesNo), hiddenLabelYesNo, hiddenLabelVat)().row(id)(changeUrl, userAnswers)
+          case _ => PayeCYA(Some(labelYesNo), hiddenLabelYesNo, hiddenLabelVat)().updateRow(id)(changeUrl, userAnswers)
+        }
     }
   }
 }

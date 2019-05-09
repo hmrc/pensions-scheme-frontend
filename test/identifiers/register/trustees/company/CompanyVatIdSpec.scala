@@ -57,7 +57,9 @@ class CompanyVatIdSpec extends SpecBase {
       "return answers rows with change links" in {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answersNew, PsaId("A0000000"))
         implicit val userAnswers = request.userAnswers
-        CompanyVatId(0).row(onwardUrl, UpdateMode) must equal(Seq(
+        CompanyVatId(0).row(onwardUrl, NormalMode) must equal(Seq(
+          AnswerRow("messages__checkYourAnswers__trustees__company__vat",List("site.yes"),true,
+            Some(Link("site.change",onwardUrl,Some("messages__visuallyhidden__trustee__vat_yes_no")))),
           AnswerRow("messages__common__cya__vat",List("vat"),false,Some(Link("site.change",onwardUrl,
             Some("messages__visuallyhidden__trustee__vat_number"))))
         ))

@@ -57,9 +57,11 @@ class EstablisherNinoIdSpec extends SpecBase {
       "return answers rows with change links" in {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answersNew, PsaId("A0000000"))
         implicit val userAnswers = request.userAnswers
-        EstablisherNinoId(0).row(onwardUrl, UpdateMode) must equal(Seq(
+        EstablisherNinoId(0).row(onwardUrl, NormalMode) must equal(Seq(
+          AnswerRow("messages__establisher_individual_nino_question_cya_label",List("Yes"),false,
+            Some(Link("site.change",onwardUrl,Some("messages__visuallyhidden__establisher__nino_yes_no")))),
           AnswerRow("messages__common__nino",List("nino"),false,
-            Some(Link("site.change",onwardUrl,Some("messages__visuallyhidden__establisher__nino_yes_no"))))
+            Some(Link("site.change",onwardUrl,Some("messages__visuallyhidden__establisher__nino"))))
         ))
       }
     }

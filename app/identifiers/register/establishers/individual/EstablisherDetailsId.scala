@@ -38,14 +38,17 @@ object EstablisherDetailsId {
   def isComplete(index: Int)(implicit request: DataRequest[AnyContent]): Option[Boolean] =
     request.userAnswers.get[Boolean](JsPath \ EstablishersId(index) \ IsEstablisherCompleteId.toString)
 
-  implicit def cya(implicit userAnswers: UserAnswers, messages: Messages): CheckYourAnswers[EstablisherDetailsId] = {
+  implicit def cya(implicit messages: Messages): CheckYourAnswers[EstablisherDetailsId] = {
     new CheckYourAnswers[EstablisherDetailsId] {
 
       override def row(id: EstablisherDetailsId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
         PersonalDetailsCYA()().row(id)(changeUrl, userAnswers)
 
       override def updateRow(id: EstablisherDetailsId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        PersonalDetailsCYA(userAnswers.get(IsEstablisherNewId(id.index)))().updateRow(id)(changeUrl, userAnswers)
+        userAnswers.get(IsEstablisherNewId(id.index)) match {
+          case Some(true) => PersonalDetailsCYA()().row(id)(changeUrl, userAnswers)
+          case _ => PersonalDetailsCYA()().updateRow(id)(changeUrl, userAnswers)
+        }
     }
   }
 }

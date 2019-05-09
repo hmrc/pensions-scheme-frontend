@@ -34,7 +34,7 @@ class EstablishersNavigator @Inject()(val dataCacheConnector: UserAnswersCacheCo
       case ConfirmDeleteEstablisherId =>
         mode match {
           case CheckMode | NormalMode =>
-            NavigateTo.save(controllers.register.establishers.routes.AddEstablisherController.onPageLoad(mode, srn))
+            NavigateTo.dontSave(controllers.register.establishers.routes.AddEstablisherController.onPageLoad(mode, srn))
           case _ =>
             NavigateTo.dontSave(controllers.routes.AnyMoreChangesController.onPageLoad(srn))
         }
@@ -52,20 +52,20 @@ class EstablishersNavigator @Inject()(val dataCacheConnector: UserAnswersCacheCo
       case Some(false) =>
         NavigateTo.dontSave(controllers.routes.SchemeTaskListController.onPageLoad(mode, srn))
       case Some(true) =>
-        NavigateTo.save(controllers.register.establishers.routes.EstablisherKindController.onPageLoad(mode, answers.establishersCount, srn))
+        NavigateTo.dontSave(controllers.register.establishers.routes.EstablisherKindController.onPageLoad(mode, answers.establishersCount, srn))
       case None =>
-        NavigateTo.save(controllers.register.establishers.routes.EstablisherKindController.onPageLoad(mode, answers.establishersCount, srn))
+        NavigateTo.dontSave(controllers.register.establishers.routes.EstablisherKindController.onPageLoad(mode, answers.establishersCount, srn))
     }
   }
 
   private def establisherKindRoutes(index: Int, answers: UserAnswers, mode: Mode, srn: Option[String]): Option[NavigateTo] = {
     answers.get(EstablisherKindId(index)) match {
       case Some(EstablisherKind.Company) =>
-        NavigateTo.save(controllers.register.establishers.company.routes.CompanyDetailsController.onPageLoad(mode, srn, index))
+        NavigateTo.dontSave(controllers.register.establishers.company.routes.CompanyDetailsController.onPageLoad(mode, srn, index))
       case Some(EstablisherKind.Indivdual) =>
-        NavigateTo.save(controllers.register.establishers.individual.routes.EstablisherDetailsController.onPageLoad(mode, index, srn))
+        NavigateTo.dontSave(controllers.register.establishers.individual.routes.EstablisherDetailsController.onPageLoad(mode, index, srn))
       case Some(EstablisherKind.Partnership) =>
-        NavigateTo.save(controllers.register.establishers.partnership.routes.PartnershipDetailsController.onPageLoad(mode, index, srn))
+        NavigateTo.dontSave(controllers.register.establishers.partnership.routes.PartnershipDetailsController.onPageLoad(mode, index, srn))
       case _ =>
         NavigateTo.dontSave(controllers.routes.SessionExpiredController.onPageLoad())
     }

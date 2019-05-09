@@ -18,7 +18,7 @@ package identifiers.register.establishers.partnership
 
 import identifiers.TypedIdentifier
 import identifiers.register.establishers.{EstablishersId, IsEstablisherNewId}
-import models.{Link, UniqueTaxReference}
+import models.UniqueTaxReference
 import play.api.i18n.Messages
 import play.api.libs.json.JsPath
 import utils.UserAnswers
@@ -32,22 +32,25 @@ case class PartnershipUniqueTaxReferenceID(index: Int) extends TypedIdentifier[U
 object PartnershipUniqueTaxReferenceID {
   override def toString: String = "partnershipUniqueTaxReference"
 
-  val label = "messages__partnership__checkYourAnswers__utr"
-  val utrLabel = "messages__establisher_individual_utr_cya_label"
-  val reasonLabel = "messages__establisher_individual_utr_reason_cya_label"
-  val changeHasUtr = "messages__visuallyhidden__partnership__utr_yes_no"
-  val changeUtr = "messages__visuallyhidden__partnership__utr"
-  val changeNoUtr = "messages__visuallyhidden__partnership__utr_no"
-
-  implicit def cya(implicit userAnswers: UserAnswers, messages: Messages): CheckYourAnswers[PartnershipUniqueTaxReferenceID] = {
+  implicit val cya: CheckYourAnswers[PartnershipUniqueTaxReferenceID] = {
+    val label = "messages__partnership__checkYourAnswers__utr"
+    val utrLabel = "messages__establisher_individual_utr_cya_label"
+    val reasonLabel = "messages__partnership__checkYourAnswers__utr_no_reason"
+    val changeHasUtr = "messages__visuallyhidden__partnership__utr_yes_no"
+    val changeUtr = "messages__visuallyhidden__partnership__utr"
+    val changeNoUtr = "messages__visuallyhidden__partnership__utr_no"
 
     new CheckYourAnswers[PartnershipUniqueTaxReferenceID] {
       override def row(id: PartnershipUniqueTaxReferenceID)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        UniqueTaxReferenceCYA(label, utrLabel, changeHasUtr, changeUtr, changeNoUtr)().row(id)(changeUrl, userAnswers)
+        UniqueTaxReferenceCYA(label, utrLabel, reasonLabel, changeHasUtr, changeUtr, changeNoUtr)().row(id)(changeUrl, userAnswers)
 
       override def updateRow(id: PartnershipUniqueTaxReferenceID)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        UniqueTaxReferenceCYA(label, utrLabel, reasonLabel, changeHasUtr, changeUtr, changeNoUtr, userAnswers.get(IsEstablisherNewId(id.index)))()
-          .updateRow(id)(changeUrl, userAnswers)
+        userAnswers.get(IsEstablisherNewId(id.index)) match {
+          case Some(true) => UniqueTaxReferenceCYA(label, utrLabel, reasonLabel, changeHasUtr, changeUtr, changeNoUtr)().
+            row(id)(changeUrl, userAnswers)
+          case _ => UniqueTaxReferenceCYA(label, utrLabel, reasonLabel, changeHasUtr, changeUtr, changeNoUtr)().
+            updateRow(id)(changeUrl, userAnswers)
+        }
     }
   }
 }
