@@ -104,6 +104,6 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase {
     ),
     postUrl,
     None,
-    viewOnly = false
+    hideEditLinks = false
   )(fakeRequest, messages).toString
 }

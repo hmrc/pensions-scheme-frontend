@@ -22,8 +22,15 @@
 @import viewmodels.{Section, AnswerSection, RepeaterAnswerSection}
 @import models.{NormalMode, Mode}
 
-@(appConfig: FrontendAppConfig, answerSections: Seq[Section], postUrl: Call, schemeName: Option[String],
-    returnOverview: Boolean = false, mode: Mode = NormalMode, viewOnly:Boolean, srn: Option[String] = None)(implicit request: Request[_], messages: Messages)
+@(appConfig: FrontendAppConfig,
+    answerSections: Seq[Section],
+    postUrl: Call,
+    schemeName: Option[String],
+    returnOverview: Boolean = false,
+    mode: Mode = NormalMode,
+    hideEditLinks:Boolean,
+    srn: Option[String] = None
+)(implicit request: Request[_], messages: Messages)
 
 @returnMessage=@{
     schemeName.fold(messages("messages__complete__return"))(name=>messages("messages__psaSchemeDetails__return_link", name))
@@ -42,13 +49,13 @@
         @for((section, i) <- answerSections.zipWithIndex){
             @{
                 section match {
-                    case a: AnswerSection => components.answer_section(a, i.toString, viewOnly)
-                    case r: RepeaterAnswerSection => components.repeater_answer_section(r, i.toString, viewOnly)
+                    case a: AnswerSection => components.answer_section(a, i.toString, hideEditLinks)
+                    case r: RepeaterAnswerSection => components.repeater_answer_section(r, i.toString, hideEditLinks)
                 }
             }
         }
 
-        @if(!viewOnly) {
+        @if(!hideEditLinks) {
             @components.submit_button()
         }
 

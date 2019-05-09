@@ -95,7 +95,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase {
         Seq(partnershipDetails, partnershipContactDetails),
         routes.CheckYourAnswersController.onSubmit(NormalMode, firstIndex, None),
         None,
-        viewOnly = false
+        hideEditLinks = false
       )(fakeRequest, messages).toString
 
       status(result) mustBe OK

@@ -60,7 +60,7 @@ class CheckYourAnswersViewSpec extends CheckYourAnswersBehaviours with ViewBehav
       routes.IndexController.onPageLoad(),
       None,
       mode = mode,
-      viewOnly = viewOnly
+      hideEditLinks = viewOnly
     )(fakeRequest, messages)
 
   "check_your_answers view" must {

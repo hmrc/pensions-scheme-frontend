@@ -172,7 +172,7 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase with Enumerable
       answerSections,
       postUrl,
       None,
-      viewOnly = false
+      hideEditLinks = false
     )(fakeRequest, messages).toString
 
 }
