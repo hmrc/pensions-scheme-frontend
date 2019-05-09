@@ -25,6 +25,8 @@ import models.address.Address
 import models.person.PersonDetails
 import org.joda.time.LocalDate
 import org.scalatest.OptionValues
+import play.api.libs.json.JsResult
+import play.api.mvc.Call
 import play.api.test.Helpers.{contentAsString, redirectLocation, status, _}
 import services.FakeUserAnswersService
 import utils._
@@ -36,9 +38,9 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase {
 
   import CheckYourAnswersControllerSpec._
 
-  implicit val countryOptions = new FakeCountryOptions()
-  implicit val request = FakeDataRequest(individualAnswers)
-  implicit val userAnswers = request.userAnswers
+  implicit val countryOptions:FakeCountryOptions = new FakeCountryOptions()
+  implicit val request:FakeDataRequest = FakeDataRequest(individualAnswers)
+  implicit val userAnswers:UserAnswers = request.userAnswers
   val firstIndex = Index(0)
 
   private val onwardRoute = controllers.routes.IndexController.onPageLoad()
@@ -121,10 +123,10 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase {
 }
 
 object CheckYourAnswersControllerSpec extends OptionValues {
-  val firstIndex = Index(0)
-  val desiredRoute = controllers.routes.IndexController.onPageLoad()
+  private val firstIndex = Index(0)
+  private val desiredRoute:Call = controllers.routes.IndexController.onPageLoad()
 
-  val commonAnswers = UserAnswers()
+  private val commonJsResultAnswers: JsResult[UserAnswers] = UserAnswers()
     .set(EstablisherDetailsId(firstIndex))(PersonDetails("first name", None, "last name", LocalDate.now(), false))
     .flatMap(_.set(EstablisherNinoId(firstIndex))(Nino.Yes("AB100100A")))
     .flatMap(_.set(UniqueTaxReferenceId(firstIndex))(UniqueTaxReference.Yes("1234567890")))
@@ -133,8 +135,8 @@ object CheckYourAnswersControllerSpec extends OptionValues {
     .flatMap(_.set(individual.PreviousAddressId(firstIndex))(Address("Previous Address 1", "Previous Address 2", None, None, None, "GB")))
     .flatMap(_.set(individual.ContactDetailsId(firstIndex))(ContactDetails("test@test.com", "123456789")))
 
-  val individualAnswers = commonAnswers.asOpt.value
-  val individualAnswersWithNewlyAddedEstablisher = commonAnswers
-    .flatMap(_.set(IsEstablisherNewId(firstIndex))(true))
+  private val individualAnswers:UserAnswers = commonJsResultAnswers.asOpt.value
+  private val individualAnswersWithNewlyAddedEstablisher:UserAnswers = commonJsResultAnswers
+    .flatMap(_.set(IsEstablisherNewId(firstIndex))(value = true))
     .asOpt.value
 }

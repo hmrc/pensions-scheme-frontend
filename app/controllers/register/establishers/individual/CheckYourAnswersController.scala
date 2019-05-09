@@ -83,9 +83,10 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
             appConfig, sections, routes.CheckYourAnswersController.onSubmit(mode, index, srn),
             existingSchemeName,
             mode = mode,
-            hideEditLinks = hideItem(request, userAnswers, hideIfExistingEstablisher = false),
-            hideSaveAndContinueButton = hideItem(request, userAnswers,
-              hideIfExistingEstablisher = mode == UpdateMode || mode == CheckUpdateMode)
+            hideEditLinks =
+              hideItem(request, userAnswers, hideIfExistingEstablisher = false),
+            hideSaveAndContinueButton =
+              hideItem(request, userAnswers, hideIfExistingEstablisher = mode == UpdateMode || mode == CheckUpdateMode)
           )
         )
       )
