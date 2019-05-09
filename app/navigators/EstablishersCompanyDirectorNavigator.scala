@@ -148,7 +148,7 @@ class EstablishersCompanyDirectorNavigator @Inject()(val dataCacheConnector: Use
       case CheckMode | NormalMode =>
         NavigateTo.dontSave(controllers.register.establishers.company.routes.AddCompanyDirectorsController.onPageLoad(mode, srn, establisherIndex))
       case _ => answers.get(IsEstablisherNewId(establisherIndex)) match {
-        case Some(true) =>
+        case Some(true) if mode == CheckMode || mode == NormalMode =>
           NavigateTo.dontSave(controllers.register.establishers.company.routes.AddCompanyDirectorsController.onPageLoad(mode, srn, establisherIndex))
         case _ =>
           anyMoreChanges(srn)

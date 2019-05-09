@@ -118,7 +118,7 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
   override protected def updateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] = from.id match {
     case CompanyContactDetailsId(index) =>
       NavigateTo.dontSave(controllers.register.establishers.company.routes.CheckYourAnswersController.onPageLoad(UpdateMode, srn, index))
-    case _ => routes(from, UpdateMode, srn)
+    case _ => routes (from, UpdateMode, srn)
   }
 
   override protected def editRouteMap(from: NavigateFrom): Option[NavigateTo] = editRoutes(from, CheckMode, None)

@@ -18,7 +18,7 @@ package identifiers.register.trustees.partnership
 
 import identifiers.TypedIdentifier
 import identifiers.register.trustees.{IsTrusteeNewId, TrusteesId}
-import models.{Link, UniqueTaxReference}
+import models.UniqueTaxReference
 import play.api.i18n.Messages
 import play.api.libs.json.JsPath
 import utils.UserAnswers
@@ -32,22 +32,26 @@ case class PartnershipUniqueTaxReferenceId(index: Int) extends TypedIdentifier[U
 object PartnershipUniqueTaxReferenceId {
   override def toString: String = "partnershipUniqueTaxReference"
 
-  val label = "messages__partnership__checkYourAnswers__utr"
-  val utrLabel = "messages__trustee_individual_utr_cya_label"
-  val reasonLabel = "messages__trustee_individual_utr_reason_cya_label"
-  val changeHasUtr = "messages__visuallyhidden__partnership__utr_yes_no"
-  val changeUtr = "messages__visuallyhidden__partnership__utr"
-  val changeNoUtr = "messages__visuallyhidden__partnership__utr_no"
-
-  implicit def cya(implicit userAnswers: UserAnswers, messages: Messages): CheckYourAnswers[PartnershipUniqueTaxReferenceId] = {
+  implicit val cya: CheckYourAnswers[PartnershipUniqueTaxReferenceId] = {
 
     new CheckYourAnswers[PartnershipUniqueTaxReferenceId] {
+      val label = "messages__partnership__checkYourAnswers__utr"
+      val utrLabel = "messages__trustee_individual_utr_cya_label"
+      val reasonLabel = "messages__partnership__checkYourAnswers__utr_no_reason"
+      val changeHasUtr = "messages__visuallyhidden__partnership__utr_yes_no"
+      val changeUtr = "messages__visuallyhidden__partnership__utr"
+      val changeNoUtr = "messages__visuallyhidden__partnership__utr_no"
+
       override def row(id: PartnershipUniqueTaxReferenceId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
         UniqueTaxReferenceCYA(label, utrLabel, reasonLabel, changeHasUtr, changeUtr, changeNoUtr)().row(id)(changeUrl, userAnswers)
 
       override def updateRow(id: PartnershipUniqueTaxReferenceId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        UniqueTaxReferenceCYA(label, utrLabel, reasonLabel, changeHasUtr, changeUtr, changeNoUtr, userAnswers.get(IsTrusteeNewId(id.index)))()
-          .updateRow(id)(changeUrl, userAnswers)
+        userAnswers.get(IsTrusteeNewId(id.index)) match {
+          case Some(true) => UniqueTaxReferenceCYA(label, utrLabel, reasonLabel, changeHasUtr, changeUtr, changeNoUtr)().
+            row(id)(changeUrl, userAnswers)
+          case _ => UniqueTaxReferenceCYA(label, utrLabel, reasonLabel, changeHasUtr, changeUtr, changeNoUtr)().
+            updateRow(id)(changeUrl, userAnswers)
+        }
     }
   }
 }

@@ -31,8 +31,9 @@ case class DirectorNinoId(establisherIndex: Int, directorIndex: Int) extends Typ
 object DirectorNinoId {
   override lazy val toString: String = "directorNino"
 
-  implicit def nino(implicit rds: Reads[Nino]): CheckYourAnswers[DirectorNinoId] = {
+  implicit val nino: CheckYourAnswers[DirectorNinoId] = {
     val label = "messages__director_nino_question_cya_label"
+    val reasonLabel = "messages__director_nino_reason_cya_label"
     val changeHasNino = "messages__visuallyhidden__director__nino_yes_no"
     val changeNino = "messages__visuallyhidden__director__nino"
     val changeNoNino = "messages__visuallyhidden__director__nino_no"
@@ -40,12 +41,12 @@ object DirectorNinoId {
     new CheckYourAnswers[DirectorNinoId] {
 
       override def row(id: DirectorNinoId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        NinoCYA[DirectorNinoId](label, changeHasNino, changeNino, changeNoNino)().row(id)(changeUrl, userAnswers)
+        NinoCYA[DirectorNinoId](label, reasonLabel, changeHasNino, changeNino, changeNoNino)().row(id)(changeUrl, userAnswers)
 
       override def updateRow(id: DirectorNinoId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
         userAnswers.get(IsNewDirectorId(id.establisherIndex, id.directorIndex)) match {
-          case Some(true) => NinoCYA[DirectorNinoId](label, changeHasNino, changeNino, changeNoNino)().row(id)(changeUrl, userAnswers)
-          case _ => NinoCYA[DirectorNinoId](label, changeHasNino, changeNino, changeNoNino)().updateRow(id)(changeUrl, userAnswers)
+          case Some(true) => NinoCYA[DirectorNinoId](label, reasonLabel, changeHasNino, changeNino, changeNoNino)().row(id)(changeUrl, userAnswers)
+          case _ => NinoCYA[DirectorNinoId](label, reasonLabel, changeHasNino, changeNino, changeNoNino)().updateRow(id)(changeUrl, userAnswers)
         }
       }
     }

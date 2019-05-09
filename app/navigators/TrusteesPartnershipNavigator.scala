@@ -41,7 +41,7 @@ class TrusteesPartnershipNavigator @Inject()(val dataCacheConnector: UserAnswers
     } else {
       anyMoreChanges(srn)
     }
-  
+
   //scalastyle:off cyclomatic.complexity
   protected def commonRoutes(from: NavigateFrom, mode: Mode, srn: Option[String]): Option[NavigateTo] = from.id match {
     case PartnershipDetailsId(index) =>
