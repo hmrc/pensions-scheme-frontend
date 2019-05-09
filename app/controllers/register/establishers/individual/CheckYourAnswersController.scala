@@ -74,7 +74,8 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
       Future.successful(Ok(check_your_answers(
         appConfig, sections, routes.CheckYourAnswersController.onSubmit(mode, index, srn),
         existingSchemeName, mode = mode,
-        hideEditLinks = request.viewOnly || !userAnswers.get(IsEstablisherNewId(index)).getOrElse(true))))
+        hideEditLinks = request.viewOnly || !userAnswers.get(IsEstablisherNewId(index)).getOrElse(true),
+        hideSaveAndContinueButton = request.viewOnly || !userAnswers.get(IsEstablisherNewId(index)).getOrElse(true))))
   }
 
   def onSubmit(mode: Mode,index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requiredData).async {

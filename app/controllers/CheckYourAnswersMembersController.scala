@@ -55,7 +55,8 @@ class CheckYourAnswersMembersController @Inject()(appConfig: FrontendAppConfig,
         routes.CheckYourAnswersMembersController.onSubmit(mode, srn),
         existingSchemeName,
         mode = mode,
-        hideEditLinks = request.viewOnly
+        hideEditLinks = request.viewOnly,
+        hideSaveAndContinueButton = request.viewOnly
       ))
   }
 

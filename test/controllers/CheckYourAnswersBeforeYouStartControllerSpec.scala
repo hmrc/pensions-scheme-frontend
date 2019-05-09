@@ -147,7 +147,8 @@ object CheckYourAnswersBeforeYouStartControllerSpec extends ControllerSpecBase {
     Seq(beforeYouStart),
     postUrl,
     Some("Test Scheme"),
-    hideEditLinks = false
+    hideEditLinks = false,
+    hideSaveAndContinueButton = false
   )(fakeRequest, messages).toString
 
   private def viewAsStringWithReturnToManage(): String = check_your_answers(
@@ -156,7 +157,8 @@ object CheckYourAnswersBeforeYouStartControllerSpec extends ControllerSpecBase {
     postUrl,
     Some("Test Scheme"),
     returnOverview=true,
-    hideEditLinks = false
+    hideEditLinks = false,
+    hideSaveAndContinueButton = false
   )(fakeRequest, messages).toString
 
 }

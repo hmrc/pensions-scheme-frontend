@@ -50,7 +50,8 @@ class CheckYourAnswersViewSpec extends CheckYourAnswersBehaviours with ViewBehav
       returnOverview,
       mode,
       viewOnly,
-      srn
+      srn,
+      viewOnly
     )(fakeRequest, messages)
 
   def createViewWithData: (Seq[Section], Mode, Boolean) => HtmlFormat.Appendable = (sections, mode, viewOnly) =>
@@ -60,7 +61,8 @@ class CheckYourAnswersViewSpec extends CheckYourAnswersBehaviours with ViewBehav
       routes.IndexController.onPageLoad(),
       None,
       mode = mode,
-      hideEditLinks = viewOnly
+      hideEditLinks = viewOnly,
+      hideSaveAndContinueButton = viewOnly
     )(fakeRequest, messages)
 
   "check_your_answers view" must {

@@ -29,7 +29,8 @@
     returnOverview: Boolean = false,
     mode: Mode = NormalMode,
     hideEditLinks:Boolean,
-    srn: Option[String] = None
+    srn: Option[String] = None,
+    hideSaveAndContinueButton:Boolean
 )(implicit request: Request[_], messages: Messages)
 
 @returnMessage=@{
@@ -55,7 +56,7 @@
             }
         }
 
-        @if(!hideEditLinks) {
+        @if(!hideSaveAndContinueButton) {
             @components.submit_button()
         }
 

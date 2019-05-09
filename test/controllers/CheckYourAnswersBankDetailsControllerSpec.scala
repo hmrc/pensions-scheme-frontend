@@ -109,7 +109,8 @@ object CheckYourAnswersBankDetailsControllerSpec extends ControllerSpecBase {
 
   private def viewAsString(): String = check_your_answers(
     frontendAppConfig, Seq(bankAccountSection), postUrl, Some("Test Scheme Name"),
-    hideEditLinks = false)(fakeRequest, messages).toString
+    hideEditLinks = false,
+    hideSaveAndContinueButton = false)(fakeRequest, messages).toString
 
 }
 

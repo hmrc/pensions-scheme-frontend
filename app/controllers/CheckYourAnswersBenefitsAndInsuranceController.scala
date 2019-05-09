@@ -64,7 +64,8 @@ class CheckYourAnswersBenefitsAndInsuranceController @Inject()(appConfig: Fronte
         routes.CheckYourAnswersBenefitsAndInsuranceController.onSubmit(mode, srn),
         existingSchemeName,
         mode = mode,
-        hideEditLinks = request.viewOnly
+        hideEditLinks = request.viewOnly,
+        hideSaveAndContinueButton = request.viewOnly
       ))
   }
 

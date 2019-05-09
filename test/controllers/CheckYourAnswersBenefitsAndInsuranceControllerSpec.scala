@@ -197,7 +197,8 @@ object CheckYourAnswersBenefitsAndInsuranceControllerSpec extends ControllerSpec
     None,
     false,
     mode,
-    hideEditLinks = false
+    hideEditLinks = false,
+    hideSaveAndContinueButton = false
   )(fakeRequest, messages).toString
 
   private def viewAsStringWithLessData(mode : Mode = CheckMode): String = check_your_answers(
@@ -209,7 +210,8 @@ object CheckYourAnswersBenefitsAndInsuranceControllerSpec extends ControllerSpec
     None,
     false,
     mode,
-    hideEditLinks = false
+    hideEditLinks = false,
+    hideSaveAndContinueButton = false
   )(fakeRequest, messages).toString
 
 }

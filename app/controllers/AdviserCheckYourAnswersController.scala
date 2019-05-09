@@ -62,7 +62,8 @@ class AdviserCheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
           seqAnswerSection,
           controllers.routes.AdviserCheckYourAnswersController.onSubmit(),
           existingSchemeName,
-          hideEditLinks = request.viewOnly
+          hideEditLinks = request.viewOnly,
+          hideSaveAndContinueButton = request.viewOnly
         )
       )
   }

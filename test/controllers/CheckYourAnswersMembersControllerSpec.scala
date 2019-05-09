@@ -96,7 +96,8 @@ object CheckYourAnswersMembersControllerSpec extends ControllerSpecBase {
     ),
     postUrl,
     Some(schemeName),
-    hideEditLinks = false
+    hideEditLinks = false,
+    hideSaveAndContinueButton = false
   )(fakeRequest, messages).toString
 
 }

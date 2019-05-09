@@ -153,7 +153,8 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase {
     answerSections,
     postUrl,
     None,
-    hideEditLinks = false
+    hideEditLinks = false,
+    hideSaveAndContinueButton = false
   )(fakeRequest, messages).toString
 
   private def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): CheckYourAnswersController =

@@ -77,7 +77,8 @@ class CheckYourAnswersController @Inject()(
         routes.CheckYourAnswersController.onSubmit(mode, srn, index),
         existingSchemeName,
         mode = mode,
-        hideEditLinks = request.viewOnly || !userAnswers.get(IsEstablisherNewId(index)).getOrElse(true)))
+        hideEditLinks = request.viewOnly || !userAnswers.get(IsEstablisherNewId(index)).getOrElse(true),
+        hideSaveAndContinueButton = request.viewOnly || !userAnswers.get(IsEstablisherNewId(index)).getOrElse(true)))
       )
   }
 
