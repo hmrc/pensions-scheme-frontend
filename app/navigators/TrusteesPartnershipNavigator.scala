@@ -20,17 +20,28 @@ import com.google.inject.Inject
 import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
 import controllers.register.trustees.partnership.routes
+import identifiers.register.trustees.IsTrusteeNewId
 import identifiers.register.trustees.partnership._
-import models.{AddressYears, CheckMode, CheckUpdateMode, Mode, NormalMode, UpdateMode}
+import models._
 import models.Mode.journeyMode
 import utils.{Navigator, UserAnswers}
 
 class TrusteesPartnershipNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector,
                                              appConfig: FrontendAppConfig) extends Navigator {
 
-  private def checkYourAnswers(index: Int, answers: UserAnswers, mode: Mode, srn: Option[String]): Option[NavigateTo] =
+  private def checkYourAnswers(index: Int, mode: Mode, srn: Option[String]): Option[NavigateTo] =
     NavigateTo.dontSave(routes.CheckYourAnswersController.onPageLoad(mode, index, srn))
 
+  private def anyMoreChanges(srn: Option[String]): Option[NavigateTo] =
+    NavigateTo.dontSave(controllers.routes.AnyMoreChangesController.onPageLoad(srn))
+
+  private def exitMiniJourney(index: Index, mode: Mode, srn: Option[String]): Option[NavigateTo] =
+    if (mode == CheckMode || mode == NormalMode) {
+      checkYourAnswers(index, journeyMode(mode), srn)
+    } else {
+      anyMoreChanges(srn)
+    }
+  
   //scalastyle:off cyclomatic.complexity
   protected def commonRoutes(from: NavigateFrom, mode: Mode, srn: Option[String]): Option[NavigateTo] = from.id match {
     case PartnershipDetailsId(index) =>
@@ -65,19 +76,24 @@ class TrusteesPartnershipNavigator @Inject()(val dataCacheConnector: UserAnswers
 
   protected def editRoutes(from: NavigateFrom, mode: Mode, srn: Option[String]): Option[NavigateTo] = from.id match {
     case PartnershipDetailsId(index) =>
-      checkYourAnswers(index, from.userAnswers, journeyMode(mode), srn)
+      checkYourAnswers(index, journeyMode(mode), srn)
     case PartnershipVatId(index) =>
-      checkYourAnswers(index, from.userAnswers, journeyMode(mode), srn)
+      checkYourAnswers(index, journeyMode(mode), srn)
     case PartnershipPayeId(index) =>
-      checkYourAnswers(index, from.userAnswers, journeyMode(mode), srn)
+      checkYourAnswers(index, journeyMode(mode), srn)
     case PartnershipUniqueTaxReferenceId(index) =>
-      checkYourAnswers(index, from.userAnswers, journeyMode(mode), srn)
+      checkYourAnswers(index, journeyMode(mode), srn)
     case PartnershipPostcodeLookupId(index) =>
       NavigateTo.dontSave(routes.PartnershipAddressListController.onPageLoad(mode, index, srn))
     case PartnershipAddressListId(index) =>
       NavigateTo.dontSave(routes.PartnershipAddressController.onPageLoad(mode, index, srn))
     case PartnershipAddressId(index) =>
-      checkYourAnswers(index, from.userAnswers, journeyMode(mode), srn)
+      val isNew = from.userAnswers.get(IsTrusteeNewId(index)).contains(true)
+      if(isNew || mode == CheckMode) {
+        checkYourAnswers(index, journeyMode(mode), srn)
+      } else {
+        NavigateTo.dontSave(routes.PartnershipAddressYearsController.onPageLoad(mode, index, srn))
+      }
     case PartnershipAddressYearsId(index) =>
       editAddressYearsRoutes(index, mode, srn)(from.userAnswers)
     case PartnershipPreviousAddressPostcodeLookupId(index) =>
@@ -85,9 +101,9 @@ class TrusteesPartnershipNavigator @Inject()(val dataCacheConnector: UserAnswers
     case PartnershipPreviousAddressListId(index) =>
       NavigateTo.dontSave(routes.PartnershipPreviousAddressController.onPageLoad(mode, index, srn))
     case PartnershipPreviousAddressId(index) =>
-      checkYourAnswers(index, from.userAnswers, journeyMode(mode), srn)
+      exitMiniJourney(index, mode, srn)
     case PartnershipContactDetailsId(index) =>
-      checkYourAnswers(index, from.userAnswers, journeyMode(mode), srn)
+      checkYourAnswers(index, journeyMode(mode), srn)
     case _ =>
       None
   }
@@ -113,7 +129,7 @@ class TrusteesPartnershipNavigator @Inject()(val dataCacheConnector: UserAnswers
       case Some(AddressYears.UnderAYear) =>
         NavigateTo.dontSave(controllers.register.trustees.partnership.routes.PartnershipPreviousAddressPostcodeLookupController.onPageLoad(mode, index, srn))
       case Some(AddressYears.OverAYear) =>
-        NavigateTo.dontSave(controllers.register.trustees.partnership.routes.CheckYourAnswersController.onPageLoad(journeyMode(mode), index, srn))
+        exitMiniJourney(index, mode, srn)
       case None =>
         NavigateTo.dontSave(controllers.routes.SessionExpiredController.onPageLoad())
     }

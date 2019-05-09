@@ -20,6 +20,7 @@ import com.google.inject.Inject
 import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
 import controllers.register.establishers.partnership._
+import identifiers.register.establishers.IsEstablisherNewId
 import identifiers.register.establishers.partnership._
 import models.{AddressYears, CheckMode, CheckUpdateMode, Index, Mode, NormalMode, UpdateMode}
 import models.Mode._
@@ -68,7 +69,7 @@ class EstablishersPartnershipNavigator @Inject()(val dataCacheConnector: UserAns
       NavigateTo.dontSave(routes.AddPartnersController.onPageLoad(mode, index, srn))
     case OtherPartnersId(index) =>
       NavigateTo.dontSave(routes.PartnershipReviewController.onPageLoad(mode, index, srn))
-    case PartnershipReviewId(index) =>
+    case PartnershipReviewId(_) =>
       NavigateTo.dontSave(controllers.register.establishers.routes.AddEstablisherController.onPageLoad(mode, srn))
     case _ =>
       None
@@ -86,7 +87,12 @@ class EstablishersPartnershipNavigator @Inject()(val dataCacheConnector: UserAns
     case PartnershipAddressListId(index) =>
       NavigateTo.dontSave(routes.PartnershipAddressController.onPageLoad(mode, index, None))
     case PartnershipAddressId(index) =>
-      exitMiniJourney(index, mode, srn)
+      val isNew = from.userAnswers.get(IsEstablisherNewId(index)).contains(true)
+      if(isNew || mode == CheckMode) {
+        checkYourAnswers(index, journeyMode(mode), srn)
+      } else {
+        NavigateTo.dontSave(routes.PartnershipAddressYearsController.onPageLoad(mode, index, srn))
+      }
     case PartnershipAddressYearsId(index) =>
       editAddressYearsRoutes(index, mode, srn)(from.userAnswers)
     case PartnershipPreviousAddressPostcodeLookupId(index) =>

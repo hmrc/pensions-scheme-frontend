@@ -36,7 +36,6 @@ class EstablishersIndividualNavigatorSpec extends SpecBase with MustMatchers wit
   import EstablishersIndividualNavigatorSpec._
 
   private def routes(mode: Mode): TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = {
-    println("\n\n\n mode: "+mode.toString)
     Table(
       ("Id", "User Answers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (Check Mode)", "Save (CM)"),
       (EstablisherDetailsId(0), emptyAnswers, establisherNino(mode), true, Some(exitJourney(mode)), true),
@@ -46,7 +45,7 @@ class EstablishersIndividualNavigatorSpec extends SpecBase with MustMatchers wit
       (AddressListId(0), emptyAnswers, address(mode), true, Some(address(checkMode(mode))), true),
       (AddressId(0), emptyAnswers, addressYears(mode), true,
         if(mode == UpdateMode) Some(addressYears(checkMode(UpdateMode))) else Some(checkYourAnswers(NormalMode)), true),
-      (AddressId(0), newEstablisher, addressYears(mode), true, Some(checkYourAnswers(NormalMode)), true),
+      (AddressId(0), newEstablisher, addressYears(mode), true, Some(checkYourAnswers(mode)), true),
       (AddressYearsId(0), addressYearsOverAYear, contactDetails(mode), true, Some(exitJourney(mode)), true),
       (AddressYearsId(0), addressYearsUnderAYear, previousAddressPostCodeLookup(mode), true, Some(previousAddressPostCodeLookup(checkMode(mode))), true),
       (AddressYearsId(0), emptyAnswers, sessionExpired, false, Some(sessionExpired), false),

@@ -34,34 +34,23 @@ class HsTaskListHelperVariations(answers: UserAnswers, viewOnly: Boolean, srn: O
       case _ => Link(aboutMembersLinkText, controllers.routes.WhatYouWillNeedMembersController.onPageLoad().url)
     }
 
-    val benefitsAndInsuranceLink = Link(aboutBenefitsAndInsuranceLinkText,
-      controllers.routes.CheckYourAnswersBenefitsAndInsuranceController.onPageLoad(UpdateMode, srn).url)
+    val benefitsAndInsuranceLink = userAnswers.get(IsAboutBenefitsAndInsuranceCompleteId) match {
+      case Some(true) => Link(aboutBenefitsAndInsuranceLinkText,
+        controllers.routes.CheckYourAnswersBenefitsAndInsuranceController.onPageLoad(UpdateMode, srn).url)
+      case _ => Link(aboutBenefitsAndInsuranceLinkText,
+        controllers.routes.WhatYouWillNeedBenefitsInsuranceController.onPageLoad().url)
+    }
 
     Seq(SchemeDetailsTaskListSection(userAnswers.get(IsAboutMembersCompleteId), membersLink, None),
-      SchemeDetailsTaskListSection(Some(userAnswers.isInsuranceCompleted), benefitsAndInsuranceLink, None))
+      SchemeDetailsTaskListSection(userAnswers.get(IsAboutBenefitsAndInsuranceCompleteId), benefitsAndInsuranceLink, None))
   }
 
   protected[utils] def declarationSection(userAnswers: UserAnswers): Option[SchemeDetailsTaskListDeclarationSection] =
     if (viewOnly) {
       None
     } else {
-      Some(SchemeDetailsTaskListDeclarationSection(
-        header = "messages__schemeTaskList__sectionDeclaration_header",
-        declarationLink = variationDeclarationLink(userAnswers, srn)))
+      Some(SchemeDetailsTaskListDeclarationSection(declarationLink(userAnswers)))
     }
-
-  private[utils] def variationDeclarationLink(userAnswers: UserAnswers, srn:Option[String]): Option[Link] = {
-    if(userAnswers.isUserAnswerUpdated) {
-      Some(Link(declarationLinkText,
-        if (userAnswers.areVariationChangesCompleted)
-          controllers.routes.VariationDeclarationController.onPageLoad(srn).url
-        else
-          controllers.register.routes.StillNeedDetailsController.onPageLoad(srn).url
-      ))
-    } else {
-      None
-    }
-  }
 
   private def listOfSectionNameAsLink(sections: Seq[Entity[_]]): Seq[SchemeDetailsTaskListSection] = {
     val notDeletedElements = for ((section, index) <- sections.zipWithIndex) yield {
@@ -89,8 +78,8 @@ class HsTaskListHelperVariations(answers: UserAnswers, viewOnly: Boolean, srn: O
       userAnswers.get(IsBeforeYouStartCompleteId),
       userAnswers.get(IsAboutMembersCompleteId),
       userAnswers.get(IsAboutBenefitsAndInsuranceCompleteId),
-      Some(userAnswers.allEstablishersCompleted),
-      Some(isTrusteeOptional | userAnswers.isAllTrusteesCompleted),
+      Some(isAllEstablishersCompleted(userAnswers)),
+      Some(isTrusteeOptional | isAllTrusteesCompleted(userAnswers)),
       Some(userAnswers.allTrusteesAfterDelete.size < 10 || userAnswers.get(MoreThanTenTrusteesId).isDefined)
     ).forall(_.contains(true)) && userAnswers.isUserAnswerUpdated
   }

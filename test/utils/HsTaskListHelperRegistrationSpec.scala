@@ -222,11 +222,11 @@ class HsTaskListHelperRegistrationSpec extends HsTaskListHelperBehaviour with En
       val helper = new HsTaskListHelperRegistration(userAnswers)
       helper.establishers(userAnswers) mustBe
         Seq(SchemeDetailsTaskListSection(Some(false), Link(individualLinkText,
-          controllers.register.establishers.individual.routes.CheckYourAnswersController.onPageLoad(mode, 0, srn).url), Some("firstName lastName")),
+          controllers.register.establishers.individual.routes.EstablisherDetailsController.onPageLoad(mode, 0, srn).url), Some("firstName lastName")),
           SchemeDetailsTaskListSection(Some(false), Link(companyLinkText,
-            controllers.register.establishers.company.routes.CompanyReviewController.onPageLoad(mode, srn, 1).url), Some("test company")),
+            controllers.register.establishers.company.routes.CompanyDetailsController.onPageLoad(mode, srn, 1).url), Some("test company")),
           SchemeDetailsTaskListSection(Some(false), Link(partnershipLinkText,
-            controllers.register.establishers.partnership.routes.PartnershipReviewController.onPageLoad(mode, 2, srn).url), Some("test partnership"))
+            controllers.register.establishers.partnership.routes.PartnershipDetailsController.onPageLoad(mode, 2, srn).url), Some("test partnership"))
         )
     }
 
@@ -244,9 +244,9 @@ class HsTaskListHelperRegistrationSpec extends HsTaskListHelperBehaviour with En
       val helper = new HsTaskListHelperRegistration(userAnswers)
       helper.establishers(userAnswers) mustBe
         Seq(SchemeDetailsTaskListSection(Some(false), Link(individualLinkText,
-          controllers.register.establishers.individual.routes.CheckYourAnswersController.onPageLoad(NormalMode, 0, None).url), Some("firstName lastName")),
+          controllers.register.establishers.individual.routes.EstablisherDetailsController.onPageLoad(NormalMode, 0, None).url), Some("firstName lastName")),
           SchemeDetailsTaskListSection(Some(false), Link(partnershipLinkText,
-            controllers.register.establishers.partnership.routes.PartnershipReviewController.onPageLoad(NormalMode, 2, None).url), Some("test partnership"))
+            controllers.register.establishers.partnership.routes.PartnershipDetailsController.onPageLoad(NormalMode, 2, None).url), Some("test partnership"))
         )
     }
   }
@@ -271,11 +271,11 @@ class HsTaskListHelperRegistrationSpec extends HsTaskListHelperBehaviour with En
       val helper = new HsTaskListHelperRegistration(userAnswers)
       helper.trustees(userAnswers) mustBe
         Seq(SchemeDetailsTaskListSection(Some(false), Link(individualLinkText,
-          controllers.register.trustees.individual.routes.CheckYourAnswersController.onPageLoad(mode, 0, srn).url), Some("firstName lastName")),
+          controllers.register.trustees.individual.routes.TrusteeDetailsController.onPageLoad(mode, 0, srn).url), Some("firstName lastName")),
           SchemeDetailsTaskListSection(Some(false), Link(companyLinkText,
-            controllers.register.trustees.company.routes.CheckYourAnswersController.onPageLoad(mode, 1, srn).url), Some("test company")),
+            controllers.register.trustees.company.routes.CompanyDetailsController.onPageLoad(mode, 1, srn).url), Some("test company")),
           SchemeDetailsTaskListSection(Some(false), Link(partnershipLinkText,
-            controllers.register.trustees.partnership.routes.CheckYourAnswersController.onPageLoad(mode, 2, srn).url), Some("test partnership"))
+            controllers.register.trustees.partnership.routes.TrusteeDetailsController.onPageLoad(mode, 2, srn).url), Some("test partnership"))
         )
     }
 
@@ -296,9 +296,9 @@ class HsTaskListHelperRegistrationSpec extends HsTaskListHelperBehaviour with En
       val helper = new HsTaskListHelperRegistration(userAnswers)
       helper.trustees(userAnswers) mustBe
         Seq(SchemeDetailsTaskListSection(Some(false), Link(individualLinkText,
-          controllers.register.trustees.individual.routes.CheckYourAnswersController.onPageLoad(mode, 0, srn).url), Some("firstName lastName")),
+          controllers.register.trustees.individual.routes.TrusteeDetailsController.onPageLoad(mode, 0, srn).url), Some("firstName lastName")),
           SchemeDetailsTaskListSection(Some(false), Link(partnershipLinkText,
-            controllers.register.trustees.partnership.routes.CheckYourAnswersController.onPageLoad(mode, 2, srn).url), Some("test partnership"))
+            controllers.register.trustees.partnership.routes.TrusteeDetailsController.onPageLoad(mode, 2, srn).url), Some("test partnership"))
         )
     }
   }

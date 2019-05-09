@@ -40,7 +40,9 @@ class EstablishersCompanyDirectorNavigatorSpec extends SpecBase with NavigatorBe
     (DirectorUniqueTaxReferenceId(0, 0), emptyAnswers, directorAddressPostcode(mode), true, Some(exitJourney(mode)), true),
     (DirectorAddressPostcodeLookupId(0, 0), emptyAnswers, directorAddressList(mode), true, Some(directorAddressList(checkMode(mode))), true),
     (DirectorAddressListId(0, 0), emptyAnswers, directorAddress(mode), true, Some(directorAddress(checkMode(mode))), true),
-    (DirectorAddressId(0, 0), emptyAnswers, directorAddressYears(mode), true, Some(exitJourney(mode)), true),
+    (DirectorAddressId(0, 0), emptyAnswers, directorAddressYears(mode), true,
+      if(mode == UpdateMode) Some(directorAddressYears(checkMode(UpdateMode))) else Some(checkYourAnswers(NormalMode)), true),
+    (DirectorAddressId(0, 0), newDirector, directorAddressYears(mode), true, Some(checkYourAnswers(mode)), true),
     (DirectorAddressYearsId(0, 0), addressYearsOverAYear, directorContactDetails(mode), true, Some(exitJourney(mode)), true),
     (DirectorAddressYearsId(0, 0), addressYearsUnderAYear, directorPreviousAddPostcode(mode), true, Some(directorPreviousAddPostcode(checkMode(mode))), true),
     (DirectorAddressYearsId(0, 0), emptyAnswers, sessionExpired, false, Some(sessionExpired), false),
@@ -77,7 +79,7 @@ object EstablishersCompanyDirectorNavigatorSpec extends OptionValues {
   private val emptyAnswers = UserAnswers(Json.obj())
   val establisherIndex = Index(0)
   val directorIndex = Index(0)
-
+  private val newDirector = UserAnswers(Json.obj()).set(IsNewDirectorId(establisherIndex, directorIndex))(true).asOpt.value
   private def anyMoreChanges = controllers.routes.AnyMoreChangesController.onPageLoad(None)
 
   private def exitJourney(mode: Mode) = if (mode == NormalMode) checkYourAnswers(mode) else anyMoreChanges

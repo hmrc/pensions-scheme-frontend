@@ -131,14 +131,13 @@ class EstablishersIndividualNavigator @Inject()(
       case AddressListId(index) =>
         NavigateTo.dontSave(controllers.register.establishers.individual.routes.AddressController.onPageLoad(mode, index, srn))
 
-      case AddressId(index) => {
+      case AddressId(index) =>
         val isNew = from.userAnswers.get(IsEstablisherNewId(index)).contains(true)
         if(isNew || mode == CheckMode) {
           checkYourAnswers(index, journeyMode(mode), srn)
         } else {
           NavigateTo.dontSave(controllers.register.establishers.individual.routes.AddressYearsController.onPageLoad(mode, index, srn))
         }
-      }
 
       case AddressYearsId(index) =>
         addressYearsEditRoutes(index, mode, srn)(from.userAnswers)

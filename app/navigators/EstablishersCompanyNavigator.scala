@@ -67,11 +67,11 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
 
   protected def editRoutes(from: NavigateFrom, mode: Mode, srn: Option[String]): Option[NavigateTo] =
     from.id match {
-      case CompanyDetailsId(index) =>             exitMiniJourney(index, mode, srn)
-      case CompanyVatId(index) =>                 exitMiniJourney(index, mode, srn)
-      case CompanyPayeId(index) =>                exitMiniJourney(index, mode, srn)
-      case CompanyRegistrationNumberId(index) =>  exitMiniJourney(index, mode, srn)
-      case CompanyUniqueTaxReferenceId(index) =>  exitMiniJourney(index, mode, srn)
+      case CompanyDetailsId(index) => exitMiniJourney(index, mode, srn)
+      case CompanyVatId(index) => exitMiniJourney(index, mode, srn)
+      case CompanyPayeId(index) => exitMiniJourney(index, mode, srn)
+      case CompanyRegistrationNumberId(index) => exitMiniJourney(index, mode, srn)
+      case CompanyUniqueTaxReferenceId(index) => exitMiniJourney(index, mode, srn)
 
       case CompanyPostCodeLookupId(index) =>
         NavigateTo.dontSave(controllers.register.establishers.company.routes.CompanyAddressListController.onPageLoad(mode, None, index))
@@ -79,7 +79,14 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
       case CompanyAddressListId(index) =>
         NavigateTo.dontSave(controllers.register.establishers.company.routes.CompanyAddressController.onPageLoad(mode, None, index))
 
-      case CompanyAddressId(index) =>             exitMiniJourney(index, mode, srn)
+      case CompanyAddressId(index) => {
+        val isNew = from.userAnswers.get(IsEstablisherNewId(index)).contains(true)
+        if (isNew || mode == CheckMode) {
+          checkYourAnswers(index, journeyMode(mode), srn)
+        } else {
+          NavigateTo.dontSave(controllers.register.establishers.company.routes.CompanyAddressYearsController.onPageLoad(mode, srn, index))
+        }
+      }
 
       case CompanyAddressYearsId(index) =>
         editAddressYearsRoutes(index, from.userAnswers, mode, srn)
@@ -90,9 +97,9 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
       case CompanyPreviousAddressListId(index) =>
         NavigateTo.dontSave(controllers.register.establishers.company.routes.CompanyPreviousAddressController.onPageLoad(mode, None, index))
 
-      case CompanyPreviousAddressId(index) =>     exitMiniJourney(index, mode, srn)
-      case CompanyContactDetailsId(index) =>      exitMiniJourney(index, mode, srn)
-      case IsCompanyDormantId(index) =>           exitMiniJourney(index, mode, srn)
+      case CompanyPreviousAddressId(index) => exitMiniJourney(index, mode, srn)
+      case CompanyContactDetailsId(index) => exitMiniJourney(index, mode, srn)
+      case IsCompanyDormantId(index) => exitMiniJourney(index, mode, srn)
 
       case OtherDirectorsId(index) =>
         NavigateTo.dontSave(controllers.register.establishers.company.routes.CompanyReviewController.onPageLoad(journeyMode(mode), None, index))
@@ -111,14 +118,15 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
   override protected def updateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] = from.id match {
     case CompanyContactDetailsId(index) =>
       NavigateTo.dontSave(controllers.register.establishers.company.routes.CheckYourAnswersController.onPageLoad(UpdateMode, srn, index))
-    case _ => routes (from, UpdateMode, srn)
+    case _ => routes(from, UpdateMode, srn)
   }
+
   override protected def editRouteMap(from: NavigateFrom): Option[NavigateTo] = editRoutes(from, CheckMode, None)
 
   override protected def checkUpdateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] = editRoutes(from, CheckUpdateMode, srn)
 
   private def exitMiniJourney(index: Index, mode: Mode, srn: Option[String]): Option[NavigateTo] =
-    if(mode == CheckMode || mode == NormalMode){
+    if (mode == CheckMode || mode == NormalMode) {
       checkYourAnswers(index, journeyMode(mode), srn)
     } else {
       anyMoreChanges(srn)

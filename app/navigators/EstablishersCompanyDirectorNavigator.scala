@@ -21,6 +21,7 @@ import connectors.UserAnswersCacheConnector
 import controllers.register.establishers.company.director.routes
 import identifiers.AnyMoreChangesId
 import identifiers.register.establishers.IsEstablisherNewId
+import identifiers.register.establishers.company.director
 import identifiers.register.establishers.company.director._
 import models.Mode.journeyMode
 import models._
@@ -63,16 +64,22 @@ class EstablishersCompanyDirectorNavigator @Inject()(val dataCacheConnector: Use
       case _ => commonRoutes(from, mode, srn)
     }
 
+  //scalastyle:off cyclomatic.complexity
   protected def editRoutes(from: NavigateFrom, mode: Mode, srn: Option[String]): Option[NavigateTo] =
     from.id match {
       case DirectorDetailsId(establisherIndex, directorIndex) =>
         exitMiniJourney(establisherIndex, directorIndex, mode, srn)
-      case DirectorNinoId(establisherIndex, directorIndex)  =>
+      case DirectorNinoId(establisherIndex, directorIndex) =>
         exitMiniJourney(establisherIndex, directorIndex, mode, srn)
       case DirectorUniqueTaxReferenceId(establisherIndex, directorIndex) =>
         exitMiniJourney(establisherIndex, directorIndex, mode, srn)
       case DirectorAddressId(establisherIndex, directorIndex) =>
-        exitMiniJourney(establisherIndex, directorIndex, mode, srn)
+        val isNew = from.userAnswers.get(IsNewDirectorId(establisherIndex, directorIndex)).contains(true)
+        if (isNew || mode == CheckMode) {
+          checkYourAnswers(establisherIndex, directorIndex, journeyMode(mode), srn)
+        } else {
+          NavigateTo.dontSave(routes.DirectorAddressYearsController.onPageLoad(mode, establisherIndex, directorIndex, srn))
+        }
       case DirectorPreviousAddressId(establisherIndex, directorIndex) =>
         exitMiniJourney(establisherIndex, directorIndex, mode, srn)
       case DirectorContactDetailsId(establisherIndex, directorIndex) =>
@@ -82,6 +89,7 @@ class EstablishersCompanyDirectorNavigator @Inject()(val dataCacheConnector: Use
       case _ => commonRoutes(from, mode, srn)
     }
 
+  //scalastyle:on cyclomatic.complexity
   protected def commonRoutes(from: NavigateFrom, mode: Mode, srn: Option[String]): Option[NavigateTo] =
     from.id match {
       case DirectorAddressPostcodeLookupId(establisherIndex, directorIndex) =>
@@ -140,7 +148,7 @@ class EstablishersCompanyDirectorNavigator @Inject()(val dataCacheConnector: Use
       case CheckMode | NormalMode =>
         NavigateTo.dontSave(controllers.register.establishers.company.routes.AddCompanyDirectorsController.onPageLoad(mode, srn, establisherIndex))
       case _ => answers.get(IsEstablisherNewId(establisherIndex)) match {
-        case Some(true)=>
+        case Some(true) =>
           NavigateTo.dontSave(controllers.register.establishers.company.routes.AddCompanyDirectorsController.onPageLoad(mode, srn, establisherIndex))
         case _ =>
           anyMoreChanges(srn)

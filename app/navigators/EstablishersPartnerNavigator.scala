@@ -95,7 +95,12 @@ class EstablishersPartnerNavigator @Inject()(val dataCacheConnector: UserAnswers
     case PartnerAddressListId(establisherIndex, partnerIndex) =>
       NavigateTo.dontSave(routes.PartnerAddressController.onPageLoad(mode, establisherIndex, partnerIndex, srn))
     case PartnerAddressId(establisherIndex, partnerIndex) =>
-      exitMiniJourney(establisherIndex, partnerIndex, mode, srn)
+      val isNew = from.userAnswers.get(IsNewPartnerId(establisherIndex, partnerIndex)).contains(true)
+      if (isNew || mode == CheckMode) {
+        checkYourAnswers(establisherIndex, partnerIndex, journeyMode(mode), srn)
+      } else {
+        NavigateTo.dontSave(routes.PartnerAddressYearsController.onPageLoad(mode, establisherIndex, partnerIndex, srn))
+      }
     case PartnerAddressYearsId(establisherIndex, partnerIndex) =>
       addressYearsEditRoutes(establisherIndex, partnerIndex, mode, srn)(from.userAnswers)
     case PartnerPreviousAddressPostcodeLookupId(establisherIndex, partnerIndex) =>

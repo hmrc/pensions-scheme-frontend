@@ -22,7 +22,7 @@ import controllers.register.establishers.partnership.partner._
 import identifiers.Identifier
 import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.partnership.partner._
-import identifiers.register.establishers.partnership.{AddPartnersId, PartnershipDetailsId}
+import identifiers.register.establishers.partnership.{AddPartnersId, PartnershipDetailsId, partner}
 import models.Mode.checkMode
 import models._
 import models.person.PersonDetails
@@ -52,7 +52,8 @@ class EstablishersPartnerNavigatorSpec extends SpecBase with NavigatorBehaviour 
     (PartnerUniqueTaxReferenceId(0, 0), emptyAnswers, partnerAddressPostcode(mode), true, Some(exitJourney(mode)), true),
     (PartnerAddressPostcodeLookupId(0, 0), emptyAnswers, partnerAddressList(mode), true, Some(partnerAddressList(checkMode(mode))), true),
     (PartnerAddressListId(0, 0), emptyAnswers, partnerAddress(mode), true, Some(partnerAddress(checkMode(mode))), true),
-    (PartnerAddressId(0, 0), emptyAnswers, partnerAddressYears(mode), true, Some(exitJourney(mode)), true),
+    (PartnerAddressId(0, 0), emptyAnswers, partnerAddressYears(mode), true, if(mode == UpdateMode) Some(partnerAddressYears(checkMode(UpdateMode))) else Some(checkYourAnswers(NormalMode)), true),
+    (PartnerAddressId(0, 0), newPartner, partnerAddressYears(mode), true, Some(checkYourAnswers(mode)), true),
     (PartnerAddressYearsId(0, 0), addressYearsUnderAYear, partnerPreviousAddPostcode(mode), true, Some(partnerPreviousAddPostcode(checkMode(mode))), true),
     (PartnerAddressYearsId(0, 0), addressYearsOverAYear, partnerContactDetails(mode), true, Some(exitJourney(mode)), true),
     (PartnerAddressYearsId(0, 0), emptyAnswers, sessionExpired, false, Some(sessionExpired), false),
@@ -88,10 +89,11 @@ object EstablishersPartnerNavigatorSpec extends OptionValues {
   private def dataDescriber(answers: UserAnswers): String = answers.toString
 
   private val emptyAnswers = UserAnswers(Json.obj())
+
   val establisherIndex = Index(0)
   val partnerIndex = Index(0)
   private val johnDoe = PersonDetails("John", None, "Doe", LocalDate.now())
-
+  private val newPartner = UserAnswers(Json.obj()).set(IsNewPartnerId(establisherIndex, partnerIndex))(true).asOpt.value
   val addressYearsOverAYear = UserAnswers(Json.obj())
     .set(PartnerAddressYearsId(establisherIndex, partnerIndex))(AddressYears.OverAYear).asOpt.value
   val addressYearsUnderAYear = UserAnswers(Json.obj())

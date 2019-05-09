@@ -19,7 +19,7 @@ package navigators
 import base.SpecBase
 import connectors.FakeUserAnswersCacheConnector
 import identifiers.Identifier
-import identifiers.register.establishers.EstablishersId
+import identifiers.register.establishers.{EstablishersId, IsEstablisherNewId}
 import identifiers.register.establishers.company._
 import identifiers.register.establishers.company.director.DirectorDetailsId
 import models.Mode.checkMode
@@ -48,7 +48,8 @@ class EstablishersCompanyNavigatorSpec extends SpecBase with MustMatchers with N
     (CompanyUniqueTaxReferenceId(0),              emptyAnswers,                     companyPostCodeLookup(mode),        true,           Some(exitJourney(mode)),                   true),
     (CompanyPostCodeLookupId(0),                  emptyAnswers,                     companyAddressList(mode),           true,           Some(companyAddressList(checkMode(mode))),      true),
     (CompanyAddressListId(0),                     emptyAnswers,                     companyManualAddress(mode),         true,           Some(companyManualAddress(checkMode(mode))),    true),
-    (CompanyAddressId(0),                         emptyAnswers,                     companyAddressYears(mode),          true,           Some(exitJourney(mode)),                   true),
+    (CompanyAddressId(0),                         emptyAnswers,                     companyAddressYears(mode),          true,           if(mode == UpdateMode) Some(companyAddressYears(checkMode(UpdateMode))) else Some(checkYourAnswers(NormalMode)),                   true),
+    (CompanyAddressId(0),                         newEstablisher,                   companyAddressYears(mode),          true,           Some(checkYourAnswers(mode)),                   true),
     (CompanyAddressYearsId(0),                    addressYearsOverAYear,            companyContactDetails(mode),        true,           Some(exitJourney(mode)),                   true),
     (CompanyAddressYearsId(0),                    addressYearsUnderAYear,           prevAddPostCodeLookup(mode),        true,           Some(prevAddPostCodeLookup(checkMode(mode))),   true),
     (CompanyAddressYearsId(0),                    emptyAnswers,                     sessionExpired,                     false,          Some(sessionExpired),                           false),
@@ -100,7 +101,7 @@ class EstablishersCompanyNavigatorSpec extends SpecBase with MustMatchers with N
 
 //noinspection MutatorLikeMethodIsParameterless
 object EstablishersCompanyNavigatorSpec extends OptionValues {
-
+  private val newEstablisher = UserAnswers(Json.obj()).set(IsEstablisherNewId(0))(true).asOpt.value
   private val johnDoe = PersonDetails("John", None, "Doe", new LocalDate(1862, 6, 9))
 
   private def validData(directors: PersonDetails*) = {

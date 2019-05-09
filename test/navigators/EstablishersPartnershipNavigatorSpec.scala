@@ -20,6 +20,7 @@ import base.SpecBase
 import connectors.FakeUserAnswersCacheConnector
 import controllers.register.establishers.partnership.routes
 import identifiers.Identifier
+import identifiers.register.establishers.IsEstablisherNewId
 import identifiers.register.establishers.partnership._
 import models.Mode.checkMode
 import models.{AddressYears, Mode, NormalMode, UpdateMode}
@@ -42,7 +43,8 @@ class EstablishersPartnershipNavigatorSpec extends SpecBase with NavigatorBehavi
     (PartnershipUniqueTaxReferenceID(0),              emptyAnswers,                 partnershipPostcodeLookup(mode),    true,         Some(exitJourney(mode)),              true),
     (PartnershipPostcodeLookupId(0),                  emptyAnswers,                 partnershipAddressList(mode),       true,         Some(partnershipAddressList(checkMode(mode))), true),
     (PartnershipAddressListId(0),                     emptyAnswers,                 partnershipAddress(mode),           true,         Some(partnershipAddress(checkMode(mode))), true),
-    (PartnershipAddressId(0),                         emptyAnswers,                 partnershipAddressYears(mode),      true,         Some(exitJourney(mode)),               true),
+    (PartnershipAddressId(0),                         emptyAnswers,                 partnershipAddressYears(mode),      true,         if(mode == UpdateMode) Some(partnershipAddressYears(checkMode(UpdateMode))) else Some(checkYourAnswers(NormalMode)),               true),
+    (PartnershipAddressId(0),                         newEstablisher,                 partnershipAddressYears(mode),      true,         Some(checkYourAnswers(mode)),               true),
     (PartnershipAddressYearsId(0),                    addressYearsOverAYear,        partnershipContact(mode),           true,         Some(exitJourney(mode)),               true),
     (PartnershipAddressYearsId(0),                    addressYearsUnderAYear,       partnershipPaPostCodeLookup(mode),  true,         Some(partnershipPaPostCodeLookup(checkMode(mode))), true),
     (PartnershipAddressYearsId(0),                    emptyAnswers,                 sessionExpired,                           false,        Some(sessionExpired),                 false),
@@ -87,6 +89,7 @@ class EstablishersPartnershipNavigatorSpec extends SpecBase with NavigatorBehavi
 
 object EstablishersPartnershipNavigatorSpec extends OptionValues {
   private val emptyAnswers = UserAnswers(Json.obj())
+  private val newEstablisher = UserAnswers(Json.obj()).set(IsEstablisherNewId(0))(true).asOpt.value
 
   private def partnershipVat(mode: Mode) = routes.PartnershipVatController.onPageLoad(mode, 0, None)
 

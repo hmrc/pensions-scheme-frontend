@@ -20,9 +20,10 @@ import base.SpecBase
 import connectors.FakeUserAnswersCacheConnector
 import controllers.register.trustees.partnership.routes
 import identifiers.Identifier
+import identifiers.register.trustees.IsTrusteeNewId
 import identifiers.register.trustees.partnership._
-import models.{AddressYears, CheckMode, Mode, NormalMode, UpdateMode}
 import models.Mode.checkMode
+import models.{AddressYears, Mode, NormalMode, UpdateMode}
 import org.scalatest.OptionValues
 import org.scalatest.prop.TableFor6
 import play.api.libs.json.Json
@@ -42,13 +43,15 @@ class TrusteesPartnershipNavigatorSpec extends SpecBase with NavigatorBehaviour 
     (PartnershipUniqueTaxReferenceId(0), emptyAnswers, partnershipPostcodeLookup(mode), true, Some(checkYourAnswers(mode)), true),
     (PartnershipPostcodeLookupId(0), emptyAnswers, partnershipAddressList(mode), true, Some(partnershipAddressList(checkMode((mode)))), true),
     (PartnershipAddressListId(0), emptyAnswers, partnershipAddress(mode), true, Some(partnershipAddress(checkMode((mode)))), true),
-    (PartnershipAddressId(0), emptyAnswers, partnershipAddressYears(mode), true, Some(checkYourAnswers(mode)), true),
-    (PartnershipAddressYearsId(0), addressYearsOverAYear, partnershipContact(mode), true, Some(checkYourAnswers(mode)), true),
+    (PartnershipAddressId(0), emptyAnswers, partnershipAddressYears(mode), true,
+      if (mode == UpdateMode) Some(partnershipAddressYears(checkMode(UpdateMode))) else Some(checkYourAnswers(NormalMode)), true),
+    (PartnershipAddressId(0), newTrustee, partnershipAddressYears(mode), true, Some(checkYourAnswers(mode)), true),
+    (PartnershipAddressYearsId(0), addressYearsOverAYear, partnershipContact(mode), true, Some(exitJourney(mode)), true),
     (PartnershipAddressYearsId(0), addressYearsUnderAYear, partnershipPaPostCodeLookup(mode), true, Some(partnershipPaPostCodeLookup(checkMode((mode)))), true),
     (PartnershipAddressYearsId(0), emptyAnswers, sessionExpired, false, Some(sessionExpired), false),
     (PartnershipPreviousAddressPostcodeLookupId(0), emptyAnswers, partnershipPaList(mode), true, Some(partnershipPaList(checkMode((mode)))), true),
     (PartnershipPreviousAddressListId(0), emptyAnswers, partnershipPa(mode), true, Some(partnershipPa(checkMode((mode)))), true),
-    (PartnershipPreviousAddressId(0), emptyAnswers, partnershipContact(mode), true, Some(checkYourAnswers(mode)), true),
+    (PartnershipPreviousAddressId(0), emptyAnswers, partnershipContact(mode), true, Some(exitJourney(mode)), true),
     (PartnershipContactDetailsId(0), emptyAnswers, checkYourAnswers(mode), true, Some(checkYourAnswers(mode)), true),
     (CheckYourAnswersId(0), emptyAnswers, addTrustee(mode), false, None, true)
   )
@@ -65,6 +68,8 @@ class TrusteesPartnershipNavigatorSpec extends SpecBase with NavigatorBehaviour 
 }
 
 object TrusteesPartnershipNavigatorSpec extends OptionValues {
+
+  private val newTrustee = UserAnswers(Json.obj()).set(IsTrusteeNewId(0))(true).asOpt.value
 
   private def taskList: Call = controllers.routes.SchemeTaskListController.onPageLoad(NormalMode, None)
 
@@ -104,6 +109,10 @@ object TrusteesPartnershipNavigatorSpec extends OptionValues {
     .set(PartnershipAddressYearsId(0))(AddressYears.UnderAYear).asOpt.value
 
   private def dataDescriber(answers: UserAnswers): String = answers.toString
+
+  private def anyMoreChanges = controllers.routes.AnyMoreChangesController.onPageLoad(None)
+
+  private def exitJourney(mode: Mode) = if (mode == NormalMode) checkYourAnswers(mode) else anyMoreChanges
 }
 
 
