@@ -41,7 +41,12 @@ class CheckYourAnswersViewSpec extends CheckYourAnswersBehaviours with ViewBehav
 
   private val srn = Some("S123")
 
-  def createView(returnOverview: Boolean = false, mode: Mode = NormalMode, viewOnly: Boolean = false, srn: Option[String] = None): () => HtmlFormat.Appendable = () =>
+  def createView(returnOverview: Boolean = false,
+                 mode: Mode = NormalMode,
+                 hideEditLinks: Boolean = false,
+                 srn: Option[String] = None,
+                 hideSaveAndContinueButton: Boolean
+                ): () => HtmlFormat.Appendable = () =>
     check_your_answers(
       frontendAppConfig,
       emptyAnswerSections,
@@ -49,9 +54,9 @@ class CheckYourAnswersViewSpec extends CheckYourAnswersBehaviours with ViewBehav
       None,
       returnOverview,
       mode,
-      viewOnly,
+      hideEditLinks,
       srn,
-      viewOnly
+      hideSaveAndContinueButton
     )(fakeRequest, messages)
 
   def createViewWithData: (Seq[Section], Mode, Boolean) => HtmlFormat.Appendable = (sections, mode, viewOnly) =>
@@ -67,18 +72,23 @@ class CheckYourAnswersViewSpec extends CheckYourAnswersBehaviours with ViewBehav
 
   "check_your_answers view" must {
 
-    behave like normalPageWithTitle(createView(), messageKeyPrefix, messages("checkYourAnswers.hs.title"), messages("checkYourAnswers.hs.heading"))
+    behave like normalPageWithTitle(createView(hideSaveAndContinueButton = false),
+      messageKeyPrefix, messages("checkYourAnswers.hs.title"), messages("checkYourAnswers.hs.heading"))
 
-    behave like pageWithReturnChangeLink(createView())
+    behave like pageWithReturnChangeLink(createView(hideSaveAndContinueButton = false))
 
-    behave like pageWithoutReturnChangeLink(createView(viewOnly = true))
+    behave like pageWithoutReturnChangeLink(createView(hideEditLinks = true, hideSaveAndContinueButton = true))
 
-    behave like pageWithReturnLink(createView(), (controllers.routes.SchemeTaskListController.onPageLoad(NormalMode, None).url))
+    behave like pageWithReturnLink(createView(hideSaveAndContinueButton = false), controllers.routes.SchemeTaskListController.onPageLoad(NormalMode, None).url)
 
-    behave like pageWithReturnLink(createView(returnOverview = true), frontendAppConfig.managePensionsSchemeOverviewUrl.url)
+    behave like pageWithReturnLink(createView(returnOverview = true, hideSaveAndContinueButton = true), frontendAppConfig.managePensionsSchemeOverviewUrl.url)
 
-    behave like pageWithReturnLink(createView(returnOverview = false, UpdateMode, false, srn),
+    behave like pageWithReturnLink(createView(returnOverview = false, UpdateMode, hideEditLinks = false, srn, hideSaveAndContinueButton = true),
       controllers.routes.SchemeTaskListController.onPageLoad(UpdateMode, srn).url)
+
+    behave like pageWithoutSubmitButton(createView(hideEditLinks = true, hideSaveAndContinueButton = true))
+
+    behave like pageWithSubmitButton(createView(hideEditLinks = true, hideSaveAndContinueButton = false))
 
     behave like checkYourAnswersPage(createViewWithData)
   }

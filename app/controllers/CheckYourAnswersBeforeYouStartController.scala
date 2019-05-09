@@ -20,7 +20,8 @@ import config.FrontendAppConfig
 import controllers.actions._
 import identifiers.{DeclarationDutiesId, _}
 import javax.inject.Inject
-import models.{CheckMode, Mode}
+import models.requests.DataRequest
+import models.{CheckMode, CheckUpdateMode, Mode, UpdateMode}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
@@ -42,6 +43,13 @@ class CheckYourAnswersBeforeYouStartController @Inject()(appConfig: FrontendAppC
                                                         )(implicit val ec: ExecutionContext) extends FrontendController
   with Enumerable.Implicits with I18nSupport with Retrievals {
 
+  protected def hideSaveAndContinueButton(mode: Mode, request:DataRequest[AnyContent]):Boolean = {
+    mode match {
+      case UpdateMode | CheckUpdateMode => true
+      case _ => request.viewOnly
+    }
+  }
+
   def onPageLoad(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData) {
     implicit request =>
 
@@ -62,8 +70,9 @@ class CheckYourAnswersBeforeYouStartController @Inject()(appConfig: FrontendAppC
         routes.CheckYourAnswersBeforeYouStartController.onSubmit(mode, srn),
         existingSchemeName,
         returnOverview = !userAnswers.get(IsBeforeYouStartCompleteId).getOrElse(false),
-        mode, hideEditLinks = request.viewOnly, srn,
-        hideSaveAndContinueButton = request.viewOnly))
+        mode,
+        hideEditLinks = request.viewOnly, srn,
+        hideSaveAndContinueButton = hideSaveAndContinueButton(mode, request)))
   }
 
   def onSubmit(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData() andThen requireData).async {
