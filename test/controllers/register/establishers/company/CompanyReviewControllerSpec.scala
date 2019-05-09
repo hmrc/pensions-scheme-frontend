@@ -18,17 +18,18 @@ package controllers.register.establishers.company
 
 import controllers.ControllerSpecBase
 import controllers.actions._
-import identifiers.register.establishers.company.director.{DirectorDetailsId, IsDirectorCompleteId}
-import identifiers.register.establishers.company.{CompanyDetailsId, IsCompanyCompleteId}
-import identifiers.register.establishers.{EstablishersId, IsEstablisherCompleteId}
+import identifiers.register.establishers.company.director.{DirectorDetailsId, IsDirectorAddressCompleteId, IsDirectorCompleteId}
+import identifiers.register.establishers.company.{CompanyDetailsId, CompanyPayeId, IsCompanyCompleteId}
+import identifiers.register.establishers.{EstablishersId, IsEstablisherAddressCompleteId, IsEstablisherCompleteId}
+import identifiers.register.trustees.company.CompanyVatId
+import models._
 import models.person.PersonDetails
-import models.{CompanyDetails, Index, NormalMode}
 import org.joda.time.LocalDate
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import services.FakeUserAnswersService
-import utils.{FakeNavigator, FakeSectionComplete}
+import utils.FakeNavigator
 import views.html.register.establishers.company.companyReview
 
 class CompanyReviewControllerSpec extends ControllerSpecBase {
@@ -91,7 +92,7 @@ class CompanyReviewControllerSpec extends ControllerSpecBase {
 
     "not set establisher as complete when company is complete but directors are not complete" in {
       FakeUserAnswersService.reset()
-      val getRelevantData = new FakeDataRetrievalAction(Some(validData(Seq(director("a"), director("b"), director("c", isComplete = false)))))
+      val getRelevantData = new FakeDataRetrievalAction(Some(validData(isComplete = false)))
       val result = controller(getRelevantData).onSubmit(NormalMode, None, index)(fakeRequest)
       status(result) mustBe SEE_OTHER
       FakeUserAnswersService.verifyNot(IsEstablisherCompleteId(0))
@@ -131,13 +132,22 @@ object CompanyReviewControllerSpec {
 
   val directors = Seq(director("a"), director("b"), director("c"))
 
-  def validData(inDirectors: Seq[JsObject] = directors): JsObject = Json.obj(
+  def validData(isComplete:Boolean = true): JsObject = Json.obj(
     EstablishersId.toString -> Json.arr(
       Json.obj(
         CompanyDetailsId.toString -> companyDetails,
         IsCompanyCompleteId.toString -> true,
-
-        "director" -> inDirectors
+        CompanyPayeId.toString -> Paye.Yes("paye"),
+        CompanyVatId.toString -> Vat.Yes("vat"),
+        IsEstablisherAddressCompleteId.toString -> true,
+        "director" -> Json.arr(
+          Json.obj("directorDetails" -> Json.obj("firstName" -> "director", "lastName" -> "a", "date" -> "2019-04-30", "isDeleted" -> false),
+            "isDirectorComplete" -> true, IsDirectorAddressCompleteId.toString -> true),
+          Json.obj("directorDetails" -> Json.obj("firstName" -> "director", "lastName" -> "b", "date" -> "2019-04-30", "isDeleted" -> false),
+            "isDirectorComplete" -> true, IsDirectorAddressCompleteId.toString -> true),
+          Json.obj("directorDetails" -> Json.obj("firstName" -> "director", "lastName" -> "c", "date" -> "2019-04-30", "isDeleted" -> false),
+            "isDirectorComplete" -> isComplete, IsDirectorAddressCompleteId.toString -> true)
+        )
       )
     )
   )

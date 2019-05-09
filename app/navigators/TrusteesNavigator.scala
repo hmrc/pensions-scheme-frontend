@@ -21,7 +21,7 @@ import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
 import identifiers.register.trustees._
 import models.register.trustees.TrusteeKind
-import models.{Mode, NormalMode, UpdateMode}
+import models.{CheckMode, Mode, NormalMode, UpdateMode}
 import utils.{Enumerable, Navigator, UserAnswers}
 
 class TrusteesNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector, appConfig: FrontendAppConfig) extends Navigator with Enumerable.Implicits {
@@ -36,7 +36,12 @@ class TrusteesNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnec
       case TrusteeKindId(index) =>
         trusteeKindRoutes(index, from.userAnswers, mode, srn)
       case ConfirmDeleteTrusteeId =>
-        NavigateTo.save(controllers.register.trustees.routes.AddTrusteeController.onPageLoad(mode, srn))
+        mode match {
+          case CheckMode | NormalMode =>
+            NavigateTo.save(controllers.register.trustees.routes.AddTrusteeController.onPageLoad(mode, srn))
+          case _ =>
+            NavigateTo.dontSave(controllers.routes.AnyMoreChangesController.onPageLoad(srn))
+        }
       case _ => None
     }
 

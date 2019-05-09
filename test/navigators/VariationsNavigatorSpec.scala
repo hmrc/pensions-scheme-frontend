@@ -18,7 +18,8 @@ package navigators
 
 import base.SpecBase
 import connectors.FakeUserAnswersCacheConnector
-import identifiers.AnyMoreChangesId
+import identifiers._
+import identifiers.register.establishers.{IsEstablisherAddressCompleteId, IsEstablisherCompleteId}
 import models.UpdateMode
 import org.scalatest.OptionValues
 import play.api.libs.json.Json
@@ -32,7 +33,8 @@ class VariationsNavigatorSpec extends SpecBase with NavigatorBehaviour {
   private def updateRoutes() = Table(
     ("Id", "User Answers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (Check Mode)", "Save (CM)"),
     (AnyMoreChangesId, someMoreChanges, variationsTaskList, false, None, false),
-    (AnyMoreChangesId, noMoreChanges, variationsTaskList, false, None, false),
+    (AnyMoreChangesId, noMoreChangesWithComplete, declaration, false, None, false),
+    (AnyMoreChangesId, noMoreChangesWithIncomplete, stillChanges, false, None, false),
     (AnyMoreChangesId, emptyAnswers, sessionExpired, false, None, false)
   )
 
@@ -55,10 +57,20 @@ object VariationsNavigatorSpec extends SpecBase with OptionValues {
   private def sessionExpired = controllers.routes.SessionExpiredController.onPageLoad()
 
   private def variationsTaskList = controllers.routes.SchemeTaskListController.onPageLoad(UpdateMode, srn)
+  private def stillChanges = controllers.register.routes.StillNeedDetailsController.onPageLoad(srn)
+  private def declaration = controllers.routes.VariationDeclarationController.onPageLoad(srn)
 
-  private def none: Call = controllers.routes.IndexController.onPageLoad()
   val someMoreChanges = UserAnswers(Json.obj()).set(AnyMoreChangesId)(true).asOpt.value
-  val noMoreChanges = UserAnswers(Json.obj()).set(AnyMoreChangesId)(false).asOpt.value
+
+  val noMoreChangesWithComplete = UserAnswers().set(AnyMoreChangesId)(false).flatMap(
+    _.set(BenefitsSecuredByInsuranceId)(false).flatMap(
+    _.set(IsEstablisherCompleteId(0))(true)).flatMap(
+    _.set(IsEstablisherAddressCompleteId(0))(true)).flatMap(
+    _.set(InsuranceDetailsChangedId)(true)
+  )).asOpt.value
+
+  val noMoreChangesWithIncomplete = UserAnswers().set(AnyMoreChangesId)(false).asOpt.value
 
   private def dataDescriber(answers: UserAnswers): String = answers.toString
+
 }

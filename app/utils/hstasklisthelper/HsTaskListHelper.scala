@@ -119,7 +119,7 @@ abstract class HsTaskListHelper(answers: UserAnswers)(implicit messages: Message
       userAnswers.get(IsAboutBankDetailsCompleteId),
       userAnswers.get(IsAboutBenefitsAndInsuranceCompleteId),
       userAnswers.get(IsWorkingKnowledgeCompleteId),
-      Some(isAllEstablishersCompleted(userAnswers)),
+      Some(userAnswers.allEstablishersCompleted),
       Some(isTrusteeOptional | isAllTrusteesCompleted(userAnswers)),
       Some(userAnswers.allTrusteesAfterDelete.size < 10 || userAnswers.get(MoreThanTenTrusteesId).isDefined)
     ).forall(_.contains(true))
@@ -141,28 +141,24 @@ abstract class HsTaskListHelper(answers: UserAnswers)(implicit messages: Message
 
   protected def linkTarget(item: Entity[_], index: Int, mode: Mode, srn: Option[String]): String = {
     item match {
-      case models.register.EstablisherCompanyEntity(_, _, _, true, _, _) =>
+      case models.register.EstablisherCompanyEntity(_, _, _, _, _, _) =>
         controllers.register.establishers.company.routes.CompanyReviewController.onPageLoad(mode, srn, index).url
-      case models.register.EstablisherPartnershipEntity(_, _, _, true, _, _) =>
+      case models.register.EstablisherPartnershipEntity(_, _, _, _, _, _) =>
         controllers.register.establishers.partnership.routes.PartnershipReviewController.onPageLoad(mode, index, srn).url
-      case models.register.EstablisherIndividualEntity(_, _, _, true, _, _) =>
+      case models.register.EstablisherIndividualEntity(_, _, _, _, _, _) =>
         controllers.register.establishers.individual.routes.CheckYourAnswersController.onPageLoad(mode, index, srn).url
-      case models.register.TrusteeCompanyEntity(_, _, _, true, _, _, _) =>
+      case models.register.TrusteeCompanyEntity(_, _, _, _, _, _, _) =>
         controllers.register.trustees.company.routes.CheckYourAnswersController.onPageLoad(mode, index, srn).url
-      case models.register.TrusteePartnershipEntity(_, _, _, true, _, _, _) =>
+      case models.register.TrusteePartnershipEntity(_, _, _, _, _, _, _) =>
         controllers.register.trustees.partnership.routes.CheckYourAnswersController.onPageLoad(mode, index, srn).url
-      case models.register.TrusteeIndividualEntity(_, _, _, true, _, _, _) =>
+      case models.register.TrusteeIndividualEntity(_, _, _, _, _, _, _) =>
         controllers.register.trustees.individual.routes.CheckYourAnswersController.onPageLoad(mode, index, srn).url
       case _ => item.editLink(mode, srn).getOrElse(controllers.routes.SessionExpiredController.onPageLoad().url)
     }
   }
 
-
   protected def isAllTrusteesCompleted(userAnswers: UserAnswers): Boolean = {
     userAnswers.allTrusteesAfterDelete.nonEmpty && userAnswers.allTrusteesAfterDelete.forall(_.isCompleted)
   }
 
-  protected def isAllEstablishersCompleted(userAnswers: UserAnswers): Boolean = {
-    userAnswers.allEstablishersAfterDelete.nonEmpty && userAnswers.allEstablishersAfterDelete.forall(_.isCompleted)
-  }
 }

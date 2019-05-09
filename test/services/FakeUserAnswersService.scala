@@ -19,7 +19,21 @@ package services
 import config.FrontendAppConfig
 import connectors.{FakeFrontendAppConfig, FakeLockConnector, FakeSubscriptionCacheConnector, FakeUpdateCacheConnector, PensionSchemeVarianceLockConnector, SubscriptionCacheConnector, UpdateSchemeCacheConnector}
 import identifiers.TypedIdentifier
-import models.Mode
+import identifiers.register.establishers.IsEstablisherAddressCompleteId
+import identifiers.register.establishers.company.director.{DirectorAddressYearsId, IsDirectorAddressCompleteId}
+import identifiers.register.establishers.partnership.partner.{IsPartnerAddressCompleteId, PartnerAddressYearsId}
+import identifiers.register.trustees.company.{CompanyAddressYearsId => TruesteeCompanyAddressYearsId, CompanyPreviousAddressId => TruesteeCompanyPreviousAddressId}
+import identifiers.register.trustees.individual.{TrusteeAddressYearsId => TruesteeIndividualAddressYearsId, TrusteePreviousAddressId => TruesteeIndividualPreviousAddressId}
+import identifiers.register.trustees.partnership.{PartnershipAddressYearsId => TruesteePartnershipAddressYearsId, PartnershipPreviousAddressId => TruesteePartnershipPreviousAddressId}
+import identifiers.register.establishers.company.{CompanyAddressYearsId => EstablisherCompanyAddressYearsId, CompanyPreviousAddressId => EstablisherCompanyPreviousAddressId}
+import identifiers.register.establishers.individual.{AddressYearsId => EstablisherIndividualAddressYearsId, PreviousAddressId => EstablisherIndividualPreviousAddressId}
+import identifiers.register.establishers.partnership.{PartnershipAddressYearsId => EstablisherPartnershipAddressYearsId, PartnershipPreviousAddressId => EstablisherPartnershipPreviousAddressId}
+import identifiers.register.establishers.partnership.partner.{IsPartnerAddressCompleteId, PartnerAddressYearsId, PartnerPreviousAddressId}
+import identifiers.register.establishers.company.director.{DirectorAddressYearsId, DirectorPreviousAddressId, IsDirectorAddressCompleteId}
+import identifiers.register.trustees.IsTrusteeAddressCompleteId
+import models.AddressYears.{OverAYear, UnderAYear}
+import models.address.Address
+import models.{AddressYears, Mode}
 import models.requests.DataRequest
 import org.scalatest.Matchers
 import play.api.libs.json.{Format, JsObject, JsValue, Json}
@@ -47,6 +61,36 @@ trait FakeUserAnswersService extends UserAnswersService with Matchers {
   {
     data += (id.toString -> Json.toJson(value))
     Future.successful(Json.obj())
+  }
+
+  override def setAddressCompleteFlagAfterAddressYear(mode: Mode, srn: Option[String], id: TypedIdentifier[AddressYears], addressYears: AddressYears, userAnswers: UserAnswers)
+                                                     (implicit ec: ExecutionContext, hc: HeaderCarrier, request: DataRequest[AnyContent]): Future[UserAnswers] =
+  {
+    val addressCompletedId = getAddressId[AddressYears](id)
+
+    addressYears match{
+      case OverAYear => addressCompletedId.fold(Future.successful(userAnswers)) {
+        id =>
+          data += (id.toString -> Json.toJson(true))
+          Future.successful(UserAnswers())
+      }
+      case UnderAYear =>
+        Future.successful(UserAnswers())
+    }
+
+  }
+
+  override def setAddressCompleteFlagAfterPreviousAddress(mode: Mode, srn: Option[String], id: TypedIdentifier[Address], userAnswers: UserAnswers)
+                                                         (implicit ec: ExecutionContext, hc: HeaderCarrier, request: DataRequest[AnyContent]): Future[UserAnswers] = {
+
+    val addressCompletedId = getAddressId[Address](id)
+
+    addressCompletedId.fold(Future.successful(userAnswers)) {
+      id =>
+        data += (id.toString -> Json.toJson(true))
+        Future.successful(UserAnswers())
+    }
+
   }
 
   override def setCompleteFlag(mode: Mode, srn: Option[String], id: TypedIdentifier[Boolean], userAnswers: UserAnswers, value: Boolean)

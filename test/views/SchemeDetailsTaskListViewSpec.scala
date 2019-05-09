@@ -269,18 +269,18 @@ class SchemeDetailsTaskListViewSpec extends ViewBehaviours {
 
     "display correct heading where there is a declaration section in view model" in {
       val doc = asDocument(createView(schemeDetailsTaskListData
-        .copy(declaration = Some(SchemeDetailsTaskListDeclarationSection(None))))())
+        .copy(declaration = Some(SchemeDetailsTaskListDeclarationSection("messages__schemeTaskList__sectionDeclaration_header", None))))())
       assertRenderedByIdWithText(doc, id = "section-declaration-header", text = messages("messages__schemeTaskList__sectionDeclaration_header"))
     }
 
     "display correct text for the Declaration section where there is a declaration section but no link" in {
       val doc = asDocument(createView(schemeDetailsTaskListData
-        .copy(declaration = Some(SchemeDetailsTaskListDeclarationSection(None))))())
+        .copy(declaration = Some(SchemeDetailsTaskListDeclarationSection("messages__schemeTaskList__sectionDeclaration_header", None))))())
       assertNotRenderedById(doc, id = "section-declaration-link")
     }
 
     "display correct link and no text for the Declaration section where there is a declaration section and a link" in {
-      val completed = schemeDetailsTaskListData.copy(declaration = Some(SchemeDetailsTaskListDeclarationSection(Some(Link(text = "text", target = "target")))))
+      val completed = schemeDetailsTaskListData.copy(declaration = Some(SchemeDetailsTaskListDeclarationSection("messages__schemeTaskList__sectionDeclaration_header", Some(Link(text = "text", target = "target")))))
       val doc = asDocument(createView(completed)())
 
       assertNotRenderedById(doc, id = "section-declaration-text")
