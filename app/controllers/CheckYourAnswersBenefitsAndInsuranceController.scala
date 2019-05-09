@@ -20,7 +20,7 @@ import config.FrontendAppConfig
 import controllers.actions._
 import identifiers._
 import javax.inject.Inject
-import models.Mode
+import models.{CheckUpdateMode, Mode, UpdateMode}
 import models.Mode._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
@@ -30,6 +30,7 @@ import utils.{CountryOptions, Enumerable, SectionComplete}
 import viewmodels.AnswerSection
 import views.html.check_your_answers
 import models.Mode._
+import models.requests.DataRequest
 import services.UserAnswersService
 
 import scala.concurrent.ExecutionContext
@@ -43,6 +44,13 @@ class CheckYourAnswersBenefitsAndInsuranceController @Inject()(appConfig: Fronte
                                                                implicit val countryOptions: CountryOptions
                                                               )(implicit val ec: ExecutionContext) extends FrontendController
   with Enumerable.Implicits with I18nSupport with Retrievals {
+
+  private def hideSaveAndContinueButton(mode: Mode, request:DataRequest[AnyContent]):Boolean = {
+    mode match {
+      case UpdateMode | CheckUpdateMode => true
+      case _ => request.viewOnly
+    }
+  }
 
   def onPageLoad(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData) {
     implicit request =>
@@ -65,7 +73,7 @@ class CheckYourAnswersBenefitsAndInsuranceController @Inject()(appConfig: Fronte
         existingSchemeName,
         mode = mode,
         hideEditLinks = request.viewOnly,
-        hideSaveAndContinueButton = request.viewOnly
+        hideSaveAndContinueButton = hideSaveAndContinueButton(mode, request)
       ))
   }
 

@@ -20,13 +20,14 @@ import config.FrontendAppConfig
 import controllers.actions._
 import identifiers.{CurrentMembersId, FutureMembersId, IsAboutMembersCompleteId}
 import javax.inject.Inject
-import models.{CheckMode, Mode}
+import models.requests.DataRequest
+import models.{CheckMode, CheckUpdateMode, Mode, UpdateMode}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.checkyouranswers.Ops._
-import utils.{Enumerable, SectionComplete}
+import utils.{Enumerable, UserAnswers}
 import viewmodels.AnswerSection
 import views.html.check_your_answers
 
@@ -41,9 +42,16 @@ class CheckYourAnswersMembersController @Inject()(appConfig: FrontendAppConfig,
                                                  )(implicit val ec: ExecutionContext) extends FrontendController
   with Enumerable.Implicits with I18nSupport with Retrievals {
 
+  private def hideSaveAndContinueButton(mode: Mode, request:DataRequest[AnyContent]):Boolean = {
+    mode match {
+      case UpdateMode | CheckUpdateMode => true
+      case _ => request.viewOnly
+    }
+  }
+
   def onPageLoad(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData) {
     implicit request =>
-      implicit val userAnswers = request.userAnswers
+      implicit val userAnswers:UserAnswers = request.userAnswers
       val membersSection = AnswerSection(
         None,
         CurrentMembersId.row(routes.CurrentMembersController.onPageLoad(CheckMode).url, mode) ++
@@ -56,7 +64,7 @@ class CheckYourAnswersMembersController @Inject()(appConfig: FrontendAppConfig,
         existingSchemeName,
         mode = mode,
         hideEditLinks = request.viewOnly,
-        hideSaveAndContinueButton = request.viewOnly
+        hideSaveAndContinueButton = hideSaveAndContinueButton(mode, request)
       ))
   }
 

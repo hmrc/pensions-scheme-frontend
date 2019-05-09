@@ -43,7 +43,7 @@ class CheckYourAnswersBeforeYouStartController @Inject()(appConfig: FrontendAppC
                                                         )(implicit val ec: ExecutionContext) extends FrontendController
   with Enumerable.Implicits with I18nSupport with Retrievals {
 
-  protected def hideSaveAndContinueButton(mode: Mode, request:DataRequest[AnyContent]):Boolean = {
+  private def hideSaveAndContinueButton(mode: Mode, request:DataRequest[AnyContent]):Boolean = {
     mode match {
       case UpdateMode | CheckUpdateMode => true
       case _ => request.viewOnly
