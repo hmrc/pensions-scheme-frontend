@@ -19,7 +19,7 @@ package navigators
 import com.google.inject.Inject
 import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
-import identifiers.register.establishers.IsEstablisherNewId
+import identifiers.register.establishers.{IsEstablisherCompleteId, IsEstablisherNewId}
 import identifiers.register.establishers.company._
 import models.{AddressYears, CheckMode, CheckUpdateMode, Index, Mode, NormalMode, UpdateMode}
 import models.Mode._
@@ -121,7 +121,8 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
     if(mode == CheckMode || mode == NormalMode){
       checkYourAnswers(index, journeyMode(mode), srn)
     } else {
-      if(answers.allEstablishersAfterDelete.nonEmpty && answers.allEstablishersAfterDelete(index).isCompleted) anyMoreChanges(srn)
+      if(answers.get(IsEstablisherNewId(index)).getOrElse(false) &&
+        answers.get(IsEstablisherCompleteId(index)).getOrElse(false)) anyMoreChanges(srn)
       else checkYourAnswers(index, journeyMode(mode), srn)
     }
 

@@ -19,6 +19,7 @@ package navigators
 import com.google.inject.Inject
 import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
+import identifiers.register.trustees.{IsTrusteeCompleteId, IsTrusteeNewId}
 import identifiers.register.trustees.company._
 import models._
 import models.Mode.journeyMode
@@ -31,7 +32,8 @@ class TrusteesCompanyNavigator @Inject()(val dataCacheConnector: UserAnswersCach
     if(mode == CheckMode || mode == NormalMode){
       checkYourAnswers(index, journeyMode(mode), srn)
     } else {
-      if(answers.allTrusteesAfterDelete.nonEmpty && answers.allTrustees(index).isCompleted) anyMoreChanges(srn)
+      if(answers.get(IsTrusteeNewId(index)).getOrElse(false) &&
+        answers.get(IsTrusteeCompleteId(index)).getOrElse(false)) anyMoreChanges(srn)
       else checkYourAnswers(index, journeyMode(mode), srn)
     }
 
