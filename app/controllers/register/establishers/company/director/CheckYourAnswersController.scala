@@ -21,7 +21,7 @@ import controllers.Retrievals
 import controllers.actions._
 import identifiers.AnyMoreChangesId
 import identifiers.register.establishers.{IsEstablisherCompleteId, IsEstablisherNewId}
-import identifiers.register.establishers.company.{CompanyReviewId, IsCompanyCompleteId}
+import identifiers.register.establishers.company.{CompanyReviewId, IsCompanyCompleteId, director}
 import identifiers.register.establishers.company.director._
 import javax.inject.Inject
 import models.Mode.checkMode
@@ -86,8 +86,8 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
         routes.CheckYourAnswersController.onSubmit(companyIndex, directorIndex, mode, srn),
         existingSchemeName,
         mode = mode,
-        hideEditLinks = allowChangeHelper.hideChangeLinks(request, IsEstablisherNewId(companyIndex)),
-        hideSaveAndContinueButton = allowChangeHelper.hideSaveAndContinueButton(request, IsEstablisherNewId(companyIndex), mode)
+        hideEditLinks = allowChangeHelper.hideChangeLinks(request, IsNewDirectorId(companyIndex, directorIndex)),
+        hideSaveAndContinueButton = allowChangeHelper.hideSaveAndContinueButton(request, IsNewDirectorId(companyIndex, directorIndex), mode)
 //        hideEditLinks = request.viewOnly,
 //        hideSaveAndContinueButton = request.viewOnly
       )))
