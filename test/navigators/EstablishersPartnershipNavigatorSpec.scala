@@ -61,7 +61,7 @@ class EstablishersPartnershipNavigatorSpec extends SpecBase with NavigatorBehavi
 
   private def updateOnlyRoutes: TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = Table(
     ("Id",                                          "User Answers",               "Next Page (Normal Mode)",                "Save (NM)",  "Next Page (Check Mode)",         "Save (CM)"),
-    (PartnershipContactDetailsId(0),                  emptyAnswers,                 checkYourAnswers(UpdateMode),             true,         Some(anyMoreChanges),               true)
+    (PartnershipContactDetailsId(0),                  emptyAnswers,                 checkYourAnswers(UpdateMode),             true,         Some(checkYourAnswers(UpdateMode)),               true)
   )
 
   private def normalRoutes = Table(

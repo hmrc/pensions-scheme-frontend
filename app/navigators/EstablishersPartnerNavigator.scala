@@ -40,8 +40,7 @@ class EstablishersPartnerNavigator @Inject()(val dataCacheConnector: UserAnswers
       case CheckMode | NormalMode =>
         checkYourAnswers(establisherIndex, partnerIndex, journeyMode(mode), srn)
       case _ =>
-        if(answers.get(IsNewPartnerId(establisherIndex, partnerIndex)).getOrElse(false) &&
-          answers.get(IsPartnerCompleteId(establisherIndex, partnerIndex)).getOrElse(false)) anyMoreChanges(srn)
+        if(answers.get(IsPartnerCompleteId(establisherIndex, partnerIndex)).getOrElse(false)) anyMoreChanges(srn)
         else checkYourAnswers(establisherIndex, partnerIndex, journeyMode(mode), srn)
     }
 

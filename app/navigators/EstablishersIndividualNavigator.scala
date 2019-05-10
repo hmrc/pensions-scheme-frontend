@@ -38,8 +38,7 @@ class EstablishersIndividualNavigator @Inject()(
     if(mode == CheckMode || mode == NormalMode){
       checkYourAnswers(index, journeyMode(mode), srn)
     } else {
-      if(answers.get(IsEstablisherNewId(index)).getOrElse(false) &&
-        answers.get(IsEstablisherCompleteId(index)).getOrElse(false)) anyMoreChanges(srn)
+      if(answers.get(IsEstablisherCompleteId(index)).getOrElse(false)) anyMoreChanges(srn)
       else checkYourAnswers(index, journeyMode(mode), srn)
     }
 

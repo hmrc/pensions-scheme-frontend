@@ -19,14 +19,13 @@ package navigators
 import base.SpecBase
 import connectors.FakeUserAnswersCacheConnector
 import identifiers.Identifier
-import identifiers.register.establishers.{EstablisherKindId, EstablishersId, IsEstablisherCompleteId}
 import identifiers.register.establishers.company._
 import identifiers.register.establishers.company.director.{DirectorDetailsId, IsDirectorCompleteId}
-import models.Mode.{checkMode, journeyMode}
+import identifiers.register.establishers.{EstablisherKindId, EstablishersId, IsEstablisherCompleteId}
+import models.Mode.checkMode
 import models._
 import models.person.PersonDetails
 import models.register.establishers.EstablisherKind
-import models.register.establishers.EstablisherKind.Company
 import org.joda.time.LocalDate
 import org.scalatest.prop.TableFor6
 import org.scalatest.{MustMatchers, OptionValues}
@@ -175,17 +174,9 @@ object EstablishersCompanyNavigatorSpec extends OptionValues with Enumerable.Imp
 
   private val emptyAnswers = UserAnswers(Json.obj())
   private val addressYearsOverAYear = UserAnswers(Json.obj())
-    .set(CompanyAddressYearsId(0))(AddressYears.OverAYear).flatMap(
-    _.set(EstablisherKindId(0))(EstablisherKind.Company).flatMap(
-    _.set(AddCompanyDirectorsId(0))(true)).flatMap(
-    _.set(IsEstablisherCompleteId(0))(true)).flatMap(
-    _.set(IsDirectorCompleteId(0, 0))(true))).asOpt.value
+    .set(CompanyAddressYearsId(0))(AddressYears.OverAYear).asOpt.value
   private val addressYearsUnderAYear = UserAnswers(Json.obj())
-    .set(CompanyAddressYearsId(0))(AddressYears.UnderAYear).flatMap(
-    _.set(EstablisherKindId(0))(EstablisherKind.Company).flatMap(
-    _.set(AddCompanyDirectorsId(0))(true)).flatMap(
-    _.set(IsEstablisherCompleteId(0))(true)).flatMap(
-    _.set(IsDirectorCompleteId(0, 0))(true))).asOpt.value
+    .set(CompanyAddressYearsId(0))(AddressYears.UnderAYear).asOpt.value
 
   private val addCompanyDirectorsTrue = UserAnswers(validData(johnDoe)).set(AddCompanyDirectorsId(0))(true).asOpt.value
   private val addCompanyDirectorsFalse = UserAnswers(validData(johnDoe)).set(AddCompanyDirectorsId(0))(false).asOpt.value

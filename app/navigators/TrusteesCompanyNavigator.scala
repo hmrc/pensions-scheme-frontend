@@ -32,8 +32,7 @@ class TrusteesCompanyNavigator @Inject()(val dataCacheConnector: UserAnswersCach
     if(mode == CheckMode || mode == NormalMode){
       checkYourAnswers(index, journeyMode(mode), srn)
     } else {
-      if(answers.get(IsTrusteeNewId(index)).getOrElse(false) &&
-        answers.get(IsTrusteeCompleteId(index)).getOrElse(false)) anyMoreChanges(srn)
+      if(answers.get(IsTrusteeCompleteId(index)).getOrElse(false)) anyMoreChanges(srn)
       else checkYourAnswers(index, journeyMode(mode), srn)
     }
 

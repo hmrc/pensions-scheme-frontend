@@ -64,10 +64,11 @@ class TrusteeDetailsController @Inject()(
           Future.successful(BadRequest(partnershipDetails(appConfig, formWithErrors, mode, index, existingSchemeName, submitUrl)))
         },
         value =>
-          userAnswersService.save(mode, srn, PartnershipDetailsId(index), value
-          ).map {
-            json =>
-              Redirect(navigator.nextPage(PartnershipDetailsId(index), mode, UserAnswers(json), srn))
+          request.userAnswers.upsert(PartnershipDetailsId(index))(value) {
+            answers =>
+              userAnswersService.upsert(mode, srn, answers.json).map { cacheMap =>
+                Redirect(navigator.nextPage(PartnershipDetailsId(index), mode, new UserAnswers(cacheMap), srn))
+              }
           }
       )
   }
