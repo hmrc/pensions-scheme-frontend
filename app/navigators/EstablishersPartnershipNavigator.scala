@@ -83,9 +83,9 @@ class EstablishersPartnershipNavigator @Inject()(val dataCacheConnector: UserAns
     case PartnershipUniqueTaxReferenceID(index) =>
       exitMiniJourney(index, mode, srn)
     case PartnershipPostcodeLookupId(index) =>
-      NavigateTo.dontSave(routes.PartnershipAddressListController.onPageLoad(mode, index, None))
+      NavigateTo.dontSave(routes.PartnershipAddressListController.onPageLoad(mode, index, srn))
     case PartnershipAddressListId(index) =>
-      NavigateTo.dontSave(routes.PartnershipAddressController.onPageLoad(mode, index, None))
+      NavigateTo.dontSave(routes.PartnershipAddressController.onPageLoad(mode, index, srn))
     case PartnershipAddressId(index) =>
       val isNew = from.userAnswers.get(IsEstablisherNewId(index)).contains(true)
       if(isNew || mode == CheckMode) {
@@ -96,9 +96,9 @@ class EstablishersPartnershipNavigator @Inject()(val dataCacheConnector: UserAns
     case PartnershipAddressYearsId(index) =>
       editAddressYearsRoutes(index, mode, srn)(from.userAnswers)
     case PartnershipPreviousAddressPostcodeLookupId(index) =>
-      NavigateTo.dontSave(routes.PartnershipPreviousAddressListController.onPageLoad(mode, index, None))
+      NavigateTo.dontSave(routes.PartnershipPreviousAddressListController.onPageLoad(mode, index, srn))
     case PartnershipPreviousAddressListId(index) =>
-      NavigateTo.dontSave(routes.PartnershipPreviousAddressController.onPageLoad(mode, index, None))
+      NavigateTo.dontSave(routes.PartnershipPreviousAddressController.onPageLoad(mode, index, srn))
     case PartnershipPreviousAddressId(index) =>
       exitMiniJourney(index, mode, srn)
     case PartnershipContactDetailsId(index) =>
@@ -106,7 +106,7 @@ class EstablishersPartnershipNavigator @Inject()(val dataCacheConnector: UserAns
     case IsPartnershipDormantId(index) =>
       exitMiniJourney(index, mode, srn)
     case OtherPartnersId(index) =>
-      NavigateTo.dontSave(controllers.register.establishers.partnership.routes.PartnershipReviewController.onPageLoad(journeyMode(mode), index, None))
+      NavigateTo.dontSave(controllers.register.establishers.partnership.routes.PartnershipReviewController.onPageLoad(journeyMode(mode), index, srn))
     case _ =>
       None
   }
