@@ -56,7 +56,7 @@ class VariationDeclarationControllerSpec extends ControllerSpecBase with Mockito
     new VariationDeclarationController(frontendAppConfig, messagesApi, new FakeNavigator(onwardRoute), FakeAuthAction,
       dataRetrievalAction, new DataRequiredActionImpl, formProvider, pensionsSchemeConnector, lockConnector, updateSchemeCacheConnector)
 
-  private def viewAsString() = variationDeclaration(frontendAppConfig, form, Some(schemeName), postCall, None)(fakeRequest, messages).toString
+  private def viewAsString() = variationDeclaration(frontendAppConfig, form, Some(schemeName), postCall, srn)(fakeRequest, messages).toString
 
   "VariationDeclarationController" must {
 
