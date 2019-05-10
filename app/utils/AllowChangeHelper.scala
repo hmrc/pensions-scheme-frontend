@@ -17,26 +17,26 @@
 package utils
 
 import identifiers.TypedIdentifier
-import models.{CheckUpdateMode, Mode, UpdateMode}
 import models.requests.DataRequest
+import models.{CheckUpdateMode, Mode, UpdateMode}
 import play.api.mvc.AnyContent
 
 trait AllowChangeHelper {
-  def hideChangeLinks(request: DataRequest[AnyContent], userAnswers: UserAnswers, newId: TypedIdentifier[Boolean]):Boolean
-  def hideSaveAndContinueButton(request: DataRequest[AnyContent], userAnswers: UserAnswers, newId: TypedIdentifier[Boolean], mode:Mode):Boolean
+  def hideChangeLinks(request: DataRequest[AnyContent], newId: TypedIdentifier[Boolean]):Boolean
+  def hideSaveAndContinueButton(request: DataRequest[AnyContent], newId: TypedIdentifier[Boolean], mode:Mode):Boolean
 }
 
 class AllowChangeHelperImpl extends AllowChangeHelper {
-  private def hideItem(request: DataRequest[AnyContent], userAnswers: UserAnswers, newId: TypedIdentifier[Boolean]): Option[Boolean] =
-    (request.viewOnly, userAnswers.get(newId)) match {
+  private def hideItem(request: DataRequest[AnyContent], newId: TypedIdentifier[Boolean]): Option[Boolean] =
+    (request.viewOnly, request.userAnswers.get(newId)) match {
       case (true, _) => Some(true)
       case (_, Some(true)) => Some(false)
       case _ => None
     }
 
-  def hideChangeLinks(request: DataRequest[AnyContent], userAnswers: UserAnswers, newId: TypedIdentifier[Boolean]):Boolean =
-    hideItem(request, userAnswers, newId).getOrElse(false)
+  def hideChangeLinks(request: DataRequest[AnyContent], newId: TypedIdentifier[Boolean]):Boolean =
+    hideItem(request, newId).getOrElse(false)
 
-  def hideSaveAndContinueButton(request: DataRequest[AnyContent], userAnswers: UserAnswers, newId: TypedIdentifier[Boolean], mode:Mode):Boolean =
-    hideItem(request, userAnswers, newId).getOrElse(mode == UpdateMode || mode == CheckUpdateMode)
+  def hideSaveAndContinueButton(request: DataRequest[AnyContent], newId: TypedIdentifier[Boolean], mode:Mode):Boolean =
+    hideItem(request, newId).getOrElse(mode == UpdateMode || mode == CheckUpdateMode)
 }
