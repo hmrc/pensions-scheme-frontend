@@ -17,7 +17,7 @@
 package views
 
 import base.SpecBase
-import models.NormalMode
+import models.{NormalMode, UpdateMode}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
@@ -29,6 +29,8 @@ trait ViewSpecBase extends SpecBase {
   type View = () => HtmlFormat.Appendable
 
   def getReturnLink : String = controllers.routes.SchemeTaskListController.onPageLoad(NormalMode, None).url
+
+  def getReturnLinkWithSrn : String = controllers.routes.SchemeTaskListController.onPageLoad(UpdateMode, Some("srn")).url
 
   def haveLink(url: String): Matcher[Elements] = Matcher[Elements] {
     elements =>
