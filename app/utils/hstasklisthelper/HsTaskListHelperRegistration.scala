@@ -59,7 +59,8 @@ class HsTaskListHelperRegistration(answers: UserAnswers)(implicit messages: Mess
       if (section.isDeleted) None else {
         Some(SchemeDetailsTaskListSection(
           Some(section.isCompleted),
-          Link(linkText(section), linkTarget(section, index, NormalMode, None)),
+          Link(linkText(section),
+            section.editLink(NormalMode, None).getOrElse(controllers.routes.SessionExpiredController.onPageLoad().url)),
           Some(section.name))
         )
       }
