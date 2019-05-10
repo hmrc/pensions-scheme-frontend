@@ -41,7 +41,6 @@ import scala.concurrent.{ExecutionContext, Future}
 class AddCompanyDirectorsController @Inject()(
                                                appConfig: FrontendAppConfig,
                                                override val messagesApi: MessagesApi,
-                                               userAnswersService: UserAnswersService,
                                                @EstablishersCompany navigator: Navigator,
                                                authenticate: AuthAction,
                                                getData: DataRetrievalAction,
@@ -89,16 +88,7 @@ class AddCompanyDirectorsController @Inject()(
                 Future.successful(InternalServerError)
               },
               userAnswers => {
-                mode match {
-                  case CheckMode | NormalMode =>
-                    Future.successful(Redirect(navigator.nextPage(AddCompanyDirectorsId(index), mode, userAnswers, srn)))
-                  case _ =>
-                    userAnswers.upsert(IsEstablisherCompleteId(index))(true) { result =>
-                      userAnswersService.upsert(mode, srn, result.json).map { json =>
-                        Redirect(navigator.nextPage(AddCompanyDirectorsId(index), mode, userAnswers, srn))
-                      }
-                    }
-                }
+                Future.successful(Redirect(navigator.nextPage(AddCompanyDirectorsId(index), mode, userAnswers, srn)))
               }
             )
         )
