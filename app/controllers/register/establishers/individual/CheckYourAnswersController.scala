@@ -31,7 +31,7 @@ import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.EstablishersIndividual
 import utils.checkyouranswers.Ops._
-import utils.{CountryOptions, Navigator, UserAnswers}
+import utils.{AllowChangeHelper, CountryOptions, Navigator, UserAnswers}
 import viewmodels.AnswerSection
 import views.html.check_your_answers
 
@@ -44,7 +44,8 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
                                            requiredData: DataRequiredAction,
                                            userAnswersService: UserAnswersService,
                                            implicit val countryOptions: CountryOptions,
-                                           @EstablishersIndividual navigator: Navigator)(implicit val ec: ExecutionContext)
+                                           @EstablishersIndividual navigator: Navigator,
+                                           allowChangeHelper: AllowChangeHelper)(implicit val ec: ExecutionContext)
   extends FrontendController with Retrievals with I18nSupport {
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requiredData).async {
@@ -73,20 +74,14 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
         )
       )
 
-      def hideItem(request: DataRequest[AnyContent], userAnswers: UserAnswers, hideIfExistingEstablisher: Boolean): Boolean =
-        request.viewOnly || !userAnswers.get(IsEstablisherNewId(index))
-          .getOrElse(!hideIfExistingEstablisher)
-
       Future.successful(
         Ok(
           check_your_answers(
             appConfig, sections, routes.CheckYourAnswersController.onSubmit(mode, index, srn),
             existingSchemeName,
             mode = mode,
-            hideEditLinks =
-              hideItem(request, userAnswers, hideIfExistingEstablisher = false),
-            hideSaveAndContinueButton =
-              hideItem(request, userAnswers, hideIfExistingEstablisher = mode == UpdateMode || mode == CheckUpdateMode)
+            hideEditLinks = allowChangeHelper.hideChangeLinks(request, userAnswers, IsEstablisherNewId(index)),
+            hideSaveAndContinueButton = allowChangeHelper.hideSaveAndContinueButton(request, userAnswers, IsEstablisherNewId(index), mode)
           )
         )
       )

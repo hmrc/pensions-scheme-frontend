@@ -54,7 +54,8 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase {
       new DataRequiredActionImpl,
       FakeUserAnswersService,
       countryOptions,
-      new FakeNavigator(onwardRoute)
+      new FakeNavigator(onwardRoute),
+      new AllowChangeHelperImpl
     )
 
   "CheckYourAnswersController" when {
