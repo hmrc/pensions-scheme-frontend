@@ -44,7 +44,8 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
                                            requiredData: DataRequiredAction,
                                            userAnswersService: UserAnswersService,
                                            @EstablisherPartnership navigator: Navigator,
-                                           implicit val countryOptions: CountryOptions
+                                           implicit val countryOptions: CountryOptions,
+                                           allowChangeHelper: AllowChangeHelper
                                           )(implicit val ec: ExecutionContext) extends FrontendController
   with Retrievals with I18nSupport with Enumerable.Implicits {
 
@@ -80,8 +81,8 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
         routes.CheckYourAnswersController.onSubmit(mode, index, srn),
         existingSchemeName,
         mode = mode,
-        hideEditLinks = request.viewOnly || !userAnswers.get(IsEstablisherNewId(index)).getOrElse(true),
-        hideSaveAndContinueButton = request.viewOnly || !userAnswers.get(IsEstablisherNewId(index)).getOrElse(true)
+        hideEditLinks = allowChangeHelper.hideChangeLinks(request, IsEstablisherNewId(index)),
+        hideSaveAndContinueButton = allowChangeHelper.hideSaveAndContinueButton(request, IsEstablisherNewId(index), mode)
       )))
   }
 

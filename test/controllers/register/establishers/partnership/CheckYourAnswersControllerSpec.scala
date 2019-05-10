@@ -18,6 +18,7 @@ package controllers.register.establishers.partnership
 
 import controllers.ControllerSpecBase
 import controllers.actions.{DataRequiredActionImpl, DataRetrievalAction, FakeAuthAction}
+import controllers.behaviours.ControllerAllowChangeBehaviour
 import identifiers.register.establishers.partnership._
 import models.AddressYears.UnderAYear
 import models._
@@ -30,7 +31,7 @@ import utils.checkyouranswers.Ops._
 import viewmodels.AnswerSection
 import views.html.check_your_answers
 
-class CheckYourAnswersControllerSpec extends ControllerSpecBase {
+class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerAllowChangeBehaviour {
 
   val firstIndex = Index(0)
   val partnershipName = "PartnershipName"
@@ -51,7 +52,8 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase {
   implicit val countryOptions = new FakeCountryOptions()
   private val onwardRoute = routes.AddPartnersController.onPageLoad(NormalMode, firstIndex, None)
 
-  private def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): CheckYourAnswersController =
+  private def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData,
+                         allowChangeHelper:AllowChangeHelper = ach): CheckYourAnswersController =
     new CheckYourAnswersController(
       frontendAppConfig,
       messagesApi,
@@ -60,7 +62,8 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase {
       new DataRequiredActionImpl,
       FakeUserAnswersService,
       new FakeNavigator(onwardRoute),
-      countryOptions
+      countryOptions,
+      allowChangeHelper
     )
 
   "CheckYourAnswersController" must {
@@ -102,6 +105,11 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase {
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString
     }
+
+    behave like changeableController(
+      controller(partnershipAnswers.dataRetrievalAction, _:AllowChangeHelper)
+        .onPageLoad(NormalMode, firstIndex, None)(request)
+    )
 
     "redirect to Add Partners page on submit" which {
       "marks partnership as complete on submit" in {
