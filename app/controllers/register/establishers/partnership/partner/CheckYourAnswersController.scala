@@ -85,8 +85,6 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
         mode = mode,
         hideEditLinks = request.viewOnly,
         hideSaveAndContinueButton = allowChangeHelper.hideSaveAndContinueButton(request, IsNewPartnerId(establisherIndex, partnerIndex), mode)
-//        hideEditLinks = request.viewOnly,
-//        hideSaveAndContinueButton = request.viewOnly
       )))
 
   }
