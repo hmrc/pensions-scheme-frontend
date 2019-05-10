@@ -65,12 +65,13 @@ class HsTaskListHelperVariations(answers: UserAnswers, viewOnly: Boolean, srn: O
 
   private def listOfSectionNameAsLink(sections: Seq[Entity[_]]): Seq[SchemeDetailsTaskListSection] = {
     val notDeletedElements = for ((section, index) <- sections.zipWithIndex) yield {
+
       if (section.isDeleted) None else {
         Some(SchemeDetailsTaskListSection(
-          Some(section.isCompleted),
-          Link(messages("messages__schemeTaskList__persons_details__link_text", section.name),
-            linkTarget(section, index, UpdateMode, srn)),
-          None)
+            Some(section.isCompleted),
+            Link(messages("messages__schemeTaskList__persons_details__link_text", section.name),
+                linkTarget(section, index, UpdateMode, srn)),
+            None)
         )
       }
     }
@@ -80,8 +81,9 @@ class HsTaskListHelperVariations(answers: UserAnswers, viewOnly: Boolean, srn: O
   protected[utils] def establishers(userAnswers: UserAnswers): Seq[SchemeDetailsTaskListSection] =
     listOfSectionNameAsLink(userAnswers.allEstablishers)
 
-  protected[utils] def trustees(userAnswers: UserAnswers): Seq[SchemeDetailsTaskListSection] =
+  protected[utils] def trustees(userAnswers: UserAnswers): Seq[SchemeDetailsTaskListSection] = {
     listOfSectionNameAsLink(userAnswers.allTrustees)
+  }
 
   override def declarationEnabled(userAnswers: UserAnswers): Boolean = {
     val isTrusteeOptional = userAnswers.get(HaveAnyTrusteesId).contains(false)

@@ -40,12 +40,8 @@ class EstablishersPartnerNavigator @Inject()(val dataCacheConnector: UserAnswers
       case CheckMode | NormalMode =>
         checkYourAnswers(establisherIndex, partnerIndex, journeyMode(mode), srn)
       case _ =>
-        answers.get(IsNewPartnerId(establisherIndex, partnerIndex)) match {
-          case Some(true) =>
-            checkYourAnswers(establisherIndex, partnerIndex, journeyMode(mode), srn)
-          case _ =>
-            anyMoreChanges(srn)
-        }
+        if(answers.get(IsPartnerCompleteId(establisherIndex, partnerIndex)).getOrElse(false)) anyMoreChanges(srn)
+        else checkYourAnswers(establisherIndex, partnerIndex, journeyMode(mode), srn)
     }
 
   protected def normalRoutes(from: NavigateFrom, mode: Mode, srn: Option[String]): Option[NavigateTo] = from.id match {

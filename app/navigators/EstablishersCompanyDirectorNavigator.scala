@@ -41,12 +41,9 @@ class EstablishersCompanyDirectorNavigator @Inject()(val dataCacheConnector: Use
       case CheckMode | NormalMode =>
         checkYourAnswers(establisherIndex, directorIndex, journeyMode(mode), srn)
       case _ =>
-        answers.get(IsNewDirectorId(establisherIndex, directorIndex)) match {
-          case Some(true) =>
-            checkYourAnswers(establisherIndex, directorIndex, journeyMode(mode), srn)
-          case _ =>
-            anyMoreChanges(srn)
-        }
+        if(answers.get(IsNewDirectorId(establisherIndex, directorIndex)).getOrElse(false) &&
+          answers.get(IsDirectorCompleteId(establisherIndex, directorIndex)).getOrElse(false)) anyMoreChanges(srn)
+        else checkYourAnswers(establisherIndex, directorIndex, journeyMode(mode), srn)
     }
 
   protected def normalRoutes(from: NavigateFrom, mode: Mode, srn: Option[String]): Option[NavigateTo] =
@@ -74,7 +71,7 @@ class EstablishersCompanyDirectorNavigator @Inject()(val dataCacheConnector: Use
     from.id match {
       case DirectorDetailsId(establisherIndex, directorIndex) =>
         exitMiniJourney(establisherIndex, directorIndex, mode, srn, from.userAnswers)
-      case DirectorNinoId(establisherIndex, directorIndex) =>
+      case DirectorNinoId(establisherIndex, directorIndex)  =>
         exitMiniJourney(establisherIndex, directorIndex, mode, srn, from.userAnswers)
       case DirectorUniqueTaxReferenceId(establisherIndex, directorIndex) =>
         exitMiniJourney(establisherIndex, directorIndex, mode, srn, from.userAnswers)

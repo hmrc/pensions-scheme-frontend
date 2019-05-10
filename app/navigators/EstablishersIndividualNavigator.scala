@@ -19,6 +19,7 @@ package navigators
 import com.google.inject.{Inject, Singleton}
 import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
+import identifiers.register.establishers.{IsEstablisherCompleteId, IsEstablisherNewId}
 import identifiers.register.establishers.IsEstablisherNewId
 import identifiers.register.establishers.individual._
 import models.{AddressYears, CheckMode, CheckUpdateMode, Index, Mode, NormalMode, UpdateMode}
@@ -101,11 +102,12 @@ class EstablishersIndividualNavigator @Inject()(
     }
   }
 
-  private def exitMiniJourney(index: Index, mode: Mode, srn: Option[String]): Option[NavigateTo] =
-    if (mode == CheckMode || mode == NormalMode) {
+  private def exitMiniJourney(index: Index, mode: Mode, srn: Option[String], answers: UserAnswers): Option[NavigateTo] =
+    if(mode == CheckMode || mode == NormalMode){
       checkYourAnswers(index, journeyMode(mode), srn)
     } else {
-      anyMoreChanges(srn)
+      if(answers.get(IsEstablisherCompleteId(index)).getOrElse(false)) anyMoreChanges(srn)
+      else checkYourAnswers(index, journeyMode(mode), srn)
     }
 
   private def addressYearsEditRoutes(index: Int, mode: Mode, srn: Option[String])(answers: UserAnswers): Option[NavigateTo] = {
@@ -113,7 +115,7 @@ class EstablishersIndividualNavigator @Inject()(
       case Some(AddressYears.UnderAYear) =>
         NavigateTo.dontSave(controllers.register.establishers.individual.routes.PreviousAddressPostCodeLookupController.onPageLoad(mode, index, srn))
       case Some(AddressYears.OverAYear) =>
-        exitMiniJourney(index, mode, srn)
+        exitMiniJourney(index, mode, srn, answers)
       case None =>
         NavigateTo.dontSave(controllers.routes.SessionExpiredController.onPageLoad())
     }
@@ -121,9 +123,9 @@ class EstablishersIndividualNavigator @Inject()(
 
   protected def editRoutes(from: NavigateFrom, mode: Mode, srn: Option[String]): Option[NavigateTo] = {
     from.id match {
-      case EstablisherDetailsId(index) => exitMiniJourney(index, mode, srn)
-      case EstablisherNinoId(index) => exitMiniJourney(index, mode, srn)
-      case UniqueTaxReferenceId(index) => exitMiniJourney(index, mode, srn)
+      case EstablisherDetailsId(index) =>       exitMiniJourney(index, mode, srn, from.userAnswers)
+      case EstablisherNinoId(index) =>          exitMiniJourney(index, mode, srn, from.userAnswers)
+      case UniqueTaxReferenceId(index) =>       exitMiniJourney(index, mode, srn, from.userAnswers)
 
       case PostCodeLookupId(index) =>
         NavigateTo.dontSave(controllers.register.establishers.individual.routes.AddressListController.onPageLoad(mode, index, srn))
@@ -148,8 +150,8 @@ class EstablishersIndividualNavigator @Inject()(
       case PreviousAddressListId(index) =>
         NavigateTo.dontSave(controllers.register.establishers.individual.routes.PreviousAddressController.onPageLoad(mode, index, srn))
 
-      case PreviousAddressId(index) => exitMiniJourney(index, mode, srn)
-      case ContactDetailsId(index) => exitMiniJourney(index, mode, srn)
+      case PreviousAddressId(index) =>          exitMiniJourney(index, mode, srn, from.userAnswers)
+      case ContactDetailsId(index) =>           exitMiniJourney(index, mode, srn, from.userAnswers)
     }
   }
 }

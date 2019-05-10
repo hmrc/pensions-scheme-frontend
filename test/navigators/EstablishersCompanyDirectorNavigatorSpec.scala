@@ -82,7 +82,7 @@ object EstablishersCompanyDirectorNavigatorSpec extends OptionValues {
   private val newDirector = UserAnswers(Json.obj()).set(IsNewDirectorId(establisherIndex, directorIndex))(true).asOpt.value
   private def anyMoreChanges = controllers.routes.AnyMoreChangesController.onPageLoad(None)
 
-  private def exitJourney(mode: Mode) = if (mode == NormalMode) checkYourAnswers(mode) else anyMoreChanges
+  private def exitJourney(mode: Mode) = checkYourAnswers(mode)
   
   private def sessionExpired = controllers.routes.SessionExpiredController.onPageLoad()
 
