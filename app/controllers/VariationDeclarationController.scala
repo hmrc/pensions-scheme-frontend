@@ -51,14 +51,14 @@ class VariationDeclarationController @Inject()(
 
   def onPageLoad(srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(UpdateMode, srn) andThen requireData).async {
     implicit request =>
-      Future.successful(Ok(variationDeclaration(appConfig, form, request.userAnswers.get(SchemeNameId), postCall(srn))))
+      Future.successful(Ok(variationDeclaration(appConfig, form, request.userAnswers.get(SchemeNameId), postCall(srn), srn)))
   }
 
   def onSubmit(srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(UpdateMode, srn) andThen requireData).async {
     implicit request =>
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) =>
-          Future.successful(BadRequest(variationDeclaration(appConfig, formWithErrors, request.userAnswers.get(SchemeNameId), postCall(srn)))),
+          Future.successful(BadRequest(variationDeclaration(appConfig, formWithErrors, request.userAnswers.get(SchemeNameId), postCall(srn), srn))),
         _ => {
           srn.flatMap { srnId =>
             request.userAnswers.get(PstrId).map {
