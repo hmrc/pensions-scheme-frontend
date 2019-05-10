@@ -20,20 +20,16 @@ import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions._
 import forms.register.establishers.company.AddCompanyDirectorsFormProvider
-import identifiers.register.establishers.IsEstablisherCompleteId
 import identifiers.register.establishers.company.AddCompanyDirectorsId
-import identifiers.register.establishers.company.director.ConfirmDeleteDirectorId
 import javax.inject.Inject
-import models.{CheckMode, Index, Mode, NormalMode}
-import play.api.Logger
+import models.{Index, Mode}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.libs.json.JsResultException
 import play.api.mvc.{Action, AnyContent, Call}
 import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import utils.Navigator
 import utils.annotations.EstablishersCompany
+import utils.{Navigator, UserAnswers}
 import views.html.register.establishers.company.addCompanyDirectors
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -41,6 +37,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class AddCompanyDirectorsController @Inject()(
                                                appConfig: FrontendAppConfig,
                                                override val messagesApi: MessagesApi,
+                                               userAnswersService: UserAnswersService,
                                                @EstablishersCompany navigator: Navigator,
                                                authenticate: AuthAction,
                                                getData: DataRetrievalAction,
@@ -82,15 +79,8 @@ class AddCompanyDirectorsController @Inject()(
                   )
                 ),
           value =>
-            request.userAnswers.set(AddCompanyDirectorsId(index))(value).fold(
-              errors => {
-                Logger.error("Unable to set user answer", JsResultException(errors))
-                Future.successful(InternalServerError)
-              },
-              userAnswers => {
-                Future.successful(Redirect(navigator.nextPage(AddCompanyDirectorsId(index), mode, userAnswers, srn)))
-              }
-            )
+            userAnswersService.save(mode, srn, AddCompanyDirectorsId(index), value).map(cacheMap =>
+              Redirect(navigator.nextPage(AddCompanyDirectorsId(index), mode, UserAnswers(cacheMap), srn)))
         )
       }
   }

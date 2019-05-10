@@ -31,7 +31,7 @@ import play.api.libs.json.JsResultException
 import play.api.mvc.{Action, AnyContent, Call}
 import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import utils.Navigator
+import utils.{Navigator, UserAnswers}
 import utils.annotations.EstablishersPartner
 import views.html.register.addPartners
 
@@ -40,6 +40,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class AddPartnersController @Inject()(
                                        appConfig: FrontendAppConfig,
                                        override val messagesApi: MessagesApi,
+                                       userAnswersService: UserAnswersService,
                                        @EstablishersPartner navigator: Navigator,
                                        authenticate: AuthAction,
                                        getData: DataRetrievalAction,
@@ -87,14 +88,8 @@ class AddPartnersController @Inject()(
                 )
             },
           value =>
-            request.userAnswers.set(AddPartnersId(index))(value).fold(
-              errors => {
-                Logger.error("Unable to set user answer", JsResultException(errors))
-                Future.successful(InternalServerError)
-              },
-              userAnswers =>
-                Future.successful(Redirect(navigator.nextPage(AddPartnersId(index), mode, userAnswers, srn)))
-            )
+            userAnswersService.save(mode, srn, AddPartnersId(index), value).map(cacheMap =>
+              Redirect(navigator.nextPage(AddPartnersId(index), mode, UserAnswers(cacheMap), srn)))
         )
       }
   }
