@@ -18,6 +18,8 @@ package controllers.register.establishers.company.director
 
 import controllers.ControllerSpecBase
 import controllers.actions._
+import controllers.behaviours.ControllerAllowChangeBehaviour
+import controllers.register.establishers.company.CheckYourAnswersControllerSpec.ach
 import identifiers.register.establishers.company.director._
 import models._
 import models.address.Address
@@ -27,18 +29,19 @@ import org.scalatest.OptionValues
 import play.api.test.Helpers._
 import services.FakeUserAnswersService
 import utils.checkyouranswers.Ops._
-import utils.{FakeCountryOptions, FakeDataRequest, FakeNavigator, FakeSectionComplete, UserAnswers}
+import utils.{AllowChangeHelper, FakeCountryOptions, FakeDataRequest, FakeNavigator, FakeSectionComplete, UserAnswers}
 import viewmodels.AnswerSection
 import views.html.check_your_answers
 
-class CheckYourAnswersControllerSpec extends ControllerSpecBase {
+class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerAllowChangeBehaviour {
 
   import CheckYourAnswersControllerSpec._
 
   implicit val countryOptions = new FakeCountryOptions()
   implicit val request = FakeDataRequest(directorAnswers)
 
-  private def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): CheckYourAnswersController =
+  private def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData,
+                         allowChangeHelper: AllowChangeHelper = ach): CheckYourAnswersController =
     new CheckYourAnswersController(
       frontendAppConfig,
       messagesApi,
@@ -47,7 +50,8 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase {
       new DataRequiredActionImpl,
       FakeUserAnswersService,
       new FakeNavigator(desiredRoute),
-      countryOptions
+      countryOptions,
+      allowChangeHelper
     )
 
   "CheckYourAnswersController" when {
@@ -92,6 +96,11 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase {
         status(result) mustBe OK
         contentAsString(result) mustBe viewAsString
       }
+
+      behave like changeableController(
+        controller(directorAnswers.dataRetrievalAction, _: AllowChangeHelper)
+          .onPageLoad(firstIndex, firstIndex, NormalMode, None)(request)
+      )
     }
 
     "onSubmit" must {
