@@ -22,7 +22,7 @@ import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRequiredA
 import forms.register.PersonDetailsFormProvider
 import identifiers.register.establishers.IsEstablisherCompleteId
 import identifiers.register.establishers.partnership.PartnershipDetailsId
-import identifiers.register.establishers.partnership.partner.PartnerDetailsId
+import identifiers.register.establishers.partnership.partner.{IsNewPartnerId, PartnerDetailsId}
 import javax.inject.Inject
 import models.person.PersonDetails
 import models.{Index, Mode}
@@ -76,8 +76,11 @@ class PartnerDetailsController @Inject()(
                 mode, establisherIndex, partnerIndex, srn)
               Future.successful(BadRequest(partnerDetails(appConfig, formWithErrors, mode, establisherIndex, partnerIndex, existingSchemeName, submitUrl)))
             },
-            value =>
-              userAnswersService.save(mode, srn, PartnerDetailsId(establisherIndex, partnerIndex), value).flatMap {
+            value => {
+              val answers = request.userAnswers.set(IsNewPartnerId(establisherIndex, partnerIndex))(true).flatMap(
+                _.set(PartnerDetailsId(establisherIndex, partnerIndex))(value)).asOpt.getOrElse(request.userAnswers)
+
+              userAnswersService.upsert(mode, srn, answers.json).flatMap {
                 cacheMap =>
                   val userAnswers = UserAnswers(cacheMap)
                   val allPartners = userAnswers.allPartnersAfterDelete(establisherIndex)
@@ -93,6 +96,7 @@ class PartnerDetailsController @Inject()(
                     }
                   }
               }
+            }
           )
         }
     }

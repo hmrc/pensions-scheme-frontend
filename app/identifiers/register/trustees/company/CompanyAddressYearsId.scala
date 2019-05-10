@@ -17,11 +17,12 @@
 package identifiers.register.trustees.company
 
 import identifiers.TypedIdentifier
-import identifiers.register.trustees.{IsTrusteeCompleteId, TrusteesId}
+import identifiers.register.trustees.{IsTrusteeCompleteId, IsTrusteeNewId, TrusteesId}
 import models.AddressYears
 import play.api.libs.json.{JsPath, JsResult}
 import utils.UserAnswers
 import utils.checkyouranswers.{AddressYearsCYA, CheckYourAnswers}
+import viewmodels.AnswerRow
 
 case class CompanyAddressYearsId(index: Int) extends TypedIdentifier[AddressYears] {
   override def path: JsPath = TrusteesId(index).path \ CompanyAddressYearsId.toString
@@ -44,9 +45,19 @@ case class CompanyAddressYearsId(index: Int) extends TypedIdentifier[AddressYear
 object CompanyAddressYearsId {
   override lazy val toString: String = "trusteesCompanyAddressYears"
 
-  implicit val cya: CheckYourAnswers[CompanyAddressYearsId] =
-    AddressYearsCYA(
-      label = "messages__checkYourAnswers__trustees__company__address_years",
-      changeAddressYears = "messages__visuallyhidden__trustee__address_years"
-    )()
+  implicit val cya: CheckYourAnswers[CompanyAddressYearsId] = {
+    val label: String = "messages__checkYourAnswers__trustees__company__address_years"
+    val changeAddressYears: String = "messages__visuallyhidden__trustee__address_years"
+
+    new CheckYourAnswers[CompanyAddressYearsId] {
+      override def row(id: CompanyAddressYearsId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+        AddressYearsCYA(label, changeAddressYears)().row(id)(changeUrl, userAnswers)
+
+      override def updateRow(id: CompanyAddressYearsId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+        userAnswers.get(IsTrusteeNewId(id.index)) match {
+          case Some(true) => AddressYearsCYA(label, changeAddressYears)().row(id)(changeUrl, userAnswers)
+          case _ => AddressYearsCYA(label, changeAddressYears)().updateRow(id)(changeUrl, userAnswers)
+        }
+    }
+  }
 }

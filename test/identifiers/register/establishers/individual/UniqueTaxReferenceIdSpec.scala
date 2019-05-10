@@ -57,7 +57,9 @@ class UniqueTaxReferenceIdSpec extends SpecBase {
       "return answers rows with change links" in {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answersNew, PsaId("A0000000"))
         implicit val userAnswers = request.userAnswers
-        UniqueTaxReferenceId(0).row(onwardUrl, UpdateMode) must equal(Seq(
+        UniqueTaxReferenceId(0).row(onwardUrl, NormalMode) must equal(Seq(
+          AnswerRow("messages__establisher_individual_utr_question_cya_label",List("Yes"),false,
+            Some(Link("site.change",onwardUrl,Some("messages__visuallyhidden__establisher__utr_yes_no")))),
           AnswerRow("messages__establisher_individual_utr_cya_label",List("utr"),false,
             Some(Link("site.change",onwardUrl,Some("messages__visuallyhidden__establisher__utr"))))
         ))

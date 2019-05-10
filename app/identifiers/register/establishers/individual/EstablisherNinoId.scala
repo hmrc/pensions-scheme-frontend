@@ -35,17 +35,21 @@ object EstablisherNinoId {
   override lazy val toString: String = "establisherNino"
 
   val label = "messages__establisher_individual_nino_question_cya_label"
+  val reasonLabel = "messages__establisher_individual_nino_reason_cya_label"
   val changeHasNino = "messages__visuallyhidden__establisher__nino_yes_no"
   val changeNino = "messages__visuallyhidden__establisher__nino"
   val changeNoNino = "messages__visuallyhidden__establisher__nino_no"
 
-  implicit def cya(implicit userAnswers: UserAnswers, messages: Messages): CheckYourAnswers[EstablisherNinoId] = {
+  implicit val cya: CheckYourAnswers[EstablisherNinoId] = {
     new CheckYourAnswers[EstablisherNinoId] {
       override def row(id: EstablisherNinoId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        NinoCYA(label, changeHasNino, changeNino, changeNoNino)().row(id)(changeUrl, userAnswers)
+        NinoCYA(label, reasonLabel, changeHasNino, changeNino, changeNoNino)().row(id)(changeUrl, userAnswers)
 
       override def updateRow(id: EstablisherNinoId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        NinoCYA(label, changeHasNino, changeNino, changeNoNino, userAnswers.get(IsEstablisherNewId(id.index)))().updateRow(id)(changeUrl, userAnswers)
+        userAnswers.get(IsEstablisherNewId(id.index)) match {
+          case Some(true) => NinoCYA(label, reasonLabel, changeHasNino, changeNino, changeNoNino)().row(id)(changeUrl, userAnswers)
+          case _ => NinoCYA(label, reasonLabel, changeHasNino, changeNino, changeNoNino)().updateRow(id)(changeUrl, userAnswers)
+        }
     }
   }
 }

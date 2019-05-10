@@ -21,7 +21,7 @@ import controllers.ControllerSpecBase
 import controllers.actions.{DataRequiredActionImpl, DataRetrievalAction, FakeAllowAccessProvider, FakeAuthAction, FakeDataRetrievalAction}
 import forms.register.PersonDetailsFormProvider
 import identifiers.register.establishers.partnership.PartnershipDetailsId
-import identifiers.register.establishers.partnership.partner.PartnerDetailsId
+import identifiers.register.establishers.partnership.partner.{IsNewPartnerId, PartnerDetailsId}
 import identifiers.register.establishers.{EstablishersId, IsEstablisherCompleteId}
 import models.person.PersonDetails
 import models.{Index, NormalMode, PartnershipDetails}
@@ -108,7 +108,7 @@ class PartnerDetailsControllerSpec extends ControllerSpecBase {
         )
       )
 
-      when(mockUserAnswersService.save(any(), any(), any(), any())(any(), any(), any(), any())).thenReturn(Future.successful(validData))
+      when(mockUserAnswersService.upsert(any(), any(), any())(any(), any(), any())).thenReturn(Future.successful(validData))
 
       val result = controller().onSubmit(NormalMode, firstEstablisherIndex, firstPartnerIndex, None)(postRequest)
       status(result) mustBe SEE_OTHER
@@ -153,32 +153,24 @@ class PartnerDetailsControllerSpec extends ControllerSpecBase {
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
     }
 
-    "set the establisher as not complete when the new partner is being added" in {
-      reset(mockSectionComplete)
-      val validData =
-        Json.obj(
-          EstablishersId.toString -> Json.arr(
-            Json.obj(
-              PartnershipDetailsId.toString -> PartnershipDetails(partnershipName),
-              "partner" -> Json.arr(
-                Json.obj(
-                  PartnerDetailsId.toString ->
-                    PersonDetails("First Name", Some("Middle Name"), "Last Name", new LocalDate(year, month, day))
-                )
-              )
-            )
-          )
+    "save the isNewPartner flag and set the establisher as not complete when the new partner is being added" in {
+      reset(mockSectionComplete, mockUserAnswersService)
+      val validData = UserAnswers().set(PartnershipDetailsId(firstEstablisherIndex))(PartnershipDetails("test company name")).flatMap(
+        _.set(PartnerDetailsId(firstEstablisherIndex, firstPartnerIndex))(
+          PersonDetails("testFirstName", None, "testLastName", new LocalDate(year, month, day))).flatMap(
+          _.set(IsNewPartnerId(firstEstablisherIndex, firstPartnerIndex))(true)
         )
+      ).asOpt.value.json
+
       val getRelevantData = new FakeDataRetrievalAction(Some(validData))
       val userAnswers = UserAnswers(validData)
-      val updatedUserAnswer = userAnswers.set(IsEstablisherCompleteId(0))(false).asOpt.get
-      when(mockUserAnswersService.save(any(), any(), any(), any())(any(), any(), any(), any())).thenReturn(Future.successful(validData))
-      when(mockUserAnswersService.upsert(any(), any(),eqTo(updatedUserAnswer.json))(any(), any(), any())).thenReturn(Future.successful(updatedUserAnswer.json))
+      when(mockUserAnswersService.upsert(any(), any(), any())(any(), any(), any())).thenReturn(Future.successful(validData))
+      when(mockUserAnswersService.setCompleteFlag(any(), any(), eqTo(IsEstablisherCompleteId(0)),
+        eqTo(userAnswers), eqTo(false))(any(), any(), any(), any())).thenReturn(Future.successful(userAnswers))
 
       val result = controller(getRelevantData).onSubmit(NormalMode, firstEstablisherIndex, firstPartnerIndex, None)(postRequest)
       status(result) mustBe SEE_OTHER
-      verify(mockUserAnswersService, times(1))
-        .upsert(any(), any(),eqTo(updatedUserAnswer.json))(any(), any(), any())
+      verify(mockUserAnswersService, times(1)).upsert(eqTo(NormalMode), eqTo(None), eqTo(validData))(any(), any(), any())
     }
   }
 }

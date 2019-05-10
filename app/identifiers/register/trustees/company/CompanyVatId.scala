@@ -33,19 +33,20 @@ case class CompanyVatId(index: Int) extends TypedIdentifier[Vat] {
 object CompanyVatId {
   override def toString: String = "companyVat"
 
-  val labelYesNo = "messages__checkYourAnswers__trustees__company__vat"
-  val hiddenLabelYesNo = "messages__visuallyhidden__trustee__vat_yes_no"
-  val hiddenLabelVat = "messages__visuallyhidden__trustee__vat_number"
-
-  implicit def cya(implicit userAnswers: UserAnswers, messages: Messages): CheckYourAnswers[CompanyVatId] = {
+  implicit val cya: CheckYourAnswers[CompanyVatId] = {
     new CheckYourAnswers[CompanyVatId] {
+      val labelYesNo = "messages__checkYourAnswers__trustees__company__vat"
+      val hiddenLabelYesNo = "messages__visuallyhidden__trustee__vat_yes_no"
+      val hiddenLabelVat = "messages__visuallyhidden__trustee__vat_number"
 
       override def row(id: CompanyVatId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
         VatCYA(Some(labelYesNo), hiddenLabelYesNo, hiddenLabelVat)().row(id)(changeUrl, userAnswers)
 
       override def updateRow(id: CompanyVatId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        VatCYA(Some(labelYesNo), hiddenLabelYesNo, hiddenLabelVat, isNew = userAnswers.get(IsTrusteeNewId(id.index)))()
-          .updateRow(id)(changeUrl, userAnswers)
+        userAnswers.get(IsTrusteeNewId(id.index)) match {
+          case Some(true) => VatCYA(Some(labelYesNo), hiddenLabelYesNo, hiddenLabelVat)().row(id)(changeUrl, userAnswers)
+          case _ => VatCYA(Some(labelYesNo), hiddenLabelYesNo, hiddenLabelVat)().updateRow(id)(changeUrl, userAnswers)
+        }
     }
   }
 }

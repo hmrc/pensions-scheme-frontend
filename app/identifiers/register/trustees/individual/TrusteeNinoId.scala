@@ -33,18 +33,22 @@ object TrusteeNinoId {
 
   override def toString: String = "trusteeNino"
 
-  val label = "messages__trusteeNino_question_cya_label"
-  val changeHasNino = "messages__visuallyhidden__trustee__nino_yes_no"
-  val changeNino = "messages__visuallyhidden__trustee__nino"
-  val changeNoNino = "messages__visuallyhidden__trustee__nino_no"
-
-  implicit def cya(implicit userAnswers: UserAnswers, messages: Messages): CheckYourAnswers[TrusteeNinoId] = {
+  implicit val cya: CheckYourAnswers[TrusteeNinoId] = {
     new CheckYourAnswers[TrusteeNinoId] {
+      val label = "messages__trusteeNino_question_cya_label"
+      val reasonLabel = "messages__trustee_individual_nino_reason_cya_label"
+      val changeHasNino = "messages__visuallyhidden__trustee__nino_yes_no"
+      val changeNino = "messages__visuallyhidden__trustee__nino"
+      val changeNoNino = "messages__visuallyhidden__trustee__nino_no"
+
       override def row(id: TrusteeNinoId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        NinoCYA(label, changeHasNino, changeNino, changeNoNino)().row(id)(changeUrl, userAnswers)
+        NinoCYA(label, reasonLabel, changeHasNino, changeNino, changeNoNino)().row(id)(changeUrl, userAnswers)
 
       override def updateRow(id: TrusteeNinoId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        NinoCYA(label, changeHasNino, changeNino, changeNoNino, userAnswers.get(IsTrusteeNewId(id.index)))().updateRow(id)(changeUrl, userAnswers)
+        userAnswers.get(IsTrusteeNewId(id.index)) match {
+          case Some(true) => NinoCYA(label, reasonLabel, changeHasNino, changeNino, changeNoNino)().row(id)(changeUrl, userAnswers)
+          case _ => NinoCYA(label, reasonLabel, changeHasNino, changeNino, changeNoNino)().updateRow(id)(changeUrl, userAnswers)
+        }
     }
   }
 }

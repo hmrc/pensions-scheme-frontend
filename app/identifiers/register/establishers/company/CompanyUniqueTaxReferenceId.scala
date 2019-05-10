@@ -39,15 +39,17 @@ object CompanyUniqueTaxReferenceId {
   val changeUtr = "messages__visuallyhidden__establisher__utr"
   val changeNoUtr = "messages__visuallyhidden__establisher__utr_no"
 
-  implicit def cya(implicit userAnswers: UserAnswers, messages: Messages): CheckYourAnswers[CompanyUniqueTaxReferenceId] = {
+  implicit def cya(implicit messages: Messages): CheckYourAnswers[CompanyUniqueTaxReferenceId] = {
 
     new CheckYourAnswers[CompanyUniqueTaxReferenceId] {
       override def row(id: CompanyUniqueTaxReferenceId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
         UniqueTaxReferenceCYA(label, utrLabel, reasonLabel, changeHasUtr, changeUtr, changeNoUtr)().row(id)(changeUrl, userAnswers)
 
       override def updateRow(id: CompanyUniqueTaxReferenceId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        UniqueTaxReferenceCYA(label, utrLabel, reasonLabel, changeHasUtr, changeUtr, changeNoUtr, userAnswers.get(IsEstablisherNewId(id.index)))()
-          .updateRow(id)(changeUrl, userAnswers)
+        userAnswers.get(IsEstablisherNewId(id.index)) match {
+          case Some(true) => UniqueTaxReferenceCYA(label, utrLabel, reasonLabel, changeHasUtr, changeUtr, changeNoUtr)().row(id)(changeUrl, userAnswers)
+          case _ => UniqueTaxReferenceCYA(label, utrLabel, reasonLabel, changeHasUtr, changeUtr, changeNoUtr)().updateRow(id)(changeUrl, userAnswers)
+        }
     }
   }
 }

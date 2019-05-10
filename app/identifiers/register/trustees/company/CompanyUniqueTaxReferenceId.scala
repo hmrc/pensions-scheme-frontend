@@ -32,14 +32,13 @@ case class CompanyUniqueTaxReferenceId(index: Int) extends TypedIdentifier[Uniqu
 object CompanyUniqueTaxReferenceId {
   override def toString: String = "companyUniqueTaxReference"
 
-  val label = "messages__checkYourAnswers__trustees__company__utr"
-  val utrLabel = "messages__company__cya__utr"
-  val reasonLabel = "messages__company__cya__utr_no_reason"
-  val changeHasUtr = "messages__visuallyhidden__trustee__utr_yes_no"
-  val changeUtr = "messages__visuallyhidden__trustee__utr"
-  val changeNoUtr = "messages__visuallyhidden__trustee__utr_no"
-
-  implicit def cya(implicit userAnswers: UserAnswers, messages: Messages): CheckYourAnswers[CompanyUniqueTaxReferenceId] = {
+  implicit val cya: CheckYourAnswers[CompanyUniqueTaxReferenceId] = {
+    val label = "messages__checkYourAnswers__trustees__company__utr"
+    val utrLabel = "messages__company__cya__utr"
+    val reasonLabel = "messages__checkYourAnswers__trustees__company__utr_no_reason"
+    val changeHasUtr = "messages__visuallyhidden__trustee__utr_yes_no"
+    val changeUtr = "messages__visuallyhidden__trustee__utr"
+    val changeNoUtr = "messages__visuallyhidden__trustee__utr_no"
 
     new CheckYourAnswers[CompanyUniqueTaxReferenceId] {
       override def row(id: CompanyUniqueTaxReferenceId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
@@ -47,8 +46,10 @@ object CompanyUniqueTaxReferenceId {
       }
 
       override def updateRow(id: CompanyUniqueTaxReferenceId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        UniqueTaxReferenceCYA(label, utrLabel, reasonLabel, changeHasUtr, changeUtr, changeNoUtr, userAnswers.get(IsTrusteeNewId(id.index)))()
-          .updateRow(id)(changeUrl, userAnswers)
+        userAnswers.get(IsTrusteeNewId(id.index)) match {
+          case Some(true) => UniqueTaxReferenceCYA(label, utrLabel, reasonLabel, changeHasUtr, changeUtr, changeNoUtr)().row(id)(changeUrl, userAnswers)
+          case _ => UniqueTaxReferenceCYA(label, utrLabel, reasonLabel, changeHasUtr, changeUtr, changeNoUtr)().updateRow(id)(changeUrl, userAnswers)
+        }
     }
   }
 }

@@ -30,7 +30,7 @@ import utils.{Navigator, UserAnswers}
 class EstablishersPartnerNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector, appConfig: FrontendAppConfig) extends Navigator {
   //scalastyle:off cyclomatic.complexity
   private def checkYourAnswers(establisherIndex: Int, partnerIndex: Int, mode: Mode, srn: Option[String]): Option[NavigateTo] =
-    NavigateTo.save(routes.CheckYourAnswersController.onPageLoad(mode, establisherIndex, partnerIndex, srn))
+    NavigateTo.dontSave(routes.CheckYourAnswersController.onPageLoad(mode, establisherIndex, partnerIndex, srn))
 
   private def anyMoreChanges(srn: Option[String]): Option[NavigateTo] =
     NavigateTo.dontSave(controllers.routes.AnyMoreChangesController.onPageLoad(srn))
@@ -47,25 +47,25 @@ class EstablishersPartnerNavigator @Inject()(val dataCacheConnector: UserAnswers
     case AddPartnersId(establisherIndex) =>
       addPartnerRoutes(mode, establisherIndex, from.userAnswers, srn)
     case PartnerDetailsId(establisherIndex, partnerIndex) =>
-      NavigateTo.save(routes.PartnerNinoController.onPageLoad(mode, establisherIndex, partnerIndex, srn))
+      NavigateTo.dontSave(routes.PartnerNinoController.onPageLoad(mode, establisherIndex, partnerIndex, srn))
     case PartnerNinoId(establisherIndex, partnerIndex) =>
-      NavigateTo.save(routes.PartnerUniqueTaxReferenceController.onPageLoad(mode, establisherIndex, partnerIndex, srn))
+      NavigateTo.dontSave(routes.PartnerUniqueTaxReferenceController.onPageLoad(mode, establisherIndex, partnerIndex, srn))
     case PartnerUniqueTaxReferenceId(establisherIndex, partnerIndex) =>
-      NavigateTo.save(routes.PartnerAddressPostcodeLookupController.onPageLoad(mode, establisherIndex, partnerIndex, srn))
+      NavigateTo.dontSave(routes.PartnerAddressPostcodeLookupController.onPageLoad(mode, establisherIndex, partnerIndex, srn))
     case PartnerAddressPostcodeLookupId(establisherIndex, partnerIndex) =>
-      NavigateTo.save(routes.PartnerAddressListController.onPageLoad(mode, establisherIndex, partnerIndex, srn))
+      NavigateTo.dontSave(routes.PartnerAddressListController.onPageLoad(mode, establisherIndex, partnerIndex, srn))
     case PartnerAddressListId(establisherIndex, partnerIndex) =>
-      NavigateTo.save(routes.PartnerAddressController.onPageLoad(mode, establisherIndex, partnerIndex, srn))
+      NavigateTo.dontSave(routes.PartnerAddressController.onPageLoad(mode, establisherIndex, partnerIndex, srn))
     case PartnerAddressId(establisherIndex, partnerIndex) =>
-      NavigateTo.save(routes.PartnerAddressYearsController.onPageLoad(mode, establisherIndex, partnerIndex, srn))
+      NavigateTo.dontSave(routes.PartnerAddressYearsController.onPageLoad(mode, establisherIndex, partnerIndex, srn))
     case PartnerAddressYearsId(establisherIndex, partnerIndex) =>
       addressYearsRoutes(establisherIndex, partnerIndex, mode, srn)(from.userAnswers)
     case PartnerPreviousAddressPostcodeLookupId(establisherIndex, partnerIndex) =>
-      NavigateTo.save(routes.PartnerPreviousAddressListController.onPageLoad(mode, establisherIndex, partnerIndex, srn))
+      NavigateTo.dontSave(routes.PartnerPreviousAddressListController.onPageLoad(mode, establisherIndex, partnerIndex, srn))
     case PartnerPreviousAddressListId(establisherIndex, partnerIndex) =>
-      NavigateTo.save(routes.PartnerPreviousAddressController.onPageLoad(mode, establisherIndex, partnerIndex, srn))
+      NavigateTo.dontSave(routes.PartnerPreviousAddressController.onPageLoad(mode, establisherIndex, partnerIndex, srn))
     case PartnerPreviousAddressId(establisherIndex, partnerIndex) =>
-      NavigateTo.save(routes.PartnerContactDetailsController.onPageLoad(mode, establisherIndex, partnerIndex, srn))
+      NavigateTo.dontSave(routes.PartnerContactDetailsController.onPageLoad(mode, establisherIndex, partnerIndex, srn))
     case PartnerContactDetailsId(establisherIndex, partnerIndex) =>
       checkYourAnswers(establisherIndex, partnerIndex, mode, srn)
     case ConfirmDeletePartnerId(establisherIndex) =>
@@ -91,17 +91,17 @@ class EstablishersPartnerNavigator @Inject()(val dataCacheConnector: UserAnswers
     case PartnerUniqueTaxReferenceId(establisherIndex, partnerIndex) =>
       exitMiniJourney(establisherIndex, partnerIndex, mode, srn)
     case PartnerAddressPostcodeLookupId(establisherIndex, partnerIndex) =>
-      NavigateTo.save(routes.PartnerAddressListController.onPageLoad(mode, establisherIndex, partnerIndex, srn))
+      NavigateTo.dontSave(routes.PartnerAddressListController.onPageLoad(mode, establisherIndex, partnerIndex, srn))
     case PartnerAddressListId(establisherIndex, partnerIndex) =>
-      NavigateTo.save(routes.PartnerAddressController.onPageLoad(mode, establisherIndex, partnerIndex, srn))
+      NavigateTo.dontSave(routes.PartnerAddressController.onPageLoad(mode, establisherIndex, partnerIndex, srn))
     case PartnerAddressId(establisherIndex, partnerIndex) =>
       exitMiniJourney(establisherIndex, partnerIndex, mode, srn)
     case PartnerAddressYearsId(establisherIndex, partnerIndex) =>
       addressYearsEditRoutes(establisherIndex, partnerIndex, mode, srn)(from.userAnswers)
     case PartnerPreviousAddressPostcodeLookupId(establisherIndex, partnerIndex) =>
-      NavigateTo.save(routes.PartnerPreviousAddressListController.onPageLoad(mode, establisherIndex, partnerIndex, srn))
+      NavigateTo.dontSave(routes.PartnerPreviousAddressListController.onPageLoad(mode, establisherIndex, partnerIndex, srn))
     case PartnerPreviousAddressListId(establisherIndex, partnerIndex) =>
-      NavigateTo.save(routes.PartnerPreviousAddressController.onPageLoad(mode, establisherIndex, partnerIndex, srn))
+      NavigateTo.dontSave(routes.PartnerPreviousAddressController.onPageLoad(mode, establisherIndex, partnerIndex, srn))
     case PartnerPreviousAddressId(establisherIndex, partnerIndex) =>
       exitMiniJourney(establisherIndex, partnerIndex, mode, srn)
     case PartnerContactDetailsId(establisherIndex, partnerIndex) =>
@@ -120,9 +120,9 @@ class EstablishersPartnerNavigator @Inject()(val dataCacheConnector: UserAnswers
   private def addressYearsRoutes(establisherIndex: Int, partnerIndex: Int, mode: Mode, srn: Option[String])(answers: UserAnswers): Option[NavigateTo] = {
     answers.get(PartnerAddressYearsId(establisherIndex, partnerIndex)) match {
       case Some(AddressYears.UnderAYear) =>
-        NavigateTo.save(routes.PartnerPreviousAddressPostcodeLookupController.onPageLoad(mode, establisherIndex, partnerIndex, srn))
+        NavigateTo.dontSave(routes.PartnerPreviousAddressPostcodeLookupController.onPageLoad(mode, establisherIndex, partnerIndex, srn))
       case Some(AddressYears.OverAYear) =>
-        NavigateTo.save(routes.PartnerContactDetailsController.onPageLoad(mode, establisherIndex, partnerIndex, srn))
+        NavigateTo.dontSave(routes.PartnerContactDetailsController.onPageLoad(mode, establisherIndex, partnerIndex, srn))
       case None =>
         NavigateTo.dontSave(controllers.routes.SessionExpiredController.onPageLoad())
     }
@@ -131,7 +131,7 @@ class EstablishersPartnerNavigator @Inject()(val dataCacheConnector: UserAnswers
   private def addressYearsEditRoutes(establisherIndex: Int, partnerIndex: Int, mode: Mode, srn: Option[String])(answers: UserAnswers): Option[NavigateTo] = {
     answers.get(PartnerAddressYearsId(establisherIndex, partnerIndex)) match {
       case Some(AddressYears.UnderAYear) =>
-        NavigateTo.save(routes.PartnerPreviousAddressPostcodeLookupController.onPageLoad(mode, establisherIndex, partnerIndex, srn))
+        NavigateTo.dontSave(routes.PartnerPreviousAddressPostcodeLookupController.onPageLoad(mode, establisherIndex, partnerIndex, srn))
       case Some(AddressYears.OverAYear) =>
         exitMiniJourney(establisherIndex, partnerIndex, mode, srn)
       case None =>
@@ -143,40 +143,40 @@ class EstablishersPartnerNavigator @Inject()(val dataCacheConnector: UserAnswers
     val partners = answers.allPartnersAfterDelete(index)
 
     if (partners.isEmpty) {
-      NavigateTo.save(controllers.register.establishers.partnership.partner.routes.PartnerDetailsController.onPageLoad(
+      NavigateTo.dontSave(controllers.register.establishers.partnership.partner.routes.PartnerDetailsController.onPageLoad(
         mode, index, answers.allPartners(index).size, srn))
     }
     else if (partners.lengthCompare(appConfig.maxPartners) < 0) {
       answers.get(AddPartnersId(index)) match {
         case Some(true) =>
-          NavigateTo.save(controllers.register.establishers.partnership.partner.routes.PartnerDetailsController.onPageLoad(mode,
+          NavigateTo.dontSave(controllers.register.establishers.partnership.partner.routes.PartnerDetailsController.onPageLoad(mode,
             index, answers.allPartners(index).size, srn))
         case Some(false) => mode match {
           case CheckMode | NormalMode =>
-            NavigateTo.save(controllers.register.establishers.partnership.routes.PartnershipReviewController.onPageLoad(mode, index, srn))
+            NavigateTo.dontSave(controllers.register.establishers.partnership.routes.PartnershipReviewController.onPageLoad(mode, index, srn))
           case _ =>
             answers.get(IsEstablisherNewId(index)) match {
               case Some(true) =>
                 anyMoreChanges(srn)
               case _ =>
-                NavigateTo.save(controllers.register.establishers.partnership.routes.PartnershipReviewController.onPageLoad(mode, index, srn))
+                NavigateTo.dontSave(controllers.register.establishers.partnership.routes.PartnershipReviewController.onPageLoad(mode, index, srn))
             }
         }
         case _ => NavigateTo.dontSave(controllers.routes.SessionExpiredController.onPageLoad())
       }
     }
     else {
-      NavigateTo.save(controllers.register.establishers.partnership.routes.OtherPartnersController.onPageLoad(mode, index, srn))
+      NavigateTo.dontSave(controllers.register.establishers.partnership.routes.OtherPartnersController.onPageLoad(mode, index, srn))
     }
   }
 
   private def listOrAnyMoreChange(establisherIndex: Int, mode: Mode, srn: Option[String])(answers: UserAnswers): Option[NavigateTo] = {
     mode match {
       case CheckMode | NormalMode =>
-        NavigateTo.save(controllers.register.establishers.partnership.routes.AddPartnersController.onPageLoad(mode, establisherIndex, srn))
+        NavigateTo.dontSave(controllers.register.establishers.partnership.routes.AddPartnersController.onPageLoad(mode, establisherIndex, srn))
       case _ => answers.get(IsEstablisherNewId(establisherIndex)) match {
         case Some(true) =>
-          NavigateTo.save(controllers.register.establishers.partnership.routes.AddPartnersController.onPageLoad(mode, establisherIndex, srn))
+          NavigateTo.dontSave(controllers.register.establishers.partnership.routes.AddPartnersController.onPageLoad(mode, establisherIndex, srn))
         case _ =>
           anyMoreChanges(srn)
       }
