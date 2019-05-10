@@ -18,6 +18,7 @@ package controllers.register.establishers.partnership.partner
 
 import controllers.ControllerSpecBase
 import controllers.actions.{DataRequiredActionImpl, DataRetrievalAction, FakeAuthAction}
+import controllers.behaviours.ControllerAllowChangeBehaviour
 import identifiers.register.establishers.partnership.partner._
 import models.address.Address
 import models.person.PersonDetails
@@ -31,14 +32,15 @@ import utils.{FakeCountryOptions, FakeDataRequest, FakeNavigator, UserAnswers, _
 import viewmodels.AnswerSection
 import views.html.check_your_answers
 
-class CheckYourAnswersControllerSpec extends ControllerSpecBase {
+class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerAllowChangeBehaviour {
 
   import CheckYourAnswersControllerSpec._
 
   implicit val countryOptions = new FakeCountryOptions()
   implicit val request = FakeDataRequest(partnerAnswers)
 
-  private def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): CheckYourAnswersController =
+  private def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData,
+                         allowChangeHelper: AllowChangeHelper = ach): CheckYourAnswersController =
     new CheckYourAnswersController(
       frontendAppConfig,
       messagesApi,
@@ -47,7 +49,8 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase {
       new DataRequiredActionImpl,
       FakeUserAnswersService,
       new FakeNavigator(desiredRoute),
-      countryOptions
+      countryOptions,
+      allowChangeHelper
     )
 
   "CheckYourAnswersController" when {
@@ -92,6 +95,11 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase {
         status(result) mustBe OK
         contentAsString(result) mustBe viewAsString
       }
+
+      behave like changeableController(
+        controller(partnerAnswers.dataRetrievalAction, _:AllowChangeHelper)
+          .onPageLoad(NormalMode, firstIndex, firstIndex, None)(request)
+      )
     }
 
     "onSubmit" must {
