@@ -65,9 +65,6 @@ class HsTaskListHelperVariations(answers: UserAnswers, viewOnly: Boolean, srn: O
 
   private def listOfSectionNameAsLink(sections: Seq[Entity[_]]): Seq[SchemeDetailsTaskListSection] = {
     val notDeletedElements = for ((section, index) <- sections.zipWithIndex) yield {
-
-      println("\nisDeleted"+section.isDeleted)
-
       if (section.isDeleted) None else {
         Some(SchemeDetailsTaskListSection(
             Some(section.isCompleted),
@@ -77,8 +74,6 @@ class HsTaskListHelperVariations(answers: UserAnswers, viewOnly: Boolean, srn: O
         )
       }
     }
-    println("\n notDeletedElements"+notDeletedElements)
-    println("\n\n\n")
     notDeletedElements.flatten
   }
 
