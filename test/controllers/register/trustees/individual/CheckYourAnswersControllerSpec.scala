@@ -18,6 +18,8 @@ package controllers.register.trustees.individual
 
 import controllers.ControllerSpecBase
 import controllers.actions.{DataRequiredActionImpl, DataRetrievalAction, FakeAuthAction}
+import controllers.behaviours.ControllerAllowChangeBehaviour
+import controllers.register.trustees.company.CheckYourAnswersControllerSpec.ach
 import identifiers.register.trustees.IsTrusteeCompleteId
 import models.{CheckMode, Index, Link, NormalMode}
 import org.joda.time.LocalDate
@@ -28,7 +30,7 @@ import utils._
 import viewmodels.{AnswerRow, AnswerSection, Message}
 import views.html.check_your_answers
 
-class CheckYourAnswersControllerSpec extends ControllerSpecBase {
+class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerAllowChangeBehaviour {
 
   import CheckYourAnswersControllerSpec._
 
@@ -53,10 +55,14 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase {
         FakeUserAnswersService.verify(IsTrusteeCompleteId(firstIndex), true)
       }
     }
+
+    behave like changeableController(
+      controller(getMandatoryTrustee, _:AllowChangeHelper).onPageLoad(NormalMode, firstIndex, None)(fakeRequest)
+    )
   }
 }
 
-object CheckYourAnswersControllerSpec extends ControllerSpecBase {
+object CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerAllowChangeBehaviour {
   val schemeName = "Test Scheme Name"
   val trusteeName = "Test Trustee Name"
   val firstIndex = Index(0)
@@ -84,7 +90,8 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase {
   )
   val onwardRoute = controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode, None)
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisher): CheckYourAnswersController =
+  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisher,
+                 allowChangeHelper: AllowChangeHelper = ach): CheckYourAnswersController =
     new CheckYourAnswersController(
       frontendAppConfig,
       messagesApi,
@@ -93,7 +100,8 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase {
       dataRetrievalAction,
       new DataRequiredActionImpl,
       FakeUserAnswersService,
-      new FakeCountryOptions
+      new FakeCountryOptions,
+      allowChangeHelper
     )
 
   lazy val viewAsString: String = check_your_answers(
