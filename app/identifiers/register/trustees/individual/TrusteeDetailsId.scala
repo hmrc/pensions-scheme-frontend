@@ -40,14 +40,17 @@ case class TrusteeDetailsId(index: Int) extends TypedIdentifier[PersonDetails] {
 object TrusteeDetailsId {
   override lazy val toString: String = "trusteeDetails"
 
-  implicit def cya(implicit userAnswers: UserAnswers, messages: Messages): CheckYourAnswers[TrusteeDetailsId] = {
+  implicit def cya(implicit messages: Messages): CheckYourAnswers[TrusteeDetailsId] = {
     new CheckYourAnswers[TrusteeDetailsId] {
 
       override def row(id: TrusteeDetailsId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
         PersonalDetailsCYA()().row(id)(changeUrl, userAnswers)
 
       override def updateRow(id: TrusteeDetailsId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        PersonalDetailsCYA(userAnswers.get(IsTrusteeNewId(id.index)))().updateRow(id)(changeUrl, userAnswers)
+        userAnswers.get(IsTrusteeNewId(id.index)) match {
+          case Some(true) => PersonalDetailsCYA()().row(id)(changeUrl, userAnswers)
+          case _ => PersonalDetailsCYA()().updateRow(id)(changeUrl, userAnswers)
+        }
     }
   }
 }

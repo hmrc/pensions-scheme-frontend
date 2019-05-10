@@ -32,14 +32,16 @@ case class UniqueTaxReferenceId(index: Int) extends TypedIdentifier[UniqueTaxRef
 object UniqueTaxReferenceId {
   override def toString: String = "uniqueTaxReference"
 
-  implicit def cya(implicit userAnswers: UserAnswers, messages: Messages): CheckYourAnswers[UniqueTaxReferenceId] = {
+  implicit val cya: CheckYourAnswers[UniqueTaxReferenceId] = {
     new CheckYourAnswers[UniqueTaxReferenceId] {
       override def row(id: UniqueTaxReferenceId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
         UniqueTaxReferenceCYA()().row(id)(changeUrl, userAnswers)
 
       override def updateRow(id: UniqueTaxReferenceId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        UniqueTaxReferenceCYA(isNew = userAnswers.get(IsEstablisherNewId(id.index)))()
-          .updateRow(id)(changeUrl, userAnswers)
+        userAnswers.get(IsEstablisherNewId(id.index)) match {
+          case Some(true) => UniqueTaxReferenceCYA()().row(id)(changeUrl, userAnswers)
+          case _ => UniqueTaxReferenceCYA()().updateRow(id)(changeUrl, userAnswers)
+        }
     }
   }
 }

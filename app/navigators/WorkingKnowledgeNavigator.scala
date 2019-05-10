@@ -28,19 +28,19 @@ class WorkingKnowledgeNavigator @Inject()(val dataCacheConnector: UserAnswersCac
   override protected def routeMap(from: NavigateFrom): Option[NavigateTo] = {
     from.id match {
       case AdviserNameId =>
-        NavigateTo.save(controllers.routes.AdviserEmailAddressController.onPageLoad(NormalMode))
+        NavigateTo.dontSave(controllers.routes.AdviserEmailAddressController.onPageLoad(NormalMode))
       case AdviserEmailId =>
-        NavigateTo.save(controllers.routes.AdviserPhoneController.onPageLoad(NormalMode))
+        NavigateTo.dontSave(controllers.routes.AdviserPhoneController.onPageLoad(NormalMode))
       case AdviserPhoneId =>
-        NavigateTo.save(controllers.routes.AdviserPostCodeLookupController.onPageLoad(NormalMode))
+        NavigateTo.dontSave(controllers.routes.AdviserPostCodeLookupController.onPageLoad(NormalMode))
       case AdviserAddressPostCodeLookupId =>
-        NavigateTo.save(controllers.routes.AdviserAddressListController.onPageLoad(NormalMode))
+        NavigateTo.dontSave(controllers.routes.AdviserAddressListController.onPageLoad(NormalMode))
       case AdviserAddressListId =>
-        NavigateTo.save(controllers.routes.AdviserAddressController.onPageLoad(NormalMode))
+        NavigateTo.dontSave(controllers.routes.AdviserAddressController.onPageLoad(NormalMode))
       case AdviserAddressId =>
-        NavigateTo.save(controllers.routes.AdviserCheckYourAnswersController.onPageLoad())
+        NavigateTo.dontSave(controllers.routes.AdviserCheckYourAnswersController.onPageLoad())
       case AdviserCheckYourAnswersId =>
-        NavigateTo.save(controllers.routes.SchemeTaskListController.onPageLoad(NormalMode, None))
+        NavigateTo.dontSave(controllers.routes.SchemeTaskListController.onPageLoad(NormalMode, None))
       case _ => None
     }
   }
@@ -48,17 +48,17 @@ class WorkingKnowledgeNavigator @Inject()(val dataCacheConnector: UserAnswersCac
   override protected def editRouteMap(from: NavigateFrom): Option[NavigateTo] = {
     from.id match {
       case AdviserNameId =>
-        NavigateTo.save(controllers.routes.AdviserCheckYourAnswersController.onPageLoad())
+        NavigateTo.dontSave(controllers.routes.AdviserCheckYourAnswersController.onPageLoad())
       case AdviserEmailId =>
-        NavigateTo.save(controllers.routes.AdviserCheckYourAnswersController.onPageLoad())
+        NavigateTo.dontSave(controllers.routes.AdviserCheckYourAnswersController.onPageLoad())
       case AdviserPhoneId =>
-        NavigateTo.save(controllers.routes.AdviserCheckYourAnswersController.onPageLoad())
+        NavigateTo.dontSave(controllers.routes.AdviserCheckYourAnswersController.onPageLoad())
       case AdviserAddressPostCodeLookupId =>
-        NavigateTo.save(controllers.routes.AdviserAddressListController.onPageLoad(CheckMode))
+        NavigateTo.dontSave(controllers.routes.AdviserAddressListController.onPageLoad(CheckMode))
       case AdviserAddressListId =>
-        NavigateTo.save(controllers.routes.AdviserAddressController.onPageLoad(CheckMode))
+        NavigateTo.dontSave(controllers.routes.AdviserAddressController.onPageLoad(CheckMode))
       case AdviserAddressId =>
-        NavigateTo.save(controllers.routes.AdviserCheckYourAnswersController.onPageLoad())
+        NavigateTo.dontSave(controllers.routes.AdviserCheckYourAnswersController.onPageLoad())
       case _ => None
     }
   }

@@ -57,9 +57,11 @@ class PartnershipVatIdSpec extends SpecBase {
       "return answers rows with change links" in {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answersNew, PsaId("A0000000"))
         implicit val userAnswers = request.userAnswers
-        PartnershipVatId(0).row(onwardUrl, UpdateMode) must equal(Seq(
-          AnswerRow("messages__common__cya__vat",List("vat"),false,
-            Some(Link("site.change",onwardUrl,Some("messages__visuallyhidden__partnership__vat_number"))))
+        PartnershipVatId(0).row(onwardUrl, NormalMode) must equal(Seq(
+          AnswerRow("messages__partnership__checkYourAnswers__vat",List("site.yes"),true,
+            Some(Link("site.change",onwardUrl,Some("messages__visuallyhidden__partnership__vat_yes_no")))),
+          AnswerRow("messages__common__cya__vat",List("vat"),false,Some(Link("site.change",onwardUrl,
+            Some("messages__visuallyhidden__partnership__vat_number"))))
         ))
       }
     }

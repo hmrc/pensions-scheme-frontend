@@ -17,11 +17,18 @@
 package identifiers.register.establishers.company.director
 
 import identifiers.register.establishers.IsEstablisherCompleteId
-import models.AddressYears
+import models.AddressYears.UnderAYear
+import models.{AddressYears, Link, NormalMode, UpdateMode}
 import models.address.{Address, TolerantAddress}
+import models.requests.DataRequest
 import org.scalatest.{MustMatchers, OptionValues, WordSpec}
 import play.api.libs.json.Json
+import play.api.mvc.AnyContent
+import play.api.test.FakeRequest
+import uk.gov.hmrc.domain.PsaId
 import utils.{Enumerable, UserAnswers}
+import viewmodels.AnswerRow
+import utils.checkyouranswers.Ops._
 
 class DirectorAddressYearsIdSpec extends WordSpec with MustMatchers with OptionValues with Enumerable.Implicits {
 
@@ -94,6 +101,57 @@ class DirectorAddressYearsIdSpec extends WordSpec with MustMatchers with OptionV
 
       "not remove the data for `PreviousAddressList`" in {
         result.get(DirectorPreviousAddressListId(0, 0)) mustBe defined
+      }
+    }
+  }
+
+  "cya" when {
+
+    val onwardUrl = "onwardUrl"
+
+    def answers = UserAnswers().set(DirectorAddressYearsId(0, 0))(UnderAYear).asOpt.get
+
+    "in normal mode" must {
+
+      "return answers rows with change links" in {
+        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
+        implicit val userAnswers = request.userAnswers
+        DirectorAddressYearsId(0, 0).row(onwardUrl, NormalMode) must equal(Seq(
+          AnswerRow(
+            "messages__director_address_years__cya",
+            Seq(s"messages__common__under_a_year"),
+            answerIsMessageKey = true,
+            Some(Link("site.change", onwardUrl,
+              Some("messages__visuallyhidden__director__address_years")))
+          )))
+      }
+    }
+
+    "in update mode for new trustee - company paye" must {
+
+      def answersNew: UserAnswers = answers.set(IsNewDirectorId(0, 0))(true).asOpt.value
+
+      "return answers rows with change links" in {
+        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answersNew, PsaId("A0000000"))
+        implicit val userAnswers = request.userAnswers
+        DirectorAddressYearsId(0, 0).row(onwardUrl, UpdateMode) must equal(Seq(
+          AnswerRow(
+            "messages__director_address_years__cya",
+            Seq(s"messages__common__under_a_year"),
+            answerIsMessageKey = true,
+            Some(Link("site.change", onwardUrl,
+              Some("messages__visuallyhidden__director__address_years")))
+          )))
+      }
+    }
+
+    "in update mode for existing trustee - company paye" must {
+
+      "return answers rows without change links" in {
+        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
+        implicit val userAnswers = request.userAnswers
+
+        DirectorAddressYearsId(0, 0).row(onwardUrl, UpdateMode) must equal(Nil)
       }
     }
   }

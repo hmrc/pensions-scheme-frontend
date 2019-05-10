@@ -31,9 +31,9 @@ case class PartnerUniqueTaxReferenceId(establisherIndex: Int, partnerIndex: Int)
 object PartnerUniqueTaxReferenceId {
   override def toString: String = "partnerUniqueTaxReference"
 
-  implicit def uniqueTaxReference[I <: TypedIdentifier[UniqueTaxReference]](implicit rds: Reads[UniqueTaxReference]):
-  CheckYourAnswers[PartnerUniqueTaxReferenceId] = {
+  implicit val uniqueTaxReference: CheckYourAnswers[PartnerUniqueTaxReferenceId] = {
     val inLabel = "messages__partner_utr_question_cya_label"
+    val inReasonLabel = "messages__partner__cya__utr_no_reason"
     val inChangeHasUtr = "messages__visuallyhidden__partner__utr_yes_no"
     val inChangeUtr = "messages__visuallyhidden__partner__utr"
     val inChangeNoUtr = "messages__visuallyhidden__partner__utr_no"
@@ -41,14 +41,14 @@ object PartnerUniqueTaxReferenceId {
     new CheckYourAnswers[PartnerUniqueTaxReferenceId] {
 
       override def row(id: PartnerUniqueTaxReferenceId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        UniqueTaxReferenceCYA[PartnerUniqueTaxReferenceId](label = inLabel, changeHasUtr = inChangeHasUtr,
+        UniqueTaxReferenceCYA[PartnerUniqueTaxReferenceId](label = inLabel, reasonLabel = inReasonLabel, changeHasUtr = inChangeHasUtr,
           changeUtr = inChangeUtr, changeNoUtr = inChangeNoUtr)().row(id)(changeUrl, userAnswers)
 
       override def updateRow(id: PartnerUniqueTaxReferenceId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
         userAnswers.get(IsNewPartnerId(id.establisherIndex, id.partnerIndex)) match {
-          case Some(true) => UniqueTaxReferenceCYA[PartnerUniqueTaxReferenceId](label = inLabel, changeHasUtr = inChangeHasUtr,
+          case Some(true) => UniqueTaxReferenceCYA[PartnerUniqueTaxReferenceId](label = inLabel, reasonLabel = inReasonLabel, changeHasUtr = inChangeHasUtr,
             changeUtr = inChangeUtr, changeNoUtr = inChangeNoUtr)().row(id)(changeUrl, userAnswers)
-          case _ => UniqueTaxReferenceCYA[PartnerUniqueTaxReferenceId](label = inLabel, changeHasUtr = inChangeHasUtr,
+          case _ => UniqueTaxReferenceCYA[PartnerUniqueTaxReferenceId](label = inLabel, reasonLabel = inReasonLabel, changeHasUtr = inChangeHasUtr,
             changeUtr = inChangeUtr, changeNoUtr = inChangeNoUtr)().updateRow(id)(changeUrl, userAnswers)
         }
       }
