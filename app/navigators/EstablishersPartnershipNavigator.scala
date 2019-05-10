@@ -116,6 +116,8 @@ class EstablishersPartnershipNavigator @Inject()(val dataCacheConnector: UserAns
   override protected def updateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] = from.id match {
     case PartnershipContactDetailsId(index) =>
       NavigateTo.dontSave(routes.CheckYourAnswersController.onPageLoad(UpdateMode, index, srn))
+    case PartnershipReviewId(_) =>
+      NavigateTo.dontSave(controllers.routes.AnyMoreChangesController.onPageLoad(srn))
     case _ => route(from, UpdateMode, srn)
   }
 

@@ -19,9 +19,9 @@ package navigators
 import base.SpecBase
 import connectors.FakeUserAnswersCacheConnector
 import identifiers.Identifier
-import identifiers.register.establishers.EstablishersId
+import identifiers.register.establishers.{EstablishersId, IsEstablisherNewId}
 import identifiers.register.establishers.company._
-import identifiers.register.establishers.company.director.DirectorDetailsId
+import identifiers.register.establishers.company.director.{DirectorDetailsId, IsNewDirectorId}
 import models.Mode.checkMode
 import models._
 import models.person.PersonDetails
@@ -57,11 +57,12 @@ class EstablishersCompanyNavigatorSpec extends SpecBase with MustMatchers with N
     (CompanyPreviousAddressId(0),                 emptyAnswers,                     companyContactDetails(mode),        true,           Some(exitJourney(mode)),                   true),
     (AddCompanyDirectorsId(0),                    emptyAnswers,                     directorDetails(0, mode),     true,           None,                                           true),
     (AddCompanyDirectorsId(0),                    addCompanyDirectorsTrue,          directorDetails(1, mode),     true,           None,                                           true),
-    (AddCompanyDirectorsId(0),                    addCompanyDirectorsFalse,         companyReview(mode),                true,           None,                                           true),
+    (AddCompanyDirectorsId(0),                    addCompanyDirectorsFalse,         if(mode == UpdateMode) anyMoreChanges else companyReview(mode),                true,           None,                                           true),
+    (AddCompanyDirectorsId(0),                    addCompanyDirectorsFalseNewDir,   companyReview(mode),                true,           None,                                           true),
     (AddCompanyDirectorsId(0),                    addOneCompanyDirectors,           sessionExpired,                     false,          None,                                           false),
     (AddCompanyDirectorsId(0),                    addCompanyDirectorsMoreThan10,    otherDirectors(mode),               true,           None,                                           true),
     (OtherDirectorsId(0),                         emptyAnswers,                     companyReview(mode),                true,           Some(companyReview(mode)),                       true),
-    (CompanyReviewId(0),                          emptyAnswers,                     addEstablisher(mode),               false,          None,                                           false),
+    (CompanyReviewId(0),                          emptyAnswers,                     if(mode == UpdateMode) anyMoreChanges else addEstablisher(mode),               false,          None,                                           false),
     (CheckYourAnswersId(0),                       emptyAnswers,                     addCompanyDirectors(0, mode), true,           None,                                           false)
   )
 
@@ -176,6 +177,8 @@ object EstablishersCompanyNavigatorSpec extends OptionValues {
 
   private val addCompanyDirectorsTrue = UserAnswers(validData(johnDoe)).set(AddCompanyDirectorsId(0))(true).asOpt.value
   private val addCompanyDirectorsFalse = UserAnswers(validData(johnDoe)).set(AddCompanyDirectorsId(0))(false).asOpt.value
+  private val addCompanyDirectorsFalseNewDir = UserAnswers(validData(johnDoe)).set(AddCompanyDirectorsId(0))(false)
+    .flatMap(_.set(IsEstablisherNewId(0))(true)).asOpt.value
   private val addCompanyDirectorsMoreThan10 = UserAnswers(validData(Seq.fill(10)(johnDoe): _*))
   private val addOneCompanyDirectors = UserAnswers(validData(johnDoe))
 

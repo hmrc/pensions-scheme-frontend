@@ -40,13 +40,12 @@ import scala.concurrent.{ExecutionContext, Future}
 class AddPartnersController @Inject()(
                                        appConfig: FrontendAppConfig,
                                        override val messagesApi: MessagesApi,
-                                       userAnswersService: UserAnswersService,
                                        @EstablishersPartner navigator: Navigator,
                                        authenticate: AuthAction,
                                        getData: DataRetrievalAction,
                                        requireData: DataRequiredAction,
                                        formProvider: AddPartnersFormProvider
-                                     ) (implicit val ec: ExecutionContext) extends FrontendController with I18nSupport with Retrievals {
+                                     )(implicit val ec: ExecutionContext) extends FrontendController with I18nSupport with Retrievals {
 
   private val form: Form[Boolean] = formProvider()
 
@@ -54,9 +53,9 @@ class AddPartnersController @Inject()(
 
   def onPageLoad(mode: Mode, index: Int, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
-      retrievePartnershipName(index) {_ =>
-          val partners = request.userAnswers.allPartnersAfterDelete(index)
-          Future.successful(Ok(addPartners(appConfig, form, partners, postUrl(index, mode, srn), existingSchemeName, request.viewOnly, mode, srn)))
+      retrievePartnershipName(index) { _ =>
+        val partners = request.userAnswers.allPartnersAfterDelete(index)
+        Future.successful(Ok(addPartners(appConfig, form, partners, postUrl(index, mode, srn), existingSchemeName, request.viewOnly, mode, srn)))
       }
   }
 
@@ -93,18 +92,8 @@ class AddPartnersController @Inject()(
                 Logger.error("Unable to set user answer", JsResultException(errors))
                 Future.successful(InternalServerError)
               },
-              userAnswers => {
-                mode match {
-                  case CheckMode | NormalMode =>
-                    Future.successful(Redirect(navigator.nextPage(AddPartnersId(index), mode, userAnswers, srn)))
-                  case _ =>
-                    userAnswers.upsert(IsEstablisherCompleteId(index))(true) { result =>
-                      userAnswersService.upsert(mode, srn, result.json).map { json =>
-                        Redirect(navigator.nextPage(AddPartnersId(index), mode, userAnswers, srn))
-                      }
-                    }
-                }
-              }
+              userAnswers =>
+                Future.successful(Redirect(navigator.nextPage(AddPartnersId(index), mode, userAnswers, srn)))
             )
         )
       }

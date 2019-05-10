@@ -36,6 +36,8 @@ import views.html.register.addPartners
 
 class AddPartnersControllerSpec extends ControllerSpecBase {
 
+  appRunning()
+
   private def onwardRoute = controllers.routes.IndexController.onPageLoad()
 
   private val formProvider = new AddPartnersFormProvider()
@@ -54,7 +56,6 @@ class AddPartnersControllerSpec extends ControllerSpecBase {
     new AddPartnersController(
       frontendAppConfig,
       messagesApi,
-      FakeUserAnswersService,
       navigator,
       FakeAuthAction,
       dataRetrievalAction,

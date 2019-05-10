@@ -28,8 +28,7 @@ import utils.{Navigator, UserAnswers}
 //scalastyle:off cyclomatic.complexity
 class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector, appConfig: FrontendAppConfig) extends Navigator {
 
-  protected def routes(from: NavigateFrom, mode: Mode, srn: Option[String]): Option[NavigateTo] = {
-    println("\n\n\n srn: "+srn)
+  protected def routes(from: NavigateFrom, mode: Mode, srn: Option[String]): Option[NavigateTo] =
     from.id match {
       case CompanyDetailsId(index) =>
         NavigateTo.dontSave(controllers.register.establishers.company.routes.CompanyVatController.onPageLoad(mode, index, srn))
@@ -65,7 +64,6 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
         NavigateTo.dontSave(controllers.register.establishers.company.routes.AddCompanyDirectorsController.onPageLoad(mode, srn, index))
       case _ => None
     }
-  }
 
   protected def editRoutes(from: NavigateFrom, mode: Mode, srn: Option[String]): Option[NavigateTo] =
     from.id match {
@@ -111,10 +109,11 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
   }
 
   override protected def updateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] = {
-    println("\n\n\n herer\n\n"+srn)
     from.id match {
       case CompanyContactDetailsId(index) =>
         NavigateTo.dontSave(controllers.register.establishers.company.routes.CheckYourAnswersController.onPageLoad(UpdateMode, srn, index))
+      case CompanyReviewId(_) =>
+        NavigateTo.dontSave(controllers.routes.AnyMoreChangesController.onPageLoad(srn))
       case _ => routes (from, UpdateMode, srn)
     }
   }
@@ -170,7 +169,16 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
           NavigateTo.dontSave(controllers.register.establishers.company.director.routes.DirectorDetailsController
             .onPageLoad(mode, index, answers.allDirectors(index).size, srn))
         case Some(false) =>
-          NavigateTo.dontSave(controllers.register.establishers.company.routes.CompanyReviewController.onPageLoad(mode, srn, index))
+          mode match {
+            case CheckMode | NormalMode =>
+              NavigateTo.dontSave(controllers.register.establishers.company.routes.CompanyReviewController.onPageLoad(mode, srn, index))
+            case _ => answers.get(IsEstablisherNewId(index)) match {
+              case Some(true) =>
+                NavigateTo.dontSave(controllers.register.establishers.company.routes.CompanyReviewController.onPageLoad(mode, srn, index))
+              case _ =>
+                anyMoreChanges(srn)
+            }
+          }
         case _ => NavigateTo.dontSave(controllers.routes.SessionExpiredController.onPageLoad())
       }
     }
