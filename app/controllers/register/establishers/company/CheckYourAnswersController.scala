@@ -78,7 +78,7 @@ class CheckYourAnswersController @Inject()(
         routes.CheckYourAnswersController.onSubmit(mode, srn, index),
         existingSchemeName,
         mode = mode,
-        hideEditLinks = allowChangeHelper.hideChangeLinks(request, IsEstablisherNewId(index)),
+        hideEditLinks = request.viewOnly,
         hideSaveAndContinueButton = allowChangeHelper.hideSaveAndContinueButton(request, IsEstablisherNewId(index), mode)
       )))
 

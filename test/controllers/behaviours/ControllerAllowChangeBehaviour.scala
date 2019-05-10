@@ -36,22 +36,21 @@ trait ControllerAllowChangeBehaviour extends ControllerSpecBase
   with CSRFRequest
   with OptionValues {
 
-  protected def allowChangeHelper(changeLinks:Boolean, saveAndContinueButton:Boolean):AllowChangeHelper = new AllowChangeHelper {
-    override def hideChangeLinks(request: DataRequest[AnyContent], newId: TypedIdentifier[Boolean]):Boolean = changeLinks
+  protected def allowChangeHelper(saveAndContinueButton:Boolean):AllowChangeHelper = new AllowChangeHelper {
     override def hideSaveAndContinueButton(request: DataRequest[AnyContent], newId: TypedIdentifier[Boolean], mode:Mode):Boolean = saveAndContinueButton
   }
 
-  protected val ach:AllowChangeHelper = allowChangeHelper(changeLinks = false, saveAndContinueButton = false)
+  protected val ach:AllowChangeHelper = allowChangeHelper(saveAndContinueButton = false)
 
   def changeableController(res: AllowChangeHelper => Future[Result]):Unit = {
     "return OK and displays save and continue button when asked to" in {
-      val result = res(allowChangeHelper(changeLinks = true, saveAndContinueButton = false))
+      val result = res(allowChangeHelper(saveAndContinueButton = false))
       status(result) mustBe OK
       assertRenderedById(asDocument(contentAsString(result)), "submit")
     }
 
     "return OK and does not display save and continue button when not asked to" in {
-      val result = res(allowChangeHelper(changeLinks = true, saveAndContinueButton = true))
+      val result = res(allowChangeHelper(saveAndContinueButton = true))
       status(result) mustBe OK
       assertNotRenderedById(asDocument(contentAsString(result)), "submit")
     }

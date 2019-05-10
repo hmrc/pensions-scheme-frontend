@@ -44,18 +44,6 @@ class AllowChangeHelperSpec extends WordSpec with MustMatchers with OptionValues
 
   private val ach = new AllowChangeHelperImpl
 
-  "hideChangeLinks" must {
-    "return false where not viewOnly and id is present" in {
-      ach.hideChangeLinks(request(viewOnly = false, ua = uaWithId), id) mustBe false
-    }
-    "return false where not viewOnly and id is not present" in {
-      ach.hideChangeLinks(request(viewOnly = false, ua = uaWithoutId), id) mustBe false
-    }
-    "return true where viewOnly" in {
-      ach.hideChangeLinks(request(viewOnly = true, ua = uaWithId), id) mustBe true
-    }
-  }
-
   "hideSaveAndContinueButton" must {
     "return false where not viewOnly and id is present and mode is normal mode" in {
       ach.hideSaveAndContinueButton(request(viewOnly = false, ua = uaWithId), id, NormalMode) mustBe false

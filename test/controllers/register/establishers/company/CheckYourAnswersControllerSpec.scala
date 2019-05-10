@@ -68,13 +68,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
 
 }
 
-object CheckYourAnswersControllerSpec extends ControllerSpecBase with Enumerable.Implicits {
-
-  private def allowChangeHelper(changeLinks: Boolean, saveAndContinueButton: Boolean): AllowChangeHelper = new AllowChangeHelper {
-    override def hideChangeLinks(request: DataRequest[AnyContent], newId: TypedIdentifier[Boolean]): Boolean = changeLinks
-
-    override def hideSaveAndContinueButton(request: DataRequest[AnyContent], newId: TypedIdentifier[Boolean], mode: Mode): Boolean = saveAndContinueButton
-  }
+object CheckYourAnswersControllerSpec extends ControllerSpecBase with Enumerable.Implicits with ControllerAllowChangeBehaviour {
 
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
@@ -165,7 +159,6 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase with Enumerable
 
   private def answerSections(implicit request: DataRequest[AnyContent]) = Seq(companyDetailsSection, companyContactDetailsSection)
 
-  private val ach = allowChangeHelper(changeLinks = false, saveAndContinueButton = false)
 
   def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData,
                  allowChangeHelper: AllowChangeHelper = ach): CheckYourAnswersController =
