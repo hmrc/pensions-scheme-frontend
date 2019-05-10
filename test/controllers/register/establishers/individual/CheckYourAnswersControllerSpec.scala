@@ -18,6 +18,7 @@ package controllers.register.establishers.individual
 
 import controllers.ControllerSpecBase
 import controllers.actions.{DataRequiredActionImpl, DataRetrievalAction, FakeAuthAction}
+import controllers.behaviours.ControllerAllowChangeBehaviour
 import identifiers.TypedIdentifier
 import identifiers.register.establishers.individual._
 import identifiers.register.establishers.{IsEstablisherCompleteId, IsEstablisherNewId, individual}
@@ -36,7 +37,7 @@ import utils.checkyouranswers.Ops._
 import viewmodels.AnswerSection
 import views.html.check_your_answers
 
-class CheckYourAnswersControllerSpec extends ControllerSpecBase {
+class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerAllowChangeBehaviour {
 
   import CheckYourAnswersControllerSpec._
 
@@ -46,13 +47,6 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase {
   val firstIndex = Index(0)
 
   private val onwardRoute = controllers.routes.IndexController.onPageLoad()
-
-  private def allowChangeHelper(changeLinks:Boolean, saveAndContinueButton:Boolean):AllowChangeHelper = new AllowChangeHelper {
-    override def hideChangeLinks(request: DataRequest[AnyContent], newId: TypedIdentifier[Boolean]):Boolean = changeLinks
-    override def hideSaveAndContinueButton(request: DataRequest[AnyContent], newId: TypedIdentifier[Boolean], mode:Mode):Boolean = saveAndContinueButton
-  }
-
-  private val ach = allowChangeHelper(changeLinks = false, saveAndContinueButton = false)
 
   private def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisherHns,
                          allowChangeHelper:AllowChangeHelper = ach): CheckYourAnswersController =
@@ -106,22 +100,9 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase {
         assertRenderedById(asDocument(contentAsString(result)), "submit")
       }
 
-      "return OK and displays save and continue button when asked to" in {
-        val result = controller(individualAnswers.dataRetrievalAction,
-          allowChangeHelper = allowChangeHelper(changeLinks = true, saveAndContinueButton = false))
-          .onPageLoad(UpdateMode, firstIndex, None)(request)
-        status(result) mustBe OK
-        assertRenderedById(asDocument(contentAsString(result)), "submit")
-      }
-
-      "return OK and does not display save and continue button when not asked to" in {
-        val result = controller(individualAnswers.dataRetrievalAction,
-          allowChangeHelper = allowChangeHelper(changeLinks = true, saveAndContinueButton = true))
-          .onPageLoad(UpdateMode, firstIndex, None)(request)
-        status(result) mustBe OK
-        assertNotRenderedById(asDocument(contentAsString(result)), "submit")
-      }
-
+      behave like changeableController(
+        controller(individualAnswers.dataRetrievalAction, _:AllowChangeHelper)
+        .onPageLoad(UpdateMode, firstIndex, None)(request))
     }
 
     "onSubmit" must {
