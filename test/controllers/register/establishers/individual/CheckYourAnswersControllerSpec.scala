@@ -18,15 +18,17 @@ package controllers.register.establishers.individual
 
 import controllers.ControllerSpecBase
 import controllers.actions.{DataRequiredActionImpl, DataRetrievalAction, FakeAuthAction}
+import identifiers.TypedIdentifier
 import identifiers.register.establishers.individual._
 import identifiers.register.establishers.{IsEstablisherCompleteId, IsEstablisherNewId, individual}
 import models._
 import models.address.Address
 import models.person.PersonDetails
+import models.requests.DataRequest
 import org.joda.time.LocalDate
 import org.scalatest.OptionValues
 import play.api.libs.json.JsResult
-import play.api.mvc.Call
+import play.api.mvc.{AnyContent, Call}
 import play.api.test.Helpers.{contentAsString, redirectLocation, status, _}
 import services.FakeUserAnswersService
 import utils._
@@ -45,7 +47,15 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase {
 
   private val onwardRoute = controllers.routes.IndexController.onPageLoad()
 
-  private def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisherHns): CheckYourAnswersController =
+  private def allowChangeHelper(changeLinks:Boolean, saveAndContinueButton:Boolean):AllowChangeHelper = new AllowChangeHelper {
+    override def hideChangeLinks(request: DataRequest[AnyContent], newId: TypedIdentifier[Boolean]):Boolean = changeLinks
+    override def hideSaveAndContinueButton(request: DataRequest[AnyContent], newId: TypedIdentifier[Boolean], mode:Mode):Boolean = saveAndContinueButton
+  }
+
+  private val ach = allowChangeHelper(changeLinks = false, saveAndContinueButton = false)
+
+  private def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisherHns,
+                         allowChangeHelper:AllowChangeHelper = ach): CheckYourAnswersController =
     new CheckYourAnswersController(
       frontendAppConfig,
       messagesApi,
@@ -55,7 +65,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase {
       FakeUserAnswersService,
       countryOptions,
       new FakeNavigator(onwardRoute),
-      new AllowChangeHelperImpl
+      allowChangeHelper
     )
 
   "CheckYourAnswersController" when {
@@ -96,19 +106,22 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase {
         assertRenderedById(asDocument(contentAsString(result)), "submit")
       }
 
-      "return OK and displays submit button when in UpdateMode and existing establisher" in {
-        val result = controller(individualAnswers.dataRetrievalAction).onPageLoad(UpdateMode, firstIndex, None)(request)
+      "return OK and displays save and continue button when asked to" in {
+        val result = controller(individualAnswers.dataRetrievalAction,
+          allowChangeHelper = allowChangeHelper(changeLinks = true, saveAndContinueButton = false))
+          .onPageLoad(UpdateMode, firstIndex, None)(request)
+        status(result) mustBe OK
+        assertRenderedById(asDocument(contentAsString(result)), "submit")
+      }
+
+      "return OK and does not display save and continue button when not asked to" in {
+        val result = controller(individualAnswers.dataRetrievalAction,
+          allowChangeHelper = allowChangeHelper(changeLinks = true, saveAndContinueButton = true))
+          .onPageLoad(UpdateMode, firstIndex, None)(request)
         status(result) mustBe OK
         assertNotRenderedById(asDocument(contentAsString(result)), "submit")
       }
 
-      "return OK and displays submit button when in UpdateMode and newly added establisher" in {
-        val result = controller(individualAnswersWithNewlyAddedEstablisher.dataRetrievalAction)
-          .onPageLoad(UpdateMode, firstIndex, None)(FakeDataRequest(individualAnswersWithNewlyAddedEstablisher))
-
-        status(result) mustBe OK
-        assertRenderedById(asDocument(contentAsString(result)), "submit")
-      }
     }
 
     "onSubmit" must {

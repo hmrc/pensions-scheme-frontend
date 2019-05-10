@@ -18,6 +18,7 @@ package controllers.register.establishers.company
 
 import controllers.ControllerSpecBase
 import controllers.actions._
+import identifiers.TypedIdentifier
 import identifiers.register.establishers.company._
 import models._
 import models.address.Address
@@ -28,12 +29,11 @@ import play.api.test.Helpers._
 import services.FakeUserAnswersService
 import utils.checkyouranswers.CheckYourAnswers.ContactDetailsCYA
 import utils.checkyouranswers._
-import utils.{CountryOptions, FakeCountryOptions, FakeNavigator, FakeSectionComplete, UserAnswers, _}
+import utils.{CountryOptions, FakeCountryOptions, FakeNavigator, UserAnswers, _}
 import viewmodels.AnswerSection
 import views.html.check_your_answers
 
 class CheckYourAnswersControllerSpec extends ControllerSpecBase {
-
   import CheckYourAnswersControllerSpec._
 
   "CheckYourAnswers Controller" must {
@@ -59,11 +59,33 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase {
       redirectLocation(result).value mustEqual onwardRoute.url
       FakeUserAnswersService.verify(IsCompanyCompleteId(index), true)
     }
+
+    "return OK and displays save and continue button when asked to" in {
+      val request = FakeDataRequest(fullAnswers)
+      val result = controller(fullAnswers.dataRetrievalAction,
+        allowChangeHelper = allowChangeHelper(changeLinks = true, saveAndContinueButton = false)).onPageLoad(NormalMode, None, index)(request)
+
+      status(result) mustBe OK
+      assertRenderedById(asDocument(contentAsString(result)), "submit")
+    }
+
+    "return OK and does not display save and continue button when not asked to" in {
+      val request = FakeDataRequest(fullAnswers)
+      val result = controller(fullAnswers.dataRetrievalAction,
+        allowChangeHelper = allowChangeHelper(changeLinks = true, saveAndContinueButton = true)).onPageLoad(NormalMode, None, index)(request)
+      status(result) mustBe OK
+      assertNotRenderedById(asDocument(contentAsString(result)), "submit")
+    }
   }
 
 }
 
 object CheckYourAnswersControllerSpec extends ControllerSpecBase with Enumerable.Implicits {
+
+  private def allowChangeHelper(changeLinks:Boolean, saveAndContinueButton:Boolean):AllowChangeHelper = new AllowChangeHelper {
+    override def hideChangeLinks(request: DataRequest[AnyContent], newId: TypedIdentifier[Boolean]):Boolean = changeLinks
+    override def hideSaveAndContinueButton(request: DataRequest[AnyContent], newId: TypedIdentifier[Boolean], mode:Mode):Boolean = saveAndContinueButton
+  }
 
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
@@ -154,7 +176,10 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase with Enumerable
 
   private def answerSections(implicit request: DataRequest[AnyContent]) = Seq(companyDetailsSection, companyContactDetailsSection)
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): CheckYourAnswersController =
+  private val ach = allowChangeHelper(changeLinks = false, saveAndContinueButton = false)
+
+  def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData,
+                 allowChangeHelper:AllowChangeHelper = ach): CheckYourAnswersController =
     new CheckYourAnswersController(
       frontendAppConfig,
       messagesApi,
@@ -163,7 +188,8 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase with Enumerable
       new DataRequiredActionImpl,
       fakeCountryOptions,
       new FakeNavigator(onwardRoute),
-      FakeUserAnswersService
+      FakeUserAnswersService,
+      allowChangeHelper
     )
 
   def viewAsString(answerSections: Seq[AnswerSection]): String =
