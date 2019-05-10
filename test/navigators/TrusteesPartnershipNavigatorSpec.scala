@@ -44,16 +44,16 @@ class TrusteesPartnershipNavigatorSpec extends SpecBase with NavigatorBehaviour 
     (PartnershipPostcodeLookupId(0), emptyAnswers, partnershipAddressList(mode), true, Some(partnershipAddressList(checkMode((mode)))), true),
     (PartnershipAddressListId(0), emptyAnswers, partnershipAddress(mode), true, Some(partnershipAddress(checkMode((mode)))), true),
     (PartnershipAddressId(0), emptyAnswers, partnershipAddressYears(mode), true,
-      if (mode == UpdateMode) Some(partnershipAddressYears(checkMode(UpdateMode))) else Some(checkYourAnswers(NormalMode)), true),
-    (PartnershipAddressId(0), newTrustee, partnershipAddressYears(mode), true, Some(checkYourAnswers(mode)), true),
-    (PartnershipAddressYearsId(0), addressYearsOverAYear, partnershipContact(mode), true, Some(exitJourney(mode)), true),
+      if(mode == UpdateMode) Some(partnershipAddressYears(checkMode(mode))) else Some(checkYourAnswers(mode)) , true),
+    (PartnershipAddressId(0), newTrustee, partnershipAddressYears(mode), true, Some(checkYourAnswers(mode)) , true),
+    (PartnershipAddressYearsId(0), addressYearsOverAYear, partnershipContact(mode), true, Some(checkYourAnswers(mode)), true),
     (PartnershipAddressYearsId(0), addressYearsUnderAYear, partnershipPaPostCodeLookup(mode), true, Some(partnershipPaPostCodeLookup(checkMode((mode)))), true),
     (PartnershipAddressYearsId(0), emptyAnswers, sessionExpired, false, Some(sessionExpired), false),
     (PartnershipPreviousAddressPostcodeLookupId(0), emptyAnswers, partnershipPaList(mode), true, Some(partnershipPaList(checkMode((mode)))), true),
     (PartnershipPreviousAddressListId(0), emptyAnswers, partnershipPa(mode), true, Some(partnershipPa(checkMode((mode)))), true),
-    (PartnershipPreviousAddressId(0), emptyAnswers, partnershipContact(mode), true, Some(exitJourney(mode)), true),
+    (PartnershipPreviousAddressId(0), emptyAnswers, partnershipContact(mode), true, Some(checkYourAnswers(mode)), true),
     (PartnershipContactDetailsId(0), emptyAnswers, checkYourAnswers(mode), true, Some(checkYourAnswers(mode)), true),
-    (CheckYourAnswersId(0), emptyAnswers, addTrustee(mode), false, None, true)
+    (CheckYourAnswersId(0), emptyAnswers, if(mode==UpdateMode) controllers.routes.AnyMoreChangesController.onPageLoad(None) else addTrustee(mode), false, None, true)
   )
 
   private val navigator: TrusteesPartnershipNavigator =

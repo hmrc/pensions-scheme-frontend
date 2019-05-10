@@ -32,15 +32,16 @@ class TrusteesIndividualNavigator @Inject()(val dataCacheConnector: UserAnswersC
   private def checkYourAnswers(index: Int, mode: Mode, srn: Option[String]): Option[NavigateTo] =
     NavigateTo.dontSave(controllers.register.trustees.individual.routes.CheckYourAnswersController.onPageLoad(mode, index, srn))
 
-  private def anyMoreChanges(srn: Option[String]): Option[NavigateTo] =
-    NavigateTo.dontSave(controllers.routes.AnyMoreChangesController.onPageLoad(srn))
-
-  private def exitMiniJourney(index: Index, mode: Mode, srn: Option[String]): Option[NavigateTo] =
-    if (mode == CheckMode || mode == NormalMode) {
+  private def exitMiniJourney(index: Index, mode: Mode, srn: Option[String], answers: UserAnswers): Option[NavigateTo] =
+    if(mode == CheckMode || mode == NormalMode){
       checkYourAnswers(index, journeyMode(mode), srn)
     } else {
-      anyMoreChanges(srn)
+      if(answers.allTrusteesAfterDelete.nonEmpty && answers.allTrustees(index).isCompleted) anyMoreChanges(srn)
+      else checkYourAnswers(index, journeyMode(mode), srn)
     }
+
+  private def anyMoreChanges(srn: Option[String]): Option[NavigateTo] =
+    NavigateTo.dontSave(controllers.routes.AnyMoreChangesController.onPageLoad(srn))
 
   //scalastyle:off cyclomatic.complexity
   protected def routes(from: NavigateFrom, mode: Mode, srn: Option[String]): Option[NavigateTo] = {
@@ -68,7 +69,11 @@ class TrusteesIndividualNavigator @Inject()(val dataCacheConnector: UserAnswersC
       case TrusteeContactDetailsId(index) =>
         checkYourAnswers(index, mode, srn)
       case CheckYourAnswersId =>
-        NavigateTo.dontSave(controllers.register.trustees.routes.AddTrusteeController.onPageLoad(mode, srn))
+        if(mode == CheckMode || mode == NormalMode){
+          NavigateTo.dontSave(controllers.register.trustees.routes.AddTrusteeController.onPageLoad(mode, srn))
+        } else {
+          anyMoreChanges(srn)
+        }
       case _ =>
         None
     }
@@ -76,12 +81,9 @@ class TrusteesIndividualNavigator @Inject()(val dataCacheConnector: UserAnswersC
 
   protected def editRoutes(from: NavigateFrom, mode: Mode, srn: Option[String]): Option[NavigateTo] = {
     from.id match {
-      case TrusteeDetailsId(index) =>
-        checkYourAnswers(index, journeyMode(mode), srn)
-      case TrusteeNinoId(index) =>
-        checkYourAnswers(index, journeyMode(mode), srn)
-      case UniqueTaxReferenceId(index) =>
-        checkYourAnswers(index, journeyMode(mode), srn)
+      case TrusteeDetailsId(index) => exitMiniJourney(index, mode, srn, from.userAnswers)
+      case TrusteeNinoId(index) => exitMiniJourney(index, mode, srn, from.userAnswers)
+      case UniqueTaxReferenceId(index) => exitMiniJourney(index, mode, srn, from.userAnswers)
       case IndividualPostCodeLookupId(index) =>
         NavigateTo.dontSave(controllers.register.trustees.individual.routes.IndividualAddressListController.onPageLoad(mode, index, srn))
       case IndividualAddressListId(index) =>
@@ -93,22 +95,20 @@ class TrusteesIndividualNavigator @Inject()(val dataCacheConnector: UserAnswersC
         } else {
           NavigateTo.dontSave(controllers.register.trustees.individual.routes.TrusteeAddressYearsController.onPageLoad(mode, index, srn))
         }
-      case TrusteeAddressYearsId(index) =>
-        editAddressYearsRoutes(index, mode, srn)(from.userAnswers)
+      case TrusteeAddressYearsId(index) => editAddressYearsRoutes(index, mode, srn)(from.userAnswers)
       case IndividualPreviousAddressPostCodeLookupId(index) =>
         NavigateTo.dontSave(controllers.register.trustees.individual.routes.TrusteePreviousAddressListController.onPageLoad(mode, index, srn))
       case TrusteePreviousAddressListId(index) =>
         NavigateTo.dontSave(controllers.register.trustees.individual.routes.TrusteePreviousAddressController.onPageLoad(mode, index, srn))
-      case TrusteePreviousAddressId(index) =>
-        exitMiniJourney(index, mode, srn)
-      case TrusteeContactDetailsId(index) =>
-        checkYourAnswers(index, journeyMode(mode), srn)
+      case TrusteePreviousAddressId(index) => exitMiniJourney(index, mode, srn, from.userAnswers)
+      case TrusteeContactDetailsId(index) => exitMiniJourney(index, mode, srn, from.userAnswers)
       case _ =>
         None
     }
   }
 
   override protected def routeMap(from: NavigateFrom): Option[NavigateTo] = routes(from, NormalMode, None)
+
   override protected def editRouteMap(from: NavigateFrom): Option[NavigateTo] = editRoutes(from, CheckMode, None)
 
   protected def updateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] = routes(from, UpdateMode, srn)
@@ -131,7 +131,7 @@ class TrusteesIndividualNavigator @Inject()(val dataCacheConnector: UserAnswersC
       case Some(AddressYears.UnderAYear) =>
         NavigateTo.dontSave(controllers.register.trustees.individual.routes.IndividualPreviousAddressPostcodeLookupController.onPageLoad(mode, index, srn))
       case Some(AddressYears.OverAYear) =>
-        exitMiniJourney(index, mode, srn)
+        exitMiniJourney(index, mode, srn, answers)
       case None =>
         NavigateTo.dontSave(controllers.routes.SessionExpiredController.onPageLoad())
     }

@@ -39,20 +39,21 @@ class TrusteesIndividualNavigatorSpec extends SpecBase with NavigatorBehaviour {
     (IndividualPostCodeLookupId(0), emptyAnswers, addressList(mode), true, Some(addressList(checkMode(mode))), true),
     (IndividualAddressListId(0), emptyAnswers, address(mode), true, Some(address(checkMode(mode))), true),
     (TrusteeAddressId(0), emptyAnswers, addressYears(mode), true,
-      if (mode == UpdateMode) Some(addressYears(checkMode(UpdateMode))) else Some(checkYourAnswers(NormalMode)), true),
+      if(mode == UpdateMode) Some(addressYears(checkMode(mode))) else Some(checkYourAnswers(mode)), true),
     (TrusteeAddressId(0), newTrustee, addressYears(mode), true, Some(checkYourAnswers(mode)), true),
-    (TrusteeAddressYearsId(0), overAYear, contactDetails(mode), true, Some(exitJourney(mode)), true),
+    (TrusteeAddressYearsId(0), overAYear, contactDetails(mode), true, Some(checkYourAnswers(mode)), true),
     (TrusteeAddressYearsId(0), underAYear, previousAddressPostcode(mode), true, Some(previousAddressPostcode(checkMode(mode))), true),
     (TrusteeAddressYearsId(0), emptyAnswers, sessionExpired, false, Some(sessionExpired), false),
     (IndividualPreviousAddressPostCodeLookupId(0), emptyAnswers, previousAddressList(mode), true, Some(previousAddressList(checkMode(mode))), true),
     (TrusteePreviousAddressListId(0), emptyAnswers, previousAddress(mode), true, Some(previousAddress(checkMode(mode))), true),
-    (TrusteePreviousAddressId(0), emptyAnswers, contactDetails(mode), true, Some(exitJourney(mode)), true),
+    (TrusteePreviousAddressId(0), emptyAnswers, contactDetails(mode), true, Some(checkYourAnswers(mode)), true),
     (TrusteeContactDetailsId(0), emptyAnswers, checkYourAnswers(mode), true, None, true),
-    (CheckYourAnswersId, emptyAnswers, addTrustee(mode), false, None, true)
+    (CheckYourAnswersId, emptyAnswers, if(mode==UpdateMode) controllers.routes.AnyMoreChangesController.onPageLoad(None) else addTrustee(mode), false, None, true)
   )
 
   private val navigator: TrusteesIndividualNavigator =
     new TrusteesIndividualNavigator(FakeUserAnswersCacheConnector, frontendAppConfig)
+
 
   s"${navigator.getClass.getSimpleName}" must {
     appRunning()
