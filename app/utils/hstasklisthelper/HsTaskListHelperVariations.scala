@@ -70,7 +70,7 @@ class HsTaskListHelperVariations(answers: UserAnswers, viewOnly: Boolean, srn: O
         Some(SchemeDetailsTaskListSection(
             Some(section.isCompleted),
             Link(messages("messages__schemeTaskList__persons_details__link_text", section.name),
-                linkTarget(section, index, UpdateMode, srn)),
+              section.editLink(UpdateMode, srn).getOrElse(controllers.routes.SessionExpiredController.onPageLoad().url)),
             None)
         )
       }
