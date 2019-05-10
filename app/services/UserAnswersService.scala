@@ -19,13 +19,13 @@ package services
 import config.FrontendAppConfig
 import connectors.{PensionSchemeVarianceLockConnector, SubscriptionCacheConnector, UpdateSchemeCacheConnector}
 import identifiers._
-import identifiers.register.establishers.IsEstablisherAddressCompleteId
-import identifiers.register.establishers.company.director.{DirectorAddressYearsId, DirectorPreviousAddressId, IsDirectorAddressCompleteId}
+import identifiers.register.establishers.{IsEstablisherAddressCompleteId, IsEstablisherCompleteId, IsEstablisherNewId}
+import identifiers.register.establishers.company.director._
 import identifiers.register.establishers.company.{CompanyAddressYearsId => EstablisherCompanyAddressYearsId, CompanyPreviousAddressId => EstablisherCompanyPreviousAddressId}
 import identifiers.register.establishers.individual.{AddressYearsId => EstablisherIndividualAddressYearsId, PreviousAddressId => EstablisherIndividualPreviousAddressId}
-import identifiers.register.establishers.partnership.partner.{IsPartnerAddressCompleteId, PartnerAddressYearsId, PartnerPreviousAddressId}
+import identifiers.register.establishers.partnership.partner._
 import identifiers.register.establishers.partnership.{PartnershipAddressYearsId => EstablisherPartnershipAddressYearsId, PartnershipPreviousAddressId => EstablisherPartnershipPreviousAddressId}
-import identifiers.register.trustees.IsTrusteeAddressCompleteId
+import identifiers.register.trustees.{IsTrusteeAddressCompleteId, IsTrusteeNewId}
 import identifiers.register.trustees.company.{CompanyAddressYearsId => TruesteeCompanyAddressYearsId, CompanyPreviousAddressId => TruesteeCompanyPreviousAddressId}
 import identifiers.register.trustees.individual.{TrusteeAddressYearsId => TruesteeIndividualAddressYearsId, TrusteePreviousAddressId => TruesteeIndividualPreviousAddressId}
 import identifiers.register.trustees.partnership.{PartnershipAddressYearsId => TruesteePartnershipAddressYearsId, PartnershipPreviousAddressId => TruesteePartnershipPreviousAddressId}
@@ -157,52 +157,46 @@ trait UserAnswersService {
     }
   }
 
-  def setAddressCompleteFlagAfterAddressYear(mode: Mode, srn: Option[String], id: TypedIdentifier[AddressYears], addressYears: AddressYears, userAnswers: UserAnswers)
-                                            (implicit ec: ExecutionContext, hc: HeaderCarrier, request: DataRequest[AnyContent]): Future[UserAnswers] = {
-
-    val addressCompletedId = getAddressId[AddressYears](id)
-
-    addressYears match{
-      case OverAYear => addressCompletedId.fold(Future.successful(userAnswers)) { changeId =>
-        val ua = userAnswers
-          .set(changeId)(true).asOpt.getOrElse(userAnswers)
-        upsert(mode, srn, ua.json).map(UserAnswers)
-      }
-      case UnderAYear => Future.successful(userAnswers)
-    }
-  }
-
   def setAddressCompleteFlagAfterPreviousAddress(mode: Mode, srn: Option[String], id: TypedIdentifier[Address], userAnswers: UserAnswers)
                                                 (implicit ec: ExecutionContext, hc: HeaderCarrier, request: DataRequest[AnyContent]): Future[UserAnswers] = {
 
-    val addressCompletedId = getAddressId[Address](id)
-
-    addressCompletedId.fold(Future.successful(userAnswers)) { changeId =>
-      val ua = userAnswers
-        .set(changeId)(true).asOpt.getOrElse(userAnswers)
-      upsert(mode, srn, ua.json).map(UserAnswers)
-    }
-
+    getIsNewId(id).map{ newId =>
+      userAnswers.get(newId) match {
+        case Some(false) | None =>
+          val addressCompletedId = getAddressId[Address](id)
+          addressCompletedId.fold(Future.successful(userAnswers)) { changeId =>
+            val ua = userAnswers
+              .set(changeId)(true).asOpt.getOrElse(userAnswers)
+            upsert(mode, srn, ua.json).map(UserAnswers)
+          }
+        case _ =>
+          Future.successful(userAnswers)
+      }
+    }.getOrElse(Future.successful(userAnswers))
   }
 
   def getAddressId[T](id: TypedIdentifier[T]):  Option[TypedIdentifier[Boolean]] = id match{
-    case TruesteeCompanyAddressYearsId(index) => Some(IsTrusteeAddressCompleteId(index))
-    case TruesteePartnershipAddressYearsId(index) => Some(IsTrusteeAddressCompleteId(index))
-    case TruesteeIndividualAddressYearsId(index) => Some(IsTrusteeAddressCompleteId(index))
-    case EstablisherCompanyAddressYearsId(index) => Some(IsEstablisherAddressCompleteId(index))
-    case EstablisherPartnershipAddressYearsId(index) => Some(IsEstablisherAddressCompleteId(index))
-    case EstablisherIndividualAddressYearsId(index) => Some(IsEstablisherAddressCompleteId(index))
-    case PartnerAddressYearsId(establisherIndex, partnerIndex) => Some(IsPartnerAddressCompleteId(establisherIndex, partnerIndex))
-    case DirectorAddressYearsId(establisherIndex, directorIndex) => Some(IsDirectorAddressCompleteId(establisherIndex, directorIndex))
     case TruesteeCompanyPreviousAddressId(index) => Some(IsTrusteeAddressCompleteId(index))
     case TruesteePartnershipPreviousAddressId(index) => Some(IsTrusteeAddressCompleteId(index))
     case TruesteeIndividualPreviousAddressId(index) => Some(IsTrusteeAddressCompleteId(index))
-    case EstablisherCompanyPreviousAddressId(index) => Some(IsEstablisherAddressCompleteId(index))
+    case EstablisherCompanyPreviousAddressId(index) => Some(IsEstablisherCompleteId(index))
     case EstablisherPartnershipPreviousAddressId(index) => Some(IsEstablisherAddressCompleteId(index))
     case EstablisherIndividualPreviousAddressId(index) => Some(IsEstablisherAddressCompleteId(index))
-    case PartnerPreviousAddressId(establisherIndex, partnerIndex) => Some(IsPartnerAddressCompleteId(establisherIndex, partnerIndex))
-    case DirectorPreviousAddressId(establisherIndex, directorIndex) => Some(IsDirectorAddressCompleteId(establisherIndex, directorIndex))
+    case PartnerPreviousAddressId(establisherIndex, partnerIndex) => Some(IsPartnerCompleteId(establisherIndex, partnerIndex))
+    case DirectorPreviousAddressId(establisherIndex, directorIndex) => Some(IsDirectorCompleteId(establisherIndex, directorIndex))
     case InsurerConfirmAddressId => Some(IsAboutBenefitsAndInsuranceCompleteId)
+    case _ => None
+  }
+
+  def getIsNewId[T](id: TypedIdentifier[T]):  Option[TypedIdentifier[Boolean]] = id match{
+    case TruesteeCompanyPreviousAddressId(index) => Some(IsTrusteeNewId(index))
+    case TruesteePartnershipPreviousAddressId(index) => Some(IsTrusteeNewId(index))
+    case TruesteeIndividualPreviousAddressId(index) => Some(IsTrusteeNewId(index))
+    case EstablisherCompanyPreviousAddressId(index) => Some(IsEstablisherNewId(index))
+    case EstablisherPartnershipPreviousAddressId(index) => Some(IsEstablisherNewId(index))
+    case EstablisherIndividualPreviousAddressId(index) => Some(IsEstablisherNewId(index))
+    case PartnerPreviousAddressId(establisherIndex, partnerIndex) => Some(IsNewPartnerId(establisherIndex, partnerIndex))
+    case DirectorPreviousAddressId(establisherIndex, directorIndex) => Some(IsNewDirectorId(establisherIndex, directorIndex))
     case _ => None
   }
 }
