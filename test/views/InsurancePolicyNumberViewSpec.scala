@@ -31,19 +31,25 @@ class InsurancePolicyNumberViewSpec extends QuestionViewBehaviours[String] {
 
   override val form = new InsurancePolicyNumberFormProvider()()
 
-  def createView: () => HtmlFormat.Appendable = () =>
-    insurancePolicyNumber(frontendAppConfig, form, NormalMode, insuranceCompanyName, None, postCall)(fakeRequest, messages)
+  def createView(companyName : Option[String] = None): () => HtmlFormat.Appendable = () =>
+    insurancePolicyNumber(frontendAppConfig, form, NormalMode, companyName, None, postCall)(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) =>
-    insurancePolicyNumber(frontendAppConfig, form, NormalMode, insuranceCompanyName, None, postCall)(fakeRequest, messages)
+    insurancePolicyNumber(frontendAppConfig, form, NormalMode, Some(insuranceCompanyName), None, postCall)(fakeRequest, messages)
 
   "InsurancePolicyNumber view" must {
 
-    behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__h1", insuranceCompanyName))
+    behave like normalPage(createView(Some(insuranceCompanyName)), messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__h1", insuranceCompanyName))
 
     behave like pageWithTextFields(createViewUsingForm, messageKeyPrefix, controllers.routes.InsurancePolicyNumberController.onSubmit(NormalMode, None).url,
       "policyNumber")
 
-    behave like pageWithReturnLink(createView, getReturnLink)
+    behave like pageWithReturnLink(createView(Some(insuranceCompanyName)), getReturnLink)
+  }
+
+  "Insurance Policy Number view in change mode" must {
+
+    behave like normalPage(createView(), messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"))
+
   }
 }
