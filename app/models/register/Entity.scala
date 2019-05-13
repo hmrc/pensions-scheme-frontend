@@ -147,7 +147,7 @@ case class EstablisherPartnershipEntity(id: PartnershipDetailsId, name: String, 
                                         isCompleted: Boolean, isNewEntity: Boolean, noOfRecords : Int) extends Establisher[PartnershipDetailsId] {
   override def editLink(mode: Mode, srn: Option[String]): Option[String] = (isNewEntity, isCompleted) match {
     case (false, _) => Some(controllers.register.establishers.partnership.routes.PartnershipReviewController.onPageLoad(mode, index, srn).url)
-    case (_, true) => Some(controllers.register.establishers.partnership.routes.CheckYourAnswersController.onPageLoad(mode, id.index, srn).url)
+    case (_, true) => Some(controllers.register.establishers.partnership.routes.PartnershipReviewController.onPageLoad(mode, id.index, srn).url)
     case (_, false) => Some(controllers.register.establishers.partnership.routes.PartnershipDetailsController.onPageLoad(mode, id.index, srn).url)
   }
 
