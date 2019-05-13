@@ -18,9 +18,9 @@ package controllers.register.establishers.partnership
 
 import controllers.ControllerSpecBase
 import controllers.actions.{DataRequiredActionImpl, DataRetrievalAction, FakeAuthAction, FakeDataRetrievalAction}
-import identifiers.register.establishers.partnership.partner.{IsPartnerCompleteId, PartnerDetailsId}
+import identifiers.register.establishers.partnership.partner.{IsPartnerAddressCompleteId, IsPartnerCompleteId, PartnerDetailsId}
 import identifiers.register.establishers.partnership.{IsPartnershipCompleteId, PartnershipDetailsId}
-import identifiers.register.establishers.{EstablishersId, IsEstablisherCompleteId}
+import identifiers.register.establishers.{EstablishersId, IsEstablisherAddressCompleteId, IsEstablisherCompleteId}
 import models.person.PersonDetails
 import models.{Index, NormalMode, PartnershipDetails}
 import org.joda.time.LocalDate
@@ -107,7 +107,7 @@ class PartnershipReviewControllerSpec extends ControllerSpecBase {
 
     "not set establisher as complete when partnership is complete but partners are not complete" in {
       FakeUserAnswersService.reset()
-      val getRelevantData = new FakeDataRetrievalAction(Some(validData(Seq(partner("a"), partner("b"), partner("c", isComplete = false)))))
+      val getRelevantData = new FakeDataRetrievalAction(Some(validData(isComplete = false)))
       val result = controller(getRelevantData).onSubmit(NormalMode, index, None)(fakeRequest)
       status(result) mustBe SEE_OTHER
       FakeUserAnswersService.verifyNot(IsEstablisherCompleteId(0))
@@ -146,13 +146,20 @@ object PartnershipReviewControllerSpec {
 
   val partners = Seq(partner("a"), partner("b"), partner("c"))
 
-  def validData(inPartners: Seq[JsObject] = partners): JsObject = Json.obj(
+  def validData(isComplete: Boolean = true): JsObject = Json.obj(
     EstablishersId.toString -> Json.arr(
       Json.obj(
         PartnershipDetailsId.toString -> partnershipDetails,
         IsPartnershipCompleteId.toString -> true,
-
-        "partner" -> inPartners
+        IsEstablisherAddressCompleteId.toString -> true,
+        "partner" -> Json.arr(
+          Json.obj("partnerDetails" -> Json.obj("firstName" -> "partner", "lastName" -> "a", "date" -> "2019-04-30", "isDeleted" -> false),
+            "isPartnerComplete" -> true, IsPartnerAddressCompleteId.toString -> true),
+          Json.obj("partnerDetails" -> Json.obj("firstName" -> "partner", "lastName" -> "b", "date" -> "2019-04-30", "isDeleted" -> false),
+            "isPartnerComplete" -> true, IsPartnerAddressCompleteId.toString -> true),
+          Json.obj("partnerDetails" -> Json.obj("firstName" -> "partner", "lastName" -> "c", "date" -> "2019-04-30", "isDeleted" -> false),
+            "isPartnerComplete" -> isComplete, IsPartnerAddressCompleteId.toString -> true)
+        )
       )
     )
   )
