@@ -19,11 +19,12 @@ package navigators
 import com.google.inject.{Inject, Singleton}
 import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
+import identifiers.register.establishers.IsEstablisherCompleteId
 import identifiers.register.establishers.{IsEstablisherCompleteId, IsEstablisherNewId}
 import identifiers.register.establishers.IsEstablisherNewId
 import identifiers.register.establishers.individual._
-import models.{AddressYears, CheckMode, CheckUpdateMode, Index, Mode, NormalMode, UpdateMode}
 import models.Mode.journeyMode
+import models._
 import utils.{Navigator, UserAnswers}
 
 @Singleton

@@ -19,10 +19,10 @@ package navigators
 import com.google.inject.Inject
 import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
-import identifiers.register.establishers.{IsEstablisherCompleteId, IsEstablisherNewId}
+import identifiers.register.establishers.IsEstablisherNewId
 import identifiers.register.establishers.company._
-import models.{AddressYears, CheckMode, CheckUpdateMode, Index, Mode, NormalMode, UpdateMode}
 import models.Mode._
+import models._
 import utils.{Navigator, UserAnswers}
 
 //scalastyle:off cyclomatic.complexity
@@ -115,10 +115,14 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
     case _ => routes(from, NormalMode, None)
   }
 
-  override protected def updateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] = from.id match {
-    case CompanyContactDetailsId(index) =>
-      NavigateTo.dontSave(controllers.register.establishers.company.routes.CheckYourAnswersController.onPageLoad(UpdateMode, srn, index))
-    case _ => routes (from, UpdateMode, srn)
+  override protected def updateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] = {
+    from.id match {
+      case CompanyContactDetailsId(index) =>
+        NavigateTo.dontSave(controllers.register.establishers.company.routes.CheckYourAnswersController.onPageLoad(UpdateMode, srn, index))
+      case CompanyReviewId(_) =>
+        NavigateTo.dontSave(controllers.routes.AnyMoreChangesController.onPageLoad(srn))
+      case _ => routes (from, UpdateMode, srn)
+    }
   }
 
   override protected def editRouteMap(from: NavigateFrom): Option[NavigateTo] = editRoutes(from, CheckMode, None)
@@ -179,9 +183,9 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
               NavigateTo.dontSave(controllers.register.establishers.company.routes.CompanyReviewController.onPageLoad(mode, srn, index))
             case _ => answers.get(IsEstablisherNewId(index)) match {
               case Some(true) =>
-                anyMoreChanges(srn)
-              case _ =>
                 NavigateTo.dontSave(controllers.register.establishers.company.routes.CompanyReviewController.onPageLoad(mode, srn, index))
+              case _ =>
+                anyMoreChanges(srn)
             }
           }
         case _ => NavigateTo.dontSave(controllers.routes.SessionExpiredController.onPageLoad())

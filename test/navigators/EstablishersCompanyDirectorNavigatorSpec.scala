@@ -20,6 +20,7 @@ import base.SpecBase
 import connectors.FakeUserAnswersCacheConnector
 import controllers.register.establishers.company.director.routes
 import identifiers.Identifier
+import identifiers.register.establishers.IsEstablisherNewId
 import identifiers.register.establishers.company.director._
 import models.Mode.checkMode
 import models._
@@ -61,7 +62,8 @@ class EstablishersCompanyDirectorNavigatorSpec extends SpecBase with NavigatorBe
   private def editRoutes(mode:Mode): TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = commonRoutes(mode) ++ Table(
     ("Id", "User Answers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (Check Mode)", "Save (CM)"),
     (ConfirmDeleteDirectorId(0), emptyAnswers, anyMoreChanges, false, None, false),
-    (CheckYourAnswersId(0, 0), emptyAnswers, anyMoreChanges, true, None, true)
+    (CheckYourAnswersId(0, 0), emptyAnswers, anyMoreChanges, true, None, true),
+    (CheckYourAnswersId(0, 0), newEstablisher, addCompanyDirectors(mode), true, None, true)
   )
 
   navigator.getClass.getSimpleName must {
@@ -77,6 +79,7 @@ object EstablishersCompanyDirectorNavigatorSpec extends OptionValues {
 
   private val navigator = new EstablishersCompanyDirectorNavigator(FakeUserAnswersCacheConnector)
   private val emptyAnswers = UserAnswers(Json.obj())
+  private val newEstablisher = UserAnswers().set(IsEstablisherNewId(0))(true).asOpt.value
   val establisherIndex = Index(0)
   val directorIndex = Index(0)
   private val newDirector = UserAnswers(Json.obj()).set(IsNewDirectorId(establisherIndex, directorIndex))(true).asOpt.value

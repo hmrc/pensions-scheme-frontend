@@ -56,23 +56,25 @@ class EstablishersPartnershipNavigatorSpec extends SpecBase with NavigatorBehavi
   )
 
   private def normalOnlyRoutes: TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = Table(
-    ("Id",                                          "User Answers",               "Next Page (Normal Mode)",                "Save (NM)",  "Next Page (Check Mode)",         "Save (CM)"),
-    (PartnershipContactDetailsId(0),                  emptyAnswers,                 isDormant,                                true,         Some(checkYourAnswers(NormalMode)),               true),
-    (IsPartnershipDormantId(0),                       emptyAnswers,                 checkYourAnswers(NormalMode),             true,         Some(checkYourAnswers(NormalMode)),               true)
+    ("Id", "User Answers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (Check Mode)", "Save (CM)"),
+    (PartnershipContactDetailsId(0), emptyAnswers, isDormant, true, Some(checkYourAnswers(NormalMode)), true),
+    (IsPartnershipDormantId(0), emptyAnswers, checkYourAnswers(NormalMode), true, Some(checkYourAnswers(NormalMode)), true),
+    (PartnershipReviewId(0), emptyAnswers, addEstablisher(NormalMode), false, None, true)
   )
 
   private def updateOnlyRoutes: TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = Table(
-    ("Id",                                          "User Answers",               "Next Page (Normal Mode)",                "Save (NM)",  "Next Page (Check Mode)",         "Save (CM)"),
-    (PartnershipContactDetailsId(0),                  emptyAnswers,                 checkYourAnswers(UpdateMode),             true,         Some(checkYourAnswers(UpdateMode)),               true)
+    ("Id", "User Answers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (Check Mode)", "Save (CM)"),
+    (PartnershipContactDetailsId(0), emptyAnswers, checkYourAnswers(UpdateMode), true, Some(checkYourAnswers(UpdateMode)), true),
+    (PartnershipReviewId(0), emptyAnswers, anyMoreChanges, false, None, true)
   )
 
   private def normalRoutes = Table(
-    ("Id",                                          "User Answers",               "Next Page (Normal Mode)",                "Save (NM)",  "Next Page (Check Mode)",         "Save (CM)"),
+    ("Id", "User Answers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (Check Mode)", "Save (CM)"),
     routes(NormalMode) ++ normalOnlyRoutes: _*
   );
 
   private def updateRoutes = Table(
-    ("Id",                                          "User Answers",               "Next Page (Normal Mode)",                "Save (NM)",  "Next Page (Check Mode)",         "Save (CM)"),
+    ("Id", "User Answers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (Check Mode)", "Save (CM)"),
     routes(UpdateMode) ++ updateOnlyRoutes: _*
   )
 

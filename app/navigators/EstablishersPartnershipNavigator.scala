@@ -20,10 +20,10 @@ import com.google.inject.Inject
 import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
 import controllers.register.establishers.partnership._
-import identifiers.register.establishers.{IsEstablisherCompleteId, IsEstablisherNewId}
+import identifiers.register.establishers.IsEstablisherNewId
 import identifiers.register.establishers.partnership._
-import models.{AddressYears, CheckMode, CheckUpdateMode, Index, Mode, NormalMode, UpdateMode}
 import models.Mode._
+import models._
 import utils.{Navigator, UserAnswers}
 
 class EstablishersPartnershipNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector, appConfig: FrontendAppConfig) extends Navigator {
@@ -124,6 +124,8 @@ class EstablishersPartnershipNavigator @Inject()(val dataCacheConnector: UserAns
   override protected def updateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] = from.id match {
     case PartnershipContactDetailsId(index) =>
       NavigateTo.dontSave(routes.CheckYourAnswersController.onPageLoad(UpdateMode, index, srn))
+    case PartnershipReviewId(_) =>
+      NavigateTo.dontSave(controllers.routes.AnyMoreChangesController.onPageLoad(srn))
     case _ => route(from, UpdateMode, srn)
   }
 
