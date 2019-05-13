@@ -50,14 +50,17 @@ class HsTaskListHelperRegistration(answers: UserAnswers)(implicit messages: Mess
   }
 
   protected[utils] def declarationSection(userAnswers: UserAnswers): Option[SchemeDetailsTaskListDeclarationSection] =
-    Some(SchemeDetailsTaskListDeclarationSection(declarationLink(userAnswers)))
+    Some(SchemeDetailsTaskListDeclarationSection(
+      header = "messages__schemeTaskList__sectionDeclaration_header",
+      declarationLink = declarationLink(userAnswers)))
 
   protected def listOf(sections: Seq[Entity[_]], userAnswers: UserAnswers): Seq[SchemeDetailsTaskListSection] = {
     val notDeletedElements = for ((section, index) <- sections.zipWithIndex) yield {
       if (section.isDeleted) None else {
         Some(SchemeDetailsTaskListSection(
           Some(section.isCompleted),
-          Link(linkText(section), linkTarget(section, index, NormalMode, None)),
+          Link(linkText(section),
+            section.editLink(NormalMode, None).getOrElse(controllers.routes.SessionExpiredController.onPageLoad().url)),
           Some(section.name))
         )
       }

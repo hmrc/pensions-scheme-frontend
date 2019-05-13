@@ -16,21 +16,17 @@
 
 package controllers.address
 
-import akka.stream.Materializer
 import com.google.inject.Inject
 import config.FrontendAppConfig
-import controllers.actions.{DataRetrievalAction, FakeDataRetrievalAction}
 import forms.address.AddressListFormProvider
 import identifiers.TypedIdentifier
 import models._
 import models.address.{Address, TolerantAddress}
 import models.requests.DataRequest
-import org.scalatest.{Matchers, WordSpec}
+import org.scalatest.{Matchers, OptionValues, WordSpec}
 import play.api.Application
 import play.api.i18n.MessagesApi
-import play.api.inject.bind
-import play.api.libs.json.Json
-import play.api.mvc.{AnyContent, Call, Request, Result}
+import play.api.mvc.{Call, Result}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.{FakeUserAnswersService, UserAnswersService}
@@ -42,7 +38,7 @@ import views.html.address.addressList
 
 import scala.concurrent.Future
 
-class AddressListControllerSpec extends WordSpec with Matchers {
+class AddressListControllerSpec extends WordSpec with Matchers with OptionValues {
 
   import AddressListControllerSpec._
 
@@ -108,7 +104,7 @@ class AddressListControllerSpec extends WordSpec with Matchers {
         val result = controller.onSubmit(viewModel, 0)
 
         status(result) shouldBe SEE_OTHER
-        FakeUserAnswersService.verify(FakeSelectedAddressIdentifier, viewModel.addresses.head)
+        FakeUserAnswersService.userAnswer.get(FakeSelectedAddressIdentifier).value shouldBe viewModel.addresses.head
       }
 
     }
@@ -121,7 +117,7 @@ class AddressListControllerSpec extends WordSpec with Matchers {
         val result = controller.onSubmit(viewModel, 0)
 
         status(result) shouldBe SEE_OTHER
-        FakeUserAnswersService.verifyNot(FakeAddressIdentifier)
+        FakeUserAnswersService.userAnswer.get(FakeAddressIdentifier) shouldBe None
       }
 
     }

@@ -16,16 +16,20 @@
 
 package utils
 
-import identifiers.register.establishers.company.director.{DirectorDetailsId, IsDirectorCompleteId}
+import identifiers.register.establishers.company.director._
 import identifiers.register.establishers.company.{CompanyDetailsId => EstablisherCompanyDetailsId, CompanyPayeId => EstablisherCompanyPayeId, CompanyVatId => EstablisherCompanyVatId}
 import identifiers.register.establishers.individual.EstablisherDetailsId
 import identifiers.register.establishers.partnership.PartnershipDetailsId
 import identifiers.register.establishers.partnership.partner.{IsPartnerCompleteId, PartnerDetailsId}
 import identifiers.register.establishers.{EstablisherKindId, EstablishersId, IsEstablisherCompleteId, IsEstablisherNewId}
+import identifiers.register.establishers.partnership.partner.{IsPartnerAddressCompleteId, IsPartnerCompleteId, PartnerDetailsId}
+import identifiers.register.establishers.partnership._
+import identifiers.register.establishers.{company => _, partnership => _, _}
 import identifiers.register.trustees.company.{CompanyPayeId, CompanyVatId, CompanyDetailsId => TrusteeCompanyDetailsId}
 import identifiers.register.trustees.individual.TrusteeDetailsId
 import identifiers.register.trustees.{company => _, _}
 import models._
+import models.address.{Address, TolerantAddress}
 import models.person.PersonDetails
 import models.register.SchemeType.SingleTrust
 import models.register._
@@ -47,19 +51,23 @@ class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues with 
         _.set(IsEstablisherCompleteId(0))(true).flatMap(
           _.set(EstablisherKindId(0))(EstablisherKind.Company).flatMap(
             _.set(IsEstablisherNewId(0))(true).flatMap(
-              _.set(EstablisherCompanyVatId(0))(Vat.No).flatMap(
-                _.set(EstablisherCompanyPayeId(0))(Paye.No).flatMap(
-                  _.set(EstablisherDetailsId(1))(PersonDetails("my", None, "name", LocalDate.now)).flatMap(
-                    _.set(IsEstablisherNewId(1))(true).flatMap(
-                      _.set(IsEstablisherCompleteId(1))(false).flatMap(
-                        _.set(EstablisherKindId(1))(EstablisherKind.Indivdual).flatMap(
-                          _.set(PartnershipDetailsId(2))(PartnershipDetails("my partnership name", false)).flatMap(
-                            _.set(IsEstablisherNewId(2))(true).flatMap(
-                              _.set(EstablisherKindId(2))(EstablisherKind.Partnership).flatMap(
-                                _.set(IsEstablisherCompleteId(2))(false).flatMap(
-                                  _.set(EstablisherKindId(3))(EstablisherKind.Company)).flatMap(
-                                  _.set(IsEstablisherNewId(0))(true)
-                                )))))))))))))).asOpt.value
+              _.set(IsEstablisherAddressCompleteId(0))(true).flatMap(
+                _.set(EstablisherCompanyVatId(0))(Vat.No).flatMap(
+                  _.set(EstablisherCompanyPayeId(0))(Paye.No).flatMap(
+                    _.set(EstablisherDetailsId(1))(PersonDetails("my", None, "name", LocalDate.now)).flatMap(
+                      _.set(IsEstablisherNewId(1))(true).flatMap(
+                        _.set(IsEstablisherAddressCompleteId(1))(true).flatMap(
+                          _.set(IsEstablisherCompleteId(1))(false).flatMap(
+                            _.set(EstablisherKindId(1))(EstablisherKind.Indivdual).flatMap(
+                              _.set(PartnershipDetailsId(2))(PartnershipDetails("my partnership name", false)).flatMap(
+                                _.set(IsEstablisherNewId(2))(true).flatMap(
+                                  _.set(IsEstablisherAddressCompleteId(2))(true).flatMap(
+                                    _.set(EstablisherKindId(2))(EstablisherKind.Partnership).flatMap(
+                                      _.set(IsEstablisherCompleteId(2))(false).flatMap(
+                                        _.set(EstablisherKindId(3))(EstablisherKind.Company)).flatMap(
+                                        _.set(IsEstablisherNewId(3))(true).flatMap(
+                                          _.set(IsEstablisherAddressCompleteId(2))(true)
+                                        )))))))))))))))))).asOpt.value
 
       val allEstablisherEntities: Seq[Establisher[_]] = Seq(
         establisherEntity("my company", 0, Company, isComplete = true),
@@ -123,8 +131,7 @@ class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues with 
       )
 
       val userAnswers = UserAnswers(json)
-      val allEstablisherEntities: Seq[Establisher[_]] = Seq(establisherEntity("my name 1", 0, Indivdual, countAfterDelete=3),
-        establisherEntity("my name 3", 2, Indivdual, countAfterDelete=3))
+      val allEstablisherEntities: Seq[Establisher[_]] = Seq(establisherEntity("my name 1", 0, Indivdual, countAfterDeleted = 3), establisherEntity("my name 3", 2, Indivdual, countAfterDeleted = 3))
 
       userAnswers.allEstablishersAfterDelete mustEqual allEstablisherEntities
     }
@@ -141,7 +148,8 @@ class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues with 
             TrusteeDetailsId.toString ->
               PersonDetails("First", None, "Last", LocalDate.now),
             IsTrusteeCompleteId.toString -> true,
-            IsTrusteeNewId.toString -> true
+            IsTrusteeNewId.toString -> true,
+            IsTrusteeAddressCompleteId.toString -> true
           ),
           Json.obj(
             TrusteeKindId.toString -> TrusteeKind.Company.toString,
@@ -150,7 +158,8 @@ class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues with 
             CompanyVatId.toString -> Vat.No,
             CompanyPayeId.toString -> Paye.No,
             IsTrusteeCompleteId.toString -> true,
-            IsTrusteeNewId.toString -> true
+            IsTrusteeNewId.toString -> true,
+            IsTrusteeAddressCompleteId.toString -> true
           ),
           Json.obj(
             TrusteeKindId.toString -> TrusteeKind.Partnership.toString,
@@ -229,7 +238,7 @@ class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues with 
 
       val userAnswers = UserAnswers(json)
 
-      val allTrusteesEntities: Seq[Trustee[_]] = Seq(trusteeEntity("My Company", 1, TrusteeKind.Company, countAfterDelete=2))
+      val allTrusteesEntities: Seq[Trustee[_]] = Seq(trusteeEntity("My Company", 1, TrusteeKind.Company, countAfterDeleted = 2))
 
       val result = userAnswers.allTrusteesAfterDelete
 
@@ -243,6 +252,7 @@ class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues with 
       val userAnswers = UserAnswers()
         .set(DirectorDetailsId(0, 0))(PersonDetails("First", None, "Last", LocalDate.now))
         .flatMap(_.set(IsDirectorCompleteId(0, 0))(true))
+        .flatMap(_.set(IsDirectorAddressCompleteId(0, 0))(true))
         .flatMap(_.set(IsDirectorCompleteId(0, 1))(false))
         .flatMap(_.set(DirectorDetailsId(0, 1))(PersonDetails("First", None, "Last", LocalDate.now, isDeleted = true)))
         .flatMap(_.set(DirectorDetailsId(0, 2))(PersonDetails("First", None, "Last", LocalDate.now)))
@@ -297,7 +307,7 @@ class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues with 
       result.size mustEqual 3
       result mustBe partnerEntities
     }
-  }  
+  }
 
   ".establishersCount" must {
 
@@ -454,28 +464,116 @@ class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues with 
     }
   }
 
-}
+  "areVariationChangesCompleted" when {
 
-object UserAnswersSpec {
-  private def establisherEntity(name: String, index: Int, establisherKind: EstablisherKind, isComplete: Boolean = false, countAfterDelete :Int = 4): Establisher[_] = {
-    establisherKind match {
-      case Indivdual =>
-        EstablisherIndividualEntity(EstablisherDetailsId(index), name, isDeleted = false, isCompleted = isComplete, isNewEntity = true, countAfterDelete)
-      case Company =>
-        EstablisherCompanyEntity(EstablisherCompanyDetailsId(index), name, isDeleted = false, isCompleted = isComplete, isNewEntity = true, countAfterDelete)
-      case _ =>
-        EstablisherPartnershipEntity(PartnershipDetailsId(index), name, isDeleted = false, isCompleted = isComplete, isNewEntity = true, countAfterDelete)
+    "checking insurance company" must {
+       "return false if scheme have insurance and details are missing" in {
+         val insuranceCompanyDetails = UserAnswers().investmentRegulated(true)
+         insuranceCompanyDetails.areVariationChangesCompleted mustBe false
+       }
+
+       "return false if scheme have insurance is not defined" in {
+         val insuranceCompanyDetails = UserAnswers()
+         insuranceCompanyDetails.areVariationChangesCompleted mustBe false
+       }
+
+       "return true if scheme does not have insurance" in {
+         val insuranceCompanyDetails = UserAnswers().benefitsSecuredByInsurance(false)
+         insuranceCompanyDetails.areVariationChangesCompleted mustBe true
+       }
+
+       "return true if scheme have insurance and all the details are present" in {
+         insuranceCompanyDetails.areVariationChangesCompleted mustBe true
+       }
+     }
+
+    "checking trustees" must {
+      "return true if trustees are not defined" in {
+        insuranceCompanyDetails.areVariationChangesCompleted mustBe true
+      }
+
+      "return false if trustees are not completed" in {
+        trustee.areVariationChangesCompleted mustBe false
+      }
+
+      "return false if trustee details are completed but truestee address are incomplete" in {
+        val trusteeCompleted = trustee.set(IsTrusteeCompleteId(0))(true).flatMap(
+          _.set(IsTrusteeAddressCompleteId(0))(false)).asOpt.get
+        trusteeCompleted.areVariationChangesCompleted mustBe false
+      }
+
+      "return true if trustees and address details are completed" in {
+        val trusteeCompleted = trustee.set(IsTrusteeCompleteId(0))(true).flatMap(
+          _.set(IsTrusteeAddressCompleteId(0))(true)).asOpt.get
+        trusteeCompleted.areVariationChangesCompleted mustBe true
+      }
+    }
+
+    "checking establishers" must {
+      "return false if establishers are not completed" in {
+        establisher.areVariationChangesCompleted mustBe false
+      }
+
+      "return false if establishers are completed but directors are not completed" in {
+        val establisherCompleted = establisher.set(IsEstablisherCompleteId(0))(true).asOpt.get
+        establisherCompleted.areVariationChangesCompleted mustBe false
+      }
+
+      "return false if establishers are completed but directors address is not completed" in {
+        val establisherCompleted = establisher.set(IsEstablisherCompleteId(0))(true).flatMap(
+          _.set(IsDirectorCompleteId(0,0))(false)).flatMap(
+          _.set(IsEstablisherAddressCompleteId(0))(true)).asOpt.get
+        establisherCompleted.areVariationChangesCompleted mustBe false
+      }
+
+      "return false if establishers are completed but establisher address is not completed" in {
+        val establisherCompleted = establisher.set(IsEstablisherCompleteId(0))(true).flatMap(
+          _.set(IsDirectorCompleteId(0,0))(true)).flatMap(
+          _.set(IsDirectorAddressCompleteId(0,0))(true)).flatMap(
+          _.set(IsEstablisherAddressCompleteId(0))(false)).asOpt.get
+        establisherCompleted.areVariationChangesCompleted mustBe false
+      }
+
+      "return true if establishers company is completed" in {
+        val establisherCompleted = establisher.set(IsEstablisherCompleteId(0))(true).flatMap(
+          _.set(IsDirectorCompleteId(0,0))(true)).flatMap(
+          _.set(IsDirectorAddressCompleteId(0,0))(true)).flatMap(
+          _.set(IsEstablisherAddressCompleteId(0))(true)).asOpt.get
+        establisherCompleted.areVariationChangesCompleted mustBe true
+      }
+
+      "return true if establishers partnership is completed" in {
+        val establisherCompleted = establisherPartnership.set(IsEstablisherCompleteId(0))(true).flatMap(
+          _.set(IsPartnerCompleteId(0,0))(true)).flatMap(
+          _.set(IsPartnerAddressCompleteId(0,0))(true)).flatMap(
+          _.set(IsEstablisherAddressCompleteId(0))(true)).asOpt.get
+        establisherCompleted.areVariationChangesCompleted mustBe true
+      }
     }
   }
 
-  private def trusteeEntity(name: String, index: Int, trusteeKind: TrusteeKind, isComplete: Boolean = false, countAfterDelete : Int = 4): Trustee[_] = {
+}
+
+object UserAnswersSpec extends OptionValues with Enumerable.Implicits {
+  private def establisherEntity(name: String, index: Int, establisherKind: EstablisherKind, isComplete: Boolean = false, countAfterDeleted : Int = 4): Establisher[_] = {
+    establisherKind match {
+      case Indivdual =>
+        EstablisherIndividualEntity(EstablisherDetailsId(index), name, isDeleted = false, isCompleted = isComplete, isNewEntity = true, countAfterDeleted)
+      case Company =>
+        EstablisherCompanyEntity(EstablisherCompanyDetailsId(index), name, isDeleted = false, isCompleted = isComplete, isNewEntity = true, countAfterDeleted)
+      case _ =>
+        EstablisherPartnershipEntity(PartnershipDetailsId(index), name, isDeleted = false, isCompleted = isComplete, isNewEntity = true, countAfterDeleted)
+    }
+  }
+
+  private def trusteeEntity(name: String, index: Int, trusteeKind: TrusteeKind, isComplete: Boolean = false, countAfterDeleted : Int = 4): Trustee[_] = {
     trusteeKind match {
       case TrusteeKind.Individual =>
-        TrusteeIndividualEntity(TrusteeDetailsId(index), name, isDeleted = false, isCompleted = isComplete, isNewEntity = true, countAfterDelete, Some(SingleTrust.toString))
+        TrusteeIndividualEntity(TrusteeDetailsId(index), name, isDeleted = false, isCompleted = isComplete, isNewEntity = true, countAfterDeleted, Some(SingleTrust.toString))
       case TrusteeKind.Company =>
-        TrusteeCompanyEntity(TrusteeCompanyDetailsId(index), name, isDeleted = false, isCompleted = isComplete, isNewEntity = true, countAfterDelete, Some(SingleTrust.toString))
+        TrusteeCompanyEntity(TrusteeCompanyDetailsId(index), name, isDeleted = false, isCompleted = isComplete, isNewEntity = true, countAfterDeleted, Some(SingleTrust.toString))
       case _ =>
-        TrusteePartnershipEntity(partnership.PartnershipDetailsId(index), name, isDeleted = false, isCompleted = isComplete, isNewEntity = true, countAfterDelete, Some(SingleTrust.toString))
+        TrusteePartnershipEntity(partnership.PartnershipDetailsId(index), name, isDeleted = false, isCompleted = isComplete, isNewEntity = true, countAfterDeleted, Some(SingleTrust.toString))
     }
   }
 
@@ -493,4 +591,61 @@ object UserAnswersSpec {
   private val company = CompanyDetails("test-company-name")
   private val person = PersonDetails("test-first-name", None, "test-last-name", LocalDate.now())
   private val partnershipDetails = PartnershipDetails("test-first-name")
+
+  private val policyNumber = "Test policy number"
+  private val insurerAddress = Address("addr1", "addr2", Some("addr3"), Some("addr4"), Some("xxx"), "GB")
+
+  private val crn = CompanyRegistrationNumber.Yes("test-crn")
+  private val utr = UniqueTaxReference.Yes("test-utr")
+  private val address = Address("address-1-line-1", "address-1-line-2", None, None, Some("post-code-1"), "country-1")
+  private val addressYears = AddressYears.UnderAYear
+  private val previousAddress = Address("address-2-line-1", "address-2-line-2", None, None, Some("post-code-2"), "country-2")
+  private val contactDetails = ContactDetails("test@test.com", "1234")
+
+  private val insuranceCompanyDetails = UserAnswers().investmentRegulated(true).occupationalPensionScheme(true).
+    typeOfBenefits(TypeOfBenefits.Defined).benefitsSecuredByInsurance(true).insuranceCompanyName(company.companyName).
+    insurancePolicyNumber(policyNumber).insurerConfirmAddress(insurerAddress)
+
+  private val trustee = insuranceCompanyDetails
+    .trusteesCompanyDetails(0, company)
+    .trusteesCompanyRegistrationNumber(0, crn)
+    .trusteesUniqueTaxReference(0, utr)
+    .trusteesCompanyAddress(0, address)
+    .trusteesCompanyAddressYears(0, addressYears)
+    .trusteesCompanyPreviousAddress(0, previousAddress).set(CompanyVatId(0))(Vat.Yes("vat")).flatMap(
+    _.set(CompanyPayeId(0))(Paye.Yes("vat"))).asOpt.get
+
+  private val establisher = trustee.set(IsTrusteeCompleteId(0))(true).flatMap(
+    _.set(IsTrusteeAddressCompleteId(0))(true)).asOpt.get.
+    establisherCompanyDetails(0, company).
+    establisherCompanyRegistrationNumber(0, crn).
+    establisherUniqueTaxReference(0, utr).
+    establisherCompanyDormant(0, DeclarationDormant.Yes).
+    establishersCompanyAddress(0, address).
+    establisherCompanyAddressYears(0, addressYears).
+    establishersCompanyPreviousAddress(0, previousAddress).
+    establishersCompanyContactDetails(0, contactDetails).set(EstablisherCompanyVatId(0))(Vat.Yes("vat"))
+    .flatMap(_.set(EstablisherKindId(0))(EstablisherKind.Company))
+    .flatMap(_.set(EstablisherCompanyPayeId(0))(Paye.Yes("vat")))
+    .flatMap(_.set(DirectorDetailsId(0, 0))(person))
+    .flatMap(_.set(DirectorNinoId(0, 0))(Nino.Yes("AB100100A")))
+    .flatMap(_.set(DirectorUniqueTaxReferenceId(0, 0))(utr))
+    .flatMap(_.set(DirectorAddressId(0, 0))(address))
+    .flatMap(_.set(DirectorAddressYearsId(0, 0))(AddressYears.UnderAYear))
+    .flatMap(_.set(DirectorPreviousAddressId(0, 0))(previousAddress))
+    .flatMap(_.set(DirectorContactDetailsId(0, 0))(contactDetails)).asOpt.get
+
+  val establisherPartnership = trustee.set(IsTrusteeCompleteId(0))(true)
+    .flatMap(_.set(IsTrusteeAddressCompleteId(0))(true))
+    .flatMap(_.set(EstablisherKindId(0))(EstablisherKind.Partnership))
+    .flatMap(_.set(PartnershipDetailsId(0))(PartnershipDetails("")))
+    .flatMap(_.set(PartnershipVatId(0))(Vat.No))
+    .flatMap(_.set(PartnershipPayeId(0))(Paye.No))
+    .flatMap(_.set(PartnershipUniqueTaxReferenceID(0))(utr))
+    .flatMap(_.set(PartnershipAddressId(0))(address))
+    .flatMap(_.set(PartnershipAddressYearsId(0))(AddressYears.UnderAYear))
+    .flatMap(_.set(PartnershipPreviousAddressId(0))(previousAddress))
+    .flatMap(_.set(PartnershipContactDetailsId(0))(contactDetails))
+    .flatMap(_.set(PartnerDetailsId(0, 0))(PersonDetails("par1", None, "", LocalDate.now)))
+    .asOpt.value
 }

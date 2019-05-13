@@ -103,7 +103,7 @@ sealed trait Establisher[T] extends Entity[T]
 case class EstablisherCompanyEntity(id: EstablisherCompanyDetailsId, name: String, isDeleted: Boolean,
                                     isCompleted: Boolean, isNewEntity: Boolean, noOfRecords : Int) extends Establisher[EstablisherCompanyDetailsId] {
   override def editLink(mode: Mode, srn: Option[String]): Option[String] = (isNewEntity, isCompleted) match {
-    case (false, _) => None
+    case (false, _) => Some(controllers.register.establishers.company.routes.CompanyReviewController.onPageLoad(mode, srn, index).url)
     case (_, true) => Some(controllers.register.establishers.company.routes.CheckYourAnswersController.onPageLoad(mode, srn, id.index).url)
     case (_, false) => Some(controllers.register.establishers.company.routes.CompanyDetailsController.onPageLoad(mode, srn, id.index).url)
   }
@@ -124,7 +124,7 @@ case class EstablisherCompanyEntity(id: EstablisherCompanyDetailsId, name: Strin
 case class EstablisherIndividualEntity(id: EstablisherDetailsId, name: String, isDeleted: Boolean,
                                        isCompleted: Boolean, isNewEntity: Boolean, noOfRecords : Int) extends Establisher[EstablisherDetailsId] {
   override def editLink(mode: Mode, srn: Option[String]): Option[String] = (isNewEntity, isCompleted) match {
-    case (false, _) => None
+    case (false, _) => Some(controllers.register.establishers.individual.routes.CheckYourAnswersController.onPageLoad(mode, index, srn).url)
     case (_, true) => Some(controllers.register.establishers.individual.routes.CheckYourAnswersController.onPageLoad(mode, id.index, srn).url)
     case (_, false) => Some(controllers.register.establishers.individual.routes.EstablisherDetailsController.onPageLoad(mode, id.index, srn).url)
   }
@@ -145,7 +145,7 @@ case class EstablisherIndividualEntity(id: EstablisherDetailsId, name: String, i
 case class EstablisherPartnershipEntity(id: PartnershipDetailsId, name: String, isDeleted: Boolean,
                                         isCompleted: Boolean, isNewEntity: Boolean, noOfRecords : Int) extends Establisher[PartnershipDetailsId] {
   override def editLink(mode: Mode, srn: Option[String]): Option[String] = (isNewEntity, isCompleted) match {
-    case (false, _) => None
+    case (false, _) => Some(controllers.register.establishers.partnership.routes.PartnershipReviewController.onPageLoad(mode, index, srn).url)
     case (_, true) => Some(controllers.register.establishers.partnership.routes.CheckYourAnswersController.onPageLoad(mode, id.index, srn).url)
     case (_, false) => Some(controllers.register.establishers.partnership.routes.PartnershipDetailsController.onPageLoad(mode, id.index, srn).url)
   }
@@ -184,7 +184,7 @@ case class TrusteeCompanyEntity(id: TrusteeCompanyDetailsId, name: String, isDel
                                 isCompleted: Boolean, isNewEntity: Boolean, noOfRecords : Int,
                                 schemeType: Option[String]) extends Trustee[TrusteeCompanyDetailsId] {
   override def editLink(mode: Mode, srn: Option[String]): Option[String] = (isNewEntity, isCompleted) match {
-    case (false, _) => None
+    case (false, _) => Some(controllers.register.trustees.company.routes.CheckYourAnswersController.onPageLoad(mode, index, srn).url)
     case (_, true) => Some(controllers.register.trustees.company.routes.CheckYourAnswersController.onPageLoad(mode, id.index, srn).url)
     case (_, false) => Some(controllers.register.trustees.company.routes.CompanyDetailsController.onPageLoad(mode, id.index, srn).url)
   }
@@ -210,7 +210,7 @@ case class TrusteeIndividualEntity(id: TrusteeDetailsId, name: String, isDeleted
                                    isCompleted: Boolean, isNewEntity: Boolean, noOfRecords : Int,
                                    schemeType: Option[String]) extends Trustee[TrusteeDetailsId] {
   override def editLink(mode: Mode, srn: Option[String]): Option[String] = (isNewEntity, isCompleted) match {
-    case (false, _) => None
+    case (false, _) => Some(controllers.register.trustees.individual.routes.CheckYourAnswersController.onPageLoad(mode, index, srn).url)
     case (_, true) => Some(controllers.register.trustees.individual.routes.CheckYourAnswersController.onPageLoad(mode, id.index, srn).url)
     case (_, false) => Some(controllers.register.trustees.individual.routes.TrusteeDetailsController.onPageLoad(mode, id.index, srn).url)
   }
@@ -236,7 +236,7 @@ case class TrusteePartnershipEntity(id: TrusteePartnershipDetailsId, name: Strin
                                     isCompleted: Boolean, isNewEntity: Boolean, noOfRecords : Int,
                                     schemeType: Option[String]) extends Trustee[TrusteePartnershipDetailsId] {
   override def editLink(mode: Mode, srn: Option[String]): Option[String] = (isNewEntity, isCompleted) match {
-    case (false, _) => None
+    case (false, _) => Some(controllers.register.trustees.partnership.routes.CheckYourAnswersController.onPageLoad(mode, index, srn).url)
     case (_, true) => Some(controllers.register.trustees.partnership.routes.CheckYourAnswersController.onPageLoad(mode, id.index, srn).url)
     case (_, false) => Some(controllers.register.trustees.partnership.routes.TrusteeDetailsController.onPageLoad(mode, id.index, srn).url)
   }

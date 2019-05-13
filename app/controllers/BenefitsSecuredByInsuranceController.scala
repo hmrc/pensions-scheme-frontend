@@ -19,7 +19,7 @@ package controllers
 import config.FrontendAppConfig
 import controllers.actions._
 import forms.BenefitsSecuredByInsuranceFormProvider
-import identifiers.BenefitsSecuredByInsuranceId
+import identifiers.{BenefitsSecuredByInsuranceId, IsAboutBenefitsAndInsuranceCompleteId}
 import javax.inject.Inject
 import models.Mode
 import play.api.data.Form
@@ -64,8 +64,11 @@ class BenefitsSecuredByInsuranceController @Inject()(appConfig: FrontendAppConfi
         (formWithErrors: Form[_]) =>
           Future.successful(BadRequest(benefitsSecuredByInsurance(appConfig, formWithErrors, mode, existingSchemeName, postCall(mode, srn), srn))),
         value =>
-          userAnswersService.save(mode, srn, BenefitsSecuredByInsuranceId, value).map(cacheMap =>
+          userAnswersService.save(mode, srn, BenefitsSecuredByInsuranceId, value).flatMap{ userAnswers =>
+            val updatedUserAnswers = UserAnswers(userAnswers).set(IsAboutBenefitsAndInsuranceCompleteId)(!value).getOrElse(UserAnswers(userAnswers))
+            userAnswersService.upsert(mode, srn, updatedUserAnswers.json).map(cacheMap =>
             Redirect(navigator.nextPage(BenefitsSecuredByInsuranceId, mode, UserAnswers(cacheMap), srn)))
+          }
       )
   }
 }

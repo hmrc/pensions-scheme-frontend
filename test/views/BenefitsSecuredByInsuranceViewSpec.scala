@@ -18,7 +18,7 @@ package views
 
 import controllers.routes
 import forms.BenefitsSecuredByInsuranceFormProvider
-import models.NormalMode
+import models.{NormalMode, UpdateMode}
 import play.api.data.Form
 import play.twirl.api.HtmlFormat
 import views.behaviours.YesNoViewBehaviours
@@ -29,13 +29,17 @@ class BenefitsSecuredByInsuranceViewSpec extends YesNoViewBehaviours {
   val messageKeyPrefix = "benefits_secured_by_insurance"
 
   val form = new BenefitsSecuredByInsuranceFormProvider()()
-  private val postCall = controllers.routes.BenefitsSecuredByInsuranceController.onSubmit(NormalMode, None)
+  def postCall = controllers.routes.BenefitsSecuredByInsuranceController.onSubmit(NormalMode, None)
 
   def createView(): () => HtmlFormat.Appendable = () =>
-    benefitsSecuredByInsurance(frontendAppConfig, form, NormalMode, None, postCall)(fakeRequest, messages)
+    benefitsSecuredByInsurance(frontendAppConfig, form, NormalMode, None, postCall, None)(fakeRequest, messages)
+
+  def createUpdateView(): () => HtmlFormat.Appendable = () =>
+    benefitsSecuredByInsurance(frontendAppConfig, form, UpdateMode, None, postCall, Some("srn"))(fakeRequest, messages)
+
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) =>
-    benefitsSecuredByInsurance(frontendAppConfig, form, NormalMode, None, postCall)(fakeRequest, messages)
+    benefitsSecuredByInsurance(frontendAppConfig, form, NormalMode, None, postCall, None)(fakeRequest, messages)
 
   "BenefitsSecuredByInsurance view " must {
 
@@ -45,5 +49,7 @@ class BenefitsSecuredByInsuranceViewSpec extends YesNoViewBehaviours {
       expectedFormAction = routes.BenefitsSecuredByInsuranceController.onSubmit(NormalMode, None).url)
 
     behave like pageWithReturnLink(createView(), getReturnLink)
+
+    behave like pageWithReturnLinkAndSrn(createUpdateView(), getReturnLinkWithSrn)
   }
 }

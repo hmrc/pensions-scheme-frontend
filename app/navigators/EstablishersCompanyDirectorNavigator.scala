@@ -35,12 +35,14 @@ class EstablishersCompanyDirectorNavigator @Inject()(val dataCacheConnector: Use
   private def anyMoreChanges(srn: Option[String]): Option[NavigateTo] =
     NavigateTo.dontSave(controllers.routes.AnyMoreChangesController.onPageLoad(srn))
 
-  private def exitMiniJourney(establisherIndex: Int, directorIndex: Int, mode: Mode, srn: Option[String]): Option[NavigateTo] =
+  private def exitMiniJourney(establisherIndex: Int, directorIndex: Int, mode: Mode, srn: Option[String], answers: UserAnswers): Option[NavigateTo] =
     mode match {
       case CheckMode | NormalMode =>
         checkYourAnswers(establisherIndex, directorIndex, journeyMode(mode), srn)
       case _ =>
-        anyMoreChanges(srn)
+        if(answers.get(IsNewDirectorId(establisherIndex, directorIndex)).getOrElse(false) &&
+          answers.get(IsDirectorCompleteId(establisherIndex, directorIndex)).getOrElse(false)) anyMoreChanges(srn)
+        else checkYourAnswers(establisherIndex, directorIndex, journeyMode(mode), srn)
     }
 
   protected def normalRoutes(from: NavigateFrom, mode: Mode, srn: Option[String]): Option[NavigateTo] =
@@ -66,17 +68,17 @@ class EstablishersCompanyDirectorNavigator @Inject()(val dataCacheConnector: Use
   protected def editRoutes(from: NavigateFrom, mode: Mode, srn: Option[String]): Option[NavigateTo] =
     from.id match {
       case DirectorDetailsId(establisherIndex, directorIndex) =>
-        exitMiniJourney(establisherIndex, directorIndex, mode, srn)
+        exitMiniJourney(establisherIndex, directorIndex, mode, srn, from.userAnswers)
       case DirectorNinoId(establisherIndex, directorIndex)  =>
-        exitMiniJourney(establisherIndex, directorIndex, mode, srn)
+        exitMiniJourney(establisherIndex, directorIndex, mode, srn, from.userAnswers)
       case DirectorUniqueTaxReferenceId(establisherIndex, directorIndex) =>
-        exitMiniJourney(establisherIndex, directorIndex, mode, srn)
+        exitMiniJourney(establisherIndex, directorIndex, mode, srn, from.userAnswers)
       case DirectorAddressId(establisherIndex, directorIndex) =>
-        exitMiniJourney(establisherIndex, directorIndex, mode, srn)
+        exitMiniJourney(establisherIndex, directorIndex, mode, srn, from.userAnswers)
       case DirectorPreviousAddressId(establisherIndex, directorIndex) =>
-        exitMiniJourney(establisherIndex, directorIndex, mode, srn)
+        exitMiniJourney(establisherIndex, directorIndex, mode, srn, from.userAnswers)
       case DirectorContactDetailsId(establisherIndex, directorIndex) =>
-        exitMiniJourney(establisherIndex, directorIndex, mode, srn)
+        exitMiniJourney(establisherIndex, directorIndex, mode, srn, from.userAnswers)
       case DirectorAddressYearsId(establisherIndex, directorIndex) =>
         addressYearsEditRoutes(establisherIndex, directorIndex, mode, srn)(from.userAnswers)
       case _ => commonRoutes(from, mode, srn)
@@ -129,7 +131,7 @@ class EstablishersCompanyDirectorNavigator @Inject()(val dataCacheConnector: Use
       case Some(AddressYears.UnderAYear) =>
         NavigateTo.dontSave(routes.DirectorPreviousAddressPostcodeLookupController.onPageLoad(mode, establisherIndex, directorIndex, srn))
       case Some(AddressYears.OverAYear) =>
-        exitMiniJourney(establisherIndex, directorIndex, mode, srn)
+        exitMiniJourney(establisherIndex, directorIndex, mode, srn, answers)
       case None =>
         NavigateTo.dontSave(controllers.routes.SessionExpiredController.onPageLoad())
     }
@@ -140,7 +142,7 @@ class EstablishersCompanyDirectorNavigator @Inject()(val dataCacheConnector: Use
       case CheckMode | NormalMode =>
         NavigateTo.dontSave(controllers.register.establishers.company.routes.AddCompanyDirectorsController.onPageLoad(mode, srn, establisherIndex))
       case _ => answers.get(IsEstablisherNewId(establisherIndex)) match {
-        case Some(true) if mode == CheckMode || mode == NormalMode =>
+        case Some(true)=>
           NavigateTo.dontSave(controllers.register.establishers.company.routes.AddCompanyDirectorsController.onPageLoad(mode, srn, establisherIndex))
         case _ =>
           anyMoreChanges(srn)

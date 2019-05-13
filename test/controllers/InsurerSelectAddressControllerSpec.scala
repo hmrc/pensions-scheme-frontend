@@ -136,7 +136,7 @@ class InsurerSelectAddressControllerSpec extends ControllerSpecBase with Mockito
         .onSubmit(NormalMode, None)(postRequest)
 
       status(result) mustEqual SEE_OTHER
-      FakeUserAnswersService.verify(InsurerSelectAddressId, addresses.head.copy(country = Some("GB")))
+      FakeUserAnswersService.userAnswer.get(InsurerSelectAddressId).value mustEqual(addresses.head.copy(country = Some("GB")))
     }
 
     "return a Bad Request and errors when invalid data is submitted" in {
