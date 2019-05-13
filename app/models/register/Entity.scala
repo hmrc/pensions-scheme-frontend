@@ -103,7 +103,8 @@ sealed trait Establisher[T] extends Entity[T]
 case class EstablisherCompanyEntity(id: EstablisherCompanyDetailsId, name: String, isDeleted: Boolean,
                                     isCompleted: Boolean, isNewEntity: Boolean, noOfRecords : Int) extends Establisher[EstablisherCompanyDetailsId] {
   override def editLink(mode: Mode, srn: Option[String]): Option[String] = (isNewEntity, isCompleted) match {
-    case (false, _) => None
+    case (false, true) => None
+    case (false, false) => Some(controllers.register.establishers.company.routes.CompanyReviewController.onPageLoad(mode, srn, index).url)
     case (_, true) => Some(controllers.register.establishers.company.routes.CheckYourAnswersController.onPageLoad(mode, srn, id.index).url)
     case (_, false) => Some(controllers.register.establishers.company.routes.CompanyDetailsController.onPageLoad(mode, srn, id.index).url)
   }
@@ -145,7 +146,8 @@ case class EstablisherIndividualEntity(id: EstablisherDetailsId, name: String, i
 case class EstablisherPartnershipEntity(id: PartnershipDetailsId, name: String, isDeleted: Boolean,
                                         isCompleted: Boolean, isNewEntity: Boolean, noOfRecords : Int) extends Establisher[PartnershipDetailsId] {
   override def editLink(mode: Mode, srn: Option[String]): Option[String] = (isNewEntity, isCompleted) match {
-    case (false, _) => None
+    case (false, true) => None
+    case (false, false) => Some(controllers.register.establishers.partnership.routes.PartnershipReviewController.onPageLoad(mode, index, srn).url)
     case (_, true) => Some(controllers.register.establishers.partnership.routes.CheckYourAnswersController.onPageLoad(mode, id.index, srn).url)
     case (_, false) => Some(controllers.register.establishers.partnership.routes.PartnershipDetailsController.onPageLoad(mode, id.index, srn).url)
   }
