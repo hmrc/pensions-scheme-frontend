@@ -19,7 +19,7 @@ package utils
 import identifiers.TypedIdentifier
 import identifiers.register.establishers.{company => _, partnership => _}
 import identifiers.register.trustees.{company => _}
-import models.{NormalMode, UpdateMode}
+import models._
 import models.requests.DataRequest
 import org.scalatest.{MustMatchers, OptionValues, WordSpec}
 import play.api.libs.json.Json
@@ -44,22 +44,34 @@ class AllowChangeHelperSpec extends WordSpec with MustMatchers with OptionValues
 
   private val ach = new AllowChangeHelperImpl
 
+  def registrationTests(mode:Mode, descr:String):Unit = {
+    s"return false where not viewOnly and id is present and mode is $descr mode" in {
+      ach.hideSaveAndContinueButton(request(viewOnly = false, ua = uaWithId), id, mode) mustBe false
+    }
+    s"return true where not viewOnly and id is not present and mode is $descr mode" in {
+      ach.hideSaveAndContinueButton(request(viewOnly = false, ua = uaWithoutId), id, mode) mustBe false
+    }
+    s"return true where viewOnly and id is present and mode is $descr mode" in {
+      ach.hideSaveAndContinueButton(request(viewOnly = true, ua = uaWithId), id, mode) mustBe true
+    }
+    s"return true where viewOnly and id is not present and mode is $descr mode" in {
+      ach.hideSaveAndContinueButton(request(viewOnly = true, ua = uaWithoutId), id, mode) mustBe true
+    }
+  }
+
   "hideSaveAndContinueButton" must {
-    "return false where not viewOnly and id is present and mode is normal mode" in {
-      ach.hideSaveAndContinueButton(request(viewOnly = false, ua = uaWithId), id, NormalMode) mustBe false
-    }
-    "return true where not viewOnly and id is not present and mode is normal mode" in {
-      ach.hideSaveAndContinueButton(request(viewOnly = false, ua = uaWithoutId), id, NormalMode) mustBe false
-    }
+    behave like registrationTests(NormalMode, "normal")
+
+    behave like registrationTests(CheckMode, "check")
+
     "return true where not viewOnly and id is not present and mode is update mode" in {
       ach.hideSaveAndContinueButton(request(viewOnly = false, ua = uaWithoutId), id, UpdateMode) mustBe true
     }
-    "return true where viewOnly and id is present and mode is normal mode" in {
-      ach.hideSaveAndContinueButton(request(viewOnly = true, ua = uaWithId), id, NormalMode) mustBe true
+
+    "return true where not viewOnly and id is not present and mode is checked update mode" in {
+      ach.hideSaveAndContinueButton(request(viewOnly = false, ua = uaWithoutId), id, CheckUpdateMode) mustBe true
     }
-    "return true where viewOnly and id is not present and mode is normal mode" in {
-      ach.hideSaveAndContinueButton(request(viewOnly = true, ua = uaWithoutId), id, NormalMode) mustBe true
-    }
+
   }
 
 }
