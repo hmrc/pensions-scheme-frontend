@@ -61,17 +61,12 @@ trait AddressListController extends FrontendController with Retrievals  with I18
         Future.successful(BadRequest(addressList(appConfig, formWithErrors, viewModel, existingSchemeName))),
       addressIndex => {
         val address = viewModel.addresses(addressIndex).copy(country = Some("GB"))
-
-        userAnswersService.remove(mode, viewModel.srn, dataId).flatMap {
-          _ =>
-            userAnswersService.save(mode, viewModel.srn, navigatorId, address).map {
-              json =>
-                Redirect(navigator.nextPage(navigatorId, mode, UserAnswers(json), viewModel.srn))
-            }
+        val answers = request.userAnswers.remove(dataId).flatMap(_.set(navigatorId)(address)).asOpt.getOrElse(request.userAnswers)
+        userAnswersService.upsert(mode, viewModel.srn, answers.json).map{
+          json =>
+            Redirect(navigator.nextPage(navigatorId, mode, UserAnswers(json), viewModel.srn))
         }
       }
     )
-
   }
-
 }
