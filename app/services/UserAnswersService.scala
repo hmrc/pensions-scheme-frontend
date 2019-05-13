@@ -25,7 +25,7 @@ import identifiers.register.establishers.company.{CompanyAddressYearsId => Estab
 import identifiers.register.establishers.individual.{AddressYearsId => EstablisherIndividualAddressYearsId, PreviousAddressId => EstablisherIndividualPreviousAddressId}
 import identifiers.register.establishers.partnership.partner._
 import identifiers.register.establishers.partnership.{PartnershipAddressYearsId => EstablisherPartnershipAddressYearsId, PartnershipPreviousAddressId => EstablisherPartnershipPreviousAddressId}
-import identifiers.register.trustees.{IsTrusteeAddressCompleteId, IsTrusteeNewId}
+import identifiers.register.trustees.{IsTrusteeAddressCompleteId, IsTrusteeCompleteId, IsTrusteeNewId}
 import identifiers.register.trustees.company.{CompanyAddressYearsId => TruesteeCompanyAddressYearsId, CompanyPreviousAddressId => TruesteeCompanyPreviousAddressId}
 import identifiers.register.trustees.individual.{TrusteeAddressYearsId => TruesteeIndividualAddressYearsId, TrusteePreviousAddressId => TruesteeIndividualPreviousAddressId}
 import identifiers.register.trustees.partnership.{PartnershipAddressYearsId => TruesteePartnershipAddressYearsId, PartnershipPreviousAddressId => TruesteePartnershipPreviousAddressId}
@@ -46,7 +46,9 @@ trait UserAnswersService {
   protected def subscriptionCacheConnector: SubscriptionCacheConnector
 
   protected def updateSchemeCacheConnector: UpdateSchemeCacheConnector
+
   protected def lockConnector: PensionSchemeVarianceLockConnector
+
   protected def appConfig: FrontendAppConfig
 
   case class MissingSrnNumber() extends Exception
@@ -93,18 +95,18 @@ trait UserAnswersService {
     }
 
   def removeAll[I <: TypedIdentifier[_]](mode: Mode, srn: Option[String], id: I)
-                                     (implicit
-                                      ec: ExecutionContext,
-                                      hc: HeaderCarrier,
-                                      request: DataRequest[AnyContent]
-                                     ): Future[JsValue] =
+                                        (implicit
+                                         ec: ExecutionContext,
+                                         hc: HeaderCarrier,
+                                         request: DataRequest[AnyContent]
+                                        ): Future[JsValue] =
     mode match {
       case NormalMode | CheckMode => subscriptionCacheConnector.remove(request.externalId, id)
       case UpdateMode | CheckUpdateMode => lockAndCall(srn, updateSchemeCacheConnector.remove(_, id))
     }
 
   def upsert(mode: Mode, srn: Option[String], value: JsValue)(implicit ec: ExecutionContext, hc: HeaderCarrier,
-                                                                  request: DataRequest[AnyContent]): Future[JsValue] =
+                                                              request: DataRequest[AnyContent]): Future[JsValue] =
     mode match {
       case NormalMode | CheckMode => subscriptionCacheConnector.upsert(request.externalId, value)
       case UpdateMode | CheckUpdateMode => lockAndCall(srn, updateSchemeCacheConnector.upsert(_, value))
@@ -112,7 +114,7 @@ trait UserAnswersService {
 
   def upsert(mode: Mode, srn: Option[String], value: JsValue,
              changeId: TypedIdentifier[Boolean])(implicit ec: ExecutionContext, hc: HeaderCarrier,
-                                                              request: DataRequest[AnyContent]): Future[JsValue] =
+                                                 request: DataRequest[AnyContent]): Future[JsValue] =
     mode match {
       case NormalMode | CheckMode => subscriptionCacheConnector.upsert(request.externalId, value)
       case UpdateMode | CheckUpdateMode =>
@@ -127,9 +129,9 @@ trait UserAnswersService {
                                                                      request: DataRequest[AnyContent]
   ): Future[JsValue] = srn match {
     case Some(srnId) => lockConnector.lock(request.psaId.id, srnId).flatMap {
-          case VarianceLock => f(srnId)
-          case _ => Future(Json.obj())
-      }
+      case VarianceLock => f(srnId)
+      case _ => Future(Json.obj())
+    }
 
     case _ => Future.failed(throw new MissingSrnNumber)
   }
@@ -157,38 +159,92 @@ trait UserAnswersService {
     }
   }
 
-  def setAddressCompleteFlagAfterPreviousAddress(mode: Mode, srn: Option[String], id: TypedIdentifier[Address], userAnswers: UserAnswers)
-                                                (implicit ec: ExecutionContext, hc: HeaderCarrier, request: DataRequest[AnyContent]): Future[UserAnswers] = {
+  def setAddressCompleteFlagAfterAddressYear(mode: Mode, srn: Option[String], id: TypedIdentifier[AddressYears],
+                                             addressYears: AddressYears, userAnswers: UserAnswers)
+                                            (implicit ec: ExecutionContext, hc: HeaderCarrier, request: DataRequest[AnyContent]): Future[UserAnswers] = {
 
-    getIsNewId(id).map{ newId =>
-      userAnswers.get(newId) match {
-        case Some(false) | None =>
-          val addressCompletedId = getAddressId[Address](id)
-          addressCompletedId.fold(Future.successful(userAnswers)) { changeId =>
-            val ua = userAnswers
-              .set(changeId)(true).asOpt.getOrElse(userAnswers)
-            upsert(mode, srn, ua.json).map(UserAnswers)
-          }
-        case _ =>
-          Future.successful(userAnswers)
-      }
-    }.getOrElse(Future.successful(userAnswers))
+    if(mode == UpdateMode || mode == CheckUpdateMode) {
+      getIsNewId(id).map { newId =>
+        (userAnswers.get(newId), addressYears) match {
+          case (Some(false) | None, OverAYear) =>
+            val addressCompletedId = getAddressId[AddressYears](id)
+            setCompleteFlag(addressCompletedId, userAnswers, mode, srn)
+          case _ =>
+            Future.successful(userAnswers)
+        }
+      }.getOrElse(Future.successful(userAnswers))
+    } else {
+      Future.successful(userAnswers)
+    }
   }
 
-  def getAddressId[T](id: TypedIdentifier[T]):  Option[TypedIdentifier[Boolean]] = id match{
-    case TruesteeCompanyPreviousAddressId(index) => Some(IsTrusteeAddressCompleteId(index))
-    case TruesteePartnershipPreviousAddressId(index) => Some(IsTrusteeAddressCompleteId(index))
-    case TruesteeIndividualPreviousAddressId(index) => Some(IsTrusteeAddressCompleteId(index))
+  def setAddressCompleteFlagAfterPreviousAddress(mode: Mode, srn: Option[String], id: TypedIdentifier[Address], userAnswers: UserAnswers)
+                                                (implicit ec: ExecutionContext, hc: HeaderCarrier, request: DataRequest[AnyContent]): Future[UserAnswers] = {
+    if(mode == UpdateMode || mode == CheckUpdateMode) {
+      getIsNewId(id).map { newId =>
+        userAnswers.get(newId) match {
+          case Some(false) | None =>
+            val addressCompletedId = getAddressId[Address](id)
+            setCompleteFlag(addressCompletedId, userAnswers, mode, srn)
+          case _ =>
+            Future.successful(userAnswers)
+        }
+      }.getOrElse(Future.successful(userAnswers))
+    } else {
+      Future.successful(userAnswers)
+    }
+  }
+
+  private def setCompleteFlag(addressCompletedId: Option[TypedIdentifier[Boolean]], answers: UserAnswers,
+                              mode: Mode, srn: Option[String])(implicit ec: ExecutionContext, hc: HeaderCarrier, request: DataRequest[AnyContent]) = {
+    addressCompletedId.fold(Future.successful(answers)) { changeId =>
+      val ua = answers.set(changeId)(true).asOpt.getOrElse(answers)
+      val updatedUa = changeId match {
+        case IsPartnerCompleteId(partnershipIndex, _) =>
+          if (ua.allPartnersAfterDelete(partnershipIndex).forall(_.isCompleted))
+            ua.set(IsEstablisherCompleteId(partnershipIndex))(true).asOpt.getOrElse(ua)
+          else ua
+        case IsDirectorCompleteId(companyIndex, directorIndex) =>
+          if (ua.allDirectorsAfterDelete(companyIndex).forall(_.isCompleted))
+            ua.set(IsEstablisherCompleteId(companyIndex))(true).asOpt.getOrElse(ua)
+          else ua
+        case _ => ua
+      }
+      upsert(mode, srn, updatedUa.json).map(UserAnswers)
+    }
+  }
+
+
+  def getAddressId[T](id: TypedIdentifier[T]): Option[TypedIdentifier[Boolean]] = id match {
+    case TruesteeCompanyAddressYearsId(index) => Some(IsTrusteeCompleteId(index))
+    case TruesteePartnershipAddressYearsId(index) => Some(IsTrusteeCompleteId(index))
+    case TruesteeIndividualAddressYearsId(index) => Some(IsTrusteeCompleteId(index))
+    case EstablisherCompanyAddressYearsId(index) => Some(IsEstablisherCompleteId(index))
+    case EstablisherPartnershipAddressYearsId(index) => Some(IsEstablisherCompleteId(index))
+    case EstablisherIndividualAddressYearsId(index) => Some(IsEstablisherCompleteId(index))
+    case PartnerAddressYearsId(establisherIndex, partnerIndex) => Some(IsPartnerCompleteId(establisherIndex, partnerIndex))
+    case DirectorAddressYearsId(establisherIndex, directorIndex) => Some(IsDirectorCompleteId(establisherIndex, directorIndex))
+    case TruesteeCompanyPreviousAddressId(index) => Some(IsTrusteeCompleteId(index))
+    case TruesteePartnershipPreviousAddressId(index) => Some(IsTrusteeCompleteId(index))
+    case TruesteeIndividualPreviousAddressId(index) => Some(IsTrusteeCompleteId(index))
     case EstablisherCompanyPreviousAddressId(index) => Some(IsEstablisherCompleteId(index))
-    case EstablisherPartnershipPreviousAddressId(index) => Some(IsEstablisherAddressCompleteId(index))
-    case EstablisherIndividualPreviousAddressId(index) => Some(IsEstablisherAddressCompleteId(index))
+    case EstablisherPartnershipPreviousAddressId(index) => Some(IsEstablisherCompleteId(index))
+    case EstablisherIndividualPreviousAddressId(index) => Some(IsEstablisherCompleteId(index))
     case PartnerPreviousAddressId(establisherIndex, partnerIndex) => Some(IsPartnerCompleteId(establisherIndex, partnerIndex))
     case DirectorPreviousAddressId(establisherIndex, directorIndex) => Some(IsDirectorCompleteId(establisherIndex, directorIndex))
     case InsurerConfirmAddressId => Some(IsAboutBenefitsAndInsuranceCompleteId)
     case _ => None
   }
 
-  def getIsNewId[T](id: TypedIdentifier[T]):  Option[TypedIdentifier[Boolean]] = id match{
+  def getIsNewId[T](id: TypedIdentifier[T]): Option[TypedIdentifier[Boolean]] = id match {
+    case TruesteeCompanyAddressYearsId(index) => Some(IsTrusteeNewId(index))
+    case TruesteePartnershipAddressYearsId(index) => Some(IsTrusteeNewId(index))
+    case TruesteeIndividualAddressYearsId(index) => Some(IsTrusteeNewId(index))
+    case EstablisherCompanyAddressYearsId(index) => Some(IsEstablisherNewId(index))
+    case EstablisherPartnershipAddressYearsId(index) => Some(IsEstablisherNewId(index))
+    case EstablisherIndividualAddressYearsId(index) => Some(IsEstablisherNewId(index))
+    case PartnerAddressYearsId(establisherIndex, partnerIndex) => Some(IsNewPartnerId(establisherIndex, partnerIndex))
+    case DirectorAddressYearsId(establisherIndex, directorIndex) => Some(IsNewDirectorId(establisherIndex, directorIndex))
     case TruesteeCompanyPreviousAddressId(index) => Some(IsTrusteeNewId(index))
     case TruesteePartnershipPreviousAddressId(index) => Some(IsTrusteeNewId(index))
     case TruesteeIndividualPreviousAddressId(index) => Some(IsTrusteeNewId(index))
@@ -203,10 +259,10 @@ trait UserAnswersService {
 
 @Singleton
 class UserAnswersServiceEstablishersAndTrusteesImpl @Inject()(override val subscriptionCacheConnector: SubscriptionCacheConnector,
-                                       override val updateSchemeCacheConnector: UpdateSchemeCacheConnector,
-                                       override val lockConnector: PensionSchemeVarianceLockConnector,
-                                       override val appConfig: FrontendAppConfig
-                                      ) extends UserAnswersService {
+                                                              override val updateSchemeCacheConnector: UpdateSchemeCacheConnector,
+                                                              override val lockConnector: PensionSchemeVarianceLockConnector,
+                                                              override val appConfig: FrontendAppConfig
+                                                             ) extends UserAnswersService {
 
   override def save[A, I <: TypedIdentifier[A]](mode: Mode, srn: Option[String], id: I, value: A)
                                                (implicit fmt: Format[A], ec: ExecutionContext, hc: HeaderCarrier,
@@ -236,7 +292,7 @@ class UserAnswersServiceInsuranceImpl @Inject()(override val subscriptionCacheCo
 
 @Singleton
 class UserAnswersServiceImpl @Inject()(override val subscriptionCacheConnector: SubscriptionCacheConnector,
-                                                override val updateSchemeCacheConnector: UpdateSchemeCacheConnector,
-                                                override val lockConnector: PensionSchemeVarianceLockConnector,
-                                                override val appConfig: FrontendAppConfig
-                                               ) extends UserAnswersService
+                                       override val updateSchemeCacheConnector: UpdateSchemeCacheConnector,
+                                       override val lockConnector: PensionSchemeVarianceLockConnector,
+                                       override val appConfig: FrontendAppConfig
+                                      ) extends UserAnswersService

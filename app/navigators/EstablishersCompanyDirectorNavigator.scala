@@ -21,7 +21,6 @@ import connectors.UserAnswersCacheConnector
 import controllers.register.establishers.company.director.routes
 import identifiers.AnyMoreChangesId
 import identifiers.register.establishers.IsEstablisherNewId
-import identifiers.register.establishers.company.director
 import identifiers.register.establishers.company.director._
 import models.Mode.journeyMode
 import models._
@@ -41,9 +40,9 @@ class EstablishersCompanyDirectorNavigator @Inject()(val dataCacheConnector: Use
       case CheckMode | NormalMode =>
         checkYourAnswers(establisherIndex, directorIndex, journeyMode(mode), srn)
       case _ =>
-        if(answers.get(IsNewDirectorId(establisherIndex, directorIndex)).getOrElse(false) &&
-          answers.get(IsDirectorCompleteId(establisherIndex, directorIndex)).getOrElse(false)) anyMoreChanges(srn)
-        else checkYourAnswers(establisherIndex, directorIndex, journeyMode(mode), srn)
+        if(answers.get(IsNewDirectorId(establisherIndex, directorIndex)).getOrElse(false))
+          checkYourAnswers(establisherIndex, directorIndex, journeyMode(mode), srn)
+        else anyMoreChanges(srn)
     }
 
   protected def normalRoutes(from: NavigateFrom, mode: Mode, srn: Option[String]): Option[NavigateTo] =

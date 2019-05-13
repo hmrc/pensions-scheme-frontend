@@ -129,8 +129,9 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
     if(mode == CheckMode || mode == NormalMode){
       checkYourAnswers(index, journeyMode(mode), srn)
     } else {
-      if(answers.get(IsEstablisherCompleteId(index)).getOrElse(false)) anyMoreChanges(srn)
-      else checkYourAnswers(index, journeyMode(mode), srn)
+      if(answers.get(IsEstablisherNewId(index)).getOrElse(false))
+        checkYourAnswers(index, journeyMode(mode), srn)
+      else anyMoreChanges(srn)
     }
 
   private def checkYourAnswers(index: Int, mode: Mode, srn: Option[String]): Option[NavigateTo] =

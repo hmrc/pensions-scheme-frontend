@@ -16,7 +16,7 @@
 
 package utils
 
-import identifiers.register.establishers.company.director.{DirectorDetailsId, IsDirectorCompleteId}
+import identifiers.register.establishers.company.director.{DirectorDetailsId, IsDirectorCompleteId, IsNewDirectorId}
 import identifiers.register.establishers.company.{CompanyDetailsId => EstablisherCompanyDetailsId, CompanyPayeId => EstablisherCompanyPayeId, CompanyVatId => EstablisherCompanyVatId}
 import identifiers.register.establishers.individual.EstablisherDetailsId
 import identifiers.register.establishers.partnership.PartnershipDetailsId
@@ -239,12 +239,13 @@ case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Implicits{
       details =>
         for ((director, directorIndex) <- details.zipWithIndex) yield {
           val isComplete = get(IsDirectorCompleteId(establisherIndex, directorIndex)).getOrElse(false)
+          val isNew = get(IsNewDirectorId(establisherIndex, directorIndex)).getOrElse(false)
           DirectorEntity(
             DirectorDetailsId(establisherIndex, directorIndex),
             director.fullName,
             director.isDeleted,
             isComplete,
-            isNewEntity = true,
+            isNew,
             details.count(!_.isDeleted)
           )
         }
