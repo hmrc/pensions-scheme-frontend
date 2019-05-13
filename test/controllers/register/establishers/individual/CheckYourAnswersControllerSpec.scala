@@ -18,13 +18,18 @@ package controllers.register.establishers.individual
 
 import controllers.ControllerSpecBase
 import controllers.actions.{DataRequiredActionImpl, DataRetrievalAction, FakeAuthAction}
+import controllers.behaviours.ControllerAllowChangeBehaviour
+import identifiers.TypedIdentifier
 import identifiers.register.establishers.individual._
-import identifiers.register.establishers.{IsEstablisherCompleteId, individual}
+import identifiers.register.establishers.{IsEstablisherCompleteId, IsEstablisherNewId, individual}
 import models._
 import models.address.Address
 import models.person.PersonDetails
+import models.requests.DataRequest
 import org.joda.time.LocalDate
 import org.scalatest.OptionValues
+import play.api.libs.json.JsResult
+import play.api.mvc.{AnyContent, Call}
 import play.api.test.Helpers.{contentAsString, redirectLocation, status, _}
 import services.FakeUserAnswersService
 import utils._
@@ -32,16 +37,19 @@ import utils.checkyouranswers.Ops._
 import viewmodels.AnswerSection
 import views.html.check_your_answers
 
-class CheckYourAnswersControllerSpec extends ControllerSpecBase {
- import CheckYourAnswersControllerSpec._
+class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerAllowChangeBehaviour {
 
-  implicit val countryOptions = new FakeCountryOptions()
-  implicit val request = FakeDataRequest(individualAnswers)
-  implicit val userAnswers = request.userAnswers
+  import CheckYourAnswersControllerSpec._
+
+  implicit val countryOptions:FakeCountryOptions = new FakeCountryOptions()
+  implicit val request:FakeDataRequest = FakeDataRequest(individualAnswers)
+  implicit val userAnswers:UserAnswers = request.userAnswers
   val firstIndex = Index(0)
 
   private val onwardRoute = controllers.routes.IndexController.onPageLoad()
-  private def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisherHns): CheckYourAnswersController =
+
+  private def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisherHns,
+                         allowChangeHelper:AllowChangeHelper = ach): CheckYourAnswersController =
     new CheckYourAnswersController(
       frontendAppConfig,
       messagesApi,
@@ -50,7 +58,8 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase {
       new DataRequiredActionImpl,
       FakeUserAnswersService,
       countryOptions,
-      new FakeNavigator(onwardRoute)
+      new FakeNavigator(onwardRoute),
+      allowChangeHelper
     )
 
   "CheckYourAnswersController" when {
@@ -62,32 +71,38 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase {
             controllers.register.establishers.individual.routes.EstablisherDetailsController.onPageLoad(CheckMode, firstIndex, None).url) ++
             EstablisherNinoId(firstIndex).row(
               controllers.register.establishers.individual.routes.EstablisherNinoController.onPageLoad(CheckMode, firstIndex, None).url) ++
-              UniqueTaxReferenceId(firstIndex).row(
-                routes.UniqueTaxReferenceController.onPageLoad(CheckMode, firstIndex, None).url) ++
-              AddressId(firstIndex).row(
-                controllers.register.establishers.individual.routes.AddressController.onPageLoad(CheckMode, firstIndex, None).url) ++
-              AddressYearsId(firstIndex).row(
-                controllers.register.establishers.individual.routes.AddressYearsController.onPageLoad(CheckMode, firstIndex, None).url) ++
-              PreviousAddressId(firstIndex).row(
-                controllers.register.establishers.individual.routes.PreviousAddressController.onPageLoad(CheckMode, firstIndex, None).url
-              ) ++
-              ContactDetailsId(firstIndex).row(
-                controllers.register.establishers.individual.routes.ContactDetailsController.onPageLoad(CheckMode, firstIndex, None).url
-              )
-          )
+            UniqueTaxReferenceId(firstIndex).row(
+              routes.UniqueTaxReferenceController.onPageLoad(CheckMode, firstIndex, None).url) ++
+            AddressId(firstIndex).row(
+              controllers.register.establishers.individual.routes.AddressController.onPageLoad(CheckMode, firstIndex, None).url) ++
+            AddressYearsId(firstIndex).row(
+              controllers.register.establishers.individual.routes.AddressYearsController.onPageLoad(CheckMode, firstIndex, None).url) ++
+            PreviousAddressId(firstIndex).row(
+              controllers.register.establishers.individual.routes.PreviousAddressController.onPageLoad(CheckMode, firstIndex, None).url
+            ) ++
+            ContactDetailsId(firstIndex).row(
+              controllers.register.establishers.individual.routes.ContactDetailsController.onPageLoad(CheckMode, firstIndex, None).url
+            )
+        )
 
         val viewAsString = check_your_answers(
           frontendAppConfig,
           Seq(individualDetails),
           routes.CheckYourAnswersController.onSubmit(NormalMode, firstIndex, None),
           None,
-          viewOnly = false
+          hideEditLinks = false,
+          hideSaveAndContinueButton = false
         )(fakeRequest, messages).toString
 
         val result = controller(individualAnswers.dataRetrievalAction).onPageLoad(NormalMode, firstIndex, None)(request)
         status(result) mustBe OK
         contentAsString(result) mustBe viewAsString
+        assertRenderedById(asDocument(contentAsString(result)), "submit")
       }
+
+      behave like changeableController(
+        controller(individualAnswers.dataRetrievalAction, _:AllowChangeHelper)
+        .onPageLoad(UpdateMode, firstIndex, None)(request))
     }
 
     "onSubmit" must {
@@ -103,14 +118,20 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase {
 }
 
 object CheckYourAnswersControllerSpec extends OptionValues {
-  val firstIndex = Index(0)
-  val desiredRoute = controllers.routes.IndexController.onPageLoad()
-  val individualAnswers = UserAnswers()
+  private val firstIndex = Index(0)
+  private val desiredRoute:Call = controllers.routes.IndexController.onPageLoad()
+
+  private val commonJsResultAnswers: JsResult[UserAnswers] = UserAnswers()
     .set(EstablisherDetailsId(firstIndex))(PersonDetails("first name", None, "last name", LocalDate.now(), false))
     .flatMap(_.set(EstablisherNinoId(firstIndex))(Nino.Yes("AB100100A")))
     .flatMap(_.set(UniqueTaxReferenceId(firstIndex))(UniqueTaxReference.Yes("1234567890")))
     .flatMap(_.set(AddressId(firstIndex))(Address("Address 1", "Address 2", None, None, None, "GB")))
     .flatMap(_.set(AddressYearsId(firstIndex))(AddressYears.UnderAYear))
     .flatMap(_.set(individual.PreviousAddressId(firstIndex))(Address("Previous Address 1", "Previous Address 2", None, None, None, "GB")))
-    .flatMap(_.set(individual.ContactDetailsId(firstIndex))(ContactDetails("test@test.com", "123456789"))).asOpt.value
+    .flatMap(_.set(individual.ContactDetailsId(firstIndex))(ContactDetails("test@test.com", "123456789")))
+
+  private val individualAnswers:UserAnswers = commonJsResultAnswers.asOpt.value
+  private val individualAnswersWithNewlyAddedEstablisher:UserAnswers = commonJsResultAnswers
+    .flatMap(_.set(IsEstablisherNewId(firstIndex))(value = true))
+    .asOpt.value
 }

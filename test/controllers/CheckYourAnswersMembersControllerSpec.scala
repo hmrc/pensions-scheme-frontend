@@ -18,11 +18,11 @@ package controllers
 
 import controllers.actions.{DataRequiredActionImpl, DataRetrievalAction, FakeAuthAction}
 import identifiers.IsAboutMembersCompleteId
-import models.{CheckMode, Link, Members, NormalMode}
+import models._
 import org.scalatest.OptionValues
 import play.api.test.Helpers._
 import services.FakeUserAnswersService
-import utils.{FakeSectionComplete, UserAnswers}
+import utils.UserAnswers
 import viewmodels.{AnswerRow, AnswerSection}
 import views.html.check_your_answers
 
@@ -38,6 +38,18 @@ class CheckYourAnswersMembersControllerSpec extends ControllerSpecBase with Opti
 
         status(result) mustBe OK
         contentAsString(result) mustBe viewAsString()
+      }
+
+      "return OK and NOT display submit button with return to tasklist when in update mode" in {
+        val result = controller(data).onPageLoad(UpdateMode, None)(fakeRequest)
+        status(result) mustBe OK
+        assertNotRenderedById(asDocument(contentAsString(result)), "submit")
+      }
+
+      "return OK and DO display submit button with return to tasklist when in normal mode" in {
+        val result = controller(data).onPageLoad(NormalMode, None)(fakeRequest)
+        status(result) mustBe OK
+        assertRenderedById(asDocument(contentAsString(result)), "submit")
       }
     }
 
@@ -96,7 +108,8 @@ object CheckYourAnswersMembersControllerSpec extends ControllerSpecBase {
     ),
     postUrl,
     Some(schemeName),
-    viewOnly = false
+    hideEditLinks = false,
+    hideSaveAndContinueButton = false
   )(fakeRequest, messages).toString
 
 }
