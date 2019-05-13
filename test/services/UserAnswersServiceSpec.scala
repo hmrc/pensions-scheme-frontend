@@ -160,53 +160,6 @@ class UserAnswersServiceSpec extends AsyncWordSpec with MustMatchers with Mockit
     }
   }
 
-  ".setAddressCompleteFlagAfterAddressYear" must {
-
-    "save flag with correct id for TruesteeCompanyAddressYearsId" in {
-
-      val updated = UserAnswers(json).set(IsTrusteeAddressCompleteId(0))(true).asOpt.get
-
-      when(subscriptionConnector.upsert(any(), Matchers.eq(updated.json))(any(), any()))
-        .thenReturn(Future(updated.json))
-
-      testService.setAddressCompleteFlagAfterAddressYear(NormalMode, None, TruesteeCompanyAddressYearsId(0), OverAYear, UserAnswers(json)) map {
-        _ mustEqual updated
-      }
-    }
-
-    "save flag with correct id for trustee EstablisherIndividualAddressYearsId" in {
-      val updated = UserAnswers(json).set(IsEstablisherAddressCompleteId(0))(true).asOpt.get
-
-      when(subscriptionConnector.upsert(any(), Matchers.eq(updated.json))(any(), any()))
-        .thenReturn(Future(updated.json))
-
-      testService.setAddressCompleteFlagAfterAddressYear(NormalMode, None, EstablisherIndividualAddressYearsId(0), OverAYear, UserAnswers(json)) map {
-        _ mustEqual updated
-      }
-    }
-
-    "save flag with correct id for establisher partner" in {
-      val updated = UserAnswers(json).set(IsPartnerAddressCompleteId(0, 0))(true).asOpt.get
-
-      when(subscriptionConnector.upsert(any(), Matchers.eq(updated.json))(any(), any()))
-        .thenReturn(Future(updated.json))
-
-      testService.setAddressCompleteFlagAfterAddressYear(NormalMode, None, PartnerAddressYearsId(0, 0), OverAYear, UserAnswers(json)) map {
-        _ mustEqual updated
-      }
-    }
-
-    "save flag with false if under year selected" in {
-
-      testService.setAddressCompleteFlagAfterAddressYear(NormalMode, None, PartnerAddressYearsId(0, 0), UnderAYear, UserAnswers(json)).map{
-        result =>
-          verify(subscriptionConnector, never).upsert(any(), any())(any(), any())
-          result mustEqual UserAnswers(json)
-      }
-    }
-
-  }
-
   ".setAddressCompleteFlagAfterPreviousAddress" must {
 
     "save flag with correct id for TruesteeCompanyPreviousAddressId" in {
