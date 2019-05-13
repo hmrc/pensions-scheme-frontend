@@ -54,7 +54,8 @@ class PartnershipVatController @Inject()(
               heading = Message("messages__partnershipVat__heading"),
               hint = Message("messages__common__vat__hint"),
               subHeading = Some(details.name),
-              srn = srn
+              srn = srn,
+              mode = mode
             )
         }
     }

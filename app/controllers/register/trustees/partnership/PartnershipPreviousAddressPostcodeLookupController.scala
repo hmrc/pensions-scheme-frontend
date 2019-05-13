@@ -62,7 +62,8 @@ class PartnershipPreviousAddressPostcodeLookupController @Inject()(
               title = Message(title),
               heading = Message(heading),
               subHeading = Some(details.name),
-              srn = srn
+              srn = srn,
+              mode = mode
             )
         }
     }

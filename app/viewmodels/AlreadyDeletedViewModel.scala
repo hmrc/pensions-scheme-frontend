@@ -16,10 +16,13 @@
 
 package viewmodels
 
+import models.{Mode, NormalMode}
 import play.api.mvc.Call
 
 case class AlreadyDeletedViewModel(
                                     title: Message,
                                     deletedEntity: String,
-                                    returnCall: Call
+                                    returnCall: Call,
+                                    mode : Mode = NormalMode,
+                                    srn : Option[String] = None
                                   )

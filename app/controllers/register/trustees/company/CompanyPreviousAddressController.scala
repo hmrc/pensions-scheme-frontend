@@ -69,7 +69,8 @@ class CompanyPreviousAddressController @Inject()(
               heading = Message(heading),
               hint = Some(Message(hint)),
               secondaryHeader = Some(details.companyName),
-              srn= srn
+              srn = srn,
+              mode = mode
             )
         }
     }

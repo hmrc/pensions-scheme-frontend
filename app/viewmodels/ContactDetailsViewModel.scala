@@ -16,6 +16,7 @@
 
 package viewmodels
 
+import models.{Mode, NormalMode}
 import play.api.mvc.Call
 
 case class ContactDetailsViewModel(
@@ -24,5 +25,6 @@ case class ContactDetailsViewModel(
                                     heading: Message,
                                     body: Message,
                                     subHeading: Option[Message] = None,
-                                    srn: Option[String] = None
+                                    srn: Option[String] = None,
+                                    mode: Mode = NormalMode
                                   )

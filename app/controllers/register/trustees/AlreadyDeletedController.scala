@@ -57,7 +57,9 @@ class AlreadyDeletedController @Inject()(
   private def vm(index: Index, trusteeName: String, mode: Mode, srn: Option[String]) = AlreadyDeletedViewModel(
     title = Message("messages__alreadyDeleted__trustee_title"),
     deletedEntity = trusteeName,
-    returnCall = controllers.register.trustees.routes.AddTrusteeController.onPageLoad(mode, srn)
+    returnCall = controllers.register.trustees.routes.AddTrusteeController.onPageLoad(mode, srn),
+    mode = mode,
+    srn = srn
   )
 
   private def trusteeName(index: Index, trusteeKind: TrusteeKind, srn: Option[String])

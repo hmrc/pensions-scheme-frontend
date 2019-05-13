@@ -55,7 +55,8 @@ class CompanyAddressYearsController @Inject()(
               heading = Message(questionText),
               legend = Message(questionText),
               Some(details.companyName),
-              srn = srn
+              srn = srn,
+              mode = mode
             )
         }
     )

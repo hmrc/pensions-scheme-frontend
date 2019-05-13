@@ -21,7 +21,7 @@
 @import models.register.trustees.TrusteeKind
 @import play.api.mvc.Call
 
-@(appConfig: FrontendAppConfig, form: Form[_], mode: Mode, index: Index, schemeName: Option[String], submitUrl: Call)(implicit request: Request[_], messages: Messages)
+@(appConfig: FrontendAppConfig, form: Form[_], mode: Mode, index: Index, schemeName: Option[String], submitUrl: Call, srn: Option[String])(implicit request: Request[_], messages: Messages)
 
 @main_template(
     title = messages("messages__trusteeKind__title"),
@@ -45,6 +45,6 @@
 
         @components.submit_button("site.save_and_continue")
 
-        @components.return_link("messages__schemeTaskList__returnlink", schemeName)
+        @components.return_link("messages__schemeTaskList__returnlink", schemeName, None, mode, srn)
     }
 }

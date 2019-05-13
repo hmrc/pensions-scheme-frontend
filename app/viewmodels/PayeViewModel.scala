@@ -16,6 +16,7 @@
 
 package viewmodels
 
+import models.{Mode, NormalMode}
 import play.api.mvc.Call
 
 case class PayeViewModel(
@@ -24,5 +25,6 @@ case class PayeViewModel(
                           heading: Message,
                           hint: Option[Message] = None,
                           subHeading: Option[Message] = None,
-                          srn: Option[String] = None
+                          srn: Option[String] = None,
+                          mode: Mode = NormalMode
                         )

@@ -53,7 +53,7 @@ class TrusteeNinoController @Inject()(appConfig: FrontendAppConfig,
       TrusteeDetailsId(index).retrieve.right.map { trusteeDetails =>
         val filledForm = request.userAnswers.get(TrusteeNinoId(index)).fold(form)(form.fill)
         val submitUrl = controllers.register.trustees.individual.routes.TrusteeNinoController.onSubmit(mode, index, srn)
-        Future.successful(Ok(trusteeNino(appConfig, filledForm, mode, index, existingSchemeName, submitUrl)))
+        Future.successful(Ok(trusteeNino(appConfig, filledForm, mode, index, existingSchemeName, submitUrl, srn)))
       }
   }
 
@@ -62,7 +62,7 @@ class TrusteeNinoController @Inject()(appConfig: FrontendAppConfig,
       form.bindFromRequest().fold(
         errors => TrusteeDetailsId(index).retrieve.right.map { trusteeDetails =>
           val submitUrl = controllers.register.trustees.individual.routes.TrusteeNinoController.onSubmit(mode, index, srn)
-          Future.successful(BadRequest(trusteeNino(appConfig, errors, mode, index, existingSchemeName, submitUrl)))
+          Future.successful(BadRequest(trusteeNino(appConfig, errors, mode, index, existingSchemeName, submitUrl, srn)))
         },
         nino => userAnswersService.save(mode, srn, TrusteeNinoId(index), nino).map { answers =>
           Redirect(navigator.nextPage(TrusteeNinoId(index), mode, UserAnswers(answers), srn))

@@ -67,7 +67,8 @@ class PartnershipAddressController @Inject()(
               heading = Message(heading),
               hint = Some(Message(hint)),
               secondaryHeader = Some(details.name),
-              srn = srn
+              srn = srn,
+              mode = mode
             )
         }
     }

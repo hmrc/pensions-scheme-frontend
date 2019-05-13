@@ -67,7 +67,8 @@ class TrusteeAddressYearsController @Inject()(
     heading = Message("messages__trusteeAddressYears__heading"),
     legend = Message("messages__trusteeAddressYears__title"),
     subHeading = Some(Message(trusteeName)),
-    srn = srn
+    srn = srn,
+    mode = mode
   )
 
 }
