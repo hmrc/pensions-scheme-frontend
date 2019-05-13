@@ -20,7 +20,8 @@ import config.FrontendAppConfig
 import controllers.actions._
 import identifiers.{DeclarationDutiesId, _}
 import javax.inject.Inject
-import models.{CheckMode, Mode}
+import models.requests.DataRequest
+import models.{CheckMode, CheckUpdateMode, Mode, UpdateMode}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
@@ -45,7 +46,7 @@ class CheckYourAnswersBeforeYouStartController @Inject()(appConfig: FrontendAppC
   def onPageLoad(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData) {
     implicit request =>
 
-      implicit val userAnswers = request.userAnswers
+      implicit val userAnswers: UserAnswers = request.userAnswers
 
       val beforeYouStart = AnswerSection(
         None,
@@ -62,7 +63,9 @@ class CheckYourAnswersBeforeYouStartController @Inject()(appConfig: FrontendAppC
         routes.CheckYourAnswersBeforeYouStartController.onSubmit(mode, srn),
         existingSchemeName,
         returnOverview = !userAnswers.get(IsBeforeYouStartCompleteId).getOrElse(false),
-        mode, viewOnly = request.viewOnly, srn))
+        mode,
+        hideEditLinks = request.viewOnly, srn,
+        hideSaveAndContinueButton = mode == UpdateMode || mode == CheckUpdateMode))
   }
 
   def onSubmit(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData() andThen requireData).async {

@@ -40,7 +40,7 @@ class PartnershipReviewViewSpec extends ViewBehaviours {
     PartnerDetailsId.toString -> PersonDetails("partner", None, lastName, LocalDate.now())
   )
 
-  def createView(viewOnly: Boolean = false): () => HtmlFormat.Appendable = () => partnershipReview(
+  def createView(viewOnly: Boolean = false, hideSaveAndContinueButton:Boolean = false): () => HtmlFormat.Appendable = () => partnershipReview(
     frontendAppConfig,
     index,
     partnershipName,
@@ -48,7 +48,8 @@ class PartnershipReviewViewSpec extends ViewBehaviours {
     None,
     None,
     NormalMode,
-    viewOnly
+    viewOnly,
+    hideSaveAndContinueButton
   )(fakeRequest, messages)
 
   def createSecView: () => HtmlFormat.Appendable = () => partnershipReview(
@@ -59,6 +60,7 @@ class PartnershipReviewViewSpec extends ViewBehaviours {
     None,
     None,
     NormalMode,
+    false,
     false
   )(fakeRequest, messages)
 
@@ -109,12 +111,12 @@ class PartnershipReviewViewSpec extends ViewBehaviours {
 
     }
 
-    "not have confirm button when viewOnly flag is true" in {
-      val view = asDocument(createView(true)())
+    "not have confirm button when hideSaveAndContinueButton flag is true" in {
+      val view = asDocument(createView(hideSaveAndContinueButton = true)())
       assertNotRenderedById(view, "submit")
     }
 
-    "have confirm button when viewOnly flag is false" in {
+    "have confirm button when hideSaveAndContinueButton flag is false" in {
       val view = asDocument(createView()())
       assertRenderedById(view, "submit")
     }

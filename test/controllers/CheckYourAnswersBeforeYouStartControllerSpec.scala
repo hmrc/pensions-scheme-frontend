@@ -19,12 +19,12 @@ package controllers
 import controllers.actions._
 import identifiers.register.trustees.HaveAnyTrusteesId
 import identifiers.{EstablishedCountryId, IsBeforeYouStartCompleteId, SchemeNameId, SchemeTypeId}
-import models.{CheckMode, Link, NormalMode}
+import models._
 import models.register.SchemeType
 import play.api.libs.json.Json
 import play.api.test.Helpers._
 import services.FakeUserAnswersService
-import utils.{FakeCountryOptions, FakeSectionComplete}
+import utils.FakeCountryOptions
 import viewmodels.{AnswerRow, AnswerSection}
 import views.html.check_your_answers
 
@@ -48,6 +48,19 @@ class CheckYourAnswersBeforeYouStartControllerSpec extends ControllerSpecBase {
         status(result) mustBe OK
         contentAsString(result) mustBe viewAsStringWithReturnToManage()
       }
+
+      "return OK and NOT display submit button with return to tasklist when in update mode" in {
+        val result = controller(schemeInfoWithCompleteFlag).onPageLoad(UpdateMode, None)(fakeRequest)
+        status(result) mustBe OK
+        assertNotRenderedById(asDocument(contentAsString(result)), "submit")
+      }
+
+      "return OK and DO display submit button with return to tasklist when in normal mode" in {
+        val result = controller(schemeInfoWithCompleteFlag).onPageLoad(NormalMode, None)(fakeRequest)
+        status(result) mustBe OK
+        assertRenderedById(asDocument(contentAsString(result)), "submit")
+      }
+
     }
 
     "onSubmit is called" must {
@@ -78,7 +91,7 @@ object CheckYourAnswersBeforeYouStartControllerSpec extends ControllerSpecBase {
       FakeUserAnswersService
     )
 
-  private val postUrl = routes.CheckYourAnswersBeforeYouStartController.onSubmit(NormalMode, None)
+  private def postUrl(mode:Mode) = routes.CheckYourAnswersBeforeYouStartController.onSubmit(mode, None)
 
   private val schemeInfo = new FakeDataRetrievalAction(
     Some(Json.obj(
@@ -145,18 +158,21 @@ object CheckYourAnswersBeforeYouStartControllerSpec extends ControllerSpecBase {
   private def viewAsString(): String = check_your_answers(
     frontendAppConfig,
     Seq(beforeYouStart),
-    postUrl,
+    postUrl(NormalMode),
     Some("Test Scheme"),
-    viewOnly = false
+    hideEditLinks = false,
+    hideSaveAndContinueButton = false,
+    mode = NormalMode
   )(fakeRequest, messages).toString
 
   private def viewAsStringWithReturnToManage(): String = check_your_answers(
     frontendAppConfig,
     Seq(beforeYouStart),
-    postUrl,
+    postUrl(NormalMode),
     Some("Test Scheme"),
     returnOverview=true,
-    viewOnly = false
+    hideEditLinks = false,
+    hideSaveAndContinueButton = false
   )(fakeRequest, messages).toString
 
 }

@@ -18,6 +18,7 @@ package controllers.register.establishers.company
 
 import controllers.ControllerSpecBase
 import controllers.actions._
+import controllers.behaviours.ControllerAllowChangeBehaviour
 import identifiers.register.establishers.company.director.{DirectorDetailsId, IsDirectorAddressCompleteId, IsDirectorCompleteId}
 import identifiers.register.establishers.company.{CompanyDetailsId, CompanyPayeId, IsCompanyCompleteId}
 import identifiers.register.establishers.{EstablishersId, IsEstablisherAddressCompleteId, IsEstablisherCompleteId}
@@ -29,20 +30,21 @@ import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import services.FakeUserAnswersService
-import utils.FakeNavigator
+import utils.{AllowChangeHelper, FakeNavigator}
 import views.html.register.establishers.company.companyReview
 
-class CompanyReviewControllerSpec extends ControllerSpecBase {
+class CompanyReviewControllerSpec extends ControllerSpecBase with ControllerAllowChangeBehaviour {
 
   import CompanyReviewControllerSpec._
 
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisherCompany): CompanyReviewController =
+  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisherCompany,
+                 allowChangeHelper: AllowChangeHelper = ach): CompanyReviewController =
     new CompanyReviewController(frontendAppConfig, messagesApi, new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
-      dataRetrievalAction, new DataRequiredActionImpl, FakeUserAnswersService)
+      dataRetrievalAction, new DataRequiredActionImpl, FakeUserAnswersService, allowChangeHelper)
 
-  def viewAsString(): String = companyReview(frontendAppConfig, index, companyName, directorNames, None, NormalMode, None, false)(fakeRequest, messages).toString
+  def viewAsString(): String = companyReview(frontendAppConfig, index, companyName, directorNames, None, NormalMode, None, false, false)(fakeRequest, messages).toString
 
   "CompanyReview Controller" must {
 
@@ -60,6 +62,11 @@ class CompanyReviewControllerSpec extends ControllerSpecBase {
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
     }
+
+    behave like changeableController(
+      controller(new FakeDataRetrievalAction(Some(validData())), _:AllowChangeHelper)
+        .onPageLoad(NormalMode, None, index)(fakeRequest)
+    )
 
     "redirect to the next page on submit" in {
       val result = controller().onSubmit(NormalMode, None, index)(fakeRequest)

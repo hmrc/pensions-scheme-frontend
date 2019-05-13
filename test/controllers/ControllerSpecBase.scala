@@ -30,7 +30,10 @@ import identifiers.{AdviserNameId, SchemeNameId}
 import models.person.PersonDetails
 import models.{CompanyDetails, PartnershipDetails}
 import org.joda.time.LocalDate
+import org.jsoup.Jsoup
+import org.jsoup.nodes.Document
 import play.api.libs.json.Json
+import play.twirl.api.Html
 import utils.{Enumerable, MapFormats}
 
 trait ControllerSpecBase extends SpecBase with Enumerable.Implicits with MapFormats {
@@ -159,4 +162,6 @@ trait ControllerSpecBase extends SpecBase with Enumerable.Implicits with MapForm
         "name"
     ))
   )
+
+  def asDocument(htmlAsString: String): Document = Jsoup.parse(htmlAsString)
 }

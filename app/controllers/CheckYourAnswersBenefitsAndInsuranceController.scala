@@ -20,7 +20,7 @@ import config.FrontendAppConfig
 import controllers.actions._
 import identifiers._
 import javax.inject.Inject
-import models.Mode
+import models.{CheckUpdateMode, Mode, UpdateMode}
 import models.Mode._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
@@ -30,6 +30,7 @@ import utils.{CountryOptions, Enumerable, SectionComplete}
 import viewmodels.AnswerSection
 import views.html.check_your_answers
 import models.Mode._
+import models.requests.DataRequest
 import services.UserAnswersService
 
 import scala.concurrent.ExecutionContext
@@ -64,7 +65,8 @@ class CheckYourAnswersBenefitsAndInsuranceController @Inject()(appConfig: Fronte
         routes.CheckYourAnswersBenefitsAndInsuranceController.onSubmit(mode, srn),
         existingSchemeName,
         mode = mode,
-        viewOnly = request.viewOnly
+        hideEditLinks = request.viewOnly,
+        hideSaveAndContinueButton = mode == UpdateMode || mode == CheckUpdateMode
       ))
   }
 

@@ -18,6 +18,8 @@ package controllers.register.establishers.company
 
 import controllers.ControllerSpecBase
 import controllers.actions._
+import controllers.behaviours.ControllerAllowChangeBehaviour
+import identifiers.TypedIdentifier
 import identifiers.register.establishers.company._
 import models._
 import models.address.Address
@@ -28,11 +30,11 @@ import play.api.test.Helpers._
 import services.FakeUserAnswersService
 import utils.checkyouranswers.CheckYourAnswers.ContactDetailsCYA
 import utils.checkyouranswers._
-import utils.{CountryOptions, FakeCountryOptions, FakeNavigator, FakeSectionComplete, UserAnswers, _}
+import utils.{CountryOptions, FakeCountryOptions, FakeNavigator, UserAnswers, _}
 import viewmodels.AnswerSection
 import views.html.check_your_answers
 
-class CheckYourAnswersControllerSpec extends ControllerSpecBase {
+class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerAllowChangeBehaviour {
 
   import CheckYourAnswersControllerSpec._
 
@@ -59,11 +61,14 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase {
       redirectLocation(result).value mustEqual onwardRoute.url
       FakeUserAnswersService.verify(IsCompanyCompleteId(index), true)
     }
+    behave like changeableController(
+      controller(fullAnswers.dataRetrievalAction, _: AllowChangeHelper)
+        .onPageLoad(NormalMode, None, index)(FakeDataRequest(fullAnswers)))
   }
 
 }
 
-object CheckYourAnswersControllerSpec extends ControllerSpecBase with Enumerable.Implicits {
+object CheckYourAnswersControllerSpec extends ControllerSpecBase with Enumerable.Implicits with ControllerAllowChangeBehaviour {
 
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
@@ -154,7 +159,9 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase with Enumerable
 
   private def answerSections(implicit request: DataRequest[AnyContent]) = Seq(companyDetailsSection, companyContactDetailsSection)
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): CheckYourAnswersController =
+
+  def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData,
+                 allowChangeHelper: AllowChangeHelper = ach): CheckYourAnswersController =
     new CheckYourAnswersController(
       frontendAppConfig,
       messagesApi,
@@ -163,7 +170,8 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase with Enumerable
       new DataRequiredActionImpl,
       fakeCountryOptions,
       new FakeNavigator(onwardRoute),
-      FakeUserAnswersService
+      FakeUserAnswersService,
+      allowChangeHelper
     )
 
   def viewAsString(answerSections: Seq[AnswerSection]): String =
@@ -172,7 +180,8 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase with Enumerable
       answerSections,
       postUrl,
       None,
-      viewOnly = false
+      hideEditLinks = false,
+      hideSaveAndContinueButton = false
     )(fakeRequest, messages).toString
 
 }
