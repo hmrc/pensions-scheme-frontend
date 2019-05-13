@@ -16,6 +16,7 @@
 
 package viewmodels.address
 
+import models.{Mode, NormalMode}
 import play.api.mvc.Call
 import utils.InputOption
 import viewmodels.Message
@@ -27,7 +28,8 @@ case class ManualAddressViewModel(
                                    heading: Message,
                                    secondaryHeader: Option[Message],
                                    hint: Option[Message] = None,
-                                   srn: Option[String] = None
+                                   srn: Option[String] = None,
+                                   mode: Mode = NormalMode
                                  ) {
 
 }

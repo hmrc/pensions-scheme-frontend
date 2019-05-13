@@ -59,7 +59,7 @@ class InsurancePolicyNumberController @Inject()(appConfig: FrontendAppConfig,
         case None => form
         case Some(value) => form.fill(value)
       }
-      Future.successful(Ok(insurancePolicyNumber(appConfig, preparedForm, mode, companyName, existingSchemeName, postCall(mode, srn))))
+      Future.successful(Ok(insurancePolicyNumber(appConfig, preparedForm, mode, companyName, existingSchemeName, postCall(mode, srn), srn)))
   }
 
   def onSubmit(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
@@ -67,7 +67,7 @@ class InsurancePolicyNumberController @Inject()(appConfig: FrontendAppConfig,
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) => {
           val companyName = request.userAnswers.get(InsuranceCompanyNameId)
-          Future.successful(BadRequest(insurancePolicyNumber(appConfig, formWithErrors, mode, companyName, existingSchemeName, postCall(mode, srn))))
+          Future.successful(BadRequest(insurancePolicyNumber(appConfig, formWithErrors, mode, companyName, existingSchemeName, postCall(mode, srn), srn)))
         },
         value =>
           userAnswersService.save(mode, srn, InsurancePolicyNumberId, value).map(cacheMap =>
