@@ -20,7 +20,14 @@
 @import controllers.register.establishers.company.routes
 @import play.api.mvc.Call
 
-@(appConfig: FrontendAppConfig, index: Index, companyName: String, directors: Seq[String], schemeName: Option[String], mode: Mode, srn: Option[String], viewOnly:Boolean)(implicit request: Request[_], messages: Messages)
+@(appConfig: FrontendAppConfig, index: Index,
+companyName: String,
+directors: Seq[String],
+schemeName: Option[String],
+mode: Mode,
+srn: Option[String],
+viewOnly:Boolean,
+hideSaveAndContinueButton:Boolean)(implicit request: Request[_], messages: Messages)
 
 @main_template(
     title = messages("messages__companyReview__title"),
@@ -56,7 +63,7 @@
         list = Some(directors)
     )
 
-    @if(!viewOnly) {
+    @if(!hideSaveAndContinueButton) {
         @helpers.form(action = routes.CompanyReviewController.onSubmit(mode, srn, index), 'autoComplete -> "off") {
             @components.submit_button("site.confirm")
         }
