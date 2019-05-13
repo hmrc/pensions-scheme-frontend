@@ -47,11 +47,6 @@ class InsurancePolicyNumberControllerSpec extends ControllerWithQuestionPageBeha
       viewAsString(this)(form)
     )
 
-    behave like controllerWithOnPageLoadMethodMissingRequiredData(
-      onPageLoadAction(this),
-      getEmptyData
-    )
-
     behave like controllerWithOnSubmitMethod(
       onSubmitAction(this, navigator),
       validData.dataRetrievalAction,
@@ -83,7 +78,7 @@ object InsurancePolicyNumberControllerSpec {
     FakeRequest().withFormUrlEncodedBody(("policyNumber", policyNumber))
 
   private def viewAsString(base: SpecBase)(form: Form[_] = form): Form[_] => String = form =>
-    insurancePolicyNumber(base.frontendAppConfig, form, NormalMode, companyName, None, postUrl)(base.fakeRequest, base.messages).toString()
+    insurancePolicyNumber(base.frontendAppConfig, form, NormalMode, Some(companyName), None, postUrl)(base.fakeRequest, base.messages).toString()
 
   private def controller(base: ControllerSpecBase)(
     dataRetrievalAction: DataRetrievalAction = base.getEmptyData,

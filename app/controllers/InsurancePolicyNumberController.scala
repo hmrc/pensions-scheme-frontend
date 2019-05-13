@@ -52,22 +52,23 @@ class InsurancePolicyNumberController @Inject()(appConfig: FrontendAppConfig,
   def onPageLoad(mode: Mode, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
     implicit request =>
-      InsuranceCompanyNameId.retrieve.right.map { companyName =>
-        val preparedForm = request.userAnswers.get(InsurancePolicyNumberId) match {
-          case None => form
-          case Some(value) => form.fill(value)
-        }
-        Future.successful(Ok(insurancePolicyNumber(appConfig, preparedForm, mode, companyName, existingSchemeName, postCall(mode, srn))))
+
+      val companyName = request.userAnswers.get(InsuranceCompanyNameId)
+
+      val preparedForm = request.userAnswers.get(InsurancePolicyNumberId) match {
+        case None => form
+        case Some(value) => form.fill(value)
       }
+      Future.successful(Ok(insurancePolicyNumber(appConfig, preparedForm, mode, companyName, existingSchemeName, postCall(mode, srn))))
   }
 
   def onSubmit(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
       form.bindFromRequest().fold(
-        (formWithErrors: Form[_]) =>
-          InsuranceCompanyNameId.retrieve.right.map { companyName =>
-            Future.successful(BadRequest(insurancePolicyNumber(appConfig, formWithErrors, mode, companyName, existingSchemeName, postCall(mode, srn))))
-          },
+        (formWithErrors: Form[_]) => {
+          val companyName = request.userAnswers.get(InsuranceCompanyNameId)
+          Future.successful(BadRequest(insurancePolicyNumber(appConfig, formWithErrors, mode, companyName, existingSchemeName, postCall(mode, srn))))
+        },
         value =>
           userAnswersService.save(mode, srn, InsurancePolicyNumberId, value).map(cacheMap =>
             Redirect(navigator.nextPage(InsurancePolicyNumberId, mode, UserAnswers(cacheMap), srn)))
