@@ -50,7 +50,7 @@ class TrusteesPartnershipNavigatorSpec extends SpecBase with NavigatorBehaviour 
     (PartnershipPreviousAddressListId(0), emptyAnswers, partnershipPa(mode), true, Some(partnershipPa(checkMode((mode)))), true),
     (PartnershipPreviousAddressId(0), emptyAnswers, partnershipContact(mode), true, Some(checkYourAnswers(mode)), true),
     (PartnershipContactDetailsId(0), emptyAnswers, checkYourAnswers(mode), true, Some(checkYourAnswers(mode)), true),
-    (CheckYourAnswersId(0), emptyAnswers, addTrustee(mode), false, None, true)
+    (CheckYourAnswersId(0), emptyAnswers, if(mode==UpdateMode) controllers.routes.AnyMoreChangesController.onPageLoad(None) else addTrustee(mode), false, None, true)
   )
 
   private val navigator: TrusteesPartnershipNavigator =

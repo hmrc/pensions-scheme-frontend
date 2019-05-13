@@ -44,7 +44,7 @@ class TrusteesIndividualNavigatorSpec extends SpecBase with NavigatorBehaviour {
     (TrusteePreviousAddressListId(0), emptyAnswers, previousAddress(mode), true, Some(previousAddress(checkMode(mode))), true),
     (TrusteePreviousAddressId(0), emptyAnswers, contactDetails(mode), true, Some(checkYourAnswers(mode)), true),
     (TrusteeContactDetailsId(0), emptyAnswers, checkYourAnswers(mode), true, None, true),
-    (CheckYourAnswersId, emptyAnswers, addTrustee(mode), false, None, true)
+    (CheckYourAnswersId, emptyAnswers, if(mode==UpdateMode) controllers.routes.AnyMoreChangesController.onPageLoad(None) else addTrustee(mode), false, None, true)
   )
 
   private val navigator: TrusteesIndividualNavigator =

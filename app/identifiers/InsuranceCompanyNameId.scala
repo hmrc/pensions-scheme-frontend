@@ -18,6 +18,7 @@ package identifiers
 
 import models.Link
 import play.api.i18n.Messages
+import play.api.libs.json.JsResult
 import utils.{CountryOptions, UserAnswers}
 import utils.checkyouranswers.CheckYourAnswers
 import utils.checkyouranswers.CheckYourAnswers.StringCYA
@@ -26,6 +27,14 @@ import viewmodels.AnswerRow
 case object InsuranceCompanyNameId extends TypedIdentifier[String] {
   self =>
   override def toString: String = "insuranceCompanyName"
+
+  override def cleanup(value: Option[String], userAnswers: UserAnswers): JsResult[UserAnswers] = {
+    value match {
+      case Some(_) => userAnswers.removeAllOf(List(InsurancePolicyNumberId,
+        InsurerEnterPostCodeId, InsurerSelectAddressId, InsurerConfirmAddressId))
+      case _ => super.cleanup(value, userAnswers)
+    }
+  }
 
   implicit def cya(implicit userAnswers: UserAnswers, messages: Messages, countryOptions: CountryOptions): CheckYourAnswers[self.type] = {
 

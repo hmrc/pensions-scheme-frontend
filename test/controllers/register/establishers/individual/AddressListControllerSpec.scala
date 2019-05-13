@@ -134,7 +134,7 @@ class AddressListControllerSpec extends ControllerSpecBase with Enumerable.Impli
         .onSubmit(NormalMode, firstIndex, None)(postRequest)
 
       status(result) mustEqual SEE_OTHER
-      FakeUserAnswersService.verify(AddressListId(firstIndex), addresses.head.copy(country = Some("GB")))
+      FakeUserAnswersService.userAnswer.get(AddressListId(firstIndex)).value mustEqual(addresses.head.copy(country = Some("GB")))
     }
 
     "return a Bad Request and errors when no data is submitted" in {
