@@ -18,6 +18,7 @@ package controllers.register.establishers.partnership
 
 import controllers.ControllerSpecBase
 import controllers.actions.{DataRequiredActionImpl, DataRetrievalAction, FakeAuthAction, FakeDataRetrievalAction}
+import controllers.behaviours.ControllerAllowChangeBehaviour
 import identifiers.register.establishers.partnership.partner.{IsPartnerAddressCompleteId, IsPartnerCompleteId, PartnerDetailsId}
 import identifiers.register.establishers.partnership.{IsPartnershipCompleteId, PartnershipDetailsId}
 import identifiers.register.establishers.{EstablishersId, IsEstablisherAddressCompleteId, IsEstablisherCompleteId}
@@ -28,16 +29,17 @@ import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import services.FakeUserAnswersService
-import utils.FakeNavigator
+import utils.{AllowChangeHelper, FakeNavigator}
 import views.html.register.establishers.partnership.partnershipReview
 
-class PartnershipReviewControllerSpec extends ControllerSpecBase {
+class PartnershipReviewControllerSpec extends ControllerSpecBase with ControllerAllowChangeBehaviour {
 
   import PartnershipReviewControllerSpec._
 
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisherPartnership): PartnershipReviewController =
+  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisherPartnership,
+                 allowChangeHelper: AllowChangeHelper = ach): PartnershipReviewController =
     new PartnershipReviewController(
       frontendAppConfig,
       messagesApi,
@@ -45,7 +47,8 @@ class PartnershipReviewControllerSpec extends ControllerSpecBase {
       FakeAuthAction,
       dataRetrievalAction,
       new DataRequiredActionImpl,
-      FakeUserAnswersService
+      FakeUserAnswersService,
+      allowChangeHelper
     )
 
   def viewAsString(): String = partnershipReview(
@@ -56,6 +59,7 @@ class PartnershipReviewControllerSpec extends ControllerSpecBase {
     None,
     None,
     NormalMode,
+    false,
     false
   )(fakeRequest, messages).toString
 

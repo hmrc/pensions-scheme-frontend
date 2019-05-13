@@ -48,6 +48,7 @@ class PartnershipReviewViewSpec extends ViewBehaviours {
     None,
     None,
     NormalMode,
+    viewOnly,
     viewOnly
   )(fakeRequest, messages)
 
@@ -59,6 +60,7 @@ class PartnershipReviewViewSpec extends ViewBehaviours {
     None,
     None,
     NormalMode,
+    false,
     false
   )(fakeRequest, messages)
 
