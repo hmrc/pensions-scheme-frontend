@@ -265,9 +265,9 @@ class HsTaskListHelperVariationsSpec extends HsTaskListHelperBehaviour {
         Seq(SchemeDetailsTaskListSection(Some(true), Link(messages("messages__schemeTaskList__persons_details__link_text", "firstName lastName"),
           controllers.register.establishers.individual.routes.CheckYourAnswersController.onPageLoad(UpdateMode, 0, srn).url), None),
           SchemeDetailsTaskListSection(Some(true), Link(messages("messages__schemeTaskList__persons_details__link_text", "test company"),
-            controllers.register.establishers.company.routes.CompanyReviewController.onPageLoad(UpdateMode, srn, 1).url), None),
+            controllers.register.establishers.company.routes.CheckYourAnswersController.onPageLoad(UpdateMode, srn, 1).url), None),
           SchemeDetailsTaskListSection(Some(true), Link(messages("messages__schemeTaskList__persons_details__link_text", "test partnership"),
-            controllers.register.establishers.partnership.routes.PartnershipReviewController.onPageLoad(UpdateMode, 2, srn).url), None)
+            controllers.register.establishers.partnership.routes.CheckYourAnswersController.onPageLoad(UpdateMode, 2, srn).url), None)
         )
     }
 

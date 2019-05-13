@@ -67,10 +67,10 @@ class HsTaskListHelperVariations(answers: UserAnswers, viewOnly: Boolean, srn: O
     val notDeletedElements = for ((section, index) <- sections.zipWithIndex) yield {
       if (section.isDeleted) None else {
         Some(SchemeDetailsTaskListSection(
-          Some(section.isCompleted),
-          Link(messages("messages__schemeTaskList__persons_details__link_text", section.name),
-            linkTarget(section, index, UpdateMode, srn)),
-          None)
+            Some(section.isCompleted),
+            Link(messages("messages__schemeTaskList__persons_details__link_text", section.name),
+              section.editLink(UpdateMode, srn).getOrElse(controllers.routes.SessionExpiredController.onPageLoad().url)),
+            None)
         )
       }
     }

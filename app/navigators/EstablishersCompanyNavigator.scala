@@ -19,7 +19,7 @@ package navigators
 import com.google.inject.Inject
 import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
-import identifiers.register.establishers.IsEstablisherNewId
+import identifiers.register.establishers.{IsEstablisherCompleteId, IsEstablisherNewId}
 import identifiers.register.establishers.company._
 import models.{AddressYears, CheckMode, CheckUpdateMode, Index, Mode, NormalMode, UpdateMode}
 import models.Mode._
@@ -74,10 +74,10 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
       case CompanyUniqueTaxReferenceId(index) =>  exitMiniJourney(index, mode, srn, from.userAnswers)
 
       case CompanyPostCodeLookupId(index) =>
-        NavigateTo.dontSave(controllers.register.establishers.company.routes.CompanyAddressListController.onPageLoad(mode, None, index))
+        NavigateTo.dontSave(controllers.register.establishers.company.routes.CompanyAddressListController.onPageLoad(mode, srn, index))
 
       case CompanyAddressListId(index) =>
-        NavigateTo.dontSave(controllers.register.establishers.company.routes.CompanyAddressController.onPageLoad(mode, None, index))
+        NavigateTo.dontSave(controllers.register.establishers.company.routes.CompanyAddressController.onPageLoad(mode, srn, index))
 
       case CompanyAddressId(index) =>             exitMiniJourney(index, mode, srn, from.userAnswers)
 
@@ -85,17 +85,17 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
         editAddressYearsRoutes(index, from.userAnswers, mode, srn)
 
       case CompanyPreviousAddressPostcodeLookupId(index) =>
-        NavigateTo.dontSave(controllers.register.establishers.company.routes.CompanyPreviousAddressListController.onPageLoad(mode, None, index))
+        NavigateTo.dontSave(controllers.register.establishers.company.routes.CompanyPreviousAddressListController.onPageLoad(mode, srn, index))
 
       case CompanyPreviousAddressListId(index) =>
-        NavigateTo.dontSave(controllers.register.establishers.company.routes.CompanyPreviousAddressController.onPageLoad(mode, None, index))
+        NavigateTo.dontSave(controllers.register.establishers.company.routes.CompanyPreviousAddressController.onPageLoad(mode, srn, index))
 
       case CompanyPreviousAddressId(index) =>     exitMiniJourney(index, mode, srn, from.userAnswers)
       case CompanyContactDetailsId(index) =>      exitMiniJourney(index, mode, srn, from.userAnswers)
       case IsCompanyDormantId(index) =>           exitMiniJourney(index, mode, srn, from.userAnswers)
 
       case OtherDirectorsId(index) =>
-        NavigateTo.dontSave(controllers.register.establishers.company.routes.CompanyReviewController.onPageLoad(journeyMode(mode), None, index))
+        NavigateTo.dontSave(controllers.register.establishers.company.routes.CompanyReviewController.onPageLoad(journeyMode(mode), srn, index))
 
       case _ => None
     }
@@ -121,7 +121,7 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
     if(mode == CheckMode || mode == NormalMode){
       checkYourAnswers(index, journeyMode(mode), srn)
     } else {
-      if(answers.allEstablishersAfterDelete.nonEmpty && answers.allEstablishersAfterDelete(index).isCompleted) anyMoreChanges(srn)
+      if(answers.get(IsEstablisherCompleteId(index)).getOrElse(false)) anyMoreChanges(srn)
       else checkYourAnswers(index, journeyMode(mode), srn)
     }
 
