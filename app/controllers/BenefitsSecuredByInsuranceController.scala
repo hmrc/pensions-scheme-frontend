@@ -17,7 +17,6 @@
 package controllers
 
 import config.FrontendAppConfig
-import connectors.UserAnswersCacheConnector
 import controllers.actions._
 import forms.BenefitsSecuredByInsuranceFormProvider
 import identifiers.BenefitsSecuredByInsuranceId
@@ -56,14 +55,14 @@ class BenefitsSecuredByInsuranceController @Inject()(appConfig: FrontendAppConfi
         case None => form
         case Some(value) => form.fill(value)
       }
-      Future.successful(Ok(benefitsSecuredByInsurance(appConfig, preparedForm, mode, existingSchemeName, postCall(mode, srn))))
+      Future.successful(Ok(benefitsSecuredByInsurance(appConfig, preparedForm, mode, existingSchemeName, postCall(mode, srn), srn)))
   }
 
   def onSubmit(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) =>
-          Future.successful(BadRequest(benefitsSecuredByInsurance(appConfig, formWithErrors, mode, existingSchemeName, postCall(mode, srn)))),
+          Future.successful(BadRequest(benefitsSecuredByInsurance(appConfig, formWithErrors, mode, existingSchemeName, postCall(mode, srn), srn))),
         value =>
           userAnswersService.save(mode, srn, BenefitsSecuredByInsuranceId, value).map(cacheMap =>
             Redirect(navigator.nextPage(BenefitsSecuredByInsuranceId, mode, UserAnswers(cacheMap), srn)))
