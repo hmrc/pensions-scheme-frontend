@@ -80,10 +80,8 @@ class HsTaskListHelperVariations(answers: UserAnswers, viewOnly: Boolean, srn: O
   protected[utils] def establishers(userAnswers: UserAnswers): Seq[SchemeDetailsTaskListSection] =
     listOfSectionNameAsLink(userAnswers.allEstablishers)
 
-  protected[utils] def trustees(userAnswers: UserAnswers): Seq[SchemeDetailsTaskListSection] = {
-    println("\n\n\n\n "+userAnswers.allTrustees)
+  protected[utils] def trustees(userAnswers: UserAnswers): Seq[SchemeDetailsTaskListSection] =
     listOfSectionNameAsLink(userAnswers.allTrustees)
-  }
 
   override def declarationEnabled(userAnswers: UserAnswers): Boolean = {
     val isTrusteeOptional = userAnswers.get(HaveAnyTrusteesId).contains(false)
