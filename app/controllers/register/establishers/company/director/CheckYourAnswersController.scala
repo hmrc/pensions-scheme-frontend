@@ -21,7 +21,7 @@ import controllers.Retrievals
 import controllers.actions._
 import identifiers.AnyMoreChangesId
 import identifiers.register.establishers.{IsEstablisherCompleteId, IsEstablisherNewId}
-import identifiers.register.establishers.company.{CompanyReviewId, IsCompanyCompleteId}
+import identifiers.register.establishers.company.{CompanyReviewId, IsCompanyCompleteId, director}
 import identifiers.register.establishers.company.director._
 import javax.inject.Inject
 import models.Mode.checkMode
@@ -32,7 +32,7 @@ import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.EstablishersCompanyDirector
 import utils.checkyouranswers.Ops._
-import utils.{CountryOptions, Navigator, SectionComplete, UserAnswers}
+import utils._
 import viewmodels.AnswerSection
 import views.html.check_your_answers
 
@@ -45,7 +45,8 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
                                            requiredData: DataRequiredAction,
                                            userAnswersService: UserAnswersService,
                                            @EstablishersCompanyDirector navigator: Navigator,
-                                           implicit val countryOptions: CountryOptions
+                                           implicit val countryOptions: CountryOptions,
+                                           allowChangeHelper: AllowChangeHelper
                                           )(implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport {
 
   def onPageLoad(companyIndex: Index, directorIndex: Index, mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requiredData).async {
@@ -85,7 +86,8 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
         routes.CheckYourAnswersController.onSubmit(companyIndex, directorIndex, mode, srn),
         existingSchemeName,
         mode = mode,
-        viewOnly = request.viewOnly
+        hideEditLinks = request.viewOnly,
+        hideSaveAndContinueButton = allowChangeHelper.hideSaveAndContinueButton(request, IsNewDirectorId(companyIndex, directorIndex), mode)
       )))
 
     }

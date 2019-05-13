@@ -1182,7 +1182,7 @@ messages__schemeTaskList__sectionTrustees_schemeIncomplete = You need to enter s
 messages__schemeTaskList__completed = Completed
 messages__schemeTaskList__inProgress = In progress
 
-messages__complete__saveAndReturnToManagePensionSchemes = Save and return to managing pension schemes
+messages__complete__saveAndReturnToManagePensionSchemes = Return to managing pension schemes
 
 messages__schemeTaskList__companyDetails = Company details
 
@@ -1333,7 +1333,6 @@ messages__error__insurance_policy_number = Enter a policy number
 messages__error__insurance_policy_number_invalid = Enter the policy number only using European characters
 messages__error__insurance_policy_number_length = Enter a policy number using 55 characters or less
 messages__insurance_policy_number_cya_label = What is the policy number with {0}?
-messages__insurance_policy_number_cya_label_add = What is the policy number with ?
 messages__visuallyhidden__insurance_policy_number = Change the policy number with {0}
 messages__visuallyhidden__insurance_policy_number_add = Add the policy number
 

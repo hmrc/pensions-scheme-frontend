@@ -211,9 +211,9 @@ class HsTaskListHelperRegistrationSpec extends HsTaskListHelperBehaviour with En
         Seq(SchemeDetailsTaskListSection(Some(true), Link(individualLinkText,
           controllers.register.establishers.individual.routes.CheckYourAnswersController.onPageLoad(mode, 0, srn).url), Some("firstName lastName")),
           SchemeDetailsTaskListSection(Some(true), Link(companyLinkText,
-            controllers.register.establishers.company.routes.CompanyReviewController.onPageLoad(mode, srn, 1).url), Some("test company")),
+            controllers.register.establishers.company.routes.CheckYourAnswersController.onPageLoad(mode, srn, 1).url), Some("test company")),
           SchemeDetailsTaskListSection(Some(true), Link(partnershipLinkText,
-            controllers.register.establishers.partnership.routes.PartnershipReviewController.onPageLoad(mode, 2, srn).url), Some("test partnership"))
+            controllers.register.establishers.partnership.routes.CheckYourAnswersController.onPageLoad(mode, 2, srn).url), Some("test partnership"))
         )
     }
 

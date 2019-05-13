@@ -91,7 +91,8 @@ class AdviserCheckYourAnswersControllerSpec extends ControllerSpecBase with Scal
         Seq(adviserSection),
         postUrl,
         None,
-        viewOnly = false
+        hideEditLinks = false,
+        hideSaveAndContinueButton = false
       )(fakeRequest, messages).toString
 
       status(result) mustBe OK
@@ -163,7 +164,8 @@ object AdviserCheckYourAnswersControllerSpec extends ControllerSpecBase with Moc
     Seq(adviserSection),
     postUrl,
     None,
-    viewOnly = false
+    hideEditLinks = false,
+    hideSaveAndContinueButton = false
   )(fakeRequest, messages).toString
 
 }

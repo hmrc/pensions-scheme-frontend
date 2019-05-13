@@ -139,7 +139,7 @@ class PreviousAddressListControllerSpec extends ControllerSpecBase with Enumerab
         .onSubmit(NormalMode, firstIndex, None)(postRequest)
 
       status(result) mustEqual SEE_OTHER
-      FakeUserAnswersService.verify(PreviousAddressListId(firstIndex), previousAddresses.head.copy(country = Some("GB")))
+      FakeUserAnswersService.userAnswer.get(PreviousAddressListId(firstIndex)).value mustEqual(previousAddresses.head.copy(country = Some("GB")))
     }
 
     "return a Bad Request and errors when no data is submitted" in {
