@@ -19,8 +19,6 @@ package navigators
 import com.google.inject.{Inject, Singleton}
 import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
-import identifiers.register.establishers.IsEstablisherCompleteId
-import identifiers.register.establishers.{IsEstablisherCompleteId, IsEstablisherNewId}
 import identifiers.register.establishers.IsEstablisherNewId
 import identifiers.register.establishers.individual._
 import models.Mode.journeyMode

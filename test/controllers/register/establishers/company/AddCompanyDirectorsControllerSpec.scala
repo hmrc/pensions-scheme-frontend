@@ -16,7 +16,6 @@
 
 package controllers.register.establishers.company
 
-import services.FakeUserAnswersService
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.register.establishers.company.AddCompanyDirectorsFormProvider
@@ -30,6 +29,7 @@ import org.joda.time.LocalDate
 import play.api.data.Form
 import play.api.libs.json._
 import play.api.test.Helpers._
+import services.FakeUserAnswersService
 import utils.{FakeNavigator, Navigator, UserAnswers}
 import views.html.register.establishers.company.addCompanyDirectors
 

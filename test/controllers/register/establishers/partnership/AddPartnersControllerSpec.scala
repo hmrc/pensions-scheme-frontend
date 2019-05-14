@@ -16,7 +16,6 @@
 
 package controllers.register.establishers.partnership
 
-import services.FakeUserAnswersService
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.register.AddPartnersFormProvider
@@ -31,6 +30,7 @@ import play.api.data.Form
 import play.api.libs.json._
 import play.api.mvc.Call
 import play.api.test.Helpers._
+import services.FakeUserAnswersService
 import utils.{FakeNavigator, Navigator, UserAnswers}
 import views.html.register.addPartners
 
