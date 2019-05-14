@@ -37,22 +37,22 @@ class TrusteesCompanyNavigatorSpec extends SpecBase with MustMatchers with Navig
   private def routes(mode: Mode): TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = Table(
 
     ("Id", "UserAnswers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (CheckMode)", "Save (CM)"),
-    (CompanyDetailsId(0), emptyAnswers, companyVat(mode), true, Some(checkYourAnswers(mode)), true),
-    (CompanyVatId(0), emptyAnswers, companyPaye(mode), true, Some(checkYourAnswers(mode)), true),
-    (CompanyPayeId(0), emptyAnswers, companyRegistrationNumber(mode), true, Some(checkYourAnswers(mode)), true),
-    (CompanyRegistrationNumberId(0), emptyAnswers, companyUTR(mode), true, Some(checkYourAnswers(mode)), true),
-    (CompanyUniqueTaxReferenceId(0), emptyAnswers, companyPostCodeLookup(mode), true, Some(checkYourAnswers(mode)), true),
+    (CompanyDetailsId(0), emptyAnswers, companyVat(mode), true, Some(exitJourney(mode, emptyAnswers)), true),
+    (CompanyVatId(0), emptyAnswers, companyPaye(mode), true, Some(exitJourney(mode, emptyAnswers)), true),
+    (CompanyPayeId(0), emptyAnswers, companyRegistrationNumber(mode), true, Some(exitJourney(mode, emptyAnswers)), true),
+    (CompanyRegistrationNumberId(0), emptyAnswers, companyUTR(mode), true, Some(exitJourney(mode, emptyAnswers)), true),
+    (CompanyUniqueTaxReferenceId(0), emptyAnswers, companyPostCodeLookup(mode), true, Some(exitJourney(mode, emptyAnswers)), true),
     (CompanyPostcodeLookupId(0), emptyAnswers, companyAddressList(mode), true, Some(companyAddressList(checkMode(mode))), true),
     (CompanyAddressListId(0), emptyAnswers, companyManualAddress(mode), true, Some(companyManualAddress(checkMode(mode))), true),
     (CompanyAddressId(0), emptyAnswers, companyAddressYears(mode), true,
       if(mode == UpdateMode) Some(companyAddressYears(checkMode(mode))) else Some(checkYourAnswers(mode)), true),
     (CompanyAddressId(0), newTrustee, companyAddressYears(mode), true, Some(checkYourAnswers(mode)), true),
-    (CompanyAddressYearsId(0), addressYearsOverAYear, companyContactDetails(mode), true, Some(checkYourAnswers(mode)), true),
+    (CompanyAddressYearsId(0), addressYearsOverAYear, companyContactDetails(mode), true, Some(exitJourney(mode, emptyAnswers)), true),
     (CompanyAddressYearsId(0), addressYearsUnderAYear, prevAddPostCodeLookup(mode), true, Some(prevAddPostCodeLookup(checkMode(mode))), true),
     (CompanyPreviousAddressPostcodeLookupId(0), emptyAnswers, companyPaList(mode), true, Some(companyPaList(checkMode(mode))), true),
     (CompanyPreviousAddressListId(0), emptyAnswers, companyPreviousAddress(mode), true, Some(companyPreviousAddress(checkMode(mode))), true),
     (CompanyPreviousAddressId(0), emptyAnswers, companyContactDetails(mode), true, Some(checkYourAnswers(mode)), true),
-    (CompanyContactDetailsId(0), emptyAnswers, checkYourAnswers(mode), true, Some(checkYourAnswers(mode)), true),
+    (CompanyContactDetailsId(0), emptyAnswers, checkYourAnswers(mode), true, Some(exitJourney(mode, emptyAnswers)), true),
     (CompanyAddressYearsId(0), emptyAnswers, sessionExpired, false, Some(sessionExpired), false),
     (CheckYourAnswersId, emptyAnswers, if(mode==UpdateMode) controllers.routes.AnyMoreChangesController.onPageLoad(None) else addTrustee(mode), false, None, true)
   )
@@ -124,5 +124,9 @@ object TrusteesCompanyNavigatorSpec extends OptionValues {
 
   private def anyMoreChanges = controllers.routes.AnyMoreChangesController.onPageLoad(None)
 
-  private def exitJourney(mode: Mode) = if (mode == NormalMode) checkYourAnswers(mode) else anyMoreChanges
+  private def exitJourney(mode: Mode, answers:UserAnswers, index:Int = 0) = if(mode == CheckMode || mode == NormalMode) checkYourAnswers(mode)
+  else {
+    if(answers.get(IsTrusteeNewId(index)).getOrElse(false)) checkYourAnswers(mode)
+    else anyMoreChanges
+  }
 }
