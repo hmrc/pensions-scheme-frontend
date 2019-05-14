@@ -28,6 +28,9 @@ class HsTaskListHelperVariations(answers: UserAnswers, viewOnly: Boolean, srn: O
 
   override protected lazy val beforeYouStartLinkText = messages("messages__schemeTaskList__scheme_info_link_text")
 
+  private def getStatus(id: TypedIdentifier[Boolean]): Option[Boolean] = {
+    if(answers.get(id).contains(false)) answers.get(id) else None
+  }
   override protected[utils] def aboutSection(userAnswers: UserAnswers): Seq[SchemeDetailsTaskListSection] = {
     val membersLink = userAnswers.get(IsAboutMembersCompleteId) match {
       case Some(true) => Link(aboutMembersLinkText, controllers.routes.CheckYourAnswersMembersController.onPageLoad(UpdateMode, srn).url)
@@ -37,8 +40,18 @@ class HsTaskListHelperVariations(answers: UserAnswers, viewOnly: Boolean, srn: O
     val benefitsAndInsuranceLink = Link(aboutBenefitsAndInsuranceLinkText,
       controllers.routes.CheckYourAnswersBenefitsAndInsuranceController.onPageLoad(UpdateMode, srn).url)
 
-    Seq(SchemeDetailsTaskListSection(userAnswers.get(IsAboutMembersCompleteId), membersLink, None),
-      SchemeDetailsTaskListSection(Some(userAnswers.isInsuranceCompleted), benefitsAndInsuranceLink, None))
+    Seq(SchemeDetailsTaskListSection(getStatus(IsAboutMembersCompleteId), membersLink, None),
+      SchemeDetailsTaskListSection(
+        if(userAnswers.isInsuranceCompleted) None else Some(userAnswers.isInsuranceCompleted),
+        benefitsAndInsuranceLink, None))
+  }
+
+  private def beforeYouStartSection(userAnswers: UserAnswers): SchemeDetailsTaskListSection = {
+    SchemeDetailsTaskListSection(
+      getStatus(IsBeforeYouStartCompleteId),
+      beforeYouStartLink(answers, UpdateMode, srn),
+      None
+    )
   }
 
   protected[utils] def declarationSection(userAnswers: UserAnswers): Option[SchemeDetailsTaskListDeclarationSection] =
@@ -67,7 +80,7 @@ class HsTaskListHelperVariations(answers: UserAnswers, viewOnly: Boolean, srn: O
     val notDeletedElements = for ((section, index) <- sections.zipWithIndex) yield {
       if (section.isDeleted) None else {
         Some(SchemeDetailsTaskListSection(
-            Some(section.isCompleted),
+            if(section.isCompleted) None else Some(section.isCompleted),
             Link(messages("messages__schemeTaskList__persons_details__link_text", section.name),
               section.editLink(UpdateMode, srn).getOrElse(controllers.routes.SessionExpiredController.onPageLoad().url)),
             None)
@@ -125,7 +138,7 @@ class HsTaskListHelperVariations(answers: UserAnswers, viewOnly: Boolean, srn: O
   def taskList: SchemeDetailsTaskList = {
     val schemeName = answers.get(SchemeNameId).getOrElse("")
     SchemeDetailsTaskList(
-      beforeYouStartSection(answers, UpdateMode, srn),
+      beforeYouStartSection(answers),
       messages("messages__schemeTaskList__about_scheme_header", schemeName),
       aboutSection(answers),
       None,

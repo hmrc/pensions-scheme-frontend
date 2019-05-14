@@ -177,14 +177,14 @@ trait HsTaskListHelperBehaviour extends SpecBase with MustMatchers with OptionVa
     "return the link to scheme name page when not completed " in {
       val userAnswers = UserAnswers().set(IsBeforeYouStartCompleteId)(false).asOpt.value
       val helper = createTaskListHelper(userAnswers)
-      helper.beforeYouStartSection(userAnswers, mode, srn).link mustBe
+      helper.beforeYouStartLink(userAnswers, mode, srn) mustBe
         link(controllers.routes.SchemeNameController.onPageLoad(NormalMode).url)
     }
 
     "return the link to cya page when completed " in {
       val userAnswers = UserAnswers().set(IsBeforeYouStartCompleteId)(true).asOpt.value
       val helper = createTaskListHelper(userAnswers)
-      helper.beforeYouStartSection(userAnswers, mode, srn).link mustBe link(
+      helper.beforeYouStartLink(userAnswers, mode, srn) mustBe link(
         controllers.routes.CheckYourAnswersBeforeYouStartController.onPageLoad(mode, srn).url
       )
     }

@@ -16,6 +16,7 @@
 
 package utils.checkyouranswers
 
+import identifiers.register.establishers.IsEstablisherNewId
 import identifiers.{EstablishedCountryId, TypedIdentifier}
 import models._
 import models.address.Address
