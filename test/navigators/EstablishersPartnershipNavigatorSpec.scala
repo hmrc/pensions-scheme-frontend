@@ -35,42 +35,43 @@ class EstablishersPartnershipNavigatorSpec extends SpecBase with NavigatorBehavi
   import EstablishersPartnershipNavigatorSpec._
 
   private def routes(mode: Mode): TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = Table(
-    ("Id",                                          "User Answers",               "Next Page (Normal Mode)",                "Save (NM)",  "Next Page (Check Mode)",         "Save (CM)"),
-    (PartnershipDetailsId(0),                         emptyAnswers,                 partnershipVat(mode),               true,         Some(exitJourney(mode)),             true),
-    (PartnershipVatId(0),                             emptyAnswers,                 partnershipPaye(mode),              true,         Some(exitJourney(mode)),             true),
-    (PartnershipPayeId(0),                            emptyAnswers,                 partnershipUtr(mode),               true,         Some(exitJourney(mode)),             true),
-    (PartnershipUniqueTaxReferenceID(0),              emptyAnswers,                 partnershipPostcodeLookup(mode),    true,         Some(exitJourney(mode)),              true),
-    (PartnershipPostcodeLookupId(0),                  emptyAnswers,                 partnershipAddressList(mode),       true,         Some(partnershipAddressList(checkMode(mode))), true),
-    (PartnershipAddressListId(0),                     emptyAnswers,                 partnershipAddress(mode),           true,         Some(partnershipAddress(checkMode(mode))), true),
-    (PartnershipAddressId(0),                         emptyAnswers,                 partnershipAddressYears(mode),      true,         Some(exitJourney(mode)),               true),
-    (PartnershipAddressYearsId(0),                    addressYearsOverAYear,        partnershipContact(mode),           true,         Some(exitJourney(mode)),               true),
-    (PartnershipAddressYearsId(0),                    addressYearsUnderAYear,       partnershipPaPostCodeLookup(mode),  true,         Some(partnershipPaPostCodeLookup(checkMode(mode))), true),
-    (PartnershipAddressYearsId(0),                    emptyAnswers,                 sessionExpired,                           false,        Some(sessionExpired),                 false),
-    (PartnershipPreviousAddressPostcodeLookupId(0),   emptyAnswers,                 partnershipPaList(mode),            true,         Some(partnershipPaList(checkMode(mode))),   true),
-    (PartnershipPreviousAddressListId(0),             emptyAnswers,                 partnershipPa(mode),                true,         Some(partnershipPa(checkMode(mode))),       true),
-    (PartnershipPreviousAddressId(0),                 emptyAnswers,                 partnershipContact(mode),           true,         Some(exitJourney(mode)),               true),
-    (OtherPartnersId(0),                              emptyAnswers,                 partnershipReview(mode),                        true,         Some(partnershipReview(mode)),              true),
-    (PartnershipReviewId(0),                          emptyAnswers,                 addEstablisher(mode),                           false,         None,                                 true)
+    ("Id", "User Answers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (Check Mode)", "Save (CM)"),
+    (PartnershipDetailsId(0), emptyAnswers, partnershipVat(mode), true, Some(exitJourney(mode)), true),
+    (PartnershipVatId(0), emptyAnswers, partnershipPaye(mode), true, Some(exitJourney(mode)), true),
+    (PartnershipPayeId(0), emptyAnswers, partnershipUtr(mode), true, Some(exitJourney(mode)), true),
+    (PartnershipUniqueTaxReferenceID(0), emptyAnswers, partnershipPostcodeLookup(mode), true, Some(exitJourney(mode)), true),
+    (PartnershipPostcodeLookupId(0), emptyAnswers, partnershipAddressList(mode), true, Some(partnershipAddressList(checkMode(mode))), true),
+    (PartnershipAddressListId(0), emptyAnswers, partnershipAddress(mode), true, Some(partnershipAddress(checkMode(mode))), true),
+    (PartnershipAddressId(0), emptyAnswers, partnershipAddressYears(mode), true, Some(exitJourney(mode)), true),
+    (PartnershipAddressYearsId(0), addressYearsOverAYear, partnershipContact(mode), true, Some(exitJourney(mode)), true),
+    (PartnershipAddressYearsId(0), addressYearsUnderAYear, partnershipPaPostCodeLookup(mode), true, Some(partnershipPaPostCodeLookup(checkMode(mode))), true),
+    (PartnershipAddressYearsId(0), emptyAnswers, sessionExpired, false, Some(sessionExpired), false),
+    (PartnershipPreviousAddressPostcodeLookupId(0), emptyAnswers, partnershipPaList(mode), true, Some(partnershipPaList(checkMode(mode))), true),
+    (PartnershipPreviousAddressListId(0), emptyAnswers, partnershipPa(mode), true, Some(partnershipPa(checkMode(mode))), true),
+    (PartnershipPreviousAddressId(0), emptyAnswers, partnershipContact(mode), true, Some(exitJourney(mode)), true),
+    (OtherPartnersId(0), emptyAnswers, partnershipReview(mode), true, Some(partnershipReview(mode)), true)
   )
 
   private def normalOnlyRoutes: TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = Table(
-    ("Id",                                          "User Answers",               "Next Page (Normal Mode)",                "Save (NM)",  "Next Page (Check Mode)",         "Save (CM)"),
-    (PartnershipContactDetailsId(0),                  emptyAnswers,                 isDormant,                                true,         Some(checkYourAnswers(NormalMode)),               true),
-    (IsPartnershipDormantId(0),                       emptyAnswers,                 checkYourAnswers(NormalMode),             true,         Some(checkYourAnswers(NormalMode)),               true)
+    ("Id", "User Answers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (Check Mode)", "Save (CM)"),
+    (PartnershipContactDetailsId(0), emptyAnswers, isDormant, true, Some(checkYourAnswers(NormalMode)), true),
+    (IsPartnershipDormantId(0), emptyAnswers, checkYourAnswers(NormalMode), true, Some(checkYourAnswers(NormalMode)), true),
+    (PartnershipReviewId(0), emptyAnswers, addEstablisher(NormalMode), false, None, true)
   )
 
   private def updateOnlyRoutes: TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = Table(
-    ("Id",                                          "User Answers",               "Next Page (Normal Mode)",                "Save (NM)",  "Next Page (Check Mode)",         "Save (CM)"),
-    (PartnershipContactDetailsId(0),                  emptyAnswers,                 checkYourAnswers(UpdateMode),             true,         Some(checkYourAnswers(UpdateMode)),               true)
+    ("Id", "User Answers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (Check Mode)", "Save (CM)"),
+    (PartnershipContactDetailsId(0), emptyAnswers, checkYourAnswers(UpdateMode), true, Some(checkYourAnswers(UpdateMode)), true),
+    (PartnershipReviewId(0), emptyAnswers, anyMoreChanges, false, None, true)
   )
 
   private def normalRoutes = Table(
-    ("Id",                                          "User Answers",               "Next Page (Normal Mode)",                "Save (NM)",  "Next Page (Check Mode)",         "Save (CM)"),
+    ("Id", "User Answers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (Check Mode)", "Save (CM)"),
     routes(NormalMode) ++ normalOnlyRoutes: _*
   );
 
   private def updateRoutes = Table(
-    ("Id",                                          "User Answers",               "Next Page (Normal Mode)",                "Save (NM)",  "Next Page (Check Mode)",         "Save (CM)"),
+    ("Id", "User Answers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (Check Mode)", "Save (CM)"),
     routes(UpdateMode) ++ updateOnlyRoutes: _*
   )
 
