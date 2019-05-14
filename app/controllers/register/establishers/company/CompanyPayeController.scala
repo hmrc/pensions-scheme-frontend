@@ -57,7 +57,8 @@ class CompanyPayeController @Inject()(
               heading = Message("messages__companyPaye__heading", details.companyName),
               hint = Some(Message("messages__common__paye_hint")),
               subHeading = None,
-              srn = srn
+              srn = srn,
+              mode = mode
             )
         }
     }
@@ -65,7 +66,7 @@ class CompanyPayeController @Inject()(
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
     implicit request =>
-      viewmodel(mode, index, srn).retrieve.right.map {
+      viewmodel(Mode.journeyMode(mode), index, srn).retrieve.right.map {
         vm =>
           get(CompanyPayeId(index), form, vm)
       }
@@ -73,7 +74,7 @@ class CompanyPayeController @Inject()(
 
   def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
-      viewmodel(mode, index, srn).retrieve.right.map {
+      viewmodel(Mode.journeyMode(mode), index, srn).retrieve.right.map {
         vm =>
           post(CompanyPayeId(index), mode, form, vm)
       }

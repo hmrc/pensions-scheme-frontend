@@ -54,7 +54,8 @@ class CompanyVatController @Inject()(
               heading = Message("messages__companyVat__heading", details.companyName),
               hint = Message("messages__common__company_vat__hint", details.companyName),
               subHeading = None,
-              srn = srn
+              srn = srn,
+              mode = mode
             )
         }
     }
@@ -64,7 +65,7 @@ class CompanyVatController @Inject()(
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
     implicit request =>
-      viewmodel(mode, index, srn).retrieve.right.map {
+      viewmodel(Mode.journeyMode(mode), index, srn).retrieve.right.map {
         vm =>
           get(CompanyVatId(index), form, vm)
       }
@@ -73,7 +74,7 @@ class CompanyVatController @Inject()(
   def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
-      viewmodel(mode, index, srn).retrieve.right.map {
+      viewmodel(Mode.journeyMode(mode), index, srn).retrieve.right.map {
         vm =>
           post(CompanyVatId(index), mode, form, vm)
       }
