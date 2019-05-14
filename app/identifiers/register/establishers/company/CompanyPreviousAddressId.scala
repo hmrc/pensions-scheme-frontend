@@ -17,11 +17,14 @@
 package identifiers.register.establishers.company
 
 import identifiers._
-import identifiers.register.establishers.EstablishersId
+import identifiers.register.establishers.{EstablishersId, IsEstablisherNewId}
+import models.AddressYears.UnderAYear
+import models.Link
 import models.address.Address
-import play.api.libs.json.JsPath
-import utils.CountryOptions
+import play.api.libs.json.{JsPath, Reads}
 import utils.checkyouranswers.{AddressCYA, CheckYourAnswers}
+import utils.{CountryOptions, UserAnswers}
+import viewmodels.AnswerRow
 
 case class CompanyPreviousAddressId(index: Int) extends TypedIdentifier[Address] {
   override def path: JsPath = EstablishersId(index).path \ CompanyPreviousAddressId.toString
@@ -30,9 +33,31 @@ case class CompanyPreviousAddressId(index: Int) extends TypedIdentifier[Address]
 object CompanyPreviousAddressId {
   override def toString: String = "companyPreviousAddress"
 
-  implicit def cya(implicit countryOptions: CountryOptions): CheckYourAnswers[CompanyPreviousAddressId] =
-    AddressCYA(
-      label = "messages__common__cya__previous_address",
-      changeAddress = "messages__visuallyhidden__establisher__previous_address"
-    )()
+  implicit def cya(implicit countryOptions: CountryOptions): CheckYourAnswers[CompanyPreviousAddressId] = {
+    val label: String = "messages__common__cya__previous_address"
+    val changeAddress: String = "messages__visuallyhidden__establisher__previous_address"
+
+    new CheckYourAnswers[CompanyPreviousAddressId] {
+      override def row(id: CompanyPreviousAddressId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+        AddressCYA(label, changeAddress)().row(id)(changeUrl, userAnswers)
+
+      override def updateRow(id: CompanyPreviousAddressId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+        userAnswers.get(IsEstablisherNewId(id.index)) match {
+          case Some(true) =>
+            AddressCYA(label, changeAddress)().row(id)(changeUrl, userAnswers)
+          case _ =>
+            userAnswers.get(id) match {
+              case Some(_) => row(id)(changeUrl, userAnswers)
+              case _ =>
+                userAnswers.get(CompanyAddressYearsId(id.index)) match {
+                  case Some(UnderAYear) => Seq(AnswerRow(label,
+                    Seq("site.not_entered"),
+                    answerIsMessageKey = true,
+                    Some(Link("site.add", changeUrl, Some("messages__visuallyhidden__establisher__previous_address_add")))))
+                  case _ => Seq.empty[AnswerRow]
+                }
+            }
+        }
+    }
+  }
 }

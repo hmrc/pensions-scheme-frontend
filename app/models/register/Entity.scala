@@ -77,7 +77,8 @@ case class DirectorEntity(id: DirectorDetailsId, name: String, isDeleted: Boolea
 case class PartnerEntity(id: PartnerDetailsId, name: String, isDeleted: Boolean,
                          isCompleted: Boolean, isNewEntity: Boolean, noOfRecords : Int) extends Entity[PartnerDetailsId] {
   override def editLink(mode: Mode, srn: Option[String]): Option[String] = (isNewEntity, isCompleted) match {
-    case (false, _) => None
+    case (false, _) => Some(controllers.register.establishers.partnership.partner.routes.CheckYourAnswersController.onPageLoad(
+      mode, id.establisherIndex, id.partnerIndex, srn).url)
     case (_, true) => Some(controllers.register.establishers.partnership.partner.routes.CheckYourAnswersController.onPageLoad(
       mode, id.establisherIndex, id.partnerIndex, srn).url)
     case (_, false) => Some(controllers.register.establishers.partnership.partner.routes.PartnerDetailsController.onPageLoad(

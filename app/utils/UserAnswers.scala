@@ -261,12 +261,13 @@ case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Implicits{
       details =>
         for ((partner, partnerIndex) <- details.zipWithIndex) yield {
           val isComplete = get(IsPartnerCompleteId(establisherIndex, partnerIndex)).getOrElse(false)
+          val isNew = get(IsNewDirectorId(establisherIndex, partnerIndex)).getOrElse(false)
           PartnerEntity(
             PartnerDetailsId(establisherIndex, partnerIndex),
             partner.fullName,
             partner.isDeleted,
             isComplete,
-            isNewEntity = true,
+            isNew,
             details.count(!_.isDeleted)
           )
         }
