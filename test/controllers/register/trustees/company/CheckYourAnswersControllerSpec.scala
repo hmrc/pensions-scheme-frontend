@@ -18,6 +18,7 @@ package controllers.register.trustees.company
 
 import controllers.ControllerSpecBase
 import controllers.actions.{DataRequiredActionImpl, DataRetrievalAction, FakeAuthAction}
+import controllers.behaviours.ControllerAllowChangeBehaviour
 import identifiers.register.trustees.IsTrusteeCompleteId
 import identifiers.register.trustees.company._
 import models._
@@ -32,7 +33,7 @@ import utils.checkyouranswers.{AddressYearsCYA, CompanyRegistrationNumberCYA, Un
 import viewmodels.AnswerSection
 import views.html.check_your_answers
 
-class CheckYourAnswersControllerSpec extends ControllerSpecBase {
+class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerAllowChangeBehaviour {
 
   import CheckYourAnswersControllerSpec._
 
@@ -65,13 +66,18 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase {
         status(result) mustBe SEE_OTHER
         FakeUserAnswersService.verify(IsTrusteeCompleteId(index), true)
       }
+
+      behave like changeableController(
+        controller(fullAnswers.dataRetrievalAction, _:AllowChangeHelper)
+          .onPageLoad(NormalMode, index, None)(FakeDataRequest(fullAnswers))
+      )
     }
 
   }
 
 }
 
-object CheckYourAnswersControllerSpec extends ControllerSpecBase {
+object CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerAllowChangeBehaviour {
 
   private val index = 0
   private val onwardRoute = controllers.routes.IndexController.onPageLoad()
@@ -153,10 +159,12 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase {
     answerSections,
     postUrl,
     None,
-    viewOnly = false
+    hideEditLinks = false,
+    hideSaveAndContinueButton = false
   )(fakeRequest, messages).toString
 
-  private def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): CheckYourAnswersController =
+  private def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData,
+                         allowChangeHelper: AllowChangeHelper = ach): CheckYourAnswersController =
     new CheckYourAnswersController(
       frontendAppConfig,
       messagesApi,
@@ -165,7 +173,8 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase {
       new DataRequiredActionImpl,
       fakeCountryOptions,
       new FakeNavigator(onwardRoute),
-      FakeUserAnswersService
+      FakeUserAnswersService,
+      allowChangeHelper
     )
 
 }

@@ -18,6 +18,8 @@ package controllers.register.trustees.partnership
 
 import controllers.ControllerSpecBase
 import controllers.actions.{DataRequiredActionImpl, DataRetrievalAction, FakeAuthAction}
+import controllers.behaviours.ControllerAllowChangeBehaviour
+import controllers.register.trustees.individual.CheckYourAnswersControllerSpec.ach
 import identifiers.register.trustees.partnership._
 import models.AddressYears.UnderAYear
 import models._
@@ -29,7 +31,7 @@ import utils.checkyouranswers.Ops._
 import viewmodels.AnswerSection
 import views.html.check_your_answers
 
-class CheckYourAnswersControllerSpec extends ControllerSpecBase {
+class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerAllowChangeBehaviour {
 
   val firstIndex = Index(0)
   val partnershipName = "PartnershipName"
@@ -48,7 +50,8 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase {
   implicit val countryOptions = new FakeCountryOptions()
   private val onwardRoute = controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode, None)
 
-  private def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): CheckYourAnswersController =
+  private def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData,
+                         allowChangeHelper: AllowChangeHelper = ach): CheckYourAnswersController =
     new CheckYourAnswersController(
       frontendAppConfig,
       messagesApi,
@@ -57,7 +60,8 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase {
       new DataRequiredActionImpl,
       FakeUserAnswersService,
       new FakeNavigator(onwardRoute),
-      countryOptions
+      countryOptions,
+      allowChangeHelper
     )
 
   "CheckYourAnswersController" must {
@@ -91,7 +95,8 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase {
         Seq(partnershipDetails, partnershipContactDetails),
         routes.CheckYourAnswersController.onSubmit(NormalMode, firstIndex, None),
         None,
-        viewOnly = false
+        hideEditLinks = false,
+        hideSaveAndContinueButton = false
       )(fakeRequest, messages).toString
 
       status(result) mustBe OK
@@ -109,6 +114,10 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase {
         FakeUserAnswersService.verify(IsPartnershipCompleteId(firstIndex), true)
       }
     }
+
+    behave like changeableController(
+      controller(partnershipAnswers.dataRetrievalAction, _:AllowChangeHelper).onPageLoad(NormalMode, firstIndex, None)(request)
+    )
   }
 
 }

@@ -40,13 +40,23 @@ class CompanyReviewViewSpec extends ViewBehaviours {
     DirectorDetailsId.toString -> PersonDetails("director", None, lastName, LocalDate.now())
   )
 
-  def createView(viewOnly: Boolean = false): () => HtmlFormat.Appendable = () =>
-    companyReview(frontendAppConfig, index, companyName, directors, None, NormalMode, None, viewOnly)(fakeRequest, messages)
+  def createView(viewOnly: Boolean = false, hideSaveAndContinueButton:Boolean = false): () => HtmlFormat.Appendable = () =>
+    companyReview(frontendAppConfig,
+      index,
+      companyName,
+      directors,
+      None,
+      NormalMode,
+      None,
+      viewOnly,
+      hideSaveAndContinueButton)(fakeRequest, messages)
 
-  def createUpdateView(viewOnly: Boolean = false): () => HtmlFormat.Appendable = () =>
-    companyReview(frontendAppConfig, index, companyName, directors, None, UpdateMode, Some("srn"), viewOnly)(fakeRequest, messages)
+  def createUpdateView(viewOnly: Boolean = false, hideSaveAndContinueButton:Boolean = false): () => HtmlFormat.Appendable = () => companyReview(
+    frontendAppConfig, index, companyName, directors, None, UpdateMode, Some("srn"), viewOnly,hideSaveAndContinueButton)(fakeRequest, messages)
 
-  def createSecView: () => HtmlFormat.Appendable = () => companyReview(frontendAppConfig, index, companyName, tenDirectors, None, NormalMode, None, false)(fakeRequest, messages)
+
+  def createSecView: () => HtmlFormat.Appendable = () => companyReview(
+    frontendAppConfig, index, companyName, tenDirectors, None, NormalMode, None, false, false)(fakeRequest, messages)
 
   "CompanyReview view" must {
     behave like normalPage(
@@ -94,12 +104,12 @@ class CompanyReviewViewSpec extends ViewBehaviours {
       Jsoup.parse(createView(true)().toString) must haveDynamicText("messages__companyReview__directors__viewLink")
     }
 
-    "not have confirm button when viewOnly flag is true" in {
-      val view = asDocument(createView(true)())
+    "not have confirm button when hideSaveAndContinueButton flag is true" in {
+      val view = asDocument(createView(hideSaveAndContinueButton = true)())
       assertNotRenderedById(view, "submit")
     }
 
-    "have confirm button when viewOnly flag is false" in {
+    "have confirm button when hideSaveAndContinueButton flag is false" in {
       val view = asDocument(createView()())
       assertRenderedById(view, "submit")
     }

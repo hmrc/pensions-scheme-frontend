@@ -19,7 +19,15 @@
 @import models.{Mode, CheckMode}
 @import controllers.register.establishers.partnership.routes
 
-@(appConfig: FrontendAppConfig, index: Index, partnershipName: String, partners: Seq[String], schemeName: Option[String], srn: Option[String], mode: Mode, viewOnly: Boolean)(implicit request: Request[_], messages: Messages)
+@(appConfig: FrontendAppConfig,
+index: Index,
+partnershipName: String,
+partners: Seq[String],
+schemeName: Option[String],
+srn: Option[String],
+mode: Mode,
+viewOnly: Boolean,
+hideSaveAndContinueButton:Boolean)(implicit request: Request[_], messages: Messages)
 
 @main_template(
     title = messages("messages__partnershipReview__title"),
@@ -55,7 +63,7 @@
         list = Some(partners)
     )
 
-    @if(!viewOnly) {
+    @if(!hideSaveAndContinueButton) {
         @helpers.form(action = routes.PartnershipReviewController.onSubmit(mode, index, srn), 'autoComplete -> "off") {
             @components.submit_button("site.confirm")
         }

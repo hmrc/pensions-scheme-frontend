@@ -19,7 +19,7 @@ package controllers.register.establishers.partnership
 import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions.{AuthAction, DataRequiredAction, DataRetrievalAction}
-import identifiers.register.establishers.IsEstablisherCompleteId
+import identifiers.register.establishers.{IsEstablisherCompleteId, IsEstablisherNewId}
 import identifiers.register.establishers.partnership.{IsPartnershipCompleteId, PartnershipDetailsId, PartnershipReviewId}
 import javax.inject.Inject
 import models.{Index, Mode}
@@ -27,7 +27,7 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import utils.Navigator
+import utils.{AllowChangeHelper, Navigator}
 import utils.annotations.EstablisherPartnership
 import views.html.register.establishers.partnership.partnershipReview
 
@@ -39,7 +39,8 @@ class PartnershipReviewController @Inject()(appConfig: FrontendAppConfig,
                                             authenticate: AuthAction,
                                             getData: DataRetrievalAction,
                                             requireData: DataRequiredAction,
-                                            userAnswersService: UserAnswersService)(implicit val ec: ExecutionContext)
+                                            userAnswersService: UserAnswersService,
+                                            allowChangeHelper: AllowChangeHelper)(implicit val ec: ExecutionContext)
   extends FrontendController with I18nSupport with Retrievals {
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
@@ -48,7 +49,15 @@ class PartnershipReviewController @Inject()(appConfig: FrontendAppConfig,
         case partnershipDetails =>
           val partners: Seq[String] = request.userAnswers.allPartnersAfterDelete(index).map(_.name)
 
-          Future.successful(Ok(partnershipReview(appConfig, index, partnershipDetails.name, partners, existingSchemeName, srn, mode, request.viewOnly)))
+          Future.successful(Ok(partnershipReview(appConfig,
+            index,
+            partnershipDetails.name,
+            partners,
+            existingSchemeName,
+            srn,
+            mode,
+            viewOnly = request.viewOnly,
+            hideSaveAndContinueButton = allowChangeHelper.hideSaveAndContinueButton(request, IsEstablisherNewId(index), mode))))
       }
   }
 

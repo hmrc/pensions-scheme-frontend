@@ -17,6 +17,8 @@
 package base
 
 import config.FrontendAppConfig
+import org.jsoup.nodes.Document
+import org.scalatest.Assertion
 import org.scalatestplus.play.PlaySpec
 import org.scalatestplus.play.guice._
 import play.api.Environment
@@ -42,5 +44,13 @@ trait SpecBase extends PlaySpec with GuiceOneAppPerSuite {
   def environment: Environment = injector.instanceOf[Environment]
 
   def appRunning(): Unit = app
+
+  def assertNotRenderedById(doc: Document, id: String): Assertion = {
+    assert(doc.getElementById(id) == null, "\n\nElement " + id + " was rendered on the page.\n")
+  }
+
+  def assertRenderedById(doc: Document, id: String): Assertion = {
+    assert(doc.getElementById(id) != null, "\n\nElement " + id + " was not rendered on the page.\n")
+  }
 
 }

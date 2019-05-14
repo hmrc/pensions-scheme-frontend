@@ -56,7 +56,8 @@ class CheckYourAnswersBankDetailsController @Inject()(appConfig: FrontendAppConf
         Seq(bankAccountSection),
         controllers.routes.CheckYourAnswersBankDetailsController.onSubmit(),
         existingSchemeName,
-        viewOnly = request.viewOnly
+        hideEditLinks = request.viewOnly,
+        hideSaveAndContinueButton = request.viewOnly
       ))
   }
 
