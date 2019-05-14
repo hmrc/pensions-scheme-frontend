@@ -21,15 +21,22 @@ import com.google.inject.Inject
 import config.FrontendAppConfig
 import connectors.{PensionSchemeVarianceLockConnector, SubscriptionCacheConnector, UpdateSchemeCacheConnector}
 import identifiers.TypedIdentifier
-import identifiers.register.establishers.IsEstablisherAddressCompleteId
+import identifiers.register.establishers.company.{CompanyPreviousAddressId, IsCompanyCompleteId}
+import identifiers.register.establishers.company.director.{DirectorDetailsId, IsDirectorCompleteId}
+import identifiers.register.establishers.{IsEstablisherAddressCompleteId, IsEstablisherCompleteId, IsEstablisherNewId, partnership}
 import identifiers.register.establishers.individual.{AddressYearsId => EstablisherIndividualAddressYearsId, PreviousAddressId => EstablisherIndividualPreviousAddressId}
-import identifiers.register.establishers.partnership.partner.{IsPartnerAddressCompleteId, PartnerAddressYearsId, PartnerPreviousAddressId}
-import identifiers.register.trustees.IsTrusteeAddressCompleteId
+import identifiers.register.establishers.partnership.{IsPartnershipCompleteId, partner}
+import identifiers.register.establishers.partnership.partner._
+import identifiers.register.trustees.{IsTrusteeAddressCompleteId, IsTrusteeCompleteId, IsTrusteeNewId}
 import identifiers.register.trustees.company.{CompanyAddressYearsId => TruesteeCompanyAddressYearsId, CompanyPreviousAddressId => TruesteeCompanyPreviousAddressId}
+import identifiers.register.trustees.individual.{TrusteeAddressYearsId, TrusteePreviousAddressId}
+import identifiers.register.trustees.partnership.PartnershipPreviousAddressId
 import models.AddressYears.{OverAYear, UnderAYear}
 import models._
 import models.address.Address
+import models.person.PersonDetails
 import models.requests.DataRequest
+import org.joda.time.LocalDate
 import org.mockito.Matchers
 import org.mockito.Matchers.any
 import org.mockito.Mockito._
@@ -42,7 +49,7 @@ import utils.{FakeDataRequest, UserAnswers}
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class UserAnswersServiceSpec extends AsyncWordSpec with MustMatchers with MockitoSugar with BeforeAndAfter{
+class UserAnswersServiceSpec extends AsyncWordSpec with MustMatchers with MockitoSugar with BeforeAndAfter {
 
   import UserAnswersServiceSpec._
 
@@ -68,7 +75,7 @@ class UserAnswersServiceSpec extends AsyncWordSpec with MustMatchers with Mockit
       when(updateConnector.upsert(any(), any())(any(), any()))
         .thenReturn(Future(json))
 
-      testService.save(UpdateMode, Some(srn), FakeIdentifier, "foobar") map {result =>
+      testService.save(UpdateMode, Some(srn), FakeIdentifier, "foobar") map { result =>
         result mustEqual json
       }
     }
@@ -78,7 +85,7 @@ class UserAnswersServiceSpec extends AsyncWordSpec with MustMatchers with Mockit
       when(lockConnector.lock(any(), any())(any(), any()))
         .thenReturn(Future(SchemeLock))
 
-      testService.save(UpdateMode, Some(srn), FakeIdentifier, "foobar") map {result =>
+      testService.save(UpdateMode, Some(srn), FakeIdentifier, "foobar") map { result =>
         result mustEqual Json.obj()
       }
     }
@@ -105,7 +112,7 @@ class UserAnswersServiceSpec extends AsyncWordSpec with MustMatchers with Mockit
       when(updateConnector.upsert(any(), any())(any(), any()))
         .thenReturn(Future(json))
 
-      testService.upsert(UpdateMode, Some(srn), json) map {result =>
+      testService.upsert(UpdateMode, Some(srn), json) map { result =>
         result mustEqual json
       }
     }
@@ -160,51 +167,184 @@ class UserAnswersServiceSpec extends AsyncWordSpec with MustMatchers with Mockit
     }
   }
 
-  ".setAddressCompleteFlagAfterPreviousAddress" must {
+  ".setCompleteForAddress" must {
 
-    "save flag with correct id for TruesteeCompanyPreviousAddressId" in {
+    "return correct user answers with establisher complete flag and company complete flag if company is complete and all directors are complete" in {
+      val answers = UserAnswers().set(IsDirectorCompleteId(0, 0))(true).flatMap(_.set(DirectorDetailsId(0, 0))(PersonDetails("sr", None, "test", new LocalDate()))).asOpt.value
+      val expectedAnswers = answers.set(IsEstablisherCompleteId(0))(true).flatMap(
+        _.set(IsCompanyCompleteId(0))(true)).asOpt.value
 
-      val updated = UserAnswers(json).set(IsTrusteeAddressCompleteId(0))(true).asOpt.get
+      testService.setCompleteForAddress(Some(IsCompanyCompleteId(0)), answers, UpdateMode, Some(srn)) mustEqual expectedAnswers
+    }
 
-      when(subscriptionConnector.upsert(any(), Matchers.eq(updated.json))(any(), any()))
-        .thenReturn(Future(updated.json))
+    "return correct user answers with only company complete flag if company is complete and all directors are not complete" in {
+      val answers = UserAnswers().set(IsDirectorCompleteId(0, 0))(false).flatMap(
+        _.set(DirectorDetailsId(0, 0))(PersonDetails("sr", None, "test", new LocalDate()))).asOpt.value
+      val expectedAnswers = answers.set(IsCompanyCompleteId(0))(true).asOpt.value
+      testService.setCompleteForAddress(Some(IsCompanyCompleteId(0)), answers, UpdateMode, Some(srn)) mustEqual expectedAnswers
+    }
 
-      testService.setAddressCompleteFlagAfterPreviousAddress(NormalMode, None, TruesteeCompanyPreviousAddressId(0), UserAnswers(json)) map {
-        _ mustEqual updated
+    "return correct user answers with establisher complete flag and partnership complete flag if partnership is complete and all partners are complete" in {
+      val answers = UserAnswers().set(IsPartnerCompleteId(0, 0))(true).flatMap(
+        _.set(PartnerDetailsId(0, 0))(PersonDetails("sr", None, "test", new LocalDate()))).asOpt.value
+      val expectedAnswers = answers.set(IsEstablisherCompleteId(0))(true).flatMap(
+        _.set(IsPartnershipCompleteId(0))(true)).asOpt.value
+
+      testService.setCompleteForAddress(Some(IsPartnershipCompleteId(0)), answers, UpdateMode, Some(srn)) mustEqual expectedAnswers
+    }
+
+    "return correct user answers with only partnership complete flag if partnership is complete and all partners are not complete" in {
+      val answers = UserAnswers().set(IsPartnerCompleteId(0, 0))(false).flatMap(
+        _.set(PartnerDetailsId(0, 0))(PersonDetails("sr", None, "test", new LocalDate()))).asOpt.value
+      val expectedAnswers = answers.set(IsPartnershipCompleteId(0))(true).asOpt.value
+
+      testService.setCompleteForAddress(Some(IsPartnershipCompleteId(0)), answers, UpdateMode, Some(srn)) mustEqual expectedAnswers
+    }
+
+    "return correct user answers with establisher complete flag if partnership is complete and all partners are complete" in {
+      val answers = UserAnswers().set(PartnerDetailsId(0, 0))(PersonDetails("sr", None, "test", new LocalDate())).flatMap(
+        _.set(IsPartnershipCompleteId(0))(true)
+      ).asOpt.value
+      val expectedAnswers = answers.set(IsEstablisherCompleteId(0))(true).flatMap(_.set(IsPartnerCompleteId(0, 0))(true)).asOpt.value
+
+      testService.setCompleteForAddress(Some(partner.IsPartnerCompleteId(0, 0)), answers, UpdateMode, Some(srn)) mustEqual expectedAnswers
+    }
+
+    "return correct user answers with only partner complete flag if partnership is not complete but all partners are complete" in {
+      val answers = UserAnswers().set(PartnerDetailsId(0, 0))(PersonDetails("sr", None, "test", new LocalDate())
+      ).asOpt.value
+      val expectedAnswers = answers.set(partner.IsPartnerCompleteId(0, 0))(true).asOpt.value
+
+      testService.setCompleteForAddress(Some(partner.IsPartnerCompleteId(0, 0)), answers, UpdateMode, Some(srn)) mustEqual expectedAnswers
+    }
+
+    "return correct user answers with establisher complete flag if company is complete and all directors are complete" in {
+      val answers = UserAnswers().set(DirectorDetailsId(0, 0))(PersonDetails("sr", None, "test", new LocalDate())).flatMap(
+        _.set(IsCompanyCompleteId(0))(true)
+      ).asOpt.value
+      val expectedAnswers = answers.set(IsEstablisherCompleteId(0))(true).flatMap(_.set(IsDirectorCompleteId(0, 0))(true)).asOpt.value
+
+      testService.setCompleteForAddress(Some(IsDirectorCompleteId(0, 0)), answers, UpdateMode, Some(srn)) mustEqual expectedAnswers
+    }
+
+    "return correct user answers with only director complete flag if company is not complete but all directors are complete" in {
+      val answers = UserAnswers().set(DirectorDetailsId(0, 0))(PersonDetails("sr", None, "test", new LocalDate())
+      ).asOpt.value
+      val expectedAnswers = answers.set(IsDirectorCompleteId(0, 0))(true).asOpt.value
+
+      testService.setCompleteForAddress(Some(IsDirectorCompleteId(0, 0)), answers, UpdateMode, Some(srn)) mustEqual expectedAnswers
+    }
+
+    "return the user answers with establisher complete flag if establisher individual is complete" in {
+      val answers = UserAnswers(Json.obj())
+      val expectedAnswers = answers.set(IsEstablisherCompleteId(0))(true).asOpt.value
+
+      testService.setCompleteForAddress(Some(IsEstablisherCompleteId(0)), answers, UpdateMode, Some(srn)) mustEqual expectedAnswers
+    }
+  }
+
+  "setAddressCompleteFlagAfterPreviousAddress" when {
+    "in UpdateMode" must {
+      "save the complete flag if the trustee is not new" in {
+        val answers = UserAnswers().set(IsTrusteeNewId(0))(false).asOpt.value
+        val expectedAnswers = answers.set(IsTrusteeCompleteId(0))(true).asOpt.value
+        when(lockConnector.lock(any(), any())(any(), any()))
+          .thenReturn(Future(VarianceLock))
+
+        when(updateConnector.upsert(any(), any())(any(), any()))
+          .thenReturn(Future(expectedAnswers.json))
+
+        testService.setAddressCompleteFlagAfterPreviousAddress(UpdateMode, Some(srn), TruesteeCompanyPreviousAddressId(0), answers) map {
+          _ mustEqual expectedAnswers
+        }
+      }
+
+      "not save the complete flag and return the same useramswers if the trustee is new" in {
+        val answers = UserAnswers().set(IsTrusteeNewId(0))(true).asOpt.value
+        when(lockConnector.lock(any(), any())(any(), any()))
+          .thenReturn(Future(VarianceLock))
+
+        when(updateConnector.upsert(any(), any())(any(), any()))
+          .thenReturn(Future(answers.json))
+
+        testService.setAddressCompleteFlagAfterPreviousAddress(UpdateMode, Some(srn), TruesteeCompanyPreviousAddressId(0), answers) map {
+          _ mustEqual answers
+        }
       }
     }
 
-    "save flag with correct id for trustee EstablisherIndividualPreviousAddressId" in {
+    "in Normal Mode" must {
+      "not save the complete flag and return the same useramswers if the trustee is new" in {
+        val answers = UserAnswers()
+        when(lockConnector.lock(any(), any())(any(), any()))
+          .thenReturn(Future(VarianceLock))
 
-      val updated = UserAnswers(json).set(IsEstablisherAddressCompleteId(0))(true).asOpt.get
+        when(updateConnector.upsert(any(), any())(any(), any()))
+          .thenReturn(Future(answers.json))
 
-      when(subscriptionConnector.upsert(any(), Matchers.eq(updated.json))(any(), any()))
-        .thenReturn(Future(updated.json))
+        testService.setAddressCompleteFlagAfterPreviousAddress(NormalMode, Some(srn), TruesteeCompanyPreviousAddressId(0), answers) map {
+          _ mustEqual answers
+        }
+      }
+    }
+  }
 
-      testService.setAddressCompleteFlagAfterPreviousAddress(NormalMode, None, EstablisherIndividualPreviousAddressId(0), UserAnswers(json)) map {
-        _ mustEqual updated
+  "setAddressCompleteFlagAfterAddressYear" when {
+    "in UpdateMode" must {
+      "save the complete flag if the trustee is not new and address years is over a year" in {
+        val answers = UserAnswers().set(IsTrusteeNewId(0))(false).flatMap(
+          _.set(TrusteeAddressYearsId(0))(OverAYear)).asOpt.value
+        val expectedAnswers = answers.set(IsTrusteeCompleteId(0))(true).asOpt.value
+        when(lockConnector.lock(any(), any())(any(), any()))
+          .thenReturn(Future(VarianceLock))
+
+        when(updateConnector.upsert(any(), any())(any(), any()))
+          .thenReturn(Future(expectedAnswers.json))
+
+        testService.setAddressCompleteFlagAfterAddressYear(UpdateMode, Some(srn), TruesteeCompanyAddressYearsId(0), OverAYear, answers) map {
+          _ mustEqual expectedAnswers
+        }
+      }
+
+      "not save the complete flag and return the same user answers if the address years in under a year" in {
+        val answers = UserAnswers().set(TruesteeCompanyAddressYearsId(0))(UnderAYear).asOpt.value
+        when(lockConnector.lock(any(), any())(any(), any()))
+          .thenReturn(Future(VarianceLock))
+
+        when(updateConnector.upsert(any(), any())(any(), any()))
+          .thenReturn(Future(answers.json))
+
+        testService.setAddressCompleteFlagAfterAddressYear(UpdateMode, Some(srn), TruesteeCompanyAddressYearsId(0), UnderAYear, answers) map {
+          _ mustEqual answers
+        }
+      }
+
+      "not save the complete flag and return the same user answers if the trustee is new" in {
+        val answers = UserAnswers().set(IsTrusteeNewId(0))(true).asOpt.value
+        when(lockConnector.lock(any(), any())(any(), any()))
+          .thenReturn(Future(VarianceLock))
+
+        when(updateConnector.upsert(any(), any())(any(), any()))
+          .thenReturn(Future(answers.json))
+
+        testService.setAddressCompleteFlagAfterAddressYear(UpdateMode, Some(srn), TruesteeCompanyAddressYearsId(0), OverAYear, answers) map {
+          _ mustEqual answers
+        }
       }
     }
 
-    "save flag with correct id for establisher PartnerPreviousAddressId" in {
+    "in Normal Mode" must {
+      "not save the complete flag and return the same useramswers if the trustee is new" in {
+        val answers = UserAnswers()
+        when(lockConnector.lock(any(), any())(any(), any()))
+          .thenReturn(Future(VarianceLock))
 
-      val updated = UserAnswers(json).set(IsPartnerAddressCompleteId(0, 0))(true).asOpt.get
+        when(updateConnector.upsert(any(), any())(any(), any()))
+          .thenReturn(Future(answers.json))
 
-      when(subscriptionConnector.upsert(any(), Matchers.eq(updated.json))(any(), any()))
-        .thenReturn(Future(updated.json))
-
-      testService.setAddressCompleteFlagAfterPreviousAddress(NormalMode, None, PartnerPreviousAddressId(0, 0), UserAnswers(json)) map {
-        _ mustEqual updated
-      }
-    }
-
-    "dont save flag if not macthing addresss id" in {
-
-      case class TempAddressId() extends TypedIdentifier[Address]
-
-      testService.setAddressCompleteFlagAfterPreviousAddress(NormalMode, None, TempAddressId(), UserAnswers(json)) map { result =>
-        verify(subscriptionConnector, never).save(any(), any(), any())(any(), any(), any())
-        result mustEqual UserAnswers(json)
+        testService.setAddressCompleteFlagAfterAddressYear(UpdateMode, Some(srn), TruesteeCompanyAddressYearsId(0), OverAYear, answers) map {
+          _ mustEqual answers
+        }
       }
     }
   }

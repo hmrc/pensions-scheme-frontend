@@ -19,12 +19,12 @@ package services
 import config.FrontendAppConfig
 import connectors.{PensionSchemeVarianceLockConnector, SubscriptionCacheConnector, UpdateSchemeCacheConnector}
 import identifiers._
-import identifiers.register.establishers.{IsEstablisherAddressCompleteId, IsEstablisherCompleteId, IsEstablisherNewId}
+import identifiers.register.establishers.{IsEstablisherAddressCompleteId, IsEstablisherCompleteId, IsEstablisherNewId, partnership}
 import identifiers.register.establishers.company.director._
-import identifiers.register.establishers.company.{CompanyAddressYearsId => EstablisherCompanyAddressYearsId, CompanyPreviousAddressId => EstablisherCompanyPreviousAddressId}
+import identifiers.register.establishers.company.{IsCompanyCompleteId, CompanyAddressYearsId => EstablisherCompanyAddressYearsId, CompanyPreviousAddressId => EstablisherCompanyPreviousAddressId}
 import identifiers.register.establishers.individual.{AddressYearsId => EstablisherIndividualAddressYearsId, PreviousAddressId => EstablisherIndividualPreviousAddressId}
 import identifiers.register.establishers.partnership.partner._
-import identifiers.register.establishers.partnership.{PartnershipAddressYearsId => EstablisherPartnershipAddressYearsId, PartnershipPreviousAddressId => EstablisherPartnershipPreviousAddressId}
+import identifiers.register.establishers.partnership.{IsPartnershipCompleteId => IsEstablisherPartnershipCompleteId, PartnershipAddressYearsId => EstablisherPartnershipAddressYearsId, PartnershipPreviousAddressId => EstablisherPartnershipPreviousAddressId}
 import identifiers.register.trustees.{IsTrusteeAddressCompleteId, IsTrusteeCompleteId, IsTrusteeNewId}
 import identifiers.register.trustees.company.{CompanyAddressYearsId => TruesteeCompanyAddressYearsId, CompanyPreviousAddressId => TruesteeCompanyPreviousAddressId}
 import identifiers.register.trustees.individual.{TrusteeAddressYearsId => TruesteeIndividualAddressYearsId, TrusteePreviousAddressId => TruesteeIndividualPreviousAddressId}
@@ -163,12 +163,12 @@ trait UserAnswersService {
                                              addressYears: AddressYears, userAnswers: UserAnswers)
                                             (implicit ec: ExecutionContext, hc: HeaderCarrier, request: DataRequest[AnyContent]): Future[UserAnswers] = {
 
-    if(mode == UpdateMode || mode == CheckUpdateMode) {
+    if (mode == UpdateMode || mode == CheckUpdateMode) {
       getIsNewId(id).map { newId =>
         (userAnswers.get(newId), addressYears) match {
           case (Some(false) | None, OverAYear) =>
-            val addressCompletedId = getAddressId[AddressYears](id)
-            setCompleteFlag(addressCompletedId, userAnswers, mode, srn)
+            val addressCompletedId = getCompleteId[AddressYears](id)
+            upsert(mode, srn, setCompleteForAddress(addressCompletedId, userAnswers, mode, srn).json).map(UserAnswers)
           case _ =>
             Future.successful(userAnswers)
         }
@@ -180,12 +180,12 @@ trait UserAnswersService {
 
   def setAddressCompleteFlagAfterPreviousAddress(mode: Mode, srn: Option[String], id: TypedIdentifier[Address], userAnswers: UserAnswers)
                                                 (implicit ec: ExecutionContext, hc: HeaderCarrier, request: DataRequest[AnyContent]): Future[UserAnswers] = {
-    if(mode == UpdateMode || mode == CheckUpdateMode) {
+    if (mode == UpdateMode || mode == CheckUpdateMode) {
       getIsNewId(id).map { newId =>
         userAnswers.get(newId) match {
           case Some(false) | None =>
-            val addressCompletedId = getAddressId[Address](id)
-            setCompleteFlag(addressCompletedId, userAnswers, mode, srn)
+            val addressCompletedId = getCompleteId[Address](id)
+            upsert(mode, srn, setCompleteForAddress(addressCompletedId, userAnswers, mode, srn).json).map(UserAnswers)
           case _ =>
             Future.successful(userAnswers)
         }
@@ -195,40 +195,58 @@ trait UserAnswersService {
     }
   }
 
-  private def setCompleteFlag(addressCompletedId: Option[TypedIdentifier[Boolean]], answers: UserAnswers,
-                              mode: Mode, srn: Option[String])(implicit ec: ExecutionContext, hc: HeaderCarrier, request: DataRequest[AnyContent]) = {
-    addressCompletedId.fold(Future.successful(answers)) { changeId =>
+  private[services] def setCompleteForAddress(addressCompletedId: Option[TypedIdentifier[Boolean]], answers: UserAnswers,
+                                    mode: Mode, srn: Option[String])(implicit ec: ExecutionContext, hc: HeaderCarrier, request: DataRequest[AnyContent]): UserAnswers = {
+    addressCompletedId.fold(answers) { changeId =>
       val ua = answers.set(changeId)(true).asOpt.getOrElse(answers)
-      val updatedUa = changeId match {
+      changeId match {
         case IsPartnerCompleteId(partnershipIndex, _) =>
-          if (ua.allPartnersAfterDelete(partnershipIndex).forall(_.isCompleted))
-            ua.set(IsEstablisherCompleteId(partnershipIndex))(true).asOpt.getOrElse(ua)
-          else ua
-        case IsDirectorCompleteId(companyIndex, directorIndex) =>
-          if (ua.allDirectorsAfterDelete(companyIndex).forall(_.isCompleted))
-            ua.set(IsEstablisherCompleteId(companyIndex))(true).asOpt.getOrElse(ua)
-          else ua
+          setIsEstablisherComplete(
+            ua,
+            ua.allPartnersAfterDelete(partnershipIndex).forall(_.isCompleted),
+            IsEstablisherPartnershipCompleteId(partnershipIndex),
+            partnershipIndex
+          )
+        case IsDirectorCompleteId(companyIndex, _) =>
+          setIsEstablisherComplete(
+            ua,
+            ua.allDirectorsAfterDelete(companyIndex).forall(_.isCompleted),
+            IsCompanyCompleteId(companyIndex),
+            companyIndex
+          )
+        case IsEstablisherPartnershipCompleteId(partnershipIndex) if ua.allPartnersAfterDelete(partnershipIndex).forall(_.isCompleted) =>
+          ua.set(IsEstablisherCompleteId(partnershipIndex))(true).asOpt.getOrElse(ua)
+        case IsCompanyCompleteId(companyIndex) if ua.allDirectorsAfterDelete(companyIndex).forall(_.isCompleted) =>
+          ua.set(IsEstablisherCompleteId(companyIndex))(true).asOpt.getOrElse(ua)
         case _ => ua
       }
-      upsert(mode, srn, updatedUa.json).map(UserAnswers)
     }
   }
 
+  private def setIsEstablisherComplete(userAnswers: UserAnswers, allDirectorOrPartnerComplete: Boolean,
+                                       completeId: TypedIdentifier[Boolean], index: Int) = {
+    val partnershipCompleted = userAnswers.get(completeId).contains(true)
+    if (allDirectorOrPartnerComplete && partnershipCompleted) {
+      userAnswers.set(IsEstablisherCompleteId(index))(true).asOpt.getOrElse(userAnswers)
+    } else {
+      userAnswers
+    }
+  }
 
-  def getAddressId[T](id: TypedIdentifier[T]): Option[TypedIdentifier[Boolean]] = id match {
+  def getCompleteId[T](id: TypedIdentifier[T]): Option[TypedIdentifier[Boolean]] = id match {
     case TruesteeCompanyAddressYearsId(index) => Some(IsTrusteeCompleteId(index))
     case TruesteePartnershipAddressYearsId(index) => Some(IsPartnershipCompleteId(index))
     case TruesteeIndividualAddressYearsId(index) => Some(IsTrusteeCompleteId(index))
-    case EstablisherCompanyAddressYearsId(index) => Some(IsEstablisherCompleteId(index))
-    case EstablisherPartnershipAddressYearsId(index) => Some(IsEstablisherCompleteId(index))
+    case EstablisherCompanyAddressYearsId(index) => Some(IsCompanyCompleteId(index))
+    case EstablisherPartnershipAddressYearsId(index) => Some(IsEstablisherPartnershipCompleteId(index))
     case EstablisherIndividualAddressYearsId(index) => Some(IsEstablisherCompleteId(index))
     case PartnerAddressYearsId(establisherIndex, partnerIndex) => Some(IsPartnerCompleteId(establisherIndex, partnerIndex))
     case DirectorAddressYearsId(establisherIndex, directorIndex) => Some(IsDirectorCompleteId(establisherIndex, directorIndex))
     case TruesteeCompanyPreviousAddressId(index) => Some(IsTrusteeCompleteId(index))
     case TruesteePartnershipPreviousAddressId(index) => Some(IsPartnershipCompleteId(index))
     case TruesteeIndividualPreviousAddressId(index) => Some(IsTrusteeCompleteId(index))
-    case EstablisherCompanyPreviousAddressId(index) => Some(IsEstablisherCompleteId(index))
-    case EstablisherPartnershipPreviousAddressId(index) => Some(IsEstablisherCompleteId(index))
+    case EstablisherCompanyPreviousAddressId(index) => Some(IsCompanyCompleteId(index))
+    case EstablisherPartnershipPreviousAddressId(index) => Some(IsEstablisherPartnershipCompleteId(index))
     case EstablisherIndividualPreviousAddressId(index) => Some(IsEstablisherCompleteId(index))
     case PartnerPreviousAddressId(establisherIndex, partnerIndex) => Some(IsPartnerCompleteId(establisherIndex, partnerIndex))
     case DirectorPreviousAddressId(establisherIndex, directorIndex) => Some(IsDirectorCompleteId(establisherIndex, directorIndex))

@@ -116,7 +116,7 @@ class AddPartnersControllerSpec extends ControllerSpecBase {
           val result = controller(getRelevantData).onPageLoad(NormalMode, establisherIndex, None)(fakeRequest)
 
           contentAsString(result) mustBe viewAsString(form,
-            Seq(PartnerEntity(PartnerDetailsId(0, 0), johnDoe.fullName, isDeleted = false, isCompleted = false, isNewEntity = true, 1)))
+            Seq(PartnerEntity(PartnerDetailsId(0, 0), johnDoe.fullName, isDeleted = false, isCompleted = false, isNewEntity = false, 1)))
         }
     }
 
@@ -145,7 +145,7 @@ class AddPartnersControllerSpec extends ControllerSpecBase {
 
       status(result) mustBe BAD_REQUEST
       contentAsString(result) mustBe viewAsString(boundForm,
-        Seq(PartnerEntity(PartnerDetailsId(0, 0), johnDoe.fullName, isDeleted = false, isCompleted = false, isNewEntity = true, 1)))
+        Seq(PartnerEntity(PartnerDetailsId(0, 0), johnDoe.fullName, isDeleted = false, isCompleted = false, isNewEntity = false, 1)))
     }
 
     "set the user answer when partners exist and valid data is submitted" in {
@@ -174,9 +174,9 @@ class AddPartnersControllerSpec extends ControllerSpecBase {
       val partners = Seq(johnDoe, joeBloggs)
       val partnersViewModel = Seq(
         PartnerEntity(
-          PartnerDetailsId(0, 0), johnDoe.fullName, isDeleted = false, isCompleted = false, isNewEntity = true, 2),
+          PartnerDetailsId(0, 0), johnDoe.fullName, isDeleted = false, isCompleted = false, isNewEntity = false, 2),
         PartnerEntity(
-          PartnerDetailsId(0, 1), joeBloggs.fullName, isDeleted = false, isCompleted = false, isNewEntity = true, 2))
+          PartnerDetailsId(0, 1), joeBloggs.fullName, isDeleted = false, isCompleted = false, isNewEntity = false, 2))
       val getRelevantData = new FakeDataRetrievalAction(Some(validData(partners: _*)))
       val result = controller(getRelevantData).onPageLoad(NormalMode, establisherIndex, None)(fakeRequest)
 

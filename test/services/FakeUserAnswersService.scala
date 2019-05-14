@@ -66,7 +66,7 @@ trait FakeUserAnswersService extends UserAnswersService with Matchers {
   override def setAddressCompleteFlagAfterPreviousAddress(mode: Mode, srn: Option[String], id: TypedIdentifier[Address], userAnswers: UserAnswers)
                                                          (implicit ec: ExecutionContext, hc: HeaderCarrier, request: DataRequest[AnyContent]): Future[UserAnswers] = {
 
-    val addressCompletedId = getAddressId[Address](id)
+    val addressCompletedId = getCompleteId[Address](id)
 
     addressCompletedId.fold(Future.successful(userAnswers)) {
       id =>
