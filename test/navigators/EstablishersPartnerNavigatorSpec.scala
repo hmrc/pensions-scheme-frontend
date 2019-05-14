@@ -46,20 +46,26 @@ class EstablishersPartnerNavigatorSpec extends SpecBase with NavigatorBehaviour 
     (AddPartnersId(0), addPartnersTrue, partnerDetails(1, mode), true, Some(partnerDetails(1, checkMode(mode))), true),
     (AddPartnersId(0), addOnePartner, sessionExpired, false, Some(sessionExpired), false),
     (AddPartnersId(0), addPartnersMoreThan10, otherPartners(mode), true, Some(otherPartners(checkMode(mode))), true),
-    (PartnerDetailsId(0, 0), emptyAnswers, partnerNino(mode), true, Some(exitJourney(mode)), true),
-    (PartnerNinoId(0, 0), emptyAnswers, partnerUtr(mode), true, Some(exitJourney(mode)), true),
-    (PartnerUniqueTaxReferenceId(0, 0), emptyAnswers, partnerAddressPostcode(mode), true, Some(exitJourney(mode)), true),
+    (PartnerDetailsId(0, 0), emptyAnswers, partnerNino(mode), true, Some(exitJourney(mode, emptyAnswers)), true),
+    (PartnerDetailsId(0, 0), newPartner, partnerNino(mode), true, Some(exitJourney(mode, newPartner)), true),
+    (PartnerNinoId(0, 0), emptyAnswers, partnerUtr(mode), true, Some(exitJourney(mode, emptyAnswers)), true),
+    (PartnerNinoId(0, 0), newPartner, partnerUtr(mode), true, Some(exitJourney(mode, newPartner)), true),
+    (PartnerUniqueTaxReferenceId(0, 0), emptyAnswers, partnerAddressPostcode(mode), true, Some(exitJourney(mode, emptyAnswers)), true),
+    (PartnerUniqueTaxReferenceId(0, 0), newPartner, partnerAddressPostcode(mode), true, Some(exitJourney(mode, newPartner)), true),
     (PartnerAddressPostcodeLookupId(0, 0), emptyAnswers, partnerAddressList(mode), true, Some(partnerAddressList(checkMode(mode))), true),
     (PartnerAddressListId(0, 0), emptyAnswers, partnerAddress(mode), true, Some(partnerAddress(checkMode(mode))), true),
     (PartnerAddressId(0, 0), emptyAnswers, partnerAddressYears(mode), true, if(mode == UpdateMode) Some(partnerAddressYears(checkMode(UpdateMode))) else Some(checkYourAnswers(NormalMode)), true),
     (PartnerAddressId(0, 0), newPartner, partnerAddressYears(mode), true, Some(checkYourAnswers(mode)), true),
     (PartnerAddressYearsId(0, 0), addressYearsUnderAYear, partnerPreviousAddPostcode(mode), true, Some(partnerPreviousAddPostcode(checkMode(mode))), true),
-    (PartnerAddressYearsId(0, 0), addressYearsOverAYear, partnerContactDetails(mode), true, Some(exitJourney(mode)), true),
+    (PartnerAddressYearsId(0, 0), addressYearsOverAYearNew, partnerContactDetails(mode), true, Some(exitJourney(mode, addressYearsOverAYearNew)), true),
+    (PartnerAddressYearsId(0, 0), addressYearsOverAYear, partnerContactDetails(mode), true, Some(exitJourney(mode, emptyAnswers)), true),
     (PartnerAddressYearsId(0, 0), emptyAnswers, sessionExpired, false, Some(sessionExpired), false),
     (PartnerPreviousAddressPostcodeLookupId(0, 0), emptyAnswers, partnerPreviousAddList(mode), true, Some(partnerPreviousAddList(checkMode(mode))), true),
     (PartnerPreviousAddressListId(0, 0), emptyAnswers, partnerPreviousAddress(mode), true, Some(partnerPreviousAddress(checkMode(mode))), true),
-    (PartnerPreviousAddressId(0, 0), emptyAnswers, partnerContactDetails(mode), true, Some(exitJourney(mode)), true),
-    (PartnerContactDetailsId(0, 0), emptyAnswers, checkYourAnswers(mode), true, Some(exitJourney(mode)), true)
+    (PartnerPreviousAddressId(0, 0), emptyAnswers, partnerContactDetails(mode), true, Some(exitJourney(mode, emptyAnswers)), true),
+    (PartnerPreviousAddressId(0, 0), newPartner, partnerContactDetails(mode), true, Some(exitJourney(mode, newPartner)), true),
+    (PartnerContactDetailsId(0, 0), emptyAnswers, checkYourAnswers(mode), true, Some(exitJourney(mode, emptyAnswers)), true),
+    (PartnerContactDetailsId(0, 0), newPartner, checkYourAnswers(mode), true, Some(exitJourney(mode, newPartner)), true)
   )
 
 
@@ -96,6 +102,9 @@ object EstablishersPartnerNavigatorSpec extends OptionValues {
   val partnerIndex = Index(0)
   private val johnDoe = PersonDetails("John", None, "Doe", LocalDate.now())
   private val newPartner = UserAnswers(Json.obj()).set(IsNewPartnerId(establisherIndex, partnerIndex))(true).asOpt.value
+  val addressYearsOverAYearNew = UserAnswers(Json.obj())
+    .set(PartnerAddressYearsId(establisherIndex, partnerIndex))(AddressYears.OverAYear).flatMap(
+    _.set(IsNewPartnerId(establisherIndex, partnerIndex))(true)).asOpt.value
   val addressYearsOverAYear = UserAnswers(Json.obj())
     .set(PartnerAddressYearsId(establisherIndex, partnerIndex))(AddressYears.OverAYear).asOpt.value
   val addressYearsUnderAYear = UserAnswers(Json.obj())
@@ -121,7 +130,10 @@ object EstablishersPartnerNavigatorSpec extends OptionValues {
 
   private def anyMoreChanges = controllers.routes.AnyMoreChangesController.onPageLoad(None)
 
-  private def exitJourney(mode: Mode) = checkYourAnswers(mode)
+  private def exitJourney(mode: Mode, answers:UserAnswers) = if (mode == NormalMode) checkYourAnswers(mode) else {
+    if(answers.get(IsNewPartnerId(establisherIndex, partnerIndex)).getOrElse(false)) checkYourAnswers(mode)
+    else anyMoreChanges
+  }
 
   private def partnerNino(mode: Mode) = routes.PartnerNinoController.onPageLoad(mode, establisherIndex, partnerIndex, None)
 
