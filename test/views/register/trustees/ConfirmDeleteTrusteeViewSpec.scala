@@ -17,7 +17,7 @@
 package views.register.trustees
 
 import forms.register.trustees.ConfirmDeleteTrusteeFormProvider
-import models.NormalMode
+import models.{NormalMode, UpdateMode}
 import models.register.trustees.TrusteeKind.Company
 import play.api.data.Form
 import play.twirl.api.HtmlFormat
@@ -40,6 +40,8 @@ class ConfirmDeleteTrusteeViewSpec extends YesNoViewBehaviours {
 
     behave like pageWithReturnLink(createView(), getReturnLink)
 
+    behave like pageWithReturnLinkAndSrn(createUpdateView, getReturnLinkWithSrn)
+
   }
 }
 
@@ -58,7 +60,20 @@ object ConfirmDeleteTrusteeViewSpec extends ViewSpecBase {
       formLocal,
       trusteeName,
       postCall,
+      None,
+      NormalMode,
       None
+    )(fakeRequest, messages)
+
+  private def createUpdateView =
+    () => confirmDeleteTrustee(
+      frontendAppConfig,
+      formLocal,
+      trusteeName,
+      postCall,
+      None,
+      UpdateMode,
+      Some("srn")
     )(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) =>
@@ -67,6 +82,8 @@ object ConfirmDeleteTrusteeViewSpec extends ViewSpecBase {
       form,
       trusteeName,
       postCall,
+      None,
+      NormalMode,
       None
     )(fakeRequest, messages)
 
