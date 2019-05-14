@@ -33,20 +33,25 @@ class TrusteesIndividualNavigatorSpec extends SpecBase with NavigatorBehaviour {
 
   private def routes(mode: Mode) = Table(
     ("Id", "User Answers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (Check Mode)", "Save (CM)"),
-    (TrusteeDetailsId(0), emptyAnswers, nino(mode), true, Some(checkYourAnswers(mode)), true),
-    (TrusteeNinoId(0), emptyAnswers, utr(mode), true, Some(checkYourAnswers(mode)), true),
-    (UniqueTaxReferenceId(0), emptyAnswers, postcode(mode), true, Some(checkYourAnswers(mode)), true),
+    (TrusteeDetailsId(0), emptyAnswers, nino(mode), true, Some(exitJourney(mode,emptyAnswers)), true),
+    (TrusteeDetailsId(0), newTrustee, nino(mode), true, Some(exitJourney(mode,newTrustee)), true),
+    (TrusteeNinoId(0), emptyAnswers, utr(mode), true, Some(exitJourney(mode,emptyAnswers)), true),
+    (TrusteeNinoId(0), newTrustee, utr(mode), true, Some(exitJourney(mode,newTrustee)), true),
+    (UniqueTaxReferenceId(0), emptyAnswers, postcode(mode), true, Some(exitJourney(mode,emptyAnswers)), true),
+    (UniqueTaxReferenceId(0), newTrustee, postcode(mode), true, Some(exitJourney(mode,newTrustee)), true),
     (IndividualPostCodeLookupId(0), emptyAnswers, addressList(mode), true, Some(addressList(checkMode(mode))), true),
     (IndividualAddressListId(0), emptyAnswers, address(mode), true, Some(address(checkMode(mode))), true),
     (TrusteeAddressId(0), emptyAnswers, addressYears(mode), true,
       if(mode == UpdateMode) Some(addressYears(checkMode(mode))) else Some(checkYourAnswers(mode)), true),
     (TrusteeAddressId(0), newTrustee, addressYears(mode), true, Some(checkYourAnswers(mode)), true),
-    (TrusteeAddressYearsId(0), overAYear, contactDetails(mode), true, Some(checkYourAnswers(mode)), true),
+    (TrusteeAddressYearsId(0), overAYearNew, contactDetails(mode), true, Some(exitJourney(mode,overAYearNew)), true),
+    (TrusteeAddressYearsId(0), overAYear, contactDetails(mode), true, Some(exitJourney(mode,emptyAnswers)), true),
     (TrusteeAddressYearsId(0), underAYear, previousAddressPostcode(mode), true, Some(previousAddressPostcode(checkMode(mode))), true),
     (TrusteeAddressYearsId(0), emptyAnswers, sessionExpired, false, Some(sessionExpired), false),
     (IndividualPreviousAddressPostCodeLookupId(0), emptyAnswers, previousAddressList(mode), true, Some(previousAddressList(checkMode(mode))), true),
     (TrusteePreviousAddressListId(0), emptyAnswers, previousAddress(mode), true, Some(previousAddress(checkMode(mode))), true),
-    (TrusteePreviousAddressId(0), emptyAnswers, contactDetails(mode), true, Some(checkYourAnswers(mode)), true),
+    (TrusteePreviousAddressId(0), emptyAnswers, contactDetails(mode), true, Some(exitJourney(mode,emptyAnswers)), true),
+    (TrusteePreviousAddressId(0), newTrustee, contactDetails(mode), true, Some(exitJourney(mode,newTrustee)), true),
     (TrusteeContactDetailsId(0), emptyAnswers, checkYourAnswers(mode), true, None, true),
     (CheckYourAnswersId, emptyAnswers, if(mode==UpdateMode) controllers.routes.AnyMoreChangesController.onPageLoad(None) else addTrustee(mode), false, None, true)
   )
@@ -100,14 +105,20 @@ object TrusteesIndividualNavigatorSpec extends OptionValues {
 
   private def sessionExpired = controllers.routes.SessionExpiredController.onPageLoad()
 
-  private def overAYear = UserAnswers().trusteesIndividualAddressYears(0, AddressYears.OverAYear)
+  private val overAYearNew = UserAnswers().trusteesIndividualAddressYears(0, AddressYears.OverAYear).set(IsTrusteeNewId(0))(true).asOpt.get
 
-  private def underAYear = UserAnswers().trusteesIndividualAddressYears(0, AddressYears.UnderAYear)
+  private val overAYear = UserAnswers().trusteesIndividualAddressYears(0, AddressYears.OverAYear)
+
+  private val underAYear = UserAnswers().trusteesIndividualAddressYears(0, AddressYears.UnderAYear)
 
   private def dataDescriber(answers: UserAnswers): String = answers.toString
 
   private def anyMoreChanges = controllers.routes.AnyMoreChangesController.onPageLoad(None)
 
-  private def exitJourney(mode: Mode) = if (mode == NormalMode) checkYourAnswers(mode) else anyMoreChanges
+  private def exitJourney(mode: Mode, answers:UserAnswers, index:Int = 0) = if(mode == CheckMode || mode == NormalMode) checkYourAnswers(mode)
+  else {
+    if(answers.get(IsTrusteeNewId(index)).getOrElse(false)) checkYourAnswers(mode)
+    else anyMoreChanges
+  }
 
 }

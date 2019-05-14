@@ -38,21 +38,28 @@ class TrusteesCompanyNavigatorSpec extends SpecBase with MustMatchers with Navig
 
     ("Id", "UserAnswers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (CheckMode)", "Save (CM)"),
     (CompanyDetailsId(0), emptyAnswers, companyVat(mode), true, Some(exitJourney(mode, emptyAnswers)), true),
+    (CompanyDetailsId(0), newTrustee, companyVat(mode), true, Some(exitJourney(mode, newTrustee)), true),
     (CompanyVatId(0), emptyAnswers, companyPaye(mode), true, Some(exitJourney(mode, emptyAnswers)), true),
+    (CompanyVatId(0), newTrustee, companyPaye(mode), true, Some(exitJourney(mode, newTrustee)), true),
     (CompanyPayeId(0), emptyAnswers, companyRegistrationNumber(mode), true, Some(exitJourney(mode, emptyAnswers)), true),
+    (CompanyPayeId(0), newTrustee, companyRegistrationNumber(mode), true, Some(exitJourney(mode, newTrustee)), true),
     (CompanyRegistrationNumberId(0), emptyAnswers, companyUTR(mode), true, Some(exitJourney(mode, emptyAnswers)), true),
+    (CompanyRegistrationNumberId(0), newTrustee, companyUTR(mode), true, Some(exitJourney(mode, newTrustee)), true),
     (CompanyUniqueTaxReferenceId(0), emptyAnswers, companyPostCodeLookup(mode), true, Some(exitJourney(mode, emptyAnswers)), true),
+    (CompanyUniqueTaxReferenceId(0), newTrustee, companyPostCodeLookup(mode), true, Some(exitJourney(mode, newTrustee)), true),
     (CompanyPostcodeLookupId(0), emptyAnswers, companyAddressList(mode), true, Some(companyAddressList(checkMode(mode))), true),
     (CompanyAddressListId(0), emptyAnswers, companyManualAddress(mode), true, Some(companyManualAddress(checkMode(mode))), true),
     (CompanyAddressId(0), emptyAnswers, companyAddressYears(mode), true,
       if(mode == UpdateMode) Some(companyAddressYears(checkMode(mode))) else Some(checkYourAnswers(mode)), true),
     (CompanyAddressId(0), newTrustee, companyAddressYears(mode), true, Some(checkYourAnswers(mode)), true),
     (CompanyAddressYearsId(0), addressYearsOverAYear, companyContactDetails(mode), true, Some(exitJourney(mode, emptyAnswers)), true),
+    (CompanyAddressYearsId(0), addressYearsOverAYearNew, companyContactDetails(mode), true, Some(exitJourney(mode, addressYearsOverAYearNew)), true),
     (CompanyAddressYearsId(0), addressYearsUnderAYear, prevAddPostCodeLookup(mode), true, Some(prevAddPostCodeLookup(checkMode(mode))), true),
     (CompanyPreviousAddressPostcodeLookupId(0), emptyAnswers, companyPaList(mode), true, Some(companyPaList(checkMode(mode))), true),
     (CompanyPreviousAddressListId(0), emptyAnswers, companyPreviousAddress(mode), true, Some(companyPreviousAddress(checkMode(mode))), true),
-    (CompanyPreviousAddressId(0), emptyAnswers, companyContactDetails(mode), true, Some(checkYourAnswers(mode)), true),
+    (CompanyPreviousAddressId(0), emptyAnswers, companyContactDetails(mode), true, Some(exitJourney(mode, emptyAnswers)), true),
     (CompanyContactDetailsId(0), emptyAnswers, checkYourAnswers(mode), true, Some(exitJourney(mode, emptyAnswers)), true),
+    (CompanyContactDetailsId(0), newTrustee, checkYourAnswers(mode), true, Some(exitJourney(mode, newTrustee)), true),
     (CompanyAddressYearsId(0), emptyAnswers, sessionExpired, false, Some(sessionExpired), false),
     (CheckYourAnswersId, emptyAnswers, if(mode==UpdateMode) controllers.routes.AnyMoreChangesController.onPageLoad(None) else addTrustee(mode), false, None, true)
   )
@@ -113,6 +120,9 @@ object TrusteesCompanyNavigatorSpec extends OptionValues {
   private def sessionExpired = controllers.routes.SessionExpiredController.onPageLoad()
 
   private val emptyAnswers = UserAnswers(Json.obj())
+
+  private val addressYearsOverAYearNew = UserAnswers(Json.obj())
+    .set(CompanyAddressYearsId(0))(AddressYears.OverAYear).flatMap(_.set(IsTrusteeNewId(0))(true)).asOpt.value
 
   private val addressYearsOverAYear = UserAnswers(Json.obj())
     .set(CompanyAddressYearsId(0))(AddressYears.OverAYear).asOpt.value
