@@ -23,7 +23,7 @@ import identifiers.Identifier
 import identifiers.register.trustees.IsTrusteeNewId
 import identifiers.register.trustees.partnership._
 import models.Mode.checkMode
-import models.{AddressYears, Mode, NormalMode, UpdateMode}
+import models._
 import org.scalatest.OptionValues
 import org.scalatest.prop.TableFor6
 import play.api.libs.json.Json
@@ -37,23 +37,29 @@ class TrusteesPartnershipNavigatorSpec extends SpecBase with NavigatorBehaviour 
 
   private def routes(mode: Mode): TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = Table(
     ("Id", "User Answers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (Check Mode)", "Save (CM)"),
-    (PartnershipDetailsId(0), emptyAnswers, partnershipVat(mode), true, Some(checkYourAnswers(mode)), true),
-    (PartnershipVatId(0), emptyAnswers, partnershipPaye(mode), true, Some(checkYourAnswers(mode)), true),
-    (PartnershipPayeId(0), emptyAnswers, partnershipUtr(mode), true, Some(checkYourAnswers(mode)), true),
-    (PartnershipUniqueTaxReferenceId(0), emptyAnswers, partnershipPostcodeLookup(mode), true, Some(checkYourAnswers(mode)), true),
+    (PartnershipDetailsId(0), emptyAnswers, partnershipVat(mode), true, Some(exitJourney(mode, emptyAnswers)), true),
+    (PartnershipDetailsId(0), newTrustee, partnershipVat(mode), true, Some(exitJourney(mode, newTrustee)), true),
+    (PartnershipVatId(0), emptyAnswers, partnershipPaye(mode), true, Some(exitJourney(mode,emptyAnswers)), true),
+    (PartnershipVatId(0), newTrustee, partnershipPaye(mode), true, Some(exitJourney(mode,newTrustee)), true),
+    (PartnershipPayeId(0), emptyAnswers, partnershipUtr(mode), true, Some(exitJourney(mode,emptyAnswers)), true),
+    (PartnershipPayeId(0), newTrustee, partnershipUtr(mode), true, Some(exitJourney(mode,newTrustee)), true),
+    (PartnershipUniqueTaxReferenceId(0), emptyAnswers, partnershipPostcodeLookup(mode), true, Some(exitJourney(mode,emptyAnswers)), true),
+    (PartnershipUniqueTaxReferenceId(0), newTrustee, partnershipPostcodeLookup(mode), true, Some(exitJourney(mode,newTrustee)), true),
     (PartnershipPostcodeLookupId(0), emptyAnswers, partnershipAddressList(mode), true, Some(partnershipAddressList(checkMode((mode)))), true),
     (PartnershipAddressListId(0), emptyAnswers, partnershipAddress(mode), true, Some(partnershipAddress(checkMode((mode)))), true),
     (PartnershipAddressId(0), emptyAnswers, partnershipAddressYears(mode), true,
       if(mode == UpdateMode) Some(partnershipAddressYears(checkMode(mode))) else Some(checkYourAnswers(mode)) , true),
     (PartnershipAddressId(0), newTrustee, partnershipAddressYears(mode), true, Some(checkYourAnswers(mode)) , true),
-    (PartnershipAddressYearsId(0), addressYearsOverAYear, partnershipContact(mode), true, Some(checkYourAnswers(mode)), true),
+    (PartnershipAddressYearsId(0), addressYearsOverAYear, partnershipContact(mode), true, Some(exitJourney(mode,emptyAnswers)), true),
     (PartnershipAddressYearsId(0), addressYearsUnderAYear, partnershipPaPostCodeLookup(mode), true, Some(partnershipPaPostCodeLookup(checkMode((mode)))), true),
     (PartnershipAddressYearsId(0), emptyAnswers, sessionExpired, false, Some(sessionExpired), false),
     (PartnershipPreviousAddressPostcodeLookupId(0), emptyAnswers, partnershipPaList(mode), true, Some(partnershipPaList(checkMode((mode)))), true),
     (PartnershipPreviousAddressListId(0), emptyAnswers, partnershipPa(mode), true, Some(partnershipPa(checkMode((mode)))), true),
-    (PartnershipPreviousAddressId(0), emptyAnswers, partnershipContact(mode), true, Some(checkYourAnswers(mode)), true),
-    (PartnershipContactDetailsId(0), emptyAnswers, checkYourAnswers(mode), true, Some(checkYourAnswers(mode)), true),
-    (CheckYourAnswersId(0), emptyAnswers, if(mode==UpdateMode) controllers.routes.AnyMoreChangesController.onPageLoad(None) else addTrustee(mode), false, None, true)
+    (PartnershipPreviousAddressId(0), emptyAnswers, partnershipContact(mode), true, Some(exitJourney(mode,emptyAnswers)), true),
+    (PartnershipPreviousAddressId(0), newTrustee, partnershipContact(mode), true, Some(exitJourney(mode,newTrustee)), true),
+    (PartnershipContactDetailsId(0), emptyAnswers, checkYourAnswers(mode), true, Some(exitJourney(mode,emptyAnswers)), true),
+    (PartnershipContactDetailsId(0), newTrustee, checkYourAnswers(mode), true, Some(exitJourney(mode,newTrustee)), true),
+    (CheckYourAnswersId(0), emptyAnswers, if(mode==UpdateMode) anyMoreChanges else addTrustee(mode), false, None, true)
   )
 
   private val navigator: TrusteesPartnershipNavigator =
@@ -112,7 +118,11 @@ object TrusteesPartnershipNavigatorSpec extends OptionValues {
 
   private def anyMoreChanges = controllers.routes.AnyMoreChangesController.onPageLoad(None)
 
-  private def exitJourney(mode: Mode) = if (mode == NormalMode) checkYourAnswers(mode) else anyMoreChanges
+  private def exitJourney(mode: Mode, answers:UserAnswers, index:Int = 0) = if(mode == CheckMode || mode == NormalMode) checkYourAnswers(mode)
+  else {
+    if(answers.get(IsTrusteeNewId(index)).getOrElse(false)) checkYourAnswers(mode)
+    else anyMoreChanges
+  }
 }
 
 

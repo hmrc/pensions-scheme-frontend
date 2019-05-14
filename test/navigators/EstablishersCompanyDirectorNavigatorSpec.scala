@@ -36,21 +36,27 @@ class EstablishersCompanyDirectorNavigatorSpec extends SpecBase with NavigatorBe
 
   private def commonRoutes(mode:Mode): TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = Table(
     ("Id", "User Answers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (Check Mode)", "Save (CM)"),
-    (DirectorDetailsId(0, 0), emptyAnswers, directorNino(mode), true, Some(exitJourney(mode)), true),
-    (DirectorNinoId(0, 0), emptyAnswers, directorUtr(mode), true, Some(exitJourney(mode)), true),
-    (DirectorUniqueTaxReferenceId(0, 0), emptyAnswers, directorAddressPostcode(mode), true, Some(exitJourney(mode)), true),
+    (DirectorDetailsId(0, 0), emptyAnswers, directorNino(mode), true, Some(exitJourney(mode, emptyAnswers)), true),
+    (DirectorDetailsId(0, 0), newDirector, directorNino(mode), true, Some(exitJourney(mode, newDirector)), true),
+    (DirectorNinoId(0, 0), emptyAnswers, directorUtr(mode), true, Some(exitJourney(mode, emptyAnswers)), true),
+    (DirectorNinoId(0, 0), newDirector, directorUtr(mode), true, Some(exitJourney(mode, newDirector)), true),
+    (DirectorUniqueTaxReferenceId(0, 0), emptyAnswers, directorAddressPostcode(mode), true, Some(exitJourney(mode, emptyAnswers)), true),
+    (DirectorUniqueTaxReferenceId(0, 0), newDirector, directorAddressPostcode(mode), true, Some(exitJourney(mode, newDirector)), true),
     (DirectorAddressPostcodeLookupId(0, 0), emptyAnswers, directorAddressList(mode), true, Some(directorAddressList(checkMode(mode))), true),
     (DirectorAddressListId(0, 0), emptyAnswers, directorAddress(mode), true, Some(directorAddress(checkMode(mode))), true),
     (DirectorAddressId(0, 0), emptyAnswers, directorAddressYears(mode), true,
-      if(mode == UpdateMode) Some(directorAddressYears(checkMode(UpdateMode))) else Some(checkYourAnswers(NormalMode)), true),
+      if(mode == UpdateMode) Some(directorAddressYears(checkMode(mode))) else Some(checkYourAnswers(mode)), true),
     (DirectorAddressId(0, 0), newDirector, directorAddressYears(mode), true, Some(checkYourAnswers(mode)), true),
-    (DirectorAddressYearsId(0, 0), addressYearsOverAYear, directorContactDetails(mode), true, Some(exitJourney(mode)), true),
+    (DirectorAddressYearsId(0, 0), addressYearsOverAYear, directorContactDetails(mode), true, Some(exitJourney(mode, emptyAnswers)), true),
+    (DirectorAddressYearsId(0, 0), addressYearsOverAYearNew, directorContactDetails(mode), true, Some(exitJourney(mode, addressYearsOverAYearNew)), true),
     (DirectorAddressYearsId(0, 0), addressYearsUnderAYear, directorPreviousAddPostcode(mode), true, Some(directorPreviousAddPostcode(checkMode(mode))), true),
     (DirectorAddressYearsId(0, 0), emptyAnswers, sessionExpired, false, Some(sessionExpired), false),
     (DirectorPreviousAddressPostcodeLookupId(0, 0), emptyAnswers, directorPreviousAddList(mode), true, Some(directorPreviousAddList(checkMode(mode))), true),
     (DirectorPreviousAddressListId(0, 0), emptyAnswers, directorPreviousAddress(mode), true, Some(directorPreviousAddress(checkMode(mode))), true),
-    (DirectorPreviousAddressId(0, 0), emptyAnswers, directorContactDetails(mode), true, Some(exitJourney(mode)), true),
-    (DirectorContactDetailsId(0, 0), emptyAnswers, checkYourAnswers(mode), true, Some(exitJourney(mode)), true)
+    (DirectorPreviousAddressId(0, 0), emptyAnswers, directorContactDetails(mode), true, Some(exitJourney(mode, emptyAnswers)), true),
+    (DirectorPreviousAddressId(0, 0), newDirector, directorContactDetails(mode), true, Some(exitJourney(mode, newDirector)), true),
+    (DirectorContactDetailsId(0, 0), emptyAnswers, checkYourAnswers(mode), true, Some(exitJourney(mode, emptyAnswers)), true),
+    (DirectorContactDetailsId(0, 0), newDirector, checkYourAnswers(mode), true, Some(exitJourney(mode, newDirector)), true)
   )
 
   private def normalRoutes(mode:Mode): TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = commonRoutes(mode) ++ Table(
@@ -85,7 +91,10 @@ object EstablishersCompanyDirectorNavigatorSpec extends OptionValues {
   private val newDirector = UserAnswers(Json.obj()).set(IsNewDirectorId(establisherIndex, directorIndex))(true).asOpt.value
   private def anyMoreChanges = controllers.routes.AnyMoreChangesController.onPageLoad(None)
 
-  private def exitJourney(mode: Mode) = checkYourAnswers(mode)
+  private def exitJourney(mode: Mode, answers:UserAnswers, index:Int = 0) = if (mode == NormalMode) checkYourAnswers(mode) else {
+    if(answers.get(IsNewDirectorId(establisherIndex, directorIndex)).getOrElse(false)) checkYourAnswers(mode)
+    else anyMoreChanges
+  }
   
   private def sessionExpired = controllers.routes.SessionExpiredController.onPageLoad()
 
@@ -116,6 +125,9 @@ object EstablishersCompanyDirectorNavigatorSpec extends OptionValues {
   private def addCompanyDirectors(mode: Mode) = controllers.register.establishers.company.routes.AddCompanyDirectorsController.onPageLoad(
     mode, None, establisherIndex)
 
+  val addressYearsOverAYearNew = UserAnswers(Json.obj())
+    .set(DirectorAddressYearsId(establisherIndex, directorIndex))(AddressYears.OverAYear).flatMap(
+    _.set(IsNewDirectorId(establisherIndex, directorIndex))(true)).asOpt.value
   val addressYearsOverAYear = UserAnswers(Json.obj())
     .set(DirectorAddressYearsId(establisherIndex, directorIndex))(AddressYears.OverAYear).asOpt.value
   val addressYearsUnderAYear = UserAnswers(Json.obj())
