@@ -19,7 +19,7 @@ package views.register.establishers.company
 import controllers.register.establishers.company.routes
 import identifiers.register.establishers.company.director.DirectorDetailsId
 import models.person.PersonDetails
-import models.{Index, NormalMode}
+import models.{Index, NormalMode, UpdateMode}
 import org.joda.time.LocalDate
 import org.jsoup.Jsoup
 import play.api.libs.json.{JsObject, Json}
@@ -42,6 +42,9 @@ class CompanyReviewViewSpec extends ViewBehaviours {
 
   def createView(viewOnly: Boolean = false): () => HtmlFormat.Appendable = () =>
     companyReview(frontendAppConfig, index, companyName, directors, None, NormalMode, None, viewOnly)(fakeRequest, messages)
+
+  def createUpdateView(viewOnly: Boolean = false): () => HtmlFormat.Appendable = () =>
+    companyReview(frontendAppConfig, index, companyName, directors, None, UpdateMode, Some("srn"), viewOnly)(fakeRequest, messages)
 
   def createSecView: () => HtmlFormat.Appendable = () => companyReview(frontendAppConfig, index, companyName, tenDirectors, None, NormalMode, None, false)(fakeRequest, messages)
 
@@ -107,6 +110,8 @@ class CompanyReviewViewSpec extends ViewBehaviours {
     }
 
     behave like pageWithReturnLink(createView(), getReturnLink)
+
+    behave like pageWithReturnLinkAndSrn(createUpdateView(), getReturnLinkWithSrn)
   }
 
 }
