@@ -48,7 +48,8 @@ class PreviousAddressListController @Inject()(
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
-        viewmodel(mode, index, srn).right.map(get)
+        println( "\n>>" + mode)
+        viewmodel(Mode.journeyMode(mode), index, srn).right.map(get)
     }
 
   private def viewmodel(mode: Mode, index: Index, srn: Option[String])(implicit request: DataRequest[AnyContent]):
@@ -61,7 +62,8 @@ class PreviousAddressListController @Inject()(
         title = Message("messages__select_the_previous_address__title"),
         heading = Message("messages__select_the_previous_address__title"),
         subHeading = Some(Message(establisherDetails.fullName)),
-        srn = srn
+        srn = srn,
+        mode = mode
       )
     }.left.map(_ =>
       Future.successful(Redirect(routes.PreviousAddressPostCodeLookupController.onPageLoad(mode, index, srn))))
@@ -69,7 +71,7 @@ class PreviousAddressListController @Inject()(
 
   def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
-      viewmodel(mode, index, srn).right.map {
+      viewmodel(Mode.journeyMode(mode), index, srn).right.map {
         vm =>
           post(vm, PreviousAddressListId(index), PreviousAddressId(index), mode)
       }

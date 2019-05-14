@@ -68,7 +68,8 @@ class PreviousAddressController @Inject()(
               heading = Message(heading),
               hint = Some(Message(hint)),
               secondaryHeader = Some(details.fullName),
-              srn = srn
+              srn = srn,
+              mode = mode
             )
         }
     }
@@ -76,7 +77,7 @@ class PreviousAddressController @Inject()(
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
     implicit request =>
-      viewmodel(index, mode, srn).retrieve.right.map {
+      viewmodel(index, Mode.journeyMode(mode), srn).retrieve.right.map {
         vm =>
           get(PreviousAddressId(index), PreviousAddressListId(index), vm)
       }
@@ -84,7 +85,7 @@ class PreviousAddressController @Inject()(
 
   def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
-      viewmodel(index, mode, srn).retrieve.right.map {
+      viewmodel(index, Mode.journeyMode(mode), srn).retrieve.right.map {
         vm =>
           post(PreviousAddressId(index), PreviousAddressListId(index), vm, mode, context(vm),
             PreviousPostCodeLookupId(index)

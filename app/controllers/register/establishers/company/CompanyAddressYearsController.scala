@@ -50,7 +50,7 @@ class CompanyAddressYearsController @Inject()(
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         CompanyDetailsId(index).retrieve.right.map { companyDetails =>
-          get(CompanyAddressYearsId(index), form, viewModel(mode, srn, index, companyDetails.companyName))
+          get(CompanyAddressYearsId(index), form, viewModel(Mode.journeyMode(mode), srn, index, companyDetails.companyName))
         }
     }
 
@@ -67,6 +67,7 @@ class CompanyAddressYearsController @Inject()(
     heading = Message("messages__company_address_years__title"),
     legend = Message("messages__company_address_years__title"),
     subHeading = Some(Message(companyName)),
-    srn = srn
+    srn = srn,
+    mode = mode
   )
 }
