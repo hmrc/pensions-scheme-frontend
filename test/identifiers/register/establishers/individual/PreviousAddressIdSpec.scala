@@ -17,8 +17,6 @@
 package identifiers.register.establishers.individual
 
 import base.SpecBase
-import identifiers.register.establishers.IsEstablisherNewId
-import models.UniqueTaxReference._
 import models._
 import models.address.Address
 import models.requests.DataRequest
@@ -26,8 +24,8 @@ import play.api.libs.json.Json
 import play.api.mvc.AnyContent
 import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.PsaId
-import utils.{CountryOptions, InputOption, UserAnswers}
 import utils.checkyouranswers.Ops._
+import utils.{CountryOptions, InputOption, UserAnswers}
 import viewmodels.AnswerRow
 
 class PreviousAddressIdSpec extends SpecBase {

@@ -17,11 +17,14 @@
 package identifiers.register.trustees.individual
 
 import identifiers._
-import identifiers.register.trustees.TrusteesId
+import identifiers.register.trustees.{IsTrusteeNewId, TrusteesId}
+import models.AddressYears.UnderAYear
+import models.Link
 import models.address.Address
 import play.api.libs.json.JsPath
-import utils.CountryOptions
+import utils.{CountryOptions, UserAnswers}
 import utils.checkyouranswers.{AddressCYA, CheckYourAnswers}
+import viewmodels.AnswerRow
 
 case class TrusteePreviousAddressId(index: Int) extends TypedIdentifier[Address] {
   override def path: JsPath = TrusteesId(index).path \ TrusteePreviousAddressId.toString
@@ -30,9 +33,31 @@ case class TrusteePreviousAddressId(index: Int) extends TypedIdentifier[Address]
 object TrusteePreviousAddressId {
   override def toString: String = "trusteePreviousAddress"
 
-  implicit def cya(implicit countryOptions: CountryOptions): CheckYourAnswers[TrusteePreviousAddressId] =
-    AddressCYA(
-      label = "messages__common__cya__previous_address",
-      changeAddress = "messages__visuallyhidden__trustee__previous_address"
-    )()
+  implicit def cya(implicit countryOptions: CountryOptions): CheckYourAnswers[TrusteePreviousAddressId] = {
+    val label: String = "messages__common__cya__previous_address"
+    val changeAddress: String = "messages__visuallyhidden__trustee__previous_address"
+
+    new CheckYourAnswers[TrusteePreviousAddressId] {
+      override def row(id: TrusteePreviousAddressId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+        AddressCYA(label, changeAddress)().row(id)(changeUrl, userAnswers)
+
+      override def updateRow(id: TrusteePreviousAddressId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+        userAnswers.get(IsTrusteeNewId(id.index)) match {
+          case Some(true) =>
+            AddressCYA(label, changeAddress)().row(id)(changeUrl, userAnswers)
+          case _ =>
+            userAnswers.get(id) match {
+              case Some(_) => row(id)(changeUrl, userAnswers)
+              case _ =>
+                userAnswers.get(TrusteeAddressYearsId(id.index)) match {
+                  case Some(UnderAYear) => Seq(AnswerRow(label,
+                    Seq("site.not_entered"),
+                    answerIsMessageKey = true,
+                    Some(Link("site.add", changeUrl, Some("messages__visuallyhidden__trustee__previous_address_add")))))
+                  case _ => Seq.empty[AnswerRow]
+                }
+            }
+        }
+    }
+  }
 }

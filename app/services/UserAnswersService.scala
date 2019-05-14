@@ -28,7 +28,7 @@ import identifiers.register.establishers.partnership.{PartnershipAddressYearsId 
 import identifiers.register.trustees.{IsTrusteeAddressCompleteId, IsTrusteeCompleteId, IsTrusteeNewId}
 import identifiers.register.trustees.company.{CompanyAddressYearsId => TruesteeCompanyAddressYearsId, CompanyPreviousAddressId => TruesteeCompanyPreviousAddressId}
 import identifiers.register.trustees.individual.{TrusteeAddressYearsId => TruesteeIndividualAddressYearsId, TrusteePreviousAddressId => TruesteeIndividualPreviousAddressId}
-import identifiers.register.trustees.partnership.{PartnershipAddressYearsId => TruesteePartnershipAddressYearsId, PartnershipPreviousAddressId => TruesteePartnershipPreviousAddressId}
+import identifiers.register.trustees.partnership.{IsPartnershipCompleteId, PartnershipAddressYearsId => TruesteePartnershipAddressYearsId, PartnershipPreviousAddressId => TruesteePartnershipPreviousAddressId}
 import javax.inject.{Inject, Singleton}
 import models.AddressYears.{OverAYear, UnderAYear}
 import models.address.Address
@@ -217,7 +217,7 @@ trait UserAnswersService {
 
   def getAddressId[T](id: TypedIdentifier[T]): Option[TypedIdentifier[Boolean]] = id match {
     case TruesteeCompanyAddressYearsId(index) => Some(IsTrusteeCompleteId(index))
-    case TruesteePartnershipAddressYearsId(index) => Some(IsTrusteeCompleteId(index))
+    case TruesteePartnershipAddressYearsId(index) => Some(IsPartnershipCompleteId(index))
     case TruesteeIndividualAddressYearsId(index) => Some(IsTrusteeCompleteId(index))
     case EstablisherCompanyAddressYearsId(index) => Some(IsEstablisherCompleteId(index))
     case EstablisherPartnershipAddressYearsId(index) => Some(IsEstablisherCompleteId(index))
@@ -225,7 +225,7 @@ trait UserAnswersService {
     case PartnerAddressYearsId(establisherIndex, partnerIndex) => Some(IsPartnerCompleteId(establisherIndex, partnerIndex))
     case DirectorAddressYearsId(establisherIndex, directorIndex) => Some(IsDirectorCompleteId(establisherIndex, directorIndex))
     case TruesteeCompanyPreviousAddressId(index) => Some(IsTrusteeCompleteId(index))
-    case TruesteePartnershipPreviousAddressId(index) => Some(IsTrusteeCompleteId(index))
+    case TruesteePartnershipPreviousAddressId(index) => Some(IsPartnershipCompleteId(index))
     case TruesteeIndividualPreviousAddressId(index) => Some(IsTrusteeCompleteId(index))
     case EstablisherCompanyPreviousAddressId(index) => Some(IsEstablisherCompleteId(index))
     case EstablisherPartnershipPreviousAddressId(index) => Some(IsEstablisherCompleteId(index))

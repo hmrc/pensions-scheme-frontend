@@ -1125,6 +1125,7 @@ messages__visuallyhidden__trustee__utr = Change the trustee’s Unique Taxpayer 
 messages__visuallyhidden__trustee__address = Change the trustee’s address
 messages__visuallyhidden__trustee__address_years = Change how long the trustee has been at their address
 messages__visuallyhidden__trustee__previous_address = Change the trustee’s previous address
+messages__visuallyhidden__trustee__previous_address_add = Add the trustee’s previous address
 messages__visuallyhidden__trustee__email_address = Change the trustee’s email address
 messages__visuallyhidden__trustee__phone_number = Change the trustee’s phone number
 
