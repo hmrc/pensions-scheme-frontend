@@ -26,10 +26,14 @@ srn: Option[String] = None
  schemename.fold(messages(messageKey))(name=>if(anotherReturn.isEmpty) messages("messages__psaSchemeDetails__return_link", name) else messages(messageKey))
 }
 
+@corretcMode=@{
+if(mode == NormalMode || mode == CheckMode) mode else UpdateMode
+}
+
 <div class="grid-row">
  <div class="column-two-thirds">
   <p class="govuk-margin-top-5">
-   <a id="return-link" href="@anotherReturn.fold(controllers.routes.SchemeTaskListController.onPageLoad(mode, srn))(call=>call)">@returnMessage</a>
+   <a id="return-link" href="@anotherReturn.fold(controllers.routes.SchemeTaskListController.onPageLoad(corretcMode, srn))(call=>call)">@returnMessage</a>
   </p>
  </div>
 </div>
