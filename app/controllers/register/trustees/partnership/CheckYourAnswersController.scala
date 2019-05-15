@@ -30,7 +30,7 @@ import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.TrusteesPartnership
 import utils.checkyouranswers.Ops._
-import utils.{CountryOptions, Navigator}
+import utils.{AllowChangeHelper, CountryOptions, Navigator}
 import viewmodels.AnswerSection
 import views.html.check_your_answers
 
@@ -44,7 +44,8 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
                                            requiredData: DataRequiredAction,
                                            userAnswersService: UserAnswersService,
                                            @TrusteesPartnership navigator: Navigator,
-                                           implicit val countryOptions: CountryOptions
+                                           implicit val countryOptions: CountryOptions,
+                                           allowChangeHelper: AllowChangeHelper
                                           )(implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport {
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requiredData).async {
@@ -78,7 +79,8 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
         routes.CheckYourAnswersController.onSubmit(mode, index, srn),
         existingSchemeName,
         mode = mode,
-        viewOnly = request.viewOnly || !userAnswers.get(IsTrusteeNewId(index)).getOrElse(true),
+        hideEditLinks = request.viewOnly || !userAnswers.get(IsTrusteeNewId(index)).getOrElse(true),
+        hideSaveAndContinueButton = allowChangeHelper.hideSaveAndContinueButton(request, IsTrusteeNewId(index), mode),
         srn = srn
       )))
   }

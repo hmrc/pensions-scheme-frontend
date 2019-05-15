@@ -31,7 +31,7 @@ import play.api.libs.json.JsResultException
 import play.api.mvc.{Action, AnyContent, Call}
 import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import utils.Navigator
+import utils.{Navigator, UserAnswers}
 import utils.annotations.EstablishersPartner
 import views.html.register.addPartners
 
@@ -46,7 +46,7 @@ class AddPartnersController @Inject()(
                                        getData: DataRetrievalAction,
                                        requireData: DataRequiredAction,
                                        formProvider: AddPartnersFormProvider
-                                     ) (implicit val ec: ExecutionContext) extends FrontendController with I18nSupport with Retrievals {
+                                     )(implicit val ec: ExecutionContext) extends FrontendController with I18nSupport with Retrievals {
 
   private val form: Form[Boolean] = formProvider()
 
@@ -54,9 +54,9 @@ class AddPartnersController @Inject()(
 
   def onPageLoad(mode: Mode, index: Int, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
-      retrievePartnershipName(index) {_ =>
-          val partners = request.userAnswers.allPartnersAfterDelete(index)
-          Future.successful(Ok(addPartners(appConfig, form, partners, postUrl(index, mode, srn), existingSchemeName, request.viewOnly, mode, srn)))
+      retrievePartnershipName(index) { _ =>
+        val partners = request.userAnswers.allPartnersAfterDelete(index)
+        Future.successful(Ok(addPartners(appConfig, form, partners, postUrl(index, mode, srn), existingSchemeName, request.viewOnly, mode, srn)))
       }
   }
 
@@ -88,24 +88,8 @@ class AddPartnersController @Inject()(
                 )
             },
           value =>
-            request.userAnswers.set(AddPartnersId(index))(value).fold(
-              errors => {
-                Logger.error("Unable to set user answer", JsResultException(errors))
-                Future.successful(InternalServerError)
-              },
-              userAnswers => {
-                mode match {
-                  case CheckMode | NormalMode =>
-                    Future.successful(Redirect(navigator.nextPage(AddPartnersId(index), mode, userAnswers, srn)))
-                  case _ =>
-                    userAnswers.upsert(IsEstablisherCompleteId(index))(true) { result =>
-                      userAnswersService.upsert(mode, srn, result.json).map { json =>
-                        Redirect(navigator.nextPage(AddPartnersId(index), mode, userAnswers, srn))
-                      }
-                    }
-                }
-              }
-            )
+            userAnswersService.save(mode, srn, AddPartnersId(index), value).map(cacheMap =>
+              Redirect(navigator.nextPage(AddPartnersId(index), mode, UserAnswers(cacheMap), srn)))
         )
       }
   }

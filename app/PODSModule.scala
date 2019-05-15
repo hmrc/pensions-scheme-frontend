@@ -18,7 +18,7 @@ import com.google.inject.AbstractModule
 import connectors.{SchemeDetailsReadOnlyCacheConnector, SubscriptionCacheConnector, UserAnswersCacheConnector}
 import navigators._
 import services.{UserAnswersService, UserAnswersServiceEstablishersAndTrusteesImpl, UserAnswersServiceImpl, UserAnswersServiceInsuranceImpl}
-import utils.Navigator
+import utils.{AllowChangeHelper, AllowChangeHelperImpl, Navigator}
 import utils.annotations.{EstablishersPartner, _}
 
 class PODSModule extends AbstractModule {
@@ -109,6 +109,8 @@ class PODSModule extends AbstractModule {
       .annotatedWith(classOf[Variations])
       .to(classOf[VariationsNavigator])
 
+    bind(classOf[AllowChangeHelper])
+      .to(classOf[AllowChangeHelperImpl])
 
   }
 
