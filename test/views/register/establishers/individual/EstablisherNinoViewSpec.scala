@@ -31,16 +31,20 @@ class EstablisherNinoViewSpec extends ViewBehaviours {
   val form = new EstablisherNinoFormProvider()()
   val submitUrl = controllers.register.establishers.individual.routes.EstablisherNinoController.onSubmit(NormalMode, index, None)
   def createView(): () => HtmlFormat.Appendable = () =>
-    establisherNino(frontendAppConfig, form, NormalMode, index, None, submitUrl)(fakeRequest, messages)
+    establisherNino(frontendAppConfig, form, NormalMode, index, None, submitUrl, None)(fakeRequest, messages)
+  def createUpdateView(): () => HtmlFormat.Appendable = () =>
+    establisherNino(frontendAppConfig, form, NormalMode, index, None, submitUrl, Some("srn"))(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) => establisherNino(frontendAppConfig, form, NormalMode,
-    index, None, submitUrl)(fakeRequest, messages)
+    index, None, submitUrl, None)(fakeRequest, messages)
 
   "EstablisherNino view" when {
     "rendered" must {
       behave like normalPage(createView(), messageKeyPrefix, messages("messages__establisherNino__title"))
 
       behave like pageWithReturnLink(createView(), getReturnLink)
+
+      behave like pageWithReturnLinkAndSrn(createUpdateView(), getReturnLinkWithSrn)
 
       val ninoOptions = Seq("true", "false")
 

@@ -62,7 +62,7 @@ class PartnerDetailsController @Inject()(
           }
           val submitUrl = controllers.register.establishers.partnership.partner.routes.PartnerDetailsController.onSubmit(
             mode, establisherIndex, partnerIndex, srn)
-          Future.successful(Ok(partnerDetails(appConfig, preparedForm, mode, establisherIndex, partnerIndex, existingSchemeName, submitUrl)))
+          Future.successful(Ok(partnerDetails(appConfig, preparedForm, mode, establisherIndex, partnerIndex, existingSchemeName, submitUrl, srn)))
         }
     }
 
@@ -74,7 +74,7 @@ class PartnerDetailsController @Inject()(
             (formWithErrors: Form[_]) => {
               val submitUrl = controllers.register.establishers.partnership.partner.routes.PartnerDetailsController.onSubmit(
                 mode, establisherIndex, partnerIndex, srn)
-              Future.successful(BadRequest(partnerDetails(appConfig, formWithErrors, mode, establisherIndex, partnerIndex, existingSchemeName, submitUrl)))
+              Future.successful(BadRequest(partnerDetails(appConfig, formWithErrors, mode, establisherIndex, partnerIndex, existingSchemeName, submitUrl, srn)))
             },
             value => {
               val answers = request.userAnswers.set(IsNewPartnerId(establisherIndex, partnerIndex))(true).flatMap(

@@ -55,7 +55,7 @@ class PartnerUniqueTaxReferenceController @Inject()(
           val preparedForm = request.userAnswers.get(PartnerUniqueTaxReferenceId(establisherIndex, partnerIndex)).fold(form)(form.fill)
           val submitUrl = controllers.register.establishers.partnership.partner.routes.PartnerUniqueTaxReferenceController.onSubmit(
             mode, establisherIndex, partnerIndex, srn)
-          Future.successful(Ok(partnerUniqueTaxReference(appConfig, preparedForm, mode, establisherIndex, partnerIndex, existingSchemeName, submitUrl)))
+          Future.successful(Ok(partnerUniqueTaxReference(appConfig, preparedForm, mode, establisherIndex, partnerIndex, existingSchemeName, submitUrl, srn)))
         }
     }
 
@@ -69,7 +69,7 @@ class PartnerUniqueTaxReferenceController @Inject()(
               val submitUrl = controllers.register.establishers.partnership.partner.routes.PartnerUniqueTaxReferenceController.onSubmit(
                 mode, establisherIndex, partnerIndex, srn)
               Future.successful(BadRequest(partnerUniqueTaxReference(
-                appConfig, formWithErrors, mode, establisherIndex, partnerIndex, existingSchemeName, submitUrl)))
+                appConfig, formWithErrors, mode, establisherIndex, partnerIndex, existingSchemeName, submitUrl, srn)))
             },
             (value) =>
               userAnswersService.save(

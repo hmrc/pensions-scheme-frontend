@@ -74,7 +74,8 @@ class OtherPartnersControllerSpec extends ControllerSpecBase {
       NormalMode,
       index,
       None,
-      submitUrl
+      submitUrl,
+      None
     )(fakeRequest, messages).toString
 
   "OtherPartners Controller" must {
