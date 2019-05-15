@@ -30,7 +30,6 @@ import play.api.data.Form
 import play.api.libs.json._
 import play.api.mvc.Call
 import play.api.test.Helpers._
-import services.FakeUserAnswersService
 import utils.{FakeNavigator, Navigator, UserAnswers}
 import views.html.register.addPartners
 
@@ -56,7 +55,6 @@ class AddPartnersControllerSpec extends ControllerSpecBase {
     new AddPartnersController(
       frontendAppConfig,
       messagesApi,
-      FakeUserAnswersService,
       navigator,
       FakeAuthAction,
       dataRetrievalAction,
@@ -148,26 +146,13 @@ class AddPartnersControllerSpec extends ControllerSpecBase {
         Seq(PartnerEntity(PartnerDetailsId(0, 0), johnDoe.fullName, isDeleted = false, isCompleted = false, isNewEntity = false, 1)))
     }
 
-    "set the user answer when partners exist and valid data is submitted" in {
-      FakeUserAnswersService.reset()
-      val getRelevantData = new FakeDataRetrievalAction(Some(validData(johnDoe)))
-      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "true"))
-      val navigator = fakeNavigator()
-      val result = controller(getRelevantData, navigator).onSubmit(NormalMode, establisherIndex, None)(postRequest)
-
-      status(result) mustBe SEE_OTHER
-      FakeUserAnswersService.verify(AddPartnersId(firstIndex), true)
-    }
-
     "redirect to the next page when maximum partners exist and the user submits" in {
-      FakeUserAnswersService.reset()
       val partners = Seq.fill(maxPartners)(johnDoe)
       val getRelevantData = new FakeDataRetrievalAction(Some(validData(partners: _*)))
       val result = controller(getRelevantData).onSubmit(NormalMode, establisherIndex, None)(fakeRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
-      FakeUserAnswersService.verifyNot(AddPartnersId(firstIndex))
     }
 
     "populate the view with partners when they exist" in {

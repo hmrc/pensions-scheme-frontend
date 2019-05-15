@@ -22,7 +22,6 @@ import org.joda.time.LocalDate
 import org.joda.time.format.DateTimeFormat
 import play.api.data.Form
 import play.api.test.Helpers._
-import services.FakeUserAnswersService
 import utils.FakeNavigator
 import views.html.anyMoreChanges
 
@@ -40,7 +39,6 @@ class AnyMoreChangesControllerSpec extends ControllerSpecBase {
     new AnyMoreChangesController(
       frontendAppConfig,
       messagesApi,
-      FakeUserAnswersService,
       new FakeNavigator(desiredRoute = onwardRoute),
       FakeAuthAction,
       dataRetrievalAction,

@@ -26,10 +26,9 @@ import models.{Index, Mode}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Call}
-import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import utils.Navigator
 import utils.annotations.EstablishersCompany
-import utils.{Navigator, UserAnswers}
 import views.html.register.establishers.company.addCompanyDirectors
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -37,7 +36,6 @@ import scala.concurrent.{ExecutionContext, Future}
 class AddCompanyDirectorsController @Inject()(
                                                appConfig: FrontendAppConfig,
                                                override val messagesApi: MessagesApi,
-                                               userAnswersService: UserAnswersService,
                                                @EstablishersCompany navigator: Navigator,
                                                authenticate: AuthAction,
                                                getData: DataRetrievalAction,
@@ -61,7 +59,6 @@ class AddCompanyDirectorsController @Inject()(
         Future.successful(Redirect(navigator.nextPage(AddCompanyDirectorsId(index), mode, request.userAnswers, srn)))
       }
       else {
-
         form.bindFromRequest().fold(
           (formWithErrors: Form[_]) =>
                 Future.successful(
@@ -78,9 +75,10 @@ class AddCompanyDirectorsController @Inject()(
                     )
                   )
                 ),
-          value =>
-            userAnswersService.save(mode, srn, AddCompanyDirectorsId(index), value).map(cacheMap =>
-              Redirect(navigator.nextPage(AddCompanyDirectorsId(index), mode, UserAnswers(cacheMap), srn)))
+          value => {
+            val ua = request.userAnswers.set(AddCompanyDirectorsId(index))(value).asOpt.getOrElse(request.userAnswers)
+            Future.successful(Redirect(navigator.nextPage(AddCompanyDirectorsId(index), mode, ua, srn)))
+          }
         )
       }
   }
