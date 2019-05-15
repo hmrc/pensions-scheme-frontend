@@ -57,7 +57,8 @@ class CheckYourAnswersMembersController @Inject()(appConfig: FrontendAppConfig,
         existingSchemeName,
         mode = mode,
         hideEditLinks = request.viewOnly,
-        hideSaveAndContinueButton = mode == UpdateMode || mode == CheckUpdateMode
+        hideSaveAndContinueButton = mode == UpdateMode || mode == CheckUpdateMode,
+        srn = srn
       ))
   }
 

@@ -66,7 +66,8 @@ class CheckYourAnswersBenefitsAndInsuranceController @Inject()(appConfig: Fronte
         existingSchemeName,
         mode = mode,
         hideEditLinks = request.viewOnly,
-        hideSaveAndContinueButton = mode == UpdateMode || mode == CheckUpdateMode
+        hideSaveAndContinueButton = mode == UpdateMode || mode == CheckUpdateMode,
+        srn = srn
       ))
   }
 

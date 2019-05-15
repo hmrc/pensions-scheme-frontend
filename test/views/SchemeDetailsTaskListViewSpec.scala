@@ -26,18 +26,27 @@ class SchemeDetailsTaskListViewSpec extends ViewBehaviours {
 
   import SchemeDetailsTaskListViewSpec._
 
-  private def createView(schemeDetailsList: SchemeDetailsTaskList = schemeDetailsTaskListData): () => HtmlFormat.Appendable = () =>
-    schemeDetailsTaskList(frontendAppConfig, schemeDetailsList, isVariations = false)(fakeRequest, messages)
+  private def createView(schemeDetailsList: SchemeDetailsTaskList = schemeDetailsTaskListData, isVariations:Boolean = false): () => HtmlFormat.Appendable = () =>
+    schemeDetailsTaskList(frontendAppConfig, schemeDetailsList, isVariations = isVariations)(fakeRequest, messages)
 
   "SchemeDetailsTaskListView" should {
 
     behave like normalPageWithTitle(createView(), messageKeyPrefix, schemeDetailsTaskListData.pageTitle, schemeDetailsTaskListData.h1)
 
-    "display the correct link" in {
+    "display the correct link when registration" in {
       val view = createView(schemeDetailsTaskListData)
       view must haveLinkWithText(
         url = frontendAppConfig.managePensionsSchemeOverviewUrl.url,
         linkText = messages("messages__complete__saveAndReturnToManagePensionSchemes"),
+        linkId = "save-and-return"
+      )
+    }
+
+    "display the correct link when variations" in {
+      val view = createView(schemeDetailsTaskListData, isVariations = true)
+      view must haveLinkWithText(
+        url = frontendAppConfig.managePensionsSchemeOverviewUrl.url,
+        linkText = messages("messages__complete__returnToManagePensionSchemes"),
         linkId = "save-and-return"
       )
     }

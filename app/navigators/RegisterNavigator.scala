@@ -20,8 +20,8 @@ import com.google.inject.Inject
 import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
 import identifiers.register._
-import identifiers.{IsBeforeYouStartCompleteId, UserResearchDetailsId}
-import models.NormalMode
+import identifiers.{IsBeforeYouStartCompleteId, UserResearchDetailsId, VariationDeclarationId}
+import models.{NormalMode, UpdateMode}
 import utils.{Navigator, UserAnswers}
 
 //scalastyle:off cyclomatic.complexity
@@ -45,7 +45,10 @@ class RegisterNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnec
       case _ => None
     }
 
-  protected def updateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] = None
+  protected def updateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] = from.id match {
+    case VariationDeclarationId => NavigateTo.dontSave(controllers.routes.SchemeTaskListController.onPageLoad(UpdateMode , srn))
+    case _ => None
+  }
 
   protected def checkUpdateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] = None
 
