@@ -16,6 +16,7 @@
 
 package viewmodels
 
+import models.{Mode, NormalMode}
 import play.api.mvc.Call
 
 case class ContactDetailsViewModel(

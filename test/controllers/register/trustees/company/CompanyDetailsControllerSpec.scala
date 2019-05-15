@@ -48,7 +48,7 @@ class CompanyDetailsControllerSpec extends ControllerSpecBase {
   val submitUrl = controllers.register.trustees.company.routes.CompanyDetailsController.onSubmit(NormalMode, firstIndex, None)
 
   def viewAsString(form: Form[_] = form): String =
-    companyDetails(frontendAppConfig, form, NormalMode, firstIndex, None, submitUrl)(fakeRequest, messages).toString
+    companyDetails(frontendAppConfig, form, NormalMode, firstIndex, None, submitUrl, None)(fakeRequest, messages).toString
 
   val validData: JsObject = Json.obj(
     TrusteesId.toString -> Json.arr(

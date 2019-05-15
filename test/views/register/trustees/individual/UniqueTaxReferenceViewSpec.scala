@@ -17,7 +17,7 @@
 package views.register.trustees.individual
 
 import forms.register.trustees.individual.UniqueTaxReferenceFormProvider
-import models.{Index, NormalMode}
+import models.{Index, NormalMode, UpdateMode}
 import play.api.data.Form
 import views.behaviours.ViewBehaviours
 import views.html.register.trustees.individual.uniqueTaxReference
@@ -29,17 +29,22 @@ class UniqueTaxReferenceViewSpec extends ViewBehaviours {
 
   val form = new UniqueTaxReferenceFormProvider()()
   val submitUrl = controllers.register.trustees.individual.routes.UniqueTaxReferenceController.onSubmit(NormalMode, index, None)
-  private def createView() = () =>
-    uniqueTaxReference(frontendAppConfig, form, NormalMode, index, None, submitUrl)(fakeRequest, messages)
+  private def createView() = () => uniqueTaxReference(
+    frontendAppConfig, form, NormalMode, index, None, submitUrl, None)(fakeRequest, messages)
+
+  private def createUpdateView = () => uniqueTaxReference(
+    frontendAppConfig, form, UpdateMode, index, None, submitUrl, Some("srn"))(fakeRequest, messages)
 
   private def createViewUsingForm = (form: Form[_]) =>
-    uniqueTaxReference(frontendAppConfig, form, NormalMode, index, None, submitUrl)(fakeRequest, messages)
+    uniqueTaxReference(frontendAppConfig, form, NormalMode, index, None, submitUrl, None)(fakeRequest, messages)
 
   "UniqueTaxReference view" when {
     "rendered" must {
       behave like normalPage(createView(), messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"))
 
       behave like pageWithReturnLink(createView(), getReturnLink)
+
+      behave like pageWithReturnLinkAndSrn(createUpdateView, getReturnLinkWithSrn)
 
       val utrOptions = Seq("true", "false")
 

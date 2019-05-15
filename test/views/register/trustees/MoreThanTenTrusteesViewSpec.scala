@@ -18,7 +18,7 @@ package views.register.trustees
 
 import controllers.register.trustees.routes
 import forms.register.trustees.MoreThanTenTrusteesFormProvider
-import models.NormalMode
+import models.{NormalMode, UpdateMode}
 import play.api.data.Form
 import views.behaviours.YesNoViewBehaviours
 import views.html.register.trustees.moreThanTenTrustees
@@ -28,9 +28,13 @@ class MoreThanTenTrusteesViewSpec extends YesNoViewBehaviours {
   val messageKeyPrefix = "moreThanTenTrustees"
   val form = new MoreThanTenTrusteesFormProvider()()
   val submitUrl = controllers.register.trustees.routes.MoreThanTenTrusteesController.onSubmit(NormalMode, None)
-  private def createView() = () => moreThanTenTrustees(frontendAppConfig, form, NormalMode, None, submitUrl)(fakeRequest, messages)
+  private def createView() = () => moreThanTenTrustees(
+    frontendAppConfig, form, NormalMode, None, submitUrl, None)(fakeRequest, messages)
+  private def createUpdateView = () => moreThanTenTrustees(
+    frontendAppConfig, form, UpdateMode, None, submitUrl, Some("srn"))(fakeRequest, messages)
 
-  private def createViewUsingForm = (form: Form[_]) => moreThanTenTrustees(frontendAppConfig, form, NormalMode, None, submitUrl)(fakeRequest, messages)
+  private def createViewUsingForm = (form: Form[_]) => moreThanTenTrustees(
+    frontendAppConfig, form, NormalMode, None, submitUrl, None)(fakeRequest, messages)
 
   "MoreThanTenTrustees view" must {
 
@@ -39,5 +43,7 @@ class MoreThanTenTrusteesViewSpec extends YesNoViewBehaviours {
     behave like yesNoPage(createViewUsingForm, messageKeyPrefix, routes.MoreThanTenTrusteesController.onSubmit(NormalMode, None).url, expectedHintKey = Some("_hint"))
 
     behave like pageWithReturnLink(createView(), getReturnLink)
+
+    behave like pageWithReturnLinkAndSrn(createUpdateView, getReturnLinkWithSrn)
   }
 }

@@ -18,7 +18,7 @@ package views.register.trustees
 
 import controllers.register.trustees.partnership._
 import forms.register.PartnershipDetailsFormProvider
-import models.{Index, NormalMode, PartnershipDetails}
+import models.{Index, NormalMode, PartnershipDetails, UpdateMode}
 import play.api.data.Form
 import play.twirl.api.HtmlFormat
 import views.behaviours.QuestionViewBehaviours
@@ -31,11 +31,13 @@ class PartnershipDetailsViewSpec extends QuestionViewBehaviours[PartnershipDetai
   override val form = new PartnershipDetailsFormProvider()()
   val firstIndex = Index(1)
   val submitUrl = controllers.register.trustees.partnership.routes.TrusteeDetailsController.onPageLoad(NormalMode, firstIndex, None)
-  def createView(): () => HtmlFormat.Appendable = () =>
-    partnershipDetails(frontendAppConfig, form, NormalMode, firstIndex, None, submitUrl)(fakeRequest, messages)
+  def createView(): () => HtmlFormat.Appendable = () => partnershipDetails(
+    frontendAppConfig, form, NormalMode, firstIndex, None, submitUrl, None)(fakeRequest, messages)
+  def createUpdateView: () => HtmlFormat.Appendable = () => partnershipDetails(
+    frontendAppConfig, form, UpdateMode, firstIndex, None, submitUrl, Some("srn"))(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) =>
-    partnershipDetails(frontendAppConfig, form, NormalMode, firstIndex, None, submitUrl)(fakeRequest, messages)
+    partnershipDetails(frontendAppConfig, form, NormalMode, firstIndex, None, submitUrl, None)(fakeRequest, messages)
 
 
   "PartnershipDetails view" must {
@@ -46,5 +48,7 @@ class PartnershipDetailsViewSpec extends QuestionViewBehaviours[PartnershipDetai
       routes.TrusteeDetailsController.onSubmit(NormalMode, firstIndex, None).url, "partnershipName")
 
     behave like pageWithReturnLink(createView(), getReturnLink)
+
+    behave like pageWithReturnLinkAndSrn(createUpdateView, getReturnLinkWithSrn)
   }
 }

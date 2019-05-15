@@ -180,6 +180,8 @@ object ConfirmDeleteTrusteeControllerSpec extends ControllerSpecBase {
       form,
       trusteeName,
       routes.ConfirmDeleteTrusteeController.onSubmit(NormalMode, 0, trusteeKind, None),
+      None,
+      NormalMode,
       None
     )(fakeRequest, messages).toString
 

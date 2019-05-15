@@ -46,7 +46,6 @@ class ManualAddressViewSpec extends QuestionViewBehaviours[Address] {
     Message("messages__common__manual__address__title"),
     Message("messages__common__manual__address__heading"),
     Some("secondary.header"),
-    mode = UpdateMode,
     srn = Some("srn")
   )
 

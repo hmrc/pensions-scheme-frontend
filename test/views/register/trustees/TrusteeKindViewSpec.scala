@@ -18,7 +18,7 @@ package views.register.trustees
 
 import forms.register.trustees.TrusteeKindFormProvider
 import models.register.trustees.TrusteeKind
-import models.{Index, NormalMode}
+import models.{Index, NormalMode, UpdateMode}
 import play.api.data.Form
 import views.behaviours.ViewBehaviours
 import views.html.register.trustees.trusteeKind
@@ -30,9 +30,13 @@ class TrusteeKindViewSpec extends ViewBehaviours {
   private val form = new TrusteeKindFormProvider()()
   private val index = Index(0)
   val submitUrl = controllers.register.trustees.routes.TrusteeKindController.onSubmit(NormalMode, index, None)
-  private def createView() = () => trusteeKind(frontendAppConfig, form, NormalMode, index, None, submitUrl)(fakeRequest, messages)
+  private def createView() = () => trusteeKind(
+    frontendAppConfig, form, NormalMode, index, None, submitUrl, None)(fakeRequest, messages)
+  private def createUpdateView = () => trusteeKind(
+    frontendAppConfig, form, UpdateMode, index, None, submitUrl, Some("srn"))(fakeRequest, messages)
 
-  private def createViewUsingForm = (form: Form[_]) => trusteeKind(frontendAppConfig, form, NormalMode, index, None, submitUrl)(fakeRequest, messages)
+  private def createViewUsingForm = (form: Form[_]) => trusteeKind(
+    frontendAppConfig, form, NormalMode, index, None, submitUrl, None)(fakeRequest, messages)
 
   private def trusteeKindOptions = TrusteeKind.options
 
@@ -41,6 +45,8 @@ class TrusteeKindViewSpec extends ViewBehaviours {
       behave like normalPage(createView(), messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"))
 
       behave like pageWithReturnLink(createView(), getReturnLink)
+
+      behave like pageWithReturnLinkAndSrn(createUpdateView, getReturnLinkWithSrn)
 
       "contain radio buttons for the value" in {
         val doc = asDocument(createViewUsingForm(form))

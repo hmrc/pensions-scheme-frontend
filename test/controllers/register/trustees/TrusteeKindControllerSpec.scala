@@ -43,7 +43,7 @@ class TrusteeKindControllerSpec extends ControllerSpecBase {
       dataRetrievalAction, FakeAllowAccessProvider(), new DataRequiredActionImpl, formProvider)
   val submitUrl = controllers.register.trustees.routes.TrusteeKindController.onSubmit(NormalMode, index, None)
 
-  def viewAsString(form: Form[_] = form): String = trusteeKind(frontendAppConfig, form, NormalMode, index, None, submitUrl)(fakeRequest, messages).toString
+  def viewAsString(form: Form[_] = form): String = trusteeKind(frontendAppConfig, form, NormalMode, index, None, submitUrl, None)(fakeRequest, messages).toString
 
   "TrusteeKind Controller" must {
 

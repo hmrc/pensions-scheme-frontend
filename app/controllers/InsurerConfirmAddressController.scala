@@ -61,8 +61,7 @@ class InsurerConfirmAddressController @Inject()(val appConfig: FrontendAppConfig
       title = Message(title),
       heading = Message(heading),
       secondaryHeader = None,
-      srn = srn,
-      mode = mode
+      srn = srn
     )
 
   def onPageLoad(mode: Mode, srn: Option[String]): Action[AnyContent] =
