@@ -17,7 +17,7 @@
 package views
 
 import forms.InsurancePolicyNumberFormProvider
-import models.NormalMode
+import models.{NormalMode, UpdateMode}
 import play.api.data.Form
 import play.twirl.api.HtmlFormat
 import views.behaviours.QuestionViewBehaviours
@@ -32,10 +32,14 @@ class InsurancePolicyNumberViewSpec extends QuestionViewBehaviours[String] {
   override val form = new InsurancePolicyNumberFormProvider()()
 
   def createView(companyName : Option[String] = None): () => HtmlFormat.Appendable = () =>
-    insurancePolicyNumber(frontendAppConfig, form, NormalMode, companyName, None, postCall)(fakeRequest, messages)
+    insurancePolicyNumber(frontendAppConfig, form, NormalMode, companyName, None, postCall, None)(fakeRequest, messages)
+
+
+  def createUpdateView(companyName : Option[String] = None): () => HtmlFormat.Appendable = () =>
+    insurancePolicyNumber(frontendAppConfig, form, UpdateMode, companyName, None, postCall, Some("srn"))(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) =>
-    insurancePolicyNumber(frontendAppConfig, form, NormalMode, Some(insuranceCompanyName), None, postCall)(fakeRequest, messages)
+    insurancePolicyNumber(frontendAppConfig, form, NormalMode, Some(insuranceCompanyName), None, postCall, None)(fakeRequest, messages)
 
   "InsurancePolicyNumber view" must {
 
@@ -50,6 +54,8 @@ class InsurancePolicyNumberViewSpec extends QuestionViewBehaviours[String] {
   "Insurance Policy Number view in change mode" must {
 
     behave like normalPage(createView(), messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"))
+
+    behave like pageWithReturnLinkAndSrn(createUpdateView(Some(insuranceCompanyName)), getReturnLinkWithSrn)
 
   }
 }

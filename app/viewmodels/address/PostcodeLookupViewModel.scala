@@ -16,6 +16,7 @@
 
 package viewmodels.address
 
+import models.{Mode, NormalMode}
 import play.api.mvc.Call
 import viewmodels.Message
 
@@ -28,5 +29,6 @@ case class PostcodeLookupViewModel(
                                     hint: Option[Message] = Some(Message("messages__common__address_lede")),
                                     enterPostcode: Message = Message("messages__common__postcode_lookup__enter_postcode"),
                                     formLabel: Message = Message("messages__common__postcode_lookup__address_postcode"),
-                                    srn: Option[String] = None
+                                    srn: Option[String] = None,
+                                    mode: Mode = NormalMode
                                   )

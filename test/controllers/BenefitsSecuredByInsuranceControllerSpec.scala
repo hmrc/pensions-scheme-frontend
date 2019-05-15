@@ -74,7 +74,7 @@ object BenefitsSecuredByInsuranceControllerSpec {
   private val postCall = controllers.routes.BenefitsSecuredByInsuranceController.onSubmit(NormalMode, None)
 
   private def viewAsString(base: SpecBase)(form: Form[_] = form): Form[_] => String = form =>
-    benefitsSecuredByInsurance(base.frontendAppConfig, form, NormalMode, Some("Test Scheme Name"), postCall)(base.fakeRequest, base.messages).toString()
+    benefitsSecuredByInsurance(base.frontendAppConfig, form, NormalMode, Some("Test Scheme Name"), postCall, None)(base.fakeRequest, base.messages).toString()
 
   private def controller(base: ControllerSpecBase)(
     dataRetrievalAction: DataRetrievalAction = base.getEmptyData,
