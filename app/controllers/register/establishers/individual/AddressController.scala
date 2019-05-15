@@ -77,7 +77,7 @@ class AddressController @Inject()(
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
     implicit request =>
-      viewmodel(index, Mode.journeyMode(mode), srn).retrieve.right.map {
+      viewmodel(index, mode, srn).retrieve.right.map {
         vm =>
           get(AddressId(index), AddressListId(index), vm)
       }
@@ -85,7 +85,7 @@ class AddressController @Inject()(
 
   def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
-      viewmodel(index, Mode.journeyMode(mode), srn).retrieve.right.map {
+      viewmodel(index, mode, srn).retrieve.right.map {
         vm =>
           post(AddressId(index), AddressListId(index), vm, mode, context(vm),
             PostCodeLookupId(index)

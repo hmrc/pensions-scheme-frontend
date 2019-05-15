@@ -47,14 +47,14 @@ class ContactDetailsController @Inject()(
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
     implicit request =>
       retrieveEstablisherName(index) { establisherName =>
-          get(ContactDetailsId(index), form, viewmodel(Mode.journeyMode(mode), index, establisherName, srn))
+          get(ContactDetailsId(index), form, viewmodel(mode, index, establisherName, srn))
       }
   }
 
   def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
       retrieveEstablisherName(index) { establisherName =>
-          post(ContactDetailsId(index), Mode.journeyMode(mode), form, viewmodel(mode, index, establisherName, srn))
+          post(ContactDetailsId(index), mode, form, viewmodel(mode, index, establisherName, srn))
       }
   }
 

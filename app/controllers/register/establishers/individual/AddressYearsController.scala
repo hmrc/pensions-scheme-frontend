@@ -49,14 +49,14 @@ class AddressYearsController @Inject()(
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
     implicit request =>
       EstablisherDetailsId(index).retrieve.right.map { establisherDetails =>
-        get(AddressYearsId(index), form, viewModel(Mode.journeyMode(mode), index, establisherDetails.fullName, srn))
+        get(AddressYearsId(index), form, viewModel(mode, index, establisherDetails.fullName, srn))
       }
   }
 
   def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
       EstablisherDetailsId(index).retrieve.right.map { establisherDetails =>
-        post(AddressYearsId(index), Mode.journeyMode(mode), form, viewModel(mode, index, establisherDetails.fullName, srn))
+        post(AddressYearsId(index), mode, form, viewModel(mode, index, establisherDetails.fullName, srn))
       }
   }
 

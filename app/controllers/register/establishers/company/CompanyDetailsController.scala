@@ -53,14 +53,14 @@ class CompanyDetailsController @Inject()(
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
     implicit request =>
       val formWithData = request.userAnswers.get(CompanyDetailsId(index)).fold(form)(form.fill)
-      Future.successful(Ok(companyDetails(appConfig, formWithData, Mode.journeyMode(mode), index, existingSchemeName, postCall(mode, srn, index), srn)))
+      Future.successful(Ok(companyDetails(appConfig, formWithData, mode, index, existingSchemeName, postCall(mode, srn, index), srn)))
   }
 
   def onSubmit(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) =>
-          Future.successful(BadRequest(companyDetails(appConfig, formWithErrors, Mode.journeyMode(mode), index, existingSchemeName, postCall(mode, srn, index), srn))),
+          Future.successful(BadRequest(companyDetails(appConfig, formWithErrors, mode, index, existingSchemeName, postCall(mode, srn, index), srn))),
         value =>
           userAnswersService.save(
             mode,

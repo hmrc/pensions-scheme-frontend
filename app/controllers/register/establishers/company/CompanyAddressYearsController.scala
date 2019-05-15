@@ -50,7 +50,7 @@ class CompanyAddressYearsController @Inject()(
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         CompanyDetailsId(index).retrieve.right.map { companyDetails =>
-          get(CompanyAddressYearsId(index), form, viewModel(Mode.journeyMode(mode), srn, index, companyDetails.companyName))
+          get(CompanyAddressYearsId(index), form, viewModel(mode, srn, index, companyDetails.companyName))
         }
     }
 
