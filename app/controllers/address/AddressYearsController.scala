@@ -63,6 +63,7 @@ trait AddressYearsController extends FrontendController with Retrievals with I18
       addressYears =>
         userAnswersService.save[AddressYears, TypedIdentifier[AddressYears]](mode, viewmodel.srn, id, addressYears).flatMap {
           json =>
+            println("\n\n\n ")
             userAnswersService.setAddressCompleteFlagAfterAddressYear(mode, viewmodel.srn, id, addressYears, UserAnswers(json)).map{
               answers =>
                 Redirect(navigator.nextPage(id, mode, answers, viewmodel.srn))
