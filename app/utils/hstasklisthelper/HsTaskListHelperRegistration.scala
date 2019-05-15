@@ -52,7 +52,8 @@ class HsTaskListHelperRegistration(answers: UserAnswers)(implicit messages: Mess
   protected[utils] def declarationSection(userAnswers: UserAnswers): Option[SchemeDetailsTaskListDeclarationSection] =
     Some(SchemeDetailsTaskListDeclarationSection(
       header = "messages__schemeTaskList__sectionDeclaration_header",
-      declarationLink = declarationLink(userAnswers)))
+      declarationLink = declarationLink(userAnswers),
+      incompleteDeclarationText = "messages__schemeTaskList__sectionDeclaration_incomplete"))
 
   protected def listOf(sections: Seq[Entity[_]], userAnswers: UserAnswers): Seq[SchemeDetailsTaskListSection] = {
     val notDeletedElements = for ((section, index) <- sections.zipWithIndex) yield {
