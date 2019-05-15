@@ -45,8 +45,8 @@ class RegisterNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnec
       case _ => None
     }
 
-  protected def updateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] = from.id match {
-    case VariationDeclarationId => NavigateTo.dontSave(controllers.routes.SchemeTaskListController.onPageLoad(UpdateMode , srn))
+  protected def updateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] = (from.id, srn) match {
+    case (VariationDeclarationId , Some(validSrn)) => NavigateTo.dontSave(controllers.register.routes.SchemeVariationsSuccessController.onPageLoad(validSrn))
     case _ => None
   }
 

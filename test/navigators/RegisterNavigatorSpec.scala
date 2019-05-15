@@ -38,7 +38,7 @@ class RegisterNavigatorSpec extends SpecBase with MustMatchers with NavigatorBeh
     // Start - continue or what you will need
     (ContinueRegistrationId, emptyAnswers, beforeYouStart, false, None, false),
     (ContinueRegistrationId, beforeYouStartInProgress, beforeYouStart, false, None, false),
-    (ContinueRegistrationId, beforeYouStartCompleted, taskList(), false, None, false),
+    (ContinueRegistrationId, beforeYouStartCompleted, taskList, false, None, false),
 
     // Review, declarations, success - return from establishers
     (DeclarationId, hasEstablishers, schemeSuccess, false, None, false),
@@ -50,7 +50,7 @@ class RegisterNavigatorSpec extends SpecBase with MustMatchers with NavigatorBeh
   private def updateRoute = Table(
     ("Id", "User Answers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (Check Mode)", "Save (CM)"),
     // Start - continue or what you will need
-    (VariationDeclarationId, emptyAnswers, taskList(UpdateMode, Some("srn")), false, None, false)
+    (VariationDeclarationId, emptyAnswers, variationSucess, false, None, false)
   )
 
   "RegisterNavigator" must {
@@ -85,6 +85,7 @@ object RegisterNavigatorSpec extends OptionValues{
 
   private def dataDescriber(answers: UserAnswers): String = answers.toString
 
-  private def taskList(mode : Mode = NormalMode, srn: Option[String] = None): Call = controllers.routes.SchemeTaskListController.onPageLoad(mode, srn)
+  private def taskList: Call = controllers.routes.SchemeTaskListController.onPageLoad(NormalMode, None)
+  private def variationSucess: Call = controllers.register.routes.SchemeVariationsSuccessController.onPageLoad("srn")
 
 }
