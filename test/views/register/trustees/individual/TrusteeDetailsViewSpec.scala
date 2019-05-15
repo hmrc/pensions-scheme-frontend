@@ -19,7 +19,7 @@ package views.register.trustees.individual
 import controllers.register.trustees.individual.routes._
 import forms.register.PersonDetailsFormProvider
 import models.person.PersonDetails
-import models.{Index, NormalMode}
+import models.{Index, NormalMode, UpdateMode}
 import play.api.data.Form
 import play.twirl.api.HtmlFormat
 import views.behaviours.QuestionViewBehaviours
@@ -33,11 +33,13 @@ class TrusteeDetailsViewSpec extends QuestionViewBehaviours[PersonDetails] {
 
   override val form = new PersonDetailsFormProvider()()
   val submitUrl = controllers.register.trustees.individual.routes.TrusteeDetailsController.onSubmit(NormalMode, firstIndex, None)
-  def createView(): () => HtmlFormat.Appendable = () =>
-    trusteeDetails(frontendAppConfig, form, NormalMode, firstIndex, None, submitUrl)(fakeRequest, messages)
+  def createView(): () => HtmlFormat.Appendable = () => trusteeDetails(
+    frontendAppConfig, form, NormalMode, firstIndex, None, submitUrl, None)(fakeRequest, messages)
+  def createUpdateView: () => HtmlFormat.Appendable = () => trusteeDetails(
+    frontendAppConfig, form, UpdateMode, firstIndex, None, submitUrl, Some("srn"))(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) =>
-    trusteeDetails(frontendAppConfig, form, NormalMode, firstIndex, None, submitUrl)(fakeRequest, messages)
+    trusteeDetails(frontendAppConfig, form, NormalMode, firstIndex, None, submitUrl, None)(fakeRequest, messages)
 
 
   "TrusteeDetails view" must {
@@ -45,6 +47,8 @@ class TrusteeDetailsViewSpec extends QuestionViewBehaviours[PersonDetails] {
     behave like normalPage(createView(), messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"))
 
     behave like pageWithReturnLink(createView(), getReturnLink)
+
+    behave like pageWithReturnLinkAndSrn(createUpdateView, getReturnLinkWithSrn)
 
     behave like pageWithTextFields(
       createViewUsingForm,

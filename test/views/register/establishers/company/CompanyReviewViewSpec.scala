@@ -51,8 +51,9 @@ class CompanyReviewViewSpec extends ViewBehaviours {
       viewOnly,
       hideSaveAndContinueButton)(fakeRequest, messages)
 
-  def createUpdateView(viewOnly: Boolean = false): () => HtmlFormat.Appendable = () =>
-    companyReview(frontendAppConfig, index, companyName, directors, None, UpdateMode, Some("srn"), false, false)(fakeRequest, messages)
+  def createUpdateView(viewOnly: Boolean = false, hideSaveAndContinueButton:Boolean = false): () => HtmlFormat.Appendable = () => companyReview(
+    frontendAppConfig, index, companyName, directors, None, UpdateMode, Some("srn"), viewOnly,hideSaveAndContinueButton)(fakeRequest, messages)
+
 
   def createSecView: () => HtmlFormat.Appendable = () => companyReview(
     frontendAppConfig, index, companyName, tenDirectors, None, NormalMode, None, false, false)(fakeRequest, messages)

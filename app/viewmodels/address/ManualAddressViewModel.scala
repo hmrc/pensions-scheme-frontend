@@ -28,8 +28,7 @@ case class ManualAddressViewModel(
                                    heading: Message,
                                    secondaryHeader: Option[Message],
                                    hint: Option[Message] = None,
-                                   srn: Option[String] = None,
-                                   mode: Mode = NormalMode
+                                   srn: Option[String] = None
                                  ) {
 
 }

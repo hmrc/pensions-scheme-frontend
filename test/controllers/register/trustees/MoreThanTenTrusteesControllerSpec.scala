@@ -46,7 +46,7 @@ class MoreThanTenTrusteesControllerSpec extends ControllerSpecBase {
       dataRetrievalAction, FakeAllowAccessProvider(), new DataRequiredActionImpl, formProvider)
   val submitUrl = controllers.register.trustees.routes.MoreThanTenTrusteesController.onSubmit(NormalMode, None)
 
-  def viewAsString(form: Form[_] = form): String = moreThanTenTrustees(frontendAppConfig, form, NormalMode, None, submitUrl)(fakeRequest, messages).toString
+  def viewAsString(form: Form[_] = form): String = moreThanTenTrustees(frontendAppConfig, form, NormalMode, None, submitUrl, None)(fakeRequest, messages).toString
 
   "MoreThanTenTrustees Controller" must {
 

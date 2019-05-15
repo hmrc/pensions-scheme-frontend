@@ -82,7 +82,8 @@ class CompanyRegistrationNumberControllerSpec extends ControllerSpecBase {
       NormalMode,
       index,
       None,
-      submitUrl
+      submitUrl,
+      None
     )(fakeRequest, messages).toString
 
   "CompanyRegistrationNumber Controller" must {

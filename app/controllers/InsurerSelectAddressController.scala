@@ -64,8 +64,7 @@ class InsurerSelectAddressController @Inject()(override val appConfig: FrontendA
           postCall = routes.InsurerSelectAddressController.onSubmit(mode, srn),
           manualInputCall = routes.InsurerConfirmAddressController.onPageLoad(mode, srn),
           addresses = addresses,
-          srn = srn,
-          mode = mode
+          srn = srn
         )
     }.left.map(_ => Future.successful(Redirect(routes.InsurerEnterPostcodeController.onPageLoad(mode, srn))))
   }
