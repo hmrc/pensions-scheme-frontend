@@ -26,7 +26,7 @@ import models.person.PersonDetails
 import models.register.SchemeType.SingleTrust
 import models.register.trustees.TrusteeKind
 import models.register.{SchemeType, Trustee, TrusteeIndividualEntity}
-import models.{CompanyDetails, NormalMode}
+import models.{CompanyDetails, NormalMode, UpdateMode}
 import org.joda.time.LocalDate
 import play.api.data.Form
 import utils.{Enumerable, UserAnswers}
@@ -67,6 +67,9 @@ class AddTrusteeViewSpec extends YesNoViewBehaviours with EntityListBehaviours w
   private def createView(trustees: Seq[Trustee[_]] = Seq.empty) = () =>
     addTrustee(frontendAppConfig, form, NormalMode, trustees, None, None)(fakeRequest, messages)
 
+  private def createUpdateView(trustees: Seq[Trustee[_]] = Seq.empty) = () =>
+    addTrustee(frontendAppConfig, form, UpdateMode, trustees, None, Some("srn"))(fakeRequest, messages)
+
   private def createViewUsingForm(trustees: Seq[Trustee[_]] = Seq.empty) = (form: Form[Boolean]) =>
     addTrustee(frontendAppConfig, form, NormalMode, trustees, None, None)(fakeRequest, messages)
 
@@ -74,6 +77,8 @@ class AddTrusteeViewSpec extends YesNoViewBehaviours with EntityListBehaviours w
     behave like normalPage(createView(), messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__heading"))
 
     behave like pageWithReturnLink(createView(), getReturnLink)
+
+    behave like pageWithReturnLinkAndSrn(createUpdateView(), getReturnLinkWithSrn)
 
     behave like yesNoPage(
       createViewUsingForm(trustees),
