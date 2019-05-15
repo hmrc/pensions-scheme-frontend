@@ -67,7 +67,14 @@ class DirectorAddressYearsIdSpec extends WordSpec with MustMatchers with OptionV
 
     "`AddressYears` is set to `UnderAYear`" when {
 
-      val result: UserAnswers = answers.set(DirectorAddressYearsId(0, 0))(AddressYears.UnderAYear).asOpt.value
+      val result: UserAnswers = UserAnswers(Json.obj())
+        .set(DirectorAddressYearsId(0, 0))(AddressYears.OverAYear)
+        .flatMap(_.set(DirectorPreviousAddressPostcodeLookupId(0, 0))(Seq.empty))
+        .flatMap(_.set(DirectorPreviousAddressId(0, 0))(Address("foo", "bar", None, None, None, "GB")))
+        .flatMap(_.set(DirectorPreviousAddressListId(0, 0))(TolerantAddress(Some("foo"), Some("bar"), None, None, None, Some("GB"))))
+        .flatMap(_.set(IsDirectorCompleteId(0, 0))(true))
+        .flatMap(_.set(IsEstablisherCompleteId(0))(true)).asOpt.value.
+        set(DirectorAddressYearsId(0, 0))(AddressYears.UnderAYear).asOpt.value
 
       "set the value of IsDirectorCompleteId and IsEstablisherCompleteId to false" in {
         result.get(IsDirectorCompleteId(0, 0)).value mustBe false
