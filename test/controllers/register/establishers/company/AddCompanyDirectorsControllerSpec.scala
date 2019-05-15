@@ -143,31 +143,26 @@ class AddCompanyDirectorsControllerSpec extends ControllerSpecBase {
         Seq(DirectorEntity(DirectorDetailsId(0, 0), johnDoe.fullName, isDeleted = false, isCompleted = false, isNewEntity = true, 0)))
     }
 
-    "not save the answer when directors exist and valid data is submitted" in {
-      val getRelevantData = new FakeDataRetrievalAction(Some(validData(johnDoe)))
-      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "true"))
-      controller(getRelevantData).onSubmit(NormalMode, None, establisherIndex)(postRequest)
-
-      FakeUserAnswersService.verifyNot(AddCompanyDirectorsId(firstIndex))
-    }
-
     "set the user answer when directors exist and valid data is submitted" in {
+      FakeUserAnswersService.reset()
       val getRelevantData = new FakeDataRetrievalAction(Some(validData(johnDoe)))
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "true"))
       val navigator = fakeNavigator()
       val result = controller(getRelevantData, navigator).onSubmit(NormalMode, None, establisherIndex)(postRequest)
 
       status(result) mustBe SEE_OTHER
-      navigator.lastUserAnswers.value.get(AddCompanyDirectorsId(firstIndex)).value mustBe true
+      FakeUserAnswersService.verify(AddCompanyDirectorsId(firstIndex), true)
     }
 
     "redirect to the next page when maximum directors exist and the user submits" in {
+      FakeUserAnswersService.reset()
       val directors = Seq.fill(maxDirectors)(johnDoe)
       val getRelevantData = new FakeDataRetrievalAction(Some(validData(directors: _*)))
       val result = controller(getRelevantData).onSubmit(NormalMode, None, establisherIndex)(fakeRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
+      FakeUserAnswersService.verifyNot(AddCompanyDirectorsId(firstIndex))
     }
 
     "populate the view with directors when they exist" in {

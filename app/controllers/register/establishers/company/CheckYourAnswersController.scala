@@ -44,14 +44,15 @@ class CheckYourAnswersController @Inject()(
                                             requireData: DataRequiredAction,
                                             implicit val countryOptions: CountryOptions,
                                             @EstablishersCompany navigator: Navigator,
-                                            userAnswersService: UserAnswersService
+                                            userAnswersService: UserAnswersService,
+                                            allowChangeHelper: AllowChangeHelper
                                           )(implicit val ec: ExecutionContext) extends FrontendController
   with Retrievals with I18nSupport with Enumerable.Implicits {
 
   def onPageLoad(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
 
-      implicit val userAnswers = request.userAnswers
+      implicit val userAnswers:UserAnswers = request.userAnswers
 
       val companyDetails = AnswerSection(
         Some("messages__common__company_details__title"),
@@ -77,9 +78,11 @@ class CheckYourAnswersController @Inject()(
         routes.CheckYourAnswersController.onSubmit(mode, srn, index),
         existingSchemeName,
         mode = mode,
-        viewOnly = request.viewOnly || !userAnswers.get(IsEstablisherNewId(index)).getOrElse(true),
-        srn = srn))
-      )
+        hideEditLinks = request.viewOnly || !userAnswers.get(IsEstablisherNewId(index)).getOrElse(true),
+        hideSaveAndContinueButton = allowChangeHelper.hideSaveAndContinueButton(request, IsEstablisherNewId(index), mode),
+        srn = srn
+      )))
+
   }
 
   def onSubmit(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] = (

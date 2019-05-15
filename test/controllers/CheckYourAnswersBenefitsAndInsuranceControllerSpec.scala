@@ -16,6 +16,7 @@
 
 package controllers
 
+import controllers.CheckYourAnswersBeforeYouStartControllerSpec.{controller, schemeInfoWithCompleteFlag}
 import controllers.actions.{DataRequiredActionImpl, DataRetrievalAction, FakeAuthAction}
 import identifiers.IsAboutBenefitsAndInsuranceCompleteId
 import models.address.Address
@@ -43,21 +44,33 @@ class CheckYourAnswersBenefitsAndInsuranceControllerSpec extends ControllerSpecB
       }
     }
 
-    "onPageLoad() is called with UpdateMode" must {
-      "return OK and the correct view" in {
-        val result = controller(data).onPageLoad(UpdateMode, None)(fakeRequest)
-
-        status(result) mustBe OK
-        contentAsString(result) mustBe viewAsString(UpdateMode)
-      }
-    }
-
     "onPageLoad() is called with UpdateMode with less data" must {
       "return OK and the correct view" in {
         val result = controller(updateData).onPageLoad(UpdateMode, None)(fakeRequest)
 
         status(result) mustBe OK
         contentAsString(result) mustBe viewAsStringWithLessData(UpdateMode)
+      }
+    }
+
+    "onPageLoad() is called with UpdateMode" must {
+      "return OK and the correct view" in {
+        val result = controller(data).onPageLoad(UpdateMode, None)(fakeRequest)
+
+        status(result) mustBe OK
+        contentAsString(result) mustBe viewAsString(UpdateMode, hideSaveAndContinueButton = true)
+      }
+
+      "NOT display submit button with return to tasklist when in update mode" in {
+        val result = controller(data).onPageLoad(UpdateMode, None)(fakeRequest)
+        status(result) mustBe OK
+        assertNotRenderedById(asDocument(contentAsString(result)), "submit")
+      }
+
+      "display submit button with return to tasklist when in normal mode" in {
+        val result = controller(data).onPageLoad(NormalMode, None)(fakeRequest)
+        status(result) mustBe OK
+        assertRenderedById(asDocument(contentAsString(result)), "submit")
       }
     }
 
@@ -188,7 +201,7 @@ object CheckYourAnswersBenefitsAndInsuranceControllerSpec extends ControllerSpec
     )
   }
 
-  private def viewAsString(mode : Mode = NormalMode): String = check_your_answers(
+  private def viewAsString(mode : Mode = NormalMode, hideSaveAndContinueButton:Boolean = false): String = check_your_answers(
     frontendAppConfig,
     Seq(
       benefitsAndInsuranceSection(mode)
@@ -197,7 +210,8 @@ object CheckYourAnswersBenefitsAndInsuranceControllerSpec extends ControllerSpec
     None,
     false,
     mode,
-    viewOnly = false
+    hideEditLinks = false,
+    hideSaveAndContinueButton = hideSaveAndContinueButton
   )(fakeRequest, messages).toString
 
   private def viewAsStringWithLessData(mode : Mode = CheckMode): String = check_your_answers(
@@ -209,7 +223,8 @@ object CheckYourAnswersBenefitsAndInsuranceControllerSpec extends ControllerSpec
     None,
     false,
     mode,
-    viewOnly = false
+    hideEditLinks = false,
+    hideSaveAndContinueButton = true
   )(fakeRequest, messages).toString
 
 }

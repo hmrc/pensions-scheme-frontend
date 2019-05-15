@@ -19,7 +19,7 @@ package controllers.register.establishers.company
 import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions._
-import identifiers.register.establishers.IsEstablisherCompleteId
+import identifiers.register.establishers.{IsEstablisherCompleteId, IsEstablisherNewId}
 import identifiers.register.establishers.company.{CompanyDetailsId, CompanyReviewId, IsCompanyCompleteId}
 import javax.inject.Inject
 import models.{Index, Mode, NormalMode}
@@ -28,7 +28,7 @@ import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.EstablishersCompany
-import utils.{Navigator, SectionComplete}
+import utils.{AllowChangeHelper, Navigator, SectionComplete}
 import views.html.register.establishers.company.companyReview
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -39,7 +39,8 @@ class CompanyReviewController @Inject()(appConfig: FrontendAppConfig,
                                         authenticate: AuthAction,
                                         getData: DataRetrievalAction,
                                         requireData: DataRequiredAction,
-                                        userAnswersService: UserAnswersService
+                                        userAnswersService: UserAnswersService,
+                                        allowChangeHelper: AllowChangeHelper
                                        )(implicit val ec: ExecutionContext) extends FrontendController with I18nSupport with Retrievals {
 
   def onPageLoad(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
@@ -48,7 +49,15 @@ class CompanyReviewController @Inject()(appConfig: FrontendAppConfig,
         case companyDetails =>
           val directors: Seq[String] = request.userAnswers.allDirectorsAfterDelete(index).map(_.name)
 
-          Future.successful(Ok(companyReview(appConfig, index, companyDetails.companyName, directors, existingSchemeName, mode, srn, request.viewOnly)))
+          Future.successful(Ok(companyReview(appConfig,
+            index,
+            companyDetails.companyName,
+            directors,
+            existingSchemeName,
+            mode,
+            srn,
+            viewOnly = request.viewOnly,
+            hideSaveAndContinueButton = allowChangeHelper.hideSaveAndContinueButton(request, IsEstablisherNewId(index), mode))))
       }
   }
 
