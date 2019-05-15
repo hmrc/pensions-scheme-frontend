@@ -68,8 +68,7 @@ class AddressController @Inject()(
               heading = Message(heading),
               hint = Some(Message(hint)),
               secondaryHeader = Some(details.fullName),
-              srn = srn,
-              mode = mode
+              srn = srn
             )
         }
     }

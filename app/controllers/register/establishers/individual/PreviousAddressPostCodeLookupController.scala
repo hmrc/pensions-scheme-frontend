@@ -78,8 +78,7 @@ class PreviousAddressPostCodeLookupController @Inject()(
               heading = Message(heading),
               subHeading = Some(details.fullName),
               hint = Some(Message(hint)),
-              srn = srn,
-              mode = mode
+              srn = srn
             )
         }
     }

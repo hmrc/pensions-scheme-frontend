@@ -66,8 +66,7 @@ class AddressYearsController @Inject()(
     heading = Message("messages__establisher_address_years__title"),
     legend = Message("messages__establisher_address_years__title"),
     subHeading = Some(Message(establisherName)),
-    srn = srn,
-    mode = mode
+    srn = srn
   )
 }
 
