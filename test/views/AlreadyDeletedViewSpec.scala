@@ -16,6 +16,7 @@
 
 package views
 
+import models.UpdateMode
 import play.api.mvc.Call
 import viewmodels.{AlreadyDeletedViewModel, Message}
 import views.behaviours.ViewBehaviours
@@ -30,8 +31,11 @@ class AlreadyDeletedViewSpec extends ViewBehaviours {
   )
 
   def viewmodel = AlreadyDeletedViewModel(Message("messages__alreadyDeleted__director_title"), deletedEntity, Call("GET", "/"))
+  def updatedViewmodel = AlreadyDeletedViewModel(
+    Message("messages__alreadyDeleted__director_title"), deletedEntity, Call("GET", "/"), Some("srn"), Some("Scheme Name"))
 
   def createView = () => alreadyDeleted(frontendAppConfig, viewmodel)(fakeRequest, messages)
+  def createUpdateView = () => alreadyDeleted(frontendAppConfig, updatedViewmodel)(fakeRequest, messages)
 
   "Already Deleted view" must {
 
@@ -55,6 +59,10 @@ class AlreadyDeletedViewSpec extends ViewBehaviours {
         "return-to-list"
       )
     }
+
+    behave like pageWithReturnLink(createView, getReturnLink)
+
+    behave like pageWithReturnLinkAndSrn(createUpdateView, getReturnLinkWithSrn)
 
   }
 }

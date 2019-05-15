@@ -65,7 +65,7 @@ class IndividualAddressListController @Inject()(override val appConfig: Frontend
         manualInputCall = routes.TrusteeAddressController.onPageLoad(mode, index, srn),
         addresses = addresses,
         subHeading = Some(Message(trusteeDetails.fullName)),
-        srn= srn
+        srn = srn
       )
     }.left.map(_ =>
       Future.successful(Redirect(routes.IndividualPostCodeLookupController.onPageLoad(mode, index, srn))))

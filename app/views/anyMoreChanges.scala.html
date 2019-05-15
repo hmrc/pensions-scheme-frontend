@@ -19,13 +19,16 @@
 @import controllers.routes._
 @import utils.Constants._
 @import play.api.mvc.Call
+@import models.{Mode, UpdateMode}
 
 @(
     appConfig: FrontendAppConfig,
     form: Form[_],
     schemeName:Option[String],
     dateToComplete: String,
-    postCall: Call
+    postCall: Call,
+    srn: Option[String],
+    mode: Mode = UpdateMode
 )(implicit request: Request[_], messages: Messages)
 
 @main_template(
@@ -53,6 +56,6 @@
 
         @components.submit_button("site.save_and_continue")
 
-        @components.return_link("messages__schemeTaskList__returnlink", schemeName)
+        @components.return_link("messages__schemeTaskList__returnlink", schemeName, None, srn)
     }
 }

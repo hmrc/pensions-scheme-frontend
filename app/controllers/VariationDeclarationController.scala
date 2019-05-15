@@ -51,24 +51,25 @@ class VariationDeclarationController @Inject()(
 
   def onPageLoad(srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(UpdateMode, srn) andThen requireData).async {
     implicit request =>
-      Future.successful(Ok(variationDeclaration(appConfig, form, request.userAnswers.get(SchemeNameId), postCall(srn))))
+      Future.successful(Ok(variationDeclaration(appConfig, form, request.userAnswers.get(SchemeNameId), postCall(srn), srn)))
   }
 
   def onSubmit(srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(UpdateMode, srn) andThen requireData).async {
     implicit request =>
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) =>
-          Future.successful(BadRequest(variationDeclaration(appConfig, formWithErrors, request.userAnswers.get(SchemeNameId), postCall(srn)))),
-        _ => {
+          Future.successful(BadRequest(variationDeclaration(appConfig, formWithErrors, request.userAnswers.get(SchemeNameId), postCall(srn), srn))),
+        value => {
           srn.flatMap { srnId =>
             request.userAnswers.get(PstrId).map {
             pstr =>
+              val ua = request.userAnswers.set(VariationDeclarationId)(value).asOpt.getOrElse(request.userAnswers)
               for {
-                _ <- pensionsSchemeConnector.updateSchemeDetails(request.psaId.id, pstr, request.userAnswers)
+                _ <- pensionsSchemeConnector.updateSchemeDetails(request.psaId.id, pstr, ua)
                 _ <- updateSchemeCacheConnector.removeAll(srnId)
                 _ <- lockConnector.releaseLock(request.psaId.id, srnId)
               } yield {
-                Redirect(navigator.nextPage(VariationDeclarationId, UpdateMode, UserAnswers()))
+                Redirect(navigator.nextPage(VariationDeclarationId, UpdateMode, UserAnswers(), srn))
               }
             }
           }.getOrElse(Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad)))

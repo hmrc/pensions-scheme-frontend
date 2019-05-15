@@ -17,7 +17,7 @@
 package views.register.trustees.company
 
 import forms.register.trustees.company.CompanyUniqueTaxReferenceFormProvider
-import models.{Index, NormalMode}
+import models.{Index, NormalMode, UpdateMode}
 import play.api.data.Form
 import play.twirl.api.HtmlFormat
 import views.behaviours.ViewBehaviours
@@ -31,17 +31,21 @@ class CompanyUniqueTaxReferenceViewSpec extends ViewBehaviours {
 
   val index = Index(1)
   val submitUrl = controllers.register.trustees.company.routes.CompanyUniqueTaxReferenceController.onSubmit(NormalMode, index, None)
-  def createView(): () => HtmlFormat.Appendable = () =>
-    companyUniqueTaxReference(frontendAppConfig, form, NormalMode, index, None, submitUrl)(fakeRequest, messages)
+  def createView(): () => HtmlFormat.Appendable = () => companyUniqueTaxReference(
+    frontendAppConfig, form, NormalMode, index, None, submitUrl, None)(fakeRequest, messages)
+  def createUpdateView: () => HtmlFormat.Appendable = () => companyUniqueTaxReference(
+    frontendAppConfig, form, UpdateMode, index, None, submitUrl, Some("srn"))(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) => companyUniqueTaxReference(frontendAppConfig, form,
-    NormalMode, index, None, submitUrl)(fakeRequest, messages)
+    NormalMode, index, None, submitUrl, None)(fakeRequest, messages)
 
   "CompanyUniqueTaxReference view" when {
     "rendered" must {
       behave like normalPage(createView(), messageKeyPrefix, messages("messages__trustee__has_ct_utr__title"))
 
       behave like pageWithReturnLink(createView(), getReturnLink)
+
+      behave like pageWithReturnLinkAndSrn(createUpdateView, getReturnLinkWithSrn)
 
       val utrOptions = Seq("true", "false")
 

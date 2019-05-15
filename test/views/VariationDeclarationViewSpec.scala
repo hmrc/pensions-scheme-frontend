@@ -27,13 +27,14 @@ import views.html.variationDeclaration
 class VariationDeclarationViewSpec extends QuestionViewBehaviours[Boolean] {
   private val messageKeyPrefix = "variationDeclaration"
 
+  val srn = Some("srn")
   val schemeName = "Test Scheme Name"
   val form: Form[Boolean] = new DeclarationFormProvider()()
 
   val postCall = routes.VariationDeclarationController.onSubmit _
 
   def createView: () => HtmlFormat.Appendable = () => variationDeclaration(frontendAppConfig,
-    form, Some(schemeName), postCall(Some("123")))(fakeRequest, messages)
+    form, Some(schemeName), postCall(srn), srn)(fakeRequest, messages)
 
   "Declaration view where no working knowledge" must {
 
@@ -46,9 +47,6 @@ class VariationDeclarationViewSpec extends QuestionViewBehaviours[Boolean] {
       "_statement2",
       "_statement3")
 
-    "have a return link" in {
-      Jsoup.parse(createView().toString).select("a[id=return-link]") must
-        haveLink(getReturnLink)
-    }
+    behave like pageWithReturnLinkAndSrn(createView, getReturnLinkWithSrn)
   }
 }

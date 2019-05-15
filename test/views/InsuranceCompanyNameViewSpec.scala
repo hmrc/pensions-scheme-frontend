@@ -17,7 +17,7 @@
 package views
 
 import forms.InsuranceCompanyNameFormProvider
-import models.NormalMode
+import models.{NormalMode, UpdateMode}
 import play.api.data.Form
 import play.api.mvc.Call
 import play.twirl.api.HtmlFormat
@@ -31,10 +31,14 @@ class InsuranceCompanyNameViewSpec extends QuestionViewBehaviours[String] {
   override val form = new InsuranceCompanyNameFormProvider()()
   val postCall: Call = controllers.routes.InsuranceCompanyNameController.onSubmit(NormalMode, None)
 
-  def createView: () => HtmlFormat.Appendable = () => insuranceCompanyName(frontendAppConfig, form, NormalMode, None, postCall)(fakeRequest, messages)
+  def createView: () => HtmlFormat.Appendable = () => insuranceCompanyName(
+    frontendAppConfig, form, NormalMode, None, postCall, None)(fakeRequest, messages)
+
+  def createUpdateView: () => HtmlFormat.Appendable = () => insuranceCompanyName(
+    frontendAppConfig, form, UpdateMode, None, postCall, Some("srn"))(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) =>
-    insuranceCompanyName(frontendAppConfig, form, NormalMode, None, postCall)(fakeRequest, messages)
+    insuranceCompanyName(frontendAppConfig, form, NormalMode, None, postCall, None)(fakeRequest, messages)
 
   "InsuranceCompanyName view" must {
 
@@ -44,5 +48,7 @@ class InsuranceCompanyNameViewSpec extends QuestionViewBehaviours[String] {
       "companyName")
 
     behave like pageWithReturnLink(createView, getReturnLink)
+
+    behave like pageWithReturnLinkAndSrn(createUpdateView, getReturnLinkWithSrn)
   }
 }

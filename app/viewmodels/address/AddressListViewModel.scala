@@ -16,6 +16,7 @@
 
 package viewmodels.address
 
+import models.{Mode, NormalMode}
 import models.address.TolerantAddress
 import play.api.mvc.Call
 import viewmodels.Message

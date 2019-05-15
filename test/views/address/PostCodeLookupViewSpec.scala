@@ -16,49 +16,54 @@
 
 package views.address
 
-import controllers.register.routes
+import controllers.routes
 import forms.address.AddressFormProvider
-import models.{NormalMode, UpdateMode}
 import models.address.Address
+import models.{NormalMode, UpdateMode}
 import play.api.data.Form
 import play.api.mvc.Call
 import utils.{FakeCountryOptions, InputOption}
 import viewmodels.Message
-import viewmodels.address.ManualAddressViewModel
+import viewmodels.address.PostcodeLookupViewModel
 import views.behaviours.QuestionViewBehaviours
-import views.html.address.manualAddress
+import views.html.address.postcodeLookup
 
-class ManualAddressViewSpec extends QuestionViewBehaviours[Address] {
-  val messageKeyPrefix = "common__manual__address"
+class PostCodeLookupViewSpec extends QuestionViewBehaviours[Address] {
+  val messageKeyPrefix = "adviserPostCodeLookup"
   val countryOptions: Seq[InputOption] = Seq(InputOption("AF", "Afghanistan"), InputOption("territory:AE-AZ", "Abu Dhabi"))
   val schemeName: String = "Test Scheme Name"
 
-  val viewModel = ManualAddressViewModel(
-    Call("GET", "/"),
-    countryOptions,
-    Message("messages__common__manual__address__title"),
-    Message("messages__common__manual__address__heading"),
-    Some("secondary.header")
+  def manualInputCall: Call = routes.AdviserAddressController.onPageLoad(NormalMode)
+
+  val viewModel = PostcodeLookupViewModel(
+    postCall = routes.AdviserPostCodeLookupController.onSubmit(NormalMode),
+    manualInputCall = manualInputCall,
+    title = Message("messages__adviserPostCodeLookup__title"),
+    heading = Message("messages__adviserPostCodeLookup__heading", "name"),
+    subHeading = Some(Message("messages__adviserPostCodeLookupAddress__secondary")),
+    enterPostcode = Message("messages__adviserPostCodeLookupAddress__enterPostCode")
   )
-  val updateViewModel = ManualAddressViewModel(
-    Call("GET", "/"),
-    countryOptions,
-    Message("messages__common__manual__address__title"),
-    Message("messages__common__manual__address__heading"),
-    Some("secondary.header"),
+
+  val updateViewModel = PostcodeLookupViewModel(
+    postCall = routes.AdviserPostCodeLookupController.onSubmit(NormalMode),
+    manualInputCall = manualInputCall,
+    title = Message("messages__adviserPostCodeLookup__title"),
+    heading = Message("messages__adviserPostCodeLookup__heading", "name"),
+    subHeading = Some(Message("messages__adviserPostCodeLookupAddress__secondary")),
+    enterPostcode = Message("messages__adviserPostCodeLookupAddress__enterPostCode"),
     srn = Some("srn")
   )
 
   override val form = new AddressFormProvider(FakeCountryOptions())()
 
   def createView(): () => _root_.play.twirl.api.HtmlFormat.Appendable = () =>
-    manualAddress(frontendAppConfig, new AddressFormProvider(FakeCountryOptions()).apply(), viewModel, None)(fakeRequest, messages)
+    postcodeLookup(frontendAppConfig, new AddressFormProvider(FakeCountryOptions()).apply(), viewModel, None)(fakeRequest, messages)
 
 def createUpdateView(): () => _root_.play.twirl.api.HtmlFormat.Appendable = () =>
-    manualAddress(frontendAppConfig, new AddressFormProvider(FakeCountryOptions()).apply(), updateViewModel, None)(fakeRequest, messages)
+  postcodeLookup(frontendAppConfig, new AddressFormProvider(FakeCountryOptions()).apply(), updateViewModel, None)(fakeRequest, messages)
 
   def createViewUsingForm: (Form[_]) => _root_.play.twirl.api.HtmlFormat.Appendable = (form: Form[_]) =>
-    manualAddress(frontendAppConfig, form, viewModel, None)(fakeRequest, messages)
+    postcodeLookup(frontendAppConfig, form, viewModel, None)(fakeRequest, messages)
 
   "ManualAddress view" must {
 
@@ -67,8 +72,8 @@ def createUpdateView(): () => _root_.play.twirl.api.HtmlFormat.Appendable = () =
     behave like pageWithTextFields(
       createViewUsingForm,
       messageKeyPrefix,
-      controllers.routes.AdviserAddressController.onPageLoad(NormalMode).url,
-      "addressLine1", "addressLine2", "addressLine3", "addressLine4"
+      manualInputCall.url,
+      "value"
     )
 
     behave like pageWithReturnLink(createView(), getReturnLink)

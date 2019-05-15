@@ -17,6 +17,7 @@
 package views.address
 
 import forms.address.AddressListFormProvider
+import models.UpdateMode
 import models.address.TolerantAddress
 import org.jsoup.Jsoup
 import play.api.data.Form
@@ -38,6 +39,7 @@ class AddressListSpec extends ViewBehaviours {
   private val subHeading = "sub-heading"
 
   private val viewModel = AddressListViewModel(call, call, addresses, subHeading = Some(Message(subHeading)))
+  private val updateViewModel = AddressListViewModel(call, call, addresses, subHeading = Some(Message(subHeading)), srn = Some("srn"))
 
   private def address(postCode: String): TolerantAddress =
     TolerantAddress(
@@ -55,6 +57,15 @@ class AddressListSpec extends ViewBehaviours {
         frontendAppConfig,
         form,
         viewModel,
+        None
+      )(fakeRequest, messages)
+
+  private def createUpdateView(): () => HtmlFormat.Appendable =
+    () =>
+      addressList(
+        frontendAppConfig,
+        form,
+        updateViewModel,
         None
       )(fakeRequest, messages)
 
@@ -97,6 +108,10 @@ class AddressListSpec extends ViewBehaviours {
         }
       }
     }
+
+    behave like pageWithReturnLink(createView(), getReturnLink)
+
+    behave like pageWithReturnLinkAndSrn(createUpdateView(), getReturnLinkWithSrn)
 
   }
 

@@ -54,7 +54,7 @@ class MoreThanTenTrusteesController @Inject()(
     implicit request =>
       val submitUrl = controllers.register.trustees.routes.MoreThanTenTrusteesController.onSubmit(mode, srn)
       val updatedForm = request.userAnswers.get(MoreThanTenTrusteesId).fold(form)(form.fill)
-      Future.successful(Ok(moreThanTenTrustees(appConfig, updatedForm, mode, existingSchemeName, submitUrl)))
+      Future.successful(Ok(moreThanTenTrustees(appConfig, updatedForm, mode, existingSchemeName, submitUrl, srn)))
   }
 
   def onSubmit(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
@@ -62,7 +62,7 @@ class MoreThanTenTrusteesController @Inject()(
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) => {
           val submitUrl = controllers.register.trustees.routes.MoreThanTenTrusteesController.onSubmit(mode, srn)
-          Future.successful(BadRequest(moreThanTenTrustees(appConfig, formWithErrors, mode, existingSchemeName, submitUrl)))
+          Future.successful(BadRequest(moreThanTenTrustees(appConfig, formWithErrors, mode, existingSchemeName, submitUrl, srn)))
         },
         value =>
           userAnswersService.save(mode, srn, MoreThanTenTrusteesId, value).map(cacheMap =>

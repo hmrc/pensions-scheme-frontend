@@ -55,7 +55,7 @@ class TrusteeDetailsController @Inject()(
     implicit request =>
       val submitUrl = controllers.register.trustees.individual.routes.TrusteeDetailsController.onSubmit(mode, index, srn)
       val updatedForm = request.userAnswers.get(TrusteeDetailsId(index)).fold(form)(form.fill)
-      Future.successful(Ok(trusteeDetails(appConfig, updatedForm, mode, index, existingSchemeName, submitUrl)))
+      Future.successful(Ok(trusteeDetails(appConfig, updatedForm, mode, index, existingSchemeName, submitUrl, srn)))
   }
 
   def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
@@ -63,7 +63,7 @@ class TrusteeDetailsController @Inject()(
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) => {
           val submitUrl = controllers.register.trustees.individual.routes.TrusteeDetailsController.onSubmit(mode, index, srn)
-          Future.successful(BadRequest(trusteeDetails(appConfig, formWithErrors, mode, index, existingSchemeName, submitUrl)))
+          Future.successful(BadRequest(trusteeDetails(appConfig, formWithErrors, mode, index, existingSchemeName, submitUrl, srn)))
         },
         value =>
           request.userAnswers.upsert(TrusteeDetailsId(index))(value) {

@@ -49,14 +49,14 @@ class AnyMoreChangesController @Inject()(appConfig: FrontendAppConfig,
 
   def onPageLoad(srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(UpdateMode, srn) andThen requireData).async {
     implicit request =>
-      Future.successful(Ok(anyMoreChanges(appConfig, form, existingSchemeName, dateToCompleteDeclaration, postCall(srn))))
+      Future.successful(Ok(anyMoreChanges(appConfig, form, existingSchemeName, dateToCompleteDeclaration, postCall(srn), srn)))
   }
 
   def onSubmit(srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(UpdateMode, srn) andThen requireData).async {
     implicit request =>
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) =>
-          Future.successful(BadRequest(anyMoreChanges(appConfig, formWithErrors, existingSchemeName, dateToCompleteDeclaration, postCall(srn)))),
+          Future.successful(BadRequest(anyMoreChanges(appConfig, formWithErrors, existingSchemeName, dateToCompleteDeclaration, postCall(srn), srn))),
         value => {
           val ua = request.userAnswers.set(AnyMoreChangesId)(value).asOpt.getOrElse(request.userAnswers)
           Future.successful(Redirect(navigator.nextPage(AnyMoreChangesId, UpdateMode, ua, srn)))

@@ -68,7 +68,7 @@ class TrusteeAddressController @Inject()(
               heading = Message(heading),
               hint = Some(Message(hint)),
               secondaryHeader = Some(details.fullName),
-              srn= srn
+              srn = srn
             )
         }
     }

@@ -78,7 +78,7 @@ object InsuranceCompanyNameControllerSpec extends SpecBase {
   private val postCall: Call = controllers.routes.InsuranceCompanyNameController.onSubmit(NormalMode, None)
 
   private def viewAsString(base: SpecBase)(form: Form[_] = form): Form[_] => String = form =>
-    insuranceCompanyName(base.frontendAppConfig, form, NormalMode, Some(schemeName), postCall)(base.fakeRequest, base.messages).toString()
+    insuranceCompanyName(base.frontendAppConfig, form, NormalMode, Some(schemeName), postCall, None)(base.fakeRequest, base.messages).toString()
 
   private def controller(base: ControllerSpecBase)(
     dataRetrievalAction: DataRetrievalAction = base.getEmptyData,

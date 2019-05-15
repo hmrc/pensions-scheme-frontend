@@ -65,7 +65,7 @@ class CompanyPreviousAddressPostcodeLookupController @Inject()(
               title = Message(title),
               heading = Message(heading),
               subHeading = Some(details.companyName),
-              srn= srn
+              srn = srn
             )
         }
     }
