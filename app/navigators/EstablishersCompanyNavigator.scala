@@ -57,7 +57,11 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
       case AddCompanyDirectorsId(index) =>
         addDirectors(mode, index, from.userAnswers, srn)
       case OtherDirectorsId(index) =>
-        NavigateTo.dontSave(controllers.register.establishers.company.routes.CompanyReviewController.onPageLoad(mode, srn, index))
+        if(mode == CheckMode || mode == NormalMode){
+          NavigateTo.dontSave(controllers.register.establishers.company.routes.CompanyReviewController.onPageLoad(mode, srn, index))
+        } else {
+          NavigateTo.dontSave(controllers.routes.AnyMoreChangesController.onPageLoad(srn))
+        }
       case CompanyReviewId(_) =>
         NavigateTo.dontSave(controllers.register.establishers.routes.AddEstablisherController.onPageLoad(mode, srn))
       case CheckYourAnswersId(index) =>

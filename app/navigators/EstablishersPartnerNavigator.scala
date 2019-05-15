@@ -78,7 +78,7 @@ class EstablishersPartnerNavigator @Inject()(val dataCacheConnector: UserAnswers
           anyMoreChanges(srn)
       }
     case CheckYourAnswersId(establisherIndex, partnerIndex) =>
-      listOrAnyMoreChange(establisherIndex, mode, srn)(from.userAnswers)
+      NavigateTo.dontSave(controllers.register.establishers.partnership.routes.AddPartnersController.onPageLoad(mode, establisherIndex, srn))
     case _ =>
       None
   }
@@ -177,18 +177,4 @@ class EstablishersPartnerNavigator @Inject()(val dataCacheConnector: UserAnswers
       NavigateTo.dontSave(controllers.register.establishers.partnership.routes.OtherPartnersController.onPageLoad(mode, index, srn))
     }
   }
-
-  private def listOrAnyMoreChange(establisherIndex: Int, mode: Mode, srn: Option[String])(answers: UserAnswers): Option[NavigateTo] = {
-    mode match {
-      case CheckMode | NormalMode =>
-        NavigateTo.dontSave(controllers.register.establishers.partnership.routes.AddPartnersController.onPageLoad(mode, establisherIndex, srn))
-      case _ => answers.get(IsEstablisherNewId(establisherIndex)) match {
-        case Some(true) =>
-          NavigateTo.dontSave(controllers.register.establishers.partnership.routes.AddPartnersController.onPageLoad(mode, establisherIndex, srn))
-        case _ =>
-          anyMoreChanges(srn)
-      }
-    }
-  }
-
 }

@@ -79,7 +79,7 @@ class EstablishersPartnerNavigatorSpec extends SpecBase with NavigatorBehaviour 
   private def editRoutes(mode:Mode): TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = commonRoutes(mode) ++ Table(
     ("Id", "User Answers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (Check Mode)", "Save (CM)"),
     (ConfirmDeletePartnerId(0), emptyAnswers, anyMoreChanges, false, None, false),
-    (CheckYourAnswersId(0, 0), emptyAnswers, anyMoreChanges, true, None, true),
+    (CheckYourAnswersId(0, 0), emptyAnswers, addPartners(mode), true, None, true),
     (AddPartnersId(0), addPartnersFalse, anyMoreChanges, true, Some(anyMoreChanges), true),
     (AddPartnersId(0), addPartnersFalseNewDir, partnershipReview(mode), true, Some(partnershipReview(checkMode(mode))), true)
   )

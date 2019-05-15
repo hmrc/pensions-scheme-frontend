@@ -26,10 +26,9 @@ import models.Mode
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Call}
-import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import utils.Navigator
 import utils.annotations.EstablishersPartner
-import utils.{Navigator, UserAnswers}
 import views.html.register.addPartners
 
 import scala.concurrent.{ExecutionContext, Future}

@@ -20,7 +20,6 @@ import com.google.inject.Inject
 import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
 import controllers.register.trustees.partnership.routes
-import identifiers.register.trustees.{IsTrusteeCompleteId, IsTrusteeNewId}
 import identifiers.register.trustees.IsTrusteeNewId
 import identifiers.register.trustees.partnership._
 import models.Mode.journeyMode
@@ -72,11 +71,7 @@ class TrusteesPartnershipNavigator @Inject()(val dataCacheConnector: UserAnswers
     case PartnershipContactDetailsId(index) =>
       NavigateTo.dontSave(routes.CheckYourAnswersController.onPageLoad(mode, index, srn))
     case CheckYourAnswersId(_) =>
-      if(mode == CheckMode || mode == NormalMode){
-        NavigateTo.dontSave(controllers.register.trustees.routes.AddTrusteeController.onPageLoad(mode, srn))
-      } else {
-        anyMoreChanges(srn)
-      }
+      NavigateTo.dontSave(controllers.register.trustees.routes.AddTrusteeController.onPageLoad(mode, srn))
     case _ =>
       None
   }

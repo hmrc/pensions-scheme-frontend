@@ -57,7 +57,7 @@ class EstablishersPartnershipNavigatorSpec extends SpecBase with NavigatorBehavi
     (PartnershipPreviousAddressListId(0),             emptyAnswers,                 partnershipPa(mode),                true,         Some(partnershipPa(checkMode(mode))),       true),
     (PartnershipPreviousAddressId(0),                 emptyAnswers,                 partnershipContact(mode),           true,         Some(exitJourney(mode, emptyAnswers)),               true),
     (PartnershipPreviousAddressId(0),                 newEstablisher,               partnershipContact(mode),           true,         Some(exitJourney(mode, newEstablisher)),               true),
-    (OtherPartnersId(0),                              emptyAnswers,                 partnershipReview(mode),            true,         Some(partnershipReview(mode)),              true)
+    (OtherPartnersId(0),                              emptyAnswers,                 if(mode == UpdateMode) anyMoreChanges else partnershipReview(mode),            true,         Some(partnershipReview(mode)),              true)
   )
 
   private def normalOnlyRoutes: TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = Table(

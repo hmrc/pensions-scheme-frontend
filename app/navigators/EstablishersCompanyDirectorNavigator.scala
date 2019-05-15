@@ -109,7 +109,7 @@ class EstablishersCompanyDirectorNavigator @Inject()(val dataCacheConnector: Use
             anyMoreChanges(srn)
         }
       case CheckYourAnswersId(establisherIndex, _) =>
-        listOrAnyMoreChange(establisherIndex, mode, srn)(from.userAnswers)
+        NavigateTo.dontSave(controllers.register.establishers.company.routes.AddCompanyDirectorsController.onPageLoad(mode, srn, establisherIndex))
       case AnyMoreChangesId => anyMoreChanges(srn)
       case _ => None
     }
@@ -141,19 +141,6 @@ class EstablishersCompanyDirectorNavigator @Inject()(val dataCacheConnector: Use
         exitMiniJourney(establisherIndex, directorIndex, mode, srn, answers)
       case None =>
         NavigateTo.dontSave(controllers.routes.SessionExpiredController.onPageLoad())
-    }
-  }
-
-  private def listOrAnyMoreChange(establisherIndex: Int, mode: Mode, srn: Option[String])(answers: UserAnswers): Option[NavigateTo] = {
-    mode match {
-      case CheckMode | NormalMode =>
-        NavigateTo.dontSave(controllers.register.establishers.company.routes.AddCompanyDirectorsController.onPageLoad(mode, srn, establisherIndex))
-      case _ => answers.get(IsEstablisherNewId(establisherIndex)) match {
-        case Some(true)=>
-          NavigateTo.dontSave(controllers.register.establishers.company.routes.AddCompanyDirectorsController.onPageLoad(mode, srn, establisherIndex))
-        case _ =>
-          anyMoreChanges(srn)
-      }
     }
   }
 }

@@ -68,7 +68,7 @@ class EstablishersCompanyDirectorNavigatorSpec extends SpecBase with NavigatorBe
   private def editRoutes(mode:Mode): TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = commonRoutes(mode) ++ Table(
     ("Id", "User Answers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (Check Mode)", "Save (CM)"),
     (ConfirmDeleteDirectorId(0), emptyAnswers, anyMoreChanges, false, None, false),
-    (CheckYourAnswersId(0, 0), emptyAnswers, anyMoreChanges, true, None, true),
+    (CheckYourAnswersId(0, 0), emptyAnswers, addCompanyDirectors(mode), true, None, true),
     (CheckYourAnswersId(0, 0), newEstablisher, addCompanyDirectors(mode), true, None, true)
   )
 
