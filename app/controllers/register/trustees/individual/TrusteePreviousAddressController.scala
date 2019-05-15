@@ -66,8 +66,7 @@ class TrusteePreviousAddressController @Inject()(
               title = Message(title),
               heading = Message(heading),
               secondaryHeader = Some(details.fullName),
-              srn = srn,
-              mode = mode
+              srn = srn
             )
         }
     }

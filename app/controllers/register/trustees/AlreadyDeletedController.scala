@@ -58,7 +58,6 @@ class AlreadyDeletedController @Inject()(
     title = Message("messages__alreadyDeleted__trustee_title"),
     deletedEntity = trusteeName,
     returnCall = controllers.register.trustees.routes.AddTrusteeController.onPageLoad(mode, srn),
-    mode = mode,
     srn = srn,
     schemeName = schemeName
   )

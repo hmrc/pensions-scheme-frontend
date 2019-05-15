@@ -61,8 +61,7 @@ class InsurerEnterPostcodeController @Inject()(val appConfig: FrontendAppConfig,
       "messages__insurer_enter_postcode__h1",
       None,
       None,
-      srn = srn,
-      mode = mode
+      srn = srn
     )
 
   def onPageLoad(mode: Mode, srn: Option[String]): Action[AnyContent] =

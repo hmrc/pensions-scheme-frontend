@@ -66,8 +66,7 @@ class CompanyPreviousAddressListController @Inject()(
           title = Message("messages__select_the_previous_address__title"),
           heading = Message("messages__select_the_previous_address__heading"),
           subHeading = Some(companyDetails.companyName),
-          srn = srn,
-          mode = mode
+          srn = srn
         )
     }.left.map(_ => Future.successful(Redirect(routes.CompanyPreviousAddressPostcodeLookupController.onPageLoad(mode, index, srn))))
   }
