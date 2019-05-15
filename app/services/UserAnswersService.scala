@@ -170,7 +170,6 @@ trait UserAnswersService {
             val addressCompletedId = getCompleteId[AddressYears](id)
             upsert(mode, srn, setCompleteForAddress(addressCompletedId, userAnswers, mode, srn).json).map(UserAnswers)
           case _ =>
-            println("\n\n\n userAnswers:"+userAnswers)
             Future.successful(userAnswers)
         }
       }.getOrElse(Future.successful(userAnswers))
