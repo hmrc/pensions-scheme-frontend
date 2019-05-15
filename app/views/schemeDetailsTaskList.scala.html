@@ -253,7 +253,11 @@
 
     <hr>
     <a id= "save-and-return" class="task-name" href="@appConfig.managePensionsSchemeOverviewUrl.url">
-        @messages("messages__complete__saveAndReturnToManagePensionSchemes")
+        @if(isVariations){
+            @messages("messages__complete__returnToManagePensionSchemes")
+        }else{
+            @messages("messages__complete__saveAndReturnToManagePensionSchemes")
+        }
     </a>
 
 }
