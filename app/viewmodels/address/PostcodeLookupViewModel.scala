@@ -29,6 +29,5 @@ case class PostcodeLookupViewModel(
                                     hint: Option[Message] = Some(Message("messages__common__address_lede")),
                                     enterPostcode: Message = Message("messages__common__postcode_lookup__enter_postcode"),
                                     formLabel: Message = Message("messages__common__postcode_lookup__address_postcode"),
-                                    srn: Option[String] = None,
-                                    mode: Mode = NormalMode
+                                    srn: Option[String] = None
                                   )

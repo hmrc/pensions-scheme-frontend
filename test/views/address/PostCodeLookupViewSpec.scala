@@ -51,7 +51,6 @@ class PostCodeLookupViewSpec extends QuestionViewBehaviours[Address] {
     heading = Message("messages__adviserPostCodeLookup__heading", "name"),
     subHeading = Some(Message("messages__adviserPostCodeLookupAddress__secondary")),
     enterPostcode = Message("messages__adviserPostCodeLookupAddress__enterPostCode"),
-    mode = UpdateMode,
     srn = Some("srn")
   )
 

@@ -66,8 +66,7 @@ class PartnershipAddressYearsController @Inject()(
     heading = Message("messages__partnershipAddressYears__heading"),
     legend = Message("messages__partnershipAddressYears__heading"),
     subHeading = Some(Message(partnershipName)),
-    srn = srn,
-    mode = mode
+    srn = srn
   )
 
 }

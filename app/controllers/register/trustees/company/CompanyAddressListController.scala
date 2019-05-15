@@ -65,8 +65,7 @@ class CompanyAddressListController @Inject()(override val appConfig: FrontendApp
         manualInputCall = routes.CompanyAddressController.onPageLoad(mode, index, srn),
         addresses = addresses,
         subHeading = Some(Message(companyDetails.companyName)),
-        srn = srn,
-        mode = mode
+        srn = srn
       )
     }.left.map(_ => Future.successful(Redirect(routes.CompanyPostCodeLookupController.onPageLoad(mode, index, srn))))
   }
