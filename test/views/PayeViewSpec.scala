@@ -30,25 +30,31 @@ class PayeViewSpec extends ViewBehaviours {
 
   val form = new PayeFormProvider()()
 
-  val viewmodel = PayeViewModel(
+  def viewmodel(srn:Option[String]) = PayeViewModel(
     postCall = Call("GET", "/"),
     title = Message("messages__partnershipPaye__title"),
     heading = Message("messages__partnershipPaye__heading"),
     hint = Some(Message("messages__common__paye_hint")),
-    subHeading = Some(Message("test company name"))
+    subHeading = Some(Message("test company name")),
+    srn = srn
   )
 
   def createView(): () => HtmlFormat.Appendable = () =>
-    paye(frontendAppConfig, form, viewmodel, None)(fakeRequest, messages)
+    paye(frontendAppConfig, form, viewmodel(None), None)(fakeRequest, messages)
+
+  def createUpdateView(): () => HtmlFormat.Appendable = () =>
+    paye(frontendAppConfig, form, viewmodel(Some("srn")), None)(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) =>
-    paye(frontendAppConfig, form, viewmodel, None)(fakeRequest, messages)
+    paye(frontendAppConfig, form, viewmodel(None), None)(fakeRequest, messages)
 
   "Paye view" when {
     "rendered" must {
       behave like normalPage(createView(), messageKeyPrefix, pageHeader = messages(s"messages__${messageKeyPrefix}__heading"))
 
       behave like pageWithReturnLink(createView(), getReturnLink)
+
+      behave like pageWithReturnLinkAndSrn(createUpdateView(), getReturnLinkWithSrn)
 
       val payeOptions = Seq("true", "false")
 

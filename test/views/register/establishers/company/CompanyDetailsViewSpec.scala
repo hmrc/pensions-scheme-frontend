@@ -35,6 +35,9 @@ class CompanyDetailsViewSpec extends QuestionViewBehaviours[CompanyDetails] {
   def createView(): () => HtmlFormat.Appendable = () =>
     companyDetails(frontendAppConfig, form, NormalMode, firstIndex, None, postCall(NormalMode, None, firstIndex), None)(fakeRequest, messages)
 
+  def createUpdateView(): () => HtmlFormat.Appendable = () =>
+    companyDetails(frontendAppConfig, form, NormalMode, firstIndex, None, postCall(NormalMode, None, firstIndex), Some("srn"))(fakeRequest, messages)
+
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) =>
     companyDetails(frontendAppConfig, form, NormalMode, firstIndex, None, postCall(NormalMode, None, firstIndex), None)(fakeRequest, messages)
 
@@ -46,5 +49,7 @@ class CompanyDetailsViewSpec extends QuestionViewBehaviours[CompanyDetails] {
       routes.CompanyDetailsController.onSubmit(NormalMode, None, firstIndex).url, "companyName")
 
     behave like pageWithReturnLink(createView(), getReturnLink)
+
+    behave like pageWithReturnLinkAndSrn(createUpdateView(), getReturnLinkWithSrn)
   }
 }

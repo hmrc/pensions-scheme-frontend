@@ -54,7 +54,7 @@ class UniqueTaxReferenceController @Inject()(
         retrieveEstablisherName(index) { _ =>
           val preparedForm = request.userAnswers.get(UniqueTaxReferenceId(index)).fold(form)(form.fill)
           val submitUrl = controllers.register.establishers.individual.routes.UniqueTaxReferenceController.onSubmit(mode, index, srn)
-          Future.successful(Ok(uniqueTaxReference(appConfig, preparedForm, mode, index, existingSchemeName, submitUrl)))
+          Future.successful(Ok(uniqueTaxReference(appConfig, preparedForm, mode, index, existingSchemeName, submitUrl, srn)))
         }
     }
 
@@ -65,7 +65,7 @@ class UniqueTaxReferenceController @Inject()(
           form.bindFromRequest().fold(
             (formWithErrors: Form[_]) => {
               val submitUrl = controllers.register.establishers.individual.routes.UniqueTaxReferenceController.onSubmit(mode, index, srn)
-              Future.successful(BadRequest(uniqueTaxReference(appConfig, formWithErrors, mode, index, existingSchemeName, submitUrl)))
+              Future.successful(BadRequest(uniqueTaxReference(appConfig, formWithErrors, mode, index, existingSchemeName, submitUrl, srn)))
             },
             (value) =>
               userAnswersService.save(

@@ -39,6 +39,9 @@ class DirectorDetailsViewSpec extends QuestionViewBehaviours[PersonDetails] {
   def createView(): () => HtmlFormat.Appendable = () =>
     directorDetails(frontendAppConfig, form, NormalMode, establisherIndex, directorIndex, None,
       postCall(NormalMode, establisherIndex, directorIndex, None), None)(fakeRequest, messages)
+  def createUpdateView(): () => HtmlFormat.Appendable = () =>
+    directorDetails(frontendAppConfig, form, NormalMode, establisherIndex, directorIndex, None,
+      postCall(NormalMode, establisherIndex, directorIndex, None), Some("srn"))(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) =>
     directorDetails(frontendAppConfig, form, NormalMode, establisherIndex, directorIndex, None,
@@ -122,5 +125,7 @@ class DirectorDetailsViewSpec extends QuestionViewBehaviours[PersonDetails] {
     }
 
     behave like pageWithReturnLink(createView(), getReturnLink)
+
+    behave like pageWithReturnLinkAndSrn(createUpdateView(), getReturnLinkWithSrn)
   }
 }

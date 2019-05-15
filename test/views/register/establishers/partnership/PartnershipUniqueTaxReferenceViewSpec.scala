@@ -34,12 +34,17 @@ class PartnershipUniqueTaxReferenceViewSpec extends ViewBehaviours {
   def createView(): () => HtmlFormat.Appendable = () =>
     partnershipUniqueTaxReference(frontendAppConfig, form, NormalMode, index, None, submitUrl, None)(fakeRequest, messages)
 
+  def createUpdateView(): () => HtmlFormat.Appendable = () =>
+    partnershipUniqueTaxReference(frontendAppConfig, form, NormalMode, index, None, submitUrl, Some("srn"))(fakeRequest, messages)
+
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) => partnershipUniqueTaxReference(frontendAppConfig, form,
     NormalMode, index, None, submitUrl, None)(fakeRequest, messages)
 
   "PartnershipUniqueTaxReference view" when {
     "rendered" must {
       behave like pageWithReturnLink(createView(), getReturnLink)
+
+      behave like pageWithReturnLinkAndSrn(createUpdateView(), getReturnLinkWithSrn)
 
       val utrOptions = Seq("true", "false")
 

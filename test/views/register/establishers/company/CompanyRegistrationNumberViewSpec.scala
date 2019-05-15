@@ -33,6 +33,9 @@ class CompanyRegistrationNumberViewSpec extends ViewBehaviours {
   private def createView() = () =>
     companyRegistrationNumber(frontendAppConfig, form, NormalMode, index, None, postCall(NormalMode, None, index), None)(fakeRequest, messages)
 
+  private def createUpdateView() = () =>
+    companyRegistrationNumber(frontendAppConfig, form, NormalMode, index, None, postCall(NormalMode, None, index), Some("srn"))(fakeRequest, messages)
+
   private def createViewUsingForm = (form: Form[_]) =>
     companyRegistrationNumber(frontendAppConfig, form, NormalMode, index, None, postCall(NormalMode, None, index), None)(fakeRequest, messages)
 
@@ -47,6 +50,8 @@ class CompanyRegistrationNumberViewSpec extends ViewBehaviours {
     }
 
     behave like pageWithReturnLink(createView(), getReturnLink)
+
+    behave like pageWithReturnLinkAndSrn(createUpdateView(), getReturnLinkWithSrn)
 
     "rendered" must {
       "contain radio buttons for the value" in {

@@ -41,6 +41,8 @@ class ConfirmDeleteEstablisherViewSpec extends YesNoViewBehaviours {
 
     behave like pageWithReturnLink(createView(), url = getReturnLink)
 
+    behave like pageWithReturnLinkAndSrn(createUpdateView(), getReturnLinkWithSrn)
+
     "have the correct hint text where specified" in {
       val hintText = "test hint"
       val doc = asDocument(createView(hintText = Some(hintText))())
@@ -73,6 +75,16 @@ object ConfirmDeleteEstablisherViewSpec extends ViewSpecBase {
       postCall,
       None,
       None
+    )(fakeRequest, messages)
+  private def createUpdateView(hintText:Option[String] = None) =
+    () => confirmDeleteEstablisher(
+      frontendAppConfig,
+      formLocal,
+      establisherName,
+      hintText,
+      postCall,
+      None,
+      Some("srn")
     )(fakeRequest, messages)
 
   def createViewUsingForm(hintText:Option[String] = None): Form[_] => HtmlFormat.Appendable = (form: Form[_]) =>
