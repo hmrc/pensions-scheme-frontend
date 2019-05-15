@@ -34,11 +34,11 @@ class DirectorNinoViewSpec extends ViewBehaviours {
 
   def createView(): () => HtmlFormat.Appendable = () =>
     directorNino(frontendAppConfig, form, NormalMode, establisherIndex, directorIndex, None,
-      postCall(NormalMode, establisherIndex, directorIndex, None))(fakeRequest, messages)
+      postCall(NormalMode, establisherIndex, directorIndex, None), None)(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) => directorNino(frontendAppConfig, form, NormalMode,
     establisherIndex, directorIndex, None,
-    postCall(NormalMode, establisherIndex, directorIndex, None))(fakeRequest, messages)
+    postCall(NormalMode, establisherIndex, directorIndex, None), None)(fakeRequest, messages)
 
   "DirectorNino view" when {
     "rendered" must {

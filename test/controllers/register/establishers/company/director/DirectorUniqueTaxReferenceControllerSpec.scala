@@ -112,7 +112,8 @@ class DirectorUniqueTaxReferenceControllerSpec extends ControllerSpecBase {
       establisherIndex,
       directorIndex,
       None,
-      postCall(NormalMode, establisherIndex, directorIndex, None)
+      postCall(NormalMode, establisherIndex, directorIndex, None),
+      None
     )(fakeRequest, messages).toString
 
   "DirectorUniqueTaxReference Controller" must {

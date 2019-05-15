@@ -72,7 +72,6 @@ class ConfirmDeleteEstablisherController @Inject()(
                     getHintText(establisherKind),
                     routes.ConfirmDeleteEstablisherController.onSubmit(mode, index, establisherKind, srn),
                     existingSchemeName,
-                    mode,
                     srn
                   )
                 )
@@ -138,7 +137,6 @@ class ConfirmDeleteEstablisherController @Inject()(
           getHintText(establisherKind),
           routes.ConfirmDeleteEstablisherController.onSubmit(mode, establisherIndex, establisherKind, srn),
           existingSchemeName,
-          mode,
           srn
         ))),
       value => {

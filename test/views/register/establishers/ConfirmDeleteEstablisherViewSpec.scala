@@ -71,6 +71,7 @@ object ConfirmDeleteEstablisherViewSpec extends ViewSpecBase {
       establisherName,
       hintText,
       postCall,
+      None,
       None
     )(fakeRequest, messages)
 
@@ -81,6 +82,7 @@ object ConfirmDeleteEstablisherViewSpec extends ViewSpecBase {
       establisherName,
       hintText,
       postCall,
+      None,
       None
     )(fakeRequest, messages)
 

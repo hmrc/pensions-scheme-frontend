@@ -34,11 +34,11 @@ class DirectorUniqueTaxReferenceViewSpec extends ViewBehaviours {
 
   def createView(): () => HtmlFormat.Appendable = () =>
     directorUniqueTaxReference(frontendAppConfig, form, NormalMode, establisherIndex, directorIndex, None,
-      postCall(NormalMode, establisherIndex, directorIndex, None))(fakeRequest, messages)
+      postCall(NormalMode, establisherIndex, directorIndex, None), None)(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) => directorUniqueTaxReference(frontendAppConfig, form,
     NormalMode, establisherIndex, directorIndex, None,
-    postCall(NormalMode, establisherIndex, directorIndex, None))(fakeRequest, messages)
+    postCall(NormalMode, establisherIndex, directorIndex, None), None)(fakeRequest, messages)
 
   "CompanyUniqueTaxReference view" when {
     "rendered" must {

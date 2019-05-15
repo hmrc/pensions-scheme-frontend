@@ -33,10 +33,10 @@ class CompanyDetailsViewSpec extends QuestionViewBehaviours[CompanyDetails] {
   private val postCall = routes.CompanyDetailsController.onSubmit _
 
   def createView(): () => HtmlFormat.Appendable = () =>
-    companyDetails(frontendAppConfig, form, NormalMode, firstIndex, None, postCall(NormalMode, None, firstIndex))(fakeRequest, messages)
+    companyDetails(frontendAppConfig, form, NormalMode, firstIndex, None, postCall(NormalMode, None, firstIndex), None)(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) =>
-    companyDetails(frontendAppConfig, form, NormalMode, firstIndex, None, postCall(NormalMode, None, firstIndex))(fakeRequest, messages)
+    companyDetails(frontendAppConfig, form, NormalMode, firstIndex, None, postCall(NormalMode, None, firstIndex), None)(fakeRequest, messages)
 
   "CompanyDetails view" must {
 

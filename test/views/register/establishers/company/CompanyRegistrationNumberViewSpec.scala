@@ -31,10 +31,10 @@ class CompanyRegistrationNumberViewSpec extends ViewBehaviours {
   private val postCall = routes.CompanyRegistrationNumberController.onSubmit _
 
   private def createView() = () =>
-    companyRegistrationNumber(frontendAppConfig, form, NormalMode, index, None, postCall(NormalMode, None, index))(fakeRequest, messages)
+    companyRegistrationNumber(frontendAppConfig, form, NormalMode, index, None, postCall(NormalMode, None, index), None)(fakeRequest, messages)
 
   private def createViewUsingForm = (form: Form[_]) =>
-    companyRegistrationNumber(frontendAppConfig, form, NormalMode, index, None, postCall(NormalMode, None, index))(fakeRequest, messages)
+    companyRegistrationNumber(frontendAppConfig, form, NormalMode, index, None, postCall(NormalMode, None, index), None)(fakeRequest, messages)
 
   "CompanyRegistrationNumber view" when {
     val crnOptions = Seq("true", "false")
