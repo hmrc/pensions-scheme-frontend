@@ -127,9 +127,9 @@ class HsTaskListHelperVariationsSpec extends HsTaskListHelperBehaviour {
       val helper = new HsTaskListHelperVariations(userAnswers, viewOnly = false, srn)
       helper.aboutSection(userAnswers) mustBe
         Seq(
-          SchemeDetailsTaskListSection(Some(false), Link(aboutMembersLinkText,
+          SchemeDetailsTaskListSection(None, Link(aboutMembersLinkText,
             controllers.routes.WhatYouWillNeedMembersController.onPageLoad().url), None),
-          SchemeDetailsTaskListSection(Some(false), Link(aboutBenefitsAndInsuranceLinkText,
+          SchemeDetailsTaskListSection(None, Link(aboutBenefitsAndInsuranceLinkText,
             controllers.routes.CheckYourAnswersBenefitsAndInsuranceController.onPageLoad(UpdateMode, srn).url), None)
         )
     }
@@ -274,11 +274,11 @@ class HsTaskListHelperVariationsSpec extends HsTaskListHelperBehaviour {
       val userAnswers = allEstablishers(isCompleteEstablisher = false)
       val helper = new HsTaskListHelperVariations(userAnswers, viewOnly = false, Some("test-srn"))
       helper.establishers(userAnswers) mustBe
-        Seq(SchemeDetailsTaskListSection(Some(false), Link(messages("messages__schemeTaskList__persons_details__link_text", "firstName lastName"),
+        Seq(SchemeDetailsTaskListSection(None, Link(messages("messages__schemeTaskList__persons_details__link_text", "firstName lastName"),
           controllers.register.establishers.individual.routes.EstablisherDetailsController.onPageLoad(UpdateMode, 0, srn).url), None),
-          SchemeDetailsTaskListSection(Some(false), Link(messages("messages__schemeTaskList__persons_details__link_text", "test company"),
+          SchemeDetailsTaskListSection(None, Link(messages("messages__schemeTaskList__persons_details__link_text", "test company"),
             controllers.register.establishers.company.routes.CompanyDetailsController.onPageLoad(UpdateMode, srn, 1).url), None),
-          SchemeDetailsTaskListSection(Some(false), Link(messages("messages__schemeTaskList__persons_details__link_text", "test partnership"),
+          SchemeDetailsTaskListSection(None, Link(messages("messages__schemeTaskList__persons_details__link_text", "test partnership"),
             controllers.register.establishers.partnership.routes.PartnershipDetailsController.onPageLoad(UpdateMode, 2, srn).url), None)
         )
     }
@@ -296,9 +296,9 @@ class HsTaskListHelperVariationsSpec extends HsTaskListHelperBehaviour {
               ))))))).asOpt.value
       val helper = new HsTaskListHelperVariations(userAnswers, viewOnly = false, Some("test-srn"))
       helper.establishers(userAnswers) mustBe
-        Seq(SchemeDetailsTaskListSection(Some(false), Link(messages("messages__schemeTaskList__persons_details__link_text", "firstName lastName"),
+        Seq(SchemeDetailsTaskListSection(None, Link(messages("messages__schemeTaskList__persons_details__link_text", "firstName lastName"),
           controllers.register.establishers.individual.routes.EstablisherDetailsController.onPageLoad(UpdateMode, 0, srn).url), None),
-          SchemeDetailsTaskListSection(Some(false), Link(messages("messages__schemeTaskList__persons_details__link_text", "test partnership"),
+          SchemeDetailsTaskListSection(None, Link(messages("messages__schemeTaskList__persons_details__link_text", "test partnership"),
             controllers.register.establishers.partnership.routes.PartnershipDetailsController.onPageLoad(UpdateMode, 2, srn).url), None)
         )
     }
@@ -323,11 +323,11 @@ class HsTaskListHelperVariationsSpec extends HsTaskListHelperBehaviour {
       val userAnswers = allTrustees(isCompleteTrustees = false)
       val helper = new HsTaskListHelperVariations(userAnswers, viewOnly = false, srn = Some("test-srn"))
       helper.trustees(userAnswers) mustBe
-        Seq(SchemeDetailsTaskListSection(Some(false), Link(messages("messages__schemeTaskList__persons_details__link_text", "firstName lastName"),
+        Seq(SchemeDetailsTaskListSection(None, Link(messages("messages__schemeTaskList__persons_details__link_text", "firstName lastName"),
           controllers.register.trustees.individual.routes.TrusteeDetailsController.onPageLoad(UpdateMode, 0, srn).url), None),
-          SchemeDetailsTaskListSection(Some(false), Link(messages("messages__schemeTaskList__persons_details__link_text", "test company"),
+          SchemeDetailsTaskListSection(None, Link(messages("messages__schemeTaskList__persons_details__link_text", "test company"),
             controllers.register.trustees.company.routes.CompanyDetailsController.onPageLoad(UpdateMode, 1, srn).url), None),
-          SchemeDetailsTaskListSection(Some(false), Link(messages("messages__schemeTaskList__persons_details__link_text", "test partnership"),
+          SchemeDetailsTaskListSection(None, Link(messages("messages__schemeTaskList__persons_details__link_text", "test partnership"),
             controllers.register.trustees.partnership.routes.TrusteeDetailsController.onPageLoad(UpdateMode, 2, srn).url), None)
         )
     }
@@ -345,9 +345,9 @@ class HsTaskListHelperVariationsSpec extends HsTaskListHelperBehaviour {
                 ))))))).asOpt.value
       val helper = new HsTaskListHelperVariations(userAnswers, viewOnly = false, srn = Some("test-srn"))
       helper.trustees(userAnswers) mustBe
-        Seq(SchemeDetailsTaskListSection(Some(false), Link(messages("messages__schemeTaskList__persons_details__link_text", "firstName lastName"),
+        Seq(SchemeDetailsTaskListSection(None, Link(messages("messages__schemeTaskList__persons_details__link_text", "firstName lastName"),
           controllers.register.trustees.individual.routes.TrusteeDetailsController.onPageLoad(UpdateMode, 0, srn).url), None),
-          SchemeDetailsTaskListSection(Some(false), Link(messages("messages__schemeTaskList__persons_details__link_text", "test partnership"),
+          SchemeDetailsTaskListSection(None, Link(messages("messages__schemeTaskList__persons_details__link_text", "test partnership"),
             controllers.register.trustees.partnership.routes.TrusteeDetailsController.onPageLoad(UpdateMode, 2, srn).url), None)
         )
     }
