@@ -20,6 +20,7 @@ import com.google.inject.Inject
 import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
 import controllers.register.establishers.partnership.partner._
+import identifiers.EstablishersOrTrusteesChangedId
 import identifiers.register.establishers.IsEstablisherNewId
 import identifiers.register.establishers.partnership.AddPartnersId
 import identifiers.register.establishers.partnership.partner._
@@ -40,7 +41,7 @@ class EstablishersPartnerNavigator @Inject()(val dataCacheConnector: UserAnswers
       case CheckMode | NormalMode =>
         checkYourAnswers(establisherIndex, partnerIndex, journeyMode(mode), srn)
       case _ =>
-        if(answers.get(IsNewPartnerId(establisherIndex, partnerIndex)).getOrElse(false))
+        if (answers.get(IsNewPartnerId(establisherIndex, partnerIndex)).getOrElse(false))
           checkYourAnswers(establisherIndex, partnerIndex, journeyMode(mode), srn)
         else anyMoreChanges(srn)
     }
@@ -84,8 +85,6 @@ class EstablishersPartnerNavigator @Inject()(val dataCacheConnector: UserAnswers
   }
 
   protected def editRoutes(from: NavigateFrom, mode: Mode, srn: Option[String]): Option[NavigateTo] = from.id match {
-    case AddPartnersId(establisherIndex) =>
-      addPartnerRoutes(mode, establisherIndex, from.userAnswers, srn)
     case PartnerDetailsId(establisherIndex, partnerIndex) =>
       exitMiniJourney(establisherIndex, partnerIndex, mode, srn, from.userAnswers)
     case PartnerNinoId(establisherIndex, partnerIndex) =>
@@ -162,13 +161,16 @@ class EstablishersPartnerNavigator @Inject()(val dataCacheConnector: UserAnswers
           mode match {
             case CheckMode | NormalMode =>
               NavigateTo.dontSave(controllers.register.establishers.partnership.routes.PartnershipReviewController.onPageLoad(mode, index, srn))
-            case _ =>
-              answers.get(IsEstablisherNewId(index)) match {
-                case Some(true) =>
-                  NavigateTo.dontSave(controllers.register.establishers.partnership.routes.PartnershipReviewController.onPageLoad(mode, index, srn))
-                case _ =>
+            case _ => answers.get(IsEstablisherNewId(index)) match {
+              case Some(true) =>
+                NavigateTo.dontSave(controllers.register.establishers.partnership.routes.PartnershipReviewController.onPageLoad(mode, index, srn))
+              case _ =>
+                if (answers.get(EstablishersOrTrusteesChangedId).contains(true)) {
                   anyMoreChanges(srn)
-              }
+                } else {
+                  NavigateTo.dontSave(controllers.routes.SchemeTaskListController.onPageLoad(mode, srn))
+                }
+            }
           }
         case _ => NavigateTo.dontSave(controllers.routes.SessionExpiredController.onPageLoad())
       }

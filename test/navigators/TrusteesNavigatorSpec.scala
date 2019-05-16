@@ -18,7 +18,7 @@ package navigators
 
 import base.SpecBase
 import connectors.FakeUserAnswersCacheConnector
-import identifiers.Identifier
+import identifiers.{EstablishersOrTrusteesChangedId, Identifier}
 import identifiers.register.trustees._
 import identifiers.register.trustees.individual.TrusteeDetailsId
 import models.person.PersonDetails
@@ -42,14 +42,14 @@ class TrusteesNavigatorSpec extends SpecBase with NavigatorBehaviour {
     (AddTrusteeId, addTrusteeTrue(1), trusteeKind(1, mode, srn), true, None, true),
     (AddTrusteeId, emptyAnswers, trusteeKind(0, mode, srn), true, None, true),
     (AddTrusteeId, trustees(10), moreThanTenTrustees(mode, srn), true, None, true),
-    (AddTrusteeId, addTrusteeFalse,
-      if(mode==UpdateMode) controllers.routes.AnyMoreChangesController.onPageLoad(srn) else taskList(mode, srn), false, None, false),
+    (AddTrusteeId, addTrusteeFalseWithChanges,
+      if (mode == UpdateMode) controllers.routes.AnyMoreChangesController.onPageLoad(srn) else taskList(mode, srn), false, None, false),
     (MoreThanTenTrusteesId, emptyAnswers,
-      if(mode==UpdateMode) controllers.routes.AnyMoreChangesController.onPageLoad(srn) else taskList(mode, srn), false, None, false),
+      if (mode == UpdateMode) controllers.routes.AnyMoreChangesController.onPageLoad(srn) else taskList(mode, srn), false, None, false),
     (TrusteeKindId(0), trusteeKindCompany, companyDetails(mode, srn), true, None, false),
     (TrusteeKindId(0), trusteeKindIndividual, trusteeDetails(mode, srn), true, None, false),
     (TrusteeKindId(0), emptyAnswers, sessionExpired, false, None, false),
-    (ConfirmDeleteTrusteeId, emptyAnswers, if(mode==UpdateMode) controllers.routes.AnyMoreChangesController.onPageLoad(srn) else addTrustee(mode, srn), true, None, false)
+    (ConfirmDeleteTrusteeId, emptyAnswers, if (mode == UpdateMode) controllers.routes.AnyMoreChangesController.onPageLoad(srn) else addTrustee(mode, srn), true, None, false)
   )
 
   private def normalOnlyRoutes: TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = Table(
@@ -61,9 +61,19 @@ class TrusteesNavigatorSpec extends SpecBase with NavigatorBehaviour {
     (HaveAnyTrusteesId, emptyAnswers, sessionExpired, false, None, false)
   )
 
+  private def updateOnlyRoutes(): TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = Table(
+    ("Id", "User Answers", "Next Page (UpdateMode Mode)", "Save (NM)", "Next Page (Check Mode)", "Save (CM)"),
+    (AddTrusteeId, addTrusteeFalse, taskList(UpdateMode, srn), false, None, false)
+  )
+
   private def normalRoutes: TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = Table(
     ("Id", "User Answers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (Check Mode)", "Save (CM)"),
     normalOnlyRoutes ++ routes(NormalMode, None): _*
+  )
+
+  private def updateRoutes() = Table(
+    ("Id", "User Answers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (Check Mode)", "Save (CM)"),
+    routes(UpdateMode, srn) ++ updateOnlyRoutes: _*
   )
 
 
@@ -72,7 +82,7 @@ class TrusteesNavigatorSpec extends SpecBase with NavigatorBehaviour {
   s"${navigator.getClass.getSimpleName}" must {
     appRunning()
     behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, normalRoutes, dataDescriber)
-    behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, routes(UpdateMode, srn), dataDescriber, UpdateMode, srn)
+    behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, updateRoutes(), dataDescriber, UpdateMode, srn)
     behave like nonMatchingNavigator(navigator)
   }
 }
@@ -85,6 +95,8 @@ object TrusteesNavigatorSpec extends OptionValues with Enumerable.Implicits {
   private val srn = Some(srnValue)
 
   private def addTrusteeFalse = emptyAnswers.addTrustee(false)
+
+  private def addTrusteeFalseWithChanges = emptyAnswers.set(EstablishersOrTrusteesChangedId)(true).asOpt.value.addTrustee(false)
 
   private def addTrusteeTrue(howMany: Int) = emptyAnswers.addTrustee(true).trustees(howMany)
 

@@ -19,7 +19,7 @@ package navigators
 import base.SpecBase
 import connectors.FakeUserAnswersCacheConnector
 import controllers.register.establishers.partnership.partner._
-import identifiers.Identifier
+import identifiers.{EstablishersOrTrusteesChangedId, Identifier}
 import identifiers.register.establishers.{EstablishersId, IsEstablisherNewId}
 import identifiers.register.establishers.partnership.partner._
 import identifiers.register.establishers.partnership.{AddPartnersId, PartnershipDetailsId, partner}
@@ -42,10 +42,10 @@ class EstablishersPartnerNavigatorSpec extends SpecBase with NavigatorBehaviour 
 
   private def commonRoutes(mode: Mode): TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = Table(
     ("Id", "User Answers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (Check Mode)", "Save (CM)"),
-    (AddPartnersId(0), emptyAnswers, partnerDetails(0, mode), true, Some(partnerDetails(0, checkMode(mode))), true),
-    (AddPartnersId(0), addPartnersTrue, partnerDetails(1, mode), true, Some(partnerDetails(1, checkMode(mode))), true),
-    (AddPartnersId(0), addOnePartner, sessionExpired, false, Some(sessionExpired), false),
-    (AddPartnersId(0), addPartnersMoreThan10, otherPartners(mode), true, Some(otherPartners(checkMode(mode))), true),
+    (AddPartnersId(0), emptyAnswers, partnerDetails(0, mode), true, None, true),
+    (AddPartnersId(0), addPartnersTrue, partnerDetails(1, mode), true, None, true),
+    (AddPartnersId(0), addOnePartner, sessionExpired, false, None, false),
+    (AddPartnersId(0), addPartnersMoreThan10, otherPartners(mode), true, None, true),
     (PartnerDetailsId(0, 0), emptyAnswers, partnerNino(mode), true, Some(exitJourney(mode, emptyAnswers)), true),
     (PartnerDetailsId(0, 0), newPartner, partnerNino(mode), true, Some(exitJourney(mode, newPartner)), true),
     (PartnerNinoId(0, 0), emptyAnswers, partnerUtr(mode), true, Some(exitJourney(mode, emptyAnswers)), true),
@@ -73,15 +73,16 @@ class EstablishersPartnerNavigatorSpec extends SpecBase with NavigatorBehaviour 
     ("Id", "User Answers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (Check Mode)", "Save (CM)"),
     (ConfirmDeletePartnerId(0), emptyAnswers, addPartners(mode), false, None, false),
     (CheckYourAnswersId(0, 0), emptyAnswers, addPartners(mode), true, None, true),
-    (AddPartnersId(0), addPartnersFalse, partnershipReview(mode), true, Some(partnershipReview(checkMode(mode))), true)
+    (AddPartnersId(0), addPartnersFalse, partnershipReview(mode), true, None, true)
   )
 
   private def editRoutes(mode:Mode): TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = commonRoutes(mode) ++ Table(
     ("Id", "User Answers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (Check Mode)", "Save (CM)"),
     (ConfirmDeletePartnerId(0), emptyAnswers, anyMoreChanges, false, None, false),
     (CheckYourAnswersId(0, 0), emptyAnswers, addPartners(mode), true, None, true),
-    (AddPartnersId(0), addPartnersFalse, anyMoreChanges, true, Some(anyMoreChanges), true),
-    (AddPartnersId(0), addPartnersFalseNewDir, partnershipReview(mode), true, Some(partnershipReview(checkMode(mode))), true)
+    (AddPartnersId(0), addPartnersFalseWithChanges, anyMoreChanges, true, None, true),
+    (AddPartnersId(0), addPartnersFalseNewEst, partnershipReview(mode), true, None, true),
+    (AddPartnersId(0), addPartnersFalse, taskList, true, None, true)
   )
 
   navigator.getClass.getSimpleName must {
@@ -120,10 +121,13 @@ object EstablishersPartnerNavigatorSpec extends OptionValues {
       )
     )
   }
-
+  private def taskList: Call = controllers.routes.SchemeTaskListController.onPageLoad(UpdateMode, None)
   private val addPartnersTrue = UserAnswers(validData(johnDoe)).set(AddPartnersId(0))(true).asOpt.value
   private val addPartnersFalse = UserAnswers(validData(johnDoe)).set(AddPartnersId(0))(false).asOpt.value
-  private val addPartnersFalseNewDir = UserAnswers(validData(johnDoe)).set(AddPartnersId(0))(false)
+  private val addPartnersFalseWithChanges = UserAnswers(validData(johnDoe)).
+    set(AddPartnersId(0))(false).flatMap(_.set(EstablishersOrTrusteesChangedId)(true))
+    .asOpt.value
+  private val addPartnersFalseNewEst = UserAnswers(validData(johnDoe)).set(AddPartnersId(0))(false)
     .flatMap(_.set(IsEstablisherNewId(0))(true)).asOpt.value
   private val addPartnersMoreThan10 = UserAnswers(validData(Seq.fill(10)(johnDoe): _*))
   private val addOnePartner = UserAnswers(validData(johnDoe))

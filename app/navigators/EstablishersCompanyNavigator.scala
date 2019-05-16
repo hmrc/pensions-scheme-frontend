@@ -19,6 +19,7 @@ package navigators
 import com.google.inject.Inject
 import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
+import identifiers.EstablishersOrTrusteesChangedId
 import identifiers.register.establishers.IsEstablisherNewId
 import identifiers.register.establishers.company._
 import models.Mode._
@@ -189,7 +190,11 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
               case Some(true) =>
                 NavigateTo.dontSave(controllers.register.establishers.company.routes.CompanyReviewController.onPageLoad(mode, srn, index))
               case _ =>
-                anyMoreChanges(srn)
+                if(answers.get(EstablishersOrTrusteesChangedId).contains(true)){
+                  anyMoreChanges(srn)
+                } else {
+                  NavigateTo.dontSave(controllers.routes.SchemeTaskListController.onPageLoad(mode, srn))
+                }
             }
           }
         case _ => NavigateTo.dontSave(controllers.routes.SessionExpiredController.onPageLoad())
