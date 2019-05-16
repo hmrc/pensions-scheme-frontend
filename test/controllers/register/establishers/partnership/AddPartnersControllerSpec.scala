@@ -16,7 +16,6 @@
 
 package controllers.register.establishers.partnership
 
-import services.FakeUserAnswersService
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.register.AddPartnersFormProvider
@@ -56,7 +55,6 @@ class AddPartnersControllerSpec extends ControllerSpecBase {
     new AddPartnersController(
       frontendAppConfig,
       messagesApi,
-      FakeUserAnswersService,
       navigator,
       FakeAuthAction,
       dataRetrievalAction,
@@ -116,7 +114,7 @@ class AddPartnersControllerSpec extends ControllerSpecBase {
           val result = controller(getRelevantData).onPageLoad(NormalMode, establisherIndex, None)(fakeRequest)
 
           contentAsString(result) mustBe viewAsString(form,
-            Seq(PartnerEntity(PartnerDetailsId(0, 0), johnDoe.fullName, isDeleted = false, isCompleted = false, isNewEntity = true, 1)))
+            Seq(PartnerEntity(PartnerDetailsId(0, 0), johnDoe.fullName, isDeleted = false, isCompleted = false, isNewEntity = false, 1)))
         }
     }
 
@@ -145,38 +143,25 @@ class AddPartnersControllerSpec extends ControllerSpecBase {
 
       status(result) mustBe BAD_REQUEST
       contentAsString(result) mustBe viewAsString(boundForm,
-        Seq(PartnerEntity(PartnerDetailsId(0, 0), johnDoe.fullName, isDeleted = false, isCompleted = false, isNewEntity = true, 1)))
-    }
-
-    "set the user answer when partners exist and valid data is submitted" in {
-      FakeUserAnswersService.reset()
-      val getRelevantData = new FakeDataRetrievalAction(Some(validData(johnDoe)))
-      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "true"))
-      val navigator = fakeNavigator()
-      val result = controller(getRelevantData, navigator).onSubmit(NormalMode, establisherIndex, None)(postRequest)
-
-      status(result) mustBe SEE_OTHER
-      FakeUserAnswersService.verify(AddPartnersId(firstIndex), true)
+        Seq(PartnerEntity(PartnerDetailsId(0, 0), johnDoe.fullName, isDeleted = false, isCompleted = false, isNewEntity = false, 1)))
     }
 
     "redirect to the next page when maximum partners exist and the user submits" in {
-      FakeUserAnswersService.reset()
       val partners = Seq.fill(maxPartners)(johnDoe)
       val getRelevantData = new FakeDataRetrievalAction(Some(validData(partners: _*)))
       val result = controller(getRelevantData).onSubmit(NormalMode, establisherIndex, None)(fakeRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
-      FakeUserAnswersService.verifyNot(AddPartnersId(firstIndex))
     }
 
     "populate the view with partners when they exist" in {
       val partners = Seq(johnDoe, joeBloggs)
       val partnersViewModel = Seq(
         PartnerEntity(
-          PartnerDetailsId(0, 0), johnDoe.fullName, isDeleted = false, isCompleted = false, isNewEntity = true, 2),
+          PartnerDetailsId(0, 0), johnDoe.fullName, isDeleted = false, isCompleted = false, isNewEntity = false, 2),
         PartnerEntity(
-          PartnerDetailsId(0, 1), joeBloggs.fullName, isDeleted = false, isCompleted = false, isNewEntity = true, 2))
+          PartnerDetailsId(0, 1), joeBloggs.fullName, isDeleted = false, isCompleted = false, isNewEntity = false, 2))
       val getRelevantData = new FakeDataRetrievalAction(Some(validData(partners: _*)))
       val result = controller(getRelevantData).onPageLoad(NormalMode, establisherIndex, None)(fakeRequest)
 

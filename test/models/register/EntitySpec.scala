@@ -102,7 +102,7 @@ class EntitySpec extends WordSpecLike with MustMatchers with OptionValues {
         isNewEntity = true,
         1
       )
-      val expectedEditLink = controllers.register.establishers.partnership.routes.CheckYourAnswersController.onPageLoad(NormalMode, 1, None).url
+      val expectedEditLink = controllers.register.establishers.partnership.routes.PartnershipReviewController.onPageLoad(NormalMode, 1, None).url
       completedCompanyEntity.editLink(NormalMode, None) mustBe Some(expectedEditLink)
     }
 
@@ -166,7 +166,7 @@ class EntitySpec extends WordSpecLike with MustMatchers with OptionValues {
         isNewEntity = true,
         1
       )
-      val expectedEditLink = controllers.register.establishers.company.routes.CheckYourAnswersController.onPageLoad(NormalMode, None, 1).url
+      val expectedEditLink = controllers.register.establishers.company.routes.CompanyReviewController.onPageLoad(NormalMode, None, 1).url
       completedCompanyEntity.editLink(NormalMode, None) mustBe Some(expectedEditLink)
     }
 

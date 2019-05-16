@@ -20,10 +20,10 @@ import services.FakeUserAnswersService
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.address.AddressYearsFormProvider
-import identifiers.register.establishers.{EstablishersId, IsEstablisherAddressCompleteId}
+import identifiers.register.establishers.{EstablishersId, IsEstablisherAddressCompleteId, IsEstablisherCompleteId}
 import identifiers.register.establishers.individual.{AddressYearsId, EstablisherDetailsId}
 import models.person.PersonDetails
-import models.{AddressYears, Index, NormalMode}
+import models.{AddressYears, Index, NormalMode, UpdateMode}
 import org.joda.time.LocalDate
 import play.api.data.Form
 import play.api.libs.json.Json
@@ -112,19 +112,19 @@ class AddressYearsControllerSpec extends ControllerSpecBase {
     "redirect to the next page when valid data is submitted with over_a_year" in {
       FakeUserAnswersService.reset()
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", AddressYears.options.tail.head.value))
-      val result = controller().onSubmit(NormalMode, firstIndex, None)(postRequest)
+      val result = controller().onSubmit(UpdateMode, firstIndex, None)(postRequest)
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
-      FakeUserAnswersService.verify(IsEstablisherAddressCompleteId(firstIndex), true)
+      FakeUserAnswersService.userAnswer.get(IsEstablisherCompleteId(firstIndex)).value mustBe true
     }
 
     "redirect to the next page when valid data is submitted with under_a_year" in {
       FakeUserAnswersService.reset()
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", AddressYears.options.head.value))
-      val result = controller().onSubmit(NormalMode, firstIndex, None)(postRequest)
+      val result = controller().onSubmit(UpdateMode, firstIndex, None)(postRequest)
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
-      FakeUserAnswersService.verifyNot(IsEstablisherAddressCompleteId(firstIndex))
+      FakeUserAnswersService.userAnswer.get(IsEstablisherCompleteId(firstIndex)) mustBe None
     }
 
     "return a Bad Request and errors when invalid data is submitted" in {

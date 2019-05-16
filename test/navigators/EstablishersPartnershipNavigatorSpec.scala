@@ -20,6 +20,7 @@ import base.SpecBase
 import connectors.FakeUserAnswersCacheConnector
 import controllers.register.establishers.partnership.routes
 import identifiers.Identifier
+import identifiers.register.establishers.IsEstablisherNewId
 import identifiers.register.establishers.partnership._
 import models.Mode.checkMode
 import models.{AddressYears, Mode, NormalMode, UpdateMode}
@@ -35,33 +36,40 @@ class EstablishersPartnershipNavigatorSpec extends SpecBase with NavigatorBehavi
   import EstablishersPartnershipNavigatorSpec._
 
   private def routes(mode: Mode): TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = Table(
-    ("Id", "User Answers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (Check Mode)", "Save (CM)"),
-    (PartnershipDetailsId(0), emptyAnswers, partnershipVat(mode), true, Some(exitJourney(mode)), true),
-    (PartnershipVatId(0), emptyAnswers, partnershipPaye(mode), true, Some(exitJourney(mode)), true),
-    (PartnershipPayeId(0), emptyAnswers, partnershipUtr(mode), true, Some(exitJourney(mode)), true),
-    (PartnershipUniqueTaxReferenceID(0), emptyAnswers, partnershipPostcodeLookup(mode), true, Some(exitJourney(mode)), true),
-    (PartnershipPostcodeLookupId(0), emptyAnswers, partnershipAddressList(mode), true, Some(partnershipAddressList(checkMode(mode))), true),
-    (PartnershipAddressListId(0), emptyAnswers, partnershipAddress(mode), true, Some(partnershipAddress(checkMode(mode))), true),
-    (PartnershipAddressId(0), emptyAnswers, partnershipAddressYears(mode), true, Some(exitJourney(mode)), true),
-    (PartnershipAddressYearsId(0), addressYearsOverAYear, partnershipContact(mode), true, Some(exitJourney(mode)), true),
-    (PartnershipAddressYearsId(0), addressYearsUnderAYear, partnershipPaPostCodeLookup(mode), true, Some(partnershipPaPostCodeLookup(checkMode(mode))), true),
-    (PartnershipAddressYearsId(0), emptyAnswers, sessionExpired, false, Some(sessionExpired), false),
-    (PartnershipPreviousAddressPostcodeLookupId(0), emptyAnswers, partnershipPaList(mode), true, Some(partnershipPaList(checkMode(mode))), true),
-    (PartnershipPreviousAddressListId(0), emptyAnswers, partnershipPa(mode), true, Some(partnershipPa(checkMode(mode))), true),
-    (PartnershipPreviousAddressId(0), emptyAnswers, partnershipContact(mode), true, Some(exitJourney(mode)), true),
-    (OtherPartnersId(0), emptyAnswers, partnershipReview(mode), true, Some(partnershipReview(mode)), true)
+    ("Id",                                          "User Answers",               "Next Page (Normal Mode)",                "Save (NM)",  "Next Page (Check Mode)",         "Save (CM)"),
+    (PartnershipDetailsId(0),                         emptyAnswers,                 partnershipVat(mode),               true,         Some(exitJourney(mode, emptyAnswers)),             true),
+    (PartnershipDetailsId(0),                         newEstablisher,               partnershipVat(mode),               true,         Some(exitJourney(mode, newEstablisher)),             true),
+    (PartnershipVatId(0),                             emptyAnswers,                 partnershipPaye(mode),              true,         Some(exitJourney(mode, emptyAnswers)),             true),
+    (PartnershipVatId(0),                             newEstablisher,               partnershipPaye(mode),              true,         Some(exitJourney(mode, newEstablisher)),             true),
+    (PartnershipPayeId(0),                            emptyAnswers,                 partnershipUtr(mode),               true,         Some(exitJourney(mode, emptyAnswers)),             true),
+    (PartnershipPayeId(0),                            newEstablisher,               partnershipUtr(mode),               true,         Some(exitJourney(mode, newEstablisher)),             true),
+    (PartnershipUniqueTaxReferenceID(0),              emptyAnswers,                 partnershipPostcodeLookup(mode),    true,         Some(exitJourney(mode, emptyAnswers)),              true),
+    (PartnershipUniqueTaxReferenceID(0),              newEstablisher,               partnershipPostcodeLookup(mode),    true,         Some(exitJourney(mode, newEstablisher)),              true),
+    (PartnershipPostcodeLookupId(0),                  emptyAnswers,                 partnershipAddressList(mode),       true,         Some(partnershipAddressList(checkMode(mode))), true),
+    (PartnershipAddressListId(0),                     emptyAnswers,                 partnershipAddress(mode),           true,         Some(partnershipAddress(checkMode(mode))), true),
+    (PartnershipAddressId(0),                         emptyAnswers,                 partnershipAddressYears(mode),      true,         if(mode == UpdateMode) Some(partnershipAddressYears(checkMode(UpdateMode))) else Some(checkYourAnswers(NormalMode)),               true),
+    (PartnershipAddressId(0),                         newEstablisher,               partnershipAddressYears(mode),      true,         Some(checkYourAnswers(mode)),               true),
+    (PartnershipAddressYearsId(0),                    addressYearsOverAYear,        partnershipContact(mode),           true,         Some(exitJourney(mode, addressYearsOverAYear)),               true),
+    (PartnershipAddressYearsId(0),                    addressYearsOverAYearNew,     partnershipContact(mode),           true,         Some(exitJourney(mode, addressYearsOverAYearNew)),               true),
+    (PartnershipAddressYearsId(0),                    addressYearsUnderAYear,       partnershipPaPostCodeLookup(mode),  true,         Some(partnershipPaPostCodeLookup(checkMode(mode))), true),
+    (PartnershipAddressYearsId(0),                    emptyAnswers,                 sessionExpired,                     false,        Some(sessionExpired),                 false),
+    (PartnershipPreviousAddressPostcodeLookupId(0),   emptyAnswers,                 partnershipPaList(mode),            true,         Some(partnershipPaList(checkMode(mode))),   true),
+    (PartnershipPreviousAddressListId(0),             emptyAnswers,                 partnershipPa(mode),                true,         Some(partnershipPa(checkMode(mode))),       true),
+    (PartnershipPreviousAddressId(0),                 emptyAnswers,                 partnershipContact(mode),           true,         Some(exitJourney(mode, emptyAnswers)),               true),
+    (PartnershipPreviousAddressId(0),                 newEstablisher,               partnershipContact(mode),           true,         Some(exitJourney(mode, newEstablisher)),               true),
+    (OtherPartnersId(0),                              emptyAnswers,                 if(mode == UpdateMode) anyMoreChanges else partnershipReview(mode),            true,         Some(partnershipReview(mode)),              true)
   )
 
   private def normalOnlyRoutes: TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = Table(
     ("Id", "User Answers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (Check Mode)", "Save (CM)"),
-    (PartnershipContactDetailsId(0), emptyAnswers, isDormant, true, Some(checkYourAnswers(NormalMode)), true),
+    (PartnershipContactDetailsId(0), emptyAnswers, isDormant, true, Some(exitJourney(NormalMode, emptyAnswers)), true),
     (IsPartnershipDormantId(0), emptyAnswers, checkYourAnswers(NormalMode), true, Some(checkYourAnswers(NormalMode)), true),
     (PartnershipReviewId(0), emptyAnswers, addEstablisher(NormalMode), false, None, true)
   )
 
   private def updateOnlyRoutes: TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = Table(
     ("Id", "User Answers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (Check Mode)", "Save (CM)"),
-    (PartnershipContactDetailsId(0), emptyAnswers, checkYourAnswers(UpdateMode), true, Some(checkYourAnswers(UpdateMode)), true),
+    (PartnershipContactDetailsId(0), emptyAnswers, checkYourAnswers(UpdateMode), true, Some(exitJourney(UpdateMode, emptyAnswers)), true),
     (PartnershipReviewId(0), emptyAnswers, anyMoreChanges, false, None, true)
   )
 
@@ -88,6 +96,7 @@ class EstablishersPartnershipNavigatorSpec extends SpecBase with NavigatorBehavi
 
 object EstablishersPartnershipNavigatorSpec extends OptionValues {
   private val emptyAnswers = UserAnswers(Json.obj())
+  private val newEstablisher = UserAnswers(Json.obj()).set(IsEstablisherNewId(0))(true).asOpt.value
 
   private def partnershipVat(mode: Mode) = routes.PartnershipVatController.onPageLoad(mode, 0, None)
 
@@ -95,7 +104,10 @@ object EstablishersPartnershipNavigatorSpec extends OptionValues {
 
   private def anyMoreChanges = controllers.routes.AnyMoreChangesController.onPageLoad(None)
 
-  private def exitJourney(mode: Mode) = checkYourAnswers(mode)
+  private def exitJourney(mode: Mode, answers: UserAnswers) = if (mode == NormalMode) checkYourAnswers(mode) else {
+    if(answers.get(IsEstablisherNewId(0)).getOrElse(false)) checkYourAnswers(mode)
+    else anyMoreChanges
+  }
 
   private def partnershipPaye(mode: Mode) = routes.PartnershipPayeController.onPageLoad(mode, 0, None)
 
@@ -129,6 +141,8 @@ object EstablishersPartnershipNavigatorSpec extends OptionValues {
 
   private def taskList: Call = controllers.routes.SchemeTaskListController.onPageLoad(NormalMode, None)
 
+  private val addressYearsOverAYearNew = UserAnswers(Json.obj())
+    .set(PartnershipAddressYearsId(0))(AddressYears.OverAYear).flatMap(_.set(IsEstablisherNewId(0))(true)).asOpt.value
   private val addressYearsOverAYear = UserAnswers(Json.obj())
     .set(PartnershipAddressYearsId(0))(AddressYears.OverAYear).asOpt.value
   private val addressYearsUnderAYear = UserAnswers(Json.obj())

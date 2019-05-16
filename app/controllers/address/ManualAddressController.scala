@@ -25,6 +25,7 @@ import models.address.{Address, TolerantAddress}
 import models.requests.DataRequest
 import play.api.data.Form
 import play.api.i18n.I18nSupport
+import play.api.libs.json.JsValue
 import play.api.mvc.{AnyContent, Call, Result}
 import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
@@ -79,7 +80,7 @@ trait ManualAddressController extends FrontendController with Retrievals with I1
 
         val auditEvent = AddressEvent.addressEntryEvent(request.externalId, address, existingAddress, selectedAddress, context)
 
-        userAnswersService.remove(mode, viewModel.srn, postCodeLookupIdForCleanup)
+        removePostCodeLookupAddress(mode, viewModel.srn, postCodeLookupIdForCleanup)
           .flatMap { _ =>
             userAnswersService.save(mode, viewModel.srn, id, address).flatMap {
               cacheMap =>
@@ -92,6 +93,15 @@ trait ManualAddressController extends FrontendController with Retrievals with I1
           }
       }
     )
+  }
+
+  private def removePostCodeLookupAddress(mode: Mode, srn: Option[String], postCodeLookupId: TypedIdentifier[Seq[TolerantAddress]])
+                                         (implicit request: DataRequest[AnyContent]): Future[JsValue] = {
+    if(request.userAnswers.get(postCodeLookupId).nonEmpty) {
+      userAnswersService.remove(mode, srn, postCodeLookupId)
+    } else {
+      Future(request.userAnswers.json)
+    }
   }
 
   protected def clear(id: TypedIdentifier[Address],

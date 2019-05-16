@@ -19,10 +19,11 @@ package navigators
 import base.SpecBase
 import connectors.FakeUserAnswersCacheConnector
 import identifiers.Identifier
+import identifiers.register.establishers.IsEstablisherNewId
 import identifiers.register.establishers.individual._
 import identifiers.register.trustees.HaveAnyTrusteesId
 import models._
-import models.Mode.checkMode
+import models.Mode._
 import models.register.SchemeType
 import org.scalatest.prop.TableFor6
 import org.scalatest.{MustMatchers, OptionValues}
@@ -34,22 +35,33 @@ class EstablishersIndividualNavigatorSpec extends SpecBase with MustMatchers wit
 
   import EstablishersIndividualNavigatorSpec._
 
-  private def routes(mode: Mode): TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = Table(
-    ("Id", "User Answers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (Check Mode)", "Save (CM)"),
-    (EstablisherDetailsId(0), emptyAnswers, establisherNino(mode), true, Some(exitJourney(mode)), true),
-    (EstablisherNinoId(0), emptyAnswers, establisherUtr(mode), true, Some(exitJourney(mode)), true),
-    (UniqueTaxReferenceId(0), emptyAnswers, postCodeLookup(mode), true, Some(exitJourney(mode)), true),
-    (PostCodeLookupId(0), emptyAnswers, addressList(mode), true, Some(addressList(checkMode(mode))), true),
-    (AddressListId(0), emptyAnswers, address(mode), true, Some(address(checkMode(mode))), true),
-    (AddressId(0), emptyAnswers, addressYears(mode), true, Some(exitJourney(mode)), true),
-    (AddressYearsId(0), addressYearsOverAYear, contactDetails(mode), true, Some(exitJourney(mode)), true),
-    (AddressYearsId(0), addressYearsUnderAYear, previousAddressPostCodeLookup(mode), true, Some(previousAddressPostCodeLookup(checkMode(mode))), true),
-    (AddressYearsId(0), emptyAnswers, sessionExpired, false, Some(sessionExpired), false),
-    (PreviousPostCodeLookupId(0), emptyAnswers, previousAddressAddressList(mode), true, Some(previousAddressAddressList(checkMode(mode))), true),
-    (PreviousAddressListId(0), emptyAnswers, previousAddress(mode), true, Some(previousAddress(checkMode(mode))), true),
-    (PreviousAddressId(0), emptyAnswers, contactDetails(mode), true, Some(exitJourney(mode)), true),
-    (CheckYourAnswersId, emptyAnswers, if(mode==UpdateMode) controllers.routes.AnyMoreChangesController.onPageLoad(None) else addEstablisher(mode), false, None, true)
-  )
+  private def routes(mode: Mode): TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = {
+    Table(
+      ("Id", "User Answers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (Check Mode)", "Save (CM)"),
+      (EstablisherDetailsId(0), emptyAnswers, establisherNino(mode), true, Some(exitJourney(mode, emptyAnswers)), true),
+      (EstablisherDetailsId(0), newEstablisher, establisherNino(mode), true, Some(exitJourney(mode, newEstablisher)), true),
+      (EstablisherNinoId(0), emptyAnswers, establisherUtr(mode), true, Some(exitJourney(mode, emptyAnswers)), true),
+      (EstablisherNinoId(0), newEstablisher, establisherUtr(mode), true, Some(exitJourney(mode, newEstablisher)), true),
+      (UniqueTaxReferenceId(0), emptyAnswers, postCodeLookup(mode), true, Some(exitJourney(mode, emptyAnswers)), true),
+      (UniqueTaxReferenceId(0), newEstablisher, postCodeLookup(mode), true, Some(exitJourney(mode, newEstablisher)), true),
+      (PostCodeLookupId(0), emptyAnswers, addressList(mode), true, Some(addressList(checkMode(mode))), true),
+      (AddressListId(0), emptyAnswers, address(mode), true, Some(address(checkMode(mode))), true),
+      (AddressId(0), emptyAnswers, addressYears(mode), true,
+        if(mode == UpdateMode) Some(addressYears(checkMode(mode))) else Some(checkYourAnswers(mode)), true),
+      (AddressId(0), newEstablisher, addressYears(mode), true, Some(checkYourAnswers(mode)), true),
+      (AddressYearsId(0), addressYearsOverAYearNew, contactDetails(mode), true, Some(exitJourney(mode, addressYearsOverAYearNew)), true),
+      (AddressYearsId(0), addressYearsOverAYear, contactDetails(mode), true, Some(exitJourney(mode, emptyAnswers)), true),
+      (AddressYearsId(0), addressYearsUnderAYear, previousAddressPostCodeLookup(mode), true, Some(previousAddressPostCodeLookup(checkMode(mode))), true),
+      (AddressYearsId(0), emptyAnswers, sessionExpired, false, Some(sessionExpired), false),
+      (PreviousPostCodeLookupId(0), emptyAnswers, previousAddressAddressList(mode), true, Some(previousAddressAddressList(checkMode(mode))), true),
+      (PreviousAddressListId(0), emptyAnswers, previousAddress(mode), true, Some(previousAddress(checkMode(mode))), true),
+      (PreviousAddressId(0), emptyAnswers, contactDetails(mode), true, Some(exitJourney(mode, emptyAnswers)), true),
+      (PreviousAddressId(0), newEstablisher, contactDetails(mode), true, Some(exitJourney(mode, newEstablisher)), true),
+      (ContactDetailsId(0), emptyAnswers, checkYourAnswers(mode), true, Some(exitJourney(mode, emptyAnswers)), true),
+      (ContactDetailsId(0), newEstablisher, checkYourAnswers(mode), true, Some(exitJourney(mode, newEstablisher)), true),
+      (CheckYourAnswersId, emptyAnswers, if(mode==UpdateMode) anyMoreChanges else addEstablisher(mode), false, None, true)
+    )
+  }
 
   private val navigator: EstablishersIndividualNavigator =
     new EstablishersIndividualNavigator(frontendAppConfig, FakeUserAnswersCacheConnector)
@@ -65,10 +77,14 @@ object EstablishersIndividualNavigatorSpec extends OptionValues {
   private def taskList: Call = controllers.routes.SchemeTaskListController.onPageLoad(NormalMode, None)
 
   private val emptyAnswers = UserAnswers(Json.obj())
+  private val addressYearsOverAYearNew = UserAnswers(Json.obj())
+    .set(AddressYearsId(0))(AddressYears.OverAYear).flatMap(
+    _.set(IsEstablisherNewId(0))(true)).asOpt.value
   private val addressYearsOverAYear = UserAnswers(Json.obj())
     .set(AddressYearsId(0))(AddressYears.OverAYear).asOpt.value
   private val addressYearsUnderAYear = UserAnswers(Json.obj())
     .set(AddressYearsId(0))(AddressYears.UnderAYear).asOpt.value
+  private val newEstablisher = UserAnswers(Json.obj()).set(IsEstablisherNewId(0))(true).asOpt.value
 
   private val hasTrusteeCompanies = UserAnswers().trusteesCompanyDetails(0, CompanyDetails("test-company-name"))
   private val bodyCorporateWithNoTrustees =
@@ -110,8 +126,11 @@ object EstablishersIndividualNavigatorSpec extends OptionValues {
 
   private def anyMoreChanges = controllers.routes.AnyMoreChangesController.onPageLoad(None)
 
-  private def exitJourney(mode: Mode) = checkYourAnswers(mode)
-
+  private def exitJourney(mode: Mode, answers:UserAnswers, index:Int = 0) = if(mode == CheckMode || mode == NormalMode) checkYourAnswers(mode)
+  else {
+      if(answers.get(IsEstablisherNewId(index)).getOrElse(false)) checkYourAnswers(mode)
+      else anyMoreChanges
+    }
 }
 
 

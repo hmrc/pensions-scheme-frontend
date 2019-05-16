@@ -20,18 +20,14 @@ import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions._
 import forms.register.AddPartnersFormProvider
-import identifiers.register.establishers.IsEstablisherCompleteId
 import identifiers.register.establishers.partnership.AddPartnersId
 import javax.inject.Inject
-import models.{CheckMode, Mode, NormalMode}
-import play.api.Logger
+import models.Mode
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.libs.json.JsResultException
 import play.api.mvc.{Action, AnyContent, Call}
-import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import utils.{Navigator, UserAnswers}
+import utils.Navigator
 import utils.annotations.EstablishersPartner
 import views.html.register.addPartners
 
@@ -40,7 +36,6 @@ import scala.concurrent.{ExecutionContext, Future}
 class AddPartnersController @Inject()(
                                        appConfig: FrontendAppConfig,
                                        override val messagesApi: MessagesApi,
-                                       userAnswersService: UserAnswersService,
                                        @EstablishersPartner navigator: Navigator,
                                        authenticate: AuthAction,
                                        getData: DataRetrievalAction,
@@ -87,9 +82,10 @@ class AddPartnersController @Inject()(
                   )
                 )
             },
-          value =>
-            userAnswersService.save(mode, srn, AddPartnersId(index), value).map(cacheMap =>
-              Redirect(navigator.nextPage(AddPartnersId(index), mode, UserAnswers(cacheMap), srn)))
+          value => {
+            val ua = request.userAnswers.set(AddPartnersId(index))(value).asOpt.getOrElse(request.userAnswers)
+            Future.successful(Redirect(navigator.nextPage(AddPartnersId(index), mode, ua, srn)))
+          }
         )
       }
   }

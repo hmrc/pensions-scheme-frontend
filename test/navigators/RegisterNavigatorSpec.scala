@@ -20,7 +20,7 @@ import base.SpecBase
 import config.FrontendAppConfig
 import connectors.FakeUserAnswersCacheConnector
 import identifiers.register._
-import identifiers.{IsBeforeYouStartCompleteId, UserResearchDetailsId}
+import identifiers.{IsBeforeYouStartCompleteId, UserResearchDetailsId, VariationDeclarationId}
 import models._
 import models.register.SchemeType
 import org.scalatest.{MustMatchers, OptionValues}
@@ -47,9 +47,15 @@ class RegisterNavigatorSpec extends SpecBase with MustMatchers with NavigatorBeh
     (UserResearchDetailsId, emptyAnswers, schemeOverview(frontendAppConfig), false, None, false)
   )
 
+  private def updateRoute = Table(
+    ("Id", "User Answers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (Check Mode)", "Save (CM)"),
+    // Start - continue or what you will need
+    (VariationDeclarationId, emptyAnswers, variationSucess, false, None, false)
+  )
+
   "RegisterNavigator" must {
     val navigator = new RegisterNavigator(FakeUserAnswersCacheConnector, frontendAppConfig)
-    behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, routesWithRestrictedEstablisher, dataDescriber)
+    behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, updateRoute, dataDescriber, UpdateMode, Some("srn"))
     behave like nonMatchingNavigator(navigator)
   }
 }
@@ -80,5 +86,6 @@ object RegisterNavigatorSpec extends OptionValues{
   private def dataDescriber(answers: UserAnswers): String = answers.toString
 
   private def taskList: Call = controllers.routes.SchemeTaskListController.onPageLoad(NormalMode, None)
+  private def variationSucess: Call = controllers.register.routes.SchemeVariationsSuccessController.onPageLoad("srn")
 
 }

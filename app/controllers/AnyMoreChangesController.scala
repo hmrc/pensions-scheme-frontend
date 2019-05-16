@@ -37,7 +37,6 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class AnyMoreChangesController @Inject()(appConfig: FrontendAppConfig,
                                          override val messagesApi: MessagesApi,
-                                         @NoChangeFlagService userAnswersService: UserAnswersService,
                                          @Variations navigator: Navigator,
                                          authenticate: AuthAction,
                                          getData: DataRetrievalAction,
@@ -58,9 +57,10 @@ class AnyMoreChangesController @Inject()(appConfig: FrontendAppConfig,
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) =>
           Future.successful(BadRequest(anyMoreChanges(appConfig, formWithErrors, existingSchemeName, dateToCompleteDeclaration, postCall(srn), srn))),
-        value =>
-          userAnswersService.save(UpdateMode, srn, AnyMoreChangesId, value).map(cacheMap =>
-            Redirect(navigator.nextPage(AnyMoreChangesId, UpdateMode, UserAnswers(cacheMap), srn)))
+        value => {
+          val ua = request.userAnswers.set(AnyMoreChangesId)(value).asOpt.getOrElse(request.userAnswers)
+          Future.successful(Redirect(navigator.nextPage(AnyMoreChangesId, UpdateMode, ua, srn)))
+        }
       )
   }
 

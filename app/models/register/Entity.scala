@@ -50,7 +50,8 @@ case class DirectorEntity(id: DirectorDetailsId, name: String, isDeleted: Boolea
                           isCompleted: Boolean, isNewEntity: Boolean, noOfRecords : Int) extends Entity[DirectorDetailsId] {
   override def editLink(mode: Mode, srn: Option[String]): Option[String] = {
     (isNewEntity, isCompleted) match {
-      case (false, _) => None
+      case (false, _) => Some(controllers.register.establishers.company.director.routes.CheckYourAnswersController.onPageLoad(
+        id.establisherIndex, id.directorIndex, mode, srn).url)
       case (_, true) => Some(controllers.register.establishers.company.director.routes.CheckYourAnswersController.onPageLoad(
         id.establisherIndex, id.directorIndex, mode, srn).url)
       case (_, false) => Some(controllers.register.establishers.company.director.routes.DirectorDetailsController.onPageLoad(
@@ -76,7 +77,8 @@ case class DirectorEntity(id: DirectorDetailsId, name: String, isDeleted: Boolea
 case class PartnerEntity(id: PartnerDetailsId, name: String, isDeleted: Boolean,
                          isCompleted: Boolean, isNewEntity: Boolean, noOfRecords : Int) extends Entity[PartnerDetailsId] {
   override def editLink(mode: Mode, srn: Option[String]): Option[String] = (isNewEntity, isCompleted) match {
-    case (false, _) => None
+    case (false, _) => Some(controllers.register.establishers.partnership.partner.routes.CheckYourAnswersController.onPageLoad(
+      mode, id.establisherIndex, id.partnerIndex, srn).url)
     case (_, true) => Some(controllers.register.establishers.partnership.partner.routes.CheckYourAnswersController.onPageLoad(
       mode, id.establisherIndex, id.partnerIndex, srn).url)
     case (_, false) => Some(controllers.register.establishers.partnership.partner.routes.PartnerDetailsController.onPageLoad(
@@ -104,7 +106,7 @@ case class EstablisherCompanyEntity(id: EstablisherCompanyDetailsId, name: Strin
                                     isCompleted: Boolean, isNewEntity: Boolean, noOfRecords : Int) extends Establisher[EstablisherCompanyDetailsId] {
   override def editLink(mode: Mode, srn: Option[String]): Option[String] = (isNewEntity, isCompleted) match {
     case (false, _) => Some(controllers.register.establishers.company.routes.CompanyReviewController.onPageLoad(mode, srn, index).url)
-    case (_, true) => Some(controllers.register.establishers.company.routes.CheckYourAnswersController.onPageLoad(mode, srn, id.index).url)
+    case (_, true) => Some(controllers.register.establishers.company.routes.CompanyReviewController.onPageLoad(mode, srn, id.index).url)
     case (_, false) => Some(controllers.register.establishers.company.routes.CompanyDetailsController.onPageLoad(mode, srn, id.index).url)
   }
 
@@ -146,7 +148,7 @@ case class EstablisherPartnershipEntity(id: PartnershipDetailsId, name: String, 
                                         isCompleted: Boolean, isNewEntity: Boolean, noOfRecords : Int) extends Establisher[PartnershipDetailsId] {
   override def editLink(mode: Mode, srn: Option[String]): Option[String] = (isNewEntity, isCompleted) match {
     case (false, _) => Some(controllers.register.establishers.partnership.routes.PartnershipReviewController.onPageLoad(mode, index, srn).url)
-    case (_, true) => Some(controllers.register.establishers.partnership.routes.CheckYourAnswersController.onPageLoad(mode, id.index, srn).url)
+    case (_, true) => Some(controllers.register.establishers.partnership.routes.PartnershipReviewController.onPageLoad(mode, id.index, srn).url)
     case (_, false) => Some(controllers.register.establishers.partnership.routes.PartnershipDetailsController.onPageLoad(mode, id.index, srn).url)
   }
 

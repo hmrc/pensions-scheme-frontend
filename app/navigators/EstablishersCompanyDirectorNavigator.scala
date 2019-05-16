@@ -40,9 +40,9 @@ class EstablishersCompanyDirectorNavigator @Inject()(val dataCacheConnector: Use
       case CheckMode | NormalMode =>
         checkYourAnswers(establisherIndex, directorIndex, journeyMode(mode), srn)
       case _ =>
-        if(answers.get(IsNewDirectorId(establisherIndex, directorIndex)).getOrElse(false) &&
-          answers.get(IsDirectorCompleteId(establisherIndex, directorIndex)).getOrElse(false)) anyMoreChanges(srn)
-        else checkYourAnswers(establisherIndex, directorIndex, journeyMode(mode), srn)
+        if(answers.get(IsNewDirectorId(establisherIndex, directorIndex)).getOrElse(false))
+          checkYourAnswers(establisherIndex, directorIndex, journeyMode(mode), srn)
+        else anyMoreChanges(srn)
     }
 
   protected def normalRoutes(from: NavigateFrom, mode: Mode, srn: Option[String]): Option[NavigateTo] =
@@ -65,6 +65,7 @@ class EstablishersCompanyDirectorNavigator @Inject()(val dataCacheConnector: Use
       case _ => commonRoutes(from, mode, srn)
     }
 
+  //scalastyle:off cyclomatic.complexity
   protected def editRoutes(from: NavigateFrom, mode: Mode, srn: Option[String]): Option[NavigateTo] =
     from.id match {
       case DirectorDetailsId(establisherIndex, directorIndex) =>
@@ -74,7 +75,12 @@ class EstablishersCompanyDirectorNavigator @Inject()(val dataCacheConnector: Use
       case DirectorUniqueTaxReferenceId(establisherIndex, directorIndex) =>
         exitMiniJourney(establisherIndex, directorIndex, mode, srn, from.userAnswers)
       case DirectorAddressId(establisherIndex, directorIndex) =>
-        exitMiniJourney(establisherIndex, directorIndex, mode, srn, from.userAnswers)
+        val isNew = from.userAnswers.get(IsNewDirectorId(establisherIndex, directorIndex)).contains(true)
+        if (isNew || mode == CheckMode) {
+          checkYourAnswers(establisherIndex, directorIndex, journeyMode(mode), srn)
+        } else {
+          NavigateTo.dontSave(routes.DirectorAddressYearsController.onPageLoad(mode, establisherIndex, directorIndex, srn))
+        }
       case DirectorPreviousAddressId(establisherIndex, directorIndex) =>
         exitMiniJourney(establisherIndex, directorIndex, mode, srn, from.userAnswers)
       case DirectorContactDetailsId(establisherIndex, directorIndex) =>
@@ -84,6 +90,7 @@ class EstablishersCompanyDirectorNavigator @Inject()(val dataCacheConnector: Use
       case _ => commonRoutes(from, mode, srn)
     }
 
+  //scalastyle:on cyclomatic.complexity
   protected def commonRoutes(from: NavigateFrom, mode: Mode, srn: Option[String]): Option[NavigateTo] =
     from.id match {
       case DirectorAddressPostcodeLookupId(establisherIndex, directorIndex) =>
@@ -102,7 +109,7 @@ class EstablishersCompanyDirectorNavigator @Inject()(val dataCacheConnector: Use
             anyMoreChanges(srn)
         }
       case CheckYourAnswersId(establisherIndex, _) =>
-        listOrAnyMoreChange(establisherIndex, mode, srn)(from.userAnswers)
+        NavigateTo.dontSave(controllers.register.establishers.company.routes.AddCompanyDirectorsController.onPageLoad(mode, srn, establisherIndex))
       case AnyMoreChangesId => anyMoreChanges(srn)
       case _ => None
     }
@@ -134,19 +141,6 @@ class EstablishersCompanyDirectorNavigator @Inject()(val dataCacheConnector: Use
         exitMiniJourney(establisherIndex, directorIndex, mode, srn, answers)
       case None =>
         NavigateTo.dontSave(controllers.routes.SessionExpiredController.onPageLoad())
-    }
-  }
-
-  private def listOrAnyMoreChange(establisherIndex: Int, mode: Mode, srn: Option[String])(answers: UserAnswers): Option[NavigateTo] = {
-    mode match {
-      case CheckMode | NormalMode =>
-        NavigateTo.dontSave(controllers.register.establishers.company.routes.AddCompanyDirectorsController.onPageLoad(mode, srn, establisherIndex))
-      case _ => answers.get(IsEstablisherNewId(establisherIndex)) match {
-        case Some(true)=>
-          NavigateTo.dontSave(controllers.register.establishers.company.routes.AddCompanyDirectorsController.onPageLoad(mode, srn, establisherIndex))
-        case _ =>
-          anyMoreChanges(srn)
-      }
     }
   }
 }
