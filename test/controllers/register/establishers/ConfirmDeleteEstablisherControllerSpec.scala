@@ -234,6 +234,7 @@ object ConfirmDeleteEstablisherControllerSpec extends ControllerSpecBase {
     estName,
     hintText,
     postCall,
+    None,
     None
   )(fakeRequest, messages).toString
 

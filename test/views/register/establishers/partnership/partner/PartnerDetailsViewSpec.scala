@@ -36,10 +36,13 @@ class PartnerDetailsViewSpec extends QuestionViewBehaviours[PersonDetails] {
   val submitUrl = controllers.register.establishers.partnership.partner.routes.PartnerDetailsController.onSubmit(NormalMode, establisherIndex, partnerIndex, None)
 
   def createView(): () => HtmlFormat.Appendable = () =>
-    partnerDetails(frontendAppConfig, form, NormalMode, establisherIndex, partnerIndex, None, submitUrl)(fakeRequest, messages)
+    partnerDetails(frontendAppConfig, form, NormalMode, establisherIndex, partnerIndex, None, submitUrl, None)(fakeRequest, messages)
+
+  def createUpdateView(): () => HtmlFormat.Appendable = () =>
+    partnerDetails(frontendAppConfig, form, NormalMode, establisherIndex, partnerIndex, None, submitUrl, Some("srn"))(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) =>
-    partnerDetails(frontendAppConfig, form, NormalMode, establisherIndex, partnerIndex, None, submitUrl)(fakeRequest, messages)
+    partnerDetails(frontendAppConfig, form, NormalMode, establisherIndex, partnerIndex, None, submitUrl, None)(fakeRequest, messages)
 
   private val day = LocalDate.now().getDayOfMonth
   private val year = LocalDate.now().getYear
@@ -120,6 +123,8 @@ class PartnerDetailsViewSpec extends QuestionViewBehaviours[PersonDetails] {
     }
 
     behave like pageWithReturnLink(createView(), getReturnLink)
+
+    behave like pageWithReturnLinkAndSrn(createUpdateView(), getReturnLinkWithSrn)
 
   }
 

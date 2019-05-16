@@ -34,17 +34,22 @@ class DirectorNinoViewSpec extends ViewBehaviours {
 
   def createView(): () => HtmlFormat.Appendable = () =>
     directorNino(frontendAppConfig, form, NormalMode, establisherIndex, directorIndex, None,
-      postCall(NormalMode, establisherIndex, directorIndex, None))(fakeRequest, messages)
+      postCall(NormalMode, establisherIndex, directorIndex, None), None)(fakeRequest, messages)
+  def createUpdateView(): () => HtmlFormat.Appendable = () =>
+    directorNino(frontendAppConfig, form, NormalMode, establisherIndex, directorIndex, None,
+      postCall(NormalMode, establisherIndex, directorIndex, None), Some("srn"))(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) => directorNino(frontendAppConfig, form, NormalMode,
     establisherIndex, directorIndex, None,
-    postCall(NormalMode, establisherIndex, directorIndex, None))(fakeRequest, messages)
+    postCall(NormalMode, establisherIndex, directorIndex, None), None)(fakeRequest, messages)
 
   "DirectorNino view" when {
     "rendered" must {
       behave like normalPage(createView(), messageKeyPrefix, messages("messages__director_nino__title"))
 
       behave like pageWithReturnLink(createView(), getReturnLink)
+
+      behave like pageWithReturnLinkAndSrn(createUpdateView(), getReturnLinkWithSrn)
 
       val ninoOptions = Seq("true", "false")
 

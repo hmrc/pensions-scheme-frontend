@@ -32,16 +32,20 @@ class PartnerUniqueTaxReferenceViewSpec extends ViewBehaviours {
 
   val submitUrl = controllers.register.establishers.partnership.partner.routes.PartnerUniqueTaxReferenceController.onSubmit(NormalMode, establisherIndex, partnerIndex, None)
   def createView(): () => HtmlFormat.Appendable = () =>
-    partnerUniqueTaxReference(frontendAppConfig, form, NormalMode, establisherIndex, partnerIndex, None, submitUrl)(fakeRequest, messages)
+    partnerUniqueTaxReference(frontendAppConfig, form, NormalMode, establisherIndex, partnerIndex, None, submitUrl, None)(fakeRequest, messages)
+  def createUpdateView(): () => HtmlFormat.Appendable = () =>
+    partnerUniqueTaxReference(frontendAppConfig, form, NormalMode, establisherIndex, partnerIndex, None, submitUrl, Some("srn"))(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) => partnerUniqueTaxReference(frontendAppConfig, form,
-    NormalMode, establisherIndex, partnerIndex, None, submitUrl)(fakeRequest, messages)
+    NormalMode, establisherIndex, partnerIndex, None, submitUrl, None)(fakeRequest, messages)
 
   "PartnershipUniqueTaxReference view" when {
     "rendered" must {
       behave like normalPage(createView(), messageKeyPrefix, messages("messages__partner_has_sautr__title"))
 
       behave like pageWithReturnLink(createView(), getReturnLink)
+
+      behave like pageWithReturnLinkAndSrn(createUpdateView(), getReturnLinkWithSrn)
 
       val utrOptions = Seq("true", "false")
 

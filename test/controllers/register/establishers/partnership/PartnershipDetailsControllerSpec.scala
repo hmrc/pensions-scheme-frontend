@@ -51,7 +51,8 @@ class PartnershipDetailsControllerSpec extends ControllerSpecBase {
     NormalMode,
     firstIndex,
     None,
-    submitUrl
+    submitUrl,
+    None
   )(fakeRequest, messages).toString
 
   val validData: JsObject = Json.obj(

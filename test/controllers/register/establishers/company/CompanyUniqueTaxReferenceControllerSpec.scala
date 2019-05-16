@@ -75,7 +75,8 @@ class CompanyUniqueTaxReferenceControllerSpec extends ControllerSpecBase {
       NormalMode,
       firstIndex,
       None,
-      postCall(NormalMode, None, firstIndex)
+      postCall(NormalMode, None, firstIndex),
+      None
     )(fakeRequest, messages).toString
 
   "CompanyUniqueTaxReference Controller" must {

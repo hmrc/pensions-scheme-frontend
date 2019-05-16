@@ -33,10 +33,12 @@ class OtherDirectorsViewSpec extends YesNoViewBehaviours {
   private val postCall = routes.OtherDirectorsController.onSubmit _
 
   private def createView() = () =>
-    otherDirectors(frontendAppConfig, form, NormalMode, index, None, postCall(NormalMode, None, index))(fakeRequest, messages)
+    otherDirectors(frontendAppConfig, form, NormalMode, index, None, postCall(NormalMode, None, index), None)(fakeRequest, messages)
+  private def createUpdateView() = () =>
+    otherDirectors(frontendAppConfig, form, NormalMode, index, None, postCall(NormalMode, None, index), Some("srn"))(fakeRequest, messages)
 
   private def createViewUsingForm = (form: Form[_]) =>
-    otherDirectors(frontendAppConfig, form, NormalMode, index, None, postCall(NormalMode, None, index))(fakeRequest, messages)
+    otherDirectors(frontendAppConfig, form, NormalMode, index, None, postCall(NormalMode, None, index), None)(fakeRequest, messages)
 
   "OtherDirectors view" must {
 
@@ -55,5 +57,7 @@ class OtherDirectorsViewSpec extends YesNoViewBehaviours {
     behave like pageWithSubmitButton(createView())
 
     behave like pageWithReturnLink(createView(), getReturnLink)
+
+    behave like pageWithReturnLinkAndSrn(createUpdateView(), getReturnLinkWithSrn)
   }
 }

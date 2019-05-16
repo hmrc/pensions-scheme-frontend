@@ -57,7 +57,7 @@ class EstablisherNinoControllerSpec extends ControllerSpecBase {
 
   private val submitUrl = controllers.register.establishers.individual.routes.EstablisherNinoController.onSubmit(NormalMode, firstIndex, None)
   def viewAsString(form: Form[_] = form): String = establisherNino(frontendAppConfig, form, NormalMode,
-    firstIndex, None, submitUrl)(fakeRequest, messages).toString
+    firstIndex, None, submitUrl, None)(fakeRequest, messages).toString
 
   "EstablisherNino Controller" must {
 

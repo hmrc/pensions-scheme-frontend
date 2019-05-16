@@ -53,10 +53,10 @@ class DirectorUniqueTaxReferenceController @Inject()(
       implicit request =>
         DirectorUniqueTaxReferenceId(establisherIndex, directorIndex).retrieve.right.map { value =>
           Future.successful(Ok(directorUniqueTaxReference(
-            appConfig, form.fill(value), mode, establisherIndex, directorIndex, existingSchemeName, postCall(mode, establisherIndex, directorIndex, srn))))
+            appConfig, form.fill(value), mode, establisherIndex, directorIndex, existingSchemeName, postCall(mode, establisherIndex, directorIndex, srn), srn)))
         }.left.map { _ =>
           Future.successful(Ok(directorUniqueTaxReference(
-            appConfig, form, mode, establisherIndex, directorIndex, existingSchemeName, postCall(mode, establisherIndex, directorIndex, srn))))
+            appConfig, form, mode, establisherIndex, directorIndex, existingSchemeName, postCall(mode, establisherIndex, directorIndex, srn), srn)))
         }
     }
 
@@ -66,7 +66,7 @@ class DirectorUniqueTaxReferenceController @Inject()(
         form.bindFromRequest().fold(
           (formWithErrors: Form[_]) =>
             Future.successful(BadRequest(directorUniqueTaxReference(
-              appConfig, formWithErrors, mode, establisherIndex, directorIndex, existingSchemeName, postCall(mode, establisherIndex, directorIndex, srn)))),
+              appConfig, formWithErrors, mode, establisherIndex, directorIndex, existingSchemeName, postCall(mode, establisherIndex, directorIndex, srn), srn))),
           (value) =>
             userAnswersService.save(
               mode,

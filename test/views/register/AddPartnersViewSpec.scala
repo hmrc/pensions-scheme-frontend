@@ -58,6 +58,19 @@ class AddPartnersViewSpec extends YesNoViewBehaviours with EntityListBehaviours 
         None
       )(fakeRequest, messages)
 
+  private def createUpdateView(partners: Seq[PartnerEntity] = Nil, viewOnly: Boolean = false) =
+    () =>
+      addPartners(
+        frontendAppConfig,
+        form,
+        partners,
+        postUrl,
+        None,
+        viewOnly,
+        NormalMode,
+        Some("srn")
+      )(fakeRequest, messages)
+
   private def createViewUsingForm(partners: Seq[PartnerEntity] = Nil, viewOnly: Boolean = false) =
     (form: Form[_]) =>
       addPartners(
@@ -163,6 +176,8 @@ class AddPartnersViewSpec extends YesNoViewBehaviours with EntityListBehaviours 
     }
 
     behave like pageWithReturnLink(createView(), getReturnLink)
+
+    behave like pageWithReturnLinkAndSrn(createUpdateView(), getReturnLinkWithSrn)
 
     behave like entityListWithSingleRecord(createView(), createView(Seq(johnDoeEntity)), Seq(johnDoeEntity), frontendAppConfig)
 

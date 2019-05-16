@@ -60,7 +60,8 @@ class CompanyRegistrationNumberControllerSpec extends ControllerSpecBase {
       NormalMode,
       firstIndex,
       None,
-      postCall(NormalMode, None, firstIndex)
+      postCall(NormalMode, None, firstIndex),
+      None
     )(fakeRequest, messages).toString
 
   private val validData = Json.obj(

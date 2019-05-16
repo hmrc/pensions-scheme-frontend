@@ -54,7 +54,7 @@ class OtherPartnersController @Inject()(
       retrievePartnershipName(establisherIndex) { _ =>
         val preparedForm = request.userAnswers.get(OtherPartnersId(establisherIndex)).fold(form)(form.fill)
         val submitUrl = controllers.register.establishers.partnership.routes.OtherPartnersController.onSubmit(mode, establisherIndex, srn)
-        Future.successful(Ok(otherPartners(appConfig, preparedForm, mode, establisherIndex, existingSchemeName, submitUrl)))
+        Future.successful(Ok(otherPartners(appConfig, preparedForm, mode, establisherIndex, existingSchemeName, submitUrl, srn)))
       }
 
   }
@@ -66,7 +66,7 @@ class OtherPartnersController @Inject()(
           form.bindFromRequest().fold(
             (formWithErrors: Form[_]) => {
               val submitUrl = controllers.register.establishers.partnership.routes.OtherPartnersController.onSubmit(mode, establisherIndex, srn)
-              Future.successful(BadRequest(otherPartners(appConfig, formWithErrors, mode, establisherIndex, existingSchemeName, submitUrl)))
+              Future.successful(BadRequest(otherPartners(appConfig, formWithErrors, mode, establisherIndex, existingSchemeName, submitUrl, srn)))
             },
             value =>
               userAnswersService.save(mode, srn, OtherPartnersId(establisherIndex), value).map(cacheMap =>

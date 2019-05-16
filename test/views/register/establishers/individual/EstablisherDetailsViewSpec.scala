@@ -33,10 +33,12 @@ class EstablisherDetailsViewSpec extends QuestionViewBehaviours[PersonDetails] {
   override val form = new PersonDetailsFormProvider()()
   val submitUrl = controllers.register.establishers.individual.routes.EstablisherDetailsController.onSubmit(NormalMode, Index(1), None)
   def createView(): () => HtmlFormat.Appendable = () =>
-    establisherDetails(frontendAppConfig, form, NormalMode, Index(1), None, submitUrl)(fakeRequest, messages)
+    establisherDetails(frontendAppConfig, form, NormalMode, Index(1), None, submitUrl, None)(fakeRequest, messages)
+ def createUpdateView(): () => HtmlFormat.Appendable = () =>
+    establisherDetails(frontendAppConfig, form, NormalMode, Index(1), None, submitUrl, Some("srn"))(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) =>
-    establisherDetails(frontendAppConfig, form, NormalMode, Index(1), None, submitUrl)(fakeRequest, messages)
+    establisherDetails(frontendAppConfig, form, NormalMode, Index(1), None, submitUrl, None)(fakeRequest, messages)
 
   val day = LocalDate.now().getDayOfMonth
   val year = LocalDate.now().getYear
@@ -65,6 +67,8 @@ class EstablisherDetailsViewSpec extends QuestionViewBehaviours[PersonDetails] {
     behave like pageWithDateFields(createViewUsingForm, form)
 
     behave like pageWithReturnLink(createView(), getReturnLink)
+
+    behave like pageWithReturnLinkAndSrn(createUpdateView(), getReturnLinkWithSrn)
   }
 
 }
