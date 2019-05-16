@@ -24,7 +24,7 @@ import identifiers.register.establishers.IsEstablisherCompleteId
 import identifiers.register.establishers.partnership.PartnershipDetailsId
 import identifiers.register.establishers.partnership.partner.{ConfirmDeletePartnerId, PartnerDetailsId}
 import javax.inject.Inject
-import models.{Index, Mode}
+import models.{CheckMode, Index, Mode, NormalMode}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
@@ -55,7 +55,7 @@ class ConfirmDeletePartnerController @Inject()(
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         (PartnershipDetailsId(establisherIndex) and PartnerDetailsId(establisherIndex, partnerIndex)).retrieve.right.map {
-          case partnership ~ partner =>
+          case _ ~ partner =>
             if (partner.isDeleted) {
               Future.successful(Redirect(routes.AlreadyDeletedController.onPageLoad(mode, establisherIndex, partnerIndex, srn)))
             } else {
@@ -97,14 +97,23 @@ class ConfirmDeletePartnerController @Inject()(
                 deletionResult.flatMap {
                   jsValue =>
                     val userAnswers = UserAnswers(jsValue)
-                    if (userAnswers.allDirectorsAfterDelete(establisherIndex).isEmpty) {
+                    if (userAnswers.allPartnersAfterDelete(establisherIndex).isEmpty) {
                       userAnswers.upsert(IsEstablisherCompleteId(establisherIndex))(false) { result =>
                         userAnswersService.upsert(mode, srn, result.json).map { json =>
                           Redirect(navigator.nextPage(ConfirmDeletePartnerId(establisherIndex), mode, userAnswers, srn))
                         }
                       }
                     } else {
-                      Future.successful(Redirect(navigator.nextPage(ConfirmDeletePartnerId(establisherIndex), mode, userAnswers, srn)))
+                      mode match {
+                        case CheckMode | NormalMode =>
+                          Future.successful(Redirect(navigator.nextPage(ConfirmDeletePartnerId(establisherIndex), mode, userAnswers, srn)))
+                        case _ =>
+                          userAnswers.upsert(IsEstablisherCompleteId(establisherIndex))(true) { result =>
+                            userAnswersService.upsert(mode, srn, result.json).map { _ =>
+                              Redirect(navigator.nextPage(ConfirmDeletePartnerId(establisherIndex), mode, userAnswers, srn))
+                            }
+                          }
+                      }
                     }
                 }
               }
