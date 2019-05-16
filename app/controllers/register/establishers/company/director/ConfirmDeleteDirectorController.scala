@@ -75,7 +75,8 @@ class ConfirmDeleteDirectorController @Inject()(
         }
     }
 
-  def onSubmit(establisherIndex: Index, directorIndex: Index, mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
+  def onSubmit(establisherIndex: Index, directorIndex: Index, mode: Mode, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
 
       (DirectorDetailsId(establisherIndex, directorIndex)).retrieve.right.map {
@@ -101,7 +102,7 @@ class ConfirmDeleteDirectorController @Inject()(
                   val userAnswers = UserAnswers(jsValue)
                   if (userAnswers.allDirectorsAfterDelete(establisherIndex).isEmpty) {
                     userAnswers.upsert(IsEstablisherCompleteId(establisherIndex))(false) { result =>
-                      userAnswersService.upsert(mode, srn, result.json).map { json =>
+                      userAnswersService.upsert(mode, srn, result.json).map { _ =>
                         Redirect(navigator.nextPage(ConfirmDeleteDirectorId(establisherIndex), mode, userAnswers, srn))
                       }
                     }
