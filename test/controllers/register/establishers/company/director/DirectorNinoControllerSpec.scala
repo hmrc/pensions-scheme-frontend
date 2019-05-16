@@ -100,7 +100,7 @@ class DirectorNinoControllerSpec extends ControllerSpecBase {
   private val postCall = routes.DirectorNinoController.onSubmit _
 
   def viewAsString(form: Form[_] = form): String = directorNino(frontendAppConfig, form, NormalMode,
-    establisherIndex, directorIndex, None, postCall(NormalMode, establisherIndex, directorIndex, None))(fakeRequest, messages).toString
+    establisherIndex, directorIndex, None, postCall(NormalMode, establisherIndex, directorIndex, None), None)(fakeRequest, messages).toString
 
   "DirectorNino Controller" must {
 

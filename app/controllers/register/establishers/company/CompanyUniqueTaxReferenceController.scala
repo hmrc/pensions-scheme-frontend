@@ -53,9 +53,9 @@ class CompanyUniqueTaxReferenceController @Inject()(
       implicit request =>
         val redirectResult = request.userAnswers.get(CompanyUniqueTaxReferenceId(index)) match {
           case None =>
-            Ok(companyUniqueTaxReference(appConfig, form, mode, index, existingSchemeName, postCall(mode, srn, index)))
+            Ok(companyUniqueTaxReference(appConfig, form, mode, index, existingSchemeName, postCall(mode, srn, index), srn))
           case Some(value) =>
-            Ok(companyUniqueTaxReference(appConfig, form.fill(value), mode, index, existingSchemeName, postCall(mode, srn, index)))
+            Ok(companyUniqueTaxReference(appConfig, form.fill(value), mode, index, existingSchemeName, postCall(mode, srn, index), srn))
         }
         Future.successful(redirectResult)
     }
@@ -64,7 +64,7 @@ class CompanyUniqueTaxReferenceController @Inject()(
     implicit request =>
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) =>
-          Future.successful(BadRequest(companyUniqueTaxReference(appConfig, formWithErrors, mode, index, existingSchemeName, postCall(mode, srn, index)))),
+          Future.successful(BadRequest(companyUniqueTaxReference(appConfig, formWithErrors, mode, index, existingSchemeName, postCall(mode, srn, index), srn))),
         value =>
           userAnswersService.save(
             mode,

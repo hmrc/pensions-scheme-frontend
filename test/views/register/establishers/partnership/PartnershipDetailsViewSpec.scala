@@ -33,10 +33,12 @@ class PartnershipDetailsViewSpec extends QuestionViewBehaviours[PartnershipDetai
 
   val submitUrl = controllers.register.establishers.partnership.routes.PartnershipDetailsController.onSubmit(NormalMode, firstIndex, None)
   def createView(): () => HtmlFormat.Appendable = () =>
-    partnershipDetails(frontendAppConfig, form, NormalMode, firstIndex, None, submitUrl)(fakeRequest, messages)
+    partnershipDetails(frontendAppConfig, form, NormalMode, firstIndex, None, submitUrl, None)(fakeRequest, messages)
+  def createUpdateView(): () => HtmlFormat.Appendable = () =>
+    partnershipDetails(frontendAppConfig, form, NormalMode, firstIndex, None, submitUrl, Some("srn"))(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) =>
-    partnershipDetails(frontendAppConfig, form, NormalMode, firstIndex, None, submitUrl)(fakeRequest, messages)
+    partnershipDetails(frontendAppConfig, form, NormalMode, firstIndex, None, submitUrl, None)(fakeRequest, messages)
 
   "PartnershipDetails view" must {
 
@@ -46,5 +48,7 @@ class PartnershipDetailsViewSpec extends QuestionViewBehaviours[PartnershipDetai
       routes.PartnershipDetailsController.onSubmit(NormalMode, firstIndex, None).url, "partnershipName")
 
     behave like pageWithReturnLink(createView(), getReturnLink)
+
+    behave like pageWithReturnLinkAndSrn(createUpdateView(), getReturnLinkWithSrn)
   }
 }

@@ -30,7 +30,7 @@ class PayeViewSpec extends ViewBehaviours {
 
   val form = new PayeFormProvider()()
 
-  def viewmodel(srn:Option[String] = None) = PayeViewModel(
+  def viewmodel(srn:Option[String]) = PayeViewModel(
     postCall = Call("GET", "/"),
     title = Message("messages__partnershipPaye__title"),
     heading = Message("messages__partnershipPaye__heading"),
@@ -40,13 +40,13 @@ class PayeViewSpec extends ViewBehaviours {
   )
 
   def createView(): () => HtmlFormat.Appendable = () =>
-    paye(frontendAppConfig, form, viewmodel(), None)(fakeRequest, messages)
+    paye(frontendAppConfig, form, viewmodel(None), None)(fakeRequest, messages)
 
   def createUpdateView(): () => HtmlFormat.Appendable = () =>
     paye(frontendAppConfig, form, viewmodel(Some("srn")), None)(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) =>
-    paye(frontendAppConfig, form, viewmodel(), None)(fakeRequest, messages)
+    paye(frontendAppConfig, form, viewmodel(None), None)(fakeRequest, messages)
 
   "Paye view" when {
     "rendered" must {

@@ -20,7 +20,7 @@
 @import models.Mode
 @import play.api.mvc.Call
 
-@(appConfig: FrontendAppConfig, form: Form[_], mode: Mode, establisherIndex: Index, partnerIndex: Index, schemeName: Option[String], submitCall: Call)(implicit request: Request[_], messages: Messages)
+@(appConfig: FrontendAppConfig, form: Form[_], mode: Mode, establisherIndex: Index, partnerIndex: Index, schemeName: Option[String], submitCall: Call, srn:Option[String])(implicit request: Request[_], messages: Messages)
 
 @main_template(
     title = messages("messages__partnerDetails__title"),
@@ -58,6 +58,6 @@
 
         @components.submit_button()
 
-        @components.return_link("messages__schemeTaskList__returnlink", schemeName)
+        @components.return_link("messages__schemeTaskList__returnlink", schemeName, None, srn)
     }
 }

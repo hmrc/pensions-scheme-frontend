@@ -30,7 +30,7 @@ class VatViewSpec extends ViewBehaviours {
 
   val form = new VatFormProvider()()
 
-  def viewmodel(srn:Option[String] = None) = VatViewModel(
+  def viewmodel(srn:Option[String]) = VatViewModel(
     postCall = Call("GET", "/"),
     title = Message("messages__partnershipVat__title"),
     heading = Message("messages__partnershipVat__heading"),
@@ -40,13 +40,12 @@ class VatViewSpec extends ViewBehaviours {
   )
 
   def createView(): () => HtmlFormat.Appendable = () =>
-    vat(frontendAppConfig, form, viewmodel(), None)(fakeRequest, messages)
-
+    vat(frontendAppConfig, form, viewmodel(None), None)(fakeRequest, messages)
   def createUpdateView(): () => HtmlFormat.Appendable = () =>
     vat(frontendAppConfig, form, viewmodel(Some("srn")), None)(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) =>
-    vat(frontendAppConfig, form, viewmodel(), None)(fakeRequest, messages)
+    vat(frontendAppConfig, form, viewmodel(None), None)(fakeRequest, messages)
 
   "Vat view" when {
     "rendered" must {

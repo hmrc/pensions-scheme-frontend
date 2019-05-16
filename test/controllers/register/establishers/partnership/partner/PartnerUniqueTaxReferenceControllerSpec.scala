@@ -111,7 +111,8 @@ class PartnerUniqueTaxReferenceControllerSpec extends ControllerSpecBase {
       establisherIndex,
       partnerIndex,
       None,
-      submitUrl
+      submitUrl,
+      None
     )(fakeRequest, messages).toString
 
   "PartnerUniqueTaxReference Controller" must {

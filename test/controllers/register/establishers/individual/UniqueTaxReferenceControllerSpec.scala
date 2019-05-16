@@ -60,7 +60,7 @@ class UniqueTaxReferenceControllerSpec extends ControllerSpecBase {
       FakeAuthAction, dataRetrievalAction, FakeAllowAccessProvider(), new DataRequiredActionImpl, formProvider)
 
   val submitUrl = controllers.register.establishers.individual.routes.UniqueTaxReferenceController.onSubmit(NormalMode, firstIndex, None)
-  def viewAsString(form: Form[_] = form): String = uniqueTaxReference(frontendAppConfig, form, NormalMode, firstIndex, None, submitUrl)(fakeRequest, messages).toString
+  def viewAsString(form: Form[_] = form): String = uniqueTaxReference(frontendAppConfig, form, NormalMode, firstIndex, None, submitUrl, None)(fakeRequest, messages).toString
 
   "UniqueTaxReference Controller" must {
 

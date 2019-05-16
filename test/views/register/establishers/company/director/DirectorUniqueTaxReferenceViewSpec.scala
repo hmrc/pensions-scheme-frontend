@@ -34,17 +34,22 @@ class DirectorUniqueTaxReferenceViewSpec extends ViewBehaviours {
 
   def createView(): () => HtmlFormat.Appendable = () =>
     directorUniqueTaxReference(frontendAppConfig, form, NormalMode, establisherIndex, directorIndex, None,
-      postCall(NormalMode, establisherIndex, directorIndex, None))(fakeRequest, messages)
+      postCall(NormalMode, establisherIndex, directorIndex, None), None)(fakeRequest, messages)
+  def createUpdateView(): () => HtmlFormat.Appendable = () =>
+    directorUniqueTaxReference(frontendAppConfig, form, NormalMode, establisherIndex, directorIndex, None,
+      postCall(NormalMode, establisherIndex, directorIndex, None), Some("srn"))(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) => directorUniqueTaxReference(frontendAppConfig, form,
     NormalMode, establisherIndex, directorIndex, None,
-    postCall(NormalMode, establisherIndex, directorIndex, None))(fakeRequest, messages)
+    postCall(NormalMode, establisherIndex, directorIndex, None), None)(fakeRequest, messages)
 
   "CompanyUniqueTaxReference view" when {
     "rendered" must {
       behave like normalPage(createView(), messageKeyPrefix, messages("messages__director_has_sautr__title"))
 
       behave like pageWithReturnLink(createView(), getReturnLink)
+
+      behave like pageWithReturnLinkAndSrn(createUpdateView(), getReturnLinkWithSrn)
 
       val utrOptions = Seq("true", "false")
 
