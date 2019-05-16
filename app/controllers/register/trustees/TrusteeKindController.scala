@@ -56,7 +56,7 @@ class TrusteeKindController @Inject()(
         case Some(value) => form.fill(value)
       }
       val submitUrl = controllers.register.trustees.routes.TrusteeKindController.onSubmit(mode, index, srn)
-      Future.successful(Ok(trusteeKind(appConfig, preparedForm, mode, index, existingSchemeName, submitUrl)))
+      Future.successful(Ok(trusteeKind(appConfig, preparedForm, mode, index, existingSchemeName, submitUrl, srn)))
   }
 
   def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
@@ -64,7 +64,7 @@ class TrusteeKindController @Inject()(
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) => {
           val submitUrl = controllers.register.trustees.routes.TrusteeKindController.onSubmit(mode, index, srn)
-          Future.successful(BadRequest(trusteeKind(appConfig, formWithErrors, mode, index, existingSchemeName, submitUrl)))
+          Future.successful(BadRequest(trusteeKind(appConfig, formWithErrors, mode, index, existingSchemeName, submitUrl, srn)))
         },
         value => {
 

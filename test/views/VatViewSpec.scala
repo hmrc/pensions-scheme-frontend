@@ -30,25 +30,30 @@ class VatViewSpec extends ViewBehaviours {
 
   val form = new VatFormProvider()()
 
-  val viewmodel = VatViewModel(
+  def viewmodel(srn:Option[String]) = VatViewModel(
     postCall = Call("GET", "/"),
     title = Message("messages__partnershipVat__title"),
     heading = Message("messages__partnershipVat__heading"),
     hint = Message("messages__common__vat__hint"),
-    subHeading = Some(Message("test company name"))
+    subHeading = Some(Message("test company name")),
+    srn = srn
   )
 
   def createView(): () => HtmlFormat.Appendable = () =>
-    vat(frontendAppConfig, form, viewmodel, None)(fakeRequest, messages)
+    vat(frontendAppConfig, form, viewmodel(None), None)(fakeRequest, messages)
+  def createUpdateView(): () => HtmlFormat.Appendable = () =>
+    vat(frontendAppConfig, form, viewmodel(Some("srn")), None)(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) =>
-    vat(frontendAppConfig, form, viewmodel, None)(fakeRequest, messages)
+    vat(frontendAppConfig, form, viewmodel(None), None)(fakeRequest, messages)
 
   "Vat view" when {
     "rendered" must {
       behave like normalPage(createView(), messageKeyPrefix, pageHeader = messages(s"messages__${messageKeyPrefix}__heading"))
 
       behave like pageWithReturnLink(createView(), getReturnLink)
+
+      behave like pageWithReturnLinkAndSrn(createUpdateView(), getReturnLinkWithSrn)
 
       val vatOptions = Seq("true", "false")
 

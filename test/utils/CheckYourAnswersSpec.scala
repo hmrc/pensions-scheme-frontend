@@ -647,16 +647,15 @@ class CheckYourAnswersSpec extends SpecBase with MustMatchers with PropertyCheck
 
       "Crn" when {
 
-        "yes will have change url" in {
+        "yes will not have change url" in {
 
           val crn = CompanyRegistrationNumber.Yes("12345")
 
           implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(Json.obj("testId" -> crn)), PsaId("A0000000"))
 
           testIdentifier[CompanyRegistrationNumber].row(onwardUrl, UpdateMode) must equal(Seq(
-            AnswerRow("messages__common__crn", Seq("12345"), answerIsMessageKey = false,
-              Some(Link("site.change", onwardUrl, Some("messages__visuallyhidden__establisher__crn"))))
-          ))
+            AnswerRow("messages__common__crn", Seq("12345"), answerIsMessageKey = false, None))
+          )
         }
 
         "no will have add url" in {

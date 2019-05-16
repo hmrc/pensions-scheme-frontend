@@ -18,7 +18,7 @@ package views.register.establishers.partnership
 
 import controllers.register.establishers.partnership.routes
 import identifiers.register.establishers.partnership.partner.PartnerDetailsId
-import models.{Index, NormalMode}
+import models.{Index, NormalMode, UpdateMode}
 import models.person.PersonDetails
 import org.joda.time.LocalDate
 import org.jsoup.Jsoup
@@ -48,6 +48,18 @@ class PartnershipReviewViewSpec extends ViewBehaviours {
     None,
     None,
     NormalMode,
+    viewOnly,
+    hideSaveAndContinueButton
+  )(fakeRequest, messages)
+
+  def createUpdateView(viewOnly: Boolean = false, hideSaveAndContinueButton:Boolean = false): () => HtmlFormat.Appendable = () => partnershipReview(
+    frontendAppConfig,
+    index,
+    partnershipName,
+    partners,
+    None,
+    Some("srn"),
+    UpdateMode,
     viewOnly,
     hideSaveAndContinueButton
   )(fakeRequest, messages)
@@ -127,6 +139,8 @@ class PartnershipReviewViewSpec extends ViewBehaviours {
     }
 
     behave like pageWithReturnLink(createView(), getReturnLink)
+
+    behave like pageWithReturnLinkAndSrn(createUpdateView(), getReturnLinkWithSrn)
 
   }
 }

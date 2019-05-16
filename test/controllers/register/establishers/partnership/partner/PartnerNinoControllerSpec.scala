@@ -99,7 +99,7 @@ class PartnerNinoControllerSpec extends ControllerSpecBase {
   val submitUrl = controllers.register.establishers.partnership.partner.routes.
     PartnerNinoController.onSubmit(NormalMode, establisherIndex, partnerIndex, None)
   def viewAsString(form: Form[_] = form): String = partnerNino(frontendAppConfig, form, NormalMode,
-    establisherIndex, partnerIndex, None, submitUrl)(fakeRequest, messages).toString
+    establisherIndex, partnerIndex, None, submitUrl, None)(fakeRequest, messages).toString
 
   "PartnerNino Controller" must {
 

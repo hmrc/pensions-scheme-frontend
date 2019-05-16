@@ -81,7 +81,8 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
             existingSchemeName,
             mode = mode,
             hideEditLinks = request.viewOnly || !userAnswers.get(IsEstablisherNewId(index)).getOrElse(true),
-            hideSaveAndContinueButton = allowChangeHelper.hideSaveAndContinueButton(request, IsEstablisherNewId(index), mode)
+            hideSaveAndContinueButton = allowChangeHelper.hideSaveAndContinueButton(request, IsEstablisherNewId(index), mode),
+            srn = srn
           )
         )
       )

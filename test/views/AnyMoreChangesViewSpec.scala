@@ -29,18 +29,22 @@ class AnyMoreChangesViewSpec extends YesNoViewBehaviours {
   val schemeName = Some("Scheme x")
   val messageKeyPrefix = "any_more_changes"
   val date: String = "27 February 2019"
+  val srn = Some("srn")
 
   val form = new AnyMoreChangesFormProvider()()
-  private val postCall = controllers.routes.AnyMoreChangesController.onSubmit(Some("123"))
+  private val postCall = controllers.routes.AnyMoreChangesController.onSubmit(srn)
 
   def createView: () => HtmlFormat.Appendable = () =>
-    anyMoreChanges(frontendAppConfig, form, schemeName, date, postCall)(fakeRequest, messages)
+    anyMoreChanges(frontendAppConfig, form, schemeName, date, postCall, srn)(fakeRequest, messages)
+
+  def createUpdateView: () => HtmlFormat.Appendable = () =>
+    anyMoreChanges(frontendAppConfig, form, schemeName, date, postCall, srn)(fakeRequest, messages)
 
   def createViewInCheckMode: () => HtmlFormat.Appendable = () =>
-    anyMoreChanges(frontendAppConfig, form, schemeName, date, postCall)(fakeRequest, messages)
+    anyMoreChanges(frontendAppConfig, form, schemeName, date, postCall, srn)(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) =>
-    anyMoreChanges(frontendAppConfig, form, schemeName, date, postCall)(fakeRequest, messages)
+    anyMoreChanges(frontendAppConfig, form, schemeName, date, postCall, srn)(fakeRequest, messages)
 
   "Any More Changes view" must {
 
@@ -58,7 +62,7 @@ class AnyMoreChangesViewSpec extends YesNoViewBehaviours {
 
     behave like pageWithSubmitButton(createView)
 
-    behave like pageWithReturnLink(createView, getReturnLink)
+    behave like pageWithReturnLinkAndSrn(createUpdateView, getReturnLinkWithSrn)
 
   }
 }

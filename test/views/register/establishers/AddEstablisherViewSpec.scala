@@ -22,7 +22,7 @@ import identifiers.register.establishers.company.CompanyDetailsId
 import identifiers.register.establishers.individual.EstablisherDetailsId
 import models.person.PersonDetails
 import models.register.{Establisher, EstablisherCompanyEntity, EstablisherIndividualEntity}
-import models.{CompanyDetails, NormalMode}
+import models.{CompanyDetails, NormalMode, UpdateMode}
 import org.joda.time.LocalDate
 import play.api.data.Form
 import play.twirl.api.HtmlFormat
@@ -70,6 +70,9 @@ class AddEstablisherViewSpec extends QuestionViewBehaviours[Option[Boolean]] wit
   private def createView(establishers: Seq[Establisher[_]] = Seq.empty): () => HtmlFormat.Appendable = () =>
     addEstablisher(frontendAppConfig, form, NormalMode, establishers, None, None)(fakeRequest, messages)
 
+  private def createUpdateView(establishers: Seq[Establisher[_]] = Seq.empty): () => HtmlFormat.Appendable = () =>
+    addEstablisher(frontendAppConfig, form, UpdateMode, establishers, None, Some("srn"))(fakeRequest, messages)
+
   "AddEstablisher view" must {
     behave like normalPage(createView(), messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"))
 
@@ -104,5 +107,7 @@ class AddEstablisherViewSpec extends QuestionViewBehaviours[Option[Boolean]] wit
     }
 
     behave like pageWithReturnLink(createView(), getReturnLink)
+
+    behave like pageWithReturnLinkAndSrn(createUpdateView(), getReturnLinkWithSrn)
   }
 }

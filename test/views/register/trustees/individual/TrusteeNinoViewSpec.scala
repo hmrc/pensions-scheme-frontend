@@ -17,7 +17,7 @@
 package views.register.trustees.individual
 
 import forms.register.trustees.individual.TrusteeNinoFormProvider
-import models.{Index, NormalMode}
+import models.{Index, NormalMode, UpdateMode}
 import play.api.data.Form
 import play.twirl.api.HtmlFormat
 import views.behaviours.ViewBehaviours
@@ -32,6 +32,8 @@ class TrusteeNinoViewSpec extends ViewBehaviours {
       behave like normalPage(createView(), messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__heading"))
 
       behave like pageWithReturnLink(createView(), getReturnLink)
+
+      behave like pageWithReturnLinkAndSrn(createUpdateView, getReturnLinkWithSrn)
 
       behave like pageWithSubmitButton(createView())
 
@@ -89,7 +91,19 @@ object TrusteeNinoViewSpec extends ViewBehaviours {
       mode,
       index,
       None,
-      submitUrl
+      submitUrl,
+      None
+    )(fakeRequest, messages)
+
+  private def createUpdateView =
+    () => trusteeNino(
+      frontendAppConfig,
+      form,
+      UpdateMode,
+      index,
+      None,
+      submitUrl,
+      Some("srn")
     )(fakeRequest, messages)
 
   private def createViewUsingForm: Form[_] => HtmlFormat.Appendable =
@@ -99,7 +113,8 @@ object TrusteeNinoViewSpec extends ViewBehaviours {
       mode,
       index,
       None,
-      submitUrl
+      submitUrl,
+      None
     )(fakeRequest, messages)
 
 }

@@ -46,7 +46,7 @@ class CompanyDetailsControllerSpec extends ControllerSpecBase {
       FakeAuthAction, dataRetrievalAction, FakeAllowAccessProvider(), new DataRequiredActionImpl, formProvider)
 
   def viewAsString(form: Form[_] = form): String = companyDetails(frontendAppConfig, form, NormalMode, firstIndex, None,
-    postCall(NormalMode, None, 0))(fakeRequest, messages).toString
+    postCall(NormalMode, None, 0), None)(fakeRequest, messages).toString
 
   private val validData = Json.obj(
     EstablishersId.toString -> Json.arr(

@@ -55,7 +55,7 @@ class CompanyUniqueTaxReferenceController @Inject()(
       CompanyDetailsId(index).retrieve.right.map { companyDetails =>
         val submitUrl = controllers.register.trustees.company.routes.CompanyUniqueTaxReferenceController.onSubmit(mode, index, srn)
         val updatedForm = request.userAnswers.get(CompanyUniqueTaxReferenceId(index)).fold(form)(form.fill)
-        Future.successful(Ok(companyUniqueTaxReference(appConfig, updatedForm, mode, index, existingSchemeName, submitUrl)))
+        Future.successful(Ok(companyUniqueTaxReference(appConfig, updatedForm, mode, index, existingSchemeName, submitUrl, srn)))
       }
   }
 
@@ -66,7 +66,7 @@ class CompanyUniqueTaxReferenceController @Inject()(
           form.bindFromRequest().fold(
             (formWithErrors: Form[_]) => {
               val submitUrl = controllers.register.trustees.company.routes.CompanyUniqueTaxReferenceController.onSubmit(mode, index, srn)
-              Future.successful(BadRequest(companyUniqueTaxReference(appConfig, formWithErrors, mode, index, existingSchemeName, submitUrl)))
+              Future.successful(BadRequest(companyUniqueTaxReference(appConfig, formWithErrors, mode, index, existingSchemeName, submitUrl, srn)))
             },
             value =>
               userAnswersService.save(

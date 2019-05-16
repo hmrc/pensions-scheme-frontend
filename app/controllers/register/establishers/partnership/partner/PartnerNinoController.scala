@@ -54,7 +54,7 @@ class PartnerNinoController @Inject()(
         PartnerDetailsId(establisherIndex, partnerIndex).retrieve.right.map { _ =>
           val preparedForm = request.userAnswers.get(PartnerNinoId(establisherIndex, partnerIndex)).fold(form)(form.fill)
           val submitUrl = controllers.register.establishers.partnership.partner.routes.PartnerNinoController.onSubmit(mode, establisherIndex, partnerIndex, srn)
-          Future.successful(Ok(partnerNino(appConfig, preparedForm, mode, establisherIndex, partnerIndex, existingSchemeName, submitUrl)))
+          Future.successful(Ok(partnerNino(appConfig, preparedForm, mode, establisherIndex, partnerIndex, existingSchemeName, submitUrl, srn)))
         }
     }
 
@@ -67,7 +67,7 @@ class PartnerNinoController @Inject()(
           (formWithErrors: Form[_]) => {
             val submitUrl = controllers.register.establishers.partnership.partner.routes.PartnerNinoController.onSubmit(
               mode, establisherIndex, partnerIndex, srn)
-            Future.successful(BadRequest(partnerNino(appConfig, formWithErrors, mode, establisherIndex, partnerIndex, existingSchemeName, submitUrl)))
+            Future.successful(BadRequest(partnerNino(appConfig, formWithErrors, mode, establisherIndex, partnerIndex, existingSchemeName, submitUrl, srn)))
           },
           (value) =>
             userAnswersService.save(

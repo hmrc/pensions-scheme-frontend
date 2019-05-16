@@ -57,6 +57,19 @@ class AddCompanyDirectorsViewSpec extends YesNoViewBehaviours with EntityListBeh
         None
       )(fakeRequest, messages)
 
+  private def createUpdateView(directors: Seq[DirectorEntity] = Nil, viewOnly: Boolean = false) =
+    () =>
+      addCompanyDirectors(
+        frontendAppConfig,
+        form,
+        directors,
+        None,
+        postCall(NormalMode, None, establisherIndex),
+        viewOnly,
+        NormalMode,
+        Some("srn")
+      )(fakeRequest, messages)
+
   private def createViewUsingForm(directors: Seq[DirectorEntity] = Nil, viewOnly: Boolean = false) =
     (form: Form[_]) =>
       addCompanyDirectors(
@@ -162,6 +175,8 @@ class AddCompanyDirectorsViewSpec extends YesNoViewBehaviours with EntityListBeh
     }
 
     behave like pageWithReturnLink(createView(), getReturnLink)
+
+    behave like pageWithReturnLinkAndSrn(createUpdateView(), getReturnLinkWithSrn)
 
     behave like entityListWithSingleRecord(createView(), createView(Seq(johnDoeEntity)), Seq(johnDoeEntity), frontendAppConfig)
 

@@ -70,7 +70,11 @@ class EstablishersPartnershipNavigator @Inject()(val dataCacheConnector: UserAns
     case CheckYourAnswersId(index) =>
       NavigateTo.dontSave(routes.AddPartnersController.onPageLoad(mode, index, srn))
     case OtherPartnersId(index) =>
-      NavigateTo.dontSave(routes.PartnershipReviewController.onPageLoad(mode, index, srn))
+      if(mode == CheckMode || mode == NormalMode){
+        NavigateTo.dontSave(routes.PartnershipReviewController.onPageLoad(mode, index, srn))
+      } else {
+        NavigateTo.dontSave(controllers.routes.AnyMoreChangesController.onPageLoad(srn))
+      }
     case PartnershipReviewId(_) =>
       NavigateTo.dontSave(controllers.register.establishers.routes.AddEstablisherController.onPageLoad(mode, srn))
     case _ =>

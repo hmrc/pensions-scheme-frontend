@@ -401,8 +401,7 @@ case class CompanyRegistrationNumberCYA[I <: TypedIdentifier[CompanyRegistration
       override def updateRow(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
         userAnswers.get(id) match {
           case Some(CompanyRegistrationNumber.Yes(crn)) => Seq(
-            AnswerRow("messages__common__crn", Seq(s"$crn"), answerIsMessageKey = false,
-              Some(Link("site.change", changeUrl, Some(changeCrn))))
+            AnswerRow("messages__common__crn", Seq(s"$crn"), answerIsMessageKey = false, None)
           )
           case Some(CompanyRegistrationNumber.No(_)) => Seq(
             AnswerRow("messages__common__crn", Seq("site.not_entered"), answerIsMessageKey = true,

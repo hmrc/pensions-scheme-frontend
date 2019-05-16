@@ -55,7 +55,7 @@ class PartnershipUniqueTaxReferenceController @Inject()(
       PartnershipDetailsId(index).retrieve.right.map { _ =>
         val updatedForm = request.userAnswers.get(PartnershipUniqueTaxReferenceId(index)).fold(form)(form.fill)
         val submitUrl = controllers.register.trustees.partnership.routes.PartnershipUniqueTaxReferenceController.onSubmit(mode, index, srn)
-        Future.successful(Ok(partnershipUniqueTaxReference(appConfig, updatedForm, mode, index, existingSchemeName, submitUrl)))
+        Future.successful(Ok(partnershipUniqueTaxReference(appConfig, updatedForm, mode, index, existingSchemeName, submitUrl, srn)))
       }
   }
 
@@ -65,7 +65,7 @@ class PartnershipUniqueTaxReferenceController @Inject()(
         form.bindFromRequest().fold(
           (formWithErrors: Form[_]) => {
             val submitUrl = controllers.register.trustees.partnership.routes.PartnershipUniqueTaxReferenceController.onSubmit(mode, index, srn)
-            Future.successful(BadRequest(partnershipUniqueTaxReference(appConfig, formWithErrors, mode, index, existingSchemeName, submitUrl)))
+            Future.successful(BadRequest(partnershipUniqueTaxReference(appConfig, formWithErrors, mode, index, existingSchemeName, submitUrl, srn)))
           },
           value =>
             userAnswersService.save(

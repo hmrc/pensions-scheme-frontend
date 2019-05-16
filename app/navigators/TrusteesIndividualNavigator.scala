@@ -19,11 +19,10 @@ package navigators
 import com.google.inject.{Inject, Singleton}
 import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
-import identifiers.register.trustees.{IsTrusteeCompleteId, IsTrusteeNewId}
 import identifiers.register.trustees.IsTrusteeNewId
 import identifiers.register.trustees.individual._
-import models._
 import models.Mode.journeyMode
+import models._
 import utils.{Navigator, UserAnswers}
 
 @Singleton
@@ -70,11 +69,7 @@ class TrusteesIndividualNavigator @Inject()(val dataCacheConnector: UserAnswersC
       case TrusteeContactDetailsId(index) =>
         checkYourAnswers(index, mode, srn)
       case CheckYourAnswersId =>
-        if(mode == CheckMode || mode == NormalMode){
-          NavigateTo.dontSave(controllers.register.trustees.routes.AddTrusteeController.onPageLoad(mode, srn))
-        } else {
-          anyMoreChanges(srn)
-        }
+        NavigateTo.dontSave(controllers.register.trustees.routes.AddTrusteeController.onPageLoad(mode, srn))
       case _ =>
         None
     }

@@ -17,7 +17,7 @@
 package views.register.trustees.company
 
 import forms.CompanyRegistrationNumberFormProvider
-import models.{Index, NormalMode}
+import models.{Index, NormalMode, UpdateMode}
 import play.api.data.Form
 import views.behaviours.ViewBehaviours
 import views.html.register.trustees.company.companyRegistrationNumber
@@ -28,15 +28,20 @@ class CompanyRegistrationNumberViewSpec extends ViewBehaviours {
   val index = Index(0)
   val form = new CompanyRegistrationNumberFormProvider()()
   val submitUrl = controllers.register.trustees.company.routes.CompanyRegistrationNumberController.onSubmit(NormalMode, index, None)
-  private def createView() = () =>
-    companyRegistrationNumber(frontendAppConfig, form, NormalMode, index, None, submitUrl)(fakeRequest, messages)
+  private def createView() = () => companyRegistrationNumber(
+    frontendAppConfig, form, NormalMode, index, None, submitUrl, None)(fakeRequest, messages)
+  private def createUpdateView = () => companyRegistrationNumber(
+    frontendAppConfig, form, UpdateMode, index, None, submitUrl, Some("srn"))(fakeRequest, messages)
 
   private def createViewUsingForm = (form: Form[_]) =>
-    companyRegistrationNumber(frontendAppConfig, form, NormalMode, index, None, submitUrl)(fakeRequest, messages)
+    companyRegistrationNumber(frontendAppConfig, form, NormalMode, index, None, submitUrl, None)(fakeRequest, messages)
 
   "CompanyRegistrationNumber view" when {
     behave like normalPage(createView(), messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"))
+
     behave like pageWithReturnLink(createView(), getReturnLink)
+
+    behave like pageWithReturnLinkAndSrn(createUpdateView, getReturnLinkWithSrn)
 
     "Generate correct hint text" in {
       val doc = asDocument(createView()())

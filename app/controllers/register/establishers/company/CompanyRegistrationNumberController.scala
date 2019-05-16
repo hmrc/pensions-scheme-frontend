@@ -53,9 +53,9 @@ class CompanyRegistrationNumberController @Inject()(
       implicit request =>
         val redirectResult = request.userAnswers.get(CompanyRegistrationNumberId(index)) match {
           case None =>
-            Ok(companyRegistrationNumber(appConfig, form, mode, index, existingSchemeName, postCall(mode, srn, index)))
+            Ok(companyRegistrationNumber(appConfig, form, mode, index, existingSchemeName, postCall(mode, srn, index), srn))
           case Some(value) =>
-            Ok(companyRegistrationNumber(appConfig, form.fill(value), mode, index, existingSchemeName, postCall(mode, srn, index)))
+            Ok(companyRegistrationNumber(appConfig, form.fill(value), mode, index, existingSchemeName, postCall(mode, srn, index), srn))
         }
 
         Future.successful(redirectResult)
@@ -68,7 +68,7 @@ class CompanyRegistrationNumberController @Inject()(
 
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) =>
-          Future.successful(BadRequest(companyRegistrationNumber(appConfig, formWithErrors, mode, index, existingSchemeName, postCall(mode, srn, index)))),
+          Future.successful(BadRequest(companyRegistrationNumber(appConfig, formWithErrors, mode, index, existingSchemeName, postCall(mode, srn, index), srn))),
         value =>
           userAnswersService.save(mode, srn, CompanyRegistrationNumberId(index), value).map(cacheMap =>
             Redirect(navigator.nextPage(CompanyRegistrationNumberId(index), mode, UserAnswers(cacheMap), srn)))

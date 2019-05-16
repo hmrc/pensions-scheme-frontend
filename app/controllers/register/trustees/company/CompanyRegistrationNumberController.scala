@@ -55,7 +55,7 @@ class CompanyRegistrationNumberController @Inject()(
       CompanyDetailsId(index).retrieve.right.map { _ =>
         val submitUrl = controllers.register.trustees.company.routes.CompanyRegistrationNumberController.onSubmit(mode, index, srn)
         val updatedForm = request.userAnswers.get(CompanyRegistrationNumberId(index)).fold(form)(form.fill)
-        Future.successful(Ok(companyRegistrationNumber(appConfig, updatedForm, mode, index, existingSchemeName, submitUrl)))
+        Future.successful(Ok(companyRegistrationNumber(appConfig, updatedForm, mode, index, existingSchemeName, submitUrl, srn)))
       }
   }
 
@@ -65,7 +65,7 @@ class CompanyRegistrationNumberController @Inject()(
         form.bindFromRequest().fold(
           (formWithErrors: Form[_]) => {
             val submitUrl = controllers.register.trustees.company.routes.CompanyRegistrationNumberController.onSubmit(mode, index, srn)
-            Future.successful(BadRequest(companyRegistrationNumber(appConfig, formWithErrors, mode, index, existingSchemeName, submitUrl)))
+            Future.successful(BadRequest(companyRegistrationNumber(appConfig, formWithErrors, mode, index, existingSchemeName, submitUrl, srn)))
           },
           (value) =>
             userAnswersService.save(mode, srn, CompanyRegistrationNumberId(index), value).map(cacheMap =>

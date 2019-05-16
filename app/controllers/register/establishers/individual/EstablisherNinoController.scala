@@ -55,7 +55,7 @@ class EstablisherNinoController @Inject()(
       retrieveEstablisherName(index) { _ =>
         val preparedForm = request.userAnswers.get(EstablisherNinoId(index)).fold(form)(form.fill)
         val submitUrl = controllers.register.establishers.individual.routes.EstablisherNinoController.onSubmit(mode, index, srn)
-        Future.successful(Ok(establisherNino(appConfig, preparedForm, mode, index, existingSchemeName, submitUrl)))
+        Future.successful(Ok(establisherNino(appConfig, preparedForm, mode, index, existingSchemeName, submitUrl, srn)))
       }
   }
 
@@ -66,7 +66,7 @@ class EstablisherNinoController @Inject()(
           form.bindFromRequest().fold(
             (formWithErrors: Form[_]) => {
               val submitUrl = controllers.register.establishers.individual.routes.EstablisherNinoController.onSubmit(mode, index, srn)
-              Future.successful(BadRequest(establisherNino(appConfig, formWithErrors, mode, index, existingSchemeName, submitUrl)))
+              Future.successful(BadRequest(establisherNino(appConfig, formWithErrors, mode, index, existingSchemeName, submitUrl, srn)))
             },
             (value) =>
               userAnswersService.save(

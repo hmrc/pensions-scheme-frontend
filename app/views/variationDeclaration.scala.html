@@ -21,7 +21,8 @@
 @import play.api.mvc.Call
 
 @(appConfig: FrontendAppConfig, form: Form[_],
-    schemeName: Option[String], postCall: Call)(implicit request: Request[_], messages: Messages)
+  schemeName: Option[String], postCall: Call,
+  srn: Option[String], mode: Mode = UpdateMode)(implicit request: Request[_], messages: Messages)
 
 @main_template(
     title = messages("messages__variationDeclaration__title"),
@@ -69,7 +70,7 @@
 
         @components.submit_button("site.save_and_continue")
 
-        @components.return_link("site.return_to", schemeName)
+        @components.return_link("site.return_to", schemeName, None, srn)
 
     }
 }

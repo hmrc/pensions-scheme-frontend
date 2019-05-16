@@ -65,7 +65,13 @@ class TrusteeAddressYearsIdSpec extends WordSpec with MustMatchers with OptionVa
 
     "`AddressYears` is set to `OverAYear`" when {
 
-      val result: UserAnswers = answers.set(TrusteeAddressYearsId(0))(AddressYears.UnderAYear).asOpt.value
+      val result: UserAnswers = UserAnswers(Json.obj())
+        .set(TrusteeAddressYearsId(0))(AddressYears.OverAYear)
+        .flatMap(_.set(IndividualPreviousAddressPostCodeLookupId(0))(Seq.empty))
+        .flatMap(_.set(TrusteePreviousAddressId(0))(Address("foo", "bar", None, None, None, "GB")))
+        .flatMap(_.set(TrusteePreviousAddressListId(0))(TolerantAddress(Some("foo"), Some("bar"), None, None, None, Some("GB"))))
+        .flatMap(_.set(IsTrusteeCompleteId(0))(true))
+        .asOpt.value.set(TrusteeAddressYearsId(0))(AddressYears.UnderAYear).asOpt.value
 
       "set the value of IsTrusteeCompleteId to false" in {
         result.get(IsTrusteeCompleteId(0)).value mustBe false

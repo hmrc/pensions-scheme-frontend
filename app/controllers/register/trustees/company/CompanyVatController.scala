@@ -55,7 +55,7 @@ class CompanyVatController @Inject()(
               heading = Message("messages__companyVat__heading", details.companyName),
               hint = Message("messages__common__company_vat__hint", details.companyName),
               subHeading = None,
-              srn= srn
+              srn = srn
             )
         }
     }

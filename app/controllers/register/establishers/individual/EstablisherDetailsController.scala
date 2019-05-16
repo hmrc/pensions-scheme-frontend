@@ -53,7 +53,7 @@ class EstablisherDetailsController @Inject()(
       implicit request =>
         val filledForm = request.userAnswers.get(EstablisherDetailsId(index)).fold(form)(form.fill)
         val submitUrl = controllers.register.establishers.individual.routes.EstablisherDetailsController.onSubmit(mode, index, srn)
-        Future.successful(Ok(establisherDetails(appConfig, filledForm, mode, index, existingSchemeName, submitUrl)))
+        Future.successful(Ok(establisherDetails(appConfig, filledForm, mode, index, existingSchemeName, submitUrl, srn)))
     }
 
   def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
@@ -61,7 +61,7 @@ class EstablisherDetailsController @Inject()(
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) => {
           val submitUrl = controllers.register.establishers.individual.routes.EstablisherDetailsController.onSubmit(mode, index, srn)
-          Future.successful(BadRequest(establisherDetails(appConfig, formWithErrors, mode, index, existingSchemeName, submitUrl)))
+          Future.successful(BadRequest(establisherDetails(appConfig, formWithErrors, mode, index, existingSchemeName, submitUrl, srn)))
         },
         value =>
           userAnswersService.save(

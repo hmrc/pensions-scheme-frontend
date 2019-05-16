@@ -68,13 +68,12 @@ class CompanyRegistrationNumberIdSpec extends SpecBase {
 
     "in update mode for existing trustee - company crn" must {
 
-      "return answers rows with change links" in {
+      "return answers rows without change links" in {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
         implicit val userAnswers = request.userAnswers
 
         CompanyRegistrationNumberId(0).row(onwardUrl, UpdateMode) must equal(Seq(
-          AnswerRow("messages__common__crn",List("crn"),false,
-            Some(Link("site.change",onwardUrl,Some("messages__visuallyhidden__trustee__crn"))))
+          AnswerRow("messages__common__crn",List("crn"),false, None)
         ))
       }
     }

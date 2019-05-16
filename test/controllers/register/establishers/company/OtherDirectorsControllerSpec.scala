@@ -75,7 +75,8 @@ class OtherDirectorsControllerSpec extends ControllerSpecBase {
       NormalMode,
       index,
       None,
-      postCall(NormalMode, None, index)
+      postCall(NormalMode, None, index),
+      None
     )(fakeRequest, messages).toString
 
   "OtherDirectors Controller" must {

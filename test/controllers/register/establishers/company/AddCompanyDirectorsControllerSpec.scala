@@ -52,7 +52,6 @@ class AddCompanyDirectorsControllerSpec extends ControllerSpecBase {
     new AddCompanyDirectorsController(
       frontendAppConfig,
       messagesApi,
-      FakeUserAnswersService,
       navigator,
       FakeAuthAction,
       dataRetrievalAction,
@@ -115,6 +114,25 @@ class AddCompanyDirectorsControllerSpec extends ControllerSpecBase {
         }
     }
 
+    "populate the view with directors when they exist" in {
+      val directors = Seq(johnDoe, joeBloggs)
+      val directorsViewModel = Seq(
+        DirectorEntity(DirectorDetailsId(0, 0), johnDoe.fullName, isDeleted = false, isCompleted = false, isNewEntity = false, 2),
+        DirectorEntity(DirectorDetailsId(0, 1), joeBloggs.fullName, isDeleted = false, isCompleted = false, isNewEntity = false, 3))
+      val getRelevantData = new FakeDataRetrievalAction(Some(validData(directors: _*)))
+      val result = controller(getRelevantData).onPageLoad(NormalMode, None, establisherIndex)(fakeRequest)
+
+      status(result) mustBe OK
+      contentAsString(result) mustBe viewAsString(form, directorsViewModel)
+    }
+
+    "redirect to Session Expired for a GET if no existing data is found" in {
+      val result = controller(dontGetAnyData).onPageLoad(NormalMode, None, 0)(fakeRequest)
+
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
+    }
+
     "redirect to the next page when no directors exist and the user submits" in {
       val getRelevantData = new FakeDataRetrievalAction(Some(validData()))
       val result = controller(getRelevantData).onSubmit(NormalMode, None, establisherIndex)(fakeRequest)
@@ -143,45 +161,13 @@ class AddCompanyDirectorsControllerSpec extends ControllerSpecBase {
         Seq(DirectorEntity(DirectorDetailsId(0, 0), johnDoe.fullName, isDeleted = false, isCompleted = false, isNewEntity = false, 0)))
     }
 
-    "set the user answer when directors exist and valid data is submitted" in {
-      FakeUserAnswersService.reset()
-      val getRelevantData = new FakeDataRetrievalAction(Some(validData(johnDoe)))
-      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "true"))
-      val navigator = fakeNavigator()
-      val result = controller(getRelevantData, navigator).onSubmit(NormalMode, None, establisherIndex)(postRequest)
-
-      status(result) mustBe SEE_OTHER
-      FakeUserAnswersService.verify(AddCompanyDirectorsId(firstIndex), true)
-    }
-
     "redirect to the next page when maximum directors exist and the user submits" in {
-      FakeUserAnswersService.reset()
       val directors = Seq.fill(maxDirectors)(johnDoe)
       val getRelevantData = new FakeDataRetrievalAction(Some(validData(directors: _*)))
       val result = controller(getRelevantData).onSubmit(NormalMode, None, establisherIndex)(fakeRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
-      FakeUserAnswersService.verifyNot(AddCompanyDirectorsId(firstIndex))
-    }
-
-    "populate the view with directors when they exist" in {
-      val directors = Seq(johnDoe, joeBloggs)
-      val directorsViewModel = Seq(
-        DirectorEntity(DirectorDetailsId(0, 0), johnDoe.fullName, isDeleted = false, isCompleted = false, isNewEntity = false, 2),
-        DirectorEntity(DirectorDetailsId(0, 1), joeBloggs.fullName, isDeleted = false, isCompleted = false, isNewEntity = false, 3))
-      val getRelevantData = new FakeDataRetrievalAction(Some(validData(directors: _*)))
-      val result = controller(getRelevantData).onPageLoad(NormalMode, None, establisherIndex)(fakeRequest)
-
-      status(result) mustBe OK
-      contentAsString(result) mustBe viewAsString(form, directorsViewModel)
-    }
-
-    "redirect to Session Expired for a GET if no existing data is found" in {
-      val result = controller(dontGetAnyData).onPageLoad(NormalMode, None, 0)(fakeRequest)
-
-      status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
     }
 
     "redirect to Session Expired for a POST if no existing data is found" in {

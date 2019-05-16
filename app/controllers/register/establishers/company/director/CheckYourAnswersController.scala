@@ -87,7 +87,8 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
         existingSchemeName,
         mode = mode,
         hideEditLinks = request.viewOnly,
-        hideSaveAndContinueButton = allowChangeHelper.hideSaveAndContinueButton(request, IsNewDirectorId(companyIndex, directorIndex), mode)
+        hideSaveAndContinueButton = allowChangeHelper.hideSaveAndContinueButton(request, IsNewDirectorId(companyIndex, directorIndex), mode),
+        srn = srn
       )))
 
     }
@@ -111,7 +112,7 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
             request.userAnswers.upsert(IsEstablisherCompleteId(companyIndex))(true) { answers =>
               answers.upsert(IsDirectorCompleteId(companyIndex, directorIndex))(true) { updatedAnswers =>
                 userAnswersService.upsert(mode, srn, updatedAnswers.json).map { json =>
-                  Redirect(navigator.nextPage(AnyMoreChangesId, mode, UserAnswers(json), srn))
+                  Redirect(navigator.nextPage(CheckYourAnswersId(companyIndex, directorIndex), mode, UserAnswers(json), srn))
                 }
               }
             }

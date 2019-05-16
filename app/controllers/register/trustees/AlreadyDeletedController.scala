@@ -49,15 +49,17 @@ class AlreadyDeletedController @Inject()(
     implicit request =>
       trusteeName(index, trusteeKind, srn) match {
         case Right(trusteeName) =>
-          Future.successful(Ok(alreadyDeleted(appConfig, vm(index, trusteeName, mode, srn))))
+          Future.successful(Ok(alreadyDeleted(appConfig, vm(index, trusteeName, mode, srn, existingSchemeName))))
         case Left(result) => result
       }
   }
 
-  private def vm(index: Index, trusteeName: String, mode: Mode, srn: Option[String]) = AlreadyDeletedViewModel(
+  private def vm(index: Index, trusteeName: String, mode: Mode, srn: Option[String], schemeName: Option[String]) = AlreadyDeletedViewModel(
     title = Message("messages__alreadyDeleted__trustee_title"),
     deletedEntity = trusteeName,
-    returnCall = controllers.register.trustees.routes.AddTrusteeController.onPageLoad(mode, srn)
+    returnCall = controllers.register.trustees.routes.AddTrusteeController.onPageLoad(mode, srn),
+    srn = srn,
+    schemeName = schemeName
   )
 
   private def trusteeName(index: Index, trusteeKind: TrusteeKind, srn: Option[String])

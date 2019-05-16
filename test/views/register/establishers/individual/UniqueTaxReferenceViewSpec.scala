@@ -32,14 +32,18 @@ class UniqueTaxReferenceViewSpec extends ViewBehaviours {
   val index = Index(1)
   val submitUrl = controllers.register.establishers.individual.routes.UniqueTaxReferenceController.onSubmit(NormalMode, index, None)
   def createView(): () => HtmlFormat.Appendable = () =>
-    uniqueTaxReference(frontendAppConfig, form, NormalMode, index, None, submitUrl)(fakeRequest, messages)
+    uniqueTaxReference(frontendAppConfig, form, NormalMode, index, None, submitUrl, None)(fakeRequest, messages)
+  def createUpdateView(): () => HtmlFormat.Appendable = () =>
+    uniqueTaxReference(frontendAppConfig, form, NormalMode, index, None, submitUrl, Some("srn"))(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) => uniqueTaxReference(frontendAppConfig, form, NormalMode,
-    index, None, submitUrl)(fakeRequest, messages)
+    index, None, submitUrl, None)(fakeRequest, messages)
 
   "UniqueTaxReference view" when {
     "rendered" must {
       behave like pageWithReturnLink(createView(), getReturnLink)
+
+      behave like pageWithReturnLinkAndSrn(createUpdateView(), getReturnLinkWithSrn)
 
       val utrOptions = Seq("true", "false")
 
