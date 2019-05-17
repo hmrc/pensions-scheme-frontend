@@ -47,7 +47,10 @@ class HsTaskListHelperVariations(answers: UserAnswers, viewOnly: Boolean, srn: O
     } else {
       Some(SchemeDetailsTaskListDeclarationSection(
         header = "messages__schemeTaskList__sectionDeclaration_header",
-        declarationLink = variationDeclarationLink(userAnswers, srn)))
+        declarationLink = variationDeclarationLink(userAnswers, srn),
+        incompleteDeclarationText =
+          "messages__schemeTaskList__sectionDeclaration_incomplete_v1",
+          "messages__schemeTaskList__sectionDeclaration_incomplete_v2"))
     }
 
   private[utils] def variationDeclarationLink(userAnswers: UserAnswers, srn:Option[String]): Option[Link] = {
