@@ -56,10 +56,7 @@ class SchemeTaskListController @Inject()(appConfig: FrontendAppConfig,
       (srn, request.userAnswers) match {
 
         case (None, Some(userAnswers)) =>
-          Future.successful(Ok(schemeDetailsTaskList(
-            appConfig,
-            new HsTaskListHelperRegistration(userAnswers).taskList,
-            isVariations = false)))
+          Future.successful(Ok(schemeDetailsTaskList(appConfig, new HsTaskListHelperRegistration(userAnswers).taskList)))
 
         case (Some(srnValue), _) if !featureSwitchManagementService.get(Toggles.isVariationsEnabled) =>
           onPageLoadVariationsToggledOff(srnValue)
@@ -113,7 +110,7 @@ class SchemeTaskListController @Inject()(appConfig: FrontendAppConfig,
 
       upsertUserAnswers(updatedUserAnswers.json).flatMap { _ =>
 
-        Future.successful(Ok(schemeDetailsTaskList(appConfig, taskList, isVariations = true)))
+        Future.successful(Ok(schemeDetailsTaskList(appConfig, taskList)))
       }
     }
 

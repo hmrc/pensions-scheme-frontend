@@ -26,15 +26,15 @@ class SchemeDetailsTaskListViewSpec extends ViewBehaviours {
 
   import SchemeDetailsTaskListViewSpec._
 
-  private def createView(schemeDetailsList: SchemeDetailsTaskList = schemeDetailsTaskListData, isVariations:Boolean = false): () => HtmlFormat.Appendable = () =>
-    schemeDetailsTaskList(frontendAppConfig, schemeDetailsList, isVariations = isVariations)(fakeRequest, messages)
+  private def createView(schemeDetailsList: SchemeDetailsTaskList = schemeDetailsTaskListData()): () => HtmlFormat.Appendable = () =>
+    schemeDetailsTaskList(frontendAppConfig, schemeDetailsList)(fakeRequest, messages)
 
   "SchemeDetailsTaskListView" should {
 
-    behave like normalPageWithTitle(createView(), messageKeyPrefix, schemeDetailsTaskListData.pageTitle, schemeDetailsTaskListData.h1)
+    behave like normalPageWithTitle(createView(), messageKeyPrefix, schemeDetailsTaskListData().pageTitle, schemeDetailsTaskListData().h1)
 
     "display the correct link when registration" in {
-      val view = createView(schemeDetailsTaskListData)
+      val view = createView(schemeDetailsTaskListData())
       view must haveLinkWithText(
         url = frontendAppConfig.managePensionsSchemeOverviewUrl.url,
         linkText = messages("messages__complete__saveAndReturnToManagePensionSchemes"),
@@ -43,10 +43,10 @@ class SchemeDetailsTaskListViewSpec extends ViewBehaviours {
     }
 
     "display the correct link when variations" in {
-      val view = createView(schemeDetailsTaskListData, isVariations = true)
+      val view = createView(schemeDetailsTaskListData(Some("srn")))
       view must haveLinkWithText(
-        url = frontendAppConfig.managePensionsSchemeOverviewUrl.url,
-        linkText = messages("messages__complete__returnToManagePensionSchemes"),
+        url = frontendAppConfig.managePensionsSchemeSummaryUrl.format("srn"),
+        linkText = messages("messages__complete__returnToSchemeSummary"),
         linkId = "save-and-return"
       )
     }
@@ -54,9 +54,9 @@ class SchemeDetailsTaskListViewSpec extends ViewBehaviours {
 
   "SchemeTaskListView Before start section" should {
 
-    val notStarted = schemeDetailsTaskListData.copy(beforeYouStart = beforeYouStartSection.copy(isCompleted = None))
-    val inProgress = schemeDetailsTaskListData.copy(beforeYouStart = beforeYouStartSection.copy(isCompleted = Some(false)))
-    val completed = schemeDetailsTaskListData.copy(beforeYouStart = beforeYouStartSection.copy(isCompleted = Some(true)))
+    val notStarted = schemeDetailsTaskListData().copy(beforeYouStart = beforeYouStartSection.copy(isCompleted = None))
+    val inProgress = schemeDetailsTaskListData().copy(beforeYouStart = beforeYouStartSection.copy(isCompleted = Some(false)))
+    val completed = schemeDetailsTaskListData().copy(beforeYouStart = beforeYouStartSection.copy(isCompleted = Some(true)))
 
     behave like simpleSection(
       linkId = "section-before-you-start-link",
@@ -69,19 +69,19 @@ class SchemeDetailsTaskListViewSpec extends ViewBehaviours {
 
     "display correct h2" in {
       val doc = asDocument(createView(notStarted)())
-      assertRenderedByIdWithText(doc, id = "section-before-you-start-header", text = schemeDetailsTaskListData.h2)
+      assertRenderedByIdWithText(doc, id = "section-before-you-start-header", text = schemeDetailsTaskListData().h2)
     }
 
     "display correct h3" in {
       val doc = asDocument(createView(notStarted)())
-      assertRenderedByIdWithText(doc, id = "section-information-h3", text = schemeDetailsTaskListData.h3.getOrElse(""))
+      assertRenderedByIdWithText(doc, id = "section-information-h3", text = schemeDetailsTaskListData().h3.getOrElse(""))
     }
   }
 
   "SchemeTaskListView Working knowledge of pensions section" should {
-    val notStarted = schemeDetailsTaskListData.copy(workingKnowledge = Some(wkSection.copy(isCompleted = None)))
-    val inProgress = schemeDetailsTaskListData.copy(workingKnowledge = Some(wkSection.copy(isCompleted = Some(false))))
-    val completed = schemeDetailsTaskListData.copy(workingKnowledge = Some(wkSection.copy(isCompleted = Some(true))))
+    val notStarted = schemeDetailsTaskListData().copy(workingKnowledge = Some(wkSection.copy(isCompleted = None)))
+    val inProgress = schemeDetailsTaskListData().copy(workingKnowledge = Some(wkSection.copy(isCompleted = Some(false))))
+    val completed = schemeDetailsTaskListData().copy(workingKnowledge = Some(wkSection.copy(isCompleted = Some(true))))
 
     behave like simpleSection(
       linkId = "section-working-knowledge-link",
@@ -94,11 +94,11 @@ class SchemeDetailsTaskListViewSpec extends ViewBehaviours {
   }
 
   "SchemeTaskListView About section" should {
-    val view = createView(schemeDetailsTaskListData)
+    val view = createView(schemeDetailsTaskListData())
 
     "display correct header" in {
       val doc = asDocument(view())
-      assertRenderedByIdWithText(doc, id = "section-about-header", text = schemeDetailsTaskListData.aboutHeader)
+      assertRenderedByIdWithText(doc, id = "section-about-header", text = schemeDetailsTaskListData().aboutHeader)
     }
 
 
@@ -109,14 +109,14 @@ class SchemeDetailsTaskListViewSpec extends ViewBehaviours {
       s"display the about $aboutType section with correct link" in {
 
         view must haveLinkWithText(
-          url = schemeDetailsTaskListData.about(index.toInt - 1).link.target,
-          linkText = schemeDetailsTaskListData.about(index.toInt - 1).link.text,
+          url = schemeDetailsTaskListData().about(index.toInt - 1).link.target,
+          linkText = schemeDetailsTaskListData().about(index.toInt - 1).link.text,
           linkId = s"section-about-link-$index"
         )
       }
 
       s"display the about $aboutType section with correct status" in {
-        val view = createView(schemeDetailsTaskListData)
+        val view = createView(schemeDetailsTaskListData())
         val doc = asDocument(view())
         doc.getElementById(s"section-about-status-$index").text mustBe messages(msg)
       }
@@ -138,7 +138,7 @@ class SchemeDetailsTaskListViewSpec extends ViewBehaviours {
           Some(Link(messages("messages__schemeTaskList__sectionTrustees_add_link"),
             controllers.register.trustees.routes.TrusteeKindController.onPageLoad(NormalMode, 0, None).url)),
           None
-        )), Seq.empty, None, "h1", "h2",None, "pageTitle"
+        )), Seq.empty, None, "h1", "h2",None, "pageTitle", None
       )
       val view = createView(journeyTaskListNoEstablisher)
 
@@ -160,7 +160,7 @@ class SchemeDetailsTaskListViewSpec extends ViewBehaviours {
 
     "establishers defined and not completed" should {
 
-      val view = createView(schemeDetailsTaskListData)
+      val view = createView(schemeDetailsTaskListData())
 
       "display the correct link" in {
 
@@ -176,14 +176,14 @@ class SchemeDetailsTaskListViewSpec extends ViewBehaviours {
         s"display the first establisher section with correct link and status for item no $index" in {
 
           view must haveLinkWithText(
-            url = schemeDetailsTaskListData.establishers(index.toInt-1).link.target,
-            linkText = schemeDetailsTaskListData.establishers(index.toInt-1).link.text,
+            url = schemeDetailsTaskListData().establishers(index.toInt-1).link.target,
+            linkText = schemeDetailsTaskListData().establishers(index.toInt-1).link.text,
             linkId = s"section-establishers-link-$index"
           )
         }
 
         s"display the first establisher section with correct status of in progress for item no $index" in {
-          val view = createView(schemeDetailsTaskListData)
+          val view = createView(schemeDetailsTaskListData())
           val doc = asDocument(view())
           doc.getElementById(s"section-establishers-status-$index").text mustBe messages(msg)
         }
@@ -207,7 +207,8 @@ class SchemeDetailsTaskListViewSpec extends ViewBehaviours {
           Some(Link(messages("messages__schemeTaskList__sectionTrustees_add_link"),
             controllers.register.trustees.routes.TrusteeKindController.onPageLoad(NormalMode, 0, None).url)),
             None,
-          text)), Seq.empty, None, "h1", "h2",None, "pageTitle"
+          text)), Seq.empty, None, "h1", "h2",None, "pageTitle",
+        None
       )
 
       val view = createView(journeyTaskListNoTrustees())
@@ -238,7 +239,7 @@ class SchemeDetailsTaskListViewSpec extends ViewBehaviours {
 
     "trustees defined and not completed" should {
 
-      val view = createView(schemeDetailsTaskListData)
+      val view = createView(schemeDetailsTaskListData())
 
       "display the add link" in {
 
@@ -254,14 +255,14 @@ class SchemeDetailsTaskListViewSpec extends ViewBehaviours {
         s"display the first trustee section with correct link and status for item no $index" in {
 
           view must haveLinkWithText(
-            url = schemeDetailsTaskListData.trustees(index.toInt-1).link.target,
-            linkText = schemeDetailsTaskListData.trustees(index.toInt-1).link.text,
+            url = schemeDetailsTaskListData().trustees(index.toInt-1).link.target,
+            linkText = schemeDetailsTaskListData().trustees(index.toInt-1).link.text,
             linkId = s"section-trustees-link-$index"
           )
         }
 
         s"display the first trustee section with correct status of in progress for item no $index" in {
-          val view = createView(schemeDetailsTaskListData)
+          val view = createView(schemeDetailsTaskListData())
           val doc = asDocument(view())
 
           doc.getElementById(s"section-trustees-status-$index").text mustBe messages(msg)
@@ -272,24 +273,24 @@ class SchemeDetailsTaskListViewSpec extends ViewBehaviours {
 
   "SchemeTaskListView Declaration section" should {
     "not display where no declaration section in view model" in {
-      val doc = asDocument(createView(schemeDetailsTaskListData)())
+      val doc = asDocument(createView(schemeDetailsTaskListData())())
       assertNotRenderedById(doc, id = "section-declaration-header")
     }
 
     "display correct heading where there is a declaration section in view model" in {
-      val doc = asDocument(createView(schemeDetailsTaskListData
+      val doc = asDocument(createView(schemeDetailsTaskListData()
         .copy(declaration = Some(SchemeDetailsTaskListDeclarationSection("messages__schemeTaskList__sectionDeclaration_header", None))))())
       assertRenderedByIdWithText(doc, id = "section-declaration-header", text = messages("messages__schemeTaskList__sectionDeclaration_header"))
     }
 
     "display correct text for the Declaration section where there is a declaration section but no link" in {
-      val doc = asDocument(createView(schemeDetailsTaskListData
+      val doc = asDocument(createView(schemeDetailsTaskListData()
         .copy(declaration = Some(SchemeDetailsTaskListDeclarationSection("messages__schemeTaskList__sectionDeclaration_header", None))))())
       assertNotRenderedById(doc, id = "section-declaration-link")
     }
 
     "display correct link and no text for the Declaration section where there is a declaration section and a link" in {
-      val completed = schemeDetailsTaskListData.copy(declaration = Some(SchemeDetailsTaskListDeclarationSection("messages__schemeTaskList__sectionDeclaration_header", Some(Link(text = "text", target = "target")))))
+      val completed = schemeDetailsTaskListData().copy(declaration = Some(SchemeDetailsTaskListDeclarationSection("messages__schemeTaskList__sectionDeclaration_header", Some(Link(text = "text", target = "target")))))
       val doc = asDocument(createView(completed)())
 
       assertNotRenderedById(doc, id = "section-declaration-text")
@@ -397,10 +398,10 @@ object SchemeDetailsTaskListViewSpec extends ViewSpecBase {
 
   private val testAboutHeader = "testabout"
 
-  private val schemeDetailsTaskListData: SchemeDetailsTaskList = SchemeDetailsTaskList(
+  private def schemeDetailsTaskListData(srn:Option[String]=None): SchemeDetailsTaskList = SchemeDetailsTaskList(
     beforeYouStartSection, testAboutHeader,aboutSection, Some(wkSection),
     Some(addEstablisherHeader()), establishers, Some(addTrusteesHeader()),
-    trustees, None, "h1", "h2",Some("h3"), "pageTitle" )
+    trustees, None, "h1", "h2",Some("h3"), "pageTitle", srn )
 
   private val pageHeader = messages("messages__schemeTaskList__title")
   private val messageKeyPrefix = "schemeTaskList"

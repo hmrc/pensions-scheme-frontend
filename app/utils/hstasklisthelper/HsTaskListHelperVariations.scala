@@ -137,7 +137,8 @@ class HsTaskListHelperVariations(answers: UserAnswers, viewOnly: Boolean, srn: O
       answers.get(SchemeNameId).getOrElse(""),
       messages("messages__scheme_details__title"),
       Some(messages("messages__schemeTaskList__scheme_information_link_text")),
-      messages("messages__scheme_details__title")
+      messages("messages__scheme_details__title"),
+      srn
     )
 
   }
