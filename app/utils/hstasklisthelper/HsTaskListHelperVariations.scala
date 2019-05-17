@@ -37,8 +37,16 @@ class HsTaskListHelperVariations(answers: UserAnswers, viewOnly: Boolean, srn: O
     val benefitsAndInsuranceLink = Link(aboutBenefitsAndInsuranceLinkText,
       controllers.routes.CheckYourAnswersBenefitsAndInsuranceController.onPageLoad(UpdateMode, srn).url)
 
-    Seq(SchemeDetailsTaskListSection(userAnswers.get(IsAboutMembersCompleteId), membersLink, None),
-      SchemeDetailsTaskListSection(Some(userAnswers.isInsuranceCompleted), benefitsAndInsuranceLink, None))
+    Seq(SchemeDetailsTaskListSection(None, membersLink, None),
+      SchemeDetailsTaskListSection(None, benefitsAndInsuranceLink, None))
+  }
+
+  private def beforeYouStartSection(userAnswers: UserAnswers): SchemeDetailsTaskListSection = {
+    SchemeDetailsTaskListSection(
+      None,
+      beforeYouStartLink(answers, UpdateMode, srn),
+      None
+    )
   }
 
   protected[utils] def declarationSection(userAnswers: UserAnswers): Option[SchemeDetailsTaskListDeclarationSection] =
@@ -70,7 +78,7 @@ class HsTaskListHelperVariations(answers: UserAnswers, viewOnly: Boolean, srn: O
     val notDeletedElements = for ((section, index) <- sections.zipWithIndex) yield {
       if (section.isDeleted) None else {
         Some(SchemeDetailsTaskListSection(
-            Some(section.isCompleted),
+            None,
             Link(messages("messages__schemeTaskList__persons_details__link_text", section.name),
               section.editLink(UpdateMode, srn).getOrElse(controllers.routes.SessionExpiredController.onPageLoad().url)),
             None)
@@ -110,7 +118,6 @@ class HsTaskListHelperVariations(answers: UserAnswers, viewOnly: Boolean, srn: O
     (userAnswers.allTrusteesAfterDelete.isEmpty, viewOnly) match {
       case (true, true) => Some(SchemeDetailsTaskListHeader(plainText = Some(noTrusteesText)))
       case (true, false) => Some(SchemeDetailsTaskListHeader(
-        isCompleted = trusteeStatus(isAllTrusteesCompleted(userAnswers), trusteesMandatory(userAnswers.get(SchemeTypeId))),
         link = typeOfTrusteeLink(addTrusteesLinkText, userAnswers.allTrustees.size, srn, mode)))
       case (false, false) => {
 
@@ -128,7 +135,7 @@ class HsTaskListHelperVariations(answers: UserAnswers, viewOnly: Boolean, srn: O
   def taskList: SchemeDetailsTaskList = {
     val schemeName = answers.get(SchemeNameId).getOrElse("")
     SchemeDetailsTaskList(
-      beforeYouStartSection(answers, UpdateMode, srn),
+      beforeYouStartSection(answers),
       messages("messages__schemeTaskList__about_scheme_header", schemeName),
       aboutSection(answers),
       None,

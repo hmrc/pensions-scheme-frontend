@@ -113,7 +113,7 @@ class HsTaskListHelperRegistration(answers: UserAnswers)(implicit messages: Mess
 
   def taskList: SchemeDetailsTaskList = {
     SchemeDetailsTaskList(
-      beforeYouStartSection(answers, NormalMode, None),
+      SchemeDetailsTaskListSection(answers.get(IsBeforeYouStartCompleteId), beforeYouStartLink(answers, NormalMode, None), None),
       messages("messages__schemeTaskList__about_header"),
       aboutSection(answers),
       workingKnowledgeSection(answers),

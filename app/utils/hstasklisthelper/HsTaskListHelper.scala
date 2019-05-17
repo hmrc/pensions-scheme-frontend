@@ -57,12 +57,11 @@ abstract class HsTaskListHelper(answers: UserAnswers)(implicit messages: Message
 
   protected[utils] def aboutSection(userAnswers: UserAnswers): Seq[SchemeDetailsTaskListSection]
 
-  private[utils] def beforeYouStartSection(userAnswers: UserAnswers, mode: Mode, srn: Option[String]): SchemeDetailsTaskListSection = {
-    val link = userAnswers.get(IsBeforeYouStartCompleteId) match {
+  private[utils] def beforeYouStartLink(userAnswers: UserAnswers, mode: Mode, srn: Option[String]): Link = {
+    userAnswers.get(IsBeforeYouStartCompleteId) match {
       case Some(true) => Link(beforeYouStartLinkText, controllers.routes.CheckYourAnswersBeforeYouStartController.onPageLoad(mode, srn).url)
       case _ => Link(beforeYouStartLinkText, controllers.routes.SchemeNameController.onPageLoad(NormalMode).url)
     }
-    SchemeDetailsTaskListSection(userAnswers.get(IsBeforeYouStartCompleteId), link, None)
   }
 
   private[utils] def workingKnowledgeSection(userAnswers: UserAnswers): Option[SchemeDetailsTaskListSection] = {
