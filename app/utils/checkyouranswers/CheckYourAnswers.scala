@@ -16,8 +16,8 @@
 
 package utils.checkyouranswers
 
-import identifiers.register.establishers.IsEstablisherNewId
 import identifiers.{EstablishedCountryId, TypedIdentifier}
+import models.AddressYears.UnderAYear
 import models._
 import models.address.Address
 import models.person.PersonDetails
@@ -479,6 +479,40 @@ case class AddressCYA[I <: TypedIdentifier[Address]](
       }
 
       override def updateRow(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = row(id)(changeUrl, userAnswers)
+    }
+  }
+
+}
+
+case class PreviousAddressCYA[I <: TypedIdentifier[Address]]( label: String,
+                                                              changeAddress: String,
+                                                              isNew : Option[Boolean],
+                                                              addressYear : Option[AddressYears],
+                                                              previousAddressAddLabel : Option[String]
+                                                            ) {
+
+  def apply()(implicit rds: Reads[Address], countryOptions: CountryOptions): CheckYourAnswers[I] = {
+    new CheckYourAnswers[I] {
+      override def row(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+        AddressCYA(label, changeAddress)().row(id)(changeUrl, userAnswers)
+
+        override def updateRow(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+        isNew match {
+          case Some(true) =>
+            AddressCYA(label, changeAddress)().row(id)(changeUrl, userAnswers)
+          case _ =>
+            userAnswers.get(id) match {
+              case Some(_) => row(id)(changeUrl, userAnswers)
+              case _ =>
+                addressYear match {
+                  case Some(UnderAYear) => Seq(AnswerRow(label,
+                    Seq("site.not_entered"),
+                    answerIsMessageKey = true,
+                    Some(Link("site.add", changeUrl, previousAddressAddLabel))))
+                  case _ => Seq.empty[AnswerRow]
+                }
+            }
+        }
     }
   }
 

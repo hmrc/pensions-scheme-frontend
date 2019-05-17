@@ -1180,6 +1180,8 @@ messages__schemeTaskList__sectionWorkingKnowledge_header = Working knowledge of 
 
 messages__schemeTaskList__sectionDeclaration_header = Declaration
 messages__schemeTaskList__sectionDeclaration_incomplete = You must complete every section before you can declare.
+messages__schemeTaskList__sectionDeclaration_incomplete_v1 = You need to agree to a declaration if you make any changes to this scheme.
+messages__schemeTaskList__sectionDeclaration_incomplete_v2 = You can only see the declaration when you have made any changes.
 
 messages__schemeTaskList__sectionEstablishers_schemeIncomplete = You need to enter scheme details before you can add an establisher
 messages__schemeTaskList__sectionTrustees_schemeIncomplete = You need to enter scheme details before you can add a trustee

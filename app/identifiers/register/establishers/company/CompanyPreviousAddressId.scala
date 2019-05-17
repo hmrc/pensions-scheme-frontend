@@ -18,11 +18,9 @@ package identifiers.register.establishers.company
 
 import identifiers._
 import identifiers.register.establishers.{EstablishersId, IsEstablisherNewId}
-import models.AddressYears.UnderAYear
-import models.Link
 import models.address.Address
 import play.api.libs.json.JsPath
-import utils.checkyouranswers.{AddressCYA, CheckYourAnswers}
+import utils.checkyouranswers.{AddressCYA, CheckYourAnswers, PreviousAddressCYA}
 import utils.{CountryOptions, UserAnswers}
 import viewmodels.AnswerRow
 
@@ -36,28 +34,18 @@ object CompanyPreviousAddressId {
   implicit def cya(implicit countryOptions: CountryOptions): CheckYourAnswers[CompanyPreviousAddressId] = {
     val label: String = "messages__common__cya__previous_address"
     val changeAddress: String = "messages__visuallyhidden__establisher__previous_address"
+    val previousAddressAddLabel: String = "messages__visuallyhidden__establisher__previous_address_add"
 
     new CheckYourAnswers[CompanyPreviousAddressId] {
       override def row(id: CompanyPreviousAddressId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
         AddressCYA(label, changeAddress)().row(id)(changeUrl, userAnswers)
 
       override def updateRow(id: CompanyPreviousAddressId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        userAnswers.get(IsEstablisherNewId(id.index)) match {
-          case Some(true) =>
-            AddressCYA(label, changeAddress)().row(id)(changeUrl, userAnswers)
-          case _ =>
-            userAnswers.get(id) match {
-              case Some(_) => row(id)(changeUrl, userAnswers)
-              case _ =>
-                userAnswers.get(CompanyAddressYearsId(id.index)) match {
-                  case Some(UnderAYear) => Seq(AnswerRow(label,
-                    Seq("site.not_entered"),
-                    answerIsMessageKey = true,
-                    Some(Link("site.add", changeUrl, Some("messages__visuallyhidden__establisher__previous_address_add")))))
-                  case _ => Seq.empty[AnswerRow]
-                }
-            }
-        }
+        PreviousAddressCYA(label,
+          changeAddress,
+          userAnswers.get(IsEstablisherNewId(id.index)),
+          userAnswers.get(CompanyAddressYearsId(id.index)),
+          Some(previousAddressAddLabel))().updateRow(id)(changeUrl, userAnswers)
     }
   }
 }

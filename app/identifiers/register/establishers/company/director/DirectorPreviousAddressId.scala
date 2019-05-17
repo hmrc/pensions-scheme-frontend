@@ -18,12 +18,10 @@ package identifiers.register.establishers.company.director
 
 import identifiers.TypedIdentifier
 import identifiers.register.establishers.EstablishersId
-import models.AddressYears.UnderAYear
-import models.Link
 import models.address.Address
 import play.api.libs.json._
+import utils.checkyouranswers.{AddressCYA, CheckYourAnswers, PreviousAddressCYA}
 import utils.{CountryOptions, UserAnswers}
-import utils.checkyouranswers.{AddressCYA, CheckYourAnswers}
 import viewmodels.AnswerRow
 
 case class DirectorPreviousAddressId(establisherIndex: Int, directorIndex: Int) extends TypedIdentifier[Address] {
@@ -36,28 +34,18 @@ object DirectorPreviousAddressId {
   implicit def cya(implicit countryOptions: CountryOptions): CheckYourAnswers[DirectorPreviousAddressId] = {
     val label: String = "messages__common__cya__previous_address"
     val changeAddress: String = "messages__visuallyhidden__director__previous_address"
+    val previousAddressAddLabel: String = "messages__visuallyhidden__director__previous_address_add"
 
     new CheckYourAnswers[DirectorPreviousAddressId] {
       override def row(id: DirectorPreviousAddressId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
         AddressCYA(label, changeAddress)().row(id)(changeUrl, userAnswers)
 
       override def updateRow(id: DirectorPreviousAddressId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        userAnswers.get(IsNewDirectorId(id.establisherIndex, id.directorIndex)) match {
-          case Some(true) =>
-            AddressCYA(label, changeAddress)().row(id)(changeUrl, userAnswers)
-          case _ =>
-            userAnswers.get(id) match {
-              case Some(_) => row(id)(changeUrl, userAnswers)
-              case _ =>
-                userAnswers.get(DirectorAddressYearsId(id.establisherIndex, id.directorIndex)) match {
-                  case Some(UnderAYear) => Seq(AnswerRow(label,
-                    Seq("site.not_entered"),
-                    answerIsMessageKey = true,
-                    Some(Link("site.add", changeUrl, Some("messages__visuallyhidden__director__previous_address_add")))))
-                  case _ => Seq.empty[AnswerRow]
-                }
-            }
-        }
+        PreviousAddressCYA(label,
+          changeAddress,
+          userAnswers.get(IsNewDirectorId(id.establisherIndex, id.directorIndex)),
+          userAnswers.get(DirectorAddressYearsId(id.establisherIndex, id.directorIndex)),
+          Some(previousAddressAddLabel))().updateRow(id)(changeUrl, userAnswers)
     }
   }
 }

@@ -182,7 +182,8 @@ object SchemeTaskListControllerSpec extends ControllerSpecBase with MockitoSugar
       None
     )),
     Seq.empty,
-    Some(SchemeDetailsTaskListDeclarationSection("messages__schemeTaskList__sectionDeclaration_header", None)),
+    Some(SchemeDetailsTaskListDeclarationSection("messages__schemeTaskList__sectionDeclaration_header", None,
+      incompleteDeclarationText="messages__schemeTaskList__sectionDeclaration_incomplete")),
     messages("messages__schemeTaskList__heading"),
     messages("messages__schemeTaskList__before_you_start_header"),
     None,
