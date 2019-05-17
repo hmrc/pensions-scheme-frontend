@@ -19,6 +19,7 @@ package controllers.actions
 
 import com.google.inject.{ImplementedBy, Inject}
 import connectors._
+import identifiers.SchemeStatusId
 import models._
 import models.requests.{AuthenticatedRequest, OptionalDataRequest}
 import play.api.libs.json.JsValue
@@ -45,11 +46,28 @@ class DataRetrievalImpl(dataConnector: UserAnswersCacheConnector,
       case UpdateMode | CheckUpdateMode =>
         srn.map { srn =>
           lockConnector.isLockByPsaIdOrSchemeId(request.psaId.id, srn).flatMap {
-            case Some(VarianceLock) => getOptionalRequest(updateConnector.fetch(srn), viewOnly = false)(request)
-            case Some(_) => getOptionalRequest(viewConnector.fetch(request.externalId), viewOnly = true)(request)
-            case None => getOptionalRequest(viewConnector.fetch(request.externalId), viewOnly = false)(request)
+            case Some(VarianceLock) =>
+              getOptionalRequest(updateConnector.fetch(srn), viewOnly = false)(request)
+            case Some(_) =>
+              getOptionalRequest(viewConnector.fetch(request.externalId), viewOnly = true)(request)
+            case None =>
+              getRequestWithNoLock(request)
           }
-        }.getOrElse(Future(OptionalDataRequest(request.request, request.externalId, None, request.psaId, false)))
+        }.getOrElse(Future(OptionalDataRequest(request.request, request.externalId, None, request.psaId, viewOnly = false)))
+    }
+  }
+
+  private def getRequestWithNoLock[A](request: AuthenticatedRequest[A])(implicit hc: HeaderCarrier): Future[OptionalDataRequest[A]] = {
+    viewConnector.fetch(request.externalId).map {
+      case Some(answersJsValue) =>
+        UserAnswers(answersJsValue).get(SchemeStatusId) match {
+          case Some("Open") =>
+            OptionalDataRequest(request.request, request.externalId, Some(UserAnswers(answersJsValue)), request.psaId, viewOnly = false)
+          case _ =>
+            OptionalDataRequest(request.request, request.externalId, Some(UserAnswers(answersJsValue)), request.psaId, viewOnly = true)
+        }
+      case None =>
+        OptionalDataRequest(request.request, request.externalId, None, request.psaId, viewOnly = false)
     }
   }
 
