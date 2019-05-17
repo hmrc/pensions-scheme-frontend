@@ -20,6 +20,7 @@ import base.JsonFileReader
 import config.{FeatureSwitchManagementService, FeatureSwitchManagementServiceTestImpl}
 import connectors.{MinimalPsaConnector, PensionSchemeVarianceLockConnector, SchemeDetailsConnector, SchemeDetailsReadOnlyCacheConnector, UpdateSchemeCacheConnector}
 import controllers.actions._
+import controllers.register.DeclarationControllerSpec.onwardRoute
 import handlers.ErrorHandler
 import models.details.transformation.{SchemeDetailsMasterSection, SchemeDetailsStubData}
 import models.{Link, NormalMode, SchemeLock, UpdateMode, VarianceLock}
@@ -48,6 +49,18 @@ class SchemeTaskListControllerSpec extends ControllerSpecBase {
 
         status(result) mustBe OK
         contentAsString(result) mustBe schemeDetailsTaskList(frontendAppConfig, schemeDetailsTL, isVariations = false)(fakeRequest, messages).toString()
+      }
+    }
+
+    "accessed in NormalMode with no user answers and srn as None" must {
+
+
+
+      "return OK and the correct view" in {
+        val result = controller(new FakeDataRetrievalAction(None)).onPageLoad(NormalMode, None)(fakeRequest)
+
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result) mustBe Some(frontendAppConfig.managePensionsSchemeOverviewUrl.url)
       }
     }
 
