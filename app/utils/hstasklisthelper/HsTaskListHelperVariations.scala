@@ -118,7 +118,6 @@ class HsTaskListHelperVariations(answers: UserAnswers, viewOnly: Boolean, srn: O
     (userAnswers.allTrusteesAfterDelete.isEmpty, viewOnly) match {
       case (true, true) => Some(SchemeDetailsTaskListHeader(plainText = Some(noTrusteesText)))
       case (true, false) => Some(SchemeDetailsTaskListHeader(
-        isCompleted = trusteeStatus(isAllTrusteesCompleted(userAnswers), trusteesMandatory(userAnswers.get(SchemeTypeId))),
         link = typeOfTrusteeLink(addTrusteesLinkText, userAnswers.allTrustees.size, srn, mode)))
       case (false, false) => {
 
