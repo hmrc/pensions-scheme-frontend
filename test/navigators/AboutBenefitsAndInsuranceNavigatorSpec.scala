@@ -37,8 +37,8 @@ class AboutBenefitsAndInsuranceNavigatorSpec extends SpecBase with NavigatorBeha
     (TypeOfBenefitsId, emptyAnswers, benefitsSecured, false, Some(checkYouAnswers()), false),
     (BenefitsSecuredByInsuranceId, benefitsSecuredYes, insuranceCompanyName(NormalMode), false, Some(insuranceCompanyName(CheckMode)), false),
     (BenefitsSecuredByInsuranceId, benefitsSecuredNo, checkYouAnswers(), false, Some(checkYouAnswers()), false),
-    (InsuranceCompanyNameId, emptyAnswers, policyNumber(), false, Some(checkYouAnswers()), false),
-    (InsurancePolicyNumberId, emptyAnswers, insurerPostcode(), false, None, false),
+    (InsuranceCompanyNameId, emptyAnswers, policyNumber(), false, Some(policyNumber(NormalMode)), false),
+    (InsurancePolicyNumberId, emptyAnswers, insurerPostcode(), false, Some(checkYouAnswers()), false),
     (InsurerEnterPostCodeId, emptyAnswers, insurerAddressList(), false, None, false),
     (InsurerSelectAddressId, emptyAnswers, insurerAddress(), false, None, false),
     (InsurerConfirmAddressId, emptyAnswers, checkYouAnswers(), false, None, false)
