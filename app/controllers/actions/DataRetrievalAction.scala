@@ -53,7 +53,7 @@ class DataRetrievalImpl(dataConnector: UserAnswersCacheConnector,
             case None =>
               getRequestWithNoLock(request)
           }
-        }.getOrElse(Future(OptionalDataRequest(request.request, request.externalId, None, request.psaId, false)))
+        }.getOrElse(Future(OptionalDataRequest(request.request, request.externalId, None, request.psaId, viewOnly = false)))
     }
   }
 
@@ -61,13 +61,13 @@ class DataRetrievalImpl(dataConnector: UserAnswersCacheConnector,
     viewConnector.fetch(request.externalId).map {
       case Some(answersJsValue) =>
         UserAnswers(answersJsValue).get(SchemeStatusId) match {
-          case Some(x) if x == "Open" =>
-            OptionalDataRequest(request.request, request.externalId, Some(UserAnswers(answersJsValue)), request.psaId, false)
+          case Some("Open") =>
+            OptionalDataRequest(request.request, request.externalId, Some(UserAnswers(answersJsValue)), request.psaId, viewOnly = false)
           case _ =>
-            OptionalDataRequest(request.request, request.externalId, Some(UserAnswers(answersJsValue)), request.psaId, true)
+            OptionalDataRequest(request.request, request.externalId, Some(UserAnswers(answersJsValue)), request.psaId, viewOnly = true)
         }
       case None =>
-        OptionalDataRequest(request.request, request.externalId, None, request.psaId, false)
+        OptionalDataRequest(request.request, request.externalId, None, request.psaId, viewOnly = false)
     }
   }
 
