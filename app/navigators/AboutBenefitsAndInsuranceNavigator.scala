@@ -50,7 +50,7 @@ class AboutBenefitsAndInsuranceNavigator @Inject()(val dataCacheConnector: UserA
       case OccupationalPensionSchemeId => checkYourAnswers(NormalMode)
       case TypeOfBenefitsId => checkYourAnswers(NormalMode)
       case BenefitsSecuredByInsuranceId => benefitsSecuredEditRoutes(from.userAnswers, CheckMode)
-      case InsuranceCompanyNameId => checkYourAnswers(NormalMode)
+      case InsuranceCompanyNameId => NavigateTo.dontSave(InsurancePolicyNumberController.onPageLoad(NormalMode, None))
       case InsurancePolicyNumberId => checkYourAnswers(NormalMode)
       case InsurerConfirmAddressId => checkYourAnswers(NormalMode)
       case _ => None
