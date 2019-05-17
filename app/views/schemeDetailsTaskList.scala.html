@@ -252,9 +252,10 @@
     </ol>
 
     <hr>
-    <a id= "save-and-return" class="task-name" href="@appConfig.managePensionsSchemeOverviewUrl.url">
+    <a id= "save-and-return" class="task-name"
+       href="@if(isVariations){@appConfig.managePensionsSchemeSummaryUrl.format(srn)}else{appConfig.managePensionsSchemeOverviewUrl.url}">
         @if(isVariations){
-            @messages("messages__complete__returnToManagePensionSchemes")
+            @messages("messages__complete__returnToSchemeSummary")
         }else{
             @messages("messages__complete__saveAndReturnToManagePensionSchemes")
         }
