@@ -53,9 +53,6 @@ class SchemeTaskListControllerSpec extends ControllerSpecBase {
     }
 
     "accessed in NormalMode with no user answers and srn as None" must {
-
-
-
       "return OK and the correct view" in {
         val result = controller(new FakeDataRetrievalAction(None)).onPageLoad(NormalMode, None)(fakeRequest)
 
