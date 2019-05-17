@@ -18,10 +18,12 @@ package controllers.actions
 
 import base.SpecBase
 import connectors._
+import identifiers.SchemeStatusId
 import models.requests.{AuthenticatedRequest, OptionalDataRequest}
 import models._
 import org.mockito.Matchers.{eq => eqTo, _}
 import org.mockito.Mockito._
+import org.scalatest.BeforeAndAfterEach
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.mockito.MockitoSugar
 import play.api.libs.json.Json
@@ -32,7 +34,7 @@ import utils.UserAnswers
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class DataRetrievalActionSpec extends SpecBase with MockitoSugar with ScalaFutures {
+class DataRetrievalActionSpec extends SpecBase with MockitoSugar with ScalaFutures with BeforeAndAfterEach {
 
   private val srn = "123"
   private val srnOpt = Some(srn)
@@ -55,6 +57,13 @@ class DataRetrievalActionSpec extends SpecBase with MockitoSugar with ScalaFutur
                 srn: Option[String] = None) extends
     DataRetrievalImpl(dataConnector, viewConnector, updateConnector, lockConnector, mode, srn) {
     def callTransform[A](request: AuthenticatedRequest[A]): Future[OptionalDataRequest[A]] = transform(request)
+  }
+
+  override def beforeEach(): Unit = {
+    reset(dataCacheConnector)
+    reset(lockRepoConnector)
+    reset(updateCacheConnector)
+    reset(viewCacheConnector)
   }
 
   "Data Retrieval Action" when {
@@ -115,9 +124,9 @@ class DataRetrievalActionSpec extends SpecBase with MockitoSugar with ScalaFutur
 
     "there is data in the read-only cache in UpdateMode and lock is not held by anyone" must {
       "build a userAnswers object and add it to the request, acquire lock, save data to updateCache" in {
-        when(lockRepoConnector.lock(eqTo(psa), eqTo(srn))(any(), any())) thenReturn Future(VarianceLock)
-        when(viewCacheConnector.fetch(eqTo("id"))(any(), any())) thenReturn Future.successful(Some(testData))
-        when(updateCacheConnector.upsert(eqTo(srn), eqTo(UserAnswers(testData).json))(any(), any())) thenReturn Future.successful(testData)
+        val answers = UserAnswers().set(SchemeStatusId)("Open").asOpt.value.json
+        when(lockRepoConnector.isLockByPsaIdOrSchemeId(eqTo(psa), eqTo(srn))(any(), any())).thenReturn(Future(None))
+        when(viewCacheConnector.fetch(eqTo("id"))(any(), any())) thenReturn Future.successful(Some(answers))
 
         val action = new Harness(
           viewConnector = viewCacheConnector,
@@ -130,35 +139,39 @@ class DataRetrievalActionSpec extends SpecBase with MockitoSugar with ScalaFutur
 
         whenReady(futureResult) { result =>
           result.userAnswers.isDefined mustBe true
-          result.userAnswers.get mustBe UserAnswers(testData)
+          result.viewOnly mustBe false
+          result.userAnswers.get mustBe UserAnswers(answers)
+        }
+      }
+    }
+
+    "there is data in the read-only cache in UpdateMode and lock is not held by anyone" must {
+      "status is not open, build a userAnswers object and add it to the request and set view only to true" in {
+        val answers = UserAnswers().set(SchemeStatusId)("Pending").asOpt.value.json
+        when(lockRepoConnector.isLockByPsaIdOrSchemeId(eqTo(psa), eqTo(srn))(any(), any())).thenReturn(Future(None))
+        when(viewCacheConnector.fetch(eqTo("id"))(any(), any())) thenReturn
+          Future.successful(Some(answers))
+
+        val action = new Harness(
+          viewConnector = viewCacheConnector,
+          updateConnector = updateCacheConnector,
+          lockConnector = lockRepoConnector,
+          mode = UpdateMode,
+          srn = srnOpt)
+
+        val futureResult = action.callTransform(authRequest)
+
+        whenReady(futureResult) { result =>
+          result.userAnswers.isDefined mustBe true
+          result.viewOnly mustBe true
+          result.userAnswers.get mustBe UserAnswers(answers)
         }
       }
     }
 
     "there is data in the read-only cache in UpdateMode and lock is held by someone else" must {
       "fetch data from viewConnector to build a userAnswers object and add it to the request" in {
-        when(lockRepoConnector.lock(eqTo(psa), eqTo(srn))(any(), any())) thenReturn Future(SchemeLock)
-        when(viewCacheConnector.fetch(eqTo("id"))(any(), any())) thenReturn Future.successful(Some(testData))
-
-        val action = new Harness(
-          viewConnector = viewCacheConnector,
-          updateConnector = updateCacheConnector,
-          lockConnector = lockRepoConnector,
-          mode = UpdateMode,
-          srn = srnOpt)
-
-        val futureResult = action.callTransform(authRequest)
-
-        whenReady(futureResult) { result =>
-          result.userAnswers.isDefined mustBe true
-          result.userAnswers.get mustBe UserAnswers(testData)
-        }
-      }
-    }
-
-    "there is data in the read-only cache in UpdateMode and lock is not held by anyone but disableLock flag is true" must {
-      "fetch data from viewConnector to build a userAnswers object and add it to the request" in {
-        when(lockRepoConnector.lock(eqTo(psa), eqTo(srn))(any(), any())) thenReturn Future(SchemeLock)
+        when(lockRepoConnector.isLockByPsaIdOrSchemeId(eqTo(psa), eqTo(srn))(any(), any())).thenReturn(Future(Some(SchemeLock)))
         when(viewCacheConnector.fetch(eqTo("id"))(any(), any())) thenReturn Future.successful(Some(testData))
 
         val action = new Harness(

@@ -36,7 +36,7 @@ case class SchemeDetailsTaskList(beforeYouStart: SchemeDetailsTaskListSection,
                                 ) {
 }
 
-case class SchemeDetailsTaskListDeclarationSection(header:String, declarationLink: Option[Link])
+case class SchemeDetailsTaskListDeclarationSection(header:String, declarationLink: Option[Link], incompleteDeclarationText: String*)
 
 object SchemeDetailsTaskListDeclarationSection {
   implicit val formats: OFormat[SchemeDetailsTaskListDeclarationSection] = Json.format[SchemeDetailsTaskListDeclarationSection]

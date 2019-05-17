@@ -63,6 +63,7 @@ class SchemeTaskListController @Inject()(appConfig: FrontendAppConfig,
 
         case (Some(srnValue), optionUserAnswers) =>
           onPageLoadVariationsToggledOn(srnValue, optionUserAnswers)
+        case _ => Future.successful(Redirect(appConfig.managePensionsSchemeOverviewUrl))
       }
   }
 

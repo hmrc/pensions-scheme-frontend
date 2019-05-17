@@ -77,7 +77,7 @@
                         </a>
 
                         @taskSections.beforeYouStart.isCompleted.map{ isCompleted =>
-                        <strong class="@statusClass(isCompleted)" id="section-beforeYouStart-status">@messages(status(isCompleted))</strong>
+                            <strong class="@statusClass(isCompleted)" id="section-beforeYouStart-status">@messages(status(isCompleted))</strong>
                         }
                     </li>
                 </ul>
@@ -238,12 +238,12 @@
                 <p class="tasklist">
                         @if(declarationSection.declarationLink.isDefined){
                             @declarationSection.declarationLink.map{ link =>
-                                <a id= "section-declaration-link" href="@link.target">
-                                    @messages(link.text)
-                                </a>
+                                <a id= "section-declaration-link" href="@link.target">@messages(link.text)</a>
                             }
                         }else{
-                            <span id="section-declaration-text">@messages("messages__schemeTaskList__sectionDeclaration_incomplete")</span>
+                            @for((incompleteMessage, i) <- declarationSection.incompleteDeclarationText.zipWithIndex){
+                                <p id="section-declaration-text-@i">@messages(incompleteMessage)</p>
+                            }
                         }
                 </p>
             </li>
