@@ -58,8 +58,8 @@
 
         @components.heading(taskSections.h1)
 
-    <ol class="task-list">
-        <li>
+    <div class="task-list">
+        <section aria-labelledby="section-before-you-start-header">
             <h2 id="section-before-you-start-header" class="heading-large">
                 @messages(taskSections.h2)
             </h2>
@@ -69,7 +69,7 @@
                   @item
                 </h3>
             }
-            <ol class="tasklist">
+
                 <ul class="task-list-items">
                     <li class="task-list-item">
                         <a id= "section-before-you-start-link" href="@taskSections.beforeYouStart.link.target" aria-describedby="section-beforeYouStart-status">
@@ -81,14 +81,13 @@
                         }
                     </li>
                 </ul>
-            </ol>
-        </li>
 
-        <li>
+            </section>
+
+        <section aria-labelledby="section-about-header">
             <h3 id="section-about-header" class="heading-medium">
                 @taskSections.aboutHeader
             </h3>
-            <ol class="tasklist">
                 <ul class="task-list-items">
                     @for((item, i) <- taskSections.about.zipWithIndex){
                         @defining(i+1) { index =>
@@ -104,16 +103,16 @@
                     }
 
                 </ul>
-            </ol>
-        </li>
+        </section>
 
 
             @taskSections.workingKnowledge.map { wk =>
-                <li>
-                    <h2 id="section-working-knowledge-header" class="heading-large">
+
+                    <section aria-labelledby="section-working-knowledge-header">
+                        <h2 id="section-working-knowledge-header" class="heading-large">
                         @messages("messages__schemeTaskList__working_knowledge_header")
-                    </h2>
-                    <ol class="tasklist">
+                        </h2>
+
                         <ul class="task-list-items">
                             <li class="task-list-item">
                                 <a id= "section-working-knowledge-link" href="@wk.link.target" aria-describedby="section-working-knowledge-status">
@@ -125,12 +124,12 @@
                                 }
                             </li>
                         </ul>
-                    </ol>
-                </li>
+                    </section>
+
             }
 
 
-        <li>
+        <section aria-labelledby="section-establishers-header">
             <h2 id="section-establishers-header" class="heading-large">
                 @messages("messages__schemeTaskList__sectionEstablishers_header")
             </h2>
@@ -151,7 +150,6 @@
                 }
 
                 @variationsOnly("</p>")
-            <ol class="tasklist">
 
                 <ul class="task-list-items">
                     @for((item, i) <- taskSections.establishers.zipWithIndex){
@@ -172,10 +170,11 @@
                         }
                     }
                 </ul>
-            </ol>
-        </li>
 
-        <li>
+        </li>
+        </section>
+
+        <section aria-labelledby="section-trustees-header">
             <h2 id="section-trustees-header" class="heading-large">
                 @messages("messages__schemeTaskList__sectionTrustees_header")
             </h2>
@@ -204,7 +203,7 @@
             }
             @variationsOnly("</p>")
 
-            <ol class="tasklist">
+
                 <ul class="task-list-items">
 
 
@@ -227,11 +226,11 @@
                     }
 
                 </ul>
-            </ol>
-        </li>
+
+        </section>
 
         @taskSections.declaration.map{declarationSection=>
-            <li>
+        <section aria-labelledby="section-declaration-header">
                 <h2 id="section-declaration-header" class="heading-large">
                     @messages(declarationSection.header)
                 </h2>
@@ -246,10 +245,10 @@
                             }
                         }
                 </p>
-            </li>
+        </section>
         }
 
-    </ol>
+    </div>
 
     <hr>
     <a id= "save-and-return" class="task-name" href="@appConfig.managePensionsSchemeOverviewUrl.url">
