@@ -64,7 +64,7 @@ class PsaSchemeDetailsViewSpec extends CheckYourAnswersBehaviours with ViewBehav
 
     "have link for return to scheme details" in {
       Jsoup.parse(createView().toString()).select("a[id=return]") must
-          haveLink(s"http://localhost:8204/manage-pension-schemes/scheme-details/${srn}")
+          haveLink(s"http://localhost:8204/manage-pension-schemes/pension-scheme-summary/${srn}")
     }
 
     "correctly display an MasterSection headings" in {

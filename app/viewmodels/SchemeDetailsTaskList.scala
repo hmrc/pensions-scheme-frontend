@@ -31,7 +31,8 @@ case class SchemeDetailsTaskList(beforeYouStart: SchemeDetailsTaskListSection,
                                  h1: String,
                                  h2: String,
                                  h3: Option[String],
-                                 pageTitle: String
+                                 pageTitle: String,
+                                 srn: Option[String]
                                 ) {
 }
 

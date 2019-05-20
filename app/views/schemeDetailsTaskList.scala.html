@@ -24,10 +24,10 @@
 @import controllers.register.trustees.routes._
 @import uk.gov.hmrc.play.views.html._
 
-@(appConfig: FrontendAppConfig, taskSections: SchemeDetailsTaskList, isVariations:Boolean)(implicit request: Request[_], messages: Messages)
+@(appConfig: FrontendAppConfig, taskSections: SchemeDetailsTaskList)(implicit request: Request[_], messages: Messages)
 
 @variationsOnly(html:String)=@{
-    if(isVariations){
+    if(taskSections.srn.isDefined){
         Option(Html(html))
     }else{
         None
@@ -251,9 +251,10 @@
     </div>
 
     <hr>
-    <a id= "save-and-return" class="task-name" href="@appConfig.managePensionsSchemeOverviewUrl.url">
-        @if(isVariations){
-            @messages("messages__complete__returnToManagePensionSchemes")
+    <a id= "save-and-return" class="task-name"
+       href="@taskSections.srn.fold(appConfig.managePensionsSchemeOverviewUrl.url)(srn => appConfig.managePensionsSchemeSummaryUrl.format(srn))">
+        @if(taskSections.srn.isDefined){
+            @messages("messages__complete__returnToSchemeSummary")
         }else{
             @messages("messages__complete__saveAndReturnToManagePensionSchemes")
         }

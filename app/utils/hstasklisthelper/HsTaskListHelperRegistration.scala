@@ -125,7 +125,8 @@ class HsTaskListHelperRegistration(answers: UserAnswers)(implicit messages: Mess
       messages("messages__schemeTaskList__heading"),
       messages("messages__schemeTaskList__before_you_start_header"),
       None,
-      messages("messages__schemeTaskList__title")
+      messages("messages__schemeTaskList__title"),
+      None
     )
   }
 

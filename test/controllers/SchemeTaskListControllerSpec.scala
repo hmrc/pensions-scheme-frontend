@@ -48,7 +48,7 @@ class SchemeTaskListControllerSpec extends ControllerSpecBase {
         val result = controller(UserAnswers().dataRetrievalAction).onPageLoad(NormalMode, None)(fakeRequest)
 
         status(result) mustBe OK
-        contentAsString(result) mustBe schemeDetailsTaskList(frontendAppConfig, schemeDetailsTL, isVariations = false)(fakeRequest, messages).toString()
+        contentAsString(result) mustBe schemeDetailsTaskList(frontendAppConfig, schemeDetailsTL)(fakeRequest, messages).toString()
       }
     }
 
@@ -197,6 +197,7 @@ object SchemeTaskListControllerSpec extends ControllerSpecBase with MockitoSugar
     messages("messages__schemeTaskList__heading"),
     messages("messages__schemeTaskList__before_you_start_header"),
     None,
-    messages("messages__schemeTaskList__title")
+    messages("messages__schemeTaskList__title"),
+    None
   )
 }
