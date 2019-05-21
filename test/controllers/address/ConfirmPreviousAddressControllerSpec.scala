@@ -18,11 +18,9 @@ package controllers.address
 
 import com.google.inject.Inject
 import config.FrontendAppConfig
-import connectors.UserAnswersCacheConnector
 import controllers.actions.{DataRetrievalAction, FakeDataRetrievalAction}
 import forms.address.ConfirmAddressFormProvider
 import identifiers.{SchemeNameId, TypedIdentifier}
-import identifiers.register.establishers.individual.IndividualConfirmPreviousAddressId
 import models._
 import models.address.{Address, TolerantAddress}
 import models.requests.DataRequest
@@ -37,6 +35,7 @@ import play.api.libs.json.Json
 import play.api.mvc.{AnyContent, Call, Request, Result}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import services.UserAnswersService
 import uk.gov.hmrc.domain.PsaId
 import utils.{CountryOptions, FakeNavigator, Navigator, UserAnswers}
 import viewmodels.Message
@@ -104,20 +103,20 @@ class ConfirmPreviousAddressControllerSpec extends WordSpec with MustMatchers wi
 
       import play.api.inject._
 
-      val cacheConnector = mock[UserAnswersCacheConnector]
+      val userAnswersService = mock[UserAnswersService]
 
       running(_.overrides(
-        bind[UserAnswersCacheConnector].toInstance(cacheConnector),
+        bind[UserAnswersService].toInstance(userAnswersService),
         bind[Navigator].toInstance(FakeNavigator),
         bind[ConfirmAddressFormProvider].toInstance(new ConfirmAddressFormProvider())
       )) {
         app =>
-          when(cacheConnector.save[Boolean, FakeIdentifier.type](
-            any(), eqTo(FakeIdentifier), any())(any(), any(), any())
+          when(userAnswersService.save[Boolean, FakeIdentifier.type](
+            any(), any(), eqTo(FakeIdentifier), any())(any(), any(), any(), any())
           ) thenReturn Future.successful(Json.obj())
 
-          when(cacheConnector.save[Address, PreviousAddressId.type](
-            any(), eqTo(PreviousAddressId), any())(any(), any(), any())
+          when(userAnswersService.save[Address, PreviousAddressId.type](
+            any(), any(), eqTo(PreviousAddressId), any())(any(), any(), any(), any())
           ) thenReturn Future.successful(Json.obj())
 
           val request = FakeRequest().withFormUrlEncodedBody(
@@ -135,21 +134,21 @@ class ConfirmPreviousAddressControllerSpec extends WordSpec with MustMatchers wi
 
       import play.api.inject._
 
-      val cacheConnector = mock[UserAnswersCacheConnector]
+      val userAnswersService = mock[UserAnswersService]
 
       running(_.overrides(
-        bind[UserAnswersCacheConnector].toInstance(cacheConnector),
+        bind[UserAnswersService].toInstance(userAnswersService),
         bind[Navigator].toInstance(FakeNavigator),
         bind[DataRetrievalAction].toInstance(new FakeDataRetrievalAction(Some(userAnswers.json)))
       )) {
         app =>
 
-          when(cacheConnector.save[Boolean, FakeIdentifier.type](
-            any(), eqTo(FakeIdentifier), any())(any(), any(), any())
+          when(userAnswersService.save[Boolean, FakeIdentifier.type](
+            any(), any(), eqTo(FakeIdentifier), any())(any(), any(), any(), any())
           ) thenReturn Future.successful(Json.obj())
 
-          when(cacheConnector.save[Address, PreviousAddressId.type](
-            any(), eqTo(PreviousAddressId), any())(any(), any(), any())
+          when(userAnswersService.save[Address, PreviousAddressId.type](
+            any(), any(), eqTo(PreviousAddressId), any())(any(), any(), any(), any())
           ) thenReturn Future.successful(Json.obj())
 
           val request = FakeRequest().withFormUrlEncodedBody(
@@ -160,7 +159,7 @@ class ConfirmPreviousAddressControllerSpec extends WordSpec with MustMatchers wi
 
           status(result) mustEqual SEE_OTHER
           redirectLocation(result).value mustEqual "www.example.com"
-          verify(cacheConnector, times(2)).save(any(), any(), any())(any(), any(), any())
+          verify(userAnswersService, times(2)).save(any(), any(), any(), any())(any(), any(), any(), any())
       }
     }
 
@@ -200,7 +199,7 @@ object ConfirmPreviousAddressControllerSpec extends OptionValues {
   private val psaId = PsaId("A0000000")
   private val userAnswers = UserAnswers().set(SchemeNameId)(schemeName).asOpt.value
 
-  private def userAnswersWithId(id: Boolean = false) = UserAnswers()
+  private def userAnswersWithId(id: Boolean) = UserAnswers()
     .set(SchemeNameId)(schemeName).flatMap(
     _.set(FakeIdentifier)(id)).asOpt.value
 
@@ -232,7 +231,7 @@ object ConfirmPreviousAddressControllerSpec extends OptionValues {
   class TestController @Inject()(
                                   override val appConfig: FrontendAppConfig,
                                   override val messagesApi: MessagesApi,
-                                  override val dataCacheConnector: UserAnswersCacheConnector,
+                                  override val userAnswersService: UserAnswersService,
                                   override val navigator: Navigator,
                                   override val countryOptions: CountryOptions
                                 ) extends ConfirmPreviousAddressController {

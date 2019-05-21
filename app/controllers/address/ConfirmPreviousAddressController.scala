@@ -26,6 +26,7 @@ import models.address.Address
 import models.requests.DataRequest
 import play.api.i18n.I18nSupport
 import play.api.mvc.{AnyContent, Result}
+import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.{CountryOptions, Navigator, UserAnswers}
 import viewmodels.Message
@@ -39,7 +40,7 @@ trait ConfirmPreviousAddressController extends FrontendController with Retrieval
 
   protected def appConfig: FrontendAppConfig
 
-  protected def dataCacheConnector: UserAnswersCacheConnector
+  protected def userAnswersService: UserAnswersService
 
   protected def navigator: Navigator
 
@@ -70,13 +71,13 @@ trait ConfirmPreviousAddressController extends FrontendController with Retrieval
     form(viewModel.name).bindFromRequest().fold(
       formWithError => {
           Future.successful(BadRequest(confirmPreviousAddress(appConfig, formWithError, viewModel, countryOptions, existingSchemeName)))},
-      { case true => dataCacheConnector.save(request.externalId, id, true).flatMap { _ =>
-        dataCacheConnector.save(request.externalId, contactId, viewModel.address.toAddress).map {
+      { case true => userAnswersService.save(mode, viewModel.srn, id, true).flatMap { _ =>
+        userAnswersService.save(mode, viewModel.srn, contactId, viewModel.address.toAddress).map {
           cacheMap =>
             Redirect(navigator.nextPage(id, mode, UserAnswers(cacheMap)))
         }
       }
-      case _ => dataCacheConnector.save(request.externalId, id, false).flatMap { cacheMap =>
+      case _ => userAnswersService.save(mode, viewModel.srn, id, false).flatMap { cacheMap =>
         Future.successful(Redirect(navigator.nextPage(id, mode, UserAnswers(cacheMap))))
       }
       }
