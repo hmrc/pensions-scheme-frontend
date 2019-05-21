@@ -19,6 +19,7 @@ package utils
 import com.typesafe.config.ConfigException
 import config.FrontendAppConfig
 import javax.inject.{Inject, Singleton}
+import models.address.{Address, TolerantAddress}
 import play.api.Environment
 import play.api.libs.json.Json
 
@@ -40,5 +41,17 @@ class CountryOptions(val options: Seq[InputOption]) {
         throw new ConfigException.BadValue(config.locationCanonicalList, "country json does not exist")
       }
     )
+  }
+
+  def getCountryNameFromCode(code: String): String =
+    options
+      .find(_.value == code)
+      .map(_.label)
+      .getOrElse(code)
+
+  def getCountryNameFromCode(address: Address): String = getCountryNameFromCode(address.country)
+
+  def getCountryNameFromCode(address: TolerantAddress): Option[String] = {
+    address.country.map(getCountryNameFromCode)
   }
 }

@@ -1444,3 +1444,7 @@ messages__cannot_Make_Changes__heading = Details cannot be changed
 messages__cannot_Make_Changes__p1 = You cannot make any changes to {0} at the moment.
 messages__cannot_Make_Changes__p2 = You need to phone Pension Scheme Services on 0300 123 1079.
 
+messages__confirmPreviousAddress__title = Is this the previous address?
+messages__confirmPreviousAddress__heading = Is this {0}’s previous address?
+messages__confirmPreviousAddress__error = Select yes if this is {0}’s previous address
+
