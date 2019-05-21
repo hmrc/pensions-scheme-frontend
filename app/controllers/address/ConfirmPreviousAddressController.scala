@@ -17,7 +17,6 @@
 package controllers.address
 
 import config.FrontendAppConfig
-import connectors.UserAnswersCacheConnector
 import controllers.Retrievals
 import forms.address.ConfirmAddressFormProvider
 import identifiers.TypedIdentifier
@@ -72,7 +71,7 @@ trait ConfirmPreviousAddressController extends FrontendController with Retrieval
       formWithError => {
           Future.successful(BadRequest(confirmPreviousAddress(appConfig, formWithError, viewModel, countryOptions, existingSchemeName)))},
       { case true => userAnswersService.save(mode, viewModel.srn, id, true).flatMap { _ =>
-        userAnswersService.save(mode, viewModel.srn, contactId, viewModel.address.toAddress).map {
+        userAnswersService.save(mode, viewModel.srn, contactId, viewModel.address).map {
           cacheMap =>
             Redirect(navigator.nextPage(id, mode, UserAnswers(cacheMap)))
         }

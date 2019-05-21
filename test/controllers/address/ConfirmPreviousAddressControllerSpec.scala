@@ -22,7 +22,7 @@ import controllers.actions.{DataRetrievalAction, FakeDataRetrievalAction}
 import forms.address.ConfirmAddressFormProvider
 import identifiers.{SchemeNameId, TypedIdentifier}
 import models._
-import models.address.{Address, TolerantAddress}
+import models.address.Address
 import models.requests.DataRequest
 import org.mockito.Matchers.{eq => eqTo, _}
 import org.mockito.Mockito._
@@ -203,15 +203,15 @@ object ConfirmPreviousAddressControllerSpec extends OptionValues {
     .set(SchemeNameId)(schemeName).flatMap(
     _.set(FakeIdentifier)(id)).asOpt.value
 
-  private def testAddress(line2: Option[String]) = TolerantAddress(
-    Some("address line 1"),
+  private def testAddress(line2: String) = Address(
+    "address line 1",
     line2,
     Some("test town"),
     Some("test county"),
-    Some("test post code"), Some("GB")
+    Some("test post code"), "GB"
   )
 
-  private def viewmodel(line2: Option[String] = Some("address line 2")) = ConfirmAddressViewModel(
+  private def viewmodel(line2: String = "address line 2") = ConfirmAddressViewModel(
     postCall = Call("GET", "www.example.com"),
     title = "title",
     heading = "heading",
