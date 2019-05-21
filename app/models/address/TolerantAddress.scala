@@ -19,6 +19,7 @@ package models.address
 import play.api.Logger
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
+import utils.CountryOptions
 
 import scala.language.implicitConversions
 
@@ -40,6 +41,17 @@ case class TolerantAddress(addressLine1: Option[String],
     ).flatten(s => s)
 
   def print: String = lines.mkString(", ")
+
+  def lines(countryOptions: CountryOptions): Seq[String] = {
+    Seq(
+      this.addressLine1,
+      this.addressLine2,
+      this.addressLine3,
+      this.addressLine4,
+      this.postcode,
+      countryOptions.getCountryNameFromCode(this)
+    ).flatten(s => s)
+  }
 
   def toAddress: Address =
     Address(
