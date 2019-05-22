@@ -16,14 +16,14 @@
 
 package utils
 
-import identifiers.register.establishers.company.director._
-import identifiers.register.establishers.company.{CompanyDetailsId => EstablisherCompanyDetailsId, CompanyPayeId => EstablisherCompanyPayeId, CompanyVatId => EstablisherCompanyVatId}
+import identifiers.register.establishers.company.director.{ExistingCurrentAddressId => DirectorExistingCurrentAddressId, _}
+import identifiers.register.establishers.company.{director, CompanyDetailsId => EstablisherCompanyDetailsId, CompanyPayeId => EstablisherCompanyPayeId, CompanyVatId => EstablisherCompanyVatId}
 import identifiers.register.establishers.individual.EstablisherDetailsId
 import identifiers.register.establishers.partnership._
 import identifiers.register.establishers.partnership.partner.{IsPartnerCompleteId, PartnerDetailsId}
 import identifiers.register.establishers.{EstablisherKindId, EstablishersId, IsEstablisherCompleteId, IsEstablisherNewId}
 import identifiers.register.trustees.company.{CompanyPayeId, CompanyVatId, CompanyDetailsId => TrusteeCompanyDetailsId}
-import identifiers.register.trustees.individual.TrusteeDetailsId
+import identifiers.register.trustees.individual.{TrusteeDetailsId, TrusteePreviousAddressId, ExistingCurrentAddressId => TrusteeExistingCurrentAddressId}
 import identifiers.register.trustees.{company => _, _}
 import models._
 import models.address.Address
@@ -36,6 +36,7 @@ import models.register.trustees.TrusteeKind
 import org.joda.time.LocalDate
 import org.scalatest.{MustMatchers, OptionValues, WordSpec}
 import play.api.libs.json._
+
 
 class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues with Enumerable.Implicits {
 
@@ -513,6 +514,33 @@ class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues with 
           _.set(IsPartnerCompleteId(0,0))(true)).asOpt.get
         establisherCompleted.areVariationChangesCompleted mustBe true
       }
+    }
+  }
+
+  "setAllExistingAddress" must {
+    def address(typeOfUser: String): Address = Address(s"${typeOfUser}line1", s"line2", None, None, Some("test postcode"), "GB")
+
+    val userAnswers = UserAnswers()
+      .set(TrusteePreviousAddressId(0))(address("individualTrustee"))
+      .flatMap(_.set(DirectorPreviousAddressId(0, 0))(address("director1")))
+      .flatMap(_.set(DirectorPreviousAddressId(0, 1))(address("director2"))).get
+
+    "return the updated user answers with existing address" in {
+      val result = userAnswers.setAllExistingAddress(
+        Map(TrusteePreviousAddressId(0) -> TrusteeExistingCurrentAddressId(0),
+          director.DirectorPreviousAddressId(0, 0) -> DirectorExistingCurrentAddressId(0, 0),
+          director.DirectorPreviousAddressId(0, 1) -> DirectorExistingCurrentAddressId(0, 1)
+        )
+      ).get
+
+      result mustBe userAnswers.set(DirectorExistingCurrentAddressId(0, 1))(address("director1"))
+        .flatMap(_.set(DirectorExistingCurrentAddressId(0, 1))(address("director2")))
+        .flatMap(_.set(TrusteeExistingCurrentAddressId(0))(address("individualTrustee"))).get
+    }
+
+    "return the same user answers if map is empty" in {
+      val result = userAnswers.setAllExistingAddress(Map.empty).get
+      result mustBe userAnswers
     }
   }
 
