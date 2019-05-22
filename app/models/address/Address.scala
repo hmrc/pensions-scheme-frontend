@@ -17,6 +17,7 @@
 package models.address
 
 import play.api.libs.json._
+import utils.CountryOptions
 
 case class AddressRecord(address: Address)
 
@@ -41,15 +42,15 @@ case class Address(addressLine1: String,
     ).flatten.mkString(", ")
   }
 
-  def toTolerantAddress: TolerantAddress = {
-    TolerantAddress(
-      Some(addressLine1),
-      Some(addressLine2),
-      addressLine3,
-      addressLine4,
-      postcode,
-      Some(country)
-    )
+  def lines(countryOptions: CountryOptions): Seq[String] = {
+    Seq(
+      Some(this.addressLine1),
+      Some(this.addressLine2),
+      this.addressLine3,
+      this.addressLine4,
+      this.postcode,
+      Some(countryOptions.getCountryNameFromCode(this))
+    ).flatten(s => s)
   }
 }
 
