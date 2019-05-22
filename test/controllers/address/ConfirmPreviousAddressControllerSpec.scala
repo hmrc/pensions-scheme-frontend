@@ -111,8 +111,8 @@ class ConfirmPreviousAddressControllerSpec extends WordSpec with MustMatchers wi
         bind[ConfirmAddressFormProvider].toInstance(new ConfirmAddressFormProvider())
       )) {
         app =>
-          when(userAnswersService.save[Boolean, FakeIdentifier.type](
-            any(), any(), eqTo(FakeIdentifier), any())(any(), any(), any(), any())
+          when(userAnswersService.upsert(
+            any(), any(), any())(any(), any(), any())
           ) thenReturn Future.successful(Json.obj())
 
           when(userAnswersService.save[Address, PreviousAddressId.type](
@@ -143,8 +143,8 @@ class ConfirmPreviousAddressControllerSpec extends WordSpec with MustMatchers wi
       )) {
         app =>
 
-          when(userAnswersService.save[Boolean, FakeIdentifier.type](
-            any(), any(), eqTo(FakeIdentifier), any())(any(), any(), any(), any())
+          when(userAnswersService.upsert(
+            any(), any(), any())(any(), any(), any())
           ) thenReturn Future.successful(Json.obj())
 
           when(userAnswersService.save[Address, PreviousAddressId.type](
@@ -159,7 +159,7 @@ class ConfirmPreviousAddressControllerSpec extends WordSpec with MustMatchers wi
 
           status(result) mustEqual SEE_OTHER
           redirectLocation(result).value mustEqual "www.example.com"
-          verify(userAnswersService, times(2)).save(any(), any(), any(), any())(any(), any(), any(), any())
+          verify(userAnswersService, times(1)).upsert(any(), any(), any())(any(), any(), any())
       }
     }
 

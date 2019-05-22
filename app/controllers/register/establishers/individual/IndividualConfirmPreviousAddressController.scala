@@ -17,7 +17,6 @@
 package controllers.register.establishers.individual
 
 import config.FrontendAppConfig
-import connectors.UserAnswersCacheConnector
 import controllers.Retrievals
 import controllers.actions._
 import controllers.address.ConfirmPreviousAddressController
@@ -27,8 +26,8 @@ import models.{Index, Mode}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
-import utils.{CountryOptions, Navigator}
 import utils.annotations.EstablishersIndividual
+import utils.{CountryOptions, Navigator}
 import viewmodels.Message
 import viewmodels.address.ConfirmAddressViewModel
 
