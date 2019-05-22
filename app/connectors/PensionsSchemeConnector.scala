@@ -21,8 +21,9 @@ import config.FrontendAppConfig
 import models.register.SchemeSubmissionResponse
 import play.api.Logger
 import play.api.http.Status
-import play.api.libs.json.{JsError, JsResultException, JsSuccess, Json}
-import uk.gov.hmrc.http.{BadRequestException, HeaderCarrier}
+import play.api.libs.json._
+import play.api.mvc.RequestHeader
+import uk.gov.hmrc.http.{BadRequestException, HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 import utils.UserAnswers
 
@@ -36,6 +37,10 @@ trait PensionsSchemeConnector {
 
   def updateSchemeDetails(psaId: String, pstr: String, answers: UserAnswers)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Unit]
 
+  def checkForAssociation(psaId: String, srn: String)(implicit
+                                                     headerCarrier: HeaderCarrier,
+                                                     ec: ExecutionContext,
+                                                     request: RequestHeader): Future[Boolean]
 }
 
 @Singleton
@@ -68,6 +73,28 @@ class PensionsSchemeConnectorImpl @Inject()(http: HttpClient, config: FrontendAp
     } recoverWith {
       translateExceptions()
     }
+  }
+
+   def checkForAssociation(psaId: String, srn: String)(implicit
+                                                                             headerCarrier: HeaderCarrier,
+                                                                             ec: ExecutionContext,
+                                                                             request: RequestHeader): Future[Boolean] = {
+
+    val headers: Seq[(String, String)] = Seq(("psaId", psaId), ("schemeReferenceNumber", srn), ("Content-Type", "application/json"))
+
+    implicit val hc: HeaderCarrier = headerCarrier.withExtraHeaders(headers: _*)
+
+    http.GET[HttpResponse](config.checkAssociationUrl)(implicitly, hc, implicitly) .map { response =>
+      require(response.status == Status.OK)
+
+      val json = Json.parse(response.body)
+
+      json.validate[Boolean] match {
+        case JsSuccess(value, _) => value
+        case JsError(errors) => throw JsResultException(errors)
+      }
+    } andThen logExceptions("Unable to register Scheme") recoverWith translateExceptions
+
   }
 
   private def translateExceptions[I](): PartialFunction[Throwable, Future[I]] = {

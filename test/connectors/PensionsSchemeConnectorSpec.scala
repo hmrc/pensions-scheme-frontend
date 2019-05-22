@@ -21,7 +21,8 @@ import com.github.tomakehurst.wiremock.client.WireMock._
 import models.register.SchemeSubmissionResponse
 import org.scalatest.{AsyncFlatSpec, Matchers, OptionValues}
 import play.api.http.Status
-import play.api.libs.json.{JsResultException, Json}
+import play.api.libs.json.{JsBoolean, JsResultException, Json}
+import play.api.test.FakeRequest
 import uk.gov.hmrc.http.{BadRequestException, HeaderCarrier, NotFoundException, Upstream5xxResponse}
 import utils.{UserAnswers, WireMockHelper}
 
@@ -216,6 +217,67 @@ class PensionsSchemeConnectorSpec extends AsyncFlatSpec with Matchers with WireM
     }
   }
 
+
+  "checkForAssociation" should "return without exceptions for a valid request/response" in {
+    implicit val request = FakeRequest("GET", "/")
+
+    val validResponse =
+      Json.stringify(
+        JsBoolean(true)
+      )
+
+    server.stubFor(
+      get(urlEqualTo(checkAssociationUrl))
+        .withHeader("Content-Type", equalTo("application/json"))
+        .withHeader("psaId", equalTo(psaId))
+        .withHeader("schemeReferenceNumber", equalTo(schemeId))
+        .willReturn(
+          ok(validResponse)
+            .withHeader("Content-Type", "application/json")
+        )
+    )
+
+    val connector = injector.instanceOf[PensionsSchemeConnector]
+
+    noException shouldBe thrownBy {
+      connector.checkForAssociation(psaId, pstr)
+    }
+  }
+
+  it should "return Upstream5xxResponse where 500 response is received" in {
+    implicit val request = FakeRequest("GET", "/")
+
+    server.stubFor(
+      get(urlEqualTo(checkAssociationUrl))
+        .willReturn(
+          aResponse.withStatus(500)
+        )
+    )
+
+    val connector = injector.instanceOf[PensionsSchemeConnector]
+
+    recoverToSucceededIf[Upstream5xxResponse] {
+      connector.checkForAssociation(psaId, pstr)
+    }
+  }
+
+  it should "return BadRequestException where 400 response is received" in {
+    implicit val request = FakeRequest("GET", "/")
+    server.stubFor(
+      get(urlEqualTo(checkAssociationUrl))
+        .willReturn(
+          aResponse.withStatus(400)
+        )
+    )
+
+    val connector = injector.instanceOf[PensionsSchemeConnector]
+
+    recoverToSucceededIf[BadRequestException] {
+      connector.checkForAssociation(psaId, pstr)
+    }
+  }
+
+
 }
 
 object PensionsSchemeConnectorSpec extends OptionValues {
@@ -223,6 +285,7 @@ object PensionsSchemeConnectorSpec extends OptionValues {
   private val registerSchemeUrl = "/pensions-scheme/register-scheme"
   
   private val updateSchemeUrl = "/pensions-scheme/update-scheme"
+  private val checkAssociationUrl = "/pensions-scheme/is-psa-associated"
 
   private implicit val headerCarrier: HeaderCarrier = HeaderCarrier()
 
