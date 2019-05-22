@@ -14,17 +14,15 @@
  * limitations under the License.
  */
 
-package controllers.register.establishers.individual
+package controllers.register.establishers.company
 
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.address.ConfirmAddressFormProvider
 import identifiers.register.establishers.ExistingCurrentAddressId
-import identifiers.register.establishers.individual.{EstablisherDetailsId, IndividualConfirmPreviousAddressId}
+import identifiers.register.establishers.company.{CompanyConfirmPreviousAddressId, CompanyDetailsId}
 import models._
 import models.address.Address
-import models.person.PersonDetails
-import org.joda.time.LocalDate
 import play.api.data.Form
 import play.api.libs.json.JsResult
 import play.api.mvc.Call
@@ -35,11 +33,11 @@ import viewmodels.Message
 import viewmodels.address.ConfirmAddressViewModel
 import views.html.address.confirmPreviousAddress
 
-class IndividualConfirmPreviousAddressControllerSpec extends ControllerSpecBase {
+class CompanyConfirmPreviousAddressControllerSpec extends ControllerSpecBase {
 
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
-  val name: String = "John Doe"
+  val name: String = "Test Company"
 
   val formProvider = new ConfirmAddressFormProvider()
   val form: Form[Boolean] = formProvider(Message("confirmPreviousAddress.error", name))
@@ -53,7 +51,7 @@ class IndividualConfirmPreviousAddressControllerSpec extends ControllerSpecBase 
   )
 
   private def viewmodel = ConfirmAddressViewModel(
-    postCall = routes.IndividualConfirmPreviousAddressController.onSubmit(index, srn),
+    postCall = routes.CompanyConfirmPreviousAddressController.onSubmit(index, srn),
     title = Message("messages__confirmPreviousAddress__title"),
     heading = Message("messages__confirmPreviousAddress__heading", name),
     hint = None,
@@ -68,7 +66,7 @@ class IndividualConfirmPreviousAddressControllerSpec extends ControllerSpecBase 
   val srn = Some("srn")
 
   private def controller(dataRetrievalAction: DataRetrievalAction = getMandatorySchemeNameHs) =
-    new IndividualConfirmPreviousAddressController(
+    new CompanyConfirmPreviousAddressController(
       frontendAppConfig,
       messagesApi,
       FakeUserAnswersService,
@@ -90,12 +88,12 @@ class IndividualConfirmPreviousAddressControllerSpec extends ControllerSpecBase 
     )(fakeRequest, messages).toString
 
   val validData: JsResult[UserAnswers] = UserAnswers()
-    .set(EstablisherDetailsId(index))(PersonDetails("John", None, "Doe", LocalDate.now())).flatMap(_.set(
+    .set(CompanyDetailsId(index))(CompanyDetails("Test Company")).flatMap(_.set(
     ExistingCurrentAddressId(index))(testAddress))
 
   val getRelevantData = new FakeDataRetrievalAction(Some(validData.get.json))
 
-  "IndividualConfirmPreviousAddressController" must {
+  "CompanyConfirmPreviousAddressController" must {
 
     "return OK and the correct view for a GET" in {
       val result = controller(getRelevantData).onPageLoad(UpdateMode, index, srn)(fakeRequest)
@@ -105,7 +103,7 @@ class IndividualConfirmPreviousAddressControllerSpec extends ControllerSpecBase 
     }
 
     "populate the view correctly on a GET when the question has previously been answered" in {
-      val getData = new FakeDataRetrievalAction(Some(validData.flatMap(_.set(IndividualConfirmPreviousAddressId(index))(false)).get.json))
+      val getData = new FakeDataRetrievalAction(Some(validData.flatMap(_.set(CompanyConfirmPreviousAddressId(index))(false)).get.json))
 
       val result = controller(getData).onPageLoad(UpdateMode, index, srn)(fakeRequest)
 

@@ -14,51 +14,51 @@
  * limitations under the License.
  */
 
-package controllers.register.establishers.individual
+package controllers.register.establishers.company
 
 import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions._
 import controllers.address.ConfirmPreviousAddressController
 import identifiers.register.establishers.ExistingCurrentAddressId
-import identifiers.register.establishers.individual.{EstablisherDetailsId, IndividualConfirmPreviousAddressId, PreviousAddressId}
+import identifiers.register.establishers.company.{CompanyConfirmPreviousAddressId, CompanyDetailsId, CompanyPreviousAddressId}
 import javax.inject.Inject
 import models.{Index, Mode}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
-import utils.annotations.EstablishersIndividual
+import utils.annotations.EstablishersCompany
 import utils.{CountryOptions, Navigator}
 import viewmodels.Message
 import viewmodels.address.ConfirmAddressViewModel
 
-class IndividualConfirmPreviousAddressController @Inject()(val appConfig: FrontendAppConfig,
-                                                           val messagesApi: MessagesApi,
-                                                           val userAnswersService: UserAnswersService,
-                                                           @EstablishersIndividual val navigator: Navigator,
-                                                           authenticate: AuthAction,
-                                                           allowAccess: AllowAccessActionProvider,
-                                                           getData: DataRetrievalAction,
-                                                           requireData: DataRequiredAction,
-                                                           val countryOptions: CountryOptions
+class CompanyConfirmPreviousAddressController @Inject()(val appConfig: FrontendAppConfig,
+                                                        val messagesApi: MessagesApi,
+                                                        val userAnswersService: UserAnswersService,
+                                                        @EstablishersCompany val navigator: Navigator,
+                                                        authenticate: AuthAction,
+                                                        allowAccess: AllowAccessActionProvider,
+                                                        getData: DataRetrievalAction,
+                                                        requireData: DataRequiredAction,
+                                                        val countryOptions: CountryOptions
                                                 ) extends ConfirmPreviousAddressController with Retrievals with I18nSupport {
 
-  private[controllers] val postCall = routes.IndividualConfirmPreviousAddressController.onSubmit _
+  private[controllers] val postCall = routes.CompanyConfirmPreviousAddressController.onSubmit _
   private[controllers] val title: Message = "messages__confirmPreviousAddress__title"
   private[controllers] val heading: Message = "messages__confirmPreviousAddress__heading"
 
   private def viewmodel(mode: Mode, index: Int, srn: Option[String]) =
     Retrieval(
       implicit request =>
-        (EstablisherDetailsId(index) and ExistingCurrentAddressId(index)).retrieve.right.map {
+        (CompanyDetailsId(index) and ExistingCurrentAddressId(index)).retrieve.right.map {
           case details ~ address =>
             ConfirmAddressViewModel(
               postCall(index, srn),
               title = Message(title),
-              heading = Message(heading, details.fullName),
+              heading = Message(heading, details.companyName),
               hint = None,
               address = address,
-              name = details.fullName,
+              name = details.companyName,
               srn = srn
             )
       }
@@ -68,7 +68,7 @@ class IndividualConfirmPreviousAddressController @Inject()(val appConfig: Fronte
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
     implicit request =>
       viewmodel(mode, index, srn).retrieve.right.map { vm =>
-        get(IndividualConfirmPreviousAddressId(index), vm)
+        get(CompanyConfirmPreviousAddressId(index), vm)
       }
   }
 
@@ -76,7 +76,7 @@ class IndividualConfirmPreviousAddressController @Inject()(val appConfig: Fronte
     (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
       viewmodel(mode, index, srn).retrieve.right.map { vm =>
-        post(IndividualConfirmPreviousAddressId(index), PreviousAddressId(index), vm, mode)
+        post(CompanyConfirmPreviousAddressId(index), CompanyPreviousAddressId(index), vm, mode)
       }
   }
 

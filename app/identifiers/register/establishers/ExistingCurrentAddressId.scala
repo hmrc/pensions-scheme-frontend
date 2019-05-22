@@ -14,10 +14,9 @@
  * limitations under the License.
  */
 
-package identifiers.register.establishers.individual
+package identifiers.register.establishers
 
 import identifiers.TypedIdentifier
-import identifiers.register.establishers.EstablishersId
 import models.address.Address
 import play.api.libs.json.JsPath
 
