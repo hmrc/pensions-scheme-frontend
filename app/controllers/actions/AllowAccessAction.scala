@@ -22,31 +22,42 @@ import identifiers.IsPsaSuspendedId
 import models.requests.OptionalDataRequest
 import play.api.mvc.Results._
 import play.api.mvc.{ActionFilter, Result}
+import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.play.HeaderCarrierConverter
 
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class AllowAccessAction(srn: Option[String], pensionsSchemeConnector: PensionsSchemeConnector) extends ActionFilter[OptionalDataRequest]{
+class AllowAccessAction(srn: Option[String], pensionsSchemeConnector: PensionsSchemeConnector) extends ActionFilter[OptionalDataRequest] {
 
   override protected def filter[A](request: OptionalDataRequest[A]): Future[Option[Result]] = {
-
+    implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
     request.userAnswers match {
-      case None => Future.successful(None)
+      case None =>
+        Future.successful(None)
       case Some(userAnswers) => userAnswers.get(IsPsaSuspendedId) match {
         case Some(true) => Future.successful(Some(Redirect(controllers.register.routes.CannotMakeChangesController.onPageLoad(srn))))
-        case _ => Future.successful(None) //todo- url manipulation by changing srn should be handled here (currently handles users in NormalMode as well)
+        case _ => srn
+          .map(pensionsSchemeConnector.checkForAssociation(request.psaId.id, _)(hc, global, request))
+          .fold[Future[Option[Result]]](Future.successful(None)) {
+          _.map {
+            case true => None
+            case _ => Some(NotFound)
+          }
+        }
       }
     }
   }
 
 }
 
-class AllowAccessActionProviderImpl @Inject()(pensionsSchemeConnector: PensionsSchemeConnector) extends AllowAccessActionProvider{
+class AllowAccessActionProviderImpl @Inject()(pensionsSchemeConnector: PensionsSchemeConnector) extends AllowAccessActionProvider {
   def apply(srn: Option[String]): AllowAccessAction = {
     new AllowAccessAction(srn, pensionsSchemeConnector)
   }
 }
 
 @ImplementedBy(classOf[AllowAccessActionProviderImpl])
-trait AllowAccessActionProvider{
-  def apply(srn: Option[String]) : AllowAccessAction
+trait AllowAccessActionProvider {
+  def apply(srn: Option[String]): AllowAccessAction
 }

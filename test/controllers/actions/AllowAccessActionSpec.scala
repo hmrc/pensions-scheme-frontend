@@ -20,6 +20,8 @@ import base.SpecBase
 import connectors.PensionsSchemeConnector
 import identifiers.IsPsaSuspendedId
 import models.requests.OptionalDataRequest
+import org.mockito.Matchers.any
+import org.mockito.Mockito._
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.mockito.MockitoSugar
 import play.api.libs.json.Json
@@ -30,11 +32,16 @@ import utils.UserAnswers
 
 import scala.concurrent.Future
 
-class AllowAccessActionSpec extends SpecBase  with ScalaFutures with MockitoSugar {
+class AllowAccessActionSpec extends SpecBase with ScalaFutures with MockitoSugar {
 
-  val pensionsSchemeConnector: PensionsSchemeConnector = mock[PensionsSchemeConnector]
+  val pensionsSchemeConnector: PensionsSchemeConnector = {
+    val psc = mock[PensionsSchemeConnector]
+    when(psc.checkForAssociation(any(), any())(any(), any(), any()))
+      .thenReturn(Future.successful(true))
+    psc
+  }
 
-  class TestAllowAccessAction(srn: Option[String]) extends AllowAccessAction( srn, pensionsSchemeConnector) {
+  class TestAllowAccessAction(srn: Option[String], psc: PensionsSchemeConnector = pensionsSchemeConnector) extends AllowAccessAction(srn, psc) {
     override def filter[A](request: OptionalDataRequest[A]): Future[Option[Result]] = super.filter(request)
   }
 
@@ -44,7 +51,23 @@ class AllowAccessActionSpec extends SpecBase  with ScalaFutures with MockitoSuga
   val notSuspendedUserAnswers = UserAnswers(Json.obj(IsPsaSuspendedId.toString -> false))
 
 
-  "AllowAccessAction" must{
+  "AllowAccessAction" must {
+
+    "return NOT FOUND for user where no associated between psa id and srn" in {
+      val psc: PensionsSchemeConnector = mock[PensionsSchemeConnector]
+      when(psc.checkForAssociation(any(), any())(any(), any(), any()))
+        .thenReturn(Future.successful(false))
+
+      val action = new TestAllowAccessAction(srn = srn, psc = psc)
+
+      val futureResult = action.filter(OptionalDataRequest(fakeRequest, "id", Some(UserAnswers(Json.obj())), PsaId("A0000000"), false))
+
+      whenReady(futureResult) { result =>
+        result.map {
+          _.header.status
+        } mustBe Some(NOT_FOUND)
+      }
+    }
 
     "allow access to pages for user with no data" in {
 
@@ -54,7 +77,9 @@ class AllowAccessActionSpec extends SpecBase  with ScalaFutures with MockitoSuga
 
       whenReady(futureResult) { result =>
 
-        result.map { _.header.status  } mustBe None
+        result.map {
+          _.header.status
+        } mustBe None
       }
 
     }
@@ -67,7 +92,9 @@ class AllowAccessActionSpec extends SpecBase  with ScalaFutures with MockitoSuga
 
       whenReady(futureResult) { result =>
 
-        result.map { _.header.status  } mustBe None
+        result.map {
+          _.header.status
+        } mustBe None
       }
 
 
@@ -81,7 +108,9 @@ class AllowAccessActionSpec extends SpecBase  with ScalaFutures with MockitoSuga
 
       whenReady(futureResult) { result =>
 
-        result.map { _.header.status  } mustBe None
+        result.map {
+          _.header.status
+        } mustBe None
       }
 
 
@@ -95,8 +124,12 @@ class AllowAccessActionSpec extends SpecBase  with ScalaFutures with MockitoSuga
 
       whenReady(futureResult) { result =>
 
-        result.map { _.header.status  } mustBe Some(SEE_OTHER)
-        result.flatMap { _.header.headers.get(LOCATION)  } mustBe Some(controllers.register.routes.CannotMakeChangesController.onPageLoad(srn).url)
+        result.map {
+          _.header.status
+        } mustBe Some(SEE_OTHER)
+        result.flatMap {
+          _.header.headers.get(LOCATION)
+        } mustBe Some(controllers.register.routes.CannotMakeChangesController.onPageLoad(srn).url)
       }
 
     }
