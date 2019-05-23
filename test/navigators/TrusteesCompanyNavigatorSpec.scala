@@ -54,7 +54,7 @@ class TrusteesCompanyNavigatorSpec extends SpecBase with MustMatchers with Navig
     (CompanyAddressId(0), newTrustee, companyAddressYears(mode), true, Some(checkYourAnswers(mode)), true),
     (CompanyAddressYearsId(0), addressYearsOverAYear, companyContactDetails(mode), true, Some(exitJourney(mode, emptyAnswers)), true),
     (CompanyAddressYearsId(0), addressYearsOverAYearNew, companyContactDetails(mode), true, Some(exitJourney(mode, addressYearsOverAYearNew)), true),
-    (CompanyAddressYearsId(0), addressYearsUnderAYear, prevAddPostCodeLookup(mode), true, Some(prevAddPostCodeLookup(mode)), true),
+    (CompanyAddressYearsId(0), addressYearsUnderAYear, prevAddPostCodeLookup(mode), true, Some(addressYearsLessThanTwelveEdit(checkMode(mode), isPrevAddEnabled)), true),
     (CompanyPreviousAddressPostcodeLookupId(0), emptyAnswers, companyPaList(mode), true, Some(companyPaList(checkMode(mode))), true),
     (CompanyPreviousAddressListId(0), emptyAnswers, companyPreviousAddress(mode), true, Some(companyPreviousAddress(checkMode(mode))), true),
     (CompanyPreviousAddressId(0), emptyAnswers, companyContactDetails(mode), true, Some(exitJourney(mode, emptyAnswers)), true),
@@ -66,7 +66,7 @@ class TrusteesCompanyNavigatorSpec extends SpecBase with MustMatchers with Navig
 
   private def editRoutesToggleOn(mode: Mode, isPrevAddEnabled:Boolean = false): TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = Table(
     ("Id", "UserAnswers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (CheckMode)", "Save (CM)"),
-    (CompanyConfirmPreviousAddressId(0), confirmPreviousAddressYes, sessionExpired, false, Some(confirmPreviousAddress), false),
+    (CompanyConfirmPreviousAddressId(0), confirmPreviousAddressYes, sessionExpired, false, Some(anyMoreChanges), false),
     (CompanyConfirmPreviousAddressId(0), confirmPreviousAddressNo, sessionExpired, false, Some(prevAddPostCodeLookup(checkMode(mode))), false)
   )
 
@@ -170,9 +170,4 @@ object TrusteesCompanyNavigatorSpec extends SpecBase with OptionValues {
   private def addressYearsLessThanTwelveEdit(mode: Mode, isPrevAddEnabled:Boolean = false) =
     if (mode == CheckUpdateMode && isPrevAddEnabled) confirmPreviousAddress
     else prevAddPostCodeLookup(mode)
-
-  private def confirmPreviousAddressRoute(mode: Mode, call: Call, isPrevAddEnabled:Boolean = false) =
-    if (mode == CheckUpdateMode && isPrevAddEnabled) Some(call)
-    else Some(sessionExpired)
-
 }

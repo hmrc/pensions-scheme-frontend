@@ -138,6 +138,7 @@ class TrusteesCompanyNavigator @Inject()(val dataCacheConnector: UserAnswersCach
 
       case CompanyContactDetailsId(index) =>
         exitMiniJourney(index, mode, srn, from.userAnswers)
+
       case _ => None
     }
   }
