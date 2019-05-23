@@ -19,7 +19,8 @@ package controllers.register.establishers.individual
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.address.ConfirmAddressFormProvider
-import identifiers.register.establishers.individual.{EstablisherDetailsId, ExistingCurrentAddressId, IndividualConfirmPreviousAddressId}
+import identifiers.register.establishers.ExistingCurrentAddressId
+import identifiers.register.establishers.individual.{EstablisherDetailsId, IndividualConfirmPreviousAddressId}
 import models._
 import models.address.Address
 import models.person.PersonDetails

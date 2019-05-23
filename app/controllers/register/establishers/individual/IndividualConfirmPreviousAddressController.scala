@@ -20,7 +20,8 @@ import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions._
 import controllers.address.ConfirmPreviousAddressController
-import identifiers.register.establishers.individual.{EstablisherDetailsId, ExistingCurrentAddressId, IndividualConfirmPreviousAddressId, PreviousAddressId}
+import identifiers.register.establishers.ExistingCurrentAddressId
+import identifiers.register.establishers.individual.{EstablisherDetailsId, IndividualConfirmPreviousAddressId, PreviousAddressId}
 import javax.inject.Inject
 import models.{Index, Mode}
 import play.api.i18n.{I18nSupport, MessagesApi}
