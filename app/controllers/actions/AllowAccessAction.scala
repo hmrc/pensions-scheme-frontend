@@ -32,12 +32,15 @@ class AllowAccessAction(srn: Option[String], pensionsSchemeConnector: PensionsSc
 
   override protected def filter[A](request: OptionalDataRequest[A]): Future[Option[Result]] = {
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
-    request.userAnswers match {
-      case None =>
-        Future.successful(None)
-      case Some(userAnswers) => userAnswers.get(IsPsaSuspendedId) match {
-        case Some(true) => Future.successful(Some(Redirect(controllers.register.routes.CannotMakeChangesController.onPageLoad(srn))))
-        case _ => srn
+
+    val optionUA = request.userAnswers
+    val optionIsSuspendedId = optionUA.flatMap(_.get(IsPsaSuspendedId))
+
+    (optionUA, optionIsSuspendedId) match {
+      case (None, _) => Future.successful(None)
+      case (Some(_), Some(true)) => Future.successful(Some(Redirect(controllers.register.routes.CannotMakeChangesController.onPageLoad(srn))))
+      case (Some(ua), _) =>
+        srn
           .map(pensionsSchemeConnector.checkForAssociation(request.psaId.id, _)(hc, global, request))
           .fold[Future[Option[Result]]](Future.successful(None)) {
           _.map {
@@ -45,7 +48,7 @@ class AllowAccessAction(srn: Option[String], pensionsSchemeConnector: PensionsSc
             case _ => Some(NotFound)
           }
         }
-      }
+
     }
   }
 
