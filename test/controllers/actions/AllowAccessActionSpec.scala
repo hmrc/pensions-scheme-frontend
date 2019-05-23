@@ -17,7 +17,7 @@
 package controllers.actions
 
 import base.SpecBase
-import connectors.PensionsSchemeConnector
+import connectors.{PensionsSchemeConnector, SchemeDetailsReadOnlyCacheConnector}
 import identifiers.IsPsaSuspendedId
 import models.requests.OptionalDataRequest
 import org.mockito.Matchers.any
@@ -41,7 +41,16 @@ class AllowAccessActionSpec extends SpecBase with ScalaFutures with MockitoSugar
     psc
   }
 
-  class TestAllowAccessAction(srn: Option[String], psc: PensionsSchemeConnector = pensionsSchemeConnector) extends AllowAccessAction(srn, psc) {
+  val schemeDetailsReadOnlyCacheConnector: SchemeDetailsReadOnlyCacheConnector = {
+    val sdrocc = mock[SchemeDetailsReadOnlyCacheConnector]
+    when(sdrocc.fetch(any())(any(),any()))
+      .thenReturn(Future.successful(None))
+    sdrocc
+  }
+
+  class TestAllowAccessAction(srn: Option[String],
+                              psc: PensionsSchemeConnector = pensionsSchemeConnector,
+                              sdrocc: SchemeDetailsReadOnlyCacheConnector = schemeDetailsReadOnlyCacheConnector) extends AllowAccessAction(srn, psc, sdrocc) {
     override def filter[A](request: OptionalDataRequest[A]): Future[Option[Result]] = super.filter(request)
   }
 

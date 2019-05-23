@@ -17,8 +17,9 @@
 package controllers.actions
 
 import com.google.inject.{ImplementedBy, Inject}
-import connectors.PensionsSchemeConnector
+import connectors.{PensionsSchemeConnector, SchemeDetailsReadOnlyCacheConnector}
 import identifiers.IsPsaSuspendedId
+import models.UpdateMode
 import models.requests.OptionalDataRequest
 import play.api.mvc.Results._
 import play.api.mvc.{ActionFilter, Result}
@@ -28,7 +29,10 @@ import uk.gov.hmrc.play.HeaderCarrierConverter
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class AllowAccessAction(srn: Option[String], pensionsSchemeConnector: PensionsSchemeConnector) extends ActionFilter[OptionalDataRequest] {
+class AllowAccessAction(srn: Option[String],
+                        pensionsSchemeConnector: PensionsSchemeConnector,
+                        viewConnector: SchemeDetailsReadOnlyCacheConnector
+                       ) extends ActionFilter[OptionalDataRequest] {
 
   override protected def filter[A](request: OptionalDataRequest[A]): Future[Option[Result]] = {
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
@@ -39,15 +43,17 @@ class AllowAccessAction(srn: Option[String], pensionsSchemeConnector: PensionsSc
     (optionUA, optionIsSuspendedId, srn) match {
       case (Some(_), Some(true), _) => Future.successful(Some(Redirect(controllers.register.routes.CannotMakeChangesController.onPageLoad(srn))))
       case (Some(ua), _, Some(extractedSRN)) =>
-        pensionsSchemeConnector.checkForAssociation(request.psaId.id, extractedSRN)(hc, global, request) map {
+        pensionsSchemeConnector.checkForAssociation(request.psaId.id, extractedSRN)(hc, global, request) flatMap {
           case true =>
-
             if (request.viewOnly) {
-              None
+              viewConnector.fetch(request.externalId).map {
+                case None => Some(Redirect(controllers.routes.SchemeTaskListController.onPageLoad(UpdateMode, srn)))
+                case Some(jsValue) => None
+              }
             } else {
-              None // Works fine if have lock
+              Future.successful(None)
             }
-          case _ => Some(NotFound)
+          case _ => Future.successful(Some(NotFound))
         }
       case _ => Future.successful(None)
     }
@@ -55,9 +61,10 @@ class AllowAccessAction(srn: Option[String], pensionsSchemeConnector: PensionsSc
 
 }
 
-class AllowAccessActionProviderImpl @Inject()(pensionsSchemeConnector: PensionsSchemeConnector) extends AllowAccessActionProvider {
+class AllowAccessActionProviderImpl @Inject()(pensionsSchemeConnector: PensionsSchemeConnector,
+                                              viewConnector: SchemeDetailsReadOnlyCacheConnector) extends AllowAccessActionProvider {
   def apply(srn: Option[String]): AllowAccessAction = {
-    new AllowAccessAction(srn, pensionsSchemeConnector)
+    new AllowAccessAction(srn, pensionsSchemeConnector, viewConnector)
   }
 }
 
