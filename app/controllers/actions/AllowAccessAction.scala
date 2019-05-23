@@ -45,7 +45,7 @@ class AllowAccessAction(srn: Option[String],
 
     (optionUA, optionIsSuspendedId, srn) match {
       case (Some(_), Some(true), _) => Future.successful(Some(Redirect(controllers.register.routes.CannotMakeChangesController.onPageLoad(srn))))
-      case (Some(ua), _, Some(extractedSRN)) =>
+      case (Some(_), _, Some(extractedSRN)) =>
         pensionsSchemeConnector.checkForAssociation(request.psaId.id, extractedSRN)(hc, global, request).flatMap {
           case true => Future.successful(None)
           case _ => errorHandler.onClientError(request, NOT_FOUND, "").map(Some.apply)

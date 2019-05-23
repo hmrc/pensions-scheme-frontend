@@ -93,7 +93,7 @@ class PensionsSchemeConnectorImpl @Inject()(http: HttpClient, config: FrontendAp
         case JsSuccess(value, _) => value
         case JsError(errors) => throw JsResultException(errors)
       }
-    } andThen logExceptions("Unable to register Scheme") recoverWith translateExceptions
+    } andThen logExceptions("Unable to check for scheme association with PSA") recoverWith translateExceptions
 
   }
 
