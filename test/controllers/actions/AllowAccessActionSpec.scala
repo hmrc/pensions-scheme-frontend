@@ -18,6 +18,7 @@ package controllers.actions
 
 import base.SpecBase
 import connectors.{PensionsSchemeConnector, SchemeDetailsReadOnlyCacheConnector}
+import handlers.{ErrorHandler, ErrorHandlerWithReturnLinkToManage}
 import identifiers.IsPsaSuspendedId
 import models.requests.OptionalDataRequest
 import org.mockito.Matchers.any
@@ -33,6 +34,8 @@ import utils.UserAnswers
 import scala.concurrent.Future
 
 class AllowAccessActionSpec extends SpecBase with ScalaFutures with MockitoSugar {
+
+  val errorHandler = new ErrorHandler
 
   val pensionsSchemeConnector: PensionsSchemeConnector = {
     val psc = mock[PensionsSchemeConnector]

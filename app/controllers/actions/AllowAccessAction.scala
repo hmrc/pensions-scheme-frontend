@@ -18,11 +18,13 @@ package controllers.actions
 
 import com.google.inject.{ImplementedBy, Inject}
 import connectors.{PensionsSchemeConnector, SchemeDetailsReadOnlyCacheConnector}
+import handlers.{ErrorHandler, ErrorHandlerWithReturnLinkToManage}
 import identifiers.IsPsaSuspendedId
 import models.UpdateMode
 import models.requests.OptionalDataRequest
 import play.api.mvc.Results._
-import play.api.mvc.{ActionFilter, Result}
+import play.api.http.Status._
+import play.api.mvc.{ActionFilter, Result, Results}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.HeaderCarrierConverter
 
@@ -30,7 +32,8 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 class AllowAccessAction(srn: Option[String],
-                        pensionsSchemeConnector: PensionsSchemeConnector
+                        pensionsSchemeConnector: PensionsSchemeConnector,
+                        errorHandler: ErrorHandler
                        ) extends ActionFilter[OptionalDataRequest] {
 
   override protected def filter[A](request: OptionalDataRequest[A]): Future[Option[Result]] = {
@@ -42,9 +45,9 @@ class AllowAccessAction(srn: Option[String],
     (optionUA, optionIsSuspendedId, srn) match {
       case (Some(_), Some(true), _) => Future.successful(Some(Redirect(controllers.register.routes.CannotMakeChangesController.onPageLoad(srn))))
       case (Some(ua), _, Some(extractedSRN)) =>
-        pensionsSchemeConnector.checkForAssociation(request.psaId.id, extractedSRN)(hc, global, request) map {
-          case true => None
-          case _ => Some(NotFound)
+        pensionsSchemeConnector.checkForAssociation(request.psaId.id, extractedSRN)(hc, global, request).flatMap {
+          case true => Future.successful(None)
+          case _ => errorHandler.onClientError(request, NOT_FOUND, "").map(Some.apply)
         }
       case (None, _, Some(_)) => Future.successful(Some(Redirect(controllers.routes.SchemeTaskListController.onPageLoad(UpdateMode, srn))))
       case _ => Future.successful(None)
@@ -53,9 +56,10 @@ class AllowAccessAction(srn: Option[String],
 
 }
 
-class AllowAccessActionProviderImpl @Inject()(pensionsSchemeConnector: PensionsSchemeConnector) extends AllowAccessActionProvider {
+class AllowAccessActionProviderImpl @Inject()(pensionsSchemeConnector: PensionsSchemeConnector,
+                                              errorHandler: ErrorHandlerWithReturnLinkToManage) extends AllowAccessActionProvider {
   def apply(srn: Option[String]): AllowAccessAction = {
-    new AllowAccessAction(srn, pensionsSchemeConnector)
+    new AllowAccessAction(srn, pensionsSchemeConnector, errorHandler)
   }
 }
 
