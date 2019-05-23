@@ -103,16 +103,21 @@ class EstablishersCompanyNavigatorSpec extends SpecBase with MustMatchers with N
     routes(UpdateMode) ++ updateOnlyRoutes: _*
   )
 
-  featureSwitch.change(Toggles.isPrevAddEnabled, true)
-
   private val navigator: EstablishersCompanyNavigator =
     new EstablishersCompanyNavigator(FakeUserAnswersCacheConnector, frontendAppConfig, featureSwitch)
 
   s"${navigator.getClass.getSimpleName}" must {
     appRunning()
     behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, normalRoutes, dataDescriber)
+    featureSwitch.change(Toggles.isPrevAddEnabled, true)
     behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, updateRoutes, dataDescriber, UpdateMode)
     behave like nonMatchingNavigator(navigator)
+  }
+
+  s"${navigator.getClass.getSimpleName} when previous address feature is toggled off" must {
+    appRunning()
+    featureSwitch.change(Toggles.isPrevAddEnabled, false)
+    behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, updateRoutes, dataDescriber, UpdateMode)
   }
 }
 
@@ -123,7 +128,7 @@ object EstablishersCompanyNavigatorSpec extends OptionValues with Enumerable.Imp
   private val johnDoe = PersonDetails("John", None, "Doe", new LocalDate(1862, 6, 9))
 
   private val config = injector.instanceOf[Configuration]
-  private val featureSwitch = new FeatureSwitchManagementServiceTestImpl(config, environment)
+  private def featureSwitch = new FeatureSwitchManagementServiceTestImpl(config, environment)
 
   private def validData(directors: PersonDetails*) = {
     Json.obj(
