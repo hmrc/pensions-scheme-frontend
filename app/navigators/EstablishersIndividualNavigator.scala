@@ -163,18 +163,13 @@ class EstablishersIndividualNavigator @Inject()(
     }
   }
 
-  private def confirmPreviousAddressRoutes(index: Int, mode: Mode, srn: Option[String])(answers: UserAnswers): Option[NavigateTo] = {
-    println(">>>>>>>>>>>>>>>>>>4")
+  private def confirmPreviousAddressRoutes(index: Int, mode: Mode, srn: Option[String])(answers: UserAnswers): Option[NavigateTo] =
     answers.get(IndividualConfirmPreviousAddressId(index)) match {
       case Some(false) =>
-        println(">>>>>>>>>>>>>>>>>>5")
         NavigateTo.dontSave(controllers.register.establishers.individual.routes.PreviousAddressPostCodeLookupController.onPageLoad(mode, index, srn))
       case Some(true) =>
-        println(">>>>>>>>>>>>>>>>>>6")
         anyMoreChanges(srn)
       case None =>
-        println(">>>>>>>>>>>>>>>>>>7")
         NavigateTo.dontSave(controllers.routes.SessionExpiredController.onPageLoad())
     }
-  }
 }
