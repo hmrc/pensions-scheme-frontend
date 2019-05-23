@@ -17,7 +17,7 @@
 package navigators
 
 import com.google.inject.Inject
-import config.FrontendAppConfig
+import config.{FeatureSwitchManagementService, FrontendAppConfig}
 import connectors.UserAnswersCacheConnector
 import controllers.register.establishers.partnership.partner._
 import identifiers.EstablishersOrTrusteesChangedId
@@ -26,9 +26,11 @@ import identifiers.register.establishers.partnership.AddPartnersId
 import identifiers.register.establishers.partnership.partner._
 import models.Mode.journeyMode
 import models._
-import utils.{Navigator, UserAnswers}
+import utils.{Navigator, Toggles, UserAnswers}
 
-class EstablishersPartnerNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector, appConfig: FrontendAppConfig) extends Navigator {
+class EstablishersPartnerNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector,
+                                             appConfig: FrontendAppConfig,
+                                             featureSwitchManagementService: FeatureSwitchManagementService) extends Navigator {
   //scalastyle:off cyclomatic.complexity
   private def checkYourAnswers(establisherIndex: Int, partnerIndex: Int, mode: Mode, srn: Option[String]): Option[NavigateTo] =
     NavigateTo.dontSave(routes.CheckYourAnswersController.onPageLoad(mode, establisherIndex, partnerIndex, srn))
@@ -104,6 +106,10 @@ class EstablishersPartnerNavigator @Inject()(val dataCacheConnector: UserAnswers
       }
     case PartnerAddressYearsId(establisherIndex, partnerIndex) =>
       addressYearsEditRoutes(establisherIndex, partnerIndex, mode, srn)(from.userAnswers)
+
+    case PartnerConfirmPreviousAddressId(establisherIndex, partnerIndex) => confirmPreviousAddressRoutes(establisherIndex, partnerIndex, mode, srn)(from.userAnswers)
+
+
     case PartnerPreviousAddressPostcodeLookupId(establisherIndex, partnerIndex) =>
       NavigateTo.dontSave(routes.PartnerPreviousAddressListController.onPageLoad(mode, establisherIndex, partnerIndex, srn))
     case PartnerPreviousAddressListId(establisherIndex, partnerIndex) =>
@@ -137,7 +143,10 @@ class EstablishersPartnerNavigator @Inject()(val dataCacheConnector: UserAnswers
   private def addressYearsEditRoutes(establisherIndex: Int, partnerIndex: Int, mode: Mode, srn: Option[String])(answers: UserAnswers): Option[NavigateTo] = {
     answers.get(PartnerAddressYearsId(establisherIndex, partnerIndex)) match {
       case Some(AddressYears.UnderAYear) =>
-        NavigateTo.dontSave(routes.PartnerPreviousAddressPostcodeLookupController.onPageLoad(mode, establisherIndex, partnerIndex, srn))
+        if (mode == CheckUpdateMode && featureSwitchManagementService.get(Toggles.isPrevAddEnabled))
+          NavigateTo.dontSave(routes.PartnerConfirmPreviousAddressController.onPageLoad(establisherIndex, partnerIndex, srn))
+        else
+          NavigateTo.dontSave(routes.PartnerPreviousAddressPostcodeLookupController.onPageLoad(mode, establisherIndex, partnerIndex, srn))
       case Some(AddressYears.OverAYear) =>
         exitMiniJourney(establisherIndex, partnerIndex, mode, srn, answers)
       case None =>
@@ -179,4 +188,15 @@ class EstablishersPartnerNavigator @Inject()(val dataCacheConnector: UserAnswers
       NavigateTo.dontSave(controllers.register.establishers.partnership.routes.OtherPartnersController.onPageLoad(mode, index, srn))
     }
   }
+
+  private def confirmPreviousAddressRoutes(establisherIndex: Int, partnerIndex: Int,
+                                           mode: Mode, srn: Option[String])(answers: UserAnswers): Option[NavigateTo] =
+    answers.get(PartnerConfirmPreviousAddressId(establisherIndex, partnerIndex)) match {
+      case Some(false) =>
+        NavigateTo.dontSave(routes.PartnerPreviousAddressPostcodeLookupController.onPageLoad(mode, establisherIndex, partnerIndex, srn))
+      case Some(true) =>
+        anyMoreChanges(srn)
+      case None =>
+        NavigateTo.dontSave(controllers.routes.SessionExpiredController.onPageLoad())
+    }
 }
