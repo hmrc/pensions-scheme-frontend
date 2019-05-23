@@ -17,16 +17,16 @@
 package controllers.actions
 
 import connectors.PensionsSchemeConnector
-import models.register.SchemeSubmissionResponse
 import models.requests.OptionalDataRequest
+import org.mockito.Matchers.any
+import org.mockito.Mockito._
+import org.scalatest.mockito.MockitoSugar
 import play.api.i18n.MessagesApi
-import play.api.mvc.{Request, RequestHeader, Result}
+import play.api.mvc.{Request, Result}
 import play.twirl.api.Html
-import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.http.FrontendErrorHandler
-import utils.UserAnswers
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.Future
 
 class FakeAllowAccessAction(srn: Option[String],
                             pensionsSchemeConnector: PensionsSchemeConnector,
@@ -36,7 +36,7 @@ class FakeAllowAccessAction(srn: Option[String],
 
 case class FakeAllowAccessProvider(srn: Option[String] = None,
                                    pensionsSchemeConnector: Option[PensionsSchemeConnector] = None
-                                  ) extends AllowAccessActionProvider {
+                                  ) extends AllowAccessActionProvider with MockitoSugar {
 
   private val errorHandler = new FrontendErrorHandler {
     override def standardErrorTemplate(pageTitle: String, heading: String, message: String)(implicit request: Request[_]): Html = Html("")
@@ -49,16 +49,13 @@ case class FakeAllowAccessProvider(srn: Option[String] = None,
       srn,
       pensionsSchemeConnector match {
         case None =>
-          new PensionsSchemeConnector {
-            override def registerScheme(answers: UserAnswers, psaId: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[SchemeSubmissionResponse] = ???
-
-            override def updateSchemeDetails(psaId: String, pstr: String, answers: UserAnswers)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Unit] = ???
-
-            override def checkForAssociation(psaId: String, srn: String)(implicit headerCarrier: HeaderCarrier, ec: ExecutionContext, request: RequestHeader): Future[Boolean] = Future.successful(true)
-          }
+          val psc = mock[PensionsSchemeConnector]
+          when(psc.checkForAssociation(any(), any())(any(),any(),any()))
+            .thenReturn(Future.successful(true))
+          psc
         case Some(psc) => psc
-      },errorHandler
-
+      },
+      errorHandler
     )
   }
 }
