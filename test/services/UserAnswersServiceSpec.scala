@@ -27,9 +27,10 @@ import identifiers.register.establishers.{IsEstablisherAddressCompleteId, IsEsta
 import identifiers.register.establishers.individual.{AddressYearsId => EstablisherIndividualAddressYearsId, PreviousAddressId => EstablisherIndividualPreviousAddressId}
 import identifiers.register.establishers.partnership.{IsPartnershipCompleteId, partner}
 import identifiers.register.establishers.partnership.partner._
+import identifiers.register.trustees
 import identifiers.register.trustees.{IsTrusteeAddressCompleteId, IsTrusteeCompleteId, IsTrusteeNewId}
 import identifiers.register.trustees.company.{CompanyAddressYearsId => TruesteeCompanyAddressYearsId, CompanyPreviousAddressId => TruesteeCompanyPreviousAddressId}
-import identifiers.register.trustees.individual.{TrusteeAddressYearsId, TrusteePreviousAddressId}
+import identifiers.register.trustees.individual.{TrusteeAddressId, TrusteeAddressYearsId, TrusteePreviousAddressId}
 import identifiers.register.trustees.partnership.PartnershipPreviousAddressId
 import models.AddressYears.{OverAYear, UnderAYear}
 import models._
@@ -346,6 +347,31 @@ class UserAnswersServiceSpec extends AsyncWordSpec with MustMatchers with Mockit
           _ mustEqual answers
         }
       }
+    }
+  }
+
+  "setExistingAddress" when {
+    val address = Address("line1", "line2", None, None, None, "GB")
+    "in CheckUpdateMode" must {
+      "save the existing address" in {
+        val answers = UserAnswers().set(TrusteeAddressId(0))(address).asOpt.value
+        val expectedAnswers = answers.set(trustees.ExistingCurrentAddressId(0))(address).asOpt.value
+
+        testService.setExistingAddress(CheckUpdateMode, TrusteeAddressId(0), answers) mustEqual expectedAnswers
+      }
+
+      "not save the existing address and return the same user answers if there is no current address" in {
+        val answers = UserAnswers()
+
+        testService.setExistingAddress(CheckUpdateMode, TrusteeAddressId(0), answers) mustEqual answers
+      }
+    }
+  }
+
+  "in Normal Mode" must {
+    "not save the existing address and return the same user answers" in {
+      val answers = UserAnswers()
+      testService.setExistingAddress(CheckUpdateMode, TrusteeAddressId(0), answers) mustEqual answers
     }
   }
 }
