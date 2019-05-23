@@ -27,8 +27,6 @@ import identifiers.register.establishers.partnership.{AddPartnersId, Partnership
 import models.Mode.checkMode
 import models._
 import models.person.PersonDetails
-import navigators.EstablishersCompanyDirectorNavigatorSpec.navigator
-import navigators.EstablishersIndividualNavigatorSpec.featureSwitch
 import org.joda.time.LocalDate
 import org.scalatest.OptionValues
 import org.scalatest.prop.TableFor6
