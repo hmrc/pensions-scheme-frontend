@@ -136,6 +136,7 @@ object SchemeTaskListControllerSpec extends ControllerSpecBase with MockitoSugar
       messagesApi,
       FakeAuthAction,
       dataRetrievalAction,
+      FakeAllowAccessProvider(),
       fakeSchemeDetailsConnector,
       fakeSchemeTransformer,
       new ErrorHandler(frontendAppConfig, messagesApi),

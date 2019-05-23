@@ -41,6 +41,7 @@ class SchemeTaskListController @Inject()(appConfig: FrontendAppConfig,
                                          override val messagesApi: MessagesApi,
                                          authenticate: AuthAction,
                                          getData: DataRetrievalAction,
+                                         allowAccess: AllowAccessActionProvider,
                                          schemeDetailsConnector: SchemeDetailsConnector,
                                          schemeTransformer: SchemeDetailsMasterSection,
                                          errorHandler: ErrorHandler,
@@ -51,7 +52,7 @@ class SchemeTaskListController @Inject()(appConfig: FrontendAppConfig,
                                          minimalPsaConnector: MinimalPsaConnector
                                         )(implicit val ec: ExecutionContext) extends FrontendController with I18nSupport with Retrievals {
 
-  def onPageLoad(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn)).async {
+  def onPageLoad(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen allowAccess(srn)).async {
     implicit request =>
       (srn, request.userAnswers) match {
 
