@@ -112,7 +112,7 @@ trait ControllerBehaviours extends ControllerSpecBase
             status(result) must be(SEE_OTHER)
             redirectLocation(result).value mustEqual onwardCall.url
 
-            FakeUserAnswersService.verify(id, address)
+            FakeUserAnswersService.userAnswer.get(id).value mustEqual address
 
         }
       }
