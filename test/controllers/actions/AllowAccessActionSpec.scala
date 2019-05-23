@@ -17,9 +17,9 @@
 package controllers.actions
 
 import base.SpecBase
-import connectors.{PensionsSchemeConnector, SchemeDetailsReadOnlyCacheConnector}
-import handlers.{ErrorHandler, ErrorHandlerWithReturnLinkToManage}
+import connectors.PensionsSchemeConnector
 import identifiers.IsPsaSuspendedId
+import models.UpdateMode
 import models.requests.OptionalDataRequest
 import org.mockito.Matchers.any
 import org.mockito.Mockito._
@@ -38,13 +38,13 @@ import scala.concurrent.Future
 
 class AllowAccessActionSpec extends SpecBase with ScalaFutures with MockitoSugar {
 
-  val errorHandler = new FrontendErrorHandler {
+  private val errorHandler = new FrontendErrorHandler {
     override def standardErrorTemplate(pageTitle: String, heading: String, message: String)(implicit request: Request[_]): Html = Html("")
 
     override def messagesApi: MessagesApi = injector.instanceOf[MessagesApi]
   }
 
-  val pensionsSchemeConnector: PensionsSchemeConnector = {
+  private val pensionsSchemeConnector: PensionsSchemeConnector = {
     val psc = mock[PensionsSchemeConnector]
     when(psc.checkForAssociation(any(), any())(any(), any(), any()))
       .thenReturn(Future.successful(true))
@@ -64,14 +64,14 @@ class AllowAccessActionSpec extends SpecBase with ScalaFutures with MockitoSugar
 
   "AllowAccessAction" must {
 
-    "return NOT FOUND for user where no associated between psa id and srn" in {
+    "return NOT FOUND for user where NO association between psa id and both srn and user answers present" in {
       val psc: PensionsSchemeConnector = mock[PensionsSchemeConnector]
       when(psc.checkForAssociation(any(), any())(any(), any(), any()))
         .thenReturn(Future.successful(false))
 
       val action = new TestAllowAccessAction(srn = srn, psc = psc)
 
-      val futureResult = action.filter(OptionalDataRequest(fakeRequest, "id", Some(UserAnswers(Json.obj())), PsaId("A0000000"), false))
+      val futureResult = action.filter(OptionalDataRequest(fakeRequest, "id", Some(UserAnswers(Json.obj())), PsaId("A0000000")))
 
       whenReady(futureResult) { result =>
         result.map {
@@ -80,11 +80,46 @@ class AllowAccessActionSpec extends SpecBase with ScalaFutures with MockitoSugar
       }
     }
 
+    "allow access for user where association between psa id and both srn and user answers present" in {
+      val psc: PensionsSchemeConnector = mock[PensionsSchemeConnector]
+      when(psc.checkForAssociation(any(), any())(any(), any(), any()))
+        .thenReturn(Future.successful(true))
+
+      val action = new TestAllowAccessAction(srn = srn, psc = psc)
+
+      val futureResult = action.filter(OptionalDataRequest(fakeRequest, "id", Some(UserAnswers(Json.obj())), PsaId("A0000000")))
+
+      whenReady(futureResult) { result =>
+        result.map {
+          _.header.status
+        } mustBe None
+      }
+    }
+
+    "redirect to scheme task list page where association between psa id and srn and no user answers present but an srn IS present" in {
+      val psc: PensionsSchemeConnector = mock[PensionsSchemeConnector]
+      when(psc.checkForAssociation(any(), any())(any(), any(), any()))
+        .thenReturn(Future.successful(true))
+
+      val action = new TestAllowAccessAction(srn = srn, psc = psc)
+
+      val futureResult = action.filter(OptionalDataRequest(fakeRequest, "id", None, PsaId("A0000000")))
+
+      whenReady(futureResult) { result =>
+        result.map {
+          _.header.status
+        } mustBe Some(SEE_OTHER)
+        result.flatMap {
+          _.header.headers.get(LOCATION)
+        } mustBe Some(controllers.routes.SchemeTaskListController.onPageLoad(UpdateMode, srn).url)
+      }
+    }
+
     "allow access to pages for user with no data" in {
 
       val action = new TestAllowAccessAction(None)
 
-      val futureResult = action.filter(OptionalDataRequest(fakeRequest, "id", None, PsaId("A0000000"), false))
+      val futureResult = action.filter(OptionalDataRequest(fakeRequest, "id", None, PsaId("A0000000")))
 
       whenReady(futureResult) { result =>
 
@@ -99,7 +134,7 @@ class AllowAccessActionSpec extends SpecBase with ScalaFutures with MockitoSugar
 
       val action = new TestAllowAccessAction(None)
 
-      val futureResult = action.filter(OptionalDataRequest(fakeRequest, "id", Some(UserAnswers(Json.obj())), PsaId("A0000000"), false))
+      val futureResult = action.filter(OptionalDataRequest(fakeRequest, "id", Some(UserAnswers(Json.obj())), PsaId("A0000000")))
 
       whenReady(futureResult) { result =>
 
@@ -115,7 +150,7 @@ class AllowAccessActionSpec extends SpecBase with ScalaFutures with MockitoSugar
 
       val action = new TestAllowAccessAction(srn)
 
-      val futureResult = action.filter(OptionalDataRequest(fakeRequest, "id", Some(notSuspendedUserAnswers), PsaId("A0000000"), false))
+      val futureResult = action.filter(OptionalDataRequest(fakeRequest, "id", Some(notSuspendedUserAnswers), PsaId("A0000000")))
 
       whenReady(futureResult) { result =>
 
@@ -131,7 +166,7 @@ class AllowAccessActionSpec extends SpecBase with ScalaFutures with MockitoSugar
 
       val action = new TestAllowAccessAction(srn)
 
-      val futureResult = action.filter(OptionalDataRequest(fakeRequest, "id", Some(suspendedUserAnswers), PsaId("A0000000"), false))
+      val futureResult = action.filter(OptionalDataRequest(fakeRequest, "id", Some(suspendedUserAnswers), PsaId("A0000000")))
 
       whenReady(futureResult) { result =>
 
