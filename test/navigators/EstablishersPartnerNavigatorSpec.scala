@@ -27,6 +27,7 @@ import identifiers.register.establishers.partnership.{AddPartnersId, Partnership
 import models.Mode.checkMode
 import models._
 import models.person.PersonDetails
+import navigators.EstablishersCompanyDirectorNavigatorSpec.navigator
 import navigators.EstablishersIndividualNavigatorSpec.featureSwitch
 import org.joda.time.LocalDate
 import org.scalatest.OptionValues
@@ -41,7 +42,6 @@ class EstablishersPartnerNavigatorSpec extends SpecBase with NavigatorBehaviour 
   //scalastyle:off magic.number
   import EstablishersPartnerNavigatorSpec._
 
-  featureSwitch.change(Toggles.isPrevAddEnabled, true)
   private val navigator = new EstablishersPartnerNavigator(FakeUserAnswersCacheConnector, frontendAppConfig, featureSwitch)
 
   private def commonRoutes(mode: Mode): TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = Table(
@@ -95,10 +95,16 @@ class EstablishersPartnerNavigatorSpec extends SpecBase with NavigatorBehaviour 
   navigator.getClass.getSimpleName must {
     appRunning()
     behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, normalRoutes(NormalMode), dataDescriber)
+    featureSwitch.change(Toggles.isPrevAddEnabled, true)
     behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, editRoutes(UpdateMode), dataDescriber, UpdateMode)
     behave like nonMatchingNavigator(navigator)
   }
 
+  s"${navigator.getClass.getSimpleName} when previous address feature is toggled off" must {
+    appRunning()
+    featureSwitch.change(Toggles.isPrevAddEnabled, false)
+    behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, editRoutes(UpdateMode), dataDescriber, UpdateMode)
+  }
 }
 
 object EstablishersPartnerNavigatorSpec extends SpecBase with OptionValues {
@@ -124,7 +130,7 @@ object EstablishersPartnerNavigatorSpec extends SpecBase with OptionValues {
     .set(PartnerConfirmPreviousAddressId(0, 0))(false).asOpt.value
 
   private val config = injector.instanceOf[Configuration]
-  private val featureSwitch = new FeatureSwitchManagementServiceTestImpl(config, environment)
+  private def featureSwitch = new FeatureSwitchManagementServiceTestImpl(config, environment)
 
   private def addressYearsLessThanTwelveEdit(mode: Mode) =
     if (checkMode(mode) == CheckUpdateMode && featureSwitch.get(Toggles.isPrevAddEnabled))
