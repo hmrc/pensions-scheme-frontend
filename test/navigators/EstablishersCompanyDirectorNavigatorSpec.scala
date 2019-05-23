@@ -78,9 +78,17 @@ class EstablishersCompanyDirectorNavigatorSpec extends SpecBase with NavigatorBe
 
   navigator.getClass.getSimpleName must {
     appRunning()
+    featureSwitch.change(Toggles.isPrevAddEnabled, true)
     behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, normalRoutes(NormalMode), dataDescriber)
     behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, editRoutes(UpdateMode), dataDescriber, UpdateMode)
     behave like nonMatchingNavigator(navigator)
+  }
+
+  s"${navigator.getClass.getSimpleName} when previous address feature is toggled off" must {
+    appRunning()
+    featureSwitch.change(Toggles.isPrevAddEnabled, true)
+    behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, editRoutes(UpdateMode), dataDescriber, UpdateMode)
+
   }
 
 }
@@ -88,7 +96,7 @@ class EstablishersCompanyDirectorNavigatorSpec extends SpecBase with NavigatorBe
 object EstablishersCompanyDirectorNavigatorSpec extends SpecBase with OptionValues {
 
   private val config = injector.instanceOf[Configuration]
-  private val featureSwitch = new FeatureSwitchManagementServiceTestImpl(config, environment)
+  private def featureSwitch = new FeatureSwitchManagementServiceTestImpl(config, environment)
   private val navigator = new EstablishersCompanyDirectorNavigator(FakeUserAnswersCacheConnector, featureSwitch)
   private val emptyAnswers = UserAnswers(Json.obj())
   private val newEstablisher = UserAnswers().set(IsEstablisherNewId(0))(true).asOpt.value
