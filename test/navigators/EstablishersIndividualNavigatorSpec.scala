@@ -74,9 +74,9 @@ class EstablishersIndividualNavigatorSpec extends SpecBase with MustMatchers wit
     behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, routes(NormalMode), dataDescriber)
     featureSwitch.change(Toggles.isPrevAddEnabled, true)
     behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, routes(UpdateMode), dataDescriber, UpdateMode)
-   }
+  }
 
-  s"${navigator.getClass.getSimpleName} with feature toggled off" must {
+  s"${navigator.getClass.getSimpleName} when previous address freature is toggled off" must {
     appRunning()
     featureSwitch.change(Toggles.isPrevAddEnabled, false)
     behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, routes(UpdateMode), dataDescriber, UpdateMode)

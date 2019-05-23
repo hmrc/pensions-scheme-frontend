@@ -163,7 +163,7 @@ class DirectorAddressControllerSpec extends ControllerSpecBase with MockitoSugar
             status(result) must be(SEE_OTHER)
             redirectLocation(result).value mustEqual onwardCall.url
 
-            FakeUserAnswersService.verify(DirectorAddressId(establisherIndex, directorIndex), address)
+            FakeUserAnswersService.userAnswer.get(DirectorAddressId(establisherIndex, directorIndex)).value mustEqual address
         }
       }
     }

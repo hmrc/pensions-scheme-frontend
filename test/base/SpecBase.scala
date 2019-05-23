@@ -21,9 +21,10 @@ import org.jsoup.nodes.Document
 import org.scalatest.Assertion
 import org.scalatestplus.play.PlaySpec
 import org.scalatestplus.play.guice._
-import play.api.Environment
+import play.api.{Configuration, Environment}
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.inject.Injector
+import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 import uk.gov.hmrc.crypto.ApplicationCrypto
@@ -34,6 +35,13 @@ trait SpecBase extends PlaySpec with GuiceOneAppPerSuite {
   def injector: Injector = app.injector
 
   def frontendAppConfig: FrontendAppConfig = injector.instanceOf[FrontendAppConfig]
+
+  def appConfig(isPrevPrePopEnabled:Boolean): Configuration = {
+    val app = new GuiceApplicationBuilder()
+      .configure("features.is-address-pre-population-enabled" -> isPrevPrePopEnabled)
+      .build()
+    app.injector.instanceOf[Configuration]
+  }
 
   def messagesApi: MessagesApi = injector.instanceOf[MessagesApi]
 
