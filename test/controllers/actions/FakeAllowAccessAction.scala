@@ -19,7 +19,6 @@ package controllers.actions
 import connectors.PensionsSchemeConnector
 import models.register.SchemeSubmissionResponse
 import models.requests.OptionalDataRequest
-import org.scalatest.mockito.MockitoSugar
 import play.api.mvc.{RequestHeader, Result}
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.UserAnswers

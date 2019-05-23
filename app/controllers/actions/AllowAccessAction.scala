@@ -46,7 +46,8 @@ class AllowAccessAction(srn: Option[String],
           case true => None
           case _ => Some(NotFound)
         }
-      case _ => Future.successful(None)//Future.successful(Some(Redirect(controllers.routes.SchemeTaskListController.onPageLoad(UpdateMode, srn))))
+      case (None, _, Some(_)) => Future.successful(Some(Redirect(controllers.routes.SchemeTaskListController.onPageLoad(UpdateMode, srn))))
+      case _ => Future.successful(None)
     }
   }
 
