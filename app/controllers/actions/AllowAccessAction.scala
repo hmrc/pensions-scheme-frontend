@@ -36,19 +36,15 @@ class AllowAccessAction(srn: Option[String], pensionsSchemeConnector: PensionsSc
     val optionUA = request.userAnswers
     val optionIsSuspendedId = optionUA.flatMap(_.get(IsPsaSuspendedId))
 
-    (optionUA, optionIsSuspendedId) match {
-      case (None, _) => Future.successful(None)
-      case (Some(_), Some(true)) => Future.successful(Some(Redirect(controllers.register.routes.CannotMakeChangesController.onPageLoad(srn))))
-      case (Some(ua), _) =>
-        srn
-          .map(pensionsSchemeConnector.checkForAssociation(request.psaId.id, _)(hc, global, request))
-          .fold[Future[Option[Result]]](Future.successful(None)) {
-          _.map {
-            case true => None
-            case _ => Some(NotFound)
-          }
+    (optionUA, optionIsSuspendedId, srn) match {
+      case (None, _, _) => Future.successful(None)
+      case (Some(_), Some(true), _) => Future.successful(Some(Redirect(controllers.register.routes.CannotMakeChangesController.onPageLoad(srn))))
+      case (Some(ua), _, Some(extractedSRN)) =>
+        pensionsSchemeConnector.checkForAssociation(request.psaId.id, extractedSRN)(hc, global, request) map {
+          case true => None
+          case _ => Some(NotFound)
         }
-
+      case _ => Future.successful(None)
     }
   }
 
