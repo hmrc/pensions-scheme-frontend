@@ -17,16 +17,18 @@
 package navigators
 
 import com.google.inject.Inject
-import config.FrontendAppConfig
+import config.{FeatureSwitchManagementService, FrontendAppConfig}
 import connectors.UserAnswersCacheConnector
 import controllers.register.establishers.partnership._
 import identifiers.register.establishers.IsEstablisherNewId
 import identifiers.register.establishers.partnership._
 import models.Mode._
 import models._
-import utils.{Navigator, UserAnswers}
+import utils.{Navigator, Toggles, UserAnswers}
 
-class EstablishersPartnershipNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector, appConfig: FrontendAppConfig) extends Navigator {
+class EstablishersPartnershipNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector,
+                                                 appConfig: FrontendAppConfig,
+                                                 featureSwitchManagementService: FeatureSwitchManagementService) extends Navigator {
 
   private def checkYourAnswers(index: Int, mode: Mode, srn: Option[String]): Option[NavigateTo] =
     NavigateTo.dontSave(routes.CheckYourAnswersController.onPageLoad(mode, index, srn))
@@ -35,7 +37,7 @@ class EstablishersPartnershipNavigator @Inject()(val dataCacheConnector: UserAns
     if (mode == CheckMode || mode == NormalMode) {
       checkYourAnswers(index, journeyMode(mode), srn)
     } else {
-      if(answers.get(IsEstablisherNewId(index)).getOrElse(false))
+      if (answers.get(IsEstablisherNewId(index)).getOrElse(false))
         checkYourAnswers(index, journeyMode(mode), srn)
       else anyMoreChanges(srn)
     }
@@ -70,7 +72,7 @@ class EstablishersPartnershipNavigator @Inject()(val dataCacheConnector: UserAns
     case CheckYourAnswersId(index) =>
       NavigateTo.dontSave(routes.AddPartnersController.onPageLoad(mode, index, srn))
     case OtherPartnersId(index) =>
-      if(mode == CheckMode || mode == NormalMode){
+      if (mode == CheckMode || mode == NormalMode) {
         NavigateTo.dontSave(routes.PartnershipReviewController.onPageLoad(mode, index, srn))
       } else {
         NavigateTo.dontSave(controllers.routes.AnyMoreChangesController.onPageLoad(srn))
@@ -94,13 +96,15 @@ class EstablishersPartnershipNavigator @Inject()(val dataCacheConnector: UserAns
       NavigateTo.dontSave(routes.PartnershipAddressController.onPageLoad(mode, index, srn))
     case PartnershipAddressId(index) =>
       val isNew = from.userAnswers.get(IsEstablisherNewId(index)).contains(true)
-      if(isNew || mode == CheckMode) {
+      if (isNew || mode == CheckMode) {
         checkYourAnswers(index, journeyMode(mode), srn)
       } else {
         NavigateTo.dontSave(routes.PartnershipAddressYearsController.onPageLoad(mode, index, srn))
       }
     case PartnershipAddressYearsId(index) =>
       editAddressYearsRoutes(index, mode, srn)(from.userAnswers)
+    case PartnershipConfirmPreviousAddressId(index) =>
+      confirmPreviousAddressRoutes(index, mode, srn)(from.userAnswers)
     case PartnershipPreviousAddressPostcodeLookupId(index) =>
       NavigateTo.dontSave(routes.PartnershipPreviousAddressListController.onPageLoad(mode, index, srn))
     case PartnershipPreviousAddressListId(index) =>
@@ -134,6 +138,7 @@ class EstablishersPartnershipNavigator @Inject()(val dataCacheConnector: UserAns
   }
 
   override protected def editRouteMap(from: NavigateFrom): Option[NavigateTo] = editRoutes(from, CheckMode, None)
+
   override protected def checkUpdateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] = editRoutes(from, CheckUpdateMode, srn)
 
   private def addressYearsRoutes(index: Int, mode: Mode, srn: Option[String])(answers: UserAnswers): Option[NavigateTo] = {
@@ -150,9 +155,24 @@ class EstablishersPartnershipNavigator @Inject()(val dataCacheConnector: UserAns
   private def editAddressYearsRoutes(index: Int, mode: Mode, srn: Option[String])(answers: UserAnswers): Option[NavigateTo] = {
     answers.get(PartnershipAddressYearsId(index)) match {
       case Some(AddressYears.UnderAYear) =>
-        NavigateTo.dontSave(controllers.register.establishers.partnership.routes
-          .PartnershipPreviousAddressPostcodeLookupController.onPageLoad(mode, index, srn))
+        if (mode == CheckUpdateMode && featureSwitchManagementService.get(Toggles.isPrevAddEnabled))
+          NavigateTo.dontSave(controllers.register.establishers.partnership.routes.PartnershipConfirmPreviousAddressController.onPageLoad(index, srn))
+        else
+          NavigateTo.dontSave(
+            controllers.register.establishers.partnership.routes.PartnershipPreviousAddressPostcodeLookupController.onPageLoad(mode, index, srn))
       case Some(AddressYears.OverAYear) => exitMiniJourney(index, mode, srn, answers)
+      case None =>
+        NavigateTo.dontSave(controllers.routes.SessionExpiredController.onPageLoad())
+    }
+  }
+
+  private def confirmPreviousAddressRoutes(index: Int, mode: Mode, srn: Option[String])(answers: UserAnswers): Option[NavigateTo] = {
+    answers.get(PartnershipConfirmPreviousAddressId(index)) match {
+      case Some(false) =>
+        NavigateTo.dontSave(
+          controllers.register.establishers.partnership.routes.PartnershipPreviousAddressPostcodeLookupController.onPageLoad(mode, index, srn))
+      case Some(true) =>
+        anyMoreChanges(srn)
       case None =>
         NavigateTo.dontSave(controllers.routes.SessionExpiredController.onPageLoad())
     }

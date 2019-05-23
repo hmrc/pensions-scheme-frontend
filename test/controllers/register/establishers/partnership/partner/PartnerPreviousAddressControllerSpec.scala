@@ -149,7 +149,7 @@ class PartnerPreviousAddressControllerSpec extends ControllerSpecBase with Mocki
             status(result) must be(SEE_OTHER)
             redirectLocation(result).value mustEqual onwardCall.url
 
-            FakeUserAnswersService.verify(PartnerPreviousAddressId(establisherIndex, partnerIndex), address)
+            FakeUserAnswersService.userAnswer.get(PartnerPreviousAddressId(establisherIndex, partnerIndex)).value mustEqual address
         }
       }
     }
