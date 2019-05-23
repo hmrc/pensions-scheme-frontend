@@ -17,9 +17,11 @@
 package controllers.actions
 
 import base.SpecBase
+import connectors.PensionsSchemeConnector
 import identifiers.IsPsaSuspendedId
 import models.requests.OptionalDataRequest
 import org.scalatest.concurrent.ScalaFutures
+import org.scalatest.mockito.MockitoSugar
 import play.api.libs.json.Json
 import play.api.mvc.Result
 import play.api.test.Helpers._
@@ -28,9 +30,11 @@ import utils.UserAnswers
 
 import scala.concurrent.Future
 
-class AllowAccessActionSpec extends SpecBase  with ScalaFutures{
+class AllowAccessActionSpec extends SpecBase  with ScalaFutures with MockitoSugar {
 
-  class TestAllowAccessAction(srn: Option[String]) extends AllowAccessAction(srn) {
+  val pensionsSchemeConnector: PensionsSchemeConnector = mock[PensionsSchemeConnector]
+
+  class TestAllowAccessAction(srn: Option[String]) extends AllowAccessAction( srn, pensionsSchemeConnector) {
     override def filter[A](request: OptionalDataRequest[A]): Future[Option[Result]] = super.filter(request)
   }
 

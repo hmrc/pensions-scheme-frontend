@@ -16,7 +16,8 @@
 
 package controllers.actions
 
-import com.google.inject.ImplementedBy
+import com.google.inject.{ImplementedBy, Inject}
+import connectors.PensionsSchemeConnector
 import identifiers.IsPsaSuspendedId
 import models.requests.OptionalDataRequest
 import play.api.mvc.Results._
@@ -24,7 +25,7 @@ import play.api.mvc.{ActionFilter, Result}
 
 import scala.concurrent.Future
 
-class AllowAccessAction(srn: Option[String]) extends ActionFilter[OptionalDataRequest]{
+class AllowAccessAction(srn: Option[String], pensionsSchemeConnector: PensionsSchemeConnector) extends ActionFilter[OptionalDataRequest]{
 
   override protected def filter[A](request: OptionalDataRequest[A]): Future[Option[Result]] = {
 
@@ -39,9 +40,9 @@ class AllowAccessAction(srn: Option[String]) extends ActionFilter[OptionalDataRe
 
 }
 
-class AllowAccessActionProviderImpl extends AllowAccessActionProvider{
+class AllowAccessActionProviderImpl @Inject()(pensionsSchemeConnector: PensionsSchemeConnector) extends AllowAccessActionProvider{
   def apply(srn: Option[String]): AllowAccessAction = {
-    new AllowAccessAction(srn)
+    new AllowAccessAction(srn, pensionsSchemeConnector)
   }
 }
 

@@ -16,16 +16,34 @@
 
 package controllers.actions
 
+import connectors.PensionsSchemeConnector
+import models.register.SchemeSubmissionResponse
 import models.requests.OptionalDataRequest
-import play.api.mvc.Result
+import play.api.mvc.{RequestHeader, Result}
+import uk.gov.hmrc.http.HeaderCarrier
+import utils.UserAnswers
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
-class FakeAllowAccessAction(srn: Option[String]) extends AllowAccessAction(srn) {
+class FakeAllowAccessAction(srn: Option[String], pensionsSchemeConnector: PensionsSchemeConnector) extends AllowAccessAction(srn, pensionsSchemeConnector) {
   override def filter[A](request: OptionalDataRequest[A]): Future[Option[Result]] = Future.successful(None)
 }
 
-case class FakeAllowAccessProvider(srn: Option[String] = None) extends AllowAccessActionProvider{
-  override def apply(srn: Option[String]): AllowAccessAction = new FakeAllowAccessAction(srn)
+case class FakeAllowAccessProvider(srn: Option[String] = None, pensionsSchemeConnector: Option[PensionsSchemeConnector] = None) extends AllowAccessActionProvider{
+  override def apply(srn: Option[String]): AllowAccessAction = {
+    pensionsSchemeConnector match {
+      case None =>
+        val psc = new PensionsSchemeConnector {
+          override def registerScheme(answers: UserAnswers, psaId: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[SchemeSubmissionResponse] = ???
+
+          override def updateSchemeDetails(psaId: String, pstr: String, answers: UserAnswers)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Unit] = ???
+
+          override def checkForAssociation(psaId: String, srn: String)(implicit headerCarrier: HeaderCarrier, ec: ExecutionContext, request: RequestHeader): Future[Boolean] = Future.successful(true)
+        }
+        new FakeAllowAccessAction(srn, psc)
+      case Some(psc) => new FakeAllowAccessAction(srn, psc)
+    }
+
+  }
 }
 
