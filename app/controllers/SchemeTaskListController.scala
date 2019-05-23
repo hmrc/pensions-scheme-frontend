@@ -103,7 +103,7 @@ class SchemeTaskListController @Inject()(appConfig: FrontendAppConfig,
 
   private def createViewWithSuspensionFlag(srn: String, userAnswers: UserAnswers,
                                            upsertUserAnswers: JsValue => Future[JsValue])(implicit request: OptionalDataRequest[AnyContent],
-                                                                          hc: HeaderCarrier): Future[Result] =
+                                                                                          hc: HeaderCarrier): Future[Result] =
     minimalPsaConnector.isPsaSuspended(request.psaId.id).flatMap { isSuspended =>
 
       val updatedUserAnswers = userAnswers.set(IsPsaSuspendedId)(isSuspended).asOpt.getOrElse(userAnswers)

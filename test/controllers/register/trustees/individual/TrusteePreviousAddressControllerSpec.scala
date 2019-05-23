@@ -147,7 +147,7 @@ class TrusteePreviousAddressControllerSpec extends ControllerSpecBase with CSRFR
             status(result) must be(SEE_OTHER)
             redirectLocation(result).value mustEqual onwardRoute.url
 
-            FakeUserAnswersService.verify(TrusteePreviousAddressId(firstIndex), address)
+            FakeUserAnswersService.userAnswer.get(TrusteePreviousAddressId(firstIndex)).value mustEqual address
         }
       }
     }
