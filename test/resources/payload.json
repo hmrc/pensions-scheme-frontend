@@ -273,27 +273,11 @@
             "emailAddress": "a@a.a",
             "phoneNumber": "321"
           },
-          "isDirectorComplete": true,
-          "existingCurrentAddress": {
-            "addressLine1": "2 Other Place",
-            "addressLine2": "Some District",
-            "addressLine3": "Anytown",
-            "addressLine4": "Somerset",
-            "postcode": "ZZ1 1ZZ",
-            "country": "GB"
-          }
+          "isDirectorComplete": true
         }
       ],
       "isEstablisherComplete": true,
-      "isCompanyDormant": "no",
-      "existingCurrentAddress": {
-        "addressLine1": "10 Other Place",
-        "addressLine2": "Some District",
-        "addressLine3": "Anytown",
-        "addressLine4": "Somerset",
-        "postcode": "ZZ1 1ZZ",
-        "country": "GB"
-      }
+      "isCompanyDormant" : "no"
     },
     {
       "establisherKind": "individual",
@@ -423,15 +407,7 @@
         "emailAddress": "e@e.e",
         "phoneNumber": "456456"
       },
-      "isEstablisherComplete": true,
-      "existingCurrentAddress": {
-        "addressLine1": "3 Other Place",
-        "addressLine2": "Some District",
-        "addressLine3": "Anytown",
-        "addressLine4": "Somerset",
-        "postcode": "ZZ1 1ZZ",
-        "country": "GB"
-      }
+      "isEstablisherComplete": true
     }
   ],
   "trustees": [
@@ -563,17 +539,8 @@
         "emailAddress": "x@x.x",
         "phoneNumber": "98765"
       },
-      "isPartnershipCompleteId": true,
-      "existingCurrentAddress": {
-        "addressLine1": "4 Other Place",
-        "addressLine2": "Some District",
-        "addressLine3": "Anytown",
-        "addressLine4": "Somerset",
-        "postcode": "ZZ1 1ZZ",
-        "country": "GB"
-      }
+      "isPartnershipCompleteId": true
     }
   ],
-  "isWorkingKnowledgeComplete": true,
-  "isPsaSuspended": false
+  "isWorkingKnowledgeComplete": true
 }

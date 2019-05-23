@@ -75,7 +75,8 @@ trait FakeUserAnswersService extends UserAnswersService with Matchers {
     }
   }
 
-  override def setExistingAddress(mode: Mode, id: TypedIdentifier[Address], userAnswers: UserAnswers)(implicit ec: ExecutionContext, hc: HeaderCarrier, request: DataRequest[AnyContent]): UserAnswers = {
+  override def setExistingAddress(mode: Mode, id: TypedIdentifier[Address], userAnswers: UserAnswers)
+                                 (implicit ec: ExecutionContext, hc: HeaderCarrier, request: DataRequest[AnyContent]): UserAnswers = {
     userAnswers.get(id).fold(userAnswers) {
       address =>
         data += ("fakeExistingAddressId" -> Json.toJson(address))
