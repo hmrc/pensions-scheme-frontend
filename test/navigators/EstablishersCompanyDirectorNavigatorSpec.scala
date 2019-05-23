@@ -17,6 +17,7 @@
 package navigators
 
 import base.SpecBase
+import config.FeatureSwitchManagementServiceTestImpl
 import connectors.FakeUserAnswersCacheConnector
 import controllers.register.establishers.company.director.routes
 import identifiers.Identifier
@@ -26,9 +27,10 @@ import models.Mode.checkMode
 import models._
 import org.scalatest.OptionValues
 import org.scalatest.prop.TableFor6
+import play.api.Configuration
 import play.api.libs.json.Json
 import play.api.mvc.Call
-import utils.UserAnswers
+import utils.{Toggles, UserAnswers}
 
 class EstablishersCompanyDirectorNavigatorSpec extends SpecBase with NavigatorBehaviour {
 
@@ -49,8 +51,10 @@ class EstablishersCompanyDirectorNavigatorSpec extends SpecBase with NavigatorBe
     (DirectorAddressId(0, 0), newDirector, directorAddressYears(mode), true, Some(checkYourAnswers(mode)), true),
     (DirectorAddressYearsId(0, 0), addressYearsOverAYear, directorContactDetails(mode), true, Some(exitJourney(mode, emptyAnswers)), true),
     (DirectorAddressYearsId(0, 0), addressYearsOverAYearNew, directorContactDetails(mode), true, Some(exitJourney(mode, addressYearsOverAYearNew)), true),
-    (DirectorAddressYearsId(0, 0), addressYearsUnderAYear, directorPreviousAddPostcode(mode), true, Some(directorPreviousAddPostcode(checkMode(mode))), true),
+    (DirectorAddressYearsId(0, 0), addressYearsUnderAYear, directorPreviousAddPostcode(mode), true, addressYearsLessThanTwelveEdit(mode), true),
     (DirectorAddressYearsId(0, 0), emptyAnswers, sessionExpired, false, Some(sessionExpired), false),
+    (DirectorConfirmPreviousAddressId(0, 0), confirmPreviousAddressYes, none, false, Some(anyMoreChanges), false),
+    (DirectorConfirmPreviousAddressId(0, 0), confirmPreviousAddressNo, none, false, Some(directorPreviousAddPostcode(checkMode(mode))), false),
     (DirectorPreviousAddressPostcodeLookupId(0, 0), emptyAnswers, directorPreviousAddList(mode), true, Some(directorPreviousAddList(checkMode(mode))), true),
     (DirectorPreviousAddressListId(0, 0), emptyAnswers, directorPreviousAddress(mode), true, Some(directorPreviousAddress(checkMode(mode))), true),
     (DirectorPreviousAddressId(0, 0), emptyAnswers, directorContactDetails(mode), true, Some(exitJourney(mode, emptyAnswers)), true),
@@ -81,14 +85,35 @@ class EstablishersCompanyDirectorNavigatorSpec extends SpecBase with NavigatorBe
 
 }
 
-object EstablishersCompanyDirectorNavigatorSpec extends OptionValues {
+object EstablishersCompanyDirectorNavigatorSpec extends SpecBase with OptionValues {
 
-  private val navigator = new EstablishersCompanyDirectorNavigator(FakeUserAnswersCacheConnector)
+  private val config = injector.instanceOf[Configuration]
+  private val featureSwitch = new FeatureSwitchManagementServiceTestImpl(config, environment)
+  private val navigator = new EstablishersCompanyDirectorNavigator(FakeUserAnswersCacheConnector, featureSwitch)
   private val emptyAnswers = UserAnswers(Json.obj())
   private val newEstablisher = UserAnswers().set(IsEstablisherNewId(0))(true).asOpt.value
   val establisherIndex = Index(0)
   val directorIndex = Index(0)
   private val newDirector = UserAnswers(Json.obj()).set(IsNewDirectorId(establisherIndex, directorIndex))(true).asOpt.value
+
+  private val confirmPreviousAddressYes = UserAnswers(Json.obj())
+    .set(DirectorConfirmPreviousAddressId(0, 0))(true).asOpt.value
+  private val confirmPreviousAddressNo = UserAnswers(Json.obj())
+    .set(DirectorConfirmPreviousAddressId(0, 0))(false).asOpt.value
+
+
+
+
+  private def addressYearsLessThanTwelveEdit(mode: Mode) =
+    if (checkMode(mode) == CheckUpdateMode && featureSwitch.get(Toggles.isPrevAddEnabled))
+      Some(confirmPreviousAddress)
+    else
+      Some(directorPreviousAddPostcode(checkMode(mode)))
+
+  private def confirmPreviousAddress = routes.DirectorConfirmPreviousAddressController.onPageLoad(0, 0, None)
+
+  private def none: Call = controllers.routes.IndexController.onPageLoad()
+
   private def anyMoreChanges = controllers.routes.AnyMoreChangesController.onPageLoad(None)
 
   private def exitJourney(mode: Mode, answers:UserAnswers, index:Int = 0) = if (mode == NormalMode) checkYourAnswers(mode) else {
