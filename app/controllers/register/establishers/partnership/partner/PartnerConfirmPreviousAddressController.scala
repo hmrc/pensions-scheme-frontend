@@ -26,7 +26,7 @@ import models.{Index, Mode}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
-import utils.annotations.EstablishersIndividual
+import utils.annotations.EstablishersPartner
 import utils.{CountryOptions, Navigator}
 import viewmodels.Message
 import viewmodels.address.ConfirmAddressViewModel
@@ -34,7 +34,7 @@ import viewmodels.address.ConfirmAddressViewModel
 class PartnerConfirmPreviousAddressController @Inject()(val appConfig: FrontendAppConfig,
                                                         val messagesApi: MessagesApi,
                                                         val userAnswersService: UserAnswersService,
-                                                        @EstablishersIndividual val navigator: Navigator,
+                                                        @EstablishersPartner val navigator: Navigator,
                                                         authenticate: AuthAction,
                                                         allowAccess: AllowAccessActionProvider,
                                                         getData: DataRetrievalAction,
