@@ -30,8 +30,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 class AllowAccessAction(srn: Option[String],
-                        pensionsSchemeConnector: PensionsSchemeConnector,
-                        viewConnector: SchemeDetailsReadOnlyCacheConnector
+                        pensionsSchemeConnector: PensionsSchemeConnector
                        ) extends ActionFilter[OptionalDataRequest] {
 
   override protected def filter[A](request: OptionalDataRequest[A]): Future[Option[Result]] = {
@@ -43,28 +42,19 @@ class AllowAccessAction(srn: Option[String],
     (optionUA, optionIsSuspendedId, srn) match {
       case (Some(_), Some(true), _) => Future.successful(Some(Redirect(controllers.register.routes.CannotMakeChangesController.onPageLoad(srn))))
       case (Some(ua), _, Some(extractedSRN)) =>
-        pensionsSchemeConnector.checkForAssociation(request.psaId.id, extractedSRN)(hc, global, request) flatMap {
-          case true =>
-            if (request.viewOnly) {
-              viewConnector.fetch(request.externalId).map {
-                case None => Some(Redirect(controllers.routes.SchemeTaskListController.onPageLoad(UpdateMode, srn)))
-                case Some(jsValue) => None
-              }
-            } else {
-              Future.successful(None)
-            }
-          case _ => Future.successful(Some(NotFound))
+        pensionsSchemeConnector.checkForAssociation(request.psaId.id, extractedSRN)(hc, global, request) map {
+          case true => None
+          case _ => Some(NotFound)
         }
-      case _ => Future.successful(None)
+      case _ => Future.successful(None)//Future.successful(Some(Redirect(controllers.routes.SchemeTaskListController.onPageLoad(UpdateMode, srn))))
     }
   }
 
 }
 
-class AllowAccessActionProviderImpl @Inject()(pensionsSchemeConnector: PensionsSchemeConnector,
-                                              viewConnector: SchemeDetailsReadOnlyCacheConnector) extends AllowAccessActionProvider {
+class AllowAccessActionProviderImpl @Inject()(pensionsSchemeConnector: PensionsSchemeConnector) extends AllowAccessActionProvider {
   def apply(srn: Option[String]): AllowAccessAction = {
-    new AllowAccessAction(srn, pensionsSchemeConnector, viewConnector)
+    new AllowAccessAction(srn, pensionsSchemeConnector)
   }
 }
 

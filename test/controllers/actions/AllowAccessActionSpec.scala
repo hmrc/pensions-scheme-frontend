@@ -41,16 +41,8 @@ class AllowAccessActionSpec extends SpecBase with ScalaFutures with MockitoSugar
     psc
   }
 
-  val schemeDetailsReadOnlyCacheConnector: SchemeDetailsReadOnlyCacheConnector = {
-    val sdrocc = mock[SchemeDetailsReadOnlyCacheConnector]
-    when(sdrocc.fetch(any())(any(),any()))
-      .thenReturn(Future.successful(None))
-    sdrocc
-  }
-
   class TestAllowAccessAction(srn: Option[String],
-                              psc: PensionsSchemeConnector = pensionsSchemeConnector,
-                              sdrocc: SchemeDetailsReadOnlyCacheConnector = schemeDetailsReadOnlyCacheConnector) extends AllowAccessAction(srn, psc, sdrocc) {
+                              psc: PensionsSchemeConnector = pensionsSchemeConnector) extends AllowAccessAction(srn, psc) {
     override def filter[A](request: OptionalDataRequest[A]): Future[Option[Result]] = super.filter(request)
   }
 
