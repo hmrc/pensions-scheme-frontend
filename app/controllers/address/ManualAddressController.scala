@@ -81,8 +81,10 @@ trait ManualAddressController extends FrontendController with Retrievals with I1
         val auditEvent = AddressEvent.addressEntryEvent(request.externalId, address, existingAddress, selectedAddress, context)
 
         removePostCodeLookupAddress(mode, viewModel.srn, postCodeLookupIdForCleanup)
-          .flatMap { _ =>
-            userAnswersService.save(mode, viewModel.srn, id, address).flatMap {
+          .flatMap { userAnswersJson =>
+            val updatedAddress = userAnswersService.setExistingAddress(mode, id, UserAnswers(userAnswersJson))
+              .set(id)(address).asOpt.getOrElse(UserAnswers(userAnswersJson))
+            userAnswersService.upsert(mode, viewModel.srn, updatedAddress.json).flatMap {
               cacheMap =>
                 userAnswersService.setAddressCompleteFlagAfterPreviousAddress(mode, viewModel.srn, id, UserAnswers(cacheMap)).map {
                   answers =>

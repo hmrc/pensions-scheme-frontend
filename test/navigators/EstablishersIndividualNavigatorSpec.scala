@@ -65,13 +65,19 @@ class EstablishersIndividualNavigatorSpec extends SpecBase with MustMatchers wit
     )
   }
 
-  featureSwitch.change(Toggles.isPrevAddEnabled, true)
   private val navigator: EstablishersIndividualNavigator =
     new EstablishersIndividualNavigator(frontendAppConfig, FakeUserAnswersCacheConnector, featureSwitch)
 
   s"${navigator.getClass.getSimpleName}" must {
     appRunning()
     behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, routes(NormalMode), dataDescriber)
+    featureSwitch.change(Toggles.isPrevAddEnabled, true)
+    behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, routes(UpdateMode), dataDescriber, UpdateMode)
+  }
+
+  s"${navigator.getClass.getSimpleName} when previous address freature is toggled off" must {
+    appRunning()
+    featureSwitch.change(Toggles.isPrevAddEnabled, false)
     behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, routes(UpdateMode), dataDescriber, UpdateMode)
   }
 }
@@ -136,7 +142,7 @@ object EstablishersIndividualNavigatorSpec extends SpecBase with OptionValues {
     }
 
   private val config = injector.instanceOf[Configuration]
-  private val featureSwitch = new FeatureSwitchManagementServiceTestImpl(config, environment)
+  private def featureSwitch = new FeatureSwitchManagementServiceTestImpl(config, environment)
 
   private def addressYearsLessThanTwelveEdit(mode: Mode) =
     if (checkMode(mode) == CheckUpdateMode && featureSwitch.get(Toggles.isPrevAddEnabled))

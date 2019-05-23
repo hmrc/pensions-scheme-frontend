@@ -148,7 +148,7 @@ class DirectorPreviousAddressControllerSpec extends ControllerSpecBase with Mock
             status(result) must be(SEE_OTHER)
             redirectLocation(result).value mustEqual onwardCall.url
 
-            FakeUserAnswersService.verify(DirectorPreviousAddressId(establisherIndex, directorIndex), address)
+            FakeUserAnswersService.userAnswer.get(DirectorPreviousAddressId(establisherIndex, directorIndex)).value mustEqual address
         }
       }
     }
