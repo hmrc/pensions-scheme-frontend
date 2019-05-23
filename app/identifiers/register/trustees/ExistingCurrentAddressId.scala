@@ -14,16 +14,17 @@
  * limitations under the License.
  */
 
-package toggles
+package identifiers.register.trustees
 
-class TogglesSpec extends FeatureToggleBehaviours {
+import identifiers.TypedIdentifier
+import identifiers.register.establishers.EstablishersId
+import models.address.Address
+import play.api.libs.json.JsPath
 
-  "is-variations-enabled new feature toggle" should {
-    behave like featureToggle("is-variations-enabled", false)
-  }
+case class ExistingCurrentAddressId(index: Int) extends TypedIdentifier[Address] {
+  override def path: JsPath = TrusteesId(index).path \ ExistingCurrentAddressId.toString
+}
 
-  "is-address-pre-population-enabled new feature toggle" should {
-    behave like featureToggle("is-address-pre-population-enabled", false)
-  }
-
+object ExistingCurrentAddressId {
+  override def toString: String = "existingCurrentAddress"
 }

@@ -17,6 +17,7 @@
 package navigators
 
 import base.SpecBase
+import config.FeatureSwitchManagementServiceTestImpl
 import connectors.FakeUserAnswersCacheConnector
 import identifiers.Identifier
 import identifiers.register.trustees.IsTrusteeNewId
@@ -25,16 +26,17 @@ import models._
 import models.Mode.checkMode
 import org.scalatest.prop.TableFor6
 import org.scalatest.{MustMatchers, OptionValues}
+import play.api.Configuration
 import play.api.libs.json.Json
 import play.api.mvc.Call
-import utils.UserAnswers
+import utils.{FakeFeatureSwitchManagementService, Toggles, UserAnswers}
 
 
 class TrusteesCompanyNavigatorSpec extends SpecBase with MustMatchers with NavigatorBehaviour {
 
   import TrusteesCompanyNavigatorSpec._
 
-  private def routes(mode: Mode): TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = Table(
+  private def routes(mode: Mode, isPrevAddEnabled:Boolean = false): TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = Table(
 
     ("Id", "UserAnswers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (CheckMode)", "Save (CM)"),
     (CompanyDetailsId(0), emptyAnswers, companyVat(mode), true, Some(exitJourney(mode, emptyAnswers)), true),
@@ -54,7 +56,7 @@ class TrusteesCompanyNavigatorSpec extends SpecBase with MustMatchers with Navig
     (CompanyAddressId(0), newTrustee, companyAddressYears(mode), true, Some(checkYourAnswers(mode)), true),
     (CompanyAddressYearsId(0), addressYearsOverAYear, companyContactDetails(mode), true, Some(exitJourney(mode, emptyAnswers)), true),
     (CompanyAddressYearsId(0), addressYearsOverAYearNew, companyContactDetails(mode), true, Some(exitJourney(mode, addressYearsOverAYearNew)), true),
-    (CompanyAddressYearsId(0), addressYearsUnderAYear, prevAddPostCodeLookup(mode), true, Some(prevAddPostCodeLookup(checkMode(mode))), true),
+    (CompanyAddressYearsId(0), addressYearsUnderAYear, prevAddPostCodeLookup(mode), true, Some(addressYearsLessThanTwelveEdit(checkMode(mode), isPrevAddEnabled)), true),
     (CompanyPreviousAddressPostcodeLookupId(0), emptyAnswers, companyPaList(mode), true, Some(companyPaList(checkMode(mode))), true),
     (CompanyPreviousAddressListId(0), emptyAnswers, companyPreviousAddress(mode), true, Some(companyPreviousAddress(checkMode(mode))), true),
     (CompanyPreviousAddressId(0), emptyAnswers, companyContactDetails(mode), true, Some(exitJourney(mode, emptyAnswers)), true),
@@ -64,21 +66,32 @@ class TrusteesCompanyNavigatorSpec extends SpecBase with MustMatchers with Navig
     (CheckYourAnswersId, emptyAnswers, addTrustee(mode), false, None, true)
   )
 
+  private def editRoutes(mode: Mode, isPrevAddEnabled:Boolean = false): TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = Table(
+    ("Id", "UserAnswers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (CheckMode)", "Save (CM)"),
+    (CompanyConfirmPreviousAddressId(0), confirmPreviousAddressYes, sessionExpired, false, confirmPreviousAddressRoute(checkMode(mode), anyMoreChanges, isPrevAddEnabled), false),
+    (CompanyConfirmPreviousAddressId(0), confirmPreviousAddressNo, sessionExpired, false, confirmPreviousAddressRoute(checkMode(mode), prevAddPostCodeLookup(checkMode(mode)), isPrevAddEnabled), false)
+  )
+
   private val navigator: TrusteesCompanyNavigator =
-    new TrusteesCompanyNavigator(FakeUserAnswersCacheConnector, frontendAppConfig)
+    new TrusteesCompanyNavigator(FakeUserAnswersCacheConnector, frontendAppConfig, new FakeFeatureSwitchManagementService(false))
 
   s"${navigator.getClass.getSimpleName}" must {
     appRunning()
     behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, routes(NormalMode), dataDescriber)
-    behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, routes(UpdateMode), dataDescriber, UpdateMode)
+    behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, routes(UpdateMode) ++ editRoutes(UpdateMode), dataDescriber, UpdateMode)
     behave like nonMatchingNavigator(navigator)
   }
+
+  "is-address-pre-population-enabled toggled on" must {
+    val navigator: TrusteesCompanyNavigator =
+    new TrusteesCompanyNavigator(FakeUserAnswersCacheConnector, frontendAppConfig, new FakeFeatureSwitchManagementService(true))
+    behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, routes(UpdateMode, true) ++ editRoutes(UpdateMode, true), dataDescriber, UpdateMode)
+  }
+
 }
 
 //noinspection MutatorLikeMethodIsParameterless
-object TrusteesCompanyNavigatorSpec extends OptionValues {
-
-  private val newTrustee = UserAnswers(Json.obj()).set(IsTrusteeNewId(0))(true).asOpt.value
+object TrusteesCompanyNavigatorSpec extends SpecBase with OptionValues {
 
   private def taskList: Call = controllers.routes.SchemeTaskListController.onPageLoad(NormalMode, None)
 
@@ -111,11 +124,15 @@ object TrusteesCompanyNavigatorSpec extends OptionValues {
   private def companyPreviousAddress(mode: Mode) =
     controllers.register.trustees.company.routes.CompanyPreviousAddressController.onPageLoad(mode, 0, None)
 
+  private def confirmPreviousAddress = controllers.register.trustees.company.routes.CompanyConfirmPreviousAddressController.onPageLoad(0, None)
+
+
   private def companyContactDetails(mode: Mode) = controllers.register.trustees.company.routes.CompanyContactDetailsController.onPageLoad(mode, 0, None)
 
   private def checkYourAnswers(mode: Mode) = controllers.register.trustees.company.routes.CheckYourAnswersController.onPageLoad(mode, 0, None)
 
   private def addTrustee(mode: Mode) = controllers.register.trustees.routes.AddTrusteeController.onPageLoad(mode, None)
+
 
   private def sessionExpired = controllers.routes.SessionExpiredController.onPageLoad()
 
@@ -130,6 +147,12 @@ object TrusteesCompanyNavigatorSpec extends OptionValues {
   private val addressYearsUnderAYear = UserAnswers(Json.obj())
     .set(CompanyAddressYearsId(0))(AddressYears.UnderAYear).asOpt.value
 
+  private val newTrustee = UserAnswers(Json.obj()).set(IsTrusteeNewId(0))(true).asOpt.value
+
+  private val confirmPreviousAddressYes = UserAnswers(Json.obj()).set(CompanyConfirmPreviousAddressId(0))(true).asOpt.value
+
+  private val confirmPreviousAddressNo = UserAnswers(Json.obj()).set(CompanyConfirmPreviousAddressId(0))(false).asOpt.value
+
   private def dataDescriber(answers: UserAnswers): String = answers.toString
 
   private def anyMoreChanges = controllers.routes.AnyMoreChangesController.onPageLoad(None)
@@ -139,4 +162,13 @@ object TrusteesCompanyNavigatorSpec extends OptionValues {
     if(answers.get(IsTrusteeNewId(index)).getOrElse(false)) checkYourAnswers(mode)
     else anyMoreChanges
   }
+
+  private def addressYearsLessThanTwelveEdit(mode: Mode, isPrevAddEnabled:Boolean = false) =
+    if (mode == CheckUpdateMode && isPrevAddEnabled) confirmPreviousAddress
+    else prevAddPostCodeLookup(mode)
+
+  private def confirmPreviousAddressRoute(mode: Mode, call: Call, isPrevAddEnabled:Boolean = false) =
+    if (mode == CheckUpdateMode && isPrevAddEnabled) Some(call)
+    else Some(sessionExpired)
+
 }
