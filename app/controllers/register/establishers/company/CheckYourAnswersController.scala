@@ -41,6 +41,7 @@ class CheckYourAnswersController @Inject()(
                                             override val messagesApi: MessagesApi,
                                             authenticate: AuthAction,
                                             getData: DataRetrievalAction,
+                                            allowAccess: AllowAccessActionProvider,
                                             requireData: DataRequiredAction,
                                             implicit val countryOptions: CountryOptions,
                                             @EstablishersCompany navigator: Navigator,
@@ -49,7 +50,7 @@ class CheckYourAnswersController @Inject()(
                                           )(implicit val ec: ExecutionContext) extends FrontendController
   with Retrievals with I18nSupport with Enumerable.Implicits {
 
-  def onPageLoad(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
+  def onPageLoad(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
     implicit request =>
 
       implicit val userAnswers:UserAnswers = request.userAnswers

@@ -39,6 +39,7 @@ class AddPartnersController @Inject()(
                                        @EstablishersPartner navigator: Navigator,
                                        authenticate: AuthAction,
                                        getData: DataRetrievalAction,
+                                       allowAccess: AllowAccessActionProvider,
                                        requireData: DataRequiredAction,
                                        formProvider: AddPartnersFormProvider
                                      )(implicit val ec: ExecutionContext) extends FrontendController with I18nSupport with Retrievals {
@@ -47,7 +48,7 @@ class AddPartnersController @Inject()(
 
   private def postUrl(index: Int, mode: Mode, srn: Option[String]): Call = routes.AddPartnersController.onSubmit(mode, index, srn)
 
-  def onPageLoad(mode: Mode, index: Int, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
+  def onPageLoad(mode: Mode, index: Int, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
     implicit request =>
       retrievePartnershipName(index) { _ =>
         val partners = request.userAnswers.allPartnersAfterDelete(index)

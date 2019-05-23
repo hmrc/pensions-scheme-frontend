@@ -18,7 +18,7 @@ package controllers.register.establishers.partnership
 
 import config.FrontendAppConfig
 import controllers.Retrievals
-import controllers.actions.{AuthAction, DataRequiredAction, DataRetrievalAction}
+import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRequiredAction, DataRetrievalAction}
 import identifiers.register.establishers.{IsEstablisherCompleteId, IsEstablisherNewId}
 import identifiers.register.establishers.partnership.{IsPartnershipCompleteId, PartnershipDetailsId, PartnershipReviewId}
 import javax.inject.Inject
@@ -38,12 +38,13 @@ class PartnershipReviewController @Inject()(appConfig: FrontendAppConfig,
                                             @EstablisherPartnership navigator: Navigator,
                                             authenticate: AuthAction,
                                             getData: DataRetrievalAction,
+                                            allowAccess: AllowAccessActionProvider,
                                             requireData: DataRequiredAction,
                                             userAnswersService: UserAnswersService,
                                             allowChangeHelper: AllowChangeHelper)(implicit val ec: ExecutionContext)
   extends FrontendController with I18nSupport with Retrievals {
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
+  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
     implicit request =>
       PartnershipDetailsId(index).retrieve.right.map {
         case partnershipDetails =>

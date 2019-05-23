@@ -17,7 +17,7 @@
 package controllers
 
 import controllers.CheckYourAnswersBeforeYouStartControllerSpec.{controller, schemeInfoWithCompleteFlag}
-import controllers.actions.{DataRequiredActionImpl, DataRetrievalAction, FakeAuthAction}
+import controllers.actions.{DataRequiredActionImpl, DataRetrievalAction, FakeAllowAccessProvider, FakeAuthAction}
 import identifiers.IsAboutBenefitsAndInsuranceCompleteId
 import models.address.Address
 import models._
@@ -106,6 +106,7 @@ object CheckYourAnswersBenefitsAndInsuranceControllerSpec extends ControllerSpec
       messagesApi,
       FakeAuthAction,
       dataRetrievalAction,
+      FakeAllowAccessProvider(),
       new DataRequiredActionImpl,
       FakeUserAnswersService,
       new FakeCountryOptions
