@@ -25,17 +25,24 @@ import org.mockito.Matchers.any
 import org.mockito.Mockito._
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.mockito.MockitoSugar
+import play.api.i18n.MessagesApi
 import play.api.libs.json.Json
-import play.api.mvc.Result
+import play.api.mvc.{Request, Result}
 import play.api.test.Helpers._
+import play.twirl.api.Html
 import uk.gov.hmrc.domain.PsaId
+import uk.gov.hmrc.play.bootstrap.http.FrontendErrorHandler
 import utils.UserAnswers
 
 import scala.concurrent.Future
 
 class AllowAccessActionSpec extends SpecBase with ScalaFutures with MockitoSugar {
 
-  val errorHandler = new ErrorHandler
+  val errorHandler = new FrontendErrorHandler {
+    override def standardErrorTemplate(pageTitle: String, heading: String, message: String)(implicit request: Request[_]): Html = Html("")
+
+    override def messagesApi: MessagesApi = injector.instanceOf[MessagesApi]
+  }
 
   val pensionsSchemeConnector: PensionsSchemeConnector = {
     val psc = mock[PensionsSchemeConnector]
@@ -45,7 +52,7 @@ class AllowAccessActionSpec extends SpecBase with ScalaFutures with MockitoSugar
   }
 
   class TestAllowAccessAction(srn: Option[String],
-                              psc: PensionsSchemeConnector = pensionsSchemeConnector) extends AllowAccessAction(srn, psc) {
+                              psc: PensionsSchemeConnector = pensionsSchemeConnector) extends AllowAccessAction(srn, psc, errorHandler) {
     override def filter[A](request: OptionalDataRequest[A]): Future[Option[Result]] = super.filter(request)
   }
 

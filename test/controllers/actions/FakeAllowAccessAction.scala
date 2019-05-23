@@ -19,31 +19,47 @@ package controllers.actions
 import connectors.PensionsSchemeConnector
 import models.register.SchemeSubmissionResponse
 import models.requests.OptionalDataRequest
-import play.api.mvc.{RequestHeader, Result}
+import play.api.i18n.MessagesApi
+import play.api.mvc.{Request, RequestHeader, Result}
+import play.twirl.api.Html
 import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.play.bootstrap.http.FrontendErrorHandler
 import utils.UserAnswers
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class FakeAllowAccessAction(srn: Option[String], pensionsSchemeConnector: PensionsSchemeConnector) extends AllowAccessAction(srn, pensionsSchemeConnector) {
+class FakeAllowAccessAction(srn: Option[String],
+                            pensionsSchemeConnector: PensionsSchemeConnector,
+                            errorHandler: FrontendErrorHandler) extends AllowAccessAction(srn, pensionsSchemeConnector, errorHandler) {
   override def filter[A](request: OptionalDataRequest[A]): Future[Option[Result]] = Future.successful(None)
 }
 
 case class FakeAllowAccessProvider(srn: Option[String] = None,
                                    pensionsSchemeConnector: Option[PensionsSchemeConnector] = None
                                   ) extends AllowAccessActionProvider {
+
+  private val errorHandler = new FrontendErrorHandler {
+    override def standardErrorTemplate(pageTitle: String, heading: String, message: String)(implicit request: Request[_]): Html = Html("")
+
+    override def messagesApi: MessagesApi = ???
+  }
+
   override def apply(srn: Option[String]): AllowAccessAction = {
-    new FakeAllowAccessAction(srn, pensionsSchemeConnector match {
-      case None =>
-        new PensionsSchemeConnector {
-          override def registerScheme(answers: UserAnswers, psaId: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[SchemeSubmissionResponse] = ???
+    new FakeAllowAccessAction(
+      srn,
+      pensionsSchemeConnector match {
+        case None =>
+          new PensionsSchemeConnector {
+            override def registerScheme(answers: UserAnswers, psaId: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[SchemeSubmissionResponse] = ???
 
-          override def updateSchemeDetails(psaId: String, pstr: String, answers: UserAnswers)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Unit] = ???
+            override def updateSchemeDetails(psaId: String, pstr: String, answers: UserAnswers)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Unit] = ???
 
-          override def checkForAssociation(psaId: String, srn: String)(implicit headerCarrier: HeaderCarrier, ec: ExecutionContext, request: RequestHeader): Future[Boolean] = Future.successful(true)
-        }
-      case Some(psc) => psc
-    })
+            override def checkForAssociation(psaId: String, srn: String)(implicit headerCarrier: HeaderCarrier, ec: ExecutionContext, request: RequestHeader): Future[Boolean] = Future.successful(true)
+          }
+        case Some(psc) => psc
+      },errorHandler
+
+    )
   }
 }
 

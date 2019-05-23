@@ -17,23 +17,24 @@
 package controllers.actions
 
 import com.google.inject.{ImplementedBy, Inject}
-import connectors.{PensionsSchemeConnector, SchemeDetailsReadOnlyCacheConnector}
-import handlers.{ErrorHandler, ErrorHandlerWithReturnLinkToManage}
+import connectors.PensionsSchemeConnector
+import handlers.ErrorHandlerWithReturnLinkToManage
 import identifiers.IsPsaSuspendedId
 import models.UpdateMode
 import models.requests.OptionalDataRequest
-import play.api.mvc.Results._
 import play.api.http.Status._
-import play.api.mvc.{ActionFilter, Result, Results}
+import play.api.mvc.Results._
+import play.api.mvc.{ActionFilter, Result}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.HeaderCarrierConverter
+import uk.gov.hmrc.play.bootstrap.http.FrontendErrorHandler
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 class AllowAccessAction(srn: Option[String],
                         pensionsSchemeConnector: PensionsSchemeConnector,
-                        errorHandler: ErrorHandler
+                        errorHandler: FrontendErrorHandler
                        ) extends ActionFilter[OptionalDataRequest] {
 
   override protected def filter[A](request: OptionalDataRequest[A]): Future[Option[Result]] = {

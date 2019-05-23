@@ -16,6 +16,7 @@
 
 package views
 
+import models.Link
 import org.jsoup.Jsoup
 import play.twirl.api.HtmlFormat
 import views.behaviours.ViewBehaviours
@@ -25,8 +26,10 @@ class ErrorTemplatePageNotFoundViewSpec extends ViewBehaviours {
 
   private val messageKeyPrefix = "pageNotFound404"
 
+  private val returnLink = Link(text = "bla", target = "target",None)
+
   def createView: () => HtmlFormat.Appendable = () =>
-    error_template_page_not_found(frontendAppConfig)(fakeRequest, messages)
+    error_template_page_not_found(frontendAppConfig, returnLink)(fakeRequest, messages)
 
   "Error template page not found page" must {
     behave like normalPageWithoutBrowserTitle(
@@ -42,9 +45,9 @@ class ErrorTemplatePageNotFoundViewSpec extends ViewBehaviours {
       assertEqualsMessage(doc, "title", messages(s"messages__${messageKeyPrefix}__title"))
     }
 
-    "have link to return to your pension schemes" in {
-      Jsoup.parse(createView().toString()).select("a[id=view-pension-schemes]") must
-        haveLink(frontendAppConfig.managePensionsYourPensionSchemesUrl)
+    "have link" in {
+      Jsoup.parse(createView().toString()).select("a[id=return]") must
+        haveLink(returnLink.target)
     }
   }
 }
