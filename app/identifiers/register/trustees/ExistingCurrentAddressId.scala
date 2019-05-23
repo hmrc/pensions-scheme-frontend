@@ -14,10 +14,9 @@
  * limitations under the License.
  */
 
-package identifiers.register.trustees.partnership
+package identifiers.register.trustees
 
 import identifiers.TypedIdentifier
-import identifiers.register.trustees.TrusteesId
 import models.Index
 import models.address.Address
 import play.api.libs.json.JsPath
@@ -29,5 +28,3 @@ case class ExistingCurrentAddressId(index: Index) extends TypedIdentifier[Addres
 object ExistingCurrentAddressId {
   override def toString: String = "existingCurrentAddress"
 }
-
-

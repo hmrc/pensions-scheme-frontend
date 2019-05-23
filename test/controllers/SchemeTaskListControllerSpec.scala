@@ -18,17 +18,13 @@ package controllers
 
 import base.JsonFileReader
 import config.{FeatureSwitchManagementService, FeatureSwitchManagementServiceTestImpl}
-import connectors._
+import connectors.{MinimalPsaConnector, PensionSchemeVarianceLockConnector, SchemeDetailsConnector, SchemeDetailsReadOnlyCacheConnector, UpdateSchemeCacheConnector}
 import controllers.actions._
+import controllers.register.DeclarationControllerSpec.onwardRoute
 import handlers.ErrorHandler
-import identifiers.register.establishers.company.director.{ExistingCurrentAddressId => DirectorExistingCurrentAddressId}
-import identifiers.register.establishers.company.{ExistingCurrentAddressId => CompanyExistingCurrentAddressId}
-import identifiers.register.establishers.individual.{ExistingCurrentAddressId => IndividualExistingCurrentAddressId}
-import identifiers.register.trustees.partnership.{ExistingCurrentAddressId => TrusteePartnershipExistingCurrentAddressId}
-import models.address.Address
 import models.details.transformation.{SchemeDetailsMasterSection, SchemeDetailsStubData}
 import models.{Link, NormalMode, SchemeLock, UpdateMode, VarianceLock}
-import org.mockito.Matchers.{any, eq => eqTo}
+import org.mockito.Matchers.any
 import org.mockito.Mockito.{reset, when}
 import org.scalatest.mockito.MockitoSugar
 import play.api.Configuration
@@ -86,22 +82,15 @@ class SchemeTaskListControllerSpec extends ControllerSpecBase {
     "isVariationsEnabled toggle switched on in UpdateMode and user holds the lock" must {
 
       "return OK and the correct view for a GET" in {
-        reset(fakeSchemeDetailsConnector, fakeLockConnector, fakeUpdateCacheConnector)
-        fs.change("is-variations-enabled", true)
-        val updatedUserAnswers = UserAnswers(userAnswersJson).set(
-          DirectorExistingCurrentAddressId(0, 0))(address("2")).flatMap(
-          _.set(CompanyExistingCurrentAddressId(0))(address("10")).flatMap(
-            _.set(IndividualExistingCurrentAddressId(1))(address("3")).flatMap(
-              _.set(TrusteePartnershipExistingCurrentAddressId(0))(address("4"))
-            )
-          )
-        ).asOpt.value
 
+        reset(fakeSchemeDetailsConnector)
+        fs.change("is-variations-enabled", true)
         when(fakeMinimalPsaConnector.isPsaSuspended(any())(any(), any()))
           .thenReturn(Future.successful(false))
+        when(fakeSchemeTransformer.transformMasterSection(any())).thenReturn(masterSections)
         when(fakeLockConnector.isLockByPsaIdOrSchemeId(any(), any())(any(), any())).thenReturn(Future.successful(Some(VarianceLock)))
-        when(fakeUpdateCacheConnector.upsert(eqTo(srnValue), eqTo(updatedUserAnswers.json))(any(), any()))
-          .thenReturn(Future.successful(updatedUserAnswers.json))
+        when(fakeUpdateCacheConnector.upsert(any(), any())(any(), any()))
+          .thenReturn(Future.successful(JsNull))
 
         val result = controller().onPageLoad(UpdateMode, srn)(fakeRequest)
 
@@ -211,7 +200,4 @@ object SchemeTaskListControllerSpec extends ControllerSpecBase with MockitoSugar
     messages("messages__schemeTaskList__title"),
     None
   )
-
-  def address(streetNo: String): Address = Address(s"$streetNo Other Place",
-    "Some District", Some("Anytown"), Some("Somerset"), Some("ZZ1 1ZZ"), "GB")
 }

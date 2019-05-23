@@ -17,24 +17,14 @@
 package controllers
 
 import config.{FeatureSwitchManagementService, FrontendAppConfig}
-import connectors._
+import connectors.{MinimalPsaConnector, PensionSchemeVarianceLockConnector, SchemeDetailsConnector, SchemeDetailsReadOnlyCacheConnector, UpdateSchemeCacheConnector}
 import controllers.actions._
 import handlers.ErrorHandler
-import identifiers.register.establishers.company.director.{DirectorAddressId, ExistingCurrentAddressId => DirectorExistingCurrentAddressId}
-import identifiers.register.establishers.company.{CompanyAddressId, ExistingCurrentAddressId => CompanyExistingCurrentAddressId}
-import identifiers.register.establishers.individual.{AddressId, ExistingCurrentAddressId}
-import identifiers.register.establishers.partnership.partner.{PartnerAddressId, ExistingCurrentAddressId => PartnerExistingCurrentAddressId}
-import identifiers.register.establishers.partnership.{PartnershipAddressId, ExistingCurrentAddressId => PartnershipExistingCurrentAddressId}
-import identifiers.register.trustees.company.{CompanyAddressId => TrusteeCompanyAddressId, ExistingCurrentAddressId => TrusteeCompanyExistingCurrentAddressId}
-import identifiers.register.trustees.individual.{TrusteeAddressId, ExistingCurrentAddressId => TrusteeExistingCurrentAddressId}
-import identifiers.register.trustees.partnership.{ExistingCurrentAddressId => TrusteePartnershipExistingCurrentAddressId, PartnershipAddressId => TrusteePartnershipAddressId}
-import identifiers.{IsPsaSuspendedId, TypedIdentifier}
+import identifiers.IsPsaSuspendedId
 import javax.inject.Inject
-import models.address.Address
-import models.details.transformation.SchemeDetailsMasterSection
-import models.register._
-import models.requests.OptionalDataRequest
 import models.{Mode, VarianceLock}
+import models.details.transformation.SchemeDetailsMasterSection
+import models.requests.OptionalDataRequest
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.JsValue
 import play.api.mvc.{Action, AnyContent, Result}
@@ -95,17 +85,19 @@ class SchemeTaskListController @Inject()(appConfig: FrontendAppConfig,
     lockConnector.isLockByPsaIdOrSchemeId(request.psaId.id, srn).flatMap {
       case Some(VarianceLock) =>
         ua match {
-          case Some(userAnswers) =>
-            createViewWithSuspensionFlag(srn, userAnswers, updateConnector.upsert(srn, _))
-          case _ =>
-            Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
+          case Some(userAnswers) => createViewWithSuspensionFlag(srn, userAnswers, updateConnector.upsert(srn, _))
+
+          case _ => Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
         }
 
       case _ =>
         schemeDetailsConnector.getSchemeDetailsVariations(request.psaId.id, schemeIdType = "srn", srn)
           .flatMap { userAnswers =>
+
             createViewWithSuspensionFlag(srn, userAnswers, viewConnector.upsert(request.externalId, _))
           }
+
+
     }
   }
 
@@ -114,13 +106,7 @@ class SchemeTaskListController @Inject()(appConfig: FrontendAppConfig,
                                                                                           hc: HeaderCarrier): Future[Result] =
     minimalPsaConnector.isPsaSuspended(request.psaId.id).flatMap { isSuspended =>
 
-      val establishersAddresssIdsMap = userAnswers.allEstablishersAfterDelete.flatMap(getSeqOfEstAddressIds(_, userAnswers)).toMap
-      val trusteeAddressIdsMap = userAnswers.allTrusteesAfterDelete.flatMap(getSeqOfTrusteeAddressIds(_, userAnswers))
-
-      val updatedUserAnswers = userAnswers.set(IsPsaSuspendedId)(isSuspended).flatMap(
-        _.setAllExistingAddress(establishersAddresssIdsMap ++ trusteeAddressIdsMap)
-      ).asOpt.getOrElse(userAnswers)
-
+      val updatedUserAnswers = userAnswers.set(IsPsaSuspendedId)(isSuspended).asOpt.getOrElse(userAnswers)
       val taskList: SchemeDetailsTaskList = new HsTaskListHelperVariations(updatedUserAnswers, request.viewOnly, Some(srn)).taskList
 
       upsertUserAnswers(updatedUserAnswers.json).flatMap { _ =>
@@ -129,40 +115,7 @@ class SchemeTaskListController @Inject()(appConfig: FrontendAppConfig,
       }
     }
 
-  private def getSeqOfEstAddressIds(establishers: Establisher[_], userAnswers: UserAnswers): Seq[(TypedIdentifier[Address], TypedIdentifier[Address])] = {
-    establishers match {
-      case models.register.EstablisherIndividualEntity(id, _, _, _, _, _) =>
-        Seq(AddressId(id.index) -> ExistingCurrentAddressId(id.index))
-      case EstablisherCompanyEntity(id, _, _, _, _, _) =>
-        val allDirectors = userAnswers.allDirectorsAfterDelete(id.index)
-        val allDirectorsAddressIdMap = allDirectors.map { director =>
-          val index = allDirectors.indexOf(director)
-          (DirectorAddressId(id.index, index), DirectorExistingCurrentAddressId(id.index, index))
-        }
-        allDirectorsAddressIdMap :+ (CompanyAddressId(id.index) -> CompanyExistingCurrentAddressId(id.index))
-      case EstablisherPartnershipEntity(id, _, _, _, _, _) =>
-        val allPartners = userAnswers.allPartnersAfterDelete(id.index)
-        val allPartnersAddressIdMap = allPartners.map { director =>
-          val index = allPartners.indexOf(director)
-          (PartnerAddressId(id.index, index), PartnerExistingCurrentAddressId(id.index, index))
-        }
-        allPartnersAddressIdMap :+ PartnershipAddressId(id.index) -> PartnershipExistingCurrentAddressId(id.index)
-      case _ =>
-        Seq.empty
-    }
-  }
-
-  private def getSeqOfTrusteeAddressIds(trustee: Trustee[_], userAnswers: UserAnswers): Seq[(TypedIdentifier[Address], TypedIdentifier[Address])] = {
-    trustee match {
-      case models.register.TrusteeIndividualEntity(id, _, _, _, _, _, _) =>
-        Seq(TrusteeAddressId(id.index) -> TrusteeExistingCurrentAddressId(id.index))
-      case TrusteeCompanyEntity(id, _, _, _, _, _, _) =>
-        Seq(TrusteeCompanyAddressId(id.index) -> TrusteeCompanyExistingCurrentAddressId(id.index))
-      case TrusteePartnershipEntity(id, _, _, _, _, _, _) =>
-        Seq(TrusteePartnershipAddressId(id.index) -> TrusteePartnershipExistingCurrentAddressId(id.index))
-      case _ =>
-        Seq.empty
-    }
-  }
   case class TaskListDetails(userAnswers: UserAnswers, taskList: SchemeDetailsTaskList)
+
+
 }

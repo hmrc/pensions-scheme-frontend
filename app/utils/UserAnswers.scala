@@ -27,11 +27,11 @@ import identifiers.register.trustees.individual.TrusteeDetailsId
 import identifiers.register.trustees.partnership.{IsPartnershipCompleteId, PartnershipDetailsId => TrusteePartnershipDetailsId}
 import identifiers.register.trustees.{IsTrusteeCompleteId, IsTrusteeNewId, TrusteeKindId, TrusteesId}
 import identifiers._
-import models.address.{Address, TolerantAddress}
+import models.address.Address
 import models.person.PersonDetails
 import models.register._
 import models.register.establishers.EstablisherKind
-import models._
+import models.{CompanyDetails, PartnershipDetails, Paye, Vat}
 import play.api.Logger
 import play.api.libs.functional.syntax._
 import play.api.libs.json.Reads._
@@ -66,6 +66,11 @@ case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Implicits{
     JsLens.fromPath(path)
       .getAll(json)
       .flatMap(a => traverse(a.map(Json.fromJson[A]))).asOpt
+  }
+
+  def set(path: JsPath)(jsValue: JsValue): JsResult[UserAnswers] = {
+    JsLens.fromPath(path)
+      .set(jsValue, json).map(UserAnswers(_))
   }
 
   def set[I <: TypedIdentifier.PathDependent](id: I)(value: id.Data)(implicit writes: Writes[id.Data]): JsResult[UserAnswers] = {
@@ -454,30 +459,5 @@ case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Implicits{
 
     isInsuranceCompleted && isAllTrusteesCompleted && allEstablishersCompleted
 
-  }
-
-  def setAllExistingAddress(ids: Map[TypedIdentifier[Address], TypedIdentifier[Address]]): JsResult[UserAnswers] = {
-
-    @tailrec
-    def setRec(addressIds: Map[TypedIdentifier[Address], TypedIdentifier[Address]], resultAnswers: JsResult[UserAnswers])(
-      implicit writes: Writes[Address]): JsResult[UserAnswers] = {
-      resultAnswers match {
-        case JsSuccess(_, _) =>
-          if (addressIds.nonEmpty) {
-            val updatedUserAnswers = resultAnswers.map { userAnswers =>
-              userAnswers.get(addressIds.head._1).map { address =>
-                userAnswers.set(addressIds.head._2)(address)
-              }
-            }.asOpt.flatten.getOrElse(resultAnswers)
-
-            setRec(addressIds.tail, updatedUserAnswers)
-          } else {
-            resultAnswers
-          }
-        case failure => failure
-      }
-    }
-
-    setRec(ids, JsSuccess(this))
   }
 }

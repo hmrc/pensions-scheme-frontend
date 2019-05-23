@@ -14,18 +14,17 @@
  * limitations under the License.
  */
 
-package identifiers.register.establishers.partnership
+package identifiers.register.establishers
 
 import identifiers.TypedIdentifier
-import identifiers.register.establishers.EstablishersId
-import models.Index
 import models.address.Address
 import play.api.libs.json.JsPath
 
-case class ExistingCurrentAddressId(index: Index) extends TypedIdentifier[Address] {
+case class ExistingCurrentAddressId(index: Int) extends TypedIdentifier[Address] {
   override def path: JsPath = EstablishersId(index).path \ ExistingCurrentAddressId.toString
 }
 
 object ExistingCurrentAddressId {
   override def toString: String = "existingCurrentAddress"
+
 }

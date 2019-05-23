@@ -81,8 +81,10 @@ trait ManualAddressController extends FrontendController with Retrievals with I1
         val auditEvent = AddressEvent.addressEntryEvent(request.externalId, address, existingAddress, selectedAddress, context)
 
         removePostCodeLookupAddress(mode, viewModel.srn, postCodeLookupIdForCleanup)
-          .flatMap { _ =>
-            userAnswersService.save(mode, viewModel.srn, id, address).flatMap {
+          .flatMap { userAnswersJson =>
+            val updateAddress = userAnswersService.setExistingAddress(mode, id, UserAnswers(userAnswersJson))
+              .set(id)(address).asOpt.getOrElse(UserAnswers(userAnswersJson))
+            userAnswersService.upsert(mode, viewModel.srn, updateAddress.json).flatMap {
               cacheMap =>
                 userAnswersService.setAddressCompleteFlagAfterPreviousAddress(mode, viewModel.srn, id, UserAnswers(cacheMap)).map {
                   answers =>
@@ -97,7 +99,7 @@ trait ManualAddressController extends FrontendController with Retrievals with I1
 
   private def removePostCodeLookupAddress(mode: Mode, srn: Option[String], postCodeLookupId: TypedIdentifier[Seq[TolerantAddress]])
                                          (implicit request: DataRequest[AnyContent]): Future[JsValue] = {
-    if(request.userAnswers.get(postCodeLookupId).nonEmpty) {
+    if (request.userAnswers.get(postCodeLookupId).nonEmpty) {
       userAnswersService.remove(mode, srn, postCodeLookupId)
     } else {
       Future(request.userAnswers.json)
@@ -108,8 +110,8 @@ trait ManualAddressController extends FrontendController with Retrievals with I1
                       selectedId: TypedIdentifier[TolerantAddress],
                       mode: Mode, srn: Option[String], manualCall: Call)(implicit request: DataRequest[AnyContent]): Future[Result] =
     if (mode == CheckUpdateMode || mode == UpdateMode) {
-      userAnswersService.remove(mode, srn, id).flatMap (_ =>
-        userAnswersService.remove(mode, srn, selectedId).map (_ =>
+      userAnswersService.remove(mode, srn, id).flatMap(_ =>
+        userAnswersService.remove(mode, srn, selectedId).map(_ =>
           Redirect(manualCall)))
     } else {
       Future.successful(Redirect(manualCall))

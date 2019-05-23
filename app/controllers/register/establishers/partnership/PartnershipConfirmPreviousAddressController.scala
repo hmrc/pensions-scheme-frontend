@@ -17,23 +17,24 @@
 package controllers.register.establishers.partnership
 
 import config.FrontendAppConfig
-import connectors.UserAnswersCacheConnector
 import controllers.Retrievals
 import controllers.actions._
 import controllers.address.ConfirmPreviousAddressController
+import identifiers.register.establishers.ExistingCurrentAddressId
 import identifiers.register.establishers.partnership._
 import javax.inject.Inject
 import models.{Index, Mode}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
-import utils.{CountryOptions, Navigator}
+import services.UserAnswersService
 import utils.annotations.EstablisherPartnership
+import utils.{CountryOptions, Navigator}
 import viewmodels.Message
 import viewmodels.address.ConfirmAddressViewModel
 
 class PartnershipConfirmPreviousAddressController @Inject()(val appConfig: FrontendAppConfig,
                                                             val messagesApi: MessagesApi,
-                                                            val dataCacheConnector: UserAnswersCacheConnector,
+                                                            val userAnswersService: UserAnswersService,
                                                             @EstablisherPartnership val navigator: Navigator,
                                                             authenticate: AuthAction,
                                                             allowAccess: AllowAccessActionProvider,
@@ -43,8 +44,8 @@ class PartnershipConfirmPreviousAddressController @Inject()(val appConfig: Front
                                                       ) extends ConfirmPreviousAddressController with I18nSupport with Retrievals {
 
   private[controllers] val postCall = routes.PartnershipConfirmPreviousAddressController.onSubmit _
-  private[controllers] val pageTitle: Message = "confirmPreviousAddress.title"
-  private[controllers] val heading: Message = "confirmPreviousAddress.heading"
+  private[controllers] val title: Message = "messages__confirmPreviousAddress__title"
+  private[controllers] val heading: Message = "messages__confirmPreviousAddress__heading"
 
   private def viewmodel(srn: Option[String], index: Int) =
     Retrieval(
@@ -52,11 +53,11 @@ class PartnershipConfirmPreviousAddressController @Inject()(val appConfig: Front
         (PartnershipDetailsId(index) and ExistingCurrentAddressId(index)).retrieve.right.map {
           case details ~ address =>
             ConfirmAddressViewModel(
-              routes.PartnershipConfirmPreviousAddressController.onSubmit(index, srn),
-              Message(pageTitle),
+              postCall(index, srn),
+              Message(title),
               Message(heading, details.name),
               None,
-              address.toTolerantAddress,
+              address,
               details.name,
               srn
             )

@@ -17,7 +17,7 @@
 package services
 
 import config.FrontendAppConfig
-import connectors.{FakeFrontendAppConfig, FakeLockConnector, FakeSubscriptionCacheConnector, FakeUpdateCacheConnector, PensionSchemeVarianceLockConnector, SubscriptionCacheConnector, UpdateSchemeCacheConnector}
+import connectors._
 import identifiers.TypedIdentifier
 import identifiers.register.establishers.IsEstablisherAddressCompleteId
 import identifiers.register.establishers.company.director.{DirectorAddressYearsId, IsDirectorAddressCompleteId}
@@ -36,7 +36,7 @@ import models.address.Address
 import models.{AddressYears, Mode}
 import models.requests.DataRequest
 import org.scalatest.Matchers
-import play.api.libs.json.{Format, JsObject, JsValue, Json}
+import play.api.libs.json._
 import play.api.mvc.Results.Ok
 import play.api.mvc.{AnyContent, Result}
 import uk.gov.hmrc.http.HeaderCarrier
@@ -73,7 +73,14 @@ trait FakeUserAnswersService extends UserAnswersService with Matchers {
         data += (id.toString -> Json.toJson(true))
         Future.successful(UserAnswers())
     }
+  }
 
+  override def setExistingAddress(mode: Mode, id: TypedIdentifier[Address], userAnswers: UserAnswers)(implicit ec: ExecutionContext, hc: HeaderCarrier, request: DataRequest[AnyContent]): UserAnswers = {
+    userAnswers.get(id).fold(userAnswers) {
+      address =>
+        data += ("fakeExistingAddressId" -> Json.toJson(address))
+        userAnswers
+    }
   }
 
   override def setCompleteFlag(mode: Mode, srn: Option[String], id: TypedIdentifier[Boolean], userAnswers: UserAnswers, value: Boolean)
@@ -98,7 +105,7 @@ trait FakeUserAnswersService extends UserAnswersService with Matchers {
                                       request: DataRequest[AnyContent]
                                      ): Future[JsValue] = {
     removed += id.toString
-    Future.successful(Json.obj())
+    Future.successful(request.userAnswers.json)
   }
 
   def fetch(cacheId: String)(implicit

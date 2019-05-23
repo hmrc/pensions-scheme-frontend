@@ -137,7 +137,7 @@ class AdviserAddressControllerSpec extends ControllerSpecBase with MockitoSugar 
 
             status(result) must be(SEE_OTHER)
 
-            FakeUserAnswersService.verify(AdviserAddressId, address)
+            FakeUserAnswersService.userAnswer.get(AdviserAddressId).value mustEqual address
         }
       }
     }

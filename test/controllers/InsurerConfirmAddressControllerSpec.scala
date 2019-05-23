@@ -58,7 +58,7 @@ class InsurerConfirmAddressControllerSpec extends ControllerWithQuestionPageBeha
       postRequest
     )
 
-    behave like controllerThatSavesUserAnswersWithService(
+    behave like controllerThatUpsertUserAnswersWithService(
       saveAction(this),
       postRequest,
       InsurerConfirmAddressId,
