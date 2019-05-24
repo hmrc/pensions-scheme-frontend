@@ -65,6 +65,7 @@ class EstablishersIndividualNavigatorSpec extends SpecBase with MustMatchers wit
     )
   }
 
+
   private val navigator: EstablishersIndividualNavigator =
     new EstablishersIndividualNavigator(frontendAppConfig, FakeUserAnswersCacheConnector, featureSwitch)
 
@@ -79,7 +80,7 @@ class EstablishersIndividualNavigatorSpec extends SpecBase with MustMatchers wit
     appRunning()
     featureSwitch.change(Toggles.isPrevAddEnabled, false)
     behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, routes(UpdateMode), dataDescriber, UpdateMode)
-  }
+   }
 }
 
 object EstablishersIndividualNavigatorSpec extends SpecBase with OptionValues {
@@ -149,6 +150,7 @@ object EstablishersIndividualNavigatorSpec extends SpecBase with OptionValues {
       Some(confirmPreviousAddress)
     else
       Some(previousAddressPostCodeLookup(checkMode(mode)))
+
 
 }
 
