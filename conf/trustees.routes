@@ -289,6 +289,9 @@ POST       /:index/partnership/change/trustee-address-manual            controll
 GET        /:index/partnership/:mode/trustee-address-manual/:srn        controllers.register.trustees.partnership.PartnershipAddressController.onPageLoad(mode: Mode, index: Index, srn: Option[String])
 POST       /:index/partnership/:mode/trustee-address-manual/:srn        controllers.register.trustees.partnership.PartnershipAddressController.onSubmit(mode: Mode, index: Index, srn: Option[String])
 
+GET         /:index/partnership/update/is-this-previous-address/:srn    controllers.register.trustees.partnership.PartnershipConfirmPreviousAddressController.onPageLoad(mode: Mode = CheckUpdateMode, index:Index, srn: Option[String])
+POST        /:index/partnership/update/is-this-previous-address/:srn    controllers.register.trustees.partnership.PartnershipConfirmPreviousAddressController.onSubmit(mode: Mode = CheckUpdateMode, index:Index, srn: Option[String])
+
 GET        /:index/partnership/unique-taxpayer-reference                 controllers.register.trustees.partnership.PartnershipUniqueTaxReferenceController.onPageLoad(mode: Mode = NormalMode, index: Index, srn: Option[String] = None)
 POST       /:index/partnership/unique-taxpayer-reference                 controllers.register.trustees.partnership.PartnershipUniqueTaxReferenceController.onSubmit(mode: Mode = NormalMode, index: Index, srn: Option[String] = None)
 GET        /:index/partnership/change/unique-taxpayer-reference          controllers.register.trustees.partnership.PartnershipUniqueTaxReferenceController.onPageLoad(mode: Mode = CheckMode, index: Index, srn: Option[String] = None)
