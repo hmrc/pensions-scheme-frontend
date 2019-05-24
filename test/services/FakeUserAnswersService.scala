@@ -17,7 +17,7 @@
 package services
 
 import config.FrontendAppConfig
-import connectors.{FakeFrontendAppConfig, FakeLockConnector, FakeSubscriptionCacheConnector, FakeUpdateCacheConnector, PensionSchemeVarianceLockConnector, SubscriptionCacheConnector, UpdateSchemeCacheConnector}
+import connectors.{FakeFrontendAppConfig, FakeLockConnector, FakeSubscriptionCacheConnector, FakeUpdateCacheConnector, PensionSchemeVarianceLockConnector, OldSubscriptionCacheConnector, UpdateSchemeCacheConnector}
 import identifiers.TypedIdentifier
 import identifiers.register.establishers.IsEstablisherAddressCompleteId
 import identifiers.register.establishers.company.director.{DirectorAddressYearsId, IsDirectorAddressCompleteId}
@@ -47,7 +47,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 trait FakeUserAnswersService extends UserAnswersService with Matchers {
 
-  override protected def subscriptionCacheConnector: SubscriptionCacheConnector = FakeSubscriptionCacheConnector.getConnector
+  override protected def subscriptionCacheConnector: OldSubscriptionCacheConnector = FakeSubscriptionCacheConnector.getConnector
   override protected def updateSchemeCacheConnector: UpdateSchemeCacheConnector = FakeUpdateCacheConnector.getConnector
   override protected def lockConnector: PensionSchemeVarianceLockConnector = FakeLockConnector.getConnector
     override val appConfig: FrontendAppConfig =  FakeFrontendAppConfig.getConfig

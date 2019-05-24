@@ -16,10 +16,18 @@
 
 package connectors
 
-import base.SpecBase
+import com.google.inject.Inject
+import config.FrontendAppConfig
+import javax.inject.Singleton
 import play.api.libs.ws.WSClient
 
-object FakeSubscriptionCacheConnector extends SpecBase {
-  def getConnector: OldSubscriptionCacheConnector =
-    new OldSubscriptionCacheConnector(frontendAppConfig, injector.instanceOf[WSClient])
+@Singleton
+class OldSubscriptionCacheConnector @Inject()(
+                                               override val config: FrontendAppConfig,
+                                               override val http: WSClient
+                                             ) extends CacheConnector {
+
+  override protected def url(id: String) = s"${config.pensionsSchemeUrl}/pensions-scheme/journey-cache/scheme/$id"
+
+  override protected def lastUpdatedUrl(id: String) = s"${config.pensionsSchemeUrl}/pensions-scheme/journey-cache/scheme/$id/lastUpdated"
 }

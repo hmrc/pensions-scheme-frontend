@@ -19,7 +19,7 @@ package services
 import base.SpecBase
 import com.google.inject.Inject
 import config.FrontendAppConfig
-import connectors.{PensionSchemeVarianceLockConnector, SubscriptionCacheConnector, UpdateSchemeCacheConnector}
+import connectors.{PensionSchemeVarianceLockConnector, OldSubscriptionCacheConnector, UpdateSchemeCacheConnector}
 import identifiers.TypedIdentifier
 import identifiers.register.establishers.company.{CompanyPreviousAddressId, IsCompanyCompleteId}
 import identifiers.register.establishers.company.director.{DirectorDetailsId, IsDirectorCompleteId}
@@ -369,7 +369,7 @@ object UserAnswersServiceSpec extends SpecBase with MockitoSugar {
     "other-key" -> "meh"
   )
 
-  class TestService @Inject()(override val subscriptionCacheConnector: SubscriptionCacheConnector,
+  class TestService @Inject()(override val subscriptionCacheConnector: OldSubscriptionCacheConnector,
                               override val updateSchemeCacheConnector: UpdateSchemeCacheConnector,
                               override val lockConnector: PensionSchemeVarianceLockConnector,
                               override val appConfig: FrontendAppConfig
@@ -382,7 +382,7 @@ object UserAnswersServiceSpec extends SpecBase with MockitoSugar {
     }
   }
 
-  protected val subscriptionConnector: SubscriptionCacheConnector = mock[SubscriptionCacheConnector]
+  protected val subscriptionConnector: OldSubscriptionCacheConnector = mock[OldSubscriptionCacheConnector]
   protected val updateConnector: UpdateSchemeCacheConnector = mock[UpdateSchemeCacheConnector]
   protected val lockConnector: PensionSchemeVarianceLockConnector = mock[PensionSchemeVarianceLockConnector]
 

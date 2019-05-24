@@ -41,7 +41,8 @@ class DataRetrievalImpl(dataConnector: UserAnswersCacheConnector,
   override protected def transform[A](request: AuthenticatedRequest[A]): Future[OptionalDataRequest[A]] = {
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
     mode match {
-      case NormalMode | CheckMode => getOptionalRequest(dataConnector.fetch(request.externalId), viewOnly = false)(request)
+      case NormalMode | CheckMode =>
+        getOptionalRequest(dataConnector.fetch(request.externalId), viewOnly = false)(request)
 
       case UpdateMode | CheckUpdateMode =>
         srn.map { srn =>
