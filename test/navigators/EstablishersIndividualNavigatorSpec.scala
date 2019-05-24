@@ -65,7 +65,6 @@ class EstablishersIndividualNavigatorSpec extends SpecBase with MustMatchers wit
     )
   }
 
-
   private val navigator: EstablishersIndividualNavigator =
     new EstablishersIndividualNavigator(frontendAppConfig, FakeUserAnswersCacheConnector, featureSwitch)
 
@@ -73,6 +72,12 @@ class EstablishersIndividualNavigatorSpec extends SpecBase with MustMatchers wit
     appRunning()
     behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, routes(NormalMode), dataDescriber)
     featureSwitch.change(Toggles.isPrevAddEnabled, true)
+    behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, routes(UpdateMode), dataDescriber, UpdateMode)
+  }
+
+  s"${navigator.getClass.getSimpleName} when previous address freature is toggled off" must {
+    appRunning()
+    featureSwitch.change(Toggles.isPrevAddEnabled, false)
     behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, routes(UpdateMode), dataDescriber, UpdateMode)
   }
 
