@@ -20,7 +20,7 @@ import base.SpecBase
 import connectors.FakeUserAnswersCacheConnector
 import identifiers._
 import identifiers.register.establishers.{IsEstablisherAddressCompleteId, IsEstablisherCompleteId}
-import models.UpdateMode
+import models.{NormalMode, UpdateMode}
 import org.scalatest.OptionValues
 import play.api.libs.json.Json
 import play.api.mvc.Call
@@ -40,7 +40,8 @@ class VariationsNavigatorSpec extends SpecBase with NavigatorBehaviour {
 
   "VariationsNavigator" must {
     behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, updateRoutes, dataDescriber, UpdateMode, srn)
-    behave like nonMatchingNavigator(navigator)
+    behave like nonMatchingNavigator(navigator, UpdateMode)
+    behave like nonMatchingNavigator(navigator, NormalMode)
   }
 }
 

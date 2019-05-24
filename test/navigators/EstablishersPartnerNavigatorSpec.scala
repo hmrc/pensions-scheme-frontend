@@ -62,6 +62,7 @@ class EstablishersPartnerNavigatorSpec extends SpecBase with NavigatorBehaviour 
     (PartnerAddressYearsId(0, 0), addressYearsOverAYearNew, partnerContactDetails(mode), true, Some(exitJourney(mode, addressYearsOverAYearNew)), true),
     (PartnerAddressYearsId(0, 0), addressYearsOverAYear, partnerContactDetails(mode), true, Some(exitJourney(mode, emptyAnswers)), true),
     (PartnerAddressYearsId(0, 0), emptyAnswers, sessionExpired, false, Some(sessionExpired), false),
+    (PartnerConfirmPreviousAddressId(0, 0), emptyAnswers, none, false, Some(sessionExpired), false),
     (PartnerConfirmPreviousAddressId(0, 0), confirmPreviousAddressYes, none, false, Some(anyMoreChanges), false),
     (PartnerConfirmPreviousAddressId(0, 0), confirmPreviousAddressNo, none, false, Some(partnerPreviousAddPostcode(checkMode(mode))), false),
     (PartnerPreviousAddressPostcodeLookupId(0, 0), emptyAnswers, partnerPreviousAddList(mode), true, Some(partnerPreviousAddList(checkMode(mode))), true),
@@ -96,6 +97,7 @@ class EstablishersPartnerNavigatorSpec extends SpecBase with NavigatorBehaviour 
     featureSwitch.change(Toggles.isPrevAddEnabled, true)
     behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, editRoutes(UpdateMode), dataDescriber, UpdateMode)
     behave like nonMatchingNavigator(navigator)
+    behave like nonMatchingNavigator(navigator, UpdateMode)
   }
 
   s"${navigator.getClass.getSimpleName} when previous address feature is toggled off" must {

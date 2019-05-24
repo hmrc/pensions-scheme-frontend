@@ -39,6 +39,7 @@ class EstablishersPartnershipNavigatorSpec extends SpecBase with NavigatorBehavi
 
   private def routes(mode: Mode): TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = Table(
     ("Id", "User Answers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (Check Mode)", "Save (CM)"),
+    (CheckYourAnswersId(0), emptyAnswers, addPartners(mode), true, None, true),
     (PartnershipDetailsId(0), emptyAnswers, partnershipVat(mode), true, Some(exitJourney(mode, emptyAnswers)), true),
     (PartnershipDetailsId(0), newEstablisher, partnershipVat(mode), true, Some(exitJourney(mode, newEstablisher)), true),
     (PartnershipVatId(0), emptyAnswers, partnershipPaye(mode), true, Some(exitJourney(mode, emptyAnswers)), true),
@@ -75,6 +76,7 @@ class EstablishersPartnershipNavigatorSpec extends SpecBase with NavigatorBehavi
     (PartnershipContactDetailsId(0), emptyAnswers, checkYourAnswers(UpdateMode), true, Some(exitJourney(UpdateMode, emptyAnswers)), true),
     (PartnershipReviewId(0), emptyAnswers, anyMoreChanges, false, None, true),
     (PartnershipAddressYearsId(0), addressYearsUnderAYear, partnershipPaPostCodeLookup(UpdateMode), true, Some(confirmPreviousAddress), true),
+    (PartnershipConfirmPreviousAddressId(0), emptyAnswers, defaultPage, false, Some(sessionExpired), false),
     (PartnershipConfirmPreviousAddressId(0), confirmPreviousAddressYes, defaultPage, false, Some(anyMoreChanges), false),
     (PartnershipConfirmPreviousAddressId(0), confirmPreviousAddressNo, defaultPage, false, Some(partnershipPaPostCodeLookup(checkMode(UpdateMode))), false)
   )
@@ -108,7 +110,6 @@ class EstablishersPartnershipNavigatorSpec extends SpecBase with NavigatorBehavi
     val navigator = new EstablishersPartnershipNavigator(FakeUserAnswersCacheConnector, frontendAppConfig, featureSwitch1)
     behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, normalRoutes, dataDescriber)
     behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, updateRoutesToggleOn(), dataDescriber, UpdateMode)
-    behave like nonMatchingNavigator(navigator)
   }
 
   s"EstablisherPartnershipNavigator if toggle off" must {
@@ -117,6 +118,7 @@ class EstablishersPartnershipNavigatorSpec extends SpecBase with NavigatorBehavi
     behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, normalRoutes, dataDescriber)
     behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, updateRoutesToggleOff(), dataDescriber, UpdateMode)
     behave like nonMatchingNavigator(navigator)
+    behave like nonMatchingNavigator(navigator, UpdateMode)
   }
 }
 
