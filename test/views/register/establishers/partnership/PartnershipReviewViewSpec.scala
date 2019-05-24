@@ -104,7 +104,7 @@ class PartnershipReviewViewSpec extends ViewBehaviours {
       Jsoup.parse(createView()().toString).select("a[id=edit-partner-details]") must haveLink(
         routes.AddPartnersController.onPageLoad(NormalMode, index, None).url
       )
-      Jsoup.parse(createView()().toString) must haveDynamicText("messages__partnershipReview__partners__editLink")
+      Jsoup.parse(createView()().toString) must haveDynamicText("messages__partnershipReview__partners__changeLink")
 
     }
 

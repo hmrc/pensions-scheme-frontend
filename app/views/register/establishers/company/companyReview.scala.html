@@ -53,8 +53,6 @@ hideSaveAndContinueButton:Boolean)(implicit request: Request[_], messages: Messa
         heading = messages("messages__companyReview__directors__heading"),
         linkMessage = if(viewOnly){
             "messages__companyReview__directors__viewLink"
-        } else if(directors.lengthCompare(10)<0){
-            "messages__companyReview__directors__editLink"
         } else {
             "messages__companyReview__directors__changeLink"
         },
