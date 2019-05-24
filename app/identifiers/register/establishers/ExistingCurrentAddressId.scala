@@ -14,20 +14,17 @@
  * limitations under the License.
  */
 
-package viewmodels.address
+package identifiers.register.establishers
 
+import identifiers.TypedIdentifier
 import models.address.Address
-import play.api.mvc.Call
-import viewmodels.Message
+import play.api.libs.json.JsPath
 
-case class ConfirmAddressViewModel(
-                                        postCall: Call,
-                                        title: Message,
-                                        heading: Message,
-                                        hint: Option[Message] = None,
-                                        address: Address,
-                                        name: String,
-                                        srn: Option[String] = None
-                                      ) {
+case class ExistingCurrentAddressId(index: Int) extends TypedIdentifier[Address] {
+  override def path: JsPath = EstablishersId(index).path \ ExistingCurrentAddressId.toString
+}
+
+object ExistingCurrentAddressId {
+  override def toString: String = "existingCurrentAddress"
 
 }

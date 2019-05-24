@@ -92,6 +92,9 @@ GET        /:index/individual/:mode/establishers-address-manual/:srn            
 POST       /:index/individual/:mode/establishers-address-manual/:srn                                        controllers.register.establishers.individual.AddressController.onSubmit(mode: Mode, index: Index, srn: Option[String])
 GET       /:index/individual/:mode/establishers-address-manual-link/:srn                                    controllers.register.establishers.individual.AddressController.onClick(mode: Mode, index: Index, srn: Option[String])
 
+GET         /:index/individual/update/is-this-previous-address/:srn                                       controllers.register.establishers.individual.IndividualConfirmPreviousAddressController.onPageLoad(mode: Mode = CheckUpdateMode, index:Index, srn: Option[String])
+POST        /:index/individual/update/is-this-previous-address/:srn                                       controllers.register.establishers.individual.IndividualConfirmPreviousAddressController.onSubmit(mode: Mode = CheckUpdateMode, index:Index, srn: Option[String])
+
 GET         /:index/individual/establishers-previous-address                                                controllers.register.establishers.individual.PreviousAddressPostCodeLookupController.onPageLoad(mode: Mode = NormalMode,index:Index, srn: Option[String] = None)
 POST        /:index/individual/establishers-previous-address                                                controllers.register.establishers.individual.PreviousAddressPostCodeLookupController.onSubmit(mode: Mode = NormalMode,index:Index, srn: Option[String] = None)
 GET         /:index/individual/change/establishers-previous-address                                         controllers.register.establishers.individual.PreviousAddressPostCodeLookupController.onPageLoad(mode: Mode = CheckMode,index:Index, srn: Option[String] = None)
@@ -377,6 +380,9 @@ GET        /:index/partnership/change/previous-address                          
 POST       /:index/partnership/change/previous-address                                                      controllers.register.establishers.partnership.PartnershipPreviousAddressPostcodeLookupController.onSubmit(mode: Mode = CheckMode, index: Index, srn: Option[String] = None)
 GET        /:index/partnership/:mode/previous-address/:srn                                                  controllers.register.establishers.partnership.PartnershipPreviousAddressPostcodeLookupController.onPageLoad(mode: Mode, index: Index, srn: Option[String])
 POST       /:index/partnership/:mode/previous-address/:srn                                                  controllers.register.establishers.partnership.PartnershipPreviousAddressPostcodeLookupController.onSubmit(mode: Mode, index: Index, srn: Option[String])
+
+GET        /:index/partnership/update/is-this-previous-address/:srn                                       controllers.register.establishers.partnership.PartnershipConfirmPreviousAddressController.onPageLoad(mode: Mode = CheckUpdateMode, index: Index, srn: Option[String])
+POST       /:index/partnership/update/is-this-previous-address/:srn                                       controllers.register.establishers.partnership.PartnershipConfirmPreviousAddressController.onSubmit(mode: Mode = CheckUpdateMode, index: Index, srn: Option[String])
 
 GET        /:index/partnership/previous-address-results                                                     controllers.register.establishers.partnership.PartnershipPreviousAddressListController.onPageLoad(mode: Mode = NormalMode, index: Index, srn: Option[String] = None)
 POST       /:index/partnership/previous-address-results                                                     controllers.register.establishers.partnership.PartnershipPreviousAddressListController.onSubmit(mode: Mode = NormalMode, index: Index, srn: Option[String] = None)

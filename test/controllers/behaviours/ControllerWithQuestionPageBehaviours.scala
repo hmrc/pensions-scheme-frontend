@@ -150,12 +150,30 @@ trait ControllerWithQuestionPageBehaviours extends ControllerSpecBase with Scala
 
   }
 
-  def controllerThatSavesUserAnswersWithService[A, I <: TypedIdentifier[A]](
+  def controllerThatUpsertUserAnswersWithService[A, I <: TypedIdentifier[A]](
                                                                   saveAction: UserAnswersService => Action[AnyContent],
                                                                   validRequest: FakeRequest[AnyContentAsFormUrlEncoded],
                                                                   id: I,
                                                                   value: A
                                                                 )(implicit fmt: Format[A]): Unit = {
+
+    "upsert user answers to cache" in {
+      val cache = FakeUserAnswersService
+      val result = saveAction(cache)(validRequest)
+
+      whenReady(result) {
+        _ =>
+          cache.userAnswer.get(id).value mustEqual value
+      }
+    }
+  }
+
+  def controllerThatSavesUserAnswersWithService[A, I <: TypedIdentifier[A]](
+                                                                              saveAction: UserAnswersService => Action[AnyContent],
+                                                                              validRequest: FakeRequest[AnyContentAsFormUrlEncoded],
+                                                                              id: I,
+                                                                              value: A
+                                                                            )(implicit fmt: Format[A]): Unit = {
 
     "save user answers to cache" in {
       val cache = FakeUserAnswersService
@@ -165,9 +183,8 @@ trait ControllerWithQuestionPageBehaviours extends ControllerSpecBase with Scala
         _ =>
           cache.verify(id, value)
       }
-
     }
-
   }
+
 
 }
