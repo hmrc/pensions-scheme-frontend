@@ -67,7 +67,7 @@ class DataRetrievalImpl(dataConnector: UserAnswersCacheConnector,
             OptionalDataRequest(request.request, request.externalId, Some(UserAnswers(answersJsValue)), request.psaId, viewOnly = true)
         }
       case None =>
-        OptionalDataRequest(request.request, request.externalId, None, request.psaId, viewOnly = false)
+        OptionalDataRequest(request.request, request.externalId, None, request.psaId, viewOnly = true)
     }
   }
 
