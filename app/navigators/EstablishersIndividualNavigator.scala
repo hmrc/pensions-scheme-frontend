@@ -77,7 +77,7 @@ class EstablishersIndividualNavigator @Inject()(
           anyMoreChanges(srn)
         }
 
-      case _ => NavigateTo.dontSave(controllers.routes.SessionExpiredController.onPageLoad())
+      case _ => None
     }
   }
 
@@ -163,7 +163,7 @@ class EstablishersIndividualNavigator @Inject()(
     }
   }
 
-  private def confirmPreviousAddressRoutes(index: Int, mode: Mode, srn: Option[String])(answers: UserAnswers): Option[NavigateTo] = {
+  private def confirmPreviousAddressRoutes(index: Int, mode: Mode, srn: Option[String])(answers: UserAnswers): Option[NavigateTo] =
     answers.get(IndividualConfirmPreviousAddressId(index)) match {
       case Some(false) =>
         NavigateTo.dontSave(controllers.register.establishers.individual.routes.PreviousAddressPostCodeLookupController.onPageLoad(mode, index, srn))
@@ -172,5 +172,4 @@ class EstablishersIndividualNavigator @Inject()(
       case None =>
         NavigateTo.dontSave(controllers.routes.SessionExpiredController.onPageLoad())
     }
-  }
 }

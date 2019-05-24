@@ -17,6 +17,7 @@
 package navigators
 
 import base.SpecBase
+import config.FeatureSwitchManagementServiceTestImpl
 import connectors.FakeUserAnswersCacheConnector
 import identifiers.{EstablishersOrTrusteesChangedId, Identifier}
 import identifiers.register.establishers.company._
@@ -25,12 +26,14 @@ import identifiers.register.establishers.{EstablishersId, IsEstablisherNewId}
 import models.Mode.{checkMode, journeyMode}
 import models._
 import models.person.PersonDetails
+import navigators.EstablishersIndividualNavigatorSpec.{environment, injector}
 import org.joda.time.LocalDate
 import org.scalatest.prop.TableFor6
 import org.scalatest.{MustMatchers, OptionValues}
+import play.api.Configuration
 import play.api.libs.json.Json
 import play.api.mvc.Call
-import utils.{Enumerable, UserAnswers}
+import utils.{Enumerable, Toggles, UserAnswers}
 
 //scalastyle:off line.size.limit
 //scalastyle:off magic.number
@@ -57,8 +60,10 @@ class EstablishersCompanyNavigatorSpec extends SpecBase with MustMatchers with N
     (CompanyAddressId(0),                         newEstablisher,                   companyAddressYears(mode),          true,           Some(checkYourAnswers(mode)),                   true),
     (CompanyAddressYearsId(0),                    addressYearsOverAYear,            companyContactDetails(mode),        true,           Some(exitJourney(mode, addressYearsOverAYear)),                   true),
     (CompanyAddressYearsId(0),                    addressYearsOverAYearNew,         companyContactDetails(mode),        true,           Some(exitJourney(mode, addressYearsOverAYearNew)),                   true),
-    (CompanyAddressYearsId(0),                    addressYearsUnderAYear,           prevAddPostCodeLookup(mode),        true,           Some(prevAddPostCodeLookup(checkMode(mode))),   true),
+    (CompanyAddressYearsId(0),                    addressYearsUnderAYear,           prevAddPostCodeLookup(mode),        true,           addressYearsLessThanTwelveEdit(mode),           true),
     (CompanyAddressYearsId(0),                    emptyAnswers,                     sessionExpired,                     false,          Some(sessionExpired),                           false),
+    (CompanyConfirmPreviousAddressId(0),          confirmPreviousAddressYes,        none,                               false,          Some(anyMoreChanges),                           false),
+    (CompanyConfirmPreviousAddressId(0),          confirmPreviousAddressNo,         none,                               false,          Some(prevAddPostCodeLookup(checkMode(mode))),   false),
     (CompanyPreviousAddressPostcodeLookupId(0),   emptyAnswers,                     companyPaList(mode),                true,           Some(companyPaList(checkMode(mode))),           true),
     (CompanyPreviousAddressListId(0),             emptyAnswers,                     companyPreviousAddress(mode),       true,           Some(companyPreviousAddress(checkMode(mode))),  true),
     (CompanyPreviousAddressId(0),                 emptyAnswers,                     companyContactDetails(mode),        true,           Some(exitJourney(mode, emptyAnswers)),                   true),
@@ -99,13 +104,20 @@ class EstablishersCompanyNavigatorSpec extends SpecBase with MustMatchers with N
   )
 
   private val navigator: EstablishersCompanyNavigator =
-    new EstablishersCompanyNavigator(FakeUserAnswersCacheConnector, frontendAppConfig)
+    new EstablishersCompanyNavigator(FakeUserAnswersCacheConnector, frontendAppConfig, featureSwitch)
 
   s"${navigator.getClass.getSimpleName}" must {
     appRunning()
     behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, normalRoutes, dataDescriber)
+    featureSwitch.change(Toggles.isPrevAddEnabled, true)
     behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, updateRoutes, dataDescriber, UpdateMode)
     behave like nonMatchingNavigator(navigator)
+  }
+
+  s"${navigator.getClass.getSimpleName} when previous address feature is toggled off" must {
+    appRunning()
+    featureSwitch.change(Toggles.isPrevAddEnabled, false)
+    behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, updateRoutes, dataDescriber, UpdateMode)
   }
 }
 
@@ -114,6 +126,9 @@ object EstablishersCompanyNavigatorSpec extends OptionValues with Enumerable.Imp
   private val emptyAnswers = UserAnswers(Json.obj())
   private val newEstablisher = UserAnswers(Json.obj()).set(IsEstablisherNewId(0))(true).asOpt.value
   private val johnDoe = PersonDetails("John", None, "Doe", new LocalDate(1862, 6, 9))
+
+  private val config = injector.instanceOf[Configuration]
+  private def featureSwitch = new FeatureSwitchManagementServiceTestImpl(config, environment)
 
   private def validData(directors: PersonDetails*) = {
     Json.obj(
@@ -126,6 +141,7 @@ object EstablishersCompanyNavigatorSpec extends OptionValues with Enumerable.Imp
     )
   }
 
+  private def none: Call = controllers.routes.IndexController.onPageLoad()
   private def sessionExpired = controllers.routes.SessionExpiredController.onPageLoad()
 
   private def companyRegistrationNumber(mode: Mode): Call =
@@ -175,6 +191,15 @@ object EstablishersCompanyNavigatorSpec extends OptionValues with Enumerable.Imp
     else anyMoreChanges
   }
 
+  private def confirmPreviousAddress = controllers.register.establishers.company.routes.CompanyConfirmPreviousAddressController.onPageLoad(0, None)
+
+
+  private def addressYearsLessThanTwelveEdit(mode: Mode) =
+    if (checkMode(mode) == CheckUpdateMode && featureSwitch.get(Toggles.isPrevAddEnabled))
+      Some(confirmPreviousAddress)
+    else
+      Some(prevAddPostCodeLookup(checkMode(mode)))
+
   private def addEstablisher(mode: Mode) = controllers.register.establishers.routes.AddEstablisherController.onPageLoad(mode, None)
 
   private def addCompanyDirectors(index: Int, mode: Mode) = controllers.register.establishers.company.routes.AddCompanyDirectorsController.onPageLoad(mode, None, index)
@@ -199,6 +224,11 @@ object EstablishersCompanyNavigatorSpec extends OptionValues with Enumerable.Imp
     .flatMap(_.set(IsEstablisherNewId(0))(true)).asOpt.value
   private val addCompanyDirectorsMoreThan10 = UserAnswers(validData(Seq.fill(10)(johnDoe): _*))
   private val addOneCompanyDirectors = UserAnswers(validData(johnDoe))
+
+  private val confirmPreviousAddressYes = UserAnswers(Json.obj())
+    .set(CompanyConfirmPreviousAddressId(0))(true).asOpt.value
+  private val confirmPreviousAddressNo = UserAnswers(Json.obj())
+    .set(CompanyConfirmPreviousAddressId(0))(false).asOpt.value
 
   private def dataDescriber(answers: UserAnswers): String = answers.toString
 }
