@@ -22,4 +22,8 @@ class TogglesSpec extends FeatureToggleBehaviours {
     behave like featureToggle("is-variations-enabled", false)
   }
 
+  "is-address-pre-population-enabled new feature toggle" should {
+    behave like featureToggle("is-address-pre-population-enabled", false)
+  }
+
 }
