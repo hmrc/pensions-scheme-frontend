@@ -77,7 +77,7 @@ class EstablishersIndividualNavigator @Inject()(
           anyMoreChanges(srn)
         }
 
-      case _ => NavigateTo.dontSave(controllers.routes.SessionExpiredController.onPageLoad())
+      case _ => None
     }
   }
 
