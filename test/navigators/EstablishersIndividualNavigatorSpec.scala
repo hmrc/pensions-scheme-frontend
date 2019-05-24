@@ -80,6 +80,12 @@ class EstablishersIndividualNavigatorSpec extends SpecBase with MustMatchers wit
     featureSwitch.change(Toggles.isPrevAddEnabled, false)
     behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, routes(UpdateMode), dataDescriber, UpdateMode)
   }
+
+  s"${navigator.getClass.getSimpleName} when previous address freature is toggled off" must {
+    appRunning()
+    featureSwitch.change(Toggles.isPrevAddEnabled, false)
+    behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, routes(UpdateMode), dataDescriber, UpdateMode)
+   }
 }
 
 object EstablishersIndividualNavigatorSpec extends SpecBase with OptionValues {
@@ -149,6 +155,7 @@ object EstablishersIndividualNavigatorSpec extends SpecBase with OptionValues {
       Some(confirmPreviousAddress)
     else
       Some(previousAddressPostCodeLookup(checkMode(mode)))
+
 
 }
 
