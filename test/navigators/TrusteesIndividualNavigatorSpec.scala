@@ -17,15 +17,17 @@
 package navigators
 
 import base.SpecBase
+import config.FeatureSwitchManagementServiceTestImpl
 import connectors.FakeUserAnswersCacheConnector
 import identifiers.register.trustees.IsTrusteeNewId
 import identifiers.register.trustees.individual._
 import models._
 import models.Mode.checkMode
 import org.scalatest.OptionValues
+import play.api.Configuration
 import play.api.libs.json.Json
 import play.api.mvc.Call
-import utils.UserAnswers
+import utils.{Toggles, UserAnswers}
 
 class TrusteesIndividualNavigatorSpec extends SpecBase with NavigatorBehaviour {
 
@@ -46,8 +48,10 @@ class TrusteesIndividualNavigatorSpec extends SpecBase with NavigatorBehaviour {
     (TrusteeAddressId(0), newTrustee, addressYears(mode), true, Some(checkYourAnswers(mode)), true),
     (TrusteeAddressYearsId(0), overAYearNew, contactDetails(mode), true, Some(exitJourney(mode,overAYearNew)), true),
     (TrusteeAddressYearsId(0), overAYear, contactDetails(mode), true, Some(exitJourney(mode,emptyAnswers)), true),
-    (TrusteeAddressYearsId(0), underAYear, previousAddressPostcode(mode), true, Some(previousAddressPostcode(checkMode(mode))), true),
+    (TrusteeAddressYearsId(0), underAYear, previousAddressPostcode(mode), true, addressYearsLessThanTwelveEdit(mode), true),
     (TrusteeAddressYearsId(0), emptyAnswers, sessionExpired, false, Some(sessionExpired), false),
+    (IndividualConfirmPreviousAddressId(0), confirmPreviousAddressYes, none, false, Some(anyMoreChanges), false),
+    (IndividualConfirmPreviousAddressId(0), confirmPreviousAddressNo, none, false, Some(previousAddressPostcode(checkMode(mode))), false),
     (IndividualPreviousAddressPostCodeLookupId(0), emptyAnswers, previousAddressList(mode), true, Some(previousAddressList(checkMode(mode))), true),
     (TrusteePreviousAddressListId(0), emptyAnswers, previousAddress(mode), true, Some(previousAddress(checkMode(mode))), true),
     (TrusteePreviousAddressId(0), emptyAnswers, contactDetails(mode), true, Some(exitJourney(mode,emptyAnswers)), true),
@@ -57,25 +61,39 @@ class TrusteesIndividualNavigatorSpec extends SpecBase with NavigatorBehaviour {
   )
 
   private val navigator: TrusteesIndividualNavigator =
-    new TrusteesIndividualNavigator(FakeUserAnswersCacheConnector, frontendAppConfig)
+    new TrusteesIndividualNavigator(FakeUserAnswersCacheConnector, frontendAppConfig, featureSwitch)
 
 
   s"${navigator.getClass.getSimpleName}" must {
     appRunning()
     behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, routes(NormalMode), dataDescriber)
+    featureSwitch.change(Toggles.isPrevAddEnabled, true)
     behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, routes(UpdateMode), dataDescriber, UpdateMode)
     behave like nonMatchingNavigator(navigator)
   }
 
+  s"${navigator.getClass.getSimpleName} when previousAddress feature is toggled off" must {
+    appRunning()
+    featureSwitch.change(Toggles.isPrevAddEnabled, false)
+    behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, routes(UpdateMode), dataDescriber, UpdateMode)
+  }
+
 }
 
-object TrusteesIndividualNavigatorSpec extends OptionValues {
+object TrusteesIndividualNavigatorSpec extends SpecBase with OptionValues {
   private val newTrustee = UserAnswers(Json.obj()).set(IsTrusteeNewId(0))(true).asOpt.value
 
   private def taskList: Call = controllers.routes.SchemeTaskListController.onPageLoad(NormalMode, None)
 
   private val emptyAnswers = UserAnswers(Json.obj())
   val firstIndex = Index(0)
+  private val confirmPreviousAddressYes = UserAnswers(Json.obj())
+    .set(IndividualConfirmPreviousAddressId(0))(true).asOpt.value
+  private val confirmPreviousAddressNo = UserAnswers(Json.obj())
+    .set(IndividualConfirmPreviousAddressId(0))(false).asOpt.value
+
+  private def none = controllers.routes.IndexController.onPageLoad
+  private def confirmPreviousAddress = controllers.register.trustees.individual.routes.IndividualConfirmPreviousAddressController.onPageLoad(0, None)
 
   private def details(mode: Mode) = controllers.register.trustees.individual.routes.TrusteeDetailsController.onPageLoad(mode, Index(0), None)
 
@@ -120,5 +138,14 @@ object TrusteesIndividualNavigatorSpec extends OptionValues {
     if(answers.get(IsTrusteeNewId(index)).getOrElse(false)) checkYourAnswers(mode)
     else anyMoreChanges
   }
+
+  private val config = injector.instanceOf[Configuration]
+  private def featureSwitch = new FeatureSwitchManagementServiceTestImpl(config, environment)
+
+  private def addressYearsLessThanTwelveEdit(mode: Mode) =
+    if (checkMode(mode) == CheckUpdateMode && featureSwitch.get(Toggles.isPrevAddEnabled))
+      Some(confirmPreviousAddress)
+    else
+      Some(previousAddressPostcode(checkMode(mode)))
 
 }

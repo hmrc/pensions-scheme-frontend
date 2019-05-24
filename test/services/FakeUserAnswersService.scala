@@ -19,21 +19,8 @@ package services
 import config.FrontendAppConfig
 import connectors._
 import identifiers.TypedIdentifier
-import identifiers.register.establishers.IsEstablisherAddressCompleteId
-import identifiers.register.establishers.company.director.{DirectorAddressYearsId, IsDirectorAddressCompleteId}
-import identifiers.register.establishers.partnership.partner.{IsPartnerAddressCompleteId, PartnerAddressYearsId}
-import identifiers.register.trustees.company.{CompanyAddressYearsId => TruesteeCompanyAddressYearsId, CompanyPreviousAddressId => TruesteeCompanyPreviousAddressId}
-import identifiers.register.trustees.individual.{TrusteeAddressYearsId => TruesteeIndividualAddressYearsId, TrusteePreviousAddressId => TruesteeIndividualPreviousAddressId}
-import identifiers.register.trustees.partnership.{PartnershipAddressYearsId => TruesteePartnershipAddressYearsId, PartnershipPreviousAddressId => TruesteePartnershipPreviousAddressId}
-import identifiers.register.establishers.company.{CompanyAddressYearsId => EstablisherCompanyAddressYearsId, CompanyPreviousAddressId => EstablisherCompanyPreviousAddressId}
-import identifiers.register.establishers.individual.{AddressYearsId => EstablisherIndividualAddressYearsId, PreviousAddressId => EstablisherIndividualPreviousAddressId}
-import identifiers.register.establishers.partnership.{PartnershipAddressYearsId => EstablisherPartnershipAddressYearsId, PartnershipPreviousAddressId => EstablisherPartnershipPreviousAddressId}
-import identifiers.register.establishers.partnership.partner.{IsPartnerAddressCompleteId, PartnerAddressYearsId, PartnerPreviousAddressId}
-import identifiers.register.establishers.company.director.{DirectorAddressYearsId, DirectorPreviousAddressId, IsDirectorAddressCompleteId}
-import identifiers.register.trustees.IsTrusteeAddressCompleteId
-import models.AddressYears.{OverAYear, UnderAYear}
+import models.Mode
 import models.address.Address
-import models.{AddressYears, Mode}
 import models.requests.DataRequest
 import org.scalatest.Matchers
 import play.api.libs.json._

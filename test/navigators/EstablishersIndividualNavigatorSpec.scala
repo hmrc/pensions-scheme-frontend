@@ -53,8 +53,8 @@ class EstablishersIndividualNavigatorSpec extends SpecBase with MustMatchers wit
       (AddressYearsId(0), addressYearsOverAYear, contactDetails(mode), true, Some(exitJourney(mode, emptyAnswers)), true),
       (AddressYearsId(0), addressYearsUnderAYear, previousAddressPostCodeLookup(mode), true, addressYearsLessThanTwelveEdit(mode), true),
       (AddressYearsId(0), emptyAnswers, sessionExpired, false, Some(sessionExpired), false),
-      (IndividualConfirmPreviousAddressId(0), confirmPreviousAddressYes, sessionExpired, false, Some(anyMoreChanges), false),
-      (IndividualConfirmPreviousAddressId(0), confirmPreviousAddressNo, sessionExpired, false, Some(previousAddressPostCodeLookup(checkMode(mode))), false),
+      (IndividualConfirmPreviousAddressId(0), confirmPreviousAddressYes, none, false, Some(anyMoreChanges), false),
+      (IndividualConfirmPreviousAddressId(0), confirmPreviousAddressNo, none, false, Some(previousAddressPostCodeLookup(checkMode(mode))), false),
       (PreviousPostCodeLookupId(0), emptyAnswers, previousAddressAddressList(mode), true, Some(previousAddressAddressList(checkMode(mode))), true),
       (PreviousAddressListId(0), emptyAnswers, previousAddress(mode), true, Some(previousAddress(checkMode(mode))), true),
       (PreviousAddressId(0), emptyAnswers, contactDetails(mode), true, Some(exitJourney(mode, emptyAnswers)), true),
@@ -80,6 +80,12 @@ class EstablishersIndividualNavigatorSpec extends SpecBase with MustMatchers wit
     featureSwitch.change(Toggles.isPrevAddEnabled, false)
     behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, routes(UpdateMode), dataDescriber, UpdateMode)
   }
+
+  s"${navigator.getClass.getSimpleName} when previous address freature is toggled off" must {
+    appRunning()
+    featureSwitch.change(Toggles.isPrevAddEnabled, false)
+    behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, routes(UpdateMode), dataDescriber, UpdateMode)
+   }
 }
 
 object EstablishersIndividualNavigatorSpec extends SpecBase with OptionValues {
@@ -100,7 +106,7 @@ object EstablishersIndividualNavigatorSpec extends SpecBase with OptionValues {
     .set(IndividualConfirmPreviousAddressId(0))(false).asOpt.value
 
 
-
+  private def none: Call = controllers.routes.IndexController.onPageLoad()
   private def establisherNino(mode: Mode) = controllers.register.establishers.individual.routes.EstablisherNinoController.onPageLoad(mode, 0, None)
 
   private def establisherUtr(mode: Mode) = controllers.register.establishers.individual.routes.UniqueTaxReferenceController.onPageLoad(mode, 0, None)
@@ -149,6 +155,7 @@ object EstablishersIndividualNavigatorSpec extends SpecBase with OptionValues {
       Some(confirmPreviousAddress)
     else
       Some(previousAddressPostCodeLookup(checkMode(mode)))
+
 
 }
 
