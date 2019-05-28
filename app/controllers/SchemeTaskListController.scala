@@ -115,7 +115,7 @@ class SchemeTaskListController @Inject()(appConfig: FrontendAppConfig,
 
       val updatedUserAnswers = userAnswers.set(IsPsaSuspendedId)(isSuspended).asOpt.getOrElse(userAnswers)
       val taskList: SchemeDetailsTaskList = new HsTaskListHelperVariations(updatedUserAnswers,
-        if (viewOnly) viewOnly else !userAnswers.get(SchemeStatusId).contains("Open"), Some(srn)).taskList
+        viewOnly || !userAnswers.get(SchemeStatusId).contains("Open"), Some(srn)).taskList
 
       upsertUserAnswers(updatedUserAnswers.json).flatMap { _ =>
 
