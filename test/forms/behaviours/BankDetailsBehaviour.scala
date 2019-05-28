@@ -121,9 +121,7 @@ trait BankDetailsBehaviour extends FormSpec with BankDetailsMapping with Propert
                                getAccountNumber: T => String
                               ): Unit = {
 
-
     "behave like form with Account Number" should {
-
 
       forAll(Gen.listOfN[Char](8, Gen.numChar).map(_.mkString(" "))) { accountNumber =>
         s"bind a valid account number $accountNumber" in {
@@ -144,12 +142,20 @@ trait BankDetailsBehaviour extends FormSpec with BankDetailsMapping with Propert
         }
       }
 
+      forAll(numbersWithMaxLength(8) -> "longString") {
+        accountNumber =>
+          s"not bind a account number $accountNumber which exceeds max length" in {
+            val result = testForm.bind(Map("accountNumber" -> accountNumber)).apply("accountNumber")
+            result.errors shouldEqual Seq(FormError("accountNumber", keyMaxError))
+          }
+      }
+      /*
       Seq("12 34 56 78 7", "123456787").foreach { accountNumber =>
         s"not bind a account number $accountNumber which exceeds max length" in {
           val result = testForm.bind(validOtherData ++ Map("accountNumber" -> accountNumber))
           result.errors shouldBe Seq(FormError("accountNumber", keyMaxError))
         }
-      }
+      }*/
 
       "not bind a account number which is less than the expected length" in {
         val result = testForm.bind(validOtherData ++ Map("accountNumber" -> "12345"))
