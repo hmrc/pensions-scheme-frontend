@@ -163,7 +163,7 @@ class PartnerAddressControllerSpec extends ControllerSpecBase with MockitoSugar 
             status(result) must be(SEE_OTHER)
             redirectLocation(result).value mustEqual onwardCall.url
 
-            FakeUserAnswersService.verify(PartnerAddressId(establisherIndex, partnerIndex), address)
+            FakeUserAnswersService.userAnswer.get(PartnerAddressId(establisherIndex, partnerIndex)).value mustEqual address
         }
       }
     }

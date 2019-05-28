@@ -81,7 +81,7 @@ class SchemeTaskListControllerSpec extends ControllerSpecBase {
 
     "isVariationsEnabled toggle switched on in UpdateMode and user holds the lock" must {
 
-      "return OK and the correct view for a GET" in {
+      "return OK and the correct view for a GET where scheme status is open" in {
 
         reset(fakeSchemeDetailsConnector)
         fs.change("is-variations-enabled", true)
@@ -97,6 +97,25 @@ class SchemeTaskListControllerSpec extends ControllerSpecBase {
         status(result) mustBe OK
         contentAsString(result).contains(messages("messages__scheme_details__title")) mustBe true
         contentAsString(result).contains(messages("messages__schemeTaskList__sectionDeclaration_header")) mustBe true
+        contentAsString(result).contains(messages("messages__schemeTaskList__sectionTrustees_no_trustees")) mustBe false
+      }
+
+      "return OK and the correct view for a GET where scheme status is rejected" in {
+
+        reset(fakeSchemeDetailsConnector)
+        fs.change("is-variations-enabled", true)
+        when(fakeMinimalPsaConnector.isPsaSuspended(any())(any(), any()))
+          .thenReturn(Future.successful(false))
+        when(fakeSchemeTransformer.transformMasterSection(any())).thenReturn(masterSections)
+        when(fakeLockConnector.isLockByPsaIdOrSchemeId(any(), any())(any(), any())).thenReturn(Future.successful(Some(VarianceLock)))
+        when(fakeUpdateCacheConnector.upsert(any(), any())(any(), any()))
+          .thenReturn(Future.successful(JsNull))
+
+        val result = controller(dataRetrievalAction = userAnswersRejected).onPageLoad(UpdateMode, srn)(fakeRequest)
+
+        status(result) mustBe OK
+        contentAsString(result).contains(messages("messages__scheme_details__title")) mustBe true
+        contentAsString(result).contains(messages("messages__schemeTaskList__sectionDeclaration_header")) mustBe false
         contentAsString(result).contains(messages("messages__schemeTaskList__sectionTrustees_no_trustees")) mustBe false
       }
 
@@ -168,8 +187,10 @@ object SchemeTaskListControllerSpec extends ControllerSpecBase with MockitoSugar
     )(fakeRequest, messages).toString()
 
   private val userAnswersJson = readJsonFromFile("/payload.json")
+  private val userAnswersJsonRejected = readJsonFromFile("/payloadRejected.json")
 
   private val userAnswers = new FakeDataRetrievalAction(Some(userAnswersJson))
+  private val userAnswersRejected = new FakeDataRetrievalAction(Some(userAnswersJsonRejected))
   private lazy val beforeYouStartLinkText = messages("messages__schemeTaskList__before_you_start_link_text")
   private lazy val addEstablisherLinkText = messages("messages__schemeTaskList__sectionEstablishers_add_link")
   private lazy val aboutMembersLinkText = messages("messages__schemeTaskList__about_members_link_text")

@@ -17,17 +17,19 @@
 package navigators
 
 import com.google.inject.Inject
-import config.FrontendAppConfig
+import config.{FeatureSwitchManagementService, FrontendAppConfig}
 import connectors.UserAnswersCacheConnector
 import identifiers.EstablishersOrTrusteesChangedId
 import identifiers.register.establishers.IsEstablisherNewId
 import identifiers.register.establishers.company._
 import models.Mode._
 import models._
-import utils.{Navigator, UserAnswers}
+import utils.{Navigator, Toggles, UserAnswers}
 
 //scalastyle:off cyclomatic.complexity
-class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector, appConfig: FrontendAppConfig) extends Navigator {
+class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector,
+                                             appConfig: FrontendAppConfig,
+                                             featureSwitchManagementService: FeatureSwitchManagementService) extends Navigator {
 
   protected def routes(from: NavigateFrom, mode: Mode, srn: Option[String]): Option[NavigateTo] =
     from.id match {
@@ -96,6 +98,8 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
       case CompanyAddressYearsId(index) =>
         editAddressYearsRoutes(index, from.userAnswers, mode, srn)
 
+      case CompanyConfirmPreviousAddressId(index) => confirmPreviousAddressRoutes(index, mode, srn)(from.userAnswers)
+
       case CompanyPreviousAddressPostcodeLookupId(index) =>
         NavigateTo.dontSave(controllers.register.establishers.company.routes.CompanyPreviousAddressListController.onPageLoad(mode, srn, index))
 
@@ -163,7 +167,10 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
   private def editAddressYearsRoutes(index: Int, answers: UserAnswers, mode: Mode, srn: Option[String]): Option[NavigateTo] = {
     answers.get(CompanyAddressYearsId(index)) match {
       case Some(AddressYears.UnderAYear) =>
-        NavigateTo.dontSave(controllers.register.establishers.company.routes.CompanyPreviousAddressPostcodeLookupController.onPageLoad(mode, srn, index))
+        if (mode == CheckUpdateMode && featureSwitchManagementService.get(Toggles.isPrevAddEnabled))
+          NavigateTo.dontSave(controllers.register.establishers.company.routes.CompanyConfirmPreviousAddressController.onPageLoad(index, srn))
+        else
+          NavigateTo.dontSave(controllers.register.establishers.company.routes.CompanyPreviousAddressPostcodeLookupController.onPageLoad(mode, srn, index))
       case Some(AddressYears.OverAYear) => exitMiniJourney(index, mode, srn, answers)
       case None =>
         NavigateTo.dontSave(controllers.routes.SessionExpiredController.onPageLoad())
@@ -215,6 +222,17 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
         case _ =>
           anyMoreChanges(srn)
       }
+    }
+  }
+
+  private def confirmPreviousAddressRoutes(index: Int, mode: Mode, srn: Option[String])(answers: UserAnswers): Option[NavigateTo] = {
+    answers.get(CompanyConfirmPreviousAddressId(index)) match {
+      case Some(false) =>
+        NavigateTo.dontSave(controllers.register.establishers.company.routes.CompanyPreviousAddressPostcodeLookupController.onPageLoad(mode, srn, index))
+      case Some(true) =>
+        anyMoreChanges(srn)
+      case None =>
+        NavigateTo.dontSave(controllers.routes.SessionExpiredController.onPageLoad())
     }
   }
 }

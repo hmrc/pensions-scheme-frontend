@@ -24,8 +24,6 @@ import utils.UserAnswers
 case class IndividualConfirmPreviousAddressId(index: Int) extends TypedIdentifier[Boolean] {
   override def path: JsPath = EstablishersId(index).path \ IndividualConfirmPreviousAddressId.toString
 
-  override def toString: String = "individualConfirmPreviousAddress"
-
   override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): JsResult[UserAnswers] = {
     value match {
       case Some(false) =>
@@ -34,4 +32,8 @@ case class IndividualConfirmPreviousAddressId(index: Int) extends TypedIdentifie
       case _ => super.cleanup(value, userAnswers)
     }
   }
+}
+
+case object IndividualConfirmPreviousAddressId {
+  override def toString: String = "individualConfirmPreviousAddress"
 }

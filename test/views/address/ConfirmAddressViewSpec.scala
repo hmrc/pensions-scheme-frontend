@@ -17,7 +17,7 @@
 package views.address
 
 import forms.address.ConfirmAddressFormProvider
-import models.address.TolerantAddress
+import models.address.{Address, TolerantAddress}
 import models.{Mode, NormalMode, UpdateMode}
 import play.api.data.Form
 import play.api.mvc.Call
@@ -36,13 +36,13 @@ class ConfirmAddressViewSpec extends YesNoViewBehaviours {
   val formProvider = new ConfirmAddressFormProvider()
   val form = formProvider(name)
 
-  val testAddress = TolerantAddress(
-    Some("address line 1"),
-    Some("address line 2"),
+  val testAddress = Address(
+    "address line 1",
+    "address line 2",
     Some("test town"),
     Some("test county"),
     Some("test post code"),
-    Some("GB")
+    "GB"
   )
 
   val testCountry = "United Kingdom"
@@ -79,8 +79,8 @@ class ConfirmAddressViewSpec extends YesNoViewBehaviours {
 
     "display the address" in {
       val doc = asDocument(createView())
-      assertRenderedByIdWithText(doc, "address-value-0", testAddress.addressLine1.value)
-      assertRenderedByIdWithText(doc, "address-value-1", testAddress.addressLine2.value)
+      assertRenderedByIdWithText(doc, "address-value-0", testAddress.addressLine1)
+      assertRenderedByIdWithText(doc, "address-value-1", testAddress.addressLine2)
       assertRenderedByIdWithText(doc, "address-value-2", testAddress.addressLine3.value)
       assertRenderedByIdWithText(doc, "address-value-3", testAddress.addressLine4.value)
       assertRenderedByIdWithText(doc, "address-value-4", testAddress.postcode.value)

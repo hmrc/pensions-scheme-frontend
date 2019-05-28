@@ -42,17 +42,6 @@ case class TolerantAddress(addressLine1: Option[String],
 
   def print: String = lines.mkString(", ")
 
-  def lines(countryOptions: CountryOptions): Seq[String] = {
-    Seq(
-      this.addressLine1,
-      this.addressLine2,
-      this.addressLine3,
-      this.addressLine4,
-      this.postcode,
-      countryOptions.getCountryNameFromCode(this)
-    ).flatten(s => s)
-  }
-
   def toAddress: Address =
     Address(
       addressLine1.getOrElse(""),

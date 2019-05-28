@@ -54,6 +54,10 @@ object ManualAddressControllerSpec {
     override def toString = "fakeAddressId"
   }
 
+  val fakeExistingAddressId: TypedIdentifier[Address] = new TypedIdentifier[Address] {
+    override def toString = "fakeExistingAddressId"
+  }
+
   val fakeAddressListId: TypedIdentifier[TolerantAddress] = new TypedIdentifier[TolerantAddress] {
     override def toString = "fakeAddressListId"
   }
@@ -243,8 +247,9 @@ class ManualAddressControllerSpec extends WordSpec with MustMatchers with Mockit
 
             val controller = app.injector.instanceOf[TestController]
 
+            val currentAddress = Address("current1", "current2", None, None, None, "GB")
             val result = controller.onSubmit(viewModel, UserAnswers().set(fakeSeqTolerantAddressId)(Seq(TolerantAddress(
-              None, None, None, None, None, None))).asOpt.value, FakeRequest().withFormUrlEncodedBody(
+              None, None, None, None, None, None))).flatMap(_.set(fakeAddressId)(currentAddress)).asOpt.value, FakeRequest().withFormUrlEncodedBody(
               ("addressLine1", "value 1"),
               ("addressLine2", "value 2"),
               ("postCode", "AB1 1AB"),
@@ -256,10 +261,10 @@ class ManualAddressControllerSpec extends WordSpec with MustMatchers with Mockit
 
             val address = Address("value 1", "value 2", None, None, Some("AB1 1AB"), "GB")
 
-            FakeUserAnswersService.verify(fakeAddressId, address)
+            FakeUserAnswersService.userAnswer.get(fakeAddressId).value mustEqual address
+            FakeUserAnswersService.verify(fakeExistingAddressId, currentAddress)
             FakeUserAnswersService.verifyRemoved(fakeSeqTolerantAddressId)
         }
-
       }
 
       "will send an audit event" in {

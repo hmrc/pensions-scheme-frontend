@@ -68,6 +68,11 @@ case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Implicits{
       .flatMap(a => traverse(a.map(Json.fromJson[A]))).asOpt
   }
 
+  def set(path: JsPath)(jsValue: JsValue): JsResult[UserAnswers] = {
+    JsLens.fromPath(path)
+      .set(jsValue, json).map(UserAnswers(_))
+  }
+
   def set[I <: TypedIdentifier.PathDependent](id: I)(value: id.Data)(implicit writes: Writes[id.Data]): JsResult[UserAnswers] = {
     val jsValue = Json.toJson(value)
     val oldValue = json
