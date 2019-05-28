@@ -18,17 +18,18 @@ package controllers
 
 import base.JsonFileReader
 import config.{FeatureSwitchManagementService, FeatureSwitchManagementServiceTestImpl}
-import connectors.{MinimalPsaConnector, PensionSchemeVarianceLockConnector, SchemeDetailsConnector, SchemeDetailsReadOnlyCacheConnector, UpdateSchemeCacheConnector}
+import connectors._
 import controllers.actions._
-import controllers.register.DeclarationControllerSpec.onwardRoute
 import handlers.ErrorHandler
+import identifiers.SchemeStatusId
+import models._
 import models.details.transformation.{SchemeDetailsMasterSection, SchemeDetailsStubData}
-import models.{Link, NormalMode, SchemeLock, UpdateMode, VarianceLock}
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{reset, when}
+import org.scalatest.BeforeAndAfterEach
 import org.scalatest.mockito.MockitoSugar
 import play.api.Configuration
-import play.api.libs.json.{JsNull, Json}
+import play.api.libs.json.JsNull
 import play.api.test.Helpers._
 import utils.UserAnswers
 import viewmodels._
@@ -36,9 +37,13 @@ import views.html.{psa_scheme_details, schemeDetailsTaskList}
 
 import scala.concurrent.Future
 
-class SchemeTaskListControllerSpec extends ControllerSpecBase {
+class SchemeTaskListControllerSpec extends ControllerSpecBase with BeforeAndAfterEach {
 
   import SchemeTaskListControllerSpec._
+
+  override protected def beforeEach(): Unit = {
+    reset(fakeSchemeDetailsConnector, fakeSchemeTransformer, fakeMinimalPsaConnector, fakeLockConnector, fakeUpdateCacheConnector)
+  }
 
   "SchemeTaskList Controller" when {
 
@@ -65,8 +70,6 @@ class SchemeTaskListControllerSpec extends ControllerSpecBase {
     "when isVariationsEnabled toggle switched off in UpdateMode" must {
 
       "return OK and the correct view for a GET" in {
-
-        reset(fakeSchemeDetailsConnector)
         fs.change("is-variations-enabled", false)
         when(fakeSchemeDetailsConnector.getSchemeDetails(any(), any(), any())(any(), any()))
           .thenReturn(Future.successful(psaSchemeDetailsSample))
@@ -82,12 +85,9 @@ class SchemeTaskListControllerSpec extends ControllerSpecBase {
     "isVariationsEnabled toggle switched on in UpdateMode and user holds the lock" must {
 
       "return OK and the correct view for a GET where scheme status is open" in {
-
-        reset(fakeSchemeDetailsConnector)
         fs.change("is-variations-enabled", true)
         when(fakeMinimalPsaConnector.isPsaSuspended(any())(any(), any()))
           .thenReturn(Future.successful(false))
-        when(fakeSchemeTransformer.transformMasterSection(any())).thenReturn(masterSections)
         when(fakeLockConnector.isLockByPsaIdOrSchemeId(any(), any())(any(), any())).thenReturn(Future.successful(Some(VarianceLock)))
         when(fakeUpdateCacheConnector.upsert(any(), any())(any(), any()))
           .thenReturn(Future.successful(JsNull))
@@ -101,14 +101,12 @@ class SchemeTaskListControllerSpec extends ControllerSpecBase {
       }
 
       "return OK and the correct view for a GET where scheme status is rejected" in {
-
-        reset(fakeSchemeDetailsConnector)
-        fs.change("is-variations-enabled", true)
+        when(fakeSchemeDetailsConnector.getSchemeDetailsVariations(any(), any(), any())(any(), any()))
+          .thenReturn(Future.successful(UserAnswers(userAnswersJsonRejected)))
         when(fakeMinimalPsaConnector.isPsaSuspended(any())(any(), any()))
           .thenReturn(Future.successful(false))
-        when(fakeSchemeTransformer.transformMasterSection(any())).thenReturn(masterSections)
-        when(fakeLockConnector.isLockByPsaIdOrSchemeId(any(), any())(any(), any())).thenReturn(Future.successful(Some(VarianceLock)))
-        when(fakeUpdateCacheConnector.upsert(any(), any())(any(), any()))
+        when(fakeLockConnector.isLockByPsaIdOrSchemeId(any(), any())(any(), any())).thenReturn(Future.successful(None))
+        when(fakeSchemeDetailsReadOnlyCacheConnector.upsert(any(), any())(any(), any()))
           .thenReturn(Future.successful(JsNull))
 
         val result = controller(dataRetrievalAction = userAnswersRejected).onPageLoad(UpdateMode, srn)(fakeRequest)
@@ -119,21 +117,66 @@ class SchemeTaskListControllerSpec extends ControllerSpecBase {
         contentAsString(result).contains(messages("messages__schemeTaskList__sectionTrustees_no_trustees")) mustBe false
       }
 
-      "return OK and correct view when viewOnly flag set to true" in {
-
-        val userAnswersResponse = UserAnswers(Json.obj(
-          "test attribute" -> "test value"
-        ))
-
-        when(fakeSchemeDetailsConnector.getSchemeDetailsVariations(any(), any(), any())(any(), any()))
-          .thenReturn(Future.successful(userAnswersResponse))
-        when(fakeSchemeTransformer.transformMasterSection(any())).thenReturn(masterSections)
+      "return OK and correct view when viewOnly flag set to true if the scheme is locked by another psa, have user answers and cannot be edited" in {
+        val answers = UserAnswers().set(SchemeStatusId)("Open").asOpt.value
         when(fakeLockConnector.isLockByPsaIdOrSchemeId(any(), any())(any(), any())).thenReturn(Future.successful(Some(SchemeLock)))
+        when(fakeMinimalPsaConnector.isPsaSuspended(any())(any(), any())).thenReturn(Future.successful(false))
+        when(fakeUpdateCacheConnector.upsert(any(), any())(any(), any()))
+          .thenReturn(Future.successful(JsNull))
+
+        val result = controller(dataRetrievalAction = answers.dataRetrievalAction)
+          .onPageLoad(UpdateMode, srn)(fakeRequest)
+
+        status(result) mustBe OK
+
+        contentAsString(result).contains(messages("messages__schemeTaskList__sectionDeclaration_header")) mustBe false
+        contentAsString(result).contains(messages("messages__schemeTaskList__sectionTrustees_no_trustees")) mustBe true
+      }
+
+      "return OK and correct view when viewOnly flag set to true if the scheme is locked by another psa, don't have user answers and cannot be edited" in {
+        val answers = UserAnswers().set(SchemeStatusId)("Open").asOpt.value
+        when(fakeSchemeDetailsConnector.getSchemeDetailsVariations(any(), any(), any())(any(), any()))
+          .thenReturn(Future.successful(answers))
+        when(fakeLockConnector.isLockByPsaIdOrSchemeId(any(), any())(any(), any())).thenReturn(Future.successful(Some(SchemeLock)))
+        when(fakeMinimalPsaConnector.isPsaSuspended(any())(any(), any())).thenReturn(Future.successful(false))
+        when(fakeUpdateCacheConnector.upsert(any(), any())(any(), any()))
+          .thenReturn(Future.successful(JsNull))
+
+        val result = controller(dataRetrievalAction = getEmptyData)
+          .onPageLoad(UpdateMode, srn)(fakeRequest)
+
+        status(result) mustBe OK
+
+        contentAsString(result).contains(messages("messages__schemeTaskList__sectionDeclaration_header")) mustBe false
+        contentAsString(result).contains(messages("messages__schemeTaskList__sectionTrustees_no_trustees")) mustBe true
+      }
+
+      "return OK and correct view when viewOnly flag set to false if scheme is locked by same psa and can be edited" in {
+        val answers = UserAnswers().set(SchemeStatusId)("Open").asOpt.value
+        when(fakeLockConnector.isLockByPsaIdOrSchemeId(any(), any())(any(), any())).thenReturn(Future.successful(Some(VarianceLock)))
+        when(fakeMinimalPsaConnector.isPsaSuspended(any())(any(), any())).thenReturn(Future.successful(false))
+        when(fakeUpdateCacheConnector.upsert(any(), any())(any(), any()))
+          .thenReturn(Future.successful(JsNull))
+
+        val result = controller(dataRetrievalAction = answers.dataRetrievalAction)
+          .onPageLoad(UpdateMode, srn)(fakeRequest)
+
+        status(result) mustBe OK
+
+        contentAsString(result).contains(messages("messages__schemeTaskList__sectionDeclaration_header")) mustBe true
+        contentAsString(result).contains(messages("messages__schemeTaskList__sectionTrustees_no_trustees")) mustBe false
+      }
+
+      "return OK and correct view when viewOnly flag set to true if the scheme is not locked but the scheme status is rejected" in {
+        val answers = UserAnswers().set(SchemeStatusId)("Rejected").asOpt.value
+        when(fakeSchemeDetailsConnector.getSchemeDetailsVariations(any(), any(), any())(any(), any()))
+          .thenReturn(Future.successful(answers))
+        when(fakeLockConnector.isLockByPsaIdOrSchemeId(any(), any())(any(), any())).thenReturn(Future.successful(None))
         when(fakeMinimalPsaConnector.isPsaSuspended(any())(any(), any())).thenReturn(Future.successful(false))
         when(fakeSchemeDetailsReadOnlyCacheConnector.upsert(any(), any())(any(), any()))
           .thenReturn(Future.successful(JsNull))
 
-        val result = controller(dataRetrievalAction = dontGetAnyDataViewOnly)
+        val result = controller(dataRetrievalAction = answers.dataRetrievalAction)
           .onPageLoad(UpdateMode, srn)(fakeRequest)
 
         status(result) mustBe OK
@@ -176,7 +219,6 @@ object SchemeTaskListControllerSpec extends ControllerSpecBase with MockitoSugar
 
   val fs: FeatureSwitchManagementService = new FeatureSwitchManagementServiceTestImpl(config, environment)
 
-
   val masterSections = Seq(individualMasterSection)
   val srnValue = "S1000000456"
   val srn = Some(srnValue)
@@ -188,7 +230,6 @@ object SchemeTaskListControllerSpec extends ControllerSpecBase with MockitoSugar
 
   private val userAnswersJson = readJsonFromFile("/payload.json")
   private val userAnswersJsonRejected = readJsonFromFile("/payloadRejected.json")
-
   private val userAnswers = new FakeDataRetrievalAction(Some(userAnswersJson))
   private val userAnswersRejected = new FakeDataRetrievalAction(Some(userAnswersJsonRejected))
   private lazy val beforeYouStartLinkText = messages("messages__schemeTaskList__before_you_start_link_text")
