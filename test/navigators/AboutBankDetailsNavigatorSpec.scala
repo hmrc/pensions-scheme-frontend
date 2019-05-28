@@ -19,7 +19,7 @@ package navigators
 import base.SpecBase
 import connectors.FakeUserAnswersCacheConnector
 import identifiers.{BankAccountDetailsId, UKBankAccountId}
-import models.{BankAccountDetails, NormalMode}
+import models.{BankAccountDetails, NormalMode, UpdateMode}
 import models.register.SortCode
 import org.joda.time.LocalDate
 import play.api.libs.json.Json
@@ -46,6 +46,7 @@ class AboutBankDetailsNavigatorSpec extends SpecBase with NavigatorBehaviour {
     behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, routes, dataDescriber)
 
     behave like nonMatchingNavigator(navigator)
+    behave like nonMatchingNavigator(navigator, UpdateMode)
   }
 }
 object AboutBankDetailsNavigatorSpec {
