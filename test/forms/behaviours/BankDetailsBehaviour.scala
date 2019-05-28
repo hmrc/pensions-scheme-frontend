@@ -17,16 +17,11 @@
 package forms.behaviours
 
 import forms.FormSpec
-import forms.mappings.{BankDetailsMapping, Transforms}
-import generators.Generators
+import forms.mappings.BankDetailsMapping
 import models.register.SortCode
-import org.apache.commons.lang3.RandomUtils
-import org.scalacheck.Gen
-import org.scalatest.prop.PropertyChecks
 import play.api.data.{Form, FormError}
-import wolfendale.scalacheck.regexp.RegexpGen
 
-trait BankDetailsBehaviour extends FormSpec with BankDetailsMapping with PropertyChecks with Generators {
+trait BankDetailsBehaviour extends FormSpec with BankDetailsMapping {
 
   def formWithSortCode[T](testForm: Form[T],
                           keyRequired: String,
@@ -126,10 +121,10 @@ trait BankDetailsBehaviour extends FormSpec with BankDetailsMapping with Propert
 
     "behave like form with Account Number" should {
 
-      forAll(Gen.listOfN[Char](8, Gen.numChar).map(_.mkString(" "))) { accountNumber =>
+      Seq("12 34 56 78", "12345678", " 12345678 ").foreach { accountNumber =>
         s"bind a valid account number $accountNumber" in {
           val result = testForm.bind(validOtherData ++ Map("accountNumber" -> accountNumber))
-          getAccountNumber(result.get) shouldBe accountNumber.trim.replaceAll("\\s", "")
+          getAccountNumber(result.get) shouldBe "12345678"
         }
       }
 

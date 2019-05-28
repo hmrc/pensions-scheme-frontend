@@ -16,13 +16,13 @@
 
 package forms
 
-import forms.mappings.{BankDetailsMapping, Transforms}
+import forms.mappings.BankDetailsMapping
 import javax.inject.Inject
 import models.BankAccountDetails
 import play.api.data.Form
 import play.api.data.Forms._
 
-class BankAccountDetailsFormProvider @Inject() extends BankDetailsMapping with Transforms {
+class BankAccountDetailsFormProvider @Inject() extends BankDetailsMapping {
 
   protected val nameMaxLength = 28
   protected val accountNoExactLength = 8
