@@ -52,7 +52,7 @@ class AllowAccessActionSpec extends SpecBase with ScalaFutures with MockitoSugar
   }
 
   class TestAllowAccessAction(srn: Option[String],
-                              psc: PensionsSchemeConnector = pensionsSchemeConnector) extends AllowAccessAction(srn, psc, errorHandler) {
+                              psc: PensionsSchemeConnector = pensionsSchemeConnector) extends AllowAccessActionMain(srn, psc, errorHandler) {
     override def filter[A](request: OptionalDataRequest[A]): Future[Option[Result]] = super.filter(request)
   }
 

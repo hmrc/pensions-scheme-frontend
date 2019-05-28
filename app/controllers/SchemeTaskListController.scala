@@ -30,6 +30,7 @@ import play.api.libs.json.JsValue
 import play.api.mvc.{Action, AnyContent, Result}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import utils.annotations.TaskList
 import utils.hstasklisthelper.{HsTaskListHelperRegistration, HsTaskListHelperVariations}
 import utils.{Toggles, UserAnswers}
 import viewmodels.SchemeDetailsTaskList
@@ -41,7 +42,7 @@ class SchemeTaskListController @Inject()(appConfig: FrontendAppConfig,
                                          override val messagesApi: MessagesApi,
                                          authenticate: AuthAction,
                                          getData: DataRetrievalAction,
-                                         allowAccess: AllowAccessActionProvider,
+                                         @TaskList allowAccess: AllowAccessActionProvider,
                                          schemeDetailsConnector: SchemeDetailsConnector,
                                          schemeTransformer: SchemeDetailsMasterSection,
                                          errorHandler: ErrorHandler,
