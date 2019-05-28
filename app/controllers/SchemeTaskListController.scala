@@ -90,10 +90,20 @@ class SchemeTaskListController @Inject()(appConfig: FrontendAppConfig,
           case _ =>
             Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
         }
-      case lock =>
+      case Some(_) =>
+        ua match {
+          case Some(userAnswers) =>
+            createViewWithSuspensionFlag(srn, userAnswers, viewConnector.upsert(srn, _), true)
+          case _ =>
+            schemeDetailsConnector.getSchemeDetailsVariations(request.psaId.id, schemeIdType = "srn", srn)
+              .flatMap { userAnswers =>
+                createViewWithSuspensionFlag(srn, userAnswers, viewConnector.upsert(request.externalId, _), true)
+              }
+        }
+      case _ =>
         schemeDetailsConnector.getSchemeDetailsVariations(request.psaId.id, schemeIdType = "srn", srn)
           .flatMap { userAnswers =>
-            createViewWithSuspensionFlag(srn, userAnswers, viewConnector.upsert(request.externalId, _), if(lock.nonEmpty) true else false)
+            createViewWithSuspensionFlag(srn, userAnswers, viewConnector.upsert(request.externalId, _), false)
           }
     }
   }
