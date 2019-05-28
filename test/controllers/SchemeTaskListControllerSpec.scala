@@ -119,8 +119,6 @@ class SchemeTaskListControllerSpec extends ControllerSpecBase with BeforeAndAfte
 
       "return OK and correct view when viewOnly flag set to true if the scheme is locked by another psa, have user answers and cannot be edited" in {
         val answers = UserAnswers().set(SchemeStatusId)("Open").asOpt.value
-        when(fakeSchemeDetailsConnector.getSchemeDetailsVariations(any(), any(), any())(any(), any()))
-          .thenReturn(Future.successful(answers))
         when(fakeLockConnector.isLockByPsaIdOrSchemeId(any(), any())(any(), any())).thenReturn(Future.successful(Some(SchemeLock)))
         when(fakeMinimalPsaConnector.isPsaSuspended(any())(any(), any())).thenReturn(Future.successful(false))
         when(fakeUpdateCacheConnector.upsert(any(), any())(any(), any()))
@@ -136,6 +134,7 @@ class SchemeTaskListControllerSpec extends ControllerSpecBase with BeforeAndAfte
       }
 
       "return OK and correct view when viewOnly flag set to true if the scheme is locked by another psa, don't have user answers and cannot be edited" in {
+        val answers = UserAnswers().set(SchemeStatusId)("Open").asOpt.value
         when(fakeSchemeDetailsConnector.getSchemeDetailsVariations(any(), any(), any())(any(), any()))
           .thenReturn(Future.successful(answers))
         when(fakeLockConnector.isLockByPsaIdOrSchemeId(any(), any())(any(), any())).thenReturn(Future.successful(Some(SchemeLock)))
@@ -143,7 +142,7 @@ class SchemeTaskListControllerSpec extends ControllerSpecBase with BeforeAndAfte
         when(fakeUpdateCacheConnector.upsert(any(), any())(any(), any()))
           .thenReturn(Future.successful(JsNull))
 
-        val result = controller(dataRetrievalAction = answers.dataRetrievalAction)
+        val result = controller(dataRetrievalAction = getEmptyData)
           .onPageLoad(UpdateMode, srn)(fakeRequest)
 
         status(result) mustBe OK
