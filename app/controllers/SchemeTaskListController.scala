@@ -20,7 +20,7 @@ import config.{FeatureSwitchManagementService, FrontendAppConfig}
 import connectors.{MinimalPsaConnector, PensionSchemeVarianceLockConnector, SchemeDetailsConnector, SchemeDetailsReadOnlyCacheConnector, UpdateSchemeCacheConnector}
 import controllers.actions._
 import handlers.ErrorHandler
-import identifiers.IsPsaSuspendedId
+import identifiers.{IsPsaSuspendedId, SchemeStatusId}
 import javax.inject.Inject
 import models.{Mode, VarianceLock}
 import models.details.transformation.SchemeDetailsMasterSection
@@ -108,7 +108,8 @@ class SchemeTaskListController @Inject()(appConfig: FrontendAppConfig,
     minimalPsaConnector.isPsaSuspended(request.psaId.id).flatMap { isSuspended =>
 
       val updatedUserAnswers = userAnswers.set(IsPsaSuspendedId)(isSuspended).asOpt.getOrElse(userAnswers)
-      val taskList: SchemeDetailsTaskList = new HsTaskListHelperVariations(updatedUserAnswers, request.viewOnly, Some(srn)).taskList
+
+      val taskList: SchemeDetailsTaskList = new HsTaskListHelperVariations(updatedUserAnswers, !userAnswers.get(SchemeStatusId).contains("Open"), Some(srn)).taskList
 
       upsertUserAnswers(updatedUserAnswers.json).flatMap { _ =>
 

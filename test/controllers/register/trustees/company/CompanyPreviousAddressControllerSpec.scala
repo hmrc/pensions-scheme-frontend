@@ -147,7 +147,7 @@ class CompanyPreviousAddressControllerSpec extends ControllerSpecBase with Mocki
             status(result) must be(SEE_OTHER)
             redirectLocation(result).value mustEqual onwardCall.url
 
-            FakeUserAnswersService.verify(CompanyPreviousAddressId(firstIndex), address)
+            FakeUserAnswersService.userAnswer.get(CompanyPreviousAddressId(firstIndex)).value mustEqual address
         }
       }
     }

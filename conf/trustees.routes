@@ -63,6 +63,9 @@ POST       /:index/company/change/trustee-address-manual                controll
 GET        /:index/company/:mode/trustee-address-manual/:srn            controllers.register.trustees.company.CompanyAddressController.onPageLoad(mode: Mode, index: Index, srn: Option[String])
 POST       /:index/company/:mode/trustee-address-manual/:srn            controllers.register.trustees.company.CompanyAddressController.onSubmit(mode: Mode, index: Index, srn: Option[String])
 
+GET         /:index/company/update/is-this-previous-address/:srn        controllers.register.trustees.company.CompanyConfirmPreviousAddressController.onPageLoad(mode: Mode = CheckUpdateMode, index:Index, srn: Option[String])
+POST        /:index/company/update/is-this-previous-address/:srn        controllers.register.trustees.company.CompanyConfirmPreviousAddressController.onSubmit(mode: Mode = CheckUpdateMode, index:Index, srn: Option[String])
+
 GET        /:index/company/trustee-previous-address                     controllers.register.trustees.company.CompanyPreviousAddressPostcodeLookupController.onPageLoad(mode: Mode = NormalMode, index: Index, srn: Option[String] = None)
 POST       /:index/company/trustee-previous-address                     controllers.register.trustees.company.CompanyPreviousAddressPostcodeLookupController.onSubmit(mode: Mode = NormalMode, index: Index, srn: Option[String] = None)
 GET        /:index/company/change/trustee-previous-address               controllers.register.trustees.company.CompanyPreviousAddressPostcodeLookupController.onPageLoad(mode: Mode = CheckMode, index: Index, srn: Option[String] = None)
@@ -180,6 +183,9 @@ POST       /:index/individual/change/how-long-at-address                controll
 GET        /:index/individual/:mode/how-long-at-address/:srn            controllers.register.trustees.individual.TrusteeAddressYearsController.onPageLoad(mode: Mode, index: Index, srn: Option[String])
 POST       /:index/individual/:mode/how-long-at-address/:srn            controllers.register.trustees.individual.TrusteeAddressYearsController.onSubmit(mode: Mode, index: Index, srn: Option[String])
 
+GET         /:index/individual/update/is-this-previous-address/:srn     controllers.register.trustees.individual.IndividualConfirmPreviousAddressController.onPageLoad(mode: Mode = CheckUpdateMode, index:Index, srn: Option[String])
+POST        /:index/individual/update/is-this-previous-address/:srn     controllers.register.trustees.individual.IndividualConfirmPreviousAddressController.onSubmit(mode: Mode = CheckUpdateMode, index:Index, srn: Option[String])
+
 GET        /:index/individual/trustee-previous-address-manual           controllers.register.trustees.individual.TrusteePreviousAddressController.onPageLoad(mode: Mode = NormalMode, index: Index, srn: Option[String] = None)
 POST       /:index/individual/trustee-previous-address-manual           controllers.register.trustees.individual.TrusteePreviousAddressController.onSubmit(mode: Mode = NormalMode, index: Index, srn: Option[String] = None)
 GET        /:index/individual/change/trustee-previous-address-manual    controllers.register.trustees.individual.TrusteePreviousAddressController.onPageLoad(mode: Mode = CheckMode, index: Index, srn: Option[String] = None)
@@ -282,6 +288,9 @@ GET        /:index/partnership/change/trustee-address-manual            controll
 POST       /:index/partnership/change/trustee-address-manual            controllers.register.trustees.partnership.PartnershipAddressController.onSubmit(mode: Mode = CheckMode, index: Index, srn: Option[String] = None)
 GET        /:index/partnership/:mode/trustee-address-manual/:srn        controllers.register.trustees.partnership.PartnershipAddressController.onPageLoad(mode: Mode, index: Index, srn: Option[String])
 POST       /:index/partnership/:mode/trustee-address-manual/:srn        controllers.register.trustees.partnership.PartnershipAddressController.onSubmit(mode: Mode, index: Index, srn: Option[String])
+
+GET         /:index/partnership/update/is-this-previous-address/:srn    controllers.register.trustees.partnership.PartnershipConfirmPreviousAddressController.onPageLoad(mode: Mode = CheckUpdateMode, index:Index, srn: Option[String])
+POST        /:index/partnership/update/is-this-previous-address/:srn    controllers.register.trustees.partnership.PartnershipConfirmPreviousAddressController.onSubmit(mode: Mode = CheckUpdateMode, index:Index, srn: Option[String])
 
 GET        /:index/partnership/unique-taxpayer-reference                 controllers.register.trustees.partnership.PartnershipUniqueTaxReferenceController.onPageLoad(mode: Mode = NormalMode, index: Index, srn: Option[String] = None)
 POST       /:index/partnership/unique-taxpayer-reference                 controllers.register.trustees.partnership.PartnershipUniqueTaxReferenceController.onSubmit(mode: Mode = NormalMode, index: Index, srn: Option[String] = None)

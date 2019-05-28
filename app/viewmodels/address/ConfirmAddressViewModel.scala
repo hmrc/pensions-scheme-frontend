@@ -16,7 +16,7 @@
 
 package viewmodels.address
 
-import models.address.TolerantAddress
+import models.address.Address
 import play.api.mvc.Call
 import viewmodels.Message
 
@@ -25,7 +25,7 @@ case class ConfirmAddressViewModel(
                                         title: Message,
                                         heading: Message,
                                         hint: Option[Message] = None,
-                                        address: TolerantAddress,
+                                        address: Address,
                                         name: String,
                                         srn: Option[String] = None
                                       ) {

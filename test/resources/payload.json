@@ -11,6 +11,7 @@
   },
   "schemeEstablishedCountry": "GB",
   "membership": "opt2",
+  "schemeStatus" : "Open",
   "membershipFuture": "opt3",
   "investmentRegulated": true,
   "occupationalPensionScheme": true,

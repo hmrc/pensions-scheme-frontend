@@ -17,6 +17,7 @@
 package models.address
 
 import play.api.libs.json._
+import utils.CountryOptions
 
 case class AddressRecord(address: Address)
 
@@ -39,6 +40,17 @@ case class Address(addressLine1: String,
       addressLine4,
       postcode
     ).flatten.mkString(", ")
+  }
+
+  def lines(countryOptions: CountryOptions): Seq[String] = {
+    Seq(
+      Some(this.addressLine1),
+      Some(this.addressLine2),
+      this.addressLine3,
+      this.addressLine4,
+      this.postcode,
+      Some(countryOptions.getCountryNameFromCode(this))
+    ).flatten(s => s)
   }
 }
 
