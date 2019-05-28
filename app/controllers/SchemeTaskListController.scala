@@ -83,32 +83,29 @@ class SchemeTaskListController @Inject()(appConfig: FrontendAppConfig,
                                             ua: Option[UserAnswers])(implicit request: OptionalDataRequest[AnyContent],
                                                                      hc: HeaderCarrier): Future[Result] = {
     lockConnector.isLockByPsaIdOrSchemeId(request.psaId.id, srn).flatMap {
-      case Some(VarianceLock) =>
+      case Some(lock) =>
         ua match {
-          case Some(userAnswers) => createViewWithSuspensionFlag(srn, userAnswers, updateConnector.upsert(srn, _))
-
-          case _ => Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
+          case Some(userAnswers) =>
+            createViewWithSuspensionFlag(srn, userAnswers, updateConnector.upsert(srn, _), lock != VarianceLock)
+          case _ =>
+            Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
         }
-
       case _ =>
         schemeDetailsConnector.getSchemeDetailsVariations(request.psaId.id, schemeIdType = "srn", srn)
           .flatMap { userAnswers =>
-
-            createViewWithSuspensionFlag(srn, userAnswers, viewConnector.upsert(request.externalId, _))
+            createViewWithSuspensionFlag(srn, userAnswers, viewConnector.upsert(request.externalId, _), false)
           }
-
-
     }
   }
 
   private def createViewWithSuspensionFlag(srn: String, userAnswers: UserAnswers,
-                                           upsertUserAnswers: JsValue => Future[JsValue])(implicit request: OptionalDataRequest[AnyContent],
-                                                                          hc: HeaderCarrier): Future[Result] =
+                                           upsertUserAnswers: JsValue => Future[JsValue], viewOnly: Boolean)(implicit request: OptionalDataRequest[AnyContent],
+                                                                                                             hc: HeaderCarrier): Future[Result] =
     minimalPsaConnector.isPsaSuspended(request.psaId.id).flatMap { isSuspended =>
 
       val updatedUserAnswers = userAnswers.set(IsPsaSuspendedId)(isSuspended).asOpt.getOrElse(userAnswers)
-
-      val taskList: SchemeDetailsTaskList = new HsTaskListHelperVariations(updatedUserAnswers, !userAnswers.get(SchemeStatusId).contains("Open"), Some(srn)).taskList
+      val taskList: SchemeDetailsTaskList = new HsTaskListHelperVariations(updatedUserAnswers,
+        if (viewOnly) viewOnly else !userAnswers.get(SchemeStatusId).contains("Open"), Some(srn)).taskList
 
       upsertUserAnswers(updatedUserAnswers.json).flatMap { _ =>
 
@@ -117,6 +114,5 @@ class SchemeTaskListController @Inject()(appConfig: FrontendAppConfig,
     }
 
   case class TaskListDetails(userAnswers: UserAnswers, taskList: SchemeDetailsTaskList)
-
 
 }
