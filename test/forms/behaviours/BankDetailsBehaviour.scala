@@ -17,11 +17,16 @@
 package forms.behaviours
 
 import forms.FormSpec
-import forms.mappings.BankDetailsMapping
+import forms.mappings.{BankDetailsMapping, Transforms}
+import generators.Generators
 import models.register.SortCode
+import org.apache.commons.lang3.RandomUtils
+import org.scalacheck.Gen
+import org.scalatest.prop.PropertyChecks
 import play.api.data.{Form, FormError}
+import wolfendale.scalacheck.regexp.RegexpGen
 
-trait BankDetailsBehaviour extends FormSpec with BankDetailsMapping {
+trait BankDetailsBehaviour extends FormSpec with BankDetailsMapping with PropertyChecks with Generators {
 
   def formWithSortCode[T](testForm: Form[T],
                           keyRequired: String,
@@ -68,11 +73,11 @@ trait BankDetailsBehaviour extends FormSpec with BankDetailsMapping {
   }
 
   def formWithSortCodeHS[T](testForm: Form[T],
-                          keyRequired: String,
-                          keyLengthError: String,
-                          validOtherData: Map[String, String],
-                          getSortCode: T => SortCode
-                         ): Unit = {
+                            keyRequired: String,
+                            keyLengthError: String,
+                            validOtherData: Map[String, String],
+                            getSortCode: T => SortCode
+                           ): Unit = {
 
 
     "behave like form with SortCode" should {
@@ -106,6 +111,50 @@ trait BankDetailsBehaviour extends FormSpec with BankDetailsMapping {
       "not bind a sort code which is less than the expected length" in {
         val result = testForm.bind(validOtherData ++ Map("sortCode" -> "12345"))
         result.errors shouldBe Seq(FormError("sortCode", keyLengthError))
+      }
+    }
+  }
+
+  def formWithAccountNumber[T](testForm: Form[T],
+                               keyRequired: String,
+                               keyInvalidError: String,
+                               keyMaxError: String,
+                               validOtherData: Map[String, String],
+                               getAccountNumber: T => String
+                              ): Unit = {
+
+
+    "behave like form with Account Number" should {
+
+      forAll(Gen.listOfN[Char](8, Gen.numChar).map(_.mkString(" "))) { accountNumber =>
+        s"bind a valid account number $accountNumber" in {
+          val result = testForm.bind(validOtherData ++ Map("accountNumber" -> accountNumber))
+          getAccountNumber(result.get) shouldBe accountNumber.trim.replaceAll("\\s", "")
+        }
+      }
+
+      "not bind when account number is not supplied" in {
+        val result = testForm.bind(validOtherData)
+        result.errors shouldBe Seq(FormError("accountNumber", keyRequired))
+      }
+
+      Seq("%^%^jkhk", "4545454h").foreach { accountNumber =>
+        s"not bind an invalid account number $accountNumber" in {
+          val result = testForm.bind(validOtherData ++ Map("accountNumber" -> accountNumber))
+          result.errors shouldBe Seq(FormError("accountNumber", keyInvalidError))
+        }
+      }
+
+      Seq("12 34 56 78 7", "123456787").foreach { accountNumber =>
+        s"not bind a account number $accountNumber which exceeds max length" in {
+          val result = testForm.bind(validOtherData ++ Map("accountNumber" -> accountNumber))
+          result.errors shouldBe Seq(FormError("accountNumber", keyMaxError))
+        }
+      }
+
+      "not bind a account number which is less than the expected length" in {
+        val result = testForm.bind(validOtherData ++ Map("accountNumber" -> "12345"))
+        result.errors shouldBe Seq(FormError("accountNumber", keyMaxError))
       }
     }
   }
