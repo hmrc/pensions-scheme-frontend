@@ -83,17 +83,17 @@ class SchemeTaskListController @Inject()(appConfig: FrontendAppConfig,
                                             ua: Option[UserAnswers])(implicit request: OptionalDataRequest[AnyContent],
                                                                      hc: HeaderCarrier): Future[Result] = {
     lockConnector.isLockByPsaIdOrSchemeId(request.psaId.id, srn).flatMap {
-      case Some(lock) =>
+      case Some(VarianceLock) =>
         ua match {
           case Some(userAnswers) =>
-            createViewWithSuspensionFlag(srn, userAnswers, updateConnector.upsert(srn, _), lock != VarianceLock)
+            createViewWithSuspensionFlag(srn, userAnswers, updateConnector.upsert(srn, _), false)
           case _ =>
             Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
         }
-      case _ =>
+      case lock =>
         schemeDetailsConnector.getSchemeDetailsVariations(request.psaId.id, schemeIdType = "srn", srn)
           .flatMap { userAnswers =>
-            createViewWithSuspensionFlag(srn, userAnswers, viewConnector.upsert(request.externalId, _), false)
+            createViewWithSuspensionFlag(srn, userAnswers, viewConnector.upsert(request.externalId, _), if(lock.nonEmpty) true else false)
           }
     }
   }
