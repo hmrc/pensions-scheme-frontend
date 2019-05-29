@@ -57,13 +57,105 @@ class AllowAccessActionSpec extends SpecBase with ScalaFutures with MockitoSugar
     override def filter[A](request: OptionalDataRequest[A]): Future[Option[Result]] = super.filter(request)
   }
 
+  class TestAllowAccessActionTaskList(srn: Option[String],
+                                      psc: PensionsSchemeConnector = pensionsSchemeConnector) extends AllowAccessActionTaskList(srn, psc, errorHandler) {
+    override def filter[A](request: OptionalDataRequest[A]): Future[Option[Result]] = super.filter(request)
+  }
+
+  class TestAllowAccessActionCYA(srn: Option[String],
+                                      psc: PensionsSchemeConnector = pensionsSchemeConnector) extends AllowAccessActionCYA(srn, psc, errorHandler) {
+    override def filter[A](request: OptionalDataRequest[A]): Future[Option[Result]] = super.filter(request)
+  }
+
   val srn = Some("S123")
 
   val suspendedUserAnswers = UserAnswers(Json.obj(IsPsaSuspendedId.toString -> true))
   val notSuspendedUserAnswers = UserAnswers(Json.obj(IsPsaSuspendedId.toString -> false))
 
+  "AllowAccessAction for task list" must {
+    "allow access where association between psa id and srn and no user answers present but an srn IS present" in {
+      val psc: PensionsSchemeConnector = mock[PensionsSchemeConnector]
+      when(psc.checkForAssociation(any(), any())(any(), any(), any()))
+        .thenReturn(Future.successful(true))
 
-  "AllowAccessAction" must {
+      val action = new TestAllowAccessActionTaskList(srn = srn, psc = psc)
+
+      val futureResult = action.filter(OptionalDataRequest(fakeRequest, "id", None, PsaId("A0000000")))
+
+      whenReady(futureResult) { result =>
+        result mustBe None
+      }
+    }
+
+    "allow accesswhere association between psa id and srn and user answers present and an srn IS present and viewonly mode" in {
+      val psc: PensionsSchemeConnector = mock[PensionsSchemeConnector]
+      when(psc.checkForAssociation(any(), any())(any(), any(), any()))
+        .thenReturn(Future.successful(true))
+
+      val action = new TestAllowAccessActionTaskList(srn = srn, psc = psc)
+
+      val futureResult = action.filter(OptionalDataRequest(fakeRequest, "id", Some(UserAnswers(Json.obj())), PsaId("A0000000"), viewOnly = true))
+
+      whenReady(futureResult) { result =>
+        result mustBe None
+      }
+    }
+  }
+
+  "AllowAccessAction for cya" must {
+    "redirect to scheme task list page where association between psa id and srn and no user answers present but an srn IS present" in {
+      val psc: PensionsSchemeConnector = mock[PensionsSchemeConnector]
+      when(psc.checkForAssociation(any(), any())(any(), any(), any()))
+        .thenReturn(Future.successful(true))
+
+      val action = new TestAllowAccessActionCYA(srn = srn, psc = psc)
+
+      val futureResult = action.filter(OptionalDataRequest(fakeRequest, "id", None, PsaId("A0000000")))
+
+      whenReady(futureResult) { result =>
+        result.map {
+          _.header.status
+        } mustBe Some(SEE_OTHER)
+        result.flatMap {
+          _.header.headers.get(LOCATION)
+        } mustBe Some(controllers.routes.SchemeTaskListController.onPageLoad(UpdateMode, srn).url)
+      }
+    }
+
+    "allow access where association between psa id and srn and user answers present and an srn IS present and viewonly mode" in {
+      val psc: PensionsSchemeConnector = mock[PensionsSchemeConnector]
+      when(psc.checkForAssociation(any(), any())(any(), any(), any()))
+        .thenReturn(Future.successful(true))
+
+      val action = new TestAllowAccessActionCYA(srn = srn, psc = psc)
+
+      val futureResult = action.filter(OptionalDataRequest(fakeRequest, "id", Some(UserAnswers(Json.obj())), PsaId("A0000000"), viewOnly = true))
+
+      whenReady(futureResult) { result =>
+        result mustBe None
+      }
+    }
+  }
+
+  "AllowAccessAction (generic)" must {
+    "redirect to scheme task list page where association between psa id and srn and user answers present and an srn IS present and viewonly mode" in {
+      val psc: PensionsSchemeConnector = mock[PensionsSchemeConnector]
+      when(psc.checkForAssociation(any(), any())(any(), any(), any()))
+        .thenReturn(Future.successful(true))
+
+      val action = new TestAllowAccessAction(srn = srn, psc = psc)
+
+      val futureResult = action.filter(OptionalDataRequest(fakeRequest, "id", Some(UserAnswers(Json.obj())), PsaId("A0000000"), viewOnly = true))
+
+      whenReady(futureResult) { result =>
+        result.map {
+          _.header.status
+        } mustBe Some(SEE_OTHER)
+        result.flatMap {
+          _.header.headers.get(LOCATION)
+        } mustBe Some(controllers.routes.SchemeTaskListController.onPageLoad(UpdateMode, srn).url)
+      }
+    }
 
     "return NOT FOUND for user where NO association between psa id and both srn and user answers present" in {
       val psc: PensionsSchemeConnector = mock[PensionsSchemeConnector]
@@ -132,7 +224,8 @@ class AllowAccessActionSpec extends SpecBase with ScalaFutures with MockitoSugar
       }
     }
 
-    "allow access to pages for user with no data" in {
+
+    "allow access for user with no data" in {
 
       val action = new TestAllowAccessAction(None)
 
