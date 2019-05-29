@@ -86,7 +86,7 @@ class CompanyReviewViewSpec extends ViewBehaviours {
       Jsoup.parse(createView()().toString).select("a[id=edit-director-details]") must haveLink(
         routes.AddCompanyDirectorsController.onPageLoad(NormalMode, None, index).url
       )
-      Jsoup.parse(createView()().toString) must haveDynamicText("messages__companyReview__directors__editLink")
+      Jsoup.parse(createView()().toString) must haveDynamicText("messages__companyReview__directors__changeLink")
 
     }
 
