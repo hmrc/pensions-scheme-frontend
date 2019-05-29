@@ -18,7 +18,7 @@ package controllers.actions
 
 import base.SpecBase
 import connectors._
-import identifiers.SchemeStatusId
+import identifiers.{SchemeSrnId, SchemeStatusId}
 import models.requests.{AuthenticatedRequest, OptionalDataRequest}
 import models._
 import org.mockito.Matchers.{eq => eqTo, _}
@@ -124,7 +124,7 @@ class DataRetrievalActionSpec extends SpecBase with MockitoSugar with ScalaFutur
 
     "there is data in the read-only cache in UpdateMode and lock is not held by anyone" must {
       "build a userAnswers object and add it to the request, acquire lock, save data to updateCache" in {
-        val answers = UserAnswers().set(SchemeStatusId)("Open").asOpt.value.json
+        val answers = UserAnswers().set(SchemeStatusId)("Open").flatMap(_.set(SchemeSrnId)(srn)).asOpt.value.json
         when(lockRepoConnector.isLockByPsaIdOrSchemeId(eqTo(psa), eqTo(srn))(any(), any())).thenReturn(Future(None))
         when(viewCacheConnector.fetch(eqTo("id"))(any(), any())) thenReturn Future.successful(Some(answers))
 
@@ -165,6 +165,26 @@ class DataRetrievalActionSpec extends SpecBase with MockitoSugar with ScalaFutur
           result.userAnswers.isDefined mustBe true
           result.viewOnly mustBe true
           result.userAnswers.get mustBe UserAnswers(answers)
+        }
+      }
+
+      "status is open and srn is different from cached srn then non user answers is added to the request" in {
+        val answers = UserAnswers().set(SchemeStatusId)("Pending").flatMap(_.set(SchemeSrnId)("existing-srn")).asOpt.value.json
+        when(lockRepoConnector.isLockByPsaIdOrSchemeId(eqTo(psa), eqTo(srn))(any(), any())).thenReturn(Future(None))
+        when(viewCacheConnector.fetch(eqTo("id"))(any(), any())) thenReturn
+          Future.successful(Some(answers))
+
+        val action = new Harness(
+          viewConnector = viewCacheConnector,
+          updateConnector = updateCacheConnector,
+          lockConnector = lockRepoConnector,
+          mode = UpdateMode,
+          srn = srnOpt)
+
+        val futureResult = action.callTransform(authRequest)
+
+        whenReady(futureResult) { result =>
+          result.userAnswers.isDefined mustBe false
         }
       }
     }
