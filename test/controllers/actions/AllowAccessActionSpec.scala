@@ -31,6 +31,7 @@ import play.api.mvc.{Request, Result}
 import play.api.test.Helpers._
 import play.twirl.api.Html
 import uk.gov.hmrc.domain.PsaId
+import uk.gov.hmrc.http.{BadRequestException, HttpException}
 import uk.gov.hmrc.play.bootstrap.http.FrontendErrorHandler
 import utils.UserAnswers
 
@@ -70,6 +71,22 @@ class AllowAccessActionSpec extends SpecBase with ScalaFutures with MockitoSugar
         .thenReturn(Future.successful(false))
 
       val action = new TestAllowAccessAction(srn = srn, psc = psc)
+
+      val futureResult = action.filter(OptionalDataRequest(fakeRequest, "id", Some(UserAnswers(Json.obj())), PsaId("A0000000")))
+
+      whenReady(futureResult) { result =>
+        result.map {
+          _.header.status
+        } mustBe Some(NOT_FOUND)
+      }
+    }
+
+    "return NOT FOUND for user where nonsense srn entered causing an exception" in {
+      val psc: PensionsSchemeConnector = mock[PensionsSchemeConnector]
+      when(psc.checkForAssociation(any(), any())(any(), any(), any()))
+        .thenReturn(Future.failed(new BadRequestException("INVALID_SRN")))
+
+      val action = new TestAllowAccessAction(srn = Some("nonsense"), psc = psc)
 
       val futureResult = action.filter(OptionalDataRequest(fakeRequest, "id", Some(UserAnswers(Json.obj())), PsaId("A0000000")))
 
