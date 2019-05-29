@@ -190,7 +190,27 @@ class DataRetrievalActionSpec extends SpecBase with MockitoSugar with ScalaFutur
     }
 
     "there is data in the read-only cache in UpdateMode and lock is held by someone else" must {
-      "fetch data from viewConnector to build a userAnswers object and add it to the request" in {
+      "when the scheme SRN is not found in the user answers cache return no user answers" in {
+        when(lockRepoConnector.isLockByPsaIdOrSchemeId(eqTo(psa), eqTo(srn))(any(), any())).thenReturn(Future(Some(SchemeLock)))
+        when(viewCacheConnector.fetch(eqTo("id"))(any(), any())) thenReturn Future.successful(Some(testData))
+
+        val action = new Harness(
+          viewConnector = viewCacheConnector,
+          updateConnector = updateCacheConnector,
+          lockConnector = lockRepoConnector,
+          mode = UpdateMode,
+          srn = srnOpt)
+
+        val futureResult = action.callTransform(authRequest)
+
+        whenReady(futureResult) { result =>
+          result.userAnswers.isDefined mustBe false
+        }
+      }
+
+      "when the scheme SRN is found in the user answers cache fetch data from viewConnector to build a userAnswers object and add it to the request" in {
+        val testData = Json.obj(SchemeSrnId.toString -> srn)
+
         when(lockRepoConnector.isLockByPsaIdOrSchemeId(eqTo(psa), eqTo(srn))(any(), any())).thenReturn(Future(Some(SchemeLock)))
         when(viewCacheConnector.fetch(eqTo("id"))(any(), any())) thenReturn Future.successful(Some(testData))
 
@@ -208,6 +228,7 @@ class DataRetrievalActionSpec extends SpecBase with MockitoSugar with ScalaFutur
           result.userAnswers.get mustBe UserAnswers(testData)
         }
       }
+
     }
   }
 }
