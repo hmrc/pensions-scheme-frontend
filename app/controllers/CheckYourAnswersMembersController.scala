@@ -26,7 +26,7 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import utils.annotations.AccessibleViewOnly
+import utils.annotations.CYA
 import utils.checkyouranswers.Ops._
 import utils.{Enumerable, UserAnswers}
 import viewmodels.AnswerSection
@@ -38,7 +38,7 @@ class CheckYourAnswersMembersController @Inject()(appConfig: FrontendAppConfig,
                                                   override val messagesApi: MessagesApi,
                                                   authenticate: AuthAction,
                                                   getData: DataRetrievalAction,
-                                                  @AccessibleViewOnly allowAccess: AllowAccessActionProvider,
+                                                  @CYA allowAccess: AllowAccessActionProvider,
                                                   requireData: DataRequiredAction,
                                                   userAnswersService: UserAnswersService
                                                  )(implicit val ec: ExecutionContext) extends FrontendController

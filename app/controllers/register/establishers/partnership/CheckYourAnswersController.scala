@@ -28,7 +28,7 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import utils.annotations.{AccessibleViewOnly, EstablisherPartnership}
+import utils.annotations.{CYA, EstablisherPartnership}
 import utils.checkyouranswers.Ops._
 import utils._
 import viewmodels.AnswerSection
@@ -41,7 +41,7 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
                                            override val messagesApi: MessagesApi,
                                            authenticate: AuthAction,
                                            getData: DataRetrievalAction,
-                                           @AccessibleViewOnly allowAccess: AllowAccessActionProvider,
+                                           @CYA allowAccess: AllowAccessActionProvider,
                                            requiredData: DataRequiredAction,
                                            userAnswersService: UserAnswersService,
                                            @EstablisherPartnership navigator: Navigator,

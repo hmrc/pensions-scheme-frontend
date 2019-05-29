@@ -118,7 +118,7 @@ class PODSModule extends AbstractModule {
       .to(classOf[AllowAccessActionProviderTaskListImpl])
 
     bind(classOf[AllowAccessActionProvider])
-      .annotatedWith(classOf[AccessibleViewOnly])
+      .annotatedWith(classOf[CYA])
       .to(classOf[AllowAccessActionProviderCYAImpl])
 
     bind(classOf[AllowAccessActionProvider])

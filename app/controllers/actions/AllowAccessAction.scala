@@ -58,8 +58,7 @@ abstract class AllowAccessAction(srn: Option[String],
       case (Some(_), Some(true), _) => Future.successful(Some(Redirect(controllers.register.routes.CannotMakeChangesController.onPageLoad(srn))))
       case (Some(_), _, Some(extractedSRN)) =>
         pensionsSchemeConnector.checkForAssociation(request.psaId.id, extractedSRN)(hc, global, request).flatMap {
-          case true =>
-            goToPage(request.viewOnly, destinationForUAAndSRNAndViewonly)
+          case true => goToPage(request.viewOnly, destinationForUAAndSRNAndViewonly)
           case _ => errorHandler.onClientError(request, NOT_FOUND, "").map(Some.apply)
         }.recoverWith {
           case ex:BadRequestException if ex.message.contains("INVALID_SRN") =>
