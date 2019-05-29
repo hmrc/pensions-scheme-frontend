@@ -35,4 +35,17 @@ class BankDetailsMappingSpec extends BankDetailsBehaviour {
       (sortCode: SortCode) => sortCode
     )
   }
+
+  "AccountNumberMapping" should {
+    val testForm: Form[String] = Form("accountNumber" -> accountNumberMapping("error.required", "error.invalid", "error.max.error"))
+
+    behave like formWithAccountNumber(
+      testForm,
+      "error.required",
+      "error.invalid",
+      "error.max.error",
+      Map.empty,
+      (str: String) => str
+    )
+  }
 }
