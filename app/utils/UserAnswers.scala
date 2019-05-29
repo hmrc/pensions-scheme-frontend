@@ -16,22 +16,22 @@
 
 package utils
 
+import identifiers._
 import identifiers.register.establishers.company.director.{DirectorDetailsId, IsDirectorCompleteId, IsNewDirectorId}
-import identifiers.register.establishers.company.{CompanyDetailsId => EstablisherCompanyDetailsId, CompanyPayeId => EstablisherCompanyPayeId, CompanyVatId => EstablisherCompanyVatId}
+import identifiers.register.establishers.company.{CompanyDetailsId => EstablisherCompanyDetailsId}
 import identifiers.register.establishers.individual.EstablisherDetailsId
 import identifiers.register.establishers.partnership.PartnershipDetailsId
 import identifiers.register.establishers.partnership.partner.{IsPartnerCompleteId, PartnerDetailsId}
 import identifiers.register.establishers.{EstablisherKindId, EstablishersId, IsEstablisherCompleteId, IsEstablisherNewId}
-import identifiers.register.trustees.company.{CompanyDetailsId, CompanyPayeId, CompanyVatId}
+import identifiers.register.trustees.company.CompanyDetailsId
 import identifiers.register.trustees.individual.TrusteeDetailsId
 import identifiers.register.trustees.partnership.{IsPartnershipCompleteId, PartnershipDetailsId => TrusteePartnershipDetailsId}
 import identifiers.register.trustees.{IsTrusteeCompleteId, IsTrusteeNewId, TrusteeKindId, TrusteesId}
-import identifiers._
 import models.address.Address
 import models.person.PersonDetails
 import models.register._
 import models.register.establishers.EstablisherKind
-import models.{CompanyDetails, PartnershipDetails, Paye, Vat}
+import models.{CompanyDetails, PartnershipDetails}
 import play.api.Logger
 import play.api.libs.functional.syntax._
 import play.api.libs.json.Reads._
@@ -66,6 +66,11 @@ case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Implicits{
     JsLens.fromPath(path)
       .getAll(json)
       .flatMap(a => traverse(a.map(Json.fromJson[A]))).asOpt
+  }
+
+  def set(path: JsPath)(jsValue: JsValue): JsResult[UserAnswers] = {
+    JsLens.fromPath(path)
+      .set(jsValue, json).map(UserAnswers(_))
   }
 
   def set[I <: TypedIdentifier.PathDependent](id: I)(value: id.Data)(implicit writes: Writes[id.Data]): JsResult[UserAnswers] = {
@@ -142,14 +147,6 @@ case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Implicits{
     recur(JsSuccess(Nil), entities.zipWithIndex)
   }
 
-  private def isCompanyComplete(vat: Option[Vat], paye: Option[Paye], isComplete: Option[Boolean]): Option[Boolean] = {
-    (vat, paye) match {
-      case (None, None) => Some(false)
-      case _ => isComplete
-    }
-  }
-
-
   private def notDeleted: Reads[JsBoolean] = __.read(JsBoolean(false))
 
   //scalastyle:off method.length
@@ -176,17 +173,13 @@ case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Implicits{
         isComplete.getOrElse(false), isNew.fold(false)(identity), noOfRecords)
     )
 
-    /*TODO: This logic for vat and paye is done to handle the partial data with vat and paye in company details
-     this should be removed, may be after 28 days of putting this in production*/
     private def readsCompany(index: Int): Reads[Establisher[_]] = (
       (JsPath \ EstablisherCompanyDetailsId.toString).read[CompanyDetails] and
-        (JsPath \ EstablisherCompanyVatId.toString).readNullable[Vat] and
-        (JsPath \ EstablisherCompanyPayeId.toString).readNullable[Paye] and
         (JsPath \ IsEstablisherCompleteId.toString).readNullable[Boolean] and
         (JsPath \ IsEstablisherNewId.toString).readNullable[Boolean]
-      ) ((details, vat, paye, isComplete, isNew) =>
+      ) ((details, isComplete, isNew) =>
       EstablisherCompanyEntity(EstablisherCompanyDetailsId(index),
-        details.companyName, details.isDeleted, isCompanyComplete(vat, paye, isComplete).getOrElse(false), isNew.fold(false)(identity), noOfRecords)
+        details.companyName, details.isDeleted, isComplete.getOrElse(false), isNew.fold(false)(identity), noOfRecords)
     )
 
     private def readsPartnership(index: Int): Reads[Establisher[_]] = (
@@ -309,17 +302,14 @@ case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Implicits{
         TrusteeDetailsId(index), details.fullName, details.isDeleted,
         isComplete.getOrElse(false), isNew.fold(false)(identity), noOfRecords, schemeType)
     )
-    /*TODO: This logic for vat and paye is done to handle the partial data with vat and paye in company details
-     this should be removed, may be after 28 days of putting this in production*/
+
     private def readsCompany(index: Int): Reads[Trustee[_]] = (
       (JsPath \ CompanyDetailsId.toString).read[CompanyDetails] and
-        (JsPath \ CompanyVatId.toString).readNullable[Vat] and
-        (JsPath \ CompanyPayeId.toString).readNullable[Paye] and
         (JsPath \ IsTrusteeCompleteId.toString).readNullable[Boolean] and
         (JsPath \ IsTrusteeNewId.toString).readNullable[Boolean]
-      ) ((details, vat, paye, isComplete, isNew) => {
+      ) ((details, isComplete, isNew) => {
       TrusteeCompanyEntity(CompanyDetailsId(index), details.companyName, details.isDeleted,
-        isCompanyComplete(vat, paye, isComplete).getOrElse(false), isNew.fold(false)(identity), noOfRecords, schemeType)
+        isComplete.getOrElse(false), isNew.fold(false)(identity), noOfRecords, schemeType)
     }
     )
     private def readsPartnership(index: Int): Reads[Trustee[_]] = (

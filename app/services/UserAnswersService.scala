@@ -34,7 +34,7 @@ import models.AddressYears.OverAYear
 import models.address.Address
 import models.requests.DataRequest
 import models.{Mode, _}
-import play.api.libs.json.{Format, JsResultException, JsValue, Json}
+import play.api.libs.json._
 import play.api.mvc.AnyContent
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.UserAnswers
@@ -230,6 +230,18 @@ trait UserAnswersService {
       userAnswers.set(IsEstablisherCompleteId(index))(true).asOpt.getOrElse(userAnswers)
     } else {
       userAnswers
+    }
+  }
+
+  def setExistingAddress(mode: Mode, id: TypedIdentifier[Address], userAnswers: UserAnswers)
+                        (implicit ec: ExecutionContext, hc: HeaderCarrier, request: DataRequest[AnyContent]): UserAnswers = {
+    val existingAddressPathNode = List(KeyPathNode("existingCurrentAddress"))
+    val existingAddressPath = JsPath(id.path.path.init ++ existingAddressPathNode)
+    userAnswers.get(id) match {
+      case Some(address) if mode == CheckUpdateMode =>
+        userAnswers.set(existingAddressPath)(Json.toJson(address)).asOpt.getOrElse(userAnswers)
+      case _ =>
+        userAnswers
     }
   }
 
