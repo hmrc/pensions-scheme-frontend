@@ -84,27 +84,18 @@ class BankAccountDetailsFormProviderSpec extends FormBehaviours with Constraints
       checkForError(form, data, expectedError)
     }
 
-    Seq("Abffgk", "1 1 1 1 1 1 ", "A1b3j4b2").foreach { code =>
-      s"fail to bind when account number $code is invalid" in {
-        val data = validData + ("accountNumber" -> code)
+    behave like formWithAccountNumber(
+      form,
+      "messages__error__bank_accno__blank",
+      "messages__error__bank_accno__invalid",
+      "messages__error__bank_accno__length",
+      Map(
+        "bankName" -> "test bank",
+        "accountName" -> "test account",
+        "sortCode" -> "123456"
+      ),
+      (bankDetails: BankAccountDetails) => bankDetails.accountNumber
+    )
 
-        val expectedError = error("accountNumber", "messages__error__bank_accno__invalid", regexAccountNo)
-        checkForError(form, data, expectedError)
-      }
-    }
-
-    "fail to bind when account number is less than length 8" in {
-      val data = validData + ("accountNumber" -> "1234567")
-
-      val expectedError = error("accountNumber", "messages__error__bank_accno__length", 8)
-      checkForError(form, data, expectedError)
-    }
-
-    "fail to bind when account number exceeds length 8" in {
-      val data = validData + ("accountNumber" -> "123456789")
-
-      val expectedError = error("accountNumber", "messages__error__bank_accno__length", 8)
-      checkForError(form, data, expectedError)
-    }
   }
 }
