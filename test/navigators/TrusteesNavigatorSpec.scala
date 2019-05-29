@@ -48,6 +48,7 @@ class TrusteesNavigatorSpec extends SpecBase with NavigatorBehaviour {
       if (mode == UpdateMode) controllers.routes.AnyMoreChangesController.onPageLoad(srn) else taskList(mode, srn), false, None, false),
     (TrusteeKindId(0), trusteeKindCompany, companyDetails(mode, srn), true, None, false),
     (TrusteeKindId(0), trusteeKindIndividual, trusteeDetails(mode, srn), true, None, false),
+    (TrusteeKindId(0), trusteeKindPartnership, partnershipDetails(mode, srn), true, None, false),
     (TrusteeKindId(0), emptyAnswers, sessionExpired, false, None, false),
     (ConfirmDeleteTrusteeId, emptyAnswers, if (mode == UpdateMode) controllers.routes.AnyMoreChangesController.onPageLoad(srn) else addTrustee(mode, srn), true, None, false)
   )
@@ -84,6 +85,7 @@ class TrusteesNavigatorSpec extends SpecBase with NavigatorBehaviour {
     behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, normalRoutes, dataDescriber)
     behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, updateRoutes(), dataDescriber, UpdateMode, srn)
     behave like nonMatchingNavigator(navigator)
+    behave like nonMatchingNavigator(navigator, UpdateMode)
   }
 }
 
@@ -115,6 +117,8 @@ object TrusteesNavigatorSpec extends OptionValues with Enumerable.Implicits {
 
   private def trustees(howMany: Int) = emptyAnswers.trustees(howMany)
 
+  private def trusteeKindPartnership = emptyAnswers.trusteeKind(TrusteeKind.Partnership)
+
   private def trusteeKindCompany = emptyAnswers.trusteeKind(TrusteeKind.Company)
 
   private def trusteeKindIndividual = emptyAnswers.trusteeKind(TrusteeKind.Individual)
@@ -122,6 +126,8 @@ object TrusteesNavigatorSpec extends OptionValues with Enumerable.Implicits {
   private def addTrustee(mode: Mode, srn: Option[String]) = controllers.register.trustees.routes.AddTrusteeController.onPageLoad(mode, srn)
 
   private def companyDetails(mode: Mode, srn: Option[String]) = controllers.register.trustees.company.routes.CompanyDetailsController.onPageLoad(mode, 0, srn)
+
+  private def partnershipDetails(mode: Mode, srn: Option[String]) = controllers.register.trustees.partnership.routes.TrusteeDetailsController.onPageLoad(mode, 0, srn)
 
   private def moreThanTenTrustees(mode: Mode, srn: Option[String]) = controllers.register.trustees.routes.MoreThanTenTrusteesController.onPageLoad(mode, srn)
 

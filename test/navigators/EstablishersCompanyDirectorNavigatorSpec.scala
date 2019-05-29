@@ -20,7 +20,7 @@ import base.SpecBase
 import config.FeatureSwitchManagementServiceTestImpl
 import connectors.FakeUserAnswersCacheConnector
 import controllers.register.establishers.company.director.routes
-import identifiers.Identifier
+import identifiers.{AnyMoreChangesId, Identifier}
 import identifiers.register.establishers.IsEstablisherNewId
 import identifiers.register.establishers.company.director._
 import models.Mode.checkMode
@@ -30,13 +30,13 @@ import org.scalatest.prop.TableFor6
 import play.api.Configuration
 import play.api.libs.json.Json
 import play.api.mvc.Call
-import utils.{Toggles, UserAnswers}
+import utils.{FakeFeatureSwitchManagementService, Toggles, UserAnswers}
 
 class EstablishersCompanyDirectorNavigatorSpec extends SpecBase with NavigatorBehaviour {
 
   import EstablishersCompanyDirectorNavigatorSpec._
 
-  private def commonRoutes(mode:Mode): TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = Table(
+  private def commonRoutes(mode:Mode, isPrevAddEnabled : Boolean): TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = Table(
     ("Id", "User Answers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (Check Mode)", "Save (CM)"),
     (DirectorDetailsId(0, 0), emptyAnswers, directorNino(mode), true, Some(exitJourney(mode, emptyAnswers)), true),
     (DirectorDetailsId(0, 0), newDirector, directorNino(mode), true, Some(exitJourney(mode, newDirector)), true),
@@ -51,25 +51,27 @@ class EstablishersCompanyDirectorNavigatorSpec extends SpecBase with NavigatorBe
     (DirectorAddressId(0, 0), newDirector, directorAddressYears(mode), true, Some(checkYourAnswers(mode)), true),
     (DirectorAddressYearsId(0, 0), addressYearsOverAYear, directorContactDetails(mode), true, Some(exitJourney(mode, emptyAnswers)), true),
     (DirectorAddressYearsId(0, 0), addressYearsOverAYearNew, directorContactDetails(mode), true, Some(exitJourney(mode, addressYearsOverAYearNew)), true),
-    (DirectorAddressYearsId(0, 0), addressYearsUnderAYear, directorPreviousAddPostcode(mode), true, addressYearsLessThanTwelveEdit(mode), true),
+    (DirectorAddressYearsId(0, 0), addressYearsUnderAYear, directorPreviousAddPostcode(mode), true, addressYearsLessThanTwelveEdit(mode, isPrevAddEnabled), true),
     (DirectorAddressYearsId(0, 0), emptyAnswers, sessionExpired, false, Some(sessionExpired), false),
     (DirectorConfirmPreviousAddressId(0, 0), confirmPreviousAddressYes, none, false, Some(anyMoreChanges), false),
     (DirectorConfirmPreviousAddressId(0, 0), confirmPreviousAddressNo, none, false, Some(directorPreviousAddPostcode(checkMode(mode))), false),
+    (DirectorConfirmPreviousAddressId(0, 0), emptyAnswers, none, false, Some(sessionExpired), false),
     (DirectorPreviousAddressPostcodeLookupId(0, 0), emptyAnswers, directorPreviousAddList(mode), true, Some(directorPreviousAddList(checkMode(mode))), true),
     (DirectorPreviousAddressListId(0, 0), emptyAnswers, directorPreviousAddress(mode), true, Some(directorPreviousAddress(checkMode(mode))), true),
     (DirectorPreviousAddressId(0, 0), emptyAnswers, directorContactDetails(mode), true, Some(exitJourney(mode, emptyAnswers)), true),
     (DirectorPreviousAddressId(0, 0), newDirector, directorContactDetails(mode), true, Some(exitJourney(mode, newDirector)), true),
     (DirectorContactDetailsId(0, 0), emptyAnswers, checkYourAnswers(mode), true, Some(exitJourney(mode, emptyAnswers)), true),
-    (DirectorContactDetailsId(0, 0), newDirector, checkYourAnswers(mode), true, Some(exitJourney(mode, newDirector)), true)
+    (DirectorContactDetailsId(0, 0), newDirector, checkYourAnswers(mode), true, Some(exitJourney(mode, newDirector)), true),
+    (AnyMoreChangesId, newDirector, anyMoreChanges, true, None, true)
   )
 
-  private def normalRoutes(mode:Mode): TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = commonRoutes(mode) ++ Table(
+  private def normalRoutes(mode:Mode, isPrevAddEnabled : Boolean = false): TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = commonRoutes(mode, isPrevAddEnabled) ++ Table(
     ("Id", "User Answers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (Check Mode)", "Save (CM)"),
     (ConfirmDeleteDirectorId(0), emptyAnswers, addCompanyDirectors(mode), false, None, false),
     (CheckYourAnswersId(0, 0), emptyAnswers, addCompanyDirectors(mode), true, None, true)
   )
 
-  private def editRoutes(mode:Mode): TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = commonRoutes(mode) ++ Table(
+  private def editRoutes(mode:Mode, isPrevAddEnabled : Boolean = false): TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = commonRoutes(mode, isPrevAddEnabled) ++ Table(
     ("Id", "User Answers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (Check Mode)", "Save (CM)"),
     (ConfirmDeleteDirectorId(0), emptyAnswers, anyMoreChanges, false, None, false),
     (CheckYourAnswersId(0, 0), emptyAnswers, addCompanyDirectors(mode), true, None, true),
@@ -78,16 +80,15 @@ class EstablishersCompanyDirectorNavigatorSpec extends SpecBase with NavigatorBe
 
   navigator.getClass.getSimpleName must {
     appRunning()
-    featureSwitch.change(Toggles.isPrevAddEnabled, true)
     behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, normalRoutes(NormalMode), dataDescriber)
     behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, editRoutes(UpdateMode), dataDescriber, UpdateMode)
     behave like nonMatchingNavigator(navigator)
   }
 
-  s"${navigator.getClass.getSimpleName} when previous address feature is toggled off" must {
+  s"when previous address feature is toggled on" must {
+    val navigator = new EstablishersCompanyDirectorNavigator(FakeUserAnswersCacheConnector, new FakeFeatureSwitchManagementService(true))
     appRunning()
-    featureSwitch.change(Toggles.isPrevAddEnabled, true)
-    behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, editRoutes(UpdateMode), dataDescriber, UpdateMode)
+    behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, editRoutes(UpdateMode, true), dataDescriber, UpdateMode)
 
   }
 
@@ -97,7 +98,7 @@ object EstablishersCompanyDirectorNavigatorSpec extends SpecBase with OptionValu
 
   private val config = injector.instanceOf[Configuration]
   private def featureSwitch = new FeatureSwitchManagementServiceTestImpl(config, environment)
-  private val navigator = new EstablishersCompanyDirectorNavigator(FakeUserAnswersCacheConnector, featureSwitch)
+  private val navigator = new EstablishersCompanyDirectorNavigator(FakeUserAnswersCacheConnector, new FakeFeatureSwitchManagementService(false))
   private val emptyAnswers = UserAnswers(Json.obj())
   private val newEstablisher = UserAnswers().set(IsEstablisherNewId(0))(true).asOpt.value
   val establisherIndex = Index(0)
@@ -109,14 +110,9 @@ object EstablishersCompanyDirectorNavigatorSpec extends SpecBase with OptionValu
   private val confirmPreviousAddressNo = UserAnswers(Json.obj())
     .set(DirectorConfirmPreviousAddressId(0, 0))(false).asOpt.value
 
-
-
-
-  private def addressYearsLessThanTwelveEdit(mode: Mode) =
-    if (checkMode(mode) == CheckUpdateMode && featureSwitch.get(Toggles.isPrevAddEnabled))
-      Some(confirmPreviousAddress)
-    else
-      Some(directorPreviousAddPostcode(checkMode(mode)))
+  private def addressYearsLessThanTwelveEdit(mode: Mode, isPrevAddEnabled : Boolean = false) =
+    if (checkMode(mode) == CheckUpdateMode && isPrevAddEnabled) Some(confirmPreviousAddress)
+    else Some(directorPreviousAddPostcode(checkMode(mode)))
 
   private def confirmPreviousAddress = routes.DirectorConfirmPreviousAddressController.onPageLoad(0, 0, None)
 

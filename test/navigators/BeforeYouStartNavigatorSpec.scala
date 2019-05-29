@@ -21,7 +21,7 @@ import connectors.FakeUserAnswersCacheConnector
 import controllers.routes._
 import identifiers._
 import models.register.SchemeType
-import models.{CheckMode, NormalMode}
+import models.{CheckMode, NormalMode, UpdateMode}
 import play.api.libs.json.Json
 import play.api.mvc.Call
 import utils.UserAnswers
@@ -35,6 +35,7 @@ class BeforeYouStartNavigatorSpec extends SpecBase with NavigatorBehaviour {
     (SchemeNameId, emptyAnswers, schemeTypePage, false, Some(checkYourAnswersPage), false),
     (SchemeTypeId, schemeTypeGroupLife, haveAnyTrusteesPage, false, Some(haveAnyTrusteesCheckPage), false),
     (SchemeTypeId, schemeTypeSingleTrust, establishedCountryPage, false, Some(checkYourAnswersPage), false),
+    (SchemeTypeId, emptyAnswers, sessionExpired, false, Some(sessionExpired), false),
     (HaveAnyTrusteesId, emptyAnswers, establishedCountryPage, false, Some(checkYourAnswersPage), false),
     (EstablishedCountryId, emptyAnswers, workingKnowledgePage, false, Some(checkYourAnswersPage), false),
     (DeclarationDutiesId, emptyAnswers, checkYourAnswersPage, false, Some(checkYourAnswersPage), false)
@@ -45,6 +46,7 @@ class BeforeYouStartNavigatorSpec extends SpecBase with NavigatorBehaviour {
 
     behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, routes, dataDescriber)
     behave like nonMatchingNavigator(navigator)
+    behave like nonMatchingNavigator(navigator, UpdateMode)
   }
 }
 
@@ -59,6 +61,7 @@ object BeforeYouStartNavigatorSpec {
   private val workingKnowledgePage: Call = WorkingKnowledgeController.onPageLoad(NormalMode)
   private val checkYourAnswersPage: Call = controllers.routes.CheckYourAnswersBeforeYouStartController.onPageLoad(NormalMode, None)
   private val taskListPage: Call = controllers.routes.SchemeTaskListController.onPageLoad(NormalMode, None)
+  private val sessionExpired = controllers.routes.SessionExpiredController.onPageLoad()
 
   private val schemeTypeSingleTrust = UserAnswers(Json.obj(SchemeTypeId.toString -> SchemeType.SingleTrust))
   private val schemeTypeGroupLife = UserAnswers(Json.obj(SchemeTypeId.toString -> SchemeType.GroupLifeDeath))

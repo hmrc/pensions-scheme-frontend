@@ -39,6 +39,7 @@ class RegisterNavigatorSpec extends SpecBase with MustMatchers with NavigatorBeh
     (ContinueRegistrationId, emptyAnswers, beforeYouStart, false, None, false),
     (ContinueRegistrationId, beforeYouStartInProgress, beforeYouStart, false, None, false),
     (ContinueRegistrationId, beforeYouStartCompleted, taskList, false, None, false),
+    (DeclarationDormantId, beforeYouStartCompleted, declaration, false, None, false),
 
     // Review, declarations, success - return from establishers
     (DeclarationId, hasEstablishers, schemeSuccess, false, None, false),
@@ -55,8 +56,10 @@ class RegisterNavigatorSpec extends SpecBase with MustMatchers with NavigatorBeh
 
   "RegisterNavigator" must {
     val navigator = new RegisterNavigator(FakeUserAnswersCacheConnector, frontendAppConfig)
+    behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, routesWithRestrictedEstablisher, dataDescriber, NormalMode)
     behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, updateRoute, dataDescriber, UpdateMode, Some("srn"))
     behave like nonMatchingNavigator(navigator)
+    behave like nonMatchingNavigator(navigator, UpdateMode)
   }
 }
 
@@ -78,6 +81,8 @@ object RegisterNavigatorSpec extends OptionValues{
   private def schemeSuccess = controllers.register.routes.SchemeSuccessController.onPageLoad()
 
   private def beforeYouStart = controllers.routes.BeforeYouStartController.onPageLoad()
+
+  private def declaration = controllers.register.routes.DeclarationController.onPageLoad()
 
   private def expired = controllers.routes.SessionExpiredController.onPageLoad()
 

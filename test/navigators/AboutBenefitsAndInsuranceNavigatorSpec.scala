@@ -37,17 +37,19 @@ class AboutBenefitsAndInsuranceNavigatorSpec extends SpecBase with NavigatorBeha
     (TypeOfBenefitsId, emptyAnswers, benefitsSecured, false, Some(checkYouAnswers()), false),
     (BenefitsSecuredByInsuranceId, benefitsSecuredYes, insuranceCompanyName(NormalMode), false, Some(insuranceCompanyName(CheckMode)), false),
     (BenefitsSecuredByInsuranceId, benefitsSecuredNo, checkYouAnswers(), false, Some(checkYouAnswers()), false),
+    (BenefitsSecuredByInsuranceId, emptyAnswers, sessionExpired, false, None, false),
     (InsuranceCompanyNameId, emptyAnswers, policyNumber(), false, Some(policyNumber(NormalMode)), false),
     (InsurancePolicyNumberId, emptyAnswers, insurerPostcode(), false, Some(checkYouAnswers()), false),
     (InsurerEnterPostCodeId, emptyAnswers, insurerAddressList(), false, None, false),
     (InsurerSelectAddressId, emptyAnswers, insurerAddress(), false, None, false),
-    (InsurerConfirmAddressId, emptyAnswers, checkYouAnswers(), false, None, false)
+    (InsurerConfirmAddressId, emptyAnswers, checkYouAnswers(), false, Some(checkYouAnswers()), false)
   )
 
   private def updateRoutes() = Table(
     ("Id", "User Answers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (Check Mode)", "Save (CM)"),
     (BenefitsSecuredByInsuranceId, benefitsSecuredYes, none, false, Some(insuranceCompanyName(CheckUpdateMode)), false),
     (BenefitsSecuredByInsuranceId, benefitsSecuredNo, none, false, Some(anyMoreChanges), false),
+    (BenefitsSecuredByInsuranceId, emptyAnswers, none, false, Some(sessionExpired), false),
     (InsuranceCompanyNameId, emptyAnswers, none, false, Some(policyNumber(UpdateMode)), false),
     (InsurancePolicyNumberId, emptyAnswers, insurerPostcode(CheckUpdateMode), false, Some(anyMoreChanges), false),
     (InsurerEnterPostCodeId, emptyAnswers, none, false, Some(insurerAddressList(CheckUpdateMode)), false),
@@ -61,6 +63,7 @@ class AboutBenefitsAndInsuranceNavigatorSpec extends SpecBase with NavigatorBeha
     behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, routes(), dataDescriber)
     behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, updateRoutes, dataDescriber, UpdateMode)
     behave like nonMatchingNavigator(navigator)
+    behave like nonMatchingNavigator(navigator, UpdateMode)
   }
 }
 
@@ -82,6 +85,7 @@ object AboutBenefitsAndInsuranceNavigatorSpec extends OptionValues {
   private def insurerAddress(mode: Mode = NormalMode): Call = InsurerConfirmAddressController.onPageLoad(mode, None)
   private def checkYouAnswers(mode: Mode = NormalMode): Call = CheckYourAnswersBenefitsAndInsuranceController.onPageLoad(mode, None)
   private def anyMoreChanges: Call = controllers.routes.AnyMoreChangesController.onPageLoad(None)
+  private def sessionExpired = controllers.routes.SessionExpiredController.onPageLoad()
 
   private def dataDescriber(answers: UserAnswers): String = answers.toString
 }
