@@ -45,6 +45,16 @@ abstract class AllowAccessAction(srn: Option[String],
     }
   }
 
+  private def ook[A](request:OptionalDataRequest[A], extractedSRN:String, destinationForUAAndSRNAndViewonly:Future[Option[Result]])(implicit hc:HeaderCarrier) = {
+    pensionsSchemeConnector.checkForAssociation(request.psaId.id, extractedSRN)(hc, global, request).flatMap {
+      case true => goToPage(request.viewOnly, destinationForUAAndSRNAndViewonly)
+      case _ => errorHandler.onClientError(request, NOT_FOUND, "").map(Some.apply)
+    }.recoverWith {
+      case ex:BadRequestException if ex.message.contains("INVALID_SRN") =>
+        errorHandler.onClientError(request, NOT_FOUND, "").map(Some.apply)
+    }
+  }
+
   protected def filter[A](request: OptionalDataRequest[A],
                           destinationForNoUAAndSRN: => Future[Option[Result]],
                           destinationForUAAndSRNAndViewonly: => Future[Option[Result]]
@@ -57,14 +67,9 @@ abstract class AllowAccessAction(srn: Option[String],
     (optionUA, optionIsSuspendedId, srn) match {
       case (Some(_), Some(true), _) => Future.successful(Some(Redirect(controllers.register.routes.CannotMakeChangesController.onPageLoad(srn))))
       case (Some(_), _, Some(extractedSRN)) =>
-        pensionsSchemeConnector.checkForAssociation(request.psaId.id, extractedSRN)(hc, global, request).flatMap {
-          case true => goToPage(request.viewOnly, destinationForUAAndSRNAndViewonly)
-          case _ => errorHandler.onClientError(request, NOT_FOUND, "").map(Some.apply)
-        }.recoverWith {
-          case ex:BadRequestException if ex.message.contains("INVALID_SRN") =>
-            errorHandler.onClientError(request, NOT_FOUND, "").map(Some.apply)
-        }
-      case (None, _, Some(_)) => destinationForNoUAAndSRN
+        ook(request, extractedSRN, destinationForUAAndSRNAndViewonly)
+      case (None, _, Some(extractedSRN)) =>
+        ook(request, extractedSRN, destinationForNoUAAndSRN)
       case _ => goToPage(request.viewOnly, destinationForUAAndSRNAndViewonly)
     }
   }
