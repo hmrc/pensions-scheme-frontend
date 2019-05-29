@@ -37,7 +37,18 @@ abstract class AllowAccessAction(srn: Option[String],
                               pensionsSchemeConnector: PensionsSchemeConnector,
                               errorHandler: FrontendErrorHandler
                              ) extends ActionFilter[OptionalDataRequest] {
-  protected def filter[A](request: OptionalDataRequest[A], destinationForNoUAAndSRN: => Future[Option[Result]] ): Future[Option[Result]] = {
+  private def goToPage(viewOnly:Boolean, destinationForUAAndSRNAndViewonly:Future[Option[Result]]):Future[Option[Result]] = {
+    if(viewOnly) {
+      destinationForUAAndSRNAndViewonly
+    } else {
+      Future.successful(None)
+    }
+  }
+
+  protected def filter[A](request: OptionalDataRequest[A],
+                          destinationForNoUAAndSRN: => Future[Option[Result]],
+                          destinationForUAAndSRNAndViewonly: => Future[Option[Result]]
+                         ): Future[Option[Result]] = {
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
 
     val optionUA = request.userAnswers
@@ -47,14 +58,15 @@ abstract class AllowAccessAction(srn: Option[String],
       case (Some(_), Some(true), _) => Future.successful(Some(Redirect(controllers.register.routes.CannotMakeChangesController.onPageLoad(srn))))
       case (Some(_), _, Some(extractedSRN)) =>
         pensionsSchemeConnector.checkForAssociation(request.psaId.id, extractedSRN)(hc, global, request).flatMap {
-          case true => Future.successful(None)
+          case true =>
+            goToPage(request.viewOnly, destinationForUAAndSRNAndViewonly)
           case _ => errorHandler.onClientError(request, NOT_FOUND, "").map(Some.apply)
         }.recoverWith {
           case ex:BadRequestException if ex.message.contains("INVALID_SRN") =>
             errorHandler.onClientError(request, NOT_FOUND, "").map(Some.apply)
         }
       case (None, _, Some(_)) => destinationForNoUAAndSRN
-      case _ => Future.successful(None)
+      case _ => goToPage(request.viewOnly, destinationForUAAndSRNAndViewonly)
     }
   }
 }
@@ -66,7 +78,10 @@ class AllowAccessActionMain(srn: Option[String],
 
 
   override protected def filter[A](request: OptionalDataRequest[A]): Future[Option[Result]] = {
-    filter(request, Future.successful(Some(Redirect(controllers.routes.SchemeTaskListController.onPageLoad(UpdateMode, srn)))))
+    filter(request,
+      destinationForNoUAAndSRN = Future.successful(Some(Redirect(controllers.routes.SchemeTaskListController.onPageLoad(UpdateMode, srn)))),
+      destinationForUAAndSRNAndViewonly = Future.successful(Some(Redirect(controllers.routes.SchemeTaskListController.onPageLoad(UpdateMode, srn))))
+    )
   }
 }
 
@@ -77,7 +92,24 @@ class AllowAccessActionTaskList(srn: Option[String],
 
 
   override protected def filter[A](request: OptionalDataRequest[A]): Future[Option[Result]] = {
-    filter(request, Future.successful(None))
+    filter(request,
+      destinationForNoUAAndSRN = Future.successful(None),
+      destinationForUAAndSRNAndViewonly = Future.successful(None)
+    )
+  }
+}
+
+class AllowAccessActionCYA(srn: Option[String],
+                                pensionsSchemeConnector: PensionsSchemeConnector,
+                                errorHandler: FrontendErrorHandler
+                               ) extends AllowAccessAction(srn,pensionsSchemeConnector, errorHandler) {
+
+
+  override protected def filter[A](request: OptionalDataRequest[A]): Future[Option[Result]] = {
+    filter(request,
+      destinationForNoUAAndSRN = Future.successful(Some(Redirect(controllers.routes.SchemeTaskListController.onPageLoad(UpdateMode, srn)))),
+      destinationForUAAndSRNAndViewonly = Future.successful(None)
+    )
   }
 }
 
@@ -92,6 +124,13 @@ class AllowAccessActionProviderTaskListImpl @Inject()(pensionsSchemeConnector: P
                                                   errorHandler: ErrorHandlerWithReturnLinkToManage) extends AllowAccessActionProvider {
   def apply(srn: Option[String]): AllowAccessAction = {
     new AllowAccessActionTaskList(srn, pensionsSchemeConnector, errorHandler)
+  }
+}
+
+class AllowAccessActionProviderCYAImpl @Inject()(pensionsSchemeConnector: PensionsSchemeConnector,
+                                                      errorHandler: ErrorHandlerWithReturnLinkToManage) extends AllowAccessActionProvider {
+  def apply(srn: Option[String]): AllowAccessAction = {
+    new AllowAccessActionCYA(srn, pensionsSchemeConnector, errorHandler)
   }
 }
 

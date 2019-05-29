@@ -26,6 +26,7 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import utils.annotations.AccessibleViewOnly
 import utils.checkyouranswers.Ops._
 import utils.{Enumerable, UserAnswers}
 import viewmodels.AnswerSection
@@ -37,7 +38,7 @@ class CheckYourAnswersMembersController @Inject()(appConfig: FrontendAppConfig,
                                                   override val messagesApi: MessagesApi,
                                                   authenticate: AuthAction,
                                                   getData: DataRetrievalAction,
-                                                  allowAccess: AllowAccessActionProvider,
+                                                  @AccessibleViewOnly allowAccess: AllowAccessActionProvider,
                                                   requireData: DataRequiredAction,
                                                   userAnswersService: UserAnswersService
                                                  )(implicit val ec: ExecutionContext) extends FrontendController
@@ -45,7 +46,7 @@ class CheckYourAnswersMembersController @Inject()(appConfig: FrontendAppConfig,
 
   def onPageLoad(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData) {
     implicit request =>
-      implicit val userAnswers:UserAnswers = request.userAnswers
+      implicit val userAnswers: UserAnswers = request.userAnswers
       val membersSection = AnswerSection(
         None,
         CurrentMembersId.row(routes.CurrentMembersController.onPageLoad(CheckMode).url, mode) ++
