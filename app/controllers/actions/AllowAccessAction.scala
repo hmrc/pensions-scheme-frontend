@@ -31,6 +31,7 @@ import uk.gov.hmrc.play.bootstrap.http.FrontendErrorHandler
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
+import uk.gov.hmrc.http.BadRequestException
 
 abstract class AllowAccessAction(srn: Option[String],
                               pensionsSchemeConnector: PensionsSchemeConnector,
@@ -48,6 +49,9 @@ abstract class AllowAccessAction(srn: Option[String],
         pensionsSchemeConnector.checkForAssociation(request.psaId.id, extractedSRN)(hc, global, request).flatMap {
           case true => Future.successful(None)
           case _ => errorHandler.onClientError(request, NOT_FOUND, "").map(Some.apply)
+        }.recoverWith {
+          case ex:BadRequestException if ex.message.contains("INVALID_SRN") =>
+            errorHandler.onClientError(request, NOT_FOUND, "").map(Some.apply)
         }
       case (None, _, Some(_)) => destinationForNoUAAndSRN
       case _ => Future.successful(None)
