@@ -20,12 +20,13 @@ import connectors.{PensionSchemeVarianceLockConnector, PensionsSchemeConnector, 
 import controllers.actions._
 import forms.register.DeclarationFormProvider
 import identifiers.{PstrId, SchemeNameId}
+import org.mockito.Matchers
 import org.scalatest.mockito.MockitoSugar
 import org.mockito.Matchers.any
 import org.mockito.Mockito._
 import org.scalatest.mockito.MockitoSugar
 import org.scalatest.{AsyncWordSpec, MustMatchers}
-import play.api.libs.json.Json
+import play.api.libs.json.{JsNull, Json}
 import play.api.mvc.Call
 import play.api.mvc.Results.Ok
 import play.api.test.Helpers._
@@ -60,11 +61,25 @@ class VariationDeclarationControllerSpec extends ControllerSpecBase with Mockito
 
   "VariationDeclarationController" must {
 
-    "return OK and the correct view for a GET" in {
+    "return OK and the correct view for a GET when update cache has srn" in {
+
+      when(updateSchemeCacheConnector.fetch(Matchers.eq(srnNumber))(Matchers.any(), Matchers.any()))
+        .thenReturn(Future.successful(Some(JsNull)))
+
       val result = controller().onPageLoad(srn)(fakeRequest)
 
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString()
+    }
+
+    "redirect to tasklist and the correct view for a GET when update cache does not have srn" in {
+
+      when(updateSchemeCacheConnector.fetch(Matchers.any())(Matchers.any(), Matchers.any()))
+        .thenReturn(Future.successful(None))
+
+      val result = controller().onPageLoad(srn)(fakeRequest)
+
+      status(result) mustBe SEE_OTHER
     }
 
       "redirect to the next page for a POST" in {

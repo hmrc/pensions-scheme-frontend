@@ -111,7 +111,7 @@ class DataRetrievalActionSpec extends SpecBase with MockitoSugar with ScalaFutur
     "there is no data in the read-only cache in UpdateMode and lock is not held by psa" must {
       "set userAnswers to 'None' in the request" in {
         when(lockRepoConnector.isLockByPsaIdOrSchemeId(eqTo(psa), eqTo(srn))(any(), any())).thenReturn(Future(None))
-        when(viewCacheConnector.fetch(eqTo("id"))(any(), any())) thenReturn Future(None)
+        when(viewCacheConnector.fetch(eqTo(srn))(any(), any())) thenReturn Future(None)
         val action = new Harness(viewConnector = viewCacheConnector, lockConnector = lockRepoConnector, mode = UpdateMode, srn = srnOpt)
 
         val futureResult = action.callTransform(authRequest)
@@ -126,7 +126,7 @@ class DataRetrievalActionSpec extends SpecBase with MockitoSugar with ScalaFutur
       "build a userAnswers object and add it to the request, acquire lock, save data to updateCache" in {
         val answers = UserAnswers().set(SchemeStatusId)("Open").flatMap(_.set(SchemeSrnId)(srn)).asOpt.value.json
         when(lockRepoConnector.isLockByPsaIdOrSchemeId(eqTo(psa), eqTo(srn))(any(), any())).thenReturn(Future(None))
-        when(viewCacheConnector.fetch(eqTo("id"))(any(), any())) thenReturn Future.successful(Some(answers))
+        when(viewCacheConnector.fetch(eqTo(srn))(any(), any())) thenReturn Future.successful(Some(answers))
 
         val action = new Harness(
           viewConnector = viewCacheConnector,
@@ -149,7 +149,7 @@ class DataRetrievalActionSpec extends SpecBase with MockitoSugar with ScalaFutur
       "status is not open, build a userAnswers object and add it to the request and set view only to true" in {
         val answers = UserAnswers().set(SchemeStatusId)("Pending").asOpt.value.json
         when(lockRepoConnector.isLockByPsaIdOrSchemeId(eqTo(psa), eqTo(srn))(any(), any())).thenReturn(Future(None))
-        when(viewCacheConnector.fetch(eqTo("id"))(any(), any())) thenReturn
+        when(viewCacheConnector.fetch(eqTo(srn))(any(), any())) thenReturn
           Future.successful(Some(answers))
 
         val action = new Harness(
@@ -171,7 +171,7 @@ class DataRetrievalActionSpec extends SpecBase with MockitoSugar with ScalaFutur
       "status is open and srn is different from cached srn then non user answers is added to the request" in {
         val answers = UserAnswers().set(SchemeStatusId)("Pending").flatMap(_.set(SchemeSrnId)("existing-srn")).asOpt.value.json
         when(lockRepoConnector.isLockByPsaIdOrSchemeId(eqTo(psa), eqTo(srn))(any(), any())).thenReturn(Future(None))
-        when(viewCacheConnector.fetch(eqTo("id"))(any(), any())) thenReturn
+        when(viewCacheConnector.fetch(eqTo(srn))(any(), any())) thenReturn
           Future.successful(Some(answers))
 
         val action = new Harness(
@@ -192,7 +192,7 @@ class DataRetrievalActionSpec extends SpecBase with MockitoSugar with ScalaFutur
     "there is data in the read-only cache in UpdateMode and lock is held by someone else" must {
       "when the scheme SRN is not found in the user answers cache return no user answers" in {
         when(lockRepoConnector.isLockByPsaIdOrSchemeId(eqTo(psa), eqTo(srn))(any(), any())).thenReturn(Future(Some(SchemeLock)))
-        when(viewCacheConnector.fetch(eqTo("id"))(any(), any())) thenReturn Future.successful(Some(testData))
+        when(viewCacheConnector.fetch(eqTo(srn))(any(), any())) thenReturn Future.successful(Some(testData))
 
         val action = new Harness(
           viewConnector = viewCacheConnector,
@@ -212,7 +212,7 @@ class DataRetrievalActionSpec extends SpecBase with MockitoSugar with ScalaFutur
         val testData = Json.obj(SchemeSrnId.toString -> srn)
 
         when(lockRepoConnector.isLockByPsaIdOrSchemeId(eqTo(psa), eqTo(srn))(any(), any())).thenReturn(Future(Some(SchemeLock)))
-        when(viewCacheConnector.fetch(eqTo("id"))(any(), any())) thenReturn Future.successful(Some(testData))
+        when(viewCacheConnector.fetch(eqTo(srn))(any(), any())) thenReturn Future.successful(Some(testData))
 
         val action = new Harness(
           viewConnector = viewCacheConnector,

@@ -52,8 +52,6 @@ abstract class AllowAccessAction(srn: Option[String],
     val optionUA = request.userAnswers
     val optionIsSuspendedId = optionUA.flatMap(_.get(IsPsaSuspendedId))
 
-    println( "\n>>>" + optionUA)
-
     (optionUA, optionIsSuspendedId, srn) match {
       case (Some(_), Some(true), _) => Future.successful(Some(Redirect(controllers.register.routes.CannotMakeChangesController.onPageLoad(srn))))
       case (Some(_), _, Some(extractedSRN)) => checkForAssociation(request, extractedSRN)

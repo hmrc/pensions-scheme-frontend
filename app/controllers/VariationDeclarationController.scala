@@ -55,7 +55,7 @@ class VariationDeclarationController @Inject()(
     implicit request =>
       srn.fold(Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad))) { actualSrn =>
         updateSchemeCacheConnector.fetch(actualSrn).map {
-          case Some(jsValue) => Ok(variationDeclaration(appConfig, form, request.userAnswers.get(SchemeNameId), postCall(srn), srn))
+          case Some(_) => Ok(variationDeclaration(appConfig, form, request.userAnswers.get(SchemeNameId), postCall(srn), srn))
           case _ => Redirect(controllers.routes.SchemeTaskListController.onPageLoad(UpdateMode, srn))
         }
       }
