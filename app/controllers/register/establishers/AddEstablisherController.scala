@@ -28,7 +28,7 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.Navigator
-import utils.annotations.{Establishers}
+import utils.annotations.{Establishers, NoSuspendedCheck}
 import views.html.register.establishers.addEstablisher
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -38,18 +38,18 @@ class AddEstablisherController @Inject()(appConfig: FrontendAppConfig,
                                          @Establishers navigator: Navigator,
                                          authenticate: AuthAction,
                                          getData: DataRetrievalAction,
-                                         allowAccess: AllowAccessActionProvider,
+                                         @NoSuspendedCheck allowAccess: AllowAccessActionProvider,
                                          requireData: DataRequiredAction,
                                          formProvider: AddEstablisherFormProvider)(implicit val ec: ExecutionContext)
   extends FrontendController with Retrievals with I18nSupport {
 
   def onPageLoad(mode: Mode, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
-    implicit request =>
-      val establishers = request.userAnswers.allEstablishersAfterDelete
-      Future.successful(Ok(addEstablisher(appConfig, formProvider(establishers), mode,
-        establishers, existingSchemeName, srn)))
-  }
+      implicit request =>
+        val establishers = request.userAnswers.allEstablishersAfterDelete
+        Future.successful(Ok(addEstablisher(appConfig, formProvider(establishers), mode,
+          establishers, existingSchemeName, srn)))
+    }
 
   def onSubmit(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>

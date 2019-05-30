@@ -27,7 +27,7 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import utils.annotations.{EstablishersCompany}
+import utils.annotations.{EstablishersCompany, NoSuspendedCheck, TaskList}
 import utils.{AllowChangeHelper, Navigator, SectionComplete}
 import views.html.register.establishers.company.companyReview
 
@@ -38,7 +38,7 @@ class CompanyReviewController @Inject()(appConfig: FrontendAppConfig,
                                         @EstablishersCompany navigator: Navigator,
                                         authenticate: AuthAction,
                                         getData: DataRetrievalAction,
-                                        allowAccess: AllowAccessActionProvider,
+                                        @NoSuspendedCheck allowAccess: AllowAccessActionProvider,
                                         requireData: DataRequiredAction,
                                         userAnswersService: UserAnswersService,
                                         allowChangeHelper: AllowChangeHelper
@@ -62,7 +62,7 @@ class CompanyReviewController @Inject()(appConfig: FrontendAppConfig,
       }
   }
 
-  def onSubmit(mode: Mode,  srn: Option[String], index: Index): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
+  def onSubmit(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
       val allDirectors = request.userAnswers.allDirectorsAfterDelete(index)
       val allDirectorsCompleted = allDirectors.nonEmpty & (allDirectors.count(!_.isCompleted) == 0)

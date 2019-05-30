@@ -45,7 +45,8 @@ abstract class AllowAccessAction(srn: Option[String],
     }
 
   protected def filter[A](request: OptionalDataRequest[A],
-                          destinationForNoUserAnswersAndSRN: => Option[Result]
+                          destinationForNoUserAnswersAndSRN: => Option[Result],
+                          checkForSuspended:Boolean
                          ): Future[Option[Result]] = {
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
 
@@ -53,7 +54,8 @@ abstract class AllowAccessAction(srn: Option[String],
     val optionIsSuspendedId = optionUA.flatMap(_.get(IsPsaSuspendedId))
 
     (optionUA, optionIsSuspendedId, srn) match {
-      case (Some(_), Some(true), _) => Future.successful(Some(Redirect(controllers.register.routes.CannotMakeChangesController.onPageLoad(srn))))
+      case (Some(_), Some(true), _) if checkForSuspended =>
+        Future.successful(Some(Redirect(controllers.register.routes.CannotMakeChangesController.onPageLoad(srn))))
       case (Some(_), _, Some(extractedSRN)) => checkForAssociation(request, extractedSRN)
       case (None, _, Some(extractedSRN)) => checkForAssociation(request, extractedSRN).map {
         case None => destinationForNoUserAnswersAndSRN
@@ -72,7 +74,8 @@ class AllowAccessActionMain(srn: Option[String],
 
   override protected def filter[A](request: OptionalDataRequest[A]): Future[Option[Result]] = {
     filter(request,
-      destinationForNoUserAnswersAndSRN = Some(Redirect(controllers.routes.SchemeTaskListController.onPageLoad(UpdateMode, srn)))
+      destinationForNoUserAnswersAndSRN = Some(Redirect(controllers.routes.SchemeTaskListController.onPageLoad(UpdateMode, srn))),
+      checkForSuspended = true
     )
   }
 }
@@ -85,7 +88,22 @@ class AllowAccessActionTaskList(srn: Option[String],
 
   override protected def filter[A](request: OptionalDataRequest[A]): Future[Option[Result]] = {
     filter(request,
-      destinationForNoUserAnswersAndSRN = None
+      destinationForNoUserAnswersAndSRN = None,
+      checkForSuspended = false
+    )
+  }
+}
+
+class AllowAccessActionNoSuspendedCheck(srn: Option[String],
+                                pensionsSchemeConnector: PensionsSchemeConnector,
+                                errorHandler: FrontendErrorHandler
+                               ) extends AllowAccessAction(srn, pensionsSchemeConnector, errorHandler) {
+
+
+  override protected def filter[A](request: OptionalDataRequest[A]): Future[Option[Result]] = {
+    filter(request,
+      destinationForNoUserAnswersAndSRN = Some(Redirect(controllers.routes.SchemeTaskListController.onPageLoad(UpdateMode, srn))),
+      checkForSuspended = false
     )
   }
 }
@@ -103,6 +121,14 @@ class AllowAccessActionProviderTaskListImpl @Inject()(pensionsSchemeConnector: P
     new AllowAccessActionTaskList(srn, pensionsSchemeConnector, errorHandler)
   }
 }
+
+class AllowAccessActionProviderNoSuspendedCheckImpl @Inject()(pensionsSchemeConnector: PensionsSchemeConnector,
+                                                      errorHandler: ErrorHandlerWithReturnLinkToManage) extends AllowAccessActionProvider {
+  def apply(srn: Option[String]): AllowAccessAction = {
+    new AllowAccessActionNoSuspendedCheck(srn, pensionsSchemeConnector, errorHandler)
+  }
+}
+
 
 trait AllowAccessActionProvider {
   def apply(srn: Option[String]): AllowAccessAction
