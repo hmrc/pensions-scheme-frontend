@@ -23,7 +23,7 @@ import play.api.Logger
 import play.api.http.Status
 import play.api.libs.json._
 import play.api.mvc.RequestHeader
-import uk.gov.hmrc.http.{BadRequestException, HeaderCarrier, HttpResponse}
+import uk.gov.hmrc.http.{BadRequestException, HeaderCarrier, HttpResponse, NotFoundException}
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 import utils.UserAnswers
 
@@ -38,9 +38,9 @@ trait PensionsSchemeConnector {
   def updateSchemeDetails(psaId: String, pstr: String, answers: UserAnswers)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Unit]
 
   def checkForAssociation(psaId: String, srn: String)(implicit
-                                                     headerCarrier: HeaderCarrier,
-                                                     ec: ExecutionContext,
-                                                     request: RequestHeader): Future[Boolean]
+                                                      headerCarrier: HeaderCarrier,
+                                                      ec: ExecutionContext,
+                                                      request: RequestHeader): Future[Boolean]
 }
 
 @Singleton
@@ -75,16 +75,15 @@ class PensionsSchemeConnectorImpl @Inject()(http: HttpClient, config: FrontendAp
     }
   }
 
-   def checkForAssociation(psaId: String, srn: String)(implicit
-                                                                             headerCarrier: HeaderCarrier,
-                                                                             ec: ExecutionContext,
-                                                                             request: RequestHeader): Future[Boolean] = {
-
+  def checkForAssociation(psaId: String, srn: String)(implicit
+                                                      headerCarrier: HeaderCarrier,
+                                                      ec: ExecutionContext,
+                                                      request: RequestHeader): Future[Boolean] = {
     val headers: Seq[(String, String)] = Seq(("psaId", psaId), ("schemeReferenceNumber", srn), ("Content-Type", "application/json"))
 
     implicit val hc: HeaderCarrier = headerCarrier.withExtraHeaders(headers: _*)
 
-    http.GET[HttpResponse](config.checkAssociationUrl)(implicitly, hc, implicitly) .map { response =>
+    http.GET[HttpResponse](config.checkAssociationUrl)(implicitly, hc, implicitly).map { response =>
       require(response.status == Status.OK)
 
       val json = Json.parse(response.body)
@@ -93,18 +92,20 @@ class PensionsSchemeConnectorImpl @Inject()(http: HttpClient, config: FrontendAp
         case JsSuccess(value, _) => value
         case JsError(errors) => throw JsResultException(errors)
       }
-    } andThen logExceptions("Unable to check for scheme association with PSA") recoverWith translateExceptions
-
+    } recoverWith {
+      case ex: BadRequestException if ex.message.contains("INVALID_SRN") => Future.successful(false)
+      case ex: NotFoundException => Future.successful(false)
+      case e: BadRequestException if e.getMessage contains "INVALID_PAYLOAD" => Future.failed(new InvalidPayloadException)
+    } andThen logExceptions("Unable to check for scheme association with PSA")
   }
 
   private def translateExceptions[I](): PartialFunction[Throwable, Future[I]] = {
     case e: BadRequestException if e.getMessage contains "INVALID_PAYLOAD" => Future.failed(new InvalidPayloadException)
   }
 
-  private def logExceptions[I](msg : String): PartialFunction[Try[I], Unit] = {
+  private def logExceptions[I](msg: String): PartialFunction[Try[I], Unit] = {
     case Failure(t: Throwable) => Logger.error(msg, t)
   }
-
 }
 
 sealed trait RegisterSchemeException extends Exception

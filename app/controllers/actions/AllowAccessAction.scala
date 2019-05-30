@@ -36,27 +36,16 @@ abstract class AllowAccessAction(srn: Option[String],
                                  pensionsSchemeConnector: PensionsSchemeConnector,
                                  errorHandler: FrontendErrorHandler
                                 ) extends ActionFilter[OptionalDataRequest] {
-  private def goToPage(viewOnly: Boolean, destinationForViewonly: Future[Option[Result]]): Future[Option[Result]] =
-    if (viewOnly) {
-      destinationForViewonly
-    } else {
-      Future.successful(None)
+
+  private def checkForAssociation[A](request: OptionalDataRequest[A],
+                                     extractedSRN: String)(implicit hc: HeaderCarrier) =
+    pensionsSchemeConnector.checkForAssociation(request.psaId.id, extractedSRN)(hc, global, request).flatMap {
+      case true => Future.successful(None)
+      case _ => errorHandler.onClientError(request, NOT_FOUND, "").map(Some.apply)
     }
 
-  private def checkForAssociatedThenGoToPage[A](request: OptionalDataRequest[A], extractedSRN: String, destinationForViewonly: Future[Option[Result]])(implicit hc: HeaderCarrier) = {
-    pensionsSchemeConnector.checkForAssociation(request.psaId.id, extractedSRN)(hc, global, request).flatMap {
-      case true => goToPage(request.viewOnly, destinationForViewonly)
-      case _ => errorHandler.onClientError(request, NOT_FOUND, "").map(Some.apply)
-    }.recoverWith {
-      case ex: BadRequestException if ex.message.contains("INVALID_SRN") =>
-        errorHandler.onClientError(request, NOT_FOUND, "").map(Some.apply)
-      case ex: NotFoundException =>
-        errorHandler.onClientError(request, NOT_FOUND, "").map(Some.apply)   }
-  }
-
   protected def filter[A](request: OptionalDataRequest[A],
-                          destinationForNoUAAndSRN: => Future[Option[Result]],
-                          destinationForUAAndSRNAndViewonly: => Future[Option[Result]]
+                          destinationForNoUserAnswersAndSRN: => Option[Result]
                          ): Future[Option[Result]] = {
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
 
@@ -65,11 +54,12 @@ abstract class AllowAccessAction(srn: Option[String],
 
     (optionUA, optionIsSuspendedId, srn) match {
       case (Some(_), Some(true), _) => Future.successful(Some(Redirect(controllers.register.routes.CannotMakeChangesController.onPageLoad(srn))))
-      case (Some(_), _, Some(extractedSRN)) =>
-        checkForAssociatedThenGoToPage(request, extractedSRN, destinationForUAAndSRNAndViewonly)
-      case (None, _, Some(extractedSRN)) =>
-        checkForAssociatedThenGoToPage(request, extractedSRN, destinationForNoUAAndSRN)
-      case _ => goToPage(request.viewOnly, destinationForUAAndSRNAndViewonly)
+      case (Some(_), _, Some(extractedSRN)) => checkForAssociation(request, extractedSRN)
+      case (None, _, Some(extractedSRN)) => checkForAssociation(request, extractedSRN).map {
+        case None => destinationForNoUserAnswersAndSRN
+        case notAssociatedResult@Some(_) => notAssociatedResult
+      }
+      case _ => Future.successful(None)
     }
   }
 }
@@ -82,8 +72,7 @@ class AllowAccessActionMain(srn: Option[String],
 
   override protected def filter[A](request: OptionalDataRequest[A]): Future[Option[Result]] = {
     filter(request,
-      destinationForNoUAAndSRN = Future.successful(Some(Redirect(controllers.routes.SchemeTaskListController.onPageLoad(UpdateMode, srn)))),
-      destinationForUAAndSRNAndViewonly = Future.successful(Some(Redirect(controllers.routes.SchemeTaskListController.onPageLoad(UpdateMode, srn))))
+      destinationForNoUserAnswersAndSRN = Some(Redirect(controllers.routes.SchemeTaskListController.onPageLoad(UpdateMode, srn)))
     )
   }
 }
@@ -96,22 +85,7 @@ class AllowAccessActionTaskList(srn: Option[String],
 
   override protected def filter[A](request: OptionalDataRequest[A]): Future[Option[Result]] = {
     filter(request,
-      destinationForNoUAAndSRN = Future.successful(None),
-      destinationForUAAndSRNAndViewonly = Future.successful(None)
-    )
-  }
-}
-
-class AllowAccessActionCYA(srn: Option[String],
-                           pensionsSchemeConnector: PensionsSchemeConnector,
-                           errorHandler: FrontendErrorHandler
-                          ) extends AllowAccessAction(srn, pensionsSchemeConnector, errorHandler) {
-
-
-  override protected def filter[A](request: OptionalDataRequest[A]): Future[Option[Result]] = {
-    filter(request,
-      destinationForNoUAAndSRN = Future.successful(Some(Redirect(controllers.routes.SchemeTaskListController.onPageLoad(UpdateMode, srn)))),
-      destinationForUAAndSRNAndViewonly = Future.successful(None)
+      destinationForNoUserAnswersAndSRN = None
     )
   }
 }
@@ -127,13 +101,6 @@ class AllowAccessActionProviderTaskListImpl @Inject()(pensionsSchemeConnector: P
                                                       errorHandler: ErrorHandlerWithReturnLinkToManage) extends AllowAccessActionProvider {
   def apply(srn: Option[String]): AllowAccessAction = {
     new AllowAccessActionTaskList(srn, pensionsSchemeConnector, errorHandler)
-  }
-}
-
-class AllowAccessActionProviderCYAImpl @Inject()(pensionsSchemeConnector: PensionsSchemeConnector,
-                                                 errorHandler: ErrorHandlerWithReturnLinkToManage) extends AllowAccessActionProvider {
-  def apply(srn: Option[String]): AllowAccessAction = {
-    new AllowAccessActionCYA(srn, pensionsSchemeConnector, errorHandler)
   }
 }
 

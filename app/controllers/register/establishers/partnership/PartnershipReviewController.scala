@@ -28,7 +28,7 @@ import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.{AllowChangeHelper, Navigator}
-import utils.annotations.{CYA, EstablisherPartnership}
+import utils.annotations.{EstablisherPartnership}
 import views.html.register.establishers.partnership.partnershipReview
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -38,7 +38,7 @@ class PartnershipReviewController @Inject()(appConfig: FrontendAppConfig,
                                             @EstablisherPartnership navigator: Navigator,
                                             authenticate: AuthAction,
                                             getData: DataRetrievalAction,
-                                            @CYA allowAccess: AllowAccessActionProvider,
+                                            allowAccess: AllowAccessActionProvider,
                                             requireData: DataRequiredAction,
                                             userAnswersService: UserAnswersService,
                                             allowChangeHelper: AllowChangeHelper)(implicit val ec: ExecutionContext)

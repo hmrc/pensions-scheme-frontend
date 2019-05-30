@@ -32,7 +32,7 @@ import views.html.check_your_answers
 import models.Mode._
 import models.requests.DataRequest
 import services.UserAnswersService
-import utils.annotations.CYA
+
 
 import scala.concurrent.ExecutionContext
 
@@ -40,7 +40,7 @@ class CheckYourAnswersBenefitsAndInsuranceController @Inject()(appConfig: Fronte
                                                                override val messagesApi: MessagesApi,
                                                                authenticate: AuthAction,
                                                                getData: DataRetrievalAction,
-                                                               @CYA allowAccess: AllowAccessActionProvider,
+                                                               allowAccess: AllowAccessActionProvider,
                                                                requireData: DataRequiredAction,
                                                                userAnswersService: UserAnswersService,
                                                                implicit val countryOptions: CountryOptions

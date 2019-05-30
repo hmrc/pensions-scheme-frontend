@@ -27,7 +27,7 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import utils.annotations.{CYA, EstablishersCompany}
+import utils.annotations.{EstablishersCompany}
 import utils.{AllowChangeHelper, Navigator, SectionComplete}
 import views.html.register.establishers.company.companyReview
 
@@ -38,7 +38,7 @@ class CompanyReviewController @Inject()(appConfig: FrontendAppConfig,
                                         @EstablishersCompany navigator: Navigator,
                                         authenticate: AuthAction,
                                         getData: DataRetrievalAction,
-                                        @CYA allowAccess: AllowAccessActionProvider,
+                                        allowAccess: AllowAccessActionProvider,
                                         requireData: DataRequiredAction,
                                         userAnswersService: UserAnswersService,
                                         allowChangeHelper: AllowChangeHelper
