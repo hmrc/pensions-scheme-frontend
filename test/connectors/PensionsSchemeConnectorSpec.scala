@@ -277,6 +277,38 @@ class PensionsSchemeConnectorSpec extends AsyncFlatSpec with Matchers with WireM
     }
   }
 
+  it should "return false where 400 response is received with text INVALID_SRN" in {
+    implicit val request = FakeRequest("GET", "/")
+    server.stubFor(
+      get(urlEqualTo(checkAssociationUrl))
+        .willReturn(
+          aResponse.withStatus(400).withBody("INVALID_SRN")
+        )
+    )
+
+    val connector = injector.instanceOf[PensionsSchemeConnector]
+
+      connector.checkForAssociation(psaId, pstr).map { result =>
+        result shouldBe false
+      }
+  }
+
+  it should "return false where 404 response is received" in {
+    implicit val request = FakeRequest("GET", "/")
+    server.stubFor(
+      get(urlEqualTo(checkAssociationUrl))
+        .willReturn(
+          aResponse.withStatus(404)
+        )
+    )
+
+    val connector = injector.instanceOf[PensionsSchemeConnector]
+
+    connector.checkForAssociation(psaId, pstr).map { result =>
+      result shouldBe false
+    }
+  }
+
 
 }
 

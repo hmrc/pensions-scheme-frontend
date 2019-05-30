@@ -31,7 +31,7 @@ import play.api.mvc.{Request, Result}
 import play.api.test.Helpers._
 import play.twirl.api.Html
 import uk.gov.hmrc.domain.PsaId
-import uk.gov.hmrc.http.{BadRequestException, HttpException}
+import uk.gov.hmrc.http.BadRequestException
 import uk.gov.hmrc.play.bootstrap.http.FrontendErrorHandler
 import utils.UserAnswers
 
@@ -59,11 +59,6 @@ class AllowAccessActionSpec extends SpecBase with ScalaFutures with MockitoSugar
 
   class TestAllowAccessActionTaskList(srn: Option[String],
                                       psc: PensionsSchemeConnector = pensionsSchemeConnector) extends AllowAccessActionTaskList(srn, psc, errorHandler) {
-    override def filter[A](request: OptionalDataRequest[A]): Future[Option[Result]] = super.filter(request)
-  }
-
-  class TestAllowAccessActionCYA(srn: Option[String],
-                                      psc: PensionsSchemeConnector = pensionsSchemeConnector) extends AllowAccessActionCYA(srn, psc, errorHandler) {
     override def filter[A](request: OptionalDataRequest[A]): Future[Option[Result]] = super.filter(request)
   }
 
@@ -102,43 +97,8 @@ class AllowAccessActionSpec extends SpecBase with ScalaFutures with MockitoSugar
     }
   }
 
-  "AllowAccessAction for cya" must {
-    "redirect to scheme task list page where association between psa id and srn and no user answers present but an srn IS present" in {
-      val psc: PensionsSchemeConnector = mock[PensionsSchemeConnector]
-      when(psc.checkForAssociation(any(), any())(any(), any(), any()))
-        .thenReturn(Future.successful(true))
-
-      val action = new TestAllowAccessActionCYA(srn = srn, psc = psc)
-
-      val futureResult = action.filter(OptionalDataRequest(fakeRequest, "id", None, PsaId("A0000000")))
-
-      whenReady(futureResult) { result =>
-        result.map {
-          _.header.status
-        } mustBe Some(SEE_OTHER)
-        result.flatMap {
-          _.header.headers.get(LOCATION)
-        } mustBe Some(controllers.routes.SchemeTaskListController.onPageLoad(UpdateMode, srn).url)
-      }
-    }
-
-    "allow access where association between psa id and srn and user answers present and an srn IS present and viewonly mode" in {
-      val psc: PensionsSchemeConnector = mock[PensionsSchemeConnector]
-      when(psc.checkForAssociation(any(), any())(any(), any(), any()))
-        .thenReturn(Future.successful(true))
-
-      val action = new TestAllowAccessActionCYA(srn = srn, psc = psc)
-
-      val futureResult = action.filter(OptionalDataRequest(fakeRequest, "id", Some(UserAnswers(Json.obj())), PsaId("A0000000"), viewOnly = true))
-
-      whenReady(futureResult) { result =>
-        result mustBe None
-      }
-    }
-  }
-
   "AllowAccessAction (generic)" must {
-    "redirect to scheme task list page where association between psa id and srn and user answers present and an srn IS present and viewonly mode" in {
+    "allow access where association between psa id and srn and user answers present and an srn IS present and viewonly mode" in {
       val psc: PensionsSchemeConnector = mock[PensionsSchemeConnector]
       when(psc.checkForAssociation(any(), any())(any(), any(), any()))
         .thenReturn(Future.successful(true))
@@ -150,10 +110,7 @@ class AllowAccessActionSpec extends SpecBase with ScalaFutures with MockitoSugar
       whenReady(futureResult) { result =>
         result.map {
           _.header.status
-        } mustBe Some(SEE_OTHER)
-        result.flatMap {
-          _.header.headers.get(LOCATION)
-        } mustBe Some(controllers.routes.SchemeTaskListController.onPageLoad(UpdateMode, srn).url)
+        } mustBe None
       }
     }
 
@@ -163,22 +120,6 @@ class AllowAccessActionSpec extends SpecBase with ScalaFutures with MockitoSugar
         .thenReturn(Future.successful(false))
 
       val action = new TestAllowAccessAction(srn = srn, psc = psc)
-
-      val futureResult = action.filter(OptionalDataRequest(fakeRequest, "id", Some(UserAnswers(Json.obj())), PsaId("A0000000")))
-
-      whenReady(futureResult) { result =>
-        result.map {
-          _.header.status
-        } mustBe Some(NOT_FOUND)
-      }
-    }
-
-    "return NOT FOUND for user where nonsense srn entered causing an exception" in {
-      val psc: PensionsSchemeConnector = mock[PensionsSchemeConnector]
-      when(psc.checkForAssociation(any(), any())(any(), any(), any()))
-        .thenReturn(Future.failed(new BadRequestException("INVALID_SRN")))
-
-      val action = new TestAllowAccessAction(srn = Some("nonsense"), psc = psc)
 
       val futureResult = action.filter(OptionalDataRequest(fakeRequest, "id", Some(UserAnswers(Json.obj())), PsaId("A0000000")))
 
