@@ -49,7 +49,7 @@ class DataRetrievalImpl(dataConnector: UserAnswersCacheConnector,
             case Some(VarianceLock) =>
               getOptionalRequest(updateConnector.fetch(srn), viewOnly = false)(request)
             case Some(_) =>
-              viewConnector.fetch(request.externalId).map {
+              viewConnector.fetch(srn).map {
                 case None => OptionalDataRequest(request.request, request.externalId, None, request.psaId, viewOnly = true)
                 case Some(data) =>
                   UserAnswers(data).get(SchemeSrnId) match {
