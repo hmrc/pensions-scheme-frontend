@@ -65,7 +65,7 @@ class DataRetrievalImpl(dataConnector: UserAnswersCacheConnector,
   }
 
   private def getRequestWithNoLock[A](request: AuthenticatedRequest[A], srn:String)(implicit hc: HeaderCarrier): Future[OptionalDataRequest[A]] = {
-    viewConnector.fetch(request.externalId).map {
+    viewConnector.fetch(srn).map {
       case Some(answersJsValue) =>
         val ua = UserAnswers(answersJsValue)
         (ua.get(SchemeSrnId), ua.get(SchemeStatusId)) match {

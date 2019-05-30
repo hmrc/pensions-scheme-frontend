@@ -99,13 +99,13 @@ class SchemeTaskListController @Inject()(appConfig: FrontendAppConfig,
           case _ =>
             schemeDetailsConnector.getSchemeDetailsVariations(request.psaId.id, schemeIdType = "srn", srn)
               .flatMap { userAnswers =>
-                createViewWithSuspensionFlag(srn, userAnswers, viewConnector.upsert(request.externalId, _), true)
+                createViewWithSuspensionFlag(srn, userAnswers, viewConnector.upsert(srn, _), true)
               }
         }
       case _ =>
         schemeDetailsConnector.getSchemeDetailsVariations(request.psaId.id, schemeIdType = "srn", srn)
           .flatMap { userAnswers =>
-            createViewWithSuspensionFlag(srn, userAnswers, viewConnector.upsert(request.externalId, _), false)
+            createViewWithSuspensionFlag(srn, userAnswers, viewConnector.upsert(srn, _), false)
           }
     }
   }
