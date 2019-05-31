@@ -37,7 +37,6 @@ import utils.UserAnswers
 import scala.concurrent.Future
 
 class AllowAccessActionSpec extends SpecBase with ScalaFutures with MockitoSugar {
-
   private val errorHandler = new FrontendErrorHandler {
     override def standardErrorTemplate(pageTitle: String, heading: String, message: String)(implicit request: Request[_]): Html = Html("")
 
@@ -55,10 +54,6 @@ class AllowAccessActionSpec extends SpecBase with ScalaFutures with MockitoSugar
     def test[A](request: OptionalDataRequest[A]): Future[Option[Result]]
   }
 
-  val generateTestHarnessForAllowAccessTaskList: (Option[String], PensionsSchemeConnector) => TestHarness = new TestAllowAccessActionTaskList(_, _)
-  val generateTestHarnessForAllowAccessSuspendedCheck: (Option[String], PensionsSchemeConnector) => TestHarness = new TestAllowAccessActionNoSuspendedCheck(_, _)
-  val generateTestHarnessForAllowAccessGeneric: (Option[String], PensionsSchemeConnector) => TestHarness =new TestAllowAccessAction(_, _)
-
   class TestAllowAccessAction(srn: Option[String],
                               psc: PensionsSchemeConnector = pensionsSchemeConnector) extends AllowAccessActionMain(srn, psc, errorHandler) with TestHarness {
     def test[A](request: OptionalDataRequest[A]): Future[Option[Result]] = super.filter(request)
@@ -75,10 +70,132 @@ class AllowAccessActionSpec extends SpecBase with ScalaFutures with MockitoSugar
     def test[A](request: OptionalDataRequest[A]): Future[Option[Result]] = super.filter(request)
   }
 
+  val generateTestHarnessForAllowAccessMain: (Option[String], PensionsSchemeConnector) => TestHarness = new TestAllowAccessAction(_, _)
+  val generateTestHarnessForAllowAccessTaskList: (Option[String], PensionsSchemeConnector) => TestHarness = new TestAllowAccessActionTaskList(_, _)
+  val generateTestHarnessForAllowAccessSuspendedCheck: (Option[String], PensionsSchemeConnector) => TestHarness = new TestAllowAccessActionNoSuspendedCheck(_, _)
+
   val srn = Some("S123")
 
   val suspendedUserAnswers = UserAnswers(Json.obj(IsPsaSuspendedId.toString -> true))
   val notSuspendedUserAnswers = UserAnswers(Json.obj(IsPsaSuspendedId.toString -> false))
+
+
+  def assertEqual(futureResult: Future[Option[Result]], expectedResult: Option[String]): Unit = {
+    whenReady(futureResult) {
+      case result@Some(_) =>
+        result.map {
+          _.header.status
+        } mustBe Some(SEE_OTHER)
+        result.flatMap {
+          _.header.headers.get(LOCATION)
+        } mustBe expectedResult
+      case result => result mustBe expectedResult
+
+    }
+  }
+
+  "AllowAccessAction (main)" must {
+    behave like allowAccessAction(generateTestHarnessForAllowAccessMain)
+
+    "redirect to task list page where association between psa id and srn and no user answers present but an srn IS present" in {
+      val psc: PensionsSchemeConnector = mock[PensionsSchemeConnector]
+      when(psc.checkForAssociation(any(), any())(any(), any(), any()))
+        .thenReturn(Future.successful(true))
+
+      val action = new TestAllowAccessActionTaskList(srn = srn, psc = psc)
+
+      val futureResult = generateTestHarnessForAllowAccessMain(srn, pensionsSchemeConnector)
+        .test(OptionalDataRequest(fakeRequest, "id", None, PsaId("A0000000")))
+
+      assertEqual(futureResult, Some(controllers.routes.SchemeTaskListController.onPageLoad(UpdateMode, srn).url))
+    }
+
+    "redirect to cannot make changes page where association between psa id and srn and user answers present and an srn IS present and viewonly mode and PSA is suspended" in {
+      val psc: PensionsSchemeConnector = mock[PensionsSchemeConnector]
+      when(psc.checkForAssociation(any(), any())(any(), any(), any()))
+        .thenReturn(Future.successful(true))
+
+      val action = new TestAllowAccessActionTaskList(srn = srn, psc = psc)
+
+      val futureResult = generateTestHarnessForAllowAccessMain(srn, pensionsSchemeConnector)
+        .test(OptionalDataRequest(fakeRequest, "id", Some(suspendedUserAnswers), PsaId("A0000000"), viewOnly = true))
+
+      assertEqual(futureResult, Some(controllers.register.routes.CannotMakeChangesController.onPageLoad(srn).url))
+    }
+
+    "redirect to cannot make changes page where association between psa id and srn and user answers present and an srn IS present and not viewonly mode and PSA is suspended" in {
+      val psc: PensionsSchemeConnector = mock[PensionsSchemeConnector]
+      when(psc.checkForAssociation(any(), any())(any(), any(), any()))
+        .thenReturn(Future.successful(true))
+
+      val action = new TestAllowAccessActionTaskList(srn = srn, psc = psc)
+
+      val futureResult = generateTestHarnessForAllowAccessMain(srn, pensionsSchemeConnector)
+        .test(OptionalDataRequest(fakeRequest, "id", Some(suspendedUserAnswers), PsaId("A0000000"), viewOnly = false))
+
+      assertEqual(futureResult, Some(controllers.register.routes.CannotMakeChangesController.onPageLoad(srn).url))
+    }
+  }
+
+  "AllowAccessAction for task list" must {
+    behave like allowAccessAction(generateTestHarnessForAllowAccessTaskList)
+
+    "allow access where association between psa id and srn and no user answers present but an srn IS present" in {
+      val psc: PensionsSchemeConnector = mock[PensionsSchemeConnector]
+      when(psc.checkForAssociation(any(), any())(any(), any(), any()))
+        .thenReturn(Future.successful(true))
+
+      val action = new TestAllowAccessActionTaskList(srn = srn, psc = psc)
+
+      val futureResult = generateTestHarnessForAllowAccessTaskList(srn, pensionsSchemeConnector)
+        .test(OptionalDataRequest(fakeRequest, "id", None, PsaId("A0000000")))
+
+      assertEqual(futureResult, None)
+    }
+
+    "allow access where association between psa id and srn and user answers present and an srn IS present and viewonly mode and PSA is suspended" in {
+      val psc: PensionsSchemeConnector = mock[PensionsSchemeConnector]
+      when(psc.checkForAssociation(any(), any())(any(), any(), any()))
+        .thenReturn(Future.successful(true))
+
+      val action = new TestAllowAccessActionTaskList(srn = srn, psc = psc)
+
+      val futureResult = generateTestHarnessForAllowAccessTaskList(srn, pensionsSchemeConnector)
+        .test(OptionalDataRequest(fakeRequest, "id", Some(suspendedUserAnswers), PsaId("A0000000"), viewOnly = true))
+
+      assertEqual(futureResult, None)
+    }
+  }
+
+  "AllowAccessAction for suspended check" must {
+    behave like allowAccessAction(generateTestHarnessForAllowAccessSuspendedCheck)
+
+    "allow access where association between psa id and srn and user answers present and an srn IS present and viewonly mode and PSA is suspended" in {
+      val psc: PensionsSchemeConnector = mock[PensionsSchemeConnector]
+      when(psc.checkForAssociation(any(), any())(any(), any(), any()))
+        .thenReturn(Future.successful(true))
+
+      val action = new TestAllowAccessActionTaskList(srn = srn, psc = psc)
+
+      val futureResult = generateTestHarnessForAllowAccessSuspendedCheck(srn, pensionsSchemeConnector)
+        .test(OptionalDataRequest(fakeRequest, "id", Some(suspendedUserAnswers), PsaId("A0000000"), viewOnly = true))
+
+      assertEqual(futureResult, None)
+    }
+
+    "redirect to task list page where association between psa id and srn and no user answers present but an srn IS present" in {
+      val psc: PensionsSchemeConnector = mock[PensionsSchemeConnector]
+      when(psc.checkForAssociation(any(), any())(any(), any(), any()))
+        .thenReturn(Future.successful(true))
+
+      val action = new TestAllowAccessActionNoSuspendedCheck(srn = srn, psc = psc)
+
+      val futureResult = generateTestHarnessForAllowAccessSuspendedCheck(srn, pensionsSchemeConnector)
+        .test(OptionalDataRequest(fakeRequest, "id", None, PsaId("A0000000")))
+
+      assertEqual(futureResult, Some(controllers.routes.SchemeTaskListController.onPageLoad(UpdateMode, srn).url))
+    }
+  }
 
   def allowAccessAction(testHarness: (Option[String], PensionsSchemeConnector) => TestHarness): Unit = {
     "allow access where association between psa id and srn and user answers present and an srn IS present and viewonly mode" in {
@@ -88,11 +205,7 @@ class AllowAccessActionSpec extends SpecBase with ScalaFutures with MockitoSugar
 
       val futureResult = testHarness(srn, psc).test(OptionalDataRequest(fakeRequest, "id", Some(UserAnswers(Json.obj())), PsaId("A0000000"), viewOnly = true))
 
-      whenReady(futureResult) { result =>
-        result.map {
-          _.header.status
-        } mustBe None
-      }
+      assertEqual(futureResult, None)
     }
 
     "return NOT FOUND for user where NO association between psa id and both srn and user answers present" in {
@@ -116,153 +229,25 @@ class AllowAccessActionSpec extends SpecBase with ScalaFutures with MockitoSugar
 
       val futureResult = testHarness(srn, psc).test(OptionalDataRequest(fakeRequest, "id", Some(UserAnswers(Json.obj())), PsaId("A0000000")))
 
-      whenReady(futureResult) { result =>
-        result.map {
-          _.header.status
-        } mustBe None
-      }
+      assertEqual(futureResult, None)
     }
 
     "allow access for user with no data" in {
       val futureResult = testHarness(None, pensionsSchemeConnector).test(OptionalDataRequest(fakeRequest, "id", None, PsaId("A0000000")))
 
-      whenReady(futureResult) { result =>
-
-        result.map {
-          _.header.status
-        } mustBe None
-      }
+      assertEqual(futureResult, None)
     }
 
     "allow access to pages for user with no srn in Normal mode" in {
       val futureResult = testHarness(None, pensionsSchemeConnector).test(OptionalDataRequest(fakeRequest, "id", Some(UserAnswers(Json.obj())), PsaId("A0000000")))
 
-      whenReady(futureResult) { result =>
-
-        result.map {
-          _.header.status
-        } mustBe None
-      }
+      assertEqual(futureResult, None)
     }
 
     "allow access to pages for users that are not suspended" in {
       val futureResult = testHarness(srn, pensionsSchemeConnector).test(OptionalDataRequest(fakeRequest, "id", Some(notSuspendedUserAnswers), PsaId("A0000000")))
 
-      whenReady(futureResult) { result =>
-        result.map {
-          _.header.status
-        } mustBe None
-      }
-    }
-  }
-
-  "AllowAccessAction (generic)" must {
-    behave like allowAccessAction(generateTestHarnessForAllowAccessGeneric)
-
-    "redirect to task list page where association between psa id and srn and no user answers present but an srn IS present" in {
-      val psc: PensionsSchemeConnector = mock[PensionsSchemeConnector]
-      when(psc.checkForAssociation(any(), any())(any(), any(), any()))
-        .thenReturn(Future.successful(true))
-
-      val action = new TestAllowAccessActionTaskList(srn = srn, psc = psc)
-
-      val futureResult = generateTestHarnessForAllowAccessGeneric(srn, pensionsSchemeConnector).test(OptionalDataRequest(fakeRequest, "id", None, PsaId("A0000000")))
-
-      whenReady(futureResult) { result =>
-        result.map {
-          _.header.status
-        } mustBe Some(SEE_OTHER)
-        result.flatMap {
-          _.header.headers.get(LOCATION)
-        } mustBe Some(controllers.routes.SchemeTaskListController.onPageLoad(UpdateMode, srn).url)
-      }
-    }
-
-    "redirect to cannot make changes page where association between psa id and srn and user answers present and an srn IS present and viewonly mode and PSA is suspended" in {
-      val psc: PensionsSchemeConnector = mock[PensionsSchemeConnector]
-      when(psc.checkForAssociation(any(), any())(any(), any(), any()))
-        .thenReturn(Future.successful(true))
-
-      val action = new TestAllowAccessActionTaskList(srn = srn, psc = psc)
-
-      val futureResult = generateTestHarnessForAllowAccessGeneric(srn, pensionsSchemeConnector).test(OptionalDataRequest(fakeRequest, "id", Some(suspendedUserAnswers), PsaId("A0000000"), viewOnly = true))
-
-      whenReady(futureResult) { result =>
-        result.map {
-          _.header.status
-        } mustBe Some(SEE_OTHER)
-        result.flatMap {
-          _.header.headers.get(LOCATION)
-        } mustBe Some(controllers.register.routes.CannotMakeChangesController.onPageLoad(srn).url)
-      }
-    }
-  }
-
-  "AllowAccessAction for task list" must {
-    behave like allowAccessAction(generateTestHarnessForAllowAccessTaskList)
-
-    "allow access where association between psa id and srn and no user answers present but an srn IS present" in {
-      val psc: PensionsSchemeConnector = mock[PensionsSchemeConnector]
-      when(psc.checkForAssociation(any(), any())(any(), any(), any()))
-        .thenReturn(Future.successful(true))
-
-      val action = new TestAllowAccessActionTaskList(srn = srn, psc = psc)
-
-      val futureResult = generateTestHarnessForAllowAccessTaskList(srn, pensionsSchemeConnector).test(OptionalDataRequest(fakeRequest, "id", None, PsaId("A0000000")))
-
-      whenReady(futureResult) { result =>
-        result mustBe None
-      }
-    }
-
-    "allow access where association between psa id and srn and user answers present and an srn IS present and viewonly mode and PSA is suspended" in {
-      val psc: PensionsSchemeConnector = mock[PensionsSchemeConnector]
-      when(psc.checkForAssociation(any(), any())(any(), any(), any()))
-        .thenReturn(Future.successful(true))
-
-      val action = new TestAllowAccessActionTaskList(srn = srn, psc = psc)
-
-      val futureResult = generateTestHarnessForAllowAccessTaskList(srn, pensionsSchemeConnector).test(OptionalDataRequest(fakeRequest, "id", Some(suspendedUserAnswers), PsaId("A0000000"), viewOnly = true))
-
-      whenReady(futureResult) { result =>
-        result mustBe None
-      }
-    }
-  }
-
-  "AllowAccessAction for suspended check" must {
-    behave like allowAccessAction(generateTestHarnessForAllowAccessSuspendedCheck)
-    "allow access where association between psa id and srn and user answers present and an srn IS present and viewonly mode and PSA is suspended" in {
-      val psc: PensionsSchemeConnector = mock[PensionsSchemeConnector]
-      when(psc.checkForAssociation(any(), any())(any(), any(), any()))
-        .thenReturn(Future.successful(true))
-
-      val action = new TestAllowAccessActionTaskList(srn = srn, psc = psc)
-
-      val futureResult = generateTestHarnessForAllowAccessSuspendedCheck(srn, pensionsSchemeConnector).test(OptionalDataRequest(fakeRequest, "id", Some(suspendedUserAnswers), PsaId("A0000000"), viewOnly = true))
-
-      whenReady(futureResult) { result =>
-        result mustBe None
-      }
-    }
-
-    "redirect to task list page where association between psa id and srn and no user answers present but an srn IS present" in {
-      val psc: PensionsSchemeConnector = mock[PensionsSchemeConnector]
-      when(psc.checkForAssociation(any(), any())(any(), any(), any()))
-        .thenReturn(Future.successful(true))
-
-      val action = new TestAllowAccessActionNoSuspendedCheck(srn = srn, psc = psc)
-
-      val futureResult = generateTestHarnessForAllowAccessSuspendedCheck(srn, pensionsSchemeConnector).test(OptionalDataRequest(fakeRequest, "id", None, PsaId("A0000000")))
-
-      whenReady(futureResult) { result =>
-        result.map {
-          _.header.status
-        } mustBe Some(SEE_OTHER)
-        result.flatMap {
-          _.header.headers.get(LOCATION)
-        } mustBe Some(controllers.routes.SchemeTaskListController.onPageLoad(UpdateMode, srn).url)
-      }
+      assertEqual(futureResult, None)
     }
   }
 }
