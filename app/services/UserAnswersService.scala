@@ -17,7 +17,7 @@
 package services
 
 import config.FrontendAppConfig
-import connectors.{PensionSchemeVarianceLockConnector, SubscriptionCacheConnector, UpdateSchemeCacheConnector}
+import connectors.{OldSubscriptionCacheConnector, PensionSchemeVarianceLockConnector, SubscriptionDualCacheConnector, UpdateSchemeCacheConnector, UserAnswersCacheConnector}
 import identifiers._
 import identifiers.register.establishers.company.director._
 import identifiers.register.establishers.company.{IsCompanyCompleteId, CompanyAddressYearsId => EstablisherCompanyAddressYearsId, CompanyPreviousAddressId => EstablisherCompanyPreviousAddressId}
@@ -43,7 +43,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 trait UserAnswersService {
 
-  protected def subscriptionCacheConnector: SubscriptionCacheConnector
+  protected def subscriptionCacheConnector: UserAnswersCacheConnector
 
   protected def updateSchemeCacheConnector: UpdateSchemeCacheConnector
 
@@ -270,7 +270,7 @@ trait UserAnswersService {
 }
 
 @Singleton
-class UserAnswersServiceEstablishersAndTrusteesImpl @Inject()(override val subscriptionCacheConnector: SubscriptionCacheConnector,
+class UserAnswersServiceEstablishersAndTrusteesImpl @Inject()(override val subscriptionCacheConnector: UserAnswersCacheConnector,
                                                               override val updateSchemeCacheConnector: UpdateSchemeCacheConnector,
                                                               override val lockConnector: PensionSchemeVarianceLockConnector,
                                                               override val appConfig: FrontendAppConfig
@@ -287,7 +287,7 @@ class UserAnswersServiceEstablishersAndTrusteesImpl @Inject()(override val subsc
 }
 
 @Singleton
-class UserAnswersServiceInsuranceImpl @Inject()(override val subscriptionCacheConnector: SubscriptionCacheConnector,
+class UserAnswersServiceInsuranceImpl @Inject()(override val subscriptionCacheConnector: UserAnswersCacheConnector,
                                                 override val updateSchemeCacheConnector: UpdateSchemeCacheConnector,
                                                 override val lockConnector: PensionSchemeVarianceLockConnector,
                                                 override val appConfig: FrontendAppConfig
@@ -303,7 +303,7 @@ class UserAnswersServiceInsuranceImpl @Inject()(override val subscriptionCacheCo
 }
 
 @Singleton
-class UserAnswersServiceImpl @Inject()(override val subscriptionCacheConnector: SubscriptionCacheConnector,
+class UserAnswersServiceImpl @Inject()(override val subscriptionCacheConnector: UserAnswersCacheConnector,
                                        override val updateSchemeCacheConnector: UpdateSchemeCacheConnector,
                                        override val lockConnector: PensionSchemeVarianceLockConnector,
                                        override val appConfig: FrontendAppConfig

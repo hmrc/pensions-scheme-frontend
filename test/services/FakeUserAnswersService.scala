@@ -17,6 +17,7 @@
 package services
 
 import config.FrontendAppConfig
+import connectors.{FakeFrontendAppConfig, FakeLockConnector, FakeSubscriptionCacheConnector, FakeUpdateCacheConnector, PensionSchemeVarianceLockConnector, OldSubscriptionCacheConnector, UpdateSchemeCacheConnector}
 import connectors._
 import identifiers.TypedIdentifier
 import models.Mode
@@ -34,7 +35,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 trait FakeUserAnswersService extends UserAnswersService with Matchers {
 
-  override protected def subscriptionCacheConnector: SubscriptionCacheConnector = FakeSubscriptionCacheConnector.getConnector
+  override protected def subscriptionCacheConnector: OldSubscriptionCacheConnector = FakeSubscriptionCacheConnector.getConnector
   override protected def updateSchemeCacheConnector: UpdateSchemeCacheConnector = FakeUpdateCacheConnector.getConnector
   override protected def lockConnector: PensionSchemeVarianceLockConnector = FakeLockConnector.getConnector
     override val appConfig: FrontendAppConfig =  FakeFrontendAppConfig.getConfig

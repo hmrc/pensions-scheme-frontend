@@ -19,7 +19,7 @@ package services
 import base.SpecBase
 import com.google.inject.Inject
 import config.FrontendAppConfig
-import connectors.{PensionSchemeVarianceLockConnector, SubscriptionCacheConnector, UpdateSchemeCacheConnector}
+import connectors.{OldSubscriptionCacheConnector, PensionSchemeVarianceLockConnector, SubscriptionCacheConnector, UpdateSchemeCacheConnector, UserAnswersCacheConnector}
 import identifiers.TypedIdentifier
 import identifiers.register.establishers.IsEstablisherCompleteId
 import identifiers.register.establishers.company.IsCompanyCompleteId
@@ -408,7 +408,7 @@ class UserAnswersServiceSpec extends AsyncWordSpec with MustMatchers with Mockit
     }
 
     "in Normal Mode" must {
-      "not save the complete flag and return the same useramswers if the trustee is new" in {
+      "not save the complete flag and return the same user answers if the trustee is new" in {
         val answers = UserAnswers()
         when(lockConnector.lock(any(), any())(any(), any()))
           .thenReturn(Future(VarianceLock))
@@ -466,13 +466,13 @@ object UserAnswersServiceSpec extends SpecBase with MockitoSugar {
     "other-key" -> "meh"
   )
 
-  class TestServiceNotAnnotated @Inject()(override val subscriptionCacheConnector: SubscriptionCacheConnector,
+  class TestServiceNotAnnotated @Inject()(override val subscriptionCacheConnector: UserAnswersCacheConnector,
                               override val updateSchemeCacheConnector: UpdateSchemeCacheConnector,
                               override val lockConnector: PensionSchemeVarianceLockConnector,
                               override val appConfig: FrontendAppConfig
                              ) extends UserAnswersService
 
-  class TestServiceEstAndTrustees @Inject()(override val subscriptionCacheConnector: SubscriptionCacheConnector,
+  class TestServiceEstAndTrustees @Inject()(override val subscriptionCacheConnector: UserAnswersCacheConnector,
                                             override val updateSchemeCacheConnector: UpdateSchemeCacheConnector,
                                             override val lockConnector: PensionSchemeVarianceLockConnector,
                                             override val appConfig: FrontendAppConfig
@@ -480,13 +480,13 @@ object UserAnswersServiceSpec extends SpecBase with MockitoSugar {
 
 
 
-  class TestServiceInsurance @Inject()(override val subscriptionCacheConnector: SubscriptionCacheConnector,
+  class TestServiceInsurance @Inject()(override val subscriptionCacheConnector: UserAnswersCacheConnector,
                                             override val updateSchemeCacheConnector: UpdateSchemeCacheConnector,
                                             override val lockConnector: PensionSchemeVarianceLockConnector,
                                             override val appConfig: FrontendAppConfig
   ) extends UserAnswersServiceInsuranceImpl(subscriptionCacheConnector, updateSchemeCacheConnector, lockConnector, appConfig)
 
-  protected val subscriptionConnector: SubscriptionCacheConnector = mock[SubscriptionCacheConnector]
+  protected val subscriptionConnector: UserAnswersCacheConnector = mock[OldSubscriptionCacheConnector]
   protected val updateConnector: UpdateSchemeCacheConnector = mock[UpdateSchemeCacheConnector]
   protected val lockConnector: PensionSchemeVarianceLockConnector = mock[PensionSchemeVarianceLockConnector]
 
