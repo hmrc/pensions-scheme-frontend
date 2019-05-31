@@ -408,7 +408,7 @@ class UserAnswersServiceSpec extends AsyncWordSpec with MustMatchers with Mockit
     }
 
     "in Normal Mode" must {
-      "not save the complete flag and return the same useramswers if the trustee is new" in {
+      "not save the complete flag and return the same user answers if the trustee is new" in {
         val answers = UserAnswers()
         when(lockConnector.lock(any(), any())(any(), any()))
           .thenReturn(Future(VarianceLock))
