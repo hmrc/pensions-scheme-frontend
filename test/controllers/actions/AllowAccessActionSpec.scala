@@ -206,7 +206,7 @@ class AllowAccessActionSpec extends SpecBase with ScalaFutures with MockitoSugar
   }
 
   def allowAccessSuspended(testHarness: (Option[String], PensionsSchemeConnector) => TestHarness, expectedResult: => Option[String]):Unit = {
-    "redirect to cannot make changes page where association between psa id and srn and user answers present and an srn IS present and viewonly mode and PSA is suspended" in {
+    "respond correctly where association between psa id and srn and user answers present and an srn IS present and viewonly mode and PSA is suspended" in {
       val psc: PensionsSchemeConnector = mock[PensionsSchemeConnector]
       when(psc.checkForAssociation(any(), any())(any(), any(), any()))
         .thenReturn(Future.successful(true))
@@ -217,7 +217,7 @@ class AllowAccessActionSpec extends SpecBase with ScalaFutures with MockitoSugar
       assertEqual(futureResult, expectedResult)
     }
 
-    "redirect to cannot make changes page where association between psa id and srn and user answers present and an srn IS present and not viewonly mode and PSA is suspended" in {
+    "respond correctly where association between psa id and srn and user answers present and an srn IS present and not viewonly mode and PSA is suspended" in {
       val psc: PensionsSchemeConnector = mock[PensionsSchemeConnector]
       when(psc.checkForAssociation(any(), any())(any(), any(), any()))
         .thenReturn(Future.successful(true))
