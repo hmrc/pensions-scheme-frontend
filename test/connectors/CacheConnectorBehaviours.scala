@@ -27,7 +27,7 @@ import uk.gov.hmrc.crypto.PlainText
 import uk.gov.hmrc.http.{HeaderCarrier, HttpException}
 import utils.WireMockHelper
 
-trait CacheConnectorBehavious extends AsyncWordSpec with MustMatchers with WireMockHelper with OptionValues {
+trait CacheConnectorBehaviours extends AsyncWordSpec with MustMatchers with WireMockHelper with OptionValues {
 
   protected object FakeIdentifier extends TypedIdentifier[String] {
     override def toString: String = "fake-identifier"

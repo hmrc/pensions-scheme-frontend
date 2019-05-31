@@ -16,7 +16,7 @@
 
 package connectors
 
-class SchemeDetailsReadOnlyCacheConnectorSpec extends CacheConnectorBehavious {
+class SchemeDetailsReadOnlyCacheConnectorSpec extends CacheConnectorBehaviours {
 
   override protected def url(id: String) = s"/pensions-scheme/journey-cache/scheme-details/$id"
 

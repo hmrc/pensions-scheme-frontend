@@ -16,7 +16,7 @@
 
 package connectors
 
-class SubscriptionCacheConnectorSpec extends CacheConnectorBehavious {
+class SubscriptionCacheConnectorSpec extends CacheConnectorBehaviours {
 
   override protected def url(id: String): String = s"/pensions-scheme/journey-cache/scheme/$id"
 
