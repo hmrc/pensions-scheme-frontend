@@ -41,38 +41,43 @@ class DataRetrievalImpl(dataConnector: UserAnswersCacheConnector,
   override protected def transform[A](request: AuthenticatedRequest[A]): Future[OptionalDataRequest[A]] = {
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
     mode match {
-      case NormalMode | CheckMode => getOptionalRequest(dataConnector.fetch(request.externalId), viewOnly = false)(request)
-
+      case NormalMode | CheckMode =>
+        getOptionalRequest(dataConnector.fetch(request.externalId), viewOnly = false)(request)
       case UpdateMode | CheckUpdateMode =>
-        srn.map { srn =>
-          lockConnector.isLockByPsaIdOrSchemeId(request.psaId.id, srn).flatMap {
+        srn.map { extractedSrn =>
+          lockConnector.isLockByPsaIdOrSchemeId(request.psaId.id, extractedSrn).flatMap {
             case Some(VarianceLock) =>
-              getOptionalRequest(updateConnector.fetch(srn), viewOnly = false)(request)
+              getOptionalRequest(updateConnector.fetch(extractedSrn), viewOnly = false)(request)
             case Some(_) =>
-              viewConnector.fetch(srn).map {
-                case None => OptionalDataRequest(request.request, request.externalId, None, request.psaId, viewOnly = true)
-                case Some(data) =>
-                  UserAnswers(data).get(SchemeSrnId) match {
-                    case Some(foundSrn) if foundSrn == srn  => OptionalDataRequest(request.request, request.externalId, Some(UserAnswers(data)), request.psaId, viewOnly = true)
-                    case _ => OptionalDataRequest(request.request, request.externalId, None, request.psaId, viewOnly = true)
-                  }
-              }
+              getRequestWithLock(request, extractedSrn)
             case None =>
-              getRequestWithNoLock(request, srn)
+              getRequestWithNoLock(request, extractedSrn)
           }
         }.getOrElse(Future(OptionalDataRequest(request.request, request.externalId, None, request.psaId)))
     }
   }
 
-  private def getRequestWithNoLock[A](request: AuthenticatedRequest[A], srn:String)(implicit hc: HeaderCarrier): Future[OptionalDataRequest[A]] = {
-    viewConnector.fetch(srn).map {
+  private def getRequestWithLock[A](request: AuthenticatedRequest[A], srn: String)(implicit hc: HeaderCarrier): Future[OptionalDataRequest[A]] = {
+    viewConnector.fetch(request.externalId).map {
+      case None =>
+        OptionalDataRequest(request.request, request.externalId, None, request.psaId, viewOnly = true)
+      case Some(data) =>
+        UserAnswers(data).get(SchemeSrnId) match {
+          case Some(foundSrn) if foundSrn == srn =>
+            OptionalDataRequest(request.request, request.externalId, Some(UserAnswers(data)), request.psaId, viewOnly = true)
+          case _ =>
+            OptionalDataRequest(request.request, request.externalId, None, request.psaId, viewOnly = true)
+        }
+    }
+  }
+
+  private def getRequestWithNoLock[A](request: AuthenticatedRequest[A], srn: String)(implicit hc: HeaderCarrier): Future[OptionalDataRequest[A]] = {
+    viewConnector.fetch(request.externalId).map {
       case Some(answersJsValue) =>
         val ua = UserAnswers(answersJsValue)
         (ua.get(SchemeSrnId), ua.get(SchemeStatusId)) match {
-          case (Some(foundSrn), Some("Open")) if foundSrn == srn  =>
-            OptionalDataRequest(request.request, request.externalId, Some(UserAnswers(answersJsValue)), request.psaId)
-          case (Some(_), _) =>
-            OptionalDataRequest(request.request, request.externalId, None, request.psaId)
+          case (Some(foundSrn), Some(status)) if foundSrn == srn =>
+            OptionalDataRequest(request.request, request.externalId, Some(UserAnswers(answersJsValue)), request.psaId, status != "Open")
           case _ =>
             OptionalDataRequest(request.request, request.externalId, Some(UserAnswers(answersJsValue)), request.psaId, viewOnly = true)
         }
@@ -81,7 +86,7 @@ class DataRetrievalImpl(dataConnector: UserAnswersCacheConnector,
     }
   }
 
-  def getOptionalRequest[A](f: Future[Option[JsValue]], viewOnly: Boolean)(implicit request: AuthenticatedRequest[A]): Future[OptionalDataRequest[A]] =
+  private def getOptionalRequest[A](f: Future[Option[JsValue]], viewOnly: Boolean)(implicit request: AuthenticatedRequest[A]): Future[OptionalDataRequest[A]] =
     f.map {
       case None => OptionalDataRequest(request.request, request.externalId, None, request.psaId, viewOnly)
       case Some(data) => OptionalDataRequest(request.request, request.externalId, Some(UserAnswers(data)), request.psaId, viewOnly)

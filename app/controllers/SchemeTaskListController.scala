@@ -17,7 +17,7 @@
 package controllers
 
 import config.{FeatureSwitchManagementService, FrontendAppConfig}
-import connectors.{MinimalPsaConnector, PensionSchemeVarianceLockConnector, SchemeDetailsConnector, SchemeDetailsReadOnlyCacheConnector, UpdateSchemeCacheConnector}
+import connectors._
 import controllers.actions._
 import handlers.ErrorHandler
 import identifiers.{IsPsaSuspendedId, SchemeSrnId, SchemeStatusId}
@@ -72,12 +72,9 @@ class SchemeTaskListController @Inject()(appConfig: FrontendAppConfig,
   private def onPageLoadVariationsToggledOff(srn: String)(implicit
                                                           request: OptionalDataRequest[AnyContent],
                                                           hc: HeaderCarrier): Future[Result] = {
-
     schemeDetailsConnector.getSchemeDetails(request.psaId.id, schemeIdType = "srn", srn).flatMap { scheme =>
-
       val schemeDetailMasterSection = schemeTransformer.transformMasterSection(scheme)
       Future.successful(Ok(psa_scheme_details(appConfig, schemeDetailMasterSection, scheme.schemeDetails.name, srn)))
-
     }
   }
 
@@ -88,26 +85,23 @@ class SchemeTaskListController @Inject()(appConfig: FrontendAppConfig,
       case Some(VarianceLock) =>
         ua match {
           case Some(userAnswers) =>
-            createViewWithSuspensionFlag(srn, userAnswers, updateConnector.upsert(srn, _), false)
+            createViewWithSuspensionFlag(srn, userAnswers, updateConnector.upsert(srn, _), viewOnly = false)
           case _ =>
             Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
         }
       case Some(_) =>
-        ua match {
-          case Some(userAnswers) =>
-            createViewWithSuspensionFlag(srn, userAnswers, viewConnector.upsert(srn, _), true)
-          case _ =>
-            schemeDetailsConnector.getSchemeDetailsVariations(request.psaId.id, schemeIdType = "srn", srn)
-              .flatMap { userAnswers =>
-                createViewWithSuspensionFlag(srn, userAnswers, viewConnector.upsert(srn, _), true)
-              }
-        }
+        getSchemeDetailsAndReturnResult(srn, viewOnly = true)
       case _ =>
-        schemeDetailsConnector.getSchemeDetailsVariations(request.psaId.id, schemeIdType = "srn", srn)
-          .flatMap { userAnswers =>
-            createViewWithSuspensionFlag(srn, userAnswers, viewConnector.upsert(srn, _), false)
-          }
+        getSchemeDetailsAndReturnResult(srn, viewOnly = false)
     }
+  }
+
+  private def getSchemeDetailsAndReturnResult(srn: String, viewOnly: Boolean)(implicit request: OptionalDataRequest[AnyContent],
+                                                                              hc: HeaderCarrier): Future[Result] = {
+    schemeDetailsConnector.getSchemeDetailsVariations(request.psaId.id, schemeIdType = "srn", srn)
+      .flatMap { userAnswers =>
+        createViewWithSuspensionFlag(srn, userAnswers, viewConnector.upsert(request.externalId, _), viewOnly)
+      }
   }
 
   private def createViewWithSuspensionFlag(srn: String, userAnswers: UserAnswers,
