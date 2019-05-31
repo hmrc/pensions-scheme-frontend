@@ -135,7 +135,7 @@ class PensionsSchemeFeatureSwitchConnectorSpec extends AsyncWordSpec with MustMa
       }
     }
 
-    "return none when toggle is defined" in {
+    "return none when toggle is not defined" in {
       server.stubFor(
         get(urlEqualTo(getUrl))
           .willReturn(
