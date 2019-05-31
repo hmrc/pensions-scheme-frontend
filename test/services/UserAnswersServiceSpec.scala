@@ -466,7 +466,7 @@ object UserAnswersServiceSpec extends SpecBase with MockitoSugar {
     "other-key" -> "meh"
   )
 
-  class TestService @Inject()(override val subscriptionCacheConnector: UserAnswersCacheConnector,
+  class TestServiceNotAnnotated @Inject()(override val subscriptionCacheConnector: UserAnswersCacheConnector,
                               override val updateSchemeCacheConnector: UpdateSchemeCacheConnector,
                               override val lockConnector: PensionSchemeVarianceLockConnector,
                               override val appConfig: FrontendAppConfig
