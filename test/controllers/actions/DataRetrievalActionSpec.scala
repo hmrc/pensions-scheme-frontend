@@ -189,5 +189,18 @@ class DataRetrievalActionSpec extends SpecBase with MockitoSugar with ScalaFutur
         }
       }
     }
+
+    "no SRN is defined for UpdateMode" must {
+      "set userAnswers to 'None' in the request" in {
+        when(dataCacheConnector.fetch(eqTo("id"))(any(), any())) thenReturn Future(None)
+        val action = new Harness(updateConnector = updateCacheConnector, lockConnector = lockRepoConnector, mode = UpdateMode)
+
+        val futureResult = action.callTransform(authRequest)
+
+        whenReady(futureResult) { result =>
+          result.userAnswers.isEmpty mustBe true
+        }
+      }
+    }
   }
 }

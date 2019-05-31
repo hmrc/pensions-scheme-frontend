@@ -30,8 +30,6 @@ class FrontendAppConfig @Inject()(override val runModeConfiguration: Configurati
 
   private def loadConfig(key: String) = runModeConfiguration.getString(key).getOrElse(throw new Exception(s"Missing configuration key: $key"))
 
-  private def loadConfigOrDefault(key: String, default: String) = runModeConfiguration.getString(key).getOrElse(default)
-
   private lazy val contactHost = runModeConfiguration.getString("contact-frontend.host").getOrElse("")
   private val contactFormServiceIdentifier = "pensionsschemefrontend"
   lazy val managePensionsSchemeOverviewUrl : Call = Call("GET",loadConfig("urls.manage-pensions-frontend.schemesOverview"))
@@ -44,27 +42,20 @@ class FrontendAppConfig @Inject()(override val runModeConfiguration: Configurati
   lazy val googleTagManagerId: String = loadConfig(s"google-tag-manager.id")
   lazy val reportAProblemPartialUrl = s"$contactHost/contact/problem_reports_ajax?service=$contactFormServiceIdentifier"
   lazy val reportAProblemNonJSUrl = s"$contactHost/contact/problem_reports_nonjs?service=$contactFormServiceIdentifier"
-  lazy val betaFeedbackUrl = s"$contactHost/contact/beta-feedback"
   lazy val betaFeedbackUnauthenticatedUrl = s"$contactHost/contact/beta-feedback-unauthenticated"
 
-  lazy val authUrl = baseUrl("auth")
   lazy val pensionsSchemeUrl = baseUrl("pensions-scheme")
   lazy val pensionsAdministratorUrl = baseUrl("pension-administrator")
 
   lazy val loginUrl = loadConfig("urls.login")
-  lazy val loginContinueUrl = loadConfig("urls.loginContinue")
   lazy val serviceSignOut = loadConfig("urls.logout")
   lazy val registerSchemeUrl: String = pensionsSchemeUrl +
     runModeConfiguration.underlying.getString("urls.registerScheme")
   lazy val registerSchemeAdministratorUrl: String = loadConfig("urls.registerSchemeAdministrator")
-  lazy val listOfSchemesUrl: String = pensionsSchemeUrl +
-    runModeConfiguration.underlying.getString("urls.listOfSchemes")
-  lazy val pensionSchemeOnlineServiceUrl: String = loadConfig("urls.pensionSchemeOnlineService")
   lazy val pensionAdministratorGovUkLink = runModeConfiguration.underlying.getString("urls.pensionAdministratorGovUkLink")
   lazy val pensionPractitionerGovUkLink = runModeConfiguration.underlying.getString("urls.pensionPractitionerGovUkLink")
   lazy val govUkLink = runModeConfiguration.underlying.getString("urls.govUkLink")
   lazy val appealLink = runModeConfiguration.underlying.getString("urls.appealLink")
-  lazy val applyToRegisterLink = runModeConfiguration.underlying.getString("urls.applyToRegisterLink")
   lazy val pensionsRegulatorLink = runModeConfiguration.underlying.getString("urls.pensionsRegulatorLink")
   lazy val getPSAEmail = runModeConfiguration.underlying.getString("urls.get-psa-email")
   lazy val getPSAName = runModeConfiguration.underlying.getString("urls.get-psa-name")
@@ -89,8 +80,6 @@ class FrontendAppConfig @Inject()(override val runModeConfiguration: Configurati
   lazy val updateSchemeDetailsUrl: String = s"${baseUrl("pensions-scheme")}${runModeConfiguration.underlying.getString("urls.updateSchemeDetails")}"
 
   //FEATURES
-  lazy val allowMasterTrust: Boolean = loadConfigOrDefault("features.allowMasterTrust", "false").toBoolean
   lazy val languageTranslationEnabled:Boolean = runModeConfiguration.getBoolean("features.welsh-translation").getOrElse(true)
-
-  def encryptionKey(crypto: String): String = loadConfig(s"$crypto.encryption.key")
 }
+
