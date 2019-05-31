@@ -15,7 +15,8 @@
  */
 
 import com.google.inject.AbstractModule
-import connectors.{OldSubscriptionCacheConnector, SubscriptionDualCacheConnector, UserAnswersCacheConnector}
+import connectors.{SubscriptionDualCacheConnector, UserAnswersCacheConnector}
+import controllers.actions._
 import navigators._
 import services.{UserAnswersService, UserAnswersServiceEstablishersAndTrusteesImpl, UserAnswersServiceImpl, UserAnswersServiceInsuranceImpl}
 import utils.annotations.{EstablishersPartner, _}
@@ -112,6 +113,16 @@ class PODSModule extends AbstractModule {
     bind(classOf[AllowChangeHelper])
       .to(classOf[AllowChangeHelperImpl])
 
-  }
+    bind(classOf[AllowAccessActionProvider])
+      .annotatedWith(classOf[TaskList])
+      .to(classOf[AllowAccessActionProviderTaskListImpl])
 
+    bind(classOf[AllowAccessActionProvider])
+      .annotatedWith(classOf[NoSuspendedCheck])
+      .to(classOf[AllowAccessActionProviderNoSuspendedCheckImpl])
+
+    bind(classOf[AllowAccessActionProvider])
+      .to(classOf[AllowAccessActionProviderMainImpl])
+
+  }
 }

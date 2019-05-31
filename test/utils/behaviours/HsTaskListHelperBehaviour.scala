@@ -58,7 +58,7 @@ trait HsTaskListHelperBehaviour extends SpecBase with MustMatchers with OptionVa
   protected lazy val addTrusteesLinkText = messages("messages__schemeTaskList__sectionTrustees_add_link")
   protected lazy val addTrusteesAdditionalInfo = messages("messages__schemeTaskList__sectionTrustees_add_additional_text")
   protected lazy val changeTrusteesLinkText = messages("messages__schemeTaskList__sectionTrustees_change_link")
-  protected lazy val addDeleteTrusteesLinkText = messages("messages__schemeTaskList__sectionTrustees_add_delete_link")
+  protected lazy val addDeleteTrusteesLinkText = messages("messages__schemeTaskList__sectionTrustees_change_link")
   protected lazy val deleteTrusteesLinkText = messages("messages__schemeTaskList__sectionTrustees_delete_link")
   protected lazy val deleteTrusteesAdditionalInfo = messages("messages__schemeTaskList__sectionTrustees_delete_additional_text")
   protected lazy val declarationLinkText = messages("messages__schemeTaskList__declaration_link")

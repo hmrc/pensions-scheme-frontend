@@ -36,7 +36,7 @@ import org.scalatest.mockito.MockitoSugar
 import play.api.data.Form
 import play.api.libs.json.{JsValue, Json}
 import play.api.libs.ws.WSClient
-import play.api.mvc.Call
+import play.api.mvc.{Call, RequestHeader}
 import play.api.test.Helpers._
 import uk.gov.hmrc.crypto.ApplicationCrypto
 import uk.gov.hmrc.domain.PsaId
@@ -331,6 +331,9 @@ object DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar {
 
     override def updateSchemeDetails(psaId: String, pstr: String, answers: UserAnswers)(
       implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Unit] = ???
+
+    override def checkForAssociation(psaId: String, srn: String)(implicit headerCarrier: HeaderCarrier,
+                                                                 ec: ExecutionContext, request: RequestHeader): Future[Boolean] = ???
   }
 
   private val fakeEmailConnector = new EmailConnector {

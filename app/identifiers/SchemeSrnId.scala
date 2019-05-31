@@ -1,4 +1,4 @@
-@*
+/*
  * Copyright 2019 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,23 +12,10 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *@
+ */
 
-@import config.FrontendAppConfig
-@import models.Link
+package identifiers
 
-@(appConfig: FrontendAppConfig, returnLink:Link)(implicit request: Request[_], messages: Messages)
-
-@contentHeader = {
-    <h1>@messages("messages__pageNotFound404__heading")</h1>
+object SchemeSrnId extends TypedIdentifier[String] {
+  override def toString: String = "schemeSrnId"
 }
-
-@mainContent = {
-    <p>@messages("messages__pageNotFound404__p1")</p>
-    <p>@messages("messages__pageNotFound404__p2")</p>
-
-    <p><a id="return" href="@returnLink.target">@returnLink.text</a></p>
-
-}
-
-@govuk_wrapper(appConfig = appConfig, title = messages("messages__pageNotFound404__title"), contentHeader = Some(contentHeader), mainContent = mainContent)

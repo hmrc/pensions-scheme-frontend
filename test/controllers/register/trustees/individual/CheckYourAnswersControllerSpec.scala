@@ -17,7 +17,7 @@
 package controllers.register.trustees.individual
 
 import controllers.ControllerSpecBase
-import controllers.actions.{DataRequiredActionImpl, DataRetrievalAction, FakeAuthAction}
+import controllers.actions.{DataRequiredActionImpl, DataRetrievalAction, FakeAllowAccessProvider, FakeAuthAction}
 import controllers.behaviours.ControllerAllowChangeBehaviour
 import controllers.register.trustees.company.CheckYourAnswersControllerSpec.ach
 import identifiers.register.trustees.IsTrusteeCompleteId
@@ -98,6 +98,7 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase with Controller
       new FakeNavigator(onwardRoute),
       FakeAuthAction,
       dataRetrievalAction,
+      FakeAllowAccessProvider(),
       new DataRequiredActionImpl,
       FakeUserAnswersService,
       new FakeCountryOptions,

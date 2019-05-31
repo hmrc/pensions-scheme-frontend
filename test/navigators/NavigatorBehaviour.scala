@@ -109,20 +109,20 @@ trait NavigatorBehaviour extends PropertyChecks with OptionValues {
   //scalastyle:on method.length
   //scalastyle:on regex
 
-  def nonMatchingNavigator(navigator: Navigator): Unit = {
+  def nonMatchingNavigator(navigator: Navigator, mode : Mode = NormalMode): Unit = {
 
     val testId: Identifier = new Identifier {}
 
-    "behaviour like a navigator without routes" when {
+    s"behaviour like a navigator without routes with $mode" when {
       "navigating in NormalMode" must {
         "return a call given a non-configured Id" in {
-          navigator.nextPage(testId, NormalMode, UserAnswers()) mustBe a[Call]
+          navigator.nextPage(testId, mode, UserAnswers()) mustBe a[Call]
         }
       }
 
       "navigating in CheckMode" must {
         "return a call given a non-configured Id" in {
-          navigator.nextPage(testId, CheckMode, UserAnswers()) mustBe a[Call]
+          navigator.nextPage(testId, checkMode(mode), UserAnswers()) mustBe a[Call]
         }
       }
     }

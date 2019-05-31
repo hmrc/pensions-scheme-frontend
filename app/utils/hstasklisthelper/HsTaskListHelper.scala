@@ -44,7 +44,7 @@ abstract class HsTaskListHelper(answers: UserAnswers)(implicit messages: Message
   protected lazy val individualLinkText = messages("messages__schemeTaskList__individual_link")
   protected lazy val partnershipLinkText = messages("messages__schemeTaskList__partnership_link")
   protected lazy val addTrusteesLinkText = messages("messages__schemeTaskList__sectionTrustees_add_link")
-  protected lazy val addDeleteTrusteesLinkText = messages("messages__schemeTaskList__sectionTrustees_add_delete_link")
+  protected lazy val addDeleteTrusteesLinkText = messages("messages__schemeTaskList__sectionTrustees_change_link")
   protected lazy val addTrusteesAdditionalInfo = messages("messages__schemeTaskList__sectionTrustees_add_additional_text")
   protected lazy val changeTrusteesLinkText = messages("messages__schemeTaskList__sectionTrustees_change_link")
   protected lazy val deleteTrusteesLinkText = messages("messages__schemeTaskList__sectionTrustees_delete_link")

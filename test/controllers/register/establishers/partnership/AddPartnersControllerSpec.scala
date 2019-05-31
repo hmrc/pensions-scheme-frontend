@@ -58,6 +58,7 @@ class AddPartnersControllerSpec extends ControllerSpecBase {
       navigator,
       FakeAuthAction,
       dataRetrievalAction,
+      FakeAllowAccessProvider(),
       new DataRequiredActionImpl,
       formProvider
     )

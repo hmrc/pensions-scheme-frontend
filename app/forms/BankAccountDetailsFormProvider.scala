@@ -39,11 +39,13 @@ class BankAccountDetailsFormProvider @Inject() extends BankDetailsMapping {
         sortCodeMappingHS("messages__error__sort_code__blank",
           "messages__error__sort_code__invalid",
           "messages__error__sort_code__length"
-          ),
+        ),
       "accountNumber" ->
-        text("messages__error__bank_accno__blank").
-          verifying(returnOnFirstFailure(regexp(regexAccountNo, "messages__error__bank_accno__invalid"),
-            exactLength(accountNoExactLength, "messages__error__bank_accno__length")))
+        accountNumberMapping(
+          "messages__error__bank_accno__blank",
+          "messages__error__bank_accno__invalid",
+          "messages__error__bank_accno__length"
+        )
     )(BankAccountDetails.apply)(BankAccountDetails.unapply)
   )
 }

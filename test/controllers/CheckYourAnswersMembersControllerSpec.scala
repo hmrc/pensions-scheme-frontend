@@ -16,7 +16,7 @@
 
 package controllers
 
-import controllers.actions.{DataRequiredActionImpl, DataRetrievalAction, FakeAuthAction}
+import controllers.actions.{DataRequiredActionImpl, DataRetrievalAction, FakeAllowAccessProvider, FakeAuthAction}
 import identifiers.IsAboutMembersCompleteId
 import models._
 import org.scalatest.OptionValues
@@ -77,6 +77,7 @@ object CheckYourAnswersMembersControllerSpec extends ControllerSpecBase {
       messagesApi,
       FakeAuthAction,
       dataRetrievalAction,
+      FakeAllowAccessProvider(),
       new DataRequiredActionImpl,
       FakeUserAnswersService
     )

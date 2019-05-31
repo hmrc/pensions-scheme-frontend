@@ -20,7 +20,7 @@ import config.{FeatureSwitchManagementService, FrontendAppConfig}
 import connectors.{MinimalPsaConnector, PensionSchemeVarianceLockConnector, SchemeDetailsConnector, SchemeDetailsReadOnlyCacheConnector, UpdateSchemeCacheConnector}
 import controllers.actions._
 import handlers.ErrorHandler
-import identifiers.{IsPsaSuspendedId, SchemeStatusId}
+import identifiers.{IsPsaSuspendedId, SchemeSrnId, SchemeStatusId}
 import javax.inject.Inject
 import models.{Mode, VarianceLock}
 import models.details.transformation.SchemeDetailsMasterSection
@@ -30,6 +30,7 @@ import play.api.libs.json.JsValue
 import play.api.mvc.{Action, AnyContent, Result}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import utils.annotations.TaskList
 import utils.hstasklisthelper.{HsTaskListHelperRegistration, HsTaskListHelperVariations}
 import utils.{Toggles, UserAnswers}
 import viewmodels.SchemeDetailsTaskList
@@ -41,6 +42,7 @@ class SchemeTaskListController @Inject()(appConfig: FrontendAppConfig,
                                          override val messagesApi: MessagesApi,
                                          authenticate: AuthAction,
                                          getData: DataRetrievalAction,
+                                         @TaskList allowAccess: AllowAccessActionProvider,
                                          schemeDetailsConnector: SchemeDetailsConnector,
                                          schemeTransformer: SchemeDetailsMasterSection,
                                          errorHandler: ErrorHandler,
@@ -51,7 +53,7 @@ class SchemeTaskListController @Inject()(appConfig: FrontendAppConfig,
                                          minimalPsaConnector: MinimalPsaConnector
                                         )(implicit val ec: ExecutionContext) extends FrontendController with I18nSupport with Retrievals {
 
-  def onPageLoad(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn)).async {
+  def onPageLoad(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen allowAccess(srn)).async {
     implicit request =>
       (srn, request.userAnswers) match {
 
@@ -98,13 +100,13 @@ class SchemeTaskListController @Inject()(appConfig: FrontendAppConfig,
           case _ =>
             schemeDetailsConnector.getSchemeDetailsVariations(request.psaId.id, schemeIdType = "srn", srn)
               .flatMap { userAnswers =>
-                createViewWithSuspensionFlag(srn, userAnswers, viewConnector.upsert(request.externalId, _), true)
+                createViewWithSuspensionFlag(srn, userAnswers, viewConnector.upsert(srn, _), true)
               }
         }
       case _ =>
         schemeDetailsConnector.getSchemeDetailsVariations(request.psaId.id, schemeIdType = "srn", srn)
           .flatMap { userAnswers =>
-            createViewWithSuspensionFlag(srn, userAnswers, viewConnector.upsert(request.externalId, _), false)
+            createViewWithSuspensionFlag(srn, userAnswers, viewConnector.upsert(srn, _), false)
           }
     }
   }
@@ -114,7 +116,8 @@ class SchemeTaskListController @Inject()(appConfig: FrontendAppConfig,
                                                                                                              hc: HeaderCarrier): Future[Result] =
     minimalPsaConnector.isPsaSuspended(request.psaId.id).flatMap { isSuspended =>
 
-      val updatedUserAnswers = userAnswers.set(IsPsaSuspendedId)(isSuspended).asOpt.getOrElse(userAnswers)
+      val updatedUserAnswers = userAnswers.set(IsPsaSuspendedId)(isSuspended).flatMap(
+        _.set(SchemeSrnId)(srn)).asOpt.getOrElse(userAnswers)
       val taskList: SchemeDetailsTaskList = new HsTaskListHelperVariations(updatedUserAnswers,
         viewOnly || !userAnswers.get(SchemeStatusId).contains("Open"), Some(srn)).taskList
 

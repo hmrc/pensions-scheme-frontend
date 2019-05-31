@@ -39,6 +39,7 @@ class AnyMoreChangesController @Inject()(appConfig: FrontendAppConfig,
                                          override val messagesApi: MessagesApi,
                                          @Variations navigator: Navigator,
                                          authenticate: AuthAction,
+                                         allowAccess: AllowAccessActionProvider,
                                          getData: DataRetrievalAction,
                                          requireData: DataRequiredAction,
                                          formProvider: AnyMoreChangesFormProvider)(implicit val ec: ExecutionContext)
@@ -47,7 +48,7 @@ class AnyMoreChangesController @Inject()(appConfig: FrontendAppConfig,
   private val form: Form[Boolean] = formProvider()
   private val postCall = controllers.routes.AnyMoreChangesController.onSubmit _
 
-  def onPageLoad(srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(UpdateMode, srn) andThen requireData).async {
+  def onPageLoad(srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(UpdateMode, srn) andThen allowAccess(srn) andThen requireData).async {
     implicit request =>
       Future.successful(Ok(anyMoreChanges(appConfig, form, existingSchemeName, dateToCompleteDeclaration, postCall(srn), srn)))
   }
