@@ -19,7 +19,7 @@ package controllers.actions
 
 import com.google.inject.{ImplementedBy, Inject}
 import connectors._
-import identifiers.SchemeStatusId
+import identifiers.{SchemeSrnId, SchemeStatusId}
 import models._
 import models.requests.{AuthenticatedRequest, OptionalDataRequest}
 import play.api.libs.json.JsValue
@@ -49,20 +49,30 @@ class DataRetrievalImpl(dataConnector: UserAnswersCacheConnector,
             case Some(VarianceLock) =>
               getOptionalRequest(updateConnector.fetch(srn), viewOnly = false)(request)
             case Some(_) =>
-              getOptionalRequest(viewConnector.fetch(request.externalId), viewOnly = true)(request)
+              viewConnector.fetch(srn).map {
+                case None => OptionalDataRequest(request.request, request.externalId, None, request.psaId, viewOnly = true)
+                case Some(data) =>
+                  UserAnswers(data).get(SchemeSrnId) match {
+                    case Some(foundSrn) if foundSrn == srn  => OptionalDataRequest(request.request, request.externalId, Some(UserAnswers(data)), request.psaId, viewOnly = true)
+                    case _ => OptionalDataRequest(request.request, request.externalId, None, request.psaId, viewOnly = true)
+                  }
+              }
             case None =>
-              getRequestWithNoLock(request)
+              getRequestWithNoLock(request, srn)
           }
-        }.getOrElse(Future(OptionalDataRequest(request.request, request.externalId, None, request.psaId, viewOnly = false)))
+        }.getOrElse(Future(OptionalDataRequest(request.request, request.externalId, None, request.psaId)))
     }
   }
 
-  private def getRequestWithNoLock[A](request: AuthenticatedRequest[A])(implicit hc: HeaderCarrier): Future[OptionalDataRequest[A]] = {
-    viewConnector.fetch(request.externalId).map {
+  private def getRequestWithNoLock[A](request: AuthenticatedRequest[A], srn:String)(implicit hc: HeaderCarrier): Future[OptionalDataRequest[A]] = {
+    viewConnector.fetch(srn).map {
       case Some(answersJsValue) =>
-        UserAnswers(answersJsValue).get(SchemeStatusId) match {
-          case Some("Open") =>
-            OptionalDataRequest(request.request, request.externalId, Some(UserAnswers(answersJsValue)), request.psaId, viewOnly = false)
+        val ua = UserAnswers(answersJsValue)
+        (ua.get(SchemeSrnId), ua.get(SchemeStatusId)) match {
+          case (Some(foundSrn), Some(status)) if foundSrn == srn  =>
+            OptionalDataRequest(request.request, request.externalId, Some(UserAnswers(answersJsValue)), request.psaId, viewOnly = status != "Open")
+          case (Some(_), _) =>
+            OptionalDataRequest(request.request, request.externalId, None, request.psaId)
           case _ =>
             OptionalDataRequest(request.request, request.externalId, Some(UserAnswers(answersJsValue)), request.psaId, viewOnly = true)
         }

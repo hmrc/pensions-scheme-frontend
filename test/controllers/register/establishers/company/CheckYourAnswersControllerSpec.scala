@@ -167,6 +167,7 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase with Enumerable
       messagesApi,
       FakeAuthAction,
       dataRetrievalAction,
+      FakeAllowAccessProvider(),
       new DataRequiredActionImpl,
       fakeCountryOptions,
       new FakeNavigator(onwardRoute),

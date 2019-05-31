@@ -42,7 +42,7 @@ class CompanyReviewControllerSpec extends ControllerSpecBase with ControllerAllo
   def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisherCompany,
                  allowChangeHelper: AllowChangeHelper = ach): CompanyReviewController =
     new CompanyReviewController(frontendAppConfig, messagesApi, new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
-      dataRetrievalAction, new DataRequiredActionImpl, FakeUserAnswersService, allowChangeHelper)
+      dataRetrievalAction, FakeAllowAccessProvider(),new DataRequiredActionImpl, FakeUserAnswersService, allowChangeHelper)
 
   def viewAsString(): String = companyReview(frontendAppConfig, index, companyName, directorNames, None, NormalMode, None, false, false)(fakeRequest, messages).toString
 

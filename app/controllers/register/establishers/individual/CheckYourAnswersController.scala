@@ -18,7 +18,7 @@ package controllers.register.establishers.individual
 
 import config.FrontendAppConfig
 import controllers.Retrievals
-import controllers.actions.{AuthAction, DataRequiredAction, DataRetrievalAction}
+import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRequiredAction, DataRetrievalAction}
 import identifiers.register.establishers.individual._
 import identifiers.register.establishers.{IsEstablisherCompleteId, IsEstablisherNewId}
 import javax.inject.Inject
@@ -29,7 +29,7 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import utils.annotations.EstablishersIndividual
+import utils.annotations.{EstablishersIndividual, NoSuspendedCheck, TaskList}
 import utils.checkyouranswers.Ops._
 import utils.{AllowChangeHelper, CountryOptions, Navigator, UserAnswers}
 import viewmodels.AnswerSection
@@ -41,6 +41,7 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
                                            override val messagesApi: MessagesApi,
                                            authenticate: AuthAction,
                                            getData: DataRetrievalAction,
+                                           @NoSuspendedCheck allowAccess: AllowAccessActionProvider,
                                            requiredData: DataRequiredAction,
                                            userAnswersService: UserAnswersService,
                                            implicit val countryOptions: CountryOptions,
@@ -48,7 +49,7 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
                                            allowChangeHelper: AllowChangeHelper)(implicit val ec: ExecutionContext)
   extends FrontendController with Retrievals with I18nSupport {
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requiredData).async {
+  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requiredData).async {
     implicit request =>
 
       implicit val userAnswers: UserAnswers = request.userAnswers

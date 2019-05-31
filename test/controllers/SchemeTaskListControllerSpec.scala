@@ -21,12 +21,12 @@ import config.{FeatureSwitchManagementService, FeatureSwitchManagementServiceTes
 import connectors._
 import controllers.actions._
 import handlers.ErrorHandler
-import identifiers.SchemeStatusId
+import identifiers.{IsPsaSuspendedId, SchemeSrnId, SchemeStatusId}
 import models._
 import models.details.transformation.{SchemeDetailsMasterSection, SchemeDetailsStubData}
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{reset, when}
-import org.scalatest.BeforeAndAfterEach
+import org.scalatest.{BeforeAndAfterEach, Matchers}
 import org.scalatest.mockito.MockitoSugar
 import play.api.Configuration
 import play.api.libs.json.JsNull
@@ -34,6 +34,8 @@ import play.api.test.Helpers._
 import utils.UserAnswers
 import viewmodels._
 import views.html.{psa_scheme_details, schemeDetailsTaskList}
+import org.mockito.Matchers.{any, eq => eqTo}
+import org.mockito.Mockito._
 
 import scala.concurrent.Future
 
@@ -98,6 +100,12 @@ class SchemeTaskListControllerSpec extends ControllerSpecBase with BeforeAndAfte
         contentAsString(result).contains(messages("messages__scheme_details__title")) mustBe true
         contentAsString(result).contains(messages("messages__schemeTaskList__sectionDeclaration_header")) mustBe true
         contentAsString(result).contains(messages("messages__schemeTaskList__sectionTrustees_no_trustees")) mustBe false
+
+        val updatedUserAnswers = UserAnswers(userAnswersJson).set(IsPsaSuspendedId)(false).flatMap(
+          _.set(SchemeSrnId)(srnValue)).asOpt.getOrElse(UserAnswers(userAnswersJson))
+
+        verify(fakeUpdateCacheConnector, times(1)).upsert(any(), eqTo(updatedUserAnswers.json))(any(), any())
+
       }
 
       "return OK and the correct view for a GET where scheme status is rejected" in {
@@ -184,6 +192,7 @@ class SchemeTaskListControllerSpec extends ControllerSpecBase with BeforeAndAfte
         contentAsString(result).contains(messages("messages__schemeTaskList__sectionDeclaration_header")) mustBe false
         contentAsString(result).contains(messages("messages__schemeTaskList__sectionTrustees_no_trustees")) mustBe true
       }
+
     }
 
   }
@@ -198,6 +207,7 @@ object SchemeTaskListControllerSpec extends ControllerSpecBase with MockitoSugar
       messagesApi,
       FakeAuthAction,
       dataRetrievalAction,
+      FakeAllowAccessProvider(),
       fakeSchemeDetailsConnector,
       fakeSchemeTransformer,
       new ErrorHandler(frontendAppConfig, messagesApi),

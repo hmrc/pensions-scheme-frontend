@@ -32,6 +32,7 @@ import views.html.check_your_answers
 import models.Mode._
 import models.requests.DataRequest
 import services.UserAnswersService
+import utils.annotations.NoSuspendedCheck
 
 import scala.concurrent.ExecutionContext
 
@@ -39,13 +40,14 @@ class CheckYourAnswersBenefitsAndInsuranceController @Inject()(appConfig: Fronte
                                                                override val messagesApi: MessagesApi,
                                                                authenticate: AuthAction,
                                                                getData: DataRetrievalAction,
+                                                               @NoSuspendedCheck allowAccess: AllowAccessActionProvider,
                                                                requireData: DataRequiredAction,
                                                                userAnswersService: UserAnswersService,
                                                                implicit val countryOptions: CountryOptions
                                                               )(implicit val ec: ExecutionContext) extends FrontendController
   with Enumerable.Implicits with I18nSupport with Retrievals {
 
-  def onPageLoad(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData) {
+  def onPageLoad(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData) {
     implicit request =>
       implicit val userAnswers = request.userAnswers
       val benefitsAndInsuranceSection = AnswerSection(

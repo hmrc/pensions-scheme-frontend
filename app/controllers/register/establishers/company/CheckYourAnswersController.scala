@@ -29,7 +29,7 @@ import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils._
-import utils.annotations.EstablishersCompany
+import utils.annotations.{EstablishersCompany, NoSuspendedCheck, TaskList}
 import utils.checkyouranswers.Ops._
 import viewmodels.AnswerSection
 import views.html.check_your_answers
@@ -41,6 +41,7 @@ class CheckYourAnswersController @Inject()(
                                             override val messagesApi: MessagesApi,
                                             authenticate: AuthAction,
                                             getData: DataRetrievalAction,
+                                            @NoSuspendedCheck allowAccess: AllowAccessActionProvider,
                                             requireData: DataRequiredAction,
                                             implicit val countryOptions: CountryOptions,
                                             @EstablishersCompany navigator: Navigator,
@@ -49,10 +50,10 @@ class CheckYourAnswersController @Inject()(
                                           )(implicit val ec: ExecutionContext) extends FrontendController
   with Retrievals with I18nSupport with Enumerable.Implicits {
 
-  def onPageLoad(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
+  def onPageLoad(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
     implicit request =>
 
-      implicit val userAnswers:UserAnswers = request.userAnswers
+      implicit val userAnswers: UserAnswers = request.userAnswers
 
       val companyDetails = AnswerSection(
         Some("messages__common__company_details__title"),
