@@ -138,25 +138,7 @@ trait UserAnswersService {
 
   def setCompleteFlag(mode: Mode, srn: Option[String], id: TypedIdentifier[Boolean], userAnswers: UserAnswers, value: Boolean)
                      (implicit fmt: Format[Boolean], ec: ExecutionContext, hc: HeaderCarrier, request: DataRequest[AnyContent]): Future[UserAnswers] = {
-
-    userAnswers.set(id)(value).fold(
-      invalid => Future.failed(JsResultException(invalid)),
-      valid => Future.successful(valid)
-    )
-
-    mode match {
-      case NormalMode | CheckMode => subscriptionCacheConnector.save(request.externalId, id, value) map UserAnswers
-      case UpdateMode | CheckUpdateMode => srn match {
-        case Some(srnId) => lockConnector.lock(request.psaId.id, srnId).flatMap {
-          case VarianceLock => save(mode, srn, id, value) map UserAnswers
-          case _ => Future.successful(request.userAnswers)
-        }
-
-        case _ =>
-          case class MissingSrnNumber() extends Exception
-          Future.failed(throw new MissingSrnNumber)
-      }
-    }
+    save(mode, srn, id, value) map UserAnswers
   }
 
   def setAddressCompleteFlagAfterAddressYear(mode: Mode, srn: Option[String], id: TypedIdentifier[AddressYears],
