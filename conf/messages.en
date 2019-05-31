@@ -114,8 +114,8 @@ messages__service_unavailable__guidance2 = We will use your contact details to c
 
 site.back = Back
 site.continue = Continue
-site.complete = COMPLETE
-site.incomplete = INCOMPLETE
+site.complete = Completed
+site.incomplete = In progress
 site.delete = Remove
 site.edit = Edit
 site.change = Change

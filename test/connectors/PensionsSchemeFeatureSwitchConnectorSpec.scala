@@ -18,11 +18,11 @@ package connectors
 
 import com.github.tomakehurst.wiremock.client.WireMock._
 import org.scalatest.{AsyncWordSpec, MustMatchers, OptionValues}
+import play.api.http.Status._
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.WireMockHelper
-import play.api.http.Status._
 
-class FeatureSwitchConnectorSpec extends AsyncWordSpec with MustMatchers with WireMockHelper with OptionValues {
+class PensionsSchemeFeatureSwitchConnectorSpec extends AsyncWordSpec with MustMatchers with WireMockHelper with OptionValues {
 
   override protected def portConfigKey: String = "microservice.services.pensions-scheme.port"
 
@@ -34,6 +34,7 @@ class FeatureSwitchConnectorSpec extends AsyncWordSpec with MustMatchers with Wi
   "toggle On " must {
 
     val toggleOnUrl = s"/pensions-scheme/test-only/toggle-on/$featureSwitch"
+
     "return No Content when backend toggles on successfully" in {
       server.stubFor(
         get(urlEqualTo(toggleOnUrl))
@@ -62,6 +63,7 @@ class FeatureSwitchConnectorSpec extends AsyncWordSpec with MustMatchers with Wi
   "toggle Off " must {
 
     val toggleOffUrl = s"/pensions-scheme/test-only/toggle-off/$featureSwitch"
+
     "return No Content when backend toggles off successfully" in {
       server.stubFor(
         get(urlEqualTo(toggleOffUrl))
@@ -90,6 +92,7 @@ class FeatureSwitchConnectorSpec extends AsyncWordSpec with MustMatchers with Wi
   "reset " must {
 
     val resetUrl = s"/pensions-scheme/test-only/reset/$featureSwitch"
+
     "return ok when backend resets successfully" in {
       server.stubFor(
         get(urlEqualTo(resetUrl))
@@ -111,6 +114,36 @@ class FeatureSwitchConnectorSpec extends AsyncWordSpec with MustMatchers with Wi
       )
       connector.reset(featureSwitch).map(response =>
         response mustEqual false
+      )
+    }
+  }
+
+  "get" must {
+
+    val getUrl = s"/pensions-scheme/test-only/get/$featureSwitch"
+
+    "return correct toggle value when get called successfully" in {
+
+      server.stubFor(
+        get(urlEqualTo(getUrl))
+          .willReturn(
+            okJson("true")
+          )
+      )
+      connector.get(featureSwitch).map { response =>
+        response mustEqual Some(true)
+      }
+    }
+
+    "return none when toggle is not defined" in {
+      server.stubFor(
+        get(urlEqualTo(getUrl))
+          .willReturn(
+            noContent()
+          )
+      )
+      connector.get(featureSwitch).map(response =>
+        response mustEqual None
       )
     }
   }

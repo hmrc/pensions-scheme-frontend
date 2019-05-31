@@ -55,7 +55,7 @@ trait EntityListBehaviours {
         val doc = asDocument(nonEmptyView())
         items.foreach { item =>
           val link = doc.select(s"#person-${item.index}-status")
-          val expectedResult = if (item.isCompleted) "COMPLETE" else "INCOMPLETE"
+          val expectedResult = if (item.isCompleted) messages("site.complete") else messages("site.incomplete")
 
           link.size mustBe 1
           link.first.text mustBe expectedResult

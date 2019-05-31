@@ -77,7 +77,8 @@ class TrusteesPartnershipNavigatorSpec extends SpecBase with NavigatorBehaviour 
       (PartnershipAddressYearsId(0), addressYearsUnderAYear, partnershipPaPostCodeLookup(mode), true,
         if(mode == UpdateMode) Some(confirmPreviousAddress) else Some(partnershipPaPostCodeLookup(checkMode((mode)))), true),
       (PartnershipConfirmPreviousAddressId(0), confirmPreviousAddressYes, defaultPage, false, Some(anyMoreChanges), false),
-      (PartnershipConfirmPreviousAddressId(0), confirmPreviousAddressNo, defaultPage, false, Some(partnershipPaPostCodeLookup(checkMode(mode))), false)
+      (PartnershipConfirmPreviousAddressId(0), confirmPreviousAddressNo, defaultPage, false, Some(partnershipPaPostCodeLookup(checkMode(mode))), false),
+      (PartnershipConfirmPreviousAddressId(0), emptyAnswers, defaultPage, false, Some(sessionExpired), false)
     )
   }
 
@@ -87,6 +88,7 @@ class TrusteesPartnershipNavigatorSpec extends SpecBase with NavigatorBehaviour 
     behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, routesToggleOff(NormalMode), dataDescriber)
     behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, routesToggleOff(UpdateMode), dataDescriber, UpdateMode)
     behave like nonMatchingNavigator(navigator)
+    behave like nonMatchingNavigator(navigator, UpdateMode)
   }
 
   s"TrusteesPartnershipNavigator when toggle On" must {
@@ -94,7 +96,6 @@ class TrusteesPartnershipNavigatorSpec extends SpecBase with NavigatorBehaviour 
     val navigator = new TrusteesPartnershipNavigator(FakeUserAnswersCacheConnector, frontendAppConfig, featureSwitchToggleOn)
     behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, routesToggleOn(NormalMode), dataDescriber)
     behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, routesToggleOn(UpdateMode), dataDescriber, UpdateMode)
-    behave like nonMatchingNavigator(navigator)
   }
 }
 

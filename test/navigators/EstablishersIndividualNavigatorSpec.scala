@@ -17,7 +17,6 @@
 package navigators
 
 import base.SpecBase
-import config.FeatureSwitchManagementServiceTestImpl
 import connectors.FakeUserAnswersCacheConnector
 import identifiers.Identifier
 import identifiers.register.establishers.IsEstablisherNewId
@@ -29,13 +28,13 @@ import org.scalatest.{MustMatchers, OptionValues}
 import play.api.Configuration
 import play.api.libs.json.Json
 import play.api.mvc.Call
-import utils.{Toggles, UserAnswers}
+import utils.{FakeFeatureSwitchManagementService, UserAnswers}
 
 class EstablishersIndividualNavigatorSpec extends SpecBase with MustMatchers with NavigatorBehaviour {
 
   import EstablishersIndividualNavigatorSpec._
 
-  private def routes(mode: Mode): TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = {
+  private def routes(mode: Mode, isPrevAddEnabled : Boolean = false): TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = {
     Table(
       ("Id", "User Answers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (Check Mode)", "Save (CM)"),
       (EstablisherDetailsId(0), emptyAnswers, establisherNino(mode), true, Some(exitJourney(mode, emptyAnswers)), true),
@@ -51,10 +50,11 @@ class EstablishersIndividualNavigatorSpec extends SpecBase with MustMatchers wit
       (AddressId(0), newEstablisher, addressYears(mode), true, Some(checkYourAnswers(mode)), true),
       (AddressYearsId(0), addressYearsOverAYearNew, contactDetails(mode), true, Some(exitJourney(mode, addressYearsOverAYearNew)), true),
       (AddressYearsId(0), addressYearsOverAYear, contactDetails(mode), true, Some(exitJourney(mode, emptyAnswers)), true),
-      (AddressYearsId(0), addressYearsUnderAYear, previousAddressPostCodeLookup(mode), true, addressYearsLessThanTwelveEdit(mode), true),
+      (AddressYearsId(0), addressYearsUnderAYear, previousAddressPostCodeLookup(mode), true, addressYearsLessThanTwelveEdit(checkMode(mode), isPrevAddEnabled), true),
       (AddressYearsId(0), emptyAnswers, sessionExpired, false, Some(sessionExpired), false),
       (IndividualConfirmPreviousAddressId(0), confirmPreviousAddressYes, none, false, Some(anyMoreChanges), false),
       (IndividualConfirmPreviousAddressId(0), confirmPreviousAddressNo, none, false, Some(previousAddressPostCodeLookup(checkMode(mode))), false),
+      (IndividualConfirmPreviousAddressId(0), emptyAnswers, none, false, Some(sessionExpired), false),
       (PreviousPostCodeLookupId(0), emptyAnswers, previousAddressAddressList(mode), true, Some(previousAddressAddressList(checkMode(mode))), true),
       (PreviousAddressListId(0), emptyAnswers, previousAddress(mode), true, Some(previousAddress(checkMode(mode))), true),
       (PreviousAddressId(0), emptyAnswers, contactDetails(mode), true, Some(exitJourney(mode, emptyAnswers)), true),
@@ -66,19 +66,19 @@ class EstablishersIndividualNavigatorSpec extends SpecBase with MustMatchers wit
   }
 
   private val navigator: EstablishersIndividualNavigator =
-    new EstablishersIndividualNavigator(frontendAppConfig, FakeUserAnswersCacheConnector, featureSwitch)
+    new EstablishersIndividualNavigator(frontendAppConfig, FakeUserAnswersCacheConnector, new FakeFeatureSwitchManagementService(false))
 
   s"${navigator.getClass.getSimpleName}" must {
     appRunning()
     behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, routes(NormalMode), dataDescriber)
-    featureSwitch.change(Toggles.isPrevAddEnabled, true)
     behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, routes(UpdateMode), dataDescriber, UpdateMode)
   }
 
-  s"${navigator.getClass.getSimpleName} when previous address feature is toggled off" must {
+  s"previous address feature is toggled on" must {
+    val navigator: EstablishersIndividualNavigator =
+    new EstablishersIndividualNavigator(frontendAppConfig, FakeUserAnswersCacheConnector, new FakeFeatureSwitchManagementService(true))
     appRunning()
-    featureSwitch.change(Toggles.isPrevAddEnabled, false)
-    behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, routes(UpdateMode), dataDescriber, UpdateMode)
+    behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, routes(UpdateMode, true), dataDescriber, UpdateMode)
   }
 }
 
@@ -101,6 +101,7 @@ object EstablishersIndividualNavigatorSpec extends SpecBase with OptionValues {
 
 
   private def none: Call = controllers.routes.IndexController.onPageLoad()
+
   private def establisherNino(mode: Mode) = controllers.register.establishers.individual.routes.EstablisherNinoController.onPageLoad(mode, 0, None)
 
   private def establisherUtr(mode: Mode) = controllers.register.establishers.individual.routes.UniqueTaxReferenceController.onPageLoad(mode, 0, None)
@@ -142,13 +143,12 @@ object EstablishersIndividualNavigatorSpec extends SpecBase with OptionValues {
     }
 
   private val config = injector.instanceOf[Configuration]
-  private def featureSwitch = new FeatureSwitchManagementServiceTestImpl(config, environment)
 
-  private def addressYearsLessThanTwelveEdit(mode: Mode) =
-    if (checkMode(mode) == CheckUpdateMode && featureSwitch.get(Toggles.isPrevAddEnabled))
+  private def addressYearsLessThanTwelveEdit(mode: Mode, isPrevAddEnabled : Boolean = false) =
+    if (mode == CheckUpdateMode && isPrevAddEnabled)
       Some(confirmPreviousAddress)
     else
-      Some(previousAddressPostCodeLookup(checkMode(mode)))
+      Some(previousAddressPostCodeLookup(mode))
 
 
 }

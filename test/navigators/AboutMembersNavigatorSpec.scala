@@ -19,7 +19,7 @@ package navigators
 import base.SpecBase
 import connectors.FakeUserAnswersCacheConnector
 import identifiers.{CurrentMembersId, FutureMembersId, MembershipPensionRegulatorId}
-import models.{CheckMode, Members, Mode, NormalMode}
+import models._
 import play.api.libs.json.Json
 import play.api.mvc.Call
 import utils.UserAnswers
@@ -30,6 +30,7 @@ class AboutMembersNavigatorSpec extends SpecBase with NavigatorBehaviour {
 
   private def routes() = Table(
     ("Id", "User Answers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (Check Mode)", "Save (CM)"),
+    (CurrentMembersId, emptyAnswers, sessionExpiredPage, false, Some(sessionExpiredPage), false),
     (CurrentMembersId, noMembers, futureMembers(NormalMode), false, Some(cya), false),
     (CurrentMembersId, oneMember, futureMembers(NormalMode), false, Some(cya), false),
     (CurrentMembersId, twoToElevenMembers, membershipPensionRegulator(NormalMode), false, Some(membershipPensionRegulator(CheckMode)), false),
@@ -37,7 +38,7 @@ class AboutMembersNavigatorSpec extends SpecBase with NavigatorBehaviour {
     (CurrentMembersId, fiftyOneToTenThousandMembers, membershipPensionRegulator(NormalMode), false, Some(membershipPensionRegulator(CheckMode)), false),
     (CurrentMembersId, moreThanTenThousandMembers, membershipPensionRegulator(NormalMode), false, Some(membershipPensionRegulator(CheckMode)), false),
     (MembershipPensionRegulatorId, emptyAnswers, futureMembers(NormalMode), false, Some(cya), false),
-    (FutureMembersId, emptyAnswers, cya, false, None, false)
+    (FutureMembersId, emptyAnswers, cya, false, Some(cya), false)
   )
 
   private val navigator = new AboutMembersNavigator(FakeUserAnswersCacheConnector, frontendAppConfig)
@@ -46,6 +47,7 @@ class AboutMembersNavigatorSpec extends SpecBase with NavigatorBehaviour {
     appRunning()
     behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, routes, dataDescriber)
     behave like nonMatchingNavigator(navigator)
+    behave like nonMatchingNavigator(navigator, UpdateMode)
   }
 }
 
@@ -67,6 +69,7 @@ object AboutMembersNavigatorSpec {
   private def cya: Call = controllers.routes.CheckYourAnswersMembersController.onPageLoad(NormalMode, None)
 
   private def dataDescriber(answers: UserAnswers): String = answers.toString
+  private val sessionExpiredPage: Call = controllers.routes.SessionExpiredController.onPageLoad()
 }
 
 
