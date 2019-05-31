@@ -71,6 +71,8 @@ class DataRetrievalImpl(dataConnector: UserAnswersCacheConnector,
         (ua.get(SchemeSrnId), ua.get(SchemeStatusId)) match {
           case (Some(foundSrn), Some(status)) if foundSrn == srn  =>
             OptionalDataRequest(request.request, request.externalId, Some(UserAnswers(answersJsValue)), request.psaId, viewOnly = status != "Open")
+          case (Some(_), _) =>
+            OptionalDataRequest(request.request, request.externalId, None, request.psaId)
           case _ =>
             OptionalDataRequest(request.request, request.externalId, Some(UserAnswers(answersJsValue)), request.psaId, viewOnly = true)
         }
