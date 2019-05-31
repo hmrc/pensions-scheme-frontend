@@ -30,8 +30,8 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.JsResultException
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import utils.{Navigator}
-import utils.annotations.Trustees
+import utils.Navigator
+import utils.annotations.{NoSuspendedCheck, Trustees}
 import views.html.register.trustees.addTrustee
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -42,7 +42,7 @@ class AddTrusteeController @Inject()(
                                       @Trustees navigator: Navigator,
                                       authenticate: AuthAction,
                                       getData: DataRetrievalAction,
-                                      allowAccess: AllowAccessActionProvider,
+                                      @NoSuspendedCheck allowAccess: AllowAccessActionProvider,
                                       requireData: DataRequiredAction,
                                       formProvider: AddTrusteeFormProvider
                                     )(implicit val ec: ExecutionContext) extends FrontendController with I18nSupport with Retrievals {

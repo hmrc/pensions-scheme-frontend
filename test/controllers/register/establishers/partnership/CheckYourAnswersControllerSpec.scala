@@ -17,7 +17,7 @@
 package controllers.register.establishers.partnership
 
 import controllers.ControllerSpecBase
-import controllers.actions.{DataRequiredActionImpl, DataRetrievalAction, FakeAuthAction}
+import controllers.actions.{DataRequiredActionImpl, DataRetrievalAction, FakeAllowAccessProvider, FakeAuthAction}
 import controllers.behaviours.ControllerAllowChangeBehaviour
 import identifiers.register.establishers.partnership._
 import models.AddressYears.UnderAYear
@@ -59,6 +59,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
       messagesApi,
       FakeAuthAction,
       dataRetrievalAction,
+      FakeAllowAccessProvider(),
       new DataRequiredActionImpl,
       FakeUserAnswersService,
       new FakeNavigator(onwardRoute),

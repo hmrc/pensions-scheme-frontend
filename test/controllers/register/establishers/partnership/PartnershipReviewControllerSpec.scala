@@ -17,7 +17,7 @@
 package controllers.register.establishers.partnership
 
 import controllers.ControllerSpecBase
-import controllers.actions.{DataRequiredActionImpl, DataRetrievalAction, FakeAuthAction, FakeDataRetrievalAction}
+import controllers.actions._
 import controllers.behaviours.ControllerAllowChangeBehaviour
 import identifiers.register.establishers.partnership.partner.{IsPartnerAddressCompleteId, IsPartnerCompleteId, PartnerDetailsId}
 import identifiers.register.establishers.partnership.{IsPartnershipCompleteId, PartnershipDetailsId}
@@ -46,6 +46,7 @@ class PartnershipReviewControllerSpec extends ControllerSpecBase with Controller
       new FakeNavigator(desiredRoute = onwardRoute),
       FakeAuthAction,
       dataRetrievalAction,
+      FakeAllowAccessProvider(),
       new DataRequiredActionImpl,
       FakeUserAnswersService,
       allowChangeHelper

@@ -15,11 +15,12 @@
  */
 
 import com.google.inject.AbstractModule
-import connectors.{SchemeDetailsReadOnlyCacheConnector, SubscriptionCacheConnector, UserAnswersCacheConnector}
+import connectors.{SubscriptionDualCacheConnector, UserAnswersCacheConnector}
+import controllers.actions._
 import navigators._
 import services.{UserAnswersService, UserAnswersServiceEstablishersAndTrusteesImpl, UserAnswersServiceImpl, UserAnswersServiceInsuranceImpl}
-import utils.{AllowChangeHelper, AllowChangeHelperImpl, Navigator}
 import utils.annotations.{EstablishersPartner, _}
+import utils.{AllowChangeHelper, AllowChangeHelperImpl, Navigator}
 
 class PODSModule extends AbstractModule {
 
@@ -36,7 +37,7 @@ class PODSModule extends AbstractModule {
       .to(classOf[UserAnswersServiceImpl])
 
     bind(classOf[UserAnswersCacheConnector])
-      .to(classOf[SubscriptionCacheConnector])
+      .to(classOf[SubscriptionDualCacheConnector])
 
     bind(classOf[UserAnswersService])
       .to(classOf[UserAnswersServiceEstablishersAndTrusteesImpl])
@@ -112,6 +113,16 @@ class PODSModule extends AbstractModule {
     bind(classOf[AllowChangeHelper])
       .to(classOf[AllowChangeHelperImpl])
 
-  }
+    bind(classOf[AllowAccessActionProvider])
+      .annotatedWith(classOf[TaskList])
+      .to(classOf[AllowAccessActionProviderTaskListImpl])
 
+    bind(classOf[AllowAccessActionProvider])
+      .annotatedWith(classOf[NoSuspendedCheck])
+      .to(classOf[AllowAccessActionProviderNoSuspendedCheckImpl])
+
+    bind(classOf[AllowAccessActionProvider])
+      .to(classOf[AllowAccessActionProviderMainImpl])
+
+  }
 }

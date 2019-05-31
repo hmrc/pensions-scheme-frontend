@@ -16,16 +16,47 @@
 
 package controllers.actions
 
+import connectors.PensionsSchemeConnector
 import models.requests.OptionalDataRequest
-import play.api.mvc.Result
+import org.mockito.Matchers.any
+import org.mockito.Mockito._
+import org.scalatest.mockito.MockitoSugar
+import play.api.i18n.MessagesApi
+import play.api.mvc.{Request, Result}
+import play.twirl.api.Html
+import uk.gov.hmrc.play.bootstrap.http.FrontendErrorHandler
 
 import scala.concurrent.Future
 
-class FakeAllowAccessAction(srn: Option[String]) extends AllowAccessAction(srn) {
+class FakeAllowAccessAction(srn: Option[String],
+                            pensionsSchemeConnector: PensionsSchemeConnector,
+                            errorHandler: FrontendErrorHandler) extends AllowAccessAction(srn, pensionsSchemeConnector, errorHandler) {
   override def filter[A](request: OptionalDataRequest[A]): Future[Option[Result]] = Future.successful(None)
 }
 
-case class FakeAllowAccessProvider(srn: Option[String] = None) extends AllowAccessActionProvider{
-  override def apply(srn: Option[String]): AllowAccessAction = new FakeAllowAccessAction(srn)
+case class FakeAllowAccessProvider(srn: Option[String] = None,
+                                   pensionsSchemeConnector: Option[PensionsSchemeConnector] = None
+                                  ) extends AllowAccessActionProvider with MockitoSugar {
+
+  private val errorHandler = new FrontendErrorHandler {
+    override def standardErrorTemplate(pageTitle: String, heading: String, message: String)(implicit request: Request[_]): Html = Html("")
+
+    override def messagesApi: MessagesApi = ???
+  }
+
+  override def apply(srn: Option[String]): AllowAccessAction = {
+    new FakeAllowAccessAction(
+      srn,
+      pensionsSchemeConnector match {
+        case None =>
+          val psc = mock[PensionsSchemeConnector]
+          when(psc.checkForAssociation(any(), any())(any(),any(),any()))
+            .thenReturn(Future.successful(true))
+          psc
+        case Some(psc) => psc
+      },
+      errorHandler
+    )
+  }
 }
 

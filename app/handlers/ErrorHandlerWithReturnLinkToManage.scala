@@ -22,21 +22,17 @@ import models.Link
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.Request
 import play.twirl.api.Html
-import uk.gov.hmrc.play.bootstrap.http.FrontendErrorHandler
 
 @Singleton
-class ErrorHandler @Inject()(
+class ErrorHandlerWithReturnLinkToManage @Inject()(
                               appConfig: FrontendAppConfig,
-                              val messagesApi: MessagesApi
-                            ) extends FrontendErrorHandler with I18nSupport {
+                              override val messagesApi: MessagesApi
+                            ) extends ErrorHandler(appConfig, messagesApi) with I18nSupport {
 
   override def notFoundTemplate(implicit request: Request[_]): Html = {
-    val linkContent = messagesApi.apply("messages__schemesOverview__manage__link")
+    val linkContent = messagesApi.apply("messages__complete__returnToManagePensionSchemes")
     views.html.error_template_page_not_found(appConfig,
-      Link(linkContent, appConfig.managePensionsYourPensionSchemesUrl, Some(linkContent))
+      Link(linkContent, appConfig.managePensionsSchemeOverviewUrl.url, Some(linkContent))
     )
   }
-
-  override def standardErrorTemplate(pageTitle: String, heading: String, message: String)(implicit rh: Request[_]): Html =
-    views.html.error_template(pageTitle, heading, message, appConfig)
 }

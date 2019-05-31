@@ -16,13 +16,13 @@
 
 package connectors
 
-class SubscriptionCacheConnectorSpec extends CacheConnectorBehaviours {
+class OldSubscriptionCacheConnectorSpec extends CacheConnectorBehaviours {
 
-  override protected def url(id: String): String = s"/pensions-scheme/journey-cache/scheme-subscription/$id"
+  override protected def url(id: String): String = s"/pensions-scheme/journey-cache/scheme/$id"
 
-  override protected def lastUpdatedUrl(id: String) = s"/pensions-scheme/journey-cache/scheme-subscription/$id/lastUpdated"
+  override protected def lastUpdatedUrl(id: String) = s"/pensions-scheme/journey-cache/scheme/$id/lastUpdated"
 
-  protected def connector(): SubscriptionCacheConnector = injector.instanceOf[SubscriptionCacheConnector]
+  protected def connector(): OldSubscriptionCacheConnector = injector.instanceOf[OldSubscriptionCacheConnector]
 
   "CacheConnector" when {
 

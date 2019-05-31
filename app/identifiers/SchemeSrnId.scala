@@ -14,20 +14,8 @@
  * limitations under the License.
  */
 
-package connectors
+package identifiers
 
-class SubscriptionCacheConnectorSpec extends CacheConnectorBehaviours {
-
-  override protected def url(id: String): String = s"/pensions-scheme/journey-cache/scheme-subscription/$id"
-
-  override protected def lastUpdatedUrl(id: String) = s"/pensions-scheme/journey-cache/scheme-subscription/$id/lastUpdated"
-
-  protected def connector(): SubscriptionCacheConnector = injector.instanceOf[SubscriptionCacheConnector]
-
-  "CacheConnector" when {
-
-    behave like cacheConnector(connector)
-    behave like cacheConnectorWithLastUpdate(connector)
-
-  }
+object SchemeSrnId extends TypedIdentifier[String] {
+  override def toString: String = "schemeSrnId"
 }

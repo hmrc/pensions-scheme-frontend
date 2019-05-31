@@ -86,6 +86,7 @@ object CheckYourAnswersBeforeYouStartControllerSpec extends ControllerSpecBase {
       messagesApi,
       FakeAuthAction,
       dataRetrievalAction,
+      FakeAllowAccessProvider(),
       new DataRequiredActionImpl,
       new FakeCountryOptions,
       FakeUserAnswersService
