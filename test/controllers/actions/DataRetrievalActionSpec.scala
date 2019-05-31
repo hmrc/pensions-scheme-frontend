@@ -168,7 +168,27 @@ class DataRetrievalActionSpec extends SpecBase with MockitoSugar with ScalaFutur
         }
       }
 
-      "status is open and srn is different from cached srn then non user answers is added to the request" in {
+      "status is open and srn is different from cached srn then no user answers is added to the request" in {
+        val answers = UserAnswers().set(SchemeStatusId)("Open").flatMap(_.set(SchemeSrnId)("existing-srn")).asOpt.value.json
+        when(lockRepoConnector.isLockByPsaIdOrSchemeId(eqTo(psa), eqTo(srn))(any(), any())).thenReturn(Future(None))
+        when(viewCacheConnector.fetch(eqTo(srn))(any(), any())) thenReturn
+          Future.successful(Some(answers))
+
+        val action = new Harness(
+          viewConnector = viewCacheConnector,
+          updateConnector = updateCacheConnector,
+          lockConnector = lockRepoConnector,
+          mode = UpdateMode,
+          srn = srnOpt)
+
+        val futureResult = action.callTransform(authRequest)
+
+        whenReady(futureResult) { result =>
+          result.userAnswers.isDefined mustBe false
+        }
+      }
+
+      "status is Pending and srn is different from cached srn then no user answers is added to the request" in {
         val answers = UserAnswers().set(SchemeStatusId)("Pending").flatMap(_.set(SchemeSrnId)("existing-srn")).asOpt.value.json
         when(lockRepoConnector.isLockByPsaIdOrSchemeId(eqTo(psa), eqTo(srn))(any(), any())).thenReturn(Future(None))
         when(viewCacheConnector.fetch(eqTo(srn))(any(), any())) thenReturn
@@ -185,6 +205,48 @@ class DataRetrievalActionSpec extends SpecBase with MockitoSugar with ScalaFutur
 
         whenReady(futureResult) { result =>
           result.userAnswers.isDefined mustBe false
+        }
+      }
+
+      "status is open and srn is same as cached srn then user answers is added to the request and viewOnly is false" in {
+        val answers = UserAnswers().set(SchemeStatusId)("Open").flatMap(_.set(SchemeSrnId)(srn)).asOpt.value.json
+        when(lockRepoConnector.isLockByPsaIdOrSchemeId(eqTo(psa), eqTo(srn))(any(), any())).thenReturn(Future(None))
+        when(viewCacheConnector.fetch(eqTo(srn))(any(), any())) thenReturn
+          Future.successful(Some(answers))
+
+        val action = new Harness(
+          viewConnector = viewCacheConnector,
+          updateConnector = updateCacheConnector,
+          lockConnector = lockRepoConnector,
+          mode = UpdateMode,
+          srn = srnOpt)
+
+        val futureResult = action.callTransform(authRequest)
+
+        whenReady(futureResult) { result =>
+          result.userAnswers.isDefined mustBe true
+          result.viewOnly mustBe false
+        }
+      }
+
+      "status is Pending and srn is same as cached srn then user answers is added to the request and viewOnly is true" in {
+        val answers = UserAnswers().set(SchemeStatusId)("Pending").flatMap(_.set(SchemeSrnId)(srn)).asOpt.value.json
+        when(lockRepoConnector.isLockByPsaIdOrSchemeId(eqTo(psa), eqTo(srn))(any(), any())).thenReturn(Future(None))
+        when(viewCacheConnector.fetch(eqTo(srn))(any(), any())) thenReturn
+          Future.successful(Some(answers))
+
+        val action = new Harness(
+          viewConnector = viewCacheConnector,
+          updateConnector = updateCacheConnector,
+          lockConnector = lockRepoConnector,
+          mode = UpdateMode,
+          srn = srnOpt)
+
+        val futureResult = action.callTransform(authRequest)
+
+        whenReady(futureResult) { result =>
+          result.userAnswers.isDefined mustBe true
+          result.viewOnly mustBe true
         }
       }
     }
