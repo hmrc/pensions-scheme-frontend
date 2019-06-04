@@ -93,7 +93,7 @@ class AddTrusteeControllerSpec extends ControllerSpecBase {
   def viewAsString(form: Form[_] = form, trustees: Seq[Trustee[_]] = Seq.empty): String =
     addTrustee(frontendAppConfig, form, NormalMode, trustees, None, None)(fakeRequest, messages).toString
 
-  val testAnswer = "answer"
+  val testAnswer = "true"
 
   "AddTrustee Controller" must {
 
@@ -108,6 +108,16 @@ class AddTrusteeControllerSpec extends ControllerSpecBase {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", testAnswer))
 
       val result = controller().onSubmit(NormalMode, None)(postRequest)
+
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result) mustBe Some(onwardRoute.url)
+    }
+
+    "redirect to the next page when valid data is submitted and few trustees were previously added" in {
+      val getRelevantData = new FakeDataRetrievalAction(Some(validData))
+      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", testAnswer))
+
+      val result = controller(getRelevantData).onSubmit(NormalMode, None)(postRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)

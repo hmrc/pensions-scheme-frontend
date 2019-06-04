@@ -95,7 +95,6 @@ class ConfirmDeleteEstablisherController @Inject()(
       case Indivdual => userAnswers.get(EstablisherDetailsId(index)).map(details => DeletableEstablisher(details.fullName, details.isDeleted))
       case Company => userAnswers.get(CompanyDetailsId(index)).map(details => DeletableEstablisher(details.companyName, details.isDeleted))
       case Partnership => userAnswers.get(PartnershipDetailsId(index)).map(details => DeletableEstablisher(details.name, details.isDeleted))
-      case _ => None
     }
   }
 
@@ -115,8 +114,6 @@ class ConfirmDeleteEstablisherController @Inject()(
           PartnershipDetailsId(establisherIndex).retrieve.right.map { partnershipDetails =>
             updateEstablisherKind(partnershipDetails.name, establisherKind, establisherIndex, None, None, Some(partnershipDetails), mode, srn)
           }
-        case _ =>
-          Left(Future.successful(SeeOther(controllers.routes.SessionExpiredController.onPageLoad().url)))
       }
   }
 

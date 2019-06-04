@@ -20,6 +20,7 @@ import controllers.ControllerSpecBase
 import controllers.actions._
 import controllers.behaviours.ControllerAllowChangeBehaviour
 import controllers.register.establishers.company.CheckYourAnswersControllerSpec.ach
+import identifiers.register.establishers.IsEstablisherNewId
 import identifiers.register.establishers.company.director._
 import models._
 import models.address.Address
@@ -112,6 +113,22 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
 
         FakeUserAnswersService.verify(IsDirectorCompleteId(firstIndex, firstIndex), true)
       }
+
+      "mark the section as complete and redirect to the next page in UpdateMode if Establisher is new" in {
+        val result = controller(newDirectorAnswers.dataRetrievalAction).onSubmit(firstIndex, firstIndex, UpdateMode, None)(request)
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result) mustBe Some(desiredRoute.url)
+
+        FakeUserAnswersService.verify(IsDirectorCompleteId(firstIndex, firstIndex), true)
+      }
+
+      "mark the section as complete and redirect to the next page in UpdateMode if Establisher is not new" in {
+        val result = controller(directorAnswers.dataRetrievalAction).onSubmit(firstIndex, firstIndex, UpdateMode, None)(request)
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result) mustBe Some(desiredRoute.url)
+
+        FakeUserAnswersService.verify(IsDirectorCompleteId(firstIndex, firstIndex), true)
+      }
     }
   }
 }
@@ -130,4 +147,6 @@ object CheckYourAnswersControllerSpec extends OptionValues {
     .flatMap(_.set(DirectorPreviousAddressId(firstIndex, firstIndex))(Address("Previous Address 1", "Previous Address 2", None, None, None, "GB")))
     .flatMap(_.set(DirectorContactDetailsId(firstIndex, firstIndex))(ContactDetails("test@test.com", "123456789")))
     .asOpt.value
+
+  val newDirectorAnswers = directorAnswers.set(IsEstablisherNewId(firstIndex))(true).asOpt.value
 }

@@ -21,6 +21,8 @@ import controllers.Retrievals
 import controllers.actions.{AuthAction, DataRequiredAction, DataRetrievalAction}
 import identifiers.register.establishers.company.CompanyDetailsId
 import identifiers.register.establishers.individual.EstablisherDetailsId
+import identifiers.register.establishers.partnership.PartnershipDetailsId
+import identifiers.register.establishers.partnership.partner.PartnerDetailsId
 import javax.inject.Inject
 import models.register.establishers.EstablisherKind
 import models.register.establishers.EstablisherKind.{Company, Indivdual, Partnership}
@@ -63,8 +65,7 @@ class AlreadyDeletedController @Inject()(
     establisherKind match {
       case Company => CompanyDetailsId(index).retrieve.right.map(_.companyName)
       case Indivdual => EstablisherDetailsId(index).retrieve.right.map(_.fullName)
-      case Partnership => Left(Future.successful(SeeOther(controllers.routes.SessionExpiredController.onPageLoad().url)))
-      case _ => Left(Future.successful(SeeOther(controllers.routes.SessionExpiredController.onPageLoad().url)))
+      case Partnership => PartnershipDetailsId(index).retrieve.right.map(_.name)
     }
   }
 }

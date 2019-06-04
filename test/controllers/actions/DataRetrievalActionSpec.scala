@@ -39,7 +39,6 @@ class DataRetrievalActionSpec extends SpecBase with MockitoSugar with ScalaFutur
   private val srn = "123"
   private val srnOpt = Some(srn)
   private val psa = "A0000000"
-  private val schemeVariance = SchemeVariance(psa, srn)
   private val authRequest: AuthenticatedRequest[AnyContent] = AuthenticatedRequest(fakeRequest, "id", PsaId(psa))
 
   private val dataCacheConnector = mock[UserAnswersCacheConnector]
@@ -89,6 +88,18 @@ class DataRetrievalActionSpec extends SpecBase with MockitoSugar with ScalaFutur
 
         whenReady(futureResult) { result =>
           result.userAnswers.isDefined mustBe true
+        }
+      }
+    }
+
+    "there is no srn in UpdateMode" must {
+      "set userAnswers to 'None' in the request" in {
+        val action = new Harness(viewConnector = viewCacheConnector, lockConnector = lockRepoConnector, mode = UpdateMode, srn = None)
+
+        val futureResult = action.callTransform(authRequest)
+
+        whenReady(futureResult) { result =>
+          result.userAnswers.isEmpty mustBe true
         }
       }
     }
