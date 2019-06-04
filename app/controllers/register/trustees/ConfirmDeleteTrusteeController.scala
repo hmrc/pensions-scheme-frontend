@@ -95,8 +95,6 @@ class ConfirmDeleteTrusteeController @Inject()(appConfig: FrontendAppConfig,
           PartnershipDetailsId(index).retrieve.right.map { partnershipDetails =>
             updateTrusteeKind(partnershipDetails.name, trusteeKind, index, None, None, Some(partnershipDetails), srn, mode)
           }
-        case _ =>
-          Left(Future.successful(SeeOther(controllers.routes.SessionExpiredController.onPageLoad().url)))
       }
   }
 
@@ -146,7 +144,6 @@ class ConfirmDeleteTrusteeController @Inject()(appConfig: FrontendAppConfig,
       case Individual => userAnswers.get(TrusteeDetailsId(index)).map(details => DeletableTrustee(details.fullName, details.isDeleted))
       case Company => userAnswers.get(CompanyDetailsId(index)).map(details => DeletableTrustee(details.companyName, details.isDeleted))
       case Partnership => userAnswers.get(PartnershipDetailsId(index)).map(details => DeletableTrustee(details.name, details.isDeleted))
-      case _ => None
     }
   }
 }

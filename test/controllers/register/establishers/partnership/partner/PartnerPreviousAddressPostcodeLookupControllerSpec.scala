@@ -102,10 +102,10 @@ class PartnerPreviousAddressPostcodeLookupControllerSpec extends ControllerSpecB
     "redirect to the next page on POST request" in {
 
       val validPostcode = "ZZ1 1ZZ"
-      val onwardUrl = routes.PartnerPreviousAddressListController.onSubmit(NormalMode, establisherIndex, partnerIndex, None)
+      val onwardUrl = routes.PartnerPreviousAddressListController.onPageLoad(NormalMode, establisherIndex, partnerIndex, None)
 
-      val fakeRequest = addToken(FakeRequest(onwardUrl)
-        .withFormUrlEncodedBody("value" -> validPostcode))
+      val fakeRequest = addToken(FakeRequest(onwardRoute))
+        .withFormUrlEncodedBody("value" -> validPostcode)
         .withHeaders("Csrf-Token" -> "nocheck")
 
       when(fakeAddressLookupConnector.addressLookupByPostCode(Matchers.eq(validPostcode))(Matchers.any(), Matchers.any()))
@@ -127,7 +127,7 @@ class PartnerPreviousAddressPostcodeLookupControllerSpec extends ControllerSpecB
           val result = route(app, fakeRequest).get
 
           status(result) mustBe SEE_OTHER
-          redirectLocation(result) mustBe Some(onwardRoute.url)
+          redirectLocation(result) mustBe Some(onwardUrl.url)
       }
     }
 

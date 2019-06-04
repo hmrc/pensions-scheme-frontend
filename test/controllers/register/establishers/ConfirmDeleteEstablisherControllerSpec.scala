@@ -28,6 +28,7 @@ import models.person.PersonDetails
 import models.register.establishers.EstablisherKind
 import models.{CompanyDetails, Index, NormalMode, PartnershipDetails}
 import org.joda.time.LocalDate
+import play.api.data.Form
 import play.api.libs.json._
 import play.api.mvc.{AnyContentAsFormUrlEncoded, Call}
 import play.api.test.FakeRequest
@@ -93,6 +94,22 @@ class ConfirmDeleteEstablisherControllerSpec extends ControllerSpecBase {
       redirectLocation(result) mustBe Some(routes.AlreadyDeletedController.onPageLoad(NormalMode, establisherIndex, establisherKind, None).url)
     }
 
+
+    "redirect to Session Expired for a GET if a deletable trustee cannot be found in UserAnswers" in {
+      val result = controller(getEmptyData).onPageLoad(NormalMode, 0, EstablisherKind.Company, None)(fakeRequest)
+
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
+    }
+
+    "redirect to Session Expired for a GET if no cached data exists" in {
+      val result = controller(dontGetAnyData).onPageLoad(NormalMode, 0, EstablisherKind.Company, None)(fakeRequest)
+
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
+    }
+
+
     "delete the establisher individual on a POST" in {
       val data = new FakeDataRetrievalAction(Some(testData))
       val result = controller(data).onSubmit(NormalMode, establisherIndex, establisherKind, None)(postRequest)
@@ -104,7 +121,7 @@ class ConfirmDeleteEstablisherControllerSpec extends ControllerSpecBase {
     "dont delete the establisher individual on a POST if selcted NO" in {
       FakeUserAnswersService.reset()
       val data = new FakeDataRetrievalAction(Some(testData))
-      val result = controller(data).onSubmit(NormalMode, establisherIndex, establisherKind, None)(postRequestForCancle)
+      val result = controller(data).onSubmit(NormalMode, establisherIndex, establisherKind, None)(postRequestForCancel)
 
       status(result) mustBe SEE_OTHER
       FakeUserAnswersService.verifyNot(EstablisherDetailsId(establisherIndex))
@@ -121,7 +138,7 @@ class ConfirmDeleteEstablisherControllerSpec extends ControllerSpecBase {
     "dont delete the establisher company on a POST if selected NO" in {
       FakeUserAnswersService.reset()
       val data = new FakeDataRetrievalAction(Some(testData))
-      val result = controller(data).onSubmit(NormalMode, Index(1), EstablisherKind.Company, None)(postRequestForCancle)
+      val result = controller(data).onSubmit(NormalMode, Index(1), EstablisherKind.Company, None)(postRequestForCancel)
 
       status(result) mustBe SEE_OTHER
       FakeUserAnswersService.verifyNot(CompanyDetailsId(Index(1)))
@@ -138,7 +155,7 @@ class ConfirmDeleteEstablisherControllerSpec extends ControllerSpecBase {
     "dont delete the establisher partnership on a POST if selected No" in {
       FakeUserAnswersService.reset()
       val data = new FakeDataRetrievalAction(Some(testData))
-      val result = controller(data).onSubmit(NormalMode, Index(2), EstablisherKind.Partnership, None)(postRequestForCancle)
+      val result = controller(data).onSubmit(NormalMode, Index(2), EstablisherKind.Partnership, None)(postRequestForCancel)
 
       status(result) mustBe SEE_OTHER
       FakeUserAnswersService.verifyNot(PartnershipDetailsId(Index(2)))
@@ -152,11 +169,19 @@ class ConfirmDeleteEstablisherControllerSpec extends ControllerSpecBase {
       redirectLocation(result) mustBe Some(onwardRoute.url)
     }
 
-    "redirect to Session Expired for a GET if no existing data is found" in {
-      val result = controller(dontGetAnyData).onPageLoad(NormalMode, establisherIndex, establisherKind, None)(fakeRequest)
+    "return a Bad Request and errors when invalid data is submitted" in {
+      val data = new FakeDataRetrievalAction(Some(testData))
+      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "invalid value"))
+      val postCall = routes.ConfirmDeleteEstablisherController.onSubmit(NormalMode, 1, EstablisherKind.Company, None)
 
-      status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
+      val boundForm = form.bind(Map("value" -> "invalid value"))
+
+      val result = controller(data).onSubmit(NormalMode, Index(1), EstablisherKind.Company, None)(postRequest)
+      status(result) mustBe BAD_REQUEST
+      contentAsString(result) mustBe viewAsString(
+        hintText = Some(messages("messages__confirmDeleteEstablisher__companyHint")),
+        estName = companyDetails.companyName,
+        postCall = postCall, form = boundForm)
     }
 
     "redirect to Session Expired for a POST if no existing data is found" in {
@@ -172,14 +197,12 @@ class ConfirmDeleteEstablisherControllerSpec extends ControllerSpecBase {
 object ConfirmDeleteEstablisherControllerSpec extends ControllerSpecBase {
 
   private val establisherIndex = Index(0)
-  private val schemeName = "MyScheme Ltd"
   private val establisherName = "John Doe"
   private val establisherKind = EstablisherKind.Indivdual
   private val day = LocalDate.now().getDayOfMonth
   private val month = LocalDate.now().getMonthOfYear
   private val year = LocalDate.now().getYear - 20
   private lazy val postCall = routes.ConfirmDeleteEstablisherController.onSubmit(NormalMode, establisherIndex, establisherKind, None)
-  private lazy val cancelCall = routes.AddEstablisherController.onPageLoad(NormalMode, None)
   private val personDetails = PersonDetails("John", None, "Doe", new LocalDate(year, month, day))
   private val companyDetails = CompanyDetails("Test Ltd")
   private val partnershipDetails = PartnershipDetails("Test Partnership Ltd")
@@ -191,7 +214,7 @@ object ConfirmDeleteEstablisherControllerSpec extends ControllerSpecBase {
   private val postRequest: FakeRequest[AnyContentAsFormUrlEncoded] =
     FakeRequest().withFormUrlEncodedBody(("value", "true"))
 
-  private val postRequestForCancle: FakeRequest[AnyContentAsFormUrlEncoded] =
+  private val postRequestForCancel: FakeRequest[AnyContentAsFormUrlEncoded] =
     FakeRequest().withFormUrlEncodedBody(("value", "false"))
 
   private val testData = Json.obj(
@@ -228,7 +251,7 @@ object ConfirmDeleteEstablisherControllerSpec extends ControllerSpecBase {
 
   private def viewAsString(hintText:Option[String] = None,
                            estName:String = establisherName,
-                           postCall:Call = postCall) = confirmDeleteEstablisher(
+                           postCall:Call = postCall, form: Form[_] = form) = confirmDeleteEstablisher(
     frontendAppConfig,
     form,
     estName,

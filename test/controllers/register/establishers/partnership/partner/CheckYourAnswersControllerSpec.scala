@@ -19,6 +19,7 @@ package controllers.register.establishers.partnership.partner
 import controllers.ControllerSpecBase
 import controllers.actions.{DataRequiredActionImpl, DataRetrievalAction, FakeAllowAccessProvider, FakeAuthAction}
 import controllers.behaviours.ControllerAllowChangeBehaviour
+import identifiers.register.establishers.IsEstablisherNewId
 import identifiers.register.establishers.partnership.partner._
 import models.address.Address
 import models.person.PersonDetails
@@ -104,8 +105,24 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
     }
 
     "onSubmit" must {
-      "mark the section as complete and redirect to the next page" in {
+      "mark the section as complete and redirect to the next page in NormalMode" in {
         val result = controller().onSubmit(NormalMode, firstIndex, firstIndex, None)(request)
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result) mustBe Some(desiredRoute.url)
+
+        FakeUserAnswersService.verify(IsPartnerCompleteId(firstIndex, firstIndex), true)
+      }
+
+      "mark the section as complete and redirect to the next page in UpdateMode if Establisher is new" in {
+        val result = controller(newPartnerAnswers.dataRetrievalAction).onSubmit(UpdateMode, firstIndex, firstIndex, None)(request)
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result) mustBe Some(desiredRoute.url)
+
+        FakeUserAnswersService.verify(IsPartnerCompleteId(firstIndex, firstIndex), true)
+      }
+
+      "mark the section as complete and redirect to the next page in UpdateMode if Establisher is not new" in {
+        val result = controller(partnerAnswers.dataRetrievalAction).onSubmit(UpdateMode, firstIndex, firstIndex, None)(request)
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(desiredRoute.url)
 
@@ -129,4 +146,6 @@ object CheckYourAnswersControllerSpec extends OptionValues {
     .flatMap(_.set(PartnerPreviousAddressId(firstIndex, firstIndex))(Address("Previous Address 1", "Previous Address 2", None, None, None, "GB")))
     .flatMap(_.set(PartnerContactDetailsId(firstIndex, firstIndex))(ContactDetails("test@test.com", "123456789")))
     .asOpt.value
+
+  val newPartnerAnswers = partnerAnswers.set(IsEstablisherNewId(firstIndex))(true).asOpt.value
 }

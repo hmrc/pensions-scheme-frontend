@@ -356,7 +356,7 @@ class ManualAddressControllerSpec extends WordSpec with MustMatchers with Mockit
 
     }
 
-    "clear saved address and selected address in list" when {
+    "clear saved address and selected address in list in UpdateMode" when {
       "user clicks on manual entry link" in {
         val userAnswersService: UserAnswersService = mock[UserAnswersService]
 
@@ -375,7 +375,29 @@ class ManualAddressControllerSpec extends WordSpec with MustMatchers with Mockit
 
             val request = FakeRequest()
             val controller = app.injector.instanceOf[TestController]
-            val result = controller.onClick(CheckUpdateMode, UserAnswers(answers), request)
+            val result = controller.onClick(UpdateMode, UserAnswers(answers), request)
+
+            status(result) mustEqual SEE_OTHER
+            redirectLocation(result) mustBe Some(manualCall.url)
+        }
+      }
+    }
+
+    "redirect user to manual entry page in NormalMode" when {
+      "user clicks on manual entry link" in {
+
+        running(_.overrides(
+          bind[Navigator].toInstance(FakeNavigator),
+          bind[DataRetrievalAction].toInstance(preSavedAddress),
+          bind[DataRequiredAction].to(new DataRequiredActionImpl)
+        )) {
+          app =>
+
+            implicit val mat: Materializer = app.materializer
+
+            val request = FakeRequest()
+            val controller = app.injector.instanceOf[TestController]
+            val result = controller.onClick(NormalMode, UserAnswers(answers), request)
 
             status(result) mustEqual SEE_OTHER
             redirectLocation(result) mustBe Some(manualCall.url)

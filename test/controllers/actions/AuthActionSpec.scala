@@ -34,14 +34,35 @@ class AuthActionSpec extends SpecBase {
 
   "Auth Action" when {
 
-    "the user hasn't enrolled in PODS" must {
+    "the user has valid credentials" must {
       "redirect the user to pension administrator frontend" in {
         val authAction = new AuthActionImpl(fakeAuthConnector(authRetrievals), frontendAppConfig)
         val controller = new Harness(authAction)
 
         val result = controller.onPageLoad()(fakeRequest)
+        status(result) mustBe OK
+      }
+    }
+
+    "the user hasn't enrolled in PODS" must {
+      "redirect the user to pension administrator frontend" in {
+        val authAction = new AuthActionImpl(fakeAuthConnector(emptyAuthRetrievals), frontendAppConfig)
+        val controller = new Harness(authAction)
+
+        val result = controller.onPageLoad()(fakeRequest)
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(controllers.routes.YouNeedToRegisterController.onPageLoad().url)
+      }
+    }
+
+    "erroneous retrievals are obtained" must {
+      "redirect the user to unauthorised controller" in {
+        val authAction = new AuthActionImpl(fakeAuthConnector(erroneousRetrievals), frontendAppConfig)
+        val controller = new Harness(authAction)
+
+        val result = controller.onPageLoad()(fakeRequest)
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result) mustBe Some(controllers.routes.UnauthorisedController.onPageLoad().url)
       }
     }
 
@@ -125,7 +146,11 @@ object AuthActionSpec {
     }
   }
 
-  private def authRetrievals = Future.successful(new ~(Some("id"), Enrolments(Set())))
+  private def authRetrievals = Future.successful(new ~(Some("id"), Enrolments(Set(
+    Enrolment("HMRC-PODS-ORG", Seq(EnrolmentIdentifier("PSAID", "A2100000")), "", None)
+  ))))
+  private def emptyAuthRetrievals = Future.successful(new ~(Some("id"), Enrolments(Set())))
+  private def erroneousRetrievals = Future.successful(new ~(None, Enrolments(Set())))
 
   class Harness(authAction: AuthAction) extends Controller {
     def onPageLoad(): Action[AnyContent] = authAction { _ => Ok }
