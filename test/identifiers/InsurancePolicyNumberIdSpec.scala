@@ -17,9 +17,9 @@
 package identifiers
 
 import base.SpecBase
-import models.{Link, UpdateMode}
 import models.address.{Address, TolerantAddress}
 import models.requests.DataRequest
+import models.{Link, UpdateMode}
 import org.scalatest.prop.PropertyChecks
 import org.scalatest.{MustMatchers, OptionValues}
 import play.api.libs.json.Json
@@ -30,44 +30,11 @@ import utils.checkyouranswers.Ops._
 import utils.{CountryOptions, Enumerable, InputOption, UserAnswers}
 import viewmodels.{AnswerRow, Message}
 
-class InsuranceCompanyNameIdSpec extends SpecBase with MustMatchers with PropertyChecks with OptionValues with Enumerable.Implicits {
-
-  "Cleanup" when {
-
-    val answers = UserAnswers(Json.obj())
-      .set(BenefitsSecuredByInsuranceId)(true)
-      .flatMap(_.set(InsuranceCompanyNameId)("test"))
-      .flatMap(_.set(InsurancePolicyNumberId)("test"))
-      .flatMap(_.set(InsurerEnterPostCodeId)(Seq.empty))
-      .flatMap(_.set(InsurerSelectAddressId)(TolerantAddress(None, None, None, None, None, None)))
-      .flatMap(_.set(InsurerConfirmAddressId)(Address("foo", "bar", None, None, None, "GB")))
-      .asOpt.value
-
-    "InsuranceCompanyNameId is updated with new value" must {
-
-      val result: UserAnswers = answers.set(InsuranceCompanyNameId)("test123").asOpt.value
-
-      "remove the data for `InsurancePolicyNumber`" in {
-        result.get(InsurancePolicyNumberId) mustNot be(defined)
-      }
-
-      "remove the data for `InsurerEnterPostCode`" in {
-        result.get(InsurerEnterPostCodeId) mustNot be(defined)
-      }
-
-      "remove the data for `InsurerSelectAddress`" in {
-        result.get(InsurerSelectAddressId) mustNot be(defined)
-      }
-
-      "remove the data for `InsurerConfirmAddress`" in {
-        result.get(InsurerConfirmAddressId) mustNot be(defined)
-      }
-    }
-  }
+class InsurancePolicyNumberIdSpec extends SpecBase with MustMatchers with PropertyChecks with OptionValues with Enumerable.Implicits {
 
   "updateRow" when {
 
-    "no data defined for InsuranceCompanyNameId" must {
+    "no data defined for InsurancePolicyNumberId" must {
 
       implicit val countryOptions = new CountryOptions(Seq(InputOption("AU", "Australia"),
         InputOption("GB", "United Kingdom")))
@@ -79,7 +46,7 @@ class InsuranceCompanyNameIdSpec extends SpecBase with MustMatchers with Propert
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
         implicit val userAnswers = request.userAnswers
         val onwardUrl = "onwardUrl"
-        InsuranceCompanyNameId.row(onwardUrl, UpdateMode) must equal(Seq.empty[AnswerRow])
+        InsurancePolicyNumberId.row(onwardUrl, UpdateMode) must equal(Seq.empty[AnswerRow])
       }
 
       "return correct AnswerRow when BenefitsSecuredByInsuranceId is true" in {
@@ -89,8 +56,9 @@ class InsuranceCompanyNameIdSpec extends SpecBase with MustMatchers with Propert
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
         implicit val userAnswers = request.userAnswers
         val onwardUrl = "onwardUrl"
-        InsuranceCompanyNameId.row(onwardUrl, UpdateMode) must equal(Seq(AnswerRow("insuranceCompanyName.checkYourAnswersLabel",
-          List("site.not_entered"),true,Some(Link("site.add",onwardUrl,Some(Message("messages__visuallyhidden__add_insuranceCompanyName")))))))
+        InsurancePolicyNumberId.row(onwardUrl, UpdateMode) must equal(Seq(AnswerRow(
+          Message("messages__insurance_policy_number__title"),List("site.not_entered"),true,Some(Link("site.add",
+            onwardUrl,Some(Message("messages__visuallyhidden__insurance_policy_number_add")))))))
       }
     }
   }
