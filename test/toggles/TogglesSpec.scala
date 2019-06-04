@@ -26,4 +26,12 @@ class TogglesSpec extends FeatureToggleBehaviours {
     behave like featureToggle("is-address-pre-population-enabled", false)
   }
 
+  "is-scheme-data-shift-enabled new feature toggle" should {
+    behave like featureToggle("is-scheme-data-shift-enabled", false)
+  }
+
+  "separate-ref-collection new feature toggle" should {
+    behave like featureToggle("separate-ref-collection", false)
+  }
+
 }
