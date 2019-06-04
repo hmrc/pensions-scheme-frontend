@@ -45,8 +45,8 @@ import scala.concurrent.Future
 
 class DirectorAddressPostcodeLookupControllerSpec extends ControllerSpecBase with MockitoSugar with CSRFRequest {
 
-  def onwardRoute: Call = routes.DirectorAddressPostcodeLookupController.onSubmit(NormalMode, estIndex, dirIndex, None)
-
+  def onwardRoute: Call = routes.DirectorAddressListController.onPageLoad(NormalMode, estIndex, dirIndex, None)
+  def postCall: Call = routes.DirectorAddressPostcodeLookupController.onSubmit(NormalMode, estIndex, dirIndex, None)
   def manualInputCall: Call = routes.DirectorAddressController.onPageLoad(NormalMode, estIndex, dirIndex, None)
 
   val formProvider = new PostCodeLookupFormProvider()
@@ -73,7 +73,7 @@ class DirectorAddressPostcodeLookupControllerSpec extends ControllerSpecBase wit
   val director = PersonDetails("first", Some("middle"), "last", LocalDate.now())
 
   lazy val viewmodel = PostcodeLookupViewModel(
-    onwardRoute,
+    postCall,
     manualInputCall,
     Message("messages__directorAddressPostcodeLookup__title"),
     Message("messages__directorAddressPostcodeLookup__heading"),
@@ -116,11 +116,9 @@ class DirectorAddressPostcodeLookupControllerSpec extends ControllerSpecBase wit
 
     "redirect to next page on POST request" in {
 
-      val call: Call = routes.DirectorAddressListController.onSubmit(NormalMode, estIndex, dirIndex, None)
-
       val validPostcode = "ZZ1 1ZZ"
 
-      val fakeRequest = addToken(FakeRequest(call)
+      val fakeRequest = addToken(FakeRequest(postCall)
         .withFormUrlEncodedBody("value" -> validPostcode))
 
       when(fakeAddressLookupConnector.addressLookupByPostCode(Matchers.eq(validPostcode))(Matchers.any(), Matchers.any()))
