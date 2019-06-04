@@ -135,7 +135,7 @@ class UserAnswersServiceSpec extends AsyncWordSpec with MustMatchers with Mockit
       when(subscriptionConnector.upsert(any(), any())(any(), any()))
         .thenReturn(Future(json))
 
-      testServiceEstAndTrustees.upsert(CheckMode, None, json) map {
+      testServiceNotAnnotated.upsert(CheckMode, None, json) map {
         _ mustEqual json
       }
     }
@@ -148,7 +148,7 @@ class UserAnswersServiceSpec extends AsyncWordSpec with MustMatchers with Mockit
       when(updateConnector.upsert(any(), any())(any(), any()))
         .thenReturn(Future(json))
 
-      testServiceEstAndTrustees.upsert(UpdateMode, Some(srn), json) map { result =>
+      testServiceNotAnnotated.upsert(UpdateMode, Some(srn), json) map { result =>
         result mustEqual json
       }
     }
@@ -158,7 +158,7 @@ class UserAnswersServiceSpec extends AsyncWordSpec with MustMatchers with Mockit
       when(lockConnector.lock(any(), any())(any(), any()))
         .thenReturn(Future(SchemeLock))
 
-      testServiceEstAndTrustees.upsert(UpdateMode, Some(srn), json) map { result =>
+      testServiceNotAnnotated.upsert(UpdateMode, Some(srn), json) map { result =>
         result mustEqual Json.obj()
       }
     }
@@ -236,6 +236,45 @@ class UserAnswersServiceSpec extends AsyncWordSpec with MustMatchers with Mockit
 
       testServiceEstAndTrustees.remove(UpdateMode, Some(srn), FakeIdentifier) map {
         _ mustEqual Json.obj()
+      }
+    }
+  }
+
+
+  ".setCompleteFlag" must {
+    "set flag in NormalMode" in {
+
+      when(subscriptionConnector.save(any(), any(), any())(any(), any(), any()))
+        .thenReturn(Future(json))
+
+      testServiceNotAnnotated.setCompleteFlag(NormalMode, None, FakeCompleteIdentifier, UserAnswers(json), true) map {
+        _ mustEqual UserAnswers(json)
+      }
+    }
+
+    "set flag in UpdateMode/ CheckUpdateMode when user holds the lock" in {
+
+      val updatedJson = Json.obj(
+        "other-key" -> "meh"
+      )
+
+      when(lockConnector.lock(any(), any())(any(), any()))
+        .thenReturn(Future(VarianceLock))
+
+      when(updateConnector.save(any(), any(), any())(any(), any(), any()))
+        .thenReturn(Future(updatedJson))
+
+      testServiceNotAnnotated.setCompleteFlag(UpdateMode, Some(srn), FakeCompleteIdentifier, UserAnswers(updatedJson), true) map {
+        _ mustEqual UserAnswers(updatedJson)
+      }
+    }
+
+    "not perform any action UpdateMode/ CheckUpdateMode when user does not hold the lock" in {
+      when(lockConnector.lock(any(), any())(any(), any()))
+        .thenReturn(Future(SchemeLock))
+
+      testServiceNotAnnotated.setCompleteFlag(UpdateMode, Some(srn), FakeCompleteIdentifier, UserAnswers(json), true) map {
+        _ mustEqual UserAnswers(Json.obj())
       }
     }
   }
@@ -345,6 +384,19 @@ class UserAnswersServiceSpec extends AsyncWordSpec with MustMatchers with Mockit
           _ mustEqual answers
         }
       }
+
+      "not save the complete flag and return the same useramswers if the isNew flag cannot be found" in {
+        val answers = UserAnswers().set(IsTrusteeNewId(0))(true).asOpt.value
+        when(lockConnector.lock(any(), any())(any(), any()))
+          .thenReturn(Future(VarianceLock))
+
+        when(updateConnector.upsert(any(), any())(any(), any()))
+          .thenReturn(Future(answers.json))
+
+        testServiceEstAndTrustees.setAddressCompleteFlagAfterPreviousAddress(UpdateMode, Some(srn), FakePreviousAddressIdentifier, answers) map {
+          _ mustEqual answers
+        }
+      }
     }
 
     "in Normal Mode" must {
@@ -405,6 +457,19 @@ class UserAnswersServiceSpec extends AsyncWordSpec with MustMatchers with Mockit
           _ mustEqual answers
         }
       }
+
+      "not save the complete flag and return the same user answers if the is new flag cannot be found" in {
+        val answers = UserAnswers().set(IsTrusteeNewId(0))(true).asOpt.value
+        when(lockConnector.lock(any(), any())(any(), any()))
+          .thenReturn(Future(VarianceLock))
+
+        when(updateConnector.upsert(any(), any())(any(), any()))
+          .thenReturn(Future(answers.json))
+
+        testServiceEstAndTrustees.setAddressCompleteFlagAfterAddressYear(UpdateMode, Some(srn), FakeAddressYearsIdentifier, OverAYear, answers) map {
+          _ mustEqual answers
+        }
+      }
     }
 
     "in Normal Mode" must {
@@ -455,6 +520,18 @@ object UserAnswersServiceSpec extends SpecBase with MockitoSugar {
 
   protected object FakeIdentifier extends TypedIdentifier[String] {
     override def toString: String = "fake-identifier"
+  }
+
+  protected object FakeAddressYearsIdentifier extends TypedIdentifier[AddressYears] {
+    override def toString: String = "fake-identifier"
+  }
+
+  protected object FakePreviousAddressIdentifier extends TypedIdentifier[Address] {
+    override def toString: String = "fake-identifier"
+  }
+
+  protected object FakeCompleteIdentifier extends TypedIdentifier[Boolean] {
+    override def toString: String = "fake-complete"
   }
 
   protected implicit val hc: HeaderCarrier = HeaderCarrier()

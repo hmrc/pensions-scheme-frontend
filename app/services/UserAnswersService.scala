@@ -94,17 +94,6 @@ trait UserAnswersService {
       case UpdateMode | CheckUpdateMode => lockAndCall(srn, updateSchemeCacheConnector.remove(_, id))
     }
 
-  def removeAll[I <: TypedIdentifier[_]](mode: Mode, srn: Option[String], id: I)
-                                        (implicit
-                                         ec: ExecutionContext,
-                                         hc: HeaderCarrier,
-                                         request: DataRequest[AnyContent]
-                                        ): Future[JsValue] =
-    mode match {
-      case NormalMode | CheckMode => subscriptionCacheConnector.remove(request.externalId, id)
-      case UpdateMode | CheckUpdateMode => lockAndCall(srn, updateSchemeCacheConnector.remove(_, id))
-    }
-
   def upsert(mode: Mode, srn: Option[String], value: JsValue)(implicit ec: ExecutionContext, hc: HeaderCarrier,
                                                               request: DataRequest[AnyContent]): Future[JsValue] =
     mode match {
