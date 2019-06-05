@@ -17,7 +17,7 @@
 package services
 
 import config.FrontendAppConfig
-import connectors.{PensionSchemeVarianceLockConnector, SchemeDetailsReadOnlyCacheConnector, SubscriptionCacheConnector, UpdateSchemeCacheConnector}
+import connectors.{PensionSchemeVarianceLockConnector, SchemeDetailsReadOnlyCacheConnector, UpdateSchemeCacheConnector, UserAnswersCacheConnector}
 import identifiers._
 import identifiers.register.establishers.company.director._
 import identifiers.register.establishers.company.{IsCompanyCompleteId, CompanyAddressYearsId => EstablisherCompanyAddressYearsId, CompanyPreviousAddressId => EstablisherCompanyPreviousAddressId}
@@ -43,7 +43,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 trait UserAnswersService {
 
-  protected def subscriptionCacheConnector: SubscriptionCacheConnector
+  protected def subscriptionCacheConnector: UserAnswersCacheConnector
 
   protected def updateSchemeCacheConnector: UpdateSchemeCacheConnector
 
@@ -96,17 +96,6 @@ trait UserAnswersService {
       case UpdateMode | CheckUpdateMode => lockAndCall(srn, updateSchemeCacheConnector.remove(_, id))
     }
 
-  def removeAll[I <: TypedIdentifier[_]](mode: Mode, srn: Option[String], id: I)
-                                        (implicit
-                                         ec: ExecutionContext,
-                                         hc: HeaderCarrier,
-                                         request: DataRequest[AnyContent]
-                                        ): Future[JsValue] =
-    mode match {
-      case NormalMode | CheckMode => subscriptionCacheConnector.remove(request.externalId, id)
-      case UpdateMode | CheckUpdateMode => lockAndCall(srn, updateSchemeCacheConnector.remove(_, id))
-    }
-
   def upsert(mode: Mode, srn: Option[String], value: JsValue)(implicit ec: ExecutionContext, hc: HeaderCarrier,
                                                               request: DataRequest[AnyContent]): Future[JsValue] =
     mode match {
@@ -140,25 +129,7 @@ trait UserAnswersService {
 
   def setCompleteFlag(mode: Mode, srn: Option[String], id: TypedIdentifier[Boolean], userAnswers: UserAnswers, value: Boolean)
                      (implicit fmt: Format[Boolean], ec: ExecutionContext, hc: HeaderCarrier, request: DataRequest[AnyContent]): Future[UserAnswers] = {
-
-    userAnswers.set(id)(value).fold(
-      invalid => Future.failed(JsResultException(invalid)),
-      valid => Future.successful(valid)
-    )
-
-    mode match {
-      case NormalMode | CheckMode => subscriptionCacheConnector.save(request.externalId, id, value) map UserAnswers
-      case UpdateMode | CheckUpdateMode => srn match {
-        case Some(srnId) => lockConnector.lock(request.psaId.id, srnId).flatMap {
-          case VarianceLock => save(mode, srn, id, value) map UserAnswers
-          case _ => Future.successful(request.userAnswers)
-        }
-
-        case _ =>
-          case class MissingSrnNumber() extends Exception
-          Future.failed(throw new MissingSrnNumber)
-      }
-    }
+    save(mode, srn, id, value) map UserAnswers
   }
 
   def setAddressCompleteFlagAfterAddressYear(mode: Mode, srn: Option[String], id: TypedIdentifier[AddressYears],
@@ -290,7 +261,7 @@ trait UserAnswersService {
 }
 
 @Singleton
-class UserAnswersServiceEstablishersAndTrusteesImpl @Inject()(override val subscriptionCacheConnector: SubscriptionCacheConnector,
+class UserAnswersServiceEstablishersAndTrusteesImpl @Inject()(override val subscriptionCacheConnector: UserAnswersCacheConnector,
                                                               override val updateSchemeCacheConnector: UpdateSchemeCacheConnector,
                                                               override val lockConnector: PensionSchemeVarianceLockConnector,
                                                               override val viewConnector: SchemeDetailsReadOnlyCacheConnector,
@@ -308,7 +279,7 @@ class UserAnswersServiceEstablishersAndTrusteesImpl @Inject()(override val subsc
 }
 
 @Singleton
-class UserAnswersServiceInsuranceImpl @Inject()(override val subscriptionCacheConnector: SubscriptionCacheConnector,
+class UserAnswersServiceInsuranceImpl @Inject()(override val subscriptionCacheConnector: UserAnswersCacheConnector,
                                                 override val updateSchemeCacheConnector: UpdateSchemeCacheConnector,
                                                 override val lockConnector: PensionSchemeVarianceLockConnector,
                                                 override val viewConnector: SchemeDetailsReadOnlyCacheConnector,
@@ -325,7 +296,7 @@ class UserAnswersServiceInsuranceImpl @Inject()(override val subscriptionCacheCo
 }
 
 @Singleton
-class UserAnswersServiceImpl @Inject()(override val subscriptionCacheConnector: SubscriptionCacheConnector,
+class UserAnswersServiceImpl @Inject()(override val subscriptionCacheConnector: UserAnswersCacheConnector,
                                        override val updateSchemeCacheConnector: UpdateSchemeCacheConnector,
                                        override val lockConnector: PensionSchemeVarianceLockConnector,
                                        override val viewConnector: SchemeDetailsReadOnlyCacheConnector,

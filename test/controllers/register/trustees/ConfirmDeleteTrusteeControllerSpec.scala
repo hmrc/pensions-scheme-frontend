@@ -29,6 +29,7 @@ import models.register.trustees.TrusteeKind
 import models.register.trustees.TrusteeKind.{Company, Individual, Partnership}
 import models.{CompanyDetails, NormalMode, PartnershipDetails}
 import org.joda.time.LocalDate
+import play.api.data.Form
 import play.api.libs.json.Writes
 import play.api.mvc.AnyContentAsFormUrlEncoded
 import play.api.test.FakeRequest
@@ -63,12 +64,18 @@ class ConfirmDeleteTrusteeControllerSpec extends ControllerSpecBase {
       contentAsString(result) mustBe viewAsString(partnershipTrustee.name, Partnership)
     }
 
-
     "redirect to already deleted view for a GET if the trustee was already deleted" in {
       val result = controller(testData(individualId)(deletedTrustee)).onPageLoad(NormalMode, index = 0, trusteeKind = Individual, None)(fakeRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(routes.AlreadyDeletedController.onPageLoad(NormalMode, index = 0, trusteeKind = Individual, None).url)
+    }
+
+    "redirect to Session Expired for a GET if a deletable trustee cannot be found in UserAnswers" in {
+      val result = controller(getEmptyData).onPageLoad(NormalMode, 0, Company, None)(fakeRequest)
+
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
     }
 
     "redirect to Session Expired for a GET if no cached data exists" in {
@@ -102,7 +109,7 @@ class ConfirmDeleteTrusteeControllerSpec extends ControllerSpecBase {
 
     "redirect to the next page following a POST request when selected no" in {
       FakeUserAnswersService.reset()
-      val result = controller(testData(partnershipId)(partnershipTrustee)).onSubmit(NormalMode, 0, Partnership, None)(postRequestForCancle)
+      val result = controller(testData(partnershipId)(partnershipTrustee)).onSubmit(NormalMode, 0, Partnership, None)(postRequestForCancel)
 
       status(result) mustBe SEE_OTHER
       FakeUserAnswersService.verifyNot(partnershipId)
@@ -113,6 +120,16 @@ class ConfirmDeleteTrusteeControllerSpec extends ControllerSpecBase {
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
+    }
+
+    "return a Bad Request and errors when invalid data is submitted" in {
+      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "invalid value"))
+
+      val boundForm = form.bind(Map("value" -> "invalid value"))
+
+      val result = controller(testData(companyId)(companyTrustee)).onSubmit(NormalMode, 0, Company, None)(postRequest)
+      status(result) mustBe BAD_REQUEST
+      contentAsString(result) mustBe viewAsString(companyTrustee.companyName, Company, boundForm)
     }
 
     "redirect to Session Expired following a POST if no cached data exists" in {
@@ -134,7 +151,7 @@ object ConfirmDeleteTrusteeControllerSpec extends ControllerSpecBase {
   private val postRequest: FakeRequest[AnyContentAsFormUrlEncoded] =
     FakeRequest().withFormUrlEncodedBody(("value", "true"))
 
-  private val postRequestForCancle: FakeRequest[AnyContentAsFormUrlEncoded] =
+  private val postRequestForCancel: FakeRequest[AnyContentAsFormUrlEncoded] =
     FakeRequest().withFormUrlEncodedBody(("value", "false"))
 
   private val individualId = TrusteeDetailsId(0)
@@ -174,7 +191,7 @@ object ConfirmDeleteTrusteeControllerSpec extends ControllerSpecBase {
       formProvider
     )
 
-  private def viewAsString(trusteeName: String, trusteeKind: TrusteeKind) =
+  private def viewAsString(trusteeName: String, trusteeKind: TrusteeKind, form: Form[_] = form) =
     confirmDeleteTrustee(
       frontendAppConfig,
       form,

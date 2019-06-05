@@ -43,6 +43,7 @@ class DataRetrievalImpl(dataConnector: UserAnswersCacheConnector,
     mode match {
       case NormalMode | CheckMode =>
         getOptionalRequest(dataConnector.fetch(request.externalId), viewOnly = false)(request)
+
       case UpdateMode | CheckUpdateMode =>
         srn.map { extractedSrn =>
           lockConnector.isLockByPsaIdOrSchemeId(request.psaId.id, extractedSrn).flatMap {

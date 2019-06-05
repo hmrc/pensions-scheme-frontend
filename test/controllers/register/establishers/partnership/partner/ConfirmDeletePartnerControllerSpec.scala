@@ -24,8 +24,9 @@ import identifiers.register.establishers.partnership.PartnershipDetailsId
 import identifiers.register.establishers.partnership.partner.PartnerDetailsId
 import identifiers.register.establishers.{EstablishersId, IsEstablisherCompleteId}
 import models.person.PersonDetails
-import models.{Index, NormalMode, PartnershipDetails}
+import models.{Index, NormalMode, PartnershipDetails, UpdateMode}
 import org.joda.time.LocalDate
+import play.api.data.Form
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.AnyContentAsFormUrlEncoded
 import play.api.test.FakeRequest
@@ -54,6 +55,17 @@ class ConfirmDeletePartnerControllerSpec extends ControllerSpecBase {
       redirectLocation(result) mustBe Some(routes.AlreadyDeletedController.onPageLoad(NormalMode, establisherIndex, partnerIndex, None).url)
     }
 
+    "return a Bad Request on POST and errors when invalid data is submitted" in {
+      val data = new FakeDataRetrievalAction(Some(testData()))
+      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "invalid value"))
+
+      val boundForm = form.bind(Map("value" -> "invalid value"))
+
+      val result = controller(data).onSubmit(NormalMode, establisherIndex, partnerIndex, None)(postRequest)
+      status(result) mustBe BAD_REQUEST
+      contentAsString(result) mustBe viewAsString(boundForm)
+    }
+
     "delete the partner on a POST" in {
       val data = new FakeDataRetrievalAction(Some(testData()))
       val result = controller(data).onSubmit(NormalMode, establisherIndex, partnerIndex, None)(postRequest)
@@ -62,10 +74,20 @@ class ConfirmDeletePartnerControllerSpec extends ControllerSpecBase {
       FakeUserAnswersService.verify(PartnerDetailsId(establisherIndex, partnerIndex), partnerDetails.copy(isDeleted = true))
     }
 
+
     "never delete the partner on a POST if selected No" in {
       FakeUserAnswersService.reset()
       val data = new FakeDataRetrievalAction(Some(testData()))
       val result = controller(data).onSubmit(NormalMode, establisherIndex, partnerIndex, None)(postRequestForCancle)
+
+      status(result) mustBe SEE_OTHER
+      FakeUserAnswersService.verifyNot(PartnerDetailsId(establisherIndex, partnerIndex))
+    }
+
+    "never delete the partner on a POST if selected No in UpdateMode" in {
+      FakeUserAnswersService.reset()
+      val data = new FakeDataRetrievalAction(Some(testData()))
+      val result = controller(data).onSubmit(UpdateMode, establisherIndex, partnerIndex, Some("S123"))(postRequestForCancle)
 
       status(result) mustBe SEE_OTHER
       FakeUserAnswersService.verifyNot(PartnerDetailsId(establisherIndex, partnerIndex))
@@ -167,7 +189,7 @@ object ConfirmDeletePartnerControllerSpec extends ControllerSpecBase {
       formProvider
     )
 
-  private def viewAsString() = confirmDeletePartner(
+  private def viewAsString(form: Form[_] = form) = confirmDeletePartner(
     frontendAppConfig,
     form,
     partnerName,

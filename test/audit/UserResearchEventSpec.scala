@@ -32,6 +32,8 @@ class UserResearchEventSpec extends WordSpec with MustMatchers {
       val actual = UserResearchEvent(externalId, name, email)
 
       actual mustBe expected
+      actual.auditType mustBe "URagreementSchemeEvent"
+      actual.details mustBe  Map("externalId" -> externalId, "name" -> name, "email" -> email)
     }
   }
 }

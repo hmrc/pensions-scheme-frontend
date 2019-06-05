@@ -19,8 +19,8 @@ package controllers.actions
 import base.SpecBase
 import connectors._
 import identifiers.{SchemeSrnId, SchemeStatusId}
-import models.requests.{AuthenticatedRequest, OptionalDataRequest}
 import models._
+import models.requests.{AuthenticatedRequest, OptionalDataRequest}
 import org.mockito.Matchers.{eq => eqTo, _}
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
@@ -90,6 +90,18 @@ class DataRetrievalActionSpec extends SpecBase with MockitoSugar with ScalaFutur
 
         whenReady(futureResult) { result =>
           result.userAnswers.isDefined mustBe true
+        }
+      }
+    }
+
+    "there is no srn in UpdateMode" must {
+      "set userAnswers to 'None' in the request" in {
+        val action = new Harness(viewConnector = viewCacheConnector, lockConnector = lockRepoConnector, mode = UpdateMode, srn = None)
+
+        val futureResult = action.callTransform(authRequest)
+
+        whenReady(futureResult) { result =>
+          result.userAnswers.isEmpty mustBe true
         }
       }
     }
@@ -292,6 +304,19 @@ class DataRetrievalActionSpec extends SpecBase with MockitoSugar with ScalaFutur
         }
       }
 
+    }
+
+    "no SRN is defined for UpdateMode" must {
+      "set userAnswers to 'None' in the request" in {
+        when(dataCacheConnector.fetch(eqTo("id"))(any(), any())) thenReturn Future(None)
+        val action = new Harness(updateConnector = updateCacheConnector, lockConnector = lockRepoConnector, mode = UpdateMode)
+
+        val futureResult = action.callTransform(authRequest)
+
+        whenReady(futureResult) { result =>
+          result.userAnswers.isEmpty mustBe true
+        }
+      }
     }
   }
 }

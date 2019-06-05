@@ -30,15 +30,14 @@ class AlreadyDeletedControllerSpec extends ControllerSpecBase {
   def onwardRoute: Call = controllers.register.establishers.routes.AddEstablisherController.onPageLoad(NormalMode, None)
 
   private val establisherIndex = Index(0)
-  private val establisherName = "test first name test last name"
 
-  def viewmodel: AlreadyDeletedViewModel = AlreadyDeletedViewModel(
+  def viewmodel(establisherName: String): AlreadyDeletedViewModel = AlreadyDeletedViewModel(
     title = Message("messages__alreadyDeleted__establisher_title"),
     deletedEntity = establisherName,
     returnCall = onwardRoute
   )
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisher): AlreadyDeletedController =
+  def controller(dataRetrievalAction: DataRetrievalAction): AlreadyDeletedController =
     new AlreadyDeletedController(
       frontendAppConfig,
       messagesApi,
@@ -47,18 +46,32 @@ class AlreadyDeletedControllerSpec extends ControllerSpecBase {
       new DataRequiredActionImpl
     )
 
-  def viewAsString(): String = alreadyDeleted(
+  def viewAsString(establisherName: String): String = alreadyDeleted(
     frontendAppConfig,
-    viewmodel
+    viewmodel(establisherName)
   )(fakeRequest, messages).toString
 
   "AlreadyDeleted Establisher Controller" must {
 
-    "return OK and the correct view for a GET" in {
-      val result = controller().onPageLoad(NormalMode, establisherIndex, EstablisherKind.Indivdual, None)(fakeRequest)
+    "return OK and the correct view for a GET for an individual" in {
+      val result = controller(getMandatoryEstablisher).onPageLoad(NormalMode, establisherIndex, EstablisherKind.Indivdual, None)(fakeRequest)
 
       status(result) mustBe OK
-      contentAsString(result) mustBe viewAsString()
+      contentAsString(result) mustBe viewAsString("test first name test last name")
+    }
+
+    "return OK and the correct view for a GET for a company" in {
+      val result = controller(getMandatoryEstablisherCompany).onPageLoad(NormalMode, establisherIndex, EstablisherKind.Company, None)(fakeRequest)
+
+      status(result) mustBe OK
+      contentAsString(result) mustBe viewAsString("test company name")
+    }
+
+    "return OK and the correct view for a GET for a partnership" in {
+      val result = controller(getMandatoryEstablisherPartnership).onPageLoad(NormalMode, establisherIndex, EstablisherKind.Partnership, None)(fakeRequest)
+
+      status(result) mustBe OK
+      contentAsString(result) mustBe viewAsString("test partnership name")
     }
 
     "redirect to Session Expired for a GET if no existing data is found" in {

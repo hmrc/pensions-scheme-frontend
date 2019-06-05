@@ -14,8 +14,20 @@
  * limitations under the License.
  */
 
-package identifiers
+package connectors
 
-case object PsaNameId extends TypedIdentifier[String] {
-  override def toString: String = "psaName"
+class OldSubscriptionCacheConnectorSpec extends CacheConnectorBehaviours {
+
+  override protected def url(id: String): String = s"/pensions-scheme/journey-cache/scheme/$id"
+
+  override protected def lastUpdatedUrl(id: String) = s"/pensions-scheme/journey-cache/scheme/$id/lastUpdated"
+
+  protected def connector(): OldSubscriptionCacheConnector = injector.instanceOf[OldSubscriptionCacheConnector]
+
+  "CacheConnector" when {
+
+    behave like cacheConnector(connector)
+    behave like cacheConnectorWithLastUpdate(connector)
+
+  }
 }
