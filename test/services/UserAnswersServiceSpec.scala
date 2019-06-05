@@ -19,32 +19,30 @@ package services
 import base.SpecBase
 import com.google.inject.Inject
 import config.FrontendAppConfig
-import connectors.{PensionSchemeVarianceLockConnector, SubscriptionCacheConnector, UpdateSchemeCacheConnector}
+import connectors.{PensionSchemeVarianceLockConnector, SchemeDetailsReadOnlyCacheConnector, SubscriptionCacheConnector, UpdateSchemeCacheConnector}
 import identifiers.TypedIdentifier
-import identifiers.register.establishers.company.{CompanyPreviousAddressId, IsCompanyCompleteId}
+import identifiers.register.establishers.IsEstablisherCompleteId
+import identifiers.register.establishers.company.IsCompanyCompleteId
 import identifiers.register.establishers.company.director.{DirectorDetailsId, IsDirectorCompleteId}
-import identifiers.register.establishers.{IsEstablisherAddressCompleteId, IsEstablisherCompleteId, IsEstablisherNewId, partnership}
-import identifiers.register.establishers.individual.{AddressYearsId => EstablisherIndividualAddressYearsId, PreviousAddressId => EstablisherIndividualPreviousAddressId}
-import identifiers.register.establishers.partnership.{IsPartnershipCompleteId, partner}
 import identifiers.register.establishers.partnership.partner._
+import identifiers.register.establishers.partnership.{IsPartnershipCompleteId, partner}
 import identifiers.register.trustees
-import identifiers.register.trustees.{IsTrusteeAddressCompleteId, IsTrusteeCompleteId, IsTrusteeNewId}
 import identifiers.register.trustees.company.{CompanyAddressYearsId => TruesteeCompanyAddressYearsId, CompanyPreviousAddressId => TruesteeCompanyPreviousAddressId}
-import identifiers.register.trustees.individual.{TrusteeAddressId, TrusteeAddressYearsId, TrusteePreviousAddressId}
-import identifiers.register.trustees.partnership.PartnershipPreviousAddressId
+import identifiers.register.trustees.individual.{TrusteeAddressId, TrusteeAddressYearsId}
+import identifiers.register.trustees.{IsTrusteeCompleteId, IsTrusteeNewId}
 import models.AddressYears.{OverAYear, UnderAYear}
 import models._
 import models.address.Address
 import models.person.PersonDetails
 import models.requests.DataRequest
 import org.joda.time.LocalDate
-import org.mockito.Matchers
 import org.mockito.Matchers.any
 import org.mockito.Mockito._
 import org.scalatest.mockito.MockitoSugar
 import org.scalatest.{AsyncWordSpec, BeforeAndAfter, MustMatchers}
 import play.api.libs.json.{Format, JsValue, Json}
 import play.api.mvc.AnyContent
+import play.api.mvc.Results.Ok
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.{FakeDataRequest, UserAnswers}
 
@@ -72,6 +70,9 @@ class UserAnswersServiceSpec extends AsyncWordSpec with MustMatchers with Mockit
 
       when(lockConnector.lock(any(), any())(any(), any()))
         .thenReturn(Future(VarianceLock))
+
+      when(viewConnector.removeAll(any())(any(), any()))
+        .thenReturn(Future(Ok))
 
       when(updateConnector.upsert(any(), any())(any(), any()))
         .thenReturn(Future(json))
@@ -109,6 +110,9 @@ class UserAnswersServiceSpec extends AsyncWordSpec with MustMatchers with Mockit
 
       when(lockConnector.lock(any(), any())(any(), any()))
         .thenReturn(Future(VarianceLock))
+
+      when(viewConnector.removeAll(any())(any(), any()))
+        .thenReturn(Future(Ok))
 
       when(updateConnector.upsert(any(), any())(any(), any()))
         .thenReturn(Future(json))
@@ -149,6 +153,9 @@ class UserAnswersServiceSpec extends AsyncWordSpec with MustMatchers with Mockit
 
       when(lockConnector.lock(any(), any())(any(), any()))
         .thenReturn(Future(VarianceLock))
+
+      when(viewConnector.removeAll(any())(any(), any()))
+        .thenReturn(Future(Ok))
 
       when(updateConnector.remove(any(), any())(any(), any()))
         .thenReturn(Future(updatedJson))
@@ -251,6 +258,9 @@ class UserAnswersServiceSpec extends AsyncWordSpec with MustMatchers with Mockit
         val expectedAnswers = answers.set(IsTrusteeCompleteId(0))(true).asOpt.value
         when(lockConnector.lock(any(), any())(any(), any()))
           .thenReturn(Future(VarianceLock))
+
+        when(viewConnector.removeAll(any())(any(), any()))
+          .thenReturn(Future(Ok))
 
         when(updateConnector.upsert(any(), any())(any(), any()))
           .thenReturn(Future(expectedAnswers.json))
@@ -398,6 +408,7 @@ object UserAnswersServiceSpec extends SpecBase with MockitoSugar {
   class TestService @Inject()(override val subscriptionCacheConnector: SubscriptionCacheConnector,
                               override val updateSchemeCacheConnector: UpdateSchemeCacheConnector,
                               override val lockConnector: PensionSchemeVarianceLockConnector,
+                              override val viewConnector: SchemeDetailsReadOnlyCacheConnector,
                               override val appConfig: FrontendAppConfig
                              ) extends UserAnswersService {
 
@@ -411,10 +422,11 @@ object UserAnswersServiceSpec extends SpecBase with MockitoSugar {
   protected val subscriptionConnector: SubscriptionCacheConnector = mock[SubscriptionCacheConnector]
   protected val updateConnector: UpdateSchemeCacheConnector = mock[UpdateSchemeCacheConnector]
   protected val lockConnector: PensionSchemeVarianceLockConnector = mock[PensionSchemeVarianceLockConnector]
+  protected val viewConnector: SchemeDetailsReadOnlyCacheConnector = mock[SchemeDetailsReadOnlyCacheConnector]
 
 
   protected lazy val testService: UserAnswersService = new TestService(subscriptionConnector,
-    updateConnector, lockConnector, frontendAppConfig)
+    updateConnector, lockConnector, viewConnector, frontendAppConfig)
 
 
 }
