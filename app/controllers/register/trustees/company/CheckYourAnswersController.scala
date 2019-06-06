@@ -61,7 +61,7 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
       val companyPayeRow = CompanyPayeId(index).row(routes.CompanyPayeController.onPageLoad(checkMode(mode), index, srn).url, mode)
 
       val companyRegistrationNumber = CompanyRegistrationNumberId(index).row(
-        routes.CompanyRegistrationNumberController.onPageLoad(checkMode(mode), index, srn).url, mode
+        routes.CompanyRegistrationNumberController.onPageLoad(checkMode(mode), srn, index).url, mode
       )
 
       val companyUtr = CompanyUniqueTaxReferenceId(index).row(

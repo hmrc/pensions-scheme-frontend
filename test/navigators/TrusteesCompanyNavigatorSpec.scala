@@ -102,7 +102,7 @@ object TrusteesCompanyNavigatorSpec extends SpecBase with OptionValues {
   private def taskList: Call = controllers.routes.SchemeTaskListController.onPageLoad(NormalMode, None)
 
   private def companyRegistrationNumber(mode: Mode): Call =
-    controllers.register.trustees.company.routes.CompanyRegistrationNumberController.onPageLoad(mode, 0, None)
+    controllers.register.trustees.company.routes.CompanyRegistrationNumberController.onPageLoad(mode, None, 0)
 
   private def companyVat(mode: Mode): Call =
     controllers.register.trustees.company.routes.CompanyVatController.onPageLoad(mode, 0, None)

@@ -27,7 +27,7 @@ class CompanyRegistrationNumberViewSpec extends ViewBehaviours {
   val messageKeyPrefix = "companyRegistrationNumber"
   val index = Index(0)
   val form = new CompanyRegistrationNumberFormProvider()()
-  val submitUrl = controllers.register.trustees.company.routes.CompanyRegistrationNumberController.onSubmit(NormalMode, index, None)
+  val submitUrl = controllers.register.trustees.company.routes.CompanyRegistrationNumberController.onSubmit(NormalMode, None, index)
   private def createView() = () => companyRegistrationNumber(
     frontendAppConfig, form, NormalMode, index, None, submitUrl, None)(fakeRequest, messages)
   private def createUpdateView = () => companyRegistrationNumber(

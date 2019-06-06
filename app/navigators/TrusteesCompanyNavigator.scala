@@ -50,7 +50,7 @@ class TrusteesCompanyNavigator @Inject()(val dataCacheConnector: UserAnswersCach
         NavigateTo.dontSave(controllers.register.trustees.company.routes.CompanyPayeController.onPageLoad(mode, index, srn))
 
       case CompanyPayeId(index) =>
-        NavigateTo.dontSave(controllers.register.trustees.company.routes.CompanyRegistrationNumberController.onPageLoad(mode, index, srn))
+        NavigateTo.dontSave(controllers.register.trustees.company.routes.CompanyRegistrationNumberController.onPageLoad(mode, srn, index))
 
       case CompanyRegistrationNumberId(index) =>
         NavigateTo.dontSave(controllers.register.trustees.company.routes.CompanyUniqueTaxReferenceController.onPageLoad(mode, index, srn))
