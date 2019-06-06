@@ -34,7 +34,7 @@ import views.html.register.companyRegistrationNumberUpdate
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
-class CompanyRegistrationNumberUpdateController @Inject()(
+class CompanyRegistrationNumberVariationsController @Inject()(
                                                      val appConfig: FrontendAppConfig,
                                                      override val messagesApi: MessagesApi,
                                                      userAnswersService: UserAnswersService,

@@ -29,7 +29,7 @@ import services.FakeUserAnswersService
 import utils.FakeNavigator
 import views.html.register.companyRegistrationNumberUpdate
 
-class CompanyRegistrationNumberUpdateControllerSpec extends ControllerSpecBase {
+class CompanyRegistrationNumberVariationsControllerSpec extends ControllerSpecBase {
 
   private def onwardRoute = controllers.routes.IndexController.onPageLoad()
 
@@ -41,7 +41,7 @@ class CompanyRegistrationNumberUpdateControllerSpec extends ControllerSpecBase {
   private val postCall = routes.CompanyRegistrationNumberController.onSubmit _
 
   private def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisherCompany) =
-    new CompanyRegistrationNumberUpdateController(
+    new CompanyRegistrationNumberVariationsController(
       frontendAppConfig,
       messagesApi,
       FakeUserAnswersService,
@@ -74,7 +74,7 @@ class CompanyRegistrationNumberUpdateControllerSpec extends ControllerSpecBase {
       )
     )
   )
-  "CompanyRegistrationNumberUpdateController" must {
+  "CompanyRegistrationNumberVariationsController" must {
 
     "return OK and the correct view for a GET" in {
       val result = controller().onPageLoad(NormalMode, None, firstIndex)(fakeRequest)
