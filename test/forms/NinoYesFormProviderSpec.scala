@@ -16,19 +16,47 @@
 
 package forms
 
+import base.SpecBase
+import config.FrontendAppConfig
 import forms.behaviours.StringFieldBehaviours
 import forms.mappings.Constraints
+import org.scalatestplus.play.guice.GuiceOneAppPerSuite
+import play.api.Configuration
 import play.api.data.FormError
+import play.api.i18n.Messages.Message
+import play.api.i18n.{Messages, MessagesApi}
+import play.api.inject.Injector
+import play.api.inject.guice.GuiceApplicationBuilder
+import play.api.mvc.AnyContentAsEmpty
+import play.api.test.FakeRequest
+import viewmodels.Message
 
-class NinoYesFormProviderSpec extends StringFieldBehaviours with Constraints {
+class NinoYesFormProviderSpec extends StringFieldBehaviours with Constraints with GuiceOneAppPerSuite{
+
+  def injector: Injector = app.injector
+
+  def frontendAppConfig: FrontendAppConfig = injector.instanceOf[FrontendAppConfig]
+
+  def appConfig(isPrevPrePopEnabled:Boolean): Configuration = {
+    val app = new GuiceApplicationBuilder()
+      .configure("features.is-address-pre-population-enabled" -> isPrevPrePopEnabled)
+      .build()
+    app.injector.instanceOf[Configuration]
+  }
+
+  def messagesApi: MessagesApi = injector.instanceOf[MessagesApi]
+
+  def fakeRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest("", "")
+
+  implicit def messages: Messages = messagesApi.preferred(fakeRequest)
 
   val validData: Map[String, String] = Map("nino" -> "CS700100A")
-  val form = new NinoYesFormProvider()()
+  val form = new NinoYesFormProvider()("Mark")
 
   ".nino" must {
     val fieldName = "nino"
-    val requiredKey = "messages__error__nino"
-    val invalidKey = "messages__error__nino_invalid"
+    val requiredKey = Message("messages__error__common_nino", "Mark").resolve
+    val invalidKey = "messages__error__common_nino_invalid"
 
     behave like mandatoryField(
       form,

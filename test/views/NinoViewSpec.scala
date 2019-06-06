@@ -28,7 +28,7 @@ class NinoViewSpec extends QuestionViewBehaviours[String] {
 
   val messageKeyPrefix = "common_nino"
 
-  val form = new NinoYesFormProvider()()
+  val form = new NinoYesFormProvider()("Mark")
 
   def viewmodel(srn:Option[String]) = NinoViewModel(
     postCall = Call("POST", "/"),

@@ -19,11 +19,13 @@ package forms
 import forms.mappings.{Constraints, Mappings, Transforms}
 import javax.inject.Inject
 import play.api.data.Form
+import play.api.i18n.Messages
+import viewmodels.Message
 
 
-class NinoYesFormProvider @Inject() extends Mappings with Constraints with Transforms {
-  def apply(): Form[String] = Form(
-    "nino" -> text("messages__error__nino").transform(ninoTransform, noTransform).
-      verifying(validNino("messages__error__nino_invalid"))
+class NinoYesFormProvider @Inject()() extends Mappings with Constraints with Transforms {
+  def apply(personName: String)(implicit messages: Messages): Form[String] = Form(
+    "nino" -> text(Message("messages__error__common_nino", personName).resolve).transform(ninoTransform, noTransform).
+      verifying(validNino("messages__error__common_nino_invalid"))
   )
 }

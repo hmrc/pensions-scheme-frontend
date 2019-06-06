@@ -53,22 +53,21 @@ class NinoControllerSpec extends ControllerSpecBase {
   private def onwardRoute = controllers.routes.IndexController.onPageLoad()
 
   val formProvider = new NinoYesFormProvider()
-  val form = formProvider()
+  val form = formProvider("Mark")
 
   class TestNinoController @Inject()(
                                   override val appConfig: FrontendAppConfig,
                                   override val messagesApi: MessagesApi,
                                   override val userAnswersService: UserAnswersService,
-                                  override val navigator: Navigator,
-                                  formProvider: NinoYesFormProvider
+                                  override val navigator: Navigator
                                 ) extends NinoController {
 
     def onPageLoad(answers: UserAnswers): Future[Result] = {
-      onPageLoad(FakeIdentifier, formProvider(), viewmodel)(DataRequest(FakeRequest(), "cacheId", answers, PsaId("A0000000")))
+      onPageLoad(FakeIdentifier, form, viewmodel)(DataRequest(FakeRequest(), "cacheId", answers, PsaId("A0000000")))
     }
 
     def onSubmit(mode: Mode, answers: UserAnswers, fakeRequest: Request[AnyContent]): Future[Result] = {
-      onSubmit(FakeIdentifier, NormalMode, formProvider(), viewmodel)(DataRequest(fakeRequest, "cacheId", answers, PsaId("A0000000")))
+      onSubmit(FakeIdentifier, NormalMode, form, viewmodel)(DataRequest(fakeRequest, "cacheId", answers, PsaId("A0000000")))
     }
   }
 
@@ -77,8 +76,7 @@ class NinoControllerSpec extends ControllerSpecBase {
       frontendAppConfig,
       messagesApi,
       FakeUserAnswersService,
-      new FakeNavigator(desiredRoute = onwardRoute),
-      formProvider
+      new FakeNavigator(desiredRoute = onwardRoute)
     )
 
   private def viewAsString(form: Form[_] = form) = nino(frontendAppConfig, form, viewmodel, None)(fakeRequest, messages).toString
