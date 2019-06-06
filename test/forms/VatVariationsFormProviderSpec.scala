@@ -23,13 +23,15 @@ import play.api.data.Form
 class VatVariationsFormProviderSpec extends VatBehaviours {
 
   private val vatLengthKey = "messages__error__vat_length"
+  private val requiredVatKey = "messages__error__vat_required"
   private val invalidVatKey = "messages__error__vat_invalid"
 
   "A form with a Vat" should {
     val testForm = new VatVariationsFormProvider().apply()
 
-    behave like formWithVatVariations(testForm: Form[Option[String]],
+    behave like formWithVatVariations(testForm: Form[String],
       vatLengthKey: String,
+      requiredVatKey: String,
       invalidVatKey: String
     )
 

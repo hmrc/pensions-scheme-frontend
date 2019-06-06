@@ -21,19 +21,14 @@ import com.google.inject.Inject
 import config.FrontendAppConfig
 import forms.VatVariationsFormProvider
 import identifiers.TypedIdentifier
-import models.NormalMode
+import models.{NormalMode, Vat}
 import models.requests.DataRequest
 import org.mockito.Matchers.{any, eq => eqTo}
 import org.mockito.Mockito.when
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.mockito.MockitoSugar
 import org.scalatest.{MustMatchers, OptionValues, WordSpec}
-import play.api.i18n.MessagesApi
-import play.api.inject.bind
-import play.api.libs.json._
-import play.api.mvc.{AnyContent, Call, Request, Result}
-import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.mvc.Call
 import services.UserAnswersService
 import uk.gov.hmrc.domain.PsaId
 import utils.{FakeNavigator, Navigator, UserAnswers}
@@ -92,13 +87,13 @@ class VatVariationsControllerSpec extends WordSpec with MustMatchers with Option
           val request = FakeRequest()
           val messages = app.injector.instanceOf[MessagesApi].preferred(request)
           val controller = app.injector.instanceOf[TestController]
-          val answers = UserAnswers().set(FakeIdentifier)(Some("123456789")).get
+          val answers = UserAnswers().set(FakeIdentifier)("123456789").get
           val result = controller.onPageLoad(viewmodel, answers)
 
           status(result) mustEqual OK
           contentAsString(result) mustEqual vatVariations(
             appConfig,
-            formProvider().fill(Some("123456789")),
+            formProvider().fill("123456789"),
             viewmodel,
             None
           )(request, messages).toString
@@ -172,7 +167,7 @@ class VatVariationsControllerSpec extends WordSpec with MustMatchers with Option
 
 object VatVariationsControllerSpec {
 
-  object FakeIdentifier extends TypedIdentifier[Option[String]]
+  object FakeIdentifier extends TypedIdentifier[Vat]
 
   class TestController @Inject()(
                                   override val appConfig: FrontendAppConfig,

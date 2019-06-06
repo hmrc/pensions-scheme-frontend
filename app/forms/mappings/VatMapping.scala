@@ -43,10 +43,11 @@ trait VatMapping extends Mappings with Transforms {
     ).transform(toVat, fromVat)
   }
 
-  def vatOptionMapping(vatLengthKey: String = "messages__error__vat_length",
+  def vatStringMapping(vatLengthKey: String = "messages__error__vat_length",
+                       requiredVatKey: String = "messages__error__vat_required",
                        invalidVatKey: String = "messages__error__vat_invalid"):
-  Mapping[Option[String]] = optionalText()
-    .transform(vatRegistrationNumberOptionTransform, noTransformOption)
+  Mapping[String] = text(requiredVatKey)
+    .transform(vatRegistrationNumberTransform, noTransform)
     .verifying(
       firstError(
         maxLength(VatMapping.maxVatLength, vatLengthKey),
