@@ -17,7 +17,6 @@
 package forms
 
 import forms.behaviours.VatBehaviours
-import models.Vat
 import play.api.data.Form
 
 class VatVariationsFormProviderSpec extends VatBehaviours {

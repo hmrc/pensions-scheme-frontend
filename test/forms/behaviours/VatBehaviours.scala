@@ -117,7 +117,7 @@ trait VatBehaviours extends FormSpec with Generators with PropertyChecks with Co
     "behave like a form with a VAT Mapping in variations" should {
 
       "fail to bind when value is not entered" in {
-        val expectedError = error("vat.hasVat", requiredVatKey)
+        val expectedError = error("vat", requiredVatKey)
         checkForError(testForm, emptyForm, expectedError)
       }
 

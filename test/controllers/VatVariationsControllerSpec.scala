@@ -21,14 +21,19 @@ import com.google.inject.Inject
 import config.FrontendAppConfig
 import forms.VatVariationsFormProvider
 import identifiers.TypedIdentifier
-import models.{NormalMode, Vat}
 import models.requests.DataRequest
+import models.{NormalMode, Vat}
 import org.mockito.Matchers.{any, eq => eqTo}
 import org.mockito.Mockito.when
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.mockito.MockitoSugar
 import org.scalatest.{MustMatchers, OptionValues, WordSpec}
-import play.api.mvc.Call
+import play.api.i18n.MessagesApi
+import play.api.inject.bind
+import play.api.libs.json._
+import play.api.mvc.{AnyContent, Call, Request, Result}
+import play.api.test.FakeRequest
+import play.api.test.Helpers._
 import services.UserAnswersService
 import uk.gov.hmrc.domain.PsaId
 import utils.{FakeNavigator, Navigator, UserAnswers}
@@ -87,7 +92,7 @@ class VatVariationsControllerSpec extends WordSpec with MustMatchers with Option
           val request = FakeRequest()
           val messages = app.injector.instanceOf[MessagesApi].preferred(request)
           val controller = app.injector.instanceOf[TestController]
-          val answers = UserAnswers().set(FakeIdentifier)("123456789").get
+          val answers = UserAnswers().set(FakeIdentifier)(Vat.Yes("123456789")).get
           val result = controller.onPageLoad(viewmodel, answers)
 
           status(result) mustEqual OK
@@ -118,7 +123,7 @@ class VatVariationsControllerSpec extends WordSpec with MustMatchers with Option
           implicit val materializer: Materializer = app.materializer
 
           when(
-            userAnswersService.save[Option[String], FakeIdentifier.type](any(), any(), eqTo(FakeIdentifier), any())(any(), any(), any(), any())
+            userAnswersService.upsert(any(), any(), any())(any(), any(), any())
           ).thenReturn(Future.successful(Json.obj()))
 
           val request = FakeRequest().withFormUrlEncodedBody(
