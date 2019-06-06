@@ -22,17 +22,7 @@ trait Transforms {
     strip(value).replaceAll("^[gG][bB]", "")
   }
 
-  def vatRegistrationNumberOptionTransform(value: Option[String]): Option[String] = {
-    value.map {
-      strip(_).replaceAll("^[gG][bB]", "")
-    }
-  }
-
   def noTransform(value: String): String = {
-    value
-  }
-
-  def noTransformOption(value: Option[String]): Option[String] = {
     value
   }
 

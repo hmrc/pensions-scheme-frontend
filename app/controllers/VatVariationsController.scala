@@ -22,7 +22,6 @@ import models.requests.DataRequest
 import models.{Mode, Vat}
 import play.api.data.Form
 import play.api.i18n.I18nSupport
-import play.api.libs.json.{Format, JsNull, JsResult, JsValue, Writes}
 import play.api.mvc.{AnyContent, Result}
 import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
@@ -34,12 +33,10 @@ import scala.concurrent.Future
 
 trait VatVariationsController extends FrontendController with Retrievals with I18nSupport {
 
-  implicit def optionFormat[T: Format]: Format[Option[T]] = new Format[Option[T]]{
-    override def reads(json: JsValue): JsResult[Option[T]] = json.validateOpt[T]
-
-    override def writes(o: Option[T]): JsValue = o match {
-      case Some(t) ⇒ implicitly[Writes[T]].writes(t)
-      case None ⇒ JsNull
+  private[this] def toVat(vatOpt: Option[String]) = {
+    vatOpt match {
+      case Some(vat) => Vat.Yes(vat)
+      case _ => Vat.No
     }
   }
 
@@ -51,22 +48,27 @@ trait VatVariationsController extends FrontendController with Retrievals with I1
 
   protected def navigator: Navigator
 
-  def get(id: TypedIdentifier[Option[String]], form: Form[Option[String]], viewmodel: VatViewModel)
+  def get(id: TypedIdentifier[Vat], form: Form[String], viewmodel: VatViewModel)
          (implicit request: DataRequest[AnyContent]): Future[Result] = {
     val preparedForm =
-      request.userAnswers.get(id).fold(form)(form.fill)
+      request.userAnswers.get(id) match {
+        case Some(Vat.Yes(vat)) => form.fill(vat)
+        case _ => form
+      }
 
     Future.successful(Ok(vatVariations(appConfig, preparedForm, viewmodel, existingSchemeName)))
   }
 
-  def post(id: TypedIdentifier[Option[String]], mode: Mode, form: Form[Option[String]], viewmodel: VatViewModel)
+  def post(id: TypedIdentifier[Vat], mode: Mode, form: Form[String], viewmodel: VatViewModel)
           (implicit request: DataRequest[AnyContent]): Future[Result] = {
     form.bindFromRequest().fold(
       (formWithErrors: Form[_]) =>
         Future.successful(BadRequest(vatVariations(appConfig, formWithErrors, viewmodel, existingSchemeName))),
-      value =>
-        userAnswersService.save(mode, viewmodel.srn, id, value).map(cacheMap =>
+      vat => {
+        val updatedUserAnswers = request.userAnswers.set(id)(Vat.Yes(vat)).asOpt.getOrElse(request.userAnswers)
+        userAnswersService.upsert(mode, viewmodel.srn, updatedUserAnswers.json).map(cacheMap =>
           Redirect(navigator.nextPage(id, mode, UserAnswers(cacheMap), viewmodel.srn)))
+      }
     )
   }
 }

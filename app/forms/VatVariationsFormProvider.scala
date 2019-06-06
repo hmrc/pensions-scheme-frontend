@@ -23,8 +23,8 @@ import play.api.data.Form
 
 class VatVariationsFormProvider @Inject() extends VatMapping {
 
-  def apply(): Form[Option[String]] =
+  def apply(): Form[String] =
     Form(
-      "vat" -> vatOptionMapping()
+      "vat" -> vatStringMapping()
     )
 }

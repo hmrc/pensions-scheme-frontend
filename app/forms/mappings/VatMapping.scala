@@ -32,26 +32,21 @@ trait VatMapping extends Mappings with Transforms {
     tuple("hasVat" -> boolean(requiredKey),
       "vat" -> mandatoryIfTrue(
         "vat.hasVat",
-        text(requiredVatKey)
-          .transform(vatRegistrationNumberTransform, noTransform)
-          .verifying(
-            firstError(
-              maxLength(VatMapping.maxVatLength, vatLengthKey),
-              vatRegistrationNumber(invalidVatKey))
-          )
+        vatStringMapping(vatLengthKey, requiredVatKey, invalidVatKey)
       )
     ).transform(toVat, fromVat)
   }
 
-  def vatOptionMapping(vatLengthKey: String = "messages__error__vat_length",
-                       invalidVatKey: String = "messages__error__vat_invalid"):
-  Mapping[Option[String]] = optionalText()
-    .transform(vatRegistrationNumberOptionTransform, noTransformOption)
-    .verifying(
-      firstError(
-        maxLength(VatMapping.maxVatLength, vatLengthKey),
-        vatRegistrationNumber(invalidVatKey))
-    )
+  def vatStringMapping(vatLengthKey: String = "messages__error__vat_length",
+                       requiredVatKey: String = "messages__error__vat_required",
+                       invalidVatKey: String = "messages__error__vat_invalid"): Mapping[String] =
+    text(requiredVatKey)
+      .transform(vatRegistrationNumberTransform, noTransform)
+      .verifying(
+        firstError(
+          maxLength(VatMapping.maxVatLength, vatLengthKey),
+          vatRegistrationNumber(invalidVatKey))
+      )
 
   private[this] def fromVat(vat: Vat): (Boolean, Option[String]) = {
     vat match {
