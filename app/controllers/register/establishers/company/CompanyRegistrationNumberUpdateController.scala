@@ -30,7 +30,7 @@ import play.api.mvc.{AnyContent, Call}
 import services.UserAnswersService
 import utils._
 import utils.annotations.EstablishersCompany
-import views.html.register.establishers.company.companyRegistrationNumber
+import views.html.register.companyRegistrationNumberUpdate
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
@@ -48,11 +48,11 @@ class CompanyRegistrationNumberUpdateController @Inject()(
   CompanyRegistrationNumberBaseController(
     appConfig, messagesApi, userAnswersService, navigator, authenticate, getData, allowAccess, requireData, formProvider) {
 
-  override def addView(mode: Mode, index: Index, srn: Option[String])(implicit request: DataRequest[AnyContent]) = companyRegistrationNumber(appConfig, form, mode, index, existingSchemeName, postCall(mode, srn, index), srn)
+  override def addView(mode: Mode, index: Index, srn: Option[String])(implicit request: DataRequest[AnyContent]) = companyRegistrationNumberUpdate(appConfig, form, mode, index, existingSchemeName, postCall(mode, srn, index), srn)
 
-  override def errorView(mode: Mode, index: Index, srn: Option[String], form: Form[_])(implicit request: DataRequest[AnyContent]) = companyRegistrationNumber(appConfig, form, mode, index, existingSchemeName, postCall(mode, srn, index), srn)
+  override def errorView(mode: Mode, index: Index, srn: Option[String], form: Form[_])(implicit request: DataRequest[AnyContent]) = companyRegistrationNumberUpdate(appConfig, form, mode, index, existingSchemeName, postCall(mode, srn, index), srn)
 
-  override def updateView(mode: Mode, index: Index, srn: Option[String], value: CompanyRegistrationNumber)(implicit request: DataRequest[AnyContent]) = companyRegistrationNumber(appConfig, form.fill(value), mode, index, existingSchemeName, postCall(mode, srn, index), srn)
+  override def updateView(mode: Mode, index: Index, srn: Option[String], value: CompanyRegistrationNumber)(implicit request: DataRequest[AnyContent]) = companyRegistrationNumberUpdate(appConfig, form.fill(value), mode, index, existingSchemeName, postCall(mode, srn, index), srn)
 
   override def id(index: Index) = CompanyRegistrationNumberId(index)
 

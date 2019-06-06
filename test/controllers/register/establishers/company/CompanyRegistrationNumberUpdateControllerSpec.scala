@@ -27,7 +27,7 @@ import play.api.libs.json.Json
 import play.api.test.Helpers._
 import services.FakeUserAnswersService
 import utils.FakeNavigator
-import views.html.register.establishers.company.companyRegistrationNumber
+import views.html.register.companyRegistrationNumberUpdate
 
 class CompanyRegistrationNumberUpdateControllerSpec extends ControllerSpecBase {
 
@@ -54,7 +54,7 @@ class CompanyRegistrationNumberUpdateControllerSpec extends ControllerSpecBase {
     )
 
   private def viewAsString(form: Form[_] = form) =
-    companyRegistrationNumber(
+    companyRegistrationNumberUpdate(
       frontendAppConfig,
       form,
       NormalMode,
