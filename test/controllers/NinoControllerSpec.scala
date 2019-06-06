@@ -19,7 +19,6 @@ package controllers
 import config.FrontendAppConfig
 import controllers.actions.DataRetrievalAction
 import forms.NinoYesFormProvider
-import forms.mappings.{Constraints, Mappings, Transforms}
 import identifiers.TypedIdentifier
 import javax.inject.Inject
 import models.requests.DataRequest
@@ -45,7 +44,7 @@ class NinoControllerSpec extends ControllerSpecBase {
     title = Message("messages__common_nino__title"),
     heading = Message("messages__common_nino__h1"),
     hint = Message("messages__common__nino_hint"),
-    subHeading = None,
+    personName = "Mark",
     srn = None
   )
 

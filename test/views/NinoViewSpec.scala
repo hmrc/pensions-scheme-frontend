@@ -35,7 +35,7 @@ class NinoViewSpec extends QuestionViewBehaviours[String] {
     title = Message("messages__common_nino__title"),
     heading = Message("messages__common_nino__h1"),
     hint = Message("messages__common__nino_hint"),
-    subHeading = None,
+    personName = "Mark",
     srn = srn
   )
 

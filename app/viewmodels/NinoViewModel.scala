@@ -23,6 +23,6 @@ case class NinoViewModel(
                          title: Message,
                          heading: Message,
                          hint: Message,
-                         subHeading: Option[Message] = None,
+                         personName: String,
                          srn: Option[String] = None
                        )
