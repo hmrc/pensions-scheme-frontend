@@ -39,9 +39,11 @@ trait VatVariationsController extends FrontendController with Retrievals with I1
 
   protected def userAnswersService: UserAnswersService
 
+  protected val form: Form[String]
+
   protected def navigator: Navigator
 
-  def get(id: TypedIdentifier[Vat], form: Form[String], viewmodel: VatViewModel)
+  def get(id: TypedIdentifier[Vat], viewmodel: VatViewModel)
          (implicit request: DataRequest[AnyContent]): Future[Result] = {
     val preparedForm =
       request.userAnswers.get(id) match {
@@ -52,7 +54,7 @@ trait VatVariationsController extends FrontendController with Retrievals with I1
     Future.successful(Ok(vatVariations(appConfig, preparedForm, viewmodel, existingSchemeName)))
   }
 
-  def post(id: TypedIdentifier[Vat], mode: Mode, form: Form[String], viewmodel: VatViewModel)
+  def post(id: TypedIdentifier[Vat], mode: Mode, viewmodel: VatViewModel)
           (implicit request: DataRequest[AnyContent]): Future[Result] = {
     form.bindFromRequest().fold(
       (formWithErrors: Form[_]) =>
