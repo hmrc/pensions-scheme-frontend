@@ -19,7 +19,7 @@ package services
 import base.SpecBase
 import com.google.inject.Inject
 import config.FrontendAppConfig
-import connectors.{OldSubscriptionCacheConnector, PensionSchemeVarianceLockConnector, SubscriptionCacheConnector, UpdateSchemeCacheConnector, UserAnswersCacheConnector}
+import connectors._
 import identifiers.TypedIdentifier
 import identifiers.register.establishers.IsEstablisherCompleteId
 import identifiers.register.establishers.company.IsCompanyCompleteId
@@ -42,8 +42,9 @@ import org.scalatest.mockito.MockitoSugar
 import org.scalatest.{AsyncWordSpec, BeforeAndAfter, MustMatchers}
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.AnyContent
+import play.api.mvc.Results.Ok
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.{CountryOptions, FakeDataRequest, UserAnswers}
+import utils.{FakeDataRequest, UserAnswers}
 
 import scala.concurrent.Future
 
@@ -69,6 +70,9 @@ class UserAnswersServiceSpec extends AsyncWordSpec with MustMatchers with Mockit
 
       when(lockConnector.lock(any(), any())(any(), any()))
         .thenReturn(Future(VarianceLock))
+
+      when(viewConnector.removeAll(any())(any(), any()))
+        .thenReturn(Future(Ok))
 
       when(updateConnector.upsert(any(), any())(any(), any()))
         .thenReturn(Future(json))
@@ -182,6 +186,9 @@ class UserAnswersServiceSpec extends AsyncWordSpec with MustMatchers with Mockit
       when(lockConnector.lock(any(), any())(any(), any()))
         .thenReturn(Future(VarianceLock))
 
+      when(viewConnector.removeAll(any())(any(), any()))
+        .thenReturn(Future(Ok))
+
       when(updateConnector.upsert(any(), any())(any(), any()))
         .thenReturn(Future(json))
 
@@ -221,6 +228,9 @@ class UserAnswersServiceSpec extends AsyncWordSpec with MustMatchers with Mockit
 
       when(lockConnector.lock(any(), any())(any(), any()))
         .thenReturn(Future(VarianceLock))
+
+      when(viewConnector.removeAll(any())(any(), any()))
+        .thenReturn(Future(Ok))
 
       when(updateConnector.remove(any(), any())(any(), any()))
         .thenReturn(Future(updatedJson))
@@ -363,6 +373,9 @@ class UserAnswersServiceSpec extends AsyncWordSpec with MustMatchers with Mockit
         val expectedAnswers = answers.set(IsTrusteeCompleteId(0))(true).asOpt.value
         when(lockConnector.lock(any(), any())(any(), any()))
           .thenReturn(Future(VarianceLock))
+
+        when(viewConnector.removeAll(any())(any(), any()))
+          .thenReturn(Future(Ok))
 
         when(updateConnector.upsert(any(), any())(any(), any()))
           .thenReturn(Future(expectedAnswers.json))
@@ -546,34 +559,38 @@ object UserAnswersServiceSpec extends SpecBase with MockitoSugar {
   class TestServiceNotAnnotated @Inject()(override val subscriptionCacheConnector: UserAnswersCacheConnector,
                               override val updateSchemeCacheConnector: UpdateSchemeCacheConnector,
                               override val lockConnector: PensionSchemeVarianceLockConnector,
+                              override val viewConnector: SchemeDetailsReadOnlyCacheConnector,
                               override val appConfig: FrontendAppConfig
                              ) extends UserAnswersService
 
   class TestServiceEstAndTrustees @Inject()(override val subscriptionCacheConnector: UserAnswersCacheConnector,
                                             override val updateSchemeCacheConnector: UpdateSchemeCacheConnector,
                                             override val lockConnector: PensionSchemeVarianceLockConnector,
+                                            override val viewConnector: SchemeDetailsReadOnlyCacheConnector,
                                             override val appConfig: FrontendAppConfig
-  ) extends UserAnswersServiceEstablishersAndTrusteesImpl(subscriptionCacheConnector, updateSchemeCacheConnector, lockConnector, appConfig)
+  ) extends UserAnswersServiceEstablishersAndTrusteesImpl(subscriptionCacheConnector, updateSchemeCacheConnector, lockConnector, viewConnector, appConfig)
 
 
 
   class TestServiceInsurance @Inject()(override val subscriptionCacheConnector: UserAnswersCacheConnector,
                                             override val updateSchemeCacheConnector: UpdateSchemeCacheConnector,
                                             override val lockConnector: PensionSchemeVarianceLockConnector,
+                                       override val viewConnector: SchemeDetailsReadOnlyCacheConnector,
                                             override val appConfig: FrontendAppConfig
-  ) extends UserAnswersServiceInsuranceImpl(subscriptionCacheConnector, updateSchemeCacheConnector, lockConnector, appConfig)
+  ) extends UserAnswersServiceInsuranceImpl(subscriptionCacheConnector, updateSchemeCacheConnector, lockConnector, viewConnector, appConfig)
 
   protected val subscriptionConnector: UserAnswersCacheConnector = mock[OldSubscriptionCacheConnector]
   protected val updateConnector: UpdateSchemeCacheConnector = mock[UpdateSchemeCacheConnector]
   protected val lockConnector: PensionSchemeVarianceLockConnector = mock[PensionSchemeVarianceLockConnector]
+  protected val viewConnector: SchemeDetailsReadOnlyCacheConnector = mock[SchemeDetailsReadOnlyCacheConnector]
 
   protected lazy val testServiceNotAnnotated: UserAnswersService = new TestServiceNotAnnotated(subscriptionConnector,
-    updateConnector, lockConnector, frontendAppConfig)
+    updateConnector, lockConnector, viewConnector, frontendAppConfig)
 
   protected lazy val testServiceEstAndTrustees = new TestServiceEstAndTrustees(subscriptionConnector,
-    updateConnector, lockConnector, frontendAppConfig)
+    updateConnector, lockConnector, viewConnector, frontendAppConfig)
 
   protected lazy val testServiceInsurance = new TestServiceInsurance(subscriptionConnector,
-    updateConnector, lockConnector, frontendAppConfig)
+    updateConnector, lockConnector, viewConnector, frontendAppConfig)
 
 }
