@@ -63,8 +63,7 @@ trait VatVariationsController extends FrontendController with Retrievals with I1
       (formWithErrors: Form[_]) =>
         Future.successful(BadRequest(vatVariations(appConfig, formWithErrors, viewmodel, existingSchemeName))),
       vat => {
-        val updatedUserAnswers = request.userAnswers.set(id)(vat).asOpt.getOrElse(request.userAnswers)
-        userAnswersService.upsert(mode, viewmodel.srn, updatedUserAnswers.json).map(cacheMap =>
+        userAnswersService.save(mode, viewmodel.srn, id, vat).map(cacheMap =>
           Redirect(navigator.nextPage(id, mode, UserAnswers(cacheMap), viewmodel.srn)))
       }
     )
