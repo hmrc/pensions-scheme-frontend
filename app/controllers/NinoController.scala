@@ -18,8 +18,8 @@ package controllers
 
 import config.FrontendAppConfig
 import identifiers.TypedIdentifier
+import models.Mode
 import models.requests.DataRequest
-import models.{Mode, Nino}
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{AnyContent, Result}

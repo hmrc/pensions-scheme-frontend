@@ -20,9 +20,9 @@ import play.api.mvc.Call
 
 case class NinoViewModel(
                          postCall: Call,
-                         title: Message,
-                         heading: Message,
-                         hint: Message,
+                         title: String,
+                         heading: String,
+                         hint: String,
                          personName: String,
                          srn: Option[String] = None
                        )

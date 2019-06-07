@@ -43,7 +43,7 @@ object DirectorDetailsId {
 
   override def toString: String = "directorDetails"
 
-  implicit def personDetails(implicit rds: Reads[PersonDetails], messages: Messages): CheckYourAnswers[DirectorDetailsId] = {
+  implicit def cya(implicit rds: Reads[PersonDetails], messages: Messages): CheckYourAnswers[DirectorDetailsId] = {
     new CheckYourAnswers[DirectorDetailsId] {
 
       override def row(id: DirectorDetailsId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =

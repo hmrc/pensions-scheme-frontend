@@ -21,7 +21,7 @@ import controllers.actions._
 import forms.NinoYesFormProvider
 import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.company.CompanyDetailsId
-import identifiers.register.establishers.company.director.{DirectorDetailsId, DirectorNinoId, DirectorNinoYesId}
+import identifiers.register.establishers.company.director.{DirectorDetailsId, DirectorNewNinoId}
 import models._
 import models.person.PersonDetails
 import org.joda.time.LocalDate
@@ -31,12 +31,12 @@ import play.api.mvc.Call
 import play.api.test.Helpers._
 import services.FakeUserAnswersService
 import utils.FakeNavigator
-import viewmodels.{Message, NinoViewModel}
+import viewmodels.NinoViewModel
 import views.html.nino
 
 //scalastyle:off magic.number
 
-class DirectorNinoYesControllerSpec extends ControllerSpecBase {
+class DirectorNinoNewControllerSpec extends ControllerSpecBase {
 
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
@@ -56,24 +56,7 @@ class DirectorNinoYesControllerSpec extends ControllerSpecBase {
           Json.obj(
             DirectorDetailsId.toString ->
               PersonDetails("First Name", Some("Middle Name"), "Last Name", LocalDate.now),
-            DirectorNinoYesId.toString ->
-              "CS700100A"
-          )
-        )
-      )
-    )
-  )
-
-  val validDataNoDirectorDetails: JsObject = Json.obj(
-    EstablishersId.toString -> Json.arr(
-      Json.obj(
-        CompanyDetailsId.toString -> CompanyDetails(companyName),
-        "director" -> Json.arr(
-          Json.obj(
-            DirectorDetailsId.toString ->
-              PersonDetails("First Name", Some("Middle Name"), "Last Name", LocalDate.now),
-            DirectorNinoId.toString ->
-              Nino.Yes("CS700100A")
+              DirectorNewNinoId.toString -> Json.obj( "nino" -> "CS700100A")
           )
         )
       )
@@ -94,16 +77,16 @@ class DirectorNinoYesControllerSpec extends ControllerSpecBase {
     )
   )
   def viewmodel(srn:Option[String]) = NinoViewModel(
-    postCall = controllers.register.establishers.company.director.routes.DirectorNinoYesController.onSubmit(NormalMode, establisherIndex, directorIndex, None),
-    title = Message("messages__director_yes_nino__title"),
-    heading = Message("messages__common_nino__h1"),
-    hint = Message("messages__common__nino_hint"),
+    postCall = controllers.register.establishers.company.director.routes.DirectorNinoNewController.onSubmit(NormalMode, establisherIndex, directorIndex, None),
+    title = "messages__director_yes_nino__title",
+    heading ="messages__common_nino__h1",
+    hint = "messages__common__nino_hint",
     personName = directorName,
     srn = srn
   )
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisher): DirectorNinoYesController =
-    new DirectorNinoYesController(frontendAppConfig, messagesApi, FakeUserAnswersService, new FakeNavigator(desiredRoute = onwardRoute),
+  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisher): DirectorNinoNewController =
+    new DirectorNinoNewController(frontendAppConfig, messagesApi, FakeUserAnswersService, new FakeNavigator(desiredRoute = onwardRoute),
       FakeAuthAction, dataRetrievalAction, FakeAllowAccessProvider(), new DataRequiredActionImpl, formProvider)
 
   private val postCall = routes.DirectorNinoController.onSubmit _

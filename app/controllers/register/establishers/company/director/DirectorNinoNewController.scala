@@ -20,29 +20,29 @@ import config.FrontendAppConfig
 import controllers.NinoController
 import controllers.actions._
 import forms.NinoYesFormProvider
-import identifiers.register.establishers.company.director.{DirectorDetailsId, DirectorNinoYesId}
+import identifiers.register.establishers.company.director.{DirectorDetailsId, DirectorNewNinoId}
 import javax.inject.Inject
 import models.{Index, Mode}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
 import utils.Navigator
-import utils.annotations.EstablishersIndividual
+import utils.annotations.EstablishersCompanyDirector
 import viewmodels.{Message, NinoViewModel}
 
-class DirectorNinoYesController @Inject()(
-                                              val appConfig: FrontendAppConfig,
-                                              val messagesApi: MessagesApi,
-                                              val userAnswersService: UserAnswersService,
-                                              @EstablishersIndividual val navigator: Navigator,
-                                              authenticate: AuthAction,
-                                              getData: DataRetrievalAction,
-                                              allowAccess: AllowAccessActionProvider,
-                                              requireData: DataRequiredAction,
-                                              val formProvider: NinoYesFormProvider
+class DirectorNinoNewController @Inject()(
+                                           val appConfig: FrontendAppConfig,
+                                           val messagesApi: MessagesApi,
+                                           val userAnswersService: UserAnswersService,
+                                           @EstablishersCompanyDirector val navigator: Navigator,
+                                           authenticate: AuthAction,
+                                           getData: DataRetrievalAction,
+                                           allowAccess: AllowAccessActionProvider,
+                                           requireData: DataRequiredAction,
+                                           val formProvider: NinoYesFormProvider
                                  ) extends NinoController with I18nSupport {
 
-  private[controllers] val postCall = controllers.register.establishers.company.director.routes.DirectorNinoYesController.onSubmit _
+  private[controllers] val postCall = controllers.register.establishers.company.director.routes.DirectorNinoNewController.onSubmit _
   private[controllers] val title: Message = "messages__director_yes_nino__title"
   private[controllers] val heading: Message = "messages__common_nino__h1"
   private[controllers] val hint: Message = "messages__common__nino_hint"
@@ -54,9 +54,9 @@ class DirectorNinoYesController @Inject()(
           details =>
             NinoViewModel(
               postCall(mode, Index(establisherIndex), Index(directorIndex), srn),
-              title = Message(title),
-              heading = Message(heading),
-              hint = Message(hint),
+              title = title,
+              heading = heading,
+              hint = hint,
               personName = details.fullName,
               srn = srn
             )
@@ -68,7 +68,7 @@ class DirectorNinoYesController @Inject()(
     implicit request =>
       viewmodel(establisherIndex, directorIndex, mode, srn).retrieve.right.map {
         vm =>
-          get(DirectorNinoYesId(establisherIndex, directorIndex), formProvider(vm.personName), vm)
+          get(DirectorNewNinoId(establisherIndex, directorIndex), formProvider(vm.personName), vm)
       }
   }
 
@@ -76,7 +76,7 @@ class DirectorNinoYesController @Inject()(
     implicit request =>
       viewmodel(establisherIndex, directorIndex, mode, srn).retrieve.right.map {
         vm =>
-          post(DirectorNinoYesId(establisherIndex, directorIndex), mode, formProvider(vm.personName), vm)
+          post(DirectorNewNinoId(establisherIndex, directorIndex), mode, formProvider(vm.personName), vm)
       }
   }
 
