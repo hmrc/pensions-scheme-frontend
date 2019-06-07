@@ -25,8 +25,9 @@ import identifiers.register.establishers.company.CompanyDetailsId
 import identifiers.register.establishers.company.director.DirectorDetailsId
 import identifiers.register.establishers.{EstablishersId, IsEstablisherCompleteId}
 import models.person.PersonDetails
-import models.{CompanyDetails, Index, NormalMode}
+import models.{CompanyDetails, Index, NormalMode, UpdateMode}
 import org.joda.time.LocalDate
+import play.api.data.Form
 import play.api.libs.json._
 import play.api.mvc.AnyContentAsFormUrlEncoded
 import play.api.test.FakeRequest
@@ -55,6 +56,17 @@ class ConfirmDeleteDirectorControllerSpec extends ControllerSpecBase {
       redirectLocation(result) mustBe Some(routes.AlreadyDeletedController.onPageLoad(establisherIndex, directorIndex, None).url)
     }
 
+    "return a Bad Request on POST and errors when invalid data is submitted" in {
+      val data = new FakeDataRetrievalAction(Some(testData()))
+      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "invalid value"))
+
+      val boundForm = form.bind(Map("value" -> "invalid value"))
+
+      val result = controller(data).onSubmit(establisherIndex, directorIndex, NormalMode, None)(postRequest)
+      status(result) mustBe BAD_REQUEST
+      contentAsString(result) mustBe viewAsString(boundForm)
+    }
+
     "delete the director on a POST" in {
       val data = new FakeDataRetrievalAction(Some(testData()))
       val result = controller(data).onSubmit(establisherIndex, directorIndex, NormalMode, None)(postRequest)
@@ -67,6 +79,15 @@ class ConfirmDeleteDirectorControllerSpec extends ControllerSpecBase {
       FakeUserAnswersService.reset()
       val data = new FakeDataRetrievalAction(Some(testData()))
       val result = controller(data).onSubmit(establisherIndex, directorIndex, NormalMode, None)(postRequestForCancel)
+
+      status(result) mustBe SEE_OTHER
+      FakeUserAnswersService.verifyNot(DirectorDetailsId(establisherIndex, directorIndex))
+    }
+
+    "never delete the director on a POST if selected No in UpdateMode" in {
+      FakeUserAnswersService.reset()
+      val data = new FakeDataRetrievalAction(Some(testData()))
+      val result = controller(data).onSubmit(establisherIndex, directorIndex, UpdateMode, Some("S123"))(postRequestForCancel)
 
       status(result) mustBe SEE_OTHER
       FakeUserAnswersService.verifyNot(DirectorDetailsId(establisherIndex, directorIndex))
@@ -125,7 +146,6 @@ object ConfirmDeleteDirectorControllerSpec extends ControllerSpecBase {
   private val companyName = "MyCo Ltd"
   private val directorName = "John Doe"
   private lazy val postCall = routes.ConfirmDeleteDirectorController.onSubmit(establisherIndex, directorIndex, NormalMode, None)
-  private lazy val cancelCall = AddCompanyDirectorsController.onPageLoad(NormalMode, None, establisherIndex)
   private val directorDetails = PersonDetails("John", None, "Doe", LocalDate.now(), false)
   private val postRequest: FakeRequest[AnyContentAsFormUrlEncoded] =
     FakeRequest().withFormUrlEncodedBody(("value", "true"))
@@ -167,7 +187,7 @@ object ConfirmDeleteDirectorControllerSpec extends ControllerSpecBase {
       formProvider
     )
 
-  private def viewAsString() = confirmDeleteDirector(
+  private def viewAsString(form: Form[_] = form) = confirmDeleteDirector(
     frontendAppConfig,
     form,
     directorName,

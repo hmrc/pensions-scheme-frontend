@@ -19,7 +19,7 @@ package services
 import base.SpecBase
 import com.google.inject.Inject
 import config.FrontendAppConfig
-import connectors.{OldSubscriptionCacheConnector, PensionSchemeVarianceLockConnector, SubscriptionCacheConnector, UpdateSchemeCacheConnector, UserAnswersCacheConnector}
+import connectors._
 import identifiers.TypedIdentifier
 import identifiers.register.establishers.IsEstablisherCompleteId
 import identifiers.register.establishers.company.IsCompanyCompleteId
@@ -42,8 +42,9 @@ import org.scalatest.mockito.MockitoSugar
 import org.scalatest.{AsyncWordSpec, BeforeAndAfter, MustMatchers}
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.AnyContent
+import play.api.mvc.Results.Ok
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.{CountryOptions, FakeDataRequest, UserAnswers}
+import utils.{FakeDataRequest, UserAnswers}
 
 import scala.concurrent.Future
 
@@ -69,6 +70,9 @@ class UserAnswersServiceSpec extends AsyncWordSpec with MustMatchers with Mockit
 
       when(lockConnector.lock(any(), any())(any(), any()))
         .thenReturn(Future(VarianceLock))
+
+      when(viewConnector.removeAll(any())(any(), any()))
+        .thenReturn(Future(Ok))
 
       when(updateConnector.upsert(any(), any())(any(), any()))
         .thenReturn(Future(json))
@@ -135,7 +139,7 @@ class UserAnswersServiceSpec extends AsyncWordSpec with MustMatchers with Mockit
       when(subscriptionConnector.upsert(any(), any())(any(), any()))
         .thenReturn(Future(json))
 
-      testServiceEstAndTrustees.upsert(CheckMode, None, json) map {
+      testServiceNotAnnotated.upsert(CheckMode, None, json) map {
         _ mustEqual json
       }
     }
@@ -148,7 +152,7 @@ class UserAnswersServiceSpec extends AsyncWordSpec with MustMatchers with Mockit
       when(updateConnector.upsert(any(), any())(any(), any()))
         .thenReturn(Future(json))
 
-      testServiceEstAndTrustees.upsert(UpdateMode, Some(srn), json) map { result =>
+      testServiceNotAnnotated.upsert(UpdateMode, Some(srn), json) map { result =>
         result mustEqual json
       }
     }
@@ -158,7 +162,7 @@ class UserAnswersServiceSpec extends AsyncWordSpec with MustMatchers with Mockit
       when(lockConnector.lock(any(), any())(any(), any()))
         .thenReturn(Future(SchemeLock))
 
-      testServiceEstAndTrustees.upsert(UpdateMode, Some(srn), json) map { result =>
+      testServiceNotAnnotated.upsert(UpdateMode, Some(srn), json) map { result =>
         result mustEqual Json.obj()
       }
     }
@@ -181,6 +185,9 @@ class UserAnswersServiceSpec extends AsyncWordSpec with MustMatchers with Mockit
 
       when(lockConnector.lock(any(), any())(any(), any()))
         .thenReturn(Future(VarianceLock))
+
+      when(viewConnector.removeAll(any())(any(), any()))
+        .thenReturn(Future(Ok))
 
       when(updateConnector.upsert(any(), any())(any(), any()))
         .thenReturn(Future(json))
@@ -222,6 +229,9 @@ class UserAnswersServiceSpec extends AsyncWordSpec with MustMatchers with Mockit
       when(lockConnector.lock(any(), any())(any(), any()))
         .thenReturn(Future(VarianceLock))
 
+      when(viewConnector.removeAll(any())(any(), any()))
+        .thenReturn(Future(Ok))
+
       when(updateConnector.remove(any(), any())(any(), any()))
         .thenReturn(Future(updatedJson))
 
@@ -236,6 +246,45 @@ class UserAnswersServiceSpec extends AsyncWordSpec with MustMatchers with Mockit
 
       testServiceEstAndTrustees.remove(UpdateMode, Some(srn), FakeIdentifier) map {
         _ mustEqual Json.obj()
+      }
+    }
+  }
+
+
+  ".setCompleteFlag" must {
+    "set flag in NormalMode" in {
+
+      when(subscriptionConnector.save(any(), any(), any())(any(), any(), any()))
+        .thenReturn(Future(json))
+
+      testServiceNotAnnotated.setCompleteFlag(NormalMode, None, FakeCompleteIdentifier, UserAnswers(json), true) map {
+        _ mustEqual UserAnswers(json)
+      }
+    }
+
+    "set flag in UpdateMode/ CheckUpdateMode when user holds the lock" in {
+
+      val updatedJson = Json.obj(
+        "other-key" -> "meh"
+      )
+
+      when(lockConnector.lock(any(), any())(any(), any()))
+        .thenReturn(Future(VarianceLock))
+
+      when(updateConnector.save(any(), any(), any())(any(), any(), any()))
+        .thenReturn(Future(updatedJson))
+
+      testServiceNotAnnotated.setCompleteFlag(UpdateMode, Some(srn), FakeCompleteIdentifier, UserAnswers(updatedJson), true) map {
+        _ mustEqual UserAnswers(updatedJson)
+      }
+    }
+
+    "not perform any action UpdateMode/ CheckUpdateMode when user does not hold the lock" in {
+      when(lockConnector.lock(any(), any())(any(), any()))
+        .thenReturn(Future(SchemeLock))
+
+      testServiceNotAnnotated.setCompleteFlag(UpdateMode, Some(srn), FakeCompleteIdentifier, UserAnswers(json), true) map {
+        _ mustEqual UserAnswers(Json.obj())
       }
     }
   }
@@ -325,6 +374,9 @@ class UserAnswersServiceSpec extends AsyncWordSpec with MustMatchers with Mockit
         when(lockConnector.lock(any(), any())(any(), any()))
           .thenReturn(Future(VarianceLock))
 
+        when(viewConnector.removeAll(any())(any(), any()))
+          .thenReturn(Future(Ok))
+
         when(updateConnector.upsert(any(), any())(any(), any()))
           .thenReturn(Future(expectedAnswers.json))
 
@@ -342,6 +394,19 @@ class UserAnswersServiceSpec extends AsyncWordSpec with MustMatchers with Mockit
           .thenReturn(Future(answers.json))
 
         testServiceEstAndTrustees.setAddressCompleteFlagAfterPreviousAddress(UpdateMode, Some(srn), TruesteeCompanyPreviousAddressId(0), answers) map {
+          _ mustEqual answers
+        }
+      }
+
+      "not save the complete flag and return the same useramswers if the isNew flag cannot be found" in {
+        val answers = UserAnswers().set(IsTrusteeNewId(0))(true).asOpt.value
+        when(lockConnector.lock(any(), any())(any(), any()))
+          .thenReturn(Future(VarianceLock))
+
+        when(updateConnector.upsert(any(), any())(any(), any()))
+          .thenReturn(Future(answers.json))
+
+        testServiceEstAndTrustees.setAddressCompleteFlagAfterPreviousAddress(UpdateMode, Some(srn), FakePreviousAddressIdentifier, answers) map {
           _ mustEqual answers
         }
       }
@@ -405,6 +470,19 @@ class UserAnswersServiceSpec extends AsyncWordSpec with MustMatchers with Mockit
           _ mustEqual answers
         }
       }
+
+      "not save the complete flag and return the same user answers if the is new flag cannot be found" in {
+        val answers = UserAnswers().set(IsTrusteeNewId(0))(true).asOpt.value
+        when(lockConnector.lock(any(), any())(any(), any()))
+          .thenReturn(Future(VarianceLock))
+
+        when(updateConnector.upsert(any(), any())(any(), any()))
+          .thenReturn(Future(answers.json))
+
+        testServiceEstAndTrustees.setAddressCompleteFlagAfterAddressYear(UpdateMode, Some(srn), FakeAddressYearsIdentifier, OverAYear, answers) map {
+          _ mustEqual answers
+        }
+      }
     }
 
     "in Normal Mode" must {
@@ -457,6 +535,18 @@ object UserAnswersServiceSpec extends SpecBase with MockitoSugar {
     override def toString: String = "fake-identifier"
   }
 
+  protected object FakeAddressYearsIdentifier extends TypedIdentifier[AddressYears] {
+    override def toString: String = "fake-identifier"
+  }
+
+  protected object FakePreviousAddressIdentifier extends TypedIdentifier[Address] {
+    override def toString: String = "fake-identifier"
+  }
+
+  protected object FakeCompleteIdentifier extends TypedIdentifier[Boolean] {
+    override def toString: String = "fake-complete"
+  }
+
   protected implicit val hc: HeaderCarrier = HeaderCarrier()
   implicit val request: DataRequest[AnyContent] = FakeDataRequest(UserAnswers(Json.obj()))
   private val srn = "S1234567890"
@@ -469,34 +559,38 @@ object UserAnswersServiceSpec extends SpecBase with MockitoSugar {
   class TestServiceNotAnnotated @Inject()(override val subscriptionCacheConnector: UserAnswersCacheConnector,
                               override val updateSchemeCacheConnector: UpdateSchemeCacheConnector,
                               override val lockConnector: PensionSchemeVarianceLockConnector,
+                              override val viewConnector: SchemeDetailsReadOnlyCacheConnector,
                               override val appConfig: FrontendAppConfig
                              ) extends UserAnswersService
 
   class TestServiceEstAndTrustees @Inject()(override val subscriptionCacheConnector: UserAnswersCacheConnector,
                                             override val updateSchemeCacheConnector: UpdateSchemeCacheConnector,
                                             override val lockConnector: PensionSchemeVarianceLockConnector,
+                                            override val viewConnector: SchemeDetailsReadOnlyCacheConnector,
                                             override val appConfig: FrontendAppConfig
-  ) extends UserAnswersServiceEstablishersAndTrusteesImpl(subscriptionCacheConnector, updateSchemeCacheConnector, lockConnector, appConfig)
+  ) extends UserAnswersServiceEstablishersAndTrusteesImpl(subscriptionCacheConnector, updateSchemeCacheConnector, lockConnector, viewConnector, appConfig)
 
 
 
   class TestServiceInsurance @Inject()(override val subscriptionCacheConnector: UserAnswersCacheConnector,
                                             override val updateSchemeCacheConnector: UpdateSchemeCacheConnector,
                                             override val lockConnector: PensionSchemeVarianceLockConnector,
+                                       override val viewConnector: SchemeDetailsReadOnlyCacheConnector,
                                             override val appConfig: FrontendAppConfig
-  ) extends UserAnswersServiceInsuranceImpl(subscriptionCacheConnector, updateSchemeCacheConnector, lockConnector, appConfig)
+  ) extends UserAnswersServiceInsuranceImpl(subscriptionCacheConnector, updateSchemeCacheConnector, lockConnector, viewConnector, appConfig)
 
   protected val subscriptionConnector: UserAnswersCacheConnector = mock[OldSubscriptionCacheConnector]
   protected val updateConnector: UpdateSchemeCacheConnector = mock[UpdateSchemeCacheConnector]
   protected val lockConnector: PensionSchemeVarianceLockConnector = mock[PensionSchemeVarianceLockConnector]
+  protected val viewConnector: SchemeDetailsReadOnlyCacheConnector = mock[SchemeDetailsReadOnlyCacheConnector]
 
   protected lazy val testServiceNotAnnotated: UserAnswersService = new TestServiceNotAnnotated(subscriptionConnector,
-    updateConnector, lockConnector, frontendAppConfig)
+    updateConnector, lockConnector, viewConnector, frontendAppConfig)
 
   protected lazy val testServiceEstAndTrustees = new TestServiceEstAndTrustees(subscriptionConnector,
-    updateConnector, lockConnector, frontendAppConfig)
+    updateConnector, lockConnector, viewConnector, frontendAppConfig)
 
   protected lazy val testServiceInsurance = new TestServiceInsurance(subscriptionConnector,
-    updateConnector, lockConnector, frontendAppConfig)
+    updateConnector, lockConnector, viewConnector, frontendAppConfig)
 
 }

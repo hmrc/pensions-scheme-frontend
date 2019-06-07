@@ -130,7 +130,7 @@ class ConfirmPreviousAddressControllerSpec extends WordSpec with MustMatchers wi
       }
     }
 
-    "return a redirect and save the data when the there is no existing data" in {
+    "return a redirect and save the data when the there is no existing data and user answers yes" in {
 
       import play.api.inject._
 
@@ -147,10 +147,6 @@ class ConfirmPreviousAddressControllerSpec extends WordSpec with MustMatchers wi
             any(), any(), any())(any(), any(), any())
           ) thenReturn Future.successful(Json.obj())
 
-          when(userAnswersService.save[Address, PreviousAddressId.type](
-            any(), any(), eqTo(PreviousAddressId), any())(any(), any(), any(), any())
-          ) thenReturn Future.successful(Json.obj())
-
           val request = FakeRequest().withFormUrlEncodedBody(
             "value" -> "true"
           )
@@ -160,6 +156,35 @@ class ConfirmPreviousAddressControllerSpec extends WordSpec with MustMatchers wi
           status(result) mustEqual SEE_OTHER
           redirectLocation(result).value mustEqual "www.example.com"
           verify(userAnswersService, times(1)).upsert(any(), any(), any())(any(), any(), any())
+      }
+    }
+
+    "return a redirect and save the data when the there is no existing data and user answers no" in {
+
+      import play.api.inject._
+
+      val userAnswersService = mock[UserAnswersService]
+
+      running(_.overrides(
+        bind[UserAnswersService].toInstance(userAnswersService),
+        bind[Navigator].toInstance(FakeNavigator),
+        bind[DataRetrievalAction].toInstance(new FakeDataRetrievalAction(Some(userAnswers.json)))
+      )) {
+        app =>
+
+          when(userAnswersService.save(
+            any(), any(), any(), any())(any(), any(), any(), any())
+          ) thenReturn Future.successful(Json.obj())
+
+          val request = FakeRequest().withFormUrlEncodedBody(
+            "value" -> "false"
+          )
+          val controller = app.injector.instanceOf[TestController]
+          val result = controller.onSubmit(viewmodel(), userAnswers, request)
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual "www.example.com"
+          verify(userAnswersService, times(1)).save(any(), any(), any(), any())(any(), any(), any(), any())
       }
     }
 

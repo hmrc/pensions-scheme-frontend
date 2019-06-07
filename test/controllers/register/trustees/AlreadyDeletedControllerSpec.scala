@@ -30,15 +30,14 @@ class AlreadyDeletedControllerSpec extends ControllerSpecBase {
   def onwardRoute: Call = controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode, None)
 
   private val trusteeIndex = Index(0)
-  private val trusteeName = "Test Trustee Name"
 
-  def viewmodel: AlreadyDeletedViewModel = AlreadyDeletedViewModel(
+  def viewmodel(trusteeName: String): AlreadyDeletedViewModel = AlreadyDeletedViewModel(
     title = Message("messages__alreadyDeleted__trustee_title"),
     deletedEntity = trusteeName,
     returnCall = onwardRoute
   )
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryTrustee): AlreadyDeletedController =
+  def controller(dataRetrievalAction: DataRetrievalAction): AlreadyDeletedController =
     new AlreadyDeletedController(
       frontendAppConfig,
       messagesApi,
@@ -47,18 +46,32 @@ class AlreadyDeletedControllerSpec extends ControllerSpecBase {
       new DataRequiredActionImpl
     )
 
-  def viewAsString(): String = alreadyDeleted(
+  def viewAsString(trusteeName: String): String = alreadyDeleted(
     frontendAppConfig,
-    viewmodel
+    viewmodel(trusteeName)
   )(fakeRequest, messages).toString
 
   "AlreadyDeleted Trustee Controller" must {
 
-    "return OK and the correct view for a GET" in {
-      val result = controller().onPageLoad(NormalMode, trusteeIndex, TrusteeKind.Individual, None)(fakeRequest)
+    "return OK and the correct view for a GET for an individual trustee" in {
+      val result = controller(getMandatoryTrustee).onPageLoad(NormalMode, trusteeIndex, TrusteeKind.Individual, None)(fakeRequest)
 
       status(result) mustBe OK
-      contentAsString(result) mustBe viewAsString()
+      contentAsString(result) mustBe viewAsString("Test Trustee Name")
+    }
+
+    "return OK and the correct view for a GET for a company trustee" in {
+      val result = controller(getMandatoryTrusteeCompany).onPageLoad(NormalMode, trusteeIndex, TrusteeKind.Company, None)(fakeRequest)
+
+      status(result) mustBe OK
+      contentAsString(result) mustBe viewAsString("test company name")
+    }
+
+    "return OK and the correct view for a GET for a partnership trustee" in {
+      val result = controller(getMandatoryTrusteePartnership).onPageLoad(NormalMode, trusteeIndex, TrusteeKind.Partnership, None)(fakeRequest)
+
+      status(result) mustBe OK
+      contentAsString(result) mustBe viewAsString("test partnership name")
     }
 
     "redirect to Session Expired for a GET if no existing data is found" in {
