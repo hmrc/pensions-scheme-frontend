@@ -24,7 +24,7 @@ import identifiers.register.establishers.company._
 import javax.inject.Inject
 import models.Mode.checkMode
 import models.requests.DataRequest
-import models.{Index, Mode}
+import models.{Index, Mode, UpdateMode}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
@@ -97,9 +97,11 @@ class CheckYourAnswersController @Inject()(
   }
 
   private def vatCya(mode: Mode, srn: Option[String], index: Index)(implicit request: DataRequest[AnyContent]) =
-    if (featureSwitchManagementService.get(Toggles.isSeparateRefCollectionEnabled))
-      CompanyVatId(index).row(routes.CompanyVatVariationsController.onPageLoad(checkMode(mode), index, srn).url, mode)
+    if (mode == UpdateMode && featureSwitchManagementService.get(Toggles.isSeparateRefCollectionEnabled) &&
+      !request.userAnswers.get(IsEstablisherNewId(index)).getOrElse(false))
+        CompanyVatVariationsId(index).row(routes.CompanyVatVariationsController.onPageLoad(checkMode(mode), index, srn).url, mode)
     else
       CompanyVatId(index).row(routes.CompanyVatController.onPageLoad(checkMode(mode), index, srn).url, mode)
+
 
 }

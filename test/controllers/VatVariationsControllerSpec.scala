@@ -92,7 +92,7 @@ class VatVariationsControllerSpec extends WordSpec with MustMatchers with Option
           val request = FakeRequest()
           val messages = app.injector.instanceOf[MessagesApi].preferred(request)
           val controller = app.injector.instanceOf[TestController]
-          val answers = UserAnswers().set(FakeIdentifier)(Vat.Yes("123456789")).get
+          val answers = UserAnswers().set(FakeIdentifier)("123456789").get
           val result = controller.onPageLoad(viewmodel, answers)
 
           status(result) mustEqual OK
@@ -172,7 +172,7 @@ class VatVariationsControllerSpec extends WordSpec with MustMatchers with Option
 
 object VatVariationsControllerSpec {
 
-  object FakeIdentifier extends TypedIdentifier[Vat]
+  object FakeIdentifier extends TypedIdentifier[String]
 
   class TestController @Inject()(
                                   override val appConfig: FrontendAppConfig,
