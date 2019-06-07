@@ -41,7 +41,7 @@ trait NinoController extends FrontendController with Retrievals with I18nSupport
 
   protected def navigator: Navigator
 
-  def onPageLoad(id: TypedIdentifier[String], form: Form[String], viewmodel: NinoViewModel)
+  def get(id: TypedIdentifier[String], form: Form[String], viewmodel: NinoViewModel)
          (implicit request: DataRequest[AnyContent]): Future[Result] = {
 
     val preparedForm = request.userAnswers.get(id).map(form.fill).getOrElse(form)
@@ -49,7 +49,7 @@ trait NinoController extends FrontendController with Retrievals with I18nSupport
     Future.successful(Ok(nino(appConfig, preparedForm, viewmodel, existingSchemeName)))
   }
 
-  def onSubmit(id: TypedIdentifier[String], mode: Mode, form: Form[String], viewmodel: NinoViewModel)
+  def post(id: TypedIdentifier[String], mode: Mode, form: Form[String], viewmodel: NinoViewModel)
           (implicit request: DataRequest[AnyContent]): Future[Result] = {
     form.bindFromRequest().fold(
       (formWithErrors: Form[_]) =>
