@@ -20,7 +20,7 @@ import config.FrontendAppConfig
 import controllers.VatVariationsController
 import controllers.actions._
 import forms.VatVariationsFormProvider
-import identifiers.register.trustees.company.{CompanyDetailsId, CompanyVatId}
+import identifiers.register.trustees.company.{CompanyDetailsId, CompanyVatVariationsId}
 import javax.inject.Inject
 import models.{Index, Mode}
 import play.api.i18n.MessagesApi
@@ -64,7 +64,7 @@ class CompanyVatVariationsController @Inject()(
       implicit request =>
         viewmodel(mode, index, srn).retrieve.right.map {
           vm =>
-            get(CompanyVatId(index), vm)
+            get(CompanyVatVariationsId(index), vm)
         }
     }
 
@@ -72,7 +72,7 @@ class CompanyVatVariationsController @Inject()(
     implicit request =>
       viewmodel(mode, index, srn).retrieve.right.map {
         vm =>
-          post(CompanyVatId(index), mode, vm)
+          post(CompanyVatVariationsId(index), mode, vm)
       }
   }
 }
