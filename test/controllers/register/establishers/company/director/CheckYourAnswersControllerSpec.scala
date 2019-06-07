@@ -25,7 +25,6 @@ import models._
 import models.address.Address
 import models.person.PersonDetails
 import org.joda.time.LocalDate
-import org.scalatest.OptionValues
 import play.api.test.Helpers._
 import services.FakeUserAnswersService
 import utils.checkyouranswers.Ops._
@@ -113,7 +112,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
 
       "return OK and display new Nino with Add link for UpdateMode and separateRefCollectionEnabled is true" in {
 
-        val result = controller(directorAnswersUpdateWithoutNino.dataRetrievalAction, toggle = true).onPageLoad(firstIndex, firstIndex, UpdateMode, Some("srn"))(request)
+        val result = controller(directorDetailsAnswersUpdateWithoutNino.dataRetrievalAction, toggle = true).onPageLoad(firstIndex, firstIndex, UpdateMode, Some("srn"))(request)
         status(result) mustBe OK
         contentAsString(result) mustBe viewAsString(UpdateMode, displayNewNinoAnswerRowWithAdd, Some("srn"))
       }
@@ -155,36 +154,29 @@ object CheckYourAnswersControllerSpec extends SpecBase {
   val schemeName = "test scheme name"
   val desiredRoute = controllers.routes.IndexController.onPageLoad()
 
-  implicit val directorAnswers = UserAnswers()
+  implicit val directorDetailsAnswersUpdateWithoutNino = UserAnswers()
     .set(DirectorDetailsId(firstIndex, firstIndex))(PersonDetails("first name", None, "last name", LocalDate.now(), false))
-    .flatMap(_.set(DirectorNinoId(firstIndex, firstIndex))(Nino.Yes("AB100100A")))
-    .flatMap(_.set(DirectorUniqueTaxReferenceId(firstIndex, firstIndex))(UniqueTaxReference.Yes("1234567890")))
+    .asOpt.value
+
+
+  implicit val directorAnswersUpdate = directorDetailsAnswersUpdateWithoutNino
+    .set(DirectorNinoId(firstIndex, firstIndex))(Nino.Yes("AB100100A")).asOpt.value
+
+  implicit val directorAnswers = directorAnswersUpdate
+    .set(DirectorUniqueTaxReferenceId(firstIndex, firstIndex))(UniqueTaxReference.Yes("1234567890"))
     .flatMap(_.set(DirectorAddressId(firstIndex, firstIndex))(Address("Address 1", "Address 2", None, None, None, "GB")))
     .flatMap(_.set(DirectorAddressYearsId(firstIndex, firstIndex))(AddressYears.UnderAYear))
     .flatMap(_.set(DirectorPreviousAddressId(firstIndex, firstIndex))(Address("Previous Address 1", "Previous Address 2", None, None, None, "GB")))
     .flatMap(_.set(DirectorContactDetailsId(firstIndex, firstIndex))(ContactDetails("test@test.com", "123456789")))
     .asOpt.value
 
-  implicit val directorAnswersUpdate = UserAnswers()
-    .set(DirectorDetailsId(firstIndex, firstIndex))(PersonDetails("first name", None, "last name", LocalDate.now(), false))
-    .flatMap(_.set(DirectorNinoId(firstIndex, firstIndex))(Nino.Yes("AB100100A")))
+  implicit val directorAnswersUpdateWithNewNino = directorAnswersUpdate
+    .set(DirectorNewNinoId(firstIndex, firstIndex))("AB100100A")
     .asOpt.value
 
-  implicit val directorAnswersUpdateWithNewNino = UserAnswers()
-    .set(DirectorDetailsId(firstIndex, firstIndex))(PersonDetails("first name", None, "last name", LocalDate.now(), false))
-    .flatMap(_.set(DirectorNinoId(firstIndex, firstIndex))(Nino.Yes("AB100100A")))
+  implicit val newDirectorAnswersUpdateWithNewNino = directorAnswersUpdate
+    .set(IsNewDirectorId(firstIndex, firstIndex))(true)
     .flatMap(_.set(DirectorNewNinoId(firstIndex, firstIndex))("AB100100A"))
-    .asOpt.value
-
-  implicit val newDirectorAnswersUpdateWithNewNino = UserAnswers()
-    .set(DirectorDetailsId(firstIndex, firstIndex))(PersonDetails("first name", None, "last name", LocalDate.now(), false))
-    .flatMap(_.set(IsNewDirectorId(firstIndex, firstIndex))(true))
-    .flatMap(_.set(DirectorNinoId(firstIndex, firstIndex))(Nino.Yes("AB100100A")))
-    .flatMap(_.set(DirectorNewNinoId(firstIndex, firstIndex))("AB100100A"))
-    .asOpt.value
-
-  implicit val directorAnswersUpdateWithoutNino = UserAnswers()
-    .set(DirectorDetailsId(firstIndex, firstIndex))(PersonDetails("first name", None, "last name", LocalDate.now(), false))
     .asOpt.value
 
   def updateAnswerRows = Seq(AnswerSection(
