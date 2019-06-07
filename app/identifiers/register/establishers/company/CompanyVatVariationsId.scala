@@ -27,11 +27,11 @@ import utils.{CountryOptions, UserAnswers}
 import viewmodels.AnswerRow
 
 case class CompanyVatVariationsId(index: Int) extends TypedIdentifier[String] {
-  override def path: JsPath = EstablishersId(index).path \ CompanyVatVariationsId.toString \ "vat"
+  override def path: JsPath = EstablishersId(index).path \ "companyVat" \ CompanyVatVariationsId.toString
 }
 
 object CompanyVatVariationsId {
-  override def toString: String = "companyVat"
+  override def toString: String = "vat"
 
   val labelYesNo = "messages__company__cya__vat_yes_no"
   val hiddenLabelVat = "messages__visuallyhidden__establisher__vat_number"
@@ -40,7 +40,7 @@ object CompanyVatVariationsId {
     new CheckYourAnswers[CompanyVatVariationsId] {
 
       override def row(id: CompanyVatVariationsId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        StringCYA(Some(labelYesNo), Some(hiddenLabelVat))().updateRow(id)(changeUrl, userAnswers)
+        StringCYA(Some(labelYesNo), Some(hiddenLabelVat))().row(id)(changeUrl, userAnswers)
 
       override def updateRow(id: CompanyVatVariationsId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
         userAnswers.get(id) match {
