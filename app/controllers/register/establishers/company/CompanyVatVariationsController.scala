@@ -16,11 +16,11 @@
 
 package controllers.register.establishers.company
 
-import config.{FeatureSwitchManagementService, FrontendAppConfig}
-import controllers.VatController
+import config.FrontendAppConfig
+import controllers.VatVariationsController
 import controllers.actions._
-import forms.VatFormProvider
-import identifiers.register.establishers.company.{CompanyDetailsId, CompanyVatId}
+import forms.VatVariationsFormProvider
+import identifiers.register.establishers.company.{CompanyDetailsId, CompanyVatId, CompanyVatVariationsId}
 import javax.inject.Inject
 import models.{Index, Mode}
 import play.api.i18n.MessagesApi
@@ -31,7 +31,7 @@ import utils.annotations.EstablishersCompany
 import viewmodels.{Message, VatViewModel}
 
 
-class CompanyVatController @Inject()(
+class CompanyVatVariationsController @Inject()(
                                           override val appConfig: FrontendAppConfig,
                                           override val messagesApi: MessagesApi,
                                           override val userAnswersService: UserAnswersService,
@@ -39,9 +39,8 @@ class CompanyVatController @Inject()(
                                           authenticate: AuthAction,
                                           getData: DataRetrievalAction,
                                           allowAccess: AllowAccessActionProvider,
-                                          requireData: DataRequiredAction,
-                                          formProvider: VatFormProvider
-                                        ) extends VatController {
+                                          requireData: DataRequiredAction
+                                        ) extends VatVariationsController {
 
   private def viewmodel(mode: Mode, index: Index, srn: Option[String]): Retrieval[VatViewModel] =
     Retrieval {
@@ -49,24 +48,22 @@ class CompanyVatController @Inject()(
         CompanyDetailsId(index).retrieve.right.map {
           details =>
             VatViewModel(
-              postCall = routes.CompanyVatController.onSubmit(mode, index, srn),
-              title = Message("messages__companyVat__title"),
-              heading = Message("messages__companyVat__heading", details.companyName),
-              hint = Message("messages__common__company_vat__hint", details.companyName),
+              postCall = routes.CompanyVatVariationsController.onSubmit(mode, index, srn),
+              title = Message("messages__vatVariations__company_title"),
+              heading = Message("messages__vatVariations__heading", details.companyName),
+              hint = Message("messages__vatVariations__hint", details.companyName),
               subHeading = None,
               srn = srn
             )
         }
     }
 
-  private val form = formProvider("messages__companyVat__error__required")
-
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
     implicit request =>
       viewmodel(mode, index, srn).retrieve.right.map {
         vm =>
-          get(CompanyVatId(index), form, vm)
+          get(CompanyVatVariationsId(index), vm)
       }
   }
 
@@ -75,7 +72,7 @@ class CompanyVatController @Inject()(
     implicit request =>
       viewmodel(mode, index, srn).retrieve.right.map {
         vm =>
-          post(CompanyVatId(index), mode, form, vm)
+          post(CompanyVatVariationsId(index), mode, vm)
       }
   }
 }

@@ -31,7 +31,6 @@ class PODSModule extends AbstractModule {
       .annotatedWith(classOf[InsuranceService])
       .to(classOf[UserAnswersServiceInsuranceImpl])
 
-
     bind(classOf[UserAnswersService])
       .annotatedWith(classOf[NoChangeFlagService])
       .to(classOf[UserAnswersServiceImpl])
