@@ -16,12 +16,21 @@
 
 package identifiers
 
+import base.SpecBase
+import models.{Link, UpdateMode}
 import models.address.{Address, TolerantAddress}
+import models.requests.DataRequest
+import org.scalatest.prop.PropertyChecks
 import org.scalatest.{MustMatchers, OptionValues, WordSpec}
-import play.api.libs.json.Json
-import utils.{Enumerable, UserAnswers}
+import play.api.libs.json.{JsSuccess, Json}
+import play.api.mvc.AnyContent
+import play.api.test.FakeRequest
+import uk.gov.hmrc.domain.PsaId
+import utils.{CountryOptions, Enumerable, InputOption, UserAnswers}
+import viewmodels.{AnswerRow, Message}
+import utils.checkyouranswers.Ops._
 
-class BenefitsSecuredByInsuranceIdSpec extends WordSpec with MustMatchers with OptionValues with Enumerable.Implicits {
+class BenefitsSecuredByInsuranceIdSpec extends SpecBase with MustMatchers with PropertyChecks with OptionValues with Enumerable.Implicits {
 
   "Cleanup" when {
 
@@ -85,6 +94,41 @@ class BenefitsSecuredByInsuranceIdSpec extends WordSpec with MustMatchers with O
 
       "not remove the data for `InsurerConfirmAddress`" in {
         result.get(InsurerConfirmAddressId) must be(defined)
+      }
+    }
+
+    "`BenefitsSecuredByInsuranceId` is set to `None`" must {
+      "don't remove any data for answers" in {
+        BenefitsSecuredByInsuranceId.cleanup(None, answers) mustBe JsSuccess(answers)
+      }
+    }
+  }
+
+  "updateRow" when {
+
+    "no data defined for InsurancePolicyNumberId" must {
+
+      implicit val countryOptions = new CountryOptions(Seq(InputOption("AU", "Australia"),
+        InputOption("GB", "United Kingdom")))
+
+      "return empty AnswerRow when BenefitsSecuredByInsuranceId is false" in {
+        val answers = UserAnswers(Json.obj())
+        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
+        implicit val userAnswers = request.userAnswers
+        val onwardUrl = "onwardUrl"
+        BenefitsSecuredByInsuranceId.row(onwardUrl, UpdateMode) must equal(Seq.empty[AnswerRow])
+      }
+
+      "return correct AnswerRow when BenefitsSecuredByInsuranceId is true" in {
+        val answers = UserAnswers(Json.obj())
+          .set(BenefitsSecuredByInsuranceId)(true)
+          .asOpt.value
+        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
+        implicit val userAnswers = request.userAnswers
+        val onwardUrl = "onwardUrl"
+        BenefitsSecuredByInsuranceId.row(onwardUrl, UpdateMode) must equal(Seq(AnswerRow(
+          "securedBenefits.checkYourAnswersLabel",List("site.yes"),true,Some(Link("site.change",
+            onwardUrl,Some("messages__visuallyhidden__securedBenefits"))))))
       }
     }
   }

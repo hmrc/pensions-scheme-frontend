@@ -25,7 +25,7 @@ import models.requests.OptionalDataRequest
 import play.api.http.Status._
 import play.api.mvc.Results._
 import play.api.mvc.{ActionFilter, Result}
-import uk.gov.hmrc.http.{BadRequestException, HeaderCarrier, NotFoundException}
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.HeaderCarrierConverter
 import uk.gov.hmrc.play.bootstrap.http.FrontendErrorHandler
 
@@ -38,7 +38,7 @@ abstract class AllowAccessAction(srn: Option[String],
                                 ) extends ActionFilter[OptionalDataRequest] {
 
   private def checkForAssociation[A](request: OptionalDataRequest[A],
-                                     extractedSRN: String)(implicit hc: HeaderCarrier) =
+                                     extractedSRN: String)(implicit hc: HeaderCarrier): Future[Option[Result]] =
     pensionsSchemeConnector.checkForAssociation(request.psaId.id, extractedSRN)(hc, global, request).flatMap {
       case true => Future.successful(None)
       case _ => errorHandler.onClientError(request, NOT_FOUND, "").map(Some.apply)
