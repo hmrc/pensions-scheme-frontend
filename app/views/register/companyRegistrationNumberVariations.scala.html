@@ -38,19 +38,15 @@
         @components.heading(
             headingKey=messages("messages__companyRegistrationNumber__heading")
         )
-        @components.fieldSet(
-            field = form("companyRegistrationNumber.hasCrn"),
-            hint=Some(messages("messages__common__crn_hint")),
-            legend = "messages__company__has_crn",
-            hiddenLegend = true
-            ) {
 
-            @components.input_text(
-                field = form("companyRegistrationNumber.crn"),
+        <p>@messages("messages__common__crn_hint")</p>
+
+        @components.input_text(
+                field = form("companyRegistrationNumber"),
                 label = messages("messages__common__crn"),
                 groupClass = Some("js-hidden panel panel-border-narrow")
                 )
-        }
+
         @components.submit_button()
 
         @components.return_link("messages__schemeTaskList__returnlink", schemeName, None, srn)

@@ -16,27 +16,27 @@
 
 package views.register
 
-import forms.CompanyRegistrationNumberFormProvider
+import forms.CompanyRegistrationNumberVariationsFormProvider
 import models.{Index, NormalMode, UpdateMode}
 import play.api.data.Form
 import views.behaviours.ViewBehaviours
-import views.html.register.companyRegistrationNumberUpdate
+import views.html.register.companyRegistrationNumberVariations
 
-class CompanyRegistrationNumberUpdateViewSpec extends ViewBehaviours {
+class CompanyRegistrationNumberVariationsViewSpec extends ViewBehaviours {
 
   val messageKeyPrefix = "companyRegistrationNumber"
   val index = Index(0)
-  val form = new CompanyRegistrationNumberFormProvider()()
+  val form = new CompanyRegistrationNumberVariationsFormProvider()()
   val submitUrl = controllers.register.trustees.company.routes.CompanyRegistrationNumberController.onSubmit(NormalMode, None, index)
-  private def createView() = () => companyRegistrationNumberUpdate(
+  private def createView() = () => companyRegistrationNumberVariations(
     frontendAppConfig, form, NormalMode, index, None, submitUrl, None)(fakeRequest, messages)
-  private def createUpdateView = () => companyRegistrationNumberUpdate(
+  private def createUpdateView = () => companyRegistrationNumberVariations(
     frontendAppConfig, form, UpdateMode, index, None, submitUrl, Some("srn"))(fakeRequest, messages)
 
   private def createViewUsingForm = (form: Form[_]) =>
-    companyRegistrationNumberUpdate(frontendAppConfig, form, NormalMode, index, None, submitUrl, None)(fakeRequest, messages)
+    companyRegistrationNumberVariations(frontendAppConfig, form, NormalMode, index, None, submitUrl, None)(fakeRequest, messages)
 
-  "CompanyRegistrationNumber view" when {
+  "CompanyRegistrationNumberVariations view" should {
     behave like normalPage(createView(), messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"))
 
     behave like pageWithReturnLink(createView(), getReturnLink)
@@ -48,10 +48,10 @@ class CompanyRegistrationNumberUpdateViewSpec extends ViewBehaviours {
       assertContainsText(doc, messages("messages__common__crn_hint"))
     }
 
-    "display an input text box with the value when yes is selected" in {
-      val expectedValue = "1234567"
-      val doc = asDocument(createViewUsingForm(form.bind(Map("companyRegistrationNumber.crn" -> expectedValue))))
-      doc must haveLabelAndValue("companyRegistrationNumber_crn", s"${messages("messages__common__crn")}", expectedValue)
+    "display an input text box" in {
+      val expectedValue = "12345678"
+      val doc = asDocument(createViewUsingForm(form.bind(Map("companyRegistrationNumber" -> expectedValue))))
+      doc must haveLabelAndValue("companyRegistrationNumber", s"${messages("messages__common__crn")}", expectedValue)
     }
 
   }

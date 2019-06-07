@@ -17,44 +17,64 @@
 package controllers.register.establishers.company
 
 import config.FrontendAppConfig
-import controllers.actions._
-import controllers.register.CompanyRegistrationNumberBaseController
-import forms.CompanyRegistrationNumberFormProvider
+import controllers.Retrievals
 import identifiers.register.establishers.company.CompanyRegistrationNumberId
-import javax.inject.Inject
 import models.requests.DataRequest
 import models.{CompanyRegistrationNumber, Index, Mode}
 import play.api.data.Form
-import play.api.i18n.MessagesApi
-import play.api.mvc.{AnyContent, Call}
+import play.api.i18n.I18nSupport
+import play.api.mvc.{AnyContent, Call, Result}
 import services.UserAnswersService
+import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils._
-import utils.annotations.EstablishersCompany
-import views.html.register.companyRegistrationNumberUpdate
+import views.html.register.companyRegistrationNumberVariations
 
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 
-class CompanyRegistrationNumberVariationsController @Inject()(
-                                                     val appConfig: FrontendAppConfig,
-                                                     override val messagesApi: MessagesApi,
-                                                     userAnswersService: UserAnswersService,
-                                                     @EstablishersCompany navigator: Navigator,
-                                                     authenticate: AuthAction,
-                                                     getData: DataRetrievalAction,
-                                                     allowAccess: AllowAccessActionProvider,
-                                                     requireData: DataRequiredAction,
-                                                     formProvider: CompanyRegistrationNumberFormProvider
-                                                   ) extends
-  CompanyRegistrationNumberBaseController(
-    appConfig, messagesApi, userAnswersService, navigator, authenticate, getData, allowAccess, requireData, formProvider) {
+trait CompanyRegistrationNumberVariationsController extends FrontendController with Retrievals with I18nSupport {
 
-  override def addView(mode: Mode, index: Index, srn: Option[String])(implicit request: DataRequest[AnyContent]) = companyRegistrationNumberUpdate(appConfig, form, mode, index, existingSchemeName, postCall(mode, srn, index), srn)
+  protected implicit val ec = play.api.libs.concurrent.Execution.defaultContext
 
-  override def errorView(mode: Mode, index: Index, srn: Option[String], form: Form[_])(implicit request: DataRequest[AnyContent]) = companyRegistrationNumberUpdate(appConfig, form, mode, index, existingSchemeName, postCall(mode, srn, index), srn)
+  protected def appConfig: FrontendAppConfig
 
-  override def updateView(mode: Mode, index: Index, srn: Option[String], value: CompanyRegistrationNumber)(implicit request: DataRequest[AnyContent]) = companyRegistrationNumberUpdate(appConfig, form.fill(value), mode, index, existingSchemeName, postCall(mode, srn, index), srn)
+  protected def userAnswersService: UserAnswersService
 
-  override def id(index: Index) = CompanyRegistrationNumberId(index)
+  protected val form: Form[String]
 
-  override def postCall: (Mode, Option[String], Index) => Call = routes.CompanyRegistrationNumberController.onSubmit _
+  protected def navigator: Navigator
+
+  def postCall: (Mode, Option[String], Index) => Call = routes.CompanyRegistrationNumberController.onSubmit _
+
+  def get(mode: Mode, srn: Option[String], index: Index)
+         (implicit request: DataRequest[AnyContent]): Future[Result] = {
+
+    val preparedForm =
+      request.userAnswers.get(CompanyRegistrationNumberId(index)) match {
+        case Some(CompanyRegistrationNumber.Yes(crnNumber)) => form.fill(crnNumber)
+        case _ => form
+      }
+
+    val view = companyRegistrationNumberVariations(appConfig, preparedForm, mode, index, existingSchemeName, postCall(mode, srn, index), srn)
+
+    Future.successful(Ok(view))
+  }
+
+  def post(mode: Mode, srn: Option[String], index: Index)
+          (implicit request: DataRequest[AnyContent]): Future[Result] = {
+    form.bindFromRequest().fold(
+      (formWithErrors: Form[_]) =>
+
+        Future.successful(BadRequest(
+          companyRegistrationNumberVariations(appConfig, formWithErrors, mode, index, existingSchemeName, postCall(mode, srn, index), srn))),
+
+      crnNumber => {
+        val updatedUserAnswers = request.userAnswers
+          .set(CompanyRegistrationNumberId(index))(CompanyRegistrationNumber.Yes(crnNumber)).asOpt.getOrElse(request.userAnswers)
+        userAnswersService.upsert(mode, srn, updatedUserAnswers.json).map(cacheMap =>
+          Redirect(navigator.nextPage(CompanyRegistrationNumberId(index), mode, UserAnswers(cacheMap), srn)))
+      }
+    )
+  }
 }
+
