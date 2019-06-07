@@ -39,8 +39,7 @@ class CompanyVatVariationsController @Inject()(
                                           authenticate: AuthAction,
                                           getData: DataRetrievalAction,
                                           allowAccess: AllowAccessActionProvider,
-                                          requireData: DataRequiredAction,
-                                          formProvider: VatVariationsFormProvider
+                                          requireData: DataRequiredAction
                                         ) extends VatVariationsController {
 
   private def viewmodel(mode: Mode, index: Index, srn: Option[String]): Retrieval[VatViewModel] =
@@ -49,7 +48,7 @@ class CompanyVatVariationsController @Inject()(
         CompanyDetailsId(index).retrieve.right.map {
           details =>
             VatViewModel(
-              postCall = routes.CompanyVatController.onSubmit(mode, index, srn),
+              postCall = routes.CompanyVatVariationsController.onSubmit(mode, index, srn),
               title = Message("messages__vatVariations__company_title"),
               heading = Message("messages__vatVariations__heading", details.companyName),
               hint = Message("messages__vatVariations__hint", details.companyName),
@@ -59,14 +58,12 @@ class CompanyVatVariationsController @Inject()(
         }
     }
 
-  private val form = formProvider()
-
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
     implicit request =>
       viewmodel(mode, index, srn).retrieve.right.map {
         vm =>
-          get(CompanyVatId(index), form, vm)
+          get(CompanyVatId(index), vm)
       }
   }
 
@@ -75,7 +72,7 @@ class CompanyVatVariationsController @Inject()(
     implicit request =>
       viewmodel(mode, index, srn).retrieve.right.map {
         vm =>
-          post(CompanyVatId(index), mode, form, vm)
+          post(CompanyVatId(index), mode, vm)
       }
   }
 }

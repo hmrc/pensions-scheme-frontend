@@ -18,21 +18,21 @@ package controllers.register.establishers.company
 
 import base.CSRFRequest
 import controllers.ControllerSpecBase
-import controllers.actions.{AuthAction, DataRetrievalAction, FakeAuthAction}
-import forms.VatFormProvider
-import models.{Index, NormalMode}
+import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRetrievalAction, FakeAllowAccessProvider, FakeAuthAction}
+import forms.VatVariationsFormProvider
+import models.{CheckUpdateMode, Index, NormalMode}
 import org.scalatest.MustMatchers
 import play.api.Application
 import play.api.http.Writeable
 import play.api.inject.bind
 import play.api.mvc.{Call, Request, Result}
 import play.api.test.FakeRequest
-import play.api.test.Helpers.{contentAsString, redirectLocation, status, _}
+import play.api.test.Helpers.{contentAsString, status, _}
 import services.{FakeUserAnswersService, UserAnswersService}
 import utils.annotations.EstablishersCompany
 import utils.{FakeNavigator, Navigator}
 import viewmodels.{Message, VatViewModel}
-import views.html.vat
+import views.html.vatVariations
 
 import scala.concurrent.Future
 
@@ -44,18 +44,18 @@ class CompanyVatVariationsControllerSpec extends ControllerSpecBase with MustMat
 
     "render the view correctly on a GET request" in {
       requestResult(
-        implicit app => addToken(FakeRequest(routes.CompanyVatVariationsController.onPageLoad(NormalMode, firstIndex, None))),
+        implicit app => addToken(FakeRequest(routes.CompanyVatVariationsController.onPageLoad(CheckUpdateMode, firstIndex, srn))),
         (request, result) => {
           status(result) mustBe OK
-          contentAsString(result) mustBe vat(frontendAppConfig, form, viewModel, None)(request, messages).toString()
+          contentAsString(result) mustBe vatVariations(frontendAppConfig, form, viewModel, Some("pension scheme details"))(request, messages).toString()
         }
       )
     }
 
     "redirect to the next page on a POST request" in {
       requestResult(
-        implicit app => addToken(FakeRequest(routes.CompanyVatVariationsController.onSubmit(NormalMode, firstIndex, None))
-          .withFormUrlEncodedBody(("vat.hasVat", "true"), ("vat.vat", "123456789"))),
+        implicit app => addToken(FakeRequest(routes.CompanyVatVariationsController.onSubmit(CheckUpdateMode, firstIndex, srn))
+          .withFormUrlEncodedBody(("vat", "123456789"))),
         (_, result) => {
           status(result) mustBe SEE_OTHER
           redirectLocation(result) mustBe Some(onwardRoute.url)
@@ -68,18 +68,19 @@ class CompanyVatVariationsControllerSpec extends ControllerSpecBase with MustMat
 
 object CompanyVatVariationsControllerSpec extends CompanyVatVariationsControllerSpec {
 
-  val form = new VatFormProvider()()
+  val form = new VatVariationsFormProvider()()
   val firstIndex = Index(0)
+  val srn = Some("S123")
 
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
   val viewModel = VatViewModel(
-    routes.CompanyVatVariationsController.onSubmit(NormalMode, firstIndex, None),
+    routes.CompanyVatVariationsController.onSubmit(CheckUpdateMode, firstIndex, srn),
     title = Message("messages__vatVariations__company_title"),
     heading = Message("messages__vatVariations__heading", "test company name"),
     hint = Message("messages__vatVariations__hint"),
     subHeading = None,
-    srn = Some("S123")
+    srn = srn
   )
 
   private def requestResult[T](request: Application => Request[T], test: (Request[_], Future[Result]) => Unit)
@@ -87,9 +88,10 @@ object CompanyVatVariationsControllerSpec extends CompanyVatVariationsController
 
     running(_.overrides(
       bind[AuthAction].to(FakeAuthAction),
-      bind[DataRetrievalAction].toInstance(getMandatoryTrusteeCompany),
+      bind[DataRetrievalAction].toInstance(getMandatoryEstablisherCompany),
       bind(classOf[Navigator]).qualifiedWith(classOf[EstablishersCompany]).toInstance(new FakeNavigator(onwardRoute)),
-      bind[UserAnswersService].toInstance(FakeUserAnswersService)
+      bind[UserAnswersService].toInstance(FakeUserAnswersService),
+      bind[AllowAccessActionProvider].toInstance(FakeAllowAccessProvider())
     )) {
       app =>
         val req = request(app)

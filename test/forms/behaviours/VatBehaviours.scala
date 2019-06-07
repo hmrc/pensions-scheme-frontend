@@ -108,12 +108,18 @@ trait VatBehaviours extends FormSpec with Generators with PropertyChecks with Co
     }
   }
 
-  def formWithVatVariations(testForm: Form[Option[String]],
+  def formWithVatVariations(testForm: Form[String],
                   vatLengthKey: String,
+                            requiredVatKey: String,
                   invalidVatKey: String
                  ): Unit = {
 
     "behave like a form with a VAT Mapping in variations" should {
+
+      "fail to bind when value is not entered" in {
+        val expectedError = error("vat", requiredVatKey)
+        checkForError(testForm, emptyForm, expectedError)
+      }
 
       Seq("AB123490", "AO111111B", "ORA12345C", "AB0202020", "AB040404E").foreach { vat =>
         s"fail to bind when VAT $vat is invalid" in {

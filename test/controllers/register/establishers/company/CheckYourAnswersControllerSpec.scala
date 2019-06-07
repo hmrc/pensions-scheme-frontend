@@ -16,6 +16,7 @@
 
 package controllers.register.establishers.company
 
+import config.{FeatureSwitchManagementService, FeatureSwitchManagementServiceTestImpl}
 import controllers.ControllerSpecBase
 import controllers.actions._
 import controllers.behaviours.ControllerAllowChangeBehaviour
@@ -25,6 +26,7 @@ import models._
 import models.address.Address
 import models.register.DeclarationDormant
 import models.requests.DataRequest
+import play.api.Configuration
 import play.api.mvc.{AnyContent, Call}
 import play.api.test.Helpers._
 import services.FakeUserAnswersService
@@ -157,6 +159,10 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase with Enumerable
       addressRows ++ addressYearsRows ++ previousAddressRows ++ contactDetailsRows)
   }
 
+  val config = injector.instanceOf[Configuration]
+  def featureSwitchManagementService: FeatureSwitchManagementService =
+    new FeatureSwitchManagementServiceTestImpl(config, environment)
+
   private def answerSections(implicit request: DataRequest[AnyContent]) = Seq(companyDetailsSection, companyContactDetailsSection)
 
 
@@ -172,7 +178,8 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase with Enumerable
       fakeCountryOptions,
       new FakeNavigator(onwardRoute),
       FakeUserAnswersService,
-      allowChangeHelper
+      allowChangeHelper,
+      featureSwitchManagementService
     )
 
   def viewAsString(answerSections: Seq[AnswerSection]): String =

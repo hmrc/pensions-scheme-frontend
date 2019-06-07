@@ -24,7 +24,7 @@ import viewmodels.{Message, VatViewModel}
 import views.behaviours.QuestionViewBehaviours
 import views.html.vatVariations
 
-class VatVariationsViewSpec extends QuestionViewBehaviours[Option[String]] {
+class VatVariationsViewSpec extends QuestionViewBehaviours[String] {
 
   val messageKeyPrefix = "vatVariations"
 

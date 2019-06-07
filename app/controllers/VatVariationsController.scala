@@ -17,6 +17,7 @@
 package controllers
 
 import config.FrontendAppConfig
+import forms.VatVariationsFormProvider
 import identifiers.TypedIdentifier
 import models.requests.DataRequest
 import models.{Mode, Vat}
@@ -33,13 +34,6 @@ import scala.concurrent.Future
 
 trait VatVariationsController extends FrontendController with Retrievals with I18nSupport {
 
-  private[this] def toVat(vatOpt: Option[String]) = {
-    vatOpt match {
-      case Some(vat) => Vat.Yes(vat)
-      case _ => Vat.No
-    }
-  }
-
   protected implicit val ec = play.api.libs.concurrent.Execution.defaultContext
 
   protected def appConfig: FrontendAppConfig
@@ -48,7 +42,11 @@ trait VatVariationsController extends FrontendController with Retrievals with I1
 
   protected def navigator: Navigator
 
-  def get(id: TypedIdentifier[Vat], form: Form[String], viewmodel: VatViewModel)
+  protected def form = formProvider()
+
+  protected def formProvider: VatVariationsFormProvider = new VatVariationsFormProvider()
+
+  def get(id: TypedIdentifier[Vat], viewmodel: VatViewModel)
          (implicit request: DataRequest[AnyContent]): Future[Result] = {
     val preparedForm =
       request.userAnswers.get(id) match {
@@ -59,7 +57,7 @@ trait VatVariationsController extends FrontendController with Retrievals with I1
     Future.successful(Ok(vatVariations(appConfig, preparedForm, viewmodel, existingSchemeName)))
   }
 
-  def post(id: TypedIdentifier[Vat], mode: Mode, form: Form[String], viewmodel: VatViewModel)
+  def post(id: TypedIdentifier[Vat], mode: Mode, viewmodel: VatViewModel)
           (implicit request: DataRequest[AnyContent]): Future[Result] = {
     form.bindFromRequest().fold(
       (formWithErrors: Form[_]) =>
