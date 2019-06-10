@@ -89,6 +89,25 @@ class FeatureSwitchManagementServiceSpec extends PlaySpec {
           injector(false).instanceOf[Configuration],
           injector(false).instanceOf[Environment]
         )
+        fs.change("toggleOn", newValue = true)
+        fs.reset("toggleOn")
+        fs.get("toggleOn") mustEqual false
+      }
+
+      "change is nothing for FeatureSwitchManagementServiceProductionImpl" in {
+        val fs = new FeatureSwitchManagementServiceProductionImpl(
+          injector(false).instanceOf[Configuration],
+          injector(false).instanceOf[Environment]
+        )
+        fs.change("toggleOn", newValue = true)
+        fs.get("toggleOn") mustEqual false
+      }
+
+      "reset do nothing for FeatureSwitchManagementServiceProductionImpl" in {
+        val fs = new FeatureSwitchManagementServiceProductionImpl(
+          injector(false).instanceOf[Configuration],
+          injector(false).instanceOf[Environment]
+        )
         fs.reset("toggleOn")
         fs.get("toggleOn") mustEqual false
       }

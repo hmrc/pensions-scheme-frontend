@@ -17,7 +17,7 @@
 package controllers
 
 import config.FrontendAppConfig
-import connectors.{PensionSchemeVarianceLockConnector, PensionsSchemeConnector, UpdateSchemeCacheConnector}
+import connectors.{PensionSchemeVarianceLockConnector, PensionsSchemeConnector, SchemeDetailsReadOnlyCacheConnector, UpdateSchemeCacheConnector}
 import controllers.actions._
 import forms.register.DeclarationFormProvider
 import identifiers.{PstrId, SchemeNameId, VariationDeclarationId}
@@ -25,7 +25,6 @@ import javax.inject.Inject
 import models.UpdateMode
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.Results.Redirect
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.Register
@@ -45,7 +44,8 @@ class VariationDeclarationController @Inject()(
                                                 formProvider: DeclarationFormProvider,
                                                 pensionsSchemeConnector: PensionsSchemeConnector,
                                                 lockConnector: PensionSchemeVarianceLockConnector,
-                                                updateSchemeCacheConnector: UpdateSchemeCacheConnector
+                                                updateSchemeCacheConnector: UpdateSchemeCacheConnector,
+                                                viewConnector: SchemeDetailsReadOnlyCacheConnector
                                               )(implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
 
   private val form = formProvider()
@@ -74,6 +74,7 @@ class VariationDeclarationController @Inject()(
                 for {
                   _ <- pensionsSchemeConnector.updateSchemeDetails(request.psaId.id, pstr, ua)
                   _ <- updateSchemeCacheConnector.removeAll(srnId)
+                  _ <- viewConnector.removeAll(request.externalId)
                   _ <- lockConnector.releaseLock(request.psaId.id, srnId)
                 } yield {
                   Redirect(navigator.nextPage(VariationDeclarationId, UpdateMode, UserAnswers(), srn))
