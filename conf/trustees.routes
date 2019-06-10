@@ -338,3 +338,7 @@ GET        /:index/partnership/check-your-answers                       controll
 POST       /:index/partnership/check-your-answers                       controllers.register.trustees.partnership.CheckYourAnswersController.onSubmit(mode: Mode = NormalMode, index: Index, srn: Option[String] = None)
 GET        /:index/partnership/:mode/check-your-answers/:srn            controllers.register.trustees.partnership.CheckYourAnswersController.onPageLoad(mode: Mode, index: Index, srn: Option[String])
 POST       /:index/partnership/:mode/check-your-answers/:srn            controllers.register.trustees.partnership.CheckYourAnswersController.onSubmit(mode: Mode, index: Index, srn: Option[String])
+
+GET        /:index/individual/:mode/enter-national-insurance-number/:srn        controllers.register.trustees.individual.TrusteeNinoNewController.onPageLoad(mode: Mode, index: Index, srn: Option[String])
+POST       /:index/individual/:mode/enter-national-insurance-number/:srn        controllers.register.trustees.individual.TrusteeNinoNewController.onSubmit(mode: Mode, index: Index, srn: Option[String])
+
