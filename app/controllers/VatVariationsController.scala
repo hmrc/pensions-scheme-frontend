@@ -42,9 +42,9 @@ trait VatVariationsController extends FrontendController with Retrievals with I1
 
   protected def navigator: Navigator
 
-  protected def form = formProvider()
-
   protected def formProvider: VatVariationsFormProvider = new VatVariationsFormProvider()
+
+  protected def form = formProvider()
 
   def get(id: TypedIdentifier[String], viewmodel: VatViewModel)
          (implicit request: DataRequest[AnyContent]): Future[Result] = {

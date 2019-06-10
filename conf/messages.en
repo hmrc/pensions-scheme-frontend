@@ -1445,8 +1445,8 @@ messages__confirmPreviousAddress__title = Is this the previous address?
 messages__confirmPreviousAddress__heading = Is this {0}’s previous address?
 messages__confirmPreviousAddress__error = Select yes if this is {0}’s previous address
 
-messages__vatVariations__company_title = What is the company's VAT registration number?
-messages__vatVariations__partnership_title = What is the partnership's VAT registration number?
+messages__vatVariations__company_title = What is the company’s VAT registration number?
+messages__vatVariations__partnership_title = What is the partnership’s VAT registration number?
 messages__vatVariations__heading = What is {0}’s VAT registration number?
 messages__vatVariations__hint = This is 9 numbers, sometimes with ‘GB’ at the start, for example 123456789 or GB123456789.
 
