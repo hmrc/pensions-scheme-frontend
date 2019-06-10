@@ -17,11 +17,14 @@
 package controllers.register.trustees.individual
 
 import controllers.ControllerSpecBase
-import controllers.actions.{DataRequiredActionImpl, DataRetrievalAction, FakeAllowAccessProvider, FakeAuthAction}
+import controllers.actions._
 import controllers.behaviours.ControllerAllowChangeBehaviour
 import identifiers.register.trustees.IsTrusteeCompleteId
+import identifiers.register.trustees.individual.{TrusteeDetailsId, TrusteeNewNinoId, TrusteeNinoId}
 import models._
+import models.person.PersonDetails
 import org.joda.time.LocalDate
+import play.api.libs.json.Json
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import services.FakeUserAnswersService
@@ -189,4 +192,27 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase with Controller
     srn = srn,
     mode = mode
   )(fakeRequest, messages).toString
+
+
+  def getMandatoryTrusteeWithNewNinoId: FakeDataRetrievalAction = new FakeDataRetrievalAction(Some(
+    Json.obj(
+      "trustees" -> Json.arr(
+        Json.obj(
+          TrusteeDetailsId.toString ->
+            PersonDetails("Test", Some("Trustee"), "Name", LocalDate.now),
+          TrusteeNewNinoId.toString -> "CS121212C"
+        )
+      )
+    )))
+
+  def getMandatoryTrusteeWithOldNinoId: FakeDataRetrievalAction = new FakeDataRetrievalAction(Some(
+    Json.obj(
+      "trustees" -> Json.arr(
+        Json.obj(
+          TrusteeDetailsId.toString ->
+            PersonDetails("Test", Some("Trustee"), "Name", LocalDate.now),
+          TrusteeNinoId.toString -> Nino.Yes("CS121212C")
+        )
+      )
+    )))
 }
