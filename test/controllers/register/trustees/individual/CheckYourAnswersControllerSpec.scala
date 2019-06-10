@@ -55,27 +55,37 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
       }
     }
 
-    "return OK and display new Nino with Add link for UpdateMode and separateRefCollectionEnabled is true" in {
-
-      val answerSections = Seq(
-        trusteeDetailsSection2,
-        contactDetailsSection
-      )
+    "return OK and display Add link for UpdateMode pointing to new Nino page where separateRefCollectionEnabled is true and no nino retrieved" in {
+      val expectedAnswerSections = {
+        val expectedAnswerRowNino = AnswerRow("messages__common__nino", Seq("site.not_entered"), answerIsMessageKey = true,
+          Some(Link("site.add",
+            routes.TrusteeNinoNewController.onPageLoad(Mode.checkMode(UpdateMode), firstIndex, Some("srn")).url,
+            Some(s"messages__visuallyhidden__director__nino_add"))))
+        Seq(
+          trusteeDetailsSectionUpdate(expectedAnswerRowNino),
+          contactDetailsSection
+        )
+      }
 
       val result = controller(getMandatoryTrustee, toggle = true).onPageLoad(UpdateMode, firstIndex, Some("srn"))(fakeRequest)
       status(result) mustBe OK
-
-//
-//      println( "\nACTUAL:-" + contentAsString(result))
-//
-//      println( "\nEXPECTED:-" + viewAsString(answerSections, UpdateMode, Some("srn")))
-
-      contentAsString(result) mustBe viewAsString(answerSections, UpdateMode, Some("srn"))
-
-
-
-
+      contentAsString(result) mustBe viewAsString(expectedAnswerSections, UpdateMode, Some("srn"))
     }
+
+    "return OK and display no Add link and nino for UpdateMode where separateRefCollectionEnabled is true and a nino retrieved" in {
+      val expectedAnswerSections = {
+        val expectedAnswerRowNino = AnswerRow("messages__common__nino", Seq("CS121212C"), answerIsMessageKey = false, None)
+        Seq(
+          trusteeDetailsSectionUpdate(expectedAnswerRowNino),
+          contactDetailsSection
+        )
+      }
+
+      val result = controller(getMandatoryTrusteeWithNewNinoId, toggle = true).onPageLoad(UpdateMode, firstIndex, Some("srn"))(fakeRequest)
+      status(result) mustBe OK
+      contentAsString(result) mustBe viewAsString(expectedAnswerSections, UpdateMode, Some("srn"))
+    }
+
 
     behave like changeableController(
       controller(getMandatoryTrustee, _:AllowChangeHelper).onPageLoad(NormalMode, firstIndex, None)(fakeRequest)
@@ -107,10 +117,7 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase with Controller
   )
 
 
-  def trusteeDetailsSectionUpdate(ninoRow:AnswerRow = AnswerRow("messages__common__nino", Seq("site.not_entered"), answerIsMessageKey = true,
-    Some(Link("site.add",
-      routes.TrusteeNinoNewController.onPageLoad(Mode.checkMode(UpdateMode), firstIndex, Some("srn")).url,
-      Some(s"messages__visuallyhidden__director__nino_add"))))) = AnswerSection(None,
+  def trusteeDetailsSectionUpdate(ninoRow:AnswerRow) = AnswerSection(None,
     Seq(
       AnswerRow(
         "messages__common__cya__name",

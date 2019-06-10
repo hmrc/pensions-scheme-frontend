@@ -25,7 +25,7 @@ import identifiers.register.establishers.individual.EstablisherDetailsId
 import identifiers.register.establishers.partnership.PartnershipDetailsId
 import identifiers.register.establishers.partnership.partner.PartnerDetailsId
 import identifiers.register.trustees.TrusteesId
-import identifiers.register.trustees.individual.TrusteeDetailsId
+import identifiers.register.trustees.individual.{TrusteeDetailsId, TrusteeNewNinoId}
 import identifiers.{AdviserNameId, SchemeNameId}
 import models.person.PersonDetails
 import models.{CompanyDetails, PartnershipDetails}
@@ -75,6 +75,17 @@ trait ControllerSpecBase extends SpecBase with Enumerable.Implicits with MapForm
         Json.obj(
           TrusteeDetailsId.toString ->
             PersonDetails("Test", Some("Trustee"), "Name", LocalDate.now)
+        )
+      )
+    )))
+
+  def getMandatoryTrusteeWithNewNinoId: FakeDataRetrievalAction = new FakeDataRetrievalAction(Some(
+    Json.obj(
+      "trustees" -> Json.arr(
+        Json.obj(
+          TrusteeDetailsId.toString ->
+            PersonDetails("Test", Some("Trustee"), "Name", LocalDate.now),
+          TrusteeNewNinoId.toString -> "CS121212C"
         )
       )
     )))
