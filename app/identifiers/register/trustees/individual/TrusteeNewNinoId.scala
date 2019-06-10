@@ -28,7 +28,7 @@ import viewmodels.AnswerRow
 
 
 case class TrusteeNewNinoId(index: Int) extends TypedIdentifier[String] {
-  override def path: JsPath =  TrusteesId(index).path \ TrusteeNewNinoId.toString
+  override def path: JsPath =  TrusteesId(index).path \ TrusteeNewNinoId.toString \ "nino"
 }
 
 object TrusteeNewNinoId {

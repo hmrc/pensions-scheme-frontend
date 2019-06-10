@@ -200,7 +200,9 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase with Controller
         Json.obj(
           TrusteeDetailsId.toString ->
             PersonDetails("Test", Some("Trustee"), "Name", LocalDate.now),
-          TrusteeNewNinoId.toString -> "CS121212C"
+          TrusteeNewNinoId.toString -> Json.obj(
+            "nino" -> "CS121212C"
+          )
         )
       )
     )))

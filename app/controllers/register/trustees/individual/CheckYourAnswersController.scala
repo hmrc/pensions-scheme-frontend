@@ -24,15 +24,14 @@ import identifiers.register.trustees.individual._
 import identifiers.register.trustees.{IsTrusteeCompleteId, IsTrusteeNewId, individual}
 import javax.inject.Inject
 import models.Mode.checkMode
-import models.Nino.Yes
 import models.{CheckUpdateMode, Index, Mode, UpdateMode}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import utils.annotations.{NoSuspendedCheck, TaskList, TrusteesIndividual}
+import utils.annotations.{NoSuspendedCheck, TrusteesIndividual}
 import utils.checkyouranswers.Ops._
-import utils.{AllowChangeHelper, CountryOptions, Navigator, Toggles}
+import utils._
 import viewmodels.AnswerSection
 import views.html.check_your_answers
 
@@ -55,17 +54,16 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requiredData).async {
     implicit request =>
 
-      implicit val userAnswers = request.userAnswers
+      implicit val userAnswers: UserAnswers = request.userAnswers
 
-      lazy val displayNewNino = (userAnswers.get(trustees.IsTrusteeNewId(index)), userAnswers.get(TrusteeNinoId(index))) match {
-        case (Some(true), _) => false
-        case (_, Some(Yes(_)))  => false
+      lazy val displayNewNino = userAnswers.get(trustees.IsTrusteeNewId(index)) match {
+        case Some(true) => false
         case _ => fs.get(Toggles.separateRefCollectionEnabled)
       }
 
       val trusteeDetailsRow = TrusteeDetailsId(index).row(routes.TrusteeDetailsController.onPageLoad(checkMode(mode), index, srn).url, mode)
       val trusteeNinoRow = mode match {
-        case UpdateMode| CheckUpdateMode if displayNewNino => individual.TrusteeNewNinoId(index).
+        case UpdateMode | CheckUpdateMode if displayNewNino => individual.TrusteeNewNinoId(index).
           row(routes.TrusteeNinoNewController.onPageLoad(checkMode(mode), index, srn).url, mode)
         case _ => individual.TrusteeNinoId(index).
           row(routes.TrusteeNinoController.onPageLoad(checkMode(mode), index, srn).url, mode)
@@ -73,7 +71,7 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
       val trusteeUtrRow = UniqueTaxReferenceId(index).row(routes.UniqueTaxReferenceController.onPageLoad(checkMode(mode), index, srn).url, mode)
       val trusteeAddressRow = TrusteeAddressId(index).row(routes.TrusteeAddressController.onPageLoad(checkMode(mode), index, srn).url, mode)
       val trusteeAddressYearsRow = TrusteeAddressYearsId(index).row(routes.TrusteeAddressYearsController.onPageLoad(checkMode(mode), index, srn).url, mode)
-      val trusteePreviousAddressRow = TrusteePreviousAddressId(index).row(routes.TrusteePreviousAddressController.onPageLoad(checkMode(mode),index, srn).url, mode)
+      val trusteePreviousAddressRow = TrusteePreviousAddressId(index).row(routes.TrusteePreviousAddressController.onPageLoad(checkMode(mode), index, srn).url, mode)
       val trusteeContactDetails = TrusteeContactDetailsId(index).row(routes.TrusteeContactDetailsController.onPageLoad(checkMode(mode), index, srn).url, mode)
 
       val trusteeDetailsSection = AnswerSection(None,
