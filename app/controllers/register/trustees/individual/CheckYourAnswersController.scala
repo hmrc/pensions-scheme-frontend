@@ -24,6 +24,7 @@ import identifiers.register.trustees.individual._
 import identifiers.register.trustees.{IsTrusteeCompleteId, IsTrusteeNewId, individual}
 import javax.inject.Inject
 import models.Mode.checkMode
+import models.Nino.Yes
 import models.{CheckUpdateMode, Index, Mode, UpdateMode}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
@@ -58,7 +59,11 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
 
       lazy val displayNewNino = userAnswers.get(trustees.IsTrusteeNewId(index)) match {
         case Some(true) => false
-        case _ => fs.get(Toggles.separateRefCollectionEnabled)
+        case _ =>
+          userAnswers.get(TrusteeNinoId(index)) match {
+            case Some(Yes(_))  => false
+            case _ => fs.get(Toggles.separateRefCollectionEnabled)
+          }
       }
 
       val trusteeDetailsRow = TrusteeDetailsId(index).row(routes.TrusteeDetailsController.onPageLoad(checkMode(mode), index, srn).url, mode)
