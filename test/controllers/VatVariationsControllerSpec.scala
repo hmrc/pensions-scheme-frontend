@@ -24,7 +24,6 @@ import identifiers.TypedIdentifier
 import models.NormalMode
 import models.requests.DataRequest
 import org.scalatest.concurrent.ScalaFutures
-import org.scalatest.mockito.MockitoSugar
 import org.scalatest.{MustMatchers, OptionValues, WordSpec}
 import play.api.i18n.MessagesApi
 import play.api.inject.bind
