@@ -43,7 +43,7 @@ class CompanyVatVariationsIdSpec extends SpecBase {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
         implicit val userAnswers = request.userAnswers
         CompanyVatVariationsId(0).row(onwardUrl, NormalMode) must equal(Seq(
-          AnswerRow("messages__company__cya__vat_yes_no",List("vat"),false,Some(Link("site.change",onwardUrl,
+          AnswerRow("messages__common__cya__vat",List("vat"),false,Some(Link("site.change",onwardUrl,
             Some("messages__visuallyhidden__establisher__vat_number"))))
         ))
       }
