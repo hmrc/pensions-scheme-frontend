@@ -90,7 +90,6 @@ GET        /:index/individual/change/establishers-address-manual                
 POST       /:index/individual/change/establishers-address-manual                                            controllers.register.establishers.individual.AddressController.onSubmit(mode: Mode = CheckMode, index: Index, srn: Option[String] = None)
 GET        /:index/individual/:mode/establishers-address-manual/:srn                                        controllers.register.establishers.individual.AddressController.onPageLoad(mode: Mode, index: Index, srn: Option[String])
 POST       /:index/individual/:mode/establishers-address-manual/:srn                                        controllers.register.establishers.individual.AddressController.onSubmit(mode: Mode, index: Index, srn: Option[String])
-GET       /:index/individual/:mode/establishers-address-manual-link/:srn                                    controllers.register.establishers.individual.AddressController.onClick(mode: Mode, index: Index, srn: Option[String])
 
 GET         /:index/individual/update/is-this-previous-address/:srn                                       controllers.register.establishers.individual.IndividualConfirmPreviousAddressController.onPageLoad(mode: Mode = CheckUpdateMode, index:Index, srn: Option[String])
 POST        /:index/individual/update/is-this-previous-address/:srn                                       controllers.register.establishers.individual.IndividualConfirmPreviousAddressController.onSubmit(mode: Mode = CheckUpdateMode, index:Index, srn: Option[String])
@@ -373,7 +372,6 @@ GET        /:index/partnership/change/establishers-address-manual               
 POST       /:index/partnership/change/establishers-address-manual                                           controllers.register.establishers.partnership.PartnershipAddressController.onSubmit(mode: Mode = CheckMode, index: Index, srn: Option[String] = None)
 GET        /:index/partnership/:mode/establishers-address-manual/:srn                                       controllers.register.establishers.partnership.PartnershipAddressController.onPageLoad(mode: Mode, index: Index, srn: Option[String])
 POST       /:index/partnership/:mode/establishers-address-manual/:srn                                       controllers.register.establishers.partnership.PartnershipAddressController.onSubmit(mode: Mode, index: Index, srn: Option[String])
-GET       /:index/partnership/:mode/establishers-address-manual-link/:srn                                       controllers.register.establishers.partnership.PartnershipAddressController.onClick(mode: Mode, index: Index, srn: Option[String])
 
 GET        /:index/partnership/establishers-address                                                          controllers.register.establishers.partnership.PartnershipPostcodeLookupController.onPageLoad(mode: Mode = NormalMode, index: Index, srn: Option[String] = None)
 POST       /:index/partnership/establishers-address                                                          controllers.register.establishers.partnership.PartnershipPostcodeLookupController.onSubmit(mode: Mode = NormalMode, index: Index, srn: Option[String] = None)
@@ -433,6 +431,9 @@ GET        /:index/partnership/change/vat-number                                
 POST       /:index/partnership/change/vat-number                                                            controllers.register.establishers.partnership.PartnershipVatController.onSubmit(mode: Mode = CheckMode, index: Index, srn: Option[String] = None)
 GET        /:index/partnership/:mode/vat-number/:srn                                                        controllers.register.establishers.partnership.PartnershipVatController.onPageLoad(mode: Mode, index: Index, srn: Option[String])
 POST       /:index/partnership/:mode/vat-number/:srn                                                        controllers.register.establishers.partnership.PartnershipVatController.onSubmit(mode: Mode, index: Index, srn: Option[String])
+
+GET        /:index/partnership/:mode/enter-employer-paye-number/:srn                                            controllers.register.establishers.partnership.PartnershipPayeVariationsController.onPageLoad(mode: Mode, index: Index, srn: Option[String])
+POST       /:index/partnership/:mode/enter-employer-paye-number/:srn                                            controllers.register.establishers.partnership.PartnershipPayeVariationsController.onSubmit(mode: Mode, index: Index, srn: Option[String])
 
 GET        /:index/partnership/contact-details                                                              controllers.register.establishers.partnership.PartnershipContactDetailsController.onPageLoad(mode: Mode = NormalMode, index: Index, srn: Option[String] = None)
 POST       /:index/partnership/contact-details                                                              controllers.register.establishers.partnership.PartnershipContactDetailsController.onSubmit(mode: Mode = NormalMode, index: Index, srn: Option[String] = None)

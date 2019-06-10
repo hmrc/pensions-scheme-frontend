@@ -88,6 +88,8 @@ class EstablishersPartnershipNavigator @Inject()(val dataCacheConnector: UserAns
     case PartnershipVatId(index) => exitMiniJourney(index, mode, srn, from.userAnswers)
     case PartnershipPayeId(index) =>
       exitMiniJourney(index, mode, srn, from.userAnswers)
+    case PartnershipPayeVariationsId(index) =>
+      exitMiniJourney(index, mode, srn, from.userAnswers)
     case PartnershipUniqueTaxReferenceID(index) =>
       exitMiniJourney(index, mode, srn, from.userAnswers)
     case PartnershipPostcodeLookupId(index) =>

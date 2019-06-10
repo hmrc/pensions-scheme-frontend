@@ -78,7 +78,8 @@ class EstablishersPartnershipNavigatorSpec extends SpecBase with NavigatorBehavi
     (PartnershipAddressYearsId(0), addressYearsUnderAYear, partnershipPaPostCodeLookup(UpdateMode), true, Some(confirmPreviousAddress), true),
     (PartnershipConfirmPreviousAddressId(0), emptyAnswers, defaultPage, false, Some(sessionExpired), false),
     (PartnershipConfirmPreviousAddressId(0), confirmPreviousAddressYes, defaultPage, false, Some(anyMoreChanges), false),
-    (PartnershipConfirmPreviousAddressId(0), confirmPreviousAddressNo, defaultPage, false, Some(partnershipPaPostCodeLookup(checkMode(UpdateMode))), false)
+    (PartnershipConfirmPreviousAddressId(0), confirmPreviousAddressNo, defaultPage, false, Some(partnershipPaPostCodeLookup(checkMode(UpdateMode))), false),
+    (PartnershipPayeVariationsId(0), emptyAnswers, none, true, Some(exitJourney(checkMode(UpdateMode), emptyAnswers)), true)
   )
 
   private def updateOnlyRoutesToggleOff(): TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = Table(
@@ -133,6 +134,7 @@ object EstablishersPartnershipNavigatorSpec extends SpecBase with OptionValues {
   private def checkYourAnswers(mode: Mode) = routes.CheckYourAnswersController.onPageLoad(mode, 0, None)
 
   private def anyMoreChanges = controllers.routes.AnyMoreChangesController.onPageLoad(None)
+  private def none = controllers.routes.IndexController.onPageLoad
 
   private def exitJourney(mode: Mode, answers: UserAnswers) = if (mode == NormalMode) checkYourAnswers(mode) else {
     if (answers.get(IsEstablisherNewId(0)).getOrElse(false)) checkYourAnswers(mode)

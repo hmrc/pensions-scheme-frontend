@@ -16,21 +16,22 @@
 
 package controllers.register.establishers.partnership
 
-import config.FrontendAppConfig
+import config.{FeatureSwitchManagementService, FrontendAppConfig}
 import controllers.Retrievals
 import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRequiredAction, DataRetrievalAction}
 import identifiers.register.establishers.IsEstablisherNewId
 import identifiers.register.establishers.partnership._
 import javax.inject.{Inject, Singleton}
-import models.{Index, Mode, NormalMode}
 import models.Mode.checkMode
+import models.requests.DataRequest
+import models.{Index, Mode, UpdateMode}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import utils.annotations.{EstablisherPartnership, NoSuspendedCheck, TaskList}
-import utils.checkyouranswers.Ops._
 import utils._
+import utils.annotations.{EstablisherPartnership, NoSuspendedCheck}
+import utils.checkyouranswers.Ops._
 import viewmodels.AnswerSection
 import views.html.check_your_answers
 
@@ -46,7 +47,8 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
                                            userAnswersService: UserAnswersService,
                                            @EstablisherPartnership navigator: Navigator,
                                            implicit val countryOptions: CountryOptions,
-                                           allowChangeHelper: AllowChangeHelper
+                                           allowChangeHelper: AllowChangeHelper,
+                                           featureSwitchManagementService: FeatureSwitchManagementService
                                           )(implicit val ec: ExecutionContext) extends FrontendController
   with Retrievals with I18nSupport with Enumerable.Implicits {
 
@@ -60,7 +62,7 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
         Seq(
           PartnershipDetailsId(index).row(routes.PartnershipDetailsController.onPageLoad(checkMode(mode), index, srn).url, mode),
           PartnershipVatId(index).row(routes.PartnershipVatController.onPageLoad(checkMode(mode), index, srn).url, mode),
-          PartnershipPayeId(index).row(routes.PartnershipPayeController.onPageLoad(checkMode(mode), index, srn).url, mode),
+          payeCya(mode, srn, index) ++
           PartnershipUniqueTaxReferenceID(index).row(routes.PartnershipUniqueTaxReferenceController.onPageLoad(checkMode(mode), index, srn).url, mode),
           IsPartnershipDormantId(index).row(routes.IsPartnershipDormantController.onPageLoad(checkMode(mode), index, srn).url, mode)
         ).flatten
@@ -94,5 +96,13 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
         Redirect(navigator.nextPage(CheckYourAnswersId(index), mode, request.userAnswers, srn))
       }
   }
+
+  private def payeCya(mode: Mode, srn: Option[String], index: Index)(implicit request: DataRequest[AnyContent]) =
+    if (mode == UpdateMode && featureSwitchManagementService.get(Toggles.isSeparateRefCollectionEnabled) &&
+      !request.userAnswers.get(IsEstablisherNewId(index)).getOrElse(false))
+      PartnershipPayeVariationsId(index).row(routes.PartnershipPayeVariationsController.onPageLoad(checkMode(mode), index, srn).url, mode)
+    else
+      PartnershipPayeId(index).row(routes.PartnershipPayeController.onPageLoad(checkMode(mode), index, srn).url, mode)
+
 
 }
