@@ -38,6 +38,7 @@ trait FakeUserAnswersService extends UserAnswersService with Matchers {
   override protected def subscriptionCacheConnector: OldSubscriptionCacheConnector = FakeSubscriptionCacheConnector.getConnector
   override protected def updateSchemeCacheConnector: UpdateSchemeCacheConnector = FakeUpdateCacheConnector.getConnector
   override protected def lockConnector: PensionSchemeVarianceLockConnector = FakeLockConnector.getConnector
+  override protected def viewConnector: SchemeDetailsReadOnlyCacheConnector = FakeReadOnlyCacheConnector.getConnector
     override val appConfig: FrontendAppConfig =  FakeFrontendAppConfig.getConfig
 
   private val data: mutable.HashMap[String, JsValue] = mutable.HashMap()

@@ -16,7 +16,7 @@
 
 package controllers
 
-import connectors.{PensionSchemeVarianceLockConnector, PensionsSchemeConnector, UpdateSchemeCacheConnector}
+import connectors.{PensionSchemeVarianceLockConnector, PensionsSchemeConnector, SchemeDetailsReadOnlyCacheConnector, UpdateSchemeCacheConnector}
 import controllers.actions._
 import forms.register.DeclarationFormProvider
 import identifiers.{PstrId, SchemeNameId}
@@ -52,10 +52,12 @@ class VariationDeclarationControllerSpec extends ControllerSpecBase with Mockito
   val pensionsSchemeConnector: PensionsSchemeConnector = mock[PensionsSchemeConnector]
   val lockConnector: PensionSchemeVarianceLockConnector = mock[PensionSchemeVarianceLockConnector]
   val updateSchemeCacheConnector: UpdateSchemeCacheConnector = mock[UpdateSchemeCacheConnector]
+  val viewConnector: SchemeDetailsReadOnlyCacheConnector = mock[SchemeDetailsReadOnlyCacheConnector]
 
   def controller(dataRetrievalAction: DataRetrievalAction = validData): VariationDeclarationController =
     new VariationDeclarationController(frontendAppConfig, messagesApi, new FakeNavigator(onwardRoute), FakeAuthAction,
-      dataRetrievalAction, FakeAllowAccessProvider(), new DataRequiredActionImpl, formProvider, pensionsSchemeConnector, lockConnector, updateSchemeCacheConnector)
+      dataRetrievalAction, FakeAllowAccessProvider(), new DataRequiredActionImpl, formProvider,
+      pensionsSchemeConnector, lockConnector, updateSchemeCacheConnector, viewConnector)
 
   private def viewAsString() = variationDeclaration(frontendAppConfig, form, Some(schemeName), postCall, srn)(fakeRequest, messages).toString
 
@@ -87,6 +89,8 @@ class VariationDeclarationControllerSpec extends ControllerSpecBase with Mockito
         when(pensionsSchemeConnector.updateSchemeDetails(any(), any(), any())(any(), any()))
           .thenReturn(Future.successful((): Unit))
         when(updateSchemeCacheConnector.removeAll(any())(any(), any()))
+          .thenReturn(Future.successful(Ok))
+        when(viewConnector.removeAll(any())(any(), any()))
           .thenReturn(Future.successful(Ok))
         when(lockConnector.releaseLock(any(), any())(any(), any()))
           .thenReturn(Future.successful((): Unit))
