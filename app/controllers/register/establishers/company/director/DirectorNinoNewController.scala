@@ -43,9 +43,9 @@ class DirectorNinoNewController @Inject()(
                                  ) extends NinoController with I18nSupport {
 
   private[controllers] val postCall = controllers.register.establishers.company.director.routes.DirectorNinoNewController.onSubmit _
-  private[controllers] val title: Message = "messages__director_yes_nino__title"
-  private[controllers] val heading: Message = "messages__common_nino__h1"
-  private[controllers] val hint: Message = "messages__common__nino_hint"
+  private[controllers] val title: String = "messages__director_yes_nino__title"
+  private[controllers] val heading: String = "messages__common_nino__h1"
+  private[controllers] val hint: String = "messages__common__nino_hint"
 
   private def viewmodel(establisherIndex: Index, directorIndex: Index, mode: Mode, srn: Option[String]): Retrieval[NinoViewModel] =
     Retrieval {
