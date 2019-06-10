@@ -135,6 +135,9 @@ POST       /:index/company/change/employer-paye-number                          
 GET        /:index/company/:mode/employer-paye-number/:srn                                                               controllers.register.establishers.company.CompanyPayeController.onPageLoad(mode: Mode, index: Index, srn: Option[String])
 POST       /:index/company/:mode/employer-paye-number/:srn                                                               controllers.register.establishers.company.CompanyPayeController.onSubmit(mode: Mode, index: Index, srn: Option[String])
 
+GET        /:index/company/:mode/enter-employer-paye-number/:srn                                            controllers.register.establishers.company.CompanyPayeVariationsController.onPageLoad(mode: Mode, index: Index, srn: Option[String])
+POST       /:index/company/:mode/enter-employer-paye-number/:srn                                            controllers.register.establishers.company.CompanyPayeVariationsController.onSubmit(mode: Mode, index: Index, srn: Option[String])
+
 GET        /:index/company/vat-registered                                                                          controllers.register.establishers.company.CompanyVatController.onPageLoad(mode: Mode = NormalMode, index: Index, srn: Option[String] = None)
 POST       /:index/company/vat-registered                                                                          controllers.register.establishers.company.CompanyVatController.onSubmit(mode: Mode = NormalMode, index: Index, srn: Option[String] = None)
 GET        /:index/company/change/vat-registered                                                                   controllers.register.establishers.company.CompanyVatController.onPageLoad(mode: Mode = CheckMode, index: Index, srn: Option[String] = None)
@@ -214,7 +217,6 @@ GET        /:index/company/change/establishers-address-manual                   
 POST       /:index/company/change/establishers-address-manual                                                      controllers.register.establishers.company.CompanyAddressController.onSubmit(mode: Mode = CheckMode, srn: Option[String] = None, index: Index)
 GET        /:index/company/:mode/establishers-address-manual/:srn                                               controllers.register.establishers.company.CompanyAddressController.onPageLoad(mode: Mode, srn: Option[String], index: Index)
 POST       /:index/company/:mode/establishers-address-manual/:srn                                               controllers.register.establishers.company.CompanyAddressController.onSubmit(mode: Mode, srn: Option[String], index: Index)
-GET       /:index/company/:mode/establishers-address-manual-link/:srn                                               controllers.register.establishers.company.CompanyAddressController.onClick(mode: Mode, srn: Option[String], index: Index)
 
 GET        /:index/company/establishers-previous-address                                                    controllers.register.establishers.company.CompanyPreviousAddressPostcodeLookupController.onPageLoad(mode: Mode = NormalMode, srn: Option[String] = None, index: Index)
 POST       /:index/company/establishers-previous-address                                                    controllers.register.establishers.company.CompanyPreviousAddressPostcodeLookupController.onSubmit(mode: Mode = NormalMode, srn: Option[String] = None, index: Index)

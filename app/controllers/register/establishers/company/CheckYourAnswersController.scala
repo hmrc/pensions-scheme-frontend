@@ -16,14 +16,15 @@
 
 package controllers.register.establishers.company
 
-import config.FrontendAppConfig
+import config.{FeatureSwitchManagementService, FrontendAppConfig}
 import controllers.Retrievals
 import controllers.actions._
 import identifiers.register.establishers.IsEstablisherNewId
 import identifiers.register.establishers.company._
 import javax.inject.Inject
-import models.{Index, Mode, NormalMode}
+import models.{Index, Mode, NormalMode, UpdateMode}
 import models.Mode.checkMode
+import models.requests.DataRequest
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
@@ -46,7 +47,8 @@ class CheckYourAnswersController @Inject()(
                                             implicit val countryOptions: CountryOptions,
                                             @EstablishersCompany navigator: Navigator,
                                             userAnswersService: UserAnswersService,
-                                            allowChangeHelper: AllowChangeHelper
+                                            allowChangeHelper: AllowChangeHelper,
+                                            featureSwitchManagementService: FeatureSwitchManagementService
                                           )(implicit val ec: ExecutionContext) extends FrontendController
   with Retrievals with I18nSupport with Enumerable.Implicits {
 
@@ -59,7 +61,7 @@ class CheckYourAnswersController @Inject()(
         Some("messages__common__company_details__title"),
         CompanyDetailsId(index).row(routes.CompanyDetailsController.onPageLoad(checkMode(mode), srn, index).url, mode) ++
           CompanyVatId(index).row(routes.CompanyVatController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
-          CompanyPayeId(index).row(routes.CompanyPayeController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
+          payeCya(mode, srn, index) ++
           CompanyRegistrationNumberId(index).row(routes.CompanyRegistrationNumberController.onPageLoad(checkMode(mode), srn, Index(index)).url, mode) ++
           CompanyUniqueTaxReferenceId(index).row(routes.CompanyUniqueTaxReferenceController.onPageLoad(checkMode(mode), srn, Index(index)).url, mode) ++
           IsCompanyDormantId(index).row(routes.IsCompanyDormantController.onPageLoad(checkMode(mode), srn, Index(index)).url, mode)
@@ -93,5 +95,13 @@ class CheckYourAnswersController @Inject()(
         Redirect(navigator.nextPage(CheckYourAnswersId(index), mode, request.userAnswers, srn))
       }
   }
+
+  private def payeCya(mode: Mode, srn: Option[String], index: Index)(implicit request: DataRequest[AnyContent]) =
+    if (mode == UpdateMode && featureSwitchManagementService.get(Toggles.isSeparateRefCollectionEnabled) &&
+      !request.userAnswers.get(IsEstablisherNewId(index)).getOrElse(false))
+      CompanyPayeVariationsId(index).row(routes.CompanyPayeVariationsController.onPageLoad(checkMode(mode), index, srn).url, mode)
+    else
+      CompanyPayeId(index).row(routes.CompanyPayeController.onPageLoad(checkMode(mode), index, srn).url, mode)
+
 
 }
