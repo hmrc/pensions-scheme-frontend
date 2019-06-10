@@ -20,7 +20,6 @@ import base.SpecBase
 import controllers.ControllerSpecBase
 import controllers.actions._
 import controllers.behaviours.ControllerAllowChangeBehaviour
-import controllers.register.establishers.company.CheckYourAnswersControllerSpec.ach
 import identifiers.register.establishers.IsEstablisherNewId
 import identifiers.register.establishers.company.director._
 import models._
