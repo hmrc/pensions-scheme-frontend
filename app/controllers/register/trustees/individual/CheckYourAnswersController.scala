@@ -63,15 +63,6 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
         case _ => fs.get(Toggles.separateRefCollectionEnabled)
       }
 
-//      lazy val displayNewNino = userAnswers.get(trustees.IsTrusteeNewId(index)) match {
-//        case Some(true) => false
-//        case _ =>
-//          userAnswers.get(TrusteeNinoId(index)) match {
-//            case Some(Yes(_))  => false
-//            case _ => fs.get(Toggles.separateRefCollectionEnabled)
-//          }
-//      }
-
       val trusteeDetailsRow = TrusteeDetailsId(index).row(routes.TrusteeDetailsController.onPageLoad(checkMode(mode), index, srn).url, mode)
       val trusteeNinoRow = mode match {
         case UpdateMode| CheckUpdateMode if displayNewNino => individual.TrusteeNewNinoId(index).
