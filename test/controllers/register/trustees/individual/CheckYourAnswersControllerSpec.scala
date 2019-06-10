@@ -55,7 +55,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
       }
     }
 
-    "return OK and display Add link for UpdateMode pointing to new Nino page where separateRefCollectionEnabled is true and no nino retrieved" in {
+    "return OK and display Add link for UpdateMode pointing to new Nino page where separateRefCollectionEnabled is true and no nino retrieved from ETMP" in {
       val expectedAnswerSections = {
         val expectedAnswerRowNino = AnswerRow("messages__common__nino", Seq("site.not_entered"), answerIsMessageKey = true,
           Some(Link("site.add",
@@ -72,7 +72,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
       contentAsString(result) mustBe viewAsString(expectedAnswerSections, UpdateMode, Some("srn"))
     }
 
-    "return OK and display no Add link but do display new nino for UpdateMode where separateRefCollectionEnabled is true and a new nino retrieved" in {
+    "return OK and display no add/change link but do display new nino for UpdateMode where separateRefCollectionEnabled is true and a new nino has already been entered" in {
       val expectedAnswerSections = {
         val expectedAnswerRowNino = AnswerRow("messages__common__nino", Seq("CS121212C"), answerIsMessageKey = false, None)
         Seq(
@@ -86,7 +86,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
       contentAsString(result) mustBe viewAsString(expectedAnswerSections, UpdateMode, Some("srn"))
     }
 
-    "return OK and display no Add link but do display old nino for UpdateMode where separateRefCollectionEnabled is true and an old nino retrieved" in {
+    "return OK and display no Add link but do display old nino for UpdateMode where separateRefCollectionEnabled is true and a nino retrieved from ETMP" in {
       val expectedAnswerSections = {
         val expectedAnswerRowNino = AnswerRow("messages__common__nino", Seq("CS121212C"), answerIsMessageKey = false, None)
         Seq(
