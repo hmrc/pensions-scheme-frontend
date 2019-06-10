@@ -25,10 +25,10 @@ import identifiers.register.establishers.individual.EstablisherDetailsId
 import identifiers.register.establishers.partnership.PartnershipDetailsId
 import identifiers.register.establishers.partnership.partner.PartnerDetailsId
 import identifiers.register.trustees.TrusteesId
-import identifiers.register.trustees.individual.{TrusteeDetailsId, TrusteeNewNinoId}
+import identifiers.register.trustees.individual.{TrusteeDetailsId, TrusteeNewNinoId, TrusteeNinoId}
 import identifiers.{AdviserNameId, SchemeNameId}
 import models.person.PersonDetails
-import models.{CompanyDetails, PartnershipDetails}
+import models.{CompanyDetails, Nino, PartnershipDetails}
 import org.joda.time.LocalDate
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -86,6 +86,17 @@ trait ControllerSpecBase extends SpecBase with Enumerable.Implicits with MapForm
           TrusteeDetailsId.toString ->
             PersonDetails("Test", Some("Trustee"), "Name", LocalDate.now),
           TrusteeNewNinoId.toString -> "CS121212C"
+        )
+      )
+    )))
+
+  def getMandatoryTrusteeWithOldNinoId: FakeDataRetrievalAction = new FakeDataRetrievalAction(Some(
+    Json.obj(
+      "trustees" -> Json.arr(
+        Json.obj(
+          TrusteeDetailsId.toString ->
+            PersonDetails("Test", Some("Trustee"), "Name", LocalDate.now),
+          TrusteeNinoId.toString -> Nino.Yes("CS121212C")
         )
       )
     )))

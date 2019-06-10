@@ -55,6 +55,23 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
       }
     }
 
+    "return OK and display all given answers where separateRefCollectionEnabled is true" in {
+      val expectedAnswerSections = {
+        val expectedAnswerRowNino = AnswerRow("messages__common__nino", Seq("site.not_entered"), answerIsMessageKey = true,
+          Some(Link("site.add",
+            routes.TrusteeNinoNewController.onPageLoad(Mode.checkMode(UpdateMode), firstIndex, Some("srn")).url,
+            Some(s"messages__visuallyhidden__director__nino_add"))))
+        Seq(
+          trusteeDetailsSectionUpdate(expectedAnswerRowNino),
+          contactDetailsSection
+        )
+      }
+
+      val result = controller(getMandatoryTrusteeWithOldNinoId, toggle = true).onPageLoad(UpdateMode, firstIndex, Some("srn"))(fakeRequest)
+      status(result) mustBe OK
+      contentAsString(result) mustBe viewAsString(expectedAnswerSections, UpdateMode, Some("srn"))
+    }
+
     "return OK and display Add link for UpdateMode pointing to new Nino page where separateRefCollectionEnabled is true and no nino retrieved" in {
       val expectedAnswerSections = {
         val expectedAnswerRowNino = AnswerRow("messages__common__nino", Seq("site.not_entered"), answerIsMessageKey = true,
