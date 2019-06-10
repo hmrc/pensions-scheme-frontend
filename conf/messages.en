@@ -1445,3 +1445,7 @@ messages__confirmPreviousAddress__title = Is this the previous address?
 messages__confirmPreviousAddress__heading = Is this {0}’s previous address?
 messages__confirmPreviousAddress__error = Select yes if this is {0}’s previous address
 
+messages__payeVariations__company_title = What is the company’s employer PAYE number?
+messages__payeVariations__partnership_title = What is the partnership’s employer PAYE number?
+messages__payeVariations__heading = What is {0}’s employer PAYE number?
+messages__payeVariations__hint = For example, 123/AB456

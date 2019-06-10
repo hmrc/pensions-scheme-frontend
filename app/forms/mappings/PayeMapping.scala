@@ -44,6 +44,18 @@ trait PayeMapping extends Mappings with Transforms {
     ).transform(toPaye, fromPaye)
   }
 
+  def payeStringMapping(requiredPayeKey: String = "messages__error__paye_required",
+                        invalidPayeKey: String = "messages__error__paye_invalid",
+                        payeLengthKey: String = "messages__error__paye_length"):
+  Mapping[String] = text(requiredPayeKey)
+    .transform(payeTransform, noTransform)
+    .verifying(
+      firstError(
+        maxLength(PayeMapping.maxPayeLength, payeLengthKey),
+        payeEmployerReferenceNumber(invalidPayeKey)
+      )
+    )
+
   private[this] def fromPaye(paye: Paye): (Boolean, Option[String]) = {
     paye match {
       case Paye.Yes(payeNo) => (true, Some(payeNo))

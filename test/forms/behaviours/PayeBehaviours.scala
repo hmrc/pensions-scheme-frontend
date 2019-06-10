@@ -75,4 +75,38 @@ class PayeBehaviours extends FormSpec with PayeMapping with RegexBehaviourSpec {
     behave like formWithRegex(testForm, valid, invalid)
   }
 
+  def formWithPayeVariations(
+                    testForm: Form[String],
+                    keyPayeRequired: String,
+                    keyPayeLength: String
+                  ): Unit = {
+
+    "fail to bind when paye exceeds max length of 16" in {
+      val testString = RandomStringUtils.randomAlphabetic(PayeMapping.maxPayeLength + 1)
+      val result = testForm.bind(Map("paye" -> testString))
+      result.errors shouldBe Seq(FormError("paye", keyPayeLength, Seq(PayeMapping.maxPayeLength)))
+    }
+
+    "fail to bind when value is omitted" in {
+      val expectedError = error("paye", keyPayeRequired)
+      checkForError(testForm, emptyForm, expectedError)
+    }
+
+    val valid = Table(
+      "data",
+      Map("paye" -> " 123/AB56789 "),
+      Map("paye" -> " 123AB56789 "),
+      Map("paye" -> " 123\\AB56789 ")
+    )
+
+    val invalid = Table(
+      "data",
+      Map("paye" -> "A1_"),
+      Map("paye" -> "ABC1234567897"),
+      Map("paye" -> "123")
+    )
+
+    behave like formWithRegex(testForm, valid, invalid)
+  }
+
 }
