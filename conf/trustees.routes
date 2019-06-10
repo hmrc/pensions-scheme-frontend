@@ -115,6 +115,11 @@ POST       /:index/company/change/company-registration-number           controll
 GET        /:index/company/:mode/company-registration-number/:srn       controllers.register.trustees.company.CompanyRegistrationNumberController.onPageLoad(mode: Mode, srn: Option[String], index: Index)
 POST       /:index/company/:mode/company-registration-number/:srn       controllers.register.trustees.company.CompanyRegistrationNumberController.onSubmit(mode: Mode, srn: Option[String], index: Index)
 
+
+GET        /:index/company/:mode/enter-company-registration-number/:srn controllers.register.trustees.company.CompanyRegistrationNumberVariationsController.onPageLoad(mode: Mode, srn: Option[String], index: Index)
+POST       /:index/company/:mode/enter-company-registration-number/:srn controllers.register.trustees.company.CompanyRegistrationNumberVariationsController.onSubmit(mode: Mode, srn: Option[String], index: Index)
+
+
 GET        /:index/company/check-your-answers                           controllers.register.trustees.company.CheckYourAnswersController.onPageLoad(mode: Mode = NormalMode, index: Index, srn: Option[String] = None)
 POST       /:index/company/check-your-answers                           controllers.register.trustees.company.CheckYourAnswersController.onSubmit(mode: Mode = NormalMode, index: Index, srn: Option[String] = None)
 GET        /:index/company/:mode/check-your-answers/:srn                controllers.register.trustees.company.CheckYourAnswersController.onPageLoad(mode: Mode,index: Index, srn: Option[String])

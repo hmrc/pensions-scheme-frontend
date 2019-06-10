@@ -19,6 +19,7 @@
 @import controllers.register.trustees.company.routes._
 @import models.{Mode,CompanyRegistrationNumber}
 @import play.api.mvc.Call
+@import forms.CompanyRegistrationNumberVariationsFormProvider
 
 @(appConfig: FrontendAppConfig, form: Form[_], mode: Mode, index:Index, schemeName: Option[String], submitUrl: Call, srn: Option[String])(implicit request: Request[_], messages: Messages)
 
@@ -42,10 +43,10 @@
         <p>@messages("messages__common__crn_hint")</p>
 
         @components.input_text(
-                field = form("companyRegistrationNumber"),
-                label = messages("messages__common__crn"),
-                groupClass = Some("js-hidden panel panel-border-narrow")
-                )
+            field = form("companyRegistrationNumber"),
+            label = messages("messages__common__crn"),
+            labelClass = Some("visually-hidden")
+            )
 
         @components.submit_button()
 

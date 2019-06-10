@@ -19,6 +19,7 @@ package controllers.register.establishers.company
 import akka.stream.Materializer
 import com.google.inject.Inject
 import config.FrontendAppConfig
+import controllers.register.CompanyRegistrationNumberVariationsBaseController
 import forms.CompanyRegistrationNumberVariationsFormProvider
 import identifiers.TypedIdentifier
 import identifiers.register.establishers.company.CompanyRegistrationNumberId
@@ -33,7 +34,7 @@ import play.api.data.Form
 import play.api.i18n.MessagesApi
 import play.api.inject.bind
 import play.api.libs.json.Json
-import play.api.mvc.{AnyContent, Request, Result}
+import play.api.mvc.{AnyContent, Call, Request, Result}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.UserAnswersService
@@ -43,9 +44,9 @@ import views.html.register.companyRegistrationNumberVariations
 
 import scala.concurrent.Future
 
-class CompanyRegistrationNumberVariationsControllerSpec extends WordSpec with MustMatchers with OptionValues with ScalaFutures with MockitoSugar {
+class CompanyRegistrationNumberVariationsBaseControllerSpec extends WordSpec with MustMatchers with OptionValues with ScalaFutures with MockitoSugar {
 
-  import CompanyRegistrationNumberVariationsControllerSpec._
+  import CompanyRegistrationNumberVariationsBaseControllerSpec._
 
   val postCall = routes.CompanyRegistrationNumberController.onSubmit _
 
@@ -64,7 +65,7 @@ class CompanyRegistrationNumberVariationsControllerSpec extends WordSpec with Mu
           val formProvider = app.injector.instanceOf[CompanyRegistrationNumberVariationsFormProvider]
           val request = FakeRequest()
           val messages = app.injector.instanceOf[MessagesApi].preferred(request)
-          val controller = app.injector.instanceOf[TestController]
+          val controller = app.injector.instanceOf[TestBaseController]
           val result = controller.onPageLoad(UserAnswers())
           val postCall = routes.CompanyRegistrationNumberController.onSubmit _
 
@@ -95,7 +96,7 @@ class CompanyRegistrationNumberVariationsControllerSpec extends WordSpec with Mu
           val formProvider = app.injector.instanceOf[CompanyRegistrationNumberVariationsFormProvider]
           val request = FakeRequest()
           val messages = app.injector.instanceOf[MessagesApi].preferred(request)
-          val controller = app.injector.instanceOf[TestController]
+          val controller = app.injector.instanceOf[TestBaseController]
           val answers = UserAnswers().set(CompanyRegistrationNumberId(firstIndex))(CompanyRegistrationNumber.Yes("123456789")).get
           val result = controller.onPageLoad(answers)
 
@@ -138,7 +139,7 @@ class CompanyRegistrationNumberVariationsControllerSpec extends WordSpec with Mu
           val request = FakeRequest().withFormUrlEncodedBody(
             ("companyRegistrationNumber", "12345678")
           )
-          val controller = app.injector.instanceOf[TestController]
+          val controller = app.injector.instanceOf[TestBaseController]
           val result = controller.onSubmit(UserAnswers(), request)
 
           status(result) mustEqual SEE_OTHER
@@ -158,7 +159,7 @@ class CompanyRegistrationNumberVariationsControllerSpec extends WordSpec with Mu
 
         val appConfig = app.injector.instanceOf[FrontendAppConfig]
         val formProvider = app.injector.instanceOf[CompanyRegistrationNumberVariationsFormProvider]
-        val controller = app.injector.instanceOf[TestController]
+        val controller = app.injector.instanceOf[TestBaseController]
         val request = FakeRequest().withFormUrlEncodedBody(("companyRegistrationNumber", "123456789012345"))
 
         val messages = app.injector.instanceOf[MessagesApi].preferred(request)
@@ -179,19 +180,23 @@ class CompanyRegistrationNumberVariationsControllerSpec extends WordSpec with Mu
   }
 }
 
-object CompanyRegistrationNumberVariationsControllerSpec {
+object CompanyRegistrationNumberVariationsBaseControllerSpec {
 
   val firstIndex = Index(0)
 
   object FakeIdentifier extends TypedIdentifier[CompanyRegistrationNumber]
 
-  class TestController @Inject()(
+  class TestBaseController @Inject()(
                                   override val appConfig: FrontendAppConfig,
                                   override val messagesApi: MessagesApi,
                                   override val userAnswersService: UserAnswersService,
                                   override val navigator: Navigator,
                                   formProvider: CompanyRegistrationNumberVariationsFormProvider
-                                ) extends CompanyRegistrationNumberVariationsController {
+                                ) extends CompanyRegistrationNumberVariationsBaseController {
+
+    def postCall: (Mode, Option[String], Index) => Call = routes.CompanyRegistrationNumberController.onSubmit _
+
+    override def identifier(index: Int): TypedIdentifier[CompanyRegistrationNumber] = CompanyRegistrationNumberId(index)
 
     override protected val form: Form[String] = formProvider()
 

@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-package controllers.register.establishers.company
+package controllers.register
 
 import config.FrontendAppConfig
 import controllers.Retrievals
-import identifiers.register.establishers.company.CompanyRegistrationNumberId
+import forms.CompanyRegistrationNumberVariationsFormProvider
+import identifiers.TypedIdentifier
 import models.requests.DataRequest
 import models.{CompanyRegistrationNumber, Index, Mode}
 import play.api.data.Form
@@ -32,7 +33,7 @@ import views.html.register.companyRegistrationNumberVariations
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-trait CompanyRegistrationNumberVariationsController extends FrontendController with Retrievals with I18nSupport {
+trait CompanyRegistrationNumberVariationsBaseController extends FrontendController with Retrievals with I18nSupport {
 
   protected implicit val ec = play.api.libs.concurrent.Execution.defaultContext
 
@@ -40,17 +41,21 @@ trait CompanyRegistrationNumberVariationsController extends FrontendController w
 
   protected def userAnswersService: UserAnswersService
 
-  protected val form: Form[String]
+  protected def form = formProvider()
+
+  protected val formProvider: CompanyRegistrationNumberVariationsFormProvider = new CompanyRegistrationNumberVariationsFormProvider()
 
   protected def navigator: Navigator
 
-  def postCall: (Mode, Option[String], Index) => Call = routes.CompanyRegistrationNumberController.onSubmit _
+  def postCall: (Mode, Option[String], Index) => Call
+
+  def identifier(index: Int): TypedIdentifier[CompanyRegistrationNumber]
 
   def get(mode: Mode, srn: Option[String], index: Index)
          (implicit request: DataRequest[AnyContent]): Future[Result] = {
 
     val preparedForm =
-      request.userAnswers.get(CompanyRegistrationNumberId(index)) match {
+      request.userAnswers.get(identifier(index)) match {
         case Some(CompanyRegistrationNumber.Yes(crnNumber)) => form.fill(crnNumber)
         case _ => form
       }
@@ -70,9 +75,9 @@ trait CompanyRegistrationNumberVariationsController extends FrontendController w
 
       crnNumber => {
         val updatedUserAnswers = request.userAnswers
-          .set(CompanyRegistrationNumberId(index))(CompanyRegistrationNumber.Yes(crnNumber)).asOpt.getOrElse(request.userAnswers)
+          .set(identifier(index))(CompanyRegistrationNumber.Yes(crnNumber)).asOpt.getOrElse(request.userAnswers)
         userAnswersService.upsert(mode, srn, updatedUserAnswers.json).map(cacheMap =>
-          Redirect(navigator.nextPage(CompanyRegistrationNumberId(index), mode, UserAnswers(cacheMap), srn)))
+          Redirect(navigator.nextPage(identifier(index), mode, UserAnswers(cacheMap), srn)))
       }
     )
   }
