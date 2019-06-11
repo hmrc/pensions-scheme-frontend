@@ -22,7 +22,7 @@ import controllers.behaviours.ControllerAllowChangeBehaviour
 import controllers.register.trustees.individual.CheckYourAnswersControllerSpec.{fakeRequest, frontendAppConfig, messages, postUrl}
 import identifiers.TypedIdentifier
 import identifiers.register.establishers.individual._
-import identifiers.register.establishers.{IsEstablisherCompleteId, IsEstablisherNewId, individual}
+import identifiers.register.establishers.{EstablisherNewNinoId, IsEstablisherCompleteId, IsEstablisherNewId, individual}
 import models._
 import models.address.Address
 import models.person.PersonDetails
@@ -35,7 +35,7 @@ import play.api.test.Helpers.{contentAsString, redirectLocation, status, _}
 import services.FakeUserAnswersService
 import utils._
 import utils.checkyouranswers.Ops._
-import viewmodels.AnswerSection
+import viewmodels.{AnswerRow, AnswerSection}
 import views.html.check_your_answers
 
 class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerAllowChangeBehaviour {
@@ -68,37 +68,68 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
   "CheckYourAnswersController" when {
     "onPageLoad" must {
       "return OK and display all the answers" in {
-        val individualDetails = AnswerSection(
-          None,
-          EstablisherDetailsId(firstIndex).row(
-            controllers.register.establishers.individual.routes.EstablisherDetailsController.onPageLoad(CheckMode, firstIndex, None).url) ++
-            EstablisherNinoId(firstIndex).row(
-              controllers.register.establishers.individual.routes.EstablisherNinoController.onPageLoad(CheckMode, firstIndex, None).url) ++
-            UniqueTaxReferenceId(firstIndex).row(
-              routes.UniqueTaxReferenceController.onPageLoad(CheckMode, firstIndex, None).url) ++
-            AddressId(firstIndex).row(
-              controllers.register.establishers.individual.routes.AddressController.onPageLoad(CheckMode, firstIndex, None).url) ++
-            AddressYearsId(firstIndex).row(
-              controllers.register.establishers.individual.routes.AddressYearsController.onPageLoad(CheckMode, firstIndex, None).url) ++
-            PreviousAddressId(firstIndex).row(
-              controllers.register.establishers.individual.routes.PreviousAddressController.onPageLoad(CheckMode, firstIndex, None).url
-            ) ++
-            ContactDetailsId(firstIndex).row(
-              controllers.register.establishers.individual.routes.ContactDetailsController.onPageLoad(CheckMode, firstIndex, None).url
-            )
-        )
-
         val result = controller(individualAnswers.dataRetrievalAction).onPageLoad(NormalMode, firstIndex, None)(request)
         status(result) mustBe OK
 
-        contentAsString(result) mustBe viewAsString(Seq(individualDetails), NormalMode, None)
+        val ninoRow = EstablisherNinoId(firstIndex).row(
+          controllers.register.establishers.individual.routes.EstablisherNinoController.onPageLoad(CheckMode, firstIndex, None).url)
+
+        contentAsString(result) mustBe viewAsString(Seq(individualDetails(ninoRow, CheckMode, None)), NormalMode, None)
         assertRenderedById(asDocument(contentAsString(result)), "submit")
       }
 
       behave like changeableController(
         controller(individualAnswers.dataRetrievalAction, _:AllowChangeHelper)
         .onPageLoad(UpdateMode, firstIndex, None)(request))
+
+      "return OK and display Add link for UpdateMode pointing to new Nino page where separateRefCollectionEnabled is true and no nino retrieved from ETMP" in {
+        implicit val request:FakeDataRequest = FakeDataRequest(individualAnswersWithNoNino)
+        val expectedNinoRow = EstablisherNewNinoId(firstIndex).row(
+          controllers.register.establishers.individual.routes.EstablisherNinoNewController.onPageLoad(CheckUpdateMode, firstIndex, Some("srn")).url, UpdateMode)
+
+        val result = controller(individualAnswersWithNoNino.dataRetrievalAction, toggle = true).onPageLoad(UpdateMode, firstIndex, Some("srn"))(fakeRequest)
+        status(result) mustBe OK
+
+        contentAsString(result) mustBe viewAsString(Seq(individualDetails(expectedNinoRow, CheckUpdateMode, Some("srn"))), UpdateMode, Some("srn"))
+      }
     }
+
+    def individualDetails(ninoRow:Seq[AnswerRow], mode:Mode, srn:Option[String]) = AnswerSection(
+      None,
+      EstablisherDetailsId(firstIndex).row(
+        controllers.register.establishers.individual.routes.EstablisherDetailsController.onPageLoad(mode, firstIndex, srn).url, mode) ++
+        ninoRow ++
+        UniqueTaxReferenceId(firstIndex).row(
+          routes.UniqueTaxReferenceController.onPageLoad(mode, firstIndex, srn).url, mode) ++
+        AddressId(firstIndex).row(
+          controllers.register.establishers.individual.routes.AddressController.onPageLoad(mode, firstIndex, srn).url, mode) ++
+        AddressYearsId(firstIndex).row(
+          controllers.register.establishers.individual.routes.AddressYearsController.onPageLoad(mode, firstIndex, srn).url, mode) ++
+        PreviousAddressId(firstIndex).row(
+          controllers.register.establishers.individual.routes.PreviousAddressController.onPageLoad(mode, firstIndex, srn).url, mode
+        ) ++
+        ContactDetailsId(firstIndex).row(
+          controllers.register.establishers.individual.routes.ContactDetailsController.onPageLoad(mode, firstIndex, srn).url, mode
+        )
+    )
+
+    def establishersSectionUpdate(ninoRow:AnswerRow) = AnswerSection(None,
+      Seq(
+        AnswerRow(
+          "messages__common__cya__name",
+          Seq("Test Trustee Name"),
+          answerIsMessageKey = false,
+          None
+        ),
+        AnswerRow(
+          "messages__common__dob",
+          Seq(s"${DateHelper.formatDate(LocalDate.now)}"),
+          answerIsMessageKey = false,
+          None
+        ),
+        ninoRow
+      )
+    )
 
     "onSubmit" must {
       "mark the section as complete and redirect to the next page" in {
@@ -128,17 +159,22 @@ object CheckYourAnswersControllerSpec extends OptionValues {
   private val firstIndex = Index(0)
   private val desiredRoute:Call = controllers.routes.IndexController.onPageLoad()
 
-  private val commonJsResultAnswers: JsResult[UserAnswers] = UserAnswers()
+
+
+  private def commonJsResultAnswers(f:UserAnswers => JsResult[UserAnswers] ): JsResult[UserAnswers] = UserAnswers()
     .set(EstablisherDetailsId(firstIndex))(PersonDetails("first name", None, "last name", LocalDate.now(), false))
-    .flatMap(_.set(EstablisherNinoId(firstIndex))(Nino.Yes("AB100100A")))
+    .flatMap(dd => f(dd))
     .flatMap(_.set(UniqueTaxReferenceId(firstIndex))(UniqueTaxReference.Yes("1234567890")))
     .flatMap(_.set(AddressId(firstIndex))(Address("Address 1", "Address 2", None, None, None, "GB")))
     .flatMap(_.set(AddressYearsId(firstIndex))(AddressYears.UnderAYear))
     .flatMap(_.set(individual.PreviousAddressId(firstIndex))(Address("Previous Address 1", "Previous Address 2", None, None, None, "GB")))
     .flatMap(_.set(individual.ContactDetailsId(firstIndex))(ContactDetails("test@test.com", "123456789")))
 
-  private val individualAnswers:UserAnswers = commonJsResultAnswers.asOpt.value
-  private val individualAnswersWithNewlyAddedEstablisher:UserAnswers = commonJsResultAnswers
+  private val individualAnswers:UserAnswers = commonJsResultAnswers(_.set(EstablisherNinoId(firstIndex))(Nino.Yes("AB100100A"))).asOpt.value
+  private val individualAnswersWithNoNino:UserAnswers = commonJsResultAnswers(
+    _.set(EstablisherNinoId(firstIndex))(Nino.No("reason"))
+  ).asOpt.value
+  private val individualAnswersWithNewlyAddedEstablisher:UserAnswers = commonJsResultAnswers(_.set(EstablisherNinoId(firstIndex))(Nino.Yes("AB100100A")))
     .flatMap(_.set(IsEstablisherNewId(firstIndex))(value = true))
     .asOpt.value
 }
