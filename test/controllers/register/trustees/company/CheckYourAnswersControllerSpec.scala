@@ -143,16 +143,11 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase with Controller
     "messages__visuallyhidden__trustee__vat_yes_no",
     "messages__visuallyhidden__trustee__vat_number")().row(CompanyVatId(index))(companyVatRoute, answers)
 
-  private def emptyContactDetailsSection = AnswerSection(
-    Some("messages__checkYourAnswers__section__contact_details"),
-    Nil)
+  private def emptyContactDetailsSection =
+    AnswerSection(Some("messages__checkYourAnswers__section__contact_details"), Nil)
 
-  private def companyDetailsSectionWithOnlyVat(vatRow: Seq[AnswerRow]) = {
-    AnswerSection(
-      Some("messages__checkYourAnswers__section__company_details"),
-      vatRow
-    )
-  }
+  private def companyDetailsSectionWithOnlyVat(vatRow: Seq[AnswerRow]) =
+    AnswerSection(Some("messages__checkYourAnswers__section__company_details"), vatRow)
 
   private def answerSections(implicit request: DataRequest[AnyContent]): Seq[AnswerSection] = {
 
@@ -192,38 +187,18 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase with Controller
         addressYearsRows ++
         CompanyPreviousAddressId(index).row(companyPreviousAddressRoute)
     )
-
-    Seq(
-      companyDetailsSection,
-      contactDetailsSection
-    )
-
+    Seq(companyDetailsSection, contactDetailsSection)
   }
 
   private def viewAsString(answerSections: Seq[AnswerSection], mode: Mode = NormalMode) = check_your_answers(
-    frontendAppConfig,
-    answerSections,
-    postUrl(mode),
-    None,
-    hideEditLinks = false,
-    hideSaveAndContinueButton = false
+    frontendAppConfig, answerSections, postUrl(mode), None, hideEditLinks = false, hideSaveAndContinueButton = false
   )(fakeRequest, messages).toString
 
   private def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData,
                          allowChangeHelper: AllowChangeHelper = ach,
                          isToggleOn: Boolean = false): CheckYourAnswersController =
-    new CheckYourAnswersController(
-      frontendAppConfig,
-      messagesApi,
-      FakeAuthAction,
-      dataRetrievalAction,
-      FakeAllowAccessProvider(),
-      new DataRequiredActionImpl,
-      fakeCountryOptions,
-      new FakeNavigator(onwardRoute),
-      FakeUserAnswersService,
-      allowChangeHelper,
-      new FakeFeatureSwitchManagementService(isToggleOn)
-    )
+    new CheckYourAnswersController(frontendAppConfig, messagesApi, FakeAuthAction, dataRetrievalAction,
+      FakeAllowAccessProvider(), new DataRequiredActionImpl, fakeCountryOptions, new FakeNavigator(onwardRoute),
+      FakeUserAnswersService, allowChangeHelper, new FakeFeatureSwitchManagementService(isToggleOn))
 
 }

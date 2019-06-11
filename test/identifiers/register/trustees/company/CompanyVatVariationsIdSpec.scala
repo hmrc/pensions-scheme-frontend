@@ -54,13 +54,10 @@ class CompanyVatVariationsIdSpec extends SpecBase {
             None)
         ))
       }
-    }
 
-    "in update mode for existing trustee - company vat" must {
-      implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(), PsaId("A0000000"))
-      implicit val userAnswers: UserAnswers = request.userAnswers
-
-      "return answers rows without change links" in {
+      "return answers rows with add link if vat is not available" in {
+        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(), PsaId("A0000000"))
+        implicit val userAnswers: UserAnswers = request.userAnswers
         CompanyVatVariationsId(0).row(onwardUrl, UpdateMode) must equal(Seq(
           AnswerRow("messages__common__cya__vat", Seq("site.not_entered"), answerIsMessageKey = true,
             Some(Link("site.add", onwardUrl, Some("messages__visuallyhidden__trustee__vat_number_add"))))
