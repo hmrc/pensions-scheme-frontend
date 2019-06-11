@@ -44,7 +44,7 @@ class EstablisherNinoNewController @Inject()(
                                  ) extends NinoController with I18nSupport {
 
   private[controllers] val postCall = controllers.register.establishers.individual.routes.EstablisherNinoNewController.onSubmit _
-  private[controllers] val title: Message = "messages__director_yes_nino__title"
+  private[controllers] val title: Message = "messages__common_nino__title"
   private[controllers] val heading: Message = "messages__common_nino__h1"
   private[controllers] val hint: Message = "messages__common__nino_hint"
 
