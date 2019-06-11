@@ -19,6 +19,7 @@ package controllers.register.establishers.individual
 import controllers.ControllerSpecBase
 import controllers.actions.{DataRequiredActionImpl, DataRetrievalAction, FakeAllowAccessProvider, FakeAuthAction}
 import controllers.behaviours.ControllerAllowChangeBehaviour
+import controllers.register.trustees.individual.CheckYourAnswersControllerSpec.{fakeRequest, frontendAppConfig, messages, postUrl}
 import identifiers.TypedIdentifier
 import identifiers.register.establishers.individual._
 import identifiers.register.establishers.{IsEstablisherCompleteId, IsEstablisherNewId, individual}
@@ -87,18 +88,10 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
             )
         )
 
-        val viewAsString = check_your_answers(
-          frontendAppConfig,
-          Seq(individualDetails),
-          routes.CheckYourAnswersController.onSubmit(NormalMode, firstIndex, None),
-          None,
-          hideEditLinks = false,
-          hideSaveAndContinueButton = false
-        )(fakeRequest, messages).toString
-
         val result = controller(individualAnswers.dataRetrievalAction).onPageLoad(NormalMode, firstIndex, None)(request)
         status(result) mustBe OK
-        contentAsString(result) mustBe viewAsString
+
+        contentAsString(result) mustBe viewAsString(Seq(individualDetails), NormalMode, None)
         assertRenderedById(asDocument(contentAsString(result)), "submit")
       }
 
@@ -120,6 +113,18 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
 }
 
 object CheckYourAnswersControllerSpec extends OptionValues {
+  def postUrl(mode:Mode, srn:Option[String]): Call = routes.CheckYourAnswersController.onSubmit(mode, firstIndex, srn)
+
+  def viewAsString(answerSections:Seq[AnswerSection], mode: Mode, srn:Option[String]): String = check_your_answers(
+    frontendAppConfig,
+    answerSections,
+    postUrl(mode, srn),
+    None,
+    hideEditLinks = false,
+    hideSaveAndContinueButton = false,
+    srn = srn,
+    mode = mode
+  )(fakeRequest, messages).toString
   private val firstIndex = Index(0)
   private val desiredRoute:Call = controllers.routes.IndexController.onPageLoad()
 
