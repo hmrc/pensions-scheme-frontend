@@ -23,6 +23,7 @@ import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRequiredA
 import forms.PayeVariationsFormProvider
 import identifiers.register.establishers.partnership.{PartnershipDetailsId, PartnershipPayeVariationsId}
 import models.{Index, Mode}
+import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
@@ -40,38 +41,35 @@ class PartnershipPayeVariationsController @Inject()(
                                                      allowAccess: AllowAccessActionProvider,
                                                      requireData: DataRequiredAction,
                                                      formProvider: PayeVariationsFormProvider
-                                     ) extends PayeVariationsController with I18nSupport {
-
-  private def viewmodel(mode: Mode, index: Index, srn: Option[String]): Retrieval[PayeViewModel] =
-    Retrieval {
-      implicit request =>
-        PartnershipDetailsId(index).retrieve.right.map {
-          details =>
-            PayeViewModel(
-              postCall = routes.PartnershipPayeVariationsController.onSubmit(mode, index, srn),
-              title = Message("messages__payeVariations__partnership_title"),
-              heading = Message("messages__payeVariations__heading", details.name),
-              hint = Some(Message("messages__payeVariations__hint")),
-              subHeading = None,
-              srn = srn
-            )
-        }
-    }
+                                                   ) extends PayeVariationsController with I18nSupport {
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
-    implicit request =>
-      viewmodel(mode, index, srn).retrieve.right.map {
-        vm =>
-          get(PartnershipPayeVariationsId(index), vm)
-      }
-  }
+      implicit request =>
+        PartnershipDetailsId(index).retrieve.right.map {
+          details =>
+            get(PartnershipPayeVariationsId(index), form(details.name), viewmodel(mode, index, srn, details.name))
+        }
+    }
+
+  protected def form(partnershipName: String): Form[String] = formProvider(partnershipName)
+
+  private def viewmodel(mode: Mode, index: Index, srn: Option[String], partnershipName: String): PayeViewModel =
+
+    PayeViewModel(
+      postCall = routes.PartnershipPayeVariationsController.onSubmit(mode, index, srn),
+      title = Message("messages__payeVariations__partnership_title"),
+      heading = Message("messages__payeVariations__heading", partnershipName),
+      hint = Some(Message("messages__payeVariations__hint")),
+      subHeading = None,
+      srn = srn
+    )
 
   def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
-      viewmodel(mode, index, srn).retrieve.right.map {
-        vm =>
-          post(PartnershipPayeVariationsId(index), mode, vm)
+      PartnershipDetailsId(index).retrieve.right.map {
+        details =>
+          post(PartnershipPayeVariationsId(index), mode, form(details.name), viewmodel(mode, index, srn, details.name))
       }
   }
 }

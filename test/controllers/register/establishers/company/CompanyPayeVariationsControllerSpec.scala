@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers.register.establishers.partnership
+package controllers.register.establishers.company
 
 import base.CSRFRequest
 import controllers.ControllerSpecBase
@@ -29,32 +29,32 @@ import play.api.mvc.{Call, Request, Result}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.{FakeUserAnswersService, UserAnswersService}
-import utils.annotations.EstablisherPartnership
 import utils.{FakeNavigator, Navigator}
+import utils.annotations.EstablishersCompany
 import viewmodels.{Message, PayeViewModel}
 import views.html.{paye, payeVariations}
 
 import scala.concurrent.Future
 
-class PartnershipPayeVariationsControllerSpec extends ControllerSpecBase with MustMatchers with CSRFRequest {
+class CompanyPayeVariationsControllerSpec extends ControllerSpecBase with MustMatchers with CSRFRequest {
 
-  import PartnershipPayeVariationsControllerSpec._
+  import CompanyPayeVariationsControllerSpec._
 
-  "PartnershipPayeVariationsController" must {
+  "CompanyPayeVariationsController" must {
 
     "render the view correctly on a GET request" in {
       requestResult(
-        implicit app => addToken(FakeRequest(routes.PartnershipPayeVariationsController.onPageLoad(CheckUpdateMode, firstIndex, srn))),
+        implicit app => addToken(FakeRequest(routes.CompanyPayeVariationsController.onPageLoad(CheckUpdateMode, firstIndex, srn))),
         (request, result) => {
           status(result) mustBe OK
-          contentAsString(result) mustBe payeVariations(frontendAppConfig, form, viewModel, Some("pension scheme details"))(request, messages).toString()
+          contentAsString(result) mustBe payeVariations(frontendAppConfig, form, viewModel, None)(request, messages).toString()
         }
       )
     }
 
     "redirect to the next page on a POST request" in {
       requestResult(
-        implicit app => addToken(FakeRequest(routes.PartnershipPayeVariationsController.onSubmit(CheckUpdateMode, firstIndex, srn))
+        implicit app => addToken(FakeRequest(routes.CompanyPayeVariationsController.onSubmit(CheckUpdateMode, firstIndex, srn))
           .withFormUrlEncodedBody(("paye", "123456789"))),
         (_, result) => {
           status(result) mustBe SEE_OTHER
@@ -67,20 +67,18 @@ class PartnershipPayeVariationsControllerSpec extends ControllerSpecBase with Mu
 
 }
 
+object CompanyPayeVariationsControllerSpec extends CompanyPayeVariationsControllerSpec{
 
-object PartnershipPayeVariationsControllerSpec extends PartnershipPayeVariationsControllerSpec {
-
-  val partnershipName = "test partnership name"
-  val form = new PayeVariationsFormProvider()(partnershipName)
+  val form = new PayeVariationsFormProvider()("test company name")
   val firstIndex = Index(0)
   val srn = Some("S123")
 
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
   val viewModel = PayeViewModel(
-    routes.PartnershipPayeVariationsController.onSubmit(CheckUpdateMode, firstIndex, srn),
-    title = Message("messages__payeVariations__partnership_title"),
-    heading = Message("messages__payeVariations__heading", partnershipName),
+    routes.CompanyPayeVariationsController.onSubmit(CheckUpdateMode, firstIndex, srn),
+    title = Message("messages__payeVariations__company_title"),
+    heading = Message("messages__payeVariations__heading", "test company name"),
     hint = Some(Message("messages__payeVariations__hint")),
     srn = srn
   )
@@ -90,10 +88,11 @@ object PartnershipPayeVariationsControllerSpec extends PartnershipPayeVariations
 
     running(_.overrides(
       bind[AuthAction].to(FakeAuthAction),
-      bind[DataRetrievalAction].toInstance(getMandatoryEstablisherPartnership),
-      bind(classOf[Navigator]).qualifiedWith(classOf[EstablisherPartnership]).toInstance(new FakeNavigator(onwardRoute)),
+      bind[DataRetrievalAction].toInstance(getMandatoryEstablisherCompany),
+      bind(classOf[Navigator]).qualifiedWith(classOf[EstablishersCompany]).toInstance(new FakeNavigator(onwardRoute)),
       bind[UserAnswersService].toInstance(FakeUserAnswersService),
       bind[AllowAccessActionProvider].toInstance(FakeAllowAccessProvider())
+
     )) {
       app =>
         val req = request(app)
@@ -103,6 +102,8 @@ object PartnershipPayeVariationsControllerSpec extends PartnershipPayeVariations
   }
 
 }
+
+
 
 
 

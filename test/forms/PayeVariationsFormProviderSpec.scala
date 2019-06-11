@@ -16,11 +16,12 @@
 
 package forms
 
+import com.google.inject.Inject
 import forms.behaviours.PayeBehaviours
-import models.Paye
 import play.api.data.Form
+import play.api.i18n.Messages
 
-class PayeVariationsFormProviderSpec extends PayeBehaviours {
+class PayeVariationsFormProviderSpec @Inject()(implicit messages: Messages) extends PayeBehaviours {
 
   private val requiredPayeKey = "messages__error__paye_required"
   private val payeLengthKey = "messages__error__paye_length"
@@ -33,7 +34,7 @@ class PayeVariationsFormProviderSpec extends PayeBehaviours {
       payeLengthKey
     )
 
-    val testForm = new PayeVariationsFormProvider().apply()
+    val testForm = new PayeVariationsFormProvider().apply("test company")
 
     behave like formWithPayeVariations(
       testForm: Form[String],
