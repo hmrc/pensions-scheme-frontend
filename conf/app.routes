@@ -1,6 +1,5 @@
 # microservice specific routes
 ->         /register                                    register.Routes
-->         /establisher                                 establisher.Routes
 
 GET        /                                            controllers.BeforeYouStartController.onPageLoad()
 
