@@ -28,7 +28,7 @@ class VatVariationsViewSpec extends QuestionViewBehaviours[String] {
 
   val messageKeyPrefix = "vatVariations"
 
-  val form = new VatVariationsFormProvider()()
+  val form = new VatVariationsFormProvider()("companyName")
   val postCall = Call("GET", "/")
 
   def viewmodel(srn:Option[String]): VatViewModel = VatViewModel(

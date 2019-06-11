@@ -41,38 +41,34 @@ class CompanyVatVariationsController @Inject()(
                                                 requireData: DataRequiredAction,
                                                 formProvider: VatVariationsFormProvider
                                               ) extends VatVariationsController {
-  override val form = formProvider()
 
-  private def viewmodel(mode: Mode, index: Index, srn: Option[String]): Retrieval[VatViewModel] =
-    Retrieval {
-      implicit request =>
-        CompanyDetailsId(index).retrieve.right.map {
-          details =>
-            VatViewModel(
-              postCall = routes.CompanyVatVariationsController.onSubmit(mode, index, srn),
-              title = Message("messages__vatVariations__company_title"),
-              heading = Message("messages__vatVariations__heading", details.companyName),
-              hint = Message("messages__vatVariations__hint", details.companyName),
-              subHeading = None,
-              srn = srn
-            )
-        }
-    }
+  private def form(companyName: String) = formProvider(companyName)
+
+  private def viewModel(mode: Mode, index: Index, srn: Option[String], companyName: String): VatViewModel = {
+    VatViewModel(
+      postCall = routes.CompanyVatVariationsController.onSubmit(mode, index, srn),
+      title = Message("messages__vatVariations__company_title"),
+      heading = Message("messages__vatVariations__heading", companyName),
+      hint = Message("messages__vatVariations__hint", companyName),
+      subHeading = None,
+      srn = srn
+    )
+  }
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
-        viewmodel(mode, index, srn).retrieve.right.map {
-          vm =>
-            get(CompanyVatVariationsId(index), vm)
+        CompanyDetailsId(index).retrieve.right.map { details =>
+          val companyName = details.companyName
+          get(CompanyVatVariationsId(index), viewModel(mode, index, srn, companyName), form(companyName))
         }
     }
 
   def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
-      viewmodel(mode, index, srn).retrieve.right.map {
-        vm =>
-          post(CompanyVatVariationsId(index), mode, vm)
+      CompanyDetailsId(index).retrieve.right.map { details =>
+        val companyName = details.companyName
+        post(CompanyVatVariationsId(index), mode, viewModel(mode, index, srn, companyName), form(companyName))
       }
   }
 }

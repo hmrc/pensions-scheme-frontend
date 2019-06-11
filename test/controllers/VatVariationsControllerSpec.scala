@@ -21,21 +21,16 @@ import com.google.inject.Inject
 import config.FrontendAppConfig
 import forms.VatVariationsFormProvider
 import identifiers.TypedIdentifier
+import models.NormalMode
 import models.requests.DataRequest
-import models.{NormalMode, Vat}
-import org.mockito.Matchers.any
-import org.mockito.Mockito.when
 import org.scalatest.concurrent.ScalaFutures
-import org.scalatest.mockito.MockitoSugar
 import org.scalatest.{MustMatchers, OptionValues, WordSpec}
-import play.api.data.Form
 import play.api.i18n.MessagesApi
 import play.api.inject.bind
-import play.api.libs.json._
 import play.api.mvc.{AnyContent, Call, Request, Result}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import services.UserAnswersService
+import services.{FakeUserAnswersService, UserAnswersService}
 import uk.gov.hmrc.domain.PsaId
 import utils.{FakeNavigator, Navigator, UserAnswers}
 import viewmodels.VatViewModel
@@ -43,7 +38,7 @@ import views.html.vatVariations
 
 import scala.concurrent.Future
 
-class VatVariationsControllerSpec extends WordSpec with MustMatchers with OptionValues with ScalaFutures with MockitoSugar {
+class VatVariationsControllerSpec extends WordSpec with MustMatchers with OptionValues with ScalaFutures {
 
   import VatVariationsControllerSpec._
 
@@ -74,7 +69,7 @@ class VatVariationsControllerSpec extends WordSpec with MustMatchers with Option
           val result = controller.onPageLoad(viewmodel, UserAnswers())
 
           status(result) mustEqual OK
-          contentAsString(result) mustEqual vatVariations(appConfig, formProvider(), viewmodel, None)(request, messages).toString
+          contentAsString(result) mustEqual vatVariations(appConfig, formProvider(companyName)(messages), viewmodel, None)(request, messages).toString
       }
     }
 
@@ -98,7 +93,7 @@ class VatVariationsControllerSpec extends WordSpec with MustMatchers with Option
           status(result) mustEqual OK
           contentAsString(result) mustEqual vatVariations(
             appConfig,
-            formProvider().fill("123456789"),
+            formProvider(companyName)(messages).fill("123456789"),
             viewmodel,
             None
           )(request, messages).toString
@@ -112,19 +107,13 @@ class VatVariationsControllerSpec extends WordSpec with MustMatchers with Option
 
       import play.api.inject._
 
-      val userAnswersService = mock[UserAnswersService]
-
       running(_.overrides(
-        bind[UserAnswersService].toInstance(userAnswersService),
+        bind[UserAnswersService].toInstance(FakeUserAnswersService),
         bind[Navigator].toInstance(FakeNavigator)
       )) {
         app =>
 
           implicit val materializer: Materializer = app.materializer
-
-          when(
-            userAnswersService.upsert(any(), any(), any())(any(), any(), any())
-          ).thenReturn(Future.successful(Json.obj()))
 
           val request = FakeRequest().withFormUrlEncodedBody(
             ("vat", "123456789")
@@ -134,6 +123,7 @@ class VatVariationsControllerSpec extends WordSpec with MustMatchers with Option
 
           status(result) mustEqual SEE_OTHER
           redirectLocation(result).value mustEqual "www.example.com"
+          FakeUserAnswersService.verify(FakeIdentifier, "123456789")
       }
     }
 
@@ -155,12 +145,10 @@ class VatVariationsControllerSpec extends WordSpec with MustMatchers with Option
 
           val result = controller.onSubmit(viewmodel, UserAnswers(), request)
 
-
-
           status(result) mustEqual BAD_REQUEST
           contentAsString(result) mustEqual vatVariations(
             appConfig,
-            formProvider().bind(Map("vat" -> "123456789012345")),
+            formProvider(companyName)(messages).bind(Map("vat" -> "123456789012345")),
             viewmodel,
             None
           )(request, messages).toString
@@ -174,21 +162,21 @@ object VatVariationsControllerSpec {
 
   object FakeIdentifier extends TypedIdentifier[String]
 
+  val companyName = "test company"
   class TestController @Inject()(
                                   override val appConfig: FrontendAppConfig,
                                   override val messagesApi: MessagesApi,
                                   override val userAnswersService: UserAnswersService,
-                                  override val navigator: Navigator
+                                  override val navigator: Navigator,
+                                  val formProvider: VatVariationsFormProvider
                                 ) extends VatVariationsController {
 
-    override protected val form: Form[String] = formProvider()
-
     def onPageLoad(viewmodel: VatViewModel, answers: UserAnswers): Future[Result] = {
-      get(FakeIdentifier, viewmodel)(DataRequest(FakeRequest(), "cacheId", answers, PsaId("A0000000")))
+      get(FakeIdentifier, viewmodel, formProvider(companyName))(DataRequest(FakeRequest(), "cacheId", answers, PsaId("A0000000")))
     }
 
     def onSubmit(viewmodel: VatViewModel, answers: UserAnswers, fakeRequest: Request[AnyContent]): Future[Result] = {
-      post(FakeIdentifier, NormalMode, viewmodel)(DataRequest(fakeRequest, "cacheId", answers, PsaId("A0000000")))
+      post(FakeIdentifier, NormalMode, viewmodel, formProvider(companyName))(DataRequest(fakeRequest, "cacheId", answers, PsaId("A0000000")))
     }
   }
 
