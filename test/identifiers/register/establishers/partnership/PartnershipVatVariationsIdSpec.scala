@@ -32,7 +32,7 @@ class PartnershipVatVariationsIdSpec extends SpecBase {
   implicit val countryOptions: CountryOptions = new CountryOptions(environment, frontendAppConfig)
 
   "cya" when {
-    
+
     val onwardUrl = "onwardUrl"
 
     def answers: UserAnswers = UserAnswers().set(PartnershipVatVariationsId(0))("vat").asOpt.get
@@ -43,43 +43,30 @@ class PartnershipVatVariationsIdSpec extends SpecBase {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
         implicit val userAnswers: UserAnswers = request.userAnswers
         PartnershipVatVariationsId(0).row(onwardUrl, NormalMode) must equal(Seq(
-          AnswerRow("messages__common__cya__vat",List("vat"),false,Some(Link("site.change",onwardUrl,
+          AnswerRow("messages__common__cya__vat", List("vat"), false, Some(Link("site.change", onwardUrl,
             Some("messages__visuallyhidden__establisher__vat_number"))))
         ))
       }
     }
 
-    "in update mode for new establisher - partnership vat" must {
+    "in update mode" must {
 
-      def answersNew: UserAnswers = answers.set(IsEstablisherNewId(0))(true).asOpt.value
-
-      "return answers rows with change links" in {
-        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answersNew, PsaId("A0000000"))
-        implicit val userAnswers: UserAnswers = request.userAnswers
-        PartnershipVatVariationsId(0).row(onwardUrl, UpdateMode) must equal(Seq(
-          AnswerRow("messages__common__cya__vat",List("vat"),false, None)
-        ))
-      }
-    }
-
-    "in update mode for existing establisher - partnership vat" must {
-
-      "return answers rows without change links" in {
+      "return answers rows without change links if vat is available" in {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
         implicit val userAnswers: UserAnswers = request.userAnswers
 
         PartnershipVatVariationsId(0).row(onwardUrl, UpdateMode) must equal(Seq(
-          AnswerRow("messages__common__cya__vat",List("vat"),false,None)
+          AnswerRow("messages__common__cya__vat", List("vat"), false, None)
         ))
       }
 
-      "display an add link if no answer if found" in {
+      "display an add link if no vat is available" in {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(), PsaId("A0000000"))
         implicit val userAnswers: UserAnswers = request.userAnswers
 
         PartnershipVatVariationsId(0).row(onwardUrl, UpdateMode) must equal(Seq(
           AnswerRow("messages__common__cya__vat", Seq("site.not_entered"), answerIsMessageKey = true,
-          Some(Link("site.add", onwardUrl, Some("messages__visuallyhidden__establisher__vat_number_add"))))))
+            Some(Link("site.add", onwardUrl, Some("messages__visuallyhidden__establisher__vat_number_add"))))))
       }
     }
   }
