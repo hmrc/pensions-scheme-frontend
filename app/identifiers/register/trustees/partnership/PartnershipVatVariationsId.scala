@@ -33,15 +33,15 @@ case class PartnershipVatVariationsId(index: Int) extends TypedIdentifier[String
 object PartnershipVatVariationsId {
   override def toString: String = "vat"
 
-  val labelYesNo = "messages__company__cya__vat_yes_no"
-  val hiddenLabelVat = "messages__visuallyhidden__establisher__vat_number"
+  val hiddenLabelVat = "messages__visuallyhidden__partnership__vat_number"
   val vatLabel = "messages__common__cya__vat"
 
   implicit def cya(implicit messages: Messages, countryOptions: CountryOptions): CheckYourAnswers[PartnershipVatVariationsId] = {
     new CheckYourAnswers[PartnershipVatVariationsId] {
 
-      override def row(id: PartnershipVatVariationsId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        StringCYA(Some(labelYesNo), Some(hiddenLabelVat))().updateRow(id)(changeUrl, userAnswers)
+      override def row(id: PartnershipVatVariationsId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
+        StringCYA(Some(vatLabel), Some(hiddenLabelVat))().row(id)(changeUrl, userAnswers)
+      }
 
       override def updateRow(id: PartnershipVatVariationsId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
         userAnswers.get(id) match {

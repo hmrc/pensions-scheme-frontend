@@ -95,16 +95,16 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
 }
 
 object CheckYourAnswersControllerSpec extends CheckYourAnswersControllerSpec {
-  val firstIndex = Index(0)
+  private val firstIndex = Index(0)
   implicit val countryOptions: CountryOptions = new FakeCountryOptions()
   private val onwardRoute = controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode, None)
   private lazy val partnershipVatRoute = routes.PartnershipVatController.onPageLoad(CheckMode, firstIndex, None).url
+  private lazy val partnershipPayeRoute = routes.PartnershipPayeController.onPageLoad(CheckMode, firstIndex, None).url
   private lazy val partnershipUniqueTaxReferenceRoute = routes.PartnershipUniqueTaxReferenceController.onPageLoad(CheckMode, firstIndex, None).url
   private lazy val partnershipDetailsRoute = routes.TrusteeDetailsController.onPageLoad(CheckMode, firstIndex, None).url
 
   private def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData,
-                         allowChangeHelper: AllowChangeHelper = ach,
-                         isToggleOn: Boolean = false): CheckYourAnswersController =
+                         allowChangeHelper: AllowChangeHelper = ach, isToggleOn: Boolean = false): CheckYourAnswersController =
     new CheckYourAnswersController(frontendAppConfig, messagesApi, FakeAuthAction, dataRetrievalAction, FakeAllowAccessProvider(),
       new DataRequiredActionImpl, FakeUserAnswersService, new FakeNavigator(onwardRoute), countryOptions, allowChangeHelper,
       new FakeFeatureSwitchManagementService(isToggleOn))
@@ -119,51 +119,34 @@ object CheckYourAnswersControllerSpec extends CheckYourAnswersControllerSpec {
     .flatMap(_.set(PartnershipContactDetailsId(firstIndex))(ContactDetails("e@mail.co", "98765")))
     .asOpt.value
 
-  private def emptyPartnershipContactDetailsSection = AnswerSection(
-    Some("messages__partnership__checkYourAnswers__partnership_contact_details"),
-    Nil)
+  private def emptyPartnershipContactDetailsSection =
+    AnswerSection(Some("messages__partnership__checkYourAnswers__partnership_contact_details"), Nil)
 
   def viewAsString(answerSections: Seq[AnswerSection], mode: Mode = NormalMode): String = check_your_answers(
     frontendAppConfig, answerSections, routes.CheckYourAnswersController.onSubmit(mode, firstIndex, None),
     None, hideEditLinks = false, hideSaveAndContinueButton = false)(fakeRequest, messages).toString
 
-  private def vatRow(answers: UserAnswers): Seq[AnswerRow] = VatCYA(
-    Some("messages__partnership__checkYourAnswers__vat")
-  )().row(PartnershipVatId(firstIndex))(partnershipVatRoute, answers)
+  private def vatRow(answers: UserAnswers): Seq[AnswerRow] = VatCYA(Some("messages__partnership__checkYourAnswers__vat"))().
+    row(PartnershipVatId(firstIndex))(partnershipVatRoute, answers)
 
-  private def partnershipDetailsSectionWithOnlyVat(vatRow: Seq[AnswerRow]): AnswerSection = {
-    AnswerSection(
-      Some("messages__partnership__checkYourAnswers__partnership_details"),
-      vatRow
-    )
-  }
+  private def partnershipDetailsSectionWithOnlyVat(vatRow: Seq[AnswerRow]): AnswerSection =
+    AnswerSection(Some("messages__partnership__checkYourAnswers__partnership_details"), vatRow)
 
   private def answerSections(implicit request: DataRequest[AnyContent]): Seq[AnswerSection] = {
-
-    val utrRows = UniqueTaxReferenceCYA[PartnershipUniqueTaxReferenceId](
-      "messages__partnership__checkYourAnswers__utr",
-      "messages__trustee_individual_utr_cya_label",
-      "messages__partnership__checkYourAnswers__utr_no_reason",
-      "messages__visuallyhidden__partnership__utr_yes_no",
-      "messages__visuallyhidden__partnership__utr",
+    val utrRows = UniqueTaxReferenceCYA[PartnershipUniqueTaxReferenceId]("messages__partnership__checkYourAnswers__utr",
+      "messages__trustee_individual_utr_cya_label", "messages__partnership__checkYourAnswers__utr_no_reason",
+      "messages__visuallyhidden__partnership__utr_yes_no", "messages__visuallyhidden__partnership__utr",
       "messages__visuallyhidden__partnership__utr_no"
     )().row(PartnershipUniqueTaxReferenceId(firstIndex))(partnershipUniqueTaxReferenceRoute, request.userAnswers)
 
-    val payeRows = PayeCYA[PartnershipPayeId](
-      Some("messages__partnership__checkYourAnswers__paye"),
-      "messages__visuallyhidden__partnership__paye_yes_no",
-      "messages__visuallyhidden__partnership__paye_number"
-    )().row(PartnershipPayeId(firstIndex))(partnershipUniqueTaxReferenceRoute, request.userAnswers)
+    val payeRows = PayeCYA[PartnershipPayeId](Some("messages__partnership__checkYourAnswers__paye"),
+      "messages__visuallyhidden__partnership__paye_yes_no", "messages__visuallyhidden__partnership__paye_number"
+    )().row(PartnershipPayeId(firstIndex))(partnershipPayeRoute, request.userAnswers)
 
     val vatRows = vatRow(request.userAnswers)
 
-    val partnershipDetailsSection = AnswerSection(
-      Some("messages__partnership__checkYourAnswers__partnership_details"),
-      PartnershipDetailsId(firstIndex).row(partnershipDetailsRoute) ++
-        vatRows ++
-        payeRows ++
-        utrRows
-    )
+    val partnershipDetailsSection = AnswerSection(Some("messages__partnership__checkYourAnswers__partnership_details"),
+      PartnershipDetailsId(firstIndex).row(partnershipDetailsRoute) ++ vatRows ++ payeRows ++ utrRows)
 
     val contactDetailsSection = AnswerSection(
       Some("messages__partnership__checkYourAnswers__partnership_contact_details"),
