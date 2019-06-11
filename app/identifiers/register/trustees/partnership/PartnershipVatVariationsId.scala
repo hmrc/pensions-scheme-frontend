@@ -17,17 +17,17 @@
 package identifiers.register.trustees.partnership
 
 import identifiers._
-import identifiers.register.establishers.EstablishersId
+import identifiers.register.trustees.TrusteesId
 import models.Link
 import play.api.i18n.Messages
 import play.api.libs.json.JsPath
-import utils.{CountryOptions, UserAnswers}
 import utils.checkyouranswers.CheckYourAnswers
 import utils.checkyouranswers.CheckYourAnswers.StringCYA
+import utils.{CountryOptions, UserAnswers}
 import viewmodels.AnswerRow
 
 case class PartnershipVatVariationsId(index: Int) extends TypedIdentifier[String] {
-  override def path: JsPath = EstablishersId(index).path \ "partnershipVat" \ PartnershipVatVariationsId.toString
+  override def path: JsPath = TrusteesId(index).path \ "partnershipVat" \ PartnershipVatVariationsId.toString
 }
 
 object PartnershipVatVariationsId {

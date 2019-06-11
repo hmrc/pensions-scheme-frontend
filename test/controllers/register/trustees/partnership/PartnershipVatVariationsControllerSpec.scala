@@ -67,7 +67,7 @@ class PartnershipVatVariationsControllerSpec extends ControllerSpecBase with Mus
 
 object PartnershipVatVariationsControllerSpec extends PartnershipVatVariationsControllerSpec {
 
-  val form = new VatVariationsFormProvider()()
+  val form = new VatVariationsFormProvider()("test partnership")
   val firstIndex = Index(0)
 
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()

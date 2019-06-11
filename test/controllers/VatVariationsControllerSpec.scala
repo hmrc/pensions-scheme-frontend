@@ -20,7 +20,7 @@ import akka.stream.Materializer
 import com.google.inject.Inject
 import config.FrontendAppConfig
 import forms.VatVariationsFormProvider
-import identifiers.TypedIdentifier
+import identifiers.{EstablishersOrTrusteesChangedId, TypedIdentifier}
 import models.NormalMode
 import models.requests.DataRequest
 import org.scalatest.concurrent.ScalaFutures
