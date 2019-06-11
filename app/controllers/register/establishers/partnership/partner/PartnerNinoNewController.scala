@@ -30,7 +30,7 @@ import utils.Navigator
 import utils.annotations.EstablishersPartner
 import viewmodels.{Message, NinoViewModel}
 
-class PartnerNewNinoController @Inject()(
+class PartnerNinoNewController @Inject()(
                                           val appConfig: FrontendAppConfig,
                                           val messagesApi: MessagesApi,
                                           val userAnswersService: UserAnswersService,
@@ -42,7 +42,7 @@ class PartnerNewNinoController @Inject()(
                                           val formProvider: NinoYesFormProvider
                                         ) extends NinoController with I18nSupport {
 
-  private[controllers] val postCall = controllers.register.establishers.partnership.partner.routes.PartnerNewNinoController.onSubmit _
+  private[controllers] val postCall = controllers.register.establishers.partnership.partner.routes.PartnerNinoNewController.onSubmit _
   private[controllers] val title: Message = "messages__partner_nino__title"
   private[controllers] val heading: Message = "messages__common_nino__h1"
   private[controllers] val hint: Message = "messages__common__nino_hint"
