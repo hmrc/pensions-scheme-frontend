@@ -19,7 +19,7 @@ package controllers.register.trustees.individual
 import config.FrontendAppConfig
 import controllers.NinoController
 import controllers.actions._
-import forms.NinoYesFormProvider
+
 import identifiers.register.trustees.individual.{TrusteeDetailsId, TrusteeNewNinoId}
 import javax.inject.Inject
 import models.{Index, Mode}

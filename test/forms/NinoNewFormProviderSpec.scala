@@ -31,7 +31,7 @@ import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 import viewmodels.Message
 
-class NinoYesFormProviderSpec extends StringFieldBehaviours with Constraints with GuiceOneAppPerSuite{
+class NinoNewFormProviderSpec extends StringFieldBehaviours with Constraints with GuiceOneAppPerSuite{
 
   def injector: Injector = app.injector
 
@@ -51,7 +51,7 @@ class NinoYesFormProviderSpec extends StringFieldBehaviours with Constraints wit
   implicit def messages: Messages = messagesApi.preferred(fakeRequest)
 
   val validData: Map[String, String] = Map("nino" -> "CS700100A")
-  val form = new NinoYesFormProvider()("Mark")
+  val form = new NinoNewFormProvider()("Mark")
 
   ".nino" must {
     val fieldName = "nino"
