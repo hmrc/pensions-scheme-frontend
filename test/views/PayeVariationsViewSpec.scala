@@ -28,7 +28,8 @@ class PayeVariationsViewSpec extends QuestionViewBehaviours[String] {
 
   val messageKeyPrefix = "payeVariations"
   val postCall = Call("GET", "/")
-  val form = new PayeVariationsFormProvider()()
+  val companyName = "test company name"
+  val form = new PayeVariationsFormProvider()(companyName)
 
   def viewmodel(srn:Option[String]) = PayeViewModel(
     postCall = postCall,

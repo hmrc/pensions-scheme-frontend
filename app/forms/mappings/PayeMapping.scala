@@ -51,7 +51,7 @@ trait PayeMapping extends Mappings with Transforms {
     .transform(payeTransform, noTransform)
     .verifying(
       firstError(
-        maxLength(PayeMapping.maxPayeLength, payeLengthKey),
+        maxLength(PayeMapping.maxPayeLength, invalidPayeKey),
         payeEmployerReferenceNumber(invalidPayeKey)
       )
     )

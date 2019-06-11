@@ -28,8 +28,8 @@ class PayeVariationsFormProvider @Inject() extends PayeMapping {
   def apply(name: String)(implicit messages: Messages): Form[String] =
     Form(
       "paye" -> payeStringMapping(
-        payeLengthKey = Message("messages__vatVariations__company_length", name),
-        invalidPayeKey = Message("messages__vatVariations__company_invalid", name)
+        payeLengthKey = Message("messages__payeVariations__error_length", name),
+        invalidPayeKey = Message("messages__payeVariations__error_invalid", name)
       )
     )
 }

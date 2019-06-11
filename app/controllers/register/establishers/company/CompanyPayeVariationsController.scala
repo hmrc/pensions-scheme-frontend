@@ -22,7 +22,7 @@ import controllers.PayeVariationsController
 import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRequiredAction, DataRetrievalAction}
 import forms.PayeVariationsFormProvider
 import identifiers.register.establishers.company.{CompanyDetailsId, CompanyPayeVariationsId}
-import models.{Index, Mode, Paye}
+import models.{Index, Mode}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
@@ -32,49 +32,43 @@ import utils.annotations.EstablishersCompany
 import viewmodels.{Message, PayeViewModel}
 
 class CompanyPayeVariationsController @Inject()(
-                                       val appConfig: FrontendAppConfig,
-                                       override val messagesApi: MessagesApi,
-                                       override val userAnswersService: UserAnswersService,
-                                       @EstablishersCompany val navigator: Navigator,
-                                       authenticate: AuthAction,
-                                       getData: DataRetrievalAction,
-                                       allowAccess: AllowAccessActionProvider,
-                                       requireData: DataRequiredAction,
-                                       formProvider: PayeVariationsFormProvider
-                                     ) extends PayeVariationsController with I18nSupport {
-
-  protected val form: Form[String] = formProvider("messages__companyPaye__error__required")
-
-  private def viewmodel(mode: Mode, index: Index, srn: Option[String]): Retrieval[PayeViewModel] =
-    Retrieval {
-      implicit request =>
-        CompanyDetailsId(index).retrieve.right.map {
-          details =>
-            PayeViewModel(
-              postCall = routes.CompanyPayeVariationsController.onSubmit(mode, index, srn),
-              title = Message("messages__payeVariations__company_title"),
-              heading = Message("messages__payeVariations__heading", details.companyName),
-              hint = Some(Message("messages__payeVariations__hint")),
-              subHeading = None,
-              srn = srn
-            )
-        }
-    }
+                                                 val appConfig: FrontendAppConfig,
+                                                 override val messagesApi: MessagesApi,
+                                                 override val userAnswersService: UserAnswersService,
+                                                 @EstablishersCompany val navigator: Navigator,
+                                                 authenticate: AuthAction,
+                                                 getData: DataRetrievalAction,
+                                                 allowAccess: AllowAccessActionProvider,
+                                                 requireData: DataRequiredAction,
+                                                 formProvider: PayeVariationsFormProvider
+                                               ) extends PayeVariationsController with I18nSupport {
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
-    implicit request =>
-      viewmodel(mode, index, srn).retrieve.right.map {
-        vm =>
-          get(CompanyPayeVariationsId(index), vm)
-      }
-  }
+      implicit request =>
+        CompanyDetailsId(index).retrieve.right.map {
+          details =>
+            get(CompanyPayeVariationsId(index), form(details.companyName), viewmodel(mode, index, srn, details.companyName))
+        }
+    }
+
+  protected def form(companyName: String): Form[String] = formProvider(companyName)
+
+  private def viewmodel(mode: Mode, index: Index, srn: Option[String], companyName: String): PayeViewModel =
+    PayeViewModel(
+      postCall = routes.CompanyPayeVariationsController.onSubmit(mode, index, srn),
+      title = Message("messages__payeVariations__company_title"),
+      heading = Message("messages__payeVariations__heading", companyName),
+      hint = Some(Message("messages__payeVariations__hint")),
+      subHeading = None,
+      srn = srn
+    )
 
   def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
-      viewmodel(mode, index, srn).retrieve.right.map {
-        vm =>
-          post(CompanyPayeVariationsId(index), mode, vm)
+      CompanyDetailsId(index).retrieve.right.map {
+        details =>
+          post(CompanyPayeVariationsId(index), mode, form(details.companyName), viewmodel(mode, index, srn, details.companyName))
       }
   }
 }
