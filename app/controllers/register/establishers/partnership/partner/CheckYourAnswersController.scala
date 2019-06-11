@@ -66,9 +66,9 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
           PartnerDetailsId(establisherIndex, partnerIndex).
             row(routes.PartnerDetailsController.onPageLoad(checkMode(mode), establisherIndex, partnerIndex, srn).url, mode),
           mode match {
-            case UpdateMode| CheckUpdateMode if displayNewNino => PartnerNinoId(establisherIndex, partnerIndex).
-              row(routes.PartnerNinoController.onPageLoad(checkMode(mode), establisherIndex, partnerIndex, srn).url, mode)
-            case _ => PartnerNewNinoId(establisherIndex, partnerIndex).
+            case UpdateMode| CheckUpdateMode if displayNewNino => PartnerNewNinoId(establisherIndex, partnerIndex).
+              row(routes.PartnerNinoNewController.onPageLoad(checkMode(mode), establisherIndex, partnerIndex, srn).url, mode)
+            case _ => PartnerNinoId(establisherIndex, partnerIndex).
               row(routes.PartnerNinoController.onPageLoad(checkMode(mode), establisherIndex, partnerIndex, srn).url, mode)
           },
           PartnerUniqueTaxReferenceId(establisherIndex, partnerIndex).

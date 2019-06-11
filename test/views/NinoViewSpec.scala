@@ -16,7 +16,7 @@
 
 package views
 
-import forms.NinoYesFormProvider
+import forms.NinoNewFormProvider
 import play.api.data.Form
 import play.api.mvc.Call
 import play.twirl.api.HtmlFormat
@@ -28,7 +28,7 @@ class NinoViewSpec extends QuestionViewBehaviours[String] {
 
   val messageKeyPrefix = "common_nino"
 
-  val form = new NinoYesFormProvider()("Mark")
+  val form = new NinoNewFormProvider()("Mark")
 
   def viewmodel(srn:Option[String]) = NinoViewModel(
     postCall = Call("POST", "/"),

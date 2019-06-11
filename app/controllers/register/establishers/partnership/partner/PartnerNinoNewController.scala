@@ -19,7 +19,7 @@ package controllers.register.establishers.partnership.partner
 import config.FrontendAppConfig
 import controllers.NinoController
 import controllers.actions._
-import forms.NinoYesFormProvider
+import forms.NinoNewFormProvider
 import identifiers.register.establishers.partnership.partner.{PartnerDetailsId, PartnerNewNinoId}
 import javax.inject.Inject
 import models.{Index, Mode}
@@ -28,7 +28,7 @@ import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
 import utils.Navigator
 import utils.annotations.EstablishersPartner
-import viewmodels.{Message, NinoViewModel}
+import viewmodels.NinoViewModel
 
 class PartnerNinoNewController @Inject()(
                                           val appConfig: FrontendAppConfig,
@@ -39,13 +39,13 @@ class PartnerNinoNewController @Inject()(
                                           getData: DataRetrievalAction,
                                           allowAccess: AllowAccessActionProvider,
                                           requireData: DataRequiredAction,
-                                          val formProvider: NinoYesFormProvider
+                                          val formProvider: NinoNewFormProvider
                                         ) extends NinoController with I18nSupport {
 
   private[controllers] val postCall = controllers.register.establishers.partnership.partner.routes.PartnerNinoNewController.onSubmit _
-  private[controllers] val title: Message = "messages__partner_nino__title"
-  private[controllers] val heading: Message = "messages__common_nino__h1"
-  private[controllers] val hint: Message = "messages__common__nino_hint"
+  private[controllers] val title: String = "messages__partner_yes_nino__title"
+  private[controllers] val heading: String = "messages__common_nino__h1"
+  private[controllers] val hint: String = "messages__common__nino_hint"
 
   private def viewmodel(establisherIndex: Index, partnerIndex: Index, mode: Mode, srn: Option[String]): Retrieval[NinoViewModel] =
     Retrieval {

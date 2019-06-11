@@ -189,10 +189,6 @@ object CheckYourAnswersControllerSpec extends SpecBase {
 
   val newDirectorAnswers = directorAnswers.set(IsEstablisherNewId(firstIndex))(true).asOpt.value
 
-  implicit val directorAnswersUpdateWithNewNino = directorAnswersUpdate
-    .set(DirectorNewNinoId(firstIndex, firstIndex))("AB100100A")
-    .asOpt.value
-
   implicit val newDirectorAnswersUpdateWithNewNino = directorAnswersUpdate
     .set(IsNewDirectorId(firstIndex, firstIndex))(true)
     .flatMap(_.set(DirectorNewNinoId(firstIndex, firstIndex))("AB100100A"))

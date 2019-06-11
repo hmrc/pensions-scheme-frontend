@@ -18,7 +18,7 @@ package controllers.register.establishers.partnership.partner
 
 import controllers.ControllerSpecBase
 import controllers.actions._
-import forms.register.establishers.partnership.partner.PartnerNinoFormProvider
+import forms.NinoNewFormProvider
 import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.partnership.PartnershipDetailsId
 import identifiers.register.establishers.partnership.partner.{PartnerDetailsId, PartnerNinoId}
@@ -42,8 +42,8 @@ class PartnerNinoNewControllerSpec extends ControllerSpecBase {
 
 
   val partnershipName = "test partnership name"
-  val formProvider = new PartnerNinoFormProvider()
-  val form = formProvider()
+  val formProvider = new NinoNewFormProvider()
+  val form = formProvider("First Name Middle Name Last Name")
   val establisherIndex = Index(0)
   val partnerIndex = Index(0)
   val invalidIndex = Index(11)
@@ -81,7 +81,7 @@ class PartnerNinoNewControllerSpec extends ControllerSpecBase {
   
   def viewmodel(srn:Option[String]) = NinoViewModel(
     postCall = controllers.register.establishers.partnership.partner.routes.PartnerNinoNewController.onSubmit(NormalMode, establisherIndex, partnerIndex, None),
-    title = "messages__director_yes_nino__title",
+    title = "messages__partner_yes_nino__title",
     heading ="messages__common_nino__h1",
     hint = "messages__common__nino_hint",
     personName = partnerName,
@@ -96,7 +96,7 @@ class PartnerNinoNewControllerSpec extends ControllerSpecBase {
 
   def viewAsString(form: Form[_] = form): String = nino(frontendAppConfig, form, viewmodel(None), None)(fakeRequest, messages).toString
 
-  "DirectorNino Controller" must {
+  "PartnerNino Controller" must {
 
     "return OK and the correct view for a GET when establisher name is present" in {
       val getRelevantData = new FakeDataRetrievalAction(Some(validDataNoPreviousAnswer))
@@ -113,7 +113,7 @@ class PartnerNinoNewControllerSpec extends ControllerSpecBase {
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
     }
-    "redirect to session expired from a GET when the director index is invalid" in {
+    "redirect to session expired from a GET when the partner index is invalid" in {
       val getRelevantData = new FakeDataRetrievalAction(Some(validDataNoPreviousAnswer))
       val result = controller(getRelevantData).onPageLoad(NormalMode, establisherIndex, invalidIndex, None)(fakeRequest)
 
@@ -164,7 +164,7 @@ class PartnerNinoNewControllerSpec extends ControllerSpecBase {
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
     }
 
-    "redirect to Session Expired for a POST if no existing director details data is found" in {
+    "redirect to Session Expired for a POST if no existing partner details data is found" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("nino", Nino.options.head.value))
       val result = controller(dontGetAnyData).onSubmit(NormalMode, establisherIndex, partnerIndex, None)(postRequest)
       status(result) mustBe SEE_OTHER
