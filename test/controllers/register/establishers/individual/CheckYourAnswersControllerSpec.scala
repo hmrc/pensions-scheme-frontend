@@ -19,18 +19,16 @@ package controllers.register.establishers.individual
 import controllers.ControllerSpecBase
 import controllers.actions.{DataRequiredActionImpl, DataRetrievalAction, FakeAllowAccessProvider, FakeAuthAction}
 import controllers.behaviours.ControllerAllowChangeBehaviour
-import controllers.register.trustees.individual.CheckYourAnswersControllerSpec.{fakeRequest, frontendAppConfig, messages, postUrl}
-import identifiers.TypedIdentifier
+import controllers.register.trustees.individual.CheckYourAnswersControllerSpec.{fakeRequest, frontendAppConfig, messages}
 import identifiers.register.establishers.individual._
 import identifiers.register.establishers.{EstablisherNewNinoId, IsEstablisherCompleteId, IsEstablisherNewId, individual}
 import models._
 import models.address.Address
 import models.person.PersonDetails
-import models.requests.DataRequest
 import org.joda.time.LocalDate
 import org.scalatest.OptionValues
 import play.api.libs.json.JsResult
-import play.api.mvc.{AnyContent, Call}
+import play.api.mvc.Call
 import play.api.test.Helpers.{contentAsString, redirectLocation, status, _}
 import services.FakeUserAnswersService
 import utils._
@@ -42,15 +40,15 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
 
   import CheckYourAnswersControllerSpec._
 
-  implicit val countryOptions:FakeCountryOptions = new FakeCountryOptions()
-  implicit val request:FakeDataRequest = FakeDataRequest(individualAnswers)
-  implicit val userAnswers:UserAnswers = request.userAnswers
+  implicit val countryOptions: FakeCountryOptions = new FakeCountryOptions()
+  implicit val request: FakeDataRequest = FakeDataRequest(individualAnswers)
+  implicit val userAnswers: UserAnswers = request.userAnswers
   val firstIndex = Index(0)
 
   private val onwardRoute = controllers.routes.IndexController.onPageLoad()
 
   private def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisherHns,
-                         allowChangeHelper:AllowChangeHelper = ach, toggle:Boolean = false): CheckYourAnswersController =
+                         allowChangeHelper: AllowChangeHelper = ach, toggle: Boolean = false): CheckYourAnswersController =
     new CheckYourAnswersController(
       frontendAppConfig,
       messagesApi,
@@ -79,22 +77,38 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
       }
 
       behave like changeableController(
-        controller(individualAnswers.dataRetrievalAction, _:AllowChangeHelper)
-        .onPageLoad(UpdateMode, firstIndex, None)(request))
+        controller(individualAnswers.dataRetrievalAction, _: AllowChangeHelper)
+          .onPageLoad(UpdateMode, firstIndex, None)(request))
 
       "return OK and display Add link for UpdateMode pointing to new Nino page where separateRefCollectionEnabled is true and no nino retrieved from ETMP" in {
-        implicit val request:FakeDataRequest = FakeDataRequest(individualAnswersWithNoNino)
-        val expectedNinoRow = EstablisherNewNinoId(firstIndex).row(
-          controllers.register.establishers.individual.routes.EstablisherNinoNewController.onPageLoad(CheckUpdateMode, firstIndex, Some("srn")).url, UpdateMode)
+
+        val expectedNinoRow = {
+          implicit val request: FakeDataRequest = FakeDataRequest(individualAnswersWithNoNino)
+          EstablisherNewNinoId(firstIndex).row(
+            controllers.register.establishers.individual.routes.EstablisherNinoNewController.onPageLoad(CheckUpdateMode, firstIndex, Some("srn")).url, UpdateMode)
+        }
 
         val result = controller(individualAnswersWithNoNino.dataRetrievalAction, toggle = true).onPageLoad(UpdateMode, firstIndex, Some("srn"))(fakeRequest)
         status(result) mustBe OK
 
         contentAsString(result) mustBe viewAsString(Seq(individualDetails(expectedNinoRow, CheckUpdateMode, Some("srn"))), UpdateMode, Some("srn"))
       }
+
+      "return OK and display no add/change link but do display new nino for UpdateMode where separateRefCollectionEnabled is true and a new nino has already been entered" in {
+        val expectedNinoRow = {
+          implicit val request: FakeDataRequest = FakeDataRequest(individualAnswersWithNewNino)
+          EstablisherNewNinoId(firstIndex).row(
+            controllers.register.establishers.individual.routes.EstablisherNinoNewController.onPageLoad(CheckUpdateMode, firstIndex, Some("srn")).url, UpdateMode)
+        }
+
+        val result = controller(individualAnswersWithNewNino.dataRetrievalAction, toggle = true).onPageLoad(UpdateMode, firstIndex, Some("srn"))(fakeRequest)
+        status(result) mustBe OK
+
+        contentAsString(result) mustBe viewAsString(Seq(individualDetails(expectedNinoRow, CheckUpdateMode, Some("srn"))), UpdateMode, Some("srn"))
+      }
     }
 
-    def individualDetails(ninoRow:Seq[AnswerRow], mode:Mode, srn:Option[String]) = AnswerSection(
+    def individualDetails(ninoRow: Seq[AnswerRow], mode: Mode, srn: Option[String]) = AnswerSection(
       None,
       EstablisherDetailsId(firstIndex).row(
         controllers.register.establishers.individual.routes.EstablisherDetailsController.onPageLoad(mode, firstIndex, srn).url, mode) ++
@@ -113,7 +127,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
         )
     )
 
-    def establishersSectionUpdate(ninoRow:AnswerRow) = AnswerSection(None,
+    def establishersSectionUpdate(ninoRow: AnswerRow) = AnswerSection(None,
       Seq(
         AnswerRow(
           "messages__common__cya__name",
@@ -144,9 +158,9 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
 }
 
 object CheckYourAnswersControllerSpec extends OptionValues {
-  def postUrl(mode:Mode, srn:Option[String]): Call = routes.CheckYourAnswersController.onSubmit(mode, firstIndex, srn)
+  def postUrl(mode: Mode, srn: Option[String]): Call = routes.CheckYourAnswersController.onSubmit(mode, firstIndex, srn)
 
-  def viewAsString(answerSections:Seq[AnswerSection], mode: Mode, srn:Option[String]): String = check_your_answers(
+  def viewAsString(answerSections: Seq[AnswerSection], mode: Mode, srn: Option[String]): String = check_your_answers(
     frontendAppConfig,
     answerSections,
     postUrl(mode, srn),
@@ -156,12 +170,12 @@ object CheckYourAnswersControllerSpec extends OptionValues {
     srn = srn,
     mode = mode
   )(fakeRequest, messages).toString
+
   private val firstIndex = Index(0)
-  private val desiredRoute:Call = controllers.routes.IndexController.onPageLoad()
+  private val desiredRoute: Call = controllers.routes.IndexController.onPageLoad()
 
 
-
-  private def commonJsResultAnswers(f:UserAnswers => JsResult[UserAnswers] ): JsResult[UserAnswers] = UserAnswers()
+  private def commonJsResultAnswers(f: UserAnswers => JsResult[UserAnswers]): JsResult[UserAnswers] = UserAnswers()
     .set(EstablisherDetailsId(firstIndex))(PersonDetails("first name", None, "last name", LocalDate.now(), false))
     .flatMap(dd => f(dd))
     .flatMap(_.set(UniqueTaxReferenceId(firstIndex))(UniqueTaxReference.Yes("1234567890")))
@@ -170,11 +184,16 @@ object CheckYourAnswersControllerSpec extends OptionValues {
     .flatMap(_.set(individual.PreviousAddressId(firstIndex))(Address("Previous Address 1", "Previous Address 2", None, None, None, "GB")))
     .flatMap(_.set(individual.ContactDetailsId(firstIndex))(ContactDetails("test@test.com", "123456789")))
 
-  private val individualAnswers:UserAnswers = commonJsResultAnswers(_.set(EstablisherNinoId(firstIndex))(Nino.Yes("AB100100A"))).asOpt.value
-  private val individualAnswersWithNoNino:UserAnswers = commonJsResultAnswers(
+  private val individualAnswers: UserAnswers = commonJsResultAnswers(_.set(EstablisherNinoId(firstIndex))(Nino.Yes("AB100100A"))).asOpt.value
+  private val individualAnswersWithNoNino: UserAnswers = commonJsResultAnswers(
     _.set(EstablisherNinoId(firstIndex))(Nino.No("reason"))
   ).asOpt.value
-  private val individualAnswersWithNewlyAddedEstablisher:UserAnswers = commonJsResultAnswers(_.set(EstablisherNinoId(firstIndex))(Nino.Yes("AB100100A")))
+
+  private val individualAnswersWithNewNino: UserAnswers = commonJsResultAnswers(
+    _.set(EstablisherNinoId(firstIndex))(Nino.Yes("CS121212C"))
+  ).asOpt.value
+
+  private val individualAnswersWithNewlyAddedEstablisher: UserAnswers = commonJsResultAnswers(_.set(EstablisherNinoId(firstIndex))(Nino.Yes("AB100100A")))
     .flatMap(_.set(IsEstablisherNewId(firstIndex))(value = true))
     .asOpt.value
 }
