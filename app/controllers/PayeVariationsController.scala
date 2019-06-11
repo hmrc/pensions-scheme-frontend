@@ -40,14 +40,10 @@ trait PayeVariationsController extends FrontendController with Retrievals with I
 
   protected def userAnswersService: UserAnswersService
 
-  protected def form: Form[String] = formProvider()
-
-  protected def formProvider: PayeVariationsFormProvider = new PayeVariationsFormProvider()
-
 
   protected def navigator: Navigator
 
-  protected def get(id: TypedIdentifier[String], viewmodel: PayeViewModel)
+  protected def get(id: TypedIdentifier[String], form: Form[String], viewmodel: PayeViewModel)
                    (implicit request: DataRequest[AnyContent]): Future[Result] = {
 
     val filledForm =
@@ -59,6 +55,7 @@ trait PayeVariationsController extends FrontendController with Retrievals with I
   protected def post(
                       id: TypedIdentifier[String],
                       mode: Mode,
+                      form: Form[String],
                       viewmodel: PayeViewModel
                     )(implicit request: DataRequest[AnyContent]): Future[Result] = {
     form.bindFromRequest().fold(

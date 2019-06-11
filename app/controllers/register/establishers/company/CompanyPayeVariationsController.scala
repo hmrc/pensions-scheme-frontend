@@ -22,7 +22,8 @@ import controllers.PayeVariationsController
 import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRequiredAction, DataRetrievalAction}
 import forms.PayeVariationsFormProvider
 import identifiers.register.establishers.company.{CompanyDetailsId, CompanyPayeVariationsId}
-import models.{Index, Mode}
+import models.{Index, Mode, Paye}
+import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
@@ -41,6 +42,8 @@ class CompanyPayeVariationsController @Inject()(
                                        requireData: DataRequiredAction,
                                        formProvider: PayeVariationsFormProvider
                                      ) extends PayeVariationsController with I18nSupport {
+
+  protected val form: Form[String] = formProvider("messages__companyPaye__error__required")
 
   private def viewmodel(mode: Mode, index: Index, srn: Option[String]): Retrieval[PayeViewModel] =
     Retrieval {

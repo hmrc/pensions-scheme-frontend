@@ -20,11 +20,16 @@ import forms.mappings.PayeMapping
 import javax.inject.Inject
 import models.Paye
 import play.api.data.Form
+import play.api.i18n.Messages
+import viewmodels.Message
 
 class PayeVariationsFormProvider @Inject() extends PayeMapping {
 
-  def apply(): Form[String] =
+  def apply(name: String)(implicit messages: Messages): Form[String] =
     Form(
-      "paye" -> payeStringMapping()
+      "paye" -> payeStringMapping(
+        payeLengthKey = Message("messages__vatVariations__company_length", name),
+        invalidPayeKey = Message("messages__vatVariations__company_invalid", name)
+      )
     )
 }
