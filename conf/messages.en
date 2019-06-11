@@ -898,9 +898,9 @@ messages__error__no_nino_partner = You need to tell us why the partner does not 
 
 messages__common_nino__title = What is the person’s National Insurance number?
 messages__common_nino__h1 = What is {0}’s National Insurance number?
-messages__error__common_nino = Enter {0}'s National Insurance number
+messages__error__common_nino = Enter a National Insurance number
 messages__error__common_nino_invalid = Enter a National Insurance number in the correct format
-messages__director_yes_nino__title = Does the director have a National Insurance number?
+messages__director_yes_nino__title = What is the director’s National Insurance number?
 
 messages__partnerDetails__title = Enter the partner’s details
 messages__partnerDetails__heading = Enter the partner’s details

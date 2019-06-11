@@ -49,7 +49,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
   private val onwardRoute = controllers.routes.IndexController.onPageLoad()
 
   private def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisherHns,
-                         allowChangeHelper:AllowChangeHelper = ach): CheckYourAnswersController =
+                         allowChangeHelper:AllowChangeHelper = ach, toggle:Boolean = false): CheckYourAnswersController =
     new CheckYourAnswersController(
       frontendAppConfig,
       messagesApi,
@@ -60,7 +60,8 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
       FakeUserAnswersService,
       countryOptions,
       new FakeNavigator(onwardRoute),
-      allowChangeHelper
+      allowChangeHelper,
+      new FakeFeatureSwitchManagementService(toggle)
     )
 
   "CheckYourAnswersController" when {

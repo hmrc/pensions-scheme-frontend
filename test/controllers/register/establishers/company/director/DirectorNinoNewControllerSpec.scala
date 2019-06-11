@@ -18,7 +18,7 @@ package controllers.register.establishers.company.director
 
 import controllers.ControllerSpecBase
 import controllers.actions._
-import forms.NinoYesFormProvider
+import forms.NinoNewFormProvider
 import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.company.CompanyDetailsId
 import identifiers.register.establishers.company.director.{DirectorDetailsId, DirectorNewNinoId}
@@ -41,7 +41,7 @@ class DirectorNinoNewControllerSpec extends ControllerSpecBase {
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
   val companyName = "test company name"
-  val formProvider = new NinoYesFormProvider()
+  val formProvider = new NinoNewFormProvider()
   val form = formProvider("First Name Middle Name Last Name")
   val establisherIndex = Index(0)
   val directorIndex = Index(0)
