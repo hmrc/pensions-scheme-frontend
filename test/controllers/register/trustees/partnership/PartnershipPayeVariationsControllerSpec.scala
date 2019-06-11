@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers.register.establishers.company
+package controllers.register.trustees.partnership
 
 import base.CSRFRequest
 import controllers.ControllerSpecBase
@@ -29,22 +29,22 @@ import play.api.mvc.{Call, Request, Result}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.{FakeUserAnswersService, UserAnswersService}
-import utils.annotations.EstablishersCompany
+import utils.annotations.TrusteesPartnership
 import utils.{FakeNavigator, Navigator}
 import viewmodels.{Message, PayeViewModel}
 import views.html.payeVariations
 
 import scala.concurrent.Future
 
-class CompanyPayeVariationsControllerSpec extends ControllerSpecBase with MustMatchers with CSRFRequest {
+class PartnershipPayeVariationsControllerSpec extends ControllerSpecBase with MustMatchers with CSRFRequest {
 
-  import CompanyPayeVariationsControllerSpec._
+  import PartnershipPayeVariationsControllerSpec._
 
-  "CompanyPayeVariationsController" must {
+  "PartnershipPayeVariationsController" must {
 
     "render the view correctly on a GET request" in {
       requestResult(
-        implicit app => addToken(FakeRequest(routes.CompanyPayeVariationsController.onPageLoad(CheckUpdateMode, firstIndex, srn))),
+        implicit app => addToken(FakeRequest(routes.PartnershipPayeVariationsController.onPageLoad(CheckUpdateMode, firstIndex, srn))),
         (request, result) => {
           status(result) mustBe OK
           contentAsString(result) mustBe payeVariations(frontendAppConfig, form, viewModel, None)(request, messages).toString()
@@ -54,7 +54,7 @@ class CompanyPayeVariationsControllerSpec extends ControllerSpecBase with MustMa
 
     "redirect to the next page on a POST request" in {
       requestResult(
-        implicit app => addToken(FakeRequest(routes.CompanyPayeVariationsController.onSubmit(CheckUpdateMode, firstIndex, srn))
+        implicit app => addToken(FakeRequest(routes.PartnershipPayeVariationsController.onSubmit(CheckUpdateMode, firstIndex, srn))
           .withFormUrlEncodedBody(("paye", "123456789"))),
         (_, result) => {
           status(result) mustBe SEE_OTHER
@@ -67,18 +67,18 @@ class CompanyPayeVariationsControllerSpec extends ControllerSpecBase with MustMa
 
 }
 
-object CompanyPayeVariationsControllerSpec extends CompanyPayeVariationsControllerSpec{
+object PartnershipPayeVariationsControllerSpec extends PartnershipPayeVariationsControllerSpec {
 
-  val form = new PayeVariationsFormProvider()("test company name")
+  val form = new PayeVariationsFormProvider()("test partnership name")
   val firstIndex = Index(0)
   val srn = Some("S123")
 
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
   val viewModel = PayeViewModel(
-    routes.CompanyPayeVariationsController.onSubmit(CheckUpdateMode, firstIndex, srn),
-    title = Message("messages__payeVariations__company_title"),
-    heading = Message("messages__payeVariations__heading", "test company name"),
+    routes.PartnershipPayeVariationsController.onSubmit(CheckUpdateMode, firstIndex, srn),
+    title = Message("messages__payeVariations__partnership_title"),
+    heading = Message("messages__payeVariations__heading", "test partnership name"),
     hint = Some(Message("messages__payeVariations__hint")),
     srn = srn
   )
@@ -88,8 +88,8 @@ object CompanyPayeVariationsControllerSpec extends CompanyPayeVariationsControll
 
     running(_.overrides(
       bind[AuthAction].to(FakeAuthAction),
-      bind[DataRetrievalAction].toInstance(getMandatoryEstablisherCompany),
-      bind(classOf[Navigator]).qualifiedWith(classOf[EstablishersCompany]).toInstance(new FakeNavigator(onwardRoute)),
+      bind[DataRetrievalAction].toInstance(getMandatoryTrusteePartnership),
+      bind(classOf[Navigator]).qualifiedWith(classOf[TrusteesPartnership]).toInstance(new FakeNavigator(onwardRoute)),
       bind[UserAnswersService].toInstance(FakeUserAnswersService),
       bind[AllowAccessActionProvider].toInstance(FakeAllowAccessProvider())
 

@@ -16,21 +16,22 @@
 
 package controllers.register.trustees.partnership
 
-import config.FrontendAppConfig
+import config.{FeatureSwitchManagementService, FrontendAppConfig}
 import controllers.Retrievals
 import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRequiredAction, DataRetrievalAction}
 import identifiers.register.trustees.IsTrusteeNewId
 import identifiers.register.trustees.partnership._
 import javax.inject.{Inject, Singleton}
 import models.Mode._
-import models.{Index, Mode}
+import models.requests.DataRequest
+import models.{Index, Mode, UpdateMode}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.{NoSuspendedCheck, TaskList, TrusteesPartnership}
 import utils.checkyouranswers.Ops._
-import utils.{AllowChangeHelper, CountryOptions, Navigator}
+import utils.{AllowChangeHelper, CountryOptions, Navigator, Toggles}
 import viewmodels.AnswerSection
 import views.html.check_your_answers
 
@@ -46,7 +47,8 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
                                            userAnswersService: UserAnswersService,
                                            @TrusteesPartnership navigator: Navigator,
                                            implicit val countryOptions: CountryOptions,
-                                           allowChangeHelper: AllowChangeHelper
+                                           allowChangeHelper: AllowChangeHelper,
+                                           featureSwitchManagementService: FeatureSwitchManagementService
                                           )(implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport {
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requiredData).async {
@@ -59,7 +61,7 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
         Seq(
           PartnershipDetailsId(index).row(routes.TrusteeDetailsController.onPageLoad(checkMode(mode), index, srn).url, mode),
           PartnershipVatId(index).row(routes.PartnershipVatController.onPageLoad(checkMode(mode), index, srn).url, mode),
-          PartnershipPayeId(index).row(routes.PartnershipPayeController.onPageLoad(checkMode(mode), index, srn).url, mode),
+          payeCya(mode, srn, index),
           PartnershipUniqueTaxReferenceId(index).row(routes.PartnershipUniqueTaxReferenceController.onPageLoad(checkMode(mode), index, srn).url, mode)
         ).flatten
       )
@@ -92,5 +94,13 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
         Redirect(navigator.nextPage(CheckYourAnswersId(index), mode, request.userAnswers, srn))
       }
   }
+
+  private def payeCya(mode: Mode, srn: Option[String], index: Index)(implicit request: DataRequest[AnyContent]) =
+    if (mode == UpdateMode && featureSwitchManagementService.get(Toggles.isSeparateRefCollectionEnabled) &&
+      !request.userAnswers.get(IsTrusteeNewId(index)).getOrElse(false))
+      PartnershipPayeVariationsId(index).row(routes.PartnershipPayeVariationsController.onPageLoad(checkMode(mode), index, srn).url, mode)
+    else
+      PartnershipPayeId(index).row(routes.PartnershipPayeController.onPageLoad(checkMode(mode), index, srn).url, mode)
+
 
 }
