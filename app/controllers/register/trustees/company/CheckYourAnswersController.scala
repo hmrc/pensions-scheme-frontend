@@ -16,14 +16,15 @@
 
 package controllers.register.trustees.company
 
-import config.FrontendAppConfig
+import config.{FeatureSwitchManagementService, FrontendAppConfig}
 import controllers.Retrievals
 import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRequiredAction, DataRetrievalAction}
 import identifiers.register.trustees.company._
 import identifiers.register.trustees.{IsTrusteeCompleteId, IsTrusteeNewId}
 import javax.inject.Inject
 import models.Mode._
-import models.{Index, Mode}
+import models.requests.DataRequest
+import models.{Index, Mode, UpdateMode}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
@@ -46,10 +47,12 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
                                            implicit val countryOptions: CountryOptions,
                                            @TrusteesCompany navigator: Navigator,
                                            userAnswersService: UserAnswersService,
-                                           allowChangeHelper: AllowChangeHelper
+                                           allowChangeHelper: AllowChangeHelper,
+                                           featureSwitchManagementService: FeatureSwitchManagementService
                                           )(implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport {
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requiredData).async {
+  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requiredData).async {
     implicit request =>
 
       implicit val userAnswers = request.userAnswers
@@ -58,7 +61,12 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
 
       val companyVatRow = CompanyVatId(index).row(routes.CompanyVatController.onPageLoad(checkMode(mode), index, srn).url, mode)
 
-      val companyPayeRow = CompanyPayeId(index).row(routes.CompanyPayeController.onPageLoad(checkMode(mode), index, srn).url, mode)
+      val companyPayeRow = if (mode == UpdateMode && featureSwitchManagementService.get(Toggles.isSeparateRefCollectionEnabled) &&
+        !request.userAnswers.get(IsTrusteeNewId(index)).getOrElse(false))
+        CompanyPayeVariationsId(index).row(routes.CompanyPayeVariationsController.onPageLoad(checkMode(mode), index, srn).url, mode)
+      else
+        CompanyPayeId(index).row(routes.CompanyPayeController.onPageLoad(checkMode(mode), index, srn).url, mode)
+
 
       val companyRegistrationNumber = CompanyRegistrationNumberId(index).row(
         routes.CompanyRegistrationNumberController.onPageLoad(checkMode(mode), index, srn).url, mode
