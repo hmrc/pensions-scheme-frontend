@@ -33,7 +33,7 @@ import services.FakeUserAnswersService
 import utils.checkyouranswers.CheckYourAnswers.ContactDetailsCYA
 import utils.checkyouranswers._
 import utils.{CountryOptions, FakeCountryOptions, FakeNavigator, UserAnswers, _}
-import viewmodels.AnswerSection
+import viewmodels.{AnswerRow, AnswerSection}
 import views.html.check_your_answers
 
 class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerAllowChangeBehaviour {
@@ -42,12 +42,20 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
 
   "CheckYourAnswers Controller" must {
 
-    "return OK and the correct view for a GET with all the answers" in {
+    "return OK and the correct view for a GET with all the answers when ref collection toggle is off" in {
       val request = FakeDataRequest(fullAnswers)
       val result = controller(fullAnswers.dataRetrievalAction).onPageLoad(NormalMode, None, index)(request)
 
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString(answerSections(request))
+    }
+
+    "return OK and the correct view for a GET with all the answers when ref collection toggle is on" in {
+      val request = FakeDataRequest(UserAnswers())
+      val result = controller(UserAnswers().dataRetrievalAction, fs = new FakeFeatureSwitchManagementService(true)).onPageLoad(UpdateMode, srn, index)(request)
+
+      status(result) mustBe OK
+      contentAsString(result) mustBe viewAsString(vatSection(request), srn, postUrlUpdateMode)
     }
 
     "redirect to Session Expired for a GET if no existing data is found" in {
@@ -77,6 +85,7 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase with Enumerable
   private implicit val fakeCountryOptions: CountryOptions = new FakeCountryOptions
   val index = Index(0)
   val testSchemeName = "Test Scheme Name"
+  val srn = Some("S123")
   private val companyDetails = CompanyDetails("test company")
   private val companyRegNoYes = CompanyRegistrationNumber.Yes("crn")
   private val utrYes = UniqueTaxReference.Yes("utr")
@@ -87,6 +96,7 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase with Enumerable
 
   private val emptyAnswers = UserAnswers()
   private val companyRegistrationNumberRoute = routes.CompanyRegistrationNumberController.onPageLoad(CheckMode, None, 0).url
+  private val companyVatVariationsRoute = routes.CompanyVatVariationsController.onPageLoad(CheckUpdateMode, 0, srn).url
   private val companyUniqueTaxReferenceRoute = routes.CompanyUniqueTaxReferenceController.onPageLoad(CheckMode, None, 0).url
   private val companyDetailsRoute = routes.CompanyDetailsController.onPageLoad(CheckMode, None, 0).url
   private val isCompanyDormantRoute = routes.IsCompanyDormantController.onPageLoad(CheckMode, None, 0).url
@@ -106,6 +116,7 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase with Enumerable
     establishersCompanyContactDetails(0, contactDetails)
 
   def postUrl: Call = routes.CheckYourAnswersController.onSubmit(NormalMode, None, index)
+  def postUrlUpdateMode: Call = routes.CheckYourAnswersController.onSubmit(UpdateMode, srn, index)
 
   private def companyDetailsSection(implicit request: DataRequest[AnyContent]): AnswerSection = {
     val companyDetailsRow = CompanyDetailsCYA()().row(CompanyDetailsId(index))(companyDetailsRoute, request.userAnswers)
@@ -159,15 +170,24 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase with Enumerable
       addressRows ++ addressYearsRows ++ previousAddressRows ++ contactDetailsRows)
   }
 
-  val config = injector.instanceOf[Configuration]
+  private val config = injector.instanceOf[Configuration]
   def featureSwitchManagementService: FeatureSwitchManagementService =
     new FeatureSwitchManagementServiceTestImpl(config, environment)
 
   private def answerSections(implicit request: DataRequest[AnyContent]) = Seq(companyDetailsSection, companyContactDetailsSection)
+  private def vatSection(implicit request: DataRequest[AnyContent]) = Seq(
+    AnswerSection(
+    Some("messages__common__company_details__title"), Seq(
+    AnswerRow("messages__common__cya__vat", Seq("site.not_entered"), answerIsMessageKey = true,
+      Some(Link("site.add", companyVatVariationsRoute, Some("messages__visuallyhidden__establisher__vat_number_add")))))),
+    AnswerSection(
+      Some("messages__establisher_company_contact_details__title"),
+      Seq.empty))
 
 
   def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData,
-                 allowChangeHelper: AllowChangeHelper = ach): CheckYourAnswersController =
+                 allowChangeHelper: AllowChangeHelper = ach,
+                 fs: FeatureSwitchManagementService = featureSwitchManagementService): CheckYourAnswersController =
     new CheckYourAnswersController(
       frontendAppConfig,
       messagesApi,
@@ -179,16 +199,17 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase with Enumerable
       new FakeNavigator(onwardRoute),
       FakeUserAnswersService,
       allowChangeHelper,
-      featureSwitchManagementService
+      fs
     )
 
-  def viewAsString(answerSections: Seq[AnswerSection]): String =
+  def viewAsString(answerSections: Seq[AnswerSection], srn: Option[String] = None, postUrl: Call = postUrl): String =
     check_your_answers(
       frontendAppConfig,
       answerSections,
       postUrl,
       None,
       hideEditLinks = false,
+      srn = srn,
       hideSaveAndContinueButton = false
     )(fakeRequest, messages).toString
 

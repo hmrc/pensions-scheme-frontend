@@ -19,6 +19,7 @@ package controllers.register.trustees.partnership
 import config.FrontendAppConfig
 import controllers.VatVariationsController
 import controllers.actions._
+import forms.VatVariationsFormProvider
 import identifiers.register.trustees.partnership.{PartnershipDetailsId, PartnershipVatVariationsId}
 import javax.inject.Inject
 import models.{Index, Mode}
@@ -30,47 +31,45 @@ import utils.annotations.TrusteesPartnership
 import viewmodels.{Message, VatViewModel}
 
 class PartnershipVatVariationsController @Inject()(
-                                          override val appConfig: FrontendAppConfig,
-                                          override val messagesApi: MessagesApi,
-                                          val userAnswersService: UserAnswersService,
-                                          @TrusteesPartnership override val navigator: Navigator,
-                                          authenticate: AuthAction,
-                                          getData: DataRetrievalAction,
-                                          allowAccess: AllowAccessActionProvider,
-                                          requireData: DataRequiredAction
-                                        ) extends VatVariationsController {
+                                                    override val appConfig: FrontendAppConfig,
+                                                    override val messagesApi: MessagesApi,
+                                                    val userAnswersService: UserAnswersService,
+                                                    @TrusteesPartnership override val navigator: Navigator,
+                                                    authenticate: AuthAction,
+                                                    getData: DataRetrievalAction,
+                                                    allowAccess: AllowAccessActionProvider,
+                                                    requireData: DataRequiredAction,
+                                                    formProvider: VatVariationsFormProvider
+                                                  ) extends VatVariationsController {
 
-  private def viewmodel(mode: Mode, index: Index, srn: Option[String]): Retrieval[VatViewModel] =
-    Retrieval {
-      implicit request =>
-        PartnershipDetailsId(index).retrieve.right.map {
-          details =>
-            VatViewModel(
-              postCall = routes.PartnershipVatVariationsController.onSubmit(mode, index, srn),
-              title = Message("messages__vatVariations__partnership_title"),
-              heading = Message("messages__vatVariations__heading", details.name),
-              hint = Message("messages__vatVariations__hint", details.name),
-              subHeading = None,
-              srn = srn
-            )
-        }
-    }
+  private def form(companyName: String) = formProvider(companyName)
+
+  private def viewModel(mode: Mode, index: Index, srn: Option[String], companyName: String): VatViewModel = {
+    VatViewModel(
+      postCall = routes.PartnershipVatVariationsController.onSubmit(mode, index, srn),
+      title = Message("messages__vatVariations__partnership_title"),
+      heading = Message("messages__vatVariations__heading", companyName),
+      hint = Message("messages__vatVariations__hint", companyName),
+      subHeading = None,
+      srn = srn
+    )
+  }
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
-    implicit request =>
-      viewmodel(mode, index, srn).retrieve.right.map {
-        vm =>
-          get(PartnershipVatVariationsId(index), vm)
-      }
-  }
+      implicit request =>
+        PartnershipDetailsId(index).retrieve.right.map { details =>
+          val partnershipName = details.name
+          get(PartnershipVatVariationsId(index), viewModel(mode, index, srn, partnershipName), form(partnershipName))
+        }
+    }
 
   def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen requireData).async {
-    implicit request =>
-      viewmodel(mode, index, srn).retrieve.right.map {
-        vm =>
-          post(PartnershipVatVariationsId(index), mode, vm)
-      }
-  }
+      implicit request =>
+        PartnershipDetailsId(index).retrieve.right.map { details =>
+          val partnershipName = details.name
+          post(PartnershipVatVariationsId(index), mode, viewModel(mode, index, srn, partnershipName), form(partnershipName))
+        }
+    }
 }

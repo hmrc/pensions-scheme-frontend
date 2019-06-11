@@ -38,7 +38,6 @@ import views.html.vatVariations
 
 import scala.concurrent.Future
 
-
 class VatVariationsControllerSpec extends WordSpec with MustMatchers with OptionValues with ScalaFutures {
 
   import VatVariationsControllerSpec._
@@ -70,7 +69,7 @@ class VatVariationsControllerSpec extends WordSpec with MustMatchers with Option
           val result = controller.onPageLoad(viewmodel, UserAnswers())
 
           status(result) mustEqual OK
-          contentAsString(result) mustEqual vatVariations(appConfig, formProvider(), viewmodel, None)(request, messages).toString
+          contentAsString(result) mustEqual vatVariations(appConfig, formProvider(companyName)(messages), viewmodel, None)(request, messages).toString
       }
     }
 
@@ -94,7 +93,7 @@ class VatVariationsControllerSpec extends WordSpec with MustMatchers with Option
           status(result) mustEqual OK
           contentAsString(result) mustEqual vatVariations(
             appConfig,
-            formProvider().fill("123456789"),
+            formProvider(companyName)(messages).fill("123456789"),
             viewmodel,
             None
           )(request, messages).toString
@@ -149,7 +148,7 @@ class VatVariationsControllerSpec extends WordSpec with MustMatchers with Option
           status(result) mustEqual BAD_REQUEST
           contentAsString(result) mustEqual vatVariations(
             appConfig,
-            formProvider().bind(Map("vat" -> "123456789012345")),
+            formProvider(companyName)(messages).bind(Map("vat" -> "123456789012345")),
             viewmodel,
             None
           )(request, messages).toString
@@ -163,19 +162,21 @@ object VatVariationsControllerSpec {
 
   object FakeIdentifier extends TypedIdentifier[String]
 
+  val companyName = "test company"
   class TestController @Inject()(
                                   override val appConfig: FrontendAppConfig,
                                   override val messagesApi: MessagesApi,
                                   override val userAnswersService: UserAnswersService,
-                                  override val navigator: Navigator
+                                  override val navigator: Navigator,
+                                  val formProvider: VatVariationsFormProvider
                                 ) extends VatVariationsController {
 
     def onPageLoad(viewmodel: VatViewModel, answers: UserAnswers): Future[Result] = {
-      get(FakeIdentifier, viewmodel)(DataRequest(FakeRequest(), "cacheId", answers, PsaId("A0000000")))
+      get(FakeIdentifier, viewmodel, formProvider(companyName))(DataRequest(FakeRequest(), "cacheId", answers, PsaId("A0000000")))
     }
 
     def onSubmit(viewmodel: VatViewModel, answers: UserAnswers, fakeRequest: Request[AnyContent]): Future[Result] = {
-      post(FakeIdentifier, NormalMode, viewmodel)(DataRequest(fakeRequest, "cacheId", answers, PsaId("A0000000")))
+      post(FakeIdentifier, NormalMode, viewmodel, formProvider(companyName))(DataRequest(fakeRequest, "cacheId", answers, PsaId("A0000000")))
     }
   }
 

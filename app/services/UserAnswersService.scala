@@ -63,7 +63,10 @@ trait UserAnswersService {
                                       ): Future[JsValue] = {
     mode match {
       case NormalMode | CheckMode => subscriptionCacheConnector.save(request.externalId, id, value)
-      case UpdateMode | CheckUpdateMode => lockAndCall(srn, updateSchemeCacheConnector.save(_, id, value))
+      case UpdateMode | CheckUpdateMode => {
+        println("\n\n\n ererer")
+        lockAndCall(srn, updateSchemeCacheConnector.save(_, id, value))
+      }
     }
   }
 
@@ -76,11 +79,13 @@ trait UserAnswersService {
     mode match {
       case NormalMode | CheckMode => subscriptionCacheConnector.save(request.externalId, id, value)
       case UpdateMode | CheckUpdateMode =>
+        println("\n\n\n ererer"+id)
         val answers = request.userAnswers
           .set(id)(value).flatMap {
           _.set(changeId)(true)
         }.asOpt.getOrElse(request.userAnswers)
 
+        println("\n\n\n answers: "+answers)
         lockAndCall(srn, updateSchemeCacheConnector.upsert(_, answers.json))
     }
   }

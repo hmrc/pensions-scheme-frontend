@@ -17,10 +17,9 @@
 package controllers
 
 import config.FrontendAppConfig
-import forms.VatVariationsFormProvider
 import identifiers.TypedIdentifier
+import models.Mode
 import models.requests.DataRequest
-import models.{Mode, Vat}
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{AnyContent, Result}
@@ -42,11 +41,7 @@ trait VatVariationsController extends FrontendController with Retrievals with I1
 
   protected def navigator: Navigator
 
-  protected def formProvider: VatVariationsFormProvider = new VatVariationsFormProvider()
-
-  protected def form = formProvider()
-
-  def get(id: TypedIdentifier[String], viewmodel: VatViewModel)
+  def get(id: TypedIdentifier[String], viewmodel: VatViewModel, form: Form[String])
          (implicit request: DataRequest[AnyContent]): Future[Result] = {
     val preparedForm =
       request.userAnswers.get(id) match {
@@ -57,13 +52,15 @@ trait VatVariationsController extends FrontendController with Retrievals with I1
     Future.successful(Ok(vatVariations(appConfig, preparedForm, viewmodel, existingSchemeName)))
   }
 
-  def post(id: TypedIdentifier[String], mode: Mode, viewmodel: VatViewModel)
+  def post(id: TypedIdentifier[String], mode: Mode, viewmodel: VatViewModel, form: Form[String])
           (implicit request: DataRequest[AnyContent]): Future[Result] = {
     form.bindFromRequest().fold(
       (formWithErrors: Form[_]) =>
         Future.successful(BadRequest(vatVariations(appConfig, formWithErrors, viewmodel, existingSchemeName))),
       vat => {
-        userAnswersService.save(mode, viewmodel.srn, id, vat).map(cacheMap =>
+        val updatedUserAnswers = request.userAnswers.set(id)(vat).asOpt.getOrElse(request.userAnswers)
+        println("\n\n\n updatedUserAnswers : "+updatedUserAnswers)
+        userAnswersService.upsert(mode, viewmodel.srn, updatedUserAnswers.json).map(cacheMap =>
           Redirect(navigator.nextPage(id, mode, UserAnswers(cacheMap), viewmodel.srn)))
       }
     )

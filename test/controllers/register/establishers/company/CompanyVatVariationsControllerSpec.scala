@@ -68,7 +68,7 @@ class CompanyVatVariationsControllerSpec extends ControllerSpecBase with MustMat
 
 object CompanyVatVariationsControllerSpec extends CompanyVatVariationsControllerSpec {
 
-  val form = new VatVariationsFormProvider()()
+  val form = new VatVariationsFormProvider()("test company")
   val firstIndex = Index(0)
   val srn = Some("S123")
 
