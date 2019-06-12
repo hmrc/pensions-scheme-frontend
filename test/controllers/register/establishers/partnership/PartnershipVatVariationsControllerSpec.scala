@@ -67,7 +67,7 @@ class PartnershipVatVariationsControllerSpec extends ControllerSpecBase with Mus
 
 object PartnershipVatVariationsControllerSpec extends PartnershipVatVariationsControllerSpec {
 
-  val form = new VatVariationsFormProvider()("test partnership")
+  val form = new VatVariationsFormProvider()("test partnership name")
   val firstIndex = Index(0)
   val srn = Some("S123")
 
@@ -76,7 +76,7 @@ object PartnershipVatVariationsControllerSpec extends PartnershipVatVariationsCo
   val viewModel = VatViewModel(
     routes.PartnershipVatVariationsController.onSubmit(CheckUpdateMode, firstIndex, srn),
     title = Message("messages__vatVariations__partnership_title"),
-    heading = Message("messages__vatVariations__heading", "test company name"),
+    heading = Message("messages__vatVariations__heading", "test partnership name"),
     hint = Message("messages__vatVariations__hint"),
     subHeading = None,
     srn = srn
