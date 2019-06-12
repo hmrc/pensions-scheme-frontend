@@ -14,12 +14,18 @@
  * limitations under the License.
  */
 
-package utils
+package forms
 
-object Toggles {
+import forms.mappings.{Constraints, Mappings, Transforms}
+import javax.inject.Inject
+import play.api.data.Form
+import play.api.i18n.Messages
+import viewmodels.Message
 
-  val isVariationsEnabled: String = "is-variations-enabled"
-  val isPrevAddEnabled: String = "is-address-pre-population-enabled"
-  val isSchemeDataShiftEnabled: String = "is-scheme-data-shift-enabled"
-  val separateRefCollectionEnabled: String = "separate-ref-collection"
+
+class NinoNewFormProvider @Inject()() extends Mappings with Constraints with Transforms {
+  def apply(personName: String)(implicit messages: Messages): Form[String] = Form(
+    "nino" -> text(Message("messages__error__common_nino", personName).resolve).transform(ninoTransform, noTransform).
+      verifying(validNino("messages__error__common_nino_invalid"))
+  )
 }
