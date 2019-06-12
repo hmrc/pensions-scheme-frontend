@@ -23,17 +23,11 @@
 )(implicit messages: Messages)
 
 <div class="multiple-choice" @dataTarget.map { dataTarget => data-target="@dataTarget" }>
-  <input id="@field.id-@value" type="radio" name="@field.name" value="@value" @if(field.value.contains(value)){ checked="checked" }>
-  <label class="block-label" for="@field.id-@value">
-    @messages(label)
-  </label>
-
- @if(hint.nonEmpty) {
-  <div class="panel">
-   @hint.map { hintText =>
-    <p>@messages(hintText)</p>
-   }
-  </div>
- }
-
+    <input id="@field.id-@value" type="radio" name="@field.name" value="@value" @if(field.value.contains(value)){ checked="checked" }>
+    <label  for="@field.id-@value">
+        @messages(label)
+        @if(hint.nonEmpty) {
+        <span class="form-hint">@hint.map { hintText => @messages(hintText)}</span>
+        }
+    </label>
 </div>
