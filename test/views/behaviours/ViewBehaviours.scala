@@ -142,14 +142,15 @@ trait ViewBehaviours extends ViewSpecBase {
   def pageWithReturnChangeLink(view: () => HtmlFormat.Appendable): Unit = {
     s"have a change link" in {
       val doc = asDocument(view())
-      assertRenderedByCssSelector(doc, ".cya-change")
+
+      assertRenderedById(doc, "cya-0-0-change")
     }
   }
 
   def pageWithoutReturnChangeLink(view: () => HtmlFormat.Appendable): Unit = {
-    s"dont have a return link" in {
+    s"don't have a return link" in {
       val doc = asDocument(view())
-      assertNotRenderedByCssSelector(doc, ".cya-change")
+      assertNotRenderedById(doc, "cya-0-0-change")
     }
   }
 
