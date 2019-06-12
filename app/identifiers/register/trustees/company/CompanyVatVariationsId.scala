@@ -17,7 +17,7 @@
 package identifiers.register.trustees.company
 
 import identifiers.TypedIdentifier
-import identifiers.register.trustees.TrusteesId
+import identifiers.register.trustees.{IsTrusteeNewId, TrusteesId}
 import models.Link
 import play.api.i18n.Messages
 import play.api.libs.json.JsPath
@@ -40,15 +40,18 @@ object CompanyVatVariationsId {
     new CheckYourAnswers[CompanyVatVariationsId] {
 
       override def row(id: CompanyVatVariationsId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        StringCYA(Some(labelVat), Some(hiddenLabelVat))().row(id)(changeUrl, userAnswers)
+        StringCYA[CompanyVatVariationsId](Some(labelVat), Some(hiddenLabelVat))().row(id)(changeUrl, userAnswers)
 
       override def updateRow(id: CompanyVatVariationsId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        userAnswers.get(id) match {
-          case Some(vat) => Seq(AnswerRow(labelVat, Seq(vat), answerIsMessageKey = false, None))
-          case _ => Seq(AnswerRow(labelVat, Seq("site.not_entered"), answerIsMessageKey = true,
-            Some(Link("site.add", changeUrl, Some(s"${hiddenLabelVat}_add")))))
+        userAnswers.get(IsTrusteeNewId(id.index)) match {
+          case Some(true) => StringCYA[CompanyVatVariationsId]()().row(id)(changeUrl, userAnswers)
+          case _ =>
+            userAnswers.get(id) match {
+              case Some(vat) => Seq(AnswerRow(labelVat, Seq(vat), answerIsMessageKey = false, None))
+              case _ => Seq(AnswerRow(labelVat, Seq("site.not_entered"), answerIsMessageKey = true,
+                Some(Link("site.add", changeUrl, Some(s"${hiddenLabelVat}_add")))))
+            }
         }
-
     }
   }
 }

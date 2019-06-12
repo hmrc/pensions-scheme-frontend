@@ -17,51 +17,69 @@
 package identifiers.register.trustees.company
 
 import base.SpecBase
+import identifiers.register.establishers.IsEstablisherNewId
 import models._
 import models.requests.DataRequest
 import play.api.mvc.AnyContent
 import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.PsaId
 import utils.checkyouranswers.Ops._
-import utils.{CountryOptions, InputOption, UserAnswers}
+import utils.{CountryOptions, UserAnswers}
 import viewmodels.AnswerRow
 
 class CompanyVatVariationsIdSpec extends SpecBase {
 
+  implicit val countryOptions: CountryOptions = new CountryOptions(environment, frontendAppConfig)
+
   "cya" when {
 
     val onwardUrl = "onwardUrl"
-    implicit val countryOptions: CountryOptions = new CountryOptions(Seq.empty[InputOption])
-    implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id",
-      UserAnswers().set(CompanyVatVariationsId(0))("test-vat").asOpt.get, PsaId("A0000000"))
-    implicit val userAnswers: UserAnswers = request.userAnswers
+
+    def answers: UserAnswers = UserAnswers().set(CompanyVatVariationsId(0))("vat").asOpt.get
 
     "in normal mode" must {
 
       "return answers rows with change links" in {
+        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
+        implicit val userAnswers = request.userAnswers
         CompanyVatVariationsId(0).row(onwardUrl, NormalMode) must equal(Seq(
-          AnswerRow("messages__common__cya__vat", List("test-vat"), false,
-            Some(Link("site.change", onwardUrl, Some("messages__visuallyhidden__trustee__vat_number"))))
+          AnswerRow("messages__common__cya__vat",List("vat"),false,Some(Link("site.change",onwardUrl,
+            Some("messages__visuallyhidden__trustee__vat_number"))))
         ))
       }
     }
 
-    "in update mode" must {
+    "in update mode for new trustee - company vat" must {
 
-      "return answers rows with no links if vat is available " in {
+      def answersNew: UserAnswers = answers.set(IsEstablisherNewId(0))(true).asOpt.value
+
+      "return answers rows with change links" in {
+        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answersNew, PsaId("A0000000"))
+        implicit val userAnswers = request.userAnswers
         CompanyVatVariationsId(0).row(onwardUrl, UpdateMode) must equal(Seq(
-          AnswerRow("messages__common__cya__vat", List("test-vat"), false,
-            None)
+          AnswerRow("messages__common__cya__vat",List("vat"),false, None)
+        ))
+      }
+    }
+
+    "in update mode for existing trustee - company vat" must {
+
+      "return answers rows without change links if existing vat is available" in {
+        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
+        implicit val userAnswers = request.userAnswers
+
+        CompanyVatVariationsId(0).row(onwardUrl, UpdateMode) must equal(Seq(
+          AnswerRow("messages__common__cya__vat",List("vat"),false,None)
         ))
       }
 
-      "return answers rows with add link if vat is not available" in {
+      "display an add link if no vat is available" in {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(), PsaId("A0000000"))
-        implicit val userAnswers: UserAnswers = request.userAnswers
+        implicit val userAnswers = request.userAnswers
+
         CompanyVatVariationsId(0).row(onwardUrl, UpdateMode) must equal(Seq(
           AnswerRow("messages__common__cya__vat", Seq("site.not_entered"), answerIsMessageKey = true,
-            Some(Link("site.add", onwardUrl, Some("messages__visuallyhidden__trustee__vat_number_add"))))
-        ))
+            Some(Link("site.add", onwardUrl, Some("messages__visuallyhidden__trustee__vat_number_add"))))))
       }
     }
   }

@@ -97,7 +97,7 @@ class CheckYourAnswersController @Inject()(
   }
 
   private def vatCya(mode: Mode, srn: Option[String], index: Index)(implicit request: DataRequest[AnyContent]) =
-    if (mode == UpdateMode && featureSwitchManagementService.get(Toggles.isSeparateRefCollectionEnabled) &&
+    if (mode == UpdateMode && featureSwitchManagementService.get(Toggles.separateRefCollectionEnabled) &&
       !request.userAnswers.get(IsEstablisherNewId(index)).getOrElse(false))
         CompanyVatVariationsId(index).row(routes.CompanyVatVariationsController.onPageLoad(checkMode(mode), index, srn).url, mode)
     else
