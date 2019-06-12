@@ -23,7 +23,6 @@ import identifiers.register.establishers.partnership._
 import models.AddressYears.UnderAYear
 import models._
 import models.address.Address
-import models.register.DeclarationDormant
 import play.api.test.Helpers._
 import services.FakeUserAnswersService
 import utils._
@@ -44,7 +43,6 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
     .flatMap(_.set(PartnershipAddressYearsId(firstIndex))(UnderAYear))
     .flatMap(_.set(PartnershipPreviousAddressId(firstIndex))(Address("Previous Address 1", "Previous Address 2", None, None, None, "US")))
     .flatMap(_.set(PartnershipContactDetailsId(firstIndex))(ContactDetails("e@mail.co", "98765")))
-    .flatMap(_.set(IsPartnershipDormantId(firstIndex))(DeclarationDormant.Yes))
     .asOpt.value
 
   implicit val request = FakeDataRequest(partnershipAnswers)
@@ -77,8 +75,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
           PartnershipDetailsId(firstIndex).row(routes.PartnershipDetailsController.onPageLoad(CheckMode, firstIndex, None).url),
           PartnershipVatId(firstIndex).row(routes.PartnershipVatController.onPageLoad(CheckMode, firstIndex, None).url),
           PartnershipPayeId(firstIndex).row(routes.PartnershipPayeController.onPageLoad(CheckMode, firstIndex, None).url),
-          PartnershipUniqueTaxReferenceID(firstIndex).row(routes.PartnershipUniqueTaxReferenceController.onPageLoad(CheckMode, firstIndex, None).url),
-          IsPartnershipDormantId(firstIndex).row(routes.IsPartnershipDormantController.onPageLoad(CheckMode, firstIndex, None).url)
+          PartnershipUniqueTaxReferenceID(firstIndex).row(routes.PartnershipUniqueTaxReferenceController.onPageLoad(CheckMode, firstIndex, None).url)
         ).flatten
       )
 

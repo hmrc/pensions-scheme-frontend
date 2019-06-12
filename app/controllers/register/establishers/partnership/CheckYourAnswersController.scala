@@ -61,8 +61,7 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
           PartnershipDetailsId(index).row(routes.PartnershipDetailsController.onPageLoad(checkMode(mode), index, srn).url, mode),
           PartnershipVatId(index).row(routes.PartnershipVatController.onPageLoad(checkMode(mode), index, srn).url, mode),
           PartnershipPayeId(index).row(routes.PartnershipPayeController.onPageLoad(checkMode(mode), index, srn).url, mode),
-          PartnershipUniqueTaxReferenceID(index).row(routes.PartnershipUniqueTaxReferenceController.onPageLoad(checkMode(mode), index, srn).url, mode),
-          IsPartnershipDormantId(index).row(routes.IsPartnershipDormantController.onPageLoad(checkMode(mode), index, srn).url, mode)
+          PartnershipUniqueTaxReferenceID(index).row(routes.PartnershipUniqueTaxReferenceController.onPageLoad(checkMode(mode), index, srn).url, mode)
         ).flatten
       )
 
