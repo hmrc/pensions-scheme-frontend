@@ -55,8 +55,8 @@ trait NinoController extends FrontendController with Retrievals with I18nSupport
       (formWithErrors: Form[_]) =>
         Future.successful(BadRequest(nino(appConfig, formWithErrors, viewmodel, existingSchemeName))),
       value =>
-        userAnswersService.save(mode, viewmodel.srn, id, value).map(cacheMap =>
-          Redirect(navigator.nextPage(id, mode, UserAnswers(cacheMap), viewmodel.srn)))
+        userAnswersService.save(mode, viewmodel.srn, id, value).map{cacheMap =>
+          Redirect(navigator.nextPage(id, mode, UserAnswers(cacheMap), viewmodel.srn))}
     )
   }
 }

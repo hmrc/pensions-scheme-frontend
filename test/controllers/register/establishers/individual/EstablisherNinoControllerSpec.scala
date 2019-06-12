@@ -33,31 +33,7 @@ import views.html.register.establishers.individual.establisherNino
 
 class EstablisherNinoControllerSpec extends ControllerSpecBase {
 
-  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
-
-  val formProvider = new EstablisherNinoFormProvider()
-  val form = formProvider()
-  val firstIndex = Index(0)
-  val establisherName = "test first name test last name"
-  val establisherDetails = PersonDetails("test first name", None, "test last name", LocalDate.now, false)
-
-  val validData: JsObject = Json.obj(
-    "establishers" -> Json.arr(
-      Json.obj(
-        EstablisherDetailsId.toString -> establisherDetails,
-        EstablisherNinoId.toString -> Nino.Yes("CS700100A")
-      ),
-      Json.obj(EstablisherDetailsId.toString -> establisherDetails)
-    )
-  )
-
-  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisher): EstablisherNinoController =
-    new EstablisherNinoController(frontendAppConfig, messagesApi, FakeUserAnswersService, new FakeNavigator(desiredRoute = onwardRoute),
-      FakeAuthAction, dataRetrievalAction, FakeAllowAccessProvider(), new DataRequiredActionImpl, formProvider)
-
-  private val submitUrl = controllers.register.establishers.individual.routes.EstablisherNinoController.onSubmit(NormalMode, firstIndex, None)
-  def viewAsString(form: Form[_] = form): String = establisherNino(frontendAppConfig, form, NormalMode,
-    firstIndex, None, submitUrl, None)(fakeRequest, messages).toString
+import EstablisherNinoControllerSpec._
 
   "EstablisherNino Controller" must {
 
@@ -108,4 +84,32 @@ class EstablisherNinoControllerSpec extends ControllerSpecBase {
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
     }
   }
+}
+
+object EstablisherNinoControllerSpec extends ControllerSpecBase  {
+  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
+
+  val formProvider = new EstablisherNinoFormProvider()
+  val form = formProvider()
+  val firstIndex = Index(0)
+  val establisherName = "test first name test last name"
+  val establisherDetails = PersonDetails("test first name", None, "test last name", LocalDate.now, false)
+
+  val validData: JsObject = Json.obj(
+    "establishers" -> Json.arr(
+      Json.obj(
+        EstablisherDetailsId.toString -> establisherDetails,
+        EstablisherNinoId.toString -> Nino.Yes("CS700100A")
+      ),
+      Json.obj(EstablisherDetailsId.toString -> establisherDetails)
+    )
+  )
+
+  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisher): EstablisherNinoController =
+    new EstablisherNinoController(frontendAppConfig, messagesApi, FakeUserAnswersService, new FakeNavigator(desiredRoute = onwardRoute),
+      FakeAuthAction, dataRetrievalAction, FakeAllowAccessProvider(), new DataRequiredActionImpl, formProvider)
+
+  private val submitUrl = controllers.register.establishers.individual.routes.EstablisherNinoController.onSubmit(NormalMode, firstIndex, None)
+  def viewAsString(form: Form[_] = form): String = establisherNino(frontendAppConfig, form, NormalMode,
+    firstIndex, None, submitUrl, None)(fakeRequest, messages).toString
 }

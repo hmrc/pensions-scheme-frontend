@@ -166,6 +166,7 @@ messages__before_you_start__item_1 = the pension scheme name
 messages__before_you_start__item_2 = the type of scheme
 messages__before_you_start__item_3 = which country the scheme was established in
 messages__before_you_start__item_4 = if you have working knowledge of pensions and pensions tax legislation
+messages__before_you_start__scheme_setup = This will set up your scheme application
 
 messages__trustee__has_ct_utr__title = Does the trustee have a Corporation Tax Unique Taxpayer Reference number?
 messages__trustee__ct_utr_hint_what = A CTUTR is issued by HMRC when you register your business.
@@ -898,7 +899,7 @@ messages__error__no_nino_partner = You need to tell us why the partner does not 
 
 messages__common_nino__title = What is the person’s National Insurance number?
 messages__common_nino__h1 = What is {0}’s National Insurance number?
-messages__error__common_nino = Enter {0}'s National Insurance number
+messages__error__common_nino = Enter a National Insurance number
 messages__error__common_nino_invalid = Enter a National Insurance number in the correct format
 messages__director_yes_nino__title = What is the director’s National Insurance number?
 messages__partner_yes_nino__title = What is the partner’s National Insurance number?
