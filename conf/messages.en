@@ -166,6 +166,7 @@ messages__before_you_start__item_1 = the pension scheme name
 messages__before_you_start__item_2 = the type of scheme
 messages__before_you_start__item_3 = which country the scheme was established in
 messages__before_you_start__item_4 = if you have working knowledge of pensions and pensions tax legislation
+messages__before_you_start__scheme_setup = This will set up your scheme application
 
 messages__trustee__has_ct_utr__title = Does the trustee have a Corporation Tax Unique Taxpayer Reference number?
 messages__trustee__ct_utr_hint_what = A CTUTR is issued by HMRC when you register your business.
