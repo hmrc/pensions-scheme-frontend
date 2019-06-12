@@ -14,12 +14,15 @@
  * limitations under the License.
  */
 
-package utils
+package viewmodels
 
-object Toggles {
+import play.api.mvc.Call
 
-  val isVariationsEnabled: String = "is-variations-enabled"
-  val isPrevAddEnabled: String = "is-address-pre-population-enabled"
-  val isSchemeDataShiftEnabled: String = "is-scheme-data-shift-enabled"
-  val separateRefCollectionEnabled: String = "separate-ref-collection"
-}
+case class NinoViewModel(
+                         postCall: Call,
+                         title: String,
+                         heading: String,
+                         hint: String,
+                         personName: String,
+                         srn: Option[String] = None
+                       )

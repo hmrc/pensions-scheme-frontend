@@ -48,7 +48,7 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
                                            @TrusteesPartnership navigator: Navigator,
                                            implicit val countryOptions: CountryOptions,
                                            allowChangeHelper: AllowChangeHelper,
-                                           featureSwitchManagementService: FeatureSwitchManagementService
+                                           fs: FeatureSwitchManagementService
                                           )(implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport {
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
@@ -57,11 +57,20 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
 
         implicit val userAnswers: UserAnswers = request.userAnswers
 
+        lazy val isVatVariationsEnabled = userAnswers.get(IsTrusteeNewId(index)) match {
+          case Some(true) => false
+          case _ => fs.get(Toggles.separateRefCollectionEnabled)
+        }
+
         val partnershipDetails = AnswerSection(
           Some("messages__partnership__checkYourAnswers__partnership_details"),
           Seq(
             PartnershipDetailsId(index).row(routes.TrusteeDetailsController.onPageLoad(checkMode(mode), index, srn).url, mode),
-            vatCya(mode, srn, index),
+            if (mode == UpdateMode && isVatVariationsEnabled) {
+              PartnershipVatVariationsId(index).row(routes.PartnershipVatVariationsController.onPageLoad(checkMode(mode), index, srn).url, mode)
+            } else {
+              PartnershipVatId(index).row(routes.PartnershipVatController.onPageLoad(checkMode(mode), index, srn).url, mode)
+            },
             PartnershipPayeId(index).row(routes.PartnershipPayeController.onPageLoad(checkMode(mode), index, srn).url, mode),
             PartnershipUniqueTaxReferenceId(index).row(routes.PartnershipUniqueTaxReferenceController.onPageLoad(checkMode(mode), index, srn).url, mode)
           ).flatten
@@ -88,14 +97,6 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
           srn = srn
         )))
     }
-
-  private def vatCya(mode: Mode, srn: Option[String], index: Index)(implicit request: DataRequest[AnyContent]): Seq[AnswerRow] = {
-    val notNewTrustee = !request.userAnswers.get(IsTrusteeNewId(index)).getOrElse(false)
-    if (featureSwitchManagementService.get(Toggles.isSeparateRefCollectionEnabled) && mode == UpdateMode && notNewTrustee)
-      PartnershipVatVariationsId(index).row(routes.PartnershipVatVariationsController.onPageLoad(checkMode(mode), index, srn).url, mode)
-    else
-      PartnershipVatId(index).row(routes.PartnershipVatController.onPageLoad(checkMode(mode), index, srn).url, mode)
-  }
 
   def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requiredData).async {
     implicit request =>
