@@ -313,7 +313,7 @@ messages__error__middle_name_invalid = Enter the valid middle name
 messages__establisherNino__title = Does the establisher have a National Insurance number?
 messages__establisher__no_nino = Tell us why the establisher does not have a National Insurance number
 messages__common__nino = National Insurance number
-messages__common__nino_hint = Example ’QQ 12 34 56 C’
+messages__common__nino_hint = For example ’QQ 12 34 56 C’
 messages__error__has_nino_establisher = Select yes if the establisher has a National Insurance number
 messages__error__nino = Enter the National Insurance number
 messages__error__no_nino_establisher = You need to tell us why the establisher does not have a National Insurance number
@@ -896,6 +896,12 @@ messages__partner_nino__title = Does the partner have a National Insurance numbe
 messages__partner_no_nino = Tell us why the partner does not have a National Insurance number
 messages__error__has_nino_partner = Select yes if the partner has a National Insurance number
 messages__error__no_nino_partner = You need to tell us why the partner does not have a National Insurance number
+
+messages__common_nino__title = What is the person’s National Insurance number?
+messages__common_nino__h1 = What is {0}’s National Insurance number?
+messages__error__common_nino = Enter a National Insurance number
+messages__error__common_nino_invalid = Enter a National Insurance number in the correct format
+messages__director_yes_nino__title = What is the director’s National Insurance number?
 
 messages__partnerDetails__title = Enter the partner’s details
 messages__partnerDetails__heading = Enter the partner’s details

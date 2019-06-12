@@ -75,7 +75,8 @@ class EstablishersCompanyDirectorNavigatorSpec extends SpecBase with NavigatorBe
     ("Id", "User Answers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (Check Mode)", "Save (CM)"),
     (ConfirmDeleteDirectorId(0), emptyAnswers, anyMoreChanges, false, None, false),
     (CheckYourAnswersId(0, 0), emptyAnswers, addCompanyDirectors(mode), true, None, true),
-    (CheckYourAnswersId(0, 0), newEstablisher, addCompanyDirectors(mode), true, None, true)
+    (CheckYourAnswersId(0, 0), newEstablisher, addCompanyDirectors(mode), true, None, true),
+    (DirectorNewNinoId(0, 0), emptyAnswers, none, true, Some(exitJourney(mode, emptyAnswers)), true)
   )
 
   navigator.getClass.getSimpleName must {
