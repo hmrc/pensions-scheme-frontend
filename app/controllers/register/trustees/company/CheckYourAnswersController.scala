@@ -16,14 +16,15 @@
 
 package controllers.register.trustees.company
 
-import config.FrontendAppConfig
+import config.{FeatureSwitchManagementService, FrontendAppConfig}
 import controllers.Retrievals
 import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRequiredAction, DataRetrievalAction}
 import identifiers.register.trustees.company._
 import identifiers.register.trustees.{IsTrusteeCompleteId, IsTrusteeNewId}
 import javax.inject.Inject
 import models.Mode._
-import models.{Index, Mode}
+import models.requests.DataRequest
+import models.{Index, Mode, UpdateMode}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
@@ -46,8 +47,10 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
                                            implicit val countryOptions: CountryOptions,
                                            @TrusteesCompany navigator: Navigator,
                                            userAnswersService: UserAnswersService,
-                                           allowChangeHelper: AllowChangeHelper
+                                           allowChangeHelper: AllowChangeHelper,
+                                           featureSwitchManagementService: FeatureSwitchManagementService
                                           )(implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport {
+
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requiredData).async {
     implicit request =>
@@ -60,9 +63,7 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
 
       val companyPayeRow = CompanyPayeId(index).row(routes.CompanyPayeController.onPageLoad(checkMode(mode), index, srn).url, mode)
 
-      val companyRegistrationNumber = CompanyRegistrationNumberId(index).row(
-        routes.CompanyRegistrationNumberController.onPageLoad(checkMode(mode), srn, index).url, mode
-      )
+      val companyRegistrationNumber = companyRegistrationNumberCya(mode, srn, index)
 
       val companyUtr = CompanyUniqueTaxReferenceId(index).row(
         routes.CompanyUniqueTaxReferenceController.onPageLoad(checkMode(mode), index, srn).url, mode
@@ -111,5 +112,13 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
       userAnswersService.setCompleteFlag(mode, srn, IsTrusteeCompleteId(index), request.userAnswers, true).map { _ =>
         Redirect(navigator.nextPage(CheckYourAnswersId, mode, request.userAnswers, srn))
       }
+  }
+
+  private def companyRegistrationNumberCya(mode: Mode, srn: Option[String], index: Index)(implicit request: DataRequest[AnyContent]) = {
+    if (mode == UpdateMode && featureSwitchManagementService.get(Toggles.isSeparateRefCollectionEnabled) &&
+      !request.userAnswers.get(IsTrusteeNewId(index)).getOrElse(false))
+      CompanyRegistrationNumberVariationsId(index).row(routes.CompanyRegistrationNumberVariationsController.onPageLoad(checkMode(mode), srn, index).url, mode)
+    else
+      CompanyRegistrationNumberId(index).row(routes.CompanyRegistrationNumberController.onPageLoad(checkMode(mode), srn, index).url, mode)
   }
 }

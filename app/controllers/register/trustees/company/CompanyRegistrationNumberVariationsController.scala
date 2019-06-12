@@ -47,20 +47,13 @@ class CompanyRegistrationNumberVariationsController @Inject()(
   def onPageLoad(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
-//        viewmodel(mode, index, srn).retrieve.right.map {
-//          vm =>
-            get(mode, srn, index)
-//        }
+        get(mode, srn, index)
     }
 
   def onSubmit(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
-//        viewmodel(mode, index, srn).retrieve.right.map {
-//          vm =>
-            post(mode, srn, index)
-//        }
-
+        post(mode, srn, index)
     }
 
 }

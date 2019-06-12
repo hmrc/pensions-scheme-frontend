@@ -45,6 +45,7 @@ class TrusteesCompanyNavigatorSpec extends SpecBase with MustMatchers with Navig
     (CompanyPayeId(0), newTrustee, companyRegistrationNumber(mode), true, Some(exitJourney(mode, newTrustee)), true),
     (CompanyRegistrationNumberId(0), emptyAnswers, companyUTR(mode), true, Some(exitJourney(mode, emptyAnswers)), true),
     (CompanyRegistrationNumberId(0), newTrustee, companyUTR(mode), true, Some(exitJourney(mode, newTrustee)), true),
+    (CompanyRegistrationNumberVariationsId(0), emptyAnswers, none, true, Some(exitJourney(mode, emptyAnswers)), true),
     (CompanyUniqueTaxReferenceId(0), emptyAnswers, companyPostCodeLookup(mode), true, Some(exitJourney(mode, emptyAnswers)), true),
     (CompanyUniqueTaxReferenceId(0), newTrustee, companyPostCodeLookup(mode), true, Some(exitJourney(mode, newTrustee)), true),
     (CompanyPostcodeLookupId(0), emptyAnswers, companyAddressList(mode), true, Some(companyAddressList(checkMode(mode))), true),
@@ -98,6 +99,8 @@ class TrusteesCompanyNavigatorSpec extends SpecBase with MustMatchers with Navig
 
 //noinspection MutatorLikeMethodIsParameterless
 object TrusteesCompanyNavigatorSpec extends SpecBase with OptionValues {
+
+  private def none: Call = controllers.routes.IndexController.onPageLoad()
 
   private def taskList: Call = controllers.routes.SchemeTaskListController.onPageLoad(NormalMode, None)
 

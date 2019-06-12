@@ -24,7 +24,7 @@ import views.html.register.companyRegistrationNumberVariations
 
 class CompanyRegistrationNumberVariationsViewSpec extends ViewBehaviours {
 
-  val messageKeyPrefix = "companyRegistrationNumber"
+  val messageKeyPrefix = "companyNumber"
   val index = Index(0)
   val form = new CompanyRegistrationNumberVariationsFormProvider()()
   val submitUrl = controllers.register.trustees.company.routes.CompanyRegistrationNumberController.onSubmit(NormalMode, None, index)
@@ -37,7 +37,7 @@ class CompanyRegistrationNumberVariationsViewSpec extends ViewBehaviours {
     companyRegistrationNumberVariations(frontendAppConfig, form, NormalMode, index, None, submitUrl, None)(fakeRequest, messages)
 
   "CompanyRegistrationNumberVariations view" should {
-    behave like normalPage(createView(), messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"))
+    behave like normalPage(createView(), messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__heading"))
 
     behave like pageWithReturnLink(createView(), getReturnLink)
 

@@ -16,6 +16,7 @@
 
 package controllers.register.trustees.company
 
+import config.{FeatureSwitchManagementService, FeatureSwitchManagementServiceTestImpl}
 import controllers.ControllerSpecBase
 import controllers.actions.{DataRequiredActionImpl, DataRetrievalAction, FakeAllowAccessProvider, FakeAuthAction}
 import controllers.behaviours.ControllerAllowChangeBehaviour
@@ -24,13 +25,14 @@ import identifiers.register.trustees.company._
 import models._
 import models.address.Address
 import models.requests.DataRequest
-import play.api.mvc.AnyContent
+import play.api.Configuration
+import play.api.mvc.{AnyContent, Call}
 import play.api.test.Helpers._
 import services.FakeUserAnswersService
 import utils._
 import utils.checkyouranswers.Ops._
 import utils.checkyouranswers.{AddressYearsCYA, CompanyRegistrationNumberCYA, UniqueTaxReferenceCYA}
-import viewmodels.AnswerSection
+import viewmodels.{AnswerRow, AnswerSection}
 import views.html.check_your_answers
 
 class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerAllowChangeBehaviour {
@@ -38,12 +40,21 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
   import CheckYourAnswersControllerSpec._
 
   "Check Your Answers Controller" must {
-    "return 200 and the correct view for a GET with full answers" in {
+    "return 200 and the correct view for a GET with full answers when ref collection toggle is off" in {
       val request = FakeDataRequest(fullAnswers)
       val result = controller(fullAnswers.dataRetrievalAction).onPageLoad(NormalMode, index, None)(request)
 
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString(answerSections(request))
+    }
+
+    "return 200 and the correct view for a GET with full answers when ref collection toggle is on" in {
+      val request = FakeDataRequest(UserAnswers())
+      val result = controller(UserAnswers().dataRetrievalAction, featureSwitch =
+        new FakeFeatureSwitchManagementService(true)).onPageLoad(UpdateMode, index, Some("S123"))(request)
+
+      status(result) mustBe OK
+      contentAsString(result) mustBe viewAsString(companyRegistrationNumberSection(request), Some("S123"), postUrlUpdateMode)
     }
 
     "return 200 and the correct view for a GET with empty answers" in {
@@ -79,6 +90,16 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
 
 object CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerAllowChangeBehaviour {
 
+
+  private def companyRegistrationNumberSection(implicit request: DataRequest[AnyContent]) = Seq(
+    AnswerSection(
+      Some("messages__common__company_details__title"), Seq(
+        AnswerRow(
+          "messages__checkYourAnswers__trustees__company__number", Seq("site.not_entered"), answerIsMessageKey = true,
+          Some(Link("site.add", companyRegistrationNumberVariationsRoute, Some("messages__visuallyhidden__trustee__crn_add")))))),
+    AnswerSection(
+      Some("messages__checkYourAnswers__section__contact_details"), Seq.empty))
+
   private val index = 0
   private val onwardRoute = controllers.routes.IndexController.onPageLoad()
 
@@ -107,9 +128,12 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase with Controller
   private lazy val companyDetailsRoute = routes.CompanyDetailsController.onPageLoad(CheckMode, index, None).url
   private lazy val companyPreviousAddressRoute = routes.CompanyPreviousAddressController.onPageLoad(CheckMode, index, None).url
   private lazy val companyRegistrationNumberRoute = routes.CompanyRegistrationNumberController.onPageLoad(CheckMode, None, index).url
+  private lazy val companyRegistrationNumberVariationsRoute =
+    routes.CompanyRegistrationNumberVariationsController.onPageLoad(CheckUpdateMode, Some("S123"), index).url
   private lazy val companyUniqueTaxReferenceRoute = routes.CompanyUniqueTaxReferenceController.onPageLoad(CheckMode, index, None).url
 
   private lazy val postUrl = routes.CheckYourAnswersController.onSubmit(NormalMode, index, None)
+  private lazy val postUrlUpdateMode = routes.CheckYourAnswersController.onSubmit(UpdateMode, index, Some("S123"))
 
   private def answerSections(implicit request: DataRequest[AnyContent]): Seq[AnswerSection] = {
 
@@ -154,17 +178,23 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase with Controller
 
   }
 
-  private def viewAsString(answerSections: Seq[AnswerSection]) = check_your_answers(
+  private def viewAsString(answerSections: Seq[AnswerSection], srn: Option[String] = None, postUrl: Call = postUrl) = check_your_answers(
     frontendAppConfig,
     answerSections,
     postUrl,
     None,
     hideEditLinks = false,
+    srn = srn,
     hideSaveAndContinueButton = false
   )(fakeRequest, messages).toString
 
+  private val config = injector.instanceOf[Configuration]
+  def featureSwitchManagementService: FeatureSwitchManagementService =
+    new FeatureSwitchManagementServiceTestImpl(config, environment)
+
   private def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData,
-                         allowChangeHelper: AllowChangeHelper = ach): CheckYourAnswersController =
+                         allowChangeHelper: AllowChangeHelper = ach,
+                         featureSwitch: FeatureSwitchManagementService = featureSwitchManagementService): CheckYourAnswersController =
     new CheckYourAnswersController(
       frontendAppConfig,
       messagesApi,
@@ -175,7 +205,8 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase with Controller
       fakeCountryOptions,
       new FakeNavigator(onwardRoute),
       FakeUserAnswersService,
-      allowChangeHelper
+      allowChangeHelper,
+      featureSwitch
     )
 
 }
