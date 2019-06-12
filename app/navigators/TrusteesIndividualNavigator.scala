@@ -80,6 +80,7 @@ class TrusteesIndividualNavigator @Inject()(val dataCacheConnector: UserAnswersC
     from.id match {
       case TrusteeDetailsId(index) => exitMiniJourney(index, mode, srn, from.userAnswers)
       case TrusteeNinoId(index) => exitMiniJourney(index, mode, srn, from.userAnswers)
+      case TrusteeNewNinoId(index) => exitMiniJourney(index, mode, srn, from.userAnswers)
       case UniqueTaxReferenceId(index) => exitMiniJourney(index, mode, srn, from.userAnswers)
       case IndividualPostCodeLookupId(index) =>
         NavigateTo.dontSave(controllers.register.trustees.individual.routes.IndividualAddressListController.onPageLoad(mode, index, srn))

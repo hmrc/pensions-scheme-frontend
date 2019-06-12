@@ -19,7 +19,7 @@ package navigators
 import com.google.inject.{Inject, Singleton}
 import config.{FeatureSwitchManagementService, FrontendAppConfig}
 import connectors.UserAnswersCacheConnector
-import identifiers.register.establishers.IsEstablisherNewId
+import identifiers.register.establishers.{EstablisherNewNinoId, IsEstablisherNewId}
 import identifiers.register.establishers.individual._
 import models.Mode.journeyMode
 import models._
@@ -108,6 +108,7 @@ class EstablishersIndividualNavigator @Inject()(
     from.id match {
       case EstablisherDetailsId(index) => exitMiniJourney(index, mode, srn, from.userAnswers)
       case EstablisherNinoId(index) => exitMiniJourney(index, mode, srn, from.userAnswers)
+      case EstablisherNewNinoId(index) => exitMiniJourney(index, mode, srn, from.userAnswers)
       case UniqueTaxReferenceId(index) => exitMiniJourney(index, mode, srn, from.userAnswers)
 
       case PostCodeLookupId(index) =>
