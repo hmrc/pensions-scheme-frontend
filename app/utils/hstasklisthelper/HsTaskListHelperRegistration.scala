@@ -30,18 +30,21 @@ class HsTaskListHelperRegistration(answers: UserAnswers)(implicit messages: Mess
   override protected[utils] def aboutSection(userAnswers: UserAnswers): Seq[SchemeDetailsTaskListSection] = {
     val membersLink = userAnswers.get(IsAboutMembersCompleteId) match {
       case Some(true) => Link(aboutMembersLinkText, controllers.routes.CheckYourAnswersMembersController.onPageLoad(NormalMode, None).url)
-      case _ => Link(aboutMembersLinkText, controllers.routes.WhatYouWillNeedMembersController.onPageLoad().url)
+      case Some(false) => Link(aboutMembersLinkText, controllers.routes.WhatYouWillNeedMembersController.onPageLoad().url)
+      case None => Link(aboutMembersAddLinkText, controllers.routes.WhatYouWillNeedMembersController.onPageLoad().url)
     }
 
     val benefitsAndInsuranceLink = userAnswers.get(IsAboutBenefitsAndInsuranceCompleteId) match {
       case Some(true) => Link(aboutBenefitsAndInsuranceLinkText,
         controllers.routes.CheckYourAnswersBenefitsAndInsuranceController.onPageLoad(NormalMode, None).url)
-      case _ => Link(aboutBenefitsAndInsuranceLinkText, controllers.routes.WhatYouWillNeedBenefitsInsuranceController.onPageLoad.url)
+      case Some(false) => Link(aboutBenefitsAndInsuranceLinkText, controllers.routes.WhatYouWillNeedBenefitsInsuranceController.onPageLoad.url)
+      case None => Link(aboutBenefitsAndInsuranceAddLinkText, controllers.routes.WhatYouWillNeedBenefitsInsuranceController.onPageLoad.url)
     }
 
     val bankDetailsLink = userAnswers.get(IsAboutBankDetailsCompleteId) match {
       case Some(true) => Link(aboutBankDetailsLinkText, controllers.routes.CheckYourAnswersBankDetailsController.onPageLoad().url)
-      case _ => Link(aboutBankDetailsLinkText, controllers.routes.WhatYouWillNeedBankDetailsController.onPageLoad().url)
+      case Some(false) => Link(aboutBankDetailsLinkText, controllers.routes.WhatYouWillNeedBankDetailsController.onPageLoad().url)
+      case None => Link(aboutBankDetailsAddLinkText, controllers.routes.WhatYouWillNeedBankDetailsController.onPageLoad().url)
     }
 
     Seq(SchemeDetailsTaskListSection(userAnswers.get(IsAboutMembersCompleteId), membersLink, None),
@@ -112,9 +115,10 @@ class HsTaskListHelperRegistration(answers: UserAnswers)(implicit messages: Mess
   }
 
   def taskList: SchemeDetailsTaskList = {
+    val schemeName = answers.get(SchemeNameId).getOrElse("")
     SchemeDetailsTaskList(
       SchemeDetailsTaskListSection(answers.get(IsBeforeYouStartCompleteId), beforeYouStartLink(answers, NormalMode, None), None),
-      messages("messages__schemeTaskList__about_header"),
+      messages("messages__schemeTaskList__about_scheme_header", schemeName),
       aboutSection(answers),
       workingKnowledgeSection(answers),
       addEstablisherHeader(answers, NormalMode, None),
@@ -122,9 +126,9 @@ class HsTaskListHelperRegistration(answers: UserAnswers)(implicit messages: Mess
       addTrusteeHeader(answers, NormalMode, None),
       trustees(answers),
       declarationSection(answers),
-      messages("messages__schemeTaskList__heading"),
-      messages("messages__schemeTaskList__before_you_start_header"),
-      None,
+      answers.get(SchemeNameId).getOrElse(""),
+      messages("messages__scheme_details__title"),
+      Some(messages("messages__schemeTaskList__before_you_start_header")),
       messages("messages__schemeTaskList__title"),
       None
     )

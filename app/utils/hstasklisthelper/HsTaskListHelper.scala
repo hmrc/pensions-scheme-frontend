@@ -35,9 +35,13 @@ abstract class HsTaskListHelper(answers: UserAnswers)(implicit messages: Message
 
   protected val beforeYouStartLinkText: String
   protected lazy val aboutMembersLinkText = messages("messages__schemeTaskList__about_members_link_text")
+  protected lazy val aboutMembersAddLinkText = messages("messages__schemeTaskList__about_members_link_text_add")
   protected lazy val aboutBenefitsAndInsuranceLinkText = messages("messages__schemeTaskList__about_benefits_and_insurance_link_text")
+  protected lazy val aboutBenefitsAndInsuranceAddLinkText = messages("messages__schemeTaskList__about_benefits_and_insurance_link_text_add")
   protected lazy val aboutBankDetailsLinkText = messages("messages__schemeTaskList__about_bank_details_link_text")
+  protected lazy val aboutBankDetailsAddLinkText = messages("messages__schemeTaskList__about_bank_details_link_text_add")
   protected lazy val workingKnowledgeLinkText = messages("messages__schemeTaskList__working_knowledge_link_text")
+  protected lazy val workingKnowledgeAddLinkText = messages("messages__schemeTaskList__working_knowledge_link_text_add")
   protected lazy val addEstablisherLinkText = messages("messages__schemeTaskList__sectionEstablishers_add_link")
   protected lazy val changeEstablisherLinkText = messages("messages__schemeTaskList__sectionEstablishers_change_link")
   protected lazy val companyLinkText = messages("messages__schemeTaskList__company_link")
@@ -69,7 +73,8 @@ abstract class HsTaskListHelper(answers: UserAnswers)(implicit messages: Message
       case Some(false) =>
         val wkLink = userAnswers.get(IsWorkingKnowledgeCompleteId) match {
           case Some(true) => Link(workingKnowledgeLinkText, controllers.routes.AdviserCheckYourAnswersController.onPageLoad().url)
-          case _ => Link(workingKnowledgeLinkText, controllers.routes.WhatYouWillNeedWorkingKnowledgeController.onPageLoad().url)
+          case Some(false) => Link(workingKnowledgeLinkText, controllers.routes.WhatYouWillNeedWorkingKnowledgeController.onPageLoad().url)
+          case None => Link(workingKnowledgeAddLinkText, controllers.routes.WhatYouWillNeedWorkingKnowledgeController.onPageLoad().url)
         }
         Some(SchemeDetailsTaskListSection(userAnswers.get(IsWorkingKnowledgeCompleteId), wkLink, None))
       case _ =>
