@@ -169,7 +169,7 @@ trait UserAnswersService {
   }
 
   private[services] def setCompleteForAddress(addressCompletedId: Option[TypedIdentifier[Boolean]], answers: UserAnswers,
-                                    mode: Mode, srn: Option[String])(implicit ec: ExecutionContext, hc: HeaderCarrier, request: DataRequest[AnyContent]): UserAnswers = {
+                                              mode: Mode, srn: Option[String])(implicit ec: ExecutionContext, hc: HeaderCarrier, request: DataRequest[AnyContent]): UserAnswers = {
     addressCompletedId.fold(answers) { changeId =>
       val ua = answers.set(changeId)(true).asOpt.getOrElse(answers)
       changeId match {

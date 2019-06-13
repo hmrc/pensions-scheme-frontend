@@ -43,6 +43,17 @@ trait VatMapping extends Mappings with Transforms {
     ).transform(toVat, fromVat)
   }
 
+  def vatStringMapping(vatLengthKey: String = "messages__error__vat_length",
+                       requiredVatKey: String = "messages__error__vat_required",
+                       invalidVatKey: String = "messages__error__vat_invalid"):
+  Mapping[String] = text(requiredVatKey)
+    .transform(vatRegistrationNumberTransform, noTransform)
+    .verifying(
+      firstError(
+        maxLength(VatMapping.maxVatLength, vatLengthKey),
+        vatRegistrationNumber(invalidVatKey))
+    )
+
   private[this] def fromVat(vat: Vat): (Boolean, Option[String]) = {
     vat match {
       case Vat.Yes(vatNo) => (true, Some(vatNo))
