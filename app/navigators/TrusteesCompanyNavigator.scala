@@ -102,6 +102,9 @@ class TrusteesCompanyNavigator @Inject()(val dataCacheConnector: UserAnswersCach
       case CompanyPayeId(index) =>
         exitMiniJourney(index, mode, srn, from.userAnswers)
 
+      case CompanyPayeVariationsId(index) =>
+        exitMiniJourney(index, mode, srn, from.userAnswers)
+
       case CompanyRegistrationNumberId(index) =>
         exitMiniJourney(index, mode, srn, from.userAnswers)
 
