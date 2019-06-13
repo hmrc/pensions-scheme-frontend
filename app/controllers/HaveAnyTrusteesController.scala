@@ -20,7 +20,7 @@ import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
 import controllers.actions._
 import forms.register.trustees.HaveAnyTrusteesFormProvider
-import identifiers.HaveAnyTrusteesId
+import identifiers.{HaveAnyTrusteesId, SchemeNameId}
 import javax.inject.Inject
 import models.Mode
 import models.requests.OptionalDataRequest
@@ -41,28 +41,30 @@ class HaveAnyTrusteesController @Inject()(
                                            @BeforeYouStart navigator: Navigator,
                                            authenticate: AuthAction,
                                            getData: DataRetrievalAction,
+                                           requireData: DataRequiredAction,
                                            formProvider: HaveAnyTrusteesFormProvider
                                          )(implicit val ec: ExecutionContext) extends FrontendController with I18nSupport with Retrievals {
 
   private val form: Form[Boolean] = formProvider()
 
-  private def existingSchemeNameOrEmptyString(implicit request:OptionalDataRequest[AnyContent]):String =
-    existingSchemeName.getOrElse("")
-
-  def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate andThen getData()).async {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate andThen getData() andThen requireData).async {
     implicit request =>
-      val preparedForm = request.userAnswers.flatMap(_.get(HaveAnyTrusteesId)) match {
-        case None => form
-        case Some(value) => form.fill(value)
+      SchemeNameId.retrieve.right.map { schemeName =>
+        val preparedForm = request.userAnswers.get(HaveAnyTrusteesId) match {
+          case None => form
+          case Some(value) => form.fill(value)
+        }
+        Future.successful(Ok(haveAnyTrustees(appConfig, preparedForm, mode, schemeName)))
       }
-      Future.successful(Ok(haveAnyTrustees(appConfig, preparedForm, mode, existingSchemeNameOrEmptyString)))
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (authenticate andThen getData()).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = (authenticate andThen getData() andThen requireData).async {
     implicit request =>
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) =>
-          Future.successful(BadRequest(haveAnyTrustees(appConfig, formWithErrors, mode, existingSchemeNameOrEmptyString))),
+          SchemeNameId.retrieve.right.map { schemeName =>
+            Future.successful(BadRequest(haveAnyTrustees(appConfig, formWithErrors, mode, schemeName)))
+          },
         value =>
           dataCacheConnector.save(request.externalId, HaveAnyTrusteesId, value).map(cacheMap =>
             Redirect(navigator.nextPage(HaveAnyTrusteesId, mode, UserAnswers(cacheMap))))

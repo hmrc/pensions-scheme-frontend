@@ -691,7 +691,7 @@ messages__declarationDormant__checkYourAnswersLabel = Have any of the scheme est
 messages__declarationDormant__error__required = You need to tell us if you have appointed an adviser
 
 messages__haveAnyTrustees__title = Does the scheme have any trustees?
-messages__haveAnyTrustees__heading = Does the scheme have any trustees?
+messages__haveAnyTrustees__heading = Does {0} have any trustees?
 messages__haveAnyTrustees__error__required = Enter yes if the scheme has any trustees
 
 messages__adviserDetails__title = Enter the details of your pension adviser
