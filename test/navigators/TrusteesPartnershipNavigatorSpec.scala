@@ -46,15 +46,15 @@ class TrusteesPartnershipNavigatorSpec extends SpecBase with NavigatorBehaviour 
     (PartnershipPayeId(0), newTrustee, partnershipUtr(mode), true, Some(exitJourney(mode, newTrustee)), true),
     (PartnershipUniqueTaxReferenceId(0), emptyAnswers, partnershipPostcodeLookup(mode), true, Some(exitJourney(mode, emptyAnswers)), true),
     (PartnershipUniqueTaxReferenceId(0), newTrustee, partnershipPostcodeLookup(mode), true, Some(exitJourney(mode, newTrustee)), true),
-    (PartnershipPostcodeLookupId(0), emptyAnswers, partnershipAddressList(mode), true, Some(partnershipAddressList(checkMode((mode)))), true),
-    (PartnershipAddressListId(0), emptyAnswers, partnershipAddress(mode), true, Some(partnershipAddress(checkMode((mode)))), true),
+    (PartnershipPostcodeLookupId(0), emptyAnswers, partnershipAddressList(mode), true, Some(partnershipAddressList(checkMode(mode))), true),
+    (PartnershipAddressListId(0), emptyAnswers, partnershipAddress(mode), true, Some(partnershipAddress(checkMode(mode))), true),
     (PartnershipAddressId(0), emptyAnswers, partnershipAddressYears(mode), true,
       if (mode == UpdateMode) Some(partnershipAddressYears(checkMode(mode))) else Some(checkYourAnswers(mode)), true),
     (PartnershipAddressId(0), newTrustee, partnershipAddressYears(mode), true, Some(checkYourAnswers(mode)), true),
     (PartnershipAddressYearsId(0), addressYearsOverAYear, partnershipContact(mode), true, Some(exitJourney(mode, emptyAnswers)), true),
     (PartnershipAddressYearsId(0), emptyAnswers, sessionExpired, false, Some(sessionExpired), false),
-    (PartnershipPreviousAddressPostcodeLookupId(0), emptyAnswers, partnershipPaList(mode), true, Some(partnershipPaList(checkMode((mode)))), true),
-    (PartnershipPreviousAddressListId(0), emptyAnswers, partnershipPa(mode), true, Some(partnershipPa(checkMode((mode)))), true),
+    (PartnershipPreviousAddressPostcodeLookupId(0), emptyAnswers, partnershipPaList(mode), true, Some(partnershipPaList(checkMode(mode))), true),
+    (PartnershipPreviousAddressListId(0), emptyAnswers, partnershipPa(mode), true, Some(partnershipPa(checkMode(mode))), true),
     (PartnershipPreviousAddressId(0), emptyAnswers, partnershipContact(mode), true, Some(exitJourney(mode, emptyAnswers)), true),
     (PartnershipPreviousAddressId(0), newTrustee, partnershipContact(mode), true, Some(exitJourney(mode, newTrustee)), true),
     (PartnershipContactDetailsId(0), emptyAnswers, checkYourAnswers(mode), true, Some(exitJourney(mode, emptyAnswers)), true),
@@ -75,10 +75,21 @@ class TrusteesPartnershipNavigatorSpec extends SpecBase with NavigatorBehaviour 
     routes(mode: Mode) ++ Table(
       ("Id", "User Answers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (Check Mode)", "Save (CM)"),
       (PartnershipAddressYearsId(0), addressYearsUnderAYear, partnershipPaPostCodeLookup(mode), true,
-        if(mode == UpdateMode) Some(confirmPreviousAddress) else Some(partnershipPaPostCodeLookup(checkMode((mode)))), true),
+        if(mode == UpdateMode) Some(confirmPreviousAddress) else Some(partnershipPaPostCodeLookup(checkMode(mode))), true),
       (PartnershipConfirmPreviousAddressId(0), confirmPreviousAddressYes, defaultPage, false, Some(anyMoreChanges), false),
       (PartnershipConfirmPreviousAddressId(0), confirmPreviousAddressNo, defaultPage, false, Some(partnershipPaPostCodeLookup(checkMode(mode))), false),
       (PartnershipConfirmPreviousAddressId(0), emptyAnswers, defaultPage, false, Some(sessionExpired), false)
+    )
+  }
+
+  private def updateOnlyRoutesToggleOn: TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = {
+    routes(UpdateMode) ++ Table(
+      ("Id", "User Answers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (Check Mode)", "Save (CM)"),
+      (PartnershipAddressYearsId(0), addressYearsUnderAYear, partnershipPaPostCodeLookup(UpdateMode), true, Some(confirmPreviousAddress), true),
+      (PartnershipConfirmPreviousAddressId(0), confirmPreviousAddressYes, defaultPage, false, Some(anyMoreChanges), false),
+      (PartnershipConfirmPreviousAddressId(0), confirmPreviousAddressNo, defaultPage, false, Some(partnershipPaPostCodeLookup(CheckUpdateMode)), false),
+      (PartnershipConfirmPreviousAddressId(0), emptyAnswers, defaultPage, false, Some(sessionExpired), false),
+      (PartnershipPayeVariationsId(0), emptyAnswers, none, true, Some(exitJourney(UpdateMode, emptyAnswers)), true)
     )
   }
 
@@ -95,13 +106,15 @@ class TrusteesPartnershipNavigatorSpec extends SpecBase with NavigatorBehaviour 
     val featureSwitchToggleOn = new FeatureSwitchManagementServiceProductionImpl(appConfig(true), environment)
     val navigator = new TrusteesPartnershipNavigator(FakeUserAnswersCacheConnector, frontendAppConfig, featureSwitchToggleOn)
     behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, routesToggleOn(NormalMode), dataDescriber)
-    behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, routesToggleOn(UpdateMode), dataDescriber, UpdateMode)
+    behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, updateOnlyRoutesToggleOn, dataDescriber, UpdateMode)
   }
 }
 
 object TrusteesPartnershipNavigatorSpec extends OptionValues {
 
   private val newTrustee = UserAnswers(Json.obj()).set(IsTrusteeNewId(0))(true).asOpt.value
+
+  private def none: Call = controllers.routes.IndexController.onPageLoad
 
   private def taskList: Call = controllers.routes.SchemeTaskListController.onPageLoad(NormalMode, None)
 
