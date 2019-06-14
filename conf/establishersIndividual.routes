@@ -79,7 +79,11 @@ POST       /:index/individual/change/establishers-previous-address-manual       
 GET        /:index/individual/:mode/establishers-previous-address-manual/:srn         controllers.register.establishers.individual.PreviousAddressController.onPageLoad(mode: Mode,index:Index, srn: Option[String])
 POST       /:index/individual/:mode/establishers-previous-address-manual/:srn         controllers.register.establishers.individual.PreviousAddressController.onSubmit(mode: Mode,index:Index, srn: Option[String])
 
+GET        /:index/individual/:mode/enter-national-insurance-number/:srn              controllers.register.establishers.individual.EstablisherNinoNewController.onPageLoad(mode: Mode, index: Index, srn: Option[String])
+POST       /:index/individual/:mode/enter-national-insurance-number/:srn              controllers.register.establishers.individual.EstablisherNinoNewController.onSubmit(mode: Mode, index: Index, srn: Option[String])
+
 GET        /:index/individual/check-your-answers                                      controllers.register.establishers.individual.CheckYourAnswersController.onPageLoad(mode: Mode = NormalMode, index: Index, srn: Option[String] = None)
 POST       /:index/individual/check-your-answers                                      controllers.register.establishers.individual.CheckYourAnswersController.onSubmit(mode: Mode = NormalMode, index: Index, srn: Option[String] = None)
 GET        /:index/individual/:mode/check-your-answers/:srn                           controllers.register.establishers.individual.CheckYourAnswersController.onPageLoad(mode: Mode, index: Index, srn: Option[String])
 POST       /:index/individual/:mode/check-your-answers/:srn                           controllers.register.establishers.individual.CheckYourAnswersController.onSubmit(mode: Mode, index: Index, srn: Option[String])
+

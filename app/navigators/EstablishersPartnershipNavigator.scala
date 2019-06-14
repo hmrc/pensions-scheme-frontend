@@ -84,8 +84,12 @@ class EstablishersPartnershipNavigator @Inject()(val dataCacheConnector: UserAns
   }
 
   protected def editRoutes(from: NavigateFrom, mode: Mode, srn: Option[String]): Option[NavigateTo] = from.id match {
-    case PartnershipDetailsId(index) => exitMiniJourney(index, mode, srn, from.userAnswers)
-    case PartnershipVatId(index) => exitMiniJourney(index, mode, srn, from.userAnswers)
+    case PartnershipDetailsId(index) =>
+      exitMiniJourney(index, mode, srn, from.userAnswers)
+    case PartnershipVatId(index) =>
+      exitMiniJourney(index, mode, srn, from.userAnswers)
+    case PartnershipVatVariationsId(index) =>
+      exitMiniJourney(index, mode, srn, from.userAnswers)
     case PartnershipPayeId(index) =>
       exitMiniJourney(index, mode, srn, from.userAnswers)
     case PartnershipUniqueTaxReferenceID(index) =>
