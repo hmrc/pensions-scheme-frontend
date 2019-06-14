@@ -26,7 +26,7 @@ import views.html.haveAnyTrustees
 
 class HaveAnyTrusteesViewSpec extends YesNoViewBehaviours {
 
-  private val scheme = "A scheme"
+  private val scheme = "Test Scheme Name"
   val messageKeyPrefix = "haveAnyTrustees"
 
   val form = new HaveAnyTrusteesFormProvider()()
@@ -42,7 +42,7 @@ class HaveAnyTrusteesViewSpec extends YesNoViewBehaviours {
 
   "HaveAnyTrustees view" must {
 
-    behave like normalPage(createView(), messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__heading"))
+    behave like normalPage(createView(), messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__heading", scheme))
 
     behave like yesNoPage(createViewUsingForm, messageKeyPrefix, routes.HaveAnyTrusteesController.onSubmit(NormalMode).url)
 

@@ -39,9 +39,10 @@ class HsTaskListHelperRegistrationSpec extends HsTaskListHelperBehaviour with En
 
   "h1" must {
     "display appropriate heading" in {
-      val userAnswers = UserAnswers()
+      val name = "scheme name 1"
+      val userAnswers = UserAnswers().set(SchemeNameId)(name).asOpt.value
       val helper = new HsTaskListHelperRegistration(userAnswers)
-      helper.taskList.h1 mustBe messages("messages__schemeTaskList__heading")
+      helper.taskList.h1 mustBe name
     }
   }
 
@@ -49,23 +50,24 @@ class HsTaskListHelperRegistrationSpec extends HsTaskListHelperBehaviour with En
     "display appropriate text" in {
       val userAnswers = UserAnswers()
       val helper = new HsTaskListHelperRegistration(userAnswers)
-      helper.taskList.h2 mustBe messages("messages__schemeTaskList__before_you_start_header")
+      helper.taskList.h2 mustBe messages("messages__scheme_details__title")
     }
   }
 
   "h3" must {
-    "not display \"Scheme Information\"" in {
+    "display Before You Start" in {
       val userAnswers = UserAnswers()
       val helper = new HsTaskListHelperRegistration(userAnswers)
-      helper.taskList.h3 mustBe None
+      helper.taskList.h3 mustBe Some(messages("messages__schemeTaskList__before_you_start_header"))
     }
   }
 
   "about header" must {
-    "display \"About\"" in {
-      val userAnswers = UserAnswers()
+    "display About Scheme name" in {
+      val schemeName = "test scheme"
+      val userAnswers = UserAnswers().set(SchemeNameId)(schemeName).asOpt.value
       val helper = new HsTaskListHelperRegistration(userAnswers)
-      helper.taskList.aboutHeader mustBe messages("messages__schemeTaskList__about_header")
+      helper.taskList.aboutHeader mustBe messages("messages__schemeTaskList__about_scheme_header", schemeName)
     }
   }
 

@@ -20,7 +20,6 @@ import base.SpecBase
 import controllers.ControllerSpecBase
 import controllers.actions._
 import controllers.behaviours.ControllerAllowChangeBehaviour
-import controllers.register.establishers.company.CheckYourAnswersControllerSpec.ach
 import identifiers.register.establishers.IsEstablisherNewId
 import identifiers.register.establishers.company.director._
 import models._
@@ -189,10 +188,6 @@ object CheckYourAnswersControllerSpec extends SpecBase {
     .asOpt.value
 
   val newDirectorAnswers = directorAnswers.set(IsEstablisherNewId(firstIndex))(true).asOpt.value
-
-  implicit val directorAnswersUpdateWithNewNino = directorAnswersUpdate
-    .set(DirectorNewNinoId(firstIndex, firstIndex))("AB100100A")
-    .asOpt.value
 
   implicit val newDirectorAnswersUpdateWithNewNino = directorAnswersUpdate
     .set(IsNewDirectorId(firstIndex, firstIndex))(true)
