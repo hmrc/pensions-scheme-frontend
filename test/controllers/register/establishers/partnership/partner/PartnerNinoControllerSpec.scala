@@ -63,22 +63,6 @@ class PartnerNinoControllerSpec extends ControllerSpecBase {
     )
   )
 
-  val validDataNoPartnerDetails: JsObject = Json.obj(
-    EstablishersId.toString -> Json.arr(
-      Json.obj(
-        PartnershipDetailsId.toString -> PartnershipDetails(partnershipName),
-        "partner" -> Json.arr(
-          Json.obj(
-            PartnerDetailsId.toString ->
-              PersonDetails("First Name", Some("Middle Name"), "Last Name", LocalDate.now),
-            PartnerNinoId.toString ->
-              Nino.Yes("CS700100A")
-          )
-        )
-      )
-    )
-  )
-
   val validDataNoPreviousAnswer: JsObject = Json.obj(
     EstablishersId.toString -> Json.arr(
       Json.obj(

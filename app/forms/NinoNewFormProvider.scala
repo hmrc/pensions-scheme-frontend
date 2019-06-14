@@ -26,6 +26,6 @@ import viewmodels.Message
 class NinoNewFormProvider @Inject()() extends Mappings with Constraints with Transforms {
   def apply(personName: String)(implicit messages: Messages): Form[String] = Form(
     "nino" -> text(Message("messages__error__common_nino", personName).resolve).transform(ninoTransform, noTransform).
-      verifying(validNino("messages__error__common_nino_invalid"))
+      verifying(validNino(Message("messages__error__common_nino_invalid", personName)))
   )
 }
