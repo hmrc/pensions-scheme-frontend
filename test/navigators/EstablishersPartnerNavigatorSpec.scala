@@ -87,7 +87,8 @@ class EstablishersPartnerNavigatorSpec extends SpecBase with NavigatorBehaviour 
     (CheckYourAnswersId(0, 0), emptyAnswers, addPartners(mode), true, None, true),
     (AddPartnersId(0), addPartnersFalseWithChanges, anyMoreChanges, true, None, true),
     (AddPartnersId(0), addPartnersFalseNewEst, partnershipReview(mode), true, None, true),
-    (AddPartnersId(0), addPartnersFalse, taskList, true, None, true)
+    (AddPartnersId(0), addPartnersFalse, taskList, true, None, true),
+    (PartnerNewNinoId(0, 0), emptyAnswers, none, true, Some(exitJourney(mode, emptyAnswers)), true)
   )
 
 

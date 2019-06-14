@@ -91,6 +91,8 @@ class EstablishersPartnerNavigator @Inject()(val dataCacheConnector: UserAnswers
       exitMiniJourney(establisherIndex, partnerIndex, mode, srn, from.userAnswers)
     case PartnerNinoId(establisherIndex, partnerIndex) =>
       exitMiniJourney(establisherIndex, partnerIndex, mode, srn, from.userAnswers)
+    case PartnerNewNinoId(establisherIndex, partnerIndex) =>
+      exitMiniJourney(establisherIndex, partnerIndex, mode, srn, from.userAnswers)
     case PartnerUniqueTaxReferenceId(establisherIndex, partnerIndex) =>
       exitMiniJourney(establisherIndex, partnerIndex, mode, srn, from.userAnswers)
     case PartnerAddressPostcodeLookupId(establisherIndex, partnerIndex) =>
