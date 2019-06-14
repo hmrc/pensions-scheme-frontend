@@ -24,7 +24,6 @@ import forms.register.DeclarationFormProvider
 import identifiers.SchemeTypeId
 import identifiers.register._
 import identifiers.register.establishers.company.{CompanyDetailsId, IsCompanyDormantId}
-import identifiers.register.establishers.partnership.{IsPartnershipDormantId, PartnershipDetailsId}
 import javax.inject.Inject
 import models.NormalMode
 import models.register.DeclarationDormant
@@ -113,8 +112,6 @@ class DeclarationController @Inject()(
       allEstablishers.id match {
         case CompanyDetailsId(index) =>
           isDormant(request.userAnswers.get(IsCompanyDormantId(index)))
-        case PartnershipDetailsId(index) =>
-          isDormant(request.userAnswers.get(IsPartnershipDormantId(index)))
         case _ =>
           false
       }
