@@ -67,8 +67,7 @@ class EstablishersPartnershipNavigatorSpec extends SpecBase with NavigatorBehavi
 
   private def normalOnlyRoutes: TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = Table(
     ("Id", "User Answers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (Check Mode)", "Save (CM)"),
-    (PartnershipContactDetailsId(0), emptyAnswers, isDormant, true, Some(exitJourney(NormalMode, emptyAnswers)), true),
-    (IsPartnershipDormantId(0), emptyAnswers, checkYourAnswers(NormalMode), true, Some(checkYourAnswers(NormalMode)), true),
+    (PartnershipContactDetailsId(0), emptyAnswers, exitJourney(NormalMode, emptyAnswers), true, Some(exitJourney(NormalMode, emptyAnswers)), true),
     (PartnershipReviewId(0), emptyAnswers, addEstablisher(NormalMode), false, None, true),
     (PartnershipAddressYearsId(0), addressYearsUnderAYear, partnershipPaPostCodeLookup(NormalMode), true, Some(partnershipPaPostCodeLookup(checkMode(NormalMode))), true)
   )
@@ -175,8 +174,6 @@ object EstablishersPartnershipNavigatorSpec extends SpecBase with OptionValues {
   private def addEstablisher(mode: Mode) = controllers.register.establishers.routes.AddEstablisherController.onPageLoad(mode, None)
 
   private def sessionExpired = controllers.routes.SessionExpiredController.onPageLoad()
-
-  private def isDormant = controllers.register.establishers.partnership.routes.IsPartnershipDormantController.onPageLoad(NormalMode, 0, None)
 
   private def taskList: Call = controllers.routes.SchemeTaskListController.onPageLoad(NormalMode, None)
 
