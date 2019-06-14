@@ -65,8 +65,8 @@ POST       /:index/partnership/change/paye-number                       controll
 GET        /:index/partnership/:mode/paye-number/:srn                   controllers.register.trustees.partnership.PartnershipPayeController.onPageLoad(mode: Mode, index: Index, srn: Option[String])
 POST       /:index/partnership/:mode/paye-number/:srn                   controllers.register.trustees.partnership.PartnershipPayeController.onSubmit(mode: Mode, index: Index, srn: Option[String])
 
-GET        /:index/partnership/:mode/enter-employer-paye-number/:srn    controllers.register.trustees.partnership.PartnershipPayeVariationsController.onPageLoad(mode: Mode, index: Index, srn: Option[String])
-POST       /:index/partnership/:mode/enter-employer-paye-number/:srn    controllers.register.trustees.partnership.PartnershipPayeVariationsController.onSubmit(mode: Mode, index: Index, srn: Option[String])
+GET        /:index/partnership/:mode/enter-employer-paye-reference/:srn    controllers.register.trustees.partnership.PartnershipPayeVariationsController.onPageLoad(mode: Mode, index: Index, srn: Option[String])
+POST       /:index/partnership/:mode/enter-employer-paye-reference/:srn    controllers.register.trustees.partnership.PartnershipPayeVariationsController.onSubmit(mode: Mode, index: Index, srn: Option[String])
 
 GET        /:index/partnership/trustee-address                          controllers.register.trustees.partnership.PartnershipPostcodeLookupController.onPageLoad(mode: Mode = NormalMode, index: Index, srn: Option[String] = None)
 POST       /:index/partnership/trustee-address                          controllers.register.trustees.partnership.PartnershipPostcodeLookupController.onSubmit(mode: Mode = NormalMode, index: Index, srn: Option[String] = None)

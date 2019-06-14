@@ -106,8 +106,8 @@ POST       /:index/partnership/change/paye-number                               
 GET        /:index/partnership/:mode/paye-number/:srn                                                        controllers.register.establishers.partnership.PartnershipPayeController.onPageLoad(mode: Mode, index: Index, srn: Option[String])
 POST       /:index/partnership/:mode/paye-number/:srn                                                        controllers.register.establishers.partnership.PartnershipPayeController.onSubmit(mode: Mode, index: Index, srn: Option[String])
 
-GET        /:index/partnership/:mode/enter-employer-paye-number/:srn                                            controllers.register.establishers.partnership.PartnershipPayeVariationsController.onPageLoad(mode: Mode, index: Index, srn: Option[String])
-POST       /:index/partnership/:mode/enter-employer-paye-number/:srn                                            controllers.register.establishers.partnership.PartnershipPayeVariationsController.onSubmit(mode: Mode, index: Index, srn: Option[String])
+GET        /:index/partnership/:mode/enter-employer-paye-reference/:srn                                            controllers.register.establishers.partnership.PartnershipPayeVariationsController.onPageLoad(mode: Mode, index: Index, srn: Option[String])
+POST       /:index/partnership/:mode/enter-employer-paye-reference/:srn                                            controllers.register.establishers.partnership.PartnershipPayeVariationsController.onSubmit(mode: Mode, index: Index, srn: Option[String])
 
 GET        /:index/partnership/partners                                                                        controllers.register.establishers.partnership.AddPartnersController.onPageLoad(mode: Mode = NormalMode, index: Index, srn: Option[String] = None)
 POST       /:index/partnership/partners                                                                        controllers.register.establishers.partnership.AddPartnersController.onSubmit(mode: Mode = NormalMode, index: Index, srn: Option[String] = None)
