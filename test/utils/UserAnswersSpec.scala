@@ -20,7 +20,7 @@ import identifiers.register.establishers.company.director._
 import identifiers.register.establishers.company.{CompanyDetailsId => EstablisherCompanyDetailsId, CompanyPayeId => EstablisherCompanyPayeId, CompanyVatId => EstablisherCompanyVatId}
 import identifiers.register.establishers.individual.EstablisherDetailsId
 import identifiers.register.establishers.partnership._
-import identifiers.register.establishers.partnership.partner.{IsPartnerCompleteId, PartnerDetailsId}
+import identifiers.register.establishers.partnership.partner.{IsNewPartnerId, IsPartnerCompleteId, PartnerDetailsId}
 import identifiers.register.establishers.{EstablisherKindId, EstablishersId, IsEstablisherCompleteId, IsEstablisherNewId}
 import identifiers.register.trustees.company.{CompanyPayeId, CompanyVatId, CompanyDetailsId => TrusteeCompanyDetailsId}
 import identifiers.register.trustees.individual.TrusteeDetailsId
@@ -285,10 +285,11 @@ class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues with 
         .flatMap(_.set(IsPartnerCompleteId(0, 1))(false))
         .flatMap(_.set(PartnerDetailsId(0, 1))(PersonDetails("First", None, "Last", LocalDate.now, isDeleted = true)))
         .flatMap(_.set(PartnerDetailsId(0, 2))(PersonDetails("First", None, "Last", LocalDate.now)))
+        .flatMap(_.set(IsNewPartnerId(0, 0))(true))
         .get
 
       val partnerEntities = Seq(
-        PartnerEntity(PartnerDetailsId(0, 0), "First Last", isDeleted = false, isCompleted = true, isNewEntity = false, 2),
+        PartnerEntity(PartnerDetailsId(0, 0), "First Last", isDeleted = false, isCompleted = true, isNewEntity = true, 2),
         PartnerEntity(PartnerDetailsId(0, 1), "First Last", isDeleted = true, isCompleted = false, isNewEntity = false, 2),
         PartnerEntity(PartnerDetailsId(0, 2), "First Last", isDeleted = false, isCompleted = false, isNewEntity = false, 2))
 
