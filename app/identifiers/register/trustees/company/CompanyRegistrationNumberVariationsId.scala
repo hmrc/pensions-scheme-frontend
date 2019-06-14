@@ -27,20 +27,15 @@ import utils.checkyouranswers.CheckYourAnswers.StringCYA
 import viewmodels.AnswerRow
 
 case class CompanyRegistrationNumberVariationsId(index: Int) extends TypedIdentifier[String] {
-  //TODO: This may need another nested path
   override def path: JsPath = TrusteesId(index).path \ "companyRegistrationNumber" \ CompanyRegistrationNumberVariationsId.toString
 }
-
 
 object CompanyRegistrationNumberVariationsId {
   override def toString: String = "crn"
 
   implicit def cya(implicit messages: Messages, countryOptions: CountryOptions): CheckYourAnswers[CompanyRegistrationNumberVariationsId] = {
     val label: String = "messages__checkYourAnswers__trustees__company__number"
-    //val reasonLabel: String = "messages__checkYourAnswers__trustees__company__crn_no_reason"
-    //val changeHasCrn: String = "messages__visuallyhidden__trustee__crn_yes_no"
     val changeCrn: String = "messages__visuallyhidden__trustee__crn"
-    //val changeNoCrn: String = "messages__visuallyhidden__trustee__crn_no"
 
     new CheckYourAnswers[CompanyRegistrationNumberVariationsId] {
       override def row(id: CompanyRegistrationNumberVariationsId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
