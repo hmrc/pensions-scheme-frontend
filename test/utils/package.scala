@@ -17,6 +17,8 @@
 import controllers.actions.{DataRetrievalAction, FakeDataRetrievalAction}
 import identifiers._
 import identifiers.register._
+import identifiers.register.trustees.IsTrusteeNewId
+import identifiers.register.trustees.company.CompanyPayeVariationsId
 import models._
 import models.address.{Address, TolerantAddress}
 import models.register.{establishers => _, trustees => _, _}
@@ -193,6 +195,18 @@ package object utils {
       answers.set(trustees.company.CompanyAddressYearsId(index))(addressYears).asOpt.value
     }
 
+    def trusteesCompanyVat(index: Int, vat: Vat): UserAnswers = {
+      answers.set(trustees.company.CompanyVatId(index))(vat).asOpt.value
+    }
+
+    def trusteesCompanyVatVariations(index: Int, vat: String): UserAnswers = {
+      answers.set(trustees.company.CompanyVatVariationsId(index))(vat).asOpt.value
+    }
+
+    def trusteesCompanyPayeVariations(index: Int, paye: String): UserAnswers = {
+      answers.set(CompanyPayeVariationsId(index))(paye).asOpt.value
+    }
+
     def trusteesCompanyContactDetails(index: Int, contactDetails: ContactDetails): UserAnswers = {
       answers.set(trustees.company.CompanyContactDetailsId(index))(contactDetails).asOpt.value
     }
@@ -228,6 +242,10 @@ package object utils {
 
     def trusteesPreviousAddress(index: Int, address: Address): UserAnswers = {
       answers.set(trustees.individual.TrusteePreviousAddressId(index))(address).asOpt.value
+    }
+
+    def isTrusteeNew(index: Int, flag: Boolean): UserAnswers = {
+      answers.set(IsTrusteeNewId(index))(flag).asOpt.value
     }
 
     def trusteesPreviousAddressList(index: Int, selectedAddress: TolerantAddress): UserAnswers = {

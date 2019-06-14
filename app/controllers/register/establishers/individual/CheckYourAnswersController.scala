@@ -16,11 +16,11 @@
 
 package controllers.register.establishers.individual
 
-import config.FrontendAppConfig
+import config.{FeatureSwitchManagementService, FrontendAppConfig}
 import controllers.Retrievals
 import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRequiredAction, DataRetrievalAction}
 import identifiers.register.establishers.individual._
-import identifiers.register.establishers.{IsEstablisherCompleteId, IsEstablisherNewId}
+import identifiers.register.establishers.{EstablisherNewNinoId, IsEstablisherCompleteId, IsEstablisherNewId}
 import javax.inject.Inject
 import models.Mode.checkMode
 import models._
@@ -31,7 +31,7 @@ import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.{EstablishersIndividual, NoSuspendedCheck, TaskList}
 import utils.checkyouranswers.Ops._
-import utils.{AllowChangeHelper, CountryOptions, Navigator, UserAnswers}
+import utils._
 import viewmodels.AnswerSection
 import views.html.check_your_answers
 
@@ -46,20 +46,33 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
                                            userAnswersService: UserAnswersService,
                                            implicit val countryOptions: CountryOptions,
                                            @EstablishersIndividual navigator: Navigator,
-                                           allowChangeHelper: AllowChangeHelper)(implicit val ec: ExecutionContext)
+                                           allowChangeHelper: AllowChangeHelper,
+                                           fs: FeatureSwitchManagementService)(implicit val ec: ExecutionContext)
   extends FrontendController with Retrievals with I18nSupport {
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requiredData).async {
+  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requiredData).async {
     implicit request =>
 
       implicit val userAnswers: UserAnswers = request.userAnswers
+
+      lazy val displayNewNino = userAnswers.get(IsEstablisherNewId(index)) match {
+        case Some(true) => false
+        case _ => fs.get(Toggles.separateRefCollectionEnabled)
+      }
+
+      val establisherNinoRow = mode match {
+        case UpdateMode | CheckUpdateMode if displayNewNino => EstablisherNewNinoId(index).
+          row(routes.EstablisherNinoNewController.onPageLoad(checkMode(mode), index, srn).url, mode)
+        case _ => EstablisherNinoId(index).
+          row(routes.EstablisherNinoController.onPageLoad(checkMode(mode), index, srn).url, mode)
+      }
 
       val sections = Seq(
         AnswerSection(None,
           EstablisherDetailsId(index).row(
             controllers.register.establishers.individual.routes.EstablisherDetailsController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
-            EstablisherNinoId(index).row(
-              controllers.register.establishers.individual.routes.EstablisherNinoController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
+            establisherNinoRow ++
             UniqueTaxReferenceId(index).row(
               routes.UniqueTaxReferenceController.onPageLoad(checkMode(mode), Index(index), srn).url, mode) ++
             AddressId(index).row(

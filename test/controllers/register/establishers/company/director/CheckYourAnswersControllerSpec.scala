@@ -16,6 +16,7 @@
 
 package controllers.register.establishers.company.director
 
+import base.SpecBase
 import controllers.ControllerSpecBase
 import controllers.actions._
 import controllers.behaviours.ControllerAllowChangeBehaviour
@@ -26,12 +27,11 @@ import models._
 import models.address.Address
 import models.person.PersonDetails
 import org.joda.time.LocalDate
-import org.scalatest.OptionValues
 import play.api.test.Helpers._
 import services.FakeUserAnswersService
 import utils.checkyouranswers.Ops._
-import utils.{AllowChangeHelper, FakeCountryOptions, FakeDataRequest, FakeNavigator, FakeSectionComplete, UserAnswers}
-import viewmodels.AnswerSection
+import utils.{AllowChangeHelper, DateHelper, FakeCountryOptions, FakeDataRequest, FakeFeatureSwitchManagementService, FakeNavigator, UserAnswers, _}
+import viewmodels.{AnswerRow, AnswerSection, Message}
 import views.html.check_your_answers
 
 class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerAllowChangeBehaviour {
@@ -42,7 +42,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
   implicit val request = FakeDataRequest(directorAnswers)
 
   private def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData,
-                         allowChangeHelper: AllowChangeHelper = ach): CheckYourAnswersController =
+                         allowChangeHelper: AllowChangeHelper = ach, toggle:Boolean = false): CheckYourAnswersController =
     new CheckYourAnswersController(
       frontendAppConfig,
       messagesApi,
@@ -53,50 +53,84 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
       FakeUserAnswersService,
       new FakeNavigator(desiredRoute),
       countryOptions,
-      allowChangeHelper
+      allowChangeHelper,
+      new FakeFeatureSwitchManagementService(toggle)
     )
+
+  def directorDetails(mode:Mode, srn : Option[String] = None) = AnswerSection(
+    Some("messages__director__cya__details_heading"),
+    Seq(
+      DirectorDetailsId(firstIndex, firstIndex).
+        row(routes.DirectorDetailsController.onPageLoad(Mode.checkMode(mode), firstIndex, firstIndex, srn).url),
+      DirectorNinoId(firstIndex, firstIndex).
+        row(routes.DirectorNinoController.onPageLoad(Mode.checkMode(mode), firstIndex, firstIndex, srn).url),
+      DirectorUniqueTaxReferenceId(firstIndex, firstIndex).
+        row(routes.DirectorUniqueTaxReferenceController.onPageLoad(Mode.checkMode(mode), firstIndex, firstIndex, srn).url)
+    ).flatten
+  )
+
+  def directorContactDetails(mode:Mode, srn : Option[String] = None) = AnswerSection(
+    Some("messages__director__cya__contact__details_heading"),
+    Seq(
+      DirectorAddressId(firstIndex, firstIndex).
+        row(routes.DirectorAddressController.onPageLoad(Mode.checkMode(mode), firstIndex, firstIndex, srn).url),
+      DirectorAddressYearsId(firstIndex, firstIndex).
+        row(routes.DirectorAddressYearsController.onPageLoad(Mode.checkMode(mode), firstIndex, firstIndex, srn).url),
+      DirectorPreviousAddressId(firstIndex, firstIndex).
+        row(routes.DirectorPreviousAddressController.onPageLoad(Mode.checkMode(mode), firstIndex, firstIndex, srn).url),
+      DirectorContactDetailsId(firstIndex, firstIndex).
+        row(routes.DirectorContactDetailsController.onPageLoad(Mode.checkMode(mode), firstIndex, firstIndex, srn).url)
+    ).flatten
+  )
+
+  def viewAsString(mode:Mode = NormalMode,
+                   answerSection : Seq[AnswerSection] = Seq(directorDetails(NormalMode), directorContactDetails(NormalMode)),
+                   srn : Option[String] =  None) = check_your_answers(
+    frontendAppConfig,
+    answerSection,
+    routes.CheckYourAnswersController.onSubmit(firstIndex, firstIndex, mode, srn),
+    None,
+    hideEditLinks = false,
+    hideSaveAndContinueButton = false,
+    srn = srn
+  )(fakeRequest, messages).toString
 
   "CheckYourAnswersController" when {
     "onPageLoad" must {
+
       "return OK and display all the answers" in {
-        val directorDetails = AnswerSection(
-          Some("messages__director__cya__details_heading"),
-          Seq(
-            DirectorDetailsId(firstIndex, firstIndex).
-              row(routes.DirectorDetailsController.onPageLoad(CheckMode, firstIndex, firstIndex, None).url),
-            DirectorNinoId(firstIndex, firstIndex).
-              row(routes.DirectorNinoController.onPageLoad(CheckMode, firstIndex, firstIndex, None).url),
-            DirectorUniqueTaxReferenceId(firstIndex, firstIndex).
-              row(routes.DirectorUniqueTaxReferenceController.onPageLoad(CheckMode, firstIndex, firstIndex, None).url)
-          ).flatten
-        )
-
-        val directorContactDetails = AnswerSection(
-          Some("messages__director__cya__contact__details_heading"),
-          Seq(
-            DirectorAddressId(firstIndex, firstIndex).
-              row(routes.DirectorAddressController.onPageLoad(CheckMode, firstIndex, firstIndex, None).url),
-            DirectorAddressYearsId(firstIndex, firstIndex).
-              row(routes.DirectorAddressYearsController.onPageLoad(CheckMode, firstIndex, firstIndex, None).url),
-            DirectorPreviousAddressId(firstIndex, firstIndex).
-              row(routes.DirectorPreviousAddressController.onPageLoad(CheckMode, firstIndex, firstIndex, None).url),
-            DirectorContactDetailsId(firstIndex, firstIndex).
-              row(routes.DirectorContactDetailsController.onPageLoad(CheckMode, firstIndex, firstIndex, None).url)
-          ).flatten
-        )
-
-        val viewAsString = check_your_answers(
-          frontendAppConfig,
-          Seq(directorDetails, directorContactDetails),
-          routes.CheckYourAnswersController.onSubmit(firstIndex, firstIndex, NormalMode, None),
-          None,
-          hideEditLinks = false,
-          hideSaveAndContinueButton = false
-        )(fakeRequest, messages).toString
 
         val result = controller(directorAnswers.dataRetrievalAction).onPageLoad(firstIndex, firstIndex, NormalMode, None)(request)
         status(result) mustBe OK
-        contentAsString(result) mustBe viewAsString
+        contentAsString(result) mustBe viewAsString()
+      }
+
+      "return OK and display all given answers for UpdateMode" in {
+
+        val result = controller(directorAnswersUpdate.dataRetrievalAction).onPageLoad(firstIndex, firstIndex, UpdateMode, Some("srn"))(request)
+        status(result) mustBe OK
+        contentAsString(result) mustBe viewAsString(UpdateMode, updateAnswerRows, Some("srn"))
+      }
+
+      "return OK and display new Nino with Add link for UpdateMode and separateRefCollectionEnabled is true" in {
+
+        val result = controller(directorDetailsAnswersUpdateWithoutNino.dataRetrievalAction, toggle = true).onPageLoad(firstIndex, firstIndex, UpdateMode, Some("srn"))(request)
+        status(result) mustBe OK
+        contentAsString(result) mustBe viewAsString(UpdateMode, displayNewNinoAnswerRowWithAdd, Some("srn"))
+      }
+
+      "return OK and display new Nino with no link for UpdateMode and separateRefCollectionEnabled is true" in {
+
+        val result = controller(directorAnswersUpdate.dataRetrievalAction, toggle = true).onPageLoad(firstIndex, firstIndex, UpdateMode, Some("srn"))(request)
+        status(result) mustBe OK
+        contentAsString(result) mustBe viewAsString(UpdateMode, displayNewNinoAnswerRowWithNoLink, Some("srn"))
+      }
+
+      "return OK and display old Nino links for UpdateMode, New Director and separateRefCollectionEnabled is true" in {
+
+        val result = controller(newDirectorAnswersUpdateWithNewNino.dataRetrievalAction, toggle = true).onPageLoad(firstIndex, firstIndex, UpdateMode, Some("srn"))(request)
+        status(result) mustBe OK
+        contentAsString(result) mustBe viewAsString(UpdateMode, updateAnswerRowsWithChange, Some("srn"))
       }
 
       behave like changeableController(
@@ -133,15 +167,21 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
   }
 }
 
-object CheckYourAnswersControllerSpec extends OptionValues {
+object CheckYourAnswersControllerSpec extends SpecBase {
   val firstIndex = Index(0)
   val schemeName = "test scheme name"
   val desiredRoute = controllers.routes.IndexController.onPageLoad()
 
-  val directorAnswers = UserAnswers()
+  implicit val directorDetailsAnswersUpdateWithoutNino = UserAnswers()
     .set(DirectorDetailsId(firstIndex, firstIndex))(PersonDetails("first name", None, "last name", LocalDate.now(), false))
-    .flatMap(_.set(DirectorNinoId(firstIndex, firstIndex))(Nino.Yes("AB100100A")))
-    .flatMap(_.set(DirectorUniqueTaxReferenceId(firstIndex, firstIndex))(UniqueTaxReference.Yes("1234567890")))
+    .asOpt.value
+
+
+  implicit val directorAnswersUpdate = directorDetailsAnswersUpdateWithoutNino
+    .set(DirectorNinoId(firstIndex, firstIndex))(Nino.Yes("AB100100A")).asOpt.value
+
+  implicit val directorAnswers = directorAnswersUpdate
+    .set(DirectorUniqueTaxReferenceId(firstIndex, firstIndex))(UniqueTaxReference.Yes("1234567890"))
     .flatMap(_.set(DirectorAddressId(firstIndex, firstIndex))(Address("Address 1", "Address 2", None, None, None, "GB")))
     .flatMap(_.set(DirectorAddressYearsId(firstIndex, firstIndex))(AddressYears.UnderAYear))
     .flatMap(_.set(DirectorPreviousAddressId(firstIndex, firstIndex))(Address("Previous Address 1", "Previous Address 2", None, None, None, "GB")))
@@ -149,4 +189,69 @@ object CheckYourAnswersControllerSpec extends OptionValues {
     .asOpt.value
 
   val newDirectorAnswers = directorAnswers.set(IsEstablisherNewId(firstIndex))(true).asOpt.value
+
+  implicit val directorAnswersUpdateWithNewNino = directorAnswersUpdate
+    .set(DirectorNewNinoId(firstIndex, firstIndex))("AB100100A")
+    .asOpt.value
+
+  implicit val newDirectorAnswersUpdateWithNewNino = directorAnswersUpdate
+    .set(IsNewDirectorId(firstIndex, firstIndex))(true)
+    .flatMap(_.set(DirectorNewNinoId(firstIndex, firstIndex))("AB100100A"))
+    .asOpt.value
+
+  def updateAnswerRows = Seq(AnswerSection(
+      Some("messages__director__cya__details_heading"),
+      Seq(
+        AnswerRow("messages__common__cya__name", Seq("first name last name"), false, None),
+        AnswerRow("messages__common__dob", Seq(DateHelper.formatDate(LocalDate.now())), answerIsMessageKey = false, None),
+        AnswerRow("messages__common__nino", Seq("AB100100A"), answerIsMessageKey = false, None)
+      )
+    ),
+    AnswerSection(Some("messages__director__cya__contact__details_heading"), Seq())
+  )
+
+  def updateAnswerRowsWithChange = Seq(AnswerSection(
+      Some("messages__director__cya__details_heading"),
+      Seq(
+        AnswerRow("messages__common__cya__name", Seq("first name last name"), false,
+          Some(Link("site.change", routes.DirectorDetailsController.onPageLoad(Mode.checkMode(UpdateMode), firstIndex, firstIndex, Some("srn")).url,
+            Some(Message("messages__visuallyhidden__common__name", "first name last name").resolve)))),
+        AnswerRow("messages__common__dob", Seq(DateHelper.formatDate(LocalDate.now())), answerIsMessageKey = false,
+          Some(Link("site.change", routes.DirectorDetailsController.onPageLoad(Mode.checkMode(UpdateMode), firstIndex, firstIndex, Some("srn")).url,
+            Some(Message("messages__visuallyhidden__common__dob", "first name last name").resolve)))),
+        AnswerRow("messages__director_nino_question_cya_label", Seq(s"${Nino.Yes}"), answerIsMessageKey = false,
+          Some(Link("site.change", routes.DirectorNinoController.onPageLoad(Mode.checkMode(UpdateMode), firstIndex, firstIndex, Some("srn")).url,
+            Some("messages__visuallyhidden__director__nino_yes_no")))),
+        AnswerRow("messages__common__nino", Seq("AB100100A"), answerIsMessageKey = false,
+          Some(Link("site.change", routes.DirectorNinoController.onPageLoad(Mode.checkMode(UpdateMode), firstIndex, firstIndex, Some("srn")).url,
+            Some("messages__visuallyhidden__director__nino"))))
+      )
+    ),
+    AnswerSection(Some("messages__director__cya__contact__details_heading"), Seq())
+  )
+
+  def displayNewNinoAnswerRowWithAdd = Seq(AnswerSection(
+      Some("messages__director__cya__details_heading"),
+      Seq(
+        AnswerRow("messages__common__cya__name", Seq("first name last name"), false, None),
+        AnswerRow("messages__common__dob", Seq(DateHelper.formatDate(LocalDate.now())), answerIsMessageKey = false, None),
+        AnswerRow("messages__common__nino", Seq("site.not_entered"), answerIsMessageKey = true,
+          Some(Link("site.add",
+            routes.DirectorNinoNewController.onPageLoad(Mode.checkMode(UpdateMode), firstIndex, firstIndex, Some("srn")).url,
+            Some(s"messages__visuallyhidden__director__nino_add"))))
+      )
+    ),
+    AnswerSection(Some("messages__director__cya__contact__details_heading"), Seq())
+  )
+
+  def displayNewNinoAnswerRowWithNoLink = Seq(AnswerSection(
+      Some("messages__director__cya__details_heading"),
+      Seq(
+        AnswerRow("messages__common__cya__name", Seq("first name last name"), false, None),
+        AnswerRow("messages__common__dob", Seq(DateHelper.formatDate(LocalDate.now())), answerIsMessageKey = false, None),
+        AnswerRow("messages__common__nino", Seq("AB100100A"), answerIsMessageKey = false, None)
+      )
+    ),
+    AnswerSection(Some("messages__director__cya__contact__details_heading"), Seq())
+  )
 }

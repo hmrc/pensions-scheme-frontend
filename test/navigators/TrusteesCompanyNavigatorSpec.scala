@@ -61,7 +61,9 @@ class TrusteesCompanyNavigatorSpec extends SpecBase with MustMatchers with Navig
     (CompanyContactDetailsId(0), emptyAnswers, checkYourAnswers(mode), true, Some(exitJourney(mode, emptyAnswers)), true),
     (CompanyContactDetailsId(0), newTrustee, checkYourAnswers(mode), true, Some(exitJourney(mode, newTrustee)), true),
     (CompanyAddressYearsId(0), emptyAnswers, sessionExpired, false, Some(sessionExpired), false),
-    (CheckYourAnswersId, emptyAnswers, addTrustee(mode), false, None, true)
+    (CheckYourAnswersId, emptyAnswers, addTrustee(mode), false, None, true),
+    (CompanyVatVariationsId(0), emptyAnswers, index, false, Some(exitJourney(mode, emptyAnswers)), true),
+    (CompanyVatVariationsId(0), newTrustee, index, false, Some(exitJourney(mode, newTrustee)), true)
   )
 
   private def editRoutesToggleOn(mode: Mode, isPrevAddEnabled:Boolean = false): TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = Table(
@@ -143,6 +145,7 @@ object TrusteesCompanyNavigatorSpec extends SpecBase with OptionValues {
 
 
   private def sessionExpired = controllers.routes.SessionExpiredController.onPageLoad()
+  private def index = controllers.routes.IndexController.onPageLoad()
 
   private val emptyAnswers = UserAnswers(Json.obj())
 

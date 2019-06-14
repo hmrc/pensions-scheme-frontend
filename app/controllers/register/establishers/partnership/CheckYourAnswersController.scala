@@ -23,7 +23,6 @@ import identifiers.register.establishers.IsEstablisherNewId
 import identifiers.register.establishers.partnership._
 import javax.inject.{Inject, Singleton}
 import models.Mode.checkMode
-import models.requests.DataRequest
 import models.{Index, Mode, UpdateMode}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
@@ -48,47 +47,53 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
                                            @EstablisherPartnership navigator: Navigator,
                                            implicit val countryOptions: CountryOptions,
                                            allowChangeHelper: AllowChangeHelper,
-                                           featureSwitchManagementService: FeatureSwitchManagementService
+                                           fs: FeatureSwitchManagementService
                                           )(implicit val ec: ExecutionContext) extends FrontendController
   with Retrievals with I18nSupport with Enumerable.Implicits {
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requiredData).async {
-    implicit request =>
+  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requiredData).async {
+      implicit request =>
+        implicit val userAnswers: UserAnswers = request.userAnswers
+        lazy val isVatVariationsEnabled = userAnswers.get(IsEstablisherNewId(index)) match {
+          case Some(true) => false
+          case _ => fs.get(Toggles.separateRefCollectionEnabled)
+        }
 
-      implicit val userAnswers = request.userAnswers
+        val partnershipDetails = AnswerSection(
+          Some("messages__partnership__checkYourAnswers__partnership_details"),
 
-      val partnershipDetails = AnswerSection(
-        Some("messages__partnership__checkYourAnswers__partnership_details"),
-        Seq(
-          PartnershipDetailsId(index).row(routes.PartnershipDetailsController.onPageLoad(checkMode(mode), index, srn).url, mode),
-          PartnershipVatId(index).row(routes.PartnershipVatController.onPageLoad(checkMode(mode), index, srn).url, mode),
-          payeCya(mode, srn, index) ++
-          PartnershipUniqueTaxReferenceID(index).row(routes.PartnershipUniqueTaxReferenceController.onPageLoad(checkMode(mode), index, srn).url, mode),
-          IsPartnershipDormantId(index).row(routes.IsPartnershipDormantController.onPageLoad(checkMode(mode), index, srn).url, mode)
-        ).flatten
-      )
+          PartnershipDetailsId(index).row(routes.PartnershipDetailsController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
+            (if (mode == UpdateMode && isVatVariationsEnabled) {
+              PartnershipVatVariationsId(index).row(routes.PartnershipVatVariationsController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
+                PartnershipPayeVariationsId(index).row(routes.PartnershipPayeVariationsController.onPageLoad(checkMode(mode), index, srn).url, mode)
+            } else {
+              PartnershipVatId(index).row(routes.PartnershipVatController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
+                PartnershipPayeId(index).row(routes.PartnershipPayeController.onPageLoad(checkMode(mode), index, srn).url, mode)
+            }) ++
+            PartnershipUniqueTaxReferenceID(index).row(routes.PartnershipUniqueTaxReferenceController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
+            IsPartnershipDormantId(index).row(routes.IsPartnershipDormantController.onPageLoad(checkMode(mode), index, srn).url, mode)
+        )
 
-      val partnershipContactDetails = AnswerSection(
-        Some("messages__partnership__checkYourAnswers__partnership_contact_details"),
-        Seq(
-          PartnershipAddressId(index).row(routes.PartnershipAddressController.onPageLoad(checkMode(mode), index, srn).url, mode),
-          PartnershipAddressYearsId(index).row(routes.PartnershipAddressYearsController.onPageLoad(checkMode(mode), index, srn).url, mode),
-          PartnershipPreviousAddressId(index).row(routes.PartnershipPreviousAddressController.onPageLoad(checkMode(mode), index, srn).url, mode),
-          PartnershipContactDetailsId(index).row(routes.PartnershipContactDetailsController.onPageLoad(checkMode(mode), index, srn).url, mode)
-        ).flatten
-      )
+        val partnershipContactDetails = AnswerSection(
+          Some("messages__partnership__checkYourAnswers__partnership_contact_details"),
+          PartnershipAddressId(index).row(routes.PartnershipAddressController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
+            PartnershipAddressYearsId(index).row(routes.PartnershipAddressYearsController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
+            PartnershipPreviousAddressId(index).row(routes.PartnershipPreviousAddressController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
+            PartnershipContactDetailsId(index).row(routes.PartnershipContactDetailsController.onPageLoad(checkMode(mode), index, srn).url, mode)
+        )
 
-      Future.successful(Ok(check_your_answers(
-        appConfig,
-        Seq(partnershipDetails, partnershipContactDetails),
-        routes.CheckYourAnswersController.onSubmit(mode, index, srn),
-        existingSchemeName,
-        mode = mode,
-        hideEditLinks = request.viewOnly || !userAnswers.get(IsEstablisherNewId(index)).getOrElse(true),
-        hideSaveAndContinueButton = allowChangeHelper.hideSaveAndContinueButton(request, IsEstablisherNewId(index), mode),
-        srn = srn
-      )))
-  }
+        Future.successful(Ok(check_your_answers(
+          appConfig,
+          Seq(partnershipDetails, partnershipContactDetails),
+          routes.CheckYourAnswersController.onSubmit(mode, index, srn),
+          existingSchemeName,
+          mode = mode,
+          hideEditLinks = request.viewOnly || !userAnswers.get(IsEstablisherNewId(index)).getOrElse(true),
+          hideSaveAndContinueButton = allowChangeHelper.hideSaveAndContinueButton(request, IsEstablisherNewId(index), mode),
+          srn = srn
+        )))
+    }
 
   def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requiredData).async {
     implicit request =>
@@ -96,13 +101,4 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
         Redirect(navigator.nextPage(CheckYourAnswersId(index), mode, request.userAnswers, srn))
       }
   }
-
-  private def payeCya(mode: Mode, srn: Option[String], index: Index)(implicit request: DataRequest[AnyContent]) =
-    if (mode == UpdateMode && featureSwitchManagementService.get(Toggles.isSeparateRefCollectionEnabled) &&
-      !request.userAnswers.get(IsEstablisherNewId(index)).getOrElse(false))
-      PartnershipPayeVariationsId(index).row(routes.PartnershipPayeVariationsController.onPageLoad(checkMode(mode), index, srn).url, mode)
-    else
-      PartnershipPayeId(index).row(routes.PartnershipPayeController.onPageLoad(checkMode(mode), index, srn).url, mode)
-
-
 }

@@ -16,23 +16,21 @@
 
 package controllers.register.establishers.company.director
 
-import config.FrontendAppConfig
+import config.{FeatureSwitchManagementService, FrontendAppConfig}
 import controllers.Retrievals
 import controllers.actions._
-import identifiers.AnyMoreChangesId
-import identifiers.register.establishers.{IsEstablisherCompleteId, IsEstablisherNewId}
-import identifiers.register.establishers.company.{CompanyReviewId, IsCompanyCompleteId, director}
 import identifiers.register.establishers.company.director._
+import identifiers.register.establishers.{IsEstablisherCompleteId, IsEstablisherNewId}
 import javax.inject.Inject
 import models.Mode.checkMode
-import models.{CheckMode, Index, Mode, NormalMode}
+import models._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import utils.annotations.{EstablishersCompanyDirector, NoSuspendedCheck, TaskList}
-import utils.checkyouranswers.Ops._
 import utils._
+import utils.annotations.{EstablishersCompanyDirector, NoSuspendedCheck}
+import utils.checkyouranswers.Ops._
 import viewmodels.AnswerSection
 import views.html.check_your_answers
 
@@ -47,7 +45,8 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
                                            userAnswersService: UserAnswersService,
                                            @EstablishersCompanyDirector navigator: Navigator,
                                            implicit val countryOptions: CountryOptions,
-                                           allowChangeHelper: AllowChangeHelper
+                                           allowChangeHelper: AllowChangeHelper,
+                                           fs: FeatureSwitchManagementService
                                           )(implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport {
 
   def onPageLoad(companyIndex: Index, directorIndex: Index, mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requiredData).async {
@@ -55,13 +54,22 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
 
       implicit val userAnswers = request.userAnswers
 
+      lazy val displayNewNino = userAnswers.get(IsNewDirectorId(companyIndex, directorIndex)) match {
+        case Some(true) => false
+        case _ => fs.get(Toggles.separateRefCollectionEnabled)
+      }
+
       val companyDirectorDetails = AnswerSection(
         Some("messages__director__cya__details_heading"),
         Seq(
           DirectorDetailsId(companyIndex, directorIndex).
             row(routes.DirectorDetailsController.onPageLoad(checkMode(mode), companyIndex, directorIndex, srn).url, mode),
-          DirectorNinoId(companyIndex, directorIndex).
-            row(routes.DirectorNinoController.onPageLoad(checkMode(mode), companyIndex, directorIndex, srn).url, mode),
+          mode match {
+            case UpdateMode| CheckUpdateMode if displayNewNino => DirectorNewNinoId(companyIndex, directorIndex).
+              row(routes.DirectorNinoNewController.onPageLoad(checkMode(mode), companyIndex, directorIndex, srn).url, mode)
+            case _ => DirectorNinoId(companyIndex, directorIndex).
+              row(routes.DirectorNinoController.onPageLoad(checkMode(mode), companyIndex, directorIndex, srn).url, mode)
+          },
           DirectorUniqueTaxReferenceId(companyIndex, directorIndex).
             row(routes.DirectorUniqueTaxReferenceController.onPageLoad(checkMode(mode), companyIndex, directorIndex, srn).url, mode)
         ).flatten

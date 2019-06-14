@@ -59,7 +59,9 @@ class TrusteesPartnershipNavigatorSpec extends SpecBase with NavigatorBehaviour 
     (PartnershipPreviousAddressId(0), newTrustee, partnershipContact(mode), true, Some(exitJourney(mode, newTrustee)), true),
     (PartnershipContactDetailsId(0), emptyAnswers, checkYourAnswers(mode), true, Some(exitJourney(mode, emptyAnswers)), true),
     (PartnershipContactDetailsId(0), newTrustee, checkYourAnswers(mode), true, Some(exitJourney(mode, newTrustee)), true),
-    (CheckYourAnswersId(0), emptyAnswers, addTrustee(mode), false, None, true)
+    (CheckYourAnswersId(0), emptyAnswers, addTrustee(mode), false, None, true),
+    (PartnershipVatVariationsId(0), emptyAnswers, defaultPage, false, Some(exitJourney(mode, emptyAnswers)), true),
+    (PartnershipVatVariationsId(0), newTrustee, defaultPage, false, Some(exitJourney(mode, newTrustee)), true)
   )
 
   appRunning()

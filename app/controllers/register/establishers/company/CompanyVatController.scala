@@ -16,7 +16,7 @@
 
 package controllers.register.establishers.company
 
-import config.FrontendAppConfig
+import config.{FeatureSwitchManagementService, FrontendAppConfig}
 import controllers.VatController
 import controllers.actions._
 import forms.VatFormProvider
