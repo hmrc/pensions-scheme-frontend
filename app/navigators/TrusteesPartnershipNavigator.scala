@@ -86,6 +86,8 @@ class TrusteesPartnershipNavigator @Inject()(val dataCacheConnector: UserAnswers
       exitMiniJourney(index, mode, srn, from.userAnswers)
     case PartnershipPayeId(index) =>
       exitMiniJourney(index, mode, srn, from.userAnswers)
+    case PartnershipPayeVariationsId(index) =>
+      exitMiniJourney(index, mode, srn, from.userAnswers)
     case PartnershipUniqueTaxReferenceId(index) =>
       exitMiniJourney(index, mode, srn, from.userAnswers)
     case PartnershipPostcodeLookupId(index) =>

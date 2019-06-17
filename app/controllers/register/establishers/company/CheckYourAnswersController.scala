@@ -23,7 +23,6 @@ import identifiers.register.establishers.IsEstablisherNewId
 import identifiers.register.establishers.company._
 import javax.inject.Inject
 import models.Mode.checkMode
-import models.requests.DataRequest
 import models.{Index, Mode, UpdateMode}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
@@ -48,45 +47,55 @@ class CheckYourAnswersController @Inject()(
                                             @EstablishersCompany navigator: Navigator,
                                             userAnswersService: UserAnswersService,
                                             allowChangeHelper: AllowChangeHelper,
-                                            featureSwitchManagementService: FeatureSwitchManagementService
+                                            fs: FeatureSwitchManagementService
                                           )(implicit val ec: ExecutionContext) extends FrontendController
   with Retrievals with I18nSupport with Enumerable.Implicits {
 
-  def onPageLoad(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
-    implicit request =>
+  def onPageLoad(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+      implicit request =>
+        implicit val userAnswers: UserAnswers = request.userAnswers
 
-      implicit val userAnswers: UserAnswers = request.userAnswers
+        lazy val isVatVariationsEnabled = userAnswers.get(IsEstablisherNewId(index)) match {
+          case Some(true) => false
+          case _ => fs.get(Toggles.isSeparateRefCollectionEnabled)
+        }
 
-      val companyDetails = AnswerSection(
-        Some("messages__common__company_details__title"),
-        CompanyDetailsId(index).row(routes.CompanyDetailsController.onPageLoad(checkMode(mode), srn, index).url, mode) ++
-       vatCya(mode, srn, index) ++
-          CompanyPayeId(index).row(routes.CompanyPayeController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
-          CompanyRegistrationNumberId(index).row(routes.CompanyRegistrationNumberController.onPageLoad(checkMode(mode), srn, Index(index)).url, mode) ++
-          CompanyUniqueTaxReferenceId(index).row(routes.CompanyUniqueTaxReferenceController.onPageLoad(checkMode(mode), srn, Index(index)).url, mode) ++
-          IsCompanyDormantId(index).row(routes.IsCompanyDormantController.onPageLoad(checkMode(mode), srn, Index(index)).url, mode)
-      )
+        val companyDetails = AnswerSection(
+          Some("messages__common__company_details__title"),
+          CompanyDetailsId(index).row(routes.CompanyDetailsController.onPageLoad(checkMode(mode), srn, index).url, mode) ++
+            (if (mode == UpdateMode && isVatVariationsEnabled) {
+              CompanyVatVariationsId(index).row(routes.CompanyVatVariationsController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
+                CompanyPayeVariationsId(index).row(routes.CompanyPayeVariationsController.onPageLoad(checkMode(mode), index, srn).url, mode)
+            } else {
+              CompanyVatId(index).row(routes.CompanyVatController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
+                CompanyPayeId(index).row(routes.CompanyPayeController.onPageLoad(checkMode(mode), index, srn).url, mode)
+            }) ++
+            CompanyRegistrationNumberId(index).row(routes.CompanyRegistrationNumberController.onPageLoad(checkMode(mode), srn, Index(index)).url, mode) ++
+            CompanyUniqueTaxReferenceId(index).row(routes.CompanyUniqueTaxReferenceController.onPageLoad(checkMode(mode), srn, Index(index)).url, mode) ++
+            IsCompanyDormantId(index).row(routes.IsCompanyDormantController.onPageLoad(checkMode(mode), srn, Index(index)).url, mode)
+        )
 
-      val companyContactDetails = AnswerSection(
-        Some("messages__establisher_company_contact_details__title"),
-        CompanyAddressId(index).row(routes.CompanyAddressController.onPageLoad(checkMode(mode), srn, Index(index)).url, mode) ++
-          CompanyAddressYearsId(index).row(routes.CompanyAddressYearsController.onPageLoad(checkMode(mode), srn, index).url, mode) ++
-          CompanyPreviousAddressId(index).row(routes.CompanyPreviousAddressController.onPageLoad(checkMode(mode), srn, index).url, mode) ++
-          CompanyContactDetailsId(index).row(routes.CompanyContactDetailsController.onPageLoad(checkMode(mode), srn, index).url, mode)
-      )
+        val companyContactDetails = AnswerSection(
+          Some("messages__establisher_company_contact_details__title"),
+          CompanyAddressId(index).row(routes.CompanyAddressController.onPageLoad(checkMode(mode), srn, Index(index)).url, mode) ++
+            CompanyAddressYearsId(index).row(routes.CompanyAddressYearsController.onPageLoad(checkMode(mode), srn, index).url, mode) ++
+            CompanyPreviousAddressId(index).row(routes.CompanyPreviousAddressController.onPageLoad(checkMode(mode), srn, index).url, mode) ++
+            CompanyContactDetailsId(index).row(routes.CompanyContactDetailsController.onPageLoad(checkMode(mode), srn, index).url, mode)
+        )
 
-      Future.successful(Ok(check_your_answers(
-        appConfig,
-        Seq(companyDetails, companyContactDetails),
-        routes.CheckYourAnswersController.onSubmit(mode, srn, index),
-        existingSchemeName,
-        mode = mode,
-        hideEditLinks = request.viewOnly || !userAnswers.get(IsEstablisherNewId(index)).getOrElse(true),
-        hideSaveAndContinueButton = allowChangeHelper.hideSaveAndContinueButton(request, IsEstablisherNewId(index), mode),
-        srn = srn
-      )))
+        Future.successful(Ok(check_your_answers(
+          appConfig,
+          Seq(companyDetails, companyContactDetails),
+          routes.CheckYourAnswersController.onSubmit(mode, srn, index),
+          existingSchemeName,
+          mode = mode,
+          hideEditLinks = request.viewOnly || !userAnswers.get(IsEstablisherNewId(index)).getOrElse(true),
+          hideSaveAndContinueButton = allowChangeHelper.hideSaveAndContinueButton(request, IsEstablisherNewId(index), mode),
+          srn = srn
+        )))
 
-  }
+    }
 
   def onSubmit(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] = (
     authenticate andThen getData(mode, srn) andThen requireData).async {
@@ -95,13 +104,4 @@ class CheckYourAnswersController @Inject()(
         Redirect(navigator.nextPage(CheckYourAnswersId(index), mode, request.userAnswers, srn))
       }
   }
-
-  private def vatCya(mode: Mode, srn: Option[String], index: Index)(implicit request: DataRequest[AnyContent]) =
-    if (mode == UpdateMode && featureSwitchManagementService.get(Toggles.isSeparateRefCollectionEnabled) &&
-      !request.userAnswers.get(IsEstablisherNewId(index)).getOrElse(false))
-        CompanyVatVariationsId(index).row(routes.CompanyVatVariationsController.onPageLoad(checkMode(mode), index, srn).url, mode)
-    else
-      CompanyVatId(index).row(routes.CompanyVatController.onPageLoad(checkMode(mode), index, srn).url, mode)
-
-
 }

@@ -66,13 +66,13 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
         } else {
           CompanyVatId(index).row(routes.CompanyVatController.onPageLoad(checkMode(mode), index, srn).url, mode)
         }
-        val companyPayeRow = CompanyPayeId(index).row(routes.CompanyPayeController.onPageLoad(checkMode(mode), index, srn).url, mode)
-
+        val companyPayeRow = if (mode == UpdateMode && isVatVariationsEnabled) {
+          CompanyPayeVariationsId(index).row(routes.CompanyPayeVariationsController.onPageLoad(checkMode(mode), index, srn).url, mode)
+        }
+        else {
+          CompanyPayeId(index).row(routes.CompanyPayeController.onPageLoad(checkMode(mode), index, srn).url, mode)
+        }
         val companyRegistrationNumber = companyRegistrationNumberCya(mode, srn, index)
-
-//        val companyRegistrationNumber = CompanyRegistrationNumberId(index).
-//          row(routes.CompanyRegistrationNumberController.onPageLoad(checkMode(mode), srn, index).url, mode)
-
         val companyUtr = CompanyUniqueTaxReferenceId(index).
           row(routes.CompanyUniqueTaxReferenceController.onPageLoad(checkMode(mode), index, srn).url, mode)
         val companyAddress = CompanyAddressId(index).
@@ -83,7 +83,6 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
           row(routes.CompanyPreviousAddressController.onPageLoad(checkMode(mode), index, srn).url, mode)
         val companyContactDetails = CompanyContactDetailsId(index).
           row(routes.CompanyContactDetailsController.onPageLoad(checkMode(mode), index, srn).url)
-
         val companyDetailsSection = AnswerSection(Some("messages__checkYourAnswers__section__company_details"),
           companyDetailsRow ++ companyVatRow ++ companyPayeRow ++ companyRegistrationNumber ++ companyUtr)
 

@@ -54,9 +54,7 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requiredData).async {
       implicit request =>
-
         implicit val userAnswers: UserAnswers = request.userAnswers
-
         lazy val isVatVariationsEnabled = userAnswers.get(IsEstablisherNewId(index)) match {
           case Some(true) => false
           case _ => fs.get(Toggles.isSeparateRefCollectionEnabled)
@@ -64,26 +62,24 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
 
         val partnershipDetails = AnswerSection(
           Some("messages__partnership__checkYourAnswers__partnership_details"),
-          Seq(
-            PartnershipDetailsId(index).row(routes.PartnershipDetailsController.onPageLoad(checkMode(mode), index, srn).url, mode),
-            if (mode == UpdateMode && isVatVariationsEnabled) {
-              PartnershipVatVariationsId(index).row(routes.PartnershipVatVariationsController.onPageLoad(checkMode(mode), index, srn).url, mode)
+
+          PartnershipDetailsId(index).row(routes.PartnershipDetailsController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
+            (if (mode == UpdateMode && isVatVariationsEnabled) {
+              PartnershipVatVariationsId(index).row(routes.PartnershipVatVariationsController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
+                PartnershipPayeVariationsId(index).row(routes.PartnershipPayeVariationsController.onPageLoad(checkMode(mode), index, srn).url, mode)
             } else {
-              PartnershipVatId(index).row(routes.PartnershipVatController.onPageLoad(checkMode(mode), index, srn).url, mode)
-            },
-            PartnershipPayeId(index).row(routes.PartnershipPayeController.onPageLoad(checkMode(mode), index, srn).url, mode),
+              PartnershipVatId(index).row(routes.PartnershipVatController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
+                PartnershipPayeId(index).row(routes.PartnershipPayeController.onPageLoad(checkMode(mode), index, srn).url, mode)
+            }) ++
             PartnershipUniqueTaxReferenceID(index).row(routes.PartnershipUniqueTaxReferenceController.onPageLoad(checkMode(mode), index, srn).url, mode)
-          ).flatten
         )
 
         val partnershipContactDetails = AnswerSection(
           Some("messages__partnership__checkYourAnswers__partnership_contact_details"),
-          Seq(
-            PartnershipAddressId(index).row(routes.PartnershipAddressController.onPageLoad(checkMode(mode), index, srn).url, mode),
-            PartnershipAddressYearsId(index).row(routes.PartnershipAddressYearsController.onPageLoad(checkMode(mode), index, srn).url, mode),
-            PartnershipPreviousAddressId(index).row(routes.PartnershipPreviousAddressController.onPageLoad(checkMode(mode), index, srn).url, mode),
+          PartnershipAddressId(index).row(routes.PartnershipAddressController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
+            PartnershipAddressYearsId(index).row(routes.PartnershipAddressYearsController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
+            PartnershipPreviousAddressId(index).row(routes.PartnershipPreviousAddressController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
             PartnershipContactDetailsId(index).row(routes.PartnershipContactDetailsController.onPageLoad(checkMode(mode), index, srn).url, mode)
-          ).flatten
         )
 
         Future.successful(Ok(check_your_answers(
@@ -104,5 +100,4 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
         Redirect(navigator.nextPage(CheckYourAnswersId(index), mode, request.userAnswers, srn))
       }
   }
-
 }

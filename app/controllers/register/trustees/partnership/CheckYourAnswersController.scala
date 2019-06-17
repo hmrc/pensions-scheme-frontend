@@ -64,16 +64,15 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
 
         val partnershipDetails = AnswerSection(
           Some("messages__partnership__checkYourAnswers__partnership_details"),
-          Seq(
-            PartnershipDetailsId(index).row(routes.TrusteeDetailsController.onPageLoad(checkMode(mode), index, srn).url, mode),
-            if (mode == UpdateMode && isVatVariationsEnabled) {
-              PartnershipVatVariationsId(index).row(routes.PartnershipVatVariationsController.onPageLoad(checkMode(mode), index, srn).url, mode)
+          PartnershipDetailsId(index).row(routes.TrusteeDetailsController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
+            (if (mode == UpdateMode && isVatVariationsEnabled) {
+              PartnershipVatVariationsId(index).row(routes.PartnershipVatVariationsController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
+                PartnershipPayeVariationsId(index).row(routes.PartnershipPayeVariationsController.onPageLoad(checkMode(mode), index, srn).url, mode)
             } else {
-              PartnershipVatId(index).row(routes.PartnershipVatController.onPageLoad(checkMode(mode), index, srn).url, mode)
-            },
-            PartnershipPayeId(index).row(routes.PartnershipPayeController.onPageLoad(checkMode(mode), index, srn).url, mode),
+              PartnershipVatId(index).row(routes.PartnershipVatController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
+                PartnershipPayeId(index).row(routes.PartnershipPayeController.onPageLoad(checkMode(mode), index, srn).url, mode)
+            }) ++
             PartnershipUniqueTaxReferenceId(index).row(routes.PartnershipUniqueTaxReferenceController.onPageLoad(checkMode(mode), index, srn).url, mode)
-          ).flatten
         )
 
         val partnershipContactDetails = AnswerSection(
@@ -104,5 +103,4 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
         Redirect(navigator.nextPage(CheckYourAnswersId(index), mode, request.userAnswers, srn))
       }
   }
-
 }
