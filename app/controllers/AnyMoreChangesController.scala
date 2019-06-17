@@ -21,16 +21,15 @@ import controllers.actions._
 import forms.AnyMoreChangesFormProvider
 import identifiers.AnyMoreChangesId
 import javax.inject.Inject
-import models.{NormalMode, UpdateMode}
+import models.UpdateMode
 import org.joda.time.LocalDate
 import org.joda.time.format.DateTimeFormat
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
-import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import utils.annotations.{NoChangeFlagService, Variations}
-import utils.{Navigator, UserAnswers}
+import utils.Navigator
+import utils.annotations.Variations
 import views.html.anyMoreChanges
 
 import scala.concurrent.{ExecutionContext, Future}

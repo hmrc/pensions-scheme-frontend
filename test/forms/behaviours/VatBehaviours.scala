@@ -108,4 +108,54 @@ trait VatBehaviours extends FormSpec with Generators with PropertyChecks with Co
     }
   }
 
+  def formWithVatVariations(testForm: Form[String],
+                  vatLengthKey: String,
+                            requiredVatKey: String,
+                  invalidVatKey: String
+                 ): Unit = {
+
+    "behave like a form with a VAT Mapping in variations" should {
+
+      "fail to bind when value is not entered" in {
+        val expectedError = error("vat", requiredVatKey)
+        checkForError(testForm, emptyForm, expectedError)
+      }
+
+      Seq("AB123490", "AO111111B", "ORA12345C", "AB0202020", "AB040404E").foreach { vat =>
+        s"fail to bind when VAT $vat is invalid" in {
+          val result = testForm.bind(Map("vat" -> vat))
+          result.errors shouldBe Seq(FormError("vat", invalidVatKey, Seq(regexVat)))
+        }
+      }
+
+      Seq("AB1234567890", "987654328765", "CDCDCDOPOPOP", "AB03047853030D").foreach { vat =>
+        s"fail to bind when VAT $vat is longer than expected" in {
+          val result = testForm.bind(Map("vat" -> vat))
+          result.errors shouldBe Seq(FormError("vat", vatLengthKey, Seq(VatMapping.maxVatLength)))
+        }
+      }
+
+      "vatRegistrationNumberTransform" must {
+        "strip leading, trailing ,and internal spaces" in {
+          val actual = vatRegistrationNumberTransform("  123 456 789  ")
+          actual shouldBe "123456789"
+        }
+
+        "remove leading GB" in {
+          val gb = Table(
+            "vat",
+            "GB123456789",
+            "Gb123456789",
+            "gB123456789",
+            "gb123456789"
+          )
+
+          forAll(gb) { vat =>
+            vatRegistrationNumberTransform(vat) shouldBe "123456789"
+          }
+        }
+      }
+    }
+  }
+
 }

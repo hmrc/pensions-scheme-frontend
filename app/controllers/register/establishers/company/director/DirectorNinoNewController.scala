@@ -28,7 +28,7 @@ import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
 import utils.Navigator
 import utils.annotations.EstablishersCompanyDirector
-import viewmodels.{Message, NinoViewModel}
+import viewmodels.NinoViewModel
 
 class DirectorNinoNewController @Inject()(
                                            val appConfig: FrontendAppConfig,

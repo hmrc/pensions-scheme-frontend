@@ -33,7 +33,6 @@ import org.joda.time.LocalDate
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.libs.json.Json
-import play.twirl.api.Html
 import utils.{Enumerable, MapFormats}
 
 trait ControllerSpecBase extends SpecBase with Enumerable.Implicits with MapFormats {

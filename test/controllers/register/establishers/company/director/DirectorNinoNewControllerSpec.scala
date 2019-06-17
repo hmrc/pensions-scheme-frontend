@@ -76,6 +76,7 @@ class DirectorNinoNewControllerSpec extends ControllerSpecBase {
       )
     )
   )
+
   def viewmodel(srn:Option[String]) = NinoViewModel(
     postCall = controllers.register.establishers.company.director.routes.DirectorNinoNewController.onSubmit(NormalMode, establisherIndex, directorIndex, None),
     title = "messages__director_yes_nino__title",
@@ -88,8 +89,6 @@ class DirectorNinoNewControllerSpec extends ControllerSpecBase {
   def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisher): DirectorNinoNewController =
     new DirectorNinoNewController(frontendAppConfig, messagesApi, FakeUserAnswersService, new FakeNavigator(desiredRoute = onwardRoute),
       FakeAuthAction, dataRetrievalAction, FakeAllowAccessProvider(), new DataRequiredActionImpl, formProvider)
-
-  private val postCall = routes.DirectorNinoController.onSubmit _
 
   def viewAsString(form: Form[_] = form): String = nino(frontendAppConfig, form, viewmodel(None), None)(fakeRequest, messages).toString
 

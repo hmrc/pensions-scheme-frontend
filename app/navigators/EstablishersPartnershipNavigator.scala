@@ -84,8 +84,12 @@ class EstablishersPartnershipNavigator @Inject()(val dataCacheConnector: UserAns
   }
 
   protected def editRoutes(from: NavigateFrom, mode: Mode, srn: Option[String]): Option[NavigateTo] = from.id match {
-    case PartnershipDetailsId(index) => exitMiniJourney(index, mode, srn, from.userAnswers)
-    case PartnershipVatId(index) => exitMiniJourney(index, mode, srn, from.userAnswers)
+    case PartnershipDetailsId(index) =>
+      exitMiniJourney(index, mode, srn, from.userAnswers)
+    case PartnershipVatId(index) =>
+      exitMiniJourney(index, mode, srn, from.userAnswers)
+    case PartnershipVatVariationsId(index) =>
+      exitMiniJourney(index, mode, srn, from.userAnswers)
     case PartnershipPayeId(index) =>
       exitMiniJourney(index, mode, srn, from.userAnswers)
     case PartnershipUniqueTaxReferenceID(index) =>
@@ -113,8 +117,6 @@ class EstablishersPartnershipNavigator @Inject()(val dataCacheConnector: UserAns
       exitMiniJourney(index, mode, srn, from.userAnswers)
     case PartnershipContactDetailsId(index) =>
       exitMiniJourney(index, mode, srn, from.userAnswers)
-    case IsPartnershipDormantId(index) =>
-      exitMiniJourney(index, mode, srn, from.userAnswers)
     case OtherPartnersId(index) =>
       NavigateTo.dontSave(controllers.register.establishers.partnership.routes.PartnershipReviewController.onPageLoad(journeyMode(mode), index, srn))
     case _ =>
@@ -123,8 +125,6 @@ class EstablishersPartnershipNavigator @Inject()(val dataCacheConnector: UserAns
 
   override protected def routeMap(from: NavigateFrom): Option[NavigateTo] = from.id match {
     case PartnershipContactDetailsId(index) =>
-      NavigateTo.dontSave(routes.IsPartnershipDormantController.onPageLoad(NormalMode, index, None))
-    case IsPartnershipDormantId(index) =>
       NavigateTo.dontSave(routes.CheckYourAnswersController.onPageLoad(NormalMode, index, None))
     case _ => route(from, NormalMode, None)
   }

@@ -20,11 +20,11 @@ import connectors.{FakeUserAnswersCacheConnector, _}
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.register.DeclarationFormProvider
+import identifiers.SchemeTypeId
 import identifiers.register.DeclarationDormantId
 import identifiers.register.establishers.company.{CompanyDetailsId, IsCompanyDormantId}
 import identifiers.register.establishers.individual.EstablisherDetailsId
-import identifiers.register.establishers.partnership.{IsPartnershipDormantId, PartnershipDetailsId}
-import identifiers.{SchemeTypeId, TypedIdentifier}
+import identifiers.register.establishers.partnership.PartnershipDetailsId
 import models.person.PersonDetails
 import models.register.{DeclarationDormant, SchemeSubmissionResponse, SchemeType}
 import models.{CompanyDetails, PartnershipDetails}
@@ -34,8 +34,6 @@ import org.mockito.Mockito._
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.mockito.MockitoSugar
 import play.api.data.Form
-import play.api.libs.json.{JsValue, Json}
-import play.api.libs.ws.WSClient
 import play.api.mvc.{Call, RequestHeader}
 import play.api.test.Helpers._
 import uk.gov.hmrc.crypto.ApplicationCrypto
@@ -83,14 +81,6 @@ class DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar wit
 
       "dormant company establisher and non dormant partnership" in {
         val result = controller(dormantCompanyAndNonDormantPartnership).onPageLoad()(fakeRequest)
-
-        status(result) mustBe OK
-        contentAsString(result) mustBe viewAsString(isCompany = true, isDormant = true)
-        FakeUserAnswersCacheConnector.verify(DeclarationDormantId, DeclarationDormant.values.head)
-      }
-
-      "dormant partnership establisher and non dormant company" in {
-        val result = controller(dormantPartnershipAndNonDormantCompany).onPageLoad()(fakeRequest)
 
         status(result) mustBe OK
         contentAsString(result) mustBe viewAsString(isCompany = true, isDormant = true)
@@ -251,7 +241,6 @@ object DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar {
       .value
       .dormantCompany(false, 0)
       .partnershipEstablisher(1)
-      .dormantPartnership(false, 1)
       .asDataRetrievalAction()
 
   private val dormantCompanyAndNonDormantPartnership =
@@ -264,7 +253,6 @@ object DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar {
       .companyEstablisher(1)
       .dormantCompany(true, 1)
       .partnershipEstablisher(2)
-      .dormantPartnership(false, 2)
       .asDataRetrievalAction()
 
   private val dormantPartnershipAndNonDormantCompany =
@@ -277,9 +265,7 @@ object DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar {
       .companyEstablisher(1)
       .dormantCompany(false, 1)
       .partnershipEstablisher(2)
-      .dormantPartnership(true, 2)
       .partnershipEstablisher(3)
-      .dormantPartnership(false, 3)
       .asDataRetrievalAction()
 
   private implicit class UserAnswersOps(answers: UserAnswers) {
@@ -304,11 +290,6 @@ object DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar {
     def dormantCompany(dormant: Boolean, index: Int): UserAnswers = {
       val declarationDormant = if (dormant) DeclarationDormant.Yes else DeclarationDormant.No
       answers.set(IsCompanyDormantId(index))(declarationDormant).asOpt.value
-    }
-
-    def dormantPartnership(dormant: Boolean, index: Int): UserAnswers = {
-      val declarationDormant = if (dormant) DeclarationDormant.Yes else DeclarationDormant.No
-      answers.set(IsPartnershipDormantId(index))(declarationDormant).asOpt.value
     }
 
     def asDataRetrievalAction(): DataRetrievalAction = {

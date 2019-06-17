@@ -35,7 +35,7 @@ package controllers
 import connectors.FakeUserAnswersCacheConnector
 import controllers.actions._
 import forms.register.trustees.HaveAnyTrusteesFormProvider
-import identifiers.HaveAnyTrusteesId
+import identifiers.{HaveAnyTrusteesId, SchemeNameId}
 import models.NormalMode
 import play.api.data.Form
 import play.api.libs.json._
@@ -48,19 +48,20 @@ class HaveAnyTrusteesControllerSpec extends ControllerSpecBase {
 
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
-  private val scheme = "A scheme"
-  val formProvider = new HaveAnyTrusteesFormProvider()
-  val form = formProvider()
+  private val scheme = "Test Scheme Name"
+  private val formProvider = new HaveAnyTrusteesFormProvider()
+  private val form = formProvider()
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): HaveAnyTrusteesController =
+  def controller(dataRetrievalAction: DataRetrievalAction = getMandatorySchemeNameHs): HaveAnyTrusteesController =
     new HaveAnyTrusteesController(frontendAppConfig, messagesApi, FakeUserAnswersCacheConnector, new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
-      dataRetrievalAction, formProvider)
+      dataRetrievalAction, new DataRequiredActionImpl, formProvider)
 
   def viewAsString(form: Form[_] = form): String = haveAnyTrustees(frontendAppConfig, form, NormalMode, scheme)(fakeRequest, messages).toString
 
   "HaveAnyTrustees Controller" must {
 
     "return OK and the correct view for a GET" in {
+
       val result = controller().onPageLoad(NormalMode)(fakeRequest)
 
       status(result) mustBe OK
@@ -68,7 +69,9 @@ class HaveAnyTrusteesControllerSpec extends ControllerSpecBase {
     }
 
     "populate the view correctly on a GET when the question has previously been answered" in {
-      val validData = Json.obj(HaveAnyTrusteesId.toString -> true)
+      val validData = Json.obj(
+        SchemeNameId.toString -> scheme,
+        HaveAnyTrusteesId.toString -> true)
       val getRelevantData = new FakeDataRetrievalAction(Some(validData))
 
       val result = controller(getRelevantData).onPageLoad(NormalMode)(fakeRequest)

@@ -89,3 +89,6 @@ GET        /:index/individual/check-your-answers                            cont
 POST       /:index/individual/check-your-answers                            controllers.register.trustees.individual.CheckYourAnswersController.onSubmit(mode: Mode = NormalMode, index: Index, srn: Option[String] = None)
 GET        /:index/individual/:mode/check-your-answers/:srn                 controllers.register.trustees.individual.CheckYourAnswersController.onPageLoad(mode: Mode, index: Index, srn: Option[String])
 POST       /:index/individual/:mode/check-your-answers/:srn                 controllers.register.trustees.individual.CheckYourAnswersController.onSubmit(mode: Mode, index: Index, srn: Option[String])
+
+GET        /:index/individual/:mode/enter-national-insurance-number/:srn        controllers.register.trustees.individual.TrusteeNinoNewController.onPageLoad(mode: Mode, index: Index, srn: Option[String])
+POST       /:index/individual/:mode/enter-national-insurance-number/:srn        controllers.register.trustees.individual.TrusteeNinoNewController.onSubmit(mode: Mode, index: Index, srn: Option[String])

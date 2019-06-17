@@ -30,9 +30,9 @@ import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils._
-import utils.annotations.{NoSuspendedCheck, TaskList, TrusteesCompany}
+import utils.annotations.{NoSuspendedCheck, TrusteesCompany}
 import utils.checkyouranswers.Ops._
-import viewmodels.AnswerSection
+import viewmodels.{AnswerRow, AnswerSection}
 import views.html.check_your_answers
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -48,77 +48,70 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
                                            @TrusteesCompany navigator: Navigator,
                                            userAnswersService: UserAnswersService,
                                            allowChangeHelper: AllowChangeHelper,
-                                           featureSwitchManagementService: FeatureSwitchManagementService
+                                           fs: FeatureSwitchManagementService
                                           )(implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport {
 
+  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requiredData).async {
+      implicit request =>
+        implicit val userAnswers: UserAnswers = request.userAnswers
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requiredData).async {
-    implicit request =>
+        lazy val isVatVariationsEnabled = userAnswers.get(IsTrusteeNewId(index)) match {
+          case Some(true) => false
+          case _ => fs.get(Toggles.isSeparateRefCollectionEnabled)
+        }
+        val companyDetailsRow = CompanyDetailsId(index).row(routes.CompanyDetailsController.onPageLoad(checkMode(mode), index, srn).url, mode)
+        val companyVatRow = if (mode == UpdateMode && isVatVariationsEnabled) {
+          CompanyVatVariationsId(index).row(routes.CompanyVatVariationsController.onPageLoad(checkMode(mode), index, srn).url, mode)
+        } else {
+          CompanyVatId(index).row(routes.CompanyVatController.onPageLoad(checkMode(mode), index, srn).url, mode)
+        }
+        val companyPayeRow = CompanyPayeId(index).row(routes.CompanyPayeController.onPageLoad(checkMode(mode), index, srn).url, mode)
 
-      implicit val userAnswers = request.userAnswers
+        val companyRegistrationNumber = companyRegistrationNumberCya(mode, srn, index)
 
-      val companyDetailsRow = CompanyDetailsId(index).row(routes.CompanyDetailsController.onPageLoad(checkMode(mode), index, srn).url, mode)
+//        val companyRegistrationNumber = CompanyRegistrationNumberId(index).
+//          row(routes.CompanyRegistrationNumberController.onPageLoad(checkMode(mode), srn, index).url, mode)
 
-      val companyVatRow = CompanyVatId(index).row(routes.CompanyVatController.onPageLoad(checkMode(mode), index, srn).url, mode)
+        val companyUtr = CompanyUniqueTaxReferenceId(index).
+          row(routes.CompanyUniqueTaxReferenceController.onPageLoad(checkMode(mode), index, srn).url, mode)
+        val companyAddress = CompanyAddressId(index).
+          row(routes.CompanyAddressController.onPageLoad(checkMode(mode), index, srn).url)
+        val companyAddressYears = CompanyAddressYearsId(index).
+          row(routes.CompanyAddressYearsController.onPageLoad(checkMode(mode), index, srn).url, mode)
+        val companyPreviousAddress = CompanyPreviousAddressId(index).
+          row(routes.CompanyPreviousAddressController.onPageLoad(checkMode(mode), index, srn).url, mode)
+        val companyContactDetails = CompanyContactDetailsId(index).
+          row(routes.CompanyContactDetailsController.onPageLoad(checkMode(mode), index, srn).url)
 
-      val companyPayeRow = CompanyPayeId(index).row(routes.CompanyPayeController.onPageLoad(checkMode(mode), index, srn).url, mode)
+        val companyDetailsSection = AnswerSection(Some("messages__checkYourAnswers__section__company_details"),
+          companyDetailsRow ++ companyVatRow ++ companyPayeRow ++ companyRegistrationNumber ++ companyUtr)
 
-      val companyRegistrationNumber = companyRegistrationNumberCya(mode, srn, index)
+        val contactDetailsSection = AnswerSection(Some("messages__checkYourAnswers__section__contact_details"),
+          companyAddress ++ companyAddressYears ++ companyPreviousAddress ++ companyContactDetails)
 
-      val companyUtr = CompanyUniqueTaxReferenceId(index).row(
-        routes.CompanyUniqueTaxReferenceController.onPageLoad(checkMode(mode), index, srn).url, mode
-      )
-
-      val companyDetailsSection = AnswerSection(
-        Some("messages__checkYourAnswers__section__company_details"),
-        companyDetailsRow ++ companyVatRow ++ companyPayeRow ++ companyRegistrationNumber ++ companyUtr
-      )
-
-      val companyAddress = CompanyAddressId(index).row(
-        routes.CompanyAddressController.onPageLoad(checkMode(mode), index, srn).url
-      )
-
-      val companyAddressYears = CompanyAddressYearsId(index).row(
-        routes.CompanyAddressYearsController.onPageLoad(checkMode(mode), index, srn).url, mode
-      )
-
-      val companyPreviousAddress = CompanyPreviousAddressId(index).row(
-        routes.CompanyPreviousAddressController.onPageLoad(checkMode(mode), index, srn).url, mode
-      )
-
-      val companyContactDetails = CompanyContactDetailsId(index).row(
-        routes.CompanyContactDetailsController.onPageLoad(checkMode(mode), index, srn).url
-      )
-
-      val contactDetailsSection = AnswerSection(
-        Some("messages__checkYourAnswers__section__contact_details"),
-        companyAddress ++ companyAddressYears ++ companyPreviousAddress ++ companyContactDetails
-      )
-
-      Future.successful(Ok(check_your_answers(
-        appConfig,
-        Seq(companyDetailsSection, contactDetailsSection),
-        routes.CheckYourAnswersController.onSubmit(mode, index, srn),
-        existingSchemeName,
-        mode = mode,
-        hideEditLinks = request.viewOnly || !userAnswers.get(IsTrusteeNewId(index)).getOrElse(true),
-        hideSaveAndContinueButton = allowChangeHelper.hideSaveAndContinueButton(request, IsTrusteeNewId(index), mode),
-        srn = srn
-      )))
-  }
-
-  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requiredData).async {
-    implicit request =>
-      userAnswersService.setCompleteFlag(mode, srn, IsTrusteeCompleteId(index), request.userAnswers, true).map { _ =>
-        Redirect(navigator.nextPage(CheckYourAnswersId, mode, request.userAnswers, srn))
-      }
-  }
+        Future.successful(Ok(check_your_answers(
+          appConfig, Seq(companyDetailsSection, contactDetailsSection),
+          routes.CheckYourAnswersController.onSubmit(mode, index, srn),
+          existingSchemeName, mode = mode,
+          hideEditLinks = request.viewOnly || !userAnswers.get(IsTrusteeNewId(index)).getOrElse(true),
+          hideSaveAndContinueButton = allowChangeHelper.hideSaveAndContinueButton(request, IsTrusteeNewId(index), mode),
+          srn = srn
+        )))
+    }
 
   private def companyRegistrationNumberCya(mode: Mode, srn: Option[String], index: Index)(implicit request: DataRequest[AnyContent]) = {
-    if (mode == UpdateMode && featureSwitchManagementService.get(Toggles.isSeparateRefCollectionEnabled) &&
+    if (mode == UpdateMode && fs.get(Toggles.isSeparateRefCollectionEnabled) &&
       !request.userAnswers.get(IsTrusteeNewId(index)).getOrElse(false))
       CompanyRegistrationNumberVariationsId(index).row(routes.CompanyRegistrationNumberVariationsController.onPageLoad(checkMode(mode), srn, index).url, mode)
     else
       CompanyRegistrationNumberId(index).row(routes.CompanyRegistrationNumberController.onPageLoad(checkMode(mode), srn, index).url, mode)
+  }
+
+  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requiredData).async {
+    implicit request =>
+      userAnswersService.setCompleteFlag(mode, srn, IsTrusteeCompleteId(index), request.userAnswers, value = true).map { _ =>
+        Redirect(navigator.nextPage(CheckYourAnswersId, mode, request.userAnswers, srn))
+      }
   }
 }

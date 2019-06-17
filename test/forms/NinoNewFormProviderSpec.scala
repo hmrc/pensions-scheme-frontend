@@ -56,7 +56,7 @@ class NinoNewFormProviderSpec extends StringFieldBehaviours with Constraints wit
   ".nino" must {
     val fieldName = "nino"
     val requiredKey = Message("messages__error__common_nino", "Mark").resolve
-    val invalidKey = "messages__error__common_nino_invalid"
+    val invalidKey = Message("messages__error__common_nino_invalid", "Mark").resolve
 
     behave like mandatoryField(
       form,

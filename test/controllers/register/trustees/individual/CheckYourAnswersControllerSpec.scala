@@ -17,12 +17,14 @@
 package controllers.register.trustees.individual
 
 import controllers.ControllerSpecBase
-import controllers.actions.{DataRequiredActionImpl, DataRetrievalAction, FakeAllowAccessProvider, FakeAuthAction}
+import controllers.actions._
 import controllers.behaviours.ControllerAllowChangeBehaviour
-import controllers.register.trustees.company.CheckYourAnswersControllerSpec.ach
 import identifiers.register.trustees.IsTrusteeCompleteId
-import models.{CheckMode, Index, Link, NormalMode}
+import identifiers.register.trustees.individual.{TrusteeDetailsId, TrusteeNewNinoId, TrusteeNinoId}
+import models._
+import models.person.PersonDetails
 import org.joda.time.LocalDate
+import play.api.libs.json.Json
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import services.FakeUserAnswersService
@@ -39,7 +41,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
       val result = controller(getMandatoryTrustee).onPageLoad(NormalMode, firstIndex, None)(fakeRequest)
 
       status(result) mustBe OK
-      contentAsString(result) mustBe viewAsString
+      contentAsString(result) mustBe viewAsString(answerSections, NormalMode, None)
     }
 
     "redirect to Add Trustee page" when {
@@ -56,6 +58,52 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
       }
     }
 
+    "return OK and display Add link for UpdateMode pointing to new Nino page where separateRefCollectionEnabled is true and no nino retrieved from ETMP" in {
+      val expectedAnswerSections = {
+        val expectedAnswerRowNino = AnswerRow("messages__common__nino", Seq("site.not_entered"), answerIsMessageKey = true,
+          Some(Link("site.add",
+            routes.TrusteeNinoNewController.onPageLoad(Mode.checkMode(UpdateMode), firstIndex, Some("srn")).url,
+            Some(s"messages__visuallyhidden__director__nino_add"))))
+        Seq(
+          trusteeDetailsSectionUpdate(expectedAnswerRowNino),
+          contactDetailsSection
+        )
+      }
+
+      val result = controller(getMandatoryTrustee, toggle = true).onPageLoad(UpdateMode, firstIndex, Some("srn"))(fakeRequest)
+      status(result) mustBe OK
+      contentAsString(result) mustBe viewAsString(expectedAnswerSections, UpdateMode, Some("srn"))
+    }
+
+    "return OK and display no add/change link but do display new nino for UpdateMode where separateRefCollectionEnabled is true and a new nino has already been entered" in {
+      val expectedAnswerSections = {
+        val expectedAnswerRowNino = AnswerRow("messages__common__nino", Seq("CS121212C"), answerIsMessageKey = false, None)
+        Seq(
+          trusteeDetailsSectionUpdate(expectedAnswerRowNino),
+          contactDetailsSection
+        )
+      }
+
+      val result = controller(getMandatoryTrusteeWithNewNinoId, toggle = true).onPageLoad(UpdateMode, firstIndex, Some("srn"))(fakeRequest)
+      status(result) mustBe OK
+      contentAsString(result) mustBe viewAsString(expectedAnswerSections, UpdateMode, Some("srn"))
+    }
+
+    "return OK and display no Add link but do display old nino for UpdateMode where separateRefCollectionEnabled is true and a nino retrieved from ETMP" in {
+      val expectedAnswerSections = {
+        val expectedAnswerRowNino = AnswerRow("messages__common__nino", Seq("CS121212C"), answerIsMessageKey = false, None)
+        Seq(
+          trusteeDetailsSectionUpdate(expectedAnswerRowNino),
+          contactDetailsSection
+        )
+      }
+
+      val result = controller(getMandatoryTrusteeWithOldNinoId, toggle = true).onPageLoad(UpdateMode, firstIndex, Some("srn"))(fakeRequest)
+      status(result) mustBe OK
+      contentAsString(result) mustBe viewAsString(expectedAnswerSections, UpdateMode, Some("srn"))
+    }
+
+
     behave like changeableController(
       controller(getMandatoryTrustee, _:AllowChangeHelper).onPageLoad(NormalMode, firstIndex, None)(fakeRequest)
     )
@@ -67,7 +115,7 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase with Controller
   val trusteeName = "Test Trustee Name"
   val firstIndex = Index(0)
   lazy val trusteeDetailsRoute: String = routes.TrusteeDetailsController.onPageLoad(CheckMode, firstIndex, None).url
-  lazy val postUrl: Call = routes.CheckYourAnswersController.onSubmit(NormalMode, firstIndex, None)
+  def postUrl(mode:Mode, srn:Option[String]): Call = routes.CheckYourAnswersController.onSubmit(mode, firstIndex, srn)
   lazy val trusteeDetailsSection = AnswerSection(None,
     Seq(
       AnswerRow(
@@ -84,6 +132,29 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase with Controller
       )
     )
   )
+
+
+  def trusteeDetailsSectionUpdate(ninoRow:AnswerRow) = AnswerSection(None,
+    Seq(
+      AnswerRow(
+        "messages__common__cya__name",
+        Seq("Test Trustee Name"),
+        answerIsMessageKey = false,
+        None
+      ),
+      AnswerRow(
+        "messages__common__dob",
+        Seq(s"${DateHelper.formatDate(LocalDate.now)}"),
+        answerIsMessageKey = false,
+        None
+      ),
+      ninoRow
+    )
+  )
+
+
+
+
   lazy val contactDetailsSection = AnswerSection(
     Some("messages__checkYourAnswers__section__contact_details"),
     Seq.empty[AnswerRow]
@@ -91,7 +162,7 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase with Controller
   val onwardRoute = controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode, None)
 
   def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisher,
-                 allowChangeHelper: AllowChangeHelper = ach): CheckYourAnswersController =
+                 allowChangeHelper: AllowChangeHelper = ach, toggle:Boolean = false): CheckYourAnswersController =
     new CheckYourAnswersController(
       frontendAppConfig,
       messagesApi,
@@ -102,18 +173,48 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase with Controller
       new DataRequiredActionImpl,
       FakeUserAnswersService,
       new FakeCountryOptions,
-      allowChangeHelper
+      allowChangeHelper,
+      new FakeFeatureSwitchManagementService(toggle)
     )
 
-  lazy val viewAsString: String = check_your_answers(
+  val answerSections = Seq(
+    trusteeDetailsSection,
+    contactDetailsSection
+  )
+
+  def viewAsString(answerSections:Seq[AnswerSection], mode: Mode, srn:Option[String]): String = check_your_answers(
     frontendAppConfig,
-    Seq(
-      trusteeDetailsSection,
-      contactDetailsSection
-    ),
-    postUrl,
+    answerSections,
+    postUrl(mode, srn),
     None,
     hideEditLinks = false,
-    hideSaveAndContinueButton = false
+    hideSaveAndContinueButton = false,
+    srn = srn,
+    mode = mode
   )(fakeRequest, messages).toString
+
+
+  def getMandatoryTrusteeWithNewNinoId: FakeDataRetrievalAction = new FakeDataRetrievalAction(Some(
+    Json.obj(
+      "trustees" -> Json.arr(
+        Json.obj(
+          TrusteeDetailsId.toString ->
+            PersonDetails("Test", Some("Trustee"), "Name", LocalDate.now),
+          TrusteeNewNinoId.toString -> Json.obj(
+            "nino" -> "CS121212C"
+          )
+        )
+      )
+    )))
+
+  def getMandatoryTrusteeWithOldNinoId: FakeDataRetrievalAction = new FakeDataRetrievalAction(Some(
+    Json.obj(
+      "trustees" -> Json.arr(
+        Json.obj(
+          TrusteeDetailsId.toString ->
+            PersonDetails("Test", Some("Trustee"), "Name", LocalDate.now),
+          TrusteeNinoId.toString -> Nino.Yes("CS121212C")
+        )
+      )
+    )))
 }

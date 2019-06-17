@@ -21,7 +21,7 @@ import config.{FeatureSwitchManagementService, FeatureSwitchManagementServiceTes
 import connectors._
 import controllers.actions._
 import handlers.ErrorHandler
-import identifiers.{IsPsaSuspendedId, SchemeSrnId, SchemeStatusId}
+import identifiers.{IsPsaSuspendedId, SchemeNameId, SchemeSrnId, SchemeStatusId}
 import models._
 import models.details.transformation.{SchemeDetailsMasterSection, SchemeDetailsStubData}
 import org.mockito.Matchers.any
@@ -52,7 +52,7 @@ class SchemeTaskListControllerSpec extends ControllerSpecBase with BeforeAndAfte
     "accessed in NormalMode with srn as None" must {
 
       "return OK and the correct view" in {
-        val result = controller(UserAnswers().dataRetrievalAction).onPageLoad(NormalMode, None)(fakeRequest)
+        val result = controller(UserAnswers().set(SchemeNameId)("test scheme").asOpt.value.dataRetrievalAction).onPageLoad(NormalMode, None)(fakeRequest)
 
         status(result) mustBe OK
         contentAsString(result) mustBe schemeDetailsTaskList(frontendAppConfig, schemeDetailsTL)(fakeRequest, messages).toString()
@@ -228,18 +228,18 @@ object SchemeTaskListControllerSpec extends ControllerSpecBase with MockitoSugar
   private val userAnswersRejected = new FakeDataRetrievalAction(Some(userAnswersJsonRejected))
   private lazy val beforeYouStartLinkText = messages("messages__schemeTaskList__before_you_start_link_text")
   private lazy val addEstablisherLinkText = messages("messages__schemeTaskList__sectionEstablishers_add_link")
-  private lazy val aboutMembersLinkText = messages("messages__schemeTaskList__about_members_link_text")
-  private lazy val aboutBenefitsAndInsuranceLinkText = messages("messages__schemeTaskList__about_benefits_and_insurance_link_text")
-  private lazy val aboutBankDetailsLinkText = messages("messages__schemeTaskList__about_bank_details_link_text")
+  private lazy val aboutMembersAddLinkText = messages("messages__schemeTaskList__about_members_link_text_add")
+  private lazy val aboutBenefitsAndInsuranceAddLinkText = messages("messages__schemeTaskList__about_benefits_and_insurance_link_text_add")
+  private lazy val aboutBankDetailsAddLinkText = messages("messages__schemeTaskList__about_bank_details_link_text_add")
   private lazy val addTrusteesLinkText = messages("messages__schemeTaskList__sectionTrustees_add_link")
 
   private val schemeDetailsTL = SchemeDetailsTaskList(
     SchemeDetailsTaskListSection(None, Link(beforeYouStartLinkText, controllers.routes.SchemeNameController.onPageLoad(NormalMode).url)),
-    messages("messages__schemeTaskList__about_header"),
-    Seq(SchemeDetailsTaskListSection(None, Link(aboutMembersLinkText, controllers.routes.WhatYouWillNeedMembersController.onPageLoad.url), None),
-      SchemeDetailsTaskListSection(None, Link(aboutBenefitsAndInsuranceLinkText,
+    messages("messages__schemeTaskList__about_scheme_header", "test scheme"),
+    Seq(SchemeDetailsTaskListSection(None, Link(aboutMembersAddLinkText, controllers.routes.WhatYouWillNeedMembersController.onPageLoad.url), None),
+      SchemeDetailsTaskListSection(None, Link(aboutBenefitsAndInsuranceAddLinkText,
         controllers.routes.WhatYouWillNeedBenefitsInsuranceController.onPageLoad.url), None),
-      SchemeDetailsTaskListSection(None, Link(aboutBankDetailsLinkText, controllers.routes.WhatYouWillNeedBankDetailsController.onPageLoad.url), None)), None,
+      SchemeDetailsTaskListSection(None, Link(aboutBankDetailsAddLinkText, controllers.routes.WhatYouWillNeedBankDetailsController.onPageLoad.url), None)), None,
     Some(SchemeDetailsTaskListHeader(None, Some(Link(addEstablisherLinkText,
       controllers.register.establishers.routes.EstablisherKindController.onPageLoad(NormalMode, 0, None).url)), None)),
     Seq.empty,
@@ -250,9 +250,9 @@ object SchemeTaskListControllerSpec extends ControllerSpecBase with MockitoSugar
     Seq.empty,
     Some(SchemeDetailsTaskListDeclarationSection("messages__schemeTaskList__sectionDeclaration_header", None,
       incompleteDeclarationText="messages__schemeTaskList__sectionDeclaration_incomplete")),
-    messages("messages__schemeTaskList__heading"),
-    messages("messages__schemeTaskList__before_you_start_header"),
-    None,
+    "test scheme",
+    messages("messages__scheme_details__title"),
+    Some(messages("messages__schemeTaskList__before_you_start_header")),
     messages("messages__schemeTaskList__title"),
     None
   )
