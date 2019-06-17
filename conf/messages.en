@@ -560,6 +560,10 @@ messages__checkYourAnswers__trustees__company__utr = Does the trustee have a Uni
 messages__checkYourAnswers__trustees__company__utr_no_reason = Why the trustee does not have a Unique Taxpayer Reference number
 messages__checkYourAnswers__trustees__company__address_years = How long has the company been at this address?
 
+messages__checkYourAnswers__establishers__company__number = Company number
+
+
+
 messages__directorPreviousAddressPostcodeLookup__title = Director’s previous address
 messages__directorPreviousAddressPostcodeLookup__heading = Director’s previous address
 messages__directorPreviousAddressPostcodeLookup__lede = This is usually the director’s residential address.

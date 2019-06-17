@@ -36,6 +36,10 @@ POST       /:index/company/change/company-registration-number                   
 GET        /:index/company/:mode/company-registration-number/:srn                                               controllers.register.establishers.company.CompanyRegistrationNumberController.onPageLoad(mode: Mode, srn: Option[String],index:Index)
 POST       /:index/company/:mode/company-registration-number/:srn                                               controllers.register.establishers.company.CompanyRegistrationNumberController.onSubmit(mode: Mode, srn: Option[String],index:Index)
 
+GET        /:index/company/:mode/enter-company-registration-number/:srn controllers.register.establishers.company.CompanyRegistrationNumberVariationsController.onPageLoad(mode: Mode, srn: Option[String], index: Index)
+POST       /:index/company/:mode/enter-company-registration-number/:srn controllers.register.establishers.company.CompanyRegistrationNumberVariationsController.onSubmit(mode: Mode, srn: Option[String], index: Index)
+
+
 GET        /:index/company/contact-details                                                                  controllers.register.establishers.company.CompanyContactDetailsController.onPageLoad(mode: Mode = NormalMode, srn: Option[String] = None, index: Index)
 POST       /:index/company/contact-details                                                                  controllers.register.establishers.company.CompanyContactDetailsController.onSubmit(mode: Mode = NormalMode, srn: Option[String] = None, index: Index)
 GET        /:index/company/change/contact-details                                                                  controllers.register.establishers.company.CompanyContactDetailsController.onPageLoad(mode: Mode = CheckMode, srn: Option[String] = None, index: Index)

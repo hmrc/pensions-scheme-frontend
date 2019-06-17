@@ -70,9 +70,6 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
 
         val companyRegistrationNumber = companyRegistrationNumberCya(mode, srn, index)
 
-//        val companyRegistrationNumber = CompanyRegistrationNumberId(index).
-//          row(routes.CompanyRegistrationNumberController.onPageLoad(checkMode(mode), srn, index).url, mode)
-
         val companyUtr = CompanyUniqueTaxReferenceId(index).
           row(routes.CompanyUniqueTaxReferenceController.onPageLoad(checkMode(mode), index, srn).url, mode)
         val companyAddress = CompanyAddressId(index).

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers.register.trustees.company
+package controllers.register.establishers.company
 
 import base.CSRFRequest
 import config.FrontendAppConfig
@@ -28,10 +28,10 @@ import play.api.http.Writeable
 import play.api.inject.bind
 import play.api.mvc.{Call, Request, Result}
 import play.api.test.FakeRequest
-import services.{FakeUserAnswersService, UserAnswersService}
-import utils.annotations.TrusteesCompany
-import utils.{FakeNavigator, Navigator}
 import play.api.test.Helpers.{contentAsString, status, _}
+import services.{FakeUserAnswersService, UserAnswersService}
+import utils.annotations.EstablishersCompany
+import utils.{FakeNavigator, Navigator}
 import views.html.register.companyRegistrationNumberVariations
 
 import scala.concurrent.Future
@@ -93,8 +93,8 @@ object CompanyRegistrationNumberVariationsControllerSpec extends CompanyRegistra
 
     running(_.overrides(
       bind[AuthAction].to(FakeAuthAction),
-      bind[DataRetrievalAction].toInstance(getMandatoryTrusteeCompany),
-      bind(classOf[Navigator]).qualifiedWith(classOf[TrusteesCompany]).toInstance(new FakeNavigator(onwardRoute)),
+      bind[DataRetrievalAction].toInstance(getMandatoryEstablisherCompany),
+      bind(classOf[Navigator]).qualifiedWith(classOf[EstablishersCompany]).toInstance(new FakeNavigator(onwardRoute)),
       bind[UserAnswersService].toInstance(FakeUserAnswersService),
       bind[AllowAccessActionProvider].toInstance(FakeAllowAccessProvider())
     )) {

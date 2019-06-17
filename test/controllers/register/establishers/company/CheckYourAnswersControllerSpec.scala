@@ -21,6 +21,7 @@ import controllers.ControllerSpecBase
 import controllers.actions._
 import controllers.behaviours.ControllerAllowChangeBehaviour
 import identifiers.TypedIdentifier
+import identifiers.register.establishers.IsEstablisherCompleteId
 import identifiers.register.establishers.company._
 import models._
 import models.address.Address
@@ -40,30 +41,40 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
 
   import CheckYourAnswersControllerSpec._
 
-  "CheckYourAnswers Controller" must {
+  "CheckYourAnswers Controller" when {
 
-    "return OK and the correct view for a GET with all the answers when ref collection toggle is off" in {
-      val request = FakeDataRequest(fullAnswers)
-      val result = controller(fullAnswers.dataRetrievalAction).onPageLoad(NormalMode, None, index)(request)
+    "onPageLoad if toggle off in NormalMode" must {
 
-      status(result) mustBe OK
-      contentAsString(result) mustBe viewAsString(answerSections(request))
+      "return OK and the correct view for a GET with all the answers when ref collection toggle is off" in {
+        val request = FakeDataRequest(fullAnswers)
+        val result = controller(fullAnswers.dataRetrievalAction).onPageLoad(NormalMode, None, index)(request)
+
+        status(result) mustBe OK
+        contentAsString(result) mustBe viewAsString(answerSections(request))
+      }
+
+      "redirect to Session Expired for a GET if no existing data is found" in {
+        val result = controller(dontGetAnyData).onPageLoad(NormalMode, None, index)(fakeRequest)
+
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
+      }
     }
 
-    "return OK and the correct view for a GET with all the answers when ref collection toggle is on" in {
-      val request = FakeDataRequest(UserAnswers())
-      val result = controller(UserAnswers().dataRetrievalAction, fs = new FakeFeatureSwitchManagementService(true)).onPageLoad(UpdateMode, srn, index)(request)
+    "onPageLoad if toggle on in UpdateMode" must {
 
-      status(result) mustBe OK
-      contentAsString(result) mustBe viewAsString(vatSection(request), srn, postUrlUpdateMode)
+      "return OK and the correct view for a GET with all the answers when ref collection toggle is on" in {
+        val request = FakeDataRequest(UserAnswers())
+        val result = controller(UserAnswers().dataRetrievalAction, fs = new FakeFeatureSwitchManagementService(true))
+          .onPageLoad(UpdateMode, srn, index)(request)
+
+        status(result) mustBe OK
+        contentAsString(result) mustBe viewAsString(vatCrnSection(request), srn, postUrlUpdateMode)
+      }
     }
+  }
 
-    "redirect to Session Expired for a GET if no existing data is found" in {
-      val result = controller(dontGetAnyData).onPageLoad(NormalMode, None, index)(fakeRequest)
-
-      status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
-    }
+  "on Submit" must {
 
     "mark company as complete on submit" in {
       val result = controller().onSubmit(NormalMode, None, index)(fakeRequest)
@@ -71,6 +82,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
       redirectLocation(result).value mustEqual onwardRoute.url
       FakeUserAnswersService.verify(IsCompanyCompleteId(index), true)
     }
+
     behave like changeableController(
       controller(fullAnswers.dataRetrievalAction, _: AllowChangeHelper)
         .onPageLoad(NormalMode, None, index)(FakeDataRequest(fullAnswers)))
@@ -96,6 +108,8 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase with Enumerable
 
   private val emptyAnswers = UserAnswers()
   private val companyRegistrationNumberRoute = routes.CompanyRegistrationNumberController.onPageLoad(CheckMode, None, 0).url
+  private def companyRegistrationNumberVariationsRoute(srn: Option[String] = Some("S123")) =
+    routes.CompanyRegistrationNumberVariationsController.onPageLoad(CheckUpdateMode, srn, index).url
   private val companyVatVariationsRoute = routes.CompanyVatVariationsController.onPageLoad(CheckUpdateMode, 0, srn).url
   private val companyUniqueTaxReferenceRoute = routes.CompanyUniqueTaxReferenceController.onPageLoad(CheckMode, None, 0).url
   private val companyDetailsRoute = routes.CompanyDetailsController.onPageLoad(CheckMode, None, 0).url
@@ -175,11 +189,16 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase with Enumerable
     new FeatureSwitchManagementServiceTestImpl(config, environment)
 
   private def answerSections(implicit request: DataRequest[AnyContent]) = Seq(companyDetailsSection, companyContactDetailsSection)
-  private def vatSection(implicit request: DataRequest[AnyContent]) = Seq(
+  private def vatCrnSection(implicit request: DataRequest[AnyContent]) = Seq(
     AnswerSection(
-    Some("messages__common__company_details__title"), Seq(
-    AnswerRow("messages__common__cya__vat", Seq("site.not_entered"), answerIsMessageKey = true,
-      Some(Link("site.add", companyVatVariationsRoute, Some("messages__visuallyhidden__establisher__vat_number_add")))))),
+      Some("messages__common__company_details__title"),
+        Seq(
+          AnswerRow("messages__common__cya__vat", Seq("site.not_entered"), answerIsMessageKey = true,
+            Some(Link("site.add", companyVatVariationsRoute, Some("messages__visuallyhidden__establisher__vat_number_add")))),
+          AnswerRow("messages__checkYourAnswers__establishers__company__number", Seq("site.not_entered"), answerIsMessageKey = true,
+            Some(Link("site.add", companyRegistrationNumberVariationsRoute(srn), Some("messages__visuallyhidden__establisher__crn_add"))))
+        )
+      ),
     AnswerSection(
       Some("messages__establisher_company_contact_details__title"),
       Seq.empty))

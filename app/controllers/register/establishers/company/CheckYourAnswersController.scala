@@ -21,6 +21,7 @@ import controllers.Retrievals
 import controllers.actions._
 import identifiers.register.establishers.IsEstablisherNewId
 import identifiers.register.establishers.company._
+import identifiers.register.establishers.company.CompanyRegistrationNumberVariationsId
 import javax.inject.Inject
 import models.Mode.checkMode
 import models.requests.DataRequest
@@ -58,11 +59,11 @@ class CheckYourAnswersController @Inject()(
       implicit val userAnswers: UserAnswers = request.userAnswers
 
       val companyDetails = AnswerSection(
-        Some("messages__common__company_details__title"),
-        CompanyDetailsId(index).row(routes.CompanyDetailsController.onPageLoad(checkMode(mode), srn, index).url, mode) ++
-       vatCya(mode, srn, index) ++
+          Some("messages__common__company_details__title"),
+          CompanyDetailsId(index).row(routes.CompanyDetailsController.onPageLoad(checkMode(mode), srn, index).url, mode) ++
+          vatCya(mode, srn, index) ++
           CompanyPayeId(index).row(routes.CompanyPayeController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
-          CompanyRegistrationNumberId(index).row(routes.CompanyRegistrationNumberController.onPageLoad(checkMode(mode), srn, Index(index)).url, mode) ++
+          companyRegistrationNumberCya(mode, srn, index) ++
           CompanyUniqueTaxReferenceId(index).row(routes.CompanyUniqueTaxReferenceController.onPageLoad(checkMode(mode), srn, Index(index)).url, mode) ++
           IsCompanyDormantId(index).row(routes.IsCompanyDormantController.onPageLoad(checkMode(mode), srn, Index(index)).url, mode)
       )
@@ -103,5 +104,12 @@ class CheckYourAnswersController @Inject()(
     else
       CompanyVatId(index).row(routes.CompanyVatController.onPageLoad(checkMode(mode), index, srn).url, mode)
 
+  private def companyRegistrationNumberCya(mode: Mode, srn: Option[String], index: Index)(implicit request: DataRequest[AnyContent]) = {
+    if (mode == UpdateMode && featureSwitchManagementService.get(Toggles.isSeparateRefCollectionEnabled) &&
+      !request.userAnswers.get(IsEstablisherNewId(index)).getOrElse(false))
+      CompanyRegistrationNumberVariationsId(index).row(routes.CompanyRegistrationNumberVariationsController.onPageLoad(checkMode(mode), srn, index).url, mode)
+    else
+      CompanyRegistrationNumberId(index).row(routes.CompanyRegistrationNumberController.onPageLoad(checkMode(mode), srn, Index(index)).url, mode)
+  }
 
 }
