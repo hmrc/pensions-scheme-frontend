@@ -58,7 +58,7 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
 
         lazy val isVatVariationsEnabled = userAnswers.get(IsTrusteeNewId(index)) match {
           case Some(true) => false
-          case _ => fs.get(Toggles.separateRefCollectionEnabled)
+          case _ => fs.get(Toggles.isSeparateRefCollectionEnabled)
         }
         val companyDetailsRow = CompanyDetailsId(index).row(routes.CompanyDetailsController.onPageLoad(checkMode(mode), index, srn).url, mode)
         val companyVatRow = if (mode == UpdateMode && isVatVariationsEnabled) {
@@ -67,8 +67,12 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
           CompanyVatId(index).row(routes.CompanyVatController.onPageLoad(checkMode(mode), index, srn).url, mode)
         }
         val companyPayeRow = CompanyPayeId(index).row(routes.CompanyPayeController.onPageLoad(checkMode(mode), index, srn).url, mode)
-        val companyRegistrationNumber = CompanyRegistrationNumberId(index).
-          row(routes.CompanyRegistrationNumberController.onPageLoad(checkMode(mode), index, srn).url, mode)
+
+        val companyRegistrationNumber = companyRegistrationNumberCya(mode, srn, index)
+
+//        val companyRegistrationNumber = CompanyRegistrationNumberId(index).
+//          row(routes.CompanyRegistrationNumberController.onPageLoad(checkMode(mode), srn, index).url, mode)
+
         val companyUtr = CompanyUniqueTaxReferenceId(index).
           row(routes.CompanyUniqueTaxReferenceController.onPageLoad(checkMode(mode), index, srn).url, mode)
         val companyAddress = CompanyAddressId(index).
@@ -95,6 +99,14 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
           srn = srn
         )))
     }
+
+  private def companyRegistrationNumberCya(mode: Mode, srn: Option[String], index: Index)(implicit request: DataRequest[AnyContent]) = {
+    if (mode == UpdateMode && fs.get(Toggles.isSeparateRefCollectionEnabled) &&
+      !request.userAnswers.get(IsTrusteeNewId(index)).getOrElse(false))
+      CompanyRegistrationNumberVariationsId(index).row(routes.CompanyRegistrationNumberVariationsController.onPageLoad(checkMode(mode), srn, index).url, mode)
+    else
+      CompanyRegistrationNumberId(index).row(routes.CompanyRegistrationNumberController.onPageLoad(checkMode(mode), srn, index).url, mode)
+  }
 
   def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requiredData).async {
     implicit request =>

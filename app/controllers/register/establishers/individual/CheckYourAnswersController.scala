@@ -57,7 +57,7 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
 
       lazy val displayNewNino = userAnswers.get(IsEstablisherNewId(index)) match {
         case Some(true) => false
-        case _ => fs.get(Toggles.separateRefCollectionEnabled)
+        case _ => fs.get(Toggles.isSeparateRefCollectionEnabled)
       }
 
       val establisherNinoRow = mode match {

@@ -57,7 +57,7 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
 
       lazy val displayNewNino = userAnswers.get(IsNewPartnerId(establisherIndex, partnerIndex)) match {
         case Some(true) => false
-        case _ => fs.get(Toggles.separateRefCollectionEnabled)
+        case _ => fs.get(Toggles.isSeparateRefCollectionEnabled)
       }
 
       val partnerDetails = AnswerSection(

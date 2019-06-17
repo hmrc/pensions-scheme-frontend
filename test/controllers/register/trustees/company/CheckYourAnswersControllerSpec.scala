@@ -40,7 +40,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
 
   "Check Your Answers Controller " when {
     "on Page load if toggle off/toggle on in Normal Mode" must {
-      "return OK and the correct view with full answers" in {
+      "return OK and the correct view with full answers when ref collection toggle is off" in {
         val request = FakeDataRequest(fullAnswers)
         val result = controller(fullAnswers.dataRetrievalAction).onPageLoad(NormalMode, index, None)(request)
 
@@ -58,22 +58,39 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
     }
 
     "on Page load if toggle on in UpdateMode" must {
+
+      "return OK and the correct view for company registration number if not new trustee" in {
+        val answers = UserAnswers().trusteesCompanyVatVariations(index, "098765432")
+        val request = FakeDataRequest(answers)
+        val result = controller(answers.dataRetrievalAction, isToggleOn = true).onPageLoad(UpdateMode, index, Some("S123"))(request)
+        val answersSection = companyDetailsSectionWithAnswerRow(
+              Seq(
+                vatCompletedAnswerRow,
+                crnAnswerRow()
+              ))
+
+        status(result) mustBe OK
+        contentAsString(result) mustBe viewAsString(Seq(answersSection, emptyContactDetailsSection), UpdateMode, Some("S123"))
+      }
+
       "return OK and the correct view for vat if not new trustee" in {
         val answers = UserAnswers().trusteesCompanyVatVariations(index, "098765432")
         val request = FakeDataRequest(answers)
-        val expectedCompanyDetailsSection = companyDetailsSectionWithOnlyVat(
-          Seq(AnswerRow("messages__common__cya__vat", Seq("098765432"), answerIsMessageKey = false, None))
-        )
         val result = controller(answers.dataRetrievalAction, isToggleOn = true).onPageLoad(UpdateMode, index, None)(request)
+        val answersSection = companyDetailsSectionWithAnswerRow(
+          Seq(
+            vatCompletedAnswerRow,
+            crnAnswerRow(None)
+          ))
 
         status(result) mustBe OK
-        contentAsString(result) mustBe viewAsString(Seq(expectedCompanyDetailsSection, emptyContactDetailsSection), UpdateMode)
+        contentAsString(result) mustBe viewAsString(Seq(answersSection, emptyContactDetailsSection), UpdateMode)
       }
 
       "return OK and the correct view for vat if new trustee" in {
         val answers = UserAnswers().trusteesCompanyVatVariations(index, "098765432").isTrusteeNew(index, true)
         val request = FakeDataRequest(answers)
-        val expectedCompanyDetailsSection = companyDetailsSectionWithOnlyVat(vatRow(answers))
+        val expectedCompanyDetailsSection = companyDetailsSectionWithAnswerRow(vatRow(answers))
         val result = controller(answers.dataRetrievalAction, isToggleOn = true).onPageLoad(UpdateMode, index, None)(request)
 
         status(result) mustBe OK
@@ -116,6 +133,11 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase with Controller
   private val address = Address("address-1-line-1", "address-1-line-2", None, None, Some("post-code-1"), "country-1")
   private val addressYears = AddressYears.UnderAYear
   private val previousAddress = Address("address-2-line-1", "address-2-line-2", None, None, Some("post-code-2"), "country-2")
+  private val vatCompletedAnswerRow = AnswerRow("messages__common__cya__vat", Seq("098765432"), answerIsMessageKey = false, None)
+  private def crnAnswerRow(srn: Option[String] = Some("S123")) = AnswerRow(
+    "messages__checkYourAnswers__trustees__company__number", Seq("site.not_entered"), answerIsMessageKey = true,
+    Some(Link("site.add", companyRegistrationNumberVariationsRoute(srn), Some("messages__visuallyhidden__trustee__crn_add"))))
+
 
   private val emptyAnswers = UserAnswers()
 
@@ -132,11 +154,13 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase with Controller
   private lazy val companyAddressYearsRoute = routes.CompanyAddressYearsController.onPageLoad(CheckMode, index, None).url
   private lazy val companyDetailsRoute = routes.CompanyDetailsController.onPageLoad(CheckMode, index, None).url
   private lazy val companyPreviousAddressRoute = routes.CompanyPreviousAddressController.onPageLoad(CheckMode, index, None).url
-  private lazy val companyRegistrationNumberRoute = routes.CompanyRegistrationNumberController.onPageLoad(CheckMode, index, None).url
+  private lazy val companyRegistrationNumberRoute = routes.CompanyRegistrationNumberController.onPageLoad(CheckMode, None, index).url
+  private def companyRegistrationNumberVariationsRoute(srn: Option[String] = Some("S123")) =
+    routes.CompanyRegistrationNumberVariationsController.onPageLoad(CheckUpdateMode, srn, index).url
   private lazy val companyUniqueTaxReferenceRoute = routes.CompanyUniqueTaxReferenceController.onPageLoad(CheckMode, index, None).url
   private lazy val companyVatRoute = routes.CompanyVatController.onPageLoad(CheckMode, index, None).url
 
-  private def postUrl(mode: Mode) = routes.CheckYourAnswersController.onSubmit(mode, index, None)
+  private def postUrl(mode: Mode, srn: Option[String] = None) = routes.CheckYourAnswersController.onSubmit(mode, index, srn)
 
   def vatRow(answers: UserAnswers): Seq[AnswerRow] = VatCYA(
     Some("messages__checkYourAnswers__trustees__company__vat"),
@@ -146,8 +170,8 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase with Controller
   private def emptyContactDetailsSection =
     AnswerSection(Some("messages__checkYourAnswers__section__contact_details"), Nil)
 
-  private def companyDetailsSectionWithOnlyVat(vatRow: Seq[AnswerRow]) =
-    AnswerSection(Some("messages__checkYourAnswers__section__company_details"), vatRow)
+  private def companyDetailsSectionWithAnswerRow(answerRow: Seq[AnswerRow]) =
+    AnswerSection(Some("messages__checkYourAnswers__section__company_details"), answerRow)
 
   private def answerSections(implicit request: DataRequest[AnyContent]): Seq[AnswerSection] = {
 
@@ -190,8 +214,8 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase with Controller
     Seq(companyDetailsSection, contactDetailsSection)
   }
 
-  private def viewAsString(answerSections: Seq[AnswerSection], mode: Mode = NormalMode) = check_your_answers(
-    frontendAppConfig, answerSections, postUrl(mode), None, hideEditLinks = false, hideSaveAndContinueButton = false
+  private def viewAsString(answerSections: Seq[AnswerSection], mode: Mode = NormalMode, srn: Option[String] = None) = check_your_answers(
+    frontendAppConfig, answerSections, postUrl(mode, srn), None, hideEditLinks = false, hideSaveAndContinueButton = false, srn = srn
   )(fakeRequest, messages).toString
 
   private def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData,
