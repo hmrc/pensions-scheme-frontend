@@ -56,7 +56,7 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
 
       lazy val displayNewNino = userAnswers.get(IsNewDirectorId(companyIndex, directorIndex)) match {
         case Some(true) => false
-        case _ => fs.get(Toggles.separateRefCollectionEnabled)
+        case _ => fs.get(Toggles.isSeparateRefCollectionEnabled)
       }
 
       val companyDirectorDetails = AnswerSection(

@@ -58,7 +58,7 @@ class CheckYourAnswersController @Inject()(
 
         lazy val isVatVariationsEnabled = userAnswers.get(IsEstablisherNewId(index)) match {
           case Some(true) => false
-          case _ => fs.get(Toggles.separateRefCollectionEnabled)
+          case _ => fs.get(Toggles.isSeparateRefCollectionEnabled)
         }
 
         val companyDetails = AnswerSection(

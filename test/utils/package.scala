@@ -18,7 +18,7 @@ import controllers.actions.{DataRetrievalAction, FakeDataRetrievalAction}
 import identifiers._
 import identifiers.register._
 import identifiers.register.trustees.IsTrusteeNewId
-import identifiers.register.trustees.company.CompanyPayeVariationsId
+import identifiers.register.trustees.company.{CompanyPayeVariationsId, CompanyRegistrationNumberId, CompanyRegistrationNumberVariationsId}
 import models._
 import models.address.{Address, TolerantAddress}
 import models.register.{establishers => _, trustees => _, _}
@@ -131,6 +131,14 @@ package object utils {
       answers.set(establishers.company.CompanyUniqueTaxReferenceId(index))(utr).asOpt.value
     }
 
+    def establisherVat(index: Int, vat: Vat): UserAnswers = {
+      answers.set(establishers.company.CompanyVatId(index))(vat).asOpt.value
+    }
+
+    def establisherPaye(index: Int, paye: Paye): UserAnswers = {
+      answers.set(establishers.company.CompanyPayeId(index))(paye).asOpt.value
+    }
+
     def establisherCompanyAddressYears(index: Int, addressYears: AddressYears): UserAnswers = {
       answers.set(establishers.company.CompanyAddressYearsId(index))(addressYears).asOpt.value
     }
@@ -199,12 +207,24 @@ package object utils {
       answers.set(trustees.company.CompanyVatId(index))(vat).asOpt.value
     }
 
+    def trusteesCompanyPaye(index: Int, paye: Paye): UserAnswers = {
+      answers.set(trustees.company.CompanyPayeId(index))(paye).asOpt.value
+    }
+
     def trusteesCompanyVatVariations(index: Int, vat: String): UserAnswers = {
       answers.set(trustees.company.CompanyVatVariationsId(index))(vat).asOpt.value
     }
 
     def trusteesCompanyPayeVariations(index: Int, paye: String): UserAnswers = {
       answers.set(CompanyPayeVariationsId(index))(paye).asOpt.value
+    }
+
+    def trusteesCompanyCrn(index: Int, crn: CompanyRegistrationNumber): UserAnswers = {
+      answers.set(CompanyRegistrationNumberId(index))(crn).asOpt.value
+    }
+
+    def trusteesCompanyCrnVariations(index: Int, crn: String): UserAnswers = {
+      answers.set(CompanyRegistrationNumberVariationsId(index))(crn).asOpt.value
     }
 
     def trusteesCompanyContactDetails(index: Int, contactDetails: ContactDetails): UserAnswers = {

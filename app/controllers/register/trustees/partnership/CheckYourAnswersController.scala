@@ -59,7 +59,7 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
 
         lazy val isVatVariationsEnabled = userAnswers.get(IsTrusteeNewId(index)) match {
           case Some(true) => false
-          case _ => fs.get(Toggles.separateRefCollectionEnabled)
+          case _ => fs.get(Toggles.isSeparateRefCollectionEnabled)
         }
 
         val partnershipDetails = AnswerSection(

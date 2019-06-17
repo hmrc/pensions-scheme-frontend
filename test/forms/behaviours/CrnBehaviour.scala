@@ -26,6 +26,38 @@ import play.api.data.{Form, FormError}
 
 trait CrnBehaviour extends FormSpec with CrnMapping with PropertyChecks with Generators {
 
+  def formWithCrnVariations(testForm: Form[String],
+                            crnLengthKey: String,
+                            requiredCRNKey: String,
+                            invaliddCRNKey: String
+                           ): Unit = {
+
+    "behave like a form with a companyRegistrationNumber Mapping in variations" should {
+
+      Seq("1234567", " 1234567 ").foreach {
+        crnNo =>
+          s"bind successfully when CRN $crnNo is valid" in {
+            val result = testForm.bind(Map("companyRegistrationNumber" -> crnNo))
+            result.errors.size shouldBe 0
+            result.get shouldBe crnNo.trim
+          }
+      }
+
+      "fail to bind when value is not entered" in {
+        val expectedError = error("companyRegistrationNumber", requiredCRNKey)
+        checkForError(testForm, emptyForm, expectedError)
+      }
+
+      Seq("1234567891", "123.456").foreach { crn =>
+        s"fail to bind when companyRegistrationNumber $crn is longer than expected" in {
+          val result = testForm.bind(Map("companyRegistrationNumber" -> crn))
+          result.errors shouldBe Seq(FormError("companyRegistrationNumber", invaliddCRNKey))
+        }
+      }
+
+    }
+  }
+
   def formWithCrn(testForm: Form[CompanyRegistrationNumber]): Unit = {
 
     "behave like form with crn" must {

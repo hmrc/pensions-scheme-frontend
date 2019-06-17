@@ -17,25 +17,25 @@
 package controllers.register.establishers.company
 
 import config.FrontendAppConfig
-import controllers.Retrievals
 import controllers.actions._
+import controllers.register.CompanyRegistrationNumberBaseController
 import forms.CompanyRegistrationNumberFormProvider
 import identifiers.register.establishers.company.CompanyRegistrationNumberId
 import javax.inject.Inject
-import models.{Index, Mode}
+import models.requests.DataRequest
+import models.{CompanyRegistrationNumber, Index, Mode}
 import play.api.data.Form
-import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, Call}
+import play.api.i18n.MessagesApi
+import play.api.mvc.{AnyContent, Call}
 import services.UserAnswersService
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils._
 import utils.annotations.EstablishersCompany
 import views.html.register.establishers.company.companyRegistrationNumber
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext.Implicits.global
 
 class CompanyRegistrationNumberController @Inject()(
-                                                     appConfig: FrontendAppConfig,
+                                                     val appConfig: FrontendAppConfig,
                                                      override val messagesApi: MessagesApi,
                                                      userAnswersService: UserAnswersService,
                                                      @EstablishersCompany navigator: Navigator,
@@ -44,37 +44,17 @@ class CompanyRegistrationNumberController @Inject()(
                                                      allowAccess: AllowAccessActionProvider,
                                                      requireData: DataRequiredAction,
                                                      formProvider: CompanyRegistrationNumberFormProvider
-                                                   )(implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits with MapFormats {
+                                                   ) extends
+  CompanyRegistrationNumberBaseController(
+    appConfig, messagesApi, userAnswersService, navigator, authenticate, getData, allowAccess, requireData, formProvider) {
 
-  val form = formProvider()
+  override def addView(mode: Mode, index: Index, srn: Option[String])(implicit request: DataRequest[AnyContent]) = companyRegistrationNumber(appConfig, form, mode, index, existingSchemeName, postCall(mode, srn, index), srn)
 
-  def onPageLoad(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
-      implicit request =>
-        val redirectResult = request.userAnswers.get(CompanyRegistrationNumberId(index)) match {
-          case None =>
-            Ok(companyRegistrationNumber(appConfig, form, mode, index, existingSchemeName, postCall(mode, srn, index), srn))
-          case Some(value) =>
-            Ok(companyRegistrationNumber(appConfig, form.fill(value), mode, index, existingSchemeName, postCall(mode, srn, index), srn))
-        }
+  override def errorView(mode: Mode, index: Index, srn: Option[String], form: Form[_])(implicit request: DataRequest[AnyContent]) = companyRegistrationNumber(appConfig, form, mode, index, existingSchemeName, postCall(mode, srn, index), srn)
 
-        Future.successful(redirectResult)
+  override def updateView(mode: Mode, index: Index, srn: Option[String], value: CompanyRegistrationNumber)(implicit request: DataRequest[AnyContent]) = companyRegistrationNumber(appConfig, form.fill(value), mode, index, existingSchemeName, postCall(mode, srn, index), srn)
 
+  override def id(index: Index) = CompanyRegistrationNumberId(index)
 
-    }
-
-  def onSubmit(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
-    implicit request =>
-
-      form.bindFromRequest().fold(
-        (formWithErrors: Form[_]) =>
-          Future.successful(BadRequest(companyRegistrationNumber(appConfig, formWithErrors, mode, index, existingSchemeName, postCall(mode, srn, index), srn))),
-        value =>
-          userAnswersService.save(mode, srn, CompanyRegistrationNumberId(index), value).map(cacheMap =>
-            Redirect(navigator.nextPage(CompanyRegistrationNumberId(index), mode, UserAnswers(cacheMap), srn)))
-      )
-  }
-
-  private def postCall: (Mode, Option[String], Index) => Call = routes.CompanyRegistrationNumberController.onSubmit _
-
+  override def postCall: (Mode, Option[String], Index) => Call = routes.CompanyRegistrationNumberController.onSubmit _
 }
