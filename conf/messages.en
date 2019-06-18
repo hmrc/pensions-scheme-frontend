@@ -719,7 +719,6 @@ messages__adviser__secondary_heading = Pension adviser
 messages__adviserPostCodeLookupAddress__title=Pension adviser’s address
 messages__adviserPostCodeLookupAddress__heading=Pension adviser’s address
 messages__adviserPostCodeLookupAddress__secondary=Pension adviser
-messages__advisorCommon__address_lede = You
 messages__adviserPostCodeLookupAddress__lede = You can enter any postcode you have for your pension practitioner or provider.
 messages__adviserPostCodeLookupAddress__enterPostCode= You can {0} enter the address manually {1}  if it is overseas
 messages__adviserPostCodeLookup__title=What is the person’s postcode?
