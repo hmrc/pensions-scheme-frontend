@@ -106,7 +106,7 @@ class CheckYourAnswersController @Inject()(
         Redirect(navigator.nextPage(CheckYourAnswersId(index), mode, request.userAnswers, srn))
       }
   }
-  
+
   private def companyRegistrationNumberCya(mode: Mode, srn: Option[String], index: Index)(implicit request: DataRequest[AnyContent]) = {
     if (mode == UpdateMode && fs.get(Toggles.isSeparateRefCollectionEnabled) &&
       !request.userAnswers.get(IsEstablisherNewId(index)).getOrElse(false))
