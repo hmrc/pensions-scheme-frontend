@@ -32,6 +32,7 @@ import utils.Navigator
 import utils.annotations.WorkingKnowledge
 import viewmodels.Message
 import viewmodels.address.PostcodeLookupViewModel
+import views.html.components.heading
 
 class AdviserPostCodeLookupController @Inject()(
                                                  override val appConfig: FrontendAppConfig,
@@ -70,6 +71,7 @@ class AdviserPostCodeLookupController @Inject()(
       title = Message("messages__adviserPostCodeLookup__title"),
       heading = Message("messages__adviserPostCodeLookup__heading", adviserName),
       subHeading = Some(Message("messages__adviserPostCodeLookupAddress__secondary")),
+      hint = Some(Message("messages__adviserPostCodeLookupAddress__lede")),
       enterPostcode = Message("messages__adviserPostCodeLookupAddress__enterPostCode")
     )
 }
