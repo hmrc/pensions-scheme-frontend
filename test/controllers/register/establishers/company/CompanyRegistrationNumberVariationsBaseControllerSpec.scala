@@ -40,6 +40,7 @@ import play.api.test.Helpers._
 import services.UserAnswersService
 import uk.gov.hmrc.domain.PsaId
 import utils.{FakeNavigator, Navigator, UserAnswers}
+import viewmodels.{CompanyRegistrationNumberViewModel, Message}
 import views.html.register.companyRegistrationNumberVariations
 
 import scala.concurrent.Future
@@ -72,9 +73,8 @@ class CompanyRegistrationNumberVariationsBaseControllerSpec extends WordSpec wit
           status(result) mustEqual OK
           contentAsString(result) mustEqual companyRegistrationNumberVariations(
             appConfig,
-            formProvider(),
-            NormalMode,
-            firstIndex,
+            viewModel(),
+            formProvider(companyName)(messages),
             None,
             postCall(NormalMode, None, firstIndex),
             None
@@ -103,9 +103,8 @@ class CompanyRegistrationNumberVariationsBaseControllerSpec extends WordSpec wit
           status(result) mustEqual OK
           contentAsString(result) mustEqual companyRegistrationNumberVariations(
             appConfig,
-            formProvider().fill("123456789"),
-            NormalMode,
-            firstIndex,
+            viewModel(),
+            formProvider(companyName)(messages).fill("123456789"),
             None,
             postCall(NormalMode, None, firstIndex),
             None
@@ -169,9 +168,8 @@ class CompanyRegistrationNumberVariationsBaseControllerSpec extends WordSpec wit
         status(result) mustEqual BAD_REQUEST
         contentAsString(result) mustEqual companyRegistrationNumberVariations(
           appConfig,
-          formProvider().bind(Map("companyRegistrationNumber" -> "123456789012345")),
-          NormalMode,
-          firstIndex,
+          viewModel(),
+          formProvider(companyName)(messages).bind(Map("companyRegistrationNumber" -> "123456789012345")),
           None,
           postCall(NormalMode, None, firstIndex),
           None
@@ -183,6 +181,15 @@ class CompanyRegistrationNumberVariationsBaseControllerSpec extends WordSpec wit
 object CompanyRegistrationNumberVariationsBaseControllerSpec {
 
   val firstIndex = Index(0)
+  val companyName = "test company name"
+
+  def viewModel(companyName: String = companyName): CompanyRegistrationNumberViewModel = {
+    CompanyRegistrationNumberViewModel(
+      title = Message("messages__companyNumber__title"),
+      heading = Message("messages__companyNumber__heading", companyName),
+      hint = Message("messages__common__crn_hint", companyName)
+    )
+  }
 
   object FakeIdentifier extends TypedIdentifier[CompanyRegistrationNumber]
 
@@ -190,22 +197,21 @@ object CompanyRegistrationNumberVariationsBaseControllerSpec {
                                   override val appConfig: FrontendAppConfig,
                                   override val messagesApi: MessagesApi,
                                   override val userAnswersService: UserAnswersService,
-                                  override val navigator: Navigator,
-                                  formProvider: CompanyRegistrationNumberVariationsFormProvider
+                                  override val navigator: Navigator
                                 ) extends CompanyRegistrationNumberVariationsBaseController {
 
     def postCall: (Mode, Option[String], Index) => Call = routes.CompanyRegistrationNumberController.onSubmit _
 
     override def identifier(index: Int): TypedIdentifier[CompanyRegistrationNumber] = CompanyRegistrationNumberId(index)
 
-    override protected val form: Form[String] = formProvider()
+    override protected def form(name: String): Form[String] = formProvider(name)
 
     def onPageLoad(answers: UserAnswers): Future[Result] = {
-      get(NormalMode, None, firstIndex)(DataRequest(FakeRequest(), "cacheId", answers, PsaId("A0000000")))
+      get(NormalMode, None, firstIndex, viewModel(companyName), companyName)(DataRequest(FakeRequest(), "cacheId", answers, PsaId("A0000000")))
     }
 
     def onSubmit(answers: UserAnswers, fakeRequest: Request[AnyContent]): Future[Result] = {
-      post(NormalMode, None, firstIndex)(DataRequest(fakeRequest, "cacheId", answers, PsaId("A0000000")))
+      post(NormalMode, None, firstIndex, viewModel(companyName), companyName)(DataRequest(fakeRequest, "cacheId", answers, PsaId("A0000000")))
     }
   }
 

@@ -19,25 +19,35 @@ package views.register
 import forms.CompanyRegistrationNumberVariationsFormProvider
 import models.{Index, NormalMode, UpdateMode}
 import play.api.data.Form
+import viewmodels.{CompanyRegistrationNumberViewModel, Message}
 import views.behaviours.ViewBehaviours
 import views.html.register.companyRegistrationNumberVariations
 
 class CompanyRegistrationNumberVariationsViewSpec extends ViewBehaviours {
 
+  val name = "test name"
   val messageKeyPrefix = "companyNumber"
   val index = Index(0)
-  val form = new CompanyRegistrationNumberVariationsFormProvider()()
+  val form = new CompanyRegistrationNumberVariationsFormProvider()(name)
   val submitUrl = controllers.register.trustees.company.routes.CompanyRegistrationNumberController.onSubmit(NormalMode, None, index)
+
+  def viewModel(name: String = name): CompanyRegistrationNumberViewModel = {
+    CompanyRegistrationNumberViewModel(
+      title = Message("messages__companyNumber__title"),
+      heading = Message("messages__companyNumber__heading", name),
+      hint = Message("messages__common__crn_hint", name)
+    )
+  }
   private def createView() = () => companyRegistrationNumberVariations(
-    frontendAppConfig, form, NormalMode, index, None, submitUrl, None)(fakeRequest, messages)
+    frontendAppConfig, viewModel(), form, None, submitUrl, None)(fakeRequest, messages)
   private def createUpdateView = () => companyRegistrationNumberVariations(
-    frontendAppConfig, form, UpdateMode, index, None, submitUrl, Some("srn"))(fakeRequest, messages)
+    frontendAppConfig, viewModel(), form, None, submitUrl, Some("srn"))(fakeRequest, messages)
 
   private def createViewUsingForm = (form: Form[_]) =>
-    companyRegistrationNumberVariations(frontendAppConfig, form, NormalMode, index, None, submitUrl, None)(fakeRequest, messages)
+    companyRegistrationNumberVariations(frontendAppConfig, viewModel(), form, None, submitUrl, None)(fakeRequest, messages)
 
   "CompanyRegistrationNumberVariations view" should {
-    behave like normalPage(createView(), messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__heading"))
+    behave like normalPage(createView(), messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__heading", name))
 
     behave like pageWithReturnLink(createView(), getReturnLink)
 

@@ -21,7 +21,7 @@ import config.FrontendAppConfig
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.CompanyRegistrationNumberVariationsFormProvider
-import models.{CheckUpdateMode, Index}
+import models.{CheckUpdateMode, Index, Mode}
 import org.scalatest.MustMatchers
 import play.api.Application
 import play.api.http.Writeable
@@ -32,6 +32,7 @@ import play.api.test.Helpers.{contentAsString, status, _}
 import services.{FakeUserAnswersService, UserAnswersService}
 import utils.annotations.EstablishersCompany
 import utils.{FakeNavigator, Navigator}
+import viewmodels.{CompanyRegistrationNumberViewModel, Message}
 import views.html.register.companyRegistrationNumberVariations
 
 import scala.concurrent.Future
@@ -52,9 +53,8 @@ class CompanyRegistrationNumberVariationsControllerSpec extends ControllerSpecBa
           contentAsString(result) mustBe
             companyRegistrationNumberVariations(
               appConfig,
+              viewModel(),
               form,
-              CheckUpdateMode,
-              firstIndex,
               None,
               postCall(CheckUpdateMode, srn, firstIndex),
               srn
@@ -80,9 +80,18 @@ class CompanyRegistrationNumberVariationsControllerSpec extends ControllerSpecBa
 
 object CompanyRegistrationNumberVariationsControllerSpec extends CompanyRegistrationNumberVariationsControllerSpec {
 
-  val form = new CompanyRegistrationNumberVariationsFormProvider()()
+  val companyName = "test company name"
+  val form = new CompanyRegistrationNumberVariationsFormProvider()(companyName)
   val firstIndex = Index(0)
   val srn = Some("S123")
+
+  def viewModel(companyName: String = companyName): CompanyRegistrationNumberViewModel = {
+    CompanyRegistrationNumberViewModel(
+      title = Message("messages__companyNumber__establisher__title"),
+      heading = Message("messages__companyNumber__heading", companyName),
+      hint = Message("messages__common__crn_hint", companyName)
+    )
+  }
 
   val postCall = routes.CompanyRegistrationNumberVariationsController.onSubmit _
 
