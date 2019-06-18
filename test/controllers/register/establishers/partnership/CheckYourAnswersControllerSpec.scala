@@ -57,24 +57,32 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
 
     "on Page load if toggle on in UpdateMode" must {
       "return OK and the correct view for vat if not new establisher" in {
-        val answers = UserAnswers().set(PartnershipVatVariationsId(firstIndex))("098765432").asOpt.value
-        val expectedCompanyDetailsSection = partnershipDetailsSectionWithOnlyVat(
-          Seq(AnswerRow("messages__common__cya__vat", Seq("098765432"), answerIsMessageKey = false, None)))
+        val answers = UserAnswers().set(PartnershipVatVariationsId(firstIndex))("098765432").flatMap(
+          _.set(PartnershipPayeVariationsId(firstIndex))("12345678")).asOpt.value
+        implicit val request = FakeDataRequest(answers)
+        val expectedCompanyDetailsSection = partnershipDetailsSection(
+          PartnershipVatVariationsId(firstIndex).row(partnershipVatVariationsRoute, UpdateMode) ++
+            PartnershipPayeVariationsId(firstIndex).row(partnershipPayeVariationsRoute, UpdateMode))
 
-        val result = controller(answers.dataRetrievalAction, isToggleOn = true).onPageLoad(UpdateMode, firstIndex, None)(FakeDataRequest(answers))
+        val result = controller(answers.dataRetrievalAction, isToggleOn = true).onPageLoad(UpdateMode, firstIndex, srn)(request)
 
         status(result) mustBe OK
-        contentAsString(result) mustBe viewAsString(Seq(expectedCompanyDetailsSection, emptyPartnershipContactDetailsSection), UpdateMode)
+        contentAsString(result) mustBe viewAsString(Seq(expectedCompanyDetailsSection, emptyPartnershipContactDetailsSection), UpdateMode, srn)
       }
 
       "return OK and the correct view for vat if new establisher" in {
-        val answers = UserAnswers().set(PartnershipVatVariationsId(firstIndex))("098765432").flatMap(
+        val answers = UserAnswers().set(PartnershipVatId(firstIndex))(Vat.Yes("098765432")).flatMap(
+          _.set(PartnershipPayeId(firstIndex))(Paye.Yes("12345678"))).flatMap(
           _.set(IsEstablisherNewId(firstIndex))(true)).asOpt.value
-        val expectedPartnershipDetailsSection = partnershipDetailsSectionWithOnlyVat(vatRow(answers))
-        val result = controller(answers.dataRetrievalAction, isToggleOn = true).onPageLoad(UpdateMode, firstIndex, None)(FakeDataRequest(answers))
+        implicit val request = FakeDataRequest(answers)
+        val expectedPartnershipDetailsSection = partnershipDetailsSection(
+          PartnershipVatId(firstIndex).row(partnershipVatRoute(CheckUpdateMode, srn), UpdateMode) ++
+            PartnershipPayeId(firstIndex).row(partnershipPayeRoute(CheckUpdateMode, srn), UpdateMode)
+        )
+        val result = controller(answers.dataRetrievalAction, isToggleOn = true).onPageLoad(UpdateMode, firstIndex, srn)(request)
 
         status(result) mustBe OK
-        contentAsString(result) mustBe viewAsString(Seq(expectedPartnershipDetailsSection, emptyPartnershipContactDetailsSection), UpdateMode)
+        contentAsString(result) mustBe viewAsString(Seq(expectedPartnershipDetailsSection, emptyPartnershipContactDetailsSection), UpdateMode, srn)
       }
     }
 
@@ -96,12 +104,15 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
 }
 
 object CheckYourAnswersControllerSpec extends CheckYourAnswersControllerSpec {
+  private val srn = Some("123")
   private val firstIndex = Index(0)
   implicit val countryOptions: CountryOptions = new FakeCountryOptions()
   private val onwardRoute = routes.AddPartnersController.onPageLoad(NormalMode, firstIndex, None)
 
-  private lazy val partnershipVatRoute = routes.PartnershipVatController.onPageLoad(CheckMode, firstIndex, None).url
-  private lazy val partnershipPayeRoute = routes.PartnershipPayeController.onPageLoad(CheckMode, firstIndex, None).url
+  private def partnershipVatRoute(mode: Mode = CheckMode, srn: Option[String] = None) = routes.PartnershipVatController.onPageLoad(mode, firstIndex, srn).url
+  private lazy val partnershipVatVariationsRoute = routes.PartnershipVatVariationsController.onPageLoad(CheckMode, firstIndex, None).url
+  private def partnershipPayeRoute(mode: Mode = CheckMode, srn: Option[String] = None) = routes.PartnershipPayeController.onPageLoad(mode, firstIndex, srn).url
+  private lazy val partnershipPayeVariationsRoute = routes.PartnershipPayeVariationsController.onPageLoad(CheckMode, firstIndex, None).url
   private lazy val partnershipUniqueTaxReferenceRoute = routes.PartnershipUniqueTaxReferenceController.onPageLoad(CheckMode, firstIndex, None).url
   private lazy val partnershipDetailsRoute = routes.PartnershipDetailsController.onPageLoad(CheckMode, firstIndex, None).url
 
@@ -114,15 +125,13 @@ object CheckYourAnswersControllerSpec extends CheckYourAnswersControllerSpec {
     .flatMap(_.set(PartnershipPreviousAddressId(firstIndex))(Address("Previous Address 1", "Previous Address 2", None, None, None, "US")))
     .flatMap(_.set(PartnershipContactDetailsId(firstIndex))(ContactDetails("e@mail.co", "98765")))
     .asOpt.value
+
   implicit val request: DataRequest[_] = FakeDataRequest(partnershipAnswers)
 
   private def emptyPartnershipContactDetailsSection =
     AnswerSection(Some("messages__partnership__checkYourAnswers__partnership_contact_details"), Nil)
 
-  private def vatRow(answers: UserAnswers): Seq[AnswerRow] = VatCYA(Some("messages__partnership__checkYourAnswers__vat"))().
-    row(PartnershipVatId(firstIndex))(partnershipVatRoute, answers)
-
-  private def partnershipDetailsSectionWithOnlyVat(vatRow: Seq[AnswerRow]): AnswerSection =
+  private def partnershipDetailsSection(vatRow: Seq[AnswerRow]): AnswerSection =
     AnswerSection(Some("messages__partnership__checkYourAnswers__partnership_details"), vatRow)
 
   private def answerSections(implicit request: DataRequest[AnyContent]): Seq[AnswerSection] = {
@@ -135,9 +144,10 @@ object CheckYourAnswersControllerSpec extends CheckYourAnswersControllerSpec {
     val payeRows = PayeCYA[PartnershipPayeId](
       Some("messages__partnership__checkYourAnswers__paye"), "messages__visuallyhidden__partnership__paye_yes_no",
       "messages__visuallyhidden__partnership__paye_number"
-    )().row(PartnershipPayeId(firstIndex))(partnershipPayeRoute, request.userAnswers)
+    )().row(PartnershipPayeId(firstIndex))(partnershipPayeRoute(), request.userAnswers)
 
-    val vatRows = vatRow(request.userAnswers)
+    val vatRows = VatCYA(Some("messages__partnership__checkYourAnswers__vat"))().
+      row(PartnershipVatId(firstIndex))(partnershipVatRoute(), request.userAnswers)
 
     val partnershipDetailsSection = AnswerSection(
       Some("messages__partnership__checkYourAnswers__partnership_details"),
@@ -152,7 +162,6 @@ object CheckYourAnswersControllerSpec extends CheckYourAnswersControllerSpec {
         PartnershipContactDetailsId(firstIndex).row(routes.PartnershipContactDetailsController.onPageLoad(CheckMode, firstIndex, None).url)
       ).flatten
     )
-
     Seq(partnershipDetailsSection, contactDetailsSection)
   }
 
@@ -163,8 +172,8 @@ object CheckYourAnswersControllerSpec extends CheckYourAnswersControllerSpec {
       new FakeFeatureSwitchManagementService(isToggleOn)
     )
 
-  private def viewAsString(answerSections: Seq[AnswerSection], mode: Mode = NormalMode): String = check_your_answers(
-    frontendAppConfig, answerSections, routes.CheckYourAnswersController.onSubmit(mode, firstIndex, None),
-    None, hideEditLinks = false, hideSaveAndContinueButton = false)(fakeRequest, messages).toString
+  private def viewAsString(answerSections: Seq[AnswerSection], mode: Mode = NormalMode, srn: Option[String] = None): String = check_your_answers(
+    frontendAppConfig, answerSections, routes.CheckYourAnswersController.onSubmit(mode, firstIndex, srn),
+    None, srn = srn, hideEditLinks = false, hideSaveAndContinueButton = false)(fakeRequest, messages).toString
 
 }
