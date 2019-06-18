@@ -54,6 +54,9 @@ object CheckYourAnswers {
   implicit def companyDetails[I <: TypedIdentifier[CompanyDetails]]
   (implicit rds: Reads[CompanyDetails], messages: Messages): CheckYourAnswers[I] = CompanyDetailsCYA()()
 
+  implicit def vatNew[I <: TypedIdentifier[VatNew]]
+  (implicit rds: Reads[VatNew], messages: Messages): CheckYourAnswers[I] = VatNewCYA()()
+
   implicit def contactDetails[I <: TypedIdentifier[ContactDetails]](implicit rds: Reads[ContactDetails]): CheckYourAnswers[I] = ContactDetailsCYA()()
 
   implicit def string[I <: TypedIdentifier[String]](implicit rds: Reads[String], countryOptions: CountryOptions): CheckYourAnswers[I] = StringCYA()()
@@ -608,6 +611,29 @@ case class CompanyDetailsCYA[I <: TypedIdentifier[CompanyDetails]](
       override def updateRow(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
         userAnswers.get(id).map { companyDetails =>
           Seq(AnswerRow(nameLabel, Seq(s"${companyDetails.companyName}"), answerIsMessageKey = false, None))
+        }.getOrElse(Seq.empty[AnswerRow])
+    }
+  }
+
+}
+
+case class VatNewCYA[I <: TypedIdentifier[VatNew]](
+                                                                    nameLabel: String = "messages__common__cya__name",
+                                                                    hiddenNameLabel: String = "messages__visuallyhidden__common__name") {
+
+  def apply()(implicit rds: Reads[VatNew], messages: Messages): CheckYourAnswers[I] = {
+    new CheckYourAnswers[I] {
+
+      override def row(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+        userAnswers.get(id).map { vatNew =>
+          Seq(AnswerRow(nameLabel, Seq(s"${vatNew.vat}"), answerIsMessageKey = false,
+            Some(Link("site.change", changeUrl, Some(Message(hiddenNameLabel, vatNew.vat))))
+          ))
+        }.getOrElse(Seq.empty[AnswerRow])
+
+      override def updateRow(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+        userAnswers.get(id).map { vatNew =>
+          Seq(AnswerRow(nameLabel, Seq(s"${vatNew.vat}"), answerIsMessageKey = false, None))
         }.getOrElse(Seq.empty[AnswerRow])
     }
   }

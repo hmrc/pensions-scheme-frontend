@@ -18,7 +18,7 @@ package controllers
 
 import config.FrontendAppConfig
 import identifiers.TypedIdentifier
-import models.Mode
+import models.{Mode, VatNew}
 import models.requests.DataRequest
 import play.api.data.Form
 import play.api.i18n.I18nSupport
@@ -41,24 +41,24 @@ trait VatVariationsController extends FrontendController with Retrievals with I1
 
   protected def navigator: Navigator
 
-  def get(id: TypedIdentifier[String], viewmodel: VatViewModel, form: Form[String])
+  def get(id: TypedIdentifier[VatNew], viewmodel: VatViewModel, form: Form[VatNew])
          (implicit request: DataRequest[AnyContent]): Future[Result] = {
     val preparedForm =
       request.userAnswers.get(id) match {
-        case Some(vat) => form.fill(vat)
+        case Some(vatNew) => form.fill(vatNew)
         case _ => form
       }
 
     Future.successful(Ok(vatVariations(appConfig, preparedForm, viewmodel, existingSchemeName)))
   }
 
-  def post(id: TypedIdentifier[String], mode: Mode, viewmodel: VatViewModel, form: Form[String])
+  def post(id: TypedIdentifier[VatNew], mode: Mode, viewmodel: VatViewModel, form: Form[VatNew])
           (implicit request: DataRequest[AnyContent]): Future[Result] = {
     form.bindFromRequest().fold(
       (formWithErrors: Form[_]) =>
         Future.successful(BadRequest(vatVariations(appConfig, formWithErrors, viewmodel, existingSchemeName))),
       vat => {
-        userAnswersService.save(mode, viewmodel.srn, id, vat).map(cacheMap =>
+        userAnswersService.save(mode, viewmodel.srn, id, vat.copy(isEditable = true)).map(cacheMap =>
           Redirect(navigator.nextPage(id, mode, UserAnswers(cacheMap), viewmodel.srn)))
       }
     )
