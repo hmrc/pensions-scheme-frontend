@@ -34,4 +34,8 @@ class TogglesSpec extends FeatureToggleBehaviours {
     behave like featureToggle("separate-ref-collection", false)
   }
 
+  "is-establisher-company-hns new feature toggle" should {
+    behave like featureToggle("is-establisher-company-hns", false)
+  }
+
 }
