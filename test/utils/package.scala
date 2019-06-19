@@ -223,7 +223,7 @@ package object utils {
       answers.set(CompanyRegistrationNumberId(index))(crn).asOpt.value
     }
 
-    def trusteesCompanyCrnVariations(index: Int, crn: String): UserAnswers = {
+    def trusteesCompanyCrnVariations(index: Int, crn: ReferenceValue): UserAnswers = {
       answers.set(CompanyRegistrationNumberVariationsId(index))(crn).asOpt.value
     }
 

@@ -18,6 +18,7 @@ package forms
 
 import com.google.inject.Inject
 import forms.behaviours.CrnBehaviour
+import models.ReferenceValue
 import play.api.data.Form
 import play.api.i18n.Messages
 
@@ -30,7 +31,7 @@ class CompanyRegistrationNumberVariationsFormProviderSpec @Inject() (implicit me
   "A form with a CRNNumber" should {
     val testForm = new CompanyRegistrationNumberVariationsFormProvider().apply("company name")
 
-    behave like formWithCrnVariations(testForm: Form[String],
+    behave like formWithCrnVariations(testForm: Form[ReferenceValue],
       lengthKey: String,
       requiredKey: String,
       invalidKey: String

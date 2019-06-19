@@ -21,7 +21,7 @@ import controllers.Retrievals
 import forms.CompanyRegistrationNumberVariationsFormProvider
 import identifiers.TypedIdentifier
 import models.requests.DataRequest
-import models.{CompanyRegistrationNumber, Index, Mode}
+import models.{CompanyRegistrationNumber, Index, Mode, ReferenceValue}
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{AnyContent, Call, Result}
@@ -50,16 +50,13 @@ trait CompanyRegistrationNumberVariationsBaseController extends FrontendControll
 
   def postCall: (Mode, Option[String], Index) => Call
 
-  def identifier(index: Int): TypedIdentifier[CompanyRegistrationNumber]
+  def identifier(index: Int): TypedIdentifier[ReferenceValue]
 
   def get(mode: Mode, srn: Option[String], index: Index, viewModel: CompanyRegistrationNumberViewModel, companyName: String)
          (implicit request: DataRequest[AnyContent]): Future[Result] = {
 
     val preparedForm =
-      request.userAnswers.get(identifier(index)) match {
-        case Some(CompanyRegistrationNumber.Yes(crnNumber)) => form(companyName).fill(crnNumber)
-        case _ => form(companyName)
-      }
+      request.userAnswers.get(identifier(index)).fold(form(companyName))(form(companyName).fill)
 
     val view = companyRegistrationNumberVariations(appConfig, viewModel, preparedForm, existingSchemeName, postCall(mode, srn, index), srn)
 
@@ -72,12 +69,10 @@ trait CompanyRegistrationNumberVariationsBaseController extends FrontendControll
       (formWithErrors: Form[_]) =>
 
         Future.successful(BadRequest(
-          companyRegistrationNumberVariations(appConfig, viewModel, formWithErrors,  existingSchemeName, postCall(mode, srn, index), srn))),
+          companyRegistrationNumberVariations(appConfig, viewModel, formWithErrors, existingSchemeName, postCall(mode, srn, index), srn))),
 
       crnNumber => {
-        val updatedUserAnswers = request.userAnswers
-          .set(identifier(index))(CompanyRegistrationNumber.Yes(crnNumber)).asOpt.getOrElse(request.userAnswers)
-        userAnswersService.upsert(mode, srn, updatedUserAnswers.json).map(cacheMap =>
+        userAnswersService.save(mode, srn, identifier(index), crnNumber.copy(isEditable = true)).map(cacheMap =>
           Redirect(navigator.nextPage(identifier(index), mode, UserAnswers(cacheMap), srn)))
       }
     )

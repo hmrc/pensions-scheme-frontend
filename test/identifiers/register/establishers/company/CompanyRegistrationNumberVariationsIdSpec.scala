@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package identifiers.register.trustees.company
+package identifiers.register.establishers.company
 
 import base.SpecBase
-import identifiers.register.trustees.IsTrusteeNewId
+import identifiers.register.establishers.IsEstablisherNewId
 import models._
 import models.requests.DataRequest
 import play.api.mvc.AnyContent
@@ -32,8 +32,8 @@ class CompanyRegistrationNumberVariationsIdSpec extends SpecBase {
   implicit val countryOptions: CountryOptions = new CountryOptions(environment, frontendAppConfig)
   private val onwardUrl = "onwardUrl"
   private val answerRowsWithChangeLinks = Seq(
-    AnswerRow("messages__checkYourAnswers__trustees__company__number",List("companyRegistrationNumber"),false,Some(Link("site.change",onwardUrl,
-      Some("messages__visuallyhidden__trustees__crn"))))
+    AnswerRow("messages__checkYourAnswers__establishers__company__number",List("companyRegistrationNumber"),false,Some(Link("site.change",onwardUrl,
+      Some("messages__visuallyhidden__establisher__crn"))))
   )
 
   "cya" when {
@@ -49,9 +49,9 @@ class CompanyRegistrationNumberVariationsIdSpec extends SpecBase {
       }
     }
 
-    "in update mode for new trustee - companyRegistrationNumber" must {
+    "in update mode for new establisher - companyRegistrationNumber" must {
 
-      def answersNew: UserAnswers = answers.set(IsTrusteeNewId(0))(true).asOpt.value
+      def answersNew: UserAnswers = answers.set(IsEstablisherNewId(0))(true).asOpt.value
 
       "return answers rows with change links" in {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answersNew, PsaId("A0000000"))
@@ -60,14 +60,14 @@ class CompanyRegistrationNumberVariationsIdSpec extends SpecBase {
       }
     }
 
-    "in update mode for existing trustee - company companyRegistrationNumber" must {
+    "in update mode for existing establisher - company companyRegistrationNumber" must {
 
       "return answers rows without change links if companyRegistrationNumber is available and not editable" in {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
         implicit val userAnswers: UserAnswers = request.userAnswers
 
         CompanyRegistrationNumberVariationsId(0).row(onwardUrl, UpdateMode) must equal(Seq(
-          AnswerRow("messages__checkYourAnswers__trustees__company__number",List("companyRegistrationNumber"),false, None)
+          AnswerRow("messages__checkYourAnswers__establishers__company__number",List("companyRegistrationNumber"),false, None)
         ))
       }
 
@@ -84,8 +84,8 @@ class CompanyRegistrationNumberVariationsIdSpec extends SpecBase {
         implicit val userAnswers: UserAnswers = request.userAnswers
 
         CompanyRegistrationNumberVariationsId(0).row(onwardUrl, UpdateMode) must equal(Seq(
-          AnswerRow("messages__checkYourAnswers__trustees__company__number", Seq("site.not_entered"), answerIsMessageKey = true,
-            Some(Link("site.add", onwardUrl, Some("messages__visuallyhidden__trustees__crn_add"))))))
+          AnswerRow("messages__checkYourAnswers__establishers__company__number", Seq("site.not_entered"), answerIsMessageKey = true,
+            Some(Link("site.add", onwardUrl, Some("messages__visuallyhidden__establisher__crn_add"))))))
       }
     }
   }

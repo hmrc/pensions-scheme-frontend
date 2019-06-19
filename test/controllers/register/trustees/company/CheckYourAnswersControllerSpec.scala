@@ -61,7 +61,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
       "return OK and the correct view for vat, crn and paye if not new trustee" in {
         val answers = UserAnswers().trusteesCompanyVatVariations(index, ReferenceValue("098765432")).
           trusteesCompanyPayeVariations(index, ReferenceValue("12345678"))
-          .trusteesCompanyCrnVariations(index, "AB123456")
+          .trusteesCompanyCrnVariations(index, ReferenceValue("AB123456"))
         implicit val request = FakeDataRequest(answers)
         val expectedCompanyDetailsSection = companyDetailsSection(
           CompanyVatVariationsId(index).row(companyVatVariationsRoute, UpdateMode) ++
