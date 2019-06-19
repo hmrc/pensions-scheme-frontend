@@ -18,7 +18,7 @@ package forms
 
 import forms.mappings.VatMapping
 import javax.inject.Inject
-import models.VatNew
+import models.Reference
 import play.api.data.Form
 import play.api.data.Forms._
 import play.api.i18n.Messages
@@ -26,7 +26,7 @@ import viewmodels.Message
 
 class VatVariationsFormProvider @Inject() extends VatMapping {
 
-  def apply(name: String)(implicit messages: Messages): Form[VatNew] =
+  def apply(name: String)(implicit messages: Messages): Form[Reference] =
     Form(
       mapping(
         "vat" -> vatStringMapping(
@@ -34,6 +34,6 @@ class VatVariationsFormProvider @Inject() extends VatMapping {
           invalidVatKey = Message("messages__vatVariations__company_invalid", name)
         )
       )
-      (VatNew.applyEditable)(VatNew.unapplyEditable)
+      (Reference.applyEditable)(Reference.unapplyEditable)
     )
 }

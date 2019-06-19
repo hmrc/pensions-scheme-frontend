@@ -18,15 +18,14 @@ package identifiers.register.trustees.partnership
 
 import identifiers._
 import identifiers.register.trustees.{IsTrusteeNewId, TrusteesId}
-import models.{Link, VatNew}
+import models.Reference
 import play.api.i18n.Messages
 import play.api.libs.json.JsPath
-import utils.checkyouranswers.{CheckYourAnswers, VatNewCYA}
-import utils.checkyouranswers.CheckYourAnswers.StringCYA
+import utils.checkyouranswers.{CheckYourAnswers, ReferenceCYA}
 import utils.{CountryOptions, UserAnswers}
 import viewmodels.AnswerRow
 
-case class PartnershipVatVariationsId(index: Int) extends TypedIdentifier[VatNew] {
+case class PartnershipVatVariationsId(index: Int) extends TypedIdentifier[Reference] {
   override def path: JsPath = TrusteesId(index).path \ PartnershipVatVariationsId.toString
 }
 
@@ -39,20 +38,15 @@ object PartnershipVatVariationsId {
   implicit def cya(implicit messages: Messages, countryOptions: CountryOptions): CheckYourAnswers[PartnershipVatVariationsId] = {
     new CheckYourAnswers[PartnershipVatVariationsId] {
 
-      override def row(id: PartnershipVatVariationsId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
-        VatNewCYA[PartnershipVatVariationsId](vatLabel, hiddenLabelVat)().row(id)(changeUrl, userAnswers)
-      }
+      override def row(id: PartnershipVatVariationsId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+        ReferenceCYA[PartnershipVatVariationsId](vatLabel, hiddenLabelVat)().row(id)(changeUrl, userAnswers)
 
       override def updateRow(id: PartnershipVatVariationsId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
         userAnswers.get(IsTrusteeNewId(id.index)) match {
           case Some(true) =>
-            VatNewCYA[PartnershipVatVariationsId](vatLabel, hiddenLabelVat)().row(id)(changeUrl, userAnswers)
+            ReferenceCYA[PartnershipVatVariationsId](vatLabel, hiddenLabelVat)().row(id)(changeUrl, userAnswers)
           case _ =>
-            userAnswers.get(id) match {
-              case Some(vatNew) => Seq(AnswerRow(vatLabel, Seq(vatNew.vat), answerIsMessageKey = false, None))
-              case _ => Seq(AnswerRow(vatLabel, Seq("site.not_entered"), answerIsMessageKey = true,
-                Some(Link("site.add", changeUrl, Some(s"${hiddenLabelVat}_add")))))
-            }
+            ReferenceCYA[PartnershipVatVariationsId](vatLabel, hiddenLabelVat)().updateRow(id)(changeUrl, userAnswers)
         }
     }
   }

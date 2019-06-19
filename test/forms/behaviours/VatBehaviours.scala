@@ -19,7 +19,7 @@ package forms.behaviours
 import forms.FormSpec
 import forms.mappings.{Constraints, VatMapping}
 import generators.Generators
-import models.Vat
+import models.{Reference, Vat}
 import org.scalatest.prop.PropertyChecks
 import play.api.data.{Form, FormError}
 
@@ -108,10 +108,10 @@ trait VatBehaviours extends FormSpec with Generators with PropertyChecks with Co
     }
   }
 
-  def formWithVatVariations(testForm: Form[String],
-                  vatLengthKey: String,
+  def formWithVatVariations(testForm: Form[Reference],
+                            vatLengthKey: String,
                             requiredVatKey: String,
-                  invalidVatKey: String
+                            invalidVatKey: String
                  ): Unit = {
 
     "behave like a form with a VAT Mapping in variations" should {
@@ -124,14 +124,14 @@ trait VatBehaviours extends FormSpec with Generators with PropertyChecks with Co
       Seq("AB123490", "AO111111B", "ORA12345C", "AB0202020", "AB040404E").foreach { vat =>
         s"fail to bind when VAT $vat is invalid" in {
           val result = testForm.bind(Map("vat" -> vat))
-          result.errors shouldBe Seq(FormError("vat", invalidVatKey, Seq(regexVat)))
+          result.errors shouldBe Seq(FormError("value", invalidVatKey, Seq(regexVat)))
         }
       }
 
       Seq("AB1234567890", "987654328765", "CDCDCDOPOPOP", "AB03047853030D").foreach { vat =>
         s"fail to bind when VAT $vat is longer than expected" in {
           val result = testForm.bind(Map("vat" -> vat))
-          result.errors shouldBe Seq(FormError("vat", vatLengthKey, Seq(VatMapping.maxVatLength)))
+          result.errors shouldBe Seq(FormError("value", vatLengthKey, Seq(VatMapping.maxVatLength)))
         }
       }
 

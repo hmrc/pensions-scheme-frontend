@@ -54,8 +54,8 @@ object CheckYourAnswers {
   implicit def companyDetails[I <: TypedIdentifier[CompanyDetails]]
   (implicit rds: Reads[CompanyDetails], messages: Messages): CheckYourAnswers[I] = CompanyDetailsCYA()()
 
-  implicit def vatNew[I <: TypedIdentifier[VatNew]]
-  (implicit rds: Reads[VatNew], messages: Messages): CheckYourAnswers[I] = VatNewCYA()()
+  implicit def reference[I <: TypedIdentifier[Reference]]
+  (implicit rds: Reads[Reference], messages: Messages): CheckYourAnswers[I] = ReferenceCYA()()
 
   implicit def contactDetails[I <: TypedIdentifier[ContactDetails]](implicit rds: Reads[ContactDetails]): CheckYourAnswers[I] = ContactDetailsCYA()()
 
@@ -487,11 +487,11 @@ case class AddressCYA[I <: TypedIdentifier[Address]](
 
 }
 
-case class PreviousAddressCYA[I <: TypedIdentifier[Address]]( label: String,
-                                                              changeAddress: String,
-                                                              isNew : Option[Boolean],
-                                                              addressYear : Option[AddressYears],
-                                                              previousAddressAddLabel : Option[String]
+case class PreviousAddressCYA[I <: TypedIdentifier[Address]](label: String,
+                                                             changeAddress: String,
+                                                             isNew: Option[Boolean],
+                                                             addressYear: Option[AddressYears],
+                                                             previousAddressAddLabel: Option[String]
                                                             ) {
 
   def apply()(implicit rds: Reads[Address], countryOptions: CountryOptions): CheckYourAnswers[I] = {
@@ -499,7 +499,7 @@ case class PreviousAddressCYA[I <: TypedIdentifier[Address]]( label: String,
       override def row(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
         AddressCYA(label, changeAddress)().row(id)(changeUrl, userAnswers)
 
-        override def updateRow(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+      override def updateRow(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
         isNew match {
           case Some(true) =>
             AddressCYA(label, changeAddress)().row(id)(changeUrl, userAnswers)
@@ -617,24 +617,30 @@ case class CompanyDetailsCYA[I <: TypedIdentifier[CompanyDetails]](
 
 }
 
-case class VatNewCYA[I <: TypedIdentifier[VatNew]](
-                                                                    nameLabel: String = "messages__common__cya__name",
-                                                                    hiddenNameLabel: String = "messages__visuallyhidden__common__name") {
+case class ReferenceCYA[I <: TypedIdentifier[Reference]](
+                                                          nameLabel: String = "messages__common__cya__name",
+                                                          hiddenNameLabel: String = "messages__visuallyhidden__common__name") {
 
-  def apply()(implicit rds: Reads[VatNew], messages: Messages): CheckYourAnswers[I] = {
+  def apply()(implicit rds: Reads[Reference], messages: Messages): CheckYourAnswers[I] = {
     new CheckYourAnswers[I] {
 
       override def row(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        userAnswers.get(id).map { vatNew =>
-          Seq(AnswerRow(nameLabel, Seq(s"${vatNew.vat}"), answerIsMessageKey = false,
-            Some(Link("site.change", changeUrl, Some(Message(hiddenNameLabel, vatNew.vat))))
+        userAnswers.get(id).map { reference =>
+          Seq(AnswerRow(nameLabel, Seq(s"${reference.value}"), answerIsMessageKey = false,
+            Some(Link("site.change", changeUrl, Some(hiddenNameLabel)))
           ))
         }.getOrElse(Seq.empty[AnswerRow])
 
       override def updateRow(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        userAnswers.get(id).map { vatNew =>
-          Seq(AnswerRow(nameLabel, Seq(s"${vatNew.vat}"), answerIsMessageKey = false, None))
-        }.getOrElse(Seq.empty[AnswerRow])
+        userAnswers.get(id) match {
+          case Some(reference) if !reference.isEditable =>
+            Seq(AnswerRow(nameLabel, Seq(reference.value), answerIsMessageKey = false, None))
+          case Some(_) =>
+            row(id)(changeUrl, userAnswers)
+          case _ =>
+            Seq(AnswerRow(nameLabel, Seq("site.not_entered"), answerIsMessageKey = true,
+              Some(Link("site.add", changeUrl, Some(s"${hiddenNameLabel}_add")))))
+        }
     }
   }
 

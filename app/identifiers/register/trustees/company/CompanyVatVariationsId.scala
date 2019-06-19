@@ -18,14 +18,14 @@ package identifiers.register.trustees.company
 
 import identifiers.TypedIdentifier
 import identifiers.register.trustees.{IsTrusteeNewId, TrusteesId}
-import models.{Link, VatNew}
+import models.Reference
 import play.api.i18n.Messages
 import play.api.libs.json.JsPath
-import utils.checkyouranswers.{CheckYourAnswers, VatNewCYA}
+import utils.checkyouranswers.{CheckYourAnswers, ReferenceCYA}
 import utils.{CountryOptions, UserAnswers}
 import viewmodels.AnswerRow
 
-case class CompanyVatVariationsId(index: Int) extends TypedIdentifier[VatNew] {
+case class CompanyVatVariationsId(index: Int) extends TypedIdentifier[Reference] {
   override def path: JsPath = TrusteesId(index).path \ CompanyVatVariationsId.toString
 }
 
@@ -39,17 +39,13 @@ object CompanyVatVariationsId {
     new CheckYourAnswers[CompanyVatVariationsId] {
 
       override def row(id: CompanyVatVariationsId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        VatNewCYA[CompanyVatVariationsId]("messages__common__cya__vat", hiddenLabelVat)().row(id)(changeUrl, userAnswers)
+        ReferenceCYA[CompanyVatVariationsId]("messages__common__cya__vat", hiddenLabelVat)().row(id)(changeUrl, userAnswers)
 
       override def updateRow(id: CompanyVatVariationsId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
         userAnswers.get(IsTrusteeNewId(id.index)) match {
-          case Some(true) => VatNewCYA[CompanyVatVariationsId]("messages__common__cya__vat", hiddenLabelVat)().row(id)(changeUrl, userAnswers)
+          case Some(true) => ReferenceCYA[CompanyVatVariationsId]("messages__common__cya__vat", hiddenLabelVat)().row(id)(changeUrl, userAnswers)
           case _ =>
-            userAnswers.get(id) match {
-              case Some(vatNew) => Seq(AnswerRow(labelVat, Seq(vatNew.vat), answerIsMessageKey = false, None))
-              case _ => Seq(AnswerRow(labelVat, Seq("site.not_entered"), answerIsMessageKey = true,
-                Some(Link("site.add", changeUrl, Some(s"${hiddenLabelVat}_add")))))
-            }
+            ReferenceCYA[CompanyVatVariationsId](labelVat, hiddenLabelVat)().updateRow(id)(changeUrl, userAnswers)
         }
     }
   }
