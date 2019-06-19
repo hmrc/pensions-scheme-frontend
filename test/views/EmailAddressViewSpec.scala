@@ -33,7 +33,7 @@ class EmailAddressViewSpec extends QuestionViewBehaviours[String] {
   val viewModel = EmailAddressViewModel(
     postCall = Call("GET", "www.example.com"),
     Message("messages__establisher_email__title"),
-    Message("messages__establisher_company_email__heading", companyName),
+    Message("messages__common_email__heading", companyName),
     Some(Message("messages__establisher_email__hint")),
     None
   )
@@ -44,7 +44,7 @@ class EmailAddressViewSpec extends QuestionViewBehaviours[String] {
     (form: Form[String]) => emailAddress(frontendAppConfig, form, viewModel, Some("test scheme"))(fakeRequest, messages)
 
   behave like normalPage(createView, messageKeyPrefix,
-    messages("messages__establisher_company_email__heading", companyName),
+    messages("messages__common_email__heading", companyName),
    "_hint")
 
   behave like pageWithTextFields(

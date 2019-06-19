@@ -52,7 +52,7 @@ class CompanyEmailController @Inject()(val appConfig: FrontendAppConfig,
             EmailAddressViewModel(
               routes.CompanyEmailController.onSubmit(mode, srn, index),
               Message("messages__establisher_email__title"),
-              Message("messages__establisher_company_email__heading", details.companyName),
+              Message("messages__common_email__heading", details.companyName),
               Some(Message("messages__establisher_email__hint")),
               srn = srn
             )
