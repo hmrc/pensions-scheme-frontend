@@ -62,7 +62,7 @@ trait CrnMapping extends Mappings with Transforms {
   def companyRegistrationNumberStringMapping(crnLengthKey: String = "messages__error__no_crn_length",
                         requiredCRNKey: String = "messages__error__company_number",
                         invalidCRNKey: String = "messages__error__crn_invalid"):
-  Mapping[String] = text(requiredCRNKey)
-    .transform(standardTextTransform, noTransform)
-    .verifying(validCrn(invalidCRNKey))
+    Mapping[String] = text(requiredCRNKey)
+      .transform(standardTextTransform, noTransform)
+      .verifying(validCrn(invalidCRNKey))
 }

@@ -32,6 +32,7 @@ import services.{FakeUserAnswersService, UserAnswersService}
 import utils.annotations.TrusteesCompany
 import utils.{FakeNavigator, Navigator}
 import play.api.test.Helpers.{contentAsString, status, _}
+import viewmodels.{CompanyRegistrationNumberViewModel, Message}
 import views.html.register.companyRegistrationNumberVariations
 
 import scala.concurrent.Future
@@ -52,9 +53,8 @@ class CompanyRegistrationNumberVariationsControllerSpec extends ControllerSpecBa
           contentAsString(result) mustBe
             companyRegistrationNumberVariations(
               appConfig,
+              viewModel(),
               form,
-              CheckUpdateMode,
-              firstIndex,
               None,
               postCall(CheckUpdateMode, srn, firstIndex),
               srn
@@ -80,9 +80,18 @@ class CompanyRegistrationNumberVariationsControllerSpec extends ControllerSpecBa
 
 object CompanyRegistrationNumberVariationsControllerSpec extends CompanyRegistrationNumberVariationsControllerSpec {
 
-  val form = new CompanyRegistrationNumberVariationsFormProvider()()
+  val companyName = "test company name"
+  val form = new CompanyRegistrationNumberVariationsFormProvider()(companyName)
   val firstIndex = Index(0)
   val srn = Some("S123")
+
+  def viewModel(companyName: String = companyName): CompanyRegistrationNumberViewModel = {
+    CompanyRegistrationNumberViewModel(
+      title = Message("messages__companyNumber__trustee__title"),
+      heading = Message("messages__companyNumber__trustee__heading", companyName),
+      hint = Message("messages__common__crn_hint", companyName)
+    )
+  }
 
   val postCall = routes.CompanyRegistrationNumberVariationsController.onSubmit _
 
@@ -93,7 +102,7 @@ object CompanyRegistrationNumberVariationsControllerSpec extends CompanyRegistra
 
     running(_.overrides(
       bind[AuthAction].to(FakeAuthAction),
-      bind[DataRetrievalAction].toInstance(getMandatoryEstablisherCompany),
+      bind[DataRetrievalAction].toInstance(getMandatoryTrusteeCompany),
       bind(classOf[Navigator]).qualifiedWith(classOf[TrusteesCompany]).toInstance(new FakeNavigator(onwardRoute)),
       bind[UserAnswersService].toInstance(FakeUserAnswersService),
       bind[AllowAccessActionProvider].toInstance(FakeAllowAccessProvider())

@@ -21,13 +21,14 @@ import config.FrontendAppConfig
 import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRequiredAction, DataRetrievalAction}
 import controllers.register.CompanyRegistrationNumberVariationsBaseController
 import identifiers.TypedIdentifier
-import identifiers.register.trustees.company.CompanyRegistrationNumberId
+import identifiers.register.trustees.company.{CompanyDetailsId, CompanyRegistrationNumberId}
 import models.{CompanyRegistrationNumber, Index, Mode}
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, Call}
 import services.UserAnswersService
 import utils.Navigator
 import utils.annotations.TrusteesCompany
+import viewmodels.{CompanyRegistrationNumberViewModel, Message, VatViewModel}
 
 class CompanyRegistrationNumberVariationsController @Inject()(
                                                                override val appConfig: FrontendAppConfig,
@@ -44,16 +45,30 @@ class CompanyRegistrationNumberVariationsController @Inject()(
 
   def postCall: (Mode, Option[String], Index) => Call = routes.CompanyRegistrationNumberVariationsController.onSubmit _
 
+  private def viewModel(mode: Mode, index: Index, srn: Option[String], companyName: String): CompanyRegistrationNumberViewModel = {
+    CompanyRegistrationNumberViewModel(
+      title = Message("messages__companyNumber__trustee__title"),
+      heading = Message("messages__companyNumber__trustee__heading", companyName),
+      hint = Message("messages__common__crn_hint", companyName)
+    )
+  }
+
   def onPageLoad(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
-        get(mode, srn, index)
+        CompanyDetailsId(index).retrieve.right.map { details =>
+          val companyName = details.companyName
+          get(mode, srn, index, viewModel(mode, index, srn, companyName), companyName)
+        }
     }
 
   def onSubmit(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
-        post(mode, srn, index)
+        CompanyDetailsId(index).retrieve.right.map { details =>
+          val companyName = details.companyName
+          post(mode, srn, index, viewModel(mode, index, srn, companyName), companyName)
+        }
     }
 
 }

@@ -43,12 +43,7 @@ trait VatVariationsController extends FrontendController with Retrievals with I1
 
   def get(id: TypedIdentifier[ReferenceValue], viewmodel: VatViewModel, form: Form[ReferenceValue])
          (implicit request: DataRequest[AnyContent]): Future[Result] = {
-    val preparedForm =
-      request.userAnswers.get(id) match {
-        case Some(vatNew) => form.fill(vatNew)
-        case _ => form
-      }
-
+    val preparedForm = request.userAnswers.get(id).fold(form)(form.fill)
     Future.successful(Ok(vatVariations(appConfig, preparedForm, viewmodel, existingSchemeName)))
   }
 

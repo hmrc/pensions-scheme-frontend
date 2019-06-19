@@ -55,7 +55,7 @@ object CheckYourAnswers {
   (implicit rds: Reads[CompanyDetails], messages: Messages): CheckYourAnswers[I] = CompanyDetailsCYA()()
 
   implicit def reference[I <: TypedIdentifier[ReferenceValue]]
-  (implicit rds: Reads[ReferenceValue], messages: Messages): CheckYourAnswers[I] = ReferenceCYA()()
+  (implicit rds: Reads[ReferenceValue], messages: Messages): CheckYourAnswers[I] = ReferenceValueCYA()()
 
   implicit def contactDetails[I <: TypedIdentifier[ContactDetails]](implicit rds: Reads[ContactDetails]): CheckYourAnswers[I] = ContactDetailsCYA()()
 
@@ -617,7 +617,7 @@ case class CompanyDetailsCYA[I <: TypedIdentifier[CompanyDetails]](
 
 }
 
-case class ReferenceCYA[I <: TypedIdentifier[ReferenceValue]](
+case class ReferenceValueCYA[I <: TypedIdentifier[ReferenceValue]](
                                                           nameLabel: String = "messages__common__cya__name",
                                                           hiddenNameLabel: String = "messages__visuallyhidden__common__name") {
 

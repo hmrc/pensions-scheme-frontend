@@ -43,16 +43,16 @@
             headingKey=messages(viewmodel.heading)
         )
 
-
         @viewmodel.hint.map{ hint =>
             <p>@hint.resolve</p>
         }
-        <p>@Html(viewmodel.enterPostcode.withArgs(openLink, closeLink))</p>
 
         @components.input_text(
             field = form("value"),
             label = messages(viewmodel.formLabel)
         )
+
+        <p>@Html(viewmodel.enterPostcode.withArgs(openLink, closeLink))</p>
 
         @components.submit_button("site.find_address")
 
