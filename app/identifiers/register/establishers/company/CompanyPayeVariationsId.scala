@@ -17,36 +17,38 @@
 package identifiers.register.establishers.company
 
 import identifiers.TypedIdentifier
-import identifiers.register.establishers.EstablishersId
-import models.Link
+import identifiers.register.establishers.{EstablishersId, IsEstablisherNewId}
+import models.ReferenceValue
 import play.api.i18n.Messages
 import play.api.libs.json.JsPath
-import utils.checkyouranswers.CheckYourAnswers
-import utils.checkyouranswers.CheckYourAnswers.StringCYA
+import utils.checkyouranswers.{CheckYourAnswers, ReferenceValueCYA}
 import utils.{CountryOptions, UserAnswers}
 import viewmodels.AnswerRow
 
-case class CompanyPayeVariationsId(index: Int) extends TypedIdentifier[String] {
-  override def path: JsPath = EstablishersId(index).path \ "companyPaye" \ CompanyPayeVariationsId.toString
+case class CompanyPayeVariationsId(index: Int) extends TypedIdentifier[ReferenceValue] {
+  override def path: JsPath = EstablishersId(index).path \ CompanyPayeVariationsId.toString
 }
 
 object CompanyPayeVariationsId {
-  override def toString: String = "paye"
-
-  val hiddenLabelPaye = "messages__visuallyhidden__establisher__paye_number"
+  override def toString: String = "companyPaye"
 
   implicit def cya(implicit messages: Messages, countryOptions: CountryOptions): CheckYourAnswers[CompanyPayeVariationsId] = {
     new CheckYourAnswers[CompanyPayeVariationsId] {
 
-      override def row(id: CompanyPayeVariationsId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        StringCYA(Some("messages__common__cya__paye"), Some(hiddenLabelPaye))().row(id)(changeUrl, userAnswers)
+      private val payeLabel = "messages__common__cya__paye"
+      private val hiddenLabelPaye = "messages__visuallyhidden__establisher__paye_number"
 
-      override def updateRow(id: CompanyPayeVariationsId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        userAnswers.get(id) match {
-          case Some(paye) => Seq(AnswerRow("messages__common__cya__paye", Seq(paye), answerIsMessageKey = false, None))
-          case _ => Seq(AnswerRow("messages__common__cya__paye", Seq("site.not_entered"), answerIsMessageKey = true,
-            Some(Link("site.add", changeUrl, Some(s"${hiddenLabelPaye}_add")))))
+      override def row(id: CompanyPayeVariationsId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+        ReferenceValueCYA[CompanyPayeVariationsId](payeLabel, hiddenLabelPaye)().row(id)(changeUrl, userAnswers)
+
+      override def updateRow(id: CompanyPayeVariationsId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
+        userAnswers.get(IsEstablisherNewId(id.index)) match {
+          case Some(true) =>
+            ReferenceValueCYA[CompanyPayeVariationsId](payeLabel, hiddenLabelPaye)().row(id)(changeUrl, userAnswers)
+          case _ =>
+            ReferenceValueCYA[CompanyPayeVariationsId](payeLabel, hiddenLabelPaye)().updateRow(id)(changeUrl, userAnswers)
         }
+      }
     }
   }
 }

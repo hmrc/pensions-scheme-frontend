@@ -22,7 +22,7 @@ import controllers.PayeVariationsController
 import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRequiredAction, DataRetrievalAction}
 import forms.PayeVariationsFormProvider
 import identifiers.register.establishers.company.{CompanyDetailsId, CompanyPayeVariationsId}
-import models.{Index, Mode}
+import models.{Index, Mode, ReferenceValue}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
@@ -43,16 +43,7 @@ class CompanyPayeVariationsController @Inject()(
                                                  formProvider: PayeVariationsFormProvider
                                                ) extends PayeVariationsController with I18nSupport {
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
-      implicit request =>
-        CompanyDetailsId(index).retrieve.right.map {
-          details =>
-            get(CompanyPayeVariationsId(index), form(details.companyName), viewmodel(mode, index, srn, details.companyName))
-        }
-    }
-
-  protected def form(companyName: String): Form[String] = formProvider(companyName)
+  protected def form(companyName: String): Form[ReferenceValue] = formProvider(companyName)
 
   private def viewmodel(mode: Mode, index: Index, srn: Option[String], companyName: String): PayeViewModel =
     PayeViewModel(
@@ -63,6 +54,15 @@ class CompanyPayeVariationsController @Inject()(
       subHeading = None,
       srn = srn
     )
+
+  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+      implicit request =>
+        CompanyDetailsId(index).retrieve.right.map {
+          details =>
+            get(CompanyPayeVariationsId(index), form(details.companyName), viewmodel(mode, index, srn, details.companyName))
+        }
+    }
 
   def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>

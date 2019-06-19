@@ -18,6 +18,7 @@ package forms
 
 import com.google.inject.Inject
 import forms.behaviours.PayeBehaviours
+import models.ReferenceValue
 import play.api.data.Form
 import play.api.i18n.Messages
 
@@ -37,7 +38,7 @@ class PayeVariationsFormProviderSpec @Inject()(implicit messages: Messages) exte
     val testForm = new PayeVariationsFormProvider().apply("test company")
 
     behave like formWithPayeVariations(
-      testForm: Form[String],
+      testForm: Form[ReferenceValue],
       requiredPayeKey: String,
       payeLengthKey: String
     )

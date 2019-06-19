@@ -17,35 +17,36 @@
 package identifiers.register.trustees.partnership
 
 import identifiers.TypedIdentifier
-import identifiers.register.trustees.TrusteesId
-import models.Link
+import identifiers.register.trustees.{IsTrusteeNewId, TrusteesId}
+import models.ReferenceValue
 import play.api.i18n.Messages
 import play.api.libs.json.JsPath
+import utils.checkyouranswers.{CheckYourAnswers, ReferenceValueCYA}
 import utils.{CountryOptions, UserAnswers}
-import utils.checkyouranswers.CheckYourAnswers
-import utils.checkyouranswers.CheckYourAnswers.StringCYA
 import viewmodels.AnswerRow
 
-case class PartnershipPayeVariationsId(index: Int) extends TypedIdentifier[String] {
-  override def path: JsPath = TrusteesId(index).path \ "partnershipPaye" \ PartnershipPayeVariationsId.toString
+case class PartnershipPayeVariationsId(index: Int) extends TypedIdentifier[ReferenceValue] {
+  override def path: JsPath = TrusteesId(index).path \ PartnershipPayeVariationsId.toString
 }
 
 object PartnershipPayeVariationsId {
-  override def toString: String = "paye"
-
-  val hiddenLabelPaye = "messages__visuallyhidden__trustee__paye_number"
+  override def toString: String = "partnershipPaye"
 
   implicit def cya(implicit messages: Messages, countryOptions: CountryOptions): CheckYourAnswers[PartnershipPayeVariationsId] = {
     new CheckYourAnswers[PartnershipPayeVariationsId] {
 
+      private val payeLabel = "messages__common__cya__paye"
+      private val hiddenLabelPaye = "messages__visuallyhidden__trustee__paye_number"
+
       override def row(id: PartnershipPayeVariationsId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        StringCYA(Some("messages__common__cya__paye"), Some(hiddenLabelPaye))().row(id)(changeUrl, userAnswers)
+        ReferenceValueCYA[PartnershipPayeVariationsId](payeLabel, hiddenLabelPaye)().row(id)(changeUrl, userAnswers)
 
       override def updateRow(id: PartnershipPayeVariationsId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        userAnswers.get(id) match {
-          case Some(paye) => Seq(AnswerRow("messages__common__cya__paye", Seq(paye), answerIsMessageKey = false, None))
-          case _ => Seq(AnswerRow("messages__common__cya__paye", Seq("site.not_entered"), answerIsMessageKey = true,
-            Some(Link("site.add", changeUrl, Some(s"${hiddenLabelPaye}_add")))))
+        userAnswers.get(IsTrusteeNewId(id.index)) match {
+          case Some(true) =>
+            ReferenceValueCYA[PartnershipPayeVariationsId](payeLabel, hiddenLabelPaye)().row(id)(changeUrl, userAnswers)
+          case _ =>
+            ReferenceValueCYA[PartnershipPayeVariationsId](payeLabel, hiddenLabelPaye)().updateRow(id)(changeUrl, userAnswers)
         }
     }
   }

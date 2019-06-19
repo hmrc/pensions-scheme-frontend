@@ -21,7 +21,7 @@ import com.google.inject.Inject
 import config.FrontendAppConfig
 import forms.PayeVariationsFormProvider
 import identifiers.TypedIdentifier
-import models.CheckUpdateMode
+import models.{CheckUpdateMode, ReferenceValue}
 import models.requests.DataRequest
 import org.mockito.Matchers.{any, eq => eqTo}
 import org.mockito.Mockito.when
@@ -34,7 +34,7 @@ import play.api.libs.json._
 import play.api.mvc.{AnyContent, Call, Request, Result}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import services.UserAnswersService
+import services.{FakeUserAnswersService, UserAnswersService}
 import uk.gov.hmrc.domain.PsaId
 import utils.{FakeNavigator, Navigator, UserAnswers}
 import viewmodels.PayeViewModel
@@ -91,13 +91,13 @@ class PayeVariationsControllerSpec extends WordSpec with MustMatchers with Optio
           val request = FakeRequest()
           val messages = app.injector.instanceOf[MessagesApi].preferred(request)
           val controller = app.injector.instanceOf[TestController]
-          val answers = UserAnswers().set(FakeIdentifier)("123456789").get
+          val answers = UserAnswers().set(FakeIdentifier)(ReferenceValue("123456789")).get
           val result = controller.onPageLoad(viewmodel, answers)
 
           status(result) mustEqual OK
           contentAsString(result) mustEqual payeVariations(
             appConfig,
-            formProvider(companyName)(messages).fill("123456789"),
+            formProvider(companyName)(messages).fill(ReferenceValue("123456789")),
             viewmodel,
             None
           )(request, messages).toString
@@ -114,16 +114,12 @@ class PayeVariationsControllerSpec extends WordSpec with MustMatchers with Optio
       val userAnswersService = mock[UserAnswersService]
 
       running(_.overrides(
-        bind[UserAnswersService].toInstance(userAnswersService),
+        bind[UserAnswersService].toInstance(FakeUserAnswersService),
         bind[Navigator].toInstance(FakeNavigator)
       )) {
         app =>
 
           implicit val materializer: Materializer = app.materializer
-
-          when(
-            userAnswersService.save[String, FakeIdentifier.type](any(), any(), eqTo(FakeIdentifier), any())(any(), any(), any(), any())
-          ).thenReturn(Future.successful(Json.obj()))
 
           val request = FakeRequest().withFormUrlEncodedBody(
           ("paye", "123456789")
@@ -133,6 +129,7 @@ class PayeVariationsControllerSpec extends WordSpec with MustMatchers with Optio
 
           status(result) mustEqual SEE_OTHER
           redirectLocation(result).value mustEqual "www.example.com"
+          FakeUserAnswersService.verify(FakeIdentifier, ReferenceValue("123456789", isEditable = true))
       }
     }
 
@@ -166,7 +163,7 @@ class PayeVariationsControllerSpec extends WordSpec with MustMatchers with Optio
 
 object PayeVariationsControllerSpec {
 
-  object FakeIdentifier extends TypedIdentifier[String]
+  object FakeIdentifier extends TypedIdentifier[ReferenceValue]
   val companyName = "test company name"
 
   class TestController @Inject()(

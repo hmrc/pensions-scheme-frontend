@@ -32,11 +32,11 @@ case class CompanyVatVariationsId(index: Int) extends TypedIdentifier[ReferenceV
 object CompanyVatVariationsId {
   override def toString: String = "companyVat"
 
-  val labelVat = "messages__common__cya__vat"
-  val hiddenLabelVat = "messages__visuallyhidden__trustee__vat_number"
-
   implicit def cya(implicit messages: Messages, countryOptions: CountryOptions): CheckYourAnswers[CompanyVatVariationsId] = {
     new CheckYourAnswers[CompanyVatVariationsId] {
+
+      private val labelVat = "messages__common__cya__vat"
+      private val hiddenLabelVat = "messages__visuallyhidden__trustee__vat_number"
 
       override def row(id: CompanyVatVariationsId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
         ReferenceValueCYA[CompanyVatVariationsId](labelVat, hiddenLabelVat)().row(id)(changeUrl, userAnswers)
