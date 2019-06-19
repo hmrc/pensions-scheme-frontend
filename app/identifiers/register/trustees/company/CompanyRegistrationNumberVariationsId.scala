@@ -17,8 +17,7 @@
 package identifiers.register.trustees.company
 
 import identifiers.TypedIdentifier
-import identifiers.register.establishers.EstablishersId
-import identifiers.register.trustees.IsTrusteeNewId
+import identifiers.register.trustees.{IsTrusteeNewId, TrusteesId}
 import models.ReferenceValue
 import play.api.i18n.Messages
 import play.api.libs.json.JsPath
@@ -27,7 +26,7 @@ import utils.{CountryOptions, UserAnswers}
 import viewmodels.AnswerRow
 
 case class CompanyRegistrationNumberVariationsId(index: Int) extends TypedIdentifier[ReferenceValue] {
-  override def path: JsPath = EstablishersId(index).path \ CompanyRegistrationNumberVariationsId.toString
+  override def path: JsPath = TrusteesId(index).path \ CompanyRegistrationNumberVariationsId.toString
 }
 
 object CompanyRegistrationNumberVariationsId {

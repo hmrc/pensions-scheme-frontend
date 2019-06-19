@@ -80,6 +80,7 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
       case CompanyPayeId(index) =>                exitMiniJourney(index, mode, srn, from.userAnswers)
       case CompanyPayeVariationsId(index) =>      exitMiniJourney(index, mode, srn, from.userAnswers)
       case CompanyRegistrationNumberId(index) =>  exitMiniJourney(index, mode, srn, from.userAnswers)
+      case CompanyRegistrationNumberVariationsId(index) =>  exitMiniJourney(index, mode, srn, from.userAnswers)
       case CompanyUniqueTaxReferenceId(index) =>  exitMiniJourney(index, mode, srn, from.userAnswers)
 
       case CompanyPostCodeLookupId(index) =>
