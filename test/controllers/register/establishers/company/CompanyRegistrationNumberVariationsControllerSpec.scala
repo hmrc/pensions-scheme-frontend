@@ -14,24 +14,24 @@
  * limitations under the License.
  */
 
-package controllers.register.trustees.company
+package controllers.register.establishers.company
 
 import base.CSRFRequest
 import config.FrontendAppConfig
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.CompanyRegistrationNumberVariationsFormProvider
-import models.{CheckUpdateMode, Index}
+import models.{CheckUpdateMode, Index, Mode}
 import org.scalatest.MustMatchers
 import play.api.Application
 import play.api.http.Writeable
 import play.api.inject.bind
 import play.api.mvc.{Call, Request, Result}
 import play.api.test.FakeRequest
-import services.{FakeUserAnswersService, UserAnswersService}
-import utils.annotations.TrusteesCompany
-import utils.{FakeNavigator, Navigator}
 import play.api.test.Helpers.{contentAsString, status, _}
+import services.{FakeUserAnswersService, UserAnswersService}
+import utils.annotations.EstablishersCompany
+import utils.{FakeNavigator, Navigator}
 import viewmodels.{CompanyRegistrationNumberViewModel, Message}
 import views.html.register.companyRegistrationNumberVariations
 
@@ -87,8 +87,8 @@ object CompanyRegistrationNumberVariationsControllerSpec extends CompanyRegistra
 
   def viewModel(companyName: String = companyName): CompanyRegistrationNumberViewModel = {
     CompanyRegistrationNumberViewModel(
-      title = Message("messages__companyNumber__trustee__title"),
-      heading = Message("messages__companyNumber__trustee__heading", companyName),
+      title = Message("messages__companyNumber__establisher__title"),
+      heading = Message("messages__companyNumber__establisher__heading", companyName),
       hint = Message("messages__common__crn_hint", companyName)
     )
   }
@@ -102,8 +102,8 @@ object CompanyRegistrationNumberVariationsControllerSpec extends CompanyRegistra
 
     running(_.overrides(
       bind[AuthAction].to(FakeAuthAction),
-      bind[DataRetrievalAction].toInstance(getMandatoryTrusteeCompany),
-      bind(classOf[Navigator]).qualifiedWith(classOf[TrusteesCompany]).toInstance(new FakeNavigator(onwardRoute)),
+      bind[DataRetrievalAction].toInstance(getMandatoryEstablisherCompany),
+      bind(classOf[Navigator]).qualifiedWith(classOf[EstablishersCompany]).toInstance(new FakeNavigator(onwardRoute)),
       bind[UserAnswersService].toInstance(FakeUserAnswersService),
       bind[AllowAccessActionProvider].toInstance(FakeAllowAccessProvider())
     )) {

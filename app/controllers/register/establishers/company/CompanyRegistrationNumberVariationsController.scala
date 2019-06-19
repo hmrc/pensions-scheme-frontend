@@ -14,27 +14,27 @@
  * limitations under the License.
  */
 
-package controllers.register.trustees.company
+package controllers.register.establishers.company
 
 import com.google.inject.Inject
 import config.FrontendAppConfig
 import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRequiredAction, DataRetrievalAction}
 import controllers.register.CompanyRegistrationNumberVariationsBaseController
 import identifiers.TypedIdentifier
-import identifiers.register.trustees.company.{CompanyDetailsId, CompanyRegistrationNumberId}
+import identifiers.register.establishers.company.{CompanyDetailsId, CompanyRegistrationNumberId}
 import models.{CompanyRegistrationNumber, Index, Mode}
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, Call}
 import services.UserAnswersService
 import utils.Navigator
-import utils.annotations.TrusteesCompany
-import viewmodels.{CompanyRegistrationNumberViewModel, Message, VatViewModel}
+import utils.annotations.EstablishersCompany
+import viewmodels.{CompanyRegistrationNumberViewModel, Message}
 
 class CompanyRegistrationNumberVariationsController @Inject()(
                                                                override val appConfig: FrontendAppConfig,
                                                                override val messagesApi: MessagesApi,
                                                                override val userAnswersService: UserAnswersService,
-                                                               @TrusteesCompany override val navigator: Navigator,
+                                                               @EstablishersCompany override val navigator: Navigator,
                                                                authenticate: AuthAction,
                                                                getData: DataRetrievalAction,
                                                                allowAccess: AllowAccessActionProvider,
@@ -47,8 +47,8 @@ class CompanyRegistrationNumberVariationsController @Inject()(
 
   private def viewModel(mode: Mode, index: Index, srn: Option[String], companyName: String): CompanyRegistrationNumberViewModel = {
     CompanyRegistrationNumberViewModel(
-      title = Message("messages__companyNumber__trustee__title"),
-      heading = Message("messages__companyNumber__trustee__heading", companyName),
+      title = Message("messages__companyNumber__establisher__title"),
+      heading = Message("messages__companyNumber__establisher__heading", companyName),
       hint = Message("messages__common__crn_hint", companyName)
     )
   }

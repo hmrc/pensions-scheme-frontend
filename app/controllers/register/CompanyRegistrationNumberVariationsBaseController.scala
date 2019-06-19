@@ -28,6 +28,7 @@ import play.api.mvc.{AnyContent, Call, Result}
 import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils._
+import viewmodels.CompanyRegistrationNumberViewModel
 import views.html.register.companyRegistrationNumberVariations
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -41,7 +42,7 @@ trait CompanyRegistrationNumberVariationsBaseController extends FrontendControll
 
   protected def userAnswersService: UserAnswersService
 
-  protected def form = formProvider()
+  protected def form(name: String) = formProvider(name)
 
   protected val formProvider: CompanyRegistrationNumberVariationsFormProvider = new CompanyRegistrationNumberVariationsFormProvider()
 
@@ -51,27 +52,27 @@ trait CompanyRegistrationNumberVariationsBaseController extends FrontendControll
 
   def identifier(index: Int): TypedIdentifier[CompanyRegistrationNumber]
 
-  def get(mode: Mode, srn: Option[String], index: Index)
+  def get(mode: Mode, srn: Option[String], index: Index, viewModel: CompanyRegistrationNumberViewModel, companyName: String)
          (implicit request: DataRequest[AnyContent]): Future[Result] = {
 
     val preparedForm =
       request.userAnswers.get(identifier(index)) match {
-        case Some(CompanyRegistrationNumber.Yes(crnNumber)) => form.fill(crnNumber)
-        case _ => form
+        case Some(CompanyRegistrationNumber.Yes(crnNumber)) => form(companyName).fill(crnNumber)
+        case _ => form(companyName)
       }
 
-    val view = companyRegistrationNumberVariations(appConfig, preparedForm, mode, index, existingSchemeName, postCall(mode, srn, index), srn)
+    val view = companyRegistrationNumberVariations(appConfig, viewModel, preparedForm, existingSchemeName, postCall(mode, srn, index), srn)
 
     Future.successful(Ok(view))
   }
 
-  def post(mode: Mode, srn: Option[String], index: Index)
+  def post(mode: Mode, srn: Option[String], index: Index, viewModel: CompanyRegistrationNumberViewModel, companyName: String)
           (implicit request: DataRequest[AnyContent]): Future[Result] = {
-    form.bindFromRequest().fold(
+    form(companyName).bindFromRequest().fold(
       (formWithErrors: Form[_]) =>
 
         Future.successful(BadRequest(
-          companyRegistrationNumberVariations(appConfig, formWithErrors, mode, index, existingSchemeName, postCall(mode, srn, index), srn))),
+          companyRegistrationNumberVariations(appConfig, viewModel, formWithErrors,  existingSchemeName, postCall(mode, srn, index), srn))),
 
       crnNumber => {
         val updatedUserAnswers = request.userAnswers

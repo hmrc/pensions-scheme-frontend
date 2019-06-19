@@ -16,17 +16,19 @@
 
 package forms
 
+import com.google.inject.Inject
 import forms.behaviours.CrnBehaviour
 import play.api.data.Form
+import play.api.i18n.Messages
 
-class CompanyRegistrationNumberVariationsFormProviderSpec extends CrnBehaviour {
+class CompanyRegistrationNumberVariationsFormProviderSpec @Inject() (implicit messages: Messages) extends CrnBehaviour {
 
   private val lengthKey = "messages__error__no_crn_length"
   private val requiredKey = "messages__error__company_number"
   private val invalidKey = "messages__error__crn_invalid"
 
   "A form with a CRNNumber" should {
-    val testForm = new CompanyRegistrationNumberVariationsFormProvider().apply()
+    val testForm = new CompanyRegistrationNumberVariationsFormProvider().apply("company name")
 
     behave like formWithCrnVariations(testForm: Form[String],
       lengthKey: String,
