@@ -88,7 +88,7 @@ object CompanyRegistrationNumberVariationsControllerSpec extends CompanyRegistra
   def viewModel(companyName: String = companyName): CompanyRegistrationNumberViewModel = {
     CompanyRegistrationNumberViewModel(
       title = Message("messages__companyNumber__establisher__title"),
-      heading = Message("messages__companyNumber__heading", companyName),
+      heading = Message("messages__companyNumber__establisher__heading", companyName),
       hint = Message("messages__common__crn_hint", companyName)
     )
   }

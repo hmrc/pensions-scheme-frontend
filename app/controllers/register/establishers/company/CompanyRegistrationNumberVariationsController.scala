@@ -48,7 +48,7 @@ class CompanyRegistrationNumberVariationsController @Inject()(
   private def viewModel(mode: Mode, index: Index, srn: Option[String], companyName: String): CompanyRegistrationNumberViewModel = {
     CompanyRegistrationNumberViewModel(
       title = Message("messages__companyNumber__establisher__title"),
-      heading = Message("messages__companyNumber__heading", companyName),
+      heading = Message("messages__companyNumber__establisher__heading", companyName),
       hint = Message("messages__common__crn_hint", companyName)
     )
   }

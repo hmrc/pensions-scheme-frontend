@@ -26,15 +26,15 @@ import views.html.register.companyRegistrationNumberVariations
 class CompanyRegistrationNumberVariationsViewSpec extends ViewBehaviours {
 
   val name = "test name"
-  val messageKeyPrefix = "companyNumber"
+  val messageKeyPrefix = "companyNumber__trustee"
   val index = Index(0)
   val form = new CompanyRegistrationNumberVariationsFormProvider()(name)
   val submitUrl = controllers.register.trustees.company.routes.CompanyRegistrationNumberController.onSubmit(NormalMode, None, index)
 
   def viewModel(name: String = name): CompanyRegistrationNumberViewModel = {
     CompanyRegistrationNumberViewModel(
-      title = Message("messages__companyNumber__title"),
-      heading = Message("messages__companyNumber__heading", name),
+      title = Message(s"messages__${messageKeyPrefix}__title"),
+      heading = Message(s"messages__${messageKeyPrefix}__heading", name),
       hint = Message("messages__common__crn_hint", name)
     )
   }

@@ -544,10 +544,11 @@ messages__companyRegistrationNumber__title = Does the trustee have a Company Reg
 messages__companyRegistrationNumber__heading = Does the trustee have a Company Registration number?
 messages__companyRegistrationNumber__error__required = Please give an answer for companyRegistrationNumber
 
-messages__companyNumber__title = What is their company number?
-messages__companyNumber__heading = What is {0}’s company number?
+messages__companyNumber__trustee__title = What is the trustees company number?
+messages__companyNumber__trustee__heading = What is {0}’s company number?
 
 messages__companyNumber__establisher__title = What is the establisher’s company number?
+messages__companyNumber__establisher__heading = What is {0}'s company number?
 
 messages__checkYourAnswers__section__contact_details = Contact details
 messages__checkYourAnswers__section__company_details = Company details
