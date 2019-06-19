@@ -54,8 +54,8 @@ object CheckYourAnswers {
   implicit def companyDetails[I <: TypedIdentifier[CompanyDetails]]
   (implicit rds: Reads[CompanyDetails], messages: Messages): CheckYourAnswers[I] = CompanyDetailsCYA()()
 
-  implicit def reference[I <: TypedIdentifier[Reference]]
-  (implicit rds: Reads[Reference], messages: Messages): CheckYourAnswers[I] = ReferenceCYA()()
+  implicit def reference[I <: TypedIdentifier[ReferenceValue]]
+  (implicit rds: Reads[ReferenceValue], messages: Messages): CheckYourAnswers[I] = ReferenceCYA()()
 
   implicit def contactDetails[I <: TypedIdentifier[ContactDetails]](implicit rds: Reads[ContactDetails]): CheckYourAnswers[I] = ContactDetailsCYA()()
 
@@ -617,11 +617,11 @@ case class CompanyDetailsCYA[I <: TypedIdentifier[CompanyDetails]](
 
 }
 
-case class ReferenceCYA[I <: TypedIdentifier[Reference]](
+case class ReferenceCYA[I <: TypedIdentifier[ReferenceValue]](
                                                           nameLabel: String = "messages__common__cya__name",
                                                           hiddenNameLabel: String = "messages__visuallyhidden__common__name") {
 
-  def apply()(implicit rds: Reads[Reference], messages: Messages): CheckYourAnswers[I] = {
+  def apply()(implicit rds: Reads[ReferenceValue], messages: Messages): CheckYourAnswers[I] = {
     new CheckYourAnswers[I] {
 
       override def row(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =

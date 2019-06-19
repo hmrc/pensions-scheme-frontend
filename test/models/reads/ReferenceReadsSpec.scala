@@ -16,7 +16,7 @@
 
 package models.reads
 
-import models.Reference
+import models.ReferenceValue
 import org.scalatest.{MustMatchers, OptionValues, WordSpec}
 import play.api.libs.json._
 
@@ -27,13 +27,13 @@ class ReferenceReadsSpec extends WordSpec with MustMatchers with OptionValues {
 
       "We have Reference with isEditable defaulted to false when no isEditable flag is in json" in {
         val payload = Json.obj("value" -> "test")
-        val result = payload.as[Reference]
+        val result = payload.as[ReferenceValue]
         result.isEditable mustBe false
       }
 
       "We have Reference with isEditable flag to true when isEditable is present in json" in {
         val payload = Json.obj("value" -> "test", "isEditable" -> true)
-        val result = payload.as[Reference]
+        val result = payload.as[ReferenceValue]
         result.isEditable mustBe true
       }
     }

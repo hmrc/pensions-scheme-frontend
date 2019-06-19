@@ -18,7 +18,7 @@ package forms
 
 import com.google.inject.Inject
 import forms.behaviours.VatBehaviours
-import models.Reference
+import models.ReferenceValue
 import play.api.data.Form
 import play.api.i18n.Messages
 
@@ -31,7 +31,7 @@ class VatVariationsFormProviderSpec @Inject() (implicit messages: Messages) exte
   "A form with a Vat" should {
     val testForm = new VatVariationsFormProvider().apply("test company")
 
-    behave like formWithVatVariations(testForm: Form[Reference],
+    behave like formWithVatVariations(testForm: Form[ReferenceValue],
       vatLengthKey: String,
       requiredVatKey: String,
       invalidVatKey: String

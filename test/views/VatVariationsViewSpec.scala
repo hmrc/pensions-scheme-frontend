@@ -17,7 +17,7 @@
 package views
 
 import forms.VatVariationsFormProvider
-import models.Reference
+import models.ReferenceValue
 import play.api.data.Form
 import play.api.mvc.Call
 import play.twirl.api.HtmlFormat
@@ -25,7 +25,7 @@ import viewmodels.{Message, VatViewModel}
 import views.behaviours.QuestionViewBehaviours
 import views.html.vatVariations
 
-class VatVariationsViewSpec extends QuestionViewBehaviours[Reference] {
+class VatVariationsViewSpec extends QuestionViewBehaviours[ReferenceValue] {
 
   val messageKeyPrefix = "vatVariations"
 

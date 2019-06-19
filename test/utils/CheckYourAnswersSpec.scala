@@ -456,13 +456,13 @@ class CheckYourAnswersSpec extends SpecBase with MustMatchers with PropertyCheck
 
       "reference" in {
 
-        val reference = Reference("reference")
+        val reference = ReferenceValue("reference")
 
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(Json.obj(
           "testId" -> reference
         )), PsaId("A0000000"))
 
-        testIdentifier[Reference].row("onwardUrl") must equal(Seq(AnswerRow(
+        testIdentifier[ReferenceValue].row("onwardUrl") must equal(Seq(AnswerRow(
           "messages__common__cya__name",
           Seq(reference.value),
           false,
@@ -706,13 +706,13 @@ class CheckYourAnswersSpec extends SpecBase with MustMatchers with PropertyCheck
 
       "reference" must {
         "not be editable " in {
-          val reference = Reference("reference")
+          val reference = ReferenceValue("reference")
 
           implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(Json.obj(
             "testId" -> reference
           )), PsaId("A0000000"))
 
-          testIdentifier[Reference].row("onwardUrl", UpdateMode) must equal(Seq(AnswerRow(
+          testIdentifier[ReferenceValue].row("onwardUrl", UpdateMode) must equal(Seq(AnswerRow(
             "messages__common__cya__name",
             Seq(reference.value),
             false,
@@ -721,13 +721,13 @@ class CheckYourAnswersSpec extends SpecBase with MustMatchers with PropertyCheck
         }
 
         "be editable" in {
-          val reference = Reference("reference", true)
+          val reference = ReferenceValue("reference", true)
 
           implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(Json.obj(
             "testId" -> reference
           )), PsaId("A0000000"))
 
-          testIdentifier[Reference].row("onwardUrl", UpdateMode) must equal(Seq(AnswerRow(
+          testIdentifier[ReferenceValue].row("onwardUrl", UpdateMode) must equal(Seq(AnswerRow(
             "messages__common__cya__name",
             Seq(reference.value),
             false,
@@ -739,7 +739,7 @@ class CheckYourAnswersSpec extends SpecBase with MustMatchers with PropertyCheck
           implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id",
             UserAnswers(Json.obj()), PsaId("A0000000"))
 
-          testIdentifier[Reference].row("onwardUrl", UpdateMode) must equal(Seq(AnswerRow(
+          testIdentifier[ReferenceValue].row("onwardUrl", UpdateMode) must equal(Seq(AnswerRow(
             "messages__common__cya__name",
             Seq("site.not_entered"),
             true,

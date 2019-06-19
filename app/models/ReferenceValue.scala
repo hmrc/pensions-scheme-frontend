@@ -19,21 +19,21 @@ package models
 import play.api.libs.functional.syntax._
 import play.api.libs.json.{JsPath, Json, Reads, Writes}
 
-case class Reference(value: String, isEditable: Boolean = false)
+case class ReferenceValue(value: String, isEditable: Boolean = false)
 
-object Reference {
-  implicit val reads: Reads[Reference] =
+object ReferenceValue {
+  implicit val reads: Reads[ReferenceValue] =
     ((JsPath \ "value").read[String] and
       ((JsPath \ "isEditable").read[Boolean] orElse Reads.pure(false))
-      ) (Reference.apply _)
+      ) (ReferenceValue.apply _)
 
-  implicit val writes: Writes[Reference] = Json.writes[Reference]
+  implicit val writes: Writes[ReferenceValue] = Json.writes[ReferenceValue]
 
-  def applyEditable(vat: String): Reference = {
-    Reference(vat)
+  def applyEditable(vat: String): ReferenceValue = {
+    ReferenceValue(vat)
   }
 
-  def unapplyEditable(reference: Reference): Option[String] = {
+  def unapplyEditable(reference: ReferenceValue): Option[String] = {
     Some(reference.value)
   }
 }

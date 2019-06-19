@@ -18,14 +18,14 @@ package identifiers.register.establishers.company
 
 import identifiers._
 import identifiers.register.establishers.{EstablishersId, IsEstablisherNewId}
-import models.Reference
+import models.ReferenceValue
 import play.api.i18n.Messages
 import play.api.libs.json.JsPath
 import utils.checkyouranswers.{CheckYourAnswers, ReferenceCYA}
 import utils.{CountryOptions, UserAnswers}
 import viewmodels.AnswerRow
 
-case class CompanyVatVariationsId(index: Int) extends TypedIdentifier[Reference] {
+case class CompanyVatVariationsId(index: Int) extends TypedIdentifier[ReferenceValue] {
   override def path: JsPath = EstablishersId(index).path \ CompanyVatVariationsId.toString
 }
 

@@ -211,7 +211,7 @@ package object utils {
       answers.set(trustees.company.CompanyPayeId(index))(paye).asOpt.value
     }
 
-    def trusteesCompanyVatVariations(index: Int, reference: Reference): UserAnswers = {
+    def trusteesCompanyVatVariations(index: Int, reference: ReferenceValue): UserAnswers = {
       answers.set(trustees.company.CompanyVatVariationsId(index))(reference).asOpt.value
     }
 

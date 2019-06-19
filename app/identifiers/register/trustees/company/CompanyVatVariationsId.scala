@@ -18,14 +18,14 @@ package identifiers.register.trustees.company
 
 import identifiers.TypedIdentifier
 import identifiers.register.trustees.{IsTrusteeNewId, TrusteesId}
-import models.Reference
+import models.ReferenceValue
 import play.api.i18n.Messages
 import play.api.libs.json.JsPath
 import utils.checkyouranswers.{CheckYourAnswers, ReferenceCYA}
 import utils.{CountryOptions, UserAnswers}
 import viewmodels.AnswerRow
 
-case class CompanyVatVariationsId(index: Int) extends TypedIdentifier[Reference] {
+case class CompanyVatVariationsId(index: Int) extends TypedIdentifier[ReferenceValue] {
   override def path: JsPath = TrusteesId(index).path \ CompanyVatVariationsId.toString
 }
 

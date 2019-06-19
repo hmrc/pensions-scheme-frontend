@@ -38,7 +38,7 @@ class PartnershipVatVariationsIdSpec extends SpecBase {
 
   "cya" when {
 
-    def answers: UserAnswers = UserAnswers().set(PartnershipVatVariationsId(0))(Reference("vat")).asOpt.get
+    def answers: UserAnswers = UserAnswers().set(PartnershipVatVariationsId(0))(ReferenceValue("vat")).asOpt.get
 
     "in normal mode" must {
 
@@ -72,7 +72,7 @@ class PartnershipVatVariationsIdSpec extends SpecBase {
       }
 
       "return answers rows with change links if vat is available and editable" in {
-        val answers = UserAnswers().set(PartnershipVatVariationsId(0))(Reference("vat", true)).asOpt.get
+        val answers = UserAnswers().set(PartnershipVatVariationsId(0))(ReferenceValue("vat", true)).asOpt.get
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
         implicit val userAnswers: UserAnswers = request.userAnswers
 

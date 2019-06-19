@@ -19,7 +19,7 @@ package controllers
 import config.FrontendAppConfig
 import identifiers.TypedIdentifier
 import models.requests.DataRequest
-import models.{Mode, Reference}
+import models.{Mode, ReferenceValue}
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{AnyContent, Result}
@@ -41,7 +41,7 @@ trait VatVariationsController extends FrontendController with Retrievals with I1
 
   protected def navigator: Navigator
 
-  def get(id: TypedIdentifier[Reference], viewmodel: VatViewModel, form: Form[Reference])
+  def get(id: TypedIdentifier[ReferenceValue], viewmodel: VatViewModel, form: Form[ReferenceValue])
          (implicit request: DataRequest[AnyContent]): Future[Result] = {
     val preparedForm =
       request.userAnswers.get(id) match {
@@ -52,7 +52,7 @@ trait VatVariationsController extends FrontendController with Retrievals with I1
     Future.successful(Ok(vatVariations(appConfig, preparedForm, viewmodel, existingSchemeName)))
   }
 
-  def post(id: TypedIdentifier[Reference], mode: Mode, viewmodel: VatViewModel, form: Form[Reference])
+  def post(id: TypedIdentifier[ReferenceValue], mode: Mode, viewmodel: VatViewModel, form: Form[ReferenceValue])
           (implicit request: DataRequest[AnyContent]): Future[Result] = {
     form.bindFromRequest().fold(
       (formWithErrors: Form[_]) =>
