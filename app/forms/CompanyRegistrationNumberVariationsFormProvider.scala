@@ -31,7 +31,7 @@ class CompanyRegistrationNumberVariationsFormProvider @Inject() extends CrnMappi
       mapping(
         "companyRegistrationNumber" -> companyRegistrationNumberStringMapping(
           crnLengthKey = Message("messages__error__no_crn_length", name),
-          invalidCRNKey = Message("messages__error__crn_invalid", name)
+          invalidCRNKey = Message("messages__error__crn_invalid_with_company_name", name).resolve
         )
       )(ReferenceValue.applyEditable)(ReferenceValue.unapplyEditable)
     )

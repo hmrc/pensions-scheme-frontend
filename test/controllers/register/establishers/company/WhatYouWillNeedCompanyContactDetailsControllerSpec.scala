@@ -28,13 +28,12 @@ class WhatYouWillNeedCompanyContactDetailsControllerSpec extends ControllerSpecB
 
   def onwardRoute: Call = controllers.routes.SessionExpiredController.onPageLoad
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): WhatYouWillNeedCompanyDetailsController =
-    new WhatYouWillNeedCompanyDetailsController(frontendAppConfig,
+  def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): WhatYouWillNeedCompanyContactDetailsController =
+    new WhatYouWillNeedCompanyContactDetailsController(frontendAppConfig,
       messagesApi,
       FakeAuthAction,
       dataRetrievalAction
     )
-
 
   "WhatYouWillNeedCompanyContactDetailsController" when {
 
