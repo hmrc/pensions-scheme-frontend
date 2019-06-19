@@ -57,6 +57,8 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
         NavigateTo.dontSave(controllers.register.establishers.company.routes.CompanyPreviousAddressController.onPageLoad(mode, srn, index))
       case CompanyPreviousAddressId(index) =>
         NavigateTo.dontSave(controllers.register.establishers.company.routes.CompanyContactDetailsController.onPageLoad(mode, srn, index))
+      case CompanyEmailId(index) =>
+        NavigateTo.dontSave(controllers.register.establishers.company.routes.CompanyPhoneController.onPageLoad(index))
       case AddCompanyDirectorsId(index) =>
         addDirectors(mode, index, from.userAnswers, srn)
       case OtherDirectorsId(index) =>
@@ -110,6 +112,7 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
 
       case CompanyPreviousAddressId(index) =>     exitMiniJourney(index, mode, srn, from.userAnswers)
       case CompanyContactDetailsId(index) =>      exitMiniJourney(index, mode, srn, from.userAnswers)
+      case CompanyEmailId(index) =>               exitMiniJourney(index, mode, srn, from.userAnswers)
       case IsCompanyDormantId(index) =>           exitMiniJourney(index, mode, srn, from.userAnswers)
 
       case OtherDirectorsId(index) =>

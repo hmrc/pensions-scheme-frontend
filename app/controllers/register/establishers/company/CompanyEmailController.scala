@@ -17,28 +17,63 @@
 package controllers.register.establishers.company
 
 import config.FrontendAppConfig
+import controllers.EmailAddressController
 import controllers.actions._
+import forms.EmailFormProvider
+import identifiers.register.establishers.company.{CompanyDetailsId, CompanyEmailId}
 import javax.inject.Inject
 import models.{Index, Mode}
+import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import services.UserAnswersService
+import utils.Navigator
+import utils.annotations.EstablishersCompany
+import viewmodels.{EmailAddressViewModel, Message}
 
-import scala.concurrent.Future
-
-class CompanyEmailController @Inject()(appConfig: FrontendAppConfig,
+class CompanyEmailController @Inject()(val appConfig: FrontendAppConfig,
                                        override val messagesApi: MessagesApi,
                                        authenticate: AuthAction,
-                                       getData: DataRetrievalAction
-                                                    ) extends FrontendController with I18nSupport {
+                                       getData: DataRetrievalAction,
+                                       override val userAnswersService: UserAnswersService,
+                                       allowAccess: AllowAccessActionProvider,
+                                       requireData: DataRequiredAction,
+                                       @EstablishersCompany val navigator: Navigator,
+                                       formProvider: EmailFormProvider
+                                      ) extends EmailAddressController with I18nSupport {
 
-  def onPageLoad(mode: Mode, srn: Option[String] = None, index: Index): Action[AnyContent] = (authenticate andThen getData()).async {
-    implicit request =>
-      Future.successful(Ok)
-  }
+  protected val form: Form[String] = formProvider()
 
-  def onSubmit(mode: Mode, srn: Option[String] = None, index: Index): Action[AnyContent] = authenticate {
+  private def viewModel(mode: Mode, srn: Option[String], index: Index): Retrieval[EmailAddressViewModel] =
+    Retrieval {
+      implicit request =>
+        CompanyDetailsId(index).retrieve.right.map {
+          details =>
+            EmailAddressViewModel(
+              routes.CompanyEmailController.onSubmit(mode, srn, index),
+              Message("messages__establisher_email__title"),
+              Message("messages__establisher_company_email__heading", details.companyName),
+              Some(Message("messages__establisher_email__hint")),
+              srn = srn
+            )
+        }
+    }
+
+  def onPageLoad(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+      implicit request =>
+        viewModel(mode, srn, index).retrieve.right.map {
+          vm =>
+            get(CompanyEmailId(index), form, vm)
+        }
+    }
+
+  def onSubmit(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
     implicit request =>
-      Redirect(controllers.routes.IndexController.onPageLoad())
+      viewModel(mode, srn, index).retrieve.right.map {
+        vm =>
+          post(CompanyEmailId(index), mode, form, vm)
+      }
   }
 }

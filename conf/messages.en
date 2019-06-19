@@ -91,7 +91,7 @@ messages__error__common__email__dot_after_at_sign = Enter an email address in th
 messages__error__common__email__ends_with_dot = Enter an email address with at least a character after the last dot
 messages__error__common__email__address__required = Enter an email address
 messages__error__common__email__address__length = Enter an email address using less than 133 characters
-messages__error__common__email__address__invalid = Enter an email address in the correct format - you might have to check that you have the correct email
+messages__error__common__email__address__invalid = Enter an email address in the correct format, like name@example.com
 
 messages__common__cya__name = Name
 messages__common__cya__address = Address
@@ -1504,3 +1504,7 @@ messages__payeVariations__hint = For example, 123/AB456
 messages__payeVariations__error_invalid = Enter {0}’s employer PAYE reference in the correct format
 messages__payeVariations__error_length = Enter {0}’s employer PAYE reference using 16 characters or less
 messages__payeVariations__error_required = Enter an employer PAYE reference
+
+messages__establisher_email__title =  What is the establisher’s email address?
+messages__establisher_company_email__heading = What is {0}’s email address?
+messages__establisher_email__hint = We will only use this to contact about pension scheme administration.
