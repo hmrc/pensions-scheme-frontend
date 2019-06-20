@@ -19,12 +19,12 @@ package navigators
 import com.google.inject.Inject
 import config.{FeatureSwitchManagementService, FrontendAppConfig}
 import connectors.UserAnswersCacheConnector
+import controllers.register.establishers.company.{routes => establisherCompanyRoutes}
 import identifiers.EstablishersOrTrusteesChangedId
 import identifiers.register.establishers.IsEstablisherNewId
 import identifiers.register.establishers.company._
 import models.Mode._
 import models._
-import controllers.register.establishers.company.{routes => establisherCompanyRoutes}
 import play.api.mvc.Call
 import utils.{Navigator, Toggles, UserAnswers}
 
@@ -84,6 +84,8 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
         NavigateTo.dontSave(controllers.register.establishers.company.routes.CompanyPreviousAddressController.onPageLoad(mode, srn, index))
       case CompanyPreviousAddressId(index) =>
         NavigateTo.dontSave(controllers.register.establishers.company.routes.CompanyContactDetailsController.onPageLoad(mode, srn, index))
+      case CompanyEmailId(index) =>
+        NavigateTo.dontSave(controllers.register.establishers.company.routes.CompanyPhoneController.onPageLoad(mode, srn, index))
       case CompanyPhoneId(index) =>
         NavigateTo.dontSave(controllers.register.establishers.company.routes.CheckYourAnswersCompanyContactDetailsController.onPageLoad(index))
       case AddCompanyDirectorsId(index) =>
@@ -142,6 +144,7 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
 
       case CompanyPreviousAddressId(index) =>     exitMiniJourney(index, mode, srn, from.userAnswers, cya(index, mode, srn))
       case CompanyContactDetailsId(index) =>      exitMiniJourney(index, mode, srn, from.userAnswers, cya(index, mode, srn))
+      case CompanyEmailId(index) =>               exitMiniJourney(index, mode, srn, from.userAnswers, cyaContactDetails(index))
       case CompanyPhoneId(index) =>               exitMiniJourney(index, mode, srn, from.userAnswers, cyaContactDetails(index))
       case IsCompanyDormantId(index) =>           exitMiniJourney(index, mode, srn, from.userAnswers, cya(index, mode, srn))
 

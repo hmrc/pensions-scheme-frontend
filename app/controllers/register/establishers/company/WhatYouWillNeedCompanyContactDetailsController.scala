@@ -46,6 +46,6 @@ class WhatYouWillNeedCompanyContactDetailsController @Inject()(appConfig: Fronte
   def onSubmit(mode: Mode, srn: Option[String] = None, index: Index): Action[AnyContent] = (authenticate andThen
     getData(mode, srn) andThen requireData).async {
     implicit request =>
-      Future.successful(Redirect(controllers.register.establishers.company.routes.CompanyEmailController.onPageLoad(index)))
+      Future.successful(Redirect(controllers.register.establishers.company.routes.CompanyEmailController.onPageLoad(mode, srn, index)))
   }
 }
