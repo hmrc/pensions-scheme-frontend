@@ -72,7 +72,6 @@ object CheckYourAnswers {
 
     def apply()(implicit rds: Reads[String], countryOptions: CountryOptions): CheckYourAnswers[I] = {
       new CheckYourAnswers[I] {
-        println("\n\n\n herer\n\n\n")
         private def stringCYARow(id: I, changeUrl: Option[Link], userAnswers: UserAnswers): Seq[AnswerRow] = {
           userAnswers.get(id).map {
             string =>

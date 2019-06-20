@@ -34,7 +34,7 @@ object CompanyEmailId {
 
   implicit def cya(implicit messages: Messages, countryOptions: CountryOptions, userAnswers: UserAnswers): CheckYourAnswers[CompanyEmailId] = new
       CheckYourAnswers[CompanyEmailId] {
-    private val hiddenLabel = Some(messages("messages__common_email__visually_hidden_change_label"))
+    private val hiddenLabel = Some(messages("messages__common_company_email__visually_hidden_change_label"))
 
     override def row(id: CompanyEmailId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
       StringCYA[CompanyEmailId](userAnswers.get(CompanyDetailsId(id.index)).map(companyDetails =>

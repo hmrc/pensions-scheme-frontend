@@ -22,7 +22,7 @@ import controllers.behaviours.ControllerAllowChangeBehaviour
 import identifiers.register.establishers.company.{CompanyDetailsId, CompanyEmailId, CompanyPhoneId}
 import models.Mode.checkMode
 import models.requests.DataRequest
-import models.{Index, Mode, NormalMode, UpdateMode}
+import models._
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.mockito.MockitoSugar
 import play.api.mvc.{AnyContent, Call}
@@ -30,35 +30,32 @@ import play.api.test.Helpers._
 import services.FakeUserAnswersService
 import utils.checkyouranswers.CheckYourAnswers.StringCYA
 import utils.{AllowChangeHelper, CountryOptions, FakeCountryOptions, FakeDataRequest, UserAnswers}
-import viewmodels.{AnswerRow, AnswerSection}
+import viewmodels.AnswerSection
 import views.html.check_your_answers
 
 class CheckYourAnswersCompanyContactDetailsControllerSpec extends ControllerSpecBase with MockitoSugar
   with BeforeAndAfterEach with ControllerAllowChangeBehaviour {
 
-  val index = Index(0)
-  val srn = Some("test-srn")
-
-  def onwardRoute: Call = controllers.routes.SessionExpiredController.onPageLoad()
-
+  private val index = Index(0)
+  private val srn = Some("test-srn")
   private implicit val fakeCountryOptions: CountryOptions = new FakeCountryOptions
 
-  def postUrl: Call = routes.CheckYourAnswersCompanyContactDetailsController.onSubmit(NormalMode, None, index)
+  private def submitUrl(mode: Mode = NormalMode, srn: Option[String] = None): Call =
+    routes.CheckYourAnswersCompanyContactDetailsController.onSubmit(mode, srn, index)
 
-  private def answerSection(mode: Mode)(implicit request: DataRequest[AnyContent]): Seq[AnswerSection] = {
+  private def answerSection(mode: Mode, srn: Option[String] = None)(implicit request: DataRequest[AnyContent]): Seq[AnswerSection] = {
     val userAnswers = request.userAnswers
     Seq(AnswerSection(None,
       StringCYA[CompanyEmailId](userAnswers.get(CompanyDetailsId(index)).map(companyDetails =>
         messages("messages__common_email__cya_label", companyDetails.companyName)),
-        Some(messages("messages__common_email__visually_hidden_change_label")))().row(CompanyEmailId(index))(
+        Some(messages("messages__common_company_email__visually_hidden_change_label")))().row(CompanyEmailId(index))(
         routes.CompanyEmailController.onPageLoad(checkMode(mode), srn, Index(index)).url, userAnswers) ++
 
         StringCYA[CompanyPhoneId](userAnswers.get(CompanyDetailsId(index)).map(companyDetails =>
           messages("messages__common_phone__cya_label", companyDetails.companyName)),
-          Some(messages("messages__common_phone__visually_hidden_change_label")))().row(CompanyPhoneId(index))(
+          Some(messages("messages__common_company_phone__visually_hidden_change_label")))().row(CompanyPhoneId(index))(
           routes.CompanyPhoneController.onPageLoad(checkMode(mode), srn, Index(index)).url, userAnswers)
-    )
-    )
+    ))
   }
 
   def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData,
@@ -74,7 +71,7 @@ class CheckYourAnswersCompanyContactDetailsControllerSpec extends ControllerSpec
       FakeUserAnswersService
     )
 
-  def viewAsString(answerSections: Seq[AnswerSection], srn: Option[String] = None, postUrl: Call = postUrl): String =
+  def viewAsString(answerSections: Seq[AnswerSection], srn: Option[String] = None, postUrl: Call = submitUrl()): String =
     check_your_answers(
       frontendAppConfig,
       answerSections,
@@ -85,40 +82,37 @@ class CheckYourAnswersCompanyContactDetailsControllerSpec extends ControllerSpec
       hideSaveAndContinueButton = false
     )(fakeRequest, messages).toString
 
-  private val fullAnswers = UserAnswers().set(CompanyEmailId(0))("test@test.com").flatMap(_.set(CompanyPhoneId(0))("12345")).asOpt.value
+  private val fullAnswers = UserAnswers().set(CompanyEmailId(0))("test@test.com").flatMap(_.set(CompanyPhoneId(0))("12345"))
+    .flatMap(_.set(CompanyDetailsId(0))(CompanyDetails("test company"))).asOpt.value
 
   "CheckYourAnswersCompanyContactDetailsController" when {
 
     "on a GET" must {
-      "return OK and the correct view with full answers for NormalMode" in {
-        implicit val request: DataRequest[AnyContent] = FakeDataRequest(fullAnswers)
-        val result = controller(fullAnswers.dataRetrievalAction).onPageLoad(NormalMode, None, index)(request)
+      "return OK and the correct view with full answers" when {
+        "Normal Mode" in {
+          implicit val request: DataRequest[AnyContent] = FakeDataRequest(fullAnswers)
+          val result = controller(fullAnswers.dataRetrievalAction).onPageLoad(NormalMode, None, index)(request)
 
-        status(result) mustBe OK
-        contentAsString(result) mustBe viewAsString(answerSection(NormalMode))
-      }
+          status(result) mustBe OK
 
-      "return OK and the correct view with full answers for UpdateMode" in {
-        implicit val request: DataRequest[AnyContent] = FakeDataRequest(fullAnswers)
-        val result = controller(fullAnswers.dataRetrievalAction).onPageLoad(NormalMode, None, index)(request)
+          contentAsString(result) mustBe viewAsString(answerSection(NormalMode))
+        }
+        "Update Mode" in {
+          implicit val request: DataRequest[AnyContent] = FakeDataRequest(fullAnswers)
+          val result = controller(fullAnswers.dataRetrievalAction).onPageLoad(UpdateMode, srn, index)(request)
 
-        status(result) mustBe OK
-        contentAsString(result) mustBe viewAsString(answerSection(UpdateMode))
-      }
-
-      "return OK and the correct view" in {
-        val result = controller().onPageLoad(NormalMode, None, Index(1))(fakeRequest)
-
-        status(result) mustBe OK
+          status(result) mustBe OK
+          contentAsString(result) mustBe viewAsString(answerSection(UpdateMode, srn), postUrl = submitUrl(UpdateMode, srn), srn = srn)
+        }
       }
     }
 
     "on a POST" must {
-      "redirect to relavant page" in {
+      "redirect to task list page" in {
         val result = controller().onSubmit(NormalMode, None, Index(1))(fakeRequest)
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(controllers.routes.IndexController.onPageLoad().url)
+        redirectLocation(result) mustBe Some(controllers.routes.SchemeTaskListController.onPageLoad(NormalMode, None).url)
       }
     }
   }
