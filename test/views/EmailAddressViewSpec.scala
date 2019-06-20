@@ -20,7 +20,7 @@ import forms.EmailFormProvider
 import play.api.data.Form
 import play.api.mvc.Call
 import play.twirl.api.HtmlFormat
-import viewmodels.{EmailAddressViewModel, Message}
+import viewmodels.{CommonFormWithHintViewModel, Message}
 import views.behaviours.QuestionViewBehaviours
 import views.html.emailAddress
 
@@ -30,7 +30,7 @@ class EmailAddressViewSpec extends QuestionViewBehaviours[String] {
   val form = new EmailFormProvider().apply()
   val companyName = "test company"
 
-  val viewModel = EmailAddressViewModel(
+  val viewModel = CommonFormWithHintViewModel(
     postCall = Call("GET", "www.example.com"),
     Message("messages__establisher_email__title"),
     Message("messages__common_email__heading", companyName),

@@ -19,18 +19,38 @@ package navigators
 import com.google.inject.Inject
 import config.{FeatureSwitchManagementService, FrontendAppConfig}
 import connectors.UserAnswersCacheConnector
+import controllers.register.establishers.company.{routes => establisherCompanyRoutes}
 import identifiers.EstablishersOrTrusteesChangedId
 import identifiers.register.establishers.IsEstablisherNewId
 import identifiers.register.establishers.company._
 import models.Mode._
 import models._
-import controllers.register.establishers.company.{routes => establisherCompanyRoutes}
+import play.api.mvc.Call
 import utils.{Navigator, Toggles, UserAnswers}
 
 //scalastyle:off cyclomatic.complexity
 class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector,
                                              appConfig: FrontendAppConfig,
                                              featureSwitchManagementService: FeatureSwitchManagementService) extends Navigator {
+
+  private def exitMiniJourney(index: Index, mode: Mode, srn: Option[String],
+                              answers: UserAnswers, cyaPage: Call): Option[NavigateTo] =
+    if(mode == CheckMode || mode == NormalMode){
+      NavigateTo.dontSave(cyaPage)
+    } else {
+      if(answers.get(IsEstablisherNewId(index)).getOrElse(false))
+        NavigateTo.dontSave(cyaPage)
+      else anyMoreChanges(srn)
+    }
+
+  private def cya(index: Int, mode: Mode, srn: Option[String]): Call =
+    controllers.register.establishers.company.routes.CheckYourAnswersController.onPageLoad(journeyMode(mode), srn, index)
+
+  private def cyaContactDetails(index: Int): Call =
+    controllers.register.establishers.company.routes.CheckYourAnswersCompanyContactDetailsController.onPageLoad(index)
+
+  private def anyMoreChanges(srn: Option[String]): Option[NavigateTo] =
+    NavigateTo.dontSave(controllers.routes.AnyMoreChangesController.onPageLoad(srn))
 
   protected def routes(from: NavigateFrom, mode: Mode, srn: Option[String]): Option[NavigateTo] =
     from.id match {
@@ -83,15 +103,15 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
 
   protected def editRoutes(from: NavigateFrom, mode: Mode, srn: Option[String]): Option[NavigateTo] =
     from.id match {
-      case CompanyDetailsId(index) =>             exitMiniJourney(index, mode, srn, from.userAnswers)
-      case HasCompanyNumberId(index) =>           exitMiniJourney(index, mode, srn, from.userAnswers)
-      case CompanyVatId(index) =>                 exitMiniJourney(index, mode, srn, from.userAnswers)
-      case CompanyVatVariationsId(index) =>       exitMiniJourney(index, mode, srn, from.userAnswers)
-      case CompanyPayeId(index) =>                exitMiniJourney(index, mode, srn, from.userAnswers)
-      case CompanyPayeVariationsId(index) =>      exitMiniJourney(index, mode, srn, from.userAnswers)
-      case CompanyRegistrationNumberId(index) =>  exitMiniJourney(index, mode, srn, from.userAnswers)
-      case CompanyUniqueTaxReferenceId(index) =>  exitMiniJourney(index, mode, srn, from.userAnswers)
-      case NoCompanyUTRId(index) =>               exitMiniJourney(index, mode, srn, from.userAnswers)
+      case CompanyDetailsId(index) =>             exitMiniJourney(index, mode, srn, from.userAnswers, cya(index, mode, srn))
+      case HasCompanyNumberId(index) =>           exitMiniJourney(index, mode, srn, from.userAnswers, cya(index, mode, srn))
+      case CompanyVatId(index) =>                 exitMiniJourney(index, mode, srn, from.userAnswers, cya(index, mode, srn))
+      case CompanyVatVariationsId(index) =>       exitMiniJourney(index, mode, srn, from.userAnswers, cya(index, mode, srn))
+      case CompanyPayeId(index) =>                exitMiniJourney(index, mode, srn, from.userAnswers, cya(index, mode, srn))
+      case CompanyPayeVariationsId(index) =>      exitMiniJourney(index, mode, srn, from.userAnswers, cya(index, mode, srn))
+      case CompanyRegistrationNumberId(index) =>  exitMiniJourney(index, mode, srn, from.userAnswers, cya(index, mode, srn))
+      case CompanyUniqueTaxReferenceId(index) =>  exitMiniJourney(index, mode, srn, from.userAnswers, cya(index, mode, srn))
+      case NoCompanyUTRId(index) =>               exitMiniJourney(index, mode, srn, from.userAnswers, cya(index, mode, srn))
 
       case CompanyPostCodeLookupId(index) =>
         NavigateTo.dontSave(controllers.register.establishers.company.routes.CompanyAddressListController.onPageLoad(mode, srn, index))
@@ -102,7 +122,7 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
       case CompanyAddressId(index) => {
         val isNew = from.userAnswers.get(IsEstablisherNewId(index)).contains(true)
         if (isNew || mode == CheckMode) {
-          checkYourAnswers(index, journeyMode(mode), srn)
+          NavigateTo.dontSave(cya(index, mode, srn))
         } else {
           NavigateTo.dontSave(controllers.register.establishers.company.routes.CompanyAddressYearsController.onPageLoad(mode, srn, index))
         }
@@ -119,10 +139,10 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
       case CompanyPreviousAddressListId(index) =>
         NavigateTo.dontSave(controllers.register.establishers.company.routes.CompanyPreviousAddressController.onPageLoad(mode, srn, index))
 
-      case CompanyPreviousAddressId(index) =>     exitMiniJourney(index, mode, srn, from.userAnswers)
-      case CompanyContactDetailsId(index) =>      exitMiniJourney(index, mode, srn, from.userAnswers)
-      case CompanyEmailId(index) =>               exitMiniJourney(index, mode, srn, from.userAnswers)
-      case IsCompanyDormantId(index) =>           exitMiniJourney(index, mode, srn, from.userAnswers)
+      case CompanyPreviousAddressId(index) =>     exitMiniJourney(index, mode, srn, from.userAnswers, cya(index, mode, srn))
+      case CompanyContactDetailsId(index) =>      exitMiniJourney(index, mode, srn, from.userAnswers, cya(index, mode, srn))
+      case CompanyEmailId(index) =>               exitMiniJourney(index, mode, srn, from.userAnswers, cyaContactDetails(index))
+      case IsCompanyDormantId(index) =>           exitMiniJourney(index, mode, srn, from.userAnswers, cya(index, mode, srn))
 
       case OtherDirectorsId(index) =>
         NavigateTo.dontSave(controllers.register.establishers.company.routes.CompanyReviewController.onPageLoad(journeyMode(mode), srn, index))
@@ -152,21 +172,6 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
 
   override protected def checkUpdateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] = editRoutes(from, CheckUpdateMode, srn)
 
-  private def exitMiniJourney(index: Index, mode: Mode, srn: Option[String], answers: UserAnswers): Option[NavigateTo] =
-    if(mode == CheckMode || mode == NormalMode){
-      checkYourAnswers(index, journeyMode(mode), srn)
-    } else {
-      if(answers.get(IsEstablisherNewId(index)).getOrElse(false))
-        checkYourAnswers(index, journeyMode(mode), srn)
-      else anyMoreChanges(srn)
-    }
-
-  private def checkYourAnswers(index: Int, mode: Mode, srn: Option[String]): Option[NavigateTo] =
-    NavigateTo.dontSave(controllers.register.establishers.company.routes.CheckYourAnswersController.onPageLoad(mode, srn, index))
-
-  private def anyMoreChanges(srn: Option[String]): Option[NavigateTo] =
-    NavigateTo.dontSave(controllers.routes.AnyMoreChangesController.onPageLoad(srn))
-
   private def addressYearsRoutes(index: Int, answers: UserAnswers, mode: Mode, srn: Option[String]): Option[NavigateTo] = {
     answers.get(CompanyAddressYearsId(index)) match {
       case Some(AddressYears.UnderAYear) =>
@@ -185,7 +190,7 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
           NavigateTo.dontSave(controllers.register.establishers.company.routes.CompanyConfirmPreviousAddressController.onPageLoad(index, srn))
         else
           NavigateTo.dontSave(controllers.register.establishers.company.routes.CompanyPreviousAddressPostcodeLookupController.onPageLoad(mode, srn, index))
-      case Some(AddressYears.OverAYear) => exitMiniJourney(index, mode, srn, answers)
+      case Some(AddressYears.OverAYear) => exitMiniJourney(index, mode, srn, answers, cya(index, mode, srn))
       case None =>
         NavigateTo.dontSave(controllers.routes.SessionExpiredController.onPageLoad())
     }

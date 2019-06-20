@@ -71,8 +71,8 @@ class EstablishersCompanyNavigatorSpec extends SpecBase with MustMatchers with N
     (CompanyPreviousAddressListId(0),             emptyAnswers,                     companyPreviousAddress(mode),       true,           Some(companyPreviousAddress(checkMode(mode))),  true),
     (CompanyPreviousAddressId(0),                 emptyAnswers,                     companyContactDetails(mode),        true,           Some(exitJourney(mode, emptyAnswers)),                   true),
     (CompanyPreviousAddressId(0),                 newEstablisher,                   companyContactDetails(mode),        true,           Some(exitJourney(mode, newEstablisher)),                   true),
-    (CompanyEmailId(0),                           newEstablisher,                   companyPhoneNumber(mode),           true,           Some(checkYourAnswers(mode)),                   true),
-    (CompanyEmailId(0),                           emptyAnswers,                     companyPhoneNumber(mode),           true,           Some(exitJourney(mode, emptyAnswers)),                   true),
+    (CompanyEmailId(0),                           newEstablisher,                   companyPhoneNumber(mode),           true,           Some(cyaCompanyContactDetails(mode)),                   true),
+    (CompanyEmailId(0),                           emptyAnswers,                     companyPhoneNumber(mode),           true,           Some(exitJourneyContactDetails(mode, emptyAnswers)),                   true),
     (AddCompanyDirectorsId(0),                    emptyAnswers,                     directorDetails(0, mode),     true,           None,                                           true),
     (AddCompanyDirectorsId(0),                    addCompanyDirectorsTrue,          directorDetails(1, mode),     true,           None,                                           true),
     (AddCompanyDirectorsId(0),                    addCompanyDirectorsFalse,         if(mode == UpdateMode) taskList else companyReview(mode),                true,           None,                                           true),
@@ -167,6 +167,9 @@ object EstablishersCompanyNavigatorSpec extends OptionValues with Enumerable.Imp
   private def companyPhoneNumber(mode: Mode): Call =
     controllers.register.establishers.company.routes.CompanyPhoneController.onPageLoad(0)
 
+  private def cyaCompanyContactDetails(mode: Mode) =
+    controllers.register.establishers.company.routes.CheckYourAnswersCompanyContactDetailsController.onPageLoad(0)
+
   private def companyUTR(mode: Mode): Call =
     controllers.register.establishers.company.routes.CompanyUniqueTaxReferenceController.onPageLoad(mode, None, 0)
 
@@ -205,6 +208,11 @@ object EstablishersCompanyNavigatorSpec extends OptionValues with Enumerable.Imp
 
   private def exitJourney(mode: Mode, answers:UserAnswers, index:Int = 0) = if (mode == NormalMode) checkYourAnswers(mode) else {
     if(answers.get(IsEstablisherNewId(index)).getOrElse(false)) checkYourAnswers(mode)
+    else anyMoreChanges
+  }
+
+  private def exitJourneyContactDetails(mode: Mode, answers:UserAnswers, index:Int = 0) = if (mode == NormalMode) cyaCompanyContactDetails(mode) else {
+    if(answers.get(IsEstablisherNewId(index)).getOrElse(false)) cyaCompanyContactDetails(mode)
     else anyMoreChanges
   }
 

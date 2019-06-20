@@ -16,9 +16,9 @@
 
 @import config.FrontendAppConfig
 @import uk.gov.hmrc.play.views.html._
-@import viewmodels.EmailAddressViewModel
+@import viewmodels.CommonFormWithHintViewModel
 
-@(appConfig: FrontendAppConfig, form: Form[_], viewModel: EmailAddressViewModel, schemeName: Option[String])(implicit request: Request[_], messages: Messages)
+@(appConfig: FrontendAppConfig, form: Form[_], viewModel: CommonFormWithHintViewModel, schemeName: Option[String])(implicit request: Request[_], messages: Messages)
 
 @main_template(
     title = viewModel.title,

@@ -27,7 +27,7 @@ import play.api.mvc.Call
 import play.api.test.Helpers._
 import services.FakeUserAnswersService
 import utils.FakeNavigator
-import viewmodels.{EmailAddressViewModel, Message}
+import viewmodels.{CommonFormWithHintViewModel, Message}
 import views.html.emailAddress
 
 class CompanyEmailControllerSpec extends ControllerSpecBase with MockitoSugar with BeforeAndAfterEach {
@@ -54,7 +54,7 @@ class CompanyEmailControllerSpec extends ControllerSpecBase with MockitoSugar wi
     emailAddress(
       frontendAppConfig,
       form,
-      EmailAddressViewModel(
+      CommonFormWithHintViewModel(
         routes.CompanyEmailController.onSubmit(NormalMode, None, firstIndex),
         Message("messages__establisher_email__title"),
         Message("messages__common_email__heading", "test company name"),

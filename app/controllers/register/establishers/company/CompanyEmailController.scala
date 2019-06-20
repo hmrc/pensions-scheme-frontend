@@ -29,7 +29,7 @@ import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
 import utils.Navigator
 import utils.annotations.EstablishersCompany
-import viewmodels.{EmailAddressViewModel, Message}
+import viewmodels.{CommonFormWithHintViewModel, Message}
 
 class CompanyEmailController @Inject()(val appConfig: FrontendAppConfig,
                                        override val messagesApi: MessagesApi,
@@ -44,12 +44,12 @@ class CompanyEmailController @Inject()(val appConfig: FrontendAppConfig,
 
   protected val form: Form[String] = formProvider()
 
-  private def viewModel(mode: Mode, srn: Option[String], index: Index): Retrieval[EmailAddressViewModel] =
+  private def viewModel(mode: Mode, srn: Option[String], index: Index): Retrieval[CommonFormWithHintViewModel] =
     Retrieval {
       implicit request =>
         CompanyDetailsId(index).retrieve.right.map {
           details =>
-            EmailAddressViewModel(
+            CommonFormWithHintViewModel(
               routes.CompanyEmailController.onSubmit(mode, srn, index),
               Message("messages__establisher_email__title"),
               Message("messages__common_email__heading", details.companyName),
