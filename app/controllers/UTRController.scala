@@ -29,11 +29,11 @@ import utils.{Navigator, UserAnswers}
 import viewmodels.UTRViewModel
 import views.html.utr
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 trait UTRController extends FrontendController with Retrievals with I18nSupport {
 
-  protected implicit val ec = play.api.libs.concurrent.Execution.defaultContext
+  protected implicit def ec: ExecutionContext
 
   protected def appConfig: FrontendAppConfig
 

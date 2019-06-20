@@ -29,6 +29,8 @@ import utils.Navigator
 import utils.annotations.TrusteesIndividual
 import viewmodels.{ContactDetailsViewModel, Message}
 
+import scala.concurrent.ExecutionContext
+
 class TrusteeContactDetailsController @Inject()(
                                                  @TrusteesIndividual override val navigator: Navigator,
                                                  override val appConfig: FrontendAppConfig,
@@ -39,7 +41,7 @@ class TrusteeContactDetailsController @Inject()(
                                                  allowAccess: AllowAccessActionProvider,
                                                  requireData: DataRequiredAction,
                                                  formProvider: ContactDetailsFormProvider
-                                               ) extends controllers.ContactDetailsController {
+                                               )(implicit val ec: ExecutionContext) extends controllers.ContactDetailsController {
 
   private val form = formProvider()
 

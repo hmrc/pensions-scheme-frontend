@@ -40,7 +40,7 @@ import utils.{FakeNavigator, Navigator, UserAnswers}
 import viewmodels.address.AddressYearsViewModel
 import views.html.address.addressYears
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 object AddressYearsControllerSpec {
 
@@ -52,7 +52,7 @@ object AddressYearsControllerSpec {
                                   override val userAnswersService: UserAnswersService,
                                   override val navigator: Navigator,
                                   formProvider: AddressYearsFormProvider
-                                ) extends AddressYearsController {
+                                )(implicit val ec: ExecutionContext) extends AddressYearsController {
 
     def onPageLoad(viewmodel: AddressYearsViewModel, answers: UserAnswers): Future[Result] = {
       get(FakeIdentifier, formProvider("error"), viewmodel)(DataRequest(FakeRequest(), "cacheId", answers, PsaId("A0000000")))

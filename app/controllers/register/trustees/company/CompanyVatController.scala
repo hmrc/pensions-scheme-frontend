@@ -31,6 +31,8 @@ import utils.Navigator
 import utils.annotations.TrusteesCompany
 import viewmodels.{Message, VatViewModel}
 
+import scala.concurrent.ExecutionContext
+
 
 class CompanyVatController @Inject()(
                                       override val appConfig: FrontendAppConfig,
@@ -42,7 +44,7 @@ class CompanyVatController @Inject()(
                                       allowAccess: AllowAccessActionProvider,
                                       requireData: DataRequiredAction,
                                       formProvider: VatFormProvider
-                                        ) extends VatController {
+                                    )(implicit val ec: ExecutionContext) extends VatController {
 
   private def viewmodel(mode: Mode, index: Index, srn: Option[String]): Retrieval[VatViewModel] =
     Retrieval {

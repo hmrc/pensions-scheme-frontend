@@ -31,6 +31,8 @@ import utils.Navigator
 import utils.annotations.EstablishersCompany
 import viewmodels.{CommonFormWithHintViewModel, Message}
 
+import scala.concurrent.ExecutionContext
+
 class CompanyEmailController @Inject()(val appConfig: FrontendAppConfig,
                                        override val messagesApi: MessagesApi,
                                        authenticate: AuthAction,
@@ -40,7 +42,7 @@ class CompanyEmailController @Inject()(val appConfig: FrontendAppConfig,
                                        requireData: DataRequiredAction,
                                        @EstablishersCompany val navigator: Navigator,
                                        formProvider: EmailFormProvider
-                                      ) extends EmailAddressController with I18nSupport {
+                                      )(implicit val ec: ExecutionContext) extends EmailAddressController with I18nSupport {
 
   protected val form: Form[String] = formProvider()
 

@@ -30,6 +30,8 @@ import utils.Navigator
 import utils.annotations.EstablishersPartner
 import viewmodels.NinoViewModel
 
+import scala.concurrent.ExecutionContext
+
 class PartnerNinoNewController @Inject()(
                                           val appConfig: FrontendAppConfig,
                                           val messagesApi: MessagesApi,
@@ -40,7 +42,7 @@ class PartnerNinoNewController @Inject()(
                                           allowAccess: AllowAccessActionProvider,
                                           requireData: DataRequiredAction,
                                           val formProvider: NinoNewFormProvider
-                                        ) extends NinoController with I18nSupport {
+                                        )(implicit val ec: ExecutionContext) extends NinoController with I18nSupport {
 
   private[controllers] val postCall = controllers.register.establishers.partnership.partner.routes.PartnerNinoNewController.onSubmit _
   private[controllers] val title: String = "messages__partner_yes_nino__title"

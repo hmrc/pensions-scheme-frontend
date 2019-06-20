@@ -32,11 +32,11 @@ import utils.{Navigator, UserAnswers}
 import viewmodels.address.AddressListViewModel
 import views.html.address.addressList
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 trait AddressListController extends FrontendController with Retrievals  with I18nSupport {
 
-  protected implicit val ec = play.api.libs.concurrent.Execution.defaultContext
+  protected implicit def ec: ExecutionContext
 
   protected def appConfig: FrontendAppConfig
 

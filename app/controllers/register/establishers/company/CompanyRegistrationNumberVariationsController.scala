@@ -30,6 +30,8 @@ import utils.Navigator
 import utils.annotations.EstablishersCompany
 import viewmodels.{CompanyRegistrationNumberViewModel, Message}
 
+import scala.concurrent.ExecutionContext
+
 class CompanyRegistrationNumberVariationsController @Inject()(
                                                                override val appConfig: FrontendAppConfig,
                                                                override val messagesApi: MessagesApi,
@@ -39,11 +41,11 @@ class CompanyRegistrationNumberVariationsController @Inject()(
                                                                getData: DataRetrievalAction,
                                                                allowAccess: AllowAccessActionProvider,
                                                                requireData: DataRequiredAction
-                                                             ) extends CompanyRegistrationNumberVariationsBaseController {
+                                                             )(implicit val ec: ExecutionContext) extends CompanyRegistrationNumberVariationsBaseController {
 
   def identifier(index: Int): TypedIdentifier[ReferenceValue] = CompanyRegistrationNumberVariationsId(index)
 
-  def postCall: (Mode, Option[String], Index) => Call = routes.CompanyRegistrationNumberVariationsController.onSubmit _
+  def postCall: (Mode, Option[String], Index) => Call = routes.CompanyRegistrationNumberVariationsController.onSubmit
 
   private def viewModel(mode: Mode, index: Index, srn: Option[String], companyName: String): CompanyRegistrationNumberViewModel = {
     CompanyRegistrationNumberViewModel(

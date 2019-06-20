@@ -41,7 +41,7 @@ import utils.{FakeNavigator, Navigator, UserAnswers}
 import viewmodels.VatViewModel
 import views.html.vat
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 object VatControllerSpec {
 
@@ -53,7 +53,7 @@ object VatControllerSpec {
                                   override val userAnswersService: UserAnswersService,
                                   override val navigator: Navigator,
                                   formProvider: VatFormProvider
-                                ) extends VatController {
+                                )(implicit val ec: ExecutionContext) extends VatController {
 
     def onPageLoad(viewmodel: VatViewModel, answers: UserAnswers): Future[Result] = {
       get(FakeIdentifier, formProvider(), viewmodel)(DataRequest(FakeRequest(), "cacheId", answers, PsaId("A0000000")))

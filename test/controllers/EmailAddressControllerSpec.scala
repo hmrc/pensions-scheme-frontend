@@ -37,7 +37,7 @@ import utils.{FakeNavigator, Navigator, UserAnswers}
 import viewmodels.CommonFormWithHintViewModel
 import views.html.emailAddress
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 class EmailAddressControllerSpec extends WordSpec with MustMatchers with OptionValues with ScalaFutures with MockitoSugar {
 
@@ -166,7 +166,7 @@ object EmailAddressControllerSpec {
                                   override val userAnswersService: UserAnswersService,
                                   override val navigator: Navigator,
                                   formProvider: EmailFormProvider
-                                ) extends EmailAddressController {
+                                )(implicit val ec: ExecutionContext) extends EmailAddressController {
 
     def onPageLoad(viewmodel: CommonFormWithHintViewModel, answers: UserAnswers): Future[Result] = {
       get(FakeIdentifier, formProvider(), viewmodel)(DataRequest(FakeRequest(), "cacheId", answers, PsaId("A0000000")))
