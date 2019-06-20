@@ -46,8 +46,8 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
   private def cya(index: Int, mode: Mode, srn: Option[String]): Call =
     controllers.register.establishers.company.routes.CheckYourAnswersController.onPageLoad(journeyMode(mode), srn, index)
 
-  private def cyaContactDetails(index: Int): Call =
-    controllers.register.establishers.company.routes.CheckYourAnswersCompanyContactDetailsController.onPageLoad(index)
+  private def cyaContactDetails(index: Int, mode: Mode, srn: Option[String]): Call =
+    controllers.register.establishers.company.routes.CheckYourAnswersCompanyContactDetailsController.onPageLoad(journeyMode(mode), srn, index)
 
   private def anyMoreChanges(srn: Option[String]): Option[NavigateTo] =
     NavigateTo.dontSave(controllers.routes.AnyMoreChangesController.onPageLoad(srn))
@@ -87,7 +87,7 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
       case CompanyEmailId(index) =>
         NavigateTo.dontSave(controllers.register.establishers.company.routes.CompanyPhoneController.onPageLoad(mode, srn, index))
       case CompanyPhoneId(index) =>
-        NavigateTo.dontSave(controllers.register.establishers.company.routes.CheckYourAnswersCompanyContactDetailsController.onPageLoad(index))
+        NavigateTo.dontSave(controllers.register.establishers.company.routes.CheckYourAnswersCompanyContactDetailsController.onPageLoad(mode, srn, index))
       case AddCompanyDirectorsId(index) =>
         addDirectors(mode, index, from.userAnswers, srn)
       case OtherDirectorsId(index) =>
@@ -144,8 +144,8 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
 
       case CompanyPreviousAddressId(index) =>     exitMiniJourney(index, mode, srn, from.userAnswers, cya(index, mode, srn))
       case CompanyContactDetailsId(index) =>      exitMiniJourney(index, mode, srn, from.userAnswers, cya(index, mode, srn))
-      case CompanyEmailId(index) =>               exitMiniJourney(index, mode, srn, from.userAnswers, cyaContactDetails(index))
-      case CompanyPhoneId(index) =>               exitMiniJourney(index, mode, srn, from.userAnswers, cyaContactDetails(index))
+      case CompanyEmailId(index) =>               exitMiniJourney(index, mode, srn, from.userAnswers, cyaContactDetails(index, mode, srn))
+      case CompanyPhoneId(index) =>               exitMiniJourney(index, mode, srn, from.userAnswers, cyaContactDetails(index, mode, srn))
       case IsCompanyDormantId(index) =>           exitMiniJourney(index, mode, srn, from.userAnswers, cya(index, mode, srn))
 
       case OtherDirectorsId(index) =>
