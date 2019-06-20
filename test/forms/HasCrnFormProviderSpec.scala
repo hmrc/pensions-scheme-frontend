@@ -14,42 +14,43 @@
  * limitations under the License.
  */
 
-package forms.register.trustees
+package forms
 
-import forms.FormSpec
+import base.SpecBase
+import viewmodels.Message
 
-class HaveAnyTrusteesFormProviderSpec extends FormSpec {
+class HasCrnFormProviderSpec extends FormSpec with SpecBase {
 
-  val requiredKey = "messages__haveAnyTrustees__error__required"
+  val requiredKey = Message("messages__hasCompanyNumber__error__required", "ABC").resolve
   val invalidKey = "error.boolean"
 
-  val formProvider = new HaveAnyTrusteesFormProvider()
+  def formProvider(companyName:String) = new HasCrnFormProvider()("messages__hasCompanyNumber__error__required", companyName)
 
-  "HaveAnyTrustees Form Provider" must {
+  "HasCompanyNumber Form Provider" must {
 
     "bind true" in {
-      val form = formProvider().bind(Map("value" -> "true"))
+      val form = formProvider("ABC").bind(Map("value" -> "true"))
       form.get mustBe true
     }
 
     "bind false" in {
-      val form = formProvider().bind(Map("value" -> "false"))
+      val form = formProvider("ABC").bind(Map("value" -> "false"))
       form.get mustBe false
     }
 
     "fail to bind non-booleans" in {
       val expectedError = error("value", invalidKey)
-      checkForError(formProvider(), Map("value" -> "not a boolean"), expectedError)
+      checkForError(formProvider("ABC"), Map("value" -> "not a boolean"), expectedError)
     }
 
     "fail to bind a blank value" in {
       val expectedError = error("value", requiredKey)
-      checkForError(formProvider(), Map("value" -> ""), expectedError)
+      checkForError(formProvider("ABC"), Map("value" -> ""), expectedError)
     }
 
     "fail to bind when value is omitted" in {
       val expectedError = error("value", requiredKey)
-      checkForError(formProvider(), emptyForm, expectedError)
+      checkForError(formProvider("ABC"), emptyForm, expectedError)
     }
   }
 }

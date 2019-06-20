@@ -56,7 +56,9 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
     from.id match {
       case CompanyDetailsId(index) =>
         NavigateTo.dontSave(controllers.register.establishers.company.routes.CompanyVatController.onPageLoad(mode, index, srn))
-      case CompanyVatId(index) =>
+      case HasCompanyNumberId(index) =>
+        confirmHasCompanyNumber(index, mode, srn)(from.userAnswers)
+       case CompanyVatId(index) =>
         NavigateTo.dontSave(controllers.register.establishers.company.routes.CompanyPayeController.onPageLoad(mode, index, srn))
       case CompanyPayeId(index) =>
         NavigateTo.dontSave(controllers.register.establishers.company.routes.CompanyRegistrationNumberController.onPageLoad(mode, srn, index))
@@ -103,6 +105,7 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
   protected def editRoutes(from: NavigateFrom, mode: Mode, srn: Option[String]): Option[NavigateTo] =
     from.id match {
       case CompanyDetailsId(index) =>             exitMiniJourney(index, mode, srn, from.userAnswers, cya(index, mode, srn))
+      case HasCompanyNumberId(index) =>           exitMiniJourney(index, mode, srn, from.userAnswers, cya(index, mode, srn))
       case CompanyVatId(index) =>                 exitMiniJourney(index, mode, srn, from.userAnswers, cya(index, mode, srn))
       case CompanyVatVariationsId(index) =>       exitMiniJourney(index, mode, srn, from.userAnswers, cya(index, mode, srn))
       case CompanyPayeId(index) =>                exitMiniJourney(index, mode, srn, from.userAnswers, cya(index, mode, srn))
@@ -248,6 +251,17 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
         NavigateTo.dontSave(controllers.register.establishers.company.routes.CompanyPreviousAddressPostcodeLookupController.onPageLoad(mode, srn, index))
       case Some(true) =>
         anyMoreChanges(srn)
+      case None =>
+        NavigateTo.dontSave(controllers.routes.SessionExpiredController.onPageLoad())
+    }
+  }
+
+  private def confirmHasCompanyNumber(index: Int, mode: Mode, srn: Option[String])(answers: UserAnswers): Option[NavigateTo] = {
+    answers.get(HasCompanyNumberId(index)) match {
+      case Some(true) =>
+        NavigateTo.dontSave(controllers.register.establishers.company.routes.CompanyRegistrationNumberVariationsController.onPageLoad(mode, srn, index))
+      case Some(false) =>
+        NavigateTo.dontSave(controllers.register.establishers.company.routes.NoCompanyNumberController.onPageLoad(index))
       case None =>
         NavigateTo.dontSave(controllers.routes.SessionExpiredController.onPageLoad())
     }
