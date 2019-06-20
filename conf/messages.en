@@ -1444,6 +1444,11 @@ messages__hasCompanyUtr__h1 = Does {0} have a Unique Taxpayer Reference (UTR)?
 messages__hasCompanyUtr__p1 = This is a 10-digit or 13-digit number. You can find it on tax returns and other documents from HMRC. It might be called ‘reference’, ‘UTR’ or ‘official use’.
 messages__hasCompanyUtr__error__required = Select yes if {0} has a Unique Taxpayer Reference (UTR)
 
+messages__hasCompanyVat__title = Is the company registered for VAT?
+messages__hasCompanyVat__h1 = Is {0} registered for VAT?
+messages__hasCompanyVat__p1 = This is 9 numbers, sometimes with ‘GB’ at the start, for example 123456789 or GB123456789. You can find it on {0}’s VAT registration certificate.
+messages__hasCompanyVat__error__required = Select yes if the {0} is registered for VAT
+
 messages__schemeTaskList__before_you_start_link_text = Setting up your scheme application
 messages__schemeTaskList__scheme_info_link_text = Information about your scheme
 messages__schemeTaskList__scheme_information_link_text = Scheme information
