@@ -29,12 +29,12 @@ class HaveAnyTrusteesFormProviderSpec extends FormSpec {
 
     "bind true" in {
       val form = formProvider().bind(Map("value" -> "true"))
-      form.get shouldBe true
+      form.get mustBe true
     }
 
     "bind false" in {
       val form = formProvider().bind(Map("value" -> "false"))
-      form.get shouldBe false
+      form.get mustBe false
     }
 
     "fail to bind non-booleans" in {

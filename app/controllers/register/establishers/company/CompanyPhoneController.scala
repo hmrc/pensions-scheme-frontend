@@ -17,28 +17,63 @@
 package controllers.register.establishers.company
 
 import config.FrontendAppConfig
+import controllers.PhoneNumberController
 import controllers.actions._
+import forms.PhoneFormProvider
+import identifiers.register.establishers.company.{CompanyDetailsId, CompanyPhoneId}
 import javax.inject.Inject
 import models.{Index, Mode}
+import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import services.UserAnswersService
+import utils.Navigator
+import utils.annotations.EstablishersCompany
+import viewmodels.{Message, CommonFormWithHintViewModel}
 
-import scala.concurrent.Future
-
-class CompanyPhoneController @Inject()(appConfig: FrontendAppConfig,
+class CompanyPhoneController @Inject()(val appConfig: FrontendAppConfig,
                                        override val messagesApi: MessagesApi,
                                        authenticate: AuthAction,
-                                       getData: DataRetrievalAction
-                                                    ) extends FrontendController with I18nSupport {
+                                       getData: DataRetrievalAction,
+                                       override val userAnswersService: UserAnswersService,
+                                       allowAccess: AllowAccessActionProvider,
+                                       requireData: DataRequiredAction,
+                                       @EstablishersCompany val navigator: Navigator,
+                                       formProvider: PhoneFormProvider
+                                      ) extends PhoneNumberController with I18nSupport {
 
-  def onPageLoad(mode: Mode, srn: Option[String] = None, index: Index): Action[AnyContent] = (authenticate andThen getData()).async {
-    implicit request =>
-      Future.successful(Ok)
-  }
+  protected val form: Form[String] = formProvider()
 
-  def onSubmit(mode: Mode, srn: Option[String] = None, index: Index): Action[AnyContent] = authenticate {
-    implicit request =>
-      Redirect(controllers.routes.IndexController.onPageLoad())
-  }
+  private def viewModel(mode: Mode, srn: Option[String], index: Index): Retrieval[CommonFormWithHintViewModel] =
+    Retrieval {
+      implicit request =>
+        CompanyDetailsId(index).retrieve.right.map {
+          details =>
+            CommonFormWithHintViewModel(
+              routes.CompanyPhoneController.onSubmit(mode, srn, index),
+              Message("messages__establisher_phone__title"),
+              Message("messages__common_phone__heading", details.companyName),
+              None,
+              srn = srn
+            )
+        }
+    }
+
+  def onPageLoad(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+      implicit request =>
+        viewModel(mode, srn, index).retrieve.right.map {
+          vm =>
+            get(CompanyPhoneId(index), form, vm)
+        }
+    }
+
+  def onSubmit(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+      implicit request =>
+        viewModel(mode, srn, index).retrieve.right.map {
+          vm =>
+            post(CompanyPhoneId(index), mode, form, vm)
+        }
+    }
 }

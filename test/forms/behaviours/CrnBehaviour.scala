@@ -32,14 +32,14 @@ trait CrnBehaviour extends FormSpec with CrnMapping with PropertyChecks with Gen
                             invaliddCRNKey: String
                            ): Unit = {
 
-    "behave like a form with a companyRegistrationNumber Mapping in variations" should {
+    "behave like a form with a companyRegistrationNumber Mapping in variations" must {
 
       Seq("1234567", " 1234567 ").foreach {
         crnNo =>
           s"bind successfully when CRN $crnNo is valid" in {
             val result = testForm.bind(Map("companyRegistrationNumber" -> crnNo))
-            result.errors.size shouldBe 0
-            result.get shouldBe crnNo.trim
+            result.errors.size mustBe 0
+            result.get mustBe ReferenceValue(crnNo.trim)
           }
       }
 
@@ -51,7 +51,7 @@ trait CrnBehaviour extends FormSpec with CrnMapping with PropertyChecks with Gen
       Seq("1234567891", "123.456").foreach { crn =>
         s"fail to bind when companyRegistrationNumber $crn is longer than expected" in {
           val result = testForm.bind(Map("companyRegistrationNumber" -> crn))
-          result.errors shouldBe Seq(FormError("companyRegistrationNumber", invaliddCRNKey))
+          result.errors mustBe Seq(FormError("companyRegistrationNumber", invaliddCRNKey))
         }
       }
 
@@ -69,46 +69,46 @@ trait CrnBehaviour extends FormSpec with CrnMapping with PropertyChecks with Gen
         crnNo =>
           s"bind successfully when CRN $crnNo is valid" in {
             val result = testForm.bind(Map(hasCrn -> "true", crn -> crnNo))
-            result.errors.size shouldBe 0
-            result.get shouldBe Yes(crnNo.trim)
+            result.errors.size mustBe 0
+            result.get mustBe Yes(crnNo.trim)
           }
       }
 
       "fail to bind" when {
         "yes is selected but Company Registration Number is not provided" in {
           val result = testForm.bind(Map(hasCrn -> "true"))
-          result.errors shouldBe Seq(FormError(crn, "messages__error__crn"))
+          result.errors mustBe Seq(FormError(crn, "messages__error__crn"))
         }
         "no is selected but reason is not provided" in {
           val result = testForm.bind(Map(hasCrn -> "false"))
-          result.errors shouldBe Seq(FormError(reason, "messages__error__no_crn_company"))
+          result.errors mustBe Seq(FormError(reason, "messages__error__no_crn_company"))
         }
         "CRN is invalid" in {
           val result = testForm.bind(Map(hasCrn -> "true", crn -> "123.456"))
-          result.errors shouldBe Seq(FormError(crn, "messages__error__crn_invalid"))
+          result.errors mustBe Seq(FormError(crn, "messages__error__crn_invalid"))
         }
         "reason is invalid" in {
           val result = testForm.bind(Map(hasCrn -> "false", "companyRegistrationNumber.reason" -> "{reason}"))
-          result.errors shouldBe Seq(FormError(reason, "messages__error__no_crn_invalid", Seq(regexSafeText)))
+          result.errors mustBe Seq(FormError(reason, "messages__error__no_crn_invalid", Seq(regexSafeText)))
         }
         "reason is more than max length" in {
           val maxLength = 160
           forAll(stringsLongerThan(maxLength) -> "longString") {
             string =>
               val result = testForm.bind(Map(hasCrn -> "false", "companyRegistrationNumber.reason" -> string))
-              result.errors shouldBe Seq(FormError(reason, "messages__error__no_crn_length", Seq(maxLength)))
+              result.errors mustBe Seq(FormError(reason, "messages__error__no_crn_length", Seq(maxLength)))
           }
         }
       }
       "Successfully unbind 'companyRegistrationNumber.hasCrn'" in {
         val result = testForm.fill(CompanyRegistrationNumber.Yes("crn")).data
-        result should contain(hasCrn -> "true")
-        result should contain(crn -> "crn")
+        result must contain(hasCrn -> "true")
+        result must contain(crn -> "crn")
       }
       "Successfully unbind 'companyRegistrationNumber.No'" in {
         val result = testForm.fill(CompanyRegistrationNumber.No("reason")).data
-        result should contain(hasCrn -> "false")
-        result should contain(reason -> "reason")
+        result must contain(hasCrn -> "false")
+        result must contain(reason -> "reason")
       }
     }
   }

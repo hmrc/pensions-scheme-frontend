@@ -54,56 +54,56 @@ trait SchemeTypeBehaviours extends FormSpec with SchemeTypeMapping with Generato
       forAll(schemeTypeTable) { (schemeType, schemeValue) =>
         s"bind a valid schemeType $schemeType" in {
           val result = testForm.bind(Map("schemeType.type" -> schemeValue))
-          result.get shouldBe schemeType
+          result.get mustBe schemeType
         }
       }
 
       "bind a valid schemeType Other" in {
         val result = testForm.bind(Map(schemeTypeFieldName -> "other", otherDetailsFieldName -> "some value"))
-        result.get shouldBe SchemeType.Other("some value")
+        result.get mustBe SchemeType.Other("some value")
       }
 
       "not bind an empty Map" in {
         val result = testForm.bind(Map.empty[String, String])
-        result.errors should contain(FormError(schemeTypeFieldName, requiredTypeKey))
+        result.errors must contain(FormError(schemeTypeFieldName, requiredTypeKey))
       }
 
       "not bind a Map with invalid schemeType" in {
         val result = testForm.bind(Map(schemeTypeFieldName -> "Invalid"))
-        result.errors should contain(FormError(schemeTypeFieldName, invalidTypeKey))
+        result.errors must contain(FormError(schemeTypeFieldName, invalidTypeKey))
       }
 
       "not bind a Map with type other but no schemeTypeDetails" in {
         val result = testForm.bind(Map(schemeTypeFieldName -> "other"))
-        result.errors should contain(FormError(otherDetailsFieldName, requiredOtherKey))
+        result.errors must contain(FormError(otherDetailsFieldName, requiredOtherKey))
       }
 
       "not bind a Map with type other and schemeTypeDetails exceeds max length 160" in {
         forAll(stringsLongerThan(maxlength) -> "longString") {
           string =>
             val result = testForm.bind(Map(schemeTypeFieldName -> "other", otherDetailsFieldName -> string))
-            result.errors should contain(FormError(otherDetailsFieldName, lengthOtherKey,
+            result.errors must contain(FormError(otherDetailsFieldName, lengthOtherKey,
               Seq(maxlength)))
         }
       }
 
       "not bind a Map with type other and invalid schemeTypeDetails" in {
         val result = testForm.bind(Map(schemeTypeFieldName -> "other", otherDetailsFieldName -> "{invalid}"))
-        result.errors should contain(FormError(otherDetailsFieldName, invalidOtherKey,
+        result.errors must contain(FormError(otherDetailsFieldName, invalidOtherKey,
           Seq(regexSafeText)))
       }
 
       forAll(schemeTypeTable) { (schemeType, schemeValue) =>
         s"unbind a valid schemeType $schemeType" in {
           val result = testForm.fill(schemeType)
-          result.apply(schemeTypeFieldName).value.value shouldBe schemeValue
+          result.apply(schemeTypeFieldName).value.value mustBe schemeValue
         }
       }
 
       "unbind a valid schemeType Other" in {
         val result = testForm.fill(SchemeType.Other("some value"))
-        result.apply(schemeTypeFieldName).value.value shouldBe "other"
-        result.apply(otherDetailsFieldName).value.value shouldBe "some value"
+        result.apply(schemeTypeFieldName).value.value mustBe "other"
+        result.apply(otherDetailsFieldName).value.value mustBe "some value"
       }
     }
   }

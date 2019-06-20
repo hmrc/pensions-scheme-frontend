@@ -20,11 +20,10 @@ import forms.behaviours.StringFieldBehaviours
 import forms.mappings.Constraints
 import models.person.PersonDetails
 import org.joda.time.LocalDate
-import org.scalatest.Matchers
 import play.api.data.FormError
 import wolfendale.scalacheck.regexp.RegexpGen
 
-class PersonDetailsFormProviderSpec extends StringFieldBehaviours with Constraints with Matchers {
+class PersonDetailsFormProviderSpec extends StringFieldBehaviours with Constraints {
 
   val form = new PersonDetailsFormProvider()()
 
@@ -201,7 +200,7 @@ class PersonDetailsFormProviderSpec extends StringFieldBehaviours with Constrain
           "date.month" -> "A",
           "date.year" -> "A"
         )
-      ).errors should contain allOf(
+      ).errors must contain allOf(
         FormError("date.day", "error.date.day_invalid"),
         FormError("date.month", "error.date.month_invalid"),
         FormError("date.year", "error.date.year_invalid")
@@ -217,7 +216,7 @@ class PersonDetailsFormProviderSpec extends StringFieldBehaviours with Constrain
           "date.month" -> "13",
           "date.year" -> "0"
         )
-      ).errors shouldBe Seq(FormError(fieldName, invalidKey))
+      ).errors mustBe Seq(FormError(fieldName, invalidKey))
     }
 
     val futureDate = LocalDate.now().plusDays(1)
@@ -230,7 +229,7 @@ class PersonDetailsFormProviderSpec extends StringFieldBehaviours with Constrain
           "date.month" -> futureDate.getMonthOfYear.toString,
           "date.year" -> futureDate.getYear.toString
         )
-      ).errors shouldBe Seq(FormError(fieldName, "messages__error__date_future"))
+      ).errors mustBe Seq(FormError(fieldName, "messages__error__date_future"))
     }
   }
 
@@ -246,18 +245,18 @@ class PersonDetailsFormProviderSpec extends StringFieldBehaviours with Constrain
         )
       ).get
 
-      details.firstName shouldBe johnDoe.firstName
-      details.lastName shouldBe johnDoe.lastName
-      details.date shouldBe johnDoe.date
+      details.firstName mustBe johnDoe.firstName
+      details.lastName mustBe johnDoe.lastName
+      details.date mustBe johnDoe.date
     }
 
     "unapply PersonDetails corectly" in {
       val filled = form.fill(johnDoe)
-      filled("firstName").value.value shouldBe johnDoe.firstName
-      filled("lastName").value.value shouldBe johnDoe.lastName
-      filled("date.day").value.value shouldBe johnDoe.date.getDayOfMonth.toString
-      filled("date.month").value.value shouldBe johnDoe.date.getMonthOfYear.toString
-      filled("date.year").value.value shouldBe johnDoe.date.getYear.toString
+      filled("firstName").value.value mustBe johnDoe.firstName
+      filled("lastName").value.value mustBe johnDoe.lastName
+      filled("date.day").value.value mustBe johnDoe.date.getDayOfMonth.toString
+      filled("date.month").value.value mustBe johnDoe.date.getMonthOfYear.toString
+      filled("date.year").value.value mustBe johnDoe.date.getYear.toString
     }
   }
 }
