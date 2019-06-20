@@ -30,6 +30,8 @@ import utils.Navigator
 import utils.annotations.EstablishersCompany
 import viewmodels.{Message, ReasonViewModel}
 
+import scala.concurrent.ExecutionContext
+
 class NoCompanyUTRController @Inject()(override val appConfig: FrontendAppConfig,
                                        override val messagesApi: MessagesApi,
                                        override val userAnswersService: UserAnswersService,
@@ -39,7 +41,7 @@ class NoCompanyUTRController @Inject()(override val appConfig: FrontendAppConfig
                                        allowAccess: AllowAccessActionProvider,
                                        requireData: DataRequiredAction,
                                        formProvider: ReasonFormProvider
-                                      ) extends ReasonController with I18nSupport {
+                                      )(implicit val ec: ExecutionContext) extends ReasonController with I18nSupport {
 
   private def form(companyName: String) = formProvider(companyName)
 

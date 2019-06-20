@@ -21,8 +21,8 @@ import config.FrontendAppConfig
 import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRequiredAction, DataRetrievalAction}
 import controllers.register.CompanyRegistrationNumberVariationsBaseController
 import identifiers.TypedIdentifier
-import identifiers.register.establishers.company.{CompanyDetailsId, CompanyRegistrationNumberId}
-import models.{CompanyRegistrationNumber, Index, Mode}
+import identifiers.register.establishers.company.{CompanyDetailsId, CompanyRegistrationNumberVariationsId}
+import models.{Index, Mode, ReferenceValue}
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, Call}
 import services.UserAnswersService
@@ -41,7 +41,7 @@ class CompanyRegistrationNumberVariationsController @Inject()(
                                                                requireData: DataRequiredAction
                                                              ) extends CompanyRegistrationNumberVariationsBaseController {
 
-  def identifier(index: Int): TypedIdentifier[CompanyRegistrationNumber] = CompanyRegistrationNumberId(index)
+  def identifier(index: Int): TypedIdentifier[ReferenceValue] = CompanyRegistrationNumberVariationsId(index)
 
   def postCall: (Mode, Option[String], Index) => Call = routes.CompanyRegistrationNumberVariationsController.onSubmit _
 
@@ -70,5 +70,4 @@ class CompanyRegistrationNumberVariationsController @Inject()(
           post(mode, srn, index, viewModel(mode, index, srn, companyName), companyName)
         }
     }
-
 }

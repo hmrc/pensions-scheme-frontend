@@ -22,7 +22,7 @@ import forms.NinoNewFormProvider
 import identifiers.TypedIdentifier
 import javax.inject.Inject
 import models.requests.DataRequest
-import models.{Mode, NormalMode}
+import models.{Mode, NormalMode, ReferenceValue}
 import play.api.data.Form
 import play.api.i18n.MessagesApi
 import play.api.mvc.{AnyContent, Call, Request, Result}
@@ -34,7 +34,7 @@ import utils.{FakeNavigator, Navigator, UserAnswers}
 import viewmodels.{Message, NinoViewModel}
 import views.html.nino
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 
 class NinoControllerSpec extends ControllerSpecBase {
@@ -48,7 +48,7 @@ class NinoControllerSpec extends ControllerSpecBase {
     srn = None
   )
 
-  object FakeIdentifier extends TypedIdentifier[String]
+  object FakeIdentifier extends TypedIdentifier[ReferenceValue]
 
   private def onwardRoute = controllers.routes.IndexController.onPageLoad()
 
@@ -56,11 +56,11 @@ class NinoControllerSpec extends ControllerSpecBase {
   val form = formProvider("Mark")
 
   class TestNinoController @Inject()(
-                                  override val appConfig: FrontendAppConfig,
-                                  override val messagesApi: MessagesApi,
-                                  override val userAnswersService: UserAnswersService,
-                                  override val navigator: Navigator
-                                ) extends NinoController {
+                                      override val appConfig: FrontendAppConfig,
+                                      override val messagesApi: MessagesApi,
+                                      override val userAnswersService: UserAnswersService,
+                                      override val navigator: Navigator
+                                    )(implicit val ec: ExecutionContext) extends NinoController {
 
     def onPageLoad(answers: UserAnswers): Future[Result] = {
       get(FakeIdentifier, form, viewmodel)(DataRequest(FakeRequest(), "cacheId", answers, PsaId("A0000000")))
@@ -93,9 +93,9 @@ class NinoControllerSpec extends ControllerSpecBase {
 
     "populate the view correctly on a GET when the question has previously been answered" in {
 
-      val result = controller().onPageLoad(UserAnswers().set(FakeIdentifier)("nino").asOpt.get)
+      val result = controller().onPageLoad(UserAnswers().set(FakeIdentifier)(ReferenceValue("nino")).asOpt.get)
 
-      contentAsString(result) mustBe viewAsString(form.fill("nino"))
+      contentAsString(result) mustBe viewAsString(form.fill(ReferenceValue("nino")))
     }
 
     "redirect to the next page when valid data is submitted" in {
@@ -105,16 +105,17 @@ class NinoControllerSpec extends ControllerSpecBase {
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
+      FakeUserAnswersService.verify(FakeIdentifier, ReferenceValue("CS700100A", isEditable = true))
     }
 
     "return a Bad Request and errors invalid data is submitted" in {
-        val postRequest = fakeRequest.withFormUrlEncodedBody(("nino", "invalid value"))
-        val boundForm = form.bind(Map("nino" -> "invalid value"))
+      val postRequest = fakeRequest.withFormUrlEncodedBody(("nino", "invalid value"))
+      val boundForm = form.bind(Map("nino" -> "invalid value"))
 
-        val result = controller().onSubmit(NormalMode, UserAnswers(), postRequest)
+      val result = controller().onSubmit(NormalMode, UserAnswers(), postRequest)
 
-        status(result) mustBe BAD_REQUEST
-        contentAsString(result) mustBe viewAsString(boundForm)
+      status(result) mustBe BAD_REQUEST
+      contentAsString(result) mustBe viewAsString(boundForm)
     }
 
   }

@@ -63,7 +63,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
         val expectedAnswerRowNino = AnswerRow("messages__common__nino", Seq("site.not_entered"), answerIsMessageKey = true,
           Some(Link("site.add",
             routes.TrusteeNinoNewController.onPageLoad(Mode.checkMode(UpdateMode), firstIndex, Some("srn")).url,
-            Some(s"messages__visuallyhidden__director__nino_add"))))
+            Some(s"messages__visuallyhidden__trustee__nino_add"))))
         Seq(
           trusteeDetailsSectionUpdate(expectedAnswerRowNino),
           contactDetailsSection
@@ -75,7 +75,8 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
       contentAsString(result) mustBe viewAsString(expectedAnswerSections, UpdateMode, Some("srn"))
     }
 
-    "return OK and display no add/change link but do display new nino for UpdateMode where separateRefCollectionEnabled is true and a new nino has already been entered" in {
+    "return OK and display no add/change link but do display new nino for UpdateMode where separateRefCollectionEnabled is true and" +
+      "a new nino has already been entered" in {
       val expectedAnswerSections = {
         val expectedAnswerRowNino = AnswerRow("messages__common__nino", Seq("CS121212C"), answerIsMessageKey = false, None)
         Seq(
@@ -98,7 +99,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
         )
       }
 
-      val result = controller(getMandatoryTrusteeWithOldNinoId, toggle = true).onPageLoad(UpdateMode, firstIndex, Some("srn"))(fakeRequest)
+      val result = controller(getMandatoryTrusteeWithNinoFromEtmp, toggle = true).onPageLoad(UpdateMode, firstIndex, Some("srn"))(fakeRequest)
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString(expectedAnswerSections, UpdateMode, Some("srn"))
     }
@@ -201,19 +202,21 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase with Controller
           TrusteeDetailsId.toString ->
             PersonDetails("Test", Some("Trustee"), "Name", LocalDate.now),
           TrusteeNewNinoId.toString -> Json.obj(
-            "nino" -> "CS121212C"
+            "value" -> "CS121212C"
           )
         )
       )
     )))
 
-  def getMandatoryTrusteeWithOldNinoId: FakeDataRetrievalAction = new FakeDataRetrievalAction(Some(
+  def getMandatoryTrusteeWithNinoFromEtmp: FakeDataRetrievalAction = new FakeDataRetrievalAction(Some(
     Json.obj(
       "trustees" -> Json.arr(
         Json.obj(
           TrusteeDetailsId.toString ->
             PersonDetails("Test", Some("Trustee"), "Name", LocalDate.now),
-          TrusteeNinoId.toString -> Nino.Yes("CS121212C")
+          TrusteeNewNinoId.toString -> Json.obj(
+            "value" -> "CS121212C"
+          )
         )
       )
     )))

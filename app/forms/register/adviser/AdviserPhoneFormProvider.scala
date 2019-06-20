@@ -24,9 +24,9 @@ class AdviserPhoneFormProvider @Inject() extends PhoneNumberMapping {
 
   def apply(): Form[String] = {
     Form(
-      "phone" -> phoneNumberMapping("messages__adviser__phone__blank",
-      "messages__adviser__phone__length",
-      "messages__adviser__phone__invalid")
+      "phone" -> phoneNumberMapping("messages__phone__blank",
+      "messages__phone__length",
+      "messages__phone__invalid")
     )
   }
 }

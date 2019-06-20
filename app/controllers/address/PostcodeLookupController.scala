@@ -33,11 +33,11 @@ import viewmodels.Message
 import viewmodels.address.PostcodeLookupViewModel
 import views.html.address.postcodeLookup
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 trait PostcodeLookupController extends FrontendController with Retrievals with I18nSupport {
 
-  protected implicit val ec = play.api.libs.concurrent.Execution.defaultContext
+  protected implicit def ec: ExecutionContext
 
   protected def appConfig: FrontendAppConfig
 
@@ -80,6 +80,7 @@ trait PostcodeLookupController extends FrontendController with Retrievals with I
                               noResults: Message,
                               mode: Mode
                             )(postcode: String)(implicit request: DataRequest[AnyContent]): Future[Result] = {
+
     addressLookupConnector.addressLookupByPostCode(postcode).flatMap {
 
       case Nil => Future.successful(Ok(postcodeLookup(appConfig, formWithError(noResults), viewmodel, existingSchemeName)))

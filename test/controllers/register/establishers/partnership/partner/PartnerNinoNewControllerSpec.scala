@@ -21,7 +21,7 @@ import controllers.actions._
 import forms.NinoNewFormProvider
 import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.partnership.PartnershipDetailsId
-import identifiers.register.establishers.partnership.partner.{PartnerDetailsId, PartnerNinoId}
+import identifiers.register.establishers.partnership.partner.{PartnerDetailsId, PartnerNewNinoId, PartnerNinoId}
 import models._
 import models.person.PersonDetails
 import org.joda.time.LocalDate
@@ -57,8 +57,9 @@ class PartnerNinoNewControllerSpec extends ControllerSpecBase {
           Json.obj(
             PartnerDetailsId.toString ->
               PersonDetails("First Name", Some("Middle Name"), "Last Name", LocalDate.now),
-            PartnerNinoId.toString ->
-              Nino.Yes("CS700100A")
+            PartnerNewNinoId.toString ->Json.obj(
+              "value" -> "CS700100A"
+            )
           )
         )
       )
@@ -79,7 +80,7 @@ class PartnerNinoNewControllerSpec extends ControllerSpecBase {
     )
   )
   
-  def viewmodel(srn:Option[String]) = NinoViewModel(
+  private def viewmodel(srn:Option[String]) = NinoViewModel(
     postCall = controllers.register.establishers.partnership.partner.routes.PartnerNinoNewController.onSubmit(NormalMode, establisherIndex, partnerIndex, None),
     title = "messages__partner_yes_nino__title",
     heading ="messages__common_nino__h1",
@@ -124,7 +125,7 @@ class PartnerNinoNewControllerSpec extends ControllerSpecBase {
     "populate the view correctly on a GET when the question has previously been answered" in {
       val getRelevantData = new FakeDataRetrievalAction(Some(validData))
       val result = controller(getRelevantData).onPageLoad(NormalMode, establisherIndex, partnerIndex, None)(fakeRequest)
-      contentAsString(result) mustBe viewAsString(form.fill("CS700100A"))
+      contentAsString(result) mustBe viewAsString(form.fill(ReferenceValue("CS700100A")))
     }
 
     "redirect to the next page when valid data is submitted" in {

@@ -18,7 +18,7 @@ package controllers
 
 import config.FrontendAppConfig
 import identifiers.TypedIdentifier
-import models.Mode
+import models.{Mode, ReferenceValue}
 import models.requests.DataRequest
 import play.api.data.Form
 import play.api.i18n.I18nSupport
@@ -29,11 +29,11 @@ import utils.{Navigator, UserAnswers}
 import viewmodels.NinoViewModel
 import views.html.nino
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 trait NinoController extends FrontendController with Retrievals with I18nSupport {
 
-  protected implicit val ec = play.api.libs.concurrent.Execution.defaultContext
+  protected implicit def ec: ExecutionContext
 
   protected def appConfig: FrontendAppConfig
 
@@ -41,7 +41,7 @@ trait NinoController extends FrontendController with Retrievals with I18nSupport
 
   protected def navigator: Navigator
 
-  def get(id: TypedIdentifier[String], form: Form[String], viewmodel: NinoViewModel)
+  def get(id: TypedIdentifier[ReferenceValue], form: Form[ReferenceValue], viewmodel: NinoViewModel)
          (implicit request: DataRequest[AnyContent]): Future[Result] = {
 
     val preparedForm = request.userAnswers.get(id).map(form.fill).getOrElse(form)
@@ -49,13 +49,13 @@ trait NinoController extends FrontendController with Retrievals with I18nSupport
     Future.successful(Ok(nino(appConfig, preparedForm, viewmodel, existingSchemeName)))
   }
 
-  def post(id: TypedIdentifier[String], mode: Mode, form: Form[String], viewmodel: NinoViewModel)
+  def post(id: TypedIdentifier[ReferenceValue], mode: Mode, form: Form[ReferenceValue], viewmodel: NinoViewModel)
           (implicit request: DataRequest[AnyContent]): Future[Result] = {
     form.bindFromRequest().fold(
       (formWithErrors: Form[_]) =>
         Future.successful(BadRequest(nino(appConfig, formWithErrors, viewmodel, existingSchemeName))),
       value =>
-        userAnswersService.save(mode, viewmodel.srn, id, value).map{cacheMap =>
+        userAnswersService.save(mode, viewmodel.srn, id, value.copy(isEditable = true)).map{cacheMap =>
           Redirect(navigator.nextPage(id, mode, UserAnswers(cacheMap), viewmodel.srn))}
     )
   }

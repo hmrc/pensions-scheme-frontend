@@ -16,6 +16,11 @@
 
 package forms.mappings
 
+
+
+import java.time.Month
+
+import org.joda.time.LocalDate
 import org.scalatestplus.play.PlaySpec
 import play.api.data.validation.{Invalid, Valid}
 import utils.{CountryOptions, InputOption}
@@ -382,6 +387,20 @@ class ConstraintsSpec extends PlaySpec with Constraints with RegexBehaviourSpec 
     val invalidMsg = "Invalid text"
 
     behave like regexWithValidAndInvalidExamples(adviserName, validText, invalidText, invalidMsg, adviserNameRegex)
+  }
+
+  "notBeforeYear" must {
+
+    "return valid if date is greater than constraint" in {
+
+      notBeforeYear("error.invalid", 1900).apply(LocalDate.now()) mustBe Valid
+    }
+
+    "return invalid if date is less than constraint" in {
+
+      notBeforeYear("error.invalid", 1900).apply(LocalDate.parse("1889-06-15")) mustBe Invalid("error.invalid")
+    }
+
   }
 
 }

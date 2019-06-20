@@ -29,13 +29,15 @@ POST       /:index/company/change/vat-registered                                
 GET        /:index/company/:mode/vat-registered/:srn                                                        controllers.register.establishers.company.CompanyVatController.onPageLoad(mode: Mode, index: Index, srn: Option[String])
 POST       /:index/company/:mode/vat-registered/:srn                                                        controllers.register.establishers.company.CompanyVatController.onSubmit(mode: Mode, index: Index, srn: Option[String])
 
+GET        /:index/company/enter-vat                                                                        controllers.register.establishers.company.CompanyVatVariationsController.onPageLoad(mode: Mode = NormalMode, index: Index, srn: Option[String] = None)
+POST       /:index/company/enter-vat                                                                        controllers.register.establishers.company.CompanyVatVariationsController.onSubmit(mode: Mode = NormalMode, index: Index, srn: Option[String] = None)
 GET        /:index/company/:mode/enter-vat/:srn                                                             controllers.register.establishers.company.CompanyVatVariationsController.onPageLoad(mode: Mode, index: Index, srn: Option[String])
 POST       /:index/company/:mode/enter-vat/:srn                                                             controllers.register.establishers.company.CompanyVatVariationsController.onSubmit(mode: Mode, index: Index, srn: Option[String])
 
-GET        /:index/company/company-registration-number                                                      controllers.register.establishers.company.CompanyRegistrationNumberController.onPageLoad(mode: Mode = NormalMode, srn: Option[String] = None,index:Index)
-POST       /:index/company/company-registration-number                                                      controllers.register.establishers.company.CompanyRegistrationNumberController.onSubmit(mode: Mode = NormalMode, srn: Option[String] = None,index:Index)
-GET        /:index/company/change/company-registration-number                                               controllers.register.establishers.company.CompanyRegistrationNumberController.onPageLoad(mode: Mode = CheckMode, srn: Option[String] = None,index:Index)
-POST       /:index/company/change/company-registration-number                                               controllers.register.establishers.company.CompanyRegistrationNumberController.onSubmit(mode: Mode = CheckMode, srn: Option[String] = None,index:Index)
+GET        /:index/company/company-registration-number                                                      controllers.register.establishers.company.CompanyRegistrationNumberController.onPageLoad(mode: Mode = NormalMode, srn: Option[String] = None, index:Index)
+POST       /:index/company/company-registration-number                                                      controllers.register.establishers.company.CompanyRegistrationNumberController.onSubmit(mode: Mode = NormalMode, srn: Option[String] = None, index:Index)
+GET        /:index/company/change/company-registration-number                                               controllers.register.establishers.company.CompanyRegistrationNumberController.onPageLoad(mode: Mode = CheckMode, srn: Option[String] = None, index:Index)
+POST       /:index/company/change/company-registration-number                                               controllers.register.establishers.company.CompanyRegistrationNumberController.onSubmit(mode: Mode = CheckMode, srn: Option[String] = None, index:Index)
 GET        /:index/company/:mode/company-registration-number/:srn                                           controllers.register.establishers.company.CompanyRegistrationNumberController.onPageLoad(mode: Mode, srn: Option[String],index:Index)
 POST       /:index/company/:mode/company-registration-number/:srn                                           controllers.register.establishers.company.CompanyRegistrationNumberController.onSubmit(mode: Mode, srn: Option[String],index:Index)
 
@@ -271,23 +273,36 @@ POST       /:index/company/:mode/has-company-number/:srn                        
 
 GET        /:index/company/reason-for-no-company-number                                                     controllers.register.establishers.company.NoCompanyNumberController.onPageLoad(mode: Mode = NormalMode, srn: Option[String] = None, index: Index)
 POST       /:index/company/reason-for-no-company-number                                                     controllers.register.establishers.company.NoCompanyNumberController.onSubmit(mode: Mode = NormalMode, srn: Option[String] = None, index: Index)
+GET        /:index/company/:mode/reason-for-no-company-number/:srn                                          controllers.register.establishers.company.NoCompanyNumberController.onPageLoad(mode: Mode, srn: Option[String], index: Index)
+POST       /:index/company/:mode/reason-for-no-company-number/:srn                                          controllers.register.establishers.company.NoCompanyNumberController.onSubmit(mode: Mode, srn: Option[String], index: Index)
 
-GET        /:index/company/unique-taxpayer-reference                                                        controllers.register.establishers.company.HasCompanyUTRController.onPageLoad(mode: Mode = NormalMode, srn: Option[String] = None, index: Index)
-POST       /:index/company/unique-taxpayer-reference                                                        controllers.register.establishers.company.HasCompanyUTRController.onSubmit(mode: Mode = NormalMode, srn: Option[String] = None, index: Index)
+GET        /:index/company/has-unique-taxpayer-reference                                                    controllers.register.establishers.company.HasCompanyUTRController.onPageLoad(mode: Mode = NormalMode, srn: Option[String] = None, index: Index)
+POST       /:index/company/has-unique-taxpayer-reference                                                    controllers.register.establishers.company.HasCompanyUTRController.onSubmit(mode: Mode = NormalMode, srn: Option[String] = None, index: Index)
+GET        /:index/company/:mode/has-unique-taxpayer-reference/:srn                                         controllers.register.establishers.company.HasCompanyUTRController.onPageLoad(mode: Mode, srn: Option[String], index: Index)
+POST       /:index/company/:mode/has-unique-taxpayer-reference/:srn                                         controllers.register.establishers.company.HasCompanyUTRController.onSubmit(mode: Mode, srn: Option[String], index: Index)
+
+GET        /:index/company/enter-unique-taxpayer-reference                                                  controllers.register.establishers.company.CompanyUTRController.onPageLoad(mode: Mode = NormalMode, srn: Option[String] = None, index: Index)
+POST       /:index/company/enter-unique-taxpayer-reference                                                  controllers.register.establishers.company.CompanyUTRController.onSubmit(mode: Mode = NormalMode, srn: Option[String] = None, index: Index)
+GET        /:index/company/:mode/enter-unique-taxpayer-reference/:srn                                       controllers.register.establishers.company.CompanyUTRController.onPageLoad(mode: Mode, srn: Option[String], index: Index)
+POST       /:index/company/:mode/enter-unique-taxpayer-reference/:srn                                       controllers.register.establishers.company.CompanyUTRController.onSubmit(mode: Mode, srn: Option[String], index: Index)
 
 GET        /:index/company/reason-for-no-unique-taxpayer-reference                                          controllers.register.establishers.company.NoCompanyUTRController.onPageLoad(mode: Mode = NormalMode, srn: Option[String] = None, index: Index)
 POST       /:index/company/reason-for-no-unique-taxpayer-reference                                          controllers.register.establishers.company.NoCompanyUTRController.onSubmit(mode: Mode = NormalMode, srn: Option[String] = None, index: Index)
 GET        /:index/company/:mode/reason-for-no-unique-taxpayer-reference/:srn                               controllers.register.establishers.company.NoCompanyUTRController.onPageLoad(mode: Mode, srn: Option[String], index: Index)
 POST       /:index/company/:mode/reason-for-no-unique-taxpayer-reference/:srn                               controllers.register.establishers.company.NoCompanyUTRController.onSubmit(mode: Mode, srn: Option[String], index: Index)
 
-GET        /:index/company/vat-registered                                                                   controllers.register.establishers.company.HasCompanyVATController.onPageLoad(mode: Mode = NormalMode, srn: Option[String] = None, index: Index)
-POST       /:index/company/vat-registered                                                                   controllers.register.establishers.company.HasCompanyVATController.onSubmit(mode: Mode = NormalMode, srn: Option[String] = None, index: Index)
+GET        /:index/company/has-vat-registered                                                               controllers.register.establishers.company.HasCompanyVATController.onPageLoad(mode: Mode = NormalMode, srn: Option[String] = None, index: Index)
+POST       /:index/company/has-vat-registered                                                               controllers.register.establishers.company.HasCompanyVATController.onSubmit(mode: Mode = NormalMode, srn: Option[String] = None, index: Index)
+GET        /:index/company/:mode/has-vat-registered/:srn                                                    controllers.register.establishers.company.HasCompanyVATController.onPageLoad(mode: Mode, srn: Option[String], index: Index)
+POST       /:index/company/:mode/has-vat-registered/:srn                                                    controllers.register.establishers.company.HasCompanyVATController.onSubmit(mode: Mode, srn: Option[String], index: Index)
 
 GET        /:index/company/employer-paye-reference                                                          controllers.register.establishers.company.HasCompanyPAYEController.onPageLoad(mode: Mode = NormalMode, srn: Option[String] = None, index: Index)
 POST       /:index/company/employer-paye-reference                                                          controllers.register.establishers.company.HasCompanyPAYEController.onSubmit(mode: Mode = NormalMode, srn: Option[String] = None, index: Index)
 
 GET        /:index/company/check-your-answers-company-details                                               controllers.register.establishers.company.CheckYourAnswersCompanyDetailsController.onPageLoad(mode: Mode = NormalMode, srn: Option[String] = None, index: Index)
 POST       /:index/company/check-your-answers-company-details                                               controllers.register.establishers.company.CheckYourAnswersCompanyDetailsController.onSubmit(mode: Mode = NormalMode, srn: Option[String] = None, index: Index)
+GET        /:index/company/:mode/check-your-answers-company-details/:srn                                    controllers.register.establishers.company.CheckYourAnswersCompanyDetailsController.onPageLoad(mode: Mode, srn: Option[String], index: Index)
+POST       /:index/company/:mode/check-your-answers-company-details/:srn                                    controllers.register.establishers.company.CheckYourAnswersCompanyDetailsController.onSubmit(mode: Mode, srn: Option[String], index: Index)
 
 GET        /:index/company/company-address                                                                  controllers.register.establishers.company.WhatYouWillNeedCompanyAddressController.onPageLoad(mode: Mode = NormalMode, srn: Option[String] = None, index: Index)
 POST       /:index/company/company-address                                                                  controllers.register.establishers.company.WhatYouWillNeedCompanyAddressController.onSubmit(mode: Mode = NormalMode, srn: Option[String] = None, index: Index)
@@ -313,8 +328,12 @@ GET        /:index/company/:mode/enter-email-address/:srn                       
 POST       /:index/company/:mode/enter-email-address/:srn                                                   controllers.register.establishers.company.CompanyEmailController.onSubmit(mode: Mode, srn: Option[String], index:Index)
 
 
-GET        /:index/company/enter-phone-number                                                               controllers.register.establishers.company.CompanyPhoneController.onPageLoad(mode: Mode = NormalMode, srn: Option[String] = None, index: Index)
-POST       /:index/company/enter-phone-number                                                               controllers.register.establishers.company.CompanyPhoneController.onSubmit(mode: Mode = NormalMode, srn: Option[String] = None, index: Index)
+GET        /:index/company/enter-phone-number                                                              controllers.register.establishers.company.CompanyPhoneController.onPageLoad(mode: Mode = NormalMode, srn: Option[String] = None, index:Index)
+POST       /:index/company/enter-phone-number                                                              controllers.register.establishers.company.CompanyPhoneController.onSubmit(mode: Mode = NormalMode, srn: Option[String] = None, index:Index)
+GET        /:index/company/change/enter-phone-number                                                       controllers.register.establishers.company.CompanyPhoneController.onPageLoad(mode: Mode = CheckMode, srn: Option[String] = None, index:Index)
+POST       /:index/company/change/enter-phone-number                                                       controllers.register.establishers.company.CompanyPhoneController.onSubmit(mode: Mode = CheckMode, srn: Option[String] = None, index:Index)
+GET        /:index/company/:mode/enter-phone-number/:srn                                                   controllers.register.establishers.company.CompanyPhoneController.onPageLoad(mode: Mode, srn: Option[String], index:Index)
+POST       /:index/company/:mode/enter-phone-number/:srn                                                   controllers.register.establishers.company.CompanyPhoneController.onSubmit(mode: Mode, srn: Option[String], index:Index)
 
 GET        /:index/company/check-your-answers-company-contact-details                                       controllers.register.establishers.company.CheckYourAnswersCompanyContactDetailsController.onPageLoad(mode: Mode = NormalMode, srn: Option[String] = None, index: Index)
 POST       /:index/company/check-your-answers-company-contact-details                                       controllers.register.establishers.company.CheckYourAnswersCompanyContactDetailsController.onSubmit(mode: Mode = NormalMode, srn: Option[String] = None, index: Index)

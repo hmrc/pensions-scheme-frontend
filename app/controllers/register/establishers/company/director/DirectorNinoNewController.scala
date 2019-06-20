@@ -30,6 +30,8 @@ import utils.Navigator
 import utils.annotations.EstablishersCompanyDirector
 import viewmodels.NinoViewModel
 
+import scala.concurrent.ExecutionContext
+
 class DirectorNinoNewController @Inject()(
                                            val appConfig: FrontendAppConfig,
                                            val messagesApi: MessagesApi,
@@ -40,7 +42,7 @@ class DirectorNinoNewController @Inject()(
                                            allowAccess: AllowAccessActionProvider,
                                            requireData: DataRequiredAction,
                                            val formProvider: NinoNewFormProvider
-                                 ) extends NinoController with I18nSupport {
+                                 )(implicit val ec: ExecutionContext) extends NinoController with I18nSupport {
 
   private[controllers] val postCall = controllers.register.establishers.company.director.routes.DirectorNinoNewController.onSubmit _
   private[controllers] val title: String = "messages__director_yes_nino__title"
@@ -72,7 +74,8 @@ class DirectorNinoNewController @Inject()(
       }
   }
 
-  def onSubmit(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
+  def onSubmit(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
       viewmodel(establisherIndex, directorIndex, mode, srn).retrieve.right.map {
         vm =>

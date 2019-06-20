@@ -18,42 +18,75 @@ package controllers.register.establishers.company
 
 import controllers.ControllerSpecBase
 import controllers.actions._
+import forms.HasUtrFormProvider
+import identifiers.register.establishers.company.HasCompanyUTRId
 import models.{Index, NormalMode}
-import org.scalatest.BeforeAndAfterEach
-import org.scalatest.mockito.MockitoSugar
-import play.api.mvc.Call
+import play.api.data.Form
 import play.api.test.Helpers._
+import services.FakeUserAnswersService
+import utils.FakeNavigator
+import viewmodels.{CommonFormWithHintViewModel, Message}
+import views.html.hasUtr
 
-class HasCompanyUTRControllerSpec extends ControllerSpecBase with MockitoSugar with BeforeAndAfterEach {
+class HasCompanyUTRControllerSpec extends ControllerSpecBase {
+  private val schemeName = None
+  private def onwardRoute = controllers.routes.IndexController.onPageLoad()
+  val formProvider = new HasUtrFormProvider()
+  val form = formProvider("messages__hasCompanyUtr__error__required","test company name")
+  val index = Index(0)
+  val srn = None
+  val postCall = controllers.register.establishers.company.routes.HasCompanyUTRController.onSubmit(NormalMode, srn, index)
+  val viewModel = CommonFormWithHintViewModel(
+    postCall,
+    title = Message("messages__hasCompanyUtr__title"),
+    heading = Message("messages__hasCompanyUtr__h1", "test company name"),
+    hint = Some(Message("messages__hasCompanyUtr__p1"))
+  )
 
-  def onwardRoute: Call = controllers.routes.SessionExpiredController.onPageLoad
-
-  def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): HasCompanyUTRController =
-    new HasCompanyUTRController(frontendAppConfig,
+  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisherCompany): HasCompanyUTRController =
+    new HasCompanyUTRController(
+      frontendAppConfig,
       messagesApi,
+      FakeUserAnswersService,
+      new FakeNavigator(desiredRoute = onwardRoute),
       FakeAuthAction,
-      dataRetrievalAction
+      FakeAllowAccessProvider(),
+      dataRetrievalAction,
+      new DataRequiredActionImpl,
+      formProvider
     )
 
+  private def viewAsString(form: Form[_] = form) = hasUtr(frontendAppConfig, form, viewModel, schemeName)(fakeRequest, messages).toString
 
-  "HasCompanyUTRController" when {
+  "HasCompanyUTRController" must {
 
-    "on a GET" must {
-      "return OK and the correct view" in {
-        val result = controller().onPageLoad(NormalMode, None, Index(1))(fakeRequest)
+    "return OK and the correct view for a GET" in {
+      val result = controller().onPageLoad(NormalMode, None, index)(fakeRequest)
 
-        status(result) mustBe OK
-      }
+      status(result) mustBe OK
+      contentAsString(result) mustBe viewAsString()
     }
 
-    "on a POST" must {
-      "redirect to relavant page" in {
-        val result = controller().onSubmit(NormalMode, None, Index(1))(fakeRequest)
+    "redirect to the next page when valid data is submitted for true" in {
+      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "true"))
 
-        status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(controllers.routes.IndexController.onPageLoad().url)
-      }
+      val result = controller().onSubmit(NormalMode, None, index)(postRequest)
+
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result) mustBe Some(onwardRoute.url)
+      FakeUserAnswersService.verify(HasCompanyUTRId(index), true)
     }
+
+    "return a Bad Request and errors when invalid data is submitted" in {
+      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "invalid value"))
+      val boundForm = form.bind(Map("value" -> "invalid value"))
+
+      val result = controller().onSubmit(NormalMode, None, index)(postRequest)
+
+      status(result) mustBe BAD_REQUEST
+      contentAsString(result) mustBe viewAsString(boundForm)
+    }
+
   }
 }
 
