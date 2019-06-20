@@ -53,7 +53,7 @@ trait UserAnswersService {
 
   protected def appConfig: FrontendAppConfig
 
-  case class MissingSrnNumber() extends Exception
+  case object MissingSrnNumber extends Exception
 
   def save[A, I <: TypedIdentifier[A]](mode: Mode, srn: Option[String], id: I, value: A)
                                       (implicit fmt: Format[A],
@@ -124,7 +124,7 @@ trait UserAnswersService {
       case _ => Future(Json.obj())
     }
 
-    case _ => Future.failed(throw new MissingSrnNumber)
+    case _ => Future.failed(MissingSrnNumber)
   }
 
   def setCompleteFlag(mode: Mode, srn: Option[String], id: TypedIdentifier[Boolean], userAnswers: UserAnswers, value: Boolean)

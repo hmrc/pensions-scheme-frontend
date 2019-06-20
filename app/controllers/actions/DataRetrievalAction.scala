@@ -28,15 +28,16 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.HeaderCarrierConverter
 import utils.UserAnswers
 
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
-class DataRetrievalImpl(dataConnector: UserAnswersCacheConnector,
-                        viewConnector: SchemeDetailsReadOnlyCacheConnector,
-                        updateConnector: UpdateSchemeCacheConnector,
-                        lockConnector: PensionSchemeVarianceLockConnector,
-                        mode: Mode,
-                        srn: Option[String]) extends DataRetrieval {
+class DataRetrievalImpl(
+                         dataConnector: UserAnswersCacheConnector,
+                         viewConnector: SchemeDetailsReadOnlyCacheConnector,
+                         updateConnector: UpdateSchemeCacheConnector,
+                         lockConnector: PensionSchemeVarianceLockConnector,
+                         mode: Mode,
+                         srn: Option[String]
+                       )(implicit ec: ExecutionContext) extends DataRetrieval {
 
   override protected def transform[A](request: AuthenticatedRequest[A]): Future[OptionalDataRequest[A]] = {
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
@@ -103,7 +104,7 @@ class DataRetrievalActionImpl @Inject()(dataConnector: UserAnswersCacheConnector
                                         viewConnector: SchemeDetailsReadOnlyCacheConnector,
                                         updateConnector: UpdateSchemeCacheConnector,
                                         lockConnector: PensionSchemeVarianceLockConnector
-                                       ) extends DataRetrievalAction {
+                                       )(implicit ec: ExecutionContext) extends DataRetrievalAction {
   override def apply(mode: Mode, srn: Option[String]): DataRetrieval =
     new DataRetrievalImpl(dataConnector, viewConnector, updateConnector, lockConnector, mode, srn)
 }
