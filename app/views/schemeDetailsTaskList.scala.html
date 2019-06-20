@@ -159,14 +159,16 @@
                                     <h3 class="task-list-section">@messages(hdr)</h3>
                                 </li>
                             }
-                            <li class="task-list-item">
-                                <a id= "section-establishers-link-0@index" href="@{item.link.target}">
-                                    @messages(item.link.text)
-                                </a>
-                                @item.isCompleted.map{ isCompleted =>
-                                <strong class="@statusClass(isCompleted)" id="section-establishers-status-0@index">@messages(status(isCompleted))</strong>
-                                }
-                            </li>
+                            @for((entity, i) <- item.entities.zipWithIndex){
+                                <li class="task-list-item">
+                                    <a id= "section-establishers-link-0@index-@i" href="@{entity.link.target}">
+                                        @messages(entity.link.text)
+                                    </a>
+                                    @entity.isCompleted.map{ isCompleted =>
+                                    <strong class="@statusClass(isCompleted)" id="section-establishers-status-0@index-@i">@messages(status(isCompleted))</strong>
+                                    }
+                                </li>
+                            }
                         }
                     }
                 </ul>
