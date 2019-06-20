@@ -188,8 +188,7 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
           NavigateTo.dontSave(controllers.register.establishers.company.routes.CompanyConfirmPreviousAddressController.onPageLoad(index, srn))
         else
           NavigateTo.dontSave(controllers.register.establishers.company.routes.CompanyPreviousAddressPostcodeLookupController.onPageLoad(mode, srn, index))
-      case Some(AddressYears.OverAYear) => exitMiniJourney(index, mode, srn, answers,
-        controllers.register.establishers.company.routes.CheckYourAnswersController.onPageLoad(journeyMode(mode), srn, index))
+      case Some(AddressYears.OverAYear) => exitMiniJourney(index, mode, srn, answers, cya(index, mode, srn))
       case None =>
         NavigateTo.dontSave(controllers.routes.SessionExpiredController.onPageLoad())
     }
