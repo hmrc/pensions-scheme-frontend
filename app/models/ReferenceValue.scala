@@ -29,8 +29,8 @@ object ReferenceValue {
 
   implicit val writes: Writes[ReferenceValue] = Json.writes[ReferenceValue]
 
-  def applyEditable(vat: String): ReferenceValue = {
-    ReferenceValue(vat)
+  def applyEditable(value: String): ReferenceValue = {
+    ReferenceValue(value)
   }
 
   def unapplyEditable(reference: ReferenceValue): Option[String] = {
