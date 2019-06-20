@@ -38,7 +38,7 @@ trait FieldBehaviours extends FormSpec with PropertyChecks with Generators with 
       forAll(validDataGenerator.retryUntil(!_.matches("""^\s+$""")) -> "validDataItem") {
         dataItem: String =>
           val result = form.bind(Map(fieldName -> dataItem)).apply(fieldName)
-          result.errors shouldBe empty
+          result.errors mustBe empty
       }
     }
   }
@@ -50,13 +50,13 @@ trait FieldBehaviours extends FormSpec with PropertyChecks with Generators with 
     "not bind when key is not present at all" in {
 
       val result = form.bind(emptyForm).apply(fieldName)
-      result.errors shouldEqual Seq(requiredError)
+      result.errors mustEqual Seq(requiredError)
     }
 
     "not bind blank values" in {
 
       val result = form.bind(Map(fieldName -> "")).apply(fieldName)
-      result.errors shouldEqual Seq(requiredError)
+      result.errors mustEqual Seq(requiredError)
     }
   }
 
@@ -69,7 +69,7 @@ trait FieldBehaviours extends FormSpec with PropertyChecks with Generators with 
       val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
 
       def testField(fieldName: String, data: String): Unit = {
-        form.bind(Map(fieldName -> data)).apply(fieldName).errors shouldBe empty
+        form.bind(Map(fieldName -> data)).apply(fieldName).errors mustBe empty
       }
 
       forAll(generator -> "date") {
@@ -89,12 +89,12 @@ trait FieldBehaviours extends FormSpec with PropertyChecks with Generators with 
 
     def keyNotPresent(fieldName: String, requiredKey: String): Unit = {
       val result = form.bind(emptyForm).apply(fieldName)
-      result.errors shouldEqual Seq(FormError(fieldName, requiredKey))
+      result.errors mustEqual Seq(FormError(fieldName, requiredKey))
     }
 
     def keyBlank(fieldName: String, requiredKey: String): Unit = {
       val result = form.bind(Map(fieldName -> "")).apply(fieldName)
-      result.errors shouldEqual Seq(FormError(fieldName, requiredKey))
+      result.errors mustEqual Seq(FormError(fieldName, requiredKey))
     }
 
     "not bind when day key is not present at all" in {

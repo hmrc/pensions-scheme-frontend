@@ -16,16 +16,16 @@
 
 package forms
 
-import com.google.inject.Inject
+import base.SpecBase
 import forms.behaviours.PayeBehaviours
 import play.api.data.Form
-import play.api.i18n.Messages
+import viewmodels.Message
 
-class PayeVariationsFormProviderSpec @Inject()(implicit messages: Messages) extends PayeBehaviours {
+class PayeVariationsFormProviderSpec extends PayeBehaviours with SpecBase{
 
-  private val requiredPayeKey = "messages__error__paye_required"
-  private val payeLengthKey = "messages__error__paye_length"
-  private val invalidPayeKey = "messages__error__paye_invalid"
+  private val requiredPayeKey = "messages__payeVariations__error_required"
+  private val payeLengthKey = Message("messages__payeVariations__error_length", "test company").resolve
+  private val invalidPayeKey = Message("messages__payeVariations__error_invalid", "test company").resolve
 
   "A form with Paye" should {
     val mapping = payeStringMapping(
@@ -39,7 +39,7 @@ class PayeVariationsFormProviderSpec @Inject()(implicit messages: Messages) exte
     behave like formWithPayeVariations(
       testForm: Form[String],
       requiredPayeKey: String,
-      payeLengthKey: String
+      invalidPayeKey: String
     )
 
   }

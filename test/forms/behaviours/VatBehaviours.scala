@@ -35,24 +35,24 @@ trait VatBehaviours extends FormSpec with Generators with PropertyChecks with Co
                   invalidVatKey: String
                  ): Unit = {
 
-    "behave like a form with a VAT Mapping" should {
+    "behave like a form with a VAT Mapping" must {
 
       "fail to bind when yes is selected but VAT is not provided" in {
         val result = testForm.bind(Map("vat.hasVat" -> "true"))
-        result.errors shouldBe Seq(FormError("vat.vat", requiredVatKey))
+        result.errors mustBe Seq(FormError("vat.vat", requiredVatKey))
       }
 
       Seq("AB123490", "AO111111B", "ORA12345C", "AB0202020", "AB040404E").foreach { vat =>
         s"fail to bind when VAT $vat is invalid" in {
           val result = testForm.bind(Map("vat.hasVat" -> "true", "vat.vat" -> vat))
-          result.errors shouldBe Seq(FormError("vat.vat", invalidVatKey, Seq(regexVat)))
+          result.errors mustBe Seq(FormError("vat.vat", invalidVatKey, Seq(regexVat)))
         }
       }
 
       Seq("AB1234567890", "987654328765", "CDCDCDOPOPOP", "AB03047853030D").foreach { vat =>
         s"fail to bind when VAT $vat is longer than expected" in {
           val result = testForm.bind(Map("vat.hasVat" -> "true", "vat.vat" -> vat))
-          result.errors shouldBe Seq(FormError("vat.vat", vatLengthKey, Seq(VatMapping.maxVatLength)))
+          result.errors mustBe Seq(FormError("vat.vat", vatLengthKey, Seq(VatMapping.maxVatLength)))
         }
       }
 
@@ -60,13 +60,13 @@ trait VatBehaviours extends FormSpec with Generators with PropertyChecks with Co
         validVat =>
           s"successfully bind when yes is selected and valid VAT $validVat is provided" in {
             val form = testForm.bind(Map("vat.hasVat" -> "true", "vat.vat" -> validVat))
-            form.get shouldEqual Vat.Yes("999999999")
+            form.get mustEqual Vat.Yes("999999999")
           }
       }
 
       "successfully bind when no is selected" in {
         val form = testForm.bind(Map("vat.hasVat" -> "false"))
-        form.get shouldBe Vat.No
+        form.get mustBe Vat.No
       }
 
       "fail to bind when value is omitted" in {
@@ -76,20 +76,20 @@ trait VatBehaviours extends FormSpec with Generators with PropertyChecks with Co
 
       "successfully unbind `Vat.Yes`" in {
         val result = testForm.fill(Vat.Yes("vat")).data
-        result should contain("vat.hasVat" -> "true")
-        result should contain("vat.vat" -> "vat")
+        result must contain("vat.hasVat" -> "true")
+        result must contain("vat.vat" -> "vat")
       }
 
       "successfully unbind `Vat.No`" in {
         val result = testForm.fill(Vat.No).data
-        result should contain("vat.hasVat" -> "false")
+        result must contain("vat.hasVat" -> "false")
       }
     }
 
     "vatRegistrationNumberTransform" must {
       "strip leading, trailing ,and internal spaces" in {
         val actual = vatRegistrationNumberTransform("  123 456 789  ")
-        actual shouldBe "123456789"
+        actual mustBe "123456789"
       }
 
       "remove leading GB" in {
@@ -102,7 +102,7 @@ trait VatBehaviours extends FormSpec with Generators with PropertyChecks with Co
         )
 
         forAll(gb) { vat =>
-          vatRegistrationNumberTransform(vat) shouldBe "123456789"
+          vatRegistrationNumberTransform(vat) mustBe "123456789"
         }
       }
     }
@@ -114,7 +114,7 @@ trait VatBehaviours extends FormSpec with Generators with PropertyChecks with Co
                   invalidVatKey: String
                  ): Unit = {
 
-    "behave like a form with a VAT Mapping in variations" should {
+    "behave like a form with a VAT Mapping in variations" must {
 
       "fail to bind when value is not entered" in {
         val expectedError = error("vat", requiredVatKey)
@@ -124,21 +124,21 @@ trait VatBehaviours extends FormSpec with Generators with PropertyChecks with Co
       Seq("AB123490", "AO111111B", "ORA12345C", "AB0202020", "AB040404E").foreach { vat =>
         s"fail to bind when VAT $vat is invalid" in {
           val result = testForm.bind(Map("vat" -> vat))
-          result.errors shouldBe Seq(FormError("vat", invalidVatKey, Seq(regexVat)))
+          result.errors mustBe Seq(FormError("vat", invalidVatKey, Seq(regexVat)))
         }
       }
 
       Seq("AB1234567890", "987654328765", "CDCDCDOPOPOP", "AB03047853030D").foreach { vat =>
         s"fail to bind when VAT $vat is longer than expected" in {
           val result = testForm.bind(Map("vat" -> vat))
-          result.errors shouldBe Seq(FormError("vat", vatLengthKey, Seq(VatMapping.maxVatLength)))
+          result.errors mustBe Seq(FormError("vat", vatLengthKey, Seq(VatMapping.maxVatLength)))
         }
       }
 
       "vatRegistrationNumberTransform" must {
         "strip leading, trailing ,and internal spaces" in {
           val actual = vatRegistrationNumberTransform("  123 456 789  ")
-          actual shouldBe "123456789"
+          actual mustBe "123456789"
         }
 
         "remove leading GB" in {
@@ -151,7 +151,7 @@ trait VatBehaviours extends FormSpec with Generators with PropertyChecks with Co
           )
 
           forAll(gb) { vat =>
-            vatRegistrationNumberTransform(vat) shouldBe "123456789"
+            vatRegistrationNumberTransform(vat) mustBe "123456789"
           }
         }
       }
