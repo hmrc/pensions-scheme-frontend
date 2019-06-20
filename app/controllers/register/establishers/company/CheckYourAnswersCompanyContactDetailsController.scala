@@ -54,8 +54,8 @@ class CheckYourAnswersCompanyContactDetailsController @Inject()(appConfig: Front
         val notNewEstablisher = !userAnswers.get(IsEstablisherNewId(index)).getOrElse(true)
         val contactDetails = AnswerSection(
           None,
-          CompanyEmailId(index).row(routes.CompanyEmailController.onPageLoad(checkMode(mode), srn, Index(index)).url, mode) ++
-            CompanyPhoneId(index).row(routes.CompanyPhoneController.onPageLoad(checkMode(mode), srn, Index(index)).url, mode)
+          CompanyEmailId(index).row(routes.CompanyEmailController.onPageLoad(checkMode(mode), srn, index).url, mode) ++
+            CompanyPhoneId(index).row(routes.CompanyPhoneController.onPageLoad(checkMode(mode), srn, index).url, mode)
         )
 
         Future.successful(Ok(check_your_answers(

@@ -47,12 +47,12 @@ class CheckYourAnswersCompanyContactDetailsControllerSpec extends ControllerSpec
     val userAnswers = request.userAnswers
     Seq(AnswerSection(None,
       StringCYA[CompanyEmailId](userAnswers.get(CompanyDetailsId(index)).map(companyDetails =>
-        messages("messages__common_email__cya_label", companyDetails.companyName)),
+        messages("messages__common_email__heading", companyDetails.companyName)),
         Some(messages("messages__common_company_email__visually_hidden_change_label")))().row(CompanyEmailId(index))(
         routes.CompanyEmailController.onPageLoad(checkMode(mode), srn, Index(index)).url, userAnswers) ++
 
         StringCYA[CompanyPhoneId](userAnswers.get(CompanyDetailsId(index)).map(companyDetails =>
-          messages("messages__common_phone__cya_label", companyDetails.companyName)),
+          messages("messages__common_phone__heading", companyDetails.companyName)),
           Some(messages("messages__common_company_phone__visually_hidden_change_label")))().row(CompanyPhoneId(index))(
           routes.CompanyPhoneController.onPageLoad(checkMode(mode), srn, Index(index)).url, userAnswers)
     ))

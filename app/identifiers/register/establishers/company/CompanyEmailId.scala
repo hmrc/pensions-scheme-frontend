@@ -34,18 +34,14 @@ object CompanyEmailId {
 
   implicit def cya(implicit messages: Messages, countryOptions: CountryOptions, userAnswers: UserAnswers): CheckYourAnswers[CompanyEmailId] = new
       CheckYourAnswers[CompanyEmailId] {
+    private val label = "messages__common_email__heading"
     private val hiddenLabel = Some(messages("messages__common_company_email__visually_hidden_change_label"))
 
-    override def row(id: CompanyEmailId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
-      StringCYA[CompanyEmailId](userAnswers.get(CompanyDetailsId(id.index)).map(companyDetails =>
-        messages("messages__common_email__cya_label", companyDetails.companyName)),
-        hiddenLabel)().row(id)(changeUrl, userAnswers)
-    }
-    override def updateRow(id: CompanyEmailId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
-      StringCYA[CompanyEmailId](userAnswers.get(CompanyDetailsId(id.index)).map(companyDetails =>
-        messages("messages__common_email__cya_label", companyDetails.companyName)),
-        hiddenLabel)().row(id)(changeUrl, userAnswers)
-    }
+    override def row(id: CompanyEmailId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+      StringCYA(userAnswers.get(CompanyDetailsId(id.index)).map(companyDetails =>
+        messages(label, companyDetails.companyName)), hiddenLabel)().row(id)(changeUrl, userAnswers)
+
+    override def updateRow(id: CompanyEmailId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = row(id)(changeUrl, userAnswers)
   }
 }
 
