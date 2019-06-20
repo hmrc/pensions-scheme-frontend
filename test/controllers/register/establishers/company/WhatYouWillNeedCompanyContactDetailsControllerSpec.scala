@@ -23,6 +23,7 @@ import org.scalatest.BeforeAndAfterEach
 import org.scalatest.mockito.MockitoSugar
 import play.api.mvc.Call
 import play.api.test.Helpers._
+import views.html.register.establishers.company.whatYouWillNeedCompanyDetails
 
 class WhatYouWillNeedCompanyContactDetailsControllerSpec extends ControllerSpecBase with MockitoSugar with BeforeAndAfterEach {
 
@@ -35,6 +36,9 @@ class WhatYouWillNeedCompanyContactDetailsControllerSpec extends ControllerSpecB
       dataRetrievalAction
     )
 
+  val postCall = controllers.register.establishers.company.routes.WhatYouWillNeedCompanyDetailsController.onSubmit(index=Index(0))
+
+  def viewAsString(): String = whatYouWillNeedCompanyDetails(frontendAppConfig, Some("testScheme"), postCall, None)(fakeRequest, messages).toString
 
   "WhatYouWillNeedCompanyContactDetailsController" when {
 
