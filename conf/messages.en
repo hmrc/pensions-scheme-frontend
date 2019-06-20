@@ -1414,6 +1414,13 @@ messages__whatYouWillNeedEstablisherCompany__item2 = Unique Taxpayer Reference (
 messages__whatYouWillNeedEstablisherCompany__item3 = VAT registration number
 messages__whatYouWillNeedEstablisherCompany__item4 = employer PAYE number
 
+messages__whatYouWillNeedEstablisherCompanyContact__title = Contact details
+messages__whatYouWillNeedEstablisherCompanyContact__h1 = Contact details
+messages__whatYouWillNeedEstablisherCompanyContact__lede = You will need to tell us the company’s contact:
+messages__whatYouWillNeedEstablisherCompanyContact__item1 = email address
+messages__whatYouWillNeedEstablisherCompanyContact__item2 = phone number
+messages__whatYouWillNeedEstablisherCompanyContact__item3 = These should be details used for other HMRC services. These will not be used to contact the company.
+
 messages__schemeTaskList__before_you_start_link_text = Setting up your scheme application
 messages__schemeTaskList__scheme_info_link_text = Information about your scheme
 messages__schemeTaskList__scheme_information_link_text = Scheme information
