@@ -20,7 +20,7 @@ import forms.PhoneFormProvider
 import play.api.data.Form
 import play.api.mvc.Call
 import play.twirl.api.HtmlFormat
-import viewmodels.{Message, PhoneNumberViewModel}
+import viewmodels.{Message, CommonFormWithHintViewModel}
 import views.behaviours.QuestionViewBehaviours
 import views.html.phoneNumber
 
@@ -30,7 +30,7 @@ class PhoneNumberViewSpec extends QuestionViewBehaviours[String] {
   val form = new PhoneFormProvider().apply()
   val companyName = "test company"
 
-  val viewModel = PhoneNumberViewModel(
+  val viewModel = CommonFormWithHintViewModel(
     postCall = Call("GET", "www.example.com"),
     Message("messages__establisher_phone__title"),
     Message("messages__common_phone__heading", companyName),

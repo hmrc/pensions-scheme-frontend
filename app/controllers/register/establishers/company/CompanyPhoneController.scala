@@ -29,7 +29,7 @@ import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
 import utils.Navigator
 import utils.annotations.EstablishersCompany
-import viewmodels.{Message, PhoneNumberViewModel}
+import viewmodels.{Message, CommonFormWithHintViewModel}
 
 class CompanyPhoneController @Inject()(val appConfig: FrontendAppConfig,
                                        override val messagesApi: MessagesApi,
@@ -44,12 +44,12 @@ class CompanyPhoneController @Inject()(val appConfig: FrontendAppConfig,
 
   protected val form: Form[String] = formProvider()
 
-  private def viewModel(mode: Mode, srn: Option[String], index: Index): Retrieval[PhoneNumberViewModel] =
+  private def viewModel(mode: Mode, srn: Option[String], index: Index): Retrieval[CommonFormWithHintViewModel] =
     Retrieval {
       implicit request =>
         CompanyDetailsId(index).retrieve.right.map {
           details =>
-            PhoneNumberViewModel(
+            CommonFormWithHintViewModel(
               routes.CompanyPhoneController.onSubmit(mode, srn, index),
               Message("messages__establisher_phone__title"),
               Message("messages__common_phone__heading", details.companyName),

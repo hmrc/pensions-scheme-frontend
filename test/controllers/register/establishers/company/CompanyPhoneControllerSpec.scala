@@ -27,7 +27,7 @@ import play.api.mvc.Call
 import play.api.test.Helpers._
 import services.FakeUserAnswersService
 import utils.FakeNavigator
-import viewmodels.{Message, PhoneNumberViewModel}
+import viewmodels.{Message, CommonFormWithHintViewModel}
 import views.html.phoneNumber
 
 class CompanyPhoneControllerSpec extends ControllerSpecBase with MockitoSugar with BeforeAndAfterEach {
@@ -54,7 +54,7 @@ class CompanyPhoneControllerSpec extends ControllerSpecBase with MockitoSugar wi
     phoneNumber(
       frontendAppConfig,
       form,
-      PhoneNumberViewModel(
+      CommonFormWithHintViewModel(
         routes.CompanyPhoneController.onSubmit(NormalMode, None, firstIndex),
         Message("messages__establisher_phone__title"),
         Message("messages__common_phone__heading", "test company name"),

@@ -26,7 +26,7 @@ import play.api.mvc.{AnyContent, Result}
 import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.{Navigator, UserAnswers}
-import viewmodels.PhoneNumberViewModel
+import viewmodels.CommonFormWithHintViewModel
 import views.html.phoneNumber
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -41,14 +41,14 @@ trait PhoneNumberController extends FrontendController with Retrievals with I18n
 
   protected def navigator: Navigator
 
-  def get(id: TypedIdentifier[String], form: Form[String], viewModel: PhoneNumberViewModel)
+  def get(id: TypedIdentifier[String], form: Form[String], viewModel: CommonFormWithHintViewModel)
          (implicit request: DataRequest[AnyContent]): Future[Result] = {
     val preparedForm = request.userAnswers.get(id).map(form.fill).getOrElse(form)
 
     Future.successful(Ok(phoneNumber(appConfig, preparedForm, viewModel, existingSchemeName)))
   }
 
-  def post(id: TypedIdentifier[String], mode: Mode, form: Form[String], viewModel: PhoneNumberViewModel)
+  def post(id: TypedIdentifier[String], mode: Mode, form: Form[String], viewModel: CommonFormWithHintViewModel)
           (implicit request: DataRequest[AnyContent]): Future[Result] = {
     form.bindFromRequest().fold(
       (formWithErrors: Form[_]) =>

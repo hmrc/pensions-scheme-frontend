@@ -34,7 +34,7 @@ import play.api.test.Helpers._
 import services.{FakeUserAnswersService, UserAnswersService}
 import uk.gov.hmrc.domain.PsaId
 import utils.{FakeNavigator, Navigator, UserAnswers}
-import viewmodels.PhoneNumberViewModel
+import viewmodels.CommonFormWithHintViewModel
 import views.html.phoneNumber
 
 import scala.concurrent.Future
@@ -43,7 +43,7 @@ class PhoneNumberControllerSpec extends WordSpec with MustMatchers with OptionVa
 
   import PhoneNumberControllerSpec._
 
-  val viewmodel = PhoneNumberViewModel(
+  val viewmodel = CommonFormWithHintViewModel(
     postCall = Call("GET", "www.example.com"),
     title = "title",
     heading = "heading",
@@ -168,11 +168,11 @@ object PhoneNumberControllerSpec {
                                   formProvider: PhoneFormProvider
                                 ) extends PhoneNumberController {
 
-    def onPageLoad(viewmodel: PhoneNumberViewModel, answers: UserAnswers): Future[Result] = {
+    def onPageLoad(viewmodel: CommonFormWithHintViewModel, answers: UserAnswers): Future[Result] = {
       get(FakeIdentifier, formProvider(), viewmodel)(DataRequest(FakeRequest(), "cacheId", answers, PsaId("A0000000")))
     }
 
-    def onSubmit(viewmodel: PhoneNumberViewModel, answers: UserAnswers, fakeRequest: Request[AnyContent]): Future[Result] = {
+    def onSubmit(viewmodel: CommonFormWithHintViewModel, answers: UserAnswers, fakeRequest: Request[AnyContent]): Future[Result] = {
       post(FakeIdentifier, CheckUpdateMode, formProvider(), viewmodel)(DataRequest(fakeRequest, "cacheId", answers, PsaId("A0000000")))
     }
   }
