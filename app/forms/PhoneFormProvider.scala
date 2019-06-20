@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package forms.register.adviser
+package forms
 
 import com.google.inject.Inject
 import forms.mappings.PhoneNumberMapping
 import play.api.data.Form
 
-class AdviserPhoneFormProvider @Inject() extends PhoneNumberMapping {
+class PhoneFormProvider @Inject() extends PhoneNumberMapping {
 
   def apply(): Form[String] = {
     Form(

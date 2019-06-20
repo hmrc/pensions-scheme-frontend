@@ -17,7 +17,6 @@
 package navigators
 
 import base.SpecBase
-import config.FeatureSwitchManagementServiceTestImpl
 import connectors.FakeUserAnswersCacheConnector
 import identifiers.register.establishers.company._
 import identifiers.register.establishers.company.director.DirectorDetailsId
@@ -26,11 +25,9 @@ import identifiers.{EstablishersOrTrusteesChangedId, Identifier}
 import models.Mode.{checkMode, journeyMode}
 import models._
 import models.person.PersonDetails
-import navigators.EstablishersIndividualNavigatorSpec.{environment, injector}
 import org.joda.time.LocalDate
 import org.scalatest.prop.TableFor6
 import org.scalatest.{MustMatchers, OptionValues}
-import play.api.Configuration
 import play.api.libs.json.Json
 import play.api.mvc.Call
 import utils.{Enumerable, FakeFeatureSwitchManagementService, UserAnswers}
@@ -87,12 +84,14 @@ class EstablishersCompanyNavigatorSpec extends SpecBase with MustMatchers with N
   private def normalOnlyRoutes: TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = Table(
     ("Id",                                          "User Answers",               "Next Page (Normal Mode)",                "Save (NM)",  "Next Page (Check Mode)",         "Save (CM)"),
     (CompanyContactDetailsId(0),                  emptyAnswers,                 isDormant(NormalMode),                                true,         Some(checkYourAnswers(journeyMode(CheckMode))),               true),
+    (CompanyPhoneId(0),                           emptyAnswers,                 cyaCompanyContactDetails(NormalMode),                         true,         Some(cyaCompanyContactDetails(journeyMode(CheckMode))),               true),
     (IsCompanyDormantId(0),                       emptyAnswers,                 checkYourAnswers(NormalMode),             true,         Some(checkYourAnswers(journeyMode(CheckMode))),               true)
   )
 
   private def updateOnlyRoutes: TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = Table(
     ("Id",                                          "User Answers",               "Next Page (UpdateMode Mode)",                "Save (NM)",  "Next Page (Check Mode)",         "Save (CM)"),
     (CompanyContactDetailsId(0),  emptyAnswers,                         checkYourAnswers(UpdateMode),   true,   Some(exitJourney(checkMode(UpdateMode),   emptyAnswers)),       true),
+    (CompanyPhoneId(0),           emptyAnswers,                         cyaCompanyContactDetails(UpdateMode),   true,   Some(exitJourney(checkMode(UpdateMode),   emptyAnswers)),       true),
     (AddCompanyDirectorsId(0),    addCompanyDirectorsFalseWithChanges,  anyMoreChanges,                 true,   None,                                                           true),
     (CompanyVatVariationsId(0),   emptyAnswers,                         none,                           true,   Some(exitJourney(checkMode(UpdateMode),   emptyAnswers)),       true),
     (CompanyPayeVariationsId(0),                  emptyAnswers,                  none,    true,           Some(exitJourney(checkMode(UpdateMode), emptyAnswers)),                   true)
@@ -179,6 +178,7 @@ object EstablishersCompanyNavigatorSpec extends OptionValues with Enumerable.Imp
     controllers.register.establishers.company.routes.CompanyPreviousAddressController.onPageLoad(mode, None, 0)
 
   private def companyContactDetails(mode: Mode) = controllers.register.establishers.company.routes.CompanyContactDetailsController.onPageLoad(mode, None, 0)
+  private def companyPhoneNumber(mode: Mode) = controllers.register.establishers.company.routes.CompanyPhoneController.onPageLoad(mode, None, 0)
 
   private def directorDetails(index: Index, mode: Mode) =
     controllers.register.establishers.company.director.routes.DirectorDetailsController.onPageLoad(mode, 0, index, None)
@@ -188,6 +188,8 @@ object EstablishersCompanyNavigatorSpec extends OptionValues with Enumerable.Imp
   private def otherDirectors(mode: Mode) = controllers.register.establishers.company.routes.OtherDirectorsController.onPageLoad(mode, None, 0)
 
   private def checkYourAnswers(mode: Mode) = controllers.register.establishers.company.routes.CheckYourAnswersController.onPageLoad(mode, None, 0)
+  private def cyaCompanyContactDetails(mode: Mode) =
+    controllers.register.establishers.company.routes.CheckYourAnswersCompanyContactDetailsController.onPageLoad(0)
 
   private def anyMoreChanges = controllers.routes.AnyMoreChangesController.onPageLoad(None)
 
