@@ -16,7 +16,7 @@
 
 package views.register.establishers.company
 
-import models.Index
+import models.{Index, NormalMode}
 import play.twirl.api.HtmlFormat
 import views.behaviours.ViewBehaviours
 import views.html.register.establishers.company.whatYouWillNeedCompanyDetails
@@ -25,7 +25,7 @@ class WhatYouWillNeedCompanyDetailsViewSpec extends ViewBehaviours {
 
   val messageKeyPrefix = "whatYouWillNeedEstablisherCompany"
 
-  val postCall = controllers.register.establishers.company.routes.WhatYouWillNeedCompanyDetailsController.onSubmit(index=Index(0))
+  val postCall = controllers.register.establishers.company.routes.WhatYouWillNeedCompanyDetailsController.onSubmit(NormalMode, None, index=Index(0))
 
   def createView: () => HtmlFormat.Appendable = () => whatYouWillNeedCompanyDetails(frontendAppConfig, Some("testScheme"), postCall, None)(fakeRequest, messages)
 

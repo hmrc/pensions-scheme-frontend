@@ -1411,7 +1411,7 @@ messages__whatYouWillNeedEstablisherCompany__h1 = Company details
 messages__whatYouWillNeedEstablisherCompany__lede = You will need to tell us the company’s:
 messages__whatYouWillNeedEstablisherCompany__item1 = registration number
 messages__whatYouWillNeedEstablisherCompany__item2 = Unique Taxpayer Reference (UTR)
-messages__whatYouWillNeedEstablisherCompany__item3 = VAT number
+messages__whatYouWillNeedEstablisherCompany__item3 = VAT registration number
 messages__whatYouWillNeedEstablisherCompany__item4 = employer PAYE number
 
 messages__schemeTaskList__before_you_start_link_text = Setting up your scheme application

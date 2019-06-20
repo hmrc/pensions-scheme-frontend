@@ -23,22 +23,17 @@ import org.scalatest.BeforeAndAfterEach
 import org.scalatest.mockito.MockitoSugar
 import play.api.mvc.Call
 import play.api.test.Helpers._
-import views.html.register.establishers.company.whatYouWillNeedCompanyDetails
 
 class WhatYouWillNeedCompanyContactDetailsControllerSpec extends ControllerSpecBase with MockitoSugar with BeforeAndAfterEach {
 
   def onwardRoute: Call = controllers.routes.SessionExpiredController.onPageLoad
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): WhatYouWillNeedCompanyDetailsController =
-    new WhatYouWillNeedCompanyDetailsController(frontendAppConfig,
+  def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): WhatYouWillNeedCompanyContactDetailsController =
+    new WhatYouWillNeedCompanyContactDetailsController(frontendAppConfig,
       messagesApi,
       FakeAuthAction,
       dataRetrievalAction
     )
-
-  val postCall = controllers.register.establishers.company.routes.WhatYouWillNeedCompanyDetailsController.onSubmit(index=Index(0))
-
-  def viewAsString(): String = whatYouWillNeedCompanyDetails(frontendAppConfig, Some("testScheme"), postCall, None)(fakeRequest, messages).toString
 
   "WhatYouWillNeedCompanyContactDetailsController" when {
 
