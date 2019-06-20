@@ -16,36 +16,36 @@
 
 package identifiers.register.trustees.company
 
-import identifiers._
-import identifiers.register.trustees.TrusteesId
-import models.Link
+import identifiers.TypedIdentifier
+import identifiers.register.trustees.{IsTrusteeNewId, TrusteesId}
+import models.ReferenceValue
 import play.api.i18n.Messages
 import play.api.libs.json.JsPath
+import utils.checkyouranswers.{CheckYourAnswers, ReferenceValueCYA}
 import utils.{CountryOptions, UserAnswers}
-import utils.checkyouranswers.CheckYourAnswers
-import utils.checkyouranswers.CheckYourAnswers.StringCYA
 import viewmodels.AnswerRow
 
-case class CompanyRegistrationNumberVariationsId(index: Int) extends TypedIdentifier[String] {
-  override def path: JsPath = TrusteesId(index).path \ "companyRegistrationNumber" \ CompanyRegistrationNumberVariationsId.toString
+case class CompanyRegistrationNumberVariationsId(index: Int) extends TypedIdentifier[ReferenceValue] {
+  override def path: JsPath = TrusteesId(index).path \ CompanyRegistrationNumberVariationsId.toString
 }
 
 object CompanyRegistrationNumberVariationsId {
-  override def toString: String = "crn"
+  override def toString: String = "companyRegistrationNumber"
 
   implicit def cya(implicit messages: Messages, countryOptions: CountryOptions): CheckYourAnswers[CompanyRegistrationNumberVariationsId] = {
+
     val label: String = "messages__checkYourAnswers__trustees__company__number"
-    val changeCrn: String = "messages__visuallyhidden__trustee__crn"
+    val changeCrn: String = "messages__visuallyhidden__trustees__crn"
 
     new CheckYourAnswers[CompanyRegistrationNumberVariationsId] {
       override def row(id: CompanyRegistrationNumberVariationsId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        StringCYA(Some(label), Some(changeCrn))().row(id)(changeUrl, userAnswers)
+        ReferenceValueCYA[CompanyRegistrationNumberVariationsId](label, changeCrn)().row(id)(changeUrl, userAnswers)
 
       override def updateRow(id: CompanyRegistrationNumberVariationsId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        userAnswers.get(id) match {
-          case Some(crn) => Seq(AnswerRow(label, Seq(crn), answerIsMessageKey = false, None))
-          case _ => Seq(AnswerRow(label, Seq("site.not_entered"), answerIsMessageKey = true,
-            Some(Link("site.add", changeUrl, Some(s"${changeCrn}_add")))))
+        userAnswers.get(IsTrusteeNewId(id.index)) match {
+          case Some(true) => ReferenceValueCYA[CompanyRegistrationNumberVariationsId](label, changeCrn)().row(id)(changeUrl, userAnswers)
+          case _ =>
+            ReferenceValueCYA[CompanyRegistrationNumberVariationsId](label, changeCrn)().updateRow(id)(changeUrl, userAnswers)
         }
     }
   }

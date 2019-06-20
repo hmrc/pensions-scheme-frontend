@@ -18,6 +18,7 @@ package forms
 
 import base.SpecBase
 import forms.behaviours.PayeBehaviours
+import models.ReferenceValue
 import play.api.data.Form
 import viewmodels.Message
 
@@ -37,7 +38,7 @@ class PayeVariationsFormProviderSpec extends PayeBehaviours with SpecBase{
     val testForm = new PayeVariationsFormProvider().apply("test company")
 
     behave like formWithPayeVariations(
-      testForm: Form[String],
+      testForm: Form[ReferenceValue],
       requiredPayeKey: String,
       invalidPayeKey: String
     )

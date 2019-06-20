@@ -41,7 +41,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
   implicit val request = FakeDataRequest(partnerAnswers)
 
   private def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData,
-                         allowChangeHelper: AllowChangeHelper = ach, toggle:Boolean = false): CheckYourAnswersController =
+                         allowChangeHelper: AllowChangeHelper = ach, toggle: Boolean = false): CheckYourAnswersController =
     new CheckYourAnswersController(
       frontendAppConfig,
       messagesApi,
@@ -57,7 +57,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
     )
 
 
-  def partnerDetails(mode:Mode, srn : Option[String] = None) = AnswerSection(
+  private def partnerDetails(mode: Mode, srn: Option[String] = None) = AnswerSection(
     Some("messages__partner__cya__details_heading"),
     Seq(
       PartnerDetailsId(firstIndex, firstIndex).
@@ -69,7 +69,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
     ).flatten
   )
 
-  def partnerContactDetails(mode:Mode, srn : Option[String] = None) = AnswerSection(
+  private def partnerContactDetails(mode: Mode, srn: Option[String] = None) = AnswerSection(
     Some("messages__partner__cya__contact__details_heading"),
     Seq(
       PartnerAddressId(firstIndex, firstIndex).
@@ -83,9 +83,9 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
     ).flatten
   )
 
-  def viewAsString(mode:Mode = NormalMode,
-                   answerSection : Seq[AnswerSection] = Seq(partnerDetails(NormalMode), partnerContactDetails(NormalMode)),
-                   srn : Option[String] =  None) = check_your_answers(
+  private def viewAsString(mode: Mode = NormalMode,
+                           answerSection: Seq[AnswerSection] = Seq(partnerDetails(NormalMode), partnerContactDetails(NormalMode)),
+                           srn: Option[String] = None) = check_your_answers(
     frontendAppConfig,
     answerSection,
     routes.CheckYourAnswersController.onSubmit(mode, firstIndex, firstIndex, srn),
@@ -107,14 +107,15 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
 
       "return OK and display all given answers for UpdateMode" in {
 
-        val result = controller(partnerAnswersUpdate.dataRetrievalAction).onPageLoad(UpdateMode, firstIndex, firstIndex, Some("srn"))(request)
+        val result = controller(partnerAnswersExistingNino.dataRetrievalAction).onPageLoad(UpdateMode, firstIndex, firstIndex, Some("srn"))(request)
         status(result) mustBe OK
         contentAsString(result) mustBe viewAsString(UpdateMode, updateAnswerRows, Some("srn"))
       }
 
       "return OK and display new Nino with Add link for UpdateMode and separateRefCollectionEnabled is true" in {
 
-        val result = controller(partnerDetailsAnswersUpdateWithoutNino.dataRetrievalAction, toggle = true).onPageLoad(UpdateMode, firstIndex, firstIndex, Some("srn"))(request)
+        val result = controller(partnerDetailsAnswersUpdateWithoutNino.dataRetrievalAction, toggle = true).
+          onPageLoad(UpdateMode, firstIndex, firstIndex, Some("srn"))(request)
         status(result) mustBe OK
         contentAsString(result) mustBe viewAsString(UpdateMode, displayNewNinoAnswerRowWithAdd, Some("srn"))
       }
@@ -128,13 +129,14 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
 
       "return OK and display old Nino links for UpdateMode, New Partner and separateRefCollectionEnabled is true" in {
 
-        val result = controller(newPartnerAnswersUpdateWithNewNino.dataRetrievalAction, toggle = true).onPageLoad(UpdateMode, firstIndex, firstIndex, Some("srn"))(request)
+        val result = controller(newPartnerAnswersUpdateWithOldNino.dataRetrievalAction, toggle = true).
+          onPageLoad(UpdateMode, firstIndex, firstIndex, Some("srn"))(request)
         status(result) mustBe OK
         contentAsString(result) mustBe viewAsString(UpdateMode, updateAnswerRowsWithChange, Some("srn"))
       }
 
       behave like changeableController(
-        controller(partnerAnswers.dataRetrievalAction, _:AllowChangeHelper)
+        controller(partnerAnswers.dataRetrievalAction, _: AllowChangeHelper)
           .onPageLoad(NormalMode, firstIndex, firstIndex, None)(request)
       )
     }
@@ -176,8 +178,10 @@ object CheckYourAnswersControllerSpec extends SpecBase {
     .set(PartnerDetailsId(firstIndex, firstIndex))(PersonDetails("first name", None, "last name", LocalDate.now(), false))
     .asOpt.value
 
-
   implicit val partnerAnswersUpdate = partnerDetailsAnswersUpdateWithoutNino
+    .set(PartnerNewNinoId(firstIndex, firstIndex))(ReferenceValue("AB100100A")).asOpt.value
+
+  implicit val partnerAnswersExistingNino = partnerDetailsAnswersUpdateWithoutNino
     .set(PartnerNinoId(firstIndex, firstIndex))(Nino.Yes("AB100100A")).asOpt.value
 
   val partnerAnswers = partnerAnswersUpdate
@@ -190,12 +194,12 @@ object CheckYourAnswersControllerSpec extends SpecBase {
 
   val newPartnerAnswers = partnerAnswers.set(IsEstablisherNewId(firstIndex))(true).asOpt.value
 
-  implicit val newPartnerAnswersUpdateWithNewNino = partnerAnswersUpdate
+  implicit val newPartnerAnswersUpdateWithOldNino = partnerAnswersUpdate
     .set(IsNewPartnerId(firstIndex, firstIndex))(true)
-    .flatMap(_.set(PartnerNewNinoId(firstIndex, firstIndex))("AB100100A"))
+    .flatMap(_.set(PartnerNinoId(firstIndex, firstIndex))(Nino.Yes("AB100100A")))
     .asOpt.value
 
-  def updateAnswerRows = Seq(AnswerSection(
+  private def updateAnswerRows = Seq(AnswerSection(
     Some("messages__partner__cya__details_heading"),
     Seq(
       AnswerRow("messages__common__cya__name", Seq("first name last name"), false, None),
@@ -206,7 +210,7 @@ object CheckYourAnswersControllerSpec extends SpecBase {
     AnswerSection(Some("messages__partner__cya__contact__details_heading"), Seq())
   )
 
-  def updateAnswerRowsWithChange = Seq(AnswerSection(
+  private def updateAnswerRowsWithChange = Seq(AnswerSection(
     Some("messages__partner__cya__details_heading"),
     Seq(
       AnswerRow("messages__common__cya__name", Seq("first name last name"), false,
@@ -226,7 +230,7 @@ object CheckYourAnswersControllerSpec extends SpecBase {
     AnswerSection(Some("messages__partner__cya__contact__details_heading"), Seq())
   )
 
-  def displayNewNinoAnswerRowWithAdd = Seq(AnswerSection(
+  private def displayNewNinoAnswerRowWithAdd = Seq(AnswerSection(
     Some("messages__partner__cya__details_heading"),
     Seq(
       AnswerRow("messages__common__cya__name", Seq("first name last name"), false, None),
@@ -240,7 +244,7 @@ object CheckYourAnswersControllerSpec extends SpecBase {
     AnswerSection(Some("messages__partner__cya__contact__details_heading"), Seq())
   )
 
-  def displayNewNinoAnswerRowWithNoLink = Seq(AnswerSection(
+  private def displayNewNinoAnswerRowWithNoLink = Seq(AnswerSection(
     Some("messages__partner__cya__details_heading"),
     Seq(
       AnswerRow("messages__common__cya__name", Seq("first name last name"), false, None),
