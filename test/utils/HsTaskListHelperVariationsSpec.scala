@@ -32,7 +32,7 @@ import controllers.register.establishers.company.{routes => establisherCompanyRo
 import play.api.libs.json.JsResult
 import utils.behaviours.HsTaskListHelperBehaviour
 import utils.hstasklisthelper.{HsTaskListHelper, HsTaskListHelperVariations}
-import viewmodels.{EntityItem, SchemeDetailsTaskListEntitySection, SchemeDetailsTaskListHeader, SchemeDetailsTaskListSection}
+import viewmodels.{SchemeDetailsTaskListEntitySection, SchemeDetailsTaskListHeader, SchemeDetailsTaskListSection}
 
 class HsTaskListHelperVariationsSpec extends HsTaskListHelperBehaviour {
   private val srn = Some("test-srn")
@@ -263,12 +263,12 @@ class HsTaskListHelperVariationsSpec extends HsTaskListHelperBehaviour {
     "return the seq of establishers sub sections for non deleted establishers which are all completed" in {
       val userAnswers = allEstablishers()
       val helper = new HsTaskListHelperVariations(userAnswers, viewOnly = false, Some("test-srn"), fakeFeatureManagementService)
-      helper.establishers(userAnswers) mustBe
-        Seq(SchemeDetailsTaskListEntitySection(None, Seq(EntityItem(Link(messages("messages__schemeTaskList__persons_details__link_text", "firstName lastName"),
+      helper.establishers(userAnswers, UpdateMode, srn) mustBe
+        Seq(SchemeDetailsTaskListEntitySection(None, Seq(EntitySpoke(Link(messages("messages__schemeTaskList__persons_details__link_text", "firstName lastName"),
           controllers.register.establishers.individual.routes.CheckYourAnswersController.onPageLoad(UpdateMode, 0, srn).url), None)), None),
-          SchemeDetailsTaskListEntitySection(None, Seq(EntityItem(Link(messages("messages__schemeTaskList__persons_details__link_text", "test company"),
+          SchemeDetailsTaskListEntitySection(None, Seq(EntitySpoke(Link(messages("messages__schemeTaskList__persons_details__link_text", "test company"),
             controllers.register.establishers.company.routes.CompanyReviewController.onPageLoad(UpdateMode, srn, 1).url), None)), None),
-          SchemeDetailsTaskListEntitySection(None, Seq(EntityItem(Link(messages("messages__schemeTaskList__persons_details__link_text", "test partnership"),
+          SchemeDetailsTaskListEntitySection(None, Seq(EntitySpoke(Link(messages("messages__schemeTaskList__persons_details__link_text", "test partnership"),
             controllers.register.establishers.partnership.routes.PartnershipReviewController.onPageLoad(UpdateMode, 2, srn).url), None)), None)
         )
     }
@@ -277,24 +277,24 @@ class HsTaskListHelperVariationsSpec extends HsTaskListHelperBehaviour {
       val userAnswers = allEstablishers()
       val helper = new HsTaskListHelperVariations(userAnswers, viewOnly = false, Some("test-srn"),
         new FakeFeatureSwitchManagementService(true))
-      helper.establishers(userAnswers) mustBe
-        Seq(SchemeDetailsTaskListEntitySection(None, Seq(EntityItem(Link(messages("messages__schemeTaskList__persons_details__link_text", "firstName lastName"),
+      helper.establishers(userAnswers, UpdateMode, srn) mustBe
+        Seq(SchemeDetailsTaskListEntitySection(None, Seq(EntitySpoke(Link(messages("messages__schemeTaskList__persons_details__link_text", "firstName lastName"),
           controllers.register.establishers.individual.routes.CheckYourAnswersController.onPageLoad(UpdateMode, 0, srn).url), None)), None),
 
           SchemeDetailsTaskListEntitySection(None,
 
             Seq(
-              EntityItem(Link(messages("messages__schemeTaskList__sectionEstablishersCompany_add_details", "test company"),
+              EntitySpoke(Link(messages("messages__schemeTaskList__sectionEstablishersCompany_add_details", "test company"),
                 establisherCompanyRoutes.WhatYouWillNeedCompanyDetailsController.onPageLoad(UpdateMode, srn, 1).url), None),
-              EntityItem(Link(messages("messages__schemeTaskList__sectionEstablishersCompany_add_address", "test company"),
+              EntitySpoke(Link(messages("messages__schemeTaskList__sectionEstablishersCompany_add_address", "test company"),
                 establisherCompanyRoutes.WhatYouWillNeedCompanyAddressController.onPageLoad(UpdateMode, srn, 1).url), None),
-              EntityItem(Link(messages("messages__schemeTaskList__sectionEstablishersCompany_add_contact", "test company"),
+              EntitySpoke(Link(messages("messages__schemeTaskList__sectionEstablishersCompany_add_contact", "test company"),
                 establisherCompanyRoutes.WhatYouWillNeedCompanyContactDetailsController.onPageLoad(UpdateMode, srn, 1).url), None),
-              EntityItem(Link(messages("messages__schemeTaskList__sectionEstablishersCompany_add_directors", "test company"),
+              EntitySpoke(Link(messages("messages__schemeTaskList__sectionEstablishersCompany_add_directors", "test company"),
                 controllers.register.establishers.company.routes.AddCompanyDirectorsController.onPageLoad(UpdateMode, srn, 1).url, None))
             ), Some("test company")),
 
-          SchemeDetailsTaskListEntitySection(None, Seq(EntityItem(Link(messages("messages__schemeTaskList__persons_details__link_text", "test partnership"),
+          SchemeDetailsTaskListEntitySection(None, Seq(EntitySpoke(Link(messages("messages__schemeTaskList__persons_details__link_text", "test partnership"),
             controllers.register.establishers.partnership.routes.PartnershipReviewController.onPageLoad(UpdateMode, 2, srn).url), None)), None)
         )
     }
@@ -302,12 +302,12 @@ class HsTaskListHelperVariationsSpec extends HsTaskListHelperBehaviour {
     "return the seq of establishers sub sections for non deleted establishers which are not completed" in {
       val userAnswers = allEstablishers(isCompleteEstablisher = false)
       val helper = new HsTaskListHelperVariations(userAnswers, viewOnly = false, Some("test-srn"), fakeFeatureManagementService)
-      helper.establishers(userAnswers) mustBe
-        Seq(SchemeDetailsTaskListEntitySection(None, Seq(EntityItem(Link(messages("messages__schemeTaskList__persons_details__link_text", "firstName lastName"),
+      helper.establishers(userAnswers, UpdateMode, srn) mustBe
+        Seq(SchemeDetailsTaskListEntitySection(None, Seq(EntitySpoke(Link(messages("messages__schemeTaskList__persons_details__link_text", "firstName lastName"),
           controllers.register.establishers.individual.routes.EstablisherDetailsController.onPageLoad(UpdateMode, 0, srn).url), None)), None),
-          SchemeDetailsTaskListEntitySection(None, Seq(EntityItem(Link(messages("messages__schemeTaskList__persons_details__link_text", "test company"),
+          SchemeDetailsTaskListEntitySection(None, Seq(EntitySpoke(Link(messages("messages__schemeTaskList__persons_details__link_text", "test company"),
             controllers.register.establishers.company.routes.CompanyDetailsController.onPageLoad(UpdateMode, srn, 1).url), None)), None),
-          SchemeDetailsTaskListEntitySection(None, Seq(EntityItem(Link(messages("messages__schemeTaskList__persons_details__link_text", "test partnership"),
+          SchemeDetailsTaskListEntitySection(None, Seq(EntitySpoke(Link(messages("messages__schemeTaskList__persons_details__link_text", "test partnership"),
             controllers.register.establishers.partnership.routes.PartnershipDetailsController.onPageLoad(UpdateMode, 2, srn).url), None)), None)
         )
     }
@@ -324,10 +324,10 @@ class HsTaskListHelperVariationsSpec extends HsTaskListHelperBehaviour {
                 _.set(IsEstablisherCompleteId(2))(false)
               ))))))).asOpt.value
       val helper = new HsTaskListHelperVariations(userAnswers, viewOnly = false, Some("test-srn"), fakeFeatureManagementService)
-      helper.establishers(userAnswers) mustBe
-        Seq(SchemeDetailsTaskListEntitySection(None, Seq(EntityItem(Link(messages("messages__schemeTaskList__persons_details__link_text", "firstName lastName"),
+      helper.establishers(userAnswers, UpdateMode, srn) mustBe
+        Seq(SchemeDetailsTaskListEntitySection(None, Seq(EntitySpoke(Link(messages("messages__schemeTaskList__persons_details__link_text", "firstName lastName"),
           controllers.register.establishers.individual.routes.EstablisherDetailsController.onPageLoad(UpdateMode, 0, srn).url), None)), None),
-          SchemeDetailsTaskListEntitySection(None, Seq(EntityItem(Link(messages("messages__schemeTaskList__persons_details__link_text", "test partnership"),
+          SchemeDetailsTaskListEntitySection(None, Seq(EntitySpoke(Link(messages("messages__schemeTaskList__persons_details__link_text", "test partnership"),
             controllers.register.establishers.partnership.routes.PartnershipDetailsController.onPageLoad(UpdateMode, 2, srn).url), None)), None)
         )
     }

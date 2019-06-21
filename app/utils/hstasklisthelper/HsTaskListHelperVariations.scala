@@ -17,20 +17,19 @@
 package utils.hstasklisthelper
 
 import config.FeatureSwitchManagementService
-import controllers.register.establishers.company.{routes => establisherCompanyRoutes}
-import identifiers.register.establishers.company.CompanyDetailsId
 import identifiers.register.trustees.MoreThanTenTrusteesId
 import identifiers.{IsAboutBenefitsAndInsuranceCompleteId, IsAboutMembersCompleteId, SchemeNameId, _}
 import models.register.Entity
 import models.{Link, Mode, UpdateMode}
 import play.api.i18n.Messages
-import utils.{Toggles, UserAnswers}
+import utils.UserAnswers
 import viewmodels._
 
 class HsTaskListHelperVariations(answers: UserAnswers,
-                                 viewOnly: Boolean, srn: Option[String],
+                                 viewOnly: Boolean,
+                                 srn: Option[String],
                                  featureSwitchManagementService: FeatureSwitchManagementService
-                                )(implicit messages: Messages) extends HsTaskListHelper(answers) {
+                                )(implicit messages: Messages) extends HsTaskListHelper(answers, featureSwitchManagementService) {
 
   override protected lazy val beforeYouStartLinkText = messages("messages__schemeTaskList__scheme_info_link_text")
 
@@ -54,7 +53,7 @@ class HsTaskListHelperVariations(answers: UserAnswers,
       aboutSection(answers),
       None,
       addEstablisherHeader(answers, UpdateMode, srn),
-      establishers(answers),
+      establishers(answers, UpdateMode, srn),
       addTrusteeHeader(answers, UpdateMode, srn),
       trustees(answers),
       declarationSection(answers),
@@ -111,40 +110,6 @@ class HsTaskListHelperVariations(answers: UserAnswers,
     } else {
       None
     }
-  }
-
-  protected[utils] def establishers(userAnswers: UserAnswers): Seq[SchemeDetailsTaskListEntitySection] = {
-    val sections = userAnswers.allEstablishers
-    val notDeletedElements = for ((section, _) <- sections.zipWithIndex) yield {
-      if (section.isDeleted) None else {
-        section.id match {
-          case CompanyDetailsId(_) if featureSwitchManagementService.get(Toggles.isEstablisherCompanyHnSEnabled) =>
-            Some(SchemeDetailsTaskListEntitySection(
-              None,
-              Seq(
-                EntityItem(Link(messages("messages__schemeTaskList__sectionEstablishersCompany_add_details", section.name),
-                  establisherCompanyRoutes.WhatYouWillNeedCompanyDetailsController.onPageLoad(UpdateMode, srn, section.index).url), None),
-                EntityItem(Link(messages("messages__schemeTaskList__sectionEstablishersCompany_add_address", section.name),
-                  establisherCompanyRoutes.WhatYouWillNeedCompanyAddressController.onPageLoad(UpdateMode, srn, section.index).url), None),
-                EntityItem(Link(messages("messages__schemeTaskList__sectionEstablishersCompany_add_contact", section.name),
-                  establisherCompanyRoutes.WhatYouWillNeedCompanyContactDetailsController.onPageLoad(UpdateMode, srn, section.index).url), None),
-                EntityItem(Link(messages("messages__schemeTaskList__sectionEstablishersCompany_add_directors", section.name),
-                  controllers.register.establishers.company.routes.AddCompanyDirectorsController.onPageLoad(UpdateMode, srn, section.index).url, None))
-              ),
-              Some(section.name))
-            )
-
-          case _ => Some(SchemeDetailsTaskListEntitySection(
-            None,
-            Seq(EntityItem(Link(messages("messages__schemeTaskList__persons_details__link_text", section.name),
-              section.editLink(UpdateMode, srn).getOrElse(controllers.routes.SessionExpiredController.onPageLoad().url)), None)),
-            None)
-          )
-        }
-
-      }
-    }
-    notDeletedElements.flatten
   }
 
   protected[utils] def trustees(userAnswers: UserAnswers): Seq[SchemeDetailsTaskListSection] =

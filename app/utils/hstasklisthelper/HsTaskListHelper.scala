@@ -16,6 +16,7 @@
 
 package utils.hstasklisthelper
 
+import config.FeatureSwitchManagementService
 import identifiers.register.establishers.company.{CompanyDetailsId => EstablisherCompanyDetailsId}
 import identifiers.register.establishers.individual.EstablisherDetailsId
 import identifiers.register.establishers.partnership.{PartnershipDetailsId => EstablisherPartnershipDetailsId}
@@ -26,12 +27,14 @@ import identifiers.register.trustees.partnership.{PartnershipDetailsId => Truste
 import identifiers.{DeclarationDutiesId, IsWorkingKnowledgeCompleteId, _}
 import models.register.SchemeType.{MasterTrust, SingleTrust}
 import models.register.{Entity, SchemeType}
-import models.{Link, Mode, NormalMode}
+import models._
 import play.api.i18n.Messages
-import utils.{Enumerable, UserAnswers}
+import utils.{Enumerable, Toggles, UserAnswers}
 import viewmodels._
 
-abstract class HsTaskListHelper(answers: UserAnswers)(implicit messages: Messages) extends Enumerable.Implicits {
+abstract class HsTaskListHelper(answers: UserAnswers,
+                                featureSwitchManagementService: FeatureSwitchManagementService
+                               )(implicit val messages: Messages) extends Enumerable.Implicits with HsTaskListHelperEstablishers {
 
   protected val beforeYouStartLinkText: String
   protected lazy val aboutMembersLinkText = messages("messages__schemeTaskList__about_members_link_text")
@@ -150,4 +153,37 @@ abstract class HsTaskListHelper(answers: UserAnswers)(implicit messages: Message
   protected def isAllEstablishersCompleted(userAnswers: UserAnswers): Boolean = {
     userAnswers.allEstablishersAfterDelete.nonEmpty && userAnswers.allEstablishersAfterDelete.forall(_.isCompleted)
   }
+
+  protected[utils] def establishers(userAnswers: UserAnswers, mode: Mode, srn: Option[String]): Seq[SchemeDetailsTaskListEntitySection] = {
+    val sections = userAnswers.allEstablishers
+    val notDeletedElements = for ((section, _) <- sections.zipWithIndex) yield {
+      if (section.isDeleted) None else {
+        section.id match {
+          case EstablisherCompanyDetailsId(_) if featureSwitchManagementService.get(Toggles.isEstablisherCompanyHnSEnabled) =>
+            Some(SchemeDetailsTaskListEntitySection(
+              None,
+              getEstablisherCompanySpokes(userAnswers, mode, srn, section.name, section.index),
+              Some(section.name))
+            )
+          case _ if mode == NormalMode =>
+            Some(SchemeDetailsTaskListEntitySection(
+              Some(section.isCompleted),
+              Seq(EntitySpoke(Link(linkText(section),
+                section.editLink(NormalMode, None).getOrElse(controllers.routes.SessionExpiredController.onPageLoad().url)), Some(section.isCompleted))),
+              Some(section.name))
+            )
+
+          case _ => Some(SchemeDetailsTaskListEntitySection(
+            None,
+            Seq(EntitySpoke(Link(messages("messages__schemeTaskList__persons_details__link_text", section.name),
+              section.editLink(UpdateMode, srn).getOrElse(controllers.routes.SessionExpiredController.onPageLoad().url)), None)),
+            None)
+          )
+        }
+      }
+    }
+    notDeletedElements.flatten
+  }
+
+
 }
