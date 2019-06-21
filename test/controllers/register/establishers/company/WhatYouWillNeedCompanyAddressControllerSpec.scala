@@ -27,7 +27,7 @@ import views.html.register.establishers.company.whatYouWillNeedCompanyAddress
 
 class WhatYouWillNeedCompanyAddressControllerSpec extends ControllerSpecBase with MockitoSugar with BeforeAndAfterEach {
 
-  def onwardRoute: Call = controllers.routes.SessionExpiredController.onPageLoad
+  def onwardRoute: Call = controllers.register.establishers.company.routes.CompanyPostCodeLookupController.onPageLoad(NormalMode, None, Index(0))
 
   def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): WhatYouWillNeedCompanyAddressController =
     new WhatYouWillNeedCompanyAddressController(frontendAppConfig,
@@ -60,7 +60,7 @@ class WhatYouWillNeedCompanyAddressControllerSpec extends ControllerSpecBase wit
         val result = controller().onSubmit(NormalMode, None, Index(0))(fakeRequest)
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(controllers.routes.IndexController.onPageLoad().url)
+        redirectLocation(result) mustBe Some(onwardRoute.url)
       }
     }
   }

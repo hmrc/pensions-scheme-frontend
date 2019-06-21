@@ -16,16 +16,41 @@
 
 package utils.hstasklisthelper
 
+import config.FeatureSwitchManagementService
+import controllers.register.establishers.company.{routes => establisherCompanyRoutes}
 import identifiers._
+import identifiers.register.establishers.company.CompanyDetailsId
 import models.register.Entity
 import models.{Link, Mode, NormalMode}
 import play.api.i18n.Messages
-import utils.UserAnswers
+import utils.{Toggles, UserAnswers}
 import viewmodels._
 
-class HsTaskListHelperRegistration(answers: UserAnswers)(implicit messages: Messages) extends HsTaskListHelper(answers) {
+class HsTaskListHelperRegistration(answers: UserAnswers,
+                                   featureSwitchManagementService: FeatureSwitchManagementService
+                                  )(implicit messages: Messages) extends HsTaskListHelper(answers) {
 
   override protected lazy val beforeYouStartLinkText = messages("messages__schemeTaskList__before_you_start_link_text")
+
+  def taskList: SchemeDetailsTaskList = {
+    val schemeName = answers.get(SchemeNameId).getOrElse("")
+    SchemeDetailsTaskList(
+      SchemeDetailsTaskListSection(answers.get(IsBeforeYouStartCompleteId), beforeYouStartLink(answers, NormalMode, None), None),
+      messages("messages__schemeTaskList__about_scheme_header", schemeName),
+      aboutSection(answers),
+      workingKnowledgeSection(answers),
+      addEstablisherHeader(answers, NormalMode, None),
+      establishers(answers),
+      addTrusteeHeader(answers, NormalMode, None),
+      trustees(answers),
+      declarationSection(answers),
+      answers.get(SchemeNameId).getOrElse(""),
+      messages("messages__scheme_details__title"),
+      Some(messages("messages__schemeTaskList__before_you_start_header")),
+      messages("messages__schemeTaskList__title"),
+      None
+    )
+  }
 
   override protected[utils] def aboutSection(userAnswers: UserAnswers): Seq[SchemeDetailsTaskListSection] = {
     val membersLink = userAnswers.get(IsAboutMembersCompleteId) match {
@@ -58,6 +83,9 @@ class HsTaskListHelperRegistration(answers: UserAnswers)(implicit messages: Mess
       declarationLink = declarationLink(userAnswers),
       incompleteDeclarationText = "messages__schemeTaskList__sectionDeclaration_incomplete"))
 
+  protected[utils] def trustees(userAnswers: UserAnswers): Seq[SchemeDetailsTaskListSection] =
+    listOf(userAnswers.allTrustees, userAnswers)
+
   protected def listOf(sections: Seq[Entity[_]], userAnswers: UserAnswers): Seq[SchemeDetailsTaskListSection] = {
     val notDeletedElements = for ((section, index) <- sections.zipWithIndex) yield {
       if (section.isDeleted) None else {
@@ -71,12 +99,6 @@ class HsTaskListHelperRegistration(answers: UserAnswers)(implicit messages: Mess
     }
     notDeletedElements.flatten
   }
-
-  protected[utils] def establishers(userAnswers: UserAnswers): Seq[SchemeDetailsTaskListSection] =
-    listOf(userAnswers.allEstablishers, userAnswers)
-
-  protected[utils] def trustees(userAnswers: UserAnswers): Seq[SchemeDetailsTaskListSection] =
-    listOf(userAnswers.allTrustees, userAnswers)
 
   protected[utils] override def addTrusteeHeader(userAnswers: UserAnswers, mode: Mode, srn: Option[String]): Option[SchemeDetailsTaskListHeader] = {
     (userAnswers.get(HaveAnyTrusteesId), userAnswers.allTrusteesAfterDelete.isEmpty) match {
@@ -114,24 +136,37 @@ class HsTaskListHelperRegistration(answers: UserAnswers)(implicit messages: Mess
     }
   }
 
-  def taskList: SchemeDetailsTaskList = {
-    val schemeName = answers.get(SchemeNameId).getOrElse("")
-    SchemeDetailsTaskList(
-      SchemeDetailsTaskListSection(answers.get(IsBeforeYouStartCompleteId), beforeYouStartLink(answers, NormalMode, None), None),
-      messages("messages__schemeTaskList__about_scheme_header", schemeName),
-      aboutSection(answers),
-      workingKnowledgeSection(answers),
-      addEstablisherHeader(answers, NormalMode, None),
-      establishers(answers),
-      addTrusteeHeader(answers, NormalMode, None),
-      trustees(answers),
-      declarationSection(answers),
-      answers.get(SchemeNameId).getOrElse(""),
-      messages("messages__scheme_details__title"),
-      Some(messages("messages__schemeTaskList__before_you_start_header")),
-      messages("messages__schemeTaskList__title"),
-      None
-    )
+  protected[utils] def establishers(userAnswers: UserAnswers): Seq[SchemeDetailsTaskListEntitySection] = {
+    val sections = userAnswers.allEstablishers
+    val notDeletedElements = for ((section, _) <- sections.zipWithIndex) yield {
+      if (section.isDeleted) None else {
+        section.id match {
+          case CompanyDetailsId(_) if featureSwitchManagementService.get(Toggles.isEstablisherCompanyHnSEnabled) =>
+            Some(SchemeDetailsTaskListEntitySection(
+              None,
+              Seq(
+                EntityItem(Link(messages("messages__schemeTaskList__sectionEstablishersCompany_add_details", section.name),
+                  establisherCompanyRoutes.WhatYouWillNeedCompanyDetailsController.onPageLoad(NormalMode, None, section.index).url), None),
+                  EntityItem(Link(messages("messages__schemeTaskList__sectionEstablishersCompany_add_address", section.name),
+                  establisherCompanyRoutes.WhatYouWillNeedCompanyAddressController.onPageLoad(NormalMode, None, section.index).url), None),
+                    EntityItem(Link(messages("messages__schemeTaskList__sectionEstablishersCompany_add_contact", section.name),
+                  establisherCompanyRoutes.WhatYouWillNeedCompanyContactDetailsController.onPageLoad(NormalMode, None, section.index).url), None),
+                      EntityItem(Link(messages("messages__schemeTaskList__sectionEstablishersCompany_add_directors", section.name),
+                  controllers.register.establishers.company.routes.AddCompanyDirectorsController.onPageLoad(NormalMode, None, section.index).url, None))
+              ),
+              Some(section.name))
+            )
+          case _ =>
+            Some(SchemeDetailsTaskListEntitySection(
+            Some(section.isCompleted),
+            Seq(EntityItem(Link(linkText(section),
+              section.editLink(NormalMode, None).getOrElse(controllers.routes.SessionExpiredController.onPageLoad().url)), Some(section.isCompleted))),
+            Some(section.name))
+          )
+        }
+      }
+    }
+    notDeletedElements.flatten
   }
 
 }
