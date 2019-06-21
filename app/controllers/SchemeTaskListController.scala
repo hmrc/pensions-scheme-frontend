@@ -58,7 +58,7 @@ class SchemeTaskListController @Inject()(appConfig: FrontendAppConfig,
       (srn, request.userAnswers) match {
 
         case (None, Some(userAnswers)) =>
-          Future.successful(Ok(schemeDetailsTaskList(appConfig, new HsTaskListHelperRegistration(userAnswers).taskList)))
+          Future.successful(Ok(schemeDetailsTaskList(appConfig, new HsTaskListHelperRegistration(userAnswers, featureSwitchManagementService).taskList)))
 
         case (Some(srnValue), _) if !featureSwitchManagementService.get(Toggles.isVariationsEnabled) =>
           onPageLoadVariationsToggledOff(srnValue)
@@ -113,7 +113,7 @@ class SchemeTaskListController @Inject()(appConfig: FrontendAppConfig,
       val updatedUserAnswers = userAnswers.set(IsPsaSuspendedId)(isSuspended).flatMap(
         _.set(SchemeSrnId)(srn)).asOpt.getOrElse(userAnswers)
       val taskList: SchemeDetailsTaskList = new HsTaskListHelperVariations(updatedUserAnswers,
-        viewOnly || !userAnswers.get(SchemeStatusId).contains("Open"), Some(srn)).taskList
+        viewOnly || !userAnswers.get(SchemeStatusId).contains("Open"), Some(srn), featureSwitchManagementService).taskList
 
       upsertUserAnswers(updatedUserAnswers.json).flatMap { _ =>
 

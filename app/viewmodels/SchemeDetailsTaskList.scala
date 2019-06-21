@@ -24,7 +24,7 @@ case class SchemeDetailsTaskList(beforeYouStart: SchemeDetailsTaskListSection,
                                  about: Seq[SchemeDetailsTaskListSection],
                                  workingKnowledge: Option[SchemeDetailsTaskListSection],
                                  addEstablisherHeader : Option[SchemeDetailsTaskListHeader],
-                                 establishers: Seq[SchemeDetailsTaskListSection],
+                                 establishers: Seq[SchemeDetailsTaskListEntitySection],
                                  addTrusteeHeader : Option[SchemeDetailsTaskListHeader],
                                  trustees: Seq[SchemeDetailsTaskListSection],
                                  declaration: Option[SchemeDetailsTaskListDeclarationSection] = None,
@@ -50,6 +50,21 @@ case class SchemeDetailsTaskListSection(isCompleted: Option[Boolean] = None, lin
 
 object SchemeDetailsTaskListSection {
   implicit val formats: OFormat[SchemeDetailsTaskListSection] = Json.format[SchemeDetailsTaskListSection]
+}
+
+case class SchemeDetailsTaskListEntitySection(isCompleted: Option[Boolean] = None,
+                                              entities: Seq[EntityItem],
+                                              header: Option[String] = None,
+                                              p1: Option[String] = None)
+
+object SchemeDetailsTaskListEntitySection {
+  implicit val formats: OFormat[SchemeDetailsTaskListEntitySection] = Json.format[SchemeDetailsTaskListEntitySection]
+}
+
+case class EntityItem(link: Link, isCompleted: Option[Boolean] = None)
+
+object EntityItem {
+  implicit val formats: OFormat[EntityItem] = Json.format[EntityItem]
 }
 
 case class SchemeDetailsTaskListHeader(isCompleted: Option[Boolean] = None, link: Option[Link] = None,
