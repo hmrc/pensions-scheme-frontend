@@ -16,13 +16,12 @@
 
 package forms.register.establishers.company
 
-import base.SpecBase
 import forms.FormSpec
-import org.scalatest.Assertion
-import play.api.data.{Form, FormError}
+import javax.inject.Inject
+import play.api.i18n.Messages
 import viewmodels.Message
 
-class HasCompanyNumberFormProviderSpec extends SpecBase  {
+class HasCompanyNumberFormProviderSpec @Inject()(implicit message : Messages) extends FormSpec  {
 
   val requiredKey = Message("messages__hasCompanyNumber__error__required", "ABC").resolve
   val invalidKey = "error.boolean"
@@ -33,12 +32,12 @@ class HasCompanyNumberFormProviderSpec extends SpecBase  {
 
     "bind true" in {
       val form = formProvider("ABC").bind(Map("value" -> "true"))
-      form.get mustBe true
+      form.get shouldBe true
     }
 
     "bind false" in {
       val form = formProvider("ABC").bind(Map("value" -> "false"))
-      form.get mustBe false
+      form.get shouldBe false
     }
 
     "fail to bind non-booleans" in {
@@ -56,21 +55,4 @@ class HasCompanyNumberFormProviderSpec extends SpecBase  {
       checkForError(formProvider("ABC"), emptyForm, expectedError)
     }
   }
-
-  private def checkForError(form: Form[_], data: Map[String, String], expectedErrors: Seq[FormError]): Assertion = {
-
-    form.bind(data).fold(
-      formWithErrors => {
-        for (error <- expectedErrors) formWithErrors.errors must contain(FormError(error.key, error.message, error.args))
-        formWithErrors.errors.size mustBe expectedErrors.size
-      },
-      _ => {
-        fail("Expected a validation error when binding the form, but it was bound successfully.")
-      }
-    )
-  }
-
-  private def error(key: String, value: String, args: Any*): Seq[FormError] = Seq(FormError(key, value, args))
-
-  lazy val emptyForm: Map[String, String] = Map[String, String]()
 }
