@@ -38,7 +38,8 @@ trait HsTaskListHelperUtils extends Enumerable.Implicits {
 
     isChangeLink match {
       case Some(true) => EntitySpoke(Link(getChangeLinkText(spokeName)(name), getChangeLink(spokeName)(mode, srn, index).url), isComplete)
-      case _ => EntitySpoke(Link(getAddLinkText(spokeName)(name), getAddLink(spokeName)(mode, srn, index).url), isComplete)
+      case Some(false) => EntitySpoke(Link(getChangeLinkText(spokeName)(name), getAddLink(spokeName)(mode, srn, index).url), isComplete)
+      case None => EntitySpoke(Link(getAddLinkText(spokeName)(name), getAddLink(spokeName)(mode, srn, index).url), None)
     }
   }
 
@@ -46,13 +47,12 @@ trait HsTaskListHelperUtils extends Enumerable.Implicits {
                                  spokeName: String,
                                  mode: Mode, srn: Option[String], name: String, index: Int): EntitySpoke = {
 
-    val isChangeLink = entityList.nonEmpty
-    val isComplete: Option[Boolean] = if (mode == NormalMode && entityList.nonEmpty) Some(entityList.exists(!_.isCompleted)) else None
+    val isComplete: Option[Boolean] = if (mode == NormalMode && entityList.nonEmpty) Some(entityList.forall(_.isCompleted)) else None
 
-    if (isChangeLink)
-      EntitySpoke(Link(getChangeLinkText(spokeName)(name), getChangeLink(spokeName)(mode, srn, index).url), isComplete)
-    else
+    if (entityList.isEmpty)
       EntitySpoke(Link(getAddLinkText(spokeName)(name), getAddLink(spokeName)(mode, srn, index).url), None)
+    else
+      EntitySpoke(Link(getChangeLinkText(spokeName)(name), getChangeLink(spokeName)(mode, srn, index).url), isComplete)
   }
 
   private def getCompleteFlag(answers: UserAnswers, index: Int, spokeName: String): Option[Boolean] = spokeName match {

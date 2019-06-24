@@ -18,7 +18,7 @@ package utils
 
 import base.SpecBase
 import controllers.register.establishers.company.{routes => establisherCompanyRoutes}
-import identifiers.register.establishers.company.director.DirectorDetailsId
+import identifiers.register.establishers.company.director.{DirectorDetailsId, IsDirectorCompleteId}
 import identifiers.register.establishers.{IsEstablisherNewId, company => establisherCompanyPath}
 import models.person.PersonDetails
 import models.{CompanyDetails, EntitySpoke, Link, Mode, NormalMode, UpdateMode}
@@ -31,7 +31,13 @@ class HsTaskListHelperUtilsSpec extends SpecBase with MustMatchers with OptionVa
 
   "getEstablisherCompanySpokes" must {
     "display all spokes with appropriate links" when {
-      "in subscription journey when all spokes are incomplete" in {
+      "in subscription journey when all spokes are uninitiated" in {
+        subscriptionHelper.getEstablisherCompanySpokes(
+          establisherCompanyBlank, NormalMode, None, "test company", 0
+        ) mustBe expectedAddSpokes(NormalMode, None)
+      }
+
+      "in subscription journey when all spokes are in progress" in {
         subscriptionHelper.getEstablisherCompanySpokes(
           establisherCompany(isComplete = false), NormalMode, None, "test company", 0
         ) mustBe expectedInProgressSpokes(NormalMode, None)
@@ -39,11 +45,17 @@ class HsTaskListHelperUtilsSpec extends SpecBase with MustMatchers with OptionVa
 
       "in subscription journey when all spokes are complete" in {
         subscriptionHelper.getEstablisherCompanySpokes(
-          establisherCompanyWithDirectors(isComplete = true), NormalMode, None, "test company", 0
+          establisherCompanyWithCompletedDirectors(isComplete = true), NormalMode, None, "test company", 0
         ) mustBe expectedCompletedSpokes(NormalMode, None)
       }
 
-      "in variations journey when all spokes are incomplete" in {
+      "in variations journey when all spokes are uninitiated" in {
+        subscriptionHelper.getEstablisherCompanySpokes(
+          establisherCompanyBlank, UpdateMode, srn, "test company", 0
+        ) mustBe expectedAddSpokes(UpdateMode, srn)
+      }
+
+      "in variations journey when all spokes are in progress" in {
         subscriptionHelper.getEstablisherCompanySpokes(
           establisherCompany(isComplete = false), UpdateMode, srn, "test company", 0
         ) mustBe expectedInProgressSpokes(UpdateMode, srn)
@@ -51,7 +63,7 @@ class HsTaskListHelperUtilsSpec extends SpecBase with MustMatchers with OptionVa
 
       "in variations journey when all spokes are complete" in {
         subscriptionHelper.getEstablisherCompanySpokes(
-          establisherCompanyWithDirectors(isComplete = true), UpdateMode, srn, "test company", 0
+          establisherCompany(isComplete = true), UpdateMode, srn, "test company", 0
         ) mustBe expectedCompletedSpokes(UpdateMode, srn)
       }
     }
@@ -64,31 +76,48 @@ object HsTaskListHelperUtilsSpec extends SpecBase with OptionValues {
   val srn = Some("S123")
   private val fakeFeatureSwitch = new FakeFeatureSwitchManagementService(true)
 
+  protected def establisherCompanyBlank: UserAnswers = {
+    UserAnswers().set(establisherCompanyPath.CompanyDetailsId(0))(CompanyDetails("test company", false))
+      .asOpt.value
+  }
+
   protected def establisherCompany(isComplete: Boolean): UserAnswers = {
-    UserAnswers().set(establisherCompanyPath.CompanyDetailsId(0))(CompanyDetails("test company", false)).flatMap(
-      _.set(IsEstablisherNewId(0))(true).flatMap(
+    establisherCompanyBlank
+      .set(IsEstablisherNewId(0))(true).flatMap(
         _.set(establisherCompanyPath.IsCompanyAddressCompleteId(0))(isComplete).flatMap(
           _.set(establisherCompanyPath.IsCompanyDetailsCompleteId(0))(isComplete).flatMap(
-            _.set(establisherCompanyPath.IsCompanyContactDetailsCompleteId(0))(isComplete)
+            _.set(establisherCompanyPath.IsCompanyContactDetailsCompleteId(0))(isComplete).flatMap(
+            _.set(DirectorDetailsId(0, 0))(PersonDetails("Joe", None, "Bloggs", LocalDate.now()))
           )))).asOpt.value
   }
 
-  protected def establisherCompanyWithDirectors(isComplete: Boolean) = establisherCompany(isComplete)
-    .set(DirectorDetailsId(0, 0))(PersonDetails("Joe", None, "Bloggs", LocalDate.now())).asOpt.value
+  protected def establisherCompanyWithCompletedDirectors(isComplete: Boolean) = establisherCompany(isComplete)
+    .set(IsDirectorCompleteId(0, 0))(true).asOpt.value
 
   def modeBasedCompletion(mode: Mode, completion: Option[Boolean]): Option[Boolean] = if(mode == NormalMode) completion else None
 
   def subscriptionHelper: HsTaskListHelper = new HsTaskListHelperRegistration(UserAnswers(), fakeFeatureSwitch)
   def variationsHelper(viewOnly: Boolean = false): HsTaskListHelper = new HsTaskListHelperVariations(UserAnswers(), viewOnly, srn, fakeFeatureSwitch)
 
-  def expectedInProgressSpokes(mode: Mode, srn: Option[String]): Seq[EntitySpoke] = Seq(
+  def expectedAddSpokes(mode: Mode, srn: Option[String]): Seq[EntitySpoke] = Seq(
     EntitySpoke(Link(messages("messages__schemeTaskList__sectionEstablishersCompany_add_details", "test company"),
-      establisherCompanyRoutes.WhatYouWillNeedCompanyDetailsController.onPageLoad(mode, srn, 0).url), modeBasedCompletion(mode, Some(false))),
+      establisherCompanyRoutes.WhatYouWillNeedCompanyDetailsController.onPageLoad(mode, srn, 0).url), None),
     EntitySpoke(Link(messages("messages__schemeTaskList__sectionEstablishersCompany_add_address", "test company"),
-      establisherCompanyRoutes.WhatYouWillNeedCompanyAddressController.onPageLoad(mode, srn, 0).url), modeBasedCompletion(mode, Some(false))),
+      establisherCompanyRoutes.WhatYouWillNeedCompanyAddressController.onPageLoad(mode, srn, 0).url), None),
     EntitySpoke(Link(messages("messages__schemeTaskList__sectionEstablishersCompany_add_contact", "test company"),
-      establisherCompanyRoutes.WhatYouWillNeedCompanyContactDetailsController.onPageLoad(mode, srn, 0).url), modeBasedCompletion(mode, Some(false))),
+      establisherCompanyRoutes.WhatYouWillNeedCompanyContactDetailsController.onPageLoad(mode, srn, 0).url), None),
     EntitySpoke(Link(messages("messages__schemeTaskList__sectionEstablishersCompany_add_directors", "test company"),
+      controllers.register.establishers.company.routes.AddCompanyDirectorsController.onPageLoad(mode, srn, 0).url), None)
+  )
+
+  def expectedInProgressSpokes(mode: Mode, srn: Option[String]): Seq[EntitySpoke] = Seq(
+    EntitySpoke(Link(messages("messages__schemeTaskList__sectionEstablishersCompany_change_details", "test company"),
+      establisherCompanyRoutes.WhatYouWillNeedCompanyDetailsController.onPageLoad(mode, srn, 0).url), modeBasedCompletion(mode, Some(false))),
+    EntitySpoke(Link(messages("messages__schemeTaskList__sectionEstablishersCompany_change_address", "test company"),
+      establisherCompanyRoutes.WhatYouWillNeedCompanyAddressController.onPageLoad(mode, srn, 0).url), modeBasedCompletion(mode, Some(false))),
+    EntitySpoke(Link(messages("messages__schemeTaskList__sectionEstablishersCompany_change_contact", "test company"),
+      establisherCompanyRoutes.WhatYouWillNeedCompanyContactDetailsController.onPageLoad(mode, srn, 0).url), modeBasedCompletion(mode, Some(false))),
+    EntitySpoke(Link(messages("messages__schemeTaskList__sectionEstablishersCompany_change_directors", "test company"),
       controllers.register.establishers.company.routes.AddCompanyDirectorsController.onPageLoad(mode, srn, 0).url), modeBasedCompletion(mode, Some(false)))
   )
 
