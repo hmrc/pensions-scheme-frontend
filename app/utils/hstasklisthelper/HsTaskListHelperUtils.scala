@@ -18,21 +18,55 @@ package utils.hstasklisthelper
 
 
 import controllers.register.establishers.company.{routes => establisherCompanyRoutes}
-import identifiers.register.establishers.company.{IsCompanyAddressCompleteId, IsCompanyContactDetailsCompleteId, IsCompanyDetailsCompleteId}
-import models.{EntitySpoke, Index, Link, Mode, NormalMode}
+import models.register.Entity
+import models._
 import play.api.i18n.Messages
 import play.api.mvc.Call
 import utils.{Enumerable, UserAnswers}
+import identifiers.register.establishers.{company => establisherCompany}
 
-trait HsTaskListHelperEstablishers  extends Enumerable.Implicits {
+trait HsTaskListHelperUtils extends Enumerable.Implicits {
 
   implicit val messages: Messages
 
+  def createSpoke(answers: UserAnswers,
+                  spokeName: String,
+                  mode: Mode, srn: Option[String], name: String, index: Int): EntitySpoke = {
+
+    val isChangeLink = getCompleteFlag(answers, index, spokeName)
+    val isComplete: Option[Boolean] = if (mode == NormalMode) isChangeLink else None
+
+    isChangeLink match {
+      case Some(true) => EntitySpoke(Link(getChangeLinkText(spokeName)(name), getChangeLink(spokeName)(mode, srn, index).url), isComplete)
+      case _ => EntitySpoke(Link(getAddLinkText(spokeName)(name), getAddLink(spokeName)(mode, srn, index).url), isComplete)
+    }
+  }
+
+  def createDirectorPartnerSpoke(entityList: Seq[Entity[_]],
+                                 spokeName: String,
+                                 mode: Mode, srn: Option[String], name: String, index: Int): EntitySpoke = {
+
+    val isChangeLink = entityList.nonEmpty
+    val isComplete: Option[Boolean] = if (mode == NormalMode && entityList.nonEmpty) Some(entityList.exists(!_.isCompleted)) else None
+
+    if (isChangeLink)
+      EntitySpoke(Link(getChangeLinkText(spokeName)(name), getChangeLink(spokeName)(mode, srn, index).url), isComplete)
+    else
+      EntitySpoke(Link(getAddLinkText(spokeName)(name), getAddLink(spokeName)(mode, srn, index).url), None)
+  }
+
+  private def getCompleteFlag(answers: UserAnswers, index: Int, spokeName: String): Option[Boolean] = spokeName match {
+    case "establisherCompanyDetails" => answers.get(establisherCompany.IsCompanyDetailsCompleteId(index))
+    case "establisherCompanyAddress" => answers.get(establisherCompany.IsCompanyAddressCompleteId(index))
+    case "establisherCompanyContactDetails" => answers.get(establisherCompany.IsCompanyContactDetailsCompleteId(index))
+    case _ => None
+  }
+
   private def getChangeLinkText(spokeName: String): String => String = spokeName match {
-    case "establisherCompanyDetails" => messages ("messages__schemeTaskList__sectionEstablishersCompany_change_details", _)
-    case "establisherCompanyAddress" => messages ("messages__schemeTaskList__sectionEstablishersCompany_change_address", _)
-    case "establisherCompanyContactDetails" => messages ("messages__schemeTaskList__sectionEstablishersCompany_change_contact", _)
-    case "establisherCompanyDirectors" => messages ("messages__schemeTaskList__sectionEstablishersCompany_change_directors", _)
+    case "establisherCompanyDetails" => messages("messages__schemeTaskList__sectionEstablishersCompany_change_details", _)
+    case "establisherCompanyAddress" => messages("messages__schemeTaskList__sectionEstablishersCompany_change_address", _)
+    case "establisherCompanyContactDetails" => messages("messages__schemeTaskList__sectionEstablishersCompany_change_contact", _)
+    case "establisherCompanyDirectors" => messages("messages__schemeTaskList__sectionEstablishersCompany_change_directors", _)
     case _ => (_: String) => s"Not found link text for spoke $spokeName"
   }
 
@@ -62,22 +96,10 @@ trait HsTaskListHelperEstablishers  extends Enumerable.Implicits {
 
   def getEstablisherCompanySpokes(answers: UserAnswers, mode: Mode, srn: Option[String], name: String, index: Int): Seq[EntitySpoke] =
     Seq(
-    createSpoke(answers.get(IsCompanyDetailsCompleteId(index)),"establisherCompanyDetails", mode, srn, name, index),
-    createSpoke(answers.get(IsCompanyAddressCompleteId(index)),"establisherCompanyAddress", mode, srn, name, index),
-    createSpoke(answers.get(IsCompanyContactDetailsCompleteId(index)),"establisherCompanyContactDetails", mode, srn, name, index),
-    createSpoke(Some(answers.allDirectorsAfterDelete(index).nonEmpty),"establisherCompanyDirectors", mode, srn, name, index)
-  )
-
-  private def createSpoke(isChangeLink: Option[Boolean],
-                           spokeName: String,
-                           mode: Mode, srn: Option[String], name: String, index: Int): EntitySpoke = {
-    //TODO Speak to Mark about In Progress logic of directors and create alternate method to be used for setting isComplete flag for directors/partners
-    val isComplete: Option[Boolean] = if(mode==NormalMode || spokeName!="establisherCompanyDirectors") isChangeLink else None
-
-    isChangeLink match {
-      case Some(true) => EntitySpoke(Link(getChangeLinkText(spokeName)(name), getChangeLink(spokeName)(mode, srn, index).url), isComplete)
-      case _ => EntitySpoke(Link(getAddLinkText(spokeName)(name), getAddLink(spokeName)(mode, srn, index).url), isComplete)
-    }
-  }
+      createSpoke(answers,"establisherCompanyDetails", mode, srn, name, index),
+      createSpoke(answers,"establisherCompanyAddress", mode, srn, name, index),
+      createSpoke(answers,"establisherCompanyContactDetails", mode, srn, name, index),
+      createDirectorPartnerSpoke(answers.allDirectorsAfterDelete(index),"establisherCompanyDirectors", mode, srn, name, index)
+    )
 
 }

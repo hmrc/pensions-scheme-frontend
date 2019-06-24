@@ -17,7 +17,7 @@
 package utils.hstasklisthelper
 
 import config.FeatureSwitchManagementService
-import identifiers.register.establishers.company.{CompanyDetailsId => EstablisherCompanyDetailsId}
+import identifiers.register.establishers.{company => establisherCompany}
 import identifiers.register.establishers.individual.EstablisherDetailsId
 import identifiers.register.establishers.partnership.{PartnershipDetailsId => EstablisherPartnershipDetailsId}
 import identifiers.register.trustees.MoreThanTenTrusteesId
@@ -34,31 +34,31 @@ import viewmodels._
 
 abstract class HsTaskListHelper(answers: UserAnswers,
                                 featureSwitchManagementService: FeatureSwitchManagementService
-                               )(implicit val messages: Messages) extends Enumerable.Implicits with HsTaskListHelperEstablishers {
+                               )(implicit val messages: Messages) extends Enumerable.Implicits with HsTaskListHelperUtils {
 
   protected val beforeYouStartLinkText: String
-  protected lazy val aboutMembersLinkText = messages("messages__schemeTaskList__about_members_link_text")
-  protected lazy val aboutMembersAddLinkText = messages("messages__schemeTaskList__about_members_link_text_add")
-  protected lazy val aboutBenefitsAndInsuranceLinkText = messages("messages__schemeTaskList__about_benefits_and_insurance_link_text")
-  protected lazy val aboutBenefitsAndInsuranceAddLinkText = messages("messages__schemeTaskList__about_benefits_and_insurance_link_text_add")
-  protected lazy val aboutBankDetailsLinkText = messages("messages__schemeTaskList__about_bank_details_link_text")
-  protected lazy val aboutBankDetailsAddLinkText = messages("messages__schemeTaskList__about_bank_details_link_text_add")
-  protected lazy val workingKnowledgeLinkText = messages("messages__schemeTaskList__working_knowledge_link_text")
-  protected lazy val workingKnowledgeAddLinkText = messages("messages__schemeTaskList__working_knowledge_link_text_add")
-  protected lazy val addEstablisherLinkText = messages("messages__schemeTaskList__sectionEstablishers_add_link")
-  protected lazy val changeEstablisherLinkText = messages("messages__schemeTaskList__sectionEstablishers_change_link")
-  protected lazy val companyLinkText = messages("messages__schemeTaskList__company_link")
-  protected lazy val individualLinkText = messages("messages__schemeTaskList__individual_link")
-  protected lazy val partnershipLinkText = messages("messages__schemeTaskList__partnership_link")
-  protected lazy val addTrusteesLinkText = messages("messages__schemeTaskList__sectionTrustees_add_link")
-  protected lazy val addDeleteTrusteesLinkText = messages("messages__schemeTaskList__sectionTrustees_change_link")
-  protected lazy val addTrusteesAdditionalInfo = messages("messages__schemeTaskList__sectionTrustees_add_additional_text")
-  protected lazy val changeTrusteesLinkText = messages("messages__schemeTaskList__sectionTrustees_change_link")
-  protected lazy val deleteTrusteesLinkText = messages("messages__schemeTaskList__sectionTrustees_delete_link")
-  protected lazy val deleteTrusteesAdditionalInfo = messages("messages__schemeTaskList__sectionTrustees_delete_additional_text")
-  protected lazy val declarationLinkText = messages("messages__schemeTaskList__declaration_link")
-  protected lazy val noEstablishersText = messages("messages__schemeTaskList__sectionEstablishers_no_establishers")
-  protected lazy val noTrusteesText = messages("messages__schemeTaskList__sectionTrustees_no_trustees")
+  protected lazy val aboutMembersLinkText: String = messages("messages__schemeTaskList__about_members_link_text")
+  protected lazy val aboutMembersAddLinkText: String = messages("messages__schemeTaskList__about_members_link_text_add")
+  protected lazy val aboutBenefitsAndInsuranceLinkText: String = messages("messages__schemeTaskList__about_benefits_and_insurance_link_text")
+  protected lazy val aboutBenefitsAndInsuranceAddLinkText: String = messages("messages__schemeTaskList__about_benefits_and_insurance_link_text_add")
+  protected lazy val aboutBankDetailsLinkText: String = messages("messages__schemeTaskList__about_bank_details_link_text")
+  protected lazy val aboutBankDetailsAddLinkText: String = messages("messages__schemeTaskList__about_bank_details_link_text_add")
+  protected lazy val workingKnowledgeLinkText: String = messages("messages__schemeTaskList__working_knowledge_link_text")
+  protected lazy val workingKnowledgeAddLinkText: String = messages("messages__schemeTaskList__working_knowledge_link_text_add")
+  protected lazy val addEstablisherLinkText: String = messages("messages__schemeTaskList__sectionEstablishers_add_link")
+  protected lazy val changeEstablisherLinkText: String = messages("messages__schemeTaskList__sectionEstablishers_change_link")
+  protected lazy val companyLinkText: String = messages("messages__schemeTaskList__company_link")
+  protected lazy val individualLinkText: String = messages("messages__schemeTaskList__individual_link")
+  protected lazy val partnershipLinkText: String = messages("messages__schemeTaskList__partnership_link")
+  protected lazy val addTrusteesLinkText: String = messages("messages__schemeTaskList__sectionTrustees_add_link")
+  protected lazy val addDeleteTrusteesLinkText: String = messages("messages__schemeTaskList__sectionTrustees_change_link")
+  protected lazy val addTrusteesAdditionalInfo: String = messages("messages__schemeTaskList__sectionTrustees_add_additional_text")
+  protected lazy val changeTrusteesLinkText: String = messages("messages__schemeTaskList__sectionTrustees_change_link")
+  protected lazy val deleteTrusteesLinkText: String = messages("messages__schemeTaskList__sectionTrustees_delete_link")
+  protected lazy val deleteTrusteesAdditionalInfo: String = messages("messages__schemeTaskList__sectionTrustees_delete_additional_text")
+  protected lazy val declarationLinkText: String = messages("messages__schemeTaskList__declaration_link")
+  protected lazy val noEstablishersText: String = messages("messages__schemeTaskList__sectionEstablishers_no_establishers")
+  protected lazy val noTrusteesText: String = messages("messages__schemeTaskList__sectionTrustees_no_trustees")
 
   def taskList: SchemeDetailsTaskList
 
@@ -141,7 +141,7 @@ abstract class HsTaskListHelper(answers: UserAnswers,
   protected[utils] def declarationSection(userAnswers: UserAnswers): Option[SchemeDetailsTaskListDeclarationSection]
 
   protected def linkText(item: Entity[_]): String = item.id match {
-    case EstablisherCompanyDetailsId(_) | TrusteeCompanyDetailsId(_) => companyLinkText
+    case establisherCompany.CompanyDetailsId(_) | TrusteeCompanyDetailsId(_) => companyLinkText
     case EstablisherDetailsId(_) | TrusteeDetailsId(_) => individualLinkText
     case EstablisherPartnershipDetailsId(_) | TrusteePartnershipDetailsId(_) => partnershipLinkText
   }
@@ -159,7 +159,7 @@ abstract class HsTaskListHelper(answers: UserAnswers,
     val notDeletedElements = for ((section, _) <- sections.zipWithIndex) yield {
       if (section.isDeleted) None else {
         section.id match {
-          case EstablisherCompanyDetailsId(_) if featureSwitchManagementService.get(Toggles.isEstablisherCompanyHnSEnabled) =>
+          case establisherCompany.CompanyDetailsId(_) if featureSwitchManagementService.get(Toggles.isEstablisherCompanyHnSEnabled) =>
             Some(SchemeDetailsTaskListEntitySection(
               None,
               getEstablisherCompanySpokes(userAnswers, mode, srn, section.name, section.index),
