@@ -14,13 +14,19 @@
  * limitations under the License.
  */
 
-package utils
+package identifiers.register.establishers.company
 
-object Toggles {
+import identifiers.TypedIdentifier
+import identifiers.register.establishers.EstablishersId
+import play.api.libs.json.JsPath
 
-  val isVariationsEnabled: String = "is-variations-enabled"
-  val isPrevAddEnabled: String = "is-address-pre-population-enabled"
-  val isSchemeDataShiftEnabled: String = "is-scheme-data-shift-enabled"
-  val isSeparateRefCollectionEnabled: String = "separate-ref-collection"
-  val isEstablisherCompanyHnSEnabled: String = "is-establisher-company-hns"
+case class NoCompanyNumberId(index: Int) extends TypedIdentifier[String] {
+  override def path: JsPath = EstablishersId(index).path \ "companyRegistrationNumber" \ NoCompanyNumberId.toString
 }
+
+object NoCompanyNumberId {
+  override def toString: String = "reason"
+}
+
+
+
