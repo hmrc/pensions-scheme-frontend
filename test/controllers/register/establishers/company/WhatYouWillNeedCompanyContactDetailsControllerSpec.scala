@@ -23,34 +23,42 @@ import org.scalatest.BeforeAndAfterEach
 import org.scalatest.mockito.MockitoSugar
 import play.api.mvc.Call
 import play.api.test.Helpers._
+import views.html.register.establishers.company.whatYouWillNeedCompanyContactDetails
 
 class WhatYouWillNeedCompanyContactDetailsControllerSpec extends ControllerSpecBase with MockitoSugar with BeforeAndAfterEach {
 
-  def onwardRoute: Call = controllers.routes.SessionExpiredController.onPageLoad
+  def onwardRoute: Call = controllers.register.establishers.company.routes.CompanyEmailController.onPageLoad(Index(0))
 
   def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): WhatYouWillNeedCompanyContactDetailsController =
     new WhatYouWillNeedCompanyContactDetailsController(frontendAppConfig,
       messagesApi,
       FakeAuthAction,
-      dataRetrievalAction
+      dataRetrievalAction,
+      FakeAllowAccessProvider(),
+      new DataRequiredActionImpl
     )
+
+  val postCall = controllers.register.establishers.company.routes.WhatYouWillNeedCompanyContactDetailsController.onSubmit(NormalMode, None, index=Index(0))
+
+  def viewAsString(): String = whatYouWillNeedCompanyContactDetails(frontendAppConfig, None, postCall, None)(fakeRequest, messages).toString
 
   "WhatYouWillNeedCompanyContactDetailsController" when {
 
     "on a GET" must {
       "return OK and the correct view" in {
-        val result = controller().onPageLoad(NormalMode, None, Index(1))(fakeRequest)
+        val result = controller().onPageLoad(NormalMode, None, Index(0))(fakeRequest)
 
         status(result) mustBe OK
+        contentAsString(result) mustBe viewAsString()
       }
     }
 
     "on a POST" must {
       "redirect to relavant page" in {
-        val result = controller().onSubmit(NormalMode, None, Index(1))(fakeRequest)
+        val result = controller().onSubmit(NormalMode, None, Index(0))(fakeRequest)
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(controllers.routes.IndexController.onPageLoad().url)
+        redirectLocation(result) mustBe Some(onwardRoute.url)
       }
     }
   }
