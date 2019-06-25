@@ -402,6 +402,7 @@ messages__common__crn_hint = This is issued by Companies House. It is 8 characte
 messages__error__has_crn_company = Select yes if the company has a CRN
 messages__error__no_crn_company = You need to tell us why the company does not have a CRN
 messages__error__crn_invalid = Enter a company number in the correct format
+messages__error__crn_invalid_with_company_name = Enter {0}’s company number in the correct format
 messages__error__no_crn_length = The reason cannot be more than 160 characters
 messages__error__no_crn_invalid = The reason cannot contain invalid characters
 messages__error__crn = Enter the Company Registration number
