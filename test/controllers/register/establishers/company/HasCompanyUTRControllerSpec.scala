@@ -28,8 +28,8 @@ class HasCompanyUTRControllerSpec extends ControllerSpecBase with MockitoSugar w
 
   def onwardRoute: Call = controllers.routes.SessionExpiredController.onPageLoad
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): WhatYouWillNeedCompanyDetailsController =
-    new WhatYouWillNeedCompanyDetailsController(frontendAppConfig,
+  def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): HasCompanyUTRController =
+    new HasCompanyUTRController(frontendAppConfig,
       messagesApi,
       FakeAuthAction,
       dataRetrievalAction

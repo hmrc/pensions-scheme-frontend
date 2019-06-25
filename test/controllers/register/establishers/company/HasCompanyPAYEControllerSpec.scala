@@ -28,8 +28,8 @@ class HasCompanyPAYEControllerSpec extends ControllerSpecBase with MockitoSugar 
 
   def onwardRoute: Call = controllers.routes.SessionExpiredController.onPageLoad
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): WhatYouWillNeedCompanyDetailsController =
-    new WhatYouWillNeedCompanyDetailsController(frontendAppConfig,
+  def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): HasCompanyPAYEController =
+    new HasCompanyPAYEController(frontendAppConfig,
       messagesApi,
       FakeAuthAction,
       dataRetrievalAction

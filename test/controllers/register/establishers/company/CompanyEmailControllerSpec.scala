@@ -28,8 +28,8 @@ class CompanyEmailControllerSpec extends ControllerSpecBase with MockitoSugar wi
 
   def onwardRoute: Call = controllers.routes.SessionExpiredController.onPageLoad
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): WhatYouWillNeedCompanyDetailsController =
-    new WhatYouWillNeedCompanyDetailsController(frontendAppConfig,
+  def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): CompanyEmailController =
+    new CompanyEmailController(frontendAppConfig,
       messagesApi,
       FakeAuthAction,
       dataRetrievalAction
