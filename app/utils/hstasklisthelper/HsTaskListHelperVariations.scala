@@ -129,7 +129,7 @@ class HsTaskListHelperVariations(answers: UserAnswers,
                 EntityItem(Link(messages("messages__schemeTaskList__sectionEstablishersCompany_add_contact", section.name),
                   establisherCompanyRoutes.WhatYouWillNeedCompanyContactDetailsController.onPageLoad(UpdateMode, srn, section.index).url), None),
                 EntityItem(Link(messages("messages__schemeTaskList__sectionEstablishersCompany_add_directors", section.name),
-                  controllers.register.establishers.company.routes.AddCompanyDirectorsController.onPageLoad(UpdateMode, srn, section.index).url, None))
+                  establisherCompanyRoutes.AddCompanyDirectorsController.onPageLoad(UpdateMode, srn, section.index).url, None))
               ),
               Some(section.name))
             )
