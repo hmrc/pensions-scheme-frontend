@@ -44,7 +44,7 @@
             headingKey=messages("messages__hasCompanyUtr__h1", establisherName)
         )
 
-        <p>@messages("messages__hasCompanyUtr__p1")<a href="@appConfig.findLostUtrNumberLink">@messages("messages__hasCompanyUtr__a1")</a></p>
+        <p><span>@messages("messages__hasCompanyUtr__p1") <a href="@appConfig.findLostUtrNumberLink">@messages("messages__hasCompanyUtr__a1")</a>.</span></p>
 
         @components.input_yes_no(
             field = form("value"),

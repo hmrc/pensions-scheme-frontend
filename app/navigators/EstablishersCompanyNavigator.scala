@@ -42,7 +42,13 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
       case CompanyPayeId(index) =>
         NavigateTo.dontSave(controllers.register.establishers.company.routes.CompanyRegistrationNumberController.onPageLoad(mode, srn, index))
       case CompanyRegistrationNumberId(index) =>
+        if(featureSwitchManagementService.get(Toggles.isEstablisherCompanyHnSEnabled)){
+          NavigateTo.dontSave(controllers.register.establishers.company.routes.HasCompanyUTRController.onPageLoad(mode, srn, index))
+        } else {
         NavigateTo.dontSave(controllers.register.establishers.company.routes.CompanyUniqueTaxReferenceController.onPageLoad(mode, srn, index))
+        }
+      case HasCompanyUTRId(index) =>
+        confirmHasCompanyUtr(index, mode, srn)(from.userAnswers)
       case CompanyUniqueTaxReferenceId(index) =>
         NavigateTo.dontSave(controllers.register.establishers.company.routes.CompanyPostCodeLookupController.onPageLoad(mode, srn, index))
       case CompanyPostCodeLookupId(index) =>
@@ -247,6 +253,17 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
         NavigateTo.dontSave(controllers.register.establishers.company.routes.CompanyRegistrationNumberVariationsController.onPageLoad(mode, srn, index))
       case Some(false) =>
         NavigateTo.dontSave(controllers.register.establishers.company.routes.NoCompanyNumberController.onPageLoad(index))
+      case None =>
+        NavigateTo.dontSave(controllers.routes.SessionExpiredController.onPageLoad())
+    }
+  }
+
+  private def confirmHasCompanyUtr(index: Int, mode: Mode, srn: Option[String])(answers: UserAnswers): Option[NavigateTo] = {
+    answers.get(HasCompanyUTRId(index)) match {
+      case Some(true) =>
+        NavigateTo.dontSave(controllers.register.establishers.company.routes.CompanyVatVariationsController.onPageLoad(mode, index, srn))
+      case Some(false) =>
+        NavigateTo.dontSave(controllers.register.establishers.company.routes.NoCompanyUTRController.onPageLoad(index))
       case None =>
         NavigateTo.dontSave(controllers.routes.SessionExpiredController.onPageLoad())
     }

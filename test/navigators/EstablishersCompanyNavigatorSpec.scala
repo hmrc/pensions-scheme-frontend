@@ -51,8 +51,11 @@ class EstablishersCompanyNavigatorSpec extends SpecBase with MustMatchers with N
     (HasCompanyNumberId(0),                       hasCompanyNumber(false),   noCompanyRegistrationNumber(mode),  true,           Some(exitJourney(mode, emptyAnswers)),          true),
     (CompanyVatId(0),                             emptyAnswers,                     companyPaye(mode),                  true,           Some(exitJourney(mode, emptyAnswers)),                   true),
     (CompanyVatId(0),                             newEstablisher,                   companyPaye(mode),                  true,           Some(checkYourAnswers(mode)),                   true),
-    (CompanyPayeId(0),                            emptyAnswers,                     companyRegistrationNumber(mode),    true,           Some(exitJourney(mode, emptyAnswers)),                   true),
-    (CompanyPayeId(0),                            newEstablisher,                   companyRegistrationNumber(mode),    true,           Some(checkYourAnswers(mode)),                   true),
+    (CompanyPayeId(0),                            emptyAnswers,                     companyVatNumberNew(mode),          true,           Some(exitJourney(mode, emptyAnswers)),                   true),
+    (CompanyPayeId(0),                            newEstablisher,                   companyVatNumberNew(mode),          true,           Some(checkYourAnswers(mode)),                   true),
+    (HasCompanyUTRId(0),                          emptyAnswers,                     companyUTR(mode),                   true,           Some(exitJourney(mode, emptyAnswers)),                   true),
+    (HasCompanyUTRId(0),                          hasCompanyUtr(true),       companyUTR(mode),                   true,           Some(exitJourney(mode, emptyAnswers)),                   true),
+    (HasCompanyUTRId(0),                          hasCompanyUtr(false),      companyUTR(mode),                   true,           Some(exitJourney(mode, emptyAnswers)),                   true),
     (CompanyRegistrationNumberId(0),              emptyAnswers,                     companyUTR(mode),                   true,           Some(exitJourney(mode, emptyAnswers)),                   true),
     (CompanyRegistrationNumberId(0),              newEstablisher,                   companyUTR(mode),                   true,           Some(checkYourAnswers(mode)),                   true),
     (CompanyUniqueTaxReferenceId(0),              emptyAnswers,                     companyPostCodeLookup(mode),        true,           Some(exitJourney(mode, emptyAnswers)),                   true),
@@ -109,6 +112,11 @@ class EstablishersCompanyNavigatorSpec extends SpecBase with MustMatchers with N
     routes(UpdateMode, isPrevAddEnabled) ++ updateOnlyRoutes: _*
   )
 
+  private def establisherCompanyHnSEnabledRoutes(establisherCompanyHnSEnabled : Boolean = false) = Table(
+    ("Id",                            "User Answers",  "Next Page (UpdateMode Mode)",      "Save (NM)",  "Next Page (Check Mode)",         "Save (CM)"),
+    (CompanyRegistrationNumberId(0),   emptyAnswers,    companyVatNumberNew(NormalMode),             true,          Some(exitJourney(NormalMode,     emptyAnswers)),                   true)
+  )
+
   private val navigator: EstablishersCompanyNavigator =
     new EstablishersCompanyNavigator(FakeUserAnswersCacheConnector, frontendAppConfig, new FakeFeatureSwitchManagementService(false))
 
@@ -132,6 +140,7 @@ object EstablishersCompanyNavigatorSpec extends OptionValues with Enumerable.Imp
   private val emptyAnswers = UserAnswers(Json.obj())
   private val newEstablisher = UserAnswers(Json.obj()).set(IsEstablisherNewId(0))(true).asOpt.value
   private def hasCompanyNumber(yesNo : Boolean) = UserAnswers(Json.obj()).set(HasCompanyNumberId(0))(yesNo).asOpt.value
+  private def hasCompanyUtr(yesNo : Boolean) = UserAnswers(Json.obj()).set(HasCompanyUTRId(0))(yesNo).asOpt.value
   private val johnDoe = PersonDetails("John", None, "Doe", new LocalDate(1862, 6, 9))
 
   private def validData(directors: PersonDetails*) = {
@@ -153,6 +162,9 @@ object EstablishersCompanyNavigatorSpec extends OptionValues with Enumerable.Imp
 
   private def companyRegistrationNumberNew(mode: Mode): Call =
     controllers.register.establishers.company.routes.CompanyRegistrationNumberVariationsController.onPageLoad(mode, None, 0)
+
+  private def companyVatNumberNew(mode: Mode): Call =
+    controllers.register.establishers.company.routes.CompanyVatVariationsController.onPageLoad(mode, 0, None)
 
   private def noCompanyRegistrationNumber(mode: Mode): Call =
     controllers.register.establishers.company.routes.NoCompanyNumberController.onPageLoad(Index(0))
