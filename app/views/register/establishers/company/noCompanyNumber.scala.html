@@ -19,17 +19,17 @@
 @import controllers.register.trustees.company.routes._
 @import models.{Mode,CompanyRegistrationNumber}
 @import play.api.mvc.Call
-@import forms.CompanyRegistrationNumberVariationsFormProvider
-@import viewmodels.CompanyRegistrationNumberViewModel
+@import forms.register.establishers.company.NoCompanyNumberFormProvider
+@import viewmodels.NoCompanyNumberViewModel
 
-@(appConfig: FrontendAppConfig, viewmodel: CompanyRegistrationNumberViewModel, form: Form[_], schemeName: Option[String], submitUrl: Call, srn: Option[String])(implicit request: Request[_], messages: Messages)
+@(appConfig: FrontendAppConfig, viewmodel: NoCompanyNumberViewModel, form: Form[_], schemeName: Option[String], submitUrl: Call, srn: Option[String])(implicit request: Request[_], messages: Messages)
 
-    @main_template(
-        title = viewmodel.title,
-        appConfig = appConfig,
-        bodyClasses = None) {
+@main_template(
+    title = viewmodel.title,
+    appConfig = appConfig,
+    bodyClasses = None) {
 
-        @helpers.form(action = submitUrl, 'autoComplete -> "off") {
+    @helpers.form(action = submitUrl, 'autoComplete -> "off") {
 
         @components.error_summary(form.errors)
 
@@ -37,13 +37,10 @@
             messages(viewmodel.heading).toString
         )
 
-        <p>@messages(viewmodel.hint)</p>
-
         @components.input_text(
-            field = form("companyRegistrationNumber"),
-            label = messages("messages__common__crn"),
-            labelClass = Some("visually-hidden")
-            )
+            field = form("reason"),
+            label = messages("messages__common__reason"),
+            labelClass = Some("visually-hidden"))
 
         @components.submit_button()
 
