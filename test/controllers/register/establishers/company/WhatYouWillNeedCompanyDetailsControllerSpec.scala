@@ -59,7 +59,7 @@ class WhatYouWillNeedCompanyDetailsControllerSpec extends ControllerSpecBase wit
         val result = controller().onSubmit(NormalMode, None, Index(0))(fakeRequest)
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(controllers.register.establishers.company.routes.HasCompanyNumberController.onPageLoad(Index(0)).url)
+        redirectLocation(result) mustBe Some(onwardRoute.url)
       }
     }
   }
