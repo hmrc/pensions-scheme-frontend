@@ -23,6 +23,9 @@ import uk.gov.voa.play.form.ConditionalMappings.{mandatoryIfFalse, mandatoryIfTr
 
 trait UtrMapping extends Mappings with Transforms {
 
+  val reasonMaxLength = 160
+  val utrMaxLength = 10
+
   protected def uniqueTaxReferenceMapping(requiredKey: String = "messages__error__has_sautr_establisher",
                                           requiredUtrKey: String = "messages__error__sautr",
                                           requiredReasonKey: String = "messages__error__no_sautr_establisher",
@@ -31,8 +34,6 @@ trait UtrMapping extends Mappings with Transforms {
                                           invalidReasonKey: String = "messages__error__no_sautr_invalid"
                                          ):
   Mapping[UniqueTaxReference] = {
-
-    val reasonMaxLength = 160
 
     def fromUniqueTaxReference(utr: UniqueTaxReference): (Boolean, Option[String], Option[String]) = {
       utr match {
@@ -58,4 +59,12 @@ trait UtrMapping extends Mappings with Transforms {
           firstError(maxLength(reasonMaxLength, maxLengthReasonKey), safeText(invalidReasonKey))))).
       transform(toUniqueTaxReference, fromUniqueTaxReference)
   }
+
+  def utrStringMapping(requiredKey: String = "messages__utr__error_required",
+                       maxLengthKey: String = "messages__utr__error_maxLength",
+                       invalidKey: String = "messages__utr__error_invalid"
+                      ): Mapping[String] = text(requiredKey)
+    .transform(standardTextTransform, noTransform)
+    .verifying(firstError(maxLength(utrMaxLength, maxLengthKey),
+      regexp(regexUtr, invalidKey)))
 }

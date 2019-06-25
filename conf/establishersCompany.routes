@@ -271,6 +271,11 @@ POST       /:index/company/reason-for-no-company-number                         
 GET        /:index/company/unique-taxpayer-reference                                                        controllers.register.establishers.company.HasCompanyUTRController.onPageLoad(mode: Mode = NormalMode, srn: Option[String] = None, index: Index)
 POST       /:index/company/unique-taxpayer-reference                                                        controllers.register.establishers.company.HasCompanyUTRController.onSubmit(mode: Mode = NormalMode, srn: Option[String] = None, index: Index)
 
+GET        /:index/company/enter-unique-taxpayer-reference                                                  controllers.register.establishers.company.CompanyUTRController.onPageLoad(mode: Mode = NormalMode, srn: Option[String] = None, index: Index)
+POST       /:index/company/enter-unique-taxpayer-reference                                                  controllers.register.establishers.company.CompanyUTRController.onSubmit(mode: Mode = NormalMode, srn: Option[String] = None, index: Index)
+GET        /:index/company/:mode/enter-unique-taxpayer-reference/:srn                                       controllers.register.establishers.company.CompanyUTRController.onPageLoad(mode: Mode, srn: Option[String], index: Index)
+POST       /:index/company/:mode/enter-unique-taxpayer-reference/:srn                                       controllers.register.establishers.company.CompanyUTRController.onSubmit(mode: Mode, srn: Option[String], index: Index)
+
 GET        /:index/company/reason-for-no-unique-taxpayer-reference                                          controllers.register.establishers.company.NoCompanyUTRController.onPageLoad(mode: Mode = NormalMode, srn: Option[String] = None, index: Index)
 POST       /:index/company/reason-for-no-unique-taxpayer-reference                                          controllers.register.establishers.company.NoCompanyUTRController.onSubmit(mode: Mode = NormalMode, srn: Option[String] = None, index: Index)
 
