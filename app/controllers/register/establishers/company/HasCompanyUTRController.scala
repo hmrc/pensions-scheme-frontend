@@ -46,7 +46,7 @@ class HasCompanyUTRController @Inject()(appConfig: FrontendAppConfig,
   extends FrontendController with Retrievals with I18nSupport {
 
   private def form(companyName:String): Form[Boolean] = formProvider.apply(companyName)
-  private def postCall = controllers.register.establishers.company.routes.HasCompanyNumberController.onSubmit _
+  private def postCall = controllers.register.establishers.company.routes.HasCompanyUTRController.onSubmit _
 
   def onPageLoad(mode: Mode, srn: Option[String] = None, index: Index): Action[AnyContent] = (authenticate andThen
     getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {

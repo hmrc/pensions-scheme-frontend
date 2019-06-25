@@ -17,12 +17,11 @@
 package views.register.establishers.company
 
 import forms.register.establishers.HasCompanyUtrFormProvider
-import forms.register.establishers.company.HasCompanyNumberFormProvider
 import models.{Index, NormalMode}
 import play.api.data.Form
 import play.twirl.api.HtmlFormat
 import views.behaviours.YesNoViewBehaviours
-import views.html.register.establishers.company.hasCompanyNumber
+import views.html.register.establishers.company.hasCompanyUtr
 
 class HasCompanyUtrViewSpec extends YesNoViewBehaviours {
   val schemeName = Some("Scheme x")
@@ -33,13 +32,13 @@ class HasCompanyUtrViewSpec extends YesNoViewBehaviours {
   private val postCall = controllers.register.establishers.company.routes.HasCompanyUTRController.onSubmit(NormalMode, None, Index(0))
 
   def createView: () => HtmlFormat.Appendable = () =>
-    hasCompanyNumber(frontendAppConfig, form, "ABC", schemeName, postCall, srn)(fakeRequest, messages)
+    hasCompanyUtr(frontendAppConfig, form, "ABC", schemeName, postCall, srn)(fakeRequest, messages)
 
   def createUpdateView: () => HtmlFormat.Appendable = () =>
-    hasCompanyNumber(frontendAppConfig, form, "ABC", schemeName, postCall, srn)(fakeRequest, messages)
+    hasCompanyUtr(frontendAppConfig, form, "ABC", schemeName, postCall, srn)(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) =>
-    hasCompanyNumber(frontendAppConfig, form, "ABC", schemeName, postCall, srn)(fakeRequest, messages)
+    hasCompanyUtr(frontendAppConfig, form, "ABC", schemeName, postCall, srn)(fakeRequest, messages)
 
   "HasCompanyNumber view" must {
 

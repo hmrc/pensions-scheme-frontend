@@ -19,7 +19,7 @@ package controllers.register.establishers.company
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.register.establishers.HasCompanyUtrFormProvider
-import identifiers.register.establishers.company.HasCompanyNumberId
+import identifiers.register.establishers.company.HasCompanyUTRId
 import models.{Index, NormalMode}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.mockito.MockitoSugar
@@ -70,7 +70,7 @@ class HasCompanyUTRControllerSpec extends ControllerSpecBase {
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
-      FakeUserAnswersService.verify(HasCompanyNumberId(index), true)
+      FakeUserAnswersService.verify(HasCompanyUTRId(index), true)
     }
 
     "return a Bad Request and errors when invalid data is submitted" in {
