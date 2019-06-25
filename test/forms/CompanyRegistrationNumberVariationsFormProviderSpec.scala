@@ -24,7 +24,7 @@ import play.api.i18n.Messages
 class CompanyRegistrationNumberVariationsFormProviderSpec @Inject() (implicit messages: Messages) extends CrnBehaviour {
 
   private val lengthKey = "messages__error__no_crn_length"
-  private val requiredKey = "messages__error__company_number_with_company_name"
+  private val requiredKey = "messages__error__company_number"
   private val invalidKey = "messages__error__crn_invalid"
 
   "A form with a CRNNumber" should {
