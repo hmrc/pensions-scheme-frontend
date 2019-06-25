@@ -1492,9 +1492,9 @@ messages__payeVariations__error_invalid = Enter {0}’s employer PAYE reference 
 messages__payeVariations__error_length = Enter {0}’s employer PAYE reference using 16 characters or less
 messages__payeVariations__error_required = Enter an employer PAYE reference
 
-messages__utr__error__required = "Enter a UTR"
-messages__utr__error_maxLength = "The UTR must be 10 numbers"
-messages__utr__error__invalid = "The UTR must only include numbers"
+messages__utr__error_required = Enter a UTR
+messages__utr__error_maxLength = The UTR must be 10 numbers
+messages__utr__error_invalid = The UTR must only include numbers
 messages__companyUtr__title = What is their UTR?
 messages__companyUtr__heading = What is {0}’s UTR?
 messages__companyUtr__hint = For example, 12345 67890

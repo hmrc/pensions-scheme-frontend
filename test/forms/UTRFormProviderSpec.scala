@@ -16,12 +16,10 @@
 
 package forms
 
-import com.google.inject.Inject
 import forms.behaviours.UtrBehaviour
 import play.api.data.Form
-import play.api.i18n.Messages
 
-class UTRFormProviderSpec @Inject()(implicit messages: Messages) extends UtrBehaviour {
+class UTRFormProviderSpec extends UtrBehaviour {
 
   private val requiredKey = "messages__utr__error_required"
   private val maxLengthKey = "messages__utr__error_maxLength"
