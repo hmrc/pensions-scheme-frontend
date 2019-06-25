@@ -152,7 +152,7 @@ class HsTaskListHelperRegistration(answers: UserAnswers,
                     EntityItem(Link(messages("messages__schemeTaskList__sectionEstablishersCompany_add_contact", section.name),
                   establisherCompanyRoutes.WhatYouWillNeedCompanyContactDetailsController.onPageLoad(NormalMode, None, section.index).url), None),
                       EntityItem(Link(messages("messages__schemeTaskList__sectionEstablishersCompany_add_directors", section.name),
-                  controllers.register.establishers.company.routes.AddCompanyDirectorsController.onPageLoad(NormalMode, None, section.index).url, None))
+                  establisherCompanyRoutes.AddCompanyDirectorsController.onPageLoad(NormalMode, None, section.index).url, None))
               ),
               Some(section.name))
             )
