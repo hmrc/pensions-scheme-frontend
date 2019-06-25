@@ -18,7 +18,6 @@ package forms
 
 import forms.mappings.CrnMapping
 import javax.inject.Inject
-import models.CompanyRegistrationNumber
 import play.api.data.Form
 import play.api.i18n.Messages
 import viewmodels.Message
@@ -29,7 +28,7 @@ class CompanyRegistrationNumberVariationsFormProvider @Inject() extends CrnMappi
     Form(
       "companyRegistrationNumber" -> companyRegistrationNumberStringMapping(
         crnLengthKey = Message("messages__error__no_crn_length", name),
-        invalidCRNKey = Message("messages__error__crn_invalid", name)
+        invalidCRNKey = Message("messages__error__crn_invalid_with_company_name", name).resolve
       )
     )
 }
