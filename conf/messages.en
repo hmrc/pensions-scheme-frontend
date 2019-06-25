@@ -1419,6 +1419,12 @@ messages__whatYouWillNeedEstablisherCompany__item2 = Unique Taxpayer Reference (
 messages__whatYouWillNeedEstablisherCompany__item3 = VAT registration number
 messages__whatYouWillNeedEstablisherCompany__item4 = employer PAYE number
 
+messages__whatYouWillNeedEstablisherCompanyAddress__title = Address
+messages__whatYouWillNeedEstablisherCompanyAddress__h1 = Address
+messages__whatYouWillNeedEstablisherCompanyAddress__lede = You will need to tell us the company’s:
+messages__whatYouWillNeedEstablisherCompanyAddress__item1 = current address
+messages__whatYouWillNeedEstablisherCompanyAddress__item2 = previous address if the company has not been at the current address for at least 1 year
+
 messages__whatYouWillNeedEstablisherCompanyContact__title = Contact details
 messages__whatYouWillNeedEstablisherCompanyContact__h1 = Contact details
 messages__whatYouWillNeedEstablisherCompanyContact__lede = You will need to tell us the company’s contact:
