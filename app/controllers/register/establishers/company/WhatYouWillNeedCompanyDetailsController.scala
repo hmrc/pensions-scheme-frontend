@@ -17,28 +17,35 @@
 package controllers.register.establishers.company
 
 import config.FrontendAppConfig
+import controllers.Retrievals
 import controllers.actions._
 import javax.inject.Inject
 import models.{Index, Mode}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import views.html.register.establishers.company.whatYouWillNeedCompanyDetails
 
 import scala.concurrent.Future
 
 class WhatYouWillNeedCompanyDetailsController @Inject()(appConfig: FrontendAppConfig,
                                                         override val messagesApi: MessagesApi,
                                                         authenticate: AuthAction,
-                                                        getData: DataRetrievalAction
-                                                    ) extends FrontendController with I18nSupport {
+                                                        getData: DataRetrievalAction,
+                                                        allowAccess: AllowAccessActionProvider,
+                                                        requireData: DataRequiredAction
+                                                    ) extends FrontendController with I18nSupport with Retrievals{
 
-  def onPageLoad(mode: Mode, srn: Option[String] = None, index: Index): Action[AnyContent] = (authenticate andThen getData()).async {
+  def onPageLoad(mode: Mode, srn: Option[String] = None, index: Index): Action[AnyContent] = (authenticate andThen
+    getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
     implicit request =>
-      Future.successful(Ok)
+      val postCall = controllers.register.establishers.company.routes.WhatYouWillNeedCompanyDetailsController.onSubmit(mode, srn, index)
+      Future.successful(Ok(whatYouWillNeedCompanyDetails(appConfig, existingSchemeName, postCall, srn)))
   }
 
-  def onSubmit(mode: Mode, srn: Option[String] = None, index: Index): Action[AnyContent] = authenticate {
+  def onSubmit(mode: Mode, srn: Option[String] = None, index: Index): Action[AnyContent] = (authenticate andThen
+    getData(mode, srn) andThen requireData).async {
     implicit request =>
-      Redirect(controllers.routes.IndexController.onPageLoad())
+      Future.successful(Redirect(controllers.register.establishers.company.routes.HasCompanyNumberController.onPageLoad(index)))
   }
 }
