@@ -27,7 +27,7 @@ import services.FakeUserAnswersService
 import utils.FakeNavigator
 import views.html.register.establishers.company.hasCompanyNumber
 
-class HasCompanyNumberControllerSpec  extends ControllerSpecBase {
+class HasCompanyNumberControllerSpec extends ControllerSpecBase {
   private val schemeName = None
   private def onwardRoute = controllers.routes.IndexController.onPageLoad()
   val formProvider = new HasCompanyNumberFormProvider()
