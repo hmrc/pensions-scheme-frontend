@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package forms.register.establishers.company
+package forms
 
 import forms.mappings.Mappings
 import javax.inject.Inject
@@ -22,10 +22,10 @@ import play.api.data.Form
 import play.api.i18n.Messages
 import viewmodels.Message
 
-class HasCompanyNumberFormProvider @Inject() extends Mappings {
+class HasCrnFormProvider @Inject() extends Mappings {
 
-  def apply(companyName : String)(implicit messages: Messages): Form[Boolean] =
+  def apply(errorKey : String, companyName : String)(implicit messages: Messages): Form[Boolean] =
     Form(
-      "value" -> boolean(Message("messages__hasCompanyNumber__error__required", companyName).resolve)
+      "value" -> boolean(Message(errorKey, companyName).resolve)
     )
 }
