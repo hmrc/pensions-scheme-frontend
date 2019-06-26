@@ -169,7 +169,7 @@ object EstablishersCompanyNavigatorSpec extends OptionValues with Enumerable.Imp
     controllers.register.establishers.company.routes.CompanyUniqueTaxReferenceController.onPageLoad(mode, None, 0)
 
   private def hasCompanyVat(mode: Mode): Call =
-    controllers.register.establishers.company.routes.HasCompanyVATController.onPageLoad(0)
+    controllers.register.establishers.company.routes.HasCompanyVATController.onPageLoad(mode, None, 0)
 
   private def companyPostCodeLookup(mode: Mode) = controllers.register.establishers.company.routes.CompanyPostCodeLookupController.onPageLoad(mode, None, 0)
 
