@@ -30,27 +30,27 @@ class HasCompanyPAYEControllerFormProviderSpec extends FormSpec {
   "DoesCompanyHavePAYENumber form" must {
 
     "bind true" in {
-      val form = formProvider().bind(Map("value" -> "true"))
+      val form = formProvider().bind(Map("hasPaye" -> "true"))
       form.get shouldBe true
     }
 
     "bind false" in {
-      val form = formProvider().bind(Map("value" -> "false"))
+      val form = formProvider().bind(Map("hasPaye" -> "false"))
       form.get shouldBe false
     }
 
     "fail to bind non-booleans" in {
-      val expectedError = error("value", invalidKey)
-      checkForError(formProvider(), Map("value" -> "not a boolean"), expectedError)
+      val expectedError = error("hasPaye", invalidKey)
+      checkForError(formProvider(), Map("hasPaye" -> "not a boolean"), expectedError)
     }
 
     "fail to bind a blank value" in {
-      val expectedError = error("value", requiredKey)
-      checkForError(formProvider(), Map("value" -> ""), expectedError)
+      val expectedError = error("hasPaye", requiredKey)
+      checkForError(formProvider(), Map("hasPaye" -> ""), expectedError)
     }
 
     "fail to bind when value is omitted" in {
-      val expectedError = error("value", requiredKey)
+      val expectedError = error("hasPaye", requiredKey)
       checkForError(formProvider(), emptyForm, expectedError)
     }
   }

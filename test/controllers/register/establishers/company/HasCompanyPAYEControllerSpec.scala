@@ -33,7 +33,6 @@ import views.html.register.establishers.company.hasCompanyPAYE
 
 class HasCompanyPAYEControllerSpec extends ControllerSpecBase {
 
-  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
   val formProvider = new HasCompanyPAYEFormProvider()
   val form = formProvider()
@@ -51,6 +50,9 @@ class HasCompanyPAYEControllerSpec extends ControllerSpecBase {
     )
 
   val index = 0
+
+  def onwardRoute: Call = controllers.register.establishers.company.routes.CompanyPayeVariationsController.onPageLoad (NormalMode, index, None)
+
   val companyName = "test company name"
   def postCall: Call = routes.HasCompanyPAYEController.onSubmit(NormalMode, None, index)
 
@@ -59,7 +61,9 @@ class HasCompanyPAYEControllerSpec extends ControllerSpecBase {
       Json.obj(
         CompanyDetailsId.toString ->
           CompanyDetails("test company name"),
-        HasCompanyPAYEId.toString -> true
+        "companyPaye" -> Json.obj(
+          "hasPaye" -> true
+        )
       )
     )
   )
@@ -83,7 +87,7 @@ class HasCompanyPAYEControllerSpec extends ControllerSpecBase {
     }
 
     "redirect to the next page when valid data is submitted" in {
-      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "true"))
+      val postRequest = fakeRequest.withFormUrlEncodedBody(("hasPaye", "true"))
 
       val result = controller().onSubmit(NormalMode, None, index)(postRequest)
 
@@ -92,8 +96,8 @@ class HasCompanyPAYEControllerSpec extends ControllerSpecBase {
     }
 
     "return a Bad Request and errors when invalid data is submitted" in {
-      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", ""))
-      val boundForm = form.bind(Map("value" -> ""))
+      val postRequest = fakeRequest.withFormUrlEncodedBody(("hasPaye", ""))
+      val boundForm = form.bind(Map("hasPaye" -> ""))
 
       val result = controller().onSubmit(NormalMode, None, index)(postRequest)
 
@@ -110,7 +114,7 @@ class HasCompanyPAYEControllerSpec extends ControllerSpecBase {
           redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
         }
         "POST" in {
-          val postRequest = fakeRequest.withFormUrlEncodedBody(("value", DeclarationDormant.options.head.value))
+          val postRequest = fakeRequest.withFormUrlEncodedBody(("hasPaye", DeclarationDormant.options.head.value))
           val result = controller(dontGetAnyData).onSubmit(NormalMode, None, index)(postRequest)
 
           status(result) mustBe SEE_OTHER
@@ -125,7 +129,7 @@ class HasCompanyPAYEControllerSpec extends ControllerSpecBase {
           redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
         }
         "POST" in {
-          val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "invalid value"))
+          val postRequest = fakeRequest.withFormUrlEncodedBody(("hasPaye", "invalid value"))
 
           val result = controller(getEmptyData).onSubmit(NormalMode, None, index)(postRequest)
 

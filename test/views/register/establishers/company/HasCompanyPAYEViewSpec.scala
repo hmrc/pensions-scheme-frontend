@@ -38,7 +38,7 @@ class HasCompanyPAYEViewSpec extends YesNoViewBehaviours {
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable =
     (form: Form[_]) => hasCompanyPAYE(frontendAppConfig, form, companyName, postCall, None)(fakeRequest, messages)
 
-  "DoesCompanyHavePAYENumber view" must {
+  "HasCompanyPAYEView view" must {
     behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__heading", companyName))
 
     behave like pageWithReturnLink(createView, getReturnLink)
@@ -46,7 +46,8 @@ class HasCompanyPAYEViewSpec extends YesNoViewBehaviours {
     behave like yesNoPage(
       createView = createViewUsingForm,
       messageKeyPrefix = messageKeyPrefix,
-      expectedFormAction = controllers.register.establishers.company.routes.HasCompanyPAYEController.onSubmit(NormalMode, None, 0).url
+      expectedFormAction = controllers.register.establishers.company.routes.HasCompanyPAYEController.onSubmit(NormalMode, None, 0).url,
+      valueId = "hasPaye"
     )
 
     behave like pageWithSubmitButton(createView)

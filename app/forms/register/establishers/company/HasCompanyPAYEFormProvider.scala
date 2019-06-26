@@ -24,6 +24,6 @@ class HasCompanyPAYEFormProvider @Inject() extends Mappings {
 
   def apply(): Form[Boolean] =
     Form(
-      "value" -> boolean("messages__companyPayeRef__error__required")
+      "hasPaye" -> boolean("messages__companyPayeRef__error__required")
     )
 }
