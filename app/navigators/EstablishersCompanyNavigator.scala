@@ -47,7 +47,10 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
 
       case CompanyUTRId(index) =>
         NavigateTo.dontSave(establisherCompanyRoutes.HasCompanyVATController.onPageLoad(index))
-      
+
+      case NoCompanyUTRId(index) =>
+        NavigateTo.dontSave(establisherCompanyRoutes.HasCompanyVATController.onPageLoad(index))
+
       case CompanyPostCodeLookupId(index) =>
         NavigateTo.dontSave(establisherCompanyRoutes.CompanyAddressListController.onPageLoad(mode, srn, index))
       case CompanyAddressListId(index) =>
@@ -87,6 +90,7 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
       case CompanyRegistrationNumberId(index) =>  exitMiniJourney(index, mode, srn, from.userAnswers)
       case CompanyUniqueTaxReferenceId(index) =>  exitMiniJourney(index, mode, srn, from.userAnswers)
       case CompanyUTRId(index) =>                 exitMiniJourney(index, mode, srn, from.userAnswers)
+      case NoCompanyUTRId(index) =>               exitMiniJourney(index, mode, srn, from.userAnswers)
 
       case CompanyPostCodeLookupId(index) =>
         NavigateTo.dontSave(establisherCompanyRoutes.CompanyAddressListController.onPageLoad(mode, srn, index))

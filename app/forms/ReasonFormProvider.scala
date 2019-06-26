@@ -16,19 +16,25 @@
 
 package forms
 
-import forms.mappings.CrnMapping
+import forms.mappings.{Mappings, Transforms}
 import javax.inject.Inject
 import play.api.data.Form
 import play.api.i18n.Messages
 import viewmodels.Message
 
-class CompanyRegistrationNumberVariationsFormProvider @Inject() extends CrnMapping {
+class ReasonFormProvider @Inject() extends Mappings with Transforms {
+
+  val reasonMaxLength = 160
 
   def apply(name: String)(implicit messages: Messages): Form[String] =
     Form(
-      "companyRegistrationNumber" -> companyRegistrationNumberStringMapping(
-        crnLengthKey = Message("messages__error__no_crn_length", name),
-        invalidCRNKey = Message("messages__error__crn_invalid_with_company_name", name).resolve
-      )
+      "reason" -> text(Message("messages__reason__error_required", name))
+        .transform(standardTextTransform, noTransform)
+        .verifying(
+          firstError(
+            maxLength(reasonMaxLength, "messages__reason__error_maxLength"),
+            safeText("messages__reason__error_invalid")
+        )
+    )
     )
 }

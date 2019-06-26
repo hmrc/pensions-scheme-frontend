@@ -72,11 +72,16 @@
 
                 <ul class="task-list-items">
                     <li class="task-list-item">
+                        @if(taskSections.beforeYouStart.isCompleted.isEmpty){
+                        <a id= "section-before-you-start-link" href="@taskSections.beforeYouStart.link.target">
+                            @messages(taskSections.beforeYouStart.link.text)
+                        </a>
+                        }
+
+                        @taskSections.beforeYouStart.isCompleted.map{ isCompleted =>
                         <a id= "section-before-you-start-link" href="@taskSections.beforeYouStart.link.target" aria-describedby="section-beforeYouStart-status">
                             @messages(taskSections.beforeYouStart.link.text)
                         </a>
-
-                        @taskSections.beforeYouStart.isCompleted.map{ isCompleted =>
                             <strong class="@statusClass(isCompleted)" id="section-beforeYouStart-status">@messages(status(isCompleted))</strong>
                         }
                     </li>

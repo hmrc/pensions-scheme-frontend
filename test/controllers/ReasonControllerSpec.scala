@@ -38,9 +38,9 @@ import views.html.reason
 
 import scala.concurrent.Future
 
-class NoCompanyUTRControllerSpec extends WordSpec with MustMatchers with OptionValues with ScalaFutures {
+class ReasonControllerSpec extends WordSpec with MustMatchers with OptionValues with ScalaFutures {
 
-  import NoCompanyUTRControllerSpec._
+  import ReasonControllerSpec._
 
   val viewmodel = ReasonViewModel(
     postCall = Call("GET", "www.example.com"),
@@ -137,7 +137,7 @@ class NoCompanyUTRControllerSpec extends WordSpec with MustMatchers with OptionV
           val appConfig = app.injector.instanceOf[FrontendAppConfig]
           val formProvider = app.injector.instanceOf[ReasonFormProvider]
           val controller = app.injector.instanceOf[TestController]
-          val request = FakeRequest().withFormUrlEncodedBody(("reason", "123456789{0}12345"))
+          val request = FakeRequest().withFormUrlEncodedBody(("reason", "1234567^89{0}12345"))
 
           val messages = app.injector.instanceOf[MessagesApi].preferred(request)
 
@@ -146,7 +146,7 @@ class NoCompanyUTRControllerSpec extends WordSpec with MustMatchers with OptionV
           status(result) mustEqual BAD_REQUEST
           contentAsString(result) mustEqual reason(
             appConfig,
-            formProvider(companyName)(messages).bind(Map("reason" -> "123456789{0}12345")),
+            formProvider(companyName)(messages).bind(Map("reason" -> "1234567^89{0}12345")),
             viewmodel,
             None
           )(request, messages).toString
@@ -156,7 +156,7 @@ class NoCompanyUTRControllerSpec extends WordSpec with MustMatchers with OptionV
 }
 
 
-object NoCompanyUTRControllerSpec {
+object ReasonControllerSpec {
 
   object FakeIdentifier extends TypedIdentifier[String]
 
@@ -169,13 +169,14 @@ object NoCompanyUTRControllerSpec {
                                   val formProvider: ReasonFormProvider
                                 ) extends ReasonController {
 
-    def onPageLoad(viewmodel: ReasonViewModel, answers: UserAnswers): Future[Result] = {
+    def onPageLoad(viewmodel: ReasonViewModel, answers: UserAnswers): Future[Result] =
       get(FakeIdentifier, viewmodel, formProvider(companyName))(DataRequest(FakeRequest(), "cacheId", answers, PsaId("A0000000")))
-    }
 
-    def onSubmit(viewmodel: ReasonViewModel, answers: UserAnswers, fakeRequest: Request[AnyContent]): Future[Result] = {
+    def onSubmit(viewmodel: ReasonViewModel, answers: UserAnswers, fakeRequest: Request[AnyContent]): Future[Result] =
       post(FakeIdentifier, NormalMode, viewmodel, formProvider(companyName))(DataRequest(fakeRequest, "cacheId", answers, PsaId("A0000000")))
-    }
   }
 
 }
+
+
+
