@@ -45,53 +45,53 @@ trait UtrBehaviour extends FormSpec with UtrMapping with PropertyChecks with Gen
         utrNo =>
           s"bind a valid uniqueTaxReference with utr $utrNo when yes is selected" in {
             val result = testForm.bind(Map(hasUtr -> "true", utr -> utrNo))
-            result.get shouldBe UniqueTaxReference.Yes(utrNo.trim)
+            result.get mustBe UniqueTaxReference.Yes(utrNo.trim)
           }
       }
 
       "fail to bind" when {
         "an empty Map" in {
           val result = testForm.bind(Map.empty[String, String])
-          result.errors shouldBe Seq(FormError(hasUtr, requiredKey))
+          result.errors mustBe Seq(FormError(hasUtr, requiredKey))
         }
         Seq("1234", "12345678766655", "sdfghjkloi").foreach { utrNo =>
           s"utr $utrNo is invalid" in {
             val result = testForm.bind(Map(hasUtr -> "true", utr -> utrNo))
-            result.errors shouldBe Seq(FormError(utr, invalidUtrKey, Seq(regexUtr)))
+            result.errors mustBe Seq(FormError(utr, invalidUtrKey, Seq(regexUtr)))
           }
         }
         "yes is selected but no utr is entered" in {
           val result = testForm.bind(Map(hasUtr -> "true"))
-          result.errors shouldBe Seq(FormError(utr, requiredUtrKey))
+          result.errors mustBe Seq(FormError(utr, requiredUtrKey))
         }
         "no is selected but without reason" in {
           val result = testForm.bind(Map(hasUtr -> "false"))
-          result.errors shouldBe Seq(FormError(reason, requiredReasonKey))
+          result.errors mustBe Seq(FormError(reason, requiredReasonKey))
         }
         "reason is more than maxlength 160" in {
           val maxlength = 160
           forAll(stringsLongerThan(maxlength) -> "longerString") {
             string =>
               val result = testForm.bind(Map(hasUtr -> "false", reason -> string))
-              result.errors shouldBe Seq(FormError(reason, maxLengthReasonKey, Seq(maxlength)))
+              result.errors mustBe Seq(FormError(reason, maxLengthReasonKey, Seq(maxlength)))
           }
         }
         "reason is invalid" in {
           val result = testForm.bind(Map(hasUtr -> "false", reason -> "{reason}]"))
-          result.errors shouldBe Seq(FormError(reason, invalidReasonKey, Seq(regexSafeText)))
+          result.errors mustBe Seq(FormError(reason, invalidReasonKey, Seq(regexSafeText)))
         }
       }
 
       "Successfully unbind 'uniqueTaxReference.hasUtr'" in {
         val result = testForm.fill(UniqueTaxReference.Yes("utr")).data
-        result should contain(hasUtr -> "true")
-        result should contain(utr -> "utr")
+        result must contain(hasUtr -> "true")
+        result must contain(utr -> "utr")
       }
 
       "Successfully unbind 'uniqueTaxReference.no'" in {
         val result = testForm.fill(UniqueTaxReference.No("reason")).data
-        result should contain(hasUtr -> "false")
-        result should contain(reason -> "reason")
+        result must contain(hasUtr -> "false")
+        result must contain(reason -> "reason")
       }
     }
   }

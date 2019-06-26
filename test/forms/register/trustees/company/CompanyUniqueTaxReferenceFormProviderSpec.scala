@@ -33,12 +33,12 @@ class CompanyUniqueTaxReferenceFormProviderSpec extends FormSpec {
   "CompanyUniqueTaxReference form" must {
     "successfully bind when the utr is provided and yes is selected" in {
       val form = formProvider().bind(Map("uniqueTaxReference.hasUtr" -> "true", "uniqueTaxReference.utr" -> "1234556676"))
-      form.get shouldBe UniqueTaxReference.Yes("1234556676")
+      form.get mustBe UniqueTaxReference.Yes("1234556676")
     }
 
     "successfully bind when the reason is provided and no is selected" in {
       val form = formProvider().bind(Map("uniqueTaxReference.hasUtr" -> "false", "uniqueTaxReference.reason" -> "haven't got ctutr"))
-      form.get shouldBe UniqueTaxReference.No("haven't got ctutr")
+      form.get mustBe UniqueTaxReference.No("haven't got ctutr")
     }
 
     "fail to bind when value is omitted" in {

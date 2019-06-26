@@ -24,7 +24,7 @@ class VatMappingStringSpec extends VatBehavioursString {
 
   case class VatTestModel(vat: String)
 
-  "VatMapping" should {
+  "VatMapping" must {
     val fieldName = "vat"
     val keyVatLength = "error.length"
     val keyVatInvalid = "error.invalid"
@@ -49,7 +49,7 @@ class VatMappingStringSpec extends VatBehavioursString {
   "vatRegistrationNumberTransform" must {
     "strip leading, trailing ,and internal spaces" in {
       val actual = vatRegistrationNumberTransform("  123 456 789  ")
-      actual shouldBe "123456789"
+      actual mustBe "123456789"
     }
 
     "remove leading GB" in {
@@ -62,7 +62,7 @@ class VatMappingStringSpec extends VatBehavioursString {
       )
 
       forAll(gb) { vat =>
-        vatRegistrationNumberTransform(vat) shouldBe "123456789"
+        vatRegistrationNumberTransform(vat) mustBe "123456789"
       }
     }
   }
