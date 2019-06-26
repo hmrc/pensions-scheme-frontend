@@ -16,12 +16,11 @@
 
 package forms
 
-import com.google.inject.Inject
+import base.SpecBase
 import forms.behaviours.StringFieldBehaviours
 import play.api.data.{Form, FormError}
-import play.api.i18n.Messages
 
-class ReasonFormProviderSpec @Inject()(implicit messages: Messages) extends StringFieldBehaviours {
+class ReasonFormProviderSpec extends StringFieldBehaviours with SpecBase{
 
   private val reasonMaxLength = 160
   private val reasonLengthKey = "messages__reason__error_maxLength"
