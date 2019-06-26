@@ -277,8 +277,12 @@ POST       /:index/company/reason-for-no-unique-taxpayer-reference              
 GET        /:index/company/vat-registered                                                                   controllers.register.establishers.company.HasCompanyVATController.onPageLoad(mode: Mode = NormalMode, srn: Option[String] = None, index: Index)
 POST       /:index/company/vat-registered                                                                   controllers.register.establishers.company.HasCompanyVATController.onSubmit(mode: Mode = NormalMode, srn: Option[String] = None, index: Index)
 
-GET        /:index/company/employer-paye-reference                                                          controllers.register.establishers.company.HasCompanyPAYEController.onPageLoad(mode: Mode = NormalMode, srn: Option[String] = None, index: Index)
-POST       /:index/company/employer-paye-reference                                                          controllers.register.establishers.company.HasCompanyPAYEController.onSubmit(mode: Mode = NormalMode, srn: Option[String] = None, index: Index)
+GET        /:index/company/employer-paye-reference                                                          controllers.register.establishers.company.HasCompanyPAYEController.onPageLoad(mode: Mode = NormalMode, srn: Option[String] = None, index:Index)
+POST       /:index/company/employer-paye-reference                                                          controllers.register.establishers.company.HasCompanyPAYEController.onSubmit(mode: Mode = NormalMode, srn: Option[String] = None, index:Index)
+GET        /:index/company/change/employer-paye-reference                                                   controllers.register.establishers.company.HasCompanyPAYEController.onPageLoad(mode: Mode = CheckMode, srn: Option[String] = None, index:Index)
+POST       /:index/company/change/employer-paye-reference                                                   controllers.register.establishers.company.HasCompanyPAYEController.onSubmit(mode: Mode = CheckMode, srn: Option[String] = None, index:Index)
+GET        /:index/company/:mode/employer-paye-reference/:srn                                               controllers.register.establishers.company.HasCompanyPAYEController.onPageLoad(mode: Mode, srn: Option[String], index:Index)
+POST       /:index/company/:mode/employer-paye-reference/:srn                                               controllers.register.establishers.company.HasCompanyPAYEController.onSubmit(mode: Mode, srn: Option[String], index:Index)
 
 GET        /:index/company/check-your-answers-company-details                                               controllers.register.establishers.company.CheckYourAnswersCompanyDetailsController.onPageLoad(mode: Mode = NormalMode, srn: Option[String] = None, index: Index)
 POST       /:index/company/check-your-answers-company-details                                               controllers.register.establishers.company.CheckYourAnswersCompanyDetailsController.onSubmit(mode: Mode = NormalMode, srn: Option[String] = None, index: Index)
@@ -309,10 +313,4 @@ GET        /:index/company/check-your-answers-company-contact-details           
 POST       /:index/company/check-your-answers-company-contact-details                                       controllers.register.establishers.company.CheckYourAnswersCompanyContactDetailsController.onSubmit(mode: Mode = NormalMode, srn: Option[String] = None, index: Index)
 
 
-GET        /:index/company/employer-paye-reference                                                          controllers.register.establishers.company.DoesCompanyHavePAYENoController.onPageLoad(mode: Mode = NormalMode, srn: Option[String] = None, index:Index)
-POST       /:index/company/employer-paye-reference                                                          controllers.register.establishers.company.DoesCompanyHavePAYENoController.onSubmit(mode: Mode = NormalMode, srn: Option[String] = None, index:Index)
-GET        /:index/company/change/employer-paye-reference                                                   controllers.register.establishers.company.DoesCompanyHavePAYENoController.onPageLoad(mode: Mode = CheckMode, srn: Option[String] = None, index:Index)
-POST       /:index/company/change/employer-paye-reference                                                   controllers.register.establishers.company.DoesCompanyHavePAYENoController.onSubmit(mode: Mode = CheckMode, srn: Option[String] = None, index:Index)
-GET        /:index/company/:mode/employer-paye-reference/:srn                                               controllers.register.establishers.company.DoesCompanyHavePAYENoController.onPageLoad(mode: Mode, srn: Option[String], index:Index)
-POST       /:index/company/:mode/employer-paye-reference/:srn                                               controllers.register.establishers.company.DoesCompanyHavePAYENoController.onSubmit(mode: Mode, srn: Option[String], index:Index)
 

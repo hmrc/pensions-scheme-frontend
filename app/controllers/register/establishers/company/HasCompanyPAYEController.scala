@@ -16,29 +16,60 @@
 
 package controllers.register.establishers.company
 
+import com.google.inject.Inject
 import config.FrontendAppConfig
-import controllers.actions._
-import javax.inject.Inject
-import models.{Index, Mode}
+import controllers.Retrievals
+import controllers.actions.{AuthAction, DataRequiredAction, DataRetrievalAction}
+import forms.register.establishers.company.HasCompanyPAYEControllerFormProvider
+import identifiers.register.establishers.company.HasCompanyPAYEId
+import models.Mode
+import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent}
+import play.api.mvc.{Action, AnyContent, Call}
+import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import utils.annotations.EstablishersCompany
+import utils.{Enumerable, Navigator, UserAnswers}
+import views.html.register.establishers.company.hasCompanyPAYE
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 class HasCompanyPAYEController @Inject()(appConfig: FrontendAppConfig,
-                                         override val messagesApi: MessagesApi,
-                                         authenticate: AuthAction,
-                                         getData: DataRetrievalAction
-                                                    ) extends FrontendController with I18nSupport {
+                                                override val messagesApi: MessagesApi,
+                                                userAnswersService: UserAnswersService,
+                                                @EstablishersCompany navigator: Navigator,
+                                                authenticate: AuthAction,
+                                                getData: DataRetrievalAction,
+                                                requireData: DataRequiredAction,
+                                                formProvider: HasCompanyPAYEControllerFormProvider
+                                               )(implicit val ec: ExecutionContext) extends FrontendController with Enumerable.Implicits with I18nSupport with Retrievals {
 
-  def onPageLoad(mode: Mode, srn: Option[String] = None, index: Index): Action[AnyContent] = (authenticate andThen getData()).async {
+  private val form: Form[Boolean] = formProvider()
+
+  private def postCall(mode: Mode, srn: Option[String], index: Int): Call = controllers.register.establishers.company.routes.HasCompanyPAYEController.onSubmit(mode, srn, index)
+
+  def onPageLoad(mode: Mode, srn: Option[String], index: Int): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
-      Future.successful(Ok)
+      retrieveCompanyName(index) {
+        companyName =>
+          val preparedForm = request.userAnswers.get(HasCompanyPAYEId(index)).fold(form)(v => form.fill(v))
+          Future.successful(Ok(hasCompanyPAYE(appConfig, preparedForm, companyName, postCall(mode, srn, index), existingSchemeName)))
+      }
   }
 
-  def onSubmit(mode: Mode, srn: Option[String] = None, index: Index): Action[AnyContent] = authenticate {
+  def onSubmit(mode: Mode, srn: Option[String], index: Int): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
-      Redirect(controllers.routes.IndexController.onPageLoad())
+      retrieveCompanyName(index) { companyName =>
+        form.bindFromRequest().fold(
+          (formWithErrors: Form[_]) =>
+            Future.successful(BadRequest(hasCompanyPAYE(appConfig, formWithErrors, companyName, postCall(mode, srn, index), existingSchemeName))),
+          value => {
+            userAnswersService.save(mode, srn, HasCompanyPAYEId(index), value).map { cacheMap =>
+              Redirect(navigator.nextPage(HasCompanyPAYEId(index), mode, UserAnswers(cacheMap), srn))
+            }
+          }
+        )
+      }
   }
+
 }
