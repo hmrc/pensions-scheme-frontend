@@ -37,11 +37,11 @@ class YouNeedToRegisterViewSpec extends ViewBehaviours with SpecBase{
   "YouNeedToRegister view" must {
     behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__heading"), "_lede")
 
-    "display the pensionPractitionerGovUkLink text" in {
+    "display the pensionPractitionerGovUkLink" in {
       Jsoup.parse(createView().toString()) must haveDynamicText(s"messages__${messageKeyPrefix}__p1",link1)
     }
 
-    "display the pensionAdministratorGovUkLink text" in {
+    "display the pensionAdministratorGovUkLink" in {
       Jsoup.parse(createView().toString()) must haveDynamicText(s"messages__${messageKeyPrefix}__p2",link2)
     }
 
@@ -53,16 +53,6 @@ class YouNeedToRegisterViewSpec extends ViewBehaviours with SpecBase{
     "have link to redirect to Gov UK" in {
       Jsoup.parse(createView().toString()).select("a[id=gov-uk-link]") must
         haveLink(frontendAppConfig.govUkLink)
-    }
-
-    "have link to redirect to PSA Gov UK" in {
-      Jsoup.parse(createView().toString()).select("a[id=psa-gov-uk-link]") must
-        haveLink(frontendAppConfig.pensionAdministratorGovUkLink)
-    }
-
-    "have link to redirect to PSP Gov UK" in {
-      Jsoup.parse(createView().toString()).select("a[id=psp-gov-uk-link]") must
-        haveLink(frontendAppConfig.pensionPractitionerGovUkLink)
     }
   }
 }
