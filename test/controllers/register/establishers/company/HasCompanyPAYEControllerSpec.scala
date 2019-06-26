@@ -18,42 +18,122 @@ package controllers.register.establishers.company
 
 import controllers.ControllerSpecBase
 import controllers.actions._
-import models.{Index, NormalMode}
-import org.scalatest.BeforeAndAfterEach
-import org.scalatest.mockito.MockitoSugar
+import forms.register.establishers.company.HasCompanyPAYEFormProvider
+import identifiers.register.establishers.EstablishersId
+import identifiers.register.establishers.company.{CompanyDetailsId, HasCompanyPAYEId}
+import models.register.DeclarationDormant
+import models.{CompanyDetails, NormalMode}
+import play.api.data.Form
+import play.api.libs.json._
 import play.api.mvc.Call
 import play.api.test.Helpers._
+import services.FakeUserAnswersService
+import utils.FakeNavigator
+import views.html.register.establishers.company.hasCompanyPAYE
 
-class HasCompanyPAYEControllerSpec extends ControllerSpecBase with MockitoSugar with BeforeAndAfterEach {
+class HasCompanyPAYEControllerSpec extends ControllerSpecBase {
 
-  def onwardRoute: Call = controllers.routes.SessionExpiredController.onPageLoad
+  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): HasCompanyPAYEController =
-    new HasCompanyPAYEController(frontendAppConfig,
+  val formProvider = new HasCompanyPAYEFormProvider()
+  val form = formProvider()
+
+  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisherCompany): HasCompanyPAYEController =
+    new HasCompanyPAYEController(
+      frontendAppConfig,
       messagesApi,
+      FakeUserAnswersService,
+      new FakeNavigator(desiredRoute = onwardRoute),
       FakeAuthAction,
-      dataRetrievalAction
+      dataRetrievalAction,
+      new DataRequiredActionImpl,
+      formProvider
     )
 
+  val index = 0
+  val companyName = "test company name"
+  def postCall: Call = routes.HasCompanyPAYEController.onSubmit(NormalMode, None, index)
 
-  "HasCompanyPAYEController" when {
+  val validData: JsObject = Json.obj(
+    EstablishersId.toString -> Json.arr(
+      Json.obj(
+        CompanyDetailsId.toString ->
+          CompanyDetails("test company name"),
+        HasCompanyPAYEId.toString -> true
+      )
+    )
+  )
 
-    "on a GET" must {
-      "return OK and the correct view" in {
-        val result = controller().onPageLoad(NormalMode, None, Index(1))(fakeRequest)
+  def viewAsString(form: Form[_] = form): String = hasCompanyPAYE(frontendAppConfig, form, companyName, postCall, None)(fakeRequest, messages).toString
 
-        status(result) mustBe OK
+  "HasCompanyPAYE Controller" must {
+
+    "return OK and the correct view for a GET" in {
+      val result = controller().onPageLoad(NormalMode, None, index)(fakeRequest)
+
+      status(result) mustBe OK
+      contentAsString(result) mustBe viewAsString()
+    }
+
+    "populate the view correctly on a GET when the question has previously been answered" in {
+
+      val result = controller(new FakeDataRetrievalAction(Some(validData))).onPageLoad(NormalMode, None, index)(fakeRequest)
+
+      contentAsString(result) mustBe viewAsString(form.fill(value = true))
+    }
+
+    "redirect to the next page when valid data is submitted" in {
+      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "true"))
+
+      val result = controller().onSubmit(NormalMode, None, index)(postRequest)
+
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result) mustBe Some(onwardRoute.url)
+    }
+
+    "return a Bad Request and errors when invalid data is submitted" in {
+      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", ""))
+      val boundForm = form.bind(Map("value" -> ""))
+
+      val result = controller().onSubmit(NormalMode, None, index)(postRequest)
+
+      status(result) mustBe BAD_REQUEST
+      contentAsString(result) mustBe viewAsString(boundForm)
+    }
+
+    "redirect to Session Expired" when {
+      "no existing data is found" when {
+        "GET" in {
+          val result = controller(dontGetAnyData).onPageLoad(NormalMode, None, index)(fakeRequest)
+
+          status(result) mustBe SEE_OTHER
+          redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
+        }
+        "POST" in {
+          val postRequest = fakeRequest.withFormUrlEncodedBody(("value", DeclarationDormant.options.head.value))
+          val result = controller(dontGetAnyData).onSubmit(NormalMode, None, index)(postRequest)
+
+          status(result) mustBe SEE_OTHER
+          redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
+        }
+      }
+      "scheme details cannot be retrieved" when {
+        "GET" in {
+          val result = controller(getEmptyData).onPageLoad(NormalMode, None, index)(fakeRequest)
+
+          status(result) mustBe SEE_OTHER
+          redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
+        }
+        "POST" in {
+          val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "invalid value"))
+
+          val result = controller(getEmptyData).onSubmit(NormalMode, None, index)(postRequest)
+
+          status(result) mustBe SEE_OTHER
+          redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
+        }
       }
     }
 
-    "on a POST" must {
-      "redirect to relavant page" in {
-        val result = controller().onSubmit(NormalMode, None, Index(1))(fakeRequest)
-
-        status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(controllers.routes.IndexController.onPageLoad().url)
-      }
-    }
   }
 }
-

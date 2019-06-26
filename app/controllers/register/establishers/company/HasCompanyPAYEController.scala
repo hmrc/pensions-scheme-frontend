@@ -20,7 +20,7 @@ import com.google.inject.Inject
 import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions.{AuthAction, DataRequiredAction, DataRetrievalAction}
-import forms.register.establishers.company.HasCompanyPAYEControllerFormProvider
+import forms.register.establishers.company.HasCompanyPAYEFormProvider
 import identifiers.register.establishers.company.HasCompanyPAYEId
 import models.Mode
 import play.api.data.Form
@@ -41,7 +41,7 @@ class HasCompanyPAYEController @Inject()(appConfig: FrontendAppConfig,
                                                 authenticate: AuthAction,
                                                 getData: DataRetrievalAction,
                                                 requireData: DataRequiredAction,
-                                                formProvider: HasCompanyPAYEControllerFormProvider
+                                                formProvider: HasCompanyPAYEFormProvider
                                                )(implicit val ec: ExecutionContext) extends FrontendController with Enumerable.Implicits with I18nSupport with Retrievals {
 
   private val form: Form[Boolean] = formProvider()

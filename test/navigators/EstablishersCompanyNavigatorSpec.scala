@@ -43,7 +43,7 @@ class EstablishersCompanyNavigatorSpec extends SpecBase with MustMatchers with N
   import EstablishersCompanyNavigatorSpec._
 
   private def routes(mode: Mode, isPrevAddEnabled : Boolean): TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = Table(
-    ("Id",                                      "User Answers",                   "Next Page (Normal Mode)",                "Save (NM)",    "Next Page (Check Mode)",                 "Save (CM)"),
+    ("Id",                                      "User Answers",                   "Next Page (Normal Mode)",            "Save (NM)",    "Next Page (Check Mode)",                 "Save (CM)"),
     (CompanyDetailsId(0),                         emptyAnswers,                     companyVat(mode),                   true,           Some(exitJourney(mode, emptyAnswers)),                   true),
     (CompanyDetailsId(0),                         newEstablisher,                   companyVat(mode),                   true,           Some(checkYourAnswers(mode)),                   true),
     (CompanyVatId(0),                             emptyAnswers,                     companyPaye(mode),                  true,           Some(exitJourney(mode, emptyAnswers)),                   true),
@@ -82,6 +82,18 @@ class EstablishersCompanyNavigatorSpec extends SpecBase with MustMatchers with N
   )
 
 
+
+
+  private def routesNormalModeOnly: TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = Table(
+    ("Id",                                      "User Answers",                   "Next Page (Normal Mode)",            "Save (NM)",    "Next Page (Check Mode)",                 "Save (CM)"),
+    (HasCompanyPAYEId(0),                       establisherHasPAYE(true),          whatIsPAYE(NormalMode),                   false,          None,                                           false),
+    (HasCompanyPAYEId(0),                       establisherHasPAYE(false),         checkYourAnswers(NormalMode),             false,          None,                                           false)
+  )
+
+
+
+
+
   private def normalOnlyRoutes: TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = Table(
     ("Id",                                          "User Answers",               "Next Page (Normal Mode)",                "Save (NM)",  "Next Page (Check Mode)",         "Save (CM)"),
     (CompanyContactDetailsId(0),                  emptyAnswers,                 isDormant(NormalMode),                                true,         Some(checkYourAnswers(journeyMode(CheckMode))),               true),
@@ -114,6 +126,7 @@ class EstablishersCompanyNavigatorSpec extends SpecBase with MustMatchers with N
     behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, normalRoutes(), dataDescriber)
     behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, updateRoutes(), dataDescriber, UpdateMode)
     behave like nonMatchingNavigator(navigator)
+    behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, routesNormalModeOnly, dataDescriber, NormalMode)
   }
 
   s"when previous address feature is toggled on" must {
@@ -128,6 +141,8 @@ class EstablishersCompanyNavigatorSpec extends SpecBase with MustMatchers with N
 object EstablishersCompanyNavigatorSpec extends OptionValues with Enumerable.Implicits {
   private val emptyAnswers = UserAnswers(Json.obj())
   private val newEstablisher = UserAnswers(Json.obj()).set(IsEstablisherNewId(0))(true).asOpt.value
+  private def establisherHasPAYE(v:Boolean) = UserAnswers(Json.obj())
+    .set(HasCompanyPAYEId(0))(v).asOpt.value
   private val johnDoe = PersonDetails("John", None, "Doe", new LocalDate(1862, 6, 9))
 
   private def validData(directors: PersonDetails*) = {
@@ -146,6 +161,9 @@ object EstablishersCompanyNavigatorSpec extends OptionValues with Enumerable.Imp
 
   private def companyRegistrationNumber(mode: Mode): Call =
     controllers.register.establishers.company.routes.CompanyRegistrationNumberController.onPageLoad(mode, None, 0)
+
+  private def whatIsPAYE(mode:Mode):Call =
+    controllers.register.establishers.company.routes.CompanyPayeVariationsController.onPageLoad (mode, 0, None)
 
   private def companyPaye(mode: Mode): Call =
     controllers.register.establishers.company.routes.CompanyPayeController.onPageLoad(mode, 0, None)

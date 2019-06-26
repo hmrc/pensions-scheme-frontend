@@ -19,6 +19,8 @@ POST       /:index/company/change/employer-paye-number                          
 GET        /:index/company/:mode/employer-paye-number/:srn                                                  controllers.register.establishers.company.CompanyPayeController.onPageLoad(mode: Mode, index: Index, srn: Option[String])
 POST       /:index/company/:mode/employer-paye-number/:srn                                                  controllers.register.establishers.company.CompanyPayeController.onSubmit(mode: Mode, index: Index, srn: Option[String])
 
+GET        /:index/company/enter-employer-paye-reference                                                    controllers.register.establishers.company.CompanyPayeVariationsController.onPageLoad(mode: Mode = NormalMode, index: Index, srn: Option[String] = None)
+POST       /:index/company/enter-employer-paye-reference                                                    controllers.register.establishers.company.CompanyPayeVariationsController.onSubmit(mode: Mode = NormalMode, index: Index, srn: Option[String] = None)
 GET        /:index/company/:mode/enter-employer-paye-reference/:srn                                         controllers.register.establishers.company.CompanyPayeVariationsController.onPageLoad(mode: Mode, index: Index, srn: Option[String])
 POST       /:index/company/:mode/enter-employer-paye-reference/:srn                                         controllers.register.establishers.company.CompanyPayeVariationsController.onSubmit(mode: Mode, index: Index, srn: Option[String])
 

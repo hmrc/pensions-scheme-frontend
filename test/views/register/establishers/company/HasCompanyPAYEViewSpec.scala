@@ -16,28 +16,27 @@
 
 package views.register.establishers.company
 
-import forms.register.establishers.company.DoesCompanyHavePAYENumberFormProvider
+import forms.register.establishers.company.HasCompanyPAYEFormProvider
 import models.NormalMode
-import models.register.DeclarationDormant
 import play.api.data.Form
 import play.api.mvc.Call
 import play.twirl.api.HtmlFormat
 import views.behaviours.YesNoViewBehaviours
-import views.html.register.establishers.company.doesCompanyHavePAYENumber
+import views.html.register.establishers.company.hasCompanyPAYE
 
-class DoesCompanyHavePAYENoViewSpec extends YesNoViewBehaviours {
+class HasCompanyPAYEViewSpec extends YesNoViewBehaviours {
 
   val companyName = "My company"
 
   val messageKeyPrefix = "companyPayeRef"
 
-  val form = new DoesCompanyHavePAYENumberFormProvider()()
-  val postCall: Call = controllers.register.establishers.company.routes.DoesCompanyHavePAYENoController.onSubmit(NormalMode, None, 0)
+  val form = new HasCompanyPAYEFormProvider()()
+  val postCall: Call = controllers.register.establishers.company.routes.HasCompanyPAYEController.onSubmit(NormalMode, None, 0)
 
-  def createView: () => HtmlFormat.Appendable = () => doesCompanyHavePAYENumber(frontendAppConfig, form, companyName, postCall, None)(fakeRequest, messages)
+  def createView: () => HtmlFormat.Appendable = () => hasCompanyPAYE(frontendAppConfig, form, companyName, postCall, None)(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable =
-    (form: Form[_]) => doesCompanyHavePAYENumber(frontendAppConfig, form, companyName, postCall, None)(fakeRequest, messages)
+    (form: Form[_]) => hasCompanyPAYE(frontendAppConfig, form, companyName, postCall, None)(fakeRequest, messages)
 
   "DoesCompanyHavePAYENumber view" must {
     behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__heading", companyName))
@@ -47,7 +46,7 @@ class DoesCompanyHavePAYENoViewSpec extends YesNoViewBehaviours {
     behave like yesNoPage(
       createView = createViewUsingForm,
       messageKeyPrefix = messageKeyPrefix,
-      expectedFormAction = controllers.register.establishers.company.routes.DoesCompanyHavePAYENoController.onSubmit(NormalMode, None, 0).url
+      expectedFormAction = controllers.register.establishers.company.routes.HasCompanyPAYEController.onSubmit(NormalMode, None, 0).url
     )
 
     behave like pageWithSubmitButton(createView)

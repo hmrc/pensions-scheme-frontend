@@ -25,7 +25,7 @@ class HasCompanyPAYEControllerFormProviderSpec extends FormSpec {
     "value" -> "true"
   )
 
-  val formProvider = new DoesCompanyHavePAYENumberFormProvider()
+  val formProvider = new HasCompanyPAYEFormProvider()
 
   "DoesCompanyHavePAYENumber form" must {
 

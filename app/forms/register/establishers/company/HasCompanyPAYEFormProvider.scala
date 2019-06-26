@@ -20,7 +20,7 @@ import com.google.inject.Inject
 import forms.mappings.Mappings
 import play.api.data.Form
 
-class HasCompanyPAYEControllerFormProvider @Inject() extends Mappings {
+class HasCompanyPAYEFormProvider @Inject() extends Mappings {
 
   def apply(): Form[Boolean] =
     Form(
