@@ -31,7 +31,7 @@ class EstablishedCountryFormProviderSpec extends FormSpec {
 
     "bind a valid country" in {
       val form = formProvider().bind(Map("value" -> "territory:AE-AZ"))
-      form.get shouldBe "territory:AE-AZ"
+      form.get mustBe "territory:AE-AZ"
     }
 
     "fail to bind an invalid country" in {

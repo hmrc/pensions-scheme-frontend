@@ -24,6 +24,7 @@ import identifiers.register.establishers.IsEstablisherNewId
 import identifiers.register.establishers.company._
 import models.Mode._
 import models._
+import controllers.register.establishers.company.{routes => establisherCompanyRoutes}
 import utils.{Navigator, Toggles, UserAnswers}
 
 //scalastyle:off cyclomatic.complexity
@@ -35,7 +36,9 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
     from.id match {
       case CompanyDetailsId(index) =>
         NavigateTo.dontSave(controllers.register.establishers.company.routes.CompanyVatController.onPageLoad(mode, index, srn))
-      case CompanyVatId(index) =>
+      case HasCompanyNumberId(index) =>
+        confirmHasCompanyNumber(index, mode, srn)(from.userAnswers)
+       case CompanyVatId(index) =>
         NavigateTo.dontSave(controllers.register.establishers.company.routes.CompanyPayeController.onPageLoad(mode, index, srn))
 
       case HasCompanyPAYEId(index) =>
@@ -53,6 +56,10 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
         NavigateTo.dontSave(controllers.register.establishers.company.routes.CompanyUniqueTaxReferenceController.onPageLoad(mode, srn, index))
       case CompanyUniqueTaxReferenceId(index) =>
         NavigateTo.dontSave(controllers.register.establishers.company.routes.CompanyPostCodeLookupController.onPageLoad(mode, srn, index))
+
+      case NoCompanyUTRId(index) =>
+        NavigateTo.dontSave(establisherCompanyRoutes.HasCompanyVATController.onPageLoad(index))
+
       case CompanyPostCodeLookupId(index) =>
         NavigateTo.dontSave(controllers.register.establishers.company.routes.CompanyAddressListController.onPageLoad(mode, srn, index))
       case CompanyAddressListId(index) =>
@@ -85,12 +92,14 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
   protected def editRoutes(from: NavigateFrom, mode: Mode, srn: Option[String]): Option[NavigateTo] =
     from.id match {
       case CompanyDetailsId(index) =>             exitMiniJourney(index, mode, srn, from.userAnswers)
+      case HasCompanyNumberId(index) =>           exitMiniJourney(index, mode, srn, from.userAnswers)
       case CompanyVatId(index) =>                 exitMiniJourney(index, mode, srn, from.userAnswers)
       case CompanyVatVariationsId(index) =>       exitMiniJourney(index, mode, srn, from.userAnswers)
       case CompanyPayeId(index) =>                exitMiniJourney(index, mode, srn, from.userAnswers)
       case CompanyPayeVariationsId(index) =>      exitMiniJourney(index, mode, srn, from.userAnswers)
       case CompanyRegistrationNumberId(index) =>  exitMiniJourney(index, mode, srn, from.userAnswers)
       case CompanyUniqueTaxReferenceId(index) =>  exitMiniJourney(index, mode, srn, from.userAnswers)
+      case NoCompanyUTRId(index) =>               exitMiniJourney(index, mode, srn, from.userAnswers)
 
       case CompanyPostCodeLookupId(index) =>
         NavigateTo.dontSave(controllers.register.establishers.company.routes.CompanyAddressListController.onPageLoad(mode, srn, index))
@@ -243,6 +252,17 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
         NavigateTo.dontSave(controllers.register.establishers.company.routes.CompanyPreviousAddressPostcodeLookupController.onPageLoad(mode, srn, index))
       case Some(true) =>
         anyMoreChanges(srn)
+      case None =>
+        NavigateTo.dontSave(controllers.routes.SessionExpiredController.onPageLoad())
+    }
+  }
+
+  private def confirmHasCompanyNumber(index: Int, mode: Mode, srn: Option[String])(answers: UserAnswers): Option[NavigateTo] = {
+    answers.get(HasCompanyNumberId(index)) match {
+      case Some(true) =>
+        NavigateTo.dontSave(controllers.register.establishers.company.routes.CompanyRegistrationNumberVariationsController.onPageLoad(mode, srn, index))
+      case Some(false) =>
+        NavigateTo.dontSave(controllers.register.establishers.company.routes.NoCompanyNumberController.onPageLoad(index))
       case None =>
         NavigateTo.dontSave(controllers.routes.SessionExpiredController.onPageLoad())
     }

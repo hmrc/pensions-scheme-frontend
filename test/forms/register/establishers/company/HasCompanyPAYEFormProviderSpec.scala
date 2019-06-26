@@ -31,12 +31,12 @@ class HasCompanyPAYEFormProviderSpec extends FormSpec {
 
     "bind true" in {
       val form = formProvider().bind(Map("hasPaye" -> "true"))
-      form.get shouldBe true
+      form.get mustBe true
     }
 
     "bind false" in {
       val form = formProvider().bind(Map("hasPaye" -> "false"))
-      form.get shouldBe false
+      form.get mustBe false
     }
 
     "fail to bind non-booleans" in {

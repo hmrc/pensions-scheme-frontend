@@ -16,15 +16,10 @@
 
 @import config.FrontendAppConfig
 @import uk.gov.hmrc.play.views.html._
-@import controllers.routes._
 @import models.Mode
-@import viewmodels.VatViewModel
+@import viewmodels.CommonFormWithHintViewModel
 
-@(appConfig: FrontendAppConfig, form: Form[_], viewmodel: VatViewModel, schemeName: Option[String])(implicit request: Request[_], messages: Messages)
-
-@_options = @{
-Vat.options
-}
+@(appConfig: FrontendAppConfig, form: Form[_], viewmodel: CommonFormWithHintViewModel, schemeName: Option[String])(implicit request: Request[_], messages: Messages)
 
 @main_template(
     title = viewmodel.title,
@@ -35,19 +30,17 @@ Vat.options
 
         @components.error_summary(form.errors)
 
-        @components.heading(
-            messages(viewmodel.heading).toString
-        )
+        @components.heading(headingKey=viewmodel.heading)
 
         <p>@messages(viewmodel.hint)</p>
 
-        @components.input_text(
-            field = form("vat"),
-            label = messages(viewmodel.title),
+        @components.input_yes_no(
+            field = form("value"),
+            label = viewmodel.title,
             labelClass = Some("visually-hidden")
         )
 
-        @components.submit_button()
+        @components.submit_button("site.save_and_continue")
 
         @components.return_link("messages__schemeTaskList__returnlink", schemeName, None, viewmodel.srn)
     }

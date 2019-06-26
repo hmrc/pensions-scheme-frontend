@@ -31,7 +31,7 @@ trait StringFieldBehaviours extends FieldBehaviours {
       forAll(stringsLongerThan(maxLength) -> "longString") {
         string =>
           val result = form.bind(Map(fieldName -> string)).apply(fieldName)
-          result.errors shouldEqual Seq(lengthError)
+          result.errors mustEqual Seq(lengthError)
       }
     }
   }
@@ -43,7 +43,7 @@ trait StringFieldBehaviours extends FieldBehaviours {
 
     "not bind strings invalidated by regex" in {
       val result = form.bind(Map(fieldName -> invalidString)).apply(fieldName)
-      result.errors shouldEqual Seq(error)
+      result.errors mustEqual Seq(error)
     }
   }
 
@@ -54,8 +54,8 @@ trait StringFieldBehaviours extends FieldBehaviours {
                                actual: A => B): Unit = {
     s"apply field transform $transformName" in {
       val result = form.bind(data)
-      result.errors.size shouldBe 0
-      actual(result.get) shouldBe expected
+      result.errors.size mustBe 0
+      actual(result.get) mustBe expected
     }
   }
 
@@ -64,8 +64,8 @@ trait StringFieldBehaviours extends FieldBehaviours {
                            expectedData: A): Unit = {
     s"bind the form with the transformation" in {
       val result = form.bind(data)
-      result.errors.size shouldBe 0
-      result.get shouldBe expectedData
+      result.errors.size mustBe 0
+      result.get mustBe expectedData
     }
   }
 
@@ -76,7 +76,7 @@ trait StringFieldBehaviours extends FieldBehaviours {
     "not bind spaces" in {
       forAll(RegexpGen.from("""^\s+$""")) { s =>
         val result = form.bind(Map(fieldName -> s)).apply(fieldName)
-        result.errors shouldEqual Seq(requiredError)
+        result.errors mustEqual Seq(requiredError)
       }
     }
 
@@ -94,7 +94,7 @@ trait StringFieldBehaviours extends FieldBehaviours {
       val value = validData(fieldName)
       forAll(RegexpGen.from("""^\s+""" + value + """\s+$""")) { s =>
         val result = form.bind(validData.updated(fieldName, s))
-        accessor(result.get) shouldBe Some(value)
+        accessor(result.get) mustBe Some(value)
       }
     }
 

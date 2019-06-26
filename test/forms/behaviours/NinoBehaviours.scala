@@ -36,22 +36,22 @@ trait NinoBehaviours extends FormSpec with NinoMapping with PropertyChecks with 
                    invalidReasonKey: String
                   ): Unit = {
 
-    "behave like a form with a NINO Mapping" should {
+    "behave like a form with a NINO Mapping" must {
 
       "fail to bind when yes is selected but NINO is not provided" in {
         val result = testForm.bind(Map("nino.hasNino" -> "true"))
-        result.errors shouldBe Seq(FormError("nino.nino", requiredNinoKey))
+        result.errors mustBe Seq(FormError("nino.nino", requiredNinoKey))
       }
 
       "fail to bind when no is selected but reason is not provided" in {
         val result = testForm.bind(Map("nino.hasNino" -> "false"))
-        result.errors shouldBe Seq(FormError("nino.reason", requiredReasonKey))
+        result.errors mustBe Seq(FormError("nino.reason", requiredReasonKey))
       }
 
       Seq("DE999999A", "AO111111B", "ORA12345C", "AB0202020", "AB0303030D", "AB040404E").foreach { nino =>
         s"fail to bind when NINO $nino is invalid" in {
           val result = testForm.bind(Map("nino.hasNino" -> "true", "nino.nino" -> nino))
-          result.errors shouldBe Seq(FormError("nino.nino", invalidNinoKey))
+          result.errors mustBe Seq(FormError("nino.nino", invalidNinoKey))
         }
       }
 
@@ -59,27 +59,27 @@ trait NinoBehaviours extends FormSpec with NinoMapping with PropertyChecks with 
         forAll(stringsLongerThan(reasonMaxLength) -> "longerString") {
           string =>
             val result = testForm.bind(Map("nino.hasNino" -> "false", "nino.reason" -> string))
-            result.errors shouldBe Seq(FormError("nino.reason", reasonLengthKey, Seq(reasonMaxLength)))
+            result.errors mustBe Seq(FormError("nino.reason", reasonLengthKey, Seq(reasonMaxLength)))
         }
       }
 
       "fail to bind when reason is invalid" in {
         val result = testForm.bind(Map("nino.hasNino" -> "false", "nino.reason" -> "{reason}"))
-        result.errors shouldBe Seq(FormError("nino.reason", invalidReasonKey, Seq(regexSafeText)))
+        result.errors mustBe Seq(FormError("nino.reason", invalidReasonKey, Seq(regexSafeText)))
       }
 
       "successfully bind when yes is selected and valid NINO is provided" in {
         val form = testForm.bind(Map("nino.hasNino" -> "true", "nino.nino" -> "AB020202A"))
-        form.get shouldEqual Nino.Yes("AB020202A")
+        form.get mustEqual Nino.Yes("AB020202A")
       }
 
       "successfully bind when yes is selected and valid NINO with spaces is provided" in {
         val form = testForm.bind(Map("nino.hasNino" -> "true", "nino.nino" -> " a b 0 2 0 2 0 2 a "))
-        form.get shouldEqual Nino.Yes("AB020202A")
+        form.get mustEqual Nino.Yes("AB020202A")
       }
       "successfully bind when no is selected and reason is provided" in {
         val form = testForm.bind(Map("nino.hasNino" -> "false", "nino.reason" -> "haven't got Nino"))
-        form.get shouldBe Nino.No("haven't got Nino")
+        form.get mustBe Nino.No("haven't got Nino")
       }
 
       "fail to bind when value is omitted" in {
@@ -89,14 +89,14 @@ trait NinoBehaviours extends FormSpec with NinoMapping with PropertyChecks with 
 
       "successfully unbind `Nino.Yes`" in {
         val result = testForm.fill(Nino.Yes("nino")).data
-        result should contain("nino.hasNino" -> "true")
-        result should contain("nino.nino" -> "nino")
+        result must contain("nino.hasNino" -> "true")
+        result must contain("nino.nino" -> "nino")
       }
 
       "successfully unbind `Nino.No`" in {
         val result = testForm.fill(Nino.No("reason")).data
-        result should contain("nino.hasNino" -> "false")
-        result should contain("nino.reason" -> "reason")
+        result must contain("nino.hasNino" -> "false")
+        result must contain("nino.reason" -> "reason")
       }
     }
   }

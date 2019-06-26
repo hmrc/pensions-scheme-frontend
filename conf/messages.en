@@ -1432,6 +1432,11 @@ messages__whatYouWillNeedEstablisherCompanyContact__item1 = email address
 messages__whatYouWillNeedEstablisherCompanyContact__item2 = phone number
 messages__whatYouWillNeedEstablisherCompanyContact__item3 = These should be details used for other HMRC services. These will not be used to contact the company.
 
+messages__hasCompanyNumber__title = Does the establisher have a company number?
+messages__hasCompanyNumber__h1 = Does {0} have a company number?
+messages__hasCompanyNumber__p1 = You can find this on the company’s certificate of incorporation or on any official letters from Companies House.
+messages__hasCompanyNumber__error__required = Select yes if {0} has a company number
+
 messages__schemeTaskList__before_you_start_link_text = Setting up your scheme application
 messages__schemeTaskList__scheme_info_link_text = Information about your scheme
 messages__schemeTaskList__scheme_information_link_text = Scheme information
@@ -1510,3 +1515,9 @@ messages__payeVariations__hint = For example, 123/AB456
 messages__payeVariations__error_invalid = Enter {0}’s employer PAYE reference in the correct format
 messages__payeVariations__error_length = Enter {0}’s employer PAYE reference using 16 characters or less
 messages__payeVariations__error_required = Enter an employer PAYE reference
+
+messages__reason__error_required = Enter a reason why {0} does not have a UTR
+messages__reason__error_maxLength = Reason must be 160 characters or less
+messages__reason__error_invalid = Reason must only include letters, numbers and punctuation marks
+messages__noCompanyUtr__title = Why does the company not have a UTR?
+messages__noCompanyUtr__heading = Why does {0} not have a UTR?
