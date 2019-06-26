@@ -21,9 +21,8 @@ import config.FrontendAppConfig
 import controllers.HasPAYEController
 import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRequiredAction, DataRetrievalAction}
 import forms.HasPAYEFormProvider
-import identifiers.register.establishers.company.{CompanyDetailsId, HasCompanyNumberId, HasCompanyPAYEId}
+import identifiers.register.establishers.company.{CompanyDetailsId, HasCompanyPAYEId}
 import models.{Index, Mode}
-import play.api.data.Form
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, Call}
 import services.UserAnswersService
@@ -73,30 +72,4 @@ class HasCompanyPAYEController @Inject()(override val appConfig: FrontendAppConf
             post(HasCompanyPAYEId(index), mode, form(details.companyName), viewModel(mode, index, srn, details.companyName))
         }
     }
-
-
-  //  def onPageLoad(mode: Mode, srn: Option[String], index: Int): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
-  //    implicit request =>
-  //      retrieveCompanyName(index) {
-  //        companyName =>
-  //          val preparedForm = request.userAnswers.get(HasCompanyPAYEId(index)).fold(form)(v => form.fill(v))
-  //          Future.successful(Ok(hasCompanyPAYE(appConfig, preparedForm, companyName, postCall(mode, srn, index), existingSchemeName)))
-  //      }
-  //  }
-  //
-  //  def onSubmit(mode: Mode, srn: Option[String], index: Int): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
-  //    implicit request =>
-  //      retrieveCompanyName(index) { companyName =>
-  //        form.bindFromRequest().fold(
-  //          (formWithErrors: Form[_]) =>
-  //            Future.successful(BadRequest(hasCompanyPAYE(appConfig, formWithErrors, companyName, postCall(mode, srn, index), existingSchemeName))),
-  //          value => {
-  //            userAnswersService.save(mode, srn, HasCompanyPAYEId(index), value).map { cacheMap =>
-  //              Redirect(navigator.nextPage(HasCompanyPAYEId(index), mode, UserAnswers(cacheMap), srn))
-  //            }
-  //          }
-  //        )
-  //      }
-  //  }
-
 }
