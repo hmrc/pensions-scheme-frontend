@@ -17,13 +17,13 @@
 package forms.mappings
 
 import org.scalatest.prop.{TableDrivenPropertyChecks, TableFor1}
-import org.scalatest.{Matchers, WordSpec}
+import org.scalatestplus.play.PlaySpec
 import play.api.data.Form
 import play.api.data.validation.{Constraint, Invalid, Valid}
 
 trait RegexBehaviourSpec extends TableDrivenPropertyChecks {
 
-  this: WordSpec with Matchers =>
+  this: PlaySpec =>
 
   def regexWithValidAndInvalidExamples(
                                         constraint: String => Constraint[String],
@@ -32,13 +32,13 @@ trait RegexBehaviourSpec extends TableDrivenPropertyChecks {
                                         regexString: String): Unit = {
     "Accept all valid examples" in {
       forAll(valid) { value: String =>
-        constraint(invalidMsg)(value) shouldBe Valid
+        constraint(invalidMsg)(value) mustBe Valid
       }
     }
 
     "Reject all invalid examples" in {
       forAll(invalid) { value: String =>
-        constraint(invalidMsg)(value) shouldBe Invalid(invalidMsg, regexString)
+        constraint(invalidMsg)(value) mustBe Invalid(invalidMsg, regexString)
       }
     }
   }
@@ -51,13 +51,13 @@ trait RegexBehaviourSpec extends TableDrivenPropertyChecks {
 
     "Accept all valid examples" in {
       forAll(valid) { data =>
-        form.bind(data).errors.isEmpty shouldBe true
+        form.bind(data).errors.isEmpty mustBe true
       }
     }
 
     "Reject all invalid examples" in {
       forAll(invalid) { data =>
-        form.bind(data).errors.nonEmpty shouldBe true
+        form.bind(data).errors.nonEmpty mustBe true
       }
     }
   }
