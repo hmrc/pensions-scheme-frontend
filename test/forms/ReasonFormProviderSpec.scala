@@ -19,20 +19,22 @@ package forms
 import base.SpecBase
 import forms.behaviours.StringFieldBehaviours
 import play.api.data.{Form, FormError}
+import viewmodels.Message
 
 class ReasonFormProviderSpec extends StringFieldBehaviours with SpecBase{
 
   private val reasonMaxLength = 160
   private val reasonLengthKey = "messages__reason__error_maxLength"
-  private val requiredReasonKey = "messages__reason__error_required"
+  private val requiredReasonKey = Message("messages__reason__error_required", "test company").resolve
   private val invalidReasonKey = "messages__reason__error_invalid"
-  private def formError(errorKey: String) = FormError("reason", errorKey, "test company")
+  private def formError(errorKey: String) = FormError("reason", errorKey)
+  private val regexSafeText = """^[a-zA-Z0-9\u00C0-\u00FF !#$%&'‘’"“”«»()*+,./:;=?@\\\[\]|~£€¥\u005C\u2014\u2013\u2010\u005F\u005E\u0060\u002d]{1,160}$"""
 
   "A form with a Reason" should {
     val testForm = new ReasonFormProvider().apply("test company")
 
-    behave like fieldWithMaxLength(testForm: Form[String], "reason", reasonMaxLength, formError(reasonLengthKey))
-    behave like fieldWithRegex(testForm: Form[String], "reason", "abc^66", formError(invalidReasonKey))
+    behave like fieldWithMaxLength(testForm: Form[String], "reason", reasonMaxLength, FormError("reason", reasonLengthKey, List(160)))
+    behave like fieldWithRegex(testForm: Form[String], "reason", "abc^¬66", FormError("reason", invalidReasonKey, List(regexSafeText)))
     behave like mandatoryField(testForm: Form[String], "reason", formError(requiredReasonKey))
 
   }
