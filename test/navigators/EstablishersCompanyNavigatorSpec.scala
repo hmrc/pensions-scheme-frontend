@@ -49,6 +49,9 @@ class EstablishersCompanyNavigatorSpec extends SpecBase with MustMatchers with N
     (HasCompanyNumberId(0),                       emptyAnswers,                     sessionExpired,                     true,           Some(exitJourney(mode, emptyAnswers)),          true),
     (HasCompanyNumberId(0),                       hasCompanyNumber(true),    companyRegistrationNumberNew(mode), true,           Some(exitJourney(mode, emptyAnswers)),          true),
     (HasCompanyNumberId(0),                       hasCompanyNumber(false),   noCompanyRegistrationNumber(mode),  true,           Some(exitJourney(mode, emptyAnswers)),          true),
+    (HasCompanyVATId(0),                          emptyAnswers,                     sessionExpired,                     true,           Some(exitJourney(mode, emptyAnswers)),          true),
+    (HasCompanyVATId(0),                          hasCompanyVat(true),       companyVatNew(mode),                true,           Some(exitJourney(mode, emptyAnswers)),          true),
+    (HasCompanyVATId(0),                          hasCompanyVat(false),      hasCompanyPaye(mode),               true,           Some(exitJourney(mode, emptyAnswers)),          true),
     (CompanyVatId(0),                             emptyAnswers,                     companyPaye(mode),                  true,           Some(exitJourney(mode, emptyAnswers)),                   true),
     (CompanyVatId(0),                             newEstablisher,                   companyPaye(mode),                  true,           Some(checkYourAnswers(mode)),                   true),
     (CompanyPayeId(0),                            emptyAnswers,                     companyRegistrationNumber(mode),    true,           Some(exitJourney(mode, emptyAnswers)),                   true),
@@ -134,6 +137,7 @@ object EstablishersCompanyNavigatorSpec extends OptionValues with Enumerable.Imp
   private val emptyAnswers = UserAnswers(Json.obj())
   private val newEstablisher = UserAnswers(Json.obj()).set(IsEstablisherNewId(0))(true).asOpt.value
   private def hasCompanyNumber(yesNo : Boolean) = UserAnswers(Json.obj()).set(HasCompanyNumberId(0))(yesNo).asOpt.value
+  private def hasCompanyVat(yesNo : Boolean) = UserAnswers(Json.obj()).set(HasCompanyVATId(0))(yesNo).asOpt.value
   private val johnDoe = PersonDetails("John", None, "Doe", new LocalDate(1862, 6, 9))
 
   private def validData(directors: PersonDetails*) = {
@@ -165,11 +169,17 @@ object EstablishersCompanyNavigatorSpec extends OptionValues with Enumerable.Imp
   private def companyVat(mode: Mode): Call =
     controllers.register.establishers.company.routes.CompanyVatController.onPageLoad(mode, 0, None)
 
+  private def companyVatNew(mode: Mode): Call =
+    controllers.register.establishers.company.routes.CompanyVatVariationsController.onPageLoad(mode, 0, None)
+
   private def companyUTR(mode: Mode): Call =
     controllers.register.establishers.company.routes.CompanyUniqueTaxReferenceController.onPageLoad(mode, None, 0)
 
   private def hasCompanyVat(mode: Mode): Call =
     controllers.register.establishers.company.routes.HasCompanyVATController.onPageLoad(mode, None, 0)
+
+  private def hasCompanyPaye(mode: Mode): Call =
+    controllers.register.establishers.company.routes.HasCompanyPAYEController.onPageLoad(0)
 
   private def companyPostCodeLookup(mode: Mode) = controllers.register.establishers.company.routes.CompanyPostCodeLookupController.onPageLoad(mode, None, 0)
 
