@@ -16,16 +16,16 @@
 
 package forms
 
-import com.google.inject.Inject
+import base.SpecBase
 import forms.behaviours.VatBehaviours
 import play.api.data.Form
-import play.api.i18n.Messages
+import viewmodels.Message
 
-class VatVariationsFormProviderSpec @Inject() (implicit messages: Messages) extends VatBehaviours {
+class VatVariationsFormProviderSpec extends VatBehaviours with SpecBase{
 
-  private val vatLengthKey = "messages__error__vat_length"
+  private val vatLengthKey = Message("messages__vatVariations__company_length", "test company")
   private val requiredVatKey = "messages__error__vat_required"
-  private val invalidVatKey = "messages__error__vat_invalid"
+  private val invalidVatKey = Message("messages__vatVariations__company_invalid", "test company")
 
   "A form with a Vat" should {
     val testForm = new VatVariationsFormProvider().apply("test company")

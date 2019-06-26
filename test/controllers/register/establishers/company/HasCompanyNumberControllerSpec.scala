@@ -28,8 +28,8 @@ class HasCompanyNumberControllerSpec extends ControllerSpecBase with MockitoSuga
 
   def onwardRoute: Call = controllers.routes.SessionExpiredController.onPageLoad
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): WhatYouWillNeedCompanyDetailsController =
-    new WhatYouWillNeedCompanyDetailsController(frontendAppConfig,
+  def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): HasCompanyNumberController =
+    new HasCompanyNumberController(frontendAppConfig,
       messagesApi,
       FakeAuthAction,
       dataRetrievalAction

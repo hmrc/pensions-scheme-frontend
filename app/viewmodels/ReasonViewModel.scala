@@ -14,21 +14,13 @@
  * limitations under the License.
  */
 
-package forms
+package viewmodels
 
-import forms.mappings.CrnMapping
-import javax.inject.Inject
-import play.api.data.Form
-import play.api.i18n.Messages
-import viewmodels.Message
+import play.api.mvc.Call
 
-class CompanyRegistrationNumberVariationsFormProvider @Inject() extends CrnMapping {
-
-  def apply(name: String)(implicit messages: Messages): Form[String] =
-    Form(
-      "companyRegistrationNumber" -> companyRegistrationNumberStringMapping(
-        crnLengthKey = Message("messages__error__no_crn_length", name),
-        invalidCRNKey = Message("messages__error__crn_invalid_with_company_name", name).resolve
-      )
-    )
-}
+case class ReasonViewModel(
+                         postCall: Call,
+                         title: Message,
+                         heading: Message,
+                         srn: Option[String] = None
+                       )

@@ -28,8 +28,8 @@ class CheckYourAnswersCompanyAddressControllerSpec extends ControllerSpecBase wi
 
   def onwardRoute: Call = controllers.routes.SessionExpiredController.onPageLoad
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): WhatYouWillNeedCompanyDetailsController =
-    new WhatYouWillNeedCompanyDetailsController(frontendAppConfig,
+  def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): CheckYourAnswersCompanyAddressController =
+    new CheckYourAnswersCompanyAddressController(frontendAppConfig,
       messagesApi,
       FakeAuthAction,
       dataRetrievalAction

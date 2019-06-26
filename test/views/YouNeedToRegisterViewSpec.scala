@@ -16,20 +16,34 @@
 
 package views
 
-import com.google.inject.Inject
-import config.FrontendAppConfig
+import base.SpecBase
 import org.jsoup.Jsoup
+import viewmodels.Message
 import views.behaviours.ViewBehaviours
 import views.html.youNeedToRegister
 
-class YouNeedToRegisterViewSpec @Inject()(appConfig: FrontendAppConfig) extends ViewBehaviours {
+class YouNeedToRegisterViewSpec extends ViewBehaviours with SpecBase{
 
   val messageKeyPrefix = "youNeedToRegister"
+
+  val message1 = Message("messages__youNeedToRegister__p1__link").resolve
+  val message2 = Message("messages__youNeedToRegister__p2__link").resolve
+
+  val link1 = s"""<a id="psa-gov-uk-link" href="${frontendAppConfig.pensionAdministratorGovUkLink}">$message1</a>"""
+  val link2 = s"""<a id="psp-gov-uk-link" href="${frontendAppConfig.pensionPractitionerGovUkLink}">$message2</a>"""
 
   private def createView = () => youNeedToRegister(frontendAppConfig)(fakeRequest, messages)
 
   "YouNeedToRegister view" must {
-    behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__heading"), "_lede", "_p1", "_p2")
+    behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__heading"), "_lede")
+
+    "display the pensionPractitionerGovUkLink" in {
+      Jsoup.parse(createView().toString()) must haveDynamicText(s"messages__${messageKeyPrefix}__p1",link1)
+    }
+
+    "display the pensionAdministratorGovUkLink" in {
+      Jsoup.parse(createView().toString()) must haveDynamicText(s"messages__${messageKeyPrefix}__p2",link2)
+    }
 
     "have button to redirect to register as pension administrator" in {
       Jsoup.parse(createView().toString()).select("a[id=redirect-to-psa]") must
@@ -38,17 +52,7 @@ class YouNeedToRegisterViewSpec @Inject()(appConfig: FrontendAppConfig) extends 
 
     "have link to redirect to Gov UK" in {
       Jsoup.parse(createView().toString()).select("a[id=gov-uk-link]") must
-        haveLink(appConfig.govUkLink)
-    }
-
-    "have link to redirect to PSA Gov UK" in {
-      Jsoup.parse(createView().toString()).select("a[id=psa-gov-uk-link]") must
-        haveLink(appConfig.pensionAdministratorGovUkLink)
-    }
-
-    "have link to redirect to PSP Gov UK" in {
-      Jsoup.parse(createView().toString()).select("a[id=psp-gov-uk-link]") must
-        haveLink(appConfig.pensionPractitionerGovUkLink)
+        haveLink(frontendAppConfig.govUkLink)
     }
   }
 }
