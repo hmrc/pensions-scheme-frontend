@@ -20,7 +20,6 @@ import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
 import controllers.actions._
 import forms.WorkingKnowledgeFormProvider
-import identifiers.SchemeNameId
 import identifiers.{DeclarationDutiesId, IsWorkingKnowledgeCompleteId}
 import javax.inject.Inject
 import models.Mode
