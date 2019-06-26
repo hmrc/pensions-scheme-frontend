@@ -17,9 +17,9 @@
 @import config.FrontendAppConfig
 @import uk.gov.hmrc.play.views.html._
 @import models.Mode
-@import viewmodels.HasCrnViewModel
+@import viewmodels.CommonFormWithHintViewModel
 
-@(appConfig: FrontendAppConfig, form: Form[_], viewmodel: HasCrnViewModel, schemeName: Option[String])(implicit request: Request[_], messages: Messages)
+@(appConfig: FrontendAppConfig, form: Form[_], viewmodel: CommonFormWithHintViewModel, schemeName: Option[String])(implicit request: Request[_], messages: Messages)
 
 @main_template(
     title = viewmodel.title,

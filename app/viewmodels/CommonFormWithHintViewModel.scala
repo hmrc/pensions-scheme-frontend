@@ -18,7 +18,7 @@ package viewmodels
 
 import play.api.mvc.Call
 
-case class HasCrnViewModel(
+case class CommonFormWithHintViewModel(
                          postCall: Call,
                          title: Message,
                          heading: Message,
