@@ -20,7 +20,7 @@ import forms.HasCrnFormProvider
 import models.{Index, NormalMode}
 import play.api.data.Form
 import play.twirl.api.HtmlFormat
-import viewmodels.{HasCrnViewModel, Message}
+import viewmodels.{CommonFormWithHintViewModel, Message}
 import views.behaviours.YesNoViewBehaviours
 import views.html.hasCrn
 
@@ -30,7 +30,7 @@ class HasCrnViewSpec extends YesNoViewBehaviours {
   val srn = None
   val index = Index(0)
 
-  def viewModel(srn : Option[String] = None) = HasCrnViewModel(
+  def viewModel(srn : Option[String] = None) = CommonFormWithHintViewModel(
     controllers.register.establishers.company.routes.HasCompanyNumberController.onSubmit(NormalMode, srn, index),
     title = Message("messages__hasCompanyNumber__title"),
     heading = Message("messages__hasCompanyNumber__h1", "ABC"),

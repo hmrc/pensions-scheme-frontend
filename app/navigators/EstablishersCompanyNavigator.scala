@@ -52,10 +52,10 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
         confirmHasCompanyUtr(index, mode, srn)(from.userAnswers)
       case CompanyUniqueTaxReferenceId(index) =>
         NavigateTo.dontSave(establisherCompanyRoutes.CompanyPostCodeLookupController.onPageLoad(mode, srn, index))
-
       case CompanyUTRId(index) =>
         NavigateTo.dontSave(establisherCompanyRoutes.HasCompanyVATController.onPageLoad(index))
-
+      case NoCompanyUTRId(index) =>
+        NavigateTo.dontSave(establisherCompanyRoutes.HasCompanyVATController.onPageLoad(index))
       case CompanyPostCodeLookupId(index) =>
         NavigateTo.dontSave(establisherCompanyRoutes.CompanyAddressListController.onPageLoad(mode, srn, index))
       case CompanyAddressListId(index) =>
@@ -97,6 +97,7 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
       case HasCompanyUTRId(index)  =>             exitMiniJourney(index, mode, srn, from.userAnswers)
       case CompanyUniqueTaxReferenceId(index) =>  exitMiniJourney(index, mode, srn, from.userAnswers)
       case CompanyUTRId(index) =>                 exitMiniJourney(index, mode, srn, from.userAnswers)
+      case NoCompanyUTRId(index) =>               exitMiniJourney(index, mode, srn, from.userAnswers)
 
       case CompanyPostCodeLookupId(index) =>
         NavigateTo.dontSave(establisherCompanyRoutes.CompanyAddressListController.onPageLoad(mode, srn, index))
@@ -270,7 +271,7 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
       case Some(true) =>
         NavigateTo.dontSave(establisherCompanyRoutes.CompanyUTRController.onPageLoad(mode, srn, index))
       case Some(false) =>
-        NavigateTo.dontSave(establisherCompanyRoutes.NoCompanyUTRController.onPageLoad(index))
+        NavigateTo.dontSave(establisherCompanyRoutes.NoCompanyUTRController.onPageLoad(mode, srn, index))
       case None =>
         NavigateTo.dontSave(controllers.routes.SessionExpiredController.onPageLoad())
     }

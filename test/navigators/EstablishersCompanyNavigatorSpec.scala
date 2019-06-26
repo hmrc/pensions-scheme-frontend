@@ -60,6 +60,8 @@ class EstablishersCompanyNavigatorSpec extends SpecBase with MustMatchers with N
     (CompanyUniqueTaxReferenceId(0),              newEstablisher,                   companyPostCodeLookup(mode),        true,           Some(checkYourAnswers(mode)),                   true),
     (CompanyUTRId(0),                             emptyAnswers,                     hasCompanyVat(mode),                true,           Some(exitJourney(mode, emptyAnswers)),                   true),
     (CompanyUTRId(0),                             newEstablisher,                   hasCompanyVat(mode),                true,           Some(checkYourAnswers(mode)),                   true),
+    (NoCompanyUTRId(0),                           emptyAnswers,                     hasCompanyVat(mode),                true,           Some(exitJourney(mode, emptyAnswers)),                   true),
+    (NoCompanyUTRId(0),                           newEstablisher,                   hasCompanyVat(mode),                true,           Some(checkYourAnswers(mode)),                   true),
     (CompanyPostCodeLookupId(0),                  emptyAnswers,                     companyAddressList(mode),           true,           Some(companyAddressList(checkMode(mode))),      true),
     (CompanyAddressListId(0),                     emptyAnswers,                     companyManualAddress(mode),         true,           Some(companyManualAddress(checkMode(mode))),    true),
     (CompanyAddressId(0),                         emptyAnswers,                     companyAddressYears(mode),          true,           if(mode == UpdateMode) Some(companyAddressYears(checkMode(mode))) else Some(checkYourAnswers(mode)),                   true),
@@ -183,7 +185,7 @@ object EstablishersCompanyNavigatorSpec extends OptionValues with Enumerable.Imp
     controllers.register.establishers.company.routes.CompanyUTRController.onPageLoad(mode, None, 0)
 
   private def noCompanyUTR(mode: Mode): Call =
-    controllers.register.establishers.company.routes.NoCompanyUTRController.onPageLoad(Index(0))
+    controllers.register.establishers.company.routes.NoCompanyUTRController.onPageLoad(mode, None, 0)
 
   private def companyPaye(mode: Mode): Call =
     controllers.register.establishers.company.routes.CompanyPayeController.onPageLoad(mode, 0, None)
@@ -193,7 +195,6 @@ object EstablishersCompanyNavigatorSpec extends OptionValues with Enumerable.Imp
 
   private def hasCompanyVat(mode: Mode): Call =
     controllers.register.establishers.company.routes.HasCompanyVATController.onPageLoad(0)
-
 
   private def companyPostCodeLookup(mode: Mode) = controllers.register.establishers.company.routes.CompanyPostCodeLookupController.onPageLoad(mode, None, 0)
 

@@ -28,7 +28,7 @@ import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
 import utils.Navigator
 import utils.annotations.EstablishersCompany
-import viewmodels.{HasUtrViewModel, Message}
+import viewmodels.{CommonFormWithHintViewModel, Message}
 
 class HasCompanyUTRController @Inject()(override val appConfig: FrontendAppConfig,
                                         override val messagesApi: MessagesApi,
@@ -40,13 +40,12 @@ class HasCompanyUTRController @Inject()(override val appConfig: FrontendAppConfi
                                         requireData: DataRequiredAction,
                                         formProvider: HasUtrFormProvider) extends HasUtrController {
 
-  private def viewModel(mode: Mode, index: Index, srn: Option[String], companyName: String): HasUtrViewModel =
-    HasUtrViewModel(
+  private def viewModel(mode: Mode, index: Index, srn: Option[String], companyName: String): CommonFormWithHintViewModel =
+    CommonFormWithHintViewModel(
       postCall = controllers.register.establishers.company.routes.HasCompanyUTRController.onSubmit(mode, srn, index),
       title = Message("messages__hasCompanyUtr__title"),
       heading = Message("messages__hasCompanyUtr__h1", companyName),
       hint = Message("messages__hasCompanyUtr__p1"),
-      link = Message("messages__hasCompanyUtr__a1"),
       srn = srn
     )
 

@@ -25,7 +25,7 @@ import play.api.data.Form
 import play.api.test.Helpers._
 import services.FakeUserAnswersService
 import utils.FakeNavigator
-import viewmodels.{HasCrnViewModel, Message}
+import viewmodels.{CommonFormWithHintViewModel, Message}
 import views.html.hasCrn
 
 class HasCompanyNumberControllerSpec extends ControllerSpecBase {
@@ -37,7 +37,7 @@ class HasCompanyNumberControllerSpec extends ControllerSpecBase {
   val srn = None
   val postCall = controllers.register.establishers.company.routes.HasCompanyNumberController.onSubmit(NormalMode, srn, index)
 
-  val viewModel = HasCrnViewModel(
+  val viewModel = CommonFormWithHintViewModel(
     controllers.register.establishers.company.routes.HasCompanyNumberController.onSubmit(NormalMode, srn, index),
     title = Message("messages__hasCompanyNumber__title"),
     heading = Message("messages__hasCompanyNumber__h1", "test company name"),

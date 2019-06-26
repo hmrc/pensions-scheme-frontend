@@ -16,11 +16,10 @@
 
 package forms
 
-import javax.inject.Inject
-import play.api.i18n.Messages
+import base.SpecBase
 import viewmodels.Message
 
-class HasCrnFormProviderSpec @Inject()(implicit message : Messages) extends FormSpec  {
+class HasCrnFormProviderSpec extends FormSpec with SpecBase {
 
   val requiredKey = Message("messages__hasCompanyNumber__error__required", "ABC").resolve
   val invalidKey = "error.boolean"
@@ -31,12 +30,12 @@ class HasCrnFormProviderSpec @Inject()(implicit message : Messages) extends Form
 
     "bind true" in {
       val form = formProvider("ABC").bind(Map("value" -> "true"))
-      form.get shouldBe true
+      form.get mustBe true
     }
 
     "bind false" in {
       val form = formProvider("ABC").bind(Map("value" -> "false"))
-      form.get shouldBe false
+      form.get mustBe false
     }
 
     "fail to bind non-booleans" in {

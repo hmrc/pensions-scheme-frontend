@@ -18,11 +18,10 @@ package viewmodels
 
 import play.api.mvc.Call
 
-case class HasUtrViewModel(
+case class CommonFormWithHintViewModel(
                          postCall: Call,
                          title: Message,
                          heading: Message,
                          hint: Message,
-                         link: Message,
                          srn: Option[String] = None
                        )

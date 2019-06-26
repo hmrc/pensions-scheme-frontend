@@ -20,10 +20,9 @@ import com.google.inject.Inject
 import config.FrontendAppConfig
 import forms.HasUtrFormProvider
 import models.{Index, NormalMode}
-import org.jsoup.Jsoup
 import play.api.data.Form
 import play.twirl.api.HtmlFormat
-import viewmodels.{HasUtrViewModel, Message}
+import viewmodels.{CommonFormWithHintViewModel, Message}
 import views.behaviours.YesNoViewBehaviours
 import views.html.hasUtr
 
@@ -35,12 +34,11 @@ class HasUtrViewSpec@Inject()(appConfig: FrontendAppConfig) extends YesNoViewBeh
   val form = new HasUtrFormProvider()("messages__hasCompanyUtr__error__required", "ABC")
   val postCall = controllers.register.establishers.company.routes.HasCompanyUTRController.onSubmit(NormalMode, None, Index(0))
 
-  def viewModel(srn : Option[String] = None) = HasUtrViewModel(
+  def viewModel(srn : Option[String] = None) = CommonFormWithHintViewModel(
     postCall,
     title = Message("messages__hasCompanyUtr__title"),
     heading = Message("messages__hasCompanyUtr__h1", "ABC"),
     hint = Message("messages__hasCompanyUtr__p1"),
-    link = Message("messages__hasCompanyUtr__a1"),
     srn = srn
   )
   def createView(srn : Option[String] = None): () => HtmlFormat.Appendable = () =>
@@ -63,11 +61,6 @@ class HasUtrViewSpec@Inject()(appConfig: FrontendAppConfig) extends YesNoViewBeh
     behave like pageWithSubmitButton(createView())
 
     behave like pageWithReturnLinkAndSrn(createView(Some("srn")), getReturnLinkWithSrn)
-
-    "have link to redirect to find lost UTR link" in {
-      Jsoup.parse(createView().toString()).select("a") must
-        haveLink(appConfig.findLostUtrNumberLink)
-    }
 
   }
 }

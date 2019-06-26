@@ -31,12 +31,12 @@ class HasUtrFormProviderSpec @Inject()(implicit message : Messages) extends Form
 
     "bind true" in {
       val form = formProvider("ABC").bind(Map("value" -> "true"))
-      form.get shouldBe true
+      form.get mustBe true
     }
 
     "bind false" in {
       val form = formProvider("ABC").bind(Map("value" -> "false"))
-      form.get shouldBe false
+      form.get mustBe false
     }
 
     "fail to bind non-booleans" in {

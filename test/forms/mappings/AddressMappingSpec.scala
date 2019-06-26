@@ -27,7 +27,7 @@ class AddressMappingSpec extends AddressBehaviours {
   private val keyAddressLength = "error.address_line.length"
   private val keyAddressInvalid = "error.address_line.invalid"
 
-  "Address mapping" should {
+  "Address mapping" must {
 
     val mapping: Mapping[String] = addressLineMapping(keyAddressRequired, keyAddressLength, keyAddressInvalid)
     val form: Form[String] = Form(fieldName -> mapping)
@@ -42,7 +42,7 @@ class AddressMappingSpec extends AddressBehaviours {
 
   }
 
-  "Optional address mapping" should {
+  "Optional address mapping" must {
 
     val mapping: Mapping[Option[String]] = optionalAddressLineMapping(keyAddressLength, keyAddressInvalid)
     val form: Form[Option[String]] = Form(fieldName -> mapping)
@@ -58,7 +58,7 @@ class AddressMappingSpec extends AddressBehaviours {
 
   }
 
-  "Post Code with Country mapping" should {
+  "Post Code with Country mapping" must {
 
     val form: Form[Option[String]] = Form("postCode" -> postCodeWithCountryMapping("error.required", "error.invalid", "error.postcode.nonUK.length"))
 
@@ -73,7 +73,7 @@ class AddressMappingSpec extends AddressBehaviours {
 
   }
 
-  "Post Code mapping" should {
+  "Post Code mapping" must {
 
     val keyRequired = "error.required"
     val keyLength = "error.length"
@@ -91,7 +91,7 @@ class AddressMappingSpec extends AddressBehaviours {
 
   }
 
-  "Country mapping" should {
+  "Country mapping" must {
 
     val keyRequired = "error.required"
     val keyInvalid = "error.invalid"
@@ -106,29 +106,29 @@ class AddressMappingSpec extends AddressBehaviours {
   "postCodeTransform" must {
     "strip leading and trailing spaces" in {
       val actual = postCodeTransform(" AB12 1AB ")
-      actual shouldBe "AB12 1AB"
+      actual mustBe "AB12 1AB"
     }
 
     "upper case all characters" in {
       val actual = postCodeTransform("ab12 1ab")
-      actual shouldBe "AB12 1AB"
+      actual mustBe "AB12 1AB"
     }
 
     "minimise spaces" in {
       val actual = postCodeTransform("AB12     1AB")
-      actual shouldBe "AB12 1AB"
+      actual mustBe "AB12 1AB"
     }
   }
 
   "postCodeValidTransform" must {
     "add missing internal space in full post code" in {
       val actual = postCodeValidTransform("AB121AB")
-      actual shouldBe "AB12 1AB"
+      actual mustBe "AB12 1AB"
     }
 
     "add missing internal space in minimal post code" in {
       val actual = postCodeValidTransform("A11AB")
-      actual shouldBe "A1 1AB"
+      actual mustBe "A1 1AB"
     }
   }
 

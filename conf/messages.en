@@ -1439,8 +1439,7 @@ messages__hasCompanyNumber__error__required = Select yes if {0} has a company nu
 
 messages__hasCompanyUtr__title = Does the company have a UTR?
 messages__hasCompanyUtr__h1 = Does {0} have a Unique Taxpayer Reference (UTR)?
-messages__hasCompanyUtr__p1 = This is 10 numbers, for example 12345 67890. It will be on tax returns and other letters about Corporation Tax. It may be called ‘reference’, ‘UTR’ or ‘official use’. You can
-messages__hasCompanyUtr__a1 = find a lost UTR number
+messages__hasCompanyUtr__p1 = This is a 10-digit or 13-digit number. You can find it on tax returns and other documents from HMRC. It might be called ‘reference’, ‘UTR’ or ‘official use’.
 messages__hasCompanyUtr__error__required = Select yes if {0} has a Unique Taxpayer Reference (UTR)
 
 messages__schemeTaskList__before_you_start_link_text = Setting up your scheme application
@@ -1515,6 +1514,12 @@ messages__payeVariations__hint = For example, 123/AB456
 messages__payeVariations__error_invalid = Enter {0}’s employer PAYE reference in the correct format
 messages__payeVariations__error_length = Enter {0}’s employer PAYE reference using 16 characters or less
 messages__payeVariations__error_required = Enter an employer PAYE reference
+
+messages__reason__error_required = Enter a reason why {0} does not have a UTR
+messages__reason__error_maxLength = Reason must be 160 characters or less
+messages__reason__error_invalid = Reason must only include letters, numbers and punctuation marks
+messages__noCompanyUtr__title = Why does the company not have a UTR?
+messages__noCompanyUtr__heading = Why does {0} not have a UTR?
 
 messages__utr__error__required = "Enter a UTR"
 messages__utr__error_maxLength = "The UTR must be 10 numbers"

@@ -26,7 +26,7 @@ import play.api.mvc.{AnyContent, Result}
 import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.{Navigator, UserAnswers}
-import viewmodels.HasUtrViewModel
+import viewmodels.CommonFormWithHintViewModel
 import views.html.hasUtr
 
 import scala.concurrent.Future
@@ -41,7 +41,7 @@ trait HasUtrController extends FrontendController with Retrievals with I18nSuppo
 
   protected def navigator: Navigator
 
-  def get(id: TypedIdentifier[Boolean], form: Form[Boolean], viewmodel: HasUtrViewModel)
+  def get(id: TypedIdentifier[Boolean], form: Form[Boolean], viewmodel: CommonFormWithHintViewModel)
          (implicit request: DataRequest[AnyContent]): Future[Result] = {
     val preparedForm =
       request.userAnswers.get(id).map(form.fill).getOrElse(form)
@@ -49,7 +49,7 @@ trait HasUtrController extends FrontendController with Retrievals with I18nSuppo
     Future.successful(Ok(hasUtr(appConfig, preparedForm, viewmodel, existingSchemeName)))
   }
 
-  def post(id: TypedIdentifier[Boolean], mode: Mode, form: Form[Boolean], viewmodel: HasUtrViewModel)
+  def post(id: TypedIdentifier[Boolean], mode: Mode, form: Form[Boolean], viewmodel: CommonFormWithHintViewModel)
           (implicit request: DataRequest[AnyContent]): Future[Result] = {
     form.bindFromRequest().fold(
       (formWithErrors: Form[_]) =>

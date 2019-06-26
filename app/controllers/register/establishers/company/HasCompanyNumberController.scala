@@ -28,7 +28,7 @@ import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
 import utils.Navigator
 import utils.annotations.EstablishersCompany
-import viewmodels.{HasCrnViewModel, Message}
+import viewmodels.{CommonFormWithHintViewModel, Message}
 
 class HasCompanyNumberController @Inject()(override val appConfig: FrontendAppConfig,
                                            override val messagesApi: MessagesApi,
@@ -40,8 +40,8 @@ class HasCompanyNumberController @Inject()(override val appConfig: FrontendAppCo
                                            requireData: DataRequiredAction,
                                            formProvider: HasCrnFormProvider) extends HasCrnController {
 
-  private def viewModel(mode: Mode, index: Index, srn: Option[String], companyName: String): HasCrnViewModel =
-    HasCrnViewModel(
+  private def viewModel(mode: Mode, index: Index, srn: Option[String], companyName: String): CommonFormWithHintViewModel =
+    CommonFormWithHintViewModel(
       postCall = controllers.register.establishers.company.routes.HasCompanyNumberController.onSubmit(mode, srn, index),
       title = Message("messages__hasCompanyNumber__title"),
       heading = Message("messages__hasCompanyNumber__h1", companyName),
