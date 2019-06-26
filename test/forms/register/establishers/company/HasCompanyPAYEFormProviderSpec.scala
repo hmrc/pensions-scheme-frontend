@@ -18,7 +18,7 @@ package forms.register.establishers.company
 
 import forms.FormSpec
 
-class HasCompanyPAYEControllerFormProviderSpec extends FormSpec {
+class HasCompanyPAYEFormProviderSpec extends FormSpec {
   val requiredKey = "messages__companyPayeRef__error__required"
   val invalidKey = "error.boolean"
   val validData: Map[String, String] = Map(
@@ -27,7 +27,7 @@ class HasCompanyPAYEControllerFormProviderSpec extends FormSpec {
 
   val formProvider = new HasCompanyPAYEFormProvider()
 
-  "DoesCompanyHavePAYENumber form" must {
+  "HasCompanyPAYEFormProvider form" must {
 
     "bind true" in {
       val form = formProvider().bind(Map("hasPaye" -> "true"))
