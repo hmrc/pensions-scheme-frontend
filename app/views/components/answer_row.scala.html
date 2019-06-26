@@ -24,12 +24,14 @@
     </div>
     <div class="cya-answer">
         <p>
+            @if(row.answer.nonEmpty){
             @if(row.answerIsMessageKey){
                 <span id="cya-@idPath-0-answer">@messages(row.answer.head)</span>
             } else{
                 @for((r, i) <- row.answer.zipWithIndex){
                     <span id="cya-@idPath-@i-answer" class="address-multi-line">@r</span>
                 }
+            }
             }
         </p>
     </div>

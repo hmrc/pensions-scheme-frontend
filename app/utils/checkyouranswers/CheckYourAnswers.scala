@@ -119,6 +119,62 @@ object CheckYourAnswers {
     }
   }
 
+  case class DoYouHaveBoolCYA[I <: TypedIdentifier[Boolean]](label: String, hiddenLabel: Option[String] = None) {
+
+    def apply()(implicit rds: Reads[Boolean]): CheckYourAnswers[I] = {
+      new CheckYourAnswers[I] {
+        private def booleanCYARow(id: I, changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
+          userAnswers.get(id) match {
+            case Some(flag) =>
+              Seq(AnswerRow(
+                label, Seq(if (flag) "site.yes" else "site.no"),
+                answerIsMessageKey = false,
+                Some(Link("site.change", changeUrl,
+                  Some(hiddenLabel.fold(s"messages__visuallyhidden__${id.toString}")(customHiddenLabel => customHiddenLabel))))
+              ))
+            case _ =>
+              Seq(AnswerRow(label, Seq.empty, answerIsMessageKey = true,
+              Some(Link("site.add", changeUrl, hiddenLabel))))
+          }
+        }
+
+        override def row(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+          booleanCYARow(id, changeUrl, userAnswers)
+
+        override def updateRow(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+          booleanCYARow(id, changeUrl, userAnswers)
+      }
+    }
+  }
+
+  case class BoolAnswerStringCYA[I <: TypedIdentifier[String]](label: String, hiddenLabel: Option[String] = None, displayAddLink: Boolean) {
+
+    def apply()(implicit rds: Reads[String]): CheckYourAnswers[I] = {
+      new CheckYourAnswers[I] {
+        private def stringCYARow(id: I, changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
+          userAnswers.get(id) match {
+            case Some(answer) =>
+              Seq(AnswerRow(
+                label,
+                Seq(answer),
+                answerIsMessageKey = false,
+                Some(Link("site.change", changeUrl,
+                  Some(hiddenLabel.fold(s"messages__visuallyhidden__${id.toString}")(customHiddenLabel => customHiddenLabel))))
+              ))
+            case _ if displayAddLink =>  Seq(AnswerRow(label, Seq.empty, answerIsMessageKey = true,
+              Some(Link("site.add", changeUrl, hiddenLabel))))
+            case _ => Seq.empty[AnswerRow]
+          }
+        }
+
+        override def row(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+          stringCYARow(id, changeUrl, userAnswers)
+
+        override def updateRow(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = stringCYARow(id, changeUrl, userAnswers)
+      }
+    }
+  }
+
   case class SchemeTypeCYA[I <: TypedIdentifier[SchemeType]](label: Option[String] = None, hiddenLabel: Option[String] = None) {
 
     def apply()(implicit rds: Reads[SchemeType]): CheckYourAnswers[I] = {
@@ -582,7 +638,8 @@ case class IsDormantCYA[I <: TypedIdentifier[DeclarationDormant]](
               Some(Link("site.change", changeUrl,
                 Some(changeIsDormant)))
             ))
-          case _ => Seq.empty[AnswerRow]
+          case _ => Seq(AnswerRow(label, Seq.empty, answerIsMessageKey = true,
+            Some(Link("site.add", changeUrl, Some(changeIsDormant)))))
         }
 
       override def updateRow(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = Nil

@@ -17,12 +17,12 @@
 package identifiers.register.establishers.company
 
 import identifiers._
-import identifiers.register.establishers.EstablishersId
+import identifiers.register.establishers.{EstablishersId, IsEstablisherNewId}
 import models.Link
 import play.api.i18n.Messages
 import play.api.libs.json.JsPath
 import utils.checkyouranswers.CheckYourAnswers
-import utils.checkyouranswers.CheckYourAnswers.StringCYA
+import utils.checkyouranswers.CheckYourAnswers.{BoolAnswerStringCYA, StringCYA}
 import utils.{CountryOptions, UserAnswers}
 import viewmodels.AnswerRow
 
@@ -33,21 +33,26 @@ case class CompanyVatVariationsId(index: Int) extends TypedIdentifier[String] {
 object CompanyVatVariationsId {
   override def toString: String = "vat"
 
-  val hiddenLabelVat = "messages__visuallyhidden__establisher__vat_number"
+  implicit def cya(implicit userAnswers: UserAnswers,
+                   messages: Messages): CheckYourAnswers[CompanyVatVariationsId] = {
 
-  implicit def cya(implicit messages: Messages, countryOptions: CountryOptions): CheckYourAnswers[CompanyVatVariationsId] = {
+    def label(index: Int) = userAnswers.get(CompanyDetailsId(index)) match {
+      case Some(name) => messages("messages__vatVariations__heading", name)
+      case _ => messages("messages__vatVariations__company_title")
+    }
+
     new CheckYourAnswers[CompanyVatVariationsId] {
-
       override def row(id: CompanyVatVariationsId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        StringCYA(Some("messages__common__cya__vat"), Some(hiddenLabelVat))().row(id)(changeUrl, userAnswers)
-
-      override def updateRow(id: CompanyVatVariationsId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        userAnswers.get(id) match {
-          case Some(vat) => Seq(AnswerRow("messages__common__cya__vat", Seq(vat), answerIsMessageKey = false, None))
-          case _ => Seq(AnswerRow("messages__common__cya__vat", Seq("site.not_entered"), answerIsMessageKey = true,
-            Some(Link("site.add", changeUrl, Some(s"${hiddenLabelVat}_add")))))
+        userAnswers.get(HasCompanyVATId(id.index)) match {
+          case Some(bool: Boolean) => BoolAnswerStringCYA(label(id.index), Some(label(id.index)), bool)().row(id)(changeUrl, userAnswers)
+          case _ => Seq.empty[AnswerRow]
         }
 
+      override def updateRow(id: CompanyVatVariationsId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+        userAnswers.get(IsEstablisherNewId(id.index)) match {
+          case Some(true) => row(id)(changeUrl, userAnswers)
+          case _ => BoolAnswerStringCYA(label(id.index), Some(label(id.index)), true)().row(id)(changeUrl, userAnswers)
+        }
     }
   }
 }

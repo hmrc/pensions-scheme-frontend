@@ -17,8 +17,13 @@
 package identifiers.register.establishers.company
 
 import identifiers.TypedIdentifier
-import identifiers.register.establishers.EstablishersId
+import identifiers.register.establishers.{EstablishersId, IsEstablisherNewId}
+import play.api.i18n.Messages
 import play.api.libs.json.JsPath
+import utils.UserAnswers
+import utils.checkyouranswers.CheckYourAnswers
+import utils.checkyouranswers.CheckYourAnswers.DoYouHaveBoolCYA
+import viewmodels.AnswerRow
 
 case class HasCompanyVATId(index: Int) extends TypedIdentifier[Boolean] {
   override def path: JsPath = EstablishersId(index).path \ "companyVat" \ HasCompanyVATId.toString
@@ -26,6 +31,25 @@ case class HasCompanyVATId(index: Int) extends TypedIdentifier[Boolean] {
 
 object HasCompanyVATId {
   override def toString: String = "hasVat"
+
+  implicit def cya(implicit userAnswers: UserAnswers, messages: Messages): CheckYourAnswers[HasCompanyVATId] = {
+
+    def label(index: Int) = userAnswers.get(CompanyDetailsId(index)) match {
+      case Some(name) => messages("messages__hasCompanyVat__heading", name)
+      case _ => messages("messages__hasCompanyVat__title")
+    }
+
+    new CheckYourAnswers[HasCompanyVATId] {
+      override def row(id: HasCompanyVATId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+        DoYouHaveBoolCYA(label(id.index), Some(label(id.index)))().row(id)(changeUrl, userAnswers)
+
+      override def updateRow(id: HasCompanyVATId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+        userAnswers.get(IsEstablisherNewId(id.index)) match {
+          case Some(true) => DoYouHaveBoolCYA(label(id.index), Some(label(id.index)))().row(id)(changeUrl, userAnswers)
+          case _ => Seq.empty[AnswerRow]
+        }
+    }
+  }
 }
 
 

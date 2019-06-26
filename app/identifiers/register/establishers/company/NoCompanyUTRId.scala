@@ -17,8 +17,13 @@
 package identifiers.register.establishers.company
 
 import identifiers.TypedIdentifier
-import identifiers.register.establishers.EstablishersId
+import identifiers.register.establishers.{EstablishersId, IsEstablisherNewId}
+import play.api.i18n.Messages
 import play.api.libs.json.JsPath
+import utils.UserAnswers
+import utils.checkyouranswers.CheckYourAnswers
+import utils.checkyouranswers.CheckYourAnswers.BoolAnswerStringCYA
+import viewmodels.AnswerRow
 
 case class NoCompanyUTRId(index: Int) extends TypedIdentifier[String] {
   override def path: JsPath = EstablishersId(index).path \ "companyUniqueTaxReference" \ NoCompanyUTRId.toString
@@ -26,6 +31,29 @@ case class NoCompanyUTRId(index: Int) extends TypedIdentifier[String] {
 
 object NoCompanyUTRId {
   override def toString: String = "reason"
+
+  implicit def cya(implicit userAnswers: UserAnswers,
+                   messages: Messages): CheckYourAnswers[NoCompanyUTRId] = {
+
+    def label(index: Int) = userAnswers.get(CompanyDetailsId(index)) match {
+      case Some(name) => messages("messages__vatVariations__heading", name)
+      case _ => messages("messages__vatVariations__company_title")
+    }
+
+    new CheckYourAnswers[NoCompanyUTRId] {
+      override def row(id: NoCompanyUTRId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+        userAnswers.get(HasCompanyUTRId(id.index)) match {
+          case Some(bool: Boolean) => BoolAnswerStringCYA(label(id.index), Some(label(id.index)), !bool)().row(id)(changeUrl, userAnswers)
+          case _ => Seq.empty[AnswerRow]
+        }
+
+      override def updateRow(id: NoCompanyUTRId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+        userAnswers.get(IsEstablisherNewId(id.index)) match {
+          case Some(true) => row(id)(changeUrl, userAnswers)
+          case _ => Seq.empty[AnswerRow]
+        }
+    }
+  }
 }
 
 

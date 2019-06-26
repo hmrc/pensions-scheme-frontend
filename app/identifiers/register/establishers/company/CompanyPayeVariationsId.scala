@@ -17,12 +17,12 @@
 package identifiers.register.establishers.company
 
 import identifiers.TypedIdentifier
-import identifiers.register.establishers.EstablishersId
+import identifiers.register.establishers.{EstablishersId, IsEstablisherNewId}
 import models.Link
 import play.api.i18n.Messages
 import play.api.libs.json.JsPath
 import utils.checkyouranswers.CheckYourAnswers
-import utils.checkyouranswers.CheckYourAnswers.StringCYA
+import utils.checkyouranswers.CheckYourAnswers.{BoolAnswerStringCYA, StringCYA}
 import utils.{CountryOptions, UserAnswers}
 import viewmodels.AnswerRow
 
@@ -33,19 +33,25 @@ case class CompanyPayeVariationsId(index: Int) extends TypedIdentifier[String] {
 object CompanyPayeVariationsId {
   override def toString: String = "paye"
 
-  val hiddenLabelPaye = "messages__visuallyhidden__establisher__paye_number"
+  implicit def cya(implicit userAnswers: UserAnswers,
+                   messages: Messages): CheckYourAnswers[CompanyPayeVariationsId] = {
 
-  implicit def cya(implicit messages: Messages, countryOptions: CountryOptions): CheckYourAnswers[CompanyPayeVariationsId] = {
+    def label(index: Int) = userAnswers.get(CompanyDetailsId(index)) match {
+      case Some(name) => messages("messages__payeVariations__heading", name)
+      case _ => messages("messages__payeVariations__company_title")
+    }
+
     new CheckYourAnswers[CompanyPayeVariationsId] {
-
       override def row(id: CompanyPayeVariationsId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        StringCYA(Some("messages__common__cya__paye"), Some(hiddenLabelPaye))().row(id)(changeUrl, userAnswers)
+        userAnswers.get(HasCompanyPAYEId(id.index)) match {
+          case Some(bool: Boolean) => BoolAnswerStringCYA(label(id.index), Some(label(id.index)), bool)().row(id)(changeUrl, userAnswers)
+          case _ => Seq.empty[AnswerRow]
+        }
 
       override def updateRow(id: CompanyPayeVariationsId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        userAnswers.get(id) match {
-          case Some(paye) => Seq(AnswerRow("messages__common__cya__paye", Seq(paye), answerIsMessageKey = false, None))
-          case _ => Seq(AnswerRow("messages__common__cya__paye", Seq("site.not_entered"), answerIsMessageKey = true,
-            Some(Link("site.add", changeUrl, Some(s"${hiddenLabelPaye}_add")))))
+        userAnswers.get(IsEstablisherNewId(id.index)) match {
+          case Some(true) => row(id)(changeUrl, userAnswers)
+          case _ => BoolAnswerStringCYA(label(id.index), Some(label(id.index)), true)().row(id)(changeUrl, userAnswers)
         }
     }
   }
