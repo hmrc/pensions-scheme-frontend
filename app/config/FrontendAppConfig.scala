@@ -55,7 +55,6 @@ class FrontendAppConfig @Inject()(override val runModeConfiguration: Configurati
   lazy val pensionAdministratorGovUkLink = runModeConfiguration.underlying.getString("urls.pensionAdministratorGovUkLink")
   lazy val pensionPractitionerGovUkLink = runModeConfiguration.underlying.getString("urls.pensionPractitionerGovUkLink")
   lazy val govUkLink = runModeConfiguration.underlying.getString("urls.govUkLink")
-  lazy val findLostUtrNumberLink = runModeConfiguration.underlying.getString("urls.findLostUtrNumberLink")
   lazy val appealLink = runModeConfiguration.underlying.getString("urls.appealLink")
   lazy val pensionsRegulatorLink = runModeConfiguration.underlying.getString("urls.pensionsRegulatorLink")
   lazy val getPSAEmail = runModeConfiguration.underlying.getString("urls.get-psa-email")
