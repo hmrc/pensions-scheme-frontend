@@ -307,3 +307,12 @@ POST       /:index/company/enter-phone-number                                   
 
 GET        /:index/company/check-your-answers-company-contact-details                                       controllers.register.establishers.company.CheckYourAnswersCompanyContactDetailsController.onPageLoad(mode: Mode = NormalMode, srn: Option[String] = None, index: Index)
 POST       /:index/company/check-your-answers-company-contact-details                                       controllers.register.establishers.company.CheckYourAnswersCompanyContactDetailsController.onSubmit(mode: Mode = NormalMode, srn: Option[String] = None, index: Index)
+
+
+GET        /:index/company/employer-paye-reference                                                          controllers.register.establishers.company.DoesCompanyHavePAYENoController.onPageLoad(mode: Mode = NormalMode, srn: Option[String] = None, index:Index)
+POST       /:index/company/employer-paye-reference                                                          controllers.register.establishers.company.DoesCompanyHavePAYENoController.onSubmit(mode: Mode = NormalMode, srn: Option[String] = None, index:Index)
+GET        /:index/company/change/employer-paye-reference                                                   controllers.register.establishers.company.DoesCompanyHavePAYENoController.onPageLoad(mode: Mode = CheckMode, srn: Option[String] = None, index:Index)
+POST       /:index/company/change/employer-paye-reference                                                   controllers.register.establishers.company.DoesCompanyHavePAYENoController.onSubmit(mode: Mode = CheckMode, srn: Option[String] = None, index:Index)
+GET        /:index/company/:mode/employer-paye-reference/:srn                                               controllers.register.establishers.company.DoesCompanyHavePAYENoController.onPageLoad(mode: Mode, srn: Option[String], index:Index)
+POST       /:index/company/:mode/employer-paye-reference/:srn                                               controllers.register.establishers.company.DoesCompanyHavePAYENoController.onSubmit(mode: Mode, srn: Option[String], index:Index)
+
