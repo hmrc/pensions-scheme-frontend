@@ -18,26 +18,31 @@ package controllers.register.establishers.company
 
 import controllers.ControllerSpecBase
 import controllers.actions._
-import forms.register.establishers.HasCompanyUtrFormProvider
+import forms.HasUtrFormProvider
 import identifiers.register.establishers.company.HasCompanyUTRId
 import models.{Index, NormalMode}
-import org.scalatest.BeforeAndAfterEach
-import org.scalatest.mockito.MockitoSugar
 import play.api.data.Form
-import play.api.mvc.Call
 import play.api.test.Helpers._
 import services.FakeUserAnswersService
 import utils.FakeNavigator
-import views.html.register.establishers.company.hasCompanyUtr
+import viewmodels.{HasUtrViewModel, Message}
+import views.html.hasUtr
 
 class HasCompanyUTRControllerSpec extends ControllerSpecBase {
   private val schemeName = None
   private def onwardRoute = controllers.routes.IndexController.onPageLoad()
-  val formProvider = new HasCompanyUtrFormProvider()
-  val form = formProvider("test company name")
+  val formProvider = new HasUtrFormProvider()
+  val form = formProvider("messages__hasCompanyUtr__error__required","test company name")
   val index = Index(0)
   val srn = None
   val postCall = controllers.register.establishers.company.routes.HasCompanyUTRController.onSubmit(NormalMode, srn, index)
+  val viewModel = HasUtrViewModel(
+    postCall,
+    title = Message("messages__hasCompanyUtr__title"),
+    heading = Message("messages__hasCompanyUtr__h1", "test company name"),
+    hint = Message("messages__hasCompanyUtr__p1"),
+    link = Message("messages__hasCompanyUtr__a1")
+  )
 
   def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisherCompany): HasCompanyUTRController =
     new HasCompanyUTRController(
@@ -52,7 +57,7 @@ class HasCompanyUTRControllerSpec extends ControllerSpecBase {
       formProvider
     )
 
-  private def viewAsString(form: Form[_] = form) = hasCompanyUtr(frontendAppConfig, form, "test company name", schemeName, postCall, srn)(fakeRequest, messages).toString
+  private def viewAsString(form: Form[_] = form) = hasUtr(frontendAppConfig, form, viewModel, schemeName)(fakeRequest, messages).toString
 
   "HasCompanyUTRController" must {
 

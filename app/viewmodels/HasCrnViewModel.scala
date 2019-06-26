@@ -14,18 +14,14 @@
  * limitations under the License.
  */
 
-package forms.register.establishers
+package viewmodels
 
-import forms.mappings.Mappings
-import javax.inject.Inject
-import play.api.data.Form
-import play.api.i18n.Messages
-import viewmodels.Message
+import play.api.mvc.Call
 
-class HasCompanyUtrFormProvider @Inject() extends Mappings {
-
-  def apply(companyName : String)(implicit messages: Messages): Form[Boolean] =
-    Form(
-      "value" -> boolean(Message("messages__hasCompanyUtr__error__required", companyName).resolve)
-    )
-}
+case class HasCrnViewModel(
+                         postCall: Call,
+                         title: Message,
+                         heading: Message,
+                         hint: Message,
+                         srn: Option[String] = None
+                       )

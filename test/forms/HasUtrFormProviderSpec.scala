@@ -14,20 +14,18 @@
  * limitations under the License.
  */
 
-package forms.register.establishers.company
+package forms
 
-import forms.FormSpec
-import forms.register.establishers.HasCompanyUtrFormProvider
 import javax.inject.Inject
 import play.api.i18n.Messages
 import viewmodels.Message
 
-class HasCompanyUtrFormProviderSpec @Inject()(implicit message : Messages) extends FormSpec  {
+class HasUtrFormProviderSpec @Inject()(implicit message : Messages) extends FormSpec  {
 
   val requiredKey = Message("messages__hasCompanyUtr__error__required", "ABC").resolve
   val invalidKey = "error.boolean"
 
-  def formProvider(companyName:String) = new HasCompanyUtrFormProvider().apply(companyName)
+  def formProvider(companyName:String) = new HasUtrFormProvider()("messages__hasCompanyUtr__error__required", companyName)
 
   "HasCompanyUtr Form Provider" must {
 

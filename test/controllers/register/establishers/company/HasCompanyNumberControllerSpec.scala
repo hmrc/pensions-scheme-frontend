@@ -18,23 +18,31 @@ package controllers.register.establishers.company
 
 import controllers.ControllerSpecBase
 import controllers.actions._
-import forms.register.establishers.company.HasCompanyNumberFormProvider
+import forms.HasCrnFormProvider
 import identifiers.register.establishers.company.HasCompanyNumberId
 import models.{Index, NormalMode}
 import play.api.data.Form
 import play.api.test.Helpers._
 import services.FakeUserAnswersService
 import utils.FakeNavigator
-import views.html.register.establishers.company.hasCompanyNumber
+import viewmodels.{HasCrnViewModel, Message}
+import views.html.hasCrn
 
 class HasCompanyNumberControllerSpec extends ControllerSpecBase {
   private val schemeName = None
   private def onwardRoute = controllers.routes.IndexController.onPageLoad()
-  val formProvider = new HasCompanyNumberFormProvider()
-  val form = formProvider("test company name")
+  val formProvider = new HasCrnFormProvider()
+  val form = formProvider("messages__hasCompanyNumber__error__required","test company name")
   val index = Index(0)
   val srn = None
   val postCall = controllers.register.establishers.company.routes.HasCompanyNumberController.onSubmit(NormalMode, srn, index)
+
+  val viewModel = HasCrnViewModel(
+    controllers.register.establishers.company.routes.HasCompanyNumberController.onSubmit(NormalMode, srn, index),
+    title = Message("messages__hasCompanyNumber__title"),
+    heading = Message("messages__hasCompanyNumber__h1", "test company name"),
+    hint = Message("messages__hasCompanyNumber__p1")
+  )
 
   def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisherCompany): HasCompanyNumberController =
     new HasCompanyNumberController(
@@ -49,7 +57,7 @@ class HasCompanyNumberControllerSpec extends ControllerSpecBase {
       formProvider
     )
 
-  private def viewAsString(form: Form[_] = form) = hasCompanyNumber(frontendAppConfig, form, "test company name", schemeName, postCall, srn)(fakeRequest, messages).toString
+  private def viewAsString(form: Form[_] = form) = hasCrn(frontendAppConfig, form, viewModel, schemeName)(fakeRequest, messages).toString
 
   "HasCompanyNumberController" must {
 

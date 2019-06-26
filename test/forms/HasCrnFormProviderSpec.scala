@@ -14,19 +14,18 @@
  * limitations under the License.
  */
 
-package forms.register.establishers.company
+package forms
 
-import forms.FormSpec
 import javax.inject.Inject
 import play.api.i18n.Messages
 import viewmodels.Message
 
-class HasCompanyNumberFormProviderSpec @Inject()(implicit message : Messages) extends FormSpec  {
+class HasCrnFormProviderSpec @Inject()(implicit message : Messages) extends FormSpec  {
 
   val requiredKey = Message("messages__hasCompanyNumber__error__required", "ABC").resolve
   val invalidKey = "error.boolean"
 
-  def formProvider(companyName:String) = new HasCompanyNumberFormProvider().apply(companyName)
+  def formProvider(companyName:String) = new HasCrnFormProvider()("messages__hasCompanyNumber__error__required", companyName)
 
   "HasCompanyNumber Form Provider" must {
 

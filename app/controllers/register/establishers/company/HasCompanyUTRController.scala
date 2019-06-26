@@ -17,63 +17,56 @@
 package controllers.register.establishers.company
 
 import config.FrontendAppConfig
-import controllers.Retrievals
+import controllers.HasUtrController
 import controllers.actions._
-import forms.register.establishers.HasCompanyUtrFormProvider
+import forms.HasUtrFormProvider
 import identifiers.register.establishers.company.{CompanyDetailsId, HasCompanyUTRId}
 import javax.inject.Inject
 import models.{Index, Mode}
-import play.api.data.Form
-import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import utils.Navigator
 import utils.annotations.EstablishersCompany
-import utils.{Navigator, UserAnswers}
-import views.html.register.establishers.company.hasCompanyUtr
+import viewmodels.{HasUtrViewModel, Message}
 
-import scala.concurrent.{ExecutionContext, Future}
-
-class HasCompanyUTRController @Inject()(appConfig: FrontendAppConfig,
+class HasCompanyUTRController @Inject()(override val appConfig: FrontendAppConfig,
                                         override val messagesApi: MessagesApi,
-                                        userAnswersService: UserAnswersService,
-                                        @EstablishersCompany navigator: Navigator,
+                                        override val userAnswersService: UserAnswersService,
+                                        @EstablishersCompany override val navigator: Navigator,
                                         authenticate: AuthAction,
                                         allowAccess: AllowAccessActionProvider,
                                         getData: DataRetrievalAction,
                                         requireData: DataRequiredAction,
-                                        formProvider: HasCompanyUtrFormProvider)(implicit val ec: ExecutionContext)
-  extends FrontendController with Retrievals with I18nSupport {
+                                        formProvider: HasUtrFormProvider) extends HasUtrController {
 
-  private def form(companyName:String): Form[Boolean] = formProvider.apply(companyName)
-  private def postCall = controllers.register.establishers.company.routes.HasCompanyUTRController.onSubmit _
+  private def viewModel(mode: Mode, index: Index, srn: Option[String], companyName: String): HasUtrViewModel =
+    HasUtrViewModel(
+      postCall = controllers.register.establishers.company.routes.HasCompanyUTRController.onSubmit(mode, srn, index),
+      title = Message("messages__hasCompanyUtr__title"),
+      heading = Message("messages__hasCompanyUtr__h1", companyName),
+      hint = Message("messages__hasCompanyUtr__p1"),
+      link = Message("messages__hasCompanyUtr__a1"),
+      srn = srn
+    )
 
-  def onPageLoad(mode: Mode, srn: Option[String] = None, index: Index): Action[AnyContent] = (authenticate andThen
-    getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
-    implicit request =>
-      CompanyDetailsId(index.id).retrieve.right.map {
-        details =>
-          val preparedForm = request.userAnswers.get(HasCompanyUTRId(index)) match {
-            case None => form(details.companyName)
-            case Some(value) => form(details.companyName).fill(value)
-          }
-          Future.successful(Ok(hasCompanyUtr(appConfig, preparedForm, details.companyName, existingSchemeName, postCall(mode, srn, index), srn)))
-      }
-  }
+  private def form(companyName: String) = formProvider("messages__hasCompanyUtr__error__required", companyName)
 
-  def onSubmit(mode: Mode, srn: Option[String] = None, index: Index): Action[AnyContent] = (authenticate andThen
-    getData(mode, srn) andThen requireData).async {
-    implicit request => CompanyDetailsId(index.id).retrieve.right.map {
-      details =>
-        form(details.companyName).bindFromRequest().fold(
-          (formWithErrors: Form[_]) =>
-            Future.successful(BadRequest(hasCompanyUtr(appConfig, formWithErrors, details.companyName, existingSchemeName, postCall(mode, srn, index), srn))),
-          value => {
-            userAnswersService.save(mode, srn, HasCompanyUTRId(index), value).map(cacheMap =>
-              Redirect(navigator.nextPage(HasCompanyUTRId(index), mode, UserAnswers(cacheMap), srn))
-            )
-          }
-        )
+  def onPageLoad(mode: Mode, srn: Option[String] = None, index: Index): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+      implicit request =>
+        CompanyDetailsId(index).retrieve.right.map {
+          details =>
+            get(HasCompanyUTRId(index), form(details.companyName), viewModel(mode, index, srn, details.companyName))
+        }
     }
-  }
+
+  def onSubmit(mode: Mode, srn: Option[String] = None, index: Index): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen requireData).async {
+      implicit request =>
+        CompanyDetailsId(index).retrieve.right.map {
+          details =>
+            post(HasCompanyUTRId(index), mode, form(details.companyName), viewModel(mode, index, srn, details.companyName))
+        }
+    }
 }

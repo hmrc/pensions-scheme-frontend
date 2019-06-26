@@ -17,64 +17,55 @@
 package controllers.register.establishers.company
 
 import config.FrontendAppConfig
-import controllers.Retrievals
+import controllers.HasCrnController
 import controllers.actions._
-import forms.register.establishers.company.HasCompanyNumberFormProvider
+import forms.HasCrnFormProvider
 import identifiers.register.establishers.company.{CompanyDetailsId, HasCompanyNumberId}
 import javax.inject.Inject
-import models.{Index, Mode, UpdateMode}
-import play.api.data.Form
-import play.api.i18n.{I18nSupport, MessagesApi}
+import models.{Index, Mode}
+import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import utils.{Navigator, UserAnswers}
+import utils.Navigator
 import utils.annotations.EstablishersCompany
-import views.html.register.establishers.company.hasCompanyNumber
+import viewmodels.{HasCrnViewModel, Message}
 
-import scala.concurrent.{ExecutionContext, Future}
-
-class HasCompanyNumberController @Inject()(appConfig: FrontendAppConfig,
+class HasCompanyNumberController @Inject()(override val appConfig: FrontendAppConfig,
                                            override val messagesApi: MessagesApi,
-                                           userAnswersService: UserAnswersService,
-                                           @EstablishersCompany navigator: Navigator,
+                                           override val userAnswersService: UserAnswersService,
+                                           @EstablishersCompany override val navigator: Navigator,
                                            authenticate: AuthAction,
                                            allowAccess: AllowAccessActionProvider,
                                            getData: DataRetrievalAction,
                                            requireData: DataRequiredAction,
-                                           formProvider: HasCompanyNumberFormProvider)(implicit val ec: ExecutionContext)
-  extends FrontendController with Retrievals with I18nSupport {
+                                           formProvider: HasCrnFormProvider) extends HasCrnController {
 
-  private def form(companyName:String): Form[Boolean] = formProvider.apply(companyName)
-  private def postCall = controllers.register.establishers.company.routes.HasCompanyNumberController.onSubmit _
+  private def viewModel(mode: Mode, index: Index, srn: Option[String], companyName: String): HasCrnViewModel =
+    HasCrnViewModel(
+      postCall = controllers.register.establishers.company.routes.HasCompanyNumberController.onSubmit(mode, srn, index),
+      title = Message("messages__hasCompanyNumber__title"),
+      heading = Message("messages__hasCompanyNumber__h1", companyName),
+      hint = Message("messages__hasCompanyNumber__p1"),
+      srn = srn
+    )
 
-  def onPageLoad(mode: Mode, srn: Option[String] = None, index: Index): Action[AnyContent] = (authenticate andThen
-    getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
-    implicit request =>
-      CompanyDetailsId(index.id).retrieve.right.map {
-        details =>
-          val preparedForm = request.userAnswers.get(HasCompanyNumberId(index)) match {
-            case None => form(details.companyName)
-            case Some(value) => form(details.companyName).fill(value)
-          }
-          Future.successful(Ok(hasCompanyNumber(appConfig, preparedForm, details.companyName, existingSchemeName, postCall(mode, srn, index), srn)))
-      }
-  }
+  private def form(companyName: String) = formProvider("messages__hasCompanyNumber__error__required", companyName)
 
-  def onSubmit(mode: Mode, srn: Option[String] = None, index: Index): Action[AnyContent] = (authenticate andThen
-    getData(mode, srn) andThen requireData).async {
-    implicit request => CompanyDetailsId(index.id).retrieve.right.map {
-      details =>
-        form(details.companyName).bindFromRequest().fold(
-          (formWithErrors: Form[_]) =>
-            Future.successful(BadRequest(hasCompanyNumber(appConfig, formWithErrors, details.companyName, existingSchemeName, postCall(mode, srn, index), srn))),
-          value => {
-            userAnswersService.save(mode, srn, HasCompanyNumberId(index), value).map(cacheMap =>
-              Redirect(navigator.nextPage(HasCompanyNumberId(index), mode, UserAnswers(cacheMap), srn))
-            )
-          }
-        )
+  def onPageLoad(mode: Mode, srn: Option[String] = None, index: Index): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+      implicit request =>
+        CompanyDetailsId(index).retrieve.right.map {
+          details =>
+            get(HasCompanyNumberId(index), form(details.companyName), viewModel(mode, index, srn, details.companyName))
+        }
     }
-  }
 
+  def onSubmit(mode: Mode, srn: Option[String] = None, index: Index): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen requireData).async {
+      implicit request =>
+        CompanyDetailsId(index).retrieve.right.map {
+          details =>
+            post(HasCompanyNumberId(index), mode, form(details.companyName), viewModel(mode, index, srn, details.companyName))
+        }
+    }
 }
