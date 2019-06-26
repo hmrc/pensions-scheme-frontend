@@ -47,7 +47,7 @@ class HasCompanyPAYEController @Inject()(override val appConfig: FrontendAppConf
 
   private def viewModel(mode: Mode, index: Index, srn: Option[String], companyName: String): CommonFormWithHintViewModel =
     CommonFormWithHintViewModel(
-      postCall = controllers.register.establishers.company.routes.HasCompanyNumberController.onSubmit(mode, srn, index),
+      postCall = controllers.register.establishers.company.routes.HasCompanyPAYEController.onSubmit(mode, srn, index),
       title = Message("messages__companyPayeRef__title"),
       heading = Message("messages__companyPayeRef__h1", companyName),
       hint = Message("messages__companyPayeRef__p1"),
@@ -61,7 +61,7 @@ class HasCompanyPAYEController @Inject()(override val appConfig: FrontendAppConf
       implicit request =>
         CompanyDetailsId(index).retrieve.right.map {
           details =>
-            get(HasCompanyNumberId(index), form(details.companyName), viewModel(mode, index, srn, details.companyName))
+            get(HasCompanyPAYEId(index), form(details.companyName), viewModel(mode, index, srn, details.companyName))
         }
     }
 

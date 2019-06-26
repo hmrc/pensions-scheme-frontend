@@ -22,6 +22,7 @@ import forms.HasPAYEFormProvider
 import identifiers.register.establishers.company.HasCompanyPAYEId
 import models.{Index, NormalMode}
 import play.api.data.Form
+import play.api.mvc.Call
 import play.api.test.Helpers._
 import services.FakeUserAnswersService
 import utils.FakeNavigator
@@ -30,7 +31,8 @@ import views.html.hasPAYE
 
 class HasCompanyPAYEControllerSpec  extends ControllerSpecBase {
   private val schemeName = None
-  private def onwardRoute = controllers.routes.IndexController.onPageLoad()
+  def onwardRoute: Call = controllers.register.establishers.company.routes.CompanyPayeVariationsController.onPageLoad (NormalMode, index, None)
+
   val formProvider = new HasPAYEFormProvider()
   val form = formProvider("messages__companyPayeRef__error__required","test company name")
   val index = Index(0)
@@ -69,7 +71,7 @@ class HasCompanyPAYEControllerSpec  extends ControllerSpecBase {
     }
 
     "redirect to the next page when valid data is submitted for true" in {
-      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "true"))
+      val postRequest = fakeRequest.withFormUrlEncodedBody(("hasPaye", "true"))
 
       val result = controller().onSubmit(NormalMode, None, index)(postRequest)
 
@@ -79,7 +81,7 @@ class HasCompanyPAYEControllerSpec  extends ControllerSpecBase {
     }
 
     "return a Bad Request and errors when invalid data is submitted" in {
-      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "invalid value"))
+      val postRequest = fakeRequest.withFormUrlEncodedBody(("hasPAYE", "invalid value"))
       val boundForm = form.bind(Map("value" -> "invalid value"))
 
       val result = controller().onSubmit(NormalMode, None, index)(postRequest)
