@@ -16,42 +16,31 @@
 
 package forms
 
-import javax.inject.Inject
-import play.api.i18n.Messages
+import base.SpecBase
+import forms.behaviours.BooleanFieldBehaviours
+import play.api.data.FormError
 import viewmodels.Message
 
-class HasUtrFormProviderSpec @Inject()(implicit message : Messages) extends FormSpec  {
+class HasUtrFormProviderSpec extends BooleanFieldBehaviours with SpecBase {
 
-  val requiredKey = Message("messages__hasCompanyUtr__error__required", "ABC").resolve
-  val invalidKey = "error.boolean"
+  private val requiredKey = Message("messages__hasCompanyUtr__error__required", "ABC").resolve
+  private val invalidKey = "error.boolean"
+  private val fieldName = "value"
 
   def formProvider(companyName:String) = new HasUtrFormProvider()("messages__hasCompanyUtr__error__required", companyName)
 
   "HasCompanyUtr Form Provider" must {
 
-    "bind true" in {
-      val form = formProvider("ABC").bind(Map("value" -> "true"))
-      form.get mustBe true
-    }
+    behave like booleanField(
+      formProvider("ABC"),
+      fieldName,
+      invalidError = FormError(fieldName, invalidKey)
+    )
 
-    "bind false" in {
-      val form = formProvider("ABC").bind(Map("value" -> "false"))
-      form.get mustBe false
-    }
-
-    "fail to bind non-booleans" in {
-      val expectedError = error("value", invalidKey)
-      checkForError(formProvider("ABC"), Map("value" -> "not a boolean"), expectedError)
-    }
-
-    "fail to bind a blank value" in {
-      val expectedError = error("value", requiredKey)
-      checkForError(formProvider("ABC"), Map("value" -> ""), expectedError)
-    }
-
-    "fail to bind when value is omitted" in {
-      val expectedError = error("value", requiredKey)
-      checkForError(formProvider("ABC"), emptyForm, expectedError)
-    }
+    behave like mandatoryField(
+      formProvider("ABC"),
+      fieldName,
+      requiredError = FormError(fieldName, requiredKey)
+    )
   }
 }
