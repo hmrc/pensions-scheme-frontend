@@ -18,42 +18,71 @@ package controllers.register.establishers.company
 
 import controllers.ControllerSpecBase
 import controllers.actions._
+import forms.PhoneFormProvider
 import models.{Index, NormalMode}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.mockito.MockitoSugar
+import play.api.data.Form
 import play.api.mvc.Call
 import play.api.test.Helpers._
+import services.FakeUserAnswersService
+import utils.FakeNavigator
+import viewmodels.{Message, CommonFormWithHintViewModel}
+import views.html.phoneNumber
 
 class CompanyPhoneControllerSpec extends ControllerSpecBase with MockitoSugar with BeforeAndAfterEach {
 
-  def onwardRoute: Call = controllers.routes.SessionExpiredController.onPageLoad
+  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): CompanyPhoneController =
+  val formProvider = new PhoneFormProvider()
+  val form: Form[String] = formProvider()
+  val firstIndex = Index(0)
+
+  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisherCompany): CompanyPhoneController =
     new CompanyPhoneController(frontendAppConfig,
       messagesApi,
       FakeAuthAction,
-      dataRetrievalAction
+      dataRetrievalAction,
+      FakeUserAnswersService,
+      FakeAllowAccessProvider(),
+      new DataRequiredActionImpl,
+      new FakeNavigator(desiredRoute = onwardRoute),
+      formProvider
     )
 
+  def viewAsString(form: Form[_] = form): String =
+    phoneNumber(
+      frontendAppConfig,
+      form,
+      CommonFormWithHintViewModel(
+        routes.CompanyPhoneController.onSubmit(NormalMode, None, firstIndex),
+        Message("messages__establisher_phone__title"),
+        Message("messages__common_phone__heading", "test company name"),
+        None,
+        None
+      ),
+      None
+    )(fakeRequest, messages).toString
 
   "CompanyPhoneController" when {
 
     "on a GET" must {
       "return OK and the correct view" in {
-        val result = controller().onPageLoad(NormalMode, None, Index(1))(fakeRequest)
+        val result = controller().onPageLoad(NormalMode, None, firstIndex)(fakeRequest)
 
         status(result) mustBe OK
+        contentAsString(result) mustBe viewAsString()
       }
     }
 
     "on a POST" must {
-      "redirect to relavant page" in {
-        val result = controller().onSubmit(NormalMode, None, Index(1))(fakeRequest)
+      "redirect to relevant page" in {
+        val postRequest = fakeRequest.withFormUrlEncodedBody(("phone", "09090909090"))
+        val result = controller().onSubmit(NormalMode, None, firstIndex)(postRequest)
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(controllers.routes.IndexController.onPageLoad().url)
+        redirectLocation(result) mustBe Some(onwardRoute.url)
       }
     }
   }
 }
-

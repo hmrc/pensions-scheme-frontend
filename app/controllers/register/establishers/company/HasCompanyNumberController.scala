@@ -45,7 +45,7 @@ class HasCompanyNumberController @Inject()(override val appConfig: FrontendAppCo
       postCall = controllers.register.establishers.company.routes.HasCompanyNumberController.onSubmit(mode, srn, index),
       title = Message("messages__hasCompanyNumber__title"),
       heading = Message("messages__hasCompanyNumber__h1", companyName),
-      hint = Message("messages__hasCompanyNumber__p1"),
+      hint = Some(Message("messages__hasCompanyNumber__p1")),
       srn = srn
     )
 
