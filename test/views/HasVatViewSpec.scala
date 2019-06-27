@@ -18,7 +18,7 @@ package views
 
 import com.google.inject.Inject
 import config.FrontendAppConfig
-import forms.HasUtrFormProvider
+import forms.HasVatFormProvider
 import models.{Index, NormalMode}
 import play.api.data.Form
 import play.twirl.api.HtmlFormat
@@ -26,19 +26,19 @@ import viewmodels.{CommonFormWithHintViewModel, Message}
 import views.behaviours.YesNoViewBehaviours
 import views.html.hasUtr
 
-class HasUtrViewSpec@Inject()(appConfig: FrontendAppConfig) extends YesNoViewBehaviours {
+class HasVatViewSpec@Inject()(appConfig: FrontendAppConfig) extends YesNoViewBehaviours {
   val schemeName = Some("Scheme x")
-  val messageKeyPrefix = "hasCompanyUtr"
+  val messageKeyPrefix = "hasCompanyVat"
   val srn = Some("srn")
 
-  val form = new HasUtrFormProvider()("messages__hasCompanyUtr__error__required", "ABC")
-  val postCall = controllers.register.establishers.company.routes.HasCompanyUTRController.onSubmit(NormalMode, None, Index(0))
+  val form = new HasVatFormProvider()("messages__hasCompanyVat__error__required", "ABC")
+  val postCall = controllers.register.establishers.company.routes.HasCompanyVATController.onSubmit(NormalMode, None, Index(0))
 
   def viewModel(srn : Option[String] = None) = CommonFormWithHintViewModel(
     postCall,
-    title = Message("messages__hasCompanyUtr__title"),
-    heading = Message("messages__hasCompanyUtr__h1", "ABC"),
-    hint = Some(Message("messages__hasCompanyUtr__p1")),
+    title = Message("messages__hasCompanyVat__title"),
+    heading = Message("messages__hasCompanyVat__h1", "ABC"),
+    hint = Some(Message("messages__hasCompanyVat__p1")),
     srn = srn
   )
   def createView(srn : Option[String] = None): () => HtmlFormat.Appendable = () =>
@@ -47,7 +47,7 @@ class HasUtrViewSpec@Inject()(appConfig: FrontendAppConfig) extends YesNoViewBeh
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) =>
     hasUtr(frontendAppConfig, form, viewModel(), schemeName)(fakeRequest, messages)
 
-  "HasCompanyNumber view" must {
+  "HasCompanyVAT view" must {
 
     behave like normalPage(createView(), messageKeyPrefix, pageHeader = messages(s"messages__${messageKeyPrefix}__h1", "ABC"),
       expectedGuidanceKeys = "_p1")
