@@ -18,18 +18,21 @@ package forms
 
 import forms.mappings.CrnMapping
 import javax.inject.Inject
-import models.CompanyRegistrationNumber
+import models.ReferenceValue
 import play.api.data.Form
+import play.api.data.Forms.mapping
 import play.api.i18n.Messages
 import viewmodels.Message
 
 class CompanyRegistrationNumberVariationsFormProvider @Inject() extends CrnMapping {
 
-  def apply(name: String)(implicit messages: Messages): Form[String] =
+  def apply(name: String)(implicit messages: Messages): Form[ReferenceValue] =
     Form(
-      "companyRegistrationNumber" -> companyRegistrationNumberStringMapping(
-        crnLengthKey = Message("messages__error__no_crn_length", name),
-        invalidCRNKey = Message("messages__error__crn_invalid", name)
-      )
+      mapping(
+        "companyRegistrationNumber" -> companyRegistrationNumberStringMapping(
+          crnLengthKey = Message("messages__error__no_crn_length", name),
+          invalidCRNKey = Message("messages__error__crn_invalid_with_company_name", name).resolve
+        )
+      )(ReferenceValue.applyEditable)(ReferenceValue.unapplyEditable)
     )
 }

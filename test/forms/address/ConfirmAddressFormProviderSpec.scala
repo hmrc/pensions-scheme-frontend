@@ -16,13 +16,12 @@
 
 package forms.address
 
-import com.google.inject.Inject
+import base.SpecBase
 import forms.behaviours.BooleanFieldBehaviours
 import play.api.data.FormError
-import play.api.i18n.Messages
 import viewmodels.Message
 
-class ConfirmAddressFormProviderSpec @Inject()(implicit messages: Messages) extends BooleanFieldBehaviours {
+class ConfirmAddressFormProviderSpec extends BooleanFieldBehaviours with SpecBase{
 
   val requiredKey = "confirmPreviousAddress.error"
   val invalidKey = "error.boolean"

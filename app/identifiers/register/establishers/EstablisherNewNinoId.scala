@@ -17,17 +17,15 @@
 package identifiers.register.establishers
 
 import identifiers._
-import models.Link
+import models.ReferenceValue
 import play.api.i18n.Messages
 import play.api.libs.json.JsPath
-import utils.checkyouranswers.CheckYourAnswers
-import utils.checkyouranswers.CheckYourAnswers.StringCYA
+import utils.checkyouranswers.{CheckYourAnswers, ReferenceValueCYA}
 import utils.{CountryOptions, UserAnswers}
 import viewmodels.AnswerRow
 
-
-case class EstablisherNewNinoId(index: Int) extends TypedIdentifier[String] {
-  override def path: JsPath = EstablishersId(index).path \ EstablisherNewNinoId.toString \ "nino"
+case class EstablisherNewNinoId(index: Int) extends TypedIdentifier[ReferenceValue] {
+  override def path: JsPath = EstablishersId(index).path \ EstablisherNewNinoId.toString
 }
 
 object EstablisherNewNinoId {
@@ -38,18 +36,18 @@ object EstablisherNewNinoId {
 
     new CheckYourAnswers[EstablisherNewNinoId] {
 
+      private val label = "messages__common__nino"
+      private val hiddenLabel = "messages__visuallyhidden__establisher__nino"
+
       override def row(id: EstablisherNewNinoId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        StringCYA[EstablisherNewNinoId]()().row(id)(changeUrl, userAnswers)
+        ReferenceValueCYA[EstablisherNewNinoId](label, hiddenLabel)().row(id)(changeUrl, userAnswers)
 
       override def updateRow(id: EstablisherNewNinoId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
         userAnswers.get(IsEstablisherNewId(id.index)) match {
-          case Some(true) => StringCYA[EstablisherNewNinoId]()().row(id)(changeUrl, userAnswers)
+          case Some(true) =>
+            ReferenceValueCYA[EstablisherNewNinoId](label, hiddenLabel)().row(id)(changeUrl, userAnswers)
           case _ =>
-            userAnswers.get(id) match {
-              case Some(nino) => Seq(AnswerRow("messages__common__nino", Seq(nino), answerIsMessageKey = false, None))
-              case _ => Seq(AnswerRow("messages__common__nino", Seq("site.not_entered"), answerIsMessageKey = true,
-                Some(Link("site.add", changeUrl, Some(s"messages__visuallyhidden__director__nino_add")))))
-            }
+            ReferenceValueCYA[EstablisherNewNinoId](label, hiddenLabel)().updateRow(id)(changeUrl, userAnswers)
         }
       }
     }

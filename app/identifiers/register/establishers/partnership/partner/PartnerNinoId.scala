@@ -44,7 +44,8 @@ object PartnerNinoId {
 
       override def updateRow(id: PartnerNinoId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
         userAnswers.get(IsNewPartnerId(id.establisherIndex, id.partnerIndex)) match {
-          case Some(true) => NinoCYA[PartnerNinoId](label, reasonLabel, changeHasNino, changeNino, changeNoNino)().row(id)(changeUrl, userAnswers)
+          case Some(true) =>
+            NinoCYA[PartnerNinoId](label, reasonLabel, changeHasNino, changeNino, changeNoNino)().row(id)(changeUrl, userAnswers)
           case _ => NinoCYA[PartnerNinoId](label, reasonLabel, changeHasNino, changeNino, changeNoNino)().updateRow(id)(changeUrl, userAnswers)
         }
       }

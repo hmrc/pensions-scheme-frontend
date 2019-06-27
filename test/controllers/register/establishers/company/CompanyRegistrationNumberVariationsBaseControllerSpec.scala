@@ -22,22 +22,19 @@ import config.FrontendAppConfig
 import controllers.register.CompanyRegistrationNumberVariationsBaseController
 import forms.CompanyRegistrationNumberVariationsFormProvider
 import identifiers.TypedIdentifier
-import identifiers.register.establishers.company.CompanyRegistrationNumberId
+import identifiers.register.establishers.company.CompanyRegistrationNumberVariationsId
 import models._
 import models.requests.DataRequest
-import org.mockito.Matchers.any
-import org.mockito.Mockito.when
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.mockito.MockitoSugar
 import org.scalatest.{MustMatchers, OptionValues, WordSpec}
 import play.api.data.Form
 import play.api.i18n.MessagesApi
 import play.api.inject.bind
-import play.api.libs.json.Json
 import play.api.mvc.{AnyContent, Call, Request, Result}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import services.UserAnswersService
+import services.{FakeUserAnswersService, UserAnswersService}
 import uk.gov.hmrc.domain.PsaId
 import utils.{FakeNavigator, Navigator, UserAnswers}
 import viewmodels.{CompanyRegistrationNumberViewModel, Message}
@@ -97,14 +94,14 @@ class CompanyRegistrationNumberVariationsBaseControllerSpec extends WordSpec wit
           val request = FakeRequest()
           val messages = app.injector.instanceOf[MessagesApi].preferred(request)
           val controller = app.injector.instanceOf[TestBaseController]
-          val answers = UserAnswers().set(CompanyRegistrationNumberId(firstIndex))(CompanyRegistrationNumber.Yes("123456789")).get
+          val answers = UserAnswers().set(CompanyRegistrationNumberVariationsId(firstIndex))(ReferenceValue("123456789")).get
           val result = controller.onPageLoad(answers)
 
           status(result) mustEqual OK
           contentAsString(result) mustEqual companyRegistrationNumberVariations(
             appConfig,
             viewModel(),
-            formProvider(companyName)(messages).fill("123456789"),
+            formProvider(companyName)(messages).fill(ReferenceValue("123456789")),
             None,
             postCall(NormalMode, None, firstIndex),
             None
@@ -121,19 +118,13 @@ class CompanyRegistrationNumberVariationsBaseControllerSpec extends WordSpec wit
 
       import play.api.inject._
 
-      val userAnswersService = mock[UserAnswersService]
-
       running(_.overrides(
-        bind[UserAnswersService].toInstance(userAnswersService),
+        bind[UserAnswersService].toInstance(FakeUserAnswersService),
         bind[Navigator].toInstance(FakeNavigator)
       )) {
         app =>
 
           implicit val materializer: Materializer = app.materializer
-
-          when(
-            userAnswersService.upsert(any(), any(), any())(any(), any(), any())
-          ).thenReturn(Future.successful(Json.obj()))
 
           val request = FakeRequest().withFormUrlEncodedBody(
             ("companyRegistrationNumber", "12345678")
@@ -143,6 +134,7 @@ class CompanyRegistrationNumberVariationsBaseControllerSpec extends WordSpec wit
 
           status(result) mustEqual SEE_OTHER
           redirectLocation(result).value mustEqual "www.example.com"
+          FakeUserAnswersService.verify(CompanyRegistrationNumberVariationsId(0), ReferenceValue("12345678", isEditable = true))
       }
     }
   }
@@ -191,7 +183,7 @@ object CompanyRegistrationNumberVariationsBaseControllerSpec {
     )
   }
 
-  object FakeIdentifier extends TypedIdentifier[CompanyRegistrationNumber]
+  object FakeIdentifier extends TypedIdentifier[ReferenceValue]
 
   class TestBaseController @Inject()(
                                   override val appConfig: FrontendAppConfig,
@@ -202,9 +194,9 @@ object CompanyRegistrationNumberVariationsBaseControllerSpec {
 
     def postCall: (Mode, Option[String], Index) => Call = routes.CompanyRegistrationNumberController.onSubmit _
 
-    override def identifier(index: Int): TypedIdentifier[CompanyRegistrationNumber] = CompanyRegistrationNumberId(index)
+    override def identifier(index: Int): TypedIdentifier[ReferenceValue] = CompanyRegistrationNumberVariationsId(index)
 
-    override protected def form(name: String): Form[String] = formProvider(name)
+    override protected def form(name: String): Form[ReferenceValue] = formProvider(name)
 
     def onPageLoad(answers: UserAnswers): Future[Result] = {
       get(NormalMode, None, firstIndex, viewModel(companyName), companyName)(DataRequest(FakeRequest(), "cacheId", answers, PsaId("A0000000")))

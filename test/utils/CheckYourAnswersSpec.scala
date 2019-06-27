@@ -453,6 +453,22 @@ class CheckYourAnswersSpec extends SpecBase with MustMatchers with PropertyCheck
         }
 
       }
+
+      "reference" in {
+
+        val reference = ReferenceValue("reference")
+
+        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(Json.obj(
+          "testId" -> reference
+        )), PsaId("A0000000"))
+
+        testIdentifier[ReferenceValue].row("onwardUrl") must equal(Seq(AnswerRow(
+          "messages__common__cya__name",
+          Seq(reference.value),
+          false,
+          Some(Link("site.change", onwardUrl, Some("messages__visuallyhidden__common__name")))
+        )))
+      }
     }
 
     "produce update row(row in UpdateMode) of answers" when {
@@ -686,6 +702,50 @@ class CheckYourAnswersSpec extends SpecBase with MustMatchers with PropertyCheck
           )))
         }
 
+      }
+
+      "reference" must {
+        "not be editable " in {
+          val reference = ReferenceValue("reference")
+
+          implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(Json.obj(
+            "testId" -> reference
+          )), PsaId("A0000000"))
+
+          testIdentifier[ReferenceValue].row("onwardUrl", UpdateMode) must equal(Seq(AnswerRow(
+            "messages__common__cya__name",
+            Seq(reference.value),
+            false,
+            None
+          )))
+        }
+
+        "be editable" in {
+          val reference = ReferenceValue("reference", true)
+
+          implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(Json.obj(
+            "testId" -> reference
+          )), PsaId("A0000000"))
+
+          testIdentifier[ReferenceValue].row("onwardUrl", UpdateMode) must equal(Seq(AnswerRow(
+            "messages__common__cya__name",
+            Seq(reference.value),
+            false,
+            Some(Link("site.change", onwardUrl, Some("messages__visuallyhidden__common__name")))
+          )))
+        }
+
+        "not have any value" in {
+          implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id",
+            UserAnswers(Json.obj()), PsaId("A0000000"))
+
+          testIdentifier[ReferenceValue].row("onwardUrl", UpdateMode) must equal(Seq(AnswerRow(
+            "messages__common__cya__name",
+            Seq("site.not_entered"),
+            true,
+            Some(Link("site.add", onwardUrl, Some("messages__visuallyhidden__common__name_add")))
+          )))
+        }
       }
     }
   }

@@ -27,9 +27,9 @@ class AdviserPhoneFormProviderSpec extends PhoneNumberBehaviours with Constraint
 
     val fieldName = "phone"
 
-    val requiredKey = "messages__adviser__phone__blank"
-    val maxLengthKey = "messages__adviser__phone__length"
-    val invalidKey = "messages__adviser__phone__invalid"
+    val requiredKey = "messages__phone__blank"
+    val maxLengthKey = "messages__phone__length"
+    val invalidKey = "messages__phone__invalid"
 
     behave like formWithPhoneNumberField(form, fieldName, requiredKey, maxLengthKey, invalidKey)
 
