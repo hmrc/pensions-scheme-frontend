@@ -17,7 +17,6 @@
 package navigators
 
 import base.SpecBase
-import config.FeatureSwitchManagementServiceTestImpl
 import connectors.FakeUserAnswersCacheConnector
 import identifiers.register.establishers.company._
 import identifiers.register.establishers.company.director.DirectorDetailsId
@@ -26,11 +25,9 @@ import identifiers.{EstablishersOrTrusteesChangedId, Identifier}
 import models.Mode.{checkMode, journeyMode}
 import models._
 import models.person.PersonDetails
-import navigators.EstablishersIndividualNavigatorSpec.{environment, injector}
 import org.joda.time.LocalDate
 import org.scalatest.prop.TableFor6
 import org.scalatest.{MustMatchers, OptionValues}
-import play.api.Configuration
 import play.api.libs.json.Json
 import play.api.mvc.Call
 import utils.{Enumerable, FakeFeatureSwitchManagementService, UserAnswers}
@@ -46,6 +43,9 @@ class EstablishersCompanyNavigatorSpec extends SpecBase with MustMatchers with N
     ("Id",                                      "User Answers",                   "Next Page (Normal Mode)",                "Save (NM)",    "Next Page (Check Mode)",                 "Save (CM)"),
     (CompanyDetailsId(0),                         emptyAnswers,                     companyVat(mode),                   true,           Some(exitJourney(mode, emptyAnswers, 0, cya(mode))),                   true),
     (CompanyDetailsId(0),                         newEstablisher,                   companyVat(mode),                   true,           Some(cya(mode)),                                                             true),
+    (HasCompanyNumberId(0),                       emptyAnswers,                     sessionExpired,                     true,           Some(exitJourney(mode, emptyAnswers, 0, cya(mode))),          true),
+    (HasCompanyNumberId(0),                       hasCompanyNumber(true),    companyRegistrationNumberNew(mode), true,           Some(exitJourney(mode, emptyAnswers, 0, cya(mode))),          true),
+    (HasCompanyNumberId(0),                       hasCompanyNumber(false),   noCompanyRegistrationNumber(mode),  true,           Some(exitJourney(mode, emptyAnswers, 0, cya(mode))),          true),
     (CompanyVatId(0),                             emptyAnswers,                     companyPaye(mode),                  true,           Some(exitJourney(mode, emptyAnswers, 0, cya(mode))),                   true),
     (CompanyVatId(0),                             newEstablisher,                   companyPaye(mode),                  true,           Some(cya(mode)),                                                             true),
     (CompanyPayeId(0),                            emptyAnswers,                     companyRegistrationNumber(mode),    true,           Some(exitJourney(mode, emptyAnswers, 0, cya(mode))),                   true),
@@ -132,6 +132,7 @@ class EstablishersCompanyNavigatorSpec extends SpecBase with MustMatchers with N
 object EstablishersCompanyNavigatorSpec extends OptionValues with Enumerable.Implicits {
   private val emptyAnswers = UserAnswers(Json.obj())
   private val newEstablisher = UserAnswers(Json.obj()).set(IsEstablisherNewId(0))(true).asOpt.value
+  private def hasCompanyNumber(yesNo : Boolean) = UserAnswers(Json.obj()).set(HasCompanyNumberId(0))(yesNo).asOpt.value
   private val johnDoe = PersonDetails("John", None, "Doe", new LocalDate(1862, 6, 9))
 
   private def validData(directors: PersonDetails*) = {
@@ -150,6 +151,12 @@ object EstablishersCompanyNavigatorSpec extends OptionValues with Enumerable.Imp
 
   private def companyRegistrationNumber(mode: Mode): Call =
     controllers.register.establishers.company.routes.CompanyRegistrationNumberController.onPageLoad(mode, None, 0)
+
+  private def companyRegistrationNumberNew(mode: Mode): Call =
+    controllers.register.establishers.company.routes.CompanyRegistrationNumberVariationsController.onPageLoad(mode, None, 0)
+
+  private def noCompanyRegistrationNumber(mode: Mode): Call =
+    controllers.register.establishers.company.routes.NoCompanyNumberController.onPageLoad(Index(0))
 
   private def companyPaye(mode: Mode): Call =
     controllers.register.establishers.company.routes.CompanyPayeController.onPageLoad(mode, 0, None)
@@ -199,7 +206,7 @@ object EstablishersCompanyNavigatorSpec extends OptionValues with Enumerable.Imp
     if(answers.get(IsEstablisherNewId(index)).getOrElse(false)) cyaPage
     else anyMoreChanges
   }
-  
+
   private def confirmPreviousAddress = controllers.register.establishers.company.routes.CompanyConfirmPreviousAddressController.onPageLoad(0, None)
 
 
