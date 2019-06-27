@@ -41,7 +41,7 @@ class HasCompanyVATControllerSpec extends ControllerSpecBase {
     controllers.register.establishers.company.routes.HasCompanyVATController.onSubmit(NormalMode, srn, index),
     title = Message("messages__hasCompanyVat__title"),
     heading = Message("messages__hasCompanyVat__h1", "test company name"),
-    hint = Message("messages__hasCompanyVat__p1")
+    hint = Message("messages__hasCompanyVat__p1", "test company name")
   )
 
   def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisherCompany): HasCompanyVATController =

@@ -1444,7 +1444,7 @@ messages__hasCompanyUtr__error__required = Select yes if {0} has a Unique Taxpay
 
 messages__hasCompanyVat__title = Is the company registered for VAT?
 messages__hasCompanyVat__h1 = Is {0} registered for VAT?
-messages__hasCompanyVat__p1 = This is 9 numbers, sometimes with ‘GB’ at the start, for example 123456789 or GB123456789. You can find it on ’s VAT registration certificate.
+messages__hasCompanyVat__p1 = This is 9 numbers, sometimes with ‘GB’ at the start, for example 123456789 or GB123456789. You can find it on {0}’s VAT registration certificate.
 messages__hasCompanyVat__error__required = Select yes if the {0} is registered for VAT
 
 messages__schemeTaskList__before_you_start_link_text = Setting up your scheme application

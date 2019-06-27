@@ -45,7 +45,7 @@ class HasCompanyVATController @Inject()(override val appConfig: FrontendAppConfi
       postCall = controllers.register.establishers.company.routes.HasCompanyVATController.onSubmit(mode, srn, index),
       title = Message("messages__hasCompanyVat__title"),
       heading = Message("messages__hasCompanyVat__h1", companyName),
-      hint = Message("messages__hasCompanyVat__p1"),
+      hint = Message("messages__hasCompanyVat__p1", companyName),
       srn = srn
     )
 
