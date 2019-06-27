@@ -22,7 +22,7 @@ import play.api.i18n.Messages
 import play.api.libs.json.JsPath
 import utils.UserAnswers
 import utils.checkyouranswers.CheckYourAnswers
-import utils.checkyouranswers.CheckYourAnswers.DoYouHaveBoolCYA
+import utils.checkyouranswers.CheckYourAnswers.BooleanCYA
 import viewmodels.AnswerRow
 
 case class HasCompanyPAYEId(index: Int) extends TypedIdentifier[Boolean] {
@@ -35,17 +35,22 @@ object HasCompanyPAYEId {
   implicit def cya(implicit userAnswers: UserAnswers, messages: Messages): CheckYourAnswers[HasCompanyPAYEId] = {
 
     def label(index: Int) = userAnswers.get(CompanyDetailsId(index)) match {
-      case Some(name) => messages("messages__hasCompanyPaye__heading", name)
-      case _ => messages("messages__hasCompanyPaye__title")
+      case Some(name) => Some(messages("messages__hasCompanyPaye__heading", name))
+      case _ => Some(messages("messages__hasCompanyPaye__title"))
+    }
+
+    def hiddenLabel(index: Int) = userAnswers.get(CompanyDetailsId(index)) match {
+      case Some(name) => Some(messages("messages__hasCompanyPaye__heading", name))
+      case _ => Some(messages("messages__hasCompanyPaye__title"))
     }
 
     new CheckYourAnswers[HasCompanyPAYEId] {
       override def row(id: HasCompanyPAYEId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        DoYouHaveBoolCYA(label(id.index), Some(label(id.index)))().row(id)(changeUrl, userAnswers)
+        BooleanCYA(label(id.index), hiddenLabel(id.index))().row(id)(changeUrl, userAnswers)
 
       override def updateRow(id: HasCompanyPAYEId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
         userAnswers.get(IsEstablisherNewId(id.index)) match {
-          case Some(true) => DoYouHaveBoolCYA(label(id.index), Some(label(id.index)))().row(id)(changeUrl, userAnswers)
+          case Some(true) => BooleanCYA(label(id.index), hiddenLabel(id.index))().row(id)(changeUrl, userAnswers)
           case _ => Seq.empty[AnswerRow]
         }
     }

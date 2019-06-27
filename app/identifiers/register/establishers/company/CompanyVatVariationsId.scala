@@ -18,11 +18,10 @@ package identifiers.register.establishers.company
 
 import identifiers._
 import identifiers.register.establishers.{EstablishersId, IsEstablisherNewId}
-import models.Link
 import play.api.i18n.Messages
 import play.api.libs.json.JsPath
 import utils.checkyouranswers.CheckYourAnswers
-import utils.checkyouranswers.CheckYourAnswers.{BoolAnswerStringCYA, StringCYA}
+import utils.checkyouranswers.CheckYourAnswers.StringCYA
 import utils.{CountryOptions, UserAnswers}
 import viewmodels.AnswerRow
 
@@ -34,24 +33,28 @@ object CompanyVatVariationsId {
   override def toString: String = "vat"
 
   implicit def cya(implicit userAnswers: UserAnswers,
-                   messages: Messages): CheckYourAnswers[CompanyVatVariationsId] = {
+                   messages: Messages,
+                   countryOptions: CountryOptions): CheckYourAnswers[CompanyVatVariationsId] = {
 
     def label(index: Int) = userAnswers.get(CompanyDetailsId(index)) match {
-      case Some(name) => messages("messages__vatVariations__heading", name)
-      case _ => messages("messages__vatVariations__company_title")
+      case Some(name) => Some(messages("messages__vatVariations__heading", name))
+      case _ => Some(messages("messages__vatVariations__company_title"))
+    }
+
+    def hiddenLabel(index: Int) = userAnswers.get(CompanyDetailsId(index)) match {
+      case Some(name) => Some(messages("messages__vatVariations__heading", name))
+      case _ => Some(messages("messages__vatVariations__company_title"))
     }
 
     new CheckYourAnswers[CompanyVatVariationsId] {
       override def row(id: CompanyVatVariationsId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        userAnswers.get(HasCompanyVATId(id.index)) match {
-          case Some(bool: Boolean) => BoolAnswerStringCYA(label(id.index), Some(label(id.index)), bool)().row(id)(changeUrl, userAnswers)
-          case _ => Seq.empty[AnswerRow]
-        }
+        StringCYA(label(id.index), hiddenLabel(id.index))().row(id)(changeUrl, userAnswers)
+
 
       override def updateRow(id: CompanyVatVariationsId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
         userAnswers.get(IsEstablisherNewId(id.index)) match {
           case Some(true) => row(id)(changeUrl, userAnswers)
-          case _ => BoolAnswerStringCYA(label(id.index), Some(label(id.index)), true)().row(id)(changeUrl, userAnswers)
+          case _ => StringCYA(label(id.index), hiddenLabel(id.index), true)().row(id)(changeUrl, userAnswers)
         }
     }
   }

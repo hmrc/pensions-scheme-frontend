@@ -44,7 +44,7 @@ class CheckYourAnswersCompanyDetailsControllerSpec extends ControllerSpecBase wi
         val result = controller(fullAnswers.dataRetrievalAction).onPageLoad(NormalMode, None, index)(request)
 
         status(result) mustBe OK
-        contentAsString(result) mustBe viewAsString(answerSections(request))
+        contentAsString(result) mustBe viewAsString(companyDetailsAllValues(NormalMode, None)(request))
       }
 
       "return OK and the correct view with full answers when user has answered no to all questions" in {
@@ -52,72 +52,33 @@ class CheckYourAnswersCompanyDetailsControllerSpec extends ControllerSpecBase wi
         val result = controller(fullAnswers.dataRetrievalAction).onPageLoad(NormalMode, None, index)(request)
 
         status(result) mustBe OK
-        contentAsString(result) mustBe viewAsString(answerSections(request))
-      }
-
-      "return OK and the correct view with add links for values" in {
-        val request = FakeDataRequest(emptyAnswers)
-        val result = controller(emptyAnswers.dataRetrievalAction).onPageLoad(NormalMode, None, index)(request)
-
-        status(result) mustBe OK
-        contentAsString(result) mustBe viewAsString(answerSections(request))
-      }
-
-      "return OK and the correct view with add links for reasons" in {
-        val request = FakeDataRequest(emptyAnswers)
-        val result = controller(emptyAnswers.dataRetrievalAction).onPageLoad(NormalMode, None, index)(request)
-
-        status(result) mustBe OK
-        contentAsString(result) mustBe viewAsString(answerSections(request))
-      }
-
-      "return OK and the correct view with empty answers" in {
-        val request = FakeDataRequest(emptyAnswers)
-        val result = controller(emptyAnswers.dataRetrievalAction).onPageLoad(NormalMode, None, index)(request)
-
-        status(result) mustBe OK
-        contentAsString(result) mustBe viewAsString(answerSections(request))
+        contentAsString(result) mustBe viewAsString(companyDetailsAllReasons(NormalMode, None)(request))
       }
     }
+
     "when in variations journey with existing establisher" must {
       "return OK and the correct view with full answers when user has answered yes to all questions" in {
         val request = FakeDataRequest(fullAnswers)
-        val result = controller(fullAnswers.dataRetrievalAction).onPageLoad(NormalMode, None, index)(request)
+        val result = controller(fullAnswers.dataRetrievalAction).onPageLoad(UpdateMode, srn, index)(request)
 
         status(result) mustBe OK
-        contentAsString(result) mustBe viewAsString(answerSections(request))
+        contentAsString(result) mustBe viewAsString(companyDetailsAllValues(UpdateMode, srn)(request))
       }
 
       "return OK and the correct view with full answers when user has answered no to all questions" in {
         val request = FakeDataRequest(fullAnswers)
-        val result = controller(fullAnswers.dataRetrievalAction).onPageLoad(NormalMode, None, index)(request)
+        val result = controller(fullAnswers.dataRetrievalAction).onPageLoad(UpdateMode, srn, index)(request)
 
         status(result) mustBe OK
-        contentAsString(result) mustBe viewAsString(answerSections(request))
+        contentAsString(result) mustBe viewAsString(companyDetailsAllReasons(UpdateMode, srn)(request))
       }
 
       "return OK and the correct view with add links for values" in {
         val request = FakeDataRequest(emptyAnswers)
-        val result = controller(emptyAnswers.dataRetrievalAction).onPageLoad(NormalMode, None, index)(request)
+        val result = controller(emptyAnswers.dataRetrievalAction).onPageLoad(UpdateMode, srn, index)(request)
 
         status(result) mustBe OK
-        contentAsString(result) mustBe viewAsString(answerSections(request))
-      }
-
-      "return OK and the correct view with add links for reasons" in {
-        val request = FakeDataRequest(emptyAnswers)
-        val result = controller(emptyAnswers.dataRetrievalAction).onPageLoad(NormalMode, None, index)(request)
-
-        status(result) mustBe OK
-        contentAsString(result) mustBe viewAsString(answerSections(request))
-      }
-
-      "return OK and the correct view with empty answers" in {
-        val request = FakeDataRequest(emptyAnswers)
-        val result = controller(emptyAnswers.dataRetrievalAction).onPageLoad(NormalMode, None, index)(request)
-
-        status(result) mustBe OK
-        contentAsString(result) mustBe viewAsString(answerSections(request))
+        contentAsString(result) mustBe viewAsString(companyDetailsAddLinksValues(request))
       }
     }
 
@@ -128,7 +89,7 @@ class CheckYourAnswersCompanyDetailsControllerSpec extends ControllerSpecBase wi
         redirectLocation(result) mustBe Some(onwardRoute.url)
       }
 
-      "mark establisher company as complete" in {
+      "mark establisher company details as complete" in {
         val result = controller().onSubmit(NormalMode, None, index)(fakeRequest)
         status(result) mustBe SEE_OTHER
         FakeUserAnswersService.verify(IsCompanyCompleteId(index), true)
@@ -191,50 +152,14 @@ object CheckYourAnswersCompanyDetailsControllerSpec extends ControllerSpecBase w
 
   def postUrlUpdateMode: Call = routes.CheckYourAnswersCompanyDetailsController.onSubmit(UpdateMode, srn, index)
 
-  private def emptyCompanyDetailsSection(mode: Mode, srn: Option[String]
-                                                    )(implicit request: DataRequest[AnyContent]): Seq[AnswerSection] =
-    Seq(AnswerSection(
-      None,
-      Seq(
-        addLink("", hasCompanyNumberRoute(mode, srn)),
-        addLink("", hasCompanyUTRRoute(mode, srn)),
-        addLink("", hasCompanyVatRoute(mode, srn)),
-        addLink("", hasCompanyPayeRoute(mode, srn)),
-        addLink("", isCompanyDormantRoute(mode, srn))
-      )
-    ))
 
-  private def companyDetailsAddLinksValues(mode: Mode, srn: Option[String]
-                                                    )(implicit request: DataRequest[AnyContent]): Seq[AnswerSection] =
+  private def companyDetailsAddLinksValues(implicit request: DataRequest[AnyContent]): Seq[AnswerSection] =
     Seq(AnswerSection(
       None,
       Seq(
-        booleanChangeLink("", hasCompanyNumberRoute(mode, srn), true),
-        addLink("", companyRegistrationNumberVariationsRoute(mode, srn)),
-        booleanChangeLink("", hasCompanyUTRRoute(mode, srn), true),
-        addLink("", hasCompanyUTR1Route(mode, srn)),
-        booleanChangeLink("", hasCompanyVatRoute(mode, srn), true),
-        addLink("", companyVatVariationsRoute(mode, srn)),
-        booleanChangeLink("", hasCompanyPayeRoute(mode, srn), true),
-        addLink("", companyPayeRoute(mode, srn)),
-        booleanChangeLink("", isCompanyDormantRoute(mode, srn), true)
-      )
-    ))
-
-  private def companyDetailsAddLinksReasons(mode: Mode, srn: Option[String]
-                                          )(implicit request: DataRequest[AnyContent]): Seq[AnswerSection] =
-    Seq(AnswerSection(
-      None,
-      Seq(
-        booleanChangeLink("", hasCompanyNumberRoute(mode, srn), false),
-        addLink("", noCompanyNumberReasonRoute(mode, srn)),
-        booleanChangeLink("", hasCompanyUTRRoute(mode, srn), false),
-        addLink("", noCompanyUTRRoute(mode, srn)),
-        booleanChangeLink("", hasCompanyVatRoute(mode, srn), true),
-        addLink("", companyVatVariationsRoute(mode, srn)),
-        booleanChangeLink("", hasCompanyPayeRoute(mode, srn), true),
-        addLink("", companyPayeRoute(mode, srn)),
-        booleanChangeLink("", isCompanyDormantRoute(mode, srn), true)
+        addLink("", companyRegistrationNumberVariationsRoute(UpdateMode, srn)),
+        addLink("", companyVatVariationsRoute(UpdateMode, srn)),
+        addLink("", companyPayeRoute(UpdateMode, srn))
       )
     ))
 
