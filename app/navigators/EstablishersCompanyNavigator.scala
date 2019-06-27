@@ -41,7 +41,7 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
       case CompanyVatId(index) =>
         NavigateTo.dontSave(controllers.register.establishers.company.routes.CompanyPayeController.onPageLoad(mode, index, srn))
       case CompanyVatVariationsId(index) =>
-        navigateOrSessionExpired(from.userAnswers, CompanyVatVariationsId(index),
+        navigateOrSessionExpired(from.userAnswers, CompanyVatVariationsId(index), (_:String) =>
           controllers.register.establishers.company.routes.HasCompanyPAYEController.onPageLoad(mode, srn, index))
       case HasCompanyPAYEId(index) => confirmHasCompanyPAYE(index, mode, srn)(from.userAnswers)
       case CompanyPayeId(index) =>
@@ -262,12 +262,10 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
   }
 
   private def confirmHasCompanyPAYE(index: Int, mode: Mode, srn: Option[String])(answers: UserAnswers): Option[NavigateTo] =
-    answers.get(HasCompanyPAYEId(index)) match {
-      case Some(true) =>
-        NavigateTo.dontSave(controllers.register.establishers.company.routes.CompanyPayeVariationsController.onPageLoad(mode, index, srn))
-      case Some(false) =>
-        NavigateTo.dontSave(controllers.register.establishers.company.routes.CheckYourAnswersController.onPageLoad(mode, srn, index))
-      case None =>
-        NavigateTo.dontSave(controllers.routes.SessionExpiredController.onPageLoad())
-    }
+    navigateOrSessionExpired(answers, HasCompanyPAYEId(index), (b:Boolean) =>
+      if(b)
+        controllers.register.establishers.company.routes.CompanyPayeVariationsController.onPageLoad(mode, index, srn)
+      else
+        controllers.register.establishers.company.routes.CheckYourAnswersController.onPageLoad(mode, srn, index)
+    )
 }

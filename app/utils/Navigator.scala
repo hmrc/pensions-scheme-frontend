@@ -18,8 +18,8 @@ package utils
 
 import connectors.UserAnswersCacheConnector
 import identifiers.{Identifier, LastPageId, TypedIdentifier}
-import models.requests.IdentifiedRequest
 import models._
+import models.requests.IdentifiedRequest
 import play.api.Logger
 import play.api.libs.json.Reads
 import play.api.mvc.Call
@@ -29,12 +29,10 @@ import scala.concurrent.ExecutionContext
 import scala.util.Failure
 
 abstract class Navigator {
-
-  protected def navigateOrSessionExpired[A](answers: UserAnswers, id: => TypedIdentifier[A], destination: => Call)(implicit reads: Reads[A]): Option[NavigateTo] = {
-    NavigateTo.dontSave(answers.get(id).fold(controllers.routes.SessionExpiredController.onPageLoad()) { _ =>
-      destination
-    })
-  }
+  protected def navigateOrSessionExpired[A](answers: UserAnswers,
+                                            id: => TypedIdentifier[A],
+                                            destination: A => Call)(implicit reads: Reads[A]): Option[NavigateTo] =
+    NavigateTo.dontSave(answers.get(id).fold(controllers.routes.SessionExpiredController.onPageLoad())(destination(_)))
 
   protected def dataCacheConnector: UserAnswersCacheConnector
 
