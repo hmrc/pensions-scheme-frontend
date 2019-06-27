@@ -39,6 +39,12 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
       case HasCompanyNumberId(index) => confirmHasCompanyNumber(index, mode, srn)(from.userAnswers)
       case CompanyVatId(index) =>
         NavigateTo.dontSave(controllers.register.establishers.company.routes.CompanyPayeController.onPageLoad(mode, index, srn))
+
+      case CompanyVatVariationsId(index) =>
+        NavigateTo.dontSave(controllers.register.establishers.company.routes.HasCompanyPAYEController.onPageLoad(mode, srn, index))
+
+
+
       case HasCompanyPAYEId(index) => confirmHasCompanyPAYE(index, mode, srn)(from.userAnswers)
       case CompanyPayeId(index) =>
         NavigateTo.dontSave(controllers.register.establishers.company.routes.CompanyRegistrationNumberController.onPageLoad(mode, srn, index))
