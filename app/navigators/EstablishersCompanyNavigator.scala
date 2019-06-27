@@ -20,18 +20,19 @@ import com.google.inject.Inject
 import config.{FeatureSwitchManagementService, FrontendAppConfig}
 import connectors.UserAnswersCacheConnector
 import controllers.register.establishers.company.{routes => establisherCompanyRoutes}
-import identifiers.EstablishersOrTrusteesChangedId
+import identifiers.{EstablishersOrTrusteesChangedId, TypedIdentifier}
 import identifiers.register.establishers.IsEstablisherNewId
 import identifiers.register.establishers.company._
 import models.Mode._
 import models._
+import play.api.libs.json.Reads
+import play.api.mvc.Call
 import utils.{Navigator, Toggles, UserAnswers}
 
 //scalastyle:off cyclomatic.complexity
 class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector,
                                              appConfig: FrontendAppConfig,
                                              featureSwitchManagementService: FeatureSwitchManagementService) extends Navigator {
-
   protected def routes(from: NavigateFrom, mode: Mode, srn: Option[String]): Option[NavigateTo] =
     from.id match {
       case CompanyDetailsId(index) =>
@@ -39,12 +40,9 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
       case HasCompanyNumberId(index) => confirmHasCompanyNumber(index, mode, srn)(from.userAnswers)
       case CompanyVatId(index) =>
         NavigateTo.dontSave(controllers.register.establishers.company.routes.CompanyPayeController.onPageLoad(mode, index, srn))
-
       case CompanyVatVariationsId(index) =>
-        NavigateTo.dontSave(controllers.register.establishers.company.routes.HasCompanyPAYEController.onPageLoad(mode, srn, index))
-
-
-
+        navigateOrSessionExpired(from.userAnswers, CompanyVatVariationsId(index),
+          controllers.register.establishers.company.routes.HasCompanyPAYEController.onPageLoad(mode, srn, index))
       case HasCompanyPAYEId(index) => confirmHasCompanyPAYE(index, mode, srn)(from.userAnswers)
       case CompanyPayeId(index) =>
         NavigateTo.dontSave(controllers.register.establishers.company.routes.CompanyRegistrationNumberController.onPageLoad(mode, srn, index))
