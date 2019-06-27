@@ -84,9 +84,9 @@ object HsTaskListHelperUtilsSpec extends SpecBase with OptionValues {
   protected def establisherCompany(isComplete: Boolean): UserAnswers = {
     establisherCompanyBlank
       .set(IsEstablisherNewId(0))(true).flatMap(
-        _.set(establisherCompanyPath.IsCompanyAddressCompleteId(0))(isComplete).flatMap(
-          _.set(establisherCompanyPath.IsCompanyDetailsCompleteId(0))(isComplete).flatMap(
-            _.set(establisherCompanyPath.IsCompanyContactDetailsCompleteId(0))(isComplete).flatMap(
+        _.set(establisherCompanyPath.IsAddressCompleteId(0))(isComplete).flatMap(
+          _.set(establisherCompanyPath.IsDetailsCompleteId(0))(isComplete).flatMap(
+            _.set(establisherCompanyPath.IsContactDetailsCompleteId(0))(isComplete).flatMap(
             _.set(DirectorDetailsId(0, 0))(PersonDetails("Joe", None, "Bloggs", LocalDate.now()))
           )))).asOpt.value
   }

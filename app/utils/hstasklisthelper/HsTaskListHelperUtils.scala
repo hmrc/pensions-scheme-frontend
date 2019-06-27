@@ -56,9 +56,9 @@ trait HsTaskListHelperUtils extends Enumerable.Implicits {
   }
 
   private def getCompleteFlag(answers: UserAnswers, index: Int, spokeName: String): Option[Boolean] = spokeName match {
-    case "establisherCompanyDetails" => answers.get(establisherCompany.IsCompanyDetailsCompleteId(index))
-    case "establisherCompanyAddress" => answers.get(establisherCompany.IsCompanyAddressCompleteId(index))
-    case "establisherCompanyContactDetails" => answers.get(establisherCompany.IsCompanyContactDetailsCompleteId(index))
+    case "establisherCompanyDetails" => answers.get(establisherCompany.IsDetailsCompleteId(index))
+    case "establisherCompanyAddress" => answers.get(establisherCompany.IsAddressCompleteId(index))
+    case "establisherCompanyContactDetails" => answers.get(establisherCompany.IsContactDetailsCompleteId(index))
     case _ => None
   }
 
