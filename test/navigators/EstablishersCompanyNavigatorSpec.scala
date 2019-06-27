@@ -44,20 +44,23 @@ class EstablishersCompanyNavigatorSpec extends SpecBase with MustMatchers with N
 
   private def routes(mode: Mode, isPrevAddEnabled : Boolean): TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = Table(
     ("Id",                                      "User Answers",                   "Next Page (Normal Mode)",            "Save (NM)",    "Next Page (Check Mode)",                 "Save (CM)"),
-    (CompanyDetailsId(0),                         emptyAnswers,                     companyVat(mode),                   true,           Some(exitJourney(mode, emptyAnswers)),                   true),
+    (CompanyDetailsId(0),                         emptyAnswers,                     companyVat(mode),                   true,           Some(exitJourney(mode, emptyAnswers)),          true),
     (CompanyDetailsId(0),                         newEstablisher,                   companyVat(mode),                   true,           Some(checkYourAnswers(mode)),                   true),
     (HasCompanyNumberId(0),                       emptyAnswers,                     sessionExpired,                     true,           Some(exitJourney(mode, emptyAnswers)),          true),
     (HasCompanyNumberId(0),                       hasCompanyNumber(true),    companyRegistrationNumberNew(mode), true,           Some(exitJourney(mode, emptyAnswers)),          true),
     (HasCompanyNumberId(0),                       hasCompanyNumber(false),   noCompanyRegistrationNumber(mode),  true,           Some(exitJourney(mode, emptyAnswers)),          true),
-    (CompanyVatId(0),                             emptyAnswers,                     companyPaye(mode),                  true,           Some(exitJourney(mode, emptyAnswers)),                   true),
+    (CompanyVatId(0),                             emptyAnswers,                     companyPaye(mode),                  true,           Some(exitJourney(mode, emptyAnswers)),          true),
     (CompanyVatId(0),                             newEstablisher,                   companyPaye(mode),                  true,           Some(checkYourAnswers(mode)),                   true),
-    (CompanyPayeId(0),                            emptyAnswers,                     companyRegistrationNumber(mode),    true,           Some(exitJourney(mode, emptyAnswers)),                   true),
+    (HasCompanyPAYEId(0),                         emptyAnswers,                     sessionExpired,                     true,           Some(exitJourney(mode, emptyAnswers)),          true),
+    (HasCompanyPAYEId(0),                         establisherHasPAYE(true),         whatIsPAYE(mode),                   true,           Some(exitJourney(mode, emptyAnswers)),          true),
+    (HasCompanyPAYEId(0),                         establisherHasPAYE(false),        checkYourAnswers(mode),             true,           Some(exitJourney(mode, emptyAnswers)),          true),
+    (CompanyPayeId(0),                            emptyAnswers,                     companyRegistrationNumber(mode),    true,           Some(exitJourney(mode, emptyAnswers)),          true),
     (CompanyPayeId(0),                            newEstablisher,                   companyRegistrationNumber(mode),    true,           Some(checkYourAnswers(mode)),                   true),
-    (CompanyRegistrationNumberId(0),              emptyAnswers,                     companyUTR(mode),                   true,           Some(exitJourney(mode, emptyAnswers)),                   true),
+    (CompanyRegistrationNumberId(0),              emptyAnswers,                     companyUTR(mode),                   true,           Some(exitJourney(mode, emptyAnswers)),          true),
     (CompanyRegistrationNumberId(0),              newEstablisher,                   companyUTR(mode),                   true,           Some(checkYourAnswers(mode)),                   true),
-    (CompanyUniqueTaxReferenceId(0),              emptyAnswers,                     companyPostCodeLookup(mode),        true,           Some(exitJourney(mode, emptyAnswers)),                   true),
+    (CompanyUniqueTaxReferenceId(0),              emptyAnswers,                     companyPostCodeLookup(mode),        true,           Some(exitJourney(mode, emptyAnswers)),          true),
     (CompanyUniqueTaxReferenceId(0),              newEstablisher,                   companyPostCodeLookup(mode),        true,           Some(checkYourAnswers(mode)),                   true),
-    (NoCompanyUTRId(0),                           emptyAnswers,                     hasCompanyVat(mode),                true,           Some(exitJourney(mode, emptyAnswers)),                   true),
+    (NoCompanyUTRId(0),                           emptyAnswers,                     hasCompanyVat(mode),                true,           Some(exitJourney(mode, emptyAnswers)),          true),
     (NoCompanyUTRId(0),                           newEstablisher,                   hasCompanyVat(mode),                true,           Some(checkYourAnswers(mode)),                   true),
     (CompanyPostCodeLookupId(0),                  emptyAnswers,                     companyAddressList(mode),           true,           Some(companyAddressList(checkMode(mode))),      true),
     (CompanyAddressListId(0),                     emptyAnswers,                     companyManualAddress(mode),         true,           Some(companyManualAddress(checkMode(mode))),    true),
@@ -85,18 +88,6 @@ class EstablishersCompanyNavigatorSpec extends SpecBase with MustMatchers with N
     (CheckYourAnswersId(0),                       emptyAnswers,                     if(mode == UpdateMode) anyMoreChanges else addCompanyDirectors(0, mode), true,           None,                                           false),
     (CheckYourAnswersId(0),                       newEstablisher,                   addCompanyDirectors(0, mode), true,           None,                                           false)
   )
-
-
-
-
-  private def routesNormalModeOnly: TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = Table(
-    ("Id",                                      "User Answers",                   "Next Page (Normal Mode)",            "Save (NM)",    "Next Page (Check Mode)",                 "Save (CM)"),
-    (HasCompanyPAYEId(0),                       establisherHasPAYE(true),          whatIsPAYE(NormalMode),                   false,          None,                                           false),
-    (HasCompanyPAYEId(0),                       establisherHasPAYE(false),         checkYourAnswers(NormalMode),             false,          None,                                           false)
-  )
-
-
-
 
 
   private def normalOnlyRoutes: TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = Table(
@@ -131,7 +122,6 @@ class EstablishersCompanyNavigatorSpec extends SpecBase with MustMatchers with N
     behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, normalRoutes(), dataDescriber)
     behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, updateRoutes(), dataDescriber, UpdateMode)
     behave like nonMatchingNavigator(navigator)
-    behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, routesNormalModeOnly, dataDescriber, NormalMode)
   }
 
   s"when previous address feature is toggled on" must {

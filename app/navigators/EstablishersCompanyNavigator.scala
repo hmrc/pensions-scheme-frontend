@@ -262,7 +262,7 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
       case Some(true) =>
         NavigateTo.dontSave(controllers.register.establishers.company.routes.CompanyPayeVariationsController.onPageLoad(mode, index, srn))
       case Some(false) =>
-        NavigateTo.dontSave(controllers.register.establishers.company.routes.CheckYourAnswersController.onPageLoad(NormalMode, None, index))
+        NavigateTo.dontSave(controllers.register.establishers.company.routes.CheckYourAnswersController.onPageLoad(mode, srn, index))
       case None =>
         NavigateTo.dontSave(controllers.routes.SessionExpiredController.onPageLoad())
     }
