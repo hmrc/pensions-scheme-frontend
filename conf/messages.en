@@ -1437,6 +1437,10 @@ messages__hasCompanyNumber__h1 = Does {0} have a company number?
 messages__hasCompanyNumber__p1 = You can find this on the company’s certificate of incorporation or on any official letters from Companies House.
 messages__hasCompanyNumber__error__required = Select yes if {0} has a company number
 
+messages__hasBeenTradingCompany__title = Has the establisher been trading for more than a year?
+messages__hasBeenTradingCompany__h1 =  Has {0} been trading for more than a year?
+messages__hasBeenTradingCompany__error__required = Select yes if {0} has been trading  for more than a year
+
 messages__schemeTaskList__before_you_start_link_text = Setting up your scheme application
 messages__schemeTaskList__scheme_info_link_text = Information about your scheme
 messages__schemeTaskList__scheme_information_link_text = Scheme information
