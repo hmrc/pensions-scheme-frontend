@@ -16,25 +16,16 @@
 
 package forms
 
-import base.SpecBase
-import forms.behaviours.VatBehaviours
+import forms.mappings.Mappings
+import javax.inject.Inject
 import play.api.data.Form
+import play.api.i18n.Messages
 import viewmodels.Message
 
-class VatVariationsFormProviderSpec extends VatBehaviours with SpecBase{
+class HasCrnFormProvider @Inject() extends Mappings {
 
-  private val vatLengthKey = Message("messages__vatVariations__company_length", "test company")
-  private val requiredVatKey = "messages__error__vat_required"
-  private val invalidVatKey = Message("messages__vatVariations__company_invalid", "test company")
-
-  "A form with a Vat" should {
-    val testForm = new VatVariationsFormProvider().apply("test company")
-
-    behave like formWithVatVariations(testForm: Form[String],
-      vatLengthKey: String,
-      requiredVatKey: String,
-      invalidVatKey: String
+  def apply(errorKey : String, companyName : String)(implicit messages: Messages): Form[Boolean] =
+    Form(
+      "value" -> boolean(Message(errorKey, companyName).resolve)
     )
-
-  }
 }

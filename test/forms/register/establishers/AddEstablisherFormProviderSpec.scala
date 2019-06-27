@@ -31,12 +31,12 @@ class AddEstablisherFormProviderSpec extends FormSpec {
 
       "bind Some(true)" in {
         val form = formProvider(Seq(0)).bind(Map("value" -> "true"))
-        form.get shouldEqual Some(true)
+        form.get mustEqual Some(true)
       }
 
       "bind Some(false)" in {
         val form = formProvider(Seq(0)).bind(Map("value" -> "false"))
-        form.get shouldEqual Some(false)
+        form.get mustEqual Some(false)
       }
 
       "fail to bind non-booleans" in {
@@ -59,17 +59,17 @@ class AddEstablisherFormProviderSpec extends FormSpec {
 
       "bind Some(true)" in {
         val form = formProvider(Seq.empty).bind(Map("value" -> "true"))
-        form.get shouldEqual Some(true)
+        form.get mustEqual Some(true)
       }
 
       "bind Some(false)" in {
         val form = formProvider(Seq.empty).bind(Map("value" -> "false"))
-        form.get shouldEqual Some(false)
+        form.get mustEqual Some(false)
       }
 
       "bind None" in {
         val form = formProvider(Seq.empty).bind(Map.empty[String, String])
-        form.get shouldNot be(defined)
+        form.get mustNot be(defined)
       }
 
       "fail to bind non-booleans" in {

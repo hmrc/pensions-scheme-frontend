@@ -16,25 +16,25 @@
 
 package forms
 
-import base.SpecBase
-import forms.behaviours.VatBehaviours
+import forms.mappings.{Mappings, Transforms}
+import javax.inject.Inject
 import play.api.data.Form
+import play.api.i18n.Messages
 import viewmodels.Message
 
-class VatVariationsFormProviderSpec extends VatBehaviours with SpecBase{
+class ReasonFormProvider @Inject() extends Mappings with Transforms {
 
-  private val vatLengthKey = Message("messages__vatVariations__company_length", "test company")
-  private val requiredVatKey = "messages__error__vat_required"
-  private val invalidVatKey = Message("messages__vatVariations__company_invalid", "test company")
+  val reasonMaxLength = 160
 
-  "A form with a Vat" should {
-    val testForm = new VatVariationsFormProvider().apply("test company")
-
-    behave like formWithVatVariations(testForm: Form[String],
-      vatLengthKey: String,
-      requiredVatKey: String,
-      invalidVatKey: String
+  def apply(name: String)(implicit messages: Messages): Form[String] =
+    Form(
+      "reason" -> text(Message("messages__reason__error_required", name))
+        .transform(standardTextTransform, noTransform)
+        .verifying(
+          firstError(
+            maxLength(reasonMaxLength, "messages__reason__error_maxLength"),
+            safeText("messages__reason__error_invalid")
+        )
     )
-
-  }
+    )
 }
