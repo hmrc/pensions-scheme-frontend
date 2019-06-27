@@ -25,12 +25,34 @@ import identifiers.register.establishers.company._
 import models.Mode._
 import models._
 import controllers.register.establishers.company.{routes => establisherCompanyRoutes}
+import play.api.mvc.Call
 import utils.{Navigator, Toggles, UserAnswers}
 
 //scalastyle:off cyclomatic.complexity
 class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector,
                                              appConfig: FrontendAppConfig,
                                              featureSwitchManagementService: FeatureSwitchManagementService) extends Navigator {
+  private def exitMiniJourney(index: Int, mode: Mode, srn: Option[String], answers: UserAnswers,
+                              cyaPage: (Int, Mode, Option[String]) => Option[NavigateTo] = cya): Option[NavigateTo] =
+    if(mode == CheckMode || mode == NormalMode){
+      cyaPage(index, journeyMode(mode), srn)
+    } else {
+      if(answers.get(IsEstablisherNewId(index)).getOrElse(false))
+        cyaPage(index, journeyMode(mode), srn)
+      else anyMoreChanges(srn)
+    }
+
+  private def cya(index: Int, mode: Mode, srn: Option[String]): Option[NavigateTo] =
+    NavigateTo.dontSave(establisherCompanyRoutes.CheckYourAnswersController.onPageLoad(mode, srn, index))
+
+  private def cyaCompanyDetails(index: Int, mode: Mode, srn: Option[String]): Option[NavigateTo] =
+    NavigateTo.dontSave(establisherCompanyRoutes.CheckYourAnswersCompanyDetailsController.onPageLoad(mode, srn, index))
+
+  private def cyaContactDetails(index: Int, mode: Mode, srn: Option[String]): Option[NavigateTo] =
+    NavigateTo.dontSave(controllers.register.establishers.company.routes.CheckYourAnswersCompanyContactDetailsController.onPageLoad(index))
+
+  private def anyMoreChanges(srn: Option[String]): Option[NavigateTo] =
+    NavigateTo.dontSave(controllers.routes.AnyMoreChangesController.onPageLoad(srn))
 
   protected def routes(from: NavigateFrom, mode: Mode, srn: Option[String]): Option[NavigateTo] =
     from.id match {
@@ -70,6 +92,8 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
         NavigateTo.dontSave(establisherCompanyRoutes.CompanyPreviousAddressController.onPageLoad(mode, srn, index))
       case CompanyPreviousAddressId(index) =>
         NavigateTo.dontSave(establisherCompanyRoutes.CompanyContactDetailsController.onPageLoad(mode, srn, index))
+      case CompanyPhoneId(index) =>
+        NavigateTo.dontSave(establisherCompanyRoutes.CheckYourAnswersCompanyContactDetailsController.onPageLoad(index))
       case AddCompanyDirectorsId(index) =>
         addDirectors(mode, index, from.userAnswers, srn)
       case OtherDirectorsId(index) =>
@@ -84,6 +108,7 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
         listOrAnyMoreChange(index, mode, srn)(from.userAnswers)
       case _ => None
     }
+
 
   protected def editRoutes(from: NavigateFrom, mode: Mode, srn: Option[String]): Option[NavigateTo] =
     from.id match {
@@ -127,6 +152,7 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
 
       case CompanyPreviousAddressId(index) =>     exitMiniJourney(index, mode, srn, from.userAnswers)
       case CompanyContactDetailsId(index) =>      exitMiniJourney(index, mode, srn, from.userAnswers)
+      case CompanyPhoneId(index) =>               exitMiniJourney(index, mode, srn, from.userAnswers, cyaContactDetails)
       case IsCompanyDormantId(index) =>           exitMiniJourney(index, mode, srn, from.userAnswers)
 
       case OtherDirectorsId(index) =>
@@ -156,25 +182,6 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
   override protected def editRouteMap(from: NavigateFrom): Option[NavigateTo] = editRoutes(from, CheckMode, None)
 
   override protected def checkUpdateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] = editRoutes(from, CheckUpdateMode, srn)
-
-  private def exitMiniJourney(index: Int, mode: Mode, srn: Option[String], answers: UserAnswers,
-                              cyaPage: (Int, Mode, Option[String]) => Option[NavigateTo] = cya): Option[NavigateTo] =
-    if(mode == CheckMode || mode == NormalMode){
-      cyaPage(index, journeyMode(mode), srn)
-    } else {
-      if(answers.get(IsEstablisherNewId(index)).getOrElse(false))
-        cyaPage(index, journeyMode(mode), srn)
-      else anyMoreChanges(srn)
-    }
-
-  private def cya(index: Int, mode: Mode, srn: Option[String]): Option[NavigateTo] =
-    NavigateTo.dontSave(establisherCompanyRoutes.CheckYourAnswersController.onPageLoad(mode, srn, index))
-
-  private def cyaCompanyDetails(index: Int, mode: Mode, srn: Option[String]): Option[NavigateTo] =
-    NavigateTo.dontSave(establisherCompanyRoutes.CheckYourAnswersCompanyDetailsController.onPageLoad(mode, srn, index))
-
-  private def anyMoreChanges(srn: Option[String]): Option[NavigateTo] =
-    NavigateTo.dontSave(controllers.routes.AnyMoreChangesController.onPageLoad(srn))
 
   private def addressYearsRoutes(index: Int, answers: UserAnswers, mode: Mode, srn: Option[String]): Option[NavigateTo] = {
     answers.get(CompanyAddressYearsId(index)) match {

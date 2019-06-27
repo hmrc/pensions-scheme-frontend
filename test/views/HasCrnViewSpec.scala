@@ -34,7 +34,7 @@ class HasCrnViewSpec extends YesNoViewBehaviours {
     controllers.register.establishers.company.routes.HasCompanyNumberController.onSubmit(NormalMode, srn, index),
     title = Message("messages__hasCompanyNumber__title"),
     heading = Message("messages__hasCompanyNumber__h1", "ABC"),
-    hint = Message("messages__hasCompanyNumber__p1"),
+    hint = Some(Message("messages__hasCompanyNumber__p1")),
     srn = srn
   )
 
