@@ -19,6 +19,7 @@ package forms
 import config.FrontendAppConfig
 import forms.behaviours.StringFieldBehaviours
 import forms.mappings.Constraints
+import models.ReferenceValue
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.Configuration
 import play.api.data.FormError
@@ -64,12 +65,12 @@ class NinoNewFormProviderSpec extends StringFieldBehaviours with Constraints wit
 
     "successfully bind when yes is selected and valid NINO is provided" in {
       val res = form.bind(Map("nino" -> "AB020202A"))
-      res.get mustEqual "AB020202A"
+      res.get mustEqual ReferenceValue("AB020202A")
     }
 
     "successfully bind when yes is selected and valid NINO with spaces is provided" in {
       val res = form.bind(Map("nino" -> " a b 0 2 0 2 0 2 a "))
-      res.get mustEqual "AB020202A"
+      res.get mustEqual ReferenceValue("AB020202A")
     }
 
     Seq("DE999999A", "AO111111B", "ORA12345C", "AB0202020", "AB0303030D", "AB040404E").foreach { nino =>

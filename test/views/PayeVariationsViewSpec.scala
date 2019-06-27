@@ -17,6 +17,7 @@
 package views
 
 import forms.PayeVariationsFormProvider
+import models.ReferenceValue
 import play.api.data.Form
 import play.api.mvc.Call
 import play.twirl.api.HtmlFormat
@@ -24,14 +25,14 @@ import viewmodels.{Message, PayeViewModel}
 import views.behaviours.QuestionViewBehaviours
 import views.html.payeVariations
 
-class PayeVariationsViewSpec extends QuestionViewBehaviours[String] {
+class PayeVariationsViewSpec extends QuestionViewBehaviours[ReferenceValue] {
 
   val messageKeyPrefix = "payeVariations"
   val postCall = Call("GET", "/")
   val companyName = "test company name"
   val form = new PayeVariationsFormProvider()(companyName)
 
-  def viewmodel(srn:Option[String]) = PayeViewModel(
+  private def viewmodel(srn:Option[String]) = PayeViewModel(
     postCall = postCall,
     title = Message("messages__payeVariations__company_title"),
     heading = Message("messages__payeVariations__heading"),

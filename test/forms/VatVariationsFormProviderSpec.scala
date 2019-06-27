@@ -18,6 +18,7 @@ package forms
 
 import base.SpecBase
 import forms.behaviours.VatBehaviours
+import models.ReferenceValue
 import play.api.data.Form
 import viewmodels.Message
 
@@ -30,7 +31,7 @@ class VatVariationsFormProviderSpec extends VatBehaviours with SpecBase{
   "A form with a Vat" should {
     val testForm = new VatVariationsFormProvider().apply("test company")
 
-    behave like formWithVatVariations(testForm: Form[String],
+    behave like formWithVatVariations(testForm: Form[ReferenceValue],
       vatLengthKey: String,
       requiredVatKey: String,
       invalidVatKey: String
