@@ -14,15 +14,14 @@
  * limitations under the License.
  */
 
-package forms.register.adviser
+package forms
 
 import forms.behaviours.PhoneNumberBehaviours
 import forms.mappings.Constraints
 
-class AdviserPhoneFormProviderSpec extends PhoneNumberBehaviours with Constraints {
+class PhoneFormProviderSpec extends PhoneNumberBehaviours with Constraints {
 
-  val form = new AdviserPhoneFormProvider()()
-
+  val form = new PhoneFormProvider()()
   ".phone" must {
 
     val fieldName = "phone"

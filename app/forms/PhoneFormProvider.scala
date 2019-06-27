@@ -14,15 +14,19 @@
  * limitations under the License.
  */
 
-package viewmodels
+package forms
 
-import play.api.mvc.Call
+import com.google.inject.Inject
+import forms.mappings.PhoneNumberMapping
+import play.api.data.Form
 
-case class VatViewModel(
-                         postCall: Call,
-                         title: Message,
-                         heading: Message,
-                         hint: Message,
-                         subHeading: Option[Message] = None,
-                         srn: Option[String] = None
-                       )
+class PhoneFormProvider @Inject() extends PhoneNumberMapping {
+
+  def apply(): Form[String] = {
+    Form(
+      "phone" -> phoneNumberMapping("messages__phone__blank",
+      "messages__phone__length",
+      "messages__phone__invalid")
+    )
+  }
+}

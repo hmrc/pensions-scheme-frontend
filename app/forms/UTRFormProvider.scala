@@ -14,15 +14,16 @@
  * limitations under the License.
  */
 
-package viewmodels
+package forms
 
-import play.api.mvc.Call
+import forms.mappings.UtrMapping
+import javax.inject.Inject
+import play.api.data.Form
 
-case class VatViewModel(
-                         postCall: Call,
-                         title: Message,
-                         heading: Message,
-                         hint: Message,
-                         subHeading: Option[Message] = None,
-                         srn: Option[String] = None
-                       )
+class UTRFormProvider @Inject() extends UtrMapping {
+
+  def apply(): Form[String] =
+    Form(
+      "utr" -> utrStringMapping()
+    )
+}

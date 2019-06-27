@@ -14,15 +14,18 @@
  * limitations under the License.
  */
 
-package viewmodels
+package forms
 
-import play.api.mvc.Call
+import forms.mappings.Mappings
+import javax.inject.Inject
+import play.api.data.Form
+import play.api.i18n.Messages
+import viewmodels.Message
 
-case class VatViewModel(
-                         postCall: Call,
-                         title: Message,
-                         heading: Message,
-                         hint: Message,
-                         subHeading: Option[Message] = None,
-                         srn: Option[String] = None
-                       )
+class HasCrnFormProvider @Inject() extends Mappings {
+
+  def apply(errorKey : String, companyName : String)(implicit messages: Messages): Form[Boolean] =
+    Form(
+      "value" -> boolean(Message(errorKey, companyName).resolve)
+    )
+}

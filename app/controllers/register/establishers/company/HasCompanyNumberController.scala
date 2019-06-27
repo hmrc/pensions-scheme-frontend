@@ -17,28 +17,55 @@
 package controllers.register.establishers.company
 
 import config.FrontendAppConfig
+import controllers.HasCrnController
 import controllers.actions._
+import forms.HasCrnFormProvider
+import identifiers.register.establishers.company.{CompanyDetailsId, HasCompanyNumberId}
 import javax.inject.Inject
 import models.{Index, Mode}
-import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent}
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import services.UserAnswersService
+import utils.Navigator
+import utils.annotations.EstablishersCompany
+import viewmodels.{CommonFormWithHintViewModel, Message}
 
-import scala.concurrent.Future
-
-class HasCompanyNumberController @Inject()(appConfig: FrontendAppConfig,
+class HasCompanyNumberController @Inject()(override val appConfig: FrontendAppConfig,
                                            override val messagesApi: MessagesApi,
+                                           override val userAnswersService: UserAnswersService,
+                                           @EstablishersCompany override val navigator: Navigator,
                                            authenticate: AuthAction,
-                                           getData: DataRetrievalAction
-                                                    ) extends FrontendController with I18nSupport {
+                                           allowAccess: AllowAccessActionProvider,
+                                           getData: DataRetrievalAction,
+                                           requireData: DataRequiredAction,
+                                           formProvider: HasCrnFormProvider) extends HasCrnController {
 
-  def onPageLoad(mode: Mode, srn: Option[String] = None, index: Index): Action[AnyContent] = (authenticate andThen getData()).async {
-    implicit request =>
-      Future.successful(Ok)
-  }
+  private def viewModel(mode: Mode, index: Index, srn: Option[String], companyName: String): CommonFormWithHintViewModel =
+    CommonFormWithHintViewModel(
+      postCall = controllers.register.establishers.company.routes.HasCompanyNumberController.onSubmit(mode, srn, index),
+      title = Message("messages__hasCompanyNumber__title"),
+      heading = Message("messages__hasCompanyNumber__h1", companyName),
+      hint = Some(Message("messages__hasCompanyNumber__p1")),
+      srn = srn
+    )
 
-  def onSubmit(mode: Mode, srn: Option[String] = None, index: Index): Action[AnyContent] = authenticate {
-    implicit request =>
-      Redirect(controllers.routes.IndexController.onPageLoad())
-  }
+  private def form(companyName: String) = formProvider("messages__hasCompanyNumber__error__required", companyName)
+
+  def onPageLoad(mode: Mode, srn: Option[String] = None, index: Index): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+      implicit request =>
+        CompanyDetailsId(index).retrieve.right.map {
+          details =>
+            get(HasCompanyNumberId(index), form(details.companyName), viewModel(mode, index, srn, details.companyName))
+        }
+    }
+
+  def onSubmit(mode: Mode, srn: Option[String] = None, index: Index): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen requireData).async {
+      implicit request =>
+        CompanyDetailsId(index).retrieve.right.map {
+          details =>
+            post(HasCompanyNumberId(index), mode, form(details.companyName), viewModel(mode, index, srn, details.companyName))
+        }
+    }
 }
