@@ -14,15 +14,25 @@
  * limitations under the License.
  */
 
-package viewmodels
+package forms
 
-import play.api.mvc.Call
+import forms.behaviours.UtrBehaviour
+import play.api.data.Form
 
-case class VatViewModel(
-                         postCall: Call,
-                         title: Message,
-                         heading: Message,
-                         hint: Message,
-                         subHeading: Option[Message] = None,
-                         srn: Option[String] = None
-                       )
+class UTRFormProviderSpec extends UtrBehaviour {
+
+  private val requiredKey = "messages__utr__error_required"
+  private val maxLengthKey = "messages__utr__error_maxLength"
+  private val invalidKey = "messages__utr__error_invalid"
+
+  "A form with a Vat" should {
+    val testForm = new UTRFormProvider().apply()
+
+    behave like formWithUtrString(testForm: Form[String],
+      requiredKey: String,
+      maxLengthKey: String,
+      invalidKey: String
+    )
+
+  }
+}
