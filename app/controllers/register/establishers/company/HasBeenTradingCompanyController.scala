@@ -17,10 +17,10 @@
 package controllers.register.establishers.company
 
 import config.FrontendAppConfig
-import controllers.HasCrnController
+import controllers.HasBeenTradingController
 import controllers.actions._
-import forms.HasVatFormProvider
-import identifiers.register.establishers.company.{CompanyDetailsId, HasCompanyVATId}
+import forms.HasBeenTradingFormProvider
+import identifiers.register.establishers.company.{CompanyDetailsId, HasBeenTradingCompanyId}
 import javax.inject.Inject
 import models.{Index, Mode}
 import play.api.i18n.MessagesApi
@@ -30,33 +30,33 @@ import utils.Navigator
 import utils.annotations.EstablishersCompany
 import viewmodels.{CommonFormWithHintViewModel, Message}
 
-class HasCompanyVATController @Inject()(override val appConfig: FrontendAppConfig,
-                                        override val messagesApi: MessagesApi,
-                                        override val userAnswersService: UserAnswersService,
-                                        @EstablishersCompany override val navigator: Navigator,
-                                        authenticate: AuthAction,
-                                        allowAccess: AllowAccessActionProvider,
-                                        getData: DataRetrievalAction,
-                                        requireData: DataRequiredAction,
-                                        formProvider: HasVatFormProvider) extends HasCrnController {
+class HasBeenTradingCompanyController @Inject()(override val appConfig: FrontendAppConfig,
+                                                override val messagesApi: MessagesApi,
+                                                override val userAnswersService: UserAnswersService,
+                                                @EstablishersCompany override val navigator: Navigator,
+                                                authenticate: AuthAction,
+                                                allowAccess: AllowAccessActionProvider,
+                                                getData: DataRetrievalAction,
+                                                requireData: DataRequiredAction,
+                                                formProvider: HasBeenTradingFormProvider) extends HasBeenTradingController {
 
   private def viewModel(mode: Mode, index: Index, srn: Option[String], companyName: String): CommonFormWithHintViewModel =
     CommonFormWithHintViewModel(
-      postCall = controllers.register.establishers.company.routes.HasCompanyVATController.onSubmit(mode, srn, index),
-      title = Message("messages__hasCompanyVat__title"),
-      heading = Message("messages__hasCompanyVat__h1", companyName),
-      hint = Some(Message("messages__hasCompanyVat__p1", companyName)),
+      postCall = controllers.register.establishers.company.routes.HasBeenTradingCompanyController.onSubmit(mode, srn, index),
+      title = Message("messages__hasBeenTradingCompany__title"),
+      heading = Message("messages__hasBeenTradingCompany__h1", companyName),
+      hint = None,
       srn = srn
     )
 
-  private def form(companyName: String) = formProvider("messages__hasCompanyVat__error__required", companyName)
+  private def form(companyName: String) = formProvider("messages__hasBeenTradingCompany__error__required", companyName)
 
   def onPageLoad(mode: Mode, srn: Option[String] = None, index: Index): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         CompanyDetailsId(index).retrieve.right.map {
           details =>
-            get(HasCompanyVATId(index), form(details.companyName), viewModel(mode, index, srn, details.companyName))
+            get(HasBeenTradingCompanyId(index), form(details.companyName), viewModel(mode, index, srn, details.companyName))
         }
     }
 
@@ -65,7 +65,7 @@ class HasCompanyVATController @Inject()(override val appConfig: FrontendAppConfi
       implicit request =>
         CompanyDetailsId(index).retrieve.right.map {
           details =>
-            post(HasCompanyVATId(index), mode, form(details.companyName), viewModel(mode, index, srn, details.companyName))
+            post(HasBeenTradingCompanyId(index), mode, form(details.companyName), viewModel(mode, index, srn, details.companyName))
         }
     }
 }
