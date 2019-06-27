@@ -43,16 +43,19 @@ class EstablishersCompanyNavigatorSpec extends SpecBase with MustMatchers with N
     ("Id",                                      "User Answers",                   "Next Page (Normal Mode)",                "Save (NM)",    "Next Page (Check Mode)",                 "Save (CM)"),
     (CompanyDetailsId(0),                         emptyAnswers,                     companyVat(mode),                   true,           Some(exitJourney(mode, emptyAnswers, 0, cya(mode))),                   true),
     (CompanyDetailsId(0),                         newEstablisher,                   companyVat(mode),                   true,           Some(cya(mode)),                                                             true),
-    (HasCompanyNumberId(0),                       emptyAnswers,                     sessionExpired,                     true,           Some(exitJourney(mode, emptyAnswers, 0, cya(mode))),          true),
-    (HasCompanyNumberId(0),                       hasCompanyNumber(true),    companyRegistrationNumberNew(mode), true,           Some(exitJourney(mode, emptyAnswers, 0, cya(mode))),          true),
-    (HasCompanyNumberId(0),                       hasCompanyNumber(false),   noCompanyRegistrationNumber(mode),  true,           Some(exitJourney(mode, emptyAnswers, 0, cya(mode))),          true),
+    (HasCompanyNumberId(0),                       emptyAnswers,                     sessionExpired,                     true,           Some(exitJourney(mode, emptyAnswers, 0, cyaCompanyDetails(mode))),          true),
+    (HasCompanyNumberId(0),                       hasCompanyNumber(true),    companyRegistrationNumberNew(mode), true,           Some(exitJourney(mode, emptyAnswers, 0, cyaCompanyDetails(mode))),          true),
+    (HasCompanyNumberId(0),                       hasCompanyNumber(false),   noCompanyRegistrationNumber(mode),  true,           Some(exitJourney(mode, emptyAnswers, 0, cyaCompanyDetails(mode))),          true),
+    (HasCompanyVATId(0),                          emptyAnswers,                     sessionExpired,                     true,           Some(exitJourney(mode, emptyAnswers, 0, cyaCompanyDetails(mode))),          true),
+    (HasCompanyVATId(0),                          hasCompanyVat(true),       companyVatNew(mode),                true,           Some(exitJourney(mode, emptyAnswers, 0, cyaCompanyDetails(mode))),          true),
+    (HasCompanyVATId(0),                          hasCompanyVat(false),      hasCompanyPaye(mode),               true,           Some(exitJourney(mode, emptyAnswers, 0, cyaCompanyDetails(mode))),          true),
     (CompanyVatId(0),                             emptyAnswers,                     companyPaye(mode),                  true,           Some(exitJourney(mode, emptyAnswers, 0, cya(mode))),                   true),
     (CompanyVatId(0),                             newEstablisher,                   companyPaye(mode),                  true,           Some(cya(mode)),                                                             true),
     (CompanyPayeId(0),                            emptyAnswers,                     companyRegistrationNumber(mode),    true,           Some(exitJourney(mode, emptyAnswers, 0, cya(mode))),                   true),
     (CompanyPayeId(0),                            newEstablisher,                   companyRegistrationNumber(mode),    true,           Some(cya(mode)),                                                             true),
-    (HasCompanyUTRId(0),                          emptyAnswers,                     sessionExpired,                     true,           Some(exitJourney(mode, emptyAnswers, 0, cya(mode))),                   true),
-    (HasCompanyUTRId(0),                          hasCompanyUtr(true),       companyUTRNew(mode),                true,           Some(exitJourney(mode, emptyAnswers, 0, cya(mode))),                   true),
-    (HasCompanyUTRId(0),                          hasCompanyUtr(false),      noCompanyUTR(mode),                 true,           Some(exitJourney(mode, emptyAnswers, 0, cya(mode))),                   true),
+    (HasCompanyUTRId(0),                          emptyAnswers,                     sessionExpired,                     true,           Some(exitJourney(mode, emptyAnswers, 0, cyaCompanyDetails(mode))),                   true),
+    (HasCompanyUTRId(0),                          hasCompanyUtr(true),       companyUTRNew(mode),                true,           Some(exitJourney(mode, emptyAnswers, 0, cyaCompanyDetails(mode))),                   true),
+    (HasCompanyUTRId(0),                          hasCompanyUtr(false),      noCompanyUTR(mode),                 true,           Some(exitJourney(mode, emptyAnswers, 0, cyaCompanyDetails(mode))),                   true),
     (CompanyUniqueTaxReferenceId(0),              emptyAnswers,                     companyPostCodeLookup(mode),        true,           Some(exitJourney(mode, emptyAnswers, 0, cya(mode))),                    true),
     (CompanyUniqueTaxReferenceId(0),              newEstablisher,                   companyPostCodeLookup(mode),        true,           Some(cya(mode)),                                                              true),
     (CompanyUTRId(0),                             emptyAnswers,                     hasCompanyVat(mode),                true,           Some(exitJourney(mode, emptyAnswers, 0, cyaCompanyDetails(mode))),                   true),
@@ -103,7 +106,7 @@ class EstablishersCompanyNavigatorSpec extends SpecBase with MustMatchers with N
     (CompanyContactDetailsId(0),  emptyAnswers,                         cya(UpdateMode),                        true,   Some(exitJourney(checkMode(UpdateMode),   emptyAnswers, 0, cya(UpdateMode))),       true),
     (CompanyPhoneId(0),           emptyAnswers,                         cyaCompanyContactDetails(UpdateMode),   true,   Some(exitJourney(checkMode(UpdateMode),   emptyAnswers, 0, cyaCompanyContactDetails(UpdateMode))),       true),
     (AddCompanyDirectorsId(0),    addCompanyDirectorsFalseWithChanges,  anyMoreChanges,                         true,   None,                                                           true),
-    (CompanyVatVariationsId(0),   emptyAnswers,                         none,                                   true,   Some(exitJourney(checkMode(UpdateMode),   emptyAnswers, 0, cya(UpdateMode))),       true),
+    (CompanyVatVariationsId(0),   emptyAnswers,                         none,                                   true,   Some(exitJourney(checkMode(UpdateMode),   emptyAnswers, 0, cyaCompanyDetails(UpdateMode))),       true),
     (CompanyPayeVariationsId(0),                  emptyAnswers,         none,                                   true,   Some(exitJourney(checkMode(UpdateMode), emptyAnswers, 0, cya(UpdateMode))),                   true)
   )
 
@@ -141,6 +144,7 @@ object EstablishersCompanyNavigatorSpec extends OptionValues with Enumerable.Imp
   private val newEstablisher = UserAnswers(Json.obj()).set(IsEstablisherNewId(0))(true).asOpt.value
   private def hasCompanyNumber(yesNo : Boolean) = UserAnswers(Json.obj()).set(HasCompanyNumberId(0))(yesNo).asOpt.value
   private def hasCompanyUtr(yesNo : Boolean) = UserAnswers(Json.obj()).set(HasCompanyUTRId(0))(yesNo).asOpt.value
+  private def hasCompanyVat(yesNo : Boolean) = UserAnswers(Json.obj()).set(HasCompanyVATId(0))(yesNo).asOpt.value
   private val johnDoe = PersonDetails("John", None, "Doe", new LocalDate(1862, 6, 9))
 
   private def validData(directors: PersonDetails*) = {
@@ -187,8 +191,14 @@ object EstablishersCompanyNavigatorSpec extends OptionValues with Enumerable.Imp
   private def companyVat(mode: Mode): Call =
     controllers.register.establishers.company.routes.CompanyVatController.onPageLoad(mode, 0, None)
 
+  private def companyVatNew(mode: Mode): Call =
+    controllers.register.establishers.company.routes.CompanyVatVariationsController.onPageLoad(mode, 0, None)
+
   private def hasCompanyVat(mode: Mode): Call =
     controllers.register.establishers.company.routes.HasCompanyVATController.onPageLoad(mode, None, 0)
+
+  private def hasCompanyPaye(mode: Mode): Call =
+    controllers.register.establishers.company.routes.HasCompanyPAYEController.onPageLoad(0)
 
   private def companyPostCodeLookup(mode: Mode) = controllers.register.establishers.company.routes.CompanyPostCodeLookupController.onPageLoad(mode, None, 0)
 
