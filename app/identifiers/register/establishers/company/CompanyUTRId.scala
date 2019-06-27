@@ -14,15 +14,20 @@
  * limitations under the License.
  */
 
-package viewmodels
+package identifiers.register.establishers.company
 
-import play.api.mvc.Call
+import identifiers.TypedIdentifier
+import identifiers.register.establishers.EstablishersId
+import models.UniqueTaxReference
+import play.api.libs.json.JsPath
 
-case class VatViewModel(
-                         postCall: Call,
-                         title: Message,
-                         heading: Message,
-                         hint: Message,
-                         subHeading: Option[Message] = None,
-                         srn: Option[String] = None
-                       )
+case class CompanyUTRId(index: Int) extends TypedIdentifier[String] {
+  override def path: JsPath = EstablishersId(index).path \ "companyUniqueTaxReference" \ CompanyUTRId.toString
+}
+
+object CompanyUTRId {
+  override def toString: String = "utr"
+
+}
+
+
