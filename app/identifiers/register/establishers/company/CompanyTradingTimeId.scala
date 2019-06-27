@@ -17,10 +17,13 @@
 package identifiers.register.establishers.company
 
 import identifiers.TypedIdentifier
-import identifiers.register.establishers.{EstablishersId, IsEstablisherCompleteId}
+import identifiers.register.establishers.{EstablishersId, IsEstablisherCompleteId, IsEstablisherNewId}
 import models.AddressYears
 import play.api.libs.json.{JsPath, JsResult}
 import utils.UserAnswers
+import utils.checkyouranswers.CheckYourAnswers.BooleanCYA
+import utils.checkyouranswers.{AddressYearsCYA, CheckYourAnswers}
+import viewmodels.AnswerRow
 
 case class CompanyTradingTimeId(index: Int) extends TypedIdentifier[AddressYears] {
   override def path: JsPath = EstablishersId(index).path \ CompanyTradingTimeId.toString
@@ -28,5 +31,21 @@ case class CompanyTradingTimeId(index: Int) extends TypedIdentifier[AddressYears
 
 object CompanyTradingTimeId {
   override def toString: String = "companyTradingTime"
+
+  implicit val cya: CheckYourAnswers[CompanyTradingTimeId] = {
+    val label: String = "companyTradingTime.checkYourAnswersLabel"
+    val changeAddressYears: String = "messages__visuallyhidden__establisher__trading_time"
+
+    new CheckYourAnswers[CompanyTradingTimeId] {
+      override def row(id: CompanyTradingTimeId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+        AddressYearsCYA(label, changeAddressYears)().row(id)(changeUrl, userAnswers)
+
+      override def updateRow(id: CompanyTradingTimeId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+        userAnswers.get(IsEstablisherNewId(id.index)) match {
+          case Some(true) => AddressYearsCYA(label, changeAddressYears)().row(id)(changeUrl, userAnswers)
+          case _ => AddressYearsCYA(label, changeAddressYears)().updateRow(id)(changeUrl, userAnswers)
+        }
+    }
+  }
 }
 

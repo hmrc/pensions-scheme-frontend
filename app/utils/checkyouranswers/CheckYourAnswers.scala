@@ -443,7 +443,8 @@ case class AddressYearsCYA[I <: TypedIdentifier[AddressYears]](label: String = "
 
   def apply()(implicit rds: Reads[AddressYears]): CheckYourAnswers[I] = {
     new CheckYourAnswers[I] {
-      override def row(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = userAnswers.get(id).map(addressYears =>
+      override def row(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+        userAnswers.get(id).map(addressYears =>
         Seq(AnswerRow(
           label,
           Seq(s"messages__common__$addressYears"),
@@ -478,7 +479,8 @@ case class AddressCYA[I <: TypedIdentifier[Address]](
         }.getOrElse(Seq.empty[AnswerRow])
       }
 
-      override def updateRow(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = row(id)(changeUrl, userAnswers)
+      override def updateRow(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+        row(id)(changeUrl, userAnswers)
     }
   }
 

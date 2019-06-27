@@ -305,9 +305,13 @@ POST       /:index/company/:mode/company-address/:srn                           
 
 GET        /:index/company/trading-time                                                                     controllers.register.establishers.company.CompanyTradingTimeController.onPageLoad(mode: Mode = NormalMode, srn: Option[String] = None, index: Index)
 POST       /:index/company/trading-time                                                                     controllers.register.establishers.company.CompanyTradingTimeController.onSubmit(mode: Mode = NormalMode, srn: Option[String] = None, index: Index)
+GET        /:index/company/:mode/trading-time/:srn                                                          controllers.register.establishers.company.CompanyTradingTimeController.onPageLoad(mode: Mode, srn: Option[String], index: Index)
+POST       /:index/company/:mode/trading-time/:srn                                                          controllers.register.establishers.company.CompanyTradingTimeController.onSubmit(mode: Mode, srn: Option[String], index: Index)
 
 GET        /:index/company/check-your-answers-company-address                                               controllers.register.establishers.company.CheckYourAnswersCompanyAddressController.onPageLoad(mode: Mode = NormalMode, srn: Option[String] = None, index: Index)
 POST       /:index/company/check-your-answers-company-address                                               controllers.register.establishers.company.CheckYourAnswersCompanyAddressController.onSubmit(mode: Mode = NormalMode, srn: Option[String] = None, index: Index)
+GET        /:index/company/:mode/check-your-answers-company-address/:srn                                    controllers.register.establishers.company.CheckYourAnswersCompanyAddressController.onPageLoad(mode: Mode, srn: Option[String], index: Index)
+POST       /:index/company/:mode/check-your-answers-company-address/:srn                                    controllers.register.establishers.company.CheckYourAnswersCompanyAddressController.onSubmit(mode: Mode, srn: Option[String], index: Index)
 
 GET        /:index/company/company-contact-details                                                          controllers.register.establishers.company.WhatYouWillNeedCompanyContactDetailsController.onPageLoad(mode: Mode = NormalMode, srn: Option[String] = None, index: Index)
 POST       /:index/company/company-contact-details                                                          controllers.register.establishers.company.WhatYouWillNeedCompanyContactDetailsController.onSubmit(mode: Mode = NormalMode, srn: Option[String] = None, index: Index)
