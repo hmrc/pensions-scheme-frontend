@@ -261,8 +261,8 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
   }
 
   private def confirmHasCompanyPAYE(index: Int, mode: Mode, srn: Option[String])(answers: UserAnswers): Option[NavigateTo] =
-    navigateOrSessionExpired(answers, HasCompanyPAYEId(index), (b:Boolean) =>
-      if(b)
+    navigateOrSessionExpired(answers, HasCompanyPAYEId(index),
+      if(_:Boolean)
         CompanyPayeVariationsController.onPageLoad(mode, index, srn)
       else
         CheckYourAnswersController.onPageLoad(mode, srn, index)
