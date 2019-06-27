@@ -37,11 +37,35 @@ class CheckYourAnswersCompanyDetailsControllerSpec extends ControllerSpecBase wi
 
   import CheckYourAnswersCompanyDetailsControllerSpec._
 
-  "Check Your Answers Copany Details Controller " when {
-    "on Page load if toggle off/toggle on in Normal Mode" must {
-      "return OK and the correct view with full answers" in {
+  "Check Your Answers Company Details Controller " when {
+    "when in registration journey" must {
+      "return OK and the correct view with full answers when user has answered yes to all questions" in {
         val request = FakeDataRequest(fullAnswers)
         val result = controller(fullAnswers.dataRetrievalAction).onPageLoad(NormalMode, None, index)(request)
+
+        status(result) mustBe OK
+        contentAsString(result) mustBe viewAsString(answerSections(request))
+      }
+
+      "return OK and the correct view with full answers when user has answered no to all questions" in {
+        val request = FakeDataRequest(fullAnswers)
+        val result = controller(fullAnswers.dataRetrievalAction).onPageLoad(NormalMode, None, index)(request)
+
+        status(result) mustBe OK
+        contentAsString(result) mustBe viewAsString(answerSections(request))
+      }
+
+      "return OK and the correct view with add links for values" in {
+        val request = FakeDataRequest(emptyAnswers)
+        val result = controller(emptyAnswers.dataRetrievalAction).onPageLoad(NormalMode, None, index)(request)
+
+        status(result) mustBe OK
+        contentAsString(result) mustBe viewAsString(answerSections(request))
+      }
+
+      "return OK and the correct view with add links for reasons" in {
+        val request = FakeDataRequest(emptyAnswers)
+        val result = controller(emptyAnswers.dataRetrievalAction).onPageLoad(NormalMode, None, index)(request)
 
         status(result) mustBe OK
         contentAsString(result) mustBe viewAsString(answerSections(request))
@@ -55,35 +79,45 @@ class CheckYourAnswersCompanyDetailsControllerSpec extends ControllerSpecBase wi
         contentAsString(result) mustBe viewAsString(answerSections(request))
       }
     }
-
-    "on Page load if toggle on in UpdateMode" must {
-      "return OK and the correct view for vat, paye and crn if not new establisher" in {
-        val answers = UserAnswers().set(CompanyVatVariationsId(index))("098765432").flatMap(
-          _.set(CompanyPayeVariationsId(index))("12345678")).asOpt.value
-        implicit val request = FakeDataRequest(answers)
-        val expectedCompanyDetailsSection = estCompanyDetailsSection(
-          CompanyVatVariationsId(index).row(companyVatVariationsRoute, UpdateMode) ++
-            CompanyPayeVariationsId(index).row(companyPayeRoute, UpdateMode) ++
-            CompanyRegistrationNumberVariationsId(index).row(companyRegistrationNumberVariationsRoute, UpdateMode)
-        )
-        val result = controller(answers.dataRetrievalAction, isToggleOn = true).onPageLoad(UpdateMode, srn, index)(request)
+    "when in variations journey with existing establisher" must {
+      "return OK and the correct view with full answers when user has answered yes to all questions" in {
+        val request = FakeDataRequest(fullAnswers)
+        val result = controller(fullAnswers.dataRetrievalAction).onPageLoad(NormalMode, None, index)(request)
 
         status(result) mustBe OK
-        contentAsString(result) mustBe viewAsString(Seq(expectedCompanyDetailsSection), srn, postUrlUpdateMode)
+        contentAsString(result) mustBe viewAsString(answerSections(request))
       }
 
-      "return OK and the correct view for vat and paye if new establisher" in {
-        val answers = UserAnswers().set(CompanyVatId(index))(Vat.Yes("098765432")).flatMap(
-          _.set(CompanyPayeId(index))(Paye.Yes("12345678"))).flatMap(_.set(IsEstablisherNewId(index))(true)).asOpt.value
-        implicit val request = FakeDataRequest(answers)
-
-        val expectedCompanyDetailsSection = estCompanyDetailsSection(
-          Seq.empty[AnswerRow]
-        )
-        val result = controller(answers.dataRetrievalAction, isToggleOn = true).onPageLoad(UpdateMode, srn, index)(request)
+      "return OK and the correct view with full answers when user has answered no to all questions" in {
+        val request = FakeDataRequest(fullAnswers)
+        val result = controller(fullAnswers.dataRetrievalAction).onPageLoad(NormalMode, None, index)(request)
 
         status(result) mustBe OK
-        contentAsString(result) mustBe viewAsString(Seq(expectedCompanyDetailsSection), srn, postUrlUpdateMode)
+        contentAsString(result) mustBe viewAsString(answerSections(request))
+      }
+
+      "return OK and the correct view with add links for values" in {
+        val request = FakeDataRequest(emptyAnswers)
+        val result = controller(emptyAnswers.dataRetrievalAction).onPageLoad(NormalMode, None, index)(request)
+
+        status(result) mustBe OK
+        contentAsString(result) mustBe viewAsString(answerSections(request))
+      }
+
+      "return OK and the correct view with add links for reasons" in {
+        val request = FakeDataRequest(emptyAnswers)
+        val result = controller(emptyAnswers.dataRetrievalAction).onPageLoad(NormalMode, None, index)(request)
+
+        status(result) mustBe OK
+        contentAsString(result) mustBe viewAsString(answerSections(request))
+      }
+
+      "return OK and the correct view with empty answers" in {
+        val request = FakeDataRequest(emptyAnswers)
+        val result = controller(emptyAnswers.dataRetrievalAction).onPageLoad(NormalMode, None, index)(request)
+
+        status(result) mustBe OK
+        contentAsString(result) mustBe viewAsString(answerSections(request))
       }
     }
 
@@ -118,22 +152,38 @@ object CheckYourAnswersCompanyDetailsControllerSpec extends ControllerSpecBase w
   val testSchemeName = "Test Scheme Name"
   val srn = Some("S123")
   private val companyDetails = CompanyDetails("test company")
+  private val crn = "crn"
+  private val utr = "utr"
+  private val vat = "vat"
+  private val paye = "paye"
+  private val reason = "reason"
 
   private def estCompanyDetailsSection(rows: Seq[AnswerRow]) =
     AnswerSection(None, rows)
 
   private val emptyAnswers = UserAnswers()
-  private val hasCompanyNumberRoute = routes.HasCompanyNumberController.onPageLoad(CheckMode, None, 0).url
-  private val companyRegistrationNumberVariationsRoute = routes.CompanyRegistrationNumberVariationsController.onPageLoad(CheckUpdateMode, srn, index).url
-  private val noCompanyNumberReasonRoute = routes.NoCompanyNumberController.onPageLoad(CheckUpdateMode, srn, index).url
-  private val hasCompanyUTRRoute = routes.HasCompanyUTRController.onPageLoad(CheckUpdateMode, srn, index).url
-  private val hasCompanyUTR1Route = routes.HasCompanyUTRController.onPageLoad(CheckUpdateMode, srn, index).url
-  private val noCompanyUTRRoute = routes.NoCompanyUTRController.onPageLoad(CheckMode, None, 0).url
-  private def hasCompanyVatRoute = routes.HasCompanyVATController.onPageLoad(CheckMode, srn, 0).url
-  private val companyVatVariationsRoute = routes.CompanyVatVariationsController.onPageLoad(CheckUpdateMode, 0, srn).url
-  private val hasCompanyPayeRoute = routes.HasCompanyPAYEController.onPageLoad(CheckMode, None, 0).url
-  private val companyPayeRoute = routes.HasCompanyPAYEController.onPageLoad(CheckMode, None, 0).url
-  private val isCompanyDormantRoute = routes.IsCompanyDormantController.onPageLoad(CheckMode, None, 0).url
+  private def hasCompanyNumberRoute(mode: Mode, srn: Option[String]) =
+    routes.HasCompanyNumberController.onPageLoad(mode, srn, 0).url
+  private def companyRegistrationNumberVariationsRoute(mode: Mode, srn: Option[String]) =
+    routes.CompanyRegistrationNumberVariationsController.onPageLoad(mode, srn, index).url
+  private def noCompanyNumberReasonRoute(mode: Mode, srn: Option[String]) =
+    routes.NoCompanyNumberController.onPageLoad(mode, srn, index).url
+  private def hasCompanyUTRRoute(mode: Mode, srn: Option[String]) =
+    routes.HasCompanyUTRController.onPageLoad(mode, srn, index).url
+  private def hasCompanyUTR1Route(mode: Mode, srn: Option[String]) =
+    routes.HasCompanyUTRController.onPageLoad(mode, srn, index).url
+  private def noCompanyUTRRoute(mode: Mode, srn: Option[String]) =
+    routes.NoCompanyUTRController.onPageLoad(mode, srn, 0).url
+  private def hasCompanyVatRoute(mode: Mode, srn: Option[String]) =
+    routes.HasCompanyVATController.onPageLoad(mode, srn, 0).url
+  private def companyVatVariationsRoute(mode: Mode, srn: Option[String]) =
+    routes.CompanyVatVariationsController.onPageLoad(mode, 0, srn).url
+  private def hasCompanyPayeRoute(mode: Mode, srn: Option[String]) =
+    routes.HasCompanyPAYEController.onPageLoad(mode, srn, 0).url
+  private def companyPayeRoute(mode: Mode, srn: Option[String]) =
+    routes.CompanyPayeVariationsController.onPageLoad(mode, srn, 0).url
+  private def isCompanyDormantRoute(mode: Mode, srn: Option[String]) =
+  routes.IsCompanyDormantController.onPageLoad(mode, srn, 0).url
 
   private val fullAnswers = emptyAnswers
 
@@ -141,30 +191,105 @@ object CheckYourAnswersCompanyDetailsControllerSpec extends ControllerSpecBase w
 
   def postUrlUpdateMode: Call = routes.CheckYourAnswersCompanyDetailsController.onSubmit(UpdateMode, srn, index)
 
-  private def companyDetailsSection(implicit request: DataRequest[AnyContent]): AnswerSection = {
-    val crnRows = DoYouHaveBoolCYA[HasCompanyNumberId](
-      label = "messages__company__cya__crn_yes_no"
-    )().row(HasCompanyNumberId(index))(hasCompanyNumberRoute, request.userAnswers)
-
-    val payeRows = DoYouHaveBoolCYA[HasCompanyPAYEId](
-     "messages__company__cya__paye_yes_no"
-    )().row(HasCompanyPAYEId(index))(hasCompanyPayeRoute, request.userAnswers)
-
-    val vatRows = DoYouHaveBoolCYA("messages__company__cya__vat_yes_no")().
-      row(HasCompanyVATId(index))(hasCompanyVatRoute, request.userAnswers)
-
-    val utrRows = DoYouHaveBoolCYA(
-      label = "messages__company__cya__utr_yes_no"
-    )().row(HasCompanyUTRId(index))(hasCompanyUTRRoute, request.userAnswers)
-
-    val isDormantRows = IsDormantCYA()().row(IsCompanyDormantId(index))(isCompanyDormantRoute, request.userAnswers)
-
-    AnswerSection(
+  private def emptyCompanyDetailsSection(mode: Mode, srn: Option[String]
+                                                    )(implicit request: DataRequest[AnyContent]): Seq[AnswerSection] =
+    Seq(AnswerSection(
       None,
-      crnRows ++ utrRows ++ vatRows ++ payeRows ++ isDormantRows)
-  }
+      Seq(
+        addLink("", hasCompanyNumberRoute(mode, srn)),
+        addLink("", hasCompanyUTRRoute(mode, srn)),
+        addLink("", hasCompanyVatRoute(mode, srn)),
+        addLink("", hasCompanyPayeRoute(mode, srn)),
+        addLink("", isCompanyDormantRoute(mode, srn))
+      )
+    ))
 
-  private def answerSections(implicit request: DataRequest[AnyContent]) = Seq(companyDetailsSection)
+  private def companyDetailsAddLinksValues(mode: Mode, srn: Option[String]
+                                                    )(implicit request: DataRequest[AnyContent]): Seq[AnswerSection] =
+    Seq(AnswerSection(
+      None,
+      Seq(
+        booleanChangeLink("", hasCompanyNumberRoute(mode, srn), true),
+        addLink("", companyRegistrationNumberVariationsRoute(mode, srn)),
+        booleanChangeLink("", hasCompanyUTRRoute(mode, srn), true),
+        addLink("", hasCompanyUTR1Route(mode, srn)),
+        booleanChangeLink("", hasCompanyVatRoute(mode, srn), true),
+        addLink("", companyVatVariationsRoute(mode, srn)),
+        booleanChangeLink("", hasCompanyPayeRoute(mode, srn), true),
+        addLink("", companyPayeRoute(mode, srn)),
+        booleanChangeLink("", isCompanyDormantRoute(mode, srn), true)
+      )
+    ))
+
+  private def companyDetailsAddLinksReasons(mode: Mode, srn: Option[String]
+                                          )(implicit request: DataRequest[AnyContent]): Seq[AnswerSection] =
+    Seq(AnswerSection(
+      None,
+      Seq(
+        booleanChangeLink("", hasCompanyNumberRoute(mode, srn), false),
+        addLink("", noCompanyNumberReasonRoute(mode, srn)),
+        booleanChangeLink("", hasCompanyUTRRoute(mode, srn), false),
+        addLink("", noCompanyUTRRoute(mode, srn)),
+        booleanChangeLink("", hasCompanyVatRoute(mode, srn), true),
+        addLink("", companyVatVariationsRoute(mode, srn)),
+        booleanChangeLink("", hasCompanyPayeRoute(mode, srn), true),
+        addLink("", companyPayeRoute(mode, srn)),
+        booleanChangeLink("", isCompanyDormantRoute(mode, srn), true)
+      )
+    ))
+
+  private def companyDetailsAllValues(mode: Mode, srn: Option[String]
+                                          )(implicit request: DataRequest[AnyContent]): Seq[AnswerSection] =
+    Seq(AnswerSection(
+      None,
+      Seq(
+        booleanChangeLink("", hasCompanyNumberRoute(mode, srn), true),
+        stringChangeLink("", companyRegistrationNumberVariationsRoute(mode, srn), crn),
+        booleanChangeLink("", hasCompanyUTRRoute(mode, srn), true),
+        stringChangeLink("", hasCompanyUTR1Route(mode, srn), utr),
+        booleanChangeLink("", hasCompanyVatRoute(mode, srn), true),
+        stringChangeLink("", companyVatVariationsRoute(mode, srn), vat),
+        booleanChangeLink("", hasCompanyPayeRoute(mode, srn), true),
+        stringChangeLink("", companyPayeRoute(mode, srn), paye),
+        booleanChangeLink("", isCompanyDormantRoute(mode, srn), true)
+      )
+    ))
+
+  private def companyDetailsAllReasons(mode: Mode, srn: Option[String]
+                                           )(implicit request: DataRequest[AnyContent]): Seq[AnswerSection] =
+    Seq(AnswerSection(
+      None,
+      Seq(
+        booleanChangeLink("", hasCompanyNumberRoute(mode, srn), false),
+        stringChangeLink("", noCompanyNumberReasonRoute(mode, srn), reason),
+        booleanChangeLink("", hasCompanyUTRRoute(mode, srn), false),
+        stringChangeLink("", noCompanyUTRRoute(mode, srn), reason),
+        booleanChangeLink("", hasCompanyVatRoute(mode, srn), true),
+        stringChangeLink("", companyVatVariationsRoute(mode, srn), reason),
+        booleanChangeLink("", hasCompanyPayeRoute(mode, srn), true),
+        stringChangeLink("", companyPayeRoute(mode, srn), reason),
+        booleanChangeLink("", isCompanyDormantRoute(mode, srn), true)
+      )
+    ))
+
+  private def booleanChangeLink(label: String, changeUrl: String, value: Boolean) =
+    AnswerRow(label, Seq(if (value) "site.yes" else "site.no"),
+    answerIsMessageKey = false,
+    Some(Link("site.change", changeUrl, Some(label))))
+
+  private def stringChangeLink(label: String, changeUrl: String, ansOrReason: String) =
+    AnswerRow(
+      label,
+      Seq(ansOrReason),
+      answerIsMessageKey = false,
+      Some(Link("site.change", changeUrl,
+        Some(label)
+    )))
+
+
+  private def addLink(label: String, changeUrl: String) =
+    AnswerRow(label, Seq.empty, answerIsMessageKey = true, Some(Link("site.add", changeUrl, Some(label))))
+
 
   def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData,
                  allowChangeHelper: AllowChangeHelper = ach,
