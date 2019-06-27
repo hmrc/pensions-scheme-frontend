@@ -43,20 +43,32 @@ class EstablishersCompanyNavigatorSpec extends SpecBase with MustMatchers with N
     ("Id",                                      "User Answers",                   "Next Page (Normal Mode)",                "Save (NM)",    "Next Page (Check Mode)",                 "Save (CM)"),
     (CompanyDetailsId(0),                         emptyAnswers,                     companyVat(mode),                   true,           Some(exitJourney(mode, emptyAnswers, 0, cya(mode))),                   true),
     (CompanyDetailsId(0),                         newEstablisher,                   companyVat(mode),                   true,           Some(cya(mode)),                                                             true),
-    (HasCompanyNumberId(0),                       emptyAnswers,                     sessionExpired,                     true,           Some(exitJourney(mode, emptyAnswers, 0, cya(mode))),          true),
-    (HasCompanyNumberId(0),                       hasCompanyNumber(true),    companyRegistrationNumberNew(mode), true,           Some(exitJourney(mode, emptyAnswers, 0, cya(mode))),          true),
-    (HasCompanyNumberId(0),                       hasCompanyNumber(false),   noCompanyRegistrationNumber(mode),  true,           Some(exitJourney(mode, emptyAnswers, 0, cya(mode))),          true),
+    (HasCompanyNumberId(0),                       emptyAnswers,                     sessionExpired,                     true,           Some(exitJourney(mode, emptyAnswers, 0, cyaCompanyDetails(mode))),          true),
+    (HasCompanyNumberId(0),                       hasCompanyNumber(true),    companyRegistrationNumberNew(mode), true,           Some(exitJourney(mode, emptyAnswers, 0, cyaCompanyDetails(mode))),          true),
+    (HasCompanyNumberId(0),                       hasCompanyNumber(false),   noCompanyRegistrationNumber(mode),  true,           Some(exitJourney(mode, emptyAnswers, 0, cyaCompanyDetails(mode))),          true),
+    (HasCompanyVATId(0),                          emptyAnswers,                     sessionExpired,                     true,           Some(exitJourney(mode, emptyAnswers, 0, cyaCompanyDetails(mode))),          true),
+    (HasCompanyVATId(0),                          hasCompanyVat(true),       companyVatNew(mode),                true,           Some(exitJourney(mode, emptyAnswers, 0, cyaCompanyDetails(mode))),          true),
+    (HasCompanyVATId(0),                          hasCompanyVat(false),      hasCompanyPaye(mode),               true,           Some(exitJourney(mode, emptyAnswers, 0, cyaCompanyDetails(mode))),          true),
     (CompanyVatId(0),                             emptyAnswers,                     companyPaye(mode),                  true,           Some(exitJourney(mode, emptyAnswers, 0, cya(mode))),                   true),
     (CompanyVatId(0),                             newEstablisher,                   companyPaye(mode),                  true,           Some(cya(mode)),                                                             true),
     (CompanyPayeId(0),                            emptyAnswers,                     companyRegistrationNumber(mode),    true,           Some(exitJourney(mode, emptyAnswers, 0, cya(mode))),                   true),
     (CompanyPayeId(0),                            newEstablisher,                   companyRegistrationNumber(mode),    true,           Some(cya(mode)),                                                             true),
+
     (CompanyRegistrationNumberId(0),              emptyAnswers,                     companyUTR(mode),                   true,           Some(exitJourney(mode, emptyAnswers, 0, cya(mode))),                   true),
     (CompanyRegistrationNumberId(0),              newEstablisher,                   companyUTR(mode),                   true,           Some(cya(mode)),                                                              true),
 
-    (NoCompanyNumberId(0),                        emptyAnswers,                     companyUTR(mode),                   true,           Some(exitJourney(mode, emptyAnswers, 0, cya(mode))),                   true),
-    (NoCompanyNumberId(0),                        newEstablisher,                   companyUTR(mode),                   true,           Some(cya(mode)),                   true),
 
 
+
+    (NoCompanyNumberId(0),                        emptyAnswers,                     hasCompanyUTR(mode),                   true,           Some(exitJourney(mode, emptyAnswers, 0, cya(mode))),                   true),
+    (NoCompanyNumberId(0),                        newEstablisher,                   hasCompanyUTR(mode),                   true,           Some(cya(mode)),                   true),
+
+
+
+
+    (HasCompanyUTRId(0),                          emptyAnswers,                     sessionExpired,                     true,           Some(exitJourney(mode, emptyAnswers, 0, cyaCompanyDetails(mode))),                   true),
+    (HasCompanyUTRId(0),                          hasCompanyUtr(true),       companyUTRNew(mode),                true,           Some(exitJourney(mode, emptyAnswers, 0, cyaCompanyDetails(mode))),                   true),
+    (HasCompanyUTRId(0),                          hasCompanyUtr(false),      noCompanyUTR(mode),                 true,           Some(exitJourney(mode, emptyAnswers, 0, cyaCompanyDetails(mode))),                   true),
 
     (CompanyUniqueTaxReferenceId(0),              emptyAnswers,                     companyPostCodeLookup(mode),        true,           Some(exitJourney(mode, emptyAnswers, 0, cya(mode))),                    true),
     (CompanyUniqueTaxReferenceId(0),              newEstablisher,                   companyPostCodeLookup(mode),        true,           Some(cya(mode)),                                                              true),
@@ -94,17 +106,21 @@ class EstablishersCompanyNavigatorSpec extends SpecBase with MustMatchers with N
 
   private def normalOnlyRoutes: TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = Table(
     ("Id",                                          "User Answers",               "Next Page (Normal Mode)",                "Save (NM)",  "Next Page (Check Mode)",         "Save (CM)"),
+//    (CompanyRegistrationNumberId(0),              emptyAnswers,                 companyUTR(NormalMode),                   true,         Some(exitJourney(journeyMode(CheckMode), emptyAnswers, 0, cya(NormalMode))),                   true),
+//    (CompanyRegistrationNumberId(0),              newEstablisher,               companyUTR(NormalMode),                   true,         Some(cya(journeyMode(CheckMode))),                   true),
     (CompanyContactDetailsId(0),                  emptyAnswers,                 isDormant(NormalMode),                                true,         Some(cya(journeyMode(CheckMode))),               true),
     (CompanyPhoneId(0),                           emptyAnswers,                 cyaCompanyContactDetails(NormalMode),                         true,         Some(cyaCompanyContactDetails(journeyMode(CheckMode))),               true),
     (IsCompanyDormantId(0),                       emptyAnswers,                 cya(NormalMode),             true,         Some(cya(journeyMode(CheckMode))),               true)
   )
 
-  private def updateOnlyRoutes: TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = Table(
+  private def updateOnlyRoutes(toggled:Boolean): TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = Table(
     ("Id",                                          "User Answers",               "Next Page (UpdateMode Mode)",                "Save (NM)",  "Next Page (Check Mode)",         "Save (CM)"),
+//    (CompanyRegistrationNumberId(0),              emptyAnswers,                     if(toggled)hasCompanyUTR(UpdateMode) else companyUTR(UpdateMode),                   true,           Some(exitJourney(UpdateMode, emptyAnswers, 0, cya(UpdateMode))),                   true),
+//    (CompanyRegistrationNumberId(0),              newEstablisher,                   if(toggled)hasCompanyUTR(UpdateMode) else companyUTR(UpdateMode),                   true,           Some(cya(UpdateMode)),                   true),
     (CompanyContactDetailsId(0),  emptyAnswers,                         cya(UpdateMode),                        true,   Some(exitJourney(checkMode(UpdateMode),   emptyAnswers, 0, cya(UpdateMode))),       true),
     (CompanyPhoneId(0),           emptyAnswers,                         cyaCompanyContactDetails(UpdateMode),   true,   Some(exitJourney(checkMode(UpdateMode),   emptyAnswers, 0, cyaCompanyContactDetails(UpdateMode))),       true),
     (AddCompanyDirectorsId(0),    addCompanyDirectorsFalseWithChanges,  anyMoreChanges,                         true,   None,                                                           true),
-    (CompanyVatVariationsId(0),   emptyAnswers,                         none,                                   true,   Some(exitJourney(checkMode(UpdateMode),   emptyAnswers, 0, cya(UpdateMode))),       true),
+    (CompanyVatVariationsId(0),   emptyAnswers,                         none,                                   true,   Some(exitJourney(checkMode(UpdateMode),   emptyAnswers, 0, cyaCompanyDetails(UpdateMode))),       true),
     (CompanyPayeVariationsId(0),                  emptyAnswers,         none,                                   true,   Some(exitJourney(checkMode(UpdateMode), emptyAnswers, 0, cya(UpdateMode))),                   true)
   )
 
@@ -113,9 +129,9 @@ class EstablishersCompanyNavigatorSpec extends SpecBase with MustMatchers with N
     routes(NormalMode, isPrevAddEnabled) ++ normalOnlyRoutes: _*
   )
 
-  private def updateRoutes(isPrevAddEnabled : Boolean = false) = Table(
+  private def updateRoutes(toggled : Boolean = false) = Table(
     ("Id",                                          "User Answers",               "Next Page (Normal Mode)",                "Save (NM)",  "Next Page (Check Mode)",         "Save (CM)"),
-    routes(UpdateMode, isPrevAddEnabled) ++ updateOnlyRoutes: _*
+    routes(UpdateMode, toggled) ++ updateOnlyRoutes(toggled): _*
   )
 
   private val navigator: EstablishersCompanyNavigator =
@@ -141,6 +157,8 @@ object EstablishersCompanyNavigatorSpec extends OptionValues with Enumerable.Imp
   private val emptyAnswers = UserAnswers(Json.obj())
   private val newEstablisher = UserAnswers(Json.obj()).set(IsEstablisherNewId(0))(true).asOpt.value
   private def hasCompanyNumber(yesNo : Boolean) = UserAnswers(Json.obj()).set(HasCompanyNumberId(0))(yesNo).asOpt.value
+  private def hasCompanyUtr(yesNo : Boolean) = UserAnswers(Json.obj()).set(HasCompanyUTRId(0))(yesNo).asOpt.value
+  private def hasCompanyVat(yesNo : Boolean) = UserAnswers(Json.obj()).set(HasCompanyVATId(0))(yesNo).asOpt.value
   private val johnDoe = PersonDetails("John", None, "Doe", new LocalDate(1862, 6, 9))
 
   private def validData(directors: PersonDetails*) = {
@@ -166,17 +184,35 @@ object EstablishersCompanyNavigatorSpec extends OptionValues with Enumerable.Imp
   private def noCompanyRegistrationNumber(mode: Mode): Call =
     controllers.register.establishers.company.routes.NoCompanyNumberController.onPageLoad(mode, None, 0)
 
+  private def companyVatNumberNew(mode: Mode): Call =
+    controllers.register.establishers.company.routes.CompanyVatVariationsController.onPageLoad(mode, 0, None)
+
+  private def companyUTR(mode: Mode): Call =
+    controllers.register.establishers.company.routes.CompanyUniqueTaxReferenceController.onPageLoad(mode, None, 0)
+
+  private def hasCompanyUTR(mode: Mode): Call =
+    controllers.register.establishers.company.routes.HasCompanyUTRController.onPageLoad(mode, None, 0)
+
+  private def companyUTRNew(mode: Mode): Call =
+    controllers.register.establishers.company.routes.CompanyUTRController.onPageLoad(mode, None, 0)
+
+  private def noCompanyUTR(mode: Mode): Call =
+    controllers.register.establishers.company.routes.NoCompanyUTRController.onPageLoad(mode, None, 0)
+
   private def companyPaye(mode: Mode): Call =
     controllers.register.establishers.company.routes.CompanyPayeController.onPageLoad(mode, 0, None)
 
   private def companyVat(mode: Mode): Call =
     controllers.register.establishers.company.routes.CompanyVatController.onPageLoad(mode, 0, None)
 
-  private def companyUTR(mode: Mode): Call =
-    controllers.register.establishers.company.routes.CompanyUniqueTaxReferenceController.onPageLoad(mode, None, 0)
+  private def companyVatNew(mode: Mode): Call =
+    controllers.register.establishers.company.routes.CompanyVatVariationsController.onPageLoad(mode, 0, None)
 
   private def hasCompanyVat(mode: Mode): Call =
     controllers.register.establishers.company.routes.HasCompanyVATController.onPageLoad(mode, None, 0)
+
+  private def hasCompanyPaye(mode: Mode): Call =
+    controllers.register.establishers.company.routes.HasCompanyPAYEController.onPageLoad(0)
 
   private def companyPostCodeLookup(mode: Mode) = controllers.register.establishers.company.routes.CompanyPostCodeLookupController.onPageLoad(mode, None, 0)
 
