@@ -95,4 +95,52 @@ trait UtrBehaviour extends FormSpec with UtrMapping with PropertyChecks with Gen
       }
     }
   }
+
+  def formWithUtrString(testForm: Form[String],
+                  requiredKey: String,
+                  maxLengthKey: String,
+                  invalidKey: String): Unit = {
+
+    "behave like form with UTR" must {
+
+      val utr = "uniqueTaxReference.utr"
+
+      Seq("1234556676", " 1234454646 ").foreach {
+        utrNo =>
+          s"bind a valid uniqueTaxReference with utr $utrNo" in {
+            val result = testForm.bind(Map(utr -> utrNo))
+            result.get mustBe utrNo.trim
+          }
+      }
+
+      "fail to bind" when {
+        "an empty Map" in {
+          val result = testForm.bind(Map.empty[String, String])
+          result.errors mustBe Seq(FormError(utr, requiredKey))
+        }
+
+        Seq("1234", "sdfghjkloi").foreach { utrNo =>
+          s"utr $utrNo is invalid" in {
+            val result = testForm.bind(Map(utr -> utrNo))
+            result.errors mustBe Seq(FormError(utr, invalidKey, Seq(regexUtr)))
+          }
+        }
+
+        Seq("12345678766655", "adfghsdfghjkloi").foreach { utrNo =>
+          s"utr $utrNo exceeds max length allowed" in {
+            val maxLength = 10
+            val result = testForm.bind(Map(utr -> utrNo))
+            result.errors mustBe Seq(FormError(utr, maxLengthKey, Seq(maxLength)))
+          }
+        }
+
+      }
+
+      "Successfully unbind 'utr'" in {
+        val result = testForm.fill("utr").data
+        result must contain(utr -> "utr")
+      }
+
+    }
+  }
 }

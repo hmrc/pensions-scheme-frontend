@@ -28,7 +28,7 @@ import utils.FakeNavigator
 import viewmodels.{CommonFormWithHintViewModel, Message}
 import views.html.hasCrn
 
-class HasCompanyNumberControllerSpec  extends ControllerSpecBase {
+class HasCompanyNumberControllerSpec extends ControllerSpecBase {
   private val schemeName = None
   private def onwardRoute = controllers.routes.IndexController.onPageLoad()
   val formProvider = new HasCrnFormProvider()

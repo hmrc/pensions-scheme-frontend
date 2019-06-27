@@ -14,18 +14,20 @@
  * limitations under the License.
  */
 
-package forms
+package identifiers.register.establishers.company
 
-import forms.mappings.Mappings
-import javax.inject.Inject
-import play.api.data.Form
-import play.api.i18n.Messages
-import viewmodels.Message
+import identifiers.TypedIdentifier
+import identifiers.register.establishers.EstablishersId
+import models.UniqueTaxReference
+import play.api.libs.json.JsPath
 
-class HasCrnFormProvider @Inject() extends Mappings {
-
-  def apply(errorKey : String, name : String)(implicit messages: Messages): Form[Boolean] =
-    Form(
-      "value" -> boolean(Message(errorKey, name).resolve)
-    )
+case class CompanyUTRId(index: Int) extends TypedIdentifier[String] {
+  override def path: JsPath = EstablishersId(index).path \ "companyUniqueTaxReference" \ CompanyUTRId.toString
 }
+
+object CompanyUTRId {
+  override def toString: String = "utr"
+
+}
+
+

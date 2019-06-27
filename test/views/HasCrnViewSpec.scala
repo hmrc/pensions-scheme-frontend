@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package views.register
+package views
 
 import forms.HasCrnFormProvider
 import models.{Index, NormalMode}
