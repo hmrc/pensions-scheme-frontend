@@ -14,10 +14,9 @@
  * limitations under the License.
  */
 
-package identifiers.register.trustees.company
+package identifiers.register.establishers.company.director
 
 import base.SpecBase
-import identifiers.register.trustees.IsTrusteeNewId
 import models._
 import models.requests.DataRequest
 import play.api.mvc.AnyContent
@@ -27,65 +26,65 @@ import utils.checkyouranswers.Ops._
 import utils.{CountryOptions, UserAnswers}
 import viewmodels.AnswerRow
 
-class CompanyVatVariationsIdSpec extends SpecBase {
+class DirectorNewNinoIdSpec extends SpecBase {
 
   implicit val countryOptions: CountryOptions = new CountryOptions(environment, frontendAppConfig)
   private val onwardUrl = "onwardUrl"
   private val answerRowsWithChangeLinks = Seq(
-    AnswerRow("messages__common__cya__vat",List("vat"),false,Some(Link("site.change",onwardUrl,
-      Some("messages__visuallyhidden__trustee__vat_number"))))
+    AnswerRow("messages__common__nino",List("nino"),false,Some(Link("site.change",onwardUrl,
+      Some("messages__visuallyhidden__director__nino"))))
   )
 
   "cya" when {
 
-    def answers: UserAnswers = UserAnswers().set(CompanyVatVariationsId(0))(ReferenceValue("vat")).asOpt.get
+    def answers: UserAnswers = UserAnswers().set(DirectorNewNinoId(0, 0))(ReferenceValue("nino")).asOpt.get
 
     "in normal mode" must {
 
       "return answers rows with change links" in {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
         implicit val userAnswers: UserAnswers = request.userAnswers
-        CompanyVatVariationsId(0).row(onwardUrl, NormalMode) must equal(answerRowsWithChangeLinks)
+        DirectorNewNinoId(0, 0).row(onwardUrl, NormalMode) must equal(answerRowsWithChangeLinks)
       }
     }
 
-    "in update mode for new trustee - company vat" must {
+    "in update mode for new director -  nino" must {
 
-      def answersNew: UserAnswers = answers.set(IsTrusteeNewId(0))(true).asOpt.value
+      def answersNew: UserAnswers = answers.set(IsNewDirectorId(0, 0))(true).asOpt.value
 
       "return answers rows with change links" in {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answersNew, PsaId("A0000000"))
         implicit val userAnswers: UserAnswers = request.userAnswers
-        CompanyVatVariationsId(0).row(onwardUrl, UpdateMode) must equal(answerRowsWithChangeLinks)
+        DirectorNewNinoId(0, 0).row(onwardUrl, UpdateMode) must equal(answerRowsWithChangeLinks)
       }
     }
 
-    "in update mode for existing trustee - company vat" must {
+    "in update mode for existing establisher - company director nino" must {
 
-      "return answers rows without change links if vat is available and not editable" in {
+      "return answers rows without change links if nino is available and not editable" in {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
         implicit val userAnswers: UserAnswers = request.userAnswers
 
-        CompanyVatVariationsId(0).row(onwardUrl, UpdateMode) must equal(Seq(
-          AnswerRow("messages__common__cya__vat",List("vat"),false, None)
+        DirectorNewNinoId(0, 0).row(onwardUrl, UpdateMode) must equal(Seq(
+          AnswerRow("messages__common__nino",List("nino"),false, None)
         ))
       }
 
-      "return answers rows with change links if vat is available and editable" in {
-        val answers = UserAnswers().set(CompanyVatVariationsId(0))(ReferenceValue("vat", true)).asOpt.get
+      "return answers rows with change links if nino is available and editable" in {
+        val answers = UserAnswers().set(DirectorNewNinoId(0, 0))(ReferenceValue("nino", true)).asOpt.get
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
         implicit val userAnswers: UserAnswers = request.userAnswers
 
-        CompanyVatVariationsId(0).row(onwardUrl, UpdateMode) must equal(answerRowsWithChangeLinks)
+        DirectorNewNinoId(0, 0).row(onwardUrl, UpdateMode) must equal(answerRowsWithChangeLinks)
       }
 
-      "display an add link if vat is not available" in {
+      "display an add link if nino is not available" in {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(), PsaId("A0000000"))
         implicit val userAnswers: UserAnswers = request.userAnswers
 
-        CompanyVatVariationsId(0).row(onwardUrl, UpdateMode) must equal(Seq(
-          AnswerRow("messages__common__cya__vat", Seq("site.not_entered"), answerIsMessageKey = true,
-            Some(Link("site.add", onwardUrl, Some("messages__visuallyhidden__trustee__vat_number_add"))))))
+        DirectorNewNinoId(0, 0).row(onwardUrl, UpdateMode) must equal(Seq(
+          AnswerRow("messages__common__nino", Seq("site.not_entered"), answerIsMessageKey = true,
+            Some(Link("site.add", onwardUrl, Some("messages__visuallyhidden__director__nino_add"))))))
       }
     }
   }

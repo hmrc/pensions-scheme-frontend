@@ -18,17 +18,15 @@ package identifiers.register.establishers.company.director
 
 import identifiers._
 import identifiers.register.establishers.EstablishersId
-import models.{Link, Nino}
+import models.ReferenceValue
 import play.api.i18n.Messages
 import play.api.libs.json.JsPath
-import utils.checkyouranswers.CheckYourAnswers
-import utils.checkyouranswers.CheckYourAnswers.StringCYA
+import utils.checkyouranswers.{CheckYourAnswers, ReferenceValueCYA}
 import utils.{CountryOptions, UserAnswers}
 import viewmodels.AnswerRow
 
-
-case class DirectorNewNinoId(establisherIndex: Int, directorIndex: Int) extends TypedIdentifier[String] {
-  override def path: JsPath = EstablishersId(establisherIndex).path \ "director" \ directorIndex \ DirectorNewNinoId.toString \ "nino"
+case class DirectorNewNinoId(establisherIndex: Int, directorIndex: Int) extends TypedIdentifier[ReferenceValue] {
+  override def path: JsPath = EstablishersId(establisherIndex).path \ "director" \ directorIndex \ DirectorNewNinoId.toString
 }
 
 object DirectorNewNinoId {
@@ -39,18 +37,18 @@ object DirectorNewNinoId {
 
     new CheckYourAnswers[DirectorNewNinoId] {
 
+      private val label = "messages__common__nino"
+      private val hiddenLabel = "messages__visuallyhidden__director__nino"
+
       override def row(id: DirectorNewNinoId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        StringCYA[DirectorNewNinoId]()().row(id)(changeUrl, userAnswers)
+        ReferenceValueCYA[DirectorNewNinoId](label, hiddenLabel)().row(id)(changeUrl, userAnswers)
 
       override def updateRow(id: DirectorNewNinoId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
         userAnswers.get(IsNewDirectorId(id.establisherIndex, id.directorIndex)) match {
-          case Some(true) => StringCYA[DirectorNewNinoId]()().row(id)(changeUrl, userAnswers)
+          case Some(true) =>
+            ReferenceValueCYA[DirectorNewNinoId](label, hiddenLabel)().row(id)(changeUrl, userAnswers)
           case _ =>
-            userAnswers.get(id) match {
-              case Some(nino) => Seq(AnswerRow("messages__common__nino", Seq(nino), answerIsMessageKey = false, None))
-              case _ => Seq(AnswerRow("messages__common__nino", Seq("site.not_entered"), answerIsMessageKey = true,
-                Some(Link("site.add", changeUrl, Some(s"messages__visuallyhidden__director__nino_add")))))
-            }
+            ReferenceValueCYA[DirectorNewNinoId](label, hiddenLabel)().updateRow(id)(changeUrl, userAnswers)
         }
       }
     }
