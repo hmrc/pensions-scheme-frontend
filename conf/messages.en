@@ -1520,15 +1520,17 @@ messages__payeVariations__error_invalid = Enter {0}’s employer PAYE reference 
 messages__payeVariations__error_length = Enter {0}’s employer PAYE reference using 16 characters or less
 messages__payeVariations__error_required = Enter an employer PAYE reference
 
+messages__utr__error_required = Enter a UTR
+messages__utr__error_maxLength = The UTR must be 10 numbers
+messages__utr__error_invalid = The UTR must only include numbers
+messages__companyUtr__title = What is their UTR?
+messages__companyUtr__heading = What is {0}’s UTR?
+messages__companyUtr__guidance1 = If the UTR is 13 numbers, you only need to enter the last 10.
+messages__companyUtr__guidance2 = If there is a letter ‘K’ at the end of the number, do not enter it.
+messages__companyUtr__hint = For example, 12345 67890
+
 messages__reason__error_required = Enter a reason why {0} does not have a UTR
 messages__reason__error_maxLength = Reason must be 160 characters or less
 messages__reason__error_invalid = Reason must only include letters, numbers and punctuation marks
 messages__noCompanyUtr__title = Why does the company not have a UTR?
 messages__noCompanyUtr__heading = Why does {0} not have a UTR?
-
-messages__utr__error__required = "Enter a UTR"
-messages__utr__error_maxLength = "The UTR must be 10 numbers"
-messages__utr__error__invalid = "The UTR must only include numbers"
-messages__companyUtr__title = What is their UTR?
-messages__companyUtr__heading = What is {0}’s UTR?
-messages__companyUtr__hint = For example, 12345 67890

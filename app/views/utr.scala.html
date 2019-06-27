@@ -39,7 +39,11 @@ Vat.options
             messages(viewmodel.heading).toString
         )
 
-        <p>@messages(viewmodel.hint)</p>
+        <p>@messages("messages__companyUtr__guidance1")</p>
+
+        <p>@messages("messages__companyUtr__guidance2")</p>
+
+        <p class="form-hint">@messages(viewmodel.hint)</p>
 
         @components.input_text(
             field = form("utr"),
