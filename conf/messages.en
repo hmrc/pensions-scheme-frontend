@@ -85,6 +85,8 @@ messages__error__address_line_4_invalid = The fourth line of the address contain
 messages__error_country_required = Enter a country
 messages__error_country_invalid = Enter a valid country
 
+messages__common_phone__heading = What is {0}’s phone number?
+
 messages__error__common__email__no_at_sign = Enter an email address which includes an @ symbol
 messages__error__common__email__start_with_at_sign = Enter an email address which does not start with @
 messages__error__common__email__dot_after_at_sign = Enter an email address in the correct format with a character between @ and dot
@@ -1257,9 +1259,9 @@ messages__adviser__phone__title = What is the person’s phone number?
 messages__adviser__phone__heading = What is {0}’s phone number?
 messages__adviser__phone__p1 = This will be used if HMRC need to contact {0}.
 
-messages__adviser__phone__blank = Enter a phone number
-messages__adviser__phone__length = The phone number cannot be more than 24 characters
-messages__adviser__phone__invalid = The phone number can only contain numbers
+messages__phone__blank = Enter a phone number
+messages__phone__length = The phone number cannot be more than 24 characters
+messages__phone__invalid = The phone number can only contain numbers
 
 declarationDuties.checkYourAnswersLabel= Do you have working knowledge of pensions and pensions tax legislation?
 messages__visuallyhidden__declarationDuties = Change if you have working knowledge of pensions and pensions tax legislation
@@ -1437,6 +1439,16 @@ messages__hasCompanyNumber__h1 = Does {0} have a company number?
 messages__hasCompanyNumber__p1 = You can find this on the company’s certificate of incorporation or on any official letters from Companies House.
 messages__hasCompanyNumber__error__required = Select yes if {0} has a company number
 
+messages__hasCompanyUtr__title = Does the company have a UTR?
+messages__hasCompanyUtr__h1 = Does {0} have a Unique Taxpayer Reference (UTR)?
+messages__hasCompanyUtr__p1 = This is a 10-digit or 13-digit number. You can find it on tax returns and other documents from HMRC. It might be called ‘reference’, ‘UTR’ or ‘official use’.
+messages__hasCompanyUtr__error__required = Select yes if {0} has a Unique Taxpayer Reference (UTR)
+
+messages__hasCompanyVat__title = Is the company registered for VAT?
+messages__hasCompanyVat__h1 = Is {0} registered for VAT?
+messages__hasCompanyVat__p1 = This is 9 numbers, sometimes with ‘GB’ at the start, for example 123456789 or GB123456789. You can find it on {0}’s VAT registration certificate.
+messages__hasCompanyVat__error__required = Select yes if the {0} is registered for VAT
+
 messages__schemeTaskList__before_you_start_link_text = Setting up your scheme application
 messages__schemeTaskList__scheme_info_link_text = Information about your scheme
 messages__schemeTaskList__scheme_information_link_text = Scheme information
@@ -1510,8 +1522,19 @@ messages__payeVariations__error_invalid = Enter {0}’s employer PAYE reference 
 messages__payeVariations__error_length = Enter {0}’s employer PAYE reference using 16 characters or less
 messages__payeVariations__error_required = Enter an employer PAYE reference
 
+messages__utr__error_required = Enter a UTR
+messages__utr__error_maxLength = The UTR must be 10 numbers
+messages__utr__error_invalid = The UTR must only include numbers
+messages__companyUtr__title = What is their UTR?
+messages__companyUtr__heading = What is {0}’s UTR?
+messages__companyUtr__guidance1 = If the UTR is 13 numbers, you only need to enter the last 10.
+messages__companyUtr__guidance2 = If there is a letter ‘K’ at the end of the number, do not enter it.
+messages__companyUtr__hint = For example, 12345 67890
+
 messages__reason__error_required = Enter a reason why {0} does not have a UTR
 messages__reason__error_maxLength = Reason must be 160 characters or less
 messages__reason__error_invalid = Reason must only include letters, numbers and punctuation marks
 messages__noCompanyUtr__title = Why does the company not have a UTR?
 messages__noCompanyUtr__heading = Why does {0} not have a UTR?
+
+messages__establisher_phone__title =  What is the establisher’s phone number?

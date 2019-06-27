@@ -16,16 +16,23 @@
 
 package forms
 
-import forms.mappings.Mappings
-import javax.inject.Inject
+import forms.behaviours.UtrBehaviour
 import play.api.data.Form
-import play.api.i18n.Messages
-import viewmodels.Message
 
-class HasCrnFormProvider @Inject() extends Mappings {
+class UTRFormProviderSpec extends UtrBehaviour {
 
-  def apply(errorKey : String, name : String)(implicit messages: Messages): Form[Boolean] =
-    Form(
-      "value" -> boolean(Message(errorKey, name).resolve)
+  private val requiredKey = "messages__utr__error_required"
+  private val maxLengthKey = "messages__utr__error_maxLength"
+  private val invalidKey = "messages__utr__error_invalid"
+
+  "A form with a Vat" should {
+    val testForm = new UTRFormProvider().apply()
+
+    behave like formWithUtrString(testForm: Form[String],
+      requiredKey: String,
+      maxLengthKey: String,
+      invalidKey: String
     )
+
+  }
 }

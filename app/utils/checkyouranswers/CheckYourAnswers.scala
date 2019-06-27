@@ -77,27 +77,15 @@ object CheckYourAnswers {
     def apply()(implicit rds: Reads[String], countryOptions: CountryOptions): CheckYourAnswers[I] = {
       new CheckYourAnswers[I] {
         private def stringCYARow(id: I, changeUrl: Option[Link], userAnswers: UserAnswers): Seq[AnswerRow] = {
-         userAnswers.get(id) match {
-
-            case Some(string) =>
+          userAnswers.get(id).map {
+            string =>
               Seq(AnswerRow(
                 label.fold(s"${id.toString}.checkYourAnswersLabel")(customLabel => customLabel),
                 Seq(retrieveStringAnswer(id, string)),
                 answerIsMessageKey = false,
                 changeUrl
               ))
-
-            case _ if displayAddLink =>
-              val defaultLink = Link("site.add", controllers.routes.SessionExpiredController.onPageLoad().url)
-              Seq(AnswerRow(
-                label.fold(s"${id.toString}.checkYourAnswersLabel")(customLabel => customLabel),
-                Seq.empty, answerIsMessageKey = false,
-                Some(Link("site.add",
-                changeUrl.getOrElse(defaultLink).target,
-                Some(hiddenLabel.fold(s"${id.toString}.checkYourAnswersLabel_add")(customLabel => s"${customLabel}_add"))))))
-
-            case _ => Seq.empty[AnswerRow]
-          }
+          }.getOrElse(Seq.empty[AnswerRow])
         }
 
         override def row(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
@@ -348,6 +336,11 @@ object CheckYourAnswers {
       case _ => stringValue
     }
   }
+
+  def addLink(label: String, changeUrl: String, hiddenLabel: Option[String]): Seq[AnswerRow] = Seq(AnswerRow(label,
+    Seq("site.not_entered"),
+    answerIsMessageKey = true,
+    Some(Link("site.add", changeUrl, hiddenLabel))))
 }
 
 case class NinoCYA[I <: TypedIdentifier[Nino]](

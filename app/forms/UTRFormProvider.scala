@@ -16,16 +16,14 @@
 
 package forms
 
-import forms.mappings.Mappings
+import forms.mappings.UtrMapping
 import javax.inject.Inject
 import play.api.data.Form
-import play.api.i18n.Messages
-import viewmodels.Message
 
-class HasCrnFormProvider @Inject() extends Mappings {
+class UTRFormProvider @Inject() extends UtrMapping {
 
-  def apply(errorKey : String, name : String)(implicit messages: Messages): Form[Boolean] =
+  def apply(): Form[String] =
     Form(
-      "value" -> boolean(Message(errorKey, name).resolve)
+      "utr" -> utrStringMapping()
     )
 }

@@ -35,13 +35,13 @@ object HasCompanyUTRId {
   implicit def cya(implicit userAnswers: UserAnswers, messages: Messages): CheckYourAnswers[HasCompanyUTRId] = {
 
     def label(index: Int) = userAnswers.get(CompanyDetailsId(index)) match {
-      case Some(name) => Some(messages("messages__hasCompanyUTR__heading", name))
-      case _ => Some(messages("messages__hasCompanyUTR__title"))
+      case Some(name) => Some(messages("messages__hasCompanyUtr__h1", name))
+      case _ => Some(messages("messages__hasCompanyUtr__title"))
     }
 
     def hiddenLabel(index: Int) = userAnswers.get(CompanyDetailsId(index)) match {
-      case Some(name) => Some(messages("messages__hasCompanyUTR__heading", name))
-      case _ => Some(messages("messages__hasCompanyUTR__title"))
+      case Some(name) => Some(messages("messages__hasCompanyUtr__h1", name))
+      case _ => Some(messages("messages__hasCompanyUtr__title"))
     }
 
     new CheckYourAnswers[HasCompanyUTRId] {

@@ -35,12 +35,12 @@ object HasCompanyVATId {
   implicit def cya(implicit userAnswers: UserAnswers, messages: Messages): CheckYourAnswers[HasCompanyVATId] = {
 
     def label(index: Int) = userAnswers.get(CompanyDetailsId(index)) match {
-      case Some(name) => Some(messages("messages__hasCompanyVat__heading", name))
+      case Some(name) => Some(messages("messages__hasCompanyVat__h1", name))
       case _ => Some(messages("messages__hasCompanyVat__title"))
     }
 
     def hiddenLabel(index: Int) = userAnswers.get(CompanyDetailsId(index)) match {
-      case Some(name) => Some(messages("messages__hasCompanyVat__heading", name))
+      case Some(name) => Some(messages("messages__hasCompanyVat__h1", name))
       case _ => Some(messages("messages__hasCompanyVat__title"))
     }
 

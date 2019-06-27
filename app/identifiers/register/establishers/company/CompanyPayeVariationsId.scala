@@ -21,7 +21,7 @@ import identifiers.register.establishers.{EstablishersId, IsEstablisherNewId}
 import play.api.i18n.Messages
 import play.api.libs.json.JsPath
 import utils.checkyouranswers.CheckYourAnswers
-import utils.checkyouranswers.CheckYourAnswers.StringCYA
+import utils.checkyouranswers.CheckYourAnswers.{StringCYA, addLink}
 import utils.{CountryOptions, UserAnswers}
 import viewmodels.AnswerRow
 
@@ -37,24 +37,25 @@ object CompanyPayeVariationsId {
                    countryOptions: CountryOptions): CheckYourAnswers[CompanyPayeVariationsId] = {
 
     def label(index: Int) = userAnswers.get(CompanyDetailsId(index)) match {
-      case Some(name) => Some(messages("messages__payeVariations__heading", name))
-      case _ => Some(messages("messages__payeVariations__company_title"))
+      case Some(name) => messages("messages__payeVariations__heading", name)
+      case _ => messages("messages__payeVariations__company_title")
     }
 
-    def hiddenabel(index: Int) = userAnswers.get(CompanyDetailsId(index)) match {
+    def hiddenLabel(index: Int) = userAnswers.get(CompanyDetailsId(index)) match {
       case Some(name) => Some(messages("messages__payeVariations__heading", name))
       case _ => Some(messages("messages__payeVariations__company_title"))
     }
 
     new CheckYourAnswers[CompanyPayeVariationsId] {
       override def row(id: CompanyPayeVariationsId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        StringCYA(label(id.index), hiddenabel(id.index))().row(id)(changeUrl, userAnswers)
+        StringCYA(Some(label(id.index)), hiddenLabel(id.index))().row(id)(changeUrl, userAnswers)
 
 
       override def updateRow(id: CompanyPayeVariationsId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        userAnswers.get(IsEstablisherNewId(id.index)) match {
-          case Some(true) => row(id)(changeUrl, userAnswers)
-          case _ => StringCYA(label(id.index), hiddenabel(id.index), displayAddLink = true)().row(id)(changeUrl, userAnswers)
+        (userAnswers.get(IsEstablisherNewId(id.index)), userAnswers.get(id)) match {
+          case (Some(true), _) => row(id)(changeUrl, userAnswers)
+          case (_, Some(_)) => StringCYA(Some(label(id.index)), hiddenLabel(id.index))().updateRow(id)(changeUrl, userAnswers)
+          case _ => addLink(label(id.index), changeUrl, Some(s"${hiddenLabel(id.index)}_add"))
         }
     }
   }

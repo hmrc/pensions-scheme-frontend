@@ -16,16 +16,17 @@
 
 package forms
 
-import forms.mappings.Mappings
-import javax.inject.Inject
+import com.google.inject.Inject
+import forms.mappings.PhoneNumberMapping
 import play.api.data.Form
-import play.api.i18n.Messages
-import viewmodels.Message
 
-class HasCrnFormProvider @Inject() extends Mappings {
+class PhoneFormProvider @Inject() extends PhoneNumberMapping {
 
-  def apply(errorKey : String, name : String)(implicit messages: Messages): Form[Boolean] =
+  def apply(): Form[String] = {
     Form(
-      "value" -> boolean(Message(errorKey, name).resolve)
+      "phone" -> phoneNumberMapping("messages__phone__blank",
+      "messages__phone__length",
+      "messages__phone__invalid")
     )
+  }
 }

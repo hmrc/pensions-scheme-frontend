@@ -28,7 +28,7 @@ import utils.FakeNavigator
 import viewmodels.{CommonFormWithHintViewModel, Message}
 import views.html.hasCrn
 
-class HasCompanyNumberControllerSpec  extends ControllerSpecBase {
+class HasCompanyNumberControllerSpec extends ControllerSpecBase {
   private val schemeName = None
   private def onwardRoute = controllers.routes.IndexController.onPageLoad()
   val formProvider = new HasCrnFormProvider()
@@ -41,7 +41,7 @@ class HasCompanyNumberControllerSpec  extends ControllerSpecBase {
     controllers.register.establishers.company.routes.HasCompanyNumberController.onSubmit(NormalMode, srn, index),
     title = Message("messages__hasCompanyNumber__title"),
     heading = Message("messages__hasCompanyNumber__h1", "test company name"),
-    hint = Message("messages__hasCompanyNumber__p1")
+    hint = Some(Message("messages__hasCompanyNumber__p1"))
   )
 
   def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisherCompany): HasCompanyNumberController =

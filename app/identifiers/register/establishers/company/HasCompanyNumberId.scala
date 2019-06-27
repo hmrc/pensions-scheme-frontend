@@ -35,12 +35,12 @@ object HasCompanyNumberId {
   implicit def cya(implicit userAnswers: UserAnswers, messages: Messages): CheckYourAnswers[HasCompanyNumberId] = {
 
     def label(index: Int) = userAnswers.get(CompanyDetailsId(index)) match {
-      case Some(name) => Some(messages("messages__hasCompanyNumber__heading", name))
+      case Some(name) => Some(messages("messages__hasCompanyNumber__h1", name))
       case _ => Some(messages("messages__hasCompanyNumber__title"))
     }
 
     def hiddenLabel(index: Int) = userAnswers.get(CompanyDetailsId(index)) match {
-      case Some(name) => Some(messages("messages__hasCompanyNumber__heading", name))
+      case Some(name) => Some(messages("messages__hasCompanyNumber__h1", name))
       case _ => Some(messages("messages__hasCompanyNumber__title"))
     }
 
