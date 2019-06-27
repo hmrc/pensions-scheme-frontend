@@ -48,7 +48,8 @@ class UTRViewSpec extends QuestionViewBehaviours[String] {
 
   "UTR view" when {
     "rendered" must {
-      behave like normalPageWithoutBrowserTitle(createView(), messageKeyPrefix, pageHeader = messages(s"messages__${messageKeyPrefix}__heading"))
+      behave like normalPage(createView(), messageKeyPrefix,
+        pageHeader = messages(s"messages__${messageKeyPrefix}__heading"), "_guidance1", "_guidance2")
 
       behave like pageWithReturnLinkAndSrn(createView(), getReturnLinkWithSrn)
 

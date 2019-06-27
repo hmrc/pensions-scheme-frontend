@@ -53,9 +53,9 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
       case CompanyUniqueTaxReferenceId(index) =>
         NavigateTo.dontSave(establisherCompanyRoutes.CompanyPostCodeLookupController.onPageLoad(mode, srn, index))
       case CompanyUTRId(index) =>
-        NavigateTo.dontSave(establisherCompanyRoutes.HasCompanyVATController.onPageLoad(index))
+        NavigateTo.dontSave(establisherCompanyRoutes.HasCompanyVATController.onPageLoad(mode, srn, index))
       case NoCompanyUTRId(index) =>
-        NavigateTo.dontSave(establisherCompanyRoutes.HasCompanyVATController.onPageLoad(index))
+        NavigateTo.dontSave(establisherCompanyRoutes.HasCompanyVATController.onPageLoad(mode, srn, index))
       case CompanyPostCodeLookupId(index) =>
         NavigateTo.dontSave(establisherCompanyRoutes.CompanyAddressListController.onPageLoad(mode, srn, index))
       case CompanyAddressListId(index) =>
@@ -96,8 +96,8 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
       case CompanyRegistrationNumberId(index) =>  exitMiniJourney(index, mode, srn, from.userAnswers)
       case HasCompanyUTRId(index)  =>             exitMiniJourney(index, mode, srn, from.userAnswers)
       case CompanyUniqueTaxReferenceId(index) =>  exitMiniJourney(index, mode, srn, from.userAnswers)
-      case CompanyUTRId(index) =>                 exitMiniJourney(index, mode, srn, from.userAnswers)
-      case NoCompanyUTRId(index) =>               exitMiniJourney(index, mode, srn, from.userAnswers)
+      case CompanyUTRId(index) =>                 exitMiniJourney(index, mode, srn, from.userAnswers, cyaCompanyDetails)
+      case NoCompanyUTRId(index) =>               exitMiniJourney(index, mode, srn, from.userAnswers, cyaCompanyDetails)
 
       case CompanyPostCodeLookupId(index) =>
         NavigateTo.dontSave(establisherCompanyRoutes.CompanyAddressListController.onPageLoad(mode, srn, index))
@@ -108,7 +108,7 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
       case CompanyAddressId(index) => {
         val isNew = from.userAnswers.get(IsEstablisherNewId(index)).contains(true)
         if (isNew || mode == CheckMode) {
-          checkYourAnswers(index, journeyMode(mode), srn)
+          cya(index, journeyMode(mode), srn)
         } else {
           NavigateTo.dontSave(establisherCompanyRoutes.CompanyAddressYearsController.onPageLoad(mode, srn, index))
         }
@@ -157,17 +157,21 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
 
   override protected def checkUpdateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] = editRoutes(from, CheckUpdateMode, srn)
 
-  private def exitMiniJourney(index: Index, mode: Mode, srn: Option[String], answers: UserAnswers): Option[NavigateTo] =
+  private def exitMiniJourney(index: Int, mode: Mode, srn: Option[String], answers: UserAnswers,
+                              cyaPage: (Int, Mode, Option[String]) => Option[NavigateTo] = cya): Option[NavigateTo] =
     if(mode == CheckMode || mode == NormalMode){
-      checkYourAnswers(index, journeyMode(mode), srn)
+      cyaPage(index, journeyMode(mode), srn)
     } else {
       if(answers.get(IsEstablisherNewId(index)).getOrElse(false))
-        checkYourAnswers(index, journeyMode(mode), srn)
+        cyaPage(index, journeyMode(mode), srn)
       else anyMoreChanges(srn)
     }
 
-  private def checkYourAnswers(index: Int, mode: Mode, srn: Option[String]): Option[NavigateTo] =
+  private def cya(index: Int, mode: Mode, srn: Option[String]): Option[NavigateTo] =
     NavigateTo.dontSave(establisherCompanyRoutes.CheckYourAnswersController.onPageLoad(mode, srn, index))
+
+  private def cyaCompanyDetails(index: Int, mode: Mode, srn: Option[String]): Option[NavigateTo] =
+    NavigateTo.dontSave(establisherCompanyRoutes.CheckYourAnswersCompanyDetailsController.onPageLoad(mode, srn, index))
 
   private def anyMoreChanges(srn: Option[String]): Option[NavigateTo] =
     NavigateTo.dontSave(controllers.routes.AnyMoreChangesController.onPageLoad(srn))
