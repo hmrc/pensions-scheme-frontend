@@ -19,7 +19,7 @@ package forms.behaviours
 import forms.FormSpec
 import forms.mappings.{Constraints, VatMapping}
 import generators.Generators
-import models.Vat
+import models.{ReferenceValue, Vat}
 import org.scalatest.prop.PropertyChecks
 import play.api.data.{Form, FormError}
 
@@ -108,10 +108,10 @@ trait VatBehaviours extends FormSpec with Generators with PropertyChecks with Co
     }
   }
 
-  def formWithVatVariations(testForm: Form[String],
-                  vatLengthKey: String,
+  def formWithVatVariations(testForm: Form[ReferenceValue],
+                            vatLengthKey: String,
                             requiredVatKey: String,
-                  invalidVatKey: String
+                            invalidVatKey: String
                  ): Unit = {
 
     "behave like a form with a VAT Mapping in variations" must {

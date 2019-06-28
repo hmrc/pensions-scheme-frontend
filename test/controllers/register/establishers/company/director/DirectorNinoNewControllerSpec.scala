@@ -56,7 +56,7 @@ class DirectorNinoNewControllerSpec extends ControllerSpecBase {
           Json.obj(
             DirectorDetailsId.toString ->
               PersonDetails("First Name", Some("Middle Name"), "Last Name", LocalDate.now),
-              DirectorNewNinoId.toString -> Json.obj( "nino" -> "CS700100A")
+              DirectorNewNinoId.toString -> Json.obj( "value" -> "CS700100A")
           )
         )
       )
@@ -77,7 +77,7 @@ class DirectorNinoNewControllerSpec extends ControllerSpecBase {
     )
   )
 
-  def viewmodel(srn:Option[String]) = NinoViewModel(
+  private def viewmodel(srn:Option[String]) = NinoViewModel(
     postCall = controllers.register.establishers.company.director.routes.DirectorNinoNewController.onSubmit(NormalMode, establisherIndex, directorIndex, None),
     title = "messages__director_yes_nino__title",
     heading ="messages__common_nino__h1",
@@ -120,7 +120,7 @@ class DirectorNinoNewControllerSpec extends ControllerSpecBase {
     "populate the view correctly on a GET when the question has previously been answered" in {
       val getRelevantData = new FakeDataRetrievalAction(Some(validData))
       val result = controller(getRelevantData).onPageLoad(NormalMode, establisherIndex, directorIndex, None)(fakeRequest)
-      contentAsString(result) mustBe viewAsString(form.fill("CS700100A"))
+      contentAsString(result) mustBe viewAsString(form.fill(ReferenceValue("CS700100A")))
     }
 
     "redirect to the next page when valid data is submitted" in {

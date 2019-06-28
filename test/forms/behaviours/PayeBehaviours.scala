@@ -18,7 +18,7 @@ package forms.behaviours
 
 import forms.FormSpec
 import forms.mappings.{PayeMapping, RegexBehaviourSpec}
-import models.Paye
+import models.{Paye, ReferenceValue}
 import org.apache.commons.lang3.RandomStringUtils
 import play.api.data.{Form, FormError}
 
@@ -76,9 +76,9 @@ class PayeBehaviours extends FormSpec with PayeMapping with RegexBehaviourSpec {
   }
 
   def formWithPayeVariations(
-                    testForm: Form[String],
-                    keyPayeRequired: String,
-                    keyPayeLength: String
+                              testForm: Form[ReferenceValue],
+                              keyPayeRequired: String,
+                              keyPayeLength: String
                   ): Unit = {
 
     "fail to bind when paye exceeds max length of 16" in {

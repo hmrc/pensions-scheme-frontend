@@ -21,14 +21,14 @@ import config.FrontendAppConfig
 import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRequiredAction, DataRetrievalAction}
 import controllers.register.CompanyRegistrationNumberVariationsBaseController
 import identifiers.TypedIdentifier
-import identifiers.register.trustees.company.{CompanyDetailsId, CompanyRegistrationNumberId}
-import models.{CompanyRegistrationNumber, Index, Mode}
+import identifiers.register.trustees.company.{CompanyDetailsId, CompanyRegistrationNumberVariationsId}
+import models.{Index, Mode, ReferenceValue}
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, Call}
 import services.UserAnswersService
 import utils.Navigator
 import utils.annotations.TrusteesCompany
-import viewmodels.{CompanyRegistrationNumberViewModel, Message, VatViewModel}
+import viewmodels.{CompanyRegistrationNumberViewModel, Message}
 
 class CompanyRegistrationNumberVariationsController @Inject()(
                                                                override val appConfig: FrontendAppConfig,
@@ -41,7 +41,7 @@ class CompanyRegistrationNumberVariationsController @Inject()(
                                                                requireData: DataRequiredAction
                                                              ) extends CompanyRegistrationNumberVariationsBaseController {
 
-  def identifier(index: Int): TypedIdentifier[CompanyRegistrationNumber] = CompanyRegistrationNumberId(index)
+  def identifier(index: Int): TypedIdentifier[ReferenceValue] = CompanyRegistrationNumberVariationsId(index)
 
   def postCall: (Mode, Option[String], Index) => Call = routes.CompanyRegistrationNumberVariationsController.onSubmit _
 

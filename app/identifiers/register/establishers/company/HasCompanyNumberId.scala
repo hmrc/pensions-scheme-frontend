@@ -26,7 +26,7 @@ import utils.checkyouranswers.CheckYourAnswers.BooleanCYA
 import viewmodels.AnswerRow
 
 case class HasCompanyNumberId(index: Int) extends TypedIdentifier[Boolean] {
-  override def path: JsPath = EstablishersId(index).path \ "companyRegistrationNumber" \ HasCompanyNumberId.toString
+  override def path: JsPath = EstablishersId(index).path \ HasCompanyNumberId.toString
 }
 
 object HasCompanyNumberId {
@@ -34,13 +34,14 @@ object HasCompanyNumberId {
 
   implicit def cya(implicit userAnswers: UserAnswers, messages: Messages): CheckYourAnswers[HasCompanyNumberId] = {
 
-    def label(index: Int) = userAnswers.get(CompanyDetailsId(index)) match {
-      case Some(name) => Some(messages("messages__hasCompanyNumber__h1", name))
-      case _ => Some(messages("messages__hasCompanyNumber__title"))
-    }
+    def label(index: Int) =
+      userAnswers.get(CompanyDetailsId(index)) match {
+        case Some(companyDetails) => Some(messages("messages__hasCompanyNumber__h1", companyDetails.companyName))
+        case _ => Some(messages("messages__hasCompanyNumber__title"))
+      }
 
     def hiddenLabel(index: Int) = userAnswers.get(CompanyDetailsId(index)) match {
-      case Some(name) => Some(messages("messages__hasCompanyNumber__h1", name))
+      case Some(companyDetails) => Some(messages("messages__hasCompanyNumber__h1", companyDetails.companyName))
       case _ => Some(messages("messages__hasCompanyNumber__title"))
     }
 

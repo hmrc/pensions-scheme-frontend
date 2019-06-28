@@ -17,18 +17,17 @@
 package identifiers.register.trustees.individual
 
 import identifiers._
-import identifiers.register.trustees.{IsTrusteeNewId, TrusteesId}
-import models.Link
+import identifiers.register.trustees
+import identifiers.register.trustees.TrusteesId
+import models.ReferenceValue
 import play.api.i18n.Messages
 import play.api.libs.json.JsPath
-import utils.checkyouranswers.CheckYourAnswers
-import utils.checkyouranswers.CheckYourAnswers.StringCYA
+import utils.checkyouranswers.{CheckYourAnswers, ReferenceValueCYA}
 import utils.{CountryOptions, UserAnswers}
 import viewmodels.AnswerRow
 
-
-case class TrusteeNewNinoId(index: Int) extends TypedIdentifier[String] {
-  override def path: JsPath =  TrusteesId(index).path \ TrusteeNewNinoId.toString \ "nino"
+case class TrusteeNewNinoId(index: Int) extends TypedIdentifier[ReferenceValue] {
+  override def path: JsPath = TrusteesId(index).path \ TrusteeNewNinoId.toString
 }
 
 object TrusteeNewNinoId {
@@ -39,18 +38,18 @@ object TrusteeNewNinoId {
 
     new CheckYourAnswers[TrusteeNewNinoId] {
 
+      private val label = "messages__common__nino"
+      private val hiddenLabel = "messages__visuallyhidden__trustee__nino"
+
       override def row(id: TrusteeNewNinoId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        StringCYA[TrusteeNewNinoId]()().row(id)(changeUrl, userAnswers)
+        ReferenceValueCYA[TrusteeNewNinoId](label, hiddenLabel)().row(id)(changeUrl, userAnswers)
 
       override def updateRow(id: TrusteeNewNinoId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
-        userAnswers.get(IsTrusteeNewId(id.index)) match {
-          case Some(true) => StringCYA[TrusteeNewNinoId]()().row(id)(changeUrl, userAnswers)
+        userAnswers.get(trustees.IsTrusteeNewId(id.index)) match {
+          case Some(true) =>
+            ReferenceValueCYA[TrusteeNewNinoId](label, hiddenLabel)().row(id)(changeUrl, userAnswers)
           case _ =>
-            userAnswers.get(id) match {
-              case Some(nino) => Seq(AnswerRow("messages__common__nino", Seq(nino), answerIsMessageKey = false, None))
-              case _ => Seq(AnswerRow("messages__common__nino", Seq("site.not_entered"), answerIsMessageKey = true,
-                Some(Link("site.add", changeUrl, Some(s"messages__visuallyhidden__director__nino_add")))))
-            }
+            ReferenceValueCYA[TrusteeNewNinoId](label, hiddenLabel)().updateRow(id)(changeUrl, userAnswers)
         }
       }
     }

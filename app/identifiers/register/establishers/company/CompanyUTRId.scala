@@ -37,25 +37,18 @@ object CompanyUTRId {
                    messages: Messages,
                    countryOptions: CountryOptions): CheckYourAnswers[CompanyUTRId] = {
 
-    def label(index: Int) = userAnswers.get(CompanyDetailsId(index)) match {
-      case Some(name) => Some(messages("messages__companyUtr__heading", name))
-      case _ => Some(messages("messages__companyUtr__title"))
-    }
-
-    def hiddenLabel(index: Int) = userAnswers.get(CompanyDetailsId(index)) match {
-      case Some(name) => Some(messages("messages__companyUtr__heading", name))
-      case _ => Some(messages("messages__companyUtr__title"))
-    }
+    val label: String = messages("messages__companyUtr__checkyouranswerslabel")
+    val hiddenLabel = "messages__visuallyhidden__establisher__utr"
 
     new CheckYourAnswers[CompanyUTRId] {
       override def row(id: CompanyUTRId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        StringCYA(label(id.index), hiddenLabel(id.index))().row(id)(changeUrl, userAnswers)
+        StringCYA(Some(label), Some(hiddenLabel))().row(id)(changeUrl, userAnswers)
 
 
       override def updateRow(id: CompanyUTRId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
         userAnswers.get(IsEstablisherNewId(id.index)) match {
           case Some(true) => row(id)(changeUrl, userAnswers)
-          case _ => StringCYA(label(id.index), hiddenLabel(id.index), true)().updateRow(id)(changeUrl, userAnswers)
+          case _ => StringCYA(Some(label), Some(hiddenLabel), true)().updateRow(id)(changeUrl, userAnswers)
         }
     }
   }

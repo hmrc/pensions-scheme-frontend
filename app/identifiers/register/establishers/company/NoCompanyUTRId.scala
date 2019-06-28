@@ -37,12 +37,12 @@ object NoCompanyUTRId {
                    countryOptions: CountryOptions): CheckYourAnswers[NoCompanyUTRId] = {
 
     def label(index: Int) = userAnswers.get(CompanyDetailsId(index)) match {
-      case Some(name) => Some(messages("messages__noCompanyUtr__heading", name))
+      case Some(details) => Some(messages("messages__noCompanyUtr__heading", details.companyName))
       case _ => Some(messages("messages__noCompanyUtr__title"))
     }
 
     def hiddenLabel(index: Int) = userAnswers.get(CompanyDetailsId(index)) match {
-      case Some(name) => Some(messages("messages__noCompanyUtr__heading", name))
+      case Some(details) => Some(messages("messages__noCompanyUtr__heading", details.companyName))
       case _ => Some(messages("messages__noCompanyUtr__title"))
     }
 

@@ -26,7 +26,7 @@ import utils.checkyouranswers.CheckYourAnswers.BooleanCYA
 import viewmodels.AnswerRow
 
 case class HasCompanyPAYEId(index: Int) extends TypedIdentifier[Boolean] {
-  override def path: JsPath = EstablishersId(index).path \ "companyPaye" \ HasCompanyPAYEId.toString
+  override def path: JsPath = EstablishersId(index).path \ HasCompanyPAYEId.toString
 }
 
 object HasCompanyPAYEId {
@@ -35,12 +35,12 @@ object HasCompanyPAYEId {
   implicit def cya(implicit userAnswers: UserAnswers, messages: Messages): CheckYourAnswers[HasCompanyPAYEId] = {
 
     def label(index: Int) = userAnswers.get(CompanyDetailsId(index)) match {
-      case Some(name) => Some(messages("messages__hasCompanyPaye__heading", name))
+      case Some(details) => Some(messages("messages__hasCompanyPaye__heading", details.companyName))
       case _ => Some(messages("messages__hasCompanyPaye__title"))
     }
 
     def hiddenLabel(index: Int) = userAnswers.get(CompanyDetailsId(index)) match {
-      case Some(name) => Some(messages("messages__hasCompanyPaye__heading", name))
+      case Some(details) => Some(messages("messages__hasCompanyPaye__heading", details.companyName))
       case _ => Some(messages("messages__hasCompanyPaye__title"))
     }
 

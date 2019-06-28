@@ -18,45 +18,37 @@ package identifiers.register.establishers.company
 
 import identifiers._
 import identifiers.register.establishers.{EstablishersId, IsEstablisherNewId}
+import models.ReferenceValue
 import play.api.i18n.Messages
 import play.api.libs.json.JsPath
-import utils.checkyouranswers.CheckYourAnswers
-import utils.checkyouranswers.CheckYourAnswers._
+import utils.checkyouranswers.{CheckYourAnswers, ReferenceValueCYA}
 import utils.{CountryOptions, UserAnswers}
 import viewmodels.AnswerRow
 
-case class CompanyVatVariationsId(index: Int) extends TypedIdentifier[String] {
-  override def path: JsPath = EstablishersId(index).path \ "companyVat" \ CompanyVatVariationsId.toString
+case class CompanyVatVariationsId(index: Int) extends TypedIdentifier[ReferenceValue] {
+  override def path: JsPath = EstablishersId(index).path \ CompanyVatVariationsId.toString
 }
 
 object CompanyVatVariationsId {
-  override def toString: String = "vat"
+  override def toString: String = "companyVat"
 
-  implicit def cya(implicit userAnswers: UserAnswers,
-                   messages: Messages,
-                   countryOptions: CountryOptions): CheckYourAnswers[CompanyVatVariationsId] = {
-
-    def label(index: Int) = userAnswers.get(CompanyDetailsId(index)) match {
-      case Some(name) => messages("messages__vatVariations__heading", name)
-      case _ => messages("messages__vatVariations__company_title")
-    }
-
-    def hiddenLabel(index: Int) = userAnswers.get(CompanyDetailsId(index)) match {
-      case Some(name) => messages("messages__vatVariations__heading", name)
-      case _ => messages("messages__vatVariations__company_title")
-    }
-
+  implicit def cya(implicit messages: Messages, countryOptions: CountryOptions): CheckYourAnswers[CompanyVatVariationsId] = {
     new CheckYourAnswers[CompanyVatVariationsId] {
+
+      private val hiddenLabelVat = "messages__visuallyhidden__establisher__vat_number"
+      private val vatLabel = "messages__common__cya__vat"
+
       override def row(id: CompanyVatVariationsId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        StringCYA(Some(label(id.index)), Some(hiddenLabel(id.index)))().row(id)(changeUrl, userAnswers)
+        ReferenceValueCYA[CompanyVatVariationsId](vatLabel, hiddenLabelVat)().row(id)(changeUrl, userAnswers)
 
-
-      override def updateRow(id: CompanyVatVariationsId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        (userAnswers.get(IsEstablisherNewId(id.index)), userAnswers.get(id)) match {
-          case (Some(true), _) => row(id)(changeUrl, userAnswers)
-          case (_, Some(_)) => StringCYA(Some(label(id.index)), Some(hiddenLabel(id.index)))().updateRow(id)(changeUrl, userAnswers)
-          case _ => addLink(label(id.index), changeUrl, Some(s"${hiddenLabel(id.index)}_add"))
+      override def updateRow(id: CompanyVatVariationsId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
+        userAnswers.get(IsEstablisherNewId(id.index)) match {
+          case Some(true) =>
+            ReferenceValueCYA[CompanyVatVariationsId](vatLabel, hiddenLabelVat)().row(id)(changeUrl, userAnswers)
+          case _ =>
+            ReferenceValueCYA[CompanyVatVariationsId](vatLabel, hiddenLabelVat)().updateRow(id)(changeUrl, userAnswers)
         }
+      }
     }
   }
 }

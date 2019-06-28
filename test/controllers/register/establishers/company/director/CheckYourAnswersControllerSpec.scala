@@ -56,7 +56,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
       new FakeFeatureSwitchManagementService(toggle)
     )
 
-  def directorDetails(mode:Mode, srn : Option[String] = None) = AnswerSection(
+  private def directorDetails(mode:Mode, srn : Option[String] = None) = AnswerSection(
     Some("messages__director__cya__details_heading"),
     Seq(
       DirectorDetailsId(firstIndex, firstIndex).
@@ -68,7 +68,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
     ).flatten
   )
 
-  def directorContactDetails(mode:Mode, srn : Option[String] = None) = AnswerSection(
+  private def directorContactDetails(mode:Mode, srn : Option[String] = None) = AnswerSection(
     Some("messages__director__cya__contact__details_heading"),
     Seq(
       DirectorAddressId(firstIndex, firstIndex).
@@ -82,7 +82,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
     ).flatten
   )
 
-  def viewAsString(mode:Mode = NormalMode,
+  private def viewAsString(mode:Mode = NormalMode,
                    answerSection : Seq[AnswerSection] = Seq(directorDetails(NormalMode), directorContactDetails(NormalMode)),
                    srn : Option[String] =  None) = check_your_answers(
     frontendAppConfig,
@@ -113,21 +113,24 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
 
       "return OK and display new Nino with Add link for UpdateMode and separateRefCollectionEnabled is true" in {
 
-        val result = controller(directorDetailsAnswersUpdateWithoutNino.dataRetrievalAction, toggle = true).onPageLoad(firstIndex, firstIndex, UpdateMode, Some("srn"))(request)
+        val result = controller(directorDetailsAnswersUpdateWithoutNino.dataRetrievalAction, toggle = true).
+          onPageLoad(firstIndex, firstIndex, UpdateMode, Some("srn"))(request)
         status(result) mustBe OK
         contentAsString(result) mustBe viewAsString(UpdateMode, displayNewNinoAnswerRowWithAdd, Some("srn"))
       }
 
       "return OK and display new Nino with no link for UpdateMode and separateRefCollectionEnabled is true" in {
 
-        val result = controller(directorAnswersUpdate.dataRetrievalAction, toggle = true).onPageLoad(firstIndex, firstIndex, UpdateMode, Some("srn"))(request)
+        val result = controller(directorAnswersUpdateWithNewNino.dataRetrievalAction, toggle = true).
+          onPageLoad(firstIndex, firstIndex, UpdateMode, Some("srn"))(request)
         status(result) mustBe OK
         contentAsString(result) mustBe viewAsString(UpdateMode, displayNewNinoAnswerRowWithNoLink, Some("srn"))
       }
 
       "return OK and display old Nino links for UpdateMode, New Director and separateRefCollectionEnabled is true" in {
 
-        val result = controller(newDirectorAnswersUpdateWithNewNino.dataRetrievalAction, toggle = true).onPageLoad(firstIndex, firstIndex, UpdateMode, Some("srn"))(request)
+        val result = controller(newDirectorAnswersUpdateWithOldNino.dataRetrievalAction, toggle = true).
+          onPageLoad(firstIndex, firstIndex, UpdateMode, Some("srn"))(request)
         status(result) mustBe OK
         contentAsString(result) mustBe viewAsString(UpdateMode, updateAnswerRowsWithChange, Some("srn"))
       }
@@ -179,6 +182,9 @@ object CheckYourAnswersControllerSpec extends SpecBase {
   implicit val directorAnswersUpdate = directorDetailsAnswersUpdateWithoutNino
     .set(DirectorNinoId(firstIndex, firstIndex))(Nino.Yes("AB100100A")).asOpt.value
 
+  implicit val directorAnswersUpdateWithNewNino = directorDetailsAnswersUpdateWithoutNino
+    .set(DirectorNewNinoId(firstIndex, firstIndex))(ReferenceValue("AB100100A")).asOpt.value
+
   implicit val directorAnswers = directorAnswersUpdate
     .set(DirectorUniqueTaxReferenceId(firstIndex, firstIndex))(UniqueTaxReference.Yes("1234567890"))
     .flatMap(_.set(DirectorAddressId(firstIndex, firstIndex))(Address("Address 1", "Address 2", None, None, None, "GB")))
@@ -189,12 +195,12 @@ object CheckYourAnswersControllerSpec extends SpecBase {
 
   val newDirectorAnswers = directorAnswers.set(IsEstablisherNewId(firstIndex))(true).asOpt.value
 
-  implicit val newDirectorAnswersUpdateWithNewNino = directorAnswersUpdate
+  implicit val newDirectorAnswersUpdateWithOldNino = directorAnswersUpdate
     .set(IsNewDirectorId(firstIndex, firstIndex))(true)
-    .flatMap(_.set(DirectorNewNinoId(firstIndex, firstIndex))("AB100100A"))
+    .flatMap(_.set(DirectorNinoId(firstIndex, firstIndex))(Nino.Yes("AB100100A")))
     .asOpt.value
 
-  def updateAnswerRows = Seq(AnswerSection(
+  private def updateAnswerRows = Seq(AnswerSection(
       Some("messages__director__cya__details_heading"),
       Seq(
         AnswerRow("messages__common__cya__name", Seq("first name last name"), false, None),
@@ -205,7 +211,7 @@ object CheckYourAnswersControllerSpec extends SpecBase {
     AnswerSection(Some("messages__director__cya__contact__details_heading"), Seq())
   )
 
-  def updateAnswerRowsWithChange = Seq(AnswerSection(
+  private def updateAnswerRowsWithChange = Seq(AnswerSection(
       Some("messages__director__cya__details_heading"),
       Seq(
         AnswerRow("messages__common__cya__name", Seq("first name last name"), false,
@@ -225,7 +231,7 @@ object CheckYourAnswersControllerSpec extends SpecBase {
     AnswerSection(Some("messages__director__cya__contact__details_heading"), Seq())
   )
 
-  def displayNewNinoAnswerRowWithAdd = Seq(AnswerSection(
+  private def displayNewNinoAnswerRowWithAdd = Seq(AnswerSection(
       Some("messages__director__cya__details_heading"),
       Seq(
         AnswerRow("messages__common__cya__name", Seq("first name last name"), false, None),

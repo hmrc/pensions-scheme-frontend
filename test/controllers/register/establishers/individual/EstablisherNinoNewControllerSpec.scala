@@ -49,7 +49,7 @@ class EstablisherNinoNewControllerSpec extends ControllerSpecBase {
     "populate the view correctly on a GET when the question has previously been answered" in {
       val getRelevantData = new FakeDataRetrievalAction(Some(alreadySubmittedData))
       val result = controller(getRelevantData).onPageLoad(UpdateMode, firstIndex, srn)(fakeRequest)
-      contentAsString(result) mustBe viewAsString(form.fill("CS700100A"), UpdateMode, firstIndex, srn)
+      contentAsString(result) mustBe viewAsString(form.fill(ReferenceValue("CS700100A")), UpdateMode, firstIndex, srn)
     }
 
     "redirect to the next page when valid data is submitted" in {
@@ -106,7 +106,7 @@ object EstablisherNinoNewControllerSpec extends ControllerSpecBase {
       Json.obj(
         EstablisherDetailsId.toString -> establisherDetails,
         EstablisherNewNinoId.toString -> Json.obj(
-          "nino" -> "CS700100A"
+          "value" -> "CS700100A"
         )
       )
     ),

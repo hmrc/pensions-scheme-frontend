@@ -17,11 +17,14 @@
 package controllers.register.establishers.company
 
 import controllers.ControllerSpecBase
-import controllers.actions._
+import controllers.actions.{DataRetrievalAction, FakeAuthAction, _}
 import controllers.behaviours.ControllerAllowChangeBehaviour
 import identifiers.register.establishers.company._
-import models._
+import models.Mode.checkMode
+import models.register.DeclarationDormant
 import models.requests.DataRequest
+import models.{Index, NormalMode, _}
+import org.scalatest.OptionValues
 import play.api.mvc.{AnyContent, Call}
 import play.api.test.Helpers._
 import services.FakeUserAnswersService
@@ -44,8 +47,8 @@ class CheckYourAnswersCompanyDetailsControllerSpec extends ControllerSpecBase wi
       }
 
       "return OK and the correct view with full answers when user has answered no to all questions" in {
-        val request = FakeDataRequest(fullAnswers)
-        val result = controller(fullAnswers.dataRetrievalAction).onPageLoad(NormalMode, None, index)(request)
+        val request = FakeDataRequest(fullAnswersNo)
+        val result = controller(fullAnswersNo.dataRetrievalAction).onPageLoad(NormalMode, None, index)(request)
 
         status(result) mustBe OK
         contentAsString(result) mustBe viewAsString(companyDetailsAllReasons(NormalMode, None)(request))
@@ -58,23 +61,26 @@ class CheckYourAnswersCompanyDetailsControllerSpec extends ControllerSpecBase wi
         val result = controller(fullAnswers.dataRetrievalAction).onPageLoad(UpdateMode, srn, index)(request)
 
         status(result) mustBe OK
-        contentAsString(result) mustBe viewAsString(companyDetailsAllValues(UpdateMode, srn)(request))
+        contentAsString(result) mustBe
+          viewAsString(companyDetailsAllValues(UpdateMode, srn)(request), UpdateMode, srn, postUrlUpdateMode)
       }
 
       "return OK and the correct view with full answers when user has answered no to all questions" in {
-        val request = FakeDataRequest(fullAnswers)
-        val result = controller(fullAnswers.dataRetrievalAction).onPageLoad(UpdateMode, srn, index)(request)
+        val request = FakeDataRequest(fullAnswersNo)
+        val result = controller(fullAnswersNo.dataRetrievalAction).onPageLoad(UpdateMode, srn, index)(request)
 
         status(result) mustBe OK
-        contentAsString(result) mustBe viewAsString(companyDetailsAllReasons(UpdateMode, srn)(request))
+        contentAsString(result) mustBe
+          viewAsString(companyDetailsAddLinksValues(request), UpdateMode, srn, postUrlUpdateMode)
       }
 
       "return OK and the correct view with add links for values" in {
-        val request = FakeDataRequest(emptyAnswers)
+        val request = FakeDataRequest(fullAnswersNo)
         val result = controller(emptyAnswers.dataRetrievalAction).onPageLoad(UpdateMode, srn, index)(request)
 
         status(result) mustBe OK
-        contentAsString(result) mustBe viewAsString(companyDetailsAddLinksValues(request))
+        contentAsString(result) mustBe
+          viewAsString(companyDetailsAddLinksValues(request), UpdateMode, srn, postUrlUpdateMode)
       }
     }
 
@@ -88,7 +94,7 @@ class CheckYourAnswersCompanyDetailsControllerSpec extends ControllerSpecBase wi
       "mark establisher company details as complete" in {
         val result = controller().onSubmit(NormalMode, None, index)(fakeRequest)
         status(result) mustBe SEE_OTHER
-        FakeUserAnswersService.verify(IsCompanyCompleteId(index), true)
+        FakeUserAnswersService.verify(IsDetailsCompleteId(index), true)
       }
 
       behave like changeableController(
@@ -100,7 +106,7 @@ class CheckYourAnswersCompanyDetailsControllerSpec extends ControllerSpecBase wi
 
 }
 
-object CheckYourAnswersCompanyDetailsControllerSpec extends ControllerSpecBase with Enumerable.Implicits with ControllerAllowChangeBehaviour {
+object CheckYourAnswersCompanyDetailsControllerSpec extends ControllerSpecBase with Enumerable.Implicits with ControllerAllowChangeBehaviour with OptionValues {
 
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
@@ -116,31 +122,51 @@ object CheckYourAnswersCompanyDetailsControllerSpec extends ControllerSpecBase w
   private val paye = "paye"
   private val reason = "reason"
 
-  private val emptyAnswers = UserAnswers()
+  private val emptyAnswers = UserAnswers().set(CompanyDetailsId(0))(CompanyDetails(companyName)).asOpt.value
   private def hasCompanyNumberRoute(mode: Mode, srn: Option[String]) =
-    routes.HasCompanyNumberController.onPageLoad(mode, srn, 0).url
+    routes.HasCompanyNumberController.onPageLoad(checkMode(mode), srn, 0).url
   private def companyRegistrationNumberVariationsRoute(mode: Mode, srn: Option[String]) =
-    routes.CompanyRegistrationNumberVariationsController.onPageLoad(mode, srn, index).url
+    routes.CompanyRegistrationNumberVariationsController.onPageLoad(checkMode(mode), srn, index).url
   private def noCompanyNumberReasonRoute(mode: Mode, srn: Option[String]) =
-    routes.NoCompanyNumberController.onPageLoad(mode, srn, index).url
+    routes.NoCompanyNumberController.onPageLoad(checkMode(mode), srn, index).url
   private def hasCompanyUTRRoute(mode: Mode, srn: Option[String]) =
-    routes.HasCompanyUTRController.onPageLoad(mode, srn, index).url
+    routes.HasCompanyUTRController.onPageLoad(checkMode(mode), srn, index).url
   private def companyUTRRoute(mode: Mode, srn: Option[String]) =
-    routes.CompanyUTRController.onPageLoad(mode, srn, index).url
+    routes.CompanyUTRController.onPageLoad(checkMode(mode), srn, index).url
   private def noCompanyUTRRoute(mode: Mode, srn: Option[String]) =
-    routes.NoCompanyUTRController.onPageLoad(mode, srn, 0).url
+    routes.NoCompanyUTRController.onPageLoad(checkMode(mode), srn, 0).url
   private def hasCompanyVatRoute(mode: Mode, srn: Option[String]) =
-    routes.HasCompanyVATController.onPageLoad(mode, srn, 0).url
+    routes.HasCompanyVATController.onPageLoad(checkMode(mode), srn, 0).url
   private def companyVatVariationsRoute(mode: Mode, srn: Option[String]) =
-    routes.CompanyVatVariationsController.onPageLoad(mode, 0, srn).url
+    routes.CompanyVatVariationsController.onPageLoad(checkMode(mode), 0, srn).url
   private def hasCompanyPayeRoute(mode: Mode, srn: Option[String]) =
-    routes.HasCompanyPAYEController.onPageLoad(mode, srn, 0).url
+    routes.HasCompanyPAYEController.onPageLoad(checkMode(mode), srn, 0).url
   private def companyPayeVariationsRoute(mode: Mode, srn: Option[String]) =
-    routes.CompanyPayeVariationsController.onPageLoad(mode, 0, srn).url
+    routes.CompanyPayeVariationsController.onPageLoad(checkMode(mode), 0, srn).url
   private def isCompanyDormantRoute(mode: Mode, srn: Option[String]) =
-  routes.IsCompanyDormantController.onPageLoad(mode, srn, 0).url
+  routes.IsCompanyDormantController.onPageLoad(checkMode(mode), srn, 0).url
 
-  private val fullAnswers = emptyAnswers
+  private val fullAnswersYes = emptyAnswers
+    .set(HasCompanyNumberId(0))(true).flatMap(
+      _.set(CompanyRegistrationNumberVariationsId(0))(ReferenceValue(crn, isEditable = true)).flatMap(
+       _.set(HasCompanyUTRId(0))(true).flatMap(
+         _.set(CompanyUTRId(0))(utr).flatMap(
+           _.set(HasCompanyVATId(0))(true).flatMap(
+           _.set(CompanyVatVariationsId(0))(ReferenceValue(vat, isEditable = true)).flatMap(
+             _.set(HasCompanyPAYEId(0))(true).flatMap(
+               _.set(CompanyPayeVariationsId(0))(ReferenceValue(paye, isEditable = true))
+       ))))))).asOpt.value
+
+  private val fullAnswersNo = emptyAnswers
+    .set(HasCompanyNumberId(0))(false).flatMap(
+    _.set(NoCompanyNumberId(0))(reason).flatMap(
+      _.set(HasCompanyUTRId(0))(false).flatMap(
+        _.set(NoCompanyUTRId(0))(reason).flatMap(
+          _.set(HasCompanyVATId(0))(false).flatMap(
+              _.set(HasCompanyPAYEId(0))(false)
+              ))))).asOpt.value
+
+    private val fullAnswers = fullAnswersYes.set(IsCompanyDormantId(0))(DeclarationDormant.No).asOpt.value
 
   def postUrl: Call = routes.CheckYourAnswersCompanyDetailsController.onSubmit(NormalMode, None, index)
 
@@ -151,9 +177,12 @@ object CheckYourAnswersCompanyDetailsControllerSpec extends ControllerSpecBase w
     Seq(AnswerSection(
       None,
       Seq(
-        addLink(messages("messages__companyNumber__establisher__heading", companyName), companyRegistrationNumberVariationsRoute(UpdateMode, srn)),
-        addLink(messages("messages__vatVariations__heading", companyName), companyVatVariationsRoute(UpdateMode, srn)),
-        addLink(messages("messages__payeVariations__heading", companyName), companyPayeVariationsRoute(UpdateMode, srn))
+        addLink(messages("messages__checkYourAnswers__establishers__company__number"), companyRegistrationNumberVariationsRoute(UpdateMode, srn),
+          messages("messages__visuallyhidden__establisher__crn_add")),
+        addLink(messages("messages__common__cya__vat"), companyVatVariationsRoute(UpdateMode, srn),
+          messages("messages__visuallyhidden__establisher__vat_number_add")),
+        addLink(messages("messages__common__cya__paye"), companyPayeVariationsRoute(UpdateMode, srn),
+          messages("messages__visuallyhidden__establisher__paye_number_add"))
       )
     ))
 
@@ -161,53 +190,106 @@ object CheckYourAnswersCompanyDetailsControllerSpec extends ControllerSpecBase w
                                           )(implicit request: DataRequest[AnyContent]): Seq[AnswerSection] =
     Seq(AnswerSection(
       None,
-      Seq(
-        booleanChangeLink(messages("messages__hasCompanyNumber__h1", companyName), hasCompanyNumberRoute(mode, srn), value = true),
-        stringChangeLink(messages("messages__companyNumber__establisher__heading", companyName), companyRegistrationNumberVariationsRoute(mode, srn), crn),
-        booleanChangeLink(messages("messages__hasCompanyUtr__h1", companyName), hasCompanyUTRRoute(mode, srn), value = true),
-        stringChangeLink(messages("messages__companyUtr__heading", companyName), companyUTRRoute(mode, srn), utr),
-        booleanChangeLink(messages("messages__hasCompanyVat__h1", companyName), hasCompanyVatRoute(mode, srn), value = true),
-        stringChangeLink(messages("messages__vatVariations__heading", companyName), companyVatVariationsRoute(mode, srn), vat),
-        booleanChangeLink(messages("", companyName), hasCompanyPayeRoute(mode, srn), value = true),
-        stringChangeLink(messages("messages__payeVariations__heading", companyName), companyPayeVariationsRoute(mode, srn), paye),
-        booleanChangeLink(messages("messages__company__cya__dormant", companyName), isCompanyDormantRoute(mode, srn), value = true)
-      )
+      hasCompanyNumberYesRow(mode, srn) ++
+      companyNumberRow(mode, srn) ++
+        hasCompanyUTRYesRow(mode, srn) ++
+        utrRow(mode, srn) ++
+      hasCompanyVatYesRow(mode, srn) ++
+        vatRow(mode, srn) ++
+      hasCompanyPayeYesRow(mode, srn) ++
+        payeRow(mode, srn) ++
+        dormantAnswerRow(mode, srn)
     ))
+
+  private def hasCompanyNumberYesRow(mode: Mode, srn: Option[String]): Seq[AnswerRow] =
+    if(mode == NormalMode)
+      Seq(booleanChangeLink(messages("messages__hasCompanyNumber__h1", companyName), hasCompanyNumberRoute(mode, srn), value = true,
+        messages("messages__hasCompanyNumber__h1", companyName))) else Nil
+
+  private def companyNumberRow(mode: Mode, srn: Option[String]): Seq[AnswerRow] =
+    Seq(stringChangeLink(messages("messages__checkYourAnswers__establishers__company__number"), companyRegistrationNumberVariationsRoute(mode, srn), crn,
+    messages("messages__visuallyhidden__establisher__crn")))
+
+  private def utrRow(mode: Mode, srn: Option[String]): Seq[AnswerRow] =
+    if(mode == NormalMode)
+    Seq(stringChangeLink(messages("messages__companyUtr__checkyouranswerslabel"), companyUTRRoute(mode, srn), utr,
+      messages("messages__visuallyhidden__establisher__utr"))) else
+      Seq(stringLink(messages("messages__companyUtr__checkyouranswerslabel"), companyUTRRoute(mode, srn), utr,
+        messages("messages__visuallyhidden__establisher__utr")))
+
+  private def vatRow(mode: Mode, srn: Option[String]): Seq[AnswerRow] =
+    Seq(stringChangeLink(messages("messages__common__cya__vat"), companyVatVariationsRoute(mode, srn), vat,
+      messages("messages__visuallyhidden__establisher__vat_number")))
+
+  private def payeRow(mode: Mode, srn: Option[String]): Seq[AnswerRow] =
+    Seq(stringChangeLink(messages("messages__common__cya__paye"), companyPayeVariationsRoute(mode, srn), paye,
+      messages("messages__visuallyhidden__establisher__paye_number")))
+
+  private def hasCompanyUTRYesRow(mode: Mode, srn: Option[String]): Seq[AnswerRow] =
+    if(mode == NormalMode)
+      Seq(booleanChangeLink(messages("messages__hasCompanyUtr__h1", companyName), hasCompanyUTRRoute(mode, srn), value = true,
+        messages("messages__hasCompanyUtr__h1", companyName))) else Nil
+
+  private def hasCompanyVatYesRow(mode: Mode, srn: Option[String]): Seq[AnswerRow] =
+    if(mode == NormalMode)
+      Seq(booleanChangeLink(messages("messages__hasCompanyVat__h1", companyName), hasCompanyVatRoute(mode, srn), value = true,
+        messages("messages__hasCompanyVat__h1", companyName))) else Nil
+
+  private def hasCompanyPayeYesRow(mode: Mode, srn: Option[String]): Seq[AnswerRow] =
+    if(mode == NormalMode)
+      Seq(booleanChangeLink(messages("messages__hasCompanyPaye__heading", companyName), hasCompanyPayeRoute(mode, srn), value = true,
+        messages("messages__hasCompanyPaye__heading", companyName))) else Nil
+
+  private def dormantAnswerRow(mode: Mode, srn: Option[String]): Seq[AnswerRow] =
+    if(mode == NormalMode)
+      Seq(booleanChangeLink(messages("messages__company__cya__dormant", companyName),
+        isCompanyDormantRoute(mode, srn), value = false,
+    messages("messages__visuallyhidden__establisher__dormant"))) else Nil
 
   private def companyDetailsAllReasons(mode: Mode, srn: Option[String]
                                            )(implicit request: DataRequest[AnyContent]): Seq[AnswerSection] =
     Seq(AnswerSection(
       None,
       Seq(
-        booleanChangeLink(messages("messages__hasCompanyNumber__h1", companyName), hasCompanyNumberRoute(mode, srn), value = false),
-        stringChangeLink(messages("", companyName), noCompanyNumberReasonRoute(mode, srn), reason),
-        booleanChangeLink(messages("messages__hasCompanyUtr__h1", companyName), hasCompanyUTRRoute(mode, srn), value = false),
-        stringChangeLink(messages("messages__noCompanyUtr__heading", companyName), noCompanyUTRRoute(mode, srn), reason),
-        booleanChangeLink(messages("messages__hasCompanyVat__h1", companyName), hasCompanyVatRoute(mode, srn), value = true),
-        stringChangeLink(messages("messages__vatVariations__heading", companyName), companyVatVariationsRoute(mode, srn), reason),
-        booleanChangeLink(messages("", companyName), hasCompanyPayeRoute(mode, srn), value = true),
-        stringChangeLink(messages("messages__payeVariations__heading", companyName), companyPayeVariationsRoute(mode, srn), reason),
-        booleanChangeLink(messages("messages__company__cya__dormant", companyName), isCompanyDormantRoute(mode, srn), value = true)
+        booleanChangeLink(messages("messages__hasCompanyNumber__h1", companyName), hasCompanyNumberRoute(mode, srn), value = false,
+          messages("messages__hasCompanyNumber__h1", companyName)),
+        stringChangeLink(messages("messages__noCompanyNumber__heading", companyName), noCompanyNumberReasonRoute(mode, srn), reason,
+          messages("messages__noCompanyNumber__heading", companyName)),
+        booleanChangeLink(messages("messages__hasCompanyUtr__h1", companyName), hasCompanyUTRRoute(mode, srn), value = false,
+          messages("messages__hasCompanyUtr__h1", companyName)),
+        stringChangeLink(messages("messages__noCompanyUtr__heading", companyName), noCompanyUTRRoute(mode, srn), reason,
+          messages("messages__noCompanyUtr__heading", companyName)),
+        booleanChangeLink(messages("messages__hasCompanyVat__h1", companyName), hasCompanyVatRoute(mode, srn), value = false,
+          messages("messages__hasCompanyVat__h1", companyName)),
+        booleanChangeLink(messages("messages__hasCompanyPaye__heading", companyName), hasCompanyPayeRoute(mode, srn), value = false,
+          messages("messages__hasCompanyPaye__heading", companyName))
       )
     ))
 
-  private def booleanChangeLink(label: String, changeUrl: String, value: Boolean) =
+  private def booleanChangeLink(label: String, changeUrl: String, value: Boolean, hiddenLabel: String) =
     AnswerRow(label, Seq(if (value) "site.yes" else "site.no"),
-    answerIsMessageKey = false,
-    Some(Link("site.change", changeUrl, Some(label))))
+    answerIsMessageKey = true,
+    Some(Link("site.change", changeUrl, Some(hiddenLabel))))
 
-  private def stringChangeLink(label: String, changeUrl: String, ansOrReason: String) =
+  private def stringChangeLink(label: String, changeUrl: String, ansOrReason: String, hiddenLabel: String) =
     AnswerRow(
       label,
       Seq(ansOrReason),
       answerIsMessageKey = false,
       Some(Link("site.change", changeUrl,
-        Some(label)
+        Some(hiddenLabel)
     )))
 
+  private def stringLink(label: String, changeUrl: String, ansOrReason: String, hiddenLabel: String) =
+    AnswerRow(
+      label,
+      Seq(ansOrReason),
+      answerIsMessageKey = false,
+      None)
 
-  private def addLink(label: String, changeUrl: String) =
-    AnswerRow(label, Seq.empty, answerIsMessageKey = true, Some(Link("site.add", changeUrl, Some(label))))
+
+  private def addLink(label: String, changeUrl: String, hiddenLabel: String) =
+    AnswerRow(label, Seq("site.not_entered"), answerIsMessageKey = true, Some(Link("site.add", changeUrl, Some(hiddenLabel))))
 
 
   def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData,
@@ -227,12 +309,14 @@ object CheckYourAnswersCompanyDetailsControllerSpec extends ControllerSpecBase w
       new FakeFeatureSwitchManagementService(isToggleOn)
     )
 
-  def viewAsString(answerSections: Seq[AnswerSection], srn: Option[String] = None, postUrl: Call = postUrl): String =
+  def viewAsString(answerSections: Seq[AnswerSection], mode: Mode = NormalMode,
+                   srn: Option[String] = None, postUrl: Call = postUrl): String =
     check_your_answers(
       frontendAppConfig,
       answerSections,
       postUrl,
       None,
+      mode = mode,
       hideEditLinks = false,
       srn = srn,
       hideSaveAndContinueButton = false

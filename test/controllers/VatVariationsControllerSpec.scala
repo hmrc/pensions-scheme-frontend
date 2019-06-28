@@ -20,9 +20,9 @@ import akka.stream.Materializer
 import com.google.inject.Inject
 import config.FrontendAppConfig
 import forms.VatVariationsFormProvider
-import identifiers.{EstablishersOrTrusteesChangedId, TypedIdentifier}
-import models.NormalMode
+import identifiers.TypedIdentifier
 import models.requests.DataRequest
+import models.{NormalMode, ReferenceValue}
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.{MustMatchers, OptionValues, WordSpec}
 import play.api.i18n.MessagesApi
@@ -87,13 +87,13 @@ class VatVariationsControllerSpec extends WordSpec with MustMatchers with Option
           val request = FakeRequest()
           val messages = app.injector.instanceOf[MessagesApi].preferred(request)
           val controller = app.injector.instanceOf[TestController]
-          val answers = UserAnswers().set(FakeIdentifier)("123456789").get
+          val answers = UserAnswers().set(FakeIdentifier)(ReferenceValue("123456789")).get
           val result = controller.onPageLoad(viewmodel, answers)
 
           status(result) mustEqual OK
           contentAsString(result) mustEqual vatVariations(
             appConfig,
-            formProvider(companyName)(messages).fill("123456789"),
+            formProvider(companyName)(messages).fill(ReferenceValue("123456789")),
             viewmodel,
             None
           )(request, messages).toString
@@ -123,7 +123,7 @@ class VatVariationsControllerSpec extends WordSpec with MustMatchers with Option
 
           status(result) mustEqual SEE_OTHER
           redirectLocation(result).value mustEqual "www.example.com"
-          FakeUserAnswersService.verify(FakeIdentifier, "123456789")
+          FakeUserAnswersService.verify(FakeIdentifier, ReferenceValue("123456789", isEditable = true))
       }
     }
 
@@ -160,7 +160,7 @@ class VatVariationsControllerSpec extends WordSpec with MustMatchers with Option
 
 object VatVariationsControllerSpec {
 
-  object FakeIdentifier extends TypedIdentifier[String]
+  object FakeIdentifier extends TypedIdentifier[ReferenceValue]
 
   val companyName = "test company"
   class TestController @Inject()(

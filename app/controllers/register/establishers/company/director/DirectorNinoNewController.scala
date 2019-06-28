@@ -72,7 +72,8 @@ class DirectorNinoNewController @Inject()(
       }
   }
 
-  def onSubmit(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
+  def onSubmit(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
       viewmodel(establisherIndex, directorIndex, mode, srn).retrieve.right.map {
         vm =>
