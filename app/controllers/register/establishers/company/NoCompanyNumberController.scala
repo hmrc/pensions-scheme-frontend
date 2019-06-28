@@ -17,28 +17,56 @@
 package controllers.register.establishers.company
 
 import config.FrontendAppConfig
+import controllers.ReasonController
 import controllers.actions._
+import forms.register.establishers.company.NoCompanyNumberFormProvider
+import identifiers.register.establishers.company.{CompanyDetailsId, NoCompanyNumberId}
 import javax.inject.Inject
 import models.{Index, Mode}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import services.UserAnswersService
+import utils.Navigator
+import utils.annotations.EstablishersCompany
+import viewmodels.{Message, ReasonViewModel}
 
-import scala.concurrent.Future
-
-class NoCompanyNumberController @Inject()(appConfig: FrontendAppConfig,
+class NoCompanyNumberController @Inject()(override val appConfig: FrontendAppConfig,
                                           override val messagesApi: MessagesApi,
+                                          override val userAnswersService: UserAnswersService,
+                                          @EstablishersCompany val navigator: Navigator,
                                           authenticate: AuthAction,
-                                          getData: DataRetrievalAction
-                                                    ) extends FrontendController with I18nSupport {
+                                          getData: DataRetrievalAction,
+                                          allowAccess: AllowAccessActionProvider,
+                                          requireData: DataRequiredAction,
+                                          formProvider: NoCompanyNumberFormProvider) extends ReasonController with I18nSupport {
 
-  def onPageLoad(mode: Mode, srn: Option[String] = None, index: Index): Action[AnyContent] = (authenticate andThen getData()).async {
-    implicit request =>
-      Future.successful(Ok)
+  protected def form(name: String) = formProvider(name)
+
+  private def viewModel(mode: Mode, index: Index, srn: Option[String], companyName: String): ReasonViewModel = {
+    ReasonViewModel(
+      postCall = routes.NoCompanyNumberController.onSubmit(mode, srn, index),
+      title = Message("messages__noCompanyNumber__establisher__title"),
+      heading = Message("messages__noCompanyNumber__establisher__heading", companyName),
+      srn = srn
+    )
   }
 
-  def onSubmit(mode: Mode, srn: Option[String] = None, index: Index): Action[AnyContent] = authenticate {
-    implicit request =>
-      Redirect(controllers.routes.IndexController.onPageLoad())
-  }
+  def onPageLoad(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+      implicit request =>
+        CompanyDetailsId(index).retrieve.right.map { details =>
+          val companyName = details.companyName
+          get(NoCompanyNumberId(index), viewModel(mode, index, srn, companyName), form(companyName))
+        }
+    }
+
+  def onSubmit(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen requireData).async {
+      implicit request =>
+        CompanyDetailsId(index).retrieve.right.map { details =>
+          val companyName = details.companyName
+          post(NoCompanyNumberId(index), mode, viewModel(mode, index, srn, companyName), form(companyName))
+        }
+    }
+
 }

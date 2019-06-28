@@ -53,6 +53,8 @@ class EstablishersCompanyNavigatorSpec extends SpecBase with MustMatchers with N
     (CompanyVatId(0),                             newEstablisher,                   companyPaye(mode),                  true,           Some(cya(mode)),                                                             true),
     (CompanyPayeId(0),                            emptyAnswers,                     companyRegistrationNumber(mode),    true,           Some(exitJourney(mode, emptyAnswers, 0, cya(mode))),                   true),
     (CompanyPayeId(0),                            newEstablisher,                   companyRegistrationNumber(mode),    true,           Some(cya(mode)),                                                             true),
+    (NoCompanyNumberId(0),                        emptyAnswers,                     hasCompanyUTR(mode),                   true,           Some(exitJourney(mode, emptyAnswers, 0, cya(mode))),                   true),
+    (NoCompanyNumberId(0),                        newEstablisher,                   hasCompanyUTR(mode),                   true,           Some(cya(mode)),                   true),
     (HasCompanyUTRId(0),                          emptyAnswers,                     sessionExpired,                     true,           Some(exitJourney(mode, emptyAnswers, 0, cyaCompanyDetails(mode))),                   true),
     (HasCompanyUTRId(0),                          hasCompanyUtr(true),       companyUTRNew(mode),                true,           Some(exitJourney(mode, emptyAnswers, 0, cyaCompanyDetails(mode))),                   true),
     (HasCompanyUTRId(0),                          hasCompanyUtr(false),      noCompanyUTR(mode),                 true,           Some(exitJourney(mode, emptyAnswers, 0, cyaCompanyDetails(mode))),                   true),
@@ -169,7 +171,7 @@ object EstablishersCompanyNavigatorSpec extends OptionValues with Enumerable.Imp
     controllers.register.establishers.company.routes.CompanyRegistrationNumberVariationsController.onPageLoad(mode, None, 0)
 
   private def noCompanyRegistrationNumber(mode: Mode): Call =
-    controllers.register.establishers.company.routes.NoCompanyNumberController.onPageLoad(Index(0))
+    controllers.register.establishers.company.routes.NoCompanyNumberController.onPageLoad(mode, None, 0)
 
   private def companyVatNumberNew(mode: Mode): Call =
     controllers.register.establishers.company.routes.CompanyVatVariationsController.onPageLoad(mode, 0, None)
