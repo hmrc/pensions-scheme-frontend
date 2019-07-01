@@ -36,7 +36,7 @@ import utils.{FakeNavigator, Navigator, UserAnswers}
 import viewmodels.UTRViewModel
 import views.html.utr
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 class UTRControllerSpec extends WordSpec with MustMatchers with OptionValues with ScalaFutures {
 
@@ -170,7 +170,7 @@ object UTRControllerSpec {
                                   override val userAnswersService: UserAnswersService,
                                   override val navigator: Navigator,
                                   val formProvider: UTRFormProvider
-                                ) extends UTRController {
+                                )(implicit val ec: ExecutionContext) extends UTRController {
 
     def onPageLoad(viewmodel: UTRViewModel, answers: UserAnswers): Future[Result] = {
       get(FakeIdentifier, viewmodel, formProvider())(DataRequest(FakeRequest(), "cacheId", answers, PsaId("A0000000")))

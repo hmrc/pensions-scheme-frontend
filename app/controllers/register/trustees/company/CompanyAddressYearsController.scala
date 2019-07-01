@@ -31,6 +31,8 @@ import utils.annotations.TrusteesCompany
 import viewmodels.Message
 import viewmodels.address.AddressYearsViewModel
 
+import scala.concurrent.ExecutionContext
+
 class CompanyAddressYearsController @Inject()(
                                                override val appConfig: FrontendAppConfig,
                                                override val messagesApi: MessagesApi,
@@ -41,7 +43,7 @@ class CompanyAddressYearsController @Inject()(
                                                allowAccess: AllowAccessActionProvider,
                                                requireData: DataRequiredAction,
                                                formProvider: AddressYearsFormProvider
-                                             ) extends controllers.address.AddressYearsController {
+                                             )(implicit val ec: ExecutionContext) extends controllers.address.AddressYearsController {
 
   private def viewmodel(index: Index, mode: Mode, srn: Option[String]): Retrieval[AddressYearsViewModel] =
     Retrieval(

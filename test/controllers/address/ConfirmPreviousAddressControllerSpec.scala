@@ -42,7 +42,7 @@ import viewmodels.Message
 import viewmodels.address.ConfirmAddressViewModel
 import views.html.address.confirmPreviousAddress
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 
 class ConfirmPreviousAddressControllerSpec extends WordSpec with MustMatchers with OptionValues with ScalaFutures with MockitoSugar {
@@ -259,7 +259,7 @@ object ConfirmPreviousAddressControllerSpec extends OptionValues {
                                   override val userAnswersService: UserAnswersService,
                                   override val navigator: Navigator,
                                   override val countryOptions: CountryOptions
-                                ) extends ConfirmPreviousAddressController {
+                                )(implicit val ec: ExecutionContext) extends ConfirmPreviousAddressController {
 
     def onPageLoad(viewmodel: ConfirmAddressViewModel, answers: UserAnswers): Future[Result] = {
       get(FakeIdentifier, viewmodel)(DataRequest(FakeRequest(), "cacheId", answers, psaId))

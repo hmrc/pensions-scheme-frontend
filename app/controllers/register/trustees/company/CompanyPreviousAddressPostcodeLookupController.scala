@@ -33,6 +33,8 @@ import utils.annotations.TrusteesCompany
 import viewmodels.Message
 import viewmodels.address.PostcodeLookupViewModel
 
+import scala.concurrent.ExecutionContext
+
 class CompanyPreviousAddressPostcodeLookupController @Inject()(
                                                                 val appConfig: FrontendAppConfig,
                                                                 override val messagesApi: MessagesApi,
@@ -44,7 +46,7 @@ class CompanyPreviousAddressPostcodeLookupController @Inject()(
                                                                 requireData: DataRequiredAction,
                                                                 formProvider: PostCodeLookupFormProvider,
                                                                 val addressLookupConnector: AddressLookupConnector
-                                                              ) extends PostcodeLookupController with I18nSupport {
+                                                              )(implicit val ec: ExecutionContext) extends PostcodeLookupController with I18nSupport {
 
   private[controllers] val manualAddressCall = routes.CompanyPreviousAddressController.onPageLoad _
   private[controllers] val postCall = routes.CompanyPreviousAddressPostcodeLookupController.onSubmit _

@@ -32,6 +32,8 @@ import utils.annotations.TrusteesIndividual
 import viewmodels.Message
 import viewmodels.address.AddressYearsViewModel
 
+import scala.concurrent.ExecutionContext
+
 @Singleton
 class TrusteeAddressYearsController @Inject()(
                                                override val appConfig: FrontendAppConfig,
@@ -42,7 +44,7 @@ class TrusteeAddressYearsController @Inject()(
                                                getData: DataRetrievalAction,
                                                allowAccess: AllowAccessActionProvider,
                                                requireData: DataRequiredAction
-                                             ) extends AddressYearsController with Retrievals {
+                                             )(implicit val ec: ExecutionContext) extends AddressYearsController with Retrievals {
 
   private val form = new AddressYearsFormProvider()(Message("messages__trusteeAddressYears__error_required"))
 
