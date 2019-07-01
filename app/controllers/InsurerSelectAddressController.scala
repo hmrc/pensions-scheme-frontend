@@ -30,7 +30,7 @@ import utils.Navigator
 import utils.annotations.{AboutBenefitsAndInsurance, InsuranceService}
 import viewmodels.address.AddressListViewModel
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 class InsurerSelectAddressController @Inject()(override val appConfig: FrontendAppConfig,
                                                override val messagesApi: MessagesApi,
@@ -39,7 +39,8 @@ class InsurerSelectAddressController @Inject()(override val appConfig: FrontendA
                                                authenticate: AuthAction,
                                                getData: DataRetrievalAction,
                                                allowAccess: AllowAccessActionProvider,
-                                               requireData: DataRequiredAction) extends AddressListController with Retrievals {
+                                               requireData: DataRequiredAction
+                                              )(implicit val ec: ExecutionContext) extends AddressListController with Retrievals {
 
 
   def onPageLoad(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {

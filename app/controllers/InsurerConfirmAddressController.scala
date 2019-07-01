@@ -35,6 +35,8 @@ import utils.{CountryOptions, Navigator}
 import viewmodels.Message
 import viewmodels.address.ManualAddressViewModel
 
+import scala.concurrent.ExecutionContext
+
 class InsurerConfirmAddressController @Inject()(val appConfig: FrontendAppConfig,
                                                 val messagesApi: MessagesApi,
                                                 @InsuranceService val userAnswersService: UserAnswersService,
@@ -46,7 +48,7 @@ class InsurerConfirmAddressController @Inject()(val appConfig: FrontendAppConfig
                                                 val formProvider: AddressFormProvider,
                                                 val countryOptions: CountryOptions,
                                                 val auditService: AuditService
-                                               ) extends ManualAddressController with I18nSupport {
+                                               )(implicit val ec: ExecutionContext) extends ManualAddressController with I18nSupport {
 
   private[controllers] val postCall = routes.InsurerConfirmAddressController.onSubmit _
   private[controllers] val title: Message = "messages__insurer_confirm_address__title"

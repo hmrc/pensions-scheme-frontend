@@ -31,6 +31,8 @@ import utils.{CountryOptions, Navigator}
 import viewmodels.Message
 import viewmodels.address.ConfirmAddressViewModel
 
+import scala.concurrent.ExecutionContext
+
 class PartnerConfirmPreviousAddressController @Inject()(val appConfig: FrontendAppConfig,
                                                         val messagesApi: MessagesApi,
                                                         val userAnswersService: UserAnswersService,
@@ -40,7 +42,7 @@ class PartnerConfirmPreviousAddressController @Inject()(val appConfig: FrontendA
                                                         getData: DataRetrievalAction,
                                                         requireData: DataRequiredAction,
                                                         val countryOptions: CountryOptions
-                                                ) extends ConfirmPreviousAddressController with Retrievals with I18nSupport {
+                                                )(implicit val ec: ExecutionContext) extends ConfirmPreviousAddressController with Retrievals with I18nSupport {
 
   private[controllers] val postCall = routes.PartnerConfirmPreviousAddressController.onSubmit _
   private[controllers] val title: Message = "messages__confirmPreviousAddress__title"
