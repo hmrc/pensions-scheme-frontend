@@ -18,8 +18,8 @@ package controllers
 
 import config.FrontendAppConfig
 import identifiers.TypedIdentifier
+import models.Mode
 import models.requests.DataRequest
-import models.{Mode, Vat}
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{AnyContent, Result}
@@ -35,12 +35,6 @@ trait HasCrnController extends FrontendController with Retrievals with I18nSuppo
 
   protected implicit val ec = play.api.libs.concurrent.Execution.defaultContext
 
-  protected def appConfig: FrontendAppConfig
-
-  protected def userAnswersService: UserAnswersService
-
-  protected def navigator: Navigator
-
   def get(id: TypedIdentifier[Boolean], form: Form[Boolean], viewmodel: CommonFormWithHintViewModel)
          (implicit request: DataRequest[AnyContent]): Future[Result] = {
     val preparedForm =
@@ -49,14 +43,29 @@ trait HasCrnController extends FrontendController with Retrievals with I18nSuppo
     Future.successful(Ok(hasCrn(appConfig, preparedForm, viewmodel, existingSchemeName)))
   }
 
-  def post(id: TypedIdentifier[Boolean], mode: Mode, form: Form[Boolean], viewmodel: CommonFormWithHintViewModel)
+  def post(id: TypedIdentifier[Boolean], mode: Mode, form: Form[Boolean], viewmodel: CommonFormWithHintViewModel,
+           startSpokeId: Option[TypedIdentifier[Boolean]] = None)
           (implicit request: DataRequest[AnyContent]): Future[Result] = {
     form.bindFromRequest().fold(
       (formWithErrors: Form[_]) =>
         Future.successful(BadRequest(hasCrn(appConfig, formWithErrors, viewmodel, existingSchemeName))),
-      value =>
-        userAnswersService.save(mode, viewmodel.srn, id, value).map(cacheMap =>
+      value => {
+
+        val updatedAnswers = request.userAnswers.set(id)(value).map { answers =>
+          startSpokeId.map { isCompleteId =>
+            answers.set(isCompleteId)(false).asOpt.getOrElse(answers)
+          }.getOrElse(answers)
+        }.asOpt.getOrElse(request.userAnswers)
+
+        userAnswersService.upsert(mode, viewmodel.srn, updatedAnswers.json).map(cacheMap =>
           Redirect(navigator.nextPage(id, mode, UserAnswers(cacheMap), viewmodel.srn)))
+      }
     )
   }
+
+  protected def appConfig: FrontendAppConfig
+
+  protected def userAnswersService: UserAnswersService
+
+  protected def navigator: Navigator
 }

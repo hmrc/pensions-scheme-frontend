@@ -19,16 +19,23 @@ package controllers.register.establishers.company
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.HasCrnFormProvider
-import identifiers.register.establishers.company.HasCompanyNumberId
+import identifiers.register.establishers.company.{HasCompanyNumberId, HasCompanyVATId, IsDetailsCompleteId}
 import models.{Index, NormalMode}
+import org.mockito.ArgumentCaptor
+import org.mockito.Matchers.{eq => eqTo, _}
+import org.mockito.Mockito._
+import org.scalatest.mockito.MockitoSugar
 import play.api.data.Form
+import play.api.libs.json.{JsNull, JsValue}
 import play.api.test.Helpers._
-import services.FakeUserAnswersService
-import utils.FakeNavigator
+import services.UserAnswersService
+import utils.{FakeNavigator, MockValidationHelper}
 import viewmodels.{CommonFormWithHintViewModel, Message}
 import views.html.hasCrn
 
-class HasCompanyNumberControllerSpec extends ControllerSpecBase {
+import scala.concurrent.Future
+
+class HasCompanyNumberControllerSpec extends ControllerSpecBase with MockitoSugar with MockValidationHelper {
   private val schemeName = None
   private def onwardRoute = controllers.routes.IndexController.onPageLoad()
   val formProvider = new HasCrnFormProvider()
@@ -36,6 +43,8 @@ class HasCompanyNumberControllerSpec extends ControllerSpecBase {
   val index = Index(0)
   val srn = None
   val postCall = controllers.register.establishers.company.routes.HasCompanyNumberController.onSubmit(NormalMode, srn, index)
+
+  lazy val mockUserAnswersService = mock[UserAnswersService]
 
   val viewModel = CommonFormWithHintViewModel(
     controllers.register.establishers.company.routes.HasCompanyNumberController.onSubmit(NormalMode, srn, index),
@@ -48,7 +57,7 @@ class HasCompanyNumberControllerSpec extends ControllerSpecBase {
     new HasCompanyNumberController(
       frontendAppConfig,
       messagesApi,
-      FakeUserAnswersService,
+      mockUserAnswersService,
       new FakeNavigator(desiredRoute = onwardRoute),
       FakeAuthAction,
       FakeAllowAccessProvider(),
@@ -69,13 +78,21 @@ class HasCompanyNumberControllerSpec extends ControllerSpecBase {
     }
 
     "redirect to the next page when valid data is submitted for true" in {
+      when(mockUserAnswersService.upsert(any(), any(), any())(any(), any(), any()))
+        .thenReturn(Future.successful(JsNull))
+
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "true"))
 
       val result = controller().onSubmit(NormalMode, None, index)(postRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
-      FakeUserAnswersService.verify(HasCompanyNumberId(index), true)
+
+      val captor = ArgumentCaptor.forClass(classOf[JsValue])
+      verify(mockUserAnswersService).upsert(eqTo(NormalMode), eqTo(None), captor.capture())(any(), any(), any())
+
+      captor.getValue must containJson (HasCompanyNumberId(0), true)
+      captor.getValue must containJson (IsDetailsCompleteId(0), false)
     }
 
     "return a Bad Request and errors when invalid data is submitted" in {

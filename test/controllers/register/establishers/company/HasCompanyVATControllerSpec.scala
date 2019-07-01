@@ -21,14 +21,29 @@ import controllers.actions._
 import forms.HasVatFormProvider
 import identifiers.register.establishers.company.HasCompanyVATId
 import models.{Index, NormalMode}
+import org.mockito.Matchers.{eq => eqTo, _}
+import org.mockito.Mockito._
+import org.mockito.{ArgumentCaptor, Mockito}
+import org.scalatest.mockito.MockitoSugar
+import org.scalatest.{BeforeAndAfterEach, OptionValues}
 import play.api.data.Form
+import play.api.libs.json.{JsNull, JsValue}
 import play.api.test.Helpers._
-import services.FakeUserAnswersService
-import utils.FakeNavigator
+import services.UserAnswersService
+import utils.{FakeNavigator, MockValidationHelper}
 import viewmodels.{CommonFormWithHintViewModel, Message}
 import views.html.hasCrn
 
-class HasCompanyVATControllerSpec extends ControllerSpecBase {
+import scala.concurrent.Future
+
+class HasCompanyVATControllerSpec extends ControllerSpecBase with MockitoSugar with BeforeAndAfterEach
+  with OptionValues with MockValidationHelper {
+
+
+  override def beforeEach(): Unit = {
+    Mockito.reset(mockUserAnswersService)
+  }
+
   private val schemeName = None
   private def onwardRoute = controllers.routes.IndexController.onPageLoad()
   val formProvider = new HasVatFormProvider()
@@ -44,11 +59,13 @@ class HasCompanyVATControllerSpec extends ControllerSpecBase {
     hint = Some(Message("messages__hasCompanyVat__p1", "test company name"))
   )
 
+  lazy val mockUserAnswersService = mock[UserAnswersService]
+
   def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisherCompany): HasCompanyVATController =
     new HasCompanyVATController(
       frontendAppConfig,
       messagesApi,
-      FakeUserAnswersService,
+      mockUserAnswersService,
       new FakeNavigator(desiredRoute = onwardRoute),
       FakeAuthAction,
       FakeAllowAccessProvider(),
@@ -69,13 +86,21 @@ class HasCompanyVATControllerSpec extends ControllerSpecBase {
     }
 
     "redirect to the next page when valid data is submitted for true" in {
+
+      when(mockUserAnswersService.upsert(any(), any(), any())(any(), any(), any()))
+        .thenReturn(Future.successful(JsNull))
+
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "true"))
 
       val result = controller().onSubmit(NormalMode, None, index)(postRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
-      FakeUserAnswersService.verify(HasCompanyVATId(index), true)
+
+      val captor = ArgumentCaptor.forClass(classOf[JsValue])
+      verify(mockUserAnswersService).upsert(eqTo(NormalMode), eqTo(None), captor.capture())(any(), any(), any())
+
+      captor.getValue must containJson (HasCompanyVATId(0), true)
     }
 
     "return a Bad Request and errors when invalid data is submitted" in {
