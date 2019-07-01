@@ -21,6 +21,7 @@ import controllers.actions._
 import controllers.behaviours.ControllerAllowChangeBehaviour
 import identifiers.register.establishers.company._
 import models._
+import models.Mode.checkMode
 import models.address.Address
 import play.api.mvc.Call
 import play.api.test.Helpers._
@@ -72,7 +73,7 @@ class CheckYourAnswersCompanyAddressControllerSpec extends ControllerSpecBase wi
       "mark company address as complete" in {
         val result = controller().onSubmit(NormalMode, None, index)(fakeRequest)
         status(result) mustBe SEE_OTHER
-        FakeUserAnswersService.verify(IsCompanyCompleteId(index), true)
+        FakeUserAnswersService.verify(IsAddressCompleteId(index), true)
       }
 
       behave like changeableController(
@@ -91,6 +92,7 @@ object CheckYourAnswersCompanyAddressControllerSpec extends ControllerSpecBase w
   private implicit val fakeCountryOptions: CountryOptions = new FakeCountryOptions
   val index = Index(0)
   val testSchemeName = "Test Scheme Name"
+  val companyName = "Test company Name"
   val srn = Some("S123")
 
   private val address = Address("address-1-line-1", "address-1-line-2", None, None, Some("post-code-1"), "country-1")
@@ -104,17 +106,19 @@ object CheckYourAnswersCompanyAddressControllerSpec extends ControllerSpecBase w
   private def companyAddressYearsRoute(mode: Mode, srn: Option[String]) =
     routes.CompanyAddressYearsController.onPageLoad(mode, srn, Index(index)).url
   private def companyTradingTimeRoute(mode: Mode, srn: Option[String]) =
-    routes.CompanyTradingTimeController.onPageLoad(mode, srn, Index(index)).url
+    routes.HasBeenTradingCompanyController.onPageLoad(mode, srn, Index(index)).url
   private def companyPreviousAddressRoute(mode: Mode, srn: Option[String]) =
     routes.CompanyPreviousAddressController.onPageLoad(mode, srn, Index(index)).url
 
   private val fullAnswers = emptyAnswers.
+    establisherCompanyDetails(0, CompanyDetails(companyName)).
     establishersCompanyAddress(0, address).
     establisherCompanyAddressYears(0, addressYearsUnderAYear).
-    establisherCompanyTradingTime(0, addressYearsOverAYear).
+    establisherCompanyTradingTime(0, true).
     establishersCompanyPreviousAddress(0, previousAddress)
 
   private val partialAnswers = emptyAnswers.
+    establisherCompanyDetails(0, CompanyDetails(companyName)).
     establishersCompanyAddress(0, address).
     establisherCompanyAddressYears(0, addressYearsUnderAYear)
 
@@ -126,28 +130,28 @@ object CheckYourAnswersCompanyAddressControllerSpec extends ControllerSpecBase w
     "messages__common__cya__address",
     UserAnswers().addressAnswer(address),
     answerIsMessageKey = false,
-    Some(Link("site.change", companyAddressRoute(mode, srn),
+    Some(Link("site.change", companyAddressRoute(checkMode(mode), srn),
       Some("messages__visuallyhidden__establisher__address")))
   )
   def addressYearsAnswerRow(mode: Mode, srn: Option[String]): AnswerRow = AnswerRow(
     "companyAddressYears.checkYourAnswersLabel",
     Seq(s"messages__common__$addressYearsUnderAYear"),
     answerIsMessageKey = true,
-    Some(Link("site.change", companyAddressYearsRoute(mode, srn),
+    Some(Link("site.change", companyAddressYearsRoute(checkMode(mode), srn),
       Some("messages__visuallyhidden__establisher__address_years")))
   )
   def tradingTimeAnswerRow(mode: Mode, srn: Option[String]): AnswerRow = AnswerRow(
-    "companyTradingTime.checkYourAnswersLabel",
-    Seq(s"messages__common__$addressYearsOverAYear"),
+    messages("messages__hasBeenTradingCompany__h1", companyName),
+    Seq("site.yes"),
     answerIsMessageKey = true,
-    Some(Link("site.change", companyTradingTimeRoute(mode, srn),
-      Some("messages__visuallyhidden__establisher__trading_time")))
+    Some(Link("site.change", companyTradingTimeRoute(checkMode(mode), srn),
+      Some(messages("messages__hasBeenTradingCompany__h1", companyName))))
   )
   def previousAddressAnswerRow(mode: Mode, srn: Option[String]): AnswerRow = AnswerRow(
     "messages__common__cya__previous_address",
     UserAnswers().addressAnswer(previousAddress),
     answerIsMessageKey = false,
-    Some(Link("site.change", companyPreviousAddressRoute(mode, srn),
+    Some(Link("site.change", companyPreviousAddressRoute(checkMode(mode), srn),
       Some("messages__visuallyhidden__establisher__previous_address")))
   )
 
@@ -155,7 +159,7 @@ object CheckYourAnswersCompanyAddressControllerSpec extends ControllerSpecBase w
     AnswerRow("messages__common__cya__previous_address",
     Seq("site.not_entered"),
     answerIsMessageKey = true,
-    Some(Link("site.add", companyPreviousAddressRoute(mode, srn), Some("messages__visuallyhidden__establisher__previous_address_add"))))
+    Some(Link("site.add", companyPreviousAddressRoute(checkMode(mode), srn), Some("messages__visuallyhidden__establisher__previous_address_add"))))
 
   def companyAddressNormal: Seq[AnswerSection] = Seq(AnswerSection(None, Seq(
     addressAnswerRow(NormalMode, None), addressYearsAnswerRow(NormalMode, None),

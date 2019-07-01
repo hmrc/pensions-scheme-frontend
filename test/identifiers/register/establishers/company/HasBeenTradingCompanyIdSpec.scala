@@ -16,39 +16,41 @@
 
 package identifiers.register.establishers.company
 
+import base.SpecBase
 import identifiers.register.establishers.IsEstablisherNewId
-import models.AddressYears.UnderAYear
-import models.{Link, NormalMode, UpdateMode}
 import models.requests.DataRequest
-import org.scalatest.{MustMatchers, OptionValues, WordSpec}
+import models.{CompanyDetails, Link, NormalMode, UpdateMode}
+import org.scalatest.{MustMatchers, OptionValues}
 import play.api.mvc.AnyContent
 import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.PsaId
+import utils.checkyouranswers.Ops._
 import utils.{Enumerable, UserAnswers}
 import viewmodels.AnswerRow
 
-import utils.checkyouranswers.Ops._
-
-class CompanyTradingTimeIdSpec extends WordSpec with MustMatchers with OptionValues with Enumerable.Implicits  {
+class HasBeenTradingCompanyIdSpec extends SpecBase with MustMatchers with OptionValues with Enumerable.Implicits  {
 
   "cya" when {
 
     val onwardUrl = "onwardUrl"
+    val companyName = "test company name"
 
-    def answers: UserAnswers = UserAnswers().set(CompanyTradingTimeId(0))(UnderAYear).asOpt.get
+    def answers: UserAnswers = UserAnswers()
+      .set(HasBeenTradingCompanyId(0))(true).flatMap(_
+      .set(CompanyDetailsId(0))(CompanyDetails(companyName)) ).asOpt.get
 
     "in normal mode" must {
 
       "return answers rows with change links" in {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
         implicit val userAnswers = request.userAnswers
-        CompanyTradingTimeId(0).row(onwardUrl, NormalMode) must equal(Seq(
+        HasBeenTradingCompanyId(0).row(onwardUrl, NormalMode) must equal(Seq(
           AnswerRow(
-            "companyTradingTime.checkYourAnswersLabel",
-            Seq(s"messages__common__under_a_year"),
+            messages("messages__hasBeenTradingCompany__h1", companyName),
+            Seq("site.yes"),
             answerIsMessageKey = true,
             Some(Link("site.change", onwardUrl,
-              Some("messages__visuallyhidden__establisher__trading_time")))
+              Some(messages("messages__hasBeenTradingCompany__h1", companyName))))
           )))
       }
     }
@@ -60,13 +62,13 @@ class CompanyTradingTimeIdSpec extends WordSpec with MustMatchers with OptionVal
       "return answers rows with change links" in {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answersNew, PsaId("A0000000"))
         implicit val userAnswers = request.userAnswers
-        CompanyTradingTimeId(0).row(onwardUrl, UpdateMode) must equal(Seq(
+        HasBeenTradingCompanyId(0).row(onwardUrl, UpdateMode) must equal(Seq(
           AnswerRow(
-            "companyTradingTime.checkYourAnswersLabel",
-            Seq(s"messages__common__under_a_year"),
+            messages("messages__hasBeenTradingCompany__h1", companyName),
+            Seq("site.yes"),
             answerIsMessageKey = true,
             Some(Link("site.change", onwardUrl,
-              Some("messages__visuallyhidden__establisher__trading_time")))
+              Some(messages("messages__hasBeenTradingCompany__h1", companyName))))
           )))
       }
     }
@@ -77,7 +79,7 @@ class CompanyTradingTimeIdSpec extends WordSpec with MustMatchers with OptionVal
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
         implicit val userAnswers = request.userAnswers
 
-        CompanyTradingTimeId(0).row(onwardUrl, UpdateMode) must equal(Nil)
+        HasBeenTradingCompanyId(0).row(onwardUrl, UpdateMode) must equal(Nil)
       }
     }
   }

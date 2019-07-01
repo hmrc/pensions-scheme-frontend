@@ -20,20 +20,19 @@ import config.{FeatureSwitchManagementService, FrontendAppConfig}
 import controllers.Retrievals
 import controllers.actions._
 import identifiers.register.establishers.IsEstablisherNewId
-import identifiers.register.establishers.company.{CheckYourAnswersId, CompanyAddressId, CompanyAddressYearsId, CompanyContactDetailsId, CompanyDetailsId, CompanyPayeId, CompanyPayeVariationsId, CompanyPreviousAddressId, CompanyRegistrationNumberId, CompanyRegistrationNumberVariationsId, CompanyTradingTimeId, CompanyUniqueTaxReferenceId, CompanyVatId, CompanyVatVariationsId, IsAddressCompleteId, IsCompanyCompleteId, IsCompanyDormantId}
+import identifiers.register.establishers.company._
 import javax.inject.Inject
-import models.Mode.checkMode
-import models.requests.DataRequest
 import models.{Index, Mode}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import utils.{AllowChangeHelper, CountryOptions, Enumerable, Navigator, Toggles, UserAnswers}
 import utils.annotations.{EstablishersCompany, NoSuspendedCheck}
 import utils.checkyouranswers.Ops._
+import utils._
 import viewmodels.AnswerSection
 import views.html.check_your_answers
+import models.Mode.checkMode
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -58,10 +57,10 @@ class CheckYourAnswersCompanyAddressController @Inject()(appConfig: FrontendAppC
 
         val answerSections = Seq(AnswerSection(
           None,
-          CompanyAddressId(index).row(routes.CompanyAddressController.onPageLoad(mode, srn, index).url, mode)++
-          CompanyAddressYearsId(index).row(routes.CompanyAddressYearsController.onPageLoad(mode, srn, index).url, mode)++
-          CompanyTradingTimeId(index).row(routes.CompanyTradingTimeController.onPageLoad(mode, srn, index).url, mode)++
-          CompanyPreviousAddressId(index).row(routes.CompanyPreviousAddressController.onPageLoad(mode, srn, index).url, mode)
+          CompanyAddressId(index).row(routes.CompanyAddressController.onPageLoad(checkMode(mode), srn, index).url, mode)++
+          CompanyAddressYearsId(index).row(routes.CompanyAddressYearsController.onPageLoad(checkMode(mode), srn, index).url, mode)++
+          HasBeenTradingCompanyId(index).row(routes.HasBeenTradingCompanyController.onPageLoad(checkMode(mode), srn, index).url, mode)++
+          CompanyPreviousAddressId(index).row(routes.CompanyPreviousAddressController.onPageLoad(checkMode(mode), srn, index).url, mode)
         ))
 
         Future.successful(Ok(check_your_answers(
