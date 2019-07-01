@@ -14,40 +14,40 @@
  * limitations under the License.
  */
 
-package views.register
+package views
 
-import forms.HasCrnFormProvider
+import com.google.inject.Inject
+import config.FrontendAppConfig
+import forms.HasVatFormProvider
 import models.{Index, NormalMode}
 import play.api.data.Form
 import play.twirl.api.HtmlFormat
 import viewmodels.{CommonFormWithHintViewModel, Message}
 import views.behaviours.YesNoViewBehaviours
-import views.html.hasCrn
+import views.html.hasUtr
 
-class HasCrnViewSpec extends YesNoViewBehaviours {
+class HasVatViewSpec@Inject()(appConfig: FrontendAppConfig) extends YesNoViewBehaviours {
   val schemeName = Some("Scheme x")
-  val messageKeyPrefix = "hasCompanyNumber"
-  val srn = None
-  val index = Index(0)
+  val messageKeyPrefix = "hasCompanyVat"
+  val srn = Some("srn")
+
+  val form = new HasVatFormProvider()("messages__hasCompanyVat__error__required", "ABC")
+  val postCall = controllers.register.establishers.company.routes.HasCompanyVATController.onSubmit(NormalMode, None, Index(0))
 
   def viewModel(srn : Option[String] = None) = CommonFormWithHintViewModel(
-    controllers.register.establishers.company.routes.HasCompanyNumberController.onSubmit(NormalMode, srn, index),
-    title = Message("messages__hasCompanyNumber__title"),
-    heading = Message("messages__hasCompanyNumber__h1", "ABC"),
-    hint = Message("messages__hasCompanyNumber__p1"),
+    postCall,
+    title = Message("messages__hasCompanyVat__title"),
+    heading = Message("messages__hasCompanyVat__h1", "ABC"),
+    hint = Some(Message("messages__hasCompanyVat__p1")),
     srn = srn
   )
-
-  val form = new HasCrnFormProvider()("messages__hasCompanyNumber__error__required", "ABC")
-  private val postCall = controllers.register.establishers.company.routes.HasCompanyNumberController.onSubmit(NormalMode, srn, index)
-
   def createView(srn : Option[String] = None): () => HtmlFormat.Appendable = () =>
-    hasCrn(frontendAppConfig, form, viewModel(srn), schemeName)(fakeRequest, messages)
+    hasUtr(frontendAppConfig, form, viewModel(srn), schemeName)(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) =>
-    hasCrn(frontendAppConfig, form, viewModel(), schemeName)(fakeRequest, messages)
+    hasUtr(frontendAppConfig, form, viewModel(), schemeName)(fakeRequest, messages)
 
-  "HasCompanyNumber view" must {
+  "HasCompanyVAT view" must {
 
     behave like normalPage(createView(), messageKeyPrefix, pageHeader = messages(s"messages__${messageKeyPrefix}__h1", "ABC"),
       expectedGuidanceKeys = "_p1")

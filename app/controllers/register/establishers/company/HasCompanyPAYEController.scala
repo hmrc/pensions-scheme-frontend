@@ -49,7 +49,7 @@ class HasCompanyPAYEController @Inject()(override val appConfig: FrontendAppConf
       postCall = controllers.register.establishers.company.routes.HasCompanyPAYEController.onSubmit(mode, srn, index),
       title = Message("messages__companyPayeRef__title"),
       heading = Message("messages__companyPayeRef__h1", companyName),
-      hint = Message("messages__companyPayeRef__p1"),
+      hint = Some(Message("messages__companyPayeRef__p1")),
       srn = srn
     )
 

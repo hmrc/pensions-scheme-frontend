@@ -17,10 +17,9 @@
 package controllers
 
 import config.FrontendAppConfig
-import forms.PayeVariationsFormProvider
 import identifiers.TypedIdentifier
 import models.requests.DataRequest
-import models.{Mode, Paye}
+import models.{Mode, ReferenceValue}
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{AnyContent, Result}
@@ -40,10 +39,9 @@ trait PayeVariationsController extends FrontendController with Retrievals with I
 
   protected def userAnswersService: UserAnswersService
 
-
   protected def navigator: Navigator
 
-  protected def get(id: TypedIdentifier[String], form: Form[String], viewmodel: PayeViewModel)
+  protected def get(id: TypedIdentifier[ReferenceValue], form: Form[ReferenceValue], viewmodel: PayeViewModel)
                    (implicit request: DataRequest[AnyContent]): Future[Result] = {
 
     val filledForm =
@@ -53,16 +51,16 @@ trait PayeVariationsController extends FrontendController with Retrievals with I
   }
 
   protected def post(
-                      id: TypedIdentifier[String],
+                      id: TypedIdentifier[ReferenceValue],
                       mode: Mode,
-                      form: Form[String],
+                      form: Form[ReferenceValue],
                       viewmodel: PayeViewModel
                     )(implicit request: DataRequest[AnyContent]): Future[Result] = {
     form.bindFromRequest().fold(
       formWithErrors =>
         Future.successful(BadRequest(payeVariations(appConfig, formWithErrors, viewmodel, existingSchemeName))),
       paye =>
-        userAnswersService.save(mode, viewmodel.srn, id, paye).map {
+        userAnswersService.save(mode, viewmodel.srn, id, paye.copy(isEditable = true)).map {
           answers =>
             Redirect(navigator.nextPage(id, mode, UserAnswers(answers), viewmodel.srn))
         }

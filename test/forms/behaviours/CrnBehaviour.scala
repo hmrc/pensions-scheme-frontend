@@ -19,14 +19,14 @@ package forms.behaviours
 import forms.FormSpec
 import forms.mappings.CrnMapping
 import generators.Generators
-import models.CompanyRegistrationNumber
+import models.{CompanyRegistrationNumber, ReferenceValue}
 import models.CompanyRegistrationNumber.Yes
 import org.scalatest.prop.PropertyChecks
 import play.api.data.{Form, FormError}
 
 trait CrnBehaviour extends FormSpec with CrnMapping with PropertyChecks with Generators {
 
-  def formWithCrnVariations(testForm: Form[String],
+  def formWithCrnVariations(testForm: Form[ReferenceValue],
                             crnLengthKey: String,
                             requiredCRNKey: String,
                             invaliddCRNKey: String
@@ -39,7 +39,7 @@ trait CrnBehaviour extends FormSpec with CrnMapping with PropertyChecks with Gen
           s"bind successfully when CRN $crnNo is valid" in {
             val result = testForm.bind(Map("companyRegistrationNumber" -> crnNo))
             result.errors.size mustBe 0
-            result.get mustBe crnNo.trim
+            result.get mustBe ReferenceValue(crnNo.trim)
           }
       }
 

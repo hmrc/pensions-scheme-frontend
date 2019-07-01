@@ -30,22 +30,22 @@ import viewmodels.AnswerRow
 class CompanyPayeVariationsIdSpec extends SpecBase {
 
   implicit val countryOptions: CountryOptions = new CountryOptions(environment, frontendAppConfig)
+  val onwardUrl = "onwardUrl"
+  private val answerRowsWithChangeLinks = Seq(
+    AnswerRow("messages__common__cya__paye",List("paye"),false,Some(Link("site.change",onwardUrl,
+      Some("messages__visuallyhidden__establisher__paye_number"))))
+  )
 
   "cya" when {
 
-    val onwardUrl = "onwardUrl"
-
-    def answers = UserAnswers().set(CompanyPayeVariationsId(0))("paye").asOpt.get
+    def answers: UserAnswers = UserAnswers().set(CompanyPayeVariationsId(0))(ReferenceValue("paye")).asOpt.get
 
     "in normal mode" must {
 
       "return answers rows with change links" in {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
-        implicit val userAnswers = request.userAnswers
-        CompanyPayeVariationsId(0).row(onwardUrl, NormalMode) must equal(Seq(
-          AnswerRow("messages__common__cya__paye",List("paye"),false,Some(Link("site.change",onwardUrl,
-            Some("messages__visuallyhidden__establisher__paye_number"))))
-        ))
+        implicit val userAnswers: UserAnswers = request.userAnswers
+        CompanyPayeVariationsId(0).row(onwardUrl, NormalMode) must equal(answerRowsWithChangeLinks)
       }
     }
 
@@ -55,11 +55,8 @@ class CompanyPayeVariationsIdSpec extends SpecBase {
 
       "return answers rows with change links" in {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answersNew, PsaId("A0000000"))
-        implicit val userAnswers = request.userAnswers
-        CompanyPayeVariationsId(0).row(onwardUrl, NormalMode) must equal(Seq(
-          AnswerRow("messages__common__cya__paye",List("paye"),false,Some(Link("site.change",onwardUrl,
-            Some("messages__visuallyhidden__establisher__paye_number"))))
-        ))
+        implicit val userAnswers: UserAnswers = request.userAnswers
+        CompanyPayeVariationsId(0).row(onwardUrl, UpdateMode) must equal(answerRowsWithChangeLinks)
       }
     }
 
@@ -67,16 +64,24 @@ class CompanyPayeVariationsIdSpec extends SpecBase {
 
       "return answers rows without change links" in {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
-        implicit val userAnswers = request.userAnswers
+        implicit val userAnswers: UserAnswers = request.userAnswers
 
         CompanyPayeVariationsId(0).row(onwardUrl, UpdateMode) must equal(Seq(
-          AnswerRow("messages__common__cya__paye",List("paye"),false,None)
+          AnswerRow("messages__common__cya__paye",List("paye"), false, None)
         ))
       }
 
-      "display an add link if no answer if found" in {
+      "return answers rows with change links if paye is available and editable" in {
+        val answers = UserAnswers().set(CompanyPayeVariationsId(0))(ReferenceValue("paye", isEditable = true)).asOpt.get
+        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
+        implicit val userAnswers: UserAnswers = request.userAnswers
+
+        CompanyPayeVariationsId(0).row(onwardUrl, UpdateMode) must equal(answerRowsWithChangeLinks)
+      }
+
+      "display an add link if no answer is found" in {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(), PsaId("A0000000"))
-        implicit val userAnswers = request.userAnswers
+        implicit val userAnswers: UserAnswers = request.userAnswers
 
         CompanyPayeVariationsId(0).row(onwardUrl, CheckUpdateMode) must equal(Seq(
           AnswerRow("messages__common__cya__paye", Seq("site.not_entered"), answerIsMessageKey = true,
