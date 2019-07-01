@@ -182,6 +182,15 @@ case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Implicits{
         details.companyName, details.isDeleted, isComplete.getOrElse(false), isNew.fold(false)(identity), noOfRecords)
     )
 
+    private def readsCompanyHnS(index: Int): Reads[Establisher[_]] = (
+      (JsPath \ EstablisherCompanyDetailsId.toString).read[CompanyDetails] and
+        (JsPath \ IsEstablisherCompleteId.toString).readNullable[Boolean] and
+        (JsPath \ IsEstablisherNewId.toString).readNullable[Boolean]
+      ) ((details, isComplete, isNew) =>
+      EstablisherCompanyEntity(EstablisherCompanyDetailsId(index),
+        details.companyName, details.isDeleted, isComplete.getOrElse(false), isNew.fold(false)(identity), noOfRecords)
+    )
+
     private def readsPartnership(index: Int): Reads[Establisher[_]] = (
       (JsPath \ PartnershipDetailsId.toString).read[PartnershipDetails] and
         (JsPath \ IsEstablisherCompleteId.toString).readNullable[Boolean] and
@@ -216,7 +225,6 @@ case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Implicits{
 
 
   def allEstablishers: Seq[Establisher[_]] = {
-
     json.validate[Seq[Establisher[_]]](readEstablishers) match {
       case JsSuccess(establishers, _) =>
         establishers

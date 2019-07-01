@@ -22,6 +22,6 @@ case class CommonFormWithHintViewModel(
                          postCall: Call,
                          title: Message,
                          heading: Message,
-                         hint: Message,
+                         hint: Option[Message],
                          srn: Option[String] = None
                        )

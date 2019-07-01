@@ -18,39 +18,34 @@ package identifiers.register.trustees.company
 
 import identifiers.TypedIdentifier
 import identifiers.register.trustees.{IsTrusteeNewId, TrusteesId}
-import models.Link
+import models.ReferenceValue
 import play.api.i18n.Messages
 import play.api.libs.json.JsPath
-import utils.checkyouranswers.CheckYourAnswers
-import utils.checkyouranswers.CheckYourAnswers.StringCYA
+import utils.checkyouranswers.{CheckYourAnswers, ReferenceValueCYA}
 import utils.{CountryOptions, UserAnswers}
 import viewmodels.AnswerRow
 
-case class CompanyVatVariationsId(index: Int) extends TypedIdentifier[String] {
-  override def path: JsPath = TrusteesId(index).path \ "companyVat" \ CompanyVatVariationsId.toString
+case class CompanyVatVariationsId(index: Int) extends TypedIdentifier[ReferenceValue] {
+  override def path: JsPath = TrusteesId(index).path \ CompanyVatVariationsId.toString
 }
 
 object CompanyVatVariationsId {
-  override def toString: String = "vat"
-
-  val labelVat = "messages__common__cya__vat"
-  val hiddenLabelVat = "messages__visuallyhidden__trustee__vat_number"
+  override def toString: String = "companyVat"
 
   implicit def cya(implicit messages: Messages, countryOptions: CountryOptions): CheckYourAnswers[CompanyVatVariationsId] = {
     new CheckYourAnswers[CompanyVatVariationsId] {
 
+      private val labelVat = "messages__common__cya__vat"
+      private val hiddenLabelVat = "messages__visuallyhidden__trustee__vat_number"
+
       override def row(id: CompanyVatVariationsId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        StringCYA[CompanyVatVariationsId](Some(labelVat), Some(hiddenLabelVat))().row(id)(changeUrl, userAnswers)
+        ReferenceValueCYA[CompanyVatVariationsId](labelVat, hiddenLabelVat)().row(id)(changeUrl, userAnswers)
 
       override def updateRow(id: CompanyVatVariationsId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
         userAnswers.get(IsTrusteeNewId(id.index)) match {
-          case Some(true) => StringCYA[CompanyVatVariationsId]()().row(id)(changeUrl, userAnswers)
+          case Some(true) => ReferenceValueCYA[CompanyVatVariationsId](labelVat, hiddenLabelVat)().row(id)(changeUrl, userAnswers)
           case _ =>
-            userAnswers.get(id) match {
-              case Some(vat) => Seq(AnswerRow(labelVat, Seq(vat), answerIsMessageKey = false, None))
-              case _ => Seq(AnswerRow(labelVat, Seq("site.not_entered"), answerIsMessageKey = true,
-                Some(Link("site.add", changeUrl, Some(s"${hiddenLabelVat}_add")))))
-            }
+            ReferenceValueCYA[CompanyVatVariationsId](labelVat, hiddenLabelVat)().updateRow(id)(changeUrl, userAnswers)
         }
     }
   }

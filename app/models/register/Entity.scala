@@ -114,7 +114,7 @@ case class EstablisherCompanyEntity(id: EstablisherCompanyDetailsId, name: Strin
     mode match {
       case NormalMode | CheckMode =>
         Some(controllers.register.establishers.routes.ConfirmDeleteEstablisherController.onPageLoad(mode, id.index, EstablisherKind.Company, srn).url)
-      case UpdateMode | CheckUpdateMode if (noOfRecords > 1) =>
+      case UpdateMode | CheckUpdateMode if noOfRecords > 1 =>
         Some(controllers.register.establishers.routes.ConfirmDeleteEstablisherController.onPageLoad(mode, id.index, EstablisherKind.Company, srn).url)
       case _ => None
     }

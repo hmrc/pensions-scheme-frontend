@@ -17,6 +17,7 @@
 package views
 
 import forms.NinoNewFormProvider
+import models.ReferenceValue
 import play.api.data.Form
 import play.api.mvc.Call
 import play.twirl.api.HtmlFormat
@@ -24,13 +25,13 @@ import viewmodels.{Message, NinoViewModel}
 import views.behaviours.QuestionViewBehaviours
 import views.html.nino
 
-class NinoViewSpec extends QuestionViewBehaviours[String] {
+class NinoViewSpec extends QuestionViewBehaviours[ReferenceValue] {
 
   val messageKeyPrefix = "common_nino"
 
   val form = new NinoNewFormProvider()("Mark")
 
-  def viewmodel(srn:Option[String]) = NinoViewModel(
+  private def viewmodel(srn:Option[String]) = NinoViewModel(
     postCall = Call("POST", "/"),
     title = Message("messages__common_nino__title"),
     heading = Message("messages__common_nino__h1"),

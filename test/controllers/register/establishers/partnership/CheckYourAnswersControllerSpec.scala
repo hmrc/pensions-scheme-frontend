@@ -57,8 +57,8 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
 
     "on Page load if toggle on in UpdateMode" must {
       "return OK and the correct view for vat if not new establisher" in {
-        val answers = UserAnswers().set(PartnershipVatVariationsId(firstIndex))("098765432").flatMap(
-          _.set(PartnershipPayeVariationsId(firstIndex))("12345678")).asOpt.value
+        val answers = UserAnswers().set(PartnershipVatVariationsId(firstIndex))(ReferenceValue("098765432")).flatMap(
+          _.set(PartnershipPayeVariationsId(firstIndex))(ReferenceValue("12345678"))).asOpt.value
         implicit val request = FakeDataRequest(answers)
         val expectedCompanyDetailsSection = partnershipDetailsSection(
           PartnershipVatVariationsId(firstIndex).row(partnershipVatVariationsRoute, UpdateMode) ++

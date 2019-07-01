@@ -18,19 +18,22 @@ package forms
 
 import forms.mappings.PayeMapping
 import javax.inject.Inject
-import models.Paye
+import models.ReferenceValue
 import play.api.data.Form
+import play.api.data.Forms.mapping
 import play.api.i18n.Messages
 import viewmodels.Message
 
 class PayeVariationsFormProvider @Inject() extends PayeMapping {
 
-  def apply(name: String)(implicit messages: Messages): Form[String] =
+  def apply(name: String)(implicit messages: Messages): Form[ReferenceValue] =
     Form(
-      "paye" -> payeStringMapping(
-        requiredPayeKey = "messages__payeVariations__error_required",
-        payeLengthKey = Message("messages__payeVariations__error_length", name),
-        invalidPayeKey = Message("messages__payeVariations__error_invalid", name)
-      )
+      mapping(
+        "paye" -> payeStringMapping(
+          requiredPayeKey = "messages__payeVariations__error_required",
+          payeLengthKey = Message("messages__payeVariations__error_length", name),
+          invalidPayeKey = Message("messages__payeVariations__error_invalid", name)
+        )
+      )(ReferenceValue.applyEditable)(ReferenceValue.unapplyEditable)
     )
 }

@@ -215,11 +215,11 @@ package object utils {
       answers.set(trustees.company.CompanyPayeId(index))(paye).asOpt.value
     }
 
-    def trusteesCompanyVatVariations(index: Int, vat: String): UserAnswers = {
-      answers.set(trustees.company.CompanyVatVariationsId(index))(vat).asOpt.value
+    def trusteesCompanyVatVariations(index: Int, reference: ReferenceValue): UserAnswers = {
+      answers.set(trustees.company.CompanyVatVariationsId(index))(reference).asOpt.value
     }
 
-    def trusteesCompanyPayeVariations(index: Int, paye: String): UserAnswers = {
+    def trusteesCompanyPayeVariations(index: Int, paye: ReferenceValue): UserAnswers = {
       answers.set(CompanyPayeVariationsId(index))(paye).asOpt.value
     }
 
@@ -227,7 +227,7 @@ package object utils {
       answers.set(CompanyRegistrationNumberId(index))(crn).asOpt.value
     }
 
-    def trusteesCompanyCrnVariations(index: Int, crn: String): UserAnswers = {
+    def trusteesCompanyCrnVariations(index: Int, crn: ReferenceValue): UserAnswers = {
       answers.set(CompanyRegistrationNumberVariationsId(index))(crn).asOpt.value
     }
 
