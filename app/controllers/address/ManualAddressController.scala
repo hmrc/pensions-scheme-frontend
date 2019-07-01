@@ -70,7 +70,8 @@ trait ManualAddressController extends FrontendController with Retrievals with I1
                       viewModel: ManualAddressViewModel,
                       mode: Mode,
                       context: String,
-                      postCodeLookupIdForCleanup: TypedIdentifier[Seq[TolerantAddress]]
+                      postCodeLookupIdForCleanup: TypedIdentifier[Seq[TolerantAddress]],
+                      startSpokeId: Option[TypedIdentifier[Boolean]] = None
                     )(implicit request: DataRequest[AnyContent]): Future[Result] = {
     form.bindFromRequest().fold(
       (formWithError: Form[_]) => Future.successful(BadRequest(manualAddress(appConfig, formWithError, viewModel, existingSchemeName))),
@@ -82,8 +83,17 @@ trait ManualAddressController extends FrontendController with Retrievals with I1
 
         removePostCodeLookupAddress(mode, viewModel.srn, postCodeLookupIdForCleanup)
           .flatMap { userAnswersJson =>
+
             val updatedAddress = userAnswersService.setExistingAddress(mode, id, UserAnswers(userAnswersJson))
-              .set(id)(address).asOpt.getOrElse(UserAnswers(userAnswersJson))
+              .set(id)(address)
+              .map {answers =>
+                startSpokeId.map{xid =>
+                  answers.set(xid)(false).asOpt.getOrElse(answers)
+                }.getOrElse(answers)
+              }
+              .asOpt.getOrElse(UserAnswers(userAnswersJson))
+
+
             userAnswersService.upsert(mode, viewModel.srn, updatedAddress.json).flatMap {
               cacheMap =>
                 userAnswersService.setAddressCompleteFlagAfterPreviousAddress(mode, viewModel.srn, id, UserAnswers(cacheMap)).map {

@@ -20,7 +20,7 @@ import config.{FeatureSwitchManagementService, FrontendAppConfig}
 import controllers.Retrievals
 import controllers.actions._
 import identifiers.register.establishers.IsEstablisherNewId
-import identifiers.register.establishers.company.{CheckYourAnswersId, CompanyAddressId, CompanyAddressYearsId, CompanyContactDetailsId, CompanyDetailsId, CompanyPayeId, CompanyPayeVariationsId, CompanyPreviousAddressId, CompanyRegistrationNumberId, CompanyRegistrationNumberVariationsId, CompanyTradingTimeId, CompanyUniqueTaxReferenceId, CompanyVatId, CompanyVatVariationsId, IsCompanyCompleteId, IsCompanyDormantId}
+import identifiers.register.establishers.company.{CheckYourAnswersId, CompanyAddressId, CompanyAddressYearsId, CompanyContactDetailsId, CompanyDetailsId, CompanyPayeId, CompanyPayeVariationsId, CompanyPreviousAddressId, CompanyRegistrationNumberId, CompanyRegistrationNumberVariationsId, CompanyTradingTimeId, CompanyUniqueTaxReferenceId, CompanyVatId, CompanyVatVariationsId, IsAddressCompleteId, IsCompanyCompleteId, IsCompanyDormantId}
 import javax.inject.Inject
 import models.Mode.checkMode
 import models.requests.DataRequest

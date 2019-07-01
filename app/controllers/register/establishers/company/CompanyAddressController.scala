@@ -22,7 +22,7 @@ import connectors.UserAnswersCacheConnector
 import controllers.actions._
 import controllers.address.ManualAddressController
 import forms.address.AddressFormProvider
-import identifiers.register.establishers.company.{CompanyAddressId, CompanyAddressListId, CompanyDetailsId, CompanyPostCodeLookupId}
+import identifiers.register.establishers.company.{CompanyAddressId, CompanyAddressListId, CompanyDetailsId, CompanyPostCodeLookupId, IsAddressCompleteId}
 import javax.inject.Inject
 import models.address.Address
 import models.{Index, Mode}
@@ -86,7 +86,8 @@ class CompanyAddressController @Inject()(
     implicit request =>
       viewmodel(index, mode, srn).retrieve.right.map {
         vm =>
-          post(CompanyAddressId(index), CompanyAddressListId(index), vm, mode, context(vm), CompanyPostCodeLookupId(index))
+          post(CompanyAddressId(index), CompanyAddressListId(index), vm, mode, context(vm), CompanyPostCodeLookupId(index),
+            Some(IsAddressCompleteId(index)))
       }
   }
 
