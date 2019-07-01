@@ -66,6 +66,7 @@ messages__error__first_name = Enter the first name
 messages__error__last_name = Enter the last name
 messages__error__date = Enter a valid date
 messages__error__date_future = Date cannot be a date in the future
+messages__error__date_past = The date of birth must be after 1900
 messages__error__selection = You must make a selection
 messages__error__sautr = Enter the Self Assessment Unique Tax Reference number
 messages__error__sautr_invalid = Enter a valid 10 digit Self Assessment Unique Taxpayer Reference number

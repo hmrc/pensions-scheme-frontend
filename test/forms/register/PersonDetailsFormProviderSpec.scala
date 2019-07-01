@@ -28,7 +28,7 @@ class PersonDetailsFormProviderSpec extends StringFieldBehaviours with Constrain
   val form = new PersonDetailsFormProvider()()
 
   // scalastyle:off magic.number
-  private val johnDoe = PersonDetails("John", None, "Doe", new LocalDate(1862, 6, 9))
+  private val johnDoe = PersonDetails("John", None, "Doe", new LocalDate(1962, 6, 9))
   // scalastyle:on magic.number
 
   ".firstName" must {
@@ -73,7 +73,7 @@ class PersonDetailsFormProviderSpec extends StringFieldBehaviours with Constrain
         "lastName" -> "Doe",
         "date.day" -> "9",
         "date.month" -> "6",
-        "date.year" -> "1862"
+        "date.year" -> "1903"
       ),
       expected = "John",
       actual = (model: PersonDetails) => model.firstName
@@ -117,7 +117,7 @@ class PersonDetailsFormProviderSpec extends StringFieldBehaviours with Constrain
         "lastName" -> "Doe",
         "date.day" -> "9",
         "date.month" -> "6",
-        "date.year" -> "1862"
+        "date.year" -> "1967"
       ),
       (model: PersonDetails) => model.middleName
     )
@@ -166,7 +166,7 @@ class PersonDetailsFormProviderSpec extends StringFieldBehaviours with Constrain
         "lastName" -> " Doe  ",
         "date.day" -> "9",
         "date.month" -> "6",
-        "date.year" -> "1862"
+        "date.year" -> "1956"
       ),
       expected = "Doe",
       actual = (model: PersonDetails) => model.lastName
@@ -230,6 +230,18 @@ class PersonDetailsFormProviderSpec extends StringFieldBehaviours with Constrain
           "date.year" -> futureDate.getYear.toString
         )
       ).errors mustBe Seq(FormError(fieldName, "messages__error__date_future"))
+    }
+
+    "not accept a year before 1900" in {
+      form.bind(
+        Map(
+          "firstName" -> johnDoe.firstName,
+          "lastName" -> johnDoe.lastName,
+          "date.day" -> "1",
+          "date.month" -> "1",
+          "date.year" -> "1899"
+        )
+      ).errors mustBe Seq(FormError(fieldName, "messages__error__date_past"))
     }
   }
 
