@@ -68,6 +68,10 @@ object ManualAddressControllerSpec {
     override def toString = "abc"
   }
 
+  val fakeIsCompleteId: TypedIdentifier[Boolean] = new TypedIdentifier[Boolean] {
+    override def toString = "isComplete"
+  }
+
   val tolerantAddress = TolerantAddress(Some("address line 1"), Some("address line 2"), None, None, Some("ZZ1 1ZZ"), Some("GB"))
   val address = Address("address line 1", "address line 2", None, None, Some("ZZ1 1ZZ"), "GB")
   object FakeAddressIdentifier extends TypedIdentifier[Address]
@@ -93,14 +97,13 @@ object ManualAddressControllerSpec {
     def onPageLoad(viewModel: ManualAddressViewModel, answers: UserAnswers): Future[Result] =
       get(fakeAddressId, fakeAddressListId, viewModel)(DataRequest(FakeRequest(), "cacheId", answers, psaId))
 
-    def onSubmit(viewModel: ManualAddressViewModel, answers: UserAnswers, request: Request[AnyContent] = FakeRequest()): Future[Result] =
-      post(fakeAddressId, fakeAddressListId, viewModel, NormalMode, "test-context", fakeSeqTolerantAddressId)(
+    def onSubmit(viewModel: ManualAddressViewModel, answers: UserAnswers, request: Request[AnyContent] = FakeRequest(),
+                 isCompleteId: Option[TypedIdentifier[Boolean]] = None): Future[Result] =
+      post(fakeAddressId, fakeAddressListId, viewModel, NormalMode, "test-context", fakeSeqTolerantAddressId, isCompleteId)(
         DataRequest(request, externalId, answers, psaId))
 
     def onClick(mode: Mode, answers: UserAnswers, request: Request[AnyContent] = FakeRequest()): Future[Result] =
       clear(FakeAddressIdentifier, FakeSelectedAddressIdentifier, mode, srn, manualCall)(DataRequest(request, "cacheId", answers, PsaId("A0000000")))
-
-
 
     override protected val form: Form[Address] = formProvider()
   }
@@ -253,7 +256,8 @@ class ManualAddressControllerSpec extends WordSpec with MustMatchers with Mockit
               ("addressLine1", "value 1"),
               ("addressLine2", "value 2"),
               ("postCode", "AB1 1AB"),
-              "country" -> "GB")
+              "country" -> "GB"),
+              Some(fakeIsCompleteId)
             )
 
             status(result) mustEqual SEE_OTHER
@@ -263,6 +267,7 @@ class ManualAddressControllerSpec extends WordSpec with MustMatchers with Mockit
 
             FakeUserAnswersService.userAnswer.get(fakeAddressId).value mustEqual address
             FakeUserAnswersService.verify(fakeExistingAddressId, currentAddress)
+            FakeUserAnswersService.userAnswer.get(fakeIsCompleteId).value mustEqual false
             FakeUserAnswersService.verifyRemoved(fakeSeqTolerantAddressId)
         }
       }

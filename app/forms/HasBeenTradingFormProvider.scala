@@ -14,19 +14,18 @@
  * limitations under the License.
  */
 
-package identifiers.register.establishers.company
+package forms
 
-import identifiers.TypedIdentifier
-import identifiers.register.establishers.{EstablishersId, IsEstablisherCompleteId}
-import models.AddressYears
-import play.api.libs.json.{JsPath, JsResult}
-import utils.UserAnswers
+import forms.mappings.Mappings
+import javax.inject.Inject
+import play.api.data.Form
+import play.api.i18n.Messages
+import viewmodels.Message
 
-case class CompanyTradingTimeId(index: Int) extends TypedIdentifier[AddressYears] {
-  override def path: JsPath = EstablishersId(index).path \ CompanyTradingTimeId.toString
+class HasBeenTradingFormProvider @Inject() extends Mappings {
+
+  def apply(errorKey : String, companyName : String)(implicit messages: Messages): Form[Boolean] =
+    Form(
+      "value" -> boolean(Message(errorKey, companyName).resolve)
+    )
 }
-
-object CompanyTradingTimeId {
-  override def toString: String = "companyTradingTime"
-}
-

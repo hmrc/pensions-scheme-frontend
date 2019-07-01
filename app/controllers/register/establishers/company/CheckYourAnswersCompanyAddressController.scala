@@ -16,29 +16,72 @@
 
 package controllers.register.establishers.company
 
-import config.FrontendAppConfig
+import config.{FeatureSwitchManagementService, FrontendAppConfig}
+import controllers.Retrievals
 import controllers.actions._
+import identifiers.register.establishers.IsEstablisherNewId
+import identifiers.register.establishers.company._
 import javax.inject.Inject
 import models.{Index, Mode}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
+import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import utils.annotations.{EstablishersCompany, NoSuspendedCheck}
+import utils.checkyouranswers.Ops._
+import utils._
+import viewmodels.AnswerSection
+import views.html.check_your_answers
+import models.Mode.checkMode
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 class CheckYourAnswersCompanyAddressController @Inject()(appConfig: FrontendAppConfig,
-                                                         override val messagesApi: MessagesApi,
-                                                         authenticate: AuthAction,
-                                                         getData: DataRetrievalAction
-                                                    ) extends FrontendController with I18nSupport {
+                                            override val messagesApi: MessagesApi,
+                                            authenticate: AuthAction,
+                                            getData: DataRetrievalAction,
+                                            @NoSuspendedCheck allowAccess: AllowAccessActionProvider,
+                                            requireData: DataRequiredAction,
+                                            implicit val countryOptions: CountryOptions,
+                                            @EstablishersCompany navigator: Navigator,
+                                            userAnswersService: UserAnswersService,
+                                            allowChangeHelper: AllowChangeHelper,
+                                            fs: FeatureSwitchManagementService
+                                          )(implicit val ec: ExecutionContext) extends FrontendController
+  with Retrievals with I18nSupport with Enumerable.Implicits {
 
-  def onPageLoad(mode: Mode, srn: Option[String] = None, index: Index): Action[AnyContent] = (authenticate andThen getData()).async {
+  def onPageLoad(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+      implicit request =>
+        implicit val userAnswers: UserAnswers = request.userAnswers
+
+        val answerSections = Seq(AnswerSection(
+          None,
+          CompanyAddressId(index).row(routes.CompanyAddressController.onPageLoad(checkMode(mode), srn, index).url, mode)++
+          CompanyAddressYearsId(index).row(routes.CompanyAddressYearsController.onPageLoad(checkMode(mode), srn, index).url, mode)++
+          HasBeenTradingCompanyId(index).row(routes.HasBeenTradingCompanyController.onPageLoad(checkMode(mode), srn, index).url, mode)++
+          CompanyPreviousAddressId(index).row(routes.CompanyPreviousAddressController.onPageLoad(checkMode(mode), srn, index).url, mode)
+        ))
+
+        Future.successful(Ok(check_your_answers(
+          appConfig,
+          answerSections,
+          routes.CheckYourAnswersCompanyAddressController.onSubmit(mode, srn, index),
+          existingSchemeName,
+          mode = mode,
+          hideEditLinks = request.viewOnly || !userAnswers.get(IsEstablisherNewId(index)).getOrElse(true),
+          hideSaveAndContinueButton = allowChangeHelper.hideSaveAndContinueButton(request, IsEstablisherNewId(index), mode),
+          srn = srn
+        )))
+
+    }
+
+  def onSubmit(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] = (
+    authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
-      Future.successful(Ok)
+      userAnswersService.setCompleteFlag(mode, srn, IsAddressCompleteId(index), request.userAnswers, true).map { _ =>
+        Redirect(controllers.routes.SchemeTaskListController.onPageLoad(mode, srn))
+      }
   }
 
-  def onSubmit(mode: Mode, srn: Option[String] = None, index: Index): Action[AnyContent] = authenticate {
-    implicit request =>
-      Redirect(controllers.routes.IndexController.onPageLoad())
-  }
 }
