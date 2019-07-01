@@ -80,7 +80,7 @@ class CheckYourAnswersCompanyAddressController @Inject()(appConfig: FrontendAppC
   def onSubmit(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] = (
     authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
-      userAnswersService.setCompleteFlag(mode, srn, IsCompanyCompleteId(index), request.userAnswers, true).map { _ =>
+      userAnswersService.setCompleteFlag(mode, srn, IsAddressCompleteId(index), request.userAnswers, true).map { _ =>
         Redirect(controllers.routes.SchemeTaskListController.onPageLoad(mode, srn))
       }
   }
