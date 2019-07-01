@@ -1491,7 +1491,7 @@ messages__companyPaye__title = Does the company have an employer PAYE number?
 messages__companyPaye__heading = Does {0} have an employer PAYE number?
 messages__companyPaye__error__required = Select yes if the company has an employer PAYE number
 
-messages__companyPayeRef__title = Does the company have an employer PAYE reference?
+messages__companyPayeRef__title = Does the establisher have an employer PAYE reference?
 messages__companyPayeRef__h1 = Does {0} have an employer PAYE reference?
 messages__companyPayeRef__error__required = Select whether the company has an employer PAYE number
 
