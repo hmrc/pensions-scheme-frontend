@@ -40,7 +40,7 @@ import utils.{FakeNavigator, Navigator, UserAnswers}
 import viewmodels.{CompanyRegistrationNumberViewModel, Message}
 import views.html.register.companyRegistrationNumberVariations
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 class CompanyRegistrationNumberVariationsBaseControllerSpec extends WordSpec with MustMatchers with OptionValues with ScalaFutures with MockitoSugar {
 
@@ -190,7 +190,7 @@ object CompanyRegistrationNumberVariationsBaseControllerSpec {
                                   override val messagesApi: MessagesApi,
                                   override val userAnswersService: UserAnswersService,
                                   override val navigator: Navigator
-                                ) extends CompanyRegistrationNumberVariationsBaseController {
+                                )(implicit val ec: ExecutionContext) extends CompanyRegistrationNumberVariationsBaseController {
 
     def postCall: (Mode, Option[String], Index) => Call = routes.CompanyRegistrationNumberController.onSubmit _
 
