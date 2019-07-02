@@ -27,12 +27,13 @@ import models.{CompanyRegistrationNumber, Index, Mode}
 import play.api.data.Form
 import play.api.i18n.MessagesApi
 import play.api.mvc.{AnyContent, Call}
+import play.twirl.api.Html
 import services.UserAnswersService
 import utils.Navigator
 import utils.annotations.TrusteesCompany
 import views.html.register.trustees.company.companyRegistrationNumber
 
-import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.ExecutionContext
 
 class CompanyRegistrationNumberController @Inject()(
                                                      appConfig: FrontendAppConfig,
@@ -44,17 +45,21 @@ class CompanyRegistrationNumberController @Inject()(
                                                      allowAccess: AllowAccessActionProvider,
                                                      requireData: DataRequiredAction,
                                                      formProvider: CompanyRegistrationNumberFormProvider
-                                                   ) extends
+                                                   )(implicit ec: ExecutionContext) extends
   CompanyRegistrationNumberBaseController(
     appConfig, messagesApi, userAnswersService, navigator, authenticate, getData, allowAccess, requireData, formProvider) {
 
-  override def addView(mode: Mode, index: Index, srn: Option[String])(implicit request: DataRequest[AnyContent]) = companyRegistrationNumber(appConfig, form, mode, index, existingSchemeName, postCall(mode, srn, index), srn)
+  override def addView(mode: Mode, index: Index, srn: Option[String])(implicit request: DataRequest[AnyContent]): Html =
+    companyRegistrationNumber(appConfig, form, mode, index, existingSchemeName, postCall(mode, srn, index), srn)
 
-  override def errorView(mode: Mode, index: Index, srn: Option[String], form: Form[_])(implicit request: DataRequest[AnyContent]) = companyRegistrationNumber(appConfig, form, mode, index, existingSchemeName, postCall(mode, srn, index), srn)
+  override def errorView(mode: Mode, index: Index, srn: Option[String], form: Form[_])(implicit request: DataRequest[AnyContent]): Html =
+    companyRegistrationNumber(appConfig, form, mode, index, existingSchemeName, postCall(mode, srn, index), srn)
 
-  override def updateView(mode: Mode, index: Index, srn: Option[String], value: CompanyRegistrationNumber)(implicit request: DataRequest[AnyContent]) = companyRegistrationNumber(appConfig, form.fill(value), mode, index, existingSchemeName, postCall(mode, srn, index), srn)
+  override def updateView(mode: Mode, index: Index, srn: Option[String], value: CompanyRegistrationNumber)(implicit request: DataRequest[AnyContent]): Html =
+    companyRegistrationNumber(appConfig, form.fill(value), mode, index, existingSchemeName, postCall(mode, srn, index), srn)
 
   override def id(index: Index) = CompanyRegistrationNumberId(index)
 
-  def postCall: (Mode, Option[String], Index) => Call = controllers.register.trustees.company.routes.CompanyRegistrationNumberController.onSubmit _
+  def postCall: (Mode, Option[String], Index) => Call =
+    controllers.register.trustees.company.routes.CompanyRegistrationNumberController.onSubmit
 }
