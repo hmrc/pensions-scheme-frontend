@@ -320,6 +320,6 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
       if (_: Boolean)
         establisherCompanyRoutes.CompanyPayeVariationsController.onPageLoad(mode, index, srn)
       else
-        establisherCompanyRoutes.CheckYourAnswersController.onPageLoad(mode, srn, index)
+        establisherCompanyRoutes.CheckYourAnswersCompanyDetailsController.onPageLoad(mode, srn, index)
     )
 }
