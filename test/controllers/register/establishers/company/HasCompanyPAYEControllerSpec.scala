@@ -27,7 +27,7 @@ import play.api.test.Helpers._
 import services.FakeUserAnswersService
 import utils.FakeNavigator
 import viewmodels.{CommonFormWithHintViewModel, Message}
-import views.html.{hasPAYE, hasReferenceNumber}
+import views.html.hasReferenceNumber
 
 class HasCompanyPAYEControllerSpec  extends ControllerSpecBase {
   private val schemeName = None
