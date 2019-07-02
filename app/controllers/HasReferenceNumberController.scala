@@ -18,8 +18,8 @@ package controllers
 
 import config.FrontendAppConfig
 import identifiers.TypedIdentifier
+import models.Mode
 import models.requests.DataRequest
-import models.{Mode, Vat}
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{AnyContent, Result}
@@ -27,11 +27,11 @@ import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.{Navigator, UserAnswers}
 import viewmodels.CommonFormWithHintViewModel
-import views.html.hasCrn
+import views.html.hasReferenceNumber
 
 import scala.concurrent.Future
 
-trait HasCrnController extends FrontendController with Retrievals with I18nSupport {
+trait HasReferenceNumberController extends FrontendController with Retrievals with I18nSupport {
 
   protected implicit val ec = play.api.libs.concurrent.Execution.defaultContext
 
@@ -46,14 +46,14 @@ trait HasCrnController extends FrontendController with Retrievals with I18nSuppo
     val preparedForm =
       request.userAnswers.get(id).map(form.fill).getOrElse(form)
 
-    Future.successful(Ok(hasCrn(appConfig, preparedForm, viewmodel, existingSchemeName)))
+    Future.successful(Ok(hasReferenceNumber(appConfig, preparedForm, viewmodel, existingSchemeName)))
   }
 
   def post(id: TypedIdentifier[Boolean], mode: Mode, form: Form[Boolean], viewmodel: CommonFormWithHintViewModel)
           (implicit request: DataRequest[AnyContent]): Future[Result] = {
     form.bindFromRequest().fold(
       (formWithErrors: Form[_]) =>
-        Future.successful(BadRequest(hasCrn(appConfig, formWithErrors, viewmodel, existingSchemeName))),
+        Future.successful(BadRequest(hasReferenceNumber(appConfig, formWithErrors, viewmodel, existingSchemeName))),
       value =>
         userAnswersService.save(mode, viewmodel.srn, id, value).map(cacheMap =>
           Redirect(navigator.nextPage(id, mode, UserAnswers(cacheMap), viewmodel.srn)))

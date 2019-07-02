@@ -18,7 +18,7 @@ package controllers.register.establishers.company
 
 import com.google.inject.Inject
 import config.FrontendAppConfig
-import controllers.HasPAYEController
+import controllers.HasReferenceNumberController
 import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRequiredAction, DataRetrievalAction}
 import forms.HasPAYEFormProvider
 import identifiers.register.establishers.company.{CompanyDetailsId, HasCompanyPAYEId}
@@ -39,7 +39,7 @@ class HasCompanyPAYEController @Inject()(override val appConfig: FrontendAppConf
                                          getData: DataRetrievalAction,
                                          requireData: DataRequiredAction,
                                          formProvider: HasPAYEFormProvider
-                                        ) extends HasPAYEController {
+                                        ) extends HasReferenceNumberController {
 
   private def postCall(mode: Mode, srn: Option[String], index: Int): Call = controllers.register.establishers.company.routes.HasCompanyPAYEController.onSubmit(mode, srn, index)
 
@@ -50,7 +50,8 @@ class HasCompanyPAYEController @Inject()(override val appConfig: FrontendAppConf
       title = Message("messages__companyPayeRef__title"),
       heading = Message("messages__companyPayeRef__h1", companyName),
       hint = Some(Message("messages__companyPayeRef__p1")),
-      srn = srn
+      srn = srn,
+      formFieldName = Some("hasPAYE")
     )
 
   private def form(companyName: String) = formProvider("messages__companyPayeRef__error__required", companyName)

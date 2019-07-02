@@ -22,7 +22,7 @@ import play.api.data.Form
 import play.twirl.api.HtmlFormat
 import viewmodels.{CommonFormWithHintViewModel, Message}
 import views.behaviours.YesNoViewBehaviours
-import views.html.hasCrn
+import views.html.hasReferenceNumber
 
 class HasCrnViewSpec extends YesNoViewBehaviours {
   val schemeName = Some("Scheme x")
@@ -42,10 +42,10 @@ class HasCrnViewSpec extends YesNoViewBehaviours {
   private val postCall = controllers.register.establishers.company.routes.HasCompanyNumberController.onSubmit(NormalMode, srn, index)
 
   def createView(srn : Option[String] = None): () => HtmlFormat.Appendable = () =>
-    hasCrn(frontendAppConfig, form, viewModel(srn), schemeName)(fakeRequest, messages)
+    hasReferenceNumber(frontendAppConfig, form, viewModel(srn), schemeName)(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) =>
-    hasCrn(frontendAppConfig, form, viewModel(), schemeName)(fakeRequest, messages)
+    hasReferenceNumber(frontendAppConfig, form, viewModel(), schemeName)(fakeRequest, messages)
 
   "HasCompanyNumber view" must {
 

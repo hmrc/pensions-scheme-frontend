@@ -27,7 +27,7 @@ import play.api.test.Helpers._
 import services.FakeUserAnswersService
 import utils.FakeNavigator
 import viewmodels.{CommonFormWithHintViewModel, Message}
-import views.html.hasPAYE
+import views.html.{hasPAYE, hasReferenceNumber}
 
 class HasCompanyPAYEControllerSpec  extends ControllerSpecBase {
   private val schemeName = None
@@ -43,7 +43,8 @@ class HasCompanyPAYEControllerSpec  extends ControllerSpecBase {
     controllers.register.establishers.company.routes.HasCompanyPAYEController.onSubmit(NormalMode, srn, index),
     title = Message("messages__companyPayeRef__title"),
     heading = Message("messages__companyPayeRef__h1", "test company name"),
-    hint = Some(Message("messages__companyPayeRef__p1"))
+    hint = Some(Message("messages__companyPayeRef__p1")),
+    formFieldName = Some("hasPAYE")
   )
 
   def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisherCompany): HasCompanyPAYEController =
@@ -59,7 +60,7 @@ class HasCompanyPAYEControllerSpec  extends ControllerSpecBase {
       formProvider
     )
 
-  private def viewAsString(form: Form[_] = form) = hasPAYE(frontendAppConfig, form, viewModel, schemeName)(fakeRequest, messages).toString
+  private def viewAsString(form: Form[_] = form) = hasReferenceNumber(frontendAppConfig, form, viewModel, schemeName)(fakeRequest, messages).toString
 
   "HasCompanyPAYEController" must {
 
