@@ -44,7 +44,7 @@ class HasCompanyPAYEControllerSpec  extends ControllerSpecBase {
     title = Message("messages__companyPayeRef__title"),
     heading = Message("messages__companyPayeRef__h1", "test company name"),
     hint = Some(Message("messages__companyPayeRef__p1")),
-    formFieldName = Some("hasPAYE")
+    formFieldName = Some("hasPaye")
   )
 
   def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisherCompany): HasCompanyPAYEController =
@@ -57,7 +57,8 @@ class HasCompanyPAYEControllerSpec  extends ControllerSpecBase {
       FakeAllowAccessProvider(),
       dataRetrievalAction,
       new DataRequiredActionImpl,
-      formProvider
+      formProvider,
+      global
     )
 
   private def viewAsString(form: Form[_] = form) = hasReferenceNumber(frontendAppConfig, form, viewModel, schemeName)(fakeRequest, messages).toString

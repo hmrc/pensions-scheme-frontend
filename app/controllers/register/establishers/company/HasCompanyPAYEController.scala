@@ -30,6 +30,8 @@ import utils.Navigator
 import utils.annotations.EstablishersCompany
 import viewmodels.{CommonFormWithHintViewModel, Message}
 
+import scala.concurrent.ExecutionContext
+
 class HasCompanyPAYEController @Inject()(override val appConfig: FrontendAppConfig,
                                          override val messagesApi: MessagesApi,
                                          override val userAnswersService: UserAnswersService,
@@ -38,7 +40,8 @@ class HasCompanyPAYEController @Inject()(override val appConfig: FrontendAppConf
                                          allowAccess: AllowAccessActionProvider,
                                          getData: DataRetrievalAction,
                                          requireData: DataRequiredAction,
-                                         formProvider: HasPAYEFormProvider
+                                         formProvider: HasPAYEFormProvider,
+                                         implicit val ec: ExecutionContext
                                         ) extends HasReferenceNumberController {
 
   private def postCall(mode: Mode, srn: Option[String], index: Int): Call = controllers.register.establishers.company.routes.HasCompanyPAYEController.onSubmit(mode, srn, index)
@@ -51,7 +54,7 @@ class HasCompanyPAYEController @Inject()(override val appConfig: FrontendAppConf
       heading = Message("messages__companyPayeRef__h1", companyName),
       hint = Some(Message("messages__companyPayeRef__p1")),
       srn = srn,
-      formFieldName = Some("hasPAYE")
+      formFieldName = Some("hasPaye")
     )
 
   private def form(companyName: String) = formProvider("messages__companyPayeRef__error__required", companyName)
