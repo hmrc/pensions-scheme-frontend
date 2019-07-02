@@ -29,7 +29,9 @@ import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
 import utils.Navigator
 import utils.annotations.EstablishersCompany
-import viewmodels.{Message, CommonFormWithHintViewModel}
+import viewmodels.{CommonFormWithHintViewModel, Message}
+
+import scala.concurrent.ExecutionContext
 
 class CompanyPhoneController @Inject()(val appConfig: FrontendAppConfig,
                                        override val messagesApi: MessagesApi,
@@ -40,7 +42,7 @@ class CompanyPhoneController @Inject()(val appConfig: FrontendAppConfig,
                                        requireData: DataRequiredAction,
                                        @EstablishersCompany val navigator: Navigator,
                                        formProvider: PhoneFormProvider
-                                      ) extends PhoneNumberController with I18nSupport {
+                                      )(implicit val ec: ExecutionContext) extends PhoneNumberController with I18nSupport {
 
   protected val form: Form[String] = formProvider()
 
