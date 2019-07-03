@@ -32,7 +32,7 @@ import utils.annotations.EstablishersIndividual
 import viewmodels.Message
 import viewmodels.address.AddressListViewModel
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 class AddressListController @Inject()(
                                        val appConfig: FrontendAppConfig,
@@ -43,7 +43,7 @@ class AddressListController @Inject()(
                                        getData: DataRetrievalAction,
                                        allowAccess: AllowAccessActionProvider,
                                        requireData: DataRequiredAction
-                                     ) extends GenericAddressListController with Retrievals {
+                                     )(implicit val ec: ExecutionContext) extends GenericAddressListController with Retrievals {
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {

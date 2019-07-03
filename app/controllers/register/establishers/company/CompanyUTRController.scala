@@ -31,6 +31,8 @@ import utils.Navigator
 import utils.annotations.EstablishersCompany
 import viewmodels.{Message, UTRViewModel}
 
+import scala.concurrent.ExecutionContext
+
 class CompanyUTRController @Inject()(
                                       override val appConfig: FrontendAppConfig,
                                       override val messagesApi: MessagesApi,
@@ -41,7 +43,7 @@ class CompanyUTRController @Inject()(
                                       allowAccess: AllowAccessActionProvider,
                                       requireData: DataRequiredAction,
                                       formProvider: UTRFormProvider
-                                    ) extends UTRController {
+                                    )(implicit val ec: ExecutionContext) extends UTRController {
 
   private def form: Form[String] = formProvider()
 

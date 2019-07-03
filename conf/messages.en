@@ -66,6 +66,7 @@ messages__error__first_name = Enter the first name
 messages__error__last_name = Enter the last name
 messages__error__date = Enter a valid date
 messages__error__date_future = Date cannot be a date in the future
+messages__error__date_past = The date of birth must be after 1900
 messages__error__selection = You must make a selection
 messages__error__sautr = Enter the Self Assessment Unique Tax Reference number
 messages__error__sautr_invalid = Enter a valid 10 digit Self Assessment Unique Taxpayer Reference number
@@ -87,13 +88,14 @@ messages__error_country_invalid = Enter a valid country
 
 messages__common_phone__heading = What is {0}’s phone number?
 
+messages__common_email__heading = What is {0}’s email address?
 messages__error__common__email__no_at_sign = Enter an email address which includes an @ symbol
 messages__error__common__email__start_with_at_sign = Enter an email address which does not start with @
 messages__error__common__email__dot_after_at_sign = Enter an email address in the correct format with a character between @ and dot
 messages__error__common__email__ends_with_dot = Enter an email address with at least a character after the last dot
 messages__error__common__email__address__required = Enter an email address
 messages__error__common__email__address__length = Enter an email address using less than 133 characters
-messages__error__common__email__address__invalid = Enter an email address in the correct format - you might have to check that you have the correct email
+messages__error__common__email__address__invalid = Enter an email address in the correct format, like name@example.com
 
 messages__common__cya__name = Name
 messages__common__cya__address = Address
@@ -550,7 +552,15 @@ messages__companyNumber__trustee__title = What is the trustees company number?
 messages__companyNumber__trustee__heading = What is {0}’s company number?
 
 messages__companyNumber__establisher__title = What is the establisher’s company number?
-messages__companyNumber__establisher__heading = What is {0}'s company number?
+messages__companyNumber__establisher__heading = What is {0}’s company number?
+
+messages__noCompanyNumber__establisher__title = Why does the establisher not have a company number?
+messages__noCompanyNumber__establisher__heading = Why does {0} not have a company number?
+
+messages__error__no_company_number = Enter a reason why {0} does not have a company number
+messages__error__no_company_number_maxlength = Reason must be 160 characters or less
+messages__error__no_company_number_invalid = Reason must only include letters, numbers and punctuation marks
+
 
 messages__checkYourAnswers__section__contact_details = Contact details
 messages__checkYourAnswers__section__company_details = Company details
@@ -1547,3 +1557,7 @@ messages__noCompanyUtr__title = Why does the company not have a UTR?
 messages__noCompanyUtr__heading = Why does {0} not have a UTR?
 
 messages__establisher_phone__title =  What is the establisher’s phone number?
+
+
+messages__establisher_email__title =  What is the establisher’s email address?
+messages__establisher_email__hint = We will only use this to contact about pension scheme administration.

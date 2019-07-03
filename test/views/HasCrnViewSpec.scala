@@ -30,7 +30,7 @@ class HasCrnViewSpec extends YesNoViewBehaviours {
   val srn = None
   val index = Index(0)
 
-  def viewModel(srn : Option[String] = None) = CommonFormWithHintViewModel(
+  private def viewModel(srn : Option[String] = None) = CommonFormWithHintViewModel(
     controllers.register.establishers.company.routes.HasCompanyNumberController.onSubmit(NormalMode, srn, index),
     title = Message("messages__hasCompanyNumber__title"),
     heading = Message("messages__hasCompanyNumber__h1", "ABC"),
