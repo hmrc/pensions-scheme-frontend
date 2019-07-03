@@ -17,7 +17,7 @@
 package controllers.register.establishers.company
 
 import config.FrontendAppConfig
-import controllers.HasCrnController
+import controllers.HasReferenceNumberController
 import controllers.actions._
 import forms.HasVatFormProvider
 import identifiers.register.establishers.company.{CompanyDetailsId, HasCompanyVATId}
@@ -41,7 +41,7 @@ class HasCompanyVATController @Inject()(override val appConfig: FrontendAppConfi
                                         getData: DataRetrievalAction,
                                         requireData: DataRequiredAction,
                                         formProvider: HasVatFormProvider
-                                       )(implicit val ec: ExecutionContext) extends HasCrnController {
+                                       )(implicit val ec: ExecutionContext) extends HasReferenceNumberController {
 
   private def viewModel(mode: Mode, index: Index, srn: Option[String], companyName: String): CommonFormWithHintViewModel =
     CommonFormWithHintViewModel(

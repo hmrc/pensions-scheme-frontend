@@ -25,7 +25,8 @@ trait YesNoViewBehaviours extends QuestionViewBehaviours[Boolean] {
                 messageKeyPrefix: String,
                 expectedFormAction: String,
                 legendKey: String = "_title",
-                expectedHintKey: Option[String] = None): Unit = {
+                expectedHintKey: Option[String] = None,
+                valueId:String = "value"): Unit = {
 
     "behave like a page with a Yes/No question" when {
       "rendered" must {
@@ -41,14 +42,14 @@ trait YesNoViewBehaviours extends QuestionViewBehaviours[Boolean] {
 
         "contain an input for the value" in {
           val doc = asDocument(createView(form))
-          assertRenderedById(doc, "value-yes")
-          assertRenderedById(doc, "value-no")
+          assertRenderedById(doc, s"$valueId-yes")
+          assertRenderedById(doc, s"$valueId-no")
         }
 
         "have no values checked when rendered with no form" in {
           val doc = asDocument(createView(form))
-          assert(!doc.getElementById("value-yes").hasAttr("checked"))
-          assert(!doc.getElementById("value-no").hasAttr("checked"))
+          assert(!doc.getElementById(s"$valueId-yes").hasAttr("checked"))
+          assert(!doc.getElementById(s"$valueId-no").hasAttr("checked"))
         }
 
         "not render an error summary" in {
@@ -58,21 +59,21 @@ trait YesNoViewBehaviours extends QuestionViewBehaviours[Boolean] {
       }
 
       "rendered with a value of true" must {
-        behave like answeredYesNoPage(createView, true)
+        behave like answeredYesNoPage(createView, true, valueId=valueId)
       }
 
       "rendered with a value of false" must {
-        behave like answeredYesNoPage(createView, false)
+        behave like answeredYesNoPage(createView, false, valueId=valueId)
       }
 
       "rendered with an error" must {
         "show an error summary" in {
-          val doc = asDocument(createView(form.withError(error)))
+          val doc = asDocument(createView(form.withError(error(valueId))))
           assertRenderedById(doc, "error-summary-heading")
         }
 
         "show an error in the value field's label" in {
-          val doc = asDocument(createView(form.withError(error)))
+          val doc = asDocument(createView(form.withError(error(valueId))))
           val errorSpan = doc.getElementsByClass("error-notification").first
           errorSpan.text mustBe messages(errorMessage)
         }
@@ -81,12 +82,12 @@ trait YesNoViewBehaviours extends QuestionViewBehaviours[Boolean] {
   }
 
 
-  def answeredYesNoPage(createView: (Form[Boolean]) => HtmlFormat.Appendable, answer: Boolean): Unit = {
+  def answeredYesNoPage(createView: (Form[Boolean]) => HtmlFormat.Appendable, answer: Boolean, valueId:String = "value"): Unit = {
 
     "have only the correct value checked" in {
       val doc = asDocument(createView(form.fill(answer)))
-      assert(doc.getElementById("value-yes").hasAttr("checked") == answer)
-      assert(doc.getElementById("value-no").hasAttr("checked") != answer)
+      assert(doc.getElementById(s"$valueId-yes").hasAttr("checked") == answer)
+      assert(doc.getElementById(s"$valueId-no").hasAttr("checked") != answer)
     }
 
     "not render an error summary" in {

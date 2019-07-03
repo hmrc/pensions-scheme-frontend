@@ -54,7 +54,7 @@ trait StringViewBehaviours extends QuestionViewBehaviours[String] {
       "rendered with an error" must {
 
         "show an error summary" in {
-          val doc = asDocument(createView(form.withError(error)))
+          val doc = asDocument(createView(form.withError(error())))
           assertRenderedById(doc, "error-summary-heading")
         }
 

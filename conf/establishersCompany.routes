@@ -19,6 +19,8 @@ POST       /:index/company/change/employer-paye-number                          
 GET        /:index/company/:mode/employer-paye-number/:srn                                                  controllers.register.establishers.company.CompanyPayeController.onPageLoad(mode: Mode, index: Index, srn: Option[String])
 POST       /:index/company/:mode/employer-paye-number/:srn                                                  controllers.register.establishers.company.CompanyPayeController.onSubmit(mode: Mode, index: Index, srn: Option[String])
 
+GET        /:index/company/enter-employer-paye-reference                                                    controllers.register.establishers.company.CompanyPayeVariationsController.onPageLoad(mode: Mode = NormalMode, index: Index, srn: Option[String] = None)
+POST       /:index/company/enter-employer-paye-reference                                                    controllers.register.establishers.company.CompanyPayeVariationsController.onSubmit(mode: Mode = NormalMode, index: Index, srn: Option[String] = None)
 GET        /:index/company/:mode/enter-employer-paye-reference/:srn                                         controllers.register.establishers.company.CompanyPayeVariationsController.onPageLoad(mode: Mode, index: Index, srn: Option[String])
 POST       /:index/company/:mode/enter-employer-paye-reference/:srn                                         controllers.register.establishers.company.CompanyPayeVariationsController.onSubmit(mode: Mode, index: Index, srn: Option[String])
 
@@ -31,6 +33,8 @@ POST       /:index/company/:mode/vat-registered/:srn                            
 
 GET        /:index/company/enter-vat                                                                        controllers.register.establishers.company.CompanyVatVariationsController.onPageLoad(mode: Mode = NormalMode, index: Index, srn: Option[String] = None)
 POST       /:index/company/enter-vat                                                                        controllers.register.establishers.company.CompanyVatVariationsController.onSubmit(mode: Mode = NormalMode, index: Index, srn: Option[String] = None)
+GET        /:index/company/change/enter-vat                                                                 controllers.register.establishers.company.CompanyVatVariationsController.onPageLoad(mode: Mode = CheckMode, index: Index, srn: Option[String] = None)
+POST       /:index/company/change/enter-vat                                                                 controllers.register.establishers.company.CompanyVatVariationsController.onSubmit(mode: Mode = CheckMode, index: Index, srn: Option[String] = None)
 GET        /:index/company/:mode/enter-vat/:srn                                                             controllers.register.establishers.company.CompanyVatVariationsController.onPageLoad(mode: Mode, index: Index, srn: Option[String])
 POST       /:index/company/:mode/enter-vat/:srn                                                             controllers.register.establishers.company.CompanyVatVariationsController.onSubmit(mode: Mode, index: Index, srn: Option[String])
 
@@ -296,8 +300,12 @@ POST       /:index/company/has-vat-registered                                   
 GET        /:index/company/:mode/has-vat-registered/:srn                                                    controllers.register.establishers.company.HasCompanyVATController.onPageLoad(mode: Mode, srn: Option[String], index: Index)
 POST       /:index/company/:mode/has-vat-registered/:srn                                                    controllers.register.establishers.company.HasCompanyVATController.onSubmit(mode: Mode, srn: Option[String], index: Index)
 
-GET        /:index/company/employer-paye-reference                                                          controllers.register.establishers.company.HasCompanyPAYEController.onPageLoad(mode: Mode = NormalMode, srn: Option[String] = None, index: Index)
-POST       /:index/company/employer-paye-reference                                                          controllers.register.establishers.company.HasCompanyPAYEController.onSubmit(mode: Mode = NormalMode, srn: Option[String] = None, index: Index)
+GET        /:index/company/employer-paye-reference                                                          controllers.register.establishers.company.HasCompanyPAYEController.onPageLoad(mode: Mode = NormalMode, srn: Option[String] = None, index:Index)
+POST       /:index/company/employer-paye-reference                                                          controllers.register.establishers.company.HasCompanyPAYEController.onSubmit(mode: Mode = NormalMode, srn: Option[String] = None, index:Index)
+GET        /:index/company/change/employer-paye-reference                                                   controllers.register.establishers.company.HasCompanyPAYEController.onPageLoad(mode: Mode = CheckMode, srn: Option[String] = None, index:Index)
+POST       /:index/company/change/employer-paye-reference                                                   controllers.register.establishers.company.HasCompanyPAYEController.onSubmit(mode: Mode = CheckMode, srn: Option[String] = None, index:Index)
+GET        /:index/company/:mode/employer-paye-reference/:srn                                               controllers.register.establishers.company.HasCompanyPAYEController.onPageLoad(mode: Mode, srn: Option[String], index:Index)
+POST       /:index/company/:mode/employer-paye-reference/:srn                                               controllers.register.establishers.company.HasCompanyPAYEController.onSubmit(mode: Mode, srn: Option[String], index:Index)
 
 GET        /:index/company/check-your-answers-company-details                                               controllers.register.establishers.company.CheckYourAnswersCompanyDetailsController.onPageLoad(mode: Mode = NormalMode, srn: Option[String] = None, index: Index)
 POST       /:index/company/check-your-answers-company-details                                               controllers.register.establishers.company.CheckYourAnswersCompanyDetailsController.onSubmit(mode: Mode = NormalMode, srn: Option[String] = None, index: Index)
@@ -339,3 +347,6 @@ POST       /:index/company/:mode/enter-phone-number/:srn                        
 
 GET        /:index/company/check-your-answers-company-contact-details                                       controllers.register.establishers.company.CheckYourAnswersCompanyContactDetailsController.onPageLoad(mode: Mode = NormalMode, srn: Option[String] = None, index: Index)
 POST       /:index/company/check-your-answers-company-contact-details                                       controllers.register.establishers.company.CheckYourAnswersCompanyContactDetailsController.onSubmit(mode: Mode = NormalMode, srn: Option[String] = None, index: Index)
+
+
+
