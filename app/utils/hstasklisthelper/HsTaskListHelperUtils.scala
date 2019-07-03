@@ -28,9 +28,15 @@ import identifiers.register.establishers.{company => establisherCompany}
 trait HsTaskListHelperUtils extends Enumerable.Implicits {
 
   implicit val messages: Messages
+  
+  sealed trait Spoke
+  case object EstablisherCompanyDetails extends Spoke
+  case object EstablisherCompanyAddress extends Spoke
+  case object EstablisherCompanyContactDetails extends Spoke
+  case object EstablisherCompanyDirectors extends Spoke
 
   def createSpoke(answers: UserAnswers,
-                  spokeName: String,
+                  spokeName: Spoke,
                   mode: Mode, srn: Option[String], name: String, index: Int): EntitySpoke = {
 
     val isChangeLink = getCompleteFlag(answers, index, spokeName)
@@ -44,7 +50,7 @@ trait HsTaskListHelperUtils extends Enumerable.Implicits {
   }
 
   def createDirectorPartnerSpoke(entityList: Seq[Entity[_]],
-                                 spokeName: String,
+                                 spokeName: Spoke,
                                  mode: Mode, srn: Option[String], name: String, index: Int): EntitySpoke = {
 
     val isComplete: Option[Boolean] = if (mode == NormalMode && entityList.nonEmpty) Some(entityList.forall(_.isCompleted)) else None
@@ -55,51 +61,52 @@ trait HsTaskListHelperUtils extends Enumerable.Implicits {
       EntitySpoke(Link(getChangeLinkText(spokeName)(name), getChangeLink(spokeName)(mode, srn, index).url), isComplete)
   }
 
-  private def getCompleteFlag(answers: UserAnswers, index: Int, spokeName: String): Option[Boolean] = spokeName match {
-    case "establisherCompanyDetails" => answers.get(establisherCompany.IsDetailsCompleteId(index))
-    case "establisherCompanyAddress" => answers.get(establisherCompany.IsAddressCompleteId(index))
-    case "establisherCompanyContactDetails" => answers.get(establisherCompany.IsContactDetailsCompleteId(index))
+  private def getCompleteFlag(answers: UserAnswers, index: Int, spokeName: Spoke): Option[Boolean] = spokeName match {
+    case EstablisherCompanyDetails => answers.get(establisherCompany.IsDetailsCompleteId(index))
+    case EstablisherCompanyAddress
+ => answers.get(establisherCompany.IsAddressCompleteId(index))
+    case EstablisherCompanyContactDetails => answers.get(establisherCompany.IsContactDetailsCompleteId(index))
     case _ => None
   }
 
-  private def getChangeLinkText(spokeName: String): String => String = spokeName match {
-    case "establisherCompanyDetails" => messages("messages__schemeTaskList__sectionEstablishersCompany_change_details", _)
-    case "establisherCompanyAddress" => messages("messages__schemeTaskList__sectionEstablishersCompany_change_address", _)
-    case "establisherCompanyContactDetails" => messages("messages__schemeTaskList__sectionEstablishersCompany_change_contact", _)
-    case "establisherCompanyDirectors" => messages("messages__schemeTaskList__sectionEstablishersCompany_change_directors", _)
+  private def getChangeLinkText(spokeName: Spoke): String => String = spokeName match {
+    case EstablisherCompanyDetails => messages("messages__schemeTaskList__sectionEstablishersCompany_change_details", _)
+    case EstablisherCompanyAddress => messages("messages__schemeTaskList__sectionEstablishersCompany_change_address", _)
+    case EstablisherCompanyContactDetails => messages("messages__schemeTaskList__sectionEstablishersCompany_change_contact", _)
+    case EstablisherCompanyDirectors => messages("messages__schemeTaskList__sectionEstablishersCompany_change_directors", _)
     case _ => (_: String) => s"Not found link text for spoke $spokeName"
   }
 
-  private def getAddLinkText(spokeName: String): String => String = spokeName match {
-    case "establisherCompanyDetails" => messages("messages__schemeTaskList__sectionEstablishersCompany_add_details", _)
-    case "establisherCompanyAddress" => messages("messages__schemeTaskList__sectionEstablishersCompany_add_address", _)
-    case "establisherCompanyContactDetails" => messages("messages__schemeTaskList__sectionEstablishersCompany_add_contact", _)
-    case "establisherCompanyDirectors" => messages("messages__schemeTaskList__sectionEstablishersCompany_add_directors", _)
+  private def getAddLinkText(spokeName: Spoke): String => String = spokeName match {
+    case EstablisherCompanyDetails => messages("messages__schemeTaskList__sectionEstablishersCompany_add_details", _)
+    case EstablisherCompanyAddress => messages("messages__schemeTaskList__sectionEstablishersCompany_add_address", _)
+    case EstablisherCompanyContactDetails => messages("messages__schemeTaskList__sectionEstablishersCompany_add_contact", _)
+    case EstablisherCompanyDirectors => messages("messages__schemeTaskList__sectionEstablishersCompany_add_directors", _)
     case _ => (_: String) => s"Not found link text for spoke $spokeName"
   }
 
-  private def getChangeLink(spokeName: String)(mode: Mode, srn: Option[String], index: Index): Call = spokeName match {
-    case "establisherCompanyDetails" => establisherCompanyRoutes.CheckYourAnswersCompanyDetailsController.onPageLoad(mode, srn, index)
-    case "establisherCompanyAddress" => establisherCompanyRoutes.CheckYourAnswersCompanyAddressController.onPageLoad(mode, srn, index)
-    case "establisherCompanyContactDetails" => establisherCompanyRoutes.CheckYourAnswersCompanyContactDetailsController.onPageLoad(mode, srn, index)
-    case "establisherCompanyDirectors" => establisherCompanyRoutes.AddCompanyDirectorsController.onPageLoad(mode, srn, index)
+  private def getChangeLink(spokeName: Spoke)(mode: Mode, srn: Option[String], index: Index): Call = spokeName match {
+    case EstablisherCompanyDetails => establisherCompanyRoutes.CheckYourAnswersCompanyDetailsController.onPageLoad(mode, srn, index)
+    case EstablisherCompanyAddress => establisherCompanyRoutes.CheckYourAnswersCompanyAddressController.onPageLoad(mode, srn, index)
+    case EstablisherCompanyContactDetails => establisherCompanyRoutes.CheckYourAnswersCompanyContactDetailsController.onPageLoad(mode, srn, index)
+    case EstablisherCompanyDirectors => establisherCompanyRoutes.AddCompanyDirectorsController.onPageLoad(mode, srn, index)
     case _ => controllers.routes.IndexController.onPageLoad()
   }
 
-  private def getAddLink(spokeName: String)(mode: Mode, srn: Option[String], index: Index): Call = spokeName match {
-    case "establisherCompanyDetails" => establisherCompanyRoutes.WhatYouWillNeedCompanyDetailsController.onPageLoad(mode, srn, index)
-    case "establisherCompanyAddress" => establisherCompanyRoutes.WhatYouWillNeedCompanyAddressController.onPageLoad(mode, srn, index)
-    case "establisherCompanyContactDetails" => establisherCompanyRoutes.WhatYouWillNeedCompanyContactDetailsController.onPageLoad(mode, srn, index)
-    case "establisherCompanyDirectors" => establisherCompanyRoutes.AddCompanyDirectorsController.onPageLoad(mode, srn, index)
+  private def getAddLink(spokeName: Spoke)(mode: Mode, srn: Option[String], index: Index): Call = spokeName match {
+    case EstablisherCompanyDetails => establisherCompanyRoutes.WhatYouWillNeedCompanyDetailsController.onPageLoad(mode, srn, index)
+    case EstablisherCompanyAddress => establisherCompanyRoutes.WhatYouWillNeedCompanyAddressController.onPageLoad(mode, srn, index)
+    case EstablisherCompanyContactDetails => establisherCompanyRoutes.WhatYouWillNeedCompanyContactDetailsController.onPageLoad(mode, srn, index)
+    case EstablisherCompanyDirectors => establisherCompanyRoutes.AddCompanyDirectorsController.onPageLoad(mode, srn, index)
     case _ => controllers.routes.IndexController.onPageLoad()
   }
 
   def getEstablisherCompanySpokes(answers: UserAnswers, mode: Mode, srn: Option[String], name: String, index: Int): Seq[EntitySpoke] =
     Seq(
-      createSpoke(answers,"establisherCompanyDetails", mode, srn, name, index),
-      createSpoke(answers,"establisherCompanyAddress", mode, srn, name, index),
-      createSpoke(answers,"establisherCompanyContactDetails", mode, srn, name, index),
-      createDirectorPartnerSpoke(answers.allDirectorsAfterDelete(index),"establisherCompanyDirectors", mode, srn, name, index)
+      createSpoke(answers, EstablisherCompanyDetails, mode, srn, name, index),
+      createSpoke(answers, EstablisherCompanyAddress, mode, srn, name, index),
+      createSpoke(answers, EstablisherCompanyContactDetails, mode, srn, name, index),
+      createDirectorPartnerSpoke(answers.allDirectorsAfterDelete(index), EstablisherCompanyDirectors, mode, srn, name, index)
     )
 
 }
