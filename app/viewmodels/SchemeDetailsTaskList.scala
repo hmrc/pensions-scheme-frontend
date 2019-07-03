@@ -16,7 +16,7 @@
 
 package viewmodels
 
-import models.Link
+import models.{EntitySpoke, Link}
 import play.api.libs.json.{Json, OFormat}
 
 case class SchemeDetailsTaskList(beforeYouStart: SchemeDetailsTaskListSection,
@@ -53,18 +53,12 @@ object SchemeDetailsTaskListSection {
 }
 
 case class SchemeDetailsTaskListEntitySection(isCompleted: Option[Boolean] = None,
-                                              entities: Seq[EntityItem],
+                                              entities: Seq[EntitySpoke],
                                               header: Option[String] = None,
                                               p1: Option[String] = None)
 
 object SchemeDetailsTaskListEntitySection {
   implicit val formats: OFormat[SchemeDetailsTaskListEntitySection] = Json.format[SchemeDetailsTaskListEntitySection]
-}
-
-case class EntityItem(link: Link, isCompleted: Option[Boolean] = None)
-
-object EntityItem {
-  implicit val formats: OFormat[EntityItem] = Json.format[EntityItem]
 }
 
 case class SchemeDetailsTaskListHeader(isCompleted: Option[Boolean] = None, link: Option[Link] = None,

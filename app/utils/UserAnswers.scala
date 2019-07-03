@@ -216,7 +216,6 @@ case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Implicits{
 
 
   def allEstablishers: Seq[Establisher[_]] = {
-
     json.validate[Seq[Establisher[_]]](readEstablishers) match {
       case JsSuccess(establishers, _) =>
         establishers

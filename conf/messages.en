@@ -1205,6 +1205,11 @@ messages__schemeTaskList__sectionEstablishersCompany_add_address = Add {0}’s a
 messages__schemeTaskList__sectionEstablishersCompany_add_contact = Add {0}’s contact details
 messages__schemeTaskList__sectionEstablishersCompany_add_directors = Add {0}’s directors
 
+messages__schemeTaskList__sectionEstablishersCompany_change_details = Change {0}’s company details
+messages__schemeTaskList__sectionEstablishersCompany_change_address = Change {0}’s address
+messages__schemeTaskList__sectionEstablishersCompany_change_contact = Change {0}’s contact details
+messages__schemeTaskList__sectionEstablishersCompany_change_directors = Change {0}’s directors
+
 messages__schemeTaskList__sectionTrustees_header = Trustees
 messages__schemeTaskList__sectionTrustees_add_link = Add a trustee
 messages__schemeTaskList__sectionTrustees_add_additional_text = There must be a minimum of 1 trustee. If you want to remove this trustee, you must first add a new one.
@@ -1461,6 +1466,10 @@ messages__hasCompanyVat__h1 = Is {0} registered for VAT?
 messages__hasCompanyVat__p1 = This is 9 numbers, sometimes with ‘GB’ at the start, for example 123456789 or GB123456789. You can find it on {0}’s VAT registration certificate.
 messages__hasCompanyVat__error__required = Select yes if the {0} is registered for VAT
 
+messages__hasBeenTradingCompany__title = Has the establisher been trading for more than a year?
+messages__hasBeenTradingCompany__h1 =  Has {0} been trading for more than a year?
+messages__hasBeenTradingCompany__error__required = Select yes if {0} has been trading  for more than a year
+
 messages__schemeTaskList__before_you_start_link_text = Setting up your scheme application
 messages__schemeTaskList__scheme_info_link_text = Information about your scheme
 messages__schemeTaskList__scheme_information_link_text = Scheme information
@@ -1494,6 +1503,12 @@ messages__variationDeclaration__statement3 = understand that where HMRC believes
 messages__companyPaye__title = Does the company have an employer PAYE number?
 messages__companyPaye__heading = Does {0} have an employer PAYE number?
 messages__companyPaye__error__required = Select yes if the company has an employer PAYE number
+
+messages__companyPayeRef__title = Does the establisher have an employer PAYE reference?
+messages__companyPayeRef__h1 = Does {0} have an employer PAYE reference?
+messages__companyPayeRef__error__required = Select whether the company has an employer PAYE number
+
+messages__companyPayeRef__p1 = This is a 3 digit tax office number, a forward slash, and a tax office employer reference, like 123/AB456. It may be called ‘Employer PAYE reference’ or ‘PAYE reference’.
 
 messages__companyVat__title = Is the company registered for VAT?
 messages__companyVat__heading = Is {0} registered for VAT?

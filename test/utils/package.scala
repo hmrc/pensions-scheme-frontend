@@ -143,6 +143,10 @@ package object utils {
       answers.set(establishers.company.CompanyAddressYearsId(index))(addressYears).asOpt.value
     }
 
+    def establisherCompanyTradingTime(index: Int, hasBeenTrading: Boolean): UserAnswers = {
+      answers.set(establishers.company.HasBeenTradingCompanyId(index))(hasBeenTrading).asOpt.value
+    }
+
     def establisherPartnershipDetails(index: Int, partnershipDetails: PartnershipDetails): UserAnswers = {
       answers.set(establishers.partnership.PartnershipDetailsId(index))(partnershipDetails).asOpt.value
     }

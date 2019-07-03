@@ -14,15 +14,12 @@
  * limitations under the License.
  */
 
-package viewmodels
+package models
 
-import play.api.mvc.Call
+import play.api.libs.json.{Json, OFormat}
 
-case class CommonFormWithHintViewModel(
-                         postCall: Call,
-                         title: Message,
-                         heading: Message,
-                         hint: Option[Message],
-                         srn: Option[String] = None,
-                         formFieldName:Option[String] = None
-                       )
+case class EntitySpoke(link: Link, isCompleted: Option[Boolean] = None)
+
+object EntitySpoke {
+  implicit val formats: OFormat[EntitySpoke] = Json.format[EntitySpoke]
+}

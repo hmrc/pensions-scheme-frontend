@@ -14,15 +14,16 @@
  * limitations under the License.
  */
 
-package viewmodels
+package identifiers.register.establishers.company
 
-import play.api.mvc.Call
+import identifiers.TypedIdentifier
+import identifiers.register.establishers.EstablishersId
+import play.api.libs.json.JsPath
 
-case class CommonFormWithHintViewModel(
-                         postCall: Call,
-                         title: Message,
-                         heading: Message,
-                         hint: Option[Message],
-                         srn: Option[String] = None,
-                         formFieldName:Option[String] = None
-                       )
+case class IsAddressCompleteId(index: Int) extends TypedIdentifier[Boolean] {
+  override def path: JsPath = EstablishersId(index).path \ IsAddressCompleteId.toString
+}
+
+object IsAddressCompleteId {
+  override def toString: String = "isAddressComplete"
+}

@@ -82,8 +82,12 @@ trait ManualAddressController extends FrontendController with Retrievals with I1
 
         removePostCodeLookupAddress(mode, viewModel.srn, postCodeLookupIdForCleanup)
           .flatMap { userAnswersJson =>
+
             val updatedAddress = userAnswersService.setExistingAddress(mode, id, UserAnswers(userAnswersJson))
-              .set(id)(address).asOpt.getOrElse(UserAnswers(userAnswersJson))
+              .set(id)(address)
+              .asOpt.getOrElse(UserAnswers(userAnswersJson))
+
+
             userAnswersService.upsert(mode, viewModel.srn, updatedAddress.json).flatMap {
               cacheMap =>
                 userAnswersService.setAddressCompleteFlagAfterPreviousAddress(mode, viewModel.srn, id, UserAnswers(cacheMap)).map {
