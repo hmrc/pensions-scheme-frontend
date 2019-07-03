@@ -17,13 +17,8 @@
 package identifiers.register.establishers.company
 
 import identifiers.TypedIdentifier
-import identifiers.register.establishers.{EstablishersId, IsEstablisherNewId}
-import play.api.i18n.Messages
+import identifiers.register.establishers.EstablishersId
 import play.api.libs.json.JsPath
-import utils.UserAnswers
-import utils.checkyouranswers.CheckYourAnswers
-import utils.checkyouranswers.CheckYourAnswers.BooleanCYA
-import viewmodels.AnswerRow
 
 case class HasBeenTradingCompanyId(index: Int) extends TypedIdentifier[Boolean] {
   override def path: JsPath = EstablishersId(index).path \ HasBeenTradingCompanyId.toString

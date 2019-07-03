@@ -18,11 +18,10 @@ package controllers.register.establishers.company
 
 import audit.AuditService
 import config.FrontendAppConfig
-import connectors.UserAnswersCacheConnector
 import controllers.actions._
 import controllers.address.ManualAddressController
 import forms.address.AddressFormProvider
-import identifiers.register.establishers.company.{CompanyAddressId, CompanyAddressListId, CompanyDetailsId, CompanyPostCodeLookupId, IsAddressCompleteId}
+import identifiers.register.establishers.company._
 import javax.inject.Inject
 import models.address.Address
 import models.{Index, Mode}
