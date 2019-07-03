@@ -40,7 +40,7 @@ import utils.{FakeNavigator, Navigator, UserAnswers}
 import viewmodels.ContactDetailsViewModel
 import views.html.contactDetails
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 object ContactDetailsControllerSpec {
 
@@ -52,7 +52,7 @@ object ContactDetailsControllerSpec {
                                   override val userAnswersService: UserAnswersService,
                                   override val navigator: Navigator,
                                   formProvider: ContactDetailsFormProvider
-                                ) extends ContactDetailsController {
+                                )(implicit val ec: ExecutionContext) extends ContactDetailsController {
 
     def onPageLoad(viewmodel: ContactDetailsViewModel, answers: UserAnswers): Future[Result] = {
       get(FakeIdentifier, formProvider(), viewmodel)(DataRequest(FakeRequest(), "cacheId", answers, PsaId("A0000000")))

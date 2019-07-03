@@ -32,6 +32,8 @@ import utils.Navigator
 import utils.annotations.EstablishersCompany
 import viewmodels.{Message, PayeViewModel}
 
+import scala.concurrent.ExecutionContext
+
 class CompanyPayeController @Inject()(
                                        val appConfig: FrontendAppConfig,
                                        override val messagesApi: MessagesApi,
@@ -42,7 +44,7 @@ class CompanyPayeController @Inject()(
                                        allowAccess: AllowAccessActionProvider,
                                        requireData: DataRequiredAction,
                                        formProvider: PayeFormProvider
-                                     ) extends PayeController with I18nSupport {
+                                     )(implicit val ec: ExecutionContext) extends PayeController with I18nSupport {
 
   protected val form: Form[Paye] = formProvider("messages__companyPaye__error__required")
 

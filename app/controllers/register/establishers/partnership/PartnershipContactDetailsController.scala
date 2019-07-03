@@ -29,6 +29,8 @@ import utils._
 import utils.annotations.EstablisherPartnership
 import viewmodels.{ContactDetailsViewModel, Message}
 
+import scala.concurrent.ExecutionContext
+
 class PartnershipContactDetailsController @Inject()(
                                                      @EstablisherPartnership override val navigator: Navigator,
                                                      override val appConfig: FrontendAppConfig,
@@ -39,7 +41,7 @@ class PartnershipContactDetailsController @Inject()(
                                                      allowAccess: AllowAccessActionProvider,
                                                      requireData: DataRequiredAction,
                                                      formProvider: ContactDetailsFormProvider
-                                                   ) extends controllers.ContactDetailsController {
+                                                   )(implicit val ec: ExecutionContext) extends controllers.ContactDetailsController {
 
   private val form = formProvider()
 

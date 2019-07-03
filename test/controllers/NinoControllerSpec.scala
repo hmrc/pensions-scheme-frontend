@@ -34,7 +34,7 @@ import utils.{FakeNavigator, Navigator, UserAnswers}
 import viewmodels.{Message, NinoViewModel}
 import views.html.nino
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 
 class NinoControllerSpec extends ControllerSpecBase {
@@ -60,7 +60,7 @@ class NinoControllerSpec extends ControllerSpecBase {
                                       override val messagesApi: MessagesApi,
                                       override val userAnswersService: UserAnswersService,
                                       override val navigator: Navigator
-                                    ) extends NinoController {
+                                    )(implicit val ec: ExecutionContext) extends NinoController {
 
     def onPageLoad(answers: UserAnswers): Future[Result] = {
       get(FakeIdentifier, form, viewmodel)(DataRequest(FakeRequest(), "cacheId", answers, PsaId("A0000000")))

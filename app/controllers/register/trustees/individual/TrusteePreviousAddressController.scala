@@ -35,6 +35,8 @@ import utils.{CountryOptions, Navigator}
 import viewmodels.Message
 import viewmodels.address.ManualAddressViewModel
 
+import scala.concurrent.ExecutionContext
+
 class TrusteePreviousAddressController @Inject()(
                                                   override val appConfig: FrontendAppConfig,
                                                   override val messagesApi: MessagesApi,
@@ -47,7 +49,7 @@ class TrusteePreviousAddressController @Inject()(
                                                   formProvider: AddressFormProvider,
                                                   val countryOptions: CountryOptions,
                                                   val auditService: AuditService
-                                                ) extends ManualAddressController with I18nSupport {
+                                                )(implicit val ec: ExecutionContext) extends ManualAddressController with I18nSupport {
 
   private[controllers] val postCall = TrusteePreviousAddressController.onSubmit _
   private[controllers] val title: Message = "messages__trustee_individual_previous_address__title"

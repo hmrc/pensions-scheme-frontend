@@ -46,7 +46,7 @@ import viewmodels.Message
 import viewmodels.address.PostcodeLookupViewModel
 import views.html.address.postcodeLookup
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 object PostcodeLookupControllerSpec {
 
@@ -64,7 +64,7 @@ object PostcodeLookupControllerSpec {
                                   override val addressLookupConnector: AddressLookupConnector,
                                   override val navigator: Navigator,
                                   formProvider: PostCodeLookupFormProvider
-                                ) extends PostcodeLookupController {
+                                )(implicit val ec: ExecutionContext) extends PostcodeLookupController {
 
     def onPageLoad(viewmodel: PostcodeLookupViewModel, answers: UserAnswers): Future[Result] =
       get(viewmodel)(DataRequest(FakeRequest(), "cacheId", answers, PsaId("A0000000")))

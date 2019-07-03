@@ -30,6 +30,8 @@ import utils.Navigator
 import utils.annotations.EstablishersCompany
 import viewmodels.{Message, VatViewModel}
 
+import scala.concurrent.ExecutionContext
+
 class CompanyVatVariationsController @Inject()(
                                                 override val appConfig: FrontendAppConfig,
                                                 override val messagesApi: MessagesApi,
@@ -40,7 +42,7 @@ class CompanyVatVariationsController @Inject()(
                                                 allowAccess: AllowAccessActionProvider,
                                                 requireData: DataRequiredAction,
                                                 formProvider: VatVariationsFormProvider
-                                              ) extends VatVariationsController {
+                                              )(implicit val ec: ExecutionContext) extends VatVariationsController {
 
   private def form(companyName: String) = formProvider(companyName)
 

@@ -27,7 +27,7 @@ import views.html.register.establishers.company.whatYouWillNeedCompanyContactDet
 
 class WhatYouWillNeedCompanyContactDetailsControllerSpec extends ControllerSpecBase with MockitoSugar with BeforeAndAfterEach {
 
-  def onwardRoute: Call = controllers.register.establishers.company.routes.CompanyEmailController.onPageLoad(Index(0))
+  def onwardRoute: Call = controllers.register.establishers.company.routes.CompanyEmailController.onPageLoad(NormalMode, None, Index(0))
 
   def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): WhatYouWillNeedCompanyContactDetailsController =
     new WhatYouWillNeedCompanyContactDetailsController(frontendAppConfig,
