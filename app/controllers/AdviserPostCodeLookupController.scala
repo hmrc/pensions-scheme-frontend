@@ -34,6 +34,8 @@ import viewmodels.Message
 import viewmodels.address.PostcodeLookupViewModel
 import views.html.components.heading
 
+import scala.concurrent.ExecutionContext
+
 class AdviserPostCodeLookupController @Inject()(
                                                  override val appConfig: FrontendAppConfig,
                                                  override val messagesApi: MessagesApi,
@@ -44,7 +46,7 @@ class AdviserPostCodeLookupController @Inject()(
                                                  getData: DataRetrievalAction,
                                                  requireData: DataRequiredAction,
                                                  formProvider: PostCodeLookupFormProvider
-                                               ) extends PostcodeLookupController {
+                                               )(implicit val ec: ExecutionContext) extends PostcodeLookupController {
 
   protected val form: Form[String] = formProvider()
 

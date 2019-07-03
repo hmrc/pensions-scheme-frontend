@@ -39,18 +39,15 @@ object HasCompanyUTRId {
       case _ => Some(messages("messages__hasCompanyUtr__title"))
     }
 
-    def hiddenLabel(index: Int) = userAnswers.get(CompanyDetailsId(index)) match {
-      case Some(details) => Some(messages("messages__hasCompanyUtr__h1", details.companyName))
-      case _ => Some(messages("messages__hasCompanyUtr__title"))
-    }
+    def hiddenLabel = Some(messages("messages__visuallyhidden__hasCompanyUtr"))
 
     new CheckYourAnswers[HasCompanyUTRId] {
       override def row(id: HasCompanyUTRId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        BooleanCYA(label(id.index), hiddenLabel(id.index))().row(id)(changeUrl, userAnswers)
+        BooleanCYA(label(id.index), hiddenLabel)().row(id)(changeUrl, userAnswers)
 
       override def updateRow(id: HasCompanyUTRId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
         userAnswers.get(IsEstablisherNewId(id.index)) match {
-          case Some(true) => BooleanCYA(label(id.index), hiddenLabel(id.index))().row(id)(changeUrl, userAnswers)
+          case Some(true) => BooleanCYA(label(id.index), hiddenLabel)().row(id)(changeUrl, userAnswers)
           case _ => Seq.empty[AnswerRow]
         }
     }

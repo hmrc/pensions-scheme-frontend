@@ -41,19 +41,16 @@ object NoCompanyUTRId {
       case _ => Some(messages("messages__noCompanyUtr__title"))
     }
 
-    def hiddenLabel(index: Int) = userAnswers.get(CompanyDetailsId(index)) match {
-      case Some(details) => Some(messages("messages__noCompanyUtr__heading", details.companyName))
-      case _ => Some(messages("messages__noCompanyUtr__title"))
-    }
+    def hiddenLabel = Some(messages("messages__visuallyhidden__noCompanyUTRReason"))
 
     new CheckYourAnswers[NoCompanyUTRId] {
       override def row(id: NoCompanyUTRId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        StringCYA(label(id.index), hiddenLabel(id.index))().row(id)(changeUrl, userAnswers)
+        StringCYA(label(id.index), hiddenLabel)().row(id)(changeUrl, userAnswers)
 
 
       override def updateRow(id: NoCompanyUTRId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
         userAnswers.get(IsEstablisherNewId(id.index)) match {
-          case Some(true) => StringCYA(label(id.index), hiddenLabel(id.index))().row(id)(changeUrl, userAnswers)
+          case Some(true) => StringCYA(label(id.index), hiddenLabel)().row(id)(changeUrl, userAnswers)
           case _ => Seq.empty[AnswerRow]
         }
     }

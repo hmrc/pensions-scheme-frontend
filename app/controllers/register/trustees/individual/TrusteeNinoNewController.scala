@@ -30,6 +30,8 @@ import utils.Navigator
 import utils.annotations.TrusteesIndividual
 import viewmodels.{Message, NinoViewModel}
 
+import scala.concurrent.ExecutionContext
+
 class TrusteeNinoNewController @Inject()(
                                            val appConfig: FrontendAppConfig,
                                            val messagesApi: MessagesApi,
@@ -40,7 +42,7 @@ class TrusteeNinoNewController @Inject()(
                                            allowAccess: AllowAccessActionProvider,
                                            requireData: DataRequiredAction,
                                            val formProvider: NinoNewFormProvider
-                                 ) extends NinoController with I18nSupport {
+                                 )(implicit val ec: ExecutionContext) extends NinoController with I18nSupport {
 
   private[controllers] val postCall = controllers.register.trustees.individual.routes.TrusteeNinoNewController.onSubmit _
   private[controllers] val title: Message = "messages__common_nino__title"

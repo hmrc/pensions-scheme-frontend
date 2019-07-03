@@ -178,11 +178,11 @@ object CheckYourAnswersCompanyDetailsControllerSpec extends ControllerSpecBase w
       None,
       Seq(
         addLink(messages("messages__checkYourAnswers__establishers__company__number"), companyRegistrationNumberVariationsRoute(UpdateMode, srn),
-          messages("messages__visuallyhidden__establisher__crn_add")),
+          messages("messages__visuallyhidden__companyNumber_add")),
         addLink(messages("messages__common__cya__vat"), companyVatVariationsRoute(UpdateMode, srn),
-          messages("messages__visuallyhidden__establisher__vat_number_add")),
+          messages("messages__visuallyhidden__companyVat_add")),
         addLink(messages("messages__common__cya__paye"), companyPayeVariationsRoute(UpdateMode, srn),
-          messages("messages__visuallyhidden__establisher__paye_number_add"))
+          messages("messages__visuallyhidden__companyPaye_add"))
       )
     ))
 
@@ -204,41 +204,41 @@ object CheckYourAnswersCompanyDetailsControllerSpec extends ControllerSpecBase w
   private def hasCompanyNumberYesRow(mode: Mode, srn: Option[String]): Seq[AnswerRow] =
     if(mode == NormalMode)
       Seq(booleanChangeLink(messages("messages__hasCompanyNumber__h1", companyName), hasCompanyNumberRoute(mode, srn), value = true,
-        messages("messages__hasCompanyNumber__h1", companyName))) else Nil
+        messages("messages__visuallyhidden__hasCompanyNumber"))) else Nil
 
   private def companyNumberRow(mode: Mode, srn: Option[String]): Seq[AnswerRow] =
     Seq(stringChangeLink(messages("messages__checkYourAnswers__establishers__company__number"), companyRegistrationNumberVariationsRoute(mode, srn), crn,
-    messages("messages__visuallyhidden__establisher__crn")))
+    messages("messages__visuallyhidden__companyNumber")))
 
   private def utrRow(mode: Mode, srn: Option[String]): Seq[AnswerRow] =
     if(mode == NormalMode)
     Seq(stringChangeLink(messages("messages__companyUtr__checkyouranswerslabel"), companyUTRRoute(mode, srn), utr,
-      messages("messages__visuallyhidden__establisher__utr"))) else
+      messages("messages__visuallyhidden__companyUTR"))) else
       Seq(stringLink(messages("messages__companyUtr__checkyouranswerslabel"), companyUTRRoute(mode, srn), utr,
-        messages("messages__visuallyhidden__establisher__utr")))
+        messages("messages__visuallyhidden__companyUTR")))
 
   private def vatRow(mode: Mode, srn: Option[String]): Seq[AnswerRow] =
     Seq(stringChangeLink(messages("messages__common__cya__vat"), companyVatVariationsRoute(mode, srn), vat,
-      messages("messages__visuallyhidden__establisher__vat_number")))
+      messages("messages__visuallyhidden__companyVat")))
 
   private def payeRow(mode: Mode, srn: Option[String]): Seq[AnswerRow] =
     Seq(stringChangeLink(messages("messages__common__cya__paye"), companyPayeVariationsRoute(mode, srn), paye,
-      messages("messages__visuallyhidden__establisher__paye_number")))
+      messages("messages__visuallyhidden__companyPaye")))
 
   private def hasCompanyUTRYesRow(mode: Mode, srn: Option[String]): Seq[AnswerRow] =
     if(mode == NormalMode)
       Seq(booleanChangeLink(messages("messages__hasCompanyUtr__h1", companyName), hasCompanyUTRRoute(mode, srn), value = true,
-        messages("messages__hasCompanyUtr__h1", companyName))) else Nil
+        messages("messages__visuallyhidden__hasCompanyUtr"))) else Nil
 
   private def hasCompanyVatYesRow(mode: Mode, srn: Option[String]): Seq[AnswerRow] =
     if(mode == NormalMode)
       Seq(booleanChangeLink(messages("messages__hasCompanyVat__h1", companyName), hasCompanyVatRoute(mode, srn), value = true,
-        messages("messages__hasCompanyVat__h1", companyName))) else Nil
+        messages("messages__visuallyhidden__hasCompanyVat"))) else Nil
 
   private def hasCompanyPayeYesRow(mode: Mode, srn: Option[String]): Seq[AnswerRow] =
     if(mode == NormalMode)
-      Seq(booleanChangeLink(messages("messages__hasCompanyPaye__heading", companyName), hasCompanyPayeRoute(mode, srn), value = true,
-        messages("messages__hasCompanyPaye__heading", companyName))) else Nil
+      Seq(booleanChangeLink(messages("messages__companyPayeRef__h1", companyName), hasCompanyPayeRoute(mode, srn), value = true,
+        messages("messages__visuallyhidden__companyPayeRef"))) else Nil
 
   private def dormantAnswerRow(mode: Mode, srn: Option[String]): Seq[AnswerRow] =
     if(mode == NormalMode)
@@ -252,17 +252,17 @@ object CheckYourAnswersCompanyDetailsControllerSpec extends ControllerSpecBase w
       None,
       Seq(
         booleanChangeLink(messages("messages__hasCompanyNumber__h1", companyName), hasCompanyNumberRoute(mode, srn), value = false,
-          messages("messages__hasCompanyNumber__h1", companyName)),
+          messages("messages__visuallyhidden__hasCompanyNumber")),
         stringChangeLink(messages("messages__noCompanyNumber__heading", companyName), noCompanyNumberReasonRoute(mode, srn), reason,
-          messages("messages__noCompanyNumber__heading", companyName)),
+          messages("messages__visuallyhidden__noCompanyNumberReason")),
         booleanChangeLink(messages("messages__hasCompanyUtr__h1", companyName), hasCompanyUTRRoute(mode, srn), value = false,
-          messages("messages__hasCompanyUtr__h1", companyName)),
+          messages("messages__visuallyhidden__hasCompanyUtr")),
         stringChangeLink(messages("messages__noCompanyUtr__heading", companyName), noCompanyUTRRoute(mode, srn), reason,
-          messages("messages__noCompanyUtr__heading", companyName)),
+          messages("messages__visuallyhidden__noCompanyUTRReason")),
         booleanChangeLink(messages("messages__hasCompanyVat__h1", companyName), hasCompanyVatRoute(mode, srn), value = false,
-          messages("messages__hasCompanyVat__h1", companyName)),
-        booleanChangeLink(messages("messages__hasCompanyPaye__heading", companyName), hasCompanyPayeRoute(mode, srn), value = false,
-          messages("messages__hasCompanyPaye__heading", companyName))
+          messages("messages__visuallyhidden__hasCompanyVat")),
+        booleanChangeLink(messages("messages__companyPayeRef__h1", companyName), hasCompanyPayeRoute(mode, srn), value = false,
+          messages("messages__visuallyhidden__companyPayeRef"))
       )
     ))
 

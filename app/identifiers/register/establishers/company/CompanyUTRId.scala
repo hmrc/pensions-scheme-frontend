@@ -38,7 +38,7 @@ object CompanyUTRId {
                    countryOptions: CountryOptions): CheckYourAnswers[CompanyUTRId] = {
 
     val label: String = messages("messages__companyUtr__checkyouranswerslabel")
-    val hiddenLabel = "messages__visuallyhidden__establisher__utr"
+    val hiddenLabel = messages("messages__visuallyhidden__companyUTR")
 
     new CheckYourAnswers[CompanyUTRId] {
       override def row(id: CompanyUTRId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =

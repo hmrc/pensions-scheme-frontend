@@ -21,7 +21,7 @@ import controllers.Retrievals
 import forms.CompanyRegistrationNumberVariationsFormProvider
 import identifiers.TypedIdentifier
 import models.requests.DataRequest
-import models.{CompanyRegistrationNumber, Index, Mode, ReferenceValue}
+import models.{Index, Mode, ReferenceValue}
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{AnyContent, Call, Result}
@@ -31,12 +31,11 @@ import utils._
 import viewmodels.CompanyRegistrationNumberViewModel
 import views.html.register.companyRegistrationNumberVariations
 
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 trait CompanyRegistrationNumberVariationsBaseController extends FrontendController with Retrievals with I18nSupport {
 
-  protected implicit val ec = play.api.libs.concurrent.Execution.defaultContext
+  protected implicit def ec: ExecutionContext
 
   protected def appConfig: FrontendAppConfig
 

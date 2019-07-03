@@ -37,7 +37,7 @@ import utils.{FakeNavigator, Navigator, UserAnswers}
 import viewmodels.CommonFormWithHintViewModel
 import views.html.phoneNumber
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 class PhoneNumberControllerSpec extends WordSpec with MustMatchers with OptionValues with ScalaFutures with MockitoSugar {
 
@@ -166,7 +166,7 @@ object PhoneNumberControllerSpec {
                                   override val userAnswersService: UserAnswersService,
                                   override val navigator: Navigator,
                                   formProvider: PhoneFormProvider
-                                ) extends PhoneNumberController {
+                                )(implicit val ec: ExecutionContext) extends PhoneNumberController {
 
     def onPageLoad(viewmodel: CommonFormWithHintViewModel, answers: UserAnswers): Future[Result] = {
       get(FakeIdentifier, formProvider(), viewmodel)(DataRequest(FakeRequest(), "cacheId", answers, PsaId("A0000000")))

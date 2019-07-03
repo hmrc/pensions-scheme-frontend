@@ -41,14 +41,11 @@ object NoCompanyNumberId {
       case _ => Some(messages("messages__noCompanyNumber__title"))
     }
 
-    def hiddenLabel(index: Int) = userAnswers.get(CompanyDetailsId(index)) match {
-      case Some(details) => Some(messages("messages__noCompanyNumber__heading", details.companyName))
-      case _ => Some(messages("messages__noCompanyNumber__title"))
-    }
+    def hiddenLabel = Some(messages("messages__visuallyhidden__noCompanyNumberReason"))
 
     new CheckYourAnswers[NoCompanyNumberId] {
       override def row(id: NoCompanyNumberId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        StringCYA(label(id.index), hiddenLabel(id.index))().row(id)(changeUrl, userAnswers)
+        StringCYA(label(id.index), hiddenLabel)().row(id)(changeUrl, userAnswers)
 
 
       override def updateRow(id: NoCompanyNumberId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =

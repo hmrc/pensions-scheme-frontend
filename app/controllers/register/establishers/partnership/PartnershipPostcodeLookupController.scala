@@ -33,6 +33,8 @@ import utils.annotations.EstablisherPartnership
 import viewmodels.Message
 import viewmodels.address.PostcodeLookupViewModel
 
+import scala.concurrent.ExecutionContext
+
 class PartnershipPostcodeLookupController @Inject()(
                                                      override val appConfig: FrontendAppConfig,
                                                      override val messagesApi: MessagesApi,
@@ -44,7 +46,7 @@ class PartnershipPostcodeLookupController @Inject()(
                                                      allowAccess: AllowAccessActionProvider,
                                                      requireData: DataRequiredAction,
                                                      formProvider: PostCodeLookupFormProvider
-                                                   ) extends PostcodeLookupController {
+                                                   )(implicit val ec: ExecutionContext) extends PostcodeLookupController {
 
   protected val form: Form[String] = formProvider()
   private val title: Message = "messages__partnershipPostcodeLookup__title"

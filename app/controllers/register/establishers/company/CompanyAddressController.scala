@@ -18,11 +18,10 @@ package controllers.register.establishers.company
 
 import audit.AuditService
 import config.FrontendAppConfig
-import connectors.UserAnswersCacheConnector
 import controllers.actions._
 import controllers.address.ManualAddressController
 import forms.address.AddressFormProvider
-import identifiers.register.establishers.company.{CompanyAddressId, CompanyAddressListId, CompanyDetailsId, CompanyPostCodeLookupId, IsAddressCompleteId}
+import identifiers.register.establishers.company._
 import javax.inject.Inject
 import models.address.Address
 import models.{Index, Mode}
@@ -34,6 +33,8 @@ import utils.annotations.EstablishersCompany
 import utils.{CountryOptions, Navigator}
 import viewmodels.Message
 import viewmodels.address.ManualAddressViewModel
+
+import scala.concurrent.ExecutionContext
 
 class CompanyAddressController @Inject()(
                                           val appConfig: FrontendAppConfig,
@@ -47,7 +48,7 @@ class CompanyAddressController @Inject()(
                                           val formProvider: AddressFormProvider,
                                           val countryOptions: CountryOptions,
                                           val auditService: AuditService
-                                        ) extends ManualAddressController with I18nSupport {
+                                        )(implicit val ec: ExecutionContext) extends ManualAddressController with I18nSupport {
 
   private[controllers] val postCall = routes.CompanyAddressController.onSubmit _
   private[controllers] val title: Message = "messages__companyAddress__title"
@@ -86,8 +87,7 @@ class CompanyAddressController @Inject()(
     implicit request =>
       viewmodel(index, mode, srn).retrieve.right.map {
         vm =>
-          post(CompanyAddressId(index), CompanyAddressListId(index), vm, mode, context(vm), CompanyPostCodeLookupId(index),
-            Some(IsAddressCompleteId(index)))
+          post(CompanyAddressId(index), CompanyAddressListId(index), vm, mode, context(vm), CompanyPostCodeLookupId(index))
       }
   }
 

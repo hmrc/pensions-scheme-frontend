@@ -32,6 +32,8 @@ import utils.Navigator
 import utils.annotations.{AboutBenefitsAndInsurance, InsuranceService}
 import viewmodels.address.PostcodeLookupViewModel
 
+import scala.concurrent.ExecutionContext
+
 class InsurerEnterPostcodeController @Inject()(val appConfig: FrontendAppConfig,
                                                override val messagesApi: MessagesApi,
                                                @InsuranceService val userAnswersService: UserAnswersService,
@@ -42,7 +44,7 @@ class InsurerEnterPostcodeController @Inject()(val appConfig: FrontendAppConfig,
                                                allowAccess: AllowAccessActionProvider,
                                                requireData: DataRequiredAction,
                                                formProvider: PostCodeLookupFormProvider
-                                              ) extends PostcodeLookupController {
+                                              )(implicit val ec: ExecutionContext) extends PostcodeLookupController {
 
   val postCall: (Mode, Option[String]) => Call = routes.InsurerEnterPostcodeController.onSubmit
   val manualCall: (Mode, Option[String]) => Call = routes.InsurerConfirmAddressController.onClick

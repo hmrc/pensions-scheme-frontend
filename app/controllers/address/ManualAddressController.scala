@@ -33,11 +33,11 @@ import utils.{Navigator, UserAnswers}
 import viewmodels.address.ManualAddressViewModel
 import views.html.address.manualAddress
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 trait ManualAddressController extends FrontendController with Retrievals with I18nSupport {
 
-  protected implicit val ec = play.api.libs.concurrent.Execution.defaultContext
+  protected implicit def ec: ExecutionContext
 
   protected def appConfig: FrontendAppConfig
 
@@ -70,8 +70,7 @@ trait ManualAddressController extends FrontendController with Retrievals with I1
                       viewModel: ManualAddressViewModel,
                       mode: Mode,
                       context: String,
-                      postCodeLookupIdForCleanup: TypedIdentifier[Seq[TolerantAddress]],
-                      startSpokeId: Option[TypedIdentifier[Boolean]] = None
+                      postCodeLookupIdForCleanup: TypedIdentifier[Seq[TolerantAddress]]
                     )(implicit request: DataRequest[AnyContent]): Future[Result] = {
     form.bindFromRequest().fold(
       (formWithError: Form[_]) => Future.successful(BadRequest(manualAddress(appConfig, formWithError, viewModel, existingSchemeName))),
@@ -86,11 +85,6 @@ trait ManualAddressController extends FrontendController with Retrievals with I1
 
             val updatedAddress = userAnswersService.setExistingAddress(mode, id, UserAnswers(userAnswersJson))
               .set(id)(address)
-              .map {answers =>
-                startSpokeId.map{xid =>
-                  answers.set(xid)(false).asOpt.getOrElse(answers)
-                }.getOrElse(answers)
-              }
               .asOpt.getOrElse(UserAnswers(userAnswersJson))
 
 

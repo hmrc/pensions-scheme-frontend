@@ -105,8 +105,6 @@ object CheckYourAnswersCompanyAddressControllerSpec extends ControllerSpecBase w
     routes.CompanyAddressController.onPageLoad(mode, srn, Index(index)).url
   private def companyAddressYearsRoute(mode: Mode, srn: Option[String]) =
     routes.CompanyAddressYearsController.onPageLoad(mode, srn, Index(index)).url
-  private def companyTradingTimeRoute(mode: Mode, srn: Option[String]) =
-    routes.HasBeenTradingCompanyController.onPageLoad(mode, srn, Index(index)).url
   private def companyPreviousAddressRoute(mode: Mode, srn: Option[String]) =
     routes.CompanyPreviousAddressController.onPageLoad(mode, srn, Index(index)).url
 
@@ -140,13 +138,6 @@ object CheckYourAnswersCompanyAddressControllerSpec extends ControllerSpecBase w
     Some(Link("site.change", companyAddressYearsRoute(checkMode(mode), srn),
       Some("messages__visuallyhidden__establisher__address_years")))
   )
-  def tradingTimeAnswerRow(mode: Mode, srn: Option[String]): AnswerRow = AnswerRow(
-    messages("messages__hasBeenTradingCompany__h1", companyName),
-    Seq("site.yes"),
-    answerIsMessageKey = true,
-    Some(Link("site.change", companyTradingTimeRoute(checkMode(mode), srn),
-      Some(messages("messages__hasBeenTradingCompany__h1", companyName))))
-  )
   def previousAddressAnswerRow(mode: Mode, srn: Option[String]): AnswerRow = AnswerRow(
     "messages__common__cya__previous_address",
     UserAnswers().addressAnswer(previousAddress),
@@ -163,7 +154,6 @@ object CheckYourAnswersCompanyAddressControllerSpec extends ControllerSpecBase w
 
   def companyAddressNormal: Seq[AnswerSection] = Seq(AnswerSection(None, Seq(
     addressAnswerRow(NormalMode, None), addressYearsAnswerRow(NormalMode, None),
-    tradingTimeAnswerRow(NormalMode, None),
     previousAddressAnswerRow(NormalMode, None)
   )))
 

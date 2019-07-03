@@ -89,7 +89,7 @@ class CheckYourAnswersCompanyDetailsController @Inject()(
     authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
       userAnswersService.setCompleteFlag(mode, srn, IsDetailsCompleteId(index), request.userAnswers, true).map { _ =>
-        Redirect(navigator.nextPage(CheckYourAnswersId(index), mode, request.userAnswers, srn))
+        Redirect(controllers.routes.SchemeTaskListController.onPageLoad(mode, srn))
       }
   }
 

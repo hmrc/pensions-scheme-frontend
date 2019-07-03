@@ -97,7 +97,8 @@ class UserAnswersServiceSpec extends AsyncWordSpec with MustMatchers with Mockit
       when(lockConnector.lock(any(), any())(any(), any()))
         .thenReturn(Future(SchemeLock))
 
-      an[testServiceEstAndTrustees.MissingSrnNumber] shouldBe thrownBy {
+
+      recoverToSucceededIf[testServiceEstAndTrustees.MissingSrnNumber.type] {
         testServiceEstAndTrustees.save(UpdateMode, None, FakeIdentifier, "foobar")
       }
 

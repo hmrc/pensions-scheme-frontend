@@ -31,6 +31,8 @@ import utils.Navigator
 import utils.annotations.EstablishersIndividual
 import viewmodels.{Message, NinoViewModel}
 
+import scala.concurrent.ExecutionContext
+
 class EstablisherNinoNewController @Inject()(
                                            val appConfig: FrontendAppConfig,
                                            val messagesApi: MessagesApi,
@@ -41,7 +43,7 @@ class EstablisherNinoNewController @Inject()(
                                            allowAccess: AllowAccessActionProvider,
                                            requireData: DataRequiredAction,
                                            val formProvider: NinoNewFormProvider
-                                 ) extends NinoController with I18nSupport {
+                                 )(implicit val ec: ExecutionContext) extends NinoController with I18nSupport {
 
   private[controllers] val postCall = controllers.register.establishers.individual.routes.EstablisherNinoNewController.onSubmit _
   private[controllers] val title: Message = "messages__common_nino__title"
