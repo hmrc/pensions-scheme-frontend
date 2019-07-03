@@ -17,10 +17,8 @@
 package identifiers.register.establishers.company
 
 import identifiers.TypedIdentifier
-import identifiers.register.establishers.{EstablishersId, IsEstablisherCompleteId}
-import models.AddressYears
-import play.api.libs.json.{JsPath, JsResult}
-import utils.UserAnswers
+import identifiers.register.establishers.EstablishersId
+import play.api.libs.json.JsPath
 
 case class HasBeenTradingCompanyId(index: Int) extends TypedIdentifier[Boolean] {
   override def path: JsPath = EstablishersId(index).path \ HasBeenTradingCompanyId.toString

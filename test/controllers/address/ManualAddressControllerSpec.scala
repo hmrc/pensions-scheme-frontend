@@ -100,8 +100,6 @@ object ManualAddressControllerSpec {
     def onClick(mode: Mode, answers: UserAnswers, request: Request[AnyContent] = FakeRequest()): Future[Result] =
       clear(FakeAddressIdentifier, FakeSelectedAddressIdentifier, mode, srn, manualCall)(DataRequest(request, "cacheId", answers, PsaId("A0000000")))
 
-
-
     override protected val form: Form[Address] = formProvider()
   }
 

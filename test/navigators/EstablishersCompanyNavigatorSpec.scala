@@ -39,7 +39,7 @@ class EstablishersCompanyNavigatorSpec extends SpecBase with MustMatchers with N
 
   import EstablishersCompanyNavigatorSpec._
 
-  private def routes(mode: Mode): TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = Table(
+  private def routes(mode: Mode, toggled: Boolean = false): TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = Table(
     ("Id",                                      "User Answers",                   "Next Page (Normal Mode)",                "Save (NM)",    "Next Page (Check Mode)",                 "Save (CM)"),
     (CompanyDetailsId(0),                         emptyAnswers,                     companyVat(mode),                   true,           Some(exitJourney(mode, emptyAnswers, 0, cya(mode))),                   true),
     (CompanyDetailsId(0),                         newEstablisher,                   companyVat(mode),                   true,           Some(cya(mode)),                                                             true),
@@ -81,10 +81,10 @@ class EstablishersCompanyNavigatorSpec extends SpecBase with MustMatchers with N
     (CompanyConfirmPreviousAddressId(0),          emptyAnswers,                     none,                               false,          Some(sessionExpired),                                                      false),
     (CompanyPreviousAddressPostcodeLookupId(0),   emptyAnswers,                     companyPaList(mode),                true,           Some(companyPaList(checkMode(mode))),                                      true),
     (CompanyPreviousAddressListId(0),             emptyAnswers,                     companyPreviousAddress(mode),       true,           Some(companyPreviousAddress(checkMode(mode))),                             true),
-    (CompanyPreviousAddressId(0),                 emptyAnswers,                     companyContactDetails(mode),        true,           Some(exitJourney(mode, emptyAnswers, 0, cya(mode))),                   true),
-    (CompanyPreviousAddressId(0),                 newEstablisher,                   companyContactDetails(mode),        true,           Some(exitJourney(mode, newEstablisher, 0, cya(mode))),                   true),
     (CompanyEmailId(0),                           newEstablisher,                   companyPhoneNumber(mode),           true,           Some(cyaCompanyContactDetails(mode)),                   true),
     (CompanyEmailId(0),                           emptyAnswers,                     companyPhoneNumber(mode),           true,           Some(exitJourney(mode, emptyAnswers, 0, cyaCompanyContactDetails(mode))),                   true),
+    (CompanyPreviousAddressId(0),                 emptyAnswers,                     previousAddressRoutes(toggled, mode),true,          Some(previousAddressEditRoutes(toggled, mode, emptyAnswers)),              true),
+    (CompanyPreviousAddressId(0),                 newEstablisher,                   previousAddressRoutes(toggled, mode),true,          Some(previousAddressEditRoutes(toggled, mode, newEstablisher)),              true),
     (AddCompanyDirectorsId(0),                    emptyAnswers,                     directorDetails(0, mode),     true,           None,                                                                      true),
     (AddCompanyDirectorsId(0),                    addCompanyDirectorsTrue,          directorDetails(1, mode),     true,           None,                                                                      true),
     (AddCompanyDirectorsId(0),                    addCompanyDirectorsFalse,         if(mode == UpdateMode) taskList else companyReview(mode),                true,           None,                                           true),
@@ -122,12 +122,12 @@ class EstablishersCompanyNavigatorSpec extends SpecBase with MustMatchers with N
 
   private def normalRoutes(toggled : Boolean = false) = Table(
     ("Id",                                          "User Answers",               "Next Page (Normal Mode)",                "Save (NM)",  "Next Page (Check Mode)",         "Save (CM)"),
-    routes(NormalMode) ++ normalOnlyRoutes(toggled): _*
+    routes(NormalMode, toggled) ++ normalOnlyRoutes(toggled): _*
   )
 
   private def updateRoutes(toggled : Boolean = false) = Table(
     ("Id",                                          "User Answers",               "Next Page (Normal Mode)",                "Save (NM)",  "Next Page (Check Mode)",         "Save (CM)"),
-    routes(UpdateMode) ++ updateOnlyRoutes(toggled): _*
+    routes(UpdateMode, toggled) ++ updateOnlyRoutes(toggled): _*
   )
 
   private val navigator: EstablishersCompanyNavigator =
@@ -244,6 +244,7 @@ object EstablishersCompanyNavigatorSpec extends OptionValues with Enumerable.Imp
     controllers.register.establishers.company.routes.CompanyPreviousAddressController.onPageLoad(mode, None, 0)
 
   private def companyContactDetails(mode: Mode) = controllers.register.establishers.company.routes.CompanyContactDetailsController.onPageLoad(mode, None, 0)
+
   private def companyPhoneNumber(mode: Mode) = controllers.register.establishers.company.routes.CompanyPhoneController.onPageLoad(mode, None, 0)
 
   private def directorDetails(index: Index, mode: Mode) =
@@ -310,4 +311,18 @@ object EstablishersCompanyNavigatorSpec extends OptionValues with Enumerable.Imp
     .set(CompanyConfirmPreviousAddressId(0))(false).asOpt.value
 
   private def dataDescriber(answers: UserAnswers): String = answers.toString
+
+  private def previousAddressRoutes(toggled: Boolean, mode: Mode) =
+    if (toggled)
+      cyaCompanyAddressDetails(mode)
+    else
+      companyContactDetails(mode)
+
+  private def previousAddressEditRoutes(toggled: Boolean, mode: Mode, userAnswers: UserAnswers) =
+    if (toggled)
+      exitJourney(mode, userAnswers, 0, cyaCompanyAddressDetails(mode))
+    else
+      exitJourney(mode, userAnswers, 0, cya(mode))
+
+
 }
