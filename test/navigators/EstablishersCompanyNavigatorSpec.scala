@@ -257,9 +257,9 @@ object EstablishersCompanyNavigatorSpec extends OptionValues with Enumerable.Imp
   private def cyaCompanyDetails(mode: Mode) =
     controllers.register.establishers.company.routes.CheckYourAnswersCompanyDetailsController.onPageLoad(mode, None, 0)
   private def cyaCompanyContactDetails(mode: Mode) =
-    controllers.register.establishers.company.routes.CheckYourAnswersCompanyContactDetailsController.onPageLoad(0)
+    controllers.register.establishers.company.routes.CheckYourAnswersCompanyContactDetailsController.onPageLoad(mode, None, 0)
   private def cyaCompanyAddressDetails(mode: Mode) =
-    controllers.register.establishers.company.routes.CheckYourAnswersCompanyAddressController.onPageLoad(0)
+    controllers.register.establishers.company.routes.CheckYourAnswersCompanyAddressController.onPageLoad(mode, None, 0)
 
   private def anyMoreChanges = controllers.routes.AnyMoreChangesController.onPageLoad(None)
 

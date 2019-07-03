@@ -16,7 +16,7 @@
 
 package views
 
-import models.{Link, NormalMode}
+import models.{EntitySpoke, Link, NormalMode}
 import play.twirl.api.HtmlFormat
 import viewmodels._
 import views.behaviours.ViewBehaviours
@@ -431,30 +431,30 @@ object SchemeDetailsTaskListViewSpec extends ViewSpecBase {
   private def establisherCompanyToggleOn: Seq[SchemeDetailsTaskListEntitySection] = {
     Seq(SchemeDetailsTaskListEntitySection(Some(false),
       Seq(
-        EntityItem(Link(messages("messages__schemeTaskList__sectionEstablishersCompany_add_details", "test company"),
+        EntitySpoke(Link(messages("messages__schemeTaskList__sectionEstablishersCompany_add_details", "test company"),
           establisherCompanyRoutes.WhatYouWillNeedCompanyDetailsController.onPageLoad(NormalMode, None, 0).url), None),
-        EntityItem(Link(messages("messages__schemeTaskList__sectionEstablishersCompany_add_address", "test company"),
+        EntitySpoke(Link(messages("messages__schemeTaskList__sectionEstablishersCompany_add_address", "test company"),
           establisherCompanyRoutes.WhatYouWillNeedCompanyAddressController.onPageLoad(NormalMode, None, 0).url), None),
-        EntityItem(Link(messages("messages__schemeTaskList__sectionEstablishersCompany_add_contact", "test company"),
+        EntitySpoke(Link(messages("messages__schemeTaskList__sectionEstablishersCompany_add_contact", "test company"),
           establisherCompanyRoutes.WhatYouWillNeedCompanyContactDetailsController.onPageLoad(NormalMode, None, 0).url), None),
-        EntityItem(Link(messages("messages__schemeTaskList__sectionEstablishersCompany_add_directors", "test company"),
+        EntitySpoke(Link(messages("messages__schemeTaskList__sectionEstablishersCompany_add_directors", "test company"),
           establisherCompanyRoutes.AddCompanyDirectorsController.onPageLoad(NormalMode, None, 0).url, None))
       ),
       Some("test company")),
 
-      SchemeDetailsTaskListEntitySection(Some(true), Seq(EntityItem(Link(individualLinkText,
+      SchemeDetailsTaskListEntitySection(Some(true), Seq(EntitySpoke(Link(individualLinkText,
         controllers.register.establishers.individual.routes.CheckYourAnswersController.onPageLoad(NormalMode, 1, None).url),
         Some(true))),
         Some("firstName lastName")))
   }
 
   private def establishers: Seq[SchemeDetailsTaskListEntitySection] = {
-    Seq(SchemeDetailsTaskListEntitySection(Some(false), Seq(EntityItem(Link(individualLinkText,
+    Seq(SchemeDetailsTaskListEntitySection(Some(false), Seq(EntitySpoke(Link(individualLinkText,
       controllers.register.establishers.individual.routes.EstablisherDetailsController.onPageLoad(NormalMode, 0, None).url),
       Some(false))),
       Some("firstName lastName")),
 
-      SchemeDetailsTaskListEntitySection(Some(true), Seq(EntityItem(Link(individualLinkText,
+      SchemeDetailsTaskListEntitySection(Some(true), Seq(EntitySpoke(Link(individualLinkText,
         controllers.register.establishers.individual.routes.CheckYourAnswersController.onPageLoad(NormalMode, 1, None).url),
         Some(true))),
         Some("firstName lastName")))
