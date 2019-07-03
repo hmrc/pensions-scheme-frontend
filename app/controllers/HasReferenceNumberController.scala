@@ -27,13 +27,13 @@ import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.{Navigator, UserAnswers}
 import viewmodels.CommonFormWithHintViewModel
-import views.html.hasVat
+import views.html.hasReferenceNumber
 
 import scala.concurrent.{ExecutionContext, Future}
 
-trait HasVatController extends FrontendController with Retrievals with I18nSupport {
+trait HasReferenceNumberController extends FrontendController with Retrievals with I18nSupport {
 
-  protected implicit def ec: ExecutionContext
+  protected implicit def ec : ExecutionContext
 
   protected def appConfig: FrontendAppConfig
 
@@ -46,14 +46,14 @@ trait HasVatController extends FrontendController with Retrievals with I18nSuppo
     val preparedForm =
       request.userAnswers.get(id).map(form.fill).getOrElse(form)
 
-    Future.successful(Ok(hasVat(appConfig, preparedForm, viewmodel, existingSchemeName)))
+    Future.successful(Ok(hasReferenceNumber(appConfig, preparedForm, viewmodel, existingSchemeName)))
   }
 
   def post(id: TypedIdentifier[Boolean], mode: Mode, form: Form[Boolean], viewmodel: CommonFormWithHintViewModel)
           (implicit request: DataRequest[AnyContent]): Future[Result] = {
     form.bindFromRequest().fold(
       (formWithErrors: Form[_]) =>
-        Future.successful(BadRequest(hasVat(appConfig, formWithErrors, viewmodel, existingSchemeName))),
+        Future.successful(BadRequest(hasReferenceNumber(appConfig, formWithErrors, viewmodel, existingSchemeName))),
       value =>
         userAnswersService.save(mode, viewmodel.srn, id, value).map(cacheMap =>
           Redirect(navigator.nextPage(id, mode, UserAnswers(cacheMap), viewmodel.srn)))

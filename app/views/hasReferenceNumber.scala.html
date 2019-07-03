@@ -37,7 +37,7 @@
         }
 
         @components.input_yes_no(
-            field = form("value"),
+            field = form(viewmodel.formFieldName.fold("value")(identity)),
             label = viewmodel.title,
             labelClass = Some("visually-hidden")
         )
