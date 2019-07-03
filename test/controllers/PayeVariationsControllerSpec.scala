@@ -40,7 +40,7 @@ import utils.{FakeNavigator, Navigator, UserAnswers}
 import viewmodels.PayeViewModel
 import views.html.payeVariations
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 class PayeVariationsControllerSpec extends WordSpec with MustMatchers with OptionValues with ScalaFutures with MockitoSugar {
 
@@ -172,7 +172,7 @@ object PayeVariationsControllerSpec {
                                   override val userAnswersService: UserAnswersService,
                                   override val navigator: Navigator,
                                   formProvider: PayeVariationsFormProvider
-                                ) extends PayeVariationsController {
+                                )(implicit val ec: ExecutionContext) extends PayeVariationsController {
 
     def onPageLoad(viewmodel: PayeViewModel, answers: UserAnswers): Future[Result] = {
       get(FakeIdentifier, formProvider(companyName), viewmodel)(DataRequest(FakeRequest(), "cacheId", answers, PsaId("A0000000")))

@@ -22,11 +22,11 @@ import models.AddressYears
 import play.api.libs.json.{JsPath, JsResult}
 import utils.UserAnswers
 
-case class CompanyTradingTimeId(index: Int) extends TypedIdentifier[AddressYears] {
-  override def path: JsPath = EstablishersId(index).path \ CompanyTradingTimeId.toString
+case class HasBeenTradingCompanyId(index: Int) extends TypedIdentifier[Boolean] {
+  override def path: JsPath = EstablishersId(index).path \ HasBeenTradingCompanyId.toString
 }
 
-object CompanyTradingTimeId {
-  override def toString: String = "companyTradingTime"
+object HasBeenTradingCompanyId {
+  override def toString: String = "hasBeenTrading"
 }
 

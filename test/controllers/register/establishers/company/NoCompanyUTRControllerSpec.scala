@@ -36,7 +36,7 @@ import utils.{FakeNavigator, Navigator, UserAnswers}
 import viewmodels.ReasonViewModel
 import views.html.reason
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 class NoCompanyUTRControllerSpec extends WordSpec with MustMatchers with OptionValues with ScalaFutures {
 
@@ -167,7 +167,7 @@ object NoCompanyUTRControllerSpec {
                                   override val userAnswersService: UserAnswersService,
                                   override val navigator: Navigator,
                                   val formProvider: ReasonFormProvider
-                                ) extends ReasonController {
+                                )(implicit val ec: ExecutionContext) extends ReasonController {
 
     def onPageLoad(viewmodel: ReasonViewModel, answers: UserAnswers): Future[Result] = {
       get(FakeIdentifier, viewmodel, formProvider(companyName))(DataRequest(FakeRequest(), "cacheId", answers, PsaId("A0000000")))

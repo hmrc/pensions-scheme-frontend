@@ -33,6 +33,8 @@ import utils.annotations.EstablishersIndividual
 import viewmodels.Message
 import viewmodels.address.PostcodeLookupViewModel
 
+import scala.concurrent.ExecutionContext
+
 class PostCodeLookupController @Inject()(
                                           override val appConfig: FrontendAppConfig,
                                           override val messagesApi: MessagesApi,
@@ -44,7 +46,7 @@ class PostCodeLookupController @Inject()(
                                           allowAccess: AllowAccessActionProvider,
                                           requireData: DataRequiredAction,
                                           formProvider: PostCodeLookupFormProvider
-                                        ) extends GenericPostcodeLookupController {
+                                        )(implicit val ec: ExecutionContext) extends GenericPostcodeLookupController {
 
   private val title: Message = "messages__establisher_individual_address__title"
   private val heading: Message = "messages__establisher_individual_address__title"

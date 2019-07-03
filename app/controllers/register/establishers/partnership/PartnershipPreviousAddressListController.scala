@@ -32,7 +32,7 @@ import utils.annotations.EstablisherPartnership
 import viewmodels.Message
 import viewmodels.address.AddressListViewModel
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 class PartnershipPreviousAddressListController @Inject()(
                                                           val appConfig: FrontendAppConfig,
@@ -43,7 +43,7 @@ class PartnershipPreviousAddressListController @Inject()(
                                                           getData: DataRetrievalAction,
                                                           allowAccess: AllowAccessActionProvider,
                                                           requireData: DataRequiredAction
-                                                        ) extends AddressListController with Retrievals {
+                                                        )(implicit val ec: ExecutionContext) extends AddressListController with Retrievals {
 
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =

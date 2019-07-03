@@ -16,29 +16,64 @@
 
 package controllers.register.establishers.company
 
+import com.google.inject.Inject
 import config.FrontendAppConfig
-import controllers.actions._
-import javax.inject.Inject
+import controllers.HasReferenceNumberController
+import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRequiredAction, DataRetrievalAction}
+import forms.HasPAYEFormProvider
+import identifiers.register.establishers.company.{CompanyDetailsId, HasCompanyPAYEId}
 import models.{Index, Mode}
-import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent}
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import play.api.i18n.MessagesApi
+import play.api.mvc.{Action, AnyContent, Call}
+import services.UserAnswersService
+import utils.Navigator
+import utils.annotations.EstablishersCompany
+import viewmodels.{CommonFormWithHintViewModel, Message}
 
-import scala.concurrent.Future
+import scala.concurrent.ExecutionContext
 
-class HasCompanyPAYEController @Inject()(appConfig: FrontendAppConfig,
+class HasCompanyPAYEController @Inject()(override val appConfig: FrontendAppConfig,
                                          override val messagesApi: MessagesApi,
+                                         override val userAnswersService: UserAnswersService,
+                                         @EstablishersCompany override val navigator: Navigator,
                                          authenticate: AuthAction,
-                                         getData: DataRetrievalAction
-                                                    ) extends FrontendController with I18nSupport {
+                                         allowAccess: AllowAccessActionProvider,
+                                         getData: DataRetrievalAction,
+                                         requireData: DataRequiredAction,
+                                         formProvider: HasPAYEFormProvider,
+                                         implicit val ec: ExecutionContext
+                                        ) extends HasReferenceNumberController {
 
-  def onPageLoad(mode: Mode, srn: Option[String] = None, index: Index): Action[AnyContent] = (authenticate andThen getData()).async {
-    implicit request =>
-      Future.successful(Ok)
-  }
+  private def postCall(mode: Mode, srn: Option[String], index: Int): Call = controllers.register.establishers.company.routes.HasCompanyPAYEController.onSubmit(mode, srn, index)
 
-  def onSubmit(mode: Mode, srn: Option[String] = None, index: Index): Action[AnyContent] = authenticate {
-    implicit request =>
-      Redirect(controllers.routes.IndexController.onPageLoad())
-  }
+
+  private def viewModel(mode: Mode, index: Index, srn: Option[String], companyName: String): CommonFormWithHintViewModel =
+    CommonFormWithHintViewModel(
+      postCall = controllers.register.establishers.company.routes.HasCompanyPAYEController.onSubmit(mode, srn, index),
+      title = Message("messages__companyPayeRef__title"),
+      heading = Message("messages__companyPayeRef__h1", companyName),
+      hint = Some(Message("messages__companyPayeRef__p1")),
+      srn = srn,
+      formFieldName = Some("hasPaye")
+    )
+
+  private def form(companyName: String) = formProvider("messages__companyPayeRef__error__required", companyName)
+
+  def onPageLoad(mode: Mode, srn: Option[String] = None, index: Index): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+      implicit request =>
+        CompanyDetailsId(index).retrieve.right.map {
+          details =>
+            get(HasCompanyPAYEId(index), form(details.companyName), viewModel(mode, index, srn, details.companyName))
+        }
+    }
+
+  def onSubmit(mode: Mode, srn: Option[String] = None, index: Index): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen requireData).async {
+      implicit request =>
+        CompanyDetailsId(index).retrieve.right.map {
+          details =>
+            post(HasCompanyPAYEId(index), mode, form(details.companyName), viewModel(mode, index, srn, details.companyName))
+        }
+    }
 }

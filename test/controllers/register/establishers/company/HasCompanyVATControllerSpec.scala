@@ -26,7 +26,7 @@ import play.api.test.Helpers._
 import services.FakeUserAnswersService
 import utils.FakeNavigator
 import viewmodels.{CommonFormWithHintViewModel, Message}
-import views.html.hasCrn
+import views.html.hasReferenceNumber
 
 class HasCompanyVATControllerSpec extends ControllerSpecBase {
   private val schemeName = None
@@ -57,7 +57,7 @@ class HasCompanyVATControllerSpec extends ControllerSpecBase {
       formProvider
     )
 
-  private def viewAsString(form: Form[_] = form) = hasCrn(frontendAppConfig, form, viewModel, schemeName)(fakeRequest, messages).toString
+  private def viewAsString(form: Form[_] = form) = hasReferenceNumber(frontendAppConfig, form, viewModel, schemeName)(fakeRequest, messages).toString
 
   "HasCompanyVatController" must {
 

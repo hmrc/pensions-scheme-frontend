@@ -16,41 +16,51 @@
 
 package views
 
-import forms.HasCrnFormProvider
+import forms.mappings.Mappings
+import javax.inject.Inject
 import models.{Index, NormalMode}
 import play.api.data.Form
+import play.api.i18n.Messages
+import play.api.mvc.Call
 import play.twirl.api.HtmlFormat
 import viewmodels.{CommonFormWithHintViewModel, Message}
 import views.behaviours.YesNoViewBehaviours
-import views.html.hasCrn
+import views.html.hasReferenceNumber
 
-class HasCrnViewSpec extends YesNoViewBehaviours {
+class HasReferenceNumberViewSpec extends YesNoViewBehaviours {
   val schemeName = Some("Scheme x")
-  val messageKeyPrefix = "hasCompanyNumber"
+  val messageKeyPrefix = "hasX"
   val srn = None
   val index = Index(0)
 
   def viewModel(srn : Option[String] = None) = CommonFormWithHintViewModel(
-    controllers.register.establishers.company.routes.HasCompanyNumberController.onSubmit(NormalMode, srn, index),
-    title = Message("messages__hasCompanyNumber__title"),
-    heading = Message("messages__hasCompanyNumber__h1", "ABC"),
-    hint = Some(Message("messages__hasCompanyNumber__p1")),
+    Call("GET","url"),
+    title = Message("messages__hasX__title"),
+    heading = Message("messages__hasX__heading"),
+    hint = Some(Message("messages__hasX__hint")),
     srn = srn
   )
 
-  val form = new HasCrnFormProvider()("messages__hasCompanyNumber__error__required", "ABC")
+  class HasXFormProvider @Inject() extends Mappings {
+
+    def apply(errorKey : String, name : String)(implicit messages: Messages): Form[Boolean] =
+      Form(
+        "value" -> boolean(Message(errorKey, name).resolve)
+      )
+  }
+
+  val form = new HasXFormProvider()("required", "name")
   private val postCall = controllers.register.establishers.company.routes.HasCompanyNumberController.onSubmit(NormalMode, srn, index)
 
   def createView(srn : Option[String] = None): () => HtmlFormat.Appendable = () =>
-    hasCrn(frontendAppConfig, form, viewModel(srn), schemeName)(fakeRequest, messages)
+    hasReferenceNumber(frontendAppConfig, form, viewModel(srn), schemeName)(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) =>
-    hasCrn(frontendAppConfig, form, viewModel(), schemeName)(fakeRequest, messages)
+    hasReferenceNumber(frontendAppConfig, form, viewModel(), schemeName)(fakeRequest, messages)
 
-  "HasCompanyNumber view" must {
+  "HasReferenceNumber view" must {
 
-    behave like normalPage(createView(), messageKeyPrefix, pageHeader = messages(s"messages__${messageKeyPrefix}__h1", "ABC"),
-      expectedGuidanceKeys = "_p1")
+    behave like normalPage(createView(), messageKeyPrefix, pageHeader = messages("messages__hasX__heading"))
 
     behave like yesNoPage(
       createView = createViewUsingForm,

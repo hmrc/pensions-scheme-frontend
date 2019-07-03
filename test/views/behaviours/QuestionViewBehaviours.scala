@@ -21,9 +21,8 @@ import play.twirl.api.HtmlFormat
 
 trait QuestionViewBehaviours[A] extends ViewBehaviours {
 
-  val errorKey = "value"
   val errorMessage = "error.number"
-  val error = FormError(errorKey, errorMessage)
+  def error(errorKey:String = "value") = FormError(errorKey, errorMessage)
 
   val form: Form[A]
 

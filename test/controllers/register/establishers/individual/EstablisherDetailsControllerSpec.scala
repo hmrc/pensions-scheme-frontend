@@ -61,7 +61,7 @@ class EstablisherDetailsControllerSpec extends ControllerSpecBase {
       new DataRequiredActionImpl,
       formProvider
     )
-  private val submitUrl = controllers.register.establishers.individual.routes.EstablisherDetailsController.onSubmit(NormalMode, firstIndex, None)
+  private def submitUrl = controllers.register.establishers.individual.routes.EstablisherDetailsController.onSubmit(NormalMode, firstIndex, None)
   def viewAsString(form: Form[_] = form): String =
     establisherDetails(frontendAppConfig, form, NormalMode, firstIndex, None, submitUrl, None)(fakeRequest, messages).toString
 
@@ -70,6 +70,7 @@ class EstablisherDetailsControllerSpec extends ControllerSpecBase {
     "return OK and the correct view for a GET when scheme name is present" in {
       val result = controller().onPageLoad(NormalMode, firstIndex, None)(fakeRequest)
       status(result) mustBe OK
+
       contentAsString(result) mustBe viewAsString()
     }
 

@@ -16,43 +16,127 @@
 
 package controllers.register.establishers.company
 
-import controllers.ControllerSpecBase
-import controllers.actions._
-import models.{Index, NormalMode}
-import org.scalatest.BeforeAndAfterEach
-import org.scalatest.mockito.MockitoSugar
-import play.api.mvc.Call
+import akka.stream.Materializer
+import com.google.inject.Inject
+import config.FrontendAppConfig
+import controllers.ReasonController
+import forms.register.establishers.company.NoCompanyNumberFormProvider
+import identifiers.TypedIdentifier
+import models.NormalMode
+import models.requests.DataRequest
+import org.scalatest.concurrent.ScalaFutures
+import org.scalatest.{MustMatchers, OptionValues, WordSpec}
+import org.scalatestplus.play.guice.GuiceOneAppPerSuite
+import play.api.i18n.MessagesApi
+import play.api.inject.bind
+import play.api.inject.guice.GuiceApplicationBuilder
+import play.api.mvc.{AnyContent, Call, Request, Result}
+import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import services.{FakeUserAnswersService, UserAnswersService}
+import uk.gov.hmrc.domain.PsaId
+import utils.{FakeNavigator, Navigator, UserAnswers}
+import viewmodels.ReasonViewModel
+import views.html.reason
 
-class NoCompanyNumberControllerSpec extends ControllerSpecBase with MockitoSugar with BeforeAndAfterEach {
+import scala.concurrent.{ExecutionContext, Future}
 
-  def onwardRoute: Call = controllers.routes.SessionExpiredController.onPageLoad
+class NoCompanyNumberControllerSpec extends WordSpec with MustMatchers with OptionValues with ScalaFutures with GuiceOneAppPerSuite {
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): NoCompanyNumberController =
-    new NoCompanyNumberController(frontendAppConfig,
-      messagesApi,
-      FakeAuthAction,
-      dataRetrievalAction
-    )
+  import NoCompanyNumberControllerSpec._
 
+  override lazy val app = new GuiceApplicationBuilder()
+    .overrides(
+    bind[Navigator].toInstance(FakeNavigator),
+    bind[UserAnswersService].toInstance(FakeUserAnswersService)
+  ).build()
+
+  implicit val materializer: Materializer = app.materializer
+
+  val appConfig = app.injector.instanceOf[FrontendAppConfig]
+  val formProvider = app.injector.instanceOf[NoCompanyNumberFormProvider]
+  val request = FakeRequest()
+  val messages = app.injector.instanceOf[MessagesApi].preferred(request)
+  val controller = app.injector.instanceOf[TestController]
 
   "NoCompanyNumberController" when {
 
-    "on a GET" must {
-      "return OK and the correct view" in {
-        val result = controller().onPageLoad(NormalMode, None, Index(1))(fakeRequest)
+    "calling get method" must {
 
-        status(result) mustBe OK
+      "return a successful result when there is no existing answer" in {
+          val result = controller.onPageLoad(viewModel, UserAnswers())
+          status(result) mustEqual OK
+          contentAsString(result) mustEqual reason(
+            appConfig,
+            formProvider("test company")(messages),
+            viewModel,
+            None)(request, messages).toString
       }
+
+      "return a successful result when there is an existing answer" in {
+          val answers = UserAnswers().set(FakeIdentifier)("123456789").get
+          val result = controller.onPageLoad(viewModel, answers)
+          status(result) mustEqual OK
+          contentAsString(result) mustEqual reason(
+            appConfig,
+            formProvider("test company")(messages).fill("123456789"),
+            viewModel,
+            None
+          )(request, messages).toString
+      }
+
     }
 
-    "on a POST" must {
-      "redirect to relavant page" in {
-        val result = controller().onSubmit(NormalMode, None, Index(1))(fakeRequest)
+    "calling post method" must {
 
-        status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(controllers.routes.IndexController.onPageLoad().url)
+      "return a redirect when the submitted data is valid" in {
+          val request = FakeRequest().withFormUrlEncodedBody(("reason", "123456789"))
+          val result = controller.onSubmit(viewModel, UserAnswers(), request)
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual "www.example.com"
+          FakeUserAnswersService.verify(FakeIdentifier, "123456789")
       }
+
+      "return a bad request when the submitted data is invalid" in {
+          val request = FakeRequest().withFormUrlEncodedBody(("reason", "123456789{0}12345"))
+          val result = controller.onSubmit(viewModel, UserAnswers(), request)
+          status(result) mustEqual BAD_REQUEST
+          contentAsString(result) mustEqual reason(
+            appConfig,
+            formProvider("test company")(messages).bind(Map("reason" -> "123456789{0}12345")),
+            viewModel,
+            None
+          )(request, messages).toString
+      }
+    }
+  }
+}
+
+
+object NoCompanyNumberControllerSpec extends NoCompanyNumberControllerSpec {
+
+  object FakeIdentifier extends TypedIdentifier[String]
+
+  val viewModel = ReasonViewModel(
+    postCall = Call("GET", "www.example.com"),
+    title = "title",
+    heading = "heading"
+  )
+
+  class TestController @Inject()(
+                                  override val appConfig: FrontendAppConfig,
+                                  override val messagesApi: MessagesApi,
+                                  override val userAnswersService: UserAnswersService,
+                                  override val navigator: Navigator,
+                                  val formProvider: NoCompanyNumberFormProvider
+                                )(implicit val ec: ExecutionContext) extends ReasonController {
+
+    def onPageLoad(viewModel: ReasonViewModel, answers: UserAnswers): Future[Result] = {
+      get(FakeIdentifier, viewModel, formProvider("test company"))(DataRequest(FakeRequest(), "cacheId", answers, PsaId("A0000000")))
+    }
+
+    def onSubmit(viewModel: ReasonViewModel, answers: UserAnswers, fakeRequest: Request[AnyContent]): Future[Result] = {
+      post(FakeIdentifier, NormalMode, viewModel, formProvider("test company"))(DataRequest(fakeRequest, "cacheId", answers, PsaId("A0000000")))
     }
   }
 }
