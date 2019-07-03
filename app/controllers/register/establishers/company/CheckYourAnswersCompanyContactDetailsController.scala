@@ -17,28 +17,64 @@
 package controllers.register.establishers.company
 
 import config.FrontendAppConfig
+import controllers.Retrievals
 import controllers.actions._
+import identifiers.register.establishers.IsEstablisherNewId
+import identifiers.register.establishers.company.{CompanyEmailId, CompanyPhoneId, IsContactDetailsCompleteId}
 import javax.inject.Inject
+import models.Mode.checkMode
 import models.{Index, Mode}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
+import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import utils.annotations.NoSuspendedCheck
+import utils.checkyouranswers.Ops._
+import utils.{AllowChangeHelper, CountryOptions, UserAnswers}
+import viewmodels.AnswerSection
+import views.html.check_your_answers
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 class CheckYourAnswersCompanyContactDetailsController @Inject()(appConfig: FrontendAppConfig,
                                                                 override val messagesApi: MessagesApi,
                                                                 authenticate: AuthAction,
-                                                                getData: DataRetrievalAction
-                                                    ) extends FrontendController with I18nSupport {
+                                                                getData: DataRetrievalAction,
+                                                                @NoSuspendedCheck allowAccess: AllowAccessActionProvider,
+                                                                requireData: DataRequiredAction,
+                                                                implicit val countryOptions: CountryOptions,
+                                                                allowChangeHelper: AllowChangeHelper,
+                                                                userAnswersService: UserAnswersService
+                                                               )(implicit val ec: ExecutionContext) extends FrontendController with I18nSupport with Retrievals {
 
-  def onPageLoad(mode: Mode, srn: Option[String] = None, index: Index): Action[AnyContent] = (authenticate andThen getData()).async {
-    implicit request =>
-      Future.successful(Ok)
-  }
+  def onPageLoad(mode: Mode, srn: Option[String] = None, index: Index): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+      implicit request =>
+        implicit val userAnswers: UserAnswers = request.userAnswers
+        val notNewEstablisher = !userAnswers.get(IsEstablisherNewId(index)).getOrElse(true)
+        val contactDetails = AnswerSection(
+          None,
+          CompanyEmailId(index).row(routes.CompanyEmailController.onPageLoad(checkMode(mode), srn, index).url, mode) ++
+            CompanyPhoneId(index).row(routes.CompanyPhoneController.onPageLoad(checkMode(mode), srn, index).url, mode)
+        )
 
-  def onSubmit(mode: Mode, srn: Option[String] = None, index: Index): Action[AnyContent] = authenticate {
-    implicit request =>
-      Redirect(controllers.routes.IndexController.onPageLoad())
-  }
+        Future.successful(Ok(check_your_answers(
+          appConfig,
+          Seq(contactDetails),
+          routes.CheckYourAnswersCompanyContactDetailsController.onSubmit(mode, srn, index),
+          existingSchemeName,
+          mode = mode,
+          hideEditLinks = request.viewOnly || notNewEstablisher,
+          hideSaveAndContinueButton = allowChangeHelper.hideSaveAndContinueButton(request, IsEstablisherNewId(index), mode),
+          srn = srn
+        )))
+    }
+
+  def onSubmit(mode: Mode, srn: Option[String] = None, index: Index): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+      implicit request =>
+        userAnswersService.setCompleteFlag(mode, srn, IsContactDetailsCompleteId(index), request.userAnswers, value = true).map { _ =>
+          Redirect(controllers.routes.SchemeTaskListController.onPageLoad(mode, srn))
+        }
+    }
 }

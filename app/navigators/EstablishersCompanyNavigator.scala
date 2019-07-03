@@ -46,10 +46,10 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
     NavigateTo.dontSave(establisherCompanyRoutes.CheckYourAnswersCompanyDetailsController.onPageLoad(mode, srn, index))
 
   private def cyaContactDetails(index: Int, mode: Mode, srn: Option[String]): Option[NavigateTo] =
-    NavigateTo.dontSave(controllers.register.establishers.company.routes.CheckYourAnswersCompanyContactDetailsController.onPageLoad(mode, srn, index))
+    NavigateTo.dontSave(establisherCompanyRoutes.CheckYourAnswersCompanyContactDetailsController.onPageLoad(mode, srn, index))
 
   private def cyaAddressDetails(index: Int, mode: Mode, srn: Option[String]): Option[NavigateTo] =
-    NavigateTo.dontSave(controllers.register.establishers.company.routes.CheckYourAnswersCompanyAddressController.onPageLoad(mode, srn, index))
+    NavigateTo.dontSave(establisherCompanyRoutes.CheckYourAnswersCompanyAddressController.onPageLoad(mode, srn, index))
 
   private def anyMoreChanges(srn: Option[String]): Option[NavigateTo] =
     NavigateTo.dontSave(controllers.routes.AnyMoreChangesController.onPageLoad(srn))
