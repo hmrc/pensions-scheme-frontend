@@ -97,6 +97,8 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
         NavigateTo.dontSave(establisherCompanyRoutes.CompanyContactDetailsController.onPageLoad(mode, srn, index))
       case CompanyPhoneId(index) =>
         NavigateTo.dontSave(establisherCompanyRoutes.CheckYourAnswersCompanyContactDetailsController.onPageLoad(index))
+      case CompanyEmailId(index) =>
+        NavigateTo.dontSave(establisherCompanyRoutes.CompanyPhoneController.onPageLoad(mode, srn, index))
       case AddCompanyDirectorsId(index) =>
         addDirectors(mode, index, from.userAnswers, srn)
       case OtherDirectorsId(index) =>
@@ -111,7 +113,6 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
         listOrAnyMoreChange(index, mode, srn)(from.userAnswers)
       case _ => None
     }
-
 
   protected def editRoutes(from: NavigateFrom, mode: Mode, srn: Option[String]): Option[NavigateTo] =
     from.id match {
@@ -159,6 +160,7 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
       case CompanyPreviousAddressId(index) =>     exitMiniJourney(index, mode, srn, from.userAnswers)
       case CompanyContactDetailsId(index) =>      exitMiniJourney(index, mode, srn, from.userAnswers)
       case CompanyPhoneId(index) =>               exitMiniJourney(index, mode, srn, from.userAnswers, cyaContactDetails)
+      case CompanyEmailId(index) =>               exitMiniJourney(index, mode, srn, from.userAnswers, cyaContactDetails)
       case IsCompanyDormantId(index) =>           exitMiniJourney(index, mode, srn, from.userAnswers)
 
       case OtherDirectorsId(index) =>

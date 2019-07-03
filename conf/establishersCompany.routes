@@ -320,8 +320,13 @@ POST       /:index/company/company-contact-details                              
 GET        /:index/company/:mode/company-contact-details/:srn                                               controllers.register.establishers.company.WhatYouWillNeedCompanyContactDetailsController.onPageLoad(mode: Mode, srn: Option[String], index: Index)
 POST       /:index/company/:mode/company-contact-details/:srn                                               controllers.register.establishers.company.WhatYouWillNeedCompanyContactDetailsController.onSubmit(mode: Mode, srn: Option[String], index: Index)
 
-GET        /:index/company/enter-email-address                                                              controllers.register.establishers.company.CompanyEmailController.onPageLoad(mode: Mode = NormalMode, srn: Option[String] = None, index: Index)
-POST       /:index/company/enter-email-address                                                              controllers.register.establishers.company.CompanyEmailController.onSubmit(mode: Mode = NormalMode, srn: Option[String] = None, index: Index)
+GET        /:index/company/enter-email-address                                                              controllers.register.establishers.company.CompanyEmailController.onPageLoad(mode: Mode = NormalMode, srn: Option[String] = None, index:Index)
+POST       /:index/company/enter-email-address                                                              controllers.register.establishers.company.CompanyEmailController.onSubmit(mode: Mode = NormalMode, srn: Option[String] = None, index:Index)
+GET        /:index/company/change/enter-email-address                                                       controllers.register.establishers.company.CompanyEmailController.onPageLoad(mode: Mode = CheckMode, srn: Option[String] = None, index:Index)
+POST       /:index/company/change/enter-email-address                                                       controllers.register.establishers.company.CompanyEmailController.onSubmit(mode: Mode = CheckMode, srn: Option[String] = None, index:Index)
+GET        /:index/company/:mode/enter-email-address/:srn                                                   controllers.register.establishers.company.CompanyEmailController.onPageLoad(mode: Mode, srn: Option[String], index:Index)
+POST       /:index/company/:mode/enter-email-address/:srn                                                   controllers.register.establishers.company.CompanyEmailController.onSubmit(mode: Mode, srn: Option[String], index:Index)
+
 
 GET        /:index/company/enter-phone-number                                                              controllers.register.establishers.company.CompanyPhoneController.onPageLoad(mode: Mode = NormalMode, srn: Option[String] = None, index:Index)
 POST       /:index/company/enter-phone-number                                                              controllers.register.establishers.company.CompanyPhoneController.onSubmit(mode: Mode = NormalMode, srn: Option[String] = None, index:Index)
