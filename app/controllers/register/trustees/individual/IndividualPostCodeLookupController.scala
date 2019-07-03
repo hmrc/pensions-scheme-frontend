@@ -33,6 +33,8 @@ import utils.annotations.TrusteesIndividual
 import viewmodels.Message
 import viewmodels.address.PostcodeLookupViewModel
 
+import scala.concurrent.ExecutionContext
+
 class IndividualPostCodeLookupController @Inject()(
                                                     val appConfig: FrontendAppConfig,
                                                     override val messagesApi: MessagesApi,
@@ -44,7 +46,8 @@ class IndividualPostCodeLookupController @Inject()(
                                                     requireData: DataRequiredAction,
                                                     formProvider: PostCodeLookupFormProvider,
                                                     val addressLookupConnector: AddressLookupConnector
-                                                  ) extends PostcodeLookupController with I18nSupport {
+                                                  )(implicit val ec: ExecutionContext) extends PostcodeLookupController with I18nSupport {
+
   override protected val form: Form[String] = formProvider()
 
   private def postCodeViewmodel(index: Int, mode: Mode, srn: Option[String]): Retrieval[PostcodeLookupViewModel] =

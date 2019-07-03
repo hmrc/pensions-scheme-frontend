@@ -30,6 +30,8 @@ import utils.Navigator
 import utils.annotations.EstablishersCompany
 import viewmodels.{CommonFormWithHintViewModel, Message}
 
+import scala.concurrent.ExecutionContext
+
 class HasCompanyUTRController @Inject()(override val appConfig: FrontendAppConfig,
                                         override val messagesApi: MessagesApi,
                                         override val userAnswersService: UserAnswersService,
@@ -38,7 +40,8 @@ class HasCompanyUTRController @Inject()(override val appConfig: FrontendAppConfi
                                         allowAccess: AllowAccessActionProvider,
                                         getData: DataRetrievalAction,
                                         requireData: DataRequiredAction,
-                                        formProvider: HasUtrFormProvider) extends HasUtrController {
+                                        formProvider: HasUtrFormProvider
+                                       )(implicit val ec: ExecutionContext) extends HasUtrController {
 
   private def viewModel(mode: Mode, index: Index, srn: Option[String], companyName: String): CommonFormWithHintViewModel =
     CommonFormWithHintViewModel(

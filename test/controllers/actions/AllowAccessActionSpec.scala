@@ -33,10 +33,12 @@ import play.twirl.api.Html
 import uk.gov.hmrc.domain.PsaId
 import uk.gov.hmrc.play.bootstrap.http.FrontendErrorHandler
 import utils.UserAnswers
+import scala.concurrent.ExecutionContext.Implicits.global
 
 import scala.concurrent.Future
 
 class AllowAccessActionSpec extends SpecBase with ScalaFutures with MockitoSugar {
+
   private val errorHandler = new FrontendErrorHandler {
     override def standardErrorTemplate(pageTitle: String, heading: String, message: String)(implicit request: Request[_]): Html = Html("")
 

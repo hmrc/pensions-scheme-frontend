@@ -40,8 +40,8 @@ class HasCompanyNumberController @Inject()(override val appConfig: FrontendAppCo
                                            allowAccess: AllowAccessActionProvider,
                                            getData: DataRetrievalAction,
                                            requireData: DataRequiredAction,
-                                           formProvider: HasCrnFormProvider,
-                                           implicit val ec: ExecutionContext) extends HasReferenceNumberController {
+                                           formProvider: HasCrnFormProvider
+                                          )(implicit val ec: ExecutionContext) extends HasReferenceNumberController {
 
   private def viewModel(mode: Mode, index: Index, srn: Option[String], companyName: String): CommonFormWithHintViewModel =
     CommonFormWithHintViewModel(

@@ -61,7 +61,8 @@ trait MicroService {
     .settings(
       fork in Test := true,
       javaOptions in Test += "-Dconfig.file=conf/test.application.conf",
-      scalacOptions ++= Seq("-Xfatal-warnings", "-feature"),
+      scalacOptions ++= Seq("-Xfatal-warnings", "-feature", "-Ywarn-dead-code"),
+      (scalacOptions in Test) -= "-Ywarn-dead-code",
       PlayKeys.devSettings += "play.server.http.port" -> "8200",
       libraryDependencies ++= appDependencies,
       retrieveManaged := true,

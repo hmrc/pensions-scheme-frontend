@@ -54,8 +54,7 @@ class HasCompanyNumberControllerSpec extends ControllerSpecBase {
       FakeAllowAccessProvider(),
       dataRetrievalAction,
       new DataRequiredActionImpl,
-      formProvider,
-      global
+      formProvider
     )
 
   private def viewAsString(form: Form[_] = form) = hasReferenceNumber(frontendAppConfig, form, viewModel, schemeName)(fakeRequest, messages).toString

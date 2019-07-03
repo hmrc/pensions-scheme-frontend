@@ -57,7 +57,11 @@ class PersonDetailsFormProvider @Inject() extends Mappings with Transforms {
             )
           ),
       "date" -> dateMapping("messages__error__date", "error.invalid_date")
-        .verifying(futureDate("messages__error__date_future"))
+        .verifying(firstError(futureDate("messages__error__date_future"),
+          notBeforeYear("messages__error__date_past", PersonDetailsFormProvider.startYear)
+        )
+        )
+
     )(PersonDetails.applyDelete)(PersonDetails.unapplyDelete)
   )
 }
@@ -66,4 +70,6 @@ object PersonDetailsFormProvider {
   val firstNameLength: Int = 35
   val middleNameLength: Int = 35
   val lastNameLength: Int = 35
+  val startYear: Int = 1900
 }
+

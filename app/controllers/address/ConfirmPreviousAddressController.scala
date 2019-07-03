@@ -32,10 +32,11 @@ import viewmodels.Message
 import viewmodels.address.ConfirmAddressViewModel
 import views.html.address.confirmPreviousAddress
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 trait ConfirmPreviousAddressController extends FrontendController with Retrievals with I18nSupport {
-  implicit val ec = play.api.libs.concurrent.Execution.defaultContext
+
+  protected implicit def ec: ExecutionContext
 
   protected def appConfig: FrontendAppConfig
 

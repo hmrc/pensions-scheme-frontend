@@ -27,6 +27,7 @@ import play.twirl.api.Html
 import uk.gov.hmrc.play.bootstrap.http.FrontendErrorHandler
 
 import scala.concurrent.Future
+import scala.concurrent.ExecutionContext.Implicits.global
 
 class FakeAllowAccessAction(srn: Option[String],
                             pensionsSchemeConnector: PensionsSchemeConnector,

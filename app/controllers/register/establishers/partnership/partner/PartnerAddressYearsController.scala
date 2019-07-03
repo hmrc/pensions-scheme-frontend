@@ -32,6 +32,8 @@ import utils.annotations.EstablishersPartner
 import viewmodels.Message
 import viewmodels.address.AddressYearsViewModel
 
+import scala.concurrent.ExecutionContext
+
 class PartnerAddressYearsController @Inject()(
                                                val appConfig: FrontendAppConfig,
                                                val userAnswersService: UserAnswersService,
@@ -41,7 +43,7 @@ class PartnerAddressYearsController @Inject()(
                                                getData: DataRetrievalAction,
                                                allowAccess: AllowAccessActionProvider,
                                                requireData: DataRequiredAction
-                                             ) extends AddressYearsController with Retrievals {
+                                             )(implicit val ec: ExecutionContext) extends AddressYearsController with Retrievals {
 
   private val form = new AddressYearsFormProvider()(Message("messages__common_error__current_address_years"))
 

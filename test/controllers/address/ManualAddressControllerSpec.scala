@@ -46,7 +46,7 @@ import utils.{CountryOptions, FakeCountryOptions, FakeNavigator, Navigator, User
 import viewmodels.address.ManualAddressViewModel
 import views.html.address.manualAddress
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 object ManualAddressControllerSpec {
 
@@ -88,7 +88,7 @@ object ManualAddressControllerSpec {
                                   override val navigator: Navigator,
                                   formProvider: AddressFormProvider,
                                   override val auditService: AuditService
-                                ) extends ManualAddressController {
+                                )(implicit val ec: ExecutionContext) extends ManualAddressController {
 
     def onPageLoad(viewModel: ManualAddressViewModel, answers: UserAnswers): Future[Result] =
       get(fakeAddressId, fakeAddressListId, viewModel)(DataRequest(FakeRequest(), "cacheId", answers, psaId))

@@ -36,7 +36,7 @@ import viewmodels.Message
 import viewmodels.address.AddressListViewModel
 import views.html.address.addressList
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 class AddressListControllerSpec extends WordSpec with Matchers with OptionValues {
 
@@ -143,7 +143,7 @@ object AddressListControllerSpec {
   class TestController @Inject()(
                                   override val appConfig: FrontendAppConfig,
                                   override val messagesApi: MessagesApi
-                                ) extends AddressListController {
+                                )(implicit val ec: ExecutionContext) extends AddressListController {
 
     override protected def userAnswersService: UserAnswersService = FakeUserAnswersService
 

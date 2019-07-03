@@ -36,7 +36,7 @@ import utils.{FakeNavigator, Navigator, UserAnswers}
 import viewmodels.VatViewModel
 import views.html.vatVariations
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 class VatVariationsControllerSpec extends WordSpec with MustMatchers with OptionValues with ScalaFutures {
 
@@ -169,7 +169,7 @@ object VatVariationsControllerSpec {
                                   override val userAnswersService: UserAnswersService,
                                   override val navigator: Navigator,
                                   val formProvider: VatVariationsFormProvider
-                                ) extends VatVariationsController {
+                                )(implicit val ec: ExecutionContext) extends VatVariationsController {
 
     def onPageLoad(viewmodel: VatViewModel, answers: UserAnswers): Future[Result] = {
       get(FakeIdentifier, viewmodel, formProvider(companyName))(DataRequest(FakeRequest(), "cacheId", answers, PsaId("A0000000")))

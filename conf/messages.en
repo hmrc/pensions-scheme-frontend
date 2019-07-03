@@ -66,6 +66,7 @@ messages__error__first_name = Enter the first name
 messages__error__last_name = Enter the last name
 messages__error__date = Enter a valid date
 messages__error__date_future = Date cannot be a date in the future
+messages__error__date_past = The date of birth must be after 1900
 messages__error__selection = You must make a selection
 messages__error__sautr = Enter the Self Assessment Unique Tax Reference number
 messages__error__sautr_invalid = Enter a valid 10 digit Self Assessment Unique Taxpayer Reference number
@@ -87,13 +88,14 @@ messages__error_country_invalid = Enter a valid country
 
 messages__common_phone__heading = What is {0}’s phone number?
 
+messages__common_email__heading = What is {0}’s email address?
 messages__error__common__email__no_at_sign = Enter an email address which includes an @ symbol
 messages__error__common__email__start_with_at_sign = Enter an email address which does not start with @
 messages__error__common__email__dot_after_at_sign = Enter an email address in the correct format with a character between @ and dot
 messages__error__common__email__ends_with_dot = Enter an email address with at least a character after the last dot
 messages__error__common__email__address__required = Enter an email address
 messages__error__common__email__address__length = Enter an email address using less than 133 characters
-messages__error__common__email__address__invalid = Enter an email address in the correct format - you might have to check that you have the correct email
+messages__error__common__email__address__invalid = Enter an email address in the correct format, like name@example.com
 
 messages__common__cya__name = Name
 messages__common__cya__address = Address
@@ -1457,6 +1459,10 @@ messages__hasCompanyVat__h1 = Is {0} registered for VAT?
 messages__hasCompanyVat__p1 = This is 9 numbers, sometimes with ‘GB’ at the start, for example 123456789 or GB123456789. You can find it on {0}’s VAT registration certificate.
 messages__hasCompanyVat__error__required = Select yes if the {0} is registered for VAT
 
+messages__hasBeenTradingCompany__title = Has the establisher been trading for more than a year?
+messages__hasBeenTradingCompany__h1 =  Has {0} been trading for more than a year?
+messages__hasBeenTradingCompany__error__required = Select yes if {0} has been trading  for more than a year
+
 messages__schemeTaskList__before_you_start_link_text = Setting up your scheme application
 messages__schemeTaskList__scheme_info_link_text = Information about your scheme
 messages__schemeTaskList__scheme_information_link_text = Scheme information
@@ -1552,3 +1558,7 @@ messages__noCompanyUtr__title = Why does the company not have a UTR?
 messages__noCompanyUtr__heading = Why does {0} not have a UTR?
 
 messages__establisher_phone__title =  What is the establisher’s phone number?
+
+
+messages__establisher_email__title =  What is the establisher’s email address?
+messages__establisher_email__hint = We will only use this to contact about pension scheme administration.
