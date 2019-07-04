@@ -50,7 +50,7 @@ class AddEstablisherController @Inject()(appConfig: FrontendAppConfig,
       implicit request =>
         val establishers = request.userAnswers.allEstablishersAfterDelete
         Future.successful(Ok(addEstablisher(appConfig, formProvider(establishers), mode,
-          establishers, existingSchemeName, srn)))
+          establishers, existingSchemeName, srn, !establishers.exists(!_.isCompleted))))
     }
 
   def onSubmit(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
@@ -59,7 +59,7 @@ class AddEstablisherController @Inject()(appConfig: FrontendAppConfig,
       formProvider(establishers).bindFromRequest().fold(
         formWithErrors =>
           Future.successful(BadRequest(addEstablisher(appConfig, formWithErrors, mode,
-            establishers, existingSchemeName, srn))),
+            establishers, existingSchemeName, srn, !establishers.exists(!_.isCompleted)))),
         value =>
           Future.successful(Redirect(navigator.nextPage(AddEstablisherId(value), mode, request.userAnswers, srn)))
       )

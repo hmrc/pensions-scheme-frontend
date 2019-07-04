@@ -145,14 +145,15 @@ object AddEstablisherControllerSpec extends AddEstablisherControllerSpec {
       new FakeFeatureSwitchManagementService(toggle)
     )
 
-  private def viewAsString(form: Form[_] = form, allEstablishers: Seq[Establisher[_]] = Seq.empty): String =
+  private def viewAsString(form: Form[_] = form, allEstablishers: Seq[Establisher[_]] = Seq.empty, enableSubmission:Boolean = false): String =
     addEstablisher(
       frontendAppConfig,
       form,
       NormalMode,
       allEstablishers,
       None,
-      None
+      None,
+      enableSubmission
     )(fakeRequest, messages).toString
 
   private val day = LocalDate.now().getDayOfMonth

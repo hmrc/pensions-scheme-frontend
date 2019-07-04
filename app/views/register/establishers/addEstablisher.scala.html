@@ -28,12 +28,9 @@
     mode: Mode,
     establishers: Seq[Establisher[_]],
     schemeName: Option[String],
-    srn: Option[String]
+    srn: Option[String],
+    enableSubmission:Boolean
 )(implicit request: Request[_], messages: Messages)
-
-@enableSubmission = @{
-    !establishers.exists(!_.isCompleted)
-}
 
 @main_template(
     title = messages("messages__establishers__add__title"),

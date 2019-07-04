@@ -64,32 +64,32 @@ class AddEstablisherViewSpec extends QuestionViewBehaviours[Option[Boolean]] wit
 
   val form: Form[Option[Boolean]] = new AddEstablisherFormProvider()(establishers)
 
-  private def createView: () => HtmlFormat.Appendable = () =>
-    addEstablisher(frontendAppConfig, form, NormalMode, Seq.empty, None, None)(fakeRequest, messages)
+  private def createView(enableSubmission:Boolean): () => HtmlFormat.Appendable = () =>
+    addEstablisher(frontendAppConfig, form, NormalMode, Seq.empty, None, None, enableSubmission = false)(fakeRequest, messages)
 
-  private def createView(establishers: Seq[Establisher[_]] = Seq.empty): () => HtmlFormat.Appendable = () =>
-    addEstablisher(frontendAppConfig, form, NormalMode, establishers, None, None)(fakeRequest, messages)
+  private def createView(establishers: Seq[Establisher[_]] = Seq.empty, enableSubmission:Boolean = false): () => HtmlFormat.Appendable = () =>
+    addEstablisher(frontendAppConfig, form, NormalMode, establishers, None, None, enableSubmission)(fakeRequest, messages)
 
-  private def createUpdateView(establishers: Seq[Establisher[_]] = Seq.empty): () => HtmlFormat.Appendable = () =>
-    addEstablisher(frontendAppConfig, form, UpdateMode, establishers, None, Some("srn"))(fakeRequest, messages)
+  private def createUpdateView(establishers: Seq[Establisher[_]] = Seq.empty, enableSubmission:Boolean = false): () => HtmlFormat.Appendable = () =>
+    addEstablisher(frontendAppConfig, form, UpdateMode, establishers, None, Some("srn"), enableSubmission)(fakeRequest, messages)
 
   "AddEstablisher view" must {
     behave like normalPage(createView(), messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"))
 
     "when there are no establishers" when {
       "not show the yes no inputs" in {
-        val doc = asDocument(createView())
+        val doc = asDocument(createView()())
         doc.select("#value-yes").size() mustEqual 0
         doc.select("#value-no").size() mustEqual 0
       }
 
       "show the add establisher text" in {
-        val doc = asDocument(createView())
+        val doc = asDocument(createView()())
         doc must haveDynamicText("messages__establishers__add_hint")
       }
 
       "do not disable the submit button" in {
-        val doc = asDocument(createView())
+        val doc = asDocument(createView()())
         doc.getElementById("submit").hasAttr("disabled") mustBe false
       }
     }
