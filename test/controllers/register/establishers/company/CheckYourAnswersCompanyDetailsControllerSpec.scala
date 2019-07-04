@@ -253,7 +253,7 @@ object CheckYourAnswersCompanyDetailsControllerSpec extends ControllerSpecBase w
       Seq(
         booleanChangeLink(messages("messages__hasCompanyNumber__h1", companyName), hasCompanyNumberRoute(mode, srn), value = false,
           messages("messages__visuallyhidden__hasCompanyNumber")),
-        stringChangeLink(messages("messages__noCompanyNumber__heading", companyName), noCompanyNumberReasonRoute(mode, srn), reason,
+        stringChangeLink(messages("messages__noCompanyNumber__establisher__heading", companyName), noCompanyNumberReasonRoute(mode, srn), reason,
           messages("messages__visuallyhidden__noCompanyNumberReason")),
         booleanChangeLink(messages("messages__hasCompanyUtr__h1", companyName), hasCompanyUTRRoute(mode, srn), value = false,
           messages("messages__visuallyhidden__hasCompanyUtr")),

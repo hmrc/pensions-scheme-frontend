@@ -37,8 +37,8 @@ object NoCompanyNumberId {
                    countryOptions: CountryOptions): CheckYourAnswers[NoCompanyNumberId] = {
 
     def label(index: Int) = userAnswers.get(CompanyDetailsId(index)) match {
-      case Some(details) => Some(messages("messages__noCompanyNumber__heading", details.companyName))
-      case _ => Some(messages("messages__noCompanyNumber__title"))
+      case Some(details) => Some(messages("messages__noCompanyNumber__establisher__heading", details.companyName))
+      case _ => Some(messages("messages__noCompanyNumber__establisher__title"))
     }
 
     def hiddenLabel = Some(messages("messages__visuallyhidden__noCompanyNumberReason"))
