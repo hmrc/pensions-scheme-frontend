@@ -37,15 +37,15 @@ class AddEstablisherControllerSpec extends ControllerSpecBase {
 
   import AddEstablisherControllerSpec._
 
-  "AddEstablisher Controller with HnS feature toggle set to true" must {
-
-    "return OK and the correct view for a GET when scheme name is present" in {
-      val result = controller(toggle = true).onPageLoad(NormalMode, None)(fakeRequest)
-
-      status(result) mustBe OK
-      contentAsString(result) mustBe viewAsString()
-    }
-  }
+//  "AddEstablisher Controller with HnS feature toggle set to true" must {
+//
+//    "return OK and the correct view for a GET when scheme name is present" in {
+//      val result = controller(toggle = true).onPageLoad(NormalMode, None)(fakeRequest)
+//
+//      status(result) mustBe OK
+//      contentAsString(result) mustBe viewAsString()
+//    }
+//  }
 
   "AddEstablisher Controller with HnS feature toggle set to false" must {
 
@@ -53,7 +53,7 @@ class AddEstablisherControllerSpec extends ControllerSpecBase {
       val result = controller().onPageLoad(NormalMode, None)(fakeRequest)
 
       status(result) mustBe OK
-      contentAsString(result) mustBe viewAsString()
+      contentAsString(result) mustBe viewAsString(enableSubmission = true)
     }
 
     "not populate the view on a GET when the question has previously been answered" in {
@@ -116,7 +116,7 @@ class AddEstablisherControllerSpec extends ControllerSpecBase {
       val result = controller().onSubmit(NormalMode, None)(postRequest)
 
       status(result) mustBe BAD_REQUEST
-      contentAsString(result) mustBe viewAsString(boundForm)
+      contentAsString(result) mustBe viewAsString(boundForm, enableSubmission = true)
     }
   }
 }
