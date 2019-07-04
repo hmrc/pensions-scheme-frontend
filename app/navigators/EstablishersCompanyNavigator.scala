@@ -356,7 +356,7 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
       if (_: Boolean)
         establisherCompanyRoutes.CompanyPayeVariationsController.onPageLoad(mode, index, srn)
       else
-        establisherCompanyRoutes.CheckYourAnswersCompanyDetailsController.onPageLoad(mode, srn, index)
+        establisherCompanyRoutes.IsCompanyDormantController.onPageLoad(mode, srn, index)
     )
 
   private def confirmHasBeenTrading(index: Int, mode: Mode, srn: Option[String])(answers: UserAnswers): Option[NavigateTo] = {
