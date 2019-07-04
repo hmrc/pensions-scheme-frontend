@@ -16,7 +16,7 @@
 
 package controllers.register.establishers
 
-import config.FrontendAppConfig
+import config.{FeatureSwitchManagementService, FrontendAppConfig}
 import connectors.UserAnswersCacheConnector
 import controllers.Retrievals
 import controllers.actions._
@@ -40,7 +40,9 @@ class AddEstablisherController @Inject()(appConfig: FrontendAppConfig,
                                          getData: DataRetrievalAction,
                                          @NoSuspendedCheck allowAccess: AllowAccessActionProvider,
                                          requireData: DataRequiredAction,
-                                         formProvider: AddEstablisherFormProvider)(implicit val ec: ExecutionContext)
+                                         formProvider: AddEstablisherFormProvider,
+                                         fsms:FeatureSwitchManagementService
+                                        )(implicit val ec: ExecutionContext)
   extends FrontendController with Retrievals with I18nSupport {
 
   def onPageLoad(mode: Mode, srn: Option[String]): Action[AnyContent] =

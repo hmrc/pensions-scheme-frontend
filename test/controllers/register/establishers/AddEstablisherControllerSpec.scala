@@ -30,14 +30,24 @@ import play.api.data.Form
 import play.api.libs.json.Json
 import play.api.mvc.Call
 import play.api.test.Helpers._
-import utils.FakeNavigator
+import utils.{FakeFeatureSwitchManagementService, FakeNavigator}
 import views.html.register.establishers.addEstablisher
 
 class AddEstablisherControllerSpec extends ControllerSpecBase {
 
   import AddEstablisherControllerSpec._
 
-  "AddEstablisher Controller" must {
+  "AddEstablisher Controller with HnS feature toggle set to true" must {
+
+    "return OK and the correct view for a GET when scheme name is present" in {
+      val result = controller(toggle = true).onPageLoad(NormalMode, None)(fakeRequest)
+
+      status(result) mustBe OK
+      contentAsString(result) mustBe viewAsString()
+    }
+  }
+
+  "AddEstablisher Controller with HnS feature toggle set to false" must {
 
     "return OK and the correct view for a GET when scheme name is present" in {
       val result = controller().onPageLoad(NormalMode, None)(fakeRequest)
@@ -122,7 +132,7 @@ object AddEstablisherControllerSpec extends AddEstablisherControllerSpec {
 
   protected def fakeNavigator() = new FakeNavigator(desiredRoute = onwardRoute)
 
-  private def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): AddEstablisherController =
+  private def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData, toggle:Boolean = false): AddEstablisherController =
     new AddEstablisherController(
       frontendAppConfig,
       messagesApi,
@@ -131,7 +141,8 @@ object AddEstablisherControllerSpec extends AddEstablisherControllerSpec {
       dataRetrievalAction,
       FakeAllowAccessProvider(),
       new DataRequiredActionImpl,
-      formProvider
+      formProvider,
+      new FakeFeatureSwitchManagementService(toggle)
     )
 
   private def viewAsString(form: Form[_] = form, allEstablishers: Seq[Establisher[_]] = Seq.empty): String =
