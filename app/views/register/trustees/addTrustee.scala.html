@@ -24,7 +24,7 @@
 @(appConfig: FrontendAppConfig, form: Form[_], mode: Mode, trustees: Seq[Trustee[_]], schemeName: Option[String], srn: Option[String])(implicit request: Request[_], messages: Messages)
 
 @enableSubmission = @{
-    !trustees.exists(!_.isCompleted)
+    trustees.forall(_.isCompleted)
 }
 
 @main_template(
