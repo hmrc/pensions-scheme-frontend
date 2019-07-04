@@ -147,7 +147,7 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
       case CompanyDetailsId(index) =>             exitMiniJourney(index, mode, srn, from.userAnswers)
       case HasCompanyNumberId(index) =>           exitMiniJourney(index, mode, srn, from.userAnswers, cyaCompanyDetails)
       case HasCompanyVATId(index) =>              exitMiniJourney(index, mode, srn, from.userAnswers, cyaCompanyDetails)
-      case HasCompanyPAYEId(index) =>             exitMiniJourney(index, mode, srn, from.userAnswers)
+      case HasCompanyPAYEId(index) =>             exitMiniJourney(index, mode, srn, from.userAnswers, cyaCompanyDetails)
       case CompanyVatId(index) =>                 exitMiniJourney(index, mode, srn, from.userAnswers)
       case CompanyVatVariationsId(index) =>       exitMiniJourney(index, mode, srn, from.userAnswers)
       case CompanyPayeId(index) =>                exitMiniJourney(index, mode, srn, from.userAnswers)
@@ -351,13 +351,18 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
     }
   }
 
-  private def confirmHasCompanyPAYE(index: Int, mode: Mode, srn: Option[String])(answers: UserAnswers): Option[NavigateTo] =
-    navigateOrSessionExpired(answers, HasCompanyPAYEId(index),
-      if (_: Boolean)
-        establisherCompanyRoutes.CompanyPayeVariationsController.onPageLoad(mode, index, srn)
-      else
-        establisherCompanyRoutes.IsCompanyDormantController.onPageLoad(mode, srn, index)
-    )
+  private def confirmHasCompanyPAYE(index: Int, mode: Mode, srn: Option[String])(answers: UserAnswers): Option[NavigateTo] = {
+    (answers.get(HasCompanyPAYEId(index)), mode) match {
+      case (Some(true), _) =>
+        NavigateTo.dontSave(establisherCompanyRoutes.CompanyPayeVariationsController.onPageLoad(mode, index, srn))
+      case (Some(false), NormalMode) =>
+        NavigateTo.dontSave(establisherCompanyRoutes.IsCompanyDormantController.onPageLoad(mode, srn, index))
+      case (Some(false), UpdateMode) =>
+        NavigateTo.dontSave(establisherCompanyRoutes.CheckYourAnswersCompanyDetailsController.onPageLoad(mode, srn, index))
+      case _ =>
+        NavigateTo.dontSave(controllers.routes.SessionExpiredController.onPageLoad())
+    }
+  }
 
   private def confirmHasBeenTrading(index: Int, mode: Mode, srn: Option[String])(answers: UserAnswers): Option[NavigateTo] = {
     answers.get(HasBeenTradingCompanyId(index)) match {
