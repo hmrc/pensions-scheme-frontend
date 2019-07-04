@@ -27,11 +27,11 @@ import views.html.register.establishers.company.director.whatYouWillNeed
 
 class WhatYouWillNeedDirectorControllerSpec extends ControllerSpecBase with MockitoSugar with BeforeAndAfterEach {
 
-  def onwardRoute: Call =
-    controllers.register.establishers.company.director.routes.DirectorDetailsController
+  private def onwardRoute: Call =
+    controllers.register.establishers.company.director.routes.DirectorNameController
       .onSubmit(NormalMode, establisherIndex = Index(0), directorIndex = Index(1), None)
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): WhatYouWillNeedDirectorController =
+  private def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): WhatYouWillNeedDirectorController =
     new WhatYouWillNeedDirectorController(frontendAppConfig,
       messagesApi,
       FakeAuthAction,
@@ -40,11 +40,10 @@ class WhatYouWillNeedDirectorControllerSpec extends ControllerSpecBase with Mock
       new DataRequiredActionImpl
     )
 
-  def postCall = controllers.register.establishers.company.director.routes.WhatYouWillNeedDirectorController
+  private def postCall = controllers.register.establishers.company.director.routes.WhatYouWillNeedDirectorController
     .onSubmit(NormalMode, None, establisherIndex = Index(0), directorIndex = Index(1))
 
-  def viewAsString(): String = whatYouWillNeed(frontendAppConfig, None, postCall, None)(fakeRequest, messages).toString
-
+  private def viewAsString(): String = whatYouWillNeed(frontendAppConfig, None, postCall, None)(fakeRequest, messages).toString
 
   "WhatYouWillNeedCompanyDetailsControllerSpec" when {
 

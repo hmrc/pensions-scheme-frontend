@@ -48,6 +48,6 @@ class WhatYouWillNeedDirectorController @Inject()(appConfig: FrontendAppConfig,
     getData(mode, srn) andThen requireData).async {
     implicit request =>
       Future.successful(
-        Redirect(controllers.register.establishers.company.director.routes.DirectorDetailsController.onSubmit(mode, establisherIndex, directorIndex, srn)))
+        Redirect(controllers.register.establishers.company.director.routes.DirectorNameController.onPageLoad(mode, establisherIndex, directorIndex, srn)))
   }
 }

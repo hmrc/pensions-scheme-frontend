@@ -359,3 +359,10 @@ POST       /:index/company/:mode/check-your-answers-company-contact-details/:srn
 
 
 
+GET        /:establisherIndex/company/director/:directorIndex/director-name                                 controllers.register.establishers.company.director.DirectorNameController.onPageLoad(mode: Mode = NormalMode, establisherIndex: Index, directorIndex: Index, srn: Option[String] = None)
+POST       /:establisherIndex/company/director/:directorIndex/director-name                                 controllers.register.establishers.company.director.DirectorNameController.onSubmit(mode: Mode = NormalMode, establisherIndex: Index, directorIndex: Index, srn: Option[String] = None)
+GET        /:establisherIndex/company/director/:directorIndex/change/director-name                          controllers.register.establishers.company.director.DirectorNameController.onPageLoad(mode: Mode = CheckMode, establisherIndex: Index, directorIndex: Index, srn: Option[String] = None)
+POST       /:establisherIndex/company/director/:directorIndex/change/director-name                          controllers.register.establishers.company.director.DirectorNameController.onSubmit(mode: Mode = CheckMode, establisherIndex: Index, directorIndex: Index, srn: Option[String] = None)
+GET        /:establisherIndex/company/director/:directorIndex/:mode/director-name/:srn                      controllers.register.establishers.company.director.DirectorNameController.onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String])
+POST       /:establisherIndex/company/director/:directorIndex/:mode/director-name/:srn                      controllers.register.establishers.company.director.DirectorNameController.onSubmit(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String])
+
