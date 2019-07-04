@@ -64,9 +64,6 @@ class AddEstablisherViewSpec extends QuestionViewBehaviours[Option[Boolean]] wit
 
   val form: Form[Option[Boolean]] = new AddEstablisherFormProvider()(establishers)
 
-  private def createView(enableSubmission:Boolean): () => HtmlFormat.Appendable = () =>
-    addEstablisher(frontendAppConfig, form, NormalMode, Seq.empty, None, None, enableSubmission = false)(fakeRequest, messages)
-
   private def createView(establishers: Seq[Establisher[_]] = Seq.empty, enableSubmission:Boolean = false): () => HtmlFormat.Appendable = () =>
     addEstablisher(frontendAppConfig, form, NormalMode, establishers, None, None, enableSubmission)(fakeRequest, messages)
 
@@ -88,9 +85,9 @@ class AddEstablisherViewSpec extends QuestionViewBehaviours[Option[Boolean]] wit
         doc must haveDynamicText("messages__establishers__add_hint")
       }
 
-      "do not disable the submit button" in {
+      "do disable the submit button" in {
         val doc = asDocument(createView()())
-        doc.getElementById("submit").hasAttr("disabled") mustBe false
+        doc.getElementById("submit").hasAttr("disabled") mustBe true
       }
     }
 
@@ -109,5 +106,10 @@ class AddEstablisherViewSpec extends QuestionViewBehaviours[Option[Boolean]] wit
     behave like pageWithReturnLink(createView(), getReturnLink)
 
     behave like pageWithReturnLinkAndSrn(createUpdateView(), getReturnLinkWithSrn)
+
+    "do enable the submit button when enableSubmission is true" in {
+      val doc = asDocument(createView(enableSubmission = true)())
+      doc.getElementById("submit").hasAttr("disabled") mustBe false
+    }
   }
 }
