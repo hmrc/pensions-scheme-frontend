@@ -24,10 +24,11 @@ import forms.register.establishers.AddEstablisherFormProvider
 import identifiers.register.establishers.AddEstablisherId
 import javax.inject.Inject
 import models.Mode
+import models.register.Establisher
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import utils.Navigator
+import utils.{Navigator, Toggles}
 import utils.annotations.{Establishers, NoSuspendedCheck}
 import views.html.register.establishers.addEstablisher
 
@@ -50,7 +51,7 @@ class AddEstablisherController @Inject()(appConfig: FrontendAppConfig,
       implicit request =>
         val establishers = request.userAnswers.allEstablishersAfterDelete
         Future.successful(Ok(addEstablisher(appConfig, formProvider(establishers), mode,
-          establishers, existingSchemeName, srn, !establishers.exists(!_.isCompleted))))
+          establishers, existingSchemeName, srn, checkContinueButton(establishers))))
     }
 
   def onSubmit(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
@@ -59,9 +60,13 @@ class AddEstablisherController @Inject()(appConfig: FrontendAppConfig,
       formProvider(establishers).bindFromRequest().fold(
         formWithErrors =>
           Future.successful(BadRequest(addEstablisher(appConfig, formWithErrors, mode,
-            establishers, existingSchemeName, srn, !establishers.exists(!_.isCompleted)))),
+            establishers, existingSchemeName, srn, checkContinueButton(establishers)))),
         value =>
           Future.successful(Redirect(navigator.nextPage(AddEstablisherId(value), mode, request.userAnswers, srn)))
       )
+  }
+
+  private def checkContinueButton(establishers: Seq[Establisher[_]]) = {
+    fsms.get(Toggles.isEstablisherCompanyHnSEnabled) || establishers.forall(_.isCompleted)
   }
 }

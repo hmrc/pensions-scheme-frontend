@@ -37,15 +37,16 @@ class AddEstablisherControllerSpec extends ControllerSpecBase {
 
   import AddEstablisherControllerSpec._
 
-//  "AddEstablisher Controller with HnS feature toggle set to true" must {
-//
-//    "return OK and the correct view for a GET when scheme name is present" in {
-//      val result = controller(toggle = true).onPageLoad(NormalMode, None)(fakeRequest)
-//
-//      status(result) mustBe OK
-//      contentAsString(result) mustBe viewAsString()
-//    }
-//  }
+  "AddEstablisher Controller with HnS feature toggle set to true" must {
+
+    "continue button should be enabled" in {
+      val establishersAsEntities = Seq(johnDoe, testLtd)
+      val getRelevantData = establisherWithDeletedDataRetrieval
+      val result = controller(getRelevantData, toggle = true).onPageLoad(NormalMode, None)(fakeRequest)
+
+      contentAsString(result) mustBe viewAsString(form, establishersAsEntities, enableSubmission = true)
+    }
+  }
 
   "AddEstablisher Controller with HnS feature toggle set to false" must {
 
@@ -63,7 +64,7 @@ class AddEstablisherControllerSpec extends ControllerSpecBase {
       contentAsString(result) mustBe viewAsString(form, Seq(johnDoe))
     }
 
-    "populate the view with establishers when they exist" in {
+    "populate the view with establishers when they exist and continue button should be disabled" in {
       val establishersAsEntities = Seq(johnDoe, testLtd)
       val getRelevantData = establisherWithDeletedDataRetrieval
       val result = controller(getRelevantData).onPageLoad(NormalMode, None)(fakeRequest)
