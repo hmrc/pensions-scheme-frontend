@@ -18,7 +18,6 @@ package utils
 
 object Toggles {
 
-  val isVariationsEnabled: String = "is-variations-enabled"
   val isPrevAddEnabled: String = "is-address-pre-population-enabled"
   val isSchemeDataShiftEnabled: String = "is-scheme-data-shift-enabled"
   val isSeparateRefCollectionEnabled: String = "separate-ref-collection"

@@ -23,19 +23,16 @@ import controllers.actions._
 import handlers.ErrorHandler
 import identifiers.{IsPsaSuspendedId, SchemeNameId, SchemeSrnId, SchemeStatusId}
 import models._
-import models.details.transformation.{SchemeDetailsMasterSection, SchemeDetailsStubData}
-import org.mockito.Matchers.any
-import org.mockito.Mockito.{reset, when}
-import org.scalatest.{BeforeAndAfterEach, Matchers}
+import org.mockito.Matchers.{any, eq => eqTo}
+import org.mockito.Mockito.{reset, when, _}
+import org.scalatest.BeforeAndAfterEach
 import org.scalatest.mockito.MockitoSugar
 import play.api.Configuration
 import play.api.libs.json.JsNull
 import play.api.test.Helpers._
 import utils.UserAnswers
 import viewmodels._
-import views.html.{psa_scheme_details, schemeDetailsTaskList}
-import org.mockito.Matchers.{any, eq => eqTo}
-import org.mockito.Mockito._
+import views.html.schemeDetailsTaskList
 
 import scala.concurrent.Future
 
@@ -44,7 +41,7 @@ class SchemeTaskListControllerSpec extends ControllerSpecBase with BeforeAndAfte
   import SchemeTaskListControllerSpec._
 
   override protected def beforeEach(): Unit = {
-    reset(fakeSchemeDetailsConnector, fakeSchemeTransformer, fakeMinimalPsaConnector, fakeLockConnector, fakeUpdateCacheConnector)
+    reset(fakeSchemeDetailsConnector, fakeMinimalPsaConnector, fakeLockConnector, fakeUpdateCacheConnector)
   }
 
   "SchemeTaskList Controller" when {
@@ -68,26 +65,9 @@ class SchemeTaskListControllerSpec extends ControllerSpecBase with BeforeAndAfte
       }
     }
 
-
-    "when isVariationsEnabled toggle switched off in UpdateMode" must {
-
-      "return OK and the correct view for a GET" in {
-        fs.change("is-variations-enabled", false)
-        when(fakeSchemeDetailsConnector.getSchemeDetails(any(), any(), any())(any(), any()))
-          .thenReturn(Future.successful(psaSchemeDetailsSample))
-        when(fakeSchemeTransformer.transformMasterSection(any())).thenReturn(masterSections)
-
-        val result = controller().onPageLoad(UpdateMode, srn)(fakeRequest)
-
-        status(result) mustBe OK
-        contentAsString(result) mustBe viewAsStringVariationsToggleOff()
-      }
-    }
-
     "isVariationsEnabled toggle switched on in UpdateMode and user holds the lock" must {
 
       "return OK and the correct view for a GET where scheme status is open" in {
-        fs.change("is-variations-enabled", true)
         when(fakeMinimalPsaConnector.isPsaSuspended(any())(any(), any()))
           .thenReturn(Future.successful(false))
         when(fakeLockConnector.isLockByPsaIdOrSchemeId(any(), any())(any(), any())).thenReturn(Future.successful(Some(VarianceLock)))
@@ -182,7 +162,7 @@ class SchemeTaskListControllerSpec extends ControllerSpecBase with BeforeAndAfte
   }
 }
 
-object SchemeTaskListControllerSpec extends ControllerSpecBase with MockitoSugar with SchemeDetailsStubData with JsonFileReader {
+object SchemeTaskListControllerSpec extends ControllerSpecBase with MockitoSugar with JsonFileReader {
 
 
   def controller(dataRetrievalAction: DataRetrievalAction = userAnswers): SchemeTaskListController =
@@ -193,7 +173,6 @@ object SchemeTaskListControllerSpec extends ControllerSpecBase with MockitoSugar
       dataRetrievalAction,
       FakeAllowAccessProvider(),
       fakeSchemeDetailsConnector,
-      fakeSchemeTransformer,
       new ErrorHandler(frontendAppConfig, messagesApi),
       fs,
       fakeLockConnector,
@@ -206,21 +185,14 @@ object SchemeTaskListControllerSpec extends ControllerSpecBase with MockitoSugar
   val fakeSchemeDetailsConnector: SchemeDetailsConnector = mock[SchemeDetailsConnector]
   val fakeSchemeDetailsReadOnlyCacheConnector: SchemeDetailsReadOnlyCacheConnector = mock[SchemeDetailsReadOnlyCacheConnector]
   val fakeUpdateCacheConnector: UpdateSchemeCacheConnector = mock[UpdateSchemeCacheConnector]
-  val fakeSchemeTransformer: SchemeDetailsMasterSection = mock[SchemeDetailsMasterSection]
   val fakeLockConnector: PensionSchemeVarianceLockConnector = mock[PensionSchemeVarianceLockConnector]
   val fakeMinimalPsaConnector: MinimalPsaConnector = mock[MinimalPsaConnector]
   val config = injector.instanceOf[Configuration]
 
   val fs: FeatureSwitchManagementService = new FeatureSwitchManagementServiceTestImpl(config, environment)
 
-  val masterSections = Seq(individualMasterSection)
   val srnValue = "S1000000456"
   val srn = Some(srnValue)
-
-  def viewAsStringVariationsToggleOff(): String =
-    psa_scheme_details(
-      frontendAppConfig, masterSections, psaSchemeDetailsSample.schemeDetails.name, srnValue
-    )(fakeRequest, messages).toString()
 
   private val userAnswersJson = readJsonFromFile("/payload.json")
   private val userAnswersJsonRejected = readJsonFromFile("/payloadRejected.json")
