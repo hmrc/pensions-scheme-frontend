@@ -17,7 +17,6 @@
 package controllers.register.establishers
 
 import config.{FeatureSwitchManagementService, FrontendAppConfig}
-import connectors.UserAnswersCacheConnector
 import controllers.Retrievals
 import controllers.actions._
 import forms.register.establishers.AddEstablisherFormProvider
@@ -28,8 +27,8 @@ import models.register.Establisher
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import utils.{Navigator, Toggles}
 import utils.annotations.{Establishers, NoSuspendedCheck}
+import utils.{Navigator, Toggles}
 import views.html.register.establishers.addEstablisher
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -42,7 +41,7 @@ class AddEstablisherController @Inject()(appConfig: FrontendAppConfig,
                                          @NoSuspendedCheck allowAccess: AllowAccessActionProvider,
                                          requireData: DataRequiredAction,
                                          formProvider: AddEstablisherFormProvider,
-                                         fsms:FeatureSwitchManagementService
+                                         fsms: FeatureSwitchManagementService
                                         )(implicit val ec: ExecutionContext)
   extends FrontendController with Retrievals with I18nSupport {
 
@@ -66,9 +65,8 @@ class AddEstablisherController @Inject()(appConfig: FrontendAppConfig,
       )
   }
 
-  private def checkContinueButton(establishers: Seq[Establisher[_]]) = {
+  private def checkContinueButton(establishers: Seq[Establisher[_]]) =
     fsms.get(Toggles.isEstablisherCompanyHnSEnabled) || establishers.forall(_.isCompleted)
-  }
 
   private def displayStatus = !fsms.get(Toggles.isEstablisherCompanyHnSEnabled)
 }
