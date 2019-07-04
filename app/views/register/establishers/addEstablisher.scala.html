@@ -31,8 +31,8 @@
     srn: Option[String]
 )(implicit request: Request[_], messages: Messages)
 
-@disableSubmission = @{
-    establishers.exists(!_.isCompleted)
+@enableSubmission = @{
+    !establishers.exists(!_.isCompleted)
 }
 
 @main_template(
@@ -68,7 +68,7 @@
             )
         }
 
-        @components.submit_button("messages__common__continue", disableSubmission)
+        @components.submit_button("messages__common__continue", enableSubmission)
 
         @components.return_link("messages__schemeTaskList__returnlink", schemeName, None, srn)
     }
