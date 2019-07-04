@@ -29,7 +29,8 @@
     establishers: Seq[Establisher[_]],
     schemeName: Option[String],
     srn: Option[String],
-    enableSubmission:Boolean
+    enableSubmission:Boolean,
+    displayStatus: Boolean = true
 )(implicit request: Request[_], messages: Messages)
 
 @main_template(
@@ -55,7 +56,7 @@
                 headingKey=messages("messages__establishers__add__title")
             )
 
-            @components.entity_list(establishers, mode = mode, srn = srn)
+            @components.entity_list(establishers, mode = mode, srn = srn, displayStatus = displayStatus)
 
             @components.input_yes_no(
                 field = form("value"),

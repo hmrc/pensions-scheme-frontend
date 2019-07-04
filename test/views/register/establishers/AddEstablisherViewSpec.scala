@@ -64,8 +64,8 @@ class AddEstablisherViewSpec extends QuestionViewBehaviours[Option[Boolean]] wit
 
   val form: Form[Option[Boolean]] = new AddEstablisherFormProvider()(establishers)
 
-  private def createView(establishers: Seq[Establisher[_]] = Seq.empty, enableSubmission:Boolean = false): () => HtmlFormat.Appendable = () =>
-    addEstablisher(frontendAppConfig, form, NormalMode, establishers, None, None, enableSubmission)(fakeRequest, messages)
+  private def createView(establishers: Seq[Establisher[_]] = Seq.empty, enableSubmission:Boolean = false, displayStatus: Boolean = true): () => HtmlFormat.Appendable = () =>
+    addEstablisher(frontendAppConfig, form, NormalMode, establishers, None, None, enableSubmission, displayStatus)(fakeRequest, messages)
 
   private def createUpdateView(establishers: Seq[Establisher[_]] = Seq.empty, enableSubmission:Boolean = false): () => HtmlFormat.Appendable = () =>
     addEstablisher(frontendAppConfig, form, UpdateMode, establishers, None, Some("srn"), enableSubmission)(fakeRequest, messages)
@@ -110,6 +110,18 @@ class AddEstablisherViewSpec extends QuestionViewBehaviours[Option[Boolean]] wit
     "do enable the submit button when enableSubmission is true" in {
       val doc = asDocument(createView(enableSubmission = true)())
       doc.getElementById("submit").hasAttr("disabled") mustBe false
+    }
+
+    "do not display the status if displayStatus is false" in {
+      val doc = asDocument(createView(establishers = establishers, displayStatus = false)())
+      doc mustNot haveDynamicText("site.complete")
+      doc mustNot haveDynamicText("site.incomplete")
+    }
+
+    "display the status if displayStatus is true" in {
+      val doc = asDocument(createView(establishers = establishers)())
+      doc must haveDynamicText("site.complete")
+      doc must haveDynamicText("site.incomplete")
     }
   }
 }
