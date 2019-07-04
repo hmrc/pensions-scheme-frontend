@@ -273,14 +273,6 @@ object EstablishersCompanyNavigatorSpec extends OptionValues with Enumerable.Imp
 
   private def confirmPreviousAddress = controllers.register.establishers.company.routes.CompanyConfirmPreviousAddressController.onPageLoad(0, None)
 
-
-  private def addressYearsLessThanTwelveEdit(mode: Mode, isEstablisherCompanyHnSEnabled : Boolean = false) =
-    ((checkMode(mode) == CheckUpdateMode), (isEstablisherCompanyHnSEnabled)) match {
-      case (false, true) => Some(hasBeenTrading(checkMode(mode)))
-      case (false, false) => Some(prevAddPostCodeLookup(checkMode(mode)))
-      case (true, _) => Some(confirmPreviousAddress)
-    }
-
   private def addEstablisher(mode: Mode) = controllers.register.establishers.routes.AddEstablisherController.onPageLoad(mode, None)
 
   private def addCompanyDirectors(index: Int, mode: Mode) = controllers.register.establishers.company.routes.AddCompanyDirectorsController.onPageLoad(mode, None, index)
