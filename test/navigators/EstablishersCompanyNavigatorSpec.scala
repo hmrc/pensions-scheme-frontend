@@ -137,7 +137,6 @@ class EstablishersCompanyNavigatorSpec extends SpecBase with MustMatchers with N
     appRunning()
     behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, normalRoutes(), dataDescriber)
     behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, updateRoutes(), dataDescriber, UpdateMode)
-  //  behave like nonMatchingNavigator(navigator)
   }
 
   s"when previous address feature is toggled on" must {

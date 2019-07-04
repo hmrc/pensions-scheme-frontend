@@ -57,12 +57,12 @@ trait NavigatorBehaviour extends PropertyChecks with OptionValues {
         try {
           forAll(routes) {
             (id: Identifier, userAnswers: UserAnswers, call: Call, save: Boolean, _: Option[Call], _: Boolean) =>
-              s"move from $id to $call with data: ${describer(userAnswers)}" in {
+              s"move from $id to $call in $mode with data: ${describer(userAnswers)}" in {
                 val result = navigator.nextPage(id, mode, userAnswers, srn)
                 result mustBe call
               }
 
-              s"move from $id to $call and ${if (!save) "not " else ""}save the page with data: ${describer(userAnswers)}" in {
+              s"move from $id to $call and ${if (!save) "not " else ""}save the page with data: ${describer(userAnswers)} and mode $mode" in {
                 dataCacheConnector.reset()
                 navigator.nextPage(id, mode, userAnswers, srn)
               }
@@ -81,12 +81,12 @@ trait NavigatorBehaviour extends PropertyChecks with OptionValues {
           if (routes.nonEmpty) {
             forAll(routes) { (id: Identifier, userAnswers: UserAnswers, _: Call, _: Boolean, editCall: Option[Call], save: Boolean) =>
               if (editCall.isDefined) {
-                s"move from $id to ${editCall.value} with data: ${describer(userAnswers)}" in {
+                s"move from $id to ${editCall.value} in mode ${checkMode(mode)} with data: ${describer(userAnswers)}" in {
                   val result = navigator.nextPage(id, checkMode(mode), userAnswers, srn)
                   result mustBe editCall.value
                 }
 
-                s"move from $id to $editCall and ${if (!save) "not " else ""}save the page with data: ${describer(userAnswers)}" in {
+                s"move from $id to $editCall and ${if (!save) "not " else ""} in mode ${checkMode(mode)} save the page with data: ${describer(userAnswers)}" in {
                   dataCacheConnector.reset()
                   navigator.nextPage(id, checkMode(mode), userAnswers, srn)
 
