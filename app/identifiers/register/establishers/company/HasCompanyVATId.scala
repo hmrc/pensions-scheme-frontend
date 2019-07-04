@@ -18,10 +18,20 @@ package identifiers.register.establishers.company
 
 import identifiers.TypedIdentifier
 import identifiers.register.establishers.EstablishersId
-import play.api.libs.json.JsPath
+import play.api.libs.json.{JsPath, JsResult}
+import utils.UserAnswers
 
 case class HasCompanyVATId(index: Int) extends TypedIdentifier[Boolean] {
   override def path: JsPath = EstablishersId(index).path \ "companyVat" \ HasCompanyVATId.toString
+
+  override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): JsResult[UserAnswers] = {
+    value match {
+      case Some(false) =>
+        userAnswers.remove(CompanyVatVariationsId(this.index))
+      case _ =>
+        super.cleanup(value, userAnswers)
+    }
+  }
 }
 
 object HasCompanyVATId {
