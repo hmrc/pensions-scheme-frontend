@@ -1451,6 +1451,19 @@ messages__whatYouWillNeedEstablisherCompanyContact__item1 = email address
 messages__whatYouWillNeedEstablisherCompanyContact__item2 = phone number
 messages__whatYouWillNeedEstablisherCompanyContact__item3 = These should be details used for other HMRC services. These will not be used to contact the company.
 
+messages__whatYouWillNeedDirectors__title = what you will need
+messages__whatYouWillNeedDirectors__h1 = Directors
+messages__whatYouWillNeedDirectors__p1 = We need to know about every director associated with the company you’re registering.
+messages__whatYouWillNeedDirectors__p2 = You will need to tell us each director’s:
+messages__whatYouWillNeedDirectors__item1 = name
+messages__whatYouWillNeedDirectors__item2 = date of birth
+messages__whatYouWillNeedDirectors__item3 = National Insurance number
+messages__whatYouWillNeedDirectors__item4 = Unique Taxpayer Reference(UTR)
+messages__whatYouWillNeedDirectors__item5 = current address
+messages__whatYouWillNeedDirectors__item6 = previous address if they have not been at their current address for at least 1 year
+messages__whatYouWillNeedDirectors__item7 = contact email address
+messages__whatYouWillNeedDirectors__item8 = contact phone number
+
 messages__hasCompanyNumber__title = Does the establisher have a company number?
 messages__hasCompanyNumber__h1 = Does {0} have a company number?
 messages__hasCompanyNumber__p1 = You can find this on the company’s certificate of incorporation or on any official letters from Companies House.
