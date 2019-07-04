@@ -24,7 +24,7 @@ import models.{Index, Mode}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import views.html.register.establishers.company.whatYouWillNeedCompanyDetails
+import views.html.register.establishers.company.director.whatYouWillNeed
 
 import scala.concurrent.Future
 
@@ -40,7 +40,7 @@ class WhatYouWillNeedDirectorController @Inject()(appConfig: FrontendAppConfig,
     getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
     implicit request =>
       val postCall = controllers.register.establishers.company.director.routes.WhatYouWillNeedDirectorController.onSubmit(mode, srn, establisherIndex, directorIndex)
-      Future.successful(Ok(whatYouWillNeedCompanyDetails(appConfig, existingSchemeName, postCall, srn)))
+      Future.successful(Ok(whatYouWillNeed(appConfig, existingSchemeName, postCall, srn)))
 
   }
 

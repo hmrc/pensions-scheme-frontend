@@ -23,7 +23,7 @@ import org.scalatest.BeforeAndAfterEach
 import org.scalatest.mockito.MockitoSugar
 import play.api.mvc.Call
 import play.api.test.Helpers._
-import views.html.register.establishers.company.whatYouWillNeedCompanyDetails
+import views.html.register.establishers.company.director.whatYouWillNeed
 
 class WhatYouWillNeedDirectorControllerSpec extends ControllerSpecBase with MockitoSugar with BeforeAndAfterEach {
 
@@ -43,7 +43,7 @@ class WhatYouWillNeedDirectorControllerSpec extends ControllerSpecBase with Mock
   def postCall = controllers.register.establishers.company.director.routes.WhatYouWillNeedDirectorController
     .onSubmit(NormalMode, None, establisherIndex = Index(0), directorIndex = Index(1))
 
-  def viewAsString(): String = whatYouWillNeedCompanyDetails(frontendAppConfig, None, postCall, None)(fakeRequest, messages).toString
+  def viewAsString(): String = whatYouWillNeed(frontendAppConfig, None, postCall, None)(fakeRequest, messages).toString
 
 
   "WhatYouWillNeedCompanyDetailsControllerSpec" when {
