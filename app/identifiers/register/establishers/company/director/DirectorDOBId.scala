@@ -21,9 +21,9 @@ import identifiers.register.establishers.EstablishersId
 import play.api.libs.json.JsPath
 
 case class DirectorDOBId(establisherIndex: Int, directorIndex: Int) extends TypedIdentifier[String] {
-  override def path: JsPath = EstablishersId(establisherIndex).path \ "director" \ directorIndex \ DirectorDOBId.toString
+  override def path: JsPath = EstablishersId(establisherIndex).path \ "director" \ directorIndex \ "directorDetails" \ DirectorDOBId.toString
 }
 
 object DirectorDOBId {
-  override def toString: String = "directorDOB"
+  override def toString: String = "date"
 }

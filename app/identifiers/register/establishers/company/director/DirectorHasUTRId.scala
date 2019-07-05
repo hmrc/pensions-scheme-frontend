@@ -21,11 +21,11 @@ import identifiers.register.establishers.EstablishersId
 import play.api.libs.json.JsPath
 
 case class DirectorHasUTRId(establisherIndex: Int, directorIndex: Int) extends TypedIdentifier[Boolean] {
-  override def path: JsPath = EstablishersId(establisherIndex).path \ "director" \ directorIndex \ DirectorHasUTRId.toString
+  override def path: JsPath = EstablishersId(establisherIndex).path \ "director" \ directorIndex \ "directorUniqueTaxReference" \ DirectorHasUTRId.toString
 }
 
 object DirectorHasUTRId {
-  override def toString: String = "directorHasUTR"
+  override def toString: String = "hasUtr"
 }
 
 
