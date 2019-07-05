@@ -21,6 +21,7 @@ import config.FeatureSwitchManagementServiceProductionImpl
 import connectors.FakeUserAnswersCacheConnector
 import controllers.register.trustees.partnership.routes
 import identifiers.Identifier
+import identifiers.register.establishers.ExistingCurrentAddressId
 import identifiers.register.trustees.IsTrusteeNewId
 import identifiers.register.trustees.partnership._
 import models.Mode.checkMode
@@ -87,7 +88,7 @@ class TrusteesPartnershipNavigatorSpec extends SpecBase with NavigatorBehaviour 
   private def updateOnlyRoutesToggleOn: TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = {
     routes(UpdateMode) ++ Table(
       ("Id", "User Answers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (Check Mode)", "Save (CM)"),
-      (PartnershipAddressYearsId(0), addressYearsUnderAYear, partnershipPaPostCodeLookup(UpdateMode), true, Some(confirmPreviousAddress), true),
+      (PartnershipAddressYearsId(0), addressYearsUnderAYear, partnershipPaPostCodeLookup(UpdateMode), true, Some(addressYearsLessThanTwelveEdit(UpdateMode, addressYearsUnderAYear)), true),
       (PartnershipConfirmPreviousAddressId(0), confirmPreviousAddressYes, defaultPage, false, Some(anyMoreChanges), false),
       (PartnershipConfirmPreviousAddressId(0), confirmPreviousAddressNo, defaultPage, false, Some(partnershipPaPostCodeLookup(CheckUpdateMode)), false),
       (PartnershipConfirmPreviousAddressId(0), emptyAnswers, defaultPage, false, Some(sessionExpired), false),
@@ -167,11 +168,26 @@ object TrusteesPartnershipNavigatorSpec extends OptionValues {
 
   private def anyMoreChanges = controllers.routes.AnyMoreChangesController.onPageLoad(None)
 
-  private def exitJourney(mode: Mode, answers: UserAnswers, index: Int = 0) = if (mode == CheckMode || mode == NormalMode) checkYourAnswers(mode)
-  else {
-    if (answers.get(IsTrusteeNewId(index)).getOrElse(false)) checkYourAnswers(mode)
-    else anyMoreChanges
-  }
+  private def exitJourney(mode: Mode, answers: UserAnswers, index: Int = 0): Call =
+    if (mode == CheckMode || mode == NormalMode)
+      checkYourAnswers(mode)
+    else if (answers.get(IsTrusteeNewId(index)).getOrElse(false))
+      checkYourAnswers(mode)
+    else
+      anyMoreChanges
+
+  private def addressYearsLessThanTwelveEdit(mode: Mode, userAnswers: UserAnswers): Call =
+    (
+      userAnswers.get(ExistingCurrentAddressId(0)),
+      mode
+    ) match {
+      case (None, CheckUpdateMode) =>
+        partnershipPaPostCodeLookup(checkMode(mode))
+      case (_, CheckUpdateMode) =>
+        confirmPreviousAddress
+      case _ =>
+        partnershipPaPostCodeLookup(checkMode(mode))
+    }
 }
 
 

@@ -20,10 +20,11 @@ import base.SpecBase
 import connectors.FakeUserAnswersCacheConnector
 import identifiers.register.establishers.company._
 import identifiers.register.establishers.company.director.DirectorDetailsId
-import identifiers.register.establishers.{EstablishersId, IsEstablisherNewId}
+import identifiers.register.establishers.{EstablishersId, ExistingCurrentAddressId, IsEstablisherNewId}
 import identifiers.{EstablishersOrTrusteesChangedId, Identifier}
 import models.Mode.{checkMode, journeyMode}
 import models._
+import models.address.Address
 import models.person.PersonDetails
 import org.joda.time.LocalDate
 import org.scalatest.prop.TableFor6
@@ -73,7 +74,7 @@ class EstablishersCompanyNavigatorSpec extends SpecBase with MustMatchers with N
     (CompanyAddressId(0),                         emptyAnswers,                     companyAddressYears(mode),          true,           if(mode == UpdateMode) Some(companyAddressYears(checkMode(mode))) else Some(cya(mode)),                   true),
     (CompanyAddressId(0),                         newEstablisher,                   companyAddressYears(mode),          true,           Some(cya(mode)),                                                             true),
     (CompanyAddressYearsId(0),                    addressYearsOverAYear,            companyContactDetails(mode),        true,           Some(exitJourney(mode, addressYearsOverAYear, 0, cya(mode))),                   true),
-    (CompanyAddressYearsId(0),                    addressYearsOverAYearNew,         companyContactDetails(mode),        true,           Some(exitJourney(mode, addressYearsOverAYearNew, 0, cya(mode))),                   true),
+    (CompanyAddressYearsId(0),                    addressYearsOverAYearNew,         companyContactDetails(mode),        true,           if (toggled) Some(exitJourney(mode, addressYearsOverAYearNew, 0, cyaCompanyAddressDetails(mode))) else Some(exitJourney(mode, addressYearsOverAYearNew, 0, cya(mode))),                   true),
     (CompanyAddressYearsId(0),                    emptyAnswers,                     sessionExpired,                     false,          Some(sessionExpired),                                                      false),
     (CompanyConfirmPreviousAddressId(0),          confirmPreviousAddressYes,        none,                               false,          Some(anyMoreChanges),                                                      false),
     (CompanyConfirmPreviousAddressId(0),          confirmPreviousAddressNo,         none,                               false,          Some(prevAddPostCodeLookup(checkMode(mode))),                              false),
@@ -99,10 +100,13 @@ class EstablishersCompanyNavigatorSpec extends SpecBase with MustMatchers with N
 
   private def normalOnlyRoutes(toggled:Boolean): TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = Table(
     ("Id",                                          "User Answers",               "Next Page (Normal Mode)",                "Save (NM)",  "Next Page (Check Mode)",         "Save (CM)"),
-    (CompanyAddressYearsId(0),                    addressYearsUnderAYear,       if(toggled) hasBeenTrading(UpdateMode) else prevAddPostCodeLookup(NormalMode),        true,         addressYearsLessThanTwelveEdit(journeyMode(CheckMode), toggled),                          true),
+    (CompanyAddressYearsId(0),                    addressYearsUnderAYear,         if(toggled) hasBeenTrading(NormalMode) else prevAddPostCodeLookup(NormalMode),        true,         addressYearsLessThanTwelveEdit(NormalMode, toggled, addressYearsUnderAYear),                          true),
+    (CompanyAddressYearsId(0),                    addressYearsUnderAYearWithExistingAddress,         if(toggled) hasBeenTrading(NormalMode) else prevAddPostCodeLookup(NormalMode),        true,         addressYearsLessThanTwelveEdit(NormalMode, toggled, addressYearsUnderAYearWithExistingAddress),                          true),
+    (CompanyRegistrationNumberId(0),              emptyAnswers,                 companyUTR(NormalMode),                   true,         Some(exitJourney(NormalMode, emptyAnswers, 0, cya(NormalMode))),                   true),
+    (CompanyRegistrationNumberId(0),              newEstablisher,               companyUTR(NormalMode),                   true,         Some(cya(NormalMode)),                   true),
     (CompanyRegistrationNumberVariationsId(0),    emptyAnswers,                 hasCompanyUTR(NormalMode),                   true,         Some(cya(NormalMode)),                   true),
     (CompanyContactDetailsId(0),                  emptyAnswers,                 isDormant(NormalMode),                                true,         Some(cya(NormalMode)),               true),
-    (CompanyPhoneId(0),                           emptyAnswers,                 cyaCompanyContactDetails(NormalMode),                         true,         Some(cyaCompanyContactDetails(journeyMode(CheckMode))),               true),
+    (CompanyPhoneId(0),                           emptyAnswers,                 cyaCompanyContactDetails(NormalMode),                         true,         Some(cyaCompanyContactDetails(NormalMode)),               true),
     (IsCompanyDormantId(0),                       emptyAnswers,                 cya(NormalMode),             true,         Some(cya(NormalMode)),               true),
     (CompanyPayeVariationsId(0),                  emptyAnswers,                 isDormant(NormalMode),                                   true,   Some(cyaCompanyDetails(NormalMode)),                   true),
     (HasCompanyPAYEId(0),                         establisherHasPAYE(false),        isDormant(NormalMode),                    true,           Some(cyaCompanyDetails(NormalMode)),          true)
@@ -111,14 +115,15 @@ class EstablishersCompanyNavigatorSpec extends SpecBase with MustMatchers with N
 
   private def updateOnlyRoutes(toggled:Boolean): TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = Table(
     ("Id",                                          "User Answers",               "Next Page (UpdateMode Mode)",                "Save (NM)",  "Next Page (Check Mode)",         "Save (CM)"),
-    (CompanyAddressYearsId(0),                    addressYearsUnderAYear,         if(toggled) hasBeenTrading(UpdateMode) else prevAddPostCodeLookup(UpdateMode),        true,         addressYearsLessThanTwelveEdit(UpdateMode, toggled),                          true),
+    (CompanyAddressYearsId(0),                    addressYearsUnderAYear,         if(toggled) hasBeenTrading(UpdateMode) else prevAddPostCodeLookup(UpdateMode),        true,         addressYearsLessThanTwelveEdit(UpdateMode, toggled, addressYearsUnderAYear),                          true),
+    (CompanyAddressYearsId(0),                    addressYearsUnderAYearWithExistingAddress,         if(toggled) hasBeenTrading(UpdateMode) else prevAddPostCodeLookup(UpdateMode),        true,         addressYearsLessThanTwelveEdit(UpdateMode, toggled, addressYearsUnderAYearWithExistingAddress),                          true),
     (CompanyRegistrationNumberId(0),              emptyAnswers,                     if(toggled)hasCompanyUTR(UpdateMode) else companyUTR(UpdateMode),                   true,           Some(exitJourney(UpdateMode, emptyAnswers, 0, cya(UpdateMode))),                   true),
     (CompanyRegistrationNumberId(0),              newEstablisher,                   if(toggled)hasCompanyUTR(UpdateMode) else companyUTR(UpdateMode),                   true,           Some(cya(UpdateMode)),                   true),
-    (CompanyContactDetailsId(0),  emptyAnswers,                         cya(UpdateMode),                        true,   Some(exitJourney(checkMode(UpdateMode),   emptyAnswers, 0, cya(UpdateMode))),       true),
-    (CompanyPhoneId(0),           emptyAnswers,                         cyaCompanyContactDetails(UpdateMode),   true,   Some(exitJourney(checkMode(UpdateMode),   emptyAnswers, 0, cyaCompanyContactDetails(UpdateMode))),       true),
+    (CompanyContactDetailsId(0),  emptyAnswers,                         cya(UpdateMode),                        true,   Some(exitJourney(CheckUpdateMode,   emptyAnswers, 0, cya(UpdateMode))),       true),
+    (CompanyPhoneId(0),           emptyAnswers,                         cyaCompanyContactDetails(UpdateMode),   true,   Some(exitJourney(CheckUpdateMode,   emptyAnswers, 0, cyaCompanyContactDetails(UpdateMode))),       true),
     (AddCompanyDirectorsId(0),    addCompanyDirectorsFalseWithChanges,  anyMoreChanges,                         true,   None,                                                           true),
-    (CompanyPayeVariationsId(0),                  emptyAnswers,         cyaCompanyDetails(UpdateMode),                                   true,   Some(exitJourney(checkMode(UpdateMode), emptyAnswers, 0, cya(UpdateMode))),                   true),
-    (CompanyRegistrationNumberVariationsId(0),                  emptyAnswers,                  hasCompanyUTR(UpdateMode),    true,           Some(exitJourney(checkMode(UpdateMode), emptyAnswers, 0, cya(UpdateMode))),                   true),
+    (CompanyPayeVariationsId(0),                  emptyAnswers,         cyaCompanyDetails(UpdateMode),                                   true,   Some(exitJourney(CheckUpdateMode, emptyAnswers, 0, cya(UpdateMode))),                   true),
+    (CompanyRegistrationNumberVariationsId(0),                  emptyAnswers,                  hasCompanyUTR(UpdateMode),    true,           Some(exitJourney(CheckUpdateMode, emptyAnswers, 0, cya(UpdateMode))),                   true),
     (HasCompanyPAYEId(0),                         establisherHasPAYE(false),        cyaCompanyDetails(UpdateMode),                    true,           Some(exitJourney(CheckUpdateMode, emptyAnswers, 0, cyaCompanyDetails(UpdateMode))),          true)
 
   )
@@ -140,7 +145,6 @@ class EstablishersCompanyNavigatorSpec extends SpecBase with MustMatchers with N
     appRunning()
     behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, normalRoutes(), dataDescriber)
     behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, updateRoutes(), dataDescriber, UpdateMode)
-  //  behave like nonMatchingNavigator(navigator)
   }
 
   s"when previous address feature is toggled on" must {
@@ -267,21 +271,36 @@ object EstablishersCompanyNavigatorSpec extends OptionValues with Enumerable.Imp
 
   private def anyMoreChanges = controllers.routes.AnyMoreChangesController.onPageLoad(None)
 
-  private def exitJourney(mode: Mode, answers:UserAnswers, index:Int = 0, cyaPage: Call) = {
-    if (mode == NormalMode) cyaPage else {
-      if (answers.get(IsEstablisherNewId(index)).getOrElse(false)) cyaPage
-      else anyMoreChanges
-    }
-  }
+  private def exitJourney(mode: Mode, answers:UserAnswers, index:Int = 0, cyaPage: Call) =
+    if (mode == NormalMode)
+      cyaPage
+    else if (answers.get(IsEstablisherNewId(index)).getOrElse(false))
+      cyaPage
+    else
+      anyMoreChanges
 
   private def confirmPreviousAddress = controllers.register.establishers.company.routes.CompanyConfirmPreviousAddressController.onPageLoad(0, None)
 
-
-  private def addressYearsLessThanTwelveEdit(mode: Mode, isEstablisherCompanyHnSEnabled : Boolean = false) =
-    ((checkMode(mode) == CheckUpdateMode), (isEstablisherCompanyHnSEnabled)) match {
-      case (true, true) => Some(cyaCompanyAddressDetails(mode))
-      case (false, true) => Some(hasBeenTrading(checkMode(mode)))
-      case (_, false) => Some(confirmPreviousAddress)
+  private def addressYearsLessThanTwelveEdit(mode: Mode,
+                                             isEstablisherCompanyHnSEnabled: Boolean = false,
+                                             userAnswers: UserAnswers) =
+    (
+      userAnswers.get(CompanyAddressYearsId(0)),
+      isEstablisherCompanyHnSEnabled,
+      userAnswers.get(ExistingCurrentAddressId(0))
+    ) match {
+      case (Some(AddressYears.UnderAYear), false, Some(_)) =>
+        Some(confirmPreviousAddress)
+      case (Some(AddressYears.UnderAYear), true, _) =>
+        Some(hasBeenTrading(checkMode(mode)))
+      case (Some(AddressYears.UnderAYear), false, _) =>
+        Some(prevAddPostCodeLookup(checkMode(mode)))
+      case (Some(AddressYears.OverAYear), true, _) =>
+        Some(exitJourney(mode, userAnswers, 0, cyaCompanyAddressDetails(mode)))
+      case (Some(AddressYears.OverAYear), false, _) =>
+        Some(exitJourney(mode, userAnswers, 0, cya(mode)))
+      case _ =>
+        Some(sessionExpired)
     }
 
   private def addEstablisher(mode: Mode) = controllers.register.establishers.routes.AddEstablisherController.onPageLoad(mode, None)
@@ -298,6 +317,9 @@ object EstablishersCompanyNavigatorSpec extends OptionValues with Enumerable.Imp
     .set(CompanyAddressYearsId(0))(AddressYears.OverAYear).asOpt.value
   private val addressYearsUnderAYear = UserAnswers(Json.obj())
     .set(CompanyAddressYearsId(0))(AddressYears.UnderAYear).asOpt.value
+  private val addressYearsUnderAYearWithExistingAddress = UserAnswers(Json.obj())
+    .set(CompanyAddressYearsId(0))(AddressYears.UnderAYear).asOpt.value
+    .set(ExistingCurrentAddressId(0))(Address("", "", None, None, None, "")).asOpt.value
 
   private val addCompanyDirectorsTrue = UserAnswers(validData(johnDoe)).set(AddCompanyDirectorsId(0))(true).asOpt.value
   private val addCompanyDirectorsFalse = UserAnswers(validData(johnDoe)).set(AddCompanyDirectorsId(0))(false).asOpt.value
