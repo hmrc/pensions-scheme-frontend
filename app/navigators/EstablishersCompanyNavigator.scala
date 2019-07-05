@@ -35,15 +35,18 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
                                              appConfig: FrontendAppConfig,
                                              featureSwitchManagementService: FeatureSwitchManagementService) extends Navigator {
 
-  private def exitMiniJourney(index: Int, mode: Mode, srn: Option[String], answers: UserAnswers,
+  private def exitMiniJourney(index: Int,
+                              mode: Mode,
+                              srn: Option[String],
+                              answers: UserAnswers,
                               cyaPage: (Int, Mode, Option[String]) => Option[NavigateTo] = cya): Option[NavigateTo] =
-    if (mode == CheckMode || mode == NormalMode) {
+    if (mode == CheckMode || mode == NormalMode)
       cyaPage(index, journeyMode(mode), srn)
-    } else {
-      if (answers.get(IsEstablisherNewId(index)).getOrElse(false))
-        cyaPage(index, journeyMode(mode), srn)
-      else anyMoreChanges(srn)
-    }
+    else if (answers.get(IsEstablisherNewId(index)).getOrElse(false))
+      cyaPage(index, journeyMode(mode), srn)
+    else
+      anyMoreChanges(srn)
+
 
   private def cyaCompanyDetails(index: Int, mode: Mode, srn: Option[String]): Option[NavigateTo] =
     NavigateTo.dontSave(establisherCompanyRoutes.CheckYourAnswersCompanyDetailsController.onPageLoad(mode, srn, index))
@@ -238,17 +241,18 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
   private def editAddressYearsRoutes(index: Int, answers: UserAnswers, mode: Mode, srn: Option[String]): Option[NavigateTo] = {
     (
       answers.get(CompanyAddressYearsId(index)),
-      mode,
       featureSwitchManagementService.get(Toggles.isEstablisherCompanyHnSEnabled),
       answers.get(ExistingCurrentAddressId(index))
     ) match {
-      case (Some(AddressYears.UnderAYear), CheckUpdateMode, false, Some(_)) =>
+      case (Some(AddressYears.UnderAYear), false, Some(_)) =>
         NavigateTo.dontSave(CompanyConfirmPreviousAddressController.onPageLoad(index, srn))
-      case (Some(AddressYears.UnderAYear), _, false, _) =>
-        NavigateTo.dontSave(CompanyPreviousAddressPostcodeLookupController.onPageLoad(mode, srn, index))
-      case (Some(AddressYears.UnderAYear), _, true, _) =>
+      case (Some(AddressYears.UnderAYear), true, _) =>
         NavigateTo.dontSave(HasBeenTradingCompanyController.onPageLoad(mode, srn, index))
-      case (Some(AddressYears.OverAYear), _, _, _) =>
+      case (Some(AddressYears.UnderAYear), false, _) =>
+        NavigateTo.dontSave(CompanyPreviousAddressPostcodeLookupController.onPageLoad(mode, srn, index))
+      case (Some(AddressYears.OverAYear), true, _) =>
+        exitMiniJourney(index, mode, srn, answers, cyaAddressDetails)
+      case (Some(AddressYears.OverAYear), false, _) =>
         exitMiniJourney(index, mode, srn, answers)
       case _ =>
         NavigateTo.dontSave(SessionExpiredController.onPageLoad())
