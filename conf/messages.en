@@ -103,7 +103,7 @@ messages__common__cya__name = Name
 messages__common__cya__address = Address
 messages__common__cya__previous_address = Previous Address
 messages__common__cya__vat = VAT registration number
-messages__common__cya__paye = PAYE employer reference number
+messages__common__cya__paye = Employer PAYE reference
 messages__common__cya__email = Email address
 messages__common__cya__phone = Phone number
 
@@ -1086,13 +1086,30 @@ messages__visuallyhidden__establisher__crn_yes_no = Change whether the establish
 messages__visuallyhidden__establisher__crn_no = Change why the establisher does not have a Company Registration number
 messages__visuallyhidden__establisher__crn = Change the establisher’s Company Registration number
 messages__visuallyhidden__establisher__crn_add = Add the establisher’s Company Registration number
-messages__visuallyhidden__establisher__address = Change the establisher’s address
-messages__visuallyhidden__establisher__address_years = Change how long the establisher has been at their address
-messages__visuallyhidden__establisher__previous_address = Change the establisher’s previous address
-messages__visuallyhidden__establisher__previous_address_add = Add the establisher’s previous address
+messages__visuallyhidden__establisher__address = Change contact address
+messages__visuallyhidden__establisher__address_years = Change whether company has been at their address for at least 1 year
+messages__visuallyhidden__establisher__address_years_add = Add whether company has been at their address for at least 1 year
+messages__visuallyhidden__establisher__previous_address = Change previous contact address
+messages__visuallyhidden__establisher__previous_address_add = Add previous contact address
 messages__visuallyhidden__establisher__email_address = Change the establisher’s email address
 messages__visuallyhidden__establisher__phone_number = Change the establisher’s phone number
-messages__visuallyhidden__establisher__dormant = Change whether the establisher been dormant in the last 12 months
+messages__visuallyhidden__establisher__dormant = Change whether company has been dormant in the last 12 months
+messages__visuallyhidden__hasCompanyUtr = Change whether company has a Unique Taxpayer Reference (UTR)
+messages__visuallyhidden__hasCompanyVat = Change whether company is registered for VAT
+messages__visuallyhidden__companyPayeRef = Change whether company has an employer PAYE reference
+messages__visuallyhidden__hasCompanyNumber = Change whether company has a company number
+messages__visuallyhidden__companyNumber = Change company number
+messages__visuallyhidden__companyNumber_add = Add company number
+messages__visuallyhidden__noCompanyNumberReason = Change reason why company has no company number
+messages__visuallyhidden__companyUTR = Change UTR
+messages__visuallyhidden__companyUTR_add = Add UTR
+messages__visuallyhidden__noCompanyUTRReason = Change reason why company has no UTR
+messages__visuallyhidden__companyVat = Change VAT registration number
+messages__visuallyhidden__companyVat_add = Add VAT registration number
+messages__visuallyhidden__companyPaye = Change Employer PAYE reference
+messages__visuallyhidden__companyPaye_add = Add Employer PAYE reference
+messages__visuallyhidden__establisher__utr = Change the establisher’s UTR
+messages__visuallyhidden__establisher__utr_add = Add the establisher’s UTR
 
 messages__visuallyhidden__director__nino_yes_no = Change whether the director has a National Insurance number
 messages__visuallyhidden__director__nino_no = Change why the director does not have a National Insurance number
@@ -1451,10 +1468,24 @@ messages__whatYouWillNeedEstablisherCompanyContact__item1 = email address
 messages__whatYouWillNeedEstablisherCompanyContact__item2 = phone number
 messages__whatYouWillNeedEstablisherCompanyContact__item3 = These should be details used for other HMRC services. These will not be used to contact the company.
 
+messages__whatYouWillNeedDirectors__title = what you will need
+messages__whatYouWillNeedDirectors__h1 = Directors
+messages__whatYouWillNeedDirectors__p1 = We need to know about every director associated with the company you’re registering.
+messages__whatYouWillNeedDirectors__p2 = You will need to tell us each director’s:
+messages__whatYouWillNeedDirectors__item1 = name
+messages__whatYouWillNeedDirectors__item2 = date of birth
+messages__whatYouWillNeedDirectors__item3 = National Insurance number
+messages__whatYouWillNeedDirectors__item4 = Unique Taxpayer Reference(UTR)
+messages__whatYouWillNeedDirectors__item5 = current address
+messages__whatYouWillNeedDirectors__item6 = previous address if they have not been at their current address for at least 1 year
+messages__whatYouWillNeedDirectors__item7 = contact email address
+messages__whatYouWillNeedDirectors__item8 = contact phone number
+
 messages__hasCompanyNumber__title = Does the establisher have a company number?
 messages__hasCompanyNumber__h1 = Does {0} have a company number?
 messages__hasCompanyNumber__p1 = You can find this on the company’s certificate of incorporation or on any official letters from Companies House.
 messages__hasCompanyNumber__error__required = Select yes if {0} has a company number
+
 
 messages__hasCompanyUtr__title = Does the company have a UTR?
 messages__hasCompanyUtr__h1 = Does {0} have a Unique Taxpayer Reference (UTR)?
@@ -1507,7 +1538,6 @@ messages__companyPaye__error__required = Select yes if the company has an employ
 messages__companyPayeRef__title = Does the establisher have an employer PAYE reference?
 messages__companyPayeRef__h1 = Does {0} have an employer PAYE reference?
 messages__companyPayeRef__error__required = Select whether the company has an employer PAYE number
-
 messages__companyPayeRef__p1 = This is a 3 digit tax office number, a forward slash, and a tax office employer reference, like 123/AB456. It may be called ‘Employer PAYE reference’ or ‘PAYE reference’.
 
 messages__companyVat__title = Is the company registered for VAT?
@@ -1557,6 +1587,7 @@ messages__companyUtr__heading = What is {0}’s UTR?
 messages__companyUtr__guidance1 = If the UTR is 13 numbers, you only need to enter the last 10.
 messages__companyUtr__guidance2 = If there is a letter ‘K’ at the end of the number, do not enter it.
 messages__companyUtr__hint = For example, 12345 67890
+messages__companyUtr__checkyouranswerslabel = UTR
 
 messages__reason__error_required = Enter a reason why {0} does not have a UTR
 messages__reason__error_maxLength = Reason must be 160 characters or less
