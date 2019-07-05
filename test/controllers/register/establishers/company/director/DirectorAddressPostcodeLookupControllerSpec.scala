@@ -75,10 +75,10 @@ class DirectorAddressPostcodeLookupControllerSpec extends ControllerSpecBase wit
   lazy val viewmodel = PostcodeLookupViewModel(
     postCall,
     manualInputCall,
-    Message("messages__directorAddressPostcodeLookup__title"),
-    Message("messages__directorAddressPostcodeLookup__heading"),
+    Message("messages__directorCompanyAddressPostcodeLookup__title"),
+    Message("messages__addressPostcodeLookup__heading", director.fullName),
     Some(director.fullName),
-    Some(Message("messages__directorAddressPostcodeLookup__lede"))
+    Some(Message("messages__directorCompanyAddressPostcodeLookup__lede"))
   )
 
   "DirectorAddressPostcodeLookup Controller" must {

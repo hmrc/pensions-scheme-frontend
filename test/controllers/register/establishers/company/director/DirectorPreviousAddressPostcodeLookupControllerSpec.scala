@@ -66,7 +66,7 @@ class DirectorPreviousAddressPostcodeLookupControllerSpec extends ControllerSpec
     onwardRoute,
     manualInputCall,
     Message("messages__directorPreviousAddressPostcodeLookup__title"),
-    Message("messages__directorPreviousAddressPostcodeLookup__heading"),
+    Message("messages__previousAddressPostcodeLookup__heading",director.fullName),
     Some(director.fullName),
     Some(Message("messages__directorPreviousAddressPostcodeLookup__lede"))
   )
