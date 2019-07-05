@@ -143,18 +143,15 @@ class EstablishersPartnerNavigator @Inject()(val dataCacheConnector: UserAnswers
   }
 
   private def addressYearsEditRoutes(establisherIndex: Int, partnerIndex: Int, mode: Mode, srn: Option[String])(answers: UserAnswers): Option[NavigateTo] = {
-    (
-      answers.get(PartnerAddressYearsId(establisherIndex, partnerIndex)),
-      mode,
-      answers.get(ExistingCurrentAddressId(establisherIndex, partnerIndex))
-    ) match {
-      case (Some(AddressYears.UnderAYear), CheckUpdateMode, Some(_)) =>
-        NavigateTo.dontSave(routes.PartnerConfirmPreviousAddressController.onPageLoad(establisherIndex, partnerIndex, srn))
-      case (Some(AddressYears.UnderAYear), _, _) =>
-        NavigateTo.dontSave(routes.PartnerPreviousAddressPostcodeLookupController.onPageLoad(mode, establisherIndex, partnerIndex, srn))
-      case (Some(AddressYears.OverAYear), _, _) =>
+    answers.get(PartnerAddressYearsId(establisherIndex, partnerIndex)) match {
+      case Some(AddressYears.UnderAYear) =>
+        if (mode == CheckUpdateMode && featureSwitchManagementService.get(Toggles.isPrevAddEnabled))
+          NavigateTo.dontSave(routes.PartnerConfirmPreviousAddressController.onPageLoad(establisherIndex, partnerIndex, srn))
+        else
+          NavigateTo.dontSave(routes.PartnerPreviousAddressPostcodeLookupController.onPageLoad(mode, establisherIndex, partnerIndex, srn))
+      case Some(AddressYears.OverAYear) =>
         exitMiniJourney(establisherIndex, partnerIndex, mode, srn, answers)
-      case _ =>
+      case None =>
         NavigateTo.dontSave(controllers.routes.SessionExpiredController.onPageLoad())
     }
   }

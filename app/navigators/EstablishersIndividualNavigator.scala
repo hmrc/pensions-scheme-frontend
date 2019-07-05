@@ -19,11 +19,11 @@ package navigators
 import com.google.inject.{Inject, Singleton}
 import config.{FeatureSwitchManagementService, FrontendAppConfig}
 import connectors.UserAnswersCacheConnector
+import identifiers.register.establishers.{EstablisherNewNinoId, IsEstablisherNewId}
 import identifiers.register.establishers.individual._
-import identifiers.register.establishers.{EstablisherNewNinoId, ExistingCurrentAddressId, IsEstablisherNewId}
 import models.Mode.journeyMode
 import models._
-import utils.{Navigator, UserAnswers}
+import utils.{Navigator, Toggles, UserAnswers}
 
 @Singleton
 class EstablishersIndividualNavigator @Inject()(
@@ -151,18 +151,15 @@ class EstablishersIndividualNavigator @Inject()(
     }
 
   private def addressYearsEditRoutes(index: Int, mode: Mode, srn: Option[String])(answers: UserAnswers): Option[NavigateTo] = {
-    (
-      answers.get(AddressYearsId(index)),
-      mode,
-      answers.get(ExistingCurrentAddressId(index))
-    ) match {
-      case (Some(AddressYears.UnderAYear), CheckUpdateMode, Some(_)) =>
+    answers.get(AddressYearsId(index)) match {
+      case Some(AddressYears.UnderAYear) =>
+        if (mode == CheckUpdateMode && featureSwitchManagementService.get(Toggles.isPrevAddEnabled))
           NavigateTo.dontSave(controllers.register.establishers.individual.routes.IndividualConfirmPreviousAddressController.onPageLoad(index, srn))
-      case (Some(AddressYears.UnderAYear), _, _) =>
+        else
           NavigateTo.dontSave(controllers.register.establishers.individual.routes.PreviousAddressPostCodeLookupController.onPageLoad(mode, index, srn))
-      case (Some(AddressYears.OverAYear), _, _) =>
+      case Some(AddressYears.OverAYear) =>
         exitMiniJourney(index, mode, srn, answers)
-      case _ =>
+      case None =>
         NavigateTo.dontSave(controllers.routes.SessionExpiredController.onPageLoad())
     }
   }
