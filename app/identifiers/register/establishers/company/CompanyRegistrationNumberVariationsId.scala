@@ -35,7 +35,7 @@ object CompanyRegistrationNumberVariationsId {
   implicit def cya(implicit messages: Messages, countryOptions: CountryOptions): CheckYourAnswers[CompanyRegistrationNumberVariationsId] = {
 
     val label: String = "messages__checkYourAnswers__establishers__company__number"
-    val changeCrn: String = "messages__visuallyhidden__companyNumber"
+    val changeCrn: String = "messages__visuallyhidden__establisher__crn"
 
     new CheckYourAnswers[CompanyRegistrationNumberVariationsId] {
       override def row(id: CompanyRegistrationNumberVariationsId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =

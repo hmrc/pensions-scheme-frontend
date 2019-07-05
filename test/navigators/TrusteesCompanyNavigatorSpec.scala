@@ -20,7 +20,6 @@ import base.SpecBase
 import connectors.FakeUserAnswersCacheConnector
 import identifiers.Identifier
 import identifiers.register.trustees.IsTrusteeNewId
-import identifiers.register.establishers.ExistingCurrentAddressId
 import identifiers.register.trustees.company._
 import models.Mode.checkMode
 import models._
@@ -56,7 +55,7 @@ class TrusteesCompanyNavigatorSpec extends SpecBase with MustMatchers with Navig
     (CompanyAddressId(0), newTrustee, companyAddressYears(mode), true, Some(checkYourAnswers(mode)), true),
     (CompanyAddressYearsId(0), addressYearsOverAYear, companyContactDetails(mode), true, Some(exitJourney(mode, emptyAnswers)), true),
     (CompanyAddressYearsId(0), addressYearsOverAYearNew, companyContactDetails(mode), true, Some(exitJourney(mode, addressYearsOverAYearNew)), true),
-    (CompanyAddressYearsId(0), addressYearsUnderAYear, prevAddPostCodeLookup(mode), true, Some(addressYearsLessThanTwelveEdit(checkMode(mode), addressYearsUnderAYear)), true),
+    (CompanyAddressYearsId(0), addressYearsUnderAYear, prevAddPostCodeLookup(mode), true, Some(addressYearsLessThanTwelveEdit(checkMode(mode), isPrevAddEnabled)), true),
     (CompanyPreviousAddressPostcodeLookupId(0), emptyAnswers, companyPaList(mode), true, Some(companyPaList(checkMode(mode))), true),
     (CompanyPreviousAddressListId(0), emptyAnswers, companyPreviousAddress(mode), true, Some(companyPreviousAddress(checkMode(mode))), true),
     (CompanyPreviousAddressId(0), emptyAnswers, companyContactDetails(mode), true, Some(exitJourney(mode, emptyAnswers)), true),
@@ -177,16 +176,7 @@ object TrusteesCompanyNavigatorSpec extends SpecBase with OptionValues {
     else anyMoreChanges
   }
 
-  private def addressYearsLessThanTwelveEdit(mode: Mode, userAnswers: UserAnswers): Call =
-    (
-      userAnswers.get(ExistingCurrentAddressId(0)),
-      mode
-    ) match {
-      case (None, CheckUpdateMode) =>
-        prevAddPostCodeLookup(mode)
-      case (_, CheckUpdateMode) =>
-        confirmPreviousAddress
-      case _ =>
-        prevAddPostCodeLookup(mode)
-    }
+  private def addressYearsLessThanTwelveEdit(mode: Mode, isPrevAddEnabled:Boolean = false) =
+    if (mode == CheckUpdateMode && isPrevAddEnabled) confirmPreviousAddress
+    else prevAddPostCodeLookup(mode)
 }

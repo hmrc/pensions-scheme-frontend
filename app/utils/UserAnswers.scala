@@ -44,9 +44,7 @@ import scala.concurrent.Future
 import scala.language.implicitConversions
 
 //scalastyle:off number.of.methods
-case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Implicits {
-
-  def prettyPrint: String = Json.prettyPrint(json)
+case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Implicits{
 
   def get[A](id: TypedIdentifier[A])(implicit rds: Reads[A]): Option[A] = {
     get[A](id.path)

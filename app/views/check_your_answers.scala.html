@@ -33,6 +33,10 @@
     hideSaveAndContinueButton:Boolean
 )(implicit request: Request[_], messages: Messages)
 
+@returnMessage=@{
+    schemeName.fold(messages("messages__complete__return"))(name=>messages("messages__psaSchemeDetails__return_link", name))
+}
+
 @main_template(
     title = messages("checkYourAnswers.hs.title"),
     appConfig = appConfig,
