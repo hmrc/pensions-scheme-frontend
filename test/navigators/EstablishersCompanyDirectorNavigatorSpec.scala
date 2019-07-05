@@ -51,7 +51,7 @@ class EstablishersCompanyDirectorNavigatorSpec extends SpecBase with NavigatorBe
     (DirectorAddressId(0, 0), newDirector, directorAddressYears(mode), true, Some(checkYourAnswers(mode)), true),
     (DirectorAddressYearsId(0, 0), addressYearsOverAYear, directorContactDetails(mode), true, Some(exitJourney(mode, emptyAnswers)), true),
     (DirectorAddressYearsId(0, 0), addressYearsOverAYearNew, directorContactDetails(mode), true, Some(exitJourney(mode, addressYearsOverAYearNew)), true),
-    (DirectorAddressYearsId(0, 0), addressYearsUnderAYear, directorPreviousAddPostcode(mode), true, addressYearsLessThanTwelveEdit(mode, isPrevAddEnabled), true),
+    (DirectorAddressYearsId(0, 0), addressYearsUnderAYear, directorPreviousAddPostcode(mode), true, addressYearsLessThanTwelveEdit(mode, addressYearsUnderAYear), true),
     (DirectorAddressYearsId(0, 0), emptyAnswers, sessionExpired, false, Some(sessionExpired), false),
     (DirectorConfirmPreviousAddressId(0, 0), confirmPreviousAddressYes, none, false, Some(anyMoreChanges), false),
     (DirectorConfirmPreviousAddressId(0, 0), confirmPreviousAddressNo, none, false, Some(directorPreviousAddPostcode(checkMode(mode))), false),
@@ -111,9 +111,18 @@ object EstablishersCompanyDirectorNavigatorSpec extends SpecBase with OptionValu
   private val confirmPreviousAddressNo = UserAnswers(Json.obj())
     .set(DirectorConfirmPreviousAddressId(0, 0))(false).asOpt.value
 
-  private def addressYearsLessThanTwelveEdit(mode: Mode, isPrevAddEnabled : Boolean = false) =
-    if (checkMode(mode) == CheckUpdateMode && isPrevAddEnabled) Some(confirmPreviousAddress)
-    else Some(directorPreviousAddPostcode(checkMode(mode)))
+  private def addressYearsLessThanTwelveEdit(mode: Mode, userAnswers: UserAnswers) =
+    (
+      userAnswers.get(ExistingCurrentAddressId(establisherIndex, directorIndex)),
+      checkMode(mode)
+    ) match {
+      case (None, CheckUpdateMode) =>
+        Some(directorPreviousAddPostcode(checkMode(mode)))
+      case (_, CheckUpdateMode) =>
+        Some(confirmPreviousAddress)
+      case _ =>
+        Some(directorPreviousAddPostcode(checkMode(mode)))
+    }
 
   private def confirmPreviousAddress = routes.DirectorConfirmPreviousAddressController.onPageLoad(0, 0, None)
 

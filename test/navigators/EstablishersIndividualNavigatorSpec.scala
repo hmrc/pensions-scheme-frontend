@@ -20,6 +20,7 @@ import base.SpecBase
 import connectors.FakeUserAnswersCacheConnector
 import identifiers.Identifier
 import identifiers.register.establishers.IsEstablisherNewId
+import identifiers.register.establishers.ExistingCurrentAddressId
 import identifiers.register.establishers.individual._
 import models.Mode._
 import models._
@@ -50,7 +51,7 @@ class EstablishersIndividualNavigatorSpec extends SpecBase with MustMatchers wit
       (AddressId(0), newEstablisher, addressYears(mode), true, Some(checkYourAnswers(mode)), true),
       (AddressYearsId(0), addressYearsOverAYearNew, contactDetails(mode), true, Some(exitJourney(mode, addressYearsOverAYearNew)), true),
       (AddressYearsId(0), addressYearsOverAYear, contactDetails(mode), true, Some(exitJourney(mode, emptyAnswers)), true),
-      (AddressYearsId(0), addressYearsUnderAYear, previousAddressPostCodeLookup(mode), true, addressYearsLessThanTwelveEdit(checkMode(mode), isPrevAddEnabled), true),
+      (AddressYearsId(0), addressYearsUnderAYear, previousAddressPostCodeLookup(mode), true, addressYearsLessThanTwelveEdit(checkMode(mode), addressYearsUnderAYear), true),
       (AddressYearsId(0), emptyAnswers, sessionExpired, false, Some(sessionExpired), false),
       (IndividualConfirmPreviousAddressId(0), confirmPreviousAddressYes, none, false, Some(anyMoreChanges), false),
       (IndividualConfirmPreviousAddressId(0), confirmPreviousAddressNo, none, false, Some(previousAddressPostCodeLookup(checkMode(mode))), false),
@@ -144,13 +145,21 @@ object EstablishersIndividualNavigatorSpec extends SpecBase with OptionValues {
 
   private val config = injector.instanceOf[Configuration]
 
-  private def addressYearsLessThanTwelveEdit(mode: Mode, isPrevAddEnabled : Boolean = false) =
-    if (mode == CheckUpdateMode && isPrevAddEnabled)
-      Some(confirmPreviousAddress)
-    else
-      Some(previousAddressPostCodeLookup(mode))
-
-
+  private def addressYearsLessThanTwelveEdit(mode: Mode, userAnswers: UserAnswers)=
+    (
+      userAnswers.get(AddressYearsId(0)),
+      mode,
+      userAnswers.get(ExistingCurrentAddressId(0))
+    ) match {
+      case (Some(AddressYears.UnderAYear), CheckUpdateMode, Some(_)) =>
+        Some(confirmPreviousAddress)
+      case (Some(AddressYears.UnderAYear), _, _) =>
+        Some(previousAddressPostCodeLookup(mode))
+      case (Some(AddressYears.OverAYear), _, _) =>
+        Some(exitJourney(mode, userAnswers, 0))
+      case _ =>
+        Some(previousAddressPostCodeLookup(mode))
+    }
 }
 
 

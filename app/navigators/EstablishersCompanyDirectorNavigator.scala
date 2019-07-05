@@ -21,7 +21,6 @@ import config.FeatureSwitchManagementService
 import connectors.UserAnswersCacheConnector
 import controllers.register.establishers.company.director.routes
 import identifiers.AnyMoreChangesId
-import identifiers.register.establishers.IsEstablisherNewId
 import identifiers.register.establishers.company.director._
 import models.Mode.journeyMode
 import models._
@@ -139,15 +138,18 @@ class EstablishersCompanyDirectorNavigator @Inject()(val dataCacheConnector: Use
   }
 
   private def addressYearsEditRoutes(establisherIndex: Int, directorIndex: Int, mode: Mode, srn: Option[String])(answers: UserAnswers): Option[NavigateTo] = {
-    answers.get(DirectorAddressYearsId(establisherIndex, directorIndex)) match {
-      case Some(AddressYears.UnderAYear) =>
-        if (mode == CheckUpdateMode && featureSwitchManagementService.get(Toggles.isPrevAddEnabled))
+    (
+      answers.get(DirectorAddressYearsId(establisherIndex, directorIndex)),
+      mode,
+      answers.get(ExistingCurrentAddressId(establisherIndex, directorIndex))
+    ) match {
+      case (Some(AddressYears.UnderAYear), CheckUpdateMode, Some(_)) =>
           NavigateTo.dontSave(routes.DirectorConfirmPreviousAddressController.onPageLoad(establisherIndex, directorIndex, srn))
-        else
-        NavigateTo.dontSave(routes.DirectorPreviousAddressPostcodeLookupController.onPageLoad(mode, establisherIndex, directorIndex, srn))
-      case Some(AddressYears.OverAYear) =>
+      case (Some(AddressYears.UnderAYear), _, _) =>
+          NavigateTo.dontSave(routes.DirectorPreviousAddressPostcodeLookupController.onPageLoad(mode, establisherIndex, directorIndex, srn))
+      case (Some(AddressYears.OverAYear), _, _) =>
         exitMiniJourney(establisherIndex, directorIndex, mode, srn, answers)
-      case None =>
+      case _ =>
         NavigateTo.dontSave(controllers.routes.SessionExpiredController.onPageLoad())
     }
   }
