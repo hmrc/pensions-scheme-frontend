@@ -26,5 +26,5 @@ case class DirectorNameId(establisherIndex: Int, directorIndex: Int) extends Typ
 }
 
 object DirectorNameId {
-  override def toString: String = "directorName"
+  override def toString: String = "directorDetails"
 }
