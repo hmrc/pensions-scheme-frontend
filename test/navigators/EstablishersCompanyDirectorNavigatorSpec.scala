@@ -20,9 +20,9 @@ import base.SpecBase
 import config.FeatureSwitchManagementServiceTestImpl
 import connectors.FakeUserAnswersCacheConnector
 import controllers.register.establishers.company.director.routes
-import identifiers.{AnyMoreChangesId, Identifier}
 import identifiers.register.establishers.IsEstablisherNewId
 import identifiers.register.establishers.company.director._
+import identifiers.{AnyMoreChangesId, Identifier}
 import models.Mode.checkMode
 import models._
 import org.scalatest.OptionValues
@@ -30,7 +30,7 @@ import org.scalatest.prop.TableFor6
 import play.api.Configuration
 import play.api.libs.json.Json
 import play.api.mvc.Call
-import utils.{FakeFeatureSwitchManagementService, Toggles, UserAnswers}
+import utils.{FakeFeatureSwitchManagementService, UserAnswers}
 
 class EstablishersCompanyDirectorNavigatorSpec extends SpecBase with NavigatorBehaviour {
 

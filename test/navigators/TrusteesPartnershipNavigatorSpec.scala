@@ -21,8 +21,7 @@ import config.FeatureSwitchManagementServiceProductionImpl
 import connectors.FakeUserAnswersCacheConnector
 import controllers.register.trustees.partnership.routes
 import identifiers.Identifier
-import identifiers.register.establishers.ExistingCurrentAddressId
-import identifiers.register.trustees.IsTrusteeNewId
+import identifiers.register.trustees.{ExistingCurrentAddressId, IsTrusteeNewId}
 import identifiers.register.trustees.partnership._
 import models.Mode.checkMode
 import models._

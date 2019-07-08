@@ -20,11 +20,11 @@ import com.google.inject.Inject
 import config.{FeatureSwitchManagementService, FrontendAppConfig}
 import connectors.UserAnswersCacheConnector
 import controllers.register.establishers.partnership.routes._
+import controllers.routes._
 import identifiers.register.establishers.{ExistingCurrentAddressId, IsEstablisherNewId}
 import identifiers.register.establishers.partnership._
 import models.Mode._
 import models._
-import controllers.routes._
 import utils.{Navigator, UserAnswers}
 
 class EstablishersPartnershipNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector,

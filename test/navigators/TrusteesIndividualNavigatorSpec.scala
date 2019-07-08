@@ -18,7 +18,7 @@ package navigators
 
 import base.SpecBase
 import connectors.FakeUserAnswersCacheConnector
-import identifiers.register.establishers.ExistingCurrentAddressId
+import identifiers.register.trustees.ExistingCurrentAddressId
 import identifiers.register.trustees.IsTrusteeNewId
 import identifiers.register.trustees.individual._
 import models.Mode.checkMode

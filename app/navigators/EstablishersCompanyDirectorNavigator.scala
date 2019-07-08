@@ -24,7 +24,7 @@ import identifiers.AnyMoreChangesId
 import identifiers.register.establishers.company.director._
 import models.Mode.journeyMode
 import models._
-import utils.{Navigator, Toggles, UserAnswers}
+import utils.{Navigator, UserAnswers}
 
 @Singleton
 class EstablishersCompanyDirectorNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector,

@@ -21,8 +21,7 @@ import config.{FeatureSwitchManagementService, FrontendAppConfig}
 import connectors.UserAnswersCacheConnector
 import controllers.register.trustees.individual.routes._
 import controllers.routes._
-import identifiers.register.establishers.ExistingCurrentAddressId
-import identifiers.register.trustees.IsTrusteeNewId
+import identifiers.register.trustees.{ExistingCurrentAddressId, IsTrusteeNewId}
 import identifiers.register.trustees.individual._
 import models.Mode.journeyMode
 import models._

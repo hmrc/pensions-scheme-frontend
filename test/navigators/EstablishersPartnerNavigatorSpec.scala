@@ -20,10 +20,10 @@ import base.SpecBase
 import config.FeatureSwitchManagementServiceTestImpl
 import connectors.FakeUserAnswersCacheConnector
 import controllers.register.establishers.partnership.partner._
-import identifiers.{EstablishersOrTrusteesChangedId, Identifier}
-import identifiers.register.establishers.{EstablishersId, IsEstablisherNewId}
 import identifiers.register.establishers.partnership.partner._
-import identifiers.register.establishers.partnership.{AddPartnersId, PartnershipDetailsId, partner}
+import identifiers.register.establishers.partnership.{AddPartnersId, PartnershipDetailsId}
+import identifiers.register.establishers.{EstablishersId, IsEstablisherNewId}
+import identifiers.{EstablishersOrTrusteesChangedId, Identifier}
 import models.Mode.checkMode
 import models._
 import models.person.PersonDetails
@@ -33,7 +33,7 @@ import org.scalatest.prop.TableFor6
 import play.api.Configuration
 import play.api.libs.json.Json
 import play.api.mvc.Call
-import utils.{FakeFeatureSwitchManagementService, Toggles, UserAnswers}
+import utils.{FakeFeatureSwitchManagementService, UserAnswers}
 
 class EstablishersPartnerNavigatorSpec extends SpecBase with NavigatorBehaviour {
   //scalastyle:off line.size.limit
