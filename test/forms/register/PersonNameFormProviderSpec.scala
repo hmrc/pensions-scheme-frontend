@@ -70,10 +70,7 @@ class PersonNameFormProviderSpec extends StringFieldBehaviours with Constraints 
       fieldName,
       Map(
         "firstName" -> "  John ",
-        "lastName" -> "Doe",
-        "date.day" -> "9",
-        "date.month" -> "6",
-        "date.year" -> "1903"
+        "lastName" -> "Doe"
       ),
       expected = "John",
       actual = (model: PersonName) => model.firstName
@@ -120,10 +117,7 @@ class PersonNameFormProviderSpec extends StringFieldBehaviours with Constraints 
       fieldName,
       Map(
         "firstName" -> "John",
-        "lastName" -> " Doe  ",
-        "date.day" -> "9",
-        "date.month" -> "6",
-        "date.year" -> "1956"
+        "lastName" -> " Doe  "
       ),
       expected = "Doe",
       actual = (model: PersonName) => model.lastName

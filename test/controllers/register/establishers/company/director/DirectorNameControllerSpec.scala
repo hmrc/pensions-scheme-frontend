@@ -118,13 +118,57 @@ class DirectorNameControllerSpec extends ControllerSpecBase {
       redirectLocation(result) mustBe Some(onwardRoute.url)
     }
 
-    "return a Bad Request and errors when invalid data is submitted" in {
+    "return a Bad Request and errors when no data is submitted" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "invalid value"))
       val boundForm = form.bind(Map("value" -> "invalid value"))
 
       val result = controller().onSubmit(NormalMode, firstEstablisherIndex, firstDirectorIndex, None)(postRequest)
 
       status(result) mustBe BAD_REQUEST
+      contentAsString(result) mustBe viewAsString(boundForm)
+    }
+
+    "returns a Bad Request and errors when invalid data is submitted" in {
+      val validData = Json.obj(
+        EstablishersId.toString -> Json.arr(
+          Json.obj(
+            CompanyDetailsId.toString ->
+              CompanyDetails("test company name")
+          )
+        )
+      )
+
+      when(mockUserAnswersService.upsert(any(), any(), any())(any(), any(), any())).thenReturn(Future.successful(validData))
+
+      val postRequest = fakeRequest.withFormUrlEncodedBody(("firstName", "01"), ("lastName", "?&^%$£"))
+
+      val boundForm = form.bind(Map("firstName" -> "01", "lastName" -> "?&^%$£"))
+
+      val result = controller().onSubmit(NormalMode, firstEstablisherIndex, firstDirectorIndex, None)(postRequest)
+      status(result) mustBe BAD_REQUEST
+
+      contentAsString(result) mustBe viewAsString(boundForm)
+    }
+
+    "returns a Bad Request and errors when max length has been exceeded" in {
+      val validData = Json.obj(
+        EstablishersId.toString -> Json.arr(
+          Json.obj(
+            CompanyDetailsId.toString ->
+              CompanyDetails("test company name")
+          )
+        )
+      )
+
+      when(mockUserAnswersService.upsert(any(), any(), any())(any(), any(), any())).thenReturn(Future.successful(validData))
+
+      val postRequest = fakeRequest.withFormUrlEncodedBody(("firstName", "tencharacter" * 3), ("lastName", "tencharacter" * 3))
+
+      val boundForm = form.bind(Map("firstName" -> "tencharactertencharactertencharacter", "lastName" -> "tencharactertencharactertencharacter"))
+
+      val result = controller().onSubmit(NormalMode, firstEstablisherIndex, firstDirectorIndex, None)(postRequest)
+      status(result) mustBe BAD_REQUEST
+
       contentAsString(result) mustBe viewAsString(boundForm)
     }
 
