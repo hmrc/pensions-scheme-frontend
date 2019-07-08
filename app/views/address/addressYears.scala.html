@@ -37,7 +37,8 @@
             field = form("value"),
             legend = viewmodel.legend,
             legendClass = Some("visually-hidden"),
-            inputs = viewmodel.inputs
+            inputs = viewmodel.inputs,
+            fieldsetClass = Some("inline")
         )
 
         @components.submit_button()

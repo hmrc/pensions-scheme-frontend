@@ -240,8 +240,8 @@ messages__error__benefits_insurance__policy_length = The policy number cannot be
 messages__error__benefits_insurance__policy_invalid = The policy number contains invalid characters
 
 messages__establisher_address_years__title = How long has the establisher been at this address?
-messages__common__under_a_year = 12 months or less
-messages__common__over_a_year = More than 12 months
+messages__common__under_a_year = No
+messages__common__over_a_year = Yes
 messages__common_error__current_address_years = Select how long they have been at the current address
 
 messages__common__what_you_need_to_know = What you need to know
@@ -510,9 +510,9 @@ messages__addCompanyDirectors_add_director = Add a director
 messages__addCompanyDirectors_at_maximum = You have added the maximum number of directors.
 messages__addCompanyDirectorsOrPartners_tell_us_if_you_have_more = You can tell us on the next page if you have more to add.
 
-messages__director_address_years__title = How long has the director lived at this address?
-messages__director_address_years__heading = How long has the director lived at this address?
-messages__director_address_years__cya = How long has the director lived at this address?
+messages__director_address_years__title = Has the director been at their address for at least 1 year?
+messages__director_address_years__heading = Has {0} been at their address for at least 1 year?
+messages__director_address_years__cya = Has {0} been at their address for at least 1 year?
 
 messages__director_has_sautr__title = Does the director have a Self Assessment Unique Taxpayer Reference number?
 messages__director_sautr = Unique Taxpayer Reference number

@@ -16,7 +16,7 @@
 
 package viewmodels.address
 
-import models.{AddressYears, Mode, NormalMode}
+import models.AddressYears
 import play.api.mvc.Call
 import utils.InputOption
 import viewmodels.Message

@@ -65,7 +65,7 @@ class AddressYearsControllerSpec extends ControllerSpecBase {
       title = Message("messages__establisher_address_years__title"),
       heading = Message("messages__establisher_address_years__title"),
       legend = Message("messages__establisher_address_years__title"),
-      Some(Message(establisherName))
+      subHeading = Some(Message(establisherName))
     )
 
   private def viewAsString(form: Form[_] = form) =
@@ -111,7 +111,7 @@ class AddressYearsControllerSpec extends ControllerSpecBase {
 
     "redirect to the next page when valid data is submitted with over_a_year" in {
       FakeUserAnswersService.reset()
-      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", AddressYears.options.tail.head.value))
+      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", AddressYears.options.head.value))
       val result = controller().onSubmit(UpdateMode, firstIndex, None)(postRequest)
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
@@ -120,7 +120,7 @@ class AddressYearsControllerSpec extends ControllerSpecBase {
 
     "redirect to the next page when valid data is submitted with under_a_year" in {
       FakeUserAnswersService.reset()
-      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", AddressYears.options.head.value))
+      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", AddressYears.options.tail.head.value))
       val result = controller().onSubmit(UpdateMode, firstIndex, None)(postRequest)
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
