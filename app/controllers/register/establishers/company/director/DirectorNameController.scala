@@ -36,19 +36,6 @@ import views.html.register.establishers.company.director.directorName
 
 import scala.concurrent.{ExecutionContext, Future}
 
-/* JSON:-
-{
-                        "directorName" : {
-                            "firstName" : "Martin",
-                            "lastName" : "Smart",
-                        }
-                    }
-
-
-                    message key = directorName
-
- */
-
 class DirectorNameController @Inject()(
                                         appConfig: FrontendAppConfig,
                                         override val messagesApi: MessagesApi,
