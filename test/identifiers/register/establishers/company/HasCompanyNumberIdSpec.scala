@@ -16,49 +16,58 @@
 
 package identifiers.register.establishers.company
 
+import base.SpecBase
+import identifiers.register.establishers.IsEstablisherNewId
 import models._
-import org.scalatest.{MustMatchers, OptionValues, WordSpec}
-import play.api.libs.json.Json
-import utils.UserAnswers
+import models.requests.DataRequest
+import play.api.mvc.AnyContent
+import play.api.test.FakeRequest
+import uk.gov.hmrc.domain.PsaId
+import utils.checkyouranswers.Ops._
+import utils.{CountryOptions, UserAnswers}
+import viewmodels.AnswerRow
 
-class HasCompanyNumberIdSpec extends WordSpec with MustMatchers with OptionValues {
+class HasCompanyNumberIdSpec extends SpecBase {
 
-  "Cleanup" when {
+  val onwardUrl = "onwardUrl"
+  val name = "test company name"
+  private val answerRowsWithChangeLinks = Seq(
+    AnswerRow(messages("messages__hasCompanyNumber__h1", name), List("site.yes"), true, Some(Link("site.change",onwardUrl,
+      Some(messages("messages__visuallyhidden__hasCompanyNumber")))))
+  )
 
-    def answers(hasCrn: Boolean = true): UserAnswers = UserAnswers(Json.obj())
-      .set(HasCompanyNumberId(0))(hasCrn)
-      .flatMap(_.set(CompanyRegistrationNumberVariationsId(0))(ReferenceValue("test-crn")))
-      .flatMap(_.set(NoCompanyNumberId(0))("reason"))
-      .asOpt.value
+  "cya" when {
 
-    "`HasCompanyNumber` is set to `false`" must {
+    val answers: UserAnswers = UserAnswers().set(CompanyDetailsId(0))(CompanyDetails(name)).flatMap(
+      _.set(HasCompanyNumberId(0))(true)).asOpt.get
 
-      val result: UserAnswers = answers().set(HasCompanyNumberId(0))(false).asOpt.value
+    "in normal mode" must {
 
-      "remove the data for `CompanyRegistrationNumberVariations`" in {
-        result.get(CompanyRegistrationNumberVariationsId(0)) mustNot be(defined)
+      "return answers rows with change links" in {
+        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
+        implicit val userAnswers: UserAnswers = request.userAnswers
+        HasCompanyNumberId(0).row(onwardUrl, NormalMode) must equal(answerRowsWithChangeLinks)
       }
     }
 
-    "`HasCompanyNumber` is set to `true`" must {
+    "in update mode for new establisher - company paye" must {
 
-      val result: UserAnswers = answers(false).set(HasCompanyNumberId(0))(true).asOpt.value
+      def answersNew: UserAnswers = answers.set(IsEstablisherNewId(0))(true).asOpt.value
 
-      "remove the data for `CompanyRegistrationNumberVariations`" in {
-        result.get(NoCompanyNumberId(0)) mustNot be(defined)
+      "return answers rows with change links" in {
+        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answersNew, PsaId("A0000000"))
+        implicit val userAnswers: UserAnswers = request.userAnswers
+        HasCompanyNumberId(0).row(onwardUrl, UpdateMode) must equal(answerRowsWithChangeLinks)
       }
     }
 
-    "`HasCompanyNumber` is not present" must {
+    "in update mode for existing establisher - company paye" must {
 
-      val result: UserAnswers = answers().remove(HasCompanyNumberId(0)).asOpt.value
+      "not display any row" in {
+        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
+        implicit val userAnswers: UserAnswers = request.userAnswers
 
-      "not remove the data for `CompanyRegistrationNumberVariations`" in {
-        result.get(CompanyRegistrationNumberVariationsId(0)) mustBe defined
-      }
-
-      "not remove the data for `NoCompanyNumber`" in {
-        result.get(NoCompanyNumberId(0)) mustBe defined
+        HasCompanyNumberId(0).row(onwardUrl, UpdateMode) mustEqual Nil
       }
     }
   }

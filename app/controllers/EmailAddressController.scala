@@ -48,14 +48,18 @@ trait EmailAddressController extends FrontendController with Retrievals with I18
     Future.successful(Ok(emailAddress(appConfig, preparedForm, viewModel, existingSchemeName)))
   }
 
-  def post(id: TypedIdentifier[String], mode: Mode, form: Form[String], viewModel: CommonFormWithHintViewModel)
+  def post(id: TypedIdentifier[String], mode: Mode, form: Form[String], viewModel: CommonFormWithHintViewModel,
+           completeId: TypedIdentifier[Boolean])
           (implicit request: DataRequest[AnyContent]): Future[Result] = {
     form.bindFromRequest().fold(
       (formWithErrors: Form[_]) =>
         Future.successful(BadRequest(emailAddress(appConfig, formWithErrors, viewModel, existingSchemeName))),
-      value =>
-        userAnswersService.save(mode, viewModel.srn, id, value).map{cacheMap =>
-          Redirect(navigator.nextPage(id, mode, UserAnswers(cacheMap), viewModel.srn))}
+      value => {
+        val answers = request.userAnswers.set(id)(value).flatMap(_.set(completeId)(false)).asOpt.getOrElse(request.userAnswers)
+        userAnswersService.upsert(mode, viewModel.srn, answers.json).map { cacheMap =>
+          Redirect(navigator.nextPage(id, mode, UserAnswers(cacheMap), viewModel.srn))
+        }
+      }
     )
   }
 }

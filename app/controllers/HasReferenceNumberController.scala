@@ -49,14 +49,17 @@ trait HasReferenceNumberController extends FrontendController with Retrievals wi
     Future.successful(Ok(hasReferenceNumber(appConfig, preparedForm, viewmodel, existingSchemeName)))
   }
 
-  def post(id: TypedIdentifier[Boolean], mode: Mode, form: Form[Boolean], viewmodel: CommonFormWithHintViewModel)
+  def post(id: TypedIdentifier[Boolean], mode: Mode, form: Form[Boolean], viewmodel: CommonFormWithHintViewModel,
+           completeId: Option[TypedIdentifier[Boolean]] = None)
           (implicit request: DataRequest[AnyContent]): Future[Result] = {
     form.bindFromRequest().fold(
       (formWithErrors: Form[_]) =>
         Future.successful(BadRequest(hasReferenceNumber(appConfig, formWithErrors, viewmodel, existingSchemeName))),
-      value =>
-        userAnswersService.save(mode, viewmodel.srn, id, value).map(cacheMap =>
-          Redirect(navigator.nextPage(id, mode, UserAnswers(cacheMap), viewmodel.srn)))
+      value => {
+        val answers = completeId.flatMap(id => request.userAnswers.set(id)(false).asOpt).getOrElse(request.userAnswers)
+        userAnswersService.upsert(mode, viewmodel.srn, answers.set(id)(value).asOpt.getOrElse(answers).json).map{cacheMap =>
+          Redirect(navigator.nextPage(id, mode, UserAnswers(cacheMap), viewmodel.srn))}
+      }
     )
   }
 }

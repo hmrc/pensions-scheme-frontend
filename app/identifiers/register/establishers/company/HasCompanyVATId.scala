@@ -17,12 +17,16 @@
 package identifiers.register.establishers.company
 
 import identifiers.TypedIdentifier
-import identifiers.register.establishers.EstablishersId
+import identifiers.register.establishers.{EstablishersId, IsEstablisherNewId}
+import play.api.i18n.Messages
 import play.api.libs.json.{JsPath, JsResult}
 import utils.UserAnswers
+import utils.checkyouranswers.CheckYourAnswers
+import utils.checkyouranswers.CheckYourAnswers.BooleanCYA
+import viewmodels.AnswerRow
 
 case class HasCompanyVATId(index: Int) extends TypedIdentifier[Boolean] {
-  override def path: JsPath = EstablishersId(index).path \ "companyVat" \ HasCompanyVATId.toString
+  override def path: JsPath = EstablishersId(index).path \ HasCompanyVATId.toString
 
   override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): JsResult[UserAnswers] = {
     value match {
@@ -36,6 +40,27 @@ case class HasCompanyVATId(index: Int) extends TypedIdentifier[Boolean] {
 
 object HasCompanyVATId {
   override def toString: String = "hasVat"
+
+  implicit def cya(implicit userAnswers: UserAnswers, messages: Messages): CheckYourAnswers[HasCompanyVATId] = {
+
+    def label(index: Int) = userAnswers.get(CompanyDetailsId(index)) match {
+      case Some(details) => Some(messages("messages__hasCompanyVat__h1", details.companyName))
+      case _ => Some(messages("messages__hasCompanyVat__title"))
+    }
+
+    def hiddenLabel = Some(messages("messages__visuallyhidden__hasCompanyVat"))
+
+    new CheckYourAnswers[HasCompanyVATId] {
+      override def row(id: HasCompanyVATId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+        BooleanCYA(label(id.index), hiddenLabel)().row(id)(changeUrl, userAnswers)
+
+      override def updateRow(id: HasCompanyVATId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+        userAnswers.get(IsEstablisherNewId(id.index)) match {
+          case Some(true) => BooleanCYA(label(id.index), hiddenLabel)().row(id)(changeUrl, userAnswers)
+          case _ => Seq.empty[AnswerRow]
+        }
+    }
+  }
 }
 
 
