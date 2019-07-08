@@ -447,14 +447,15 @@ case class AddressYearsCYA[I <: TypedIdentifier[AddressYears]](label: String = "
   def apply()(implicit rds: Reads[AddressYears]): CheckYourAnswers[I] = {
     new CheckYourAnswers[I] {
       override def row(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        userAnswers.get(id).map(addressYears =>
-          Seq(AnswerRow(
-            label,
-            Seq(s"messages__common__$addressYears"),
-            answerIsMessageKey = true,
-            Some(Link("site.change", changeUrl,
-              Some(changeAddressYears)))
-          ))).getOrElse(Seq.empty[AnswerRow])
+        userAnswers.get(id).map(
+          addressYears =>
+            Seq(AnswerRow(
+              label = label,
+              answer = Seq(s"messages__common__$addressYears"),
+              answerIsMessageKey = true,
+              changeUrl = Some(Link("site.change", changeUrl, Some(changeAddressYears)))
+            ))
+        ).getOrElse(Seq.empty[AnswerRow])
 
       override def updateRow(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = Nil
     }
