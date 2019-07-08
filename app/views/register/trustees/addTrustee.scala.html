@@ -23,8 +23,8 @@
 
 @(appConfig: FrontendAppConfig, form: Form[_], mode: Mode, trustees: Seq[Trustee[_]], schemeName: Option[String], srn: Option[String])(implicit request: Request[_], messages: Messages)
 
-@disableSubmission = @{
-    trustees.exists(!_.isCompleted)
+@enableSubmission = @{
+    trustees.forall(_.isCompleted)
 }
 
 @main_template(
@@ -65,7 +65,7 @@
 
         }
 
-        @components.submit_button("site.save_and_continue", disableSubmission)
+        @components.submit_button("site.save_and_continue", enableSubmission)
 
         @components.return_link("messages__schemeTaskList__returnlink", schemeName, None, srn)
 
