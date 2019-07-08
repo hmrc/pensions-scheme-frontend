@@ -53,8 +53,8 @@ class DirectorPreviousAddressController @Inject()(
 
   protected val form: Form[Address] = formProvider()
   private[controllers] val postCall = routes.DirectorPreviousAddressController.onSubmit _
-  private[controllers] val title: Message = "messages__companyDirectorAddress__title"
-  private[controllers] val heading: Message = "messages__companyDirectorAddress__heading"
+  private[controllers] val title: Message = "messages__directorPreviousAddressConfirm__title"
+  private[controllers] val heading: Message = "messages__directorPreviousAddressConfirm__heading"
 
   def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
@@ -74,7 +74,7 @@ class DirectorPreviousAddressController @Inject()(
               postCall(mode, establisherIndex, directorIndex, srn),
               countryOptions.options,
               title = Message(title),
-              heading = Message(heading),
+              heading = Message(heading, director.fullName  ),
               secondaryHeader = Some(director.fullName),
               srn = srn
             )
