@@ -101,8 +101,8 @@ class CompanyPreviousAddressPostcodeLookupControllerSpec extends ControllerSpecB
       PostcodeLookupViewModel(
         routes.CompanyPreviousAddressPostcodeLookupController.onSubmit(NormalMode, None, index),
         routes.CompanyPreviousAddressController.onPageLoad(NormalMode, None, index),
-        Message("messages__companyPreviousAddressPostcodeLookup__title"),
-        Message("messages__companyPreviousAddressPostcodeLookup__title"),
+        Message("messages__companyPreviousPostCode__title"),
+        Message("messages__companyPreviousPostCode__h1", companyName),
         Some(companyName)
       ),
       None

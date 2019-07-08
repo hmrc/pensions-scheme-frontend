@@ -189,7 +189,8 @@ class CompanyAddressListControllerSpec extends ControllerSpecBase with CSRFReque
       routes.CompanyAddressListController.onSubmit(NormalMode, None, Index(0)),
       routes.CompanyAddressController.onPageLoad(NormalMode, None, Index(0)),
       addresses,
-      subHeading = Some(Message(companyDetails.companyName))
+      title = Message("messages__companySelectAddress__title"),
+      heading = Message("messages__companySelectAddress__h1", companyDetails.companyName)
     )
   }
 
