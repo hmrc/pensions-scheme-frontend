@@ -1600,7 +1600,11 @@ messages__companyPreviousSelectAddress__h1 = What was {0}’s previous address?
 
 messages__companyConfirmAddress__title = Confirm company’s address
 messages__companyConfirmAddress__h1 = Confirm {0}’s address
+messages__companyConfirmAddress__cya_label = {0}’s address
+messages__companyConfirmAddress__cya_visually_hidden_label = contact address
 
 messages__companyPreviousConfirmAddress__title = Confirm company’s previous address
 messages__companyPreviousConfirmAddress__h1 = Confirm {0}’s previous address
+messages__companyPreviousConfirmAddress__cya_label = {0}’s previous address
+messages__companyPreviousConfirmAddress__cya_visually_hidden_label = previous contact address
 

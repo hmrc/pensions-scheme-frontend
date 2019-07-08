@@ -19,10 +19,11 @@ package identifiers.register.establishers.company
 import identifiers._
 import identifiers.register.establishers.{EstablishersId, IsEstablisherNewId}
 import models.address.Address
+import play.api.i18n.Messages
 import play.api.libs.json.JsPath
 import utils.checkyouranswers.{AddressCYA, CheckYourAnswers, PreviousAddressCYA}
 import utils.{CountryOptions, UserAnswers}
-import viewmodels.AnswerRow
+import viewmodels.{AnswerRow, Message}
 
 case class CompanyPreviousAddressId(index: Int) extends TypedIdentifier[Address] {
   override def path: JsPath = EstablishersId(index).path \ CompanyPreviousAddressId.toString
@@ -31,21 +32,21 @@ case class CompanyPreviousAddressId(index: Int) extends TypedIdentifier[Address]
 object CompanyPreviousAddressId {
   override def toString: String = "companyPreviousAddress"
 
-  implicit def cya(implicit countryOptions: CountryOptions): CheckYourAnswers[CompanyPreviousAddressId] = {
-    val label: String = "messages__common__cya__previous_address"
-    val changeAddress: String = "messages__visuallyhidden__establisher__previous_address"
-    val previousAddressAddLabel: String = "messages__visuallyhidden__establisher__previous_address_add"
+  implicit def cya(implicit countryOptions: CountryOptions, messages: Messages): CheckYourAnswers[CompanyPreviousAddressId] = {
+    def label(ua: UserAnswers, index: Int): Message = ua.get(CompanyDetailsId(index)).map(details =>
+      Message("messages__companyPreviousConfirmAddress__cya_label", details.companyName)).getOrElse(Message("messages__common__cya__address"))
+    val changeAddress: String = "messages__companyPreviousConfirmAddress__cya_visually_hidden_label"
 
     new CheckYourAnswers[CompanyPreviousAddressId] {
-      override def row(id: CompanyPreviousAddressId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        AddressCYA(label, changeAddress)().row(id)(changeUrl, userAnswers)
+      override def row(id: CompanyPreviousAddressId)(changeUrl: String, ua: UserAnswers): Seq[AnswerRow] =
+        AddressCYA(label(ua, id.index), changeAddress)().row(id)(changeUrl, ua)
 
-      override def updateRow(id: CompanyPreviousAddressId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        PreviousAddressCYA(label,
+      override def updateRow(id: CompanyPreviousAddressId)(changeUrl: String, ua: UserAnswers): Seq[AnswerRow] =
+        PreviousAddressCYA(label(ua, id.index),
           changeAddress,
-          userAnswers.get(IsEstablisherNewId(id.index)),
-          userAnswers.get(CompanyAddressYearsId(id.index)),
-          Some(previousAddressAddLabel))().updateRow(id)(changeUrl, userAnswers)
+          ua.get(IsEstablisherNewId(id.index)),
+          ua.get(CompanyAddressYearsId(id.index)),
+          Some(changeAddress))().updateRow(id)(changeUrl, ua)
     }
   }
 }
