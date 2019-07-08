@@ -57,7 +57,13 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
   protected def routes(from: NavigateFrom, mode: Mode, srn: Option[String]): Option[NavigateTo] =
     from.id match {
       case CompanyDetailsId(index) =>
-        NavigateTo.dontSave(establisherCompanyRoutes.CompanyVatController.onPageLoad(mode, index, srn))
+        NavigateTo.dontSave(
+          if (featureSwitchManagementService.get(Toggles.isEstablisherCompanyHnSEnabled)) {
+            controllers.register.establishers.routes.AddEstablisherController.onPageLoad(mode, srn)
+          } else {
+            establisherCompanyRoutes.CompanyVatController.onPageLoad(mode, index, srn)
+          }
+        )
       case HasCompanyNumberId(index) =>
         confirmHasCompanyNumber(index, mode, srn)(from.userAnswers)
       case HasCompanyVATId(index) =>

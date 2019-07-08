@@ -16,19 +16,19 @@
 
 package controllers.register.establishers
 
-import config.FrontendAppConfig
-import connectors.UserAnswersCacheConnector
+import config.{FeatureSwitchManagementService, FrontendAppConfig}
 import controllers.Retrievals
 import controllers.actions._
 import forms.register.establishers.AddEstablisherFormProvider
 import identifiers.register.establishers.AddEstablisherId
 import javax.inject.Inject
 import models.Mode
+import models.register.Establisher
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import utils.Navigator
 import utils.annotations.{Establishers, NoSuspendedCheck}
+import utils.{Navigator, Toggles}
 import views.html.register.establishers.addEstablisher
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -40,7 +40,9 @@ class AddEstablisherController @Inject()(appConfig: FrontendAppConfig,
                                          getData: DataRetrievalAction,
                                          @NoSuspendedCheck allowAccess: AllowAccessActionProvider,
                                          requireData: DataRequiredAction,
-                                         formProvider: AddEstablisherFormProvider)(implicit val ec: ExecutionContext)
+                                         formProvider: AddEstablisherFormProvider,
+                                         fsms: FeatureSwitchManagementService
+                                        )(implicit val ec: ExecutionContext)
   extends FrontendController with Retrievals with I18nSupport {
 
   def onPageLoad(mode: Mode, srn: Option[String]): Action[AnyContent] =
@@ -48,7 +50,7 @@ class AddEstablisherController @Inject()(appConfig: FrontendAppConfig,
       implicit request =>
         val establishers = request.userAnswers.allEstablishersAfterDelete
         Future.successful(Ok(addEstablisher(appConfig, formProvider(establishers), mode,
-          establishers, existingSchemeName, srn)))
+          establishers, existingSchemeName, srn, checkContinueButton(establishers), displayStatus = displayStatus)))
     }
 
   def onSubmit(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
@@ -57,9 +59,14 @@ class AddEstablisherController @Inject()(appConfig: FrontendAppConfig,
       formProvider(establishers).bindFromRequest().fold(
         formWithErrors =>
           Future.successful(BadRequest(addEstablisher(appConfig, formWithErrors, mode,
-            establishers, existingSchemeName, srn))),
+            establishers, existingSchemeName, srn, checkContinueButton(establishers), displayStatus = displayStatus))),
         value =>
           Future.successful(Redirect(navigator.nextPage(AddEstablisherId(value), mode, request.userAnswers, srn)))
       )
   }
+
+  private def checkContinueButton(establishers: Seq[Establisher[_]]) =
+    fsms.get(Toggles.isEstablisherCompanyHnSEnabled) || establishers.forall(_.isCompleted)
+
+  private def displayStatus = !fsms.get(Toggles.isEstablisherCompanyHnSEnabled)
 }
