@@ -512,7 +512,7 @@ messages__addCompanyDirectorsOrPartners_tell_us_if_you_have_more = You can tell 
 
 messages__director_address_years__title = Has the director been at their address for at least 1 year?
 messages__director_address_years__heading = Has {0} been at their address for at least 1 year?
-messages__director_address_years__cya = Has {0} been at their address for at least 1 year?
+messages__director_address_years__cya = Has the director been at their address for at least 1 year?
 
 messages__director_has_sautr__title = Does the director have a Self Assessment Unique Taxpayer Reference number?
 messages__director_sautr = Unique Taxpayer Reference number

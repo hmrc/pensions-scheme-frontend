@@ -462,27 +462,6 @@ case class AddressYearsCYA[I <: TypedIdentifier[AddressYears]](label: String = "
 
 }
 
-case class DirectorAddressYearsCYA[I <: TypedIdentifier[AddressYears]](label: String = "messages__director_address_years__title",
-                                                                       changeAddressYears: String = "messages__visuallyhidden__common__address_years",
-                                                                       directorName: String) {
-
-  def apply()(implicit rds: Reads[AddressYears]): CheckYourAnswers[I] = {
-    new CheckYourAnswers[I] {
-      override def row(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        userAnswers.get(id).map(addressYears =>
-          Seq(AnswerRow(
-            label,
-            Seq(s"messages__common__$addressYears"),
-            answerIsMessageKey = true,
-            Some(Link("site.change", changeUrl, Some(changeAddressYears)))
-          ))).getOrElse(Seq.empty[AnswerRow])
-
-      override def updateRow(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = Nil
-    }
-  }
-
-}
-
 case class AddressCYA[I <: TypedIdentifier[Address]](
                                                       label: String = "messages__common__cya__address",
                                                       changeAddress: String = "messages__visuallyhidden__common__address"

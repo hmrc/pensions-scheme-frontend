@@ -21,10 +21,10 @@ import identifiers.register.establishers.{EstablishersId, IsEstablisherCompleteI
 import models.AddressYears
 import play.api.libs.json.{JsPath, JsResult}
 import utils.UserAnswers
-import utils.checkyouranswers.{CheckYourAnswers, DirectorAddressYearsCYA}
+import utils.checkyouranswers.{AddressYearsCYA, CheckYourAnswers}
 import viewmodels.AnswerRow
 
-case class DirectorAddressYearsId(establisherIndex: Int, directorIndex: Int, directorName: String) extends TypedIdentifier[AddressYears] {
+case class DirectorAddressYearsId(establisherIndex: Int, directorIndex: Int) extends TypedIdentifier[AddressYears] {
 
   override def path: JsPath = EstablishersId(establisherIndex).path \ "director" \ directorIndex \ DirectorAddressYearsId.toString
 
@@ -54,14 +54,14 @@ object DirectorAddressYearsId {
 
     new CheckYourAnswers[DirectorAddressYearsId] {
       override def row(id: DirectorAddressYearsId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        DirectorAddressYearsCYA(label, changeAddressYears, "")().row(id)(changeUrl, userAnswers)
+        AddressYearsCYA(label, changeAddressYears)().row(id)(changeUrl, userAnswers)
 
       override def updateRow(id: DirectorAddressYearsId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
         userAnswers.get(IsNewDirectorId(id.establisherIndex, id.directorIndex)) match {
           case Some(true) =>
-            DirectorAddressYearsCYA(label, changeAddressYears, "")().row(id)(changeUrl, userAnswers)
+            AddressYearsCYA(label, changeAddressYears)().row(id)(changeUrl, userAnswers)
           case _ =>
-            DirectorAddressYearsCYA(label, changeAddressYears, "")().updateRow(id)(changeUrl, userAnswers)
+            AddressYearsCYA(label, changeAddressYears)().updateRow(id)(changeUrl, userAnswers)
         }
     }
   }
