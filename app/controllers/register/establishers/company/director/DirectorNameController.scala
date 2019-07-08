@@ -31,6 +31,19 @@ import utils.{Enumerable, Navigator}
 
 import scala.concurrent.{ExecutionContext, Future}
 
+/* JSON:-
+{
+                        "directorDetails" : {
+                            "firstName" : "Martin",
+                            "lastName" : "Smart",
+                        }
+                    }
+
+
+                    message key = directorDetails
+
+ */
+
 class DirectorNameController @Inject()(
                                         appConfig: FrontendAppConfig,
                                         override val messagesApi: MessagesApi,
