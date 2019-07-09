@@ -18,7 +18,7 @@ package views
 
 import com.google.inject.Inject
 import config.FrontendAppConfig
-import forms.HasVatFormProvider
+import forms.HasReferenceNumberFormProvider
 import models.{Index, NormalMode}
 import play.api.data.Form
 import play.twirl.api.HtmlFormat
@@ -31,7 +31,7 @@ class HasVatViewSpec@Inject()(appConfig: FrontendAppConfig) extends YesNoViewBeh
   val messageKeyPrefix = "hasCompanyVat"
   val srn = Some("srn")
 
-  val form = new HasVatFormProvider()("messages__hasCompanyVat__error__required", "ABC")
+  val form = new HasReferenceNumberFormProvider()("messages__hasCompanyVat__error__required", "ABC")
   val postCall = controllers.register.establishers.company.routes.HasCompanyVATController.onSubmit(NormalMode, None, Index(0))
 
   def viewModel(srn : Option[String] = None) = CommonFormWithHintViewModel(
