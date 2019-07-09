@@ -527,6 +527,9 @@ messages__error__no_sautr_director = You need to tell us why the director does n
 
 messages__director__cya__details_heading = Company director details
 messages__director__cya__contact__details_heading = Contact details for director
+messages__director__cya__name = Director’s name
+messages__director__cya__dob = What is {0}’s date of birth?
+
 
 messages__director__cya__utr_yes_no = Does the director have a Self Assessment Unique Taxpayer Reference number?
 messages__director__cya__utr = Unique Taxpayer Reference number
