@@ -51,6 +51,9 @@ class EstablishersCompanyDirectorNavigator @Inject()(val dataCacheConnector: Use
       case DirectorDetailsId(establisherIndex, directorIndex) =>
         NavigateTo.dontSave(controllers.register.establishers.company.director.routes.
           DirectorNinoController.onPageLoad(mode, establisherIndex, directorIndex, srn))
+      case DirectorNameId(establisherIndex, directorIndex) =>
+        NavigateTo.dontSave(controllers.register.establishers.company.director.routes.
+          DirectorDOBController.onPageLoad(mode, establisherIndex, directorIndex, srn))
       case DirectorNinoId(establisherIndex, directorIndex) =>
         NavigateTo.dontSave(routes.DirectorUniqueTaxReferenceController.onPageLoad(mode, establisherIndex, directorIndex, srn))
       case DirectorUniqueTaxReferenceId(establisherIndex, directorIndex) =>
@@ -72,6 +75,8 @@ class EstablishersCompanyDirectorNavigator @Inject()(val dataCacheConnector: Use
   protected def editRoutes(from: NavigateFrom, mode: Mode, srn: Option[String]): Option[NavigateTo] =
     from.id match {
       case DirectorDetailsId(establisherIndex, directorIndex) =>
+        exitMiniJourney(establisherIndex, directorIndex, mode, srn, from.userAnswers)
+      case DirectorNameId(establisherIndex, directorIndex) =>
         exitMiniJourney(establisherIndex, directorIndex, mode, srn, from.userAnswers)
       case DirectorNinoId(establisherIndex, directorIndex)  =>
         exitMiniJourney(establisherIndex, directorIndex, mode, srn, from.userAnswers)
