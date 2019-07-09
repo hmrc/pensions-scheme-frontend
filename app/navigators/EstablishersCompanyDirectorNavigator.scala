@@ -21,11 +21,12 @@ import config.FeatureSwitchManagementService
 import connectors.UserAnswersCacheConnector
 import controllers.register.establishers.company.director.routes
 import identifiers.AnyMoreChangesId
-import identifiers.register.establishers.IsEstablisherNewId
 import identifiers.register.establishers.company.director._
 import models.Mode.journeyMode
 import models._
 import utils.{Navigator, Toggles, UserAnswers}
+import controllers.register.establishers.company.director.routes._
+import play.api.mvc.Call
 
 @Singleton
 class EstablishersCompanyDirectorNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector,
@@ -42,7 +43,7 @@ class EstablishersCompanyDirectorNavigator @Inject()(val dataCacheConnector: Use
       case CheckMode | NormalMode =>
         checkYourAnswers(establisherIndex, directorIndex, journeyMode(mode), srn)
       case _ =>
-        if(answers.get(IsNewDirectorId(establisherIndex, directorIndex)).getOrElse(false))
+        if (answers.get(IsNewDirectorId(establisherIndex, directorIndex)).getOrElse(false))
           checkYourAnswers(establisherIndex, directorIndex, journeyMode(mode), srn)
         else anyMoreChanges(srn)
     }
@@ -52,6 +53,13 @@ class EstablishersCompanyDirectorNavigator @Inject()(val dataCacheConnector: Use
       case DirectorDetailsId(establisherIndex, directorIndex) =>
         NavigateTo.dontSave(controllers.register.establishers.company.director.routes.
           DirectorNinoController.onPageLoad(mode, establisherIndex, directorIndex, srn))
+      case DirectorHasNINOId(establisherIndex, directorIndex) =>
+        navigateOrSessionExpired(from.userAnswers, DirectorHasNINOId(establisherIndex, directorIndex),
+          if (_: Boolean)
+            routes.DirectorNinoNewController.onPageLoad(mode, establisherIndex, directorIndex, srn)
+          else
+            routes.DirectorNoNINOReasonController.onPageLoad(mode, establisherIndex, directorIndex, srn)
+        )
       case DirectorNameId(establisherIndex, directorIndex) =>
         NavigateTo.dontSave(controllers.register.establishers.company.director.routes.
           DirectorDOBController.onPageLoad(mode, establisherIndex, directorIndex, srn))
@@ -75,11 +83,13 @@ class EstablishersCompanyDirectorNavigator @Inject()(val dataCacheConnector: Use
     from.id match {
       case DirectorDetailsId(establisherIndex, directorIndex) =>
         exitMiniJourney(establisherIndex, directorIndex, mode, srn, from.userAnswers)
+      case DirectorHasNINOId(establisherIndex, directorIndex) =>
+        exitMiniJourney(establisherIndex, directorIndex, mode, srn, from.userAnswers)
       case DirectorNameId(establisherIndex, directorIndex) =>
         exitMiniJourney(establisherIndex, directorIndex, mode, srn, from.userAnswers)
-      case DirectorNinoId(establisherIndex, directorIndex)  =>
+      case DirectorNinoId(establisherIndex, directorIndex) =>
         exitMiniJourney(establisherIndex, directorIndex, mode, srn, from.userAnswers)
-      case DirectorNewNinoId(establisherIndex, directorIndex)  =>
+      case DirectorNewNinoId(establisherIndex, directorIndex) =>
         exitMiniJourney(establisherIndex, directorIndex, mode, srn, from.userAnswers)
       case DirectorUniqueTaxReferenceId(establisherIndex, directorIndex) =>
         exitMiniJourney(establisherIndex, directorIndex, mode, srn, from.userAnswers)
@@ -149,7 +159,7 @@ class EstablishersCompanyDirectorNavigator @Inject()(val dataCacheConnector: Use
         if (mode == CheckUpdateMode && featureSwitchManagementService.get(Toggles.isPrevAddEnabled))
           NavigateTo.dontSave(routes.DirectorConfirmPreviousAddressController.onPageLoad(establisherIndex, directorIndex, srn))
         else
-        NavigateTo.dontSave(routes.DirectorPreviousAddressPostcodeLookupController.onPageLoad(mode, establisherIndex, directorIndex, srn))
+          NavigateTo.dontSave(routes.DirectorPreviousAddressPostcodeLookupController.onPageLoad(mode, establisherIndex, directorIndex, srn))
       case Some(AddressYears.OverAYear) =>
         exitMiniJourney(establisherIndex, directorIndex, mode, srn, answers)
       case None =>
