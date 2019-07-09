@@ -22,10 +22,6 @@ class TogglesSpec extends FeatureToggleBehaviours {
     behave like featureToggle("is-variations-enabled", true)
   }
 
-  "is-address-pre-population-enabled new feature toggle" should {
-    behave like featureToggle("is-address-pre-population-enabled", true)
-  }
-
   "is-scheme-data-shift-enabled new feature toggle" should {
     behave like featureToggle("is-scheme-data-shift-enabled", true)
   }
