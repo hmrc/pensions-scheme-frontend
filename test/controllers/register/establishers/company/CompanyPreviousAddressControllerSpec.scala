@@ -84,8 +84,8 @@ class CompanyPreviousAddressControllerSpec extends ControllerSpecBase with Scala
       ManualAddressViewModel(
         routes.CompanyPreviousAddressController.onSubmit(NormalMode, None, index),
         options,
-        Message("messages__companyPreviousConfirmAddress__title"),
-        Message("messages__companyPreviousConfirmAddress__h1", companyName),
+        Message("messages__establisherPreviousConfirmAddress__title"),
+        Message("messages__establisherPreviousConfirmAddress__h1", companyName),
         Some(Message("messages__companyAddress__lede"))
       ),
       None

@@ -34,8 +34,8 @@ object CompanyPreviousAddressId {
 
   implicit def cya(implicit countryOptions: CountryOptions, messages: Messages): CheckYourAnswers[CompanyPreviousAddressId] = {
     def label(ua: UserAnswers, index: Int): Message = ua.get(CompanyDetailsId(index)).map(details =>
-      Message("messages__companyPreviousConfirmAddress__cya_label", details.companyName)).getOrElse(Message("messages__common__cya__address"))
-    val changeAddress: String = "messages__companyPreviousConfirmAddress__cya_visually_hidden_label"
+      Message("messages__establisherPreviousConfirmAddress__cya_label", details.companyName)).getOrElse(Message("messages__common__cya__address"))
+    val changeAddress: String = "messages__establisherPreviousConfirmAddress__cya_visually_hidden_label"
 
     new CheckYourAnswers[CompanyPreviousAddressId] {
       override def row(id: CompanyPreviousAddressId)(changeUrl: String, ua: UserAnswers): Seq[AnswerRow] =

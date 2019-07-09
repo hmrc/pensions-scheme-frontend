@@ -60,8 +60,8 @@ class CompanyAddressListController @Inject()(
           postCall = routes.CompanyAddressListController.onSubmit(mode, srn, index),
           manualInputCall = routes.CompanyAddressController.onPageLoad(mode, srn, index),
           addresses = addresses,
-          title = Message("messages__companySelectAddress__title"),
-          heading = Message("messages__companySelectAddress__h1", companyDetails.companyName),
+          title = Message("messages__establisherSelectAddress__title"),
+          heading = Message("messages__establisherSelectAddress__h1", companyDetails.companyName),
           srn = srn
         )
     }.left.map(_ => Future.successful(Redirect(CompanyPostCodeLookupController.onPageLoad(mode, srn, index))))

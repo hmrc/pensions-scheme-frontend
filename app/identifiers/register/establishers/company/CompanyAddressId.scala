@@ -38,7 +38,7 @@ object CompanyAddressId {
       override def row(id: CompanyAddressId)(changeUrl: String, ua: UserAnswers): Seq[AnswerRow] = {
         val label = ua.get(CompanyDetailsId(id.index)).map(details => Message("messages__companyConfirmAddress__cya_label", details.companyName)).
           getOrElse(Message("messages__common__cya__address"))
-        AddressCYA(label, "messages__companyConfirmAddress__cya_visually_hidden_label")().row(id)(changeUrl, ua)
+        AddressCYA(label, "messages__establisherConfirmAddress__cya_visually_hidden_label")().row(id)(changeUrl, ua)
       }
 
       override def updateRow(id: CompanyAddressId)(changeUrl: String, ua: UserAnswers): Seq[AnswerRow] = row(id)(changeUrl, ua)

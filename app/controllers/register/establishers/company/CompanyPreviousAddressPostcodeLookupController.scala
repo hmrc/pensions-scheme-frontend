@@ -49,8 +49,8 @@ class CompanyPreviousAddressPostcodeLookupController @Inject()(
                                                               )(implicit val ec: ExecutionContext) extends PostcodeLookupController {
 
   protected val form: Form[String] = formProvider()
-  private val title: Message = "messages__companyPreviousPostCode__title"
-  private val heading: Message = "messages__companyPreviousPostCode__h1"
+  private val title: Message = "messages__establisherPreviousPostCode__title"
+  private val heading: Message = "messages__establisherPreviousPostCode__h1"
 
   def onPageLoad(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {

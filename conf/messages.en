@@ -1586,25 +1586,25 @@ messages__establisher_phone__title =  What is the establisher’s phone number?
 messages__establisher_email__title =  What is the establisher’s email address?
 messages__establisher_email__hint = We will only use this to contact about pension scheme administration.
 
-messages__companyPostCode__title = What is company’s postcode?
-messages__companyPostCode__h1 = What is {0}’s postcode?
+messages__establisherPostCode__title = What is establisher’s postcode?
+messages__establisherPostCode__h1 = What is {0}’s postcode?
 
-messages__companyPreviousPostCode__title = What was company’s previous postcode?
-messages__companyPreviousPostCode__h1 = What was {0}’s previous postcode?
+messages__establisherPreviousPostCode__title = What was company’s previous postcode?
+messages__establisherPreviousPostCode__h1 = What was {0}’s previous postcode?
 
-messages__companySelectAddress__title = What is company’s address?
-messages__companySelectAddress__h1 = What is {0}’s address?
+messages__establisherSelectAddress__title = Select the address
+messages__establisherSelectAddress__h1 = What is {0}’s address?
 
-messages__companyPreviousSelectAddress__title = What was company’s previous address?
-messages__companyPreviousSelectAddress__h1 = What was {0}’s previous address?
+messages__establisherPreviousSelectAddress__title = What was establisher’s previous address?
+messages__establisherPreviousSelectAddress__h1 = What was {0}’s previous address?
 
-messages__companyConfirmAddress__title = Confirm company’s address
-messages__companyConfirmAddress__h1 = Confirm {0}’s address
-messages__companyConfirmAddress__cya_label = {0}’s address
-messages__companyConfirmAddress__cya_visually_hidden_label = contact address
+messages__establisherConfirmAddress__title = Confirm establisher’s address
+messages__establisherConfirmAddress__h1 = Confirm {0}’s address
+messages__establisherConfirmAddress__cya_label = {0}’s address
+messages__establisherConfirmAddress__cya_visually_hidden_label = contact address
 
-messages__companyPreviousConfirmAddress__title = Confirm company’s previous address
-messages__companyPreviousConfirmAddress__h1 = Confirm {0}’s previous address
-messages__companyPreviousConfirmAddress__cya_label = {0}’s previous address
-messages__companyPreviousConfirmAddress__cya_visually_hidden_label = previous contact address
+messages__establisherPreviousConfirmAddress__title = Confirm establisher’s previous address
+messages__establisherPreviousConfirmAddress__h1 = Confirm {0}’s previous address
+messages__establisherPreviousConfirmAddress__cya_label = {0}’s previous address
+messages__establisherPreviousConfirmAddress__cya_visually_hidden_label = previous contact address
 
