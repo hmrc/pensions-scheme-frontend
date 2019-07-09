@@ -19,22 +19,24 @@ package controllers.register.establishers.company.director
 import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions._
-import forms.register.establishers.company.director.DirectorNinoFormProvider
-import identifiers.register.establishers.company.director.{DirectorDetailsId, DirectorNinoId}
+import forms.register.PersonNameFormProvider
+import identifiers.register.establishers.IsEstablisherCompleteId
+import identifiers.register.establishers.company.director.{DirectorNameId, DirectorNinoId, IsNewDirectorId}
 import javax.inject.Inject
-import models.{Index, Mode, Nino}
+import models.person.PersonName
+import models.{Index, Mode}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Call}
 import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.EstablishersCompanyDirector
-import utils.{Enumerable, Navigator, UserAnswers}
-import views.html.register.establishers.company.director.directorNino
+import utils.{Enumerable, Navigator, SectionComplete, UserAnswers}
+import views.html.register.establishers.company.director.directorName
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class DirectorNinoController @Inject()(
+class DirectorNameController @Inject()(
                                         appConfig: FrontendAppConfig,
                                         override val messagesApi: MessagesApi,
                                         userAnswersService: UserAnswersService,
@@ -43,45 +45,42 @@ class DirectorNinoController @Inject()(
                                         getData: DataRetrievalAction,
                                         allowAccess: AllowAccessActionProvider,
                                         requireData: DataRequiredAction,
-                                        formProvider: DirectorNinoFormProvider
+                                        formProvider: PersonNameFormProvider,
+                                        sectionComplete: SectionComplete
                                       )(implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
 
-  private val form: Form[Nino] = formProvider()
-  private def postCall: (Mode, Index, Index, Option[String]) => Call = routes.DirectorNinoController.onSubmit _
+  private val form = formProvider()
+
+  private def postCall: (Mode, Index, Index, Option[String]) => Call = routes.DirectorNameController.onSubmit _
 
   def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
-    implicit request =>
-      DirectorDetailsId(establisherIndex, directorIndex).retrieve.right.flatMap { director =>
-        DirectorNinoId(establisherIndex, directorIndex).retrieve.right.map { value =>
-          Future.successful(Ok(directorNino(
-            appConfig, form.fill(value), mode, establisherIndex, directorIndex, existingSchemeName, postCall(mode, establisherIndex, directorIndex, srn), srn)))
-        }.left.map { _ =>
-          Future.successful(Ok(directorNino(
-            appConfig, form, mode, establisherIndex, directorIndex, existingSchemeName, postCall(mode, establisherIndex, directorIndex, srn), srn)))
+      implicit request =>
+        val preparedForm = request.userAnswers.get[PersonName](DirectorNameId(establisherIndex, directorIndex)) match {
+          case None => form
+          case Some(value) => form.fill(value)
         }
-      }
-  }
+        Future.successful(Ok(directorName(
+          appConfig, preparedForm, mode, establisherIndex, directorIndex, existingSchemeName, postCall(mode, establisherIndex, directorIndex, srn), srn)))
+    }
 
-
-  def onSubmit(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
-    implicit request =>
-      DirectorDetailsId(establisherIndex, directorIndex).retrieve.right.map { director =>
+  def onSubmit(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen requireData).async {
+      implicit request =>
         form.bindFromRequest().fold(
           (formWithErrors: Form[_]) =>
-            Future.successful(BadRequest(directorNino(
-              appConfig, formWithErrors, mode, establisherIndex, directorIndex, existingSchemeName, postCall(mode, establisherIndex, directorIndex, srn), srn))),
-          (value) =>
-            userAnswersService.save(
-              mode,
-              srn,
-              DirectorNinoId(establisherIndex, directorIndex),
-              value
-            ) map { json =>
-              Redirect(navigator.nextPage(DirectorNinoId(establisherIndex, directorIndex), mode, UserAnswers(json), srn))
-            }
-        )
-      }
-  }
+            Future.successful(BadRequest(directorName(
+              appConfig, formWithErrors, mode, establisherIndex, directorIndex, existingSchemeName, postCall(mode, establisherIndex, directorIndex, srn), srn)))
+          ,
+          value => {
+            val answers = request.userAnswers.set(IsNewDirectorId(establisherIndex, directorIndex))(true).flatMap(
+              _.set(DirectorNameId(establisherIndex, directorIndex))(value)).asOpt.getOrElse(request.userAnswers)
 
+            userAnswersService.upsert(mode, srn, answers.json).map {
+              cacheMap =>
+                Redirect(navigator.nextPage(DirectorNameId(establisherIndex, directorIndex), mode, UserAnswers(cacheMap), srn))
+            }
+          }
+        )
+    }
 }

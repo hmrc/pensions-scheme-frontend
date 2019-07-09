@@ -1,4 +1,4 @@
-@*
+/*
  * Copyright 2019 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,10 +12,20 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *@
+ */
 
-@(messageKey: String = "site.save_and_continue", enableSubmission: Boolean = true)(implicit messages: Messages)
+package identifiers.register.establishers.company.director
 
-<div class="section">
-    <button id="submit" class="button" @if(!enableSubmission) {disabled}>@messages(messageKey)</button>
-</div>
+import identifiers._
+import identifiers.register.establishers.EstablishersId
+import play.api.libs.json.JsPath
+
+case class DirectorHasUTRId(establisherIndex: Int, directorIndex: Int) extends TypedIdentifier[Boolean] {
+  override def path: JsPath = EstablishersId(establisherIndex).path \ "director" \ directorIndex \ "directorUniqueTaxReference" \ DirectorHasUTRId.toString
+}
+
+object DirectorHasUTRId {
+  override def toString: String = "hasUtr"
+}
+
+

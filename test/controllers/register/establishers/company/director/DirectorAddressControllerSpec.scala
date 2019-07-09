@@ -100,7 +100,7 @@ class DirectorAddressControllerSpec extends ControllerSpecBase with MockitoSugar
             controller.postCall(NormalMode, establisherIndex, directorIndex, None),
             countryOptions.options,
             Message(controller.title),
-            Message(controller.heading),
+            Message(controller.heading, director.fullName),
             secondaryHeader = Some(director.fullName),
             Some(Message(controller.hint))
           )
