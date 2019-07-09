@@ -1104,6 +1104,7 @@ messages__visuallyhidden__director__utr_no = Change why the director does not ha
 messages__visuallyhidden__director__utr = Change the director’s Unique Taxpayer Reference number
 messages__visuallyhidden__director__address = Change the director’s address
 messages__visuallyhidden__director__address_years = Change how long the director has been at their address
+messages__visuallyhidden__director__address_years_withName = Change how long {0} has been at their address
 messages__visuallyhidden__director__previous_address = Change the director’s previous address
 messages__visuallyhidden__director__previous_address_add = Add the director’s previous address
 messages__visuallyhidden__director__email_address = Change the director’s email address

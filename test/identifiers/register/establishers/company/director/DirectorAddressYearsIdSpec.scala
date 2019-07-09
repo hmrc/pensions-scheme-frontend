@@ -140,7 +140,8 @@ class DirectorAddressYearsIdSpec extends WordSpec with MustMatchers with OptionV
             label = messages("messages__director_address_years__cya_withName", userAnswers.get(DirectorDetailsId(0, 0)).get.fullName),
             answer = Seq(s"messages__common__under_a_year"),
             answerIsMessageKey = true,
-            changeUrl = Some(Link("site.change", onwardUrl, Some("messages__visuallyhidden__director__address_years")))
+            changeUrl =
+              Some(Link("site.change", onwardUrl, Some(messages("messages__visuallyhidden__director__address_years_withName", userAnswers.get(DirectorDetailsId(0, 0)).get.fullName))))
           ))
         )
       }
@@ -150,12 +151,12 @@ class DirectorAddressYearsIdSpec extends WordSpec with MustMatchers with OptionV
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
         implicit val userAnswers: UserAnswers = request.userAnswers
 
-        DirectorAddressYearsId(0, 0).row(onwardUrl, UpdateMode) must equal(
+        DirectorAddressYearsId(0, 0).row(onwardUrl, NormalMode) must equal(
           Seq(AnswerRow(
             label = messages("messages__director_address_years__cya"),
             answer = Seq(s"messages__common__under_a_year"),
             answerIsMessageKey = true,
-            changeUrl = Some(Link("site.change", onwardUrl, Some("messages__visuallyhidden__director__address_years")))
+            changeUrl = Some(Link("site.change", onwardUrl, Some(messages("messages__visuallyhidden__director__address_years"))))
           ))
         )
       }
@@ -178,7 +179,8 @@ class DirectorAddressYearsIdSpec extends WordSpec with MustMatchers with OptionV
             label = messages("messages__director_address_years__cya_withName", userAnswers.get(DirectorDetailsId(0, 0)).get.fullName),
             answer = Seq(s"messages__common__under_a_year"),
             answerIsMessageKey = true,
-            changeUrl = Some(Link("site.change", onwardUrl, Some("messages__visuallyhidden__director__address_years")))
+            changeUrl =
+              Some(Link("site.change", onwardUrl, Some(messages("messages__visuallyhidden__director__address_years_withName", userAnswers.get(DirectorDetailsId(0, 0)).get.fullName))))
           ))
         )
       }
@@ -193,7 +195,7 @@ class DirectorAddressYearsIdSpec extends WordSpec with MustMatchers with OptionV
             label = messages("messages__director_address_years__cya"),
             answer = Seq(s"messages__common__under_a_year"),
             answerIsMessageKey = true,
-            changeUrl = Some(Link("site.change", onwardUrl, Some("messages__visuallyhidden__director__address_years")))
+            changeUrl = Some(Link("site.change", onwardUrl, Some(messages("messages__visuallyhidden__director__address_years"))))
           ))
         )
       }
@@ -203,7 +205,7 @@ class DirectorAddressYearsIdSpec extends WordSpec with MustMatchers with OptionV
 
       "return answers rows without change links" in {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
-        implicit val userAnswers = request.userAnswers
+        implicit val userAnswers: UserAnswers = request.userAnswers
 
         DirectorAddressYearsId(0, 0).row(onwardUrl, UpdateMode) must equal(Nil)
       }
