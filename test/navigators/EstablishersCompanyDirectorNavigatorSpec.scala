@@ -62,6 +62,8 @@ class EstablishersCompanyDirectorNavigatorSpec extends SpecBase with NavigatorBe
     (DirectorPreviousAddressId(0, 0), newDirector, directorContactDetails(mode), true, Some(exitJourney(mode, newDirector)), true),
     (DirectorContactDetailsId(0, 0), emptyAnswers, checkYourAnswers(mode), true, Some(exitJourney(mode, emptyAnswers)), true),
     (DirectorContactDetailsId(0, 0), newDirector, checkYourAnswers(mode), true, Some(exitJourney(mode, newDirector)), true),
+    (DirectorEmailId(0, 0), emptyAnswers, directorPhone(mode), true, Some(exitJourney(mode, emptyAnswers)), true),
+    (DirectorEmailId(0, 0), newDirector, directorPhone(mode), true, Some(exitJourney(mode, newDirector)), true),
     (AnyMoreChangesId, newDirector, anyMoreChanges, true, None, true)
   )
 
@@ -133,6 +135,8 @@ object EstablishersCompanyDirectorNavigatorSpec extends SpecBase with OptionValu
   private def directorNino(mode: Mode) = routes.DirectorNinoController.onPageLoad(mode, directorIndex, establisherIndex, None)
 
   private def directorUtr(mode: Mode) = routes.DirectorUniqueTaxReferenceController.onPageLoad(mode, directorIndex, establisherIndex, None)
+
+  private def directorPhone(mode: Mode) = routes.DirectorPhoneNumberController.onPageLoad(mode, directorIndex, establisherIndex, None)
 
   private def directorContactDetails(mode: Mode) = routes.DirectorContactDetailsController.onPageLoad(mode, directorIndex, establisherIndex, None)
 
