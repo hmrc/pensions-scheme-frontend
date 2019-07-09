@@ -17,16 +17,17 @@
 package navigators
 
 import base.SpecBase
+import config.FeatureSwitchManagementServiceTestImpl
 import connectors.FakeUserAnswersCacheConnector
-import identifiers.register.establishers.ExistingCurrentAddressId
 import identifiers.register.trustees.IsTrusteeNewId
 import identifiers.register.trustees.individual._
-import models.Mode.checkMode
 import models._
+import models.Mode.checkMode
 import org.scalatest.OptionValues
+import play.api.Configuration
 import play.api.libs.json.Json
 import play.api.mvc.Call
-import utils.{FakeFeatureSwitchManagementService, UserAnswers}
+import utils.{FakeFeatureSwitchManagementService, Toggles, UserAnswers}
 
 class TrusteesIndividualNavigatorSpec extends SpecBase with NavigatorBehaviour {
 
@@ -47,7 +48,7 @@ class TrusteesIndividualNavigatorSpec extends SpecBase with NavigatorBehaviour {
     (TrusteeAddressId(0), newTrustee, addressYears(mode), true, Some(checkYourAnswers(mode)), true),
     (TrusteeAddressYearsId(0), overAYearNew, contactDetails(mode), true, Some(exitJourney(mode,overAYearNew)), true),
     (TrusteeAddressYearsId(0), overAYear, contactDetails(mode), true, Some(exitJourney(mode,emptyAnswers)), true),
-    (TrusteeAddressYearsId(0), underAYear, previousAddressPostcode(mode), true, addressYearsLessThanTwelveEdit(mode, underAYear), true),
+    (TrusteeAddressYearsId(0), underAYear, previousAddressPostcode(mode), true, addressYearsLessThanTwelveEdit(mode, isPrevAddEnabled), true),
     (TrusteeAddressYearsId(0), emptyAnswers, sessionExpired, false, Some(sessionExpired), false),
     (IndividualConfirmPreviousAddressId(0), emptyAnswers, none, false, Some(sessionExpired), false),
     (IndividualConfirmPreviousAddressId(0), confirmPreviousAddressYes, none, false, Some(anyMoreChanges), false),
@@ -140,17 +141,8 @@ object TrusteesIndividualNavigatorSpec extends SpecBase with OptionValues {
     else anyMoreChanges
   }
 
-  private def addressYearsLessThanTwelveEdit(mode: Mode, userAnswers: UserAnswers) =
-    (
-      userAnswers.get(ExistingCurrentAddressId(0)),
-      mode
-    ) match {
-      case (None, CheckUpdateMode) =>
-        Some(previousAddressPostcode(checkMode(mode)))
-      case (_, CheckUpdateMode) =>
-        Some(confirmPreviousAddress)
-      case _ =>
-        Some(previousAddressPostcode(checkMode(mode)))
-    }
+  private def addressYearsLessThanTwelveEdit(mode: Mode, isPrevAddEnabled: Boolean = false) =
+    if (checkMode(mode) == CheckUpdateMode && isPrevAddEnabled) Some(confirmPreviousAddress)
+    else Some(previousAddressPostcode(checkMode(mode)))
 
 }
