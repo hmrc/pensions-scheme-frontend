@@ -36,8 +36,5 @@ class DirectorDOBFormProvider @Inject() extends Mappings with Transforms {
 }
 
 object DirectorDOBFormProvider {
-  val firstNameLength: Int = 35
-  val middleNameLength: Int = 35
-  val lastNameLength: Int = 35
   val startYear: Int = 1900
 }

@@ -17,9 +17,8 @@
 package views.register.establishers.company.director
 
 import controllers.register.establishers.company.director.routes
-import forms.register.PersonDetailsFormProvider
 import forms.register.establishers.company.director.DirectorDOBFormProvider
-import models.person.{DateOfBirth, PersonDetails}
+import models.person.DateOfBirth
 import models.{Index, NormalMode}
 import org.joda.time.LocalDate
 import play.api.data.{Form, FormError}
