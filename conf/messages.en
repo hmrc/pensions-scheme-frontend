@@ -466,9 +466,11 @@ messages__companyAddress__lede = This is usually the registered business address
 messages__companyAddress__trustee__lede = This is usually the registered business address of the trustee but you can enter any address you have for this company.
 messages__companyAddress__checkYourAnswersLabel = Address
 
-
 messages__directorDetails__title = Company director
 messages__directorDetails__heading = Company director
+
+messages__directorName__title = What is the director’s name?
+messages__directorName__heading = What is the director’s name?
 
 messages__companyPreviousAddressPostcodeLookup__title = Previous address of the company
 messages__companyPreviousAddressPostcodeLookup__heading = Previous address of the company

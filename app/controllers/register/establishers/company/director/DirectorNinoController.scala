@@ -78,7 +78,7 @@ class DirectorNinoController @Inject()(
               DirectorNinoId(establisherIndex, directorIndex),
               value
             ) map { json =>
-              Redirect(navigator.nextPage(DirectorNinoId(establisherIndex, directorIndex), mode, new UserAnswers(json), srn))
+              Redirect(navigator.nextPage(DirectorNinoId(establisherIndex, directorIndex), mode, UserAnswers(json), srn))
             }
         )
       }
