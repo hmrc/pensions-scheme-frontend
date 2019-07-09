@@ -29,8 +29,7 @@ import models._
 import utils.{Navigator, Toggles, UserAnswers}
 
 class TrusteesCompanyNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector,
-                                         appConfig: FrontendAppConfig,
-                                         featureSwitchManagementService: FeatureSwitchManagementService) extends Navigator {
+                                         appConfig: FrontendAppConfig) extends Navigator {
 
   private def exitMiniJourney(index: Index, mode: Mode, srn: Option[String], answers: UserAnswers): Option[NavigateTo] =
     if(mode == CheckMode || mode == NormalMode){
@@ -196,7 +195,7 @@ class TrusteesCompanyNavigator @Inject()(val dataCacheConnector: UserAnswersCach
   }
 
   private def confirmPreviousAddressRoutes(index: Int, mode: Mode, srn: Option[String])(answers: UserAnswers): Option[NavigateTo] =
-    if (mode == CheckUpdateMode && featureSwitchManagementService.get(Toggles.isPrevAddEnabled)) {
+    if (mode == CheckUpdateMode) {
       answers.get(CompanyConfirmPreviousAddressId(index)) match {
         case Some(false) =>
           NavigateTo.dontSave(CompanyPreviousAddressPostcodeLookupController.onPageLoad(mode, index, srn))

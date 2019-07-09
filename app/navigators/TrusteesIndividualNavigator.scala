@@ -29,8 +29,7 @@ import utils.{Navigator, UserAnswers}
 
 @Singleton
 class TrusteesIndividualNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector,
-                                            appConfig: FrontendAppConfig,
-                                            featureSwitchManagementService: FeatureSwitchManagementService) extends Navigator {
+                                            appConfig: FrontendAppConfig) extends Navigator {
 
   private def checkYourAnswers(index: Int, mode: Mode, srn: Option[String]): Option[NavigateTo] =
     NavigateTo.dontSave(CheckYourAnswersController.onPageLoad(mode, index, srn))

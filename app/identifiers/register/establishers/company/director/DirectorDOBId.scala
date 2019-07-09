@@ -14,24 +14,16 @@
  * limitations under the License.
  */
 
-package toggles
+package identifiers.register.establishers.company.director
 
-class TogglesSpec extends FeatureToggleBehaviours {
+import identifiers._
+import identifiers.register.establishers.EstablishersId
+import play.api.libs.json.JsPath
 
-  "is-variations-enabled new feature toggle" should {
-    behave like featureToggle("is-variations-enabled", true)
-  }
+case class DirectorDOBId(establisherIndex: Int, directorIndex: Int) extends TypedIdentifier[String] {
+  override def path: JsPath = EstablishersId(establisherIndex).path \ "director" \ directorIndex \ "directorDetails" \ DirectorDOBId.toString
+}
 
-  "is-scheme-data-shift-enabled new feature toggle" should {
-    behave like featureToggle("is-scheme-data-shift-enabled", true)
-  }
-
-  "separate-ref-collection new feature toggle" should {
-    behave like featureToggle("separate-ref-collection", false)
-  }
-
-  "is-establisher-company-hns new feature toggle" should {
-    behave like featureToggle("is-establisher-company-hns", false)
-  }
-
+object DirectorDOBId {
+  override def toString: String = "date"
 }

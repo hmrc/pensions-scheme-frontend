@@ -17,7 +17,7 @@
 package navigators
 
 import com.google.inject.Inject
-import config.{FeatureSwitchManagementService, FrontendAppConfig}
+import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
 import controllers.register.establishers.partnership.partner._
 import identifiers.EstablishersOrTrusteesChangedId
@@ -26,11 +26,10 @@ import identifiers.register.establishers.partnership.AddPartnersId
 import identifiers.register.establishers.partnership.partner._
 import models.Mode.journeyMode
 import models._
-import utils.{Navigator, Toggles, UserAnswers}
+import utils.{Navigator, UserAnswers}
 
 class EstablishersPartnerNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector,
-                                             appConfig: FrontendAppConfig,
-                                             featureSwitchManagementService: FeatureSwitchManagementService) extends Navigator {
+                                             appConfig: FrontendAppConfig) extends Navigator {
   //scalastyle:off cyclomatic.complexity
   private def checkYourAnswers(establisherIndex: Int, partnerIndex: Int, mode: Mode, srn: Option[String]): Option[NavigateTo] =
     NavigateTo.dontSave(routes.CheckYourAnswersController.onPageLoad(mode, establisherIndex, partnerIndex, srn))

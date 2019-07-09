@@ -17,7 +17,6 @@
 package navigators
 
 import com.google.inject.{Inject, Singleton}
-import config.FeatureSwitchManagementService
 import connectors.UserAnswersCacheConnector
 import controllers.register.establishers.company.director.routes
 import identifiers.AnyMoreChangesId
@@ -27,8 +26,7 @@ import models._
 import utils.{Navigator, UserAnswers}
 
 @Singleton
-class EstablishersCompanyDirectorNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector,
-                                                     featureSwitchManagementService: FeatureSwitchManagementService) extends Navigator {
+class EstablishersCompanyDirectorNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector) extends Navigator {
 
   private def checkYourAnswers(establisherIndex: Int, directorIndex: Int, mode: Mode, srn: Option[String]): Option[NavigateTo] =
     NavigateTo.dontSave(routes.CheckYourAnswersController.onPageLoad(establisherIndex, directorIndex, mode, srn))
@@ -51,6 +49,9 @@ class EstablishersCompanyDirectorNavigator @Inject()(val dataCacheConnector: Use
       case DirectorDetailsId(establisherIndex, directorIndex) =>
         NavigateTo.dontSave(controllers.register.establishers.company.director.routes.
           DirectorNinoController.onPageLoad(mode, establisherIndex, directorIndex, srn))
+      case DirectorNameId(establisherIndex, directorIndex) =>
+        NavigateTo.dontSave(controllers.register.establishers.company.director.routes.
+          DirectorDOBController.onPageLoad(mode, establisherIndex, directorIndex, srn))
       case DirectorNinoId(establisherIndex, directorIndex) =>
         NavigateTo.dontSave(routes.DirectorUniqueTaxReferenceController.onPageLoad(mode, establisherIndex, directorIndex, srn))
       case DirectorUniqueTaxReferenceId(establisherIndex, directorIndex) =>
@@ -71,6 +72,8 @@ class EstablishersCompanyDirectorNavigator @Inject()(val dataCacheConnector: Use
     from.id match {
       case DirectorDetailsId(establisherIndex, directorIndex) =>
         exitMiniJourney(establisherIndex, directorIndex, mode, srn, from.userAnswers)
+      case DirectorNameId(establisherIndex, directorIndex) =>
+        exitMiniJourney(establisherIndex, directorIndex, mode, srn, from.userAnswers)
       case DirectorNinoId(establisherIndex, directorIndex) =>
         exitMiniJourney(establisherIndex, directorIndex, mode, srn, from.userAnswers)
       case DirectorNewNinoId(establisherIndex, directorIndex) =>
@@ -84,7 +87,8 @@ class EstablishersCompanyDirectorNavigator @Inject()(val dataCacheConnector: Use
         } else {
           NavigateTo.dontSave(routes.DirectorAddressYearsController.onPageLoad(mode, establisherIndex, directorIndex, srn))
         }
-      case DirectorConfirmPreviousAddressId(establisherIndex, directorIndex) => confirmPreviousAddressRoutes(establisherIndex, directorIndex, mode, srn)(from.userAnswers)
+      case DirectorConfirmPreviousAddressId(establisherIndex, directorIndex) =>
+        confirmPreviousAddressRoutes(establisherIndex, directorIndex, mode, srn)(from.userAnswers)
       case DirectorPreviousAddressId(establisherIndex, directorIndex) =>
         exitMiniJourney(establisherIndex, directorIndex, mode, srn, from.userAnswers)
       case DirectorContactDetailsId(establisherIndex, directorIndex) =>
@@ -94,7 +98,6 @@ class EstablishersCompanyDirectorNavigator @Inject()(val dataCacheConnector: Use
       case _ => commonRoutes(from, mode, srn)
     }
 
-  //scalastyle:on cyclomatic.complexity
   protected def commonRoutes(from: NavigateFrom, mode: Mode, srn: Option[String]): Option[NavigateTo] =
     from.id match {
       case DirectorAddressPostcodeLookupId(establisherIndex, directorIndex) =>
@@ -117,6 +120,7 @@ class EstablishersCompanyDirectorNavigator @Inject()(val dataCacheConnector: Use
       case AnyMoreChangesId => anyMoreChanges(srn)
       case _ => None
     }
+  //scalastyle:on cyclomatic.complexity
 
   override protected def routeMap(from: NavigateFrom): Option[NavigateTo] = normalRoutes(from, NormalMode, None)
 

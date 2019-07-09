@@ -17,7 +17,6 @@
 package navigators
 
 import base.SpecBase
-import config.FeatureSwitchManagementServiceTestImpl
 import connectors.FakeUserAnswersCacheConnector
 import controllers.register.establishers.partnership.partner._
 import identifiers.register.establishers.partnership.partner._
@@ -30,19 +29,19 @@ import models.person.PersonDetails
 import org.joda.time.LocalDate
 import org.scalatest.OptionValues
 import org.scalatest.prop.TableFor6
-import play.api.Configuration
+import play.Configuration
 import play.api.libs.json.Json
 import play.api.mvc.Call
-import utils.{FakeFeatureSwitchManagementService, UserAnswers}
+import utils.UserAnswers
 
 class EstablishersPartnerNavigatorSpec extends SpecBase with NavigatorBehaviour {
   //scalastyle:off line.size.limit
   //scalastyle:off magic.number
   import EstablishersPartnerNavigatorSpec._
 
-  private val navigator = new EstablishersPartnerNavigator(FakeUserAnswersCacheConnector, frontendAppConfig, new FakeFeatureSwitchManagementService(false))
+  private val navigator = new EstablishersPartnerNavigator(FakeUserAnswersCacheConnector, frontendAppConfig)
 
-  private def commonRoutes(mode: Mode, isPrevAddEnabled : Boolean): TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = Table(
+  private def commonRoutes(mode: Mode): TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = Table(
     ("Id", "User Answers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (Check Mode)", "Save (CM)"),
     (AddPartnersId(0), emptyAnswers, partnerDetails(0, mode), true, None, true),
     (AddPartnersId(0), addPartnersTrue, partnerDetails(1, mode), true, None, true),
@@ -74,14 +73,14 @@ class EstablishersPartnerNavigatorSpec extends SpecBase with NavigatorBehaviour 
   )
 
 
-  private def normalRoutes(mode:Mode, isPrevAddEnabled : Boolean = false): TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = commonRoutes(mode, isPrevAddEnabled) ++ Table(
+  private def normalRoutes(mode:Mode): TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = commonRoutes(mode) ++ Table(
     ("Id", "User Answers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (Check Mode)", "Save (CM)"),
     (ConfirmDeletePartnerId(0), emptyAnswers, addPartners(mode), false, None, false),
     (CheckYourAnswersId(0, 0), emptyAnswers, addPartners(mode), true, None, true),
     (AddPartnersId(0), addPartnersFalse, partnershipReview(mode), true, None, true)
   )
 
-  private def editRoutes(mode:Mode, isPrevAddEnabled : Boolean = false): TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = commonRoutes(mode, isPrevAddEnabled) ++ Table(
+  private def editRoutes(mode:Mode): TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = commonRoutes(mode) ++ Table(
     ("Id", "User Answers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (Check Mode)", "Save (CM)"),
     (ConfirmDeletePartnerId(0), emptyAnswers, anyMoreChanges, false, None, false),
     (CheckYourAnswersId(0, 0), emptyAnswers, addPartners(mode), true, None, true),
@@ -98,12 +97,6 @@ class EstablishersPartnerNavigatorSpec extends SpecBase with NavigatorBehaviour 
     behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, editRoutes(UpdateMode), dataDescriber, UpdateMode)
     behave like nonMatchingNavigator(navigator)
     behave like nonMatchingNavigator(navigator, UpdateMode)
-  }
-
-  s"when previous address feature is toggled On" must {
-    val navigator = new EstablishersPartnerNavigator(FakeUserAnswersCacheConnector, frontendAppConfig, new FakeFeatureSwitchManagementService(true))
-    appRunning()
-    behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, editRoutes(UpdateMode, true), dataDescriber, UpdateMode)
   }
 }
 
@@ -130,7 +123,6 @@ object EstablishersPartnerNavigatorSpec extends SpecBase with OptionValues {
     .set(PartnerConfirmPreviousAddressId(0, 0))(false).asOpt.value
 
   private val config = injector.instanceOf[Configuration]
-  private def featureSwitch = new FeatureSwitchManagementServiceTestImpl(config, environment)
 
   private def addressYearsLessThanTwelveEdit(mode: Mode, userAnswers: UserAnswers)=
     (
