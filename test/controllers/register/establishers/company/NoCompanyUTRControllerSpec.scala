@@ -67,7 +67,7 @@ class NoCompanyUTRControllerSpec extends WordSpec with MustMatchers with OptionV
           val result = controller.onPageLoad(viewmodel, UserAnswers())
 
           status(result) mustEqual OK
-          contentAsString(result) mustEqual reason(appConfig, formProvider(companyName)(messages), viewmodel, None)(request, messages).toString
+          contentAsString(result) mustEqual reason(appConfig, formProvider(errorKey, companyName)(messages), viewmodel, None)(request, messages).toString
       }
     }
 
@@ -91,7 +91,7 @@ class NoCompanyUTRControllerSpec extends WordSpec with MustMatchers with OptionV
           status(result) mustEqual OK
           contentAsString(result) mustEqual reason(
             appConfig,
-            formProvider(companyName)(messages).fill("123456789"),
+            formProvider(errorKey, companyName)(messages).fill("123456789"),
             viewmodel,
             None
           )(request, messages).toString
@@ -146,7 +146,7 @@ class NoCompanyUTRControllerSpec extends WordSpec with MustMatchers with OptionV
           status(result) mustEqual BAD_REQUEST
           contentAsString(result) mustEqual reason(
             appConfig,
-            formProvider(companyName)(messages).bind(Map("reason" -> "123456789{0}12345")),
+            formProvider(errorKey, companyName)(messages).bind(Map("reason" -> "123456789{0}12345")),
             viewmodel,
             None
           )(request, messages).toString
@@ -161,6 +161,8 @@ object NoCompanyUTRControllerSpec {
   object FakeIdentifier extends TypedIdentifier[String]
 
   val companyName = "test company"
+  val errorKey = "messages__reason__error_utrRequired"
+
   class TestController @Inject()(
                                   override val appConfig: FrontendAppConfig,
                                   override val messagesApi: MessagesApi,
@@ -170,11 +172,11 @@ object NoCompanyUTRControllerSpec {
                                 )(implicit val ec: ExecutionContext) extends ReasonController {
 
     def onPageLoad(viewmodel: ReasonViewModel, answers: UserAnswers): Future[Result] = {
-      get(FakeIdentifier, viewmodel, formProvider(companyName))(DataRequest(FakeRequest(), "cacheId", answers, PsaId("A0000000")))
+      get(FakeIdentifier, viewmodel, formProvider(errorKey, companyName))(DataRequest(FakeRequest(), "cacheId", answers, PsaId("A0000000")))
     }
 
     def onSubmit(viewmodel: ReasonViewModel, answers: UserAnswers, fakeRequest: Request[AnyContent]): Future[Result] = {
-      post(FakeIdentifier, NormalMode, viewmodel, formProvider(companyName))(DataRequest(fakeRequest, "cacheId", answers, PsaId("A0000000")))
+      post(FakeIdentifier, NormalMode, viewmodel, formProvider(errorKey, companyName))(DataRequest(fakeRequest, "cacheId", answers, PsaId("A0000000")))
     }
   }
 
