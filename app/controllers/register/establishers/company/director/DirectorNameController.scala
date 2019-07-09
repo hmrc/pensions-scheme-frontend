@@ -20,6 +20,7 @@ import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions._
 import forms.register.PersonNameFormProvider
+import identifiers.register.establishers.IsEstablisherCompleteId
 import identifiers.register.establishers.company.director.{DirectorNameId, DirectorNinoId, IsNewDirectorId}
 import javax.inject.Inject
 import models.person.PersonName
@@ -72,13 +73,12 @@ class DirectorNameController @Inject()(
               appConfig, formWithErrors, mode, establisherIndex, directorIndex, existingSchemeName, postCall(mode, establisherIndex, directorIndex, srn), srn)))
           ,
           value => {
-            userAnswersService.save(
-              mode,
-              srn,
-              DirectorNameId(establisherIndex, directorIndex),
-              value
-            ) map { json =>
-              Redirect(navigator.nextPage(DirectorNameId(establisherIndex, directorIndex), mode, UserAnswers(json), srn))
+            val answers = request.userAnswers.set(IsNewDirectorId(establisherIndex, directorIndex))(true).flatMap(
+              _.set(DirectorNameId(establisherIndex, directorIndex))(value)).asOpt.getOrElse(request.userAnswers)
+
+            userAnswersService.upsert(mode, srn, answers.json).map {
+              cacheMap =>
+                Redirect(navigator.nextPage(DirectorNameId(establisherIndex, directorIndex), mode, UserAnswers(cacheMap), srn))
             }
           }
         )
