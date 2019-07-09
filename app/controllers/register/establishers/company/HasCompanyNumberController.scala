@@ -68,7 +68,7 @@ class HasCompanyNumberController @Inject()(override val appConfig: FrontendAppCo
       implicit request =>
         CompanyDetailsId(index).retrieve.right.map {
           details =>
-            post(HasCompanyNumberId(index), mode, form(details.companyName), viewModel(mode, index, srn, details.companyName), Some(IsCompanyCompleteId(index)))
+            post(HasCompanyNumberId(index), mode, form(details.companyName), viewModel(mode, index, srn, details.companyName), Some(IsDetailsCompleteId(index)))
         }
     }
 }

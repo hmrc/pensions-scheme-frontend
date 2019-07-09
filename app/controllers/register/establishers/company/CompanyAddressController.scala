@@ -87,7 +87,7 @@ class CompanyAddressController @Inject()(
     implicit request =>
       viewmodel(index, mode, srn).retrieve.right.map {
         vm =>
-          post(CompanyAddressId(index), CompanyAddressListId(index), vm, mode, context(vm), CompanyPostCodeLookupId(index))
+          post(CompanyAddressId(index), CompanyAddressListId(index), vm, mode, context(vm), CompanyPostCodeLookupId(index), Some(IsAddressCompleteId(index)))
       }
   }
 

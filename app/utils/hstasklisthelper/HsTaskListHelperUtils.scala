@@ -41,6 +41,7 @@ trait HsTaskListHelperUtils extends Enumerable.Implicits {
 
     val isChangeLink = getCompleteFlag(answers, index, spokeName)
     val isComplete: Option[Boolean] = if (mode == NormalMode) isChangeLink else None
+    println("\n\n\n isisChangeLink : "+isChangeLink)
 
     isChangeLink match {
       case Some(true) => EntitySpoke(Link(getChangeLinkText(spokeName)(name), getChangeLink(spokeName)(mode, srn, index).url), isComplete)
@@ -62,7 +63,10 @@ trait HsTaskListHelperUtils extends Enumerable.Implicits {
   }
 
   private def getCompleteFlag(answers: UserAnswers, index: Int, spokeName: Spoke): Option[Boolean] = spokeName match {
-    case EstablisherCompanyDetails => answers.get(establisherCompany.IsDetailsCompleteId(index))
+    case EstablisherCompanyDetails => {
+      println("\n\n1..."+answers.get(establisherCompany.IsDetailsCompleteId(index)))
+      answers.get(establisherCompany.IsDetailsCompleteId(index))
+    }
     case EstablisherCompanyAddress
  => answers.get(establisherCompany.IsAddressCompleteId(index))
     case EstablisherCompanyContactDetails => answers.get(establisherCompany.IsContactDetailsCompleteId(index))
