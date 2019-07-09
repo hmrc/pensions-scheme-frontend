@@ -19,6 +19,8 @@ package controllers.register.establishers.company.director
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.EmailFormProvider
+import identifiers.register.establishers.company.director.DirectorNameId
+import models.person.PersonName
 import models.{Index, NormalMode}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.mockito.MockitoSugar
@@ -26,19 +28,22 @@ import play.api.data.Form
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import services.FakeUserAnswersService
-import utils.FakeNavigator
+import utils.{FakeNavigator, UserAnswers}
 import viewmodels.{CommonFormWithHintViewModel, Message}
 import views.html.emailAddress
+import utils._
 
 class DirectorEmailControllerSpec extends ControllerSpecBase with MockitoSugar with BeforeAndAfterEach {
 
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
-  val formProvider = new EmailFormProvider()
-  val form: Form[String] = formProvider()
-  val firstIndex = Index(0)
+  private val formProvider = new EmailFormProvider()
+  private val form: Form[String] = formProvider()
+  private val firstIndex = Index(0)
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisherCompanyDirector): DirectorEmailController =
+  private val estCompanyDirector = UserAnswers().set(DirectorNameId(0, 0))(PersonName("first", "last")).asOpt.value.dataRetrievalAction
+
+  def controller(dataRetrievalAction: DataRetrievalAction = estCompanyDirector): DirectorEmailController =
     new DirectorEmailController(frontendAppConfig,
       messagesApi,
       FakeAuthAction,

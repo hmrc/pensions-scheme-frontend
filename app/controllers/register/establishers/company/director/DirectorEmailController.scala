@@ -50,11 +50,11 @@ class DirectorEmailController @Inject()(val appConfig: FrontendAppConfig,
     Retrieval {
       implicit request =>
         DirectorNameId(establisherIndex, directorIndex).retrieve.right.map {
-          directorName =>
+          details =>
             CommonFormWithHintViewModel(
               routes.DirectorEmailController.onSubmit(mode, establisherIndex, directorIndex, srn),
               Message("messages__director_email__title"),
-              Message("messages__common_email__heading", directorName),
+              Message("messages__common_email__heading", details.fullName),
               Some(Message("messages__establisher_email__hint")),
               srn = srn
             )
