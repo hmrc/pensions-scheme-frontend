@@ -21,10 +21,8 @@ import controllers.actions._
 import forms.HasReferenceNumberFormProvider
 import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.company.CompanyDetailsId
-import identifiers.register.establishers.company.director.{DirectorDetailsId, DirectorHasNINOId, DirectorNameId}
-import models.person.{PersonDetails, PersonName}
+import identifiers.register.establishers.company.director.DirectorHasNINOId
 import models.{CompanyDetails, Index, NormalMode}
-import org.joda.time.LocalDate
 import play.api.data.Form
 import play.api.libs.json.Json
 import play.api.test.Helpers._
@@ -35,37 +33,23 @@ import views.html.hasReferenceNumber
 
 class DirectorHasNINOControllerSpec extends ControllerSpecBase {
   private val schemeName = None
+
   private def onwardRoute = controllers.routes.IndexController.onPageLoad()
-  val formProvider = new HasReferenceNumberFormProvider()
-  val form = formProvider("error","test company name")
-  val establisherIndex = Index(0)
-  val directorIndex = Index(0)
-  val srn = None
-  val postCall = controllers.register.establishers.company.director.routes.DirectorHasNINOController.onSubmit(NormalMode, establisherIndex, directorIndex, srn)
-  val viewModel = CommonFormWithHintViewModel(
+
+  private val formProvider = new HasReferenceNumberFormProvider()
+  private val form = formProvider("error", "test company name")
+  private val establisherIndex = Index(0)
+  private val directorIndex = Index(0)
+  private val srn = None
+  private val postCall = controllers.register.establishers.company.director.routes.DirectorHasNINOController.onSubmit(NormalMode, establisherIndex, directorIndex, srn)
+  private val viewModel = CommonFormWithHintViewModel(
     postCall,
     title = Message("messages__directorHasNino__title"),
     heading = Message("messages__directorHasNino__h1", "first last"),
     hint = None
   )
 
-  override def getMandatoryEstablisherCompanyDirector: FakeDataRetrievalAction = new FakeDataRetrievalAction(
-    Some(Json.obj(
-      EstablishersId.toString -> Json.arr(
-        Json.obj(
-          CompanyDetailsId.toString ->
-            CompanyDetails("test company name"),
-          "director" -> Json.arr(
-            Json.obj(
-              DirectorNameId.toString -> PersonName("first", "last")
-            )
-          )
-        )
-      )
-    ))
-  )
-
-  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisherCompanyDirector): DirectorHasNINOController =
+  private def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisherCompanyDirectorWithDirectorName): DirectorHasNINOController =
     new DirectorHasNINOController(
       frontendAppConfig,
       messagesApi,
@@ -87,6 +71,33 @@ class DirectorHasNINOControllerSpec extends ControllerSpecBase {
 
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString()
+    }
+
+    "return OK and the correct view for a GET where question already answered" in {
+      val validData = Json.obj(
+        EstablishersId.toString -> Json.arr(
+          Json.obj(
+            CompanyDetailsId.toString ->
+              CompanyDetails("test company name"),
+            "director" -> Json.arr(
+              Json.obj(
+                "directorDetails" -> Json.obj(
+                  "firstName" -> "first",
+                  "lastName" -> "last"
+                ),
+                "directorNino" -> Json.obj(
+                  "hasNino" -> false
+                )
+              )
+            )
+          )
+        )
+      )
+
+      val dataRetrievalAction = new FakeDataRetrievalAction(Some(validData))
+      val result = controller(dataRetrievalAction = dataRetrievalAction).onPageLoad(NormalMode, establisherIndex, directorIndex, None)(fakeRequest)
+      status(result) mustBe OK
+      contentAsString(result) mustBe viewAsString(form = form.fill(false))
     }
 
     "redirect to the next page when valid data is submitted for true" in {

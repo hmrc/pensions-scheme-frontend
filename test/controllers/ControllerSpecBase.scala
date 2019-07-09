@@ -20,14 +20,14 @@ import base.SpecBase
 import controllers.actions.FakeDataRetrievalAction
 import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.company.CompanyDetailsId
-import identifiers.register.establishers.company.director.DirectorDetailsId
+import identifiers.register.establishers.company.director.{DirectorDetailsId, DirectorNameId}
 import identifiers.register.establishers.individual.EstablisherDetailsId
 import identifiers.register.establishers.partnership.PartnershipDetailsId
 import identifiers.register.establishers.partnership.partner.PartnerDetailsId
 import identifiers.register.trustees.TrusteesId
 import identifiers.register.trustees.individual.TrusteeDetailsId
 import identifiers.{AdviserNameId, SchemeNameId}
-import models.person.PersonDetails
+import models.person.{PersonDetails, PersonName}
 import models.{CompanyDetails, PartnershipDetails}
 import org.joda.time.LocalDate
 import org.jsoup.Jsoup
@@ -132,6 +132,22 @@ trait ControllerSpecBase extends SpecBase with Enumerable.Implicits with MapForm
             Json.obj(
               DirectorDetailsId.toString -> PersonDetails("first", Some("middle"), "last",
                 new LocalDate(1990, 2, 2))
+            )
+          )
+        )
+      )
+    ))
+  )
+
+  def getMandatoryEstablisherCompanyDirectorWithDirectorName: FakeDataRetrievalAction = new FakeDataRetrievalAction(
+    Some(Json.obj(
+      EstablishersId.toString -> Json.arr(
+        Json.obj(
+          CompanyDetailsId.toString ->
+            CompanyDetails("test company name"),
+          "director" -> Json.arr(
+            Json.obj(
+              DirectorNameId.toString -> PersonName("first", "last")
             )
           )
         )
