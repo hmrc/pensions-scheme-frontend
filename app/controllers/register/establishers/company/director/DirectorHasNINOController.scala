@@ -21,7 +21,7 @@ import controllers.{HasReferenceNumberController, Retrievals}
 import controllers.actions._
 import forms.HasReferenceNumberFormProvider
 import identifiers.register.establishers.company.{CompanyDetailsId, HasCompanyVATId}
-import identifiers.register.establishers.company.director.{DirectorDetailsId, DirectorHasNINOId}
+import identifiers.register.establishers.company.director.{DirectorDetailsId, DirectorHasNINOId, DirectorNameId}
 import javax.inject.Inject
 import models.{Index, Mode}
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -59,7 +59,7 @@ class DirectorHasNINOController @Inject()(override val appConfig: FrontendAppCon
   def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
-        (CompanyDetailsId(establisherIndex) and DirectorDetailsId(establisherIndex, directorIndex)).retrieve.right.map {
+        (CompanyDetailsId(establisherIndex) and DirectorNameId(establisherIndex, directorIndex)).retrieve.right.map {
           details =>
             get(DirectorHasNINOId(establisherIndex, directorIndex), form(details.b.fullName),
               viewModel(mode, establisherIndex, directorIndex, srn, details.b.fullName))
@@ -69,7 +69,7 @@ class DirectorHasNINOController @Inject()(override val appConfig: FrontendAppCon
   def onSubmit(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
-        (CompanyDetailsId(establisherIndex) and DirectorDetailsId(establisherIndex, directorIndex)).retrieve.right.map {
+        (CompanyDetailsId(establisherIndex) and DirectorNameId(establisherIndex, directorIndex)).retrieve.right.map {
           details =>
             post(DirectorHasNINOId(establisherIndex, directorIndex), mode, form(details.b.fullName),
               viewModel(mode, establisherIndex, directorIndex, srn, details.b.fullName))

@@ -22,7 +22,7 @@ import forms.HasReferenceNumberFormProvider
 import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.company.CompanyDetailsId
 import identifiers.register.establishers.company.director.{DirectorDetailsId, DirectorNameId}
-import models.person.PersonDetails
+import models.person.{PersonDetails, PersonName}
 import models.{CompanyDetails, Index, NormalMode}
 import org.joda.time.LocalDate
 import play.api.data.Form
@@ -45,7 +45,7 @@ class DirectorHasNINOControllerSpec extends ControllerSpecBase {
   val viewModel = CommonFormWithHintViewModel(
     postCall,
     title = Message("messages__directorHasNino__title"),
-    heading = Message("messages__directorHasNino__h1", "first middle last"),
+    heading = Message("messages__directorHasNino__h1", "first last"),
     hint = None
   )
 
@@ -57,8 +57,7 @@ class DirectorHasNINOControllerSpec extends ControllerSpecBase {
             CompanyDetails("test company name"),
           "director" -> Json.arr(
             Json.obj(
-              DirectorNameId.toString -> PersonDetails("first", Some("middle"), "last",
-                new LocalDate(1990, 2, 2))
+              DirectorNameId.toString -> PersonName("first", "last")
             )
           )
         )
