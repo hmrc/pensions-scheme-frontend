@@ -21,7 +21,7 @@ import controllers.Retrievals
 import controllers.actions._
 import forms.register.PersonNameFormProvider
 import identifiers.register.establishers.IsEstablisherCompleteId
-import identifiers.register.establishers.company.director.{DirectorNameId, IsNewDirectorId}
+import identifiers.register.establishers.company.director.{DirectorNameId, DirectorNinoId, IsNewDirectorId}
 import javax.inject.Inject
 import models.person.PersonName
 import models.{Index, Mode}
@@ -76,21 +76,9 @@ class DirectorNameController @Inject()(
             val answers = request.userAnswers.set(IsNewDirectorId(establisherIndex, directorIndex))(true).flatMap(
               _.set(DirectorNameId(establisherIndex, directorIndex))(value)).asOpt.getOrElse(request.userAnswers)
 
-            userAnswersService.upsert(mode, srn, answers.json).flatMap {
+            userAnswersService.upsert(mode, srn, answers.json).map {
               cacheMap =>
-                val userAnswers = UserAnswers(cacheMap)
-                val allDirectors = userAnswers.allDirectorsAfterDelete(establisherIndex)
-                val allDirectorsCompleted = allDirectors.count(_.isCompleted) == allDirectors.size
-
-                if (allDirectorsCompleted) {
-                  Future.successful(Redirect(navigator.nextPage(DirectorNameId(establisherIndex, directorIndex), mode, userAnswers, srn)))
-                } else {
-                  userAnswers.upsert(IsEstablisherCompleteId(establisherIndex))(false) { answers =>
-                    userAnswersService.upsert(mode, srn, answers.json).map { json =>
-                      Redirect(navigator.nextPage(DirectorNameId(establisherIndex, directorIndex), mode, UserAnswers(json), srn))
-                    }
-                  }
-                }
+                Redirect(navigator.nextPage(DirectorNameId(establisherIndex, directorIndex), mode, UserAnswers(cacheMap), srn))
             }
           }
         )
