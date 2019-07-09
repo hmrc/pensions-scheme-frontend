@@ -25,8 +25,6 @@ import identifiers.register.establishers.company.director._
 import models.Mode.journeyMode
 import models._
 import utils.{Navigator, Toggles, UserAnswers}
-import controllers.register.establishers.company.director.routes._
-import play.api.mvc.Call
 
 @Singleton
 class EstablishersCompanyDirectorNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector,
@@ -54,12 +52,7 @@ class EstablishersCompanyDirectorNavigator @Inject()(val dataCacheConnector: Use
         NavigateTo.dontSave(controllers.register.establishers.company.director.routes.
           DirectorNinoController.onPageLoad(mode, establisherIndex, directorIndex, srn))
       case DirectorHasNINOId(establisherIndex, directorIndex) =>
-        navigateOrSessionExpired(from.userAnswers, DirectorHasNINOId(establisherIndex, directorIndex),
-          if (_: Boolean)
-            routes.DirectorNinoNewController.onPageLoad(mode, establisherIndex, directorIndex, srn)
-          else
-            routes.DirectorNoNINOReasonController.onPageLoad(mode, establisherIndex, directorIndex, srn)
-        )
+        hasNinoRoutes(establisherIndex, directorIndex, mode, srn)(from.userAnswers)
       case DirectorNameId(establisherIndex, directorIndex) =>
         NavigateTo.dontSave(controllers.register.establishers.company.director.routes.
           DirectorDOBController.onPageLoad(mode, establisherIndex, directorIndex, srn))
@@ -152,6 +145,14 @@ class EstablishersCompanyDirectorNavigator @Inject()(val dataCacheConnector: Use
         NavigateTo.dontSave(controllers.routes.SessionExpiredController.onPageLoad())
     }
   }
+
+  private def hasNinoRoutes(establisherIndex: Int, directorIndex: Int, mode: Mode, srn: Option[String])(answers: UserAnswers): Option[NavigateTo] =
+    navigateOrSessionExpired(answers, DirectorHasNINOId(establisherIndex, directorIndex),
+      if (_: Boolean)
+        routes.DirectorNinoNewController.onPageLoad(mode, establisherIndex, directorIndex, srn)
+      else
+        routes.DirectorNoNINOReasonController.onPageLoad(mode, establisherIndex, directorIndex, srn)
+    )
 
   private def addressYearsEditRoutes(establisherIndex: Int, directorIndex: Int, mode: Mode, srn: Option[String])(answers: UserAnswers): Option[NavigateTo] = {
     answers.get(DirectorAddressYearsId(establisherIndex, directorIndex)) match {
