@@ -58,10 +58,7 @@ class TrusteesPartnershipNavigatorSpec extends SpecBase with NavigatorBehaviour 
     (PartnershipContactDetailsId(0), newTrustee, checkYourAnswers(mode), true, Some(exitJourney(mode, newTrustee)), true),
     (CheckYourAnswersId(0), emptyAnswers, addTrustee(mode), false, None, true),
     (PartnershipVatVariationsId(0), emptyAnswers, defaultPage, false, Some(exitJourney(mode, emptyAnswers)), true),
-    (PartnershipVatVariationsId(0), newTrustee, defaultPage, false, Some(exitJourney(mode, newTrustee)), true),
-    (PartnershipConfirmPreviousAddressId(0), confirmPreviousAddressYes, defaultPage, false, Some(anyMoreChanges), false),
-    (PartnershipConfirmPreviousAddressId(0), confirmPreviousAddressNo, defaultPage, false, Some(partnershipPaPostCodeLookup(checkMode(mode))), false),
-    (PartnershipConfirmPreviousAddressId(0), emptyAnswers, defaultPage, false, Some(sessionExpired), false)
+    (PartnershipVatVariationsId(0), newTrustee, defaultPage, false, Some(exitJourney(mode, newTrustee)), true)
   )
 
   private def normalRoutes: TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = {
