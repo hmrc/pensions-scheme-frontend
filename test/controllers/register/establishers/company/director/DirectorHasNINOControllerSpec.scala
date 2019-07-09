@@ -24,7 +24,7 @@ import identifiers.register.establishers.company.CompanyDetailsId
 import identifiers.register.establishers.company.director.DirectorHasNINOId
 import models.{CompanyDetails, Index, NormalMode}
 import play.api.data.Form
-import play.api.libs.json.Json
+import play.api.libs.json.{JsObject, Json}
 import play.api.test.Helpers._
 import services.FakeUserAnswersService
 import utils.FakeNavigator
@@ -32,6 +32,50 @@ import viewmodels.{CommonFormWithHintViewModel, Message}
 import views.html.hasReferenceNumber
 
 class DirectorHasNINOControllerSpec extends ControllerSpecBase {
+
+  import DirectorHasNINOControllerSpec._
+
+  "DirectorHasNINOController" must {
+    "return OK and the correct view for a GET" in {
+      val result = controller().onPageLoad(NormalMode, establisherIndex, directorIndex, None)(fakeRequest)
+
+      status(result) mustBe OK
+      contentAsString(result) mustBe viewAsString()
+    }
+
+    "return OK and the correct view for a GET where question already answered" in {
+      val validData = validCompanyDirectorData("directorNino" -> Json.obj("hasNino" -> false))
+
+      val dataRetrievalAction = new FakeDataRetrievalAction(Some(validData))
+      val result = controller(dataRetrievalAction = dataRetrievalAction).onPageLoad(NormalMode, establisherIndex, directorIndex, None)(fakeRequest)
+      status(result) mustBe OK
+      contentAsString(result) mustBe viewAsString(form = form.fill(value = false))
+    }
+
+    "redirect to the next page when valid data is submitted for true" in {
+      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "true"))
+
+      val result = controller().onSubmit(NormalMode, establisherIndex, directorIndex, None)(postRequest)
+
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result) mustBe Some(onwardRoute.url)
+      FakeUserAnswersService.verify(DirectorHasNINOId(establisherIndex, directorIndex), true)
+    }
+
+    "return a Bad Request and errors when invalid data is submitted" in {
+      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "invalid value"))
+      val boundForm = form.bind(Map("value" -> "invalid value"))
+
+      val result = controller().onSubmit(NormalMode, establisherIndex, directorIndex, None)(postRequest)
+
+      status(result) mustBe BAD_REQUEST
+      contentAsString(result) mustBe viewAsString(boundForm)
+    }
+
+  }
+}
+
+object DirectorHasNINOControllerSpec extends ControllerSpecBase {
   private val schemeName = None
 
   private def onwardRoute = controllers.routes.IndexController.onPageLoad()
@@ -64,62 +108,24 @@ class DirectorHasNINOControllerSpec extends ControllerSpecBase {
 
   private def viewAsString(form: Form[_] = form) = hasReferenceNumber(frontendAppConfig, form, viewModel, schemeName)(fakeRequest, messages).toString
 
-  "DirectorHasNINOController" must {
-
-    "return OK and the correct view for a GET" in {
-      val result = controller().onPageLoad(NormalMode, establisherIndex, directorIndex, None)(fakeRequest)
-
-      status(result) mustBe OK
-      contentAsString(result) mustBe viewAsString()
-    }
-
-    "return OK and the correct view for a GET where question already answered" in {
-      val validData = Json.obj(
-        EstablishersId.toString -> Json.arr(
-          Json.obj(
-            CompanyDetailsId.toString ->
-              CompanyDetails("test company name"),
-            "director" -> Json.arr(
-              Json.obj(
-                "directorDetails" -> Json.obj(
-                  "firstName" -> "first",
-                  "lastName" -> "last"
-                ),
-                "directorNino" -> Json.obj(
-                  "hasNino" -> false
-                )
-              )
+  protected def validCompanyDirectorData(jsValue: (String, Json.JsValueWrapper)): JsObject = {
+    Json.obj(
+      EstablishersId.toString -> Json.arr(
+        Json.obj(
+          CompanyDetailsId.toString ->
+            CompanyDetails("test company name"),
+          "director" -> Json.arr(
+            Json.obj(
+              "directorDetails" -> Json.obj(
+                "firstName" -> "first",
+                "lastName" -> "last"
+              ),
+              jsValue
             )
           )
         )
       )
-
-      val dataRetrievalAction = new FakeDataRetrievalAction(Some(validData))
-      val result = controller(dataRetrievalAction = dataRetrievalAction).onPageLoad(NormalMode, establisherIndex, directorIndex, None)(fakeRequest)
-      status(result) mustBe OK
-      contentAsString(result) mustBe viewAsString(form = form.fill(false))
-    }
-
-    "redirect to the next page when valid data is submitted for true" in {
-      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "true"))
-
-      val result = controller().onSubmit(NormalMode, establisherIndex, directorIndex, None)(postRequest)
-
-      status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(onwardRoute.url)
-      FakeUserAnswersService.verify(DirectorHasNINOId(establisherIndex, directorIndex), true)
-    }
-
-    "return a Bad Request and errors when invalid data is submitted" in {
-      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "invalid value"))
-      val boundForm = form.bind(Map("value" -> "invalid value"))
-
-      val result = controller().onSubmit(NormalMode, establisherIndex, directorIndex, None)(postRequest)
-
-      status(result) mustBe BAD_REQUEST
-      contentAsString(result) mustBe viewAsString(boundForm)
-    }
-
+    )
   }
 }
 
