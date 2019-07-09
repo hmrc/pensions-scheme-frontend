@@ -204,8 +204,8 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase with Enumerable
   private def companyContactDetailsSection(implicit request: DataRequest[AnyContent]): AnswerSection = {
 
     val addressRows = AddressCYA(
-      label = Message("messages__companyConfirmAddress__cya_label", companyDetails.companyName),
-      changeAddress = "messages__companyConfirmAddress__cya_visually_hidden_label")().row(
+      label = Message("messages__establisherConfirmAddress__cya_label", companyDetails.companyName),
+      changeAddress = "messages__establisherConfirmAddress__cya_visually_hidden_label")().row(
       CompanyAddressId(index))(companyAddressRoute, request.userAnswers)
 
     val addressYearsRows = AddressYearsCYA(label = "companyAddressYears.checkYourAnswersLabel",
@@ -214,8 +214,8 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase with Enumerable
     )
 
     val previousAddressRows = AddressCYA(
-      label = Message("messages__companyPreviousConfirmAddress__cya_label", companyDetails.companyName),
-      changeAddress = "messages__companyPreviousConfirmAddress__cya_visually_hidden_label"
+      label = Message("messages__establisherPreviousConfirmAddress__cya_label", companyDetails.companyName),
+      changeAddress = "messages__establisherPreviousConfirmAddress__cya_visually_hidden_label"
     )().row(CompanyPreviousAddressId(index))(companyPreviousAddressRoute, request.userAnswers)
 
     val contactDetailsRows = ContactDetailsCYA(

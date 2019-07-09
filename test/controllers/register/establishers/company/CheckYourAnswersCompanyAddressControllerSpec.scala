@@ -125,11 +125,11 @@ object CheckYourAnswersCompanyAddressControllerSpec extends ControllerSpecBase w
   def postUrlUpdateMode: Call = routes.CheckYourAnswersCompanyAddressController.onSubmit(UpdateMode, srn, index)
 
   def addressAnswerRow(mode: Mode, srn: Option[String]): AnswerRow = AnswerRow(
-    Message("messages__companyConfirmAddress__cya_label", companyName),
+    Message("messages__establisherConfirmAddress__cya_label", companyName),
     UserAnswers().addressAnswer(address),
     answerIsMessageKey = false,
     Some(Link("site.change", companyAddressRoute(checkMode(mode), srn),
-      Some("messages__companyConfirmAddress__cya_visually_hidden_label")))
+      Some("messages__establisherConfirmAddress__cya_visually_hidden_label")))
   )
   def addressYearsAnswerRow(mode: Mode, srn: Option[String]): AnswerRow = AnswerRow(
     "companyAddressYears.checkYourAnswersLabel",
@@ -139,18 +139,18 @@ object CheckYourAnswersCompanyAddressControllerSpec extends ControllerSpecBase w
       Some("messages__visuallyhidden__establisher__address_years")))
   )
   def previousAddressAnswerRow(mode: Mode, srn: Option[String]): AnswerRow = AnswerRow(
-    Message("messages__companyPreviousConfirmAddress__cya_label", companyName),
+    Message("messages__establisherPreviousConfirmAddress__cya_label", companyName),
     UserAnswers().addressAnswer(previousAddress),
     answerIsMessageKey = false,
     Some(Link("site.change", companyPreviousAddressRoute(checkMode(mode), srn),
-      Some("messages__companyPreviousConfirmAddress__cya_visually_hidden_label")))
+      Some("messages__establisherPreviousConfirmAddress__cya_visually_hidden_label")))
   )
 
   def previousAddressAddLink(mode: Mode, srn: Option[String]): AnswerRow =
-    AnswerRow(Message("messages__companyPreviousConfirmAddress__cya_label", companyName),
+    AnswerRow(Message("messages__establisherPreviousConfirmAddress__cya_label", companyName),
     Seq("site.not_entered"),
     answerIsMessageKey = true,
-    Some(Link("site.add", companyPreviousAddressRoute(checkMode(mode), srn), Some("messages__companyPreviousConfirmAddress__cya_visually_hidden_label"))))
+    Some(Link("site.add", companyPreviousAddressRoute(checkMode(mode), srn), Some("messages__establisherPreviousConfirmAddress__cya_visually_hidden_label"))))
 
   def companyAddressNormal: Seq[AnswerSection] = Seq(AnswerSection(None, Seq(
     addressAnswerRow(NormalMode, None), addressYearsAnswerRow(NormalMode, None),

@@ -1589,13 +1589,13 @@ messages__establisher_email__hint = We will only use this to contact about pensi
 messages__establisherPostCode__title = What is establisher’s postcode?
 messages__establisherPostCode__h1 = What is {0}’s postcode?
 
-messages__establisherPreviousPostCode__title = What was company’s previous postcode?
+messages__establisherPreviousPostCode__title = What was establisher’s previous postcode?
 messages__establisherPreviousPostCode__h1 = What was {0}’s previous postcode?
 
 messages__establisherSelectAddress__title = Select the address
 messages__establisherSelectAddress__h1 = What is {0}’s address?
 
-messages__establisherPreviousSelectAddress__title = What was establisher’s previous address?
+messages__establisherPreviousSelectAddress__title = Select the previous address
 messages__establisherPreviousSelectAddress__h1 = What was {0}’s previous address?
 
 messages__establisherConfirmAddress__title = Confirm establisher’s address

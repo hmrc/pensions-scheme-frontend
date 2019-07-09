@@ -61,10 +61,10 @@ class CompanyPreviousAddressIdSpec extends SpecBase {
 
         CompanyPreviousAddressId(0).row(onwardUrl, NormalMode) must equal(Seq(
           AnswerRow(
-            Message("messages__companyPreviousConfirmAddress__cya_label", "test company"),
+            Message("messages__establisherPreviousConfirmAddress__cya_label", "test company"),
             addressAnswer(address),
             false,
-            Some(Link("site.change", onwardUrl, Some("messages__companyPreviousConfirmAddress__cya_visually_hidden_label")))
+            Some(Link("site.change", onwardUrl, Some("messages__establisherPreviousConfirmAddress__cya_visually_hidden_label")))
           )))
       }
     }
@@ -76,10 +76,10 @@ class CompanyPreviousAddressIdSpec extends SpecBase {
             _.set(CompanyDetailsId(0))(CompanyDetails("test company"))).asOpt.value, PsaId("A0000000"))
 
         CompanyPreviousAddressId(0).row(onwardUrl, UpdateMode) must equal(Seq(
-          AnswerRow(Message("messages__companyPreviousConfirmAddress__cya_label", "test company"),
+          AnswerRow(Message("messages__establisherPreviousConfirmAddress__cya_label", "test company"),
             Seq("site.not_entered"),
             answerIsMessageKey = true,
-            Some(Link("site.add", onwardUrl, Some("messages__companyPreviousConfirmAddress__cya_visually_hidden_label")))))
+            Some(Link("site.add", onwardUrl, Some("messages__establisherPreviousConfirmAddress__cya_visually_hidden_label")))))
         )
       }
 
@@ -90,10 +90,10 @@ class CompanyPreviousAddressIdSpec extends SpecBase {
 
         CompanyPreviousAddressId(0).row(onwardUrl, NormalMode) must equal(Seq(
           AnswerRow(
-            Message("messages__companyPreviousConfirmAddress__cya_label", "test company"),
+            Message("messages__establisherPreviousConfirmAddress__cya_label", "test company"),
             addressAnswer(address),
             false,
-            Some(Link("site.change", onwardUrl, Some("messages__companyPreviousConfirmAddress__cya_visually_hidden_label")))
+            Some(Link("site.change", onwardUrl, Some("messages__establisherPreviousConfirmAddress__cya_visually_hidden_label")))
           )))
       }
 
@@ -104,10 +104,10 @@ class CompanyPreviousAddressIdSpec extends SpecBase {
 
         CompanyPreviousAddressId(0).row(onwardUrl, NormalMode) must equal(Seq(
           AnswerRow(
-            Message("messages__companyPreviousConfirmAddress__cya_label", "test company"),
+            Message("messages__establisherPreviousConfirmAddress__cya_label", "test company"),
             addressAnswer(address),
             false,
-            Some(Link("site.change", onwardUrl, Some("messages__companyPreviousConfirmAddress__cya_visually_hidden_label")))
+            Some(Link("site.change", onwardUrl, Some("messages__establisherPreviousConfirmAddress__cya_visually_hidden_label")))
           )))
       }
     }
