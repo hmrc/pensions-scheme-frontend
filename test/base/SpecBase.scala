@@ -36,13 +36,6 @@ trait SpecBase extends PlaySpec with GuiceOneAppPerSuite {
 
   def frontendAppConfig: FrontendAppConfig = injector.instanceOf[FrontendAppConfig]
 
-  def appConfig(isPrevPrePopEnabled:Boolean): Configuration = {
-    val app = new GuiceApplicationBuilder()
-      .configure("features.is-address-pre-population-enabled" -> isPrevPrePopEnabled)
-      .build()
-    app.injector.instanceOf[Configuration]
-  }
-
   def messagesApi: MessagesApi = injector.instanceOf[MessagesApi]
 
   def fakeRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest("", "")

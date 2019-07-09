@@ -18,10 +18,6 @@ package toggles
 
 class TogglesSpec extends FeatureToggleBehaviours {
 
- "is-address-pre-population-enabled new feature toggle" should {
-    behave like featureToggle("is-address-pre-population-enabled", true)
-  }
-
   "is-scheme-data-shift-enabled new feature toggle" should {
     behave like featureToggle("is-scheme-data-shift-enabled", true)
   }

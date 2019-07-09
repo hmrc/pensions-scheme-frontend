@@ -40,6 +40,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.{FakeUserAnswersService, UserAnswersService}
 import utils.{CountryOptions, FakeNavigator, InputOption, Navigator}
+import viewmodels.Message
 import viewmodels.address.ManualAddressViewModel
 import views.html.address.manualAddress
 
@@ -86,7 +87,7 @@ class DirectorPreviousAddressControllerSpec extends ControllerSpecBase with Mock
             controller.postCall(NormalMode, establisherIndex, directorIndex, None),
             countryOptions.options,
             controller.title,
-            controller.heading,
+            Message(controller.heading, directorDetails.fullName),
             secondaryHeader = Some(directorDetails.fullName)
           )
 
