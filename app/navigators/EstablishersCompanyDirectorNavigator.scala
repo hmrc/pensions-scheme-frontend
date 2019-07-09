@@ -41,7 +41,7 @@ class EstablishersCompanyDirectorNavigator @Inject()(val dataCacheConnector: Use
       case CheckMode | NormalMode =>
         checkYourAnswers(establisherIndex, directorIndex, journeyMode(mode), srn)
       case _ =>
-        if(answers.get(IsNewDirectorId(establisherIndex, directorIndex)).getOrElse(false))
+        if (answers.get(IsNewDirectorId(establisherIndex, directorIndex)).getOrElse(false))
           checkYourAnswers(establisherIndex, directorIndex, journeyMode(mode), srn)
         else anyMoreChanges(srn)
     }
@@ -71,9 +71,9 @@ class EstablishersCompanyDirectorNavigator @Inject()(val dataCacheConnector: Use
     from.id match {
       case DirectorDetailsId(establisherIndex, directorIndex) =>
         exitMiniJourney(establisherIndex, directorIndex, mode, srn, from.userAnswers)
-      case DirectorNinoId(establisherIndex, directorIndex)  =>
+      case DirectorNinoId(establisherIndex, directorIndex) =>
         exitMiniJourney(establisherIndex, directorIndex, mode, srn, from.userAnswers)
-      case DirectorNewNinoId(establisherIndex, directorIndex)  =>
+      case DirectorNewNinoId(establisherIndex, directorIndex) =>
         exitMiniJourney(establisherIndex, directorIndex, mode, srn, from.userAnswers)
       case DirectorUniqueTaxReferenceId(establisherIndex, directorIndex) =>
         exitMiniJourney(establisherIndex, directorIndex, mode, srn, from.userAnswers)
@@ -144,9 +144,9 @@ class EstablishersCompanyDirectorNavigator @Inject()(val dataCacheConnector: Use
       answers.get(ExistingCurrentAddressId(establisherIndex, directorIndex))
     ) match {
       case (Some(AddressYears.UnderAYear), CheckUpdateMode, Some(_)) =>
-          NavigateTo.dontSave(routes.DirectorConfirmPreviousAddressController.onPageLoad(establisherIndex, directorIndex, srn))
+        NavigateTo.dontSave(routes.DirectorConfirmPreviousAddressController.onPageLoad(establisherIndex, directorIndex, srn))
       case (Some(AddressYears.UnderAYear), _, _) =>
-          NavigateTo.dontSave(routes.DirectorPreviousAddressPostcodeLookupController.onPageLoad(mode, establisherIndex, directorIndex, srn))
+        NavigateTo.dontSave(routes.DirectorPreviousAddressPostcodeLookupController.onPageLoad(mode, establisherIndex, directorIndex, srn))
       case (Some(AddressYears.OverAYear), _, _) =>
         exitMiniJourney(establisherIndex, directorIndex, mode, srn, answers)
       case _ =>
