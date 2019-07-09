@@ -36,10 +36,12 @@ class EstablishersCompanyDirectorNavigatorSpec extends SpecBase with NavigatorBe
 
   import EstablishersCompanyDirectorNavigatorSpec._
 
-  private def commonRoutes(mode:Mode, isPrevAddEnabled : Boolean): TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = Table(
+  private def commonRoutes(mode:Mode): TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = Table(
     ("Id", "User Answers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (Check Mode)", "Save (CM)"),
     (DirectorDetailsId(0, 0), emptyAnswers, directorNino(mode), true, Some(exitJourney(mode, emptyAnswers)), true),
     (DirectorDetailsId(0, 0), newDirector, directorNino(mode), true, Some(exitJourney(mode, newDirector)), true),
+    (DirectorNameId(0, 0), emptyAnswers, directorDOB(mode), true, Some(exitJourney(mode, emptyAnswers)), true),
+    (DirectorNameId(0, 0), newDirector, directorDOB(mode), true, Some(exitJourney(mode, newDirector)), true),
     (DirectorNinoId(0, 0), emptyAnswers, directorUtr(mode), true, Some(exitJourney(mode, emptyAnswers)), true),
     (DirectorNinoId(0, 0), newDirector, directorUtr(mode), true, Some(exitJourney(mode, newDirector)), true),
     (DirectorUniqueTaxReferenceId(0, 0), emptyAnswers, directorAddressPostcode(mode), true, Some(exitJourney(mode, emptyAnswers)), true),
@@ -65,13 +67,13 @@ class EstablishersCompanyDirectorNavigatorSpec extends SpecBase with NavigatorBe
     (AnyMoreChangesId, newDirector, anyMoreChanges, true, None, true)
   )
 
-  private def normalRoutes(mode:Mode, isPrevAddEnabled : Boolean = false): TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = commonRoutes(mode, isPrevAddEnabled) ++ Table(
+  private def normalRoutes(mode:Mode): TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = commonRoutes(mode) ++ Table(
     ("Id", "User Answers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (Check Mode)", "Save (CM)"),
     (ConfirmDeleteDirectorId(0), emptyAnswers, addCompanyDirectors(mode), false, None, false),
     (CheckYourAnswersId(0, 0), emptyAnswers, addCompanyDirectors(mode), true, None, true)
   )
 
-  private def editRoutes(mode:Mode, isPrevAddEnabled : Boolean = false): TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = commonRoutes(mode, isPrevAddEnabled) ++ Table(
+  private def editRoutes(mode:Mode): TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = commonRoutes(mode) ++ Table(
     ("Id", "User Answers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (Check Mode)", "Save (CM)"),
     (ConfirmDeleteDirectorId(0), emptyAnswers, anyMoreChanges, false, None, false),
     (CheckYourAnswersId(0, 0), emptyAnswers, addCompanyDirectors(mode), true, None, true),
@@ -85,21 +87,13 @@ class EstablishersCompanyDirectorNavigatorSpec extends SpecBase with NavigatorBe
     behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, editRoutes(UpdateMode), dataDescriber, UpdateMode)
     behave like nonMatchingNavigator(navigator)
   }
-
-  s"when previous address feature is toggled on" must {
-    val navigator = new EstablishersCompanyDirectorNavigator(FakeUserAnswersCacheConnector, new FakeFeatureSwitchManagementService(true))
-    appRunning()
-    behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, editRoutes(UpdateMode, true), dataDescriber, UpdateMode)
-
-  }
-
 }
 
 object EstablishersCompanyDirectorNavigatorSpec extends SpecBase with OptionValues {
 
   private val config = injector.instanceOf[Configuration]
   private def featureSwitch = new FeatureSwitchManagementServiceTestImpl(config, environment)
-  private val navigator = new EstablishersCompanyDirectorNavigator(FakeUserAnswersCacheConnector, new FakeFeatureSwitchManagementService(false))
+  private val navigator = new EstablishersCompanyDirectorNavigator(FakeUserAnswersCacheConnector)
   private val emptyAnswers = UserAnswers(Json.obj())
   private val newEstablisher = UserAnswers().set(IsEstablisherNewId(0))(true).asOpt.value
   val establisherIndex = Index(0)
@@ -163,6 +157,8 @@ object EstablishersCompanyDirectorNavigatorSpec extends SpecBase with OptionValu
 
   private def addCompanyDirectors(mode: Mode) = controllers.register.establishers.company.routes.AddCompanyDirectorsController.onPageLoad(
     mode, None, establisherIndex)
+
+  private def directorDOB(mode: Mode) = routes.DirectorDOBController.onPageLoad(mode, directorIndex, establisherIndex, None)
 
   val addressYearsOverAYearNew = UserAnswers(Json.obj())
     .set(DirectorAddressYearsId(establisherIndex, directorIndex))(AddressYears.OverAYear).flatMap(

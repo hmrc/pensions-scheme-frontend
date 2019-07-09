@@ -32,8 +32,8 @@
     srn: Option[String]
 )(implicit request: Request[_], messages: Messages)
 
-@disableSubmission = @{
-    directors.exists(!_.isCompleted)
+@enableSubmission = @{
+    directors.forall(_.isCompleted)
 }
 
 @main_template(
@@ -69,7 +69,7 @@
                     @components.paragraph_text(messages("messages__addCompanyDirectorsOrPartners_tell_us_if_you_have_more"))
                 }
 
-                @components.submit_button("site.save_and_continue", disableSubmission)
+                @components.submit_button("site.save_and_continue", enableSubmission)
             }
         }
 

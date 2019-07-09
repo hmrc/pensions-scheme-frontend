@@ -466,9 +466,11 @@ messages__companyAddress__lede = This is usually the registered business address
 messages__companyAddress__trustee__lede = This is usually the registered business address of the trustee but you can enter any address you have for this company.
 messages__companyAddress__checkYourAnswersLabel = Address
 
-
 messages__directorDetails__title = Company director
 messages__directorDetails__heading = Company director
+
+messages__directorName__title = What is the director’s name?
+messages__directorName__heading = What is the director’s name?
 
 messages__companyPreviousAddressPostcodeLookup__title = Previous address of the company
 messages__companyPreviousAddressPostcodeLookup__heading = Previous address of the company
@@ -533,6 +535,9 @@ messages__director__cya__utr_no_reason = Why the director does not have a Self A
 messages__confirmDeleteDirector__title = Confirm deletion
 messages__confirmDeleteDirector__heading = Are you sure you want to delete {0}?
 
+messages__directorAddressConfirm__title = Confirm the director’s address
+messages__directorAddressConfirm__heading = Confirm {0}’s address
+
 messages__directorAddressPostcodeLookup__title = Director’s address
 messages__directorAddressPostcodeLookup__heading = Director’s address
 messages__directorAddressPostcodeLookup__lede = This is usually the director’s residential address.
@@ -578,7 +583,8 @@ messages__checkYourAnswers__trustees__company__address_years = How long has the 
 
 messages__checkYourAnswers__establishers__company__number = Company number
 
-
+messages__directorPreviousAddressConfirm__title = Confirm the director’s previous address
+messages__directorPreviousAddressConfirm__heading = Confirm {0}’s previous address
 
 messages__directorPreviousAddressPostcodeLookup__title = Director’s previous address
 messages__directorPreviousAddressPostcodeLookup__heading = Director’s previous address

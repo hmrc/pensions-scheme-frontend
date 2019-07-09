@@ -26,16 +26,15 @@ import models.Mode._
 import models._
 import org.scalatest.prop.TableFor6
 import org.scalatest.{MustMatchers, OptionValues}
-import play.api.Configuration
 import play.api.libs.json.Json
 import play.api.mvc.Call
-import utils.{FakeFeatureSwitchManagementService, UserAnswers}
+import utils.UserAnswers
 
 class EstablishersIndividualNavigatorSpec extends SpecBase with MustMatchers with NavigatorBehaviour {
 
   import EstablishersIndividualNavigatorSpec._
 
-  private def routes(mode: Mode, isPrevAddEnabled : Boolean = false): TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = {
+  private def routes(mode: Mode): TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = {
     Table(
       ("Id", "User Answers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (Check Mode)", "Save (CM)"),
       (EstablisherDetailsId(0), emptyAnswers, establisherNino(mode), true, Some(exitJourney(mode, emptyAnswers)), true),
@@ -67,19 +66,12 @@ class EstablishersIndividualNavigatorSpec extends SpecBase with MustMatchers wit
   }
 
   private val navigator: EstablishersIndividualNavigator =
-    new EstablishersIndividualNavigator(frontendAppConfig, FakeUserAnswersCacheConnector, new FakeFeatureSwitchManagementService(false))
+    new EstablishersIndividualNavigator(frontendAppConfig, FakeUserAnswersCacheConnector)
 
   s"${navigator.getClass.getSimpleName}" must {
     appRunning()
     behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, routes(NormalMode), dataDescriber)
     behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, routes(UpdateMode), dataDescriber, UpdateMode)
-  }
-
-  s"previous address feature is toggled on" must {
-    val navigator: EstablishersIndividualNavigator =
-    new EstablishersIndividualNavigator(frontendAppConfig, FakeUserAnswersCacheConnector, new FakeFeatureSwitchManagementService(true))
-    appRunning()
-    behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, routes(UpdateMode, true), dataDescriber, UpdateMode)
   }
 }
 
@@ -142,8 +134,6 @@ object EstablishersIndividualNavigatorSpec extends SpecBase with OptionValues {
       if(answers.get(IsEstablisherNewId(index)).getOrElse(false)) checkYourAnswers(mode)
       else anyMoreChanges
     }
-
-  private val config = injector.instanceOf[Configuration]
 
   private def addressYearsLessThanTwelveEdit(mode: Mode, userAnswers: UserAnswers)=
     (

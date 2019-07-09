@@ -30,20 +30,31 @@ import play.api.data.Form
 import play.api.libs.json.Json
 import play.api.mvc.Call
 import play.api.test.Helpers._
-import utils.FakeNavigator
+import utils.{FakeFeatureSwitchManagementService, FakeNavigator}
 import views.html.register.establishers.addEstablisher
 
 class AddEstablisherControllerSpec extends ControllerSpecBase {
 
   import AddEstablisherControllerSpec._
 
-  "AddEstablisher Controller" must {
+  "AddEstablisher Controller with HnS feature toggle set to true" must {
+
+    "continue button should be enabled" in {
+      val establishersAsEntities = Seq(johnDoe, testLtd)
+      val getRelevantData = establisherWithDeletedDataRetrieval
+      val result = controller(getRelevantData, toggle = true).onPageLoad(NormalMode, None)(fakeRequest)
+
+      contentAsString(result) mustBe viewAsString(form, establishersAsEntities, enableSubmission = true, displayStatus = false)
+    }
+  }
+
+  "AddEstablisher Controller with HnS feature toggle set to false" must {
 
     "return OK and the correct view for a GET when scheme name is present" in {
       val result = controller().onPageLoad(NormalMode, None)(fakeRequest)
 
       status(result) mustBe OK
-      contentAsString(result) mustBe viewAsString()
+      contentAsString(result) mustBe viewAsString(enableSubmission = true)
     }
 
     "not populate the view on a GET when the question has previously been answered" in {
@@ -53,7 +64,7 @@ class AddEstablisherControllerSpec extends ControllerSpecBase {
       contentAsString(result) mustBe viewAsString(form, Seq(johnDoe))
     }
 
-    "populate the view with establishers when they exist" in {
+    "populate the view with establishers when they exist and continue button should be disabled" in {
       val establishersAsEntities = Seq(johnDoe, testLtd)
       val getRelevantData = establisherWithDeletedDataRetrieval
       val result = controller(getRelevantData).onPageLoad(NormalMode, None)(fakeRequest)
@@ -106,7 +117,7 @@ class AddEstablisherControllerSpec extends ControllerSpecBase {
       val result = controller().onSubmit(NormalMode, None)(postRequest)
 
       status(result) mustBe BAD_REQUEST
-      contentAsString(result) mustBe viewAsString(boundForm)
+      contentAsString(result) mustBe viewAsString(boundForm, enableSubmission = true)
     }
   }
 }
@@ -122,7 +133,7 @@ object AddEstablisherControllerSpec extends AddEstablisherControllerSpec {
 
   protected def fakeNavigator() = new FakeNavigator(desiredRoute = onwardRoute)
 
-  private def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): AddEstablisherController =
+  private def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData, toggle:Boolean = false): AddEstablisherController =
     new AddEstablisherController(
       frontendAppConfig,
       messagesApi,
@@ -131,17 +142,20 @@ object AddEstablisherControllerSpec extends AddEstablisherControllerSpec {
       dataRetrievalAction,
       FakeAllowAccessProvider(),
       new DataRequiredActionImpl,
-      formProvider
+      formProvider,
+      new FakeFeatureSwitchManagementService(toggle)
     )
 
-  private def viewAsString(form: Form[_] = form, allEstablishers: Seq[Establisher[_]] = Seq.empty): String =
+  private def viewAsString(form: Form[_] = form, allEstablishers: Seq[Establisher[_]] = Seq.empty, enableSubmission:Boolean = false, displayStatus: Boolean = true): String =
     addEstablisher(
       frontendAppConfig,
       form,
       NormalMode,
       allEstablishers,
       None,
-      None
+      None,
+      enableSubmission,
+      displayStatus
     )(fakeRequest, messages).toString
 
   private val day = LocalDate.now().getDayOfMonth
