@@ -36,7 +36,7 @@ object CompanyPayeVariationsId {
     new CheckYourAnswers[CompanyPayeVariationsId] {
 
       private val payeLabel = "messages__common__cya__paye"
-      private val hiddenLabelPaye = "messages__visuallyhidden__establisher__paye_number"
+      private val hiddenLabelPaye = "messages__visuallyhidden__companyPaye"
 
       override def row(id: CompanyPayeVariationsId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
         ReferenceValueCYA[CompanyPayeVariationsId](payeLabel, hiddenLabelPaye)().row(id)(changeUrl, userAnswers)

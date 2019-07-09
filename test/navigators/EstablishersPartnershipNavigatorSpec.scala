@@ -20,6 +20,7 @@ import base.SpecBase
 import config.FeatureSwitchManagementServiceProductionImpl
 import connectors.FakeUserAnswersCacheConnector
 import controllers.register.establishers.partnership.routes
+import identifiers.register.establishers.ExistingCurrentAddressId
 import identifiers.Identifier
 import identifiers.register.establishers.IsEstablisherNewId
 import identifiers.register.establishers.partnership._
@@ -76,7 +77,7 @@ class EstablishersPartnershipNavigatorSpec extends SpecBase with NavigatorBehavi
     ("Id", "User Answers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (Check Mode)", "Save (CM)"),
     (PartnershipContactDetailsId(0), emptyAnswers, checkYourAnswers(UpdateMode), true, Some(exitJourney(UpdateMode, emptyAnswers)), true),
     (PartnershipReviewId(0), emptyAnswers, anyMoreChanges, false, None, true),
-    (PartnershipAddressYearsId(0), addressYearsUnderAYear, partnershipPaPostCodeLookup(UpdateMode), true, Some(confirmPreviousAddress), true),
+    (PartnershipAddressYearsId(0), addressYearsUnderAYear, partnershipPaPostCodeLookup(UpdateMode), true, addressYearsLessThanTwelveEdit(UpdateMode, addressYearsUnderAYear), true),
     (PartnershipConfirmPreviousAddressId(0), emptyAnswers, defaultPage, false, Some(sessionExpired), false),
     (PartnershipConfirmPreviousAddressId(0), confirmPreviousAddressYes, defaultPage, false, Some(anyMoreChanges), false),
     (PartnershipConfirmPreviousAddressId(0), confirmPreviousAddressNo, defaultPage, false, Some(partnershipPaPostCodeLookup(checkMode(UpdateMode))), false),
@@ -189,4 +190,20 @@ object EstablishersPartnershipNavigatorSpec extends SpecBase with OptionValues {
   private def confirmPreviousAddress = controllers.register.establishers.partnership.routes.PartnershipConfirmPreviousAddressController.onPageLoad(0, None)
 
   private def dataDescriber(answers: UserAnswers): String = answers.toString
+
+  private def addressYearsLessThanTwelveEdit(mode: Mode, userAnswers: UserAnswers)=
+    (
+      userAnswers.get(PartnershipAddressYearsId(0)),
+      mode,
+      userAnswers.get(ExistingCurrentAddressId(0))
+    ) match {
+      case (Some(AddressYears.UnderAYear), CheckUpdateMode, Some(_)) =>
+        Some(confirmPreviousAddress)
+      case (Some(AddressYears.UnderAYear), _, _) =>
+        Some(partnershipPaPostCodeLookup(checkMode(mode)))
+      case (Some(AddressYears.OverAYear), _, _) =>
+        Some(exitJourney(mode, userAnswers))
+      case _ =>
+        Some(partnershipPaPostCodeLookup(checkMode(mode)))
+    }
 }
