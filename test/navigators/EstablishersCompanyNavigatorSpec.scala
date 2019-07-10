@@ -297,6 +297,7 @@ object EstablishersCompanyNavigatorSpec extends OptionValues with Enumerable.Imp
         Some(sessionExpired)
     }
 
+
   private def addEstablisher(mode: Mode) = controllers.register.establishers.routes.AddEstablisherController.onPageLoad(mode, None)
 
   private def companyNameRouting(toggle: Boolean, mode: Mode) = if (toggle) addEstablisher(mode) else companyVat(mode)
