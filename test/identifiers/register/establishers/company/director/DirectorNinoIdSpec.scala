@@ -41,7 +41,7 @@ class DirectorNinoIdSpec extends SpecBase {
       "return answers rows with change links for nino with yes" in {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers(ninoYes), PsaId("A0000000"))
         DirectorNinoId(0, 0).row(onwardUrl, NormalMode) must equal(Seq(
-          AnswerRow("messages__director_nino_question_cya_label", Seq(s"${Nino.Yes}"), false,
+          AnswerRow("messages__director__cya__nino__fallback", Seq(s"${Nino.Yes}"), false,
             Some(Link("site.change", onwardUrl, Some("messages__visuallyhidden__director__nino_yes_no")))),
           AnswerRow("messages__common__nino", Seq(ninoYes.nino), false,
             Some(Link("site.change", onwardUrl, Some("messages__visuallyhidden__director__nino"))))
@@ -51,7 +51,7 @@ class DirectorNinoIdSpec extends SpecBase {
       "return answers rows with change links for nino with no" in {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers(ninoNo), PsaId("A0000000"))
         DirectorNinoId(0, 0).row(onwardUrl, NormalMode) must equal(Seq(
-          AnswerRow("messages__director_nino_question_cya_label", Seq(s"${Nino.No}"), false,
+          AnswerRow("messages__director__cya__nino__fallback", Seq(s"${Nino.No}"), false,
             Some(Link("site.change", onwardUrl, Some("messages__visuallyhidden__director__nino_yes_no")))),
           AnswerRow(
             "messages__director_nino_reason_cya_label", Seq(ninoNo.reason), false,
@@ -67,7 +67,7 @@ class DirectorNinoIdSpec extends SpecBase {
       "return answers rows with change links for nino with yes" in {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answersNew(ninoYes), PsaId("A0000000"))
         DirectorNinoId(0, 0).row(onwardUrl, UpdateMode) must equal(Seq(
-          AnswerRow("messages__director_nino_question_cya_label", Seq(s"${Nino.Yes}"), false,
+          AnswerRow("messages__director__cya__nino__fallback", Seq(s"${Nino.Yes}"), false,
             Some(Link("site.change", onwardUrl, Some("messages__visuallyhidden__director__nino_yes_no")))),
           AnswerRow("messages__common__nino", Seq(ninoYes.nino), false,
             Some(Link("site.change", onwardUrl, Some("messages__visuallyhidden__director__nino"))))
@@ -77,7 +77,7 @@ class DirectorNinoIdSpec extends SpecBase {
       "return answers rows with change links for nino with no" in {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answersNew(ninoNo), PsaId("A0000000"))
         DirectorNinoId(0, 0).row(onwardUrl, UpdateMode) must equal(Seq(
-          AnswerRow("messages__director_nino_question_cya_label", Seq(s"${Nino.No}"), false,
+          AnswerRow("messages__director__cya__nino__fallback", Seq(s"${Nino.No}"), false,
             Some(Link("site.change", onwardUrl, Some("messages__visuallyhidden__director__nino_yes_no")))),
           AnswerRow(
             "messages__director_nino_reason_cya_label", Seq(ninoNo.reason), false,

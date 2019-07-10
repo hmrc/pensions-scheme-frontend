@@ -493,8 +493,6 @@ messages__company__paye_error_invalid = Enter a valid PAYE number
 
 messages__companyPreviousAddress__checkYourAnswersLabel = Previous Address
 
-messages__director_nino_question_cya_label = Does the director have a National Insurance number?
-messages__director_nino_reason_cya_label = Why the director does not have a National Insurance number?
 messages__director_nino_cya_label = National Insurance number
 messages__director_nino__title = Does the director have a National Insurance number?
 messages__director_no_nino = Tell us why the director does not have a National Insurance number
@@ -529,6 +527,10 @@ messages__director__cya__contact__details_heading = Contact details for director
 messages__director__cya__name = Director’s name
 messages__director__cya__dob = What is {0}’s date of birth?
 messages__director__cya__nino = Does {0} have a National Insurance number?
+messages__director__cya__nino__fallback = Does the director have a National Insurance number?
+
+messages__director_nino_reason_cya_label = Why the director does not have a National Insurance number?
+
 messages__director__cya__utr_yes_no = Does {0} have a UTR?
 messages__director__cya__utr_yes_no_fallback = Does the director have a Self Assessment Unique Taxpayer Reference number?
 messages__director__cya__utr = Unique Taxpayer Reference number
