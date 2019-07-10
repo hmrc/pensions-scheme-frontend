@@ -79,7 +79,7 @@ class HasCompanyPAYEControllerSpec  extends ControllerSpecBase {
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
-      FakeUserAnswersService.verify(HasCompanyPAYEId(index), true)
+      FakeUserAnswersService.userAnswer.get(HasCompanyPAYEId(index)).value mustEqual true
     }
 
     "return a Bad Request and errors when invalid data is submitted" in {

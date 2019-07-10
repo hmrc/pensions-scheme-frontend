@@ -123,7 +123,7 @@ class EmailAddressControllerSpec extends WordSpec with MustMatchers with OptionV
 
           status(result) mustEqual SEE_OTHER
           redirectLocation(result).value mustEqual "www.example.com"
-          FakeUserAnswersService.verify(FakeIdentifier, "test@test.com")
+          FakeUserAnswersService.userAnswer.get(FakeIdentifier).value mustEqual "test@test.com"
       }
     }
 

@@ -383,7 +383,7 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
       case (Some(false), NormalMode | UpdateMode) =>
         NavigateTo.dontSave(establisherCompanyRoutes.IsCompanyDormantController.onPageLoad(mode, srn, index))
       case (Some(false), CheckMode | CheckUpdateMode) =>
-        NavigateTo.dontSave(establisherCompanyRoutes.CheckYourAnswersCompanyDetailsController.onPageLoad(journeyMode(mode), srn, index))
+        exitMiniJourney(index, mode, srn, answers, cyaCompanyDetails)
       case _ =>
         NavigateTo.dontSave(controllers.routes.SessionExpiredController.onPageLoad())
     }
