@@ -32,7 +32,7 @@ import models.{CompanyDetails, PartnershipDetails}
 import org.joda.time.LocalDate
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
-import play.api.libs.json.Json
+import play.api.libs.json.{JsObject, Json}
 import utils.{Enumerable, MapFormats}
 
 trait ControllerSpecBase extends SpecBase with Enumerable.Implicits with MapFormats {
@@ -179,4 +179,24 @@ trait ControllerSpecBase extends SpecBase with Enumerable.Implicits with MapForm
   )
 
   def asDocument(htmlAsString: String): Document = Jsoup.parse(htmlAsString)
+
+  protected def validCompanyDirectorData(jsValue: (String, Json.JsValueWrapper)): JsObject = {
+    Json.obj(
+      EstablishersId.toString -> Json.arr(
+        Json.obj(
+          CompanyDetailsId.toString ->
+            CompanyDetails("test company name"),
+          "director" -> Json.arr(
+            Json.obj(
+              "directorDetails" -> Json.obj(
+                "firstName" -> "first",
+                "lastName" -> "last"
+              ),
+              jsValue
+            )
+          )
+        )
+      )
+    )
+  }
 }

@@ -107,25 +107,5 @@ object DirectorHasNINOControllerSpec extends ControllerSpecBase {
     )
 
   private def viewAsString(form: Form[_] = form) = hasReferenceNumber(frontendAppConfig, form, viewModel, schemeName)(fakeRequest, messages).toString
-
-  protected def validCompanyDirectorData(jsValue: (String, Json.JsValueWrapper)): JsObject = {
-    Json.obj(
-      EstablishersId.toString -> Json.arr(
-        Json.obj(
-          CompanyDetailsId.toString ->
-            CompanyDetails("test company name"),
-          "director" -> Json.arr(
-            Json.obj(
-              "directorDetails" -> Json.obj(
-                "firstName" -> "first",
-                "lastName" -> "last"
-              ),
-              jsValue
-            )
-          )
-        )
-      )
-    )
-  }
 }
 
