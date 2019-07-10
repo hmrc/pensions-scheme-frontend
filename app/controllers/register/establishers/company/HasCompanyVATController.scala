@@ -19,7 +19,7 @@ package controllers.register.establishers.company
 import config.FrontendAppConfig
 import controllers.HasReferenceNumberController
 import controllers.actions._
-import forms.HasVatFormProvider
+import forms.HasReferenceNumberFormProvider
 import identifiers.register.establishers.company.{CompanyDetailsId, HasCompanyVATId}
 import javax.inject.Inject
 import models.{Index, Mode}
@@ -40,7 +40,7 @@ class HasCompanyVATController @Inject()(override val appConfig: FrontendAppConfi
                                         allowAccess: AllowAccessActionProvider,
                                         getData: DataRetrievalAction,
                                         requireData: DataRequiredAction,
-                                        formProvider: HasVatFormProvider
+                                        formProvider: HasReferenceNumberFormProvider
                                        )(implicit val ec: ExecutionContext) extends HasReferenceNumberController {
 
   private def viewModel(mode: Mode, index: Index, srn: Option[String], companyName: String): CommonFormWithHintViewModel =
