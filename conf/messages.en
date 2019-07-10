@@ -529,9 +529,8 @@ messages__director__cya__contact__details_heading = Contact details for director
 messages__director__cya__name = Director’s name
 messages__director__cya__dob = What is {0}’s date of birth?
 messages__director__cya__nino = Does {0} have a National Insurance number?
-
-
-messages__director__cya__utr_yes_no = Does the director have a Self Assessment Unique Taxpayer Reference number?
+messages__director__cya__utr_yes_no = Does {0} have a UTR?
+messages__director__cya__utr_yes_no_fallback = Does the director have a Self Assessment Unique Taxpayer Reference number?
 messages__director__cya__utr = Unique Taxpayer Reference number
 messages__director__cya__utr_no_reason = Why the director does not have a Self Assessment Unique Taxpayer Reference number?
 

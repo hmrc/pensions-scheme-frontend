@@ -19,6 +19,8 @@ package identifiers.register.establishers.company.director
 import base.SpecBase
 import models.requests.DataRequest
 import models._
+import models.person.PersonDetails
+import org.joda.time.LocalDate
 import play.api.libs.json.Json
 import play.api.mvc.AnyContent
 import play.api.test.FakeRequest
@@ -32,7 +34,11 @@ class DirectorUniqueTaxReferenceIdSpec extends SpecBase {
   "cya" when {
     val onwardUrl = "onwardUrl"
 
-    def answers(utr: UniqueTaxReference): UserAnswers = UserAnswers(Json.obj()).set(DirectorUniqueTaxReferenceId(0, 0))(utr).asOpt.value
+    val directorDetails = PersonDetails("John", None, "One", LocalDate.now())
+
+    def answers(utr: UniqueTaxReference): UserAnswers = UserAnswers(Json.obj())
+      .set(DirectorDetailsId(0, 0))(directorDetails).asOpt.value
+      .set(DirectorUniqueTaxReferenceId(0, 0))(utr).asOpt.value
 
     val utrYes = UniqueTaxReference.Yes("1111111111")
     val utrNo = UniqueTaxReference.No("Not sure")
@@ -41,23 +47,44 @@ class DirectorUniqueTaxReferenceIdSpec extends SpecBase {
 
       "return answers rows with change links for utr with yes" in {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers(utrYes), PsaId("A0000000"))
-        DirectorUniqueTaxReferenceId(0, 0).row(onwardUrl, NormalMode) must equal(Seq(
-          AnswerRow("messages__director__cya__utr_yes_no", Seq(s"${UniqueTaxReference.Yes}"), false,
-            Some(Link("site.change", onwardUrl, Some("messages__visuallyhidden__director__utr_yes_no")))),
-          AnswerRow("messages__establisher_individual_utr_cya_label", Seq(utrYes.utr), false,
-            Some(Link("site.change", onwardUrl, Some("messages__visuallyhidden__director__utr"))))
-        ))
+
+        val expectedResult = Seq(
+          AnswerRow(
+            messages("messages__director__cya__utr_yes_no", directorDetails.firstAndLastName),
+            Seq(s"${UniqueTaxReference.Yes}"),
+            false,
+            Some(Link("site.change", onwardUrl, Some("messages__visuallyhidden__director__utr_yes_no")))
+          ),
+          AnswerRow(
+            "messages__establisher_individual_utr_cya_label",
+            Seq(utrYes.utr),
+            false,
+            Some(Link("site.change", onwardUrl, Some("messages__visuallyhidden__director__utr")))
+          )
+        )
+
+        DirectorUniqueTaxReferenceId(0, 0).row(onwardUrl, NormalMode) must equal(expectedResult)
       }
 
       "return answers rows with change links for utr with no" in {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers(utrNo), PsaId("A0000000"))
-        DirectorUniqueTaxReferenceId(0, 0).row(onwardUrl, NormalMode) must equal(Seq(
-          AnswerRow("messages__director__cya__utr_yes_no", Seq(s"${UniqueTaxReference.No}"), false,
-            Some(Link("site.change", onwardUrl, Some("messages__visuallyhidden__director__utr_yes_no")))),
+
+        val expectedResult = Seq(
           AnswerRow(
-            "messages__director__cya__utr_no_reason", Seq(utrNo.reason), false,
-            Some(Link("site.change", onwardUrl, Some("messages__visuallyhidden__director__utr_no"))))
-        ))
+            messages("messages__director__cya__utr_yes_no", directorDetails.firstAndLastName),
+            Seq(s"${UniqueTaxReference.No}"),
+            false,
+            Some(Link("site.change", onwardUrl, Some("messages__visuallyhidden__director__utr_yes_no")))
+          ),
+          AnswerRow(
+            "messages__director__cya__utr_no_reason",
+            Seq(utrNo.reason),
+            false,
+            Some(Link("site.change", onwardUrl, Some("messages__visuallyhidden__director__utr_no")))
+          )
+        )
+
+        DirectorUniqueTaxReferenceId(0, 0).row(onwardUrl, NormalMode) must equal(expectedResult)
       }
     }
 
@@ -67,23 +94,43 @@ class DirectorUniqueTaxReferenceIdSpec extends SpecBase {
 
       "return answers rows with change links for utr with yes" in {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answersNew(utrYes), PsaId("A0000000"))
-        DirectorUniqueTaxReferenceId(0, 0).row(onwardUrl, UpdateMode) must equal(Seq(
-          AnswerRow("messages__director__cya__utr_yes_no", Seq(s"${UniqueTaxReference.Yes}"), false,
-            Some(Link("site.change", onwardUrl, Some("messages__visuallyhidden__director__utr_yes_no")))),
-          AnswerRow("messages__establisher_individual_utr_cya_label", Seq(utrYes.utr), false,
-            Some(Link("site.change", onwardUrl, Some("messages__visuallyhidden__director__utr"))))
-        ))
+
+        val expectedResult = Seq(
+          AnswerRow(
+            messages("messages__director__cya__utr_yes_no", directorDetails.firstAndLastName),
+            Seq(s"${UniqueTaxReference.Yes}"),
+            false,
+            Some(Link("site.change", onwardUrl, Some("messages__visuallyhidden__director__utr_yes_no")))
+          ),
+          AnswerRow(
+            "messages__establisher_individual_utr_cya_label",
+            Seq(utrYes.utr),
+            false,
+            Some(Link("site.change", onwardUrl, Some("messages__visuallyhidden__director__utr")))
+          )
+        )
+        DirectorUniqueTaxReferenceId(0, 0).row(onwardUrl, UpdateMode) must equal(expectedResult)
       }
 
       "return answers rows with change links for utr with no" in {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answersNew(utrNo), PsaId("A0000000"))
-        DirectorUniqueTaxReferenceId(0, 0).row(onwardUrl, UpdateMode) must equal(Seq(
-          AnswerRow("messages__director__cya__utr_yes_no", Seq(s"${UniqueTaxReference.No}"), false,
-            Some(Link("site.change", onwardUrl, Some("messages__visuallyhidden__director__utr_yes_no")))),
+
+        val expectedResult = Seq(
           AnswerRow(
-            "messages__director__cya__utr_no_reason", Seq(utrNo.reason), false,
-            Some(Link("site.change", onwardUrl, Some("messages__visuallyhidden__director__utr_no"))))
-        ))
+            messages("messages__director__cya__utr_yes_no", directorDetails.firstAndLastName),
+            Seq(s"${UniqueTaxReference.No}"),
+            false,
+            Some(Link("site.change", onwardUrl, Some("messages__visuallyhidden__director__utr_yes_no")))
+          ),
+          AnswerRow(
+            "messages__director__cya__utr_no_reason",
+            Seq(utrNo.reason),
+            false,
+            Some(Link("site.change", onwardUrl, Some("messages__visuallyhidden__director__utr_no")))
+          )
+        )
+
+        DirectorUniqueTaxReferenceId(0, 0).row(onwardUrl, UpdateMode) must equal(expectedResult)
       }
     }
 
