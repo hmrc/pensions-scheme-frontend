@@ -57,7 +57,13 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
   protected def routes(from: NavigateFrom, mode: Mode, srn: Option[String]): Option[NavigateTo] =
     from.id match {
       case CompanyDetailsId(index) =>
-        NavigateTo.dontSave(establisherCompanyRoutes.CompanyVatController.onPageLoad(mode, index, srn))
+        NavigateTo.dontSave(
+          if (featureSwitchManagementService.get(Toggles.isEstablisherCompanyHnSEnabled)) {
+            controllers.register.establishers.routes.AddEstablisherController.onPageLoad(mode, srn)
+          } else {
+            establisherCompanyRoutes.CompanyVatController.onPageLoad(mode, index, srn)
+          }
+        )
       case HasCompanyNumberId(index) =>
         confirmHasCompanyNumber(index, mode, srn)(from.userAnswers)
       case HasCompanyVATId(index) =>
@@ -242,11 +248,25 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
   private def editAddressYearsRoutes(index: Int, answers: UserAnswers, mode: Mode, srn: Option[String]): Option[NavigateTo] = {
     answers.get(CompanyAddressYearsId(index)) match {
       case Some(AddressYears.UnderAYear) =>
-        if (featureSwitchManagementService.get(Toggles.isEstablisherCompanyHnSEnabled))
-          NavigateTo.dontSave(establisherCompanyRoutes.CheckYourAnswersCompanyAddressController.onPageLoad(journeyMode(mode), srn, index))
-        else
-          NavigateTo.dontSave(establisherCompanyRoutes.CompanyConfirmPreviousAddressController.onPageLoad(index, srn))
-      case Some(AddressYears.OverAYear) => exitMiniJourney(index, mode, srn, answers)
+        val notNewEstablisher = !answers.get(IsEstablisherNewId(index)).getOrElse(false)
+        if (featureSwitchManagementService.get(Toggles.isEstablisherCompanyHnSEnabled)){
+          NavigateTo.dontSave(establisherCompanyRoutes.HasBeenTradingCompanyController.onPageLoad(mode, srn, index))
+        } else {
+          mode match {
+            case CheckUpdateMode if notNewEstablisher =>
+              NavigateTo.dontSave(establisherCompanyRoutes.CompanyConfirmPreviousAddressController.onPageLoad(index, srn))
+            case _ =>
+                NavigateTo.dontSave(establisherCompanyRoutes.CompanyPreviousAddressPostcodeLookupController.onPageLoad(mode, srn, index))
+          }
+        }
+
+      case Some(AddressYears.OverAYear) => {
+        if (featureSwitchManagementService.get(Toggles.isEstablisherCompanyHnSEnabled)){
+          exitMiniJourney(index, mode, srn, answers, cyaAddressDetails)
+        } else {
+          exitMiniJourney(index, mode, srn, answers)
+        }
+      }
       case None =>
         NavigateTo.dontSave(controllers.routes.SessionExpiredController.onPageLoad())
     }

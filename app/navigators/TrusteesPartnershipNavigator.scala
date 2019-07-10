@@ -17,18 +17,17 @@
 package navigators
 
 import com.google.inject.Inject
-import config.{FeatureSwitchManagementService, FrontendAppConfig}
+import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
 import controllers.register.trustees.partnership.routes
 import identifiers.register.trustees.IsTrusteeNewId
 import identifiers.register.trustees.partnership._
 import models.Mode.journeyMode
 import models._
-import utils.{Navigator, Toggles, UserAnswers}
+import utils.{Navigator, UserAnswers}
 
 class TrusteesPartnershipNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector,
-                                             appConfig: FrontendAppConfig,
-                                             featureSwitchManagementService: FeatureSwitchManagementService) extends Navigator {
+                                             appConfig: FrontendAppConfig) extends Navigator {
 
   private def checkYourAnswers(index: Int, mode: Mode, srn: Option[String]): Option[NavigateTo] =
     NavigateTo.dontSave(routes.CheckYourAnswersController.onPageLoad(mode, index, srn))
@@ -139,7 +138,7 @@ class TrusteesPartnershipNavigator @Inject()(val dataCacheConnector: UserAnswers
   private def editAddressYearsRoutes(index: Int, mode: Mode, srn: Option[String])(answers: UserAnswers): Option[NavigateTo] = {
     answers.get(PartnershipAddressYearsId(index)) match {
       case Some(AddressYears.UnderAYear) =>
-        if (mode == CheckUpdateMode && featureSwitchManagementService.get(Toggles.isPrevAddEnabled))
+        if (mode == CheckUpdateMode)
           NavigateTo.dontSave(controllers.register.trustees.partnership.routes.PartnershipConfirmPreviousAddressController.onPageLoad(index, srn))
         else
           NavigateTo.dontSave(
