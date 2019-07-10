@@ -23,6 +23,7 @@ import identifiers.register.trustees.IsTrusteeNewId
 import identifiers.register.trustees.individual._
 import models.Mode.checkMode
 import models._
+import models.address.Address
 import org.scalatest.OptionValues
 import play.api.libs.json.Json
 import play.api.mvc.Call
@@ -34,30 +35,31 @@ class TrusteesIndividualNavigatorSpec extends SpecBase with NavigatorBehaviour {
 
   private def routes(mode: Mode) = Table(
     ("Id", "User Answers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (Check Mode)", "Save (CM)"),
-    (TrusteeDetailsId(0), emptyAnswers, nino(mode), true, Some(exitJourney(mode,emptyAnswers)), true),
-    (TrusteeDetailsId(0), newTrustee, nino(mode), true, Some(exitJourney(mode,newTrustee)), true),
-    (TrusteeNinoId(0), emptyAnswers, utr(mode), true, Some(exitJourney(mode,emptyAnswers)), true),
-    (TrusteeNinoId(0), newTrustee, utr(mode), true, Some(exitJourney(mode,newTrustee)), true),
-    (UniqueTaxReferenceId(0), emptyAnswers, postcode(mode), true, Some(exitJourney(mode,emptyAnswers)), true),
-    (UniqueTaxReferenceId(0), newTrustee, postcode(mode), true, Some(exitJourney(mode,newTrustee)), true),
-    (IndividualPostCodeLookupId(0), emptyAnswers, addressList(mode), true, Some(addressList(checkMode(mode))), true),
-    (IndividualAddressListId(0), emptyAnswers, address(mode), true, Some(address(checkMode(mode))), true),
-    (TrusteeAddressId(0), emptyAnswers, addressYears(mode), true,
-      if(mode == UpdateMode) Some(addressYears(checkMode(mode))) else Some(checkYourAnswers(mode)), true),
-    (TrusteeAddressId(0), newTrustee, addressYears(mode), true, Some(checkYourAnswers(mode)), true),
-    (TrusteeAddressYearsId(0), overAYearNew, contactDetails(mode), true, Some(exitJourney(mode,overAYearNew)), true),
-    (TrusteeAddressYearsId(0), overAYear, contactDetails(mode), true, Some(exitJourney(mode,emptyAnswers)), true),
-    (TrusteeAddressYearsId(0), underAYear, previousAddressPostcode(mode), true, addressYearsLessThanTwelveEdit(mode, underAYear), true),
-    (TrusteeAddressYearsId(0), emptyAnswers, sessionExpired, false, Some(sessionExpired), false),
-    (IndividualConfirmPreviousAddressId(0), emptyAnswers, none, false, Some(sessionExpired), false),
-    (IndividualConfirmPreviousAddressId(0), confirmPreviousAddressYes, none, false, Some(anyMoreChanges), false),
-    (IndividualConfirmPreviousAddressId(0), confirmPreviousAddressNo, none, false, Some(previousAddressPostcode(checkMode(mode))), false),
-    (IndividualPreviousAddressPostCodeLookupId(0), emptyAnswers, previousAddressList(mode), true, Some(previousAddressList(checkMode(mode))), true),
-    (TrusteePreviousAddressListId(0), emptyAnswers, previousAddress(mode), true, Some(previousAddress(checkMode(mode))), true),
-    (TrusteePreviousAddressId(0), emptyAnswers, contactDetails(mode), true, Some(exitJourney(mode,emptyAnswers)), true),
-    (TrusteePreviousAddressId(0), newTrustee, contactDetails(mode), true, Some(exitJourney(mode,newTrustee)), true),
-    (TrusteeContactDetailsId(0), emptyAnswers, checkYourAnswers(mode), true, Some(exitJourney(mode,emptyAnswers)), true),
-    (CheckYourAnswersId, emptyAnswers, addTrustee(mode), false, None, true)
+//    (TrusteeDetailsId(0), emptyAnswers, nino(mode), true, Some(exitJourney(mode,emptyAnswers)), true),
+//    (TrusteeDetailsId(0), newTrustee, nino(mode), true, Some(exitJourney(mode,newTrustee)), true),
+//    (TrusteeNinoId(0), emptyAnswers, utr(mode), true, Some(exitJourney(mode,emptyAnswers)), true),
+//    (TrusteeNinoId(0), newTrustee, utr(mode), true, Some(exitJourney(mode,newTrustee)), true),
+//    (UniqueTaxReferenceId(0), emptyAnswers, postcode(mode), true, Some(exitJourney(mode,emptyAnswers)), true),
+//    (UniqueTaxReferenceId(0), newTrustee, postcode(mode), true, Some(exitJourney(mode,newTrustee)), true),
+//    (IndividualPostCodeLookupId(0), emptyAnswers, addressList(mode), true, Some(addressList(checkMode(mode))), true),
+//    (IndividualAddressListId(0), emptyAnswers, address(mode), true, Some(address(checkMode(mode))), true),
+//    (TrusteeAddressId(0), emptyAnswers, addressYears(mode), true,
+//      if(mode == UpdateMode) Some(addressYears(checkMode(mode))) else Some(checkYourAnswers(mode)), true),
+//    (TrusteeAddressId(0), newTrustee, addressYears(mode), true, Some(checkYourAnswers(mode)), true),
+//    (TrusteeAddressYearsId(0), overAYearNew, contactDetails(mode), true, Some(exitJourney(mode,overAYearNew)), true),
+//    (TrusteeAddressYearsId(0), overAYear, contactDetails(mode), true, Some(exitJourney(mode,emptyAnswers)), true),
+//    (TrusteeAddressYearsId(0), underAYear, previousAddressPostcode(mode), true, addressYearsLessThanTwelveEdit(mode, underAYear), true),
+    (TrusteeAddressYearsId(0), underAYearWithExistingCurrentAddress, previousAddressPostcode(mode), true, addressYearsLessThanTwelveEdit(CheckUpdateMode, underAYearWithExistingCurrentAddress), true)
+//    (TrusteeAddressYearsId(0), emptyAnswers, sessionExpired, false, Some(sessionExpired), false),
+//    (IndividualConfirmPreviousAddressId(0), emptyAnswers, none, false, Some(sessionExpired), false),
+//    (IndividualConfirmPreviousAddressId(0), confirmPreviousAddressYes, none, false, Some(anyMoreChanges), false),
+//    (IndividualConfirmPreviousAddressId(0), confirmPreviousAddressNo, none, false, Some(previousAddressPostcode(checkMode(mode))), false),
+//    (IndividualPreviousAddressPostCodeLookupId(0), emptyAnswers, previousAddressList(mode), true, Some(previousAddressList(checkMode(mode))), true),
+//    (TrusteePreviousAddressListId(0), emptyAnswers, previousAddress(mode), true, Some(previousAddress(checkMode(mode))), true),
+//    (TrusteePreviousAddressId(0), emptyAnswers, contactDetails(mode), true, Some(exitJourney(mode,emptyAnswers)), true),
+//    (TrusteePreviousAddressId(0), newTrustee, contactDetails(mode), true, Some(exitJourney(mode,newTrustee)), true),
+//    (TrusteeContactDetailsId(0), emptyAnswers, checkYourAnswers(mode), true, Some(exitJourney(mode,emptyAnswers)), true),
+//    (CheckYourAnswersId, emptyAnswers, addTrustee(mode), false, None, true)
   )
 
   private val navigator: TrusteesIndividualNavigator =
@@ -121,6 +123,10 @@ object TrusteesIndividualNavigatorSpec extends SpecBase with OptionValues {
 
   private val underAYear = UserAnswers().trusteesIndividualAddressYears(0, AddressYears.UnderAYear)
 
+  private val underAYearWithExistingCurrentAddress =
+    UserAnswers().trusteesIndividualAddressYears(0, AddressYears.UnderAYear)
+      .set(ExistingCurrentAddressId(0))(Address("Line 1", "Line 2", None, None, None, "UK")).asOpt.value
+
   private def dataDescriber(answers: UserAnswers): String = answers.toString
 
   private def anyMoreChanges = controllers.routes.AnyMoreChangesController.onPageLoad(None)
@@ -131,17 +137,20 @@ object TrusteesIndividualNavigatorSpec extends SpecBase with OptionValues {
     else anyMoreChanges
   }
 
-  private def addressYearsLessThanTwelveEdit(mode: Mode, userAnswers: UserAnswers) =
+  private def addressYearsLessThanTwelveEdit(mode: Mode, userAnswers: UserAnswers) = {
+    println(s"\n\n\n\n${userAnswers.get(ExistingCurrentAddressId(0))}")
+    println(s"\n\n\n\n$mode\n\n\n")
     (
       userAnswers.get(ExistingCurrentAddressId(0)),
       mode
     ) match {
-      case (None, CheckUpdateMode) =>
-        Some(previousAddressPostcode(checkMode(mode)))
-      case (_, CheckUpdateMode) =>
+      case (Some(_), CheckUpdateMode) =>
         Some(confirmPreviousAddress)
+      case (_, _) =>
+        Some(previousAddressPostcode(checkMode(mode)))
       case _ =>
         Some(previousAddressPostcode(checkMode(mode)))
     }
+  }
 
 }

@@ -24,6 +24,7 @@ import identifiers.register.establishers.ExistingCurrentAddressId
 import identifiers.register.establishers.individual._
 import models.Mode._
 import models._
+import models.address.Address
 import org.scalatest.prop.TableFor6
 import org.scalatest.{MustMatchers, OptionValues}
 import play.api.libs.json.Json
@@ -51,6 +52,7 @@ class EstablishersIndividualNavigatorSpec extends SpecBase with MustMatchers wit
       (AddressYearsId(0), addressYearsOverAYearNew, contactDetails(mode), true, Some(exitJourney(mode, addressYearsOverAYearNew)), true),
       (AddressYearsId(0), addressYearsOverAYear, contactDetails(mode), true, Some(exitJourney(mode, emptyAnswers)), true),
       (AddressYearsId(0), addressYearsUnderAYear, previousAddressPostCodeLookup(mode), true, addressYearsLessThanTwelveEdit(checkMode(mode), addressYearsUnderAYear), true),
+      (AddressYearsId(0), addressYearsUnderAYearWithExistingCurrentAddress, previousAddressPostCodeLookup(mode), true, addressYearsLessThanTwelveEdit(checkMode(mode), addressYearsUnderAYearWithExistingCurrentAddress), true),
       (AddressYearsId(0), emptyAnswers, sessionExpired, false, Some(sessionExpired), false),
       (IndividualConfirmPreviousAddressId(0), confirmPreviousAddressYes, none, false, Some(anyMoreChanges), false),
       (IndividualConfirmPreviousAddressId(0), confirmPreviousAddressNo, none, false, Some(previousAddressPostCodeLookup(checkMode(mode))), false),
@@ -85,6 +87,9 @@ object EstablishersIndividualNavigatorSpec extends SpecBase with OptionValues {
     .set(AddressYearsId(0))(AddressYears.OverAYear).asOpt.value
   private val addressYearsUnderAYear = UserAnswers(Json.obj())
     .set(AddressYearsId(0))(AddressYears.UnderAYear).asOpt.value
+  private val addressYearsUnderAYearWithExistingCurrentAddress = UserAnswers(Json.obj())
+    .set(AddressYearsId(0))(AddressYears.UnderAYear).asOpt.value
+    .set(ExistingCurrentAddressId(0))(Address("Line 1", "Line 2", None, None, None, "UK")).asOpt.value
   private val newEstablisher = UserAnswers(Json.obj())
     .set(IsEstablisherNewId(0))(true).asOpt.value
   private val confirmPreviousAddressYes = UserAnswers(Json.obj())

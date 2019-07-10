@@ -25,6 +25,7 @@ import identifiers.register.establishers.{EstablishersId, IsEstablisherNewId}
 import identifiers.{EstablishersOrTrusteesChangedId, Identifier}
 import models.Mode.checkMode
 import models._
+import models.address.Address
 import models.person.PersonDetails
 import org.joda.time.LocalDate
 import org.scalatest.OptionValues
@@ -57,7 +58,6 @@ class EstablishersPartnerNavigatorSpec extends SpecBase with NavigatorBehaviour 
     (PartnerAddressListId(0, 0), emptyAnswers, partnerAddress(mode), true, Some(partnerAddress(checkMode(mode))), true),
     (PartnerAddressId(0, 0), emptyAnswers, partnerAddressYears(mode), true, if(mode == UpdateMode) Some(partnerAddressYears(checkMode(UpdateMode))) else Some(checkYourAnswers(NormalMode)), true),
     (PartnerAddressId(0, 0), newPartner, partnerAddressYears(mode), true, Some(checkYourAnswers(mode)), true),
-    (PartnerAddressYearsId(0, 0), addressYearsUnderAYear, partnerPreviousAddPostcode(mode), true, addressYearsLessThanTwelveEdit(mode, addressYearsUnderAYear), true),
     (PartnerAddressYearsId(0, 0), addressYearsOverAYearNew, partnerContactDetails(mode), true, Some(exitJourney(mode, addressYearsOverAYearNew)), true),
     (PartnerAddressYearsId(0, 0), addressYearsOverAYear, partnerContactDetails(mode), true, Some(exitJourney(mode, emptyAnswers)), true),
     (PartnerAddressYearsId(0, 0), emptyAnswers, sessionExpired, false, Some(sessionExpired), false),
@@ -87,6 +87,8 @@ class EstablishersPartnerNavigatorSpec extends SpecBase with NavigatorBehaviour 
     (AddPartnersId(0), addPartnersFalseWithChanges, anyMoreChanges, true, None, true),
     (AddPartnersId(0), addPartnersFalseNewEst, partnershipReview(mode), true, None, true),
     (AddPartnersId(0), addPartnersFalse, taskList, true, None, true),
+    (PartnerAddressYearsId(0, 0), addressYearsUnderAYear, partnerPreviousAddPostcode(mode), true, addressYearsLessThanTwelveEdit(mode, addressYearsUnderAYear), true),
+    (PartnerAddressYearsId(0, 0), addressYearsUnderAYearWithExistingCurrentAddress, partnerPreviousAddPostcode(mode), true, addressYearsLessThanTwelveEdit(CheckUpdateMode, addressYearsUnderAYearWithExistingCurrentAddress), true),
     (PartnerNewNinoId(0, 0), emptyAnswers, none, true, Some(exitJourney(mode, emptyAnswers)), true)
   )
 
@@ -116,6 +118,9 @@ object EstablishersPartnerNavigatorSpec extends SpecBase with OptionValues {
     .set(PartnerAddressYearsId(establisherIndex, partnerIndex))(AddressYears.OverAYear).asOpt.value
   val addressYearsUnderAYear = UserAnswers(Json.obj())
     .set(PartnerAddressYearsId(establisherIndex, partnerIndex))(AddressYears.UnderAYear).asOpt.value
+  val addressYearsUnderAYearWithExistingCurrentAddress = UserAnswers(Json.obj())
+    .set(PartnerAddressYearsId(establisherIndex, partnerIndex))(AddressYears.UnderAYear).flatMap(
+    _.set(ExistingCurrentAddressId(0, 0))(Address("Line 1", "Line 2", None, None, None, "UK"))).asOpt.value
 
   private val confirmPreviousAddressYes = UserAnswers(Json.obj())
     .set(PartnerConfirmPreviousAddressId(0, 0))(true).asOpt.value
