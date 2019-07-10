@@ -55,6 +55,9 @@ class EstablishersCompanyDirectorNavigator @Inject()(val dataCacheConnector: Use
       case DirectorNameId(establisherIndex, directorIndex) =>
         NavigateTo.dontSave(controllers.register.establishers.company.director.routes.
           DirectorDOBController.onPageLoad(mode, establisherIndex, directorIndex, srn))
+      case DirectorDOBId(establisherIndex, directorIndex) =>
+        NavigateTo.dontSave(controllers.register.establishers.company.director.routes.
+          DirectorHasNINOController.onPageLoad(mode, establisherIndex, directorIndex, srn))
       case DirectorNinoId(establisherIndex, directorIndex) =>
         NavigateTo.dontSave(routes.DirectorUniqueTaxReferenceController.onPageLoad(mode, establisherIndex, directorIndex, srn))
       case DirectorUniqueTaxReferenceId(establisherIndex, directorIndex) =>
@@ -67,7 +70,8 @@ class EstablishersCompanyDirectorNavigator @Inject()(val dataCacheConnector: Use
         checkYourAnswers(establisherIndex, directorIndex, mode, srn)
       case DirectorAddressYearsId(establisherIndex, directorIndex) =>
         addressYearsRoutes(establisherIndex, directorIndex, mode, srn)(from.userAnswers)
-      case _ => commonRoutes(from, mode, srn)
+      case _ =>
+        commonRoutes(from, mode, srn)
     }
 
   //scalastyle:off cyclomatic.complexity
@@ -76,6 +80,8 @@ class EstablishersCompanyDirectorNavigator @Inject()(val dataCacheConnector: Use
       case DirectorDetailsId(establisherIndex, directorIndex) =>
         exitMiniJourney(establisherIndex, directorIndex, mode, srn, from.userAnswers)
       case DirectorNameId(establisherIndex, directorIndex) =>
+        exitMiniJourney(establisherIndex, directorIndex, mode, srn, from.userAnswers)
+      case DirectorDOBId(establisherIndex, directorIndex) =>
         exitMiniJourney(establisherIndex, directorIndex, mode, srn, from.userAnswers)
       case DirectorNinoId(establisherIndex, directorIndex)  =>
         exitMiniJourney(establisherIndex, directorIndex, mode, srn, from.userAnswers)
@@ -97,7 +103,8 @@ class EstablishersCompanyDirectorNavigator @Inject()(val dataCacheConnector: Use
         exitMiniJourney(establisherIndex, directorIndex, mode, srn, from.userAnswers)
       case DirectorAddressYearsId(establisherIndex, directorIndex) =>
         addressYearsEditRoutes(establisherIndex, directorIndex, mode, srn)(from.userAnswers)
-      case _ => commonRoutes(from, mode, srn)
+      case _ =>
+        commonRoutes(from, mode, srn)
     }
 
   //scalastyle:on cyclomatic.complexity

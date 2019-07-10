@@ -20,7 +20,7 @@ import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions._
 import forms.register.establishers.company.director.DirectorDOBFormProvider
-import identifiers.register.establishers.company.director.{DirectorDOBId, DirectorNameId}
+import identifiers.register.establishers.company.director.{DirectorDOBId, DirectorNameId, IsNewDirectorId}
 import javax.inject.Inject
 import models.person.DateOfBirth
 import models.{Index, Mode}
@@ -57,17 +57,20 @@ class DirectorDOBController @Inject()(
       implicit request =>
         val preparedForm = request.userAnswers.get[DateOfBirth](DirectorDOBId(establisherIndex, directorIndex)) match {
           case Some(value) => form.fill(value)
-          case None => form
+          case None        => form
         }
-        Future.successful(Ok(directorDOB(
-          appConfig,
-          preparedForm,
-          mode,
-          establisherIndex,
-          directorIndex,
-          existingSchemeName,
-          postCall(mode, establisherIndex, directorIndex, srn),
-          srn)))
+
+        DirectorNameId(establisherIndex, directorIndex).retrieve.right.map(personName =>
+          Future.successful(Ok(directorDOB(
+            appConfig,
+            preparedForm,
+            mode,
+            establisherIndex,
+            directorIndex,
+            existingSchemeName,
+            postCall(mode, establisherIndex, directorIndex, srn),
+            srn,
+            personName.fullName))))
     }
 
 
@@ -76,26 +79,26 @@ class DirectorDOBController @Inject()(
     implicit request =>
       form.bindFromRequest().fold(
         formWithErrors =>
-          Future.successful(BadRequest(directorDOB(
-            appConfig,
-            formWithErrors,
-            mode,
-            establisherIndex,
-            directorIndex,
-            existingSchemeName,
-            postCall(mode, establisherIndex, directorIndex, srn),
-            srn)))
-        ,
+          DirectorNameId(establisherIndex, directorIndex).retrieve.right.map(personName =>
+            Future.successful(BadRequest(directorDOB(
+              appConfig,
+              formWithErrors,
+              mode,
+              establisherIndex,
+              directorIndex,
+              existingSchemeName,
+              postCall(mode, establisherIndex, directorIndex, srn),
+              srn,
+              personName.fullName
+            )))),
+
         value => {
-          println("hiiiiiiiiii :: ")
-          println("hiiiiiiiiii :: " + value)
-          userAnswersService.save(
-            mode,
-            srn,
-            DirectorDOBId(establisherIndex, directorIndex),
-            value
-          ) map { json =>
-            Redirect(navigator.nextPage(DirectorDOBId(establisherIndex, directorIndex), mode, UserAnswers(json), srn))
+          val answers = request.userAnswers.set(IsNewDirectorId(establisherIndex, directorIndex))(true).flatMap(
+            _.set(DirectorDOBId(establisherIndex, directorIndex))(value)).asOpt.getOrElse(request.userAnswers)
+
+          userAnswersService.upsert(mode, srn, answers.json).map {
+            cacheMap =>
+              Redirect(navigator.nextPage(DirectorDOBId(establisherIndex, directorIndex), mode, UserAnswers(cacheMap), srn))
           }
         }
       )

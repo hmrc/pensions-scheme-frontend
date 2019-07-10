@@ -20,9 +20,9 @@ import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.register.establishers.company.director.DirectorDOBFormProvider
 import identifiers.register.establishers.company.CompanyDetailsId
-import identifiers.register.establishers.company.director.{DirectorDOBId, IsNewDirectorId}
+import identifiers.register.establishers.company.director.{DirectorDOBId, DirectorDetailsId, DirectorNameId, IsNewDirectorId}
 import identifiers.register.establishers.{EstablishersId, IsEstablisherCompleteId}
-import models.person.{DateOfBirth, PersonDetails}
+import models.person.{DateOfBirth, PersonDetails, PersonName}
 import models.{CompanyDetails, Index, NormalMode}
 import org.joda.time.LocalDate
 import org.mockito.Matchers.{eq => eqTo, _}
@@ -67,15 +67,33 @@ class DirectorDOBControllerSpec extends ControllerSpecBase {
     firstDirectorIndex,
     None,
     postCall(NormalMode, firstEstablisherIndex, firstDirectorIndex, None),
-    None)(fakeRequest, messages).toString
+    None,
+    "John Doe")(fakeRequest, messages).toString
 
   private val postRequest = fakeRequest
     .withFormUrlEncodedBody(("date.day", day.toString), ("date.month", month.toString), ("date.year", year.toString))
 
+  private def fakeDataRetrivial = new FakeDataRetrievalAction(
+    Some(Json.obj(
+      EstablishersId.toString -> Json.arr(
+        Json.obj(
+          CompanyDetailsId.toString -> CompanyDetails(companyName),
+          "director" -> Json.arr(
+            Json.obj(
+              DirectorNameId.toString -> PersonName("John", "Doe")
+            )
+          )
+        )
+      )
+    ))
+  )
+
   "DirectorDOB Controller" must {
 
     "return OK and the correct view for a GET" in {
-      val result = controller().onPageLoad(NormalMode, firstEstablisherIndex, firstDirectorIndex, None)(fakeRequest)
+      val result = controller(fakeDataRetrivial)
+        .onPageLoad(NormalMode, firstEstablisherIndex, firstDirectorIndex, None)(
+          fakeRequest.withFormUrlEncodedBody(("directorDetails", "John Doe")))
 
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString()
@@ -88,8 +106,11 @@ class DirectorDOBControllerSpec extends ControllerSpecBase {
             CompanyDetailsId.toString -> CompanyDetails(companyName),
             "director" -> Json.arr(
               Json.obj(
-                "directorDetails" ->
-                  DateOfBirth(new LocalDate(year, month, day))
+                "directorDetails" -> Json.obj(
+                 "firstName" -> "John",
+                  "lastName" -> "Doe",
+                  "date" -> s"$year-$month-$day"
+                )
               )
             )
           )
@@ -119,54 +140,54 @@ class DirectorDOBControllerSpec extends ControllerSpecBase {
       when(mockUserAnswersService.upsert(any(), any(), any())(any(), any(), any())).thenReturn(Future.successful(validData))
 
       val result = controller().onSubmit(NormalMode, firstEstablisherIndex, firstDirectorIndex, None)(postRequest)
-      status(result) mustBe SEE_OTHER
 
+      status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
     }
-    /*
+
     "return a Bad Request and errors when invalid data is submitted" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "invalid value"))
       val boundForm = form.bind(Map("value" -> "invalid value"))
 
-      val result = controller().onSubmit(NormalMode, firstEstablisherIndex, firstDirectorIndex, None)(postRequest)
+      val result = controller(fakeDataRetrivial).onSubmit(NormalMode, firstEstablisherIndex, firstDirectorIndex, None)(postRequest)
 
       status(result) mustBe BAD_REQUEST
       contentAsString(result) mustBe viewAsString(boundForm)
     }
 
-         "redirect to Session Expired for a GET if no existing data is found" in {
-           val result = controller(dontGetAnyData).onPageLoad(NormalMode, firstEstablisherIndex, firstDirectorIndex, None)(fakeRequest)
+    "redirect to Session Expired for a GET if no existing data is found" in {
+      val result = controller(dontGetAnyData).onPageLoad(NormalMode, firstEstablisherIndex, firstDirectorIndex, None)(fakeRequest)
 
-           status(result) mustBe SEE_OTHER
-           redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
-         }
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
+    }
 
-         "redirect to Session Expired for a POST if no existing data is found" in {
-           val result = controller(dontGetAnyData).onSubmit(NormalMode, firstEstablisherIndex, firstDirectorIndex, None)(postRequest)
+    "redirect to Session Expired for a POST if no existing data is found" in {
+      val result = controller(dontGetAnyData).onSubmit(NormalMode, firstEstablisherIndex, firstDirectorIndex, None)(postRequest)
 
-           status(result) mustBe SEE_OTHER
-           redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
-         }
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
+    }
 
-         "save the isNewDirector flag and set the establisher as not complete when the new director is being added" in {
-           reset(mockSectionComplete, mockUserAnswersService)
-           val validData = UserAnswers().set(CompanyDetailsId(firstEstablisherIndex))(CompanyDetails("test company name")).flatMap(
-             _.set(DirectorDOBId(firstEstablisherIndex, firstDirectorIndex))(
-               DateOfBirth(new LocalDate(year, month, day))).flatMap(
-               _.set(IsNewDirectorId(firstEstablisherIndex, firstDirectorIndex))(true)
-             )
-           ).asOpt.value.json
+    "save the isNewDirector flag and set the establisher as not complete when the new director is being added" in {
+      reset(mockSectionComplete, mockUserAnswersService)
+      val validData = UserAnswers().set(CompanyDetailsId(firstEstablisherIndex))(CompanyDetails("test company name")).flatMap(
+        _.set(DirectorDOBId(firstEstablisherIndex, firstDirectorIndex))(
+          DateOfBirth(new LocalDate(year, month, day))).flatMap(
+          _.set(IsNewDirectorId(firstEstablisherIndex, firstDirectorIndex))(true)
+        )
+      ).asOpt.value.json
 
-           val getRelevantData = new FakeDataRetrievalAction(Some(validData))
-           val userAnswers = UserAnswers(validData)
-           when(mockUserAnswersService.upsert(any(), any(), any())(any(), any(), any())).thenReturn(Future.successful(validData))
-           when(mockUserAnswersService.setCompleteFlag(any(), any(), eqTo(IsEstablisherCompleteId(0)),
-             eqTo(userAnswers), eqTo(false))(any(), any(), any(), any())).thenReturn(Future.successful(userAnswers))
+      val getRelevantData = new FakeDataRetrievalAction(Some(validData))
+      val userAnswers = UserAnswers(validData)
+      when(mockUserAnswersService.upsert(any(), any(), any())(any(), any(), any())).thenReturn(Future.successful(validData))
+      when(mockUserAnswersService.setCompleteFlag(any(), any(), eqTo(IsEstablisherCompleteId(0)),
+        eqTo(userAnswers), eqTo(false))(any(), any(), any(), any())).thenReturn(Future.successful(userAnswers))
 
-           val result = controller(getRelevantData).onSubmit(NormalMode, firstEstablisherIndex, firstDirectorIndex, None)(postRequest)
-           status(result) mustBe SEE_OTHER
-           verify(mockUserAnswersService, times(1)).upsert(eqTo(NormalMode), eqTo(None), eqTo(validData))(any(), any(), any())
-         }*/
+      val result = controller(getRelevantData).onSubmit(NormalMode, firstEstablisherIndex, firstDirectorIndex, None)(postRequest)
+      status(result) mustBe SEE_OTHER
+      verify(mockUserAnswersService, times(1)).upsert(eqTo(NormalMode), eqTo(None), eqTo(validData))(any(), any(), any())
+    }
   }
 }
 

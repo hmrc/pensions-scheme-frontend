@@ -42,6 +42,8 @@ class EstablishersCompanyDirectorNavigatorSpec extends SpecBase with NavigatorBe
     (DirectorDetailsId(0, 0), newDirector, directorNino(mode), true, Some(exitJourney(mode, newDirector)), true),
     (DirectorNameId(0, 0), emptyAnswers, directorDOB(mode), true, Some(exitJourney(mode, emptyAnswers)), true),
     (DirectorNameId(0, 0), newDirector, directorDOB(mode), true, Some(exitJourney(mode, newDirector)), true),
+    (DirectorDOBId(0, 0),  emptyAnswers, directorHasNINO(mode), true, Some(exitJourney(mode, emptyAnswers)), true),
+    (DirectorDOBId(0, 0),  newDirector, directorHasNINO(mode), true, Some(exitJourney(mode, newDirector)), true),
     (DirectorNinoId(0, 0), emptyAnswers, directorUtr(mode), true, Some(exitJourney(mode, emptyAnswers)), true),
     (DirectorNinoId(0, 0), newDirector, directorUtr(mode), true, Some(exitJourney(mode, newDirector)), true),
     (DirectorUniqueTaxReferenceId(0, 0), emptyAnswers, directorAddressPostcode(mode), true, Some(exitJourney(mode, emptyAnswers)), true),
@@ -158,6 +160,8 @@ object EstablishersCompanyDirectorNavigatorSpec extends SpecBase with OptionValu
     mode, None, establisherIndex)
 
   private def directorDOB(mode: Mode) = routes.DirectorDOBController.onPageLoad(mode, directorIndex, establisherIndex, None)
+
+  private def directorHasNINO(mode: Mode) = routes.DirectorHasNINOController.onPageLoad(mode, directorIndex, establisherIndex, None)
 
   val addressYearsOverAYearNew = UserAnswers(Json.obj())
     .set(DirectorAddressYearsId(establisherIndex, directorIndex))(AddressYears.OverAYear).flatMap(
