@@ -59,17 +59,23 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
         case _ => fs.get(Toggles.isSeparateRefCollectionEnabled)
       }
 
+
+      val directorNinoDetails = mode match {
+        case UpdateMode| CheckUpdateMode if displayNewNino =>
+          DirectorNewNinoId(companyIndex, directorIndex)
+            .row(routes.DirectorNinoNewController.onPageLoad(checkMode(mode), companyIndex, directorIndex, srn).url, mode)
+
+        case _ =>
+          DirectorNinoId(companyIndex, directorIndex)
+            .row(routes.DirectorNinoController.onPageLoad(checkMode(mode), companyIndex, directorIndex, srn).url, mode)
+      }
+
       val companyDirectorDetails = AnswerSection(
         Some("messages__director__cya__details_heading"),
         Seq(
           DirectorDetailsId(companyIndex, directorIndex).
             row(routes.DirectorDetailsController.onPageLoad(checkMode(mode), companyIndex, directorIndex, srn).url, mode),
-          mode match {
-            case UpdateMode| CheckUpdateMode if displayNewNino => DirectorNewNinoId(companyIndex, directorIndex).
-              row(routes.DirectorNinoNewController.onPageLoad(checkMode(mode), companyIndex, directorIndex, srn).url, mode)
-            case _ => DirectorNinoId(companyIndex, directorIndex).
-              row(routes.DirectorNinoController.onPageLoad(checkMode(mode), companyIndex, directorIndex, srn).url, mode)
-          },
+          directorNinoDetails,
           DirectorUniqueTaxReferenceId(companyIndex, directorIndex).
             row(routes.DirectorUniqueTaxReferenceController.onPageLoad(checkMode(mode), companyIndex, directorIndex, srn).url, mode)
         ).flatten
