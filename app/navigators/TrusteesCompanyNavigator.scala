@@ -17,21 +17,20 @@
 package navigators
 
 import com.google.inject.Inject
-import config.{FeatureSwitchManagementService, FrontendAppConfig}
+import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
+import controllers.register.trustees.company.routes._
+import controllers.register.trustees.routes._
+import controllers.routes._
 import identifiers.register.establishers.ExistingCurrentAddressId
 import identifiers.register.trustees.IsTrusteeNewId
 import identifiers.register.trustees.company._
 import models.Mode.journeyMode
 import models._
-import controllers.register.trustees.routes._
-import controllers.register.trustees.company.routes._
-import controllers.routes._
-import utils.{Navigator, Toggles, UserAnswers}
+import utils.{Navigator, UserAnswers}
 
 class TrusteesCompanyNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector,
-                                         appConfig: FrontendAppConfig,
-                                         featureSwitchManagementService: FeatureSwitchManagementService) extends Navigator {
+                                         appConfig: FrontendAppConfig) extends Navigator {
 
   private def exitMiniJourney(index: Index, mode: Mode, srn: Option[String], answers: UserAnswers): Option[NavigateTo] =
     if(mode == CheckMode || mode == NormalMode){
@@ -197,7 +196,7 @@ class TrusteesCompanyNavigator @Inject()(val dataCacheConnector: UserAnswersCach
   }
 
   private def confirmPreviousAddressRoutes(index: Int, mode: Mode, srn: Option[String])(answers: UserAnswers): Option[NavigateTo] =
-    if (mode == CheckUpdateMode && featureSwitchManagementService.get(Toggles.isPrevAddEnabled)) {
+    if (mode == CheckUpdateMode) {
       answers.get(CompanyConfirmPreviousAddressId(index)) match {
         case Some(false) =>
           NavigateTo.dontSave(CompanyPreviousAddressPostcodeLookupController.onPageLoad(mode, index, srn))

@@ -19,13 +19,13 @@ package navigators
 import com.google.inject.Inject
 import config.{FeatureSwitchManagementService, FrontendAppConfig}
 import connectors.UserAnswersCacheConnector
+import controllers.register.establishers.company.director.routes._
 import controllers.register.establishers.company.routes._
 import controllers.register.establishers.company.{routes => establisherCompanyRoutes}
-import controllers.register.establishers.company.director.routes._
 import controllers.routes._
 import identifiers.EstablishersOrTrusteesChangedId
-import identifiers.register.establishers.{ExistingCurrentAddressId, IsEstablisherNewId}
 import identifiers.register.establishers.company._
+import identifiers.register.establishers.{ExistingCurrentAddressId, IsEstablisherNewId}
 import models.Mode._
 import models._
 import utils.{Navigator, Toggles, UserAnswers}
@@ -63,7 +63,13 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
   protected def routes(from: NavigateFrom, mode: Mode, srn: Option[String]): Option[NavigateTo] =
     from.id match {
       case CompanyDetailsId(index) =>
-        NavigateTo.dontSave(establisherCompanyRoutes.CompanyVatController.onPageLoad(mode, index, srn))
+        NavigateTo.dontSave(
+          if (featureSwitchManagementService.get(Toggles.isEstablisherCompanyHnSEnabled)) {
+            controllers.register.establishers.routes.AddEstablisherController.onPageLoad(mode, srn)
+          } else {
+            establisherCompanyRoutes.CompanyVatController.onPageLoad(mode, index, srn)
+          }
+        )
       case HasCompanyNumberId(index) =>
         confirmHasCompanyNumber(index, mode, srn)(from.userAnswers)
       case CompanyRegistrationNumberVariationsId(index) =>

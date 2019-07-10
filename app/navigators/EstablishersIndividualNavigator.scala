@@ -17,7 +17,7 @@
 package navigators
 
 import com.google.inject.{Inject, Singleton}
-import config.{FeatureSwitchManagementService, FrontendAppConfig}
+import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
 import identifiers.register.establishers.individual._
 import identifiers.register.establishers.{EstablisherNewNinoId, ExistingCurrentAddressId, IsEstablisherNewId}
@@ -28,8 +28,7 @@ import utils.{Navigator, UserAnswers}
 @Singleton
 class EstablishersIndividualNavigator @Inject()(
                                                  appConfig: FrontendAppConfig,
-                                                 val dataCacheConnector: UserAnswersCacheConnector,
-                                                 featureSwitchManagementService: FeatureSwitchManagementService
+                                                 val dataCacheConnector: UserAnswersCacheConnector
                                                ) extends Navigator {
 
   override protected def routeMap(from: NavigateFrom): Option[NavigateTo] = routes(from, NormalMode, None)
