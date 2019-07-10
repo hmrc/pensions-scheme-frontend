@@ -44,6 +44,8 @@ class EstablishersCompanyDirectorNavigatorSpec extends SpecBase with NavigatorBe
     (DirectorNameId(0, 0), newDirector, directorDOB(mode), true, Some(exitJourney(mode, newDirector)), true),
     (DirectorNinoId(0, 0), emptyAnswers, directorUtr(mode), true, Some(exitJourney(mode, emptyAnswers)), true),
     (DirectorNinoId(0, 0), newDirector, directorUtr(mode), true, Some(exitJourney(mode, newDirector)), true),
+    (DirectorHasNINOId(0, 0), hasNino(newDirector, value = true), directorNinoNew(mode), true, Some(exitJourney(mode, newDirector)), true),
+    (DirectorHasNINOId(0, 0), hasNino(newDirector, value = false), directorNinoReason(mode), true, Some(exitJourney(mode, newDirector)), true),
     (DirectorUniqueTaxReferenceId(0, 0), emptyAnswers, directorAddressPostcode(mode), true, Some(exitJourney(mode, emptyAnswers)), true),
     (DirectorUniqueTaxReferenceId(0, 0), newDirector, directorAddressPostcode(mode), true, Some(exitJourney(mode, newDirector)), true),
     (DirectorAddressPostcodeLookupId(0, 0), emptyAnswers, directorAddressList(mode), true, Some(directorAddressList(checkMode(mode))), true),
@@ -100,6 +102,9 @@ object EstablishersCompanyDirectorNavigatorSpec extends SpecBase with OptionValu
   val directorIndex = Index(0)
   private val newDirector = UserAnswers(Json.obj()).set(IsNewDirectorId(establisherIndex, directorIndex))(true).asOpt.value
 
+  private def hasNino(ua:UserAnswers, value:Boolean):UserAnswers =
+    ua.set(DirectorHasNINOId(0,0))(value = value).asOpt.value
+
   private val confirmPreviousAddressYes = UserAnswers(Json.obj())
     .set(DirectorConfirmPreviousAddressId(0, 0))(true).asOpt.value
   private val confirmPreviousAddressNo = UserAnswers(Json.obj())
@@ -131,6 +136,9 @@ object EstablishersCompanyDirectorNavigatorSpec extends SpecBase with OptionValu
   private def directorContactDetails(mode: Mode) = routes.DirectorContactDetailsController.onPageLoad(mode, directorIndex, establisherIndex, None)
 
   private def directorAddressPostcode(mode: Mode) = routes.DirectorAddressPostcodeLookupController.onPageLoad(mode, directorIndex, establisherIndex, None)
+
+  private def directorNinoNew(mode: Mode) = routes.DirectorNinoNewController.onPageLoad(mode, directorIndex, establisherIndex, None)
+  private def directorNinoReason(mode: Mode) = routes.DirectorNoNINOReasonController.onPageLoad(mode, directorIndex, establisherIndex, None)
 
   private def directorAddressList(mode: Mode) = routes.DirectorAddressListController.onPageLoad(mode, directorIndex, establisherIndex, None)
 
