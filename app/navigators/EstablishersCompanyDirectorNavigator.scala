@@ -54,6 +54,9 @@ class EstablishersCompanyDirectorNavigator @Inject()(val dataCacheConnector: Use
       case DirectorNameId(establisherIndex, directorIndex) =>
         NavigateTo.dontSave(controllers.register.establishers.company.director.routes.
           DirectorDOBController.onPageLoad(mode, establisherIndex, directorIndex, srn))
+      case DirectorNoUTRReasonId(establisherIndex, directorIndex) =>
+        NavigateTo.dontSave(controllers.register.establishers.company.director.routes.
+          DirectorAddressPostcodeLookupController.onPageLoad(mode, establisherIndex, directorIndex, srn))
       case DirectorNinoId(establisherIndex, directorIndex) =>
         NavigateTo.dontSave(routes.DirectorUniqueTaxReferenceController.onPageLoad(mode, establisherIndex, directorIndex, srn))
       case DirectorUniqueTaxReferenceId(establisherIndex, directorIndex) =>
