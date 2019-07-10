@@ -109,9 +109,9 @@ class EstablishersCompanyNavigatorSpec extends SpecBase with MustMatchers with N
   )
 
   private def updateOnlyRoutes(toggled:Boolean): TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = Table(
-    ("Id",                                          "User Answers",               "Next Page (UpdateMode Mode)",                "Save (NM)",  "Next Page (Check Mode)",         "Save (CM)"),
-    (CompanyAddressYearsId(0),                    addressYearsUnderAYear,         if(toggled) hasBeenTrading(UpdateMode) else prevAddPostCodeLookup(UpdateMode),        true,         addressYearsLessThanTwelveEdit(CheckUpdateMode, toggled, addressYearsUnderAYear),                          true),
-//    (CompanyAddressYearsId(0),                    addressYearsUnderAYearWithExistingCurrentAddress,         if(toggled) hasBeenTrading(UpdateMode) else prevAddPostCodeLookup(UpdateMode),        true,         addressYearsLessThanTwelveEdit(CheckUpdateMode, toggled, addressYearsUnderAYearWithExistingCurrentAddress),                          true),
+    ("Id",                                          "User Answers",               "Next Page (UpdateMode Mode)",                "Save (NM)",  "Next Page (CheckUpdateMode Mode)",         "Save (CM)"),
+    (CompanyAddressYearsId(0), addressYearsUnderAYear,                           if (toggled) hasBeenTrading(UpdateMode) else prevAddPostCodeLookup(UpdateMode), true, addressYearsLessThanTwelveEdit(UpdateMode, toggled, addressYearsUnderAYear), true),
+    (CompanyAddressYearsId(0), addressYearsUnderAYearWithExistingCurrentAddress, if (toggled) hasBeenTrading(UpdateMode) else prevAddPostCodeLookup(UpdateMode), true, addressYearsLessThanTwelveEdit(UpdateMode, toggled, addressYearsUnderAYearWithExistingCurrentAddress), true),
     (CompanyRegistrationNumberId(0),              emptyAnswers,                     if(toggled)hasCompanyUTR(UpdateMode) else companyUTR(UpdateMode),                   true,           Some(exitJourney(UpdateMode, emptyAnswers, 0, cya(UpdateMode))),                   true),
     (CompanyRegistrationNumberId(0),              newEstablisher,                   if(toggled)hasCompanyUTR(UpdateMode) else companyUTR(UpdateMode),                   true,           Some(cya(UpdateMode)),                   true),
     (CompanyContactDetailsId(0),  emptyAnswers,                         cya(UpdateMode),                        true,   Some(exitJourney(checkMode(UpdateMode),   emptyAnswers, 0, cya(UpdateMode))),       true),
@@ -138,13 +138,6 @@ class EstablishersCompanyNavigatorSpec extends SpecBase with MustMatchers with N
     appRunning()
     behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, normalRoutes(), dataDescriber)
     behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, updateRoutes(), dataDescriber, UpdateMode)
-  }
-
-  s"when previous address feature is toggled on" must {
-    val navigator: EstablishersCompanyNavigator =
-      new EstablishersCompanyNavigator(FakeUserAnswersCacheConnector, frontendAppConfig, new FakeFeatureSwitchManagementService(true))
-    appRunning()
-    behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, updateRoutes(true), dataDescriber, UpdateMode)
   }
 }
 
@@ -320,9 +313,9 @@ object EstablishersCompanyNavigatorSpec extends OptionValues with Enumerable.Imp
     .set(CompanyAddressYearsId(0))(AddressYears.OverAYear).asOpt.value
   private val addressYearsUnderAYear = UserAnswers(Json.obj())
     .set(CompanyAddressYearsId(0))(AddressYears.UnderAYear).asOpt.value
-//  private val addressYearsUnderAYearWithExistingCurrentAddress = UserAnswers(Json.obj())
-//    .set(CompanyAddressYearsId(0))(AddressYears.UnderAYear).flatMap(
-//    _.set(ExistingCurrentAddressId(0))(Address("Line 1", "Line 2", None, None, None, "UK"))).asOpt.value
+  private val addressYearsUnderAYearWithExistingCurrentAddress = UserAnswers(Json.obj())
+    .set(CompanyAddressYearsId(0))(AddressYears.UnderAYear).flatMap(
+    _.set(ExistingCurrentAddressId(0))(Address("Line 1", "Line 2", None, None, None, "UK"))).asOpt.value
 
   private val addCompanyDirectorsTrue = UserAnswers(validData(johnDoe)).set(AddCompanyDirectorsId(0))(true).asOpt.value
   private val addCompanyDirectorsFalse = UserAnswers(validData(johnDoe)).set(AddCompanyDirectorsId(0))(false).asOpt.value
