@@ -16,153 +16,91 @@
 
 package controllers.register.establishers.company.director
 
-import akka.stream.Materializer
-import config.FrontendAppConfig
-import controllers.ReasonController
+import controllers.ControllerSpecBase
+import controllers.actions._
 import forms.ReasonFormProvider
-import identifiers.TypedIdentifier
-import javax.inject.Inject
-import models.NormalMode
-import models.requests.DataRequest
-import org.scalatest.concurrent.ScalaFutures
-import org.scalatest.{MustMatchers, OptionValues, WordSpec}
-import play.api.i18n.MessagesApi
-import play.api.inject.bind
-import play.api.mvc.{AnyContent, Call, Request, Result}
-import play.api.test.FakeRequest
+import identifiers.register.establishers.company.director.DirectorNoUTRReasonId
+import models.{Index, NormalMode}
+import play.api.data.Form
+import play.api.libs.json.Json
 import play.api.test.Helpers._
-import services.{FakeUserAnswersService, UserAnswersService}
-import uk.gov.hmrc.domain.PsaId
-import utils.{FakeNavigator, Navigator, UserAnswers}
-import viewmodels.ReasonViewModel
+import services.FakeUserAnswersService
+import utils.FakeNavigator
+import viewmodels.{Message, ReasonViewModel}
 import views.html.reason
 
-import scala.concurrent.{ExecutionContext, Future}
-
-class DirectorNoUTRReasonControllerSpec extends WordSpec with MustMatchers with OptionValues with ScalaFutures {
+class DirectorNoUTRReasonControllerSpec extends ControllerSpecBase {
 
   import DirectorNoUTRReasonControllerSpec._
 
-  val viewmodel = ReasonViewModel(
-    postCall = Call("GET", "www.example.com"),
-    title = "title",
-    heading = "heading"
+  "DirectorNoUTRReasonController" must {
+    "return OK and the correct view for a GET" in {
+      val result = controller().onPageLoad(NormalMode, establisherIndex, directorIndex, None)(fakeRequest)
+
+      status(result) mustBe OK
+      contentAsString(result) mustBe viewAsString()
+    }
+
+    "return OK and the correct view for a GET where valid reason given" in {
+      val validData = validCompanyDirectorData("directorUniqueTaxReference" -> Json.obj("reason" -> "new reason"))
+
+      val dataRetrievalAction = new FakeDataRetrievalAction(Some(validData))
+      val result = controller(dataRetrievalAction = dataRetrievalAction).onPageLoad(NormalMode, establisherIndex, directorIndex, None)(fakeRequest)
+      status(result) mustBe OK
+      contentAsString(result) mustBe viewAsString(form = form.fill("new reason"))
+    }
+
+    "redirect to the next page when valid data is submitted" in {
+      val postRequest = fakeRequest.withFormUrlEncodedBody(("reason", "new reason"))
+
+      val result = controller().onSubmit(NormalMode, establisherIndex, directorIndex, None)(postRequest)
+
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result) mustBe Some(onwardRoute.url)
+      FakeUserAnswersService.verify(DirectorNoUTRReasonId(establisherIndex, directorIndex), "new reason")
+    }
+
+    "return a Bad Request when invalid data is submitted" in {
+      val postRequest = fakeRequest.withFormUrlEncodedBody(("reason", ""))
+
+      val result = controller().onSubmit(NormalMode, establisherIndex, directorIndex, None)(postRequest)
+
+      status(result) mustBe BAD_REQUEST
+    }
+  }
+}
+
+object DirectorNoUTRReasonControllerSpec extends ControllerSpecBase {
+  private val schemeName = None
+
+  private def onwardRoute = controllers.routes.IndexController.onPageLoad()
+
+  private val formProvider = new ReasonFormProvider()
+  private val form = formProvider("test director name")
+  private val establisherIndex = Index(0)
+  private val directorIndex = Index(0)
+  private val srn = None
+  private val postCall = controllers.register.establishers.company.director.routes.DirectorNoUTRReasonController.onSubmit(NormalMode, establisherIndex, directorIndex, srn)
+  private val viewModel = ReasonViewModel(
+    postCall,
+    title = Message("messages__noDirectorUtr__title"),
+    heading = Message("messages__noDirectorUtr__heading", "first last"),
+    srn = srn
   )
 
-  "get" must {
+  private def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisherCompanyDirectorWithDirectorName): DirectorNoUTRReasonController =
+    new DirectorNoUTRReasonController(
+      frontendAppConfig,
+      messagesApi,
+      FakeUserAnswersService,
+      new FakeNavigator(desiredRoute = onwardRoute),
+      FakeAuthAction,
+      dataRetrievalAction,
+      FakeAllowAccessProvider(),
+      new DataRequiredActionImpl,
+      formProvider
+    )
 
-    "return a successful result when there is no existing answer" in {
-
-      running(_.overrides(
-        bind[Navigator].toInstance(FakeNavigator)
-      )) {
-        app =>
-
-          implicit val materializer: Materializer = app.materializer
-
-          val appConfig = app.injector.instanceOf[FrontendAppConfig]
-          val formProvider = app.injector.instanceOf[ReasonFormProvider]
-          val request = FakeRequest()
-          val messages = app.injector.instanceOf[MessagesApi].preferred(request)
-          val controller = app.injector.instanceOf[TestController]
-          val result = controller.onPageLoad(viewmodel, UserAnswers())
-
-          status(result) mustEqual OK
-          contentAsString(result) mustEqual reason(appConfig, formProvider(directorName)(messages), viewmodel, None)(request, messages).toString
-      }
-    }
-
-    "return a successful result when there is an existing answer" in {
-
-      running(_.overrides(
-        bind[Navigator].toInstance(FakeNavigator)
-      )) {
-        app =>
-
-          implicit val materializer: Materializer = app.materializer
-
-          val appConfig = app.injector.instanceOf[FrontendAppConfig]
-          val formProvider = app.injector.instanceOf[ReasonFormProvider]
-          val request = FakeRequest()
-          val messages = app.injector.instanceOf[MessagesApi].preferred(request)
-          val controller = app.injector.instanceOf[TestController]
-          val answers = UserAnswers().set(FakeIdentifier)("123456789").get
-          val result = controller.onPageLoad(viewmodel, answers)
-
-          status(result) mustEqual OK
-          contentAsString(result) mustEqual reason(
-            appConfig,
-            formProvider(directorName)(messages).fill("123456789"),
-            viewmodel,
-            None
-          )(request, messages).toString
-      }
-    }
-  }
-
-  "post" must {
-
-    "return a redirect when the submitted data is valid" in {
-
-      import play.api.inject._
-
-      running(_.overrides(
-        bind[UserAnswersService].toInstance(FakeUserAnswersService),
-        bind[Navigator].toInstance(FakeNavigator)
-      )) {
-        app =>
-
-          implicit val materializer: Materializer = app.materializer
-
-          val request = FakeRequest().withFormUrlEncodedBody(
-            ("reason", "123456789")
-          )
-          val controller = app.injector.instanceOf[TestController]
-          val result = controller.onSubmit(viewmodel, UserAnswers(), request)
-
-          status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual "www.example.com"
-          FakeUserAnswersService.verify(FakeIdentifier, "123456789")
-      }
-    }
-
-    "return a bad request when the submitted data is invalid" in {
-
-      running(_.overrides(
-        bind[Navigator].toInstance(FakeNavigator)
-      )) {
-        app =>
-
-          implicit val materializer: Materializer = app.materializer
-
-          val appConfig = app.injector.instanceOf[FrontendAppConfig]
-          val formProvider = app.injector.instanceOf[ReasonFormProvider]
-          val controller = app.injector.instanceOf[TestController]
-          val request = FakeRequest().withFormUrlEncodedBody(("reason", "123456789{0}12345"))
-
-          val messages = app.injector.instanceOf[MessagesApi].preferred(request)
-
-          val result = controller.onSubmit(viewmodel, UserAnswers(), request)
-
-          status(result) mustEqual BAD_REQUEST
-          contentAsString(result) mustEqual reason(
-            appConfig,
-            formProvider(directorName)(messages).bind(Map("reason" -> "123456789{0}12345")),
-            viewmodel,
-            None
-          )(request, messages).toString
-      }
-    }
-  }
+  private def viewAsString(form: Form[_] = form) = reason(frontendAppConfig, form, viewModel, schemeName)(fakeRequest, messages).toString
 }
 
-object DirectorNoUTRReasonControllerSpec {
-
-  def controller = {
-    new DirectorNoUTRReasonController
-  }
-
-  object FakeIdentifier extends TypedIdentifier[String]
-
-  val directorName = "test director"
-}
