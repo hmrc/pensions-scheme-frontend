@@ -20,8 +20,9 @@ import com.google.inject.Inject
 import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
 import controllers.register.establishers.partnership.routes._
-import identifiers.register.establishers.{ExistingCurrentAddressId, IsEstablisherNewId}
+import controllers.routes._
 import identifiers.register.establishers.partnership._
+import identifiers.register.establishers.{ExistingCurrentAddressId, IsEstablisherNewId}
 import models.Mode._
 import models._
 import utils.{Navigator, UserAnswers}

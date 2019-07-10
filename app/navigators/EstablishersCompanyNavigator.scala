@@ -19,13 +19,13 @@ package navigators
 import com.google.inject.Inject
 import config.{FeatureSwitchManagementService, FrontendAppConfig}
 import connectors.UserAnswersCacheConnector
+import controllers.register.establishers.company.director.routes._
 import controllers.register.establishers.company.routes._
 import controllers.register.establishers.company.{routes => establisherCompanyRoutes}
-import controllers.register.establishers.company.director.routes._
 import controllers.routes._
 import identifiers.EstablishersOrTrusteesChangedId
-import identifiers.register.establishers.{ExistingCurrentAddressId, IsEstablisherNewId}
 import identifiers.register.establishers.company._
+import identifiers.register.establishers.{ExistingCurrentAddressId, IsEstablisherNewId}
 import models.Mode._
 import models._
 import utils.{Navigator, Toggles, UserAnswers}

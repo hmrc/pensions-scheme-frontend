@@ -121,9 +121,6 @@ object EstablishersPartnerNavigatorSpec extends SpecBase with OptionValues {
   private val confirmPreviousAddressNo = UserAnswers(Json.obj())
     .set(PartnerConfirmPreviousAddressId(0, 0))(false).asOpt.value
 
-  private val config = injector.instanceOf[Configuration]
-  private def featureSwitch = new FeatureSwitchManagementServiceTestImpl(config, environment)
-
   private def addressYearsLessThanTwelveEdit(mode: Mode, userAnswers: UserAnswers)=
     (
       userAnswers.get(PartnerAddressYearsId(establisherIndex, partnerIndex)),

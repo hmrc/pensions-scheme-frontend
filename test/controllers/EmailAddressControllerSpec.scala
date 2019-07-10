@@ -173,7 +173,7 @@ object EmailAddressControllerSpec {
     }
 
     def onSubmit(viewmodel: CommonFormWithHintViewModel, answers: UserAnswers, fakeRequest: Request[AnyContent]): Future[Result] = {
-      post(FakeIdentifier, CheckUpdateMode, formProvider(), viewmodel)(DataRequest(fakeRequest, "cacheId", answers, PsaId("A0000000")))
+      post(FakeIdentifier, CheckUpdateMode, formProvider(), viewmodel, None)(DataRequest(fakeRequest, "cacheId", answers, PsaId("A0000000")))
     }
   }
 }

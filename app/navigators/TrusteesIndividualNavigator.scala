@@ -17,7 +17,7 @@
 package navigators
 
 import com.google.inject.{Inject, Singleton}
-import config.{FeatureSwitchManagementService, FrontendAppConfig}
+import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
 import controllers.register.trustees.individual.routes._
 import controllers.routes._

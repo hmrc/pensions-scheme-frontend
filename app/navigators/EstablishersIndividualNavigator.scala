@@ -20,7 +20,6 @@ import com.google.inject.{Inject, Singleton}
 import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
 import identifiers.register.establishers.individual._
-import identifiers.register.establishers.{EstablisherNewNinoId, IsEstablisherNewId}
 import identifiers.register.establishers.{EstablisherNewNinoId, ExistingCurrentAddressId, IsEstablisherNewId}
 import models.Mode.journeyMode
 import models._

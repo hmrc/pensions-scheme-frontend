@@ -20,13 +20,12 @@ import com.google.inject.Inject
 import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
 import controllers.register.trustees.partnership.routes
+import controllers.register.trustees.partnership.routes._
 import identifiers.register.establishers.ExistingCurrentAddressId
 import identifiers.register.trustees.IsTrusteeNewId
 import identifiers.register.trustees.partnership._
 import models.Mode.journeyMode
 import models._
-import utils.{Navigator, UserAnswers}
-import controllers.register.trustees.partnership.routes._
 import utils.{Navigator, UserAnswers}
 
 class TrusteesPartnershipNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector,

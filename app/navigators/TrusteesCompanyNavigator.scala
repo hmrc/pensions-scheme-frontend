@@ -17,17 +17,17 @@
 package navigators
 
 import com.google.inject.Inject
-import config.{FeatureSwitchManagementService, FrontendAppConfig}
+import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
+import controllers.register.trustees.company.routes._
+import controllers.register.trustees.routes._
+import controllers.routes._
 import identifiers.register.establishers.ExistingCurrentAddressId
 import identifiers.register.trustees.IsTrusteeNewId
 import identifiers.register.trustees.company._
 import models.Mode.journeyMode
 import models._
-import controllers.register.trustees.routes._
-import controllers.register.trustees.company.routes._
-import controllers.routes._
-import utils.{Navigator, Toggles, UserAnswers}
+import utils.{Navigator, UserAnswers}
 
 class TrusteesCompanyNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector,
                                          appConfig: FrontendAppConfig) extends Navigator {

@@ -75,7 +75,7 @@ class CompanyEmailController @Inject()(val appConfig: FrontendAppConfig,
     implicit request =>
       viewModel(mode, srn, index).retrieve.right.map {
         vm =>
-          post(CompanyEmailId(index), mode, form, vm, IsContactDetailsCompleteId(index))
+          post(CompanyEmailId(index), mode, form, vm, Some(IsContactDetailsCompleteId(index)))
       }
   }
 }
