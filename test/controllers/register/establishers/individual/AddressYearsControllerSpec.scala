@@ -41,11 +41,11 @@ class AddressYearsControllerSpec extends ControllerSpecBase {
   private def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
   private val formProvider = new AddressYearsFormProvider()
-  private val form = formProvider(Message("messages__common_error__current_address_years"))
+  private val establisherName = "test first name test last name"
 
+  private val form = formProvider(Message("messages__common_error__current_address_years", establisherName))
   private val firstIndex = Index(0)
   private val invalidIndex = Index(11)
-  private val establisherName = "test first name test last name"
 
   private def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisher) =
     new AddressYearsController(
@@ -62,9 +62,9 @@ class AddressYearsControllerSpec extends ControllerSpecBase {
   private lazy val viewModel =
     AddressYearsViewModel(
       postCall = routes.AddressYearsController.onSubmit(NormalMode, firstIndex, None),
-      title = Message("messages__establisher_address_years__title"),
-      heading = Message("messages__establisher_address_years__title"),
-      legend = Message("messages__establisher_address_years__title"),
+      title = Message("messages__establisher_address_years__title", establisherName),
+      heading = Message("messages__establisher_address_years__title", establisherName),
+      legend = Message("messages__establisher_address_years__title", establisherName),
       subHeading = Some(Message(establisherName))
     )
 

@@ -41,7 +41,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
   implicit val request = FakeDataRequest(directorAnswers)
 
   private def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData,
-                         allowChangeHelper: AllowChangeHelper = ach, toggle: Boolean = false): CheckYourAnswersController =
+                         allowChangeHelper: AllowChangeHelper = ach, toggle:Boolean = false): CheckYourAnswersController =
     new CheckYourAnswersController(
       frontendAppConfig,
       messagesApi,
@@ -56,7 +56,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
       new FakeFeatureSwitchManagementService(toggle)
     )
 
-  private def directorDetails(mode: Mode, srn: Option[String] = None) = AnswerSection(
+  private def directorDetails(mode:Mode, srn : Option[String] = None) = AnswerSection(
     Some("messages__director__cya__details_heading"),
     Seq(
       DirectorDetailsId(firstIndex, firstIndex).
@@ -68,7 +68,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
     ).flatten
   )
 
-  private def directorContactDetails(mode: Mode, srn: Option[String] = None) = AnswerSection(
+  private def directorContactDetails(mode:Mode, srn : Option[String] = None) = AnswerSection(
     Some("messages__director__cya__contact__details_heading"),
     Seq(
       DirectorAddressId(firstIndex, firstIndex).
@@ -82,9 +82,9 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
     ).flatten
   )
 
-  private def viewAsString(mode: Mode = NormalMode,
-                           answerSection: Seq[AnswerSection] = Seq(directorDetails(NormalMode), directorContactDetails(NormalMode)),
-                           srn: Option[String] = None) = check_your_answers(
+  private def viewAsString(mode:Mode = NormalMode,
+                   answerSection : Seq[AnswerSection] = Seq(directorDetails(NormalMode), directorContactDetails(NormalMode)),
+                   srn : Option[String] =  None) = check_your_answers(
     frontendAppConfig,
     answerSection,
     routes.CheckYourAnswersController.onSubmit(firstIndex, firstIndex, mode, srn),
@@ -178,6 +178,7 @@ object CheckYourAnswersControllerSpec extends SpecBase {
     .set(DirectorDetailsId(firstIndex, firstIndex))(PersonDetails("first name", None, "last name", LocalDate.now(), false))
     .asOpt.value
 
+
   implicit val directorAnswersUpdate = directorDetailsAnswersUpdateWithoutNino
     .set(DirectorNinoId(firstIndex, firstIndex))(Nino.Yes("AB100100A")).asOpt.value
 
@@ -200,58 +201,58 @@ object CheckYourAnswersControllerSpec extends SpecBase {
     .asOpt.value
 
   private def updateAnswerRows = Seq(AnswerSection(
-    Some("messages__director__cya__details_heading"),
-    Seq(
-      AnswerRow("messages__common__cya__name", Seq("first name last name"), false, None),
-      AnswerRow("messages__common__dob", Seq(DateHelper.formatDate(LocalDate.now())), answerIsMessageKey = false, None),
-      AnswerRow("messages__common__nino", Seq("AB100100A"), answerIsMessageKey = false, None)
-    )
-  ),
+      Some("messages__director__cya__details_heading"),
+      Seq(
+        AnswerRow("messages__common__cya__name", Seq("first name last name"), false, None),
+        AnswerRow("messages__common__dob", Seq(DateHelper.formatDate(LocalDate.now())), answerIsMessageKey = false, None),
+        AnswerRow("messages__common__nino", Seq("AB100100A"), answerIsMessageKey = false, None)
+      )
+    ),
     AnswerSection(Some("messages__director__cya__contact__details_heading"), Seq())
   )
 
   private def updateAnswerRowsWithChange = Seq(AnswerSection(
-    Some("messages__director__cya__details_heading"),
-    Seq(
-      AnswerRow("messages__common__cya__name", Seq("first name last name"), false,
-        Some(Link("site.change", routes.DirectorDetailsController.onPageLoad(Mode.checkMode(UpdateMode), firstIndex, firstIndex, Some("srn")).url,
-          Some(Message("messages__visuallyhidden__common__name", "first name last name").resolve)))),
-      AnswerRow("messages__common__dob", Seq(DateHelper.formatDate(LocalDate.now())), answerIsMessageKey = false,
-        Some(Link("site.change", routes.DirectorDetailsController.onPageLoad(Mode.checkMode(UpdateMode), firstIndex, firstIndex, Some("srn")).url,
-          Some(Message("messages__visuallyhidden__common__dob", "first name last name").resolve)))),
-      AnswerRow("messages__director_nino_question_cya_label", Seq(s"${Nino.Yes}"), answerIsMessageKey = false,
-        Some(Link("site.change", routes.DirectorNinoController.onPageLoad(Mode.checkMode(UpdateMode), firstIndex, firstIndex, Some("srn")).url,
-          Some("messages__visuallyhidden__director__nino_yes_no")))),
-      AnswerRow("messages__common__nino", Seq("AB100100A"), answerIsMessageKey = false,
-        Some(Link("site.change", routes.DirectorNinoController.onPageLoad(Mode.checkMode(UpdateMode), firstIndex, firstIndex, Some("srn")).url,
-          Some("messages__visuallyhidden__director__nino"))))
-    )
-  ),
+      Some("messages__director__cya__details_heading"),
+      Seq(
+        AnswerRow("messages__common__cya__name", Seq("first name last name"), false,
+          Some(Link("site.change", routes.DirectorDetailsController.onPageLoad(Mode.checkMode(UpdateMode), firstIndex, firstIndex, Some("srn")).url,
+            Some(Message("messages__visuallyhidden__common__name", "first name last name").resolve)))),
+        AnswerRow("messages__common__dob", Seq(DateHelper.formatDate(LocalDate.now())), answerIsMessageKey = false,
+          Some(Link("site.change", routes.DirectorDetailsController.onPageLoad(Mode.checkMode(UpdateMode), firstIndex, firstIndex, Some("srn")).url,
+            Some(Message("messages__visuallyhidden__common__dob", "first name last name").resolve)))),
+        AnswerRow("messages__director_nino_question_cya_label", Seq(s"${Nino.Yes}"), answerIsMessageKey = false,
+          Some(Link("site.change", routes.DirectorNinoController.onPageLoad(Mode.checkMode(UpdateMode), firstIndex, firstIndex, Some("srn")).url,
+            Some("messages__visuallyhidden__director__nino_yes_no")))),
+        AnswerRow("messages__common__nino", Seq("AB100100A"), answerIsMessageKey = false,
+          Some(Link("site.change", routes.DirectorNinoController.onPageLoad(Mode.checkMode(UpdateMode), firstIndex, firstIndex, Some("srn")).url,
+            Some("messages__visuallyhidden__director__nino"))))
+      )
+    ),
     AnswerSection(Some("messages__director__cya__contact__details_heading"), Seq())
   )
 
   private def displayNewNinoAnswerRowWithAdd = Seq(AnswerSection(
-    Some("messages__director__cya__details_heading"),
-    Seq(
-      AnswerRow("messages__common__cya__name", Seq("first name last name"), false, None),
-      AnswerRow("messages__common__dob", Seq(DateHelper.formatDate(LocalDate.now())), answerIsMessageKey = false, None),
-      AnswerRow("messages__common__nino", Seq("site.not_entered"), answerIsMessageKey = true,
-        Some(Link("site.add",
-          routes.DirectorNinoNewController.onPageLoad(Mode.checkMode(UpdateMode), firstIndex, firstIndex, Some("srn")).url,
-          Some(s"messages__visuallyhidden__director__nino_add"))))
-    )
-  ),
+      Some("messages__director__cya__details_heading"),
+      Seq(
+        AnswerRow("messages__common__cya__name", Seq("first name last name"), false, None),
+        AnswerRow("messages__common__dob", Seq(DateHelper.formatDate(LocalDate.now())), answerIsMessageKey = false, None),
+        AnswerRow("messages__common__nino", Seq("site.not_entered"), answerIsMessageKey = true,
+          Some(Link("site.add",
+            routes.DirectorNinoNewController.onPageLoad(Mode.checkMode(UpdateMode), firstIndex, firstIndex, Some("srn")).url,
+            Some(s"messages__visuallyhidden__director__nino_add"))))
+      )
+    ),
     AnswerSection(Some("messages__director__cya__contact__details_heading"), Seq())
   )
 
   def displayNewNinoAnswerRowWithNoLink = Seq(AnswerSection(
-    Some("messages__director__cya__details_heading"),
-    Seq(
-      AnswerRow("messages__common__cya__name", Seq("first name last name"), false, None),
-      AnswerRow("messages__common__dob", Seq(DateHelper.formatDate(LocalDate.now())), answerIsMessageKey = false, None),
-      AnswerRow("messages__common__nino", Seq("AB100100A"), answerIsMessageKey = false, None)
-    )
-  ),
+      Some("messages__director__cya__details_heading"),
+      Seq(
+        AnswerRow("messages__common__cya__name", Seq("first name last name"), false, None),
+        AnswerRow("messages__common__dob", Seq(DateHelper.formatDate(LocalDate.now())), answerIsMessageKey = false, None),
+        AnswerRow("messages__common__nino", Seq("AB100100A"), answerIsMessageKey = false, None)
+      )
+    ),
     AnswerSection(Some("messages__director__cya__contact__details_heading"), Seq())
   )
 }

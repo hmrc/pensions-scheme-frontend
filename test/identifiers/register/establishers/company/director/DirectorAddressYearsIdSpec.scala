@@ -18,26 +18,19 @@ package identifiers.register.establishers.company.director
 
 import identifiers.register.establishers.IsEstablisherCompleteId
 import models.AddressYears.UnderAYear
-import models.address.{Address, TolerantAddress}
-import models.person.PersonDetails
-import models.requests.DataRequest
 import models.{AddressYears, Link, NormalMode, UpdateMode}
-import org.joda.time.LocalDate
+import models.address.{Address, TolerantAddress}
+import models.requests.DataRequest
 import org.scalatest.{MustMatchers, OptionValues, WordSpec}
-import org.scalatestplus.play.OneAppPerSuite
-import play.api.i18n.{Messages, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.AnyContent
 import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.PsaId
-import utils.checkyouranswers.Ops._
 import utils.{Enumerable, UserAnswers}
 import viewmodels.AnswerRow
+import utils.checkyouranswers.Ops._
 
-class DirectorAddressYearsIdSpec extends WordSpec with MustMatchers with OptionValues with Enumerable.Implicits with OneAppPerSuite {
-
-  implicit val messagesApi: MessagesApi = app.injector.instanceOf[MessagesApi]
-  implicit val messages: Messages = messagesApi.preferred(FakeRequest())
+class DirectorAddressYearsIdSpec extends WordSpec with MustMatchers with OptionValues with Enumerable.Implicits {
 
   "Cleanup" must {
 
@@ -127,38 +120,17 @@ class DirectorAddressYearsIdSpec extends WordSpec with MustMatchers with OptionV
 
     "in normal mode" must {
 
-      "return answers rows with change links with director name in question text" in {
-
-        val personDetails = PersonDetails("firstName", None, "last", LocalDate.now)
+      "return answers rows with change links" in {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
-        implicit val userAnswers: UserAnswers = UserAnswers(Json.obj())
-          .set(DirectorDetailsId(0, 0))(personDetails)
-          .asOpt.value
-
-        DirectorAddressYearsId(0, 0).row(onwardUrl, NormalMode) must equal(
-          Seq(AnswerRow(
-            label = messages("messages__director_address_years__cya_withName", userAnswers.get(DirectorDetailsId(0, 0)).get.fullName),
-            answer = Seq(s"messages__common__under_a_year"),
+        implicit val userAnswers = request.userAnswers
+        DirectorAddressYearsId(0, 0).row(onwardUrl, NormalMode) must equal(Seq(
+          AnswerRow(
+            "messages__director_address_years__cya",
+            Seq(s"messages__common__under_a_year"),
             answerIsMessageKey = true,
-            changeUrl =
-              Some(Link("site.change", onwardUrl, Some(messages("messages__visuallyhidden__director__address_years_withName", userAnswers.get(DirectorDetailsId(0, 0)).get.fullName))))
-          ))
-        )
-      }
-
-      "return answers rows with change links without director name in question text" in {
-
-        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
-        implicit val userAnswers: UserAnswers = request.userAnswers
-
-        DirectorAddressYearsId(0, 0).row(onwardUrl, NormalMode) must equal(
-          Seq(AnswerRow(
-            label = messages("messages__director_address_years__cya"),
-            answer = Seq(s"messages__common__under_a_year"),
-            answerIsMessageKey = true,
-            changeUrl = Some(Link("site.change", onwardUrl, Some(messages("messages__visuallyhidden__director__address_years"))))
-          ))
-        )
+            Some(Link("site.change", onwardUrl,
+              Some("messages__visuallyhidden__director__address_years")))
+          )))
       }
     }
 
@@ -166,38 +138,17 @@ class DirectorAddressYearsIdSpec extends WordSpec with MustMatchers with OptionV
 
       def answersNew: UserAnswers = answers.set(IsNewDirectorId(0, 0))(true).asOpt.value
 
-      "return answers rows with change links with director name in question text" in {
-
-        val personDetails = PersonDetails("firstName", None, "last", LocalDate.now)
+      "return answers rows with change links" in {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answersNew, PsaId("A0000000"))
-        implicit val userAnswers: UserAnswers = UserAnswers(Json.obj())
-          .set(DirectorDetailsId(0, 0))(personDetails)
-          .asOpt.value
-
-        DirectorAddressYearsId(0, 0).row(onwardUrl, UpdateMode) must equal(
-          Seq(AnswerRow(
-            label = messages("messages__director_address_years__cya_withName", userAnswers.get(DirectorDetailsId(0, 0)).get.fullName),
-            answer = Seq(s"messages__common__under_a_year"),
+        implicit val userAnswers = request.userAnswers
+        DirectorAddressYearsId(0, 0).row(onwardUrl, UpdateMode) must equal(Seq(
+          AnswerRow(
+            "messages__director_address_years__cya",
+            Seq(s"messages__common__under_a_year"),
             answerIsMessageKey = true,
-            changeUrl =
-              Some(Link("site.change", onwardUrl, Some(messages("messages__visuallyhidden__director__address_years_withName", userAnswers.get(DirectorDetailsId(0, 0)).get.fullName))))
-          ))
-        )
-      }
-
-      "return answers rows with change links without director name in question text" in {
-
-        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answersNew, PsaId("A0000000"))
-        implicit val userAnswers: UserAnswers = request.userAnswers
-
-        DirectorAddressYearsId(0, 0).row(onwardUrl, UpdateMode) must equal(
-          Seq(AnswerRow(
-            label = messages("messages__director_address_years__cya"),
-            answer = Seq(s"messages__common__under_a_year"),
-            answerIsMessageKey = true,
-            changeUrl = Some(Link("site.change", onwardUrl, Some(messages("messages__visuallyhidden__director__address_years"))))
-          ))
-        )
+            Some(Link("site.change", onwardUrl,
+              Some("messages__visuallyhidden__director__address_years")))
+          )))
       }
     }
 
@@ -205,7 +156,7 @@ class DirectorAddressYearsIdSpec extends WordSpec with MustMatchers with OptionV
 
       "return answers rows without change links" in {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
-        implicit val userAnswers: UserAnswers = request.userAnswers
+        implicit val userAnswers = request.userAnswers
 
         DirectorAddressYearsId(0, 0).row(onwardUrl, UpdateMode) must equal(Nil)
       }

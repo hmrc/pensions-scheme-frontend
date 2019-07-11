@@ -45,28 +45,28 @@ class AddressYearsController @Inject()(
                                         requireData: DataRequiredAction
                                       )(implicit val ec: ExecutionContext) extends GenericAddressYearController with Retrievals {
 
-  private val form = new AddressYearsFormProvider()(Message("messages__common_error__current_address_years"))
+  private def form(establisherName: String) = new AddressYearsFormProvider()(Message("messages__establisher_address_years__formError", establisherName))
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
     implicit request =>
       EstablisherDetailsId(index).retrieve.right.map { establisherDetails =>
-        get(AddressYearsId(index), form, viewModel(mode, index, establisherDetails.fullName, srn))
+        get(AddressYearsId(index), form(establisherDetails.fullName), viewModel(mode, index, establisherDetails.fullName, srn))
       }
   }
 
   def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
       EstablisherDetailsId(index).retrieve.right.map { establisherDetails =>
-        post(AddressYearsId(index), mode, form, viewModel(mode, index, establisherDetails.fullName, srn))
+        post(AddressYearsId(index), mode, form(establisherDetails.fullName), viewModel(mode, index, establisherDetails.fullName, srn))
       }
   }
 
   private def viewModel(mode: Mode, index: Index, establisherName: String, srn: Option[String]) = AddressYearsViewModel(
     postCall = routes.AddressYearsController.onSubmit(mode, index, srn),
-    title = Message("messages__establisher_address_years__title"),
-    heading = Message("messages__establisher_address_years__title"),
-    legend = Message("messages__establisher_address_years__title"),
+    title = Message("messages__establisher_address_years__title", establisherName),
+    heading = Message("messages__establisher_address_years__title", establisherName),
+    legend = Message("messages__establisher_address_years__title", establisherName),
     subHeading = Some(Message(establisherName)),
     srn = srn
   )

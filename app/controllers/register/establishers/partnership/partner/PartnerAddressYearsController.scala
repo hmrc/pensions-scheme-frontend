@@ -45,22 +45,22 @@ class PartnerAddressYearsController @Inject()(
                                                requireData: DataRequiredAction
                                              )(implicit val ec: ExecutionContext) extends AddressYearsController with Retrievals {
 
-  private val form = new AddressYearsFormProvider()(Message("messages__common_error__current_address_years"))
+  private def form(partnerName: String) = new AddressYearsFormProvider()(Message("messages__partner_address_years__formError", partnerName))
 
   def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         PartnerDetailsId(establisherIndex, partnerIndex).retrieve.right.map { partnerDetails =>
-          get(PartnerAddressYearsId(establisherIndex, partnerIndex), form,
+          get(PartnerAddressYearsId(establisherIndex, partnerIndex), form(partnerDetails.fullName),
             viewModel(mode, establisherIndex, partnerIndex, partnerDetails.fullName, srn))
         }
     }
 
   private def viewModel(mode: Mode, establisherIndex: Index, partnerIndex: Index, partnerName: String, srn: Option[String]) = AddressYearsViewModel(
     postCall = routes.PartnerAddressYearsController.onSubmit(mode, establisherIndex, partnerIndex, srn),
-    title = Message("messages__partner_address_years__title"),
-    heading = Message("messages__partner_address_years__heading"),
-    legend = Message("messages__partner_address_years__heading"),
+    title = Message("messages__partner_address_years__title", partnerName),
+    heading = Message("messages__partner_address_years__heading", partnerName),
+    legend = Message("messages__partner_address_years__heading", partnerName),
     subHeading = Some(Message(partnerName)),
     srn = srn
   )
@@ -72,7 +72,7 @@ class PartnerAddressYearsController @Inject()(
           post(
             PartnerAddressYearsId(establisherIndex, partnerIndex),
             mode,
-            form,
+            form(partnerDetails.fullName),
             viewModel(mode, establisherIndex, partnerIndex, partnerDetails.fullName, srn)
           )
         }

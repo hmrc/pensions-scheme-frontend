@@ -46,28 +46,28 @@ class TrusteeAddressYearsController @Inject()(
                                                requireData: DataRequiredAction
                                              )(implicit val ec: ExecutionContext) extends AddressYearsController with Retrievals {
 
-  private val form = new AddressYearsFormProvider()(Message("messages__trusteeAddressYears__error_required"))
+  private def form(trusteeName: String) = new AddressYearsFormProvider()(Message("messages__trusteeAddressYears__error_required", trusteeName))
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
     implicit request =>
       TrusteeDetailsId(index).retrieve.right.map { trusteeDetails =>
-        get(TrusteeAddressYearsId(index), form, viewModel(mode, index, trusteeDetails.fullName, srn))
+        get(TrusteeAddressYearsId(index), form(trusteeDetails.fullName), viewModel(mode, index, trusteeDetails.fullName, srn))
       }
   }
 
   def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
       TrusteeDetailsId(index).retrieve.right.map { trusteeDetails =>
-        post(TrusteeAddressYearsId(index), mode, form, viewModel(mode, index, trusteeDetails.fullName, srn))
+        post(TrusteeAddressYearsId(index), mode, form(trusteeDetails.fullName), viewModel(mode, index, trusteeDetails.fullName, srn))
       }
   }
 
   private def viewModel(mode: Mode, index: Index, trusteeName: String, srn: Option[String]) = AddressYearsViewModel(
     postCall = controllers.register.trustees.individual.routes.TrusteeAddressYearsController.onSubmit(mode, index, srn),
-    title = Message("messages__trusteeAddressYears__title"),
-    heading = Message("messages__trusteeAddressYears__heading"),
-    legend = Message("messages__trusteeAddressYears__title"),
+    title = Message("messages__trusteeAddressYears__title", trusteeName),
+    heading = Message("messages__trusteeAddressYears__heading", trusteeName),
+    legend = Message("messages__trusteeAddressYears__title", trusteeName),
     subHeading = Some(Message(trusteeName)),
     srn = srn
   )
