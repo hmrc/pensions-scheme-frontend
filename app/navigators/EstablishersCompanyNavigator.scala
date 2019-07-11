@@ -274,11 +274,16 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
   }
 
   private def addDirectors(mode: Mode, index: Int, answers: UserAnswers, srn: Option[String]): Option[NavigateTo] = {
+
+    val directorsSeq = answers.allDirectorsAfterDelete(index)
+    val addCompanyDirectors = answers.get(AddCompanyDirectorsId(index))
+    val addNewEstablisher = answers.get(IsEstablisherNewId(index))
+
       NavigateTo.dontSave(
-        (answers.allDirectorsAfterDelete(index), answers.get(AddCompanyDirectorsId(index)), mode, answers.get(IsEstablisherNewId(index))) match {
-          case (d, _, _, _) if d.isEmpty => DirectorDetailsController.onPageLoad(
+        (directorsSeq, addCompanyDirectors, mode, addNewEstablisher) match {
+          case (directors, _, _, _) if directors.isEmpty => DirectorDetailsController.onPageLoad(
             mode, index, answers.allDirectors(index).size, srn)
-          case (d, _, _, _) if d.lengthCompare(appConfig.maxDirectors) >= 0 =>
+          case (directors, _, _, _) if directors.lengthCompare(appConfig.maxDirectors) >= 0 =>
             establisherCompanyRoutes.OtherDirectorsController.onPageLoad(mode, srn, index)
           case (_, Some(true), _, _)                        =>
             DirectorDetailsController.onPageLoad(mode, index, answers.allDirectors(index).size, srn)
