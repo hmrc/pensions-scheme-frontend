@@ -45,7 +45,6 @@ trait HasReferenceNumberController extends FrontendController with Retrievals wi
          (implicit request: DataRequest[AnyContent]): Future[Result] = {
     val preparedForm =
       request.userAnswers.get(id).map(form.fill).getOrElse(form)
-
     Future.successful(Ok(hasReferenceNumber(appConfig, preparedForm, viewmodel, existingSchemeName)))
   }
 

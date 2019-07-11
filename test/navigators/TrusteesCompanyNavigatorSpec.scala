@@ -27,14 +27,13 @@ import org.scalatest.prop.TableFor6
 import org.scalatest.{MustMatchers, OptionValues}
 import play.api.libs.json.Json
 import play.api.mvc.Call
-import utils.{FakeFeatureSwitchManagementService, UserAnswers}
-
+import utils.UserAnswers
 
 class TrusteesCompanyNavigatorSpec extends SpecBase with MustMatchers with NavigatorBehaviour {
 
   import TrusteesCompanyNavigatorSpec._
 
-  private def routes(mode: Mode, isPrevAddEnabled:Boolean = false): TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = Table(
+  private def routes(mode: Mode): TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = Table(
 
     ("Id", "UserAnswers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (CheckMode)", "Save (CM)"),
     (CompanyDetailsId(0), emptyAnswers, companyVat(mode), true, Some(exitJourney(mode, emptyAnswers)), true),
@@ -55,7 +54,7 @@ class TrusteesCompanyNavigatorSpec extends SpecBase with MustMatchers with Navig
     (CompanyAddressId(0), newTrustee, companyAddressYears(mode), true, Some(checkYourAnswers(mode)), true),
     (CompanyAddressYearsId(0), addressYearsOverAYear, companyContactDetails(mode), true, Some(exitJourney(mode, emptyAnswers)), true),
     (CompanyAddressYearsId(0), addressYearsOverAYearNew, companyContactDetails(mode), true, Some(exitJourney(mode, addressYearsOverAYearNew)), true),
-    (CompanyAddressYearsId(0), addressYearsUnderAYear, prevAddPostCodeLookup(mode), true, Some(addressYearsLessThanTwelveEdit(checkMode(mode), isPrevAddEnabled)), true),
+    (CompanyAddressYearsId(0), addressYearsUnderAYear, prevAddPostCodeLookup(mode), true, Some(addressYearsLessThanTwelveEdit(checkMode(mode))), true),
     (CompanyPreviousAddressPostcodeLookupId(0), emptyAnswers, companyPaList(mode), true, Some(companyPaList(checkMode(mode))), true),
     (CompanyPreviousAddressListId(0), emptyAnswers, companyPreviousAddress(mode), true, Some(companyPreviousAddress(checkMode(mode))), true),
     (CompanyPreviousAddressId(0), emptyAnswers, companyContactDetails(mode), true, Some(exitJourney(mode, emptyAnswers)), true),
@@ -67,7 +66,7 @@ class TrusteesCompanyNavigatorSpec extends SpecBase with MustMatchers with Navig
     (CompanyVatVariationsId(0), newTrustee, index, false, Some(exitJourney(mode, newTrustee)), true)
   )
 
-  private def editRoutesToggleOn(mode: Mode, isPrevAddEnabled:Boolean = false): TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = Table(
+  private def editRoutes(mode: Mode): TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = Table(
     ("Id", "UserAnswers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (CheckMode)", "Save (CM)"),
     (CompanyConfirmPreviousAddressId(0), confirmPreviousAddressYes, sessionExpired, false, Some(anyMoreChanges), false),
     (CompanyConfirmPreviousAddressId(0), confirmPreviousAddressNo, sessionExpired, false, Some(prevAddPostCodeLookup(checkMode(mode))), false),
@@ -75,27 +74,15 @@ class TrusteesCompanyNavigatorSpec extends SpecBase with MustMatchers with Navig
     (CompanyPayeVariationsId(0), emptyAnswers, none, true, Some(exitJourney(checkMode(mode), emptyAnswers)), true)
   )
 
-  private def editRoutesToggleOff(mode: Mode): TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = Table(
-    ("Id", "UserAnswers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (CheckMode)", "Save (CM)"),
-    (CompanyConfirmPreviousAddressId(0), confirmPreviousAddressYes, sessionExpired, false, Some(sessionExpired), false),
-    (CompanyConfirmPreviousAddressId(0), confirmPreviousAddressNo, sessionExpired, false, Some(sessionExpired), false)
-  )
-
   private val navigator: TrusteesCompanyNavigator =
-    new TrusteesCompanyNavigator(FakeUserAnswersCacheConnector, frontendAppConfig, new FakeFeatureSwitchManagementService(false))
+    new TrusteesCompanyNavigator(FakeUserAnswersCacheConnector, frontendAppConfig)
 
   s"${navigator.getClass.getSimpleName}" must {
     appRunning()
     behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, routes(NormalMode), dataDescriber)
-    behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, routes(UpdateMode) ++ editRoutesToggleOff(UpdateMode), dataDescriber, UpdateMode)
+    behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, routes(UpdateMode) ++ editRoutes(UpdateMode), dataDescriber, UpdateMode)
     behave like nonMatchingNavigator(navigator)
     behave like nonMatchingNavigator(navigator, UpdateMode)
-  }
-
-  "is-address-pre-population-enabled toggled on" must {
-    val navigator: TrusteesCompanyNavigator =
-    new TrusteesCompanyNavigator(FakeUserAnswersCacheConnector, frontendAppConfig, new FakeFeatureSwitchManagementService(true))
-    behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, routes(UpdateMode, true) ++ editRoutesToggleOn(UpdateMode), dataDescriber, UpdateMode)
   }
 
 }
@@ -176,7 +163,6 @@ object TrusteesCompanyNavigatorSpec extends SpecBase with OptionValues {
     else anyMoreChanges
   }
 
-  private def addressYearsLessThanTwelveEdit(mode: Mode, isPrevAddEnabled:Boolean = false) =
-    if (mode == CheckUpdateMode && isPrevAddEnabled) confirmPreviousAddress
-    else prevAddPostCodeLookup(mode)
+  private def addressYearsLessThanTwelveEdit(mode: Mode) =
+    if (mode == CheckUpdateMode) confirmPreviousAddress else prevAddPostCodeLookup(mode)
 }
