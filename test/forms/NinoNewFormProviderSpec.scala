@@ -21,11 +21,9 @@ import forms.behaviours.StringFieldBehaviours
 import forms.mappings.Constraints
 import models.ReferenceValue
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
-import play.api.Configuration
 import play.api.data.FormError
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.inject.Injector
-import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 import viewmodels.Message
@@ -35,13 +33,6 @@ class NinoNewFormProviderSpec extends StringFieldBehaviours with Constraints wit
   def injector: Injector = app.injector
 
   def frontendAppConfig: FrontendAppConfig = injector.instanceOf[FrontendAppConfig]
-
-  def appConfig(isPrevPrePopEnabled:Boolean): Configuration = {
-    val app = new GuiceApplicationBuilder()
-      .configure("features.is-address-pre-population-enabled" -> isPrevPrePopEnabled)
-      .build()
-    app.injector.instanceOf[Configuration]
-  }
 
   def messagesApi: MessagesApi = injector.instanceOf[MessagesApi]
 
