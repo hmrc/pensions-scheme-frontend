@@ -274,32 +274,25 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
   }
 
   private def addDirectors(mode: Mode, index: Int, answers: UserAnswers, srn: Option[String]): Option[NavigateTo] = {
-    val directors = answers.allDirectorsAfterDelete(index)
-
-    if (directors.isEmpty) {
-      NavigateTo.dontSave(controllers.register.establishers.company.director.routes.DirectorDetailsController.onPageLoad(
-        mode, index, answers.allDirectors(index).size, srn))
-    }
-    else if (directors.lengthCompare(appConfig.maxDirectors) < 0) {
       NavigateTo.dontSave(
-        (answers.get(AddCompanyDirectorsId(index)), mode, answers.get(IsEstablisherNewId(index))) match {
-          case (Some(true), _, _)                        =>
+        (answers.allDirectorsAfterDelete(index), answers.get(AddCompanyDirectorsId(index)), mode, answers.get(IsEstablisherNewId(index))) match {
+          case (d, _, _, _) if d.isEmpty => DirectorDetailsController.onPageLoad(
+            mode, index, answers.allDirectors(index).size, srn)
+          case (d, _, _, _) if d.lengthCompare(appConfig.maxDirectors) >= 0 =>
+            establisherCompanyRoutes.OtherDirectorsController.onPageLoad(mode, srn, index)
+          case (_, Some(true), _, _)                        =>
             DirectorDetailsController.onPageLoad(mode, index, answers.allDirectors(index).size, srn)
-          case (Some(false), CheckMode | NormalMode, _)  =>
+          case (_, Some(false), CheckMode | NormalMode, _)  =>
             establisherCompanyRoutes.CompanyReviewController.onPageLoad(mode, srn, index)
-          case (Some(false), _, Some(true))              =>
+          case (_, Some(false), _, Some(true))              =>
             establisherCompanyRoutes.CompanyReviewController.onPageLoad(mode, srn, index)
-          case (Some(false), _, _) if answers.get(EstablishersOrTrusteesChangedId).contains(true) =>
+          case (_, Some(false), _, _) if answers.get(EstablishersOrTrusteesChangedId).contains(true) =>
             controllers.routes.AnyMoreChangesController.onPageLoad(srn)
-          case (Some(false), _, _) =>
+          case (_, Some(false), _, _) =>
             controllers.routes.SchemeTaskListController.onPageLoad(mode, srn)
           case _ => controllers.routes.SessionExpiredController.onPageLoad()
         }
       )
-    }
-    else {
-      NavigateTo.dontSave(establisherCompanyRoutes.OtherDirectorsController.onPageLoad(mode, srn, index))
-    }
   }
 
   private def listOrAnyMoreChange(index: Int, mode: Mode, srn: Option[String])(answers: UserAnswers): Option[NavigateTo] = {
