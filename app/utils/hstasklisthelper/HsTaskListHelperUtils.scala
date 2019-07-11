@@ -18,35 +18,39 @@ package utils.hstasklisthelper
 
 
 import controllers.register.establishers.company.{routes => establisherCompanyRoutes}
-import models.register.Entity
+import identifiers.register.establishers.{IsEstablisherNewId, company => establisherCompany}
 import models._
+import models.register.Entity
 import play.api.i18n.Messages
 import play.api.mvc.Call
 import utils.{Enumerable, UserAnswers}
-import identifiers.register.establishers.{company => establisherCompany}
 
 trait HsTaskListHelperUtils extends Enumerable.Implicits {
 
   implicit val messages: Messages
-  
+
   sealed trait Spoke
+
   case object EstablisherCompanyDetails extends Spoke
+
   case object EstablisherCompanyAddress extends Spoke
+
   case object EstablisherCompanyContactDetails extends Spoke
+
   case object EstablisherCompanyDirectors extends Spoke
 
   def createSpoke(answers: UserAnswers,
                   spokeName: Spoke,
-                  mode: Mode, srn: Option[String], name: String, index: Int): EntitySpoke = {
+                  mode: Mode, srn: Option[String], name: String, index: Int, isNew: Boolean): EntitySpoke = {
 
     val isChangeLink = getCompleteFlag(answers, index, spokeName)
     val isComplete: Option[Boolean] = if (mode == NormalMode) isChangeLink else None
-    println("\n\n\n isisChangeLink : "+isChangeLink)
 
-    isChangeLink match {
-      case Some(true) => EntitySpoke(Link(getChangeLinkText(spokeName)(name), getChangeLink(spokeName)(mode, srn, index).url), isComplete)
-      case Some(false) => EntitySpoke(Link(getChangeLinkText(spokeName)(name), getAddLink(spokeName)(mode, srn, index).url), isComplete)
-      case None => EntitySpoke(Link(getAddLinkText(spokeName)(name), getAddLink(spokeName)(mode, srn, index).url), None)
+    (isChangeLink, isNew) match {
+      case (_, false) => EntitySpoke(Link(getChangeLinkText(spokeName)(name), getChangeLink(spokeName)(mode, srn, index).url), None)
+      case (Some(true), _) => EntitySpoke(Link(getChangeLinkText(spokeName)(name), getChangeLink(spokeName)(mode, srn, index).url), isComplete)
+      case (Some(false), _) => EntitySpoke(Link(getChangeLinkText(spokeName)(name), getAddLink(spokeName)(mode, srn, index).url), isComplete)
+      case _ => EntitySpoke(Link(getAddLinkText(spokeName)(name), getAddLink(spokeName)(mode, srn, index).url), None)
     }
   }
 
@@ -63,10 +67,7 @@ trait HsTaskListHelperUtils extends Enumerable.Implicits {
   }
 
   private def getCompleteFlag(answers: UserAnswers, index: Int, spokeName: Spoke): Option[Boolean] = spokeName match {
-    case EstablisherCompanyDetails => {
-      println("\n\n1..."+answers.get(establisherCompany.IsDetailsCompleteId(index)))
-      answers.get(establisherCompany.IsDetailsCompleteId(index))
-    }
+    case EstablisherCompanyDetails => answers.get(establisherCompany.IsDetailsCompleteId(index))
     case EstablisherCompanyAddress
  => answers.get(establisherCompany.IsAddressCompleteId(index))
     case EstablisherCompanyContactDetails => answers.get(establisherCompany.IsContactDetailsCompleteId(index))
@@ -105,12 +106,13 @@ trait HsTaskListHelperUtils extends Enumerable.Implicits {
     case _ => controllers.routes.IndexController.onPageLoad()
   }
 
-  def getEstablisherCompanySpokes(answers: UserAnswers, mode: Mode, srn: Option[String], name: String, index: Int): Seq[EntitySpoke] =
+  def getEstablisherCompanySpokes(answers: UserAnswers, mode: Mode, srn: Option[String], name: String, index: Int): Seq[EntitySpoke] = {
+    val isEstablisherNew = answers.get(IsEstablisherNewId(index)).getOrElse(false)
     Seq(
-      createSpoke(answers, EstablisherCompanyDetails, mode, srn, name, index),
-      createSpoke(answers, EstablisherCompanyAddress, mode, srn, name, index),
-      createSpoke(answers, EstablisherCompanyContactDetails, mode, srn, name, index),
+      createSpoke(answers, EstablisherCompanyDetails, mode, srn, name, index, isEstablisherNew),
+      createSpoke(answers, EstablisherCompanyAddress, mode, srn, name, index, isEstablisherNew),
+      createSpoke(answers, EstablisherCompanyContactDetails, mode, srn, name, index, isEstablisherNew),
       createDirectorPartnerSpoke(answers.allDirectorsAfterDelete(index), EstablisherCompanyDirectors, mode, srn, name, index)
     )
-
+  }
 }

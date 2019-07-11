@@ -20,7 +20,7 @@ import audit.{AddressEvent, AuditService}
 import config.FrontendAppConfig
 import controllers.Retrievals
 import identifiers.TypedIdentifier
-import models.{CheckUpdateMode, Mode, UpdateMode}
+import models.{CheckUpdateMode, Mode, NormalMode, UpdateMode}
 import models.address.{Address, TolerantAddress}
 import models.requests.DataRequest
 import play.api.data.Form
@@ -84,7 +84,9 @@ trait ManualAddressController extends FrontendController with Retrievals with I1
         removePostCodeLookupAddress(mode, viewModel.srn, postCodeLookupIdForCleanup)
           .flatMap { userAnswersJson =>
             val answers = UserAnswers(userAnswersJson)
-            val startSpokeAnswers = startAddressSpokeId.flatMap(id => answers.set(id)(false).asOpt).getOrElse(answers)
+            val startSpokeAnswers = if(Seq(NormalMode, UpdateMode).contains(mode)) {
+              startAddressSpokeId.flatMap(id => answers.set(id)(false).asOpt).getOrElse(answers)
+            } else answers
 
             val updatedAddress = userAnswersService.setExistingAddress(mode, id, startSpokeAnswers)
               .set(id)(address)

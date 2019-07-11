@@ -240,6 +240,8 @@ POST       /:index/company/:mode/company-address/:srn                           
 
 GET        /:index/company/trading-time                                                                     controllers.register.establishers.company.HasBeenTradingCompanyController.onPageLoad(mode: Mode = NormalMode, srn: Option[String] = None, index: Index)
 POST       /:index/company/trading-time                                                                     controllers.register.establishers.company.HasBeenTradingCompanyController.onSubmit(mode: Mode = NormalMode, srn: Option[String] = None, index: Index)
+GET        /:index/company/change/trading-time                                                              controllers.register.establishers.company.HasBeenTradingCompanyController.onPageLoad(mode: Mode = CheckMode, srn: Option[String] = None, index: Index)
+POST       /:index/company/change/trading-time                                                              controllers.register.establishers.company.HasBeenTradingCompanyController.onSubmit(mode: Mode = CheckMode, srn: Option[String] = None, index: Index)
 GET        /:index/company/:mode/trading-time/:srn                                                          controllers.register.establishers.company.HasBeenTradingCompanyController.onPageLoad(mode: Mode, srn: Option[String], index: Index)
 POST       /:index/company/:mode/trading-time/:srn                                                          controllers.register.establishers.company.HasBeenTradingCompanyController.onSubmit(mode: Mode, srn: Option[String], index: Index)
 

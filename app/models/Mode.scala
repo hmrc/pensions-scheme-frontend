@@ -70,6 +70,6 @@ object Mode {
   def journeyMode(mode: Mode): Mode = mode match  {
     case CheckMode => NormalMode
     case CheckUpdateMode => UpdateMode
-    case _ => throw UnknownModeException()
+    case _ => mode
   }
 }
