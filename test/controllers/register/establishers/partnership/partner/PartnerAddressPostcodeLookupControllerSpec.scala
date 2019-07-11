@@ -76,8 +76,7 @@ class PartnerAddressPostcodeLookupControllerSpec extends ControllerSpecBase with
     manualInputCall,
     Message("messages__partnerAddressPostcodeLookup__title"),
     Message("messages__partnerAddressPostcodeLookup__heading"),
-    Some(partner.fullName),
-    Some(Message("messages__partnerAddressPostcodeLookup__lede"))
+    Some(partner.fullName)
   )
 
   "PartnerAddressPostcodeLookup Controller" must {

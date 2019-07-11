@@ -52,6 +52,8 @@ messages__common__company_vat__hint = This is 9 numbers, sometimes with ‘GB’
 messages__common__nino = National Insurance number
 messages__common__reason = Reason
 
+messages__common__postcode_lookup__manual_link = You can {0} enter the address manually {1}.
+
 messages__common__postcode_lookup__enter_postcode = Enter the postcode, or if you have an overseas address, {0} enter the address manually {1}
 messages__common__postcode_lookup__address_postcode = Postcode
 messages__common_individual_postCode_lookup__lede = This is usually the residential address for this person.
@@ -133,7 +135,7 @@ site.hidden-edit = Change {0}
 site.no = No
 site.yes = Yes
 site.save_and_continue = Save and continue
-site.find_address = Find Address
+site.find_address = Find address
 site.service_name = Managing pension schemes
 site.textarea.char_limit = (Limit is {0} characters)
 site.confirm = Confirm
@@ -540,12 +542,10 @@ messages__directorAddressConfirm__heading = Confirm {0}’s address
 
 messages__directorAddressPostcodeLookup__title = Director’s address
 messages__directorAddressPostcodeLookup__heading = Director’s address
-messages__directorAddressPostcodeLookup__lede = This is usually the director’s residential address.
 
 messages__addressPostcodeLookup__heading = What is {0}’s postcode?
 
 messages__directorCompanyAddressPostcodeLookup__title = What is the director’s postcode?
-messages__directorCompanyAddressPostcodeLookup__lede = This is usually the director’s residential address.
 
 messages__companyReview__title = Review the company details
 messages__companyReview__heading = Review the company details
@@ -694,7 +694,6 @@ messages__trustee_individual_utr_reason_cya_label = Why the trustee does not hav
 
 messages__trusteePreviousAddress__title = Trustee’s address
 messages__trusteePreviousAddress__heading = Trustee’s address
-messages__trusteePreviousAddress__lede = This is usually the registered business address but you can enter any address you have for this trustee.
 
 messages__declaration__title = Declaration
 messages__declaration__heading = Declaration
@@ -758,7 +757,6 @@ messages__adviser__secondary_heading = Pension adviser
 messages__adviserPostCodeLookupAddress__title=Pension adviser’s address
 messages__adviserPostCodeLookupAddress__heading=Pension adviser’s address
 messages__adviserPostCodeLookupAddress__secondary=Pension adviser
-messages__adviserPostCodeLookupAddress__lede = You can enter any postcode you have for your pension practitioner or provider.
 messages__adviserPostCodeLookupAddress__enterPostCode= You can {0} enter the address manually {1}  if it is overseas
 messages__adviserPostCodeLookup__title=What is the person’s postcode?
 messages__adviserPostCodeLookup__heading=What is {0}’s postcode?
@@ -964,7 +962,6 @@ messages__partnerPreviousAddress__heading = Enter the partner’s previous addre
 
 messages__partnerPreviousAddressPostcodeLookup__title = Enter the partner’s previous postcode
 messages__partnerPreviousAddressPostcodeLookup__heading = Enter the partner’s previous postcode
-messages__partnerPreviousAddressPostcodeLookup__lede = This is usually the residential address for this person.
 
 messages__partner_address_years__title = How long has the partner lived at this address?
 messages__partner_address_years__heading = How long has the partner lived at this address?
@@ -972,7 +969,6 @@ messages__partner_address_years__cya = How long has the partner lived at this ad
 
 messages__partnerAddressPostcodeLookup__title = Enter the partner’s postcode
 messages__partnerAddressPostcodeLookup__heading = Enter the partner’s postcode
-messages__partnerAddressPostcodeLookup__lede = This is usually the residential address for this person.
 
 messages__partnerAddress__title = Enter the partner’s address
 messages__partnerAddress__heading = Enter the partner’s address

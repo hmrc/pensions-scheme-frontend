@@ -67,7 +67,6 @@ class PartnerAddressPostcodeLookupController @Inject()(
               Message("messages__partnerAddressPostcodeLookup__title"),
               Message("messages__partnerAddressPostcodeLookup__heading"),
               Some(details.fullName),
-              Some(Message("messages__partnerAddressPostcodeLookup__lede")),
               srn = srn
             )
         }
