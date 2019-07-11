@@ -22,9 +22,8 @@ import connectors.UserAnswersCacheConnector
 import controllers.register.trustees.company.routes._
 import controllers.register.trustees.routes._
 import controllers.routes._
-import identifiers.register.establishers.ExistingCurrentAddressId
-import identifiers.register.trustees.IsTrusteeNewId
 import identifiers.register.trustees.company._
+import identifiers.register.trustees.{ExistingCurrentAddressId, IsTrusteeNewId}
 import models.Mode.journeyMode
 import models._
 import utils.{Navigator, UserAnswers}

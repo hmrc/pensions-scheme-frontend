@@ -21,8 +21,7 @@ import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
 import controllers.register.trustees.partnership.routes
 import controllers.register.trustees.partnership.routes._
-import identifiers.register.establishers.ExistingCurrentAddressId
-import identifiers.register.trustees.IsTrusteeNewId
+import identifiers.register.trustees.{ExistingCurrentAddressId, IsTrusteeNewId}
 import identifiers.register.trustees.partnership._
 import models.Mode.journeyMode
 import models._
