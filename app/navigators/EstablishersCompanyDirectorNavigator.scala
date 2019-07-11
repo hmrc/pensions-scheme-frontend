@@ -49,6 +49,8 @@ class EstablishersCompanyDirectorNavigator @Inject()(val dataCacheConnector: Use
       case DirectorDetailsId(establisherIndex, directorIndex) =>
         NavigateTo.dontSave(controllers.register.establishers.company.director.routes.
           DirectorNinoController.onPageLoad(mode, establisherIndex, directorIndex, srn))
+      case DirectorHasNINOId(establisherIndex, directorIndex) =>
+        hasNinoRoutes(establisherIndex, directorIndex, mode, srn)(from.userAnswers)
       case DirectorNameId(establisherIndex, directorIndex) =>
         NavigateTo.dontSave(controllers.register.establishers.company.director.routes.
           DirectorDOBController.onPageLoad(mode, establisherIndex, directorIndex, srn))
@@ -71,6 +73,8 @@ class EstablishersCompanyDirectorNavigator @Inject()(val dataCacheConnector: Use
   protected def editRoutes(from: NavigateFrom, mode: Mode, srn: Option[String]): Option[NavigateTo] =
     from.id match {
       case DirectorDetailsId(establisherIndex, directorIndex) =>
+        exitMiniJourney(establisherIndex, directorIndex, mode, srn, from.userAnswers)
+      case DirectorHasNINOId(establisherIndex, directorIndex) =>
         exitMiniJourney(establisherIndex, directorIndex, mode, srn, from.userAnswers)
       case DirectorNameId(establisherIndex, directorIndex) =>
         exitMiniJourney(establisherIndex, directorIndex, mode, srn, from.userAnswers)
@@ -140,6 +144,14 @@ class EstablishersCompanyDirectorNavigator @Inject()(val dataCacheConnector: Use
         NavigateTo.dontSave(controllers.routes.SessionExpiredController.onPageLoad())
     }
   }
+
+  private def hasNinoRoutes(establisherIndex: Int, directorIndex: Int, mode: Mode, srn: Option[String])(answers: UserAnswers): Option[NavigateTo] =
+    navigateOrSessionExpired(answers, DirectorHasNINOId(establisherIndex, directorIndex),
+      if (_: Boolean)
+        routes.DirectorNinoNewController.onPageLoad(mode, establisherIndex, directorIndex, srn)
+      else
+        routes.DirectorNoNINOReasonController.onPageLoad(mode, establisherIndex, directorIndex, srn)
+    )
 
   private def addressYearsEditRoutes(establisherIndex: Int, directorIndex: Int, mode: Mode, srn: Option[String])(answers: UserAnswers): Option[NavigateTo] = {
     (

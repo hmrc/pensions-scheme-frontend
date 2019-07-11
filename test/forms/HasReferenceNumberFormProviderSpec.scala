@@ -21,13 +21,13 @@ import forms.behaviours.BooleanFieldBehaviours
 import play.api.data.FormError
 import viewmodels.Message
 
-class HasVatFormProviderSpec extends BooleanFieldBehaviours with SpecBase {
+class HasReferenceNumberFormProviderSpec extends BooleanFieldBehaviours with SpecBase {
 
   private val requiredKey = Message("messages__hasCompanyVat__error__required", "ABC").resolve
   private val invalidKey = "error.boolean"
   private val fieldName = "value"
 
-  private def formProvider(companyName:String) = new HasVatFormProvider()("messages__hasCompanyVat__error__required", companyName)
+  private def formProvider(companyName:String) = new HasReferenceNumberFormProvider()("messages__hasCompanyVat__error__required", companyName)
 
   "HasVat Form Provider" must {
 
