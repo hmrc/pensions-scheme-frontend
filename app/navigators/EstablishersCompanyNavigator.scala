@@ -39,13 +39,15 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
                               mode: Mode,
                               srn: Option[String],
                               answers: UserAnswers,
-                              cyaPage: (Int, Mode, Option[String]) => Option[NavigateTo] = cya): Option[NavigateTo] =
+                              cyaPage: (Int, Mode, Option[String]) => Option[NavigateTo] = cya): Option[NavigateTo] = {
+    val cyaToggled = if(featureSwitchManagementService.get(Toggles.isEstablisherCompanyHnSEnabled)) cyaPage else cya _
     if (mode == CheckMode || mode == NormalMode)
-      cyaPage(index, journeyMode(mode), srn)
+      cyaToggled(index, journeyMode(mode), srn)
     else if (answers.get(IsEstablisherNewId(index)).getOrElse(false))
-      cyaPage(index, journeyMode(mode), srn)
+      cyaToggled(index, journeyMode(mode), srn)
     else
       anyMoreChanges(srn)
+  }
 
 
   private def cyaCompanyDetails(index: Int, mode: Mode, srn: Option[String]): Option[NavigateTo] =
@@ -366,10 +368,10 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
       case Some(true) =>
         NavigateTo.dontSave(establisherCompanyRoutes.CompanyVatVariationsController.onPageLoad(mode, index, srn))
       case Some(false) =>
-        if(mode == NormalMode) {
+        if(mode == NormalMode || mode == UpdateMode) {
           NavigateTo.dontSave(establisherCompanyRoutes.HasCompanyPAYEController.onPageLoad(mode, srn, index))
         }else {
-          cyaCompanyDetails(index, NormalMode, srn)
+          cyaCompanyDetails(index, journeyMode(mode), srn)
         }
       case None =>
         NavigateTo.dontSave(SessionExpiredController.onPageLoad())
@@ -380,8 +382,10 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
     (answers.get(HasCompanyPAYEId(index)), mode) match {
       case (Some(true), _) =>
         NavigateTo.dontSave(establisherCompanyRoutes.CompanyPayeVariationsController.onPageLoad(mode, index, srn))
-      case (Some(false), NormalMode | UpdateMode) =>
+      case (Some(false), NormalMode) =>
         NavigateTo.dontSave(establisherCompanyRoutes.IsCompanyDormantController.onPageLoad(mode, srn, index))
+      case (Some(false), UpdateMode) =>
+        cyaCompanyDetails(index, mode, srn)
       case (Some(false), CheckMode | CheckUpdateMode) =>
         exitMiniJourney(index, mode, srn, answers, cyaCompanyDetails)
       case _ =>
@@ -402,8 +406,6 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
 
   private def payeRoutes(index: Int, mode: Mode, srn: Option[String])(answers: UserAnswers): Option[NavigateTo] = {
     (mode, answers.get(IsEstablisherNewId(index))) match {
-      case (_, Some(true)) =>
-        NavigateTo.dontSave(establisherCompanyRoutes.IsCompanyDormantController.onPageLoad(mode, srn, index))
       case (NormalMode, _) =>
         NavigateTo.dontSave(establisherCompanyRoutes.IsCompanyDormantController.onPageLoad(mode, srn, index))
       case _ =>
