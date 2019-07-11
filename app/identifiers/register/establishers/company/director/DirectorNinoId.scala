@@ -35,14 +35,17 @@ object DirectorNinoId {
   implicit def nino(implicit messages: Messages): CheckYourAnswers[DirectorNinoId] = {
 
     val directorNinoIdCYA = (establisherIndex: Int, directorIndex: Int, ua: UserAnswers) => {
-      val label = ua.get(DirectorDetailsId(establisherIndex, directorIndex)) match {
-        case Some(name) => messages("messages__director__cya__nino", name.firstAndLastName)
-        case None   => "messages__director__cya__nino__fallback"
+      val (label, reasonLabel) = ua.get(DirectorDetailsId(establisherIndex, directorIndex)) match {
+        case Some(name) =>
+          (messages("messages__director__cya__nino", name.firstAndLastName), messages("messages__director__cya__nino_reason", name.firstAndLastName))
+
+        case None =>
+          ("messages__director__cya__nino__fallback", "messages__director__cya__nino_reason__fallback")
       }
 
       NinoCYA[DirectorNinoId](
         label = label,
-        reasonLabel = "messages__director_nino_reason_cya_label",
+        reasonLabel = reasonLabel,
         changeHasNino = "messages__visuallyhidden__director__nino_yes_no",
         changeNino = "messages__visuallyhidden__director__nino",
         changeNoNino = "messages__visuallyhidden__director__nino_no"

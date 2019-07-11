@@ -31,18 +31,18 @@ case class DirectorUniqueTaxReferenceId(establisherIndex: Int, directorIndex: In
 
 object DirectorUniqueTaxReferenceId {
 
-  import scala.language.implicitConversions
   implicit def uniqueTaxReference(implicit messages: Messages): CheckYourAnswers[DirectorUniqueTaxReferenceId] = {
 
     val directorUtrCya = (establisherIndex: Int, directorIndex: Int, ua: UserAnswers) => {
-      val label = ua.get(DirectorDetailsId(establisherIndex, directorIndex)) match {
-        case Some(name) => messages("messages__director__cya__utr_yes_no", name.firstAndLastName)
-        case None   => "messages__director__cya__utr_yes_no_fallback"
+      val (label, reasonLabel) = ua.get(DirectorDetailsId(establisherIndex, directorIndex)) match {
+        case Some(name) =>
+          (messages("messages__director__cya__utr_yes_no", name.firstAndLastName), messages("messages__director__cya__utr_no_reason", name.firstAndLastName))
+        case None   => ("messages__director__cya__utr_yes_no_fallback", "messages__director__cya__utr_no_reason__fallback")
       }
 
       UniqueTaxReferenceCYA[DirectorUniqueTaxReferenceId](
         label = label,
-        reasonLabel = "messages__director__cya__utr_no_reason",
+        reasonLabel = reasonLabel,
         changeHasUtr = "messages__visuallyhidden__director__utr_yes_no",
         changeUtr = "messages__visuallyhidden__director__utr",
         changeNoUtr = "messages__visuallyhidden__director__utr_no"

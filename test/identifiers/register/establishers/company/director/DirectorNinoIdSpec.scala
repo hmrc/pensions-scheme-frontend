@@ -54,7 +54,7 @@ class DirectorNinoIdSpec extends SpecBase {
           AnswerRow("messages__director__cya__nino__fallback", Seq(s"${Nino.No}"), false,
             Some(Link("site.change", onwardUrl, Some("messages__visuallyhidden__director__nino_yes_no")))),
           AnswerRow(
-            "messages__director_nino_reason_cya_label", Seq(ninoNo.reason), false,
+            "messages__director__cya__nino_reason", Seq(ninoNo.reason), false,
             Some(Link("site.change", onwardUrl, Some("messages__visuallyhidden__director__nino_no"))))
         ))
       }
@@ -80,7 +80,7 @@ class DirectorNinoIdSpec extends SpecBase {
           AnswerRow("messages__director__cya__nino__fallback", Seq(s"${Nino.No}"), false,
             Some(Link("site.change", onwardUrl, Some("messages__visuallyhidden__director__nino_yes_no")))),
           AnswerRow(
-            "messages__director_nino_reason_cya_label", Seq(ninoNo.reason), false,
+            "messages__director__cya__nino_reason", Seq(ninoNo.reason), false,
             Some(Link("site.change", onwardUrl, Some("messages__visuallyhidden__director__nino_no"))))
         ))
       }
