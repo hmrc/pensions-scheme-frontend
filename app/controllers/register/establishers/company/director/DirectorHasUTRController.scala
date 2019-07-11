@@ -60,20 +60,20 @@ class DirectorHasUTRController @Inject()(override val appConfig: FrontendAppConf
   def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
-        (CompanyDetailsId(establisherIndex) and DirectorNameId(establisherIndex, directorIndex)).retrieve.right.map {
+        DirectorNameId(establisherIndex, directorIndex).retrieve.right.map {
           details =>
-            get(DirectorHasUTRId(establisherIndex, directorIndex), form(details.b.fullName),
-              viewModel(mode, establisherIndex, directorIndex, srn, details.b.fullName))
+            get(DirectorHasUTRId(establisherIndex, directorIndex), form(details.fullName),
+              viewModel(mode, establisherIndex, directorIndex, srn, details.fullName))
         }
     }
 
   def onSubmit(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
-        (CompanyDetailsId(establisherIndex) and DirectorNameId(establisherIndex, directorIndex)).retrieve.right.map {
+        DirectorNameId(establisherIndex, directorIndex).retrieve.right.map {
           details =>
-            post(DirectorHasUTRId(establisherIndex, directorIndex), mode, form(details.b.fullName),
-              viewModel(mode, establisherIndex, directorIndex, srn, details.b.fullName))
+            post(DirectorHasUTRId(establisherIndex, directorIndex), mode, form(details.fullName),
+              viewModel(mode, establisherIndex, directorIndex, srn, details.fullName))
         }
     }
 }
