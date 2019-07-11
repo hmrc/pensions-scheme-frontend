@@ -18,7 +18,7 @@ package controllers.register.establishers.company
 
 import controllers.ControllerSpecBase
 import controllers.actions._
-import forms.HasVatFormProvider
+import forms.HasReferenceNumberFormProvider
 import identifiers.register.establishers.company.HasCompanyVATId
 import models.{Index, NormalMode}
 import play.api.data.Form
@@ -31,7 +31,7 @@ import views.html.hasReferenceNumber
 class HasCompanyVATControllerSpec extends ControllerSpecBase {
   private val schemeName = None
   private def onwardRoute = controllers.routes.IndexController.onPageLoad()
-  val formProvider = new HasVatFormProvider()
+  val formProvider = new HasReferenceNumberFormProvider()
   val form = formProvider("messages__hasCompanyVat__error__required","test company name")
   val index = Index(0)
   val srn = None
