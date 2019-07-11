@@ -1591,3 +1591,8 @@ messages__establisher_phone__title =  What is the establisher’s phone number?
 
 messages__establisher_email__title =  What is the establisher’s email address?
 messages__establisher_email__hint = We will only use this to contact about pension scheme administration.
+
+messages__directorHasNino__title =  Does the director have a National Insurance number?
+messages__directorHasNino__h1 =  Does {0} have a National Insurance number?
+messages__directorHasNino__error__required = Select yes if the director has a National Insurance number
+

@@ -18,20 +18,12 @@ package toggles
 
 class TogglesSpec extends FeatureToggleBehaviours {
 
-  "is-variations-enabled new feature toggle" should {
-    behave like featureToggle("is-variations-enabled", true)
-  }
-
-  "is-address-pre-population-enabled new feature toggle" should {
-    behave like featureToggle("is-address-pre-population-enabled", true)
-  }
-
   "is-scheme-data-shift-enabled new feature toggle" should {
     behave like featureToggle("is-scheme-data-shift-enabled", true)
   }
 
   "separate-ref-collection new feature toggle" should {
-    behave like featureToggle("separate-ref-collection", false)
+    behave like featureToggle("separate-ref-collection", true)
   }
 
   "is-establisher-company-hns new feature toggle" should {
