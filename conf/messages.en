@@ -535,6 +535,10 @@ messages__director__cya__utr_no_reason = Why does {0} not have a UTR?
 messages__director__cya__utr_no_reason__fallback = Why the director does not have a Self Assessment Unique Taxpayer Reference number?
 messages__director__cya__address_years = Has {0} been at their address for at least 1 year?
 messages__director__cya__address_years__fallback = How long has the director lived at this address?
+messages__director__cya__email_address = What is {0}’s email address?
+messages__director__cya__email_address__fallback = Email address
+messages__director__cya__phone = What is {0}’s phone number?
+messages__director__cya__phone__fallback = Phone number
 
 messages__director__cya__utr_yes_no_fallback = Does the director have a Self Assessment Unique Taxpayer Reference number?
 
