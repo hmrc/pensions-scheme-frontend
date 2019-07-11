@@ -77,7 +77,7 @@ class DirectorUniqueTaxReferenceIdSpec extends SpecBase {
             Some(Link("site.change", onwardUrl, Some("messages__visuallyhidden__director__utr_yes_no")))
           ),
           AnswerRow(
-            "messages__director__cya__utr_no_reason",
+            messages("messages__director__cya__utr_no_reason", directorDetails.firstAndLastName),
             Seq(utrNo.reason),
             false,
             Some(Link("site.change", onwardUrl, Some("messages__visuallyhidden__director__utr_no")))
@@ -123,7 +123,7 @@ class DirectorUniqueTaxReferenceIdSpec extends SpecBase {
             Some(Link("site.change", onwardUrl, Some("messages__visuallyhidden__director__utr_yes_no")))
           ),
           AnswerRow(
-            "messages__director__cya__utr_no_reason",
+            messages("messages__director__cya__utr_no_reason", directorDetails.firstAndLastName),
             Seq(utrNo.reason),
             false,
             Some(Link("site.change", onwardUrl, Some("messages__visuallyhidden__director__utr_no")))
