@@ -20,9 +20,9 @@ import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.register.establishers.company.director.DirectorDOBFormProvider
 import identifiers.register.establishers.company.CompanyDetailsId
-import identifiers.register.establishers.company.director.{DirectorDOBId, DirectorDetailsId, DirectorNameId, IsNewDirectorId}
+import identifiers.register.establishers.company.director.{DirectorDOBId, DirectorNameId, IsNewDirectorId}
 import identifiers.register.establishers.{EstablishersId, IsEstablisherCompleteId}
-import models.person.{DateOfBirth, PersonDetails, PersonName}
+import models.person.PersonName
 import models.{CompanyDetails, Index, NormalMode}
 import org.joda.time.LocalDate
 import org.mockito.Matchers.{eq => eqTo, _}
@@ -119,7 +119,7 @@ class DirectorDOBControllerSpec extends ControllerSpecBase {
       val getRelevantData = new FakeDataRetrievalAction(Some(validData))
       val result = controller(getRelevantData).onPageLoad(NormalMode, firstEstablisherIndex, firstDirectorIndex, None)(fakeRequest)
 
-      contentAsString(result) mustBe viewAsString(form.fill(DateOfBirth(new LocalDate(year, month, day))))
+      contentAsString(result) mustBe viewAsString(form.fill(new LocalDate(year, month, day)))
     }
 
     "redirect to the next page when valid data is submitted" in {
@@ -130,7 +130,7 @@ class DirectorDOBControllerSpec extends ControllerSpecBase {
             "director" -> Json.arr(
               Json.obj(
                 "directorDetails" ->
-                  DateOfBirth(new LocalDate(year, month, day))
+                  new LocalDate(year, month, day)
               )
             )
           )
@@ -173,7 +173,7 @@ class DirectorDOBControllerSpec extends ControllerSpecBase {
       reset(mockSectionComplete, mockUserAnswersService)
       val validData = UserAnswers().set(CompanyDetailsId(firstEstablisherIndex))(CompanyDetails("test company name")).flatMap(
         _.set(DirectorDOBId(firstEstablisherIndex, firstDirectorIndex))(
-          DateOfBirth(new LocalDate(year, month, day))).flatMap(
+          new LocalDate(year, month, day)).flatMap(
           _.set(IsNewDirectorId(firstEstablisherIndex, firstDirectorIndex))(true)
         )
       ).asOpt.value.json
@@ -195,7 +195,7 @@ object DirectorDOBControllerSpec extends MockitoSugar {
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
   val formProvider: DirectorDOBFormProvider = new DirectorDOBFormProvider()
-  val form: Form[DateOfBirth] = formProvider()
+  val form: Form[LocalDate] = formProvider()
 
   val firstEstablisherIndex: Index = Index(0)
   val firstDirectorIndex: Index = Index(0)

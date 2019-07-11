@@ -18,7 +18,6 @@ package views.register.establishers.company.director
 
 import controllers.register.establishers.company.director.routes
 import forms.register.establishers.company.director.DirectorDOBFormProvider
-import models.person.DateOfBirth
 import models.{Index, NormalMode}
 import org.joda.time.LocalDate
 import play.api.data.{Form, FormError}
@@ -26,7 +25,7 @@ import play.twirl.api.HtmlFormat
 import views.behaviours.QuestionViewBehaviours
 import views.html.register.establishers.company.director.directorDOB
 
-class DirectorDOBViewSpec extends QuestionViewBehaviours[DateOfBirth] {
+class DirectorDOBViewSpec extends QuestionViewBehaviours[LocalDate] {
 
   val messageKeyPrefix = "directorDOB"
 

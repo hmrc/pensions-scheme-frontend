@@ -18,20 +18,17 @@ package forms.register.establishers.company.director
 
 import forms.mappings.{Mappings, Transforms}
 import javax.inject.Inject
-import models.person.DateOfBirth
+import org.joda.time.LocalDate
 import play.api.data.Form
-import play.api.data.Forms._
 
 class DirectorDOBFormProvider @Inject() extends Mappings with Transforms {
 
-  def apply(): Form[DateOfBirth] = Form(
-    mapping(
-      "date" -> dateMapping("messages__error__date", "error.invalid_date")
-        .verifying(firstError(futureDate("messages__error__date_future"),
-          notBeforeYear("messages__error__date_past", DirectorDOBFormProvider.startYear)
-        )
-        )
-    )(DateOfBirth.applyDelete)(DateOfBirth.unapplyDelete)
+  def apply(): Form[LocalDate] = Form(
+    "date" -> dateMapping("messages__error__date", "error.invalid_date")
+      .verifying(firstError(futureDate("messages__error__date_future"),
+        notBeforeYear("messages__error__date_past", DirectorDOBFormProvider.startYear)
+      )
+      )
   )
 }
 

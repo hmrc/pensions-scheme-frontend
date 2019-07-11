@@ -22,8 +22,8 @@ import controllers.actions._
 import forms.register.establishers.company.director.DirectorDOBFormProvider
 import identifiers.register.establishers.company.director.{DirectorDOBId, DirectorNameId, IsNewDirectorId}
 import javax.inject.Inject
-import models.person.DateOfBirth
 import models.{Index, Mode}
+import org.joda.time.LocalDate
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Call}
 import services.UserAnswersService
@@ -55,7 +55,7 @@ class DirectorDOBController @Inject()(
   def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
-        val preparedForm = request.userAnswers.get[DateOfBirth](DirectorDOBId(establisherIndex, directorIndex)) match {
+        val preparedForm = request.userAnswers.get[LocalDate](DirectorDOBId(establisherIndex, directorIndex)) match {
           case Some(value) => form.fill(value)
           case None        => form
         }
@@ -93,9 +93,10 @@ class DirectorDOBController @Inject()(
             )))),
 
         value => {
+          val existingUserAnswers = request.userAnswers
           val answers = request.userAnswers.set(IsNewDirectorId(establisherIndex, directorIndex))(true).flatMap(
             _.set(DirectorDOBId(establisherIndex, directorIndex))(value)).asOpt.getOrElse(request.userAnswers)
-
+          println(answers.json)
           userAnswersService.upsert(mode, srn, answers.json).map {
             cacheMap =>
               Redirect(navigator.nextPage(DirectorDOBId(establisherIndex, directorIndex), mode, UserAnswers(cacheMap), srn))
