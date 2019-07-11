@@ -54,8 +54,7 @@ class DirectorDOBControllerSpec extends ControllerSpecBase {
       dataRetrievalAction,
       FakeAllowAccessProvider(),
       new DataRequiredActionImpl,
-      formProvider,
-      mockSectionComplete)
+      formProvider)
 
   private val postCall = routes.DirectorDOBController.onSubmit _
 

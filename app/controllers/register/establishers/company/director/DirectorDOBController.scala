@@ -29,7 +29,7 @@ import play.api.mvc.{Action, AnyContent, Call}
 import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.EstablishersCompanyDirector
-import utils.{Enumerable, Navigator, SectionComplete, UserAnswers}
+import utils.{Enumerable, Navigator, UserAnswers}
 import views.html.register.establishers.company.director.directorDOB
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -43,14 +43,13 @@ class DirectorDOBController @Inject()(
                                        getData: DataRetrievalAction,
                                        allowAccess: AllowAccessActionProvider,
                                        requireData: DataRequiredAction,
-                                       formProvider: DirectorDOBFormProvider,
-                                       sectionComplete: SectionComplete
+                                       formProvider: DirectorDOBFormProvider
                                      )(implicit val ec: ExecutionContext)
   extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
 
   private val form = formProvider()
 
-  private def postCall: (Mode, Index, Index, Option[String]) => Call = routes.DirectorDOBController.onSubmit _
+  private def postCall: (Mode, Index, Index, Option[String]) => Call = routes.DirectorDOBController.onSubmit
 
   def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
