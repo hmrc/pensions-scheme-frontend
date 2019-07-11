@@ -101,8 +101,8 @@ class EstablishersCompanyNavigatorSpec extends SpecBase with MustMatchers with N
   private def normalOnlyRoutes(toggled:Boolean): TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = Table(
     ("Id",                                          "User Answers",               "Next Page (Normal Mode)",                "Save (NM)",  "Next Page (Check Mode)",         "Save (CM)"),
     (CompanyAddressYearsId(0),                    addressYearsUnderAYear,       underAYearRouteWithToggle(NormalMode, toggled),        true,         Some(underAYearRouteWithToggle(CheckMode, toggled)),                          true),
-    (CompanyRegistrationNumberId(0),              emptyAnswers,                 companyUTR(NormalMode),                   true,         Some(exitJourney(journeyMode(CheckMode), emptyAnswers, 0, cya(NormalMode))),                   true),
-    (CompanyRegistrationNumberId(0),              newEstablisher,               companyUTR(NormalMode),                   true,         Some(cya(journeyMode(CheckMode))),                   true),
+    (CompanyRegistrationNumberId(0),              emptyAnswers,                 if (toggled) hasCompanyUTR(NormalMode) else companyUTR(NormalMode),                   true,         Some(exitJourney(journeyMode(CheckMode), emptyAnswers, 0, cya(NormalMode))),                   true),
+    (CompanyRegistrationNumberId(0),              newEstablisher,               if (toggled) hasCompanyUTR(NormalMode) else companyUTR(NormalMode),                   true,         Some(cya(journeyMode(CheckMode))),                   true),
     (CompanyContactDetailsId(0),                  emptyAnswers,                 isDormant(NormalMode),                                true,         Some(cya(journeyMode(CheckMode))),               true),
     (CompanyPhoneId(0),                           emptyAnswers,                 cyaCompanyContactDetails(NormalMode),                         true,         Some(cyaCompanyContactDetails(journeyMode(CheckMode))),               true),
     (IsCompanyDormantId(0),                       emptyAnswers,                 cya(NormalMode),             true,         Some(cya(journeyMode(CheckMode))),               true)
@@ -144,7 +144,8 @@ class EstablishersCompanyNavigatorSpec extends SpecBase with MustMatchers with N
     val navigator: EstablishersCompanyNavigator =
       new EstablishersCompanyNavigator(FakeUserAnswersCacheConnector, frontendAppConfig, new FakeFeatureSwitchManagementService(true))
     appRunning()
-    behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, updateRoutes(true), dataDescriber, UpdateMode)
+    behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, updateRoutes(toggled = true), dataDescriber, UpdateMode)
+    behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, normalRoutes(toggled = true), dataDescriber, NormalMode)
   }
 }
 
