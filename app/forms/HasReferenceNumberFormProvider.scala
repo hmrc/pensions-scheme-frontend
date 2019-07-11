@@ -24,8 +24,8 @@ import viewmodels.Message
 
 class HasReferenceNumberFormProvider @Inject() extends Mappings {
 
-  def apply(errorKey : String, companyName : String)(implicit messages: Messages): Form[Boolean] =
+  def apply(errorKey : String, name : String)(implicit messages: Messages): Form[Boolean] =
     Form(
-      "value" -> boolean(Message(errorKey, companyName).resolve)
+      "value" -> boolean(Message(errorKey, name).resolve)
     )
 }

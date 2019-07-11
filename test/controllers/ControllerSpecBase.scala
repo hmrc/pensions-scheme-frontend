@@ -154,6 +154,7 @@ trait ControllerSpecBase extends SpecBase with Enumerable.Implicits with MapForm
       )
     ))
   )
+
   def getMandatoryEstablisherPartner: FakeDataRetrievalAction = new FakeDataRetrievalAction(
     Some(Json.obj(
       EstablishersId.toString -> Json.arr(
