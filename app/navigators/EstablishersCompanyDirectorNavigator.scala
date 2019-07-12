@@ -17,19 +17,16 @@
 package navigators
 
 import com.google.inject.{Inject, Singleton}
-import config.FeatureSwitchManagementService
 import connectors.UserAnswersCacheConnector
 import controllers.register.establishers.company.director.routes
 import identifiers.AnyMoreChangesId
-import identifiers.register.establishers.IsEstablisherNewId
 import identifiers.register.establishers.company.director._
 import models.Mode.journeyMode
 import models._
-import utils.{Navigator, Toggles, UserAnswers}
+import utils.{Navigator, UserAnswers}
 
 @Singleton
-class EstablishersCompanyDirectorNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector,
-                                                     featureSwitchManagementService: FeatureSwitchManagementService) extends Navigator {
+class EstablishersCompanyDirectorNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector) extends Navigator {
 
   private def checkYourAnswers(establisherIndex: Int, directorIndex: Int, mode: Mode, srn: Option[String]): Option[NavigateTo] =
     NavigateTo.dontSave(routes.CheckYourAnswersController.onPageLoad(establisherIndex, directorIndex, mode, srn))
@@ -42,7 +39,7 @@ class EstablishersCompanyDirectorNavigator @Inject()(val dataCacheConnector: Use
       case CheckMode | NormalMode =>
         checkYourAnswers(establisherIndex, directorIndex, journeyMode(mode), srn)
       case _ =>
-        if(answers.get(IsNewDirectorId(establisherIndex, directorIndex)).getOrElse(false))
+        if (answers.get(IsNewDirectorId(establisherIndex, directorIndex)).getOrElse(false))
           checkYourAnswers(establisherIndex, directorIndex, journeyMode(mode), srn)
         else anyMoreChanges(srn)
     }
@@ -52,10 +49,20 @@ class EstablishersCompanyDirectorNavigator @Inject()(val dataCacheConnector: Use
       case DirectorDetailsId(establisherIndex, directorIndex) =>
         NavigateTo.dontSave(controllers.register.establishers.company.director.routes.
           DirectorNinoController.onPageLoad(mode, establisherIndex, directorIndex, srn))
+      case DirectorHasNINOId(establisherIndex, directorIndex) =>
+        hasNinoRoutes(establisherIndex, directorIndex, mode, srn)(from.userAnswers)
+      case DirectorNameId(establisherIndex, directorIndex) =>
+        NavigateTo.dontSave(controllers.register.establishers.company.director.routes.
+          DirectorDOBController.onPageLoad(mode, establisherIndex, directorIndex, srn))
+      case DirectorNoUTRReasonId(establisherIndex, directorIndex) =>
+        NavigateTo.dontSave(controllers.register.establishers.company.director.routes.
+          DirectorAddressPostcodeLookupController.onPageLoad(mode, establisherIndex, directorIndex, srn))
       case DirectorNinoId(establisherIndex, directorIndex) =>
         NavigateTo.dontSave(routes.DirectorUniqueTaxReferenceController.onPageLoad(mode, establisherIndex, directorIndex, srn))
       case DirectorUniqueTaxReferenceId(establisherIndex, directorIndex) =>
         NavigateTo.dontSave(routes.DirectorAddressPostcodeLookupController.onPageLoad(mode, establisherIndex, directorIndex, srn))
+      case DirectorHasUTRId(establisherIndex, directorIndex) =>
+        hasUTRRoutes(establisherIndex, directorIndex, mode, srn)(from.userAnswers)
       case DirectorAddressId(establisherIndex, directorIndex) =>
         NavigateTo.dontSave(routes.DirectorAddressYearsController.onPageLoad(mode, establisherIndex, directorIndex, srn))
       case DirectorPreviousAddressId(establisherIndex, directorIndex) =>
@@ -64,6 +71,8 @@ class EstablishersCompanyDirectorNavigator @Inject()(val dataCacheConnector: Use
         checkYourAnswers(establisherIndex, directorIndex, mode, srn)
       case DirectorAddressYearsId(establisherIndex, directorIndex) =>
         addressYearsRoutes(establisherIndex, directorIndex, mode, srn)(from.userAnswers)
+      case DirectorEmailId(establisherIndex, directorIndex) =>
+        NavigateTo.dontSave(routes.DirectorPhoneNumberController.onPageLoad(mode, establisherIndex, directorIndex, srn))
       case _ => commonRoutes(from, mode, srn)
     }
 
@@ -72,9 +81,17 @@ class EstablishersCompanyDirectorNavigator @Inject()(val dataCacheConnector: Use
     from.id match {
       case DirectorDetailsId(establisherIndex, directorIndex) =>
         exitMiniJourney(establisherIndex, directorIndex, mode, srn, from.userAnswers)
-      case DirectorNinoId(establisherIndex, directorIndex)  =>
+      case DirectorHasNINOId(establisherIndex, directorIndex) =>
         exitMiniJourney(establisherIndex, directorIndex, mode, srn, from.userAnswers)
-      case DirectorNewNinoId(establisherIndex, directorIndex)  =>
+      case DirectorNameId(establisherIndex, directorIndex) =>
+        exitMiniJourney(establisherIndex, directorIndex, mode, srn, from.userAnswers)
+      case DirectorNoUTRReasonId(establisherIndex, directorIndex) =>
+        exitMiniJourney(establisherIndex, directorIndex, mode, srn, from.userAnswers)
+      case DirectorNinoId(establisherIndex, directorIndex) =>
+        exitMiniJourney(establisherIndex, directorIndex, mode, srn, from.userAnswers)
+      case DirectorHasUTRId(establisherIndex, directorIndex) =>
+        exitMiniJourney(establisherIndex, directorIndex, mode, srn, from.userAnswers)
+      case DirectorNewNinoId(establisherIndex, directorIndex) =>
         exitMiniJourney(establisherIndex, directorIndex, mode, srn, from.userAnswers)
       case DirectorUniqueTaxReferenceId(establisherIndex, directorIndex) =>
         exitMiniJourney(establisherIndex, directorIndex, mode, srn, from.userAnswers)
@@ -85,17 +102,19 @@ class EstablishersCompanyDirectorNavigator @Inject()(val dataCacheConnector: Use
         } else {
           NavigateTo.dontSave(routes.DirectorAddressYearsController.onPageLoad(mode, establisherIndex, directorIndex, srn))
         }
-      case DirectorConfirmPreviousAddressId(establisherIndex, directorIndex) => confirmPreviousAddressRoutes(establisherIndex, directorIndex, mode, srn)(from.userAnswers)
+      case DirectorConfirmPreviousAddressId(establisherIndex, directorIndex) =>
+        confirmPreviousAddressRoutes(establisherIndex, directorIndex, mode, srn)(from.userAnswers)
       case DirectorPreviousAddressId(establisherIndex, directorIndex) =>
         exitMiniJourney(establisherIndex, directorIndex, mode, srn, from.userAnswers)
       case DirectorContactDetailsId(establisherIndex, directorIndex) =>
         exitMiniJourney(establisherIndex, directorIndex, mode, srn, from.userAnswers)
       case DirectorAddressYearsId(establisherIndex, directorIndex) =>
         addressYearsEditRoutes(establisherIndex, directorIndex, mode, srn)(from.userAnswers)
+      case DirectorEmailId(establisherIndex, directorIndex) =>
+        exitMiniJourney(establisherIndex, directorIndex, mode, srn, from.userAnswers)
       case _ => commonRoutes(from, mode, srn)
     }
 
-  //scalastyle:on cyclomatic.complexity
   protected def commonRoutes(from: NavigateFrom, mode: Mode, srn: Option[String]): Option[NavigateTo] =
     from.id match {
       case DirectorAddressPostcodeLookupId(establisherIndex, directorIndex) =>
@@ -119,6 +138,8 @@ class EstablishersCompanyDirectorNavigator @Inject()(val dataCacheConnector: Use
       case _ => None
     }
 
+  //scalastyle:on cyclomatic.complexity
+
   override protected def routeMap(from: NavigateFrom): Option[NavigateTo] = normalRoutes(from, NormalMode, None)
 
   override protected def editRouteMap(from: NavigateFrom): Option[NavigateTo] = editRoutes(from, CheckMode, None)
@@ -138,16 +159,27 @@ class EstablishersCompanyDirectorNavigator @Inject()(val dataCacheConnector: Use
     }
   }
 
+  private def hasNinoRoutes(establisherIndex: Int, directorIndex: Int, mode: Mode, srn: Option[String])(answers: UserAnswers): Option[NavigateTo] =
+    navigateOrSessionExpired(answers, DirectorHasNINOId(establisherIndex, directorIndex),
+      if (_: Boolean)
+        routes.DirectorNinoNewController.onPageLoad(mode, establisherIndex, directorIndex, srn)
+      else
+        routes.DirectorNoNINOReasonController.onPageLoad(mode, establisherIndex, directorIndex, srn)
+    )
+
   private def addressYearsEditRoutes(establisherIndex: Int, directorIndex: Int, mode: Mode, srn: Option[String])(answers: UserAnswers): Option[NavigateTo] = {
-    answers.get(DirectorAddressYearsId(establisherIndex, directorIndex)) match {
-      case Some(AddressYears.UnderAYear) =>
-        if (mode == CheckUpdateMode && featureSwitchManagementService.get(Toggles.isPrevAddEnabled))
-          NavigateTo.dontSave(routes.DirectorConfirmPreviousAddressController.onPageLoad(establisherIndex, directorIndex, srn))
-        else
+    (
+      answers.get(DirectorAddressYearsId(establisherIndex, directorIndex)),
+      mode,
+      answers.get(ExistingCurrentAddressId(establisherIndex, directorIndex))
+    ) match {
+      case (Some(AddressYears.UnderAYear), CheckUpdateMode, Some(_)) =>
+        NavigateTo.dontSave(routes.DirectorConfirmPreviousAddressController.onPageLoad(establisherIndex, directorIndex, srn))
+      case (Some(AddressYears.UnderAYear), _, _) =>
         NavigateTo.dontSave(routes.DirectorPreviousAddressPostcodeLookupController.onPageLoad(mode, establisherIndex, directorIndex, srn))
-      case Some(AddressYears.OverAYear) =>
+      case (Some(AddressYears.OverAYear), _, _) =>
         exitMiniJourney(establisherIndex, directorIndex, mode, srn, answers)
-      case None =>
+      case _ =>
         NavigateTo.dontSave(controllers.routes.SessionExpiredController.onPageLoad())
     }
   }
@@ -162,4 +194,12 @@ class EstablishersCompanyDirectorNavigator @Inject()(val dataCacheConnector: Use
       case None =>
         NavigateTo.dontSave(controllers.routes.SessionExpiredController.onPageLoad())
     }
+
+  private def hasUTRRoutes(establisherIndex: Int, directorIndex: Int, mode: Mode, srn: Option[String])(answers: UserAnswers): Option[NavigateTo] =
+    navigateOrSessionExpired(answers, DirectorHasUTRId(establisherIndex, directorIndex),
+      if (_: Boolean)
+        routes.DirectorUTRController.onPageLoad(mode, establisherIndex, directorIndex, srn)
+      else
+        routes.DirectorNoUTRReasonController.onPageLoad(mode, establisherIndex, directorIndex, srn)
+    )
 }

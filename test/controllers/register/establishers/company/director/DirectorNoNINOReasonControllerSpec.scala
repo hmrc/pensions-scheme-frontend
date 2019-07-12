@@ -33,7 +33,7 @@ class DirectorNoNINOReasonControllerSpec extends ControllerSpecBase {
     private val schemeName = None
     private def onwardRoute = controllers.routes.IndexController.onPageLoad()
     val formProvider = new ReasonFormProvider()
-    val name = "test director name"
+    val name = "first last"
     val form = formProvider("messages__reason__error_ninoRequired", name)
     val establisherIndex, directorIndex = Index(0)
     val srn = None
@@ -46,7 +46,7 @@ class DirectorNoNINOReasonControllerSpec extends ControllerSpecBase {
     srn = srn
   )
 
-    def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisherCompanyDirectorHnS): DirectorNoNINOReasonController =
+    def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisherCompanyDirectorWithDirectorName): DirectorNoNINOReasonController =
       new DirectorNoNINOReasonController(
         frontendAppConfig,
         messagesApi,

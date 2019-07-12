@@ -17,32 +17,32 @@
 package navigators
 
 import base.SpecBase
-import config.FeatureSwitchManagementServiceTestImpl
 import connectors.FakeUserAnswersCacheConnector
 import controllers.register.establishers.partnership.partner._
-import identifiers.{EstablishersOrTrusteesChangedId, Identifier}
-import identifiers.register.establishers.{EstablishersId, IsEstablisherNewId}
 import identifiers.register.establishers.partnership.partner._
-import identifiers.register.establishers.partnership.{AddPartnersId, PartnershipDetailsId, partner}
+import identifiers.register.establishers.partnership.{AddPartnersId, PartnershipDetailsId}
+import identifiers.register.establishers.{EstablishersId, IsEstablisherNewId}
+import identifiers.{EstablishersOrTrusteesChangedId, Identifier}
 import models.Mode.checkMode
 import models._
+import models.address.Address
 import models.person.PersonDetails
 import org.joda.time.LocalDate
 import org.scalatest.OptionValues
 import org.scalatest.prop.TableFor6
-import play.api.Configuration
+import play.Configuration
 import play.api.libs.json.Json
 import play.api.mvc.Call
-import utils.{FakeFeatureSwitchManagementService, Toggles, UserAnswers}
+import utils.UserAnswers
 
 class EstablishersPartnerNavigatorSpec extends SpecBase with NavigatorBehaviour {
   //scalastyle:off line.size.limit
   //scalastyle:off magic.number
   import EstablishersPartnerNavigatorSpec._
 
-  private val navigator = new EstablishersPartnerNavigator(FakeUserAnswersCacheConnector, frontendAppConfig, new FakeFeatureSwitchManagementService(false))
+  private val navigator = new EstablishersPartnerNavigator(FakeUserAnswersCacheConnector, frontendAppConfig)
 
-  private def commonRoutes(mode: Mode, isPrevAddEnabled : Boolean): TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = Table(
+  private def commonRoutes(mode: Mode): TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = Table(
     ("Id", "User Answers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (Check Mode)", "Save (CM)"),
     (AddPartnersId(0), emptyAnswers, partnerDetails(0, mode), true, None, true),
     (AddPartnersId(0), addPartnersTrue, partnerDetails(1, mode), true, None, true),
@@ -58,7 +58,6 @@ class EstablishersPartnerNavigatorSpec extends SpecBase with NavigatorBehaviour 
     (PartnerAddressListId(0, 0), emptyAnswers, partnerAddress(mode), true, Some(partnerAddress(checkMode(mode))), true),
     (PartnerAddressId(0, 0), emptyAnswers, partnerAddressYears(mode), true, if(mode == UpdateMode) Some(partnerAddressYears(checkMode(UpdateMode))) else Some(checkYourAnswers(NormalMode)), true),
     (PartnerAddressId(0, 0), newPartner, partnerAddressYears(mode), true, Some(checkYourAnswers(mode)), true),
-    (PartnerAddressYearsId(0, 0), addressYearsUnderAYear, partnerPreviousAddPostcode(mode), true, addressYearsLessThanTwelveEdit(mode, isPrevAddEnabled), true),
     (PartnerAddressYearsId(0, 0), addressYearsOverAYearNew, partnerContactDetails(mode), true, Some(exitJourney(mode, addressYearsOverAYearNew)), true),
     (PartnerAddressYearsId(0, 0), addressYearsOverAYear, partnerContactDetails(mode), true, Some(exitJourney(mode, emptyAnswers)), true),
     (PartnerAddressYearsId(0, 0), emptyAnswers, sessionExpired, false, Some(sessionExpired), false),
@@ -74,20 +73,22 @@ class EstablishersPartnerNavigatorSpec extends SpecBase with NavigatorBehaviour 
   )
 
 
-  private def normalRoutes(mode:Mode, isPrevAddEnabled : Boolean = false): TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = commonRoutes(mode, isPrevAddEnabled) ++ Table(
+  private def normalRoutes(mode:Mode): TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = commonRoutes(mode) ++ Table(
     ("Id", "User Answers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (Check Mode)", "Save (CM)"),
     (ConfirmDeletePartnerId(0), emptyAnswers, addPartners(mode), false, None, false),
     (CheckYourAnswersId(0, 0), emptyAnswers, addPartners(mode), true, None, true),
     (AddPartnersId(0), addPartnersFalse, partnershipReview(mode), true, None, true)
   )
 
-  private def editRoutes(mode:Mode, isPrevAddEnabled : Boolean = false): TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = commonRoutes(mode, isPrevAddEnabled) ++ Table(
+  private def editRoutes(mode:Mode): TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = commonRoutes(mode) ++ Table(
     ("Id", "User Answers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (Check Mode)", "Save (CM)"),
     (ConfirmDeletePartnerId(0), emptyAnswers, anyMoreChanges, false, None, false),
     (CheckYourAnswersId(0, 0), emptyAnswers, addPartners(mode), true, None, true),
     (AddPartnersId(0), addPartnersFalseWithChanges, anyMoreChanges, true, None, true),
     (AddPartnersId(0), addPartnersFalseNewEst, partnershipReview(mode), true, None, true),
     (AddPartnersId(0), addPartnersFalse, taskList, true, None, true),
+    (PartnerAddressYearsId(0, 0), addressYearsUnderAYear, partnerPreviousAddPostcode(mode), true, addressYearsLessThanTwelveEdit(mode, addressYearsUnderAYear), true),
+    (PartnerAddressYearsId(0, 0), addressYearsUnderAYearWithExistingCurrentAddress, partnerPreviousAddPostcode(mode), true, addressYearsLessThanTwelveEdit(CheckUpdateMode, addressYearsUnderAYearWithExistingCurrentAddress), true),
     (PartnerNewNinoId(0, 0), emptyAnswers, none, true, Some(exitJourney(mode, emptyAnswers)), true)
   )
 
@@ -98,12 +99,6 @@ class EstablishersPartnerNavigatorSpec extends SpecBase with NavigatorBehaviour 
     behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, editRoutes(UpdateMode), dataDescriber, UpdateMode)
     behave like nonMatchingNavigator(navigator)
     behave like nonMatchingNavigator(navigator, UpdateMode)
-  }
-
-  s"when previous address feature is toggled On" must {
-    val navigator = new EstablishersPartnerNavigator(FakeUserAnswersCacheConnector, frontendAppConfig, new FakeFeatureSwitchManagementService(true))
-    appRunning()
-    behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, editRoutes(UpdateMode, true), dataDescriber, UpdateMode)
   }
 }
 
@@ -123,6 +118,9 @@ object EstablishersPartnerNavigatorSpec extends SpecBase with OptionValues {
     .set(PartnerAddressYearsId(establisherIndex, partnerIndex))(AddressYears.OverAYear).asOpt.value
   val addressYearsUnderAYear = UserAnswers(Json.obj())
     .set(PartnerAddressYearsId(establisherIndex, partnerIndex))(AddressYears.UnderAYear).asOpt.value
+  val addressYearsUnderAYearWithExistingCurrentAddress = UserAnswers(Json.obj())
+    .set(PartnerAddressYearsId(establisherIndex, partnerIndex))(AddressYears.UnderAYear).flatMap(
+    _.set(ExistingCurrentAddressId(0, 0))(Address("Line 1", "Line 2", None, None, None, "UK"))).asOpt.value
 
   private val confirmPreviousAddressYes = UserAnswers(Json.obj())
     .set(PartnerConfirmPreviousAddressId(0, 0))(true).asOpt.value
@@ -130,11 +128,22 @@ object EstablishersPartnerNavigatorSpec extends SpecBase with OptionValues {
     .set(PartnerConfirmPreviousAddressId(0, 0))(false).asOpt.value
 
   private val config = injector.instanceOf[Configuration]
-  private def featureSwitch = new FeatureSwitchManagementServiceTestImpl(config, environment)
 
-  private def addressYearsLessThanTwelveEdit(mode: Mode, isPrevAddEnabled : Boolean = false) =
-    if (checkMode(mode) == CheckUpdateMode && isPrevAddEnabled) Some(confirmPreviousAddress)
-    else Some(partnerPreviousAddPostcode(checkMode(mode)))
+  private def addressYearsLessThanTwelveEdit(mode: Mode, userAnswers: UserAnswers)=
+    (
+      userAnswers.get(PartnerAddressYearsId(establisherIndex, partnerIndex)),
+      mode,
+      userAnswers.get(ExistingCurrentAddressId(establisherIndex, partnerIndex))
+    ) match {
+      case (Some(AddressYears.UnderAYear), CheckUpdateMode, Some(_)) =>
+        Some(confirmPreviousAddress)
+      case (Some(AddressYears.UnderAYear), _, _) =>
+        Some(partnerPreviousAddPostcode(checkMode(mode)))
+      case (Some(AddressYears.OverAYear), _, _) =>
+        Some(exitJourney(mode, userAnswers))
+      case _ =>
+        Some(partnerPreviousAddPostcode(checkMode(mode)))
+    }
 
   private def confirmPreviousAddress = routes.PartnerConfirmPreviousAddressController.onPageLoad(0, 0, None)
 

@@ -22,19 +22,18 @@ import controllers.actions._
 import handlers.ErrorHandler
 import identifiers.{IsPsaSuspendedId, SchemeSrnId, SchemeStatusId}
 import javax.inject.Inject
-import models.{Mode, VarianceLock}
-import models.details.transformation.SchemeDetailsMasterSection
 import models.requests.OptionalDataRequest
+import models.{Mode, VarianceLock}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.JsValue
 import play.api.mvc.{Action, AnyContent, Result}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import utils.UserAnswers
 import utils.annotations.TaskList
 import utils.hstasklisthelper.{HsTaskListHelperRegistration, HsTaskListHelperVariations}
-import utils.{Toggles, UserAnswers}
 import viewmodels.SchemeDetailsTaskList
-import views.html.{psa_scheme_details, schemeDetailsTaskList}
+import views.html.schemeDetailsTaskList
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -44,7 +43,6 @@ class SchemeTaskListController @Inject()(appConfig: FrontendAppConfig,
                                          getData: DataRetrievalAction,
                                          @TaskList allowAccess: AllowAccessActionProvider,
                                          schemeDetailsConnector: SchemeDetailsConnector,
-                                         schemeTransformer: SchemeDetailsMasterSection,
                                          errorHandler: ErrorHandler,
                                          featureSwitchManagementService: FeatureSwitchManagementService,
                                          lockConnector: PensionSchemeVarianceLockConnector,
@@ -60,26 +58,14 @@ class SchemeTaskListController @Inject()(appConfig: FrontendAppConfig,
         case (None, Some(userAnswers)) =>
           Future.successful(Ok(schemeDetailsTaskList(appConfig, new HsTaskListHelperRegistration(userAnswers, featureSwitchManagementService).taskList)))
 
-        case (Some(srnValue), _) if !featureSwitchManagementService.get(Toggles.isVariationsEnabled) =>
-          onPageLoadVariationsToggledOff(srnValue)
-
         case (Some(srnValue), optionUserAnswers) =>
-          onPageLoadVariationsToggledOn(srnValue, optionUserAnswers)
+          onPageLoadVariations(srnValue, optionUserAnswers)
         case _ =>
           Future.successful(Redirect(appConfig.managePensionsSchemeOverviewUrl))
       }
   }
 
-  private def onPageLoadVariationsToggledOff(srn: String)(implicit
-                                                          request: OptionalDataRequest[AnyContent],
-                                                          hc: HeaderCarrier): Future[Result] = {
-    schemeDetailsConnector.getSchemeDetails(request.psaId.id, schemeIdType = "srn", srn).flatMap { scheme =>
-      val schemeDetailMasterSection = schemeTransformer.transformMasterSection(scheme)
-      Future.successful(Ok(psa_scheme_details(appConfig, schemeDetailMasterSection, scheme.schemeDetails.name, srn)))
-    }
-  }
-
-  private def onPageLoadVariationsToggledOn(srn: String,
+  private def onPageLoadVariations(srn: String,
                                             ua: Option[UserAnswers])(implicit request: OptionalDataRequest[AnyContent],
                                                                      hc: HeaderCarrier): Future[Result] = {
     lockConnector.isLockByPsaIdOrSchemeId(request.psaId.id, srn).flatMap {

@@ -60,7 +60,7 @@ class DirectorNoNINOReasonController @Inject()(
       implicit request =>
         DirectorNameId(establisherIndex, directorIndex).retrieve.right.map { name =>
           get(DirectorNoNINOReasonId(establisherIndex, directorIndex),
-            viewModel(mode, establisherIndex, directorIndex, srn, name), form(name))
+            viewModel(mode, establisherIndex, directorIndex, srn, name.fullName), form(name.fullName))
         }
     }
 
@@ -69,7 +69,7 @@ class DirectorNoNINOReasonController @Inject()(
       implicit request =>
         DirectorNameId(establisherIndex, directorIndex).retrieve.right.map { name =>
           post(DirectorNoNINOReasonId(establisherIndex, directorIndex), mode,
-            viewModel(mode, establisherIndex, directorIndex, srn, name), form(name))
+            viewModel(mode, establisherIndex, directorIndex, srn, name.fullName), form(name.fullName))
         }
     }
 

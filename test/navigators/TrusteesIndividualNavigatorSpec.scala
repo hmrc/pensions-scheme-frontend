@@ -17,23 +17,23 @@
 package navigators
 
 import base.SpecBase
-import config.FeatureSwitchManagementServiceTestImpl
 import connectors.FakeUserAnswersCacheConnector
+import identifiers.register.trustees.ExistingCurrentAddressId
 import identifiers.register.trustees.IsTrusteeNewId
 import identifiers.register.trustees.individual._
-import models._
 import models.Mode.checkMode
+import models._
+import models.address.Address
 import org.scalatest.OptionValues
-import play.api.Configuration
 import play.api.libs.json.Json
 import play.api.mvc.Call
-import utils.{FakeFeatureSwitchManagementService, Toggles, UserAnswers}
+import utils.UserAnswers
 
 class TrusteesIndividualNavigatorSpec extends SpecBase with NavigatorBehaviour {
 
   import TrusteesIndividualNavigatorSpec._
 
-  private def routes(mode: Mode, isPrevAddEnabled: Boolean = false) = Table(
+  private def routes(mode: Mode) = Table(
     ("Id", "User Answers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (Check Mode)", "Save (CM)"),
     (TrusteeDetailsId(0), emptyAnswers, nino(mode), true, Some(exitJourney(mode,emptyAnswers)), true),
     (TrusteeDetailsId(0), newTrustee, nino(mode), true, Some(exitJourney(mode,newTrustee)), true),
@@ -48,7 +48,6 @@ class TrusteesIndividualNavigatorSpec extends SpecBase with NavigatorBehaviour {
     (TrusteeAddressId(0), newTrustee, addressYears(mode), true, Some(checkYourAnswers(mode)), true),
     (TrusteeAddressYearsId(0), overAYearNew, contactDetails(mode), true, Some(exitJourney(mode,overAYearNew)), true),
     (TrusteeAddressYearsId(0), overAYear, contactDetails(mode), true, Some(exitJourney(mode,emptyAnswers)), true),
-    (TrusteeAddressYearsId(0), underAYear, previousAddressPostcode(mode), true, addressYearsLessThanTwelveEdit(mode, isPrevAddEnabled), true),
     (TrusteeAddressYearsId(0), emptyAnswers, sessionExpired, false, Some(sessionExpired), false),
     (IndividualConfirmPreviousAddressId(0), emptyAnswers, none, false, Some(sessionExpired), false),
     (IndividualConfirmPreviousAddressId(0), confirmPreviousAddressYes, none, false, Some(anyMoreChanges), false),
@@ -61,25 +60,23 @@ class TrusteesIndividualNavigatorSpec extends SpecBase with NavigatorBehaviour {
     (CheckYourAnswersId, emptyAnswers, addTrustee(mode), false, None, true)
   )
 
-  private val navigator: TrusteesIndividualNavigator =
-    new TrusteesIndividualNavigator(FakeUserAnswersCacheConnector, frontendAppConfig, new FakeFeatureSwitchManagementService(false))
+  private def editRoutes = Table(
+    ("Id", "User Answers", "Next Page (UpdateMode Mode)", "Save (NM)", "Next Page (CheckUpdateMode Mode)", "Save (CM)"),
+    (TrusteeAddressYearsId(0), underAYear, previousAddressPostcode(UpdateMode), true, addressYearsLessThanTwelveEdit(CheckUpdateMode, underAYear), true),
+    (TrusteeAddressYearsId(0), underAYearWithExistingCurrentAddress, previousAddressPostcode(UpdateMode), true, addressYearsLessThanTwelveEdit(CheckUpdateMode, underAYearWithExistingCurrentAddress), true)
+  )
 
+  private val navigator: TrusteesIndividualNavigator =
+    new TrusteesIndividualNavigator(FakeUserAnswersCacheConnector, frontendAppConfig)
 
   s"${navigator.getClass.getSimpleName}" must {
     appRunning()
     behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, routes(NormalMode), dataDescriber)
     behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, routes(UpdateMode), dataDescriber, UpdateMode)
+    behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, editRoutes, dataDescriber, UpdateMode)
     behave like nonMatchingNavigator(navigator)
     behave like nonMatchingNavigator(navigator, UpdateMode)
   }
-
-  s"when previousAddress feature is toggled On" must {
-    val navigator: TrusteesIndividualNavigator =
-    new TrusteesIndividualNavigator(FakeUserAnswersCacheConnector, frontendAppConfig, new FakeFeatureSwitchManagementService(true))
-    appRunning()
-    behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, routes(UpdateMode, true), dataDescriber, UpdateMode)
-  }
-
 }
 
 object TrusteesIndividualNavigatorSpec extends SpecBase with OptionValues {
@@ -94,7 +91,7 @@ object TrusteesIndividualNavigatorSpec extends SpecBase with OptionValues {
   private val confirmPreviousAddressNo = UserAnswers(Json.obj())
     .set(IndividualConfirmPreviousAddressId(0))(false).asOpt.value
 
-  private def none = controllers.routes.IndexController.onPageLoad
+  private def none = controllers.routes.IndexController.onPageLoad()
   private def confirmPreviousAddress = controllers.register.trustees.individual.routes.IndividualConfirmPreviousAddressController.onPageLoad(0, None)
 
   private def details(mode: Mode) = controllers.register.trustees.individual.routes.TrusteeDetailsController.onPageLoad(mode, Index(0), None)
@@ -131,6 +128,10 @@ object TrusteesIndividualNavigatorSpec extends SpecBase with OptionValues {
 
   private val underAYear = UserAnswers().trusteesIndividualAddressYears(0, AddressYears.UnderAYear)
 
+  private val underAYearWithExistingCurrentAddress =
+    UserAnswers().trusteesIndividualAddressYears(0, AddressYears.UnderAYear)
+      .set(ExistingCurrentAddressId(0))(Address("Line 1", "Line 2", None, None, None, "UK")).asOpt.value
+
   private def dataDescriber(answers: UserAnswers): String = answers.toString
 
   private def anyMoreChanges = controllers.routes.AnyMoreChangesController.onPageLoad(None)
@@ -141,8 +142,18 @@ object TrusteesIndividualNavigatorSpec extends SpecBase with OptionValues {
     else anyMoreChanges
   }
 
-  private def addressYearsLessThanTwelveEdit(mode: Mode, isPrevAddEnabled: Boolean = false) =
-    if (checkMode(mode) == CheckUpdateMode && isPrevAddEnabled) Some(confirmPreviousAddress)
-    else Some(previousAddressPostcode(checkMode(mode)))
+  private def addressYearsLessThanTwelveEdit(mode: Mode, userAnswers: UserAnswers) = {
+    (
+      userAnswers.get(ExistingCurrentAddressId(0)),
+      mode
+    ) match {
+      case (Some(_), CheckUpdateMode) =>
+        Some(confirmPreviousAddress)
+      case (_, CheckUpdateMode) =>
+        Some(previousAddressPostcode(mode))
+      case _ =>
+        Some(sessionExpired)
+    }
+  }
 
 }

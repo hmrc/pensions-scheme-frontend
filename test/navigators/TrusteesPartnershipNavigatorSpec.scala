@@ -17,14 +17,14 @@
 package navigators
 
 import base.SpecBase
-import config.FeatureSwitchManagementServiceProductionImpl
 import connectors.FakeUserAnswersCacheConnector
 import controllers.register.trustees.partnership.routes
 import identifiers.Identifier
-import identifiers.register.trustees.IsTrusteeNewId
+import identifiers.register.trustees.{ExistingCurrentAddressId, IsTrusteeNewId}
 import identifiers.register.trustees.partnership._
 import models.Mode.checkMode
 import models._
+import models.address.Address
 import org.scalatest.OptionValues
 import org.scalatest.prop.TableFor6
 import play.api.libs.json.Json
@@ -48,8 +48,6 @@ class TrusteesPartnershipNavigatorSpec extends SpecBase with NavigatorBehaviour 
     (PartnershipUniqueTaxReferenceId(0), newTrustee, partnershipPostcodeLookup(mode), true, Some(exitJourney(mode, newTrustee)), true),
     (PartnershipPostcodeLookupId(0), emptyAnswers, partnershipAddressList(mode), true, Some(partnershipAddressList(checkMode(mode))), true),
     (PartnershipAddressListId(0), emptyAnswers, partnershipAddress(mode), true, Some(partnershipAddress(checkMode(mode))), true),
-    (PartnershipAddressId(0), emptyAnswers, partnershipAddressYears(mode), true,
-      if (mode == UpdateMode) Some(partnershipAddressYears(checkMode(mode))) else Some(checkYourAnswers(mode)), true),
     (PartnershipAddressId(0), newTrustee, partnershipAddressYears(mode), true, Some(checkYourAnswers(mode)), true),
     (PartnershipAddressYearsId(0), addressYearsOverAYear, partnershipContact(mode), true, Some(exitJourney(mode, emptyAnswers)), true),
     (PartnershipAddressYearsId(0), emptyAnswers, sessionExpired, false, Some(sessionExpired), false),
@@ -64,30 +62,20 @@ class TrusteesPartnershipNavigatorSpec extends SpecBase with NavigatorBehaviour 
     (PartnershipVatVariationsId(0), newTrustee, defaultPage, false, Some(exitJourney(mode, newTrustee)), true)
   )
 
-  appRunning()
-
-  private def routesToggleOff(mode: Mode): TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = {
-    routes(mode: Mode) ++ Table(
+  private def normalRoutes: TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = {
+    routes(NormalMode) ++ Table(
       ("Id", "User Answers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (Check Mode)", "Save (CM)"),
-      (PartnershipAddressYearsId(0), addressYearsUnderAYear, partnershipPaPostCodeLookup(mode), true, Some(partnershipPaPostCodeLookup(checkMode((mode)))), true)
+      (PartnershipAddressYearsId(0), addressYearsUnderAYear, partnershipPaPostCodeLookup(NormalMode), true,
+        Some(partnershipPaPostCodeLookup(CheckMode)), true),
+      (PartnershipAddressId(0), emptyAnswers, partnershipAddressYears(NormalMode), true, Some(checkYourAnswers(NormalMode)), true)
     )
   }
 
-  private def routesToggleOn(mode: Mode): TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = {
-    routes(mode: Mode) ++ Table(
-      ("Id", "User Answers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (Check Mode)", "Save (CM)"),
-      (PartnershipAddressYearsId(0), addressYearsUnderAYear, partnershipPaPostCodeLookup(mode), true,
-        if(mode == UpdateMode) Some(confirmPreviousAddress) else Some(partnershipPaPostCodeLookup(checkMode(mode))), true),
-      (PartnershipConfirmPreviousAddressId(0), confirmPreviousAddressYes, defaultPage, false, Some(anyMoreChanges), false),
-      (PartnershipConfirmPreviousAddressId(0), confirmPreviousAddressNo, defaultPage, false, Some(partnershipPaPostCodeLookup(checkMode(mode))), false),
-      (PartnershipConfirmPreviousAddressId(0), emptyAnswers, defaultPage, false, Some(sessionExpired), false)
-    )
-  }
-
-  private def updateOnlyRoutesToggleOn: TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = {
+  private def updateOnlyRoutes: TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = {
     routes(UpdateMode) ++ Table(
       ("Id", "User Answers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (Check Mode)", "Save (CM)"),
-      (PartnershipAddressYearsId(0), addressYearsUnderAYear, partnershipPaPostCodeLookup(UpdateMode), true, Some(confirmPreviousAddress), true),
+      (PartnershipAddressYearsId(0), addressYearsUnderAYear, partnershipPaPostCodeLookup(UpdateMode), true, Some(addressYearsLessThanTwelveEdit(UpdateMode, addressYearsUnderAYear)), true),
+      (PartnershipAddressYearsId(0), addressYearsUnderAYearWithExistingCurrentAddress, partnershipPaPostCodeLookup(UpdateMode), true, Some(addressYearsLessThanTwelveEdit(CheckUpdateMode, addressYearsUnderAYearWithExistingCurrentAddress)), true),
       (PartnershipConfirmPreviousAddressId(0), confirmPreviousAddressYes, defaultPage, false, Some(anyMoreChanges), false),
       (PartnershipConfirmPreviousAddressId(0), confirmPreviousAddressNo, defaultPage, false, Some(partnershipPaPostCodeLookup(CheckUpdateMode)), false),
       (PartnershipConfirmPreviousAddressId(0), emptyAnswers, defaultPage, false, Some(sessionExpired), false),
@@ -95,20 +83,14 @@ class TrusteesPartnershipNavigatorSpec extends SpecBase with NavigatorBehaviour 
     )
   }
 
-  s"TrusteesPartnershipNavigator when toggle Off" must {
-    val featureSwitchToggleOff = new FeatureSwitchManagementServiceProductionImpl(appConfig(false), environment)
-    val navigator = new TrusteesPartnershipNavigator(FakeUserAnswersCacheConnector, frontendAppConfig, featureSwitchToggleOff)
-    behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, routesToggleOff(NormalMode), dataDescriber)
-    behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, routesToggleOff(UpdateMode), dataDescriber, UpdateMode)
+  val navigator = new TrusteesPartnershipNavigator(FakeUserAnswersCacheConnector, frontendAppConfig)
+
+  navigator.getClass.getSimpleName must {
+    appRunning()
+    behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, normalRoutes, dataDescriber)
+    behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, updateOnlyRoutes, dataDescriber, UpdateMode)
     behave like nonMatchingNavigator(navigator)
     behave like nonMatchingNavigator(navigator, UpdateMode)
-  }
-
-  s"TrusteesPartnershipNavigator when toggle On" must {
-    val featureSwitchToggleOn = new FeatureSwitchManagementServiceProductionImpl(appConfig(true), environment)
-    val navigator = new TrusteesPartnershipNavigator(FakeUserAnswersCacheConnector, frontendAppConfig, featureSwitchToggleOn)
-    behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, routesToggleOn(NormalMode), dataDescriber)
-    behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, updateOnlyRoutesToggleOn, dataDescriber, UpdateMode)
   }
 }
 
@@ -116,7 +98,7 @@ object TrusteesPartnershipNavigatorSpec extends OptionValues {
 
   private val newTrustee = UserAnswers(Json.obj()).set(IsTrusteeNewId(0))(true).asOpt.value
 
-  private def none: Call = controllers.routes.IndexController.onPageLoad
+  private def none: Call = controllers.routes.IndexController.onPageLoad()
 
   private def taskList: Call = controllers.routes.SchemeTaskListController.onPageLoad(NormalMode, None)
 
@@ -157,6 +139,9 @@ object TrusteesPartnershipNavigatorSpec extends OptionValues {
     .set(PartnershipAddressYearsId(0))(AddressYears.OverAYear).asOpt.value
   private val addressYearsUnderAYear = UserAnswers(Json.obj())
     .set(PartnershipAddressYearsId(0))(AddressYears.UnderAYear).asOpt.value
+  private val addressYearsUnderAYearWithExistingCurrentAddress = UserAnswers(Json.obj())
+    .set(PartnershipAddressYearsId(0))(AddressYears.UnderAYear).flatMap(
+    _.set(ExistingCurrentAddressId(0))(Address("Line 1", "Line 2", None, None, None, "UK"))).asOpt.value
 
   private val confirmPreviousAddressYes = UserAnswers(Json.obj())
     .set(PartnershipConfirmPreviousAddressId(0))(true).asOpt.value
@@ -167,11 +152,26 @@ object TrusteesPartnershipNavigatorSpec extends OptionValues {
 
   private def anyMoreChanges = controllers.routes.AnyMoreChangesController.onPageLoad(None)
 
-  private def exitJourney(mode: Mode, answers: UserAnswers, index: Int = 0) = if (mode == CheckMode || mode == NormalMode) checkYourAnswers(mode)
-  else {
-    if (answers.get(IsTrusteeNewId(index)).getOrElse(false)) checkYourAnswers(mode)
-    else anyMoreChanges
-  }
+  private def exitJourney(mode: Mode, answers: UserAnswers, index: Int = 0): Call =
+    if (mode == CheckMode || mode == NormalMode)
+      checkYourAnswers(mode)
+    else if (answers.get(IsTrusteeNewId(index)).getOrElse(false))
+      checkYourAnswers(mode)
+    else
+      anyMoreChanges
+
+  private def addressYearsLessThanTwelveEdit(mode: Mode, userAnswers: UserAnswers): Call =
+    (
+      userAnswers.get(ExistingCurrentAddressId(0)),
+      mode
+    ) match {
+      case (None, CheckUpdateMode) =>
+        partnershipPaPostCodeLookup(checkMode(mode))
+      case (_, CheckUpdateMode) =>
+        confirmPreviousAddress
+      case _ =>
+        partnershipPaPostCodeLookup(checkMode(mode))
+    }
 }
 
 

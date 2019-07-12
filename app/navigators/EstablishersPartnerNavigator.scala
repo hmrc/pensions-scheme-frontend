@@ -17,7 +17,7 @@
 package navigators
 
 import com.google.inject.Inject
-import config.{FeatureSwitchManagementService, FrontendAppConfig}
+import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
 import controllers.register.establishers.partnership.partner._
 import identifiers.EstablishersOrTrusteesChangedId
@@ -26,11 +26,10 @@ import identifiers.register.establishers.partnership.AddPartnersId
 import identifiers.register.establishers.partnership.partner._
 import models.Mode.journeyMode
 import models._
-import utils.{Navigator, Toggles, UserAnswers}
+import utils.{Navigator, UserAnswers}
 
 class EstablishersPartnerNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector,
-                                             appConfig: FrontendAppConfig,
-                                             featureSwitchManagementService: FeatureSwitchManagementService) extends Navigator {
+                                             appConfig: FrontendAppConfig) extends Navigator {
   //scalastyle:off cyclomatic.complexity
   private def checkYourAnswers(establisherIndex: Int, partnerIndex: Int, mode: Mode, srn: Option[String]): Option[NavigateTo] =
     NavigateTo.dontSave(routes.CheckYourAnswersController.onPageLoad(mode, establisherIndex, partnerIndex, srn))
@@ -143,15 +142,18 @@ class EstablishersPartnerNavigator @Inject()(val dataCacheConnector: UserAnswers
   }
 
   private def addressYearsEditRoutes(establisherIndex: Int, partnerIndex: Int, mode: Mode, srn: Option[String])(answers: UserAnswers): Option[NavigateTo] = {
-    answers.get(PartnerAddressYearsId(establisherIndex, partnerIndex)) match {
-      case Some(AddressYears.UnderAYear) =>
-        if (mode == CheckUpdateMode && featureSwitchManagementService.get(Toggles.isPrevAddEnabled))
-          NavigateTo.dontSave(routes.PartnerConfirmPreviousAddressController.onPageLoad(establisherIndex, partnerIndex, srn))
-        else
-          NavigateTo.dontSave(routes.PartnerPreviousAddressPostcodeLookupController.onPageLoad(mode, establisherIndex, partnerIndex, srn))
-      case Some(AddressYears.OverAYear) =>
+    (
+      answers.get(PartnerAddressYearsId(establisherIndex, partnerIndex)),
+      mode,
+      answers.get(ExistingCurrentAddressId(establisherIndex, partnerIndex))
+    ) match {
+      case (Some(AddressYears.UnderAYear), CheckUpdateMode, Some(_)) =>
+        NavigateTo.dontSave(routes.PartnerConfirmPreviousAddressController.onPageLoad(establisherIndex, partnerIndex, srn))
+      case (Some(AddressYears.UnderAYear), _, _) =>
+        NavigateTo.dontSave(routes.PartnerPreviousAddressPostcodeLookupController.onPageLoad(mode, establisherIndex, partnerIndex, srn))
+      case (Some(AddressYears.OverAYear), _, _) =>
         exitMiniJourney(establisherIndex, partnerIndex, mode, srn, answers)
-      case None =>
+      case _ =>
         NavigateTo.dontSave(controllers.routes.SessionExpiredController.onPageLoad())
     }
   }

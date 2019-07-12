@@ -17,19 +17,18 @@
 package navigators
 
 import com.google.inject.{Inject, Singleton}
-import config.{FeatureSwitchManagementService, FrontendAppConfig}
+import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
-import identifiers.register.establishers.{EstablisherNewNinoId, IsEstablisherNewId}
 import identifiers.register.establishers.individual._
+import identifiers.register.establishers.{EstablisherNewNinoId, ExistingCurrentAddressId, IsEstablisherNewId}
 import models.Mode.journeyMode
 import models._
-import utils.{Navigator, Toggles, UserAnswers}
+import utils.{Navigator, UserAnswers}
 
 @Singleton
 class EstablishersIndividualNavigator @Inject()(
                                                  appConfig: FrontendAppConfig,
-                                                 val dataCacheConnector: UserAnswersCacheConnector,
-                                                 featureSwitchManagementService: FeatureSwitchManagementService
+                                                 val dataCacheConnector: UserAnswersCacheConnector
                                                ) extends Navigator {
 
   override protected def routeMap(from: NavigateFrom): Option[NavigateTo] = routes(from, NormalMode, None)
@@ -151,15 +150,18 @@ class EstablishersIndividualNavigator @Inject()(
     }
 
   private def addressYearsEditRoutes(index: Int, mode: Mode, srn: Option[String])(answers: UserAnswers): Option[NavigateTo] = {
-    answers.get(AddressYearsId(index)) match {
-      case Some(AddressYears.UnderAYear) =>
-        if (mode == CheckUpdateMode && featureSwitchManagementService.get(Toggles.isPrevAddEnabled))
+    (
+      answers.get(AddressYearsId(index)),
+      mode,
+      answers.get(ExistingCurrentAddressId(index))
+    ) match {
+      case (Some(AddressYears.UnderAYear), CheckUpdateMode, Some(_)) =>
           NavigateTo.dontSave(controllers.register.establishers.individual.routes.IndividualConfirmPreviousAddressController.onPageLoad(index, srn))
-        else
+      case (Some(AddressYears.UnderAYear), _, _) =>
           NavigateTo.dontSave(controllers.register.establishers.individual.routes.PreviousAddressPostCodeLookupController.onPageLoad(mode, index, srn))
-      case Some(AddressYears.OverAYear) =>
+      case (Some(AddressYears.OverAYear), _, _) =>
         exitMiniJourney(index, mode, srn, answers)
-      case None =>
+      case _ =>
         NavigateTo.dontSave(controllers.routes.SessionExpiredController.onPageLoad())
     }
   }
