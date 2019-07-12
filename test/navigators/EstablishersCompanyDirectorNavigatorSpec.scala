@@ -44,6 +44,7 @@ class EstablishersCompanyDirectorNavigatorSpec extends SpecBase with NavigatorBe
     (DirectorNameId(0, 0), newDirector, directorDOB(mode), true, Some(exitJourney(mode, newDirector)), true),
     (DirectorNinoId(0, 0), emptyAnswers, directorUtr(mode), true, Some(exitJourney(mode, emptyAnswers)), true),
     (DirectorNinoId(0, 0), newDirector, directorUtr(mode), true, Some(exitJourney(mode, newDirector)), true),
+    (DirectorNoUTRReasonId(0, 0), newDirector, directorAddressPostcode(mode), true, Some(exitJourney(mode, newDirector)), true),
     (DirectorHasNINOId(0, 0), hasNino(newDirector, value = true), directorNinoNew(mode), true, Some(exitJourney(mode, newDirector)), true),
     (DirectorHasNINOId(0, 0), hasNino(newDirector, value = false), directorNinoReason(mode), true, Some(exitJourney(mode, newDirector)), true),
     (DirectorHasUTRId(0, 0), hasUtr(newDirector, value = true), directorWhatIsDirectorUTR(mode), true, Some(exitJourney(mode, newDirector)), true),
