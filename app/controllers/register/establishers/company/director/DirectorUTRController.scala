@@ -49,7 +49,7 @@ class DirectorUTRController @Inject()(
 
   private def viewModel(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String], directorName: String): UTRViewModel = {
     UTRViewModel(
-      postCall = routes.DirectorUTRController.onSubmit(mode, establisherIndex, directorIndex, srn),
+      postCall = controllers.register.establishers.company.director.routes.DirectorUTRController.onSubmit(mode, establisherIndex, directorIndex, srn),
       title = Message("messages__directorUtr__title"),
       heading = Message("messages__directorUtr__heading", directorName),
       hint = Message("messages__directorUtr__hint"),

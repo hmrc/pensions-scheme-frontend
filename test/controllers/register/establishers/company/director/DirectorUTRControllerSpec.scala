@@ -20,7 +20,7 @@ import base.CSRFRequest
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.UTRFormProvider
-import models.{CheckUpdateMode, Index, NormalMode}
+import models.{Index, NormalMode}
 import org.scalatest.MustMatchers
 import play.api.Application
 import play.api.http.Writeable
@@ -29,7 +29,7 @@ import play.api.mvc.{Call, Request, Result}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{contentAsString, status, _}
 import services.{FakeUserAnswersService, UserAnswersService}
-import utils.annotations.EstablishersCompany
+import utils.annotations.EstablishersCompanyDirector
 import utils.{FakeNavigator, Navigator}
 import viewmodels.{Message, UTRViewModel}
 import views.html.utr
@@ -41,27 +41,28 @@ class DirectorUTRControllerSpec extends ControllerSpecBase with MustMatchers wit
   import DirectorUTRControllerSpec._
 
   "DirectorUTRController" must {
-
     "render the view correctly on a GET request" in {
       requestResult(
         implicit app => addToken(FakeRequest(routes.DirectorUTRController.onPageLoad(NormalMode, establisherIndex, directorIndex, srn))),
         (request, result) => {
+
+          val expected = utr(frontendAppConfig, form, viewModel, Some("pension scheme details"))(request, messages).toString()
           status(result) mustBe OK
-          contentAsString(result) mustBe utr(frontendAppConfig, form, viewModel, Some("pension scheme details"))(request, messages).toString()
+          contentAsString(result) mustBe expected
         }
       )
     }
 
-//    "redirect to the next page on a POST request" in {
-//      requestResult(
-//        implicit app => addToken(FakeRequest(routes.DirectorUTRController.onSubmit(NormalMode, establisherIndex, directorIndex, srn))
-//          .withFormUrlEncodedBody(("utr", "1234567890"))),
-//        (_, result) => {
-//          status(result) mustBe SEE_OTHER
-//          redirectLocation(result) mustBe Some(onwardRoute.url)
-//        }
-//      )
-//    }
+    "redirect to the next page on a POST request" in {
+      requestResult(
+        implicit app => addToken(FakeRequest(routes.DirectorUTRController.onSubmit(NormalMode, establisherIndex, directorIndex, srn))
+          .withFormUrlEncodedBody(("utr", "1234567890"))),
+        (_, result) => {
+          status(result) mustBe SEE_OTHER
+          redirectLocation(result) mustBe Some(onwardRoute.url)
+        }
+      )
+    }
   }
 }
 
@@ -70,14 +71,14 @@ object DirectorUTRControllerSpec extends DirectorUTRControllerSpec {
   val directorIndex = Index(0)
   val form = new UTRFormProvider()()
   val firstIndex = Index(0)
-  val srn = Some("S123")
+  val srn = None
 
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
   val viewModel = UTRViewModel(
-    routes.DirectorUTRController.onSubmit(CheckUpdateMode, establisherIndex, directorIndex, srn),
+    routes.DirectorUTRController.onSubmit(NormalMode, establisherIndex, directorIndex, srn),
     title = Message("messages__directorUtr__title"),
-    heading = Message("messages__directorUtr__heading", "test director name"),
+    heading = Message("messages__directorUtr__heading", "first last"),
     hint = Message("messages__directorUtr__hint"),
     subHeading = None,
     srn = srn
@@ -88,8 +89,8 @@ object DirectorUTRControllerSpec extends DirectorUTRControllerSpec {
 
     running(_.overrides(
       bind[AuthAction].to(FakeAuthAction),
-      bind[DataRetrievalAction].toInstance(getMandatoryEstablisherCompany),
-      bind(classOf[Navigator]).qualifiedWith(classOf[EstablishersCompany]).toInstance(new FakeNavigator(onwardRoute)),
+      bind[DataRetrievalAction].toInstance(getMandatoryEstablisherCompanyDirectorWithDirectorName),
+      bind(classOf[Navigator]).qualifiedWith(classOf[EstablishersCompanyDirector]).toInstance(new FakeNavigator(onwardRoute)),
       bind[UserAnswersService].toInstance(FakeUserAnswersService),
       bind[AllowAccessActionProvider].toInstance(FakeAllowAccessProvider())
     )) {
