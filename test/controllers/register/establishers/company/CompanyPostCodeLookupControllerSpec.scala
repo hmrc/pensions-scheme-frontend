@@ -74,9 +74,8 @@ class CompanyPostCodeLookupControllerSpec extends ControllerSpecBase with Mockit
   lazy val viewModel = PostcodeLookupViewModel(
     postCall = routes.CompanyPostCodeLookupController.onSubmit(NormalMode, None, firstIndex),
     manualInputCall = manualInputCall,
-    title = Message("messages__companyAddress__title"),
-    heading = Message("messages__companyAddress__heading"),
-    subHeading = Some(company.companyName)
+    title = Message("messages__establisherPostCode__title"),
+    heading = Message("messages__establisherPostCode__h1", companyName)
   )
 
   "Company Postcode Controller" must {
