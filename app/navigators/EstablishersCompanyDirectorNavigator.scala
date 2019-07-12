@@ -61,6 +61,8 @@ class EstablishersCompanyDirectorNavigator @Inject()(val dataCacheConnector: Use
         NavigateTo.dontSave(routes.DirectorUniqueTaxReferenceController.onPageLoad(mode, establisherIndex, directorIndex, srn))
       case DirectorUniqueTaxReferenceId(establisherIndex, directorIndex) =>
         NavigateTo.dontSave(routes.DirectorAddressPostcodeLookupController.onPageLoad(mode, establisherIndex, directorIndex, srn))
+      case DirectorHasUTRId(establisherIndex, directorIndex) =>
+        hasUTRRoutes(establisherIndex, directorIndex, mode, srn)(from.userAnswers)
       case DirectorAddressId(establisherIndex, directorIndex) =>
         NavigateTo.dontSave(routes.DirectorAddressYearsController.onPageLoad(mode, establisherIndex, directorIndex, srn))
       case DirectorPreviousAddressId(establisherIndex, directorIndex) =>
@@ -84,6 +86,8 @@ class EstablishersCompanyDirectorNavigator @Inject()(val dataCacheConnector: Use
       case DirectorNoUTRReasonId(establisherIndex, directorIndex) =>
         exitMiniJourney(establisherIndex, directorIndex, mode, srn, from.userAnswers)
       case DirectorNinoId(establisherIndex, directorIndex) =>
+        exitMiniJourney(establisherIndex, directorIndex, mode, srn, from.userAnswers)
+      case DirectorHasUTRId(establisherIndex, directorIndex) =>
         exitMiniJourney(establisherIndex, directorIndex, mode, srn, from.userAnswers)
       case DirectorNewNinoId(establisherIndex, directorIndex) =>
         exitMiniJourney(establisherIndex, directorIndex, mode, srn, from.userAnswers)
@@ -129,6 +133,7 @@ class EstablishersCompanyDirectorNavigator @Inject()(val dataCacheConnector: Use
       case AnyMoreChangesId => anyMoreChanges(srn)
       case _ => None
     }
+
   //scalastyle:on cyclomatic.complexity
 
   override protected def routeMap(from: NavigateFrom): Option[NavigateTo] = normalRoutes(from, NormalMode, None)
@@ -182,4 +187,12 @@ class EstablishersCompanyDirectorNavigator @Inject()(val dataCacheConnector: Use
       case None =>
         NavigateTo.dontSave(controllers.routes.SessionExpiredController.onPageLoad())
     }
+
+  private def hasUTRRoutes(establisherIndex: Int, directorIndex: Int, mode: Mode, srn: Option[String])(answers: UserAnswers): Option[NavigateTo] =
+    navigateOrSessionExpired(answers, DirectorHasUTRId(establisherIndex, directorIndex),
+      if (_: Boolean)
+        routes.DirectorUTRController.onPageLoad(mode, establisherIndex, directorIndex, srn)
+      else
+        routes.DirectorNoUTRReasonController.onPageLoad(mode, establisherIndex, directorIndex, srn)
+    )
 }
