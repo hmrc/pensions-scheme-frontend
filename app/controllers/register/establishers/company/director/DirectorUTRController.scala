@@ -52,7 +52,7 @@ class DirectorUTRController @Inject()(
       postCall = controllers.register.establishers.company.director.routes.DirectorUTRController.onSubmit(mode, establisherIndex, directorIndex, srn),
       title = Message("messages__directorUtr__title"),
       heading = Message("messages__directorUtr__heading", directorName),
-      hint = Message("messages__directorUtr__hint"),
+      hint = Message("messages__companyUtr__hint"),
       subHeading = None,
       srn = srn
     )
