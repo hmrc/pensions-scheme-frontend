@@ -17,42 +17,64 @@
 package controllers.register.establishers.company.director
 
 import config.FrontendAppConfig
-import controllers.Retrievals
+import controllers.UTRController
 import controllers.actions._
-import forms.register.establishers.company.director.DirectorNinoFormProvider
+import forms.UTRFormProvider
+import identifiers.register.establishers.company.director.{DirectorNameId, DirectorUTRId}
 import javax.inject.Inject
 import models.{Index, Mode}
-import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.data.Form
+import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import utils.Navigator
 import utils.annotations.EstablishersCompanyDirector
-import utils.{Enumerable, Navigator}
+import viewmodels.{Message, UTRViewModel}
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
 class DirectorUTRController @Inject()(
-                                       appConfig: FrontendAppConfig,
+                                       override val appConfig: FrontendAppConfig,
                                        override val messagesApi: MessagesApi,
-                                       userAnswersService: UserAnswersService,
-                                       @EstablishersCompanyDirector navigator: Navigator,
+                                       override val userAnswersService: UserAnswersService,
+                                       @EstablishersCompanyDirector override val navigator: Navigator,
                                        authenticate: AuthAction,
                                        getData: DataRetrievalAction,
                                        allowAccess: AllowAccessActionProvider,
                                        requireData: DataRequiredAction,
-                                       formProvider: DirectorNinoFormProvider
-                                     )(implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
+                                       formProvider: UTRFormProvider
+                                     )(implicit val ec: ExecutionContext) extends UTRController {
+
+  private def form: Form[String] = formProvider()
+
+  private def viewModel(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String], directorName: String): UTRViewModel = {
+    UTRViewModel(
+      postCall = routes.DirectorUTRController.onSubmit(mode, establisherIndex, directorIndex, srn),
+      title = Message("messages__directorUtr__title"),
+      heading = Message("messages__directorUtr__heading", directorName),
+      hint = Message("messages__directorUtr__hint"),
+      subHeading = None,
+      srn = srn
+    )
+  }
 
   def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
-        Future.successful(Ok("unimplemented page: " + this.getClass))
+        DirectorNameId(establisherIndex, directorIndex).retrieve.right.map { details =>
+          val directorName = details.fullName
+          get(DirectorUTRId(establisherIndex, directorIndex), viewModel(mode, establisherIndex, directorIndex, srn, directorName), form)
+        }
     }
 
+  def onSubmit(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen requireData).async {
+      implicit request =>
+        DirectorNameId(establisherIndex, directorIndex).retrieve.right.map { details =>
+          val directorName = details.fullName
+          post(DirectorUTRId(establisherIndex, directorIndex), mode, viewModel(mode, establisherIndex, directorIndex, srn, directorName), form)
+        }
+    }
 
-  def onSubmit(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
-    implicit request =>
-      Future.successful(Ok("unimplemented page: " + this.getClass))
-  }
 
 }
