@@ -28,7 +28,7 @@ class ReasonViewSpec extends QuestionViewBehaviours[String] {
 
   val messageKeyPrefix = "noCompanyUtr"
 
-  val form = new ReasonFormProvider()("companyName")
+  val form = new ReasonFormProvider()("messages__reason__error_ninoRequired", "companyName")
   val postCall = Call("GET", "/")
 
   def viewmodel(srn:Option[String]): ReasonViewModel = ReasonViewModel(

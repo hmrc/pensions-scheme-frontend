@@ -19,11 +19,13 @@ package navigators
 import base.SpecBase
 import connectors.FakeUserAnswersCacheConnector
 import controllers.register.establishers.partnership.routes
+import identifiers.register.establishers.ExistingCurrentAddressId
 import identifiers.Identifier
 import identifiers.register.establishers.IsEstablisherNewId
 import identifiers.register.establishers.partnership._
 import models.Mode.checkMode
 import models._
+import models.address.Address
 import org.scalatest.OptionValues
 import org.scalatest.prop.TableFor6
 import play.api.libs.json.Json
@@ -75,7 +77,8 @@ class EstablishersPartnershipNavigatorSpec extends SpecBase with NavigatorBehavi
     ("Id", "User Answers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (Check Mode)", "Save (CM)"),
     (PartnershipContactDetailsId(0), emptyAnswers, checkYourAnswers(UpdateMode), true, Some(exitJourney(UpdateMode, emptyAnswers)), true),
     (PartnershipReviewId(0), emptyAnswers, anyMoreChanges, false, None, true),
-    (PartnershipAddressYearsId(0), addressYearsUnderAYear, partnershipPaPostCodeLookup(UpdateMode), true, Some(confirmPreviousAddress), true),
+    (PartnershipAddressYearsId(0), addressYearsUnderAYear, partnershipPaPostCodeLookup(UpdateMode), true, addressYearsLessThanTwelveEdit(UpdateMode, addressYearsUnderAYear), true),
+    (PartnershipAddressYearsId(0), addressYearsUnderAYearWithExistingCurrentAddress, partnershipPaPostCodeLookup(UpdateMode), true, addressYearsLessThanTwelveEdit(CheckUpdateMode, addressYearsUnderAYearWithExistingCurrentAddress), true),
     (PartnershipConfirmPreviousAddressId(0), emptyAnswers, defaultPage, false, Some(sessionExpired), false),
     (PartnershipConfirmPreviousAddressId(0), confirmPreviousAddressYes, defaultPage, false, Some(anyMoreChanges), false),
     (PartnershipConfirmPreviousAddressId(0), confirmPreviousAddressNo, defaultPage, false, Some(partnershipPaPostCodeLookup(checkMode(UpdateMode))), false),
@@ -166,8 +169,27 @@ object EstablishersPartnershipNavigatorSpec extends SpecBase with OptionValues {
     .set(PartnershipAddressYearsId(0))(AddressYears.OverAYear).asOpt.value
   private val addressYearsUnderAYear = UserAnswers(Json.obj())
     .set(PartnershipAddressYearsId(0))(AddressYears.UnderAYear).asOpt.value
+  private val addressYearsUnderAYearWithExistingCurrentAddress = UserAnswers(Json.obj())
+    .set(PartnershipAddressYearsId(0))(AddressYears.UnderAYear).flatMap(
+    _.set(ExistingCurrentAddressId(0))(Address("Line 1", "Line 2", None, None, None, "UK"))).asOpt.value
 
   private def confirmPreviousAddress = controllers.register.establishers.partnership.routes.PartnershipConfirmPreviousAddressController.onPageLoad(0, None)
 
   private def dataDescriber(answers: UserAnswers): String = answers.toString
+
+  private def addressYearsLessThanTwelveEdit(mode: Mode, userAnswers: UserAnswers)=
+    (
+      userAnswers.get(PartnershipAddressYearsId(0)),
+      mode,
+      userAnswers.get(ExistingCurrentAddressId(0))
+    ) match {
+      case (Some(AddressYears.UnderAYear), CheckUpdateMode, Some(_)) =>
+        Some(confirmPreviousAddress)
+      case (Some(AddressYears.UnderAYear), _, _) =>
+        Some(partnershipPaPostCodeLookup(checkMode(mode)))
+      case (Some(AddressYears.OverAYear), _, _) =>
+        Some(exitJourney(mode, userAnswers))
+      case _ =>
+        Some(partnershipPaPostCodeLookup(checkMode(mode)))
+    }
 }

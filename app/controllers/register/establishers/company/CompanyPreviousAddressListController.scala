@@ -57,16 +57,16 @@ class CompanyPreviousAddressListController @Inject()(
       viewmodel(mode, srn, index).right.map(vm => post(vm, CompanyPreviousAddressListId(index), CompanyPreviousAddressId(index), mode))
   }
 
-  private def viewmodel(mode: Mode, srn: Option[String], index: Index)(implicit request: DataRequest[AnyContent]): Either[Future[Result], AddressListViewModel] = {
+  private def viewmodel(mode: Mode, srn: Option[String], index: Index)
+                       (implicit request: DataRequest[AnyContent]): Either[Future[Result], AddressListViewModel] = {
     (CompanyDetailsId(index) and CompanyPreviousAddressPostcodeLookupId(index)).retrieve.right.map {
       case companyDetails ~ addresses =>
         AddressListViewModel(
           postCall = routes.CompanyPreviousAddressListController.onSubmit(mode, srn, index),
           manualInputCall = routes.CompanyPreviousAddressController.onPageLoad(mode, srn, index),
           addresses = addresses,
-          title = Message("messages__select_the_previous_address__title"),
-          heading = Message("messages__select_the_previous_address__heading"),
-          subHeading = Some(companyDetails.companyName),
+          title = Message("messages__establisherPreviousSelectAddress__title"),
+          heading = Message("messages__establisherPreviousSelectAddress__h1", companyDetails.companyName),
           srn = srn
         )
     }.left.map(_ => Future.successful(Redirect(routes.CompanyPreviousAddressPostcodeLookupController.onPageLoad(mode, srn, index))))
