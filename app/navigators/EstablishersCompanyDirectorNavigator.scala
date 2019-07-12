@@ -71,6 +71,8 @@ class EstablishersCompanyDirectorNavigator @Inject()(val dataCacheConnector: Use
         checkYourAnswers(establisherIndex, directorIndex, mode, srn)
       case DirectorAddressYearsId(establisherIndex, directorIndex) =>
         addressYearsRoutes(establisherIndex, directorIndex, mode, srn)(from.userAnswers)
+      case DirectorEmailId(establisherIndex, directorIndex) =>
+        NavigateTo.dontSave(routes.DirectorPhoneNumberController.onPageLoad(mode, establisherIndex, directorIndex, srn))
       case _ => commonRoutes(from, mode, srn)
     }
 
@@ -108,6 +110,8 @@ class EstablishersCompanyDirectorNavigator @Inject()(val dataCacheConnector: Use
         exitMiniJourney(establisherIndex, directorIndex, mode, srn, from.userAnswers)
       case DirectorAddressYearsId(establisherIndex, directorIndex) =>
         addressYearsEditRoutes(establisherIndex, directorIndex, mode, srn)(from.userAnswers)
+      case DirectorEmailId(establisherIndex, directorIndex) =>
+        exitMiniJourney(establisherIndex, directorIndex, mode, srn, from.userAnswers)
       case _ => commonRoutes(from, mode, srn)
     }
 
