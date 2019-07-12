@@ -20,9 +20,11 @@ import base.SpecBase
 import connectors.FakeUserAnswersCacheConnector
 import identifiers.Identifier
 import identifiers.register.establishers.IsEstablisherNewId
+import identifiers.register.establishers.ExistingCurrentAddressId
 import identifiers.register.establishers.individual._
 import models.Mode._
 import models._
+import models.address.Address
 import org.scalatest.prop.TableFor6
 import org.scalatest.{MustMatchers, OptionValues}
 import play.api.libs.json.Json
@@ -49,7 +51,8 @@ class EstablishersIndividualNavigatorSpec extends SpecBase with MustMatchers wit
       (AddressId(0), newEstablisher, addressYears(mode), true, Some(checkYourAnswers(mode)), true),
       (AddressYearsId(0), addressYearsOverAYearNew, contactDetails(mode), true, Some(exitJourney(mode, addressYearsOverAYearNew)), true),
       (AddressYearsId(0), addressYearsOverAYear, contactDetails(mode), true, Some(exitJourney(mode, emptyAnswers)), true),
-      (AddressYearsId(0), addressYearsUnderAYear, previousAddressPostCodeLookup(mode), true, addressYearsLessThanTwelveEdit(checkMode(mode)), true),
+      (AddressYearsId(0), addressYearsUnderAYear, previousAddressPostCodeLookup(mode), true, addressYearsLessThanTwelveEdit(checkMode(mode), addressYearsUnderAYear), true),
+      (AddressYearsId(0), addressYearsUnderAYearWithExistingCurrentAddress, previousAddressPostCodeLookup(mode), true, addressYearsLessThanTwelveEdit(checkMode(mode), addressYearsUnderAYearWithExistingCurrentAddress), true),
       (AddressYearsId(0), emptyAnswers, sessionExpired, false, Some(sessionExpired), false),
       (IndividualConfirmPreviousAddressId(0), confirmPreviousAddressYes, none, false, Some(anyMoreChanges), false),
       (IndividualConfirmPreviousAddressId(0), confirmPreviousAddressNo, none, false, Some(previousAddressPostCodeLookup(checkMode(mode))), false),
@@ -84,6 +87,9 @@ object EstablishersIndividualNavigatorSpec extends SpecBase with OptionValues {
     .set(AddressYearsId(0))(AddressYears.OverAYear).asOpt.value
   private val addressYearsUnderAYear = UserAnswers(Json.obj())
     .set(AddressYearsId(0))(AddressYears.UnderAYear).asOpt.value
+  private val addressYearsUnderAYearWithExistingCurrentAddress = UserAnswers(Json.obj())
+    .set(AddressYearsId(0))(AddressYears.UnderAYear).asOpt.value
+    .set(ExistingCurrentAddressId(0))(Address("Line 1", "Line 2", None, None, None, "UK")).asOpt.value
   private val newEstablisher = UserAnswers(Json.obj())
     .set(IsEstablisherNewId(0))(true).asOpt.value
   private val confirmPreviousAddressYes = UserAnswers(Json.obj())
@@ -134,13 +140,21 @@ object EstablishersIndividualNavigatorSpec extends SpecBase with OptionValues {
       else anyMoreChanges
     }
 
-  private def addressYearsLessThanTwelveEdit(mode: Mode) =
-    if (mode == CheckUpdateMode)
-      Some(confirmPreviousAddress)
-    else
-      Some(previousAddressPostCodeLookup(mode))
-
-
+  private def addressYearsLessThanTwelveEdit(mode: Mode, userAnswers: UserAnswers)=
+    (
+      userAnswers.get(AddressYearsId(0)),
+      mode,
+      userAnswers.get(ExistingCurrentAddressId(0))
+    ) match {
+      case (Some(AddressYears.UnderAYear), CheckUpdateMode, Some(_)) =>
+        Some(confirmPreviousAddress)
+      case (Some(AddressYears.UnderAYear), _, _) =>
+        Some(previousAddressPostCodeLookup(mode))
+      case (Some(AddressYears.OverAYear), _, _) =>
+        Some(exitJourney(mode, userAnswers, 0))
+      case _ =>
+        Some(previousAddressPostCodeLookup(mode))
+    }
 }
 
 
