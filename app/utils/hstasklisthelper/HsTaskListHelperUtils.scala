@@ -18,6 +18,7 @@ package utils.hstasklisthelper
 
 
 import controllers.register.establishers.company.{routes => establisherCompanyRoutes}
+import identifiers.register.establishers.company.{CompanyEmailId, CompanyPhoneId, CompanyVatId}
 import identifiers.register.establishers.{IsEstablisherNewId, company => establisherCompany}
 import models._
 import models.register.Entity
@@ -67,10 +68,22 @@ trait HsTaskListHelperUtils extends Enumerable.Implicits {
   }
 
   private def getCompleteFlag(answers: UserAnswers, index: Int, spokeName: Spoke): Option[Boolean] = spokeName match {
-    case EstablisherCompanyDetails => answers.get(establisherCompany.IsDetailsCompleteId(index))
-    case EstablisherCompanyAddress
- => answers.get(establisherCompany.IsAddressCompleteId(index))
-    case EstablisherCompanyContactDetails => answers.get(establisherCompany.IsContactDetailsCompleteId(index))
+    case EstablisherCompanyDetails =>
+      //TODO: this condition is to handle the partial data, hence can be removed after
+      // 28 days of enabling the toggle is-establisher-company-hns
+      answers.get(CompanyVatId(index)) match {
+        case Some(_) => Some(false)
+        case _ => answers.get(establisherCompany.IsDetailsCompleteId(index))
+      }
+    case EstablisherCompanyAddress =>
+      answers.get(establisherCompany.IsAddressCompleteId(index))
+    case EstablisherCompanyContactDetails =>
+      //TODO: this condition is to handle the partial data, hence can be removed after
+      //28 days of enabling the toggle is-establisher-company-hns
+      (answers.get(CompanyEmailId(index)), answers.get(CompanyPhoneId(index))) match {
+        case (Some(_), Some(_)) => Some(true)
+        case _ => answers.get(establisherCompany.IsContactDetailsCompleteId(index))
+      }
     case _ => None
   }
 

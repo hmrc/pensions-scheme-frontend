@@ -150,10 +150,9 @@ trait HsTaskListHelperBehaviour extends SpecBase with MustMatchers with OptionVa
     UserAnswers().set(establisherCompanyPath.CompanyDetailsId(0))(CompanyDetails("test company", false)).flatMap(
                   _.set(IsEstablisherNewId(0))(true).flatMap(
                     _.set(IsEstablisherAddressCompleteId(0))(isCompleteEstablisher).flatMap(
-                      _.set(establisherCompanyPath.CompanyVatId(0))(Vat.No).flatMap(
                         _.set(establisherCompanyPath.CompanyPayeId(0))(Paye.No).flatMap(
                           _.set(IsEstablisherCompleteId(0))(isCompleteEstablisher)
-                                    ))))).asOpt.value
+                                    )))).asOpt.value
   }
 
   val deletedEstablishers = UserAnswers().set(EstablisherDetailsId(0))(PersonDetails("firstName", None, "lastName", LocalDate.now())).flatMap(

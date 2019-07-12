@@ -18,10 +18,12 @@ package utils
 
 import base.SpecBase
 import controllers.register.establishers.company.{routes => establisherCompanyRoutes}
+import identifiers.register.establishers.company.{CompanyEmailId, CompanyPhoneId}
 import identifiers.register.establishers.company.director.{DirectorDetailsId, IsDirectorCompleteId}
 import identifiers.register.establishers.{IsEstablisherNewId, company => establisherCompanyPath}
+import identifiers.register.establishers.company.CompanyVatId
 import models.person.PersonDetails
-import models.{CompanyDetails, EntitySpoke, Link, Mode, NormalMode, UpdateMode}
+import models._
 import org.joda.time.LocalDate
 import org.scalatest.{MustMatchers, OptionValues}
 import utils.hstasklisthelper.{HsTaskListHelper, HsTaskListHelperRegistration, HsTaskListHelperVariations}
@@ -41,6 +43,12 @@ class HsTaskListHelperUtilsSpec extends SpecBase with MustMatchers with OptionVa
         subscriptionHelper.getEstablisherCompanySpokes(
           establisherCompany(isComplete = false), NormalMode, None, "test company", 0
         ) mustBe expectedInProgressSpokes(NormalMode, None)
+      }
+
+      "in subscription journey with partial data" in {
+        subscriptionHelper.getEstablisherCompanySpokes(
+          establisherCompanyWithPartialData, NormalMode, None, "test company", 0
+        ) mustBe expectedSpokesWithPartialData(NormalMode, None)
       }
 
       "in subscription journey when all spokes are complete" in {
@@ -93,6 +101,17 @@ object HsTaskListHelperUtilsSpec extends SpecBase with OptionValues {
           )))).asOpt.value
   }
 
+  protected def establisherCompanyWithPartialData: UserAnswers = {
+    establisherCompanyBlank
+      .set(CompanyVatId(0))(Vat.Yes("test-vat")).flatMap(
+      _.set(establisherCompanyPath.IsAddressCompleteId(0))(false).flatMap(
+        _.set(CompanyEmailId(0))("test@test.com").flatMap(
+          _.set(CompanyPhoneId(0))("1234")
+        )
+      )
+    ).asOpt.value
+  }
+
   protected def establisherCompanyWithCompletedDirectors(isComplete: Boolean) = establisherCompany(isComplete)
     .set(IsDirectorCompleteId(0, 0))(true).asOpt.value
 
@@ -121,6 +140,17 @@ object HsTaskListHelperUtilsSpec extends SpecBase with OptionValues {
       establisherCompanyRoutes.WhatYouWillNeedCompanyContactDetailsController.onPageLoad(mode, srn, 0).url), modeBasedCompletion(mode, Some(false))),
     EntitySpoke(Link(messages("messages__schemeTaskList__sectionEstablishersCompany_change_directors", "test company"),
       controllers.register.establishers.company.routes.AddCompanyDirectorsController.onPageLoad(mode, srn, 0).url), modeBasedCompletion(mode, Some(false)))
+  )
+
+  def expectedSpokesWithPartialData(mode: Mode, srn: Option[String]): Seq[EntitySpoke] = Seq(
+    EntitySpoke(Link(messages("messages__schemeTaskList__sectionEstablishersCompany_change_details", "test company"),
+      establisherCompanyRoutes.WhatYouWillNeedCompanyDetailsController.onPageLoad(mode, srn, 0).url), modeBasedCompletion(mode, Some(false))),
+    EntitySpoke(Link(messages("messages__schemeTaskList__sectionEstablishersCompany_change_address", "test company"),
+      establisherCompanyRoutes.WhatYouWillNeedCompanyAddressController.onPageLoad(mode, srn, 0).url), modeBasedCompletion(mode, Some(false))),
+    EntitySpoke(Link(messages("messages__schemeTaskList__sectionEstablishersCompany_change_contact", "test company"),
+      establisherCompanyRoutes.CheckYourAnswersCompanyContactDetailsController.onPageLoad(mode, srn, 0).url), modeBasedCompletion(mode, Some(true))),
+    EntitySpoke(Link(messages("messages__schemeTaskList__sectionEstablishersCompany_add_directors", "test company"),
+      controllers.register.establishers.company.routes.AddCompanyDirectorsController.onPageLoad(mode, srn, 0).url), None)
   )
 
   def expectedCompletedSpokes(mode: Mode, srn: Option[String]): Seq[EntitySpoke] = Seq(
