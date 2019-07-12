@@ -72,4 +72,3 @@ object PersonDetailsFormProvider {
   val lastNameLength: Int = 35
   val startYear: Int = 1900
 }
-

@@ -23,7 +23,7 @@ messages__common__firstname = First name
 messages__common__lastname = Last name
 messages__common__middlename = Middle name (optional)
 messages__common__dob = Date of birth
-messages__common__dob__hint = For example 30 9 1990
+messages__common__dob__hint = For example, 31 3 1980
 messages__common__day = Day
 messages__common__month = Month
 messages__common__year = Year
@@ -52,6 +52,7 @@ messages__common__company_vat__hint = This is 9 numbers, sometimes with ‘GB’
 messages__common__nino = National Insurance number
 messages__common__reason = Reason
 
+messages__common__postcode_lookup__enter_postcode = You can {0} enter the address manually {1}.
 messages__common__postcode_lookup__manual_link = You can {0} enter the address manually {1}.
 
 messages__common__postcode_lookup__enter_postcode = Enter the postcode, or if you have an overseas address, {0} enter the address manually {1}
@@ -271,7 +272,6 @@ messages__uk_bank_account_details__sort_code = Sort code
 messages__uk_bank_account_details__sort_code_hint = For example ’00 55 66’ or ’00-55-66’
 messages__uk_bank_account_details__account_number = Account number
 messages__uk_bank_account_details__date_bank_account = Approximate date the account was opened
-messages__common__dob__hint = For example 30 9 1990
 
 messages__error__bank_name = Enter the bank name
 messages__error__account_name = Enter the account name
@@ -543,6 +543,10 @@ messages__directorAddressConfirm__heading = Confirm {0}’s address
 messages__directorAddressPostcodeLookup__title = Director’s address
 messages__directorAddressPostcodeLookup__heading = Director’s address
 messages__directorAddressPostcodeLookup__lede = This is usually the director’s residential address.
+
+messages__directorDOB__title = What is the director’s date of birth?
+messages__directorDOB__heading = What is {0}’s date of birth?
+messages__directorDOB__hint = For example, 31 3 1980
 
 
 messages__addressPostcodeLookup__heading = What is {0}’s postcode?
@@ -1580,7 +1584,8 @@ messages__companyUtr__guidance1 = If the UTR is 13 numbers, you only need to ent
 messages__companyUtr__guidance2 = If there is a letter ‘K’ at the end of the number, do not enter it.
 messages__companyUtr__hint = For example, 12345 67890
 
-messages__reason__error_required = Enter a reason why {0} does not have a UTR
+messages__reason__error_utrRequired = Enter a reason why {0} does not have a UTR
+messages__reason__error_ninoRequired = Enter a reason why {0} does not have a NINO
 messages__reason__error_maxLength = Reason must be 160 characters or less
 messages__reason__error_invalid = Reason must only include letters, numbers and punctuation marks
 messages__noCompanyUtr__title = Why does the company not have a UTR?
@@ -1588,11 +1593,46 @@ messages__noCompanyUtr__heading = Why does {0} not have a UTR?
 
 messages__establisher_phone__title =  What is the establisher’s phone number?
 
-
 messages__establisher_email__title =  What is the establisher’s email address?
 messages__establisher_email__hint = We will only use this to contact about pension scheme administration.
+
+messages__directorNoNinoReason__title = Why does the director not have a National Insurance number?
+messages__directorNoNinoReason__heading = Why does {0} not have a National Insurance number?
 
 messages__directorHasNino__title =  Does the director have a National Insurance number?
 messages__directorHasNino__h1 =  Does {0} have a National Insurance number?
 messages__directorHasNino__error__required = Select yes if the director has a National Insurance number
 
+
+messages__hasDirectorUtr__title = Does the director have a UTR?
+messages__hasDirectorUtr__h1 = Does {0} have a Unique Taxpayer Reference (UTR)?
+messages__hasDirectorUtr__p1 = This is a 10-digit or 13-digit number. You can find it on tax returns and other documents from HMRC. It might be called ‘reference’, ‘UTR’ or ‘official use’.
+messages__hasDirectorUtr__error__required = Select yes if {0} has a Unique Taxpayer Reference (UTR)
+
+messages__noDirectorUtr__title = Why does the director not have a UTR?
+messages__noDirectorUtr__heading = Why does {0} not have a UTR?
+
+messages__establisherPostCode__title = What is establisher’s postcode?
+messages__establisherPostCode__h1 = What is {0}’s postcode?
+
+messages__establisherPreviousPostCode__title = What was establisher’s previous postcode?
+messages__establisherPreviousPostCode__h1 = What was {0}’s previous postcode?
+
+messages__establisherSelectAddress__title = Select the address
+messages__establisherSelectAddress__h1 = What is {0}’s address?
+
+messages__establisherPreviousSelectAddress__title = Select the previous address
+messages__establisherPreviousSelectAddress__h1 = What was {0}’s previous address?
+
+messages__establisherConfirmAddress__title = Confirm establisher’s address
+messages__establisherConfirmAddress__h1 = Confirm {0}’s address
+messages__establisherConfirmAddress__cya_label = {0}’s address
+messages__establisherConfirmAddress__cya_visually_hidden_label = contact address
+
+messages__establisherPreviousConfirmAddress__title = Confirm establisher’s previous address
+messages__establisherPreviousConfirmAddress__h1 = Confirm {0}’s previous address
+messages__establisherPreviousConfirmAddress__cya_label = {0}’s previous address
+messages__establisherPreviousConfirmAddress__cya_visually_hidden_label = previous contact address
+
+
+messages__director_email__title =  What is the director’s email address?

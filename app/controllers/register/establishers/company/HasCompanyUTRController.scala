@@ -17,7 +17,7 @@
 package controllers.register.establishers.company
 
 import config.FrontendAppConfig
-import controllers.HasUtrController
+import controllers.HasReferenceNumberController
 import controllers.actions._
 import forms.HasUtrFormProvider
 import identifiers.register.establishers.company.{CompanyDetailsId, HasCompanyUTRId}
@@ -41,7 +41,7 @@ class HasCompanyUTRController @Inject()(override val appConfig: FrontendAppConfi
                                         getData: DataRetrievalAction,
                                         requireData: DataRequiredAction,
                                         formProvider: HasUtrFormProvider
-                                       )(implicit val ec: ExecutionContext) extends HasUtrController {
+                                       )(implicit val ec: ExecutionContext) extends HasReferenceNumberController {
 
   private def viewModel(mode: Mode, index: Index, srn: Option[String], companyName: String): CommonFormWithHintViewModel =
     CommonFormWithHintViewModel(
