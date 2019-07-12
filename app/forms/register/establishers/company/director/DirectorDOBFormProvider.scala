@@ -14,17 +14,24 @@
  * limitations under the License.
  */
 
-package identifiers.register.establishers.company.director
+package forms.register.establishers.company.director
 
-import identifiers._
-import identifiers.register.establishers.EstablishersId
+import forms.mappings.{Mappings, Transforms}
+import javax.inject.Inject
 import org.joda.time.LocalDate
-import play.api.libs.json.JsPath
+import play.api.data.Form
 
-case class DirectorDOBId(establisherIndex: Int, directorIndex: Int) extends TypedIdentifier[LocalDate] {
-  override def path: JsPath = EstablishersId(establisherIndex).path \ "director" \ directorIndex \ "directorDetails" \ DirectorDOBId.toString
+class DirectorDOBFormProvider @Inject() extends Mappings with Transforms {
+
+  def apply(): Form[LocalDate] = Form(
+    "date" -> dateMapping("messages__error__date", "error.invalid_date")
+      .verifying(firstError(futureDate("messages__error__date_future"),
+        notBeforeYear("messages__error__date_past", DirectorDOBFormProvider.startYear)
+      )
+      )
+  )
 }
 
-object DirectorDOBId {
-  override def toString: String = "date"
+object DirectorDOBFormProvider {
+  val startYear: Int = 1900
 }
