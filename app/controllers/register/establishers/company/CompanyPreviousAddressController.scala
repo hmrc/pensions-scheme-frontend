@@ -52,8 +52,8 @@ class CompanyPreviousAddressController @Inject()(
 
   protected val form: Form[Address] = formProvider()
   private[controllers] val postCall = routes.CompanyPreviousAddressController.onSubmit _
-  private[controllers] val title: Message = "messages__companyPreviousAddress__title"
-  private[controllers] val heading: Message = "messages__companyPreviousAddress__heading"
+  private[controllers] val title: Message = "messages__establisherPreviousConfirmAddress__title"
+  private[controllers] val heading: Message = "messages__establisherPreviousConfirmAddress__h1"
   private[controllers] val hint: Message = "messages__companyAddress__lede"
 
   def onPageLoad(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] =
@@ -82,9 +82,7 @@ class CompanyPreviousAddressController @Inject()(
               postCall(mode, srn, Index(index)),
               countryOptions.options,
               title = Message(title),
-              heading = Message(heading),
-              hint = Some(Message(hint)),
-              secondaryHeader = Some(details.companyName),
+              heading = Message(heading, details.companyName),
               srn = srn
             )
         }

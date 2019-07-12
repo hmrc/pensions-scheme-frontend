@@ -50,8 +50,8 @@ class CompanyPostCodeLookupController @Inject()(
                                                )(implicit val ec: ExecutionContext) extends PostcodeLookupController {
 
   protected val form: Form[String] = formProvider()
-  private val title: Message = "messages__companyAddress__title"
-  private val heading: Message = "messages__companyAddress__heading"
+  private val title: Message = "messages__establisherPostCode__title"
+  private val heading: Message = "messages__establisherPostCode__h1"
 
   def onPageLoad(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
@@ -68,8 +68,7 @@ class CompanyPostCodeLookupController @Inject()(
               routes.CompanyPostCodeLookupController.onSubmit(mode, srn, index),
               routes.CompanyAddressController.onPageLoad(mode, srn, index),
               title = Message(title),
-              heading = Message(heading),
-              subHeading = Some(details.companyName),
+              heading = Message(heading, details.companyName),
               srn = srn
             )
         }

@@ -27,7 +27,7 @@ import play.api.mvc.Call
 import play.api.test.Helpers._
 import services.FakeUserAnswersService
 import utils.{CountryOptions, FakeCountryOptions, FakeNavigator, UserAnswers, _}
-import viewmodels.{AnswerRow, AnswerSection}
+import viewmodels.{AnswerRow, AnswerSection, Message}
 import views.html.check_your_answers
 
 class CheckYourAnswersCompanyAddressControllerSpec extends ControllerSpecBase with ControllerAllowChangeBehaviour {
@@ -125,11 +125,11 @@ object CheckYourAnswersCompanyAddressControllerSpec extends ControllerSpecBase w
   def postUrlUpdateMode: Call = routes.CheckYourAnswersCompanyAddressController.onSubmit(UpdateMode, srn, index)
 
   def addressAnswerRow(mode: Mode, srn: Option[String]): AnswerRow = AnswerRow(
-    "messages__common__cya__address",
+    Message("messages__establisherConfirmAddress__cya_label", companyName),
     UserAnswers().addressAnswer(address),
     answerIsMessageKey = false,
     Some(Link("site.change", companyAddressRoute(checkMode(mode), srn),
-      Some("messages__visuallyhidden__establisher__address")))
+      Some("messages__establisherConfirmAddress__cya_visually_hidden_label")))
   )
   def addressYearsAnswerRow(mode: Mode, srn: Option[String]): AnswerRow = AnswerRow(
     "companyAddressYears.checkYourAnswersLabel",
@@ -139,18 +139,18 @@ object CheckYourAnswersCompanyAddressControllerSpec extends ControllerSpecBase w
       Some("messages__visuallyhidden__establisher__address_years")))
   )
   def previousAddressAnswerRow(mode: Mode, srn: Option[String]): AnswerRow = AnswerRow(
-    "messages__common__cya__previous_address",
+    Message("messages__establisherPreviousConfirmAddress__cya_label", companyName),
     UserAnswers().addressAnswer(previousAddress),
     answerIsMessageKey = false,
     Some(Link("site.change", companyPreviousAddressRoute(checkMode(mode), srn),
-      Some("messages__visuallyhidden__establisher__previous_address")))
+      Some("messages__establisherPreviousConfirmAddress__cya_visually_hidden_label")))
   )
 
   def previousAddressAddLink(mode: Mode, srn: Option[String]): AnswerRow =
-    AnswerRow("messages__common__cya__previous_address",
+    AnswerRow(Message("messages__establisherPreviousConfirmAddress__cya_label", companyName),
     Seq("site.not_entered"),
     answerIsMessageKey = true,
-    Some(Link("site.add", companyPreviousAddressRoute(checkMode(mode), srn), Some("messages__visuallyhidden__establisher__previous_address_add"))))
+    Some(Link("site.add", companyPreviousAddressRoute(checkMode(mode), srn), Some("messages__establisherPreviousConfirmAddress__cya_visually_hidden_label"))))
 
   def companyAddressNormal: Seq[AnswerSection] = Seq(AnswerSection(None, Seq(
     addressAnswerRow(NormalMode, None), addressYearsAnswerRow(NormalMode, None),

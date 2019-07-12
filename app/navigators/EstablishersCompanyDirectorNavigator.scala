@@ -54,6 +54,9 @@ class EstablishersCompanyDirectorNavigator @Inject()(val dataCacheConnector: Use
       case DirectorNameId(establisherIndex, directorIndex) =>
         NavigateTo.dontSave(controllers.register.establishers.company.director.routes.
           DirectorDOBController.onPageLoad(mode, establisherIndex, directorIndex, srn))
+      case DirectorNoUTRReasonId(establisherIndex, directorIndex) =>
+        NavigateTo.dontSave(controllers.register.establishers.company.director.routes.
+          DirectorAddressPostcodeLookupController.onPageLoad(mode, establisherIndex, directorIndex, srn))
       case DirectorNinoId(establisherIndex, directorIndex) =>
         NavigateTo.dontSave(routes.DirectorUniqueTaxReferenceController.onPageLoad(mode, establisherIndex, directorIndex, srn))
       case DirectorUniqueTaxReferenceId(establisherIndex, directorIndex) =>
@@ -73,6 +76,8 @@ class EstablishersCompanyDirectorNavigator @Inject()(val dataCacheConnector: Use
         checkYourAnswers(establisherIndex, directorIndex, mode, srn)
       case DirectorAddressYearsId(establisherIndex, directorIndex) =>
         addressYearsRoutes(establisherIndex, directorIndex, mode, srn)(from.userAnswers)
+      case DirectorEmailId(establisherIndex, directorIndex) =>
+        NavigateTo.dontSave(routes.DirectorPhoneNumberController.onPageLoad(mode, establisherIndex, directorIndex, srn))
       case _ => commonRoutes(from, mode, srn)
     }
 
@@ -84,6 +89,8 @@ class EstablishersCompanyDirectorNavigator @Inject()(val dataCacheConnector: Use
       case DirectorHasNINOId(establisherIndex, directorIndex) =>
         exitMiniJourney(establisherIndex, directorIndex, mode, srn, from.userAnswers)
       case DirectorNameId(establisherIndex, directorIndex) =>
+        exitMiniJourney(establisherIndex, directorIndex, mode, srn, from.userAnswers)
+      case DirectorNoUTRReasonId(establisherIndex, directorIndex) =>
         exitMiniJourney(establisherIndex, directorIndex, mode, srn, from.userAnswers)
       case DirectorNinoId(establisherIndex, directorIndex) =>
         exitMiniJourney(establisherIndex, directorIndex, mode, srn, from.userAnswers)
@@ -110,6 +117,8 @@ class EstablishersCompanyDirectorNavigator @Inject()(val dataCacheConnector: Use
         exitMiniJourney(establisherIndex, directorIndex, mode, srn, from.userAnswers)
       case DirectorAddressYearsId(establisherIndex, directorIndex) =>
         addressYearsEditRoutes(establisherIndex, directorIndex, mode, srn)(from.userAnswers)
+      case DirectorEmailId(establisherIndex, directorIndex) =>
+        exitMiniJourney(establisherIndex, directorIndex, mode, srn, from.userAnswers)
       case _ => commonRoutes(from, mode, srn)
     }
 
@@ -166,15 +175,18 @@ class EstablishersCompanyDirectorNavigator @Inject()(val dataCacheConnector: Use
     )
 
   private def addressYearsEditRoutes(establisherIndex: Int, directorIndex: Int, mode: Mode, srn: Option[String])(answers: UserAnswers): Option[NavigateTo] = {
-    answers.get(DirectorAddressYearsId(establisherIndex, directorIndex)) match {
-      case Some(AddressYears.UnderAYear) =>
-        if (mode == CheckUpdateMode)
-          NavigateTo.dontSave(routes.DirectorConfirmPreviousAddressController.onPageLoad(establisherIndex, directorIndex, srn))
-        else
-          NavigateTo.dontSave(routes.DirectorPreviousAddressPostcodeLookupController.onPageLoad(mode, establisherIndex, directorIndex, srn))
-      case Some(AddressYears.OverAYear) =>
+    (
+      answers.get(DirectorAddressYearsId(establisherIndex, directorIndex)),
+      mode,
+      answers.get(ExistingCurrentAddressId(establisherIndex, directorIndex))
+    ) match {
+      case (Some(AddressYears.UnderAYear), CheckUpdateMode, Some(_)) =>
+        NavigateTo.dontSave(routes.DirectorConfirmPreviousAddressController.onPageLoad(establisherIndex, directorIndex, srn))
+      case (Some(AddressYears.UnderAYear), _, _) =>
+        NavigateTo.dontSave(routes.DirectorPreviousAddressPostcodeLookupController.onPageLoad(mode, establisherIndex, directorIndex, srn))
+      case (Some(AddressYears.OverAYear), _, _) =>
         exitMiniJourney(establisherIndex, directorIndex, mode, srn, answers)
-      case None =>
+      case _ =>
         NavigateTo.dontSave(controllers.routes.SessionExpiredController.onPageLoad())
     }
   }

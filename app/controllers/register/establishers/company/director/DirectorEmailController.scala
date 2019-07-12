@@ -17,42 +17,66 @@
 package controllers.register.establishers.company.director
 
 import config.FrontendAppConfig
-import controllers.Retrievals
+import controllers.EmailAddressController
 import controllers.actions._
-import forms.register.establishers.company.director.DirectorNinoFormProvider
+import forms.EmailFormProvider
+import identifiers.register.establishers.company.director.{DirectorEmailId, DirectorNameId}
 import javax.inject.Inject
 import models.{Index, Mode}
+import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import utils.Navigator
 import utils.annotations.EstablishersCompanyDirector
-import utils.{Enumerable, Navigator}
+import viewmodels.{CommonFormWithHintViewModel, Message}
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
-class DirectorEmailController @Inject()(
-                                         appConfig: FrontendAppConfig,
-                                         override val messagesApi: MessagesApi,
-                                         userAnswersService: UserAnswersService,
-                                         @EstablishersCompanyDirector navigator: Navigator,
-                                         authenticate: AuthAction,
-                                         getData: DataRetrievalAction,
-                                         allowAccess: AllowAccessActionProvider,
-                                         requireData: DataRequiredAction,
-                                         formProvider: DirectorNinoFormProvider
-                                       )(implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
+class DirectorEmailController @Inject()(val appConfig: FrontendAppConfig,
+                                        override val messagesApi: MessagesApi,
+                                        authenticate: AuthAction,
+                                        getData: DataRetrievalAction,
+                                        override val userAnswersService: UserAnswersService,
+                                        allowAccess: AllowAccessActionProvider,
+                                        requireData: DataRequiredAction,
+                                        @EstablishersCompanyDirector val navigator: Navigator,
+                                        formProvider: EmailFormProvider
+                                       )(implicit val ec: ExecutionContext) extends EmailAddressController with I18nSupport {
+
+  protected val form: Form[String] = formProvider()
+
+  private def viewModel(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Retrieval[CommonFormWithHintViewModel] =
+    Retrieval {
+      implicit request =>
+        DirectorNameId(establisherIndex, directorIndex).retrieve.right.map {
+          details =>
+            CommonFormWithHintViewModel(
+              routes.DirectorEmailController.onSubmit(mode, establisherIndex, directorIndex, srn),
+              Message("messages__director_email__title"),
+              Message("messages__common_email__heading", details.fullName),
+              Some(Message("messages__establisher_email__hint")),
+              srn = srn
+            )
+        }
+    }
 
   def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
-        Future.successful(Ok("unimplemented page: " + this.getClass))
+        viewModel(mode, establisherIndex, directorIndex, srn).retrieve.right.map {
+          vm =>
+            get(DirectorEmailId(establisherIndex, directorIndex), form, vm)
+        }
     }
 
-
-  def onSubmit(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
-    implicit request =>
-      Future.successful(Ok("unimplemented page: " + this.getClass))
-  }
+  def onSubmit(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+      implicit request =>
+        viewModel(mode, establisherIndex, directorIndex, srn).retrieve.right.map {
+          vm =>
+            post(DirectorEmailId(establisherIndex, directorIndex), mode, form, vm)
+        }
+    }
 
 }

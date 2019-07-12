@@ -17,40 +17,60 @@
 package controllers.register.establishers.company.director
 
 import config.FrontendAppConfig
-import controllers.Retrievals
 import controllers.actions._
+import controllers.{ReasonController, Retrievals}
+import forms.ReasonFormProvider
+import identifiers.register.establishers.company.director.{DirectorNameId, DirectorNoNINOReasonId}
 import javax.inject.Inject
 import models.{Index, Mode}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.EstablishersCompanyDirector
 import utils.{Enumerable, Navigator}
+import viewmodels.{Message, ReasonViewModel}
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
 class DirectorNoNINOReasonController @Inject()(
-                                           appConfig: FrontendAppConfig,
+                                           override val appConfig: FrontendAppConfig,
                                            override val messagesApi: MessagesApi,
-                                           userAnswersService: UserAnswersService,
-                                           @EstablishersCompanyDirector navigator: Navigator,
+                                           override val userAnswersService: UserAnswersService,
+                                           @EstablishersCompanyDirector override val navigator: Navigator,
                                            authenticate: AuthAction,
                                            getData: DataRetrievalAction,
                                            allowAccess: AllowAccessActionProvider,
-                                           requireData: DataRequiredAction
-                                         )(implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
+                                           requireData: DataRequiredAction,
+                                           formProvider: ReasonFormProvider
+                                         )(implicit val ec: ExecutionContext) extends ReasonController with Retrievals with I18nSupport with Enumerable.Implicits {
+
+  private def form(name: String) = formProvider("messages__reason__error_ninoRequired", name)
+
+  private def viewModel(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String], name: String): ReasonViewModel = {
+    ReasonViewModel(
+      postCall = routes.DirectorNoNINOReasonController.onSubmit(mode, establisherIndex, directorIndex, srn),
+      title = Message("messages__directorNoNinoReason__title"),
+      heading = Message("messages__directorNoNinoReason__heading", name),
+      srn = srn
+    )
+  }
 
   def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
-        Future.successful(Ok("unimplemented page: " + this.getClass))
+        DirectorNameId(establisherIndex, directorIndex).retrieve.right.map { name =>
+          get(DirectorNoNINOReasonId(establisherIndex, directorIndex),
+            viewModel(mode, establisherIndex, directorIndex, srn, name.fullName), form(name.fullName))
+        }
     }
 
-
-  def onSubmit(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
-    implicit request =>
-      Future.successful(Ok("unimplemented page: " + this.getClass))
-  }
+  def onSubmit(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen requireData).async {
+      implicit request =>
+        DirectorNameId(establisherIndex, directorIndex).retrieve.right.map { name =>
+          post(DirectorNoNINOReasonId(establisherIndex, directorIndex), mode,
+            viewModel(mode, establisherIndex, directorIndex, srn, name.fullName), form(name.fullName))
+        }
+    }
 
 }
