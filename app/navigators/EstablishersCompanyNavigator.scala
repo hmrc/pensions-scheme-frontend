@@ -278,22 +278,28 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
     val directorsSeq = answers.allDirectorsAfterDelete(index)
     val addCompanyDirectors = answers.get(AddCompanyDirectorsId(index))
     val addNewEstablisher = answers.get(IsEstablisherNewId(index))
+    val toggled = featureSwitchManagementService.get(Toggles.isEstablisherCompanyHnSEnabled)
 
       NavigateTo.dontSave(
-        (directorsSeq, addCompanyDirectors, mode, addNewEstablisher) match {
-          case (directors, _, _, _) if directors.isEmpty => DirectorDetailsController.onPageLoad(
+        (toggled, directorsSeq, addCompanyDirectors, mode, addNewEstablisher) match {
+          case (true, _, Some(false), _, _) =>
+            controllers.routes.SchemeTaskListController.onPageLoad(mode, srn)
+          case (true, _, Some(true), _, _) =>
+            controllers.register.establishers.company.director.routes.DirectorNameController
+              .onPageLoad(mode, index, answers.allDirectors(index).size, srn)
+          case (_, directors, _, _, _) if directors.isEmpty => DirectorDetailsController.onPageLoad(
             mode, index, answers.allDirectors(index).size, srn)
-          case (directors, _, _, _) if directors.lengthCompare(appConfig.maxDirectors) >= 0 =>
+          case (_, directors, _, _, _) if directors.lengthCompare(appConfig.maxDirectors) >= 0 =>
             establisherCompanyRoutes.OtherDirectorsController.onPageLoad(mode, srn, index)
-          case (_, Some(true), _, _)                        =>
+          case (_, _, Some(true), _, _)                        =>
             DirectorDetailsController.onPageLoad(mode, index, answers.allDirectors(index).size, srn)
-          case (_, Some(false), CheckMode | NormalMode, _)  =>
+          case (_, _, Some(false), CheckMode | NormalMode, _)  =>
             establisherCompanyRoutes.CompanyReviewController.onPageLoad(mode, srn, index)
-          case (_, Some(false), _, Some(true))              =>
+          case (_, _, Some(false), _, Some(true))              =>
             establisherCompanyRoutes.CompanyReviewController.onPageLoad(mode, srn, index)
-          case (_, Some(false), _, _) if answers.get(EstablishersOrTrusteesChangedId).contains(true) =>
+          case (_, _, Some(false), _, _) if answers.get(EstablishersOrTrusteesChangedId).contains(true) =>
             controllers.routes.AnyMoreChangesController.onPageLoad(srn)
-          case (_, Some(false), _, _) =>
+          case (_, _, Some(false), _, _) =>
             controllers.routes.SchemeTaskListController.onPageLoad(mode, srn)
           case _ => controllers.routes.SessionExpiredController.onPageLoad()
         }

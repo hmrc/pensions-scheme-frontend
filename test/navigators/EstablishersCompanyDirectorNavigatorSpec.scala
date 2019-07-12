@@ -98,8 +98,8 @@ object EstablishersCompanyDirectorNavigatorSpec extends SpecBase with OptionValu
   private val navigator = new EstablishersCompanyDirectorNavigator(FakeUserAnswersCacheConnector)
   private val emptyAnswers = UserAnswers(Json.obj())
   private val newEstablisher = UserAnswers().set(IsEstablisherNewId(0))(true).asOpt.value
-  val establisherIndex = Index(0)
-  val directorIndex = Index(0)
+  private val establisherIndex = Index(0)
+  private val directorIndex = Index(0)
   private val newDirector = UserAnswers(Json.obj()).set(IsNewDirectorId(establisherIndex, directorIndex))(true).asOpt.value
 
   private def hasNino(ua:UserAnswers, value:Boolean):UserAnswers =
