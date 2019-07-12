@@ -1593,3 +1593,8 @@ messages__directorHasNino__title =  Does the director have a National Insurance 
 messages__directorHasNino__h1 =  Does {0} have a National Insurance number?
 messages__directorHasNino__error__required = Select yes if the director has a National Insurance number
 
+
+messages__hasDirectorUtr__title = Does the director have a UTR?
+messages__hasDirectorUtr__h1 = Does {0} have a Unique Taxpayer Reference (UTR)?
+messages__hasDirectorUtr__p1 = This is a 10-digit or 13-digit number. You can find it on tax returns and other documents from HMRC. It might be called ‘reference’, ‘UTR’ or ‘official use’.
+messages__hasDirectorUtr__error__required = Select yes if {0} has a Unique Taxpayer Reference (UTR)
