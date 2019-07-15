@@ -54,9 +54,8 @@ class EstablishersCompanyNavigatorSpec extends SpecBase with MustMatchers with N
     (CompanyVatId(0),                             newEstablisher,                   companyPaye(mode),                  true,           Some(cya(mode)),                                                             true),
     (CompanyVatVariationsId(0),                   emptyAnswers,                     sessionExpired,                     true,           Some(exitJourney(mode, emptyAnswers, 0, cya(mode))),          true),
     (CompanyVatVariationsId(0),                   establisherEnteredPAYE,           companyHasPaye(mode),               true,           Some(exitJourney(mode, emptyAnswers, 0, cya(mode))),          true),
-    (HasCompanyPAYEId(0),                         emptyAnswers,                     sessionExpired,                     true,           Some(exitJourney(mode, emptyAnswers, 0, cya(mode))),          true),
-    (HasCompanyPAYEId(0),                         establisherHasPAYE(true),         whatIsPAYE(mode),                   true,           Some(exitJourney(mode, emptyAnswers, 0, cya(mode))),          true),
-    (HasCompanyPAYEId(0),                         establisherHasPAYE(false),        cyaCompanyDetails(mode),            true,           Some(exitJourney(mode, emptyAnswers, 0, cya(mode))),          true),
+    (HasCompanyPAYEId(0),                         emptyAnswers,                     sessionExpired,                     true,           Some(exitJourney(mode, emptyAnswers, 0, cyaCompanyDetails(mode))),          true),
+    (HasCompanyPAYEId(0),                         establisherHasPAYE(true),         whatIsPAYE(mode),                   true,           Some(exitJourney(mode, emptyAnswers, 0, cyaCompanyDetails(mode))),          true),
     (CompanyPayeId(0),                            emptyAnswers,                     companyRegistrationNumber(mode),    true,           Some(exitJourney(mode, emptyAnswers, 0, cya(mode))),                   true),
     (CompanyPayeId(0),                            newEstablisher,                   companyRegistrationNumber(mode),    true,           Some(cya(mode)),                                                             true),
     (NoCompanyNumberId(0),                        emptyAnswers,                     hasCompanyUTR(mode),                true,           Some(exitJourney(mode, emptyAnswers, 0, cya(mode))),                   true),
@@ -114,11 +113,13 @@ class EstablishersCompanyNavigatorSpec extends SpecBase with MustMatchers with N
     (CompanyAddressYearsId(0), addressYearsUnderAYearWithExistingCurrentAddress, if (toggled) hasBeenTrading(UpdateMode) else prevAddPostCodeLookup(UpdateMode), true, addressYearsLessThanTwelveEdit(UpdateMode, toggled, addressYearsUnderAYearWithExistingCurrentAddress), true),
     (CompanyRegistrationNumberId(0),              emptyAnswers,                     if(toggled)hasCompanyUTR(UpdateMode) else companyUTR(UpdateMode),                   true,           Some(exitJourney(UpdateMode, emptyAnswers, 0, cya(UpdateMode))),                   true),
     (CompanyRegistrationNumberId(0),              newEstablisher,                   if(toggled)hasCompanyUTR(UpdateMode) else companyUTR(UpdateMode),                   true,           Some(cya(UpdateMode)),                   true),
-    (CompanyContactDetailsId(0),  emptyAnswers,                         cya(UpdateMode),                        true,   Some(exitJourney(checkMode(UpdateMode),   emptyAnswers, 0, cya(UpdateMode))),       true),
-    (CompanyPhoneId(0),           emptyAnswers,                         cyaCompanyContactDetails(UpdateMode),   true,   Some(exitJourney(checkMode(UpdateMode),   emptyAnswers, 0, cyaCompanyContactDetails(UpdateMode))),       true),
+    (CompanyContactDetailsId(0),  emptyAnswers,                         cya(UpdateMode),                        true,   Some(exitJourney(CheckUpdateMode,   emptyAnswers, 0, cya(UpdateMode))),       true),
+    (CompanyPhoneId(0),           emptyAnswers,                         cyaCompanyContactDetails(UpdateMode),   true,   Some(exitJourney(CheckUpdateMode,   emptyAnswers, 0, cyaCompanyContactDetails(UpdateMode))),       true),
     (AddCompanyDirectorsId(0),    addCompanyDirectorsFalseWithChanges,  anyMoreChanges,                         true,   None,                                                           true),
-    (CompanyPayeVariationsId(0),                  emptyAnswers,         none,                                   true,   Some(exitJourney(checkMode(UpdateMode), emptyAnswers, 0, cya(UpdateMode))),                   true),
-    (CompanyRegistrationNumberVariationsId(0),                  emptyAnswers,                  none,    true,           Some(exitJourney(checkMode(UpdateMode), emptyAnswers, 0, cya(UpdateMode))),                   true)
+    (CompanyPayeVariationsId(0),                  emptyAnswers,         cyaCompanyDetails(UpdateMode),                                   true,   Some(exitJourney(CheckUpdateMode, emptyAnswers, 0, cya(UpdateMode))),                   true),
+    (CompanyRegistrationNumberVariationsId(0),                  emptyAnswers,                  hasCompanyUTR(UpdateMode),    true,           Some(exitJourney(CheckUpdateMode, emptyAnswers, 0, cya(UpdateMode))),                   true),
+    (HasCompanyPAYEId(0),                         establisherHasPAYE(false),        cyaCompanyDetails(UpdateMode),                    true,           Some(exitJourney(CheckUpdateMode, emptyAnswers, 0, cyaCompanyDetails(UpdateMode))),          true)
+
   )
 
   private def normalRoutes(toggled: Boolean = false) = Table(
