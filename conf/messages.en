@@ -106,6 +106,11 @@ messages__common__cya__vat = VAT registration number
 messages__common__cya__paye = PAYE employer reference number
 messages__common__cya__email = Email address
 messages__common__cya__phone = Phone number
+messages__common__address_years__company = the company
+messages__common__address_years__director = the director
+messages__common__address_years__partnership = the partnership
+messages__common__address_years__partner = the partner
+messages__common__address_years__person = the person
 
 messages__index__title = pensions-scheme-frontend
 messages__index__guidance = Welcome to your new frontend. Please see the README file for a guide to getting started.
@@ -239,7 +244,7 @@ messages__error__company_name_invalid = The company name contains invalid charac
 messages__error__benefits_insurance__policy_length = The policy number cannot be more than 55 characters
 messages__error__benefits_insurance__policy_invalid = The policy number contains invalid characters
 
-messages__establisher_address_years__title = Has {0} been at this contact address for at least 1 year?
+messages__establisher_address_years__title = Has {0} used this contact address for at least 1 year?
 messages__establisher_address_years__formError = Select yes if {0} has been at this contact address for at least 1 year
 messages__common__under_a_year = No
 messages__common__over_a_year = Yes
@@ -513,7 +518,7 @@ messages__addCompanyDirectors_add_director = Add a director
 messages__addCompanyDirectors_at_maximum = You have added the maximum number of directors.
 messages__addCompanyDirectorsOrPartners_tell_us_if_you_have_more = You can tell us on the next page if you have more to add.
 
-messages__director_address_years__title = Has the director been at their address for at least 1 year?
+messages__director_address_years__title = Has {0} used this address for at least 1 year?
 messages__director_address_years__heading = Has {0} used this contact address for at least 1 year?
 messages__director_address_years__cya = Has the director been at their address for at least 1 year?
 messages__director_address_years__form_error = Select yes if {0} has used this contact address for at least 1 year
@@ -681,8 +686,8 @@ messages__trustee__uniqueTaxReference__error__utr_required = Enter the Unique Ta
 messages__trustee__uniqueTaxReference__error__reason_required = You need to tell us why the trustee does not have a UTR
 messages__trustee__uniqueTaxReference__error__utr_invalid = Please give an answer for uniqueTaxReference
 
-messages__trusteeAddressYears__title = Has {0} been at this contact address for at least 1 year?
-messages__trusteeAddressYears__heading = Has {0} been at this contact address for at least 1 year?
+messages__trusteeAddressYears__title = Has {0} used this contact address for at least 1 year?
+messages__trusteeAddressYears__heading = Has {0} used this contact address for at least 1 year?
 messages__trusteeAddressYears__error_required = Select yes if {0} has been at this contact address for at least 1 year
 
 messages__trusteeAddressYears_cya_label = How long has the trustee been at this address?

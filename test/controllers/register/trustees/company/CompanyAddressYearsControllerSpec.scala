@@ -49,7 +49,7 @@ class CompanyAddressYearsControllerSpec extends ControllerSpecBase {
 
   val viewmodel = AddressYearsViewModel(
     postCall = routes.CompanyAddressYearsController.onSubmit(NormalMode, firstIndex, None),
-    title = Message(questionText, companyDetails.companyName),
+    title = Message(questionText, Message("messages__common__address_years__company").resolve),
     heading = Message(questionText, companyDetails.companyName),
     legend = Message(questionText, companyDetails.companyName),
     Some(companyDetails.companyName)

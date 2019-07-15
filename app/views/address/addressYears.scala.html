@@ -23,15 +23,14 @@
 @main_template(
     title = viewmodel.title,
     appConfig = appConfig,
-    bodyClasses = None) {
+    bodyClasses = None
+) {
 
     @helpers.form(action = viewmodel.postCall, 'autoComplete -> "off") {
 
         @components.error_summary(form.errors)
 
-        @components.heading(
-            headingKey=messages(viewmodel.heading)
-        )
+        @components.heading(messages(viewmodel.heading))
 
         @components.input_radio(
             field = form("value"),

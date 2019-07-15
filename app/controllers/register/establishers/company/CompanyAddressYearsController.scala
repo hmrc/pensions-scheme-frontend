@@ -65,7 +65,7 @@ class CompanyAddressYearsController @Inject()(
 
   private def viewModel(mode: Mode, srn: Option[String], index: Index, companyName: String) = AddressYearsViewModel(
     postCall = routes.CompanyAddressYearsController.onSubmit(mode, srn, index),
-    title = Message("messages__company_address_years__title", companyName),
+    title = Message("messages__company_address_years__title", Message("messages__common__address_years__company").resolve),
     heading = Message("messages__company_address_years__title", companyName),
     legend = Message("messages__company_address_years__title", companyName),
     subHeading = Some(Message(companyName)),

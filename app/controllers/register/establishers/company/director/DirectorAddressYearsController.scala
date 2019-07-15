@@ -76,7 +76,7 @@ class DirectorAddressYearsController @Inject()(val appConfig: FrontendAppConfig,
   private def viewModel(mode: Mode, establisherIndex: Index, directorIndex: Index, directorName: String, srn: Option[String]) =
     AddressYearsViewModel(
       postCall = routes.DirectorAddressYearsController.onSubmit(mode, establisherIndex, directorIndex, srn),
-      title = Message("messages__director_address_years__title"),
+      title = Message("messages__director_address_years__title", Message("messages__common__address_years__director").resolve),
       heading = Message("messages__director_address_years__heading", directorName),
       legend = Message("messages__director_address_years__heading", directorName),
       subHeading = Some(Message(directorName)),
