@@ -1617,6 +1617,8 @@ messages__directorHasNino__title =  Does the director have a National Insurance 
 messages__directorHasNino__h1 =  Does {0} have a National Insurance number?
 messages__directorHasNino__error__required = Select yes if the director has a National Insurance number
 
+messages__directorUtr__title = What is the director’s UTR?
+messages__directorUtr__heading = What is {0}’s UTR?
 
 messages__hasDirectorUtr__title = Does the director have a UTR?
 messages__hasDirectorUtr__h1 = Does {0} have a Unique Taxpayer Reference (UTR)?
