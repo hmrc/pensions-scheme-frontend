@@ -64,6 +64,11 @@ class EstablishersCompanyDirectorNavigator @Inject()(val dataCacheConnector: Use
         NavigateTo.dontSave(routes.DirectorUniqueTaxReferenceController.onPageLoad(mode, establisherIndex, directorIndex, srn))
       case DirectorUniqueTaxReferenceId(establisherIndex, directorIndex) =>
         NavigateTo.dontSave(routes.DirectorAddressPostcodeLookupController.onPageLoad(mode, establisherIndex, directorIndex, srn))
+
+      case DirectorUTRId(establisherIndex, directorIndex) =>
+        NavigateTo.dontSave(routes.DirectorAddressPostcodeLookupController.onPageLoad(mode, establisherIndex, directorIndex, srn))
+
+
       case DirectorHasUTRId(establisherIndex, directorIndex) =>
         hasUTRRoutes(establisherIndex, directorIndex, mode, srn)(from.userAnswers)
       case DirectorAddressId(establisherIndex, directorIndex) =>
@@ -101,6 +106,8 @@ class EstablishersCompanyDirectorNavigator @Inject()(val dataCacheConnector: Use
       case DirectorNewNinoId(establisherIndex, directorIndex) =>
         exitMiniJourney(establisherIndex, directorIndex, mode, srn, from.userAnswers)
       case DirectorUniqueTaxReferenceId(establisherIndex, directorIndex) =>
+        exitMiniJourney(establisherIndex, directorIndex, mode, srn, from.userAnswers)
+      case DirectorUTRId(establisherIndex, directorIndex) =>
         exitMiniJourney(establisherIndex, directorIndex, mode, srn, from.userAnswers)
       case DirectorAddressId(establisherIndex, directorIndex) =>
         val isNew = from.userAnswers.get(IsNewDirectorId(establisherIndex, directorIndex)).contains(true)
