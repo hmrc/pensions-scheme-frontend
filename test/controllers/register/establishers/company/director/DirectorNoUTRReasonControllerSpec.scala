@@ -76,7 +76,7 @@ object DirectorNoUTRReasonControllerSpec extends ControllerSpecBase {
   private def onwardRoute = controllers.routes.IndexController.onPageLoad()
 
   private val formProvider = new ReasonFormProvider()
-  private val form = formProvider("test director name")
+  private val form = formProvider("messages__reason__error_utrRequired", "test director name")
   private val establisherIndex = Index(0)
   private val directorIndex = Index(0)
   private val srn = None

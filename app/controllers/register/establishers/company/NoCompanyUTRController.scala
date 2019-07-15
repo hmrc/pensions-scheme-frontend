@@ -43,7 +43,7 @@ class NoCompanyUTRController @Inject()(override val appConfig: FrontendAppConfig
                                        formProvider: ReasonFormProvider
                                       )(implicit val ec: ExecutionContext) extends ReasonController with I18nSupport {
 
-  private def form(companyName: String) = formProvider(companyName)
+  private def form(companyName: String) = formProvider("messages__reason__error_utrRequired", companyName)
 
   private def viewModel(mode: Mode, index: Index, srn: Option[String], companyName: String): ReasonViewModel = {
     ReasonViewModel(

@@ -43,7 +43,7 @@ class DirectorNoUTRReasonController @Inject()(override val appConfig: FrontendAp
                                               formProvider: ReasonFormProvider
                                              )(implicit val ec: ExecutionContext) extends ReasonController {
 
-  private def form(directorName: String) = formProvider(directorName)
+  private def form(directorName: String) = formProvider("messages__reason__error_utrRequired", directorName)
 
   private def viewModel(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String], directorName: String): ReasonViewModel = {
     ReasonViewModel(
