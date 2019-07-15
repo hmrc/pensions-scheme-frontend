@@ -280,6 +280,8 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
           case (true, _, Some(true), _, _) =>
             controllers.register.establishers.company.director.routes.DirectorNameController
               .onPageLoad(mode, index, answers.allDirectors(index).size, srn)
+          case (true, directors, _, _, _) if directors.isEmpty => DirectorNameController.onPageLoad(
+            mode, index, answers.allDirectors(index).size, srn)
           case (_, directors, _, _, _) if directors.isEmpty => DirectorDetailsController.onPageLoad(
             mode, index, answers.allDirectors(index).size, srn)
           case (_, directors, _, _, _) if directors.lengthCompare(appConfig.maxDirectors) >= 0 =>

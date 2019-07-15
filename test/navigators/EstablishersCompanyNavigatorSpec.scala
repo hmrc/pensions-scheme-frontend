@@ -87,7 +87,7 @@ class EstablishersCompanyNavigatorSpec extends SpecBase with MustMatchers with N
     (CompanyEmailId(0),                           emptyAnswers,                     companyPhoneNumber(mode),           true,           Some(exitJourney(mode, emptyAnswers, 0, cyaCompanyContactDetails(mode))),                   true),
     (CompanyPreviousAddressId(0),                 emptyAnswers,                     previousAddressRoutes(toggled, mode),true,          Some(previousAddressEditRoutes(toggled, mode, emptyAnswers)),              true),
     (CompanyPreviousAddressId(0),                 newEstablisher,                   previousAddressRoutes(toggled, mode),true,          Some(previousAddressEditRoutes(toggled, mode, newEstablisher)),              true),
-    (AddCompanyDirectorsId(0),                    emptyAnswers,                     directorDetails(0, mode),     true,           None,                                                                      true),
+    (AddCompanyDirectorsId(0),                    emptyAnswers,                     startDirectorJourney(toggled, mode, 0),     true,           None,                                                                      true),
     (AddCompanyDirectorsId(0),                    addCompanyDirectorsTrue,          if(toggled) directorName(mode) else directorDetails(1, mode),     true,           None,                                                                      true),
     (AddCompanyDirectorsId(0),                    addCompanyDirectorsFalse,         if(mode == UpdateMode | toggled) taskList(mode) else companyReview(mode),                true,           None,                                           true),
     (AddCompanyDirectorsId(0),                    addCompanyDirectorsFalseNewDir,   if(toggled)taskList(mode) else companyReview(mode),                true,           None,                                                                      true),
@@ -98,6 +98,7 @@ class EstablishersCompanyNavigatorSpec extends SpecBase with MustMatchers with N
     (CheckYourAnswersId(0),                       emptyAnswers,                     if(mode == UpdateMode) anyMoreChanges else addCompanyDirectors(0, mode), true,           None,                                           false),
     (CheckYourAnswersId(0),                       newEstablisher,                   addCompanyDirectors(0, mode), true,           None,                                                                      false)
      )
+//directorDetails(0, mode)
 
   private def normalOnlyRoutes(toggled:Boolean): TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = Table(
     ("Id",                                          "User Answers",               "Next Page (Normal Mode)",                "Save (NM)",  "Next Page (Check Mode)",         "Save (CM)"),
@@ -188,7 +189,10 @@ object EstablishersCompanyNavigatorSpec extends OptionValues with Enumerable.Imp
       )
     )
   }
-  private def directorName(mode: Mode) = routes.DirectorNameController.onPageLoad(mode, establisherIndex, directorIndexNew, None)
+
+  private def startDirectorJourney(toggled:Boolean, mode:Mode, index:Index) = if(toggled) directorName(mode, index) else directorDetails(index, mode)
+
+  private def directorName(mode: Mode, index:Index = directorIndexNew) = routes.DirectorNameController.onPageLoad(mode, establisherIndex, index, None)
 
   private def none: Call = controllers.routes.IndexController.onPageLoad()
 
