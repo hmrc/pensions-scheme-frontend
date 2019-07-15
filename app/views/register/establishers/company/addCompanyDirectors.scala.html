@@ -29,12 +29,9 @@
     postCall: Call,
     viewOnly: Boolean,
     mode: Mode,
-    srn: Option[String]
+    srn: Option[String],
+    enableSubmission: Boolean
 )(implicit request: Request[_], messages: Messages)
-
-@enableSubmission = @{
-    directors.forall(_.isCompleted)
-}
 
 @main_template(
     title = messages("messages__addCompanyDirectors__title"),
