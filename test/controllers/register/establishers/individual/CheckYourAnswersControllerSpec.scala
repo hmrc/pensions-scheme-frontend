@@ -48,7 +48,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
   private val onwardRoute = controllers.routes.IndexController.onPageLoad()
 
   private def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisherHns,
-                         allowChangeHelper: AllowChangeHelper = ach, toggle: Boolean = false): CheckYourAnswersController =
+                         allowChangeHelper: AllowChangeHelper = ach): CheckYourAnswersController =
     new CheckYourAnswersController(
       frontendAppConfig,
       messagesApi,
@@ -59,8 +59,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
       FakeUserAnswersService,
       countryOptions,
       new FakeNavigator(onwardRoute),
-      allowChangeHelper,
-      new FakeFeatureSwitchManagementService(toggle)
+      allowChangeHelper
     )
 
   "CheckYourAnswersController" when {
@@ -80,7 +79,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
         controller(individualAnswers.dataRetrievalAction, _: AllowChangeHelper)
           .onPageLoad(UpdateMode, firstIndex, None)(request))
 
-      "return OK and display Add link for UpdateMode pointing to new Nino page where separateRefCollectionEnabled is true and no nino retrieved from ETMP" in {
+      "return OK and display Add link for UpdateMode pointing to new Nino page where no nino retrieved from ETMP" in {
 
         val expectedNinoRow = {
           implicit val request: FakeDataRequest = FakeDataRequest(individualAnswersWithNoNino)
@@ -88,20 +87,20 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
             controllers.register.establishers.individual.routes.EstablisherNinoNewController.onPageLoad(CheckUpdateMode, firstIndex, Some("srn")).url, UpdateMode)
         }
 
-        val result = controller(individualAnswersWithNoNino.dataRetrievalAction, toggle = true).onPageLoad(UpdateMode, firstIndex, Some("srn"))(fakeRequest)
+        val result = controller(individualAnswersWithNoNino.dataRetrievalAction).onPageLoad(UpdateMode, firstIndex, Some("srn"))(fakeRequest)
         status(result) mustBe OK
 
         contentAsString(result) mustBe viewAsString(Seq(individualDetails(expectedNinoRow, CheckUpdateMode, Some("srn"))), UpdateMode, Some("srn"))
       }
 
-      "return OK and display no add/change link but do display new nino for UpdateMode where separateRefCollectionEnabled is true and a new nino has already been entered" in {
+      "return OK and display no add/change link but do display new nino for UpdateMode where a new nino has already been entered" in {
         val expectedNinoRow = {
           implicit val request: FakeDataRequest = FakeDataRequest(individualAnswersWithNewNino)
           EstablisherNewNinoId(firstIndex).row(
             controllers.register.establishers.individual.routes.EstablisherNinoNewController.onPageLoad(CheckUpdateMode, firstIndex, Some("srn")).url, UpdateMode)
         }
 
-        val result = controller(individualAnswersWithNewNino.dataRetrievalAction, toggle = true).onPageLoad(UpdateMode, firstIndex, Some("srn"))(fakeRequest)
+        val result = controller(individualAnswersWithNewNino.dataRetrievalAction).onPageLoad(UpdateMode, firstIndex, Some("srn"))(fakeRequest)
         status(result) mustBe OK
 
         contentAsString(result) mustBe viewAsString(Seq(individualDetails(expectedNinoRow, CheckUpdateMode, Some("srn"))), UpdateMode, Some("srn"))
