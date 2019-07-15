@@ -1652,3 +1652,6 @@ messages__establisherPreviousConfirmAddress__cya_visually_hidden_label = previou
 
 
 messages__director_email__title =  What is the director’s email address?
+
+messages__establisher__type__title = What kind of establisher are you adding?
+messages__establisher__type__h1 = What kind of establisher are you adding?
