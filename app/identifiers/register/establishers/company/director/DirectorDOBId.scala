@@ -18,9 +18,10 @@ package identifiers.register.establishers.company.director
 
 import identifiers._
 import identifiers.register.establishers.EstablishersId
+import org.joda.time.LocalDate
 import play.api.libs.json.JsPath
 
-case class DirectorDOBId(establisherIndex: Int, directorIndex: Int) extends TypedIdentifier[String] {
+case class DirectorDOBId(establisherIndex: Int, directorIndex: Int) extends TypedIdentifier[LocalDate] {
   override def path: JsPath = EstablishersId(establisherIndex).path \ "director" \ directorIndex \ "directorDetails" \ DirectorDOBId.toString
 }
 

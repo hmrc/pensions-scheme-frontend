@@ -23,7 +23,7 @@ messages__common__firstname = First name
 messages__common__lastname = Last name
 messages__common__middlename = Middle name (optional)
 messages__common__dob = Date of birth
-messages__common__dob__hint = For example 30 9 1990
+messages__common__dob__hint = For example, 31 3 1980
 messages__common__day = Day
 messages__common__month = Month
 messages__common__year = Year
@@ -52,7 +52,7 @@ messages__common__company_vat__hint = This is 9 numbers, sometimes with ‘GB’
 messages__common__nino = National Insurance number
 messages__common__reason = Reason
 
-messages__common__postcode_lookup__enter_postcode = Enter the postcode, or if you have an overseas address, {0} enter the address manually {1}
+messages__common__postcode_lookup__enter_postcode = You can {0} enter the address manually {1}.
 messages__common__postcode_lookup__address_postcode = Postcode
 messages__common_individual_postCode_lookup__lede = This is usually the residential address for this person.
 messages__error__postcode = Enter the postcode
@@ -103,7 +103,7 @@ messages__common__cya__name = Name
 messages__common__cya__address = Address
 messages__common__cya__previous_address = Previous Address
 messages__common__cya__vat = VAT registration number
-messages__common__cya__paye = PAYE employer reference number
+messages__common__cya__paye = Employer PAYE reference
 messages__common__cya__email = Email address
 messages__common__cya__phone = Phone number
 
@@ -269,7 +269,6 @@ messages__uk_bank_account_details__sort_code = Sort code
 messages__uk_bank_account_details__sort_code_hint = For example ’00 55 66’ or ’00-55-66’
 messages__uk_bank_account_details__account_number = Account number
 messages__uk_bank_account_details__date_bank_account = Approximate date the account was opened
-messages__common__dob__hint = For example 30 9 1990
 
 messages__error__bank_name = Enter the bank name
 messages__error__account_name = Enter the account name
@@ -541,6 +540,10 @@ messages__directorAddressConfirm__heading = Confirm {0}’s address
 messages__directorAddressPostcodeLookup__title = Director’s address
 messages__directorAddressPostcodeLookup__heading = Director’s address
 messages__directorAddressPostcodeLookup__lede = This is usually the director’s residential address.
+
+messages__directorDOB__title = What is the director’s date of birth?
+messages__directorDOB__heading = What is {0}’s date of birth?
+messages__directorDOB__hint = For example, 31 3 1980
 
 messages__companyReview__title = Review the company details
 messages__companyReview__heading = Review the company details
@@ -1092,13 +1095,30 @@ messages__visuallyhidden__establisher__crn_yes_no = Change whether the establish
 messages__visuallyhidden__establisher__crn_no = Change why the establisher does not have a Company Registration number
 messages__visuallyhidden__establisher__crn = Change the establisher’s Company Registration number
 messages__visuallyhidden__establisher__crn_add = Add the establisher’s Company Registration number
-messages__visuallyhidden__establisher__address = Change the establisher’s address
-messages__visuallyhidden__establisher__address_years = Change how long the establisher has been at their address
-messages__visuallyhidden__establisher__previous_address = Change the establisher’s previous address
-messages__visuallyhidden__establisher__previous_address_add = Add the establisher’s previous address
+messages__visuallyhidden__establisher__address = Change contact address
+messages__visuallyhidden__establisher__address_years = Change whether company has been at their address for at least 1 year
+messages__visuallyhidden__establisher__address_years_add = Add whether company has been at their address for at least 1 year
+messages__visuallyhidden__establisher__previous_address = Change previous contact address
+messages__visuallyhidden__establisher__previous_address_add = Add previous contact address
 messages__visuallyhidden__establisher__email_address = Change the establisher’s email address
 messages__visuallyhidden__establisher__phone_number = Change the establisher’s phone number
-messages__visuallyhidden__establisher__dormant = Change whether the establisher been dormant in the last 12 months
+messages__visuallyhidden__establisher__dormant = Change whether company has been dormant in the last 12 months
+messages__visuallyhidden__hasCompanyUtr = Change whether company has a Unique Taxpayer Reference (UTR)
+messages__visuallyhidden__hasCompanyVat = Change whether company is registered for VAT
+messages__visuallyhidden__companyPayeRef = Change whether company has an employer PAYE reference
+messages__visuallyhidden__hasCompanyNumber = Change whether company has a company number
+messages__visuallyhidden__companyNumber = Change company number
+messages__visuallyhidden__companyNumber_add = Add company number
+messages__visuallyhidden__noCompanyNumberReason = Change reason why company has no company number
+messages__visuallyhidden__companyUTR = Change UTR
+messages__visuallyhidden__companyUTR_add = Add UTR
+messages__visuallyhidden__noCompanyUTRReason = Change reason why company has no UTR
+messages__visuallyhidden__companyVat = Change VAT registration number
+messages__visuallyhidden__companyVat_add = Add VAT registration number
+messages__visuallyhidden__companyPaye = Change Employer PAYE reference
+messages__visuallyhidden__companyPaye_add = Add Employer PAYE reference
+messages__visuallyhidden__establisher__utr = Change the establisher’s UTR
+messages__visuallyhidden__establisher__utr_add = Add the establisher’s UTR
 
 messages__visuallyhidden__director__nino_yes_no = Change whether the director has a National Insurance number
 messages__visuallyhidden__director__nino_no = Change why the director does not have a National Insurance number
@@ -1475,6 +1495,7 @@ messages__hasCompanyNumber__h1 = Does {0} have a company number?
 messages__hasCompanyNumber__p1 = You can find this on the company’s certificate of incorporation or on any official letters from Companies House.
 messages__hasCompanyNumber__error__required = Select yes if {0} has a company number
 
+
 messages__hasCompanyUtr__title = Does the company have a UTR?
 messages__hasCompanyUtr__h1 = Does {0} have a Unique Taxpayer Reference (UTR)?
 messages__hasCompanyUtr__p1 = This is a 10-digit or 13-digit number. You can find it on tax returns and other documents from HMRC. It might be called ‘reference’, ‘UTR’ or ‘official use’.
@@ -1526,7 +1547,6 @@ messages__companyPaye__error__required = Select yes if the company has an employ
 messages__companyPayeRef__title = Does the establisher have an employer PAYE reference?
 messages__companyPayeRef__h1 = Does {0} have an employer PAYE reference?
 messages__companyPayeRef__error__required = Select whether the company has an employer PAYE number
-
 messages__companyPayeRef__p1 = This is a 3 digit tax office number, a forward slash, and a tax office employer reference, like 123/AB456. It may be called ‘Employer PAYE reference’ or ‘PAYE reference’.
 
 messages__companyVat__title = Is the company registered for VAT?
@@ -1576,8 +1596,10 @@ messages__companyUtr__heading = What is {0}’s UTR?
 messages__companyUtr__guidance1 = If the UTR is 13 numbers, you only need to enter the last 10.
 messages__companyUtr__guidance2 = If there is a letter ‘K’ at the end of the number, do not enter it.
 messages__companyUtr__hint = For example, 12345 67890
+messages__companyUtr__checkyouranswerslabel = UTR
 
-messages__reason__error_required = Enter a reason why {0} does not have a UTR
+messages__reason__error_utrRequired = Enter a reason why {0} does not have a UTR
+messages__reason__error_ninoRequired = Enter a reason why {0} does not have a NINO
 messages__reason__error_maxLength = Reason must be 160 characters or less
 messages__reason__error_invalid = Reason must only include letters, numbers and punctuation marks
 messages__noCompanyUtr__title = Why does the company not have a UTR?
@@ -1587,6 +1609,46 @@ messages__establisher_phone__title =  What is the establisher’s phone number?
 messages__director_phone__title =  What is the director’s phone number?
 messages__establisher_phone__hint = We will only use this to contact about pension scheme administration.
 
-
 messages__establisher_email__title =  What is the establisher’s email address?
 messages__establisher_email__hint = We will only use this to contact about pension scheme administration.
+
+messages__directorNoNinoReason__title = Why does the director not have a National Insurance number?
+messages__directorNoNinoReason__heading = Why does {0} not have a National Insurance number?
+
+messages__directorHasNino__title =  Does the director have a National Insurance number?
+messages__directorHasNino__h1 =  Does {0} have a National Insurance number?
+messages__directorHasNino__error__required = Select yes if the director has a National Insurance number
+
+
+messages__hasDirectorUtr__title = Does the director have a UTR?
+messages__hasDirectorUtr__h1 = Does {0} have a Unique Taxpayer Reference (UTR)?
+messages__hasDirectorUtr__p1 = This is a 10-digit or 13-digit number. You can find it on tax returns and other documents from HMRC. It might be called ‘reference’, ‘UTR’ or ‘official use’.
+messages__hasDirectorUtr__error__required = Select yes if {0} has a Unique Taxpayer Reference (UTR)
+
+messages__noDirectorUtr__title = Why does the director not have a UTR?
+messages__noDirectorUtr__heading = Why does {0} not have a UTR?
+
+messages__establisherPostCode__title = What is establisher’s postcode?
+messages__establisherPostCode__h1 = What is {0}’s postcode?
+
+messages__establisherPreviousPostCode__title = What was establisher’s previous postcode?
+messages__establisherPreviousPostCode__h1 = What was {0}’s previous postcode?
+
+messages__establisherSelectAddress__title = Select the address
+messages__establisherSelectAddress__h1 = What is {0}’s address?
+
+messages__establisherPreviousSelectAddress__title = Select the previous address
+messages__establisherPreviousSelectAddress__h1 = What was {0}’s previous address?
+
+messages__establisherConfirmAddress__title = Confirm establisher’s address
+messages__establisherConfirmAddress__h1 = Confirm {0}’s address
+messages__establisherConfirmAddress__cya_label = {0}’s address
+messages__establisherConfirmAddress__cya_visually_hidden_label = contact address
+
+messages__establisherPreviousConfirmAddress__title = Confirm establisher’s previous address
+messages__establisherPreviousConfirmAddress__h1 = Confirm {0}’s previous address
+messages__establisherPreviousConfirmAddress__cya_label = {0}’s previous address
+messages__establisherPreviousConfirmAddress__cya_visually_hidden_label = previous contact address
+
+
+messages__director_email__title =  What is the director’s email address?

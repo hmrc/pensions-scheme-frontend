@@ -18,10 +18,12 @@ package navigators
 
 import base.SpecBase
 import connectors.FakeUserAnswersCacheConnector
+import identifiers.register.trustees.ExistingCurrentAddressId
 import identifiers.register.trustees.IsTrusteeNewId
 import identifiers.register.trustees.individual._
 import models.Mode.checkMode
 import models._
+import models.address.Address
 import org.scalatest.OptionValues
 import play.api.libs.json.Json
 import play.api.mvc.Call
@@ -46,7 +48,6 @@ class TrusteesIndividualNavigatorSpec extends SpecBase with NavigatorBehaviour {
     (TrusteeAddressId(0), newTrustee, addressYears(mode), true, Some(checkYourAnswers(mode)), true),
     (TrusteeAddressYearsId(0), overAYearNew, contactDetails(mode), true, Some(exitJourney(mode,overAYearNew)), true),
     (TrusteeAddressYearsId(0), overAYear, contactDetails(mode), true, Some(exitJourney(mode,emptyAnswers)), true),
-    (TrusteeAddressYearsId(0), underAYear, previousAddressPostcode(mode), true, addressYearsLessThanTwelveEdit(mode), true),
     (TrusteeAddressYearsId(0), emptyAnswers, sessionExpired, false, Some(sessionExpired), false),
     (IndividualConfirmPreviousAddressId(0), emptyAnswers, none, false, Some(sessionExpired), false),
     (IndividualConfirmPreviousAddressId(0), confirmPreviousAddressYes, none, false, Some(anyMoreChanges), false),
@@ -59,6 +60,12 @@ class TrusteesIndividualNavigatorSpec extends SpecBase with NavigatorBehaviour {
     (CheckYourAnswersId, emptyAnswers, addTrustee(mode), false, None, true)
   )
 
+  private def editRoutes = Table(
+    ("Id", "User Answers", "Next Page (UpdateMode Mode)", "Save (NM)", "Next Page (CheckUpdateMode Mode)", "Save (CM)"),
+    (TrusteeAddressYearsId(0), underAYear, previousAddressPostcode(UpdateMode), true, addressYearsLessThanTwelveEdit(CheckUpdateMode, underAYear), true),
+    (TrusteeAddressYearsId(0), underAYearWithExistingCurrentAddress, previousAddressPostcode(UpdateMode), true, addressYearsLessThanTwelveEdit(CheckUpdateMode, underAYearWithExistingCurrentAddress), true)
+  )
+
   private val navigator: TrusteesIndividualNavigator =
     new TrusteesIndividualNavigator(FakeUserAnswersCacheConnector, frontendAppConfig)
 
@@ -66,6 +73,7 @@ class TrusteesIndividualNavigatorSpec extends SpecBase with NavigatorBehaviour {
     appRunning()
     behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, routes(NormalMode), dataDescriber)
     behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, routes(UpdateMode), dataDescriber, UpdateMode)
+    behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, editRoutes, dataDescriber, UpdateMode)
     behave like nonMatchingNavigator(navigator)
     behave like nonMatchingNavigator(navigator, UpdateMode)
   }
@@ -120,6 +128,10 @@ object TrusteesIndividualNavigatorSpec extends SpecBase with OptionValues {
 
   private val underAYear = UserAnswers().trusteesIndividualAddressYears(0, AddressYears.UnderAYear)
 
+  private val underAYearWithExistingCurrentAddress =
+    UserAnswers().trusteesIndividualAddressYears(0, AddressYears.UnderAYear)
+      .set(ExistingCurrentAddressId(0))(Address("Line 1", "Line 2", None, None, None, "UK")).asOpt.value
+
   private def dataDescriber(answers: UserAnswers): String = answers.toString
 
   private def anyMoreChanges = controllers.routes.AnyMoreChangesController.onPageLoad(None)
@@ -130,8 +142,18 @@ object TrusteesIndividualNavigatorSpec extends SpecBase with OptionValues {
     else anyMoreChanges
   }
 
-  private def addressYearsLessThanTwelveEdit(mode: Mode) =
-    if (checkMode(mode) == CheckUpdateMode) Some(confirmPreviousAddress)
-    else Some(previousAddressPostcode(checkMode(mode)))
+  private def addressYearsLessThanTwelveEdit(mode: Mode, userAnswers: UserAnswers) = {
+    (
+      userAnswers.get(ExistingCurrentAddressId(0)),
+      mode
+    ) match {
+      case (Some(_), CheckUpdateMode) =>
+        Some(confirmPreviousAddress)
+      case (_, CheckUpdateMode) =>
+        Some(previousAddressPostcode(mode))
+      case _ =>
+        Some(sessionExpired)
+    }
+  }
 
 }
