@@ -69,9 +69,13 @@ object CheckYourAnswers {
 
   implicit def vat[I <: TypedIdentifier[Vat]](implicit r: Reads[Vat]): CheckYourAnswers[I] = VatCYA()()
 
-  implicit def personDetails[I <: TypedIdentifier[PersonDetails]](implicit rds: Reads[PersonDetails], messages: Messages): CheckYourAnswers[I] = PersonalDetailsCYA()()
+  implicit def personDetails[I <: TypedIdentifier[PersonDetails]](
+                             implicit rds: Reads[PersonDetails],
+                             messages: Messages
+                            ): CheckYourAnswers[I] = PersonalDetailsCYA()()
 
-  case class StringCYA[I <: TypedIdentifier[String]](label: Option[String] = None, hiddenLabel: Option[String] = None) {
+  case class StringCYA[I <: TypedIdentifier[String]](label: Option[String] = None, hiddenLabel: Option[String] = None,
+                                                     displayAddLink: Boolean = false) {
 
     def apply()(implicit rds: Reads[String], countryOptions: CountryOptions): CheckYourAnswers[I] = {
       new CheckYourAnswers[I] {
@@ -335,6 +339,11 @@ object CheckYourAnswers {
       case _ => stringValue
     }
   }
+
+  def addLink(label: String, changeUrl: String, hiddenLabel: Option[String]): Seq[AnswerRow] = Seq(AnswerRow(label,
+    Seq("site.not_entered"),
+    answerIsMessageKey = true,
+    Some(Link("site.add", changeUrl, hiddenLabel))))
 }
 
 case class NinoCYA[I <: TypedIdentifier[Nino]](
@@ -374,12 +383,12 @@ case class NinoCYA[I <: TypedIdentifier[Nino]](
 }
 
 case class CompanyRegistrationNumberCYA[I <: TypedIdentifier[CompanyRegistrationNumber]](
-                                                                                          label: String = "messages__company__cya__crn_yes_no",
-                                                                                          reasonLabel: String = "messages__company__cya__crn_no_reason",
-                                                                                          changeHasCrn: String = "messages__visuallyhidden__establisher__crn_yes_no",
-                                                                                          changeCrn: String = "messages__visuallyhidden__establisher__crn",
-                                                                                          changeNoCrn: String = "messages__visuallyhidden__establisher__crn_no"
-                                                                                        ) {
+                                        label: String = "messages__company__cya__crn_yes_no",
+                                        reasonLabel: String = "messages__company__cya__crn_no_reason",
+                                        changeHasCrn: String = "messages__visuallyhidden__establisher__crn_yes_no",
+                                        changeCrn: String = "messages__visuallyhidden__establisher__crn",
+                                        changeNoCrn: String = "messages__visuallyhidden__establisher__crn_no"
+                                      ) {
 
   def apply()(implicit rds: Reads[CompanyRegistrationNumber]): CheckYourAnswers[I] = {
     new CheckYourAnswers[I] {

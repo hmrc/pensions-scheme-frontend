@@ -35,7 +35,7 @@ object CompanyVatVariationsId {
   implicit def cya(implicit messages: Messages, countryOptions: CountryOptions): CheckYourAnswers[CompanyVatVariationsId] = {
     new CheckYourAnswers[CompanyVatVariationsId] {
 
-      private val hiddenLabelVat = "messages__visuallyhidden__establisher__vat_number"
+      private val hiddenLabelVat = "messages__visuallyhidden__companyVat"
       private val vatLabel = "messages__common__cya__vat"
 
       override def row(id: CompanyVatVariationsId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
