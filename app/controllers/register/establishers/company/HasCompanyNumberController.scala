@@ -20,7 +20,7 @@ import config.FrontendAppConfig
 import controllers.HasReferenceNumberController
 import controllers.actions._
 import forms.HasCrnFormProvider
-import identifiers.register.establishers.company.{CompanyDetailsId, HasCompanyNumberId}
+import identifiers.register.establishers.company.{CompanyDetailsId, HasCompanyNumberId, IsDetailsCompleteId}
 import javax.inject.Inject
 import models.{Index, Mode}
 import play.api.i18n.MessagesApi
