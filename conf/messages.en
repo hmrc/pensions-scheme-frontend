@@ -1304,7 +1304,7 @@ messages__adviser__phone__p1 = This will be used if HMRC need to contact {0}.
 
 messages__phone__blank = Enter a phone number
 messages__phone__length = The phone number cannot be more than 24 characters
-messages__phone__invalid = The phone number can only contain numbers
+messages__phone__invalid = Enter a phone number, like 01632 960 001, 07700 900 982 or +44 0808 157 0192
 
 declarationDuties.checkYourAnswersLabel= Do you have working knowledge of pensions and pensions tax legislation?
 messages__visuallyhidden__declarationDuties = Change if you have working knowledge of pensions and pensions tax legislation
@@ -1606,6 +1606,8 @@ messages__noCompanyUtr__title = Why does the company not have a UTR?
 messages__noCompanyUtr__heading = Why does {0} not have a UTR?
 
 messages__establisher_phone__title =  What is the establisher’s phone number?
+messages__director_phone__title =  What is the director’s phone number?
+messages__establisher_phone__hint = We will only use this to contact about pension scheme administration.
 
 messages__establisher_email__title =  What is the establisher’s email address?
 messages__establisher_email__hint = We will only use this to contact about pension scheme administration.
