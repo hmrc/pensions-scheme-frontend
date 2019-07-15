@@ -80,7 +80,6 @@ trait CacheConnector extends UserAnswersCacheConnector{
                                  ec: ExecutionContext,
                                  hc: HeaderCarrier
                                 ): Future[JsValue] = {
-
     fetch(cacheId).flatMap {
       json =>
         modification(UserAnswers(json.getOrElse(Json.obj()))) match {

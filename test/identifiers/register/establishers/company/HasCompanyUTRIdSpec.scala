@@ -20,6 +20,7 @@ import base.SpecBase
 import identifiers.register.establishers.IsEstablisherNewId
 import models._
 import models.requests.DataRequest
+import play.api.libs.json.Json
 import play.api.mvc.AnyContent
 import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.PsaId
@@ -35,6 +36,46 @@ class HasCompanyUTRIdSpec extends SpecBase {
     AnswerRow(messages("messages__hasCompanyUtr__h1", name), List("site.yes"), true, Some(Link("site.change",onwardUrl,
       Some(messages("messages__visuallyhidden__hasCompanyUtr")))))
   )
+
+  "Cleanup" when {
+
+    def answers(hasUtr: Boolean = true): UserAnswers = UserAnswers(Json.obj())
+      .set(HasCompanyUTRId(0))(hasUtr)
+      .flatMap(_.set(CompanyUTRId(0))("test-utr"))
+      .flatMap(_.set(NoCompanyUTRId(0))("reason"))
+      .asOpt.value
+
+    "`HasCompanyUTR` is set to `false`" must {
+
+      val result: UserAnswers = answers().set(HasCompanyUTRId(0))(false).asOpt.value
+
+      "remove the data for `CompanyUTR`" in {
+        result.get(CompanyUTRId(0)) mustNot be(defined)
+      }
+    }
+
+    "`HasCompanyUTR` is set to `true`" must {
+
+      val result: UserAnswers = answers(false).set(HasCompanyUTRId(0))(true).asOpt.value
+
+      "remove the data for `CompanyRegistrationNumberVariations`" in {
+        result.get(NoCompanyUTRId(0)) mustNot be(defined)
+      }
+    }
+
+    "`HasCompanyUTR` is not present" must {
+
+      val result: UserAnswers = answers().remove(HasCompanyUTRId(0)).asOpt.value
+
+      "not remove the data for `CompanyUTR`" in {
+        result.get(CompanyUTRId(0)) mustBe defined
+      }
+
+      "not remove the data for `NoCompanyUTR`" in {
+        result.get(NoCompanyUTRId(0)) mustBe defined
+      }
+    }
+  }
 
   "cya" when {
 

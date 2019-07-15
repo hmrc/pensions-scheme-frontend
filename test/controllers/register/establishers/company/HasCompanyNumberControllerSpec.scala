@@ -76,7 +76,7 @@ class HasCompanyNumberControllerSpec extends ControllerSpecBase with MockitoSuga
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
-      FakeUserAnswersService.verify(HasCompanyNumberId(index), true)
+      FakeUserAnswersService.userAnswer.get(HasCompanyNumberId(index)).value mustEqual true
     }
 
     "return a Bad Request and errors when invalid data is submitted" in {

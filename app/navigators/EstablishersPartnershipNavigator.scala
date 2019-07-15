@@ -26,6 +26,8 @@ import identifiers.register.establishers.{ExistingCurrentAddressId, IsEstablishe
 import models.Mode._
 import models._
 import utils.{Navigator, UserAnswers}
+import controllers.routes._
+import utils.{Navigator, UserAnswers}
 
 class EstablishersPartnershipNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector,
                                                  appConfig: FrontendAppConfig) extends Navigator {

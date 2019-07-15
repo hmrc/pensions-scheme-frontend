@@ -20,6 +20,7 @@ import base.SpecBase
 import identifiers.register.establishers.IsEstablisherNewId
 import models._
 import models.requests.DataRequest
+import play.api.libs.json.Json
 import play.api.mvc.AnyContent
 import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.PsaId
@@ -68,6 +69,41 @@ class HasCompanyPayeIdSpec extends SpecBase {
         implicit val userAnswers: UserAnswers = request.userAnswers
 
         HasCompanyPAYEId(0).row(onwardUrl, UpdateMode) mustEqual Nil
+      }
+    }
+  }
+
+  "Cleanup" when {
+
+    def answers(hasPaye: Boolean = true): UserAnswers = UserAnswers(Json.obj())
+      .set(HasCompanyPAYEId(0))(hasPaye)
+      .flatMap(_.set(CompanyPayeVariationsId(0))(ReferenceValue("test-paye")))
+      .asOpt.value
+
+    "`HasCompanyPAYE` is set to `false`" must {
+
+      val result: UserAnswers = answers().set(HasCompanyPAYEId(0))(false).asOpt.value
+
+      "remove the data for `CompanyPAYE`" in {
+        result.get(CompanyPayeVariationsId(0)) mustNot be(defined)
+      }
+    }
+
+    "`HasCompanyPAYE` is set to `true`" must {
+
+      val result: UserAnswers = answers(false).set(HasCompanyPAYEId(0))(true).asOpt.value
+
+      "no clean up for `CompanyPAYE`" in {
+        result.get(CompanyPayeVariationsId(0)) must be(defined)
+      }
+    }
+
+    "`HasCompanyPAYE` is not present" must {
+
+      val result: UserAnswers = answers().remove(HasCompanyPAYEId(0)).asOpt.value
+
+      "no clean up for `CompanyPAYE`" in {
+        result.get(CompanyPayeVariationsId(0)) mustBe defined
       }
     }
   }
