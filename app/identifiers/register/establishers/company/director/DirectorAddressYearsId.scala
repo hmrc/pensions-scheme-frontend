@@ -16,12 +16,13 @@
 
 package identifiers.register.establishers.company.director
 
+import config.FeatureSwitchManagementService
 import identifiers._
 import identifiers.register.establishers.{EstablishersId, IsEstablisherCompleteId}
 import models.AddressYears
 import play.api.i18n.Messages
 import play.api.libs.json.{JsPath, JsResult}
-import utils.UserAnswers
+import utils.{Toggles, UserAnswers}
 import utils.checkyouranswers.{AddressYearsCYA, CheckYourAnswers}
 import viewmodels.AnswerRow
 
@@ -48,13 +49,18 @@ case class DirectorAddressYearsId(establisherIndex: Int, directorIndex: Int) ext
 object DirectorAddressYearsId {
   override lazy val toString: String = "companyDirectorAddressYears"
 
-  implicit def cya(implicit messages: Messages): CheckYourAnswers[DirectorAddressYearsId] = {
+  implicit def cya(implicit messages: Messages, featureSwitchManagementService: FeatureSwitchManagementService): CheckYourAnswers[DirectorAddressYearsId] = {
 
-    val label = (establisherIndex: Int, directorIndex: Int, ua: UserAnswers) =>
-      ua.get(DirectorDetailsId(establisherIndex, directorIndex)) match {
-        case Some(name) => messages("messages__director__cya__address_years", name.firstAndLastName)
-        case None => "messages__director__cya__address_years__fallback"
-      }
+    val name = (establisherIndex: Int, directorIndex: Int, ua: UserAnswers) =>
+      if(featureSwitchManagementService.get(Toggles.isEstablisherCompanyHnSEnabled))
+        ua.get(DirectorNameId(establisherIndex, directorIndex)).map(_.fullName)
+       else
+        ua.get(DirectorDetailsId(establisherIndex, directorIndex)).map(_.fullName)
+
+    def label(establisherIndex: Int, directorIndex: Int, ua: UserAnswers)=
+      name(establisherIndex, directorIndex, ua).fold("messages__director__cya__address_years__fallback")(name =>
+        messages("messages__director__cya__address_years", name)
+      )
 
     val changeAddressYears: String = "messages__visuallyhidden__director__address_years"
 

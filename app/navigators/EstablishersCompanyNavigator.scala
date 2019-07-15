@@ -284,7 +284,7 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
 
   private def addDirectors(mode: Mode, index: Int, answers: UserAnswers, srn: Option[String]): Option[NavigateTo] = {
 
-    val directorsSeq = answers.allDirectorsAfterDelete(index)
+    val directorsSeq = answers.allDirectorsAfterDelete(index, featureSwitchManagementService.get(Toggles.isEstablisherCompanyHnSEnabled))
     val addCompanyDirectors = answers.get(AddCompanyDirectorsId(index))
     val addNewEstablisher = answers.get(IsEstablisherNewId(index))
     val toggled = featureSwitchManagementService.get(Toggles.isEstablisherCompanyHnSEnabled)

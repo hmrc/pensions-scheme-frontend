@@ -18,7 +18,12 @@ package identifiers.register.establishers.company.director
 
 import identifiers._
 import identifiers.register.establishers.EstablishersId
+import play.api.i18n.Messages
 import play.api.libs.json.JsPath
+import utils.{CountryOptions, UserAnswers}
+import utils.checkyouranswers.CheckYourAnswers
+import utils.checkyouranswers.CheckYourAnswers.StringCYA
+import viewmodels.AnswerRow
 
 case class DirectorNoUTRReasonId(establisherIndex: Int, directorIndex: Int) extends TypedIdentifier[String] {
   override def path: JsPath = EstablishersId(establisherIndex).path \ "director" \ directorIndex \ "directorUniqueTaxReference" \ DirectorNoUTRReasonId.toString
@@ -26,5 +31,30 @@ case class DirectorNoUTRReasonId(establisherIndex: Int, directorIndex: Int) exte
 
 
 object DirectorNoUTRReasonId {
-  override def toString: String = "reason"
+  override def toString: String = "noUtrReason"
+
+  implicit def cya(implicit userAnswers: UserAnswers,
+                   messages: Messages,
+                   countryOptions: CountryOptions): CheckYourAnswers[DirectorNoUTRReasonId] = {
+
+    def label(establisherIndex: Int, directorIndex: Int) =
+      userAnswers.get(DirectorNameId(establisherIndex, directorIndex)) match {
+      case Some(name) => Some(messages("messages__noDirectorUtr__heading", name.fullName))
+      case _ => Some(messages("messages__noDirectorUtr__cya_fallback"))
+    }
+
+    def hiddenLabel = Some(messages("messages__visuallyhidden__director__utr_no"))
+
+    new CheckYourAnswers[DirectorNoUTRReasonId] {
+      override def row(id: DirectorNoUTRReasonId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+        StringCYA(label(id.establisherIndex, id.directorIndex), hiddenLabel)().row(id)(changeUrl, userAnswers)
+
+
+      override def updateRow(id: DirectorNoUTRReasonId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+        userAnswers.get(IsNewDirectorId(id.establisherIndex, id.directorIndex)) match {
+          case Some(true) => row(id)(changeUrl, userAnswers)
+          case _ => Seq.empty[AnswerRow]
+        }
+    }
+  }
 }

@@ -17,7 +17,7 @@
 package utils
 
 import identifiers._
-import identifiers.register.establishers.company.director.{DirectorDetailsId, IsDirectorCompleteId, IsNewDirectorId}
+import identifiers.register.establishers.company.director.{DirectorDetailsId, DirectorNameId, IsDirectorCompleteId, IsNewDirectorId}
 import identifiers.register.establishers.company.{CompanyDetailsId => EstablisherCompanyDetailsId}
 import identifiers.register.establishers.individual.EstablisherDetailsId
 import identifiers.register.establishers.partnership.PartnershipDetailsId
@@ -28,7 +28,7 @@ import identifiers.register.trustees.individual.TrusteeDetailsId
 import identifiers.register.trustees.partnership.{IsPartnershipCompleteId, PartnershipDetailsId => TrusteePartnershipDetailsId}
 import identifiers.register.trustees.{IsTrusteeCompleteId, IsTrusteeNewId, TrusteeKindId, TrusteesId}
 import models.address.Address
-import models.person.PersonDetails
+import models.person.{PersonDetails, PersonName}
 import models.register._
 import models.register.establishers.EstablisherKind
 import models.{CompanyDetails, PartnershipDetails}
@@ -250,8 +250,30 @@ case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Implicits 
     }.getOrElse(Seq.empty)
   }
 
-  def allDirectorsAfterDelete(establisherIndex: Int): Seq[DirectorEntity] = {
-    allDirectors(establisherIndex).filterNot(_.isDeleted)
+  def allDirectorsHnS(establisherIndex: Int): Seq[DirectorEntity] = {
+
+    getAllRecursive[PersonName](DirectorNameId.collectionPath(establisherIndex)).map {
+      details =>
+        for ((director, directorIndex) <- details.zipWithIndex) yield {
+          val isComplete = get(IsDirectorCompleteId(establisherIndex, directorIndex)).getOrElse(false)
+          val isNew = get(IsNewDirectorId(establisherIndex, directorIndex)).getOrElse(false)
+          DirectorEntity(
+            DirectorDetailsId(establisherIndex, directorIndex),
+            director.fullName,
+            director.isDeleted,
+            isComplete,
+            isNew,
+            details.count(!_.isDeleted)
+          )
+        }
+    }.getOrElse(Seq.empty)
+  }
+
+  def allDirectorsAfterDelete(establisherIndex: Int, isHnSEnabled: Boolean): Seq[DirectorEntity] = {
+    if(isHnSEnabled)
+      allDirectorsHnS(establisherIndex).filterNot(_.isDeleted)
+    else
+      allDirectors(establisherIndex).filterNot(_.isDeleted)
   }
 
   def allPartners(establisherIndex: Int): Seq[PartnerEntity] = {
@@ -424,14 +446,14 @@ case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Implicits 
 
   }
 
-  def isDirectorPartnerCompleted(establisherIndex:Int) = get(EstablisherKindId(establisherIndex)) match {
-    case Some(EstablisherKind.Company) => allDirectorsAfterDelete(establisherIndex).forall(_.isCompleted)
+  def isDirectorPartnerCompleted(establisherIndex:Int, isHnSEnabled: Boolean) = get(EstablisherKindId(establisherIndex)) match {
+    case Some(EstablisherKind.Company) => allDirectorsAfterDelete(establisherIndex, isHnSEnabled).forall(_.isCompleted)
     case Some(EstablisherKind.Partnership) => allPartnersAfterDelete(establisherIndex).forall(_.isCompleted)
     case _ => true
   }
 
-  def allEstablishersCompleted = !allEstablishersAfterDelete.zipWithIndex.collect { case (item, establisherIndex) =>
-    item.isCompleted && isDirectorPartnerCompleted(establisherIndex)
+  def allEstablishersCompleted(isHnSEnabled: Boolean) = !allEstablishersAfterDelete.zipWithIndex.collect { case (item, establisherIndex) =>
+    item.isCompleted && isDirectorPartnerCompleted(establisherIndex, isHnSEnabled)
   }.contains(false)
 
   def isInsuranceCompleted: Boolean = get(BenefitsSecuredByInsuranceId) match {
@@ -441,9 +463,9 @@ case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Implicits 
     case _ => false
   }
 
-  def areVariationChangesCompleted: Boolean = {
+  def areVariationChangesCompleted(isHnSEnabled: Boolean = false): Boolean = {
 
-    isInsuranceCompleted && isAllTrusteesCompleted && allEstablishersCompleted
+    isInsuranceCompleted && isAllTrusteesCompleted && allEstablishersCompleted(isHnSEnabled)
 
   }
 }

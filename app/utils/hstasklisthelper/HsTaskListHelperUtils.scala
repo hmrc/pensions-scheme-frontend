@@ -28,6 +28,7 @@ import utils.{Enumerable, UserAnswers}
 trait HsTaskListHelperUtils extends Enumerable.Implicits {
 
   implicit val messages: Messages
+  protected val isHnSEnabled: Boolean
 
   sealed trait Spoke
 
@@ -112,7 +113,7 @@ trait HsTaskListHelperUtils extends Enumerable.Implicits {
       createSpoke(answers, EstablisherCompanyDetails, mode, srn, name, index, isEstablisherNew),
       createSpoke(answers, EstablisherCompanyAddress, mode, srn, name, index, isEstablisherNew),
       createSpoke(answers, EstablisherCompanyContactDetails, mode, srn, name, index, isEstablisherNew),
-      createDirectorPartnerSpoke(answers.allDirectorsAfterDelete(index), EstablisherCompanyDirectors, mode, srn, name, index)
+      createDirectorPartnerSpoke(answers.allDirectorsAfterDelete(index, isHnSEnabled), EstablisherCompanyDirectors, mode, srn, name, index)
     )
   }
 }

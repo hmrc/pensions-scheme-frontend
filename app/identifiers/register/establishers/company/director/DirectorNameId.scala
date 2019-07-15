@@ -18,13 +18,54 @@ package identifiers.register.establishers.company.director
 
 import identifiers._
 import identifiers.register.establishers.EstablishersId
+import models.Link
 import models.person.PersonName
-import play.api.libs.json.JsPath
+import play.api.i18n.Messages
+import play.api.libs.json.{JsPath, Reads}
+import utils.UserAnswers
+import utils.checkyouranswers.CheckYourAnswers
+import viewmodels.{AnswerRow, Message}
 
 case class DirectorNameId(establisherIndex: Int, directorIndex: Int) extends TypedIdentifier[PersonName] {
-  override def path: JsPath = EstablishersId(establisherIndex).path \ "director" \ directorIndex \ DirectorNameId.toString
+  override def path: JsPath = EstablishersId(establisherIndex).path \ "director" \ directorIndex \ "directorDetails" \ DirectorNameId.toString
 }
 
 object DirectorNameId {
+  def collectionPath(establisherIndex: Int): JsPath = EstablishersId(establisherIndex).path \ "director" \\ DirectorNameId.toString
+
   override def toString: String = "directorDetails"
+
+  implicit def cya(implicit rds: Reads[PersonName], messages: Messages): CheckYourAnswers[DirectorNameId] = {
+    new CheckYourAnswers[DirectorNameId] {
+
+      override def row(id: DirectorNameId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+        userAnswers.get(id).fold(Nil: Seq[AnswerRow]) { personDetails => {
+          Seq(
+            AnswerRow(
+              "messages__directorName__cya",
+              Seq(personDetails.fullName),
+              answerIsMessageKey = false,
+              Some(Link("site.change", changeUrl, Some(Message("messages__visuallyhidden__directorName", personDetails.fullName).resolve)))
+            )
+          )
+        }}
+
+      override def updateRow(id: DirectorNameId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+        userAnswers.get(IsNewDirectorId(id.establisherIndex, id.directorIndex)) match {
+          case Some(true) => row(id)(changeUrl, userAnswers)
+          case _ =>
+            userAnswers.get(id).fold(Nil: Seq[AnswerRow]) { personDetails =>
+              Seq(
+                AnswerRow(
+                  "messages__directorName__cya",
+                  Seq(personDetails.fullName),
+                  answerIsMessageKey = false,
+                  None
+                )
+              )
+            }
+        }
+    }
+  }
+
 }

@@ -91,16 +91,11 @@ class DirectorDOBController @Inject()(
               personName.fullName
             )))),
 
-        value => {
-          val existingUserAnswers = request.userAnswers
-          val answers = request.userAnswers.set(IsNewDirectorId(establisherIndex, directorIndex))(true).flatMap(
-            _.set(DirectorDOBId(establisherIndex, directorIndex))(value)).asOpt.getOrElse(request.userAnswers)
-          println(answers.json)
-          userAnswersService.upsert(mode, srn, answers.json).map {
+        value =>
+          userAnswersService.save(mode, srn, DirectorDOBId(establisherIndex, directorIndex), value).map {
             cacheMap =>
               Redirect(navigator.nextPage(DirectorDOBId(establisherIndex, directorIndex), mode, UserAnswers(cacheMap), srn))
           }
-        }
       )
   }
 }

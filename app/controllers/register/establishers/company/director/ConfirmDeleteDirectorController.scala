@@ -16,7 +16,7 @@
 
 package controllers.register.establishers.company.director
 
-import config.FrontendAppConfig
+import config.{FeatureSwitchManagementService, FrontendAppConfig}
 import controllers.Retrievals
 import controllers.actions._
 import forms.register.establishers.company.director.ConfirmDeleteDirectorFormProvider
@@ -31,7 +31,7 @@ import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.EstablishersCompanyDirector
-import utils.{Navigator, SectionComplete, UserAnswers}
+import utils.{Navigator, SectionComplete, Toggles, UserAnswers}
 import views.html.register.establishers.company.director.confirmDeleteDirector
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -46,7 +46,8 @@ class ConfirmDeleteDirectorController @Inject()(
                                                  allowAccess: AllowAccessActionProvider,
                                                  requireData: DataRequiredAction,
                                                  sectionComplete: SectionComplete,
-                                                 formProvider: ConfirmDeleteDirectorFormProvider
+                                                 formProvider: ConfirmDeleteDirectorFormProvider,
+                                                 fs: FeatureSwitchManagementService
                                                )(implicit val ec: ExecutionContext) extends FrontendController with I18nSupport with Retrievals {
 
   private val form: Form[Boolean] = formProvider()
@@ -100,7 +101,7 @@ class ConfirmDeleteDirectorController @Inject()(
               deletionResult.flatMap {
                 jsValue =>
                   val userAnswers = UserAnswers(jsValue)
-                  if (userAnswers.allDirectorsAfterDelete(establisherIndex).isEmpty) {
+                  if (userAnswers.allDirectorsAfterDelete(establisherIndex, fs.get(Toggles.isEstablisherCompanyHnSEnabled)).isEmpty) {
                     userAnswers.upsert(IsEstablisherCompleteId(establisherIndex))(false) { result =>
                       userAnswersService.upsert(mode, srn, result.json).map { _ =>
                         Redirect(navigator.nextPage(ConfirmDeleteDirectorId(establisherIndex), mode, userAnswers, srn))

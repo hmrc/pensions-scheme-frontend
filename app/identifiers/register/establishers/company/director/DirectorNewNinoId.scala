@@ -16,13 +16,14 @@
 
 package identifiers.register.establishers.company.director
 
+import config.FeatureSwitchManagementService
 import identifiers._
 import identifiers.register.establishers.EstablishersId
 import models.ReferenceValue
 import play.api.i18n.Messages
 import play.api.libs.json.JsPath
 import utils.checkyouranswers.{CheckYourAnswers, ReferenceValueCYA}
-import utils.{CountryOptions, UserAnswers}
+import utils.{Toggles, UserAnswers}
 import viewmodels.AnswerRow
 
 case class DirectorNewNinoId(establisherIndex: Int, directorIndex: Int) extends TypedIdentifier[ReferenceValue] {
@@ -33,24 +34,19 @@ object DirectorNewNinoId {
 
   override lazy val toString: String = "directorNino"
 
-  implicit def cya(implicit messages: Messages): CheckYourAnswers[DirectorNewNinoId] = {
+  implicit def cya(implicit messages: Messages,
+                   featureSwitchManagementService: FeatureSwitchManagementService): CheckYourAnswers[DirectorNewNinoId] = {
 
     new CheckYourAnswers[DirectorNewNinoId] {
 
-      private val getLabel = (establisherIndex: Int, directorIndex: Int, ua: UserAnswers) =>
-        ua.get(DirectorDetailsId(establisherIndex, directorIndex)) match {
-          case Some(name) => messages("messages__director__cya__nino", name.firstAndLastName)
-          case None   => "messages__common__nino"
-        }
-
       private val hiddenLabel = "messages__visuallyhidden__director__nino"
+      private val label = "messages__common__nino"
 
-      override def row(id: DirectorNewNinoId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
-        ReferenceValueCYA[DirectorNewNinoId](getLabel(id.establisherIndex, id.directorIndex, userAnswers), hiddenLabel)().row(id)(changeUrl, userAnswers)
-      }
+      override def row(id: DirectorNewNinoId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+        ReferenceValueCYA[DirectorNewNinoId](label, hiddenLabel)()
+          .row(id)(changeUrl, userAnswers)
 
       override def updateRow(id: DirectorNewNinoId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
-        val label = getLabel(id.establisherIndex, id.directorIndex, userAnswers)
 
         userAnswers.get(IsNewDirectorId(id.establisherIndex, id.directorIndex)) match {
           case Some(true) =>

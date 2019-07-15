@@ -42,24 +42,26 @@ class AddCompanyDirectorsController @Inject()(
                                                getData: DataRetrievalAction,
                                                requireData: DataRequiredAction,
                                                formProvider: AddCompanyDirectorsFormProvider,
-                                               featureSwitchManagementService: FeatureSwitchManagementService
+                                               fs: FeatureSwitchManagementService
                                              )(implicit val ec: ExecutionContext) extends FrontendController with I18nSupport with Retrievals {
 
   private val form: Form[Boolean] = formProvider()
   private def postCall: (Mode, Option[String], Index) => Call = routes.AddCompanyDirectorsController.onSubmit _
+  val isHnSEnabled = fs.get(Toggles.isEstablisherCompanyHnSEnabled)
 
   def onPageLoad(mode: Mode, srn: Option[String], index: Int): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
-          val directors = request.userAnswers.allDirectorsAfterDelete(index)
-          val enableSubmission = checkForEnableSubmission(featureSwitchManagementService.get(Toggles.isEstablisherCompanyHnSEnabled), directors)
+          val directors = request.userAnswers.allDirectorsAfterDelete(index, isHnSEnabled)
+          val enableSubmission = checkForEnableSubmission(fs.get(Toggles.isEstablisherCompanyHnSEnabled), directors)
 
-          Future.successful(Ok(addCompanyDirectors(appConfig, form, directors, existingSchemeName, postCall(mode, srn, index), request.viewOnly, mode, srn, enableSubmission)))
+          Future.successful(Ok(addCompanyDirectors(appConfig, form, directors, existingSchemeName,
+            postCall(mode, srn, index), request.viewOnly, mode, srn, enableSubmission)))
   }
 
   def onSubmit(mode: Mode, srn: Option[String], index: Int): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
-      val directors = request.userAnswers.allDirectorsAfterDelete(index)
-      val enableSubmission = checkForEnableSubmission(featureSwitchManagementService.get(Toggles.isEstablisherCompanyHnSEnabled), directors)
+      val directors = request.userAnswers.allDirectorsAfterDelete(index, isHnSEnabled)
+      val enableSubmission = checkForEnableSubmission(fs.get(Toggles.isEstablisherCompanyHnSEnabled), directors)
 
       if (directors.isEmpty || directors.lengthCompare(appConfig.maxDirectors) >= 0) {
         Future.successful(Redirect(navigator.nextPage(AddCompanyDirectorsId(index), mode, request.userAnswers, srn)))

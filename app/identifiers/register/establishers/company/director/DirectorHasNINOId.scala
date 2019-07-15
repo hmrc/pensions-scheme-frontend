@@ -18,13 +18,51 @@ package identifiers.register.establishers.company.director
 
 import identifiers._
 import identifiers.register.establishers.EstablishersId
-import play.api.libs.json.JsPath
+import play.api.i18n.Messages
+import play.api.libs.json.{JsPath, JsResult}
+import utils.UserAnswers
+import utils.checkyouranswers.CheckYourAnswers
+import utils.checkyouranswers.CheckYourAnswers.BooleanCYA
+import viewmodels.AnswerRow
 
 case class DirectorHasNINOId(establisherIndex: Int, directorIndex: Int) extends TypedIdentifier[Boolean] {
-  override def path: JsPath = EstablishersId(establisherIndex).path \ "director" \ directorIndex \ "directorNino" \ DirectorHasNINOId.toString
+  override def path: JsPath = EstablishersId(establisherIndex).path \ "director" \ directorIndex \ DirectorHasNINOId.toString
+
+  override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): JsResult[UserAnswers] = {
+    value match {
+      case Some(true) =>
+        userAnswers.remove(DirectorNoNINOReasonId(establisherIndex, directorIndex))
+      case Some(false) =>
+        userAnswers.remove(DirectorNewNinoId(establisherIndex, directorIndex))
+      case _ =>
+        super.cleanup(value, userAnswers)
+    }
+  }
 }
 
 
 object DirectorHasNINOId {
   override def toString: String = "hasNino"
+
+  implicit def cya(implicit userAnswers: UserAnswers, messages: Messages): CheckYourAnswers[DirectorHasNINOId] = {
+
+    def label(establisherIndex: Int, directorIndex: Int) =
+      userAnswers.get(DirectorNameId(establisherIndex, directorIndex)) match {
+        case Some(directorName) => Some(messages("messages__director__cya__nino", directorName.fullName))
+        case _ => Some(messages("messages__director__cya__nino__fallback"))
+      }
+
+    def hiddenLabel = Some(messages("messages__visuallyhidden__director__nino_yes_no"))
+
+    new CheckYourAnswers[DirectorHasNINOId] {
+      override def row(id: DirectorHasNINOId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+        BooleanCYA(label(id.establisherIndex, id.directorIndex), hiddenLabel)().row(id)(changeUrl, userAnswers)
+
+      override def updateRow(id: DirectorHasNINOId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+        userAnswers.get(IsNewDirectorId(id.establisherIndex, id.directorIndex)) match {
+          case Some(true) => BooleanCYA(label(id.establisherIndex, id.directorIndex), hiddenLabel)().row(id)(changeUrl, userAnswers)
+          case _ => Seq.empty[AnswerRow]
+        }
+    }
+  }
 }
