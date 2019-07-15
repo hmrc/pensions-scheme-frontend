@@ -25,10 +25,10 @@ import identifiers.register.trustees.{ExistingCurrentAddressId, IsTrusteeNewId}
 import identifiers.register.trustees.partnership._
 import models.Mode.journeyMode
 import models._
-import utils.{Navigator, UserAnswers}
+import utils.{AbstractNavigator, Navigator, UserAnswers}
 
 class TrusteesPartnershipNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector,
-                                             appConfig: FrontendAppConfig) extends Navigator {
+                                             appConfig: FrontendAppConfig) extends AbstractNavigator {
 
   private def checkYourAnswers(index: Int, mode: Mode, srn: Option[String]): Option[NavigateTo] =
     NavigateTo.dontSave(routes.CheckYourAnswersController.onPageLoad(mode, index, srn))

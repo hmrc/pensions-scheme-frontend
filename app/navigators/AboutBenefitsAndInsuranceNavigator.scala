@@ -23,9 +23,9 @@ import controllers.routes._
 import identifiers._
 import models.Mode.journeyMode
 import models.{CheckMode, CheckUpdateMode, Mode, NormalMode, UpdateMode}
-import utils.{Navigator, UserAnswers}
+import utils.{AbstractNavigator, Navigator, UserAnswers}
 
-class AboutBenefitsAndInsuranceNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector, appConfig: FrontendAppConfig) extends Navigator {
+class AboutBenefitsAndInsuranceNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector, appConfig: FrontendAppConfig) extends AbstractNavigator {
 
 
   //scalastyle:off cyclomatic.complexity

@@ -21,10 +21,10 @@ import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
 import identifiers.AnyMoreChangesId
 import models.UpdateMode
-import utils.{Enumerable, Navigator}
+import utils.{AbstractNavigator, Enumerable}
 
 class VariationsNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector,
-                                    config: FrontendAppConfig)extends Navigator with Enumerable.Implicits {
+                                    config: FrontendAppConfig)extends AbstractNavigator with Enumerable.Implicits {
 
   override protected def routeMap(from: NavigateFrom): Option[NavigateTo] = None
 
@@ -32,22 +32,16 @@ class VariationsNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConn
 
   protected def updateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] =
     from.id match {
-
       case AnyMoreChangesId => from.userAnswers.get(AnyMoreChangesId) match {
-
         case Some(true) => NavigateTo.dontSave(controllers.routes.SchemeTaskListController.onPageLoad(UpdateMode, srn))
-
         case Some(false) =>
           if(from.userAnswers.areVariationChangesCompleted)
             NavigateTo.dontSave(controllers.routes.VariationDeclarationController.onPageLoad(srn))
           else
             NavigateTo.dontSave(controllers.register.routes.StillNeedDetailsController.onPageLoad(srn))
-
-        case _ => NavigateTo.dontSave(controllers.routes.SessionExpiredController.onPageLoad)
-
+        case _ => NavigateTo.dontSave(controllers.routes.SessionExpiredController.onPageLoad())
       }
-
-      case _ => NavigateTo.dontSave(controllers.routes.SessionExpiredController.onPageLoad)
+      case _ => None
     }
 
   protected def checkUpdateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] = None
