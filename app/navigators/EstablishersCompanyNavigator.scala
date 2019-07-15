@@ -26,6 +26,7 @@ import controllers.routes._
 import identifiers.EstablishersOrTrusteesChangedId
 import identifiers.register.establishers.IsEstablisherNewId
 import identifiers.register.establishers.company._
+import identifiers.register.establishers.{ExistingCurrentAddressId, IsEstablisherNewId}
 import models.Mode._
 import models._
 import utils.{Navigator, Toggles, UserAnswers}
@@ -404,6 +405,8 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
 
   private def payeRoutes(index: Int, mode: Mode, srn: Option[String])(answers: UserAnswers): Option[NavigateTo] = {
     (mode, answers.get(IsEstablisherNewId(index))) match {
+      case (_, Some(true)) =>
+        NavigateTo.dontSave(establisherCompanyRoutes.IsCompanyDormantController.onPageLoad(mode, srn, index))
       case (NormalMode, _) =>
         NavigateTo.dontSave(establisherCompanyRoutes.IsCompanyDormantController.onPageLoad(mode, srn, index))
       case _ =>

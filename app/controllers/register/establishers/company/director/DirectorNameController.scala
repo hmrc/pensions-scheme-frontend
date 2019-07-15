@@ -20,8 +20,7 @@ import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions._
 import forms.register.PersonNameFormProvider
-import identifiers.register.establishers.IsEstablisherCompleteId
-import identifiers.register.establishers.company.director.{DirectorNameId, DirectorNinoId, IsNewDirectorId}
+import identifiers.register.establishers.company.director.{DirectorNameId, IsNewDirectorId}
 import javax.inject.Inject
 import models.person.PersonName
 import models.{Index, Mode}
