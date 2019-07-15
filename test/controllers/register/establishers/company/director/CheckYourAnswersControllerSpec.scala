@@ -94,7 +94,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
     srn = srn
   )(fakeRequest, messages).toString
 
-  "CheckYourAnswersController" when {
+  "CheckYourAnswersController for Directors" when {
     "onPageLoad" must {
 
       "return OK and display all the answers" in {
@@ -174,8 +174,10 @@ object CheckYourAnswersControllerSpec extends SpecBase {
   val schemeName = "test scheme name"
   val desiredRoute = controllers.routes.IndexController.onPageLoad()
 
+  val directorPersonDetails = PersonDetails("first name", None, "last name", LocalDate.now(), false)
+
   implicit val directorDetailsAnswersUpdateWithoutNino = UserAnswers()
-    .set(DirectorDetailsId(firstIndex, firstIndex))(PersonDetails("first name", None, "last name", LocalDate.now(), false))
+    .set(DirectorDetailsId(firstIndex, firstIndex))(directorPersonDetails)
     .asOpt.value
 
 
@@ -203,8 +205,8 @@ object CheckYourAnswersControllerSpec extends SpecBase {
   private def updateAnswerRows = Seq(AnswerSection(
       Some("messages__director__cya__details_heading"),
       Seq(
-        AnswerRow("messages__common__cya__name", Seq("first name last name"), false, None),
-        AnswerRow("messages__common__dob", Seq(DateHelper.formatDate(LocalDate.now())), answerIsMessageKey = false, None),
+        AnswerRow("messages__director__cya__name", Seq("first name last name"), false, None),
+        AnswerRow(messages("messages__director__cya__dob", directorPersonDetails.firstAndLastName), Seq(DateHelper.formatDate(LocalDate.now())), answerIsMessageKey = false, None),
         AnswerRow("messages__common__nino", Seq("AB100100A"), answerIsMessageKey = false, None)
       )
     ),
@@ -214,13 +216,13 @@ object CheckYourAnswersControllerSpec extends SpecBase {
   private def updateAnswerRowsWithChange = Seq(AnswerSection(
       Some("messages__director__cya__details_heading"),
       Seq(
-        AnswerRow("messages__common__cya__name", Seq("first name last name"), false,
+        AnswerRow("messages__director__cya__name", Seq("first name last name"), false,
           Some(Link("site.change", routes.DirectorDetailsController.onPageLoad(Mode.checkMode(UpdateMode), firstIndex, firstIndex, Some("srn")).url,
             Some(Message("messages__visuallyhidden__common__name", "first name last name").resolve)))),
-        AnswerRow("messages__common__dob", Seq(DateHelper.formatDate(LocalDate.now())), answerIsMessageKey = false,
+        AnswerRow(messages("messages__director__cya__dob", directorPersonDetails.firstAndLastName), Seq(DateHelper.formatDate(LocalDate.now())), answerIsMessageKey = false,
           Some(Link("site.change", routes.DirectorDetailsController.onPageLoad(Mode.checkMode(UpdateMode), firstIndex, firstIndex, Some("srn")).url,
             Some(Message("messages__visuallyhidden__common__dob", "first name last name").resolve)))),
-        AnswerRow("messages__director_nino_question_cya_label", Seq(s"${Nino.Yes}"), answerIsMessageKey = false,
+        AnswerRow(messages("messages__director__cya__nino", directorPersonDetails.firstAndLastName), Seq(s"${Nino.Yes}"), answerIsMessageKey = false,
           Some(Link("site.change", routes.DirectorNinoController.onPageLoad(Mode.checkMode(UpdateMode), firstIndex, firstIndex, Some("srn")).url,
             Some("messages__visuallyhidden__director__nino_yes_no")))),
         AnswerRow("messages__common__nino", Seq("AB100100A"), answerIsMessageKey = false,
@@ -234,9 +236,9 @@ object CheckYourAnswersControllerSpec extends SpecBase {
   private def displayNewNinoAnswerRowWithAdd = Seq(AnswerSection(
       Some("messages__director__cya__details_heading"),
       Seq(
-        AnswerRow("messages__common__cya__name", Seq("first name last name"), false, None),
-        AnswerRow("messages__common__dob", Seq(DateHelper.formatDate(LocalDate.now())), answerIsMessageKey = false, None),
-        AnswerRow("messages__common__nino", Seq("site.not_entered"), answerIsMessageKey = true,
+        AnswerRow("messages__director__cya__name", Seq("first name last name"), false, None),
+        AnswerRow(messages("messages__director__cya__dob", directorPersonDetails.firstAndLastName), Seq(DateHelper.formatDate(LocalDate.now())), answerIsMessageKey = false, None),
+        AnswerRow(messages("messages__director__cya__nino", directorPersonDetails.firstAndLastName), Seq("site.not_entered"), answerIsMessageKey = true,
           Some(Link("site.add",
             routes.DirectorNinoNewController.onPageLoad(Mode.checkMode(UpdateMode), firstIndex, firstIndex, Some("srn")).url,
             Some(s"messages__visuallyhidden__director__nino_add"))))
@@ -248,9 +250,9 @@ object CheckYourAnswersControllerSpec extends SpecBase {
   def displayNewNinoAnswerRowWithNoLink = Seq(AnswerSection(
       Some("messages__director__cya__details_heading"),
       Seq(
-        AnswerRow("messages__common__cya__name", Seq("first name last name"), false, None),
-        AnswerRow("messages__common__dob", Seq(DateHelper.formatDate(LocalDate.now())), answerIsMessageKey = false, None),
-        AnswerRow("messages__common__nino", Seq("AB100100A"), answerIsMessageKey = false, None)
+        AnswerRow("messages__director__cya__name", Seq("first name last name"), false, None),
+        AnswerRow(messages("messages__director__cya__dob", directorPersonDetails.firstAndLastName), Seq(DateHelper.formatDate(LocalDate.now())), answerIsMessageKey = false, None),
+        AnswerRow(messages("messages__director__cya__nino", directorPersonDetails.firstAndLastName), Seq("AB100100A"), answerIsMessageKey = false, None)
       )
     ),
     AnswerSection(Some("messages__director__cya__contact__details_heading"), Seq())
