@@ -26,6 +26,7 @@ import controllers.routes._
 import identifiers.EstablishersOrTrusteesChangedId
 import identifiers.register.establishers.IsEstablisherNewId
 import identifiers.register.establishers.company._
+import identifiers.register.establishers.{ExistingCurrentAddressId, IsEstablisherNewId}
 import models.Mode._
 import models._
 import utils.{Navigator, Toggles, UserAnswers}

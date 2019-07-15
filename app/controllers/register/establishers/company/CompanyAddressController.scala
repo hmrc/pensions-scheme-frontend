@@ -51,9 +51,9 @@ class CompanyAddressController @Inject()(
                                         )(implicit val ec: ExecutionContext) extends ManualAddressController with I18nSupport {
 
   private[controllers] val postCall = routes.CompanyAddressController.onSubmit _
-  private[controllers] val title: Message = "messages__companyAddress__title"
-  private[controllers] val heading: Message = "messages__companyAddress__heading"
-  private[controllers] val hint: Message = "messages__companyAddress__lede"
+  private[controllers] val title: Message = "messages__establisherConfirmAddress__title"
+  private[controllers] val heading: Message = "messages__establisherConfirmAddress__h1"
+  private[controllers] val hint: Message = "messages__establisherConfirmAddress__lede"
 
   protected val form: Form[Address] = formProvider()
 
@@ -66,9 +66,7 @@ class CompanyAddressController @Inject()(
               postCall(mode, srn, Index(index)),
               countryOptions.options,
               title = Message(title),
-              heading = Message(heading),
-              hint = Some(Message(hint)),
-              secondaryHeader = Some(details.companyName),
+              heading = Message(heading, details.companyName),
               srn = srn
             )
         }

@@ -32,7 +32,7 @@ import utils.checkyouranswers.CheckYourAnswers.{ContactDetailsCYA, PayeCYA, VatC
 import utils.checkyouranswers.Ops._
 import utils.checkyouranswers._
 import utils.{CountryOptions, FakeCountryOptions, FakeNavigator, UserAnswers, _}
-import viewmodels.{AnswerRow, AnswerSection}
+import viewmodels.{AnswerRow, AnswerSection, Message}
 import views.html.check_your_answers
 
 class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerAllowChangeBehaviour {
@@ -204,7 +204,8 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase with Enumerable
   private def companyContactDetailsSection(implicit request: DataRequest[AnyContent]): AnswerSection = {
 
     val addressRows = AddressCYA(
-      changeAddress = "messages__visuallyhidden__establisher__address")().row(
+      label = Message("messages__establisherConfirmAddress__cya_label", companyDetails.companyName),
+      changeAddress = "messages__establisherConfirmAddress__cya_visually_hidden_label")().row(
       CompanyAddressId(index))(companyAddressRoute, request.userAnswers)
 
     val addressYearsRows = AddressYearsCYA(label = "companyAddressYears.checkYourAnswersLabel",
@@ -213,8 +214,8 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase with Enumerable
     )
 
     val previousAddressRows = AddressCYA(
-      label = "messages__common__cya__previous_address",
-      changeAddress = "messages__visuallyhidden__establisher__previous_address"
+      label = Message("messages__establisherPreviousConfirmAddress__cya_label", companyDetails.companyName),
+      changeAddress = "messages__establisherPreviousConfirmAddress__cya_visually_hidden_label"
     )().row(CompanyPreviousAddressId(index))(companyPreviousAddressRoute, request.userAnswers)
 
     val contactDetailsRows = ContactDetailsCYA(
