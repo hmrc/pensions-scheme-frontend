@@ -111,6 +111,8 @@ messages__common__address_years__director = the director
 messages__common__address_years__partnership = the partnership
 messages__common__address_years__partner = the partner
 messages__common__address_years__person = the person
+messages__common__address_years__establisher = the establisher
+messages__common__address_years__trustee = the trustee
 
 messages__index__title = pensions-scheme-frontend
 messages__index__guidance = Welcome to your new frontend. Please see the README file for a guide to getting started.
@@ -518,7 +520,7 @@ messages__addCompanyDirectors_add_director = Add a director
 messages__addCompanyDirectors_at_maximum = You have added the maximum number of directors.
 messages__addCompanyDirectorsOrPartners_tell_us_if_you_have_more = You can tell us on the next page if you have more to add.
 
-messages__director_address_years__title = Has {0} used this address for at least 1 year?
+messages__director_address_years__title = Has {0} used this contact address for at least 1 year?
 messages__director_address_years__heading = Has {0} used this contact address for at least 1 year?
 messages__director_address_years__cya = Has the director been at their address for at least 1 year?
 messages__director_address_years__form_error = Select yes if {0} has used this contact address for at least 1 year
