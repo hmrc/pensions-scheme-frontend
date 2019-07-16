@@ -1388,9 +1388,10 @@ messages__visuallyhidden__occupationalPensionScheme = Change if the scheme an oc
 
 messages__type_of_benefits__title = How does the scheme provide benefits?
 messages__type_of_benefits__h1 = How does the scheme provide benefits?
-messages__type_of_benefits__opt1 = Money Purchase benefits only (defined contribution)
-messages__type_of_benefits__opt2 = Defined Benefits only
+messages__type_of_benefits__opt1 = Money purchase benefits only - this is a defined contribution
+messages__type_of_benefits__opt2 = Defined benefits only
 messages__type_of_benefits__opt3 = Mixture of money purchase benefits and defined benefits
+
 messages__type_of_benefits_cya_label = How does the scheme provide benefits?
 messages__visuallyhidden__type_of_benefits_change = Change how the scheme provides benefits
 
