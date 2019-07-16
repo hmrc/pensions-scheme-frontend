@@ -34,7 +34,7 @@ class PhoneNumberViewSpec extends QuestionViewBehaviours[String] {
     postCall = Call("GET", "www.example.com"),
     Message("messages__establisher_phone__title"),
     Message("messages__common_phone__heading", companyName),
-    None,
+    Some(Message("messages__establisher_phone__hint")),
     None
   )
 
@@ -44,7 +44,7 @@ class PhoneNumberViewSpec extends QuestionViewBehaviours[String] {
     (form: Form[String]) => phoneNumber(frontendAppConfig, form, viewModel, Some("test scheme"))(fakeRequest, messages)
 
   behave like normalPage(createView, messageKeyPrefix,
-    messages("messages__common_phone__heading", companyName))
+    messages("messages__common_phone__heading", companyName), "_hint")
 
   behave like pageWithTextFields(
     createViewWithForm,

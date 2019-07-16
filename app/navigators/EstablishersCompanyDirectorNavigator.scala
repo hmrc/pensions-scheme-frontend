@@ -64,6 +64,11 @@ class EstablishersCompanyDirectorNavigator @Inject()(val dataCacheConnector: Use
         NavigateTo.dontSave(routes.DirectorUniqueTaxReferenceController.onPageLoad(mode, establisherIndex, directorIndex, srn))
       case DirectorUniqueTaxReferenceId(establisherIndex, directorIndex) =>
         NavigateTo.dontSave(routes.DirectorAddressPostcodeLookupController.onPageLoad(mode, establisherIndex, directorIndex, srn))
+
+      case DirectorUTRId(establisherIndex, directorIndex) =>
+        NavigateTo.dontSave(routes.DirectorAddressPostcodeLookupController.onPageLoad(mode, establisherIndex, directorIndex, srn))
+
+
       case DirectorHasUTRId(establisherIndex, directorIndex) =>
         hasUTRRoutes(establisherIndex, directorIndex, mode, srn)(from.userAnswers)
       case DirectorAddressId(establisherIndex, directorIndex) =>
@@ -71,6 +76,8 @@ class EstablishersCompanyDirectorNavigator @Inject()(val dataCacheConnector: Use
       case DirectorPreviousAddressId(establisherIndex, directorIndex) =>
         NavigateTo.dontSave(routes.DirectorContactDetailsController.onPageLoad(mode, establisherIndex, directorIndex, srn))
       case DirectorContactDetailsId(establisherIndex, directorIndex) =>
+        checkYourAnswers(establisherIndex, directorIndex, mode, srn)
+      case DirectorPhoneNumberId(establisherIndex, directorIndex) =>
         checkYourAnswers(establisherIndex, directorIndex, mode, srn)
       case DirectorAddressYearsId(establisherIndex, directorIndex) =>
         addressYearsRoutes(establisherIndex, directorIndex, mode, srn)(from.userAnswers)
@@ -100,6 +107,8 @@ class EstablishersCompanyDirectorNavigator @Inject()(val dataCacheConnector: Use
         exitMiniJourney(establisherIndex, directorIndex, mode, srn, from.userAnswers)
       case DirectorUniqueTaxReferenceId(establisherIndex, directorIndex) =>
         exitMiniJourney(establisherIndex, directorIndex, mode, srn, from.userAnswers)
+      case DirectorUTRId(establisherIndex, directorIndex) =>
+        exitMiniJourney(establisherIndex, directorIndex, mode, srn, from.userAnswers)
       case DirectorAddressId(establisherIndex, directorIndex) =>
         val isNew = from.userAnswers.get(IsNewDirectorId(establisherIndex, directorIndex)).contains(true)
         if (isNew || mode == CheckMode) {
@@ -112,6 +121,8 @@ class EstablishersCompanyDirectorNavigator @Inject()(val dataCacheConnector: Use
       case DirectorPreviousAddressId(establisherIndex, directorIndex) =>
         exitMiniJourney(establisherIndex, directorIndex, mode, srn, from.userAnswers)
       case DirectorContactDetailsId(establisherIndex, directorIndex) =>
+        exitMiniJourney(establisherIndex, directorIndex, mode, srn, from.userAnswers)
+      case DirectorPhoneNumberId(establisherIndex, directorIndex) =>
         exitMiniJourney(establisherIndex, directorIndex, mode, srn, from.userAnswers)
       case DirectorAddressYearsId(establisherIndex, directorIndex) =>
         addressYearsEditRoutes(establisherIndex, directorIndex, mode, srn)(from.userAnswers)

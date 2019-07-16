@@ -55,7 +55,7 @@ class CompanyPhoneController @Inject()(val appConfig: FrontendAppConfig,
               routes.CompanyPhoneController.onSubmit(mode, srn, index),
               Message("messages__establisher_phone__title"),
               Message("messages__common_phone__heading", details.companyName),
-              None,
+              Some(Message("messages__establisher_phone__hint")),
               srn = srn
             )
         }
