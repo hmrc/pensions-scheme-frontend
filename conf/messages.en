@@ -822,7 +822,7 @@ messages__deleteScheme__title = Are you sure you want to delete this scheme?
 messages__deleteScheme__heading = Are you sure you want to delete {0} scheme?
 messages__deleteScheme__error__required = Select yes if you want to cancel your registration
 
-messages__confirmDeleteEstablisher__title = Confirm deletion
+messages__confirmDeleteEstablisher__title = Are you sure you want to delete this establisher?
 messages__confirmDeleteEstablisher__heading = Are you sure you want to delete {0}?
 messages__confirmDeleteEstablisher__companyHint = This will delete any directors you have added.
 messages__confirmDeleteEstablisher__partnershipHint = This will delete any partners you have added.
