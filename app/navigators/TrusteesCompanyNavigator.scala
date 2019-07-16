@@ -27,9 +27,10 @@ import identifiers.register.trustees.{ExistingCurrentAddressId, IsTrusteeNewId}
 import models.Mode.journeyMode
 import models._
 import utils.{Navigator, UserAnswers}
+import utils.{AbstractNavigator, Navigator, Toggles, UserAnswers}
 
 class TrusteesCompanyNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector,
-                                         appConfig: FrontendAppConfig) extends Navigator {
+                                         appConfig: FrontendAppConfig) extends AbstractNavigator {
 
   private def exitMiniJourney(index: Index, mode: Mode, srn: Option[String], answers: UserAnswers): Option[NavigateTo] =
     if(mode == CheckMode || mode == NormalMode){

@@ -29,6 +29,7 @@ private object AppDependencies {
   private val scalacheckGenRegexp = "0.1.1"
   private val wireMockVersion = "2.18.0"
   private val whitelistVersion = "2.0.0"
+  private val guiceVersion = "4.2.2"
 
   val compile = Seq(
     ws,
@@ -42,7 +43,8 @@ private object AppDependencies {
     "uk.gov.hmrc" %% "bootstrap-play-25" % bootstrapVersion,
     "uk.gov.hmrc" %% "play-language" % playLanguageVersion,
     "uk.gov.hmrc" %% "domain" % domainVersion,
-    "uk.gov.hmrc" %% "play-whitelist-filter" % whitelistVersion
+    "uk.gov.hmrc" %% "play-whitelist-filter" % whitelistVersion,
+    "com.google.inject.extensions" % "guice-multibindings" % guiceVersion
   )
 
   trait TestDependencies {
