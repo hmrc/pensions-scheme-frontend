@@ -30,7 +30,7 @@ import play.api.data.Form
 import play.api.libs.json._
 import play.api.test.Helpers._
 import services.FakeUserAnswersService
-import utils.{FakeNavigator, Navigator, UserAnswers}
+import utils.{FakeFeatureSwitchManagementService, FakeNavigator, Navigator, UserAnswers}
 import views.html.register.establishers.company.addCompanyDirectors
 
 class AddCompanyDirectorsControllerSpec extends ControllerSpecBase {
@@ -56,7 +56,8 @@ class AddCompanyDirectorsControllerSpec extends ControllerSpecBase {
       FakeAuthAction,
       dataRetrievalAction,
       new DataRequiredActionImpl,
-      formProvider
+      formProvider,
+      new FakeFeatureSwitchManagementService(false)
     )
 
   private def viewAsString(form: Form[_] = form, directors: Seq[DirectorEntity] = Nil) =
@@ -68,7 +69,8 @@ class AddCompanyDirectorsControllerSpec extends ControllerSpecBase {
       postCall(NormalMode, None, establisherIndex),
       false,
       NormalMode,
-      None
+      None,
+      false
     )(fakeRequest, messages).toString
 
   private val establisherIndex = 0
