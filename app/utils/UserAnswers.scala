@@ -231,7 +231,7 @@ case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Implicits 
     allEstablishers.filterNot(_.isDeleted)
   }
 
-  def allDirectors(establisherIndex: Int): Seq[DirectorEntityNonHnS] = {
+  def allDirectorsOld(establisherIndex: Int): Seq[DirectorEntityNonHnS] = {
 
     getAllRecursive[PersonDetails](DirectorDetailsId.collectionPath(establisherIndex)).map {
       details =>
@@ -269,11 +269,15 @@ case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Implicits 
     }.getOrElse(Seq.empty)
   }
 
-  def allDirectorsAfterDelete(establisherIndex: Int, isHnSEnabled: Boolean): Seq[Director[_]] = {
+  def allDirectors(establisherIndex: Int, isHnSEnabled: Boolean): Seq[Director[_]] = {
     if(isHnSEnabled)
-      allDirectorsHnS(establisherIndex).filterNot(_.isDeleted)
+      allDirectorsHnS(establisherIndex)
     else
-      allDirectors(establisherIndex).filterNot(_.isDeleted)
+      allDirectorsOld(establisherIndex)
+  }
+
+  def allDirectorsAfterDelete(establisherIndex: Int, isHnSEnabled: Boolean): Seq[Director[_]] = {
+      allDirectors(establisherIndex, isHnSEnabled).filterNot(_.isDeleted)
   }
 
   def allPartners(establisherIndex: Int): Seq[PartnerEntity] = {
