@@ -21,10 +21,10 @@ import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
 import identifiers.{CurrentMembersId, FutureMembersId, MembershipPensionRegulatorId}
 import models.{CheckMode, Members, Mode, NormalMode}
-import utils.{Enumerable, Navigator, UserAnswers}
+import utils.{AbstractNavigator, Enumerable, Navigator, UserAnswers}
 
 class AboutMembersNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector,
-                                      appConfig: FrontendAppConfig) extends Navigator with Enumerable.Implicits {
+                                      appConfig: FrontendAppConfig) extends AbstractNavigator with Enumerable.Implicits {
 
   override protected def routeMap(from: NavigateFrom): Option[NavigateTo] = {
     from.id match {

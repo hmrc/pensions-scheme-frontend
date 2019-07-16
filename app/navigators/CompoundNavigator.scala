@@ -14,32 +14,28 @@
  * limitations under the License.
  */
 
-package utils
+package navigators
 
-import connectors.{UserAnswersCacheConnector, FakeUserAnswersCacheConnector}
+import com.google.inject.Inject
 import identifiers.Identifier
+import models.Mode
 import models.requests.IdentifiedRequest
-import models.{Mode, NormalMode}
 import play.api.mvc.Call
 import uk.gov.hmrc.http.HeaderCarrier
+import utils.{Navigator, UserAnswers}
 
 import scala.concurrent.ExecutionContext
+import scala.collection.JavaConverters._
 
-class FakeNavigator(desiredRoute: Call, mode: Mode = NormalMode) extends Navigator {
-
-  private[this] var userAnswers: Option[UserAnswers] = None
-
-  def lastUserAnswers: Option[UserAnswers] = userAnswers
-
-  override def nextPage(id: Identifier, mode: Mode, answers: UserAnswers, srn: Option[String])
-                       (implicit ex: IdentifiedRequest, ec: ExecutionContext, hc: HeaderCarrier): Call = {
-    userAnswers = Some(answers)
-    desiredRoute
-  }
+class CompoundNavigator @Inject()(navigators: java.util.Set[Navigator]) extends Navigator {
 
   override def nextPageOptional(id: Identifier, mode: Mode, userAnswers: UserAnswers, srn: Option[String])
-                               (implicit ex: IdentifiedRequest, ec: ExecutionContext, hc: HeaderCarrier): Option[Call] =
-    Some(desiredRoute)
+                               (implicit ex: IdentifiedRequest, ec: ExecutionContext, hc: HeaderCarrier): Option[Call] = {
+
+    navigators.asScala.foldRight(Option.empty[Call]) {
+      case (_, some: Some[Call]) => some
+      case (navigator, None)     => navigator.nextPageOptional(id, mode, userAnswers, srn)
+    }
+  }
 }
 
-object FakeNavigator extends FakeNavigator(Call("GET", "www.example.com"), NormalMode)

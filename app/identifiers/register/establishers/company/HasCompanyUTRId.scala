@@ -19,7 +19,7 @@ package identifiers.register.establishers.company
 import identifiers.TypedIdentifier
 import identifiers.register.establishers.{EstablishersId, IsEstablisherNewId}
 import play.api.i18n.Messages
-import play.api.libs.json.JsPath
+import play.api.libs.json.{JsPath, JsResult}
 import utils.UserAnswers
 import utils.checkyouranswers.CheckYourAnswers
 import utils.checkyouranswers.CheckYourAnswers.BooleanCYA
@@ -27,6 +27,17 @@ import viewmodels.AnswerRow
 
 case class HasCompanyUTRId(index: Int) extends TypedIdentifier[Boolean] {
   override def path: JsPath = EstablishersId(index).path \ HasCompanyUTRId.toString
+
+  override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): JsResult[UserAnswers] = {
+    value match {
+      case Some(true) =>
+        userAnswers.remove(NoCompanyUTRId(this.index))
+      case Some(false) =>
+        userAnswers.remove(CompanyUTRId(this.index))
+      case _ =>
+        super.cleanup(value, userAnswers)
+    }
+  }
 }
 
 object HasCompanyUTRId {

@@ -75,7 +75,7 @@ class DirectorEmailController @Inject()(val appConfig: FrontendAppConfig,
       implicit request =>
         viewModel(mode, establisherIndex, directorIndex, srn).retrieve.right.map {
           vm =>
-            post(DirectorEmailId(establisherIndex, directorIndex), mode, form, vm)
+            post(DirectorEmailId(establisherIndex, directorIndex), mode, form, vm, None)
         }
     }
 

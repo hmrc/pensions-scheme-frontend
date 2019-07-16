@@ -74,7 +74,9 @@ trait UserAnswersService {
                                        hc: HeaderCarrier,
                                        request: DataRequest[AnyContent]): Future[JsValue] = {
     mode match {
-      case NormalMode | CheckMode => subscriptionCacheConnector.save(request.externalId, id, value)
+      case NormalMode | CheckMode => {
+        subscriptionCacheConnector.save(request.externalId, id, value)
+      }
       case UpdateMode | CheckUpdateMode =>
         val answers = request.userAnswers
           .set(id)(value).flatMap {

@@ -27,7 +27,7 @@ import utils.checkyouranswers.CheckYourAnswers.StringCYA
 import viewmodels.AnswerRow
 
 case class CompanyUTRId(index: Int) extends TypedIdentifier[String] {
-  override def path: JsPath = EstablishersId(index).path \ "companyUniqueTaxReference" \ CompanyUTRId.toString
+  override def path: JsPath = EstablishersId(index).path \ CompanyUTRId.toString
 }
 
 object CompanyUTRId {

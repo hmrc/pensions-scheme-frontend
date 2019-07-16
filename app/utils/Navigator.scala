@@ -28,7 +28,35 @@ import uk.gov.hmrc.http.HeaderCarrier
 import scala.concurrent.ExecutionContext
 import scala.util.Failure
 
-abstract class Navigator {
+trait Navigator {
+
+  case class NavigateFrom(id: Identifier, userAnswers: UserAnswers)
+  case class NavigateTo(page: Call, save: Boolean)
+
+  object NavigateTo {
+
+    def save(page: Call): Option[NavigateTo] = Some(NavigateTo(page, true))
+
+    def dontSave(page: Call): Option[NavigateTo] = Some(NavigateTo(page, false))
+  }
+
+  def nextPage(id: Identifier, mode: Mode, userAnswers: UserAnswers, srn: Option[String] = None)
+                             (implicit ex: IdentifiedRequest, ec: ExecutionContext, hc: HeaderCarrier): Call = {
+    nextPageOptional(id, mode, userAnswers, srn)
+      .getOrElse(defaultPage(id, mode))
+  }
+
+  def nextPageOptional(id: Identifier, mode: Mode, userAnswers: UserAnswers, srn: Option[String] = None)
+              (implicit ex: IdentifiedRequest, ec: ExecutionContext, hc: HeaderCarrier): Option[Call]
+
+  private def defaultPage(id: Identifier, mode: Mode): Call = {
+    Logger.warn(s"No navigation defined for id $id in mode $mode")
+    controllers.routes.IndexController.onPageLoad()
+  }
+}
+
+abstract class AbstractNavigator extends Navigator {
+
   protected def navigateOrSessionExpired[A](answers: UserAnswers,
                                             id: => TypedIdentifier[A],
                                             destination: A => Call)(implicit reads: Reads[A]): Option[NavigateTo] =
@@ -44,8 +72,9 @@ abstract class Navigator {
 
   protected def checkUpdateRouteMap(from: NavigateFrom, srn: Option[String] = None): Option[NavigateTo]
 
-  def nextPage(id: Identifier, mode: Mode, userAnswers: UserAnswers, srn: Option[String] = None)
-              (implicit ex: IdentifiedRequest, ec: ExecutionContext, hc: HeaderCarrier): Call = {
+  override final def nextPageOptional(id: Identifier, mode: Mode, userAnswers: UserAnswers, srn: Option[String] = None)
+              (implicit ex: IdentifiedRequest, ec: ExecutionContext, hc: HeaderCarrier): Option[Call] = {
+
     val navigateTo = {
       mode match {
         case NormalMode => routeMap(NavigateFrom(id, userAnswers))
@@ -55,9 +84,7 @@ abstract class Navigator {
       }
     }
 
-    navigateTo
-      .map(to => saveAndContinue(to, ex.externalId))
-      .getOrElse(defaultPage(id, mode))
+    navigateTo.map(to => saveAndContinue(to, ex.externalId))
   }
 
   private[this] def saveAndContinue(navigation: NavigateTo, externalID: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Call = {
@@ -68,20 +95,4 @@ abstract class Navigator {
     }
     navigation.page
   }
-
-  private[this] def defaultPage(id: Identifier, mode: Mode): Call = {
-    Logger.warn(s"No navigation defined for id $id in mode $mode")
-    controllers.routes.IndexController.onPageLoad()
-  }
-
-  case class NavigateFrom(id: Identifier, userAnswers: UserAnswers)
-
-  case class NavigateTo(page: Call, save: Boolean)
-
-  object NavigateTo {
-    def save(page: Call): Option[NavigateTo] = Some(NavigateTo(page, true))
-
-    def dontSave(page: Call): Option[NavigateTo] = Some(NavigateTo(page, false))
-  }
-
 }

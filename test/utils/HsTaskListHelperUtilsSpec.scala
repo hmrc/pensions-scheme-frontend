@@ -77,7 +77,9 @@ object HsTaskListHelperUtilsSpec extends SpecBase with OptionValues {
   private val fakeFeatureSwitch = new FakeFeatureSwitchManagementService(true)
 
   protected def establisherCompanyBlank: UserAnswers = {
-    UserAnswers().set(establisherCompanyPath.CompanyDetailsId(0))(CompanyDetails("test company", false))
+    UserAnswers().set(establisherCompanyPath.CompanyDetailsId(0))(CompanyDetails("test company", false)).flatMap(
+      _.set(IsEstablisherNewId(0))(true)
+    )
       .asOpt.value
   }
 
