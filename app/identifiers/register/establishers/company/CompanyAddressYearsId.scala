@@ -36,7 +36,9 @@ case class CompanyAddressYearsId(index: Int) extends TypedIdentifier[AddressYear
           .flatMap(_.remove(CompanyPreviousAddressListId(this.index)))
       case Some(AddressYears.UnderAYear) =>
         userAnswers.set(IsCompanyCompleteId(index))(false).flatMap(
-          _.set(IsEstablisherCompleteId(index))(false)
+          _.set(IsEstablisherCompleteId(index))(false).flatMap(
+            _.set(IsAddressCompleteId(index))(false)
+          )
         )
       case _ => super.cleanup(value, userAnswers)
     }

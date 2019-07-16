@@ -59,7 +59,7 @@ class DirectorHasNINOControllerSpec extends ControllerSpecBase {
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
-      FakeUserAnswersService.verify(DirectorHasNINOId(establisherIndex, directorIndex), true)
+      FakeUserAnswersService.userAnswer.get(DirectorHasNINOId(establisherIndex, directorIndex)).value mustEqual true
     }
 
     "return a Bad Request and errors when invalid data is submitted" in {

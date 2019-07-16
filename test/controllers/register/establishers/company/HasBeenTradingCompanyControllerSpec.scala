@@ -76,7 +76,7 @@ class HasBeenTradingCompanyControllerSpec extends ControllerSpecBase {
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
-      FakeUserAnswersService.verify(HasBeenTradingCompanyId(index), true)
+      FakeUserAnswersService.userAnswer.get(HasBeenTradingCompanyId(index)).value mustEqual true
     }
 
     "return a Bad Request and errors when invalid data is submitted" in {

@@ -16,7 +16,6 @@
 
 package models
 
-import models.Mode.UnknownModeException
 import play.api.mvc.{JavascriptLiteral, PathBindable}
 import utils.WithName
 
@@ -71,6 +70,6 @@ object Mode {
   def journeyMode(mode: Mode): Mode = mode match  {
     case CheckMode => NormalMode
     case CheckUpdateMode => UpdateMode
-    case _ => throw UnknownModeException()
+    case _ => mode
   }
 }

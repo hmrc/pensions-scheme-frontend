@@ -123,7 +123,7 @@ class EmailAddressControllerSpec extends WordSpec with MustMatchers with OptionV
 
           status(result) mustEqual SEE_OTHER
           redirectLocation(result).value mustEqual "www.example.com"
-          FakeUserAnswersService.verify(FakeIdentifier, "test@test.com")
+          FakeUserAnswersService.userAnswer.get(FakeIdentifier).value mustEqual "test@test.com"
       }
     }
 
@@ -173,7 +173,7 @@ object EmailAddressControllerSpec {
     }
 
     def onSubmit(viewmodel: CommonFormWithHintViewModel, answers: UserAnswers, fakeRequest: Request[AnyContent]): Future[Result] = {
-      post(FakeIdentifier, CheckUpdateMode, formProvider(), viewmodel)(DataRequest(fakeRequest, "cacheId", answers, PsaId("A0000000")))
+      post(FakeIdentifier, CheckUpdateMode, formProvider(), viewmodel, None)(DataRequest(fakeRequest, "cacheId", answers, PsaId("A0000000")))
     }
   }
 }
