@@ -21,7 +21,7 @@ import forms.register.establishers.company.AddCompanyDirectorsFormProvider
 import identifiers.register.establishers.company.director.DirectorDetailsId
 import models.NormalMode
 import models.person.PersonDetails
-import models.register.DirectorEntity
+import models.register.DirectorEntityNonHnS
 import org.joda.time.LocalDate
 import play.api.data.Form
 import views.behaviours.{EntityListBehaviours, YesNoViewBehaviours}
@@ -41,10 +41,10 @@ class AddCompanyDirectorsViewSpec extends YesNoViewBehaviours with EntityListBeh
   private val postCall = routes.AddCompanyDirectorsController.onSubmit _
 
   val form = new AddCompanyDirectorsFormProvider()()
-  private val johnDoeEntity = DirectorEntity(DirectorDetailsId(0, 0), johnDoe.fullName, isDeleted = false, isCompleted = false, true, 2)
-  private val joeBloggsEntity = DirectorEntity(DirectorDetailsId(0, 1), joeBloggs.fullName, isDeleted = false, isCompleted = true, true, 2)
+  private val johnDoeEntity = DirectorEntityNonHnS(DirectorDetailsId(0, 0), johnDoe.fullName, isDeleted = false, isCompleted = false, true, 2)
+  private val joeBloggsEntity = DirectorEntityNonHnS(DirectorDetailsId(0, 1), joeBloggs.fullName, isDeleted = false, isCompleted = true, true, 2)
 
-  private def createView(directors: Seq[DirectorEntity] = Nil, viewOnly: Boolean = false) =
+  private def createView(directors: Seq[DirectorEntityNonHnS] = Nil, viewOnly: Boolean = false) =
     () =>
       addCompanyDirectors(
         frontendAppConfig,
@@ -58,7 +58,7 @@ class AddCompanyDirectorsViewSpec extends YesNoViewBehaviours with EntityListBeh
         false
       )(fakeRequest, messages)
 
-  private def createUpdateView(directors: Seq[DirectorEntity] = Nil, viewOnly: Boolean = false) =
+  private def createUpdateView(directors: Seq[DirectorEntityNonHnS] = Nil, viewOnly: Boolean = false) =
     () =>
       addCompanyDirectors(
         frontendAppConfig,
@@ -72,7 +72,7 @@ class AddCompanyDirectorsViewSpec extends YesNoViewBehaviours with EntityListBeh
         false
       )(fakeRequest, messages)
 
-  private def createViewUsingForm(directors: Seq[DirectorEntity] = Nil, viewOnly: Boolean = false) =
+  private def createViewUsingForm(directors: Seq[DirectorEntityNonHnS] = Nil, viewOnly: Boolean = false) =
     (form: Form[_]) =>
       addCompanyDirectors(
         frontendAppConfig,
@@ -120,7 +120,7 @@ class AddCompanyDirectorsViewSpec extends YesNoViewBehaviours with EntityListBeh
       submit.first().text() mustBe messages("messages__addCompanyDirectors_add_director")
     }
 
-    val directors: Seq[DirectorEntity] = Seq(johnDoeEntity, joeBloggsEntity)
+    val directors: Seq[DirectorEntityNonHnS] = Seq(johnDoeEntity, joeBloggsEntity)
 
     behave like entityList(createView(), createView(directors), directors, frontendAppConfig)
 

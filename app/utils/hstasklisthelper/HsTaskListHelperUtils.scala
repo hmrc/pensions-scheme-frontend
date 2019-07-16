@@ -18,6 +18,7 @@ package utils.hstasklisthelper
 
 
 import controllers.register.establishers.company.{routes => establisherCompanyRoutes}
+import controllers.register.establishers.company.director.{routes => establisherCompanyDirectorRoutes}
 import identifiers.register.establishers.{IsEstablisherNewId, company => establisherCompany}
 import models._
 import models.register.Entity
@@ -103,7 +104,7 @@ trait HsTaskListHelperUtils extends Enumerable.Implicits {
     case EstablisherCompanyDetails => establisherCompanyRoutes.WhatYouWillNeedCompanyDetailsController.onPageLoad(mode, srn, index)
     case EstablisherCompanyAddress => establisherCompanyRoutes.WhatYouWillNeedCompanyAddressController.onPageLoad(mode, srn, index)
     case EstablisherCompanyContactDetails => establisherCompanyRoutes.WhatYouWillNeedCompanyContactDetailsController.onPageLoad(mode, srn, index)
-    case EstablisherCompanyDirectors => establisherCompanyRoutes.AddCompanyDirectorsController.onPageLoad(mode, srn, index)
+    case EstablisherCompanyDirectors => establisherCompanyDirectorRoutes.WhatYouWillNeedDirectorController.onPageLoad(mode, srn, index)
     case _ => controllers.routes.IndexController.onPageLoad()
   }
 

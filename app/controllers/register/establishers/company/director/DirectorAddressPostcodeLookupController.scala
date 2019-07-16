@@ -16,19 +16,19 @@
 
 package controllers.register.establishers.company.director
 
-import config.FrontendAppConfig
+import config.{FeatureSwitchManagementService, FrontendAppConfig}
 import connectors.AddressLookupConnector
 import controllers.actions._
 import controllers.address.PostcodeLookupController
 import forms.address.PostCodeLookupFormProvider
-import identifiers.register.establishers.company.director.{DirectorAddressPostcodeLookupId, DirectorDetailsId}
+import identifiers.register.establishers.company.director.{DirectorAddressPostcodeLookupId, DirectorDetailsId, DirectorNameId}
 import javax.inject.Inject
 import models.{Index, Mode}
 import play.api.data.Form
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
-import utils.Navigator
+import utils.{Navigator, Toggles}
 import utils.annotations.EstablishersCompanyDirector
 import viewmodels.Message
 import viewmodels.address.PostcodeLookupViewModel
@@ -43,9 +43,10 @@ class DirectorAddressPostcodeLookupController @Inject()(
                                                          @EstablishersCompanyDirector override val navigator: Navigator,
                                                          authenticate: AuthAction,
                                                          getData: DataRetrievalAction,
-                                           allowAccess: AllowAccessActionProvider,
-                                           requireData: DataRequiredAction,
-                                                         formProvider: PostCodeLookupFormProvider
+                                                          allowAccess: AllowAccessActionProvider,
+                                                          requireData: DataRequiredAction,
+                                                         formProvider: PostCodeLookupFormProvider,
+                                                         featureSwitchManagementService: FeatureSwitchManagementService
                                                        )(implicit val ec: ExecutionContext) extends PostcodeLookupController {
 
   protected val form: Form[String] = formProvider()
@@ -53,33 +54,25 @@ class DirectorAddressPostcodeLookupController @Inject()(
   def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
-        viewmodel(establisherIndex, directorIndex, mode, srn).retrieve.right map get
+        get(viewmodel(establisherIndex, directorIndex, mode, srn))
     }
 
   def onSubmit(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
-        viewmodel(establisherIndex, directorIndex, mode, srn).retrieve.right.map(
-          vm =>
-            post(DirectorAddressPostcodeLookupId(establisherIndex, directorIndex), vm, mode)
-        )
+            post(DirectorAddressPostcodeLookupId(establisherIndex, directorIndex),
+              viewmodel(establisherIndex, directorIndex, mode, srn), mode)
     }
 
-  private def viewmodel(establisherIndex: Index, directorIndex: Index, mode: Mode, srn: Option[String]): Retrieval[PostcodeLookupViewModel] =
-    Retrieval(
-      implicit request =>
-        DirectorDetailsId(establisherIndex, directorIndex).retrieve.right.map {
-          details =>
+  private def viewmodel(establisherIndex: Index, directorIndex: Index, mode: Mode, srn: Option[String]) =
             PostcodeLookupViewModel(
               routes.DirectorAddressPostcodeLookupController.onSubmit(mode, establisherIndex, directorIndex, srn),
               routes.DirectorAddressController.onPageLoad(mode, establisherIndex, directorIndex, srn),
               Message("messages__directorAddressPostcodeLookup__title"),
               Message("messages__directorAddressPostcodeLookup__heading"),
-              Some(details.fullName),
+              None,
               Some(Message("messages__directorAddressPostcodeLookup__lede")),
               srn = srn
             )
-        }
-    )
 
 }

@@ -22,7 +22,7 @@ import controllers.actions._
 import forms.register.establishers.company.AddCompanyDirectorsFormProvider
 import identifiers.register.establishers.company.AddCompanyDirectorsId
 import javax.inject.Inject
-import models.register.DirectorEntity
+import models.register.{Director, DirectorEntityNonHnS}
 import models.{Index, Mode}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -92,6 +92,6 @@ class AddCompanyDirectorsController @Inject()(
       }
   }
 
-  private def checkForEnableSubmission(toggled: Boolean, directors: Seq[DirectorEntity]): Boolean = toggled || directors.forall(_.isCompleted)
+  private def checkForEnableSubmission(toggled: Boolean, directors: Seq[Director[_]]): Boolean = toggled || directors.forall(_.isCompleted)
 
 }

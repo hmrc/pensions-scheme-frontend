@@ -231,14 +231,14 @@ case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Implicits 
     allEstablishers.filterNot(_.isDeleted)
   }
 
-  def allDirectors(establisherIndex: Int): Seq[DirectorEntity] = {
+  def allDirectors(establisherIndex: Int): Seq[DirectorEntityNonHnS] = {
 
     getAllRecursive[PersonDetails](DirectorDetailsId.collectionPath(establisherIndex)).map {
       details =>
         for ((director, directorIndex) <- details.zipWithIndex) yield {
           val isComplete = get(IsDirectorCompleteId(establisherIndex, directorIndex)).getOrElse(false)
           val isNew = get(IsNewDirectorId(establisherIndex, directorIndex)).getOrElse(false)
-          DirectorEntity(
+          DirectorEntityNonHnS(
             DirectorDetailsId(establisherIndex, directorIndex),
             director.fullName,
             director.isDeleted,
@@ -258,7 +258,7 @@ case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Implicits 
           val isComplete = get(IsDirectorCompleteId(establisherIndex, directorIndex)).getOrElse(false)
           val isNew = get(IsNewDirectorId(establisherIndex, directorIndex)).getOrElse(false)
           DirectorEntity(
-            DirectorDetailsId(establisherIndex, directorIndex),
+            DirectorNameId(establisherIndex, directorIndex),
             director.fullName,
             director.isDeleted,
             isComplete,
@@ -269,7 +269,7 @@ case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Implicits 
     }.getOrElse(Seq.empty)
   }
 
-  def allDirectorsAfterDelete(establisherIndex: Int, isHnSEnabled: Boolean): Seq[DirectorEntity] = {
+  def allDirectorsAfterDelete(establisherIndex: Int, isHnSEnabled: Boolean): Seq[Director[_]] = {
     if(isHnSEnabled)
       allDirectorsHnS(establisherIndex).filterNot(_.isDeleted)
     else

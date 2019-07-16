@@ -62,14 +62,14 @@ class DirectorAddressListController @Inject()(
   private def viewmodel(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String])
                        (implicit request: DataRequest[AnyContent]): Either[Future[Result], AddressListViewModel] = {
 
-    (DirectorDetailsId(establisherIndex, directorIndex) and DirectorAddressPostcodeLookupId(establisherIndex, directorIndex))
+    (DirectorAddressPostcodeLookupId(establisherIndex, directorIndex))
       .retrieve.right.map {
-      case directorDetails ~ addresses =>
+      case addresses =>
         AddressListViewModel(
           postCall = routes.DirectorAddressListController.onSubmit(mode, establisherIndex, directorIndex, srn),
           manualInputCall = routes.DirectorAddressController.onPageLoad(mode, establisherIndex, directorIndex, srn),
           addresses = addresses,
-          subHeading = Some(Message(directorDetails.fullName)),
+          subHeading = None,
           srn = srn
         )
     }.left.map(_ => Future.successful(Redirect(routes.DirectorAddressPostcodeLookupController.onPageLoad(mode, establisherIndex, directorIndex, srn))))

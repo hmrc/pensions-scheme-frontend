@@ -249,9 +249,9 @@ class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues with 
         .get
 
       val directorEntities = Seq(
-        DirectorEntity(DirectorDetailsId(0, 0), "First Last", isDeleted = false, isCompleted = true, isNewEntity = false, 2),
-        DirectorEntity(DirectorDetailsId(0, 1), "First Last", isDeleted = true, isCompleted = false, isNewEntity = false, 2),
-        DirectorEntity(DirectorDetailsId(0, 2), "First Last", isDeleted = false, isCompleted = false, isNewEntity = false, 2))
+        DirectorEntityNonHnS(DirectorDetailsId(0, 0), "First Last", isDeleted = false, isCompleted = true, isNewEntity = false, 2),
+        DirectorEntityNonHnS(DirectorDetailsId(0, 1), "First Last", isDeleted = true, isCompleted = false, isNewEntity = false, 2),
+        DirectorEntityNonHnS(DirectorDetailsId(0, 2), "First Last", isDeleted = false, isCompleted = false, isNewEntity = false, 2))
 
       val result = userAnswers.allDirectors(0)
 
@@ -268,7 +268,7 @@ class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues with 
         .flatMap(_.set(DirectorDetailsId(0, 1))(PersonDetails("First1", None, "Last1", LocalDate.now))).get
 
       val directorEntities = Seq(
-        DirectorEntity(DirectorDetailsId(0, 1), "First1 Last1", isDeleted = false, isCompleted = false, isNewEntity = false, 1))
+        DirectorEntityNonHnS(DirectorDetailsId(0, 1), "First1 Last1", isDeleted = false, isCompleted = false, isNewEntity = false, 1))
       val result = userAnswers.allDirectorsAfterDelete(0)
 
       result.size mustEqual 1

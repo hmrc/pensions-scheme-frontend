@@ -23,7 +23,7 @@ import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.company.director.DirectorDetailsId
 import identifiers.register.establishers.company.{AddCompanyDirectorsId, CompanyDetailsId}
 import models.person.PersonDetails
-import models.register.DirectorEntity
+import models.register.DirectorEntityNonHnS
 import models.{CompanyDetails, Index, NormalMode}
 import org.joda.time.LocalDate
 import play.api.data.Form
@@ -60,7 +60,7 @@ class AddCompanyDirectorsControllerSpec extends ControllerSpecBase {
       new FakeFeatureSwitchManagementService(false)
     )
 
-  private def viewAsString(form: Form[_] = form, directors: Seq[DirectorEntity] = Nil) =
+  private def viewAsString(form: Form[_] = form, directors: Seq[DirectorEntityNonHnS] = Nil) =
     addCompanyDirectors(
       frontendAppConfig,
       form,
@@ -112,15 +112,15 @@ class AddCompanyDirectorsControllerSpec extends ControllerSpecBase {
           val result = controller(getRelevantData).onPageLoad(NormalMode, None, establisherIndex)(fakeRequest)
 
           contentAsString(result) mustBe viewAsString(form,
-            Seq(DirectorEntity(DirectorDetailsId(0, 0), johnDoe.fullName, isDeleted = false, isCompleted = false, isNewEntity = false, 1)))
+            Seq(DirectorEntityNonHnS(DirectorDetailsId(0, 0), johnDoe.fullName, isDeleted = false, isCompleted = false, isNewEntity = false, 1)))
         }
     }
 
     "populate the view with directors when they exist" in {
       val directors = Seq(johnDoe, joeBloggs)
       val directorsViewModel = Seq(
-        DirectorEntity(DirectorDetailsId(0, 0), johnDoe.fullName, isDeleted = false, isCompleted = false, isNewEntity = false, 2),
-        DirectorEntity(DirectorDetailsId(0, 1), joeBloggs.fullName, isDeleted = false, isCompleted = false, isNewEntity = false, 3))
+        DirectorEntityNonHnS(DirectorDetailsId(0, 0), johnDoe.fullName, isDeleted = false, isCompleted = false, isNewEntity = false, 2),
+        DirectorEntityNonHnS(DirectorDetailsId(0, 1), joeBloggs.fullName, isDeleted = false, isCompleted = false, isNewEntity = false, 3))
       val getRelevantData = new FakeDataRetrievalAction(Some(validData(directors: _*)))
       val result = controller(getRelevantData).onPageLoad(NormalMode, None, establisherIndex)(fakeRequest)
 
@@ -160,7 +160,7 @@ class AddCompanyDirectorsControllerSpec extends ControllerSpecBase {
 
       status(result) mustBe BAD_REQUEST
       contentAsString(result) mustBe viewAsString(boundForm,
-        Seq(DirectorEntity(DirectorDetailsId(0, 0), johnDoe.fullName, isDeleted = false, isCompleted = false, isNewEntity = false, 0)))
+        Seq(DirectorEntityNonHnS(DirectorDetailsId(0, 0), johnDoe.fullName, isDeleted = false, isCompleted = false, isNewEntity = false, 0)))
     }
 
     "redirect to the next page when maximum directors exist and the user submits" in {
