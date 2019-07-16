@@ -29,12 +29,12 @@ import identifiers.register.establishers.company._
 import identifiers.register.establishers.{ExistingCurrentAddressId, IsEstablisherNewId}
 import models.Mode._
 import models._
-import utils.{Navigator, Toggles, UserAnswers}
+import utils.{AbstractNavigator, Navigator, Toggles, UserAnswers}
 
 //scalastyle:off cyclomatic.complexity
 class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector,
                                              appConfig: FrontendAppConfig,
-                                             featureSwitchManagementService: FeatureSwitchManagementService) extends Navigator {
+                                             featureSwitchManagementService: FeatureSwitchManagementService) extends AbstractNavigator {
 
   private def exitMiniJourney(index: Int,
                               mode: Mode,

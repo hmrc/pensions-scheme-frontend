@@ -14,11 +14,13 @@
  * limitations under the License.
  */
 
-package controllers.register.establishers.company
+package controllers.register.establishers.company.director
 
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.PhoneFormProvider
+import identifiers.register.establishers.company.director.DirectorNameId
+import models.person.PersonName
 import models.{Index, NormalMode}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.mockito.MockitoSugar
@@ -26,11 +28,11 @@ import play.api.data.Form
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import services.FakeUserAnswersService
-import utils.FakeNavigator
-import viewmodels.{Message, CommonFormWithHintViewModel}
+import utils.{FakeNavigator, UserAnswers}
+import viewmodels.{CommonFormWithHintViewModel, Message}
 import views.html.phoneNumber
 
-class CompanyPhoneControllerSpec extends ControllerSpecBase with MockitoSugar with BeforeAndAfterEach {
+class DirectorPhoneNumberControllerSpec extends ControllerSpecBase with MockitoSugar with BeforeAndAfterEach {
 
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
@@ -38,8 +40,10 @@ class CompanyPhoneControllerSpec extends ControllerSpecBase with MockitoSugar wi
   val form: Form[String] = formProvider()
   val firstIndex = Index(0)
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisherCompany): CompanyPhoneController =
-    new CompanyPhoneController(frontendAppConfig,
+  private val estCompanyDirector = UserAnswers().set(DirectorNameId(0, 0))(PersonName("first", "last")).asOpt.value.dataRetrievalAction
+
+  def controller(dataRetrievalAction: DataRetrievalAction = estCompanyDirector): DirectorPhoneNumberController =
+    new DirectorPhoneNumberController(frontendAppConfig,
       messagesApi,
       FakeAuthAction,
       dataRetrievalAction,
@@ -55,20 +59,20 @@ class CompanyPhoneControllerSpec extends ControllerSpecBase with MockitoSugar wi
       frontendAppConfig,
       form,
       CommonFormWithHintViewModel(
-        routes.CompanyPhoneController.onSubmit(NormalMode, None, firstIndex),
-        Message("messages__establisher_phone__title"),
-        Message("messages__common_phone__heading", "test company name"),
+        routes.DirectorPhoneNumberController.onSubmit(NormalMode, firstIndex, firstIndex, None),
+        Message("messages__director_phone__title"),
+        Message("messages__common_phone__heading", "first last"),
         Some(Message("messages__establisher_phone__hint")),
         None
       ),
       None
     )(fakeRequest, messages).toString
 
-  "CompanyPhoneController" when {
+  "DirectorPhoneNumberController" when {
 
     "on a GET" must {
       "return OK and the correct view" in {
-        val result = controller().onPageLoad(NormalMode, None, firstIndex)(fakeRequest)
+        val result = controller().onPageLoad(NormalMode, firstIndex, firstIndex, None)(fakeRequest)
 
         status(result) mustBe OK
         contentAsString(result) mustBe viewAsString()
@@ -78,7 +82,7 @@ class CompanyPhoneControllerSpec extends ControllerSpecBase with MockitoSugar wi
     "on a POST" must {
       "redirect to relevant page" in {
         val postRequest = fakeRequest.withFormUrlEncodedBody(("phone", "09090909090"))
-        val result = controller().onSubmit(NormalMode, None, firstIndex)(postRequest)
+        val result = controller().onSubmit(NormalMode, firstIndex, firstIndex, None)(postRequest)
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(onwardRoute.url)

@@ -61,7 +61,6 @@ class InsurerEnterPostCodeControllerSpec extends ControllerSpecBase with CSRFReq
             routes.InsurerConfirmAddressController.onClick(NormalMode, None),
             Messages("messages__insurer_enter_postcode__title"),
             "messages__insurer_enter_postcode__h1",
-            None,
             None
           )
 

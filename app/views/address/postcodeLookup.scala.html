@@ -43,9 +43,6 @@
             headingKey=messages(viewmodel.heading)
         )
 
-        @viewmodel.hint.map{ hint =>
-            <p>@hint.resolve</p>
-        }
 
         @components.input_text(
             field = form("value"),
