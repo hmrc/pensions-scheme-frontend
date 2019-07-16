@@ -99,27 +99,27 @@ class EstablishersCompanyNavigatorSpec extends SpecBase with MustMatchers with N
      )
 
   private def normalOnlyRoutes(toggled:Boolean): TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = Table(
-    ("Id",                                          "User Answers",               "Next Page (Normal Mode)",                "Save (NM)",  "Next Page (Check Mode)",         "Save (CM)"),
-    (CompanyAddressYearsId(0),                    addressYearsUnderAYear,       underAYearRouteWithToggle(NormalMode, toggled),        true,         Some(underAYearRouteWithToggle(CheckMode, toggled)),                          true),
-    (CompanyRegistrationNumberId(0),              emptyAnswers,                 if (toggled) hasCompanyUTR(NormalMode) else companyUTR(NormalMode),                   true,         Some(exitJourney(journeyMode(CheckMode), emptyAnswers, 0, cya(NormalMode))),                   true),
-    (CompanyRegistrationNumberId(0),              newEstablisher,               if (toggled) hasCompanyUTR(NormalMode) else companyUTR(NormalMode),                   true,         Some(cya(journeyMode(CheckMode))),                   true),
-    (CompanyContactDetailsId(0),                  emptyAnswers,                 isDormant(NormalMode),                                true,         Some(cya(journeyMode(CheckMode))),               true),
-    (CompanyPhoneId(0),                           emptyAnswers,                 cyaCompanyContactDetails(NormalMode),                         true,         Some(cyaCompanyContactDetails(journeyMode(CheckMode))),               true),
-    (IsCompanyDormantId(0),                       emptyAnswers,                 if (toggled) cyaCompanyDetails(NormalMode) else cya(NormalMode),             true,         Some(cya(journeyMode(CheckMode))),               true)
+    ("Id",                                          "User Answers",                 "Next Page (Normal Mode)",                "Save (NM)",  "Next Page (Check Mode)",         "Save (CM)"),
+    (CompanyAddressYearsId(0),                    addressYearsUnderAYear,           underAYearRouteWithToggle(NormalMode, toggled),        true,         Some(underAYearRouteWithToggle(CheckMode, toggled)),                          true),
+    (CompanyRegistrationNumberId(0),              emptyAnswers,                     if (toggled) hasCompanyUTR(NormalMode) else companyUTR(NormalMode),                   true,         Some(exitJourney(journeyMode(CheckMode), emptyAnswers, 0, cya(NormalMode))),                   true),
+    (CompanyRegistrationNumberId(0),              newEstablisher,                   if (toggled) hasCompanyUTR(NormalMode) else companyUTR(NormalMode),                   true,         Some(cya(journeyMode(CheckMode))),                   true),
+    (CompanyContactDetailsId(0),                  emptyAnswers,                     isDormant(NormalMode),                                true,         Some(cya(journeyMode(CheckMode))),               true),
+    (CompanyPhoneId(0),                           emptyAnswers,                     cyaCompanyContactDetails(NormalMode),                         true,         Some(cyaCompanyContactDetails(journeyMode(CheckMode))),               true),
+    (IsCompanyDormantId(0),                       emptyAnswers,                     if (toggled) cyaCompanyDetails(NormalMode) else cya(NormalMode),             true,         Some(cya(journeyMode(CheckMode))),               true)
   )
 
   private def updateOnlyRoutes(toggled:Boolean): TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = Table(
-    ("Id",                                          "User Answers",               "Next Page (UpdateMode Mode)",                "Save (NM)",  "Next Page (CheckUpdateMode Mode)",         "Save (CM)"),
-    (CompanyAddressYearsId(0), addressYearsUnderAYear,                           if (toggled) hasBeenTrading(UpdateMode) else prevAddPostCodeLookup(UpdateMode), true, addressYearsLessThanTwelveEdit(UpdateMode, toggled, addressYearsUnderAYear), true),
-    (CompanyAddressYearsId(0), addressYearsUnderAYearWithExistingCurrentAddress, if (toggled) hasBeenTrading(UpdateMode) else prevAddPostCodeLookup(UpdateMode), true, addressYearsLessThanTwelveEdit(UpdateMode, toggled, addressYearsUnderAYearWithExistingCurrentAddress), true),
-    (CompanyRegistrationNumberId(0),              emptyAnswers,                     if(toggled)hasCompanyUTR(UpdateMode) else companyUTR(UpdateMode),                   true,           Some(exitJourney(UpdateMode, emptyAnswers, 0, cya(UpdateMode))),                   true),
-    (CompanyRegistrationNumberId(0),              newEstablisher,                   if(toggled)hasCompanyUTR(UpdateMode) else companyUTR(UpdateMode),                   true,           Some(cya(UpdateMode)),                   true),
-    (CompanyContactDetailsId(0),  emptyAnswers,                         cya(UpdateMode),                        true,   Some(exitJourney(CheckUpdateMode,   emptyAnswers, 0, cya(UpdateMode))),       true),
-    (CompanyPhoneId(0),           emptyAnswers,                         cyaCompanyContactDetails(UpdateMode),   true,   Some(exitJourney(CheckUpdateMode,   emptyAnswers, 0, cyaCompanyContactDetails(UpdateMode))),       true),
-    (AddCompanyDirectorsId(0),    addCompanyDirectorsFalseWithChanges,  if(toggled) taskList(UpdateMode) else anyMoreChanges,                         true,   None,                                                           true),
-    (CompanyPayeVariationsId(0),                  emptyAnswers,         cyaCompanyDetails(UpdateMode),                                   true,   Some(exitJourney(CheckUpdateMode, emptyAnswers, 0, cya(UpdateMode))),                   true),
-    (CompanyRegistrationNumberVariationsId(0),                  emptyAnswers,                  hasCompanyUTR(UpdateMode),    true,           Some(exitJourney(CheckUpdateMode, emptyAnswers, 0, cya(UpdateMode))),                   true),
-    (HasCompanyPAYEId(0),                         establisherHasPAYE(false),        cyaCompanyDetails(UpdateMode),                    true,           Some(exitJourney(CheckUpdateMode, emptyAnswers, 0, cyaCompanyDetails(UpdateMode))),          true)
+    ("Id",                                        "User Answers",                   "Next Page (UpdateMode Mode)",                "Save (NM)",  "Next Page (CheckUpdateMode Mode)",         "Save (CM)"),
+    (CompanyAddressYearsId(0),                    addressYearsUnderAYear,             if (toggled) hasBeenTrading(UpdateMode) else prevAddPostCodeLookup(UpdateMode), true, addressYearsLessThanTwelveEdit(UpdateMode, toggled, addressYearsUnderAYear), true),
+    (CompanyAddressYearsId(0),                    addressYearsUnderAYearWithExistingCurrentAddress,    if (toggled) hasBeenTrading(UpdateMode) else prevAddPostCodeLookup(UpdateMode), true, addressYearsLessThanTwelveEdit(UpdateMode, toggled, addressYearsUnderAYearWithExistingCurrentAddress), true),
+    (CompanyRegistrationNumberId(0),              emptyAnswers,                       if(toggled)hasCompanyUTR(UpdateMode) else companyUTR(UpdateMode),                   true,           Some(exitJourney(UpdateMode, emptyAnswers, 0, cya(UpdateMode))),                   true),
+    (CompanyRegistrationNumberId(0),              newEstablisher,                     if(toggled)hasCompanyUTR(UpdateMode) else companyUTR(UpdateMode),                   true,           Some(cya(UpdateMode)),                   true),
+    (CompanyContactDetailsId(0),                  emptyAnswers,                       cya(UpdateMode),                        true,   Some(exitJourney(CheckUpdateMode,   emptyAnswers, 0, cya(UpdateMode))),       true),
+    (CompanyPhoneId(0),                           emptyAnswers,                       cyaCompanyContactDetails(UpdateMode),   true,   Some(exitJourney(CheckUpdateMode,   emptyAnswers, 0, cyaCompanyContactDetails(UpdateMode))),       true),
+    (AddCompanyDirectorsId(0),                    addCompanyDirectorsFalseWithChanges,if(toggled) taskList(UpdateMode) else anyMoreChanges,                         true,   None,                                                           true),
+    (CompanyPayeVariationsId(0),                  emptyAnswers,                       cyaCompanyDetails(UpdateMode),                                   true,   Some(exitJourney(CheckUpdateMode, emptyAnswers, 0, cya(UpdateMode))),                   true),
+    (CompanyRegistrationNumberVariationsId(0),    emptyAnswers,                       hasCompanyUTR(UpdateMode),    true,           Some(exitJourney(CheckUpdateMode, emptyAnswers, 0, cya(UpdateMode))),                   true),
+    (HasCompanyPAYEId(0),                         establisherHasPAYE(false),          cyaCompanyDetails(UpdateMode),                    true,           Some(exitJourney(CheckUpdateMode, emptyAnswers, 0, cyaCompanyDetails(UpdateMode))),          true)
 
   )
 
