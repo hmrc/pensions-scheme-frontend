@@ -66,9 +66,9 @@ class DirectorPreviousAddressPostcodeLookupController @Inject()(
           routes.DirectorPreviousAddressPostcodeLookupController.onSubmit(mode, establisherIndex, directorIndex, srn),
           routes.DirectorPreviousAddressController.onPageLoad(mode, establisherIndex, directorIndex, srn),
           Message("messages__directorPreviousAddressPostcodeLookup__title"),
-          Message("messages__directorPreviousAddressPostcodeLookup__heading"),
+          Message("messages__previousAddressPostcodeLookup__heading", details.fullName),
           Some(details.fullName),
-          Some(Message("messages__directorPreviousAddressPostcodeLookup__lede")),
+          enterPostcode = Message("messages__common__postcode_lookup__manual_link"),
           srn = srn
         )
       )

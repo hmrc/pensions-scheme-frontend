@@ -91,8 +91,7 @@ object PartnershipPostcodeLookupControllerSpec extends ControllerSpecBase with M
     manualInputCall = routes.PartnershipAddressController.onPageLoad(NormalMode, firstIndex, None),
     title = Message("messages__partnershipPostcodeLookup__title"),
     heading = Message("messages__partnershipPostcodeLookup__heading"),
-    subHeading = Some(partnershipDetails.name),
-    hint = Some(Message("messages__partnershipPostcodeLookup__hint"))
+    subHeading = Some(partnershipDetails.name)
   )
 
   val retrieval = new FakeDataRetrievalAction(Some(
