@@ -29,7 +29,7 @@ import play.api.data.Form
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
 import play.api.test.Helpers._
-import utils.FakeNavigator
+import utils.{FakeFeatureSwitchManagementService, FakeNavigator}
 import viewmodels.Message
 import viewmodels.address.AddressYearsViewModel
 import views.html.address.addressYears
@@ -56,7 +56,8 @@ class DirectorAddressYearsControllerSpec extends ControllerSpecBase {
       FakeAuthAction,
       dataRetrievalAction,
       FakeAllowAccessProvider(),
-      new DataRequiredActionImpl
+      new DataRequiredActionImpl,
+      new FakeFeatureSwitchManagementService(false)
     )
 
   private def viewAsString(form: Form[_] = form) =

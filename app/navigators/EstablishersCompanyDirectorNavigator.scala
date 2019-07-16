@@ -177,7 +177,10 @@ class EstablishersCompanyDirectorNavigator @Inject()(val dataCacheConnector: Use
       case Some(AddressYears.UnderAYear) =>
         NavigateTo.dontSave(routes.DirectorPreviousAddressPostcodeLookupController.onPageLoad(mode, establisherIndex, directorIndex, srn))
       case Some(AddressYears.OverAYear) =>
-        NavigateTo.dontSave(routes.DirectorContactDetailsController.onPageLoad(mode, establisherIndex, directorIndex, srn))
+        if(featureSwitchManagementService.get(Toggles.isEstablisherCompanyHnSEnabled))
+          NavigateTo.dontSave(routes.DirectorEmailController.onPageLoad(mode, establisherIndex, directorIndex, srn))
+        else
+          NavigateTo.dontSave(routes.DirectorContactDetailsController.onPageLoad(mode, establisherIndex, directorIndex, srn))
       case None =>
         NavigateTo.dontSave(controllers.routes.SessionExpiredController.onPageLoad())
     }

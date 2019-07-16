@@ -54,17 +54,23 @@ class DirectorAddressPostcodeLookupController @Inject()(
   def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
-        get(viewmodel(establisherIndex, directorIndex, mode, srn))
+        viewmodel(establisherIndex, directorIndex, mode, srn).retrieve.right map get
     }
 
   def onSubmit(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
-            post(DirectorAddressPostcodeLookupId(establisherIndex, directorIndex),
-              viewmodel(establisherIndex, directorIndex, mode, srn), mode)
+        viewmodel(establisherIndex, directorIndex, mode, srn).retrieve.right.map(
+          vm =>
+            post(DirectorAddressPostcodeLookupId(establisherIndex, directorIndex), vm, mode)
+        )
     }
 
-  private def viewmodel(establisherIndex: Index, directorIndex: Index, mode: Mode, srn: Option[String]) =
+  private def viewmodel(establisherIndex: Index, directorIndex: Index, mode: Mode, srn: Option[String]): Retrieval[PostcodeLookupViewModel] =
+    Retrieval(
+      implicit request =>
+        directorName(establisherIndex, directorIndex).retrieve.right.map {
+          name =>
             PostcodeLookupViewModel(
               routes.DirectorAddressPostcodeLookupController.onSubmit(mode, establisherIndex, directorIndex, srn),
               routes.DirectorAddressController.onPageLoad(mode, establisherIndex, directorIndex, srn),
@@ -74,5 +80,15 @@ class DirectorAddressPostcodeLookupController @Inject()(
               Some(Message("messages__directorAddressPostcodeLookup__lede")),
               srn = srn
             )
+        }
+    )
+
+  val directorName = (establisherIndex: Index, directorIndex: Index) => Retrieval {
+    implicit request =>
+      if (featureSwitchManagementService.get(Toggles.isEstablisherCompanyHnSEnabled))
+        DirectorNameId(establisherIndex, directorIndex).retrieve.right.map(_.fullName)
+      else
+        DirectorDetailsId(establisherIndex, directorIndex).retrieve.right.map(_.fullName)
+  }
 
 }
