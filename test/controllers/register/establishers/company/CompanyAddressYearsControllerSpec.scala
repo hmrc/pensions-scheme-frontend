@@ -63,7 +63,7 @@ class CompanyAddressYearsControllerSpec extends ControllerSpecBase {
       AddressYearsViewModel(
         routes.CompanyAddressYearsController.onSubmit(NormalMode, None, firstIndex),
         Message("messages__company_address_years__title"),
-        Message("messages__company_address_years__title"),
+        Message("messages__company_address_years__h1", companyName),
         Message("messages__company_address_years__title"),
         Some(companyName)
       ),

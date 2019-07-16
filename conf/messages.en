@@ -380,7 +380,8 @@ messages__error__ct_utr_invalid = Enter a valid 10 digit Corporation Tax Unique 
 messages__common__enrol_test__title = Enrol PSA to access Scheme Reg
 messages__common__psa_name = PSA Name
 
-messages__company_address_years__title = How long has the company been at this address?
+messages__company_address_years__title =  Has the establisher used this contact address for at least 1 year?
+messages__company_address_years__h1 = Has {0} used this contact address for at least 1 year?
 messages__common__company_details__title = Company details
 messages__common__company_name = Company name
 messages__common__vat = VAT Registration number (optional)
@@ -534,7 +535,7 @@ messages__director__cya__utr_yes_no = Does the director have a Self Assessment U
 messages__director__cya__utr = Unique Taxpayer Reference number
 messages__director__cya__utr_no_reason = Why the director does not have a Self Assessment Unique Taxpayer Reference number?
 
-messages__confirmDeleteDirector__title = Confirm deletion
+messages__confirmDeleteDirector__title =  Are you sure you want to delete this establisher?
 messages__confirmDeleteDirector__heading = Are you sure you want to delete {0}?
 
 messages__directorAddressConfirm__title = Confirm the director’s address
@@ -1217,7 +1218,7 @@ messages__workingKnowledge__p2 = For example, if you are an employer, or a direc
 messages__workingKnowledge__p3 = If you do not have that knowledge, you must be helped by a pension practitioner or provider who has the knowledge. You will need to tell HMRC who that is.
 messages__workingKnowledge__error__required = Select yes if you have working knowledge of pensions and pensions tax legislation
 
-messages__is_dormant__title = Has the establisher been dormant in the last 12 months?
+messages__is_dormant__title = Has the company been dormant in the last 12 months?
 messages__is_dormant__heading = Have {0} been dormant in the last 12 months?
 messages__is_dormant__yes = Yes
 messages__is_dormant__no = No
@@ -1634,24 +1635,24 @@ messages__hasDirectorUtr__error__required = Select yes if {0} has a Unique Taxpa
 messages__noDirectorUtr__title = Why does the director not have a UTR?
 messages__noDirectorUtr__heading = Why does {0} not have a UTR?
 
-messages__establisherPostCode__title = What is establisher’s postcode?
+messages__establisherPostCode__title = What is the establisher’s postcode?
 messages__establisherPostCode__h1 = What is {0}’s postcode?
 
-messages__establisherPreviousPostCode__title = What was establisher’s previous postcode?
+messages__establisherPreviousPostCode__title = What was the establisher’s previous postcode?
 messages__establisherPreviousPostCode__h1 = What was {0}’s previous postcode?
 
 messages__establisherSelectAddress__title = Select the address
-messages__establisherSelectAddress__h1 = What is {0}’s address?
+messages__establisherSelectAddress__h1 = Select the address
 
 messages__establisherPreviousSelectAddress__title = Select the previous address
-messages__establisherPreviousSelectAddress__h1 = What was {0}’s previous address?
+messages__establisherPreviousSelectAddress__h1 = Select the previous address
 
-messages__establisherConfirmAddress__title = Confirm establisher’s address
+messages__establisherConfirmAddress__title = Confirm the establisher’s address
 messages__establisherConfirmAddress__h1 = Confirm {0}’s address
 messages__establisherConfirmAddress__cya_label = {0}’s address
 messages__establisherConfirmAddress__cya_visually_hidden_label = contact address
 
-messages__establisherPreviousConfirmAddress__title = Confirm establisher’s previous address
+messages__establisherPreviousConfirmAddress__title = Confirm the establisher’s previous address
 messages__establisherPreviousConfirmAddress__h1 = Confirm {0}’s previous address
 messages__establisherPreviousConfirmAddress__cya_label = {0}’s previous address
 messages__establisherPreviousConfirmAddress__cya_visually_hidden_label = previous contact address
