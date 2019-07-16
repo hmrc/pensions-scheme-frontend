@@ -1396,7 +1396,7 @@ messages__visuallyhidden__type_of_benefits_change = Change how the scheme provid
 
 messages__benefits_secured_by_insurance__title = Are any of the scheme benefits secured by a contract of insurance or annuity?
 messages__benefits_secured_by_insurance__h1 = Are any of the scheme benefits secured by a contract of insurance or annuity?
-messages__benefits_secured_by_insurance__lede = The benefits in the scheme can be secured by a contract of insurance or annuity contract by an insurance company that provides administration services to the scheme.
+messages__benefits_secured_by_insurance__lede = Benefits can be secured by a contract of insurance or an annuity contract by an insurance company that provides administration services to the scheme.
 securedBenefits.checkYourAnswersLabel = Are any of the scheme benefits secured by a contract of insurance or annuity?
 messages__visuallyhidden__securedBenefits = Change if any of the scheme benefits are secured by a contract of insurance or annuity
 
