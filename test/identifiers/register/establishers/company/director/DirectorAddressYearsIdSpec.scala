@@ -29,7 +29,7 @@ import play.api.mvc.AnyContent
 import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.PsaId
 import utils.checkyouranswers.Ops._
-import utils.{Enumerable, UserAnswers}
+import utils.{Enumerable, FakeFeatureSwitchManagementService, UserAnswers}
 import viewmodels.AnswerRow
 
 class DirectorAddressYearsIdSpec extends SpecBase with Enumerable.Implicits {
@@ -121,6 +121,7 @@ class DirectorAddressYearsIdSpec extends SpecBase with Enumerable.Implicits {
     val onwardUrl = "onwardUrl"
 
     val directorDetails = PersonDetails("John", None, "One", LocalDate.now())
+    implicit val featureSwitchManagementService = new FakeFeatureSwitchManagementService(false)
 
     def answers = UserAnswers()
       .set(DirectorAddressYearsId(0, 0))(UnderAYear).asOpt.value

@@ -42,7 +42,7 @@ class DirectorNoUTRReasonControllerSpec extends ControllerSpecBase {
     }
 
     "return OK and the correct view for a GET where valid reason given" in {
-      val validData = validCompanyDirectorData("directorUniqueTaxReference" -> Json.obj("reason" -> "new reason"))
+      val validData = validCompanyDirectorData("directorUniqueTaxReference" -> Json.obj("noUtrReason" -> "new reason"))
 
       val dataRetrievalAction = new FakeDataRetrievalAction(Some(validData))
       val result = controller(dataRetrievalAction = dataRetrievalAction).onPageLoad(NormalMode, establisherIndex, directorIndex, None)(fakeRequest)

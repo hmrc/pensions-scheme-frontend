@@ -53,8 +53,8 @@ trait UserAnswersService {
 
   protected def appConfig: FrontendAppConfig
 
-  protected val fs: FeatureSwitchManagementService
-  private val isHnSEnabled = fs.get(Toggles.isEstablisherCompanyHnSEnabled)
+  protected def fs: FeatureSwitchManagementService
+  protected val isHnSEnabled = fs.get(Toggles.isEstablisherCompanyHnSEnabled)
 
   case object MissingSrnNumber extends Exception
 

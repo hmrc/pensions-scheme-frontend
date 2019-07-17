@@ -34,8 +34,7 @@ object DirectorNewNinoId {
 
   override lazy val toString: String = "directorNino"
 
-  implicit def cya(implicit messages: Messages,
-                   featureSwitchManagementService: FeatureSwitchManagementService): CheckYourAnswers[DirectorNewNinoId] = {
+  implicit def cya(implicit messages: Messages): CheckYourAnswers[DirectorNewNinoId] = {
 
     new CheckYourAnswers[DirectorNewNinoId] {
 

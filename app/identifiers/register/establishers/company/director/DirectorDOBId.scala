@@ -33,7 +33,7 @@ case class DirectorDOBId(establisherIndex: Int, directorIndex: Int) extends Type
 object DirectorDOBId {
   override def toString: String = "date"
 
-  implicit def personDetails(implicit rds: Reads[LocalDate], messages: Messages, answers: UserAnswers): CheckYourAnswers[DirectorDOBId] = {
+  implicit def cya(implicit answers: UserAnswers, messages: Messages): CheckYourAnswers[DirectorDOBId] = {
     new CheckYourAnswers[DirectorDOBId] {
 
       def label(establisherIndex: Int, directorIndex: Int) =

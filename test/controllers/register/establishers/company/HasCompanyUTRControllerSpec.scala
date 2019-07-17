@@ -74,7 +74,7 @@ class HasCompanyUTRControllerSpec extends ControllerSpecBase {
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
-      FakeUserAnswersService.verify(HasCompanyUTRId(index), true)
+      FakeUserAnswersService.userAnswer.get(HasCompanyUTRId(index)).value mustBe true
     }
 
     "return a Bad Request and errors when invalid data is submitted" in {

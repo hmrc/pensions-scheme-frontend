@@ -39,6 +39,8 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
 
   implicit val countryOptions = new FakeCountryOptions()
   implicit val request = FakeDataRequest(directorAnswers)
+  implicit val userAnswers = request.userAnswers
+  implicit val featureSwitchManagementService = new FakeFeatureSwitchManagementService(false)
 
   private def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData,
                          allowChangeHelper: AllowChangeHelper = ach, toggle:Boolean = false): CheckYourAnswersController =
@@ -108,28 +110,28 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
 
         val result = controller(directorAnswersUpdate.dataRetrievalAction).onPageLoad(firstIndex, firstIndex, UpdateMode, Some("srn"))(request)
         status(result) mustBe OK
-        contentAsString(result) mustBe viewAsString(UpdateMode, updateAnswerRows, Some("srn"))
+        contentAsString(result) mustBe viewAsString(UpdateMode, displayNewNinoAnswerRowWithAdd, Some("srn"))
       }
 
-      "return OK and display new Nino with Add link for UpdateMode and separateRefCollectionEnabled is true" in {
+      "return OK and display new Nino with Add link for UpdateMode" in {
 
-        val result = controller(directorDetailsAnswersUpdateWithoutNino.dataRetrievalAction, toggle = true).
+        val result = controller(directorDetailsAnswersUpdateWithoutNino.dataRetrievalAction).
           onPageLoad(firstIndex, firstIndex, UpdateMode, Some("srn"))(request)
         status(result) mustBe OK
         contentAsString(result) mustBe viewAsString(UpdateMode, displayNewNinoAnswerRowWithAdd, Some("srn"))
       }
 
-      "return OK and display new Nino with no link for UpdateMode and separateRefCollectionEnabled is true" in {
+      "return OK and display new Nino with no link for UpdateMode" in {
 
-        val result = controller(directorAnswersUpdateWithNewNino.dataRetrievalAction, toggle = true).
+        val result = controller(directorAnswersUpdateWithNewNino.dataRetrievalAction).
           onPageLoad(firstIndex, firstIndex, UpdateMode, Some("srn"))(request)
         status(result) mustBe OK
         contentAsString(result) mustBe viewAsString(UpdateMode, displayNewNinoAnswerRowWithNoLink, Some("srn"))
       }
 
-      "return OK and display old Nino links for UpdateMode, New Director and separateRefCollectionEnabled is true" in {
+      "return OK and display old Nino links for UpdateMode, New Director" in {
 
-        val result = controller(newDirectorAnswersUpdateWithOldNino.dataRetrievalAction, toggle = true).
+        val result = controller(newDirectorAnswersUpdateWithOldNino.dataRetrievalAction).
           onPageLoad(firstIndex, firstIndex, UpdateMode, Some("srn"))(request)
         status(result) mustBe OK
         contentAsString(result) mustBe viewAsString(UpdateMode, updateAnswerRowsWithChange, Some("srn"))
@@ -238,7 +240,7 @@ object CheckYourAnswersControllerSpec extends SpecBase {
       Seq(
         AnswerRow("messages__director__cya__name", Seq("first name last name"), false, None),
         AnswerRow(messages("messages__director__cya__dob", directorPersonDetails.firstAndLastName), Seq(DateHelper.formatDate(LocalDate.now())), answerIsMessageKey = false, None),
-        AnswerRow(messages("messages__director__cya__nino", directorPersonDetails.firstAndLastName), Seq("site.not_entered"), answerIsMessageKey = true,
+        AnswerRow(messages("messages__common__nino", directorPersonDetails.firstAndLastName), Seq("site.not_entered"), answerIsMessageKey = true,
           Some(Link("site.add",
             routes.DirectorNinoNewController.onPageLoad(Mode.checkMode(UpdateMode), firstIndex, firstIndex, Some("srn")).url,
             Some(s"messages__visuallyhidden__director__nino_add"))))
@@ -252,7 +254,7 @@ object CheckYourAnswersControllerSpec extends SpecBase {
       Seq(
         AnswerRow("messages__director__cya__name", Seq("first name last name"), false, None),
         AnswerRow(messages("messages__director__cya__dob", directorPersonDetails.firstAndLastName), Seq(DateHelper.formatDate(LocalDate.now())), answerIsMessageKey = false, None),
-        AnswerRow(messages("messages__director__cya__nino", directorPersonDetails.firstAndLastName), Seq("AB100100A"), answerIsMessageKey = false, None)
+        AnswerRow(messages("messages__common__nino", directorPersonDetails.firstAndLastName), Seq("AB100100A"), answerIsMessageKey = false, None)
       )
     ),
     AnswerSection(Some("messages__director__cya__contact__details_heading"), Seq())

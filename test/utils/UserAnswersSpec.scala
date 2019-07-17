@@ -253,7 +253,7 @@ class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues with 
         DirectorEntityNonHnS(DirectorDetailsId(0, 1), "First Last", isDeleted = true, isCompleted = false, isNewEntity = false, 2),
         DirectorEntityNonHnS(DirectorDetailsId(0, 2), "First Last", isDeleted = false, isCompleted = false, isNewEntity = false, 2))
 
-      val result = userAnswers.allDirectors(0)
+      val result = userAnswers.allDirectors(0, false)
 
       result.size mustEqual 3
       result mustBe directorEntities
@@ -269,7 +269,7 @@ class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues with 
 
       val directorEntities = Seq(
         DirectorEntityNonHnS(DirectorDetailsId(0, 1), "First1 Last1", isDeleted = false, isCompleted = false, isNewEntity = false, 1))
-      val result = userAnswers.allDirectorsAfterDelete(0)
+      val result = userAnswers.allDirectorsAfterDelete(0, false)
 
       result.size mustEqual 1
       result mustBe directorEntities
@@ -460,59 +460,59 @@ class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues with 
     "checking insurance company" must {
        "return false if scheme have insurance and details are missing" in {
          val insuranceCompanyDetails = UserAnswers().investmentRegulated(true)
-         insuranceCompanyDetails.areVariationChangesCompleted mustBe false
+         insuranceCompanyDetails.areVariationChangesCompleted(false) mustBe false
        }
 
        "return false if scheme have insurance is not defined" in {
          val insuranceCompanyDetails = UserAnswers()
-         insuranceCompanyDetails.areVariationChangesCompleted mustBe false
+         insuranceCompanyDetails.areVariationChangesCompleted(false) mustBe false
        }
 
        "return true if scheme does not have insurance" in {
          val insuranceCompanyDetails = UserAnswers().benefitsSecuredByInsurance(false)
-         insuranceCompanyDetails.areVariationChangesCompleted mustBe true
+         insuranceCompanyDetails.areVariationChangesCompleted(false) mustBe true
        }
 
        "return true if scheme have insurance and all the details are present" in {
-         insuranceCompanyDetails.areVariationChangesCompleted mustBe true
+         insuranceCompanyDetails.areVariationChangesCompleted(false) mustBe true
        }
      }
 
     "checking trustees" must {
       "return true if trustees are not defined" in {
-        insuranceCompanyDetails.areVariationChangesCompleted mustBe true
+        insuranceCompanyDetails.areVariationChangesCompleted(false) mustBe true
       }
 
       "return false if trustees are not completed" in {
-        trustee.areVariationChangesCompleted mustBe false
+        trustee.areVariationChangesCompleted(false) mustBe false
       }
 
       "return true if trustees are completed" in {
         val trusteeCompleted = trustee.set(IsTrusteeCompleteId(0))(true).asOpt.get
-        trusteeCompleted.areVariationChangesCompleted mustBe true
+        trusteeCompleted.areVariationChangesCompleted(false) mustBe true
       }
     }
 
     "checking establishers" must {
       "return false if establishers are not completed" in {
-        establisher.areVariationChangesCompleted mustBe false
+        establisher.areVariationChangesCompleted(false) mustBe false
       }
 
       "return false if establishers are completed but directors are not completed" in {
         val establisherCompleted = establisher.set(IsEstablisherCompleteId(0))(true).asOpt.get
-        establisherCompleted.areVariationChangesCompleted mustBe false
+        establisherCompleted.areVariationChangesCompleted(false) mustBe false
       }
 
       "return true if establishers company is completed" in {
         val establisherCompleted = establisher.set(IsEstablisherCompleteId(0))(true).flatMap(
           _.set(IsDirectorCompleteId(0,0))(true)).asOpt.get
-        establisherCompleted.areVariationChangesCompleted mustBe true
+        establisherCompleted.areVariationChangesCompleted(false) mustBe true
       }
 
       "return true if establishers partnership is completed" in {
         val establisherCompleted = establisherPartnership.set(IsEstablisherCompleteId(0))(true).flatMap(
           _.set(IsPartnerCompleteId(0,0))(true)).asOpt.get
-        establisherCompleted.areVariationChangesCompleted mustBe true
+        establisherCompleted.areVariationChangesCompleted(false) mustBe true
       }
     }
   }

@@ -35,7 +35,7 @@ object DirectorNameId {
 
   override def toString: String = "directorName"
 
-  implicit def cya(implicit rds: Reads[PersonName], messages: Messages): CheckYourAnswers[DirectorNameId] = {
+  implicit def cya(implicit messages: Messages): CheckYourAnswers[DirectorNameId] = {
     new CheckYourAnswers[DirectorNameId] {
 
       override def row(id: DirectorNameId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =

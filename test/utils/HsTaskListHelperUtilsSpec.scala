@@ -18,9 +18,9 @@ package utils
 
 import base.SpecBase
 import controllers.register.establishers.company.{routes => establisherCompanyRoutes}
-import identifiers.register.establishers.company.director.{DirectorDetailsId, IsDirectorCompleteId}
+import identifiers.register.establishers.company.director.{DirectorNameId, IsDirectorCompleteId}
 import identifiers.register.establishers.{IsEstablisherNewId, company => establisherCompanyPath}
-import models.person.PersonDetails
+import models.person.{PersonDetails, PersonName}
 import models.{CompanyDetails, EntitySpoke, Link, Mode, NormalMode, UpdateMode}
 import org.joda.time.LocalDate
 import org.scalatest.{MustMatchers, OptionValues}
@@ -89,7 +89,7 @@ object HsTaskListHelperUtilsSpec extends SpecBase with OptionValues {
         _.set(establisherCompanyPath.IsAddressCompleteId(0))(isComplete).flatMap(
           _.set(establisherCompanyPath.IsDetailsCompleteId(0))(isComplete).flatMap(
             _.set(establisherCompanyPath.IsContactDetailsCompleteId(0))(isComplete).flatMap(
-            _.set(DirectorDetailsId(0, 0))(PersonDetails("Joe", None, "Bloggs", LocalDate.now()))
+            _.set(DirectorNameId(0, 0))(PersonName("Joe", "Bloggs"))
           )))).asOpt.value
   }
 
@@ -109,7 +109,7 @@ object HsTaskListHelperUtilsSpec extends SpecBase with OptionValues {
     EntitySpoke(Link(messages("messages__schemeTaskList__sectionEstablishersCompany_add_contact", "test company"),
       establisherCompanyRoutes.WhatYouWillNeedCompanyContactDetailsController.onPageLoad(mode, srn, 0).url), None),
     EntitySpoke(Link(messages("messages__schemeTaskList__sectionEstablishersCompany_add_directors", "test company"),
-      controllers.register.establishers.company.routes.AddCompanyDirectorsController.onPageLoad(mode, srn, 0).url), None)
+      controllers.register.establishers.company.director.routes.WhatYouWillNeedDirectorController.onPageLoad(mode, srn, 0).url), None)
   )
 
   def expectedInProgressSpokes(mode: Mode, srn: Option[String]): Seq[EntitySpoke] = Seq(

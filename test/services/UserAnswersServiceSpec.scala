@@ -44,7 +44,7 @@ import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.AnyContent
 import play.api.mvc.Results.Ok
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.{FakeDataRequest, UserAnswers}
+import utils.{FakeDataRequest, FakeFeatureSwitchManagementService, UserAnswers}
 
 import scala.concurrent.Future
 
@@ -561,7 +561,8 @@ object UserAnswersServiceSpec extends SpecBase with MockitoSugar {
                               override val updateSchemeCacheConnector: UpdateSchemeCacheConnector,
                               override val lockConnector: PensionSchemeVarianceLockConnector,
                               override val viewConnector: SchemeDetailsReadOnlyCacheConnector,
-                              override val appConfig: FrontendAppConfig
+                              override val appConfig: FrontendAppConfig,
+                              override val fs: FakeFeatureSwitchManagementService
                              ) extends UserAnswersService
 
   class TestServiceEstAndTrustees @Inject()(override val subscriptionCacheConnector: UserAnswersCacheConnector,
@@ -569,7 +570,7 @@ object UserAnswersServiceSpec extends SpecBase with MockitoSugar {
                                             override val lockConnector: PensionSchemeVarianceLockConnector,
                                             override val viewConnector: SchemeDetailsReadOnlyCacheConnector,
                                             override val appConfig: FrontendAppConfig
-  ) extends UserAnswersServiceEstablishersAndTrusteesImpl(subscriptionCacheConnector, updateSchemeCacheConnector, lockConnector, viewConnector, appConfig)
+  ) extends UserAnswersServiceEstablishersAndTrusteesImpl(subscriptionCacheConnector, updateSchemeCacheConnector, lockConnector, viewConnector, appConfig, new FakeFeatureSwitchManagementService(false))
 
 
 
@@ -578,7 +579,7 @@ object UserAnswersServiceSpec extends SpecBase with MockitoSugar {
                                             override val lockConnector: PensionSchemeVarianceLockConnector,
                                        override val viewConnector: SchemeDetailsReadOnlyCacheConnector,
                                             override val appConfig: FrontendAppConfig
-  ) extends UserAnswersServiceInsuranceImpl(subscriptionCacheConnector, updateSchemeCacheConnector, lockConnector, viewConnector, appConfig)
+  ) extends UserAnswersServiceInsuranceImpl(subscriptionCacheConnector, updateSchemeCacheConnector, lockConnector, viewConnector, appConfig, new FakeFeatureSwitchManagementService(false))
 
   protected val subscriptionConnector: UserAnswersCacheConnector = mock[OldSubscriptionCacheConnector]
   protected val updateConnector: UpdateSchemeCacheConnector = mock[UpdateSchemeCacheConnector]
@@ -586,7 +587,7 @@ object UserAnswersServiceSpec extends SpecBase with MockitoSugar {
   protected val viewConnector: SchemeDetailsReadOnlyCacheConnector = mock[SchemeDetailsReadOnlyCacheConnector]
 
   protected lazy val testServiceNotAnnotated: UserAnswersService = new TestServiceNotAnnotated(subscriptionConnector,
-    updateConnector, lockConnector, viewConnector, frontendAppConfig)
+    updateConnector, lockConnector, viewConnector, frontendAppConfig, new FakeFeatureSwitchManagementService(false))
 
   protected lazy val testServiceEstAndTrustees = new TestServiceEstAndTrustees(subscriptionConnector,
     updateConnector, lockConnector, viewConnector, frontendAppConfig)
