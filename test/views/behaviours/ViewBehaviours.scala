@@ -41,8 +41,7 @@ trait ViewBehaviours extends ViewSpecBase {
 
         "display the correct browser title" in {
           val doc = asDocument(view())
-          assertEqualsMessage(doc, "title", title + " - " + messagesApi(
-            "messages__pension_scheme_registration__title"))
+          assertEqualsMessage(doc, "title", title + " - " + messagesApi("messages__pension_scheme_registration__title"))
         }
 
         "display the correct page title" in {
@@ -98,6 +97,18 @@ trait ViewBehaviours extends ViewSpecBase {
       messagesApi(s"messages__${messageKeyPrefix}__title"),
       pageHeader,
       expectedGuidanceKeys: _*
+    )
+  }
+
+  def normalPageWithDynamicTitle(view: () => HtmlFormat.Appendable,
+                                 messageKeyPrefix: String,
+                                 pageHeader: String,
+                                 msgArgs: String*): Unit = {
+    normalPageWithTitle(
+      view,
+      messageKeyPrefix,
+      messagesApi(s"messages__${messageKeyPrefix}__title", msgArgs: _*),
+      pageHeader
     )
   }
 

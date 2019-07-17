@@ -41,12 +41,12 @@ class PartnerAddressYearsControllerSpec extends ControllerSpecBase {
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
   private val formProvider = new AddressYearsFormProvider()
-  private val form = formProvider(Message("messages__common_error__current_address_years"))
+  val partner = PersonDetails("first", Some("middle"), "last", LocalDate.now())
 
+  private val form = formProvider(Message("messages__common_error__current_address_years", partner.fullName))
   val establisherIndex = Index(0)
   val partnerIndex = Index(0)
   val invalidIndex = Index(10)
-  val partner = PersonDetails("first", Some("middle"), "last", LocalDate.now())
 
   def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): PartnerAddressYearsController =
     new PartnerAddressYearsController(
@@ -66,9 +66,9 @@ class PartnerAddressYearsControllerSpec extends ControllerSpecBase {
       form,
       AddressYearsViewModel(
         routes.PartnerAddressYearsController.onSubmit(NormalMode, establisherIndex, partnerIndex, None),
-        title = Message("messages__partner_address_years__title"),
-        heading = Message("messages__partner_address_years__heading"),
-        legend = Message("messages__partner_address_years__heading"),
+        title = Message("messages__partner_address_years__title", Message("messages__common__address_years__partner").resolve),
+        heading = Message("messages__partner_address_years__heading", partner.fullName),
+        legend = Message("messages__partner_address_years__heading", partner.fullName),
         Some(partner.fullName)
       ),
       None

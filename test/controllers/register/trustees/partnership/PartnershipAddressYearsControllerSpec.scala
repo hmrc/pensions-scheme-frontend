@@ -111,7 +111,7 @@ object PartnershipAddressYearsControllerSpec extends ControllerSpecBase {
     "test partnership name"
   )
 
-  private val form = new AddressYearsFormProvider()(Message("messages__partnershipAddressYears__error"))
+  private val form = new AddressYearsFormProvider()(Message("messages__partnershipAddressYears__error", partnershipUserAnswers.get(PartnershipDetailsId(index)).get.name))
 
   private val onwardRoute = controllers.routes.IndexController.onPageLoad()
   private val fakeNavigator = new FakeNavigator(onwardRoute)
@@ -131,9 +131,9 @@ object PartnershipAddressYearsControllerSpec extends ControllerSpecBase {
   private val viewModel =
     AddressYearsViewModel(
       postCall = routes.PartnershipAddressYearsController.onSubmit(mode, index, None),
-      title = Message("messages__partnershipAddressYears__title"),
-      heading = Message("messages__partnershipAddressYears__heading"),
-      legend = Message("messages__partnershipAddressYears__heading"),
+      title = Message("messages__partnershipAddressYears__title", Message("messages__common__address_years__partnership").resolve),
+      heading = Message("messages__partnershipAddressYears__heading", partnershipUserAnswers.get(PartnershipDetailsId(index)).get.name),
+      legend = Message("messages__partnershipAddressYears__heading", partnershipUserAnswers.get(PartnershipDetailsId(index)).get.name),
       subHeading = Some(Message(partnership.name))
     )
 

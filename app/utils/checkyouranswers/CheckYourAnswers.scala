@@ -456,14 +456,15 @@ case class AddressYearsCYA[I <: TypedIdentifier[AddressYears]](label: String = "
   def apply()(implicit rds: Reads[AddressYears]): CheckYourAnswers[I] = {
     new CheckYourAnswers[I] {
       override def row(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        userAnswers.get(id).map(addressYears =>
-        Seq(AnswerRow(
-          label,
-          Seq(s"messages__common__$addressYears"),
-          answerIsMessageKey = true,
-          Some(Link("site.change", changeUrl,
-            Some(changeAddressYears)))
-        ))).getOrElse(Seq.empty[AnswerRow])
+        userAnswers.get(id).map(
+          addressYears =>
+            Seq(AnswerRow(
+              label = label,
+              answer = Seq(s"messages__common__$addressYears"),
+              answerIsMessageKey = true,
+              changeUrl = Some(Link("site.change", changeUrl, Some(changeAddressYears)))
+            ))
+        ).getOrElse(Seq.empty[AnswerRow])
 
       override def updateRow(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = Nil
     }
@@ -629,8 +630,8 @@ case class CompanyDetailsCYA[I <: TypedIdentifier[CompanyDetails]](
 }
 
 case class ReferenceValueCYA[I <: TypedIdentifier[ReferenceValue]](
-                                                          nameLabel: String = "messages__common__cya__name",
-                                                          hiddenNameLabel: String = "messages__visuallyhidden__common__name") {
+                                                                    nameLabel: String = "messages__common__cya__name",
+                                                                    hiddenNameLabel: String = "messages__visuallyhidden__common__name") {
 
   def apply()(implicit rds: Reads[ReferenceValue], messages: Messages): CheckYourAnswers[I] = {
     new CheckYourAnswers[I] {

@@ -109,6 +109,13 @@ messages__common__cya__vat = VAT registration number
 messages__common__cya__paye = Employer PAYE reference
 messages__common__cya__email = Email address
 messages__common__cya__phone = Phone number
+messages__common__address_years__company = the company
+messages__common__address_years__director = the director
+messages__common__address_years__partnership = the partnership
+messages__common__address_years__partner = the partner
+messages__common__address_years__person = the person
+messages__common__address_years__establisher = the establisher
+messages__common__address_years__trustee = the trustee
 
 messages__index__title = pensions-scheme-frontend
 messages__index__guidance = Welcome to your new frontend. Please see the README file for a guide to getting started.
@@ -242,9 +249,10 @@ messages__error__company_name_invalid = The company name contains invalid charac
 messages__error__benefits_insurance__policy_length = The policy number cannot be more than 55 characters
 messages__error__benefits_insurance__policy_invalid = The policy number contains invalid characters
 
-messages__establisher_address_years__title = How long has the establisher been at this address?
-messages__common__under_a_year = 12 months or less
-messages__common__over_a_year = More than 12 months
+messages__establisher_address_years__title = Has {0} used this contact address for at least 1 year?
+messages__establisher_address_years__formError = Select yes if {0} has been at this contact address for at least 1 year
+messages__common__under_a_year = No
+messages__common__over_a_year = Yes
 messages__common_error__current_address_years = Select how long they have been at the current address
 
 messages__common__what_you_need_to_know = What you need to know
@@ -380,7 +388,8 @@ messages__error__ct_utr_invalid = Enter a valid 10 digit Corporation Tax Unique 
 messages__common__enrol_test__title = Enrol PSA to access Scheme Reg
 messages__common__psa_name = PSA Name
 
-messages__company_address_years__title = How long has the company been at this address?
+messages__company_address_years__title = Has {0} used this registered address for at least 1 year?
+messages__company_address_years__form_error = Select yes if {0} has used this registered address for at least 1 year
 messages__common__company_details__title = Company details
 messages__common__company_name = Company name
 messages__common__vat = VAT Registration number (optional)
@@ -514,9 +523,10 @@ messages__addCompanyDirectors_add_director = Add a director
 messages__addCompanyDirectors_at_maximum = You have added the maximum number of directors.
 messages__addCompanyDirectorsOrPartners_tell_us_if_you_have_more = You can tell us on the next page if you have more to add.
 
-messages__director_address_years__title = How long has the director lived at this address?
-messages__director_address_years__heading = How long has the director lived at this address?
-messages__director_address_years__cya = How long has the director lived at this address?
+messages__director_address_years__title = Has {0} used this contact address for at least 1 year?
+messages__director_address_years__heading = Has {0} used this contact address for at least 1 year?
+messages__director_address_years__cya = Has the director been at their address for at least 1 year?
+messages__director_address_years__form_error = Select yes if {0} has used this contact address for at least 1 year
 
 messages__director_has_sautr__title = Does the director have a Self Assessment Unique Taxpayer Reference number?
 messages__director_sautr = Unique Taxpayer Reference number
@@ -686,9 +696,9 @@ messages__trustee__uniqueTaxReference__error__utr_required = Enter the Unique Ta
 messages__trustee__uniqueTaxReference__error__reason_required = You need to tell us why the trustee does not have a UTR
 messages__trustee__uniqueTaxReference__error__utr_invalid = Please give an answer for uniqueTaxReference
 
-messages__trusteeAddressYears__title = How long has the trustee been at this address?
-messages__trusteeAddressYears__heading = How long has the trustee been at this address?
-messages__trusteeAddressYears__error_required = Select how long they have been at the current address
+messages__trusteeAddressYears__title = Has {0} used this contact address for at least 1 year?
+messages__trusteeAddressYears__heading = Has {0} used this contact address for at least 1 year?
+messages__trusteeAddressYears__error_required = Select yes if {0} has been at this contact address for at least 1 year
 
 messages__trusteeAddressYears_cya_label = How long has the trustee been at this address?
 messages__trustee_individual_nino_reason_cya_label = Why the trustee does not have a National Insurance number?
@@ -882,9 +892,9 @@ messages__otherPartners__heading=Do you need to tell us about other partners?
 messages__otherPartners__lede=You do not have to add them now. We may contact you if we need this information.
 messages__otherPartners__error__required=Select yes if you need to tell us about other partners
 
-messages__partnershipAddressYears__title = How long has the partnership been at this address?
-messages__partnershipAddressYears__heading = How long has the partnership been at this address?
-messages__partnershipAddressYears__error = Select how long the partnership has been at the current address
+messages__partnershipAddressYears__title = Has {0} used this registered address for at least 1 year?
+messages__partnershipAddressYears__heading = Has {0} used this registered address for at least 1 year?
+messages__partnershipAddressYears__error = Select yes if {0} has used this registered address for at least 1 year
 
 messages__partnershipVat__title = Does the partnership have a VAT registration number?
 messages__partnershipVat__heading = Does the partnership have a VAT registration number?
@@ -969,8 +979,9 @@ messages__partnerPreviousAddress__heading = Enter the partner’s previous addre
 messages__partnerPreviousAddressPostcodeLookup__title = Enter the partner’s previous postcode
 messages__partnerPreviousAddressPostcodeLookup__heading = Enter the partner’s previous postcode
 
-messages__partner_address_years__title = How long has the partner lived at this address?
-messages__partner_address_years__heading = How long has the partner lived at this address?
+messages__partner_address_years__title = Has {0} used this contact address for at least 1 year?
+messages__partner_address_years__heading = Has {0} used this contact address for at least 1 year?
+messages__partner_address_years__formError = Select yes if {0} has used this contact address for at least 1 year
 messages__partner_address_years__cya = How long has the partner lived at this address?
 
 messages__partnerAddressPostcodeLookup__title = Enter the partner’s postcode
@@ -1133,6 +1144,7 @@ messages__visuallyhidden__director__utr_no = Change why the director does not ha
 messages__visuallyhidden__director__utr = Change the director’s Unique Taxpayer Reference number
 messages__visuallyhidden__director__address = Change the director’s address
 messages__visuallyhidden__director__address_years = Change how long the director has been at their address
+messages__visuallyhidden__director__address_years_withName = Change how long {0} has been at their address
 messages__visuallyhidden__director__previous_address = Change the director’s previous address
 messages__visuallyhidden__director__previous_address_add = Add the director’s previous address
 messages__visuallyhidden__director__email_address = Change the director’s email address

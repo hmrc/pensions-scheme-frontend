@@ -34,47 +34,52 @@ import viewmodels.address.AddressYearsViewModel
 
 import scala.concurrent.ExecutionContext
 
-class DirectorAddressYearsController @Inject()(
-                                                val appConfig: FrontendAppConfig,
-
-                                                val userAnswersService: UserAnswersService,
-                                                @EstablishersCompanyDirector val navigator: Navigator,
-                                                val messagesApi: MessagesApi,
-                                                authenticate: AuthAction,
-                                                getData: DataRetrievalAction,
-                                                allowAccess: AllowAccessActionProvider,
-                                                requireData: DataRequiredAction
+class DirectorAddressYearsController @Inject()(val appConfig: FrontendAppConfig,
+                                               val userAnswersService: UserAnswersService,
+                                               @EstablishersCompanyDirector val navigator: Navigator,
+                                               val messagesApi: MessagesApi,
+                                               authenticate: AuthAction,
+                                               getData: DataRetrievalAction,
+                                               allowAccess: AllowAccessActionProvider,
+                                               requireData: DataRequiredAction
                                               )(implicit val ec: ExecutionContext) extends AddressYearsController with Retrievals {
 
-  private val form = new AddressYearsFormProvider()(Message("messages__common_error__current_address_years"))
+  private def form(directorName: String) = new AddressYearsFormProvider()(Message("messages__director_address_years__form_error", directorName))
 
   def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
-        DirectorDetailsId(establisherIndex, directorIndex).retrieve.right.map { directorDetails =>
-          get(DirectorAddressYearsId(establisherIndex, directorIndex), form, viewModel(mode, establisherIndex, directorIndex, directorDetails.fullName, srn))
+        DirectorDetailsId(establisherIndex, directorIndex).retrieve.right.map {
+          directorDetails =>
+            get(
+              DirectorAddressYearsId(establisherIndex, directorIndex),
+              form(directorDetails.fullName),
+              viewModel(mode, establisherIndex, directorIndex, directorDetails.fullName, srn)
+            )
         }
     }
 
   def onSubmit(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
-        DirectorDetailsId(establisherIndex, directorIndex).retrieve.right.map { directorDetails =>
-          post(
-            DirectorAddressYearsId(establisherIndex, directorIndex),
-            mode,
-            form,
-            viewModel(mode, establisherIndex, directorIndex, directorDetails.fullName, srn)
-          )
+        DirectorDetailsId(establisherIndex, directorIndex).retrieve.right.map {
+          directorDetails =>
+            post(
+              DirectorAddressYearsId(establisherIndex, directorIndex),
+              mode,
+              form(directorDetails.fullName),
+              viewModel(mode, establisherIndex, directorIndex, directorDetails.fullName, srn)
+            )
         }
     }
 
-  private def viewModel(mode: Mode, establisherIndex: Index, directorIndex: Index, directorName: String, srn: Option[String]) = AddressYearsViewModel(
-    postCall = routes.DirectorAddressYearsController.onSubmit(mode, establisherIndex, directorIndex, srn),
-    title = Message("messages__director_address_years__title"),
-    heading = Message("messages__director_address_years__heading"),
-    legend = Message("messages__director_address_years__heading"),
-    subHeading = Some(Message(directorName)),
-    srn = srn
-  )
+  private def viewModel(mode: Mode, establisherIndex: Index, directorIndex: Index, directorName: String, srn: Option[String]) =
+    AddressYearsViewModel(
+      postCall = routes.DirectorAddressYearsController.onSubmit(mode, establisherIndex, directorIndex, srn),
+      title = Message("messages__director_address_years__title", Message("messages__common__address_years__director").resolve),
+      heading = Message("messages__director_address_years__heading", directorName),
+      legend = Message("messages__director_address_years__heading", directorName),
+      subHeading = Some(Message(directorName)),
+      srn = srn
+    )
 }
