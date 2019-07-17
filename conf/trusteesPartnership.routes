@@ -96,12 +96,12 @@ POST       /:index/partnership/change/trustee-address-results           controll
 GET        /:index/partnership/:mode/trustee-address-results/:srn       controllers.register.trustees.partnership.PartnershipAddressListController.onPageLoad(mode: Mode, index: Index, srn: Option[String])
 POST       /:index/partnership/:mode/trustee-address-results/:srn       controllers.register.trustees.partnership.PartnershipAddressListController.onSubmit(mode: Mode, index: Index, srn: Option[String])
 
-GET        /:index/partnership/how-long-at-address                      controllers.register.trustees.partnership.PartnershipAddressYearsController.onPageLoad(mode: Mode = NormalMode, index: Index, srn: Option[String] = None)
-POST       /:index/partnership/how-long-at-address                      controllers.register.trustees.partnership.PartnershipAddressYearsController.onSubmit(mode: Mode = NormalMode, index: Index, srn: Option[String] = None)
-GET        /:index/partnership/change/how-long-at-address               controllers.register.trustees.partnership.PartnershipAddressYearsController.onPageLoad(mode: Mode = CheckMode, index: Index, srn: Option[String] = None)
-POST       /:index/partnership/change/how-long-at-address               controllers.register.trustees.partnership.PartnershipAddressYearsController.onSubmit(mode: Mode = CheckMode, index: Index, srn: Option[String] = None)
-GET        /:index/partnership/:mode/how-long-at-address/:srn           controllers.register.trustees.partnership.PartnershipAddressYearsController.onPageLoad(mode: Mode, index: Index, srn: Option[String])
-POST       /:index/partnership/:mode/how-long-at-address/:srn           controllers.register.trustees.partnership.PartnershipAddressYearsController.onSubmit(mode: Mode, index: Index, srn: Option[String])
+GET        /:index/partnership/time-at-address                      controllers.register.trustees.partnership.PartnershipAddressYearsController.onPageLoad(mode: Mode = NormalMode, index: Index, srn: Option[String] = None)
+POST       /:index/partnership/time-at-address                      controllers.register.trustees.partnership.PartnershipAddressYearsController.onSubmit(mode: Mode = NormalMode, index: Index, srn: Option[String] = None)
+GET        /:index/partnership/change/time-at-address               controllers.register.trustees.partnership.PartnershipAddressYearsController.onPageLoad(mode: Mode = CheckMode, index: Index, srn: Option[String] = None)
+POST       /:index/partnership/change/time-at-address               controllers.register.trustees.partnership.PartnershipAddressYearsController.onSubmit(mode: Mode = CheckMode, index: Index, srn: Option[String] = None)
+GET        /:index/partnership/:mode/time-at-address/:srn           controllers.register.trustees.partnership.PartnershipAddressYearsController.onPageLoad(mode: Mode, index: Index, srn: Option[String])
+POST       /:index/partnership/:mode/time-at-address/:srn           controllers.register.trustees.partnership.PartnershipAddressYearsController.onSubmit(mode: Mode, index: Index, srn: Option[String])
 
 GET        /:index/partnership/check-your-answers                       controllers.register.trustees.partnership.CheckYourAnswersController.onPageLoad(mode: Mode = NormalMode, index: Index, srn: Option[String] = None)
 POST       /:index/partnership/check-your-answers                       controllers.register.trustees.partnership.CheckYourAnswersController.onSubmit(mode: Mode = NormalMode, index: Index, srn: Option[String] = None)
