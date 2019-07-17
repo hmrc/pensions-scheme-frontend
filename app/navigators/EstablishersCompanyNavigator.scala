@@ -247,10 +247,6 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
     NavigateTo.dontSave(establisherCompanyRoutes.CheckYourAnswersController.onPageLoad(mode, srn, index))
 
   private def addressYearsRoutes(index: Int, answers: UserAnswers, mode: Mode, srn: Option[String]): Option[NavigateTo] = {
-
-    println("addressYearsRoutes ::::::;")
-    println("addressYearsRoutes ::::::;")
-    println("addressYearsRoutes ::::::;")
     (answers.get(CompanyAddressYearsId(index)),
       featureSwitchManagementService.get(Toggles.isEstablisherCompanyHnSEnabled)) match {
       case (Some(AddressYears.UnderAYear), true) =>
