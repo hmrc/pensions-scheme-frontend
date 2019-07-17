@@ -72,12 +72,12 @@ class DirectorAddressPostcodeLookupController @Inject()(
         directorName(establisherIndex, directorIndex).retrieve.right.map {
           name =>
             PostcodeLookupViewModel(
-              routes.DirectorAddressPostcodeLookupController.onSubmit(mode, establisherIndex, directorIndex, srn),
-              routes.DirectorAddressController.onPageLoad(mode, establisherIndex, directorIndex, srn),
-              Message("messages__directorAddressPostcodeLookup__title"),
-              Message("messages__directorAddressPostcodeLookup__heading"),
-              None,
-              Some(Message("messages__directorAddressPostcodeLookup__lede")),
+              postCall = routes.DirectorAddressPostcodeLookupController.onSubmit(mode, establisherIndex, directorIndex, srn),
+              manualInputCall = routes.DirectorAddressController.onPageLoad(mode, establisherIndex, directorIndex, srn),
+              title = Message("messages__directorCompanyAddressPostcodeLookup__title"),
+              heading = Message("messages__addressPostcodeLookup__heading", name),
+              subHeading = None,
+              enterPostcode = Message("messages__common__postcode_lookup__manual_link"),
               srn = srn
             )
         }

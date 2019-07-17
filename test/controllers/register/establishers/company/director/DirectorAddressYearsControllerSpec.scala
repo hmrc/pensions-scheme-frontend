@@ -65,11 +65,11 @@ class DirectorAddressYearsControllerSpec extends ControllerSpecBase {
       frontendAppConfig,
       form,
       AddressYearsViewModel(
-        routes.DirectorAddressYearsController.onSubmit(NormalMode, establisherIndex, directorIndex, None),
-        Message("messages__director_address_years__title"),
-        Message("messages__director_address_years__heading"),
-        Message("messages__director_address_years__heading"),
-        Some(director.fullName)
+        postCall = routes.DirectorAddressYearsController.onSubmit(NormalMode, establisherIndex, directorIndex, None),
+        title = Message("messages__director_address_years__title", Message("messages__common__address_years__director").resolve),
+        heading = Message("messages__director_address_years__heading", director.fullName),
+        legend = Message("messages__director_address_years__heading", director.fullName),
+        subHeading = Some(director.fullName)
       ),
       None
     )(fakeRequest, messages).toString

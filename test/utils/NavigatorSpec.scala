@@ -124,7 +124,7 @@ object NavigatorSpec {
   val testSaveId: TypedIdentifier[Nothing] = new TypedIdentifier[Nothing] {}
   val testNotSaveId: TypedIdentifier[Nothing] = new TypedIdentifier[Nothing] {}
 
-  class TestNavigator(val dataCacheConnector: UserAnswersCacheConnector) extends Navigator {
+  class TestNavigator(val dataCacheConnector: UserAnswersCacheConnector) extends AbstractNavigator {
 
     override protected def routeMap(from: NavigateFrom): Option[NavigateTo] =
       from.id match {

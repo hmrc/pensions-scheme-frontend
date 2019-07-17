@@ -49,7 +49,7 @@ trait EmailAddressController extends FrontendController with Retrievals with I18
   }
 
   def post(id: TypedIdentifier[String], mode: Mode, form: Form[String], viewModel: CommonFormWithHintViewModel,
-           completeId: Option[TypedIdentifier[Boolean]] = None)
+           completeId: Option[TypedIdentifier[Boolean]])
           (implicit request: DataRequest[AnyContent]): Future[Result] = {
     form.bindFromRequest().fold(
       (formWithErrors: Form[_]) =>
