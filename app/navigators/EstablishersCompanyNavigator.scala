@@ -29,7 +29,6 @@ import identifiers.register.establishers.{ExistingCurrentAddressId, IsEstablishe
 import models.Mode._
 import models._
 import utils.{Navigator, Toggles, UserAnswers}
-import controllers.register.establishers.company.director.routes._
 
 //scalastyle:off cyclomatic.complexity
 class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector,
@@ -157,21 +156,21 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
 
   protected def editRoutes(from: NavigateFrom, mode: Mode, srn: Option[String]): Option[NavigateTo] =
     from.id match {
-      case CompanyDetailsId(index) =>             exitMiniJourney(index, mode, srn, from.userAnswers)
-      case HasCompanyNumberId(index) =>           exitMiniJourney(index, mode, srn, from.userAnswers, cyaCompanyDetails)
-      case HasCompanyVATId(index) =>              exitMiniJourney(index, mode, srn, from.userAnswers, cyaCompanyDetails)
-      case HasCompanyPAYEId(index) =>             exitMiniJourney(index, mode, srn, from.userAnswers, cyaCompanyDetails)
-      case CompanyVatId(index) =>                 exitMiniJourney(index, mode, srn, from.userAnswers)
-      case CompanyVatVariationsId(index) =>       exitMiniJourney(index, mode, srn, from.userAnswers)
-      case CompanyPayeId(index) =>                exitMiniJourney(index, mode, srn, from.userAnswers)
-      case CompanyPayeVariationsId(index) =>      exitMiniJourney(index, mode, srn, from.userAnswers, cyaCompanyDetails)
-      case CompanyRegistrationNumberId(index) =>  exitMiniJourney(index, mode, srn, from.userAnswers)
-      case NoCompanyNumberId(index) =>            exitMiniJourney(index, mode, srn, from.userAnswers)
-      case HasCompanyUTRId(index)  =>             exitMiniJourney(index, mode, srn, from.userAnswers, cyaCompanyDetails)
-      case CompanyRegistrationNumberVariationsId(index) =>  exitMiniJourney(index, mode, srn, from.userAnswers)
-      case CompanyUniqueTaxReferenceId(index) =>  exitMiniJourney(index, mode, srn, from.userAnswers)
-      case CompanyUTRId(index) =>                 exitMiniJourney(index, mode, srn, from.userAnswers, cyaCompanyDetails)
-      case NoCompanyUTRId(index) =>               exitMiniJourney(index, mode, srn, from.userAnswers, cyaCompanyDetails)
+      case CompanyDetailsId(index) => exitMiniJourney(index, mode, srn, from.userAnswers)
+      case HasCompanyNumberId(index) => exitMiniJourney(index, mode, srn, from.userAnswers, cyaCompanyDetails)
+      case HasCompanyVATId(index) => exitMiniJourney(index, mode, srn, from.userAnswers, cyaCompanyDetails)
+      case HasCompanyPAYEId(index) => exitMiniJourney(index, mode, srn, from.userAnswers, cyaCompanyDetails)
+      case CompanyVatId(index) => exitMiniJourney(index, mode, srn, from.userAnswers)
+      case CompanyVatVariationsId(index) => exitMiniJourney(index, mode, srn, from.userAnswers)
+      case CompanyPayeId(index) => exitMiniJourney(index, mode, srn, from.userAnswers)
+      case CompanyPayeVariationsId(index) => exitMiniJourney(index, mode, srn, from.userAnswers, cyaCompanyDetails)
+      case CompanyRegistrationNumberId(index) => exitMiniJourney(index, mode, srn, from.userAnswers)
+      case NoCompanyNumberId(index) => exitMiniJourney(index, mode, srn, from.userAnswers)
+      case HasCompanyUTRId(index) => exitMiniJourney(index, mode, srn, from.userAnswers, cyaCompanyDetails)
+      case CompanyRegistrationNumberVariationsId(index) => exitMiniJourney(index, mode, srn, from.userAnswers)
+      case CompanyUniqueTaxReferenceId(index) => exitMiniJourney(index, mode, srn, from.userAnswers)
+      case CompanyUTRId(index) => exitMiniJourney(index, mode, srn, from.userAnswers, cyaCompanyDetails)
+      case NoCompanyUTRId(index) => exitMiniJourney(index, mode, srn, from.userAnswers, cyaCompanyDetails)
 
       case CompanyPostCodeLookupId(index) =>
         NavigateTo.dontSave(establisherCompanyRoutes.CompanyAddressListController.onPageLoad(mode, srn, index))
@@ -213,7 +212,7 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
     case CompanyContactDetailsId(index) =>
       NavigateTo.dontSave(establisherCompanyRoutes.IsCompanyDormantController.onPageLoad(NormalMode, None, index))
     case IsCompanyDormantId(index) =>
-      if(featureSwitchManagementService.get(Toggles.isEstablisherCompanyHnSEnabled))
+      if (featureSwitchManagementService.get(Toggles.isEstablisherCompanyHnSEnabled))
         NavigateTo.dontSave(establisherCompanyRoutes.CheckYourAnswersCompanyDetailsController.onPageLoad(NormalMode, None, index))
       else
         NavigateTo.dontSave(establisherCompanyRoutes.CheckYourAnswersController.onPageLoad(NormalMode, None, index))
@@ -274,51 +273,44 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
   }
 
   private def addDirectors(mode: Mode, index: Int, answers: UserAnswers, srn: Option[String]): Option[NavigateTo] = {
-
-    val directorsSeq = answers.allDirectorsAfterDelete(index)
-    val addCompanyDirectors = answers.get(AddCompanyDirectorsId(index))
-    val addNewEstablisher = answers.get(IsEstablisherNewId(index))
-    val toggled = featureSwitchManagementService.get(Toggles.isEstablisherCompanyHnSEnabled)
-
-
-      NavigateTo.dontSave(
-
-        if (toggled) {
-          (directorsSeq, addCompanyDirectors, mode, addNewEstablisher) match {
-            case (_, Some(false), _, _) =>
-              controllers.routes.SchemeTaskListController.onPageLoad(mode, srn)
-            case (_, Some(true), _, _) =>
-              controllers.register.establishers.company.director.routes.DirectorNameController
-                .onPageLoad(mode, index, answers.allDirectors(index).size, srn)
-            case (directors, _, _, _) if directors.isEmpty => DirectorNameController.onPageLoad(
-              mode, index, answers.allDirectors(index).size, srn)
-            case (directors, _, _, _) if directors.isEmpty => DirectorDetailsController.onPageLoad(
-              mode, index, answers.allDirectors(index).size, srn)
-            case (directors, _, _, _) if directors.lengthCompare(appConfig.maxDirectors) >= 0 =>
-              establisherCompanyRoutes.OtherDirectorsController.onPageLoad(mode, srn, index)
-            case _ => controllers.routes.SessionExpiredController.onPageLoad()
-          }
-        } else {
-          (directorsSeq, addCompanyDirectors, mode, addNewEstablisher) match {
-            case (directors, _, _, _) if directors.isEmpty => DirectorDetailsController.onPageLoad(
-              mode, index, answers.allDirectors(index).size, srn)
-            case (directors, _, _, _) if directors.lengthCompare(appConfig.maxDirectors) >= 0 =>
-              establisherCompanyRoutes.OtherDirectorsController.onPageLoad(mode, srn, index)
-            case (_, Some(true), _, _)                        =>
-              DirectorDetailsController.onPageLoad(mode, index, answers.allDirectors(index).size, srn)
-            case (_, Some(false), CheckMode | NormalMode, _)  =>
-              establisherCompanyRoutes.CompanyReviewController.onPageLoad(mode, srn, index)
-            case (_, Some(false), _, Some(true))              =>
-              establisherCompanyRoutes.CompanyReviewController.onPageLoad(mode, srn, index)
-            case (_, Some(false), _, _) if answers.get(EstablishersOrTrusteesChangedId).contains(true) =>
-              controllers.routes.AnyMoreChangesController.onPageLoad(srn)
-            case (_, Some(false), _, _) =>
-              controllers.routes.SchemeTaskListController.onPageLoad(mode, srn)
-            case _ => controllers.routes.SessionExpiredController.onPageLoad()
-          }
+    NavigateTo.dontSave(
+      if (featureSwitchManagementService.get(Toggles.isEstablisherCompanyHnSEnabled)) {
+        answers.get(AddCompanyDirectorsId(index)) match {
+          case Some(false) => controllers.routes.SchemeTaskListController.onPageLoad(mode, srn)
+          case Some(true) => controllers.register.establishers.company.director.routes.DirectorNameController
+              .onPageLoad(mode, index, answers.allDirectors(index).size, srn)
+          case _ =>
+            (answers.allDirectorsAfterDelete(index), mode, answers.get(IsEstablisherNewId(index))) match {
+              case (directors, _, _) if directors.isEmpty => DirectorNameController.onPageLoad(mode, index, answers.allDirectors(index).size, srn)
+              case (directors, _, _) if directors.isEmpty => DirectorDetailsController.onPageLoad(mode, index, answers.allDirectors(index).size, srn)
+              case (directors, _, _) if directors.lengthCompare(appConfig.maxDirectors) >= 0 =>
+                establisherCompanyRoutes.OtherDirectorsController.onPageLoad(mode, srn, index)
+              case _ => controllers.routes.SessionExpiredController.onPageLoad()
+            }
         }
-
-      )
+      } else {
+        answers.get(AddCompanyDirectorsId(index)) match {
+          case Some(false) =>
+            (mode, answers.get(IsEstablisherNewId(index))) match {
+              case (CheckMode | NormalMode, _) =>
+                establisherCompanyRoutes.CompanyReviewController.onPageLoad(mode, srn, index)
+              case (_, Some(true)) =>
+                establisherCompanyRoutes.CompanyReviewController.onPageLoad(mode, srn, index)
+              case (_, _) if answers.get(EstablishersOrTrusteesChangedId).contains(true) =>
+                controllers.routes.AnyMoreChangesController.onPageLoad(srn)
+              case _ => controllers.routes.SchemeTaskListController.onPageLoad(mode, srn)
+            }
+          case Some(true) =>
+            DirectorDetailsController.onPageLoad(mode, index, answers.allDirectors(index).size, srn)
+          case _ =>
+            answers.allDirectorsAfterDelete(index) match {
+              case d if d.isEmpty => DirectorDetailsController.onPageLoad(mode, index, answers.allDirectors(index).size, srn)
+              case d if d.lengthCompare(appConfig.maxDirectors) >= 0 => establisherCompanyRoutes.OtherDirectorsController.onPageLoad(mode, srn, index)
+              case _ => controllers.routes.SessionExpiredController.onPageLoad()
+            }
+        }
+      }
+    )
   }
 
   private def listOrAnyMoreChange(index: Int, mode: Mode, srn: Option[String])(answers: UserAnswers): Option[NavigateTo] = {
