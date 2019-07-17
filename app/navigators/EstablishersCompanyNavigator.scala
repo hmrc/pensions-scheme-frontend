@@ -279,9 +279,7 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
           controllers.register.establishers.company.director.routes.DirectorNameController
             .onPageLoad(mode, index, answers.allDirectors(index).size, srn)
         } else if (answers.allDirectorsAfterDelete(index).length < appConfig.maxDirectors) {
-          answers.get(AddCompanyDirectorsId(index)).map {
-            addCompanyDirectors =>
-
+          answers.get(AddCompanyDirectorsId(index)).map { addCompanyDirectors =>
               if (addCompanyDirectors) {
                 controllers.register.establishers.company.director.routes.DirectorNameController
                   .onPageLoad(mode, index, answers.allDirectors(index).size, srn)
