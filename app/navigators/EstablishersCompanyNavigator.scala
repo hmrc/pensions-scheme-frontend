@@ -275,39 +275,46 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
   private def addDirectors(mode: Mode, index: Int, answers: UserAnswers, srn: Option[String]): Option[NavigateTo] = {
     NavigateTo.dontSave(
       if (featureSwitchManagementService.get(Toggles.isEstablisherCompanyHnSEnabled)) {
-        answers.get(AddCompanyDirectorsId(index)) match {
-          case Some(false) => controllers.routes.SchemeTaskListController.onPageLoad(mode, srn)
-          case Some(true) => controllers.register.establishers.company.director.routes.DirectorNameController
-              .onPageLoad(mode, index, answers.allDirectors(index).size, srn)
-          case _ =>
-            (answers.allDirectorsAfterDelete(index), mode, answers.get(IsEstablisherNewId(index))) match {
-              case (directors, _, _) if directors.isEmpty => DirectorNameController.onPageLoad(mode, index, answers.allDirectors(index).size, srn)
-              case (directors, _, _) if directors.isEmpty => DirectorDetailsController.onPageLoad(mode, index, answers.allDirectors(index).size, srn)
-              case (directors, _, _) if directors.lengthCompare(appConfig.maxDirectors) >= 0 =>
-                establisherCompanyRoutes.OtherDirectorsController.onPageLoad(mode, srn, index)
-              case _ => controllers.routes.SessionExpiredController.onPageLoad()
-            }
+        if (answers.allDirectorsAfterDelete(index).isEmpty) {
+          controllers.register.establishers.company.director.routes.DirectorNameController
+            .onPageLoad(mode, index, answers.allDirectors(index).size, srn)
+        } else if (answers.allDirectorsAfterDelete(index).length < appConfig.maxDirectors) {
+          answers.get(AddCompanyDirectorsId(index)).map {
+            addCompanyDirectors =>
+
+              if (addCompanyDirectors) {
+                controllers.register.establishers.company.director.routes.DirectorNameController
+                  .onPageLoad(mode, index, answers.allDirectors(index).size, srn)
+              } else {
+                controllers.routes.SchemeTaskListController.onPageLoad(mode, srn)
+              }
+          }.getOrElse(controllers.routes.SessionExpiredController.onPageLoad())
+        } else {
+
+          establisherCompanyRoutes.OtherDirectorsController.onPageLoad(mode, srn, index)
         }
       } else {
-        answers.get(AddCompanyDirectorsId(index)) match {
-          case Some(false) =>
-            (mode, answers.get(IsEstablisherNewId(index))) match {
-              case (CheckMode | NormalMode, _) =>
-                establisherCompanyRoutes.CompanyReviewController.onPageLoad(mode, srn, index)
-              case (_, Some(true)) =>
-                establisherCompanyRoutes.CompanyReviewController.onPageLoad(mode, srn, index)
-              case (_, _) if answers.get(EstablishersOrTrusteesChangedId).contains(true) =>
-                controllers.routes.AnyMoreChangesController.onPageLoad(srn)
-              case _ => controllers.routes.SchemeTaskListController.onPageLoad(mode, srn)
-            }
-          case Some(true) =>
-            DirectorDetailsController.onPageLoad(mode, index, answers.allDirectors(index).size, srn)
-          case _ =>
-            answers.allDirectorsAfterDelete(index) match {
-              case d if d.isEmpty => DirectorDetailsController.onPageLoad(mode, index, answers.allDirectors(index).size, srn)
-              case d if d.lengthCompare(appConfig.maxDirectors) >= 0 => establisherCompanyRoutes.OtherDirectorsController.onPageLoad(mode, srn, index)
-              case _ => controllers.routes.SessionExpiredController.onPageLoad()
-            }
+        if (answers.allDirectorsAfterDelete(index).isEmpty) {
+          DirectorDetailsController.onPageLoad(mode, index, answers.allDirectors(index).size, srn)
+        } else if (answers.allDirectorsAfterDelete(index).length < appConfig.maxDirectors) {
+          answers.get(AddCompanyDirectorsId(index)).fold(controllers.routes.SessionExpiredController.onPageLoad()) {
+              if (_) {
+                DirectorDetailsController.onPageLoad(mode, index, answers.allDirectors(index).size, srn)
+              } else {
+                if (mode == CheckMode || mode == NormalMode) {
+                  establisherCompanyRoutes.CompanyReviewController.onPageLoad(mode, srn, index)
+                } else {
+                  (answers.get(IsEstablisherNewId(index)), answers.get(EstablishersOrTrusteesChangedId)) match {
+                    case (Some(true), _) => establisherCompanyRoutes.CompanyReviewController.onPageLoad(mode, srn, index)
+                    case (_, Some(true)) => controllers.routes.AnyMoreChangesController.onPageLoad(srn)
+                    case _ => controllers.routes.SchemeTaskListController.onPageLoad(mode, srn)
+                  }
+                }
+              }
+          }
+        } else {
+
+          establisherCompanyRoutes.OtherDirectorsController.onPageLoad(mode, srn, index)
         }
       }
     )
