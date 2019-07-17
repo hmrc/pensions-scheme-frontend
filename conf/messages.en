@@ -1508,7 +1508,7 @@ messages__whatYouWillNeedEstablisherCompanyContact__item1 = email address
 messages__whatYouWillNeedEstablisherCompanyContact__item2 = phone number
 messages__whatYouWillNeedEstablisherCompanyContact__item3 = These should be details used for other HMRC services. These will not be used to contact the company.
 
-messages__whatYouWillNeedDirectors__title = what you will need
+messages__whatYouWillNeedDirectors__title = Directors
 messages__whatYouWillNeedDirectors__h1 = Directors
 messages__whatYouWillNeedDirectors__p1 = We need to know about every director associated with the company you’re registering.
 messages__whatYouWillNeedDirectors__p2 = You will need to tell us each director’s:
