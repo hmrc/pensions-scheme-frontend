@@ -295,7 +295,7 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
         if (answers.allDirectorsAfterDelete(index).isEmpty) {
           DirectorDetailsController.onPageLoad(mode, index, answers.allDirectors(index).size, srn)
         } else if (answers.allDirectorsAfterDelete(index).length < appConfig.maxDirectors) {
-          answers.get(AddCompanyDirectorsId(index)).fold(controllers.routes.SessionExpiredController.onPageLoad()) {
+          answers.get(AddCompanyDirectorsId(index)).map {
               if (_) {
                 DirectorDetailsController.onPageLoad(mode, index, answers.allDirectors(index).size, srn)
               } else {
@@ -309,7 +309,7 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
                   }
                 }
               }
-          }
+          }.getOrElse(controllers.routes.SessionExpiredController.onPageLoad())
         } else {
 
           establisherCompanyRoutes.OtherDirectorsController.onPageLoad(mode, srn, index)
