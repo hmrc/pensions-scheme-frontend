@@ -94,7 +94,7 @@ class EstablishersCompanyDirectorNavigatorSpec extends SpecBase with NavigatorBe
     (DirectorNewNinoId(0, 0), emptyAnswers, none, true, Some(exitJourney(UpdateMode, emptyAnswers)), true),
     (DirectorAddressYearsId(0, 0), directorNoExistingCurrentAddress, directorPreviousAddPostcode(UpdateMode), true, addressYearsLessThanTwelveEdit(UpdateMode, directorNoExistingCurrentAddress), true),
     (DirectorAddressYearsId(0, 0), directorExistingCurrentAddress, directorPreviousAddPostcode(UpdateMode), true, addressYearsLessThanTwelveEdit(UpdateMode, directorExistingCurrentAddress), true),
-    (DirectorAddressId(0, 0), emptyAnswers, directorAddressYears(UpdateMode), true, Some(directorAddressYears(checkMode(UpdateMode))), true),
+    (DirectorAddressId(0, 0), emptyAnswers, directorAddressYears(UpdateMode), true, Some(confirmPreviousAddress), true),
     (DirectorAddressId(0, 0), newDirector, directorAddressYears(UpdateMode), true, Some(checkYourAnswers(UpdateMode)), true)
   )
 
