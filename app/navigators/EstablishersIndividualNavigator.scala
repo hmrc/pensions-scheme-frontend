@@ -120,6 +120,8 @@ class EstablishersIndividualNavigator @Inject()(
         val isNew = from.userAnswers.get(IsEstablisherNewId(index)).contains(true)
         if (isNew || mode == CheckMode) {
           checkYourAnswers(index, journeyMode(mode), srn)
+        } else if (!from.userAnswers.get(IsEstablisherNewId(index)).contains(true) && mode == CheckUpdateMode) {
+          NavigateTo.dontSave(controllers.register.establishers.individual.routes.IndividualConfirmPreviousAddressController.onPageLoad(index, srn))
         } else {
           NavigateTo.dontSave(controllers.register.establishers.individual.routes.AddressYearsController.onPageLoad(mode, index, srn))
         }
