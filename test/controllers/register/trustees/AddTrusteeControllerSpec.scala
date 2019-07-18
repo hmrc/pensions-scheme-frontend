@@ -90,8 +90,8 @@ class AddTrusteeControllerSpec extends ControllerSpecBase {
       dataRetrievalAction, FakeAllowAccessProvider(), new DataRequiredActionImpl, formProvider, new FakeFeatureSwitchManagementService(enabledV2 = false))
 
   val submitUrl = controllers.register.trustees.routes.AddTrusteeController.onSubmit(NormalMode, None)
-  def viewAsString(form: Form[_] = form, trustees: Seq[Trustee[_]] = Seq.empty): String =
-    addTrustee(frontendAppConfig, form, NormalMode, trustees, None, None, enableSubmission = false)(fakeRequest, messages).toString
+  def viewAsString(form: Form[_] = form, trustees: Seq[Trustee[_]] = Seq.empty, enable: Boolean = false): String =
+    addTrustee(frontendAppConfig, form, NormalMode, trustees, None, None, enable)(fakeRequest, messages).toString
 
   val testAnswer = "true"
 
@@ -101,7 +101,7 @@ class AddTrusteeControllerSpec extends ControllerSpecBase {
       val result = controller().onPageLoad(NormalMode, None)(fakeRequest)
 
       status(result) mustBe OK
-      contentAsString(result) mustBe viewAsString()
+      contentAsString(result) mustBe viewAsString(enable = true)
     }
 
     "redirect to the next page when valid data is submitted" in {
