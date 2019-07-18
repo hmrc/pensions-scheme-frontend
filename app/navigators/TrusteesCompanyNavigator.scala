@@ -130,6 +130,8 @@ class TrusteesCompanyNavigator @Inject()(val dataCacheConnector: UserAnswersCach
         val isNew = from.userAnswers.get(IsTrusteeNewId(index)).contains(true)
         if(isNew || mode == CheckMode) {
           checkYourAnswers(index, journeyMode(mode), srn)
+        } else if (!from.userAnswers.get(IsTrusteeNewId(index)).contains(true) && mode == CheckUpdateMode) {
+          NavigateTo.dontSave(CompanyConfirmPreviousAddressController.onPageLoad(index, srn))
         } else {
           NavigateTo.dontSave(CompanyAddressYearsController.onPageLoad(mode, index, srn))
         }
