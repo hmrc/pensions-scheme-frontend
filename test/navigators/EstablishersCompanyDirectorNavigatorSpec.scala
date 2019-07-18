@@ -58,9 +58,6 @@ class EstablishersCompanyDirectorNavigatorSpec extends SpecBase with NavigatorBe
     (DirectorUniqueTaxReferenceId(0, 0), newDirector, directorAddressPostcode(mode), true, Some(exitJourney(mode, newDirector)), true),
     (DirectorAddressPostcodeLookupId(0, 0), emptyAnswers, directorAddressList(mode), true, Some(directorAddressList(checkMode(mode))), true),
     (DirectorAddressListId(0, 0), emptyAnswers, directorAddress(mode), true, Some(directorAddress(checkMode(mode))), true),
-    (DirectorAddressId(0, 0), emptyAnswers, directorAddressYears(mode), true,
-      if (mode == UpdateMode) Some(directorAddressYears(checkMode(mode))) else Some(checkYourAnswers(mode)), true),
-    (DirectorAddressId(0, 0), newDirector, directorAddressYears(mode), true, Some(checkYourAnswers(mode)), true),
     (DirectorAddressYearsId(0, 0), addressYearsOverAYear, directorContactDetails(mode), true, Some(exitJourney(mode, emptyAnswers)), true),
     (DirectorAddressYearsId(0, 0), addressYearsOverAYearNew, directorContactDetails(mode), true, Some(exitJourney(mode, addressYearsOverAYearNew)), true),
     (DirectorAddressYearsId(0, 0), addressYearsUnderAYear, directorPreviousAddPostcode(mode), true, addressYearsLessThanTwelveEdit(mode, addressYearsUnderAYear), true),
@@ -84,7 +81,10 @@ class EstablishersCompanyDirectorNavigatorSpec extends SpecBase with NavigatorBe
   private def normalRoutes(mode: Mode): TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = commonRoutes(mode) ++ Table(
     ("Id", "User Answers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (Check Mode)", "Save (CM)"),
     (ConfirmDeleteDirectorId(0), emptyAnswers, addCompanyDirectors(mode), false, None, false),
-    (CheckYourAnswersId(0, 0), emptyAnswers, addCompanyDirectors(mode), true, None, true)
+    (CheckYourAnswersId(0, 0), emptyAnswers, addCompanyDirectors(mode), true, None, true),
+      (DirectorAddressId(0, 0), emptyAnswers, directorAddressYears(mode), true,
+        if (mode == UpdateMode) Some(directorAddressYears(checkMode(mode))) else Some(checkYourAnswers(mode)), true),
+    (DirectorAddressId(0, 0), newDirector, directorAddressYears(mode), true, Some(checkYourAnswers(mode)), true)
   )
 
   private def variancesRoutes(mode:Mode): TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = commonRoutes(mode) ++ Table(
@@ -94,7 +94,10 @@ class EstablishersCompanyDirectorNavigatorSpec extends SpecBase with NavigatorBe
     (CheckYourAnswersId(0, 0), newEstablisher, addCompanyDirectors(mode), true, None, true),
     (DirectorNewNinoId(0, 0), emptyAnswers, none, true, Some(exitJourney(mode, emptyAnswers)), true),
     (DirectorAddressYearsId(0, 0), directorNoExistingCurrentAddress, directorPreviousAddPostcode(mode), true, addressYearsLessThanTwelveEdit(mode, directorNoExistingCurrentAddress), true),
-    (DirectorAddressYearsId(0, 0), directorExistingCurrentAddress, directorPreviousAddPostcode(mode), true, addressYearsLessThanTwelveEdit(mode, directorExistingCurrentAddress), true)
+    (DirectorAddressYearsId(0, 0), directorExistingCurrentAddress, directorPreviousAddPostcode(mode), true, addressYearsLessThanTwelveEdit(mode, directorExistingCurrentAddress), true),
+    (DirectorAddressId(0, 0), emptyAnswers, directorAddressYears(mode), true,
+      if (mode == UpdateMode) Some(directorAddressYears(checkMode(mode))) else Some(checkYourAnswers(mode)), true),
+    (DirectorAddressId(0, 0), newDirector, directorAddressYears(mode), true, Some(checkYourAnswers(mode)), true)
   )
 
   navigator.getClass.getSimpleName must {
