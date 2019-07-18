@@ -95,10 +95,13 @@ class TrusteesPartnershipNavigator @Inject()(val dataCacheConnector: UserAnswers
     case PartnershipAddressListId(index) =>
       NavigateTo.dontSave(routes.PartnershipAddressController.onPageLoad(mode, index, srn))
     case PartnershipAddressId(index) =>
-      if (from.userAnswers.get(IsTrusteeNewId(index)).contains(true) || mode == CheckMode)
+      if (from.userAnswers.get(IsTrusteeNewId(index)).contains(true) || mode == CheckMode) {
         checkYourAnswers(index, journeyMode(mode), srn)
-      else
+      } else if (!from.userAnswers.get(IsTrusteeNewId(index)).contains(true) && mode == CheckUpdateMode) {
+        NavigateTo.dontSave(PartnershipConfirmPreviousAddressController.onPageLoad(index, srn))
+      } else {
         NavigateTo.dontSave(routes.PartnershipAddressYearsController.onPageLoad(mode, index, srn))
+      }
     case PartnershipAddressYearsId(index) =>
       editAddressYearsRoutes(index, mode, srn)(from.userAnswers)
     case PartnershipConfirmPreviousAddressId(index) =>
