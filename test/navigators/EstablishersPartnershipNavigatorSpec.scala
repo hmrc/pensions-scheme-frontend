@@ -51,9 +51,6 @@ class EstablishersPartnershipNavigatorSpec extends SpecBase with NavigatorBehavi
     (PartnershipUniqueTaxReferenceID(0), newEstablisher, partnershipPostcodeLookup(mode), true, Some(exitJourney(mode, newEstablisher)), true),
     (PartnershipPostcodeLookupId(0), emptyAnswers, partnershipAddressList(mode), true, Some(partnershipAddressList(checkMode(mode))), true),
     (PartnershipAddressListId(0), emptyAnswers, partnershipAddress(mode), true, Some(partnershipAddress(checkMode(mode))), true),
-    (PartnershipAddressId(0), emptyAnswers, partnershipAddressYears(mode), true, if (mode == UpdateMode) Some(partnershipAddressYears(checkMode(UpdateMode)))
-    else Some(checkYourAnswers(NormalMode)), true),
-    (PartnershipAddressId(0), newEstablisher, partnershipAddressYears(mode), true, Some(checkYourAnswers(mode)), true),
     (PartnershipAddressYearsId(0), addressYearsOverAYear, partnershipContact(mode), true, Some(exitJourney(mode, addressYearsOverAYear)), true),
     (PartnershipAddressYearsId(0), addressYearsOverAYearNew, partnershipContact(mode), true, Some(exitJourney(mode, addressYearsOverAYearNew)), true),
     (PartnershipAddressYearsId(0), emptyAnswers, sessionExpired, false, Some(sessionExpired), false),
@@ -70,7 +67,9 @@ class EstablishersPartnershipNavigatorSpec extends SpecBase with NavigatorBehavi
     ("Id", "User Answers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (Check Mode)", "Save (CM)"),
     (PartnershipContactDetailsId(0), emptyAnswers, exitJourney(NormalMode, emptyAnswers), true, Some(exitJourney(NormalMode, emptyAnswers)), true),
     (PartnershipReviewId(0), emptyAnswers, addEstablisher(NormalMode), false, None, true),
-    (PartnershipAddressYearsId(0), addressYearsUnderAYear, partnershipPaPostCodeLookup(NormalMode), true, Some(partnershipPaPostCodeLookup(checkMode(NormalMode))), true)
+    (PartnershipAddressYearsId(0), addressYearsUnderAYear, partnershipPaPostCodeLookup(NormalMode), true, Some(partnershipPaPostCodeLookup(checkMode(NormalMode))), true),
+    (PartnershipAddressId(0), emptyAnswers, partnershipAddressYears(NormalMode), true, Some(checkYourAnswers(NormalMode)), true),
+    (PartnershipAddressId(0), newEstablisher, partnershipAddressYears(NormalMode), true, Some(checkYourAnswers(NormalMode)), true)
   )
 
   private def updateOnlyRoutes(): TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = Table(
@@ -82,15 +81,17 @@ class EstablishersPartnershipNavigatorSpec extends SpecBase with NavigatorBehavi
     (PartnershipConfirmPreviousAddressId(0), emptyAnswers, defaultPage, false, Some(sessionExpired), false),
     (PartnershipConfirmPreviousAddressId(0), confirmPreviousAddressYes, defaultPage, false, Some(anyMoreChanges), false),
     (PartnershipConfirmPreviousAddressId(0), confirmPreviousAddressNo, defaultPage, false, Some(partnershipPaPostCodeLookup(checkMode(UpdateMode))), false),
-    (PartnershipPayeVariationsId(0), emptyAnswers, none, true, Some(exitJourney(checkMode(UpdateMode), emptyAnswers)), true)
+    (PartnershipPayeVariationsId(0), emptyAnswers, none, true, Some(exitJourney(checkMode(UpdateMode), emptyAnswers)), true),
+    (PartnershipAddressId(0), emptyAnswers, partnershipAddressYears(UpdateMode), true, Some(confirmPreviousAddress), true),
+    (PartnershipAddressId(0), newEstablisher, partnershipAddressYears(UpdateMode), true, Some(checkYourAnswers(UpdateMode)), true)
   )
 
-  private def normalRoutes = Table(
+  private def normalRoutes() = Table(
     ("Id", "User Answers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (Check Mode)", "Save (CM)"),
     routes(NormalMode) ++ normalOnlyRoutes: _*
   )
 
-  private def updateRoutes = Table(
+  private def updateRoutes() = Table(
     ("Id", "User Answers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (Check Mode)", "Save (CM)"),
     routes(UpdateMode) ++ updateOnlyRoutes: _*
   )
@@ -101,8 +102,8 @@ class EstablishersPartnershipNavigatorSpec extends SpecBase with NavigatorBehavi
   navigator.getClass.getSimpleName must {
     appRunning()
     val navigator = new EstablishersPartnershipNavigator(FakeUserAnswersCacheConnector, frontendAppConfig)
-    behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, normalRoutes, dataDescriber)
-    behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, updateRoutes, dataDescriber, UpdateMode)
+    behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, normalRoutes(), dataDescriber)
+    behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, updateRoutes(), dataDescriber, UpdateMode)
     behave like nonMatchingNavigator(navigator)
     behave like nonMatchingNavigator(navigator, UpdateMode)
   }

@@ -107,7 +107,9 @@ class EstablishersPartnershipNavigator @Inject()(val dataCacheConnector: UserAns
       val isNew = from.userAnswers.get(IsEstablisherNewId(index)).contains(true)
       if (isNew || mode == CheckMode) {
         checkYourAnswers(index, journeyMode(mode), srn)
-      } else {
+      } else if (!from.userAnswers.get(IsEstablisherNewId(index)).contains(true) && mode == CheckUpdateMode) {
+          NavigateTo.dontSave(PartnershipConfirmPreviousAddressController.onPageLoad(index, srn))
+        } else {
         NavigateTo.dontSave(PartnershipAddressYearsController.onPageLoad(mode, index, srn))
       }
     case PartnershipAddressYearsId(index) =>
