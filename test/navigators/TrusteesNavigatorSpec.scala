@@ -42,8 +42,7 @@ class TrusteesNavigatorSpec extends SpecBase with NavigatorBehaviour {
     (AddTrusteeId, addTrusteeTrue(1), trusteeKind(1, mode, srn), true, None, true),
     (AddTrusteeId, emptyAnswers, trusteeKind(0, mode, srn), true, None, true),
     (AddTrusteeId, trustees(10), moreThanTenTrustees(mode, srn), true, None, true),
-    (AddTrusteeId, addTrusteeFalseWithChanges,
-      if (mode == UpdateMode) controllers.routes.AnyMoreChangesController.onPageLoad(srn) else taskList(mode, srn), false, None, false),
+    (AddTrusteeId, addTrusteeFalseWithChanges, taskList(mode, srn), false, None, false),
     (MoreThanTenTrusteesId, emptyAnswers,
       if (mode == UpdateMode) controllers.routes.AnyMoreChangesController.onPageLoad(srn) else taskList(mode, srn), false, None, false),
     (TrusteeKindId(0), trusteeKindCompany, companyDetails(mode, srn), true, None, false),
@@ -63,8 +62,8 @@ class TrusteesNavigatorSpec extends SpecBase with NavigatorBehaviour {
   )
 
   private def updateOnlyRoutes(): TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = Table(
-    ("Id", "User Answers", "Next Page (UpdateMode Mode)", "Save (NM)", "Next Page (Check Mode)", "Save (CM)"),
-    (AddTrusteeId, addTrusteeFalse, taskList(UpdateMode, srn), false, None, false)
+    ("Id", "User Answers", "Next Page (UpdateMode Mode)", "Save (NM)", "Next Page (Check Mode)", "Save (CM)")
+
   )
 
   private def normalRoutes: TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = Table(
