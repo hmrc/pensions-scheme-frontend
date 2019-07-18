@@ -30,7 +30,7 @@ case class DirectorUTRId(establisherIndex: Int, directorIndex: Int) extends Type
 }
 
 object DirectorUTRId {
-  override def toString: String = "directorUTR"
+  override def toString: String = "utr"
 
   implicit def cya(implicit userAnswers: UserAnswers,
                    messages: Messages,

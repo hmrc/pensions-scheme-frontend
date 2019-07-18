@@ -30,7 +30,7 @@ case class DirectorNoNINOReasonId(establisherIndex: Int, directorIndex: Int) ext
 }
 
 object DirectorNoNINOReasonId {
-  override def toString: String = "reason"
+  override def toString: String = "noNinoReason"
 
   implicit def cya(implicit userAnswers: UserAnswers,
                    messages: Messages,

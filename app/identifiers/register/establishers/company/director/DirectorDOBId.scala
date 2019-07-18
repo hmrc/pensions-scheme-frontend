@@ -27,11 +27,11 @@ import utils.{DateHelper, UserAnswers}
 import viewmodels.{AnswerRow, Message}
 
 case class DirectorDOBId(establisherIndex: Int, directorIndex: Int) extends TypedIdentifier[LocalDate] {
-  override def path: JsPath = EstablishersId(establisherIndex).path \ "director" \ directorIndex \ "directorDetails" \ DirectorDOBId.toString
+  override def path: JsPath = EstablishersId(establisherIndex).path \ "director" \ directorIndex \ DirectorDOBId.toString
 }
 
 object DirectorDOBId {
-  override def toString: String = "date"
+  override def toString: String = "dateOfBirth"
 
   implicit def cya(implicit answers: UserAnswers, messages: Messages): CheckYourAnswers[DirectorDOBId] = {
     new CheckYourAnswers[DirectorDOBId] {
