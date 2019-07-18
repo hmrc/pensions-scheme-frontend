@@ -56,8 +56,6 @@ class EstablishersPartnerNavigatorSpec extends SpecBase with NavigatorBehaviour 
     (PartnerUniqueTaxReferenceId(0, 0), newPartner, partnerAddressPostcode(mode), true, Some(exitJourney(mode, newPartner)), true),
     (PartnerAddressPostcodeLookupId(0, 0), emptyAnswers, partnerAddressList(mode), true, Some(partnerAddressList(checkMode(mode))), true),
     (PartnerAddressListId(0, 0), emptyAnswers, partnerAddress(mode), true, Some(partnerAddress(checkMode(mode))), true),
-    (PartnerAddressId(0, 0), emptyAnswers, partnerAddressYears(mode), true, if(mode == UpdateMode) Some(partnerAddressYears(checkMode(UpdateMode))) else Some(checkYourAnswers(NormalMode)), true),
-    (PartnerAddressId(0, 0), newPartner, partnerAddressYears(mode), true, Some(checkYourAnswers(mode)), true),
     (PartnerAddressYearsId(0, 0), addressYearsOverAYearNew, partnerContactDetails(mode), true, Some(exitJourney(mode, addressYearsOverAYearNew)), true),
     (PartnerAddressYearsId(0, 0), addressYearsOverAYear, partnerContactDetails(mode), true, Some(exitJourney(mode, emptyAnswers)), true),
     (PartnerAddressYearsId(0, 0), emptyAnswers, sessionExpired, false, Some(sessionExpired), false),
@@ -73,30 +71,34 @@ class EstablishersPartnerNavigatorSpec extends SpecBase with NavigatorBehaviour 
   )
 
 
-  private def normalRoutes(mode:Mode): TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = commonRoutes(mode) ++ Table(
+  private def normalRoutes(): TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = commonRoutes(NormalMode) ++ Table(
     ("Id", "User Answers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (Check Mode)", "Save (CM)"),
-    (ConfirmDeletePartnerId(0), emptyAnswers, addPartners(mode), false, None, false),
-    (CheckYourAnswersId(0, 0), emptyAnswers, addPartners(mode), true, None, true),
-    (AddPartnersId(0), addPartnersFalse, partnershipReview(mode), true, None, true)
+    (ConfirmDeletePartnerId(0), emptyAnswers, addPartners(NormalMode), false, None, false),
+    (CheckYourAnswersId(0, 0), emptyAnswers, addPartners(NormalMode), true, None, true),
+    (AddPartnersId(0), addPartnersFalse, partnershipReview(NormalMode), true, None, true),
+    (PartnerAddressId(0, 0), emptyAnswers, partnerAddressYears(NormalMode), true, Some(checkYourAnswers(NormalMode)), true),
+    (PartnerAddressId(0, 0), newPartner, partnerAddressYears(NormalMode), true, Some(checkYourAnswers(NormalMode)), true)
   )
 
-  private def editRoutes(mode:Mode): TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = commonRoutes(mode) ++ Table(
+  private def editRoutes(): TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = commonRoutes(UpdateMode) ++ Table(
     ("Id", "User Answers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (Check Mode)", "Save (CM)"),
     (ConfirmDeletePartnerId(0), emptyAnswers, anyMoreChanges, false, None, false),
-    (CheckYourAnswersId(0, 0), emptyAnswers, addPartners(mode), true, None, true),
+    (CheckYourAnswersId(0, 0), emptyAnswers, addPartners(UpdateMode), true, None, true),
     (AddPartnersId(0), addPartnersFalseWithChanges, anyMoreChanges, true, None, true),
-    (AddPartnersId(0), addPartnersFalseNewEst, partnershipReview(mode), true, None, true),
+    (AddPartnersId(0), addPartnersFalseNewEst, partnershipReview(UpdateMode), true, None, true),
     (AddPartnersId(0), addPartnersFalse, taskList, true, None, true),
-    (PartnerAddressYearsId(0, 0), addressYearsUnderAYear, partnerPreviousAddPostcode(mode), true, addressYearsLessThanTwelveEdit(mode, addressYearsUnderAYear), true),
-    (PartnerAddressYearsId(0, 0), addressYearsUnderAYearWithExistingCurrentAddress, partnerPreviousAddPostcode(mode), true, addressYearsLessThanTwelveEdit(CheckUpdateMode, addressYearsUnderAYearWithExistingCurrentAddress), true),
-    (PartnerNewNinoId(0, 0), emptyAnswers, none, true, Some(exitJourney(mode, emptyAnswers)), true)
+    (PartnerAddressYearsId(0, 0), addressYearsUnderAYear, partnerPreviousAddPostcode(UpdateMode), true, addressYearsLessThanTwelveEdit(UpdateMode, addressYearsUnderAYear), true),
+    (PartnerAddressYearsId(0, 0), addressYearsUnderAYearWithExistingCurrentAddress, partnerPreviousAddPostcode(UpdateMode), true, addressYearsLessThanTwelveEdit(CheckUpdateMode, addressYearsUnderAYearWithExistingCurrentAddress), true),
+    (PartnerNewNinoId(0, 0), emptyAnswers, none, true, Some(exitJourney(UpdateMode, emptyAnswers)), true),
+    (PartnerAddressId(0, 0), emptyAnswers, partnerAddressYears(UpdateMode), true, Some(confirmPreviousAddress), true),
+    (PartnerAddressId(0, 0), newPartner, partnerAddressYears(UpdateMode), true, Some(checkYourAnswers(UpdateMode)), true)
   )
 
 
   navigator.getClass.getSimpleName must {
     appRunning()
-    behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, normalRoutes(NormalMode), dataDescriber)
-    behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, editRoutes(UpdateMode), dataDescriber, UpdateMode)
+    behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, normalRoutes(), dataDescriber)
+    behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, editRoutes(), dataDescriber, UpdateMode)
     behave like nonMatchingNavigator(navigator)
     behave like nonMatchingNavigator(navigator, UpdateMode)
   }
