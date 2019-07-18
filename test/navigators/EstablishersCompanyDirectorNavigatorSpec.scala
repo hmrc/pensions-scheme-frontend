@@ -78,32 +78,30 @@ class EstablishersCompanyDirectorNavigatorSpec extends SpecBase with NavigatorBe
     (AnyMoreChangesId, newDirector, anyMoreChanges, true, None, true)
   )
 
-  private def normalRoutes(mode: Mode): TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = commonRoutes(mode) ++ Table(
+  private def normalRoutes: TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = commonRoutes(NormalMode) ++ Table(
     ("Id", "User Answers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (Check Mode)", "Save (CM)"),
-    (ConfirmDeleteDirectorId(0), emptyAnswers, addCompanyDirectors(mode), false, None, false),
-    (CheckYourAnswersId(0, 0), emptyAnswers, addCompanyDirectors(mode), true, None, true),
-      (DirectorAddressId(0, 0), emptyAnswers, directorAddressYears(mode), true,
-        if (mode == UpdateMode) Some(directorAddressYears(checkMode(mode))) else Some(checkYourAnswers(mode)), true),
-    (DirectorAddressId(0, 0), newDirector, directorAddressYears(mode), true, Some(checkYourAnswers(mode)), true)
+    (ConfirmDeleteDirectorId(0), emptyAnswers, addCompanyDirectors(NormalMode), false, None, false),
+    (CheckYourAnswersId(0, 0), emptyAnswers, addCompanyDirectors(NormalMode), true, None, true),
+      (DirectorAddressId(0, 0), emptyAnswers, directorAddressYears(NormalMode), true, Some(checkYourAnswers(NormalMode)), true),
+    (DirectorAddressId(0, 0), newDirector, directorAddressYears(NormalMode), true, Some(checkYourAnswers(NormalMode)), true)
   )
 
-  private def variancesRoutes(mode:Mode): TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = commonRoutes(mode) ++ Table(
+  private def variancesRoutes: TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = commonRoutes(UpdateMode) ++ Table(
     ("Id", "User Answers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (Check Mode)", "Save (CM)"),
     (ConfirmDeleteDirectorId(0), emptyAnswers, anyMoreChanges, false, None, false),
-    (CheckYourAnswersId(0, 0), emptyAnswers, addCompanyDirectors(mode), true, None, true),
-    (CheckYourAnswersId(0, 0), newEstablisher, addCompanyDirectors(mode), true, None, true),
-    (DirectorNewNinoId(0, 0), emptyAnswers, none, true, Some(exitJourney(mode, emptyAnswers)), true),
-    (DirectorAddressYearsId(0, 0), directorNoExistingCurrentAddress, directorPreviousAddPostcode(mode), true, addressYearsLessThanTwelveEdit(mode, directorNoExistingCurrentAddress), true),
-    (DirectorAddressYearsId(0, 0), directorExistingCurrentAddress, directorPreviousAddPostcode(mode), true, addressYearsLessThanTwelveEdit(mode, directorExistingCurrentAddress), true),
-    (DirectorAddressId(0, 0), emptyAnswers, directorAddressYears(mode), true,
-      if (mode == UpdateMode) Some(directorAddressYears(checkMode(mode))) else Some(checkYourAnswers(mode)), true),
-    (DirectorAddressId(0, 0), newDirector, directorAddressYears(mode), true, Some(checkYourAnswers(mode)), true)
+    (CheckYourAnswersId(0, 0), emptyAnswers, addCompanyDirectors(UpdateMode), true, None, true),
+    (CheckYourAnswersId(0, 0), newEstablisher, addCompanyDirectors(UpdateMode), true, None, true),
+    (DirectorNewNinoId(0, 0), emptyAnswers, none, true, Some(exitJourney(UpdateMode, emptyAnswers)), true),
+    (DirectorAddressYearsId(0, 0), directorNoExistingCurrentAddress, directorPreviousAddPostcode(UpdateMode), true, addressYearsLessThanTwelveEdit(UpdateMode, directorNoExistingCurrentAddress), true),
+    (DirectorAddressYearsId(0, 0), directorExistingCurrentAddress, directorPreviousAddPostcode(UpdateMode), true, addressYearsLessThanTwelveEdit(UpdateMode, directorExistingCurrentAddress), true),
+    (DirectorAddressId(0, 0), emptyAnswers, directorAddressYears(UpdateMode), true, Some(directorAddressYears(checkMode(UpdateMode))), true),
+    (DirectorAddressId(0, 0), newDirector, directorAddressYears(UpdateMode), true, Some(checkYourAnswers(UpdateMode)), true)
   )
 
   navigator.getClass.getSimpleName must {
     appRunning()
-    behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, normalRoutes(NormalMode), dataDescriber)
-    behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, variancesRoutes(UpdateMode), dataDescriber, UpdateMode)
+    behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, normalRoutes, dataDescriber)
+    behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, variancesRoutes, dataDescriber, UpdateMode)
     behave like nonMatchingNavigator(navigator)
   }
 }
