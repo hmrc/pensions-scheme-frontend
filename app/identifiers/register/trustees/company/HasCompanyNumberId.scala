@@ -26,7 +26,7 @@ case class HasCompanyNumberId(index: Int) extends TypedIdentifier[Boolean] {
 }
 
 object HasCompanyNumberId {
-  override def toString: String = "companyNumber"
+  override def toString: String = "hasCrn"
 
 }
 
