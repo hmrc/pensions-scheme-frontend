@@ -52,7 +52,7 @@ class CompanyPostCodeLookupController @Inject()(
   private[controllers] val postCall = routes.CompanyPostCodeLookupController.onSubmit _
 
   private[controllers] val title: Message = "messages__companyAddress__title"
-  private[controllers] val heading: Message = "messages__companyAddress__title"
+  private[controllers] val heading: Message = "messages__companyAddress__heading"
 
   override protected val form: Form[String] = formProvider()
 
@@ -65,7 +65,7 @@ class CompanyPostCodeLookupController @Inject()(
               postCall(mode, index, srn),
               manualAddressCall(mode, index, srn),
               title = Message(title),
-              heading = Message(heading),
+              heading = Message(heading, details.companyName),
               subHeading = Some(details.companyName),
               srn = srn
             )
