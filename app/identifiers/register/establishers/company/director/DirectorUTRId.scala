@@ -18,15 +18,39 @@ package identifiers.register.establishers.company.director
 
 import identifiers._
 import identifiers.register.establishers.EstablishersId
+import play.api.i18n.Messages
 import play.api.libs.json.JsPath
+import utils.{CountryOptions, UserAnswers}
+import utils.checkyouranswers.CheckYourAnswers
+import utils.checkyouranswers.CheckYourAnswers.StringCYA
+import viewmodels.AnswerRow
 
 case class DirectorUTRId(establisherIndex: Int, directorIndex: Int) extends TypedIdentifier[String] {
   override def path: JsPath = EstablishersId(establisherIndex).path \ "director" \ directorIndex \ DirectorUTRId.toString
 }
 
-
 object DirectorUTRId {
-  override def toString: String = "directorUTR"
+  override def toString: String = "utr"
+
+  implicit def cya(implicit userAnswers: UserAnswers,
+                   messages: Messages,
+                   countryOptions: CountryOptions): CheckYourAnswers[DirectorUTRId] = {
+
+    val label: String = messages("messages__companyUtr__checkyouranswerslabel")
+    val hiddenLabel = messages("messages__visuallyhidden__companyUTR")
+
+    new CheckYourAnswers[DirectorUTRId] {
+      override def row(id: DirectorUTRId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+        StringCYA(Some(label), Some(hiddenLabel))().row(id)(changeUrl, userAnswers)
+
+
+      override def updateRow(id: DirectorUTRId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+        userAnswers.get(IsNewDirectorId(id.establisherIndex, id.directorIndex)) match {
+          case Some(true) => row(id)(changeUrl, userAnswers)
+          case _ => StringCYA(Some(label), Some(hiddenLabel), true)().updateRow(id)(changeUrl, userAnswers)
+        }
+    }
+  }
 }
 
 

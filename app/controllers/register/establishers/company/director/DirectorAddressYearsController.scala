@@ -16,18 +16,18 @@
 
 package controllers.register.establishers.company.director
 
-import config.FrontendAppConfig
+import config.{FeatureSwitchManagementService, FrontendAppConfig}
 import controllers.Retrievals
 import controllers.actions._
 import controllers.address.AddressYearsController
 import forms.address.AddressYearsFormProvider
-import identifiers.register.establishers.company.director.{DirectorAddressYearsId, DirectorDetailsId}
+import identifiers.register.establishers.company.director.{DirectorAddressYearsId, DirectorDetailsId, DirectorNameId}
 import javax.inject.Inject
 import models.{Index, Mode}
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
-import utils.Navigator
+import utils.{Navigator, Toggles}
 import utils.annotations.EstablishersCompanyDirector
 import viewmodels.Message
 import viewmodels.address.AddressYearsViewModel
@@ -35,13 +35,14 @@ import viewmodels.address.AddressYearsViewModel
 import scala.concurrent.ExecutionContext
 
 class DirectorAddressYearsController @Inject()(val appConfig: FrontendAppConfig,
-                                               val userAnswersService: UserAnswersService,
-                                               @EstablishersCompanyDirector val navigator: Navigator,
-                                               val messagesApi: MessagesApi,
-                                               authenticate: AuthAction,
-                                               getData: DataRetrievalAction,
-                                               allowAccess: AllowAccessActionProvider,
-                                               requireData: DataRequiredAction
+                                                val userAnswersService: UserAnswersService,
+                                                @EstablishersCompanyDirector val navigator: Navigator,
+                                                val messagesApi: MessagesApi,
+                                                authenticate: AuthAction,
+                                                getData: DataRetrievalAction,
+                                                allowAccess: AllowAccessActionProvider,
+                                                requireData: DataRequiredAction,
+                                                featureSwitchManagementService: FeatureSwitchManagementService
                                               )(implicit val ec: ExecutionContext) extends AddressYearsController with Retrievals {
 
   private def form(directorName: String) = new AddressYearsFormProvider()(Message("messages__director_address_years__form_error", directorName))
@@ -49,27 +50,22 @@ class DirectorAddressYearsController @Inject()(val appConfig: FrontendAppConfig,
   def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
-        DirectorDetailsId(establisherIndex, directorIndex).retrieve.right.map {
-          directorDetails =>
-            get(
-              DirectorAddressYearsId(establisherIndex, directorIndex),
-              form(directorDetails.fullName),
-              viewModel(mode, establisherIndex, directorIndex, directorDetails.fullName, srn)
-            )
+        directorName(establisherIndex, directorIndex).retrieve.right.map { name =>
+          get(DirectorAddressYearsId(establisherIndex, directorIndex), form(name),
+            viewModel(mode, establisherIndex, directorIndex, name, srn))
         }
     }
 
   def onSubmit(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
-        DirectorDetailsId(establisherIndex, directorIndex).retrieve.right.map {
-          directorDetails =>
-            post(
-              DirectorAddressYearsId(establisherIndex, directorIndex),
-              mode,
-              form(directorDetails.fullName),
-              viewModel(mode, establisherIndex, directorIndex, directorDetails.fullName, srn)
-            )
+        directorName(establisherIndex, directorIndex).retrieve.right.map { name =>
+          post(
+            DirectorAddressYearsId(establisherIndex, directorIndex),
+            mode,
+            form(name),
+            viewModel(mode, establisherIndex, directorIndex, name, srn)
+          )
         }
     }
 
@@ -82,4 +78,12 @@ class DirectorAddressYearsController @Inject()(val appConfig: FrontendAppConfig,
       subHeading = Some(Message(directorName)),
       srn = srn
     )
+
+  val directorName = (establisherIndex: Index, directorIndex: Index) => Retrieval {
+    implicit request =>
+      if (featureSwitchManagementService.get(Toggles.isEstablisherCompanyHnSEnabled))
+        DirectorNameId(establisherIndex, directorIndex).retrieve.right.map(_.fullName)
+      else
+        DirectorDetailsId(establisherIndex, directorIndex).retrieve.right.map(_.fullName)
+  }
 }

@@ -328,7 +328,6 @@ messages__error__middle_name_invalid = Enter the valid middle name
 
 messages__establisherNino__title = Does the establisher have a National Insurance number?
 messages__establisher__no_nino = Tell us why the establisher does not have a National Insurance number
-messages__common__nino = National Insurance number
 messages__common__nino_hint = For example ’QQ 12 34 56 C’
 messages__error__has_nino_establisher = Select yes if the establisher has a National Insurance number
 messages__error__nino = Enter the National Insurance number
@@ -482,6 +481,8 @@ messages__directorDetails__heading = Company director
 
 messages__directorName__title = What is the director’s name?
 messages__directorName__heading = What is the director’s name?
+messages__directorName__cya = Director's name
+messages__visuallyhidden__directorName = Change name of director
 
 messages__companyPreviousAddressPostcodeLookup__title = Previous address of the company
 messages__companyPreviousAddressPostcodeLookup__heading = Previous address of the company
@@ -505,9 +506,7 @@ messages__company__paye_error_invalid = Enter a valid PAYE number
 
 messages__companyPreviousAddress__checkYourAnswersLabel = Previous Address
 
-messages__director_nino_question_cya_label = Does the director have a National Insurance number?
-messages__director_nino_reason_cya_label = Why the director does not have a National Insurance number?
-messages__director_nino_cya_label = National Insurance number
+messages__direc_nino_cya_label = National Insurance number
 messages__director_nino__title = Does the director have a National Insurance number?
 messages__director_no_nino = Tell us why the director does not have a National Insurance number
 messages__error__has_nino_director = Select yes if the director has a National Insurance number
@@ -539,10 +538,25 @@ messages__error__no_sautr_director = You need to tell us why the director does n
 
 messages__director__cya__details_heading = Company director details
 messages__director__cya__contact__details_heading = Contact details for director
-
-messages__director__cya__utr_yes_no = Does the director have a Self Assessment Unique Taxpayer Reference number?
+messages__director__cya__name = Director’s name
+messages__director__cya__dob = What is {0}’s date of birth?
+messages__visuallyhidden__cya__dob = What is the director’s date of birth?
+messages__director__cya__nino = Does {0} have a National Insurance number?
+messages__director__cya__nino__fallback = Does the director have a National Insurance number?
+messages__director__cya__nino_reason = Why does {0} not have a National Insurance Number?
+messages__director__cya__nino_reason__fallback = Why the director does not have a National Insurance number?
+messages__director__cya__utr_yes_no = Does {0} have a UTR?
 messages__director__cya__utr = Unique Taxpayer Reference number
-messages__director__cya__utr_no_reason = Why the director does not have a Self Assessment Unique Taxpayer Reference number?
+messages__director__cya__utr_no_reason = Why does {0} not have a UTR?
+messages__director__cya__utr_no_reason__fallback = Why the director does not have a Self Assessment Unique Taxpayer Reference number?
+messages__director__cya__address_years = Has {0} been at their address for at least 1 year?
+messages__director__cya__address_years__fallback = How long has the director lived at this address?
+messages__director__cya__email_address = What is {0}’s email address?
+messages__director__cya__email_address__fallback = Email address
+messages__director__cya__phone = What is {0}’s phone number?
+messages__director__cya__phone__fallback = Phone number
+
+messages__director__cya__utr_yes_no_fallback = Does the director have a Self Assessment Unique Taxpayer Reference number?
 
 messages__confirmDeleteDirector__title = Confirm deletion
 messages__confirmDeleteDirector__heading = Are you sure you want to delete {0}?
@@ -1494,7 +1508,7 @@ messages__whatYouWillNeedEstablisherCompanyContact__item1 = email address
 messages__whatYouWillNeedEstablisherCompanyContact__item2 = phone number
 messages__whatYouWillNeedEstablisherCompanyContact__item3 = These should be details used for other HMRC services. These will not be used to contact the company.
 
-messages__whatYouWillNeedDirectors__title = what you will need
+messages__whatYouWillNeedDirectors__title = Directors
 messages__whatYouWillNeedDirectors__h1 = Directors
 messages__whatYouWillNeedDirectors__p1 = We need to know about every director associated with the company you’re registering.
 messages__whatYouWillNeedDirectors__p2 = You will need to tell us each director’s:
@@ -1631,6 +1645,7 @@ messages__establisher_email__hint = We will only use this to contact about pensi
 
 messages__directorNoNinoReason__title = Why does the director not have a National Insurance number?
 messages__directorNoNinoReason__heading = Why does {0} not have a National Insurance number?
+messages__directorNoNinoReason__cya_fallback = Why does the director not have a National Insurance number?
 
 messages__directorHasNino__title =  Does the director have a National Insurance number?
 messages__directorHasNino__h1 =  Does {0} have a National Insurance number?
@@ -1641,11 +1656,14 @@ messages__directorUtr__heading = What is {0}’s UTR?
 
 messages__hasDirectorUtr__title = Does the director have a UTR?
 messages__hasDirectorUtr__h1 = Does {0} have a Unique Taxpayer Reference (UTR)?
+messages__hasDirectorUtr__cya = Does {0} have a UTR?
+messages__hasDirectorUtr__cya_fallback = Does the director have a UTR?
 messages__hasDirectorUtr__p1 = This is a 10-digit or 13-digit number. You can find it on tax returns and other documents from HMRC. It might be called ‘reference’, ‘UTR’ or ‘official use’.
 messages__hasDirectorUtr__error__required = Select yes if {0} has a Unique Taxpayer Reference (UTR)
 
 messages__noDirectorUtr__title = Why does the director not have a UTR?
 messages__noDirectorUtr__heading = Why does {0} not have a UTR?
+messages__noDirectorUtr__cya_fallback = Why does the director not have a UTR?
 
 messages__establisherPostCode__title = What is establisher’s postcode?
 messages__establisherPostCode__h1 = What is {0}’s postcode?

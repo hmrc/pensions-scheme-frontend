@@ -16,17 +16,17 @@
 
 package controllers.register.establishers.company.director
 
-import config.FrontendAppConfig
+import config.{FeatureSwitchManagementService, FrontendAppConfig}
 import controllers.NinoController
 import controllers.actions._
 import forms.NinoNewFormProvider
-import identifiers.register.establishers.company.director.{DirectorDetailsId, DirectorNewNinoId}
+import identifiers.register.establishers.company.director.{DirectorDetailsId, DirectorNameId, DirectorNewNinoId}
 import javax.inject.Inject
 import models.{Index, Mode}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
-import utils.Navigator
+import utils.{Navigator, Toggles}
 import utils.annotations.EstablishersCompanyDirector
 import viewmodels.NinoViewModel
 
@@ -41,7 +41,8 @@ class DirectorNinoNewController @Inject()(
                                            getData: DataRetrievalAction,
                                            allowAccess: AllowAccessActionProvider,
                                            requireData: DataRequiredAction,
-                                           val formProvider: NinoNewFormProvider
+                                           val formProvider: NinoNewFormProvider,
+                                           featureSwitchManagementService: FeatureSwitchManagementService
                                  )(implicit val ec: ExecutionContext) extends NinoController with I18nSupport {
 
   private[controllers] val postCall = controllers.register.establishers.company.director.routes.DirectorNinoNewController.onSubmit _
@@ -49,37 +50,42 @@ class DirectorNinoNewController @Inject()(
   private[controllers] val heading: String = "messages__common_nino__h1"
   private[controllers] val hint: String = "messages__common__nino_hint"
 
-  private def viewmodel(establisherIndex: Index, directorIndex: Index, mode: Mode, srn: Option[String]): Retrieval[NinoViewModel] =
-    Retrieval {
-      implicit request =>
-        DirectorDetailsId(establisherIndex, directorIndex).retrieve.right.map {
-          details =>
+  private def viewmodel(establisherIndex: Index, directorIndex: Index, mode: Mode, srn: Option[String], name: String): NinoViewModel =
+
             NinoViewModel(
               postCall(mode, Index(establisherIndex), Index(directorIndex), srn),
               title = title,
               heading = heading,
               hint = hint,
-              personName = details.fullName,
+              personName = name,
               srn = srn
             )
-        }
-    }
+
+  val directorName = (establisherIndex: Index, directorIndex: Index) => Retrieval {
+    implicit request =>
+      if (featureSwitchManagementService.get(Toggles.isEstablisherCompanyHnSEnabled))
+      DirectorNameId(establisherIndex, directorIndex).retrieve.right.map(_.fullName)
+    else
+        DirectorDetailsId(establisherIndex, directorIndex).retrieve.right.map(_.fullName)
+  }
 
   def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
-    implicit request =>
-      viewmodel(establisherIndex, directorIndex, mode, srn).retrieve.right.map {
-        vm =>
-          get(DirectorNewNinoId(establisherIndex, directorIndex), formProvider(vm.personName), vm)
-      }
-  }
+      implicit request =>
+        directorName(establisherIndex, directorIndex).retrieve.right.map {
+          name =>
+            get(DirectorNewNinoId(establisherIndex, directorIndex), formProvider(name),
+              viewmodel(establisherIndex, directorIndex, mode, srn, name))
+        }
+    }
 
   def onSubmit(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
-      viewmodel(establisherIndex, directorIndex, mode, srn).retrieve.right.map {
-        vm =>
-          post(DirectorNewNinoId(establisherIndex, directorIndex), mode, formProvider(vm.personName), vm)
+      directorName(establisherIndex, directorIndex).retrieve.right.map {
+        name =>
+          post(DirectorNewNinoId(establisherIndex, directorIndex), mode, formProvider(name),
+            viewmodel(establisherIndex, directorIndex, mode, srn, name))
       }
   }
 

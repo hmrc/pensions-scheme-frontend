@@ -29,7 +29,7 @@ class WhatYouWillNeedDirectorControllerSpec extends ControllerSpecBase with Mock
 
   private def onwardRoute: Call =
     controllers.register.establishers.company.director.routes.DirectorNameController
-      .onSubmit(NormalMode, establisherIndex = Index(0), directorIndex = Index(1), None)
+      .onSubmit(NormalMode, establisherIndex = Index(0), directorIndex = Index(0), None)
 
   private def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): WhatYouWillNeedDirectorController =
     new WhatYouWillNeedDirectorController(frontendAppConfig,
@@ -41,7 +41,7 @@ class WhatYouWillNeedDirectorControllerSpec extends ControllerSpecBase with Mock
     )
 
   private def postCall = controllers.register.establishers.company.director.routes.WhatYouWillNeedDirectorController
-    .onSubmit(NormalMode, None, establisherIndex = Index(0), directorIndex = Index(1))
+    .onSubmit(NormalMode, None, establisherIndex = Index(0))
 
   private def viewAsString(): String = whatYouWillNeed(frontendAppConfig, None, postCall, None)(fakeRequest, messages).toString
 
@@ -49,7 +49,7 @@ class WhatYouWillNeedDirectorControllerSpec extends ControllerSpecBase with Mock
 
     "on a GET" must {
       "return OK and the correct view" in {
-        val result = controller().onPageLoad(NormalMode, None, Index(0), Index(1))(fakeRequest)
+        val result = controller().onPageLoad(NormalMode, None, Index(0))(fakeRequest)
 
         status(result) mustBe OK
         contentAsString(result) mustBe viewAsString()
@@ -58,7 +58,7 @@ class WhatYouWillNeedDirectorControllerSpec extends ControllerSpecBase with Mock
 
     "on a POST" must {
       "redirect to relavant page" in {
-        val result = controller().onSubmit(NormalMode, None, Index(0), Index(1))(fakeRequest)
+        val result = controller().onSubmit(NormalMode, None, Index(0))(fakeRequest)
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(onwardRoute.url)

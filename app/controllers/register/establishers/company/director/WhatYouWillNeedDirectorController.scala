@@ -36,18 +36,19 @@ class WhatYouWillNeedDirectorController @Inject()(appConfig: FrontendAppConfig,
                                                   requireData: DataRequiredAction
                                                     ) extends FrontendController with I18nSupport with Retrievals{
 
-  def onPageLoad(mode: Mode, srn: Option[String] = None, establisherIndex: Index, directorIndex: Index): Action[AnyContent] = (authenticate andThen
+  def onPageLoad(mode: Mode, srn: Option[String] = None, establisherIndex: Index): Action[AnyContent] = (authenticate andThen
     getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
     implicit request =>
-      val postCall = controllers.register.establishers.company.director.routes.WhatYouWillNeedDirectorController.onSubmit(mode, srn, establisherIndex, directorIndex)
+      val postCall = routes.WhatYouWillNeedDirectorController.onSubmit(mode, srn, establisherIndex)
       Future.successful(Ok(whatYouWillNeed(appConfig, existingSchemeName, postCall, srn)))
 
   }
 
-  def onSubmit(mode: Mode, srn: Option[String] = None, establisherIndex: Index, directorIndex: Index): Action[AnyContent] = (authenticate andThen
+  def onSubmit(mode: Mode, srn: Option[String] = None, establisherIndex: Index): Action[AnyContent] = (authenticate andThen
     getData(mode, srn) andThen requireData).async {
     implicit request =>
+      val directorIndex = request.userAnswers.allDirectorsHnS(establisherIndex).size
       Future.successful(
-        Redirect(controllers.register.establishers.company.director.routes.DirectorNameController.onPageLoad(mode, establisherIndex, directorIndex, srn)))
+        Redirect(routes.DirectorNameController.onPageLoad(mode, establisherIndex, directorIndex, srn)))
   }
 }

@@ -107,12 +107,23 @@ class DirectorDetailsIdSpec extends SpecBase{
 
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
 
-        DirectorDetailsId(0, 0).row(onwardUrl, UpdateMode) must equal(Seq(
-          AnswerRow("messages__common__cya__name", Seq(s"${personDetails.fullName}"), false,
-            Some(Link("site.change", onwardUrl, Some(Message("messages__visuallyhidden__common__name", personDetails.fullName))))),
-          AnswerRow("messages__common__dob", Seq(s"${DateHelper.formatDate(personDetails.date)}"),
-            false, Some(Link("site.change", onwardUrl, Some(Message("messages__visuallyhidden__common__dob", personDetails.fullName)))))
-        ))
+
+        val expectedResult = Seq(
+          AnswerRow(
+            "messages__director__cya__name",
+            Seq(s"${personDetails.fullName}"),
+            false,
+            Some(Link("site.change", onwardUrl, Some(Message("messages__visuallyhidden__common__name", personDetails.fullName))))
+          ),
+          AnswerRow(
+            messages("messages__director__cya__dob", personDetails.firstAndLastName),
+            Seq(s"${DateHelper.formatDate(personDetails.date)}"),
+            false,
+            Some(Link("site.change", onwardUrl, Some(Message("messages__visuallyhidden__common__dob", personDetails.fullName))))
+          )
+        )
+
+        DirectorDetailsId(0, 0).row(onwardUrl, UpdateMode) must equal(expectedResult)
       }
     }
 
@@ -120,8 +131,8 @@ class DirectorDetailsIdSpec extends SpecBase{
 
       "return answers rows without change links" in {
         DirectorDetailsId(0, 0).row(onwardUrl, UpdateMode) must equal(Seq(
-          AnswerRow("messages__common__cya__name", Seq(s"${personDetails.fullName}"), false, None),
-          AnswerRow("messages__common__dob", Seq(s"${DateHelper.formatDate(personDetails.date)}"), false, None)
+          AnswerRow("messages__director__cya__name", Seq(s"${personDetails.fullName}"), false, None),
+          AnswerRow(messages("messages__director__cya__dob", personDetails.firstAndLastName), Seq(s"${DateHelper.formatDate(personDetails.date)}"), false, None)
         ))
       }
     }
@@ -129,12 +140,23 @@ class DirectorDetailsIdSpec extends SpecBase{
     "in normal mode " must {
 
       "return answers rows with change links" in {
-        DirectorDetailsId(0, 0).row(onwardUrl, NormalMode) must equal(Seq(
-          AnswerRow("messages__common__cya__name", Seq(s"${personDetails.fullName}"), false,
-            Some(Link("site.change", onwardUrl, Some(Message("messages__visuallyhidden__common__name", personDetails.fullName))))),
-          AnswerRow("messages__common__dob", Seq(s"${DateHelper.formatDate(personDetails.date)}"),
-            false, Some(Link("site.change", onwardUrl, Some(Message("messages__visuallyhidden__common__dob", personDetails.fullName)))))
-        ))
+
+        val expectedResults = Seq(
+          AnswerRow(
+            "messages__director__cya__name",
+            Seq(s"${personDetails.fullName}"),
+            false,
+            Some(Link("site.change", onwardUrl, Some(Message("messages__visuallyhidden__common__name", personDetails.fullName))))
+          ),
+          AnswerRow(
+            messages("messages__director__cya__dob", personDetails.firstAndLastName),
+            Seq(s"${DateHelper.formatDate(personDetails.date)}"),
+            false,
+            Some(Link("site.change", onwardUrl, Some(Message("messages__visuallyhidden__common__dob", personDetails.fullName))))
+          )
+        )
+
+        DirectorDetailsId(0, 0).row(onwardUrl, NormalMode) must equal(expectedResults)
       }
     }
   }

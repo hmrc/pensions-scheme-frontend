@@ -29,6 +29,8 @@ import utils.{AbstractNavigator, Navigator, UserAnswers}
 import utils.{Navigator, UserAnswers}
 import controllers.routes._
 import utils.{Navigator, UserAnswers}
+import controllers.routes._
+import utils.{Navigator, UserAnswers}
 
 class EstablishersPartnershipNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector,
                                                  appConfig: FrontendAppConfig) extends AbstractNavigator {
