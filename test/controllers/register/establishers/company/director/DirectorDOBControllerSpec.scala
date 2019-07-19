@@ -153,7 +153,7 @@ object DirectorDOBControllerSpec extends MockitoSugar {
               "firstName" -> "first",
               "lastName" -> "last"
             ),
-            "directorDetails" -> Json.obj("date" -> s"$year-$month-$day")
+            "dateOfBirth" -> s"$year-$month-$day"
           )
         )
       )
