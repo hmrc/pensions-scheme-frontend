@@ -15,6 +15,7 @@
  */
 
 import com.google.inject.AbstractModule
+import com.google.inject.multibindings.Multibinder
 import connectors.{SubscriptionDualCacheConnector, UserAnswersCacheConnector}
 import controllers.actions._
 import navigators._
@@ -26,6 +27,25 @@ class PODSModule extends AbstractModule {
 
   //scalastyle:off method.length
   override def configure(): Unit = {
+
+    val navigators = Multibinder.newSetBinder(binder(), classOf[Navigator])
+    navigators.addBinding().to(classOf[AboutBankDetailsNavigator])
+    navigators.addBinding().to(classOf[AboutBenefitsAndInsuranceNavigator])
+    navigators.addBinding().to(classOf[AboutMembersNavigator])
+    navigators.addBinding().to(classOf[BeforeYouStartNavigator])
+    navigators.addBinding().to(classOf[EstablishersCompanyDirectorNavigator])
+    navigators.addBinding().to(classOf[EstablishersCompanyNavigator])
+    navigators.addBinding().to(classOf[EstablishersIndividualNavigator])
+    navigators.addBinding().to(classOf[EstablishersNavigator])
+    navigators.addBinding().to(classOf[EstablishersPartnerNavigator])
+    navigators.addBinding().to(classOf[EstablishersPartnershipNavigator])
+    navigators.addBinding().to(classOf[RegisterNavigator])
+    navigators.addBinding().to(classOf[TrusteesIndividualNavigator])
+    navigators.addBinding().to(classOf[TrusteesNavigator])
+    navigators.addBinding().to(classOf[TrusteesPartnershipNavigator])
+    navigators.addBinding().to(classOf[TrusteesCompanyNavigator])
+    navigators.addBinding().to(classOf[VariationsNavigator])
+    navigators.addBinding().to(classOf[WorkingKnowledgeNavigator])
 
     bind(classOf[UserAnswersService])
       .annotatedWith(classOf[InsuranceService])
@@ -40,6 +60,9 @@ class PODSModule extends AbstractModule {
 
     bind(classOf[UserAnswersService])
       .to(classOf[UserAnswersServiceEstablishersAndTrusteesImpl])
+
+    bind(classOf[Navigator])
+      .to(classOf[CompoundNavigator])
 
     bind(classOf[Navigator])
       .annotatedWith(classOf[AboutMembers])

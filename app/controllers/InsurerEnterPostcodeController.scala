@@ -62,7 +62,6 @@ class InsurerEnterPostcodeController @Inject()(val appConfig: FrontendAppConfig,
       Messages("messages__insurer_enter_postcode__title"),
       "messages__insurer_enter_postcode__h1",
       None,
-      None,
       srn = srn
     )
 

@@ -80,7 +80,7 @@ class DirectorDetailsController @Inject()(
             userAnswersService.upsert(mode, srn, answers.json).flatMap {
               cacheMap =>
                 val userAnswers = UserAnswers(cacheMap)
-                val allDirectors = userAnswers.allDirectorsAfterDelete(establisherIndex)
+                val allDirectors = userAnswers.allDirectorsAfterDelete(establisherIndex, false)
                 val allDirectorsCompleted = allDirectors.count(_.isCompleted) == allDirectors.size
 
                 if (allDirectorsCompleted) {

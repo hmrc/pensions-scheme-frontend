@@ -23,13 +23,13 @@ import identifiers.register.establishers.individual._
 import identifiers.register.establishers.{EstablisherNewNinoId, ExistingCurrentAddressId, IsEstablisherNewId}
 import models.Mode.journeyMode
 import models._
-import utils.{Navigator, UserAnswers}
+import utils.{AbstractNavigator, Navigator, UserAnswers}
 
 @Singleton
 class EstablishersIndividualNavigator @Inject()(
                                                  appConfig: FrontendAppConfig,
                                                  val dataCacheConnector: UserAnswersCacheConnector
-                                               ) extends Navigator {
+                                               ) extends AbstractNavigator {
 
   override protected def routeMap(from: NavigateFrom): Option[NavigateTo] = routes(from, NormalMode, None)
 

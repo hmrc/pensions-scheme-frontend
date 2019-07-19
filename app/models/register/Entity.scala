@@ -17,7 +17,7 @@
 package models.register
 
 import identifiers.register.establishers.EstablisherKindId
-import identifiers.register.establishers.company.director.DirectorDetailsId
+import identifiers.register.establishers.company.director.{DirectorDetailsId, DirectorNameId}
 import identifiers.register.establishers.company.{CompanyDetailsId => EstablisherCompanyDetailsId}
 import identifiers.register.establishers.individual.EstablisherDetailsId
 import identifiers.register.establishers.partnership.PartnershipDetailsId
@@ -46,8 +46,10 @@ sealed trait Entity[ID] {
   def index: Int
 }
 
-case class DirectorEntity(id: DirectorDetailsId, name: String, isDeleted: Boolean,
-                          isCompleted: Boolean, isNewEntity: Boolean, noOfRecords : Int) extends Entity[DirectorDetailsId] {
+sealed trait Director[T] extends Entity[T]
+
+case class DirectorEntityNonHnS(id: DirectorDetailsId, name: String, isDeleted: Boolean,
+                                isCompleted: Boolean, isNewEntity: Boolean, noOfRecords : Int) extends Director[DirectorDetailsId] {
   override def editLink(mode: Mode, srn: Option[String]): Option[String] = {
     (isNewEntity, isCompleted) match {
       case (false, _) => Some(controllers.register.establishers.company.director.routes.CheckYourAnswersController.onPageLoad(
@@ -55,6 +57,34 @@ case class DirectorEntity(id: DirectorDetailsId, name: String, isDeleted: Boolea
       case (_, true) => Some(controllers.register.establishers.company.director.routes.CheckYourAnswersController.onPageLoad(
         id.establisherIndex, id.directorIndex, mode, srn).url)
       case (_, false) => Some(controllers.register.establishers.company.director.routes.DirectorDetailsController.onPageLoad(
+        mode, id.establisherIndex, id.directorIndex, srn).url)
+    }
+  }
+
+  override def deleteLink(mode: Mode, srn: Option[String]): Option[String] = {
+    mode match {
+      case NormalMode | CheckMode =>
+        Some(controllers.register.establishers.company.director.routes.ConfirmDeleteDirectorController.onPageLoad(
+          id.establisherIndex, id.directorIndex, mode, srn).url)
+      case UpdateMode | CheckUpdateMode if noOfRecords > 1 =>
+        Some(controllers.register.establishers.company.director.routes.ConfirmDeleteDirectorController.onPageLoad(
+          id.establisherIndex, id.directorIndex, mode, srn).url)
+      case _ => None
+    }
+  }
+
+  override def index: Int = id.directorIndex
+}
+
+case class DirectorEntity(id: DirectorNameId, name: String, isDeleted: Boolean,
+                                isCompleted: Boolean, isNewEntity: Boolean, noOfRecords : Int) extends Director[DirectorNameId] {
+  override def editLink(mode: Mode, srn: Option[String]): Option[String] = {
+    (isNewEntity, isCompleted) match {
+      case (false, _) => Some(controllers.register.establishers.company.director.routes.CheckYourAnswersController.onPageLoad(
+        id.establisherIndex, id.directorIndex, mode, srn).url)
+      case (_, true) => Some(controllers.register.establishers.company.director.routes.CheckYourAnswersController.onPageLoad(
+        id.establisherIndex, id.directorIndex, mode, srn).url)
+      case (_, false) => Some(controllers.register.establishers.company.director.routes.DirectorNameController.onPageLoad(
         mode, id.establisherIndex, id.directorIndex, srn).url)
     }
   }

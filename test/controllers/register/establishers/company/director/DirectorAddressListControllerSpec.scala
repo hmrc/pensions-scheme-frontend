@@ -17,7 +17,8 @@
 package controllers.register.establishers.company.director
 
 import base.CSRFRequest
-import services.{UserAnswersService, FakeUserAnswersService}
+import config.FeatureSwitchManagementService
+import services.{FakeUserAnswersService, UserAnswersService}
 import controllers.ControllerSpecBase
 import controllers.actions.{AuthAction, DataRetrievalAction, FakeAuthAction, FakeDataRetrievalAction}
 import forms.address.AddressListFormProvider
@@ -30,7 +31,7 @@ import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import utils.UserAnswers
+import utils.{FakeFeatureSwitchManagementService, UserAnswers}
 import viewmodels.Message
 import viewmodels.address.AddressListViewModel
 import views.html.address.addressList
@@ -64,6 +65,7 @@ class DirectorAddressListControllerSpec extends ControllerSpecBase with CSRFRequ
       .asOpt.map(_.json)
 
   private val dataRetrievalAction = new FakeDataRetrievalAction(data)
+  val fakeFeatureSwitch = new FakeFeatureSwitchManagementService(false)
 
   "Company Director Address List Controller" must {
 
@@ -72,7 +74,8 @@ class DirectorAddressListControllerSpec extends ControllerSpecBase with CSRFRequ
       running(_.overrides(
         bind[AuthAction].to(FakeAuthAction),
         bind[UserAnswersService].toInstance(FakeUserAnswersService),
-        bind[DataRetrievalAction].toInstance(dataRetrievalAction)
+        bind[DataRetrievalAction].toInstance(dataRetrievalAction),
+        bind[FeatureSwitchManagementService].to(fakeFeatureSwitch)
       )) { implicit app =>
         val request = addToken(FakeRequest(routes.DirectorAddressListController.onPageLoad(NormalMode, Index(0), Index(0), None)))
         val result = route(app, request).value
@@ -124,7 +127,8 @@ class DirectorAddressListControllerSpec extends ControllerSpecBase with CSRFRequ
       running(_.overrides(
         bind[AuthAction].to(FakeAuthAction),
         bind[UserAnswersService].toInstance(FakeUserAnswersService),
-        bind[DataRetrievalAction].toInstance(dataRetrievalAction)
+        bind[DataRetrievalAction].toInstance(dataRetrievalAction),
+        bind[FeatureSwitchManagementService].to(fakeFeatureSwitch)
       )) { implicit app =>
         val request =
           addToken(

@@ -44,7 +44,7 @@ class DirectorHasNINOControllerSpec extends ControllerSpecBase {
     }
 
     "return OK and the correct view for a GET where question already answered" in {
-      val validData = validCompanyDirectorData("directorNino" -> Json.obj("hasNino" -> false))
+      val validData = validCompanyDirectorData("hasNino" -> false)
 
       val dataRetrievalAction = new FakeDataRetrievalAction(Some(validData))
       val result = controller(dataRetrievalAction = dataRetrievalAction).onPageLoad(NormalMode, establisherIndex, directorIndex, None)(fakeRequest)

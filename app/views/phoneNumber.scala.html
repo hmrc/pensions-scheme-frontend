@@ -33,6 +33,10 @@
             messages(viewModel.heading).toString
         )
 
+        @viewModel.hint.map{hint =>
+            <p>@messages(hint)</p>
+        }
+
         @components.input_text(
             field = form("phone"),
             label = messages(viewModel.title),

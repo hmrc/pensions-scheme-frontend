@@ -134,7 +134,6 @@ trait HsTaskListHelperBehaviour extends SpecBase with MustMatchers with OptionVa
                 _.set(establisherCompanyPath.CompanyDetailsId(1))(CompanyDetails("test company", false)).flatMap(
                   _.set(IsEstablisherNewId(1))(true).flatMap(
                     _.set(IsEstablisherAddressCompleteId(1))(isCompleteEstablisher).flatMap(
-                      _.set(establisherCompanyPath.CompanyVatId(1))(Vat.No).flatMap(
                         _.set(establisherCompanyPath.CompanyPayeId(1))(Paye.No).flatMap(
                           _.set(IsEstablisherCompleteId(1))(isCompleteEstablisher).flatMap(
                             _.set(EstablisherPartnershipDetailsId(2))(PartnershipDetails("test partnership", false)).flatMap(
@@ -143,7 +142,7 @@ trait HsTaskListHelperBehaviour extends SpecBase with MustMatchers with OptionVa
                                   _.set(establisherCompanyPath.CompanyVatId(2))(Vat.No).flatMap(
                                     _.set(establisherCompanyPath.CompanyPayeId(2))(Paye.No).flatMap(
                                       _.set(IsEstablisherCompleteId(2))(isCompleteEstablisher)
-                                    ))))))))))))))))).asOpt.value
+                                    )))))))))))))))).asOpt.value
   }
 
   protected def establisherCompany(isCompleteEstablisher: Boolean = true): UserAnswers = {
@@ -246,7 +245,7 @@ trait HsTaskListHelperBehaviour extends SpecBase with MustMatchers with OptionVa
               EntitySpoke(Link(messages("messages__schemeTaskList__sectionEstablishersCompany_add_contact", "test company"),
                 establisherCompanyRoutes.WhatYouWillNeedCompanyContactDetailsController.onPageLoad(mode, srn, 0).url), None),
               EntitySpoke(Link(messages("messages__schemeTaskList__sectionEstablishersCompany_add_directors", "test company"),
-                controllers.register.establishers.company.routes.AddCompanyDirectorsController.onPageLoad(mode, srn, 0).url), None)
+                controllers.register.establishers.company.director.routes.WhatYouWillNeedDirectorController.onPageLoad(mode, srn, 0).url), None)
             ), Some("test company"))
         )
     }

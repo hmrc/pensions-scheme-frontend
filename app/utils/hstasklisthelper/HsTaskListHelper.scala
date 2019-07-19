@@ -36,6 +36,8 @@ abstract class HsTaskListHelper(answers: UserAnswers,
                                 featureSwitchManagementService: FeatureSwitchManagementService
                                )(implicit val messages: Messages) extends Enumerable.Implicits with HsTaskListHelperUtils {
 
+  override val isHnSEnabled = featureSwitchManagementService.get(Toggles.isEstablisherCompanyHnSEnabled)
+
   protected val beforeYouStartLinkText: String
   protected lazy val aboutMembersLinkText: String = messages("messages__schemeTaskList__about_members_link_text")
   protected lazy val aboutMembersAddLinkText: String = messages("messages__schemeTaskList__about_members_link_text_add")

@@ -18,13 +18,14 @@ package navigators
 
 import base.SpecBase
 import connectors.FakeUserAnswersCacheConnector
+import controllers.register.establishers.company.director.routes
 import identifiers.register.establishers.company._
-import identifiers.register.establishers.company.director.DirectorDetailsId
+import identifiers.register.establishers.company.director.{DirectorDetailsId, DirectorNameId}
 import identifiers.register.establishers.{EstablishersId, IsEstablisherNewId}
 import identifiers.{EstablishersOrTrusteesChangedId, Identifier}
 import models.Mode.checkMode
 import models._
-import models.person.PersonDetails
+import models.person.{PersonDetails, PersonName}
 import org.joda.time.LocalDate
 import org.scalatest.prop.TableFor6
 import org.scalatest.{MustMatchers, OptionValues}
@@ -84,18 +85,18 @@ class EstablishersCompanyNavigatorSpec extends SpecBase with MustMatchers with N
     (CompanyEmailId(0),                           emptyAnswers,                     companyPhoneNumber(mode),           true,           Some(exitJourney(mode, emptyAnswers, 0, cyaCompanyContactDetails(mode), toggled)),                   true),
     (CompanyPreviousAddressId(0),                 emptyAnswers,                     previousAddressRoutes(toggled, mode),true,          Some(exitJourney(mode, emptyAnswers, 0, cyaCompanyAddressDetails(mode), toggled)),              true),
     (CompanyPreviousAddressId(0),                 newEstablisher,                   previousAddressRoutes(toggled, mode),true,          Some(exitJourney(mode, newEstablisher, 0, cyaCompanyAddressDetails(mode), toggled)),              true),
-    (AddCompanyDirectorsId(0),                    emptyAnswers,                     directorDetails(0, mode),     true,           None,                                                                      true),
-    (AddCompanyDirectorsId(0),                    addCompanyDirectorsTrue,          directorDetails(1, mode),     true,           None,                                                                      true),
-    (AddCompanyDirectorsId(0),                    addCompanyDirectorsFalse,         if(mode == UpdateMode) taskList else companyReview(mode),                true,           None,                                           true),
-    (AddCompanyDirectorsId(0),                    addCompanyDirectorsFalseNewDir,   companyReview(mode),                true,           None,                                                                      true),
-    (AddCompanyDirectorsId(0),                    addOneCompanyDirectors,           sessionExpired,                     false,          None,                                                                      false),
-    (AddCompanyDirectorsId(0),                    addCompanyDirectorsMoreThan10,    otherDirectors(mode),               true,           None,                                                                      true),
+    (AddCompanyDirectorsId(0),                    emptyAnswers,                     startDirectorJourney(toggled, mode, 0),     true,           None,                                                                      true),
+    (AddCompanyDirectorsId(0),                    addCompanyDirectorsTrue(toggled),          if(toggled) directorName(mode) else directorDetails(1, mode),     true,           None,                                                                      true),
+    (AddCompanyDirectorsId(0),                    addCompanyDirectorsFalse(toggled),         if(mode == UpdateMode | toggled) taskList(mode) else companyReview(mode),                true,           None,                                           true),
+    (AddCompanyDirectorsId(0),                    addCompanyDirectorsFalseNewDir(toggled),   if(toggled)taskList(mode) else companyReview(mode),                true,           None,                                                                      true),
+    (AddCompanyDirectorsId(0),                    addOneCompanyDirectors(toggled),           sessionExpired,                     false,          None,                                                                      false),
+    (AddCompanyDirectorsId(0),                    addCompanyDirectorsMoreThan10(toggled),    otherDirectors(mode),               true,           None,                                                                      true),
     (OtherDirectorsId(0),                         emptyAnswers,                     if(mode == UpdateMode) anyMoreChanges else companyReview(mode),                true,           Some(companyReview(mode)),                       true),
     (CompanyReviewId(0),                          emptyAnswers,                     if(mode == UpdateMode) anyMoreChanges else addEstablisher(mode),               false,          None,                                           false),
     (CheckYourAnswersId(0),                       emptyAnswers,                     if(mode == UpdateMode) anyMoreChanges else addCompanyDirectors(0, mode), true,           None,                                           false),
     (CheckYourAnswersId(0),                       newEstablisher,                   addCompanyDirectors(0, mode), true,           None,                                                                      false)
-  )
-
+     )
+//directorDetails(0, mode)
 
   private def normalOnlyRoutes(toggled:Boolean): TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = Table(
     ("Id",                                          "User Answers",               "Next Page (Normal Mode)",                "Save (NM)",  "Next Page (Check Mode)",         "Save (CM)"),
@@ -114,7 +115,7 @@ class EstablishersCompanyNavigatorSpec extends SpecBase with MustMatchers with N
     (CompanyAddressYearsId(0), addressYearsUnderAYearWithExistingCurrentAddress, if (toggled) hasBeenTrading(UpdateMode) else prevAddPostCodeLookup(UpdateMode), true, addressYearsLessThanTwelveEdit(UpdateMode, toggled, addressYearsUnderAYearWithExistingCurrentAddress), true),
     (CompanyContactDetailsId(0),  emptyAnswers,                         cya(UpdateMode),                        true,   Some(exitJourney(UpdateMode,   emptyAnswers, 0, cya(UpdateMode))),       true),
     (CompanyPhoneId(0),           emptyAnswers,                         cyaCompanyContactDetails(UpdateMode),   true,   Some(exitJourney(UpdateMode,   emptyAnswers, 0, cyaCompanyContactDetails(UpdateMode))),       true),
-    (AddCompanyDirectorsId(0),    addCompanyDirectorsFalseWithChanges,  anyMoreChanges,                         true,   None,                                                           true),
+    (AddCompanyDirectorsId(0),    addCompanyDirectorsFalseWithChanges(toggled),  if(toggled) taskList(UpdateMode) else anyMoreChanges,                         true,   None,                                                           true),
     (CompanyPayeVariationsId(0),                  emptyAnswers,         cyaCompanyDetails(UpdateMode),                                   true,   Some(exitJourney(UpdateMode, emptyAnswers, 0, cya(UpdateMode), toggled)),                   true),
     (CompanyRegistrationNumberVariationsId(0),                  emptyAnswers,                  hasCompanyUTR(UpdateMode),    true,           Some(exitJourney(UpdateMode, emptyAnswers, 0, cya(UpdateMode), toggled)),                   true),
     (HasCompanyPAYEId(0),                         establisherHasPAYE(false),        cyaCompanyDetails(UpdateMode),                    true,           Some(exitJourney(UpdateMode, establisherHasPAYE(false), 0, cyaCompanyDetails(UpdateMode), toggled)),          true),
@@ -153,6 +154,10 @@ object EstablishersCompanyNavigatorSpec extends OptionValues with Enumerable.Imp
   private val emptyAnswers = UserAnswers(Json.obj())
   private val newEstablisher = UserAnswers(Json.obj()).set(IsEstablisherNewId(0))(true).asOpt.value
 
+  private val establisherIndex = Index(0)
+  private val directorIndex = Index(0)
+  private val directorIndexNew = Index(1)
+
   private def establisherHasPAYE(v: Boolean) = UserAnswers(Json.obj())
     .set(HasCompanyPAYEId(0))(v).asOpt.value
 
@@ -160,12 +165,14 @@ object EstablishersCompanyNavigatorSpec extends OptionValues with Enumerable.Imp
     .set(CompanyVatVariationsId(0))(ReferenceValue("123456789")).asOpt.value
 
   private def hasCompanyNumber(yesNo: Boolean) = UserAnswers(Json.obj()).set(HasCompanyNumberId(0))(yesNo).asOpt.value
+  private def underAYearRouteWithToggle(mode: Mode, toggled: Boolean) = if(toggled) hasBeenTrading(mode) else prevAddPostCodeLookup(mode)
 
   private def hasCompanyUtr(yesNo: Boolean) = UserAnswers(Json.obj()).set(HasCompanyUTRId(0))(yesNo).asOpt.value
 
   private def hasCompanyVat(yesNo: Boolean) = UserAnswers(Json.obj()).set(HasCompanyVATId(0))(yesNo).flatMap(_.set(IsEstablisherNewId(0))(true)).asOpt.value
 
   private val johnDoe = PersonDetails("John", None, "Doe", new LocalDate(1862, 6, 9))
+  private val toggleOnJohnDoe = PersonName("John", "Doe")
 
   private def validData(directors: PersonDetails*) = {
     Json.obj(
@@ -177,6 +184,21 @@ object EstablishersCompanyNavigatorSpec extends OptionValues with Enumerable.Imp
       )
     )
   }
+
+  private def toggleOnValidData(directors: PersonName*) = {
+    Json.obj(
+      EstablishersId.toString -> Json.arr(
+        Json.obj(
+          CompanyDetailsId.toString -> CompanyDetails("test company name"),
+          "director" -> directors.map(d => Json.obj(DirectorNameId.toString -> Json.toJson(d)))
+        )
+      )
+    )
+  }
+
+  private def startDirectorJourney(toggled:Boolean, mode:Mode, index:Index) = if(toggled) directorName(mode, index) else directorDetails(index, mode)
+
+  private def directorName(mode: Mode, index:Index = directorIndexNew) = routes.DirectorNameController.onPageLoad(mode, establisherIndex, index, None)
 
   private def none: Call = controllers.routes.IndexController.onPageLoad()
 
@@ -315,7 +337,7 @@ object EstablishersCompanyNavigatorSpec extends OptionValues with Enumerable.Imp
 
   private def isDormant(mode: Mode) = controllers.register.establishers.company.routes.IsCompanyDormantController.onPageLoad(mode, None, 0)
 
-  private def taskList: Call = controllers.routes.SchemeTaskListController.onPageLoad(UpdateMode, None)
+  private def taskList(mode : Mode): Call = controllers.routes.SchemeTaskListController.onPageLoad(mode, None)
 
   private val addressYearsOverAYearNew = UserAnswers(Json.obj())
     .set(CompanyAddressYearsId(0))(AddressYears.OverAYear).flatMap(_.set(IsEstablisherNewId(0))(true)).asOpt.value
@@ -327,15 +349,17 @@ object EstablishersCompanyNavigatorSpec extends OptionValues with Enumerable.Imp
     .set(CompanyAddressYearsId(0))(AddressYears.UnderAYear).flatMap(
     _.set(IsEstablisherNewId(0))(true)).asOpt.value
 
-  private val addCompanyDirectorsTrue = UserAnswers(validData(johnDoe)).set(AddCompanyDirectorsId(0))(true).asOpt.value
-  private val addCompanyDirectorsFalse = UserAnswers(validData(johnDoe)).set(AddCompanyDirectorsId(0))(false).asOpt.value
-  private val addCompanyDirectorsFalseWithChanges = UserAnswers(validData(johnDoe)).set(AddCompanyDirectorsId(0))(false).flatMap(
+  private def addCompanyDirectorsTrue(toggled: Boolean) = addOneCompanyDirectors(toggled).set(AddCompanyDirectorsId(0))(true).asOpt.value
+  private def addCompanyDirectorsFalse(toggled: Boolean) = addOneCompanyDirectors(toggled).set(AddCompanyDirectorsId(0))(false).asOpt.value
+  private def addCompanyDirectorsFalseWithChanges(toggled: Boolean) = addOneCompanyDirectors(toggled).set(AddCompanyDirectorsId(0))(false).flatMap(
     _.set(EstablishersOrTrusteesChangedId)(true)).asOpt.value
 
-  private val addCompanyDirectorsFalseNewDir = UserAnswers(validData(johnDoe)).set(AddCompanyDirectorsId(0))(false)
+  private def addCompanyDirectorsFalseNewDir(toggled: Boolean) = addOneCompanyDirectors(toggled).set(AddCompanyDirectorsId(0))(false)
     .flatMap(_.set(IsEstablisherNewId(0))(true)).asOpt.value
-  private val addCompanyDirectorsMoreThan10 = UserAnswers(validData(Seq.fill(10)(johnDoe): _*))
-  private val addOneCompanyDirectors = UserAnswers(validData(johnDoe))
+  private def addCompanyDirectorsMoreThan10(toggled: Boolean) =
+    if(toggled) UserAnswers(toggleOnValidData(Seq.fill(10)(toggleOnJohnDoe): _*)) else UserAnswers(validData(Seq.fill(10)(johnDoe): _*))
+  private def addOneCompanyDirectors(toggled: Boolean) =
+    if(toggled) UserAnswers(toggleOnValidData(toggleOnJohnDoe)) else UserAnswers(validData(johnDoe))
 
   private val confirmPreviousAddressYes = UserAnswers(Json.obj())
     .set(CompanyConfirmPreviousAddressId(0))(true).asOpt.value

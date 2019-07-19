@@ -19,12 +19,12 @@ package navigators
 import com.google.inject.Inject
 import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
-import identifiers.{BankAccountDetailsId, UKBankAccountId}
-import models.{Mode, NormalMode}
 import controllers.routes._
-import utils.{Navigator, UserAnswers}
+import identifiers.{BankAccountDetailsId, UKBankAccountId}
+import models.NormalMode
+import utils.{AbstractNavigator, UserAnswers}
 
-class AboutBankDetailsNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector, appConfig: FrontendAppConfig) extends Navigator {
+class AboutBankDetailsNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector, appConfig: FrontendAppConfig) extends AbstractNavigator {
 
   private def checkYourAnswers: Option[NavigateTo] =
     NavigateTo.dontSave(controllers.routes.CheckYourAnswersBankDetailsController.onPageLoad())

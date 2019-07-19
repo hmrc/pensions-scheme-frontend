@@ -18,14 +18,52 @@ package identifiers.register.establishers.company.director
 
 import identifiers._
 import identifiers.register.establishers.EstablishersId
-import play.api.libs.json.JsPath
+import play.api.i18n.Messages
+import play.api.libs.json.{JsPath, JsResult}
+import utils.UserAnswers
+import utils.checkyouranswers.CheckYourAnswers
+import utils.checkyouranswers.CheckYourAnswers.BooleanCYA
+import viewmodels.AnswerRow
 
 case class DirectorHasUTRId(establisherIndex: Int, directorIndex: Int) extends TypedIdentifier[Boolean] {
   override def path: JsPath = EstablishersId(establisherIndex).path \ "director" \ directorIndex \ "directorUniqueTaxReference" \ DirectorHasUTRId.toString
+
+  override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): JsResult[UserAnswers] = {
+    value match {
+      case Some(true) =>
+        userAnswers.remove(DirectorNoUTRReasonId(establisherIndex, directorIndex))
+      case Some(false) =>
+        userAnswers.remove(DirectorUTRId(establisherIndex, directorIndex))
+      case _ =>
+        super.cleanup(value, userAnswers)
+    }
+  }
 }
 
 object DirectorHasUTRId {
   override def toString: String = "hasUtr"
+
+  implicit def cya(implicit userAnswers: UserAnswers, messages: Messages): CheckYourAnswers[DirectorHasUTRId] = {
+
+    def label(establisherIndex: Int, directorIndex: Int) =
+      userAnswers.get(DirectorNameId(establisherIndex, directorIndex)) match {
+        case Some(directorName) => Some(messages("messages__hasDirectorUtr__cya", directorName.fullName))
+        case _ => Some(messages("messages__hasDirectorUtr__cya_fallback"))
+      }
+
+    def hiddenLabel = Some(messages("messages__visuallyhidden__director__utr_yes_no"))
+
+    new CheckYourAnswers[DirectorHasUTRId] {
+      override def row(id: DirectorHasUTRId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+        BooleanCYA(label(id.establisherIndex, id.directorIndex), hiddenLabel)().row(id)(changeUrl, userAnswers)
+
+      override def updateRow(id: DirectorHasUTRId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+        userAnswers.get(IsNewDirectorId(id.establisherIndex, id.directorIndex)) match {
+          case Some(true) => BooleanCYA(label(id.establisherIndex, id.directorIndex), hiddenLabel)().row(id)(changeUrl, userAnswers)
+          case _ => Seq.empty[AnswerRow]
+        }
+    }
+  }
 }
 
 

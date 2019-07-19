@@ -29,7 +29,7 @@ import play.api.data.Form
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
 import play.api.test.Helpers._
-import utils.FakeNavigator
+import utils.{FakeFeatureSwitchManagementService, FakeNavigator}
 import viewmodels.Message
 import viewmodels.address.AddressYearsViewModel
 import views.html.address.addressYears
@@ -56,7 +56,8 @@ class DirectorAddressYearsControllerSpec extends ControllerSpecBase {
       FakeAuthAction,
       dataRetrievalAction,
       FakeAllowAccessProvider(),
-      new DataRequiredActionImpl
+      new DataRequiredActionImpl,
+      new FakeFeatureSwitchManagementService(false)
     )
 
   private def viewAsString(form: Form[_] = form) =
@@ -64,11 +65,11 @@ class DirectorAddressYearsControllerSpec extends ControllerSpecBase {
       frontendAppConfig,
       form,
       AddressYearsViewModel(
-        routes.DirectorAddressYearsController.onSubmit(NormalMode, establisherIndex, directorIndex, None),
-        Message("messages__director_address_years__title"),
-        Message("messages__director_address_years__heading"),
-        Message("messages__director_address_years__heading"),
-        Some(director.fullName)
+        postCall = routes.DirectorAddressYearsController.onSubmit(NormalMode, establisherIndex, directorIndex, None),
+        title = Message("messages__director_address_years__title", Message("messages__common__address_years__director").resolve),
+        heading = Message("messages__director_address_years__heading", director.fullName),
+        legend = Message("messages__director_address_years__heading", director.fullName),
+        subHeading = Some(director.fullName)
       ),
       None
     )(fakeRequest, messages).toString

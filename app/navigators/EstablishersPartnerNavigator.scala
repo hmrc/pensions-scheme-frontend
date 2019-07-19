@@ -26,10 +26,10 @@ import identifiers.register.establishers.partnership.AddPartnersId
 import identifiers.register.establishers.partnership.partner._
 import models.Mode.journeyMode
 import models._
-import utils.{Navigator, UserAnswers}
+import utils.{AbstractNavigator, Navigator, UserAnswers}
 
 class EstablishersPartnerNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector,
-                                             appConfig: FrontendAppConfig) extends Navigator {
+                                             appConfig: FrontendAppConfig) extends AbstractNavigator {
   //scalastyle:off cyclomatic.complexity
   private def checkYourAnswers(establisherIndex: Int, partnerIndex: Int, mode: Mode, srn: Option[String]): Option[NavigateTo] =
     NavigateTo.dontSave(routes.CheckYourAnswersController.onPageLoad(mode, establisherIndex, partnerIndex, srn))
