@@ -116,7 +116,7 @@ object TrusteeAddressYearsControllerSpec extends ControllerSpecBase {
     LocalDate.now()
   )
 
-  private val form = new AddressYearsFormProvider()(Message("messages__trusteeAddressYears__error_required"))
+  private val form = new AddressYearsFormProvider()(Message("messages__trusteeAddressYears__error_required", trustee.fullName))
 
   private val onwardRoute = controllers.routes.IndexController.onPageLoad()
   private val fakeNavigator = new FakeNavigator(onwardRoute)
@@ -136,9 +136,9 @@ object TrusteeAddressYearsControllerSpec extends ControllerSpecBase {
   private val viewModel =
     AddressYearsViewModel(
       postCall = controllers.register.trustees.individual.routes.TrusteeAddressYearsController.onSubmit(mode, index, None),
-      title = Message("messages__trusteeAddressYears__title"),
-      heading = Message("messages__trusteeAddressYears__heading"),
-      legend = Message("messages__trusteeAddressYears__title"),
+      title = Message("messages__trusteeAddressYears__title", Message("messages__common__address_years__trustee").resolve),
+      heading = Message("messages__trusteeAddressYears__heading", trustee.fullName),
+      legend = Message("messages__trusteeAddressYears__title", trustee.fullName),
       subHeading = Some(Message(trustee.fullName))
     )
 

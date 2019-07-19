@@ -21,6 +21,9 @@ import play.api.libs.functional.syntax._
 import play.api.libs.json._
 
 case class PersonDetails(firstName: String, middleName: Option[String], lastName: String, date: LocalDate, isDeleted: Boolean = false) {
+
+  def firstAndLastName: String = s"$firstName $lastName"
+
   def fullName: String = middleName match {
     case Some(middle) => s"$firstName $middle $lastName"
     case _ => s"$firstName $lastName"

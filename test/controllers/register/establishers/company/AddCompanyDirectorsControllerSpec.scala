@@ -20,17 +20,16 @@ import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.register.establishers.company.AddCompanyDirectorsFormProvider
 import identifiers.register.establishers.EstablishersId
-import identifiers.register.establishers.company.director.DirectorDetailsId
+import identifiers.register.establishers.company.director.{DirectorDetailsId, DirectorNameId}
 import identifiers.register.establishers.company.{AddCompanyDirectorsId, CompanyDetailsId}
-import models.person.PersonDetails
-import models.register.DirectorEntity
+import models.person.{PersonDetails, PersonName}
+import models.register.{Director, DirectorEntity, DirectorEntityNonHnS}
 import models.{CompanyDetails, Index, NormalMode}
 import org.joda.time.LocalDate
 import play.api.data.Form
 import play.api.libs.json._
 import play.api.test.Helpers._
-import services.FakeUserAnswersService
-import utils.{FakeNavigator, Navigator, UserAnswers}
+import utils.{FakeFeatureSwitchManagementService, FakeNavigator, Navigator, UserAnswers}
 import views.html.register.establishers.company.addCompanyDirectors
 
 class AddCompanyDirectorsControllerSpec extends ControllerSpecBase {
@@ -47,7 +46,8 @@ class AddCompanyDirectorsControllerSpec extends ControllerSpecBase {
 
   private def controller(
                           dataRetrievalAction: DataRetrievalAction = getEmptyData,
-                          navigator: Navigator = fakeNavigator()
+                          navigator: Navigator = fakeNavigator(),
+                          toggle: Boolean = false
                         ) =
     new AddCompanyDirectorsController(
       frontendAppConfig,
@@ -56,10 +56,11 @@ class AddCompanyDirectorsControllerSpec extends ControllerSpecBase {
       FakeAuthAction,
       dataRetrievalAction,
       new DataRequiredActionImpl,
-      formProvider
+      formProvider,
+      new FakeFeatureSwitchManagementService(toggle)
     )
 
-  private def viewAsString(form: Form[_] = form, directors: Seq[DirectorEntity] = Nil) =
+  private def viewAsString(form: Form[_] = form, directors: Seq[Director[_]] = Nil, enableSubmission: Boolean = false) =
     addCompanyDirectors(
       frontendAppConfig,
       form,
@@ -68,7 +69,8 @@ class AddCompanyDirectorsControllerSpec extends ControllerSpecBase {
       postCall(NormalMode, None, establisherIndex),
       false,
       NormalMode,
-      None
+      None,
+      enableSubmission
     )(fakeRequest, messages).toString
 
   private val establisherIndex = 0
@@ -77,6 +79,8 @@ class AddCompanyDirectorsControllerSpec extends ControllerSpecBase {
   // scalastyle:off magic.number
   private val johnDoe = PersonDetails("John", None, "Doe", new LocalDate(1862, 6, 9))
   private val joeBloggs = PersonDetails("Joe", None, "Bloggs", new LocalDate(1969, 7, 16))
+  private val johnDoeToggleOn = PersonName("John", "Doe")
+  private val joeBloggsToggleOn = PersonName("Joe", "Bloggs")
   // scalastyle:on magic.number
 
   private val maxDirectors = frontendAppConfig.maxDirectors
@@ -92,38 +96,86 @@ class AddCompanyDirectorsControllerSpec extends ControllerSpecBase {
     )
   }
 
+  private def validDataToggleOn(directors: PersonName*) = {
+    Json.obj(
+      EstablishersId.toString -> Json.arr(
+        Json.obj(
+          CompanyDetailsId.toString -> CompanyDetails(companyName),
+          "director" -> directors.map(d => Json.obj(DirectorNameId.toString -> Json.toJson(d)))
+        )
+      )
+    )
+  }
+
   "AddCompanyDirectors Controller" must {
 
-    "return OK and the correct view for a GET" in {
-      val getRelevantData = new FakeDataRetrievalAction(Some(validData()))
-      val result = controller(getRelevantData).onPageLoad(NormalMode, None, establisherIndex)(fakeRequest)
+    "if hns toggle is off" when {
+      "return OK and the correct view for a GET" in {
+        val getRelevantData = new FakeDataRetrievalAction(Some(validData()))
+        val result = controller(getRelevantData).onPageLoad(NormalMode, None, establisherIndex)(fakeRequest)
 
-      status(result) mustBe OK
-      contentAsString(result) mustBe viewAsString()
+        status(result) mustBe OK
+        contentAsString(result) mustBe viewAsString()
+      }
+
+      "not populate the view on a GET when the question has previously been answered" in {
+        UserAnswers(validData(johnDoe))
+          .set(AddCompanyDirectorsId(firstIndex))(true)
+          .map { userAnswers =>
+            val getRelevantData = new FakeDataRetrievalAction(Some(userAnswers.json))
+            val result = controller(getRelevantData).onPageLoad(NormalMode, None, establisherIndex)(fakeRequest)
+
+            contentAsString(result) mustBe viewAsString(form,
+              Seq(DirectorEntityNonHnS(DirectorDetailsId(0, 0), johnDoe.fullName, isDeleted = false, isCompleted = false, isNewEntity = false, 1)))
+          }
+      }
+
+      "populate the view with directors when they exist" in {
+        val directors = Seq(johnDoe, joeBloggs)
+        val directorsViewModel = Seq(
+          DirectorEntityNonHnS(DirectorDetailsId(0, 0), johnDoe.fullName, isDeleted = false, isCompleted = false, isNewEntity = false, 2),
+          DirectorEntityNonHnS(DirectorDetailsId(0, 1), joeBloggs.fullName, isDeleted = false, isCompleted = false, isNewEntity = false, 3))
+        val getRelevantData = new FakeDataRetrievalAction(Some(validData(directors: _*)))
+        val result = controller(getRelevantData).onPageLoad(NormalMode, None, establisherIndex)(fakeRequest)
+
+        status(result) mustBe OK
+        contentAsString(result) mustBe viewAsString(form, directorsViewModel)
+      }
     }
 
-    "not populate the view on a GET when the question has previously been answered" in {
-      UserAnswers(validData(johnDoe))
-        .set(AddCompanyDirectorsId(firstIndex))(true)
-        .map { userAnswers =>
-          val getRelevantData = new FakeDataRetrievalAction(Some(userAnswers.json))
-          val result = controller(getRelevantData).onPageLoad(NormalMode, None, establisherIndex)(fakeRequest)
+    "if hns toggle is on" when {
+      "return OK and the correct view for a GET" in {
+        val getRelevantData = new FakeDataRetrievalAction(Some(validDataToggleOn()))
+        val result = controller(getRelevantData, toggle = true).onPageLoad(NormalMode, None, establisherIndex)(fakeRequest)
 
-          contentAsString(result) mustBe viewAsString(form,
-            Seq(DirectorEntity(DirectorDetailsId(0, 0), johnDoe.fullName, isDeleted = false, isCompleted = false, isNewEntity = false, 1)))
-        }
-    }
+        status(result) mustBe OK
+        contentAsString(result) mustBe viewAsString()
+      }
 
-    "populate the view with directors when they exist" in {
-      val directors = Seq(johnDoe, joeBloggs)
-      val directorsViewModel = Seq(
-        DirectorEntity(DirectorDetailsId(0, 0), johnDoe.fullName, isDeleted = false, isCompleted = false, isNewEntity = false, 2),
-        DirectorEntity(DirectorDetailsId(0, 1), joeBloggs.fullName, isDeleted = false, isCompleted = false, isNewEntity = false, 3))
-      val getRelevantData = new FakeDataRetrievalAction(Some(validData(directors: _*)))
-      val result = controller(getRelevantData).onPageLoad(NormalMode, None, establisherIndex)(fakeRequest)
+      "not populate the view on a GET when the question has previously been answered" in {
+        UserAnswers(validDataToggleOn(johnDoeToggleOn))
+          .set(AddCompanyDirectorsId(firstIndex))(true)
+          .map { userAnswers =>
+            val getRelevantData = new FakeDataRetrievalAction(Some(userAnswers.json))
+            val result = controller(getRelevantData, toggle = true).onPageLoad(NormalMode, None, establisherIndex)(fakeRequest)
 
-      status(result) mustBe OK
-      contentAsString(result) mustBe viewAsString(form, directorsViewModel)
+            contentAsString(result) mustBe viewAsString(form,
+              Seq(DirectorEntity(DirectorNameId(0, 0), johnDoe.fullName, isDeleted = false, isCompleted = false, isNewEntity = false, 1)),
+              enableSubmission = true)
+          }
+      }
+
+      "populate the view with directors when they exist" in {
+        val directors = Seq(johnDoeToggleOn, joeBloggsToggleOn)
+        val directorsViewModel = Seq(
+          DirectorEntity(DirectorNameId(0, 0), johnDoe.fullName, isDeleted = false, isCompleted = false, isNewEntity = false, 2),
+          DirectorEntity(DirectorNameId(0, 1), joeBloggs.fullName, isDeleted = false, isCompleted = false, isNewEntity = false, 3))
+        val getRelevantData = new FakeDataRetrievalAction(Some(validDataToggleOn(directors: _*)))
+        val result = controller(getRelevantData, toggle = true).onPageLoad(NormalMode, None, establisherIndex)(fakeRequest)
+
+        status(result) mustBe OK
+        contentAsString(result) mustBe viewAsString(form, directorsViewModel, enableSubmission = true)
+      }
     }
 
     "redirect to Session Expired for a GET if no existing data is found" in {
@@ -158,7 +210,7 @@ class AddCompanyDirectorsControllerSpec extends ControllerSpecBase {
 
       status(result) mustBe BAD_REQUEST
       contentAsString(result) mustBe viewAsString(boundForm,
-        Seq(DirectorEntity(DirectorDetailsId(0, 0), johnDoe.fullName, isDeleted = false, isCompleted = false, isNewEntity = false, 0)))
+        Seq(DirectorEntityNonHnS(DirectorDetailsId(0, 0), johnDoe.fullName, isDeleted = false, isCompleted = false, isNewEntity = false, 0)))
     }
 
     "redirect to the next page when maximum directors exist and the user submits" in {

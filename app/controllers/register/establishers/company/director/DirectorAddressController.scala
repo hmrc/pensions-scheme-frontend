@@ -17,13 +17,13 @@
 package controllers.register.establishers.company.director
 
 import audit.AuditService
-import config.FrontendAppConfig
+import config.{FeatureSwitchManagementService, FrontendAppConfig}
 import connectors.UserAnswersCacheConnector
 import controllers.actions._
 import controllers.address.ManualAddressController
 import controllers.register.establishers.company.director.routes._
 import forms.address.AddressFormProvider
-import identifiers.register.establishers.company.director.{DirectorAddressId, DirectorAddressListId, DirectorAddressPostcodeLookupId, DirectorDetailsId}
+import identifiers.register.establishers.company.director.{DirectorAddressId, DirectorAddressListId, DirectorAddressPostcodeLookupId, DirectorDetailsId, DirectorNameId}
 import javax.inject.Inject
 import models.address.Address
 import models.{Index, Mode}
@@ -32,7 +32,7 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
 import utils.annotations.EstablishersCompanyDirector
-import utils.{CountryOptions, Navigator}
+import utils.{CountryOptions, Navigator, Toggles}
 import viewmodels.Message
 import viewmodels.address.ManualAddressViewModel
 
@@ -49,7 +49,8 @@ class DirectorAddressController @Inject()(
                                            requireData: DataRequiredAction,
                                            val formProvider: AddressFormProvider,
                                            val countryOptions: CountryOptions,
-                                           val auditService: AuditService
+                                           val auditService: AuditService,
+                                           featureSwitchManagementService: FeatureSwitchManagementService
                                          )(implicit val ec: ExecutionContext) extends ManualAddressController with I18nSupport {
 
   private[controllers] val postCall = DirectorAddressController.onSubmit _
@@ -62,49 +63,50 @@ class DirectorAddressController @Inject()(
   def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
     implicit request =>
-      viewmodel(establisherIndex, directorIndex, mode, srn).retrieve.right.map {
-        vm =>
-          get(DirectorAddressId(establisherIndex, directorIndex), DirectorAddressListId(establisherIndex, directorIndex), vm)
+      directorName(establisherIndex, directorIndex).retrieve.right.map {
+        name =>
+          get(DirectorAddressId(establisherIndex, directorIndex), DirectorAddressListId(establisherIndex, directorIndex),
+            viewmodel(establisherIndex, directorIndex, mode, srn, name))
       }
   }
 
-  def onSubmit(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
+  def onSubmit(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
-      viewmodel(establisherIndex, directorIndex, mode, srn).retrieve.right.map {
-        vm =>
+      directorName(establisherIndex, directorIndex).retrieve.right.map {
+        name =>
           post(
             DirectorAddressId(establisherIndex, directorIndex),
             DirectorAddressListId(establisherIndex, directorIndex),
-            vm,
+            viewmodel(establisherIndex, directorIndex, mode, srn, name),
             mode,
-            context(vm),
+            context(name),
             DirectorAddressPostcodeLookupId(establisherIndex, directorIndex)
           )
       }
   }
 
-  private def viewmodel(establisherIndex: Int, directorIndex: Int, mode: Mode, srn: Option[String]): Retrieval[ManualAddressViewModel] =
-    Retrieval {
-      implicit request =>
-        DirectorDetailsId(establisherIndex, directorIndex).retrieve.right.map {
-          details =>
-            ManualAddressViewModel(
+  private def viewmodel(establisherIndex: Int, directorIndex: Int, mode: Mode, srn: Option[String], name: String): ManualAddressViewModel =
+    ManualAddressViewModel(
               postCall(mode, Index(establisherIndex), Index(directorIndex), srn),
               countryOptions.options,
               title = Message(title),
-              heading = Message(heading, details.fullName),
+              heading = Message(heading, name),
               hint = Some(Message(hint)),
-              secondaryHeader = Some(details.fullName),
+              secondaryHeader = None,
               srn = srn
             )
-        }
-    }
 
-  private def context(viewModel: ManualAddressViewModel): String = {
-    viewModel.secondaryHeader match {
-      case Some(name) => s"Company Director Address: $name"
-      case _ => "Company Director Address"
-    }
+  val directorName = (establisherIndex: Index, directorIndex: Index) => Retrieval {
+    implicit request =>
+      if (featureSwitchManagementService.get(Toggles.isEstablisherCompanyHnSEnabled))
+        DirectorNameId(establisherIndex, directorIndex).retrieve.right.map(_.fullName)
+      else
+        DirectorDetailsId(establisherIndex, directorIndex).retrieve.right.map(_.fullName)
+  }
+
+  private def context(name: String): String = {
+    s"Company Director Address: $name"
   }
 
 }

@@ -45,21 +45,21 @@ class PartnershipAddressYearsController @Inject()(
                                                    requireData: DataRequiredAction
                                                  )(implicit val ec: ExecutionContext) extends AddressYearsController with Retrievals {
 
-  private val form = new AddressYearsFormProvider()(Message("messages__partnershipAddressYears__error"))
+  private def form(partnershipName: String) = new AddressYearsFormProvider()(Message("messages__partnershipAddressYears__error", partnershipName))
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         PartnershipDetailsId(index).retrieve.right.map { partnershipDetails =>
-          get(PartnershipAddressYearsId(index), form, viewModel(mode, index, partnershipDetails.name, srn))
+          get(PartnershipAddressYearsId(index), form(partnershipDetails.name), viewModel(mode, index, partnershipDetails.name, srn))
         }
     }
 
   private def viewModel(mode: Mode, index: Index, partnershipName: String, srn: Option[String]) = AddressYearsViewModel(
     postCall = routes.PartnershipAddressYearsController.onSubmit(mode, index, srn),
-    title = Message("messages__partnershipAddressYears__title"),
-    heading = Message("messages__partnershipAddressYears__heading"),
-    legend = Message("messages__partnershipAddressYears__heading"),
+    title = Message("messages__partnershipAddressYears__title", Message("messages__common__address_years__partnership").resolve),
+    heading = Message("messages__partnershipAddressYears__heading", partnershipName),
+    legend = Message("messages__partnershipAddressYears__heading", partnershipName),
     subHeading = Some(Message(partnershipName)),
     srn = srn
   )
@@ -68,7 +68,7 @@ class PartnershipAddressYearsController @Inject()(
     (authenticate andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
         PartnershipDetailsId(index).retrieve.right.map { partnershipDetails =>
-          post(PartnershipAddressYearsId(index), mode, form, viewModel(mode, index, partnershipDetails.name, srn))
+          post(PartnershipAddressYearsId(index), mode, form(partnershipDetails.name), viewModel(mode, index, partnershipDetails.name, srn))
         }
     }
 

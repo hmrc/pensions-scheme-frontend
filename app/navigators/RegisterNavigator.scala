@@ -22,11 +22,11 @@ import connectors.UserAnswersCacheConnector
 import identifiers.register._
 import identifiers.{IsBeforeYouStartCompleteId, UserResearchDetailsId, VariationDeclarationId}
 import models.{NormalMode, UpdateMode}
-import utils.{Navigator, UserAnswers}
+import utils.{AbstractNavigator, Navigator, UserAnswers}
 
 //scalastyle:off cyclomatic.complexity
 class RegisterNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector,
-                                  appConfig: FrontendAppConfig) extends Navigator {
+                                  appConfig: FrontendAppConfig) extends AbstractNavigator {
 
   override protected def routeMap(from: NavigateFrom): Option[NavigateTo] =
     from.id match {

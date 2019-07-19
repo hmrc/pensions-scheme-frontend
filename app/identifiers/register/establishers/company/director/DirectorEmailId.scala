@@ -18,7 +18,12 @@ package identifiers.register.establishers.company.director
 
 import identifiers._
 import identifiers.register.establishers.EstablishersId
+import play.api.i18n.Messages
 import play.api.libs.json.JsPath
+import utils.{CountryOptions, UserAnswers}
+import utils.checkyouranswers.CheckYourAnswers
+import utils.checkyouranswers.CheckYourAnswers.StringCYA
+import viewmodels.AnswerRow
 
 case class DirectorEmailId(establisherIndex: Int, directorIndex: Int) extends TypedIdentifier[String] {
   override def path: JsPath = EstablishersId(establisherIndex).path \ "director" \ directorIndex \ "directorContactDetails" \ DirectorEmailId.toString
@@ -27,6 +32,31 @@ case class DirectorEmailId(establisherIndex: Int, directorIndex: Int) extends Ty
 
 object DirectorEmailId {
   override def toString: String = "emailAddress"
+
+  implicit def cya(implicit userAnswers: UserAnswers,
+                   messages: Messages,
+                   countryOptions: CountryOptions): CheckYourAnswers[DirectorEmailId] = {
+
+    def emailLabel(establisherIndex: Int, directorIndex: Int) =
+      userAnswers.get(DirectorNameId(establisherIndex, directorIndex)) match {
+      case Some(name) => messages("messages__director__cya__email_address", name.fullName)
+      case None => "messages__director__cya__email_address__fallback"
+    }
+
+    val hiddenLabel = messages("messages__visuallyhidden__common__email_address")
+
+    new CheckYourAnswers[DirectorEmailId] {
+      override def row(id: DirectorEmailId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+        StringCYA(Some(emailLabel(id.establisherIndex, id.directorIndex)), Some(hiddenLabel))().row(id)(changeUrl, userAnswers)
+
+
+      override def updateRow(id: DirectorEmailId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+        userAnswers.get(IsNewDirectorId(id.establisherIndex, id.directorIndex)) match {
+          case Some(true) => row(id)(changeUrl, userAnswers)
+          case _ => StringCYA(Some(emailLabel(id.establisherIndex, id.directorIndex)), Some(hiddenLabel), true)().updateRow(id)(changeUrl, userAnswers)
+        }
+    }
+  }
 }
 
 

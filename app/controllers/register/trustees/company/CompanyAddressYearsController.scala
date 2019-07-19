@@ -53,9 +53,9 @@ class CompanyAddressYearsController @Inject()(
             val questionText = "messages__company_address_years__title"
             AddressYearsViewModel(
               postCall = routes.CompanyAddressYearsController.onSubmit(mode, index, srn),
-              title = Message(questionText),
-              heading = Message(questionText),
-              legend = Message(questionText),
+              title = Message(questionText, Message("messages__common__address_years__company").resolve),
+              heading = Message(questionText, details.companyName),
+              legend = Message(questionText, details.companyName),
               Some(details.companyName),
               srn = srn
             )

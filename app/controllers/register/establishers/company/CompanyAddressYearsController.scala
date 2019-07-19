@@ -46,20 +46,20 @@ class CompanyAddressYearsController @Inject()(
                                                requireData: DataRequiredAction
                                              )(implicit val ec: ExecutionContext) extends AddressYearsController with Retrievals {
 
-  private val form = new AddressYearsFormProvider()(Message("messages__common_error__current_address_years"))
+  private def form(companyName: String) = new AddressYearsFormProvider()(Message("messages__company_address_years__form_error", companyName))
 
   def onPageLoad(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         CompanyDetailsId(index).retrieve.right.map { companyDetails =>
-          get(CompanyAddressYearsId(index), form, viewModel(mode, srn, index, companyDetails.companyName))
+          get(CompanyAddressYearsId(index), form(companyDetails.companyName), viewModel(mode, srn, index, companyDetails.companyName))
         }
     }
 
   def onSubmit(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
       CompanyDetailsId(index).retrieve.right.map { companyDetails =>
-        post(CompanyAddressYearsId(index), mode, form, viewModel(mode, srn, index, companyDetails.companyName))
+        post(CompanyAddressYearsId(index), mode, form(companyDetails.companyName), viewModel(mode, srn, index, companyDetails.companyName))
       }
   }
 

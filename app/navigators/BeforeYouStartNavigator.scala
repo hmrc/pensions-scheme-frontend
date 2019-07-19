@@ -22,10 +22,10 @@ import connectors.UserAnswersCacheConnector
 import controllers.routes._
 import identifiers._
 import models.register.SchemeType
-import models.{CheckMode, Mode, NormalMode}
-import utils.{Navigator, UserAnswers}
+import models.{CheckMode, NormalMode}
+import utils.{AbstractNavigator, UserAnswers}
 
-class BeforeYouStartNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector, frontendAppConfig: FrontendAppConfig) extends Navigator {
+class BeforeYouStartNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector, frontendAppConfig: FrontendAppConfig) extends AbstractNavigator {
 
   private def checkYourAnswers: Option[NavigateTo] =
     NavigateTo.dontSave(controllers.routes.CheckYourAnswersBeforeYouStartController.onPageLoad(NormalMode, None))

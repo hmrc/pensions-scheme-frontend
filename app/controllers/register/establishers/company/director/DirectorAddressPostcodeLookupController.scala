@@ -16,19 +16,19 @@
 
 package controllers.register.establishers.company.director
 
-import config.FrontendAppConfig
+import config.{FeatureSwitchManagementService, FrontendAppConfig}
 import connectors.AddressLookupConnector
 import controllers.actions._
 import controllers.address.PostcodeLookupController
 import forms.address.PostCodeLookupFormProvider
-import identifiers.register.establishers.company.director.{DirectorAddressPostcodeLookupId, DirectorDetailsId}
+import identifiers.register.establishers.company.director.{DirectorAddressPostcodeLookupId, DirectorDetailsId, DirectorNameId}
 import javax.inject.Inject
 import models.{Index, Mode}
 import play.api.data.Form
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
-import utils.Navigator
+import utils.{Navigator, Toggles}
 import utils.annotations.EstablishersCompanyDirector
 import viewmodels.Message
 import viewmodels.address.PostcodeLookupViewModel
@@ -43,9 +43,10 @@ class DirectorAddressPostcodeLookupController @Inject()(
                                                          @EstablishersCompanyDirector override val navigator: Navigator,
                                                          authenticate: AuthAction,
                                                          getData: DataRetrievalAction,
-                                           allowAccess: AllowAccessActionProvider,
-                                           requireData: DataRequiredAction,
-                                                         formProvider: PostCodeLookupFormProvider
+                                                          allowAccess: AllowAccessActionProvider,
+                                                          requireData: DataRequiredAction,
+                                                         formProvider: PostCodeLookupFormProvider,
+                                                         featureSwitchManagementService: FeatureSwitchManagementService
                                                        )(implicit val ec: ExecutionContext) extends PostcodeLookupController {
 
   protected val form: Form[String] = formProvider()
@@ -68,18 +69,26 @@ class DirectorAddressPostcodeLookupController @Inject()(
   private def viewmodel(establisherIndex: Index, directorIndex: Index, mode: Mode, srn: Option[String]): Retrieval[PostcodeLookupViewModel] =
     Retrieval(
       implicit request =>
-        DirectorDetailsId(establisherIndex, directorIndex).retrieve.right.map {
-          details =>
+        directorName(establisherIndex, directorIndex).retrieve.right.map {
+          name =>
             PostcodeLookupViewModel(
               postCall = routes.DirectorAddressPostcodeLookupController.onSubmit(mode, establisherIndex, directorIndex, srn),
               manualInputCall = routes.DirectorAddressController.onPageLoad(mode, establisherIndex, directorIndex, srn),
               title = Message("messages__directorCompanyAddressPostcodeLookup__title"),
-              heading = Message("messages__addressPostcodeLookup__heading",details.fullName),
+              heading = Message("messages__addressPostcodeLookup__heading", name),
               subHeading = None,
               enterPostcode = Message("messages__common__postcode_lookup__manual_link"),
               srn = srn
             )
         }
     )
+
+  val directorName = (establisherIndex: Index, directorIndex: Index) => Retrieval {
+    implicit request =>
+      if (featureSwitchManagementService.get(Toggles.isEstablisherCompanyHnSEnabled))
+        DirectorNameId(establisherIndex, directorIndex).retrieve.right.map(_.fullName)
+      else
+        DirectorDetailsId(establisherIndex, directorIndex).retrieve.right.map(_.fullName)
+  }
 
 }

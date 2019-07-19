@@ -87,7 +87,7 @@ class DirectorNameControllerSpec extends ControllerSpecBase {
             CompanyDetailsId.toString -> CompanyDetails(companyName),
             "director" -> Json.arr(
               Json.obj(
-                "directorDetails" ->
+                "directorName" ->
                   PersonName("First Name", "Last Name")
               )
             )

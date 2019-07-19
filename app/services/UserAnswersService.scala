@@ -16,7 +16,7 @@
 
 package services
 
-import config.FrontendAppConfig
+import config.{FeatureSwitchManagementService, FrontendAppConfig}
 import connectors.{PensionSchemeVarianceLockConnector, SchemeDetailsReadOnlyCacheConnector, UpdateSchemeCacheConnector, UserAnswersCacheConnector}
 import identifiers._
 import identifiers.register.establishers.company.director._
@@ -37,7 +37,7 @@ import models.{Mode, _}
 import play.api.libs.json._
 import play.api.mvc.AnyContent
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.UserAnswers
+import utils.{Toggles, UserAnswers}
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -52,6 +52,9 @@ trait UserAnswersService {
   protected def viewConnector: SchemeDetailsReadOnlyCacheConnector
 
   protected def appConfig: FrontendAppConfig
+
+  protected def fs: FeatureSwitchManagementService
+  protected val isHnSEnabled = fs.get(Toggles.isEstablisherCompanyHnSEnabled)
 
   case object MissingSrnNumber extends Exception
 
@@ -74,7 +77,9 @@ trait UserAnswersService {
                                        hc: HeaderCarrier,
                                        request: DataRequest[AnyContent]): Future[JsValue] = {
     mode match {
-      case NormalMode | CheckMode => subscriptionCacheConnector.save(request.externalId, id, value)
+      case NormalMode | CheckMode => {
+        subscriptionCacheConnector.save(request.externalId, id, value)
+      }
       case UpdateMode | CheckUpdateMode =>
         val answers = request.userAnswers
           .set(id)(value).flatMap {
@@ -183,13 +188,13 @@ trait UserAnswersService {
         case IsDirectorCompleteId(companyIndex, _) =>
           setIsEstablisherComplete(
             ua,
-            ua.allDirectorsAfterDelete(companyIndex).forall(_.isCompleted),
+            ua.allDirectorsAfterDelete(companyIndex, isHnSEnabled).forall(_.isCompleted),
             IsCompanyCompleteId(companyIndex),
             companyIndex
           )
         case IsEstablisherPartnershipCompleteId(partnershipIndex) if ua.allPartnersAfterDelete(partnershipIndex).forall(_.isCompleted) =>
           ua.set(IsEstablisherCompleteId(partnershipIndex))(true).asOpt.getOrElse(ua)
-        case IsCompanyCompleteId(companyIndex) if ua.allDirectorsAfterDelete(companyIndex).forall(_.isCompleted) =>
+        case IsCompanyCompleteId(companyIndex) if ua.allDirectorsAfterDelete(companyIndex, isHnSEnabled).forall(_.isCompleted) =>
           ua.set(IsEstablisherCompleteId(companyIndex))(true).asOpt.getOrElse(ua)
         case _ => ua
       }
@@ -265,7 +270,8 @@ class UserAnswersServiceEstablishersAndTrusteesImpl @Inject()(override val subsc
                                                               override val updateSchemeCacheConnector: UpdateSchemeCacheConnector,
                                                               override val lockConnector: PensionSchemeVarianceLockConnector,
                                                               override val viewConnector: SchemeDetailsReadOnlyCacheConnector,
-                                                              override val appConfig: FrontendAppConfig
+                                                              override val appConfig: FrontendAppConfig,
+                                                              override val fs: FeatureSwitchManagementService
                                                              ) extends UserAnswersService {
 
   override def save[A, I <: TypedIdentifier[A]](mode: Mode, srn: Option[String], id: I, value: A)
@@ -283,7 +289,8 @@ class UserAnswersServiceInsuranceImpl @Inject()(override val subscriptionCacheCo
                                                 override val updateSchemeCacheConnector: UpdateSchemeCacheConnector,
                                                 override val lockConnector: PensionSchemeVarianceLockConnector,
                                                 override val viewConnector: SchemeDetailsReadOnlyCacheConnector,
-                                                override val appConfig: FrontendAppConfig
+                                                override val appConfig: FrontendAppConfig,
+                                                override val fs: FeatureSwitchManagementService
                                                ) extends UserAnswersService {
   override def save[A, I <: TypedIdentifier[A]](mode: Mode, srn: Option[String], id: I, value: A)
                                                (implicit fmt: Format[A], ec: ExecutionContext, hc: HeaderCarrier,
@@ -300,5 +307,6 @@ class UserAnswersServiceImpl @Inject()(override val subscriptionCacheConnector: 
                                        override val updateSchemeCacheConnector: UpdateSchemeCacheConnector,
                                        override val lockConnector: PensionSchemeVarianceLockConnector,
                                        override val viewConnector: SchemeDetailsReadOnlyCacheConnector,
-                                       override val appConfig: FrontendAppConfig
+                                       override val appConfig: FrontendAppConfig,
+                                       override val fs: FeatureSwitchManagementService
                                       ) extends UserAnswersService

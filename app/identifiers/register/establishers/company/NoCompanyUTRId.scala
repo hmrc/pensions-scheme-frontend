@@ -26,11 +26,11 @@ import utils.{CountryOptions, UserAnswers}
 import viewmodels.AnswerRow
 
 case class NoCompanyUTRId(index: Int) extends TypedIdentifier[String] {
-  override def path: JsPath = EstablishersId(index).path \ "companyUniqueTaxReference" \ NoCompanyUTRId.toString
+  override def path: JsPath = EstablishersId(index).path \ NoCompanyUTRId.toString
 }
 
 object NoCompanyUTRId {
-  override def toString: String = "reason"
+  override def toString: String = "noUtrReason"
 
   implicit def cya(implicit userAnswers: UserAnswers,
                    messages: Messages,

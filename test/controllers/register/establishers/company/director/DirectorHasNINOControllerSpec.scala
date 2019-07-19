@@ -44,7 +44,7 @@ class DirectorHasNINOControllerSpec extends ControllerSpecBase {
     }
 
     "return OK and the correct view for a GET where question already answered" in {
-      val validData = validCompanyDirectorData("directorNino" -> Json.obj("hasNino" -> false))
+      val validData = validCompanyDirectorData("hasNino" -> false)
 
       val dataRetrievalAction = new FakeDataRetrievalAction(Some(validData))
       val result = controller(dataRetrievalAction = dataRetrievalAction).onPageLoad(NormalMode, establisherIndex, directorIndex, None)(fakeRequest)
@@ -59,7 +59,7 @@ class DirectorHasNINOControllerSpec extends ControllerSpecBase {
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
-      FakeUserAnswersService.verify(DirectorHasNINOId(establisherIndex, directorIndex), true)
+      FakeUserAnswersService.userAnswer.get(DirectorHasNINOId(establisherIndex, directorIndex)).value mustEqual true
     }
 
     "return a Bad Request and errors when invalid data is submitted" in {

@@ -18,14 +18,14 @@ package navigators
 
 import base.SpecBase
 import connectors.FakeUserAnswersCacheConnector
+import controllers.register.establishers.company.director.routes
 import identifiers.register.establishers.company._
-import identifiers.register.establishers.company.director.DirectorDetailsId
-import identifiers.register.establishers.{EstablishersId, ExistingCurrentAddressId, IsEstablisherNewId}
+import identifiers.register.establishers.company.director.{DirectorDetailsId, DirectorNameId}
+import identifiers.register.establishers.{EstablishersId, IsEstablisherNewId}
 import identifiers.{EstablishersOrTrusteesChangedId, Identifier}
-import models.Mode.{checkMode, journeyMode}
+import models.Mode.checkMode
 import models._
-import models.address.Address
-import models.person.PersonDetails
+import models.person.{PersonDetails, PersonName}
 import org.joda.time.LocalDate
 import org.scalatest.prop.TableFor6
 import org.scalatest.{MustMatchers, OptionValues}
@@ -41,85 +41,87 @@ class EstablishersCompanyNavigatorSpec extends SpecBase with MustMatchers with N
   import EstablishersCompanyNavigatorSpec._
 
   private def routes(mode: Mode, toggled: Boolean = false): TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = Table(
-    ("Id",                                      "User Answers",                   "Next Page (Normal Mode)",                "Save (NM)",    "Next Page (Check Mode)",                 "Save (CM)"),
-    (CompanyDetailsId(0),                         emptyAnswers,                     companyNameRouting(toggled, mode),  true,           Some(exitJourney(mode, emptyAnswers, 0, cya(mode))), true),
-    (CompanyDetailsId(0),                         newEstablisher,                   companyNameRouting(toggled, mode),  true,           Some(cya(mode)), true),
-    (HasCompanyNumberId(0),                       emptyAnswers,                     sessionExpired,                     true,           Some(exitJourney(mode, emptyAnswers, 0, cyaCompanyDetails(mode))),          true),
-    (HasCompanyNumberId(0),                       hasCompanyNumber(true),    companyRegistrationNumberNew(mode), true,           Some(exitJourney(mode, emptyAnswers, 0, cyaCompanyDetails(mode))),          true),
-    (HasCompanyNumberId(0),                       hasCompanyNumber(false),   noCompanyRegistrationNumber(mode),  true,           Some(exitJourney(mode, emptyAnswers, 0, cyaCompanyDetails(mode))),          true),
-    (HasCompanyVATId(0),                          emptyAnswers,                     sessionExpired,                     true,           Some(exitJourney(mode, emptyAnswers, 0, cyaCompanyDetails(mode))),          true),
-    (HasCompanyVATId(0),                          hasCompanyVat(true),       companyVatNew(mode),                true,           Some(exitJourney(mode, emptyAnswers, 0, cyaCompanyDetails(mode))),          true),
-    (HasCompanyVATId(0),                          hasCompanyVat(false),      hasCompanyPaye(mode),               true,           Some(exitJourney(mode, emptyAnswers, 0, cyaCompanyDetails(mode))),          true),
-    (CompanyVatId(0),                             emptyAnswers,                     companyPaye(mode),                  true,           Some(exitJourney(mode, emptyAnswers, 0, cya(mode))),                   true),
-    (CompanyVatId(0),                             newEstablisher,                   companyPaye(mode),                  true,           Some(cya(mode)),                                                             true),
-    (CompanyVatVariationsId(0),                   emptyAnswers,                     sessionExpired,                     true,           Some(exitJourney(mode, emptyAnswers, 0, cya(mode))),          true),
-    (CompanyVatVariationsId(0),                   establisherEnteredPAYE,           companyHasPaye(mode),               true,           Some(exitJourney(mode, emptyAnswers, 0, cya(mode))),          true),
-    (HasCompanyPAYEId(0),                         emptyAnswers,                     sessionExpired,                     true,           Some(exitJourney(mode, emptyAnswers, 0, cyaCompanyDetails(mode))),          true),
-    (HasCompanyPAYEId(0),                         establisherHasPAYE(true),         whatIsPAYE(mode),                   true,           Some(exitJourney(mode, emptyAnswers, 0, cyaCompanyDetails(mode))),          true),
-    (CompanyPayeId(0),                            emptyAnswers,                     companyRegistrationNumber(mode),    true,           Some(exitJourney(mode, emptyAnswers, 0, cya(mode))),                   true),
-    (CompanyPayeId(0),                            newEstablisher,                   companyRegistrationNumber(mode),    true,           Some(cya(mode)),                                                             true),
-    (NoCompanyNumberId(0),                        emptyAnswers,                     hasCompanyUTR(mode),                true,           Some(exitJourney(mode, emptyAnswers, 0, cya(mode))),                   true),
-    (NoCompanyNumberId(0),                        newEstablisher,                   hasCompanyUTR(mode),                true,           Some(cya(mode)),                   true),
-    (HasCompanyUTRId(0),                          emptyAnswers,                     sessionExpired,                     true,           Some(exitJourney(mode, emptyAnswers, 0, cyaCompanyDetails(mode))),                   true),
-    (HasCompanyUTRId(0),                          hasCompanyUtr(true),       companyUTRNew(mode),                true,           Some(exitJourney(mode, emptyAnswers, 0, cyaCompanyDetails(mode))),                   true),
-    (HasCompanyUTRId(0),                          hasCompanyUtr(false),      noCompanyUTR(mode),                 true,           Some(exitJourney(mode, emptyAnswers, 0, cyaCompanyDetails(mode))),                   true),
-    (CompanyUniqueTaxReferenceId(0),              emptyAnswers,                     companyPostCodeLookup(mode),        true,           Some(exitJourney(mode, emptyAnswers, 0, cya(mode))),                    true),
-    (CompanyUniqueTaxReferenceId(0),              newEstablisher,                   companyPostCodeLookup(mode),        true,           Some(cya(mode)),                                                              true),
-    (CompanyUTRId(0),                             emptyAnswers,                     hasCompanyVat(mode),                true,           Some(exitJourney(mode, emptyAnswers, 0, cyaCompanyDetails(mode))),                   true),
-    (CompanyUTRId(0),                             newEstablisher,                   hasCompanyVat(mode),                true,           Some(cyaCompanyDetails(mode)),                                              true),
-    (NoCompanyUTRId(0),                           emptyAnswers,                     hasCompanyVat(mode),                true,           Some(exitJourney(mode, emptyAnswers, 0, cyaCompanyDetails(mode))),                   true),
-    (NoCompanyUTRId(0),                           newEstablisher,                   hasCompanyVat(mode),                true,           Some(cyaCompanyDetails(mode)),                                              true),
-    (CompanyPostCodeLookupId(0),                  emptyAnswers,                     companyAddressList(mode),           true,           Some(companyAddressList(checkMode(mode))),                                 true),
-    (CompanyAddressListId(0),                     emptyAnswers,                     companyManualAddress(mode),         true,           Some(companyManualAddress(checkMode(mode))),                               true),
-    (CompanyAddressId(0),                         emptyAnswers,                     companyAddressYears(mode),          true,           if(mode == UpdateMode) Some(companyAddressYears(checkMode(mode))) else Some(cya(mode)),                   true),
-    (CompanyAddressId(0),                         newEstablisher,                   companyAddressYears(mode),          true,           Some(cya(mode)),                                                             true),
-    (CompanyAddressYearsId(0),                    addressYearsOverAYear,            companyContactDetails(mode),        true,           Some(exitJourney(mode, addressYearsOverAYear, 0, cya(mode))),                   true),
-    (CompanyAddressYearsId(0),                    addressYearsOverAYearNew,         companyContactDetails(mode),        true,           if (toggled) Some(exitJourney(mode, addressYearsOverAYearNew, 0, cyaCompanyAddressDetails(mode))) else Some(exitJourney(mode, addressYearsOverAYearNew, 0, cya(mode))),                   true),
-    (CompanyAddressYearsId(0),                    emptyAnswers,                     sessionExpired,                     false,          Some(sessionExpired),                                                      false),
-    (CompanyConfirmPreviousAddressId(0),          confirmPreviousAddressYes,        none,                               false,          Some(anyMoreChanges),                                                      false),
-    (CompanyConfirmPreviousAddressId(0),          confirmPreviousAddressNo,         none,                               false,          Some(prevAddPostCodeLookup(checkMode(mode))),                              false),
-    (CompanyConfirmPreviousAddressId(0),          emptyAnswers,                     none,                               false,          Some(sessionExpired),                                                      false),
-    (CompanyPreviousAddressPostcodeLookupId(0),   emptyAnswers,                     companyPaList(mode),                true,           Some(companyPaList(checkMode(mode))),                                      true),
-    (CompanyPreviousAddressListId(0),             emptyAnswers,                     companyPreviousAddress(mode),       true,           Some(companyPreviousAddress(checkMode(mode))),                             true),
-    (CompanyEmailId(0),                           newEstablisher,                   companyPhoneNumber(mode),           true,           Some(cyaCompanyContactDetails(mode)),                   true),
-    (CompanyEmailId(0),                           emptyAnswers,                     companyPhoneNumber(mode),           true,           Some(exitJourney(mode, emptyAnswers, 0, cyaCompanyContactDetails(mode))),                   true),
-    (CompanyPreviousAddressId(0),                 emptyAnswers,                     previousAddressRoutes(toggled, mode),true,          Some(previousAddressEditRoutes(toggled, mode, emptyAnswers)),              true),
-    (CompanyPreviousAddressId(0),                 newEstablisher,                   previousAddressRoutes(toggled, mode),true,          Some(previousAddressEditRoutes(toggled, mode, newEstablisher)),              true),
-    (AddCompanyDirectorsId(0),                    emptyAnswers,                     directorDetails(0, mode),     true,           None,                                                                      true),
-    (AddCompanyDirectorsId(0),                    addCompanyDirectorsTrue,          directorDetails(1, mode),     true,           None,                                                                      true),
-    (AddCompanyDirectorsId(0),                    addCompanyDirectorsFalse,         if(mode == UpdateMode) taskList else companyReview(mode),                true,           None,                                           true),
-    (AddCompanyDirectorsId(0),                    addCompanyDirectorsFalseNewDir,   companyReview(mode),                true,           None,                                                                      true),
-    (AddCompanyDirectorsId(0),                    addOneCompanyDirectors,           sessionExpired,                     false,          None,                                                                      false),
-    (AddCompanyDirectorsId(0),                    addCompanyDirectorsMoreThan10,    otherDirectors(mode),               true,           None,                                                                      true),
-    (OtherDirectorsId(0),                         emptyAnswers,                     if(mode == UpdateMode) anyMoreChanges else companyReview(mode),                true,           Some(companyReview(mode)),                       true),
-    (CompanyReviewId(0),                          emptyAnswers,                     if(mode == UpdateMode) anyMoreChanges else addEstablisher(mode),               false,          None,                                           false),
-    (CheckYourAnswersId(0),                       emptyAnswers,                     if(mode == UpdateMode) anyMoreChanges else addCompanyDirectors(0, mode), true,           None,                                           false),
-    (CheckYourAnswersId(0),                       newEstablisher,                   addCompanyDirectors(0, mode), true,           None,                                                                      false)
+    ("Id", "User Answers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (Check Mode)", "Save (CM)"),
+    (CompanyDetailsId(0), emptyAnswers, companyNameRouting(toggled, mode), true, Some(exitJourney(mode, emptyAnswers, 0, cya(mode))), true),
+    (CompanyDetailsId(0), newEstablisher, companyNameRouting(toggled, mode), true, Some(cya(mode)), true),
+    (HasCompanyNumberId(0), emptyAnswers, sessionExpired, true, Some(sessionExpired), true),
+    (HasCompanyNumberId(0), hasCompanyNumber(true), companyRegistrationNumberNew(mode), true, Some(companyRegistrationNumberNew(checkMode(mode))), true),
+    (HasCompanyNumberId(0), hasCompanyNumber(false), noCompanyRegistrationNumber(mode), true, Some(noCompanyRegistrationNumber(checkMode(mode))), true),
+    (HasCompanyVATId(0), emptyAnswers, sessionExpired, true, Some(sessionExpired), true),
+    (HasCompanyVATId(0), hasCompanyVat(true), companyVatNew(mode), true, Some(companyVatNew(checkMode(mode))), true),
+    (HasCompanyVATId(0), hasCompanyVat(false), hasCompanyPaye(mode), true, Some(cyaCompanyDetails(mode)), true),
+    (CompanyVatId(0), emptyAnswers, companyPaye(mode), true, Some(exitJourney(mode, emptyAnswers, 0, cya(mode))), true),
+    (CompanyVatId(0), newEstablisher, companyPaye(mode), true, Some(cya(mode)), true),
+    (CompanyVatVariationsId(0), emptyAnswers, sessionExpired, true, Some(exitJourney(mode, emptyAnswers, 0, cyaCompanyDetails(mode), toggled)), true),
+    (CompanyVatVariationsId(0), establisherEnteredPAYE, companyHasPaye(mode), true, Some(exitJourney(mode, establisherEnteredPAYE, 0, cyaCompanyDetails(mode), toggled)), true),
+    (HasCompanyPAYEId(0), emptyAnswers, sessionExpired, true, Some(sessionExpired), true),
+    (HasCompanyPAYEId(0), establisherHasPAYE(true), whatIsPAYE(mode), true, Some(whatIsPAYE(checkMode(mode))), true),
+    (CompanyPayeId(0), emptyAnswers, companyRegistrationNumber(mode), true, Some(exitJourney(mode, emptyAnswers, 0, cya(mode))), true),
+    (CompanyPayeId(0), newEstablisher, companyRegistrationNumber(mode), true, Some(cya(mode)), true),
+    (HasCompanyUTRId(0), emptyAnswers, sessionExpired, true, Some(sessionExpired), true),
+    (HasCompanyUTRId(0), hasCompanyUtr(true), companyUTRNew(mode), true, Some(companyUTRNew(checkMode(mode))), true),
+    (HasCompanyUTRId(0), hasCompanyUtr(false), noCompanyUTR(mode), true, Some(noCompanyUTR(checkMode(mode))), true),
+    (CompanyUniqueTaxReferenceId(0), emptyAnswers, companyPostCodeLookup(mode), true, Some(exitJourney(mode, emptyAnswers, 0, cya(mode))), true),
+    (CompanyUniqueTaxReferenceId(0), newEstablisher, companyPostCodeLookup(mode), true, Some(cya(mode)), true),
+    (CompanyUTRId(0), emptyAnswers, hasCompanyVat(mode), true, Some(exitJourney(mode, emptyAnswers, 0, cyaCompanyDetails(mode), toggled)), true),
+    (CompanyUTRId(0), newEstablisher, hasCompanyVat(mode), true, Some(exitJourney(mode, newEstablisher, 0, cyaCompanyDetails(mode), toggled)), true),
+    (NoCompanyUTRId(0), emptyAnswers, hasCompanyVat(mode), true, Some(exitJourney(mode, emptyAnswers, 0, cyaCompanyDetails(mode), toggled)), true),
+    (NoCompanyUTRId(0), newEstablisher, hasCompanyVat(mode), true, Some(exitJourney(mode, newEstablisher, 0, cyaCompanyDetails(mode), toggled)), true),
+    (CompanyPostCodeLookupId(0), emptyAnswers, companyAddressList(mode), true, Some(companyAddressList(checkMode(mode))), true),
+    (CompanyAddressListId(0), emptyAnswers, companyManualAddress(mode), true, Some(companyManualAddress(checkMode(mode))), true),
+    (CompanyAddressId(0), emptyAnswers, companyAddressYears(mode), true, if (mode == UpdateMode) Some(companyAddressYears(checkMode(mode))) else Some(getCya(mode, toggled, cyaCompanyAddressDetails(mode))), true),
+    (CompanyAddressId(0), newEstablisher, companyAddressYears(mode), true, Some(exitJourney(mode, newEstablisher, 0, cyaCompanyAddressDetails(mode), toggled)), true),
+    (CompanyAddressYearsId(0), addressYearsOverAYear, if (toggled) cyaCompanyAddressDetails(mode) else companyContactDetails(mode), true, Some(exitJourney(mode, addressYearsOverAYear, 0, cyaCompanyAddressDetails(mode), toggled)), true),
+    (CompanyAddressYearsId(0), addressYearsOverAYearNew, if (toggled) cyaCompanyAddressDetails(mode) else companyContactDetails(mode), true, Some(exitJourney(mode, addressYearsOverAYearNew, 0, cyaCompanyAddressDetails(mode), toggled)), true),
+    (CompanyAddressYearsId(0), emptyAnswers, sessionExpired, false, Some(sessionExpired), false),
+    (CompanyConfirmPreviousAddressId(0), confirmPreviousAddressYes, none, false, Some(anyMoreChanges), false),
+    (CompanyConfirmPreviousAddressId(0), confirmPreviousAddressNo, none, false, Some(prevAddPostCodeLookup(checkMode(mode))), false),
+    (CompanyConfirmPreviousAddressId(0), emptyAnswers, none, false, Some(sessionExpired), false),
+    (CompanyPreviousAddressPostcodeLookupId(0), emptyAnswers, companyPaList(mode), true, Some(companyPaList(checkMode(mode))), true),
+    (CompanyPreviousAddressListId(0), emptyAnswers, companyPreviousAddress(mode), true, Some(companyPreviousAddress(checkMode(mode))), true),
+    (CompanyEmailId(0), newEstablisher, companyPhoneNumber(mode), true, Some(exitJourney(mode, newEstablisher, 0, cyaCompanyContactDetails(mode), toggled)), true),
+    (CompanyEmailId(0), emptyAnswers, companyPhoneNumber(mode), true, Some(exitJourney(mode, emptyAnswers, 0, cyaCompanyContactDetails(mode), toggled)), true),
+    (CompanyPreviousAddressId(0), emptyAnswers, previousAddressRoutes(toggled, mode), true, Some(exitJourney(mode, emptyAnswers, 0, cyaCompanyAddressDetails(mode), toggled)), true),
+    (CompanyPreviousAddressId(0), newEstablisher, previousAddressRoutes(toggled, mode), true, Some(exitJourney(mode, newEstablisher, 0, cyaCompanyAddressDetails(mode), toggled)), true),
+    (AddCompanyDirectorsId(0), emptyAnswers, startDirectorJourney(toggled, mode, 0), true, None, true),
+    (AddCompanyDirectorsId(0), addCompanyDirectorsTrue(toggled), if (toggled) directorName(mode) else directorDetails(1, mode), true, None, true),
+    (AddCompanyDirectorsId(0), addCompanyDirectorsFalse(toggled), if (mode == UpdateMode | toggled) taskList(mode) else companyReview(mode), true, None, true),
+    (AddCompanyDirectorsId(0), addCompanyDirectorsFalseNewDir(toggled), if (toggled) taskList(mode) else companyReview(mode), true, None, true),
+    (AddCompanyDirectorsId(0), addOneCompanyDirectors(toggled), sessionExpired, false, None, false),
+    (AddCompanyDirectorsId(0), addCompanyDirectorsMoreThan10(toggled), otherDirectors(mode), true, None, true),
+    (OtherDirectorsId(0), emptyAnswers, if (mode == UpdateMode) anyMoreChanges else companyReview(mode), true, Some(companyReview(mode)), true),
+    (CompanyReviewId(0), emptyAnswers, if (mode == UpdateMode) anyMoreChanges else addEstablisher(mode), false, None, false),
+    (CheckYourAnswersId(0), emptyAnswers, if (mode == UpdateMode) anyMoreChanges else addCompanyDirectors(0, mode), true, None, false),
+    (CheckYourAnswersId(0), newEstablisher, addCompanyDirectors(0, mode), true, None, false)
+  )
+
+  private def normalOnlyRoutes(toggled: Boolean): TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = Table(
+    ("Id", "User Answers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (Check Mode)", "Save (CM)"),
+    (CompanyRegistrationNumberVariationsId(0), emptyAnswers, hasCompanyUTR(NormalMode), true, Some(if (toggled) cyaCompanyDetails(NormalMode) else cya(NormalMode)), true),
+    (CompanyContactDetailsId(0), emptyAnswers, isDormant(NormalMode), true, Some(cya(NormalMode)), true),
+    (CompanyPhoneId(0), emptyAnswers, cyaCompanyContactDetails(NormalMode), true, Some(if (toggled) cyaCompanyContactDetails(NormalMode) else cya(NormalMode)), true),
+    (IsCompanyDormantId(0), emptyAnswers, if (toggled) cyaCompanyDetails(NormalMode) else cya(NormalMode), true, Some(if (toggled) cyaCompanyDetails(NormalMode) else cya(NormalMode)), true),
+    (HasCompanyPAYEId(0), establisherHasPAYE(false), isDormant(NormalMode), true, Some(if (toggled) cyaCompanyDetails(NormalMode) else cya(NormalMode)), true),
+    (NoCompanyNumberId(0), emptyAnswers, hasCompanyUTR(NormalMode), true, Some(if (toggled) cyaCompanyDetails(NormalMode) else cya(NormalMode)), true),
+    (CompanyPayeVariationsId(0), emptyAnswers, isDormant(NormalMode), true, Some(if (toggled) cyaCompanyDetails(NormalMode) else cya(NormalMode)), true),
+    (CompanyRegistrationNumberId(0), emptyAnswers, if (toggled) hasCompanyUTR(NormalMode) else companyUTR(NormalMode), true, Some(exitJourney(NormalMode, emptyAnswers, 0, cya(NormalMode))), true),
+    (CompanyRegistrationNumberId(0), newEstablisher, if (toggled) hasCompanyUTR(NormalMode) else companyUTR(NormalMode), true, Some(cya(NormalMode)), true)
   )
 
 
-  private def normalOnlyRoutes(toggled:Boolean): TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = Table(
-    ("Id",                                          "User Answers",               "Next Page (Normal Mode)",                "Save (NM)",  "Next Page (Check Mode)",         "Save (CM)"),
-    (CompanyRegistrationNumberId(0),              emptyAnswers,                 companyUTR(NormalMode),                   true,         Some(exitJourney(journeyMode(CheckMode), emptyAnswers, 0, cya(NormalMode))),                   true),
-    (CompanyRegistrationNumberId(0),              newEstablisher,               companyUTR(NormalMode),                   true,         Some(cya(journeyMode(CheckMode))),                   true),
-    (CompanyContactDetailsId(0),                  emptyAnswers,                 isDormant(NormalMode),                                true,         Some(cya(journeyMode(CheckMode))),               true),
-    (CompanyPhoneId(0),                           emptyAnswers,                 cyaCompanyContactDetails(NormalMode),                         true,         Some(cyaCompanyContactDetails(journeyMode(CheckMode))),               true),
-    (IsCompanyDormantId(0),                       emptyAnswers,                 cya(NormalMode),             true,         Some(cya(journeyMode(CheckMode))),               true)
-  )
-
-  private def updateOnlyRoutes(toggled:Boolean): TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = Table(
-    ("Id",                                          "User Answers",               "Next Page (UpdateMode Mode)",                "Save (NM)",  "Next Page (CheckUpdateMode Mode)",         "Save (CM)"),
-    (CompanyAddressYearsId(0), addressYearsUnderAYear,                           if (toggled) hasBeenTrading(UpdateMode) else prevAddPostCodeLookup(UpdateMode), true, addressYearsLessThanTwelveEdit(UpdateMode, toggled, addressYearsUnderAYear), true),
+  private def updateOnlyRoutes(toggled: Boolean): TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = Table(
+    ("Id", "User Answers", "Next Page (UpdateMode Mode)", "Save (NM)", "Next Page (CheckUpdateMode Mode)", "Save (CM)"),
+    (CompanyAddressYearsId(0), addressYearsUnderAYear, if (toggled) hasBeenTrading(UpdateMode) else prevAddPostCodeLookup(UpdateMode), true, addressYearsLessThanTwelveEdit(UpdateMode, toggled, addressYearsUnderAYear), true),
     (CompanyAddressYearsId(0), addressYearsUnderAYearWithExistingCurrentAddress, if (toggled) hasBeenTrading(UpdateMode) else prevAddPostCodeLookup(UpdateMode), true, addressYearsLessThanTwelveEdit(UpdateMode, toggled, addressYearsUnderAYearWithExistingCurrentAddress), true),
-    (CompanyRegistrationNumberId(0),              emptyAnswers,                     if(toggled)hasCompanyUTR(UpdateMode) else companyUTR(UpdateMode),                   true,           Some(exitJourney(UpdateMode, emptyAnswers, 0, cya(UpdateMode))),                   true),
-    (CompanyRegistrationNumberId(0),              newEstablisher,                   if(toggled)hasCompanyUTR(UpdateMode) else companyUTR(UpdateMode),                   true,           Some(cya(UpdateMode)),                   true),
-    (CompanyContactDetailsId(0),  emptyAnswers,                         cya(UpdateMode),                        true,   Some(exitJourney(CheckUpdateMode,   emptyAnswers, 0, cya(UpdateMode))),       true),
-    (CompanyPhoneId(0),           emptyAnswers,                         cyaCompanyContactDetails(UpdateMode),   true,   Some(exitJourney(CheckUpdateMode,   emptyAnswers, 0, cyaCompanyContactDetails(UpdateMode))),       true),
-    (AddCompanyDirectorsId(0),    addCompanyDirectorsFalseWithChanges,  anyMoreChanges,                         true,   None,                                                           true),
-    (CompanyPayeVariationsId(0),                  emptyAnswers,         cyaCompanyDetails(UpdateMode),                                   true,   Some(exitJourney(CheckUpdateMode, emptyAnswers, 0, cya(UpdateMode))),                   true),
-    (CompanyRegistrationNumberVariationsId(0),                  emptyAnswers,                  hasCompanyUTR(UpdateMode),    true,           Some(exitJourney(CheckUpdateMode, emptyAnswers, 0, cya(UpdateMode))),                   true),
-    (HasCompanyPAYEId(0),                         establisherHasPAYE(false),        cyaCompanyDetails(UpdateMode),                    true,           Some(exitJourney(CheckUpdateMode, emptyAnswers, 0, cyaCompanyDetails(UpdateMode))),          true)
-
+    (CompanyRegistrationNumberId(0), emptyAnswers, if (toggled) hasCompanyUTR(UpdateMode) else companyUTR(UpdateMode), true, Some(exitJourney(UpdateMode, emptyAnswers, 0, cya(UpdateMode))), true),
+    (CompanyRegistrationNumberId(0), newEstablisher, if (toggled) hasCompanyUTR(UpdateMode) else companyUTR(UpdateMode), true, Some(cya(UpdateMode)), true),
+    (CompanyContactDetailsId(0), emptyAnswers, cya(UpdateMode), true, Some(exitJourney(UpdateMode, emptyAnswers, 0, cya(UpdateMode))), true),
+    (CompanyPhoneId(0), emptyAnswers, cyaCompanyContactDetails(UpdateMode), true, Some(exitJourney(UpdateMode, emptyAnswers, 0, cyaCompanyContactDetails(UpdateMode))), true),
+    (AddCompanyDirectorsId(0), addCompanyDirectorsFalseWithChanges(toggled), if (toggled) taskList(UpdateMode) else anyMoreChanges, true, None, true),
+    (CompanyPayeVariationsId(0), emptyAnswers, cyaCompanyDetails(UpdateMode), true, Some(exitJourney(UpdateMode, emptyAnswers, 0, cya(UpdateMode), toggled)), true),
+    (CompanyRegistrationNumberVariationsId(0), emptyAnswers, hasCompanyUTR(UpdateMode), true, Some(exitJourney(UpdateMode, emptyAnswers, 0, cya(UpdateMode), toggled)), true),
+    (HasCompanyPAYEId(0), establisherHasPAYE(false), cyaCompanyDetails(UpdateMode), true, Some(exitJourney(UpdateMode, establisherHasPAYE(false), 0, cyaCompanyDetails(UpdateMode), toggled)), true),
+    (NoCompanyNumberId(0), newEstablisher, hasCompanyUTR(UpdateMode), true, Some(exitJourney(UpdateMode, newEstablisher, 0, cyaCompanyDetails(UpdateMode), toggled)), true)
   )
 
   private def normalRoutes(toggled: Boolean = false) = Table(
@@ -132,13 +134,20 @@ class EstablishersCompanyNavigatorSpec extends SpecBase with MustMatchers with N
     routes(UpdateMode, toggled) ++ updateOnlyRoutes(toggled): _*
   )
 
-  private val navigator: EstablishersCompanyNavigator =
-    new EstablishersCompanyNavigator(FakeUserAnswersCacheConnector, frontendAppConfig, new FakeFeatureSwitchManagementService(false))
-
-  s"${navigator.getClass.getSimpleName}" must {
+  s"Establisher Company Navigator when toggle(is-establisher-company-hns) off" must {
     appRunning()
+    val navigator: EstablishersCompanyNavigator =
+      new EstablishersCompanyNavigator(FakeUserAnswersCacheConnector, frontendAppConfig, new FakeFeatureSwitchManagementService(false))
     behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, normalRoutes(), dataDescriber)
     behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, updateRoutes(), dataDescriber, UpdateMode)
+  }
+
+  s"Establisher Company Navigator when toggle(is-establisher-company-hns) on" must {
+    appRunning()
+    val navigator: EstablishersCompanyNavigator =
+      new EstablishersCompanyNavigator(FakeUserAnswersCacheConnector, frontendAppConfig, new FakeFeatureSwitchManagementService(true))
+    behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, normalRoutes(true), dataDescriber)
+    behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, updateRoutes(true), dataDescriber, UpdateMode)
   }
 }
 
@@ -146,6 +155,10 @@ class EstablishersCompanyNavigatorSpec extends SpecBase with MustMatchers with N
 object EstablishersCompanyNavigatorSpec extends OptionValues with Enumerable.Implicits {
   private val emptyAnswers = UserAnswers(Json.obj())
   private val newEstablisher = UserAnswers(Json.obj()).set(IsEstablisherNewId(0))(true).asOpt.value
+
+  private val establisherIndex = Index(0)
+  private val directorIndex = Index(0)
+  private val directorIndexNew = Index(1)
 
   private def establisherHasPAYE(v: Boolean) = UserAnswers(Json.obj())
     .set(HasCompanyPAYEId(0))(v).asOpt.value
@@ -155,11 +168,14 @@ object EstablishersCompanyNavigatorSpec extends OptionValues with Enumerable.Imp
 
   private def hasCompanyNumber(yesNo: Boolean) = UserAnswers(Json.obj()).set(HasCompanyNumberId(0))(yesNo).asOpt.value
 
+  private def underAYearRouteWithToggle(mode: Mode, toggled: Boolean) = if (toggled) hasBeenTrading(mode) else prevAddPostCodeLookup(mode)
+
   private def hasCompanyUtr(yesNo: Boolean) = UserAnswers(Json.obj()).set(HasCompanyUTRId(0))(yesNo).asOpt.value
 
-  private def hasCompanyVat(yesNo: Boolean) = UserAnswers(Json.obj()).set(HasCompanyVATId(0))(yesNo).asOpt.value
+  private def hasCompanyVat(yesNo: Boolean) = UserAnswers(Json.obj()).set(HasCompanyVATId(0))(yesNo).flatMap(_.set(IsEstablisherNewId(0))(true)).asOpt.value
 
   private val johnDoe = PersonDetails("John", None, "Doe", new LocalDate(1862, 6, 9))
+  private val toggleOnJohnDoe = PersonName("John", "Doe")
 
   private def validData(directors: PersonDetails*) = {
     Json.obj(
@@ -171,6 +187,21 @@ object EstablishersCompanyNavigatorSpec extends OptionValues with Enumerable.Imp
       )
     )
   }
+
+  private def toggleOnValidData(directors: PersonName*) = {
+    Json.obj(
+      EstablishersId.toString -> Json.arr(
+        Json.obj(
+          CompanyDetailsId.toString -> CompanyDetails("test company name"),
+          "director" -> directors.map(d => Json.obj(DirectorNameId.toString -> Json.toJson(d)))
+        )
+      )
+    )
+  }
+
+  private def startDirectorJourney(toggled: Boolean, mode: Mode, index: Index) = if (toggled) directorName(mode, index) else directorDetails(index, mode)
+
+  private def directorName(mode: Mode, index: Index = directorIndexNew) = routes.DirectorNameController.onPageLoad(mode, establisherIndex, index, None)
 
   private def none: Call = controllers.routes.IndexController.onPageLoad()
 
@@ -266,13 +297,18 @@ object EstablishersCompanyNavigatorSpec extends OptionValues with Enumerable.Imp
 
   private def anyMoreChanges = controllers.routes.AnyMoreChangesController.onPageLoad(None)
 
-  private def exitJourney(mode: Mode, answers:UserAnswers, index:Int = 0, cyaPage: Call) =
+  private def exitJourney(mode: Mode, answers: UserAnswers, index: Int = 0, cyaPage: Call, toggled: Boolean = false) = {
+    val cyaToggled = if (toggled) cyaPage else cya(mode)
     if (mode == NormalMode)
-      cyaPage
+      cyaToggled
     else if (answers.get(IsEstablisherNewId(index)).getOrElse(false))
-      cyaPage
+      cyaToggled
     else
       anyMoreChanges
+  }
+
+  private def previousAddressEditRoutes(toggled: Boolean, mode: Mode, userAnswers: UserAnswers) =
+    exitJourney(mode, userAnswers, 0, if (toggled) cyaCompanyAddressDetails(mode) else cya(mode))
 
   private def confirmPreviousAddress = controllers.register.establishers.company.routes.CompanyConfirmPreviousAddressController.onPageLoad(0, None)
 
@@ -282,9 +318,9 @@ object EstablishersCompanyNavigatorSpec extends OptionValues with Enumerable.Imp
     (
       userAnswers.get(CompanyAddressYearsId(0)),
       isEstablisherCompanyHnSEnabled,
-      userAnswers.get(ExistingCurrentAddressId(0))
+      userAnswers.get(IsEstablisherNewId(0)).getOrElse(false)
     ) match {
-      case (Some(AddressYears.UnderAYear), false, Some(_)) =>
+      case (Some(AddressYears.UnderAYear), _, false) =>
         Some(confirmPreviousAddress)
       case (Some(AddressYears.UnderAYear), true, _) =>
         Some(hasBeenTrading(checkMode(mode)))
@@ -307,7 +343,7 @@ object EstablishersCompanyNavigatorSpec extends OptionValues with Enumerable.Imp
 
   private def isDormant(mode: Mode) = controllers.register.establishers.company.routes.IsCompanyDormantController.onPageLoad(mode, None, 0)
 
-  private def taskList: Call = controllers.routes.SchemeTaskListController.onPageLoad(UpdateMode, None)
+  private def taskList(mode: Mode): Call = controllers.routes.SchemeTaskListController.onPageLoad(mode, None)
 
   private val addressYearsOverAYearNew = UserAnswers(Json.obj())
     .set(CompanyAddressYearsId(0))(AddressYears.OverAYear).flatMap(_.set(IsEstablisherNewId(0))(true)).asOpt.value
@@ -317,17 +353,23 @@ object EstablishersCompanyNavigatorSpec extends OptionValues with Enumerable.Imp
     .set(CompanyAddressYearsId(0))(AddressYears.UnderAYear).asOpt.value
   private val addressYearsUnderAYearWithExistingCurrentAddress = UserAnswers(Json.obj())
     .set(CompanyAddressYearsId(0))(AddressYears.UnderAYear).flatMap(
-    _.set(ExistingCurrentAddressId(0))(Address("Line 1", "Line 2", None, None, None, "UK"))).asOpt.value
+    _.set(IsEstablisherNewId(0))(true)).asOpt.value
 
-  private val addCompanyDirectorsTrue = UserAnswers(validData(johnDoe)).set(AddCompanyDirectorsId(0))(true).asOpt.value
-  private val addCompanyDirectorsFalse = UserAnswers(validData(johnDoe)).set(AddCompanyDirectorsId(0))(false).asOpt.value
-  private val addCompanyDirectorsFalseWithChanges = UserAnswers(validData(johnDoe)).set(AddCompanyDirectorsId(0))(false).flatMap(
+  private def addCompanyDirectorsTrue(toggled: Boolean) = addOneCompanyDirectors(toggled).set(AddCompanyDirectorsId(0))(true).asOpt.value
+
+  private def addCompanyDirectorsFalse(toggled: Boolean) = addOneCompanyDirectors(toggled).set(AddCompanyDirectorsId(0))(false).asOpt.value
+
+  private def addCompanyDirectorsFalseWithChanges(toggled: Boolean) = addOneCompanyDirectors(toggled).set(AddCompanyDirectorsId(0))(false).flatMap(
     _.set(EstablishersOrTrusteesChangedId)(true)).asOpt.value
 
-  private val addCompanyDirectorsFalseNewDir = UserAnswers(validData(johnDoe)).set(AddCompanyDirectorsId(0))(false)
+  private def addCompanyDirectorsFalseNewDir(toggled: Boolean) = addOneCompanyDirectors(toggled).set(AddCompanyDirectorsId(0))(false)
     .flatMap(_.set(IsEstablisherNewId(0))(true)).asOpt.value
-  private val addCompanyDirectorsMoreThan10 = UserAnswers(validData(Seq.fill(10)(johnDoe): _*))
-  private val addOneCompanyDirectors = UserAnswers(validData(johnDoe))
+
+  private def addCompanyDirectorsMoreThan10(toggled: Boolean) =
+    if (toggled) UserAnswers(toggleOnValidData(Seq.fill(10)(toggleOnJohnDoe): _*)) else UserAnswers(validData(Seq.fill(10)(johnDoe): _*))
+
+  private def addOneCompanyDirectors(toggled: Boolean) =
+    if (toggled) UserAnswers(toggleOnValidData(toggleOnJohnDoe)) else UserAnswers(validData(johnDoe))
 
   private val confirmPreviousAddressYes = UserAnswers(Json.obj())
     .set(CompanyConfirmPreviousAddressId(0))(true).asOpt.value
@@ -336,15 +378,11 @@ object EstablishersCompanyNavigatorSpec extends OptionValues with Enumerable.Imp
 
   private def dataDescriber(answers: UserAnswers): String = answers.toString
 
+  private def getCya(mode: Mode, toggled: Boolean, cyaPage: Call) = if (toggled) cyaPage else cya(mode)
+
   private def previousAddressRoutes(toggled: Boolean, mode: Mode) =
     if (toggled)
       cyaCompanyAddressDetails(mode)
     else
       companyContactDetails(mode)
-
-  private def previousAddressEditRoutes(toggled: Boolean, mode: Mode, userAnswers: UserAnswers) =
-    if (toggled)
-      exitJourney(mode, userAnswers, 0, cyaCompanyAddressDetails(mode))
-    else
-      exitJourney(mode, userAnswers, 0, cya(mode))
 }
