@@ -86,7 +86,7 @@ class CompanyPostCodeLookupControllerSpec extends ControllerSpecBase with CSRFRe
             postCall = controller.postCall(NormalMode, firstIndex, None),
             manualInputCall = controller.manualAddressCall(NormalMode, firstIndex, None),
             title = Message(controller.title),
-            heading = Message(controller.heading),
+            heading = Message(controller.heading, companyName),
             subHeading = Some(company.companyName)
           )
 
