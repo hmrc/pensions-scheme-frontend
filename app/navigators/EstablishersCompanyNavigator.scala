@@ -288,7 +288,6 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
               }
           }.getOrElse(controllers.routes.SessionExpiredController.onPageLoad())
         } else {
-
           establisherCompanyRoutes.OtherDirectorsController.onPageLoad(mode, srn, index)
         }
       } else {
