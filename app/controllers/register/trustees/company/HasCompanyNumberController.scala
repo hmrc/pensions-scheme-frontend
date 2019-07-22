@@ -47,7 +47,7 @@ class HasCompanyNumberController @Inject()(override val appConfig: FrontendAppCo
   private def viewModel(mode: Mode, index: Index, srn: Option[String], companyName: String): CommonFormWithHintViewModel =
     CommonFormWithHintViewModel(
       postCall = controllers.register.establishers.company.routes.HasCompanyNumberController.onSubmit(mode, srn, index),
-      title = Message("messages__hasCompanyNumber__title"),
+      title = Message("messages__hasCompanyCompanyNumber__title"),
       heading = Message("messages__hasCompanyNumber__h1", companyName),
       hint = Some(Message("messages__hasCompanyNumber__p1")),
       srn = srn
