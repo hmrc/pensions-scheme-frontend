@@ -17,12 +17,15 @@
 package controllers.register.trustees.company
 
 import controllers.ControllerSpecBase
-import controllers.actions.{DataRequiredActionImpl, DataRetrievalAction, FakeAllowAccessProvider, FakeAuthAction}
+import controllers.actions._
 import forms.HasCrnFormProvider
-import identifiers.register.trustees.company.HasCompanyNumberId
-import models.{Index, NormalMode}
+import identifiers.register.establishers.company.CompanyDetailsId
+import identifiers.register.trustees.TrusteesId
+import identifiers.register.trustees.company.{CompanyRegistrationNumberVariationsId, HasCompanyNumberId}
+import models.{CompanyDetails, Index, NormalMode, ReferenceValue}
 import org.scalatest.mockito.MockitoSugar
 import play.api.data.Form
+import play.api.libs.json.Json
 import play.api.test.Helpers._
 import services.FakeUserAnswersService
 import utils.{FakeNavigator, MockValidationHelper}
@@ -48,6 +51,29 @@ class HasCompanyNumberControllerSpec extends ControllerSpecBase with MockitoSuga
     hint = Some(Message("messages__hasCompanyNumber__p1"))
   )
 
+  /*
+                "companyRegistrationNumber" : {
+                  "value" : "AB999999",
+                  "isEditable" : true
+              },
+              "hasCrn" : true
+ */
+
+  private def getTrusteeCompanyPlusCrn: FakeDataRetrievalAction = new FakeDataRetrievalAction(
+    Some(Json.obj(
+      TrusteesId.toString -> Json.arr(
+        Json.obj(
+          CompanyDetailsId.toString -> CompanyDetails("test company name"),
+          "hasCrn" -> true,
+          "companyRegistrationNumber" -> Json.obj(
+            "value" -> "123456789",
+            "isEditadble" -> true
+          )
+        )
+      )
+    ))
+  )
+
   private def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryTrusteeCompany): HasCompanyNumberController =
     new HasCompanyNumberController(
       frontendAppConfig,
@@ -65,41 +91,44 @@ class HasCompanyNumberControllerSpec extends ControllerSpecBase with MockitoSuga
 
   "HasCompanyNumberController" must {
 
-    "return OK and the correct view for a GET" in {
-      val result = controller().onPageLoad(NormalMode, index, None)(fakeRequest)
+    //    "return OK and the correct view for a GET" in {
+    //      val result = controller().onPageLoad(NormalMode, index, None)(fakeRequest)
+    //
+    //      status(result) mustBe OK
+    //      contentAsString(result) mustBe viewAsString()
+    //    }
+    //
+    //    "redirect to the next page when valid data is submitted for true" in {
+    //      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "true"))
+    //
+    //      val result = controller().onSubmit(NormalMode, index, None)(postRequest)
+    //
+    //      status(result) mustBe SEE_OTHER
+    //      redirectLocation(result) mustBe Some(onwardRoute.url)
+    //      FakeUserAnswersService.userAnswer.get(HasCompanyNumberId(index)).value mustEqual true
+    //
+    //    }
+    //
+    //    "return a Bad Request and errors when invalid data is submitted" in {
+    //      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "invalid value"))
+    //      val boundForm = form.bind(Map("value" -> "invalid value"))
+    //
+    //      val result = controller().onSubmit(NormalMode, index, None)(postRequest)
+    //
+    //      status(result) mustBe BAD_REQUEST
+    //      contentAsString(result) mustBe viewAsString(boundForm)
+    //    }
 
-      status(result) mustBe OK
-      contentAsString(result) mustBe viewAsString()
-    }
-
-    "redirect to the next page when valid data is submitted for true" in {
-      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "true"))
-
-      val result = controller().onSubmit(NormalMode, index, None)(postRequest)
+    "user changes answer, clean up should take place" in {
+      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "false"))
+      val result = controller(getTrusteeCompanyPlusCrn).onSubmit(NormalMode, index, None)(postRequest)
 
       status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(onwardRoute.url)
-      FakeUserAnswersService.userAnswer.get(HasCompanyNumberId(index)).value mustEqual true
+      //FakeUserAnswersService.userAnswer.get(HasCompanyNumberId(index)).value mustEqual false
+      FakeUserAnswersService.userAnswer.get(CompanyRegistrationNumberVariationsId(index)) mustBe None
 
+      //CompanyRegistrationNumberVariationsId
     }
-
-    "return a Bad Request and errors when invalid data is submitted" in {
-      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "invalid value"))
-      val boundForm = form.bind(Map("value" -> "invalid value"))
-
-      val result = controller().onSubmit(NormalMode, index, None)(postRequest)
-
-      status(result) mustBe BAD_REQUEST
-      contentAsString(result) mustBe viewAsString(boundForm)
-    }
-
-/*    "user changes answer, clean up should take place" in {
-
-      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "false"))
-
-      val result = controller().onSubmit(NormalMode, index, None)(postRequest)
-
-    }*/
   }
 }
 

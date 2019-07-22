@@ -44,6 +44,8 @@ class HasCompanyNumberController @Inject()(override val appConfig: FrontendAppCo
                                           formProvider: HasCrnFormProvider
                                         )(implicit val ec: ExecutionContext) extends HasReferenceNumberController {
 
+
+
   private def viewModel(mode: Mode, index: Index, srn: Option[String], companyName: String): CommonFormWithHintViewModel =
     CommonFormWithHintViewModel(
       postCall = controllers.register.trustees.company.routes.HasCompanyNumberController.onSubmit(mode, index, srn),
@@ -69,6 +71,7 @@ class HasCompanyNumberController @Inject()(override val appConfig: FrontendAppCo
       implicit request =>
         CompanyDetailsId(index).retrieve.right.map {
           details =>
+            println( "\nON SUBMIT:" + request.userAnswers)
             post(HasCompanyNumberId(index), mode, form(details.companyName), viewModel(mode, index, srn, details.companyName), Some(IsDetailsCompleteId(index)))
         }
     }

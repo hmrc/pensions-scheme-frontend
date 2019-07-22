@@ -80,6 +80,7 @@ case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Implicits 
     val oldValue = json
     val jsResultSetValue = JsLens.fromPath(id.path).set(jsValue, json)
     jsResultSetValue.flatMap { newValue =>
+      println( "\n>>NEW VALUE=" + newValue)
       if (oldValue == newValue) {
         JsSuccess(UserAnswers(newValue))
       } else {
