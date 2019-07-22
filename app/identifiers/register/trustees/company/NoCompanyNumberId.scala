@@ -28,8 +28,3 @@ object NoCompanyNumberId {
   override def toString: String = "noCrnReason"
 
 }
-
-
-
-
-
