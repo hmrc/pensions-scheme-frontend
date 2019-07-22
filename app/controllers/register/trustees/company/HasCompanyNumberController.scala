@@ -17,18 +17,18 @@
 package controllers.register.trustees.company
 
 import config.FrontendAppConfig
-import controllers.{HasReferenceNumberController, Retrievals}
+import controllers.HasReferenceNumberController
 import controllers.actions._
 import forms.HasCrnFormProvider
-import identifiers.register.establishers.company.{CompanyDetailsId, HasCompanyNumberId, IsDetailsCompleteId}
+import identifiers.register.establishers.company.{CompanyDetailsId, IsDetailsCompleteId}
+import identifiers.register.trustees.company.HasCompanyNumberId
 import javax.inject.Inject
 import models.{Index, Mode}
-import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import utils.Navigator
 import utils.annotations.TrusteesCompany
-import utils.{Enumerable, Navigator}
 import viewmodels.{CommonFormWithHintViewModel, Message}
 
 import scala.concurrent.ExecutionContext
@@ -46,7 +46,7 @@ class HasCompanyNumberController @Inject()(override val appConfig: FrontendAppCo
 
   private def viewModel(mode: Mode, index: Index, srn: Option[String], companyName: String): CommonFormWithHintViewModel =
     CommonFormWithHintViewModel(
-      postCall = controllers.register.establishers.company.routes.HasCompanyNumberController.onSubmit(mode, srn, index),
+      postCall = controllers.register.trustees.company.routes.HasCompanyNumberController.onSubmit(mode, index, srn),
       title = Message("messages__hasCompanyCompanyNumber__title"),
       heading = Message("messages__hasCompanyNumber__h1", companyName),
       hint = Some(Message("messages__hasCompanyNumber__p1")),

@@ -56,7 +56,9 @@ trait HasReferenceNumberController extends FrontendController with Retrievals wi
         Future.successful(BadRequest(hasReferenceNumber(appConfig, formWithErrors, viewmodel, existingSchemeName))),
       value => {
         val answers = completeId.flatMap(id => request.userAnswers.set(id)(false).asOpt).getOrElse(request.userAnswers)
+        println( "\nI AM HERE")
         userAnswersService.upsert(mode, viewmodel.srn, answers.set(id)(value).asOpt.getOrElse(answers).json).map{cacheMap =>
+          println( "\nI AM HERE2222" + id)
           Redirect(navigator.nextPage(id, mode, UserAnswers(cacheMap), viewmodel.srn))}
       }
     )
