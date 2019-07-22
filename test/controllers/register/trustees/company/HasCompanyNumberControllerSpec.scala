@@ -48,7 +48,7 @@ class HasCompanyNumberControllerSpec extends ControllerSpecBase with MockitoSuga
     hint = Some(Message("messages__hasCompanyNumber__p1"))
   )
 
-  private def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisherCompany): HasCompanyNumberController =
+  private def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryTrusteeCompany): HasCompanyNumberController =
     new HasCompanyNumberController(
       frontendAppConfig,
       messagesApi,
@@ -93,6 +93,13 @@ class HasCompanyNumberControllerSpec extends ControllerSpecBase with MockitoSuga
       contentAsString(result) mustBe viewAsString(boundForm)
     }
 
+/*    "user changes answer, clean up should take place" in {
+
+      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "false"))
+
+      val result = controller().onSubmit(NormalMode, index, None)(postRequest)
+
+    }*/
   }
 }
 

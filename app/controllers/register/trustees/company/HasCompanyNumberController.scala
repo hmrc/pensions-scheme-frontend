@@ -20,8 +20,8 @@ import config.FrontendAppConfig
 import controllers.HasReferenceNumberController
 import controllers.actions._
 import forms.HasCrnFormProvider
-import identifiers.register.establishers.company.{CompanyDetailsId, IsDetailsCompleteId}
-import identifiers.register.trustees.company.HasCompanyNumberId
+import identifiers.register.establishers.company.IsDetailsCompleteId
+import identifiers.register.trustees.company.{CompanyDetailsId, HasCompanyNumberId}
 import javax.inject.Inject
 import models.{Index, Mode}
 import play.api.i18n.MessagesApi
@@ -72,5 +72,4 @@ class HasCompanyNumberController @Inject()(override val appConfig: FrontendAppCo
             post(HasCompanyNumberId(index), mode, form(details.companyName), viewModel(mode, index, srn, details.companyName), Some(IsDetailsCompleteId(index)))
         }
     }
-
 }

@@ -22,7 +22,7 @@ import models.Paye
 import play.api.libs.json.JsPath
 
 case class HasCompanyNumberId(index: Int) extends TypedIdentifier[Boolean] {
-  override def path: JsPath = TrusteesId(index).path \ HasCompanyNumberId.toString
+  override def path: JsPath = TrusteesId(index).path \ "companyRegistrationNumber" \ HasCompanyNumberId.toString
 }
 
 object HasCompanyNumberId {
