@@ -86,7 +86,7 @@ class CompanyPreviousAddressPostCodeLookupControllerSpec extends ControllerSpecB
             postCall = controller.postCall(NormalMode, firstIndex, None),
             manualInputCall = controller.manualAddressCall(NormalMode, firstIndex, None),
             title = Message(controller.title),
-            heading = Message(controller.heading),
+            heading = Message(controller.heading, company.companyName),
             subHeading = Some(company.companyName)
           )
 

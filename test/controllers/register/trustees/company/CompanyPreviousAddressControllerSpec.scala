@@ -83,7 +83,7 @@ class CompanyPreviousAddressControllerSpec extends ControllerSpecBase with Mocki
             controller.postCall(NormalMode, firstIndex, None),
             countryOptions.options,
             Message(controller.title),
-            Message(controller.heading),
+            Message(controller.heading, companyDetails.companyName),
             secondaryHeader = Some(companyDetails.companyName),
             Some(Message(controller.hint))
           )
