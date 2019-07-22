@@ -17,7 +17,7 @@
 package utils
 
 import identifiers._
-import identifiers.register.establishers.company.director.{DirectorDetailsId, DirectorNameId, IsDirectorCompleteId, IsNewDirectorId}
+import identifiers.register.establishers.company.director.{DirectorDetailsId, DirectorNameId, DirectorNinoId, DirectorUniqueTaxReferenceId, IsDirectorCompleteId, IsNewDirectorId}
 import identifiers.register.establishers.company.{CompanyDetailsId => EstablisherCompanyDetailsId}
 import identifiers.register.establishers.individual.EstablisherDetailsId
 import identifiers.register.establishers.partnership.PartnershipDetailsId
@@ -255,7 +255,21 @@ case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Implicits 
     getAllRecursive[PersonName](DirectorNameId.collectionPath(establisherIndex)).map {
       details =>
         for ((director, directorIndex) <- details.zipWithIndex) yield {
-          val isComplete = get(IsDirectorCompleteId(establisherIndex, directorIndex)).getOrElse(false)
+          val isComplete = {
+            //TODO: this condition is to handle the partial data, hence can be removed after
+            // 28 days of enabling the toggle is-establisher-company-hns
+            val partialData: Boolean =
+            (get(DirectorDetailsId(establisherIndex, directorIndex)),
+              get(DirectorNinoId(establisherIndex, directorIndex)),
+              get(DirectorUniqueTaxReferenceId(establisherIndex, directorIndex))) match {
+              case (None, None, None) => false
+              case _ => true
+            }
+            (get(IsDirectorCompleteId(establisherIndex, directorIndex)), partialData) match {
+              case (Some(true), false) => true
+              case _ => false
+            }
+          }
           val isNew = get(IsNewDirectorId(establisherIndex, directorIndex)).getOrElse(false)
           DirectorEntity(
             DirectorNameId(establisherIndex, directorIndex),
@@ -456,7 +470,8 @@ case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Implicits 
     case _ => true
   }
 
-  def allEstablishersCompleted(isHnSEnabled: Boolean) = !allEstablishersAfterDelete.zipWithIndex.collect { case (item, establisherIndex) =>
+  def allEstablishersCompleted(isHnSEnabled: Boolean) =
+    !allEstablishersAfterDelete.zipWithIndex.collect { case (item, establisherIndex) =>
     item.isCompleted && isDirectorPartnerCompleted(establisherIndex, isHnSEnabled)
   }.contains(false)
 
@@ -468,7 +483,9 @@ case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Implicits 
   }
 
   def areVariationChangesCompleted(isHnSEnabled: Boolean = false): Boolean = {
-
+println(s"\n>>> $isInsuranceCompleted")
+println(s"\n>>> $isAllTrusteesCompleted")
+println(s"\n>>> ${allEstablishersCompleted(isHnSEnabled)}")
     isInsuranceCompleted && isAllTrusteesCompleted && allEstablishersCompleted(isHnSEnabled)
 
   }

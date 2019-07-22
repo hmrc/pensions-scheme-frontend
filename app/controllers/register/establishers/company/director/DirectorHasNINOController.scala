@@ -59,20 +59,20 @@ class DirectorHasNINOController @Inject()(override val appConfig: FrontendAppCon
   def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
-        (CompanyDetailsId(establisherIndex) and DirectorNameId(establisherIndex, directorIndex)).retrieve.right.map {
+        DirectorNameId(establisherIndex, directorIndex).retrieve.right.map {
           details =>
-            get(DirectorHasNINOId(establisherIndex, directorIndex), form(details.b.fullName),
-              viewModel(mode, establisherIndex, directorIndex, srn, details.b.fullName))
+            get(DirectorHasNINOId(establisherIndex, directorIndex), form(details.fullName),
+              viewModel(mode, establisherIndex, directorIndex, srn, details.fullName))
         }
     }
 
   def onSubmit(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
-        (CompanyDetailsId(establisherIndex) and DirectorNameId(establisherIndex, directorIndex)).retrieve.right.map {
+        DirectorNameId(establisherIndex, directorIndex).retrieve.right.map {
           details =>
-            post(DirectorHasNINOId(establisherIndex, directorIndex), mode, form(details.b.fullName),
-              viewModel(mode, establisherIndex, directorIndex, srn, details.b.fullName))
+            post(DirectorHasNINOId(establisherIndex, directorIndex), mode, form(details.fullName),
+              viewModel(mode, establisherIndex, directorIndex, srn, details.fullName))
         }
     }
 }

@@ -17,9 +17,9 @@
 package utils.hstasklisthelper
 
 
-import controllers.register.establishers.company.{routes => establisherCompanyRoutes}
-import identifiers.register.establishers.company.{CompanyEmailId, CompanyPhoneId, CompanyVatId}
 import controllers.register.establishers.company.director.{routes => establisherCompanyDirectorRoutes}
+import controllers.register.establishers.company.{routes => establisherCompanyRoutes}
+import identifiers.register.establishers.company.{CompanyEmailId, CompanyPhoneId, CompanyVatId, IsCompanyCompleteId}
 import identifiers.register.establishers.{IsEstablisherNewId, company => establisherCompany}
 import models._
 import models.register.Entity
@@ -46,7 +46,7 @@ trait HsTaskListHelperUtils extends Enumerable.Implicits {
                   spokeName: Spoke,
                   mode: Mode, srn: Option[String], name: String, index: Int, isNew: Boolean): EntitySpoke = {
 
-    val isChangeLink = getCompleteFlag(answers, index, spokeName)
+    val isChangeLink = getCompleteFlag(answers, index, spokeName, mode)
     val isComplete: Option[Boolean] = if (mode == NormalMode) isChangeLink else None
 
     (isChangeLink, isNew) match {
@@ -69,7 +69,7 @@ trait HsTaskListHelperUtils extends Enumerable.Implicits {
       EntitySpoke(Link(getChangeLinkText(spokeName)(name), getChangeLink(spokeName)(mode, srn, index).url), isComplete)
   }
 
-  private def getCompleteFlag(answers: UserAnswers, index: Int, spokeName: Spoke): Option[Boolean] = spokeName match {
+  private def getCompleteFlag(answers: UserAnswers, index: Int, spokeName: Spoke, mode: Mode): Option[Boolean] = spokeName match {
     case EstablisherCompanyDetails =>
       //TODO: this condition is to handle the partial data, hence can be removed after
       // 28 days of enabling the toggle is-establisher-company-hns
@@ -77,8 +77,16 @@ trait HsTaskListHelperUtils extends Enumerable.Implicits {
         case Some(_) => Some(false)
         case _ => answers.get(establisherCompany.IsDetailsCompleteId(index))
       }
+
     case EstablisherCompanyAddress =>
-      answers.get(establisherCompany.IsAddressCompleteId(index))
+      //TODO: this condition is to handle the partial data, hence can be removed after
+      // 28 days of enabling the toggle is-establisher-company-hns
+
+        (answers.get(IsCompanyCompleteId(index)), answers.get(establisherCompany.IsAddressCompleteId(index))) match {
+          case (Some(true), None) => Some(true)
+          case _ => answers.get(establisherCompany.IsAddressCompleteId(index))
+        }
+
     case EstablisherCompanyContactDetails =>
       //TODO: this condition is to handle the partial data, hence can be removed after
       //28 days of enabling the toggle is-establisher-company-hns
