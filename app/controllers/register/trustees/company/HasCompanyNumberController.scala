@@ -17,8 +17,10 @@
 package controllers.register.trustees.company
 
 import config.FrontendAppConfig
-import controllers.Retrievals
+import controllers.{HasReferenceNumberController, Retrievals}
 import controllers.actions._
+import forms.HasCrnFormProvider
+import identifiers.register.establishers.company.{CompanyDetailsId, HasCompanyNumberId, IsDetailsCompleteId}
 import javax.inject.Inject
 import models.{Index, Mode}
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -27,27 +29,48 @@ import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.TrusteesCompany
 import utils.{Enumerable, Navigator}
+import viewmodels.{CommonFormWithHintViewModel, Message}
 
 import scala.concurrent.ExecutionContext
 
-class HasCompanyNumberController @Inject()(
-                                          appConfig: FrontendAppConfig,
-                                          override val messagesApi: MessagesApi,
-                                          userAnswersService: UserAnswersService,
-                                          @TrusteesCompany navigator: Navigator,
+class HasCompanyNumberController @Inject()(override val appConfig: FrontendAppConfig,
+                                           override val messagesApi: MessagesApi,
+                                           override val userAnswersService: UserAnswersService,
+                                          @TrusteesCompany override val navigator: Navigator,
                                           authenticate: AuthAction,
                                           getData: DataRetrievalAction,
                                           allowAccess: AllowAccessActionProvider,
-                                          requireData: DataRequiredAction
-                                        )(implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
+                                          requireData: DataRequiredAction,
+                                          formProvider: HasCrnFormProvider
+                                        )(implicit val ec: ExecutionContext) extends HasReferenceNumberController {
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData) {
-    implicit request => Ok
-  }
+  private def viewModel(mode: Mode, index: Index, srn: Option[String], companyName: String): CommonFormWithHintViewModel =
+    CommonFormWithHintViewModel(
+      postCall = controllers.register.establishers.company.routes.HasCompanyNumberController.onSubmit(mode, srn, index),
+      title = Message("messages__hasCompanyNumber__title"),
+      heading = Message("messages__hasCompanyNumber__h1", companyName),
+      hint = Some(Message("messages__hasCompanyNumber__p1")),
+      srn = srn
+    )
 
-  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData) {
-    implicit request => Redirect(controllers.routes.IndexController.onPageLoad())
-  }
+  private def form(companyName: String) = formProvider("messages__hasCompanyNumber__error__required", companyName)
+
+  def onPageLoad(mode: Mode, index: Index, srn: Option[String] = None): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+      implicit request =>
+        CompanyDetailsId(index).retrieve.right.map {
+          details =>
+            get(HasCompanyNumberId(index), form(details.companyName), viewModel(mode, index, srn, details.companyName))
+        }
+    }
+
+  def onSubmit(mode: Mode, index: Index, srn: Option[String] = None): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen requireData).async {
+      implicit request =>
+        CompanyDetailsId(index).retrieve.right.map {
+          details =>
+            post(HasCompanyNumberId(index), mode, form(details.companyName), viewModel(mode, index, srn, details.companyName), Some(IsDetailsCompleteId(index)))
+        }
+    }
 
 }
