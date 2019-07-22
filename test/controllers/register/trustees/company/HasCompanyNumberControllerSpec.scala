@@ -51,14 +51,6 @@ class HasCompanyNumberControllerSpec extends ControllerSpecBase with MockitoSuga
     hint = Some(Message("messages__hasCompanyNumber__p1"))
   )
 
-  /*
-                "companyRegistrationNumber" : {
-                  "value" : "AB999999",
-                  "isEditable" : true
-              },
-              "hasCrn" : true
- */
-
   private def getTrusteeCompanyPlusCrn: FakeDataRetrievalAction = new FakeDataRetrievalAction(
     Some(Json.obj(
       TrusteesId.toString -> Json.arr(
