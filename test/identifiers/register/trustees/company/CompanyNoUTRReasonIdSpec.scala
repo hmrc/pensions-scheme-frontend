@@ -20,71 +20,35 @@ import base.SpecBase
 import identifiers.register.trustees.IsTrusteeNewId
 import models._
 import models.requests.DataRequest
-import play.api.libs.json.Json
 import play.api.mvc.AnyContent
 import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.PsaId
-import utils.UserAnswers
+import utils.{CountryOptions, UserAnswers}
 import utils.checkyouranswers.Ops._
 import viewmodels.AnswerRow
 
-class HasCompanyPAYEIdSpec extends SpecBase {
+class CompanyNoUTRReasonIdSpec extends SpecBase {
 
   val onwardUrl = "onwardUrl"
   val name = "test company name"
-
+  val reason = "some lame reason"
+  implicit val countryOptions: CountryOptions = new CountryOptions(environment, frontendAppConfig)
   private val answerRowsWithChangeLinks = Seq(
-    AnswerRow(messages("messages__companyPayeRef__h1", name), List("site.yes"), true, Some(Link("site.change",onwardUrl,
-      Some(messages("messages__visuallyhidden__companyPayeRef", name)))))
+    AnswerRow(messages("messages__noCompanyUtr__heading", name), List(reason), false, Some(Link("site.change",onwardUrl,
+      Some(messages("messages__visuallyhidden__noCompanyUTRReason")))))
   )
-
-  "Cleanup" when {
-
-    def answers(hasPaye: Boolean = true): UserAnswers = UserAnswers(Json.obj())
-      .set(HasCompanyPAYEId(0))(hasPaye)
-      .flatMap(_.set(CompanyPayeVariationsId(0))(ReferenceValue("test-paye")))
-      .asOpt.value
-
-    "`HasCompanyPAYE` is set to `false`" must {
-
-      val result: UserAnswers = answers().set(HasCompanyPAYEId(0))(false).asOpt.value
-
-      "remove the data for `CompanyPAYE`" in {
-        result.get(CompanyPayeVariationsId(0)) mustNot be(defined)
-      }
-    }
-
-    "`HasCompanyPAYE` is set to `true`" must {
-
-      val result: UserAnswers = answers(false).set(HasCompanyPAYEId(0))(true).asOpt.value
-
-      "no clean up for `CompanyPAYE`" in {
-        result.get(CompanyPayeVariationsId(0)) must be(defined)
-      }
-    }
-
-    "`HasCompanyPAYE` is not present" must {
-
-      val result: UserAnswers = answers().remove(HasCompanyPAYEId(0)).asOpt.value
-
-      "no clean up for `CompanyPAYE`" in {
-        result.get(CompanyPayeVariationsId(0)) mustBe defined
-      }
-    }
-  }
-
 
   "cya" when {
 
     val answers: UserAnswers = UserAnswers().set(CompanyDetailsId(0))(CompanyDetails(name)).flatMap(
-      _.set(HasCompanyPAYEId(0))(true)).asOpt.get
+      _.set(CompanyNoUTRReasonId(0))(reason)).asOpt.get
 
     "in normal mode" must {
 
       "return answers rows with change links" in {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
         implicit val userAnswers: UserAnswers = request.userAnswers
-        HasCompanyPAYEId(0).row(onwardUrl, NormalMode) must equal(answerRowsWithChangeLinks)
+        CompanyNoUTRReasonId(0).row(onwardUrl, NormalMode) must equal(answerRowsWithChangeLinks)
       }
     }
 
@@ -95,7 +59,7 @@ class HasCompanyPAYEIdSpec extends SpecBase {
       "return answers rows with change links" in {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answersNew, PsaId("A0000000"))
         implicit val userAnswers: UserAnswers = request.userAnswers
-        HasCompanyPAYEId(0).row(onwardUrl, UpdateMode) must equal(answerRowsWithChangeLinks)
+        CompanyNoUTRReasonId(0).row(onwardUrl, UpdateMode) must equal(answerRowsWithChangeLinks)
       }
     }
 
@@ -105,7 +69,7 @@ class HasCompanyPAYEIdSpec extends SpecBase {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
         implicit val userAnswers: UserAnswers = request.userAnswers
 
-        HasCompanyPAYEId(0).row(onwardUrl, UpdateMode) mustEqual Nil
+        CompanyNoUTRReasonId(0).row(onwardUrl, UpdateMode) mustEqual Nil
       }
     }
   }

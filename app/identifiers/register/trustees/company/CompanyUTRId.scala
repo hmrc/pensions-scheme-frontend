@@ -20,45 +20,38 @@ import identifiers.TypedIdentifier
 import identifiers.register.trustees.{IsTrusteeNewId, TrusteesId}
 import play.api.i18n.Messages
 import play.api.libs.json.JsPath
+import utils.{CountryOptions, UserAnswers}
 import utils.checkyouranswers.CheckYourAnswers
 import utils.checkyouranswers.CheckYourAnswers.StringCYA
-import utils.{CountryOptions, UserAnswers}
 import viewmodels.AnswerRow
 
-case class NoCompanyNumberId(index: Int) extends TypedIdentifier[String] {
-  override def path: JsPath = TrusteesId(index).path \ NoCompanyNumberId.toString
+case class CompanyUTRId(index: Int) extends TypedIdentifier[String] {
+  override def path: JsPath = TrusteesId(index).path \ CompanyUTRId.toString
 }
 
-object NoCompanyNumberId {
-  override def toString: String = "noCrnReason"
+object CompanyUTRId {
+  override def toString: String = "utr"
 
   implicit def cya(implicit userAnswers: UserAnswers,
                    messages: Messages,
-                   countryOptions: CountryOptions): CheckYourAnswers[NoCompanyNumberId] = {
+                   countryOptions: CountryOptions): CheckYourAnswers[CompanyUTRId] = {
 
-    def label(index: Int) = userAnswers.get(CompanyDetailsId(index)) match {
-      case Some(details) => Some(messages("messages__noCompanyNumber__establisher__heading", details.companyName))
-      case _ => Some(messages("messages__noCompanyNumber__establisher__title"))
-    }
+    val label: String = messages("messages__companyUtr__checkyouranswerslabel")
+    val hiddenLabel = messages("messages__visuallyhidden__companyUTR")
 
-    def hiddenLabel = Some(messages("messages__visuallyhidden__noCompanyNumberReason"))
-
-    new CheckYourAnswers[NoCompanyNumberId] {
-      override def row(id: NoCompanyNumberId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        StringCYA(label(id.index), hiddenLabel)().row(id)(changeUrl, userAnswers)
+    new CheckYourAnswers[CompanyUTRId] {
+      override def row(id: CompanyUTRId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+        StringCYA(Some(label), Some(hiddenLabel))().row(id)(changeUrl, userAnswers)
 
 
-      override def updateRow(id: NoCompanyNumberId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+      override def updateRow(id: CompanyUTRId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
         userAnswers.get(IsTrusteeNewId(id.index)) match {
           case Some(true) => row(id)(changeUrl, userAnswers)
-          case _ => Seq.empty[AnswerRow]
+          case _ => StringCYA(Some(label), Some(hiddenLabel), true)().updateRow(id)(changeUrl, userAnswers)
         }
     }
   }
 
 }
-
-
-
 
 

@@ -20,92 +20,59 @@ import base.SpecBase
 import identifiers.register.trustees.IsTrusteeNewId
 import models._
 import models.requests.DataRequest
-import play.api.libs.json.Json
 import play.api.mvc.AnyContent
 import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.PsaId
-import utils.UserAnswers
 import utils.checkyouranswers.Ops._
+import utils.{CountryOptions, UserAnswers}
 import viewmodels.AnswerRow
 
-class HasCompanyPAYEIdSpec extends SpecBase {
+class CompanyUTRIdSpec extends SpecBase {
 
   val onwardUrl = "onwardUrl"
   val name = "test company name"
-
+  val utr = "1234567890"
+  implicit val countryOptions: CountryOptions = new CountryOptions(environment, frontendAppConfig)
   private val answerRowsWithChangeLinks = Seq(
-    AnswerRow(messages("messages__companyPayeRef__h1", name), List("site.yes"), true, Some(Link("site.change",onwardUrl,
-      Some(messages("messages__visuallyhidden__companyPayeRef", name)))))
+    AnswerRow(messages("messages__companyUtr__checkyouranswerslabel"), List(utr), false, Some(Link("site.change",onwardUrl,
+      Some(messages("messages__visuallyhidden__companyUTR")))))
   )
 
-  "Cleanup" when {
-
-    def answers(hasPaye: Boolean = true): UserAnswers = UserAnswers(Json.obj())
-      .set(HasCompanyPAYEId(0))(hasPaye)
-      .flatMap(_.set(CompanyPayeVariationsId(0))(ReferenceValue("test-paye")))
-      .asOpt.value
-
-    "`HasCompanyPAYE` is set to `false`" must {
-
-      val result: UserAnswers = answers().set(HasCompanyPAYEId(0))(false).asOpt.value
-
-      "remove the data for `CompanyPAYE`" in {
-        result.get(CompanyPayeVariationsId(0)) mustNot be(defined)
-      }
-    }
-
-    "`HasCompanyPAYE` is set to `true`" must {
-
-      val result: UserAnswers = answers(false).set(HasCompanyPAYEId(0))(true).asOpt.value
-
-      "no clean up for `CompanyPAYE`" in {
-        result.get(CompanyPayeVariationsId(0)) must be(defined)
-      }
-    }
-
-    "`HasCompanyPAYE` is not present" must {
-
-      val result: UserAnswers = answers().remove(HasCompanyPAYEId(0)).asOpt.value
-
-      "no clean up for `CompanyPAYE`" in {
-        result.get(CompanyPayeVariationsId(0)) mustBe defined
-      }
-    }
-  }
-
+  private val answerRowsWithoutChangeLink = Seq(
+    AnswerRow(messages("messages__companyUtr__checkyouranswerslabel"), List(utr), false, None))
 
   "cya" when {
 
     val answers: UserAnswers = UserAnswers().set(CompanyDetailsId(0))(CompanyDetails(name)).flatMap(
-      _.set(HasCompanyPAYEId(0))(true)).asOpt.get
+      _.set(CompanyUTRId(0))(utr)).asOpt.get
 
     "in normal mode" must {
 
       "return answers rows with change links" in {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
         implicit val userAnswers: UserAnswers = request.userAnswers
-        HasCompanyPAYEId(0).row(onwardUrl, NormalMode) must equal(answerRowsWithChangeLinks)
+        CompanyUTRId(0).row(onwardUrl, NormalMode) must equal(answerRowsWithChangeLinks)
       }
     }
 
-    "in update mode for new establisher - company paye" must {
+    "in update mode for new establisher - company utr" must {
 
       def answersNew: UserAnswers = answers.set(IsTrusteeNewId(0))(true).asOpt.value
 
       "return answers rows with change links" in {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answersNew, PsaId("A0000000"))
         implicit val userAnswers: UserAnswers = request.userAnswers
-        HasCompanyPAYEId(0).row(onwardUrl, UpdateMode) must equal(answerRowsWithChangeLinks)
+        CompanyUTRId(0).row(onwardUrl, UpdateMode) must equal(answerRowsWithChangeLinks)
       }
     }
 
-    "in update mode for existing establisher - company paye" must {
+    "in update mode for existing establisher - company utr" must {
 
-      "not display any row" in {
+      "display the row without change link" in {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
         implicit val userAnswers: UserAnswers = request.userAnswers
 
-        HasCompanyPAYEId(0).row(onwardUrl, UpdateMode) mustEqual Nil
+        CompanyUTRId(0).row(onwardUrl, UpdateMode) mustEqual answerRowsWithoutChangeLink
       }
     }
   }
