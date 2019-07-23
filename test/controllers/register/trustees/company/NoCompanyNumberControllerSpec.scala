@@ -14,130 +14,90 @@
  * limitations under the License.
  */
 
-package controllers.register.establishers.company
+package controllers.register.trustees.company
 
-import akka.stream.Materializer
-import com.google.inject.Inject
-import config.FrontendAppConfig
-import controllers.ReasonController
+import base.CSRFRequest
+import controllers.ControllerSpecBase
+import controllers.actions.{AuthAction, DataRetrievalAction, FakeAuthAction}
 import forms.register.NoCompanyNumberFormProvider
-import identifiers.TypedIdentifier
-import models.NormalMode
-import models.requests.DataRequest
-import org.scalatest.concurrent.ScalaFutures
-import org.scalatest.{MustMatchers, OptionValues, WordSpec}
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
-import play.api.i18n.MessagesApi
+import models.{Index, NormalMode}
+import org.scalatest.MustMatchers
+import play.api.Application
+import play.api.http.Writeable
 import play.api.inject.bind
-import play.api.inject.guice.GuiceApplicationBuilder
-import play.api.mvc.{AnyContent, Call, Request, Result}
+import play.api.mvc.{Call, Request, Result}
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.{contentAsString, redirectLocation, status, _}
 import services.{FakeUserAnswersService, UserAnswersService}
-import uk.gov.hmrc.domain.PsaId
-import utils.{FakeNavigator, Navigator, UserAnswers}
-import viewmodels.ReasonViewModel
+import utils.annotations.TrusteesCompany
+import utils.{FakeNavigator, Navigator}
+import viewmodels.{Message, ReasonViewModel}
 import views.html.reason
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.Future
 
-class NoCompanyNumberControllerSpec extends WordSpec with MustMatchers with OptionValues with ScalaFutures with GuiceOneAppPerSuite {
+class NoCompanyNumberControllerSpec extends ControllerSpecBase with MustMatchers with CSRFRequest {
 
   import NoCompanyNumberControllerSpec._
+  "NoCompanyNumberController" must {
 
-  override lazy val app = new GuiceApplicationBuilder()
-    .overrides(
-    bind[Navigator].toInstance(FakeNavigator),
-    bind[UserAnswersService].toInstance(FakeUserAnswersService)
-  ).build()
-
-  implicit val materializer: Materializer = app.materializer
-
-  val appConfig = app.injector.instanceOf[FrontendAppConfig]
-  val formProvider = app.injector.instanceOf[NoCompanyNumberFormProvider]
-  val request = FakeRequest()
-  val messages = app.injector.instanceOf[MessagesApi].preferred(request)
-  val controller = app.injector.instanceOf[TestController]
-
-  "NoCompanyNumberController" when {
-
-    "calling get method" must {
-
-      "return a successful result when there is no existing answer" in {
-          val result = controller.onPageLoad(viewModel, UserAnswers())
-          status(result) mustEqual OK
-          contentAsString(result) mustEqual reason(
-            appConfig,
-            formProvider("test company")(messages),
-            viewModel,
-            None)(request, messages).toString
-      }
-
-      "return a successful result when there is an existing answer" in {
-          val answers = UserAnswers().set(FakeIdentifier)("123456789").get
-          val result = controller.onPageLoad(viewModel, answers)
-          status(result) mustEqual OK
-          contentAsString(result) mustEqual reason(
-            appConfig,
-            formProvider("test company")(messages).fill("123456789"),
-            viewModel,
-            None
-          )(request, messages).toString
-      }
-
+    "render the view correctly on a GET request" in {
+      requestResult(
+        implicit app => addToken(FakeRequest(controllers.register.trustees.company.routes.NoCompanyNumberController.onPageLoad(NormalMode, firstIndex, None))),
+        (request, result) => {
+          status(result) mustBe OK
+          contentAsString(result) mustBe reason(frontendAppConfig, form, viewModel, None)(request, messages).toString()
+        }
+      )
     }
 
-    "calling post method" must {
-
-      "return a redirect when the submitted data is valid" in {
-          val request = FakeRequest().withFormUrlEncodedBody(("reason", "123456789"))
-          val result = controller.onSubmit(viewModel, UserAnswers(), request)
-          status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual "www.example.com"
-          FakeUserAnswersService.verify(FakeIdentifier, "123456789")
-      }
-
-      "return a bad request when the submitted data is invalid" in {
-          val request = FakeRequest().withFormUrlEncodedBody(("reason", "123456789{0}12345"))
-          val result = controller.onSubmit(viewModel, UserAnswers(), request)
-          status(result) mustEqual BAD_REQUEST
-          contentAsString(result) mustEqual reason(
-            appConfig,
-            formProvider("test company")(messages).bind(Map("reason" -> "123456789{0}12345")),
-            viewModel,
-            None
-          )(request, messages).toString
-      }
+    "redirect to the next page on a POST request" in {
+      requestResult(
+        implicit app => addToken(FakeRequest(controllers.register.trustees.company.routes.NoCompanyNumberController.onSubmit(NormalMode, firstIndex, None))
+          .withFormUrlEncodedBody(("reason", "blaa"))),
+        (_, result) => {
+          status(result) mustBe SEE_OTHER
+          redirectLocation(result) mustBe Some(onwardRoute.url)
+        }
+      )
     }
+
   }
-}
 
+}
 
 object NoCompanyNumberControllerSpec extends NoCompanyNumberControllerSpec {
 
-  object FakeIdentifier extends TypedIdentifier[String]
+  val form = new NoCompanyNumberFormProvider()("test company name")
+  val firstIndex = Index(0)
+
+  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
   val viewModel = ReasonViewModel(
-    postCall = Call("GET", "www.example.com"),
-    title = "title",
-    heading = "heading"
+    postCall = controllers.register.trustees.company.routes.NoCompanyNumberController.onSubmit(NormalMode, firstIndex, None),
+    title = Message("messages__companyNoCompanyNumber__establisher__title"),
+    heading = Message("messages__noCompanyNumber__establisher__heading", "test company name"),
+    srn = None
   )
 
-  class TestController @Inject()(
-                                  override val appConfig: FrontendAppConfig,
-                                  override val messagesApi: MessagesApi,
-                                  override val userAnswersService: UserAnswersService,
-                                  override val navigator: Navigator,
-                                  val formProvider: NoCompanyNumberFormProvider
-                                )(implicit val ec: ExecutionContext) extends ReasonController {
+  private def requestResult[T](request: Application => Request[T], test: (Request[_], Future[Result]) => Unit)
+                              (implicit writeable: Writeable[T]): Unit = {
 
-    def onPageLoad(viewModel: ReasonViewModel, answers: UserAnswers): Future[Result] = {
-      get(FakeIdentifier, viewModel, formProvider("test company"))(DataRequest(FakeRequest(), "cacheId", answers, PsaId("A0000000")))
-    }
-
-    def onSubmit(viewModel: ReasonViewModel, answers: UserAnswers, fakeRequest: Request[AnyContent]): Future[Result] = {
-      post(FakeIdentifier, NormalMode, viewModel, formProvider("test company"))(DataRequest(fakeRequest, "cacheId", answers, PsaId("A0000000")))
+    running(_.overrides(
+      bind[AuthAction].to(FakeAuthAction),
+      bind[DataRetrievalAction].toInstance(getMandatoryTrusteeCompany),
+      bind(classOf[Navigator]).qualifiedWith(classOf[TrusteesCompany]).toInstance(new FakeNavigator(onwardRoute)),
+      bind[UserAnswersService].toInstance(FakeUserAnswersService)
+    )) {
+      app =>
+        val req = request(app)
+        val result = route[T](app, req).value
+        test(req, result)
     }
   }
+
 }
+
+
+
 
