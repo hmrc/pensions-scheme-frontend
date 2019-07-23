@@ -19,9 +19,8 @@ package controllers.register.trustees.company
 import controllers.ControllerSpecBase
 import controllers.actions.{DataRetrievalAction, FakeAuthAction, _}
 import controllers.behaviours.ControllerAllowChangeBehaviour
-import identifiers.register.establishers.company._
+import identifiers.register.trustees.company._
 import models.Mode.checkMode
-import models.register.DeclarationDormant
 import models.requests.DataRequest
 import models.{Index, NormalMode, _}
 import org.scalatest.OptionValues
@@ -82,7 +81,7 @@ class CheckYourAnswersCompanyDetailsControllerSpec extends ControllerSpecBase wi
         contentAsString(result) mustBe
           viewAsString(companyDetailsAddLinksValues(request), UpdateMode, srn, postUrlUpdateMode)
       }
-    }
+     }
 
     "on Submit" must {
       "redirect to next page " in {
@@ -144,7 +143,7 @@ object CheckYourAnswersCompanyDetailsControllerSpec extends ControllerSpecBase w
   private def companyPayeVariationsRoute(mode: Mode, srn: Option[String]) =
     routes.CompanyPayeVariationsController.onPageLoad(checkMode(mode), 0, srn).url
 
-  private val fullAnswersYes = emptyAnswers
+  private val fullAnswers = emptyAnswers
     .set(HasCompanyNumberId(0))(true).flatMap(
     _.set(CompanyRegistrationNumberVariationsId(0))(ReferenceValue(crn, isEditable = true)).flatMap(
       _.set(HasCompanyUTRId(0))(true).flatMap(
@@ -159,12 +158,10 @@ object CheckYourAnswersCompanyDetailsControllerSpec extends ControllerSpecBase w
     .set(HasCompanyNumberId(0))(false).flatMap(
     _.set(NoCompanyNumberId(0))(reason).flatMap(
       _.set(HasCompanyUTRId(0))(false).flatMap(
-        _.set(NoCompanyUTRId(0))(reason).flatMap(
+        _.set(CompanyNoUTRReasonId(0))(reason).flatMap(
           _.set(HasCompanyVATId(0))(false).flatMap(
             _.set(HasCompanyPAYEId(0))(false)
           ))))).asOpt.value
-
-  private val fullAnswers = fullAnswersYes.set(IsCompanyDormantId(0))(DeclarationDormant.No).asOpt.value
 
   def postUrl: Call = routes.CheckYourAnswersCompanyDetailsController.onSubmit(NormalMode, index, None)
 
