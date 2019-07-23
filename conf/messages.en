@@ -1532,6 +1532,8 @@ messages__whatYouWillNeedTrusteeCompany__item3 = VAT registration number
 messages__whatYouWillNeedTrusteeCompany__item4 = employer PAYE reference
 messages__whatYouWillNeedTrusteeCompany__p2 = You will also need to tell us if the company has been dormant at any time in the last 12 months.
 
+messages__tradingAtLeastOneYear__error = Select yes if {0} has been trading for at least 1 year
+
 messages__hasCompanyNumber__title = Does the establisher have a company number?
 messages__hasCompanyNumber__h1 = Does {0} have a company number?
 messages__hasCompanyNumber__p1 = You can find this on the company’s certificate of incorporation or on any official letters from Companies House.
