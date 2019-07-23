@@ -616,7 +616,6 @@ messages__checkYourAnswers__trustees__company__vat = Does the trustee have a VAT
 messages__checkYourAnswers__trustees__company__paye = Does the trustee have a PAYE employer reference number?
 messages__checkYourAnswers__trustees__company__utr = Does the trustee have a Unique Taxpayer Reference number?
 messages__checkYourAnswers__trustees__company__utr_no_reason = Why the trustee does not have a Unique Taxpayer Reference number
-messages__checkYourAnswers__trustees__company__address_years = How long has the company been at this address?
 
 messages__checkYourAnswers__establishers__company__number = Company number
 
