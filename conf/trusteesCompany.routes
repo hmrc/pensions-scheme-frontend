@@ -167,10 +167,10 @@ POST       /:index/company/check-your-answers-company-details                   
 GET        /:index/company/:mode/check-your-answers-company-details/:srn               controllers.register.trustees.company.CheckYourAnswersCompanyDetailsController.onPageLoad(mode: Mode,index: Index, srn: Option[String])
 POST       /:index/company/:mode/check-your-answers-company-details/:srn               controllers.register.trustees.company.CheckYourAnswersCompanyDetailsController.onSubmit(mode: Mode,index: Index, srn: Option[String])
 
-GET        /:index/company/company-address                                             controllers.register.trustees.company.WhatYouWillNeedCompanyAddressController.onPageLoad(mode: Mode = NormalMode, index: Index, srn: Option[String] = None)
-POST       /:index/company/company-address                                             controllers.register.trustees.company.WhatYouWillNeedCompanyAddressController.onSubmit(mode: Mode = NormalMode, index: Index, srn: Option[String] = None)
-GET        /:index/company/:mode/company-address/:srn                                  controllers.register.trustees.company.WhatYouWillNeedCompanyAddressController.onPageLoad(mode: Mode,index: Index, srn: Option[String])
-POST       /:index/company/:mode/company-address/:srn                                  controllers.register.trustees.company.WhatYouWillNeedCompanyAddressController.onSubmit(mode: Mode,index: Index, srn: Option[String])
+GET        /:index/company/address                                             controllers.register.trustees.company.WhatYouWillNeedCompanyAddressController.onPageLoad(mode: Mode = NormalMode, index: Index, srn: Option[String] = None)
+POST       /:index/company/address                                             controllers.register.trustees.company.WhatYouWillNeedCompanyAddressController.onSubmit(mode: Mode = NormalMode, index: Index, srn: Option[String] = None)
+GET        /:index/company/:mode/address/:srn                                  controllers.register.trustees.company.WhatYouWillNeedCompanyAddressController.onPageLoad(mode: Mode,index: Index, srn: Option[String])
+POST       /:index/company/:mode/address/:srn                                  controllers.register.trustees.company.WhatYouWillNeedCompanyAddressController.onSubmit(mode: Mode,index: Index, srn: Option[String])
 
 GET        /:index/company/trading-time                                                controllers.register.trustees.company.HasBeenTradingCompanyController.onPageLoad(mode: Mode = NormalMode, index: Index, srn: Option[String] = None)
 POST       /:index/company/trading-time                                                controllers.register.trustees.company.HasBeenTradingCompanyController.onSubmit(mode: Mode = NormalMode, index: Index, srn: Option[String] = None)
