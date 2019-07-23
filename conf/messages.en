@@ -1549,6 +1549,12 @@ messages__hasCompanyVat__h1 = Is {0} registered for VAT?
 messages__hasCompanyVat__p1 = This is 9 numbers, sometimes with ‘GB’ at the start, for example 123456789 or GB123456789. You can find it on {0}’s VAT registration certificate.
 messages__hasCompanyVat__error__required = Select yes if the {0} is registered for VAT
 
+messages__trustee__address = {0}’s address
+messages__visuallyhidden__trustee__address = Change {0}’s address
+messages__trusteeHowLongAtAddress__title = Has {0} been at their address for at least 1 year?
+messages__visuallyhidden__trusteeHowLongAtAddress__title = Change how long {0} has been at their address
+# HERE
+
 messages__hasBeenTradingCompany__title = Has the establisher been trading for more than a year?
 messages__hasBeenTradingCompany__h1 =  Has {0} been trading for more than a year?
 messages__hasBeenTradingCompany__error__required = Select yes if {0} has been trading  for more than a year

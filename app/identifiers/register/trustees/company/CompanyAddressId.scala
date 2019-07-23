@@ -19,8 +19,9 @@ package identifiers.register.trustees.company
 import identifiers._
 import identifiers.register.trustees.TrusteesId
 import models.address.Address
+import play.api.i18n.Messages
 import play.api.libs.json._
-import utils.CountryOptions
+import utils.{CountryOptions, UserAnswers}
 import utils.checkyouranswers.{AddressCYA, CheckYourAnswers}
 
 case class CompanyAddressId(index: Int) extends TypedIdentifier[Address] {
@@ -30,6 +31,25 @@ case class CompanyAddressId(index: Int) extends TypedIdentifier[Address] {
 object CompanyAddressId {
   override def toString: String = "companyAddress"
 
-  implicit def cya(implicit countryOptions: CountryOptions): CheckYourAnswers[CompanyAddressId] =
-    AddressCYA(changeAddress = "messages__visuallyhidden__trustee__address")()
+  implicit def cya(implicit countryOptions: CountryOptions, messages: Messages, ua:UserAnswers): CheckYourAnswers[CompanyAddressId] = {
+
+//    def label(index: Int) = ua.get(CompanyDetailsId(index)) match {
+//      case Some(details) => messages("messages__visuallyhidden__trustee__address", details.companyName)
+//      case _ => "messages__checkYourAnswers__trustees__company__address_years"
+//    }
+//
+//    def changeAddressYears(index: Int) = ua.get(CompanyDetailsId(index)) match {
+//      case Some(details) => messages("messages__visuallyhidden__trustee__address", details.companyName)
+//      case _ => messages("messages__visuallyhidden__trustee__address_years")
+//    }
+
+//    AddressCYA(
+//      label(id.index), changeAddressYears(id.index)
+//    )()
+
+    AddressCYA(
+      label = messages("messages__visuallyhidden__trustee__address", "aaa"),
+      changeAddress = messages("", "aa")
+    )()
+  }
 }
