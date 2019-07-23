@@ -295,14 +295,14 @@ class HsTaskListHelperVariationsSpec extends HsTaskListHelperBehaviour {
                 messages("messages__schemeTaskList__sectionEstablishersCompany_add_details", "test company"),
                 establisherCompanyRoutes.WhatYouWillNeedCompanyDetailsController.onPageLoad(UpdateMode, srn, 1).url), None),
               EntitySpoke(Link(
-                messages("messages__schemeTaskList__sectionEstablishersCompany_add_address", "test company"),
-                establisherCompanyRoutes.WhatYouWillNeedCompanyAddressController.onPageLoad(UpdateMode, srn, 1).url), None),
+                messages("messages__schemeTaskList__sectionEstablishersCompany_change_address", "test company"),
+                establisherCompanyRoutes.CheckYourAnswersCompanyAddressController.onPageLoad(UpdateMode, srn, 1).url), None),
               EntitySpoke(Link(
                 messages("messages__schemeTaskList__sectionEstablishersCompany_add_contact", "test company"),
                 establisherCompanyRoutes.WhatYouWillNeedCompanyContactDetailsController.onPageLoad(UpdateMode, srn, 1).url), None),
               EntitySpoke(Link(
-                messages("messages__schemeTaskList__sectionEstablishersCompany_add_directors", "test company"),
-                controllers.register.establishers.company.director.routes.WhatYouWillNeedDirectorController.onPageLoad(UpdateMode, srn, 1).url, None))
+                messages("messages__schemeTaskList__sectionEstablishersCompany_change_directors", "test company"),
+                controllers.register.establishers.company.routes.AddCompanyDirectorsController.onPageLoad(UpdateMode, srn, 1).url, None))
             ), Some("test company")),
 
           SchemeDetailsTaskListEntitySection(None, Seq(EntitySpoke(Link(messages("messages__schemeTaskList__persons_details__link_text", "test partnership"),

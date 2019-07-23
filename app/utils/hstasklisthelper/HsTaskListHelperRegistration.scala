@@ -28,7 +28,7 @@ class HsTaskListHelperRegistration(answers: UserAnswers,
                                    featureSwitchManagementService: FeatureSwitchManagementService
                                   )(implicit messages: Messages) extends HsTaskListHelper(answers, featureSwitchManagementService) {
 
-  override protected lazy val beforeYouStartLinkText = messages("messages__schemeTaskList__before_you_start_link_text")
+  override protected lazy val beforeYouStartLinkText: String = messages("messages__schemeTaskList__before_you_start_link_text")
 
   def taskList: SchemeDetailsTaskList = {
     val schemeName = answers.get(SchemeNameId).getOrElse("")
@@ -60,8 +60,8 @@ class HsTaskListHelperRegistration(answers: UserAnswers,
     val benefitsAndInsuranceLink = userAnswers.get(IsAboutBenefitsAndInsuranceCompleteId) match {
       case Some(true) => Link(aboutBenefitsAndInsuranceLinkText,
         controllers.routes.CheckYourAnswersBenefitsAndInsuranceController.onPageLoad(NormalMode, None).url)
-      case Some(false) => Link(aboutBenefitsAndInsuranceLinkText, controllers.routes.WhatYouWillNeedBenefitsInsuranceController.onPageLoad.url)
-      case None => Link(aboutBenefitsAndInsuranceAddLinkText, controllers.routes.WhatYouWillNeedBenefitsInsuranceController.onPageLoad.url)
+      case Some(false) => Link(aboutBenefitsAndInsuranceLinkText, controllers.routes.WhatYouWillNeedBenefitsInsuranceController.onPageLoad().url)
+      case None => Link(aboutBenefitsAndInsuranceAddLinkText, controllers.routes.WhatYouWillNeedBenefitsInsuranceController.onPageLoad().url)
     }
 
     val bankDetailsLink = userAnswers.get(IsAboutBankDetailsCompleteId) match {
@@ -85,7 +85,7 @@ class HsTaskListHelperRegistration(answers: UserAnswers,
     listOf(userAnswers.allTrustees, userAnswers)
 
   protected def listOf(sections: Seq[Entity[_]], userAnswers: UserAnswers): Seq[SchemeDetailsTaskListSection] = {
-    val notDeletedElements = for ((section, index) <- sections.zipWithIndex) yield {
+    val notDeletedElements = for ((section, _) <- sections.zipWithIndex) yield {
       if (section.isDeleted) None else {
         Some(SchemeDetailsTaskListSection(
           Some(section.isCompleted),
@@ -124,10 +124,10 @@ class HsTaskListHelperRegistration(answers: UserAnswers,
   }
 
   protected[utils] def addEstablisherHeader(userAnswers: UserAnswers, mode: Mode, srn: Option[String]): Option[SchemeDetailsTaskListHeader] = {
-    if (userAnswers.allEstablishersAfterDelete.isEmpty) {
+    if (userAnswers.allEstablishersAfterDelete(isHnSEnabled).isEmpty) {
       Some(SchemeDetailsTaskListHeader(None, Some(Link(addEstablisherLinkText,
         controllers.register.establishers.routes.EstablisherKindController.onPageLoad(mode,
-          userAnswers.allEstablishers.size, srn).url)), None))
+          userAnswers.allEstablishers(isHnSEnabled).size, srn).url)), None))
     } else {
       Some(SchemeDetailsTaskListHeader(None, Some(Link(changeEstablisherLinkText,
         controllers.register.establishers.routes.AddEstablisherController.onPageLoad(mode, srn).url)), None))
