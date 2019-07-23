@@ -41,7 +41,7 @@ class HasCompanyPAYEControllerSpec  extends ControllerSpecBase {
 
   val viewModel = CommonFormWithHintViewModel(
     postCall,
-    title = Message("messages__companyPayeRef__title"),
+    title = Message("messages__companyPayeRef__trustee_title"),
     heading = Message("messages__companyPayeRef__h1", "test company name"),
     hint = Some(Message("messages__companyPayeRef__p1")),
     formFieldName = Some("hasPaye")
