@@ -16,10 +16,8 @@
 
 package controllers.register.establishers.company.director
 
-import services.FakeUserAnswersService
 import controllers.ControllerSpecBase
 import controllers.actions._
-import controllers.register.establishers.company.routes.AddCompanyDirectorsController
 import forms.register.establishers.company.director.ConfirmDeleteDirectorFormProvider
 import identifiers.register.establishers.company.CompanyDetailsId
 import identifiers.register.establishers.company.director.DirectorDetailsId
@@ -32,7 +30,8 @@ import play.api.libs.json._
 import play.api.mvc.AnyContentAsFormUrlEncoded
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import utils.{FakeNavigator, FakeSectionComplete}
+import services.FakeUserAnswersService
+import utils.{FakeFeatureSwitchManagementService, FakeNavigator, FakeSectionComplete}
 import views.html.register.establishers.company.director.confirmDeleteDirector
 
 class ConfirmDeleteDirectorControllerSpec extends ControllerSpecBase {
@@ -184,7 +183,8 @@ object ConfirmDeleteDirectorControllerSpec extends ControllerSpecBase {
       FakeAllowAccessProvider(),
       new DataRequiredActionImpl,
       FakeSectionComplete,
-      formProvider
+      formProvider,
+      new FakeFeatureSwitchManagementService(false)
     )
 
   private def viewAsString(form: Form[_] = form) = confirmDeleteDirector(

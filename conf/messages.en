@@ -313,7 +313,7 @@ messages__common__pick_country = Select a country
 
 messages__uk_bank_account__title = Does the scheme have a UK bank account?
 
-messages__establishers__add__title = Scheme Establishers
+messages__establishers__add__title = Establishers
 messages__establishers__add_legend_more = Do you want to add another establisher?
 messages__establishers__add_hint = You must tell us about all your scheme establishers.
 messages__establishers__add_limit = You have added the maximum number of establishers
@@ -328,7 +328,6 @@ messages__error__middle_name_invalid = Enter the valid middle name
 
 messages__establisherNino__title = Does the establisher have a National Insurance number?
 messages__establisher__no_nino = Tell us why the establisher does not have a National Insurance number
-messages__common__nino = National Insurance number
 messages__common__nino_hint = For example ’QQ 12 34 56 C’
 messages__error__has_nino_establisher = Select yes if the establisher has a National Insurance number
 messages__error__nino = Enter the National Insurance number
@@ -388,8 +387,10 @@ messages__error__ct_utr_invalid = Enter a valid 10 digit Corporation Tax Unique 
 messages__common__enrol_test__title = Enrol PSA to access Scheme Reg
 messages__common__psa_name = PSA Name
 
-messages__company_address_years__title = Has {0} used this registered address for at least 1 year?
+messages__company_address_years__title =  Has the establisher used this contact address for at least 1 year?
+messages__company_address_years__h1 = Has {0} used this contact address for at least 1 year?
 messages__company_address_years__form_error = Select yes if {0} has used this registered address for at least 1 year
+
 messages__common__company_details__title = Company details
 messages__common__company_name = Company name
 messages__common__vat = VAT Registration number (optional)
@@ -482,6 +483,8 @@ messages__directorDetails__heading = Company director
 
 messages__directorName__title = What is the director’s name?
 messages__directorName__heading = What is the director’s name?
+messages__directorName__cya = Director's name
+messages__visuallyhidden__directorName = Change name of director
 
 messages__companyPreviousAddressPostcodeLookup__title = Previous address of the company
 messages__companyPreviousAddressPostcodeLookup__heading = Previous address of the company
@@ -505,9 +508,7 @@ messages__company__paye_error_invalid = Enter a valid PAYE number
 
 messages__companyPreviousAddress__checkYourAnswersLabel = Previous Address
 
-messages__director_nino_question_cya_label = Does the director have a National Insurance number?
-messages__director_nino_reason_cya_label = Why the director does not have a National Insurance number?
-messages__director_nino_cya_label = National Insurance number
+messages__direc_nino_cya_label = National Insurance number
 messages__director_nino__title = Does the director have a National Insurance number?
 messages__director_no_nino = Tell us why the director does not have a National Insurance number
 messages__error__has_nino_director = Select yes if the director has a National Insurance number
@@ -539,12 +540,27 @@ messages__error__no_sautr_director = You need to tell us why the director does n
 
 messages__director__cya__details_heading = Company director details
 messages__director__cya__contact__details_heading = Contact details for director
-
-messages__director__cya__utr_yes_no = Does the director have a Self Assessment Unique Taxpayer Reference number?
+messages__director__cya__name = Director’s name
+messages__director__cya__dob = What is {0}’s date of birth?
+messages__visuallyhidden__cya__dob = What is the director’s date of birth?
+messages__director__cya__nino = Does {0} have a National Insurance number?
+messages__director__cya__nino__fallback = Does the director have a National Insurance number?
+messages__director__cya__nino_reason = Why does {0} not have a National Insurance Number?
+messages__director__cya__nino_reason__fallback = Why the director does not have a National Insurance number?
+messages__director__cya__utr_yes_no = Does {0} have a UTR?
 messages__director__cya__utr = Unique Taxpayer Reference number
-messages__director__cya__utr_no_reason = Why the director does not have a Self Assessment Unique Taxpayer Reference number?
+messages__director__cya__utr_no_reason = Why does {0} not have a UTR?
+messages__director__cya__utr_no_reason__fallback = Why the director does not have a Self Assessment Unique Taxpayer Reference number?
+messages__director__cya__address_years = Has {0} been at their address for at least 1 year?
+messages__director__cya__address_years__fallback = How long has the director lived at this address?
+messages__director__cya__email_address = What is {0}’s email address?
+messages__director__cya__email_address__fallback = Email address
+messages__director__cya__phone = What is {0}’s phone number?
+messages__director__cya__phone__fallback = Phone number
 
-messages__confirmDeleteDirector__title = Confirm deletion
+messages__director__cya__utr_yes_no_fallback = Does the director have a Self Assessment Unique Taxpayer Reference number?
+
+messages__confirmDeleteDirector__title =  Are you sure you want to delete this establisher?
 messages__confirmDeleteDirector__heading = Are you sure you want to delete {0}?
 
 messages__directorAddressConfirm__title = Confirm the director’s address
@@ -831,7 +847,7 @@ messages__deleteScheme__title = Are you sure you want to delete this scheme?
 messages__deleteScheme__heading = Are you sure you want to delete {0} scheme?
 messages__deleteScheme__error__required = Select yes if you want to cancel your registration
 
-messages__confirmDeleteEstablisher__title = Confirm deletion
+messages__confirmDeleteEstablisher__title = Are you sure you want to delete this establisher?
 messages__confirmDeleteEstablisher__heading = Are you sure you want to delete {0}?
 messages__confirmDeleteEstablisher__companyHint = This will delete any directors you have added.
 messages__confirmDeleteEstablisher__partnershipHint = This will delete any partners you have added.
@@ -1229,7 +1245,7 @@ messages__workingKnowledge__p2 = For example, if you are an employer, or a direc
 messages__workingKnowledge__p3 = If you do not have that knowledge, you must be helped by a pension practitioner or provider who has the knowledge. You will need to tell HMRC who that is.
 messages__workingKnowledge__error__required = Select yes if you have working knowledge of pensions and pensions tax legislation
 
-messages__is_dormant__title = Has the establisher been dormant in the last 12 months?
+messages__is_dormant__title = Has the company been dormant in the last 12 months?
 messages__is_dormant__heading = Have {0} been dormant in the last 12 months?
 messages__is_dormant__yes = Yes
 messages__is_dormant__no = No
@@ -1494,7 +1510,7 @@ messages__whatYouWillNeedEstablisherCompanyContact__item1 = email address
 messages__whatYouWillNeedEstablisherCompanyContact__item2 = phone number
 messages__whatYouWillNeedEstablisherCompanyContact__item3 = These should be details used for other HMRC services. These will not be used to contact the company.
 
-messages__whatYouWillNeedDirectors__title = what you will need
+messages__whatYouWillNeedDirectors__title = Directors
 messages__whatYouWillNeedDirectors__h1 = Directors
 messages__whatYouWillNeedDirectors__p1 = We need to know about every director associated with the company you’re registering.
 messages__whatYouWillNeedDirectors__p2 = You will need to tell us each director’s:
@@ -1639,6 +1655,7 @@ messages__establisher_email__hint = We will only use this to contact about pensi
 
 messages__directorNoNinoReason__title = Why does the director not have a National Insurance number?
 messages__directorNoNinoReason__heading = Why does {0} not have a National Insurance number?
+messages__directorNoNinoReason__cya_fallback = Why does the director not have a National Insurance number?
 
 messages__directorHasNino__title =  Does the director have a National Insurance number?
 messages__directorHasNino__h1 =  Does {0} have a National Insurance number?
@@ -1649,33 +1666,39 @@ messages__directorUtr__heading = What is {0}’s UTR?
 
 messages__hasDirectorUtr__title = Does the director have a UTR?
 messages__hasDirectorUtr__h1 = Does {0} have a Unique Taxpayer Reference (UTR)?
+messages__hasDirectorUtr__cya = Does {0} have a UTR?
+messages__hasDirectorUtr__cya_fallback = Does the director have a UTR?
 messages__hasDirectorUtr__p1 = This is a 10-digit or 13-digit number. You can find it on tax returns and other documents from HMRC. It might be called ‘reference’, ‘UTR’ or ‘official use’.
 messages__hasDirectorUtr__error__required = Select yes if {0} has a Unique Taxpayer Reference (UTR)
 
 messages__noDirectorUtr__title = Why does the director not have a UTR?
 messages__noDirectorUtr__heading = Why does {0} not have a UTR?
+messages__noDirectorUtr__cya_fallback = Why does the director not have a UTR?
 
-messages__establisherPostCode__title = What is establisher’s postcode?
+messages__establisherPostCode__title = What is the establisher’s postcode?
 messages__establisherPostCode__h1 = What is {0}’s postcode?
 
-messages__establisherPreviousPostCode__title = What was establisher’s previous postcode?
+messages__establisherPreviousPostCode__title = What was the establisher’s previous postcode?
 messages__establisherPreviousPostCode__h1 = What was {0}’s previous postcode?
 
 messages__establisherSelectAddress__title = Select the address
-messages__establisherSelectAddress__h1 = What is {0}’s address?
+messages__establisherSelectAddress__h1 = Select the address
 
 messages__establisherPreviousSelectAddress__title = Select the previous address
-messages__establisherPreviousSelectAddress__h1 = What was {0}’s previous address?
+messages__establisherPreviousSelectAddress__h1 = Select the previous address
 
-messages__establisherConfirmAddress__title = Confirm establisher’s address
+messages__establisherConfirmAddress__title = Confirm the establisher’s address
 messages__establisherConfirmAddress__h1 = Confirm {0}’s address
 messages__establisherConfirmAddress__cya_label = {0}’s address
 messages__establisherConfirmAddress__cya_visually_hidden_label = contact address
 
-messages__establisherPreviousConfirmAddress__title = Confirm establisher’s previous address
+messages__establisherPreviousConfirmAddress__title = Confirm the establisher’s previous address
 messages__establisherPreviousConfirmAddress__h1 = Confirm {0}’s previous address
 messages__establisherPreviousConfirmAddress__cya_label = {0}’s previous address
 messages__establisherPreviousConfirmAddress__cya_visually_hidden_label = previous contact address
 
 
 messages__director_email__title =  What is the director’s email address?
+
+messages__establisher__type__title = What kind of establisher are you adding?
+messages__establisher__type__h1 = What kind of establisher are you adding?

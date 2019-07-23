@@ -17,12 +17,12 @@
 package controllers.register.establishers.company.director
 
 import audit.AuditService
-import config.FrontendAppConfig
+import config.{FeatureSwitchManagementService, FrontendAppConfig}
 import controllers.Retrievals
 import controllers.actions._
 import controllers.address.ManualAddressController
 import forms.address.AddressFormProvider
-import identifiers.register.establishers.company.director.{DirectorDetailsId, DirectorPreviousAddressId, DirectorPreviousAddressListId, DirectorPreviousAddressPostcodeLookupId}
+import identifiers.register.establishers.company.director.{DirectorDetailsId, DirectorNameId, DirectorPreviousAddressId, DirectorPreviousAddressListId, DirectorPreviousAddressPostcodeLookupId}
 import javax.inject.Inject
 import models.address.Address
 import models.{Index, Mode}
@@ -31,7 +31,7 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
 import utils.annotations.EstablishersCompanyDirector
-import utils.{CountryOptions, Navigator}
+import utils.{CountryOptions, Navigator, Toggles}
 import viewmodels.Message
 import viewmodels.address.ManualAddressViewModel
 
@@ -48,7 +48,8 @@ class DirectorPreviousAddressController @Inject()(
                                                    requireData: DataRequiredAction,
                                                    val formProvider: AddressFormProvider,
                                                    val countryOptions: CountryOptions,
-                                                   val auditService: AuditService
+                                                   val auditService: AuditService,
+                                                   featureSwitchManagementService: FeatureSwitchManagementService
                                                  )(implicit val ec: ExecutionContext) extends ManualAddressController with I18nSupport with Retrievals {
 
   protected val form: Form[Address] = formProvider()
@@ -68,18 +69,26 @@ class DirectorPreviousAddressController @Inject()(
   private def viewmodel(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Retrieval[ManualAddressViewModel] =
     Retrieval {
       implicit request =>
-        DirectorDetailsId(establisherIndex, directorIndex).retrieve.right.map {
-          director =>
+        directorName(establisherIndex, directorIndex).retrieve.right.map {
+          name =>
             ManualAddressViewModel(
               postCall(mode, establisherIndex, directorIndex, srn),
               countryOptions.options,
               title = Message(title),
-              heading = Message(heading, director.fullName  ),
-              secondaryHeader = Some(director.fullName),
+              heading = Message(heading, name),
+              secondaryHeader = None,
               srn = srn
             )
         }
     }
+
+  val directorName = (establisherIndex: Index, directorIndex: Index) => Retrieval {
+    implicit request =>
+      if (featureSwitchManagementService.get(Toggles.isEstablisherCompanyHnSEnabled))
+        DirectorNameId(establisherIndex, directorIndex).retrieve.right.map(_.fullName)
+      else
+        DirectorDetailsId(establisherIndex, directorIndex).retrieve.right.map(_.fullName)
+  }
 
   def onSubmit(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>

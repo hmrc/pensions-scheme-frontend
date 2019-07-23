@@ -24,7 +24,7 @@ import models.{NormalMode, UpdateMode}
 import org.scalatest.OptionValues
 import play.api.libs.json.Json
 import play.api.mvc.Call
-import utils.UserAnswers
+import utils.{FakeFeatureSwitchManagementService, UserAnswers}
 
 class VariationsNavigatorSpec extends SpecBase with NavigatorBehaviour {
 
@@ -50,7 +50,7 @@ class VariationsNavigatorSpec extends SpecBase with NavigatorBehaviour {
 
 object VariationsNavigatorSpec extends SpecBase with OptionValues {
 
-  private val navigator = new VariationsNavigator(FakeUserAnswersCacheConnector, frontendAppConfig)
+  private val navigator = new VariationsNavigator(FakeUserAnswersCacheConnector, frontendAppConfig, new FakeFeatureSwitchManagementService(false))
   private val emptyAnswers = UserAnswers(Json.obj())
   val srnValue = "S123"
   val srn = Some(srnValue)

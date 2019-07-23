@@ -17,7 +17,7 @@
 package controllers.register.establishers.company.director
 
 import base.CSRFRequest
-import config.FrontendAppConfig
+import config.{FeatureSwitchManagementService, FrontendAppConfig}
 import connectors.AddressLookupConnector
 import controllers.ControllerSpecBase
 import controllers.actions._
@@ -35,7 +35,7 @@ import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.{FakeUserAnswersService, UserAnswersService}
-import utils.{FakeNavigator, Navigator}
+import utils.{FakeFeatureSwitchManagementService, FakeNavigator, Navigator}
 import viewmodels.Message
 import viewmodels.address.PostcodeLookupViewModel
 import views.html.address.postcodeLookup
@@ -61,6 +61,7 @@ class DirectorPreviousAddressPostcodeLookupControllerSpec extends ControllerSpec
   val fakeAddressLookupConnector: AddressLookupConnector = mock[AddressLookupConnector]
   val fakeCacheConnector: UserAnswersService = mock[UserAnswersService]
 
+  val fakeFeatureSwitch = new FakeFeatureSwitchManagementService(false)
 
   lazy val viewmodel = PostcodeLookupViewModel(
     onwardRoute,
@@ -82,7 +83,8 @@ class DirectorPreviousAddressPostcodeLookupControllerSpec extends ControllerSpec
         bind[UserAnswersService].toInstance(fakeCacheConnector),
         bind[AddressLookupConnector].toInstance(fakeAddressLookupConnector),
         bind[AuthAction].to(FakeAuthAction),
-        bind[DataRetrievalAction].to(getMandatoryEstablisherCompanyDirector)
+        bind[DataRetrievalAction].to(getMandatoryEstablisherCompanyDirector),
+        bind[FeatureSwitchManagementService].to(fakeFeatureSwitch)
       )) {
         implicit app =>
 
@@ -123,7 +125,8 @@ class DirectorPreviousAddressPostcodeLookupControllerSpec extends ControllerSpec
         bind[AuthAction].to(FakeAuthAction),
         bind[DataRetrievalAction].to(getMandatoryEstablisherCompanyDirector),
         bind[DataRequiredAction].to(new DataRequiredActionImpl),
-        bind[PostCodeLookupFormProvider].to(formProvider)
+        bind[PostCodeLookupFormProvider].to(formProvider),
+        bind[FeatureSwitchManagementService].to(fakeFeatureSwitch)
       )) {
         app =>
           val result = route(app, fakeRequest).get

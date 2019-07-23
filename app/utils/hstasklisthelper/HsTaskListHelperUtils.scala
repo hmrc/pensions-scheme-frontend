@@ -18,6 +18,7 @@ package utils.hstasklisthelper
 
 
 import controllers.register.establishers.company.{routes => establisherCompanyRoutes}
+import controllers.register.establishers.company.director.{routes => establisherCompanyDirectorRoutes}
 import identifiers.register.establishers.{IsEstablisherNewId, company => establisherCompany}
 import models._
 import models.register.Entity
@@ -28,6 +29,7 @@ import utils.{Enumerable, UserAnswers}
 trait HsTaskListHelperUtils extends Enumerable.Implicits {
 
   implicit val messages: Messages
+  protected val isHnSEnabled: Boolean
 
   sealed trait Spoke
 
@@ -102,7 +104,7 @@ trait HsTaskListHelperUtils extends Enumerable.Implicits {
     case EstablisherCompanyDetails => establisherCompanyRoutes.WhatYouWillNeedCompanyDetailsController.onPageLoad(mode, srn, index)
     case EstablisherCompanyAddress => establisherCompanyRoutes.WhatYouWillNeedCompanyAddressController.onPageLoad(mode, srn, index)
     case EstablisherCompanyContactDetails => establisherCompanyRoutes.WhatYouWillNeedCompanyContactDetailsController.onPageLoad(mode, srn, index)
-    case EstablisherCompanyDirectors => establisherCompanyRoutes.AddCompanyDirectorsController.onPageLoad(mode, srn, index)
+    case EstablisherCompanyDirectors => establisherCompanyDirectorRoutes.WhatYouWillNeedDirectorController.onPageLoad(mode, srn, index)
     case _ => controllers.routes.IndexController.onPageLoad()
   }
 
@@ -112,7 +114,7 @@ trait HsTaskListHelperUtils extends Enumerable.Implicits {
       createSpoke(answers, EstablisherCompanyDetails, mode, srn, name, index, isEstablisherNew),
       createSpoke(answers, EstablisherCompanyAddress, mode, srn, name, index, isEstablisherNew),
       createSpoke(answers, EstablisherCompanyContactDetails, mode, srn, name, index, isEstablisherNew),
-      createDirectorPartnerSpoke(answers.allDirectorsAfterDelete(index), EstablisherCompanyDirectors, mode, srn, name, index)
+      createDirectorPartnerSpoke(answers.allDirectorsAfterDelete(index, isHnSEnabled), EstablisherCompanyDirectors, mode, srn, name, index)
     )
   }
 }

@@ -26,24 +26,27 @@ import views.html.register.establishers.establisherKind
 
 class EstablisherKindViewSpec extends ViewBehaviours {
 
-  private val messageKeyPrefix = "establishers__add"
+  private val messageKeyPrefix = "establisher__type"
   private val postCall = routes.EstablisherKindController.onSubmit _
+  private val srn = Some("srn")
 
   private val form = new EstablisherKindFormProvider()()
 
-  private def createView() = () =>
-    establisherKind(frontendAppConfig, form, NormalMode, Index(1), None, postCall(NormalMode, Index(1), None))(fakeRequest, messages)
+  private def createView(srn: Option[String] = None) = () =>
+    establisherKind(frontendAppConfig, form, srn, Index(1), None, postCall(NormalMode, Index(1), srn))(fakeRequest, messages)
 
   private def createViewUsingForm = (form: Form[_]) =>
-    establisherKind(frontendAppConfig, form, NormalMode, Index(1), None, postCall(NormalMode, Index(1), None))(fakeRequest, messages)
+    establisherKind(frontendAppConfig, form, srn, Index(1), None, postCall(NormalMode, Index(1), None))(fakeRequest, messages)
 
   private def establisherKindOptions = EstablisherKind.options
 
   "EstablisherKind view" when {
     "rendered" must {
-      behave like normalPage(createView(), messageKeyPrefix, messages("messages__establishers__add__title"))
+      behave like normalPage(createView(), messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__h1"))
 
       behave like pageWithReturnLink(createView(), getReturnLink)
+
+      behave like pageWithReturnLinkAndSrn(createView(srn), getReturnLinkWithSrn)
 
       "contain radio buttons for the value" in {
         val doc = asDocument(createViewUsingForm(form))

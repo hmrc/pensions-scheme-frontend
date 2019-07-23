@@ -17,7 +17,7 @@
 package controllers.register.establishers.company.director
 
 import com.google.inject.Inject
-import config.FrontendAppConfig
+import config.{FeatureSwitchManagementService, FrontendAppConfig}
 import controllers.Retrievals
 import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRequiredAction, DataRetrievalAction}
 import controllers.address.AddressListController
@@ -27,7 +27,7 @@ import models.{Index, Mode}
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, Result}
 import services.UserAnswersService
-import utils.Navigator
+import utils.{Navigator, Toggles}
 import utils.annotations.EstablishersCompanyDirector
 import viewmodels.Message
 import viewmodels.address.AddressListViewModel
@@ -42,7 +42,8 @@ class DirectorPreviousAddressListController @Inject()(
                                                        authenticate: AuthAction,
                                                        getData: DataRetrievalAction,
                                                        allowAccess: AllowAccessActionProvider,
-                                                       requireData: DataRequiredAction
+                                                       requireData: DataRequiredAction,
+                                                       featureSwitchManagementService: FeatureSwitchManagementService
                                                      )(implicit val ec: ExecutionContext) extends AddressListController with Retrievals {
 
   def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
@@ -53,16 +54,16 @@ class DirectorPreviousAddressListController @Inject()(
   private def viewmodel(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String])
                        (implicit request: DataRequest[AnyContent]): Either[Future[Result], AddressListViewModel] = {
 
-    (DirectorDetailsId(establisherIndex, directorIndex) and DirectorPreviousAddressPostcodeLookupId(establisherIndex, directorIndex))
+    (directorName(establisherIndex, directorIndex) and DirectorPreviousAddressPostcodeLookupId(establisherIndex, directorIndex))
       .retrieve.right.map {
-      case directorDetails ~ addresses =>
+      case name ~ addresses =>
         AddressListViewModel(
           postCall = routes.DirectorPreviousAddressListController.onSubmit(mode, establisherIndex, directorIndex, srn),
           manualInputCall = routes.DirectorPreviousAddressController.onPageLoad(mode, establisherIndex, directorIndex, srn),
           addresses = addresses,
           title = Message("messages__select_the_previous_address__title"),
           heading = Message("messages__select_the_previous_address__heading"),
-          subHeading = Some(Message(directorDetails.fullName)),
+          subHeading = None,
           srn = srn
         )
     }.left.map(_ => Future.successful(Redirect(routes.DirectorPreviousAddressPostcodeLookupController.onPageLoad(mode, establisherIndex, directorIndex, srn))))
@@ -75,4 +76,12 @@ class DirectorPreviousAddressListController @Inject()(
           post(vm, DirectorPreviousAddressListId(establisherIndex, directorIndex), DirectorPreviousAddressId(establisherIndex, directorIndex), mode)
       }
     }
+
+  val directorName = (establisherIndex: Index, directorIndex: Index) => Retrieval {
+    implicit request =>
+      if (featureSwitchManagementService.get(Toggles.isEstablisherCompanyHnSEnabled))
+        DirectorNameId(establisherIndex, directorIndex).retrieve.right.map(_.fullName)
+      else
+        DirectorDetailsId(establisherIndex, directorIndex).retrieve.right.map(_.fullName)
+  }
 }

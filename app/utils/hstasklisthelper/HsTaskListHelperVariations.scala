@@ -39,7 +39,7 @@ class HsTaskListHelperVariations(answers: UserAnswers,
       userAnswers.get(IsBeforeYouStartCompleteId),
       userAnswers.get(IsAboutMembersCompleteId),
       userAnswers.get(IsAboutBenefitsAndInsuranceCompleteId),
-      Some(userAnswers.allEstablishersCompleted),
+      Some(userAnswers.allEstablishersCompleted(isHnSEnabled)),
       Some(isTrusteeOptional | userAnswers.isAllTrusteesCompleted),
       Some(userAnswers.allTrusteesAfterDelete.size < 10 || userAnswers.get(MoreThanTenTrusteesId).isDefined)
     ).forall(_.contains(true)) && userAnswers.isUserAnswerUpdated
@@ -102,7 +102,7 @@ class HsTaskListHelperVariations(answers: UserAnswers,
   private[utils] def variationDeclarationLink(userAnswers: UserAnswers, srn: Option[String]): Option[Link] = {
     if (userAnswers.isUserAnswerUpdated) {
       Some(Link(declarationLinkText,
-        if (userAnswers.areVariationChangesCompleted)
+        if (userAnswers.areVariationChangesCompleted(isHnSEnabled))
           controllers.routes.VariationDeclarationController.onPageLoad(srn).url
         else
           controllers.register.routes.StillNeedDetailsController.onPageLoad(srn).url

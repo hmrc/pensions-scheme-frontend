@@ -34,7 +34,7 @@ import org.scalatest.{MustMatchers, OptionValues, WordSpecLike}
 class EntitySpec extends WordSpecLike with MustMatchers with OptionValues {
 
   "DirectorEntity" must {
-    val directorEntity = DirectorEntity(
+    val directorEntity = DirectorEntityNonHnS(
       DirectorDetailsId(establisherIndex = 0, directorIndex = 1),
       name = "test name",
       isDeleted = false,
@@ -53,7 +53,7 @@ class EntitySpec extends WordSpecLike with MustMatchers with OptionValues {
     }
 
     "have correct edit link when the director is completed" in {
-      val completedDirectorEntity = DirectorEntity(
+      val completedDirectorEntity = DirectorEntityNonHnS(
         DirectorDetailsId(establisherIndex = 0, directorIndex = 0),
         name = "test name",
         isDeleted = false,
