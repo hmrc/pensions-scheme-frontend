@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers.register.establishers.company
+package controllers.register.trustees.company
 
 import controllers.ControllerSpecBase
 import controllers.actions._
@@ -23,11 +23,11 @@ import org.scalatest.BeforeAndAfterEach
 import org.scalatest.mockito.MockitoSugar
 import play.api.mvc.Call
 import play.api.test.Helpers._
-import views.html.register.establishers.company.whatYouWillNeedCompanyDetails
+import views.html.register.trustees.company.whatYouWillNeedCompanyDetails
 
 class WhatYouWillNeedCompanyDetailsControllerSpec extends ControllerSpecBase with MockitoSugar with BeforeAndAfterEach {
 
-  def onwardRoute: Call = controllers.register.establishers.company.routes.HasCompanyNumberController.onPageLoad(NormalMode, None, index=Index(0))
+  def onwardRoute: Call = controllers.register.trustees.company.routes.HasCompanyNumberController.onPageLoad(NormalMode, index=Index(0), None)
 
   def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): WhatYouWillNeedCompanyDetailsController =
     new WhatYouWillNeedCompanyDetailsController(frontendAppConfig,
@@ -38,7 +38,7 @@ class WhatYouWillNeedCompanyDetailsControllerSpec extends ControllerSpecBase wit
       new DataRequiredActionImpl
     )
 
-  val postCall = controllers.register.establishers.company.routes.WhatYouWillNeedCompanyDetailsController.onSubmit(NormalMode, None, index=Index(0))
+  val postCall = controllers.register.trustees.company.routes.WhatYouWillNeedCompanyDetailsController.onSubmit(NormalMode, index=Index(0), None)
 
   def viewAsString(): String = whatYouWillNeedCompanyDetails(frontendAppConfig, None, postCall, None)(fakeRequest, messages).toString
 
@@ -47,7 +47,7 @@ class WhatYouWillNeedCompanyDetailsControllerSpec extends ControllerSpecBase wit
 
     "on a GET" must {
       "return OK and the correct view" in {
-        val result = controller().onPageLoad(NormalMode, None, Index(0))(fakeRequest)
+        val result = controller().onPageLoad(NormalMode, index=Index(0), None)(fakeRequest)
 
         status(result) mustBe OK
         contentAsString(result) mustBe viewAsString()
@@ -56,7 +56,7 @@ class WhatYouWillNeedCompanyDetailsControllerSpec extends ControllerSpecBase wit
 
     "on a POST" must {
       "redirect to relevant page" in {
-        val result = controller().onSubmit(NormalMode, None, Index(0))(fakeRequest)
+        val result = controller().onSubmit(NormalMode, index=Index(0), None)(fakeRequest)
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(onwardRoute.url)
