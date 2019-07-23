@@ -24,7 +24,7 @@ import models.{Index, Mode}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import views.html.register.trustees.company.whatYouWillNeedTrusteeCompanyDetails
+import views.html.register.trustees.company.whatYouWillNeedCompanyDetails
 
 import scala.concurrent.Future
 
@@ -40,7 +40,7 @@ class WhatYouWillNeedCompanyDetailsController @Inject()(appConfig: FrontendAppCo
     getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
     implicit request =>
       val postCall = controllers.register.trustees.company.routes.WhatYouWillNeedCompanyDetailsController.onSubmit(mode, index, srn)
-      Future.successful(Ok(whatYouWillNeedTrusteeCompanyDetails(appConfig, existingSchemeName, postCall, srn)))
+      Future.successful(Ok(whatYouWillNeedCompanyDetails(appConfig, existingSchemeName, postCall, srn)))
   }
 
   def onSubmit(mode: Mode, index: Index, srn: Option[String] = None): Action[AnyContent] = (authenticate andThen
