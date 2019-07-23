@@ -19,9 +19,11 @@ package controllers.register.trustees.company
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.HasUtrFormProvider
-import identifiers.register.trustees.company.HasCompanyUTRId
-import models.{Index, NormalMode}
+import identifiers.register.trustees.TrusteesId
+import identifiers.register.trustees.company._
+import models.{CompanyDetails, Index, NormalMode}
 import play.api.data.Form
+import play.api.libs.json.Json
 import play.api.test.Helpers._
 import services.FakeUserAnswersService
 import utils.FakeNavigator
@@ -41,6 +43,19 @@ class HasCompanyUTRControllerSpec extends ControllerSpecBase {
     title = Message("messages__hasCompanyUtr__title"),
     heading = Message("messages__hasCompanyUtr__h1", "test company name"),
     hint = Some(Message("messages__hasCompanyUtr__p1"))
+  )
+
+  private def getTrusteeCompanyPlusUtr(hasUtrValue:Boolean): FakeDataRetrievalAction = new FakeDataRetrievalAction(
+    Some(Json.obj(
+      TrusteesId.toString -> Json.arr(
+        Json.obj(
+          CompanyDetailsId.toString -> CompanyDetails("test company name"),
+          HasCompanyUTRId.toString -> hasUtrValue,
+          NoUTRId.toString -> "utr number is not present",
+          CompanyUTRId.toString -> "9999999999"
+        )
+      )
+    ))
   )
 
   private def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryTrusteeCompany): HasCompanyUTRController =
@@ -87,6 +102,23 @@ class HasCompanyUTRControllerSpec extends ControllerSpecBase {
       contentAsString(result) mustBe viewAsString(boundForm)
     }
 
+    "if user changes answer from yes to no then clean up should take place on utr number" in {
+      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "false"))
+      val result = controller(getTrusteeCompanyPlusUtr(hasUtrValue = true)).onSubmit(NormalMode, index, None)(postRequest)
+
+      status(result) mustBe SEE_OTHER
+      FakeUserAnswersService.userAnswer.get(HasCompanyUTRId(index)).value mustEqual false
+      FakeUserAnswersService.userAnswer.get(CompanyUTRId(index)) mustBe None
+    }
+
+    "if user changes answer from no to yes then clean up should take place on no utr reason" in {
+      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "true"))
+      val result = controller(getTrusteeCompanyPlusUtr(hasUtrValue = false)).onSubmit(NormalMode, index, None)(postRequest)
+
+      status(result) mustBe SEE_OTHER
+      FakeUserAnswersService.userAnswer.get(HasCompanyUTRId(index)).value mustEqual true
+      FakeUserAnswersService.userAnswer.get(NoUTRId(index)) mustBe None
+    }
+
   }
 }
-

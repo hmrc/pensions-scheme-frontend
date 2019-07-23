@@ -18,24 +18,12 @@ package identifiers.register.trustees.company
 
 import identifiers.TypedIdentifier
 import identifiers.register.trustees.TrusteesId
-import play.api.libs.json.{JsPath, JsResult}
-import utils.UserAnswers
+import play.api.libs.json.JsPath
 
-case class HasCompanyUTRId(index: Int) extends TypedIdentifier[Boolean] {
-  override def path: JsPath = TrusteesId(index).path \ HasCompanyUTRId.toString
-
-  override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): JsResult[UserAnswers] = {
-    value match {
-      case Some(true) =>
-        userAnswers.remove(NoUTRId(this.index))
-      case Some(false) =>
-        userAnswers.remove(CompanyUTRId(this.index))
-      case _ =>
-        super.cleanup(value, userAnswers)
-    }
-  }
+case class CompanyUTRId(index: Int) extends TypedIdentifier[String] {
+  override def path: JsPath = TrusteesId(index).path \ CompanyUTRId.toString
 }
 
-object HasCompanyUTRId {
-  override def toString: String = "hasUtr"
+object CompanyUTRId {
+  override def toString: String = "utr"
 }
