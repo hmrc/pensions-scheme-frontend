@@ -20,7 +20,7 @@ import akka.stream.Materializer
 import com.google.inject.Inject
 import config.FrontendAppConfig
 import controllers.ReasonController
-import forms.register.establishers.company.NoCompanyNumberFormProvider
+import forms.register.NoCompanyNumberFormProvider
 import identifiers.TypedIdentifier
 import models.NormalMode
 import models.requests.DataRequest

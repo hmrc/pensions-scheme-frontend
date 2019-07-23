@@ -599,6 +599,8 @@ messages__companyNumber__establisher__heading = What is {0}’s company number?
 messages__noCompanyNumber__establisher__title = Why does the establisher not have a company number?
 messages__noCompanyNumber__establisher__heading = Why does {0} not have a company number?
 
+messages__companyNoCompanyNumber__establisher__title = Why does the company not have a company number?
+
 messages__error__no_company_number = Enter a reason why {0} does not have a company number
 messages__error__no_company_number_maxlength = Reason must be 160 characters or less
 messages__error__no_company_number_invalid = Reason must only include letters, numbers and punctuation marks
