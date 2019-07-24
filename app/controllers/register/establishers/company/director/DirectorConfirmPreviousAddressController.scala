@@ -16,7 +16,7 @@
 
 package controllers.register.establishers.company.director
 
-import config.FrontendAppConfig
+import config.{FeatureSwitchManagementService, FrontendAppConfig}
 import controllers.Retrievals
 import controllers.actions._
 import controllers.address.ConfirmPreviousAddressController
@@ -27,7 +27,7 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
 import utils.annotations.EstablishersCompanyDirector
-import utils.{CountryOptions, Navigator}
+import utils.{CountryOptions, Navigator, Toggles}
 import viewmodels.Message
 import viewmodels.address.ConfirmAddressViewModel
 
@@ -41,7 +41,8 @@ class DirectorConfirmPreviousAddressController @Inject()(val appConfig: Frontend
                                                          allowAccess: AllowAccessActionProvider,
                                                          getData: DataRetrievalAction,
                                                          requireData: DataRequiredAction,
-                                                         val countryOptions: CountryOptions
+                                                         val countryOptions: CountryOptions,
+                                                         featureSwitchManagementService: FeatureSwitchManagementService
                                                 )(implicit val ec: ExecutionContext) extends ConfirmPreviousAddressController with Retrievals with I18nSupport {
 
   private[controllers] val postCall = routes.DirectorConfirmPreviousAddressController.onSubmit _
@@ -51,19 +52,27 @@ class DirectorConfirmPreviousAddressController @Inject()(val appConfig: Frontend
   private def viewmodel(mode: Mode, establisherIndex: Int, directorIndex: Int, srn: Option[String]) =
     Retrieval(
       implicit request =>
-        (DirectorDetailsId(establisherIndex, directorIndex) and ExistingCurrentAddressId(establisherIndex, directorIndex)).retrieve.right.map {
-          case details ~ address =>
+        (directorName(establisherIndex, directorIndex) and ExistingCurrentAddressId(establisherIndex, directorIndex)).retrieve.right.map {
+          case name ~ address =>
             ConfirmAddressViewModel(
               postCall(establisherIndex, directorIndex, srn),
               title = Message(title),
-              heading = Message(heading, details.fullName),
+              heading = Message(heading, name),
               hint = None,
               address = address,
-              name = details.fullName,
+              name = name,
               srn = srn
             )
       }
     )
+
+  val directorName = (establisherIndex: Index, directorIndex: Index) => Retrieval {
+    implicit request =>
+      if (featureSwitchManagementService.get(Toggles.isEstablisherCompanyHnSEnabled))
+        DirectorNameId(establisherIndex, directorIndex).retrieve.right.map(_.fullName)
+      else
+        DirectorDetailsId(establisherIndex, directorIndex).retrieve.right.map(_.fullName)
+  }
 
   def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
