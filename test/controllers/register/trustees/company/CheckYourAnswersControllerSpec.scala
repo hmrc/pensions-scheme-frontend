@@ -195,10 +195,15 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase with Controller
         utrRows
     )
 
-    val addressYearsRows = AddressYearsCYA[CompanyAddressYearsId](
-      label = "messages__checkYourAnswers__trustees__company__address_years",
-      changeAddressYears = "messages__visuallyhidden__trustee__address_years"
-    )().row(CompanyAddressYearsId(index))(companyAddressYearsRoute, request.userAnswers)
+    val addressYearsRows = {
+      val label = request.userAnswers.get(CompanyDetailsId(0)).fold(messages("messages__company_address_years__title"))(x =>
+        messages("messages__company_address_years__h1", x.companyName))
+
+        AddressYearsCYA[CompanyAddressYearsId](
+          label = label,
+          changeAddressYears = "messages__visuallyhidden__trustee__address_years"
+        )().row(CompanyAddressYearsId(index))(companyAddressYearsRoute, request.userAnswers)
+    }
 
     val contactDetailsSection = AnswerSection(
       Some("messages__checkYourAnswers__section__contact_details"),
