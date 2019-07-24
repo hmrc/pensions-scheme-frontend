@@ -21,6 +21,7 @@ import controllers.register.establishers.company.{routes => establisherCompanyRo
 import identifiers.register.establishers.company.director.{DirectorNameId, IsDirectorCompleteId}
 import identifiers.register.establishers.company.{CompanyEmailId, CompanyPhoneId, CompanyVatId}
 import identifiers.register.establishers.{IsEstablisherNewId, company => establisherCompanyPath}
+import models.address.Address
 import models.person.PersonName
 import models.{CompanyDetails, EntitySpoke, Link, Mode, NormalMode, UpdateMode, _}
 import org.scalatest.{MustMatchers, OptionValues}
@@ -39,14 +40,8 @@ class HsTaskListHelperUtilsSpec extends SpecBase with MustMatchers with OptionVa
 
       "in subscription journey when all spokes are in progress" in {
         subscriptionHelper.getEstablisherCompanySpokes(
-          establisherCompany(isComplete = false), NormalMode, None, "test company", 0
-        ) mustBe expectedInProgressSpokes(NormalMode, None)
-      }
-
-      "in subscription journey with partial data" in {
-        subscriptionHelper.getEstablisherCompanySpokes(
           establisherCompanyWithPartialData, NormalMode, None, "test company", 0
-        ) mustBe expectedSpokesWithPartialData(NormalMode, None)
+        ) mustBe expectedInProgressSpokes(NormalMode, None)
       }
 
       "in subscription journey when all spokes are complete" in {
@@ -63,7 +58,7 @@ class HsTaskListHelperUtilsSpec extends SpecBase with MustMatchers with OptionVa
 
       "in variations journey when all spokes are in progress" in {
         subscriptionHelper.getEstablisherCompanySpokes(
-          establisherCompany(isComplete = false), UpdateMode, srn, "test company", 0
+          establisherCompanyWithPartialData, UpdateMode, srn, "test company", 0
         ) mustBe expectedInProgressSpokes(UpdateMode, srn)
       }
 
@@ -81,6 +76,7 @@ object HsTaskListHelperUtilsSpec extends SpecBase with OptionValues {
 
   val srn = Some("S123")
   private val fakeFeatureSwitch = new FakeFeatureSwitchManagementService(true)
+  private val address = Address("line 1", "line 2", Some("line 3"), Some("line 4"), Some("zz11zz"), "GB")
 
   protected def establisherCompanyBlank: UserAnswers = {
     UserAnswers().set(establisherCompanyPath.CompanyDetailsId(0))(CompanyDetails("test company", false)).flatMap(
@@ -92,21 +88,22 @@ object HsTaskListHelperUtilsSpec extends SpecBase with OptionValues {
   protected def establisherCompany(isComplete: Boolean): UserAnswers = {
     establisherCompanyBlank
       .set(IsEstablisherNewId(0))(true).flatMap(
-        _.set(establisherCompanyPath.IsAddressCompleteId(0))(isComplete).flatMap(
+        _.set(establisherCompanyPath.CompanyAddressId(0))(address).flatMap(
+        _.set(establisherCompanyPath.CompanyAddressYearsId(0))(AddressYears.OverAYear).flatMap(
           _.set(establisherCompanyPath.IsDetailsCompleteId(0))(isComplete).flatMap(
-            _.set(establisherCompanyPath.IsContactDetailsCompleteId(0))(isComplete).flatMap(
+            _.set(CompanyEmailId(0))("test@test.com").flatMap(
+            _.set(CompanyPhoneId(0))("12345").flatMap(
             _.set(DirectorNameId(0, 0))(PersonName("Joe", "Bloggs"))
-          )))).asOpt.value
+          )))))).asOpt.value
   }
 
   protected def establisherCompanyWithPartialData: UserAnswers = {
     establisherCompanyBlank
       .set(CompanyVatId(0))(Vat.Yes("test-vat")).flatMap(
-      _.set(establisherCompanyPath.IsAddressCompleteId(0))(false).flatMap(
+      _.set(establisherCompanyPath.CompanyAddressId(0))(address).flatMap(
         _.set(CompanyEmailId(0))("test@test.com").flatMap(
-          _.set(CompanyPhoneId(0))("1234").flatMap(
             _.set(DirectorNameId(0, 0))(PersonName("Joe", "Bloggs"))
-        )))).asOpt.value
+        ))).asOpt.value
   }
 
   protected def establisherCompanyWithCompletedDirectors(isComplete: Boolean) = establisherCompany(isComplete)
@@ -138,17 +135,6 @@ object HsTaskListHelperUtilsSpec extends SpecBase with OptionValues {
     EntitySpoke(Link(messages("messages__schemeTaskList__sectionEstablishersCompany_change_directors", "test company"),
       controllers.register.establishers.company.routes.AddCompanyDirectorsController.onPageLoad(mode, srn, 0).url), modeBasedCompletion(mode, Some(false)))
   )
-
-  def expectedSpokesWithPartialData(mode: Mode, srn: Option[String]): Seq[EntitySpoke] = Seq(
-    EntitySpoke(Link(messages("messages__schemeTaskList__sectionEstablishersCompany_change_details", "test company"),
-      establisherCompanyRoutes.WhatYouWillNeedCompanyDetailsController.onPageLoad(mode, srn, 0).url), modeBasedCompletion(mode, Some(false))),
-    EntitySpoke(Link(messages("messages__schemeTaskList__sectionEstablishersCompany_change_address", "test company"),
-      establisherCompanyRoutes.WhatYouWillNeedCompanyAddressController.onPageLoad(mode, srn, 0).url), modeBasedCompletion(mode, Some(false))),
-    EntitySpoke(Link(messages("messages__schemeTaskList__sectionEstablishersCompany_change_contact", "test company"),
-      establisherCompanyRoutes.CheckYourAnswersCompanyContactDetailsController.onPageLoad(mode, srn, 0).url), modeBasedCompletion(mode, Some(true))),
-    EntitySpoke(Link(messages("messages__schemeTaskList__sectionEstablishersCompany_change_directors", "test company"),
-      controllers.register.establishers.company.routes.AddCompanyDirectorsController.onPageLoad(mode, srn, 0).url), modeBasedCompletion(mode, Some(false))
-  ))
 
   def expectedCompletedSpokes(mode: Mode, srn: Option[String]): Seq[EntitySpoke] = Seq(
     EntitySpoke(Link(messages("messages__schemeTaskList__sectionEstablishersCompany_change_details", "test company"),

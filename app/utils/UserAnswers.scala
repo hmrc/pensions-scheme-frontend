@@ -18,8 +18,8 @@ package utils
 
 import identifiers._
 import identifiers.register.establishers.company.director.{DirectorDetailsId, DirectorNameId, DirectorNinoId, DirectorUniqueTaxReferenceId, IsDirectorCompleteId, IsNewDirectorId}
-import identifiers.register.establishers.company.{IsAddressCompleteId, IsCompanyCompleteId, IsContactDetailsCompleteId, IsDetailsCompleteId, CompanyDetailsId => EstablisherCompanyDetailsId}
-import identifiers.register.establishers.individual.EstablisherDetailsId
+import identifiers.register.establishers.company.{CompanyAddressId, CompanyAddressYearsId, CompanyEmailId, CompanyPhoneId, CompanyPreviousAddressId, HasBeenTradingCompanyId, IsAddressCompleteId, IsCompanyCompleteId, IsContactDetailsCompleteId, IsDetailsCompleteId, CompanyDetailsId => EstablisherCompanyDetailsId}
+import identifiers.register.establishers.individual.{AddressYearsId, EstablisherDetailsId}
 import identifiers.register.establishers.partnership.PartnershipDetailsId
 import identifiers.register.establishers.partnership.partner.{IsNewPartnerId, IsPartnerCompleteId, PartnerDetailsId}
 import identifiers.register.establishers.{EstablisherKindId, EstablishersId, IsEstablisherCompleteId, IsEstablisherNewId}
@@ -31,7 +31,7 @@ import models.address.Address
 import models.person.{PersonDetails, PersonName}
 import models.register._
 import models.register.establishers.EstablisherKind
-import models.{CompanyDetails, PartnershipDetails}
+import models.{AddressYears, CompanyDetails, PartnershipDetails}
 import play.api.Logger
 import play.api.libs.functional.syntax._
 import play.api.libs.json.Reads._
@@ -188,7 +188,7 @@ case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Implicits 
       val allDirectorsCompleted = allDirectors.nonEmpty & allDirectors.forall(_.isCompleted)
       val isCompanyComplete =
         if (isHnSEnabled)
-          (get(IsDetailsCompleteId(index)), get(IsAddressCompleteId(index)), get(IsContactDetailsCompleteId(index))) match {
+          (get(IsDetailsCompleteId(index)), isEstablisherCompanyAddressComplete(index), isEstablisherCompanyContactDetailsComplete(index)) match {
             case (Some(true), Some(true), Some(true)) => true
             case _ => false
           }
@@ -229,6 +229,26 @@ case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Implicits 
       }
     }
   }
+
+  def isEstablisherCompanyContactDetailsComplete(index: Int): Option[Boolean] =
+    (get(CompanyEmailId(index)), get(CompanyPhoneId(index))) match {
+      case (Some(_), Some(_)) => Some(true)
+      case (None, None) => None
+      case _ => Some(false)
+    }
+
+  def isEstablisherCompanyAddressComplete(index: Int): Option[Boolean] =
+    (get(CompanyAddressId(index)), get(CompanyAddressYearsId(index))) match {
+      case (Some(_), Some(AddressYears.OverAYear)) => Some(true)
+      case (None, _) => None
+      case (Some(_), Some(AddressYears.UnderAYear)) =>
+        (get(CompanyPreviousAddressId(index)), get(HasBeenTradingCompanyId(index))) match {
+          case (Some(_), _) => Some(true)
+          case (_, Some(false)) => Some(true)
+          case _ => Some(false)
+        }
+      case _ => Some(false)
+    }
 
 
   def allEstablishers(isHnSEnabled: Boolean): Seq[Establisher[_]] = {

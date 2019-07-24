@@ -79,21 +79,11 @@ trait HsTaskListHelperUtils extends Enumerable.Implicits {
       }
 
     case EstablisherCompanyAddress =>
-      //TODO: this condition is to handle the partial data, hence can be removed after
-      // 28 days of enabling the toggle is-establisher-company-hns
-
-        (answers.get(IsCompanyCompleteId(index)), answers.get(establisherCompany.IsAddressCompleteId(index))) match {
-          case (Some(true), None) => Some(true)
-          case _ => answers.get(establisherCompany.IsAddressCompleteId(index))
-        }
+      answers.isEstablisherCompanyAddressComplete(index)
 
     case EstablisherCompanyContactDetails =>
-      //TODO: this condition is to handle the partial data, hence can be removed after
-      //28 days of enabling the toggle is-establisher-company-hns
-      (answers.get(CompanyEmailId(index)), answers.get(CompanyPhoneId(index))) match {
-        case (Some(_), Some(_)) => Some(true)
-        case _ => answers.get(establisherCompany.IsContactDetailsCompleteId(index))
-      }
+      answers.isEstablisherCompanyContactDetailsComplete(index)
+
     case _ => None
   }
 
