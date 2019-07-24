@@ -25,9 +25,9 @@ class WhatYouWillNeedCompanyDetailsViewSpec extends ViewBehaviours {
 
   val messageKeyPrefix = "whatYouWillNeedTrusteeCompany"
 
-  val postCall = controllers.register.trustees.company.routes.WhatYouWillNeedCompanyDetailsController.onSubmit(NormalMode, index=Index(0), None)
+  lazy val href = controllers.register.trustees.company.routes.HasCompanyNumberController.onSubmit(NormalMode, Index(0), None)
 
-  def createView: () => HtmlFormat.Appendable = () => whatYouWillNeedCompanyDetails(frontendAppConfig, Some("testScheme"), postCall, None)(fakeRequest, messages)
+  def createView: () => HtmlFormat.Appendable = () => whatYouWillNeedCompanyDetails(frontendAppConfig, Some("testScheme"), href, None)(fakeRequest, messages)
 
   "WhatYouWillNeedCompanyDetails view" must {
 

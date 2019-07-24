@@ -27,8 +27,6 @@ import views.html.register.establishers.company.whatYouWillNeedCompanyDetails
 
 class WhatYouWillNeedCompanyDetailsControllerSpec extends ControllerSpecBase with MockitoSugar with BeforeAndAfterEach {
 
-  def onwardRoute: Call = controllers.register.establishers.company.routes.HasCompanyNumberController.onPageLoad(NormalMode, None, index=Index(0))
-
   def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): WhatYouWillNeedCompanyDetailsController =
     new WhatYouWillNeedCompanyDetailsController(frontendAppConfig,
       messagesApi,
@@ -38,10 +36,9 @@ class WhatYouWillNeedCompanyDetailsControllerSpec extends ControllerSpecBase wit
       new DataRequiredActionImpl
     )
 
-  val postCall = controllers.register.establishers.company.routes.WhatYouWillNeedCompanyDetailsController.onSubmit(NormalMode, None, index=Index(0))
+  lazy val href = controllers.register.establishers.company.routes.HasCompanyNumberController.onSubmit(NormalMode, None, index=Index(0))
 
-  def viewAsString(): String = whatYouWillNeedCompanyDetails(frontendAppConfig, None, postCall, None)(fakeRequest, messages).toString
-
+  def viewAsString(): String = whatYouWillNeedCompanyDetails(frontendAppConfig, None, href, None)(fakeRequest, messages).toString
 
   "WhatYouWillNeedCompanyDetailsControllerSpec" when {
 
@@ -51,15 +48,6 @@ class WhatYouWillNeedCompanyDetailsControllerSpec extends ControllerSpecBase wit
 
         status(result) mustBe OK
         contentAsString(result) mustBe viewAsString()
-      }
-    }
-
-    "on a POST" must {
-      "redirect to relevant page" in {
-        val result = controller().onSubmit(NormalMode, None, Index(0))(fakeRequest)
-
-        status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(onwardRoute.url)
       }
     }
   }
