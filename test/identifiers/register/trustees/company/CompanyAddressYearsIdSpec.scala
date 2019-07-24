@@ -117,7 +117,6 @@ class CompanyAddressYearsIdSpec extends SpecBase {
       .set(CompanyDetailsId(0))(CompanyDetails(companyName)).asOpt.get
 
     "in normal mode" must {
-
       "return answers rows with change links" in {
         implicit val countryOptions: CountryOptions = new CountryOptions(Seq.empty[InputOption])
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))

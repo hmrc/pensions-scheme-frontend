@@ -618,7 +618,6 @@ messages__checkYourAnswers__trustees__company__vat = Does the trustee have a VAT
 messages__checkYourAnswers__trustees__company__paye = Does the trustee have a PAYE employer reference number?
 messages__checkYourAnswers__trustees__company__utr = Does the trustee have a Unique Taxpayer Reference number?
 messages__checkYourAnswers__trustees__company__utr_no_reason = Why the trustee does not have a Unique Taxpayer Reference number
-messages__checkYourAnswers__trustees__company__address_years = How long has the company been at this address?
 
 messages__checkYourAnswers__establishers__company__number = Company number
 
@@ -1534,6 +1533,8 @@ messages__whatYouWillNeedTrusteeCompany__item3 = VAT registration number
 messages__whatYouWillNeedTrusteeCompany__item4 = employer PAYE reference
 messages__whatYouWillNeedTrusteeCompany__p2 = You will also need to tell us if the company has been dormant at any time in the last 12 months.
 
+messages__tradingAtLeastOneYear__error = Select yes if {0} has been trading for at least 1 year
+
 messages__hasCompanyNumber__title = Does the establisher have a company number?
 messages__hasCompanyNumber__h1 = Does {0} have a company number?
 messages__hasCompanyNumber__p1 = You can find this on the company’s certificate of incorporation or on any official letters from Companies House.
@@ -1559,6 +1560,9 @@ messages__theTrustee = the trustee
 messages__hasBeenTradingCompany__title = Has the establisher been trading for more than a year?
 messages__hasBeenTradingCompany__h1 =  Has {0} been trading for more than a year?
 messages__hasBeenTradingCompany__error__required = Select yes if {0} has been trading  for more than a year
+messages__hasBeenTradingCompany__title = Has the company been trading for at least 1 year?
+messages__hasBeenTradingCompany__h1 =  Has {0} been trading for at least 1 year?
+messages__hasBeenTradingCompany__error__required = Select yes if {0} has been trading for at least 1 year
 
 messages__schemeTaskList__before_you_start_link_text = Setting up your scheme application
 messages__schemeTaskList__scheme_info_link_text = Information about your scheme
@@ -1595,9 +1599,10 @@ messages__companyPaye__heading = Does {0} have an employer PAYE number?
 messages__companyPaye__error__required = Select yes if the company has an employer PAYE number
 
 messages__companyPayeRef__title = Does the establisher have an employer PAYE reference?
+messages__companyPayeRef__trustee_title = Does the company have an employer PAYE reference?
 messages__companyPayeRef__h1 = Does {0} have an employer PAYE reference?
 messages__companyPayeRef__error__required = Select whether the company has an employer PAYE number
-messages__companyPayeRef__p1 = This is a 3 digit tax office number, a forward slash, and a tax office employer reference, like 123/AB456. It may be called ‘Employer PAYE reference’ or ‘PAYE reference’.
+messages__companyPayeRef__p1 = This is a 3 digit tax office number, a forward slash, and a tax office employer reference, like 123/AB456. It may be called ‘Employer PAYE reference’ or ‘PAYE reference’. It will be on letters from HMRC about PAYE.
 
 messages__companyVat__title = Is the company registered for VAT?
 messages__companyVat__heading = Is {0} registered for VAT?
