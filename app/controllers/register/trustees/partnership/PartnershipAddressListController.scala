@@ -24,10 +24,10 @@ import identifiers.register.trustees.partnership.{PartnershipAddressId, Partners
 import javax.inject.Inject
 import models.requests.DataRequest
 import models.{Index, Mode}
+import navigators.Navigator
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, Result}
 import services.UserAnswersService
-import utils.Navigator
 import utils.annotations.TrusteesPartnership
 import viewmodels.Message
 import viewmodels.address.AddressListViewModel

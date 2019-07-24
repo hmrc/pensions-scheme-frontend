@@ -23,6 +23,7 @@ import forms.ContactDetailsFormProvider
 import identifiers.TypedIdentifier
 import models.requests.DataRequest
 import models.{ContactDetails, NormalMode}
+import navigators.Navigator
 import org.mockito.Matchers.{any, eq => eqTo}
 import org.mockito.Mockito.when
 import org.scalatest.concurrent.ScalaFutures
@@ -36,7 +37,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers.{contentAsString, _}
 import services.UserAnswersService
 import uk.gov.hmrc.domain.PsaId
-import utils.{FakeNavigator, Navigator, UserAnswers}
+import utils.{FakeNavigator, UserAnswers}
 import viewmodels.ContactDetailsViewModel
 import views.html.contactDetails
 

@@ -24,12 +24,13 @@ import identifiers.register.establishers.company.{CompanyDetailsId, HasCompanyVA
 import identifiers.register.establishers.company.director.{DirectorDetailsId, DirectorHasNINOId, DirectorNameId}
 import javax.inject.Inject
 import models.{Index, Mode}
+import navigators.Navigator
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.EstablishersCompanyDirector
-import utils.{Enumerable, Navigator}
+import utils.Enumerable
 import viewmodels.{CommonFormWithHintViewModel, Message}
 
 import scala.concurrent.{ExecutionContext, Future}

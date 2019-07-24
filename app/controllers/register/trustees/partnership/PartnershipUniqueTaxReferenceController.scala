@@ -24,13 +24,14 @@ import forms.register.trustees.partnership.PartnershipUniqueTaxReferenceFormProv
 import identifiers.register.trustees.partnership.{PartnershipDetailsId, PartnershipUniqueTaxReferenceId}
 import javax.inject.Inject
 import models.{Index, Mode, UniqueTaxReference}
+import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.TrusteesPartnership
-import utils.{Enumerable, Navigator, UserAnswers}
+import utils.{Enumerable, UserAnswers}
 import views.html.register.trustees.partnership.partnershipUniqueTaxReference
 
 import scala.concurrent.{ExecutionContext, Future}

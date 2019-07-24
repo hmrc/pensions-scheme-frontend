@@ -23,10 +23,10 @@ import forms.VatFormProvider
 import identifiers.register.establishers.company.{CompanyDetailsId, CompanyVatId}
 import javax.inject.Inject
 import models.{Index, Mode}
+import navigators.Navigator
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
-import utils.Navigator
 import utils.annotations.EstablishersCompany
 import viewmodels.{Message, VatViewModel}
 

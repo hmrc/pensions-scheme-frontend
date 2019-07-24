@@ -23,12 +23,13 @@ import forms.OccupationalPensionSchemeFormProvider
 import identifiers.OccupationalPensionSchemeId
 import javax.inject.Inject
 import models.Mode
+import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.AboutBenefitsAndInsurance
-import utils.{Navigator, UserAnswers}
+import utils.UserAnswers
 import views.html.occupationalPensionScheme
 
 import scala.concurrent.{ExecutionContext, Future}

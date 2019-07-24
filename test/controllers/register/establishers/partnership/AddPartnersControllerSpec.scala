@@ -25,12 +25,13 @@ import identifiers.register.establishers.partnership.{AddPartnersId, Partnership
 import models.person.PersonDetails
 import models.register.PartnerEntity
 import models.{Index, NormalMode, PartnershipDetails}
+import navigators.Navigator
 import org.joda.time.LocalDate
 import play.api.data.Form
 import play.api.libs.json._
 import play.api.mvc.Call
 import play.api.test.Helpers._
-import utils.{FakeNavigator, Navigator, UserAnswers}
+import utils.{FakeNavigator, UserAnswers}
 import views.html.register.addPartners
 
 class AddPartnersControllerSpec extends ControllerSpecBase {

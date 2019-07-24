@@ -23,11 +23,12 @@ import identifiers.TypedIdentifier
 import models.Mode
 import models.address.Address
 import models.requests.DataRequest
+import navigators.Navigator
 import play.api.i18n.I18nSupport
 import play.api.mvc.{AnyContent, Result}
 import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import utils.{CountryOptions, Navigator, UserAnswers}
+import utils.{CountryOptions, UserAnswers}
 import viewmodels.Message
 import viewmodels.address.ConfirmAddressViewModel
 import views.html.address.confirmPreviousAddress

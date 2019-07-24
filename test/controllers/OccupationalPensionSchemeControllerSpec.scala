@@ -23,11 +23,12 @@ import controllers.behaviours.ControllerWithQuestionPageBehaviours
 import forms.OccupationalPensionSchemeFormProvider
 import identifiers.{OccupationalPensionSchemeId, SchemeNameId}
 import models.NormalMode
+import navigators.Navigator
 import play.api.data.Form
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, AnyContentAsFormUrlEncoded}
 import play.api.test.FakeRequest
-import utils.{FakeNavigator, Navigator, UserAnswers}
+import utils.{FakeNavigator, UserAnswers}
 import views.html.occupationalPensionScheme
 
 import scala.concurrent.ExecutionContext.Implicits.global

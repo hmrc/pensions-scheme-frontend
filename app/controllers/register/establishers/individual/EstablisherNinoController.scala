@@ -24,13 +24,14 @@ import forms.register.establishers.individual.EstablisherNinoFormProvider
 import identifiers.register.establishers.individual.EstablisherNinoId
 import javax.inject.Inject
 import models.{Index, Mode, Nino}
+import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.EstablishersIndividual
-import utils.{Enumerable, Navigator, UserAnswers}
+import utils.{Enumerable, UserAnswers}
 import views.html.register.establishers.individual.establisherNino
 
 import scala.concurrent.{ExecutionContext, Future}

@@ -22,12 +22,13 @@ import controllers.behaviours.ControllerWithQuestionPageBehaviours
 import forms.BenefitsSecuredByInsuranceFormProvider
 import identifiers.{BenefitsSecuredByInsuranceId, SchemeNameId}
 import models.NormalMode
+import navigators.Navigator
 import play.api.data.Form
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, AnyContentAsFormUrlEncoded}
 import play.api.test.FakeRequest
 import services.{FakeUserAnswersService, UserAnswersService}
-import utils.{FakeNavigator, Navigator, UserAnswers}
+import utils.{FakeNavigator, UserAnswers}
 import views.html.benefitsSecuredByInsurance
 
 import scala.concurrent.ExecutionContext.Implicits.global

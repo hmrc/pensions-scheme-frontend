@@ -29,6 +29,7 @@ import identifiers.register.establishers.company.director.{DirectorAddressId, Di
 import models.address.Address
 import models.person.PersonDetails
 import models.{Index, NormalMode}
+import navigators.Navigator
 import org.joda.time.LocalDate
 import org.scalatest.OptionValues
 import org.scalatest.concurrent.ScalaFutures
@@ -40,7 +41,7 @@ import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.{FakeUserAnswersService, UserAnswersService}
-import utils.{CountryOptions, FakeFeatureSwitchManagementService, FakeNavigator, InputOption, Navigator}
+import utils.{CountryOptions, FakeFeatureSwitchManagementService, FakeNavigator, InputOption}
 import viewmodels.Message
 import viewmodels.address.ManualAddressViewModel
 import views.html.address.manualAddress

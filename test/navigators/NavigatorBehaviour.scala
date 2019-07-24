@@ -26,7 +26,7 @@ import org.scalatest.prop.{PropertyChecks, TableFor6}
 import org.scalatest.{MustMatchers, OptionValues, WordSpec}
 import play.api.mvc.Call
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.{Navigator, UserAnswers}
+import utils.UserAnswers
 
 import scala.concurrent.ExecutionContext.Implicits.global
 

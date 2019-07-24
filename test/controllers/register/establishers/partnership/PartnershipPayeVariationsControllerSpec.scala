@@ -21,6 +21,7 @@ import controllers.ControllerSpecBase
 import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRetrievalAction, FakeAllowAccessProvider, FakeAuthAction}
 import forms.{PayeFormProvider, PayeVariationsFormProvider}
 import models.{CheckUpdateMode, Index, NormalMode}
+import navigators.Navigator
 import org.scalatest.MustMatchers
 import play.api.Application
 import play.api.http.Writeable
@@ -30,7 +31,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.{FakeUserAnswersService, UserAnswersService}
 import utils.annotations.EstablisherPartnership
-import utils.{FakeNavigator, Navigator}
+import utils.FakeNavigator
 import viewmodels.{Message, PayeViewModel}
 import views.html.{paye, payeVariations}
 

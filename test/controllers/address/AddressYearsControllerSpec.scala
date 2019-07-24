@@ -24,6 +24,7 @@ import forms.address.AddressYearsFormProvider
 import identifiers.TypedIdentifier
 import models.requests.DataRequest
 import models.{AddressYears, NormalMode}
+import navigators.Navigator
 import org.mockito.Matchers.{eq => eqTo, _}
 import org.mockito.Mockito._
 import org.scalatest.concurrent.ScalaFutures
@@ -36,7 +37,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.UserAnswersService
 import uk.gov.hmrc.domain.PsaId
-import utils.{FakeNavigator, Navigator, UserAnswers}
+import utils.{FakeNavigator, UserAnswers}
 import viewmodels.address.AddressYearsViewModel
 import views.html.address.addressYears
 

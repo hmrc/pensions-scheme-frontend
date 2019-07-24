@@ -25,6 +25,7 @@ import identifiers.register.establishers.{IsEstablisherCompleteId, IsEstablisher
 import javax.inject.Inject
 import models.Mode.checkMode
 import models._
+import navigators.Navigator
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService

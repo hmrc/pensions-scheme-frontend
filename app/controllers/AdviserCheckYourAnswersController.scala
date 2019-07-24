@@ -23,12 +23,13 @@ import identifiers._
 import identifiers.IsWorkingKnowledgeCompleteId
 import javax.inject.Inject
 import models.{CheckMode, NormalMode}
+import navigators.Navigator
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.WorkingKnowledge
 import utils.checkyouranswers.Ops._
-import utils.{CountryOptions, Navigator, SectionComplete}
+import utils.{CountryOptions, SectionComplete}
 import viewmodels.AnswerSection
 import views.html.check_your_answers
 
