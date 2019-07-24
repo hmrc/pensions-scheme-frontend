@@ -17,11 +17,11 @@
 package identifiers.register.trustees.company
 
 import identifiers.TypedIdentifier
-import identifiers.register.establishers.EstablishersId
+import identifiers.register.trustees.TrusteesId
 import play.api.libs.json.JsPath
 
 case class IsContactDetailsCompleteId(index: Int) extends TypedIdentifier[Boolean] {
-  override def path: JsPath = EstablishersId(index).path \ IsContactDetailsCompleteId.toString
+  override def path: JsPath = TrusteesId(index).path \ IsContactDetailsCompleteId.toString
 }
 
 object IsContactDetailsCompleteId {
