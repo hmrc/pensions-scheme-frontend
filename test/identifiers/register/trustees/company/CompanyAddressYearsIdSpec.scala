@@ -16,21 +16,21 @@
 
 package identifiers.register.trustees.company
 
+import base.SpecBase
 import identifiers.register.trustees.{IsTrusteeCompleteId, IsTrusteeNewId}
-import models.{AddressYears, Link, NormalMode, UpdateMode}
 import models.AddressYears.UnderAYear
+import models._
 import models.address.{Address, TolerantAddress}
 import models.requests.DataRequest
-import org.scalatest.{MustMatchers, OptionValues, WordSpec}
 import play.api.libs.json.Json
 import play.api.mvc.AnyContent
 import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.PsaId
-import utils.{Enumerable, UserAnswers}
-import viewmodels.AnswerRow
 import utils.checkyouranswers.Ops._
+import utils.{CountryOptions, InputOption, UserAnswers}
+import viewmodels.AnswerRow
 
-class CompanyAddressYearsIdSpec extends WordSpec with MustMatchers with OptionValues with Enumerable.Implicits {
+class CompanyAddressYearsIdSpec extends SpecBase {
 
   "Cleanup" must {
 
@@ -109,41 +109,49 @@ class CompanyAddressYearsIdSpec extends WordSpec with MustMatchers with OptionVa
   }
 
   "cya" when {
-
     val onwardUrl = "onwardUrl"
+    val companyName = "test company name"
 
-    def answers = UserAnswers().set(CompanyAddressYearsId(0))(UnderAYear).asOpt.get
+    def answers = UserAnswers()
+      .set(CompanyAddressYearsId(0))(UnderAYear).asOpt.get
+      .set(CompanyDetailsId(0))(CompanyDetails(companyName)).asOpt.get
 
     "in normal mode" must {
 
       "return answers rows with change links" in {
+        implicit val countryOptions: CountryOptions = new CountryOptions(Seq.empty[InputOption])
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
-        implicit val userAnswers = request.userAnswers
+        implicit val userAnswers: UserAnswers = request.userAnswers
         CompanyAddressYearsId(0).row(onwardUrl, NormalMode) must equal(Seq(
           AnswerRow(
-            "messages__checkYourAnswers__trustees__company__address_years",
+            messages("messages__hasBeen1Year", companyName),
             Seq(s"messages__common__under_a_year"),
             answerIsMessageKey = true,
             Some(Link("site.change", onwardUrl,
-              Some("messages__visuallyhidden__trustee__address_years")))
-        )))
+              Some(messages("messages__changeHasBeen1Year", companyName))))
+          )))
       }
     }
 
     "in update mode for new trustee - company paye" must {
 
+      val companyName = "test company name"
+
       def answersNew: UserAnswers = answers.set(IsTrusteeNewId(0))(true).asOpt.value
+        .set(CompanyDetailsId(0))(CompanyDetails(companyName)).asOpt.get
+
 
       "return answers rows with change links" in {
+        implicit val countryOptions: CountryOptions = new CountryOptions(Seq.empty[InputOption])
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answersNew, PsaId("A0000000"))
-        implicit val userAnswers = request.userAnswers
+        implicit val userAnswers: UserAnswers = request.userAnswers
         CompanyAddressYearsId(0).row(onwardUrl, UpdateMode) must equal(Seq(
           AnswerRow(
-            "messages__checkYourAnswers__trustees__company__address_years",
+            messages("messages__hasBeen1Year", companyName),
             Seq(s"messages__common__under_a_year"),
             answerIsMessageKey = true,
             Some(Link("site.change", onwardUrl,
-              Some("messages__visuallyhidden__trustee__address_years")))
+              Some(messages("messages__changeHasBeen1Year", companyName))))
           )))
       }
     }
@@ -152,7 +160,7 @@ class CompanyAddressYearsIdSpec extends WordSpec with MustMatchers with OptionVa
 
       "return answers rows without change links" in {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
-        implicit val userAnswers = request.userAnswers
+        implicit val userAnswers: UserAnswers = request.userAnswers
 
         CompanyAddressYearsId(0).row(onwardUrl, UpdateMode) must equal(Nil)
       }
