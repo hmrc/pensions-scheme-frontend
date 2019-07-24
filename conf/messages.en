@@ -1506,10 +1506,9 @@ messages__whatYouWillNeedEstablisherCompanyAddress__item2 = previous address if 
 
 messages__whatYouWillNeedEstablisherCompanyContact__title = Contact details
 messages__whatYouWillNeedEstablisherCompanyContact__h1 = Contact details
-messages__whatYouWillNeedEstablisherCompanyContact__lede = You will need to tell us the company’s contact:
-messages__whatYouWillNeedEstablisherCompanyContact__item1 = email address
-messages__whatYouWillNeedEstablisherCompanyContact__item2 = phone number
-messages__whatYouWillNeedEstablisherCompanyContact__item3 = These should be details used for other HMRC services. These will not be used to contact the company.
+messages__whatYouWillNeedEstablisherCompanyContact__lede = You will need to tell us the company’s:
+messages__whatYouWillNeedEstablisherCompanyContact__item1 = contact email address
+messages__whatYouWillNeedEstablisherCompanyContact__item2 = contact phone number
 
 messages__whatYouWillNeedDirectors__title = Directors
 messages__whatYouWillNeedDirectors__h1 = Directors
