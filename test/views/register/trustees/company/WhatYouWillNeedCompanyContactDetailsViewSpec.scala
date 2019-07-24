@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package views.register.establishers.company
+package views.register.trustees.company
 
 import models.{Index, NormalMode}
 import play.twirl.api.HtmlFormat
@@ -25,7 +25,7 @@ class WhatYouWillNeedCompanyContactDetailsViewSpec extends ViewBehaviours {
 
   val messageKeyPrefix = "whatYouWillNeedEstablisherCompanyContact"
 
-  val href = controllers.register.establishers.company.routes.CompanyEmailController.onPageLoad(NormalMode, None, Index(0))
+  val href = controllers.register.trustees.company.routes.CompanyEmailController.onPageLoad(NormalMode, Index(0), None)
 
   def createView: () => HtmlFormat.Appendable = () => whatYouWillNeedCompanyContactDetails(frontendAppConfig, Some("testScheme"), href, None)(fakeRequest, messages)
 

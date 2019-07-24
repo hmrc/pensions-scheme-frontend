@@ -185,9 +185,7 @@ GET        /:index/company/:mode/check-your-answers-company-address/:srn        
 POST       /:index/company/:mode/check-your-answers-company-address/:srn               controllers.register.trustees.company.CheckYourAnswersCompanyAddressController.onSubmit(mode: Mode,index: Index, srn: Option[String])
 
 GET        /:index/company/company-contact-details                                     controllers.register.trustees.company.WhatYouWillNeedCompanyContactDetailsController.onPageLoad(mode: Mode = NormalMode, index: Index, srn: Option[String] = None)
-POST       /:index/company/company-contact-details                                     controllers.register.trustees.company.WhatYouWillNeedCompanyContactDetailsController.onSubmit(mode: Mode = NormalMode, index: Index, srn: Option[String] = None)
 GET        /:index/company/:mode/company-contact-details/:srn                          controllers.register.trustees.company.WhatYouWillNeedCompanyContactDetailsController.onPageLoad(mode: Mode,index: Index, srn: Option[String])
-POST       /:index/company/:mode/company-contact-details/:srn                          controllers.register.trustees.company.WhatYouWillNeedCompanyContactDetailsController.onSubmit(mode: Mode,index: Index, srn: Option[String])
 
 GET        /:index/company/enter-email-address                                         controllers.register.trustees.company.CompanyEmailController.onPageLoad(mode: Mode = NormalMode, index: Index, srn: Option[String] = None)
 POST       /:index/company/enter-email-address                                         controllers.register.trustees.company.CompanyEmailController.onSubmit(mode: Mode = NormalMode, index: Index, srn: Option[String] = None)
