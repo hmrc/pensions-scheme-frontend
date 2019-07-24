@@ -19,6 +19,7 @@ package identifiers.register.trustees.company
 import identifiers.TypedIdentifier
 import identifiers.register.trustees.{IsTrusteeCompleteId, IsTrusteeNewId, TrusteesId}
 import models.AddressYears
+import play.api.i18n.Messages
 import play.api.libs.json.{JsPath, JsResult}
 import utils.UserAnswers
 import utils.checkyouranswers.{AddressYearsCYA, CheckYourAnswers}
@@ -45,18 +46,23 @@ case class CompanyAddressYearsId(index: Int) extends TypedIdentifier[AddressYear
 object CompanyAddressYearsId {
   override lazy val toString: String = "trusteesCompanyAddressYears"
 
-  implicit val cya: CheckYourAnswers[CompanyAddressYearsId] = {
-    val label: String = "messages__checkYourAnswers__trustees__company__address_years"
+  implicit def cya(implicit ua: UserAnswers, messages: Messages): CheckYourAnswers[CompanyAddressYearsId] = {
+
+    def label(index: Int) = ua.get(CompanyDetailsId(index)) match {
+      case Some(details) => messages("messages__company_address_years__h1", details.companyName)
+      case _ => messages("messages__company_address_years__title")
+    }
+
     val changeAddressYears: String = "messages__visuallyhidden__trustee__address_years"
 
     new CheckYourAnswers[CompanyAddressYearsId] {
       override def row(id: CompanyAddressYearsId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        AddressYearsCYA(label, changeAddressYears)().row(id)(changeUrl, userAnswers)
+        AddressYearsCYA(label(id.index), changeAddressYears)().row(id)(changeUrl, userAnswers)
 
       override def updateRow(id: CompanyAddressYearsId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
         userAnswers.get(IsTrusteeNewId(id.index)) match {
-          case Some(true) => AddressYearsCYA(label, changeAddressYears)().row(id)(changeUrl, userAnswers)
-          case _ => AddressYearsCYA(label, changeAddressYears)().updateRow(id)(changeUrl, userAnswers)
+          case Some(true) => AddressYearsCYA(label(id.index), changeAddressYears)().row(id)(changeUrl, userAnswers)
+          case _ => AddressYearsCYA(label(id.index), changeAddressYears)().updateRow(id)(changeUrl, userAnswers)
         }
     }
   }

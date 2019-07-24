@@ -16,6 +16,7 @@
 
 package identifiers.register.trustees.company
 
+import base.SpecBase
 import identifiers.register.trustees.{IsTrusteeCompleteId, IsTrusteeNewId}
 import models.{AddressYears, Link, NormalMode, UpdateMode}
 import models.AddressYears.UnderAYear
@@ -30,7 +31,7 @@ import utils.{Enumerable, UserAnswers}
 import viewmodels.AnswerRow
 import utils.checkyouranswers.Ops._
 
-class CompanyAddressYearsIdSpec extends WordSpec with MustMatchers with OptionValues with Enumerable.Implicits {
+class CompanyAddressYearsIdSpec extends SpecBase {
 
   "Cleanup" must {
 
@@ -115,13 +116,12 @@ class CompanyAddressYearsIdSpec extends WordSpec with MustMatchers with OptionVa
     def answers = UserAnswers().set(CompanyAddressYearsId(0))(UnderAYear).asOpt.get
 
     "in normal mode" must {
-
       "return answers rows with change links" in {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
         implicit val userAnswers = request.userAnswers
         CompanyAddressYearsId(0).row(onwardUrl, NormalMode) must equal(Seq(
           AnswerRow(
-            "messages__checkYourAnswers__trustees__company__address_years",
+            messages("messages__company_address_years__title"),
             Seq(s"messages__common__under_a_year"),
             answerIsMessageKey = true,
             Some(Link("site.change", onwardUrl,
@@ -139,7 +139,7 @@ class CompanyAddressYearsIdSpec extends WordSpec with MustMatchers with OptionVa
         implicit val userAnswers = request.userAnswers
         CompanyAddressYearsId(0).row(onwardUrl, UpdateMode) must equal(Seq(
           AnswerRow(
-            "messages__checkYourAnswers__trustees__company__address_years",
+            messages("messages__company_address_years__title"),
             Seq(s"messages__common__under_a_year"),
             answerIsMessageKey = true,
             Some(Link("site.change", onwardUrl,
