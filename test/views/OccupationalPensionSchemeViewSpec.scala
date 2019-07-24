@@ -29,16 +29,17 @@ class OccupationalPensionSchemeViewSpec extends YesNoViewBehaviours {
   val messageKeyPrefix = "occupational_pension_scheme"
 
   val form = new OccupationalPensionSchemeFormProvider()()
+  val schemeName = "schemename"
 
   def createView(): () => HtmlFormat.Appendable = () =>
-    occupationalPensionScheme(frontendAppConfig, form, NormalMode, None)(fakeRequest, messages)
+    occupationalPensionScheme(frontendAppConfig, form, NormalMode, Some(schemeName))(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) =>
     occupationalPensionScheme(frontendAppConfig, form, NormalMode, None)(fakeRequest, messages)
 
   "OccupationalPensionScheme view " must {
 
-    behave like normalPage(createView(), messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"))
+    behave like normalPage(createView(), messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__h1",schemeName))
 
     behave like yesNoPage(createView = createViewUsingForm, messageKeyPrefix = messageKeyPrefix,
       expectedFormAction = routes.OccupationalPensionSchemeController.onSubmit(NormalMode).url)

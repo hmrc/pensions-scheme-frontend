@@ -229,7 +229,7 @@ messages__contractofinsurance_pension_scheme__title = Are any of the scheme bene
 messages__contractofinsurance_pension_scheme__copy = The benefits in the scheme can be secured by a contract of insurance or annuity contract by an insurance company that provides administration services to the scheme.
 
 messages__occupational_pension_scheme__title = Is the scheme an occupational pension scheme?
-messages__occupational_pension_scheme__h1 = Is the scheme an occupational pension scheme?
+messages__occupational_pension_scheme__h1 = Is {0} an occupational pension scheme?
 
 #Duplicated these messages with the new keys, it can be deleted once the Benefits page is deleted from register routes
 messages__benefits__title = How does the scheme provide benefits?
@@ -1408,7 +1408,7 @@ messages__what_you_will_need_bank_details__item_3 = sort code
 messages__what_you_will_need_bank_details__item_4 = account number
 
 messages__investment_regulated_scheme__title = Is the scheme investment regulated?
-messages__investment_regulated_scheme__h1 = Is the scheme investment regulated?
+messages__investment_regulated_scheme__h1 = Is {0} investment regulated?
 investmentRegulated.checkYourAnswersLabel = Is the scheme investment regulated?
 messages__visuallyhidden__investmentRegulated = Change if the scheme is investment regulated
 
@@ -1416,7 +1416,7 @@ occupationalPensionScheme.checkYourAnswersLabel = Is the scheme an occupational 
 messages__visuallyhidden__occupationalPensionScheme = Change if the scheme an occupational pension scheme
 
 messages__type_of_benefits__title = How does the scheme provide benefits?
-messages__type_of_benefits__h1 = How does the scheme provide benefits?
+messages__type_of_benefits__h1 = How does {0} provide benefits?
 messages__type_of_benefits__opt1 = Money purchase benefits only - this is a defined contribution
 messages__type_of_benefits__opt2 = Defined benefits only
 messages__type_of_benefits__opt3 = Mixture of money purchase benefits and defined benefits
@@ -1425,7 +1425,7 @@ messages__type_of_benefits_cya_label = How does the scheme provide benefits?
 messages__visuallyhidden__type_of_benefits_change = Change how the scheme provides benefits
 
 messages__benefits_secured_by_insurance__title = Are any of the scheme benefits secured by a contract of insurance or annuity?
-messages__benefits_secured_by_insurance__h1 = Are any of the scheme benefits secured by a contract of insurance or annuity?
+messages__benefits_secured_by_insurance__h1 = Are any of {0} benefits secured by a contract of insurance or annuity?
 messages__benefits_secured_by_insurance__lede = Benefits can be secured by a contract of insurance or an annuity contract by an insurance company that provides administration services to the scheme.
 securedBenefits.checkYourAnswersLabel = Are any of the scheme benefits secured by a contract of insurance or annuity?
 messages__visuallyhidden__securedBenefits = Change if any of the scheme benefits are secured by a contract of insurance or annuity
