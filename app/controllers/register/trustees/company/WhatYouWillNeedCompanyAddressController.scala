@@ -39,13 +39,7 @@ class WhatYouWillNeedCompanyAddressController @Inject()(appConfig: FrontendAppCo
   def onPageLoad(mode: Mode, index: Index, srn: Option[String] = None): Action[AnyContent] = (authenticate andThen
     getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
     implicit request =>
-      val postCall = controllers.register.trustees.company.routes.WhatYouWillNeedCompanyAddressController.onSubmit(mode, index, srn)
-      Future.successful(Ok(whatYouWillNeedCompanyAddress(appConfig, existingSchemeName, postCall, srn)))
-  }
-
-  def onSubmit(mode: Mode, index: Index, srn: Option[String] = None): Action[AnyContent] = (authenticate andThen
-    getData(mode, srn) andThen requireData).async {
-    implicit request =>
-      Future.successful(Redirect(controllers.register.trustees.company.routes.CompanyPostCodeLookupController.onPageLoad(mode, index, srn)))
+      val href = controllers.register.trustees.company.routes.CompanyPostCodeLookupController.onSubmit(mode, index, srn)
+      Future.successful(Ok(whatYouWillNeedCompanyAddress(appConfig, existingSchemeName, href, srn)))
   }
 }

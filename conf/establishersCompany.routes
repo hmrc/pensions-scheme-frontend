@@ -227,9 +227,7 @@ GET        /:index/company/:mode/check-your-answers-company-details/:srn        
 POST       /:index/company/:mode/check-your-answers-company-details/:srn                                    controllers.register.establishers.company.CheckYourAnswersCompanyDetailsController.onSubmit(mode: Mode, srn: Option[String], index: Index)
 
 GET        /:index/company/company-address                                                                  controllers.register.establishers.company.WhatYouWillNeedCompanyAddressController.onPageLoad(mode: Mode = NormalMode, srn: Option[String] = None, index: Index)
-POST       /:index/company/company-address                                                                  controllers.register.establishers.company.WhatYouWillNeedCompanyAddressController.onSubmit(mode: Mode = NormalMode, srn: Option[String] = None, index: Index)
 GET        /:index/company/:mode/company-address/:srn                                                       controllers.register.establishers.company.WhatYouWillNeedCompanyAddressController.onPageLoad(mode: Mode, srn: Option[String], index: Index)
-POST       /:index/company/:mode/company-address/:srn                                                       controllers.register.establishers.company.WhatYouWillNeedCompanyAddressController.onSubmit(mode: Mode, srn: Option[String], index: Index)
 
 GET        /:index/company/trading-time                                                                     controllers.register.establishers.company.HasBeenTradingCompanyController.onPageLoad(mode: Mode = NormalMode, srn: Option[String] = None, index: Index)
 POST       /:index/company/trading-time                                                                     controllers.register.establishers.company.HasBeenTradingCompanyController.onSubmit(mode: Mode = NormalMode, srn: Option[String] = None, index: Index)

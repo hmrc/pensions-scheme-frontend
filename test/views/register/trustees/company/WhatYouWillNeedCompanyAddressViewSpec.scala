@@ -25,11 +25,11 @@ class WhatYouWillNeedCompanyAddressViewSpec extends ViewBehaviours {
 
   val messageKeyPrefix = "whatYouWillNeedEstablisherCompanyAddress"
 
-  val postCall = controllers.register.establishers.company.routes.WhatYouWillNeedCompanyAddressController.onSubmit(NormalMode, None, index=Index(0))
+  val href = controllers.register.establishers.company.routes.CompanyPostCodeLookupController.onPageLoad(NormalMode, None, index=Index(0))
 
-  def createView: () => HtmlFormat.Appendable = () => whatYouWillNeedCompanyAddress(frontendAppConfig, Some("testScheme"), postCall, None)(fakeRequest, messages)
+  def createView: () => HtmlFormat.Appendable = () => whatYouWillNeedCompanyAddress(frontendAppConfig, Some("testScheme"), href, None)(fakeRequest, messages)
 
-  "WhatYouWillNeedCompanyDetails view" must {
+  "whatYouWillNeedCompanyAddress view" must {
 
     behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__h1"),
       "_lede", "_item1")
