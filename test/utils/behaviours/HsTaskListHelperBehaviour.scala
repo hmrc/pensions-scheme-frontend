@@ -19,7 +19,9 @@ package utils.behaviours
 import base.SpecBase
 import config.FeatureSwitchManagementService
 import controllers.register.establishers.company.{routes => establisherCompanyRoutes}
+import controllers.register.trustees.company.{routes => trusteeCompanyRoutes}
 import identifiers.register.establishers.{company => establisherCompanyPath}
+import identifiers.register.trustees.{company => trusteeCompanyPath}
 import identifiers.register.establishers.individual.EstablisherDetailsId
 import identifiers.register.establishers.partnership.{PartnershipDetailsId => EstablisherPartnershipDetailsId}
 import identifiers.register.establishers.{IsEstablisherAddressCompleteId, IsEstablisherCompleteId, IsEstablisherNewId}
@@ -156,6 +158,19 @@ trait HsTaskListHelperBehaviour extends SpecBase with MustMatchers with OptionVa
                                     ))))).asOpt.value
   }
 
+  protected def trusteeCompany(isCompleteTrustee: Boolean = true): UserAnswers = {
+    UserAnswers().set(trusteeCompanyPath.CompanyDetailsId(0))(CompanyDetails("test company", false)).flatMap(
+      _.set(IsTrusteeNewId(0))(true).flatMap(
+        _.set(IsTrusteeAddressCompleteId(0))(isCompleteTrustee).flatMap(
+        _.set(trusteeCompanyPath.IsDetailsCompleteId(0))(isCompleteTrustee).flatMap(
+        _.set(trusteeCompanyPath.IsAddressCompleteId(0))(isCompleteTrustee).flatMap(
+        _.set(trusteeCompanyPath.IsContactDetailsCompleteId(0))(isCompleteTrustee).flatMap(
+          _.set(trusteeCompanyPath.CompanyVatId(0))(Vat.No).flatMap(
+            _.set(trusteeCompanyPath.CompanyPayeId(0))(Paye.No).flatMap(
+              _.set(IsTrusteeCompleteId(0))(isCompleteTrustee)
+            )))))))).asOpt.value
+  }
+
   val deletedEstablishers = UserAnswers().set(EstablisherDetailsId(0))(PersonDetails("firstName", None, "lastName", LocalDate.now())).flatMap(
     _.set(IsEstablisherCompleteId(0))(false).flatMap(
       _.set(IsEstablisherNewId(0))(true).flatMap(
@@ -248,6 +263,43 @@ trait HsTaskListHelperBehaviour extends SpecBase with MustMatchers with OptionVa
                 establisherCompanyRoutes.WhatYouWillNeedCompanyContactDetailsController.onPageLoad(mode, srn, 0).url), None),
               EntitySpoke(Link(messages("messages__schemeTaskList__sectionEstablishersCompany_add_directors", "test company"),
                 controllers.register.establishers.company.director.routes.WhatYouWillNeedDirectorController.onPageLoad(mode, srn, 0).url), None)
+            ), Some("test company"))
+        )
+    }
+  }
+
+  def trusteesSectionHnS(mode: Mode, srn: Option[String]): Unit = {
+    def modeBasedCompletion(completion: Option[Boolean]): Option[Boolean] = if(mode == NormalMode) completion else None
+    "return the seq of trustees sub sections when h&s toggle is on when all spokes are uninitiated" in {
+      val userAnswers = trusteeCompany(false)
+      val helper = createTaskListHelper(userAnswers, new FakeFeatureSwitchManagementService(true))
+      helper.trustees(userAnswers, mode, srn) mustBe
+        Seq(
+          SchemeDetailsTaskListEntitySection(None,
+            Seq(
+              EntitySpoke(Link(messages("messages__schemeTaskList__sectionEstablishersCompany_change_details", "test company"),
+                trusteeCompanyRoutes.WhatYouWillNeedCompanyDetailsController.onPageLoad(mode, 0, srn).url), modeBasedCompletion(Some(false))),
+              EntitySpoke(Link(messages("messages__schemeTaskList__sectionEstablishersCompany_change_address", "test company"),
+                trusteeCompanyRoutes.WhatYouWillNeedCompanyAddressController.onPageLoad(mode, 0, srn).url), modeBasedCompletion(Some(false))),
+              EntitySpoke(Link(messages("messages__schemeTaskList__sectionEstablishersCompany_change_contact", "test company"),
+                trusteeCompanyRoutes.WhatYouWillNeedCompanyContactDetailsController.onPageLoad(mode, 0, srn).url), modeBasedCompletion(Some(false)))
+            ), Some("test company"))
+        )
+    }
+
+    "return the seq of trustees sub sections when h&s toggle is on when all spokes are completed" in {
+      val userAnswers = trusteeCompany(true)
+      val helper = createTaskListHelper(userAnswers, new FakeFeatureSwitchManagementService(true))
+      helper.trustees(userAnswers, mode, srn) mustBe
+        Seq(
+          SchemeDetailsTaskListEntitySection(None,
+            Seq(
+              EntitySpoke(Link(messages("messages__schemeTaskList__sectionEstablishersCompany_change_details", "test company"),
+                trusteeCompanyRoutes.CheckYourAnswersCompanyDetailsController.onPageLoad(mode, 0, srn).url), modeBasedCompletion(Some(true))),
+              EntitySpoke(Link(messages("messages__schemeTaskList__sectionEstablishersCompany_change_address", "test company"),
+                trusteeCompanyRoutes.CheckYourAnswersCompanyAddressController.onPageLoad(mode, 0, srn).url), modeBasedCompletion(Some(true))),
+              EntitySpoke(Link(messages("messages__schemeTaskList__sectionEstablishersCompany_change_contact", "test company"),
+                trusteeCompanyRoutes.CheckYourAnswersCompanyContactDetailsController.onPageLoad(mode, 0, srn).url), modeBasedCompletion(Some(true)))
             ), Some("test company"))
         )
     }

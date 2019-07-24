@@ -22,6 +22,7 @@ import viewmodels._
 import views.behaviours.ViewBehaviours
 import views.html.schemeDetailsTaskList
 import controllers.register.establishers.company.{routes => establisherCompanyRoutes}
+import controllers.register.trustees.company.{routes => trusteeCompanyRoutes}
 
 class SchemeDetailsTaskListViewSpec extends ViewBehaviours {
 
@@ -319,9 +320,9 @@ class SchemeDetailsTaskListViewSpec extends ViewBehaviours {
         s"display the first trustee section with correct link and status for item no $index" in {
 
           view must haveLinkWithText(
-            url = schemeDetailsTaskListData().trustees(index.toInt - 1).link.target,
-            linkText = schemeDetailsTaskListData().trustees(index.toInt - 1).link.text,
-            linkId = s"section-trustees-link-$index"
+            url = schemeDetailsTaskListData().trustees(index.toInt - 1).entities.head.link.target,
+            linkText = schemeDetailsTaskListData().trustees(index.toInt - 1).entities.head.link.text,
+            linkId = s"section-trustees-link-$index-0"
           )
         }
 
@@ -329,8 +330,40 @@ class SchemeDetailsTaskListViewSpec extends ViewBehaviours {
           val view = createView(schemeDetailsTaskListData())
           val doc = asDocument(view())
 
-          doc.getElementById(s"section-trustees-status-$index").text mustBe messages(msg)
+          doc.getElementById(s"section-trustees-status-$index-0").text mustBe messages(msg)
         }
+      }
+    }
+
+    "trusteeCompany when h&s toggle is on" should {
+
+      val view = createView(schemeDetailsTaskListData(trustees = trusteeCompanyToggleOn))
+
+      "display the correct link" in {
+
+        view must haveLinkWithText(
+          url = controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode, None).url,
+          linkText = messages("messages__schemeTaskList__sectionTrustees_change_link"),
+          linkId = "section-trustees-link"
+        )
+      }
+
+      s"display the trustee company section with correct links" in {
+
+        for(i <- 0 to 2) {
+
+          view must haveLinkWithText(
+            url = schemeDetailsTaskListData(trustees = trusteeCompanyToggleOn).trustees(0).entities(i).link.target,
+            linkText = schemeDetailsTaskListData(trustees = trusteeCompanyToggleOn).trustees(0).entities(i).link.text,
+            linkId = s"section-trustees-link-01-$i"
+          )
+        }
+
+        view must haveLinkWithText(
+          url = schemeDetailsTaskListData(trustees = trusteeCompanyToggleOn).trustees(1).entities(0).link.target,
+          linkText = schemeDetailsTaskListData(trustees = trusteeCompanyToggleOn).trustees(1).entities(0).link.text,
+          linkId = s"section-trustees-link-02-0"
+        )
       }
     }
   }
@@ -388,7 +421,8 @@ object SchemeDetailsTaskListViewSpec extends ViewSpecBase {
   private val messageKeyPrefix = "schemeTaskList"
 
   private def schemeDetailsTaskListData(srn: Option[String] = None,
-                                        establishers: Seq[SchemeDetailsTaskListEntitySection] = establishers
+                                        establishers: Seq[SchemeDetailsTaskListEntitySection] = establishers,
+                                        trustees: Seq[SchemeDetailsTaskListEntitySection] = trustees
                                        ): SchemeDetailsTaskList = SchemeDetailsTaskList(
     beforeYouStartSection, testAboutHeader, aboutSection, Some(wkSection),
     Some(addEstablisherHeader()), establishers, Some(addTrusteesHeader()),
@@ -448,6 +482,24 @@ object SchemeDetailsTaskListViewSpec extends ViewSpecBase {
         Some("firstName lastName")))
   }
 
+  private def trusteeCompanyToggleOn: Seq[SchemeDetailsTaskListEntitySection] = {
+    Seq(SchemeDetailsTaskListEntitySection(Some(false),
+      Seq(
+        EntitySpoke(Link(messages("messages__schemeTaskList__sectionEstablishersCompany_add_details", "test company"),
+          trusteeCompanyRoutes.WhatYouWillNeedCompanyDetailsController.onPageLoad(NormalMode, 0, None).url), None),
+        EntitySpoke(Link(messages("messages__schemeTaskList__sectionEstablishersCompany_add_address", "test company"),
+          trusteeCompanyRoutes.WhatYouWillNeedCompanyAddressController.onPageLoad(NormalMode, 0, None).url), None),
+        EntitySpoke(Link(messages("messages__schemeTaskList__sectionEstablishersCompany_add_contact", "test company"),
+          trusteeCompanyRoutes.WhatYouWillNeedCompanyContactDetailsController.onPageLoad(NormalMode, 0, None).url), None)
+      ),
+      Some("test company")),
+
+      SchemeDetailsTaskListEntitySection(Some(true), Seq(EntitySpoke(Link(individualLinkText,
+        controllers.register.trustees.individual.routes.CheckYourAnswersController.onPageLoad(NormalMode, 1, None).url),
+        Some(true))),
+        Some("firstName lastName")))
+  }
+
   private def establishers: Seq[SchemeDetailsTaskListEntitySection] = {
     Seq(SchemeDetailsTaskListEntitySection(Some(false), Seq(EntitySpoke(Link(individualLinkText,
       controllers.register.establishers.individual.routes.EstablisherDetailsController.onPageLoad(NormalMode, 0, None).url),
@@ -460,11 +512,15 @@ object SchemeDetailsTaskListViewSpec extends ViewSpecBase {
         Some("firstName lastName")))
   }
 
-  private def trustees: Seq[SchemeDetailsTaskListSection] = {
-    Seq(SchemeDetailsTaskListSection(Some(false), Link(individualLinkText,
-      controllers.register.trustees.individual.routes.TrusteeDetailsController.onPageLoad(NormalMode, 0, None).url), Some("firstName lastName")),
-      SchemeDetailsTaskListSection(Some(true), Link(individualLinkText,
-        controllers.register.trustees.individual.routes.CheckYourAnswersController.onPageLoad(NormalMode, 0, None).url), Some("firstName lastName")))
+  private def trustees: Seq[SchemeDetailsTaskListEntitySection] = {
+    Seq(SchemeDetailsTaskListEntitySection(Some(false), Seq(EntitySpoke(Link(individualLinkText,
+      controllers.register.trustees.individual.routes.TrusteeDetailsController.onPageLoad(NormalMode, 0, None).url),
+      Some(false))),
+      Some("firstName lastName")),
+      SchemeDetailsTaskListEntitySection(Some(true), Seq(EntitySpoke(Link(individualLinkText,
+        controllers.register.trustees.individual.routes.CheckYourAnswersController.onPageLoad(NormalMode, 0, None).url),
+        Some(true))),
+        Some("firstName lastName")))
   }
 
 }
