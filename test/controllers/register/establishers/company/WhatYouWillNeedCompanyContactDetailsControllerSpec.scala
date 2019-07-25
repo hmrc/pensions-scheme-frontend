@@ -21,13 +21,10 @@ import controllers.actions._
 import models.{Index, NormalMode}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.mockito.MockitoSugar
-import play.api.mvc.Call
 import play.api.test.Helpers._
 import views.html.register.establishers.company.whatYouWillNeedCompanyContactDetails
 
 class WhatYouWillNeedCompanyContactDetailsControllerSpec extends ControllerSpecBase with MockitoSugar with BeforeAndAfterEach {
-
-  def onwardRoute: Call = controllers.register.establishers.company.routes.CompanyEmailController.onPageLoad(NormalMode, None, Index(0))
 
   def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): WhatYouWillNeedCompanyContactDetailsController =
     new WhatYouWillNeedCompanyContactDetailsController(frontendAppConfig,
@@ -38,9 +35,9 @@ class WhatYouWillNeedCompanyContactDetailsControllerSpec extends ControllerSpecB
       new DataRequiredActionImpl
     )
 
-  val postCall = controllers.register.establishers.company.routes.WhatYouWillNeedCompanyContactDetailsController.onSubmit(NormalMode, None, index=Index(0))
+  lazy val href = controllers.register.establishers.company.routes.CompanyEmailController.onPageLoad(NormalMode, None, Index(0))
 
-  def viewAsString(): String = whatYouWillNeedCompanyContactDetails(frontendAppConfig, None, postCall, None)(fakeRequest, messages).toString
+  def viewAsString(): String = whatYouWillNeedCompanyContactDetails(frontendAppConfig, None, href, None)(fakeRequest, messages).toString
 
   "WhatYouWillNeedCompanyContactDetailsController" when {
 
@@ -50,15 +47,6 @@ class WhatYouWillNeedCompanyContactDetailsControllerSpec extends ControllerSpecB
 
         status(result) mustBe OK
         contentAsString(result) mustBe viewAsString()
-      }
-    }
-
-    "on a POST" must {
-      "redirect to relavant page" in {
-        val result = controller().onSubmit(NormalMode, None, Index(0))(fakeRequest)
-
-        status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(onwardRoute.url)
       }
     }
   }

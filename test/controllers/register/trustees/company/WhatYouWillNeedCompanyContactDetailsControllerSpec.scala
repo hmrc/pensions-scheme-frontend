@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers.register.establishers.company
+package controllers.register.trustees.company
 
 import controllers.ControllerSpecBase
 import controllers.actions._
@@ -23,12 +23,14 @@ import org.scalatest.BeforeAndAfterEach
 import org.scalatest.mockito.MockitoSugar
 import play.api.mvc.Call
 import play.api.test.Helpers._
-import views.html.register.establishers.company.whatYouWillNeedCompanyDetails
+import views.html.register.trustees.company.whatYouWillNeedCompanyContactDetails
 
-class WhatYouWillNeedCompanyDetailsControllerSpec extends ControllerSpecBase with MockitoSugar with BeforeAndAfterEach {
+class WhatYouWillNeedCompanyContactDetailsControllerSpec extends ControllerSpecBase with MockitoSugar with BeforeAndAfterEach {
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): WhatYouWillNeedCompanyDetailsController =
-    new WhatYouWillNeedCompanyDetailsController(frontendAppConfig,
+  def onwardRoute: Call = controllers.register.trustees.company.routes.CompanyEmailController.onPageLoad(NormalMode, Index(0), None)
+
+  def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): WhatYouWillNeedCompanyContactDetailsController =
+    new WhatYouWillNeedCompanyContactDetailsController(frontendAppConfig,
       messagesApi,
       FakeAuthAction,
       dataRetrievalAction,
@@ -36,15 +38,15 @@ class WhatYouWillNeedCompanyDetailsControllerSpec extends ControllerSpecBase wit
       new DataRequiredActionImpl
     )
 
-  lazy val href = controllers.register.establishers.company.routes.HasCompanyNumberController.onSubmit(NormalMode, None, index=Index(0))
+  lazy val href = controllers.register.trustees.company.routes.CompanyEmailController.onPageLoad(NormalMode, Index(0), None)
 
-  def viewAsString(): String = whatYouWillNeedCompanyDetails(frontendAppConfig, None, href, None)(fakeRequest, messages).toString
+  def viewAsString(): String = whatYouWillNeedCompanyContactDetails(frontendAppConfig, None, href, None)(fakeRequest, messages).toString
 
-  "WhatYouWillNeedCompanyDetailsControllerSpec" when {
+  "WhatYouWillNeedCompanyContactDetailsController" when {
 
     "on a GET" must {
       "return OK and the correct view" in {
-        val result = controller().onPageLoad(NormalMode, None, Index(0))(fakeRequest)
+        val result = controller().onPageLoad(NormalMode, Index(0), None)(fakeRequest)
 
         status(result) mustBe OK
         contentAsString(result) mustBe viewAsString()
