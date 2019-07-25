@@ -315,13 +315,13 @@ class SchemeDetailsTaskListViewSpec extends ViewBehaviours {
         )
       }
 
-      Seq(("01", "messages__schemeTaskList__inProgress"), ("02", "messages__schemeTaskList__completed")).foreach { case (index, msg) =>
+      Seq(("0", "messages__schemeTaskList__inProgress"), ("1", "messages__schemeTaskList__completed")).foreach { case (index, msg) =>
 
         s"display the first trustee section with correct link and status for item no $index" in {
 
           view must haveLinkWithText(
-            url = schemeDetailsTaskListData().trustees(index.toInt - 1).entities.head.link.target,
-            linkText = schemeDetailsTaskListData().trustees(index.toInt - 1).entities.head.link.text,
+            url = schemeDetailsTaskListData().trustees(index.toInt).entities.head.link.target,
+            linkText = schemeDetailsTaskListData().trustees(index.toInt).entities.head.link.text,
             linkId = s"section-trustees-link-$index-0"
           )
         }
@@ -355,14 +355,14 @@ class SchemeDetailsTaskListViewSpec extends ViewBehaviours {
           view must haveLinkWithText(
             url = schemeDetailsTaskListData(trustees = trusteeCompanyToggleOn).trustees(0).entities(i).link.target,
             linkText = schemeDetailsTaskListData(trustees = trusteeCompanyToggleOn).trustees(0).entities(i).link.text,
-            linkId = s"section-trustees-link-01-$i"
+            linkId = s"section-trustees-link-0-$i"
           )
         }
 
         view must haveLinkWithText(
           url = schemeDetailsTaskListData(trustees = trusteeCompanyToggleOn).trustees(1).entities(0).link.target,
           linkText = schemeDetailsTaskListData(trustees = trusteeCompanyToggleOn).trustees(1).entities(0).link.text,
-          linkId = s"section-trustees-link-02-0"
+          linkId = s"section-trustees-link-1-0"
         )
       }
     }

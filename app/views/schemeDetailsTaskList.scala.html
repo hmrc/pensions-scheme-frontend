@@ -185,9 +185,7 @@
             <h2 id="section-trustees-header" class="heading-large">
                 @messages("messages__schemeTaskList__sectionTrustees_header")
             </h2>
-
             @variationsOnly("<p>")
-
             @taskSections.addTrusteeHeader.map { header =>
                 @header.link.map { link =>
                     <!--this is the add link-->
@@ -209,34 +207,27 @@
                 }
             }
             @variationsOnly("</p>")
-
-
-                <ul class="task-list-items">
-
-
-                    @for((item, i) <- taskSections.trustees.zipWithIndex){
-                    @defining(i+1) { index =>
-                        @item.header.map{hdr=>
-                            <li class="task-list-item">
-                                <h3 class="task-list-section">@messages(hdr)</h3>
-                            </li>
-                        }
-
-                        @for((entity, i) <- item.entities.zipWithIndex){
+            <ul class="task-list-items">
+                @for((item, i) <- taskSections.trustees.zipWithIndex){
+                    @item.header.map{hdr=>
                         <li class="task-list-item">
-                            <a id= "section-trustees-link-0@index-@i" href="@{entity.link.target}">
+                            <h3 class="task-list-section">@messages(hdr)</h3>
+                        </li>
+                    }
+
+                    @for((entity, j) <- item.entities.zipWithIndex){
+                        <li class="task-list-item">
+                            <a id= "section-trustees-link-@i-@j" href="@{entity.link.target}">
                                 @messages(entity.link.text)
                             </a>
                             @entity.isCompleted.map{ isCompleted =>
-                            <strong class="@statusClass(isCompleted)" id="section-trustees-status-0@index-@i">@messages(status(isCompleted))</strong>
+                                <strong class="@statusClass(isCompleted)" id="section-trustees-status-@i-@j">@messages(status(isCompleted))</strong>
                             }
                         </li>
-                        }
-                        }
                     }
+                }
 
-                </ul>
-
+            </ul>
         </section>
 
         @taskSections.declaration.map{declarationSection=>
