@@ -133,15 +133,15 @@ class SchemeDetailsTaskListViewSpec extends ViewBehaviours {
     }
 
 
-    Seq(("01", "members", "messages__schemeTaskList__inProgress"), ("02", "benefits and insurance", "messages__schemeTaskList__completed"),
-      ("03", "bank details", "messages__schemeTaskList__completed")
+    Seq(("0", "members", "messages__schemeTaskList__inProgress"), ("1", "benefits and insurance", "messages__schemeTaskList__completed"),
+      ("2", "bank details", "messages__schemeTaskList__completed")
     ).foreach { case (index, aboutType, msg) =>
 
       s"display the about $aboutType section with correct link" in {
 
         view must haveLinkWithText(
-          url = schemeDetailsTaskListData().about(index.toInt - 1).link.target,
-          linkText = schemeDetailsTaskListData().about(index.toInt - 1).link.text,
+          url = schemeDetailsTaskListData().about(index.toInt).link.target,
+          linkText = schemeDetailsTaskListData().about(index.toInt).link.text,
           linkId = s"section-about-link-$index"
         )
       }
@@ -202,13 +202,13 @@ class SchemeDetailsTaskListViewSpec extends ViewBehaviours {
         )
       }
 
-      Seq(("01", "messages__schemeTaskList__inProgress"), ("02", "messages__schemeTaskList__completed")).foreach { case (index, msg) =>
+      Seq(("0", "messages__schemeTaskList__inProgress"), ("1", "messages__schemeTaskList__completed")).foreach { case (index, msg) =>
 
         s"display the first establisher section with correct link and status for item no $index" in {
 
           view must haveLinkWithText(
-            url = schemeDetailsTaskListData().establishers(index.toInt - 1).entities.head.link.target,
-            linkText = schemeDetailsTaskListData().establishers(index.toInt - 1).entities.head.link.text,
+            url = schemeDetailsTaskListData().establishers(index.toInt).entities.head.link.target,
+            linkText = schemeDetailsTaskListData().establishers(index.toInt).entities.head.link.text,
             linkId = s"section-establishers-link-$index-0"
           )
         }
@@ -242,14 +242,14 @@ class SchemeDetailsTaskListViewSpec extends ViewBehaviours {
             view must haveLinkWithText(
               url = schemeDetailsTaskListData(establishers = establisherCompanyToggleOn).establishers(0).entities(i).link.target,
               linkText = schemeDetailsTaskListData(establishers = establisherCompanyToggleOn).establishers(0).entities(i).link.text,
-              linkId = s"section-establishers-link-01-$i"
+              linkId = s"section-establishers-link-0-$i"
             )
           }
 
           view must haveLinkWithText(
             url = schemeDetailsTaskListData(establishers = establisherCompanyToggleOn).establishers(1).entities(0).link.target,
             linkText = schemeDetailsTaskListData(establishers = establisherCompanyToggleOn).establishers(1).entities(0).link.text,
-            linkId = s"section-establishers-link-02-0"
+            linkId = s"section-establishers-link-1-0"
           )
         }
       }
