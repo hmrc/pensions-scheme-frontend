@@ -1493,10 +1493,10 @@ messages__visuallyhidden__hns_uKBankDetails = Change {0}’s bank account detail
 messages__whatYouWillNeedEstablisherCompany__title = What you will need
 messages__whatYouWillNeedEstablisherCompany__h1 = Company details
 messages__whatYouWillNeedEstablisherCompany__lede = You will need to tell us the company’s:
-messages__whatYouWillNeedEstablisherCompany__item1 = registration number
-messages__whatYouWillNeedEstablisherCompany__item2 = Unique Taxpayer Reference (UTR)
-messages__whatYouWillNeedEstablisherCompany__item3 = VAT registration number
-messages__whatYouWillNeedEstablisherCompany__item4 = employer PAYE number
+messages__whatYouWillNeedEstablisherCompany__item1 = company number, or reason why it does not have one
+messages__whatYouWillNeedEstablisherCompany__item2 = Unique Taxpayer Reference (UTR), or reason why it does not have one
+messages__whatYouWillNeedEstablisherCompany__item3 = VAT registration number, if it has one
+messages__whatYouWillNeedEstablisherCompany__item4 = employer PAYE number, if it has one
 
 messages__whatYouWillNeedEstablisherCompanyAddress__title = Address
 messages__whatYouWillNeedEstablisherCompanyAddress__h1 = Address
@@ -1526,11 +1526,13 @@ messages__whatYouWillNeedDirectors__item8 = contact phone number
 messages__whatYouWillNeedTrusteeCompany__title = Company details
 messages__whatYouWillNeedTrusteeCompany__h1 = Company details
 messages__whatYouWillNeedTrusteeCompany__p1 = You will need to tell us the company’s:
-messages__whatYouWillNeedTrusteeCompany__item1 = company number
-messages__whatYouWillNeedTrusteeCompany__item2 = Unique Taxpayer Reference (UTR)
-messages__whatYouWillNeedTrusteeCompany__item3 = VAT registration number
-messages__whatYouWillNeedTrusteeCompany__item4 = employer PAYE reference
+messages__whatYouWillNeedTrusteeCompany__item1 = company number, or reason why it does not have one
+messages__whatYouWillNeedTrusteeCompany__item2 = Unique Taxpayer Reference (UTR), or reason why it does not have one
+messages__whatYouWillNeedTrusteeCompany__item3 = VAT registration number, if it has one
+messages__whatYouWillNeedTrusteeCompany__item4 = employer PAYE reference, if it has one
 messages__whatYouWillNeedTrusteeCompany__p2 = You will also need to tell us if the company has been dormant at any time in the last 12 months.
+
+messages__tradingAtLeastOneYear__error = Select yes if {0} has been trading for at least 1 year
 
 messages__hasCompanyNumber__title = Does the establisher have a company number?
 messages__hasCompanyNumber__h1 = Does {0} have a company number?
@@ -1547,9 +1549,19 @@ messages__hasCompanyVat__h1 = Is {0} registered for VAT?
 messages__hasCompanyVat__p1 = This is 9 numbers, sometimes with ‘GB’ at the start, for example 123456789 or GB123456789. You can find it on {0}’s VAT registration certificate.
 messages__hasCompanyVat__error__required = Select yes if the {0} is registered for VAT
 
+messages__trusteeAddress = {0}’s address
+messages__changeTrusteeAddress = Change {0}’s address
+
+messages__hasBeen1Year = Has {0} been at their address for at least 1 year?
+messages__changeHasBeen1Year = Change whether {0} has been at their address for at least 1 year?
+messages__theTrustee = the trustee
+
 messages__hasBeenTradingCompany__title = Has the establisher been trading for more than a year?
 messages__hasBeenTradingCompany__h1 =  Has {0} been trading for more than a year?
 messages__hasBeenTradingCompany__error__required = Select yes if {0} has been trading  for more than a year
+messages__hasBeenTradingCompany__title = Has the company been trading for at least 1 year?
+messages__hasBeenTradingCompany__h1 =  Has {0} been trading for at least 1 year?
+messages__hasBeenTradingCompany__error__required = Select yes if {0} has been trading for at least 1 year
 
 messages__schemeTaskList__before_you_start_link_text = Setting up your scheme application
 messages__schemeTaskList__scheme_info_link_text = Information about your scheme
@@ -1586,9 +1598,10 @@ messages__companyPaye__heading = Does {0} have an employer PAYE number?
 messages__companyPaye__error__required = Select yes if the company has an employer PAYE number
 
 messages__companyPayeRef__title = Does the establisher have an employer PAYE reference?
+messages__companyPayeRef__trustee_title = Does the company have an employer PAYE reference?
 messages__companyPayeRef__h1 = Does {0} have an employer PAYE reference?
 messages__companyPayeRef__error__required = Select whether the company has an employer PAYE number
-messages__companyPayeRef__p1 = This is a 3 digit tax office number, a forward slash, and a tax office employer reference, like 123/AB456. It may be called ‘Employer PAYE reference’ or ‘PAYE reference’.
+messages__companyPayeRef__p1 = This is a 3 digit tax office number, a forward slash, and a tax office employer reference, like 123/AB456. It may be called ‘Employer PAYE reference’ or ‘PAYE reference’. It will be on letters from HMRC about PAYE.
 
 messages__companyVat__title = Is the company registered for VAT?
 messages__companyVat__heading = Is {0} registered for VAT?
