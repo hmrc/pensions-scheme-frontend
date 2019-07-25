@@ -32,16 +32,18 @@ import utils.{Toggles, UserAnswers}
 class TrusteesCompanyNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector,
                                          appConfig: FrontendAppConfig) extends AbstractNavigator {
 
+  private def isExistingTrustee(userAnswers: UserAnswers, index: Index): Boolean =
+    userAnswers.get(IsTrusteeNewId(index)).fold(true)(!_)
+
   private def exitMiniJourney(index: Index, mode: Mode, srn: Option[String], answers: UserAnswers): Option[NavigateTo] =
-    if(mode == CheckMode || mode == NormalMode){
-      checkYourAnswers(index, journeyMode(mode), srn)
-    } else {
-      if(answers.get(IsTrusteeNewId(index)).getOrElse(false)) checkYourAnswers(index, journeyMode(mode), srn)
-      else anyMoreChanges(srn)
+    mode match {
+      case UpdateMode | CheckUpdateMode if isExistingTrustee(answers, index) =>
+        NavigateTo.dontSave(AnyMoreChangesController.onPageLoad(srn))
+
+      case _ =>
+        NavigateTo.dontSave(CheckYourAnswersController.onPageLoad(journeyMode(mode), index, srn))
     }
 
-  private def anyMoreChanges(srn: Option[String]): Option[NavigateTo] =
-    NavigateTo.dontSave(AnyMoreChangesController.onPageLoad(srn))
 
   //scalastyle:off cyclomatic.complexity
   protected def routes(from: NavigateFrom, mode: Mode, srn: Option[String]): Option[NavigateTo] = {
@@ -129,7 +131,7 @@ class TrusteesCompanyNavigator @Inject()(val dataCacheConnector: UserAnswersCach
       case CompanyAddressId(index) =>
         val isNew = from.userAnswers.get(IsTrusteeNewId(index)).contains(true)
         if(isNew || mode == CheckMode) {
-          checkYourAnswers(index, journeyMode(mode), srn)
+          NavigateTo.dontSave(CheckYourAnswersController.onPageLoad(journeyMode(mode), index, srn))
         } else {
           NavigateTo.dontSave(CompanyAddressYearsController.onPageLoad(mode, index, srn))
         }
@@ -162,10 +164,6 @@ class TrusteesCompanyNavigator @Inject()(val dataCacheConnector: UserAnswersCach
   override protected def editRouteMap(from: NavigateFrom): Option[NavigateTo] = editRoutes(from, CheckMode, None)
 
   protected def checkUpdateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] = editRoutes(from, CheckUpdateMode, srn)
-
-  private def checkYourAnswers(index: Int, mode: Mode, srn: Option[String]): Option[NavigateTo] = {
-    NavigateTo.dontSave(CheckYourAnswersController.onPageLoad(mode, index, srn))
-  }
 
   private def addressYearsRoutes(index: Int, answers: UserAnswers, mode: Mode, srn: Option[String]): Option[NavigateTo] = {
     answers.get(CompanyAddressYearsId(index)) match {
@@ -201,7 +199,7 @@ class TrusteesCompanyNavigator @Inject()(val dataCacheConnector: UserAnswersCach
         case Some(false) =>
           NavigateTo.dontSave(CompanyPreviousAddressPostcodeLookupController.onPageLoad(mode, index, srn))
         case Some(true) =>
-          anyMoreChanges(srn)
+          NavigateTo.dontSave(AnyMoreChangesController.onPageLoad(srn))
         case None =>
           NavigateTo.dontSave(SessionExpiredController.onPageLoad())
       }
