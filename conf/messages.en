@@ -1362,10 +1362,10 @@ messages__scheme_uk_bank_account__h1 = Does {0} have a UK bank account?
 
 messages__members__opt1 = None
 messages__members__opt2 = 1
-messages__members__opt3 = 2 - 11
-messages__members__opt4 = 12 - 50
-messages__members__opt5 = 51 - 10,000
-messages__members__opt6 = more than 10,000
+messages__members__opt3 = 2 to 11
+messages__members__opt4 = 12 to 50
+messages__members__opt5 = 51 to 10,000
+messages__members__opt6 = More than 10,000
 
 messages__current_members__title = How many members does the scheme currently have?
 messages__current_members__h1 = How many members does {0} currently have?
