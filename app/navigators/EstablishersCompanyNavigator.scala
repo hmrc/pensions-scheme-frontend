@@ -37,12 +37,14 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
                                              appConfig: FrontendAppConfig,
                                              featureSwitchManagementService: FeatureSwitchManagementService) extends AbstractNavigator {
 
+  private val isEstablisherCompanyHnSEnabled: Boolean = featureSwitchManagementService.get(Toggles.isEstablisherCompanyHnSEnabled)
+
   private def exitMiniJourney(index: Int,
                               mode: Mode,
                               srn: Option[String],
                               answers: UserAnswers,
                               cyaPage: (Int, Mode, Option[String]) => Option[NavigateTo] = cya): Option[NavigateTo] = {
-    val cyaToggled = if(featureSwitchManagementService.get(Toggles.isEstablisherCompanyHnSEnabled)) cyaPage else cya _
+    val cyaToggled = if(isEstablisherCompanyHnSEnabled) cyaPage else cya _
     if (mode == CheckMode || mode == NormalMode)
       cyaToggled(index, journeyMode(mode), srn)
     else if (answers.get(IsEstablisherNewId(index)).getOrElse(false))
@@ -68,7 +70,7 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
     from.id match {
       case CompanyDetailsId(index) =>
         NavigateTo.dontSave(
-          if (featureSwitchManagementService.get(Toggles.isEstablisherCompanyHnSEnabled)) {
+          if (isEstablisherCompanyHnSEnabled) {
             controllers.register.establishers.routes.AddEstablisherController.onPageLoad(mode, srn)
           } else {
             establisherCompanyRoutes.CompanyVatController.onPageLoad(mode, index, srn)
@@ -89,7 +91,7 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
       case CompanyPayeId(index) =>
         NavigateTo.dontSave(establisherCompanyRoutes.CompanyRegistrationNumberController.onPageLoad(mode, srn, index))
       case CompanyRegistrationNumberId(index) =>
-        if (featureSwitchManagementService.get(Toggles.isEstablisherCompanyHnSEnabled)) {
+        if (isEstablisherCompanyHnSEnabled) {
           NavigateTo.dontSave(establisherCompanyRoutes.HasCompanyUTRController.onPageLoad(mode, srn, index))
         } else {
           NavigateTo.dontSave(establisherCompanyRoutes.CompanyUniqueTaxReferenceController.onPageLoad(mode, srn, index))
@@ -142,7 +144,7 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
     }
 
   def previousAddressRoutes(index: Int, mode: Mode, srn: Option[String]): Option[NavigateTo] = {
-    if (featureSwitchManagementService.get(Toggles.isEstablisherCompanyHnSEnabled)) {
+    if (isEstablisherCompanyHnSEnabled) {
       NavigateTo.dontSave(establisherCompanyRoutes.CheckYourAnswersCompanyAddressController.onPageLoad(mode, srn, index))
     } else {
       NavigateTo.dontSave(establisherCompanyRoutes.CompanyContactDetailsController.onPageLoad(mode, srn, index))
@@ -150,7 +152,7 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
   }
 
   def previousAddressEditRoutes(index: Int, mode: Mode, srn: Option[String], userAnswers: UserAnswers): Option[NavigateTo] = {
-    if (featureSwitchManagementService.get(Toggles.isEstablisherCompanyHnSEnabled)) {
+    if (isEstablisherCompanyHnSEnabled) {
       exitMiniJourney(index, mode, srn, userAnswers, cyaAddressDetails)
     } else {
       exitMiniJourney(index, mode, srn, userAnswers)
@@ -184,7 +186,7 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
 
       case CompanyAddressId(index) =>
         if (from.userAnswers.get(IsEstablisherNewId(index)).contains(true) || mode == CheckMode){
-          if(featureSwitchManagementService.get(Toggles.isEstablisherCompanyHnSEnabled)){
+          if(isEstablisherCompanyHnSEnabled){
             cyaAddressDetails(index, journeyMode(mode), srn)
           } else {
             cya(index, journeyMode(mode), srn)
@@ -220,7 +222,7 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
     case CompanyContactDetailsId(index) =>
       NavigateTo.dontSave(establisherCompanyRoutes.IsCompanyDormantController.onPageLoad(NormalMode, None, index))
     case IsCompanyDormantId(index) =>
-      if(featureSwitchManagementService.get(Toggles.isEstablisherCompanyHnSEnabled))
+      if(isEstablisherCompanyHnSEnabled)
         NavigateTo.dontSave(establisherCompanyRoutes.CheckYourAnswersCompanyDetailsController.onPageLoad(NormalMode, None, index))
       else
         NavigateTo.dontSave(establisherCompanyRoutes.CheckYourAnswersController.onPageLoad(NormalMode, None, index))
@@ -246,7 +248,7 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
 
   private def addressYearsRoutes(index: Int, answers: UserAnswers, mode: Mode, srn: Option[String]): Option[NavigateTo] = {
     (answers.get(CompanyAddressYearsId(index)),
-      featureSwitchManagementService.get(Toggles.isEstablisherCompanyHnSEnabled)) match {
+      isEstablisherCompanyHnSEnabled) match {
       case (Some(AddressYears.UnderAYear), true) =>
         NavigateTo.dontSave(establisherCompanyRoutes.HasBeenTradingCompanyController.onPageLoad(mode, srn, index))
       case (Some(AddressYears.OverAYear), true) =>
@@ -263,7 +265,7 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
   private def editAddressYearsRoutes(index: Int, answers: UserAnswers, mode: Mode, srn: Option[String]): Option[NavigateTo] = {
     (
       answers.get(CompanyAddressYearsId(index)),
-      featureSwitchManagementService.get(Toggles.isEstablisherCompanyHnSEnabled),
+      isEstablisherCompanyHnSEnabled,
       answers.get(IsEstablisherNewId(index)).getOrElse(false)
     ) match {
       case (Some(AddressYears.UnderAYear), _, false) =>
@@ -283,7 +285,7 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
 
 
   private def addDirectors(mode: Mode, index: Int, answers: UserAnswers, srn: Option[String]): Option[NavigateTo] = {
-    val toggled = featureSwitchManagementService.get(Toggles.isEstablisherCompanyHnSEnabled)
+    val toggled = isEstablisherCompanyHnSEnabled
     NavigateTo.dontSave(
       if (toggled) {
         if (answers.allDirectorsAfterDelete(index, toggled).isEmpty) {
