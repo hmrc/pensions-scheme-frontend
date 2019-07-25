@@ -145,7 +145,7 @@ class TrusteesCompanyNavigator @Inject()(
         val isNew = from.userAnswers.get(IsTrusteeNewId(index)).contains(true)
         if(isNew || mode == CheckMode) {
           if(featureSwitchManagementService.get(Toggles.isEstablisherCompanyHnSEnabled)){
-            cyaAddressDetails(mode, index, srn)
+            cyaAddressDetails(journeyMode(mode), index, srn)
           } else {
             checkYourAnswers(index, journeyMode(mode), srn)
           }

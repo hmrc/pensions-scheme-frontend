@@ -52,19 +52,21 @@ class TrusteesCompanyNavigatorSpec extends SpecBase with MustMatchers with Navig
     (CompanyPostcodeLookupId(0), emptyAnswers, companyAddressList(mode), true, Some(companyAddressList(checkMode(mode))), true),
     (CompanyAddressListId(0), emptyAnswers, companyManualAddress(mode), true, Some(companyManualAddress(checkMode(mode))), true),
     (CompanyAddressId(0), emptyAnswers, companyAddressYears(mode), true,
-      if(mode == UpdateMode) Some(companyAddressYears(checkMode(mode))) else Some(cya(mode)), true),
-    (CompanyAddressId(0), newTrustee, companyAddressYears(mode), true, Some(cya(mode)), true),
-    (CompanyAddressYearsId(0), addressYearsOverAYear, companyContactDetails(mode), true, Some(exitJourney(mode, emptyAnswers, 0, toggled, cyaAddress(mode))), true),
-    (CompanyAddressYearsId(0), addressYearsOverAYearNew, companyContactDetails(mode), true, Some(exitJourney(mode, addressYearsOverAYearNew, 0, toggled, cyaAddress(mode))), true),
+      addressRoutesNotNew(mode, toggled), true),
+    (CompanyAddressId(0), newTrustee, companyAddressYears(mode), true, if(toggled) Some(cyaAddress(mode)) else Some(cya(mode)), true),
+    (CompanyAddressYearsId(0), addressYearsOverAYear, if(toggled) cyaAddress(mode) else companyContactDetails(mode), true, Some(exitJourney(mode, emptyAnswers, 0, toggled, cyaAddress(mode))), true),
+    (CompanyAddressYearsId(0), addressYearsOverAYearNew, if(toggled) cyaAddress(mode) else companyContactDetails(mode), true, Some(exitJourney(mode, addressYearsOverAYearNew, 0, toggled, cyaAddress(mode))), true),
     (CompanyPreviousAddressPostcodeLookupId(0), emptyAnswers, companyPaList(mode), true, Some(companyPaList(checkMode(mode))), true),
     (CompanyPreviousAddressListId(0), emptyAnswers, companyPreviousAddress(mode), true, Some(companyPreviousAddress(checkMode(mode))), true),
-    (CompanyPreviousAddressId(0), emptyAnswers, companyContactDetails(mode), true, Some(exitJourney(mode, emptyAnswers, 0, toggled, cyaAddress(mode))), true),
-    (CompanyContactDetailsId(0), emptyAnswers, cya(mode), true, Some(exitJourney(mode, emptyAnswers, 0, toggled, cyaAddress(mode))), true),
-    (CompanyContactDetailsId(0), newTrustee, cya(mode), true, Some(exitJourney(mode, newTrustee, 0, toggled, cyaAddress(mode))), true),
+    (CompanyPreviousAddressId(0), emptyAnswers, if(toggled) cyaAddress(mode) else companyContactDetails(mode), true, Some(exitJourney(mode, emptyAnswers, 0, toggled, cyaAddress(mode))), true),
+    (CompanyContactDetailsId(0), emptyAnswers, cya(mode), true, Some(exitJourney(mode, emptyAnswers, 0, toggled, cya(mode))), true),
+    (CompanyContactDetailsId(0), newTrustee, cya(mode), true, Some(exitJourney(mode, newTrustee, 0, toggled, cya(mode))), true),
     (CompanyAddressYearsId(0), emptyAnswers, sessionExpired, false, Some(sessionExpired), false),
     (CheckYourAnswersId, emptyAnswers, addTrustee(mode), false, None, true),
     (CompanyVatVariationsId(0), emptyAnswers, index, false, Some(exitJourney(mode, emptyAnswers, 0, toggled, cya(mode))), true),
-    (CompanyVatVariationsId(0), newTrustee, index, false, Some(exitJourney(mode, newTrustee, 0, toggled, cya(mode))), true)
+    (CompanyVatVariationsId(0), newTrustee, index, false, Some(exitJourney(mode, newTrustee, 0, toggled, cya(mode))), true),
+    (HasBeenTradingCompanyId(0), tradingLessThanAYear, cyaAddress(mode), false, None, true),
+    (HasBeenTradingCompanyId(0), tradingMoreThanAYear, prevAddPostCodeLookup(mode), false, None, true)
   )
 
   private def editRoutes(mode: Mode, toggled: Boolean = false): TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = Table(
@@ -72,8 +74,8 @@ class TrusteesCompanyNavigatorSpec extends SpecBase with MustMatchers with Navig
     (CompanyConfirmPreviousAddressId(0), confirmPreviousAddressYes, sessionExpired, false, Some(anyMoreChanges), false),
     (CompanyConfirmPreviousAddressId(0), confirmPreviousAddressNo, sessionExpired, false, Some(prevAddPostCodeLookup(checkMode(mode))), false),
     (CompanyConfirmPreviousAddressId(0), emptyAnswers, sessionExpired, false, Some(sessionExpired), false),
-    (CompanyAddressYearsId(0), addressYearsUnderAYear, if(toggled) hasBeenTrading(mode) else prevAddPostCodeLookup(mode), true, Some(addressYearsLessThanTwelveEdit(checkMode(mode), addressYearsUnderAYear)), true),
-    (CompanyAddressYearsId(0), addressYearsUnderAYearWithExistingCurrentAddress, prevAddPostCodeLookup(mode), true, Some(addressYearsLessThanTwelveEdit(checkMode(mode), addressYearsUnderAYearWithExistingCurrentAddress)), true),
+    (CompanyAddressYearsId(0), addressYearsUnderAYear, if(toggled) hasBeenTrading(mode) else prevAddPostCodeLookup(mode), true, Some(addressYearsLessThanTwelveEdit(checkMode(mode), addressYearsUnderAYear, toggled)), true),
+    (CompanyAddressYearsId(0), addressYearsUnderAYearWithExistingCurrentAddress, if(toggled) hasBeenTrading(mode) else prevAddPostCodeLookup(mode), true, Some(addressYearsLessThanTwelveEdit(checkMode(mode), addressYearsUnderAYearWithExistingCurrentAddress, toggled)), true),
     (CompanyPayeVariationsId(0), emptyAnswers, none, true, Some(exitJourney(checkMode(mode), emptyAnswers, 0, toggled, cya(mode))), true)
   )
 
@@ -168,13 +170,19 @@ object TrusteesCompanyNavigatorSpec extends SpecBase with OptionValues {
 
   private val addressYearsUnderAYearWithExistingCurrentAddress = UserAnswers(Json.obj())
     .set(CompanyAddressYearsId(0))(AddressYears.UnderAYear).flatMap(
-    _.set(ExistingCurrentAddressId(0))(Address("Line 1", "Line 2", None, None, None, "UK"))).asOpt.value
+    _.set(IsTrusteeNewId(0))(false)).asOpt.value
 
   private val newTrustee = UserAnswers(Json.obj()).set(IsTrusteeNewId(0))(true).asOpt.value
+
+  private val tradingMoreThanAYear = UserAnswers(Json.obj()).set(HasBeenTradingCompanyId(0))(true).asOpt.value
+  private val tradingLessThanAYear = UserAnswers(Json.obj()).set(HasBeenTradingCompanyId(0))(false).asOpt.value
 
   private val confirmPreviousAddressYes = UserAnswers(Json.obj()).set(CompanyConfirmPreviousAddressId(0))(true).asOpt.value
 
   private val confirmPreviousAddressNo = UserAnswers(Json.obj()).set(CompanyConfirmPreviousAddressId(0))(false).asOpt.value
+
+  private def addressRoutesNotNew(mode: Mode, toggled: Boolean) =
+    if(mode == UpdateMode) Some(companyAddressYears(checkMode(mode))) else if(toggled) Some(cyaAddress(mode)) else Some(cya(mode))
 
   private def dataDescriber(answers: UserAnswers): String = answers.toString
 
@@ -191,16 +199,12 @@ object TrusteesCompanyNavigatorSpec extends SpecBase with OptionValues {
   }
 
 
-  private def addressYearsLessThanTwelveEdit(mode: Mode, userAnswers: UserAnswers): Call =
-    (
-      userAnswers.get(ExistingCurrentAddressId(0)),
-      mode
-    ) match {
-      case (None, CheckUpdateMode) =>
-        prevAddPostCodeLookup(mode)
-      case (_, CheckUpdateMode) =>
-        confirmPreviousAddress
-      case _ =>
-        prevAddPostCodeLookup(mode)
-    }
+  private def addressYearsLessThanTwelveEdit(mode: Mode, userAnswers: UserAnswers, toggled: Boolean): Call =
+    if(mode == CheckUpdateMode && !userAnswers.get(IsTrusteeNewId(0)).getOrElse(true))
+      confirmPreviousAddress
+    else if(toggled)
+      hasBeenTrading(mode)
+    else
+      prevAddPostCodeLookup(mode)
+
 }
