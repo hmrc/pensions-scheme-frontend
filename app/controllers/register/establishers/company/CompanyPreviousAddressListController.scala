@@ -24,10 +24,10 @@ import identifiers.register.establishers.company._
 import javax.inject.Inject
 import models._
 import models.requests.DataRequest
+import navigators.Navigator
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, Result}
 import services.UserAnswersService
-import utils.Navigator
 import utils.annotations.EstablishersCompany
 import viewmodels.Message
 import viewmodels.address.AddressListViewModel

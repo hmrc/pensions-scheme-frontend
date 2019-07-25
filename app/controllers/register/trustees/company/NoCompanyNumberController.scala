@@ -23,10 +23,10 @@ import forms.register.NoCompanyNumberFormProvider
 import identifiers.register.trustees.company.{CompanyDetailsId, NoCompanyNumberId}
 import javax.inject.Inject
 import models.{Index, Mode}
+import navigators.Navigator
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
-import utils.Navigator
 import utils.annotations.TrusteesCompany
 import viewmodels.{Message, ReasonViewModel}
 

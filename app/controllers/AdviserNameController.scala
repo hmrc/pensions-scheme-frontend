@@ -23,12 +23,13 @@ import forms.register.AdviserNameFormProvider
 import identifiers.{AdviserNameId, IsWorkingKnowledgeCompleteId}
 import javax.inject.Inject
 import models.Mode
+import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.WorkingKnowledge
-import utils.{Navigator, SectionComplete, UserAnswers}
+import utils.{SectionComplete, UserAnswers}
 import views.html.adviserName
 
 import scala.concurrent.{ExecutionContext, Future}

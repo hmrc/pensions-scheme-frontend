@@ -24,12 +24,13 @@ import forms.UserResearchDetailsFormProvider
 import identifiers.UserResearchDetailsId
 import javax.inject.Inject
 import models.NormalMode
+import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.Register
-import utils.{Navigator, UserAnswers}
+import utils.UserAnswers
 import views.html.userResearchDetails
 
 import scala.concurrent.ExecutionContext

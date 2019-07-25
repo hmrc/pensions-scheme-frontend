@@ -23,6 +23,7 @@ import identifiers.TypedIdentifier
 import javax.inject.Inject
 import models.requests.DataRequest
 import models.{Mode, NormalMode, ReferenceValue}
+import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.MessagesApi
 import play.api.mvc.{AnyContent, Call, Request, Result}
@@ -30,7 +31,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.{FakeUserAnswersService, UserAnswersService}
 import uk.gov.hmrc.domain.PsaId
-import utils.{FakeNavigator, Navigator, UserAnswers}
+import utils.{FakeNavigator, UserAnswers}
 import viewmodels.{Message, NinoViewModel}
 import views.html.nino
 

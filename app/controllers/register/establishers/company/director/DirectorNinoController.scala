@@ -23,13 +23,14 @@ import forms.register.establishers.company.director.DirectorNinoFormProvider
 import identifiers.register.establishers.company.director.{DirectorDetailsId, DirectorNinoId}
 import javax.inject.Inject
 import models.{Index, Mode, Nino}
+import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Call}
 import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.EstablishersCompanyDirector
-import utils.{Enumerable, Navigator, UserAnswers}
+import utils.{Enumerable, UserAnswers}
 import views.html.register.establishers.company.director.directorNino
 
 import scala.concurrent.{ExecutionContext, Future}

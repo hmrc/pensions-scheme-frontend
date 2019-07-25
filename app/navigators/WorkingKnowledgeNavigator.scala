@@ -20,8 +20,7 @@ import com.google.inject.Inject
 import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
 import identifiers._
-import models.{CheckMode, Mode, NormalMode}
-import utils.{AbstractNavigator, Navigator}
+import models.{CheckMode, NormalMode}
 
 class WorkingKnowledgeNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector, appConfig: FrontendAppConfig) extends AbstractNavigator {
 

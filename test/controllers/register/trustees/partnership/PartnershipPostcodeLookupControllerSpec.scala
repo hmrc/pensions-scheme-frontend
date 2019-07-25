@@ -25,6 +25,7 @@ import identifiers.register.trustees.TrusteesId
 import identifiers.register.trustees.partnership.PartnershipDetailsId
 import models.address.TolerantAddress
 import models.{Index, NormalMode, PartnershipDetails}
+import navigators.Navigator
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.mockito.MockitoSugar
 import play.api.Application
@@ -37,7 +38,7 @@ import play.api.test.Helpers._
 import services.{FakeUserAnswersService, UserAnswersService}
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.annotations.TrusteesPartnership
-import utils.{FakeNavigator, Navigator}
+import utils.FakeNavigator
 import viewmodels.Message
 import viewmodels.address.PostcodeLookupViewModel
 import views.html.address.postcodeLookup
