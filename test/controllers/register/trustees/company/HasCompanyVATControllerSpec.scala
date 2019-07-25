@@ -18,37 +18,38 @@ package controllers.register.trustees.company
 
 import controllers.ControllerSpecBase
 import controllers.actions._
-import forms.HasPAYEFormProvider
-import identifiers.register.trustees.company.HasCompanyPAYEId
+import forms.HasReferenceNumberFormProvider
+import identifiers.register.trustees.company.HasCompanyVATId
 import models.{Index, NormalMode}
+import org.scalatest.mockito.MockitoSugar
+import org.scalatest.{BeforeAndAfterEach, OptionValues}
 import play.api.data.Form
-import play.api.mvc.Call
 import play.api.test.Helpers._
 import services.FakeUserAnswersService
-import utils.FakeNavigator
+import utils.{FakeNavigator, MockValidationHelper}
 import viewmodels.{CommonFormWithHintViewModel, Message}
 import views.html.hasReferenceNumber
 
-class HasCompanyPAYEControllerSpec  extends ControllerSpecBase {
-  private val schemeName = None
-  def onwardRoute: Call = controllers.register.trustees.company.routes.CompanyPayeVariationsController.onPageLoad (NormalMode, index, None)
+class HasCompanyVATControllerSpec extends ControllerSpecBase with MockitoSugar with BeforeAndAfterEach
+  with OptionValues with MockValidationHelper {
 
-  val formProvider = new HasPAYEFormProvider()
-  val form = formProvider("messages__companyPayeRef__error__required","test company name")
-  val index = Index(0)
-  val srn = None
-  val postCall = controllers.register.trustees.company.routes.HasCompanyPAYEController.onSubmit(NormalMode, index, srn)
+  private val schemeName = None
+  private def onwardRoute = controllers.routes.IndexController.onPageLoad()
+  private val formProvider = new HasReferenceNumberFormProvider()
+  private val form = formProvider("messages__hasCompanyVat__error__required","test company name")
+  private val index = Index(0)
+  private val srn = None
+  private val postCall = controllers.register.trustees.company.routes.HasCompanyVATController.onSubmit(NormalMode, index, srn)
 
   val viewModel = CommonFormWithHintViewModel(
     postCall,
-    title = Message("messages__companyPayeRef__trustee_title"),
-    heading = Message("messages__companyPayeRef__h1", "test company name"),
-    hint = Some(Message("messages__companyPayeRef__p1")),
-    formFieldName = Some("hasPaye")
+    title = Message("messages__hasCompanyVat__title"),
+    heading = Message("messages__hasCompanyVat__h1", "test company name"),
+    hint = Some(Message("messages__hasCompanyVat__p1", "test company name"))
   )
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryTrusteeCompany): HasCompanyPAYEController =
-    new HasCompanyPAYEController(
+  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryTrusteeCompany): HasCompanyVATController =
+    new HasCompanyVATController(
       frontendAppConfig,
       messagesApi,
       FakeUserAnswersService,
@@ -57,13 +58,12 @@ class HasCompanyPAYEControllerSpec  extends ControllerSpecBase {
       FakeAllowAccessProvider(),
       dataRetrievalAction,
       new DataRequiredActionImpl,
-      formProvider,
-      global
+      formProvider
     )
 
   private def viewAsString(form: Form[_] = form) = hasReferenceNumber(frontendAppConfig, form, viewModel, schemeName)(fakeRequest, messages).toString
 
-  "HasCompanyPAYEController" must {
+  "HasCompanyVatController" must {
 
     "return OK and the correct view for a GET" in {
       val result = controller().onPageLoad(NormalMode, index, None)(fakeRequest)
@@ -73,17 +73,17 @@ class HasCompanyPAYEControllerSpec  extends ControllerSpecBase {
     }
 
     "redirect to the next page when valid data is submitted for true" in {
-      val postRequest = fakeRequest.withFormUrlEncodedBody(("hasPaye", "true"))
+      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "true"))
 
       val result = controller().onSubmit(NormalMode, index, None)(postRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
-      FakeUserAnswersService.userAnswer.get(HasCompanyPAYEId(index)).value mustEqual true
+      FakeUserAnswersService.userAnswer.get(HasCompanyVATId(index)).value mustEqual true
     }
 
     "return a Bad Request and errors when invalid data is submitted" in {
-      val postRequest = fakeRequest.withFormUrlEncodedBody(("hasPAYE", "invalid value"))
+      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "invalid value"))
       val boundForm = form.bind(Map("value" -> "invalid value"))
 
       val result = controller().onSubmit(NormalMode, index, None)(postRequest)

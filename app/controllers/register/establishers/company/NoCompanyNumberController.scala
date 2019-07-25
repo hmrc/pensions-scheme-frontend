@@ -19,7 +19,7 @@ package controllers.register.establishers.company
 import config.FrontendAppConfig
 import controllers.ReasonController
 import controllers.actions._
-import forms.register.establishers.company.NoCompanyNumberFormProvider
+import forms.register.NoCompanyNumberFormProvider
 import identifiers.register.establishers.company.{CompanyDetailsId, NoCompanyNumberId}
 import javax.inject.Inject
 import models.{Index, Mode}

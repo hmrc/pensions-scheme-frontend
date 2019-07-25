@@ -32,10 +32,46 @@ class HasCompanyVatIdSpec extends SpecBase {
 
   val onwardUrl = "onwardUrl"
   val name = "test company name"
+
   private val answerRowsWithChangeLinks = Seq(
     AnswerRow(messages("messages__hasCompanyVat__h1", name), List("site.yes"), true, Some(Link("site.change",onwardUrl,
       Some(messages("messages__visuallyhidden__hasCompanyVat")))))
   )
+
+  "Cleanup" when {
+
+    def answers(hasVat: Boolean = true): UserAnswers = UserAnswers(Json.obj())
+      .set(HasCompanyVATId(0))(hasVat)
+      .flatMap(_.set(CompanyVatVariationsId(0))(ReferenceValue("test-crn")))
+      .asOpt.value
+
+    "`HasCompanyVat` is set to `false`" must {
+
+      val result: UserAnswers = answers().set(HasCompanyVATId(0))(false).asOpt.value
+
+      "remove the data for `CompanyVatVariations`" in {
+        result.get(CompanyVatVariationsId(0)) mustNot be(defined)
+      }
+    }
+
+    "`HasCompanyVat` is set to `true`" must {
+
+      val result: UserAnswers = answers(false).set(HasCompanyVATId(0))(true).asOpt.value
+
+      "no clean up for `CompanyVatVariations`" in {
+        result.get(CompanyVatVariationsId(0)) must be(defined)
+      }
+    }
+
+    "`HasCompanyVat` is not present" must {
+
+      val result: UserAnswers = answers().remove(HasCompanyVATId(0)).asOpt.value
+
+      "no clean up for `CompanyVatVariations`" in {
+        result.get(CompanyVatVariationsId(0)) mustBe defined
+      }
+    }
+  }
 
   "cya" when {
 

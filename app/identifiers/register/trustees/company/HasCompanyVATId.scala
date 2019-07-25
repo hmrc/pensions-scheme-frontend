@@ -19,7 +19,7 @@ package identifiers.register.trustees.company
 import identifiers.TypedIdentifier
 import identifiers.register.trustees.{IsTrusteeNewId, TrusteesId}
 import play.api.i18n.Messages
-import play.api.libs.json.JsPath
+import play.api.libs.json.{JsPath, JsResult}
 import utils.UserAnswers
 import utils.checkyouranswers.CheckYourAnswers
 import utils.checkyouranswers.CheckYourAnswers.BooleanCYA
@@ -27,6 +27,15 @@ import viewmodels.AnswerRow
 
 case class HasCompanyVATId(index: Int) extends TypedIdentifier[Boolean] {
   override def path: JsPath = TrusteesId(index).path \ HasCompanyVATId.toString
+
+  override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): JsResult[UserAnswers] = {
+    value match {
+      case Some(false) =>
+        userAnswers.remove(CompanyVatVariationsId(this.index))
+      case _ =>
+        super.cleanup(value, userAnswers)
+    }
+  }
 }
 object HasCompanyVATId {
   override def toString: String = "hasVat"

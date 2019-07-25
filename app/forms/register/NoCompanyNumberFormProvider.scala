@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package forms.register.establishers.company
+package forms.register
 
 import com.google.inject.Inject
 import forms.mappings._

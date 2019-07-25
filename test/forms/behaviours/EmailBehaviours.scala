@@ -23,11 +23,6 @@ import play.api.data.{Form, FormError}
 
 trait EmailBehaviours extends StringFieldBehaviours with Constraints with EmailMapping with RegexBehaviourSpec{
 
-  val keyNoAtSignIncluded: String = "messages__error__common__email__no_at_sign"
-  val keyStartsWithAtSign: String = "messages__error__common__email__start_with_at_sign"
-  val keyDotAfterAtSign: String = "messages__error__common__email__dot_after_at_sign"
-  val keyEndsWithDot: String = "messages__error__common__email__ends_with_dot"
-
   def formWithEmailField(
                           form: Form[_],
                           fieldName: String,
@@ -87,7 +82,8 @@ trait EmailBehaviours extends StringFieldBehaviours with Constraints with EmailM
 
       behave like emailWithCorrectFormat(
         form,
-        fieldName
+        fieldName,
+        keyEmailInvalid
       )
 
       behave like formWithRegex(
@@ -109,25 +105,26 @@ trait EmailBehaviours extends StringFieldBehaviours with Constraints with EmailM
 
   private def emailWithCorrectFormat(
                                       form: Form[_],
-                                      fieldName: String
+                                      fieldName: String,
+                                      keyEmailInvalid: String
                                     ): Unit = {
 
     def result(value: String) = form.bind(Map(fieldName -> value)).apply(fieldName)
 
     "not bind when @ sign not included" in {
-      result("test.com").errors mustEqual Seq(FormError(fieldName, keyNoAtSignIncluded))
+      result("test.com").errors mustEqual Seq(FormError(fieldName, keyEmailInvalid))
     }
 
     "not bind when starts with @ sign" in {
-      result("@test.com").errors mustEqual Seq(FormError(fieldName, keyStartsWithAtSign))
+      result("@test.com").errors mustEqual Seq(FormError(fieldName, keyEmailInvalid))
     }
 
     "not bind when nothing is between @ sign and dot(.)" in {
-      result("test@.com").errors mustEqual Seq(FormError(fieldName, keyDotAfterAtSign))
+      result("test@.com").errors mustEqual Seq(FormError(fieldName, keyEmailInvalid))
     }
 
     "not bind when ends with a dot(.)" in {
-      result("test@com.").errors mustEqual Seq(FormError(fieldName, keyEndsWithDot))
+      result("test@com.").errors mustEqual Seq(FormError(fieldName, keyEmailInvalid))
     }
   }
 

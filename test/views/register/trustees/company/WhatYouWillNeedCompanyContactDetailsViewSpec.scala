@@ -14,25 +14,25 @@
  * limitations under the License.
  */
 
-package views.register.establishers.company
+package views.register.trustees.company
 
 import models.{Index, NormalMode}
 import play.twirl.api.HtmlFormat
 import views.behaviours.ViewBehaviours
-import views.html.register.establishers.company.whatYouWillNeedCompanyDetails
+import views.html.register.establishers.company.whatYouWillNeedCompanyContactDetails
 
-class WhatYouWillNeedCompanyDetailsViewSpec extends ViewBehaviours {
+class WhatYouWillNeedCompanyContactDetailsViewSpec extends ViewBehaviours {
 
-  val messageKeyPrefix = "whatYouWillNeedEstablisherCompany"
+  val messageKeyPrefix = "whatYouWillNeedEstablisherCompanyContact"
 
-  lazy val href = controllers.register.establishers.company.routes.HasCompanyNumberController.onPageLoad(NormalMode, None, index=Index(0))
+  val href = controllers.register.trustees.company.routes.CompanyEmailController.onPageLoad(NormalMode, Index(0), None)
 
-  def createView: () => HtmlFormat.Appendable = () => whatYouWillNeedCompanyDetails(frontendAppConfig, Some("testScheme"), href, None)(fakeRequest, messages)
+  def createView: () => HtmlFormat.Appendable = () => whatYouWillNeedCompanyContactDetails(frontendAppConfig, Some("testScheme"), href, None)(fakeRequest, messages)
 
-  "WhatYouWillNeedCompanyDetails view" must {
+  "whatYouWillNeedCompanyContactDetails view" must {
 
     behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__h1"),
-      "_lede", "_item1", "_item2", "_item3", "_item4")
+      "_lede", "_item1", "_item2")
 
     behave like pageWithSubmitButton(createView)
 
