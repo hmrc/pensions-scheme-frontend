@@ -23,10 +23,10 @@ import identifiers._
 import javax.inject.Inject
 import models.Mode
 import models.requests.DataRequest
+import navigators.Navigator
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, Result}
 import services.UserAnswersService
-import utils.Navigator
 import utils.annotations.WorkingKnowledge
 import viewmodels.Message
 import viewmodels.address.AddressListViewModel

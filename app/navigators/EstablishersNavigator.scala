@@ -22,7 +22,7 @@ import connectors.UserAnswersCacheConnector
 import identifiers.register.establishers.{AddEstablisherId, ConfirmDeleteEstablisherId, EstablisherKindId}
 import models.{CheckMode, Mode, NormalMode, UpdateMode}
 import models.register.establishers.EstablisherKind
-import utils.{AbstractNavigator, Enumerable, Navigator, UserAnswers}
+import utils.{Enumerable, UserAnswers}
 
 class EstablishersNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector,
                                       config: FrontendAppConfig) extends AbstractNavigator with Enumerable.Implicits {

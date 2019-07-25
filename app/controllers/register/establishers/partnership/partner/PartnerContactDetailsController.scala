@@ -22,6 +22,7 @@ import forms.ContactDetailsFormProvider
 import identifiers.register.establishers.partnership.partner.{PartnerContactDetailsId, PartnerDetailsId}
 import javax.inject.Inject
 import models.{Index, Mode}
+import navigators.Navigator
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService

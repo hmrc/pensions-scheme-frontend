@@ -26,13 +26,14 @@ import identifiers.register.establishers.partnership.partner.{IsNewPartnerId, Pa
 import javax.inject.Inject
 import models.person.PersonDetails
 import models.{Index, Mode}
+import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.EstablishersPartner
-import utils.{Navigator, SectionComplete, UserAnswers}
+import utils.{SectionComplete, UserAnswers}
 import views.html.register.establishers.partnership.partner.partnerDetails
 
 import scala.concurrent.{ExecutionContext, Future}

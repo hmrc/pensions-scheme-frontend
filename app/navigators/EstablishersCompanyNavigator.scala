@@ -29,7 +29,7 @@ import identifiers.register.establishers.company._
 import identifiers.register.establishers.{ExistingCurrentAddressId, IsEstablisherNewId}
 import models.Mode._
 import models._
-import utils.{AbstractNavigator, Navigator, Toggles, UserAnswers}
+import utils.{Toggles, UserAnswers}
 import controllers.register.establishers.company.director.routes._
 
 //scalastyle:off cyclomatic.complexity

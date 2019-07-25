@@ -24,6 +24,7 @@ import identifiers.register.trustees.company.{CompanyAddressId, CompanyAddressYe
 import javax.inject.Inject
 import models.Mode.checkMode
 import models.{Index, Mode}
+import navigators.Navigator
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
@@ -33,6 +34,8 @@ import utils.annotations.{NoSuspendedCheck, TrusteesCompany}
 import utils.checkyouranswers.Ops._
 import viewmodels.AnswerSection
 import views.html.check_your_answers
+import utils.annotations.TrusteesCompany
+import utils.Enumerable
 
 import scala.concurrent.{ExecutionContext, Future}
 

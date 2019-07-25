@@ -18,8 +18,8 @@ package controllers.register.trustees.company
 
 import base.CSRFRequest
 import config.FrontendAppConfig
-import connectors.{AddressLookupConnector}
-import services.{UserAnswersService, FakeUserAnswersService}
+import connectors.AddressLookupConnector
+import services.{FakeUserAnswersService, UserAnswersService}
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.address.PostCodeLookupFormProvider
@@ -27,6 +27,7 @@ import identifiers.register.trustees.TrusteesId
 import identifiers.register.trustees.company.CompanyDetailsId
 import models.address.TolerantAddress
 import models.{CompanyDetails, Index, NormalMode}
+import navigators.Navigator
 import org.mockito.Matchers
 import org.mockito.Mockito.when
 import org.scalatest.concurrent.ScalaFutures
@@ -37,7 +38,7 @@ import play.api.libs.json.Json
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import utils.{FakeNavigator, Navigator}
+import utils.FakeNavigator
 import viewmodels.Message
 import viewmodels.address.PostcodeLookupViewModel
 import views.html.address.postcodeLookup

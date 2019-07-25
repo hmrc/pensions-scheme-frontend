@@ -23,11 +23,11 @@ import forms.EmailFormProvider
 import identifiers.register.establishers.company.director.{DirectorEmailId, DirectorNameId}
 import javax.inject.Inject
 import models.{Index, Mode}
+import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
-import utils.Navigator
 import utils.annotations.EstablishersCompanyDirector
 import viewmodels.{CommonFormWithHintViewModel, Message}
 

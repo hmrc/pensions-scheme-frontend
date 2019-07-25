@@ -23,7 +23,7 @@ import controllers.routes._
 import identifiers._
 import models.Mode.journeyMode
 import models.{CheckMode, CheckUpdateMode, Mode, NormalMode, UpdateMode}
-import utils.{AbstractNavigator, Navigator, UserAnswers}
+import utils.UserAnswers
 
 class AboutBenefitsAndInsuranceNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector, appConfig: FrontendAppConfig) extends AbstractNavigator {
 

@@ -25,6 +25,7 @@ import identifiers.register.trustees.TrusteesId
 import identifiers.register.trustees.company.{CompanyAddressId, CompanyDetailsId}
 import models.address.Address
 import models.{CompanyDetails, Index, NormalMode}
+import navigators.Navigator
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
@@ -32,7 +33,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.{FakeUserAnswersService, UserAnswersService}
 import utils.annotations.TrusteesCompany
-import utils.{CountryOptions, FakeNavigator, InputOption, Navigator}
+import utils.{CountryOptions, FakeNavigator, InputOption}
 import viewmodels.Message
 import viewmodels.address.ManualAddressViewModel
 

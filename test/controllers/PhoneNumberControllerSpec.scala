@@ -23,6 +23,7 @@ import forms.PhoneFormProvider
 import identifiers.TypedIdentifier
 import models.CheckUpdateMode
 import models.requests.DataRequest
+import navigators.Navigator
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.mockito.MockitoSugar
 import org.scalatest.{MustMatchers, OptionValues, WordSpec}
@@ -33,7 +34,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.{FakeUserAnswersService, UserAnswersService}
 import uk.gov.hmrc.domain.PsaId
-import utils.{FakeNavigator, Navigator, UserAnswers}
+import utils.{FakeNavigator, UserAnswers}
 import viewmodels.CommonFormWithHintViewModel
 import views.html.phoneNumber
 
