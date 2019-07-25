@@ -14,17 +14,20 @@
  * limitations under the License.
  */
 
-package controllers.register.establishers.company
+package controllers.register.trustees.company
 
 import controllers.ControllerSpecBase
 import controllers.actions._
 import models.{Index, NormalMode}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.mockito.MockitoSugar
+import play.api.mvc.Call
 import play.api.test.Helpers._
-import views.html.register.establishers.company.whatYouWillNeedCompanyContactDetails
+import views.html.register.trustees.company.whatYouWillNeedCompanyContactDetails
 
 class WhatYouWillNeedCompanyContactDetailsControllerSpec extends ControllerSpecBase with MockitoSugar with BeforeAndAfterEach {
+
+  def onwardRoute: Call = controllers.register.trustees.company.routes.CompanyEmailController.onPageLoad(NormalMode, Index(0), None)
 
   def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): WhatYouWillNeedCompanyContactDetailsController =
     new WhatYouWillNeedCompanyContactDetailsController(frontendAppConfig,
@@ -35,7 +38,7 @@ class WhatYouWillNeedCompanyContactDetailsControllerSpec extends ControllerSpecB
       new DataRequiredActionImpl
     )
 
-  lazy val href = controllers.register.establishers.company.routes.CompanyEmailController.onPageLoad(NormalMode, None, Index(0))
+  lazy val href = controllers.register.trustees.company.routes.CompanyEmailController.onPageLoad(NormalMode, Index(0), None)
 
   def viewAsString(): String = whatYouWillNeedCompanyContactDetails(frontendAppConfig, None, href, None)(fakeRequest, messages).toString
 
@@ -43,7 +46,7 @@ class WhatYouWillNeedCompanyContactDetailsControllerSpec extends ControllerSpecB
 
     "on a GET" must {
       "return OK and the correct view" in {
-        val result = controller().onPageLoad(NormalMode, None, Index(0))(fakeRequest)
+        val result = controller().onPageLoad(NormalMode, Index(0), None)(fakeRequest)
 
         status(result) mustBe OK
         contentAsString(result) mustBe viewAsString()
