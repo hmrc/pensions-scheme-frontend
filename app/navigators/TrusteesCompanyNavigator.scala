@@ -33,15 +33,7 @@ class TrusteesCompanyNavigator @Inject()(val dataCacheConnector: UserAnswersCach
                                          appConfig: FrontendAppConfig,
                                          featureSwitchManagementService: FeatureSwitchManagementService) extends AbstractNavigator {
 
-  private def exitMiniJourney(index: Index, mode: Mode, srn: Option[String], answers: UserAnswers): Option[NavigateTo] =
-    if(mode == CheckMode || mode == NormalMode){
-      checkYourAnswers(index, journeyMode(mode), srn)
-    } else {
-      if(answers.get(IsTrusteeNewId(index)).getOrElse(false)) checkYourAnswers(index, journeyMode(mode), srn)
-      else anyMoreChanges(srn)
-    }
-
-  private def exitMiniJourney2(index: Index, mode: Mode, srn: Option[String], answers: UserAnswers,
+  private def exitMiniJourney(index: Index, mode: Mode, srn: Option[String], answers: UserAnswers,
                               cyaPage: (Mode, Index, Option[String]) => Option[NavigateTo] = cya): Option[NavigateTo] = {
     val cyaToggled = if (featureSwitchManagementService.get(Toggles.isEstablisherCompanyHnSEnabled)) cyaPage else cya _
 
@@ -53,9 +45,14 @@ class TrusteesCompanyNavigator @Inject()(val dataCacheConnector: UserAnswersCach
     }
   }
 
-
   private def anyMoreChanges(srn: Option[String]): Option[NavigateTo] =
     NavigateTo.dontSave(AnyMoreChangesController.onPageLoad(srn))
+
+  private def cyaContactDetails(mode: Mode, index: Index, srn: Option[String]): Option[NavigateTo] =
+    NavigateTo.dontSave(CheckYourAnswersCompanyContactDetailsController.onPageLoad(mode, index, srn))
+
+  private def cya(mode: Mode, index: Index, srn: Option[String]): Option[NavigateTo] =
+    NavigateTo.dontSave(CheckYourAnswersController.onPageLoad(mode, index, srn))
 
   //scalastyle:off cyclomatic.complexity
   protected def routes(from: NavigateFrom, mode: Mode, srn: Option[String]): Option[NavigateTo] = {
@@ -126,11 +123,10 @@ class TrusteesCompanyNavigator @Inject()(val dataCacheConnector: UserAnswersCach
         exitMiniJourney(index, mode, srn, from.userAnswers)
 
       case CompanyEmailId(index) =>
-        exitMiniJourney(index, mode, srn, from.userAnswers)
+        exitMiniJourney(index, mode, srn, from.userAnswers, cyaContactDetails)
 
       case CompanyPhoneId(index) =>
-        exitMiniJourney(index, mode, srn, from.userAnswers)
-
+        exitMiniJourney(index, mode, srn, from.userAnswers, cyaContactDetails)
 
       case CompanyPayeId(index) =>
         exitMiniJourney(index, mode, srn, from.userAnswers)
