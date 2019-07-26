@@ -19,18 +19,20 @@ package utils.behaviours
 import base.SpecBase
 import config.FeatureSwitchManagementService
 import controllers.register.establishers.company.{routes => establisherCompanyRoutes}
-import controllers.register.trustees.company.{routes => trusteeCompanyRoutes}
 import identifiers.register.establishers.company.IsCompanyCompleteId
-import identifiers.register.establishers.company.director.{DirectorDetailsId, IsDirectorCompleteId}
+import identifiers.register.establishers.company.director.{DirectorDetailsId, DirectorNameId, IsDirectorCompleteId}
+import controllers.register.trustees.company.{routes => trusteeCompanyRoutes}
+import identifiers.register.establishers.{company => establisherCompanyPath}
+import identifiers.register.trustees.{company => trusteeCompanyPath}
 import identifiers.register.establishers.individual.EstablisherDetailsId
 import identifiers.register.establishers.partnership.{PartnershipDetailsId => EstablisherPartnershipDetailsId}
 import identifiers.register.establishers.{IsEstablisherAddressCompleteId, IsEstablisherCompleteId, IsEstablisherNewId, company => establisherCompanyPath}
 import identifiers.register.trustees.individual.TrusteeDetailsId
 import identifiers.register.trustees.partnership.{IsPartnershipCompleteId, PartnershipDetailsId => TrusteePartnershipDetailsId}
-import identifiers.register.trustees.{IsTrusteeAddressCompleteId, IsTrusteeCompleteId, IsTrusteeNewId, MoreThanTenTrusteesId, company => trusteeCompanyPath}
+import identifiers.register.trustees.{IsTrusteeAddressCompleteId, IsTrusteeCompleteId, IsTrusteeNewId, MoreThanTenTrusteesId, company => trusteesCompany}
 import identifiers.{IsWorkingKnowledgeCompleteId, _}
 import models._
-import models.person.PersonDetails
+import models.person.{PersonDetails, PersonName}
 import models.register.SchemeType
 import models.register.SchemeType.SingleTrust
 import org.joda.time.LocalDate
@@ -137,18 +139,8 @@ trait HsTaskListHelperBehaviour extends SpecBase with MustMatchers with OptionVa
     }
   }
 
-  protected def establisherCompany(isCompleteEstablisher: Boolean = true): UserAnswers = {
-    UserAnswers().set(establisherCompanyPath.CompanyDetailsId(0))(CompanyDetails("test company", false)).flatMap(
-      _.set(IsEstablisherNewId(0))(true).flatMap(
-        _.set(IsEstablisherAddressCompleteId(0))(isCompleteEstablisher).flatMap(
-          _.set(establisherCompanyPath.CompanyPayeId(0))(Paye.No).flatMap(
-            _.set(IsEstablisherCompleteId(0))(isCompleteEstablisher)
-          )))).asOpt.value
-  }
-
   def trusteesSectionHnS(mode: Mode, srn: Option[String]): Unit = {
-    def modeBasedCompletion(completion: Option[Boolean]): Option[Boolean] = if (mode == NormalMode) completion else None
-
+    def modeBasedCompletion(completion: Option[Boolean]): Option[Boolean] = if(mode == NormalMode) completion else None
     "return the seq of trustees sub sections when h&s toggle is on when all spokes are uninitiated" in {
       val userAnswers = trusteeCompany(false)
       val helper = createTaskListHelper(userAnswers, new FakeFeatureSwitchManagementService(true))
@@ -182,6 +174,15 @@ trait HsTaskListHelperBehaviour extends SpecBase with MustMatchers with OptionVa
             ), Some("test company"))
         )
     }
+  }
+
+  protected def establisherCompany(isCompleteEstablisher: Boolean = true): UserAnswers = {
+    UserAnswers().set(establisherCompanyPath.CompanyDetailsId(0))(CompanyDetails("test company", false)).flatMap(
+      _.set(IsEstablisherNewId(0))(true).flatMap(
+        _.set(IsEstablisherAddressCompleteId(0))(isCompleteEstablisher).flatMap(
+          _.set(establisherCompanyPath.CompanyPayeId(0))(Paye.No).flatMap(
+            _.set(IsEstablisherCompleteId(0))(isCompleteEstablisher)
+          )))).asOpt.value
   }
 
   //scalastyle:off method.length
@@ -267,66 +268,6 @@ trait HsTaskListHelperBehaviour extends SpecBase with MustMatchers with OptionVa
         SchemeDetailsTaskListHeader(None, Some(Link(changeTrusteesLinkText,
           controllers.register.trustees.routes.AddTrusteeController.onPageLoad(mode, srn).url)), None)
     }
-  }
-
-  private def answersDataWithTenTrustees(isCompleteBeforeStart: Boolean = true,
-                                         isCompleteAboutMembers: Boolean = true,
-                                         isCompleteAboutBank: Boolean = true,
-                                         isCompleteAboutBenefits: Boolean = true,
-                                         isCompleteWk: Boolean = true,
-                                         isCompleteEstablishers: Boolean = true,
-                                         isCompleteTrustees: Boolean = true
-                                        ): JsResult[UserAnswers] = {
-
-    val addTrustee: (UserAnswers, Int) => JsResult[UserAnswers] = (ua, index) =>
-      ua.set(TrusteeDetailsId(index))(PersonDetails(s"firstName$index", None, s"lastName$index", LocalDate.now())).flatMap(
-        _.set(IsTrusteeCompleteId(index))(isCompleteTrustees)).flatMap(_.set(IsTrusteeAddressCompleteId(index))(isCompleteTrustees))
-
-    answersData(isCompleteBeforeStart,
-      isCompleteAboutMembers,
-      isCompleteAboutBank,
-      isCompleteAboutBenefits,
-      isCompleteWk,
-      isCompleteEstablishers,
-      isCompleteTrustees)
-      .flatMap(addTrustee(_, 1))
-      .flatMap(addTrustee(_, 2))
-      .flatMap(addTrustee(_, 3))
-      .flatMap(addTrustee(_, 4))
-      .flatMap(addTrustee(_, 5))
-      .flatMap(addTrustee(_, 6))
-      .flatMap(addTrustee(_, 7))
-      .flatMap(addTrustee(_, 8))
-      .flatMap(addTrustee(_, 9))
-  }
-
-  protected def answersData(isCompleteBeforeStart: Boolean = true,
-                            isCompleteAboutMembers: Boolean = true,
-                            isCompleteAboutBank: Boolean = true,
-                            isCompleteAboutBenefits: Boolean = true,
-                            isCompleteWk: Boolean = true,
-                            isCompleteEstablishers: Boolean = true,
-                            isCompleteTrustees: Boolean = true,
-                            isChangedInsuranceDetails: Boolean = true,
-                            isChangedEstablishersTrustees: Boolean = true
-                           ): JsResult[UserAnswers] = {
-    UserAnswers().set(IsBeforeYouStartCompleteId)(isCompleteBeforeStart).flatMap(
-      _.set(IsAboutMembersCompleteId)(isCompleteAboutMembers).flatMap(
-        _.set(IsAboutBankDetailsCompleteId)(isCompleteAboutBank).flatMap(
-          _.set(IsAboutBenefitsAndInsuranceCompleteId)(isCompleteAboutBenefits).flatMap(
-            _.set(IsWorkingKnowledgeCompleteId)(isCompleteWk).flatMap(
-              _.set(EstablisherDetailsId(0))(PersonDetails("firstName", None, "lastName", LocalDate.now())).flatMap(
-                _.set(IsEstablisherCompleteId(0))(isCompleteEstablishers)).flatMap(
-                _.set(IsEstablisherAddressCompleteId(0))(isCompleteEstablishers)).flatMap(
-                _.set(TrusteeDetailsId(0))(PersonDetails("firstName", None, "lastName", LocalDate.now())).flatMap(
-                  _.set(IsTrusteeCompleteId(0))(isCompleteTrustees).flatMap(
-                    _.set(IsTrusteeAddressCompleteId(0))(isCompleteTrustees)))
-              )
-            )
-          )
-        )
-      )
-    )
   }
 
   //scalastyle:off method.length
@@ -419,6 +360,66 @@ trait HsTaskListHelperBehaviour extends SpecBase with MustMatchers with OptionVa
       val userAnswers = answersData(isCompleteBeforeStart = false).asOpt.value
       mustHaveNoLink(createTaskListHelper(userAnswers, fakeFeatureManagementService), userAnswers)
     }
+  }
+
+  private def answersDataWithTenTrustees(isCompleteBeforeStart: Boolean = true,
+                                         isCompleteAboutMembers: Boolean = true,
+                                         isCompleteAboutBank: Boolean = true,
+                                         isCompleteAboutBenefits: Boolean = true,
+                                         isCompleteWk: Boolean = true,
+                                         isCompleteEstablishers: Boolean = true,
+                                         isCompleteTrustees: Boolean = true
+                                        ): JsResult[UserAnswers] = {
+
+    val addTrustee: (UserAnswers, Int) => JsResult[UserAnswers] = (ua, index) =>
+      ua.set(TrusteeDetailsId(index))(PersonDetails(s"firstName$index", None, s"lastName$index", LocalDate.now())).flatMap(
+        _.set(IsTrusteeCompleteId(index))(isCompleteTrustees)).flatMap(_.set(IsTrusteeAddressCompleteId(index))(isCompleteTrustees))
+
+    answersData(isCompleteBeforeStart,
+      isCompleteAboutMembers,
+      isCompleteAboutBank,
+      isCompleteAboutBenefits,
+      isCompleteWk,
+      isCompleteEstablishers,
+      isCompleteTrustees)
+      .flatMap(addTrustee(_, 1))
+      .flatMap(addTrustee(_, 2))
+      .flatMap(addTrustee(_, 3))
+      .flatMap(addTrustee(_, 4))
+      .flatMap(addTrustee(_, 5))
+      .flatMap(addTrustee(_, 6))
+      .flatMap(addTrustee(_, 7))
+      .flatMap(addTrustee(_, 8))
+      .flatMap(addTrustee(_, 9))
+  }
+
+  protected def answersData(isCompleteBeforeStart: Boolean = true,
+                            isCompleteAboutMembers: Boolean = true,
+                            isCompleteAboutBank: Boolean = true,
+                            isCompleteAboutBenefits: Boolean = true,
+                            isCompleteWk: Boolean = true,
+                            isCompleteEstablishers: Boolean = true,
+                            isCompleteTrustees: Boolean = true,
+                            isChangedInsuranceDetails: Boolean = true,
+                            isChangedEstablishersTrustees: Boolean = true
+                           ): JsResult[UserAnswers] = {
+    UserAnswers().set(IsBeforeYouStartCompleteId)(isCompleteBeforeStart).flatMap(
+      _.set(IsAboutMembersCompleteId)(isCompleteAboutMembers).flatMap(
+        _.set(IsAboutBankDetailsCompleteId)(isCompleteAboutBank).flatMap(
+          _.set(IsAboutBenefitsAndInsuranceCompleteId)(isCompleteAboutBenefits).flatMap(
+            _.set(IsWorkingKnowledgeCompleteId)(isCompleteWk).flatMap(
+              _.set(EstablisherDetailsId(0))(PersonDetails("firstName", None, "lastName", LocalDate.now())).flatMap(
+                _.set(IsEstablisherCompleteId(0))(isCompleteEstablishers)).flatMap(
+                _.set(IsEstablisherAddressCompleteId(0))(isCompleteEstablishers)).flatMap(
+                _.set(TrusteeDetailsId(0))(PersonDetails("firstName", None, "lastName", LocalDate.now())).flatMap(
+                  _.set(IsTrusteeCompleteId(0))(isCompleteTrustees).flatMap(
+                    _.set(IsTrusteeAddressCompleteId(0))(isCompleteTrustees)))
+              )
+            )
+          )
+        )
+      )
+    )
   }
 
   protected def mustHaveLink(helper: HsTaskListHelper, userAnswers: UserAnswers, url: Option[String] = None): Unit =
