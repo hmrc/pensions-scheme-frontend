@@ -24,11 +24,13 @@ import identifiers.register.establishers.company.IsDetailsCompleteId
 import identifiers.register.trustees.company.{CompanyDetailsId, HasCompanyNumberId}
 import javax.inject.Inject
 import models.{Index, Mode}
+import navigators.Navigator
+import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
-import utils.Navigator
 import utils.annotations.TrusteesCompany
+import utils.Enumerable
 import viewmodels.{CommonFormWithHintViewModel, Message}
 
 import scala.concurrent.ExecutionContext

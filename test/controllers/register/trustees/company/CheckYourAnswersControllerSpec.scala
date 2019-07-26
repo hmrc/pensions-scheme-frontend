@@ -30,7 +30,7 @@ import services.FakeUserAnswersService
 import utils._
 import utils.checkyouranswers.CheckYourAnswers.{PayeCYA, VatCYA}
 import utils.checkyouranswers.Ops._
-import utils.checkyouranswers.{AddressYearsCYA, CompanyRegistrationNumberCYA, UniqueTaxReferenceCYA}
+import utils.checkyouranswers.{AddressCYA, AddressYearsCYA, CompanyRegistrationNumberCYA, UniqueTaxReferenceCYA}
 import viewmodels.{AnswerRow, AnswerSection}
 import views.html.check_your_answers
 
@@ -195,15 +195,31 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase with Controller
         utrRows
     )
 
-    val addressYearsRows = AddressYearsCYA[CompanyAddressYearsId](
-      label = "messages__checkYourAnswers__trustees__company__address_years",
-      changeAddressYears = "messages__visuallyhidden__trustee__address_years"
-    )().row(CompanyAddressYearsId(index))(companyAddressYearsRoute, request.userAnswers)
+    def trusteeName(index: Int) = request.userAnswers.get(CompanyDetailsId(index)).fold(messages("messages__theTrustee"))(_.companyName)
+
+    val addressYearsRows = {
+      def label(index: Int) = messages("messages__hasBeen1Year", trusteeName(index))
+
+      def changeAddressYears(index: Int) = messages("messages__changeHasBeen1Year", trusteeName(index))
+      AddressYearsCYA[CompanyAddressYearsId](
+        label = label(index),
+        changeAddressYears = changeAddressYears(index)
+      )().row(CompanyAddressYearsId(index))(companyAddressYearsRoute, request.userAnswers)
+    }
+
+    val addressRows = {
+      def label(index: Int) = messages("messages__trusteeAddress", trusteeName(index))
+      def changeAddress(index: Int) = messages("messages__changeTrusteeAddress", trusteeName(index))
+      AddressCYA[CompanyAddressId](
+        label = label(index),
+        changeAddress = changeAddress(index)
+      )().row(CompanyAddressId(index))(companyAddressRoute, request.userAnswers)
+    }
+
 
     val contactDetailsSection = AnswerSection(
       Some("messages__checkYourAnswers__section__contact_details"),
-      CompanyAddressId(index).row(companyAddressRoute) ++
-        addressYearsRows ++
+      addressRows ++ addressYearsRows ++
         CompanyPreviousAddressId(index).row(companyPreviousAddressRoute)
     )
     Seq(companyDetailsSection, contactDetailsSection)

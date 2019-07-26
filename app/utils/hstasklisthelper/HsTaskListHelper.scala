@@ -187,5 +187,34 @@ abstract class HsTaskListHelper(answers: UserAnswers,
     notDeletedElements.flatten
   }
 
+  protected[utils] def trustees(userAnswers: UserAnswers, mode: Mode, srn: Option[String]): Seq[SchemeDetailsTaskListEntitySection] = {
+    val sections = userAnswers.allTrustees
+    val notDeletedElements = for ((section, _) <- sections.zipWithIndex) yield {
+      if (section.isDeleted) None else {
+        section.id match {
+          case TrusteeCompanyDetailsId(_) if featureSwitchManagementService.get(Toggles.isEstablisherCompanyHnSEnabled) =>
+            Some(SchemeDetailsTaskListEntitySection(
+              None,
+              getTrusteeCompanySpokes(userAnswers, mode, srn, section.name, section.index),
+              Some(section.name))
+            )
+          case _ if mode == NormalMode =>
+            Some(SchemeDetailsTaskListEntitySection(
+              Some(section.isCompleted),
+              Seq(EntitySpoke(Link(linkText(section),
+                section.editLink(NormalMode, None).getOrElse(controllers.routes.SessionExpiredController.onPageLoad().url)), Some(section.isCompleted))),
+              Some(section.name))
+            )
 
+          case _ => Some(SchemeDetailsTaskListEntitySection(
+            None,
+            Seq(EntitySpoke(Link(messages("messages__schemeTaskList__persons_details__link_text", section.name),
+              section.editLink(UpdateMode, srn).getOrElse(controllers.routes.SessionExpiredController.onPageLoad().url)), None)),
+            None)
+          )
+        }
+      }
+    }
+    notDeletedElements.flatten
+  }
 }

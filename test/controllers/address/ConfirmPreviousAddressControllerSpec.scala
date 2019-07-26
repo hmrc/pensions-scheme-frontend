@@ -24,6 +24,7 @@ import identifiers.{SchemeNameId, TypedIdentifier}
 import models._
 import models.address.Address
 import models.requests.DataRequest
+import navigators.Navigator
 import org.mockito.Matchers.{eq => eqTo, _}
 import org.mockito.Mockito._
 import org.scalatest.concurrent.ScalaFutures
@@ -37,7 +38,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.UserAnswersService
 import uk.gov.hmrc.domain.PsaId
-import utils.{CountryOptions, FakeNavigator, Navigator, UserAnswers}
+import utils.{CountryOptions, FakeNavigator, UserAnswers}
 import viewmodels.Message
 import viewmodels.address.ConfirmAddressViewModel
 import views.html.address.confirmPreviousAddress

@@ -23,10 +23,11 @@ import forms.NinoNewFormProvider
 import identifiers.register.establishers.company.director.{DirectorDetailsId, DirectorNameId, DirectorNewNinoId}
 import javax.inject.Inject
 import models.{Index, Mode}
+import navigators.Navigator
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
-import utils.{Navigator, Toggles}
+import utils.Toggles
 import utils.annotations.EstablishersCompanyDirector
 import viewmodels.NinoViewModel
 

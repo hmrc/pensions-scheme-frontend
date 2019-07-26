@@ -26,12 +26,13 @@ import identifiers._
 import javax.inject.Inject
 import models.Mode
 import models.address.Address
+import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n._
 import play.api.mvc._
 import services.UserAnswersService
 import utils.annotations.{AboutBenefitsAndInsurance, InsuranceService}
-import utils.{CountryOptions, Navigator}
+import utils.CountryOptions
 import viewmodels.Message
 import viewmodels.address.ManualAddressViewModel
 

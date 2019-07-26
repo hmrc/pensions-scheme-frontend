@@ -25,12 +25,12 @@ import identifiers.register.establishers.partnership._
 import identifiers.register.establishers.{ExistingCurrentAddressId, IsEstablisherNewId}
 import models.Mode._
 import models._
-import utils.{AbstractNavigator, Navigator, UserAnswers}
-import utils.{Navigator, UserAnswers}
+import utils.UserAnswers
+import utils.UserAnswers
 import controllers.routes._
-import utils.{Navigator, UserAnswers}
+import utils.UserAnswers
 import controllers.routes._
-import utils.{Navigator, UserAnswers}
+import utils.UserAnswers
 
 class EstablishersPartnershipNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector,
                                                  appConfig: FrontendAppConfig) extends AbstractNavigator {

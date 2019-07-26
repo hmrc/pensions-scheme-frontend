@@ -22,10 +22,10 @@ import forms.ContactDetailsFormProvider
 import identifiers.register.trustees.individual.{TrusteeContactDetailsId, TrusteeDetailsId}
 import javax.inject.Inject
 import models.{Index, Mode}
+import navigators.Navigator
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
-import utils.Navigator
 import utils.annotations.TrusteesIndividual
 import viewmodels.{ContactDetailsViewModel, Message}
 

@@ -23,10 +23,10 @@ import controllers.register.CompanyRegistrationNumberVariationsBaseController
 import identifiers.TypedIdentifier
 import identifiers.register.establishers.company.{CompanyDetailsId, CompanyRegistrationNumberVariationsId}
 import models.{Index, Mode, ReferenceValue}
+import navigators.Navigator
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, Call}
 import services.UserAnswersService
-import utils.Navigator
 import utils.annotations.EstablishersCompany
 import viewmodels.{CompanyRegistrationNumberViewModel, Message}
 
