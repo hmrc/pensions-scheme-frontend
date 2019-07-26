@@ -481,7 +481,7 @@ messages__companyAddress__lede = This is usually the registered business address
 messages__companyAddress__trustee__lede = This is usually the registered business address of the trustee but you can enter any address you have for this company.
 messages__companyAddress__checkYourAnswersLabel = Address
 
-messages__companyConfirmAddress__title = Confirm the company's address
+messages__companyConfirmAddress__title = Confirm the company’s address
 messages__companyConfirmAddress__heading = Confirm {0}’s address
 
 messages__companyConfirmPreviousAddress__title = Confirm the company’s previous address
@@ -492,11 +492,11 @@ messages__directorDetails__heading = Company director
 
 messages__directorName__title = What is the director’s name?
 messages__directorName__heading = What is the director’s name?
-messages__directorName__cya = Director's name
+messages__directorName__cya = Director’s name
 messages__visuallyhidden__directorName = Change name of director
 
 messages__companyPreviousAddressPostcodeLookup__title = What was the company’s previous postcode?
-messages__companyPreviousAddressPostcodeLookup__heading = What was {0}'s' previous postcode?
+messages__companyPreviousAddressPostcodeLookup__heading = What was {0}’s previous postcode?
 messages__companyPreviousAddressPostcodeLookup__checkYourAnswersLabel = Previous address
 
 messages__companyPreviousAddress__title = Previous address of the company
@@ -831,7 +831,7 @@ messages__listSchemes__status_rejected_appeal = Rejected under appeal
 messages__listSchemes__schemeName__screen_reader = The scheme name is: {0}
 messages__listSchemes__SRN__screen_reader = {0}’s, submission reference number is {1}
 messages__listSchemes__PSTR__screen_reader = {0}’s, Pension Scheme Tax Reference number is {1}
-messages__listSchemes__status__screen_reader = {0}’s' status is {1}
+messages__listSchemes__status__screen_reader = {0}’s status is {1}
 messages__listSchemes__date__screen_reader = {0} was opened on {1}
 
 messages__schemesOverview__title = Manage and register your pension schemes
