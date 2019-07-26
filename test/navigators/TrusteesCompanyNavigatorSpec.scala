@@ -84,15 +84,24 @@ class TrusteesCompanyNavigatorSpec extends SpecBase with MustMatchers with Navig
     (CompanyPayeVariationsId(0), emptyAnswers, none, true, Some(exitJourney(checkMode(mode), emptyAnswers, 0, toggled, cya(mode))), true)
   )
 
-  private val navigator: TrusteesCompanyNavigator =
-    new TrusteesCompanyNavigator(FakeUserAnswersCacheConnector, frontendAppConfig, new FakeFeatureSwitchManagementService(false))
-
-  s"${navigator.getClass.getSimpleName}" must {
+  s"Trustee company navigations with hns toggle off" must {
     appRunning()
+
+    val navigator: TrusteesCompanyNavigator =
+      new TrusteesCompanyNavigator(FakeUserAnswersCacheConnector, frontendAppConfig, new FakeFeatureSwitchManagementService(false))
+
     behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, routes(NormalMode), dataDescriber)
     behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, routes(UpdateMode) ++ editRoutes(UpdateMode), dataDescriber, UpdateMode)
-    behave like nonMatchingNavigator(navigator)
-    behave like nonMatchingNavigator(navigator, UpdateMode)
+  }
+
+  s"Trustee company navigations with hns toggle on" must {
+    appRunning()
+
+    val navigator: TrusteesCompanyNavigator =
+      new TrusteesCompanyNavigator(FakeUserAnswersCacheConnector, frontendAppConfig, new FakeFeatureSwitchManagementService(true))
+
+    behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, routes(NormalMode, toggled = true), dataDescriber)
+    behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, routes(UpdateMode, toggled = true) ++ editRoutes(UpdateMode, toggled = true), dataDescriber, UpdateMode)
   }
 
 }
