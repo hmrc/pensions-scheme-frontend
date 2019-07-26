@@ -182,6 +182,17 @@ object TrusteesCompanyNavigatorSpec extends SpecBase with OptionValues {
     else anyMoreChanges
   }
 
+
+  private def exitJourney(mode: Mode, answers:UserAnswers, index:Int = 0, toggled: Boolean,
+                          cyaPage: Call): Call = {
+    val cyaToggled = if (toggled) cyaPage else cya(mode)
+    if(mode == CheckMode || mode == NormalMode) cyaToggled
+    else {
+      if(answers.get(IsTrusteeNewId(index)).getOrElse(false)) cyaToggled
+      else anyMoreChanges
+    }
+  }
+
   private def addressYearsLessThanTwelveEdit(mode: Mode, userAnswers: UserAnswers): Call =
     (
       userAnswers.get(ExistingCurrentAddressId(0)),
