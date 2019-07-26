@@ -17,7 +17,7 @@
 package navigators
 
 import com.google.inject.Inject
-import config.FrontendAppConfig
+import config.{FeatureSwitchManagementService, FrontendAppConfig}
 import connectors.UserAnswersCacheConnector
 import controllers.register.trustees.company.routes._
 import controllers.register.trustees.routes._
@@ -30,7 +30,8 @@ import utils.UserAnswers
 import utils.{Toggles, UserAnswers}
 
 class TrusteesCompanyNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector,
-                                         appConfig: FrontendAppConfig) extends AbstractNavigator {
+                                         appConfig: FrontendAppConfig,
+                                         featureSwitchManagementService: FeatureSwitchManagementService) extends AbstractNavigator {
 
   private def exitMiniJourney(index: Index, mode: Mode, srn: Option[String], answers: UserAnswers): Option[NavigateTo] =
     if(mode == CheckMode || mode == NormalMode){
@@ -39,6 +40,19 @@ class TrusteesCompanyNavigator @Inject()(val dataCacheConnector: UserAnswersCach
       if(answers.get(IsTrusteeNewId(index)).getOrElse(false)) checkYourAnswers(index, journeyMode(mode), srn)
       else anyMoreChanges(srn)
     }
+
+  private def exitMiniJourney2(index: Index, mode: Mode, srn: Option[String], answers: UserAnswers,
+                              cyaPage: (Mode, Index, Option[String]) => Option[NavigateTo] = cya): Option[NavigateTo] = {
+    val cyaToggled = if (featureSwitchManagementService.get(Toggles.isEstablisherCompanyHnSEnabled)) cyaPage else cya _
+
+    if (mode == CheckMode || mode == NormalMode) {
+      cyaToggled(journeyMode(mode), index, srn)
+    } else {
+      if (answers.get(IsTrusteeNewId(index)).getOrElse(false)) cyaToggled(journeyMode(mode), index, srn)
+      else anyMoreChanges(srn)
+    }
+  }
+
 
   private def anyMoreChanges(srn: Option[String]): Option[NavigateTo] =
     NavigateTo.dontSave(AnyMoreChangesController.onPageLoad(srn))
@@ -51,6 +65,12 @@ class TrusteesCompanyNavigator @Inject()(val dataCacheConnector: UserAnswersCach
 
       case CompanyVatId(index) =>
         NavigateTo.dontSave(CompanyPayeController.onPageLoad(mode, index, srn))
+
+      case CompanyEmailId(index) =>
+        NavigateTo.dontSave(CompanyPhoneController.onPageLoad(mode, index, srn))
+
+      case CompanyPhoneId(index) =>
+        NavigateTo.dontSave(CheckYourAnswersCompanyContactDetailsController.onPageLoad(mode, index, srn))
 
       case CompanyPayeId(index) =>
         NavigateTo.dontSave(CompanyRegistrationNumberController.onPageLoad(mode, srn, index))
@@ -104,6 +124,13 @@ class TrusteesCompanyNavigator @Inject()(val dataCacheConnector: UserAnswersCach
 
       case CompanyVatVariationsId(index) =>
         exitMiniJourney(index, mode, srn, from.userAnswers)
+
+      case CompanyEmailId(index) =>
+        exitMiniJourney(index, mode, srn, from.userAnswers)
+
+      case CompanyPhoneId(index) =>
+        exitMiniJourney(index, mode, srn, from.userAnswers)
+
 
       case CompanyPayeId(index) =>
         exitMiniJourney(index, mode, srn, from.userAnswers)
