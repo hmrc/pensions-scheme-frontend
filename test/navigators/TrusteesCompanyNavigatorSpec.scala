@@ -146,6 +146,8 @@ object TrusteesCompanyNavigatorSpec extends SpecBase with OptionValues {
 
   private def checkYourAnswersCompanyContactDetails(mode: Mode) = controllers.register.trustees.company.routes.CheckYourAnswersCompanyContactDetailsController.onPageLoad(mode, 0, None)
 
+  private def cya(mode: Mode) = controllers.register.trustees.company.routes.CheckYourAnswersController.onPageLoad(mode, 0, None)
+
   private def addTrustee(mode: Mode) = controllers.register.trustees.routes.AddTrusteeController.onPageLoad(mode, None)
 
 
@@ -176,11 +178,11 @@ object TrusteesCompanyNavigatorSpec extends SpecBase with OptionValues {
 
   private def anyMoreChanges = controllers.routes.AnyMoreChangesController.onPageLoad(None)
 
-  private def exitJourney(mode: Mode, answers:UserAnswers, index:Int = 0) = if(mode == CheckMode || mode == NormalMode) checkYourAnswers(mode)
-  else {
-    if(answers.get(IsTrusteeNewId(index)).getOrElse(false)) checkYourAnswers(mode)
-    else anyMoreChanges
-  }
+//  private def exitJourney(mode: Mode, answers:UserAnswers, index:Int = 0) = if(mode == CheckMode || mode == NormalMode) checkYourAnswers(mode)
+//  else {
+//    if(answers.get(IsTrusteeNewId(index)).getOrElse(false)) checkYourAnswers(mode)
+//    else anyMoreChanges
+//  }
 
 
   private def exitJourney(mode: Mode, answers:UserAnswers, index:Int = 0, toggled: Boolean,
