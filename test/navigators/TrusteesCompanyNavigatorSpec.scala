@@ -29,7 +29,7 @@ import org.scalatest.prop.TableFor6
 import org.scalatest.{MustMatchers, OptionValues}
 import play.api.libs.json.Json
 import play.api.mvc.Call
-import utils.UserAnswers
+import utils.{FakeFeatureSwitchManagementService, UserAnswers}
 
 class TrusteesCompanyNavigatorSpec extends SpecBase with MustMatchers with NavigatorBehaviour {
 
@@ -42,6 +42,14 @@ class TrusteesCompanyNavigatorSpec extends SpecBase with MustMatchers with Navig
     (CompanyDetailsId(0), newTrustee, companyVat(mode), true, Some(exitJourney(mode, newTrustee)), true),
     (CompanyVatId(0), emptyAnswers, companyPaye(mode), true, Some(exitJourney(mode, emptyAnswers)), true),
     (CompanyVatId(0), newTrustee, companyPaye(mode), true, Some(exitJourney(mode, newTrustee)), true),
+
+    (CompanyEmailId(0), emptyAnswers, companyPhone(mode), true, Some(exitJourney(mode, emptyAnswers)), true),
+    (CompanyEmailId(0), newTrustee, companyPhone(mode), true, Some(exitJourney(mode, newTrustee)), true),
+
+    (CompanyPhoneId(0), emptyAnswers, checkYourAnswersCompanyContactDetails(mode), true, Some(exitJourney(mode, emptyAnswers)), true),
+    (CompanyPhoneId(0), newTrustee, checkYourAnswersCompanyContactDetails(mode), true, Some(exitJourney(mode, newTrustee)), true),
+
+
     (CompanyPayeId(0), emptyAnswers, companyRegistrationNumber(mode), true, Some(exitJourney(mode, emptyAnswers)), true),
     (CompanyPayeId(0), newTrustee, companyRegistrationNumber(mode), true, Some(exitJourney(mode, newTrustee)), true),
     (CompanyRegistrationNumberId(0), emptyAnswers, companyUTR(mode), true, Some(exitJourney(mode, emptyAnswers)), true),
@@ -78,7 +86,7 @@ class TrusteesCompanyNavigatorSpec extends SpecBase with MustMatchers with Navig
   )
 
   private val navigator: TrusteesCompanyNavigator =
-    new TrusteesCompanyNavigator(FakeUserAnswersCacheConnector, frontendAppConfig)
+    new TrusteesCompanyNavigator(FakeUserAnswersCacheConnector, frontendAppConfig, new FakeFeatureSwitchManagementService(false))
 
   s"${navigator.getClass.getSimpleName}" must {
     appRunning()
@@ -106,6 +114,9 @@ object TrusteesCompanyNavigatorSpec extends SpecBase with OptionValues {
   private def companyPaye(mode: Mode): Call =
     controllers.register.trustees.company.routes.CompanyPayeController.onPageLoad(mode, 0, None)
 
+  private def companyPhone(mode: Mode): Call =
+    controllers.register.trustees.company.routes.CompanyPhoneController.onPageLoad(mode, 0, None)
+
   private def companyUTR(mode: Mode): Call =
     controllers.register.trustees.company.routes.CompanyUniqueTaxReferenceController.onPageLoad(mode, 0, None)
 
@@ -132,6 +143,8 @@ object TrusteesCompanyNavigatorSpec extends SpecBase with OptionValues {
   private def companyContactDetails(mode: Mode) = controllers.register.trustees.company.routes.CompanyContactDetailsController.onPageLoad(mode, 0, None)
 
   private def checkYourAnswers(mode: Mode) = controllers.register.trustees.company.routes.CheckYourAnswersController.onPageLoad(mode, 0, None)
+
+  private def checkYourAnswersCompanyContactDetails(mode: Mode) = controllers.register.trustees.company.routes.CheckYourAnswersCompanyContactDetailsController.onPageLoad(mode, 0, None)
 
   private def addTrustee(mode: Mode) = controllers.register.trustees.routes.AddTrusteeController.onPageLoad(mode, None)
 
