@@ -23,11 +23,11 @@ import forms.register.AddPartnersFormProvider
 import identifiers.register.establishers.partnership.AddPartnersId
 import javax.inject.Inject
 import models.Mode
+import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Call}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import utils.Navigator
 import utils.annotations.EstablishersPartner
 import views.html.register.addPartners
 

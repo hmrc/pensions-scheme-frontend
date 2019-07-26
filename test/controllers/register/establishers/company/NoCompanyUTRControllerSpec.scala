@@ -23,6 +23,7 @@ import forms.ReasonFormProvider
 import identifiers.TypedIdentifier
 import models.NormalMode
 import models.requests.DataRequest
+import navigators.Navigator
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.{MustMatchers, OptionValues, WordSpec}
 import play.api.i18n.MessagesApi
@@ -32,7 +33,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.{FakeUserAnswersService, UserAnswersService}
 import uk.gov.hmrc.domain.PsaId
-import utils.{FakeNavigator, Navigator, UserAnswers}
+import utils.{FakeNavigator, UserAnswers}
 import viewmodels.ReasonViewModel
 import views.html.reason
 

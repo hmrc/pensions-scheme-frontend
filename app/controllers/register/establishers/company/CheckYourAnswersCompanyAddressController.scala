@@ -33,6 +33,7 @@ import utils._
 import viewmodels.AnswerSection
 import views.html.check_your_answers
 import models.Mode.checkMode
+import navigators.Navigator
 
 import scala.concurrent.{ExecutionContext, Future}
 

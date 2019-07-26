@@ -17,37 +17,60 @@
 package controllers.register.trustees.company
 
 import config.FrontendAppConfig
-import controllers.Retrievals
+import controllers.HasReferenceNumberController
 import controllers.actions._
+import forms.HasPAYEFormProvider
+import identifiers.register.trustees.company.{CompanyDetailsId, HasCompanyPAYEId}
 import javax.inject.Inject
 import models.{Index, Mode}
-import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent}
+import navigators.Navigator
+import play.api.i18n.MessagesApi
+import play.api.mvc.{Action, AnyContent, Call}
 import services.UserAnswersService
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.TrusteesCompany
-import utils.{Enumerable, Navigator}
+import viewmodels.{CommonFormWithHintViewModel, Message}
 
 import scala.concurrent.ExecutionContext
 
-class HasCompanyPAYEController @Inject()(
-                                          appConfig: FrontendAppConfig,
-                                          override val messagesApi: MessagesApi,
-                                          userAnswersService: UserAnswersService,
-                                          @TrusteesCompany navigator: Navigator,
-                                          authenticate: AuthAction,
-                                          getData: DataRetrievalAction,
-                                          allowAccess: AllowAccessActionProvider,
-                                          requireData: DataRequiredAction
-                                        )(implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
+class HasCompanyPAYEController @Inject()(override val appConfig: FrontendAppConfig,
+                                         override val messagesApi: MessagesApi,
+                                         override val userAnswersService: UserAnswersService,
+                                         @TrusteesCompany override val navigator: Navigator,
+                                         authenticate: AuthAction,
+                                         allowAccess: AllowAccessActionProvider,
+                                         getData: DataRetrievalAction,
+                                         requireData: DataRequiredAction,
+                                         formProvider: HasPAYEFormProvider,
+                                         implicit val ec: ExecutionContext
+                                        ) extends HasReferenceNumberController {
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData) {
-    implicit request => Ok
-  }
+ private def viewModel(mode: Mode, index: Index, srn: Option[String], companyName: String): CommonFormWithHintViewModel =
+    CommonFormWithHintViewModel(
+      postCall = controllers.register.trustees.company.routes.HasCompanyPAYEController.onSubmit(mode, index, srn),
+      title = Message("messages__companyPayeRef__trustee_title"),
+      heading = Message("messages__companyPayeRef__h1", companyName),
+      hint = Some(Message("messages__companyPayeRef__p1")),
+      srn = srn,
+      formFieldName = Some("hasPaye")
+    )
 
-  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData) {
-    implicit request => Redirect(controllers.routes.IndexController.onPageLoad())
-  }
+  private def form(companyName: String) = formProvider("messages__companyPayeRef__error__required", companyName)
 
+  def onPageLoad(mode: Mode, index: Index, srn: Option[String] = None): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+      implicit request =>
+        CompanyDetailsId(index).retrieve.right.map {
+          details =>
+            get(HasCompanyPAYEId(index), form(details.companyName), viewModel(mode, index, srn, details.companyName))
+        }
+    }
+
+  def onSubmit(mode: Mode, index: Index, srn: Option[String] = None): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen requireData).async {
+      implicit request =>
+        CompanyDetailsId(index).retrieve.right.map {
+          details =>
+            post(HasCompanyPAYEId(index), mode, form(details.companyName), viewModel(mode, index, srn, details.companyName))
+        }
+    }
 }

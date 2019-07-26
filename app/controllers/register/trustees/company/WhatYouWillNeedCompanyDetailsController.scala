@@ -18,40 +18,28 @@ package controllers.register.trustees.company
 
 import config.FrontendAppConfig
 import controllers.Retrievals
-import controllers.actions._
-import forms.CompanyDetailsFormProvider
-import identifiers.register.trustees.company.CompanyDetailsId
+import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRequiredAction, DataRetrievalAction}
 import javax.inject.Inject
 import models.{Index, Mode}
-import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
-import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import utils.annotations.TrusteesCompany
-import utils.{Enumerable, Navigator, UserAnswers}
-import views.html.register.trustees.company.companyDetails
+import views.html.register.trustees.company.whatYouWillNeedCompanyDetails
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.Future
 
-class WhatYouWillNeedCompanyDetailsController @Inject()(
-                                          appConfig: FrontendAppConfig,
-                                          override val messagesApi: MessagesApi,
-                                          userAnswersService: UserAnswersService,
-                                          @TrusteesCompany navigator: Navigator,
-                                          authenticate: AuthAction,
-                                          getData: DataRetrievalAction,
-                                          allowAccess: AllowAccessActionProvider,
-                                          requireData: DataRequiredAction
-                                        )(implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
+class WhatYouWillNeedCompanyDetailsController @Inject()(appConfig: FrontendAppConfig,
+                                                        override val messagesApi: MessagesApi,
+                                                        authenticate: AuthAction,
+                                                        getData: DataRetrievalAction,
+                                                        allowAccess: AllowAccessActionProvider,
+                                                        requireData: DataRequiredAction
+                                                    ) extends FrontendController with I18nSupport with Retrievals{
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData) {
-    implicit request => Ok
+  def onPageLoad(mode: Mode, index: Index, srn: Option[String] = None): Action[AnyContent] = (authenticate andThen
+    getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+    implicit request =>
+      val href = controllers.register.trustees.company.routes.HasCompanyNumberController.onSubmit(mode, index, srn)
+      Future.successful(Ok(whatYouWillNeedCompanyDetails(appConfig, existingSchemeName, href, srn)))
   }
-
-  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData) {
-    implicit request => Redirect(controllers.routes.IndexController.onPageLoad())
-  }
-
 }

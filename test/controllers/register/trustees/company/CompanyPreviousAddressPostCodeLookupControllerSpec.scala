@@ -26,6 +26,7 @@ import identifiers.register.trustees.TrusteesId
 import identifiers.register.trustees.company.CompanyDetailsId
 import models.address.TolerantAddress
 import models.{CompanyDetails, Index, NormalMode}
+import navigators.Navigator
 import org.mockito.Matchers
 import org.mockito.Mockito.when
 import org.scalatest.concurrent.ScalaFutures
@@ -37,7 +38,7 @@ import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.{FakeUserAnswersService, UserAnswersService}
-import utils.{FakeNavigator, Navigator}
+import utils.FakeNavigator
 import viewmodels.Message
 import viewmodels.address.PostcodeLookupViewModel
 import views.html.address.postcodeLookup

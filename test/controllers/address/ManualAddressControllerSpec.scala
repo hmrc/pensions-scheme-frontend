@@ -28,6 +28,7 @@ import identifiers.TypedIdentifier
 import models._
 import models.address.{Address, TolerantAddress}
 import models.requests.DataRequest
+import navigators.Navigator
 import org.mockito.Matchers.any
 import org.mockito.Mockito.when
 import org.scalatest.concurrent.ScalaFutures
@@ -42,7 +43,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.{FakeUserAnswersService, UserAnswersService}
 import uk.gov.hmrc.domain.PsaId
-import utils.{CountryOptions, FakeCountryOptions, FakeNavigator, Navigator, UserAnswers}
+import utils.{CountryOptions, FakeCountryOptions, FakeNavigator, UserAnswers}
 import viewmodels.address.ManualAddressViewModel
 import views.html.address.manualAddress
 

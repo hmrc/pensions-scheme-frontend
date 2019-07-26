@@ -30,13 +30,14 @@ import models.person.PersonDetails
 import models.register.trustees.TrusteeKind
 import models.register.trustees.TrusteeKind.{Company, Individual, Partnership}
 import models.requests.DataRequest
+import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Result}
 import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.Trustees
-import utils.{Navigator, UserAnswers}
+import utils.UserAnswers
 import views.html.register.trustees.confirmDeleteTrustee
 
 import scala.concurrent.{ExecutionContext, Future}

@@ -23,10 +23,11 @@ import controllers.behaviours.ControllerWithQuestionPageBehaviours
 import forms.InvestmentRegulatedSchemeFormProvider
 import identifiers.{InvestmentRegulatedSchemeId, IsAboutBenefitsAndInsuranceCompleteId}
 import models.NormalMode
+import navigators.Navigator
 import play.api.data.Form
 import play.api.mvc.{Action, AnyContent, AnyContentAsFormUrlEncoded}
 import play.api.test.FakeRequest
-import utils.{FakeNavigator, FakeSectionComplete, Navigator, SectionComplete, UserAnswers}
+import utils.{FakeNavigator, FakeSectionComplete, SectionComplete, UserAnswers}
 import views.html.investmentRegulatedScheme
 
 import scala.concurrent.ExecutionContext.Implicits.global

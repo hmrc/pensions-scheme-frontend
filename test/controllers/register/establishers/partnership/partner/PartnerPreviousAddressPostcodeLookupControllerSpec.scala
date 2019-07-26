@@ -18,14 +18,15 @@ package controllers.register.establishers.partnership.partner
 
 import base.CSRFRequest
 import config.FrontendAppConfig
-import connectors.{AddressLookupConnector}
-import services.{UserAnswersService, FakeUserAnswersService}
+import connectors.AddressLookupConnector
+import services.{FakeUserAnswersService, UserAnswersService}
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.address.PostCodeLookupFormProvider
 import models.address.TolerantAddress
 import models.person.PersonDetails
 import models.{Index, NormalMode}
+import navigators.Navigator
 import org.joda.time.LocalDate
 import org.mockito.Matchers
 import org.mockito.Mockito.when
@@ -35,7 +36,7 @@ import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import utils.{FakeNavigator, Navigator}
+import utils.FakeNavigator
 import viewmodels.Message
 import viewmodels.address.PostcodeLookupViewModel
 import views.html.address.postcodeLookup

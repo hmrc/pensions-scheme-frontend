@@ -24,7 +24,7 @@ import play.api.mvc.Call
 import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.PsaId
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.{Navigator, UserAnswers}
+import utils.UserAnswers
 
 import scala.concurrent.ExecutionContext
 import scala.concurrent.ExecutionContext.Implicits.global

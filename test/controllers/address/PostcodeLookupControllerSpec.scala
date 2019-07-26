@@ -26,6 +26,7 @@ import identifiers.TypedIdentifier
 import models.address.{Address, TolerantAddress}
 import models.requests.DataRequest
 import models.{CheckUpdateMode, Mode, NormalMode}
+import navigators.Navigator
 import org.mockito.Matchers.{eq => eqTo, _}
 import org.mockito.Mockito._
 import org.scalatest.concurrent.ScalaFutures
@@ -41,7 +42,7 @@ import play.api.test.Helpers._
 import services.UserAnswersService
 import uk.gov.hmrc.domain.PsaId
 import uk.gov.hmrc.http.HttpException
-import utils.{FakeNavigator, Navigator, UserAnswers}
+import utils.{FakeNavigator, UserAnswers}
 import viewmodels.Message
 import viewmodels.address.PostcodeLookupViewModel
 import views.html.address.postcodeLookup

@@ -26,6 +26,7 @@ import javax.inject.Inject
 import models.Mode.checkMode
 import models.requests.DataRequest
 import models.{Index, Mode, UpdateMode}
+import navigators.Navigator
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService

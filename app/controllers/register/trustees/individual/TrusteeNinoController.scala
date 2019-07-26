@@ -24,12 +24,13 @@ import forms.register.trustees.individual.TrusteeNinoFormProvider
 import identifiers.register.trustees.individual.{TrusteeDetailsId, TrusteeNinoId}
 import javax.inject.Inject
 import models.{Index, Mode, Nino}
+import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import utils.{Navigator, UserAnswers}
+import utils.UserAnswers
 import utils.annotations.TrusteesIndividual
 import views.html.register.trustees.individual.trusteeNino
 

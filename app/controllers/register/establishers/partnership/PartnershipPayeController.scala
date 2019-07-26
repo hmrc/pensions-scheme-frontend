@@ -23,11 +23,11 @@ import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRequiredA
 import forms.PayeFormProvider
 import identifiers.register.establishers.partnership.{PartnershipDetailsId, PartnershipPayeId}
 import models.{Index, Mode, Paye}
+import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
-import utils.Navigator
 import utils.annotations.EstablisherPartnership
 import viewmodels.{Message, PayeViewModel}
 

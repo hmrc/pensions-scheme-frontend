@@ -23,10 +23,11 @@ import controllers.behaviours.ControllerWithQuestionPageBehaviours
 import forms.register.adviser.AdviserPhoneFormProvider
 import identifiers.AdviserPhoneId
 import models.NormalMode
+import navigators.Navigator
 import play.api.data.Form
 import play.api.mvc.{Action, AnyContent, AnyContentAsFormUrlEncoded}
 import play.api.test.FakeRequest
-import utils.{FakeNavigator, Navigator, UserAnswers}
+import utils.{FakeNavigator, UserAnswers}
 import views.html.adviserPhone
 
 class AdviserPhoneControllerSpec extends ControllerSpecBase with ControllerWithQuestionPageBehaviours {

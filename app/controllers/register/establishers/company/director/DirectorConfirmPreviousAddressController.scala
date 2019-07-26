@@ -23,11 +23,12 @@ import controllers.address.ConfirmPreviousAddressController
 import identifiers.register.establishers.company.director._
 import javax.inject.Inject
 import models.{Index, Mode}
+import navigators.Navigator
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
 import utils.annotations.EstablishersCompanyDirector
-import utils.{CountryOptions, Navigator, Toggles}
+import utils.{CountryOptions, Toggles}
 import viewmodels.Message
 import viewmodels.address.ConfirmAddressViewModel
 

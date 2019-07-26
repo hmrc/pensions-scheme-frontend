@@ -30,6 +30,7 @@ import models.register.DeclarationDormant
 import models.register.DeclarationDormant.Yes
 import models.register.SchemeType.MasterTrust
 import models.requests.DataRequest
+import navigators.Navigator
 import play.api.Logger
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -39,7 +40,8 @@ import uk.gov.hmrc.crypto.ApplicationCrypto
 import uk.gov.hmrc.domain.PsaId
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.Register
-import utils.{Enumerable, Navigator, Toggles, UserAnswers}
+import utils.{Enumerable, Toggles, UserAnswers}
+import utils.{Enumerable, UserAnswers}
 import views.html.register.declaration
 
 import scala.concurrent.{ExecutionContext, Future}

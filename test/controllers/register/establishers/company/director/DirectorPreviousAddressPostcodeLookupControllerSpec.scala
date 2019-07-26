@@ -25,6 +25,7 @@ import forms.address.PostCodeLookupFormProvider
 import models.address.TolerantAddress
 import models.person.PersonDetails
 import models.{CompanyDetails, Index, NormalMode}
+import navigators.Navigator
 import org.joda.time.LocalDate
 import org.mockito.Matchers
 import org.mockito.Mockito.when
@@ -35,7 +36,7 @@ import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.{FakeUserAnswersService, UserAnswersService}
-import utils.{FakeFeatureSwitchManagementService, FakeNavigator, Navigator}
+import utils.{FakeFeatureSwitchManagementService, FakeNavigator}
 import viewmodels.Message
 import viewmodels.address.PostcodeLookupViewModel
 import views.html.address.postcodeLookup

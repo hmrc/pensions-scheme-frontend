@@ -22,13 +22,14 @@ import forms.InsurancePolicyNumberFormProvider
 import identifiers.{InsuranceCompanyNameId, InsurancePolicyNumberId}
 import javax.inject.Inject
 import models.Mode
+import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Call}
 import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.{AboutBenefitsAndInsurance, InsuranceService}
-import utils.{Navigator, UserAnswers}
+import utils.UserAnswers
 import views.html.insurancePolicyNumber
 
 import scala.concurrent.{ExecutionContext, Future}

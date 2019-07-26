@@ -24,10 +24,10 @@ import controllers.address.AddressListController
 import identifiers.register.establishers.partnership.partner.{PartnerAddressId, PartnerAddressListId, PartnerAddressPostcodeLookupId, PartnerDetailsId}
 import models.requests.DataRequest
 import models.{Index, Mode}
+import navigators.Navigator
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, Result}
 import services.UserAnswersService
-import utils.Navigator
 import utils.annotations.EstablishersPartner
 import viewmodels.Message
 import viewmodels.address.AddressListViewModel

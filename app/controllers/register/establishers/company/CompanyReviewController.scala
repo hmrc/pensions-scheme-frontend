@@ -23,12 +23,13 @@ import identifiers.register.establishers.{IsEstablisherCompleteId, IsEstablisher
 import identifiers.register.establishers.company.{CompanyDetailsId, CompanyReviewId, IsCompanyCompleteId}
 import javax.inject.Inject
 import models.{Index, Mode, NormalMode}
+import navigators.Navigator
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.{EstablishersCompany, NoSuspendedCheck, TaskList}
-import utils.{AllowChangeHelper, Navigator, SectionComplete}
+import utils.{AllowChangeHelper, SectionComplete}
 import views.html.register.establishers.company.companyReview
 
 import scala.concurrent.{ExecutionContext, Future}
