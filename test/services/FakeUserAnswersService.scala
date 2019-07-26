@@ -34,7 +34,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 trait FakeUserAnswersService extends UserAnswersService with Matchers {
 
-  override protected def subscriptionCacheConnector: OldSubscriptionCacheConnector = FakeSubscriptionCacheConnector.getConnector
+  override protected def subscriptionCacheConnector: SubscriptionCacheConnector = FakeSubscriptionCacheConnector.getConnector
   override protected def updateSchemeCacheConnector: UpdateSchemeCacheConnector = FakeUpdateCacheConnector.getConnector
   override protected def lockConnector: PensionSchemeVarianceLockConnector = FakeLockConnector.getConnector
   override protected def viewConnector: SchemeDetailsReadOnlyCacheConnector = FakeReadOnlyCacheConnector.getConnector
