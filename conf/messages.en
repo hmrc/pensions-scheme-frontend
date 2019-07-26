@@ -1534,6 +1534,8 @@ messages__whatYouWillNeedTrusteeCompany__p2 = You will also need to tell us if t
 
 messages__tradingAtLeastOneYear__error = Select yes if {0} has been trading for at least 1 year
 
+messages__hasCompanyCompanyNumber__title = Does the company have a company number?
+
 messages__hasCompanyNumber__title = Does the establisher have a company number?
 messages__hasCompanyNumber__h1 = Does {0} have a company number?
 messages__hasCompanyNumber__p1 = You can find this on the company’s certificate of incorporation or on any official letters from Companies House.
