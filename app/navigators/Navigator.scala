@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package utils
+package navigators
 
 import connectors.UserAnswersCacheConnector
 import identifiers.{Identifier, LastPageId, TypedIdentifier}
@@ -24,6 +24,7 @@ import play.api.Logger
 import play.api.libs.json.Reads
 import play.api.mvc.Call
 import uk.gov.hmrc.http.HeaderCarrier
+import utils.UserAnswers
 
 import scala.concurrent.ExecutionContext
 import scala.util.Failure

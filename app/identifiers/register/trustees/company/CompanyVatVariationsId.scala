@@ -36,7 +36,7 @@ object CompanyVatVariationsId {
     new CheckYourAnswers[CompanyVatVariationsId] {
 
       private val labelVat = "messages__common__cya__vat"
-      private val hiddenLabelVat = "messages__visuallyhidden__trustee__vat_number"
+      private val hiddenLabelVat = "messages__visuallyhidden__companyVat"
 
       override def row(id: CompanyVatVariationsId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
         ReferenceValueCYA[CompanyVatVariationsId](labelVat, hiddenLabelVat)().row(id)(changeUrl, userAnswers)

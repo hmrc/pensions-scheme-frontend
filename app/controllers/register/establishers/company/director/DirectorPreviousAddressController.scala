@@ -26,12 +26,13 @@ import identifiers.register.establishers.company.director.{DirectorDetailsId, Di
 import javax.inject.Inject
 import models.address.Address
 import models.{Index, Mode}
+import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
 import utils.annotations.EstablishersCompanyDirector
-import utils.{CountryOptions, Navigator, Toggles}
+import utils.{CountryOptions, Toggles}
 import viewmodels.Message
 import viewmodels.address.ManualAddressViewModel
 

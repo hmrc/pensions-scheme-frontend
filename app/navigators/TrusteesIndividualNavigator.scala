@@ -25,7 +25,7 @@ import identifiers.register.trustees.{ExistingCurrentAddressId, IsTrusteeNewId}
 import identifiers.register.trustees.individual._
 import models.Mode.journeyMode
 import models._
-import utils.{AbstractNavigator, Navigator, UserAnswers}
+import utils.UserAnswers
 
 @Singleton
 class TrusteesIndividualNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector,

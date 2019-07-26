@@ -95,16 +95,14 @@
             </h3>
                 <ul class="task-list-items">
                     @for((item, i) <- taskSections.about.zipWithIndex){
-                        @defining(i+1) { index =>
-                            <li class="task-list-item">
-                                <a id= "section-about-link-0@index"  href="@{item.link.target}">
-                                    @messages(item.link.text)
-                                </a>
-                                @item.isCompleted.map{ isCompleted =>
-                                    <strong class="@statusClass(isCompleted)" id="section-about-status-0@index">@messages(status(isCompleted))</strong>
-                                }
-                            </li>
-                        }
+                        <li class="task-list-item">
+                            <a id= "section-about-link-@i"  href="@{item.link.target}">
+                                @messages(item.link.text)
+                            </a>
+                            @item.isCompleted.map{ isCompleted =>
+                                <strong class="@statusClass(isCompleted)" id="section-about-status-@i">@messages(status(isCompleted))</strong>
+                            }
+                        </li>
                     }
 
                 </ul>
@@ -158,23 +156,21 @@
 
                 <ul class="task-list-items">
                     @for((item, i) <- taskSections.establishers.zipWithIndex){
-                        @defining(i+1) { index =>
                             @item.header.map{hdr=>
                                 <li class="task-list-item">
                                     <h3 class="task-list-section">@messages(hdr)</h3>
                                 </li>
                             }
-                            @for((entity, i) <- item.entities.zipWithIndex){
+                            @for((entity, j) <- item.entities.zipWithIndex){
                                 <li class="task-list-item">
-                                    <a id= "section-establishers-link-0@index-@i" href="@{entity.link.target}">
+                                    <a id= "section-establishers-link-@i-@j" href="@{entity.link.target}">
                                         @messages(entity.link.text)
                                     </a>
                                     @entity.isCompleted.map{ isCompleted =>
-                                    <strong class="@statusClass(isCompleted)" id="section-establishers-status-0@index-@i">@messages(status(isCompleted))</strong>
+                                    <strong class="@statusClass(isCompleted)" id="section-establishers-status-@i-@j">@messages(status(isCompleted))</strong>
                                     }
                                 </li>
                             }
-                        }
                     }
                 </ul>
 
@@ -185,9 +181,7 @@
             <h2 id="section-trustees-header" class="heading-large">
                 @messages("messages__schemeTaskList__sectionTrustees_header")
             </h2>
-
             @variationsOnly("<p>")
-
             @taskSections.addTrusteeHeader.map { header =>
                 @header.link.map { link =>
                     <!--this is the add link-->
@@ -209,31 +203,27 @@
                 }
             }
             @variationsOnly("</p>")
-
-
-                <ul class="task-list-items">
-
-
-                    @for((item, i) <- taskSections.trustees.zipWithIndex){
-                    @defining(i+1) { index =>
-                        @item.header.map{hdr=>
-                            <li class="task-list-item">
-                                <h3 class="task-list-section">@messages(hdr)</h3>
-                            </li>
-                        }
+            <ul class="task-list-items">
+                @for((item, i) <- taskSections.trustees.zipWithIndex){
+                    @item.header.map{hdr=>
                         <li class="task-list-item">
-                            <a id= "section-trustees-link-0@index"  href="@{item.link.target}">
-                                @messages(item.link.text)
-                            </a>
-                            @item.isCompleted.map{ isCompleted =>
-                            <strong class="@statusClass(isCompleted)" id="section-trustees-status-0@index">@messages(status(isCompleted))</strong>
-                            }
+                            <h3 class="task-list-section">@messages(hdr)</h3>
                         </li>
-                        }
                     }
 
-                </ul>
+                    @for((entity, j) <- item.entities.zipWithIndex){
+                        <li class="task-list-item">
+                            <a id= "section-trustees-link-@i-@j" href="@{entity.link.target}">
+                                @messages(entity.link.text)
+                            </a>
+                            @entity.isCompleted.map{ isCompleted =>
+                                <strong class="@statusClass(isCompleted)" id="section-trustees-status-@i-@j">@messages(status(isCompleted))</strong>
+                            }
+                        </li>
+                    }
+                }
 
+            </ul>
         </section>
 
         @taskSections.declaration.map{declarationSection=>

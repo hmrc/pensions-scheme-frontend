@@ -23,12 +23,13 @@ import forms.register.SchemeTypeFormProvider
 import identifiers.{SchemeNameId, SchemeTypeId}
 import javax.inject.Inject
 import models.Mode
+import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.BeforeYouStart
-import utils.{NameMatchingFactory, Navigator, UserAnswers}
+import utils.{NameMatchingFactory, UserAnswers}
 import views.html.schemeType
 
 import scala.concurrent.{ExecutionContext, Future}

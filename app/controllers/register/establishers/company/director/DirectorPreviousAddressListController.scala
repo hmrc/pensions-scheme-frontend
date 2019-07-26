@@ -24,10 +24,11 @@ import controllers.address.AddressListController
 import identifiers.register.establishers.company.director._
 import models.requests.DataRequest
 import models.{Index, Mode}
+import navigators.Navigator
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, Result}
 import services.UserAnswersService
-import utils.{Navigator, Toggles}
+import utils.Toggles
 import utils.annotations.EstablishersCompanyDirector
 import viewmodels.Message
 import viewmodels.address.AddressListViewModel

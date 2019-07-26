@@ -182,6 +182,7 @@ class HsTaskListHelperRegistrationSpec extends HsTaskListHelperBehaviour with En
   "trustees" must {
 
     behave like trusteesSection(NormalMode, None)
+    behave like trusteesSectionHnS(NormalMode, None)
   }
 
   "declaration" must {

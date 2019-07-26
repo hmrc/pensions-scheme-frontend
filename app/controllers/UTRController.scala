@@ -20,12 +20,13 @@ import config.FrontendAppConfig
 import identifiers.TypedIdentifier
 import models.Mode
 import models.requests.DataRequest
+import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{AnyContent, Result}
 import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import utils.{Navigator, UserAnswers}
+import utils.UserAnswers
 import viewmodels.UTRViewModel
 import views.html.utr
 

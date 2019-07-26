@@ -24,6 +24,7 @@ import forms.address.AddressYearsFormProvider
 import identifiers.register.establishers.individual.{AddressYearsId, EstablisherDetailsId}
 import javax.inject.Inject
 import models.{Index, Mode}
+import navigators.Navigator
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService

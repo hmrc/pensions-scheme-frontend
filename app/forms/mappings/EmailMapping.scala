@@ -43,7 +43,7 @@ trait EmailMapping extends Mappings with Transforms {
       verifying(
         firstError(
           maxLength(maxEmailLength, maxLengthKey),
-          emailFormat(noAtSignIncludedErrorKey, startsWithAtSignErrorKey, dotAfterAtSignErrorKey, endsWithDotErrorKey),
+          emailFormat(invalidKey, invalidKey, invalidKey, invalidKey),
           emailAddressRestrictive(invalidKey)
         )
       )
@@ -76,9 +76,5 @@ object EmailMapping {
   val invalidKey = "messages__error__common__email__address__invalid"
   val maxLengthKey = "messages__error__common__email__address__length"
 
-  val noAtSignIncludedErrorKey = "messages__error__common__email__no_at_sign"
-  val startsWithAtSignErrorKey = "messages__error__common__email__start_with_at_sign"
-  val dotAfterAtSignErrorKey = "messages__error__common__email__dot_after_at_sign"
-  val endsWithDotErrorKey = "messages__error__common__email__ends_with_dot"
 }
 

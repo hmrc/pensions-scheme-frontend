@@ -24,6 +24,7 @@ import identifiers.register.establishers.partnership._
 import javax.inject.{Inject, Singleton}
 import models.Mode.checkMode
 import models.{Index, Mode, UpdateMode}
+import navigators.Navigator
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
