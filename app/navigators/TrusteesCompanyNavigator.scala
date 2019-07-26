@@ -26,7 +26,6 @@ import identifiers.register.trustees.company._
 import identifiers.register.trustees.{ExistingCurrentAddressId, IsTrusteeNewId}
 import models.Mode.journeyMode
 import models._
-import utils.UserAnswers
 import utils.{Toggles, UserAnswers}
 
 class TrusteesCompanyNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector,
@@ -151,7 +150,7 @@ class TrusteesCompanyNavigator @Inject()(val dataCacheConnector: UserAnswersCach
 
       case CompanyAddressId(index) =>
         val isNew = from.userAnswers.get(IsTrusteeNewId(index)).contains(true)
-        if(isNew || mode == CheckMode) {
+        if (isNew || mode == CheckMode) {
           checkYourAnswers(index, journeyMode(mode), srn)
         } else {
           NavigateTo.dontSave(CompanyAddressYearsController.onPageLoad(mode, index, srn))

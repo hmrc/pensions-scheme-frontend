@@ -19,8 +19,7 @@ package navigators
 import base.SpecBase
 import connectors.FakeUserAnswersCacheConnector
 import identifiers.Identifier
-import identifiers.register.trustees.IsTrusteeNewId
-import identifiers.register.trustees.ExistingCurrentAddressId
+import identifiers.register.trustees.{ExistingCurrentAddressId, IsTrusteeNewId}
 import identifiers.register.trustees.company._
 import models.Mode.checkMode
 import models._
@@ -42,13 +41,10 @@ class TrusteesCompanyNavigatorSpec extends SpecBase with MustMatchers with Navig
     (CompanyDetailsId(0), newTrustee, companyVat(mode), true, Some(exitJourney(mode, newTrustee, 0, toggled, cya(mode))), true),
     (CompanyVatId(0), emptyAnswers, companyPaye(mode), true, Some(exitJourney(mode, emptyAnswers, 0, toggled, cya(mode))), true),
     (CompanyVatId(0), newTrustee, companyPaye(mode), true, Some(exitJourney(mode, newTrustee, 0, toggled, cya(mode))), true),
-
     (CompanyEmailId(0), emptyAnswers, companyPhone(mode), true, Some(exitJourney(mode, emptyAnswers, 0, toggled, checkYourAnswersCompanyContactDetails(mode))), true),
     (CompanyEmailId(0), newTrustee, companyPhone(mode), true, Some(exitJourney(mode, newTrustee, 0, toggled, checkYourAnswersCompanyContactDetails(mode))), true),
-
     (CompanyPhoneId(0), emptyAnswers, checkYourAnswersCompanyContactDetails(mode), true, Some(exitJourney(mode, emptyAnswers, 0, toggled, checkYourAnswersCompanyContactDetails(mode))), true),
     (CompanyPhoneId(0), newTrustee, checkYourAnswersCompanyContactDetails(mode), true, Some(exitJourney(mode, newTrustee, 0, toggled, checkYourAnswersCompanyContactDetails(mode))), true),
-
     (CompanyPayeId(0), emptyAnswers, companyRegistrationNumber(mode), true, Some(exitJourney(mode, emptyAnswers, 0, toggled, cya(mode))), true),
     (CompanyPayeId(0), newTrustee, companyRegistrationNumber(mode), true, Some(exitJourney(mode, newTrustee, 0, toggled, cya(mode))), true),
     (CompanyRegistrationNumberId(0), emptyAnswers, companyUTR(mode), true, Some(exitJourney(mode, emptyAnswers, 0, toggled, cya(mode))), true),
@@ -59,7 +55,7 @@ class TrusteesCompanyNavigatorSpec extends SpecBase with MustMatchers with Navig
     (CompanyPostcodeLookupId(0), emptyAnswers, companyAddressList(mode), true, Some(companyAddressList(checkMode(mode))), true),
     (CompanyAddressListId(0), emptyAnswers, companyManualAddress(mode), true, Some(companyManualAddress(checkMode(mode))), true),
     (CompanyAddressId(0), emptyAnswers, companyAddressYears(mode), true,
-      if(mode == UpdateMode) Some(companyAddressYears(checkMode(mode))) else Some(checkYourAnswers(mode)), true),
+      if (mode == UpdateMode) Some(companyAddressYears(checkMode(mode))) else Some(checkYourAnswers(mode)), true),
     (CompanyAddressId(0), newTrustee, companyAddressYears(mode), true, Some(checkYourAnswers(mode)), true),
     (CompanyAddressYearsId(0), addressYearsOverAYear, companyContactDetails(mode), true, Some(exitJourney(mode, emptyAnswers, 0, toggled, cya(mode))), true),
     (CompanyAddressYearsId(0), addressYearsOverAYearNew, companyContactDetails(mode), true, Some(exitJourney(mode, addressYearsOverAYearNew, 0, toggled, cya(mode))), true),
@@ -74,7 +70,7 @@ class TrusteesCompanyNavigatorSpec extends SpecBase with MustMatchers with Navig
     (CompanyVatVariationsId(0), newTrustee, index, false, Some(exitJourney(mode, newTrustee, 0, toggled, cya(mode))), true)
   )
 
-  private def editRoutes(mode: Mode, toggled:Boolean = false): TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = Table(
+  private def editRoutes(mode: Mode, toggled: Boolean = false): TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = Table(
     ("Id", "UserAnswers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (CheckMode)", "Save (CM)"),
     (CompanyConfirmPreviousAddressId(0), confirmPreviousAddressYes, sessionExpired, false, Some(anyMoreChanges), false),
     (CompanyConfirmPreviousAddressId(0), confirmPreviousAddressNo, sessionExpired, false, Some(prevAddPostCodeLookup(checkMode(mode))), false),
@@ -160,6 +156,7 @@ object TrusteesCompanyNavigatorSpec extends SpecBase with OptionValues {
 
 
   private def sessionExpired = controllers.routes.SessionExpiredController.onPageLoad()
+
   private def index = controllers.routes.IndexController.onPageLoad()
 
   private val emptyAnswers = UserAnswers(Json.obj())
@@ -186,12 +183,12 @@ object TrusteesCompanyNavigatorSpec extends SpecBase with OptionValues {
 
   private def anyMoreChanges = controllers.routes.AnyMoreChangesController.onPageLoad(None)
 
-  private def exitJourney(mode: Mode, answers:UserAnswers, index:Int = 0, toggled: Boolean,
+  private def exitJourney(mode: Mode, answers: UserAnswers, index: Int = 0, toggled: Boolean,
                           cyaPage: Call): Call = {
     val cyaToggled = if (toggled) cyaPage else cya(mode)
-    if(mode == CheckMode || mode == NormalMode) cyaToggled
+    if (mode == CheckMode || mode == NormalMode) cyaToggled
     else {
-      if(answers.get(IsTrusteeNewId(index)).getOrElse(false)) cyaToggled
+      if (answers.get(IsTrusteeNewId(index)).getOrElse(false)) cyaToggled
       else anyMoreChanges
     }
   }
