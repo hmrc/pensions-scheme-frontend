@@ -31,33 +31,33 @@ import scala.concurrent.ExecutionContext.Implicits.global
 
 
 class TrusteesCompanyNavigatorHnSSpec extends SpecBase with MustMatchers with NavigatorBehaviour {
-  val indexZero = Index(0)
+  private val indexZero = Index(0)
+  private val stringValue = "111111"
+  private val refValue = ReferenceValue(stringValue)
+  private def row(id: TypedIdentifier.PathDependent)(value: id.Data, call: Call, ua: Option[UserAnswers] = None)
+         (implicit writes: Writes[id.Data]): (id.type, UserAnswers, Call) = {
+    val userAnswers = ua.fold(UserAnswers())(identity).set(id)(value).asOpt.value
+    Tuple3(id, userAnswers, call)
+  }
 
   "For Scheme Subscription (Normal Mode)" should {
-
-    def row(id: TypedIdentifier.PathDependent)(value: id.Data, call: Call, ua: Option[UserAnswers] = None)
-                                                     (implicit writes: Writes[id.Data]): (id.type, UserAnswers, Call) = {
-      val userAnswers = ua.fold(UserAnswers())(identity).set(id)(value).asOpt.value
-      Tuple3(id, userAnswers, call)
-    }
-
     lazy val testForNormalMode: TableFor3[Identifier, UserAnswers, Call] =
       Table(
         ("Id", "UserAnswers", "Next Page"),
         row(HasCompanyNumberId(indexZero))(true, CompanyRegistrationNumberVariationsController.onPageLoad(NormalMode, None, indexZero)),
         row(HasCompanyNumberId(indexZero))(false, NoCompanyNumberController.onPageLoad(NormalMode, indexZero, None)),
-        row(NoCompanyNumberId(indexZero))("bla", HasCompanyUTRController.onPageLoad(NormalMode, indexZero, None)),
-        row(CompanyRegistrationNumberVariationsId(indexZero))(ReferenceValue("1111111111"), HasCompanyUTRController.onPageLoad(NormalMode, indexZero, None)),
+        row(NoCompanyNumberId(indexZero))(stringValue, HasCompanyUTRController.onPageLoad(NormalMode, indexZero, None)),
+        row(CompanyRegistrationNumberVariationsId(indexZero))(refValue, HasCompanyUTRController.onPageLoad(NormalMode, indexZero, None)),
         row(HasCompanyUTRId(indexZero))(true, CompanyUTRController.onPageLoad(NormalMode, None, indexZero)),
         row(HasCompanyUTRId(indexZero))(false, CompanyNoUTRReasonController.onPageLoad(NormalMode, indexZero, None)),
-        row(CompanyNoUTRReasonId(indexZero))("blah", HasCompanyVATController.onPageLoad(NormalMode, indexZero, None)),
-        row(CompanyUTRId(indexZero))("1234567890", HasCompanyVATController.onPageLoad(NormalMode, indexZero, None)),
+        row(CompanyNoUTRReasonId(indexZero))(stringValue, HasCompanyVATController.onPageLoad(NormalMode, indexZero, None)),
+        row(CompanyUTRId(indexZero))(stringValue, HasCompanyVATController.onPageLoad(NormalMode, indexZero, None)),
         row(HasCompanyVATId(indexZero))(true, CompanyVatVariationsController.onPageLoad(NormalMode, indexZero, None)),
         row(HasCompanyVATId(indexZero))(false, HasCompanyPAYEController.onPageLoad(NormalMode, indexZero, None)),
-        row(CompanyVatVariationsId(indexZero))(ReferenceValue("1111111"), HasCompanyPAYEController.onPageLoad(NormalMode, indexZero, None)),
+        row(CompanyVatVariationsId(indexZero))(refValue, HasCompanyPAYEController.onPageLoad(NormalMode, indexZero, None)),
         row(HasCompanyPAYEId(indexZero))(true, CompanyPayeVariationsController.onPageLoad(NormalMode, indexZero, None)),
         row(HasCompanyPAYEId(indexZero))(false, CheckYourAnswersCompanyDetailsController.onPageLoad(NormalMode, indexZero, None)),
-        row(CompanyPayeVariationsId(indexZero))(ReferenceValue("123123"), CheckYourAnswersCompanyDetailsController.onPageLoad(NormalMode, indexZero, None))
+        row(CompanyPayeVariationsId(indexZero))(refValue, CheckYourAnswersCompanyDetailsController.onPageLoad(NormalMode, indexZero, None))
       )
 
 
