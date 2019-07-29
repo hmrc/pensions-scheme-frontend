@@ -18,7 +18,5 @@ package utils
 
 object Toggles {
 
-  val isSchemeDataShiftEnabled: String = "is-scheme-data-shift-enabled"
-  val isSeparateRefCollectionEnabled: String = "separate-ref-collection"
   val isEstablisherCompanyHnSEnabled: String = "is-establisher-company-hns"
 }

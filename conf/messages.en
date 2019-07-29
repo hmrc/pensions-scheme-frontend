@@ -395,6 +395,8 @@ messages__company_address_years__title =  Has the establisher used this contact 
 messages__company_address_years__h1 = Has {0} used this contact address for at least 1 year?
 messages__company_address_years__form_error = Select yes if {0} has used this registered address for at least 1 year
 
+messages__company_trustee_address_years__h1 =  Has {0} used this contact address for at least 1 year?
+
 messages__common__company_details__title = Company details
 messages__common__company_name = Company name
 messages__common__vat = VAT Registration number (optional)
@@ -1507,6 +1509,7 @@ messages__whatYouWillNeedEstablisherCompanyAddress__h1 = Address
 messages__whatYouWillNeedEstablisherCompanyAddress__lede = You will need to tell us the company’s:
 messages__whatYouWillNeedEstablisherCompanyAddress__item1 = current address
 messages__whatYouWillNeedEstablisherCompanyAddress__item2 = previous address if the company has not been at the current address for at least 1 year
+messages__whatYouWillNeedTrusteeCompanyAddress__item2 = previous address if the company has been at the current address for less than 1 year
 
 messages__whatYouWillNeedEstablisherCompanyContact__title = Contact details
 messages__whatYouWillNeedEstablisherCompanyContact__h1 = Contact details
@@ -1537,6 +1540,8 @@ messages__whatYouWillNeedTrusteeCompany__item4 = employer PAYE reference, if it 
 messages__whatYouWillNeedTrusteeCompany__p2 = You will also need to tell us if the company has been dormant at any time in the last 12 months.
 
 messages__tradingAtLeastOneYear__error = Select yes if {0} has been trading for at least 1 year
+
+messages__hasCompanyCompanyNumber__title = Does the company have a company number?
 
 messages__hasCompanyNumber__title = Does the establisher have a company number?
 messages__hasCompanyNumber__h1 = Does {0} have a company number?
