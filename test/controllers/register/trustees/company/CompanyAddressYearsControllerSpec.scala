@@ -42,7 +42,7 @@ class CompanyAddressYearsControllerSpec extends ControllerSpecBase {
   val form = formProvider(Message("messages__common_error__current_address_years", companyDetails.companyName))
   val firstIndex = Index(0)
   val invalidIndex = Index(10)
-  val questionText = "messages__company_address_years__title"
+  val questionText = "messages__company_trustee_address_years__h1"
   val retrieval = new FakeDataRetrievalAction(Some(Json.obj(
     TrusteesId.toString -> Json.arr(Json.obj(CompanyDetailsId.toString -> companyDetails))
   )))

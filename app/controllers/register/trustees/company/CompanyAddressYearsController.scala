@@ -50,7 +50,7 @@ class CompanyAddressYearsController @Inject()(
       implicit request =>
         CompanyDetailsId(index.id).retrieve.right.map {
           details =>
-            val questionText = "messages__company_address_years__title"
+            val questionText = "messages__company_trustee_address_years__h1"
             AddressYearsViewModel(
               postCall = routes.CompanyAddressYearsController.onSubmit(mode, index, srn),
               title = Message(questionText, Message("messages__common__address_years__company").resolve),
