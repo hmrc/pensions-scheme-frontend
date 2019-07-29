@@ -18,6 +18,7 @@ package navigators
 
 import base.SpecBase
 import controllers.register.trustees.company.routes._
+import identifiers.register.trustees.IsTrusteeNewId
 import identifiers.register.trustees.company._
 import identifiers.{Identifier, TypedIdentifier}
 import models._
@@ -60,11 +61,14 @@ class TrusteesCompanyNavigatorHnSSpec extends SpecBase with MustMatchers with Na
         row(CompanyPayeVariationsId(indexZero))(refValue, CheckYourAnswersCompanyDetailsController.onPageLoad(NormalMode, indexZero, None))
       )
 
+    lazy val testForUpdateModeNew: TableFor3[Identifier, UserAnswers, Call] = testForNormalMode.map ( t =>
+      (t._1, t._2.set(IsTrusteeNewId(indexZero))(true).asOpt.value, t._3)
+    )
 
     val navigator: Navigator = injector.instanceOf[TrusteesCompanyNavigatorHnS]
 
     behave like navigatorWithRoutesForMode(NormalMode)(navigator, testForNormalMode)
-    //behave like navigatorWithRoutesForMode(UpdateMode)(navigator, testForNormalMode)
+//    behave like navigatorWithRoutesForMode(UpdateMode)(navigator, testForUpdateModeNew)
 
   }
 
