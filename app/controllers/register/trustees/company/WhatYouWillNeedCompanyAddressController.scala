@@ -24,31 +24,25 @@ import models.{Index, Mode}
 import navigators.Navigator
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
-import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import views.html.register.trustees.company.whatYouWillNeedCompanyAddress
 import utils.annotations.TrusteesCompany
 import utils.Enumerable
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.Future
 
-class WhatYouWillNeedCompanyAddressController @Inject()(
-                                          appConfig: FrontendAppConfig,
-                                          override val messagesApi: MessagesApi,
-                                          userAnswersService: UserAnswersService,
-                                          @TrusteesCompany navigator: Navigator,
-                                          authenticate: AuthAction,
-                                          getData: DataRetrievalAction,
-                                          allowAccess: AllowAccessActionProvider,
-                                          requireData: DataRequiredAction
-                                        )(implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
+class WhatYouWillNeedCompanyAddressController @Inject()(appConfig: FrontendAppConfig,
+                                                        override val messagesApi: MessagesApi,
+                                                        authenticate: AuthAction,
+                                                        getData: DataRetrievalAction,
+                                                        allowAccess: AllowAccessActionProvider,
+                                                        requireData: DataRequiredAction
+                                                       ) extends FrontendController with I18nSupport with Retrievals{
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData) {
-    implicit request => Ok
+  def onPageLoad(mode: Mode, index: Index, srn: Option[String] = None): Action[AnyContent] = (authenticate andThen
+    getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+    implicit request =>
+      val href = controllers.register.trustees.company.routes.CompanyPostCodeLookupController.onSubmit(mode, index, srn)
+      Future.successful(Ok(whatYouWillNeedCompanyAddress(appConfig, existingSchemeName, href, srn)))
   }
-
-  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData) {
-    implicit request => Redirect(controllers.routes.IndexController.onPageLoad())
-  }
-
 }

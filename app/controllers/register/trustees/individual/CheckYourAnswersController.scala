@@ -48,8 +48,7 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
                                            requiredData: DataRequiredAction,
                                            userAnswersService: UserAnswersService,
                                            implicit val countryOptions: CountryOptions,
-                                           allowChangeHelper: AllowChangeHelper,
-                                           fs: FeatureSwitchManagementService
+                                           allowChangeHelper: AllowChangeHelper
                                           )(implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport {
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
@@ -58,22 +57,18 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
 
       implicit val userAnswers: UserAnswers = request.userAnswers
 
-      lazy val displayNewNino = userAnswers.get(trustees.IsTrusteeNewId(index)) match {
-        case Some(true) => false
-        case _ => fs.get(Toggles.isSeparateRefCollectionEnabled)
-      }
-
       val trusteeDetailsRow = TrusteeDetailsId(index).row(routes.TrusteeDetailsController.onPageLoad(checkMode(mode), index, srn).url, mode)
       val trusteeNinoRow = mode match {
-        case UpdateMode | CheckUpdateMode if displayNewNino => individual.TrusteeNewNinoId(index).
-          row(routes.TrusteeNinoNewController.onPageLoad(checkMode(mode), index, srn).url, mode)
-        case _ => individual.TrusteeNinoId(index).
-          row(routes.TrusteeNinoController.onPageLoad(checkMode(mode), index, srn).url, mode)
+        case UpdateMode | CheckUpdateMode if !userAnswers.get(trustees.IsTrusteeNewId(index)).getOrElse(false) =>
+          individual.TrusteeNewNinoId(index).row(routes.TrusteeNinoNewController.onPageLoad(checkMode(mode), index, srn).url, mode)
+        case _ =>
+          individual.TrusteeNinoId(index).row(routes.TrusteeNinoController.onPageLoad(checkMode(mode), index, srn).url, mode)
       }
       val trusteeUtrRow = UniqueTaxReferenceId(index).row(routes.UniqueTaxReferenceController.onPageLoad(checkMode(mode), index, srn).url, mode)
       val trusteeAddressRow = TrusteeAddressId(index).row(routes.TrusteeAddressController.onPageLoad(checkMode(mode), index, srn).url, mode)
       val trusteeAddressYearsRow = TrusteeAddressYearsId(index).row(routes.TrusteeAddressYearsController.onPageLoad(checkMode(mode), index, srn).url, mode)
-      val trusteePreviousAddressRow = TrusteePreviousAddressId(index).row(routes.TrusteePreviousAddressController.onPageLoad(checkMode(mode), index, srn).url, mode)
+      val trusteePreviousAddressRow = TrusteePreviousAddressId(index).row(
+        routes.TrusteePreviousAddressController.onPageLoad(checkMode(mode), index, srn).url, mode)
       val trusteeContactDetails = TrusteeContactDetailsId(index).row(routes.TrusteeContactDetailsController.onPageLoad(checkMode(mode), index, srn).url, mode)
 
       val trusteeDetailsSection = AnswerSection(None,

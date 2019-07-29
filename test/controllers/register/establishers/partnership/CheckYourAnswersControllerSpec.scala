@@ -55,7 +55,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
       )
     }
 
-    "on Page load if toggle on in UpdateMode" must {
+    "on Page load in UpdateMode" must {
       "return OK and the correct view for vat if not new establisher" in {
         val answers = UserAnswers().set(PartnershipVatVariationsId(firstIndex))(ReferenceValue("098765432")).flatMap(
           _.set(PartnershipPayeVariationsId(firstIndex))(ReferenceValue("12345678"))).asOpt.value
@@ -64,7 +64,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
           PartnershipVatVariationsId(firstIndex).row(partnershipVatVariationsRoute, UpdateMode) ++
             PartnershipPayeVariationsId(firstIndex).row(partnershipPayeVariationsRoute, UpdateMode))
 
-        val result = controller(answers.dataRetrievalAction, isToggleOn = true).onPageLoad(UpdateMode, firstIndex, srn)(request)
+        val result = controller(answers.dataRetrievalAction).onPageLoad(UpdateMode, firstIndex, srn)(request)
 
         status(result) mustBe OK
         contentAsString(result) mustBe viewAsString(Seq(expectedCompanyDetailsSection, emptyPartnershipContactDetailsSection), UpdateMode, srn)
@@ -79,7 +79,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
           PartnershipVatId(firstIndex).row(partnershipVatRoute(CheckUpdateMode, srn), UpdateMode) ++
             PartnershipPayeId(firstIndex).row(partnershipPayeRoute(CheckUpdateMode, srn), UpdateMode)
         )
-        val result = controller(answers.dataRetrievalAction, isToggleOn = true).onPageLoad(UpdateMode, firstIndex, srn)(request)
+        val result = controller(answers.dataRetrievalAction).onPageLoad(UpdateMode, firstIndex, srn)(request)
 
         status(result) mustBe OK
         contentAsString(result) mustBe viewAsString(Seq(expectedPartnershipDetailsSection, emptyPartnershipContactDetailsSection), UpdateMode, srn)
@@ -166,10 +166,9 @@ object CheckYourAnswersControllerSpec extends CheckYourAnswersControllerSpec {
   }
 
   private def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData,
-                         allowChangeHelper: AllowChangeHelper = ach, isToggleOn: Boolean = false): CheckYourAnswersController =
+                         allowChangeHelper: AllowChangeHelper = ach): CheckYourAnswersController =
     new CheckYourAnswersController(frontendAppConfig, messagesApi, FakeAuthAction, dataRetrievalAction, FakeAllowAccessProvider(),
-      new DataRequiredActionImpl, FakeUserAnswersService, new FakeNavigator(onwardRoute), countryOptions, allowChangeHelper,
-      new FakeFeatureSwitchManagementService(isToggleOn)
+      new DataRequiredActionImpl, FakeUserAnswersService, new FakeNavigator(onwardRoute), countryOptions, allowChangeHelper
     )
 
   private def viewAsString(answerSections: Seq[AnswerSection], mode: Mode = NormalMode, srn: Option[String] = None): String = check_your_answers(

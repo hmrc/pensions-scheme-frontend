@@ -49,8 +49,7 @@ class CheckYourAnswersController @Inject()(
                                             implicit val countryOptions: CountryOptions,
                                             @EstablishersCompany navigator: Navigator,
                                             userAnswersService: UserAnswersService,
-                                            allowChangeHelper: AllowChangeHelper,
-                                            fs: FeatureSwitchManagementService
+                                            allowChangeHelper: AllowChangeHelper
                                           )(implicit val ec: ExecutionContext) extends FrontendController
   with Retrievals with I18nSupport with Enumerable.Implicits {
 
@@ -59,15 +58,10 @@ class CheckYourAnswersController @Inject()(
       implicit request =>
         implicit val userAnswers: UserAnswers = request.userAnswers
 
-        lazy val isVatVariationsEnabled = userAnswers.get(IsEstablisherNewId(index)) match {
-          case Some(true) => false
-          case _ => fs.get(Toggles.isSeparateRefCollectionEnabled)
-        }
-
         val companyDetails = AnswerSection(
           Some("messages__common__company_details__title"),
           CompanyDetailsId(index).row(routes.CompanyDetailsController.onPageLoad(checkMode(mode), srn, index).url, mode) ++
-            (if (mode == UpdateMode && isVatVariationsEnabled) {
+            (if (mode == UpdateMode && !userAnswers.get(IsEstablisherNewId(index)).getOrElse(false)) {
               CompanyVatVariationsId(index).row(routes.CompanyVatVariationsController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
                 CompanyPayeVariationsId(index).row(routes.CompanyPayeVariationsController.onPageLoad(checkMode(mode), index, srn).url, mode)
             } else {
@@ -109,8 +103,7 @@ class CheckYourAnswersController @Inject()(
   }
 
   private def companyRegistrationNumberCya(mode: Mode, srn: Option[String], index: Index)(implicit request: DataRequest[AnyContent]) = {
-    if (mode == UpdateMode && fs.get(Toggles.isSeparateRefCollectionEnabled) &&
-      !request.userAnswers.get(IsEstablisherNewId(index)).getOrElse(false))
+    if (mode == UpdateMode && !request.userAnswers.get(IsEstablisherNewId(index)).getOrElse(false))
       CompanyRegistrationNumberVariationsId(index).row(routes.CompanyRegistrationNumberVariationsController.onPageLoad(checkMode(mode), srn, index).url, mode)
     else
       CompanyRegistrationNumberId(index).row(routes.CompanyRegistrationNumberController.onPageLoad(checkMode(mode), srn, Index(index)).url, mode)
