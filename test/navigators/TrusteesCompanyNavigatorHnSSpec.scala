@@ -18,8 +18,8 @@ package navigators
 
 import base.SpecBase
 import controllers.register.trustees.company.routes._
-import identifiers.{Identifier, TypedIdentifier}
 import identifiers.register.trustees.company._
+import identifiers.{Identifier, TypedIdentifier}
 import models._
 import org.scalatest.MustMatchers
 import org.scalatest.prop.TableFor3
@@ -29,13 +29,13 @@ import utils.UserAnswers
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
-
 class TrusteesCompanyNavigatorHnSSpec extends SpecBase with MustMatchers with NavigatorBehaviour {
   private val indexZero = Index(0)
   private val stringValue = "111111"
   private val refValue = ReferenceValue(stringValue)
+
   private def row(id: TypedIdentifier.PathDependent)(value: id.Data, call: Call, ua: Option[UserAnswers] = None)
-         (implicit writes: Writes[id.Data]): (id.type, UserAnswers, Call) = {
+                 (implicit writes: Writes[id.Data]): (id.type, UserAnswers, Call) = {
     val userAnswers = ua.fold(UserAnswers())(identity).set(id)(value).asOpt.value
     Tuple3(id, userAnswers, call)
   }
@@ -61,10 +61,10 @@ class TrusteesCompanyNavigatorHnSSpec extends SpecBase with MustMatchers with Na
       )
 
 
-
     val navigator: Navigator = injector.instanceOf[TrusteesCompanyNavigatorHnS]
 
     behave like navigatorWithRoutesForMode(NormalMode)(navigator, testForNormalMode)
+    //behave like navigatorWithRoutesForMode(UpdateMode)(navigator, testForNormalMode)
 
   }
 
