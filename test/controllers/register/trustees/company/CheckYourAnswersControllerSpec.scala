@@ -39,7 +39,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
   import CheckYourAnswersControllerSpec._
 
   "Check Your Answers Controller " when {
-    "on Page load if toggle off/toggle on in Normal Mode" must {
+    "on Page load in Normal Mode" must {
       "return OK and the correct view with full answers" in {
         val request = FakeDataRequest(fullAnswers)
         val result = controller(fullAnswers.dataRetrievalAction).onPageLoad(NormalMode, index, None)(request)
@@ -57,7 +57,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
       }
     }
 
-    "on Page load if toggle on in UpdateMode" must {
+    "on Page load in UpdateMode" must {
       "return OK and the correct view for vat, crn and paye if not new trustee" in {
         val answers = UserAnswers().trusteesCompanyVatVariations(index, ReferenceValue("098765432")).
           trusteesCompanyPayeVariations(index, ReferenceValue("12345678"))
@@ -234,6 +234,6 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase with Controller
                          isToggleOn: Boolean = false): CheckYourAnswersController =
     new CheckYourAnswersController(frontendAppConfig, messagesApi, FakeAuthAction, dataRetrievalAction,
       FakeAllowAccessProvider(), new DataRequiredActionImpl, fakeCountryOptions, new FakeNavigator(onwardRoute),
-      FakeUserAnswersService, allowChangeHelper, new FakeFeatureSwitchManagementService(isToggleOn))
+      FakeUserAnswersService, allowChangeHelper)
 
 }

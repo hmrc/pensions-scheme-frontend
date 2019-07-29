@@ -53,10 +53,6 @@ class DirectorHasNINOIdSpec extends SpecBase{
 
       val result: UserAnswers = answers().remove(DirectorHasNINOId(0, 0)).asOpt.value
 
-      "not remove the data for `DirectorNino`" in {
-        result.get(DirectorNewNinoId(0, 0)) mustBe defined
-      }
-
       "not remove the data for `DirectorNoNinoReason`" in {
         result.get(DirectorNoNINOReasonId(0, 0)) mustBe defined
       }

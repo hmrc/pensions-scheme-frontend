@@ -17,10 +17,6 @@
 package toggles
 
 class TogglesSpec extends FeatureToggleBehaviours {
-  
-  "separate-ref-collection new feature toggle" should {
-    behave like featureToggle("separate-ref-collection", true)
-  }
 
   "is-establisher-company-hns new feature toggle" should {
     behave like featureToggle("is-establisher-company-hns", false)
