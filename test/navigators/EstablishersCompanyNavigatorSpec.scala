@@ -307,9 +307,6 @@ object EstablishersCompanyNavigatorSpec extends OptionValues with Enumerable.Imp
       anyMoreChanges
   }
 
-  private def previousAddressEditRoutes(toggled: Boolean, mode: Mode, userAnswers: UserAnswers) =
-    exitJourney(mode, userAnswers, 0, if (toggled) cyaCompanyAddressDetails(mode) else cya(mode))
-
   private def confirmPreviousAddress = controllers.register.establishers.company.routes.CompanyConfirmPreviousAddressController.onPageLoad(0, None)
 
   private def addressYearsLessThanTwelveEdit(mode: Mode,
