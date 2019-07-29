@@ -14,25 +14,31 @@
  * limitations under the License.
  */
 
-package views.register.establishers.company
+package views.register.trustees.company
 
 import models.{Index, NormalMode}
 import play.twirl.api.HtmlFormat
 import views.behaviours.ViewBehaviours
-import views.html.register.establishers.company.whatYouWillNeedCompanyAddress
+import views.html.register.trustees.company.whatYouWillNeedCompanyAddress
 
 class WhatYouWillNeedCompanyAddressViewSpec extends ViewBehaviours {
 
   val messageKeyPrefix = "whatYouWillNeedEstablisherCompanyAddress"
 
-  val href = controllers.register.establishers.company.routes.CompanyPostCodeLookupController.onPageLoad(NormalMode, None, Index(0))
+  val href = controllers.register.establishers.company.routes.CompanyPostCodeLookupController.onPageLoad(NormalMode, None, index=Index(0))
 
   def createView: () => HtmlFormat.Appendable = () => whatYouWillNeedCompanyAddress(frontendAppConfig, Some("testScheme"), href, None)(fakeRequest, messages)
 
   "whatYouWillNeedCompanyAddress view" must {
 
     behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__h1"),
-      "_lede", "_item1", "_item2")
+      "_lede", "_item1")
+
+
+    "display the correct for second bullet point" in {
+      val doc = asDocument(createView())
+      assertContainsText(doc, messages("messages__whatYouWillNeedTrusteeCompanyAddress__item2"))
+    }
 
     behave like pageWithSubmitButton(createView)
 
