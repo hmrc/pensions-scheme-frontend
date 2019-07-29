@@ -22,19 +22,12 @@ secondaryLabel: Option[String] = None,
 hint: Option[String] = None
 )(implicit messages: Messages)
 
-@errorSpanId = @{
-    if(field("day").errors.nonEmpty) = "error-message-day"
-    if(field("month").errors.nonEmpty) = "error-message-month"
-    if(field("year").errors.nonEmpty) = "error-message-year"
-}
-
 <div class="form-field @if(Seq(field, field("day"), field("month"), field("year")).flatMap(_.errors).nonEmpty){form-field--error}">
 <fieldset id="@field.id">
     <legend>
-
-            <span class="bold form-label @if(legendClass.nonEmpty){@legendClass}">
-              @label
-            </span>
+        <span class="bold form-label @if(legendClass.nonEmpty){@legendClass}">
+            @label
+        </span>
 
         @if(hint.nonEmpty){
         <span class="form-hint" id="@{field.id}-date-hint">@hint</span>
@@ -42,11 +35,9 @@ hint: Option[String] = None
 
         @if(field("day").errors.nonEmpty || field("month").errors.nonEmpty || field("year").errors.nonEmpty){
             <span class="error-notification" id="error-message-date">@messages("messages__error__date")</span>
-            <p>FIELD: Day@field("day").errors Mon@field("month").errors Yr@field("year").errors</p>
         } else {
             @field.errors.map { error =>
                 <span class="error-notification" id="error-message-@{field.id}-input">@messages(error.message, error.args: _*)</span>
-                <p>DATE: @field.errors</p>
             }
         }
 
