@@ -22,6 +22,7 @@ import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.CompanyRegistrationNumberVariationsFormProvider
 import models.{CheckUpdateMode, Index}
+import navigators.Navigator
 import org.scalatest.MustMatchers
 import play.api.Application
 import play.api.http.Writeable
@@ -30,7 +31,7 @@ import play.api.mvc.{Call, Request, Result}
 import play.api.test.FakeRequest
 import services.{FakeUserAnswersService, UserAnswersService}
 import utils.annotations.TrusteesCompany
-import utils.{FakeNavigator, Navigator}
+import utils.FakeNavigator
 import play.api.test.Helpers.{contentAsString, status, _}
 import viewmodels.{CompanyRegistrationNumberViewModel, Message}
 import views.html.register.companyRegistrationNumberVariations

@@ -21,7 +21,7 @@ import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
 import identifiers.{CurrentMembersId, FutureMembersId, MembershipPensionRegulatorId}
 import models.{CheckMode, Members, Mode, NormalMode}
-import utils.{AbstractNavigator, Enumerable, Navigator, UserAnswers}
+import utils.{Enumerable, UserAnswers}
 
 class AboutMembersNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector,
                                       appConfig: FrontendAppConfig) extends AbstractNavigator with Enumerable.Implicits {

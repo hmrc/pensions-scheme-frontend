@@ -21,8 +21,8 @@ import config.{FeatureSwitchManagementService, FrontendAppConfig}
 import connectors.UserAnswersCacheConnector
 import identifiers.AnyMoreChangesId
 import models.UpdateMode
-import utils.{AbstractNavigator, Enumerable, Navigator}
-import utils.{Enumerable, AbstractNavigator, Navigator, Toggles}
+import utils.Enumerable
+import utils.{Enumerable, Toggles}
 
 class VariationsNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector,
                                     config: FrontendAppConfig,

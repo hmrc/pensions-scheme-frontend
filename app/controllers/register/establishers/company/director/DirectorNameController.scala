@@ -24,13 +24,14 @@ import identifiers.register.establishers.company.director.{DirectorNameId, IsNew
 import javax.inject.Inject
 import models.person.PersonName
 import models.{Index, Mode}
+import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Call}
 import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.EstablishersCompanyDirector
-import utils.{Enumerable, Navigator, SectionComplete, UserAnswers}
+import utils.{Enumerable, SectionComplete, UserAnswers}
 import views.html.register.establishers.company.director.directorName
 
 import scala.concurrent.{ExecutionContext, Future}

@@ -16,7 +16,7 @@
 
 package controllers.register
 
-import config.FrontendAppConfig
+import config.{FeatureSwitchManagementService, FrontendAppConfig}
 import connectors._
 import controllers.Retrievals
 import controllers.actions._
@@ -30,6 +30,7 @@ import models.register.DeclarationDormant
 import models.register.DeclarationDormant.Yes
 import models.register.SchemeType.MasterTrust
 import models.requests.DataRequest
+import navigators.Navigator
 import play.api.Logger
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -39,7 +40,8 @@ import uk.gov.hmrc.crypto.ApplicationCrypto
 import uk.gov.hmrc.domain.PsaId
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.Register
-import utils.{Enumerable, Navigator, UserAnswers}
+import utils.{Enumerable, Toggles, UserAnswers}
+import utils.{Enumerable, UserAnswers}
 import views.html.register.declaration
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -56,7 +58,8 @@ class DeclarationController @Inject()(
                                        pensionsSchemeConnector: PensionsSchemeConnector,
                                        emailConnector: EmailConnector,
                                        crypto: ApplicationCrypto,
-                                       pensionAdministratorConnector: PensionAdministratorConnector
+                                       pensionAdministratorConnector: PensionAdministratorConnector,
+                                       fs: FeatureSwitchManagementService
                                      )(implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
 
   private val form = formProvider()
@@ -85,7 +88,7 @@ class DeclarationController @Inject()(
   }
 
   private def showPage(status: HtmlFormat.Appendable => Result, form: Form[_])(implicit request: DataRequest[AnyContent]) = {
-    val isCompany = request.userAnswers.hasCompanies
+    val isCompany = request.userAnswers.hasCompanies(fs.get(Toggles.isEstablisherCompanyHnSEnabled))
 
     val declarationDormantValue = if (isDeclarationDormant) DeclarationDormant.values.head else DeclarationDormant.values(1)
     val readyForRender = if (isCompany) {
@@ -108,7 +111,7 @@ class DeclarationController @Inject()(
   }
 
   private def isDeclarationDormant(implicit request: DataRequest[AnyContent]): Boolean =
-    request.userAnswers.allEstablishersAfterDelete.exists { allEstablishers =>
+    request.userAnswers.allEstablishersAfterDelete(fs.get(Toggles.isEstablisherCompanyHnSEnabled)).exists { allEstablishers =>
       allEstablishers.id match {
         case CompanyDetailsId(index) =>
           isDormant(request.userAnswers.get(IsCompanyDormantId(index)))

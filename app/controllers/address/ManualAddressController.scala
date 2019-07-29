@@ -23,13 +23,14 @@ import identifiers.TypedIdentifier
 import models.{CheckUpdateMode, Mode, NormalMode, UpdateMode}
 import models.address.{Address, TolerantAddress}
 import models.requests.DataRequest
+import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.libs.json.JsValue
 import play.api.mvc.{AnyContent, Call, Result}
 import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import utils.{Navigator, UserAnswers}
+import utils.UserAnswers
 import viewmodels.address.ManualAddressViewModel
 import views.html.address.manualAddress
 

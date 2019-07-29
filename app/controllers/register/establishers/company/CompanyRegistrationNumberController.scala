@@ -24,6 +24,7 @@ import identifiers.register.establishers.company.CompanyRegistrationNumberId
 import javax.inject.Inject
 import models.requests.DataRequest
 import models.{CompanyRegistrationNumber, Index, Mode}
+import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.MessagesApi
 import play.api.mvc.{AnyContent, Call}

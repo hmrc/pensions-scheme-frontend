@@ -23,6 +23,7 @@ import forms.address.AddressListFormProvider
 import identifiers.AdviserAddressPostCodeLookupId
 import models.NormalMode
 import models.address.TolerantAddress
+import navigators.Navigator
 import play.api.Application
 import play.api.http.Writeable
 import play.api.inject.bind
@@ -32,7 +33,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers.{contentAsString, _}
 import services.{FakeUserAnswersService, UserAnswersService}
 import utils.annotations.Adviser
-import utils.{FakeNavigator, Navigator, UserAnswers}
+import utils.{FakeNavigator, UserAnswers}
 import viewmodels.Message
 import viewmodels.address.AddressListViewModel
 import views.html.address.addressList

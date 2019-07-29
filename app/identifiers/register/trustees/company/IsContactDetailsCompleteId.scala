@@ -14,21 +14,16 @@
  * limitations under the License.
  */
 
-package forms.register.establishers.company
+package identifiers.register.trustees.company
 
-import com.google.inject.Inject
-import forms.mappings._
-import play.api.data.Form
-import play.api.i18n.Messages
+import identifiers.TypedIdentifier
+import identifiers.register.trustees.TrusteesId
+import play.api.libs.json.JsPath
 
-class NoCompanyNumberFormProvider @Inject() extends Mappings with Transforms {
+case class IsContactDetailsCompleteId(index: Int) extends TypedIdentifier[Boolean] {
+  override def path: JsPath = TrusteesId(index).path \ IsContactDetailsCompleteId.toString
+}
 
-  val maxLength = 160
-
-  def apply(name: String)(implicit messages: Messages): Form[String] = Form(
-    "reason" -> text(Messages("messages__error__no_company_number", name)).
-      verifying(firstError(
-        maxLength(maxLength, "messages__error__no_company_number_maxlength"),
-        safeText("messages__error__no_company_number_invalid")))
-  )
+object IsContactDetailsCompleteId {
+  override def toString: String = "isContactDetailsComplete"
 }

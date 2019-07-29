@@ -24,12 +24,13 @@ import identifiers.register.establishers.company.{CompanyDetailsId, HasCompanyVA
 import identifiers.register.establishers.company.director.{DirectorDetailsId, DirectorHasNINOId, DirectorNameId}
 import javax.inject.Inject
 import models.{Index, Mode}
+import navigators.Navigator
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.EstablishersCompanyDirector
-import utils.{Enumerable, Navigator}
+import utils.Enumerable
 import viewmodels.{CommonFormWithHintViewModel, Message}
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -59,20 +60,20 @@ class DirectorHasNINOController @Inject()(override val appConfig: FrontendAppCon
   def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
-        (CompanyDetailsId(establisherIndex) and DirectorNameId(establisherIndex, directorIndex)).retrieve.right.map {
+        DirectorNameId(establisherIndex, directorIndex).retrieve.right.map {
           details =>
-            get(DirectorHasNINOId(establisherIndex, directorIndex), form(details.b.fullName),
-              viewModel(mode, establisherIndex, directorIndex, srn, details.b.fullName))
+            get(DirectorHasNINOId(establisherIndex, directorIndex), form(details.fullName),
+              viewModel(mode, establisherIndex, directorIndex, srn, details.fullName))
         }
     }
 
   def onSubmit(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
-        (CompanyDetailsId(establisherIndex) and DirectorNameId(establisherIndex, directorIndex)).retrieve.right.map {
+        DirectorNameId(establisherIndex, directorIndex).retrieve.right.map {
           details =>
-            post(DirectorHasNINOId(establisherIndex, directorIndex), mode, form(details.b.fullName),
-              viewModel(mode, establisherIndex, directorIndex, srn, details.b.fullName))
+            post(DirectorHasNINOId(establisherIndex, directorIndex), mode, form(details.fullName),
+              viewModel(mode, establisherIndex, directorIndex, srn, details.fullName))
         }
     }
 }

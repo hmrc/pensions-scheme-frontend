@@ -16,12 +16,12 @@
 
 import com.google.inject.AbstractModule
 import com.google.inject.multibindings.Multibinder
-import connectors.{SubscriptionDualCacheConnector, UserAnswersCacheConnector}
+import connectors.{SubscriptionCacheConnector, UserAnswersCacheConnector}
 import controllers.actions._
 import navigators._
 import services.{UserAnswersService, UserAnswersServiceEstablishersAndTrusteesImpl, UserAnswersServiceImpl, UserAnswersServiceInsuranceImpl}
 import utils.annotations.{EstablishersPartner, _}
-import utils.{AllowChangeHelper, AllowChangeHelperImpl, Navigator}
+import utils.{AllowChangeHelper, AllowChangeHelperImpl}
 
 class PODSModule extends AbstractModule {
 
@@ -56,7 +56,7 @@ class PODSModule extends AbstractModule {
       .to(classOf[UserAnswersServiceImpl])
 
     bind(classOf[UserAnswersCacheConnector])
-      .to(classOf[SubscriptionDualCacheConnector])
+      .to(classOf[SubscriptionCacheConnector])
 
     bind(classOf[UserAnswersService])
       .to(classOf[UserAnswersServiceEstablishersAndTrusteesImpl])

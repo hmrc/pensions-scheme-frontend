@@ -25,6 +25,7 @@ import javax.inject.Inject
 import models.Mode._
 import models.requests.DataRequest
 import models.{Index, Mode, UpdateMode}
+import navigators.Navigator
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
@@ -47,18 +48,14 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
                                            implicit val countryOptions: CountryOptions,
                                            @TrusteesCompany navigator: Navigator,
                                            userAnswersService: UserAnswersService,
-                                           allowChangeHelper: AllowChangeHelper,
-                                           fs: FeatureSwitchManagementService
+                                           allowChangeHelper: AllowChangeHelper
                                           )(implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport {
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requiredData).async {
       implicit request =>
         implicit val userAnswers: UserAnswers = request.userAnswers
-        lazy val isVatVariationsEnabled = userAnswers.get(IsTrusteeNewId(index)) match {
-          case Some(true) => false
-          case _ => fs.get(Toggles.isSeparateRefCollectionEnabled)
-        }
+        lazy val isVatVariationsEnabled = !userAnswers.get(IsTrusteeNewId(index)).getOrElse(false)
         val companyDetailsRow = CompanyDetailsId(index).row(routes.CompanyDetailsController.onPageLoad(checkMode(mode), index, srn).url, mode)
         val companyVatRow = if (mode == UpdateMode && isVatVariationsEnabled) {
           CompanyVatVariationsId(index).row(routes.CompanyVatVariationsController.onPageLoad(checkMode(mode), index, srn).url, mode)

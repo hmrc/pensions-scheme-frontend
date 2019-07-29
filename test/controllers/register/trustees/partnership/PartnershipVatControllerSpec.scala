@@ -17,11 +17,12 @@
 package controllers.register.trustees.partnership
 
 import base.CSRFRequest
-import services.{UserAnswersService, FakeUserAnswersService}
+import services.{FakeUserAnswersService, UserAnswersService}
 import controllers.ControllerSpecBase
 import controllers.actions.{AuthAction, DataRetrievalAction, FakeAuthAction}
 import forms.VatFormProvider
 import models.{Index, NormalMode}
+import navigators.Navigator
 import org.scalatest.MustMatchers
 import play.api.Application
 import play.api.http.Writeable
@@ -30,7 +31,7 @@ import play.api.mvc.{Call, Request, Result}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{contentAsString, redirectLocation, route, running, status, _}
 import utils.annotations.TrusteesPartnership
-import utils.{FakeNavigator, Navigator}
+import utils.FakeNavigator
 import viewmodels.{Message, VatViewModel}
 import views.html.vat
 

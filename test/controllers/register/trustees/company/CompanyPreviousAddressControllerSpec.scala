@@ -28,6 +28,7 @@ import identifiers.register.trustees.TrusteesId
 import identifiers.register.trustees.company.{CompanyDetailsId, CompanyPreviousAddressId}
 import models.address.Address
 import models.{CompanyDetails, Index, NormalMode}
+import navigators.Navigator
 import org.scalatest.OptionValues
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.mockito.MockitoSugar
@@ -39,7 +40,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.{FakeUserAnswersService, UserAnswersService}
 import utils.annotations.TrusteesCompany
-import utils.{CountryOptions, FakeCountryOptions, FakeNavigator, InputOption, Navigator}
+import utils.{CountryOptions, FakeCountryOptions, FakeNavigator, InputOption}
 import viewmodels.Message
 import viewmodels.address.ManualAddressViewModel
 import views.html.address.manualAddress

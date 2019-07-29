@@ -30,13 +30,14 @@ import models.person.PersonDetails
 import models.register.establishers.EstablisherKind
 import models.register.establishers.EstablisherKind._
 import models.requests.DataRequest
+import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Result}
 import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.Establishers
-import utils.{Navigator, UserAnswers}
+import utils.UserAnswers
 import views.html.register.establishers.confirmDeleteEstablisher
 
 import scala.concurrent.{ExecutionContext, Future}

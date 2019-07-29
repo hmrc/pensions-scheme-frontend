@@ -25,6 +25,7 @@ import javax.inject.Inject
 import models.Mode.checkMode
 import models._
 import models.requests.DataRequest
+import navigators.Navigator
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
@@ -46,8 +47,7 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
                                            userAnswersService: UserAnswersService,
                                            implicit val countryOptions: CountryOptions,
                                            @EstablishersIndividual navigator: Navigator,
-                                           allowChangeHelper: AllowChangeHelper,
-                                           fs: FeatureSwitchManagementService)(implicit val ec: ExecutionContext)
+                                           allowChangeHelper: AllowChangeHelper)(implicit val ec: ExecutionContext)
   extends FrontendController with Retrievals with I18nSupport {
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
@@ -56,16 +56,11 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
 
       implicit val userAnswers: UserAnswers = request.userAnswers
 
-      lazy val displayNewNino = userAnswers.get(IsEstablisherNewId(index)) match {
-        case Some(true) => false
-        case _ => fs.get(Toggles.isSeparateRefCollectionEnabled)
-      }
-
       val establisherNinoRow = mode match {
-        case UpdateMode | CheckUpdateMode if displayNewNino => EstablisherNewNinoId(index).
-          row(routes.EstablisherNinoNewController.onPageLoad(checkMode(mode), index, srn).url, mode)
-        case _ => EstablisherNinoId(index).
-          row(routes.EstablisherNinoController.onPageLoad(checkMode(mode), index, srn).url, mode)
+        case UpdateMode | CheckUpdateMode if !userAnswers.get(IsEstablisherNewId(index)).getOrElse(false) =>
+          EstablisherNewNinoId(index).row(routes.EstablisherNinoNewController.onPageLoad(checkMode(mode), index, srn).url, mode)
+        case _ =>
+          EstablisherNinoId(index).row(routes.EstablisherNinoController.onPageLoad(checkMode(mode), index, srn).url, mode)
       }
 
       val sections = Seq(

@@ -24,6 +24,7 @@ import identifiers.{InsurerConfirmAddressId, InsurerSelectAddressId, SchemeNameI
 import models.{CheckUpdateMode, NormalMode}
 import models.address.{Address, TolerantAddress}
 import models.person.PersonDetails
+import navigators.Navigator
 import org.joda.time.LocalDate
 import org.scalatest.OptionValues
 import org.scalatest.concurrent.ScalaFutures
@@ -38,7 +39,7 @@ import play.api.test.Helpers.{contentAsString, route, _}
 import services.{FakeUserAnswersService, UserAnswersService}
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.annotations.{AboutBenefitsAndInsurance, InsuranceService}
-import utils.{FakeNavigator, Navigator}
+import utils.FakeNavigator
 import viewmodels.address.PostcodeLookupViewModel
 import views.html.address.postcodeLookup
 

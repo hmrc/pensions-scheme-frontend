@@ -23,12 +23,13 @@ import forms.InvestmentRegulatedSchemeFormProvider
 import identifiers.{InvestmentRegulatedSchemeId, IsAboutBenefitsAndInsuranceCompleteId}
 import javax.inject.Inject
 import models.Mode
+import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.AboutBenefitsAndInsurance
-import utils.{Navigator, SectionComplete, UserAnswers}
+import utils.{SectionComplete, UserAnswers}
 import views.html.investmentRegulatedScheme
 
 import scala.concurrent.{ExecutionContext, Future}

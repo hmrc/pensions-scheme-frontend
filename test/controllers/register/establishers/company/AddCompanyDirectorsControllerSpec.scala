@@ -25,11 +25,12 @@ import identifiers.register.establishers.company.{AddCompanyDirectorsId, Company
 import models.person.{PersonDetails, PersonName}
 import models.register.{Director, DirectorEntity, DirectorEntityNonHnS}
 import models.{CompanyDetails, Index, NormalMode}
+import navigators.Navigator
 import org.joda.time.LocalDate
 import play.api.data.Form
 import play.api.libs.json._
 import play.api.test.Helpers._
-import utils.{FakeFeatureSwitchManagementService, FakeNavigator, Navigator, UserAnswers}
+import utils.{FakeFeatureSwitchManagementService, FakeNavigator, UserAnswers}
 import views.html.register.establishers.company.addCompanyDirectors
 
 class AddCompanyDirectorsControllerSpec extends ControllerSpecBase {

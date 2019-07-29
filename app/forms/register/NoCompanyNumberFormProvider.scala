@@ -14,20 +14,21 @@
  * limitations under the License.
  */
 
-package connectors
+package forms.register
 
-class OldSubscriptionCacheConnectorSpec extends CacheConnectorBehaviours {
+import com.google.inject.Inject
+import forms.mappings._
+import play.api.data.Form
+import play.api.i18n.Messages
 
-  override protected def url(id: String): String = s"/pensions-scheme/journey-cache/scheme/$id"
+class NoCompanyNumberFormProvider @Inject() extends Mappings with Transforms {
 
-  override protected def lastUpdatedUrl(id: String) = s"/pensions-scheme/journey-cache/scheme/$id/lastUpdated"
+  val maxLength = 160
 
-  protected def connector(): OldSubscriptionCacheConnector = injector.instanceOf[OldSubscriptionCacheConnector]
-
-  "CacheConnector" when {
-
-    behave like cacheConnector(connector)
-    behave like cacheConnectorWithLastUpdate(connector)
-
-  }
+  def apply(name: String)(implicit messages: Messages): Form[String] = Form(
+    "reason" -> text(Messages("messages__error__no_company_number", name)).
+      verifying(firstError(
+        maxLength(maxLength, "messages__error__no_company_number_maxlength"),
+        safeText("messages__error__no_company_number_invalid")))
+  )
 }

@@ -17,9 +17,12 @@
 package utils.hstasklisthelper
 
 
-import controllers.register.establishers.company.{routes => establisherCompanyRoutes}
 import controllers.register.establishers.company.director.{routes => establisherCompanyDirectorRoutes}
+import controllers.register.establishers.company.{routes => establisherCompanyRoutes}
+import controllers.register.trustees.company.{routes => trusteeCompanyRoutes}
+import identifiers.register.establishers.company.CompanyVatId
 import identifiers.register.establishers.{IsEstablisherNewId, company => establisherCompany}
+import identifiers.register.trustees.{IsTrusteeNewId, company => trusteeCompany}
 import models._
 import models.register.Entity
 import play.api.i18n.Messages
@@ -41,11 +44,17 @@ trait HsTaskListHelperUtils extends Enumerable.Implicits {
 
   case object EstablisherCompanyDirectors extends Spoke
 
+  case object TrusteeCompanyDetails extends Spoke
+
+  case object TrusteeCompanyAddress extends Spoke
+
+  case object TrusteeCompanyContactDetails extends Spoke
+
   def createSpoke(answers: UserAnswers,
                   spokeName: Spoke,
                   mode: Mode, srn: Option[String], name: String, index: Int, isNew: Boolean): EntitySpoke = {
 
-    val isChangeLink = getCompleteFlag(answers, index, spokeName)
+    val isChangeLink = getCompleteFlag(answers, index, spokeName, mode)
     val isComplete: Option[Boolean] = if (mode == NormalMode) isChangeLink else None
 
     (isChangeLink, isNew) match {
@@ -68,26 +77,39 @@ trait HsTaskListHelperUtils extends Enumerable.Implicits {
       EntitySpoke(Link(getChangeLinkText(spokeName)(name), getChangeLink(spokeName)(mode, srn, index).url), isComplete)
   }
 
-  private def getCompleteFlag(answers: UserAnswers, index: Int, spokeName: Spoke): Option[Boolean] = spokeName match {
-    case EstablisherCompanyDetails => answers.get(establisherCompany.IsDetailsCompleteId(index))
-    case EstablisherCompanyAddress
- => answers.get(establisherCompany.IsAddressCompleteId(index))
-    case EstablisherCompanyContactDetails => answers.get(establisherCompany.IsContactDetailsCompleteId(index))
+  private def getCompleteFlag(answers: UserAnswers, index: Int, spokeName: Spoke, mode: Mode): Option[Boolean] = spokeName match {
+    case EstablisherCompanyDetails =>
+      //TODO: this condition is to handle the partial data, hence can be removed after
+      // 28 days of enabling the toggle is-establisher-company-hns
+      answers.get(CompanyVatId(index)) match {
+        case Some(_) => Some(false)
+        case _ => answers.get(establisherCompany.IsDetailsCompleteId(index))
+      }
+
+    case EstablisherCompanyAddress =>
+      answers.isEstablisherCompanyAddressComplete(index)
+
+    case EstablisherCompanyContactDetails =>
+      answers.isEstablisherCompanyContactDetailsComplete(index)
+    case TrusteeCompanyDetails => answers.get(trusteeCompany.IsDetailsCompleteId(index))
+    case TrusteeCompanyAddress => answers.get(trusteeCompany.IsAddressCompleteId(index))
+    case TrusteeCompanyContactDetails => answers.get(trusteeCompany.IsContactDetailsCompleteId(index))
+
     case _ => None
   }
 
   private def getChangeLinkText(spokeName: Spoke): String => String = spokeName match {
-    case EstablisherCompanyDetails => messages("messages__schemeTaskList__sectionEstablishersCompany_change_details", _)
-    case EstablisherCompanyAddress => messages("messages__schemeTaskList__sectionEstablishersCompany_change_address", _)
-    case EstablisherCompanyContactDetails => messages("messages__schemeTaskList__sectionEstablishersCompany_change_contact", _)
+    case EstablisherCompanyDetails | TrusteeCompanyDetails => messages("messages__schemeTaskList__sectionEstablishersCompany_change_details", _)
+    case EstablisherCompanyAddress | TrusteeCompanyAddress => messages("messages__schemeTaskList__sectionEstablishersCompany_change_address", _)
+    case EstablisherCompanyContactDetails | TrusteeCompanyContactDetails => messages("messages__schemeTaskList__sectionEstablishersCompany_change_contact", _)
     case EstablisherCompanyDirectors => messages("messages__schemeTaskList__sectionEstablishersCompany_change_directors", _)
     case _ => (_: String) => s"Not found link text for spoke $spokeName"
   }
 
   private def getAddLinkText(spokeName: Spoke): String => String = spokeName match {
-    case EstablisherCompanyDetails => messages("messages__schemeTaskList__sectionEstablishersCompany_add_details", _)
-    case EstablisherCompanyAddress => messages("messages__schemeTaskList__sectionEstablishersCompany_add_address", _)
-    case EstablisherCompanyContactDetails => messages("messages__schemeTaskList__sectionEstablishersCompany_add_contact", _)
+    case EstablisherCompanyDetails | TrusteeCompanyDetails => messages("messages__schemeTaskList__sectionEstablishersCompany_add_details", _)
+    case EstablisherCompanyAddress | TrusteeCompanyAddress => messages("messages__schemeTaskList__sectionEstablishersCompany_add_address", _)
+    case EstablisherCompanyContactDetails | TrusteeCompanyContactDetails => messages("messages__schemeTaskList__sectionEstablishersCompany_add_contact", _)
     case EstablisherCompanyDirectors => messages("messages__schemeTaskList__sectionEstablishersCompany_add_directors", _)
     case _ => (_: String) => s"Not found link text for spoke $spokeName"
   }
@@ -97,6 +119,9 @@ trait HsTaskListHelperUtils extends Enumerable.Implicits {
     case EstablisherCompanyAddress => establisherCompanyRoutes.CheckYourAnswersCompanyAddressController.onPageLoad(mode, srn, index)
     case EstablisherCompanyContactDetails => establisherCompanyRoutes.CheckYourAnswersCompanyContactDetailsController.onPageLoad(mode, srn, index)
     case EstablisherCompanyDirectors => establisherCompanyRoutes.AddCompanyDirectorsController.onPageLoad(mode, srn, index)
+    case TrusteeCompanyDetails => trusteeCompanyRoutes.CheckYourAnswersCompanyDetailsController.onPageLoad(mode, index, srn)
+    case TrusteeCompanyAddress => trusteeCompanyRoutes.CheckYourAnswersCompanyAddressController.onPageLoad(mode, index, srn)
+    case TrusteeCompanyContactDetails => trusteeCompanyRoutes.CheckYourAnswersCompanyContactDetailsController.onPageLoad(mode, index, srn)
     case _ => controllers.routes.IndexController.onPageLoad()
   }
 
@@ -105,6 +130,9 @@ trait HsTaskListHelperUtils extends Enumerable.Implicits {
     case EstablisherCompanyAddress => establisherCompanyRoutes.WhatYouWillNeedCompanyAddressController.onPageLoad(mode, srn, index)
     case EstablisherCompanyContactDetails => establisherCompanyRoutes.WhatYouWillNeedCompanyContactDetailsController.onPageLoad(mode, srn, index)
     case EstablisherCompanyDirectors => establisherCompanyDirectorRoutes.WhatYouWillNeedDirectorController.onPageLoad(mode, srn, index)
+    case TrusteeCompanyDetails => trusteeCompanyRoutes.WhatYouWillNeedCompanyDetailsController.onPageLoad(mode, index,srn)
+    case TrusteeCompanyAddress => trusteeCompanyRoutes.WhatYouWillNeedCompanyAddressController.onPageLoad(mode, index, srn)
+    case TrusteeCompanyContactDetails => trusteeCompanyRoutes.WhatYouWillNeedCompanyContactDetailsController.onPageLoad(mode, index, srn)
     case _ => controllers.routes.IndexController.onPageLoad()
   }
 
@@ -115,6 +143,15 @@ trait HsTaskListHelperUtils extends Enumerable.Implicits {
       createSpoke(answers, EstablisherCompanyAddress, mode, srn, name, index, isEstablisherNew),
       createSpoke(answers, EstablisherCompanyContactDetails, mode, srn, name, index, isEstablisherNew),
       createDirectorPartnerSpoke(answers.allDirectorsAfterDelete(index, isHnSEnabled), EstablisherCompanyDirectors, mode, srn, name, index)
+    )
+  }
+
+  def getTrusteeCompanySpokes(answers: UserAnswers, mode: Mode, srn: Option[String], name: String, index: Int): Seq[EntitySpoke] = {
+    val isTrusteeNew = answers.get(IsTrusteeNewId(index)).getOrElse(false)
+    Seq(
+      createSpoke(answers, TrusteeCompanyDetails, mode, srn, name, index, isTrusteeNew),
+      createSpoke(answers, TrusteeCompanyAddress, mode, srn, name, index, isTrusteeNew),
+      createSpoke(answers, TrusteeCompanyContactDetails, mode, srn, name, index, isTrusteeNew)
     )
   }
 }
