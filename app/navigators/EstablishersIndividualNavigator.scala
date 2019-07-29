@@ -23,7 +23,7 @@ import identifiers.register.establishers.individual._
 import identifiers.register.establishers.{EstablisherNewNinoId, ExistingCurrentAddressId, IsEstablisherNewId}
 import models.Mode.journeyMode
 import models._
-import utils.{AbstractNavigator, Navigator, UserAnswers}
+import utils.UserAnswers
 
 @Singleton
 class EstablishersIndividualNavigator @Inject()(

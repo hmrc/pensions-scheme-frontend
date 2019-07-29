@@ -25,7 +25,7 @@ import identifiers.register.trustees.{ExistingCurrentAddressId, IsTrusteeNewId}
 import identifiers.register.trustees.partnership._
 import models.Mode.journeyMode
 import models._
-import utils.{AbstractNavigator, Navigator, UserAnswers}
+import utils.UserAnswers
 
 class TrusteesPartnershipNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector,
                                              appConfig: FrontendAppConfig) extends AbstractNavigator {

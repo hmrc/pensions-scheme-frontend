@@ -18,14 +18,46 @@ package identifiers.register.establishers.company.director
 
 import identifiers._
 import identifiers.register.establishers.EstablishersId
-import play.api.libs.json.JsPath
+import play.api.i18n.Messages
+import play.api.libs.json.{JsPath, JsResult}
+import utils.{CountryOptions, UserAnswers}
+import utils.checkyouranswers.CheckYourAnswers
+import utils.checkyouranswers.CheckYourAnswers.StringCYA
+import viewmodels.AnswerRow
 
 case class DirectorNoNINOReasonId(establisherIndex: Int, directorIndex: Int) extends TypedIdentifier[String] {
-  override def path: JsPath = EstablishersId(establisherIndex).path \ "director" \ directorIndex \ "directorNino" \ DirectorNoNINOReasonId.toString
+  override def path: JsPath = EstablishersId(establisherIndex).path \ "director" \ directorIndex \ DirectorNoNINOReasonId.toString
+
+  override def cleanup(value: Option[String], userAnswers: UserAnswers): JsResult[UserAnswers] =
+    userAnswers.remove(DirectorNinoId(establisherIndex, directorIndex))
 }
 
 object DirectorNoNINOReasonId {
-  override def toString: String = "reason"
+  override def toString: String = "noNinoReason"
+
+  implicit def cya(implicit userAnswers: UserAnswers,
+                   messages: Messages,
+                   countryOptions: CountryOptions): CheckYourAnswers[DirectorNoNINOReasonId] = {
+
+    def label(establisherIndex: Int, directorIndex: Int) = userAnswers.get(DirectorNameId(establisherIndex, directorIndex)) match {
+      case Some(name) => Some(messages("messages__directorNoNinoReason__heading", name.fullName))
+      case _ => Some(messages("messages__directorNoNinoReason__cya_fallback"))
+    }
+
+    def hiddenLabel = Some(messages("messages__visuallyhidden__director__nino_no"))
+
+    new CheckYourAnswers[DirectorNoNINOReasonId] {
+      override def row(id: DirectorNoNINOReasonId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+        StringCYA(label(id.establisherIndex, id.directorIndex), hiddenLabel)().row(id)(changeUrl, userAnswers)
+
+
+      override def updateRow(id: DirectorNoNINOReasonId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+        userAnswers.get(IsNewDirectorId(id.establisherIndex, id.directorIndex)) match {
+          case Some(true) => row(id)(changeUrl, userAnswers)
+          case _ => Seq.empty[AnswerRow]
+        }
+    }
+  }
 }
 
 

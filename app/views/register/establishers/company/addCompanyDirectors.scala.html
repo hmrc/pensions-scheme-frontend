@@ -18,23 +18,20 @@
 @import controllers.register.establishers.company.routes
 @import uk.gov.hmrc.play.views.html._
 @import models.Mode
-@import models.register.DirectorEntity
+@import models.register.Director
 @import play.api.mvc.Call
 
 @(
     appConfig: FrontendAppConfig,
     form: Form[_],
-    directors: Seq[DirectorEntity],
+    directors: Seq[Director[_]],
     schemeName: Option[String],
     postCall: Call,
     viewOnly: Boolean,
     mode: Mode,
-    srn: Option[String]
+    srn: Option[String],
+    enableSubmission: Boolean
 )(implicit request: Request[_], messages: Messages)
-
-@enableSubmission = @{
-    directors.forall(_.isCompleted)
-}
 
 @main_template(
     title = messages("messages__addCompanyDirectors__title"),

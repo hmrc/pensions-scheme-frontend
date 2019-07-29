@@ -23,7 +23,7 @@ import controllers.routes._
 import identifiers._
 import models.register.SchemeType
 import models.{CheckMode, NormalMode}
-import utils.{AbstractNavigator, UserAnswers}
+import utils.UserAnswers
 
 class BeforeYouStartNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector, frontendAppConfig: FrontendAppConfig) extends AbstractNavigator {
 

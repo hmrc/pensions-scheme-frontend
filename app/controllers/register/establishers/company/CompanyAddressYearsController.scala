@@ -24,10 +24,10 @@ import forms.address.AddressYearsFormProvider
 import identifiers.register.establishers.company.{CompanyAddressYearsId, CompanyDetailsId}
 import javax.inject.Inject
 import models.{Index, Mode}
+import navigators.Navigator
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
-import utils.Navigator
 import utils.annotations.EstablishersCompany
 import viewmodels.Message
 import viewmodels.address.AddressYearsViewModel
@@ -65,9 +65,9 @@ class CompanyAddressYearsController @Inject()(
 
   private def viewModel(mode: Mode, srn: Option[String], index: Index, companyName: String) = AddressYearsViewModel(
     postCall = routes.CompanyAddressYearsController.onSubmit(mode, srn, index),
-    title = Message("messages__company_address_years__title", Message("messages__common__address_years__company").resolve),
-    heading = Message("messages__company_address_years__title", companyName),
-    legend = Message("messages__company_address_years__title", companyName),
+    title = Message("messages__company_address_years__title"),
+    heading = Message("messages__company_address_years__h1", companyName),
+    legend = Message("messages__company_address_years__title"),
     subHeading = Some(Message(companyName)),
     srn = srn
   )

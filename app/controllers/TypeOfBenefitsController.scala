@@ -23,12 +23,13 @@ import forms.TypeOfBenefitsFormProvider
 import identifiers.TypeOfBenefitsId
 import javax.inject.Inject
 import models.Mode
+import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.AboutBenefitsAndInsurance
-import utils.{Enumerable, Navigator, UserAnswers}
+import utils.{Enumerable, UserAnswers}
 import views.html.typeOfBenefits
 
 import scala.concurrent.{ExecutionContext, Future}

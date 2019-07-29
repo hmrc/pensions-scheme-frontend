@@ -23,13 +23,14 @@ import forms.register.establishers.company.OtherDirectorsFormProvider
 import identifiers.register.establishers.company.OtherDirectorsId
 import javax.inject.Inject
 import models.{Index, Mode}
+import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Call}
 import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.EstablishersCompany
-import utils.{Navigator, UserAnswers}
+import utils.UserAnswers
 import views.html.register.establishers.company.otherDirectors
 
 import scala.concurrent.{ExecutionContext, Future}

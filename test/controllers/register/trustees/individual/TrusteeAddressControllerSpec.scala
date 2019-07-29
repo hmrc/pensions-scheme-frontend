@@ -26,6 +26,7 @@ import identifiers.register.trustees.individual.{TrusteeAddressId, TrusteeDetail
 import models.address.Address
 import models.person.PersonDetails
 import models.{Index, NormalMode}
+import navigators.Navigator
 import org.joda.time.LocalDate
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
@@ -34,7 +35,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.{FakeUserAnswersService, UserAnswersService}
 import utils.annotations.TrusteesIndividual
-import utils.{CountryOptions, FakeNavigator, InputOption, Navigator}
+import utils.{CountryOptions, FakeNavigator, InputOption}
 import viewmodels.Message
 import viewmodels.address.ManualAddressViewModel
 

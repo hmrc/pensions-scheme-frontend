@@ -33,7 +33,7 @@ import org.scalatest.prop.TableFor6
 import play.api.Configuration
 import play.api.libs.json.Json
 import play.api.mvc.Call
-import utils.UserAnswers
+import utils.{FakeFeatureSwitchManagementService, UserAnswers}
 
 class EstablishersCompanyDirectorNavigatorSpec extends SpecBase with NavigatorBehaviour {
 
@@ -45,22 +45,24 @@ class EstablishersCompanyDirectorNavigatorSpec extends SpecBase with NavigatorBe
     (DirectorDetailsId(0, 0), newDirector, directorNino(mode), true, Some(exitJourney(mode, newDirector)), true),
     (DirectorNameId(0, 0), emptyAnswers, directorDOB(mode), true, Some(exitJourney(mode, emptyAnswers)), true),
     (DirectorNameId(0, 0), newDirector, directorDOB(mode), true, Some(exitJourney(mode, newDirector)), true),
-    (DirectorDOBId(0, 0),  emptyAnswers, directorHasNINO(mode), true, Some(exitJourney(mode, emptyAnswers)), true),
-    (DirectorDOBId(0, 0),  newDirector, directorHasNINO(mode), true, Some(exitJourney(mode, newDirector)), true),
+    (DirectorDOBId(0, 0), emptyAnswers, directorHasNINO(mode), true, Some(exitJourney(mode, emptyAnswers)), true),
+    (DirectorDOBId(0, 0), newDirector, directorHasNINO(mode), true, Some(exitJourney(mode, newDirector)), true),
     (DirectorNinoId(0, 0), emptyAnswers, directorUtr(mode), true, Some(exitJourney(mode, emptyAnswers)), true),
     (DirectorNinoId(0, 0), newDirector, directorUtr(mode), true, Some(exitJourney(mode, newDirector)), true),
+    (DirectorNewNinoId(0, 0), emptyAnswers, directorHasUTR(mode), true, Some(exitJourney(mode, emptyAnswers)), true),
     (DirectorNoUTRReasonId(0, 0), newDirector, directorAddressPostcode(mode), true, Some(exitJourney(mode, newDirector)), true),
-    (DirectorHasNINOId(0, 0), hasNino(newDirector, value = true), directorNinoNew(mode), true, Some(exitJourney(mode, newDirector)), true),
-    (DirectorHasNINOId(0, 0), hasNino(newDirector, value = false), directorNinoReason(mode), true, Some(exitJourney(mode, newDirector)), true),
-    (DirectorHasUTRId(0, 0), hasUtr(newDirector, value = true), directorWhatIsDirectorUTR(mode), true, Some(exitJourney(mode, newDirector)), true),
-    (DirectorHasUTRId(0, 0), hasUtr(newDirector, value = false), directorWhyNoUTR(mode), true, Some(exitJourney(mode, newDirector)), true),
+    (DirectorHasNINOId(0, 0), hasNino(newDirector, value = true), directorNinoNew(mode), true, Some(directorNinoNew(checkMode(mode))), true),
+    (DirectorHasNINOId(0, 0), hasNino(newDirector, value = false), directorNinoReason(mode), true, Some(directorNinoReason(checkMode(mode))), true),
+    (DirectorHasUTRId(0, 0), hasUtr(newDirector, value = true), directorWhatIsDirectorUTR(mode), true, Some(directorWhatIsDirectorUTR(checkMode(mode))), true),
+    (DirectorHasUTRId(0, 0), hasUtr(newDirector, value = false), directorWhyNoUTR(mode), true, Some(directorWhyNoUTR(checkMode(mode))), true),
     (DirectorUniqueTaxReferenceId(0, 0), emptyAnswers, directorAddressPostcode(mode), true, Some(exitJourney(mode, emptyAnswers)), true),
     (DirectorUniqueTaxReferenceId(0, 0), newDirector, directorAddressPostcode(mode), true, Some(exitJourney(mode, newDirector)), true),
     (DirectorAddressPostcodeLookupId(0, 0), emptyAnswers, directorAddressList(mode), true, Some(directorAddressList(checkMode(mode))), true),
     (DirectorAddressListId(0, 0), emptyAnswers, directorAddress(mode), true, Some(directorAddress(checkMode(mode))), true),
     (DirectorAddressYearsId(0, 0), addressYearsOverAYear, directorContactDetails(mode), true, Some(exitJourney(mode, emptyAnswers)), true),
     (DirectorAddressYearsId(0, 0), addressYearsOverAYearNew, directorContactDetails(mode), true, Some(exitJourney(mode, addressYearsOverAYearNew)), true),
-    (DirectorAddressYearsId(0, 0), addressYearsUnderAYear, directorPreviousAddPostcode(mode), true, addressYearsLessThanTwelveEdit(mode, addressYearsUnderAYear), true),
+    (DirectorAddressYearsId(0, 0), addressYearsUnderAYear, directorPreviousAddPostcode(mode), true,
+      addressYearsLessThanTwelveEdit(mode, addressYearsUnderAYear), true),
     (DirectorAddressYearsId(0, 0), emptyAnswers, sessionExpired, false, Some(sessionExpired), false),
     (DirectorConfirmPreviousAddressId(0, 0), confirmPreviousAddressYes, none, false, Some(anyMoreChanges), false),
     (DirectorConfirmPreviousAddressId(0, 0), confirmPreviousAddressNo, none, false, Some(directorPreviousAddPostcode(checkMode(mode))), false),
@@ -82,7 +84,7 @@ class EstablishersCompanyDirectorNavigatorSpec extends SpecBase with NavigatorBe
     ("Id", "User Answers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (Check Mode)", "Save (CM)"),
     (ConfirmDeleteDirectorId(0), emptyAnswers, addCompanyDirectors(NormalMode), false, None, false),
     (CheckYourAnswersId(0, 0), emptyAnswers, addCompanyDirectors(NormalMode), true, None, true),
-      (DirectorAddressId(0, 0), emptyAnswers, directorAddressYears(NormalMode), true, Some(checkYourAnswers(NormalMode)), true),
+    (DirectorAddressId(0, 0), emptyAnswers, directorAddressYears(NormalMode), true, Some(checkYourAnswers(NormalMode)), true),
     (DirectorAddressId(0, 0), newDirector, directorAddressYears(NormalMode), true, Some(checkYourAnswers(NormalMode)), true)
   )
 
@@ -91,7 +93,6 @@ class EstablishersCompanyDirectorNavigatorSpec extends SpecBase with NavigatorBe
     (ConfirmDeleteDirectorId(0), emptyAnswers, anyMoreChanges, false, None, false),
     (CheckYourAnswersId(0, 0), emptyAnswers, addCompanyDirectors(UpdateMode), true, None, true),
     (CheckYourAnswersId(0, 0), newEstablisher, addCompanyDirectors(UpdateMode), true, None, true),
-    (DirectorNewNinoId(0, 0), emptyAnswers, none, true, Some(exitJourney(UpdateMode, emptyAnswers)), true),
     (DirectorAddressYearsId(0, 0), directorNoExistingCurrentAddress, directorPreviousAddPostcode(UpdateMode), true, addressYearsLessThanTwelveEdit(UpdateMode, directorNoExistingCurrentAddress), true),
     (DirectorAddressYearsId(0, 0), directorExistingCurrentAddress, directorPreviousAddPostcode(UpdateMode), true, addressYearsLessThanTwelveEdit(UpdateMode, directorExistingCurrentAddress), true),
     (DirectorAddressId(0, 0), emptyAnswers, directorAddressYears(UpdateMode), true, Some(confirmPreviousAddress), true),
@@ -112,15 +113,15 @@ object EstablishersCompanyDirectorNavigatorSpec extends SpecBase with OptionValu
 
   private def featureSwitch = new FeatureSwitchManagementServiceTestImpl(config, environment)
 
-  private val navigator = new EstablishersCompanyDirectorNavigator(FakeUserAnswersCacheConnector)
+  private val navigator = new EstablishersCompanyDirectorNavigator(FakeUserAnswersCacheConnector, new FakeFeatureSwitchManagementService(false))
   private val emptyAnswers = UserAnswers(Json.obj())
   private val newEstablisher = UserAnswers().set(IsEstablisherNewId(0))(true).asOpt.value
-  val establisherIndex = Index(0)
-  val directorIndex = Index(0)
+  private val establisherIndex = Index(0)
+  private val directorIndex = Index(0)
   private val newDirector = UserAnswers(Json.obj()).set(IsNewDirectorId(establisherIndex, directorIndex))(true).asOpt.value
 
-  private def hasNino(ua:UserAnswers, value:Boolean):UserAnswers =
-    ua.set(DirectorHasNINOId(0,0))(value = value).asOpt.value
+  private def hasNino(ua: UserAnswers, value: Boolean): UserAnswers =
+    ua.set(DirectorHasNINOId(0, 0))(value = value).asOpt.value
 
   private val confirmPreviousAddressYes = UserAnswers(Json.obj())
     .set(DirectorConfirmPreviousAddressId(0, 0))(true).asOpt.value
@@ -169,6 +170,7 @@ object EstablishersCompanyDirectorNavigatorSpec extends SpecBase with OptionValu
   private def directorAddressPostcode(mode: Mode) = routes.DirectorAddressPostcodeLookupController.onPageLoad(mode, directorIndex, establisherIndex, None)
 
   private def directorNinoNew(mode: Mode) = routes.DirectorNinoNewController.onPageLoad(mode, directorIndex, establisherIndex, None)
+
   private def directorNinoReason(mode: Mode) = routes.DirectorNoNINOReasonController.onPageLoad(mode, directorIndex, establisherIndex, None)
 
   private def directorAddressList(mode: Mode) = routes.DirectorAddressListController.onPageLoad(mode, directorIndex, establisherIndex, None)
@@ -191,6 +193,8 @@ object EstablishersCompanyDirectorNavigatorSpec extends SpecBase with OptionValu
   private def directorWhatIsDirectorUTR(mode: Mode) = routes.DirectorUTRController.onPageLoad(mode, directorIndex, establisherIndex, None)
 
   private def directorWhyNoUTR(mode: Mode) = routes.DirectorNoUTRReasonController.onPageLoad(mode, directorIndex, establisherIndex, None)
+
+  private def directorHasUTR(mode: Mode) = routes.DirectorHasUTRController.onPageLoad(mode, directorIndex, establisherIndex, None)
 
   private def directorDOB(mode: Mode) = routes.DirectorDOBController.onPageLoad(mode, directorIndex, establisherIndex, None)
 

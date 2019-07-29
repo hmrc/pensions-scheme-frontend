@@ -24,11 +24,12 @@ import identifiers.register.establishers.AddEstablisherId
 import javax.inject.Inject
 import models.Mode
 import models.register.Establisher
+import navigators.Navigator
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.{Establishers, NoSuspendedCheck}
-import utils.{Navigator, Toggles}
+import utils.Toggles
 import views.html.register.establishers.addEstablisher
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -48,14 +49,14 @@ class AddEstablisherController @Inject()(appConfig: FrontendAppConfig,
   def onPageLoad(mode: Mode, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
-        val establishers = request.userAnswers.allEstablishersAfterDelete
+        val establishers = request.userAnswers.allEstablishersAfterDelete(fsms.get(Toggles.isEstablisherCompanyHnSEnabled))
         Future.successful(Ok(addEstablisher(appConfig, formProvider(establishers), mode,
           establishers, existingSchemeName, srn, checkContinueButton(establishers), displayStatus = displayStatus)))
     }
 
   def onSubmit(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
-      val establishers = request.userAnswers.allEstablishersAfterDelete
+      val establishers = request.userAnswers.allEstablishersAfterDelete(fsms.get(Toggles.isEstablisherCompanyHnSEnabled))
       formProvider(establishers).bindFromRequest().fold(
         formWithErrors =>
           Future.successful(BadRequest(addEstablisher(appConfig, formWithErrors, mode,

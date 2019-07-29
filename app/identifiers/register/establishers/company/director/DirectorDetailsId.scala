@@ -19,19 +19,19 @@ package identifiers.register.establishers.company.director
 import identifiers._
 import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.company.OtherDirectorsId
+import models.Link
 import models.person.PersonDetails
 import play.api.i18n.Messages
 import play.api.libs.json.{JsPath, JsResult, Reads}
-import utils.UserAnswers
 import utils.checkyouranswers.CheckYourAnswers
-import utils.checkyouranswers.CheckYourAnswers.PersonalDetailsCYA
-import viewmodels.AnswerRow
+import utils.{DateHelper, UserAnswers}
+import viewmodels.{AnswerRow, Message}
 
 case class DirectorDetailsId(establisherIndex: Int, directorIndex: Int) extends TypedIdentifier[PersonDetails] {
   override def path: JsPath = EstablishersId(establisherIndex).path \ "director" \ directorIndex \ DirectorDetailsId.toString
 
   override def cleanup(value: Option[PersonDetails], userAnswers: UserAnswers): JsResult[UserAnswers] = {
-    userAnswers.allDirectorsAfterDelete(this.establisherIndex).lengthCompare(10) match {
+    userAnswers.allDirectorsAfterDelete(this.establisherIndex, false).lengthCompare(10) match {
       case lengthCompare if lengthCompare <= 0 => userAnswers.remove(OtherDirectorsId(this.establisherIndex))
       case _ => super.cleanup(value, userAnswers)
     }
@@ -47,14 +47,44 @@ object DirectorDetailsId {
     new CheckYourAnswers[DirectorDetailsId] {
 
       override def row(id: DirectorDetailsId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        PersonalDetailsCYA[DirectorDetailsId]()().row(id)(changeUrl, userAnswers)
+        userAnswers.get(id).fold(Nil: Seq[AnswerRow]) { personDetails => {
+          Seq(
+            AnswerRow(
+              "messages__director__cya__name",
+              Seq(personDetails.fullName),
+              answerIsMessageKey = false,
+              Some(Link("site.change", changeUrl, Some(Message("messages__visuallyhidden__common__name", personDetails.fullName).resolve)))
+            ),
+            AnswerRow(
+              messages("messages__director__cya__dob", personDetails.firstAndLastName),
+              Seq(DateHelper.formatDate(personDetails.date)),
+              answerIsMessageKey = false,
+              Some(Link("site.change", changeUrl, Some(Message("messages__visuallyhidden__common__dob", personDetails.fullName).resolve)))
+            )
+          )
+        }}
 
-      override def updateRow(id: DirectorDetailsId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
+      override def updateRow(id: DirectorDetailsId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
         userAnswers.get(IsNewDirectorId(id.establisherIndex, id.directorIndex)) match {
-          case Some(true) => PersonalDetailsCYA[DirectorDetailsId]()().row(id)(changeUrl, userAnswers)
-          case _ => PersonalDetailsCYA[DirectorDetailsId]()().updateRow(id)(changeUrl, userAnswers)
+          case Some(true) => row(id)(changeUrl, userAnswers)
+          case _ =>
+            userAnswers.get(id).fold(Nil: Seq[AnswerRow]) { personDetails =>
+              Seq(
+                AnswerRow(
+                  "messages__director__cya__name",
+                  Seq(personDetails.fullName),
+                  answerIsMessageKey = false,
+                  None
+                ),
+                AnswerRow(
+                  messages("messages__director__cya__dob", personDetails.firstAndLastName),
+                  Seq(DateHelper.formatDate(personDetails.date)),
+                  answerIsMessageKey = false,
+                  None
+                )
+              )
+            }
         }
-      }
     }
   }
 }

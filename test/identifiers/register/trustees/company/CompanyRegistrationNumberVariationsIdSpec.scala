@@ -33,7 +33,7 @@ class CompanyRegistrationNumberVariationsIdSpec extends SpecBase {
   private val onwardUrl = "onwardUrl"
   private val answerRowsWithChangeLinks = Seq(
     AnswerRow("messages__checkYourAnswers__trustees__company__number",List("companyRegistrationNumber"),false,Some(Link("site.change",onwardUrl,
-      Some("messages__visuallyhidden__trustees__crn"))))
+      Some("messages__visuallyhidden__companyNumber"))))
   )
 
   "cya" when {
@@ -85,7 +85,7 @@ class CompanyRegistrationNumberVariationsIdSpec extends SpecBase {
 
         CompanyRegistrationNumberVariationsId(0).row(onwardUrl, UpdateMode) must equal(Seq(
           AnswerRow("messages__checkYourAnswers__trustees__company__number", Seq("site.not_entered"), answerIsMessageKey = true,
-            Some(Link("site.add", onwardUrl, Some("messages__visuallyhidden__trustees__crn_add"))))))
+            Some(Link("site.add", onwardUrl, Some("messages__visuallyhidden__companyNumber_add"))))))
       }
     }
   }

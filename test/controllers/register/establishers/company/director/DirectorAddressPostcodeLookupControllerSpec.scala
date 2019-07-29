@@ -17,7 +17,7 @@
 package controllers.register.establishers.company.director
 
 import base.CSRFRequest
-import config.FrontendAppConfig
+import config.{FeatureSwitchManagementService, FrontendAppConfig}
 import connectors.AddressLookupConnector
 import controllers.ControllerSpecBase
 import controllers.actions._
@@ -25,6 +25,7 @@ import forms.address.PostCodeLookupFormProvider
 import models.address.TolerantAddress
 import models.person.PersonDetails
 import models.{CompanyDetails, Index, NormalMode}
+import navigators.Navigator
 import org.joda.time.LocalDate
 import org.mockito.Matchers
 import org.mockito.Mockito.when
@@ -36,7 +37,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.{FakeUserAnswersService, UserAnswersService}
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.{FakeNavigator, Navigator}
+import utils.{FakeFeatureSwitchManagementService, FakeNavigator}
 import viewmodels.Message
 import viewmodels.address.PostcodeLookupViewModel
 import views.html.address.postcodeLookup
@@ -53,6 +54,7 @@ class DirectorAddressPostcodeLookupControllerSpec extends ControllerSpecBase wit
   val form = formProvider()
 
   val fakeAddressLookupConnector: AddressLookupConnector = mock[AddressLookupConnector]
+  val fakeFeatureSwitch = new FakeFeatureSwitchManagementService(false)
 
   implicit val hc: HeaderCarrier = mock[HeaderCarrier]
 
@@ -95,7 +97,8 @@ class DirectorAddressPostcodeLookupControllerSpec extends ControllerSpecBase wit
         bind[UserAnswersService].toInstance(cacheConnector),
         bind[AddressLookupConnector].toInstance(addressConnector),
         bind[AuthAction].to(FakeAuthAction),
-        bind[DataRetrievalAction].to(getMandatoryEstablisherCompanyDirector)
+        bind[DataRetrievalAction].to(getMandatoryEstablisherCompanyDirector),
+        bind[FeatureSwitchManagementService].to(fakeFeatureSwitch)
       )) { implicit app =>
 
         val request = addToken(FakeRequest(call)
@@ -134,7 +137,8 @@ class DirectorAddressPostcodeLookupControllerSpec extends ControllerSpecBase wit
         bind[AuthAction].to(FakeAuthAction),
         bind[DataRetrievalAction].to(getMandatoryEstablisherCompanyDirector),
         bind[DataRequiredAction].to(new DataRequiredActionImpl),
-        bind[PostCodeLookupFormProvider].to(formProvider)
+        bind[PostCodeLookupFormProvider].to(formProvider),
+        bind[FeatureSwitchManagementService].to(fakeFeatureSwitch)
       )) { app =>
 
         val result = route(app, fakeRequest).get

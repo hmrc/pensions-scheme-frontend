@@ -20,10 +20,11 @@ import com.google.inject.Inject
 import controllers.actions.{AuthAction, DataRetrievalAction}
 import identifiers.register.ContinueRegistrationId
 import models.NormalMode
+import navigators.Navigator
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.Register
-import utils.{Navigator, UserAnswers}
+import utils.UserAnswers
 
 import scala.concurrent.ExecutionContext
 

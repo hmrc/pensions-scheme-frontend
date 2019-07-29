@@ -30,7 +30,7 @@ import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import services.FakeUserAnswersService
-import utils.FakeNavigator
+import utils.{FakeFeatureSwitchManagementService, FakeNavigator}
 import viewmodels.NinoViewModel
 import views.html.nino
 
@@ -88,7 +88,8 @@ class DirectorNinoNewControllerSpec extends ControllerSpecBase {
 
   def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisher): DirectorNinoNewController =
     new DirectorNinoNewController(frontendAppConfig, messagesApi, FakeUserAnswersService, new FakeNavigator(desiredRoute = onwardRoute),
-      FakeAuthAction, dataRetrievalAction, FakeAllowAccessProvider(), new DataRequiredActionImpl, formProvider)
+      FakeAuthAction, dataRetrievalAction, FakeAllowAccessProvider(), new DataRequiredActionImpl, formProvider,
+      new FakeFeatureSwitchManagementService(false))
 
   def viewAsString(form: Form[_] = form): String = nino(frontendAppConfig, form, viewmodel(None), None)(fakeRequest, messages).toString
 

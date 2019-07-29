@@ -16,22 +16,25 @@
 
 package controllers.register.establishers.company.director
 
-import config.FrontendAppConfig
+import config.{FeatureSwitchManagementService, FrontendAppConfig}
 import controllers.Retrievals
 import controllers.actions._
 import forms.register.establishers.company.director.ConfirmDeleteDirectorFormProvider
 import identifiers.register.establishers.IsEstablisherCompleteId
 import identifiers.register.establishers.company.CompanyDetailsId
-import identifiers.register.establishers.company.director.{ConfirmDeleteDirectorId, DirectorDetailsId}
+import identifiers.register.establishers.company.director.{ConfirmDeleteDirectorId, DirectorDetailsId, DirectorNameId}
 import javax.inject.Inject
+import models.requests.DataRequest
 import models.{CheckMode, Index, Mode, NormalMode}
+import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.libs.json.JsValue
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.EstablishersCompanyDirector
-import utils.{Navigator, SectionComplete, UserAnswers}
+import utils.{SectionComplete, Toggles, UserAnswers}
 import views.html.register.establishers.company.director.confirmDeleteDirector
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -46,24 +49,48 @@ class ConfirmDeleteDirectorController @Inject()(
                                                  allowAccess: AllowAccessActionProvider,
                                                  requireData: DataRequiredAction,
                                                  sectionComplete: SectionComplete,
-                                                 formProvider: ConfirmDeleteDirectorFormProvider
+                                                 formProvider: ConfirmDeleteDirectorFormProvider,
+                                                 fs: FeatureSwitchManagementService
                                                )(implicit val ec: ExecutionContext) extends FrontendController with I18nSupport with Retrievals {
 
   private val form: Form[Boolean] = formProvider()
 
+  val directorName = (establisherIndex: Index, directorIndex: Index) => Retrieval {
+    implicit request =>
+      if (fs.get(Toggles.isEstablisherCompanyHnSEnabled))
+        DirectorNameId(establisherIndex, directorIndex).retrieve.right.map{ director =>
+          (director.fullName, director.isDeleted)
+        }
+      else
+        DirectorDetailsId(establisherIndex, directorIndex).retrieve.right.map { director =>
+          (director.fullName, director.isDeleted)
+        }
+  }
+
+  def deleteDirector(establisherIndex: Index, directorIndex: Index, mode: Mode, srn: Option[String]
+    )(implicit request: DataRequest[AnyContent]): Option[Future[JsValue]] = {
+    if (fs.get(Toggles.isEstablisherCompanyHnSEnabled))
+      request.userAnswers.get(DirectorNameId(establisherIndex, directorIndex)).map { director =>
+        userAnswersService.save(mode, srn, DirectorNameId(establisherIndex, directorIndex), director.copy(isDeleted = true))
+      }
+    else
+      request.userAnswers.get(DirectorDetailsId(establisherIndex, directorIndex)).map { director =>
+        userAnswersService.save(mode, srn, DirectorDetailsId(establisherIndex, directorIndex), director.copy(isDeleted = true))
+      }
+  }
+
   def onPageLoad(establisherIndex: Index, directorIndex: Index, mode: Mode, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
-        (CompanyDetailsId(establisherIndex) and DirectorDetailsId(establisherIndex, directorIndex)).retrieve.right.map {
-          case company ~ director =>
-            director.isDeleted match {
+        directorName(establisherIndex, directorIndex).retrieve.right.map { director =>
+            director._2 match {
               case false =>
                 Future.successful(
                   Ok(
                     confirmDeleteDirector(
                       appConfig,
                       form,
-                      director.fullName,
+                      director._1,
                       routes.ConfirmDeleteDirectorController.onSubmit(establisherIndex, directorIndex, mode, srn),
                       existingSchemeName
                     )
@@ -79,28 +106,27 @@ class ConfirmDeleteDirectorController @Inject()(
     (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
 
-      (DirectorDetailsId(establisherIndex, directorIndex)).retrieve.right.map {
-        case directorDetails =>
+      directorName(establisherIndex, directorIndex).retrieve.right.map { director =>
 
           form.bindFromRequest().fold(
             (formWithErrors: Form[_]) =>
               Future.successful(BadRequest(confirmDeleteDirector(
                 appConfig,
                 formWithErrors,
-                directorDetails.fullName,
+                director._1,
                 routes.ConfirmDeleteDirectorController.onSubmit(establisherIndex, directorIndex, mode, srn),
                 existingSchemeName
               ))),
             value => {
               val deletionResult = if (value) {
-                userAnswersService.save(mode, srn, DirectorDetailsId(establisherIndex, directorIndex), directorDetails.copy(isDeleted = true))
+                deleteDirector(establisherIndex, directorIndex, mode, srn).getOrElse(Future.successful(request.userAnswers.json))
               } else {
                 Future.successful(request.userAnswers.json)
               }
               deletionResult.flatMap {
                 jsValue =>
                   val userAnswers = UserAnswers(jsValue)
-                  if (userAnswers.allDirectorsAfterDelete(establisherIndex).isEmpty) {
+                  if (userAnswers.allDirectorsAfterDelete(establisherIndex, fs.get(Toggles.isEstablisherCompanyHnSEnabled)).isEmpty) {
                     userAnswers.upsert(IsEstablisherCompleteId(establisherIndex))(false) { result =>
                       userAnswersService.upsert(mode, srn, result.json).map { _ =>
                         Redirect(navigator.nextPage(ConfirmDeleteDirectorId(establisherIndex), mode, userAnswers, srn))

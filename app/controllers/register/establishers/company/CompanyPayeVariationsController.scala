@@ -23,11 +23,11 @@ import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRequiredA
 import forms.PayeVariationsFormProvider
 import identifiers.register.establishers.company.{CompanyDetailsId, CompanyPayeVariationsId}
 import models.{Index, Mode, ReferenceValue}
+import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
-import utils.Navigator
 import utils.annotations.EstablishersCompany
 import viewmodels.{Message, PayeViewModel}
 

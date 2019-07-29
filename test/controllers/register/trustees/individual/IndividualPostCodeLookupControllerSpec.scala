@@ -26,6 +26,7 @@ import identifiers.register.trustees.individual.TrusteeDetailsId
 import models.address.TolerantAddress
 import models.person.PersonDetails
 import models.{Index, NormalMode}
+import navigators.Navigator
 import org.joda.time.LocalDate
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.mockito.MockitoSugar
@@ -39,7 +40,7 @@ import play.api.test.Helpers._
 import services.{FakeUserAnswersService, UserAnswersService}
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.annotations.TrusteesIndividual
-import utils.{FakeNavigator, Navigator}
+import utils.FakeNavigator
 import viewmodels.Message
 import viewmodels.address.PostcodeLookupViewModel
 import views.html.address.postcodeLookup

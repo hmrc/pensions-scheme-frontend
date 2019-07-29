@@ -23,12 +23,13 @@ import identifiers.register.establishers.{IsEstablisherCompleteId, IsEstablisher
 import identifiers.register.establishers.company.{CompanyDetailsId, CompanyReviewId, IsCompanyCompleteId}
 import javax.inject.Inject
 import models.{Index, Mode, NormalMode}
+import navigators.Navigator
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.{EstablishersCompany, NoSuspendedCheck, TaskList}
-import utils.{AllowChangeHelper, Navigator, SectionComplete}
+import utils.{AllowChangeHelper, SectionComplete}
 import views.html.register.establishers.company.companyReview
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -48,7 +49,7 @@ class CompanyReviewController @Inject()(appConfig: FrontendAppConfig,
     implicit request =>
       CompanyDetailsId(index).retrieve.right.map {
         case companyDetails =>
-          val directors: Seq[String] = request.userAnswers.allDirectorsAfterDelete(index).map(_.name)
+          val directors: Seq[String] = request.userAnswers.allDirectorsAfterDelete(index, false).map(_.name)
 
           Future.successful(Ok(companyReview(appConfig,
             index,
@@ -64,7 +65,7 @@ class CompanyReviewController @Inject()(appConfig: FrontendAppConfig,
 
   def onSubmit(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
-      val allDirectors = request.userAnswers.allDirectorsAfterDelete(index)
+      val allDirectors = request.userAnswers.allDirectorsAfterDelete(index, false)
       val allDirectorsCompleted = allDirectors.nonEmpty & (allDirectors.count(!_.isCompleted) == 0)
 
       val isCompanyComplete = request.userAnswers.get(IsCompanyCompleteId(index)).getOrElse(false)

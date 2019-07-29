@@ -42,7 +42,7 @@ class DirectorHasUTRControllerSpec extends ControllerSpecBase {
     }
 
     "return OK and the correct view for a GET where question already answered" in {
-      val validData = validCompanyDirectorData("directorUniqueTaxReference" -> Json.obj("hasUtr" -> false))
+      val validData = validCompanyDirectorData("hasUtr" -> false)
 
       val dataRetrievalAction = new FakeDataRetrievalAction(Some(validData))
       val result = controller(dataRetrievalAction = dataRetrievalAction).onPageLoad(NormalMode, establisherIndex, directorIndex, None)(fakeRequest)
@@ -57,7 +57,7 @@ class DirectorHasUTRControllerSpec extends ControllerSpecBase {
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
-      FakeUserAnswersService.userAnswer.get(DirectorHasUTRId(establisherIndex, directorIndex)).value mustEqual true
+      FakeUserAnswersService.userAnswer.get(DirectorHasUTRId(establisherIndex, directorIndex)).value mustBe true
     }
 
     "return a Bad Request and errors when invalid data is submitted" in {

@@ -21,7 +21,7 @@ import controllers.actions._
 import navigators._
 import services.{UserAnswersService, UserAnswersServiceEstablishersAndTrusteesImpl, UserAnswersServiceImpl, UserAnswersServiceInsuranceImpl}
 import utils.annotations.{EstablishersPartner, _}
-import utils.{AllowChangeHelper, AllowChangeHelperImpl, Navigator}
+import utils.{AllowChangeHelper, AllowChangeHelperImpl}
 
 class PODSModule extends AbstractModule {
 

@@ -23,12 +23,13 @@ import forms.CurrentMembersFormProvider
 import identifiers.{CurrentMembersId, IsAboutMembersCompleteId, SchemeNameId}
 import javax.inject.Inject
 import models.Mode
+import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.AboutMembers
-import utils.{Enumerable, Navigator, SectionComplete, UserAnswers}
+import utils.{Enumerable, SectionComplete, UserAnswers}
 import views.html.currentMembers
 
 import scala.concurrent.{ExecutionContext, Future}

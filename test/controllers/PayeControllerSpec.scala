@@ -23,6 +23,7 @@ import forms.PayeFormProvider
 import identifiers.TypedIdentifier
 import models.requests.DataRequest
 import models.{NormalMode, Paye}
+import navigators.Navigator
 import org.mockito.Matchers.{any, eq => eqTo}
 import org.mockito.Mockito.when
 import org.scalatest.concurrent.ScalaFutures
@@ -36,7 +37,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.UserAnswersService
 import uk.gov.hmrc.domain.PsaId
-import utils.{FakeNavigator, Navigator, UserAnswers}
+import utils.{FakeNavigator, UserAnswers}
 import viewmodels.PayeViewModel
 import views.html.paye
 

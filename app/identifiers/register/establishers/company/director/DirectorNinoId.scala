@@ -19,6 +19,7 @@ package identifiers.register.establishers.company.director
 import identifiers._
 import identifiers.register.establishers.EstablishersId
 import models.Nino
+import play.api.i18n.Messages
 import play.api.libs.json.{JsPath, Reads}
 import utils.UserAnswers
 import utils.checkyouranswers.{CheckYourAnswers, NinoCYA}
@@ -31,22 +32,35 @@ case class DirectorNinoId(establisherIndex: Int, directorIndex: Int) extends Typ
 object DirectorNinoId {
   override lazy val toString: String = "directorNino"
 
-  implicit val nino: CheckYourAnswers[DirectorNinoId] = {
-    val label = "messages__director_nino_question_cya_label"
-    val reasonLabel = "messages__director_nino_reason_cya_label"
-    val changeHasNino = "messages__visuallyhidden__director__nino_yes_no"
-    val changeNino = "messages__visuallyhidden__director__nino"
-    val changeNoNino = "messages__visuallyhidden__director__nino_no"
+  implicit def nino(implicit messages: Messages): CheckYourAnswers[DirectorNinoId] = {
+
+    val directorNinoIdCYA = (establisherIndex: Int, directorIndex: Int, ua: UserAnswers) => {
+      val (label, reasonLabel) = ua.get(DirectorDetailsId(establisherIndex, directorIndex)) match {
+        case Some(name) =>
+          (messages("messages__director__cya__nino", name.firstAndLastName), messages("messages__director__cya__nino_reason", name.firstAndLastName))
+
+        case None =>
+          ("messages__director__cya__nino__fallback", "messages__director__cya__nino_reason__fallback")
+      }
+
+      NinoCYA[DirectorNinoId](
+        label = label,
+        reasonLabel = reasonLabel,
+        changeHasNino = "messages__visuallyhidden__director__nino_yes_no",
+        changeNino = "messages__visuallyhidden__director__nino",
+        changeNoNino = "messages__visuallyhidden__director__nino_no"
+      )()
+    }
 
     new CheckYourAnswers[DirectorNinoId] {
 
       override def row(id: DirectorNinoId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        NinoCYA[DirectorNinoId](label, reasonLabel, changeHasNino, changeNino, changeNoNino)().row(id)(changeUrl, userAnswers)
+        directorNinoIdCYA(id.establisherIndex, id.directorIndex, userAnswers).row(id)(changeUrl, userAnswers)
 
       override def updateRow(id: DirectorNinoId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
         userAnswers.get(IsNewDirectorId(id.establisherIndex, id.directorIndex)) match {
-          case Some(true) => NinoCYA[DirectorNinoId](label, reasonLabel, changeHasNino, changeNino, changeNoNino)().row(id)(changeUrl, userAnswers)
-          case _ => NinoCYA[DirectorNinoId](label, reasonLabel, changeHasNino, changeNino, changeNoNino)().updateRow(id)(changeUrl, userAnswers)
+          case Some(true) => directorNinoIdCYA(id.establisherIndex, id.directorIndex, userAnswers).row(id)(changeUrl, userAnswers)
+          case _ => directorNinoIdCYA(id.establisherIndex, id.directorIndex, userAnswers).updateRow(id)(changeUrl, userAnswers)
         }
       }
     }

@@ -19,7 +19,7 @@ package controllers.register.establishers.company.director
 import audit.testdoubles.StubSuccessfulAuditService
 import audit.{AddressAction, AddressEvent, AuditService}
 import base.CSRFRequest
-import config.FrontendAppConfig
+import config.{FeatureSwitchManagementService, FrontendAppConfig}
 import controllers.ControllerSpecBase
 import controllers.actions._
 import controllers.register.establishers.company.director.routes._
@@ -29,6 +29,7 @@ import identifiers.register.establishers.company.director.{DirectorAddressId, Di
 import models.address.Address
 import models.person.PersonDetails
 import models.{Index, NormalMode}
+import navigators.Navigator
 import org.joda.time.LocalDate
 import org.scalatest.OptionValues
 import org.scalatest.concurrent.ScalaFutures
@@ -40,7 +41,7 @@ import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.{FakeUserAnswersService, UserAnswersService}
-import utils.{CountryOptions, FakeNavigator, InputOption, Navigator}
+import utils.{CountryOptions, FakeFeatureSwitchManagementService, FakeNavigator, InputOption}
 import viewmodels.Message
 import viewmodels.address.ManualAddressViewModel
 import views.html.address.manualAddress
@@ -62,6 +63,7 @@ class DirectorAddressControllerSpec extends ControllerSpecBase with MockitoSugar
   )
 
   val fakeAuditService = new StubSuccessfulAuditService()
+  val fakeFeatureSwitch = new FakeFeatureSwitchManagementService(false)
 
   val formProvider = new AddressFormProvider(countryOptions)
   val form: Form[Address] = formProvider()
@@ -90,7 +92,8 @@ class DirectorAddressControllerSpec extends ControllerSpecBase with MockitoSugar
         bind[UserAnswersService].toInstance(FakeUserAnswersService),
         bind[AuthAction].to(FakeAuthAction),
         bind[DataRetrievalAction].to(retrieval),
-        bind[CountryOptions].to(countryOptions)
+        bind[CountryOptions].to(countryOptions),
+        bind[FeatureSwitchManagementService].to(fakeFeatureSwitch)
       )) {
         implicit app =>
 
@@ -146,7 +149,8 @@ class DirectorAddressControllerSpec extends ControllerSpecBase with MockitoSugar
           bind[AuthAction].to(FakeAuthAction),
           bind[DataRetrievalAction].to(retrieval),
           bind[DataRequiredAction].to(new DataRequiredActionImpl),
-          bind[AddressFormProvider].to(formProvider)
+          bind[AddressFormProvider].to(formProvider),
+          bind[FeatureSwitchManagementService].to(fakeFeatureSwitch)
         )) {
           implicit app =>
 

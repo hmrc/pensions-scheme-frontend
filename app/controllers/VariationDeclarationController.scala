@@ -23,12 +23,13 @@ import forms.register.DeclarationFormProvider
 import identifiers.{PstrId, SchemeNameId, VariationDeclarationId}
 import javax.inject.Inject
 import models.UpdateMode
+import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.Register
-import utils.{Enumerable, Navigator, UserAnswers}
+import utils.{Enumerable, UserAnswers}
 import views.html.variationDeclaration
 
 import scala.concurrent.{ExecutionContext, Future}

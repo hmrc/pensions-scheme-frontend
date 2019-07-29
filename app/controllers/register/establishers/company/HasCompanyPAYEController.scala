@@ -23,10 +23,10 @@ import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRequiredA
 import forms.HasPAYEFormProvider
 import identifiers.register.establishers.company.{CompanyDetailsId, HasCompanyPAYEId}
 import models.{Index, Mode}
+import navigators.Navigator
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, Call}
 import services.UserAnswersService
-import utils.Navigator
 import utils.annotations.EstablishersCompany
 import viewmodels.{CommonFormWithHintViewModel, Message}
 
