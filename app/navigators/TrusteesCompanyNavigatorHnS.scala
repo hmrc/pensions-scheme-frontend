@@ -20,7 +20,7 @@ import com.google.inject.Inject
 import connectors.UserAnswersCacheConnector
 import controllers.register.trustees.company.routes._
 import identifiers.TypedIdentifier
-import identifiers.register.trustees.company.{CompanyRegistrationNumberVariationsId, HasCompanyNumberId, HasCompanyUTRId, NoCompanyNumberId}
+import identifiers.register.trustees.company._
 import models.{Mode, NormalMode}
 import play.api.libs.json.Reads
 import play.api.mvc.Call
@@ -39,9 +39,21 @@ class TrusteesCompanyNavigatorHnS @Inject()(val dataCacheConnector: UserAnswersC
       case NoCompanyNumberId(id) => HasCompanyUTRController.onPageLoad(mode, id, srn)
       case CompanyRegistrationNumberVariationsId(id) => HasCompanyUTRController.onPageLoad(mode, id, srn)
       case HasCompanyUTRId(id) => hasCompanyUTRId(id, from.userAnswers)
+      case CompanyNoUTRReasonId(id) => HasCompanyVATController.onPageLoad(NormalMode, id, srn)
+      case CompanyUTRId(id) => HasCompanyVATController.onPageLoad(NormalMode, id, srn)
+      case HasCompanyVATId(id) => hasCompanyVatId(id, from.userAnswers)
       case _ => controllers.routes.SessionExpiredController.onPageLoad()
     })
   }
+
+  private def hasCompanyVatId(id: Int, answers: UserAnswers): Call =
+    callOrExpired(answers, HasCompanyVATId(id),
+      if (_: Boolean) {
+        CompanyVatVariationsController.onPageLoad(NormalMode, id, None)
+      } else {
+        HasCompanyPAYEController.onPageLoad(NormalMode, id, None)
+      }
+    )
 
   private def hasCompanyNumberId(id: Int, answers: UserAnswers): Call =
     callOrExpired(answers, HasCompanyNumberId(id),
@@ -55,7 +67,7 @@ class TrusteesCompanyNavigatorHnS @Inject()(val dataCacheConnector: UserAnswersC
   private def hasCompanyUTRId(id: Int, answers: UserAnswers): Call =
     callOrExpired(answers, HasCompanyUTRId(id),
       if (_: Boolean) {
-        HasCompanyUTRController.onPageLoad(NormalMode, id, None)
+        CompanyUTRController.onPageLoad(NormalMode, None, id)
       } else {
         CompanyNoUTRReasonController.onPageLoad(NormalMode, id, None)
       }

@@ -48,8 +48,13 @@ class TrusteesCompanyNavigatorHnSSpec extends SpecBase with MustMatchers with Na
         row(HasCompanyNumberId(indexZero))(false, NoCompanyNumberController.onPageLoad(NormalMode, indexZero, None)),
         row(NoCompanyNumberId(indexZero))("bla", HasCompanyUTRController.onPageLoad(NormalMode, indexZero, None)),
         row(CompanyRegistrationNumberVariationsId(indexZero))(ReferenceValue("1111111111"), HasCompanyUTRController.onPageLoad(NormalMode, indexZero, None)),
-        row(HasCompanyUTRId(indexZero))(true, HasCompanyUTRController.onPageLoad(NormalMode, indexZero, None)),
-        row(HasCompanyUTRId(indexZero))(false, CompanyNoUTRReasonController.onPageLoad(NormalMode, indexZero, None))
+        row(HasCompanyUTRId(indexZero))(true, CompanyUTRController.onPageLoad(NormalMode, None, indexZero)),
+        row(HasCompanyUTRId(indexZero))(false, CompanyNoUTRReasonController.onPageLoad(NormalMode, indexZero, None)),
+        row(CompanyNoUTRReasonId(indexZero))("blah", HasCompanyVATController.onPageLoad(NormalMode, indexZero, None)),
+        row(CompanyUTRId(indexZero))("1234567890", HasCompanyVATController.onPageLoad(NormalMode, indexZero, None)),
+        row(HasCompanyVATId(indexZero))(true, CompanyVatVariationsController.onPageLoad(NormalMode, indexZero, None)),
+        row(HasCompanyVATId(indexZero))(false, HasCompanyPAYEController.onPageLoad(NormalMode, indexZero, None))
+//        row(CompanyVatVariationsId(indexZero))(false, HasCompanyPAYEController.onPageLoad(NormalMode, indexZero, None))
       )
 
 
