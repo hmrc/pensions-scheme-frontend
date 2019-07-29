@@ -18,20 +18,22 @@ package navigators
 
 import com.google.inject.Inject
 import connectors.UserAnswersCacheConnector
-import identifiers.register.trustees.company.HasCompanyNumberId
-import models.{Mode, NormalMode}
+import identifiers.register.trustees.company.{CompanyRegistrationNumberVariationsId, HasCompanyNumberId, HasCompanyUTRId, NoCompanyNumberId}
+import models.{Mode, NormalMode, ReferenceValue}
 import play.api.mvc.Call
 import utils.UserAnswers
 import controllers.register.trustees.company.routes._
+import identifiers.register.establishers.company.CompanyVatVariationsId
 
 class TrusteesCompanyNavigatorHnS @Inject()(val dataCacheConnector: UserAnswersCacheConnector) extends AbstractNavigator {
 
   protected def routes(from: NavigateFrom, mode: Mode, srn: Option[String]): Option[NavigateTo] = {
     NavigateTo.dontSave(from.id match {
-      case HasCompanyNumberId(id) =>
-        hasCompanyNumberId(id, from.userAnswers)
-      case _ =>
-        controllers.routes.SessionExpiredController.onPageLoad()
+      case HasCompanyNumberId(id) => hasCompanyNumberId(id, from.userAnswers)
+      case NoCompanyNumberId(id) => HasCompanyUTRController.onPageLoad(mode, id, srn)
+      case CompanyRegistrationNumberVariationsId(id) => HasCompanyUTRController.onPageLoad(mode, id, srn)
+      case HasCompanyUTRId(id) => hasCompanyUTRId(id, from.userAnswers)
+      case _ => controllers.routes.SessionExpiredController.onPageLoad()
     })
   }
 
@@ -42,6 +44,20 @@ class TrusteesCompanyNavigatorHnS @Inject()(val dataCacheConnector: UserAnswersC
       case _ => controllers.routes.SessionExpiredController.onPageLoad()
     }
   }
+
+  private def hasCompanyUTRId(id: Int, answers: UserAnswers): Call = {
+
+//    navigateOrSessionExpired(from.userAnswers, CompanyVatVariationsId(index), (_: ReferenceValue) =>
+//      establisherCompanyRoutes.HasCompanyPAYEController.onPageLoad(mode, srn, index))
+
+    answers.get(HasCompanyUTRId(id)) match {
+      case Some(true) => HasCompanyUTRController.onPageLoad(NormalMode, id, None)
+      case Some(false) => CompanyNoUTRReasonController.onPageLoad(NormalMode, id, None)
+      case _ => controllers.routes.SessionExpiredController.onPageLoad()
+    }
+  }
+
+
 
   override protected def routeMap(from: NavigateFrom): Option[NavigateTo] = routes(from, NormalMode, None)
 

@@ -18,12 +18,16 @@ package navigators
 
 import base.SpecBase
 import controllers.register.trustees.company.routes._
-import identifiers.Identifier
+import identifiers.{Identifier, TypedIdentifier}
 import identifiers.register.trustees.company._
-import models.{Index, Mode, NormalMode}
+import models._
 import org.scalatest.MustMatchers
 import org.scalatest.prop.TableFor3
+import play.api.libs.json.Writes
 import play.api.mvc.Call
+import utils.UserAnswers
+
+import scala.concurrent.ExecutionContext.Implicits.global
 
 
 class TrusteesCompanyNavigatorHnSSpec extends SpecBase with MustMatchers with NavigatorBehaviour {
@@ -31,11 +35,24 @@ class TrusteesCompanyNavigatorHnSSpec extends SpecBase with MustMatchers with Na
 
   "For Scheme Subscription (Normal Mode)" should {
 
-    lazy val testForNormalMode: TableFor3[Identifier, Map[Identifier, Boolean], Call] = Table(
-      ("Id", "User Answers", "Next Page (Normal Mode)"),
-      (HasCompanyNumberId(indexZero), Map(HasCompanyNumberId(indexZero) -> true), CompanyRegistrationNumberVariationsController.onPageLoad(NormalMode, None, indexZero)),
-      (HasCompanyNumberId(indexZero), Map(HasCompanyNumberId(indexZero) -> false), NoCompanyNumberController.onPageLoad(NormalMode, indexZero, None))
-    )
+    def row(id: TypedIdentifier.PathDependent)(value: id.Data, call: Call, ua: Option[UserAnswers] = None)
+                                                     (implicit writes: Writes[id.Data]): (id.type, UserAnswers, Call) = {
+      val userAnswers = ua.fold(UserAnswers())(identity).set(id)(value).asOpt.value
+      Tuple3(id, userAnswers, call)
+    }
+
+    lazy val testForNormalMode: TableFor3[Identifier, UserAnswers, Call] =
+      Table(
+        ("Id", "UserAnswers", "Next Page"),
+        row(HasCompanyNumberId(indexZero))(true, CompanyRegistrationNumberVariationsController.onPageLoad(NormalMode, None, indexZero)),
+        row(HasCompanyNumberId(indexZero))(false, NoCompanyNumberController.onPageLoad(NormalMode, indexZero, None)),
+        row(NoCompanyNumberId(indexZero))("bla", HasCompanyUTRController.onPageLoad(NormalMode, indexZero, None)),
+        row(CompanyRegistrationNumberVariationsId(indexZero))(ReferenceValue("1111111111"), HasCompanyUTRController.onPageLoad(NormalMode, indexZero, None)),
+        row(HasCompanyUTRId(indexZero))(true, HasCompanyUTRController.onPageLoad(NormalMode, indexZero, None)),
+        row(HasCompanyUTRId(indexZero))(false, CompanyNoUTRReasonController.onPageLoad(NormalMode, indexZero, None))
+      )
+
+
 
     val navigator: Navigator = injector.instanceOf[TrusteesCompanyNavigatorHnS]
 
@@ -44,7 +61,7 @@ class TrusteesCompanyNavigatorHnSSpec extends SpecBase with MustMatchers with Na
   }
 
   def navigatorWithRoutesForMode(mode: Mode)(navigator: Navigator,
-                                             routes: TableFor3[Identifier, Map[Identifier, Boolean], Call],
+                                             routes: TableFor3[Identifier, UserAnswers, Call],
                                              srn: Option[String] = None): Unit = {
 
     s"behave like a navigator in ${Mode.jsLiteral.to(mode)} journey" when {
@@ -52,7 +69,7 @@ class TrusteesCompanyNavigatorHnSSpec extends SpecBase with MustMatchers with Na
       s"navigating in ${Mode.jsLiteral.to(mode)}" must {
 
         forAll(routes) {
-          (id: Identifier, userAnswers: Map[Identifier, Boolean], call: Call) =>
+          (id: Identifier, userAnswers: UserAnswers, call: Call) =>
 
             s"move from $id to $call in $mode with data: ${userAnswers.toString}" in {
               val result = navigator.nextPage(id, mode, userAnswers, srn)
