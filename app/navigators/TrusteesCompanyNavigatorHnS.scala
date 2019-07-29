@@ -18,14 +18,20 @@ package navigators
 
 import com.google.inject.Inject
 import connectors.UserAnswersCacheConnector
+import controllers.register.trustees.company.routes._
+import identifiers.TypedIdentifier
 import identifiers.register.trustees.company.{CompanyRegistrationNumberVariationsId, HasCompanyNumberId, HasCompanyUTRId, NoCompanyNumberId}
-import models.{Mode, NormalMode, ReferenceValue}
+import models.{Mode, NormalMode}
+import play.api.libs.json.Reads
 import play.api.mvc.Call
 import utils.UserAnswers
-import controllers.register.trustees.company.routes._
-import identifiers.register.establishers.company.CompanyVatVariationsId
 
 class TrusteesCompanyNavigatorHnS @Inject()(val dataCacheConnector: UserAnswersCacheConnector) extends AbstractNavigator {
+
+  protected def callOrExpired[A](answers: UserAnswers,
+                                 id: => TypedIdentifier[A],
+                                 destination: A => Call)(implicit reads: Reads[A]): Call =
+    answers.get(id).fold(controllers.routes.SessionExpiredController.onPageLoad())(destination(_))
 
   protected def routes(from: NavigateFrom, mode: Mode, srn: Option[String]): Option[NavigateTo] = {
     NavigateTo.dontSave(from.id match {
@@ -37,27 +43,23 @@ class TrusteesCompanyNavigatorHnS @Inject()(val dataCacheConnector: UserAnswersC
     })
   }
 
-  private def hasCompanyNumberId(id: Int, answers: UserAnswers): Call = {
-    answers.get(HasCompanyNumberId(id)) match {
-      case Some(true) => CompanyRegistrationNumberVariationsController.onPageLoad(NormalMode, None, id)
-      case Some(false) => NoCompanyNumberController.onPageLoad(NormalMode, id, None)
-      case _ => controllers.routes.SessionExpiredController.onPageLoad()
-    }
-  }
+  private def hasCompanyNumberId(id: Int, answers: UserAnswers): Call =
+    callOrExpired(answers, HasCompanyNumberId(id),
+      if (_: Boolean) {
+        CompanyRegistrationNumberVariationsController.onPageLoad(NormalMode, None, id)
+      } else {
+        NoCompanyNumberController.onPageLoad(NormalMode, id, None)
+      }
+    )
 
-  private def hasCompanyUTRId(id: Int, answers: UserAnswers): Call = {
-
-//    navigateOrSessionExpired(from.userAnswers, CompanyVatVariationsId(index), (_: ReferenceValue) =>
-//      establisherCompanyRoutes.HasCompanyPAYEController.onPageLoad(mode, srn, index))
-
-    answers.get(HasCompanyUTRId(id)) match {
-      case Some(true) => HasCompanyUTRController.onPageLoad(NormalMode, id, None)
-      case Some(false) => CompanyNoUTRReasonController.onPageLoad(NormalMode, id, None)
-      case _ => controllers.routes.SessionExpiredController.onPageLoad()
-    }
-  }
-
-
+  private def hasCompanyUTRId(id: Int, answers: UserAnswers): Call =
+    callOrExpired(answers, HasCompanyUTRId(id),
+      if (_: Boolean) {
+        HasCompanyUTRController.onPageLoad(NormalMode, id, None)
+      } else {
+        CompanyNoUTRReasonController.onPageLoad(NormalMode, id, None)
+      }
+    )
 
   override protected def routeMap(from: NavigateFrom): Option[NavigateTo] = routes(from, NormalMode, None)
 
