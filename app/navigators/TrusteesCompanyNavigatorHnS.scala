@@ -42,9 +42,21 @@ class TrusteesCompanyNavigatorHnS @Inject()(val dataCacheConnector: UserAnswersC
       case CompanyNoUTRReasonId(id) => HasCompanyVATController.onPageLoad(NormalMode, id, srn)
       case CompanyUTRId(id) => HasCompanyVATController.onPageLoad(NormalMode, id, srn)
       case HasCompanyVATId(id) => hasCompanyVatId(id, from.userAnswers)
+      case CompanyVatVariationsId(id) => HasCompanyPAYEController.onPageLoad(NormalMode, id, None)
+      case HasCompanyPAYEId(id) => hasCompanyPayeId(id, from.userAnswers)
+      case CompanyPayeVariationsId(id) => CheckYourAnswersCompanyDetailsController.onPageLoad(NormalMode, id, None)
       case _ => controllers.routes.SessionExpiredController.onPageLoad()
     })
   }
+
+  private def hasCompanyPayeId(id: Int, answers: UserAnswers): Call =
+    callOrExpired(answers, HasCompanyPAYEId(id),
+      if (_: Boolean) {
+        CompanyPayeVariationsController.onPageLoad(NormalMode, id, None)
+      } else {
+        CheckYourAnswersCompanyDetailsController.onPageLoad(NormalMode, id, None)
+      }
+    )
 
   private def hasCompanyVatId(id: Int, answers: UserAnswers): Call =
     callOrExpired(answers, HasCompanyVATId(id),

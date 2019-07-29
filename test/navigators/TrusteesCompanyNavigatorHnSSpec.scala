@@ -53,8 +53,11 @@ class TrusteesCompanyNavigatorHnSSpec extends SpecBase with MustMatchers with Na
         row(CompanyNoUTRReasonId(indexZero))("blah", HasCompanyVATController.onPageLoad(NormalMode, indexZero, None)),
         row(CompanyUTRId(indexZero))("1234567890", HasCompanyVATController.onPageLoad(NormalMode, indexZero, None)),
         row(HasCompanyVATId(indexZero))(true, CompanyVatVariationsController.onPageLoad(NormalMode, indexZero, None)),
-        row(HasCompanyVATId(indexZero))(false, HasCompanyPAYEController.onPageLoad(NormalMode, indexZero, None))
-//        row(CompanyVatVariationsId(indexZero))(false, HasCompanyPAYEController.onPageLoad(NormalMode, indexZero, None))
+        row(HasCompanyVATId(indexZero))(false, HasCompanyPAYEController.onPageLoad(NormalMode, indexZero, None)),
+        row(CompanyVatVariationsId(indexZero))(ReferenceValue("1111111"), HasCompanyPAYEController.onPageLoad(NormalMode, indexZero, None)),
+        row(HasCompanyPAYEId(indexZero))(true, CompanyPayeVariationsController.onPageLoad(NormalMode, indexZero, None)),
+        row(HasCompanyPAYEId(indexZero))(false, CheckYourAnswersCompanyDetailsController.onPageLoad(NormalMode, indexZero, None)),
+        row(CompanyPayeVariationsId(indexZero))(ReferenceValue("123123"), CheckYourAnswersCompanyDetailsController.onPageLoad(NormalMode, indexZero, None))
       )
 
 
