@@ -19,36 +19,66 @@ package controllers.register.trustees.company
 import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions._
+import identifiers.register.establishers.IsEstablisherNewId
+import identifiers.register.trustees.IsTrusteeNewId
+import identifiers.register.trustees.company.{CompanyEmailId, CompanyPhoneId, IsContactDetailsCompleteId}
 import javax.inject.Inject
+import models.Mode.checkMode
 import models.{Index, Mode}
 import navigators.Navigator
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import utils.annotations.NoSuspendedCheck
+import utils.checkyouranswers.Ops._
+import utils.{AllowChangeHelper, CountryOptions, UserAnswers}
+import viewmodels.AnswerSection
+import views.html.check_your_answers
 import utils.annotations.TrusteesCompany
 import utils.Enumerable
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
-class CheckYourAnswersCompanyContactDetailsController @Inject()(
-                                          appConfig: FrontendAppConfig,
-                                          override val messagesApi: MessagesApi,
-                                          userAnswersService: UserAnswersService,
-                                          @TrusteesCompany navigator: Navigator,
-                                          authenticate: AuthAction,
-                                          getData: DataRetrievalAction,
-                                          allowAccess: AllowAccessActionProvider,
-                                          requireData: DataRequiredAction
-                                        )(implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
+class CheckYourAnswersCompanyContactDetailsController @Inject()(appConfig: FrontendAppConfig,
+                                                                override val messagesApi: MessagesApi,
+                                                                authenticate: AuthAction,
+                                                                getData: DataRetrievalAction,
+                                                                @NoSuspendedCheck allowAccess: AllowAccessActionProvider,
+                                                                requireData: DataRequiredAction,
+                                                                implicit val countryOptions: CountryOptions,
+                                                                allowChangeHelper: AllowChangeHelper,
+                                                                userAnswersService: UserAnswersService
+                                                               )(implicit val ec: ExecutionContext) extends FrontendController with I18nSupport with Retrievals {
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData) {
-    implicit request => Ok
-  }
+  def onPageLoad(mode: Mode, index: Index, srn: Option[String] = None): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+      implicit request =>
+        implicit val userAnswers: UserAnswers = request.userAnswers
+        val notNewEstablisher = !userAnswers.get(IsTrusteeNewId(index)).getOrElse(true)
+        val contactDetails = AnswerSection(
+          None,
+          CompanyEmailId(index).row(routes.CompanyEmailController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
+            CompanyPhoneId(index).row(routes.CompanyPhoneController.onPageLoad(checkMode(mode), index, srn).url, mode)
+        )
 
-  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData) {
-    implicit request => Redirect(controllers.routes.IndexController.onPageLoad())
-  }
+        Future.successful(Ok(check_your_answers(
+          appConfig,
+          Seq(contactDetails),
+          routes.CheckYourAnswersCompanyContactDetailsController.onSubmit(mode, index, srn),
+          existingSchemeName,
+          mode = mode,
+          hideEditLinks = request.viewOnly || notNewEstablisher,
+          hideSaveAndContinueButton = allowChangeHelper.hideSaveAndContinueButton(request, IsTrusteeNewId(index), mode),
+          srn = srn
+        )))
+    }
 
+  def onSubmit(mode: Mode, index: Index, srn: Option[String] = None): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+      implicit request =>
+        userAnswersService.setCompleteFlag(mode, srn, IsContactDetailsCompleteId(index), request.userAnswers, value = true).map { _ =>
+          Redirect(controllers.routes.SchemeTaskListController.onPageLoad(mode, srn))
+        }
+    }
 }
