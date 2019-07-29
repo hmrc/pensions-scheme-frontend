@@ -23,11 +23,12 @@ import forms.ReasonFormProvider
 import identifiers.register.trustees.company.{CompanyDetailsId, CompanyNoUTRReasonId}
 import javax.inject.Inject
 import models.{Index, Mode}
+import navigators.Navigator
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
 import utils.annotations.TrusteesCompany
-import utils.{Enumerable, Navigator}
+import utils.Enumerable
 import viewmodels.{Message, ReasonViewModel}
 
 import scala.concurrent.ExecutionContext

@@ -17,37 +17,65 @@
 package controllers.register.trustees.company
 
 import config.FrontendAppConfig
-import controllers.Retrievals
+import controllers.PhoneNumberController
 import controllers.actions._
+import forms.PhoneFormProvider
+import identifiers.register.trustees.company.{CompanyDetailsId, CompanyPhoneId}
 import javax.inject.Inject
 import models.{Index, Mode}
+import navigators.Navigator
+import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.TrusteesCompany
-import utils.{Enumerable, Navigator}
+import viewmodels.{CommonFormWithHintViewModel, Message}
 
 import scala.concurrent.ExecutionContext
 
-class CompanyPhoneController @Inject()(
-                                          appConfig: FrontendAppConfig,
-                                          override val messagesApi: MessagesApi,
-                                          userAnswersService: UserAnswersService,
-                                          @TrusteesCompany navigator: Navigator,
-                                          authenticate: AuthAction,
-                                          getData: DataRetrievalAction,
-                                          allowAccess: AllowAccessActionProvider,
-                                          requireData: DataRequiredAction
-                                        )(implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
+class CompanyPhoneController @Inject()(val appConfig: FrontendAppConfig,
+                                       override val messagesApi: MessagesApi,
+                                       authenticate: AuthAction,
+                                       getData: DataRetrievalAction,
+                                       override val userAnswersService: UserAnswersService,
+                                       allowAccess: AllowAccessActionProvider,
+                                       requireData: DataRequiredAction,
+                                       @TrusteesCompany val navigator: Navigator,
+                                       formProvider: PhoneFormProvider
+                                      )(implicit val ec: ExecutionContext) extends PhoneNumberController with I18nSupport {
+
+  protected val form: Form[String] = formProvider()
+
+  private def viewModel(mode: Mode, srn: Option[String], index: Index): Retrieval[CommonFormWithHintViewModel] =
+    Retrieval {
+      implicit request =>
+        CompanyDetailsId(index).retrieve.right.map {
+          details =>
+            CommonFormWithHintViewModel(
+              routes.CompanyPhoneController.onSubmit(mode, index, srn),
+              Message("messages__establisher_phone__title"),
+              Message("messages__common_phone__heading", details.companyName),
+              Some(Message("messages__establisher_phone__hint")),
+              srn = srn
+            )
+        }
+    }
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData) {
-    implicit request => Ok
-  }
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+      implicit request =>
+        viewModel(mode, srn, index).retrieve.right.map {
+          vm =>
+            get(CompanyPhoneId(index), form, vm)
+        }
+    }
 
-  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData) {
-    implicit request => Redirect(controllers.routes.IndexController.onPageLoad())
-  }
-
+  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+      implicit request =>
+        viewModel(mode, srn, index).retrieve.right.map {
+          vm =>
+            post(CompanyPhoneId(index), mode, form, vm)
+        }
+    }
 }

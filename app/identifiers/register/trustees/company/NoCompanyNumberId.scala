@@ -17,8 +17,13 @@
 package identifiers.register.trustees.company
 
 import identifiers.TypedIdentifier
-import identifiers.register.trustees.TrusteesId
+import identifiers.register.trustees.{IsTrusteeNewId, TrusteesId}
+import play.api.i18n.Messages
 import play.api.libs.json.JsPath
+import utils.checkyouranswers.CheckYourAnswers
+import utils.checkyouranswers.CheckYourAnswers.StringCYA
+import utils.{CountryOptions, UserAnswers}
+import viewmodels.AnswerRow
 
 case class NoCompanyNumberId(index: Int) extends TypedIdentifier[String] {
   override def path: JsPath = TrusteesId(index).path \ NoCompanyNumberId.toString
@@ -27,9 +32,28 @@ case class NoCompanyNumberId(index: Int) extends TypedIdentifier[String] {
 object NoCompanyNumberId {
   override def toString: String = "noCrnReason"
 
+  implicit def cya(implicit userAnswers: UserAnswers,
+                   messages: Messages,
+                   countryOptions: CountryOptions): CheckYourAnswers[NoCompanyNumberId] = {
+
+    def label(index: Int) = userAnswers.get(CompanyDetailsId(index)) match {
+      case Some(details) => Some(messages("messages__noCompanyNumber__establisher__heading", details.companyName))
+      case _ => Some(messages("messages__noCompanyNumber__establisher__title"))
+    }
+
+    def hiddenLabel = Some(messages("messages__visuallyhidden__noCompanyNumberReason"))
+
+    new CheckYourAnswers[NoCompanyNumberId] {
+      override def row(id: NoCompanyNumberId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+        StringCYA(label(id.index), hiddenLabel)().row(id)(changeUrl, userAnswers)
+
+
+      override def updateRow(id: NoCompanyNumberId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+        userAnswers.get(IsTrusteeNewId(id.index)) match {
+          case Some(true) => row(id)(changeUrl, userAnswers)
+          case _ => Seq.empty[AnswerRow]
+        }
+    }
+  }
+
 }
-
-
-
-
-

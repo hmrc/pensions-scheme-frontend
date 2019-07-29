@@ -19,7 +19,7 @@ package identifiers.register.establishers.company.director
 import identifiers._
 import identifiers.register.establishers.EstablishersId
 import play.api.i18n.Messages
-import play.api.libs.json.JsPath
+import play.api.libs.json.{JsPath, JsResult}
 import utils.{CountryOptions, UserAnswers}
 import utils.checkyouranswers.CheckYourAnswers
 import utils.checkyouranswers.CheckYourAnswers.StringCYA
@@ -27,6 +27,9 @@ import viewmodels.AnswerRow
 
 case class DirectorNoNINOReasonId(establisherIndex: Int, directorIndex: Int) extends TypedIdentifier[String] {
   override def path: JsPath = EstablishersId(establisherIndex).path \ "director" \ directorIndex \ DirectorNoNINOReasonId.toString
+
+  override def cleanup(value: Option[String], userAnswers: UserAnswers): JsResult[UserAnswers] =
+    userAnswers.remove(DirectorNinoId(establisherIndex, directorIndex))
 }
 
 object DirectorNoNINOReasonId {

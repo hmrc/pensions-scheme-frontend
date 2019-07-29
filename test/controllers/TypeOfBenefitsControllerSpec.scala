@@ -23,11 +23,12 @@ import controllers.behaviours.ControllerWithQuestionPageBehaviours
 import forms.TypeOfBenefitsFormProvider
 import identifiers.{SchemeNameId, TypeOfBenefitsId}
 import models.{NormalMode, TypeOfBenefits}
+import navigators.Navigator
 import play.api.data.Form
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, AnyContentAsFormUrlEncoded}
 import play.api.test.FakeRequest
-import utils.{FakeNavigator, Navigator, UserAnswers}
+import utils.{FakeNavigator, UserAnswers}
 import views.html.typeOfBenefits
 
 import scala.concurrent.ExecutionContext.Implicits.global

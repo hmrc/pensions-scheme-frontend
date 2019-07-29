@@ -91,8 +91,12 @@ messages__error_country_invalid = Enter a valid country
 
 messages__common_email__heading = What is {0}’s email address?
 messages__common_company_email__visually_hidden_change_label = company email address
+messages__common_trustee_company_email__visually_hidden_change_label = Change {0}’s email
 messages__common_phone__heading = What is {0}’s phone number?
 messages__common_company_phone__visually_hidden_change_label = company phone number
+messages__common_trustee_company_phone__visually_hidden_change_label = Change {0}’s phone number
+
+
 
 messages__error__common__email__no_at_sign = Enter an email address which includes an @ symbol
 messages__error__common__email__start_with_at_sign = Enter an email address which does not start with @
@@ -601,6 +605,8 @@ messages__companyNumber__establisher__heading = What is {0}’s company number?
 messages__noCompanyNumber__establisher__title = Why does the establisher not have a company number?
 messages__noCompanyNumber__establisher__heading = Why does {0} not have a company number?
 
+messages__companyNoCompanyNumber__establisher__title = Why does the company not have a company number?
+
 messages__error__no_company_number = Enter a reason why {0} does not have a company number
 messages__error__no_company_number_maxlength = Reason must be 160 characters or less
 messages__error__no_company_number_invalid = Reason must only include letters, numbers and punctuation marks
@@ -616,7 +622,6 @@ messages__checkYourAnswers__trustees__company__vat = Does the trustee have a VAT
 messages__checkYourAnswers__trustees__company__paye = Does the trustee have a PAYE employer reference number?
 messages__checkYourAnswers__trustees__company__utr = Does the trustee have a Unique Taxpayer Reference number?
 messages__checkYourAnswers__trustees__company__utr_no_reason = Why the trustee does not have a Unique Taxpayer Reference number
-messages__checkYourAnswers__trustees__company__address_years = How long has the company been at this address?
 
 messages__checkYourAnswers__establishers__company__number = Company number
 
@@ -1361,10 +1366,10 @@ messages__scheme_uk_bank_account__h1 = Does {0} have a UK bank account?
 
 messages__members__opt1 = None
 messages__members__opt2 = 1
-messages__members__opt3 = 2 - 11
-messages__members__opt4 = 12 - 50
-messages__members__opt5 = 51 - 10,000
-messages__members__opt6 = more than 10,000
+messages__members__opt3 = 2 to 11
+messages__members__opt4 = 12 to 50
+messages__members__opt5 = 51 to 10,000
+messages__members__opt6 = More than 10,000
 
 messages__current_members__title = How many members does the scheme currently have?
 messages__current_members__h1 = How many members does {0} currently have?
@@ -1492,10 +1497,10 @@ messages__visuallyhidden__hns_uKBankDetails = Change {0}’s bank account detail
 messages__whatYouWillNeedEstablisherCompany__title = What you will need
 messages__whatYouWillNeedEstablisherCompany__h1 = Company details
 messages__whatYouWillNeedEstablisherCompany__lede = You will need to tell us the company’s:
-messages__whatYouWillNeedEstablisherCompany__item1 = registration number
-messages__whatYouWillNeedEstablisherCompany__item2 = Unique Taxpayer Reference (UTR)
-messages__whatYouWillNeedEstablisherCompany__item3 = VAT registration number
-messages__whatYouWillNeedEstablisherCompany__item4 = employer PAYE number
+messages__whatYouWillNeedEstablisherCompany__item1 = company number, or reason why it does not have one
+messages__whatYouWillNeedEstablisherCompany__item2 = Unique Taxpayer Reference (UTR), or reason why it does not have one
+messages__whatYouWillNeedEstablisherCompany__item3 = VAT registration number, if it has one
+messages__whatYouWillNeedEstablisherCompany__item4 = employer PAYE number, if it has one
 
 messages__whatYouWillNeedEstablisherCompanyAddress__title = Address
 messages__whatYouWillNeedEstablisherCompanyAddress__h1 = Address
@@ -1506,10 +1511,9 @@ messages__whatYouWillNeedTrusteeCompanyAddress__item2 = previous address if the 
 
 messages__whatYouWillNeedEstablisherCompanyContact__title = Contact details
 messages__whatYouWillNeedEstablisherCompanyContact__h1 = Contact details
-messages__whatYouWillNeedEstablisherCompanyContact__lede = You will need to tell us the company’s contact:
-messages__whatYouWillNeedEstablisherCompanyContact__item1 = email address
-messages__whatYouWillNeedEstablisherCompanyContact__item2 = phone number
-messages__whatYouWillNeedEstablisherCompanyContact__item3 = These should be details used for other HMRC services. These will not be used to contact the company.
+messages__whatYouWillNeedEstablisherCompanyContact__lede = You will need to tell us the company’s:
+messages__whatYouWillNeedEstablisherCompanyContact__item1 = contact email address
+messages__whatYouWillNeedEstablisherCompanyContact__item2 = contact phone number
 
 messages__whatYouWillNeedDirectors__title = Directors
 messages__whatYouWillNeedDirectors__h1 = Directors
@@ -1527,11 +1531,15 @@ messages__whatYouWillNeedDirectors__item8 = contact phone number
 messages__whatYouWillNeedTrusteeCompany__title = Company details
 messages__whatYouWillNeedTrusteeCompany__h1 = Company details
 messages__whatYouWillNeedTrusteeCompany__p1 = You will need to tell us the company’s:
-messages__whatYouWillNeedTrusteeCompany__item1 = company number
-messages__whatYouWillNeedTrusteeCompany__item2 = Unique Taxpayer Reference (UTR)
-messages__whatYouWillNeedTrusteeCompany__item3 = VAT registration number
-messages__whatYouWillNeedTrusteeCompany__item4 = employer PAYE reference
+messages__whatYouWillNeedTrusteeCompany__item1 = company number, or reason why it does not have one
+messages__whatYouWillNeedTrusteeCompany__item2 = Unique Taxpayer Reference (UTR), or reason why it does not have one
+messages__whatYouWillNeedTrusteeCompany__item3 = VAT registration number, if it has one
+messages__whatYouWillNeedTrusteeCompany__item4 = employer PAYE reference, if it has one
 messages__whatYouWillNeedTrusteeCompany__p2 = You will also need to tell us if the company has been dormant at any time in the last 12 months.
+
+messages__tradingAtLeastOneYear__error = Select yes if {0} has been trading for at least 1 year
+
+messages__hasCompanyCompanyNumber__title = Does the company have a company number?
 
 messages__hasCompanyNumber__title = Does the establisher have a company number?
 messages__hasCompanyNumber__h1 = Does {0} have a company number?
@@ -1541,16 +1549,26 @@ messages__hasCompanyNumber__error__required = Select yes if {0} has a company nu
 messages__hasCompanyUtr__title = Does the company have a UTR?
 messages__hasCompanyUtr__h1 = Does {0} have a Unique Taxpayer Reference (UTR)?
 messages__hasCompanyUtr__p1 = This is a 10-digit or 13-digit number. You can find it on tax returns and other documents from HMRC. It might be called ‘reference’, ‘UTR’ or ‘official use’.
-messages__hasCompanyUtr__error__required = Select yes if {0} has a Unique Taxpayer Reference (UTR)
+messages__hasCompanyUtr__error__required = Select yes if the company has a UTR
 
 messages__hasCompanyVat__title = Is the company registered for VAT?
 messages__hasCompanyVat__h1 = Is {0} registered for VAT?
 messages__hasCompanyVat__p1 = This is 9 numbers, sometimes with ‘GB’ at the start, for example 123456789 or GB123456789. You can find it on {0}’s VAT registration certificate.
 messages__hasCompanyVat__error__required = Select yes if the {0} is registered for VAT
 
+messages__trusteeAddress = {0}’s address
+messages__changeTrusteeAddress = Change {0}’s address
+
+messages__hasBeen1Year = Has {0} been at their address for at least 1 year?
+messages__changeHasBeen1Year = Change whether {0} has been at their address for at least 1 year?
+messages__theTrustee = the trustee
+
 messages__hasBeenTradingCompany__title = Has the establisher been trading for more than a year?
 messages__hasBeenTradingCompany__h1 =  Has {0} been trading for more than a year?
 messages__hasBeenTradingCompany__error__required = Select yes if {0} has been trading  for more than a year
+messages__hasBeenTradingCompany__title = Has the company been trading for at least 1 year?
+messages__hasBeenTradingCompany__h1 =  Has {0} been trading for at least 1 year?
+messages__hasBeenTradingCompany__error__required = Select yes if {0} has been trading for at least 1 year
 
 messages__schemeTaskList__before_you_start_link_text = Setting up your scheme application
 messages__schemeTaskList__scheme_info_link_text = Information about your scheme
@@ -1587,9 +1605,10 @@ messages__companyPaye__heading = Does {0} have an employer PAYE number?
 messages__companyPaye__error__required = Select yes if the company has an employer PAYE number
 
 messages__companyPayeRef__title = Does the establisher have an employer PAYE reference?
+messages__companyPayeRef__trustee_title = Does the company have an employer PAYE reference?
 messages__companyPayeRef__h1 = Does {0} have an employer PAYE reference?
 messages__companyPayeRef__error__required = Select whether the company has an employer PAYE number
-messages__companyPayeRef__p1 = This is a 3 digit tax office number, a forward slash, and a tax office employer reference, like 123/AB456. It may be called ‘Employer PAYE reference’ or ‘PAYE reference’.
+messages__companyPayeRef__p1 = This is a 3 digit tax office number, a forward slash, and a tax office employer reference, like 123/AB456. It may be called ‘Employer PAYE reference’ or ‘PAYE reference’. It will be on letters from HMRC about PAYE.
 
 messages__companyVat__title = Is the company registered for VAT?
 messages__companyVat__heading = Is {0} registered for VAT?
@@ -1647,11 +1666,11 @@ messages__reason__error_invalid = Reason must only include letters, numbers and 
 messages__noCompanyUtr__title = Why does the company not have a UTR?
 messages__noCompanyUtr__heading = Why does {0} not have a UTR?
 
-messages__establisher_phone__title =  What is the establisher’s phone number?
+messages__establisher_phone__title =  What is the company’s phone number?
 messages__director_phone__title =  What is the director’s phone number?
 messages__establisher_phone__hint = We will only use this to contact about pension scheme administration.
 
-messages__establisher_email__title =  What is the establisher’s email address?
+messages__establisher_email__title =  What is the company’s email address?
 messages__establisher_email__hint = We will only use this to contact about pension scheme administration.
 
 messages__directorNoNinoReason__title = Why does the director not have a National Insurance number?

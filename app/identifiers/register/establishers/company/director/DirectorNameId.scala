@@ -33,7 +33,7 @@ case class DirectorNameId(establisherIndex: Int, directorIndex: Int) extends Typ
 object DirectorNameId {
   def collectionPath(establisherIndex: Int): JsPath = EstablishersId(establisherIndex).path \ "director" \\ DirectorNameId.toString
 
-  override def toString: String = "directorName"
+  override def toString: String = "directorDetails"
 
   implicit def cya(implicit messages: Messages): CheckYourAnswers[DirectorNameId] = {
     new CheckYourAnswers[DirectorNameId] {

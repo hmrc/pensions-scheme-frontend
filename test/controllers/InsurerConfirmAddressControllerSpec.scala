@@ -26,6 +26,7 @@ import forms.address.AddressFormProvider
 import identifiers._
 import models.NormalMode
 import models.address.{Address, TolerantAddress}
+import navigators.Navigator
 import play.api.data.Form
 import play.api.mvc.{Action, AnyContent, AnyContentAsFormUrlEncoded}
 import play.api.test.FakeRequest

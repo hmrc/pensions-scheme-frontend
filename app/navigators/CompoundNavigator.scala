@@ -22,7 +22,7 @@ import models.Mode
 import models.requests.IdentifiedRequest
 import play.api.mvc.Call
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.{Navigator, UserAnswers}
+import utils.UserAnswers
 
 import scala.concurrent.ExecutionContext
 import scala.collection.JavaConverters._

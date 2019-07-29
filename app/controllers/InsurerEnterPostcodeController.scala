@@ -24,11 +24,11 @@ import forms.address.PostCodeLookupFormProvider
 import identifiers.{InsurerConfirmAddressId, InsurerEnterPostCodeId, InsurerSelectAddressId}
 import javax.inject.Inject
 import models.Mode
+import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Call}
 import services.UserAnswersService
-import utils.Navigator
 import utils.annotations.{AboutBenefitsAndInsurance, InsuranceService}
 import viewmodels.address.PostcodeLookupViewModel
 

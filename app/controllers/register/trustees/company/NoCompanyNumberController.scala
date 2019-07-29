@@ -17,37 +17,59 @@
 package controllers.register.trustees.company
 
 import config.FrontendAppConfig
-import controllers.Retrievals
+import controllers.ReasonController
 import controllers.actions._
+import forms.register.NoCompanyNumberFormProvider
+import identifiers.register.trustees.company.{CompanyDetailsId, NoCompanyNumberId}
 import javax.inject.Inject
 import models.{Index, Mode}
+import navigators.Navigator
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.TrusteesCompany
-import utils.{Enumerable, Navigator}
+import viewmodels.{Message, ReasonViewModel}
 
 import scala.concurrent.ExecutionContext
 
-class NoCompanyNumberController @Inject()(
-                                          appConfig: FrontendAppConfig,
+class NoCompanyNumberController @Inject()(override val appConfig: FrontendAppConfig,
                                           override val messagesApi: MessagesApi,
-                                          userAnswersService: UserAnswersService,
-                                          @TrusteesCompany navigator: Navigator,
+                                          override val userAnswersService: UserAnswersService,
+                                          @TrusteesCompany val navigator: Navigator,
                                           authenticate: AuthAction,
                                           getData: DataRetrievalAction,
                                           allowAccess: AllowAccessActionProvider,
-                                          requireData: DataRequiredAction
-                                        )(implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
+                                          requireData: DataRequiredAction,
+                                          formProvider: NoCompanyNumberFormProvider
+                                         )(implicit val ec: ExecutionContext) extends ReasonController with I18nSupport {
+
+  protected def form(name: String) = formProvider(name)
+
+  private def viewModel(mode: Mode, index: Index, srn: Option[String], companyName: String): ReasonViewModel = {
+    ReasonViewModel(
+      postCall = controllers.register.trustees.company.routes.NoCompanyNumberController.onSubmit(mode, index, srn),
+      title = Message("messages__companyNoCompanyNumber__establisher__title"),
+      heading = Message("messages__noCompanyNumber__establisher__heading", companyName),
+      srn = srn
+    )
+  }
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData) {
-    implicit request => Ok
-  }
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+      implicit request =>
+        CompanyDetailsId(index).retrieve.right.map { details =>
+          val companyName = details.companyName
+          get(NoCompanyNumberId(index), viewModel(mode, index, srn, companyName), form(companyName))
+        }
+    }
 
-  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData) {
-    implicit request => Redirect(controllers.routes.IndexController.onPageLoad())
-  }
+  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen requireData).async {
+      implicit request =>
+        CompanyDetailsId(index).retrieve.right.map { details =>
+          val companyName = details.companyName
+          post(NoCompanyNumberId(index), mode, viewModel(mode, index, srn, companyName), form(companyName))
+        }
+    }
 
 }

@@ -22,7 +22,7 @@ import connectors.UserAnswersCacheConnector
 import identifiers.register._
 import identifiers.{IsBeforeYouStartCompleteId, UserResearchDetailsId, VariationDeclarationId}
 import models.{NormalMode, UpdateMode}
-import utils.{AbstractNavigator, Navigator, UserAnswers}
+import utils.UserAnswers
 
 //scalastyle:off cyclomatic.complexity
 class RegisterNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector,

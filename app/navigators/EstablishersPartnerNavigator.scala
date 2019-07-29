@@ -26,7 +26,7 @@ import identifiers.register.establishers.partnership.AddPartnersId
 import identifiers.register.establishers.partnership.partner._
 import models.Mode.journeyMode
 import models._
-import utils.{AbstractNavigator, Navigator, UserAnswers}
+import utils.UserAnswers
 
 class EstablishersPartnerNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector,
                                              appConfig: FrontendAppConfig) extends AbstractNavigator {

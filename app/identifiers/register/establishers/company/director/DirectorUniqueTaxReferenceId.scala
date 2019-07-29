@@ -31,6 +31,8 @@ case class DirectorUniqueTaxReferenceId(establisherIndex: Int, directorIndex: In
 
 object DirectorUniqueTaxReferenceId {
 
+  override def toString: String = "directorUniqueTaxReference"
+
   implicit def uniqueTaxReference(implicit messages: Messages): CheckYourAnswers[DirectorUniqueTaxReferenceId] = {
 
     val directorUtrCya = (establisherIndex: Int, directorIndex: Int, ua: UserAnswers) => {
@@ -62,5 +64,4 @@ object DirectorUniqueTaxReferenceId {
     }
   }
 
-  override def toString: String = "directorUniqueTaxReference"
 }

@@ -26,6 +26,7 @@ import identifiers.register.establishers.company.director.{ConfirmDeleteDirector
 import javax.inject.Inject
 import models.requests.DataRequest
 import models.{CheckMode, Index, Mode, NormalMode}
+import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.JsValue
@@ -33,7 +34,7 @@ import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.EstablishersCompanyDirector
-import utils.{Navigator, SectionComplete, Toggles, UserAnswers}
+import utils.{SectionComplete, Toggles, UserAnswers}
 import views.html.register.establishers.company.director.confirmDeleteDirector
 
 import scala.concurrent.{ExecutionContext, Future}

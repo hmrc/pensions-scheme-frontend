@@ -24,12 +24,12 @@ import identifiers.register.trustees.company.CompanyRegistrationNumberId
 import javax.inject.Inject
 import models.requests.DataRequest
 import models.{CompanyRegistrationNumber, Index, Mode}
+import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.MessagesApi
 import play.api.mvc.{AnyContent, Call}
 import play.twirl.api.Html
 import services.UserAnswersService
-import utils.Navigator
 import utils.annotations.TrusteesCompany
 import views.html.register.trustees.company.companyRegistrationNumber
 
@@ -45,8 +45,7 @@ class CompanyRegistrationNumberController @Inject()(
                                                      allowAccess: AllowAccessActionProvider,
                                                      requireData: DataRequiredAction,
                                                      formProvider: CompanyRegistrationNumberFormProvider
-                                                   )(implicit ec: ExecutionContext) extends
-  CompanyRegistrationNumberBaseController(
+                                                   )(implicit ec: ExecutionContext) extends CompanyRegistrationNumberBaseController(
     appConfig, messagesApi, userAnswersService, navigator, authenticate, getData, allowAccess, requireData, formProvider) {
 
   override def addView(mode: Mode, index: Index, srn: Option[String])(implicit request: DataRequest[AnyContent]): Html =

@@ -25,12 +25,13 @@ import identifiers.register.establishers.partnership.{PartnershipAddressId, Part
 import javax.inject.Inject
 import models.address.Address
 import models.{Index, Mode}
+import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
 import utils.annotations.EstablisherPartnership
-import utils.{CountryOptions, Navigator}
+import utils.CountryOptions
 import viewmodels.Message
 import viewmodels.address.ManualAddressViewModel
 
