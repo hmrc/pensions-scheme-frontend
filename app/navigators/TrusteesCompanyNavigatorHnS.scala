@@ -19,9 +19,8 @@ package navigators
 import com.google.inject.Inject
 import connectors.UserAnswersCacheConnector
 import controllers.register.trustees.company.routes._
-import identifiers.{Identifier, TypedIdentifier}
-import identifiers.register.trustees.IsTrusteeNewId
 import identifiers.register.trustees.company._
+import identifiers.{Identifier, TypedIdentifier}
 import models.{Mode, NormalMode, UpdateMode}
 import play.api.libs.json.Reads
 import play.api.mvc.Call
@@ -38,60 +37,52 @@ class TrusteesCompanyNavigatorHnS @Inject()(val dataCacheConnector: UserAnswersC
     sharedRoutes(mode, from.userAnswers, srn)(from.id)
   }
 
+  private def companyNoPage(i: Int):(Mode, Option[String]) => Call = CompanyRegistrationNumberVariationsController.onPageLoad(_: Mode, _: Option[String], i)
+
+  private def noCompanyNoPage(i: Int):(Mode, Option[String]) => Call  = NoCompanyNumberController.onPageLoad(_: Mode, i, _: Option[String])
+
+  private def utrPage(i: Int):(Mode, Option[String]) => Call  = CompanyUTRController.onPageLoad(_: Mode, _: Option[String], i)
+
+  private def noUtrPage(i: Int):(Mode, Option[String]) => Call  = CompanyNoUTRReasonController.onPageLoad(_: Mode, i, _: Option[String])
+
+  private def vatPage(i: Int):(Mode, Option[String]) => Call  = CompanyVatVariationsController.onPageLoad(_: Mode, i, _: Option[String])
+
+  private def noVatPage(i: Int):(Mode, Option[String]) => Call  = HasCompanyPAYEController.onPageLoad(_: Mode, i, _: Option[String])
+
+  private def payePage(i: Int):(Mode, Option[String]) => Call  = CompanyPayeVariationsController.onPageLoad(_: Mode, i, _: Option[String])
+
+  private def cyaPage(i: Int):(Mode, Option[String]) => Call  = CheckYourAnswersCompanyDetailsController.onPageLoad(_: Mode, i, _: Option[String])
+
+
   private def sharedRoutes(mode: Mode, ua: UserAnswers, srn: Option[String]): PartialFunction[Identifier, Call] = {
-    case id @ HasCompanyNumberId(i) => booleanNav(id, ua, mode, srn,
-        CompanyRegistrationNumberVariationsController.onPageLoad(_, _, i),
-        NoCompanyNumberController.onPageLoad(_, i, _)
-      )
+    case id@HasCompanyNumberId(i) => booleanNav(id, ua, mode, srn, companyNoPage(i), noCompanyNoPage(i))
     case NoCompanyNumberId(id) => HasCompanyUTRController.onPageLoad(mode, id, srn)
     case CompanyRegistrationNumberVariationsId(id) => HasCompanyUTRController.onPageLoad(mode, id, srn)
-    case id @ HasCompanyUTRId(i) => booleanNav(id, ua, mode, srn,
-        CompanyUTRController.onPageLoad(_, _, i),
-        CompanyNoUTRReasonController.onPageLoad(_, i, _)
-      )
+    case id@HasCompanyUTRId(i) => booleanNav(id, ua, mode, srn, utrPage(i), noUtrPage(i))
     case CompanyNoUTRReasonId(id) => HasCompanyVATController.onPageLoad(NormalMode, id, srn)
     case CompanyUTRId(id) => HasCompanyVATController.onPageLoad(NormalMode, id, srn)
-    case HasCompanyVATId(id) => hasCompanyVatId(id, ua)
+    case id@HasCompanyVATId(i) => booleanNav(id, ua, mode, srn, vatPage(i), noVatPage(i))
     case CompanyVatVariationsId(id) => HasCompanyPAYEController.onPageLoad(NormalMode, id, None)
-    case HasCompanyPAYEId(id) => hasCompanyPayeId(id, ua)
+    case id@HasCompanyPAYEId(i) => booleanNav(id, ua, mode, srn, payePage(i), cyaPage(i))
     case CompanyPayeVariationsId(id) => CheckYourAnswersCompanyDetailsController.onPageLoad(NormalMode, id, None)
     case _ => controllers.routes.SessionExpiredController.onPageLoad()
   }
 
   private def booleanNav(id: TypedIdentifier[Boolean], answers: UserAnswers,
-                     mode:Mode, srn:Option[String],
-                     truePath:(Mode,Option[String]) => Call,
-                     falsePath:(Mode,Option[String]) => Call): Call =
+                         mode: Mode, srn: Option[String],
+                         truePath: (Mode, Option[String]) => Call,
+                         falsePath: (Mode, Option[String]) => Call): Call =
     callOrExpired(answers, id,
       if (_: Boolean) {
         truePath(mode, srn)
       } else {
-        falsePath(mode,srn)
-      }
-    )
-
-  private def hasCompanyPayeId(id: Int, answers: UserAnswers): Call =
-    callOrExpired(answers, HasCompanyPAYEId(id),
-      if (_: Boolean) {
-        CompanyPayeVariationsController.onPageLoad(NormalMode, id, None)
-      } else {
-        CheckYourAnswersCompanyDetailsController.onPageLoad(NormalMode, id, None)
-      }
-    )
-
-  private def hasCompanyVatId(id: Int, answers: UserAnswers): Call =
-    callOrExpired(answers, HasCompanyVATId(id),
-      if (_: Boolean) {
-        CompanyVatVariationsController.onPageLoad(NormalMode, id, None)
-      } else {
-        HasCompanyPAYEController.onPageLoad(NormalMode, id, None)
+        falsePath(mode, srn)
       }
     )
 
   override protected def routeMap(from: NavigateFrom): Option[NavigateTo] = NavigateTo.dontSave(routes(from, NormalMode, None))
 
   override protected def editRouteMap(from: NavigateFrom): Option[NavigateTo] = ???
-
 
   override protected def updateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] = {
     NavigateTo.dontSave(sharedRoutes(UpdateMode, from.userAnswers, srn)(from.id))
