@@ -42,7 +42,7 @@ class TrusteesCompanyNavigatorHnSSpec extends SpecBase with MustMatchers with Na
   }
 
   "For Scheme Subscription (Normal Mode)" should {
-    def testForNormalMode(mode: Mode): TableFor3[Identifier, UserAnswers, Call] =
+    def routes(mode: Mode): TableFor3[Identifier, UserAnswers, Call] =
       Table(
         ("Id", "UserAnswers", "Next Page"),
         row(HasCompanyNumberId(indexZero))(true, CompanyRegistrationNumberVariationsController.onPageLoad(mode, None, indexZero)),
@@ -61,14 +61,29 @@ class TrusteesCompanyNavigatorHnSSpec extends SpecBase with MustMatchers with Na
         row(CompanyPayeVariationsId(indexZero))(refValue, CheckYourAnswersCompanyDetailsController.onPageLoad(mode, indexZero, None))
       )
 
-    lazy val testForUpdateModeNew: TableFor3[Identifier, UserAnswers, Call] = testForNormalMode(UpdateMode).map(t =>
+    lazy val routesUpdateModeNewTrustee: TableFor3[Identifier, UserAnswers, Call] = routes(UpdateMode).map(t =>
       (t._1, t._2.set(IsTrusteeNewId(indexZero))(true).asOpt.value, t._3)
     )
 
+    def routesCheckMode(mode: Mode): TableFor3[Identifier, UserAnswers, Call] =
+      Table(
+        ("Id", "UserAnswers", "Next Page"),
+        row(HasCompanyNumberId(indexZero))(true, CompanyRegistrationNumberVariationsController.onPageLoad(mode, None, indexZero)),
+        row(HasCompanyNumberId(indexZero))(false, NoCompanyNumberController.onPageLoad(mode, indexZero, None)),
+        row(NoCompanyNumberId(indexZero))(stringValue, CheckYourAnswersCompanyDetailsController.onPageLoad(mode, indexZero, None)),
+        row(CompanyRegistrationNumberVariationsId(indexZero))(refValue, CheckYourAnswersCompanyDetailsController.onPageLoad(mode, indexZero, None)),
+        row(HasCompanyUTRId(indexZero))(true, CompanyUTRController.onPageLoad(mode, None, indexZero)),
+        row(HasCompanyUTRId(indexZero))(false, CompanyNoUTRReasonController.onPageLoad(mode, indexZero, None)),
+        row(CompanyNoUTRReasonId(indexZero))(stringValue, CheckYourAnswersCompanyDetailsController.onPageLoad(mode, indexZero, None)),
+        row(CompanyUTRId(indexZero))(stringValue, CheckYourAnswersCompanyDetailsController.onPageLoad(mode, indexZero, None))
+
+      )
+
     val navigator: Navigator = injector.instanceOf[TrusteesCompanyNavigatorHnS]
 
-    behave like navigatorWithRoutesForMode(NormalMode)(navigator, testForNormalMode(NormalMode))
-    behave like navigatorWithRoutesForMode(UpdateMode)(navigator, testForUpdateModeNew)
+    //    behave like navigatorWithRoutesForMode(NormalMode)(navigator, routes(NormalMode))
+    //    behave like navigatorWithRoutesForMode(UpdateMode)(navigator, routesUpdateModeNewTrustee)
+    behave like navigatorWithRoutesForMode(CheckMode)(navigator, routesCheckMode(CheckMode))
 
   }
 

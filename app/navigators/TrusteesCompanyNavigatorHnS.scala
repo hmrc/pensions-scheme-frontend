@@ -21,7 +21,7 @@ import connectors.UserAnswersCacheConnector
 import controllers.register.trustees.company.routes._
 import identifiers.register.trustees.company._
 import identifiers.{Identifier, TypedIdentifier}
-import models.{Mode, NormalMode, UpdateMode}
+import models.{CheckMode, Mode, NormalMode, UpdateMode}
 import play.api.libs.json.Reads
 import play.api.mvc.Call
 import utils.UserAnswers
@@ -35,27 +35,27 @@ class TrusteesCompanyNavigatorHnS @Inject()(val dataCacheConnector: UserAnswersC
   }
 
   protected def routes(from: NavigateFrom, mode: Mode, srn: Option[String]): Call = {
-    sharedRoutes(mode, from.userAnswers, srn)(from.id)
+    normalAndUpdateModeRoutes(mode, from.userAnswers, srn)(from.id)
   }
 
-  private def companyNoPage(i: Int): (Mode, Option[String]) => Call = CompanyRegistrationNumberVariationsController.onPageLoad(_: Mode, _: Option[String], i)
+  private def companyNoPage(index: Int): (Mode, Option[String]) => Call = CompanyRegistrationNumberVariationsController.onPageLoad(_: Mode, _: Option[String], index)
 
-  private def noCompanyNoPage(i: Int): (Mode, Option[String]) => Call = NoCompanyNumberController.onPageLoad(_: Mode, i, _: Option[String])
+  private def noCompanyNoPage(index: Int): (Mode, Option[String]) => Call = NoCompanyNumberController.onPageLoad(_: Mode, index, _: Option[String])
 
-  private def utrPage(i: Int): (Mode, Option[String]) => Call = CompanyUTRController.onPageLoad(_: Mode, _: Option[String], i)
+  private def utrPage(index: Int): (Mode, Option[String]) => Call = CompanyUTRController.onPageLoad(_: Mode, _: Option[String], index)
 
-  private def noUtrPage(i: Int): (Mode, Option[String]) => Call = CompanyNoUTRReasonController.onPageLoad(_: Mode, i, _: Option[String])
+  private def noUtrPage(index: Int): (Mode, Option[String]) => Call = CompanyNoUTRReasonController.onPageLoad(_: Mode, index, _: Option[String])
 
-  private def vatPage(i: Int): (Mode, Option[String]) => Call = CompanyVatVariationsController.onPageLoad(_: Mode, i, _: Option[String])
+  private def vatPage(index: Int): (Mode, Option[String]) => Call = CompanyVatVariationsController.onPageLoad(_: Mode, index, _: Option[String])
 
-  private def noVatPage(i: Int): (Mode, Option[String]) => Call = HasCompanyPAYEController.onPageLoad(_: Mode, i, _: Option[String])
+  private def noVatPage(index: Int): (Mode, Option[String]) => Call = HasCompanyPAYEController.onPageLoad(_: Mode, index, _: Option[String])
 
-  private def payePage(i: Int): (Mode, Option[String]) => Call = CompanyPayeVariationsController.onPageLoad(_: Mode, i, _: Option[String])
+  private def payePage(index: Int): (Mode, Option[String]) => Call = CompanyPayeVariationsController.onPageLoad(_: Mode, index, _: Option[String])
 
-  private def cyaPage(i: Int): (Mode, Option[String]) => Call = CheckYourAnswersCompanyDetailsController.onPageLoad(_: Mode, i, _: Option[String])
+  private def cyaPage(index: Int): (Mode, Option[String]) => Call = CheckYourAnswersCompanyDetailsController.onPageLoad(_: Mode, index, _: Option[String])
 
 
-  private def sharedRoutes(mode: Mode, ua: UserAnswers, srn: Option[String]): PartialFunction[Identifier, Call] = {
+  private def normalAndUpdateModeRoutes(mode: Mode, ua: UserAnswers, srn: Option[String]): PartialFunction[Identifier, Call] = {
     case id@HasCompanyNumberId(index) => booleanNav(id, ua, mode, srn, companyNoPage(index), noCompanyNoPage(index))
     case NoCompanyNumberId(index) => HasCompanyUTRController.onPageLoad(mode, index, srn)
     case CompanyRegistrationNumberVariationsId(index) => HasCompanyUTRController.onPageLoad(mode, index, srn)
@@ -69,9 +69,20 @@ class TrusteesCompanyNavigatorHnS @Inject()(val dataCacheConnector: UserAnswersC
     case _ => controllers.routes.SessionExpiredController.onPageLoad()
   }
 
+  private def checkModeRoutes(mode: Mode, ua: UserAnswers, srn: Option[String]): PartialFunction[Identifier, Call] = {
+    case id@HasCompanyNumberId(index) => booleanNav(id, ua, mode, srn, companyNoPage(index), noCompanyNoPage(index))
+    case NoCompanyNumberId(index) => CheckYourAnswersCompanyDetailsController.onPageLoad(mode, index, None)
+    case CompanyRegistrationNumberVariationsId(index) => CheckYourAnswersCompanyDetailsController.onPageLoad(mode, index, None)
+    case id@HasCompanyUTRId(index) => booleanNav(id, ua, mode, srn, utrPage(index), noUtrPage(index))
+    case CompanyNoUTRReasonId(index) => CheckYourAnswersCompanyDetailsController.onPageLoad(mode, index, None)
+    case CompanyUTRId(index) => CheckYourAnswersCompanyDetailsController.onPageLoad(mode, index, None)
+    case _ => controllers.routes.SessionExpiredController.onPageLoad()
+  }
+
   private def booleanNav(id: TypedIdentifier[Boolean],
                          answers: UserAnswers,
-                         mode: Mode, srn: Option[String],
+                         mode: Mode,
+                         srn: Option[String],
                          truePath: (Mode, Option[String]) => Call,
                          falsePath: (Mode, Option[String]) => Call): Call =
     callOrExpired(answers, id,
@@ -86,11 +97,13 @@ class TrusteesCompanyNavigatorHnS @Inject()(val dataCacheConnector: UserAnswersC
     NavigateTo.dontSave(routes(from, NormalMode, None))
   }
 
-  override protected def editRouteMap(from: NavigateFrom): Option[NavigateTo] = ???
+  override protected def editRouteMap(from: NavigateFrom): Option[NavigateTo] = {
+    NavigateTo.dontSave(checkModeRoutes(CheckMode, from.userAnswers, None)(from.id))
+  }
 
   override protected def updateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] = {
     NavigateTo.dontSave(
-      sharedRoutes(UpdateMode, from.userAnswers, srn)(from.id)
+      normalAndUpdateModeRoutes(UpdateMode, from.userAnswers, srn)(from.id)
     )
   }
 
