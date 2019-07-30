@@ -24,29 +24,22 @@ class FeatureSwitchModule extends Module {
 
   override def bindings(environment: Environment, configuration: Configuration): Seq[Binding[_]] = {
 
-    val x = if (configuration.underlying.getBoolean("enable-dynamic-switches")) {
-      Seq(
+    val featureSwitchBinding = Seq(
+      if (configuration.underlying.getBoolean("enable-dynamic-switches")) {
         bind[FeatureSwitchManagementService].to[FeatureSwitchManagementServiceTestImpl]
-      )
-    } else {
-      Seq(
-        bind[FeatureSwitchManagementService].to[FeatureSwitchManagementServiceProductionImpl]
-      )
-    }
-
-    val y = Seq(
-      if (configuration.underlying.getBoolean("features.is-establisher-company-hns")) {
-
-        bind(classOf[Navigator])
-          .qualifiedWith[TrusteesCompany]
-          .to(classOf[TrusteesCompanyNavigatorHnS])
       } else {
-        bind(classOf[Navigator])
-          .qualifiedWith[TrusteesCompany]
-          .to(classOf[TrusteesCompanyNavigator])
+        bind[FeatureSwitchManagementService].to[FeatureSwitchManagementServiceProductionImpl]
       }
     )
 
-    x ++ y
+    val trusteesCompanyNavigatorBinding = Seq(
+      if (configuration.underlying.getBoolean("features.is-establisher-company-hns")) {
+        bind(classOf[Navigator]).qualifiedWith[TrusteesCompany].to(classOf[TrusteesCompanyNavigatorHnS])
+      } else {
+        bind(classOf[Navigator]).qualifiedWith[TrusteesCompany].to(classOf[TrusteesCompanyNavigator])
+      }
+    )
+
+    featureSwitchBinding ++ trusteesCompanyNavigatorBinding
   }
 }
