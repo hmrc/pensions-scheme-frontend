@@ -28,10 +28,9 @@ import models.Mode.journeyMode
 import models._
 import utils.{Toggles, UserAnswers}
 
-class TrusteesCompanyNavigator @Inject()(
-                                          val dataCacheConnector: UserAnswersCacheConnector,
+class TrusteesCompanyNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector,
                                          appConfig: FrontendAppConfig,
-                                          featureSwitchManagementService: FeatureSwitchManagementService) extends AbstractNavigator {
+                                         featureSwitchManagementService: FeatureSwitchManagementService) extends AbstractNavigator {
 
   private def exitMiniJourney(index: Index, mode: Mode, srn: Option[String], answers: UserAnswers,
                               cyaPage: (Mode, Index, Option[String]) => Option[NavigateTo] = cya): Option[NavigateTo] = {
@@ -48,11 +47,15 @@ class TrusteesCompanyNavigator @Inject()(
   private def anyMoreChanges(srn: Option[String]): Option[NavigateTo] =
     NavigateTo.dontSave(AnyMoreChangesController.onPageLoad(srn))
 
-  private def cyaAddressDetails(mode: Mode, index: Index, srn: Option[String]): Option[NavigateTo] =
-    NavigateTo.dontSave(CheckYourAnswersCompanyAddressController.onPageLoad(mode, index, srn))
+  private def cyaContactDetails(mode: Mode, index: Index, srn: Option[String]): Option[NavigateTo] =
+    NavigateTo.dontSave(CheckYourAnswersCompanyContactDetailsController.onPageLoad(mode, index, srn))
 
   private def cya(mode: Mode, index: Index, srn: Option[String]): Option[NavigateTo] =
     NavigateTo.dontSave(CheckYourAnswersController.onPageLoad(mode, index, srn))
+
+  private def cyaAddressDetails(mode: Mode, index: Index, srn: Option[String]): Option[NavigateTo] =
+    NavigateTo.dontSave(CheckYourAnswersCompanyAddressController.onPageLoad(mode, index, srn))
+
 
   //scalastyle:off cyclomatic.complexity
   protected def routes(from: NavigateFrom, mode: Mode, srn: Option[String]): Option[NavigateTo] = {
@@ -62,6 +65,12 @@ class TrusteesCompanyNavigator @Inject()(
 
       case CompanyVatId(index) =>
         NavigateTo.dontSave(CompanyPayeController.onPageLoad(mode, index, srn))
+
+      case CompanyEmailId(index) =>
+        NavigateTo.dontSave(CompanyPhoneController.onPageLoad(mode, index, srn))
+
+      case CompanyPhoneId(index) =>
+        NavigateTo.dontSave(CheckYourAnswersCompanyContactDetailsController.onPageLoad(mode, index, srn))
 
       case CompanyPayeId(index) =>
         NavigateTo.dontSave(CompanyRegistrationNumberController.onPageLoad(mode, srn, index))
@@ -119,6 +128,12 @@ class TrusteesCompanyNavigator @Inject()(
 
       case CompanyVatVariationsId(index) =>
         exitMiniJourney(index, mode, srn, from.userAnswers)
+
+      case CompanyEmailId(index) =>
+        exitMiniJourney(index, mode, srn, from.userAnswers, cyaContactDetails)
+
+      case CompanyPhoneId(index) =>
+        exitMiniJourney(index, mode, srn, from.userAnswers, cyaContactDetails)
 
       case CompanyPayeId(index) =>
         exitMiniJourney(index, mode, srn, from.userAnswers)

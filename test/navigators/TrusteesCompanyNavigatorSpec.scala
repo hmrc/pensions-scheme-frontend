@@ -19,8 +19,7 @@ package navigators
 import base.SpecBase
 import connectors.FakeUserAnswersCacheConnector
 import identifiers.Identifier
-import identifiers.register.trustees.IsTrusteeNewId
-import identifiers.register.trustees.ExistingCurrentAddressId
+import identifiers.register.trustees.{ExistingCurrentAddressId, IsTrusteeNewId}
 import identifiers.register.trustees.company._
 import models.Mode.{checkMode, journeyMode}
 import models._
@@ -29,6 +28,7 @@ import org.scalatest.prop.TableFor6
 import org.scalatest.{MustMatchers, OptionValues}
 import play.api.libs.json.Json
 import play.api.mvc.Call
+import utils.{FakeFeatureSwitchManagementService, UserAnswers}
 import utils.{FakeFeatureSwitchManagementService, Toggles, UserAnswers}
 
 class TrusteesCompanyNavigatorSpec extends SpecBase with MustMatchers with NavigatorBehaviour {
@@ -42,6 +42,10 @@ class TrusteesCompanyNavigatorSpec extends SpecBase with MustMatchers with Navig
     (CompanyDetailsId(0), newTrustee, companyVat(mode), true, Some(exitJourney(mode, newTrustee, 0, toggled, cya(mode))), true),
     (CompanyVatId(0), emptyAnswers, companyPaye(mode), true, Some(exitJourney(mode, emptyAnswers, 0, toggled, cya(mode))), true),
     (CompanyVatId(0), newTrustee, companyPaye(mode), true, Some(exitJourney(mode, newTrustee, 0, toggled, cya(mode))), true),
+    (CompanyEmailId(0), emptyAnswers, companyPhone(mode), true, Some(exitJourney(mode, emptyAnswers, 0, toggled, checkYourAnswersCompanyContactDetails(mode))), true),
+    (CompanyEmailId(0), newTrustee, companyPhone(mode), true, Some(exitJourney(mode, newTrustee, 0, toggled, checkYourAnswersCompanyContactDetails(mode))), true),
+    (CompanyPhoneId(0), emptyAnswers, checkYourAnswersCompanyContactDetails(mode), true, Some(exitJourney(mode, emptyAnswers, 0, toggled, checkYourAnswersCompanyContactDetails(mode))), true),
+    (CompanyPhoneId(0), newTrustee, checkYourAnswersCompanyContactDetails(mode), true, Some(exitJourney(mode, newTrustee, 0, toggled, checkYourAnswersCompanyContactDetails(mode))), true),
     (CompanyPayeId(0), emptyAnswers, companyRegistrationNumber(mode), true, Some(exitJourney(mode, emptyAnswers, 0, toggled, cya(mode))), true),
     (CompanyPayeId(0), newTrustee, companyRegistrationNumber(mode), true, Some(exitJourney(mode, newTrustee, 0, toggled, cya(mode))), true),
     (CompanyRegistrationNumberId(0), emptyAnswers, companyUTR(mode), true, Some(exitJourney(mode, emptyAnswers, 0, toggled, cya(mode))), true),
@@ -119,6 +123,9 @@ object TrusteesCompanyNavigatorSpec extends SpecBase with OptionValues {
   private def companyPaye(mode: Mode): Call =
     controllers.register.trustees.company.routes.CompanyPayeController.onPageLoad(mode, 0, None)
 
+  private def companyPhone(mode: Mode): Call =
+    controllers.register.trustees.company.routes.CompanyPhoneController.onPageLoad(mode, 0, None)
+
   private def companyUTR(mode: Mode): Call =
     controllers.register.trustees.company.routes.CompanyUniqueTaxReferenceController.onPageLoad(mode, 0, None)
 
@@ -148,12 +155,16 @@ object TrusteesCompanyNavigatorSpec extends SpecBase with OptionValues {
   private def companyContactDetails(mode: Mode) = controllers.register.trustees.company.routes.CompanyContactDetailsController.onPageLoad(mode, 0, None)
 
   private def cya(mode: Mode) = controllers.register.trustees.company.routes.CheckYourAnswersController.onPageLoad(mode, 0, None)
+
   private def cyaAddress(mode: Mode) = controllers.register.trustees.company.routes.CheckYourAnswersCompanyAddressController.onPageLoad(mode, 0, None)
+
+  private def checkYourAnswersCompanyContactDetails(mode: Mode) = controllers.register.trustees.company.routes.CheckYourAnswersCompanyContactDetailsController.onPageLoad(mode, 0, None)
 
   private def addTrustee(mode: Mode) = controllers.register.trustees.routes.AddTrusteeController.onPageLoad(mode, None)
 
 
   private def sessionExpired = controllers.routes.SessionExpiredController.onPageLoad()
+
   private def index = controllers.routes.IndexController.onPageLoad()
 
   private val emptyAnswers = UserAnswers(Json.obj())
