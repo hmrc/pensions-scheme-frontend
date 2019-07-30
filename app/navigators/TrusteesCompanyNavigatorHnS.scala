@@ -39,10 +39,16 @@ class TrusteesCompanyNavigatorHnS @Inject()(val dataCacheConnector: UserAnswersC
   }
 
   private def sharedRoutes(mode: Mode, ua: UserAnswers, srn: Option[String]): PartialFunction[Identifier, Call] = {
-    case HasCompanyNumberId(id) => hasCompanyNumberId(id, ua)
+    case id @ HasCompanyNumberId(i) => booleanNav(id, ua, mode, srn,
+        CompanyRegistrationNumberVariationsController.onPageLoad(_, _, i),
+        NoCompanyNumberController.onPageLoad(_, i, _)
+      )
     case NoCompanyNumberId(id) => HasCompanyUTRController.onPageLoad(mode, id, srn)
     case CompanyRegistrationNumberVariationsId(id) => HasCompanyUTRController.onPageLoad(mode, id, srn)
-    case HasCompanyUTRId(id) => hasCompanyUTRId(id, ua)
+    case id @ HasCompanyUTRId(i) => booleanNav(id, ua, mode, srn,
+        CompanyUTRController.onPageLoad(_, _, i),
+        CompanyNoUTRReasonController.onPageLoad(_, i, _)
+      )
     case CompanyNoUTRReasonId(id) => HasCompanyVATController.onPageLoad(NormalMode, id, srn)
     case CompanyUTRId(id) => HasCompanyVATController.onPageLoad(NormalMode, id, srn)
     case HasCompanyVATId(id) => hasCompanyVatId(id, ua)
@@ -52,6 +58,17 @@ class TrusteesCompanyNavigatorHnS @Inject()(val dataCacheConnector: UserAnswersC
     case _ => controllers.routes.SessionExpiredController.onPageLoad()
   }
 
+  private def booleanNav(id: TypedIdentifier[Boolean], answers: UserAnswers,
+                     mode:Mode, srn:Option[String],
+                     truePath:(Mode,Option[String]) => Call,
+                     falsePath:(Mode,Option[String]) => Call): Call =
+    callOrExpired(answers, id,
+      if (_: Boolean) {
+        truePath(mode, srn)
+      } else {
+        falsePath(mode,srn)
+      }
+    )
 
   private def hasCompanyPayeId(id: Int, answers: UserAnswers): Call =
     callOrExpired(answers, HasCompanyPAYEId(id),
@@ -71,35 +88,10 @@ class TrusteesCompanyNavigatorHnS @Inject()(val dataCacheConnector: UserAnswersC
       }
     )
 
-  private def hasCompanyNumberId(id: Int, answers: UserAnswers): Call =
-    callOrExpired(answers, HasCompanyNumberId(id),
-      if (_: Boolean) {
-        CompanyRegistrationNumberVariationsController.onPageLoad(NormalMode, None, id)
-      } else {
-        NoCompanyNumberController.onPageLoad(NormalMode, id, None)
-      }
-    )
-
-  private def hasCompanyUTRId(id: Int, answers: UserAnswers): Call =
-    callOrExpired(answers, HasCompanyUTRId(id),
-      if (_: Boolean) {
-        CompanyUTRController.onPageLoad(NormalMode, None, id)
-      } else {
-        CompanyNoUTRReasonController.onPageLoad(NormalMode, id, None)
-      }
-    )
-
   override protected def routeMap(from: NavigateFrom): Option[NavigateTo] = NavigateTo.dontSave(routes(from, NormalMode, None))
 
   override protected def editRouteMap(from: NavigateFrom): Option[NavigateTo] = ???
 
-  private def ook(id:Identifier) = {
-
-    id match {
-      case TypedIdentifier[Boolean]
-    }
-
-  }
 
   override protected def updateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] = {
     NavigateTo.dontSave(sharedRoutes(UpdateMode, from.userAnswers, srn)(from.id))
