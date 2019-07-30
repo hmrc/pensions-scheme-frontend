@@ -15,14 +15,16 @@
  */
 
 import config.{FeatureSwitchManagementService, FeatureSwitchManagementServiceProductionImpl, FeatureSwitchManagementServiceTestImpl}
+import navigators.{Navigator, TrusteesCompanyNavigator, TrusteesCompanyNavigatorHnS}
 import play.api.inject.{Binding, Module}
 import play.api.{Configuration, Environment}
+import utils.annotations.TrusteesCompany
 
 class FeatureSwitchModule extends Module {
 
   override def bindings(environment: Environment, configuration: Configuration): Seq[Binding[_]] = {
 
-    if(configuration.underlying.getBoolean("enable-dynamic-switches")){
+    val x = if (configuration.underlying.getBoolean("enable-dynamic-switches")) {
       Seq(
         bind[FeatureSwitchManagementService].to[FeatureSwitchManagementServiceTestImpl]
       )
@@ -31,5 +33,20 @@ class FeatureSwitchModule extends Module {
         bind[FeatureSwitchManagementService].to[FeatureSwitchManagementServiceProductionImpl]
       )
     }
+
+    val y = Seq(
+      if (configuration.underlying.getBoolean("features.is-establisher-company-hns")) {
+
+        bind(classOf[Navigator])
+          .qualifiedWith[TrusteesCompany]
+          .to(classOf[TrusteesCompanyNavigatorHnS])
+      } else {
+        bind(classOf[Navigator])
+          .qualifiedWith[TrusteesCompany]
+          .to(classOf[TrusteesCompanyNavigator])
+      }
+    )
+
+    x ++ y
   }
 }

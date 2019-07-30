@@ -42,33 +42,33 @@ class TrusteesCompanyNavigatorHnSSpec extends SpecBase with MustMatchers with Na
   }
 
   "For Scheme Subscription (Normal Mode)" should {
-    lazy val testForNormalMode: TableFor3[Identifier, UserAnswers, Call] =
+    def testForNormalMode(mode: Mode): TableFor3[Identifier, UserAnswers, Call] =
       Table(
         ("Id", "UserAnswers", "Next Page"),
-        row(HasCompanyNumberId(indexZero))(true, CompanyRegistrationNumberVariationsController.onPageLoad(NormalMode, None, indexZero)),
-        row(HasCompanyNumberId(indexZero))(false, NoCompanyNumberController.onPageLoad(NormalMode, indexZero, None)),
-        row(NoCompanyNumberId(indexZero))(stringValue, HasCompanyUTRController.onPageLoad(NormalMode, indexZero, None)),
-        row(CompanyRegistrationNumberVariationsId(indexZero))(refValue, HasCompanyUTRController.onPageLoad(NormalMode, indexZero, None)),
-        row(HasCompanyUTRId(indexZero))(true, CompanyUTRController.onPageLoad(NormalMode, None, indexZero)),
-        row(HasCompanyUTRId(indexZero))(false, CompanyNoUTRReasonController.onPageLoad(NormalMode, indexZero, None)),
-        row(CompanyNoUTRReasonId(indexZero))(stringValue, HasCompanyVATController.onPageLoad(NormalMode, indexZero, None)),
-        row(CompanyUTRId(indexZero))(stringValue, HasCompanyVATController.onPageLoad(NormalMode, indexZero, None)),
-        row(HasCompanyVATId(indexZero))(true, CompanyVatVariationsController.onPageLoad(NormalMode, indexZero, None)),
-        row(HasCompanyVATId(indexZero))(false, HasCompanyPAYEController.onPageLoad(NormalMode, indexZero, None)),
-        row(CompanyVatVariationsId(indexZero))(refValue, HasCompanyPAYEController.onPageLoad(NormalMode, indexZero, None)),
-        row(HasCompanyPAYEId(indexZero))(true, CompanyPayeVariationsController.onPageLoad(NormalMode, indexZero, None)),
-        row(HasCompanyPAYEId(indexZero))(false, CheckYourAnswersCompanyDetailsController.onPageLoad(NormalMode, indexZero, None)),
-        row(CompanyPayeVariationsId(indexZero))(refValue, CheckYourAnswersCompanyDetailsController.onPageLoad(NormalMode, indexZero, None))
+        row(HasCompanyNumberId(indexZero))(true, CompanyRegistrationNumberVariationsController.onPageLoad(mode, None, indexZero)),
+        row(HasCompanyNumberId(indexZero))(false, NoCompanyNumberController.onPageLoad(mode, indexZero, None)),
+        row(NoCompanyNumberId(indexZero))(stringValue, HasCompanyUTRController.onPageLoad(mode, indexZero, None)),
+        row(CompanyRegistrationNumberVariationsId(indexZero))(refValue, HasCompanyUTRController.onPageLoad(mode, indexZero, None)),
+        row(HasCompanyUTRId(indexZero))(true, CompanyUTRController.onPageLoad(mode, None, indexZero)),
+        row(HasCompanyUTRId(indexZero))(false, CompanyNoUTRReasonController.onPageLoad(mode, indexZero, None)),
+        row(CompanyNoUTRReasonId(indexZero))(stringValue, HasCompanyVATController.onPageLoad(mode, indexZero, None)),
+        row(CompanyUTRId(indexZero))(stringValue, HasCompanyVATController.onPageLoad(mode, indexZero, None)),
+        row(HasCompanyVATId(indexZero))(true, CompanyVatVariationsController.onPageLoad(mode, indexZero, None)),
+        row(HasCompanyVATId(indexZero))(false, HasCompanyPAYEController.onPageLoad(mode, indexZero, None)),
+        row(CompanyVatVariationsId(indexZero))(refValue, HasCompanyPAYEController.onPageLoad(mode, indexZero, None)),
+        row(HasCompanyPAYEId(indexZero))(true, CompanyPayeVariationsController.onPageLoad(mode, indexZero, None)),
+        row(HasCompanyPAYEId(indexZero))(false, CheckYourAnswersCompanyDetailsController.onPageLoad(mode, indexZero, None)),
+        row(CompanyPayeVariationsId(indexZero))(refValue, CheckYourAnswersCompanyDetailsController.onPageLoad(mode, indexZero, None))
       )
 
-    lazy val testForUpdateModeNew: TableFor3[Identifier, UserAnswers, Call] = testForNormalMode.map ( t =>
+    lazy val testForUpdateModeNew: TableFor3[Identifier, UserAnswers, Call] = testForNormalMode(UpdateMode).map(t =>
       (t._1, t._2.set(IsTrusteeNewId(indexZero))(true).asOpt.value, t._3)
     )
 
     val navigator: Navigator = injector.instanceOf[TrusteesCompanyNavigatorHnS]
 
-    behave like navigatorWithRoutesForMode(NormalMode)(navigator, testForNormalMode)
-//    behave like navigatorWithRoutesForMode(UpdateMode)(navigator, testForUpdateModeNew)
+    behave like navigatorWithRoutesForMode(NormalMode)(navigator, testForNormalMode(NormalMode))
+    behave like navigatorWithRoutesForMode(UpdateMode)(navigator, testForUpdateModeNew)
 
   }
 
