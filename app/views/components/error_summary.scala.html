@@ -25,7 +25,7 @@
         <ul role="list" class="error-summary-list">
             @for(error <- errors) {
                 <li>
-                    <a id="error-messages-@{error.key.replace('.', '_')}" href="#@{error.key.replace('.', '_')}">
+                    <a id="error-message-@{error.key.replace('.', '_')}" href="#@{error.key.replace('.', '_')}">
                         @messages(error.message, error.args:_*)
                     </a>
                 </li>
