@@ -31,7 +31,7 @@ class HsTaskListHelperVariations(answers: UserAnswers,
                                  featureSwitchManagementService: FeatureSwitchManagementService
                                 )(implicit messages: Messages) extends HsTaskListHelper(answers, featureSwitchManagementService) {
 
-  override protected lazy val beforeYouStartLinkText = messages("messages__schemeTaskList__scheme_info_link_text")
+  override protected lazy val beforeYouStartLinkText: String = messages("messages__schemeTaskList__scheme_info_link_text")
 
   override def declarationEnabled(userAnswers: UserAnswers): Boolean = {
     val isTrusteeOptional = userAnswers.get(HaveAnyTrusteesId).contains(false)
@@ -113,9 +113,10 @@ class HsTaskListHelperVariations(answers: UserAnswers,
   }
 
   protected[utils] def addEstablisherHeader(userAnswers: UserAnswers, mode: Mode, srn: Option[String]): Option[SchemeDetailsTaskListHeader] =
-    (userAnswers.allEstablishersAfterDelete.isEmpty, viewOnly) match {
+    (userAnswers.allEstablishersAfterDelete(isHnSEnabled).isEmpty, viewOnly) match {
       case (true, true) => Some(SchemeDetailsTaskListHeader(plainText = Some(noEstablishersText)))
-      case (true, false) => Some(SchemeDetailsTaskListHeader(link = typeOfEstablisherLink(addEstablisherLinkText, userAnswers.allEstablishers.size, srn, mode)))
+      case (true, false) => Some(SchemeDetailsTaskListHeader(link = typeOfEstablisherLink(addEstablisherLinkText,
+        userAnswers.allEstablishers(isHnSEnabled).size, srn, mode)))
       case (false, false) => Some(SchemeDetailsTaskListHeader(link = addEstablisherLink(changeEstablisherLinkText, srn, mode)))
       case (false, true) => None
     }

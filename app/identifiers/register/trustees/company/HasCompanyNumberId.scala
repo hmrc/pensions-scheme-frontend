@@ -24,9 +24,23 @@ import utils.UserAnswers
 import utils.checkyouranswers.CheckYourAnswers
 import utils.checkyouranswers.CheckYourAnswers.BooleanCYA
 import viewmodels.AnswerRow
+import identifiers.register.trustees.TrusteesId
+import play.api.libs.json.{JsPath, JsResult}
+import utils.UserAnswers
 
 case class HasCompanyNumberId(index: Int) extends TypedIdentifier[Boolean] {
   override def path: JsPath = TrusteesId(index).path \ HasCompanyNumberId.toString
+
+  override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): JsResult[UserAnswers] = {
+    value match {
+      case Some(true) =>
+        userAnswers.remove(NoCompanyNumberId(this.index))
+      case Some(false) =>
+        userAnswers.remove(CompanyRegistrationNumberVariationsId(this.index))
+      case _ =>
+        super.cleanup(value, userAnswers)
+    }
+  }
 }
 
 object HasCompanyNumberId {
@@ -55,7 +69,3 @@ object HasCompanyNumberId {
   }
 
 }
-
-
-
-

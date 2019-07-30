@@ -149,7 +149,7 @@ object DirectorDOBControllerSpec extends MockitoSugar {
         CompanyDetailsId.toString -> CompanyDetails(companyName),
         "director" -> Json.arr(
           Json.obj(
-            "directorName" -> Json.obj(
+            "directorDetails" -> Json.obj(
               "firstName" -> "first",
               "lastName" -> "last"
             ),

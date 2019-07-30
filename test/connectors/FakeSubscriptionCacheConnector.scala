@@ -20,6 +20,6 @@ import base.SpecBase
 import play.api.libs.ws.WSClient
 
 object FakeSubscriptionCacheConnector extends SpecBase {
-  def getConnector: OldSubscriptionCacheConnector =
-    new OldSubscriptionCacheConnector(frontendAppConfig, injector.instanceOf[WSClient])
+  def getConnector: SubscriptionCacheConnector =
+    new SubscriptionCacheConnector(frontendAppConfig, injector.instanceOf[WSClient])
 }

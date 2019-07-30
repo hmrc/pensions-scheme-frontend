@@ -18,14 +18,6 @@ package toggles
 
 class TogglesSpec extends FeatureToggleBehaviours {
 
-  "is-scheme-data-shift-enabled new feature toggle" should {
-    behave like featureToggle("is-scheme-data-shift-enabled", true)
-  }
-
-  "separate-ref-collection new feature toggle" should {
-    behave like featureToggle("separate-ref-collection", true)
-  }
-
   "is-establisher-company-hns new feature toggle" should {
     behave like featureToggle("is-establisher-company-hns", false)
   }

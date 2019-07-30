@@ -45,8 +45,7 @@ class CompanyRegistrationNumberController @Inject()(
                                                      allowAccess: AllowAccessActionProvider,
                                                      requireData: DataRequiredAction,
                                                      formProvider: CompanyRegistrationNumberFormProvider
-                                                   )(implicit ec: ExecutionContext) extends
-  CompanyRegistrationNumberBaseController(
+                                                   )(implicit ec: ExecutionContext) extends CompanyRegistrationNumberBaseController(
     appConfig, messagesApi, userAnswersService, navigator, authenticate, getData, allowAccess, requireData, formProvider) {
 
   override def addView(mode: Mode, index: Index, srn: Option[String])(implicit request: DataRequest[AnyContent]): Html =

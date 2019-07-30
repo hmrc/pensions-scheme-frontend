@@ -581,7 +581,7 @@ object UserAnswersServiceSpec extends SpecBase with MockitoSugar {
                                             override val appConfig: FrontendAppConfig
   ) extends UserAnswersServiceInsuranceImpl(subscriptionCacheConnector, updateSchemeCacheConnector, lockConnector, viewConnector, appConfig, new FakeFeatureSwitchManagementService(false))
 
-  protected val subscriptionConnector: UserAnswersCacheConnector = mock[OldSubscriptionCacheConnector]
+  protected val subscriptionConnector: UserAnswersCacheConnector = mock[SubscriptionCacheConnector]
   protected val updateConnector: UpdateSchemeCacheConnector = mock[UpdateSchemeCacheConnector]
   protected val lockConnector: PensionSchemeVarianceLockConnector = mock[PensionSchemeVarianceLockConnector]
   protected val viewConnector: SchemeDetailsReadOnlyCacheConnector = mock[SchemeDetailsReadOnlyCacheConnector]

@@ -16,18 +16,18 @@
 
 package identifiers.register.establishers.company.director
 
-import config.FeatureSwitchManagementService
 import identifiers._
 import identifiers.register.establishers.EstablishersId
 import models.ReferenceValue
 import play.api.i18n.Messages
-import play.api.libs.json.JsPath
+import play.api.libs.json.{JsPath, JsResult}
+import utils.UserAnswers
 import utils.checkyouranswers.{CheckYourAnswers, ReferenceValueCYA}
-import utils.{Toggles, UserAnswers}
 import viewmodels.AnswerRow
 
 case class DirectorNewNinoId(establisherIndex: Int, directorIndex: Int) extends TypedIdentifier[ReferenceValue] {
   override def path: JsPath = EstablishersId(establisherIndex).path \ "director" \ directorIndex \ DirectorNewNinoId.toString
+
 }
 
 object DirectorNewNinoId {

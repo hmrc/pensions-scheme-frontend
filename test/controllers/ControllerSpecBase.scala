@@ -184,11 +184,9 @@ trait ControllerSpecBase extends SpecBase with Enumerable.Implicits with MapForm
     Json.obj(
       EstablishersId.toString -> Json.arr(
         Json.obj(
-          CompanyDetailsId.toString ->
-            CompanyDetails("test company name"),
           "director" -> Json.arr(
             Json.obj(
-              "directorName" -> Json.obj(
+              "directorDetails" -> Json.obj(
                 "firstName" -> "first",
                 "lastName" -> "last"
               ),

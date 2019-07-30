@@ -48,8 +48,7 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
                                            userAnswersService: UserAnswersService,
                                            @TrusteesPartnership navigator: Navigator,
                                            implicit val countryOptions: CountryOptions,
-                                           allowChangeHelper: AllowChangeHelper,
-                                           fs: FeatureSwitchManagementService
+                                           allowChangeHelper: AllowChangeHelper
                                           )(implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport {
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
@@ -57,16 +56,10 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
       implicit request =>
 
         implicit val userAnswers: UserAnswers = request.userAnswers
-
-        lazy val isVatVariationsEnabled = userAnswers.get(IsTrusteeNewId(index)) match {
-          case Some(true) => false
-          case _ => fs.get(Toggles.isSeparateRefCollectionEnabled)
-        }
-
         val partnershipDetails = AnswerSection(
           Some("messages__partnership__checkYourAnswers__partnership_details"),
           PartnershipDetailsId(index).row(routes.TrusteeDetailsController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
-            (if (mode == UpdateMode && isVatVariationsEnabled) {
+            (if (mode == UpdateMode && !userAnswers.get(IsTrusteeNewId(index)).getOrElse(false)) {
               PartnershipVatVariationsId(index).row(routes.PartnershipVatVariationsController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
                 PartnershipPayeVariationsId(index).row(routes.PartnershipPayeVariationsController.onPageLoad(checkMode(mode), index, srn).url, mode)
             } else {
