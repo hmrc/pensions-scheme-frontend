@@ -17,31 +17,45 @@
 package navigators
 
 import com.google.inject.Inject
-import config.FrontendAppConfig
+import config.{FeatureSwitchManagementService, FrontendAppConfig}
 import connectors.UserAnswersCacheConnector
 import controllers.register.trustees.company.routes._
 import controllers.register.trustees.routes._
 import controllers.routes._
+import identifiers.register.trustees.IsTrusteeNewId
 import identifiers.register.trustees.company._
-import identifiers.register.trustees.{ExistingCurrentAddressId, IsTrusteeNewId}
 import models.Mode.journeyMode
 import models._
-import utils.UserAnswers
 import utils.{Toggles, UserAnswers}
 
 class TrusteesCompanyNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector,
-                                         appConfig: FrontendAppConfig) extends AbstractNavigator {
+                                         appConfig: FrontendAppConfig,
+                                         featureSwitchManagementService: FeatureSwitchManagementService) extends AbstractNavigator {
 
-  private def exitMiniJourney(index: Index, mode: Mode, srn: Option[String], answers: UserAnswers): Option[NavigateTo] =
-    if(mode == CheckMode || mode == NormalMode){
-      checkYourAnswers(index, journeyMode(mode), srn)
+  private def exitMiniJourney(index: Index, mode: Mode, srn: Option[String], answers: UserAnswers,
+                              cyaPage: (Mode, Index, Option[String]) => Option[NavigateTo] = cya): Option[NavigateTo] = {
+    val cyaToggled = if (featureSwitchManagementService.get(Toggles.isEstablisherCompanyHnSEnabled)) cyaPage else cya _
+
+    if (mode == CheckMode || mode == NormalMode) {
+      cyaToggled(journeyMode(mode), index, srn)
     } else {
-      if(answers.get(IsTrusteeNewId(index)).getOrElse(false)) checkYourAnswers(index, journeyMode(mode), srn)
+      if (answers.get(IsTrusteeNewId(index)).getOrElse(false)) cyaToggled(journeyMode(mode), index, srn)
       else anyMoreChanges(srn)
     }
+  }
 
   private def anyMoreChanges(srn: Option[String]): Option[NavigateTo] =
     NavigateTo.dontSave(AnyMoreChangesController.onPageLoad(srn))
+
+  private def cyaContactDetails(mode: Mode, index: Index, srn: Option[String]): Option[NavigateTo] =
+    NavigateTo.dontSave(CheckYourAnswersCompanyContactDetailsController.onPageLoad(mode, index, srn))
+
+  private def cya(mode: Mode, index: Index, srn: Option[String]): Option[NavigateTo] =
+    NavigateTo.dontSave(CheckYourAnswersController.onPageLoad(mode, index, srn))
+
+  private def cyaAddressDetails(mode: Mode, index: Index, srn: Option[String]): Option[NavigateTo] =
+    NavigateTo.dontSave(CheckYourAnswersCompanyAddressController.onPageLoad(mode, index, srn))
+
 
   //scalastyle:off cyclomatic.complexity
   protected def routes(from: NavigateFrom, mode: Mode, srn: Option[String]): Option[NavigateTo] = {
@@ -51,6 +65,12 @@ class TrusteesCompanyNavigator @Inject()(val dataCacheConnector: UserAnswersCach
 
       case CompanyVatId(index) =>
         NavigateTo.dontSave(CompanyPayeController.onPageLoad(mode, index, srn))
+
+      case CompanyEmailId(index) =>
+        NavigateTo.dontSave(CompanyPhoneController.onPageLoad(mode, index, srn))
+
+      case CompanyPhoneId(index) =>
+        NavigateTo.dontSave(CheckYourAnswersCompanyContactDetailsController.onPageLoad(mode, index, srn))
 
       case CompanyPayeId(index) =>
         NavigateTo.dontSave(CompanyRegistrationNumberController.onPageLoad(mode, srn, index))
@@ -80,8 +100,10 @@ class TrusteesCompanyNavigator @Inject()(val dataCacheConnector: UserAnswersCach
         NavigateTo.dontSave(CompanyPreviousAddressController.onPageLoad(mode, index, srn))
 
       case CompanyPreviousAddressId(index) =>
-        NavigateTo.dontSave(CompanyContactDetailsController.onPageLoad(mode, index, srn))
-
+        if(featureSwitchManagementService.get(Toggles.isEstablisherCompanyHnSEnabled))
+          NavigateTo.dontSave(CheckYourAnswersCompanyAddressController.onPageLoad(mode, index, srn))
+        else
+          NavigateTo.dontSave(CompanyContactDetailsController.onPageLoad(mode, index, srn))
       case CompanyContactDetailsId(index) =>
         NavigateTo.dontSave(CheckYourAnswersController.onPageLoad(mode, index, srn))
 
@@ -89,6 +111,8 @@ class TrusteesCompanyNavigator @Inject()(val dataCacheConnector: UserAnswersCach
         NavigateTo.dontSave(AddTrusteeController.onPageLoad(mode, srn))
 
       case CompanyConfirmPreviousAddressId(index) => confirmPreviousAddressRoutes(index, mode, srn)(from.userAnswers)
+
+      case HasBeenTradingCompanyId(index) => hasBeenTradingRoutes(index, from.userAnswers, mode, srn)
 
       case _ => None
     }
@@ -104,6 +128,12 @@ class TrusteesCompanyNavigator @Inject()(val dataCacheConnector: UserAnswersCach
 
       case CompanyVatVariationsId(index) =>
         exitMiniJourney(index, mode, srn, from.userAnswers)
+
+      case CompanyEmailId(index) =>
+        exitMiniJourney(index, mode, srn, from.userAnswers, cyaContactDetails)
+
+      case CompanyPhoneId(index) =>
+        exitMiniJourney(index, mode, srn, from.userAnswers, cyaContactDetails)
 
       case CompanyPayeId(index) =>
         exitMiniJourney(index, mode, srn, from.userAnswers)
@@ -129,9 +159,11 @@ class TrusteesCompanyNavigator @Inject()(val dataCacheConnector: UserAnswersCach
       case CompanyAddressId(index) =>
         val isNew = from.userAnswers.get(IsTrusteeNewId(index)).contains(true)
         if(isNew || mode == CheckMode) {
-          checkYourAnswers(index, journeyMode(mode), srn)
-        } else if (!from.userAnswers.get(IsTrusteeNewId(index)).contains(true) && mode == CheckUpdateMode) {
-          NavigateTo.dontSave(CompanyConfirmPreviousAddressController.onPageLoad(index, srn))
+          if(featureSwitchManagementService.get(Toggles.isEstablisherCompanyHnSEnabled)){
+            cyaAddressDetails(journeyMode(mode), index, srn)
+          } else {
+            checkYourAnswers(index, journeyMode(mode), srn)
+          }
         } else {
           NavigateTo.dontSave(CompanyAddressYearsController.onPageLoad(mode, index, srn))
         }
@@ -148,7 +180,7 @@ class TrusteesCompanyNavigator @Inject()(val dataCacheConnector: UserAnswersCach
         NavigateTo.dontSave(CompanyPreviousAddressController.onPageLoad(mode, index, srn))
 
       case CompanyPreviousAddressId(index) =>
-        exitMiniJourney(index, mode, srn, from.userAnswers)
+        exitMiniJourney(index, mode, srn, from.userAnswers, cyaAddressDetails)
 
       case CompanyContactDetailsId(index) =>
         exitMiniJourney(index, mode, srn, from.userAnswers)
@@ -170,12 +202,28 @@ class TrusteesCompanyNavigator @Inject()(val dataCacheConnector: UserAnswersCach
   }
 
   private def addressYearsRoutes(index: Int, answers: UserAnswers, mode: Mode, srn: Option[String]): Option[NavigateTo] = {
-    answers.get(CompanyAddressYearsId(index)) match {
-      case Some(AddressYears.UnderAYear) =>
+
+    (answers.get(CompanyAddressYearsId(index)), featureSwitchManagementService.get(Toggles.isEstablisherCompanyHnSEnabled)) match {
+      case (Some(AddressYears.UnderAYear), true) =>
+        NavigateTo.dontSave(HasBeenTradingCompanyController.onPageLoad(mode, index, srn))
+      case (Some(AddressYears.UnderAYear), false) =>
         NavigateTo.dontSave(CompanyPreviousAddressPostcodeLookupController.onPageLoad(mode, index, srn))
-      case Some(AddressYears.OverAYear) =>
+      case (Some(AddressYears.OverAYear), true) =>
+        NavigateTo.dontSave(CheckYourAnswersCompanyAddressController.onPageLoad(mode, index, srn))
+      case (Some(AddressYears.OverAYear) , false) =>
         NavigateTo.dontSave(CompanyContactDetailsController.onPageLoad(mode, index, srn))
-      case None =>
+      case _ =>
+        NavigateTo.dontSave(SessionExpiredController.onPageLoad())
+    }
+  }
+
+  private def hasBeenTradingRoutes(index: Int, answers: UserAnswers, mode: Mode, srn: Option[String]): Option[NavigateTo] = {
+    answers.get(HasBeenTradingCompanyId(index)) match {
+      case Some(true) =>
+        NavigateTo.dontSave(CompanyPreviousAddressPostcodeLookupController.onPageLoad(mode, index, srn))
+      case Some(false) =>
+        cyaAddressDetails(mode, index, srn)
+      case _ =>
         NavigateTo.dontSave(SessionExpiredController.onPageLoad())
     }
   }
@@ -183,14 +231,18 @@ class TrusteesCompanyNavigator @Inject()(val dataCacheConnector: UserAnswersCach
   private def editAddressYearsRoutes(index: Int, answers: UserAnswers, mode: Mode, srn: Option[String]): Option[NavigateTo] = {
     (
       answers.get(CompanyAddressYearsId(index)),
-      mode,
-      answers.get(ExistingCurrentAddressId(index))
+      featureSwitchManagementService.get(Toggles.isEstablisherCompanyHnSEnabled),
+      answers.get(IsTrusteeNewId(index)).getOrElse(false)
     ) match {
-      case (Some(AddressYears.UnderAYear), CheckUpdateMode, Some(_)) =>
+      case (Some(AddressYears.UnderAYear), _, false) =>
         NavigateTo.dontSave(CompanyConfirmPreviousAddressController.onPageLoad(index, srn))
-      case (Some(AddressYears.UnderAYear), _, _) =>
-        NavigateTo.dontSave(CompanyPreviousAddressPostcodeLookupController.onPageLoad(mode, index, srn))
-      case (Some(AddressYears.OverAYear), _, _) =>
+      case (Some(AddressYears.UnderAYear), true, _) =>
+        NavigateTo.dontSave(HasBeenTradingCompanyController.onPageLoad(mode, index, srn))
+      case (Some(AddressYears.UnderAYear), false, _) =>
+        NavigateTo.dontSave(CompanyPreviousAddressPostcodeLookupController.onPageLoad(mode,index, srn))
+      case (Some(AddressYears.OverAYear), true, _) =>
+        exitMiniJourney(index, mode, srn, answers, cyaAddressDetails)
+      case (Some(AddressYears.OverAYear), false, _) =>
         exitMiniJourney(index, mode, srn, answers)
       case _ =>
         NavigateTo.dontSave(SessionExpiredController.onPageLoad())

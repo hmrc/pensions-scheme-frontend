@@ -18,6 +18,5 @@ package utils
 
 object Toggles {
 
-  val isSchemeDataShiftEnabled: String = "is-scheme-data-shift-enabled"
   val isEstablisherCompanyHnSEnabled: String = "is-establisher-company-hns"
 }

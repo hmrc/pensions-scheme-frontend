@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers.register.establishers.company
+package controllers.register.trustees.company
 
 import controllers.ControllerSpecBase
 import controllers.actions._
@@ -23,7 +23,7 @@ import org.scalatest.BeforeAndAfterEach
 import org.scalatest.mockito.MockitoSugar
 import play.api.mvc.Call
 import play.api.test.Helpers._
-import views.html.register.establishers.company.whatYouWillNeedCompanyAddress
+import views.html.register.trustees.company.whatYouWillNeedCompanyAddress
 
 class WhatYouWillNeedCompanyAddressControllerSpec extends ControllerSpecBase with MockitoSugar with BeforeAndAfterEach {
 
@@ -36,7 +36,7 @@ class WhatYouWillNeedCompanyAddressControllerSpec extends ControllerSpecBase wit
       new DataRequiredActionImpl
     )
 
-  val href = controllers.register.establishers.company.routes.CompanyPostCodeLookupController.onSubmit(NormalMode, None, index=Index(0))
+  lazy val href = controllers.register.trustees.company.routes.CompanyPostCodeLookupController.onSubmit(NormalMode, index=Index(0), None)
 
   def viewAsString(): String = whatYouWillNeedCompanyAddress(frontendAppConfig, None, href, None)(fakeRequest, messages).toString
 
@@ -44,7 +44,7 @@ class WhatYouWillNeedCompanyAddressControllerSpec extends ControllerSpecBase wit
 
     "on a GET" must {
       "return OK and the correct view" in {
-        val result = controller().onPageLoad(NormalMode, None, Index(0))(fakeRequest)
+        val result = controller().onPageLoad(NormalMode, Index(0), None)(fakeRequest)
 
         status(result) mustBe OK
         contentAsString(result) mustBe viewAsString()

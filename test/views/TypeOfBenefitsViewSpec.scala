@@ -27,16 +27,17 @@ class TypeOfBenefitsViewSpec extends ViewBehaviours {
   val messageKeyPrefix = "type_of_benefits"
 
   val form = new TypeOfBenefitsFormProvider()()
+  val schemeName = "schemename"
 
   private def createView() = () =>
-    typeOfBenefits(frontendAppConfig, form, NormalMode, None)(fakeRequest, messages)
+    typeOfBenefits(frontendAppConfig, form, NormalMode, Some(schemeName))(fakeRequest, messages)
 
   private def createViewUsingForm = (form: Form[_]) =>
     typeOfBenefits(frontendAppConfig, form, NormalMode, None)(fakeRequest, messages)
 
   "Type of benefits view" when {
     "rendered" must {
-      behave like normalPage(createView(), messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__h1"))
+      behave like normalPage(createView(), messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__h1",schemeName))
 
       behave like pageWithReturnLink(createView(), getReturnLink)
 
