@@ -14,11 +14,14 @@
  * limitations under the License.
  */
 
+import com.typesafe.config.ConfigException
 import config.{FeatureSwitchManagementService, FeatureSwitchManagementServiceProductionImpl, FeatureSwitchManagementServiceTestImpl}
 import navigators.{Navigator, TrusteesCompanyNavigator, TrusteesCompanyNavigatorHnS}
 import play.api.inject.{Binding, Module}
 import play.api.{Configuration, Environment}
 import utils.annotations.TrusteesCompany
+
+import scala.util.{Failure, Success, Try}
 
 class FeatureSwitchModule extends Module {
 
@@ -32,8 +35,14 @@ class FeatureSwitchModule extends Module {
       }
     )
 
+    val config = Try(configuration.underlying.getBoolean("features.is-establisher-company-hns")) match {
+      case Success(value) => value
+      case Failure(_: ConfigException) => false
+      case Failure(ex) => throw ex
+    }
+
     val trusteesCompanyNavigatorBinding = Seq(
-      if (configuration.underlying.getBoolean("features.is-establisher-company-hns")) {
+      if (config) {
         bind(classOf[Navigator]).qualifiedWith[TrusteesCompany].to(classOf[TrusteesCompanyNavigatorHnS])
       } else {
         bind(classOf[Navigator]).qualifiedWith[TrusteesCompany].to(classOf[TrusteesCompanyNavigator])

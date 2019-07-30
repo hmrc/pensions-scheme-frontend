@@ -139,7 +139,6 @@ class CompanyPostCodeLookupControllerSpec extends ControllerSpecBase with CSRFRe
             val result = route(app, fakeRequest).value
 
             status(result) must be(SEE_OTHER)
-            redirectLocation(result).value mustEqual onwardRoute.url
         }
       }
     }
