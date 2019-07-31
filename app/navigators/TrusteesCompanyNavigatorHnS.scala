@@ -23,7 +23,7 @@ import controllers.routes.AnyMoreChangesController
 import identifiers.register.trustees.IsTrusteeNewId
 import identifiers.register.trustees.company._
 import identifiers.{Identifier, TypedIdentifier}
-import models.{CheckMode, CheckUpdateMode, Mode, NormalMode, UpdateMode}
+import models._
 import play.api.libs.json.Reads
 import play.api.mvc.Call
 import utils.UserAnswers
@@ -53,7 +53,7 @@ class TrusteesCompanyNavigatorHnS @Inject()(val dataCacheConnector: UserAnswersC
 
   private def cyaPage(index: Int): (Mode, Option[String]) => Call = CheckYourAnswersCompanyDetailsController.onPageLoad(_: Mode, index, _: Option[String])
 
-  private def anyMoreChangesPage(): Option[String] => Call = AnyMoreChangesController.onPageLoad(_: Option[String])
+  private def anyMoreChangesPage(srn: Option[String]): Call = AnyMoreChangesController.onPageLoad(srn)
 
   private def normalAndUpdateModeRoutes(mode: Mode, ua: UserAnswers, srn: Option[String]): PartialFunction[Identifier, Call] = {
     case id@HasCompanyNumberId(index) => booleanNav(id, ua, mode, srn, companyNoPage(index), noCompanyNoPage(index))
@@ -83,11 +83,23 @@ class TrusteesCompanyNavigatorHnS @Inject()(val dataCacheConnector: UserAnswersC
     case _ => controllers.routes.SessionExpiredController.onPageLoad()
   }
 
+  private def isNewTrustee(ua: UserAnswers, index: Int): Boolean = ua.get(IsTrusteeNewId(index)).getOrElse(false)
+
   private def checkUpdateModeRoutes(mode: Mode, ua: UserAnswers, srn: Option[String]): PartialFunction[Identifier, Call] = {
-    case CompanyRegistrationNumberVariationsId(index) => CheckYourAnswersCompanyDetailsController.onPageLoad(mode, index, None)
-    case CompanyUTRId(index) => CheckYourAnswersCompanyDetailsController.onPageLoad(mode, index, None)
-    case CompanyVatVariationsId(index) => CheckYourAnswersCompanyDetailsController.onPageLoad(mode, index, None)
-    case CompanyPayeVariationsId(index) => CheckYourAnswersCompanyDetailsController.onPageLoad(mode, index, None)
+    case id@HasCompanyNumberId(index) => booleanNav(id, ua, mode, srn, companyNoPage(index), noCompanyNoPage(index))
+    case NoCompanyNumberId(index) => CheckYourAnswersCompanyDetailsController.onPageLoad(mode, index, None)
+    case CompanyRegistrationNumberVariationsId(index) if isNewTrustee(ua, index) => CheckYourAnswersCompanyDetailsController.onPageLoad(mode, index, None)
+    case id@HasCompanyUTRId(index) => booleanNav(id, ua, mode, srn, utrPage(index), noUtrPage(index))
+    case CompanyNoUTRReasonId(index) => CheckYourAnswersCompanyDetailsController.onPageLoad(mode, index, None)
+    case CompanyUTRId(index) if isNewTrustee(ua, index) => CheckYourAnswersCompanyDetailsController.onPageLoad(mode, index, None)
+    case id@HasCompanyVATId(index) => booleanNav(id, ua, mode, srn, vatPage(index), cyaPage(index))
+    case CompanyVatVariationsId(index) if isNewTrustee(ua, index) => CheckYourAnswersCompanyDetailsController.onPageLoad(mode, index, None)
+    case id@HasCompanyPAYEId(index) => booleanNav(id, ua, mode, srn, payePage(index), cyaPage(index))
+    case CompanyPayeVariationsId(index) if isNewTrustee(ua, index) => CheckYourAnswersCompanyDetailsController.onPageLoad(mode, index, None)
+    case CompanyRegistrationNumberVariationsId(index) => anyMoreChangesPage(srn)
+    case CompanyUTRId(index) => anyMoreChangesPage(srn)
+    case CompanyVatVariationsId(index) => anyMoreChangesPage(srn)
+    case CompanyPayeVariationsId(index) => anyMoreChangesPage(srn)
     case _ => controllers.routes.SessionExpiredController.onPageLoad()
   }
 

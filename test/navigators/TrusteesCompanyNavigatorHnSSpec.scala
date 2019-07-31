@@ -18,6 +18,7 @@ package navigators
 
 import base.SpecBase
 import controllers.register.trustees.company.routes._
+import controllers.routes.AnyMoreChangesController
 import identifiers.register.trustees.IsTrusteeNewId
 import identifiers.register.trustees.company._
 import identifiers.{Identifier, TypedIdentifier}
@@ -41,6 +42,12 @@ class TrusteesCompanyNavigatorHnSSpec extends SpecBase with MustMatchers with Na
     Tuple3(id, userAnswers, call)
   }
 
+  private def setNewTrusteeIdentifier(table: TableFor3[Identifier, UserAnswers, Call]): TableFor3[Identifier, UserAnswers, Call] = table.map(tuple =>
+    (tuple._1, tuple._2.set(IsTrusteeNewId(indexZero))(true).asOpt.value, tuple._3)
+  )
+
+  private def anyMoreChangesPage: Call = AnyMoreChangesController.onPageLoad(None)
+
   "For Scheme Subscription (Normal Mode)" should {
     def routes(mode: Mode): TableFor3[Identifier, UserAnswers, Call] =
       Table(
@@ -60,10 +67,6 @@ class TrusteesCompanyNavigatorHnSSpec extends SpecBase with MustMatchers with Na
         row(HasCompanyPAYEId(indexZero))(false, CheckYourAnswersCompanyDetailsController.onPageLoad(mode, indexZero, None)),
         row(CompanyPayeVariationsId(indexZero))(refValue, CheckYourAnswersCompanyDetailsController.onPageLoad(mode, indexZero, None))
       )
-
-    def routesNewTrustee(table: TableFor3[Identifier, UserAnswers, Call]): TableFor3[Identifier, UserAnswers, Call] = table.map(tuple =>
-      (tuple._1, tuple._2.set(IsTrusteeNewId(indexZero))(true).asOpt.value, tuple._3)
-    )
 
     def routesCheckMode(mode: Mode): TableFor3[Identifier, UserAnswers, Call] =
       Table(
@@ -87,21 +90,22 @@ class TrusteesCompanyNavigatorHnSSpec extends SpecBase with MustMatchers with Na
     def routesCheckUpdateMode(mode: Mode): TableFor3[Identifier, UserAnswers, Call] = {
       Table(
         ("Id", "UserAnswers", "Next Page"),
-        row(CompanyRegistrationNumberVariationsId(indexZero))(refValue, CheckYourAnswersCompanyDetailsController.onPageLoad(mode, indexZero, None)),
-        row(CompanyUTRId(indexZero))(stringValue, CheckYourAnswersCompanyDetailsController.onPageLoad(mode, indexZero, None)),
-        row(CompanyVatVariationsId(indexZero))(refValue, CheckYourAnswersCompanyDetailsController.onPageLoad(mode, indexZero, None)),
-        row(CompanyPayeVariationsId(indexZero))(refValue, CheckYourAnswersCompanyDetailsController.onPageLoad(mode, indexZero, None))
+        row(CompanyRegistrationNumberVariationsId(indexZero))(refValue, anyMoreChangesPage),
+        row(CompanyUTRId(indexZero))(stringValue, anyMoreChangesPage),
+        row(CompanyVatVariationsId(indexZero))(refValue, anyMoreChangesPage),
+        row(CompanyPayeVariationsId(indexZero))(refValue, anyMoreChangesPage)
       )
     }
 
     val navigator: Navigator = injector.instanceOf[TrusteesCompanyNavigatorHnS]
 
     behave like navigatorWithRoutesForMode(NormalMode)(navigator, routes(NormalMode))
-    behave like navigatorWithRoutesForMode(UpdateMode)(navigator, routesNewTrustee(routes(UpdateMode)))
     behave like navigatorWithRoutesForMode(CheckMode)(navigator, routesCheckMode(CheckMode))
-    behave like navigatorWithRoutesForMode(CheckUpdateMode)(navigator, routesCheckUpdateMode(CheckUpdateMode))
-    behave like navigatorWithRoutesForMode(CheckUpdateMode)(navigator, routesNewTrustee(routesCheckUpdateMode(CheckUpdateMode)))
 
+    behave like navigatorWithRoutesForMode(UpdateMode)(navigator, routes(UpdateMode))
+
+    behave like navigatorWithRoutesForMode(CheckUpdateMode)(navigator, routesCheckUpdateMode(CheckUpdateMode))
+    behave like navigatorWithRoutesForMode(CheckUpdateMode)(navigator, setNewTrusteeIdentifier(routesCheckMode(CheckUpdateMode)))
   }
 
   def navigatorWithRoutesForMode(mode: Mode)(navigator: Navigator,
