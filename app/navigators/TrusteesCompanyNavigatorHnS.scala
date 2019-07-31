@@ -19,20 +19,19 @@ package navigators
 import com.google.inject.Inject
 import connectors.UserAnswersCacheConnector
 import controllers.register.trustees.company.routes._
+import controllers.routes.AnyMoreChangesController
+import identifiers.register.trustees.IsTrusteeNewId
 import identifiers.register.trustees.company._
 import identifiers.{Identifier, TypedIdentifier}
-import models.{CheckMode, Mode, NormalMode, UpdateMode}
+import models.{CheckMode, CheckUpdateMode, Mode, NormalMode, UpdateMode}
 import play.api.libs.json.Reads
 import play.api.mvc.Call
 import utils.UserAnswers
 
 class TrusteesCompanyNavigatorHnS @Inject()(val dataCacheConnector: UserAnswersCacheConnector) extends AbstractNavigator {
 
-  protected def callOrExpired[A](answers: UserAnswers,
-                                 id: => TypedIdentifier[A],
-                                 destination: A => Call)(implicit reads: Reads[A]): Call = {
+  protected def callOrExpired[A](answers: UserAnswers, id: => TypedIdentifier[A], destination: A => Call)(implicit reads: Reads[A]): Call =
     answers.get(id).fold(controllers.routes.SessionExpiredController.onPageLoad())(destination(_))
-  }
 
   protected def routes(from: NavigateFrom, mode: Mode, srn: Option[String]): Call = {
     normalAndUpdateModeRoutes(mode, from.userAnswers, srn)(from.id)
@@ -54,6 +53,7 @@ class TrusteesCompanyNavigatorHnS @Inject()(val dataCacheConnector: UserAnswersC
 
   private def cyaPage(index: Int): (Mode, Option[String]) => Call = CheckYourAnswersCompanyDetailsController.onPageLoad(_: Mode, index, _: Option[String])
 
+  private def anyMoreChangesPage(): Option[String] => Call = AnyMoreChangesController.onPageLoad(_: Option[String])
 
   private def normalAndUpdateModeRoutes(mode: Mode, ua: UserAnswers, srn: Option[String]): PartialFunction[Identifier, Call] = {
     case id@HasCompanyNumberId(index) => booleanNav(id, ua, mode, srn, companyNoPage(index), noCompanyNoPage(index))
@@ -76,6 +76,18 @@ class TrusteesCompanyNavigatorHnS @Inject()(val dataCacheConnector: UserAnswersC
     case id@HasCompanyUTRId(index) => booleanNav(id, ua, mode, srn, utrPage(index), noUtrPage(index))
     case CompanyNoUTRReasonId(index) => CheckYourAnswersCompanyDetailsController.onPageLoad(mode, index, None)
     case CompanyUTRId(index) => CheckYourAnswersCompanyDetailsController.onPageLoad(mode, index, None)
+    case id@HasCompanyVATId(index) => booleanNav(id, ua, mode, srn, vatPage(index), cyaPage(index))
+    case CompanyVatVariationsId(index) => CheckYourAnswersCompanyDetailsController.onPageLoad(mode, index, None)
+    case id@HasCompanyPAYEId(index) => booleanNav(id, ua, mode, srn, payePage(index), cyaPage(index))
+    case CompanyPayeVariationsId(index) => CheckYourAnswersCompanyDetailsController.onPageLoad(mode, index, None)
+    case _ => controllers.routes.SessionExpiredController.onPageLoad()
+  }
+
+  private def checkUpdateModeRoutes(mode: Mode, ua: UserAnswers, srn: Option[String]): PartialFunction[Identifier, Call] = {
+    case CompanyRegistrationNumberVariationsId(index) => CheckYourAnswersCompanyDetailsController.onPageLoad(mode, index, None)
+    case CompanyUTRId(index) => CheckYourAnswersCompanyDetailsController.onPageLoad(mode, index, None)
+    case CompanyVatVariationsId(index) => CheckYourAnswersCompanyDetailsController.onPageLoad(mode, index, None)
+    case CompanyPayeVariationsId(index) => CheckYourAnswersCompanyDetailsController.onPageLoad(mode, index, None)
     case _ => controllers.routes.SessionExpiredController.onPageLoad()
   }
 
@@ -93,19 +105,15 @@ class TrusteesCompanyNavigatorHnS @Inject()(val dataCacheConnector: UserAnswersC
       }
     )
 
-  override protected def routeMap(from: NavigateFrom): Option[NavigateTo] = {
+  override protected def routeMap(from: NavigateFrom): Option[NavigateTo] =
     NavigateTo.dontSave(routes(from, NormalMode, None))
-  }
 
-  override protected def editRouteMap(from: NavigateFrom): Option[NavigateTo] = {
+  override protected def editRouteMap(from: NavigateFrom): Option[NavigateTo] =
     NavigateTo.dontSave(checkModeRoutes(CheckMode, from.userAnswers, None)(from.id))
-  }
 
-  override protected def updateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] = {
-    NavigateTo.dontSave(
-      normalAndUpdateModeRoutes(UpdateMode, from.userAnswers, srn)(from.id)
-    )
-  }
+  override protected def updateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] =
+    NavigateTo.dontSave(normalAndUpdateModeRoutes(UpdateMode, from.userAnswers, srn)(from.id))
 
-  override protected def checkUpdateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] = ???
+  override protected def checkUpdateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] =
+    NavigateTo.dontSave(checkUpdateModeRoutes(CheckUpdateMode, from.userAnswers, srn)(from.id))
 }
