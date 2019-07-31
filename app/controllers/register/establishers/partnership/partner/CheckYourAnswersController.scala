@@ -46,8 +46,7 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
                                            userAnswersService: UserAnswersService,
                                            @EstablishersPartner navigator: Navigator,
                                            implicit val countryOptions: CountryOptions,
-                                           allowChangeHelper: AllowChangeHelper,
-                                           fs: FeatureSwitchManagementService
+                                           allowChangeHelper: AllowChangeHelper
                                           )(implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport {
 
   def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
@@ -56,10 +55,7 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
 
       implicit val userAnswers = request.userAnswers
 
-      lazy val displayNewNino = userAnswers.get(IsNewPartnerId(establisherIndex, partnerIndex)) match {
-        case Some(true) => false
-        case _ => fs.get(Toggles.isSeparateRefCollectionEnabled)
-      }
+      lazy val displayNewNino = !userAnswers.get(IsNewPartnerId(establisherIndex, partnerIndex)).getOrElse(false)
 
       val partnerDetails = AnswerSection(
         Some("messages__partner__cya__details_heading"),

@@ -27,12 +27,13 @@ import views.html.benefitsSecuredByInsurance
 class BenefitsSecuredByInsuranceViewSpec extends YesNoViewBehaviours {
 
   val messageKeyPrefix = "benefits_secured_by_insurance"
+  val schemeName = "schemename"
 
   val form = new BenefitsSecuredByInsuranceFormProvider()()
   def postCall = controllers.routes.BenefitsSecuredByInsuranceController.onSubmit(NormalMode, None)
 
   def createView(): () => HtmlFormat.Appendable = () =>
-    benefitsSecuredByInsurance(frontendAppConfig, form, NormalMode, None, postCall, None)(fakeRequest, messages)
+    benefitsSecuredByInsurance(frontendAppConfig, form, NormalMode, Some(schemeName), postCall, None)(fakeRequest, messages)
 
   def createUpdateView(): () => HtmlFormat.Appendable = () =>
     benefitsSecuredByInsurance(frontendAppConfig, form, UpdateMode, None, postCall, Some("srn"))(fakeRequest, messages)
@@ -43,7 +44,7 @@ class BenefitsSecuredByInsuranceViewSpec extends YesNoViewBehaviours {
 
   "BenefitsSecuredByInsurance view " must {
 
-    behave like normalPage(createView(), messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__h1"))
+    behave like normalPage(createView(), messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__h1",schemeName))
 
     behave like yesNoPage(createView = createViewUsingForm, messageKeyPrefix = messageKeyPrefix,
       expectedFormAction = routes.BenefitsSecuredByInsuranceController.onSubmit(NormalMode, None).url)

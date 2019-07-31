@@ -20,6 +20,7 @@ package utils.hstasklisthelper
 import controllers.register.establishers.company.director.{routes => establisherCompanyDirectorRoutes}
 import controllers.register.establishers.company.{routes => establisherCompanyRoutes}
 import controllers.register.trustees.company.{routes => trusteeCompanyRoutes}
+import identifiers.register.establishers.company.CompanyVatId
 import identifiers.register.establishers.{IsEstablisherNewId, company => establisherCompany}
 import identifiers.register.trustees.{IsTrusteeNewId, company => trusteeCompany}
 import models._
@@ -53,7 +54,7 @@ trait HsTaskListHelperUtils extends Enumerable.Implicits {
                   spokeName: Spoke,
                   mode: Mode, srn: Option[String], name: String, index: Int, isNew: Boolean): EntitySpoke = {
 
-    val isChangeLink = getCompleteFlag(answers, index, spokeName)
+    val isChangeLink = getCompleteFlag(answers, index, spokeName, mode)
     val isComplete: Option[Boolean] = if (mode == NormalMode) isChangeLink else None
 
     (isChangeLink, isNew) match {
@@ -76,13 +77,24 @@ trait HsTaskListHelperUtils extends Enumerable.Implicits {
       EntitySpoke(Link(getChangeLinkText(spokeName)(name), getChangeLink(spokeName)(mode, srn, index).url), isComplete)
   }
 
-  private def getCompleteFlag(answers: UserAnswers, index: Int, spokeName: Spoke): Option[Boolean] = spokeName match {
-    case EstablisherCompanyDetails => answers.get(establisherCompany.IsDetailsCompleteId(index))
-    case EstablisherCompanyAddress => answers.get(establisherCompany.IsAddressCompleteId(index))
-    case EstablisherCompanyContactDetails => answers.get(establisherCompany.IsContactDetailsCompleteId(index))
+  private def getCompleteFlag(answers: UserAnswers, index: Int, spokeName: Spoke, mode: Mode): Option[Boolean] = spokeName match {
+    case EstablisherCompanyDetails =>
+      //TODO: this condition is to handle the partial data, hence can be removed after
+      // 28 days of enabling the toggle is-establisher-company-hns
+      answers.get(CompanyVatId(index)) match {
+        case Some(_) => Some(false)
+        case _ => answers.get(establisherCompany.IsDetailsCompleteId(index))
+      }
+
+    case EstablisherCompanyAddress =>
+      answers.isEstablisherCompanyAddressComplete(index)
+
+    case EstablisherCompanyContactDetails =>
+      answers.isEstablisherCompanyContactDetailsComplete(index)
     case TrusteeCompanyDetails => answers.get(trusteeCompany.IsDetailsCompleteId(index))
     case TrusteeCompanyAddress => answers.get(trusteeCompany.IsAddressCompleteId(index))
     case TrusteeCompanyContactDetails => answers.get(trusteeCompany.IsContactDetailsCompleteId(index))
+
     case _ => None
   }
 
