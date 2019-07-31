@@ -24,32 +24,33 @@ import identifiers.register.trustees.IsTrusteeNewId
 import identifiers.register.trustees.company._
 import identifiers.{Identifier, TypedIdentifier}
 import models._
+import models.Mode._
 import play.api.mvc.Call
 import utils.UserAnswers
 
 class TrusteesCompanyNavigatorHnS @Inject()(val dataCacheConnector: UserAnswersCacheConnector) extends AbstractNavigator {
 
-  private def companyNoPage(mode:Mode, index: Int, srn:Option[String]): Call = CompanyRegistrationNumberVariationsController.onPageLoad(mode, srn, index)
+  private def companyNoPage(mode: Mode, index: Int, srn: Option[String]): Call = CompanyRegistrationNumberVariationsController.onPageLoad(mode, srn, index)
 
-  private def noCompanyNoPage(mode:Mode, index: Int, srn:Option[String]): Call = NoCompanyNumberController.onPageLoad(mode, index,srn)
+  private def noCompanyNoPage(mode: Mode, index: Int, srn: Option[String]): Call = NoCompanyNumberController.onPageLoad(mode, index, srn)
 
-  private def utrPage(mode:Mode, index: Int, srn:Option[String]): Call = CompanyUTRController.onPageLoad(mode, srn, index)
+  private def utrPage(mode: Mode, index: Int, srn: Option[String]): Call = CompanyUTRController.onPageLoad(mode, srn, index)
 
-  private def noUtrPage(mode:Mode, index: Int, srn:Option[String]): Call = CompanyNoUTRReasonController.onPageLoad(mode, index,srn)
+  private def noUtrPage(mode: Mode, index: Int, srn: Option[String]): Call = CompanyNoUTRReasonController.onPageLoad(mode, index, srn)
 
-  private def vatPage(mode:Mode, index: Int, srn:Option[String]): Call = CompanyVatVariationsController.onPageLoad(mode, index,srn)
+  private def vatPage(mode: Mode, index: Int, srn: Option[String]): Call = CompanyVatVariationsController.onPageLoad(mode, index, srn)
 
-  private def noVatPage(mode:Mode, index: Int, srn:Option[String]): Call = HasCompanyPAYEController.onPageLoad(mode, index,srn)
+  private def noVatPage(mode: Mode, index: Int, srn: Option[String]): Call = HasCompanyPAYEController.onPageLoad(mode, index, srn)
 
-  private def payePage(mode:Mode, index: Int, srn:Option[String]): Call = CompanyPayeVariationsController.onPageLoad(mode, index,srn)
+  private def payePage(mode: Mode, index: Int, srn: Option[String]): Call = CompanyPayeVariationsController.onPageLoad(mode, index, srn)
 
-  private def cyaPage(mode:Mode, index: Int, srn:Option[String]): Call = CheckYourAnswersCompanyDetailsController.onPageLoad(mode, index,srn)
+  private def cyaPage(mode: Mode, index: Int, srn: Option[String]): Call = CheckYourAnswersCompanyDetailsController.onPageLoad(mode, index, srn)
 
-  private def hasCompanyUtrPage(mode:Mode, index: Int, srn:Option[String]):Call = HasCompanyUTRController.onPageLoad(mode, index, srn)
+  private def hasCompanyUtrPage(mode: Mode, index: Int, srn: Option[String]): Call = HasCompanyUTRController.onPageLoad(mode, index, srn)
 
-  private def hasCompanyVatPage(mode:Mode, index: Int, srn:Option[String]):Call = HasCompanyVATController.onPageLoad(mode, index, srn)
+  private def hasCompanyVatPage(mode: Mode, index: Int, srn: Option[String]): Call = HasCompanyVATController.onPageLoad(mode, index, srn)
 
-  private def hasCompanyPayePage(mode:Mode, index: Int, srn:Option[String]):Call = HasCompanyPAYEController.onPageLoad(mode, index, srn)
+  private def hasCompanyPayePage(mode: Mode, index: Int, srn: Option[String]): Call = HasCompanyPAYEController.onPageLoad(mode, index, srn)
 
   private def anyMoreChangesPage(srn: Option[String]): Call = AnyMoreChangesController.onPageLoad(srn)
 
@@ -71,14 +72,14 @@ class TrusteesCompanyNavigatorHnS @Inject()(val dataCacheConnector: UserAnswersC
   private def checkModeRoutes(mode: Mode, ua: UserAnswers, srn: Option[String]): PartialFunction[Identifier, Call] = {
     case id@HasCompanyNumberId(index) => booleanNav(id, ua, mode, index, srn, companyNoPage, noCompanyNoPage)
     case NoCompanyNumberId(index) => cyaPage(mode, index, srn)
-    case CompanyRegistrationNumberVariationsId(index) => cyaPage(mode, index, srn)
+    case CompanyRegistrationNumberVariationsId(index) => cyaPage(journeyMode(mode), index, srn)
     case id@HasCompanyUTRId(index) => booleanNav(id, ua, mode, index, srn, utrPage, noUtrPage)
-    case CompanyNoUTRReasonId(index) => cyaPage(mode, index, srn)
-    case CompanyUTRId(index) => cyaPage(mode, index, srn)
-    case id@HasCompanyVATId(index) => booleanNav(id, ua, mode, index, srn, vatPage, cyaPage)
-    case CompanyVatVariationsId(index) => cyaPage(mode, index, srn)
-    case id@HasCompanyPAYEId(index) => booleanNav(id, ua, mode, index, srn, payePage, cyaPage)
-    case CompanyPayeVariationsId(index) => cyaPage(mode, index, srn)
+    case CompanyNoUTRReasonId(index) => cyaPage(journeyMode(mode), index, srn)
+    case CompanyUTRId(index) => cyaPage(journeyMode(mode), index, srn)
+    case id@HasCompanyVATId(index) => booleanNav(id, ua, journeyMode(mode), index, srn, vatPage, cyaPage)
+    case CompanyVatVariationsId(index) => cyaPage(journeyMode(mode), index, srn)
+    case id@HasCompanyPAYEId(index) => booleanNav(id, ua, journeyMode(mode), index, srn, payePage, cyaPage)
+    case CompanyPayeVariationsId(index) => cyaPage(journeyMode(mode), index, srn)
   }
 
   private def isNewTrustee(ua: UserAnswers, index: Int): Boolean = ua.get(IsTrusteeNewId(index)).getOrElse(false)
@@ -103,7 +104,7 @@ class TrusteesCompanyNavigatorHnS @Inject()(val dataCacheConnector: UserAnswersC
   private def booleanNav(id: TypedIdentifier[Boolean],
                          answers: UserAnswers,
                          mode: Mode,
-                         index:Index,
+                         index: Index,
                          srn: Option[String],
                          truePath: (Mode, Int, Option[String]) => Call,
                          falsePath: (Mode, Int, Option[String]) => Call): Call =
