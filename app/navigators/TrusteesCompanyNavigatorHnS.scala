@@ -37,65 +37,74 @@ class TrusteesCompanyNavigatorHnS @Inject()(val dataCacheConnector: UserAnswersC
     normalAndUpdateModeRoutes(mode, from.userAnswers, srn)(from.id)
   }
 
-  private def companyNoPage(index: Int): (Mode, Option[String]) => Call = CompanyRegistrationNumberVariationsController.onPageLoad(_: Mode, _: Option[String], index)
+  private def companyNoPage(mode:Mode, index: Int, srn:Option[String]): Call = CompanyRegistrationNumberVariationsController.onPageLoad(mode, srn, index)
 
-  private def noCompanyNoPage(index: Int): (Mode, Option[String]) => Call = NoCompanyNumberController.onPageLoad(_: Mode, index, _: Option[String])
+  private def noCompanyNoPage(mode:Mode, index: Int, srn:Option[String]): Call = NoCompanyNumberController.onPageLoad(mode, index,srn)
 
-  private def utrPage(index: Int): (Mode, Option[String]) => Call = CompanyUTRController.onPageLoad(_: Mode, _: Option[String], index)
+  private def utrPage(mode:Mode, index: Int, srn:Option[String]): Call = CompanyUTRController.onPageLoad(mode, srn, index)
 
-  private def noUtrPage(index: Int): (Mode, Option[String]) => Call = CompanyNoUTRReasonController.onPageLoad(_: Mode, index, _: Option[String])
+  private def noUtrPage(mode:Mode, index: Int, srn:Option[String]): Call = CompanyNoUTRReasonController.onPageLoad(mode, index,srn)
 
-  private def vatPage(index: Int): (Mode, Option[String]) => Call = CompanyVatVariationsController.onPageLoad(_: Mode, index, _: Option[String])
+  private def vatPage(mode:Mode, index: Int, srn:Option[String]): Call = CompanyVatVariationsController.onPageLoad(mode, index,srn)
 
-  private def noVatPage(index: Int): (Mode, Option[String]) => Call = HasCompanyPAYEController.onPageLoad(_: Mode, index, _: Option[String])
+  private def noVatPage(mode:Mode, index: Int, srn:Option[String]): Call = HasCompanyPAYEController.onPageLoad(mode, index,srn)
 
-  private def payePage(index: Int): (Mode, Option[String]) => Call = CompanyPayeVariationsController.onPageLoad(_: Mode, index, _: Option[String])
+  private def payePage(mode:Mode, index: Int, srn:Option[String]): Call = CompanyPayeVariationsController.onPageLoad(mode, index,srn)
 
-  private def cyaPage(index: Int): (Mode, Option[String]) => Call = CheckYourAnswersCompanyDetailsController.onPageLoad(_: Mode, index, _: Option[String])
+  private def cyaPage(mode:Mode, index: Int, srn:Option[String]): Call = CheckYourAnswersCompanyDetailsController.onPageLoad(mode, index,srn)
+
+
+  private def hasCompanyUtrPage(mode:Mode, index: Int, srn:Option[String]):Call = HasCompanyUTRController.onPageLoad(mode, index, srn)
+
+  private def hasCompanyVatPage(mode:Mode, index: Int, srn:Option[String]):Call = HasCompanyVATController.onPageLoad(mode, index, srn)
+
+  private def hasCompanyPayePage(mode:Mode, index: Int, srn:Option[String]):Call = HasCompanyPAYEController.onPageLoad(mode, index, srn)
+
+
 
   private def anyMoreChangesPage(srn: Option[String]): Call = AnyMoreChangesController.onPageLoad(srn)
 
   private def normalAndUpdateModeRoutes(mode: Mode, ua: UserAnswers, srn: Option[String]): PartialFunction[Identifier, Call] = {
-    case id@HasCompanyNumberId(index) => booleanNav(id, ua, mode, srn, companyNoPage(index), noCompanyNoPage(index))
-    case NoCompanyNumberId(index) => HasCompanyUTRController.onPageLoad(mode, index, srn)
-    case CompanyRegistrationNumberVariationsId(index) => HasCompanyUTRController.onPageLoad(mode, index, srn)
-    case id@HasCompanyUTRId(index) => booleanNav(id, ua, mode, srn, utrPage(index), noUtrPage(index))
-    case CompanyNoUTRReasonId(index) => HasCompanyVATController.onPageLoad(mode, index, srn)
-    case CompanyUTRId(index) => HasCompanyVATController.onPageLoad(mode, index, srn)
-    case id@HasCompanyVATId(index) => booleanNav(id, ua, mode, srn, vatPage(index), noVatPage(index))
-    case CompanyVatVariationsId(index) => HasCompanyPAYEController.onPageLoad(mode, index, None)
-    case id@HasCompanyPAYEId(index) => booleanNav(id, ua, mode, srn, payePage(index), cyaPage(index))
-    case CompanyPayeVariationsId(index) => CheckYourAnswersCompanyDetailsController.onPageLoad(mode, index, None)
+    case id@HasCompanyNumberId(index) => booleanNav(id, ua, mode, index, srn, companyNoPage, noCompanyNoPage)
+    case NoCompanyNumberId(index) => hasCompanyUtrPage(mode, index, srn)
+    case CompanyRegistrationNumberVariationsId(index) => hasCompanyUtrPage(mode, index, srn)
+    case id@HasCompanyUTRId(index) => booleanNav(id, ua, mode, index, srn, utrPage, noUtrPage)
+    case CompanyNoUTRReasonId(index) => hasCompanyVatPage(mode, index, srn)
+    case CompanyUTRId(index) => hasCompanyVatPage(mode, index, srn)
+    case id@HasCompanyVATId(index) => booleanNav(id, ua, mode, index, srn, vatPage, noVatPage)
+    case CompanyVatVariationsId(index) => hasCompanyPayePage(mode, index, srn)
+    case id@HasCompanyPAYEId(index) => booleanNav(id, ua, mode, index, srn, payePage, cyaPage)
+    case CompanyPayeVariationsId(index) => cyaPage(mode, index, srn)
     case _ => controllers.routes.SessionExpiredController.onPageLoad()
   }
 
   private def checkModeRoutes(mode: Mode, ua: UserAnswers, srn: Option[String]): PartialFunction[Identifier, Call] = {
-    case id@HasCompanyNumberId(index) => booleanNav(id, ua, mode, srn, companyNoPage(index), noCompanyNoPage(index))
-    case NoCompanyNumberId(index) => CheckYourAnswersCompanyDetailsController.onPageLoad(mode, index, None)
-    case CompanyRegistrationNumberVariationsId(index) => CheckYourAnswersCompanyDetailsController.onPageLoad(mode, index, None)
-    case id@HasCompanyUTRId(index) => booleanNav(id, ua, mode, srn, utrPage(index), noUtrPage(index))
-    case CompanyNoUTRReasonId(index) => CheckYourAnswersCompanyDetailsController.onPageLoad(mode, index, None)
-    case CompanyUTRId(index) => CheckYourAnswersCompanyDetailsController.onPageLoad(mode, index, None)
-    case id@HasCompanyVATId(index) => booleanNav(id, ua, mode, srn, vatPage(index), cyaPage(index))
-    case CompanyVatVariationsId(index) => CheckYourAnswersCompanyDetailsController.onPageLoad(mode, index, None)
-    case id@HasCompanyPAYEId(index) => booleanNav(id, ua, mode, srn, payePage(index), cyaPage(index))
-    case CompanyPayeVariationsId(index) => CheckYourAnswersCompanyDetailsController.onPageLoad(mode, index, None)
+    case id@HasCompanyNumberId(index) => booleanNav(id, ua, mode, index, srn, companyNoPage, noCompanyNoPage)
+    case NoCompanyNumberId(index) => cyaPage(mode, index, srn)
+    case CompanyRegistrationNumberVariationsId(index) => cyaPage(mode, index, srn)
+    case id@HasCompanyUTRId(index) => booleanNav(id, ua, mode, index, srn, utrPage, noUtrPage)
+    case CompanyNoUTRReasonId(index) => cyaPage(mode, index, srn)
+    case CompanyUTRId(index) => cyaPage(mode, index, srn)
+    case id@HasCompanyVATId(index) => booleanNav(id, ua, mode, index, srn, vatPage, cyaPage)
+    case CompanyVatVariationsId(index) => cyaPage(mode, index, srn)
+    case id@HasCompanyPAYEId(index) => booleanNav(id, ua, mode, index, srn, payePage, cyaPage)
+    case CompanyPayeVariationsId(index) => cyaPage(mode, index, srn)
     case _ => controllers.routes.SessionExpiredController.onPageLoad()
   }
 
   private def isNewTrustee(ua: UserAnswers, index: Int): Boolean = ua.get(IsTrusteeNewId(index)).getOrElse(false)
 
   private def checkUpdateModeRoutes(mode: Mode, ua: UserAnswers, srn: Option[String]): PartialFunction[Identifier, Call] = {
-    case id@HasCompanyNumberId(index) => booleanNav(id, ua, mode, srn, companyNoPage(index), noCompanyNoPage(index))
-    case NoCompanyNumberId(index) => CheckYourAnswersCompanyDetailsController.onPageLoad(mode, index, None)
-    case CompanyRegistrationNumberVariationsId(index) if isNewTrustee(ua, index) => CheckYourAnswersCompanyDetailsController.onPageLoad(mode, index, None)
-    case id@HasCompanyUTRId(index) => booleanNav(id, ua, mode, srn, utrPage(index), noUtrPage(index))
-    case CompanyNoUTRReasonId(index) => CheckYourAnswersCompanyDetailsController.onPageLoad(mode, index, None)
-    case CompanyUTRId(index) if isNewTrustee(ua, index) => CheckYourAnswersCompanyDetailsController.onPageLoad(mode, index, None)
-    case id@HasCompanyVATId(index) => booleanNav(id, ua, mode, srn, vatPage(index), cyaPage(index))
-    case CompanyVatVariationsId(index) if isNewTrustee(ua, index) => CheckYourAnswersCompanyDetailsController.onPageLoad(mode, index, None)
-    case id@HasCompanyPAYEId(index) => booleanNav(id, ua, mode, srn, payePage(index), cyaPage(index))
-    case CompanyPayeVariationsId(index) if isNewTrustee(ua, index) => CheckYourAnswersCompanyDetailsController.onPageLoad(mode, index, None)
+    case id@HasCompanyNumberId(index) => booleanNav(id, ua, mode, index, srn, companyNoPage, noCompanyNoPage)
+    case NoCompanyNumberId(index) => cyaPage(mode, index, srn)
+    case CompanyRegistrationNumberVariationsId(index) if isNewTrustee(ua, index) => cyaPage(mode, index, srn)
+    case id@HasCompanyUTRId(index) => booleanNav(id, ua, mode, index, srn, utrPage, noUtrPage)
+    case CompanyNoUTRReasonId(index) => cyaPage(mode, index, srn)
+    case CompanyUTRId(index) if isNewTrustee(ua, index) => cyaPage(mode, index, srn)
+    case id@HasCompanyVATId(index) => booleanNav(id, ua, mode, index, srn, vatPage, cyaPage)
+    case CompanyVatVariationsId(index) if isNewTrustee(ua, index) => cyaPage(mode, index, srn)
+    case id@HasCompanyPAYEId(index) => booleanNav(id, ua, mode, index, srn, payePage, cyaPage)
+    case CompanyPayeVariationsId(index) if isNewTrustee(ua, index) => cyaPage(mode, index, srn)
     case CompanyRegistrationNumberVariationsId(index) => anyMoreChangesPage(srn)
     case CompanyUTRId(index) => anyMoreChangesPage(srn)
     case CompanyVatVariationsId(index) => anyMoreChangesPage(srn)
@@ -106,14 +115,15 @@ class TrusteesCompanyNavigatorHnS @Inject()(val dataCacheConnector: UserAnswersC
   private def booleanNav(id: TypedIdentifier[Boolean],
                          answers: UserAnswers,
                          mode: Mode,
+                         index:Index,
                          srn: Option[String],
-                         truePath: (Mode, Option[String]) => Call,
-                         falsePath: (Mode, Option[String]) => Call): Call =
+                         truePath: (Mode, Int, Option[String]) => Call,
+                         falsePath: (Mode, Int, Option[String]) => Call): Call =
     callOrExpired(answers, id,
       if (_: Boolean) {
-        truePath(mode, srn)
+        truePath(mode, index, srn)
       } else {
-        falsePath(mode, srn)
+        falsePath(mode, index, srn)
       }
     )
 
