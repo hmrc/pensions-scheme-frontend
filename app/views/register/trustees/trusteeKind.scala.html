@@ -38,7 +38,8 @@
 
         @components.input_radio(
             field = form("value"),
-            legend = "",
+            legend = messages("messages__trusteeKind__legend"),
+            legendClass = Some("visually-hidden"),
             hint=Some(messages("messages__trusteeKind__hint")),
             inputs = TrusteeKind.options
         )
