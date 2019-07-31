@@ -30,11 +30,13 @@ import models.{CompanyDetails, NormalMode}
 import org.joda.time.LocalDate
 import play.api.data.Form
 import play.api.libs.json._
-import play.api.mvc.Call
+import play.api.mvc.{Action, AnyContent, Call, Result}
 import play.api.test.Helpers.{contentAsString, _}
-import utils.{FakeFeatureSwitchManagementService, FakeNavigator}
+import utils.{FakeFeatureSwitchManagementService, FakeNavigator, UserAnswers}
 import views.html.register.trustees.addTrustee
+import identifiers.register.trustees._
 
+import scala.concurrent.Future
 class AddTrusteeControllerSpec extends ControllerSpecBase {
   appRunning()
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
@@ -85,9 +87,19 @@ class AddTrusteeControllerSpec extends ControllerSpecBase {
 
   val form = formProvider()
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): AddTrusteeController =
-    new AddTrusteeController(frontendAppConfig, messagesApi, new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
-      dataRetrievalAction, FakeAllowAccessProvider(), new DataRequiredActionImpl, formProvider, new FakeFeatureSwitchManagementService(enabledV2 = false))
+  def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData, featureToggleEnabled: Boolean = false): AddTrusteeController =  {
+    new AddTrusteeController(
+      frontendAppConfig,
+      messagesApi,
+      new FakeNavigator(desiredRoute = onwardRoute),
+      FakeAuthAction,
+      dataRetrievalAction,
+      FakeAllowAccessProvider(),
+      new DataRequiredActionImpl,
+      formProvider,
+      new FakeFeatureSwitchManagementService(enabledV2 = featureToggleEnabled)
+    )
+  }
 
   val submitUrl = controllers.register.trustees.routes.AddTrusteeController.onSubmit(NormalMode, None)
   def viewAsString(form: Form[_] = form, trustees: Seq[Trustee[_]] = Seq.empty, enable: Boolean = false): String =
@@ -97,8 +109,22 @@ class AddTrusteeControllerSpec extends ControllerSpecBase {
 
   "AddTrustee Controller" must {
 
-    "when toggle set to true" in {
-      val controller = injector.instanceOf[AddTrusteeController]
+    "return view with button enabled when toggle set to true" in {
+      val trusteeList: JsValue = UserAnswers()
+        .set(TrusteeDetailsId(0))(PersonDetails("fistName", None, "lastName", LocalDate.now(), isDeleted = false)).asOpt.value
+        .set(IsTrusteeCompleteId(0))(true).asOpt.value
+        .set(TrusteeDetailsId(1))(PersonDetails("fistName", None, "lastName", LocalDate.now(), isDeleted = false)).asOpt.value
+        .set(IsTrusteeCompleteId(1))(false).asOpt.value
+        .json
+
+      val trusteeController: AddTrusteeController = controller(new FakeDataRetrievalAction(Some(trusteeList)), featureToggleEnabled = true)
+
+      val result = trusteeController.onPageLoad(NormalMode, None)(fakeRequest)
+
+      val view = asDocument(contentAsString(result))
+
+      view.getElementById("submit").hasAttr("disabled") mustEqual false
+
     }
 
     "when toggle false and all trustees are complete" in {
@@ -110,7 +136,7 @@ class AddTrusteeControllerSpec extends ControllerSpecBase {
     }
 
     "return OK and the correct view for a GET" in {
-      val result = controller().onPageLoad(NormalMode, None)(fakeRequest)
+      val result: Future[Result] = controller().onPageLoad(NormalMode, None)(fakeRequest)
 
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString(enable = true)
