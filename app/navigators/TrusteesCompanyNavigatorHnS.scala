@@ -76,9 +76,9 @@ class TrusteesCompanyNavigatorHnS @Inject()(val dataCacheConnector: UserAnswersC
     case id@HasCompanyUTRId(index) => booleanNav(id, ua, mode, index, srn, utrPage, noUtrPage)
     case CompanyNoUTRReasonId(index) => cyaPage(journeyMode(mode), index, srn)
     case CompanyUTRId(index) => cyaPage(journeyMode(mode), index, srn)
-    case id@HasCompanyVATId(index) => booleanNav(id, ua, journeyMode(mode), index, srn, vatPage, cyaPage)
+    case id@HasCompanyVATId(index) => booleanNavNoMode(id, ua, mode, index, srn, vatPage(mode, _, _), cyaPage(journeyMode(mode), _, _))
     case CompanyVatVariationsId(index) => cyaPage(journeyMode(mode), index, srn)
-    case id@HasCompanyPAYEId(index) => booleanNav(id, ua, journeyMode(mode), index, srn, payePage, cyaPage)
+    case id@HasCompanyPAYEId(index) => booleanNavNoMode(id, ua, mode, index, srn, payePage(mode, _, _), cyaPage(journeyMode(mode), _, _))
     case CompanyPayeVariationsId(index) => cyaPage(journeyMode(mode), index, srn)
   }
 
@@ -87,17 +87,17 @@ class TrusteesCompanyNavigatorHnS @Inject()(val dataCacheConnector: UserAnswersC
   private def checkUpdateModeRoutes(mode: Mode, ua: UserAnswers, srn: Option[String]): PartialFunction[Identifier, Call] = {
     case id@HasCompanyNumberId(index) => booleanNav(id, ua, mode, index, srn, companyNoPage, noCompanyNoPage)
     case NoCompanyNumberId(index) => cyaPage(mode, index, srn)
-    case CompanyRegistrationNumberVariationsId(index) if isNewTrustee(ua, index) => cyaPage(mode, index, srn)
+    case CompanyRegistrationNumberVariationsId(index) if isNewTrustee(ua, index) => cyaPage(journeyMode(mode), index, srn)
     case CompanyRegistrationNumberVariationsId(_) => anyMoreChangesPage(srn)
     case id@HasCompanyUTRId(index) => booleanNav(id, ua, mode, index, srn, utrPage, noUtrPage)
-    case CompanyUTRId(index) if isNewTrustee(ua, index) => cyaPage(mode, index, srn)
+    case CompanyUTRId(index) if isNewTrustee(ua, index) => cyaPage(journeyMode(mode), index, srn)
     case CompanyUTRId(_) => anyMoreChangesPage(srn)
-    case CompanyNoUTRReasonId(index) => cyaPage(mode, index, srn)
-    case id@HasCompanyVATId(index) => booleanNav(id, ua, mode, index, srn, vatPage, cyaPage)
-    case CompanyVatVariationsId(index) if isNewTrustee(ua, index) => cyaPage(mode, index, srn)
+    case CompanyNoUTRReasonId(index) => cyaPage(journeyMode(mode), index, srn)
+    case id@HasCompanyVATId(index) => booleanNavNoMode(id, ua, mode, index, srn, vatPage(mode,_,_), cyaPage(journeyMode(mode), _, _))
+    case CompanyVatVariationsId(index) if isNewTrustee(ua, index) => cyaPage(journeyMode(mode), index, srn)
     case CompanyVatVariationsId(_) => anyMoreChangesPage(srn)
-    case id@HasCompanyPAYEId(index) => booleanNav(id, ua, mode, index, srn, payePage, cyaPage)
-    case CompanyPayeVariationsId(index) if isNewTrustee(ua, index) => cyaPage(mode, index, srn)
+    case id@HasCompanyPAYEId(index) => booleanNavNoMode(id, ua, mode, index, srn, payePage(mode,_,_), cyaPage(journeyMode(mode),_,_))
+    case CompanyPayeVariationsId(index) if isNewTrustee(ua, index) => cyaPage(journeyMode(mode), index, srn)
     case CompanyPayeVariationsId(_) => anyMoreChangesPage(srn)
   }
 
@@ -112,6 +112,20 @@ class TrusteesCompanyNavigatorHnS @Inject()(val dataCacheConnector: UserAnswersC
     answers.get(id) match {
       case Some(true) => truePath(mode, index, srn)
       case Some(false) => falsePath(mode, index, srn)
+      case _ => sessionExpired(id)
+    }
+
+  private def booleanNavNoMode(id: TypedIdentifier[Boolean],
+                         answers: UserAnswers,
+                         mode: Mode,
+                         index: Index,
+                         srn: Option[String],
+                         truePath: (Int, Option[String]) => Call,
+                         falsePath: (Int, Option[String]) => Call): Call =
+
+    answers.get(id) match {
+      case Some(true) => truePath(index, srn)
+      case Some(false) => falsePath(index, srn)
       case _ => sessionExpired(id)
     }
 
