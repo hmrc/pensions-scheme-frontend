@@ -54,7 +54,9 @@ class TrusteesCompanyNavigatorHnS @Inject()(val dataCacheConnector: UserAnswersC
 
   private def anyMoreChangesPage(srn: Option[String]): Call = AnyMoreChangesController.onPageLoad(srn)
 
-  private def sessionExpired: Identifier => Call = _ => controllers.routes.SessionExpiredController.onPageLoad()
+  private def sessionExpiredCall: Call = controllers.routes.SessionExpiredController.onPageLoad()
+
+  private def sessionExpired: Identifier => Call = _ => sessionExpiredCall
 
   private def normalAndUpdateModeRoutes(mode: Mode, ua: UserAnswers, srn: Option[String]): PartialFunction[Identifier, Call] = {
     case id@HasCompanyNumberId(index) => booleanNav(id, ua, mode, index, srn, companyNoPage, noCompanyNoPage)
@@ -76,9 +78,9 @@ class TrusteesCompanyNavigatorHnS @Inject()(val dataCacheConnector: UserAnswersC
     case id@HasCompanyUTRId(index) => booleanNav(id, ua, mode, index, srn, utrPage, noUtrPage)
     case CompanyNoUTRReasonId(index) => cyaPage(journeyMode(mode), index, srn)
     case CompanyUTRId(index) => cyaPage(journeyMode(mode), index, srn)
-    case id@HasCompanyVATId(index) => booleanNavNoMode(id, ua, mode, index, srn, vatPage(mode, _, _), cyaPage(journeyMode(mode), _, _))
+    case id@HasCompanyVATId(index) => booleanNav(id, ua, mode, vatPage(mode,index,srn), cyaPage(journeyMode(mode),index,srn))
     case CompanyVatVariationsId(index) => cyaPage(journeyMode(mode), index, srn)
-    case id@HasCompanyPAYEId(index) => booleanNavNoMode(id, ua, mode, index, srn, payePage(mode, _, _), cyaPage(journeyMode(mode), _, _))
+    case id@HasCompanyPAYEId(index) => booleanNav(id, ua, mode, payePage(mode,index,srn), cyaPage(journeyMode(mode),index,srn))
     case CompanyPayeVariationsId(index) => cyaPage(journeyMode(mode), index, srn)
   }
 
@@ -93,10 +95,10 @@ class TrusteesCompanyNavigatorHnS @Inject()(val dataCacheConnector: UserAnswersC
     case CompanyUTRId(index) if isNewTrustee(ua, index) => cyaPage(journeyMode(mode), index, srn)
     case CompanyUTRId(_) => anyMoreChangesPage(srn)
     case CompanyNoUTRReasonId(index) => cyaPage(journeyMode(mode), index, srn)
-    case id@HasCompanyVATId(index) => booleanNavNoMode(id, ua, mode, index, srn, vatPage(mode,_,_), cyaPage(journeyMode(mode), _, _))
+    case id@HasCompanyVATId(index) => booleanNav(id, ua, mode, vatPage(mode,index,srn), cyaPage(journeyMode(mode),index,srn))
     case CompanyVatVariationsId(index) if isNewTrustee(ua, index) => cyaPage(journeyMode(mode), index, srn)
     case CompanyVatVariationsId(_) => anyMoreChangesPage(srn)
-    case id@HasCompanyPAYEId(index) => booleanNavNoMode(id, ua, mode, index, srn, payePage(mode,_,_), cyaPage(journeyMode(mode),_,_))
+    case id@HasCompanyPAYEId(index) => booleanNav(id, ua, mode, payePage(mode,index,srn), cyaPage(journeyMode(mode),index,srn))
     case CompanyPayeVariationsId(index) if isNewTrustee(ua, index) => cyaPage(journeyMode(mode), index, srn)
     case CompanyPayeVariationsId(_) => anyMoreChangesPage(srn)
   }
@@ -115,18 +117,16 @@ class TrusteesCompanyNavigatorHnS @Inject()(val dataCacheConnector: UserAnswersC
       case _ => sessionExpired(id)
     }
 
-  private def booleanNavNoMode(id: TypedIdentifier[Boolean],
+  private def booleanNav(id: TypedIdentifier[Boolean],
                          answers: UserAnswers,
                          mode: Mode,
-                         index: Index,
-                         srn: Option[String],
-                         truePath: (Int, Option[String]) => Call,
-                         falsePath: (Int, Option[String]) => Call): Call =
+                         truePath: => Call,
+                         falsePath: => Call): Call =
 
     answers.get(id) match {
-      case Some(true) => truePath(index, srn)
-      case Some(false) => falsePath(index, srn)
-      case _ => sessionExpired(id)
+      case Some(true) => truePath
+      case Some(false) => falsePath
+      case _ => sessionExpiredCall
     }
 
   override protected def routeMap(from: NavigateFrom): Option[NavigateTo] =
