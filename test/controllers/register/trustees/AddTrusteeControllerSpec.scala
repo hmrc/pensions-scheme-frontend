@@ -97,6 +97,18 @@ class AddTrusteeControllerSpec extends ControllerSpecBase {
 
   "AddTrustee Controller" must {
 
+    "when toggle set to true" in {
+      val controller = injector.instanceOf[AddTrusteeController]
+    }
+
+    "when toggle false and all trustees are complete" in {
+
+    }
+
+    "when toggle false and not all trustees are complete" in {
+
+    }
+
     "return OK and the correct view for a GET" in {
       val result = controller().onPageLoad(NormalMode, None)(fakeRequest)
 

@@ -23,12 +23,13 @@ import controllers.actions.{AuthAction, DataRequiredAction, DataRetrievalAction}
 import forms.register.adviser.AdviserEmailFormProvider
 import identifiers.{AdviserEmailId, AdviserNameId}
 import models.Mode
+import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.WorkingKnowledge
-import utils.{Navigator, UserAnswers}
+import utils.UserAnswers
 import views.html.adviserEmailAddress
 
 import scala.concurrent.{ExecutionContext, Future}

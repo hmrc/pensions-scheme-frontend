@@ -29,7 +29,8 @@ import identifiers.register.establishers.company._
 import identifiers.register.establishers.{ExistingCurrentAddressId, IsEstablisherNewId}
 import models.Mode._
 import models._
-import utils.{AbstractNavigator, Navigator, Toggles, UserAnswers}
+import utils.{Toggles, UserAnswers}
+import controllers.register.establishers.company.director.routes._
 
 //scalastyle:off cyclomatic.complexity
 class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector,
@@ -282,40 +283,49 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
 
 
   private def addDirectors(mode: Mode, index: Int, answers: UserAnswers, srn: Option[String]): Option[NavigateTo] = {
-    val directors = answers.allDirectorsAfterDelete(index)
-
-    if (directors.isEmpty) {
-      NavigateTo.dontSave(DirectorDetailsController.onPageLoad(mode, index, answers.allDirectors(index).size, srn))
-    }
-
-    else if (directors.lengthCompare(appConfig.maxDirectors) < 0) {
-      answers.get(AddCompanyDirectorsId(index)) match {
-        case Some(true) =>
-          NavigateTo.dontSave(DirectorDetailsController.onPageLoad(mode, index, answers.allDirectors(index).size, srn))
-        case Some(false) =>
-          mode match {
-            case CheckMode | NormalMode =>
-              NavigateTo.dontSave(establisherCompanyRoutes.CompanyReviewController.onPageLoad(mode, srn, index))
-            case _ =>
-              answers.get(IsEstablisherNewId(index)) match {
-                case Some(true) =>
-                  NavigateTo.dontSave(establisherCompanyRoutes.CompanyReviewController.onPageLoad(mode, srn, index))
-                case _ =>
-                  if (answers.get(EstablishersOrTrusteesChangedId).contains(true)) {
-                    anyMoreChanges(srn)
-                  } else {
-                    NavigateTo.dontSave(SchemeTaskListController.onPageLoad(mode, srn))
-                  }
+    val toggled = featureSwitchManagementService.get(Toggles.isEstablisherCompanyHnSEnabled)
+    NavigateTo.dontSave(
+      if (toggled) {
+        if (answers.allDirectorsAfterDelete(index, toggled).isEmpty) {
+          controllers.register.establishers.company.director.routes.DirectorNameController
+            .onPageLoad(mode, index, answers.allDirectors(index, toggled).size, srn)
+        } else if (answers.allDirectorsAfterDelete(index, toggled).length < appConfig.maxDirectors) {
+          answers.get(AddCompanyDirectorsId(index)).map { addCompanyDirectors =>
+            if (addCompanyDirectors) {
+              controllers.register.establishers.company.director.routes.DirectorNameController
+                .onPageLoad(mode, index, answers.allDirectors(index, toggled).size, srn)
+            } else {
+              controllers.routes.SchemeTaskListController.onPageLoad(mode, srn)
+            }
+          }.getOrElse(controllers.routes.SessionExpiredController.onPageLoad())
+        } else {
+          establisherCompanyRoutes.OtherDirectorsController.onPageLoad(mode, srn, index)
+        }
+      } else {
+        if (answers.allDirectorsAfterDelete(index, toggled).isEmpty) {
+          DirectorDetailsController.onPageLoad(mode, index, answers.allDirectors(index, toggled).size, srn)
+        } else if (answers.allDirectorsAfterDelete(index, toggled).length < appConfig.maxDirectors) {
+          answers.get(AddCompanyDirectorsId(index)).map {
+            if (_) {
+              DirectorDetailsController.onPageLoad(mode, index, answers.allDirectors(index, toggled).size, srn)
+            } else {
+              if (mode == CheckMode || mode == NormalMode) {
+                establisherCompanyRoutes.CompanyReviewController.onPageLoad(mode, srn, index)
+              } else {
+                (answers.get(IsEstablisherNewId(index)), answers.get(EstablishersOrTrusteesChangedId)) match {
+                  case (Some(true), _) => establisherCompanyRoutes.CompanyReviewController.onPageLoad(mode, srn, index)
+                  case (_, Some(true)) => controllers.routes.AnyMoreChangesController.onPageLoad(srn)
+                  case _ => controllers.routes.SchemeTaskListController.onPageLoad(mode, srn)
+                }
               }
-          }
-        case _ =>
-          NavigateTo.dontSave(SessionExpiredController.onPageLoad())
-      }
-    }
+            }
+          }.getOrElse(controllers.routes.SessionExpiredController.onPageLoad())
+        } else {
 
-    else {
-      NavigateTo.dontSave(establisherCompanyRoutes.OtherDirectorsController.onPageLoad(mode, srn, index))
-    }
+          establisherCompanyRoutes.OtherDirectorsController.onPageLoad(mode, srn, index)
+        }
+      }
+    )
   }
 
   private def listOrAnyMoreChange(index: Int, mode: Mode, srn: Option[String])(answers: UserAnswers): Option[NavigateTo] = {
@@ -405,8 +415,6 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
 
   private def payeRoutes(index: Int, mode: Mode, srn: Option[String])(answers: UserAnswers): Option[NavigateTo] = {
     (mode, answers.get(IsEstablisherNewId(index))) match {
-      case (_, Some(true)) =>
-        NavigateTo.dontSave(establisherCompanyRoutes.IsCompanyDormantController.onPageLoad(mode, srn, index))
       case (NormalMode, _) =>
         NavigateTo.dontSave(establisherCompanyRoutes.IsCompanyDormantController.onPageLoad(mode, srn, index))
       case _ =>

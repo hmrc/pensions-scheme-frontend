@@ -64,7 +64,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
           PartnershipVatVariationsId(firstIndex).row(partnershipVatVariationsRoute, UpdateMode)++
           PartnershipPayeVariationsId(firstIndex).row(partnershipPayeVariationsRoute, UpdateMode)
         )
-        val result = controller(answers.dataRetrievalAction, isToggleOn = true).onPageLoad(UpdateMode, firstIndex, srn)(userAnswers)
+        val result = controller(answers.dataRetrievalAction).onPageLoad(UpdateMode, firstIndex, srn)(userAnswers)
 
         status(result) mustBe OK
         contentAsString(result) mustBe viewAsString(Seq(expectedCompanyDetailsSection, emptyPartnershipContactDetailsSection), UpdateMode, srn)
@@ -79,7 +79,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
           PartnershipVatId(firstIndex).row(partnershipVatRoute(CheckUpdateMode, srn), UpdateMode)++
           PartnershipPayeId(firstIndex).row(partnershipPayeRoute(CheckUpdateMode, srn), UpdateMode)
         )
-        val result = controller(answers.dataRetrievalAction, isToggleOn = true).onPageLoad(UpdateMode, firstIndex, srn)(userAnswers)
+        val result = controller(answers.dataRetrievalAction).onPageLoad(UpdateMode, firstIndex, srn)(userAnswers)
 
         status(result) mustBe OK
         contentAsString(result) mustBe viewAsString(Seq(expectedPartnershipDetailsSection, emptyPartnershipContactDetailsSection), UpdateMode, srn)
@@ -116,10 +116,9 @@ object CheckYourAnswersControllerSpec extends CheckYourAnswersControllerSpec {
   private lazy val partnershipDetailsRoute = routes.TrusteeDetailsController.onPageLoad(CheckMode, firstIndex, None).url
 
   private def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData,
-                         allowChangeHelper: AllowChangeHelper = ach, isToggleOn: Boolean = false): CheckYourAnswersController =
+                         allowChangeHelper: AllowChangeHelper = ach): CheckYourAnswersController =
     new CheckYourAnswersController(frontendAppConfig, messagesApi, FakeAuthAction, dataRetrievalAction, FakeAllowAccessProvider(),
-      new DataRequiredActionImpl, FakeUserAnswersService, new FakeNavigator(onwardRoute), countryOptions, allowChangeHelper,
-      new FakeFeatureSwitchManagementService(isToggleOn))
+      new DataRequiredActionImpl, FakeUserAnswersService, new FakeNavigator(onwardRoute), countryOptions, allowChangeHelper)
 
   implicit val partnershipAnswers: UserAnswers = UserAnswers()
     .set(PartnershipDetailsId(firstIndex))(PartnershipDetails("PartnershipName"))

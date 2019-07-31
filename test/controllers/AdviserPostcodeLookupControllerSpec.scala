@@ -23,6 +23,7 @@ import controllers.actions._
 import forms.address.PostCodeLookupFormProvider
 import models.NormalMode
 import models.address.TolerantAddress
+import navigators.Navigator
 import org.mockito.Matchers
 import org.mockito.Mockito.when
 import org.scalatest.OptionValues
@@ -36,7 +37,7 @@ import play.api.test.Helpers.{OK, SEE_OTHER, contentAsString, redirectLocation, 
 import services.{FakeUserAnswersService, UserAnswersService}
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.annotations.Adviser
-import utils.{FakeNavigator, Navigator}
+import utils.FakeNavigator
 import viewmodels.Message
 import viewmodels.address.PostcodeLookupViewModel
 import views.html.address.postcodeLookup

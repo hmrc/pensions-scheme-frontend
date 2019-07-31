@@ -19,11 +19,13 @@ package controllers.register.establishers.company.director
 import config.{FeatureSwitchManagementService, FrontendAppConfig}
 import controllers.Retrievals
 import controllers.actions._
+import identifiers.register.establishers.company.director
 import identifiers.register.establishers.company.director._
 import identifiers.register.establishers.{IsEstablisherCompleteId, IsEstablisherNewId}
 import javax.inject.Inject
 import models.Mode.checkMode
 import models._
+import navigators.Navigator
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
@@ -49,29 +51,76 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
                                            fs: FeatureSwitchManagementService
                                           )(implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport {
 
-  def onPageLoad(companyIndex: Index, directorIndex: Index, mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requiredData).async {
+  def onPageLoad(companyIndex: Index, directorIndex: Index, mode: Mode, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requiredData).async {
     implicit request =>
 
       implicit val userAnswers = request.userAnswers
+      implicit val featureSwitchManagementService = fs
 
-      lazy val displayNewNino = userAnswers.get(IsNewDirectorId(companyIndex, directorIndex)) match {
-        case Some(true) => false
-        case _ => fs.get(Toggles.isSeparateRefCollectionEnabled)
+      val directorAnswerSection = AnswerSection(
+        None,
+        Seq(
+          DirectorNameId(companyIndex, directorIndex)
+            .row(routes.DirectorNameController.onPageLoad(checkMode(mode), companyIndex, directorIndex, srn).url, mode),
+
+          DirectorDOBId(companyIndex, directorIndex)
+            .row(routes.DirectorDOBController.onPageLoad(checkMode(mode), companyIndex, directorIndex, srn).url, mode),
+
+          DirectorHasNINOId(companyIndex, directorIndex)
+            .row(routes.DirectorHasNINOController.onPageLoad(checkMode(mode), companyIndex, directorIndex, srn).url, mode),
+
+          DirectorNewNinoId(companyIndex, directorIndex)
+            .row(routes.DirectorNinoNewController.onPageLoad(checkMode(mode), companyIndex, directorIndex, srn).url, mode),
+
+          DirectorNoNINOReasonId(companyIndex, directorIndex)
+            .row(routes.DirectorNoNINOReasonController.onPageLoad(checkMode(mode), companyIndex, directorIndex, srn).url, mode),
+
+          DirectorHasUTRId(companyIndex, directorIndex)
+            .row(routes.DirectorHasUTRController.onPageLoad(checkMode(mode), companyIndex, directorIndex, srn).url, mode),
+
+          DirectorUTRId(companyIndex, directorIndex)
+            .row(routes.DirectorUTRController.onPageLoad(checkMode(mode), companyIndex, directorIndex, srn).url, mode),
+
+          DirectorNoUTRReasonId(companyIndex, directorIndex)
+            .row(routes.DirectorNoUTRReasonController.onPageLoad(checkMode(mode), companyIndex, directorIndex, srn).url, mode),
+
+          DirectorAddressId(companyIndex, directorIndex)
+            .row(routes.DirectorAddressController.onPageLoad(checkMode(mode), companyIndex, directorIndex, srn).url, mode),
+
+          DirectorAddressYearsId(companyIndex, directorIndex)
+            .row(routes.DirectorAddressYearsController.onPageLoad(checkMode(mode), companyIndex, directorIndex, srn).url, mode),
+
+          DirectorPreviousAddressId(companyIndex, directorIndex)
+            .row(routes.DirectorPreviousAddressController.onPageLoad(checkMode(mode), companyIndex, directorIndex, srn).url, mode),
+
+          DirectorEmailId(companyIndex, directorIndex)
+            .row(routes.DirectorEmailController.onPageLoad(checkMode(mode), companyIndex, directorIndex, srn).url, mode),
+
+          DirectorPhoneNumberId(companyIndex, directorIndex)
+            .row(routes.DirectorPhoneNumberController.onPageLoad(checkMode(mode), companyIndex, directorIndex, srn).url, mode)
+        ).flatten
+      )
+
+
+      val directorNinoDetails = (mode, userAnswers.get(IsNewDirectorId(companyIndex, directorIndex))) match {
+        case (_, Some(true)) | (NormalMode|CheckMode, _) =>
+          DirectorNinoId(companyIndex, directorIndex)
+            .row(routes.DirectorNinoController.onPageLoad(checkMode(mode), companyIndex, directorIndex, srn).url, mode)
+
+        case _ =>
+          DirectorNewNinoId(companyIndex, directorIndex)
+            .row(routes.DirectorNinoNewController.onPageLoad(checkMode(mode), companyIndex, directorIndex, srn).url, mode)
       }
 
       val companyDirectorDetails = AnswerSection(
         Some("messages__director__cya__details_heading"),
         Seq(
-          DirectorDetailsId(companyIndex, directorIndex).
-            row(routes.DirectorDetailsController.onPageLoad(checkMode(mode), companyIndex, directorIndex, srn).url, mode),
-          mode match {
-            case UpdateMode| CheckUpdateMode if displayNewNino => DirectorNewNinoId(companyIndex, directorIndex).
-              row(routes.DirectorNinoNewController.onPageLoad(checkMode(mode), companyIndex, directorIndex, srn).url, mode)
-            case _ => DirectorNinoId(companyIndex, directorIndex).
-              row(routes.DirectorNinoController.onPageLoad(checkMode(mode), companyIndex, directorIndex, srn).url, mode)
-          },
-          DirectorUniqueTaxReferenceId(companyIndex, directorIndex).
-            row(routes.DirectorUniqueTaxReferenceController.onPageLoad(checkMode(mode), companyIndex, directorIndex, srn).url, mode)
+          DirectorDetailsId(companyIndex, directorIndex)
+            .row(routes.DirectorDetailsController.onPageLoad(checkMode(mode), companyIndex, directorIndex, srn).url, mode),
+          directorNinoDetails,
+          DirectorUniqueTaxReferenceId(companyIndex, directorIndex)
+            .row(routes.DirectorUniqueTaxReferenceController.onPageLoad(checkMode(mode), companyIndex, directorIndex, srn).url, mode)
         ).flatten
       )
 
@@ -89,9 +138,14 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
         ).flatten
       )
 
+      val answerSections = if(fs.get(Toggles.isEstablisherCompanyHnSEnabled))
+        Seq(directorAnswerSection)
+      else
+        Seq(companyDirectorDetails, companyDirectorContactDetails)
+
       Future.successful(Ok(check_your_answers(
         appConfig,
-        Seq(companyDirectorDetails, companyDirectorContactDetails),
+        answerSections,
         routes.CheckYourAnswersController.onSubmit(companyIndex, directorIndex, mode, srn),
         existingSchemeName,
         mode = mode,

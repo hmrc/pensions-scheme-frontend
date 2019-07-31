@@ -17,7 +17,7 @@
 package controllers.register.trustees.individual
 
 import base.CSRFRequest
-import services.{UserAnswersService, FakeUserAnswersService}
+import services.{FakeUserAnswersService, UserAnswersService}
 import controllers.ControllerSpecBase
 import controllers.actions.{AuthAction, DataRetrievalAction, FakeAuthAction, FakeDataRetrievalAction}
 import forms.address.AddressListFormProvider
@@ -25,6 +25,7 @@ import identifiers.register.trustees.individual._
 import models.address.TolerantAddress
 import models.person.PersonDetails
 import models.{Index, NormalMode}
+import navigators.Navigator
 import org.joda.time.LocalDate
 import play.api.inject.bind
 import play.api.libs.json.Json
@@ -32,7 +33,7 @@ import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{contentAsString, route, running, status, _}
 import utils.annotations.TrusteesIndividual
-import utils.{FakeNavigator, Navigator, UserAnswers}
+import utils.{FakeNavigator, UserAnswers}
 import viewmodels.Message
 import viewmodels.address.AddressListViewModel
 import views.html.address.addressList

@@ -25,13 +25,14 @@ import identifiers.register.trustees.AddTrusteeId
 import javax.inject.Inject
 import models.Mode
 import models.register.Trustee
+import navigators.Navigator
 import play.api.Logger
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.JsResultException
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import utils.{Navigator, Toggles}
+import utils.Toggles
 import utils.annotations.{NoSuspendedCheck, Trustees}
 import views.html.register.trustees.addTrustee
 
@@ -83,7 +84,7 @@ class AddTrusteeController @Inject()(
       }
   }
 
-  private def enableSubmission(trusteeList: Seq[Trustee[_]]) = {
-    fsm.get(Toggles.isEstablisherCompanyHnSEnabled) || trusteeList.forall(_.isCompleted)
+  private def enableSubmission(trusteeList: Seq[Trustee[_]]): Boolean = {
+    fsm.get(Toggles.isEstablisherCompanyHnSEnabled) || (trusteeList.nonEmpty && trusteeList.forall(_.isCompleted))
   }
 }

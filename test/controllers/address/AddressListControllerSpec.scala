@@ -23,6 +23,7 @@ import identifiers.TypedIdentifier
 import models._
 import models.address.{Address, TolerantAddress}
 import models.requests.DataRequest
+import navigators.Navigator
 import org.scalatest.{Matchers, OptionValues, WordSpec}
 import play.api.Application
 import play.api.i18n.MessagesApi
@@ -31,7 +32,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.{FakeUserAnswersService, UserAnswersService}
 import uk.gov.hmrc.domain.PsaId
-import utils.{FakeNavigator, Navigator, UserAnswers}
+import utils.{FakeNavigator, UserAnswers}
 import viewmodels.Message
 import viewmodels.address.AddressListViewModel
 import views.html.address.addressList

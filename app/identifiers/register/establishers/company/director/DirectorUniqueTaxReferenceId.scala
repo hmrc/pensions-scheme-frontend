@@ -19,6 +19,7 @@ package identifiers.register.establishers.company.director
 import identifiers._
 import identifiers.register.establishers.EstablishersId
 import models.UniqueTaxReference
+import play.api.i18n.Messages
 import play.api.libs.json.{JsPath, Reads}
 import utils.UserAnswers
 import utils.checkyouranswers.{CheckYourAnswers, UniqueTaxReferenceCYA}
@@ -30,29 +31,37 @@ case class DirectorUniqueTaxReferenceId(establisherIndex: Int, directorIndex: In
 
 object DirectorUniqueTaxReferenceId {
 
-  implicit val uniqueTaxReference: CheckYourAnswers[DirectorUniqueTaxReferenceId] = {
-    val inLabel = "messages__director__cya__utr_yes_no"
-    val inReasonLabel = "messages__director__cya__utr_no_reason"
-    val inChangeHasUtr = "messages__visuallyhidden__director__utr_yes_no"
-    val inChangeUtr = "messages__visuallyhidden__director__utr"
-    val inChangeNoUtr = "messages__visuallyhidden__director__utr_no"
+  override def toString: String = "directorUniqueTaxReference"
+
+  implicit def uniqueTaxReference(implicit messages: Messages): CheckYourAnswers[DirectorUniqueTaxReferenceId] = {
+
+    val directorUtrCya = (establisherIndex: Int, directorIndex: Int, ua: UserAnswers) => {
+      val (label, reasonLabel) = ua.get(DirectorDetailsId(establisherIndex, directorIndex)) match {
+        case Some(name) =>
+          (messages("messages__director__cya__utr_yes_no", name.firstAndLastName), messages("messages__director__cya__utr_no_reason", name.firstAndLastName))
+        case None   => ("messages__director__cya__utr_yes_no_fallback", "messages__director__cya__utr_no_reason__fallback")
+      }
+
+      UniqueTaxReferenceCYA[DirectorUniqueTaxReferenceId](
+        label = label,
+        reasonLabel = reasonLabel,
+        changeHasUtr = "messages__visuallyhidden__director__utr_yes_no",
+        changeUtr = "messages__visuallyhidden__director__utr",
+        changeNoUtr = "messages__visuallyhidden__director__utr_no"
+      )()
+    }
 
     new CheckYourAnswers[DirectorUniqueTaxReferenceId] {
 
       override def row(id: DirectorUniqueTaxReferenceId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        UniqueTaxReferenceCYA[DirectorUniqueTaxReferenceId](label = inLabel, reasonLabel = inReasonLabel, changeHasUtr = inChangeHasUtr,
-          changeUtr = inChangeUtr, changeNoUtr = inChangeNoUtr)().row(id)(changeUrl, userAnswers)
+        directorUtrCya(id.establisherIndex, id.directorIndex, userAnswers).row(id)(changeUrl, userAnswers)
 
-      override def updateRow(id: DirectorUniqueTaxReferenceId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
+      override def updateRow(id: DirectorUniqueTaxReferenceId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
         userAnswers.get(IsNewDirectorId(id.establisherIndex, id.directorIndex)) match {
-          case Some(true) => UniqueTaxReferenceCYA[DirectorUniqueTaxReferenceId](label = inLabel, reasonLabel = inReasonLabel, changeHasUtr = inChangeHasUtr,
-            changeUtr = inChangeUtr, changeNoUtr = inChangeNoUtr)().row(id)(changeUrl, userAnswers)
-          case _ => UniqueTaxReferenceCYA[DirectorUniqueTaxReferenceId](label = inLabel, reasonLabel = inReasonLabel, changeHasUtr = inChangeHasUtr,
-            changeUtr = inChangeUtr, changeNoUtr = inChangeNoUtr)().updateRow(id)(changeUrl, userAnswers)
+          case Some(true) => directorUtrCya(id.establisherIndex, id.directorIndex, userAnswers).row(id)(changeUrl, userAnswers)
+          case _          => directorUtrCya(id.establisherIndex, id.directorIndex, userAnswers).updateRow(id)(changeUrl, userAnswers)
         }
-      }
     }
   }
 
-  override def toString: String = "directorUniqueTaxReference"
 }

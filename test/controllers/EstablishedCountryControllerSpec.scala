@@ -23,10 +23,11 @@ import controllers.behaviours.ControllerWithQuestionPageBehaviours
 import forms.EstablishedCountryFormProvider
 import identifiers.EstablishedCountryId
 import models.NormalMode
+import navigators.Navigator
 import play.api.data.Form
 import play.api.mvc.{Action, AnyContent, AnyContentAsFormUrlEncoded}
 import play.api.test.FakeRequest
-import utils.{CountryOptions, FakeNavigator, InputOption, Navigator, UserAnswers}
+import utils.{CountryOptions, FakeNavigator, InputOption, UserAnswers}
 import views.html.establishedCountry
 
 import scala.concurrent.ExecutionContext.Implicits.global

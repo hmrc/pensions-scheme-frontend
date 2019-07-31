@@ -24,7 +24,7 @@ import identifiers.register.trustees._
 import models.register.trustees.TrusteeKind
 import models._
 import play.api.mvc.Call
-import utils.{AbstractNavigator, Enumerable, Navigator, UserAnswers}
+import utils.{Enumerable, UserAnswers}
 
 class TrusteesNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector, appConfig: FrontendAppConfig) extends AbstractNavigator with Enumerable.Implicits {
 

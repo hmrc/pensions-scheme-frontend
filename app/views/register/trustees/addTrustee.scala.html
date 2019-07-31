@@ -21,7 +21,7 @@
 @import models.register.Trustee
 @import play.api.mvc.Call
 
-@(appConfig: FrontendAppConfig, form: Form[_], mode: Mode, trustees: Seq[Trustee[_]], schemeName: Option[String], srn: Option[String], enableSubmission: Boolean)(implicit request: Request[_], messages: Messages)
+@(appConfig: FrontendAppConfig, form: Form[_], mode: Mode, trustees: Seq[Trustee[_]], schemeName: Option[String], srn: Option[String], enableSubmission: Boolean = false)(implicit request: Request[_], messages: Messages)
 
 @main_template(
     title = messages("messages__addTrustee__title"),

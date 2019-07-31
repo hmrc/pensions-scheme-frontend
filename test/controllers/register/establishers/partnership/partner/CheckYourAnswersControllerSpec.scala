@@ -41,7 +41,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
   implicit val request = FakeDataRequest(partnerAnswers)
 
   private def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData,
-                         allowChangeHelper: AllowChangeHelper = ach, toggle: Boolean = false): CheckYourAnswersController =
+                         allowChangeHelper: AllowChangeHelper = ach): CheckYourAnswersController =
     new CheckYourAnswersController(
       frontendAppConfig,
       messagesApi,
@@ -52,8 +52,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
       FakeUserAnswersService,
       new FakeNavigator(desiredRoute),
       countryOptions,
-      allowChangeHelper,
-      new FakeFeatureSwitchManagementService(toggle)
+      allowChangeHelper
     )
 
 
@@ -105,34 +104,27 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
         contentAsString(result) mustBe viewAsString()
       }
 
-      "return OK and display all given answers for UpdateMode" in {
+      "return OK and display all given answers for UpdateMode with add/change link when user enters nino" in {
 
-        val result = controller(partnerAnswersExistingNino.dataRetrievalAction).onPageLoad(UpdateMode, firstIndex, firstIndex, Some("srn"))(request)
+        val result = controller(partnerAnswersUpdateWithNewNino(true).dataRetrievalAction).onPageLoad(UpdateMode, firstIndex, firstIndex, Some("srn"))(request)
         status(result) mustBe OK
-        contentAsString(result) mustBe viewAsString(UpdateMode, updateAnswerRows, Some("srn"))
+        contentAsString(result) mustBe viewAsString(UpdateMode, displayNino(answerRowWithChange), Some("srn"))
       }
 
-      "return OK and display new Nino with Add link for UpdateMode and separateRefCollectionEnabled is true" in {
+      "return OK and display Nino with Add link for UpdateMode when no nino returned from ETMP" in {
 
-        val result = controller(partnerDetailsAnswersUpdateWithoutNino.dataRetrievalAction, toggle = true).
+        val result = controller(partnerDetailsAnswersUpdateWithoutNino.dataRetrievalAction).
           onPageLoad(UpdateMode, firstIndex, firstIndex, Some("srn"))(request)
         status(result) mustBe OK
-        contentAsString(result) mustBe viewAsString(UpdateMode, displayNewNinoAnswerRowWithAdd, Some("srn"))
+        contentAsString(result) mustBe viewAsString(UpdateMode, displayNino(answerRowWithAdd), Some("srn"))
       }
 
-      "return OK and display new Nino with no link for UpdateMode and separateRefCollectionEnabled is true" in {
+      "return OK and display Nino with no link for UpdateMode when nino returned from ETMP" in {
 
-        val result = controller(partnerAnswersUpdate.dataRetrievalAction, toggle = true).onPageLoad(UpdateMode, firstIndex, firstIndex, Some("srn"))(request)
-        status(result) mustBe OK
-        contentAsString(result) mustBe viewAsString(UpdateMode, displayNewNinoAnswerRowWithNoLink, Some("srn"))
-      }
-
-      "return OK and display old Nino links for UpdateMode, New Partner and separateRefCollectionEnabled is true" in {
-
-        val result = controller(newPartnerAnswersUpdateWithOldNino.dataRetrievalAction, toggle = true).
+        val result = controller(partnerAnswersUpdateWithNewNino(false).dataRetrievalAction).
           onPageLoad(UpdateMode, firstIndex, firstIndex, Some("srn"))(request)
         status(result) mustBe OK
-        contentAsString(result) mustBe viewAsString(UpdateMode, updateAnswerRowsWithChange, Some("srn"))
+        contentAsString(result) mustBe viewAsString(UpdateMode, displayNino(answerRowWithNoLink), Some("srn"))
       }
 
       behave like changeableController(
@@ -170,21 +162,21 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
 }
 
 object CheckYourAnswersControllerSpec extends SpecBase {
-  val firstIndex = Index(0)
-  val schemeName = "test scheme name"
-  val desiredRoute = controllers.routes.IndexController.onPageLoad()
+  private val firstIndex = Index(0)
+  private val schemeName = "test scheme name"
+  private val desiredRoute = controllers.routes.IndexController.onPageLoad()
 
-  implicit val partnerDetailsAnswersUpdateWithoutNino = UserAnswers()
+  private val partnerDetailsAnswersUpdateWithoutNino = UserAnswers()
     .set(PartnerDetailsId(firstIndex, firstIndex))(PersonDetails("first name", None, "last name", LocalDate.now(), false))
     .asOpt.value
 
-  implicit val partnerAnswersUpdate = partnerDetailsAnswersUpdateWithoutNino
+  private val partnerAnswersUpdate = partnerDetailsAnswersUpdateWithoutNino
     .set(PartnerNewNinoId(firstIndex, firstIndex))(ReferenceValue("AB100100A")).asOpt.value
 
-  implicit val partnerAnswersExistingNino = partnerDetailsAnswersUpdateWithoutNino
-    .set(PartnerNinoId(firstIndex, firstIndex))(Nino.Yes("AB100100A")).asOpt.value
+  private def partnerAnswersUpdateWithNewNino(isEditable: Boolean): UserAnswers = partnerDetailsAnswersUpdateWithoutNino
+    .set(PartnerNewNinoId(firstIndex, firstIndex))(ReferenceValue("AB100100A", isEditable)).asOpt.value
 
-  val partnerAnswers = partnerAnswersUpdate
+  private val partnerAnswers = partnerAnswersUpdate
     .set(PartnerUniqueTaxReferenceId(firstIndex, firstIndex))(UniqueTaxReference.Yes("1234567890"))
     .flatMap(_.set(PartnerAddressId(firstIndex, firstIndex))(Address("Address 1", "Address 2", None, None, None, "GB")))
     .flatMap(_.set(PartnerAddressYearsId(firstIndex, firstIndex))(AddressYears.UnderAYear))
@@ -192,64 +184,26 @@ object CheckYourAnswersControllerSpec extends SpecBase {
     .flatMap(_.set(PartnerContactDetailsId(firstIndex, firstIndex))(ContactDetails("test@test.com", "123456789")))
     .asOpt.value
 
-  val newPartnerAnswers = partnerAnswers.set(IsEstablisherNewId(firstIndex))(true).asOpt.value
+  private val newPartnerAnswers = partnerAnswers.set(IsEstablisherNewId(firstIndex))(true).asOpt.value
 
-  implicit val newPartnerAnswersUpdateWithOldNino = partnerAnswersUpdate
-    .set(IsNewPartnerId(firstIndex, firstIndex))(true)
-    .flatMap(_.set(PartnerNinoId(firstIndex, firstIndex))(Nino.Yes("AB100100A")))
-    .asOpt.value
+  private def answerRowWithAdd: AnswerRow = AnswerRow("messages__common__nino", Seq("site.not_entered"), answerIsMessageKey = true,
+    Some(Link("site.add",
+      routes.PartnerNinoNewController.onPageLoad(Mode.checkMode(UpdateMode), firstIndex, firstIndex, Some("srn")).url,
+      Some(s"messages__visuallyhidden__partner__nino_add"))))
 
-  private def updateAnswerRows = Seq(AnswerSection(
+  private def answerRowWithChange: AnswerRow = AnswerRow("messages__common__nino", Seq("AB100100A"), answerIsMessageKey = false, Some(
+    Link("site.change", routes.PartnerNinoNewController.onPageLoad(Mode.checkMode(UpdateMode), firstIndex, firstIndex, Some("srn")).url,
+      Some("messages__visuallyhidden__partner__nino")
+    )))
+
+  private def answerRowWithNoLink: AnswerRow = AnswerRow("messages__common__nino", Seq("AB100100A"), answerIsMessageKey = false, None)
+
+  private def displayNino(answerRow: AnswerRow) = Seq(AnswerSection(
     Some("messages__partner__cya__details_heading"),
     Seq(
       AnswerRow("messages__common__cya__name", Seq("first name last name"), false, None),
       AnswerRow("messages__common__dob", Seq(DateHelper.formatDate(LocalDate.now())), answerIsMessageKey = false, None),
-      AnswerRow("messages__common__nino", Seq("AB100100A"), answerIsMessageKey = false, None)
-    )
-  ),
-    AnswerSection(Some("messages__partner__cya__contact__details_heading"), Seq())
-  )
-
-  private def updateAnswerRowsWithChange = Seq(AnswerSection(
-    Some("messages__partner__cya__details_heading"),
-    Seq(
-      AnswerRow("messages__common__cya__name", Seq("first name last name"), false,
-        Some(Link("site.change", routes.PartnerDetailsController.onPageLoad(Mode.checkMode(UpdateMode), firstIndex, firstIndex, Some("srn")).url,
-          Some(Message("messages__visuallyhidden__common__name", "first name last name").resolve)))),
-      AnswerRow("messages__common__dob", Seq(DateHelper.formatDate(LocalDate.now())), answerIsMessageKey = false,
-        Some(Link("site.change", routes.PartnerDetailsController.onPageLoad(Mode.checkMode(UpdateMode), firstIndex, firstIndex, Some("srn")).url,
-          Some(Message("messages__visuallyhidden__common__dob", "first name last name").resolve)))),
-      AnswerRow("messages__partner_nino_question_cya_label", Seq(s"${Nino.Yes}"), answerIsMessageKey = false,
-        Some(Link("site.change", routes.PartnerNinoController.onPageLoad(Mode.checkMode(UpdateMode), firstIndex, firstIndex, Some("srn")).url,
-          Some("messages__visuallyhidden__partner__nino_yes_no")))),
-      AnswerRow("messages__common__nino", Seq("AB100100A"), answerIsMessageKey = false,
-        Some(Link("site.change", routes.PartnerNinoController.onPageLoad(Mode.checkMode(UpdateMode), firstIndex, firstIndex, Some("srn")).url,
-          Some("messages__visuallyhidden__partner__nino"))))
-    )
-  ),
-    AnswerSection(Some("messages__partner__cya__contact__details_heading"), Seq())
-  )
-
-  private def displayNewNinoAnswerRowWithAdd = Seq(AnswerSection(
-    Some("messages__partner__cya__details_heading"),
-    Seq(
-      AnswerRow("messages__common__cya__name", Seq("first name last name"), false, None),
-      AnswerRow("messages__common__dob", Seq(DateHelper.formatDate(LocalDate.now())), answerIsMessageKey = false, None),
-      AnswerRow("messages__common__nino", Seq("site.not_entered"), answerIsMessageKey = true,
-        Some(Link("site.add",
-          routes.PartnerNinoNewController.onPageLoad(Mode.checkMode(UpdateMode), firstIndex, firstIndex, Some("srn")).url,
-          Some(s"messages__visuallyhidden__partner__nino_add"))))
-    )
-  ),
-    AnswerSection(Some("messages__partner__cya__contact__details_heading"), Seq())
-  )
-
-  private def displayNewNinoAnswerRowWithNoLink = Seq(AnswerSection(
-    Some("messages__partner__cya__details_heading"),
-    Seq(
-      AnswerRow("messages__common__cya__name", Seq("first name last name"), false, None),
-      AnswerRow("messages__common__dob", Seq(DateHelper.formatDate(LocalDate.now())), answerIsMessageKey = false, None),
-      AnswerRow("messages__common__nino", Seq("AB100100A"), answerIsMessageKey = false, None)
+      answerRow
     )
   ),
     AnswerSection(Some("messages__partner__cya__contact__details_heading"), Seq())

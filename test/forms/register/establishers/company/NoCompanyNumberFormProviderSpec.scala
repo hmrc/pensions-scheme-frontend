@@ -19,6 +19,7 @@ package forms.register.establishers.company
 import com.google.inject.Inject
 import forms.behaviours.StringFieldBehaviours
 import forms.mappings.Constraints
+import forms.register.NoCompanyNumberFormProvider
 import org.scalatestplus.play.OneAppPerSuite
 import play.api.data.FormError
 import play.api.i18n.{Messages, MessagesApi}
