@@ -48,43 +48,65 @@ class TrusteesCompanyNavigatorHnSSpec extends SpecBase with MustMatchers with Na
 
   private def anyMoreChangesPage: Call = AnyMoreChangesController.onPageLoad(None)
 
+  private def companyNoPage(mode:Mode):Call = CompanyRegistrationNumberVariationsController.onPageLoad(mode, None, indexZero)
+
+  private def noCompanyNoPage(mode:Mode):Call = NoCompanyNumberController.onPageLoad(mode, indexZero, None)
+
+  private def hasCompanyUtrPage(mode:Mode):Call = HasCompanyUTRController.onPageLoad(mode, indexZero, None)
+
+  private def hasCompanyVatPage(mode:Mode):Call = HasCompanyVATController.onPageLoad(mode, indexZero, None)
+
+  private def hasCompanyPayePage(mode:Mode):Call = HasCompanyPAYEController.onPageLoad(mode, indexZero, None)
+
+  private def utrPage(mode:Mode):Call = CompanyUTRController.onPageLoad(mode, None, indexZero)
+
+  private def noUtrPage(mode:Mode):Call = CompanyNoUTRReasonController.onPageLoad(mode, indexZero, None)
+
+  private def vatPage(mode:Mode):Call = CompanyVatVariationsController.onPageLoad(mode, indexZero, None)
+
+  private def noVatPage(mode:Mode):Call = HasCompanyPAYEController.onPageLoad(mode, indexZero, None)
+
+  private def payePage(mode:Mode):Call = CompanyPayeVariationsController.onPageLoad(mode, indexZero, None)
+
+  private def cyaPage(mode:Mode):Call = CheckYourAnswersCompanyDetailsController.onPageLoad(mode, indexZero, None)
+
   "For Scheme Subscription (Normal Mode)" should {
     def routes(mode: Mode): TableFor3[Identifier, UserAnswers, Call] =
       Table(
         ("Id", "UserAnswers", "Next Page"),
-        row(HasCompanyNumberId(indexZero))(true, CompanyRegistrationNumberVariationsController.onPageLoad(mode, None, indexZero)),
-        row(HasCompanyNumberId(indexZero))(false, NoCompanyNumberController.onPageLoad(mode, indexZero, None)),
-        row(NoCompanyNumberId(indexZero))(stringValue, HasCompanyUTRController.onPageLoad(mode, indexZero, None)),
-        row(CompanyRegistrationNumberVariationsId(indexZero))(refValue, HasCompanyUTRController.onPageLoad(mode, indexZero, None)),
-        row(HasCompanyUTRId(indexZero))(true, CompanyUTRController.onPageLoad(mode, None, indexZero)),
-        row(HasCompanyUTRId(indexZero))(false, CompanyNoUTRReasonController.onPageLoad(mode, indexZero, None)),
-        row(CompanyNoUTRReasonId(indexZero))(stringValue, HasCompanyVATController.onPageLoad(mode, indexZero, None)),
-        row(CompanyUTRId(indexZero))(stringValue, HasCompanyVATController.onPageLoad(mode, indexZero, None)),
-        row(HasCompanyVATId(indexZero))(true, CompanyVatVariationsController.onPageLoad(mode, indexZero, None)),
-        row(HasCompanyVATId(indexZero))(false, HasCompanyPAYEController.onPageLoad(mode, indexZero, None)),
-        row(CompanyVatVariationsId(indexZero))(refValue, HasCompanyPAYEController.onPageLoad(mode, indexZero, None)),
-        row(HasCompanyPAYEId(indexZero))(true, CompanyPayeVariationsController.onPageLoad(mode, indexZero, None)),
-        row(HasCompanyPAYEId(indexZero))(false, CheckYourAnswersCompanyDetailsController.onPageLoad(mode, indexZero, None)),
-        row(CompanyPayeVariationsId(indexZero))(refValue, CheckYourAnswersCompanyDetailsController.onPageLoad(mode, indexZero, None))
+        row(HasCompanyNumberId(indexZero))(true, companyNoPage(mode)),
+        row(HasCompanyNumberId(indexZero))(false, noCompanyNoPage(mode)),
+        row(NoCompanyNumberId(indexZero))(stringValue, hasCompanyUtrPage(mode)),
+        row(CompanyRegistrationNumberVariationsId(indexZero))(refValue, hasCompanyUtrPage(mode)),
+        row(HasCompanyUTRId(indexZero))(true, utrPage(mode)),
+        row(HasCompanyUTRId(indexZero))(false, noUtrPage(mode)),
+        row(CompanyNoUTRReasonId(indexZero))(stringValue, hasCompanyVatPage(mode)),
+        row(CompanyUTRId(indexZero))(stringValue, hasCompanyVatPage(mode)),
+        row(HasCompanyVATId(indexZero))(true, vatPage(mode)),
+        row(HasCompanyVATId(indexZero))(false, hasCompanyPayePage(mode)),
+        row(CompanyVatVariationsId(indexZero))(refValue, hasCompanyPayePage(mode)),
+        row(HasCompanyPAYEId(indexZero))(true, payePage(mode)),
+        row(HasCompanyPAYEId(indexZero))(false, cyaPage(mode)),
+        row(CompanyPayeVariationsId(indexZero))(refValue, cyaPage(mode))
       )
 
     def routesCheckMode(mode: Mode): TableFor3[Identifier, UserAnswers, Call] =
       Table(
         ("Id", "UserAnswers", "Next Page"),
-        row(HasCompanyNumberId(indexZero))(true, CompanyRegistrationNumberVariationsController.onPageLoad(mode, None, indexZero)),
-        row(HasCompanyNumberId(indexZero))(false, NoCompanyNumberController.onPageLoad(mode, indexZero, None)),
-        row(NoCompanyNumberId(indexZero))(stringValue, CheckYourAnswersCompanyDetailsController.onPageLoad(mode, indexZero, None)),
-        row(CompanyRegistrationNumberVariationsId(indexZero))(refValue, CheckYourAnswersCompanyDetailsController.onPageLoad(mode, indexZero, None)),
-        row(HasCompanyUTRId(indexZero))(true, CompanyUTRController.onPageLoad(mode, None, indexZero)),
-        row(HasCompanyUTRId(indexZero))(false, CompanyNoUTRReasonController.onPageLoad(mode, indexZero, None)),
-        row(CompanyNoUTRReasonId(indexZero))(stringValue, CheckYourAnswersCompanyDetailsController.onPageLoad(mode, indexZero, None)),
-        row(CompanyUTRId(indexZero))(stringValue, CheckYourAnswersCompanyDetailsController.onPageLoad(mode, indexZero, None)),
-        row(HasCompanyVATId(indexZero))(true, CompanyVatVariationsController.onPageLoad(mode, indexZero, None)),
-        row(HasCompanyVATId(indexZero))(false, CheckYourAnswersCompanyDetailsController.onPageLoad(mode, indexZero, None)),
-        row(CompanyVatVariationsId(indexZero))(refValue, CheckYourAnswersCompanyDetailsController.onPageLoad(mode, indexZero, None)),
-        row(HasCompanyPAYEId(indexZero))(true, CompanyPayeVariationsController.onPageLoad(mode, indexZero, None)),
-        row(HasCompanyPAYEId(indexZero))(false, CheckYourAnswersCompanyDetailsController.onPageLoad(mode, indexZero, None)),
-        row(CompanyPayeVariationsId(indexZero))(refValue, CheckYourAnswersCompanyDetailsController.onPageLoad(mode, indexZero, None))
+        row(HasCompanyNumberId(indexZero))(true, companyNoPage(mode)),
+        row(HasCompanyNumberId(indexZero))(false, noCompanyNoPage(mode)),
+        row(NoCompanyNumberId(indexZero))(stringValue, cyaPage(mode)),
+        row(CompanyRegistrationNumberVariationsId(indexZero))(refValue, cyaPage(mode)),
+        row(HasCompanyUTRId(indexZero))(true, utrPage(mode)),
+        row(HasCompanyUTRId(indexZero))(false, noUtrPage(mode)),
+        row(CompanyNoUTRReasonId(indexZero))(stringValue, cyaPage(mode)),
+        row(CompanyUTRId(indexZero))(stringValue, cyaPage(mode)),
+        row(HasCompanyVATId(indexZero))(true, vatPage(mode)),
+        row(HasCompanyVATId(indexZero))(false, cyaPage(mode)),
+        row(CompanyVatVariationsId(indexZero))(refValue, cyaPage(mode)),
+        row(HasCompanyPAYEId(indexZero))(true, payePage(mode)),
+        row(HasCompanyPAYEId(indexZero))(false, cyaPage(mode)),
+        row(CompanyPayeVariationsId(indexZero))(refValue, cyaPage(mode))
       )
 
     def routesCheckUpdateMode(mode: Mode): TableFor3[Identifier, UserAnswers, Call] = {
@@ -111,7 +133,6 @@ class TrusteesCompanyNavigatorHnSSpec extends SpecBase with MustMatchers with Na
   def navigatorWithRoutesForMode(mode: Mode)(navigator: Navigator,
                                              routes: TableFor3[Identifier, UserAnswers, Call],
                                              srn: Option[String] = None): Unit = {
-
     s"behave like a navigator in ${Mode.jsLiteral.to(mode)} journey" when {
 
       s"navigating in ${Mode.jsLiteral.to(mode)}" must {
@@ -127,8 +148,6 @@ class TrusteesCompanyNavigatorHnSSpec extends SpecBase with MustMatchers with Na
         }
 
       }
-
     }
   }
-
 }
