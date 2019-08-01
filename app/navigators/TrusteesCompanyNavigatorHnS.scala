@@ -50,9 +50,9 @@ class TrusteesCompanyNavigatorHnS @Inject()(val dataCacheConnector: UserAnswersC
     case id@HasCompanyUTRId(index) => booleanNav(id, ua, mode, index, srn, utrPage, noUtrPage)
     case CompanyNoUTRReasonId(index) => cyaPage(mode, index, srn)
     case CompanyUTRId(index) => cyaPage(mode, index, srn)
-    case id@HasCompanyVATId(index) => booleanNav(id, ua, mode, vatPage(mode, index, srn), cyaPage(mode, index, srn))
+    case id@HasCompanyVATId(index) => booleanNav(id, ua, mode, index, srn,vatPage, cyaPage)
     case CompanyVatVariationsId(index) => cyaPage(mode, index, srn)
-    case id@HasCompanyPAYEId(index) => booleanNav(id, ua, mode, payePage(mode, index, srn), cyaPage(mode, index, srn))
+    case id@HasCompanyPAYEId(index) => booleanNav(id, ua, mode, index, srn, payePage, cyaPage)
     case CompanyPayeVariationsId(index) => cyaPage(mode, index, srn)
   }
 
@@ -65,10 +65,10 @@ class TrusteesCompanyNavigatorHnS @Inject()(val dataCacheConnector: UserAnswersC
     case CompanyUTRId(index) if isNewTrustee(ua, index) => cyaPage(mode, index, srn)
     case CompanyUTRId(_) => anyMoreChangesPage(srn)
     case CompanyNoUTRReasonId(index) => cyaPage(mode, index, srn)
-    case id@HasCompanyVATId(index) => booleanNav(id, ua, mode, vatPage(mode, index, srn), cyaPage(mode, index, srn))
+    case id@HasCompanyVATId(index) => booleanNav(id, ua, mode, index, srn, vatPage, cyaPage)
     case CompanyVatVariationsId(index) if isNewTrustee(ua, index) => cyaPage(mode, index, srn)
     case CompanyVatVariationsId(_) => anyMoreChangesPage(srn)
-    case id@HasCompanyPAYEId(index) => booleanNav(id, ua, mode, payePage(mode, index, srn), cyaPage(mode, index, srn))
+    case id@HasCompanyPAYEId(index) => booleanNav(id, ua, mode, index, srn, payePage, cyaPage)
     case CompanyPayeVariationsId(index) if isNewTrustee(ua, index) => cyaPage(mode, index, srn)
     case CompanyPayeVariationsId(_) => anyMoreChangesPage(srn)
   }
