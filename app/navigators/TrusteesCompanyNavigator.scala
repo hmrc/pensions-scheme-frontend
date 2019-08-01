@@ -19,11 +19,9 @@ package navigators
 import com.google.inject.Inject
 import config.{FeatureSwitchManagementService, FrontendAppConfig}
 import connectors.UserAnswersCacheConnector
-import controllers.register.establishers.company.routes.CompanyConfirmPreviousAddressController
 import controllers.register.trustees.company.routes._
 import controllers.register.trustees.routes._
 import controllers.routes._
-import identifiers.register.establishers.IsEstablisherNewId
 import identifiers.register.trustees.IsTrusteeNewId
 import identifiers.register.trustees.company._
 import models.Mode.journeyMode
@@ -159,18 +157,37 @@ class TrusteesCompanyNavigator @Inject()(val dataCacheConnector: UserAnswersCach
         NavigateTo.dontSave(CompanyAddressController.onPageLoad(mode, index, srn))
 
       case CompanyAddressId(index) =>
+
         val isNew = from.userAnswers.get(IsTrusteeNewId(index)).contains(true)
         if(isNew || mode == CheckMode) {
-          if(featureSwitchManagementService.get(Toggles.isEstablisherCompanyHnSEnabled)){
-            cyaAddressDetails(journeyMode(mode), index, srn)
-          } else {
-            checkYourAnswers(index, journeyMode(mode), srn)
-          }
-        } else if (!isNew && mode == CheckUpdateMode) {
-          NavigateTo.dontSave(CompanyConfirmPreviousAddressController.onPageLoad(index, srn))
-        } else {
+//          checkYourAnswers(index, journeyMode(mode), srn)
+                    if(featureSwitchManagementService.get(Toggles.isEstablisherCompanyHnSEnabled)){
+                      cyaAddressDetails(journeyMode(mode), index, srn)
+                    } else {
+                      checkYourAnswers(index, journeyMode(mode), srn)
+                    }
+
+
+                  } else if (!isNew && mode == CheckUpdateMode) {
+                    NavigateTo.dontSave(CompanyConfirmPreviousAddressController.onPageLoad(index, srn))
+                  } else {
+
+
           NavigateTo.dontSave(CompanyAddressYearsController.onPageLoad(mode, index, srn))
         }
+
+//        val isNew = from.userAnswers.get(IsTrusteeNewId(index)).contains(true)
+//        if(isNew || mode == CheckMode) {
+//          if(featureSwitchManagementService.get(Toggles.isEstablisherCompanyHnSEnabled)){
+//            cyaAddressDetails(journeyMode(mode), index, srn)
+//          } else {
+//            checkYourAnswers(index, journeyMode(mode), srn)
+//          }
+//        } else if (!isNew && mode == CheckUpdateMode) {
+//          NavigateTo.dontSave(CompanyConfirmPreviousAddressController.onPageLoad(index, srn))
+//        } else {
+//          NavigateTo.dontSave(CompanyAddressYearsController.onPageLoad(mode, index, srn))
+//        }
 
       case CompanyConfirmPreviousAddressId(index) => confirmPreviousAddressRoutes(index, mode, srn)(from.userAnswers)
 

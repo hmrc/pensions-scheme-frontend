@@ -19,22 +19,19 @@ package navigators
 import base.SpecBase
 import connectors.FakeUserAnswersCacheConnector
 import identifiers.Identifier
-import identifiers.register.trustees.{ExistingCurrentAddressId, IsTrusteeNewId}
+import identifiers.register.trustees.IsTrusteeNewId
 import identifiers.register.trustees.company._
-import models.Mode.{checkMode, journeyMode}
+import models.Mode.checkMode
 import models._
-import models.address.Address
 import org.scalatest.prop.TableFor6
 import org.scalatest.{MustMatchers, OptionValues}
 import play.api.libs.json.Json
 import play.api.mvc.Call
 import utils.{FakeFeatureSwitchManagementService, UserAnswers}
-import utils.{FakeFeatureSwitchManagementService, Toggles, UserAnswers}
 
 class TrusteesCompanyNavigatorSpec extends SpecBase with MustMatchers with NavigatorBehaviour {
 
   import TrusteesCompanyNavigatorSpec._
-
 
   private def routes(mode: Mode, toggled: Boolean = false): TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = Table(
 
@@ -56,16 +53,16 @@ class TrusteesCompanyNavigatorSpec extends SpecBase with MustMatchers with Navig
     (CompanyUniqueTaxReferenceId(0), newTrustee, companyPostCodeLookup(mode), true, Some(exitJourney(mode, newTrustee, 0, toggled, cya(mode))), true),
     (CompanyPostcodeLookupId(0), emptyAnswers, companyAddressList(mode), true, Some(companyAddressList(checkMode(mode))), true),
     (CompanyAddressListId(0), emptyAnswers, companyManualAddress(mode), true, Some(companyManualAddress(checkMode(mode))), true),
-    (CompanyAddressId(0), emptyAnswers, companyAddressYears(mode), true, addressRoutesNotNew(mode, toggled), true),
-    (CompanyAddressId(0), newTrustee, companyAddressYears(mode), true, if(toggled) Some(cyaAddress(mode)) else Some(cya(mode)), true),
-    (CompanyAddressYearsId(0), addressYearsOverAYear, if(toggled) cyaAddress(mode) else companyContactDetails(mode), true, Some(exitJourney(mode, emptyAnswers, 0, toggled, cyaAddress(mode))), true),
-    (CompanyAddressYearsId(0), addressYearsOverAYearNew, if(toggled) cyaAddress(mode) else companyContactDetails(mode), true, Some(exitJourney(mode, addressYearsOverAYearNew, 0, toggled, cyaAddress(mode))), true),
+    (CompanyAddressId(0), emptyAnswers, companyAddressYears(mode), true, if (mode == UpdateMode) Some(confirmPreviousAddress) else if (toggled) Some(cyaAddress(mode)) else Some(cya(mode)), true),
+    (CompanyAddressId(0), newTrustee, companyAddressYears(mode), true, if (toggled) Some(cyaAddress(mode)) else Some(cya(mode)), true),
+    (CompanyAddressYearsId(0), addressYearsOverAYear, if (toggled) cyaAddress(mode) else companyContactDetails(mode), true, Some(exitJourney(mode, addressYearsOverAYear, 0, toggled, cyaAddress(mode))), true),
+    (CompanyAddressYearsId(0), addressYearsOverAYearNew, if (toggled) cyaAddress(mode) else companyContactDetails(mode), true, Some(exitJourney(mode, addressYearsOverAYearNew, 0, toggled, cyaAddress(mode))), true),
+    (CompanyAddressYearsId(0), emptyAnswers, sessionExpired, false, Some(sessionExpired), false),
     (CompanyPreviousAddressPostcodeLookupId(0), emptyAnswers, companyPaList(mode), true, Some(companyPaList(checkMode(mode))), true),
     (CompanyPreviousAddressListId(0), emptyAnswers, companyPreviousAddress(mode), true, Some(companyPreviousAddress(checkMode(mode))), true),
-    (CompanyPreviousAddressId(0), emptyAnswers, if(toggled) cyaAddress(mode) else companyContactDetails(mode), true, Some(exitJourney(mode, emptyAnswers, 0, toggled, cyaAddress(mode))), true),
+    (CompanyPreviousAddressId(0), emptyAnswers, if (toggled) cyaAddress(mode) else companyContactDetails(mode), true, Some(exitJourney(mode, emptyAnswers, 0, toggled, cyaAddress(mode))), true),
     (CompanyContactDetailsId(0), emptyAnswers, cya(mode), true, Some(exitJourney(mode, emptyAnswers, 0, toggled, cya(mode))), true),
     (CompanyContactDetailsId(0), newTrustee, cya(mode), true, Some(exitJourney(mode, newTrustee, 0, toggled, cya(mode))), true),
-    (CompanyAddressYearsId(0), emptyAnswers, sessionExpired, false, Some(sessionExpired), false),
     (CheckYourAnswersId, emptyAnswers, addTrustee(mode), false, None, true),
     (CompanyVatVariationsId(0), emptyAnswers, index, false, Some(exitJourney(mode, emptyAnswers, 0, toggled, cya(mode))), true),
     (CompanyVatVariationsId(0), newTrustee, index, false, Some(exitJourney(mode, newTrustee, 0, toggled, cya(mode))), true),
@@ -78,18 +75,16 @@ class TrusteesCompanyNavigatorSpec extends SpecBase with MustMatchers with Navig
     (CompanyConfirmPreviousAddressId(0), confirmPreviousAddressYes, sessionExpired, false, Some(anyMoreChanges), false),
     (CompanyConfirmPreviousAddressId(0), confirmPreviousAddressNo, sessionExpired, false, Some(prevAddPostCodeLookup(checkMode(mode))), false),
     (CompanyConfirmPreviousAddressId(0), emptyAnswers, sessionExpired, false, Some(sessionExpired), false),
-    (CompanyAddressYearsId(0), addressYearsUnderAYear, if(toggled) hasBeenTrading(mode) else prevAddPostCodeLookup(mode), true, Some(addressYearsLessThanTwelveEdit(checkMode(mode), addressYearsUnderAYear, toggled)), true),
-    (CompanyAddressYearsId(0), addressYearsUnderAYearWithExistingCurrentAddress, if(toggled) hasBeenTrading(mode) else prevAddPostCodeLookup(mode), true, Some(addressYearsLessThanTwelveEdit(checkMode(mode), addressYearsUnderAYearWithExistingCurrentAddress, toggled)), true),
+    (CompanyAddressYearsId(0), addressYearsUnderAYear, if (toggled) hasBeenTrading(mode) else prevAddPostCodeLookup(mode), true, Some(addressYearsLessThanTwelveEdit(checkMode(mode), addressYearsUnderAYear, toggled)), true),
+    (CompanyAddressYearsId(0), addressYearsUnderAYearWithExistingCurrentAddress, if (toggled) hasBeenTrading(mode) else prevAddPostCodeLookup(mode), true, Some(addressYearsLessThanTwelveEdit(checkMode(mode), addressYearsUnderAYearWithExistingCurrentAddress, toggled)), true),
     (CompanyPayeVariationsId(0), emptyAnswers, none, true, Some(exitJourney(checkMode(mode), emptyAnswers, 0, toggled, cya(mode))), true)
   )
-
-
 
   s"Trustee company navigations with hns toggle off" must {
     appRunning()
 
     val navigator: TrusteesCompanyNavigator =
-    new TrusteesCompanyNavigator(FakeUserAnswersCacheConnector, frontendAppConfig, new FakeFeatureSwitchManagementService(false))
+      new TrusteesCompanyNavigator(FakeUserAnswersCacheConnector, frontendAppConfig, new FakeFeatureSwitchManagementService(false))
 
     behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, routes(NormalMode), dataDescriber)
     behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, routes(UpdateMode) ++ editRoutes(UpdateMode), dataDescriber, UpdateMode)
@@ -193,27 +188,27 @@ object TrusteesCompanyNavigatorSpec extends SpecBase with OptionValues {
   private val confirmPreviousAddressNo = UserAnswers(Json.obj()).set(CompanyConfirmPreviousAddressId(0))(false).asOpt.value
 
   private def addressRoutesNotNew(mode: Mode, toggled: Boolean) =
-    if(mode == UpdateMode) Some(companyAddressYears(checkMode(mode))) else if(toggled) Some(cyaAddress(mode)) else Some(cya(mode))
+    if (mode == UpdateMode) Some(companyAddressYears(checkMode(mode))) else if (toggled) Some(cyaAddress(mode)) else Some(cya(mode))
 
   private def dataDescriber(answers: UserAnswers): String = answers.toString
 
   private def anyMoreChanges = controllers.routes.AnyMoreChangesController.onPageLoad(None)
 
-  private def exitJourney(mode: Mode, answers:UserAnswers, index:Int = 0, toggled: Boolean,
+  private def exitJourney(mode: Mode, answers: UserAnswers, index: Int = 0, toggled: Boolean,
                           cyaPage: Call): Call = {
     val cyaToggled = if (toggled) cyaPage else cya(mode)
-    if(mode == CheckMode || mode == NormalMode) cyaToggled
-  else {
-    if(answers.get(IsTrusteeNewId(index)).getOrElse(false)) cyaToggled
-    else anyMoreChanges
-  }
+    if (mode == CheckMode || mode == NormalMode) cyaToggled
+    else {
+      if (answers.get(IsTrusteeNewId(index)).getOrElse(false)) cyaToggled
+      else anyMoreChanges
+    }
   }
 
 
   private def addressYearsLessThanTwelveEdit(mode: Mode, userAnswers: UserAnswers, toggled: Boolean): Call =
-    if(mode == CheckUpdateMode && !userAnswers.get(IsTrusteeNewId(0)).getOrElse(true))
+    if (mode == CheckUpdateMode && !userAnswers.get(IsTrusteeNewId(0)).getOrElse(true))
       confirmPreviousAddress
-    else if(toggled)
+    else if (toggled)
       hasBeenTrading(mode)
     else
       prevAddPostCodeLookup(mode)
