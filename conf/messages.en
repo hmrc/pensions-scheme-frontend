@@ -395,6 +395,9 @@ messages__company_address_years__title =  Has the establisher used this contact 
 messages__company_address_years__h1 = Has {0} used this contact address for at least 1 year?
 messages__company_address_years__form_error = Select yes if {0} has used this registered address for at least 1 year
 
+messages__company_trustee_address_years__title =  Has the company used this contact address for at least 1 year?
+messages__company_trustee_address_years__heading = Has {0} used this contact address for at least 1 year?
+
 messages__company_trustee_address_years__h1 =  Has {0} used this contact address for at least 1 year?
 
 messages__common__company_details__title = Company details
@@ -478,22 +481,28 @@ companyContactDetails.checkYourAnswersLabel = companyContactDetails
 messages__companyDirectorAddress__title = Director’s previous address
 messages__companyDirectorAddress__heading = Director’s previous address
 
-messages__companyAddress__title = Company address
-messages__companyAddress__heading = Company address
+messages__companyAddress__title = What is the company’s postcode?
+messages__companyAddress__heading = What is {0}’s postcode?
 messages__companyAddress__lede = This is usually the registered business address of the scheme establisher but you can enter any address you have for this company.
 messages__companyAddress__trustee__lede = This is usually the registered business address of the trustee but you can enter any address you have for this company.
 messages__companyAddress__checkYourAnswersLabel = Address
+
+messages__companyConfirmAddress__title = Confirm the company’s address
+messages__companyConfirmAddress__heading = Confirm {0}’s address
+
+messages__companyConfirmPreviousAddress__title = Confirm the company’s previous address
+messages__companyConfirmPreviousAddress__heading = Confirm {0}’s previous address
 
 messages__directorDetails__title = Company director
 messages__directorDetails__heading = Company director
 
 messages__directorName__title = What is the director’s name?
 messages__directorName__heading = What is the director’s name?
-messages__directorName__cya = Director's name
+messages__directorName__cya = Director’s name
 messages__visuallyhidden__directorName = Change name of director
 
-messages__companyPreviousAddressPostcodeLookup__title = Previous address of the company
-messages__companyPreviousAddressPostcodeLookup__heading = Previous address of the company
+messages__companyPreviousAddressPostcodeLookup__title = What was the company’s previous postcode?
+messages__companyPreviousAddressPostcodeLookup__heading = What was {0}’s previous postcode?
 messages__companyPreviousAddressPostcodeLookup__checkYourAnswersLabel = Previous address
 
 messages__companyPreviousAddress__title = Previous address of the company
@@ -598,7 +607,7 @@ messages__companyRegistrationNumber__title = Does the trustee have a Company Reg
 messages__companyRegistrationNumber__heading = Does the trustee have a Company Registration number?
 messages__companyRegistrationNumber__error__required = Please give an answer for companyRegistrationNumber
 
-messages__companyNumber__trustee__title = What is the trustees company number?
+messages__companyNumber__trustee__title = What is their company number?
 messages__companyNumber__trustee__heading = What is {0}’s company number?
 
 messages__companyNumber__establisher__title = What is the establisher’s company number?
@@ -664,8 +673,8 @@ schemeEstablishedCountry.checkYourAnswersLabel = Where was the scheme establishe
 uKBankAccount.checkYourAnswersLabel = Does the scheme have a UK bank account?
 bankAccountDate.checkYourAnswersLabel = Approximate date the account was opened
 
-messages__trusteeKind__title = Trustees
-messages__trusteeKind__heading = Trustees
+messages__trusteeKind__title = What kind of trustee are you adding?
+messages__trusteeKind__heading = What kind of trustee are you adding?
 messages__trusteeKind__company = Company
 messages__trusteeKind__individual = Individual
 messages__trusteeKind__partnership = Partnership
@@ -753,7 +762,7 @@ messages__declaration__statement10 = the scheme is a Master Trust as defined in 
 messages__declaration__agree = Agree
 messages__declaration__invalid = You need to agree to all the declarations before you can continue
 
-messages__confirmDeleteTrustee__title = Confirm deletion
+messages__confirmDeleteTrustee__title = Are you sure you want to delete this trustee?
 messages__confirmDeleteTrustee__heading = Are you sure you want to delete {0}?
 
 messages__moreThanTenTrustees__title = Do you need to tell us about other trustees?
@@ -829,7 +838,7 @@ messages__listSchemes__status_rejected_appeal = Rejected under appeal
 messages__listSchemes__schemeName__screen_reader = The scheme name is: {0}
 messages__listSchemes__SRN__screen_reader = {0}’s, submission reference number is {1}
 messages__listSchemes__PSTR__screen_reader = {0}’s, Pension Scheme Tax Reference number is {1}
-messages__listSchemes__status__screen_reader = {0}’s' status is {1}
+messages__listSchemes__status__screen_reader = {0}’s status is {1}
 messages__listSchemes__date__screen_reader = {0} was opened on {1}
 
 messages__schemesOverview__title = Manage and register your pension schemes
@@ -1635,7 +1644,7 @@ messages__confirmPreviousAddress__title = Is this the previous address?
 messages__confirmPreviousAddress__heading = Is this {0}’s previous address?
 messages__confirmPreviousAddress__error = Select yes if this is {0}’s previous address
 
-messages__vatVariations__company_title = What is the company’s VAT registration number?
+messages__vatVariations__company_title = What is their VAT registration number?
 messages__vatVariations__partnership_title = What is the partnership’s VAT registration number?
 messages__vatVariations__heading = What is {0}’s VAT registration number?
 messages__vatVariations__hint = This is 9 numbers, sometimes with ‘GB’ at the start, for example 123456789 or GB123456789.
