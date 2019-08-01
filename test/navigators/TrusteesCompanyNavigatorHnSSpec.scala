@@ -67,7 +67,7 @@ object TrusteesCompanyNavigatorHnSSpec extends SpecBase with NavigatorBehaviour 
 
   private def payePage(mode: Mode): Call = CompanyPayeVariationsController.onPageLoad(mode, 0, None)
 
-  private def cyaPage(mode: Mode): Call = CheckYourAnswersCompanyDetailsController.onPageLoad(mode, 0, None)
+  private def cyaPage(mode: Mode): Call = CheckYourAnswersCompanyDetailsController.onPageLoad(journeyMode(mode), 0, None)
 
 
   def normalAndUpdateModeRoutes(mode: Mode): TableFor3[Identifier, UserAnswers, Call] =
@@ -95,17 +95,17 @@ object TrusteesCompanyNavigatorHnSSpec extends SpecBase with NavigatorBehaviour 
       row(HasCompanyNumberId(0))(true, companyNoPage(mode)),
       row(HasCompanyNumberId(0))(false, noCompanyNoPage(mode)),
       row(NoCompanyNumberId(0))(someStringValue, cyaPage(mode)),
-      row(CompanyRegistrationNumberVariationsId(0))(someRefValue, cyaPage(journeyMode(mode))),
+      row(CompanyRegistrationNumberVariationsId(0))(someRefValue, cyaPage(mode)),
       row(HasCompanyUTRId(0))(true, utrPage(mode)),
       row(HasCompanyUTRId(0))(false, noUtrPage(mode)),
-      row(CompanyNoUTRReasonId(0))(someStringValue, cyaPage(journeyMode(mode))),
-      row(CompanyUTRId(0))(someStringValue, cyaPage(journeyMode(mode))),
+      row(CompanyNoUTRReasonId(0))(someStringValue, cyaPage(mode)),
+      row(CompanyUTRId(0))(someStringValue, cyaPage(mode)),
       row(HasCompanyVATId(0))(true, vatPage(mode)),
-      row(HasCompanyVATId(0))(false, cyaPage(journeyMode(mode))),
-      row(CompanyVatVariationsId(0))(someRefValue, cyaPage(journeyMode(mode))),
+      row(HasCompanyVATId(0))(false, cyaPage(mode)),
+      row(CompanyVatVariationsId(0))(someRefValue, cyaPage(mode)),
       row(HasCompanyPAYEId(0))(true, payePage(mode)),
-      row(HasCompanyPAYEId(0))(false, cyaPage(journeyMode(mode))),
-      row(CompanyPayeVariationsId(0))(someRefValue, cyaPage(journeyMode(mode)))
+      row(HasCompanyPAYEId(0))(false, cyaPage(mode)),
+      row(CompanyPayeVariationsId(0))(someRefValue, cyaPage(mode))
     )
 
   def routesCheckUpdateMode(mode: Mode): TableFor3[Identifier, UserAnswers, Call] = {
