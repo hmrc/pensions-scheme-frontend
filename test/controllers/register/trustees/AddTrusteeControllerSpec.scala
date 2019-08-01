@@ -109,11 +109,11 @@ class AddTrusteeControllerSpec extends ControllerSpecBase {
 
   "AddTrustee Controller" must {
 
-    "return view with button enabled when toggle set to true" in {
+    "return view with button ENABLED when toggle set to TRUE" in {
       val trusteeList: JsValue = UserAnswers()
-        .set(TrusteeDetailsId(0))(PersonDetails("fistName", None, "lastName", LocalDate.now(), isDeleted = false)).asOpt.value
+        .set(TrusteeDetailsId(0))(PersonDetails("fistName", None, "lastName", LocalDate.now())).asOpt.value
         .set(IsTrusteeCompleteId(0))(true).asOpt.value
-        .set(TrusteeDetailsId(1))(PersonDetails("fistName", None, "lastName", LocalDate.now(), isDeleted = false)).asOpt.value
+        .set(TrusteeDetailsId(1))(PersonDetails("fistName", None, "lastName", LocalDate.now())).asOpt.value
         .set(IsTrusteeCompleteId(1))(false).asOpt.value
         .json
 
@@ -127,12 +127,38 @@ class AddTrusteeControllerSpec extends ControllerSpecBase {
 
     }
 
-    "when toggle false and all trustees are complete" in {
+    "return view with button ENABLED when toggle set to FALSE and all trustees complete" in {
+      val trusteeList: JsValue = UserAnswers()
+        .set(TrusteeDetailsId(0))(PersonDetails("fistName", None, "lastName", LocalDate.now())).asOpt.value
+        .set(IsTrusteeCompleteId(0))(true).asOpt.value
+        .set(TrusteeDetailsId(1))(PersonDetails("fistName", None, "lastName", LocalDate.now())).asOpt.value
+        .set(IsTrusteeCompleteId(1))(true).asOpt.value
+        .json
 
+      val trusteeController: AddTrusteeController = controller(new FakeDataRetrievalAction(Some(trusteeList)), featureToggleEnabled = false)
+
+      val result = trusteeController.onPageLoad(NormalMode, None)(fakeRequest)
+
+      val view = asDocument(contentAsString(result))
+
+      view.getElementById("submit").hasAttr("disabled") mustEqual false
     }
 
-    "when toggle false and not all trustees are complete" in {
+    "return view with button DISABLED when toggle set to FALSE and at least one trustee is INCOMPLETE" in {
+      val trusteeList: JsValue = UserAnswers()
+        .set(TrusteeDetailsId(0))(PersonDetails("fistName", None, "lastName", LocalDate.now())).asOpt.value
+        .set(IsTrusteeCompleteId(0))(true).asOpt.value
+        .set(TrusteeDetailsId(1))(PersonDetails("fistName", None, "lastName", LocalDate.now())).asOpt.value
+        .set(IsTrusteeCompleteId(1))(false).asOpt.value
+        .json
 
+      val trusteeController: AddTrusteeController = controller(new FakeDataRetrievalAction(Some(trusteeList)), featureToggleEnabled = false)
+
+      val result = trusteeController.onPageLoad(NormalMode, None)(fakeRequest)
+
+      val view = asDocument(contentAsString(result))
+
+      view.getElementById("submit").hasAttr("disabled") mustEqual true
     }
 
     "return OK and the correct view for a GET" in {
