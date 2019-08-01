@@ -45,31 +45,31 @@ class TrusteesCompanyNavigatorHnS @Inject()(val dataCacheConnector: UserAnswersC
 
   private def checkModeRoutes(mode: Mode, ua: UserAnswers, srn: Option[String]): PartialFunction[Identifier, Call] = {
     case id@HasCompanyNumberId(index) => booleanNav(id, ua, mode, index, srn, companyNoPage, noCompanyNoPage)
-    case NoCompanyNumberId(index) => cyaPage(journeyMode(mode), index, srn)
-    case CompanyRegistrationNumberVariationsId(index) => cyaPage(journeyMode(mode), index, srn)
+    case NoCompanyNumberId(index) => cyaPage(mode, index, srn)
+    case CompanyRegistrationNumberVariationsId(index) => cyaPage(mode, index, srn)
     case id@HasCompanyUTRId(index) => booleanNav(id, ua, mode, index, srn, utrPage, noUtrPage)
-    case CompanyNoUTRReasonId(index) => cyaPage(journeyMode(mode), index, srn)
-    case CompanyUTRId(index) => cyaPage(journeyMode(mode), index, srn)
-    case id@HasCompanyVATId(index) => booleanNav(id, ua, mode, vatPage(mode, index, srn), cyaPage(journeyMode(mode), index, srn))
-    case CompanyVatVariationsId(index) => cyaPage(journeyMode(mode), index, srn)
-    case id@HasCompanyPAYEId(index) => booleanNav(id, ua, mode, payePage(mode, index, srn), cyaPage(journeyMode(mode), index, srn))
-    case CompanyPayeVariationsId(index) => cyaPage(journeyMode(mode), index, srn)
+    case CompanyNoUTRReasonId(index) => cyaPage(mode, index, srn)
+    case CompanyUTRId(index) => cyaPage(mode, index, srn)
+    case id@HasCompanyVATId(index) => booleanNav(id, ua, mode, vatPage(mode, index, srn), cyaPage(mode, index, srn))
+    case CompanyVatVariationsId(index) => cyaPage(mode, index, srn)
+    case id@HasCompanyPAYEId(index) => booleanNav(id, ua, mode, payePage(mode, index, srn), cyaPage(mode, index, srn))
+    case CompanyPayeVariationsId(index) => cyaPage(mode, index, srn)
   }
 
   private def checkUpdateModeRoutes(mode: Mode, ua: UserAnswers, srn: Option[String]): PartialFunction[Identifier, Call] = {
     case id@HasCompanyNumberId(index) => booleanNav(id, ua, mode, index, srn, companyNoPage, noCompanyNoPage)
-    case NoCompanyNumberId(index) => cyaPage(journeyMode(mode), index, srn)
-    case CompanyRegistrationNumberVariationsId(index) if isNewTrustee(ua, index) => cyaPage(journeyMode(mode), index, srn)
+    case NoCompanyNumberId(index) => cyaPage(mode, index, srn)
+    case CompanyRegistrationNumberVariationsId(index) if isNewTrustee(ua, index) => cyaPage(mode, index, srn)
     case CompanyRegistrationNumberVariationsId(_) => anyMoreChangesPage(srn)
     case id@HasCompanyUTRId(index) => booleanNav(id, ua, mode, index, srn, utrPage, noUtrPage)
-    case CompanyUTRId(index) if isNewTrustee(ua, index) => cyaPage(journeyMode(mode), index, srn)
+    case CompanyUTRId(index) if isNewTrustee(ua, index) => cyaPage(mode, index, srn)
     case CompanyUTRId(_) => anyMoreChangesPage(srn)
-    case CompanyNoUTRReasonId(index) => cyaPage(journeyMode(mode), index, srn)
-    case id@HasCompanyVATId(index) => booleanNav(id, ua, mode, vatPage(mode, index, srn), cyaPage(journeyMode(mode), index, srn))
-    case CompanyVatVariationsId(index) if isNewTrustee(ua, index) => cyaPage(journeyMode(mode), index, srn)
+    case CompanyNoUTRReasonId(index) => cyaPage(mode, index, srn)
+    case id@HasCompanyVATId(index) => booleanNav(id, ua, mode, vatPage(mode, index, srn), cyaPage(mode, index, srn))
+    case CompanyVatVariationsId(index) if isNewTrustee(ua, index) => cyaPage(mode, index, srn)
     case CompanyVatVariationsId(_) => anyMoreChangesPage(srn)
-    case id@HasCompanyPAYEId(index) => booleanNav(id, ua, mode, payePage(mode, index, srn), cyaPage(journeyMode(mode), index, srn))
-    case CompanyPayeVariationsId(index) if isNewTrustee(ua, index) => cyaPage(journeyMode(mode), index, srn)
+    case id@HasCompanyPAYEId(index) => booleanNav(id, ua, mode, payePage(mode, index, srn), cyaPage(mode, index, srn))
+    case CompanyPayeVariationsId(index) if isNewTrustee(ua, index) => cyaPage(mode, index, srn)
     case CompanyPayeVariationsId(_) => anyMoreChangesPage(srn)
   }
 
@@ -103,7 +103,7 @@ object TrusteesCompanyNavigatorHnS {
 
   private def payePage(mode: Mode, index: Int, srn: Option[String]): Call = CompanyPayeVariationsController.onPageLoad(mode, index, srn)
 
-  private def cyaPage(mode: Mode, index: Int, srn: Option[String]): Call = CheckYourAnswersCompanyDetailsController.onPageLoad(mode, index, srn)
+  private def cyaPage(mode: Mode, index: Int, srn: Option[String]): Call = CheckYourAnswersCompanyDetailsController.onPageLoad(journeyMode(mode), index, srn)
 
   private def hasCompanyUtrPage(mode: Mode, index: Int, srn: Option[String]): Call = HasCompanyUTRController.onPageLoad(mode, index, srn)
 
