@@ -37,9 +37,22 @@ import views.html.register.trustees.addTrustee
 import identifiers.register.trustees._
 
 import scala.concurrent.Future
+
 class AddTrusteeControllerSpec extends ControllerSpecBase {
   appRunning()
-  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
+
+  lazy val trusteeCompanyA: TrusteeCompanyEntity = TrusteeCompanyEntity(
+    CompanyDetailsId(0), "Trustee Company A", isDeleted = false, isCompleted = false, isNewEntity = true, 3, Some(SingleTrust.toString))
+  lazy val trusteeCompanyB: TrusteeCompanyEntity = TrusteeCompanyEntity(
+    CompanyDetailsId(1), "Trustee Company B", isDeleted = false, isCompleted = false, isNewEntity = true, 3, Some(SingleTrust.toString))
+  lazy val trusteeIndividual: TrusteeIndividualEntity = TrusteeIndividualEntity(
+    TrusteeDetailsId(2), "Trustee Individual", isDeleted = false, isCompleted = false, isNewEntity = true, 3, Some(SingleTrust.toString))
+  lazy val allTrustees = Seq(trusteeCompanyA, trusteeCompanyB, trusteeIndividual)
+  val formProvider = new AddTrusteeFormProvider()
+  val schemeName = "Test Scheme Name"
+  val form = formProvider()
+  val submitUrl = controllers.register.trustees.routes.AddTrusteeController.onSubmit(NormalMode, None)
+  val testAnswer = "true"
 
   def editTrusteeCompanyRoute(id: Int): String =
     controllers.register.trustees.company.routes.CompanyDetailsController.onPageLoad(NormalMode, id, None).url
@@ -50,21 +63,28 @@ class AddTrusteeControllerSpec extends ControllerSpecBase {
   def deleteTrusteeRoute(id: Int, kind: TrusteeKind): String =
     controllers.register.trustees.routes.ConfirmDeleteTrusteeController.onPageLoad(NormalMode, id, kind, None).url
 
-  val formProvider = new AddTrusteeFormProvider()
-  val schemeName = "Test Scheme Name"
+  def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData, featureToggleEnabled: Boolean = false): AddTrusteeController = {
+    new AddTrusteeController(
+      frontendAppConfig,
+      messagesApi,
+      new FakeNavigator(desiredRoute = onwardRoute),
+      FakeAuthAction,
+      dataRetrievalAction,
+      FakeAllowAccessProvider(),
+      new DataRequiredActionImpl,
+      formProvider,
+      new FakeFeatureSwitchManagementService(enabledV2 = featureToggleEnabled)
+    )
+  }
 
-  lazy val trusteeCompanyA: TrusteeCompanyEntity = TrusteeCompanyEntity(
-    CompanyDetailsId(0), "Trustee Company A", isDeleted = false, isCompleted = false, isNewEntity = true, 3, Some(SingleTrust.toString))
-  lazy val trusteeCompanyB: TrusteeCompanyEntity = TrusteeCompanyEntity(
-    CompanyDetailsId(1), "Trustee Company B", isDeleted = false, isCompleted = false, isNewEntity = true, 3, Some(SingleTrust.toString))
-  lazy val trusteeIndividual: TrusteeIndividualEntity = TrusteeIndividualEntity(
-    TrusteeDetailsId(2), "Trustee Individual", isDeleted = false, isCompleted = false, isNewEntity = true, 3, Some(SingleTrust.toString))
+  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
-  lazy val allTrustees = Seq(trusteeCompanyA, trusteeCompanyB, trusteeIndividual)
+  def viewAsString(form: Form[_] = form, trustees: Seq[Trustee[_]] = Seq.empty, enable: Boolean = false): String =
+    addTrustee(frontendAppConfig, form, NormalMode, trustees, None, None, enable)(fakeRequest, messages).toString
 
   private def validData = {
     Json.obj(
-        "schemeType"-> Json.obj("name"-> "single"),
+      "schemeType" -> Json.obj("name" -> "single"),
       TrusteesId.toString -> Json.arr(
         Json.obj(
           TrusteeKindId.toString -> TrusteeKind.Company.toString,
@@ -84,28 +104,6 @@ class AddTrusteeControllerSpec extends ControllerSpecBase {
       )
     )
   }
-
-  val form = formProvider()
-
-  def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData, featureToggleEnabled: Boolean = false): AddTrusteeController =  {
-    new AddTrusteeController(
-      frontendAppConfig,
-      messagesApi,
-      new FakeNavigator(desiredRoute = onwardRoute),
-      FakeAuthAction,
-      dataRetrievalAction,
-      FakeAllowAccessProvider(),
-      new DataRequiredActionImpl,
-      formProvider,
-      new FakeFeatureSwitchManagementService(enabledV2 = featureToggleEnabled)
-    )
-  }
-
-  val submitUrl = controllers.register.trustees.routes.AddTrusteeController.onSubmit(NormalMode, None)
-  def viewAsString(form: Form[_] = form, trustees: Seq[Trustee[_]] = Seq.empty, enable: Boolean = false): String =
-    addTrustee(frontendAppConfig, form, NormalMode, trustees, None, None, enable)(fakeRequest, messages).toString
-
-  val testAnswer = "true"
 
   "AddTrustee Controller" must {
 
@@ -162,10 +160,10 @@ class AddTrusteeControllerSpec extends ControllerSpecBase {
     }
 
     "return OK and the correct view for a GET" in {
-      val result: Future[Result] = controller().onPageLoad(NormalMode, None)(fakeRequest)
+      val result: Future[Result] = controller(featureToggleEnabled = false).onPageLoad(NormalMode, None)(fakeRequest)
 
       status(result) mustBe OK
-      contentAsString(result) mustBe viewAsString(enable = true)
+      contentAsString(result) mustBe viewAsString()
     }
 
     "redirect to the next page when valid data is submitted" in {
