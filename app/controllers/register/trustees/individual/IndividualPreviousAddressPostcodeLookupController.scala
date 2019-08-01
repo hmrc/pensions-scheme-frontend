@@ -58,7 +58,7 @@ class IndividualPreviousAddressPostcodeLookupController @Inject()(
               routes.IndividualPreviousAddressPostcodeLookupController.onSubmit(mode, index, srn),
               routes.TrusteePreviousAddressController.onPageLoad(mode, index, srn),
               title = Message("messages__trustee_individual_previous_address__title"),
-              heading = Message("messages__trustee_individual_previous_address__heading"),
+              heading = Message("messages__trustee_individual_previous_address__heading", details.fullName),
               subHeading = Some(details.fullName),
               enterPostcode = Message("messages__trustee_individualPostCodeLookup__enter_postcode"),
               srn = srn

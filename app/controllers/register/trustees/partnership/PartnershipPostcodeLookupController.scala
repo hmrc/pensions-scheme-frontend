@@ -63,7 +63,7 @@ class PartnershipPostcodeLookupController @Inject()(
               routes.PartnershipPostcodeLookupController.onSubmit(mode, index, srn),
               routes.PartnershipAddressController.onPageLoad(mode, index, srn),
               title = Message(title),
-              heading = Message(heading),
+              heading = Message(heading, details.name),
               subHeading = Some(details.name),
               srn = srn
             )
