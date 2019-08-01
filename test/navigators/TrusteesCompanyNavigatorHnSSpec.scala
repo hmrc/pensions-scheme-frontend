@@ -34,10 +34,10 @@ class TrusteesCompanyNavigatorHnSSpec extends SpecBase with MustMatchers with Na
 
   "TrusteesCompanyNavigator" must {
 
-    behave like navigatorWithRoutesForMode(NormalMode)(navigator, routesStandardJourney(NormalMode))
+    behave like navigatorWithRoutesForMode(NormalMode)(navigator, normalAndUpdateModeRoutes(NormalMode))
     behave like navigatorWithRoutesForMode(CheckMode)(navigator, routesCheckMode(CheckMode))
 
-    behave like navigatorWithRoutesForMode(UpdateMode)(navigator, routesStandardJourney(UpdateMode))
+    behave like navigatorWithRoutesForMode(UpdateMode)(navigator, normalAndUpdateModeRoutes(UpdateMode))
 
     behave like navigatorWithRoutesForMode(CheckUpdateMode)(navigator, routesCheckUpdateMode(CheckUpdateMode))
     behave like navigatorWithRoutesForMode(CheckUpdateMode)(navigator, setNewTrusteeIdentifier(routesCheckMode(CheckUpdateMode)))
@@ -70,7 +70,7 @@ object TrusteesCompanyNavigatorHnSSpec extends SpecBase with NavigatorBehaviour 
   private def cyaPage(mode: Mode): Call = CheckYourAnswersCompanyDetailsController.onPageLoad(mode, 0, None)
 
 
-  def routesStandardJourney(mode: Mode): TableFor3[Identifier, UserAnswers, Call] =
+  def normalAndUpdateModeRoutes(mode: Mode): TableFor3[Identifier, UserAnswers, Call] =
     Table(
       ("Id", "UserAnswers", "Next Page"),
       row(HasCompanyNumberId(0))(true, companyNoPage(mode)),

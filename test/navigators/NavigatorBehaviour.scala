@@ -138,7 +138,7 @@ trait NavigatorBehaviour extends PropertyChecks with OptionValues {
 
     val testId: Identifier = new Identifier {}
 
-    s"behaviour like a navigator without routesStandardJourney with $mode" when {
+    s"behaviour like a navigator without normalAndUpdateModeRoutes with $mode" when {
       "navigating in NormalMode" must {
         "return a call given a non-configured Id" in {
           navigator.nextPage(testId, mode, UserAnswers()) mustBe a[Call]
