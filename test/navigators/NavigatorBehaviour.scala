@@ -17,13 +17,15 @@
 package navigators
 
 import connectors.FakeUserAnswersCacheConnector
-import identifiers.Identifier
+import controllers.routes.AnyMoreChangesController
+import identifiers.{Identifier, TypedIdentifier}
 import models.Mode.checkMode
 import models.requests.IdentifiedRequest
-import models.{CheckMode, Mode, NormalMode}
+import models.{CheckMode, Mode, NormalMode, ReferenceValue}
 import org.scalatest.exceptions.TableDrivenPropertyCheckFailedException
-import org.scalatest.prop.{PropertyChecks, TableFor6}
+import org.scalatest.prop.{PropertyChecks, TableFor3, TableFor6}
 import org.scalatest.{MustMatchers, OptionValues, WordSpec}
+import play.api.libs.json.Writes
 import play.api.mvc.Call
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.UserAnswers
@@ -38,6 +40,29 @@ trait NavigatorBehaviour extends PropertyChecks with OptionValues {
   }
 
   protected implicit val hc: HeaderCarrier = HeaderCarrier()
+
+  protected val someStringValue = "111111"
+  protected val someRefValue = ReferenceValue(someStringValue)
+
+  protected def row(id: TypedIdentifier.PathDependent)(value: id.Data, call: Call, ua: Option[UserAnswers] = None)
+                 (implicit writes: Writes[id.Data]): (id.type, UserAnswers, Call) = {
+    val userAnswers = ua.fold(UserAnswers())(identity).set(id)(value).asOpt.value
+    Tuple3(id, userAnswers, call)
+  }
+
+  protected def anyMoreChangesPage: Call = AnyMoreChangesController.onPageLoad(None)
+
+  protected def navigatorWithRoutesForMode(mode: Mode)(navigator: Navigator,
+                                             routes: TableFor3[Identifier, UserAnswers, Call],
+                                             srn: Option[String] = None): Unit = {
+    forAll(routes) {
+      (id: Identifier, userAnswers: UserAnswers, call: Call) =>
+        s"move from $id to $call in ${Mode.jsLiteral.to(mode)} with data: ${userAnswers.toString}" in {
+          val result = navigator.nextPage(id, mode, userAnswers, srn)
+          result mustBe call
+        }
+    }
+  }
 
   //scalastyle:off method.length
   //scalastyle:off regex
@@ -113,7 +138,7 @@ trait NavigatorBehaviour extends PropertyChecks with OptionValues {
 
     val testId: Identifier = new Identifier {}
 
-    s"behaviour like a navigator without routes with $mode" when {
+    s"behaviour like a navigator without routesStandardJourney with $mode" when {
       "navigating in NormalMode" must {
         "return a call given a non-configured Id" in {
           navigator.nextPage(testId, mode, UserAnswers()) mustBe a[Call]

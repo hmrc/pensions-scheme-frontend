@@ -17,6 +17,7 @@
 package navigators
 
 import connectors.UserAnswersCacheConnector
+import controllers.routes.AnyMoreChangesController
 import identifiers.{Identifier, LastPageId, TypedIdentifier}
 import models._
 import models.requests.IdentifiedRequest
@@ -96,4 +97,32 @@ abstract class AbstractNavigator extends Navigator {
     }
     navigation.page
   }
+
+  protected def booleanNav(id: TypedIdentifier[Boolean],
+                         answers: UserAnswers,
+                         mode: Mode,
+                         truePath: => Call,
+                         falsePath: => Call): Call =
+
+    answers.get(id) match {
+      case Some(true) => truePath
+      case Some(false) => falsePath
+      case _ => sessionExpiredPage
+    }
+
+  protected def booleanNav(id: TypedIdentifier[Boolean],
+                         answers: UserAnswers,
+                         mode: Mode,
+                         index: Index,
+                         srn: Option[String],
+                         truePath: (Mode, Int, Option[String]) => Call,
+                         falsePath: (Mode, Int, Option[String]) => Call): Call =
+    booleanNav(id, answers, mode, truePath(mode, index, srn), falsePath(mode, index, srn))
+
+  protected def sessionExpiredPage: Call = controllers.routes.SessionExpiredController.onPageLoad()
+
+  protected def anyMoreChangesPage(srn: Option[String]): Call = AnyMoreChangesController.onPageLoad(srn)
+
+  protected def goToSessionExpiredPage: Identifier => Call = _ => sessionExpiredPage
+
 }

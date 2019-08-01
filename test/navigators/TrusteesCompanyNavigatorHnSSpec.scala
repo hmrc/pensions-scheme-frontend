@@ -18,35 +18,36 @@ package navigators
 
 import base.SpecBase
 import controllers.register.trustees.company.routes._
-import controllers.routes.AnyMoreChangesController
+import identifiers.Identifier
 import identifiers.register.trustees.IsTrusteeNewId
 import identifiers.register.trustees.company._
-import identifiers.{Identifier, TypedIdentifier}
+import models.Mode._
 import models._
 import org.scalatest.MustMatchers
 import org.scalatest.prop.TableFor3
-import play.api.libs.json.Writes
 import play.api.mvc.Call
 import utils.UserAnswers
-import models.Mode._
-
-import scala.concurrent.ExecutionContext.Implicits.global
 
 class TrusteesCompanyNavigatorHnSSpec extends SpecBase with MustMatchers with NavigatorBehaviour {
-  private val someStringValue = "111111"
-  private val someRefValue = ReferenceValue(someStringValue)
 
-  private def row(id: TypedIdentifier.PathDependent)(value: id.Data, call: Call, ua: Option[UserAnswers] = None)
-                 (implicit writes: Writes[id.Data]): (id.type, UserAnswers, Call) = {
-    val userAnswers = ua.fold(UserAnswers())(identity).set(id)(value).asOpt.value
-    Tuple3(id, userAnswers, call)
+  import TrusteesCompanyNavigatorHnSSpec._
+
+  "TrusteesCompanyNavigator" must {
+
+    behave like navigatorWithRoutesForMode(NormalMode)(navigator, routesStandardJourney(NormalMode))
+    behave like navigatorWithRoutesForMode(CheckMode)(navigator, routesCheckMode(CheckMode))
+
+    behave like navigatorWithRoutesForMode(UpdateMode)(navigator, routesStandardJourney(UpdateMode))
+
+    behave like navigatorWithRoutesForMode(CheckUpdateMode)(navigator, routesCheckUpdateMode(CheckUpdateMode))
+    behave like navigatorWithRoutesForMode(CheckUpdateMode)(navigator, setNewTrusteeIdentifier(routesCheckMode(CheckUpdateMode)))
   }
+}
 
+object TrusteesCompanyNavigatorHnSSpec extends SpecBase with NavigatorBehaviour {
   private def setNewTrusteeIdentifier(table: TableFor3[Identifier, UserAnswers, Call]): TableFor3[Identifier, UserAnswers, Call] = table.map(tuple =>
     (tuple._1, tuple._2.set(IsTrusteeNewId(0))(true).asOpt.value, tuple._3)
   )
-
-  private def anyMoreChangesPage: Call = AnyMoreChangesController.onPageLoad(None)
 
   private def companyNoPage(mode: Mode): Call = CompanyRegistrationNumberVariationsController.onPageLoad(mode, None, 0)
 
@@ -68,7 +69,8 @@ class TrusteesCompanyNavigatorHnSSpec extends SpecBase with MustMatchers with Na
 
   private def cyaPage(mode: Mode): Call = CheckYourAnswersCompanyDetailsController.onPageLoad(mode, 0, None)
 
-  def routes(mode: Mode): TableFor3[Identifier, UserAnswers, Call] =
+
+  def routesStandardJourney(mode: Mode): TableFor3[Identifier, UserAnswers, Call] =
     Table(
       ("Id", "UserAnswers", "Next Page"),
       row(HasCompanyNumberId(0))(true, companyNoPage(mode)),
@@ -117,27 +119,4 @@ class TrusteesCompanyNavigatorHnSSpec extends SpecBase with MustMatchers with Na
   }
 
   val navigator: Navigator = injector.instanceOf[TrusteesCompanyNavigatorHnS]
-
-  "TrusteesCompanyNavigator" must {
-
-    behave like navigatorWithRoutesForMode(NormalMode)(navigator, routes(NormalMode))
-    behave like navigatorWithRoutesForMode(CheckMode)(navigator, routesCheckMode(CheckMode))
-
-    behave like navigatorWithRoutesForMode(UpdateMode)(navigator, routes(UpdateMode))
-
-    behave like navigatorWithRoutesForMode(CheckUpdateMode)(navigator, routesCheckUpdateMode(CheckUpdateMode))
-    behave like navigatorWithRoutesForMode(CheckUpdateMode)(navigator, setNewTrusteeIdentifier(routesCheckMode(CheckUpdateMode)))
-  }
-
-  def navigatorWithRoutesForMode(mode: Mode)(navigator: Navigator,
-                                             routes: TableFor3[Identifier, UserAnswers, Call],
-                                             srn: Option[String] = None): Unit = {
-    forAll(routes) {
-      (id: Identifier, userAnswers: UserAnswers, call: Call) =>
-        s"move from $id to $call in ${Mode.jsLiteral.to(mode)} with data: ${userAnswers.toString}" in {
-          val result = navigator.nextPage(id, mode, userAnswers, srn)
-          result mustBe call
-        }
-    }
-  }
 }
