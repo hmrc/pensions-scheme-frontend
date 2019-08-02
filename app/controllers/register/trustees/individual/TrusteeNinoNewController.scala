@@ -45,9 +45,6 @@ class TrusteeNinoNewController @Inject()(
                                  )(implicit val ec: ExecutionContext) extends NinoController with I18nSupport {
 
   private[controllers] val postCall = controllers.register.trustees.individual.routes.TrusteeNinoNewController.onSubmit _
-  private[controllers] val title: Message = "messages__common_nino__title"
-  private[controllers] val heading: Message = "messages__common_nino__h1"
-  private[controllers] val hint: Message = "messages__common__nino_hint"
 
   private def viewmodel(index: Index,  mode: Mode, srn: Option[String]): Retrieval[NinoViewModel] =
     Retrieval {
@@ -56,9 +53,9 @@ class TrusteeNinoNewController @Inject()(
           details =>
             NinoViewModel(
               postCall(mode, Index(index), srn),
-              title = title,
-              heading = heading,
-              hint = hint,
+              title = Message("messages__trustee__individual__nino__title"),
+              heading = Message("messages__trustee__individual__nino__heading", details.firstAndLastName),
+              hint = Message("messages__common__nino_hint"),
               personName = details.fullName,
               srn = srn
             )
