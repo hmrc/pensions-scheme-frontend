@@ -17,9 +17,9 @@
 package utils
 
 import identifiers._
-import identifiers.register.establishers.company.director.{DirectorDetailsId, DirectorNameId, DirectorNinoId, DirectorUniqueTaxReferenceId, IsDirectorCompleteId, IsNewDirectorId}
-import identifiers.register.establishers.company.{CompanyAddressId, CompanyAddressYearsId, CompanyEmailId, CompanyPhoneId, CompanyPreviousAddressId, HasBeenTradingCompanyId, IsAddressCompleteId, IsCompanyCompleteId, IsContactDetailsCompleteId, IsDetailsCompleteId, CompanyDetailsId => EstablisherCompanyDetailsId}
-import identifiers.register.establishers.individual.{AddressYearsId, EstablisherDetailsId}
+import identifiers.register.establishers.company.director.{DirectorDetailsId, DirectorNameId, IsNewDirectorId}
+import identifiers.register.establishers.company.{CompanyDetailsId => EstablisherCompanyDetailsId}
+import identifiers.register.establishers.individual.EstablisherDetailsId
 import identifiers.register.establishers.partnership.PartnershipDetailsId
 import identifiers.register.establishers.partnership.partner.{IsNewPartnerId, IsPartnerCompleteId, PartnerDetailsId}
 import identifiers.register.establishers.{EstablisherKindId, EstablishersId, IsEstablisherCompleteId, IsEstablisherNewId}
@@ -31,7 +31,7 @@ import models.address.Address
 import models.person.{PersonDetails, PersonName}
 import models.register._
 import models.register.establishers.EstablisherKind
-import models.{AddressYears, CompanyDetails, PartnershipDetails}
+import models.{CompanyDetails, PartnershipDetails}
 import play.api.Logger
 import play.api.libs.functional.syntax._
 import play.api.libs.json.Reads._
@@ -44,7 +44,7 @@ import scala.concurrent.Future
 import scala.language.implicitConversions
 
 //scalastyle:off number.of.methods
-case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Implicits {
+final case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Implicits with DataCompletion {
 
   def prettyPrint: String = Json.prettyPrint(json)
 
@@ -180,23 +180,8 @@ case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Implicits 
         (JsPath \ IsEstablisherNewId.toString).readNullable[Boolean]
       ) ((details, isNew) =>
       EstablisherCompanyEntity(EstablisherCompanyDetailsId(index),
-        details.companyName, details.isDeleted, isEstablisherCompanyComplete(index, isHnSEnabled), isNew.fold(false)(identity), noOfRecords)
+        details.companyName, details.isDeleted, isEstablisherCompanyAndDirectorsComplete(index, isHnSEnabled), isNew.fold(false)(identity), noOfRecords)
     )
-
-    private def isEstablisherCompanyComplete(index: Int, isHnSEnabled: Boolean) = {
-      val allDirectors = allDirectorsAfterDelete(index, isHnSEnabled)
-      val allDirectorsCompleted = allDirectors.nonEmpty & allDirectors.forall(_.isCompleted)
-      val isCompanyComplete =
-        if (isHnSEnabled)
-          (get(IsDetailsCompleteId(index)), isEstablisherCompanyAddressComplete(index), isEstablisherCompanyContactDetailsComplete(index)) match {
-            case (Some(true), Some(true), Some(true)) => true
-            case _ => false
-          }
-        else
-          get(IsCompanyCompleteId(index)).getOrElse(false)
-
-      allDirectorsCompleted & isCompanyComplete
-    }
 
     private def readsPartnership(index: Int): Reads[Establisher[_]] = (
       (JsPath \ PartnershipDetailsId.toString).read[PartnershipDetails] and
@@ -230,27 +215,6 @@ case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Implicits 
     }
   }
 
-  def isEstablisherCompanyContactDetailsComplete(index: Int): Option[Boolean] =
-    (get(CompanyEmailId(index)), get(CompanyPhoneId(index))) match {
-      case (Some(_), Some(_)) => Some(true)
-      case (None, None) => None
-      case _ => Some(false)
-    }
-
-  def isEstablisherCompanyAddressComplete(index: Int): Option[Boolean] =
-    (get(CompanyAddressId(index)), get(CompanyAddressYearsId(index))) match {
-      case (Some(_), Some(AddressYears.OverAYear)) => Some(true)
-      case (None, _) => None
-      case (Some(_), Some(AddressYears.UnderAYear)) =>
-        (get(CompanyPreviousAddressId(index)), get(HasBeenTradingCompanyId(index))) match {
-          case (Some(_), _) => Some(true)
-          case (_, Some(false)) => Some(true)
-          case _ => Some(false)
-        }
-      case _ => Some(false)
-    }
-
-
   def allEstablishers(isHnSEnabled: Boolean): Seq[Establisher[_]] = {
     json.validate[Seq[Establisher[_]]](readEstablishers(isHnSEnabled)) match {
       case JsSuccess(establishers, _) =>
@@ -270,7 +234,7 @@ case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Implicits 
     getAllRecursive[PersonDetails](DirectorDetailsId.collectionPath(establisherIndex)).map {
       details =>
         for ((director, directorIndex) <- details.zipWithIndex) yield {
-          val isComplete = get(IsDirectorCompleteId(establisherIndex, directorIndex)).getOrElse(false)
+          val isComplete = isDirectorCompleteNonHnS(establisherIndex, directorIndex)
           val isNew = get(IsNewDirectorId(establisherIndex, directorIndex)).getOrElse(false)
           DirectorEntityNonHnS(
             DirectorDetailsId(establisherIndex, directorIndex),
@@ -289,21 +253,7 @@ case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Implicits 
     getAllRecursive[PersonName](DirectorNameId.collectionPath(establisherIndex)).map {
       details =>
         for ((director, directorIndex) <- details.zipWithIndex) yield {
-          val isComplete = {
-            //TODO: this condition is to handle the partial data, hence can be removed after
-            // 28 days of enabling the toggle is-establisher-company-hns
-            val partialData: Boolean =
-            (get(DirectorDetailsId(establisherIndex, directorIndex)),
-              get(DirectorNinoId(establisherIndex, directorIndex)),
-              get(DirectorUniqueTaxReferenceId(establisherIndex, directorIndex))) match {
-              case (None, None, None) => false
-              case _ => true
-            }
-            (get(IsDirectorCompleteId(establisherIndex, directorIndex)), partialData) match {
-              case (Some(true), false) => true
-              case _ => false
-            }
-          }
+          val isComplete = isDirectorCompleteHnS(establisherIndex, directorIndex)
           val isNew = get(IsNewDirectorId(establisherIndex, directorIndex)).getOrElse(false)
           DirectorEntity(
             DirectorNameId(establisherIndex, directorIndex),
@@ -516,6 +466,8 @@ case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Implicits 
     case _ => false
   }
 
-  def areVariationChangesCompleted(isHnSEnabled: Boolean = false): Boolean =
+  def areVariationChangesCompleted(isHnSEnabled: Boolean = false): Boolean = {
     isInsuranceCompleted && isAllTrusteesCompleted && allEstablishersCompleted(isHnSEnabled)
+  }
+
 }

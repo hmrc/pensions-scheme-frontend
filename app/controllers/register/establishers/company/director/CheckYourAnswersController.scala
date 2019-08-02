@@ -19,9 +19,7 @@ package controllers.register.establishers.company.director
 import config.{FeatureSwitchManagementService, FrontendAppConfig}
 import controllers.Retrievals
 import controllers.actions._
-import identifiers.register.establishers.company.director
 import identifiers.register.establishers.company.director._
-import identifiers.register.establishers.{IsEstablisherCompleteId, IsEstablisherNewId}
 import javax.inject.Inject
 import models.Mode.checkMode
 import models._
@@ -157,29 +155,8 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
     }
 
   def onSubmit(companyIndex: Index, directorIndex: Index, mode: Mode, srn: Option[String]): Action[AnyContent] = (
-    authenticate andThen getData(mode, srn) andThen requiredData).async {
+    authenticate andThen getData(mode, srn) andThen requiredData) {
     implicit request =>
-      mode match{
-        case NormalMode | CheckMode =>
-          userAnswersService.setCompleteFlag(mode, srn, IsDirectorCompleteId(companyIndex, directorIndex), request.userAnswers, true).map { _ =>
-            Redirect(navigator.nextPage(CheckYourAnswersId(companyIndex, directorIndex), mode, request.userAnswers, srn))
-          }
-        case _ =>
-          val isEstablisherNew = request.userAnswers.get(IsEstablisherNewId(companyIndex)).getOrElse(false)
-          if (isEstablisherNew) {
-            userAnswersService.setCompleteFlag(mode, srn, IsDirectorCompleteId(companyIndex, directorIndex), request.userAnswers, value = true).map { result =>
-                Redirect(navigator.nextPage(CheckYourAnswersId(companyIndex, directorIndex), mode, request.userAnswers, srn))
-            }
-          }
-          else {
-            request.userAnswers.upsert(IsEstablisherCompleteId(companyIndex))(true) { answers =>
-              answers.upsert(IsDirectorCompleteId(companyIndex, directorIndex))(true) { updatedAnswers =>
-                userAnswersService.upsert(mode, srn, updatedAnswers.json).map { json =>
-                  Redirect(navigator.nextPage(CheckYourAnswersId(companyIndex, directorIndex), mode, UserAnswers(json), srn))
-                }
-              }
-            }
-          }
-      }
+        Redirect(navigator.nextPage(CheckYourAnswersId(companyIndex, directorIndex), mode, request.userAnswers, srn))
   }
 }

@@ -91,12 +91,6 @@ class CheckYourAnswersCompanyDetailsControllerSpec extends ControllerSpecBase wi
         redirectLocation(result) mustBe Some(onwardRoute.url)
       }
 
-      "mark establisher company details as complete" in {
-        val result = controller().onSubmit(NormalMode, None, index)(fakeRequest)
-        status(result) mustBe SEE_OTHER
-        FakeUserAnswersService.verify(IsDetailsCompleteId(index), true)
-      }
-
       behave like changeableController(
         controller(fullAnswers.dataRetrievalAction, _: AllowChangeHelper)
           .onPageLoad(NormalMode, None, index)(FakeDataRequest(fullAnswers))
