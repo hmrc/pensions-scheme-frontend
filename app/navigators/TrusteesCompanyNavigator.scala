@@ -73,17 +73,13 @@ class TrusteesCompanyNavigator @Inject()(val dataCacheConnector: UserAnswersCach
     case CompanyPayeVariationsId(_) => anyMoreChangesPage(srn)
   }
 
-  override protected def routeMap(from: NavigateFrom): Option[NavigateTo] =
-    applyRoutes(normalAndUpdateModeRoutes(NormalMode, from.userAnswers, None), from)
+  override protected def routeMap(from: NavigateFrom): Option[NavigateTo] = applyRoutes(normalAndUpdateModeRoutes, from, NormalMode, None)
 
-  override protected def editRouteMap(from: NavigateFrom): Option[NavigateTo] =
-    applyRoutes(checkModeRoutes(CheckMode, from.userAnswers, None), from)
+  override protected def editRouteMap(from: NavigateFrom): Option[NavigateTo] = applyRoutes(checkModeRoutes, from, CheckMode, None)
 
-  override protected def updateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] =
-    applyRoutes(normalAndUpdateModeRoutes(UpdateMode, from.userAnswers, srn), from)
+  override protected def updateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] = applyRoutes(normalAndUpdateModeRoutes, from, UpdateMode, srn)
 
-  override protected def checkUpdateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] =
-    applyRoutes(checkUpdateModeRoutes(CheckUpdateMode, from.userAnswers, srn), from)
+  override protected def checkUpdateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] = applyRoutes(checkUpdateModeRoutes, from, CheckUpdateMode, srn)
 }
 
 object TrusteesCompanyNavigator {
