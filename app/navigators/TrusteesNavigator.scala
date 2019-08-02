@@ -80,12 +80,7 @@ class TrusteesNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnec
 
     answers.get(AddTrusteeId) match {
       case Some(false) =>
-        mode match {
-          case UpdateMode | CheckUpdateMode if answers.get(EstablishersOrTrusteesChangedId).contains(true) =>
-            NavigateTo.dontSave(controllers.routes.AnyMoreChangesController.onPageLoad(srn))
-          case _ =>
-            NavigateTo.dontSave(controllers.routes.SchemeTaskListController.onPageLoad(mode, srn))
-        }
+        NavigateTo.dontSave(controllers.routes.SchemeTaskListController.onPageLoad(mode, srn))
       case Some(true) =>
         NavigateTo.dontSave(TrusteeKindController.onPageLoad(mode, answers.trusteesCount, srn))
       case None if trusteesLengthCompare >= 0 =>
