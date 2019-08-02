@@ -183,17 +183,20 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
         NavigateTo.dontSave(establisherCompanyRoutes.CompanyAddressController.onPageLoad(mode, srn, index))
 
       case CompanyAddressId(index) =>
-        if (from.userAnswers.get(IsEstablisherNewId(index)).contains(true) || mode == CheckMode){
-          if(featureSwitchManagementService.get(Toggles.isEstablisherCompanyHnSEnabled)){
+        if (from.userAnswers.get(IsEstablisherNewId(index)).contains(true) || mode == CheckMode) {
+          if (featureSwitchManagementService.get(Toggles.isEstablisherCompanyHnSEnabled)) {
             cyaAddressDetails(index, journeyMode(mode), srn)
           } else {
             cya(index, journeyMode(mode), srn)
           }
         }
-        else
+        else if (!from.userAnswers.get(IsEstablisherNewId(index)).contains(true) && mode == CheckUpdateMode) {
+          NavigateTo.dontSave(CompanyConfirmPreviousAddressController.onPageLoad(index, srn))
+        } else {
           NavigateTo.dontSave(establisherCompanyRoutes.CompanyAddressYearsController.onPageLoad(mode, srn, index))
-
+        }
       case CompanyAddressYearsId(index) =>
+
         editAddressYearsRoutes(index, from.userAnswers, mode, srn)
 
       case CompanyConfirmPreviousAddressId(index) => confirmPreviousAddressRoutes(index, mode, srn)(from.userAnswers)

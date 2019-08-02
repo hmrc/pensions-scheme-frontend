@@ -91,6 +91,8 @@ class TrusteesIndividualNavigator @Inject()(val dataCacheConnector: UserAnswersC
         val isNew = from.userAnswers.get(IsTrusteeNewId(index)).contains(true)
         if(isNew || mode == CheckMode) {
           checkYourAnswers(index, journeyMode(mode), srn)
+        } else if (!from.userAnswers.get(IsTrusteeNewId(index)).contains(true) && mode == CheckUpdateMode) {
+          NavigateTo.dontSave(IndividualConfirmPreviousAddressController.onPageLoad(index, srn))
         } else {
           NavigateTo.dontSave(TrusteeAddressYearsController.onPageLoad(mode, index, srn))
         }
