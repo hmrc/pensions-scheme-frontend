@@ -17,16 +17,17 @@
 package navigators
 
 import com.google.inject.Inject
-import config.FrontendAppConfig
+import config.{FeatureSwitchManagementService, FrontendAppConfig}
 import connectors.UserAnswersCacheConnector
 import identifiers.EstablishersOrTrusteesChangedId
 import identifiers.register.trustees._
 import models.register.trustees.TrusteeKind
 import models._
 import play.api.mvc.Call
-import utils.{Enumerable, UserAnswers}
+import utils.{Enumerable, Toggles, UserAnswers}
 
-class TrusteesNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector, appConfig: FrontendAppConfig) extends AbstractNavigator with Enumerable.Implicits {
+class TrusteesNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector, appConfig: FrontendAppConfig,
+                                  featureSwitchManagementService: FeatureSwitchManagementService) extends AbstractNavigator with Enumerable.Implicits {
 
   protected def routes(from: NavigateFrom, mode: Mode, srn: Option[String]): Option[NavigateTo] =
     from.id match {
@@ -80,11 +81,15 @@ class TrusteesNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnec
 
     answers.get(AddTrusteeId) match {
       case Some(false) =>
-        mode match {
-          case UpdateMode | CheckUpdateMode if answers.get(EstablishersOrTrusteesChangedId).contains(true) =>
-            NavigateTo.dontSave(controllers.routes.AnyMoreChangesController.onPageLoad(srn))
-          case _ =>
-            NavigateTo.dontSave(controllers.routes.SchemeTaskListController.onPageLoad(mode, srn))
+        if (featureSwitchManagementService.get(Toggles.isEstablisherCompanyHnSEnabled)) {
+          NavigateTo.dontSave(controllers.routes.SchemeTaskListController.onPageLoad(mode, srn))
+        } else {
+          mode match {
+            case UpdateMode | CheckUpdateMode if answers.get(EstablishersOrTrusteesChangedId).contains(true) =>
+              NavigateTo.dontSave(controllers.routes.AnyMoreChangesController.onPageLoad(srn))
+            case _ =>
+              NavigateTo.dontSave(controllers.routes.SchemeTaskListController.onPageLoad(mode, srn))
+          }
         }
       case Some(true) =>
         NavigateTo.dontSave(TrusteeKindController.onPageLoad(mode, answers.trusteesCount, srn))
