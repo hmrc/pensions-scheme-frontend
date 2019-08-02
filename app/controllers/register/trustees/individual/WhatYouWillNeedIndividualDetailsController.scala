@@ -19,12 +19,13 @@ package controllers.register.trustees.individual
 import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRequiredAction, DataRetrievalAction}
-import identifiers.register.trustees.company.CompanyDetailsId
+import identifiers.register.trustees.individual.TrusteeNameId
 import javax.inject.Inject
 import models.{Index, Mode}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Call}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import views.html.register.trustees.individual.whatYouWillNeedIndividualDetails
 
 import scala.concurrent.Future
 
@@ -39,10 +40,10 @@ class WhatYouWillNeedIndividualDetailsController @Inject()(appConfig: FrontendAp
   def onPageLoad(mode: Mode, index: Index, srn: Option[String] = None): Action[AnyContent] = (authenticate andThen
     getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
     implicit request =>
-      TrusteeIndividualName(index).retrieve.right.map {
+      TrusteeNameId(index).retrieve.right.map {
         details =>
-          val href = Call("", "")
-          Future.successful(Ok(whatYouWillNeedIndividualDetails(appConfig, existingSchemeName, href, srn)))
+          val href = Call("GET", "/unimplemented")
+          Future.successful(Ok(whatYouWillNeedIndividualDetails(appConfig, existingSchemeName, href, srn, details.fullName)))
       }
   }
 }
