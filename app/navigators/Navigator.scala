@@ -125,4 +125,6 @@ abstract class AbstractNavigator extends Navigator {
 
   protected def goToSessionExpiredPage: Identifier => Call = _ => sessionExpiredPage
 
+  protected def applyRoutes(pf:PartialFunction[Identifier,Call], from: NavigateFrom): Option[NavigateTo] =
+    NavigateTo.dontSave(pf.applyOrElse(from.id, goToSessionExpiredPage))
 }

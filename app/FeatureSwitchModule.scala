@@ -16,7 +16,7 @@
 
 import com.typesafe.config.ConfigException
 import config.{FeatureSwitchManagementService, FeatureSwitchManagementServiceProductionImpl, FeatureSwitchManagementServiceTestImpl}
-import navigators.{Navigator, TrusteesCompanyNavigator, TrusteesCompanyNavigatorHnS}
+import navigators.{Navigator, TrusteesCompanyNavigatorOld, TrusteesCompanyNavigator}
 import play.api.inject.{Binding, Module}
 import play.api.{Configuration, Environment}
 import utils.annotations.TrusteesCompany
@@ -39,9 +39,9 @@ class FeatureSwitchModule extends Module {
 
     val trusteesCompanyNavigatorBinding = Seq(
       if (hubSpokeEnabled) {
-        bind(classOf[Navigator]).qualifiedWith[TrusteesCompany].to(classOf[TrusteesCompanyNavigatorHnS])
-      } else {
         bind(classOf[Navigator]).qualifiedWith[TrusteesCompany].to(classOf[TrusteesCompanyNavigator])
+      } else {
+        bind(classOf[Navigator]).qualifiedWith[TrusteesCompany].to(classOf[TrusteesCompanyNavigatorOld])
       }
     )
 
