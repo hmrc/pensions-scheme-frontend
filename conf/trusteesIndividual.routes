@@ -92,3 +92,6 @@ POST       /:index/individual/:mode/check-your-answers/:srn                 cont
 
 GET        /:index/individual/:mode/enter-national-insurance-number/:srn        controllers.register.trustees.individual.TrusteeNinoNewController.onPageLoad(mode: Mode, index: Index, srn: Option[String])
 POST       /:index/individual/:mode/enter-national-insurance-number/:srn        controllers.register.trustees.individual.TrusteeNinoNewController.onSubmit(mode: Mode, index: Index, srn: Option[String])
+
+GET        /:index/individual/personal-details                                          controllers.register.trustees.individual.WhatYouWillNeedIndividualDetailsController.onPageLoad(mode: Mode = NormalMode, index: Index, srn: Option[String] = None)
+GET        /:index/individual/:mode/personal-details/:srn                               controllers.register.trustees.individual.WhatYouWillNeedIndividualDetailsController.onPageLoad(mode: Mode,index: Index, srn: Option[String])
