@@ -100,7 +100,7 @@ class TrusteesCompanyNavigator @Inject()(val dataCacheConnector: UserAnswersCach
         NavigateTo.dontSave(CompanyPreviousAddressController.onPageLoad(mode, index, srn))
 
       case CompanyPreviousAddressId(index) =>
-        if(featureSwitchManagementService.get(Toggles.isEstablisherCompanyHnSEnabled))
+        if (featureSwitchManagementService.get(Toggles.isEstablisherCompanyHnSEnabled))
           NavigateTo.dontSave(CheckYourAnswersCompanyAddressController.onPageLoad(mode, index, srn))
         else
           NavigateTo.dontSave(CompanyContactDetailsController.onPageLoad(mode, index, srn))
@@ -157,38 +157,18 @@ class TrusteesCompanyNavigator @Inject()(val dataCacheConnector: UserAnswersCach
         NavigateTo.dontSave(CompanyAddressController.onPageLoad(mode, index, srn))
 
       case CompanyAddressId(index) =>
-
         val isNew = from.userAnswers.get(IsTrusteeNewId(index)).contains(true)
-        if(isNew || mode == CheckMode) {
-//          checkYourAnswers(index, journeyMode(mode), srn)
-                    if(featureSwitchManagementService.get(Toggles.isEstablisherCompanyHnSEnabled)){
-                      cyaAddressDetails(journeyMode(mode), index, srn)
-                    } else {
-                      checkYourAnswers(index, journeyMode(mode), srn)
-                    }
-
-
-                  } else if (!isNew && mode == CheckUpdateMode) {
-                    NavigateTo.dontSave(CompanyConfirmPreviousAddressController.onPageLoad(index, srn))
-                  } else {
-
-
+        if (isNew || mode == CheckMode) {
+          if (featureSwitchManagementService.get(Toggles.isEstablisherCompanyHnSEnabled)) {
+            cyaAddressDetails(journeyMode(mode), index, srn)
+          } else {
+            checkYourAnswers(index, journeyMode(mode), srn)
+          }
+        } else if (!isNew && mode == CheckUpdateMode) {
+          NavigateTo.dontSave(CompanyConfirmPreviousAddressController.onPageLoad(index, srn))
+        } else {
           NavigateTo.dontSave(CompanyAddressYearsController.onPageLoad(mode, index, srn))
         }
-
-//        val isNew = from.userAnswers.get(IsTrusteeNewId(index)).contains(true)
-//        if(isNew || mode == CheckMode) {
-//          if(featureSwitchManagementService.get(Toggles.isEstablisherCompanyHnSEnabled)){
-//            cyaAddressDetails(journeyMode(mode), index, srn)
-//          } else {
-//            checkYourAnswers(index, journeyMode(mode), srn)
-//          }
-//        } else if (!isNew && mode == CheckUpdateMode) {
-//          NavigateTo.dontSave(CompanyConfirmPreviousAddressController.onPageLoad(index, srn))
-//        } else {
-//          NavigateTo.dontSave(CompanyAddressYearsController.onPageLoad(mode, index, srn))
-//        }
-
       case CompanyConfirmPreviousAddressId(index) => confirmPreviousAddressRoutes(index, mode, srn)(from.userAnswers)
 
       case CompanyAddressYearsId(index) =>
@@ -231,7 +211,7 @@ class TrusteesCompanyNavigator @Inject()(val dataCacheConnector: UserAnswersCach
         NavigateTo.dontSave(CompanyPreviousAddressPostcodeLookupController.onPageLoad(mode, index, srn))
       case (Some(AddressYears.OverAYear), true) =>
         NavigateTo.dontSave(CheckYourAnswersCompanyAddressController.onPageLoad(mode, index, srn))
-      case (Some(AddressYears.OverAYear) , false) =>
+      case (Some(AddressYears.OverAYear), false) =>
         NavigateTo.dontSave(CompanyContactDetailsController.onPageLoad(mode, index, srn))
       case _ =>
         NavigateTo.dontSave(SessionExpiredController.onPageLoad())
@@ -260,7 +240,7 @@ class TrusteesCompanyNavigator @Inject()(val dataCacheConnector: UserAnswersCach
       case (Some(AddressYears.UnderAYear), true, _) =>
         NavigateTo.dontSave(HasBeenTradingCompanyController.onPageLoad(mode, index, srn))
       case (Some(AddressYears.UnderAYear), false, _) =>
-        NavigateTo.dontSave(CompanyPreviousAddressPostcodeLookupController.onPageLoad(mode,index, srn))
+        NavigateTo.dontSave(CompanyPreviousAddressPostcodeLookupController.onPageLoad(mode, index, srn))
       case (Some(AddressYears.OverAYear), true, _) =>
         exitMiniJourney(index, mode, srn, answers, cyaAddressDetails)
       case (Some(AddressYears.OverAYear), false, _) =>
