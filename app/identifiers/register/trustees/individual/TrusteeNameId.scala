@@ -26,5 +26,5 @@ case class TrusteeNameId(index: Int) extends TypedIdentifier[PersonName] {
 }
 
 object TrusteeNameId {
-  override def toString: String = "trusteeName"
+  override def toString: String = "trusteeDetails"
 }
