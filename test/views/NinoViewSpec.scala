@@ -31,12 +31,13 @@ class NinoViewSpec extends QuestionViewBehaviours[ReferenceValue] {
 
   val form = new NinoNewFormProvider()("Mark")
 
+  val personName = "Mark"
+
   private def viewmodel(srn:Option[String]) = NinoViewModel(
     postCall = Call("POST", "/"),
     title = Message("messages__common_nino__title"),
     heading = Message("messages__common_nino__h1"),
     hint = Message("messages__common__nino_hint"),
-    personName = "Mark",
     srn = srn
   )
 

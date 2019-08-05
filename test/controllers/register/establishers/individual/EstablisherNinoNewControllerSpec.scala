@@ -126,15 +126,15 @@ object EstablisherNinoNewControllerSpec extends ControllerSpecBase {
     new EstablisherNinoNewController(frontendAppConfig, messagesApi, FakeUserAnswersService, new FakeNavigator(desiredRoute = onwardRoute),
       FakeAuthAction, dataRetrievalAction, FakeAllowAccessProvider(), new DataRequiredActionImpl, formProvider)
 
-  private def vm(mode: Mode, index: Index, srn: Option[String]) = NinoViewModel(
-    postCall = controllers.register.establishers.individual.routes.EstablisherNinoNewController.onSubmit(mode, index, srn),
-    title = "messages__common_nino__title",
-    heading = "messages__common_nino__h1",
-    hint = "messages__common__nino_hint",
-    personName = establisherName,
-    srn = srn
-  )
+  private def viewAsString(form: Form[_], mode: Mode, index: Index, srn: Option[String]): String = {
+    val vm = NinoViewModel(
+      postCall = controllers.register.establishers.individual.routes.EstablisherNinoNewController.onSubmit(mode, index, srn),
+      title = messages("messages__common_nino__title"),
+      heading = messages("messages__common_nino__h1", establisherName),
+      hint = messages("messages__common__nino_hint"),
+      srn = srn
+    )
 
-  private def viewAsString(form: Form[_], mode: Mode, index: Index, srn: Option[String]): String = nino(frontendAppConfig, form,
-    vm(mode, index, srn), Some(schemeName))(fakeRequest, messages).toString
+    nino(frontendAppConfig, form, vm, Some(schemeName))(fakeRequest, messages).toString
+  }
 }

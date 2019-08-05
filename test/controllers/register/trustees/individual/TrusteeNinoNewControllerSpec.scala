@@ -130,7 +130,6 @@ object TrusteeNinoNewControllerSpec extends ControllerSpecBase {
       title = messages("messages__trustee__individual__nino__title"),
       heading = messages("messages__trustee__individual__nino__heading", trusteeFirstAndLastName),
       hint = "messages__common__nino_hint",
-      personName = trusteeFullName,
       srn = srn
     )
 

@@ -22,6 +22,7 @@ import controllers.actions._
 import forms.NinoNewFormProvider
 import identifiers.register.trustees.individual.{TrusteeDetailsId, TrusteeNewNinoId}
 import javax.inject.Inject
+import models.person.PersonDetails
 import models.{Index, Mode}
 import navigators.Navigator
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -46,36 +47,29 @@ class TrusteeNinoNewController @Inject()(
 
   private[controllers] val postCall = controllers.register.trustees.individual.routes.TrusteeNinoNewController.onSubmit _
 
-  private def viewmodel(index: Index,  mode: Mode, srn: Option[String]): Retrieval[NinoViewModel] =
-    Retrieval {
-      implicit request =>
-        TrusteeDetailsId(index).retrieve.right.map {
-          details =>
-            NinoViewModel(
-              postCall(mode, Index(index), srn),
-              title = Message("messages__trustee__individual__nino__title"),
-              heading = Message("messages__trustee__individual__nino__heading", details.firstAndLastName),
-              hint = Message("messages__common__nino_hint"),
-              personName = details.fullName,
-              srn = srn
-            )
-        }
-    }
+  private def viewmodel(personDetails: PersonDetails, index: Index,  mode: Mode, srn: Option[String]): NinoViewModel =
+    NinoViewModel(
+      postCall(mode, Index(index), srn),
+      title = Message("messages__trustee__individual__nino__title"),
+      heading = Message("messages__trustee__individual__nino__heading", personDetails.firstAndLastName),
+      hint = Message("messages__common__nino_hint"),
+      srn = srn
+    )
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
     implicit request =>
-      viewmodel(index, mode, srn).retrieve.right.map {
-        vm =>
-          get(TrusteeNewNinoId(index), formProvider(vm.personName), vm)
+      TrusteeDetailsId(index).retrieve.right.map {
+        details =>
+          get(TrusteeNewNinoId(index), formProvider(details.fullName), viewmodel(details, index, mode, srn))
       }
   }
 
   def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
-      viewmodel(index, mode, srn).retrieve.right.map {
-        vm =>
-          post(TrusteeNewNinoId(index), mode, formProvider(vm.personName), vm)
+      TrusteeDetailsId(index).retrieve.right.map {
+        details =>
+          post(TrusteeNewNinoId(index), mode, formProvider(details.fullName), viewmodel(details, index, mode, srn))
       }
   }
 
