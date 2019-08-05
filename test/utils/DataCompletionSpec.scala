@@ -19,10 +19,11 @@ package utils
 import base.JsonFileReader
 import identifiers.register.establishers.company._
 import identifiers.register.establishers.company.director.{DirectorHasNINOId, DirectorNewNinoId, DirectorNoNINOReasonId}
+import identifiers.register.trustees.individual.{TrusteeHasUTRId, TrusteeNoUTRReasonId, TrusteeUTRId}
 import org.scalatest.{MustMatchers, OptionValues, WordSpec}
 import play.api.libs.json.JsValue
 
-class DataCompletionSpec extends WordSpec with MustMatchers with OptionValues with Enumerable.Implicits  {
+class DataCompletionSpec extends WordSpec with MustMatchers with OptionValues with Enumerable.Implicits {
 
   import DataCompletionSpec._
 
@@ -218,6 +219,19 @@ class DataCompletionSpec extends WordSpec with MustMatchers with OptionValues wi
     }
   }
 
+  "isUtrComplete for individual trustee" must {
+
+    "return None when answer is missing" in {
+      UserAnswers(userAnswersUninitiated).isUtrComplete(TrusteeHasUTRId(0), TrusteeUTRId(0), TrusteeNoUTRReasonId(0)) mustBe None
+    }
+
+    "return Some(true) when answer is present" in {
+      UserAnswers(userAnswersCompleted).isUtrComplete(TrusteeHasUTRId(0), TrusteeUTRId(0), TrusteeNoUTRReasonId(0)) mustBe Some(true)
+    }
+    "return Some(false) when answer is missing" in {
+      UserAnswers(userAnswersInProgress).isUtrComplete(TrusteeHasUTRId(0), TrusteeUTRId(0), TrusteeNoUTRReasonId(0)) mustBe Some(false)
+    }
+  }
 }
 
 object DataCompletionSpec extends JsonFileReader {

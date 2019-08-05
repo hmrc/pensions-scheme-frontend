@@ -7,6 +7,19 @@
   "schemeEstablishedCountry" : "GB",
   "declarationDuties" : true,
   "isWorkingKnowledgeComplete" : true,
+  "trustees" : [
+  {
+      "hasUtr" : false,
+      "isTrusteeNew" : true,
+      "trusteeKind" : "individual",
+      "trusteeDetails" : {
+        "firstName" : "qwqwq",
+        "lastName" : "wqwq",
+        "date" : "2000-01-01",
+        "isDeleted" : false
+      }
+    }
+  ],
   "establishers" : [
     {
       "isEstablisherNew" : true,

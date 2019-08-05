@@ -21,8 +21,7 @@ import controllers.register.establishers.company.director.{routes => establisher
 import controllers.register.establishers.company.{routes => establisherCompanyRoutes}
 import controllers.register.trustees.company.{routes => trusteeCompanyRoutes}
 import controllers.register.trustees.individual.{routes => trusteeIndividualRoutes}
-import identifiers.register.establishers.company.CompanyVatId
-import identifiers.register.establishers.{IsEstablisherNewId, company => establisherCompany}
+import identifiers.register.establishers.IsEstablisherNewId
 import identifiers.register.trustees.{IsTrusteeNewId, company => trusteeCompany}
 import models._
 import models.register.Entity
