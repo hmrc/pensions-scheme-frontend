@@ -163,7 +163,7 @@ class AddTrusteeControllerSpec extends ControllerSpecBase {
       val result: Future[Result] = controller(featureToggleEnabled = false).onPageLoad(NormalMode, None)(fakeRequest)
 
       status(result) mustBe OK
-      contentAsString(result) mustBe viewAsString()
+      contentAsString(result) mustBe viewAsString(enable=true)
     }
 
     "redirect to the next page when valid data is submitted" in {

@@ -28,7 +28,7 @@ import org.joda.time.LocalDate
 import org.scalatest.OptionValues
 import org.scalatest.prop.TableFor6
 import play.api.mvc.Call
-import utils.{Enumerable, UserAnswers}
+import utils.{Enumerable, FakeFeatureSwitchManagementService, UserAnswers}
 
 //scalastyle:off magic.number
 
@@ -36,13 +36,13 @@ class TrusteesNavigatorSpec extends SpecBase with NavigatorBehaviour {
 
   import TrusteesNavigatorSpec._
 
-  private def routes(mode: Mode, srn: Option[String]): TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = Table(
+  private def routes(mode: Mode, srn: Option[String], toggled:Boolean = false): TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = Table(
     ("Id", "User Answers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (Check Mode)", "Save (CM)"),
     (AddTrusteeId, addTrusteeTrue(0), trusteeKind(0, mode, srn), true, None, true),
     (AddTrusteeId, addTrusteeTrue(1), trusteeKind(1, mode, srn), true, None, true),
     (AddTrusteeId, emptyAnswers, trusteeKind(0, mode, srn), true, None, true),
     (AddTrusteeId, trustees(10), moreThanTenTrustees(mode, srn), true, None, true),
-    (AddTrusteeId, addTrusteeFalseWithChanges, taskList(mode, srn), false, None, false),
+    (AddTrusteeId, addTrusteeFalseWithChanges, if (!toggled && mode == UpdateMode) controllers.routes.AnyMoreChangesController.onPageLoad(srn) else taskList(mode, srn), false, None, false),
     (MoreThanTenTrusteesId, emptyAnswers,
       if (mode == UpdateMode) controllers.routes.AnyMoreChangesController.onPageLoad(srn) else taskList(mode, srn), false, None, false),
     (TrusteeKindId(0), trusteeKindCompany, companyDetails(mode, srn), true, None, false),
@@ -77,7 +77,7 @@ class TrusteesNavigatorSpec extends SpecBase with NavigatorBehaviour {
   )
 
 
-  private val navigator = new TrusteesNavigator(FakeUserAnswersCacheConnector, frontendAppConfig)
+  private val navigator = new TrusteesNavigator(FakeUserAnswersCacheConnector, frontendAppConfig, new FakeFeatureSwitchManagementService(false))
 
   s"${navigator.getClass.getSimpleName}" must {
     appRunning()

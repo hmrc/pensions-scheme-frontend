@@ -85,6 +85,6 @@ class AddTrusteeController @Inject()(
   }
 
   private def enableSubmission(trusteeList: Seq[Trustee[_]]): Boolean = {
-    fsm.get(Toggles.isEstablisherCompanyHnSEnabled) || (trusteeList.nonEmpty && trusteeList.forall(_.isCompleted))
+    fsm.get(Toggles.isEstablisherCompanyHnSEnabled) || trusteeList.forall(_.isCompleted)
   }
 }
