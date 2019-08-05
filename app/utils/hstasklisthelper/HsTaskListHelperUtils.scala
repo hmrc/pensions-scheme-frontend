@@ -102,22 +102,30 @@ trait HsTaskListHelperUtils extends Enumerable.Implicits {
     case TrusteeCompanyDetails => answers.get(trusteeCompany.IsDetailsCompleteId(index))
     case TrusteeCompanyAddress => answers.get(trusteeCompany.IsAddressCompleteId(index))
     case TrusteeCompanyContactDetails => answers.get(trusteeCompany.IsContactDetailsCompleteId(index))
-
+    case TrusteeIndividualDetails => None // answers.get(trusteeIndividual.IsDetailsCompleteId(index))
+    case TrusteeIndividualAddress => None // answers.get(trusteeIndividual.IsAddressCompleteId(index))
+    case TrusteeIndividualContactDetails => None // answers.get(trusteeIndividual.IsContactDetailsCompleteId(index))
     case _ => None
   }
 
   private def getChangeLinkText(spokeName: Spoke): String => String = spokeName match {
-    case EstablisherCompanyDetails | TrusteeCompanyDetails | TrusteeIndividualDetails => messages("messages__schemeTaskList__sectionEstablishersCompany_change_details", _)
-    case EstablisherCompanyAddress | TrusteeCompanyAddress | TrusteeIndividualAddress => messages("messages__schemeTaskList__sectionEstablishersCompany_change_address", _)
-    case EstablisherCompanyContactDetails | TrusteeCompanyContactDetails | TrusteeIndividualContactDetails => messages("messages__schemeTaskList__sectionEstablishersCompany_change_contact", _)
+    case EstablisherCompanyDetails | TrusteeCompanyDetails => messages("messages__schemeTaskList__sectionEstablishersCompany_change_details", _)
+    case TrusteeIndividualDetails => messages("messages__schemeTaskList__sectionEstablishersIndividual_add_details",  _)
+    case EstablisherCompanyAddress | TrusteeCompanyAddress => messages("messages__schemeTaskList__sectionEstablishersCompany_change_address", _)
+    case TrusteeIndividualAddress => messages("messages__schemeTaskList__sectionEstablishersIndividual_add_address",  _)
+    case EstablisherCompanyContactDetails | TrusteeCompanyContactDetails => messages("messages__schemeTaskList__sectionEstablishersCompany_change_contact", _)
+    case TrusteeIndividualContactDetails => messages("messages__schemeTaskList__sectionEstablishersIndividual_add_contact", _)
     case EstablisherCompanyDirectors => messages("messages__schemeTaskList__sectionEstablishersCompany_change_directors", _)
     case _ => (_: String) => s"Not found link text for spoke $spokeName"
   }
 
   private def getAddLinkText(spokeName: Spoke): String => String = spokeName match {
-    case EstablisherCompanyDetails | TrusteeCompanyDetails | TrusteeIndividualDetails=> messages("messages__schemeTaskList__sectionEstablishersCompany_add_details", _)
-    case EstablisherCompanyAddress | TrusteeCompanyAddress | TrusteeIndividualAddress => messages("messages__schemeTaskList__sectionEstablishersCompany_add_address", _)
-    case EstablisherCompanyContactDetails | TrusteeCompanyContactDetails | TrusteeIndividualContactDetails=> messages("messages__schemeTaskList__sectionEstablishersCompany_add_contact", _)
+    case EstablisherCompanyDetails | TrusteeCompanyDetails => messages("messages__schemeTaskList__sectionEstablishersCompany_add_details", _)
+    case TrusteeIndividualDetails => messages("messages__schemeTaskList__sectionEstablishersIndividual_add_details",  _)
+    case EstablisherCompanyAddress | TrusteeCompanyAddress => messages("messages__schemeTaskList__sectionEstablishersCompany_add_address", _)
+    case TrusteeIndividualAddress => messages("messages__schemeTaskList__sectionEstablishersIndividual_add_address",  _)
+    case EstablisherCompanyContactDetails | TrusteeCompanyContactDetails => messages("messages__schemeTaskList__sectionEstablishersCompany_add_contact", _)
+    case TrusteeIndividualContactDetails => messages("messages__schemeTaskList__sectionEstablishersIndividual_add_contact", _)
     case EstablisherCompanyDirectors => messages("messages__schemeTaskList__sectionEstablishersCompany_add_directors", _)
     case _ => (_: String) => s"Not found link text for spoke $spokeName"
   }
