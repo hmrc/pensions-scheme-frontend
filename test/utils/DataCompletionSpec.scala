@@ -219,6 +219,8 @@ class DataCompletionSpec extends WordSpec with MustMatchers with OptionValues wi
     }
   }
 
+  // TRUSTEE INDIVIDUAL
+
   "isUtrComplete for individual trustee" must {
 
     "return None when answer is missing" in {
@@ -232,6 +234,9 @@ class DataCompletionSpec extends WordSpec with MustMatchers with OptionValues wi
       UserAnswers(userAnswersInProgress).isUtrComplete(TrusteeHasUTRId(0), TrusteeUTRId(0), TrusteeNoUTRReasonId(0)) mustBe Some(false)
     }
   }
+
+
+
 }
 
 object DataCompletionSpec extends JsonFileReader {
