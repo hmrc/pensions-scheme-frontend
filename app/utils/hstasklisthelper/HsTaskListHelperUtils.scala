@@ -20,6 +20,7 @@ package utils.hstasklisthelper
 import controllers.register.establishers.company.director.{routes => establisherCompanyDirectorRoutes}
 import controllers.register.establishers.company.{routes => establisherCompanyRoutes}
 import controllers.register.trustees.company.{routes => trusteeCompanyRoutes}
+import controllers.register.trustees.individual.{routes => trusteeIndividualRoutes}
 import identifiers.register.establishers.company.CompanyVatId
 import identifiers.register.establishers.{IsEstablisherNewId, company => establisherCompany}
 import identifiers.register.trustees.{IsTrusteeNewId, company => trusteeCompany}
@@ -129,9 +130,9 @@ trait HsTaskListHelperUtils extends Enumerable.Implicits {
     case TrusteeCompanyDetails => trusteeCompanyRoutes.CheckYourAnswersCompanyDetailsController.onPageLoad(mode, index, srn)
     case TrusteeCompanyAddress => trusteeCompanyRoutes.CheckYourAnswersCompanyAddressController.onPageLoad(mode, index, srn)
     case TrusteeCompanyContactDetails => trusteeCompanyRoutes.CheckYourAnswersCompanyContactDetailsController.onPageLoad(mode, index, srn)
-    case TrusteeIndividualDetails => trusteeCompanyRoutes.CheckYourAnswersCompanyDetailsController.onPageLoad(mode, index, srn) // change the route
-    case TrusteeIndividualAddress => trusteeCompanyRoutes.CheckYourAnswersCompanyAddressController.onPageLoad(mode, index, srn) // change the route
-    case TrusteeIndividualContactDetails => trusteeCompanyRoutes.CheckYourAnswersCompanyContactDetailsController.onPageLoad(mode, index, srn) // change the route
+    case TrusteeIndividualDetails => trusteeIndividualRoutes.CheckYourAnswersIndividualDetailsController.onPageLoad(mode, index, srn)
+    case TrusteeIndividualAddress => trusteeIndividualRoutes.CheckYourAnswersIndividualAddressController.onPageLoad(mode, index, srn)
+    case TrusteeIndividualContactDetails => trusteeIndividualRoutes.CheckYourAnswersIndividualContactDetailsController.onPageLoad(mode, index, srn)
     case _ => controllers.routes.IndexController.onPageLoad()
   }
 
@@ -143,9 +144,9 @@ trait HsTaskListHelperUtils extends Enumerable.Implicits {
     case TrusteeCompanyDetails => trusteeCompanyRoutes.WhatYouWillNeedCompanyDetailsController.onPageLoad(mode, index,srn)
     case TrusteeCompanyAddress => trusteeCompanyRoutes.WhatYouWillNeedCompanyAddressController.onPageLoad(mode, index, srn)
     case TrusteeCompanyContactDetails => trusteeCompanyRoutes.WhatYouWillNeedCompanyContactDetailsController.onPageLoad(mode, index, srn)
-    case TrusteeIndividualDetails => trusteeCompanyRoutes.WhatYouWillNeedCompanyDetailsController.onPageLoad(mode, index,srn) //change the route
-    case TrusteeIndividualAddress => trusteeCompanyRoutes.WhatYouWillNeedCompanyAddressController.onPageLoad(mode, index, srn) //change the route
-    case TrusteeIndividualContactDetails => trusteeCompanyRoutes.WhatYouWillNeedCompanyContactDetailsController.onPageLoad(mode, index, srn) //change the route
+    case TrusteeIndividualDetails => trusteeIndividualRoutes.WhatYouWillNeedIndividualDetailsController.onPageLoad(mode, index,srn) //change the route
+    case TrusteeIndividualAddress => trusteeIndividualRoutes.WhatYouWillNeedIndividualAddressController.onPageLoad(mode, index, srn) //change the route
+    case TrusteeIndividualContactDetails => trusteeIndividualRoutes.WhatYouWillNeedIndividualContactDetailsController.onPageLoad(mode, index, srn) //change the route
     case _ => controllers.routes.IndexController.onPageLoad()
   }
 
