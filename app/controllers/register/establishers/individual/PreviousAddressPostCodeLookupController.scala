@@ -50,7 +50,6 @@ class PreviousAddressPostCodeLookupController @Inject()(
 
   protected val form: Form[String] = formProvider()
   private val title: Message = "messages__establisher_individual_previous_address__title"
-  private val heading: Message = "messages__establisher_individual_previous_address__heading"
   private val hint: Message = "messages__establisher_individual_previous_address_lede"
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
@@ -77,7 +76,7 @@ class PreviousAddressPostCodeLookupController @Inject()(
               routes.PreviousAddressPostCodeLookupController.onSubmit(mode, index, srn),
               routes.PreviousAddressController.onPageLoad(mode, index, srn),
               title = Message(title),
-              heading = Message(heading, details.fullName),
+              heading = Message("messages__establisher_individual_previous_address__heading", details.fullName),
               subHeading = Some(details.fullName),
               srn = srn
             )

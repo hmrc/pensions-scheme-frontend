@@ -50,7 +50,6 @@ class PartnershipPostcodeLookupController @Inject()(
 
   protected val form: Form[String] = formProvider()
   private val title: Message = "messages__partnershipPostcodeLookup__title"
-  private val heading: Message = "messages__partnershipPostcodeLookup__heading"
   private val hint: Message = "messages__partnershipPostcodeLookup__hint"
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
@@ -77,7 +76,7 @@ class PartnershipPostcodeLookupController @Inject()(
               routes.PartnershipPostcodeLookupController.onSubmit(mode, index, srn),
               routes.PartnershipAddressController.onPageLoad(mode, index, srn),
               title = Message(title),
-              heading = Message(heading, details.name),
+              heading = Message("messages__partnershipPostcodeLookup__heading", details.name),
               subHeading = Some(details.name),
               srn = srn
             )
