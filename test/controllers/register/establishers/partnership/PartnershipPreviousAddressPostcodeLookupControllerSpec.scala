@@ -102,7 +102,7 @@ class PartnershipPreviousAddressPostcodeLookupControllerSpec extends ControllerS
         routes.PartnershipPreviousAddressPostcodeLookupController.onSubmit(NormalMode, index, None),
         routes.PartnershipPreviousAddressController.onPageLoad(NormalMode, index, None),
         Message("messages__partnershipPreviousAddressPostcodeLookup__title"),
-        Message("messages__partnershipPreviousAddressPostcodeLookup__title"),
+        Message("messages__partnershipPreviousAddressPostcodeLookup__heading", partnershipName),
         Some(partnershipName)
       ),
       None

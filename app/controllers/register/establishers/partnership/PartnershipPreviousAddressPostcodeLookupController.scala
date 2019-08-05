@@ -50,7 +50,6 @@ class PartnershipPreviousAddressPostcodeLookupController @Inject()(
 
   protected val form: Form[String] = formProvider()
   private val title: Message = "messages__partnershipPreviousAddressPostcodeLookup__title"
-  private val heading: Message = "messages__partnershipPreviousAddressPostcodeLookup__title"
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
@@ -76,7 +75,7 @@ class PartnershipPreviousAddressPostcodeLookupController @Inject()(
               routes.PartnershipPreviousAddressPostcodeLookupController.onSubmit(mode, index, srn),
               routes.PartnershipPreviousAddressController.onPageLoad(mode, index, srn),
               title = Message(title),
-              heading = Message(heading),
+              heading = Message("messages__partnershipPreviousAddressPostcodeLookup__heading", details.name),
               subHeading = Some(details.name),
               srn = srn
             )

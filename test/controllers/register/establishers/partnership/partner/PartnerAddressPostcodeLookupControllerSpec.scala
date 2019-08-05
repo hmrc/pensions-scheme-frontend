@@ -76,7 +76,7 @@ class PartnerAddressPostcodeLookupControllerSpec extends ControllerSpecBase with
     onwardRoute,
     manualInputCall,
     Message("messages__partnerAddressPostcodeLookup__title"),
-    Message("messages__partnerAddressPostcodeLookup__heading"),
+    Message("messages__partnerAddressPostcodeLookup__heading", partner.fullName),
     Some(partner.fullName)
   )
 

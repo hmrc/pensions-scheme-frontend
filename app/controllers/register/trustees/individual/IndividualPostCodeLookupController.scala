@@ -59,7 +59,7 @@ class IndividualPostCodeLookupController @Inject()(
               routes.IndividualPostCodeLookupController.onSubmit(mode, index, srn),
               routes.TrusteeAddressController.onPageLoad(mode, index, srn),
               title = Message("messages__individualPostCodeLookup__title"),
-              heading = Message("messages__individualPostCodeLookup__heading"),
+              heading = Message("messages__individualPostCodeLookup__heading", details.fullName),
               subHeading = Some(details.fullName),
               enterPostcode = Message("messages__trustee_individualPostCodeLookup__enter_postcode"),
               srn = srn

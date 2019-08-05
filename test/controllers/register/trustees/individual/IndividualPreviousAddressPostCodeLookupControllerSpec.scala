@@ -93,7 +93,7 @@ object IndividualPreviousAddressPostCodeLookupControllerSpec extends ControllerS
     postCall = routes.IndividualPreviousAddressPostcodeLookupController.onSubmit(NormalMode, firstIndex, None),
     manualInputCall = routes.TrusteePreviousAddressController.onPageLoad(NormalMode, firstIndex, None),
     title = Message("messages__trustee_individual_previous_address__title"),
-    heading = Message("messages__trustee_individual_previous_address__heading"),
+    heading = Message("messages__trustee_individual_previous_address__heading", personDetails.fullName),
     subHeading = Some(personDetails.fullName),
     enterPostcode = Message("messages__trustee_individualPostCodeLookup__enter_postcode")
   )
