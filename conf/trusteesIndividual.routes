@@ -155,7 +155,7 @@ GET        /:index/individual/:mode/check-your-answers-individual-address/:srn  
 POST       /:index/individual/:mode/check-your-answers-individual-address/:srn          controllers.register.trustees.individual.CheckYourAnswersIndividualAddressController.onSubmit(mode: Mode,index: Index, srn: Option[String])
 
 GET        /:index/individual/individual-contact-details                                controllers.register.trustees.individual.WhatYouWillNeedIndividualContactDetailsController.onPageLoad(mode: Mode = NormalMode, index: Index, srn: Option[String] = None)
-GET        /:index/individual/:mode//individual-contact-details/:srn                    controllers.register.trustees.individual.WhatYouWillNeedIndividualContactDetailsController.onPageLoad(mode: Mode,index: Index, srn: Option[String])
+GET        /:index/individual/:mode/individual-contact-details/:srn                    controllers.register.trustees.individual.WhatYouWillNeedIndividualContactDetailsController.onPageLoad(mode: Mode,index: Index, srn: Option[String])
 
 GET        /:index/individual/enter-email-address                                       controllers.register.trustees.individual.TrusteeEmailController.onPageLoad(mode: Mode = NormalMode, index: Index, srn: Option[String] = None)
 POST       /:index/individual/enter-email-address                                       controllers.register.trustees.individual.TrusteeEmailController.onSubmit(mode: Mode = NormalMode, index: Index, srn: Option[String] = None)
