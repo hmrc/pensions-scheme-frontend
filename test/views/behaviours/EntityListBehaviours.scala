@@ -62,7 +62,7 @@ trait EntityListBehaviours {
         }
       }
 
-      "disable the submit button if any of the items is incomplete" in {
+      "disable the submit button if any of the items are incomplete" in {
         val doc = asDocument(nonEmptyView())
         doc.getElementById("submit").hasAttr("disabled") mustBe true
       }

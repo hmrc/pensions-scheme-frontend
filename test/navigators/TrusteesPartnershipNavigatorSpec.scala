@@ -71,7 +71,7 @@ class TrusteesPartnershipNavigatorSpec extends SpecBase with NavigatorBehaviour 
     )
   }
 
-  private def updateOnlyRoutes: TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = {
+  private def updateOnlyRoutes(): TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = {
     routes(UpdateMode) ++ Table(
       ("Id", "User Answers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (Check Mode)", "Save (CM)"),
       (PartnershipAddressYearsId(0), addressYearsUnderAYear, partnershipPaPostCodeLookup(UpdateMode), true, Some(addressYearsLessThanTwelveEdit(UpdateMode, addressYearsUnderAYear)), true),
@@ -79,7 +79,8 @@ class TrusteesPartnershipNavigatorSpec extends SpecBase with NavigatorBehaviour 
       (PartnershipConfirmPreviousAddressId(0), confirmPreviousAddressYes, defaultPage, false, Some(anyMoreChanges), false),
       (PartnershipConfirmPreviousAddressId(0), confirmPreviousAddressNo, defaultPage, false, Some(partnershipPaPostCodeLookup(CheckUpdateMode)), false),
       (PartnershipConfirmPreviousAddressId(0), emptyAnswers, defaultPage, false, Some(sessionExpired), false),
-      (PartnershipPayeVariationsId(0), emptyAnswers, none, true, Some(exitJourney(UpdateMode, emptyAnswers)), true)
+      (PartnershipPayeVariationsId(0), emptyAnswers, none, true, Some(exitJourney(UpdateMode, emptyAnswers)), true),
+      (PartnershipAddressId(0), emptyAnswers, partnershipAddressYears(UpdateMode), true, Some(confirmPreviousAddress), true)
     )
   }
 
@@ -88,7 +89,7 @@ class TrusteesPartnershipNavigatorSpec extends SpecBase with NavigatorBehaviour 
   navigator.getClass.getSimpleName must {
     appRunning()
     behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, normalRoutes, dataDescriber)
-    behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, updateOnlyRoutes, dataDescriber, UpdateMode)
+    behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, updateOnlyRoutes(), dataDescriber, UpdateMode)
     behave like nonMatchingNavigator(navigator)
     behave like nonMatchingNavigator(navigator, UpdateMode)
   }

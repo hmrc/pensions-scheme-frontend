@@ -32,7 +32,7 @@ class TrusteesCompanyNavigatorSpec extends SpecBase with MustMatchers with Navig
 
   import TrusteesCompanyNavigatorSpec._
 
-  "TrusteesCompanyNavigatorOld" must {
+  "TrusteesCompanyNavigator" must {
 
     behave like navigatorWithRoutesForMode(NormalMode)(navigator, normalAndUpdateModeRoutes(NormalMode))
     behave like navigatorWithRoutesForMode(CheckMode)(navigator, routesCheckMode(CheckMode))
