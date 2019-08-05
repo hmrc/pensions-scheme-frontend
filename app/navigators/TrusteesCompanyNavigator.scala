@@ -26,11 +26,13 @@ import models.Mode._
 import models._
 import play.api.mvc.Call
 import utils.UserAnswers
+import controllers.register.trustees.routes.AddTrusteeController
 
 class TrusteesCompanyNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector) extends AbstractNavigator {
   import TrusteesCompanyNavigator._
 
   private def normalAndUpdateModeRoutes(mode: Mode, ua: UserAnswers, srn: Option[String]): PartialFunction[Identifier, Call] = {
+    case CompanyDetailsId(index) => addTrusteePage(mode, srn)
     case id@HasCompanyNumberId(index) => booleanNav(id, ua, mode, index, srn, companyNoPage, noCompanyNoPage)
     case NoCompanyNumberId(index) => hasCompanyUtrPage(mode, index, srn)
     case CompanyRegistrationNumberVariationsId(index) => hasCompanyUtrPage(mode, index, srn)
@@ -41,6 +43,17 @@ class TrusteesCompanyNavigator @Inject()(val dataCacheConnector: UserAnswersCach
     case CompanyVatVariationsId(index) => hasCompanyPayePage(mode, index, srn)
     case id@HasCompanyPAYEId(index) => booleanNav(id, ua, mode, index, srn, payePage, cyaPage)
     case CompanyPayeVariationsId(index) => cyaPage(mode, index, srn)
+    case CompanyPostcodeLookupId(index) => selectAddressPage(mode, index, srn)
+    case CompanyAddressListId(index) => confirmAddressPage(mode, index, srn)
+    case CompanyAddressId(index) => addressYearsPage(mode, index, srn)
+    case CompanyAddressYearsId(index) if overAYear(ua, index) => cyaAddressPage(mode, index, srn)
+    case CompanyAddressYearsId(index) if underAYear(ua, index) => hasBeenTradingPage(mode, index, srn)
+    case id@HasBeenTradingCompanyId(index) => booleanNav(id, ua, mode, index, srn, previousAddressLookupPage, cyaAddressPage)
+    case CompanyPreviousAddressPostcodeLookupId(index) => selectPreviousAddressPage(mode, index, srn)
+    case CompanyPreviousAddressListId(index) => confirmPreviousAddressPage(mode, index, srn)
+    case CompanyPreviousAddressId(index) => cyaAddressPage(mode, index, srn)
+    case CompanyEmailId(index) => phonePage(mode, index, srn)
+    case CompanyPhoneId(index) => cyaContactDetailsPage(mode, index, srn)
   }
 
   private def checkModeRoutes(mode: Mode, ua: UserAnswers, srn: Option[String]): PartialFunction[Identifier, Call] = {
@@ -54,6 +67,15 @@ class TrusteesCompanyNavigator @Inject()(val dataCacheConnector: UserAnswersCach
     case CompanyVatVariationsId(index) => cyaPage(mode, index, srn)
     case id@HasCompanyPAYEId(index) => booleanNav(id, ua, mode, index, srn, payePage, cyaPage)
     case CompanyPayeVariationsId(index) => cyaPage(mode, index, srn)
+    case CompanyAddressId(index) => cyaAddressPage(mode, index, srn)
+    case CompanyAddressYearsId(index) if overAYear(ua, index) => cyaAddressPage(mode, index, srn)
+    case CompanyAddressYearsId(index) if underAYear(ua, index) => hasBeenTradingPage(mode, index, srn)
+    case id@HasBeenTradingCompanyId(index) => booleanNav(id, ua, mode, index, srn, previousAddressLookupPage, cyaAddressPage)
+    case CompanyPreviousAddressPostcodeLookupId(index) => selectPreviousAddressPage(mode, index, srn)
+    case CompanyPreviousAddressListId(index) => confirmPreviousAddressPage(mode, index, srn)
+    case CompanyPreviousAddressId(index) => cyaAddressPage(mode, index, srn)
+    case CompanyEmailId(index) => cyaContactDetailsPage(mode, index, srn)
+    case CompanyPhoneId(index) => cyaContactDetailsPage(mode, index, srn)
   }
 
   private def checkUpdateModeRoutes(mode: Mode, ua: UserAnswers, srn: Option[String]): PartialFunction[Identifier, Call] = {
@@ -71,6 +93,19 @@ class TrusteesCompanyNavigator @Inject()(val dataCacheConnector: UserAnswersCach
     case id@HasCompanyPAYEId(index) => booleanNav(id, ua, mode, index, srn, payePage, cyaPage)
     case CompanyPayeVariationsId(index) if isNewTrustee(ua, index) => cyaPage(mode, index, srn)
     case CompanyPayeVariationsId(_) => anyMoreChangesPage(srn)
+    case CompanyAddressId(index) if isNewTrustee(ua, index) => cyaAddressPage(mode, index, srn)
+    case CompanyAddressId(_) => anyMoreChangesPage(srn)
+    case CompanyAddressYearsId(index) if overAYear(ua, index) => cyaAddressPage(mode, index, srn)
+    case CompanyAddressYearsId(index) if underAYear(ua, index) => hasBeenTradingPage(mode, index, srn)
+    case CompanyPreviousAddressPostcodeLookupId(index) => selectPreviousAddressPage(mode, index, srn)
+    case CompanyPreviousAddressListId(index) => confirmPreviousAddressPage(mode, index, srn)
+    case CompanyPreviousAddressId(index) if isNewTrustee(ua, index) => cyaAddressPage(mode, index, srn)
+    case CompanyPreviousAddressId(_) => anyMoreChangesPage(srn)
+    case id@HasBeenTradingCompanyId(index) => booleanNav(id, ua, mode, index, srn, previousAddressLookupPage, cyaAddressPage)
+    case CompanyEmailId(index) if isNewTrustee(ua, index) => cyaContactDetailsPage(mode, index, srn)
+    case CompanyEmailId(_) => anyMoreChangesPage(srn)
+    case CompanyPhoneId(index) if isNewTrustee(ua, index) => cyaContactDetailsPage(mode, index, srn)
+    case CompanyPhoneId(_) => anyMoreChangesPage(srn)
   }
 
   override protected def routeMap(from: NavigateFrom): Option[NavigateTo] = applyRoutes(normalAndUpdateModeRoutes, from, NormalMode, None)
@@ -84,6 +119,10 @@ class TrusteesCompanyNavigator @Inject()(val dataCacheConnector: UserAnswersCach
 
 object TrusteesCompanyNavigator {
   private def isNewTrustee(ua: UserAnswers, index: Int): Boolean = ua.get(IsTrusteeNewId(index)).getOrElse(false)
+
+  private def overAYear(ua: UserAnswers, index: Int): Boolean = ua.get(CompanyAddressYearsId(index)).contains(AddressYears.OverAYear)
+
+  private def underAYear(ua: UserAnswers, index: Int): Boolean = ua.get(CompanyAddressYearsId(index)).contains(AddressYears.UnderAYear)
 
   private def companyNoPage(mode: Mode, index: Int, srn: Option[String]): Call = CompanyRegistrationNumberVariationsController.onPageLoad(mode, srn, index)
 
@@ -101,9 +140,33 @@ object TrusteesCompanyNavigator {
 
   private def cyaPage(mode: Mode, index: Int, srn: Option[String]): Call = CheckYourAnswersCompanyDetailsController.onPageLoad(journeyMode(mode), index, srn)
 
+  private def cyaContactDetailsPage(mode: Mode, index: Int, srn: Option[String]): Call =
+    CheckYourAnswersCompanyContactDetailsController.onPageLoad(journeyMode(mode), index, srn)
+
+  private def cyaAddressPage(mode: Mode, index: Int, srn: Option[String]): Call = CheckYourAnswersCompanyAddressController.onPageLoad(journeyMode(mode), index, srn)
+
   private def hasCompanyUtrPage(mode: Mode, index: Int, srn: Option[String]): Call = HasCompanyUTRController.onPageLoad(mode, index, srn)
 
   private def hasCompanyVatPage(mode: Mode, index: Int, srn: Option[String]): Call = HasCompanyVATController.onPageLoad(mode, index, srn)
 
   private def hasCompanyPayePage(mode: Mode, index: Int, srn: Option[String]): Call = HasCompanyPAYEController.onPageLoad(mode, index, srn)
+
+  private def phonePage(mode: Mode, index: Int, srn: Option[String]): Call = CompanyPhoneController.onPageLoad(mode, index, srn)
+
+  private def addTrusteePage(mode: Mode, srn: Option[String]): Call = AddTrusteeController.onPageLoad(mode, srn)
+
+  private def selectAddressPage(mode: Mode, index: Int, srn: Option[String]): Call = CompanyAddressListController.onPageLoad(mode, index, srn)
+
+  private def confirmAddressPage(mode: Mode, index: Int, srn: Option[String]): Call = CompanyAddressController.onPageLoad(mode, index, srn)
+
+  private def addressYearsPage(mode: Mode, index: Int, srn: Option[String]): Call = CompanyAddressYearsController.onPageLoad(mode, index, srn)
+
+  private def hasBeenTradingPage(mode: Mode, index: Int, srn: Option[String]): Call = HasBeenTradingCompanyController.onPageLoad(mode, index, srn)
+
+  private def previousAddressLookupPage(mode: Mode, index: Int, srn: Option[String]): Call = CompanyPreviousAddressPostcodeLookupController.onPageLoad(mode, index, srn)
+
+  private def selectPreviousAddressPage(mode: Mode, index: Int, srn: Option[String]): Call = CompanyPreviousAddressListController.onPageLoad(mode, index, srn)
+
+  private def confirmPreviousAddressPage(mode: Mode, index: Int, srn: Option[String]): Call = CompanyPreviousAddressController.onPageLoad(mode, index, srn)
+
 }

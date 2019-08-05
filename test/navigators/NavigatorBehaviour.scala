@@ -20,6 +20,7 @@ import connectors.FakeUserAnswersCacheConnector
 import controllers.routes.AnyMoreChangesController
 import identifiers.{Identifier, TypedIdentifier}
 import models.Mode.checkMode
+import models.address.{Address, TolerantAddress}
 import models.requests.IdentifiedRequest
 import models.{CheckMode, Mode, NormalMode, ReferenceValue}
 import org.scalatest.exceptions.TableDrivenPropertyCheckFailedException
@@ -43,6 +44,8 @@ trait NavigatorBehaviour extends PropertyChecks with OptionValues {
 
   protected val someStringValue = "111111"
   protected val someRefValue = ReferenceValue(someStringValue)
+  protected val someTolerantAddress = TolerantAddress(None, None, None, None, None, None)
+  protected val someAddress = Address("line 1", "line 2", None, None, None, "GB")
 
   protected def row(id: TypedIdentifier.PathDependent)(value: id.Data, call: Call, ua: Option[UserAnswers] = None)
                  (implicit writes: Writes[id.Data]): (id.type, UserAnswers, Call) = {
