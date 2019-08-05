@@ -44,11 +44,18 @@ trait HsTaskListHelperUtils extends Enumerable.Implicits {
 
   case object EstablisherCompanyDirectors extends Spoke
 
-  case object TrusteeCompanyDetails extends Spoke
-
   case object TrusteeCompanyAddress extends Spoke
 
   case object TrusteeCompanyContactDetails extends Spoke
+
+  case object TrusteeCompanyDetails extends Spoke
+
+  case object TrusteeIndividualAddress extends Spoke
+
+  case object TrusteeIndividualContactDetails extends Spoke
+
+  case object TrusteeIndividualDetails extends Spoke
+  
 
   def createSpoke(answers: UserAnswers,
                   spokeName: Spoke,
@@ -99,17 +106,17 @@ trait HsTaskListHelperUtils extends Enumerable.Implicits {
   }
 
   private def getChangeLinkText(spokeName: Spoke): String => String = spokeName match {
-    case EstablisherCompanyDetails | TrusteeCompanyDetails => messages("messages__schemeTaskList__sectionEstablishersCompany_change_details", _)
-    case EstablisherCompanyAddress | TrusteeCompanyAddress => messages("messages__schemeTaskList__sectionEstablishersCompany_change_address", _)
-    case EstablisherCompanyContactDetails | TrusteeCompanyContactDetails => messages("messages__schemeTaskList__sectionEstablishersCompany_change_contact", _)
+    case EstablisherCompanyDetails | TrusteeCompanyDetails | TrusteeIndividualDetails => messages("messages__schemeTaskList__sectionEstablishersCompany_change_details", _)
+    case EstablisherCompanyAddress | TrusteeCompanyAddress | TrusteeIndividualAddress => messages("messages__schemeTaskList__sectionEstablishersCompany_change_address", _)
+    case EstablisherCompanyContactDetails | TrusteeCompanyContactDetails | TrusteeIndividualContactDetails => messages("messages__schemeTaskList__sectionEstablishersCompany_change_contact", _)
     case EstablisherCompanyDirectors => messages("messages__schemeTaskList__sectionEstablishersCompany_change_directors", _)
     case _ => (_: String) => s"Not found link text for spoke $spokeName"
   }
 
   private def getAddLinkText(spokeName: Spoke): String => String = spokeName match {
-    case EstablisherCompanyDetails | TrusteeCompanyDetails => messages("messages__schemeTaskList__sectionEstablishersCompany_add_details", _)
-    case EstablisherCompanyAddress | TrusteeCompanyAddress => messages("messages__schemeTaskList__sectionEstablishersCompany_add_address", _)
-    case EstablisherCompanyContactDetails | TrusteeCompanyContactDetails => messages("messages__schemeTaskList__sectionEstablishersCompany_add_contact", _)
+    case EstablisherCompanyDetails | TrusteeCompanyDetails | TrusteeIndividualDetails=> messages("messages__schemeTaskList__sectionEstablishersCompany_add_details", _)
+    case EstablisherCompanyAddress | TrusteeCompanyAddress | TrusteeIndividualAddress => messages("messages__schemeTaskList__sectionEstablishersCompany_add_address", _)
+    case EstablisherCompanyContactDetails | TrusteeCompanyContactDetails | TrusteeIndividualContactDetails=> messages("messages__schemeTaskList__sectionEstablishersCompany_add_contact", _)
     case EstablisherCompanyDirectors => messages("messages__schemeTaskList__sectionEstablishersCompany_add_directors", _)
     case _ => (_: String) => s"Not found link text for spoke $spokeName"
   }
@@ -122,6 +129,9 @@ trait HsTaskListHelperUtils extends Enumerable.Implicits {
     case TrusteeCompanyDetails => trusteeCompanyRoutes.CheckYourAnswersCompanyDetailsController.onPageLoad(mode, index, srn)
     case TrusteeCompanyAddress => trusteeCompanyRoutes.CheckYourAnswersCompanyAddressController.onPageLoad(mode, index, srn)
     case TrusteeCompanyContactDetails => trusteeCompanyRoutes.CheckYourAnswersCompanyContactDetailsController.onPageLoad(mode, index, srn)
+    case TrusteeIndividualDetails => trusteeCompanyRoutes.CheckYourAnswersCompanyDetailsController.onPageLoad(mode, index, srn) // change the route
+    case TrusteeIndividualAddress => trusteeCompanyRoutes.CheckYourAnswersCompanyAddressController.onPageLoad(mode, index, srn) // change the route
+    case TrusteeIndividualContactDetails => trusteeCompanyRoutes.CheckYourAnswersCompanyContactDetailsController.onPageLoad(mode, index, srn) // change the route
     case _ => controllers.routes.IndexController.onPageLoad()
   }
 
@@ -133,6 +143,9 @@ trait HsTaskListHelperUtils extends Enumerable.Implicits {
     case TrusteeCompanyDetails => trusteeCompanyRoutes.WhatYouWillNeedCompanyDetailsController.onPageLoad(mode, index,srn)
     case TrusteeCompanyAddress => trusteeCompanyRoutes.WhatYouWillNeedCompanyAddressController.onPageLoad(mode, index, srn)
     case TrusteeCompanyContactDetails => trusteeCompanyRoutes.WhatYouWillNeedCompanyContactDetailsController.onPageLoad(mode, index, srn)
+    case TrusteeIndividualDetails => trusteeCompanyRoutes.WhatYouWillNeedCompanyDetailsController.onPageLoad(mode, index,srn) //change the route
+    case TrusteeIndividualAddress => trusteeCompanyRoutes.WhatYouWillNeedCompanyAddressController.onPageLoad(mode, index, srn) //change the route
+    case TrusteeIndividualContactDetails => trusteeCompanyRoutes.WhatYouWillNeedCompanyContactDetailsController.onPageLoad(mode, index, srn) //change the route
     case _ => controllers.routes.IndexController.onPageLoad()
   }
 
@@ -152,6 +165,15 @@ trait HsTaskListHelperUtils extends Enumerable.Implicits {
       createSpoke(answers, TrusteeCompanyDetails, mode, srn, name, index, isTrusteeNew),
       createSpoke(answers, TrusteeCompanyAddress, mode, srn, name, index, isTrusteeNew),
       createSpoke(answers, TrusteeCompanyContactDetails, mode, srn, name, index, isTrusteeNew)
+    )
+  }
+
+  def getTrusteeIndividualSpokes(answers: UserAnswers, mode: Mode, srn: Option[String], name: String, index: Int): Seq[EntitySpoke] = {
+    val isTrusteeNew = answers.get(IsTrusteeNewId(index)).getOrElse(false)
+    Seq(
+      createSpoke(answers, TrusteeIndividualDetails, mode, srn, name, index, isTrusteeNew),
+      createSpoke(answers, TrusteeIndividualAddress, mode, srn, name, index, isTrusteeNew),
+      createSpoke(answers, TrusteeIndividualContactDetails, mode, srn, name, index, isTrusteeNew)
     )
   }
 }

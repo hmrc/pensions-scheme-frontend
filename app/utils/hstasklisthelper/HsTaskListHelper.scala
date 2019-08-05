@@ -198,6 +198,14 @@ abstract class HsTaskListHelper(answers: UserAnswers,
               getTrusteeCompanySpokes(userAnswers, mode, srn, section.name, section.index),
               Some(section.name))
             )
+
+          case TrusteeDetailsId(_) if featureSwitchManagementService.get(Toggles.isEstablisherCompanyHnSEnabled) =>
+            Some(SchemeDetailsTaskListEntitySection(
+              None,
+              getTrusteeIndividualSpokes(userAnswers, mode, srn, section.name, section.index),
+              Some(section.name))
+            )
+
           case _ if mode == NormalMode =>
             Some(SchemeDetailsTaskListEntitySection(
               Some(section.isCompleted),
