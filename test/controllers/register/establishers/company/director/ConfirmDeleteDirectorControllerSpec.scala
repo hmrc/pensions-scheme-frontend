@@ -113,27 +113,6 @@ class ConfirmDeleteDirectorControllerSpec extends ControllerSpecBase {
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
     }
-
-    "set the establisher as not complete when directors are deleted" in {
-      FakeSectionComplete.reset()
-      val validData: JsObject = Json.obj(
-        EstablishersId.toString -> Json.arr(
-          Json.obj(
-            CompanyDetailsId.toString -> CompanyDetails(companyName),
-            "director" -> Json.arr(
-              Json.obj(
-                DirectorDetailsId.toString ->
-                  PersonDetails("John", None, "Doe", LocalDate.now(), true)
-              )
-            )
-          )
-        )
-      )
-      val getRelevantData = new FakeDataRetrievalAction(Some(validData))
-      val result = controller(getRelevantData).onSubmit(establisherIndex, directorIndex, NormalMode, None)(postRequest)
-      status(result) mustBe SEE_OTHER
-      FakeUserAnswersService.userAnswer.get(IsEstablisherCompleteId(0)) mustBe Some(false)
-    }
   }
 
 }

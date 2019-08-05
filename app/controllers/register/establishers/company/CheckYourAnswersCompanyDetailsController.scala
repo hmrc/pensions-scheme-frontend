@@ -87,11 +87,9 @@ class CheckYourAnswersCompanyDetailsController @Inject()(
     }
 
   def onSubmit(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] = (
-    authenticate andThen getData(mode, srn) andThen requireData).async {
+    authenticate andThen getData(mode, srn) andThen requireData) {
     implicit request =>
-      userAnswersService.setCompleteFlag(mode, srn, IsDetailsCompleteId(index), request.userAnswers, true).map { _ =>
-        Redirect(controllers.routes.SchemeTaskListController.onPageLoad(mode, srn))
-      }
+      Redirect(controllers.routes.SchemeTaskListController.onPageLoad(mode, srn))
   }
 
 }

@@ -30,8 +30,8 @@ import play.api.data._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
-import utils.annotations.EstablishersCompany
 import utils.CountryOptions
+import utils.annotations.EstablishersCompany
 import viewmodels.Message
 import viewmodels.address.ManualAddressViewModel
 
@@ -86,7 +86,7 @@ class CompanyAddressController @Inject()(
     implicit request =>
       viewmodel(index, mode, srn).retrieve.right.map {
         vm =>
-          post(CompanyAddressId(index), CompanyAddressListId(index), vm, mode, context(vm), CompanyPostCodeLookupId(index), Some(IsAddressCompleteId(index)))
+          post(CompanyAddressId(index), CompanyAddressListId(index), vm, mode, context(vm), CompanyPostCodeLookupId(index), None)
       }
   }
 

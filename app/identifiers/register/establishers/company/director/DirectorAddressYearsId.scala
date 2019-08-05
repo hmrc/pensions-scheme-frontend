@@ -18,12 +18,12 @@ package identifiers.register.establishers.company.director
 
 import config.FeatureSwitchManagementService
 import identifiers._
-import identifiers.register.establishers.{EstablishersId, IsEstablisherCompleteId}
+import identifiers.register.establishers.EstablishersId
 import models.AddressYears
 import play.api.i18n.Messages
 import play.api.libs.json.{JsPath, JsResult}
-import utils.{Toggles, UserAnswers}
 import utils.checkyouranswers.{AddressYearsCYA, CheckYourAnswers}
+import utils.{Toggles, UserAnswers}
 import viewmodels.AnswerRow
 
 case class DirectorAddressYearsId(establisherIndex: Int, directorIndex: Int) extends TypedIdentifier[AddressYears] {
@@ -36,10 +36,6 @@ case class DirectorAddressYearsId(establisherIndex: Int, directorIndex: Int) ext
         userAnswers.remove(DirectorPreviousAddressPostcodeLookupId(establisherIndex, directorIndex))
           .flatMap(_.remove(DirectorPreviousAddressId(establisherIndex, directorIndex)))
           .flatMap(_.remove(DirectorPreviousAddressListId(establisherIndex, directorIndex)))
-      case Some(AddressYears.UnderAYear) =>
-        userAnswers.set(IsDirectorCompleteId(establisherIndex, directorIndex))(false).flatMap(
-          _.set(IsEstablisherCompleteId(establisherIndex))(false)
-        )
       case _ => super.cleanup(value, userAnswers)
     }
   }
