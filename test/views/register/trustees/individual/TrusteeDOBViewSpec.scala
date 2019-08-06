@@ -14,39 +14,38 @@
  * limitations under the License.
  */
 
-package views.register.establishers.company.director
+package views.register.trustees.individual
 
-import controllers.register.establishers.company.director.routes
+import controllers.register.trustees.individual.routes
 import forms.DOBFormProvider
 import models.{Index, NormalMode}
 import org.joda.time.LocalDate
 import play.api.data.{Form, FormError}
 import play.twirl.api.HtmlFormat
 import views.behaviours.QuestionViewBehaviours
-import views.html.register.establishers.company.director.directorDOB
+import views.html.register.trustees.individual.trusteeDOB
 
-class DirectorDOBViewSpec extends QuestionViewBehaviours[LocalDate] {
+class TrusteeDOBViewSpec extends QuestionViewBehaviours[LocalDate] {
 
   val messageKeyPrefix = "directorDOB"
 
-  val establisherIndex = Index(1)
-  val directorIndex = Index(1)
+  val index = Index(1)
   val personName = "John Doe"
-  private val postCall = routes.DirectorDOBController.onSubmit _
+  private val postCall = routes.TrusteeDOBController.onSubmit _
 
   override val form = new DOBFormProvider()()
 
   def createView(): () => HtmlFormat.Appendable = () =>
-    directorDOB(frontendAppConfig, form, NormalMode, establisherIndex, directorIndex, None,
-      postCall(NormalMode, establisherIndex, directorIndex, None), None, personName)(fakeRequest, messages)
+    trusteeDOB(frontendAppConfig, form, NormalMode, None,
+      postCall(NormalMode, index, None), None, personName)(fakeRequest, messages)
 
   def createUpdateView(): () => HtmlFormat.Appendable = () =>
-    directorDOB(frontendAppConfig, form, NormalMode, establisherIndex, directorIndex, None,
-      postCall(NormalMode, establisherIndex, directorIndex, None), Some("srn"), personName)(fakeRequest, messages)
+    trusteeDOB(frontendAppConfig, form, NormalMode, None,
+      postCall(NormalMode, index, None), Some("srn"), personName)(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) =>
-    directorDOB(frontendAppConfig, form, NormalMode, establisherIndex, directorIndex, None,
-      postCall(NormalMode, establisherIndex, directorIndex, None), None, personName)(fakeRequest, messages)
+    trusteeDOB(frontendAppConfig, form, NormalMode, None,
+      postCall(NormalMode, index, None), None, personName)(fakeRequest, messages)
 
   private val day = LocalDate.now().getDayOfMonth
   private val year = LocalDate.now().getYear
