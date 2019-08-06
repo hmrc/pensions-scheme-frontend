@@ -152,7 +152,8 @@ object TrusteesNavigatorSpec extends OptionValues with Enumerable.Implicits {
       s"trusteeKind: $value"
     }
 
-    val trustees = answers.allTrustees.length match {
+    // TODO: Needs attentions PODS-2940
+    val trustees = answers.allTrustees(false).length match {
       case n if n > 0 => Some(s"trustees: $n")
       case _ => None
     }

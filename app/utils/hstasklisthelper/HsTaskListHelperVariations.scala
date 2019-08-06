@@ -40,8 +40,8 @@ class HsTaskListHelperVariations(answers: UserAnswers,
       userAnswers.get(IsAboutMembersCompleteId),
       userAnswers.get(IsAboutBenefitsAndInsuranceCompleteId),
       Some(userAnswers.allEstablishersCompleted(isHnSEnabled)),
-      Some(isTrusteeOptional | userAnswers.isAllTrusteesCompleted),
-      Some(userAnswers.allTrusteesAfterDelete.size < 10 || userAnswers.get(MoreThanTenTrusteesId).isDefined)
+      Some(isTrusteeOptional | userAnswers.isAllTrusteesCompleted(isHnSEnabled)),
+      Some(userAnswers.allTrusteesAfterDelete(isHnSEnabled).size < 10 || userAnswers.get(MoreThanTenTrusteesId).isDefined)
     ).forall(_.contains(true)) && userAnswers.isUserAnswerUpdated
   }
 
@@ -122,14 +122,14 @@ class HsTaskListHelperVariations(answers: UserAnswers,
     }
 
   protected[utils] override def addTrusteeHeader(userAnswers: UserAnswers, mode: Mode, srn: Option[String]): Option[SchemeDetailsTaskListHeader] =
-    (userAnswers.allTrusteesAfterDelete.isEmpty, viewOnly) match {
+    (userAnswers.allTrusteesAfterDelete(isHnSEnabled).isEmpty, viewOnly) match {
       case (true, true) => Some(SchemeDetailsTaskListHeader(plainText = Some(noTrusteesText)))
       case (true, false) => Some(SchemeDetailsTaskListHeader(
-        link = typeOfTrusteeLink(addTrusteesLinkText, userAnswers.allTrustees.size, srn, mode)))
+        link = typeOfTrusteeLink(addTrusteesLinkText, userAnswers.allTrustees(isHnSEnabled).size, srn, mode)))
       case (false, false) => {
 
         val (linkText, additionalText): (String, Option[String]) =
-          getTrusteeHeaderText(userAnswers.allTrusteesAfterDelete.size, userAnswers.get(SchemeTypeId))
+          getTrusteeHeaderText(userAnswers.allTrusteesAfterDelete(isHnSEnabled).size, userAnswers.get(SchemeTypeId))
 
         Some(
           SchemeDetailsTaskListHeader(

@@ -59,7 +59,7 @@ class AddTrusteeViewSpec extends YesNoViewBehaviours with EntityListBehaviours w
       .asOpt
       .value
 
-  private val trustees: Seq[Trustee[_]] = userAnswers.allTrustees
+  private def trustees(toggled:Boolean): Seq[Trustee[_]] = userAnswers.allTrustees(toggled)
   private val fullTrustees: Seq[TrusteeIndividualEntity] = (0 to 9).map(index => TrusteeIndividualEntity(
     TrusteeDetailsId(index), "trustee name", isDeleted = false, isCompleted = false, isNewEntity = true, 10, Some(SingleTrust.toString)))
 
@@ -82,12 +82,14 @@ class AddTrusteeViewSpec extends YesNoViewBehaviours with EntityListBehaviours w
     behave like pageWithReturnLinkAndSrn(createUpdateView(), getReturnLinkWithSrn)
 
     behave like yesNoPage(
-      createViewUsingForm(trustees),
+      createViewUsingForm(trustees(false)),
       messageKeyPrefix,
       routes.AddTrusteeController.onSubmit(NormalMode, None).url,
       "_text",
       expectedHintKey = Some("_lede")
     )
+
+    // TODO: PODS-2940 Needs attention - extra test for toggle true
 
     "when there are no trustees" when {
       "do not show the yes no inputs" in {
@@ -124,14 +126,18 @@ class AddTrusteeViewSpec extends YesNoViewBehaviours with EntityListBehaviours w
       }
     }
 
-    behave like entityList(createView(), createView(trustees, false), trustees, frontendAppConfig)
+    behave like entityList(createView(), createView(trustees(false), false), trustees(false), frontendAppConfig)
+
+    // TODO: PODS-2940 Needs attention - extra test for toggle true
 
     "display all the partially added trustee names with yes/No buttons if the maximum trustees are not added yet" in {
-      val doc = asDocument(createView(trustees)())
+      val doc = asDocument(createView(trustees(false))())
       doc.select("#value-yes").size() mustEqual 1
       doc.select("#value-no").size() mustEqual 1
 
     }
+
+    // TODO: PODS-2940 Needs attention - extra test for toggle true
 
   }
 }

@@ -155,10 +155,12 @@ class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues with 
         TrusteeSkeletonEntity(TrusteeKindId(3))
       )
 
-      val result = userAnswers.allTrustees
+      val result = userAnswers.allTrustees(false)
 
       result mustEqual allTrusteesEntities
     }
+
+    // TODO: PODS-2940 Needs attention - extra test for toggle true
 
     "return en empty sequence if there are no trustees" in {
       val json = Json.obj(
@@ -166,8 +168,10 @@ class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues with 
         )
       )
       val userAnswers = UserAnswers(json)
-      userAnswers.allTrustees mustEqual Seq.empty
+      userAnswers.allTrustees(false) mustEqual Seq.empty
     }
+
+    // TODO: PODS-2940 Needs attention - extra test for toggle true
 
     "return en empty sequence if the json is invalid" in {
       val json = Json.obj(
@@ -178,8 +182,10 @@ class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues with 
         )
       )
       val userAnswers = UserAnswers(json)
-      userAnswers.allTrustees mustEqual Seq.empty
+      userAnswers.allTrustees(false) mustEqual Seq.empty
     }
+
+    // TODO: PODS-2940 Needs attention - extra test for toggle true
   }
 
   ".allTrusteesAfterDelete" must {
@@ -214,10 +220,11 @@ class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues with 
 
       val allTrusteesEntities: Seq[Trustee[_]] = Seq(trusteeEntity("My Company", 1, TrusteeKind.Company, countAfterDeleted = 2))
 
-      val result = userAnswers.allTrusteesAfterDelete
+      val result = userAnswers.allTrusteesAfterDelete(false)
 
       result mustEqual allTrusteesEntities
     }
+    // TODO: PODS-2940 Needs attention - extra test for toggle true
   }
 
   ".allDirectors" must {

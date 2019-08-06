@@ -20,21 +20,21 @@ import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.register.trustees.AddTrusteeFormProvider
 import identifiers.register.trustees.company.CompanyDetailsId
-import identifiers.register.trustees.individual.TrusteeDetailsId
-import identifiers.register.trustees.{IsTrusteeNewId, TrusteeKindId, TrusteesId}
+import identifiers.register.trustees.individual._
+import identifiers.register.trustees.{IsTrusteeNewId, TrusteeKindId, TrusteesId, _}
+import models._
+import models.address.Address
 import models.person.PersonDetails
 import models.register.SchemeType.SingleTrust
 import models.register._
 import models.register.trustees.TrusteeKind
-import models.{CompanyDetails, NormalMode}
 import org.joda.time.LocalDate
 import play.api.data.Form
 import play.api.libs.json._
-import play.api.mvc.{Action, AnyContent, Call, Result}
+import play.api.mvc.{Call, Result}
 import play.api.test.Helpers.{contentAsString, _}
 import utils.{FakeFeatureSwitchManagementService, FakeNavigator, UserAnswers}
 import views.html.register.trustees.addTrustee
-import identifiers.register.trustees._
 
 import scala.concurrent.Future
 
@@ -53,6 +53,12 @@ class AddTrusteeControllerSpec extends ControllerSpecBase {
   val form = formProvider()
   val submitUrl = controllers.register.trustees.routes.AddTrusteeController.onSubmit(NormalMode, None)
   val testAnswer = "true"
+  val address = Address("addr1", "addr2", None, None, Some("ZZ11ZZ"), "UK")
+  val stringValue = "aa"
+  private val firstName = "First"
+  private val lastName = "Last"
+
+  import models.UniqueTaxReference
 
   def editTrusteeCompanyRoute(id: Int): String =
     controllers.register.trustees.company.routes.CompanyDetailsController.onPageLoad(NormalMode, id, None).url
@@ -105,15 +111,62 @@ class AddTrusteeControllerSpec extends ControllerSpecBase {
     )
   }
 
+  private def setTrusteeComplete(toggled: Boolean, index: Int, ua: UserAnswers): UserAnswers = {
+    if (toggled) {
+      ua.
+        set(TrusteeDOBId(index))(LocalDate.now()).asOpt.value
+        .set(TrusteeHasNINOId(index))(true).asOpt.value
+        .set(TrusteeNewNinoId(index))(ReferenceValue(stringValue)).asOpt.value
+        .set(TrusteeHasUTRId(index))(true).asOpt.value
+        .set(TrusteeUTRId(index))(stringValue).asOpt.value
+        .set(TrusteeAddressId(index))(address).asOpt.value
+        .set(TrusteeAddressYearsId(index))(AddressYears.OverAYear).asOpt.value
+        .set(TrusteeEmailId(index))(stringValue).asOpt.value
+        .set(TrusteePhoneId(index))(stringValue).asOpt.value
+    } else {
+      ua.
+        set(TrusteeDetailsId(index))(PersonDetails(firstName, None, lastName, LocalDate.now())).asOpt.value
+        .set(TrusteeNinoId(index))(Nino.Yes(stringValue)).asOpt.value
+        .set(UniqueTaxReferenceId(index))(UniqueTaxReference.Yes(stringValue)).asOpt.value
+        .set(TrusteeAddressId(index))(address).asOpt.value
+        .set(TrusteeAddressYearsId(index))(AddressYears.OverAYear).asOpt.value
+        .set(TrusteeContactDetailsId(index))(ContactDetails(stringValue, stringValue)).asOpt.value
+    }
+  }
+
+  private def setTrusteeIncomplete(toggled: Boolean, index: Int, ua: UserAnswers): UserAnswers = {
+    if (toggled) {
+      ua.
+        set(TrusteeDOBId(index))(LocalDate.now()).asOpt.value
+        .set(TrusteeHasNINOId(index))(true).asOpt.value
+        .set(TrusteeHasUTRId(index))(true).asOpt.value
+        .set(TrusteeUTRId(index))(stringValue).asOpt.value
+        .set(TrusteeAddressId(index))(address).asOpt.value
+        .set(TrusteeAddressYearsId(index))(AddressYears.OverAYear).asOpt.value
+        .set(TrusteeEmailId(index))(stringValue).asOpt.value
+        .set(TrusteePhoneId(index))(stringValue).asOpt.value
+    } else {
+      ua.
+        set(TrusteeDetailsId(index))(PersonDetails(firstName, None, lastName, LocalDate.now())).asOpt.value
+        .set(UniqueTaxReferenceId(index))(UniqueTaxReference.Yes(stringValue)).asOpt.value
+        .set(TrusteeAddressId(index))(address).asOpt.value
+        .set(TrusteeAddressYearsId(index))(AddressYears.OverAYear).asOpt.value
+        .set(TrusteeContactDetailsId(index))(ContactDetails(stringValue, stringValue)).asOpt.value
+    }
+  }
+
+
   "AddTrustee Controller" must {
 
-    "return view with button ENABLED when toggle set to TRUE" in {
-      val trusteeList: JsValue = UserAnswers()
-        .set(TrusteeDetailsId(0))(PersonDetails("fistName", None, "lastName", LocalDate.now())).asOpt.value
-        .set(IsTrusteeCompleteId(0))(true).asOpt.value
-        .set(TrusteeDetailsId(1))(PersonDetails("fistName", None, "lastName", LocalDate.now())).asOpt.value
-        .set(IsTrusteeCompleteId(1))(false).asOpt.value
-        .json
+    "return view with button ENABLED when toggle set to TRUE  and some trustees incomplete" in {
+      val trusteeList: JsValue =
+        setTrusteeIncomplete(toggled = true, 1,
+          setTrusteeComplete(toggled = true, 0,
+            UserAnswers()
+              .set(TrusteeDetailsId(0))(PersonDetails("fistName", None, "lastName", LocalDate.now())).asOpt.value
+              .set(TrusteeDetailsId(1))(PersonDetails("fistName", None, "lastName", LocalDate.now())).asOpt.value
+          )
+        ).json
 
       val trusteeController: AddTrusteeController = controller(new FakeDataRetrievalAction(Some(trusteeList)), featureToggleEnabled = true)
 
@@ -125,13 +178,34 @@ class AddTrusteeControllerSpec extends ControllerSpecBase {
 
     }
 
+    "return view with button ENABLED when toggle set to TRUE and all trustees complete" in {
+      val trusteeList: JsValue =
+        setTrusteeComplete(toggled = true, 1,
+          setTrusteeComplete(toggled = true, 0,
+            UserAnswers()
+              .set(TrusteeDetailsId(0))(PersonDetails("fistName", None, "lastName", LocalDate.now())).asOpt.value
+              .set(TrusteeDetailsId(1))(PersonDetails("fistName", None, "lastName", LocalDate.now())).asOpt.value
+          )
+        ).json
+
+      val trusteeController: AddTrusteeController = controller(new FakeDataRetrievalAction(Some(trusteeList)), featureToggleEnabled = true)
+
+      val result = trusteeController.onPageLoad(NormalMode, None)(fakeRequest)
+
+      val view = asDocument(contentAsString(result))
+
+      view.getElementById("submit").hasAttr("disabled") mustEqual false
+    }
+
     "return view with button ENABLED when toggle set to FALSE and all trustees complete" in {
-      val trusteeList: JsValue = UserAnswers()
-        .set(TrusteeDetailsId(0))(PersonDetails("fistName", None, "lastName", LocalDate.now())).asOpt.value
-        .set(IsTrusteeCompleteId(0))(true).asOpt.value
-        .set(TrusteeDetailsId(1))(PersonDetails("fistName", None, "lastName", LocalDate.now())).asOpt.value
-        .set(IsTrusteeCompleteId(1))(true).asOpt.value
-        .json
+      val trusteeList: JsValue =
+        setTrusteeComplete(toggled = false, 1,
+          setTrusteeComplete(toggled = false, 0,
+            UserAnswers()
+              .set(TrusteeDetailsId(0))(PersonDetails("fistName", None, "lastName", LocalDate.now())).asOpt.value
+              .set(TrusteeDetailsId(1))(PersonDetails("fistName", None, "lastName", LocalDate.now())).asOpt.value
+          )
+        ).json
 
       val trusteeController: AddTrusteeController = controller(new FakeDataRetrievalAction(Some(trusteeList)), featureToggleEnabled = false)
 
@@ -163,7 +237,7 @@ class AddTrusteeControllerSpec extends ControllerSpecBase {
       val result: Future[Result] = controller(featureToggleEnabled = false).onPageLoad(NormalMode, None)(fakeRequest)
 
       status(result) mustBe OK
-      contentAsString(result) mustBe viewAsString(enable=true)
+      contentAsString(result) mustBe viewAsString(enable = true)
     }
 
     "redirect to the next page when valid data is submitted" in {

@@ -318,6 +318,9 @@ final case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Impl
       case _ => 0
     }
 
+    private def isTrusteeIndividualComplete(isHnSEnabled: Boolean, index:Int):Boolean =
+      if (isHnSEnabled) isTrusteeIndividualCompleteHnS(index) else isTrusteeIndividualCompleteNonHnS(index)
+
     // Change this method
     private def readsIndividual(index: Int): Reads[Trustee[_]] = (
       (JsPath \ TrusteeDetailsId.toString).read[PersonDetails] and
@@ -325,7 +328,7 @@ final case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Impl
       ) ((details, isNew) =>
       TrusteeIndividualEntity(
         TrusteeDetailsId(index), details.fullName, details.isDeleted,
-        isComplete.getOrElse(false), isNew.fold(false)(identity), noOfRecords, schemeType)
+        isTrusteeIndividualComplete(isHnSEnabled, index), isNew.fold(false)(identity), noOfRecords, schemeType)
     )
 
     private def readsCompany(index: Int): Reads[Trustee[_]] = (
@@ -369,18 +372,6 @@ final case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Impl
   }
 
   def allTrustees(isHnSEnabled: Boolean): Seq[Trustee[_]] = {
-
-    json.validate[Seq[Trustee[_]]](readTrustees(isHnSEnabled)) match {
-      case JsSuccess(trustees, _) =>
-        trustees
-      case JsError(errors) =>
-        Logger.warn(s"Invalid json while reading all the trustees for addTrustees: $errors")
-        Nil
-    }
-  }
-
-  def allTrustees: Seq[Trustee[_]] = {
-
     json.validate[Seq[Trustee[_]]](readTrustees(isHnSEnabled)) match {
       case JsSuccess(trustees, _) =>
         trustees
