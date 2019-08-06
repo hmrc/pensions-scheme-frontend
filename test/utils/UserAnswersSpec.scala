@@ -52,7 +52,7 @@ class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues with 
         establisherEntity("Test Partnership", 2, Partnership, isComplete = true)
       )
 
-      userAnswers.allEstablishers(isHnSEnabled = true) mustEqual allEstablisherEntities
+      userAnswers.allEstablishers(isHnSEnabled = true, mode) mustEqual allEstablisherEntities
     }
 
     "return en empty sequence if there are no establishers" in {
@@ -61,7 +61,7 @@ class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues with 
         )
       )
       val userAnswers = UserAnswers(json)
-      userAnswers.allEstablishers(isHnSEnabled) mustEqual Seq.empty
+      userAnswers.allEstablishers(isHnSEnabled, mode) mustEqual Seq.empty
     }
 
     "return en empty sequence if the json is invalid" in {
@@ -73,7 +73,7 @@ class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues with 
         )
       )
       val userAnswers = UserAnswers(json)
-      userAnswers.allEstablishers(isHnSEnabled) mustEqual Seq.empty
+      userAnswers.allEstablishers(isHnSEnabled, mode) mustEqual Seq.empty
     }
   }
 
@@ -109,7 +109,7 @@ class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues with 
       val userAnswers = UserAnswers(json)
       val allEstablisherEntities: Seq[Establisher[_]] = Seq(establisherEntity("my name 1", 0, Indivdual, countAfterDeleted = 3), establisherEntity("my name 3", 2, Indivdual, countAfterDeleted = 3))
 
-      userAnswers.allEstablishersAfterDelete(isHnSEnabled) mustEqual allEstablisherEntities
+      userAnswers.allEstablishersAfterDelete(isHnSEnabled, mode) mustEqual allEstablisherEntities
     }
   }
 
@@ -426,7 +426,7 @@ class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues with 
           .asOpt
           .value
 
-      answers.hasCompanies(isHnSEnabled) mustBe true
+      answers.hasCompanies(isHnSEnabled, mode) mustBe true
     }
 
     "return true if an establisher is a partnership" in {
@@ -437,7 +437,7 @@ class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues with 
           .asOpt
           .value
 
-      answers.hasCompanies(isHnSEnabled) mustBe true
+      answers.hasCompanies(isHnSEnabled, mode) mustBe true
     }
 
     "return true if both an establisher and a trustee are companies" in {
@@ -450,7 +450,7 @@ class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues with 
           .asOpt
           .value
 
-      answers.hasCompanies(isHnSEnabled) mustBe true
+      answers.hasCompanies(isHnSEnabled, mode) mustBe true
     }
 
     "return false if no establishers or trustees are companies" in {
@@ -461,14 +461,14 @@ class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues with 
           .asOpt
           .value
 
-      answers.hasCompanies(isHnSEnabled) mustBe false
+      answers.hasCompanies(isHnSEnabled, mode) mustBe false
     }
 
     "return false if there are no establishers or trustees" in {
       val answers =
         UserAnswers()
 
-      answers.hasCompanies(isHnSEnabled) mustBe false
+      answers.hasCompanies(isHnSEnabled, mode) mustBe false
     }
   }
 
@@ -573,6 +573,7 @@ object UserAnswersSpec extends OptionValues with Enumerable.Implicits {
   )
 
   private val isHnSEnabled = true
+  private val mode = NormalMode
 
   private val company = CompanyDetails("test-company-name")
   private val person = PersonDetails("test-first-name", None, "test-last-name", LocalDate.now())

@@ -20,8 +20,7 @@ package utils.hstasklisthelper
 import controllers.register.establishers.company.director.{routes => establisherCompanyDirectorRoutes}
 import controllers.register.establishers.company.{routes => establisherCompanyRoutes}
 import controllers.register.trustees.company.{routes => trusteeCompanyRoutes}
-import identifiers.register.establishers.company.CompanyVatId
-import identifiers.register.establishers.{IsEstablisherNewId, company => establisherCompany}
+import identifiers.register.establishers.IsEstablisherNewId
 import identifiers.register.trustees.{IsTrusteeNewId, company => trusteeCompany}
 import models._
 import models.register.Entity
@@ -78,7 +77,7 @@ trait HsTaskListHelperUtils extends Enumerable.Implicits {
   }
 
   private def getCompleteFlag(answers: UserAnswers, index: Int, spokeName: Spoke, mode: Mode): Option[Boolean] = spokeName match {
-    case EstablisherCompanyDetails => answers.isEstablisherCompanyDetailsComplete(index)
+    case EstablisherCompanyDetails => answers.isEstablisherCompanyDetailsComplete(index, mode)
     case EstablisherCompanyAddress => answers.isEstablisherCompanyAddressComplete(index)
     case EstablisherCompanyContactDetails => answers.isEstablisherCompanyContactDetailsComplete(index)
     case TrusteeCompanyDetails => answers.get(trusteeCompany.IsDetailsCompleteId(index))
