@@ -708,6 +708,9 @@ messages__trustee__individual__address__confirm__title = Confirm the trustee’s
 messages__trustee__individual__address__confirm__heading = Confirm {0}’s address
 messages__trustee__individual__address__confirm__lede = This is usually the residential address for this person.
 
+messages__trustee__individual__previous__address__title = What was the trustee’s previous address?
+messages__trustee__individual__previous__address__heading = What was {0}’s previous address
+
 messages__trusteeNino__title = Does the trustee have a National Insurance number?
 messages__trusteeNino__heading = Does the trustee have a National Insurance number?
 messages__trusteeNino__error__required = Select yes if the trustee has a National Insurance number
@@ -723,7 +726,7 @@ messages__individualPostCodeLookup__heading = What is {0}’s postcode?
 messages__individualPostCodeLookup__enter_postcode = Enter the postcode, or if you have an overseas address, {0} enter the address manually {1}
 messages__trustee_individualPostCodeLookup__enter_postcode = Enter the postcode, or if you have an overseas address, {0} enter the address manually {1}
 
-messages__trustee_individual_previous_address__title = Previous address
+messages__trustee_individual_previous_address__title = What was the trustee’s previous postcode?
 messages__trustee_individual_previous_address__heading = What was {0}’s previous postcode?
 messages__trustee_individual_utr_cya_label = Unique Taxpayer Reference number
 
