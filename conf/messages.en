@@ -329,7 +329,7 @@ messages__establisher_individual__title = Establisher details
 messages__error__first_name_length = The first name cannot be more than 35 characters
 messages__error__first_name_invalid = Name must only include letters and punctuation marks
 messages__error__last_name_length = The last name cannot be more than 35 characters
-messages__error__last_name_invalid = Enter the valid last name
+messages__error__last_name_invalid = Name must only include letters and punctuation marks
 messages__error__middle_name_length = The middle name cannot be more than 35 characters
 messages__error__middle_name_invalid = Enter the valid middle name
 
