@@ -92,8 +92,6 @@ class IndividualAddressListControllerSpec extends ControllerSpecBase with CSRFRe
 
         contentAsString(result) mustBe addressList(frontendAppConfig, form, viewModel, None)(request, messages).toString
       }
-
-
     }
 
     "redirect to Individual Post Code Lookup if no address data on a GET request" in {
@@ -198,9 +196,11 @@ class IndividualAddressListControllerSpec extends ControllerSpecBase with CSRFRe
 
   private def addressListViewModel(addresses: Seq[TolerantAddress]): AddressListViewModel = {
     AddressListViewModel(
-      routes.IndividualAddressListController.onSubmit(NormalMode, Index(0), None),
-      routes.TrusteeAddressController.onPageLoad(NormalMode, Index(0), None),
-      addresses,
+      postCall = routes.IndividualAddressListController.onSubmit(NormalMode, Index(0), None),
+      manualInputCall = routes.TrusteeAddressController.onPageLoad(NormalMode, Index(0), None),
+      addresses = addresses,
+      title = messages("messages__trustee__individual__address__title"),
+      heading = messages("messages__trustee__individual__address__heading", trusteeDetails.fullName),
       subHeading = Some(Message(trusteeDetails.fullName))
     )
   }
