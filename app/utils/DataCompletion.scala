@@ -75,6 +75,7 @@ trait DataCompletion {
       case (None, _, _) => None
       case (Some(true), Some(_), _) => Some(true)
       case (Some(false), _, Some(noReasonId)) if get(noReasonId).isDefined => Some(true)
+      case (Some(false), _, None) => Some(true)
       case _ => Some(false)
     }
 
@@ -112,18 +113,17 @@ trait DataCompletion {
   def isEstablisherCompanyContactDetailsComplete(index: Int): Option[Boolean] =
     isContactDetailsComplete(CompanyEmailId(index), CompanyPhoneId(index))
 
-  def isEstablisherCompanyCompleteNonHns(index: Int, mode: Mode): Boolean = {
+  def isEstablisherCompanyCompleteNonHns(index: Int, mode: Mode): Boolean =
     isListComplete(Seq(
       get(CompanyDetailsId(index)).isDefined,
-      get(CompanyRegistrationNumberId(index)).isDefined,
-      get(CompanyUniqueTaxReferenceId(index)).isDefined,
-      get(CompanyVatId(index)).isDefined,
-      get(CompanyPayeId(index)).isDefined,
+      get(CompanyRegistrationNumberId(index)).isDefined | get(CompanyRegistrationNumberVariationsId(index)).isDefined,
+      get(CompanyUniqueTaxReferenceId(index)).isDefined | get(CompanyUTRId(index)).isDefined,
+      get(CompanyVatId(index)).isDefined | get(CompanyVatVariationsId(index)).isDefined,
+      get(CompanyPayeId(index)).isDefined | get(CompanyPayeVariationsId(index)).isDefined,
       if(mode==NormalMode) get(IsCompanyDormantId(index)).isDefined else true,
       isAddressComplete(CompanyAddressId(index), CompanyPreviousAddressId(index), CompanyAddressYearsId(index), None).getOrElse(false),
       get(CompanyContactDetailsId(index)).isDefined
     ))
-  }
 
   def isEstablisherCompanyComplete(index: Int, mode: Mode, isHnSEnabled: Boolean): Boolean =
     if (isHnSEnabled)
@@ -160,8 +160,8 @@ trait DataCompletion {
   def isDirectorCompleteNonHnS(estIndex: Int, dirIndex: Int): Boolean =
     isListComplete(Seq(
       get(DirectorDetailsId(estIndex, dirIndex)).isDefined,
-      get(DirectorNinoId(estIndex, dirIndex)).isDefined,
-      get(DirectorUniqueTaxReferenceId(estIndex, dirIndex)).isDefined,
+      get(DirectorNinoId(estIndex, dirIndex)).isDefined | get(DirectorNewNinoId(estIndex, dirIndex)).isDefined,
+      get(DirectorUniqueTaxReferenceId(estIndex, dirIndex)).isDefined | get(DirectorUTRId(estIndex, dirIndex)).isDefined,
       isAddressComplete(DirectorAddressId(estIndex, dirIndex), DirectorPreviousAddressId(estIndex, dirIndex),
         DirectorAddressYearsId(estIndex, dirIndex), None).getOrElse(false),
       get(DirectorContactDetailsId(estIndex, dirIndex)).isDefined

@@ -456,7 +456,7 @@ final case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Impl
 
   def allEstablishersCompleted(isHnSEnabled: Boolean, mode: Mode) =
     !allEstablishersAfterDelete(isHnSEnabled, mode).zipWithIndex.collect { case (item, establisherIndex) =>
-    item.isCompleted && isDirectorPartnerCompleted(establisherIndex, isHnSEnabled)
+      item.isCompleted && isDirectorPartnerCompleted(establisherIndex, isHnSEnabled)
   }.contains(false)
 
   def isInsuranceCompleted: Boolean = get(BenefitsSecuredByInsuranceId) match {
@@ -466,8 +466,7 @@ final case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Impl
     case _ => false
   }
 
-  def areVariationChangesCompleted(isHnSEnabled: Boolean = false): Boolean = {
+  def areVariationChangesCompleted(isHnSEnabled: Boolean = false): Boolean =
     isInsuranceCompleted && isAllTrusteesCompleted && allEstablishersCompleted(isHnSEnabled, UpdateMode)
-  }
 
 }

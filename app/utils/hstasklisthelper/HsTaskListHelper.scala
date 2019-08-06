@@ -168,7 +168,6 @@ abstract class HsTaskListHelper(answers: UserAnswers,
               Some(section.name))
             )
           case _ if mode == NormalMode =>
-            println(s"NormalMode >>>>>>>>>>>>>>>>>>>>>>>>> ${section.isCompleted}            ${section.name}     ${section.editLink(NormalMode, None)}")
             Some(SchemeDetailsTaskListEntitySection(
               Some(section.isCompleted),
               Seq(EntitySpoke(Link(linkText(section),
@@ -177,7 +176,6 @@ abstract class HsTaskListHelper(answers: UserAnswers,
             )
 
           case _ =>
-            println(s"UpdateMode >>>>>>>>>>>>>>>>>>>>>>>>> ${section.isCompleted}            ${section.name}")
             Some(SchemeDetailsTaskListEntitySection(
             None,
             Seq(EntitySpoke(Link(messages("messages__schemeTaskList__persons_details__link_text", section.name),
