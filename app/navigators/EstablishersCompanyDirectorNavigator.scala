@@ -21,6 +21,7 @@ import config.FeatureSwitchManagementService
 import connectors.UserAnswersCacheConnector
 import controllers.register.establishers.company.director.routes
 import identifiers.AnyMoreChangesId
+import identifiers.register.establishers.company.director
 import identifiers.register.establishers.company.director._
 import models.Mode.journeyMode
 import models._
@@ -121,8 +122,10 @@ class EstablishersCompanyDirectorNavigator @Inject()(val dataCacheConnector: Use
         val isNew = from.userAnswers.get(IsNewDirectorId(establisherIndex, directorIndex)).contains(true)
         if (isNew || mode == CheckMode) {
           checkYourAnswers(establisherIndex, directorIndex, journeyMode(mode), srn)
-        } else {
-          NavigateTo.dontSave(routes.DirectorAddressYearsController.onPageLoad(mode, establisherIndex, directorIndex, srn))
+        } else if (!from.userAnswers.get(director.IsNewDirectorId(establisherIndex, directorIndex)).contains(true) && mode == CheckUpdateMode) {
+            NavigateTo.dontSave(routes.DirectorConfirmPreviousAddressController.onPageLoad(establisherIndex, directorIndex, srn))
+          } else {
+            NavigateTo.dontSave(routes.DirectorAddressYearsController.onPageLoad(mode, establisherIndex, directorIndex, srn))
         }
       case DirectorConfirmPreviousAddressId(establisherIndex, directorIndex) =>
         confirmPreviousAddressRoutes(establisherIndex, directorIndex, mode, srn)(from.userAnswers)
