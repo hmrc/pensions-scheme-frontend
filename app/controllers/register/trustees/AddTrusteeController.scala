@@ -55,14 +55,14 @@ class AddTrusteeController @Inject()(
   def onPageLoad(mode: Mode, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
     implicit request =>
-      val trustees = request.userAnswers.allTrusteesAfterDelete
+      val trustees = request.userAnswers.allTrusteesAfterDelete(fsm.get(Toggles.isEstablisherCompanyHnSEnabled))
       Future.successful(Ok(addTrustee(appConfig, form, mode, trustees, existingSchemeName, srn, enableSubmission(trustees))))
   }
 
   def onSubmit(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
 
-      val trustees = request.userAnswers.allTrusteesAfterDelete
+      val trustees = request.userAnswers.allTrusteesAfterDelete(fsm.get(Toggles.isEstablisherCompanyHnSEnabled))
 
       if (trustees.isEmpty || trustees.lengthCompare(appConfig.maxTrustees) >= 0)
         Future.successful(Redirect(navigator.nextPage(AddTrusteeId, mode, request.userAnswers, srn)))

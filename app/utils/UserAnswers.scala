@@ -306,7 +306,7 @@ final case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Impl
   }
 
   //scalastyle:off method.length
-  def readTrustees: Reads[Seq[Trustee[_]]] = new Reads[Seq[Trustee[_]]] {
+  def readTrustees(isHnSEnabled: Boolean): Reads[Seq[Trustee[_]]] = new Reads[Seq[Trustee[_]]] {
 
     private def noOfRecords : Int = json.validate((__ \ 'trustees).readNullable(__.read(
       Reads.seq((__ \ 'trusteeKind).read[String].flatMap {
@@ -368,9 +368,9 @@ final case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Impl
     }
   }
 
-  def allTrustees: Seq[Trustee[_]] = {
+  def allTrustees(isHnSEnabled: Boolean): Seq[Trustee[_]] = {
 
-    json.validate[Seq[Trustee[_]]](readTrustees) match {
+    json.validate[Seq[Trustee[_]]](readTrustees(isHnSEnabled)) match {
       case JsSuccess(trustees, _) =>
         trustees
       case JsError(errors) =>
@@ -379,8 +379,19 @@ final case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Impl
     }
   }
 
-  def allTrusteesAfterDelete: Seq[Trustee[_]] = {
-    allTrustees.filterNot(_.isDeleted)
+  def allTrustees: Seq[Trustee[_]] = {
+
+    json.validate[Seq[Trustee[_]]](readTrustees(isHnSEnabled)) match {
+      case JsSuccess(trustees, _) =>
+        trustees
+      case JsError(errors) =>
+        Logger.warn(s"Invalid json while reading all the trustees for addTrustees: $errors")
+        Nil
+    }
+  }
+
+  def allTrusteesAfterDelete(isHnSEnabled: Boolean): Seq[Trustee[_]] = {
+    allTrustees(isHnSEnabled).filterNot(_.isDeleted)
   }
 
   def establishersCount: Int = {
@@ -438,13 +449,13 @@ final case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Impl
     ).flatten
   }
 
-  def isAllTrusteesCompleted: Boolean = {
+  def isAllTrusteesCompleted(isHnSEnabled: Boolean): Boolean = {
     val isSingleOrMaster = schemeType.fold(false)(scheme => Seq("single", "master").exists(_.equals(scheme)))
 
     if(isSingleOrMaster)
-      allTrusteesAfterDelete.nonEmpty && allTrusteesAfterDelete.forall(_.isCompleted)
+      allTrusteesAfterDelete(isHnSEnabled).nonEmpty && allTrusteesAfterDelete(isHnSEnabled).forall(_.isCompleted)
     else
-      allTrusteesAfterDelete.forall(_.isCompleted)
+      allTrusteesAfterDelete(isHnSEnabled).forall(_.isCompleted)
 
   }
 
@@ -467,7 +478,7 @@ final case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Impl
   }
 
   def areVariationChangesCompleted(isHnSEnabled: Boolean = false): Boolean = {
-    isInsuranceCompleted && isAllTrusteesCompleted && allEstablishersCompleted(isHnSEnabled)
+    isInsuranceCompleted && isAllTrusteesCompleted(isHnSEnabled) && allEstablishersCompleted(isHnSEnabled)
   }
 
 }

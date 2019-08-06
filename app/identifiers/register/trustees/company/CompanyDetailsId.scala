@@ -28,8 +28,9 @@ import viewmodels.AnswerRow
 case class CompanyDetailsId(index: Int) extends TypedIdentifier[CompanyDetails] {
   override def path: JsPath = TrusteesId(index).path \ CompanyDetailsId.toString
 
+  //TODO
   override def cleanup(value: Option[CompanyDetails], userAnswers: UserAnswers): JsResult[UserAnswers] = {
-    userAnswers.allTrusteesAfterDelete.lengthCompare(10) match {
+    userAnswers.allTrusteesAfterDelete(false).lengthCompare(10) match {
       case lengthCompare if lengthCompare <= 0 => userAnswers.remove(MoreThanTenTrusteesId)
       case _ => super.cleanup(value, userAnswers)
     }
