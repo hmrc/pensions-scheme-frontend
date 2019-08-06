@@ -38,8 +38,11 @@ import viewmodels.{SchemeDetailsTaskListEntitySection, SchemeDetailsTaskListHead
 class HsTaskListHelperVariationsSpec extends HsTaskListHelperBehaviour {
   private val srn = Some("test-srn")
   private val fakeFeatureManagementService = new FakeFeatureSwitchManagementService(false)
-  override val createTaskListHelper:(UserAnswers, FeatureSwitchManagementService) => HsTaskListHelper =
+  override val createTaskListHelper: (UserAnswers, FeatureSwitchManagementService) => HsTaskListHelper =
     (ua, fs) => new HsTaskListHelperVariations(ua, viewOnly = false, srn = srn, fs)
+
+  // TODO PODS-2940 add another unit test for toggle ON
+
   override def answersData(isCompleteBeforeStart: Boolean = true,
                            isCompleteAboutMembers: Boolean = true,
                            isCompleteAboutBank: Boolean = true,
@@ -50,25 +53,27 @@ class HsTaskListHelperVariationsSpec extends HsTaskListHelperBehaviour {
                            isChangedInsuranceDetails: Boolean = true,
                            isChangedEstablishersTrustees: Boolean = true
                           ): JsResult[UserAnswers] = {
-    UserAnswers().set(IsBeforeYouStartCompleteId)(isCompleteBeforeStart).flatMap(
-      _.set(IsAboutMembersCompleteId)(isCompleteAboutMembers).flatMap(
-        _.set(IsAboutBankDetailsCompleteId)(isCompleteAboutBank).flatMap(
-          _.set(IsAboutBenefitsAndInsuranceCompleteId)(isCompleteAboutBenefits).flatMap(
-            _.set(BenefitsSecuredByInsuranceId)(!isCompleteAboutBenefits).flatMap(
-              _.set(IsWorkingKnowledgeCompleteId)(isCompleteWk).flatMap(
-                _.set(EstablisherDetailsId(0))(PersonDetails("firstName", None, "lastName", LocalDate.now())).flatMap(
-                  _.set(IsEstablisherCompleteId(0))(isCompleteEstablishers)).flatMap(
-                  _.set(IsEstablisherAddressCompleteId(0))(isCompleteEstablishers)).flatMap(
-                  _.set(TrusteeDetailsId(0))(PersonDetails("firstName", None, "lastName", LocalDate.now())).flatMap(
-                    _.set(IsTrusteeCompleteId(0))(isCompleteTrustees)).flatMap(
-                    _.set(IsTrusteeAddressCompleteId(0))(isCompleteTrustees)).flatMap(
-                    _.set(InsuranceDetailsChangedId)(isChangedInsuranceDetails))
+
+    setTrusteeCompletionStatusJsResult(isComplete = isCompleteTrustees, toggled = false, 0,
+      UserAnswers().set(IsBeforeYouStartCompleteId)(isCompleteBeforeStart).flatMap(
+        _.set(IsAboutMembersCompleteId)(isCompleteAboutMembers).flatMap(
+          _.set(IsAboutBankDetailsCompleteId)(isCompleteAboutBank).flatMap(
+            _.set(IsAboutBenefitsAndInsuranceCompleteId)(isCompleteAboutBenefits).flatMap(
+              _.set(BenefitsSecuredByInsuranceId)(!isCompleteAboutBenefits).flatMap(
+                _.set(IsWorkingKnowledgeCompleteId)(isCompleteWk).flatMap(
+                  _.set(EstablisherDetailsId(0))(PersonDetails("firstName", None, "lastName", LocalDate.now())).flatMap(
+                    _.set(IsEstablisherCompleteId(0))(isCompleteEstablishers)).flatMap(
+                    _.set(IsEstablisherAddressCompleteId(0))(isCompleteEstablishers)).flatMap(
+                    _.set(TrusteeDetailsId(0))(PersonDetails("firstName", None, "lastName", LocalDate.now())).flatMap(
+                      _.set(IsTrusteeAddressCompleteId(0))(isCompleteTrustees)).flatMap(
+                      _.set(InsuranceDetailsChangedId)(isChangedInsuranceDetails))
+                  )
                 )
               )
             )
           )
         )
-      )
+      ).asOpt.value
     )
   }
 
@@ -273,8 +278,8 @@ class HsTaskListHelperVariationsSpec extends HsTaskListHelperBehaviour {
             messages("messages__schemeTaskList__persons_details__link_text", "Test company name"),
             controllers.register.establishers.company.routes.CompanyReviewController.onPageLoad(UpdateMode, srn, 0).url), None)), None),
           SchemeDetailsTaskListEntitySection(None, Seq(EntitySpoke(Link(
-          messages("messages__schemeTaskList__persons_details__link_text", "Test individual name"),
-          controllers.register.establishers.individual.routes.CheckYourAnswersController.onPageLoad(UpdateMode, 1, srn).url), None)), None),
+            messages("messages__schemeTaskList__persons_details__link_text", "Test individual name"),
+            controllers.register.establishers.individual.routes.CheckYourAnswersController.onPageLoad(UpdateMode, 1, srn).url), None)), None),
           SchemeDetailsTaskListEntitySection(None, Seq(EntitySpoke(Link(
             messages("messages__schemeTaskList__persons_details__link_text", "Test Partnership"),
             controllers.register.establishers.partnership.routes.PartnershipReviewController.onPageLoad(UpdateMode, 2, srn).url), None)), None)
@@ -290,8 +295,8 @@ class HsTaskListHelperVariationsSpec extends HsTaskListHelperBehaviour {
             messages("messages__schemeTaskList__persons_details__link_text", "Test company name"),
             controllers.register.establishers.company.routes.CompanyDetailsController.onPageLoad(UpdateMode, srn, 0).url), None)), None),
           SchemeDetailsTaskListEntitySection(None, Seq(EntitySpoke(Link(
-          messages("messages__schemeTaskList__persons_details__link_text", "Test individual name"),
-          controllers.register.establishers.individual.routes.EstablisherDetailsController.onPageLoad(UpdateMode, 1, srn).url), None)), None),
+            messages("messages__schemeTaskList__persons_details__link_text", "Test individual name"),
+            controllers.register.establishers.individual.routes.EstablisherDetailsController.onPageLoad(UpdateMode, 1, srn).url), None)), None),
           SchemeDetailsTaskListEntitySection(None, Seq(EntitySpoke(Link(
             messages("messages__schemeTaskList__persons_details__link_text", "Test Partnership"),
             controllers.register.establishers.partnership.routes.PartnershipDetailsController.onPageLoad(UpdateMode, 2, srn).url), None)), None)
@@ -301,14 +306,14 @@ class HsTaskListHelperVariationsSpec extends HsTaskListHelperBehaviour {
     "return the seq of establishers sub sections after filtering out deleted establishers" in {
       val userAnswers = UserAnswers().set(EstablisherDetailsId(0))(PersonDetails("firstName", None, "lastName", LocalDate.now())).flatMap(
         _.set(IsEstablisherCompleteId(0))(false).flatMap(
-        _.set(IsEstablisherNewId(0))(true).flatMap(
-          _.set(EstablisherCompanyDetailsId(1))(CompanyDetails("test company", true)).flatMap(
-            _.set(IsEstablisherCompleteId(1))(true).flatMap(
-            _.set(IsEstablisherNewId(1))(true).flatMap(
-              _.set(EstablisherPartnershipDetailsId(2))(PartnershipDetails("test partnership", false)).flatMap(
-                _.set(IsEstablisherNewId(2))(true)).flatMap(
-                _.set(IsEstablisherCompleteId(2))(false)
-              ))))))).asOpt.value
+          _.set(IsEstablisherNewId(0))(true).flatMap(
+            _.set(EstablisherCompanyDetailsId(1))(CompanyDetails("test company", true)).flatMap(
+              _.set(IsEstablisherCompleteId(1))(true).flatMap(
+                _.set(IsEstablisherNewId(1))(true).flatMap(
+                  _.set(EstablisherPartnershipDetailsId(2))(PartnershipDetails("test partnership", false)).flatMap(
+                    _.set(IsEstablisherNewId(2))(true)).flatMap(
+                    _.set(IsEstablisherCompleteId(2))(false)
+                  ))))))).asOpt.value
       val helper = new HsTaskListHelperVariations(userAnswers, viewOnly = false, Some("test-srn"), fakeFeatureManagementService)
       helper.establishers(userAnswers, UpdateMode, srn) mustBe
         Seq(SchemeDetailsTaskListEntitySection(None, Seq(EntitySpoke(Link(messages("messages__schemeTaskList__persons_details__link_text", "firstName lastName"),
@@ -320,9 +325,9 @@ class HsTaskListHelperVariationsSpec extends HsTaskListHelperBehaviour {
   }
 
   def trusteesSection(): Unit = {
-
+    // TODO PODS-2940 add another unit test for toggle ON
     "return the seq of trustees sub sections for non deleted trustees which are all completed" in {
-      val userAnswers = allTrustees()
+      val userAnswers = allTrustees(toggled = false)
       val helper = new HsTaskListHelperVariations(userAnswers, viewOnly = false, srn = Some("test-srn"), fakeFeatureManagementService)
       helper.trustees(userAnswers, UpdateMode, srn) mustBe
         Seq(SchemeDetailsTaskListEntitySection(None, List(EntitySpoke(Link(messages("messages__schemeTaskList__persons_details__link_text", "firstName lastName"),
@@ -334,8 +339,10 @@ class HsTaskListHelperVariationsSpec extends HsTaskListHelperBehaviour {
         )
     }
 
+    // TODO PODS-2940 add another unit test for toggle ON
+
     "return the seq of trustees sub sections for non deleted trustees which are not completed" in {
-      val userAnswers = allTrustees(isCompleteTrustees = false)
+      val userAnswers = allTrustees(isCompleteTrustees = false, toggled = false)
       val helper = new HsTaskListHelperVariations(userAnswers, viewOnly = false, srn = Some("test-srn"), fakeFeatureManagementService)
       helper.trustees(userAnswers, UpdateMode, srn) mustBe
         Seq(SchemeDetailsTaskListEntitySection(None, List(EntitySpoke(Link(messages("messages__schemeTaskList__persons_details__link_text", "firstName lastName"),
@@ -351,13 +358,13 @@ class HsTaskListHelperVariationsSpec extends HsTaskListHelperBehaviour {
       val userAnswers = UserAnswers().set(TrusteeDetailsId(0))(PersonDetails("firstName", None, "lastName", LocalDate.now())).flatMap(
         _.set(IsTrusteeCompleteId(0))(false).flatMap(
           _.set(IsTrusteeNewId(0))(true).flatMap(
-           _.set(TrusteeCompanyDetailsId(1))(CompanyDetails("test company", true)).flatMap(
-            _.set(IsTrusteeCompleteId(1))(false).flatMap(
-              _.set(IsTrusteeNewId(1))(true).flatMap(
-                _.set(TrusteePartnershipDetailsId(2))(PartnershipDetails("test partnership", false)).flatMap(
-                  _.set(IsTrusteeNewId(2))(true)).flatMap(
-                  _.set(IsPartnershipCompleteId(2))(false)
-                ))))))).asOpt.value
+            _.set(TrusteeCompanyDetailsId(1))(CompanyDetails("test company", true)).flatMap(
+              _.set(IsTrusteeCompleteId(1))(false).flatMap(
+                _.set(IsTrusteeNewId(1))(true).flatMap(
+                  _.set(TrusteePartnershipDetailsId(2))(PartnershipDetails("test partnership", false)).flatMap(
+                    _.set(IsTrusteeNewId(2))(true)).flatMap(
+                    _.set(IsPartnershipCompleteId(2))(false)
+                  ))))))).asOpt.value
       val helper = new HsTaskListHelperVariations(userAnswers, viewOnly = false, srn = Some("test-srn"), fakeFeatureManagementService)
       helper.trustees(userAnswers, UpdateMode, srn) mustBe
         Seq(SchemeDetailsTaskListEntitySection(None, List(EntitySpoke(Link(messages("messages__schemeTaskList__persons_details__link_text", "firstName lastName"),

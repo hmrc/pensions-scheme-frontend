@@ -253,8 +253,10 @@ class HsTaskListHelperRegistrationSpec extends HsTaskListHelperBehaviour with En
 
   def trusteesSection(mode: Mode, srn: Option[String]): Unit = {
 
+    // TODO PODS-2940 add another unit test for toggle ON
+
     "return the seq of trustees sub sections for non deleted trustees which are all completed" in {
-      val userAnswers = allTrustees()
+      val userAnswers = allTrustees(toggled = false)
       val helper = new HsTaskListHelperRegistration(userAnswers, fakeFeatureManagementService)
       helper.trustees(userAnswers) mustBe
         Seq(SchemeDetailsTaskListSection(Some(true), Link(individualLinkText,
@@ -267,7 +269,10 @@ class HsTaskListHelperRegistrationSpec extends HsTaskListHelperBehaviour with En
     }
 
     "return the seq of trustees sub sections for non deleted trustees which are not completed" in {
-      val userAnswers = allTrustees(isCompleteTrustees = false)
+
+      // TODO PODS-2940 add another unit test for toggle ON
+
+      val userAnswers = allTrustees(isCompleteTrustees = false, toggled = false)
       val helper = new HsTaskListHelperRegistration(userAnswers, fakeFeatureManagementService)
       helper.trustees(userAnswers) mustBe
         Seq(SchemeDetailsTaskListSection(Some(false), Link(individualLinkText,

@@ -23,7 +23,7 @@ import identifiers.register.establishers.partnership._
 import identifiers.register.establishers.partnership.partner.{IsNewPartnerId, IsPartnerCompleteId, PartnerDetailsId}
 import identifiers.register.establishers.{EstablisherKindId, EstablishersId, IsEstablisherCompleteId, IsEstablisherNewId}
 import identifiers.register.trustees.company.{CompanyPayeId, CompanyVatId, CompanyDetailsId => TrusteeCompanyDetailsId}
-import identifiers.register.trustees.individual.TrusteeDetailsId
+import identifiers.register.trustees.individual._
 import identifiers.register.trustees.{company => _, _}
 import models._
 import models.address.Address
@@ -116,14 +116,14 @@ class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues with 
   ".allTrustees" must {
 
     "return a map of trustee names, edit links, delete links and isComplete flag" in {
-      val userAnswers = UserAnswers(Json.obj(
+      // TODO PODS-2940 write a unit test for toggle ON
+      val userAnswers = setTrusteeComplete(toggled = false, 0, UserAnswers(Json.obj(
         "schemeType"-> Json.obj("name"-> "single"),
         TrusteesId.toString -> Json.arr(
           Json.obj(
             TrusteeKindId.toString -> TrusteeKind.Individual.toString,
             TrusteeDetailsId.toString ->
               PersonDetails("First", None, "Last", LocalDate.now),
-            IsTrusteeCompleteId.toString -> true,
             IsTrusteeNewId.toString -> true
           ),
           Json.obj(
@@ -146,7 +146,7 @@ class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues with 
             IsTrusteeNewId.toString -> true
           )
         )
-      ))
+      )))
 
       val allTrusteesEntities: Seq[Trustee[_]] = Seq(
         trusteeEntity("First Last", 0, TrusteeKind.Individual, isComplete = true),
@@ -595,6 +595,10 @@ object UserAnswersSpec extends OptionValues with Enumerable.Implicits {
   private val previousAddress = Address("address-2-line-1", "address-2-line-2", None, None, Some("post-code-2"), "country-2")
   private val contactDetails = ContactDetails("test@test.com", "1234")
 
+  private val stringValue = "aa"
+  private val firstName = "First"
+  private val lastName = "Last"
+
   private val insuranceCompanyDetails = UserAnswers().investmentRegulated(true).occupationalPensionScheme(true).
     typeOfBenefits(TypeOfBenefits.Defined).benefitsSecuredByInsurance(true).insuranceCompanyName(company.companyName).
     insurancePolicyNumber(policyNumber).insurerConfirmAddress(insurerAddress)
@@ -623,4 +627,48 @@ object UserAnswersSpec extends OptionValues with Enumerable.Implicits {
     .flatMap(_.set(PartnershipContactDetailsId(0))(contactDetails))
     .flatMap(_.set(PartnerDetailsId(0, 0))(PersonDetails("par1", None, "", LocalDate.now)))
     .asOpt.value
+
+  private def setTrusteeComplete(toggled: Boolean, index: Int, ua: UserAnswers): UserAnswers = {
+    if (toggled) {
+      ua.
+        set(TrusteeDOBId(index))(LocalDate.now()).asOpt.value
+        .set(TrusteeHasNINOId(index))(true).asOpt.value
+        .set(TrusteeNewNinoId(index))(ReferenceValue(stringValue)).asOpt.value
+        .set(TrusteeHasUTRId(index))(true).asOpt.value
+        .set(TrusteeUTRId(index))(stringValue).asOpt.value
+        .set(TrusteeAddressId(index))(address).asOpt.value
+        .set(TrusteeAddressYearsId(index))(AddressYears.OverAYear).asOpt.value
+        .set(TrusteeEmailId(index))(stringValue).asOpt.value
+        .set(TrusteePhoneId(index))(stringValue).asOpt.value
+    } else {
+      ua.
+        set(TrusteeDetailsId(index))(PersonDetails(firstName, None, lastName, LocalDate.now())).asOpt.value
+        .set(TrusteeNinoId(index))(Nino.Yes(stringValue)).asOpt.value
+        .set(UniqueTaxReferenceId(index))(UniqueTaxReference.Yes(stringValue)).asOpt.value
+        .set(TrusteeAddressId(index))(address).asOpt.value
+        .set(TrusteeAddressYearsId(index))(AddressYears.OverAYear).asOpt.value
+        .set(TrusteeContactDetailsId(index))(ContactDetails(stringValue, stringValue)).asOpt.value
+    }
+  }
+
+  private def setTrusteeIncomplete(toggled: Boolean, index: Int, ua: UserAnswers): UserAnswers = {
+    if (toggled) {
+      ua.
+        set(TrusteeDOBId(index))(LocalDate.now()).asOpt.value
+        .set(TrusteeHasNINOId(index))(true).asOpt.value
+        .set(TrusteeHasUTRId(index))(true).asOpt.value
+        .set(TrusteeUTRId(index))(stringValue).asOpt.value
+        .set(TrusteeAddressId(index))(address).asOpt.value
+        .set(TrusteeAddressYearsId(index))(AddressYears.OverAYear).asOpt.value
+        .set(TrusteeEmailId(index))(stringValue).asOpt.value
+        .set(TrusteePhoneId(index))(stringValue).asOpt.value
+    } else {
+      ua.
+        set(TrusteeDetailsId(index))(PersonDetails(firstName, None, lastName, LocalDate.now())).asOpt.value
+        .set(UniqueTaxReferenceId(index))(UniqueTaxReference.Yes(stringValue)).asOpt.value
+        .set(TrusteeAddressId(index))(address).asOpt.value
+        .set(TrusteeAddressYearsId(index))(AddressYears.OverAYear).asOpt.value
+        .set(TrusteeContactDetailsId(index))(ContactDetails(stringValue, stringValue)).asOpt.value
+    }
+  }
 }
