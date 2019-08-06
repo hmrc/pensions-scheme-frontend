@@ -39,6 +39,7 @@ class CompanyAddressYearsIdSpec extends SpecBase {
       .flatMap(_.set(CompanyPreviousAddressPostcodeLookupId(0))(Seq.empty))
       .flatMap(_.set(CompanyPreviousAddressId(0))(Address("foo", "bar", None, None, None, "GB")))
       .flatMap(_.set(CompanyPreviousAddressListId(0))(TolerantAddress(Some("foo"), Some("bar"), None, None, None, Some("GB"))))
+      .flatMap(_.set(HasBeenTradingCompanyId(0))(true))
       .flatMap(_.set(IsTrusteeCompleteId(0))(true))
       .asOpt.value
 
@@ -58,6 +59,10 @@ class CompanyAddressYearsIdSpec extends SpecBase {
         result.get(CompanyPreviousAddressListId(0)) mustNot be(defined)
       }
 
+      "remove the data for `HasBeenTrading`" in {
+        result.get(HasBeenTradingCompanyId(0)) mustNot be(defined)
+      }
+
       "do not change the value of IsTrusteeCompleteId" in {
         result.get(IsTrusteeCompleteId(0)).value mustBe true
       }
@@ -70,6 +75,7 @@ class CompanyAddressYearsIdSpec extends SpecBase {
         .flatMap(_.set(CompanyPreviousAddressPostcodeLookupId(0))(Seq.empty))
         .flatMap(_.set(CompanyPreviousAddressId(0))(Address("foo", "bar", None, None, None, "GB")))
         .flatMap(_.set(CompanyPreviousAddressListId(0))(TolerantAddress(Some("foo"), Some("bar"), None, None, None, Some("GB"))))
+        .flatMap(_.set(HasBeenTradingCompanyId(0))(true))
         .flatMap(_.set(IsTrusteeCompleteId(0))(true))
         .asOpt.value.set(CompanyAddressYearsId(0))(AddressYears.UnderAYear).asOpt.value
 
@@ -88,6 +94,10 @@ class CompanyAddressYearsIdSpec extends SpecBase {
       "not remove the data for `PreviousAddressList`" in {
         result.get(CompanyPreviousAddressListId(0)) mustBe defined
       }
+
+      "not remove the data for `HasBeenTrading`" in {
+        result.get(HasBeenTradingCompanyId(0)) mustBe defined
+      }
     }
 
     "`AddressYears` is removed" when {
@@ -105,6 +115,7 @@ class CompanyAddressYearsIdSpec extends SpecBase {
       "not remove the data for `PreviousAddressList`" in {
         result.get(CompanyPreviousAddressListId(0)) mustBe defined
       }
+
     }
   }
 
