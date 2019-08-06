@@ -122,6 +122,7 @@ class AddTrusteeControllerSpec extends ControllerSpecBase {
       val view = asDocument(contentAsString(result))
 
       view.getElementById("submit").hasAttr("disabled") mustEqual false
+      view.getElementById("person-0-status") == null mustEqual true
 
     }
 
@@ -140,6 +141,7 @@ class AddTrusteeControllerSpec extends ControllerSpecBase {
       val view = asDocument(contentAsString(result))
 
       view.getElementById("submit").hasAttr("disabled") mustEqual false
+      view.getElementById("person-0-status") == null mustEqual false
     }
 
     "return view with button DISABLED when toggle set to FALSE and at least one trustee is INCOMPLETE" in {

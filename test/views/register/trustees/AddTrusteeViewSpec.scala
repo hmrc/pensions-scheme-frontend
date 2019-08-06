@@ -65,8 +65,8 @@ class AddTrusteeViewSpec extends YesNoViewBehaviours with EntityListBehaviours w
 
   val form = new AddTrusteeFormProvider()()
 
-  private def createView(trustees: Seq[Trustee[_]] = Seq.empty, enable: Boolean = true) = () =>
-    addTrustee(frontendAppConfig, form, NormalMode, trustees, None, None, enableSubmission = enable)(fakeRequest, messages)
+  private def createView(trustees: Seq[Trustee[_]] = Seq.empty, enable: Boolean = true, displayStatus: Boolean = true) = () =>
+    addTrustee(frontendAppConfig, form, NormalMode, trustees, None, None, enableSubmission = enable, displayStatus)(fakeRequest, messages)
 
   private def createUpdateView(trustees: Seq[Trustee[_]] = Seq.empty) = () =>
     addTrustee(frontendAppConfig, form, UpdateMode, trustees, None, Some("srn"), enableSubmission = true)(fakeRequest, messages)
@@ -130,7 +130,17 @@ class AddTrusteeViewSpec extends YesNoViewBehaviours with EntityListBehaviours w
       val doc = asDocument(createView(trustees)())
       doc.select("#value-yes").size() mustEqual 1
       doc.select("#value-no").size() mustEqual 1
+    }
 
+    "not display the status if displayStatus is false" in {
+      val doc = asDocument(createView(trustees, displayStatus = false)())
+      doc mustNot haveDynamicText("site.complete")
+      doc mustNot haveDynamicText("site.incomplete")
+    }
+
+    "display the status if displayStatus is true" in {
+      val doc = asDocument(createView(trustees)())
+      doc must haveDynamicText("site.incomplete")
     }
 
   }
