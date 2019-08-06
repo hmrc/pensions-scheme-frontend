@@ -22,7 +22,7 @@ import identifiers.register.establishers.individual.EstablisherDetailsId
 import identifiers.register.establishers.partnership.{PartnershipDetailsId => EstablisherPartnershipDetailsId}
 import identifiers.register.trustees.MoreThanTenTrusteesId
 import identifiers.register.trustees.company.{CompanyDetailsId => TrusteeCompanyDetailsId}
-import identifiers.register.trustees.individual.TrusteeDetailsId
+import identifiers.register.trustees.individual.{TrusteeDetailsId, TrusteeNameId}
 import identifiers.register.trustees.partnership.{PartnershipDetailsId => TrusteePartnershipDetailsId}
 import identifiers.{DeclarationDutiesId, IsWorkingKnowledgeCompleteId, _}
 import models.register.SchemeType.{MasterTrust, SingleTrust}
@@ -144,7 +144,7 @@ abstract class HsTaskListHelper(answers: UserAnswers,
 
   protected def linkText(item: Entity[_]): String = item.id match {
     case establisherCompany.CompanyDetailsId(_) | TrusteeCompanyDetailsId(_) => companyLinkText
-    case EstablisherDetailsId(_) | TrusteeDetailsId(_) => individualLinkText
+    case EstablisherDetailsId(_) | TrusteeDetailsId(_) | TrusteeNameId(_) => individualLinkText
     case EstablisherPartnershipDetailsId(_) | TrusteePartnershipDetailsId(_) => partnershipLinkText
   }
 

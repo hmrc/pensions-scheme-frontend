@@ -16,17 +16,17 @@
 
 package controllers.register.trustees
 
-import config.FrontendAppConfig
+import config.{FeatureSwitchManagementService, FrontendAppConfig}
 import controllers.Retrievals
 import controllers.actions._
 import forms.register.trustees.ConfirmDeleteTrusteeFormProvider
 import identifiers.register.trustees.ConfirmDeleteTrusteeId
 import identifiers.register.trustees.company.CompanyDetailsId
-import identifiers.register.trustees.individual.TrusteeDetailsId
+import identifiers.register.trustees.individual.{TrusteeDetailsId, TrusteeNameId}
 import identifiers.register.trustees.partnership.PartnershipDetailsId
 import javax.inject.Inject
 import models._
-import models.person.PersonDetails
+import models.person.{PersonDetails, PersonName}
 import models.register.trustees.TrusteeKind
 import models.register.trustees.TrusteeKind.{Company, Individual, Partnership}
 import models.requests.DataRequest
@@ -37,7 +37,7 @@ import play.api.mvc.{Action, AnyContent, Result}
 import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.Trustees
-import utils.UserAnswers
+import utils.{Toggles, UserAnswers}
 import views.html.register.trustees.confirmDeleteTrustee
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -50,10 +50,13 @@ class ConfirmDeleteTrusteeController @Inject()(appConfig: FrontendAppConfig,
                                                requireData: DataRequiredAction,
                                                @Trustees navigator: Navigator,
                                                userAnswersService: UserAnswersService,
-                                               formProvider: ConfirmDeleteTrusteeFormProvider)(implicit val ec: ExecutionContext)
+                                               formProvider: ConfirmDeleteTrusteeFormProvider,
+                                               fsm: FeatureSwitchManagementService)(implicit val ec: ExecutionContext)
   extends FrontendController with I18nSupport with Retrievals {
 
   private val form: Form[Boolean] = formProvider()
+
+  private def isHnsEnabled: Boolean = fsm.get(Toggles.isEstablisherCompanyHnSEnabled)
 
   def onPageLoad(mode: Mode, index: Index, trusteeKind: TrusteeKind, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
@@ -86,15 +89,19 @@ class ConfirmDeleteTrusteeController @Inject()(appConfig: FrontendAppConfig,
       trusteeKind match {
         case Company =>
           CompanyDetailsId(index).retrieve.right.map { companyDetails =>
-            updateTrusteeKind(companyDetails.companyName, trusteeKind, index, Some(companyDetails), None, None, srn, mode)
+            updateTrusteeKind(companyDetails.companyName, trusteeKind, index, Some(companyDetails), None, None, None, srn, mode)
           }
-        case Individual =>
+        case Individual if !isHnsEnabled =>
           TrusteeDetailsId(index).retrieve.right.map { trusteeDetails =>
-            updateTrusteeKind(trusteeDetails.fullName, trusteeKind, index, None, Some(trusteeDetails), None, srn, mode)
+            updateTrusteeKind(trusteeDetails.fullName, trusteeKind, index, None, Some(trusteeDetails), None, None, srn, mode)
+          }
+        case Individual if isHnsEnabled =>
+          TrusteeNameId(index).retrieve.right.map { trusteeDetails =>
+            updateTrusteeKind(trusteeDetails.fullName, trusteeKind, index, None, None, None, Some(trusteeDetails), srn, mode)
           }
         case Partnership =>
           PartnershipDetailsId(index).retrieve.right.map { partnershipDetails =>
-            updateTrusteeKind(partnershipDetails.name, trusteeKind, index, None, None, Some(partnershipDetails), srn, mode)
+            updateTrusteeKind(partnershipDetails.name, trusteeKind, index, None, None, Some(partnershipDetails), None, srn, mode)
           }
       }
   }
@@ -103,8 +110,9 @@ class ConfirmDeleteTrusteeController @Inject()(appConfig: FrontendAppConfig,
                                 trusteeKind: TrusteeKind,
                                 trusteeIndex: Index,
                                 companyDetails: Option[CompanyDetails],
-                                trusteeDetails: Option[PersonDetails],
+                                trusteeDetailsNonHns: Option[PersonDetails],
                                 partnershipDetails: Option[PartnershipDetails],
+                                trusteeDetails: Option[PersonName],
                                 srn: Option[String],
                                 mode: Mode)(implicit dataRequest: DataRequest[AnyContent]): Future[Result] = {
     form.bindFromRequest().fold(
@@ -123,8 +131,10 @@ class ConfirmDeleteTrusteeController @Inject()(appConfig: FrontendAppConfig,
           trusteeKind match {
             case Company => companyDetails.fold(Future.successful(dataRequest.userAnswers.json))(
               company => userAnswersService.save(mode, srn, CompanyDetailsId(trusteeIndex), company.copy(isDeleted = true)))
-            case Individual => trusteeDetails.fold(Future.successful(dataRequest.userAnswers.json))(
+            case Individual if !isHnsEnabled => trusteeDetailsNonHns.fold(Future.successful(dataRequest.userAnswers.json))(
               trustee => userAnswersService.save(mode, srn, TrusteeDetailsId(trusteeIndex), trustee.copy(isDeleted = true)))
+            case Individual if isHnsEnabled=> trusteeDetails.fold(Future.successful(dataRequest.userAnswers.json))(
+              trustee => userAnswersService.save(mode, srn, TrusteeNameId(trusteeIndex), trustee.copy(isDeleted = true)))
             case Partnership => partnershipDetails.fold(Future.successful(dataRequest.userAnswers.json))(
               partnership => userAnswersService.save(mode, srn, PartnershipDetailsId(trusteeIndex), partnership.copy(isDeleted = true)))
           }
@@ -142,7 +152,13 @@ class ConfirmDeleteTrusteeController @Inject()(appConfig: FrontendAppConfig,
 
   private def getDeletableTrustee(index: Index, trusteeKind: TrusteeKind, userAnswers: UserAnswers): Option[DeletableTrustee] = {
     trusteeKind match {
-      case Individual => userAnswers.get(TrusteeDetailsId(index)).map(details => DeletableTrustee(details.fullName, details.isDeleted))
+      case Individual => {
+        if(isHnsEnabled){
+          userAnswers.get(TrusteeNameId(index)).map(details => DeletableTrustee(details.fullName, details.isDeleted))
+        } else {
+          userAnswers.get(TrusteeDetailsId(index)).map(details => DeletableTrustee(details.fullName, details.isDeleted))
+        }
+      }
       case Company => userAnswers.get(CompanyDetailsId(index)).map(details => DeletableTrustee(details.companyName, details.isDeleted))
       case Partnership => userAnswers.get(PartnershipDetailsId(index)).map(details => DeletableTrustee(details.name, details.isDeleted))
     }

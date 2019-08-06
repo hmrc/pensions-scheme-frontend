@@ -42,14 +42,17 @@
 
         } else {
 
-            @components.entity_list(trustees, mode = mode, srn = srn, displayStatus = displayStatus)
+            @if(displayStatus) {
+                @components.entity_list(trustees, mode = mode, srn = srn, displayStatus = displayStatus)
+            } else {
+                @components.add_entity_list(trustees, mode, srn)
+            }
 
             @if(trustees.size < appConfig.maxTrustees) {
                 @components.input_yes_no(
                     field = form("value"),
                     label = messages("messages__addTrustee__text"),
-                    labelClass = Some("bold-small"),
-                    hint = Some(messages("messages__addTrustee__lede"))
+                    labelClass = Some("bold-small")
                 )
 
             } else {

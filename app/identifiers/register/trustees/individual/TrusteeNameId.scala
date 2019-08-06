@@ -27,13 +27,11 @@ import utils.checkyouranswers.CheckYourAnswers
 import viewmodels.{AnswerRow, Message}
 
 case class TrusteeNameId(trusteeIndex: Int) extends TypedIdentifier[PersonName] {
-  override def path: JsPath = TrusteesId(trusteeIndex).path \ "trustee" \ TrusteeNameId.toString
+  override def path: JsPath = TrusteesId(trusteeIndex).path \ TrusteeNameId.toString
 }
 
 object TrusteeNameId {
-  def collectionPath(trusteeIndex: Int): JsPath = TrusteesId(trusteeIndex).path \ "trustee" \ TrusteeNameId.toString
-
-  override def toString: String = "trusteeDetails"
+  override def toString: String = "trusteeName"
 
   implicit def cya(implicit messages: Messages): CheckYourAnswers[TrusteeNameId] = {
     new CheckYourAnswers[TrusteeNameId] {
