@@ -49,7 +49,6 @@ class PartnershipPostcodeLookupController @Inject()(
                                                    )(implicit val ec: ExecutionContext) extends PostcodeLookupController {
 
   private val title: Message = "messages__partnershipPostcodeLookup__title"
-  private val heading: Message = "messages__partnershipPostcodeLookup__heading"
   private val hint: Message = "messages__trusteePartnershipPostcodeLookup__hint"
 
   protected val form: Form[String] = formProvider()
@@ -63,7 +62,7 @@ class PartnershipPostcodeLookupController @Inject()(
               routes.PartnershipPostcodeLookupController.onSubmit(mode, index, srn),
               routes.PartnershipAddressController.onPageLoad(mode, index, srn),
               title = Message(title),
-              heading = Message(heading),
+              heading = Message("messages__partnershipPostcodeLookup__heading", details.name),
               subHeading = Some(details.name),
               srn = srn
             )

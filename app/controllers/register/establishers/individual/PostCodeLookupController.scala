@@ -49,7 +49,6 @@ class PostCodeLookupController @Inject()(
                                         )(implicit val ec: ExecutionContext) extends GenericPostcodeLookupController {
 
   private val title: Message = "messages__establisher_individual_address__title"
-  private val heading: Message = "messages__establisher_individual_address__title"
   private val hint: Message = "messages__establisher_individual_address_lede"
 
   protected val form: Form[String] = formProvider()
@@ -63,7 +62,7 @@ class PostCodeLookupController @Inject()(
               routes.PostCodeLookupController.onSubmit(mode, index, srn),
               routes.AddressController.onPageLoad(mode, index, srn),
               title = Message(title),
-              heading = Message(heading),
+              heading = Message("messages__establisher_individual_address__heading", details.fullName),
               subHeading = Some(details.fullName),
               srn = srn
             )

@@ -91,7 +91,7 @@ object PartnershipPostcodeLookupControllerSpec extends ControllerSpecBase with M
     postCall = routes.PartnershipPostcodeLookupController.onSubmit(NormalMode, firstIndex, None),
     manualInputCall = routes.PartnershipAddressController.onPageLoad(NormalMode, firstIndex, None),
     title = Message("messages__partnershipPostcodeLookup__title"),
-    heading = Message("messages__partnershipPostcodeLookup__heading"),
+    heading = Message("messages__partnershipPostcodeLookup__heading", partnershipDetails.name),
     subHeading = Some(partnershipDetails.name)
   )
 
