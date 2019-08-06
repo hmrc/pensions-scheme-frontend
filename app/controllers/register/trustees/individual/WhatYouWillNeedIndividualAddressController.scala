@@ -19,7 +19,6 @@ package controllers.register.trustees.individual
 import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions._
-import identifiers.register.trustees.individual.TrusteeNameId
 import javax.inject.Inject
 import models.{Index, Mode}
 import navigators.Navigator
@@ -29,25 +28,25 @@ import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.Enumerable
 import utils.annotations.TrusteesIndividual
-import views.html.register.trustees.individual.whatYouWillNeedIndividualDetails
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
-class WhatYouWillNeedIndividualDetailsController @Inject()(appConfig: FrontendAppConfig,
-                                                           override val messagesApi: MessagesApi,
+class WhatYouWillNeedIndividualAddressController @Inject()(val appConfig: FrontendAppConfig,
+                                                           val messagesApi: MessagesApi,
+                                                           val userAnswersService: UserAnswersService,
+                                                           @TrusteesIndividual val navigator: Navigator,
                                                            authenticate: AuthAction,
                                                            getData: DataRetrievalAction,
                                                            allowAccess: AllowAccessActionProvider,
                                                            requireData: DataRequiredAction
-                                                          ) extends FrontendController with I18nSupport with Retrievals{
+                                     )(implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String] = None): Action[AnyContent] = (authenticate andThen
-    getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
-    implicit request =>
-      TrusteeNameId(index).retrieve.right.map {
-        details =>
-          val href = routes.WhatYouWillNeedIndividualDetailsController.onPageLoad(mode, index, srn)
-          Future.successful(Ok(whatYouWillNeedIndividualDetails(appConfig, existingSchemeName, href, srn, details.fullName)))
-      }
+  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData) {
+      implicit request => NotImplemented("Not implemented: " + this.getClass.toString)
+    }
+
+  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData) {
+    implicit request => NotImplemented("Not implemented: " + this.getClass.toString)
   }
 }
