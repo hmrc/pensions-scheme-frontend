@@ -27,6 +27,7 @@ import models._
 import play.api.mvc.Call
 import utils.UserAnswers
 import controllers.register.trustees.routes.AddTrusteeController
+import controllers.routes.AnyMoreChangesController
 
 class TrusteesCompanyNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector) extends AbstractNavigator {
   import TrusteesCompanyNavigator._
@@ -94,7 +95,8 @@ class TrusteesCompanyNavigator @Inject()(val dataCacheConnector: UserAnswersCach
     case CompanyPayeVariationsId(index) if isNewTrustee(ua, index) => cyaPage(mode, index, srn)
     case CompanyPayeVariationsId(_) => anyMoreChangesPage(srn)
     case CompanyAddressId(index) if isNewTrustee(ua, index) => cyaAddressPage(mode, index, srn)
-    case CompanyAddressId(_) => anyMoreChangesPage(srn)
+    case CompanyAddressId(index) => isThisPreviousAddressPage(index, srn)
+    case id@CompanyConfirmPreviousAddressId(index) => booleanNav(id, ua, mode, index, srn, moreChanges, previousAddressLookupPage)
     case CompanyAddressYearsId(index) if overAYear(ua, index) => cyaAddressPage(mode, index, srn)
     case CompanyAddressYearsId(index) if underAYear(ua, index) => hasBeenTradingPage(mode, index, srn)
     case CompanyPreviousAddressPostcodeLookupId(index) => selectPreviousAddressPage(mode, index, srn)
@@ -168,5 +170,9 @@ object TrusteesCompanyNavigator {
   private def selectPreviousAddressPage(mode: Mode, index: Int, srn: Option[String]): Call = CompanyPreviousAddressListController.onPageLoad(mode, index, srn)
 
   private def confirmPreviousAddressPage(mode: Mode, index: Int, srn: Option[String]): Call = CompanyPreviousAddressController.onPageLoad(mode, index, srn)
+
+  private def isThisPreviousAddressPage(index: Int, srn: Option[String]): Call = CompanyConfirmPreviousAddressController.onPageLoad(index, srn)
+
+  private def moreChanges(mode: Mode, index: Int, srn: Option[String]): Call = AnyMoreChangesController.onPageLoad(srn)
 
 }

@@ -94,6 +94,8 @@ object TrusteesCompanyNavigatorSpec extends SpecBase with NavigatorBehaviour {
 
   private def phonePage(mode: Mode): Call = CompanyPhoneController.onPageLoad(mode, 0, None)
 
+  private def isThisPreviousAddressPage: Call = CompanyConfirmPreviousAddressController.onPageLoad(0, None)
+
   def normalAndUpdateModeRoutes(mode: Mode): TableFor3[Identifier, UserAnswers, Call] =
     Table(
       ("Id", "UserAnswers", "Next Page"),
@@ -177,7 +179,9 @@ object TrusteesCompanyNavigatorSpec extends SpecBase with NavigatorBehaviour {
       row(CompanyPayeVariationsId(0))(someRefValue, cyaPage(mode), newTrustee),
       row(CompanyPayeVariationsId(0))(someRefValue, anyMoreChangesPage),
       row(CompanyAddressId(0))(someAddress, cyaAddressPage(mode), newTrustee),
-      row(CompanyAddressId(0))(someAddress, anyMoreChangesPage),
+      row(CompanyAddressId(0))(someAddress, isThisPreviousAddressPage),
+      row(CompanyConfirmPreviousAddressId(0))(true, anyMoreChangesPage),
+      row(CompanyConfirmPreviousAddressId(0))(false, previousAddressLookupPage(mode)),
       row(CompanyAddressYearsId(0))(AddressYears.OverAYear, cyaAddressPage(mode)),
       row(CompanyAddressYearsId(0))(AddressYears.UnderAYear, hasBeenTradingPage(mode)),
       row(CompanyPreviousAddressPostcodeLookupId(0))(Seq(someTolerantAddress), selectPreviousAddressPage(mode)),
