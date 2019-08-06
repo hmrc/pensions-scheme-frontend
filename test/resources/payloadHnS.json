@@ -37,8 +37,6 @@
   "IsAboutBankDetailsComplete" : true,
   "trustees" : [
     {
-      "hasUtr" : true,
-      "utr" : "123123",
       "isTrusteeNew" : true,
       "trusteeKind" : "individual",
       "trusteeDetails" : {
@@ -46,6 +44,13 @@
         "lastName" : "wqwq",
         "date" : "2000-01-01",
         "isDeleted" : false
+      },
+      "hasUtr" : true,
+      "utr" : "123123",
+      "hasNino" : true,
+      "nino": {
+        "value": "CS121212C",
+        "isEditable" : true
       }
     }
   ],

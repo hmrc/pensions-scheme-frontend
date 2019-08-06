@@ -9,7 +9,6 @@
   "isWorkingKnowledgeComplete" : true,
   "trustees" : [
   {
-      "hasUtr" : false,
       "isTrusteeNew" : true,
       "trusteeKind" : "individual",
       "trusteeDetails" : {
@@ -17,7 +16,9 @@
         "lastName" : "wqwq",
         "date" : "2000-01-01",
         "isDeleted" : false
-      }
+      },
+      "hasUtr" : false,
+      "hasNino" : true
     }
   ],
   "establishers" : [

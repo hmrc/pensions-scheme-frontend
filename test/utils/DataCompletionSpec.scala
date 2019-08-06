@@ -242,7 +242,8 @@ class DataCompletionSpec extends WordSpec with MustMatchers with OptionValues wi
 object DataCompletionSpec extends JsonFileReader {
 
   val userAnswersCompleted: JsValue = readJsonFromFile("/payloadHnS.json")
-  val userAnswersCompletedNonHnS: JsValue = readJsonFromFile("/payload.json")
   val userAnswersInProgress: JsValue = readJsonFromFile("/payloadHnSInProgress.json")
+
+  val userAnswersCompletedNonHnS: JsValue = readJsonFromFile("/payload.json")
   val userAnswersUninitiated: JsValue = readJsonFromFile("/payloadHnSUninitiated.json")
 }

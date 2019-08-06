@@ -19,27 +19,28 @@ package utils
 import identifiers.TypedIdentifier
 import identifiers.register.establishers.company._
 import identifiers.register.establishers.company.director._
+import identifiers.register.trustees.individual._
 import models.address.Address
 import models.{AddressYears, ReferenceValue}
 import play.api.libs.json.Reads
 
 trait DataCompletion {
-  
+
   self: UserAnswers =>
 
   //GENERIC METHODS
   def isComplete(list: Seq[Option[Boolean]]): Option[Boolean] =
-    if(list.flatten.isEmpty) None
+    if (list.flatten.isEmpty) None
     else
       Some(list.foldLeft(true)({
-        case (acc , Some(true)) => acc
+        case (acc, Some(true)) => acc
         case (_, Some(false)) => false
         case (_, None) => false
       }))
 
   def isListComplete(list: Seq[Boolean]): Boolean =
     list.nonEmpty & list.foldLeft(true)({
-      case (acc , true) => acc
+      case (acc, true) => acc
       case (_, false) => false
     })
 
@@ -69,8 +70,8 @@ trait DataCompletion {
     }
 
   def isAnswerComplete(yesNoQuestionId: TypedIdentifier[Boolean],
-                              yesValueId: TypedIdentifier[ReferenceValue],
-                              noReasonIdOpt: Option[TypedIdentifier[String]]): Option[Boolean] =
+                       yesValueId: TypedIdentifier[ReferenceValue],
+                       noReasonIdOpt: Option[TypedIdentifier[String]]): Option[Boolean] =
     (get(yesNoQuestionId), get(yesValueId), noReasonIdOpt) match {
       case (None, _, _) => None
       case (Some(true), Some(_), _) => Some(true)
@@ -96,14 +97,14 @@ trait DataCompletion {
 
 
   //ESTABLISHER COMPANY
-   def isEstablisherCompanyDetailsComplete(index: Int): Option[Boolean] =
-     isComplete(Seq(
-       isAnswerComplete(HasCompanyNumberId(index), CompanyRegistrationNumberVariationsId(index), Some(NoCompanyNumberId(index))),
-       isUtrComplete(HasCompanyUTRId(index), CompanyUTRId(index), NoCompanyUTRId(index)),
-       isAnswerComplete(HasCompanyVATId(index), CompanyVatVariationsId(index), None),
-       isAnswerComplete(HasCompanyPAYEId(index), CompanyPayeVariationsId(index), None),
-       isAnswerComplete(IsCompanyDormantId(index))
-     ))
+  def isEstablisherCompanyDetailsComplete(index: Int): Option[Boolean] =
+    isComplete(Seq(
+      isAnswerComplete(HasCompanyNumberId(index), CompanyRegistrationNumberVariationsId(index), Some(NoCompanyNumberId(index))),
+      isUtrComplete(HasCompanyUTRId(index), CompanyUTRId(index), NoCompanyUTRId(index)),
+      isAnswerComplete(HasCompanyVATId(index), CompanyVatVariationsId(index), None),
+      isAnswerComplete(HasCompanyPAYEId(index), CompanyPayeVariationsId(index), None),
+      isAnswerComplete(IsCompanyDormantId(index))
+    ))
 
   def isEstablisherCompanyAddressComplete(index: Int): Option[Boolean] =
     isAddressComplete(CompanyAddressId(index), CompanyPreviousAddressId(index), CompanyAddressYearsId(index), Some(HasBeenTradingCompanyId(index)))
@@ -164,6 +165,34 @@ trait DataCompletion {
       isAddressComplete(DirectorAddressId(estIndex, dirIndex), DirectorPreviousAddressId(estIndex, dirIndex),
         DirectorAddressYearsId(estIndex, dirIndex), None).getOrElse(false),
       get(DirectorContactDetailsId(estIndex, dirIndex)).isDefined
+    ))
+
+  // INDIVIDUAL TRUSTEE
+
+  def isIndividualDetailsComplete(trusteeIndex: Int): Option[Boolean] =
+    isComplete(Seq(
+      Some(get(TrusteeDOBId(trusteeIndex)).isDefined),
+      isAnswerComplete(TrusteeHasNINOId(trusteeIndex), TrusteeNewNinoId(trusteeIndex), Some(TrusteeNoNINOReasonId(trusteeIndex))),
+      isUtrComplete(TrusteeHasUTRId(trusteeIndex), TrusteeUTRId(trusteeIndex), TrusteeNoUTRReasonId(trusteeIndex))
+    ))
+
+  def isIndividualCompleteHnS(trusteeIndex: Int): Boolean =
+    isComplete(
+      Seq(
+        isIndividualDetailsComplete(trusteeIndex),
+        isAddressComplete(TrusteeAddressId(trusteeIndex), TrusteePreviousAddressId(trusteeIndex), TrusteeAddressYearsId(trusteeIndex), None),
+        isContactDetailsComplete(TrusteeEmailId(trusteeIndex), TrusteePhoneId(trusteeIndex))
+      )
+    ).getOrElse(false)
+
+  def isIndividualCompleteNonHnS(trusteeIndex: Int): Boolean =
+    isListComplete(Seq(
+      get(TrusteeDetailsId(trusteeIndex)).isDefined,
+      get(TrusteeNinoId(trusteeIndex)).isDefined,
+      get(TrusteeUTRId(trusteeIndex)).isDefined,
+      isAddressComplete(TrusteeAddressId(trusteeIndex), TrusteePreviousAddressId(trusteeIndex),
+        TrusteeAddressYearsId(trusteeIndex), None).getOrElse(false),
+      get(TrusteeContactDetailsId(trusteeIndex)).isDefined
     ))
 
 
