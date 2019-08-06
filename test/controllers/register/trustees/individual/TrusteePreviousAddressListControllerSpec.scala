@@ -43,9 +43,6 @@ class TrusteePreviousAddressListControllerSpec extends ControllerSpecBase with C
   private lazy val onwardRoute = controllers.routes.IndexController.onPageLoad()
   private lazy val fakeNavigator = new FakeNavigator(onwardRoute)
 
-  val previousAddressTitle = "Select the previous address"
-  val previousAddressHeading = "Select the previous address"
-
   private val addresses = Seq(
     TolerantAddress(
       Some("Address 1 Line 1"),
@@ -200,8 +197,8 @@ class TrusteePreviousAddressListControllerSpec extends ControllerSpecBase with C
       routes.TrusteePreviousAddressListController.onSubmit(NormalMode, Index(0), None),
       routes.TrusteePreviousAddressController.onPageLoad(NormalMode, Index(0), None),
       addresses,
-      title = previousAddressTitle,
-      heading = previousAddressHeading,
+      title = messages("messages__trustee__individual__previous__address__title"),
+      heading = messages("messages__trustee__individual__previous__address__heading", trusteeDetails.fullName),
       subHeading = Some(Message(trusteeDetails.fullName))
     )
   }
