@@ -17,7 +17,7 @@
 package identifiers.register.trustees.company
 
 import identifiers.TypedIdentifier
-import identifiers.register.trustees.{IsTrusteeCompleteId, TrusteesId}
+import identifiers.register.trustees.{IsTrusteeCompleteId, IsTrusteeNewId, TrusteesId}
 import models.AddressYears
 import play.api.i18n.Messages
 import play.api.libs.json.{JsPath, JsResult}
@@ -61,6 +61,10 @@ object CompanyAddressYearsId {
         )().row(id)(changeUrl, ua)
       }
 
-      override def updateRow(id: CompanyAddressYearsId)(changeUrl: String, ua: UserAnswers): Seq[AnswerRow] = row(id)(changeUrl, ua)
+      override def updateRow(id: CompanyAddressYearsId)(changeUrl: String, ua: UserAnswers): Seq[AnswerRow] =
+        ua.get(IsTrusteeNewId(id.index)) match {
+          case Some(true) => row(id)(changeUrl, ua)
+          case _ => Nil
+        }
     }
 }
