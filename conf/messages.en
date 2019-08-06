@@ -704,6 +704,10 @@ messages__trustee__individual__address__title = What is the trustee’s address?
 messages__trustee__individual__address__heading = What is {0}’s address?
 messages__trustee__individual__address__lede = This is usually the residential address for this person.
 
+messages__trustee__individual__address__confirm__title = Confirm the trustee’s address
+messages__trustee__individual__address__confirm__heading = Confirm {0}’s address
+messages__trustee__individual__address__confirm__lede = This is usually the residential address for this person.
+
 messages__trusteeNino__title = Does the trustee have a National Insurance number?
 messages__trusteeNino__heading = Does the trustee have a National Insurance number?
 messages__trusteeNino__error__required = Select yes if the trustee has a National Insurance number
