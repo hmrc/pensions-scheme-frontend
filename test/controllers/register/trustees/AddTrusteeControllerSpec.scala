@@ -216,13 +216,18 @@ class AddTrusteeControllerSpec extends ControllerSpecBase {
       view.getElementById("submit").hasAttr("disabled") mustEqual false
     }
 
+    // TODO PODS-2940 add a unit test for toggle ON
+
     "return view with button DISABLED when toggle set to FALSE and at least one trustee is INCOMPLETE" in {
-      val trusteeList: JsValue = UserAnswers()
-        .set(TrusteeDetailsId(0))(PersonDetails("fistName", None, "lastName", LocalDate.now())).asOpt.value
-        .set(IsTrusteeCompleteId(0))(true).asOpt.value
-        .set(TrusteeDetailsId(1))(PersonDetails("fistName", None, "lastName", LocalDate.now())).asOpt.value
-        .set(IsTrusteeCompleteId(1))(false).asOpt.value
-        .json
+
+      val trusteeList: JsValue =
+        setTrusteeComplete(toggled = false, 1,
+          setTrusteeIncomplete(toggled = false, 0,
+            UserAnswers()
+              .set(TrusteeDetailsId(0))(PersonDetails("fistName", None, "lastName", LocalDate.now())).asOpt.value
+              .set(TrusteeDetailsId(1))(PersonDetails("fistName", None, "lastName", LocalDate.now())).asOpt.value
+          )
+        ).json
 
       val trusteeController: AddTrusteeController = controller(new FakeDataRetrievalAction(Some(trusteeList)), featureToggleEnabled = false)
 
