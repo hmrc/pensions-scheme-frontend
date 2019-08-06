@@ -318,11 +318,11 @@ final case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Impl
       case _ => 0
     }
 
+    // Change this method
     private def readsIndividual(index: Int): Reads[Trustee[_]] = (
       (JsPath \ TrusteeDetailsId.toString).read[PersonDetails] and
-        (JsPath \ IsTrusteeCompleteId.toString).readNullable[Boolean] and
         (JsPath \ IsTrusteeNewId.toString).readNullable[Boolean]
-      ) ((details, isComplete, isNew) =>
+      ) ((details, isNew) =>
       TrusteeIndividualEntity(
         TrusteeDetailsId(index), details.fullName, details.isDeleted,
         isComplete.getOrElse(false), isNew.fold(false)(identity), noOfRecords, schemeType)
@@ -368,7 +368,7 @@ final case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Impl
     }
   }
 
-  def allTrustees: Seq[Trustee[_]] = {
+  def allTrustees(isHnSEnabled:Boolean): Seq[Trustee[_]] = {
 
     json.validate[Seq[Trustee[_]]](readTrustees) match {
       case JsSuccess(trustees, _) =>
@@ -379,8 +379,8 @@ final case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Impl
     }
   }
 
-  def allTrusteesAfterDelete: Seq[Trustee[_]] = {
-    allTrustees.filterNot(_.isDeleted)
+  def allTrusteesAfterDelete(isHnSEnabled:Boolean): Seq[Trustee[_]] = {
+    allTrustees(isHnSEnabled).filterNot(_.isDeleted)
   }
 
   def establishersCount: Int = {
