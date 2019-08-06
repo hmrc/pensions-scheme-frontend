@@ -221,26 +221,28 @@ class DataCompletionSpec extends WordSpec with MustMatchers with OptionValues wi
 
   // TRUSTEE INDIVIDUAL
 
-  "isUtrComplete for individual trustee" must {
-
-    "return None when answer is missing" in {
-      UserAnswers(userAnswersUninitiated).isUtrComplete(TrusteeHasUTRId(0), TrusteeUTRId(0), TrusteeNoUTRReasonId(0)) mustBe None
+  "isTrusteeIndividualCompleteNonHnS" must {
+    "return true when all answers are present" in {
+      UserAnswers(userAnswersCompletedNonHnS).isTrusteeIndividualCompleteNonHnS(0) mustBe true
     }
 
-    "return Some(true) when answer is present" in {
-      UserAnswers(userAnswersCompleted).isUtrComplete(TrusteeHasUTRId(0), TrusteeUTRId(0), TrusteeNoUTRReasonId(0)) mustBe Some(true)
+    "return false when some answer is missing" in {
+      UserAnswers(userAnswersInProgress).isTrusteeIndividualCompleteNonHnS(0) mustBe false
     }
-    "return Some(false) when answer is missing" in {
-      UserAnswers(userAnswersInProgress).isUtrComplete(TrusteeHasUTRId(0), TrusteeUTRId(0), TrusteeNoUTRReasonId(0)) mustBe Some(false)
+  }  
+
+  "isTrusteeIndividualCompleteHnS" must {
+    "return true when all answers are present" in {
+      UserAnswers(userAnswersCompleted).isTrusteeIndividualCompleteHnS(0) mustBe true
+    }
+
+    "return false when some answer is missing" in {
+      UserAnswers(userAnswersInProgress).isTrusteeIndividualCompleteHnS(0) mustBe false
     }
   }
-
-
-
 }
 
 object DataCompletionSpec extends JsonFileReader {
-
   val userAnswersCompleted: JsValue = readJsonFromFile("/payloadHnS.json")
   val userAnswersInProgress: JsValue = readJsonFromFile("/payloadHnSInProgress.json")
 

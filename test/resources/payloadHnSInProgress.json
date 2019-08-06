@@ -8,7 +8,7 @@
   "declarationDuties" : true,
   "isWorkingKnowledgeComplete" : true,
   "trustees" : [
-  {
+    {
       "isTrusteeNew" : true,
       "trusteeKind" : "individual",
       "trusteeDetails" : {
@@ -17,8 +17,32 @@
         "date" : "2000-01-01",
         "isDeleted" : false
       },
-      "hasUtr" : false,
-      "hasNino" : true
+      "hasUtr" : true,
+      "hasNino" : true,
+      "trusteeNino": {
+        "value": "CS121212C",
+        "isEditable" : true
+      },
+      "trusteeDOB": "2000-02-02",
+      "trusteeAddressId" : {
+        "addressLine1" : "10 Other Place",
+        "addressLine2" : "Some District",
+        "addressLine3" : "Anytown",
+        "addressLine4" : "Somerset",
+        "postcode" : "ZZ1 1ZZ",
+        "country" : "GB"
+      },
+      "trusteeAddressYears" : "under_a_year",
+      "trusteePreviousAddress" : {
+        "addressLine1" : "10 Other Place",
+        "addressLine2" : "Some District",
+        "addressLine3" : "Anytown",
+        "addressLine4" : "Somerset",
+        "postcode" : "ZZ1 1ZZ",
+        "country" : "GB"
+      },
+      "emailAddress": "a@a.c",
+      "phoneNumber": "11"
     }
   ],
   "establishers" : [

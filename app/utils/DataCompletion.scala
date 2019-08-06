@@ -169,31 +169,29 @@ trait DataCompletion {
 
   // INDIVIDUAL TRUSTEE
 
-  def isIndividualDetailsComplete(trusteeIndex: Int): Option[Boolean] =
+  def isTrusteeIndividualDetailsComplete(trusteeIndex: Int): Option[Boolean] =
     isComplete(Seq(
       Some(get(TrusteeDOBId(trusteeIndex)).isDefined),
       isAnswerComplete(TrusteeHasNINOId(trusteeIndex), TrusteeNewNinoId(trusteeIndex), Some(TrusteeNoNINOReasonId(trusteeIndex))),
       isUtrComplete(TrusteeHasUTRId(trusteeIndex), TrusteeUTRId(trusteeIndex), TrusteeNoUTRReasonId(trusteeIndex))
     ))
 
-  def isIndividualCompleteHnS(trusteeIndex: Int): Boolean =
+  def isTrusteeIndividualCompleteHnS(trusteeIndex: Int): Boolean =
     isComplete(
       Seq(
-        isIndividualDetailsComplete(trusteeIndex),
+        isTrusteeIndividualDetailsComplete(trusteeIndex),
         isAddressComplete(TrusteeAddressId(trusteeIndex), TrusteePreviousAddressId(trusteeIndex), TrusteeAddressYearsId(trusteeIndex), None),
         isContactDetailsComplete(TrusteeEmailId(trusteeIndex), TrusteePhoneId(trusteeIndex))
       )
     ).getOrElse(false)
 
-  def isIndividualCompleteNonHnS(trusteeIndex: Int): Boolean =
+  def isTrusteeIndividualCompleteNonHnS(trusteeIndex: Int): Boolean =
     isListComplete(Seq(
       get(TrusteeDetailsId(trusteeIndex)).isDefined,
       get(TrusteeNinoId(trusteeIndex)).isDefined,
-      get(TrusteeUTRId(trusteeIndex)).isDefined,
+      get(UniqueTaxReferenceId(trusteeIndex)).isDefined,
       isAddressComplete(TrusteeAddressId(trusteeIndex), TrusteePreviousAddressId(trusteeIndex),
         TrusteeAddressYearsId(trusteeIndex), None).getOrElse(false),
       get(TrusteeContactDetailsId(trusteeIndex)).isDefined
     ))
-
-
 }
