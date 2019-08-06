@@ -47,13 +47,13 @@ trait FieldBehaviours extends FormSpec with PropertyChecks with Generators with 
                      fieldName: String,
                      requiredError: FormError): Unit = {
 
-    "not bind when key is not present at all" in {
+    s"not bind when key is not present at all for form with error message ${requiredError.message}" in {
 
       val result = form.bind(emptyForm).apply(fieldName)
       result.errors mustEqual Seq(requiredError)
     }
 
-    "not bind blank values" in {
+    s"not bind blank values for form with error message ${requiredError.message}" in {
 
       val result = form.bind(Map(fieldName -> "")).apply(fieldName)
       result.errors mustEqual Seq(requiredError)
