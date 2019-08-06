@@ -54,6 +54,8 @@ class PartnershipAddressControllerSpec extends ControllerSpecBase with ScalaFutu
   val fakeAuditService = new StubSuccessfulAuditService()
 
   val address = Address("value 1", "value 2", None, None, None, "GB")
+  val heading: Message = "messages__common__confirmAddress__h1"
+
 
   def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisherPartnership): PartnershipAddressController =
     new PartnershipAddressController(
@@ -78,7 +80,7 @@ class PartnershipAddressControllerSpec extends ControllerSpecBase with ScalaFutu
         routes.PartnershipAddressController.onSubmit(NormalMode, firstIndex, None),
         options,
         Message("messages__partnershipAddress__title"),
-        Message("messages__partnershipAddress__heading"),
+        Message(heading,partnershipName),
         Some(partnershipName),
         Some(Message("messages__partnershipAddress__lede"))
       ),

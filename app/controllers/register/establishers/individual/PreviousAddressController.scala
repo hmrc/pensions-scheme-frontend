@@ -54,7 +54,7 @@ class PreviousAddressController @Inject()(
 
   private[controllers] val postCall = routes.PreviousAddressController.onSubmit _
   private[controllers] val title: Message = "messages__establisher_individual_previous_address__title"
-  private[controllers] val heading: Message = "messages__establisher_individual_previous_address__title"
+  private[controllers] val heading: Message = "messages__common__confirmPreviousAddress__h1"
   private[controllers] val hint: Message = "messages__establisher_individual_previous_address_lede"
 
   protected val form: Form[Address] = formProvider()
@@ -68,7 +68,7 @@ class PreviousAddressController @Inject()(
               postCall(mode, Index(index), srn),
               countryOptions.options,
               title = Message(title),
-              heading = Message(heading),
+              heading = Message(heading,details.fullName),
               hint = Some(Message(hint)),
               secondaryHeader = Some(details.fullName),
               srn = srn

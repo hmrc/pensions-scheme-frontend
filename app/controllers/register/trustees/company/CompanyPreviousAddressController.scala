@@ -55,7 +55,7 @@ class CompanyPreviousAddressController @Inject()(
 
   private[controllers] val postCall = CompanyPreviousAddressController.onSubmit _
   private[controllers] val title: Message = "messages__companyConfirmPreviousAddress__title"
-  private[controllers] val heading: Message = "messages__companyConfirmPreviousAddress__heading"
+  private[controllers] val heading: Message = "messages__common__confirmPreviousAddress__h1"
   private[controllers] val hint: Message = "messages__companyAddress__trustee__lede"
 
   protected val form: Form[Address] = formProvider()

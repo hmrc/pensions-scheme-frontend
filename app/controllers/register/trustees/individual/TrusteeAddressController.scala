@@ -53,8 +53,8 @@ class TrusteeAddressController @Inject()(
                                         )(implicit val ec: ExecutionContext) extends ManualAddressController with I18nSupport {
 
   private[controllers] val postCall = TrusteeAddressController.onSubmit _
-  private[controllers] val title: Message = "messages__trustee__individual__address__heading"
-  private[controllers] val heading: Message = "messages__trustee__individual__address__heading"
+  private[controllers] val title: Message = "messages__trustee__individual__address__title"
+  private[controllers] val heading: Message = "messages__common__confirmAddress__h1"
   private[controllers] val hint: Message = "messages__trustee__individual__address__lede"
 
   protected val form: Form[Address] = formProvider()
@@ -68,7 +68,7 @@ class TrusteeAddressController @Inject()(
               postCall(mode, Index(index), srn),
               countryOptions.options,
               title = Message(title),
-              heading = Message(heading),
+              heading = Message(heading,details.fullName),
               hint = Some(Message(hint)),
               secondaryHeader = Some(details.fullName),
               srn = srn

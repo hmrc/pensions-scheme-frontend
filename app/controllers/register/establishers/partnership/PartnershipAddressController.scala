@@ -54,7 +54,7 @@ class PartnershipAddressController @Inject()(
   protected val form: Form[Address] = formProvider()
   private[controllers] val postCall = routes.PartnershipAddressController.onSubmit _
   private[controllers] val title: Message = "messages__partnershipAddress__title"
-  private[controllers] val heading: Message = "messages__partnershipAddress__heading"
+  private[controllers] val heading: Message = "messages__common__confirmAddress__h1"
   private[controllers] val hint: Message = "messages__partnershipAddress__lede"
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
@@ -83,7 +83,7 @@ class PartnershipAddressController @Inject()(
               postCall(mode, Index(index), srn),
               countryOptions.options,
               title = Message(title),
-              heading = Message(heading),
+              heading = Message(heading,details.name),
               hint = Some(Message(hint)),
               secondaryHeader = Some(details.name),
               srn = srn

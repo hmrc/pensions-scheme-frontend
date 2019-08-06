@@ -51,6 +51,8 @@ messages__common__vat__hint = This has 9 characters and is issued by HMRC. It mi
 messages__common__company_vat__hint = This is 9 numbers, sometimes with ‘GB’ at the start, for example 123456789 or GB123456789. You can find it on {0}’s VAT registration certificate.
 messages__common__nino = National Insurance number
 messages__common__reason = Reason
+messages__common__confirmAddress__h1 = Confirm {0}’s address
+messages__common__confirmPreviousAddress__h1 = Confirm {0}’s previous address
 
 messages__common__postcode_lookup__enter_postcode = You can {0} enter the address manually {1}.
 messages__common__postcode_lookup__manual_link = You can {0} enter the address manually {1}.
@@ -419,6 +421,7 @@ messages__error__paye_invalid = Enter an employer PAYE number using only numbers
 messages__error__has_paye_establisher = Select whether the partnership has an employer PAYE number
 
 messages__establisher_individual_address__title = Establisher’s address
+messages__establisher_individual_confirmAddress__heading = Confirm {0}’s address
 messages__establisher_individual_address__heading = What is {0}’s postcode?
 messages__establisher_individual_address_lede = This is usually the residential address for this person.
 
@@ -490,10 +493,8 @@ messages__companyAddress__trustee__lede = This is usually the registered busines
 messages__companyAddress__checkYourAnswersLabel = Address
 
 messages__companyConfirmAddress__title = Confirm the company’s address
-messages__companyConfirmAddress__heading = Confirm {0}’s address
 
 messages__companyConfirmPreviousAddress__title = Confirm the company’s previous address
-messages__companyConfirmPreviousAddress__heading = Confirm {0}’s previous address
 
 messages__directorDetails__title = Company director
 messages__directorDetails__heading = Company director
@@ -698,7 +699,6 @@ messages__declarationDuties__no_hint2 = Where HMRC believes that any of the pers
 messages__error_declaration_duties_required = Tell us if you have the appropriate knowledge to admnister a pension scheme
 
 messages__trustee__individual__address__title = Trustee’s address
-messages__trustee__individual__address__heading = Trustee’s address
 messages__trustee__individual__address__lede = This is usually the residential address for this person.
 
 messages__trusteeNino__title = Does the trustee have a National Insurance number?
@@ -919,7 +919,6 @@ messages__partnershipPreviousAddressPostcodeLookup__heading = What was {0}’s p
 messages__partnershipPreviousAddressPostcodeLookup__checkYourAnswersLabel = Previous address
 
 messages__partnershipPreviousAddress__title = Enter the partnership’s previous address
-messages__partnershipPreviousAddress__heading = Enter the partnership’s previous address
 
 messages__otherPartners__title=Do you need to tell us about other partners?
 messages__otherPartners__heading=Do you need to tell us about other partners?
@@ -1048,7 +1047,6 @@ messages__partnershipReview__partners__viewLink = View details of partners
 messages__checkYourAnswers__trustees__partnership__address_years = How long has the partnership been at this address?
 
 messages__trusteePartnershipAddress__title = Enter the partnership’s address
-messages__trusteePartnershipAddress__heading = Enter the partnership’s address
 messages__trusteePartnershipAddress__lede = This is usually the registered business address but you can enter any address you have for this trustee.
 
 messages__needContact__title = What is your email address?

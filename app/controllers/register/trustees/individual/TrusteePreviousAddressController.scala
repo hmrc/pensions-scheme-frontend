@@ -54,7 +54,7 @@ class TrusteePreviousAddressController @Inject()(
 
   private[controllers] val postCall = TrusteePreviousAddressController.onSubmit _
   private[controllers] val title: Message = "messages__trustee_individual_previous_address__title"
-  private[controllers] val heading: Message = "messages__trustee_individual_previous_address__heading"
+  private[controllers] val heading: Message = "messages__common__confirmPreviousAddress__h1"
 
   protected val form: Form[Address] = formProvider()
 
@@ -67,7 +67,7 @@ class TrusteePreviousAddressController @Inject()(
               postCall(mode, Index(index), srn),
               countryOptions.options,
               title = Message(title),
-              heading = Message(heading),
+              heading = Message(heading,details.fullName),
               secondaryHeader = Some(details.fullName),
               srn = srn
             )

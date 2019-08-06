@@ -71,7 +71,7 @@ class TrusteeAddressControllerSpec extends ControllerBehaviours {
     controller.postCall(NormalMode, firstIndex, None),
     countryOptions.options,
     Message(controller.title),
-    Message(controller.heading),
+    Message(controller.heading,personDetails.fullName),
     secondaryHeader = Some(personDetails.fullName),
     Some(Message(controller.hint))
   )
