@@ -419,6 +419,7 @@ messages__error__paye_invalid = Enter an employer PAYE number using only numbers
 messages__error__has_paye_establisher = Select whether the partnership has an employer PAYE number
 
 messages__establisher_individual_address__title = Establisher’s address
+messages__establisher_individual_address__heading = What is {0}’s postcode?
 messages__establisher_individual_address_lede = This is usually the residential address for this person.
 
 messages__company__crn__title=Does the company have a Company Registration number (CRN)?
@@ -452,6 +453,7 @@ messages__select_the_previous_address__heading = Select the previous address
 messages__previousAddressList__checkYourAnswersLabel = previousAddressList
 
 messages__establisher_individual_previous_address__title = Previous address
+messages__establisher_individual_previous_address__heading = What was {0}’s previous postcode?
 messages__establisher_individual_previous_address_lede = This is usually the residential address for this person.
 
 messages__establisher_individual_name_cya_label = Name
@@ -710,12 +712,12 @@ messages__trusteeNino__nino_reason_cya_label = Reason
 
 
 messages__individualPostCodeLookup__title = Trustee’s address
-messages__individualPostCodeLookup__heading = Trustee’s address
+messages__individualPostCodeLookup__heading = What is {0}’s postcode?
 messages__individualPostCodeLookup__enter_postcode = Enter the postcode, or if you have an overseas address, {0} enter the address manually {1}
 messages__trustee_individualPostCodeLookup__enter_postcode = Enter the postcode, or if you have an overseas address, {0} enter the address manually {1}
 
 messages__trustee_individual_previous_address__title = Previous address
-messages__trustee_individual_previous_address__heading = Previous address
+messages__trustee_individual_previous_address__heading = What was {0}’s previous postcode?
 messages__trustee_individual_utr_cya_label = Unique Taxpayer Reference number
 
 messages__trustee__uniqueTaxReference__title = Does the trustee have a Self-Assessment Unique Taxpayer Reference number (SAUTR)?
@@ -904,7 +906,7 @@ messages__partnershipAddress__heading = Enter the partnership’s address
 messages__partnershipAddress__lede = This is usually the registered business address but you can enter any address you have for this scheme establisher.
 
 messages__partnershipPostcodeLookup__title = Enter the partnership’s postcode
-messages__partnershipPostcodeLookup__heading = Enter the partnership’s postcode
+messages__partnershipPostcodeLookup__heading = What is {0}’s postcode?
 messages__partnershipPostcodeLookup__hint = This is usually the registered business address but you can enter any address you have for this scheme establisher.
 messages__trusteePartnershipPostcodeLookup__hint = This is usually the registered business address but you can enter any address you have for this trustee.
 
@@ -913,7 +915,7 @@ messages__partnershipAddress__heading = Enter the partnership’s address
 messages__partnershipAddress__lede = This is usually the registered business address but you can enter any address you have for this scheme establisher.
 
 messages__partnershipPreviousAddressPostcodeLookup__title = Enter the partnership’s previous postcode
-messages__partnershipPreviousAddressPostcodeLookup__heading = Enter the partnership’s previous postcode
+messages__partnershipPreviousAddressPostcodeLookup__heading = What was {0}’s previous postcode?
 messages__partnershipPreviousAddressPostcodeLookup__checkYourAnswersLabel = Previous address
 
 messages__partnershipPreviousAddress__title = Enter the partnership’s previous address
@@ -1009,7 +1011,7 @@ messages__partnerPreviousAddress__title = Enter the partner’s previous address
 messages__partnerPreviousAddress__heading = Enter the partner’s previous address
 
 messages__partnerPreviousAddressPostcodeLookup__title = Enter the partner’s previous postcode
-messages__partnerPreviousAddressPostcodeLookup__heading = Enter the partner’s previous postcode
+messages__partnerPreviousAddressPostcodeLookup__heading = What was {0}’s previous postcode?
 
 messages__partner_address_years__title = Has {0} used this contact address for at least 1 year?
 messages__partner_address_years__heading = Has {0} used this contact address for at least 1 year?
@@ -1017,7 +1019,7 @@ messages__partner_address_years__formError = Select yes if {0} has used this con
 messages__partner_address_years__cya = How long has the partner lived at this address?
 
 messages__partnerAddressPostcodeLookup__title = Enter the partner’s postcode
-messages__partnerAddressPostcodeLookup__heading = Enter the partner’s postcode
+messages__partnerAddressPostcodeLookup__heading = What is {0}’s postcode?
 
 messages__partnerAddress__title = Enter the partner’s address
 messages__partnerAddress__heading = Enter the partner’s address
@@ -1547,6 +1549,13 @@ messages__whatYouWillNeedTrusteeCompany__item2 = Unique Taxpayer Reference (UTR)
 messages__whatYouWillNeedTrusteeCompany__item3 = VAT registration number, if it has one
 messages__whatYouWillNeedTrusteeCompany__item4 = employer PAYE reference, if it has one
 messages__whatYouWillNeedTrusteeCompany__p2 = You will also need to tell us if the company has been dormant at any time in the last 12 months.
+
+messages__whatYouWillNeedTrusteeIndividual__title = Trustee’s details
+messages__whatYouWillNeedTrusteeIndividual__h1 = {0}’s details
+messages__whatYouWillNeedTrusteeIndividual__p1 = For each trustee, you will need to tell us their:
+messages__whatYouWillNeedTrusteeIndividual__item1 = date of birth
+messages__whatYouWillNeedTrusteeIndividual__item2 = National Insurance number, or reason why they do not have one
+messages__whatYouWillNeedTrusteeIndividual__item3 = Unique Taxpayer Reference (UTR), or reason why they do not have one
 
 messages__tradingAtLeastOneYear__error = Select yes if {0} has been trading for at least 1 year
 
