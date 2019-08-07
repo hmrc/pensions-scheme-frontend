@@ -110,7 +110,7 @@ object TrusteeNinoNewControllerSpec extends ControllerSpecBase {
 
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryTrustee): TrusteeNinoNewController =
+  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryTrusteeNonHnS): TrusteeNinoNewController =
     new TrusteeNinoNewController(frontendAppConfig, messagesApi, FakeUserAnswersService, new FakeNavigator(desiredRoute = onwardRoute),
       FakeAuthAction, dataRetrievalAction, FakeAllowAccessProvider(), new DataRequiredActionImpl, formProvider)
 
