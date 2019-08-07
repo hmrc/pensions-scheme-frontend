@@ -21,34 +21,30 @@ import javax.inject.Inject
 import models.person.PersonName
 import play.api.data.Form
 import play.api.data.Forms._
+import play.api.i18n.Messages
 
 class PersonNameFormProvider @Inject() extends Mappings with Transforms {
 
-  def apply(): Form[PersonName] = Form(
-    mapping(
-      "firstName" ->
-        text(errorKey = "messages__error__first_name")
-          .verifying(
-            firstError(
-              maxLength(PersonNameFormProvider.firstNameLength,
-                errorKey = "messages__error__first_name_length"
-              ),
-              name(errorKey = "messages__error__first_name_invalid")
+  def apply(token: String)(implicit messages: Messages): Form[PersonName] =
+    Form(
+      mapping(
+        "firstName" ->
+          text(errorKey = messages("messages__error__first_name", messages(token))).verifying(
+              firstError(
+                maxLength(PersonNameFormProvider.firstNameLength, errorKey = "messages__error__first_name_length"),
+                name(errorKey = "messages__error__first_name_invalid")
+              )
+            ),
+        "lastName" ->
+          text(errorKey = messages("messages__error__last_name", messages(token))).verifying(
+              firstError(
+                maxLength(PersonNameFormProvider.lastNameLength, errorKey = "messages__error__last_name_length"),
+                name(errorKey = "messages__error__last_name_invalid")
+              )
             )
-          ),
-      "lastName" ->
-        text(errorKey = "messages__error__last_name")
-          .verifying(
-            firstError(
-              maxLength(PersonNameFormProvider.lastNameLength,
-                errorKey = "messages__error__last_name_length"
-              ),
-              name(errorKey = "messages__error__last_name_invalid")
-            )
-          )
 
-    )(PersonName.applyDelete)(PersonName.unapplyDelete)
-  )
+      )(PersonName.applyDelete)(PersonName.unapplyDelete)
+    )
 }
 
 object PersonNameFormProvider {

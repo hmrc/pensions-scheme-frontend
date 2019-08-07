@@ -14,50 +14,49 @@
  * limitations under the License.
  */
 
-package views.register.establishers.company.director
+package views.register.trustees.individual
 
-import controllers.register.establishers.company.director.routes
-import forms.register.{PersonDetailsFormProvider, PersonNameFormProvider}
-import models.person.{PersonDetails, PersonName}
+import controllers.register.trustees.individual.routes
+import forms.register.PersonNameFormProvider
+import models.person.PersonName
 import models.{Index, NormalMode}
 import org.joda.time.LocalDate
-import play.api.data.{Form, FormError}
+import play.api.data.Form
 import play.twirl.api.HtmlFormat
 import views.behaviours.QuestionViewBehaviours
-import views.html.register.establishers.company.director.directorName
+import views.html.register.trustees.individual.trusteeName
 
-class DirectorNameViewSpec extends QuestionViewBehaviours[PersonName] {
+class TrusteeNameViewSpec extends QuestionViewBehaviours[PersonName] {
 
-  val messageKeyPrefix = "directorName"
+  val messageKeyPrefix = "trusteeName"
 
-  val establisherIndex = Index(1)
-  val directorIndex = Index(1)
-  private val postCall = routes.DirectorNameController.onSubmit _
+  val trusteeIndex = Index(1)
+  private val postCall = routes.TrusteeNameController.onSubmit _
 
-  override val form = new PersonNameFormProvider()("messages__error__director")
+  override val form = new PersonNameFormProvider()("messages__error__trustees")
 
   def createView(): () => HtmlFormat.Appendable = () =>
-    directorName(frontendAppConfig, form, NormalMode, establisherIndex, directorIndex, None,
-      postCall(NormalMode, establisherIndex, directorIndex, None), None)(fakeRequest, messages)
+    trusteeName(frontendAppConfig, form, NormalMode, trusteeIndex, None,
+      postCall(NormalMode, trusteeIndex, None), None)(fakeRequest, messages)
   def createUpdateView(): () => HtmlFormat.Appendable = () =>
-    directorName(frontendAppConfig, form, NormalMode, establisherIndex, directorIndex, None,
-      postCall(NormalMode, establisherIndex, directorIndex, None), Some("srn"))(fakeRequest, messages)
+    trusteeName(frontendAppConfig, form, NormalMode, trusteeIndex, None,
+      postCall(NormalMode, trusteeIndex, None), Some("srn"))(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) =>
-    directorName(frontendAppConfig, form, NormalMode, establisherIndex, directorIndex, None,
-      postCall(NormalMode, establisherIndex, directorIndex, None), None)(fakeRequest, messages)
+    trusteeName(frontendAppConfig, form, NormalMode, trusteeIndex, None,
+      postCall(NormalMode, trusteeIndex, None), None)(fakeRequest, messages)
 
   val validData: Map[String, String] = Map(
     "firstName" -> "testFirstName",
     "lastName" -> "testLastName"
   )
 
-  "DirectorName view" must {
+  "TrusteeName view" must {
 
     behave like normalPage(createView(), messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"))
 
     behave like pageWithTextFields(createViewUsingForm, messageKeyPrefix,
-      controllers.register.establishers.company.director.routes.DirectorNameController.onSubmit(NormalMode, establisherIndex, directorIndex, None).url,
+      controllers.register.trustees.individual.routes.TrusteeNameController.onSubmit(NormalMode, trusteeIndex, None).url,
       "firstName", "lastName")
     
     behave like pageWithReturnLink(createView(), getReturnLink)
