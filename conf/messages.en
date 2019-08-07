@@ -699,9 +699,19 @@ messages__declarationDuties__no_hint1 = I have appointed an adviser to the pensi
 messages__declarationDuties__no_hint2 = Where HMRC believes that any of the persons who are the scheme administrator is not a fit and proper person, HMRC may refuse to register the scheme or, if the scheme is already registered, HMRC may de-register the scheme
 messages__error_declaration_duties_required = Tell us if you have the appropriate knowledge to admnister a pension scheme
 
-messages__trustee__individual__address__title = Trustee’s address
-messages__trustee__individual__address__heading = Trustee’s address
+messages__trustee__individual__nino__title = What is the trustee’s National Insurance number?
+messages__trustee__individual__nino__heading = What is {0}’s National Insurance number?
+
+messages__trustee__individual__address__title = What is the trustee’s address?
+messages__trustee__individual__address__heading = What is {0}’s address?
 messages__trustee__individual__address__lede = This is usually the residential address for this person.
+
+messages__trustee__individual__address__confirm__title = Confirm the trustee’s address
+messages__trustee__individual__address__confirm__heading = Confirm {0}’s address
+messages__trustee__individual__address__confirm__lede = This is usually the residential address for this person.
+
+messages__trustee__individual__previous__address__title = What was the trustee’s previous address?
+messages__trustee__individual__previous__address__heading = What was {0}’s previous address?
 
 messages__trusteeNino__title = Does the trustee have a National Insurance number?
 messages__trusteeNino__heading = Does the trustee have a National Insurance number?
@@ -716,14 +726,17 @@ messages__trusteeName__title = What is the trustee’s name?
 messages__trusteeName__heading = What is the trustee’s name?
 
 
-messages__individualPostCodeLookup__title = Trustee’s address
+messages__individualPostCodeLookup__title = What is the trustee’s postcode?
 messages__individualPostCodeLookup__heading = What is {0}’s postcode?
 messages__individualPostCodeLookup__enter_postcode = Enter the postcode, or if you have an overseas address, {0} enter the address manually {1}
 messages__trustee_individualPostCodeLookup__enter_postcode = Enter the postcode, or if you have an overseas address, {0} enter the address manually {1}
 
-messages__trustee_individual_previous_address__title = Previous address
+messages__trustee_individual_previous_address__title = What was the trustee’s previous postcode?
 messages__trustee_individual_previous_address__heading = What was {0}’s previous postcode?
 messages__trustee_individual_utr_cya_label = Unique Taxpayer Reference number
+
+messages__trustee_individual_confirm__previous_address__title = Confirm the trustee’s previous address
+messages__trustee_individual_confirm__previous_address__heading = Confirm {0}’s previous address
 
 messages__trustee__uniqueTaxReference__title = Does the trustee have a Self-Assessment Unique Taxpayer Reference number (SAUTR)?
 messages__trustee__uniqueTaxReference__heading = Does the trustee have a Self-Assessment Unique Taxpayer Reference number (SAUTR)?
@@ -735,8 +748,8 @@ messages__trustee__uniqueTaxReference__error__utr_required = Enter the Unique Ta
 messages__trustee__uniqueTaxReference__error__reason_required = You need to tell us why the trustee does not have a UTR
 messages__trustee__uniqueTaxReference__error__utr_invalid = Please give an answer for uniqueTaxReference
 
-messages__trusteeAddressYears__title = Has {0} used this contact address for at least 1 year?
-messages__trusteeAddressYears__heading = Has {0} used this contact address for at least 1 year?
+messages__trusteeAddressYears__title = Has {0} used this address for at least 1 year?
+messages__trusteeAddressYears__heading = Has {0} used this address for at least 1 year?
 messages__trusteeAddressYears__error_required = Select yes if {0} has been at this contact address for at least 1 year
 
 messages__trusteeAddressYears_cya_label = How long has the trustee been at this address?

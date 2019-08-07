@@ -53,8 +53,6 @@ class TrusteePreviousAddressController @Inject()(
                                                 )(implicit val ec: ExecutionContext) extends ManualAddressController with I18nSupport {
 
   private[controllers] val postCall = TrusteePreviousAddressController.onSubmit _
-  private[controllers] val title: Message = "messages__trustee_individual_previous_address__title"
-  private[controllers] val heading: Message = "messages__trustee_individual_previous_address__heading"
 
   protected val form: Form[Address] = formProvider()
 
@@ -66,8 +64,8 @@ class TrusteePreviousAddressController @Inject()(
             ManualAddressViewModel(
               postCall(mode, Index(index), srn),
               countryOptions.options,
-              title = Message(title),
-              heading = Message(heading),
+              title = Message("messages__trustee_individual_confirm__previous_address__title"),
+              heading = Message("messages__trustee_individual_confirm__previous_address__heading", details.fullName),
               secondaryHeader = Some(details.fullName),
               srn = srn
             )

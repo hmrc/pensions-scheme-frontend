@@ -204,14 +204,13 @@ object AddressListControllerSpec {
 
   def addressListViewModel(addresses: Seq[TolerantAddress] = addresses): AddressListViewModel =
     AddressListViewModel(
-      postCall,
-      manualInputCall,
-      addresses,
-      Message("title text"),
-      Message("heading text"),
-      Some(Message("sub-heading text")),
-      Message("select an address text"),
-      Message("select an address link text")
+      postCall = postCall,
+      manualInputCall = manualInputCall,
+      addresses = addresses,
+      title = Message("title text"),
+      heading = Message("heading text"),
+      selectAddress = Message("select an address text"),
+      selectAddressLink = Message("select an address link text")
     )
 
   def viewAsString(app: Application, viewModel: AddressListViewModel, value: Option[Int]): String = {

@@ -22,13 +22,14 @@ import controllers.actions._
 import forms.NinoNewFormProvider
 import identifiers.register.establishers.partnership.partner.{PartnerDetailsId, PartnerNewNinoId}
 import javax.inject.Inject
+import models.person.PersonDetails
 import models.{Index, Mode}
 import navigators.Navigator
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
 import utils.annotations.EstablishersPartner
-import viewmodels.NinoViewModel
+import viewmodels.{Message, NinoViewModel}
 
 import scala.concurrent.ExecutionContext
 
@@ -45,41 +46,40 @@ class PartnerNinoNewController @Inject()(
                                         )(implicit val ec: ExecutionContext) extends NinoController with I18nSupport {
 
   private[controllers] val postCall = controllers.register.establishers.partnership.partner.routes.PartnerNinoNewController.onSubmit _
-  private[controllers] val title: String = "messages__partner_yes_nino__title"
-  private[controllers] val heading: String = "messages__common_nino__h1"
-  private[controllers] val hint: String = "messages__common__nino_hint"
 
-  private def viewmodel(establisherIndex: Index, partnerIndex: Index, mode: Mode, srn: Option[String]): Retrieval[NinoViewModel] =
-    Retrieval {
-      implicit request =>
-        PartnerDetailsId(establisherIndex, partnerIndex).retrieve.right.map {
-          details =>
-            NinoViewModel(
-              postCall(mode, Index(establisherIndex), Index(partnerIndex), srn),
-              title = title,
-              heading = heading,
-              hint = hint,
-              personName = details.fullName,
-              srn = srn
-            )
-        }
-    }
+  private def viewmodel(personDetails: PersonDetails, establisherIndex: Index, partnerIndex: Index, mode: Mode, srn: Option[String]): NinoViewModel =
+    NinoViewModel(
+      postCall(mode, Index(establisherIndex), Index(partnerIndex), srn),
+      title = Message("messages__partner_yes_nino__title"),
+      heading = Message("messages__common_nino__h1", personDetails.fullName),
+      hint = Message("messages__common__nino_hint"),
+      srn = srn
+    )
 
   def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
-        viewmodel(establisherIndex, partnerIndex, mode, srn).retrieve.right.map {
-          vm =>
-            get(PartnerNewNinoId(establisherIndex, partnerIndex), formProvider(vm.personName), vm)
+        PartnerDetailsId(establisherIndex, partnerIndex).retrieve.right.map {
+          details =>
+            get(
+              PartnerNewNinoId(establisherIndex, partnerIndex),
+              formProvider(details.fullName),
+              viewmodel(details, establisherIndex, partnerIndex, mode, srn)
+            )
         }
     }
 
   def onSubmit(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
-      viewmodel(establisherIndex, partnerIndex, mode, srn).retrieve.right.map {
-        vm =>
-          post(PartnerNewNinoId(establisherIndex, partnerIndex), mode, formProvider(vm.personName), vm)
+      PartnerDetailsId(establisherIndex, partnerIndex).retrieve.right.map {
+        details =>
+          post(
+            PartnerNewNinoId(establisherIndex, partnerIndex),
+            mode,
+            formProvider(details.fullName),
+            viewmodel(details, establisherIndex, partnerIndex, mode, srn)
+          )
       }
   }
 

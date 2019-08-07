@@ -69,7 +69,6 @@ class DirectorAddressListController @Inject()(
           postCall = routes.DirectorAddressListController.onSubmit(mode, establisherIndex, directorIndex, srn),
           manualInputCall = routes.DirectorAddressController.onPageLoad(mode, establisherIndex, directorIndex, srn),
           addresses = addresses,
-          subHeading = None,
           srn = srn
         )
     }.left.map(_ => Future.successful(Redirect(routes.DirectorAddressPostcodeLookupController.onPageLoad(mode, establisherIndex, directorIndex, srn))))
