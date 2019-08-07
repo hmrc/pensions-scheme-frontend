@@ -83,7 +83,7 @@ trait CompletionStatusHelper extends OptionValues {
         .set(TrusteeAddressYearsId(index))(AddressYears.OverAYear)
     } else {
       ua
-        .set(TrusteeAddressYearsId(index))(AddressYears.OverAYear)
+        .set(TrusteeAddressId(index))(address)
     }
   }
 

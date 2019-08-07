@@ -92,7 +92,7 @@ class HsTaskListHelperUtilsSpec extends SpecBase with MustMatchers with OptionVa
       "in subscription journey when all spokes are complete" in {
         subscriptionHelper.getTrusteeCompanySpokes(
           trusteeCompany(isComplete = true), NormalMode, None, "test company", 0
-        ) mustBe expectedCompletedTrusteeSpokes(NormalMode, None)
+        ) mustBe expectedCompletedTrusteeCompanySpokes(NormalMode, None)
       }
 
       "in variations journey when all spokes are uninitiated" in {
@@ -110,7 +110,7 @@ class HsTaskListHelperUtilsSpec extends SpecBase with MustMatchers with OptionVa
       "in variations journey when all spokes are complete" in {
         subscriptionHelper.getTrusteeCompanySpokes(
           trusteeCompany(isComplete = true), UpdateMode, srn, "test company", 0
-        ) mustBe expectedCompletedTrusteeSpokes(UpdateMode, srn)
+        ) mustBe expectedCompletedTrusteeCompanySpokes(UpdateMode, srn)
       }
     }
   }
@@ -130,32 +130,31 @@ class HsTaskListHelperUtilsSpec extends SpecBase with MustMatchers with OptionVa
         ) mustBe expectedInProgressTrusteeIndividualSpokes(NormalMode, None)
       }
 
-//      "in subscription journey when all spokes are complete" in {
-//        subscriptionHelper.getTrusteeIndividualSpokes(
-//          trusteeIndividual(isHnSEnabled = false, isComplete = true), NormalMode, None, "test individual", 0
-//        ) mustBe expectedCompletedTrusteeSpokes(NormalMode, None)
-//      }
-//
+      "in subscription journey when all spokes are complete" in {
+        subscriptionHelper.getTrusteeIndividualSpokes(
+          trusteeIndividual(isComplete = true, toggled = true), NormalMode, None, "test individual", 0
+        ) mustBe expectedCompletedTrusteeIndividualSpokes(NormalMode, None)
+      }
+
       "in variations journey when all spokes are uninitiated" in {
         subscriptionHelper.getTrusteeIndividualSpokes(
           trusteeIndividualBlank, UpdateMode, srn, "test individual", 0
         ) mustBe expectedAddTrusteeIndividualSpokes(UpdateMode, srn)
       }
-//
-//      "in variations journey when all spokes are in progress" in {
-//        subscriptionHelper.getTrusteeIndividualSpokes(
-//          trusteeIndividual(isHnSEnabled = false, isComplete = false), UpdateMode, srn, "test individual", 0
-//        ) mustBe expectedInProgressTrusteeCompanySpokes(UpdateMode, srn)
-//      }
-//
-//      "in variations journey when all spokes are complete" in {
-//        subscriptionHelper.getTrusteeIndividualSpokes(
-//          trusteeIndividual(isHnSEnabled = false, isComplete = true), UpdateMode, srn, "test individual", 0
-//        ) mustBe expectedCompletedTrusteeSpokes(UpdateMode, srn)
-//      }
+
+      "in variations journey when all spokes are in progress" in {
+        subscriptionHelper.getTrusteeIndividualSpokes(
+          trusteeIndividual(isComplete = false, toggled = true), UpdateMode, srn, "test individual", 0
+        ) mustBe expectedInProgressTrusteeIndividualSpokes(UpdateMode, srn)
+      }
+
+      "in variations journey when all spokes are complete" in {
+        subscriptionHelper.getTrusteeIndividualSpokes(
+          trusteeIndividual(isComplete = true, toggled = true), UpdateMode, srn, "test individual", 0
+        ) mustBe expectedCompletedTrusteeIndividualSpokes(UpdateMode, srn)
+      }
     }
   }
-
 }
 
 object HsTaskListHelperUtilsSpec extends SpecBase with OptionValues with CompletionStatusHelper {
@@ -286,12 +285,12 @@ object HsTaskListHelperUtilsSpec extends SpecBase with OptionValues with Complet
     EntitySpoke(Link(messages("messages__schemeTaskList__sectionEstablishersIndividual_change_details", "test individual"),
       trusteeIndividualRoutes.WhatYouWillNeedIndividualDetailsController.onPageLoad(mode, 0, srn).url), modeBasedCompletion(mode, Some(false))),
     EntitySpoke(Link(messages("messages__schemeTaskList__sectionEstablishersIndividual_change_address", "test individual"),
-      trusteeIndividualRoutes.WhatYouWillNeedIndividualDetailsController.onPageLoad(mode, 0, srn).url), modeBasedCompletion(mode, Some(false))),
+      trusteeIndividualRoutes.WhatYouWillNeedIndividualAddressController.onPageLoad(mode, 0, srn).url), modeBasedCompletion(mode, Some(false))),
     EntitySpoke(Link(messages("messages__schemeTaskList__sectionEstablishersIndividual_change_contact", "test individual"),
-      trusteeIndividualRoutes.WhatYouWillNeedIndividualDetailsController.onPageLoad(mode, 0, srn).url), modeBasedCompletion(mode, Some(false)))
+      trusteeIndividualRoutes.WhatYouWillNeedIndividualContactDetailsController.onPageLoad(mode, 0, srn).url), modeBasedCompletion(mode, Some(false)))
   )
 
-  def expectedCompletedTrusteeSpokes(mode: Mode, srn: Option[String]): Seq[EntitySpoke] = Seq(
+  def expectedCompletedTrusteeCompanySpokes(mode: Mode, srn: Option[String]): Seq[EntitySpoke] = Seq(
     EntitySpoke(Link(messages("messages__schemeTaskList__sectionEstablishersCompany_change_details", "test company"),
       trusteeCompanyRoutes.CheckYourAnswersCompanyDetailsController.onPageLoad(mode, 0, srn).url), modeBasedCompletion(mode, Some(true))),
     EntitySpoke(Link(messages("messages__schemeTaskList__sectionEstablishersCompany_change_address", "test company"),
@@ -299,5 +298,14 @@ object HsTaskListHelperUtilsSpec extends SpecBase with OptionValues with Complet
     EntitySpoke(Link(messages("messages__schemeTaskList__sectionEstablishersCompany_change_contact", "test company"),
       trusteeCompanyRoutes.CheckYourAnswersCompanyContactDetailsController.onPageLoad(mode, 0, srn).url), modeBasedCompletion(mode, Some(true)))
     )
+
+  def expectedCompletedTrusteeIndividualSpokes(mode: Mode, srn: Option[String]): Seq[EntitySpoke] = Seq(
+    EntitySpoke(Link(messages("messages__schemeTaskList__sectionEstablishersIndividual_change_details", "test individual"),
+      trusteeIndividualRoutes.CheckYourAnswersIndividualDetailsController.onPageLoad(mode, 0, srn).url), modeBasedCompletion(mode, Some(true))),
+    EntitySpoke(Link(messages("messages__schemeTaskList__sectionEstablishersIndividual_change_address", "test individual"),
+      trusteeIndividualRoutes.CheckYourAnswersIndividualAddressController.onPageLoad(mode, 0, srn).url), modeBasedCompletion(mode, Some(true))),
+    EntitySpoke(Link(messages("messages__schemeTaskList__sectionEstablishersIndividual_change_contact", "test individual"),
+      trusteeIndividualRoutes.CheckYourAnswersIndividualContactDetailsController.onPageLoad(mode, 0, srn).url), modeBasedCompletion(mode, Some(true)))
+  )
 
 }
