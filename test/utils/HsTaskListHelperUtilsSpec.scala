@@ -126,7 +126,7 @@ class HsTaskListHelperUtilsSpec extends SpecBase with MustMatchers with OptionVa
 
       "in subscription journey when all spokes are in progress" in {
         subscriptionHelper.getTrusteeIndividualSpokes(
-          trusteeIndividual(isHnSEnabled = true, isComplete = false), NormalMode, None, "test individual", 0
+          trusteeIndividual(isComplete = false, toggled = true), NormalMode, None, "test individual", 0
         ) mustBe expectedInProgressTrusteeIndividualSpokes(NormalMode, None)
       }
 
@@ -204,7 +204,7 @@ object HsTaskListHelperUtilsSpec extends SpecBase with OptionValues with Complet
   }
 
   // TODO PODS-2940 Need to do something here?
-  protected def trusteeIndividual(isHnSEnabled:Boolean, isComplete: Boolean): UserAnswers = {
+  protected def trusteeIndividual(isComplete: Boolean, toggled:Boolean): UserAnswers = {
     val ua = trusteeIndividualBlank
       .set(IsTrusteeNewId(0))(true)
 //      .flatMap(
@@ -212,7 +212,7 @@ object HsTaskListHelperUtilsSpec extends SpecBase with OptionValues with Complet
 //        _.set(trusteeIndividualPath.IsDetailsCompleteId(0))(isComplete).flatMap(
 //          _.set(trusteeIndividualPath.IsContactDetailsCompleteId(0))(isComplete))))
       .asOpt.value
-    setTrusteeCompletionStatus(isComplete = isComplete, toggled = isHnSEnabled, 0, ua)
+    setTrusteeCompletionStatus(isComplete = isComplete, toggled = toggled, 0, ua)
   }
 
   protected def establisherCompanyWithCompletedDirectors = UserAnswers(readJsonFromFile("/payloadHnS.json"))
@@ -284,11 +284,11 @@ object HsTaskListHelperUtilsSpec extends SpecBase with OptionValues with Complet
 
   def expectedInProgressTrusteeIndividualSpokes(mode: Mode, srn: Option[String]): Seq[EntitySpoke] = Seq(
     EntitySpoke(Link(messages("messages__schemeTaskList__sectionEstablishersIndividual_change_details", "test individual"),
-      trusteeIndividualRoutes.CheckYourAnswersIndividualDetailsController.onPageLoad(mode, 0, srn).url), modeBasedCompletion(mode, Some(false))),
+      trusteeIndividualRoutes.WhatYouWillNeedIndividualDetailsController.onPageLoad(mode, 0, srn).url), modeBasedCompletion(mode, Some(false))),
     EntitySpoke(Link(messages("messages__schemeTaskList__sectionEstablishersIndividual_change_address", "test individual"),
-      trusteeIndividualRoutes.CheckYourAnswersIndividualAddressController.onPageLoad(mode, 0, srn).url), modeBasedCompletion(mode, Some(false))),
+      trusteeIndividualRoutes.WhatYouWillNeedIndividualDetailsController.onPageLoad(mode, 0, srn).url), modeBasedCompletion(mode, Some(false))),
     EntitySpoke(Link(messages("messages__schemeTaskList__sectionEstablishersIndividual_change_contact", "test individual"),
-      trusteeIndividualRoutes.CheckYourAnswersIndividualContactDetailsController.onPageLoad(mode, 0, srn).url), modeBasedCompletion(mode, Some(false)))
+      trusteeIndividualRoutes.WhatYouWillNeedIndividualDetailsController.onPageLoad(mode, 0, srn).url), modeBasedCompletion(mode, Some(false)))
   )
 
   def expectedCompletedTrusteeSpokes(mode: Mode, srn: Option[String]): Seq[EntitySpoke] = Seq(
