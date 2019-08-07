@@ -91,13 +91,13 @@ class ConfirmDeleteTrusteeController @Inject()(appConfig: FrontendAppConfig,
           CompanyDetailsId(index).retrieve.right.map { companyDetails =>
             updateTrusteeKind(companyDetails.companyName, trusteeKind, index, Some(companyDetails), None, None, None, srn, mode)
           }
-        case Individual if !isHnsEnabled =>
+        case Individual if isHnsEnabled =>
+          TrusteeNameId(index).retrieve.right.map { trusteeName =>
+            updateTrusteeKind(trusteeName.fullName, trusteeKind, index, None, None, None, Some(trusteeName), srn, mode)
+          }
+        case Individual =>
           TrusteeDetailsId(index).retrieve.right.map { trusteeDetails =>
             updateTrusteeKind(trusteeDetails.fullName, trusteeKind, index, None, Some(trusteeDetails), None, None, srn, mode)
-          }
-        case Individual if isHnsEnabled =>
-          TrusteeNameId(index).retrieve.right.map { trusteeDetails =>
-            updateTrusteeKind(trusteeDetails.fullName, trusteeKind, index, None, None, None, Some(trusteeDetails), srn, mode)
           }
         case Partnership =>
           PartnershipDetailsId(index).retrieve.right.map { partnershipDetails =>
@@ -131,10 +131,10 @@ class ConfirmDeleteTrusteeController @Inject()(appConfig: FrontendAppConfig,
           trusteeKind match {
             case Company => companyDetails.fold(Future.successful(dataRequest.userAnswers.json))(
               company => userAnswersService.save(mode, srn, CompanyDetailsId(trusteeIndex), company.copy(isDeleted = true)))
-            case Individual if !isHnsEnabled => trusteeDetailsNonHns.fold(Future.successful(dataRequest.userAnswers.json))(
-              trustee => userAnswersService.save(mode, srn, TrusteeDetailsId(trusteeIndex), trustee.copy(isDeleted = true)))
             case Individual if isHnsEnabled => trusteeDetails.fold(Future.successful(dataRequest.userAnswers.json))(
               trustee => userAnswersService.save(mode, srn, TrusteeNameId(trusteeIndex), trustee.copy(isDeleted = true)))
+            case Individual => trusteeDetailsNonHns.fold(Future.successful(dataRequest.userAnswers.json))(
+              trustee => userAnswersService.save(mode, srn, TrusteeDetailsId(trusteeIndex), trustee.copy(isDeleted = true)))
             case Partnership => partnershipDetails.fold(Future.successful(dataRequest.userAnswers.json))(
               partnership => userAnswersService.save(mode, srn, PartnershipDetailsId(trusteeIndex), partnership.copy(isDeleted = true)))
           }

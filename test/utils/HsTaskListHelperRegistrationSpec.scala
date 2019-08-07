@@ -32,7 +32,7 @@ import viewmodels.{SchemeDetailsTaskListEntitySection, SchemeDetailsTaskListSect
 
 class HsTaskListHelperRegistrationSpec extends HsTaskListHelperBehaviour with Enumerable.Implicits {
 
-  private val fakeFeatureManagementService = new FakeFeatureSwitchManagementService(false)
+  private def fakeFeatureManagementService(isToggleOn: Boolean = false) = new FakeFeatureSwitchManagementService(isToggleOn)
   override val createTaskListHelper:
     (UserAnswers, FeatureSwitchManagementService) => HsTaskListHelper = (ua, fs) => new HsTaskListHelperRegistration(ua, fs)
 
@@ -40,7 +40,7 @@ class HsTaskListHelperRegistrationSpec extends HsTaskListHelperBehaviour with En
     "display appropriate heading" in {
       val name = "scheme name 1"
       val userAnswers = UserAnswers().set(SchemeNameId)(name).asOpt.value
-      val helper = new HsTaskListHelperRegistration(userAnswers, fakeFeatureManagementService)
+      val helper = new HsTaskListHelperRegistration(userAnswers, fakeFeatureManagementService())
       helper.taskList.h1 mustBe name
     }
   }
@@ -48,7 +48,7 @@ class HsTaskListHelperRegistrationSpec extends HsTaskListHelperBehaviour with En
   "h2" must {
     "display appropriate text" in {
       val userAnswers = UserAnswers()
-      val helper = new HsTaskListHelperRegistration(userAnswers, fakeFeatureManagementService)
+      val helper = new HsTaskListHelperRegistration(userAnswers, fakeFeatureManagementService())
       helper.taskList.h2 mustBe messages("messages__scheme_details__title")
     }
   }
@@ -56,7 +56,7 @@ class HsTaskListHelperRegistrationSpec extends HsTaskListHelperBehaviour with En
   "h3" must {
     "display Before You Start" in {
       val userAnswers = UserAnswers()
-      val helper = new HsTaskListHelperRegistration(userAnswers, fakeFeatureManagementService)
+      val helper = new HsTaskListHelperRegistration(userAnswers, fakeFeatureManagementService())
       helper.taskList.h3 mustBe Some(messages("messages__schemeTaskList__before_you_start_header"))
     }
   }
@@ -65,23 +65,22 @@ class HsTaskListHelperRegistrationSpec extends HsTaskListHelperBehaviour with En
     "display About Scheme name" in {
       val schemeName = "test scheme"
       val userAnswers = UserAnswers().set(SchemeNameId)(schemeName).asOpt.value
-      val helper = new HsTaskListHelperRegistration(userAnswers, fakeFeatureManagementService)
+      val helper = new HsTaskListHelperRegistration(userAnswers, fakeFeatureManagementService())
       helper.taskList.aboutHeader mustBe messages("messages__schemeTaskList__about_scheme_header", schemeName)
     }
   }
-
-
+  
   "page title" must {
     "display Pension scheme details" in {
       val userAnswers = UserAnswers()
-      val helper = new HsTaskListHelperRegistration(userAnswers, fakeFeatureManagementService)
+      val helper = new HsTaskListHelperRegistration(userAnswers, fakeFeatureManagementService())
       helper.taskList.pageTitle mustBe messages("messages__schemeTaskList__title")
     }
   }
 
   "beforeYouStartSection " must {
     behave like beforeYouStartSection(
-      new HsTaskListHelperRegistration(_, fakeFeatureManagementService),
+      new HsTaskListHelperRegistration(_, fakeFeatureManagementService()),
       beforeYouStartLinkText,
       NormalMode,
       None
@@ -96,7 +95,7 @@ class HsTaskListHelperRegistrationSpec extends HsTaskListHelperBehaviour with En
           _.set(IsAboutBenefitsAndInsuranceCompleteId)(false)
         )
       ).asOpt.value
-      val helper = new HsTaskListHelperRegistration(userAnswers, fakeFeatureManagementService)
+      val helper = new HsTaskListHelperRegistration(userAnswers, fakeFeatureManagementService())
       helper.aboutSection(userAnswers) mustBe
         Seq(
           SchemeDetailsTaskListSection(Some(false), Link(aboutMembersLinkText,
@@ -115,7 +114,7 @@ class HsTaskListHelperRegistrationSpec extends HsTaskListHelperBehaviour with En
           _.set(IsAboutBenefitsAndInsuranceCompleteId)(true)
         )
       ).asOpt.value
-      val helper = new HsTaskListHelperRegistration(userAnswers, fakeFeatureManagementService)
+      val helper = new HsTaskListHelperRegistration(userAnswers, fakeFeatureManagementService())
       helper.aboutSection(userAnswers) mustBe
         Seq(
           SchemeDetailsTaskListSection(Some(true), Link(aboutMembersLinkText,
@@ -131,7 +130,7 @@ class HsTaskListHelperRegistrationSpec extends HsTaskListHelperBehaviour with En
   "workingKnowledgeSection " must {
     "not display when do you have working knowledge is true " in {
       val userAnswers = UserAnswers().set(DeclarationDutiesId)(true).asOpt.value
-      val helper = new HsTaskListHelperRegistration(userAnswers, fakeFeatureManagementService)
+      val helper = new HsTaskListHelperRegistration(userAnswers, fakeFeatureManagementService())
       helper.workingKnowledgeSection(userAnswers) mustBe None
     }
 
@@ -139,7 +138,7 @@ class HsTaskListHelperRegistrationSpec extends HsTaskListHelperBehaviour with En
       val userAnswers = UserAnswers().set(DeclarationDutiesId)(false).flatMap(
         _.set(IsWorkingKnowledgeCompleteId)(false)
       ).asOpt.value
-      val helper = new HsTaskListHelperRegistration(userAnswers, fakeFeatureManagementService)
+      val helper = new HsTaskListHelperRegistration(userAnswers, fakeFeatureManagementService())
       helper.workingKnowledgeSection(userAnswers).value mustBe
         SchemeDetailsTaskListSection(Some(false), Link(workingKnowledgeLinkText,
           controllers.routes.WhatYouWillNeedWorkingKnowledgeController.onPageLoad().url), None)
@@ -149,7 +148,7 @@ class HsTaskListHelperRegistrationSpec extends HsTaskListHelperBehaviour with En
       val userAnswers = UserAnswers().set(DeclarationDutiesId)(false).flatMap(
         _.set(IsWorkingKnowledgeCompleteId)(true)
       ).asOpt.value
-      val helper = new HsTaskListHelperRegistration(userAnswers, fakeFeatureManagementService)
+      val helper = new HsTaskListHelperRegistration(userAnswers, fakeFeatureManagementService())
       helper.workingKnowledgeSection(userAnswers).value mustBe
         SchemeDetailsTaskListSection(Some(true), Link(workingKnowledgeLinkText,
           controllers.routes.AdviserCheckYourAnswersController.onPageLoad().url), None)
@@ -161,16 +160,21 @@ class HsTaskListHelperRegistrationSpec extends HsTaskListHelperBehaviour with En
     behave like addEstablisherHeader(NormalMode, None)
   }
 
-  "addTrusteeHeader " must {
+  "addTrusteeHeader " when {
+    
+    "toggle is off" must {
+      behave like addTrusteeHeaderNonHns(NormalMode, None)
 
-    behave like addTrusteeHeader(NormalMode, None)
-
-    "not display when do you have any trustees is false " in {
-      val userAnswers = UserAnswers().set(HaveAnyTrusteesId)(false).asOpt.value
-      val helper = createTaskListHelper(userAnswers, fakeFeatureManagementService)
-      helper.addTrusteeHeader(userAnswers, NormalMode, Some("srn")) mustBe None
+      "not display when do you have any trustees is false " in {
+        val userAnswers = UserAnswers().set(HaveAnyTrusteesId)(false).asOpt.value
+        val helper = createTaskListHelper(userAnswers, fakeFeatureManagementService())
+        helper.addTrusteeHeader(userAnswers, NormalMode, Some("srn")) mustBe None
+      }
     }
 
+    "toggle is on" must {
+      behave like addTrusteeHeader(NormalMode, None)
+    }
   }
 
   "establishers" must {
@@ -188,7 +192,7 @@ class HsTaskListHelperRegistrationSpec extends HsTaskListHelperBehaviour with En
   "declaration" must {
     "have a declaration section" in {
       val userAnswers = answersData().asOpt.value
-      val helper = createTaskListHelper(userAnswers, fakeFeatureManagementService)
+      val helper = createTaskListHelper(userAnswers, fakeFeatureManagementService())
       helper.declarationSection(userAnswers).isDefined mustBe true
     }
 
@@ -196,12 +200,12 @@ class HsTaskListHelperRegistrationSpec extends HsTaskListHelperBehaviour with En
 
     "not have link when about bank details section not completed" in {
       val userAnswers = answersData(isCompleteAboutBank = false).asOpt.value
-      mustHaveNoLink(createTaskListHelper(userAnswers, fakeFeatureManagementService), userAnswers)
+      mustHaveNoLink(createTaskListHelper(userAnswers, fakeFeatureManagementService()), userAnswers)
     }
 
     "not have link when working knowledge section not completed" in {
       val userAnswers = answersData(isCompleteWk = false).asOpt.value
-      mustHaveNoLink(createTaskListHelper(userAnswers, fakeFeatureManagementService), userAnswers)
+      mustHaveNoLink(createTaskListHelper(userAnswers, fakeFeatureManagementService()), userAnswers)
     }
   }
 
@@ -209,7 +213,7 @@ class HsTaskListHelperRegistrationSpec extends HsTaskListHelperBehaviour with En
 
     "return the seq of establishers sub sections for non deleted establishers which are all completed" in {
       val userAnswers = allEstablishers()
-      val helper = new HsTaskListHelperRegistration(userAnswers, fakeFeatureManagementService)
+      val helper = new HsTaskListHelperRegistration(userAnswers, fakeFeatureManagementService())
       helper.establishers(userAnswers, mode, srn) mustBe
         Seq(SchemeDetailsTaskListEntitySection(Some(true), Seq(EntitySpoke(Link(individualLinkText,
           controllers.register.establishers.individual.routes.CheckYourAnswersController.onPageLoad(mode, 0, srn).url),
@@ -224,7 +228,7 @@ class HsTaskListHelperRegistrationSpec extends HsTaskListHelperBehaviour with En
 
     "return the seq of establishers sub sections for non deleted establishers which are not completed" in {
       val userAnswers = allEstablishers(isCompleteEstablisher = false)
-      val helper = new HsTaskListHelperRegistration(userAnswers, fakeFeatureManagementService)
+      val helper = new HsTaskListHelperRegistration(userAnswers, fakeFeatureManagementService())
       helper.establishers(userAnswers, NormalMode, None) mustBe
         Seq(SchemeDetailsTaskListEntitySection(Some(false), Seq(EntitySpoke(Link(individualLinkText,
           controllers.register.establishers.individual.routes.EstablisherDetailsController.onPageLoad(mode, 0, srn).url),
@@ -239,7 +243,7 @@ class HsTaskListHelperRegistrationSpec extends HsTaskListHelperBehaviour with En
 
     "return the seq of establishers sub sections after filtering out deleted establishers" in {
 
-      val helper = new HsTaskListHelperRegistration(deletedEstablishers, fakeFeatureManagementService)
+      val helper = new HsTaskListHelperRegistration(deletedEstablishers, fakeFeatureManagementService())
       helper.establishers(deletedEstablishers, NormalMode, None) mustBe
         Seq(SchemeDetailsTaskListEntitySection(Some(false), Seq(EntitySpoke(Link(individualLinkText,
           controllers.register.establishers.individual.routes.EstablisherDetailsController.onPageLoad(NormalMode, 0, None).url),
@@ -255,7 +259,7 @@ class HsTaskListHelperRegistrationSpec extends HsTaskListHelperBehaviour with En
 
     "return the seq of trustees sub sections for non deleted trustees which are all completed" in {
       val userAnswers = allTrustees()
-      val helper = new HsTaskListHelperRegistration(userAnswers, fakeFeatureManagementService)
+      val helper = new HsTaskListHelperRegistration(userAnswers, fakeFeatureManagementService())
       helper.trustees(userAnswers) mustBe
         Seq(SchemeDetailsTaskListSection(Some(true), Link(individualLinkText,
           controllers.register.trustees.individual.routes.CheckYourAnswersController.onPageLoad(mode, 0, srn).url), Some("firstName lastName")),
@@ -268,7 +272,7 @@ class HsTaskListHelperRegistrationSpec extends HsTaskListHelperBehaviour with En
 
     "return the seq of trustees sub sections for non deleted trustees which are not completed" in {
       val userAnswers = allTrustees(isCompleteTrustees = false)
-      val helper = new HsTaskListHelperRegistration(userAnswers, fakeFeatureManagementService)
+      val helper = new HsTaskListHelperRegistration(userAnswers, fakeFeatureManagementService())
       helper.trustees(userAnswers) mustBe
         Seq(SchemeDetailsTaskListSection(Some(false), Link(individualLinkText,
           controllers.register.trustees.individual.routes.TrusteeDetailsController.onPageLoad(mode, 0, srn).url), Some("firstName lastName")),
@@ -293,7 +297,7 @@ class HsTaskListHelperRegistrationSpec extends HsTaskListHelperBehaviour with En
                   _.set(IsTrusteeNewId(2))(true).flatMap(
                 _.set(IsPartnershipCompleteId(2))(false)
               ))))))))))).asOpt.value
-      val helper = new HsTaskListHelperRegistration(userAnswers, fakeFeatureManagementService)
+      val helper = new HsTaskListHelperRegistration(userAnswers, fakeFeatureManagementService())
       helper.trustees(userAnswers) mustBe
         Seq(SchemeDetailsTaskListSection(Some(false), Link(individualLinkText,
           controllers.register.trustees.individual.routes.TrusteeDetailsController.onPageLoad(mode, 0, srn).url), Some("firstName lastName")),

@@ -189,7 +189,7 @@ class HsTaskListHelperVariationsSpec extends HsTaskListHelperBehaviour {
 
   "addTrusteeHeader " must {
 
-    behave like addTrusteeHeader(UpdateMode, srn)
+    behave like addTrusteeHeaderNonHns(UpdateMode, srn)
 
     "display plain text when scheme is locked and no trustees exist" in {
       val userAnswers = UserAnswers().set(DeclarationDutiesId)(true).asOpt.value

@@ -17,7 +17,6 @@
 package controllers.register.trustees
 
 import config.{FeatureSwitchManagementService, FrontendAppConfig}
-import connectors.UserAnswersCacheConnector
 import controllers.Retrievals
 import controllers.actions._
 import forms.register.trustees.AddTrusteeFormProvider
@@ -87,6 +86,6 @@ class AddTrusteeController @Inject()(
   private def isHnsEnabled: Boolean = fsm.get(Toggles.isEstablisherCompanyHnSEnabled)
 
   private def enableSubmission(trusteeList: Seq[Trustee[_]]): Boolean = {
-    fsm.get(Toggles.isEstablisherCompanyHnSEnabled) || trusteeList.forall(_.isCompleted)
+    isHnsEnabled || trusteeList.forall(_.isCompleted)
   }
 }

@@ -19,20 +19,20 @@ package navigators
 import com.google.inject.Inject
 import config.{FeatureSwitchManagementService, FrontendAppConfig}
 import connectors.UserAnswersCacheConnector
-import identifiers.EstablishersOrTrusteesChangedId
-import identifiers.register.trustees._
-import models.register.trustees.TrusteeKind
-import models._
-import play.api.mvc.Call
-import utils.{Enumerable, Toggles, UserAnswers}
-import controllers.register.trustees.individual.routes._
 import controllers.register.trustees.company.routes._
+import controllers.register.trustees.individual.routes._
 import controllers.register.trustees.routes._
 import controllers.routes._
+import identifiers.EstablishersOrTrusteesChangedId
+import identifiers.register.trustees._
+import models._
+import models.register.trustees.TrusteeKind
+import play.api.mvc.Call
+import utils.{Enumerable, Toggles, UserAnswers}
 
 class TrusteesNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector, appConfig: FrontendAppConfig,
                                   featureSwitchManagementService: FeatureSwitchManagementService) extends AbstractNavigator with Enumerable.Implicits {
-  private def isToggleOn: Boolean = featureSwitchManagementService.get(Toggles.isEstablisherCompanyHnSEnabled)
+  private def isHnsEnabled: Boolean = featureSwitchManagementService.get(Toggles.isEstablisherCompanyHnSEnabled)
   protected def routes(from: NavigateFrom, mode: Mode, srn: Option[String]): Option[NavigateTo] =
     from.id match {
       case HaveAnyTrusteesId =>
@@ -85,7 +85,7 @@ class TrusteesNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnec
 
     answers.get(AddTrusteeId) match {
       case Some(false) =>
-        if (featureSwitchManagementService.get(Toggles.isEstablisherCompanyHnSEnabled)) {
+        if (isHnsEnabled) {
           NavigateTo.dontSave(SchemeTaskListController.onPageLoad(mode, srn))
         } else {
           mode match {
@@ -109,7 +109,7 @@ class TrusteesNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnec
       case Some(TrusteeKind.Company) =>
         NavigateTo.dontSave(CompanyDetailsController.onPageLoad(mode, index, srn))
       case Some(TrusteeKind.Individual) =>
-        if (isToggleOn) {
+        if (isHnsEnabled) {
           NavigateTo.dontSave(TrusteeNameController.onPageLoad(mode, index, srn))
         } else {
           NavigateTo.dontSave(TrusteeDetailsController.onPageLoad(mode, index, srn))

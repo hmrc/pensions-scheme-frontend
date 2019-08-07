@@ -50,11 +50,20 @@ class ConfirmDeleteTrusteeControllerSpec extends ControllerSpecBase {
       contentAsString(result) mustBe viewAsString(companyTrustee.companyName, Company)
     }
 
-    "return OK and the correct view for a GET to confirm deletion of an individual trustee" in {
-      val result = controller(testData(individualNonHnsId)(individualTrusteeNonHns)).onPageLoad(NormalMode, 0, Individual, None)(fakeRequest)
+    "return OK and the correct view for a GET to confirm deletion of an individual trustee" when {
+      "isEstablisherCompanyHnSEnabled is true" in {
+        val result = controller(testData(individualId)(individualTrustee), true).onPageLoad(NormalMode, 0, Individual, None)(fakeRequest)
 
-      status(result) mustBe OK
-      contentAsString(result) mustBe viewAsString(individualTrusteeNonHns.fullName, Individual)
+        status(result) mustBe OK
+        contentAsString(result) mustBe viewAsString(individualTrustee.fullName, Individual)
+      }
+
+      "isEstablisherCompanyHnSEnabled is false" in {
+        val result = controller(testData(individualNonHnsId)(individualTrusteeNonHns)).onPageLoad(NormalMode, 0, Individual, None)(fakeRequest)
+
+        status(result) mustBe OK
+        contentAsString(result) mustBe viewAsString(individualTrusteeNonHns.fullName, Individual)
+      }
     }
 
     "return OK and the correct view for a GET to confirm deletion of a partnership trustee" in {
@@ -92,18 +101,21 @@ class ConfirmDeleteTrusteeControllerSpec extends ControllerSpecBase {
       FakeUserAnswersService.verify(companyId, companyTrustee.copy(isDeleted = true))
     }
 
-    "remove the trustee in a POST request for an individual trustee if hns enabled" in {
-      val result = controller(testData(individualId)(individualTrustee), isHnsEnabled = true).onSubmit(NormalMode, 0, Individual, None)(postRequest)
+    "remove the trustee in a POST request for an individual trustee" when {
+      
+      "isEstablisherCompanyHnSEnabled is true" in {
+        val result = controller(testData(individualId)(individualTrustee), isHnsEnabled = true).onSubmit(NormalMode, 0, Individual, None)(postRequest)
 
-      status(result) mustBe SEE_OTHER
-      FakeUserAnswersService.verify(individualId, individualTrustee.copy(isDeleted = true))
-    }
+        status(result) mustBe SEE_OTHER
+        FakeUserAnswersService.verify(individualId, individualTrustee.copy(isDeleted = true))
+      }
+      
+      "isEstablisherCompanyHnSEnabled is false" in {
+        val result = controller(testData(individualNonHnsId)(individualTrusteeNonHns)).onSubmit(NormalMode, 0, Individual, None)(postRequest)
 
-    "remove the trustee in a POST request for an individual trustee if hns not enabled" in {
-      val result = controller(testData(individualNonHnsId)(individualTrusteeNonHns)).onSubmit(NormalMode, 0, Individual, None)(postRequest)
-
-      status(result) mustBe SEE_OTHER
-      FakeUserAnswersService.verify(individualNonHnsId, individualTrusteeNonHns.copy(isDeleted = true))
+        status(result) mustBe SEE_OTHER
+        FakeUserAnswersService.verify(individualNonHnsId, individualTrusteeNonHns.copy(isDeleted = true))
+      }
     }
 
     "remove the trustee in a POST request for a partnership trustee" in {
