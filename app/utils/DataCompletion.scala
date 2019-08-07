@@ -172,7 +172,7 @@ trait DataCompletion {
 
   def isTrusteeIndividualDetailsComplete(trusteeIndex: Int): Option[Boolean] =
     isComplete(Seq(
-      Some(get(TrusteeDOBId(trusteeIndex)).isDefined),
+      isAnswerComplete(TrusteeDOBId(trusteeIndex)),
       isAnswerComplete(TrusteeHasNINOId(trusteeIndex), TrusteeNewNinoId(trusteeIndex), Some(TrusteeNoNINOReasonId(trusteeIndex))),
       isUtrComplete(TrusteeHasUTRId(trusteeIndex), TrusteeUTRId(trusteeIndex), TrusteeNoUTRReasonId(trusteeIndex))
     ))
@@ -198,4 +198,8 @@ trait DataCompletion {
 
   def isTrusteeIndividualComplete(isHnSEnabled: Boolean, index:Int):Boolean =
     if (isHnSEnabled) isTrusteeIndividualCompleteHnS(index) else isTrusteeIndividualCompleteNonHnS(index)
+
+  def isTrusteeIndividualContactDetailsComplete(index: Int): Option[Boolean] = isContactDetailsComplete(TrusteeEmailId(index), TrusteePhoneId(index))
+  def isTrusteeIndividualAddressComplete(index: Int): Option[Boolean] =
+    isAddressComplete(TrusteeAddressId(index), TrusteePreviousAddressId(index), TrusteeAddressYearsId(index), None)
 }

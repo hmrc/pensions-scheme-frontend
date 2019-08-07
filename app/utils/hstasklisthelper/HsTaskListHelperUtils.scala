@@ -93,31 +93,31 @@ trait HsTaskListHelperUtils extends Enumerable.Implicits {
     case TrusteeCompanyAddress => answers.get(trusteeCompany.IsAddressCompleteId(index))
     case TrusteeCompanyContactDetails => answers.get(trusteeCompany.IsContactDetailsCompleteId(index))
       // TODO: 2940 commented code???
-    case TrusteeIndividualDetails => None // answers.get(trusteeIndividual.IsDetailsCompleteId(index))
-    case TrusteeIndividualAddress => None // answers.get(trusteeIndividual.IsAddressCompleteId(index))
-    case TrusteeIndividualContactDetails => None // answers.get(trusteeIndividual.IsContactDetailsCompleteId(index))
+    case TrusteeIndividualDetails => answers.isTrusteeIndividualDetailsComplete(index) // answers.get(trusteeIndividual.IsDetailsCompleteId(index))
+    case TrusteeIndividualAddress => answers.isTrusteeIndividualAddressComplete(index)// answers.get(trusteeIndividual.IsAddressCompleteId(index))
+    case TrusteeIndividualContactDetails => answers.isTrusteeIndividualContactDetailsComplete(index) // answers.get(trusteeIndividual.IsContactDetailsCompleteId(index))
     case _ => None
   }
 
   private def getChangeLinkText(spokeName: Spoke): String => String = spokeName match {
     case EstablisherCompanyDetails | TrusteeCompanyDetails => messages("messages__schemeTaskList__sectionEstablishersCompany_change_details", _)
-    case TrusteeIndividualDetails => messages("messages__schemeTaskList__sectionEstablishersIndividual_add_details",  _)
     case EstablisherCompanyAddress | TrusteeCompanyAddress => messages("messages__schemeTaskList__sectionEstablishersCompany_change_address", _)
-    case TrusteeIndividualAddress => messages("messages__schemeTaskList__sectionEstablishersIndividual_add_address",  _)
     case EstablisherCompanyContactDetails | TrusteeCompanyContactDetails => messages("messages__schemeTaskList__sectionEstablishersCompany_change_contact", _)
-    case TrusteeIndividualContactDetails => messages("messages__schemeTaskList__sectionEstablishersIndividual_add_contact", _)
     case EstablisherCompanyDirectors => messages("messages__schemeTaskList__sectionEstablishersCompany_change_directors", _)
+    case TrusteeIndividualDetails => messages("messages__schemeTaskList__sectionEstablishersIndividual_change_details",  _)
+    case TrusteeIndividualAddress => messages("messages__schemeTaskList__sectionEstablishersIndividual_change_address",  _)
+    case TrusteeIndividualContactDetails => messages("messages__schemeTaskList__sectionEstablishersIndividual_change_contact", _)
     case _ => (_: String) => s"Not found link text for spoke $spokeName"
   }
 
   private def getAddLinkText(spokeName: Spoke): String => String = spokeName match {
     case EstablisherCompanyDetails | TrusteeCompanyDetails => messages("messages__schemeTaskList__sectionEstablishersCompany_add_details", _)
-    case TrusteeIndividualDetails => messages("messages__schemeTaskList__sectionEstablishersIndividual_add_details",  _)
     case EstablisherCompanyAddress | TrusteeCompanyAddress => messages("messages__schemeTaskList__sectionEstablishersCompany_add_address", _)
-    case TrusteeIndividualAddress => messages("messages__schemeTaskList__sectionEstablishersIndividual_add_address",  _)
     case EstablisherCompanyContactDetails | TrusteeCompanyContactDetails => messages("messages__schemeTaskList__sectionEstablishersCompany_add_contact", _)
-    case TrusteeIndividualContactDetails => messages("messages__schemeTaskList__sectionEstablishersIndividual_add_contact", _)
     case EstablisherCompanyDirectors => messages("messages__schemeTaskList__sectionEstablishersCompany_add_directors", _)
+    case TrusteeIndividualDetails => messages("messages__schemeTaskList__sectionEstablishersIndividual_add_details",  _)
+    case TrusteeIndividualAddress => messages("messages__schemeTaskList__sectionEstablishersIndividual_add_address",  _)
+    case TrusteeIndividualContactDetails => messages("messages__schemeTaskList__sectionEstablishersIndividual_add_contact", _)
     case _ => (_: String) => s"Not found link text for spoke $spokeName"
   }
 
