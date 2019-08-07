@@ -60,7 +60,6 @@ class PartnerAddressListController @Inject()(
           postCall = routes.PartnerAddressListController.onSubmit(mode, establisherIndex, partnerIndex, srn),
           manualInputCall = routes.PartnerAddressController.onPageLoad(mode, establisherIndex, partnerIndex, srn),
           addresses = addresses,
-          subHeading = Some(Message(partnerDetails.fullName)),
           srn = srn
         )
     }.left.map(_ => Future.successful(Redirect(

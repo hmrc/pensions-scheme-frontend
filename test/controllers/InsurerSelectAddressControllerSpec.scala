@@ -67,8 +67,7 @@ class InsurerSelectAddressControllerSpec extends ControllerSpecBase with Mockito
       AddressListViewModel(
         routes.InsurerSelectAddressController.onSubmit(NormalMode, None),
         routes.InsurerConfirmAddressController.onSubmit(NormalMode, None),
-        addresses,
-        subHeading = Some(schemeName)
+        addresses
       ),
       None
     )(fakeRequest, messages).toString

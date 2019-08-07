@@ -85,8 +85,7 @@ class PartnershipPreviousAddressListControllerSpec extends ControllerSpecBase {
         routes.PartnershipPreviousAddressController.onPageLoad(NormalMode, index, None),
         addresses,
         title = previousAddressTitle,
-        heading = previousAddressHeading,
-        subHeading = Some(partnershipName)
+        heading = previousAddressHeading
       ),
       None
     )(fakeRequest, messages).toString
