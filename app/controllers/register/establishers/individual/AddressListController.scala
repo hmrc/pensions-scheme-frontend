@@ -66,7 +66,6 @@ class AddressListController @Inject()(
         postCall = routes.AddressListController.onSubmit(mode, index, srn),
         manualInputCall = routes.AddressController.onPageLoad(mode, index, srn),
         addresses = addresses,
-        subHeading = Some(Message(establisherDetails.fullName)),
         srn = srn
       )
     }.left.map(_ =>

@@ -23,6 +23,5 @@ case class NinoViewModel(
                          title: String,
                          heading: String,
                          hint: String,
-                         personName: String,
                          srn: Option[String] = None
                        )
