@@ -92,7 +92,6 @@ trait HsTaskListHelperUtils extends Enumerable.Implicits {
     case TrusteeCompanyDetails => answers.get(trusteeCompany.IsDetailsCompleteId(index))
     case TrusteeCompanyAddress => answers.get(trusteeCompany.IsAddressCompleteId(index))
     case TrusteeCompanyContactDetails => answers.get(trusteeCompany.IsContactDetailsCompleteId(index))
-      // TODO: 2940 commented code???
     case TrusteeIndividualDetails => answers.isTrusteeIndividualDetailsComplete(index)
     case TrusteeIndividualAddress => answers.isTrusteeIndividualAddressComplete(index)
     case TrusteeIndividualContactDetails => answers.isTrusteeIndividualContactDetailsComplete(index)
