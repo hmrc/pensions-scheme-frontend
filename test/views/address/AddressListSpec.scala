@@ -38,8 +38,8 @@ class AddressListSpec extends ViewBehaviours {
   private val call = controllers.routes.IndexController.onPageLoad()
   private val subHeading = "sub-heading"
 
-  private val viewModel = AddressListViewModel(call, call, addresses, subHeading = Some(Message(subHeading)))
-  private val updateViewModel = AddressListViewModel(call, call, addresses, subHeading = Some(Message(subHeading)), srn = Some("srn"))
+  private val viewModel = AddressListViewModel(call, call, addresses)
+  private val updateViewModel = AddressListViewModel(call, call, addresses, srn = Some("srn"))
 
   private def address(postCode: String): TolerantAddress =
     TolerantAddress(

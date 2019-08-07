@@ -16,7 +16,7 @@
 
 package controllers.register.trustees.individual
 
-import config.FrontendAppConfig
+import config.{FeatureSwitchManagementService, FrontendAppConfig}
 import controllers.Retrievals
 import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRequiredAction, DataRetrievalAction}
 import controllers.address.AddressListController
@@ -28,6 +28,7 @@ import navigators.Navigator
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, Result}
 import services.UserAnswersService
+import utils.Toggles
 import utils.annotations.TrusteesIndividual
 import viewmodels.Message
 import viewmodels.address.AddressListViewModel
@@ -41,34 +42,50 @@ class IndividualAddressListController @Inject()(override val appConfig: Frontend
                                                 authenticate: AuthAction,
                                                 getData: DataRetrievalAction,
                                                 allowAccess: AllowAccessActionProvider,
-                                                requireData: DataRequiredAction
+                                                requireData: DataRequiredAction,
+                                                fs: FeatureSwitchManagementService
                                                )(implicit val ec: ExecutionContext) extends AddressListController with Retrievals {
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
-    implicit request =>
-      viewmodel(mode, index, srn).right.map(get)
-  }
+      implicit request =>
+        viewmodel(mode, index, srn).fold {
+          Future.successful(Redirect(routes.IndividualPostCodeLookupController.onPageLoad(mode, index, srn)))
+        } {
+          get
+        }
+    }
 
   def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
-      viewmodel(mode, index, srn).right.map {
-        vm =>
-          post(vm, IndividualAddressListId(index), TrusteeAddressId(index), mode)
+      viewmodel(mode, index, srn).fold {
+        Future.successful(Redirect(routes.IndividualPostCodeLookupController.onPageLoad(mode, index, srn)))
+      } {
+        post(_, IndividualAddressListId(index), TrusteeAddressId(index), mode)
       }
   }
 
-  private def viewmodel(mode: Mode, index: Index, srn: Option[String])(implicit request: DataRequest[AnyContent]):
-  Either[Future[Result], AddressListViewModel] = {
-    (TrusteeDetailsId(index) and IndividualPostCodeLookupId(index)).retrieve.right.map {
-      case trusteeDetails ~ addresses => AddressListViewModel(
-        postCall = routes.IndividualAddressListController.onSubmit(mode, index, srn),
-        manualInputCall = routes.TrusteeAddressController.onPageLoad(mode, index, srn),
-        addresses = addresses,
-        subHeading = Some(Message(trusteeDetails.fullName)),
-        srn = srn
-      )
-    }.left.map(_ =>
-      Future.successful(Redirect(routes.IndividualPostCodeLookupController.onPageLoad(mode, index, srn))))
+  private def viewmodel(mode: Mode,
+                        index: Index,
+                        srn: Option[String]
+                       )(implicit request: DataRequest[AnyContent]): Option[AddressListViewModel] = {
+
+    for {
+      addresses <-  IndividualPostCodeLookupId(index).retrieve.right.toOption
+
+      name      <-  if (fs.get(Toggles.isEstablisherCompanyHnSEnabled))
+                      TrusteeNameId(index).retrieve.right.toOption.map(_.fullName)
+                    else
+                      TrusteeDetailsId(index).retrieve.right.toOption.map(_.fullName)
+
+    } yield AddressListViewModel(
+      postCall = routes.IndividualAddressListController.onSubmit(mode, index, srn),
+      manualInputCall = routes.TrusteeAddressController.onPageLoad(mode, index, srn),
+      addresses = addresses,
+      title = Message("messages__trustee__individual__address__title"),
+      heading = Message("messages__trustee__individual__address__heading", name),
+      srn = srn
+    )
+
   }
 }

@@ -77,21 +77,23 @@ class DirectorNinoNewControllerSpec extends ControllerSpecBase {
     )
   )
 
-  private def viewmodel(srn:Option[String]) = NinoViewModel(
-    postCall = controllers.register.establishers.company.director.routes.DirectorNinoNewController.onSubmit(NormalMode, establisherIndex, directorIndex, None),
-    title = "messages__director_yes_nino__title",
-    heading ="messages__common_nino__h1",
-    hint = "messages__common__nino_hint",
-    personName = directorName,
-    srn = srn
-  )
 
   def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisher): DirectorNinoNewController =
     new DirectorNinoNewController(frontendAppConfig, messagesApi, FakeUserAnswersService, new FakeNavigator(desiredRoute = onwardRoute),
       FakeAuthAction, dataRetrievalAction, FakeAllowAccessProvider(), new DataRequiredActionImpl, formProvider,
       new FakeFeatureSwitchManagementService(false))
 
-  def viewAsString(form: Form[_] = form): String = nino(frontendAppConfig, form, viewmodel(None), None)(fakeRequest, messages).toString
+  def viewAsString(form: Form[_] = form): String = {
+    val viewmodel = NinoViewModel(
+      postCall = controllers.register.establishers.company.director.routes.DirectorNinoNewController.onSubmit(NormalMode, establisherIndex, directorIndex, None),
+      title = messages("messages__director_yes_nino__title"),
+      heading = messages("messages__common_nino__h1", directorName),
+      hint = messages("messages__common__nino_hint"),
+      srn = None
+    )
+
+    nino(frontendAppConfig, form, viewmodel, None)(fakeRequest, messages).toString
+  }
 
   "DirectorNino Controller" must {
 

@@ -65,7 +65,6 @@ class PartnershipAddressListController @Inject()(override val appConfig: Fronten
         postCall = routes.PartnershipAddressListController.onSubmit(mode, index, srn),
         manualInputCall = routes.PartnershipAddressController.onPageLoad(mode, index, srn),
         addresses = addresses,
-        subHeading = Some(Message(partnershipDetails.name)),
         srn = srn
       )
     }.left.map(_ =>

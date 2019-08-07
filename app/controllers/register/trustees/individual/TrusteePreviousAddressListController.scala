@@ -50,9 +50,8 @@ class TrusteePreviousAddressListController @Inject()(override val appConfig: Fro
         routes.TrusteePreviousAddressListController.onSubmit(mode, index, srn),
         routes.TrusteePreviousAddressController.onPageLoad(mode, index, srn),
         addresses,
-        title = Message("messages__select_the_previous_address__title"),
-        heading = Message("messages__select_the_previous_address__heading"),
-        subHeading = Some(trusteeDetails.fullName),
+        title = Message("messages__trustee__individual__previous__address__title"),
+        heading = Message("messages__trustee__individual__previous__address__heading", trusteeDetails.fullName),
         srn = srn
       )
     }.left.map(_ => Future.successful(Redirect(routes.IndividualPreviousAddressPostcodeLookupController.onPageLoad(mode, index, srn))))
