@@ -71,7 +71,7 @@ class TrusteesNavigatorSpec extends SpecBase with NavigatorBehaviour {
     routes(UpdateMode, srn, toggled): _*
   )
 
-  s"Trustee company navigations with hns toggle off" must {
+  s"Trustees navigations with hns toggle off" must {
     appRunning()
     val navigator: TrusteesNavigator =
       new TrusteesNavigator(FakeUserAnswersCacheConnector, frontendAppConfig, new FakeFeatureSwitchManagementService(false))
@@ -81,7 +81,7 @@ class TrusteesNavigatorSpec extends SpecBase with NavigatorBehaviour {
     behave like nonMatchingNavigator(navigator, UpdateMode)
   }
 
-  s"Trustee company navigations with hns toggle on" must {
+  s"Trustees navigations with hns toggle on" must {
     appRunning()
     val navigator: TrusteesNavigator =
       new TrusteesNavigator(FakeUserAnswersCacheConnector, frontendAppConfig, new FakeFeatureSwitchManagementService(true))

@@ -136,6 +136,6 @@ class HsTaskListHelperVariations(answers: UserAnswers,
             link = addTrusteeLink(linkText, srn, mode),
             p1 = additionalText))
       }
-      case (false, true) => None
+      case (false, true) => Some(SchemeDetailsTaskListHeader(header = Some(messages("messages__schemeTaskList__sectionTrustees_header"))))
     }
 }
