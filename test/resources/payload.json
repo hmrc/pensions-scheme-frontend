@@ -508,7 +508,7 @@
         "postalCode" : "ZZ1 1ZZ",
         "countryCode" : "GB"
       },
-      "trusteeAddressId" : {
+      "trusteeAddress" : {
         "addressLine1" : "10 Other Place",
         "addressLine2" : "Some District",
         "addressLine3" : "Anytown",
