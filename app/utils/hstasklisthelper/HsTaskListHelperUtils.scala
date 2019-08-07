@@ -92,6 +92,7 @@ trait HsTaskListHelperUtils extends Enumerable.Implicits {
     case TrusteeCompanyDetails => answers.get(trusteeCompany.IsDetailsCompleteId(index))
     case TrusteeCompanyAddress => answers.get(trusteeCompany.IsAddressCompleteId(index))
     case TrusteeCompanyContactDetails => answers.get(trusteeCompany.IsContactDetailsCompleteId(index))
+      // TODO: 2940 If hns enabled then get dynamically else use commented code
     case TrusteeIndividualDetails => None // answers.get(trusteeIndividual.IsDetailsCompleteId(index))
     case TrusteeIndividualAddress => None // answers.get(trusteeIndividual.IsAddressCompleteId(index))
     case TrusteeIndividualContactDetails => None // answers.get(trusteeIndividual.IsContactDetailsCompleteId(index))

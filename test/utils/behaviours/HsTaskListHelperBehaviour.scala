@@ -20,17 +20,14 @@ import base.SpecBase
 import config.FeatureSwitchManagementService
 import controllers.register.establishers.company.{routes => establisherCompanyRoutes}
 import controllers.register.trustees.company.{routes => trusteeCompanyRoutes}
-import identifiers.register.establishers.company.director.DirectorDetailsId
 import identifiers.register.establishers.individual.EstablisherDetailsId
 import identifiers.register.establishers.partnership.{PartnershipDetailsId => EstablisherPartnershipDetailsId}
 import identifiers.register.establishers.{IsEstablisherAddressCompleteId, IsEstablisherCompleteId, IsEstablisherNewId, company => establisherCompanyPath}
 import identifiers.register.trustees.individual._
-import identifiers.register.trustees.{company => trusteesCompany}
 import identifiers.register.trustees.partnership.{IsPartnershipCompleteId, PartnershipDetailsId => TrusteePartnershipDetailsId}
-import identifiers.register.trustees.{IsTrusteeAddressCompleteId, IsTrusteeCompleteId, IsTrusteeNewId, MoreThanTenTrusteesId, company => trusteeCompanyPath}
+import identifiers.register.trustees.{IsTrusteeAddressCompleteId, IsTrusteeCompleteId, IsTrusteeNewId, MoreThanTenTrusteesId, company => trusteesCompany}
 import identifiers.{IsWorkingKnowledgeCompleteId, _}
 import models._
-import models.address.Address
 import models.person.PersonDetails
 import models.register.SchemeType
 import models.register.SchemeType.SingleTrust
@@ -38,12 +35,13 @@ import org.joda.time.LocalDate
 import org.scalatest.{MustMatchers, OptionValues}
 import play.api.libs.json.JsResult
 import utils.DataCompletionSpec.readJsonFromFile
-import utils.UserAnswersSpec.{address, firstName, lastName, stringValue}
 import utils.hstasklisthelper.HsTaskListHelper
-import utils.{FakeFeatureSwitchManagementService, UserAnswers}
+import utils.{CompletionStatusHelper, FakeFeatureSwitchManagementService, UserAnswers}
 import viewmodels._
+import identifiers.register.establishers.{company => establisherCompanyPath}
+import identifiers.register.trustees.{company => trusteeCompanyPath}
 
-trait HsTaskListHelperBehaviour extends SpecBase with MustMatchers with OptionValues {
+trait HsTaskListHelperBehaviour extends SpecBase with MustMatchers with OptionValues with CompletionStatusHelper {
 
   protected lazy val beforeYouStartLinkText: String = messages("messages__schemeTaskList__before_you_start_link_text")
   protected lazy val schemeInfoLinkText: String = messages("messages__schemeTaskList__scheme_info_link_text")
@@ -77,10 +75,7 @@ trait HsTaskListHelperBehaviour extends SpecBase with MustMatchers with OptionVa
   private val isHnSEnabled = false
   private val fakeFeatureManagementService = new FakeFeatureSwitchManagementService(isHnSEnabled)
 
-  private val address = Address("address-1-line-1", "address-1-line-2", None, None, Some("post-code-1"), "country-1")
-  private val stringValue = "aa"
-  private val firstName = "firstName"
-  private val lastName = "lastName"
+
 
   def beforeYouStartSection(createTaskListHelper: UserAnswers => HsTaskListHelper, linkContent: String, mode: Mode, srn: Option[String]): Unit = {
 
@@ -216,7 +211,7 @@ trait HsTaskListHelperBehaviour extends SpecBase with MustMatchers with OptionVa
           controllers.register.trustees.routes.TrusteeKindController.onPageLoad(mode, userAnswers.allTrustees(false).size, srn).url)), None, None)
     }
 
-    // TODO: PODS-2940 Needs attention - extra test for toggle true
+    // TODO: PODS-2940 Write unit test for toggle ON
 
     "display correct link data when trustee is mandatory and no trustees exists " in {
       val userAnswers = UserAnswers().set(HaveAnyTrusteesId)(true).asOpt.value
@@ -228,7 +223,7 @@ trait HsTaskListHelperBehaviour extends SpecBase with MustMatchers with OptionVa
           None)
     }
 
-    // TODO: PODS-2940 Needs attention - extra test for toggle true
+    // TODO: PODS-2940 Write unit test for toggle ON
 
     "display correct link data when trustee is mandatory and 1 trustee exists " in {
       val userAnswers = UserAnswers().set(HaveAnyTrusteesId)(true).asOpt.value
@@ -258,7 +253,7 @@ trait HsTaskListHelperBehaviour extends SpecBase with MustMatchers with OptionVa
           controllers.register.trustees.routes.TrusteeKindController.onPageLoad(mode, userAnswers.allTrustees(false).size, srn).url)), None)
     }
 
-    // TODO: PODS-2940 Needs attention - extra test for toggle true
+    // TODO: PODS-2940 Write unit test for toggle ON
 
     "display and link should go to add trustees page when do you have any trustees is not present" +
       "and trustees are added and completed" in {
@@ -375,7 +370,7 @@ trait HsTaskListHelperBehaviour extends SpecBase with MustMatchers with OptionVa
     }
   }
 
-  // TODO PODS-2940 write another unit test for toggle ON
+  // TODO: PODS-2940 Write unit test for toggle ON
 
   private def answersDataWithTenTrustees(isCompleteBeforeStart: Boolean = true,
                                          isCompleteAboutMembers: Boolean = true,
@@ -408,7 +403,7 @@ trait HsTaskListHelperBehaviour extends SpecBase with MustMatchers with OptionVa
       .flatMap(addTrustee(_, 9))
   }
 
-  // TODO PODS-2940 write a unit test for toggle ON
+  // TODO PODS-2940 write unit test for toggle ON
 
   protected def answersData(isCompleteBeforeStart: Boolean = true,
                             isCompleteAboutMembers: Boolean = true,
@@ -483,54 +478,4 @@ trait HsTaskListHelperBehaviour extends SpecBase with MustMatchers with OptionVa
                                       _.set(IsPartnershipCompleteId(2))(isCompleteTrustees)
                                     )))))))))))))))).asOpt.value)
   }
-
-  protected def setTrusteeCompletionStatus(isComplete: Boolean, toggled: Boolean, index: Int, ua: UserAnswers): UserAnswers = {
-    setTrusteeCompletionStatusJsResult(isComplete, toggled, index, ua).asOpt.value
-  }
-
-  protected def setTrusteeCompletionStatusJsResult(isComplete: Boolean, toggled: Boolean, index: Int, ua: UserAnswers): JsResult[UserAnswers] = {
-    if (isComplete) {
-      if (toggled) {
-        ua.
-          set(TrusteeDOBId(index))(LocalDate.now()).asOpt.value
-          .set(TrusteeHasNINOId(index))(true).asOpt.value
-          .set(TrusteeNewNinoId(index))(ReferenceValue(stringValue)).asOpt.value
-          .set(TrusteeHasUTRId(index))(true).asOpt.value
-          .set(TrusteeUTRId(index))(stringValue).asOpt.value
-          .set(TrusteeAddressId(index))(address).asOpt.value
-          .set(TrusteeAddressYearsId(index))(AddressYears.OverAYear).asOpt.value
-          .set(TrusteeEmailId(index))(stringValue).asOpt.value
-          .set(TrusteePhoneId(index))(stringValue)
-      } else {
-        ua.
-          set(TrusteeDetailsId(index))(PersonDetails(firstName, None, lastName, LocalDate.now())).asOpt.value
-          .set(TrusteeNinoId(index))(Nino.Yes(stringValue)).asOpt.value
-          .set(UniqueTaxReferenceId(index))(UniqueTaxReference.Yes(stringValue)).asOpt.value
-          .set(TrusteeAddressId(index))(address).asOpt.value
-          .set(TrusteeAddressYearsId(index))(AddressYears.OverAYear).asOpt.value
-          .set(TrusteeContactDetailsId(index))(ContactDetails(stringValue, stringValue))
-      }
-    } else {
-      if (toggled) {
-        ua.
-          set(TrusteeDOBId(index))(LocalDate.now()).asOpt.value
-          .set(TrusteeHasNINOId(index))(true).asOpt.value
-          .set(TrusteeHasUTRId(index))(true).asOpt.value
-          .set(TrusteeUTRId(index))(stringValue).asOpt.value
-          .set(TrusteeAddressId(index))(address).asOpt.value
-          .set(TrusteeAddressYearsId(index))(AddressYears.OverAYear).asOpt.value
-          .set(TrusteeEmailId(index))(stringValue).asOpt.value
-          .set(TrusteePhoneId(index))(stringValue)
-      } else {
-        ua.
-          set(TrusteeDetailsId(index))(PersonDetails(firstName, None, lastName, LocalDate.now())).asOpt.value
-          .set(UniqueTaxReferenceId(index))(UniqueTaxReference.Yes(stringValue)).asOpt.value
-          .set(TrusteeAddressId(index))(address).asOpt.value
-          .set(TrusteeAddressYearsId(index))(AddressYears.OverAYear).asOpt.value
-          .set(TrusteeContactDetailsId(index))(ContactDetails(stringValue, stringValue))
-      }
-    }
-  }
 }
-
-

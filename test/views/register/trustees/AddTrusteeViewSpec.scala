@@ -89,7 +89,7 @@ class AddTrusteeViewSpec extends YesNoViewBehaviours with EntityListBehaviours w
       expectedHintKey = Some("_lede")
     )
 
-    // TODO: PODS-2940 Needs attention - extra test for toggle true
+    // TODO: PODS-2940 Write unit test for toggle ON
 
     "when there are no trustees" when {
       "do not show the yes no inputs" in {
@@ -128,7 +128,7 @@ class AddTrusteeViewSpec extends YesNoViewBehaviours with EntityListBehaviours w
 
     behave like entityList(createView(), createView(trustees(false), false), trustees(false), frontendAppConfig)
 
-    // TODO: PODS-2940 Needs attention - extra test for toggle true
+    // TODO: PODS-2940 Write unit test for toggle ON
 
     "display all the partially added trustee names with yes/No buttons if the maximum trustees are not added yet" in {
       val doc = asDocument(createView(trustees(false))())
@@ -137,7 +137,7 @@ class AddTrusteeViewSpec extends YesNoViewBehaviours with EntityListBehaviours w
 
     }
 
-    // TODO: PODS-2940 Needs attention - extra test for toggle true
+    // TODO: PODS-2940 Write unit test for toggle ON
 
   }
 }

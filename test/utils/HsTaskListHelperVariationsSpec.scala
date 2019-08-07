@@ -41,7 +41,7 @@ class HsTaskListHelperVariationsSpec extends HsTaskListHelperBehaviour {
   override val createTaskListHelper: (UserAnswers, FeatureSwitchManagementService) => HsTaskListHelper =
     (ua, fs) => new HsTaskListHelperVariations(ua, viewOnly = false, srn = srn, fs)
 
-  // TODO PODS-2940 add another unit test for toggle ON
+  // TODO: PODS-2940 Write unit test for toggle ON
 
   override def answersData(isCompleteBeforeStart: Boolean = true,
                            isCompleteAboutMembers: Boolean = true,
@@ -325,7 +325,7 @@ class HsTaskListHelperVariationsSpec extends HsTaskListHelperBehaviour {
   }
 
   def trusteesSection(): Unit = {
-    // TODO PODS-2940 add another unit test for toggle ON
+    // TODO: PODS-2940 Write unit test for toggle ON
     "return the seq of trustees sub sections for non deleted trustees which are all completed" in {
       val userAnswers = allTrustees(toggled = false)
       val helper = new HsTaskListHelperVariations(userAnswers, viewOnly = false, srn = Some("test-srn"), fakeFeatureManagementService)
@@ -339,7 +339,7 @@ class HsTaskListHelperVariationsSpec extends HsTaskListHelperBehaviour {
         )
     }
 
-    // TODO PODS-2940 add another unit test for toggle ON
+    // TODO: PODS-2940 Write unit test for toggle ON
 
     "return the seq of trustees sub sections for non deleted trustees which are not completed" in {
       val userAnswers = allTrustees(isCompleteTrustees = false, toggled = false)

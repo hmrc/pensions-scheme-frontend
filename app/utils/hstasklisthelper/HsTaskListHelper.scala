@@ -193,14 +193,14 @@ abstract class HsTaskListHelper(answers: UserAnswers,
     val notDeletedElements = for ((section, _) <- sections.zipWithIndex) yield {
       if (section.isDeleted) None else {
         section.id match {
-          case TrusteeCompanyDetailsId(_) if featureSwitchManagementService.get(Toggles.isEstablisherCompanyHnSEnabled) =>
+          case TrusteeCompanyDetailsId(_) if isHnSEnabled => // Trustee companies
             Some(SchemeDetailsTaskListEntitySection(
               None,
               getTrusteeCompanySpokes(userAnswers, mode, srn, section.name, section.index),
               Some(section.name))
             )
 
-          case TrusteeDetailsId(_) if featureSwitchManagementService.get(Toggles.isEstablisherCompanyHnSEnabled) =>
+          case TrusteeDetailsId(_) if isHnSEnabled => // Trustee individuals
             Some(SchemeDetailsTaskListEntitySection(
               None,
               getTrusteeIndividualSpokes(userAnswers, mode, srn, section.name, section.index),

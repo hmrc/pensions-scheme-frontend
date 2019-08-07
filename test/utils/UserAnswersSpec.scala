@@ -38,7 +38,7 @@ import org.scalatest.{MustMatchers, OptionValues, WordSpec}
 import play.api.libs.json._
 import utils.DataCompletionSpec.readJsonFromFile
 
-class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues with Enumerable.Implicits {
+class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues with Enumerable.Implicits with CompletionStatusHelper {
 
   import UserAnswersSpec._
 
@@ -116,14 +116,14 @@ class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues with 
   ".allTrustees" must {
 
     "return a map of trustee names, edit links, delete links and isComplete flag" in {
-      // TODO PODS-2940 write a unit test for toggle ON
-      val userAnswers = setTrusteeComplete(toggled = false, 0, UserAnswers(Json.obj(
+      // TODO: PODS-2940 write a unit test for toggle ON
+      val userAnswers = setTrusteeCompletionStatus(isComplete = true, toggled = false, 0, UserAnswers(Json.obj(
         "schemeType"-> Json.obj("name"-> "single"),
         TrusteesId.toString -> Json.arr(
           Json.obj(
             TrusteeKindId.toString -> TrusteeKind.Individual.toString,
             TrusteeDetailsId.toString ->
-              PersonDetails("First", None, "Last", LocalDate.now),
+              PersonDetails("firstName", None, "lastName", LocalDate.now),
             IsTrusteeNewId.toString -> true
           ),
           Json.obj(
@@ -149,7 +149,7 @@ class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues with 
       )))
 
       val allTrusteesEntities: Seq[Trustee[_]] = Seq(
-        trusteeEntity("First Last", 0, TrusteeKind.Individual, isComplete = true),
+        trusteeEntity("firstName lastName", 0, TrusteeKind.Individual, isComplete = true),
         trusteeEntity("My Company", 1, TrusteeKind.Company, isComplete = true),
         trusteeEntity("My Partnership", 2, TrusteeKind.Partnership),
         TrusteeSkeletonEntity(TrusteeKindId(3))
@@ -160,7 +160,7 @@ class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues with 
       result mustEqual allTrusteesEntities
     }
 
-    // TODO: PODS-2940 Needs attention - extra test for toggle true
+    // TODO: PODS-2940 Write unit test for toggle ON
 
     "return en empty sequence if there are no trustees" in {
       val json = Json.obj(
@@ -171,7 +171,7 @@ class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues with 
       userAnswers.allTrustees(false) mustEqual Seq.empty
     }
 
-    // TODO: PODS-2940 Needs attention - extra test for toggle true
+    // TODO: PODS-2940 Write unit test for toggle ON
 
     "return en empty sequence if the json is invalid" in {
       val json = Json.obj(
@@ -185,7 +185,7 @@ class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues with 
       userAnswers.allTrustees(false) mustEqual Seq.empty
     }
 
-    // TODO: PODS-2940 Needs attention - extra test for toggle true
+    // TODO: PODS-2940 Write unit test for toggle ON
   }
 
   ".allTrusteesAfterDelete" must {
@@ -224,7 +224,7 @@ class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues with 
 
       result mustEqual allTrusteesEntities
     }
-    // TODO: PODS-2940 Needs attention - extra test for toggle true
+    // TODO: PODS-2940 Write unit test for toggle ON
   }
 
   ".allDirectors" must {
@@ -628,48 +628,4 @@ object UserAnswersSpec extends OptionValues with Enumerable.Implicits {
     .flatMap(_.set(PartnershipContactDetailsId(0))(contactDetails))
     .flatMap(_.set(PartnerDetailsId(0, 0))(PersonDetails("par1", None, "", LocalDate.now)))
     .asOpt.value
-
-  private def setTrusteeComplete(toggled: Boolean, index: Int, ua: UserAnswers): UserAnswers = {
-    if (toggled) {
-      ua.
-        set(TrusteeDOBId(index))(LocalDate.now()).asOpt.value
-        .set(TrusteeHasNINOId(index))(true).asOpt.value
-        .set(TrusteeNewNinoId(index))(ReferenceValue(stringValue)).asOpt.value
-        .set(TrusteeHasUTRId(index))(true).asOpt.value
-        .set(TrusteeUTRId(index))(stringValue).asOpt.value
-        .set(TrusteeAddressId(index))(address).asOpt.value
-        .set(TrusteeAddressYearsId(index))(AddressYears.OverAYear).asOpt.value
-        .set(TrusteeEmailId(index))(stringValue).asOpt.value
-        .set(TrusteePhoneId(index))(stringValue).asOpt.value
-    } else {
-      ua.
-        set(TrusteeDetailsId(index))(PersonDetails(firstName, None, lastName, LocalDate.now())).asOpt.value
-        .set(TrusteeNinoId(index))(Nino.Yes(stringValue)).asOpt.value
-        .set(UniqueTaxReferenceId(index))(UniqueTaxReference.Yes(stringValue)).asOpt.value
-        .set(TrusteeAddressId(index))(address).asOpt.value
-        .set(TrusteeAddressYearsId(index))(AddressYears.OverAYear).asOpt.value
-        .set(TrusteeContactDetailsId(index))(ContactDetails(stringValue, stringValue)).asOpt.value
-    }
-  }
-
-  private def setTrusteeIncomplete(toggled: Boolean, index: Int, ua: UserAnswers): UserAnswers = {
-    if (toggled) {
-      ua.
-        set(TrusteeDOBId(index))(LocalDate.now()).asOpt.value
-        .set(TrusteeHasNINOId(index))(true).asOpt.value
-        .set(TrusteeHasUTRId(index))(true).asOpt.value
-        .set(TrusteeUTRId(index))(stringValue).asOpt.value
-        .set(TrusteeAddressId(index))(address).asOpt.value
-        .set(TrusteeAddressYearsId(index))(AddressYears.OverAYear).asOpt.value
-        .set(TrusteeEmailId(index))(stringValue).asOpt.value
-        .set(TrusteePhoneId(index))(stringValue).asOpt.value
-    } else {
-      ua.
-        set(TrusteeDetailsId(index))(PersonDetails(firstName, None, lastName, LocalDate.now())).asOpt.value
-        .set(UniqueTaxReferenceId(index))(UniqueTaxReference.Yes(stringValue)).asOpt.value
-        .set(TrusteeAddressId(index))(address).asOpt.value
-        .set(TrusteeAddressYearsId(index))(AddressYears.OverAYear).asOpt.value
-        .set(TrusteeContactDetailsId(index))(ContactDetails(stringValue, stringValue)).asOpt.value
-    }
-  }
 }

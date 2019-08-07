@@ -124,6 +124,8 @@ class HsTaskListHelperUtilsSpec extends SpecBase with MustMatchers with OptionVa
         ) mustBe expectedAddTrusteeIndividualSpokes(NormalMode, None)
       }
 
+      // TODO: PODS-2940 Fix these tests
+
 //      "in subscription journey when all spokes are in progress" in {
 //        subscriptionHelper.getTrusteeIndividualSpokes(
 //          trusteeIndividual(isComplete = false), NormalMode, None, "test individual", 0

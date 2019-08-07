@@ -33,12 +33,12 @@ import play.api.data.Form
 import play.api.libs.json._
 import play.api.mvc.{Call, Result}
 import play.api.test.Helpers.{contentAsString, _}
-import utils.{FakeFeatureSwitchManagementService, FakeNavigator, UserAnswers}
+import utils.{CompletionStatusHelper, FakeFeatureSwitchManagementService, FakeNavigator, UserAnswers}
 import views.html.register.trustees.addTrustee
 
 import scala.concurrent.Future
 
-class AddTrusteeControllerSpec extends ControllerSpecBase {
+class AddTrusteeControllerSpec extends ControllerSpecBase with CompletionStatusHelper {
   appRunning()
 
   lazy val trusteeCompanyA: TrusteeCompanyEntity = TrusteeCompanyEntity(
@@ -111,57 +111,12 @@ class AddTrusteeControllerSpec extends ControllerSpecBase {
     )
   }
 
-  private def setTrusteeComplete(toggled: Boolean, index: Int, ua: UserAnswers): UserAnswers = {
-    if (toggled) {
-      ua.
-        set(TrusteeDOBId(index))(LocalDate.now()).asOpt.value
-        .set(TrusteeHasNINOId(index))(true).asOpt.value
-        .set(TrusteeNewNinoId(index))(ReferenceValue(stringValue)).asOpt.value
-        .set(TrusteeHasUTRId(index))(true).asOpt.value
-        .set(TrusteeUTRId(index))(stringValue).asOpt.value
-        .set(TrusteeAddressId(index))(address).asOpt.value
-        .set(TrusteeAddressYearsId(index))(AddressYears.OverAYear).asOpt.value
-        .set(TrusteeEmailId(index))(stringValue).asOpt.value
-        .set(TrusteePhoneId(index))(stringValue).asOpt.value
-    } else {
-      ua.
-        set(TrusteeDetailsId(index))(PersonDetails(firstName, None, lastName, LocalDate.now())).asOpt.value
-        .set(TrusteeNinoId(index))(Nino.Yes(stringValue)).asOpt.value
-        .set(UniqueTaxReferenceId(index))(UniqueTaxReference.Yes(stringValue)).asOpt.value
-        .set(TrusteeAddressId(index))(address).asOpt.value
-        .set(TrusteeAddressYearsId(index))(AddressYears.OverAYear).asOpt.value
-        .set(TrusteeContactDetailsId(index))(ContactDetails(stringValue, stringValue)).asOpt.value
-    }
-  }
-
-  private def setTrusteeIncomplete(toggled: Boolean, index: Int, ua: UserAnswers): UserAnswers = {
-    if (toggled) {
-      ua.
-        set(TrusteeDOBId(index))(LocalDate.now()).asOpt.value
-        .set(TrusteeHasNINOId(index))(true).asOpt.value
-        .set(TrusteeHasUTRId(index))(true).asOpt.value
-        .set(TrusteeUTRId(index))(stringValue).asOpt.value
-        .set(TrusteeAddressId(index))(address).asOpt.value
-        .set(TrusteeAddressYearsId(index))(AddressYears.OverAYear).asOpt.value
-        .set(TrusteeEmailId(index))(stringValue).asOpt.value
-        .set(TrusteePhoneId(index))(stringValue).asOpt.value
-    } else {
-      ua.
-        set(TrusteeDetailsId(index))(PersonDetails(firstName, None, lastName, LocalDate.now())).asOpt.value
-        .set(UniqueTaxReferenceId(index))(UniqueTaxReference.Yes(stringValue)).asOpt.value
-        .set(TrusteeAddressId(index))(address).asOpt.value
-        .set(TrusteeAddressYearsId(index))(AddressYears.OverAYear).asOpt.value
-        .set(TrusteeContactDetailsId(index))(ContactDetails(stringValue, stringValue)).asOpt.value
-    }
-  }
-
-
   "AddTrustee Controller" must {
 
     "return view with button ENABLED when toggle set to TRUE  and some trustees incomplete" in {
       val trusteeList: JsValue =
-        setTrusteeIncomplete(toggled = true, 1,
-          setTrusteeComplete(toggled = true, 0,
+        setTrusteeCompletionStatus(isComplete = false, toggled = true, 1,
+          setTrusteeCompletionStatus(isComplete = true, toggled = true, 0,
             UserAnswers()
               .set(TrusteeDetailsId(0))(PersonDetails("fistName", None, "lastName", LocalDate.now())).asOpt.value
               .set(TrusteeDetailsId(1))(PersonDetails("fistName", None, "lastName", LocalDate.now())).asOpt.value
@@ -180,8 +135,8 @@ class AddTrusteeControllerSpec extends ControllerSpecBase {
 
     "return view with button ENABLED when toggle set to TRUE and all trustees complete" in {
       val trusteeList: JsValue =
-        setTrusteeComplete(toggled = true, 1,
-          setTrusteeComplete(toggled = true, 0,
+        setTrusteeCompletionStatus(isComplete = true, toggled = true, 1,
+          setTrusteeCompletionStatus(isComplete = true, toggled = true, 0,
             UserAnswers()
               .set(TrusteeDetailsId(0))(PersonDetails("fistName", None, "lastName", LocalDate.now())).asOpt.value
               .set(TrusteeDetailsId(1))(PersonDetails("fistName", None, "lastName", LocalDate.now())).asOpt.value
@@ -199,8 +154,8 @@ class AddTrusteeControllerSpec extends ControllerSpecBase {
 
     "return view with button ENABLED when toggle set to FALSE and all trustees complete" in {
       val trusteeList: JsValue =
-        setTrusteeComplete(toggled = false, 1,
-          setTrusteeComplete(toggled = false, 0,
+        setTrusteeCompletionStatus(isComplete = true, toggled = false, 1,
+          setTrusteeCompletionStatus(isComplete = true, toggled = false, 0,
             UserAnswers()
               .set(TrusteeDetailsId(0))(PersonDetails("fistName", None, "lastName", LocalDate.now())).asOpt.value
               .set(TrusteeDetailsId(1))(PersonDetails("fistName", None, "lastName", LocalDate.now())).asOpt.value
@@ -216,13 +171,13 @@ class AddTrusteeControllerSpec extends ControllerSpecBase {
       view.getElementById("submit").hasAttr("disabled") mustEqual false
     }
 
-    // TODO PODS-2940 add a unit test for toggle ON
+    // TODO: PODS-2940 Write unit test for toggle ON
 
     "return view with button DISABLED when toggle set to FALSE and at least one trustee is INCOMPLETE" in {
 
       val trusteeList: JsValue =
-        setTrusteeComplete(toggled = false, 1,
-          setTrusteeIncomplete(toggled = false, 0,
+        setTrusteeCompletionStatus(isComplete = true, toggled = false, 1,
+          setTrusteeCompletionStatus(isComplete = false, toggled = false, 0,
             UserAnswers()
               .set(TrusteeDetailsId(0))(PersonDetails("fistName", None, "lastName", LocalDate.now())).asOpt.value
               .set(TrusteeDetailsId(1))(PersonDetails("fistName", None, "lastName", LocalDate.now())).asOpt.value
