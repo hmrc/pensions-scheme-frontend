@@ -19,7 +19,6 @@ package navigators
 import com.google.inject.Inject
 import connectors.UserAnswersCacheConnector
 import controllers.register.trustees.routes.AddTrusteeController
-import controllers.routes.AnyMoreChangesController
 import identifiers.Identifier
 import identifiers.register.trustees.individual.TrusteeNameId
 import models._
@@ -30,27 +29,29 @@ class TrusteesIndividualNavigator @Inject()(val dataCacheConnector: UserAnswersC
   import TrusteesIndividualNavigator._
 
   private def normalAndUpdateModeRoutes(mode: Mode, ua: UserAnswers, srn: Option[String]): PartialFunction[Identifier, Call] = {
-    case TrusteeNameId(index) => addTrusteePage(mode, srn)
+    case TrusteeNameId(_) => addTrusteePage(mode, srn)
   }
 
   private def checkModeRoutes(mode: Mode, ua: UserAnswers, srn: Option[String]): PartialFunction[Identifier, Call] = {
-    case TrusteeNameId(index) => addTrusteePage(mode, srn)
+    case _ => sessionExpiredPage
   }
 
   private def checkUpdateModeRoutes(mode: Mode, ua: UserAnswers, srn: Option[String]): PartialFunction[Identifier, Call] = {
-    case TrusteeNameId(index) => addTrusteePage(mode, srn)
+    case _ => sessionExpiredPage
   }
 
   override protected def routeMap(from: NavigateFrom): Option[NavigateTo] = applyRoutes(normalAndUpdateModeRoutes, from, NormalMode, None)
 
   override protected def editRouteMap(from: NavigateFrom): Option[NavigateTo] = applyRoutes(checkModeRoutes, from, CheckMode, None)
 
-  override protected def updateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] = applyRoutes(normalAndUpdateModeRoutes, from, UpdateMode, srn)
+  override protected def updateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] =
+    applyRoutes(normalAndUpdateModeRoutes, from, UpdateMode, srn)
 
-  override protected def checkUpdateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] = applyRoutes(checkUpdateModeRoutes, from, CheckUpdateMode, srn)
+  override protected def checkUpdateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] =
+    applyRoutes(checkUpdateModeRoutes, from, CheckUpdateMode, srn)
 }
 
 object TrusteesIndividualNavigator {
   private def addTrusteePage(mode: Mode, srn: Option[String]): Call = AddTrusteeController.onPageLoad(mode, srn)
-  private def moreChanges(mode: Mode, index: Int, srn: Option[String]): Call = AnyMoreChangesController.onPageLoad(srn)
+  private def sessionExpiredPage: Call = controllers.routes.SessionExpiredController.onPageLoad()
 }

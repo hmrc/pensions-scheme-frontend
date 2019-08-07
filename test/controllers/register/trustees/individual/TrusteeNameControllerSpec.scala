@@ -77,15 +77,7 @@ class TrusteeNameControllerSpec extends ControllerSpecBase {
     }
 
     "populate the view correctly on a GET when the question has previously been answered" in {
-      val validData = Json.obj(
-        TrusteesId.toString -> Json.arr(
-          Json.obj("trustee" -> Json.obj(
-            TrusteeNameId.toString -> personName
-          ))
-        )
-      )
-
-      val getRelevantData = new FakeDataRetrievalAction(Some(validData))
+      val getRelevantData = UserAnswers().set(TrusteeNameId(0))(personName).asOpt.value.dataRetrievalAction
 
       val result = controller(getRelevantData).onPageLoad(NormalMode, firstTrusteeIndex, None)(fakeRequest)
 

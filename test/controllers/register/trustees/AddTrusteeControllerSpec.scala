@@ -21,7 +21,7 @@ import controllers.actions._
 import forms.register.trustees.AddTrusteeFormProvider
 import identifiers.register.trustees.company.CompanyDetailsId
 import identifiers.register.trustees.individual.TrusteeDetailsId
-import identifiers.register.trustees.{IsTrusteeNewId, TrusteeKindId, TrusteesId}
+import identifiers.register.trustees.{IsTrusteeNewId, TrusteeKindId, TrusteesId, _}
 import models.person.PersonDetails
 import models.register.SchemeType.SingleTrust
 import models.register._
@@ -30,11 +30,10 @@ import models.{CompanyDetails, NormalMode}
 import org.joda.time.LocalDate
 import play.api.data.Form
 import play.api.libs.json._
-import play.api.mvc.{Action, AnyContent, Call, Result}
+import play.api.mvc.{Call, Result}
 import play.api.test.Helpers.{contentAsString, _}
 import utils.{FakeFeatureSwitchManagementService, FakeNavigator, UserAnswers}
 import views.html.register.trustees.addTrustee
-import identifiers.register.trustees._
 
 import scala.concurrent.Future
 
@@ -45,7 +44,7 @@ class AddTrusteeControllerSpec extends ControllerSpecBase {
     CompanyDetailsId(0), "Trustee Company A", isDeleted = false, isCompleted = false, isNewEntity = true, 3, Some(SingleTrust.toString))
   lazy val trusteeCompanyB: TrusteeCompanyEntity = TrusteeCompanyEntity(
     CompanyDetailsId(1), "Trustee Company B", isDeleted = false, isCompleted = false, isNewEntity = true, 3, Some(SingleTrust.toString))
-  lazy val trusteeIndividual: TrusteeIndividualEntity = TrusteeIndividualEntity(
+  lazy val trusteeIndividual: TrusteeIndividualEntityNonHns = TrusteeIndividualEntityNonHns(
     TrusteeDetailsId(2), "Trustee Individual", isDeleted = false, isCompleted = false, isNewEntity = true, 3, Some(SingleTrust.toString))
   lazy val allTrustees = Seq(trusteeCompanyA, trusteeCompanyB, trusteeIndividual)
   val formProvider = new AddTrusteeFormProvider()
@@ -80,7 +79,7 @@ class AddTrusteeControllerSpec extends ControllerSpecBase {
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
   def viewAsString(form: Form[_] = form, trustees: Seq[Trustee[_]] = Seq.empty, enable: Boolean = false): String =
-    addTrustee(frontendAppConfig, form, NormalMode, trustees, None, None, enable)(fakeRequest, messages).toString
+    addTrustee(frontendAppConfig, form, NormalMode, trustees, None, None, enable, false)(fakeRequest, messages).toString
 
   private def validData = {
     Json.obj(

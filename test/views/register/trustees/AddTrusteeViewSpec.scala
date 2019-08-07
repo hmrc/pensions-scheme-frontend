@@ -19,13 +19,13 @@ package views.register.trustees
 import controllers.register.trustees.routes
 import forms.register.trustees.AddTrusteeFormProvider
 import identifiers.SchemeTypeId
-import identifiers.register.trustees.{IsTrusteeNewId, TrusteeKindId}
 import identifiers.register.trustees.company.CompanyDetailsId
 import identifiers.register.trustees.individual.TrusteeDetailsId
+import identifiers.register.trustees.{IsTrusteeNewId, TrusteeKindId}
 import models.person.PersonDetails
 import models.register.SchemeType.SingleTrust
 import models.register.trustees.TrusteeKind
-import models.register.{SchemeType, Trustee, TrusteeIndividualEntity}
+import models.register.{SchemeType, Trustee, TrusteeIndividualEntityNonHns}
 import models.{CompanyDetails, NormalMode, UpdateMode}
 import org.joda.time.LocalDate
 import play.api.data.Form
@@ -60,19 +60,19 @@ class AddTrusteeViewSpec extends YesNoViewBehaviours with EntityListBehaviours w
       .value
 
   private val trustees: Seq[Trustee[_]] = userAnswers.allTrustees
-  private val fullTrustees: Seq[TrusteeIndividualEntity] = (0 to 9).map(index => TrusteeIndividualEntity(
+  private val fullTrustees: Seq[TrusteeIndividualEntityNonHns] = (0 to 9).map(index => TrusteeIndividualEntityNonHns(
     TrusteeDetailsId(index), "trustee name", isDeleted = false, isCompleted = false, isNewEntity = true, 10, Some(SingleTrust.toString)))
 
   val form = new AddTrusteeFormProvider()()
 
-  private def createView(trustees: Seq[Trustee[_]] = Seq.empty, enable: Boolean = true, displayStatus: Boolean = true) = () =>
-    addTrustee(frontendAppConfig, form, NormalMode, trustees, None, None, enableSubmission = enable, displayStatus)(fakeRequest, messages)
+  private def createView(trustees: Seq[Trustee[_]] = Seq.empty, enable: Boolean = true, isHnsEnabled: Boolean = false) = () =>
+    addTrustee(frontendAppConfig, form, NormalMode, trustees, None, None, enableSubmission = enable, isHnsEnabled)(fakeRequest, messages)
 
   private def createUpdateView(trustees: Seq[Trustee[_]] = Seq.empty) = () =>
-    addTrustee(frontendAppConfig, form, UpdateMode, trustees, None, Some("srn"), enableSubmission = true)(fakeRequest, messages)
+    addTrustee(frontendAppConfig, form, UpdateMode, trustees, None, Some("srn"), enableSubmission = true, false)(fakeRequest, messages)
 
   private def createViewUsingForm(trustees: Seq[Trustee[_]] = Seq.empty) = (form: Form[Boolean]) =>
-    addTrustee(frontendAppConfig, form, NormalMode, trustees, None, None, enableSubmission = true)(fakeRequest, messages)
+    addTrustee(frontendAppConfig, form, NormalMode, trustees, None, None, enableSubmission = true, false)(fakeRequest, messages)
 
   "AddTrustee view" must {
     behave like normalPage(createView(), messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__heading"))
@@ -132,16 +132,17 @@ class AddTrusteeViewSpec extends YesNoViewBehaviours with EntityListBehaviours w
       doc.select("#value-no").size() mustEqual 1
     }
 
-    "not display the status if displayStatus is false" in {
-      val doc = asDocument(createView(trustees, displayStatus = false)())
+    "not display the status and edit link if hnsEnabled is true" in {
+      val doc = asDocument(createView(trustees, isHnsEnabled = true)())
       doc mustNot haveDynamicText("site.complete")
       doc mustNot haveDynamicText("site.incomplete")
+      assertNotRenderedById(doc,"person-0-edit")
     }
 
-    "display the status if displayStatus is true" in {
+    "display the status and edit link if hnsEnabled is false" in {
       val doc = asDocument(createView(trustees)())
       doc must haveDynamicText("site.incomplete")
+      assertRenderedById(doc,"person-0-edit")
     }
-
   }
 }

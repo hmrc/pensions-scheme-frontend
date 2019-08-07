@@ -23,11 +23,11 @@ import identifiers.register.establishers.partnership._
 import identifiers.register.establishers.partnership.partner.{IsNewPartnerId, IsPartnerCompleteId, PartnerDetailsId}
 import identifiers.register.establishers.{EstablisherKindId, EstablishersId, IsEstablisherCompleteId, IsEstablisherNewId}
 import identifiers.register.trustees.company.{CompanyPayeId, CompanyVatId, CompanyDetailsId => TrusteeCompanyDetailsId}
-import identifiers.register.trustees.individual.TrusteeDetailsId
+import identifiers.register.trustees.individual.{TrusteeDetailsId, TrusteeNameId}
 import identifiers.register.trustees.{company => _, _}
 import models._
+import models.person._
 import models.address.Address
-import models.person.{PersonDetails, PersonName}
 import models.register.SchemeType.SingleTrust
 import models.register._
 import models.register.establishers.EstablisherKind
@@ -135,7 +135,7 @@ class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues with 
 
   ".allTrustees" must {
 
-    "return a map of trustee names, edit links, delete links and isComplete flag" in {
+    "return a map of trustee names, edit links, delete links and isComplete flag when hub and spoke is not enabled" in {
       val userAnswers = UserAnswers(Json.obj(
         "schemeType"-> Json.obj("name"-> "single"),
         TrusteesId.toString -> Json.arr(
@@ -172,6 +172,51 @@ class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues with 
         trusteeEntity("First Last", 0, TrusteeKind.Individual, isComplete = true),
         trusteeEntity("My Company", 1, TrusteeKind.Company, isComplete = true),
         trusteeEntity("My Partnership", 2, TrusteeKind.Partnership),
+        TrusteeSkeletonEntity(TrusteeKindId(3))
+      )
+
+      val result = userAnswers.allTrustees
+
+      result mustEqual allTrusteesEntities
+    }
+
+    "return a map of trustee names, edit links, delete links and isComplete flag when hub and spoke is enabled" in {
+      val userAnswers = UserAnswers(Json.obj(
+        "schemeType"-> Json.obj("name"-> "single"),
+        TrusteesId.toString -> Json.arr(
+          Json.obj(
+            TrusteeKindId.toString -> TrusteeKind.Individual.toString,
+            TrusteeNameId.toString ->
+              PersonName("First", "Last"),
+            IsTrusteeCompleteId.toString -> true,
+            IsTrusteeNewId.toString -> true
+          ),
+          Json.obj(
+            TrusteeKindId.toString -> TrusteeKind.Company.toString,
+            TrusteeCompanyDetailsId.toString ->
+              CompanyDetails("My Company"),
+            CompanyVatId.toString -> Vat.No,
+            CompanyPayeId.toString -> Paye.No,
+            IsTrusteeCompleteId.toString -> true,
+            IsTrusteeNewId.toString -> true
+          ),
+          Json.obj(
+            TrusteeKindId.toString -> TrusteeKind.Partnership.toString,
+            partnership.PartnershipDetailsId.toString ->
+              PartnershipDetails("My Partnership", isDeleted = false),
+            IsTrusteeNewId.toString -> true
+          ),
+          Json.obj(
+            TrusteeKindId.toString -> TrusteeKind.Individual.toString,
+            IsTrusteeNewId.toString -> true
+          )
+        )
+      ))
+
+      val allTrusteesEntities: Seq[Trustee[_]] = Seq(
+        trusteeEntity("First Last", 0, TrusteeKind.Individual, isComplete = true, isHnsEnabled = true),
+        trusteeEntity("My Company", 1, TrusteeKind.Company, isComplete = true, isHnsEnabled = true),
+        trusteeEntity("My Partnership", 2, TrusteeKind.Partnership, isHnsEnabled = true),
         TrusteeSkeletonEntity(TrusteeKindId(3))
       )
 
@@ -570,10 +615,12 @@ object UserAnswersSpec extends OptionValues with Enumerable.Implicits {
     }
   }
 
-  private def trusteeEntity(name: String, index: Int, trusteeKind: TrusteeKind, isComplete: Boolean = false, countAfterDeleted : Int = 4): Trustee[_] = {
+  private def trusteeEntity(name: String, index: Int, trusteeKind: TrusteeKind, isComplete: Boolean = false, countAfterDeleted : Int = 4, isHnsEnabled: Boolean = false): Trustee[_] = {
     trusteeKind match {
-      case TrusteeKind.Individual =>
-        TrusteeIndividualEntity(TrusteeDetailsId(index), name, isDeleted = false, isCompleted = isComplete, isNewEntity = true, countAfterDeleted, Some(SingleTrust.toString))
+      case TrusteeKind.Individual if isHnsEnabled=>
+        TrusteeIndividualEntity(TrusteeNameId(index), name, isDeleted = false, isCompleted = isComplete, isNewEntity = true, countAfterDeleted, Some(SingleTrust.toString))
+      case TrusteeKind.Individual=>
+        TrusteeIndividualEntityNonHns(TrusteeDetailsId(index), name, isDeleted = false, isCompleted = isComplete, isNewEntity = true, countAfterDeleted, Some(SingleTrust.toString))
       case TrusteeKind.Company =>
         TrusteeCompanyEntity(TrusteeCompanyDetailsId(index), name, isDeleted = false, isCompleted = isComplete, isNewEntity = true, countAfterDeleted, Some(SingleTrust.toString))
       case _ =>

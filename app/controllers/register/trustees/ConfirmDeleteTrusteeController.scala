@@ -133,7 +133,7 @@ class ConfirmDeleteTrusteeController @Inject()(appConfig: FrontendAppConfig,
               company => userAnswersService.save(mode, srn, CompanyDetailsId(trusteeIndex), company.copy(isDeleted = true)))
             case Individual if !isHnsEnabled => trusteeDetailsNonHns.fold(Future.successful(dataRequest.userAnswers.json))(
               trustee => userAnswersService.save(mode, srn, TrusteeDetailsId(trusteeIndex), trustee.copy(isDeleted = true)))
-            case Individual if isHnsEnabled=> trusteeDetails.fold(Future.successful(dataRequest.userAnswers.json))(
+            case Individual if isHnsEnabled => trusteeDetails.fold(Future.successful(dataRequest.userAnswers.json))(
               trustee => userAnswersService.save(mode, srn, TrusteeNameId(trusteeIndex), trustee.copy(isDeleted = true)))
             case Partnership => partnershipDetails.fold(Future.successful(dataRequest.userAnswers.json))(
               partnership => userAnswersService.save(mode, srn, PartnershipDetailsId(trusteeIndex), partnership.copy(isDeleted = true)))

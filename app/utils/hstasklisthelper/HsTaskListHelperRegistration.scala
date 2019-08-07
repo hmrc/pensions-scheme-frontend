@@ -99,28 +99,38 @@ class HsTaskListHelperRegistration(answers: UserAnswers,
   }
 
   protected[utils] override def addTrusteeHeader(userAnswers: UserAnswers, mode: Mode, srn: Option[String]): Option[SchemeDetailsTaskListHeader] = {
-    (userAnswers.get(HaveAnyTrusteesId), userAnswers.allTrusteesAfterDelete.isEmpty) match {
-      case (None | Some(true), false) =>
+    if (isHnSEnabled) {
+      if (userAnswers.allTrusteesAfterDelete.isEmpty) {
+        Some(SchemeDetailsTaskListHeader(None, Some(Link(addTrusteesLinkText,
+          controllers.register.trustees.routes.TrusteeKindController.onPageLoad(mode,
+            userAnswers.allTrustees.size, srn).url)), None))
+      } else {
+        Some(SchemeDetailsTaskListHeader(None, Some(Link(changeTrusteesLinkText,
+          controllers.register.trustees.routes.AddTrusteeController.onPageLoad(mode, srn).url)), None))
+      }
+    } else {
+      (userAnswers.get(HaveAnyTrusteesId), userAnswers.allTrusteesAfterDelete.isEmpty) match {
+        case (None | Some(true), false) =>
 
-        val (linkText, additionalText): (String, Option[String]) =
-          getTrusteeHeaderText(userAnswers.allTrusteesAfterDelete.size, userAnswers.get(SchemeTypeId))
+          val (linkText, additionalText): (String, Option[String]) =
+            getTrusteeHeaderText(userAnswers.allTrusteesAfterDelete.size, userAnswers.get(SchemeTypeId))
 
-        Some(
-          SchemeDetailsTaskListHeader(
-            link = addTrusteeLink(linkText, srn, mode),
-            p1 = additionalText))
+          Some(
+            SchemeDetailsTaskListHeader(
+              link = addTrusteeLink(linkText, srn, mode),
+              p1 = additionalText))
 
-      case (None | Some(true), true) =>
+        case (None | Some(true), true) =>
 
-        Some(
-          SchemeDetailsTaskListHeader(
-            trusteeStatus(isAllTrusteesCompleted(userAnswers), trusteesMandatory(userAnswers.get(SchemeTypeId))),
-            typeOfTrusteeLink(addTrusteesLinkText, userAnswers.allTrustees.size, srn, mode)))
+          Some(
+            SchemeDetailsTaskListHeader(
+              trusteeStatus(isAllTrusteesCompleted(userAnswers), trusteesMandatory(userAnswers.get(SchemeTypeId))),
+              typeOfTrusteeLink(addTrusteesLinkText, userAnswers.allTrustees.size, srn, mode)))
 
-      case _ =>
-        None
+        case _ =>
+          None
+      }
     }
-
   }
 
   protected[utils] def addEstablisherHeader(userAnswers: UserAnswers, mode: Mode, srn: Option[String]): Option[SchemeDetailsTaskListHeader] = {
