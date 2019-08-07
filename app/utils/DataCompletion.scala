@@ -195,4 +195,7 @@ trait DataCompletion {
         TrusteeAddressYearsId(trusteeIndex), None).getOrElse(false),
       get(TrusteeContactDetailsId(trusteeIndex)).isDefined
     ))
+
+  def isTrusteeIndividualComplete(isHnSEnabled: Boolean, index:Int):Boolean =
+    if (isHnSEnabled) isTrusteeIndividualCompleteHnS(index) else isTrusteeIndividualCompleteNonHnS(index)
 }

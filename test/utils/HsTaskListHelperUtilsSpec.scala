@@ -125,16 +125,17 @@ class HsTaskListHelperUtilsSpec extends SpecBase with MustMatchers with OptionVa
       }
 
       // TODO: PODS-2940 Fix these tests
+      // TODO PODS-2940 Write unit test for toggle ON
 
       "in subscription journey when all spokes are in progress" in {
         subscriptionHelper.getTrusteeIndividualSpokes(
-          trusteeIndividual(isComplete = false), NormalMode, None, "test individual", 0
+          trusteeIndividual(isHnSEnabled = false, isComplete = false), NormalMode, None, "test individual", 0
         ) mustBe expectedInProgressTrusteeIndividualSpokes(NormalMode, None)
       }
 
 //      "in subscription journey when all spokes are complete" in {
 //        subscriptionHelper.getTrusteeIndividualSpokes(
-//          trusteeIndividual(isComplete = true), NormalMode, None, "test individual", 0
+//          trusteeIndividual(isHnSEnabled = false, isComplete = true), NormalMode, None, "test individual", 0
 //        ) mustBe expectedCompletedTrusteeSpokes(NormalMode, None)
 //      }
 //
@@ -146,13 +147,13 @@ class HsTaskListHelperUtilsSpec extends SpecBase with MustMatchers with OptionVa
 //
 //      "in variations journey when all spokes are in progress" in {
 //        subscriptionHelper.getTrusteeIndividualSpokes(
-//          trusteeIndividual(isComplete = false), UpdateMode, srn, "test individual", 0
+//          trusteeIndividual(isHnSEnabled = false, isComplete = false), UpdateMode, srn, "test individual", 0
 //        ) mustBe expectedInProgressTrusteeCompanySpokes(UpdateMode, srn)
 //      }
 //
 //      "in variations journey when all spokes are complete" in {
 //        subscriptionHelper.getTrusteeIndividualSpokes(
-//          trusteeIndividual(isComplete = true), UpdateMode, srn, "test individual", 0
+//          trusteeIndividual(isHnSEnabled = false, isComplete = true), UpdateMode, srn, "test individual", 0
 //        ) mustBe expectedCompletedTrusteeSpokes(UpdateMode, srn)
 //      }
     }
@@ -160,7 +161,7 @@ class HsTaskListHelperUtilsSpec extends SpecBase with MustMatchers with OptionVa
 
 }
 
-object HsTaskListHelperUtilsSpec extends SpecBase with OptionValues {
+object HsTaskListHelperUtilsSpec extends SpecBase with OptionValues with CompletionStatusHelper {
 
   val srn = Some("S123")
   private val fakeFeatureSwitch = new FakeFeatureSwitchManagementService(true)
@@ -206,14 +207,15 @@ object HsTaskListHelperUtilsSpec extends SpecBase with OptionValues {
   }
 
   // TODO PODS-2940 Need to do something here?
-  protected def trusteeIndividual(isComplete: Boolean): UserAnswers = {
-    trusteeIndividualBlank
+  protected def trusteeIndividual(isHnSEnabled:Boolean, isComplete: Boolean): UserAnswers = {
+    val ua = trusteeIndividualBlank
       .set(IsTrusteeNewId(0))(true)
 //      .flatMap(
 //      _.set(trusteeIndividualPath.IsAddressCompleteId(0))(isComplete).flatMap(
 //        _.set(trusteeIndividualPath.IsDetailsCompleteId(0))(isComplete).flatMap(
 //          _.set(trusteeIndividualPath.IsContactDetailsCompleteId(0))(isComplete))))
       .asOpt.value
+    setTrusteeCompletionStatus(isComplete = isComplete, toggled = isHnSEnabled, 0, ua)
   }
 
   protected def establisherCompanyWithCompletedDirectors = UserAnswers(readJsonFromFile("/payloadHnS.json"))

@@ -318,9 +318,6 @@ final case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Impl
       case _ => 0
     }
 
-    private def isTrusteeIndividualComplete(isHnSEnabled: Boolean, index:Int):Boolean =
-      if (isHnSEnabled) isTrusteeIndividualCompleteHnS(index) else isTrusteeIndividualCompleteNonHnS(index)
-
     // Change this method
     private def readsIndividual(index: Int): Reads[Trustee[_]] = (
       (JsPath \ TrusteeDetailsId.toString).read[PersonDetails] and
