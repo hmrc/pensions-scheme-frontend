@@ -16,7 +16,6 @@
 
 package controllers.register.trustees.individual
 
-import com.apple.laf.AquaButtonBorder.Toggle
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.NinoNewFormProvider
