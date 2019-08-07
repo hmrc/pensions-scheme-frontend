@@ -40,9 +40,6 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class NinoControllerSpec extends ControllerSpecBase {
 
-  // TODO: This should fail!
-  val personName = "Mark"
-
   val viewmodel = NinoViewModel(
     postCall = Call("POST", "/"),
     title = Message("messages__common_nino__title"),

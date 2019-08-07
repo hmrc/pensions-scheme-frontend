@@ -76,7 +76,6 @@ class IndividualAddressListController @Inject()(override val appConfig: Frontend
           addresses = addresses,
           title = Message("messages__trustee__individual__address__title"),
           heading = Message("messages__trustee__individual__address__heading", trusteeDetails.fullName),
-          subHeading = Some(Message(trusteeDetails.fullName)),
           srn = srn
         )
     }
