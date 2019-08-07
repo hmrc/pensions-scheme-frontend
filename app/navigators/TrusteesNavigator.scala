@@ -80,7 +80,6 @@ class TrusteesNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnec
 
   private def addTrusteeRoutes(answers: UserAnswers, mode: Mode, srn: Option[String]): Option[NavigateTo] = {
     import controllers.register.trustees.routes._
-    //TODO PODS-2940 Needs attention to trustees count
     val trusteesLengthCompare = answers.allTrustees(toggled).lengthCompare(appConfig.maxTrustees)
 
     answers.get(AddTrusteeId) match {

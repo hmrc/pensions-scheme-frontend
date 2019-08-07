@@ -23,10 +23,9 @@ import utils.UserAnswers
 case class TrusteesId(index: Int) extends TypedIdentifier[Nothing] {
   override def path: JsPath = __ \ TrusteesId.toString \ index
 
-  //TODO PODS-2940 Needs attention to trustees count
   override def cleanup(value: Option[Nothing], userAnswers: UserAnswers): JsResult[UserAnswers] = {
-    userAnswers.allTrustees(isHnSEnabled = false).lengthCompare(10) match {
-      case x if x <= 0 => userAnswers.remove(MoreThanTenTrusteesId)
+    value match {
+      case None => userAnswers.remove(MoreThanTenTrusteesId)
       case _ => super.cleanup(value, userAnswers)
     }
   }

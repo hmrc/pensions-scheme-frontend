@@ -177,7 +177,7 @@ trait DataCompletion {
       isUtrComplete(TrusteeHasUTRId(trusteeIndex), TrusteeUTRId(trusteeIndex), TrusteeNoUTRReasonId(trusteeIndex))
     ))
 
-  def isTrusteeIndividualCompleteHnS(trusteeIndex: Int): Boolean =
+  def isTrusteeIndividualCompleteHnS(trusteeIndex: Int): Boolean = {
     isComplete(
       Seq(
         isTrusteeIndividualDetailsComplete(trusteeIndex),
@@ -185,6 +185,7 @@ trait DataCompletion {
         isContactDetailsComplete(TrusteeEmailId(trusteeIndex), TrusteePhoneId(trusteeIndex))
       )
     ).getOrElse(false)
+  }
 
   def isTrusteeIndividualCompleteNonHnS(trusteeIndex: Int): Boolean =
     isListComplete(Seq(

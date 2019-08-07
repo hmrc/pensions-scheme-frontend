@@ -440,11 +440,11 @@ final case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Impl
   def isAllTrusteesCompleted(isHnSEnabled: Boolean): Boolean = {
     val isSingleOrMaster = schemeType.fold(false)(scheme => Seq("single", "master").exists(_.equals(scheme)))
 
-    if(isSingleOrMaster)
+    if(isSingleOrMaster) {
       allTrusteesAfterDelete(isHnSEnabled).nonEmpty && allTrusteesAfterDelete(isHnSEnabled).forall(_.isCompleted)
-    else
+    }else {
       allTrusteesAfterDelete(isHnSEnabled).forall(_.isCompleted)
-
+    }
   }
 
   def isDirectorPartnerCompleted(establisherIndex:Int, isHnSEnabled: Boolean) = get(EstablisherKindId(establisherIndex)) match {
@@ -467,5 +467,4 @@ final case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Impl
 
   def areVariationChangesCompleted(isHnSEnabled: Boolean = false): Boolean =
     isInsuranceCompleted && isAllTrusteesCompleted(isHnSEnabled) && allEstablishersCompleted(isHnSEnabled, UpdateMode)
-
 }
