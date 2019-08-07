@@ -130,7 +130,7 @@ abstract class HsTaskListHelper(answers: UserAnswers,
       userAnswers.get(IsWorkingKnowledgeCompleteId),
       Some(isAllEstablishersCompleted(userAnswers, NormalMode)),
       Some(isTrusteeOptional | isAllTrusteesCompleted(userAnswers)),
-      Some(userAnswers.allTrusteesAfterDelete.size < 10 || userAnswers.get(MoreThanTenTrusteesId).isDefined)
+      Some(userAnswers.allTrusteesAfterDelete(isHnSEnabled).size < 10 || userAnswers.get(MoreThanTenTrusteesId).isDefined)
     ).forall(_.contains(true))
   }
 
@@ -149,7 +149,7 @@ abstract class HsTaskListHelper(answers: UserAnswers,
   }
 
   protected def isAllTrusteesCompleted(userAnswers: UserAnswers): Boolean = {
-    userAnswers.allTrusteesAfterDelete.nonEmpty && userAnswers.allTrusteesAfterDelete.forall(_.isCompleted)
+    userAnswers.allTrusteesAfterDelete(isHnSEnabled).nonEmpty && userAnswers.allTrusteesAfterDelete(isHnSEnabled).forall(_.isCompleted)
   }
 
   protected def isAllEstablishersCompleted(userAnswers: UserAnswers, mode: Mode): Boolean = {
@@ -189,7 +189,7 @@ abstract class HsTaskListHelper(answers: UserAnswers,
   }
 
   protected[utils] def trustees(userAnswers: UserAnswers, mode: Mode, srn: Option[String]): Seq[SchemeDetailsTaskListEntitySection] = {
-    val sections = userAnswers.allTrustees
+    val sections = userAnswers.allTrustees(isHnSEnabled)
     val notDeletedElements = for ((section, _) <- sections.zipWithIndex) yield {
       if (section.isDeleted) None else {
         section.id match {

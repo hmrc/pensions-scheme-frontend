@@ -21,8 +21,8 @@ import forms.register.trustees.AddTrusteeFormProvider
 import identifiers.SchemeTypeId
 import identifiers.register.trustees.{IsTrusteeNewId, TrusteeKindId}
 import identifiers.register.trustees.company.CompanyDetailsId
-import identifiers.register.trustees.individual.TrusteeDetailsId
-import models.person.PersonDetails
+import identifiers.register.trustees.individual.{TrusteeDetailsId, TrusteeNameId}
+import models.person.{PersonDetails, PersonName}
 import models.register.SchemeType.SingleTrust
 import models.register.trustees.TrusteeKind
 import models.register.{SchemeType, Trustee, TrusteeIndividualEntity}
@@ -59,7 +59,7 @@ class AddTrusteeViewSpec extends YesNoViewBehaviours with EntityListBehaviours w
       .asOpt
       .value
 
-  private val trustees: Seq[Trustee[_]] = userAnswers.allTrustees
+  private val trustees: Seq[Trustee[_]] = userAnswers.allTrustees(false)
   private val fullTrustees: Seq[TrusteeIndividualEntity] = (0 to 9).map(index => TrusteeIndividualEntity(
     TrusteeDetailsId(index), "trustee name", isDeleted = false, isCompleted = false, isNewEntity = true, 10, Some(SingleTrust.toString)))
 

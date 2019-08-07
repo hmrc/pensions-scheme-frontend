@@ -29,6 +29,8 @@ import utils.{Enumerable, Toggles, UserAnswers}
 class TrusteesNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector, appConfig: FrontendAppConfig,
                                   featureSwitchManagementService: FeatureSwitchManagementService) extends AbstractNavigator with Enumerable.Implicits {
 
+  private val isHnSEnabled = featureSwitchManagementService.get(Toggles.isEstablisherCompanyHnSEnabled)
+
   protected def routes(from: NavigateFrom, mode: Mode, srn: Option[String]): Option[NavigateTo] =
     from.id match {
       case HaveAnyTrusteesId =>
@@ -63,8 +65,8 @@ class TrusteesNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnec
   private def haveAnyTrusteesRoutes(answers: UserAnswers): Option[NavigateTo] = {
     answers.get(HaveAnyTrusteesId) match {
       case Some(true) =>
-        if (answers.allTrusteesAfterDelete.isEmpty) {
-          NavigateTo.dontSave(controllers.register.trustees.routes.TrusteeKindController.onPageLoad(NormalMode, answers.allTrustees.size, None))
+        if (answers.allTrusteesAfterDelete(isHnSEnabled).isEmpty) {
+          NavigateTo.dontSave(controllers.register.trustees.routes.TrusteeKindController.onPageLoad(NormalMode, answers.allTrustees(isHnSEnabled).size, None))
         } else {
           NavigateTo.dontSave(controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode, None))
         }
@@ -77,7 +79,7 @@ class TrusteesNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnec
 
   private def addTrusteeRoutes(answers: UserAnswers, mode: Mode, srn: Option[String]): Option[NavigateTo] = {
     import controllers.register.trustees.routes._
-    val trusteesLengthCompare = answers.allTrustees.lengthCompare(appConfig.maxTrustees)
+    val trusteesLengthCompare = answers.allTrustees(isHnSEnabled).lengthCompare(appConfig.maxTrustees)
 
     answers.get(AddTrusteeId) match {
       case Some(false) =>

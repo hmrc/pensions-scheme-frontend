@@ -43,7 +43,6 @@
         "companyName" : "Test Company",
         "isDeleted" : false
       },
-      "isDetailsComplete" : true,
       "hasCrn" : true,
       "companyRegistrationNumber" : {
         "value" : "12345678",
@@ -228,6 +227,114 @@
         }
       ],
       "isEstablisherComplete" : true
+    }
+  ],
+  "trustees": [
+    {
+      "isTrusteeNew" : true,
+      "trusteeKind" : "company",
+      "companyDetails" : {
+        "companyName" : "test company",
+        "isDeleted" : false
+      },
+      "hasCrn" : true,
+      "companyRegistrationNumber" : {
+        "value" : "12345678",
+        "isEditable" : true
+      },
+      "hasUtr" : true,
+      "utr" : "1234567890",
+      "hasVat" : true,
+      "companyVat" : {
+        "value" : "123456789",
+        "isEditable" : true
+      },
+      "hasPaye" : true,
+      "companyPaye" : {
+        "value" : "123456",
+        "isEditable" : true
+      },
+      "companyAddress" : {
+        "addressLine1" : "4 Other Place",
+        "addressLine2" : "Some District",
+        "addressLine3" : "Anytown",
+        "addressLine4" : "Somerset",
+        "postcode" : "ZZ1 1ZZ",
+        "country" : "GB"
+      },
+      "trusteesCompanyAddressYears" : "over_a_year",
+      "isAddressComplete" : true,
+      "isContactDetailsComplete" : true,
+      "companyContactDetails" : {
+        "emailAddress" : "a@a.a",
+        "phoneNumber" : "123456"
+      }
+    },
+    {
+      "trusteeKind" : "individual",
+      "isTrusteeNew" : true,
+      "trusteeDetails" : {
+        "firstName" : "firstName",
+        "lastName" : "lastName",
+        "date" : "2002-02-02",
+        "isDeleted" : false
+      },
+      "trusteeNino" : {
+        "hasNino" : false,
+        "reason" : "some reason"
+      },
+      "uniqueTaxReference" : {
+        "hasUtr" : false,
+        "reason" : "reason"
+      },
+      "trusteeAddressId" : {
+        "addressLine1" : "Flat 2a",
+        "addressLine2" : "7 Test Street",
+        "addressLine3" : "Testtown",
+        "addressLine4" : "Somerset",
+        "postcode" : "ZZ11 1ZZ",
+        "country" : "GB"
+      },
+      "trusteeAddressYears" : "over_a_year",
+      "trusteeContactDetails" : {
+        "emailAddress" : "q@q.q",
+        "phoneNumber" : "1234567890"
+      },
+      "isTrusteeComplete" : true
+    },
+    {
+      "trusteeKind" : "partnership",
+      "isTrusteeNew" : true,
+      "partnershipDetails": {
+        "name": "test partnership",
+        "isDeleted": false
+      },
+      "partnershipVat": {
+        "hasVat": true,
+        "vat": "123456789"
+      },
+      "partnershipPaye": {
+        "hasPaye": true,
+        "paye": "123AB56789"
+      },
+      "partnershipUniqueTaxReference": {
+        "hasUtr": true,
+        "utr": "1234567890"
+      },
+      "partnershipAddress": {
+        "addressLine1": "4 Other Place",
+        "addressLine2": "Some District",
+        "addressLine3": "Anytown",
+        "addressLine4": "Somerset",
+        "postcode": "ZZ1 1ZZ",
+        "country": "GB"
+      },
+      "partnershipAddressYears": "over_a_year",
+      "partnershipContactDetails": {
+        "emailAddress": "x@x.x",
+        "phoneNumber": "98765"
+      },
+      "isPartnershipCompleteId": true
     }
   ]
 }

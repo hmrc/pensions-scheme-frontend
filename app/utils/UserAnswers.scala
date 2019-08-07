@@ -306,7 +306,7 @@ final case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Impl
   }
 
   //scalastyle:off method.length
-  def readTrustees: Reads[Seq[Trustee[_]]] = new Reads[Seq[Trustee[_]]] {
+  def readTrustees(isHnSEnabled: Boolean): Reads[Seq[Trustee[_]]] = new Reads[Seq[Trustee[_]]] {
 
     private def noOfRecords : Int = json.validate((__ \ 'trustees).readNullable(__.read(
       Reads.seq((__ \ 'trusteeKind).read[String].flatMap {
@@ -330,11 +330,10 @@ final case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Impl
 
     private def readsCompany(index: Int): Reads[Trustee[_]] = (
       (JsPath \ CompanyDetailsId.toString).read[CompanyDetails] and
-        (JsPath \ IsTrusteeCompleteId.toString).readNullable[Boolean] and
         (JsPath \ IsTrusteeNewId.toString).readNullable[Boolean]
-      ) ((details, isComplete, isNew) => {
+      ) ((details, isNew) => {
       TrusteeCompanyEntity(CompanyDetailsId(index), details.companyName, details.isDeleted,
-        isComplete.getOrElse(false), isNew.fold(false)(identity), noOfRecords, schemeType)
+        isTrusteeCompanyComplete(index, isHnSEnabled), isNew.fold(false)(identity), noOfRecords, schemeType)
     }
     )
     private def readsPartnership(index: Int): Reads[Trustee[_]] = (
@@ -368,9 +367,9 @@ final case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Impl
     }
   }
 
-  def allTrustees: Seq[Trustee[_]] = {
+  def allTrustees(isHnSEnabled: Boolean): Seq[Trustee[_]] = {
 
-    json.validate[Seq[Trustee[_]]](readTrustees) match {
+    json.validate[Seq[Trustee[_]]](readTrustees(isHnSEnabled)) match {
       case JsSuccess(trustees, _) =>
         trustees
       case JsError(errors) =>
@@ -379,8 +378,8 @@ final case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Impl
     }
   }
 
-  def allTrusteesAfterDelete: Seq[Trustee[_]] = {
-    allTrustees.filterNot(_.isDeleted)
+  def allTrusteesAfterDelete(isHnSEnabled: Boolean): Seq[Trustee[_]] = {
+    allTrustees(isHnSEnabled).filterNot(_.isDeleted)
   }
 
   def establishersCount: Int = {
@@ -438,13 +437,13 @@ final case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Impl
     ).flatten
   }
 
-  def isAllTrusteesCompleted: Boolean = {
+  def isAllTrusteesCompleted(isHnSEnabled: Boolean): Boolean = {
     val isSingleOrMaster = schemeType.fold(false)(scheme => Seq("single", "master").exists(_.equals(scheme)))
 
     if(isSingleOrMaster)
-      allTrusteesAfterDelete.nonEmpty && allTrusteesAfterDelete.forall(_.isCompleted)
+      allTrusteesAfterDelete(isHnSEnabled).nonEmpty && allTrusteesAfterDelete(isHnSEnabled).forall(_.isCompleted)
     else
-      allTrusteesAfterDelete.forall(_.isCompleted)
+      allTrusteesAfterDelete(isHnSEnabled).forall(_.isCompleted)
 
   }
 
@@ -467,6 +466,6 @@ final case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Impl
   }
 
   def areVariationChangesCompleted(isHnSEnabled: Boolean = false): Boolean =
-    isInsuranceCompleted && isAllTrusteesCompleted && allEstablishersCompleted(isHnSEnabled, UpdateMode)
+    isInsuranceCompleted && isAllTrusteesCompleted(isHnSEnabled) && allEstablishersCompleted(isHnSEnabled, UpdateMode)
 
 }

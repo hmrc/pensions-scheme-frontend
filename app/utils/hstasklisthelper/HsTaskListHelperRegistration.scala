@@ -82,7 +82,7 @@ class HsTaskListHelperRegistration(answers: UserAnswers,
       incompleteDeclarationText = "messages__schemeTaskList__sectionDeclaration_incomplete"))
 
   protected[utils] def trustees(userAnswers: UserAnswers): Seq[SchemeDetailsTaskListSection] =
-    listOf(userAnswers.allTrustees, userAnswers)
+    listOf(userAnswers.allTrustees(isHnSEnabled), userAnswers)
 
   protected def listOf(sections: Seq[Entity[_]], userAnswers: UserAnswers): Seq[SchemeDetailsTaskListSection] = {
     val notDeletedElements = for ((section, _) <- sections.zipWithIndex) yield {
@@ -99,11 +99,11 @@ class HsTaskListHelperRegistration(answers: UserAnswers,
   }
 
   protected[utils] override def addTrusteeHeader(userAnswers: UserAnswers, mode: Mode, srn: Option[String]): Option[SchemeDetailsTaskListHeader] = {
-    (userAnswers.get(HaveAnyTrusteesId), userAnswers.allTrusteesAfterDelete.isEmpty) match {
+    (userAnswers.get(HaveAnyTrusteesId), userAnswers.allTrusteesAfterDelete(isHnSEnabled).isEmpty) match {
       case (None | Some(true), false) =>
 
         val (linkText, additionalText): (String, Option[String]) =
-          getTrusteeHeaderText(userAnswers.allTrusteesAfterDelete.size, userAnswers.get(SchemeTypeId))
+          getTrusteeHeaderText(userAnswers.allTrusteesAfterDelete(isHnSEnabled).size, userAnswers.get(SchemeTypeId))
 
         Some(
           SchemeDetailsTaskListHeader(
@@ -115,7 +115,7 @@ class HsTaskListHelperRegistration(answers: UserAnswers,
         Some(
           SchemeDetailsTaskListHeader(
             trusteeStatus(isAllTrusteesCompleted(userAnswers), trusteesMandatory(userAnswers.get(SchemeTypeId))),
-            typeOfTrusteeLink(addTrusteesLinkText, userAnswers.allTrustees.size, srn, mode)))
+            typeOfTrusteeLink(addTrusteesLinkText, userAnswers.allTrustees(isHnSEnabled).size, srn, mode)))
 
       case _ =>
         None

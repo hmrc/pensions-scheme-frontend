@@ -107,7 +107,9 @@ class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues with 
       )
 
       val userAnswers = UserAnswers(json)
-      val allEstablisherEntities: Seq[Establisher[_]] = Seq(establisherEntity("my name 1", 0, Indivdual, countAfterDeleted = 3), establisherEntity("my name 3", 2, Indivdual, countAfterDeleted = 3))
+      val allEstablisherEntities: Seq[Establisher[_]] =
+        Seq(establisherEntity("my name 1", 0, Indivdual, countAfterDeleted = 3),
+          establisherEntity("my name 3", 2, Indivdual, countAfterDeleted = 3))
 
       userAnswers.allEstablishersAfterDelete(isHnSEnabled, mode) mustEqual allEstablisherEntities
     }
@@ -116,46 +118,15 @@ class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues with 
   ".allTrustees" must {
 
     "return a map of trustee names, edit links, delete links and isComplete flag" in {
-      val userAnswers = UserAnswers(Json.obj(
-        "schemeType"-> Json.obj("name"-> "single"),
-        TrusteesId.toString -> Json.arr(
-          Json.obj(
-            TrusteeKindId.toString -> TrusteeKind.Individual.toString,
-            TrusteeDetailsId.toString ->
-              PersonDetails("First", None, "Last", LocalDate.now),
-            IsTrusteeCompleteId.toString -> true,
-            IsTrusteeNewId.toString -> true
-          ),
-          Json.obj(
-            TrusteeKindId.toString -> TrusteeKind.Company.toString,
-            TrusteeCompanyDetailsId.toString ->
-              CompanyDetails("My Company"),
-            CompanyVatId.toString -> Vat.No,
-            CompanyPayeId.toString -> Paye.No,
-            IsTrusteeCompleteId.toString -> true,
-            IsTrusteeNewId.toString -> true
-          ),
-          Json.obj(
-            TrusteeKindId.toString -> TrusteeKind.Partnership.toString,
-            partnership.PartnershipDetailsId.toString ->
-              PartnershipDetails("My Partnership", isDeleted = false),
-            IsTrusteeNewId.toString -> true
-          ),
-          Json.obj(
-            TrusteeKindId.toString -> TrusteeKind.Individual.toString,
-            IsTrusteeNewId.toString -> true
-          )
-        )
-      ))
+      val userAnswers = UserAnswers(readJsonFromFile("/payloadHnS.json"))
 
       val allTrusteesEntities: Seq[Trustee[_]] = Seq(
-        trusteeEntity("First Last", 0, TrusteeKind.Individual, isComplete = true),
-        trusteeEntity("My Company", 1, TrusteeKind.Company, isComplete = true),
-        trusteeEntity("My Partnership", 2, TrusteeKind.Partnership),
-        TrusteeSkeletonEntity(TrusteeKindId(3))
+        trusteeEntity("test company", 0, TrusteeKind.Company, isComplete = true),
+        trusteeEntity("firstName lastName", 1, TrusteeKind.Individual, isComplete = true),
+        trusteeEntity("test partnership", 2, TrusteeKind.Partnership, isComplete = true)
       )
 
-      val result = userAnswers.allTrustees
+      val result = userAnswers.allTrustees(true)
 
       result mustEqual allTrusteesEntities
     }
@@ -166,7 +137,7 @@ class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues with 
         )
       )
       val userAnswers = UserAnswers(json)
-      userAnswers.allTrustees mustEqual Seq.empty
+      userAnswers.allTrustees(true) mustEqual Seq.empty
     }
 
     "return en empty sequence if the json is invalid" in {
@@ -178,7 +149,7 @@ class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues with 
         )
       )
       val userAnswers = UserAnswers(json)
-      userAnswers.allTrustees mustEqual Seq.empty
+      userAnswers.allTrustees(true) mustEqual Seq.empty
     }
   }
 
@@ -214,7 +185,7 @@ class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues with 
 
       val allTrusteesEntities: Seq[Trustee[_]] = Seq(trusteeEntity("My Company", 1, TrusteeKind.Company, countAfterDeleted = 2))
 
-      val result = userAnswers.allTrusteesAfterDelete
+      val result = userAnswers.allTrusteesAfterDelete(true)
 
       result mustEqual allTrusteesEntities
     }
@@ -505,7 +476,7 @@ class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues with 
       }
 
       "return true if trustees are completed" in {
-        val trusteeCompleted = trustee.set(IsTrusteeCompleteId(0))(true).asOpt.get
+        val trusteeCompleted = trustee.trusteesCompanyContactDetails(0, ContactDetails("z@z.z", "12345"))
         trusteeCompleted.areVariationChangesCompleted(false) mustBe true
       }
     }
@@ -529,7 +500,9 @@ class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues with 
       }
 
       "return true if establishers partnership is completed" in {
-        val establisherCompleted = establisherPartnership.set(IsEstablisherCompleteId(0))(true).flatMap(
+        val establisherCompleted = establisherPartnership
+          .trusteesCompanyContactDetails(0, ContactDetails("z@z.z", "12345"))
+          .set(IsEstablisherCompleteId(0))(true).flatMap(
           _.set(IsPartnerCompleteId(0,0))(true)).asOpt.get
         establisherCompleted.areVariationChangesCompleted(false) mustBe true
       }
@@ -550,7 +523,7 @@ object UserAnswersSpec extends OptionValues with Enumerable.Implicits {
     }
   }
 
-  private def trusteeEntity(name: String, index: Int, trusteeKind: TrusteeKind, isComplete: Boolean = false, countAfterDeleted : Int = 4): Trustee[_] = {
+  private def trusteeEntity(name: String, index: Int, trusteeKind: TrusteeKind, isComplete: Boolean = false, countAfterDeleted : Int = 3): Trustee[_] = {
     trusteeKind match {
       case TrusteeKind.Individual =>
         TrusteeIndividualEntity(TrusteeDetailsId(index), name, isDeleted = false, isCompleted = isComplete, isNewEntity = true, countAfterDeleted, Some(SingleTrust.toString))
@@ -599,8 +572,9 @@ object UserAnswersSpec extends OptionValues with Enumerable.Implicits {
     .trusteesUniqueTaxReference(0, utr)
     .trusteesCompanyAddress(0, address)
     .trusteesCompanyAddressYears(0, addressYears)
-    .trusteesCompanyPreviousAddress(0, previousAddress).set(CompanyVatId(0))(Vat.Yes("vat")).flatMap(
-    _.set(CompanyPayeId(0))(Paye.Yes("vat"))).asOpt.get
+    .trusteesCompanyPreviousAddress(0, previousAddress)
+    .set(CompanyVatId(0))(Vat.Yes("vat")).asOpt.value
+    .set(CompanyPayeId(0))(Paye.Yes("vat")).asOpt.value
 
   private val establisher = UserAnswers(readJsonFromFile("/payloadHnS.json"))
 

@@ -18,6 +18,7 @@ package utils
 
 import identifiers.TypedIdentifier
 import identifiers.register.establishers.company._
+import identifiers.register.trustees.{company => tc}
 import identifiers.register.establishers.company.director._
 import models.address.Address
 import models.{AddressYears, Mode, NormalMode, ReferenceValue}
@@ -166,6 +167,43 @@ trait DataCompletion {
         DirectorAddressYearsId(estIndex, dirIndex), None).getOrElse(false),
       get(DirectorContactDetailsId(estIndex, dirIndex)).isDefined
     ))
+
+  //TRUSTEE COMPANY
+  def isTrusteeCompanyDetailsComplete(index: Int): Option[Boolean] =
+    isComplete(
+      Seq(
+        isAnswerComplete(tc.HasCompanyNumberId(index), tc.CompanyRegistrationNumberVariationsId(index), Some(tc.NoCompanyNumberId(index))),
+        isUtrComplete(tc.HasCompanyUTRId(index), tc.CompanyUTRId(index), tc.CompanyNoUTRReasonId(index)),
+        isAnswerComplete(tc.HasCompanyVATId(index), tc.CompanyVatVariationsId(index), None),
+        isAnswerComplete(tc.HasCompanyPAYEId(index), tc.CompanyPayeVariationsId(index), None)
+      )
+    )
+
+  def isTrusteeCompanyAddressComplete(index: Int): Option[Boolean] =
+    isAddressComplete(tc.CompanyAddressId(index), tc.CompanyPreviousAddressId(index), tc.CompanyAddressYearsId(index), Some(tc.HasBeenTradingCompanyId(index)))
+
+  def isTrusteeCompanyContactDetailsComplete(index: Int): Option[Boolean] =
+    isContactDetailsComplete(tc.CompanyEmailId(index), tc.CompanyPhoneId(index))
+
+  def isTrusteeCompanyCompleteNonHns(index: Int): Boolean =
+    isListComplete(Seq(
+      get(tc.CompanyDetailsId(index)).isDefined,
+      get(tc.CompanyRegistrationNumberId(index)).isDefined | get(tc.CompanyRegistrationNumberVariationsId(index)).isDefined,
+      get(tc.CompanyUniqueTaxReferenceId(index)).isDefined | get(tc.CompanyUTRId(index)).isDefined,
+      get(tc.CompanyVatId(index)).isDefined | get(tc.CompanyVatVariationsId(index)).isDefined,
+      get(tc.CompanyPayeId(index)).isDefined | get(tc.CompanyPayeVariationsId(index)).isDefined,
+      isAddressComplete(tc.CompanyAddressId(index), tc.CompanyPreviousAddressId(index), tc.CompanyAddressYearsId(index), None).getOrElse(false),
+      get(tc.CompanyContactDetailsId(index)).isDefined
+    ))
+
+  def isTrusteeCompanyComplete(index: Int, isHnSEnabled: Boolean): Boolean =
+    if (isHnSEnabled)
+      isComplete(Seq(
+        isTrusteeCompanyDetailsComplete(index),
+        isTrusteeCompanyAddressComplete(index),
+        isTrusteeCompanyContactDetailsComplete(index))).getOrElse(false)
+    else
+      isTrusteeCompanyCompleteNonHns(index)
 
 
 }

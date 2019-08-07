@@ -207,7 +207,7 @@ class HsTaskListHelperRegistrationSpec extends HsTaskListHelperBehaviour with En
   def establishersSection(mode: Mode, srn: Option[String]): Unit = {
 
     "return the seq of establishers sub sections for non deleted establishers which are all completed" in {
-      val userAnswers = allEstablishers
+      val userAnswers = allAnswers
       val helper = new HsTaskListHelperRegistration(userAnswers, fakeFeatureManagementService)
       helper.establishers(userAnswers, mode, srn) mustBe
         Seq(SchemeDetailsTaskListEntitySection(Some(true), Seq(EntitySpoke(Link(companyLinkText,
@@ -222,7 +222,7 @@ class HsTaskListHelperRegistrationSpec extends HsTaskListHelperBehaviour with En
     }
 
     "return the seq of establishers sub sections for non deleted establishers which are not completed" in {
-      val userAnswers = allEstablishersIncomplete
+      val userAnswers = allAnswersIncomplete
       val helper = new HsTaskListHelperRegistration(userAnswers, fakeFeatureManagementService)
       helper.establishers(userAnswers, NormalMode, None) mustBe
         Seq(
@@ -254,26 +254,26 @@ class HsTaskListHelperRegistrationSpec extends HsTaskListHelperBehaviour with En
   def trusteesSection(mode: Mode, srn: Option[String]): Unit = {
 
     "return the seq of trustees sub sections for non deleted trustees which are all completed" in {
-      val userAnswers = allTrustees()
+      val userAnswers = allAnswers
       val helper = new HsTaskListHelperRegistration(userAnswers, fakeFeatureManagementService)
       helper.trustees(userAnswers) mustBe
-        Seq(SchemeDetailsTaskListSection(Some(true), Link(individualLinkText,
-          controllers.register.trustees.individual.routes.CheckYourAnswersController.onPageLoad(mode, 0, srn).url), Some("firstName lastName")),
-          SchemeDetailsTaskListSection(Some(true), Link(companyLinkText,
-            controllers.register.trustees.company.routes.CheckYourAnswersController.onPageLoad(mode, 1, srn).url), Some("test company")),
+        Seq(SchemeDetailsTaskListSection(Some(true), Link(companyLinkText,
+          controllers.register.trustees.company.routes.CheckYourAnswersController.onPageLoad(mode, 0, srn).url), Some("test company")),
+          SchemeDetailsTaskListSection(Some(true), Link(individualLinkText,
+          controllers.register.trustees.individual.routes.CheckYourAnswersController.onPageLoad(mode, 1, srn).url), Some("firstName lastName")),
           SchemeDetailsTaskListSection(Some(true), Link(partnershipLinkText,
             controllers.register.trustees.partnership.routes.CheckYourAnswersController.onPageLoad(mode, 2, srn).url), Some("test partnership"))
         )
     }
 
     "return the seq of trustees sub sections for non deleted trustees which are not completed" in {
-      val userAnswers = allTrustees(isCompleteTrustees = false)
+      val userAnswers = allAnswersIncomplete
       val helper = new HsTaskListHelperRegistration(userAnswers, fakeFeatureManagementService)
       helper.trustees(userAnswers) mustBe
-        Seq(SchemeDetailsTaskListSection(Some(false), Link(individualLinkText,
-          controllers.register.trustees.individual.routes.TrusteeDetailsController.onPageLoad(mode, 0, srn).url), Some("firstName lastName")),
-          SchemeDetailsTaskListSection(Some(false), Link(companyLinkText,
-            controllers.register.trustees.company.routes.CompanyDetailsController.onPageLoad(mode, 1, srn).url), Some("test company")),
+        Seq(SchemeDetailsTaskListSection(Some(false), Link(companyLinkText,
+          controllers.register.trustees.company.routes.CompanyDetailsController.onPageLoad(mode, 0, srn).url), Some("test company")),
+          SchemeDetailsTaskListSection(Some(false), Link(individualLinkText,
+          controllers.register.trustees.individual.routes.TrusteeDetailsController.onPageLoad(mode, 1, srn).url), Some("firstName lastName")),
           SchemeDetailsTaskListSection(Some(false), Link(partnershipLinkText,
             controllers.register.trustees.partnership.routes.TrusteeDetailsController.onPageLoad(mode, 2, srn).url), Some("test partnership"))
         )
