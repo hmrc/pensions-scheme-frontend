@@ -202,14 +202,9 @@ object HsTaskListHelperUtilsSpec extends SpecBase with OptionValues with Complet
           _.set(trusteeCompanyPath.IsContactDetailsCompleteId(0))(isComplete)))).asOpt.value
   }
 
-  // TODO PODS-2940 Need to do something here?
   protected def trusteeIndividual(isComplete: Boolean, toggled:Boolean): UserAnswers = {
     val ua = trusteeIndividualBlank
       .set(IsTrusteeNewId(0))(true)
-//      .flatMap(
-//      _.set(trusteeIndividualPath.IsAddressCompleteId(0))(isComplete).flatMap(
-//        _.set(trusteeIndividualPath.IsDetailsCompleteId(0))(isComplete).flatMap(
-//          _.set(trusteeIndividualPath.IsContactDetailsCompleteId(0))(isComplete))))
       .asOpt.value
     setTrusteeCompletionStatus(isComplete = isComplete, toggled = toggled, 0, ua)
   }

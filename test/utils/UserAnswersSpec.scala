@@ -115,8 +115,51 @@ class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues with 
 
   ".allTrustees" must {
 
-    "return a map of trustee names, edit links, delete links and isComplete flag" in {
+    "return a map of trustee names, edit links, delete links and isComplete flag and toggle ON" in {
       // TODO: PODS-2940 write a unit test for toggle ON
+      val userAnswers = setTrusteeCompletionStatus(isComplete = true, toggled = false, 0, UserAnswers(Json.obj(
+        "schemeType"-> Json.obj("name"-> "single"),
+        TrusteesId.toString -> Json.arr(
+          Json.obj(
+            TrusteeKindId.toString -> TrusteeKind.Individual.toString,
+            TrusteeDetailsId.toString ->
+              PersonDetails("firstName", None, "lastName", LocalDate.now),
+            IsTrusteeNewId.toString -> true
+          ),
+          Json.obj(
+            TrusteeKindId.toString -> TrusteeKind.Company.toString,
+            TrusteeCompanyDetailsId.toString ->
+              CompanyDetails("My Company"),
+            CompanyVatId.toString -> Vat.No,
+            CompanyPayeId.toString -> Paye.No,
+            IsTrusteeCompleteId.toString -> true,
+            IsTrusteeNewId.toString -> true
+          ),
+          Json.obj(
+            TrusteeKindId.toString -> TrusteeKind.Partnership.toString,
+            partnership.PartnershipDetailsId.toString ->
+              PartnershipDetails("My Partnership", isDeleted = false),
+            IsTrusteeNewId.toString -> true
+          ),
+          Json.obj(
+            TrusteeKindId.toString -> TrusteeKind.Individual.toString,
+            IsTrusteeNewId.toString -> true
+          )
+        )
+      )))
+
+      val allTrusteesEntities: Seq[Trustee[_]] = Seq(
+        trusteeEntity("firstName lastName", 0, TrusteeKind.Individual, isComplete = true),
+        trusteeEntity("My Company", 1, TrusteeKind.Company, isComplete = true),
+        trusteeEntity("My Partnership", 2, TrusteeKind.Partnership),
+        TrusteeSkeletonEntity(TrusteeKindId(3))
+      )
+
+      val result = userAnswers.allTrustees(false)
+
+      result mustEqual allTrusteesEntities
+    }
+    "return a map of trustee names, edit links, delete links and isComplete flagand toggle OFF" in {
       val userAnswers = setTrusteeCompletionStatus(isComplete = true, toggled = false, 0, UserAnswers(Json.obj(
         "schemeType"-> Json.obj("name"-> "single"),
         TrusteesId.toString -> Json.arr(
