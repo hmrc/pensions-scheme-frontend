@@ -115,9 +115,53 @@ class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues with 
 
   ".allTrustees" must {
 
+    "return a map of trustee names, edit links, delete links and isComplete flag and toggle OFF" in {
+      val userAnswers = setTrusteeCompletionStatus(isComplete = true, toggled = false, 0, UserAnswers(Json.obj(
+        "schemeType"-> Json.obj("name"-> "single"),
+        TrusteesId.toString -> Json.arr(
+          Json.obj(
+            TrusteeKindId.toString -> TrusteeKind.Individual.toString,
+            TrusteeDetailsId.toString ->
+              PersonDetails("firstName", None, "lastName", LocalDate.now),
+            IsTrusteeNewId.toString -> true
+          ),
+          Json.obj(
+            TrusteeKindId.toString -> TrusteeKind.Company.toString,
+            TrusteeCompanyDetailsId.toString ->
+              CompanyDetails("My Company"),
+            CompanyVatId.toString -> Vat.No,
+            CompanyPayeId.toString -> Paye.No,
+            IsTrusteeCompleteId.toString -> true,
+            IsTrusteeNewId.toString -> true
+          ),
+          Json.obj(
+            TrusteeKindId.toString -> TrusteeKind.Partnership.toString,
+            partnership.PartnershipDetailsId.toString ->
+              PartnershipDetails("My Partnership", isDeleted = false),
+            IsTrusteeNewId.toString -> true
+          ),
+          Json.obj(
+            TrusteeKindId.toString -> TrusteeKind.Individual.toString,
+            IsTrusteeNewId.toString -> true
+          )
+        )
+      )))
+
+      val allTrusteesEntities: Seq[Trustee[_]] = Seq(
+        trusteeEntity("firstName lastName", 0, TrusteeKind.Individual, isComplete = true),
+        trusteeEntity("My Company", 1, TrusteeKind.Company, isComplete = true),
+        trusteeEntity("My Partnership", 2, TrusteeKind.Partnership),
+        TrusteeSkeletonEntity(TrusteeKindId(3))
+      )
+
+      val result = userAnswers.allTrustees(false)
+
+      result mustEqual allTrusteesEntities
+    }
+
+
     "return a map of trustee names, edit links, delete links and isComplete flag and toggle ON" in {
-      // TODO: PODS-2940 write a unit test for toggle ON
-      val userAnswers = setTrusteeCompletionStatus(isComplete = true, toggled = false, 0, UserAnswers(Json.obj(
+      val userAnswers = setTrusteeCompletionStatus(isComplete = true, toggled = true, 0, UserAnswers(Json.obj(
         "schemeType"-> Json.obj("name"-> "single"),
         TrusteesId.toString -> Json.arr(
           Json.obj(
@@ -155,57 +199,12 @@ class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues with 
         TrusteeSkeletonEntity(TrusteeKindId(3))
       )
 
-      val result = userAnswers.allTrustees(false)
-
-      result mustEqual allTrusteesEntities
-    }
-    "return a map of trustee names, edit links, delete links and isComplete flagand toggle OFF" in {
-      val userAnswers = setTrusteeCompletionStatus(isComplete = true, toggled = false, 0, UserAnswers(Json.obj(
-        "schemeType"-> Json.obj("name"-> "single"),
-        TrusteesId.toString -> Json.arr(
-          Json.obj(
-            TrusteeKindId.toString -> TrusteeKind.Individual.toString,
-            TrusteeDetailsId.toString ->
-              PersonDetails("firstName", None, "lastName", LocalDate.now),
-            IsTrusteeNewId.toString -> true
-          ),
-          Json.obj(
-            TrusteeKindId.toString -> TrusteeKind.Company.toString,
-            TrusteeCompanyDetailsId.toString ->
-              CompanyDetails("My Company"),
-            CompanyVatId.toString -> Vat.No,
-            CompanyPayeId.toString -> Paye.No,
-            IsTrusteeCompleteId.toString -> true,
-            IsTrusteeNewId.toString -> true
-          ),
-          Json.obj(
-            TrusteeKindId.toString -> TrusteeKind.Partnership.toString,
-            partnership.PartnershipDetailsId.toString ->
-              PartnershipDetails("My Partnership", isDeleted = false),
-            IsTrusteeNewId.toString -> true
-          ),
-          Json.obj(
-            TrusteeKindId.toString -> TrusteeKind.Individual.toString,
-            IsTrusteeNewId.toString -> true
-          )
-        )
-      )))
-
-      val allTrusteesEntities: Seq[Trustee[_]] = Seq(
-        trusteeEntity("firstName lastName", 0, TrusteeKind.Individual, isComplete = true),
-        trusteeEntity("My Company", 1, TrusteeKind.Company, isComplete = true),
-        trusteeEntity("My Partnership", 2, TrusteeKind.Partnership),
-        TrusteeSkeletonEntity(TrusteeKindId(3))
-      )
-
-      val result = userAnswers.allTrustees(false)
+      val result = userAnswers.allTrustees(isHnSEnabled = true)
 
       result mustEqual allTrusteesEntities
     }
 
-    // TODO: PODS-2940 Write unit test for toggle ON
-
-    "return en empty sequence if there are no trustees" in {
+    "return en empty sequence if there are no trustees when toggle is off" in {
       val json = Json.obj(
         TrusteesId.toString -> Json.arr(
         )
@@ -214,9 +213,16 @@ class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues with 
       userAnswers.allTrustees(false) mustEqual Seq.empty
     }
 
-    // TODO: PODS-2940 Write unit test for toggle ON
+    "return en empty sequence if there are no trustees when toggle is on" in {
+      val json = Json.obj(
+        TrusteesId.toString -> Json.arr(
+        )
+      )
+      val userAnswers = UserAnswers(json)
+      userAnswers.allTrustees(true) mustEqual Seq.empty
+    }
 
-    "return en empty sequence if the json is invalid" in {
+    "return en empty sequence if the json is invalid when toggle is off" in {
       val json = Json.obj(
         TrusteesId.toString -> Json.arr(
           Json.obj(
@@ -228,12 +234,22 @@ class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues with 
       userAnswers.allTrustees(false) mustEqual Seq.empty
     }
 
-    // TODO: PODS-2940 Write unit test for toggle ON
+    "return en empty sequence if the json is invalid when toggle is on" in {
+      val json = Json.obj(
+        TrusteesId.toString -> Json.arr(
+          Json.obj(
+            "invalid" -> "invalid"
+          )
+        )
+      )
+      val userAnswers = UserAnswers(json)
+      userAnswers.allTrustees(true) mustEqual Seq.empty
+    }
   }
 
   ".allTrusteesAfterDelete" must {
 
-    "return a map of trustee names, edit links and delete links when one of the trustee is deleted" in {
+    "return a map of trustee names, edit links and delete links when one of the trustee is deleted when toggle is off" in {
       val json = Json.obj(
         "schemeType"-> Json.obj("name"-> "single"),
         TrusteesId.toString -> Json.arr(
@@ -267,7 +283,41 @@ class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues with 
 
       result mustEqual allTrusteesEntities
     }
-    // TODO: PODS-2940 Write unit test for toggle ON
+
+    "return a map of trustee names, edit links and delete links when one of the trustee is deleted when toggle is on" in {
+      val json = Json.obj(
+        "schemeType"-> Json.obj("name"-> "single"),
+        TrusteesId.toString -> Json.arr(
+          Json.obj(
+            TrusteeKindId.toString -> TrusteeKind.Individual.toString,
+            TrusteeDetailsId.toString -> PersonDetails("First", None, "Last", LocalDate.now, isDeleted = true),
+            IsTrusteeNewId.toString -> true
+          ),
+          Json.obj(
+            TrusteeKindId.toString -> TrusteeKind.Company.toString,
+            identifiers.register.trustees.company.CompanyDetailsId.toString -> CompanyDetails("My Company"),
+            IsTrusteeNewId.toString -> true
+          ),
+          Json.obj(
+            TrusteeKindId.toString -> TrusteeKind.Individual.toString,
+            TrusteeDetailsId.toString -> PersonDetails("FName", None, "LName", LocalDate.now, isDeleted = true),
+            IsTrusteeNewId.toString -> true
+          ),
+          Json.obj(
+            TrusteeKindId.toString -> TrusteeKind.Company.toString,
+            IsTrusteeNewId.toString -> true
+          )
+        )
+      )
+
+      val userAnswers = UserAnswers(json)
+
+      val allTrusteesEntities: Seq[Trustee[_]] = Seq(trusteeEntity("My Company", 1, TrusteeKind.Company, countAfterDeleted = 2))
+
+      val result = userAnswers.allTrusteesAfterDelete(true)
+
+      result mustEqual allTrusteesEntities
+    }
   }
 
   ".allDirectors" must {

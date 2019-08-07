@@ -33,6 +33,7 @@ import viewmodels.{SchemeDetailsTaskListEntitySection, SchemeDetailsTaskListSect
 class HsTaskListHelperRegistrationSpec extends HsTaskListHelperBehaviour with Enumerable.Implicits {
 
   private val fakeFeatureManagementService = new FakeFeatureSwitchManagementService(false)
+  private val fakeFeatureManagementServiceToggleOn = new FakeFeatureSwitchManagementService(true)
   override val createTaskListHelper:
     (UserAnswers, FeatureSwitchManagementService) => HsTaskListHelper = (ua, fs) => new HsTaskListHelperRegistration(ua, fs)
 
@@ -253,11 +254,22 @@ class HsTaskListHelperRegistrationSpec extends HsTaskListHelperBehaviour with En
 
   def trusteesSection(mode: Mode, srn: Option[String]): Unit = {
 
-    // TODO: PODS-2940 Write unit test for toggle ON
-
-    "return the seq of trustees sub sections for non deleted trustees which are all completed" in {
+    "return the seq of trustees sub sections for non deleted trustees which are all completed when toggle is off" in {
       val userAnswers = allTrustees(toggled = false)
       val helper = new HsTaskListHelperRegistration(userAnswers, fakeFeatureManagementService)
+      helper.trustees(userAnswers) mustBe
+        Seq(SchemeDetailsTaskListSection(Some(true), Link(individualLinkText,
+          controllers.register.trustees.individual.routes.CheckYourAnswersController.onPageLoad(mode, 0, srn).url), Some("firstName lastName")),
+          SchemeDetailsTaskListSection(Some(true), Link(companyLinkText,
+            controllers.register.trustees.company.routes.CheckYourAnswersController.onPageLoad(mode, 1, srn).url), Some("test company")),
+          SchemeDetailsTaskListSection(Some(true), Link(partnershipLinkText,
+            controllers.register.trustees.partnership.routes.CheckYourAnswersController.onPageLoad(mode, 2, srn).url), Some("test partnership"))
+        )
+    }
+
+    "return the seq of trustees sub sections for non deleted trustees which are all completed when toggle is on" in {
+      val userAnswers = allTrustees(toggled = true)
+      val helper = new HsTaskListHelperRegistration(userAnswers, fakeFeatureManagementServiceToggleOn)
       helper.trustees(userAnswers) mustBe
         Seq(SchemeDetailsTaskListSection(Some(true), Link(individualLinkText,
           controllers.register.trustees.individual.routes.CheckYourAnswersController.onPageLoad(mode, 0, srn).url), Some("firstName lastName")),
