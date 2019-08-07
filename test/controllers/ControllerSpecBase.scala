@@ -25,7 +25,7 @@ import identifiers.register.establishers.individual.EstablisherDetailsId
 import identifiers.register.establishers.partnership.PartnershipDetailsId
 import identifiers.register.establishers.partnership.partner.PartnerDetailsId
 import identifiers.register.trustees.TrusteesId
-import identifiers.register.trustees.individual.TrusteeDetailsId
+import identifiers.register.trustees.individual.{TrusteeDetailsId, TrusteeNameId}
 import identifiers.{AdviserNameId, SchemeNameId}
 import models.person.{PersonDetails, PersonName}
 import models.{CompanyDetails, PartnershipDetails}
@@ -174,7 +174,7 @@ trait ControllerSpecBase extends SpecBase with Enumerable.Implicits with MapForm
 
   def getMandatoryWorkingKnowledgePerson: FakeDataRetrievalAction = new FakeDataRetrievalAction(
     Some(Json.obj(AdviserNameId.toString ->
-        "name"
+      "name"
     ))
   )
 
@@ -195,6 +195,20 @@ trait ControllerSpecBase extends SpecBase with Enumerable.Implicits with MapForm
           )
         )
       )
+    )
+  }
+
+  protected def validTrusteeNameData(jsValue: (String, Json.JsValueWrapper)): JsObject = {
+    Json.obj(
+      TrusteeNameId.toString -> Json.arr(
+        Json.obj(
+          "firstName" -> "first",
+          "lastName" -> "last",
+          "date" -> "2001-01-01",
+          "lastName" -> "false"
+        )
+      ),
+      jsValue
     )
   }
 }

@@ -17,17 +17,19 @@
 package controllers.register.trustees.individual
 
 import config.FrontendAppConfig
-import controllers.Retrievals
+import controllers.HasReferenceNumberController
 import controllers.actions._
+import forms.HasReferenceNumberFormProvider
+import identifiers.register.trustees.individual.{TrusteeHasNINOId, TrusteeNameId}
 import javax.inject.Inject
 import models.{Index, Mode}
 import navigators.Navigator
-import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.data.Form
+import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import utils.Enumerable
 import utils.annotations.TrusteesIndividual
+import viewmodels.{CommonFormWithHintViewModel, Message}
 
 import scala.concurrent.ExecutionContext
 
@@ -36,17 +38,39 @@ class TrusteeHasNINOController @Inject()(val appConfig: FrontendAppConfig,
                                          val userAnswersService: UserAnswersService,
                                          @TrusteesIndividual val navigator: Navigator,
                                          authenticate: AuthAction,
-                                         getData: DataRetrievalAction,
                                          allowAccess: AllowAccessActionProvider,
-                                         requireData: DataRequiredAction
-                                     )(implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
+                                         getData: DataRetrievalAction,
+                                         requireData: DataRequiredAction,
+                                         formProvider: HasReferenceNumberFormProvider
+                                        )(implicit val ec: ExecutionContext) extends HasReferenceNumberController {
+
+  private def viewModel(mode: Mode, index: Index, srn: Option[String], personName: String): CommonFormWithHintViewModel =
+    CommonFormWithHintViewModel(
+      postCall = controllers.register.trustees.individual.routes.TrusteeHasNINOController.onSubmit(mode, index, srn),
+      title = Message("messages__genericHasNino__title", Message("messages__theTrustee").resolve),
+      heading = Message("messages__genericHasNino__h1", personName),
+      hint = None,
+      srn = srn
+    )
+
+  private def form(personName: String): Form[Boolean] =
+    formProvider(Message("messages__genericHasNino__error__required", personName), personName)
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData) {
-      implicit request => NotImplemented("Not implemented: " + this.getClass.toString)
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+      implicit request =>
+        TrusteeNameId(index).retrieve.right.map {
+          trusteeName =>
+            get(TrusteeHasNINOId(index), form(trusteeName.fullName), viewModel(mode, index, srn, trusteeName.fullName))
+        }
     }
 
-  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData) {
-    implicit request => NotImplemented("Not implemented: " + this.getClass.toString)
-  }
+  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen requireData).async {
+      implicit request =>
+        TrusteeNameId(index).retrieve.right.map {
+          trusteeName =>
+            post(TrusteeHasNINOId(index), mode, form(trusteeName.fullName), viewModel(mode, index, srn, trusteeName.fullName))
+        }
+    }
 }

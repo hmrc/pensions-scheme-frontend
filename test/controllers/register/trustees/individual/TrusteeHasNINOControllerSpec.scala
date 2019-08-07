@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package controllers.register.establishers.company.director
+package controllers.register.trustees.individual
 
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.HasReferenceNumberFormProvider
-import identifiers.register.establishers.company.director.DirectorHasNINOId
+import identifiers.register.trustees.individual.TrusteeHasNINOId
 import models.{Index, NormalMode}
 import play.api.data.Form
 import play.api.mvc.Call
@@ -29,23 +29,23 @@ import utils.FakeNavigator
 import viewmodels.{CommonFormWithHintViewModel, Message}
 import views.html.hasReferenceNumber
 
-class DirectorHasNINOControllerSpec extends ControllerSpecBase {
+class TrusteeHasNINOControllerSpec extends ControllerSpecBase {
 
-  import DirectorHasNINOControllerSpec._
+  import TrusteeHasNINOControllerSpec._
 
-  "DirectorHasNINOController" must {
+  "TrusteeHasNINOController" must {
     "return OK and the correct view for a GET" in {
-      val result = controller().onPageLoad(NormalMode, establisherIndex, directorIndex, None)(fakeRequest)
+      val result = controller().onPageLoad(NormalMode, index, None)(fakeRequest)
 
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString()
     }
 
     "return OK and the correct view for a GET where question already answered" in {
-      val validData = validCompanyDirectorData("hasNino" -> false)
+      val validData = validTrusteeNameData("value" -> false)
 
       val dataRetrievalAction = new FakeDataRetrievalAction(Some(validData))
-      val result = controller(dataRetrievalAction = dataRetrievalAction).onPageLoad(NormalMode, establisherIndex, directorIndex, None)(fakeRequest)
+      val result = controller(dataRetrievalAction = dataRetrievalAction).onPageLoad(NormalMode, index, None)(fakeRequest)
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString(form = form.fill(value = false))
     }
@@ -53,46 +53,44 @@ class DirectorHasNINOControllerSpec extends ControllerSpecBase {
     "redirect to the next page when valid data is submitted for true" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "true"))
 
-      val result = controller().onSubmit(NormalMode, establisherIndex, directorIndex, None)(postRequest)
+      val result = controller().onSubmit(NormalMode, index, None)(postRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
-      FakeUserAnswersService.userAnswer.get(DirectorHasNINOId(establisherIndex, directorIndex)).value mustEqual true
+      FakeUserAnswersService.userAnswer.get(TrusteeHasNINOId(index)).value mustEqual true
     }
 
     "return a Bad Request and errors when invalid data is submitted" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "invalid value"))
       val boundForm = form.bind(Map("value" -> "invalid value"))
 
-      val result = controller().onSubmit(NormalMode, establisherIndex, directorIndex, None)(postRequest)
+      val result = controller().onSubmit(NormalMode, index, None)(postRequest)
 
       status(result) mustBe BAD_REQUEST
       contentAsString(result) mustBe viewAsString(boundForm)
     }
-
   }
 }
 
-object DirectorHasNINOControllerSpec extends ControllerSpecBase {
+object TrusteeHasNINOControllerSpec extends ControllerSpecBase {
   private val schemeName = None
 
   private def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
   private val formProvider = new HasReferenceNumberFormProvider()
-  private val form = formProvider("error", "test company name")
-  private val establisherIndex = Index(0)
-  private val directorIndex = Index(0)
+  private val form = formProvider("error", "test trustee name")
+  private val index = Index(0)
   private val srn = None
-  private val postCall = controllers.register.establishers.company.director.routes.DirectorHasNINOController.onSubmit(NormalMode, establisherIndex, directorIndex, srn)
+  private val postCall = controllers.register.trustees.individual.routes.TrusteeHasNINOController.onSubmit(NormalMode, index, srn)
   private val viewModel = CommonFormWithHintViewModel(
     postCall,
-    title = Message("messages__genericHasNino__title", Message("messages__theDirector").resolve),
-    heading = Message("messages__genericHasNino__h1", "first last"),
+    title = Message("messages__genericHasNino__title", Message("messages__theTrustee").resolve),
+    heading = Message("messages__genericHasNino__h1", "Test Name"),
     hint = None
   )
 
-  private def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisherCompanyDirectorWithDirectorName): DirectorHasNINOController =
-    new DirectorHasNINOController(
+  private def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryTrustee): TrusteeHasNINOController =
+    new TrusteeHasNINOController(
       frontendAppConfig,
       messagesApi,
       FakeUserAnswersService,
@@ -106,4 +104,3 @@ object DirectorHasNINOControllerSpec extends ControllerSpecBase {
 
   private def viewAsString(form: Form[_] = form) = hasReferenceNumber(frontendAppConfig, form, viewModel, schemeName)(fakeRequest, messages).toString
 }
-
