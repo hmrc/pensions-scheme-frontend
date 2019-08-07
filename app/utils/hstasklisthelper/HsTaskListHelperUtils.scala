@@ -22,6 +22,7 @@ import controllers.register.establishers.company.{routes => establisherCompanyRo
 import controllers.register.trustees.company.{routes => trusteeCompanyRoutes}
 import controllers.register.trustees.individual.{routes => trusteeIndividualRoutes}
 import identifiers.register.establishers.IsEstablisherNewId
+import identifiers.register.establishers.IsEstablisherNewId
 import identifiers.register.trustees.{IsTrusteeNewId, company => trusteeCompany}
 import models._
 import models.register.Entity
@@ -55,7 +56,7 @@ trait HsTaskListHelperUtils extends Enumerable.Implicits {
   case object TrusteeIndividualContactDetails extends Spoke
 
   case object TrusteeIndividualDetails extends Spoke
-  
+
 
   def createSpoke(answers: UserAnswers,
                   spokeName: Spoke,
@@ -85,7 +86,7 @@ trait HsTaskListHelperUtils extends Enumerable.Implicits {
   }
 
   private def getCompleteFlag(answers: UserAnswers, index: Int, spokeName: Spoke, mode: Mode): Option[Boolean] = spokeName match {
-    case EstablisherCompanyDetails => answers.isEstablisherCompanyDetailsComplete(index)
+    case EstablisherCompanyDetails => answers.isEstablisherCompanyDetailsComplete(index, mode)
     case EstablisherCompanyAddress => answers.isEstablisherCompanyAddressComplete(index)
     case EstablisherCompanyContactDetails => answers.isEstablisherCompanyContactDetailsComplete(index)
     case TrusteeCompanyDetails => answers.get(trusteeCompany.IsDetailsCompleteId(index))

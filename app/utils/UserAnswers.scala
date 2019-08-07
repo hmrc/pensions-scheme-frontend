@@ -31,7 +31,7 @@ import models.address.Address
 import models.person.{PersonDetails, PersonName}
 import models.register._
 import models.register.establishers.EstablisherKind
-import models.{CompanyDetails, PartnershipDetails}
+import models.{CompanyDetails, Mode, PartnershipDetails, UpdateMode}
 import play.api.Logger
 import play.api.libs.functional.syntax._
 import play.api.libs.json.Reads._
@@ -152,7 +152,7 @@ final case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Impl
   private def notDeleted: Reads[JsBoolean] = __.read(JsBoolean(false))
 
   //scalastyle:off method.length
-  def readEstablishers(isHnSEnabled: Boolean): Reads[Seq[Establisher[_]]] = new Reads[Seq[Establisher[_]]] {
+  def readEstablishers(isHnSEnabled: Boolean, mode: Mode): Reads[Seq[Establisher[_]]] = new Reads[Seq[Establisher[_]]] {
 
     private def noOfRecords : Int = json.validate((__ \ 'establishers).readNullable(__.read(
       Reads.seq((__ \ 'establisherKind).read[String].flatMap {
@@ -180,7 +180,7 @@ final case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Impl
         (JsPath \ IsEstablisherNewId.toString).readNullable[Boolean]
       ) ((details, isNew) =>
       EstablisherCompanyEntity(EstablisherCompanyDetailsId(index),
-        details.companyName, details.isDeleted, isEstablisherCompanyAndDirectorsComplete(index, isHnSEnabled), isNew.fold(false)(identity), noOfRecords)
+        details.companyName, details.isDeleted, isEstablisherCompanyAndDirectorsComplete(index, mode, isHnSEnabled), isNew.fold(false)(identity), noOfRecords)
     )
 
     private def readsPartnership(index: Int): Reads[Establisher[_]] = (
@@ -215,8 +215,8 @@ final case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Impl
     }
   }
 
-  def allEstablishers(isHnSEnabled: Boolean): Seq[Establisher[_]] = {
-    json.validate[Seq[Establisher[_]]](readEstablishers(isHnSEnabled)) match {
+  def allEstablishers(isHnSEnabled: Boolean, mode: Mode): Seq[Establisher[_]] = {
+    json.validate[Seq[Establisher[_]]](readEstablishers(isHnSEnabled, mode)) match {
       case JsSuccess(establishers, _) =>
         establishers
       case JsError(errors) =>
@@ -225,8 +225,8 @@ final case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Impl
     }
   }
 
-  def allEstablishersAfterDelete(isHnSEnabled: Boolean): Seq[Establisher[_]] = {
-    allEstablishers(isHnSEnabled).filterNot(_.isDeleted)
+  def allEstablishersAfterDelete(isHnSEnabled: Boolean, mode: Mode): Seq[Establisher[_]] = {
+    allEstablishers(isHnSEnabled, mode).filterNot(_.isDeleted)
   }
 
   def allDirectorsOld(establisherIndex: Int): Seq[DirectorEntityNonHnS] = {
@@ -399,8 +399,8 @@ final case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Impl
     }
   }
 
-  def hasCompanies(isHnSEnabled: Boolean): Boolean = {
-    allEstablishersAfterDelete(isHnSEnabled).exists {
+  def hasCompanies(isHnSEnabled: Boolean, mode: Mode): Boolean = {
+    allEstablishersAfterDelete(isHnSEnabled, mode).exists {
       _.id match {
         case EstablisherCompanyDetailsId(_) | PartnershipDetailsId(_) => true
         case _ => false
@@ -456,9 +456,9 @@ final case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Impl
     case _ => true
   }
 
-  def allEstablishersCompleted(isHnSEnabled: Boolean) =
-    !allEstablishersAfterDelete(isHnSEnabled).zipWithIndex.collect { case (item, establisherIndex) =>
-    item.isCompleted && isDirectorPartnerCompleted(establisherIndex, isHnSEnabled)
+  def allEstablishersCompleted(isHnSEnabled: Boolean, mode: Mode) =
+    !allEstablishersAfterDelete(isHnSEnabled, mode).zipWithIndex.collect { case (item, establisherIndex) =>
+      item.isCompleted && isDirectorPartnerCompleted(establisherIndex, isHnSEnabled)
   }.contains(false)
 
   def isInsuranceCompleted: Boolean = get(BenefitsSecuredByInsuranceId) match {
@@ -468,8 +468,7 @@ final case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Impl
     case _ => false
   }
 
-  def areVariationChangesCompleted(isHnSEnabled: Boolean = false): Boolean = {
-    isInsuranceCompleted && isAllTrusteesCompleted(isHnSEnabled) && allEstablishersCompleted(isHnSEnabled)
-  }
+  def areVariationChangesCompleted(isHnSEnabled: Boolean = false): Boolean =
+    isInsuranceCompleted && isAllTrusteesCompleted(isHnSEnabled) && allEstablishersCompleted(isHnSEnabled, UpdateMode)
 
 }

@@ -21,7 +21,7 @@ import identifiers.register.establishers.company._
 import identifiers.register.establishers.company.director._
 import identifiers.register.trustees.individual._
 import models.address.Address
-import models.{AddressYears, ReferenceValue}
+import models.{AddressYears, Mode, NormalMode, ReferenceValue}
 import play.api.libs.json.Reads
 
 trait DataCompletion {
@@ -76,6 +76,7 @@ trait DataCompletion {
       case (None, _, _) => None
       case (Some(true), Some(_), _) => Some(true)
       case (Some(false), _, Some(noReasonId)) if get(noReasonId).isDefined => Some(true)
+      case (Some(false), _, None) => Some(true)
       case _ => Some(false)
     }
 
@@ -97,14 +98,15 @@ trait DataCompletion {
 
 
   //ESTABLISHER COMPANY
-  def isEstablisherCompanyDetailsComplete(index: Int): Option[Boolean] =
-    isComplete(Seq(
-      isAnswerComplete(HasCompanyNumberId(index), CompanyRegistrationNumberVariationsId(index), Some(NoCompanyNumberId(index))),
-      isUtrComplete(HasCompanyUTRId(index), CompanyUTRId(index), NoCompanyUTRId(index)),
-      isAnswerComplete(HasCompanyVATId(index), CompanyVatVariationsId(index), None),
-      isAnswerComplete(HasCompanyPAYEId(index), CompanyPayeVariationsId(index), None),
-      isAnswerComplete(IsCompanyDormantId(index))
-    ))
+   def isEstablisherCompanyDetailsComplete(index: Int, mode: Mode): Option[Boolean] =
+     isComplete(
+       Seq(
+         isAnswerComplete(HasCompanyNumberId(index), CompanyRegistrationNumberVariationsId(index), Some(NoCompanyNumberId(index))),
+         isUtrComplete(HasCompanyUTRId(index), CompanyUTRId(index), NoCompanyUTRId(index)),
+         isAnswerComplete(HasCompanyVATId(index), CompanyVatVariationsId(index), None),
+         isAnswerComplete(HasCompanyPAYEId(index), CompanyPayeVariationsId(index), None)
+       ) ++ (if (mode == NormalMode) Seq(isAnswerComplete(IsCompanyDormantId(index))) else Nil)
+     )
 
   def isEstablisherCompanyAddressComplete(index: Int): Option[Boolean] =
     isAddressComplete(CompanyAddressId(index), CompanyPreviousAddressId(index), CompanyAddressYearsId(index), Some(HasBeenTradingCompanyId(index)))
@@ -112,32 +114,31 @@ trait DataCompletion {
   def isEstablisherCompanyContactDetailsComplete(index: Int): Option[Boolean] =
     isContactDetailsComplete(CompanyEmailId(index), CompanyPhoneId(index))
 
-  def isEstablisherCompanyCompleteNonHns(index: Int): Boolean = {
+  def isEstablisherCompanyCompleteNonHns(index: Int, mode: Mode): Boolean =
     isListComplete(Seq(
       get(CompanyDetailsId(index)).isDefined,
-      get(CompanyRegistrationNumberId(index)).isDefined,
-      get(CompanyUniqueTaxReferenceId(index)).isDefined,
-      get(CompanyVatId(index)).isDefined,
-      get(CompanyPayeId(index)).isDefined,
-      get(IsCompanyDormantId(index)).isDefined,
+      get(CompanyRegistrationNumberId(index)).isDefined | get(CompanyRegistrationNumberVariationsId(index)).isDefined,
+      get(CompanyUniqueTaxReferenceId(index)).isDefined | get(CompanyUTRId(index)).isDefined,
+      get(CompanyVatId(index)).isDefined | get(CompanyVatVariationsId(index)).isDefined,
+      get(CompanyPayeId(index)).isDefined | get(CompanyPayeVariationsId(index)).isDefined,
+      if(mode==NormalMode) get(IsCompanyDormantId(index)).isDefined else true,
       isAddressComplete(CompanyAddressId(index), CompanyPreviousAddressId(index), CompanyAddressYearsId(index), None).getOrElse(false),
       get(CompanyContactDetailsId(index)).isDefined
     ))
-  }
 
-  def isEstablisherCompanyComplete(index: Int, isHnSEnabled: Boolean): Boolean =
+  def isEstablisherCompanyComplete(index: Int, mode: Mode, isHnSEnabled: Boolean): Boolean =
     if (isHnSEnabled)
       isComplete(Seq(
-        isEstablisherCompanyDetailsComplete(index),
+        isEstablisherCompanyDetailsComplete(index, mode),
         isEstablisherCompanyAddressComplete(index),
         isEstablisherCompanyContactDetailsComplete(index))).getOrElse(false)
     else
-      isEstablisherCompanyCompleteNonHns(index)
+      isEstablisherCompanyCompleteNonHns(index, mode)
 
-  def isEstablisherCompanyAndDirectorsComplete(index: Int, isHnSEnabled: Boolean): Boolean = {
+  def isEstablisherCompanyAndDirectorsComplete(index: Int, mode: Mode, isHnSEnabled: Boolean): Boolean = {
     val allDirectors = allDirectorsAfterDelete(index, isHnSEnabled)
     val allDirectorsCompleted = allDirectors.nonEmpty & allDirectors.forall(_.isCompleted)
-    val isCompanyComplete = isEstablisherCompanyComplete(index, isHnSEnabled)
+    val isCompanyComplete = isEstablisherCompanyComplete(index, mode, isHnSEnabled)
     allDirectorsCompleted & isCompanyComplete
   }
 
@@ -160,8 +161,8 @@ trait DataCompletion {
   def isDirectorCompleteNonHnS(estIndex: Int, dirIndex: Int): Boolean =
     isListComplete(Seq(
       get(DirectorDetailsId(estIndex, dirIndex)).isDefined,
-      get(DirectorNinoId(estIndex, dirIndex)).isDefined,
-      get(DirectorUniqueTaxReferenceId(estIndex, dirIndex)).isDefined,
+      get(DirectorNinoId(estIndex, dirIndex)).isDefined | get(DirectorNewNinoId(estIndex, dirIndex)).isDefined,
+      get(DirectorUniqueTaxReferenceId(estIndex, dirIndex)).isDefined | get(DirectorUTRId(estIndex, dirIndex)).isDefined,
       isAddressComplete(DirectorAddressId(estIndex, dirIndex), DirectorPreviousAddressId(estIndex, dirIndex),
         DirectorAddressYearsId(estIndex, dirIndex), None).getOrElse(false),
       get(DirectorContactDetailsId(estIndex, dirIndex)).isDefined

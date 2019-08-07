@@ -20,6 +20,7 @@ import base.JsonFileReader
 import identifiers.register.establishers.company._
 import identifiers.register.establishers.company.director.{DirectorHasNINOId, DirectorNewNinoId, DirectorNoNINOReasonId}
 import identifiers.register.trustees.individual.{TrusteeHasUTRId, TrusteeNoUTRReasonId, TrusteeUTRId}
+import models.NormalMode
 import org.scalatest.{MustMatchers, OptionValues, WordSpec}
 import play.api.libs.json.JsValue
 
@@ -131,15 +132,15 @@ class DataCompletionSpec extends WordSpec with MustMatchers with OptionValues wi
 
   "isEstablisherCompanyDetailsComplete" must {
     "return None when all answers are missing" in {
-      UserAnswers(userAnswersUninitiated).isEstablisherCompanyDetailsComplete(0) mustBe None
+      UserAnswers(userAnswersUninitiated).isEstablisherCompanyDetailsComplete(0, mode) mustBe None
     }
 
     "return Some(true) when all answers are present" in {
-      UserAnswers(userAnswersCompleted).isEstablisherCompanyDetailsComplete(0) mustBe Some(true)
+      UserAnswers(userAnswersCompleted).isEstablisherCompanyDetailsComplete(0, mode) mustBe Some(true)
     }
 
     "return Some(false) when some answer is missing" in {
-      UserAnswers(userAnswersInProgress).isEstablisherCompanyDetailsComplete(0) mustBe Some(false)
+      UserAnswers(userAnswersInProgress).isEstablisherCompanyDetailsComplete(0, mode) mustBe Some(false)
     }
   }
 
@@ -173,29 +174,29 @@ class DataCompletionSpec extends WordSpec with MustMatchers with OptionValues wi
 
   "isEstablisherCompanyComplete with hns toggle on" must {
     "return false when all answers are missing" in {
-      UserAnswers(userAnswersUninitiated).isEstablisherCompanyComplete(0, true) mustBe false
+      UserAnswers(userAnswersUninitiated).isEstablisherCompanyComplete(0, mode, true) mustBe false
     }
 
     "return true when all answers are present" in {
-      UserAnswers(userAnswersCompleted).isEstablisherCompanyComplete(0, true) mustBe true
+      UserAnswers(userAnswersCompleted).isEstablisherCompanyComplete(0, mode, true) mustBe true
     }
 
     "return false when some answer is missing" in {
-      UserAnswers(userAnswersInProgress).isEstablisherCompanyComplete(0, true) mustBe false
+      UserAnswers(userAnswersInProgress).isEstablisherCompanyComplete(0, mode, true) mustBe false
     }
   }
 
   "isEstablisherCompanyComplete with hns toggle off" must {
     "return false when all answers are missing" in {
-      UserAnswers(userAnswersUninitiated).isEstablisherCompanyComplete(0, false) mustBe false
+      UserAnswers(userAnswersUninitiated).isEstablisherCompanyComplete(0, mode, false) mustBe false
     }
 
     "return true when all answers are present" in {
-      UserAnswers(userAnswersCompletedNonHnS).isEstablisherCompanyComplete(0, false) mustBe true
+      UserAnswers(userAnswersCompletedNonHnS).isEstablisherCompanyComplete(0, mode, false) mustBe true
     }
 
     "return false when some answer is missing" in {
-      UserAnswers(userAnswersInProgress).isEstablisherCompanyComplete(0, false) mustBe false
+      UserAnswers(userAnswersInProgress).isEstablisherCompanyComplete(0, mode, false) mustBe false
     }
   }
 
@@ -229,7 +230,7 @@ class DataCompletionSpec extends WordSpec with MustMatchers with OptionValues wi
     "return false when some answer is missing" in {
       UserAnswers(userAnswersInProgress).isTrusteeIndividualCompleteNonHnS(0) mustBe false
     }
-  }  
+  }
 
   "isTrusteeIndividualCompleteHnS" must {
     "return true when all answers are present" in {
@@ -243,6 +244,8 @@ class DataCompletionSpec extends WordSpec with MustMatchers with OptionValues wi
 }
 
 object DataCompletionSpec extends JsonFileReader {
+
+  val mode = NormalMode
   val userAnswersCompleted: JsValue = readJsonFromFile("/payloadHnS.json")
   val userAnswersInProgress: JsValue = readJsonFromFile("/payloadHnSInProgress.json")
 
