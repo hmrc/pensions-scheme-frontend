@@ -28,9 +28,9 @@ import models.{Index, Mode}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.libs.json.{JsError, JsResult, JsSuccess, JsValue}
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
-import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.TrusteesIndividual
 import utils.{Enumerable, UserAnswers}
@@ -49,7 +49,7 @@ class TrusteeNameController @Inject()(appConfig: FrontendAppConfig,
                                       formProvider: PersonNameFormProvider
                                      )(implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
 
-  private val form = formProvider(Some("messages__error__trustees"))
+  private val form = formProvider("messages__error__trustees")
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {

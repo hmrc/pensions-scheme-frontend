@@ -33,7 +33,7 @@ class TrusteeNameViewSpec extends QuestionViewBehaviours[PersonName] {
   val trusteeIndex = Index(1)
   private val postCall = routes.TrusteeNameController.onSubmit _
 
-  override val form = new PersonNameFormProvider()()
+  override val form = new PersonNameFormProvider()("messages__error__trustees")
 
   def createView(): () => HtmlFormat.Appendable = () =>
     trusteeName(frontendAppConfig, form, NormalMode, trusteeIndex, None,
@@ -45,10 +45,6 @@ class TrusteeNameViewSpec extends QuestionViewBehaviours[PersonName] {
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) =>
     trusteeName(frontendAppConfig, form, NormalMode, trusteeIndex, None,
       postCall(NormalMode, trusteeIndex, None), None)(fakeRequest, messages)
-
-  private val day = LocalDate.now().getDayOfMonth
-  private val year = LocalDate.now().getYear
-  private val month = LocalDate.now().getMonthOfYear
 
   val validData: Map[String, String] = Map(
     "firstName" -> "testFirstName",

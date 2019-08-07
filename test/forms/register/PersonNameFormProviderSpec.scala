@@ -30,8 +30,7 @@ class PersonNameFormProviderSpec extends StringFieldBehaviours with Constraints 
   implicit val messagesApi: MessagesApi = app.injector.instanceOf[MessagesApi]
   implicit val messages: Messages = messagesApi.preferred(FakeRequest())
 
-  val form = new PersonNameFormProvider()()
-  val formWithToken = new PersonNameFormProvider()(Some(messages("messages__error__trustees")))
+  val form = new PersonNameFormProvider()(messages("messages__error__trustees"))
 
   // scalastyle:off magic.number
   private val johnDoe = PersonName("John", "Doe")
@@ -40,8 +39,7 @@ class PersonNameFormProviderSpec extends StringFieldBehaviours with Constraints 
   ".firstName" must {
 
     val fieldName = "firstName"
-    val requiredKey = messages("messages__error__first_name")
-    val requiredKeyWithToken = messages("messages__error__first_name_withToken", messages("messages__error__trustees"))
+    val requiredKey = messages("messages__error__first_name", messages("messages__error__trustees"))
     val lengthKey = "messages__error__first_name_length"
     val invalidKey = "messages__error__first_name_invalid"
     val maxLength = PersonNameFormProvider.firstNameLength
@@ -63,12 +61,6 @@ class PersonNameFormProviderSpec extends StringFieldBehaviours with Constraints 
       form,
       fieldName,
       requiredError = FormError(fieldName, requiredKey)
-    )
-
-    behave like mandatoryField(
-      formWithToken,
-      fieldName,
-      requiredError = FormError(fieldName, requiredKeyWithToken)
     )
 
     behave like fieldWithRegex(
@@ -94,8 +86,7 @@ class PersonNameFormProviderSpec extends StringFieldBehaviours with Constraints 
   ".lastName" must {
 
     val fieldName = "lastName"
-    val requiredKey = messages("messages__error__last_name")
-    val requiredKeyWithToken = messages("messages__error__last_name_withToken", messages("messages__error__trustees"))
+    val requiredKey = messages("messages__error__last_name", messages("messages__error__trustees"))
     val lengthKey = "messages__error__last_name_length"
     val invalidKey = "messages__error__last_name_invalid"
     val maxLength = PersonNameFormProvider.lastNameLength
@@ -117,12 +108,6 @@ class PersonNameFormProviderSpec extends StringFieldBehaviours with Constraints 
       form,
       fieldName,
       requiredError = FormError(fieldName, requiredKey)
-    )
-
-    behave like mandatoryField(
-      formWithToken,
-      fieldName,
-      requiredError = FormError(fieldName, requiredKeyWithToken)
     )
 
     behave like fieldWithRegex(

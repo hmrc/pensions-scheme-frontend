@@ -24,7 +24,6 @@ import identifiers.register.establishers.company.director.{DirectorNameId, IsNew
 import identifiers.register.establishers.{EstablishersId, IsEstablisherCompleteId}
 import models.person.PersonName
 import models.{CompanyDetails, Index, NormalMode}
-import org.joda.time.LocalDate
 import org.mockito.Matchers.{eq => eqTo, _}
 import org.mockito.Mockito._
 import org.scalatest.mockito.MockitoSugar
@@ -212,17 +211,12 @@ object DirectorNameControllerSpec extends ControllerSpecBase with MockitoSugar {
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
   private val formProvider: PersonNameFormProvider = new PersonNameFormProvider()
-  private val form: Form[PersonName] = formProvider()
+  private val form: Form[PersonName] = formProvider("messages__error__director")
 
   private val firstEstablisherIndex: Index = Index(0)
   private val firstDirectorIndex: Index = Index(0)
-  private val invalidIndex: Index = Index(10)
 
   private val companyName: String = "test company name"
   private val mockUserAnswersService: UserAnswersService = mock[UserAnswersService]
   private val mockSectionComplete: SectionComplete = mock[SectionComplete]
-
-  private val day: Int = LocalDate.now().getDayOfMonth
-  private val month: Int = LocalDate.now().getMonthOfYear
-  private val year: Int = LocalDate.now().getYear - 20
 }
