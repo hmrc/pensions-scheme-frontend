@@ -19,13 +19,18 @@ package forms.register
 import forms.behaviours.StringFieldBehaviours
 import forms.mappings.Constraints
 import models.person.PersonName
-import org.joda.time.LocalDate
+import org.scalatestplus.play.OneAppPerSuite
 import play.api.data.FormError
+import play.api.i18n.{Messages, MessagesApi}
+import play.api.test.FakeRequest
 import wolfendale.scalacheck.regexp.RegexpGen
 
-class PersonNameFormProviderSpec extends StringFieldBehaviours with Constraints {
+class PersonNameFormProviderSpec extends StringFieldBehaviours with Constraints with OneAppPerSuite {
 
-  val form = new PersonNameFormProvider()()
+  implicit val messagesApi: MessagesApi = app.injector.instanceOf[MessagesApi]
+  implicit val messages: Messages = messagesApi.preferred(FakeRequest())
+
+  val form = new PersonNameFormProvider()(messages("messages__error__trustees"))
 
   // scalastyle:off magic.number
   private val johnDoe = PersonName("John", "Doe")
@@ -34,7 +39,7 @@ class PersonNameFormProviderSpec extends StringFieldBehaviours with Constraints 
   ".firstName" must {
 
     val fieldName = "firstName"
-    val requiredKey = "messages__error__first_name"
+    val requiredKey = messages("messages__error__first_name", messages("messages__error__trustees"))
     val lengthKey = "messages__error__first_name_length"
     val invalidKey = "messages__error__first_name_invalid"
     val maxLength = PersonNameFormProvider.firstNameLength
@@ -81,7 +86,7 @@ class PersonNameFormProviderSpec extends StringFieldBehaviours with Constraints 
   ".lastName" must {
 
     val fieldName = "lastName"
-    val requiredKey = "messages__error__last_name"
+    val requiredKey = messages("messages__error__last_name", messages("messages__error__trustees"))
     val lengthKey = "messages__error__last_name_length"
     val invalidKey = "messages__error__last_name_invalid"
     val maxLength = PersonNameFormProvider.lastNameLength
@@ -137,7 +142,7 @@ class PersonNameFormProviderSpec extends StringFieldBehaviours with Constraints 
       details.lastName mustBe johnDoe.lastName
     }
 
-    "unapply PersonName corectly" in {
+    "unapply PersonName correctly" in {
       val filled = form.fill(johnDoe)
       filled("firstName").value.value mustBe johnDoe.firstName
       filled("lastName").value.value mustBe johnDoe.lastName
