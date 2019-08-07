@@ -280,12 +280,22 @@ class HsTaskListHelperRegistrationSpec extends HsTaskListHelperBehaviour with En
         )
     }
 
-    "return the seq of trustees sub sections for non deleted trustees which are not completed" in {
-
-      // TODO: PODS-2940 Write unit test for toggle ON
-
+    "return the seq of trustees sub sections for non deleted trustees which are not completed when toggle off" in {
       val userAnswers = allTrustees(isCompleteTrustees = false, toggled = false)
       val helper = new HsTaskListHelperRegistration(userAnswers, fakeFeatureManagementService)
+      helper.trustees(userAnswers) mustBe
+        Seq(SchemeDetailsTaskListSection(Some(false), Link(individualLinkText,
+          controllers.register.trustees.individual.routes.TrusteeDetailsController.onPageLoad(mode, 0, srn).url), Some("firstName lastName")),
+          SchemeDetailsTaskListSection(Some(false), Link(companyLinkText,
+            controllers.register.trustees.company.routes.CompanyDetailsController.onPageLoad(mode, 1, srn).url), Some("test company")),
+          SchemeDetailsTaskListSection(Some(false), Link(partnershipLinkText,
+            controllers.register.trustees.partnership.routes.TrusteeDetailsController.onPageLoad(mode, 2, srn).url), Some("test partnership"))
+        )
+    }
+
+    "return the seq of trustees sub sections for non deleted trustees which are not completed when toggle on" in {
+      val userAnswers = allTrustees(isCompleteTrustees = false, toggled = true)
+      val helper = new HsTaskListHelperRegistration(userAnswers, fakeFeatureManagementServiceToggleOn)
       helper.trustees(userAnswers) mustBe
         Seq(SchemeDetailsTaskListSection(Some(false), Link(individualLinkText,
           controllers.register.trustees.individual.routes.TrusteeDetailsController.onPageLoad(mode, 0, srn).url), Some("firstName lastName")),
