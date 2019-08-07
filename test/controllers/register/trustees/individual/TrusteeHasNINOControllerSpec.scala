@@ -142,18 +142,5 @@ object TrusteeHasNINOControllerSpec extends ControllerSpecBase with MockitoSugar
 
   private val mockUserAnswersService: UserAnswersService = mock[UserAnswersService]
 
-//  private def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryTrustee): TrusteeHasNINOController =
-//    new TrusteeHasNINOController(
-//      frontendAppConfig,
-//      messagesApi,
-//      FakeUserAnswersService,
-//      new FakeNavigator(desiredRoute = onwardRoute),
-//      FakeAuthAction,
-//      FakeAllowAccessProvider(),
-//      dataRetrievalAction,
-//      new DataRequiredActionImpl,
-//      formProvider
-//    )
-
   private def viewAsString(form: Form[_] = form) = hasReferenceNumber(frontendAppConfig, form, viewModel, schemeName)(fakeRequest, messages).toString
 }
