@@ -78,7 +78,7 @@ class CompanyAddressControllerSpec extends ControllerSpecBase with ScalaFutures 
         routes.CompanyAddressController.onSubmit(NormalMode, None, firstIndex),
         options,
         Message("messages__establisherConfirmAddress__title"),
-        Message("messages__establisherConfirmAddress__h1", companyName)
+        Message("messages__common__confirmAddress__h1", companyName)
       ),
       None
     )(fakeRequest, messages).toString

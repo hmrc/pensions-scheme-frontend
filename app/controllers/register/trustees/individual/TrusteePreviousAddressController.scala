@@ -17,7 +17,7 @@
 package controllers.register.trustees.individual
 
 import audit.AuditService
-import config.FrontendAppConfig
+import config.{FeatureSwitchManagementService,FrontendAppConfig}
 import controllers.actions._
 import controllers.address.ManualAddressController
 import controllers.register.trustees.individual.routes._
@@ -32,7 +32,7 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
 import utils.annotations.TrusteesIndividual
-import utils.CountryOptions
+import utils.{CountryOptions, Toggles}
 import viewmodels.Message
 import viewmodels.address.ManualAddressViewModel
 
@@ -49,7 +49,8 @@ class TrusteePreviousAddressController @Inject()(
                                                   requireData: DataRequiredAction,
                                                   formProvider: AddressFormProvider,
                                                   val countryOptions: CountryOptions,
-                                                  val auditService: AuditService
+                                                  val auditService: AuditService,
+                                                  featureSwitchManagementService: FeatureSwitchManagementService
                                                 )(implicit val ec: ExecutionContext) extends ManualAddressController with I18nSupport {
 
   private[controllers] val postCall = TrusteePreviousAddressController.onSubmit _
@@ -58,41 +59,41 @@ class TrusteePreviousAddressController @Inject()(
 
   protected val form: Form[Address] = formProvider()
 
-  private def viewmodel(index: Int, mode: Mode, srn: Option[String]): Retrieval[ManualAddressViewModel] =
-    Retrieval {
-      implicit request =>
-        TrusteeDetailsId(index).retrieve.right.map {
-          details =>
+  private def viewmodel(index: Int, mode: Mode, srn: Option[String],name:String): ManualAddressViewModel =
             ManualAddressViewModel(
               postCall(mode, Index(index), srn),
               countryOptions.options,
               title = Message(title),
-              heading = Message(heading,details.fullName),
-              secondaryHeader = Some(details.fullName),
+              heading = Message(heading,name),
+              secondaryHeader = Some(name),
               srn = srn
             )
-        }
-    }
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
-    implicit request =>
-      viewmodel(index, mode, srn).retrieve.right.map {
-        vm =>
-          get(TrusteePreviousAddressId(index), TrusteePreviousAddressListId(index), vm)
-      }
-  }
-
+      implicit request =>
+        trusteeName(index).retrieve.right.map {
+          name =>
+          get(TrusteePreviousAddressId(index), TrusteePreviousAddressListId(index), viewmodel(index, mode, srn,name))
+        }
+    }
   def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
-      viewmodel(index, mode, srn).retrieve.right.map {
-        vm =>
-          post(TrusteePreviousAddressId(index), TrusteePreviousAddressListId(index), vm, mode, context(vm),
-            IndividualPreviousAddressPostCodeLookupId(index)
-          )
+      trusteeName(index).retrieve.right.map {
+        name =>
+          post(TrusteePreviousAddressId(index), TrusteePreviousAddressListId(index), viewmodel(index, mode, srn, name), mode, context(viewmodel(index, mode, srn, name)),
+            IndividualPreviousAddressPostCodeLookupId(index))
       }
   }
 
+
+  val trusteeName = (trusteeIndex: Index) => Retrieval {
+    implicit request =>
+      if (featureSwitchManagementService.get(Toggles.isEstablisherCompanyHnSEnabled))
+        TrusteeNameId(trusteeIndex).retrieve.right.map(_.fullName)
+      else
+        TrusteeDetailsId(trusteeIndex).retrieve.right.map(_.fullName)
+  }
   private def context(viewModel: ManualAddressViewModel): String = {
     viewModel.secondaryHeader match {
       case Some(fullName) => s"Trustee Individual Previous Address: $fullName"
