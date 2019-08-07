@@ -16,7 +16,7 @@
 
 package controllers.register.trustees.individual
 
-import config.FrontendAppConfig
+import config.{FeatureSwitchManagementService, FrontendAppConfig}
 import controllers.Retrievals
 import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRequiredAction, DataRetrievalAction}
 import controllers.address.AddressListController
@@ -28,6 +28,7 @@ import navigators.Navigator
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, Result}
 import services.UserAnswersService
+import utils.Toggles
 import utils.annotations.TrusteesIndividual
 import viewmodels.Message
 import viewmodels.address.AddressListViewModel
@@ -41,7 +42,8 @@ class IndividualAddressListController @Inject()(override val appConfig: Frontend
                                                 authenticate: AuthAction,
                                                 getData: DataRetrievalAction,
                                                 allowAccess: AllowAccessActionProvider,
-                                                requireData: DataRequiredAction
+                                                requireData: DataRequiredAction,
+                                                fs: FeatureSwitchManagementService
                                                )(implicit val ec: ExecutionContext) extends AddressListController with Retrievals {
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
@@ -68,16 +70,22 @@ class IndividualAddressListController @Inject()(override val appConfig: Frontend
                         srn: Option[String]
                        )(implicit request: DataRequest[AnyContent]): Option[AddressListViewModel] = {
 
-    (TrusteeDetailsId(index) and IndividualPostCodeLookupId(index)).retrieve.right.toOption.map {
-      case trusteeDetails ~ addresses =>
-        AddressListViewModel(
-          postCall = routes.IndividualAddressListController.onSubmit(mode, index, srn),
-          manualInputCall = routes.TrusteeAddressController.onPageLoad(mode, index, srn),
-          addresses = addresses,
-          title = Message("messages__trustee__individual__address__title"),
-          heading = Message("messages__trustee__individual__address__heading", trusteeDetails.fullName),
-          srn = srn
-        )
-    }
+    for {
+      addresses <-  IndividualPostCodeLookupId(index).retrieve.right.toOption
+
+      name      <-  if (fs.get(Toggles.isEstablisherCompanyHnSEnabled))
+                      TrusteeNameId(index).retrieve.right.toOption.map(_.fullName)
+                    else
+                      TrusteeDetailsId(index).retrieve.right.toOption.map(_.fullName)
+
+    } yield AddressListViewModel(
+      postCall = routes.IndividualAddressListController.onSubmit(mode, index, srn),
+      manualInputCall = routes.TrusteeAddressController.onPageLoad(mode, index, srn),
+      addresses = addresses,
+      title = Message("messages__trustee__individual__address__title"),
+      heading = Message("messages__trustee__individual__address__heading", name),
+      srn = srn
+    )
+
   }
 }

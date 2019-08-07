@@ -16,6 +16,7 @@
 
 package controllers.register.trustees.individual
 
+import com.apple.laf.AquaButtonBorder.Toggle
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.NinoNewFormProvider
@@ -29,7 +30,7 @@ import play.api.libs.json._
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import services.FakeUserAnswersService
-import utils.FakeNavigator
+import utils.{FakeFeatureSwitchManagementService, FakeNavigator}
 import viewmodels.NinoViewModel
 import views.html.nino
 
@@ -111,7 +112,7 @@ object TrusteeNinoNewControllerSpec extends ControllerSpecBase {
 
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryTrustee): TrusteeNinoNewController = {
+  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryTrustee, toggled: Boolean = false): TrusteeNinoNewController =
     new TrusteeNinoNewController(frontendAppConfig,
                                  messagesApi,
                                  FakeUserAnswersService,
@@ -120,8 +121,8 @@ object TrusteeNinoNewControllerSpec extends ControllerSpecBase {
                                  dataRetrievalAction,
                                  FakeAllowAccessProvider(),
                                  new DataRequiredActionImpl,
-                                 formProvider)
-  }
+                                 formProvider,
+                                 new FakeFeatureSwitchManagementService(true))
 
   private def viewAsString(form: Form[_], mode: Mode, index: Index, srn: Option[String]): String = {
 
