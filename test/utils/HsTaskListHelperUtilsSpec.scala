@@ -126,11 +126,11 @@ class HsTaskListHelperUtilsSpec extends SpecBase with MustMatchers with OptionVa
 
       // TODO: PODS-2940 Fix these tests
 
-//      "in subscription journey when all spokes are in progress" in {
-//        subscriptionHelper.getTrusteeIndividualSpokes(
-//          trusteeIndividual(isComplete = false), NormalMode, None, "test individual", 0
-//        ) mustBe expectedInProgressTrusteeIndividualSpokes(NormalMode, None)
-//      }
+      "in subscription journey when all spokes are in progress" in {
+        subscriptionHelper.getTrusteeIndividualSpokes(
+          trusteeIndividual(isComplete = false), NormalMode, None, "test individual", 0
+        ) mustBe expectedInProgressTrusteeIndividualSpokes(NormalMode, None)
+      }
 
 //      "in subscription journey when all spokes are complete" in {
 //        subscriptionHelper.getTrusteeIndividualSpokes(
@@ -205,6 +205,7 @@ object HsTaskListHelperUtilsSpec extends SpecBase with OptionValues {
           _.set(trusteeCompanyPath.IsContactDetailsCompleteId(0))(isComplete)))).asOpt.value
   }
 
+  // TODO PODS-2940 Need to do something here?
   protected def trusteeIndividual(isComplete: Boolean): UserAnswers = {
     trusteeIndividualBlank
       .set(IsTrusteeNewId(0))(true)
