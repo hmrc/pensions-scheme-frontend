@@ -43,8 +43,6 @@ class HsTaskListHelperVariationsSpec extends HsTaskListHelperBehaviour {
   override val createTaskListHelper: (UserAnswers, FeatureSwitchManagementService) => HsTaskListHelper =
     (ua, fs) => new HsTaskListHelperVariations(ua, viewOnly = false, srn = srn, fs)
 
-  // TODO: PODS-2940 Write unit test for toggle ON
-
   override def answersData(isCompleteBeforeStart: Boolean = true,
                            isCompleteAboutMembers: Boolean = true,
                            isCompleteAboutBank: Boolean = true,
@@ -53,10 +51,11 @@ class HsTaskListHelperVariationsSpec extends HsTaskListHelperBehaviour {
                            isCompleteEstablishers: Boolean = true,
                            isCompleteTrustees: Boolean = true,
                            isChangedInsuranceDetails: Boolean = true,
-                           isChangedEstablishersTrustees: Boolean = true
+                           isChangedEstablishersTrustees: Boolean = true,
+                           toggled: Boolean
                           ): JsResult[UserAnswers] = {
 
-    setTrusteeCompletionStatusJsResult(isComplete = isCompleteTrustees, toggled = false, 0,
+    setTrusteeCompletionStatusJsResult(isComplete = isCompleteTrustees, toggled = toggled, 0,
       UserAnswers().set(IsBeforeYouStartCompleteId)(isCompleteBeforeStart).flatMap(
         _.set(IsAboutMembersCompleteId)(isCompleteAboutMembers).flatMap(
           _.set(IsAboutBankDetailsCompleteId)(isCompleteAboutBank).flatMap(
@@ -228,44 +227,50 @@ class HsTaskListHelperVariationsSpec extends HsTaskListHelperBehaviour {
     behave like trusteesSectionHnS(UpdateMode, srn)
   }
 
-  "declaration" must {
-
-    "have a declaration section when viewonly is false" in {
-      val userAnswers = answersData().asOpt.value
-      val helper = createTaskListHelper(userAnswers, fakeFeatureManagementService)
+  def variationsTrusteeTests(toggled: Boolean):Unit = {
+    val fsm:FakeFeatureSwitchManagementService = if(toggled) fakeFeatureManagementServiceToggleON else fakeFeatureManagementService
+    s"have a declaration section when viewonly is false with toggle set to $toggled" in {
+      val userAnswers = answersData(toggled = toggled).asOpt.value
+      val helper = createTaskListHelper(userAnswers, fsm)
       helper.declarationSection(userAnswers).isDefined mustBe true
     }
 
-    "have incomplete link when about benefits and insurance section not completed" in {
-      val userAnswers = answersData(isCompleteAboutBenefits = false).asOpt.value
-      mustHaveLink(createTaskListHelper(userAnswers, fakeFeatureManagementService), userAnswers,
+    s"have incomplete link when about benefits and insurance section not completed with toggle set to $toggled" in {
+      val userAnswers = answersData(isCompleteAboutBenefits = false, toggled = toggled).asOpt.value
+      mustHaveLink(createTaskListHelper(userAnswers, fsm), userAnswers,
         Some(controllers.register.routes.StillNeedDetailsController.onPageLoad(srn).url))
     }
 
-    "have incomplete link when establishers section not completed" in {
-      val userAnswers = answersData(isCompleteEstablishers = false).asOpt.value
-      mustHaveLink(createTaskListHelper(userAnswers, fakeFeatureManagementService), userAnswers,
+    s"have incomplete link when establishers section not completed with toggle set to $toggled" in {
+      val userAnswers = answersData(isCompleteEstablishers = false, toggled = toggled).asOpt.value
+      mustHaveLink(createTaskListHelper(userAnswers, fsm), userAnswers,
         Some(controllers.register.routes.StillNeedDetailsController.onPageLoad(srn).url))
     }
 
-    "have incomplete link when trustees section not completed" in {
-      val userAnswers = answersData(isCompleteTrustees = false).asOpt.value
-      mustHaveLink(createTaskListHelper(userAnswers, fakeFeatureManagementService), userAnswers,
+    s"have incomplete link when trustees section not completed with toggle set to $toggled" in {
+      val userAnswers = answersData(isCompleteTrustees = false, toggled = toggled).asOpt.value
+      mustHaveLink(createTaskListHelper(userAnswers, fsm), userAnswers,
         Some(controllers.register.routes.StillNeedDetailsController.onPageLoad(srn).url))
     }
 
-    "have link when all the sections are completed" in {
-      val userAnswers = answersData().asOpt.value
-      mustHaveLink(createTaskListHelper(userAnswers, fakeFeatureManagementService), userAnswers,
+    s"have link when all the sections are completed with toggle set to $toggled" in {
+      val userAnswers = answersData(toggled = toggled).asOpt.value
+      mustHaveLink(createTaskListHelper(userAnswers, fsm), userAnswers,
         Some(controllers.routes.VariationDeclarationController.onPageLoad(srn).url))
     }
 
-    "have no link when all the sections are not completed and no user answers updated" in {
-      val userAnswers = answersData(isChangedInsuranceDetails = false).asOpt.value
-      val helper = createTaskListHelper(userAnswers, fakeFeatureManagementService)
+    s"have no link when all the sections are not completed and no user answers updated with toggle set to $toggled" in {
+      val userAnswers = answersData(isChangedInsuranceDetails = false, toggled = toggled).asOpt.value
+      val helper = createTaskListHelper(userAnswers, fsm)
       helper.declarationSection(userAnswers).isDefined mustBe true
       mustHaveNoLink(helper, userAnswers)
     }
+  }
+
+  "declaration" must {
+    behave like variationsTrusteeTests(toggled = false)
+
+    behave like variationsTrusteeTests(toggled = true)
   }
 
   //scalastyle:off method.length
@@ -327,7 +332,6 @@ class HsTaskListHelperVariationsSpec extends HsTaskListHelperBehaviour {
   }
 
   def trusteesSection(): Unit = {
-    // TODO: PODS-2940 Write unit test for toggle ON
     "return the seq of trustees sub sections for non deleted trustees which are all completed with toggle OFF" in {
       val userAnswers = allTrustees(toggled = false)
       val helper = new HsTaskListHelperVariations(userAnswers, viewOnly = false, srn = Some("test-srn"), fakeFeatureManagementService)
@@ -340,7 +344,6 @@ class HsTaskListHelperVariationsSpec extends HsTaskListHelperBehaviour {
             controllers.register.trustees.partnership.routes.CheckYourAnswersController.onPageLoad(UpdateMode, 2, srn).url), None)), None)
         )
     }
-
 
     "return the seq of trustees sub sections for non deleted individual trustees which are all completed with toggle ON" in {
       val userAnswers = allTrusteesIndividual(toggled = true)
@@ -426,7 +429,13 @@ class HsTaskListHelperVariationsViewOnlySpec extends HsTaskListHelperBehaviour {
 
   "declaration" must {
     "NOT have a declaration section when viewonly is true" in {
-      val userAnswers = answersData().asOpt.value
+      val userAnswers = answersData(toggled = false).asOpt.value
+      val helper = createTaskListHelper(userAnswers, fakeFeatureManagementService)
+      helper.declarationSection(userAnswers).isDefined mustBe false
+    }
+
+    "NOT have a declaration section when viewonly is true with toggle ON" in {
+      val userAnswers = answersData(toggled = true).asOpt.value
       val helper = createTaskListHelper(userAnswers, fakeFeatureManagementService)
       helper.declarationSection(userAnswers).isDefined mustBe false
     }

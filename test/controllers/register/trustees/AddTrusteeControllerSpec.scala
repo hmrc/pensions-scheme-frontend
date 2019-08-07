@@ -171,7 +171,7 @@ class AddTrusteeControllerSpec extends ControllerSpecBase with CompletionStatusH
       view.getElementById("submit").hasAttr("disabled") mustEqual false
     }
 
-    "return view with button DISABLED when toggle set to FALSE and at least one trustee is INCOMPLETE with toggle OFF" in {
+    "return view with button DISABLED when toggle set to FALSE and at least one trustee is INCOMPLETE" in {
 
       val trusteeList: JsValue =
         setTrusteeCompletionStatus(isComplete = true, toggled = false, 1,
@@ -191,7 +191,7 @@ class AddTrusteeControllerSpec extends ControllerSpecBase with CompletionStatusH
       view.getElementById("submit").hasAttr("disabled") mustEqual true
     }
 
-    "return view with button DISABLED when toggle set to FALSE and at least one trustee is INCOMPLETE with toggle ON" in {
+    "return view with button ENABLED when toggle set to TRUE and at least one trustee is INCOMPLETE" in {
 
       val trusteeList: JsValue =
         setTrusteeCompletionStatus(isComplete = true, toggled = true, 1,
@@ -208,7 +208,7 @@ class AddTrusteeControllerSpec extends ControllerSpecBase with CompletionStatusH
 
       val view = asDocument(contentAsString(result))
 
-      view.getElementById("submit").hasAttr("disabled") mustEqual true
+      view.getElementById("submit").hasAttr("disabled") mustEqual false
     }
 
     "return OK and the correct view for a GET" in {

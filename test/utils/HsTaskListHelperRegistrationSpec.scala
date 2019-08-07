@@ -187,7 +187,13 @@ class HsTaskListHelperRegistrationSpec extends HsTaskListHelperBehaviour with En
 
   "declaration" must {
     "have a declaration section" in {
-      val userAnswers = answersData().asOpt.value
+      val userAnswers = answersData(toggled = false).asOpt.value
+      val helper = createTaskListHelper(userAnswers, fakeFeatureManagementService)
+      helper.declarationSection(userAnswers).isDefined mustBe true
+    }
+
+    "have a declaration section with toggle ON" in {
+      val userAnswers = answersData(toggled = true).asOpt.value
       val helper = createTaskListHelper(userAnswers, fakeFeatureManagementService)
       helper.declarationSection(userAnswers).isDefined mustBe true
     }
@@ -195,12 +201,23 @@ class HsTaskListHelperRegistrationSpec extends HsTaskListHelperBehaviour with En
     behave like declarationSection()
 
     "not have link when about bank details section not completed" in {
-      val userAnswers = answersData(isCompleteAboutBank = false).asOpt.value
+      val userAnswers = answersData(isCompleteAboutBank = false, toggled = false).asOpt.value
+      mustHaveNoLink(createTaskListHelper(userAnswers, fakeFeatureManagementService), userAnswers)
+    }
+
+
+    "not have link when about bank details section not completed with toggle ON" in {
+      val userAnswers = answersData(isCompleteAboutBank = false, toggled = true).asOpt.value
       mustHaveNoLink(createTaskListHelper(userAnswers, fakeFeatureManagementService), userAnswers)
     }
 
     "not have link when working knowledge section not completed" in {
-      val userAnswers = answersData(isCompleteWk = false).asOpt.value
+      val userAnswers = answersData(isCompleteWk = false, toggled = false).asOpt.value
+      mustHaveNoLink(createTaskListHelper(userAnswers, fakeFeatureManagementService), userAnswers)
+    }
+
+    "not have link when working knowledge section not completed with toggle ON" in {
+      val userAnswers = answersData(isCompleteWk = false, toggled = true).asOpt.value
       mustHaveNoLink(createTaskListHelper(userAnswers, fakeFeatureManagementService), userAnswers)
     }
   }
