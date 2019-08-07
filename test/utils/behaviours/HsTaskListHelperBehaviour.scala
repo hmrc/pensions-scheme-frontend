@@ -478,4 +478,13 @@ trait HsTaskListHelperBehaviour extends SpecBase with MustMatchers with OptionVa
                                       _.set(IsPartnershipCompleteId(2))(isCompleteTrustees)
                                     )))))))))))))))).asOpt.value)
   }
+
+  protected def allTrusteesIndividual(isCompleteTrustees: Boolean = true, toggled: Boolean): UserAnswers = {
+    setTrusteeCompletionStatus(
+      isCompleteTrustees, toggled, 0, UserAnswers()
+        .set(TrusteeDetailsId(0))(PersonDetails("firstName", None, "lastName", LocalDate.now())).flatMap(
+        _.set(IsTrusteeNewId(0))(true)
+      ).asOpt.value
+    )
+  }
 }
