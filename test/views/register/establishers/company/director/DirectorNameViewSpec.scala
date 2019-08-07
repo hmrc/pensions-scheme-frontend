@@ -34,7 +34,7 @@ class DirectorNameViewSpec extends QuestionViewBehaviours[PersonName] {
   val directorIndex = Index(1)
   private val postCall = routes.DirectorNameController.onSubmit _
 
-  override val form = new PersonNameFormProvider()()
+  override val form = new PersonNameFormProvider()("messages__error__director")
 
   def createView(): () => HtmlFormat.Appendable = () =>
     directorName(frontendAppConfig, form, NormalMode, establisherIndex, directorIndex, None,
@@ -46,10 +46,6 @@ class DirectorNameViewSpec extends QuestionViewBehaviours[PersonName] {
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) =>
     directorName(frontendAppConfig, form, NormalMode, establisherIndex, directorIndex, None,
       postCall(NormalMode, establisherIndex, directorIndex, None), None)(fakeRequest, messages)
-
-  private val day = LocalDate.now().getDayOfMonth
-  private val year = LocalDate.now().getYear
-  private val month = LocalDate.now().getMonthOfYear
 
   val validData: Map[String, String] = Map(
     "firstName" -> "testFirstName",

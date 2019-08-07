@@ -25,22 +25,18 @@ import play.api.i18n.Messages
 
 class PersonNameFormProvider @Inject() extends Mappings with Transforms {
 
-  def apply(optionalToken: Option[String] = None)(implicit messages: Messages): Form[PersonName] =
+  def apply(token: String)(implicit messages: Messages): Form[PersonName] =
     Form(
       mapping(
         "firstName" ->
-          text(errorKey = optionalToken.fold(messages("messages__error__first_name")) {
-            token => messages("messages__error__first_name_withToken", messages(token))
-          }).verifying(
+          text(errorKey = messages("messages__error__first_name", messages(token))).verifying(
               firstError(
                 maxLength(PersonNameFormProvider.firstNameLength, errorKey = "messages__error__first_name_length"),
                 name(errorKey = "messages__error__first_name_invalid")
               )
             ),
         "lastName" ->
-          text(errorKey = optionalToken.fold(messages("messages__error__last_name")) {
-            token => messages("messages__error__last_name_withToken", messages(token))
-          }).verifying(
+          text(errorKey = messages("messages__error__last_name", messages(token))).verifying(
               firstError(
                 maxLength(PersonNameFormProvider.lastNameLength, errorKey = "messages__error__last_name_length"),
                 name(errorKey = "messages__error__last_name_invalid")

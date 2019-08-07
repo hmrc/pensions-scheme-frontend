@@ -17,17 +17,20 @@
 package base
 
 import config.FrontendAppConfig
+import controllers.actions._
+import navigators.Navigator
 import org.jsoup.nodes.Document
 import org.scalatest.Assertion
 import org.scalatestplus.play.PlaySpec
 import org.scalatestplus.play.guice._
-import play.api.{Configuration, Environment}
+import play.api.Environment
 import play.api.i18n.{Messages, MessagesApi}
-import play.api.inject.Injector
 import play.api.inject.guice.GuiceApplicationBuilder
-import play.api.mvc.AnyContentAsEmpty
+import play.api.inject.{Injector, bind}
+import play.api.mvc.{AnyContentAsEmpty, Call}
 import play.api.test.FakeRequest
 import uk.gov.hmrc.crypto.ApplicationCrypto
+import utils.FakeNavigator
 
 trait SpecBase extends PlaySpec with GuiceOneAppPerSuite {
   protected def crypto: ApplicationCrypto = injector.instanceOf[ApplicationCrypto]
@@ -53,5 +56,14 @@ trait SpecBase extends PlaySpec with GuiceOneAppPerSuite {
   def assertRenderedById(doc: Document, id: String): Assertion = {
     assert(doc.getElementById(id) != null, "\n\nElement " + id + " was not rendered on the page.\n")
   }
+
+  def applicationBuilder(dataRetrievalAction: DataRetrievalAction, onwardRoute: Call = controllers.routes.IndexController.onPageLoad()): GuiceApplicationBuilder =
+    new GuiceApplicationBuilder()
+      .overrides(
+        bind[AuthAction].toInstance(FakeAuthAction),
+        bind[Navigator].toInstance(new FakeNavigator(desiredRoute = onwardRoute)),
+        bind[AllowAccessActionProvider].toInstance(FakeAllowAccessProvider()),
+        bind[DataRetrievalAction].toInstance(dataRetrievalAction)
+      )
 
 }
