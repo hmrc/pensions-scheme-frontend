@@ -89,7 +89,7 @@ class HasCompanyUTRControllerSpec extends ControllerSpecBase {
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
-      FakeUserAnswersService.userAnswer.get(HasCompanyUTRId(index)).value mustEqual true
+      FakeUserAnswersService.verify(HasCompanyUTRId(index), true)
     }
 
     "return a Bad Request and errors when invalid data is submitted" in {
@@ -103,21 +103,24 @@ class HasCompanyUTRControllerSpec extends ControllerSpecBase {
     }
 
     "if user changes answer from yes to no then clean up should take place on utr number" in {
+      FakeUserAnswersService.reset()
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "false"))
       val result = controller(getTrusteeCompanyPlusUtr(hasUtrValue = true)).onSubmit(NormalMode, index, None)(postRequest)
 
       status(result) mustBe SEE_OTHER
-      FakeUserAnswersService.userAnswer.get(HasCompanyUTRId(index)).value mustEqual false
-      FakeUserAnswersService.userAnswer.get(CompanyUTRId(index)) mustBe None
+      FakeUserAnswersService.verify(HasCompanyUTRId(index), false)
+      FakeUserAnswersService.verifyNot(CompanyUTRId(index))
     }
 
     "if user changes answer from no to yes then clean up should take place on no utr reason" in {
+      FakeUserAnswersService.reset()
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "true"))
       val result = controller(getTrusteeCompanyPlusUtr(hasUtrValue = false)).onSubmit(NormalMode, index, None)(postRequest)
 
       status(result) mustBe SEE_OTHER
-      FakeUserAnswersService.userAnswer.get(HasCompanyUTRId(index)).value mustEqual true
-      FakeUserAnswersService.userAnswer.get(NoUTRId(index)) mustBe None
+
+      FakeUserAnswersService.verify(HasCompanyUTRId(index), true)
+      FakeUserAnswersService.verifyNot(NoUTRId(index))
     }
 
   }

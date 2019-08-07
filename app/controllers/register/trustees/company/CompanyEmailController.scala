@@ -20,7 +20,7 @@ import config.FrontendAppConfig
 import controllers.EmailAddressController
 import controllers.actions._
 import forms.EmailFormProvider
-import identifiers.register.trustees.company.{CompanyDetailsId, CompanyEmailId, IsContactDetailsCompleteId}
+import identifiers.register.trustees.company.{CompanyDetailsId, CompanyEmailId}
 import javax.inject.Inject
 import models.{Index, Mode}
 import navigators.Navigator
@@ -75,7 +75,7 @@ class CompanyEmailController @Inject()(val appConfig: FrontendAppConfig,
     implicit request =>
       viewModel(mode, srn, index).retrieve.right.map {
         vm =>
-          post(CompanyEmailId(index), mode, form, vm, Some(IsContactDetailsCompleteId(index)))
+          post(CompanyEmailId(index), mode, form, vm, None)
       }
   }
 }

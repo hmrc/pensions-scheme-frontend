@@ -114,7 +114,7 @@ class HsTaskListHelperRegistration(answers: UserAnswers,
 
         Some(
           SchemeDetailsTaskListHeader(
-            trusteeStatus(isAllTrusteesCompleted(userAnswers), trusteesMandatory(userAnswers.get(SchemeTypeId))),
+            None,
             typeOfTrusteeLink(addTrusteesLinkText, userAnswers.allTrustees(isHnSEnabled).size, srn, mode)))
 
       case _ =>

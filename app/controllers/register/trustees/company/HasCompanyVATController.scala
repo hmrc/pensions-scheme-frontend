@@ -20,7 +20,7 @@ import config.FrontendAppConfig
 import controllers.HasReferenceNumberController
 import controllers.actions._
 import forms.HasReferenceNumberFormProvider
-import identifiers.register.trustees.company.{CompanyDetailsId, HasCompanyVATId, IsDetailsCompleteId}
+import identifiers.register.trustees.company.{CompanyDetailsId, HasCompanyVATId}
 import javax.inject.Inject
 import models.{Index, Mode}
 import navigators.Navigator
@@ -68,7 +68,7 @@ class HasCompanyVATController @Inject()(override val appConfig: FrontendAppConfi
       implicit request =>
         CompanyDetailsId(index).retrieve.right.map {
           details =>
-            post(HasCompanyVATId(index), mode, form(details.companyName), viewModel(mode, index, srn, details.companyName), Some(IsDetailsCompleteId(index)))
+            post(HasCompanyVATId(index), mode, form(details.companyName), viewModel(mode, index, srn, details.companyName))
         }
     }
 }

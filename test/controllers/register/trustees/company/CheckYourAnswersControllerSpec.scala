@@ -97,12 +97,6 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
         redirectLocation(result) mustBe Some(onwardRoute.url)
       }
 
-      "mark trustee company as complete" in {
-        val result = controller().onSubmit(NormalMode, index, None)(fakeRequest)
-        status(result) mustBe SEE_OTHER
-        FakeUserAnswersService.verify(IsTrusteeCompleteId(index), true)
-      }
-
       behave like changeableController(
         controller(fullAnswers.dataRetrievalAction, _: AllowChangeHelper)
           .onPageLoad(NormalMode, index, None)(FakeDataRequest(fullAnswers))
