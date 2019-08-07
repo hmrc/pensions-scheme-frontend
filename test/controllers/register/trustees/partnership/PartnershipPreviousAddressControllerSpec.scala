@@ -85,7 +85,7 @@ class PartnershipPreviousAddressControllerSpec extends ControllerSpecBase with S
         routes.PartnershipPreviousAddressController.onSubmit(NormalMode, index, None),
         options,
         Message("messages__partnershipPreviousAddress__title"),
-        Message("messages__partnershipPreviousAddress__heading"),
+        Message("messages__common__confirmPreviousAddress__h1",partnershipName),
         Some(partnershipName),
         None
       ),

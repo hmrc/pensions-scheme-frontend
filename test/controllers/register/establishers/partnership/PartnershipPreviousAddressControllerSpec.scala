@@ -46,6 +46,7 @@ class PartnershipPreviousAddressControllerSpec extends ControllerSpecBase with S
   val partnershipName = "test partnership name"
   val index = Index(0)
   val options = Seq(InputOption("territory:AX", "Åland Islands"), InputOption("country:ZW", "Zimbabwe"))
+  val heading: Message = "messages__common__confirmPreviousAddress__h1"
 
   def countryOptions: CountryOptions = new CountryOptions(options)
 
@@ -85,7 +86,7 @@ class PartnershipPreviousAddressControllerSpec extends ControllerSpecBase with S
         routes.PartnershipPreviousAddressController.onSubmit(NormalMode, index, None),
         options,
         Message("messages__partnershipPreviousAddress__title"),
-        Message("messages__partnershipPreviousAddress__heading"),
+        Message(heading,partnershipName),
         Some(partnershipName),
         None
       ),

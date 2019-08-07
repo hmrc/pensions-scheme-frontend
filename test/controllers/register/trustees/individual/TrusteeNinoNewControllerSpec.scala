@@ -29,7 +29,7 @@ import play.api.libs.json._
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import services.FakeUserAnswersService
-import utils.FakeNavigator
+import utils.{FakeFeatureSwitchManagementService, FakeNavigator}
 import viewmodels.NinoViewModel
 import views.html.nino
 
@@ -94,7 +94,8 @@ object TrusteeNinoNewControllerSpec extends ControllerSpecBase {
   val form = formProvider("First Name Last Name")
   private val index = Index(0)
   private val ninoData = "CS700100A"
-  val trusteeName = "Test Trustee Name"
+  val trusteeFullName = "Test Trustee Name"
+  val trusteeFirstAndLastName = "Test Name"
   private val schemeName = "pension scheme details"
 
   private val alreadySubmittedData: JsObject = Json.obj(
@@ -110,21 +111,30 @@ object TrusteeNinoNewControllerSpec extends ControllerSpecBase {
 
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryTrustee): TrusteeNinoNewController =
-    new TrusteeNinoNewController(frontendAppConfig, messagesApi, FakeUserAnswersService, new FakeNavigator(desiredRoute = onwardRoute),
-      FakeAuthAction, dataRetrievalAction, FakeAllowAccessProvider(), new DataRequiredActionImpl, formProvider)
+  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryTrustee, toggled: Boolean = false): TrusteeNinoNewController =
+    new TrusteeNinoNewController(frontendAppConfig,
+                                 messagesApi,
+                                 FakeUserAnswersService,
+                                 new FakeNavigator(desiredRoute = onwardRoute),
+                                 FakeAuthAction,
+                                 dataRetrievalAction,
+                                 FakeAllowAccessProvider(),
+                                 new DataRequiredActionImpl,
+                                 formProvider,
+                                 new FakeFeatureSwitchManagementService(true))
 
-  private def vm(mode: Mode, index: Index, srn: Option[String]) = NinoViewModel(
-    postCall = controllers.register.trustees.individual.routes.TrusteeNinoNewController.onSubmit(mode, index, srn),
-    title = "messages__common_nino__title",
-    heading = "messages__common_nino__h1",
-    hint = "messages__common__nino_hint",
-    personName = trusteeName,
-    srn = srn
-  )
+  private def viewAsString(form: Form[_], mode: Mode, index: Index, srn: Option[String]): String = {
 
-  private def viewAsString(form: Form[_], mode: Mode, index: Index, srn: Option[String]): String = nino(frontendAppConfig, form,
-    vm(mode, index, srn), Some(schemeName))(fakeRequest, messages).toString
+    val vm = NinoViewModel(
+      postCall = controllers.register.trustees.individual.routes.TrusteeNinoNewController.onSubmit(mode, index, srn),
+      title = messages("messages__trustee__individual__nino__title"),
+      heading = messages("messages__trustee__individual__nino__heading", trusteeFirstAndLastName),
+      hint = "messages__common__nino_hint",
+      srn = srn
+    )
+
+    nino(frontendAppConfig, form, vm, Some(schemeName))(fakeRequest, messages).toString
+  }
 }
 
 

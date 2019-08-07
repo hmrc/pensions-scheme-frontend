@@ -198,8 +198,7 @@ class DirectorPreviousAddressListControllerSpec extends ControllerSpecBase with 
       routes.DirectorPreviousAddressController.onPageLoad(NormalMode, Index(0), Index(0), None),
       addresses,
       title = previousAddressTitle,
-      heading = previousAddressHeading,
-      subHeading = Some(Message(directorDetails.fullName))
+      heading = previousAddressHeading
     )
   }
 

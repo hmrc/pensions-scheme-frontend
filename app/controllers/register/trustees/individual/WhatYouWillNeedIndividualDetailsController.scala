@@ -22,16 +22,12 @@ import controllers.actions._
 import identifiers.register.trustees.individual.TrusteeNameId
 import javax.inject.Inject
 import models.{Index, Mode}
-import navigators.Navigator
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
-import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import utils.Enumerable
-import utils.annotations.TrusteesIndividual
 import views.html.register.trustees.individual.whatYouWillNeedIndividualDetails
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.Future
 
 class WhatYouWillNeedIndividualDetailsController @Inject()(appConfig: FrontendAppConfig,
                                                            override val messagesApi: MessagesApi,
