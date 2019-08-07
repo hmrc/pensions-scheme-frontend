@@ -198,17 +198,19 @@ trait ControllerSpecBase extends SpecBase with Enumerable.Implicits with MapForm
     )
   }
 
-  protected def validTrusteeNameData(jsValue: (String, Json.JsValueWrapper)): JsObject = {
+  protected def validTrusteeData(jsValue: (String, Json.JsValueWrapper)): JsObject = {
     Json.obj(
-      TrusteeNameId.toString -> Json.arr(
+      TrusteesId.toString -> Json.arr(
         Json.obj(
-          "firstName" -> "first",
-          "lastName" -> "last",
-          "date" -> "2001-01-01",
-          "lastName" -> "false"
+          TrusteeNameId.toString -> Json.obj(
+            "firstName" -> "Test",
+            "lastName" -> "Name",
+            "date" -> "2001-01-01",
+            "isDeleted" -> "false"
+          ),
+          jsValue
         )
-      ),
-      jsValue
+      )
     )
   }
 }

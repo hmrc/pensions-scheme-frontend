@@ -17,17 +17,25 @@
 package controllers.register.trustees.individual
 
 import controllers.ControllerSpecBase
-import controllers.actions._
+import controllers.actions.FakeDataRetrievalAction
 import forms.HasReferenceNumberFormProvider
-import identifiers.register.trustees.individual.TrusteeHasNINOId
+import identifiers.register.trustees.individual.TrusteeDetailsId
+import models.person.PersonDetails
 import models.{Index, NormalMode}
+import org.joda.time.LocalDate
+import org.mockito.Matchers.any
+import org.mockito.Mockito.when
+import org.scalatest.mockito.MockitoSugar
 import play.api.data.Form
+import play.api.inject.bind
+import play.api.libs.json.Json
 import play.api.mvc.Call
 import play.api.test.Helpers._
-import services.FakeUserAnswersService
-import utils.FakeNavigator
+import services.UserAnswersService
 import viewmodels.{CommonFormWithHintViewModel, Message}
 import views.html.hasReferenceNumber
+
+import scala.concurrent.Future
 
 class TrusteeHasNINOControllerSpec extends ControllerSpecBase {
 
@@ -35,44 +43,87 @@ class TrusteeHasNINOControllerSpec extends ControllerSpecBase {
 
   "TrusteeHasNINOController" must {
     "return OK and the correct view for a GET" in {
-      val result = controller().onPageLoad(NormalMode, index, None)(fakeRequest)
+      val app = applicationBuilder(getMandatoryTrustee).build()
+
+      val controller = app.injector.instanceOf[TrusteeHasNINOController]
+
+      val result = controller.onPageLoad(NormalMode, index, None)(fakeRequest)
 
       status(result) mustBe OK
+
       contentAsString(result) mustBe viewAsString()
+
+      app.stop()
     }
 
     "return OK and the correct view for a GET where question already answered" in {
-      val validData = validTrusteeNameData("value" -> false)
+      val trusteeDataWithNinoAnswer = new FakeDataRetrievalAction(Some(validTrusteeData("hasNino" -> false)))
 
-      val dataRetrievalAction = new FakeDataRetrievalAction(Some(validData))
-      val result = controller(dataRetrievalAction = dataRetrievalAction).onPageLoad(NormalMode, index, None)(fakeRequest)
+      val app = applicationBuilder(trusteeDataWithNinoAnswer).build()
+
+      val controller = app.injector.instanceOf[TrusteeHasNINOController]
+
+      val result = controller.onPageLoad(NormalMode, index, None)(fakeRequest)
+
       status(result) mustBe OK
+
       contentAsString(result) mustBe viewAsString(form = form.fill(value = false))
+
+      app.stop()
     }
 
     "redirect to the next page when valid data is submitted for true" in {
+      val app = applicationBuilder(getMandatoryTrustee)
+        .overrides(
+          bind[UserAnswersService].toInstance(mockUserAnswersService)
+        )
+        .build()
+
+      val validData = Json.obj(
+        "trustees" -> Json.arr(
+          Json.obj(
+            TrusteeDetailsId.toString ->
+              PersonDetails("Test", Some("Trustee"), "Name", LocalDate.now)
+          )
+        )
+      )
+
+      when(mockUserAnswersService.upsert(any(), any(), any())(any(), any(), any())).thenReturn(Future.successful(validData))
+
+      val controller = app.injector.instanceOf[TrusteeHasNINOController]
+
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "true"))
 
-      val result = controller().onSubmit(NormalMode, index, None)(postRequest)
+      val result = controller.onSubmit(NormalMode, index, None)(postRequest)
 
       status(result) mustBe SEE_OTHER
+
       redirectLocation(result) mustBe Some(onwardRoute.url)
-      FakeUserAnswersService.userAnswer.get(TrusteeHasNINOId(index)).value mustEqual true
+
+      app.stop()
     }
 
     "return a Bad Request and errors when invalid data is submitted" in {
+      val app = applicationBuilder(getMandatoryTrustee).build()
+
+      val controller = app.injector.instanceOf[TrusteeHasNINOController]
+
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "invalid value"))
+
       val boundForm = form.bind(Map("value" -> "invalid value"))
 
-      val result = controller().onSubmit(NormalMode, index, None)(postRequest)
+      val result = controller.onSubmit(NormalMode, index, None)(postRequest)
 
       status(result) mustBe BAD_REQUEST
+
       contentAsString(result) mustBe viewAsString(boundForm)
+
+      app.stop()
     }
   }
 }
 
-object TrusteeHasNINOControllerSpec extends ControllerSpecBase {
+object TrusteeHasNINOControllerSpec extends ControllerSpecBase with MockitoSugar {
   private val schemeName = None
 
   private def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
@@ -89,18 +140,20 @@ object TrusteeHasNINOControllerSpec extends ControllerSpecBase {
     hint = None
   )
 
-  private def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryTrustee): TrusteeHasNINOController =
-    new TrusteeHasNINOController(
-      frontendAppConfig,
-      messagesApi,
-      FakeUserAnswersService,
-      new FakeNavigator(desiredRoute = onwardRoute),
-      FakeAuthAction,
-      FakeAllowAccessProvider(),
-      dataRetrievalAction,
-      new DataRequiredActionImpl,
-      formProvider
-    )
+  private val mockUserAnswersService: UserAnswersService = mock[UserAnswersService]
+
+//  private def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryTrustee): TrusteeHasNINOController =
+//    new TrusteeHasNINOController(
+//      frontendAppConfig,
+//      messagesApi,
+//      FakeUserAnswersService,
+//      new FakeNavigator(desiredRoute = onwardRoute),
+//      FakeAuthAction,
+//      FakeAllowAccessProvider(),
+//      dataRetrievalAction,
+//      new DataRequiredActionImpl,
+//      formProvider
+//    )
 
   private def viewAsString(form: Form[_] = form) = hasReferenceNumber(frontendAppConfig, form, viewModel, schemeName)(fakeRequest, messages).toString
 }
