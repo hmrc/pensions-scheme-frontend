@@ -84,7 +84,7 @@ class TrusteeAddressController @Inject()(
     implicit request =>
       trusteeName(index).retrieve.right.map {
         name =>
-          post(TrusteeAddressId(index), IndividualAddressListId(index), viewmodel(index, mode, srn,name), mode, context(viewmodel(index, mode, srn,name)),
+          post(TrusteeAddressId(index), IndividualAddressListId(index), viewmodel(index, mode, srn,name), mode, context(name),
             IndividualPostCodeLookupId(index))
       }
   }
@@ -97,11 +97,6 @@ class TrusteeAddressController @Inject()(
         TrusteeDetailsId(trusteeIndex).retrieve.right.map(_.fullName)
   }
 
-  private def context(viewModel: ManualAddressViewModel): String = {
-    viewModel.secondaryHeader match {
-      case Some(fullName) => s"Trustee Individual Address: $fullName"
-      case _ => "Trustee Individual Address"
-    }
-  }
+  private def context(fullName: String): String = s"Trustee Individual Address: $fullName"
 
 }
