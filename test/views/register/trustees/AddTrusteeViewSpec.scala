@@ -89,8 +89,6 @@ class AddTrusteeViewSpec extends YesNoViewBehaviours with EntityListBehaviours w
       expectedHintKey = Some("_lede")
     )
 
-    // TODO: PODS-2940 Write unit test for toggle ON
-
     "when there are no trustees" when {
       "do not show the yes no inputs" in {
         val doc = asDocument(createView()())

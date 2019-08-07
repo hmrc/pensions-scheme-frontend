@@ -38,6 +38,8 @@ import viewmodels.{SchemeDetailsTaskListEntitySection, SchemeDetailsTaskListHead
 class HsTaskListHelperVariationsSpec extends HsTaskListHelperBehaviour {
   private val srn = Some("test-srn")
   private val fakeFeatureManagementService = new FakeFeatureSwitchManagementService(false)
+  private val fakeFeatureManagementServiceToggleON = new FakeFeatureSwitchManagementService(true)
+
   override val createTaskListHelper: (UserAnswers, FeatureSwitchManagementService) => HsTaskListHelper =
     (ua, fs) => new HsTaskListHelperVariations(ua, viewOnly = false, srn = srn, fs)
 
@@ -326,7 +328,7 @@ class HsTaskListHelperVariationsSpec extends HsTaskListHelperBehaviour {
 
   def trusteesSection(): Unit = {
     // TODO: PODS-2940 Write unit test for toggle ON
-    "return the seq of trustees sub sections for non deleted trustees which are all completed" in {
+    "return the seq of trustees sub sections for non deleted trustees which are all completed with toggle OFF" in {
       val userAnswers = allTrustees(toggled = false)
       val helper = new HsTaskListHelperVariations(userAnswers, viewOnly = false, srn = Some("test-srn"), fakeFeatureManagementService)
       helper.trustees(userAnswers, UpdateMode, srn) mustBe
@@ -339,9 +341,39 @@ class HsTaskListHelperVariationsSpec extends HsTaskListHelperBehaviour {
         )
     }
 
+
+
+
+    "return the seq of trustees sub sections for non deleted trustees which are all completed with toggle ON" in {
+      val userAnswers = allTrustees(toggled = true)
+      val helper = new HsTaskListHelperVariations(userAnswers, viewOnly = false, srn = Some("test-srn"), fakeFeatureManagementServiceToggleON)
+
+      helper.trustees(userAnswers, UpdateMode, srn) mustBe
+        Seq(
+          SchemeDetailsTaskListEntitySection(
+            isCompleted = None,
+            entities = List(
+              EntitySpoke(Link(messages("messages__schemeTaskList__sectionEstablishersIndividual_change_details", "firstName lastName"),
+                controllers.register.trustees.individual.routes.CheckYourAnswersIndividualDetailsController.onPageLoad(UpdateMode, 0, srn).url, None), None),
+              EntitySpoke(Link(messages("messages__schemeTaskList__sectionEstablishersIndividual_change_address", "firstName lastName"),
+                controllers.register.trustees.individual.routes.CheckYourAnswersIndividualAddressController.onPageLoad(UpdateMode, 0, srn).url, None), None),
+              EntitySpoke(Link(messages("messages__schemeTaskList__sectionEstablishersIndividual_change_contact", "firstName lastName"),
+                controllers.register.trustees.individual.routes.CheckYourAnswersIndividualContactDetailsController.onPageLoad(UpdateMode, 0, srn).url, None), None)
+            ),
+            Some("firstName lastName")
+          ),
+
+          SchemeDetailsTaskListEntitySection(None, List(EntitySpoke(Link(messages("messages__schemeTaskList__persons_details__link_text", "test company"),
+            controllers.register.trustees.company.routes.CheckYourAnswersController.onPageLoad(UpdateMode, 1, srn).url), None)), None),
+
+          SchemeDetailsTaskListEntitySection(None, List(EntitySpoke(Link(messages("messages__schemeTaskList__persons_details__link_text", "test partnership"),
+            controllers.register.trustees.partnership.routes.CheckYourAnswersController.onPageLoad(UpdateMode, 2, srn).url), None)), None)
+        )
+    }
+
     // TODO: PODS-2940 Write unit test for toggle ON
 
-    "return the seq of trustees sub sections for non deleted trustees which are not completed" in {
+    "return the seq of trustees sub sections for non deleted trustees which are not completed with toggle OFF" in {
       val userAnswers = allTrustees(isCompleteTrustees = false, toggled = false)
       val helper = new HsTaskListHelperVariations(userAnswers, viewOnly = false, srn = Some("test-srn"), fakeFeatureManagementService)
       helper.trustees(userAnswers, UpdateMode, srn) mustBe
@@ -353,6 +385,19 @@ class HsTaskListHelperVariationsSpec extends HsTaskListHelperBehaviour {
             controllers.register.trustees.partnership.routes.TrusteeDetailsController.onPageLoad(UpdateMode, 2, srn).url), None)), None)
         )
     }
+
+    /*    "return the seq of trustees sub sections for non deleted trustees which are not completed with toggle ON" in {
+          val userAnswers = allTrustees(isCompleteTrustees = false, toggled = true)
+          val helper = new HsTaskListHelperVariations(userAnswers, viewOnly = false, srn = Some("test-srn"), fakeFeatureManagementServiceToggleON)
+          helper.trustees(userAnswers, UpdateMode, srn) mustBe
+            Seq(SchemeDetailsTaskListEntitySection(None, List(EntitySpoke(Link(messages("messages__schemeTaskList__persons_details__link_text", "firstName lastName"),
+              controllers.register.trustees.individual.routes.TrusteeDetailsController.onPageLoad(UpdateMode, 0, srn).url), None)), None),
+              SchemeDetailsTaskListEntitySection(None, List(EntitySpoke(Link(messages("messages__schemeTaskList__persons_details__link_text", "test company"),
+                controllers.register.trustees.company.routes.CompanyDetailsController.onPageLoad(UpdateMode, 1, srn).url), None)), None),
+              SchemeDetailsTaskListEntitySection(None, List(EntitySpoke(Link(messages("messages__schemeTaskList__persons_details__link_text", "test partnership"),
+                controllers.register.trustees.partnership.routes.TrusteeDetailsController.onPageLoad(UpdateMode, 2, srn).url), None)), None)
+            )
+        }*/
 
     "return the seq of trustees sub sections after filtering out deleted trustees" in {
       val userAnswers = UserAnswers().set(TrusteeDetailsId(0))(PersonDetails("firstName", None, "lastName", LocalDate.now())).flatMap(
