@@ -28,11 +28,13 @@ import org.scalatest.prop._
 import play.api.mvc.Call
 import utils.UserAnswers
 import org.scalacheck.Arbitrary.arbitrary
+import controllers.register.trustees.individual.routes._
+import models.Mode._
 
 class TrusteesIndividualNavigatorSpec extends SpecBase with MustMatchers with NavigatorBehaviour with Generators {
 
-  val index = 0 // intsAboveValue(-1).sample.value
-  val someDate =  LocalDate.now() // arbitrary[LocalDate].sample.value
+  import TrusteesIndividualNavigatorSpec._
+
 
   val navigator: Navigator = injector.instanceOf[TrusteesIndividualNavigator]
 
@@ -41,7 +43,8 @@ class TrusteesIndividualNavigatorSpec extends SpecBase with MustMatchers with Na
       ("Id", "UserAnswers", "Next Page"),
       row(TrusteeDOBId(index))(someDate, controllers.register.trustees.individual.routes.TrusteeHasNINOController.onPageLoad(mode, index, None)),
       row(TrusteeHasNINOId(index))(true, controllers.register.trustees.individual.routes.TrusteeNinoController.onPageLoad(mode, index, None)),
-      row(TrusteeHasNINOId(index))(false, controllers.register.trustees.individual.routes.TrusteeNoNINOReasonController.onPageLoad(mode, index, None))
+      row(TrusteeHasNINOId(index))(false, controllers.register.trustees.individual.routes.TrusteeNoNINOReasonController.onPageLoad(mode, index, None)),
+      row(TrusteeNoNINOReasonId(index))(someStringValue, cyaIndividualDetailsPage(mode))
     )
 
 
@@ -54,4 +57,11 @@ class TrusteesIndividualNavigatorSpec extends SpecBase with MustMatchers with Na
 //  behave like navigatorWithRoutesForMode(CheckUpdateMode)(navigator, routesCheckUpdateMode(CheckUpdateMode))
 //  behave like navigatorWithRoutesForMode(CheckUpdateMode)(navigator, setNewTrusteeIdentifier(routesCheckMode(CheckUpdateMode)))
 
+}
+
+object TrusteesIndividualNavigatorSpec {
+  private val index = 0 // intsAboveValue(-1).sample.value
+  private val someDate =  LocalDate.now() // arbitrary[LocalDate].sample.value
+
+  private def cyaIndividualDetailsPage(mode: Mode): Call = CheckYourAnswersIndividualDetailsController.onPageLoad(journeyMode(mode), index, None)
 }
