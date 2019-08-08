@@ -705,7 +705,6 @@ messages__trustee__individual__address__heading = What is {0}’s address?
 messages__trustee__individual__address__lede = This is usually the residential address for this person.
 
 messages__trustee__individual__address__confirm__title = Confirm the trustee’s address
-messages__trustee__individual__address__confirm__heading = Confirm {0}’s address
 messages__trustee__individual__address__confirm__lede = This is usually the residential address for this person.
 
 messages__trustee__individual__previous__address__title = What was the trustee’s previous address?
@@ -734,7 +733,6 @@ messages__trustee_individual_previous_address__heading = What was {0}’s previo
 messages__trustee_individual_utr_cya_label = Unique Taxpayer Reference number
 
 messages__trustee_individual_confirm__previous_address__title = Confirm the trustee’s previous address
-messages__trustee_individual_confirm__previous_address__heading = Confirm {0}’s previous address
 
 messages__trustee__uniqueTaxReference__title = Does the trustee have a Self-Assessment Unique Taxpayer Reference number (SAUTR)?
 messages__trustee__uniqueTaxReference__heading = Does the trustee have a Self-Assessment Unique Taxpayer Reference number (SAUTR)?
