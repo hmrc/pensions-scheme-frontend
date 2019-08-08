@@ -1709,9 +1709,9 @@ messages__directorNoNinoReason__title = Why does the director not have a Nationa
 messages__directorNoNinoReason__heading = Why does {0} not have a National Insurance number?
 messages__directorNoNinoReason__cya_fallback = Why does the director not have a National Insurance number?
 
-messages__directorHasNino__title =  Does the director have a National Insurance number?
-messages__directorHasNino__h1 =  Does {0} have a National Insurance number?
-messages__directorHasNino__error__required = Select yes if the director has a National Insurance number
+messages__genericHasNino__title =  Does {0} have a National Insurance number?
+messages__genericHasNino__h1 =  Does {0} have a National Insurance number?
+messages__genericHasNino__error__required = Select yes if {0} has a National Insurance number
 
 messages__directorUtr__title = What is the director’s UTR?
 messages__directorUtr__heading = What is {0}’s UTR?
