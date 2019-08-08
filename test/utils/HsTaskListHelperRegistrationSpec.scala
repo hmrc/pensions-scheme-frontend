@@ -33,6 +33,7 @@ import viewmodels.{SchemeDetailsTaskListEntitySection, SchemeDetailsTaskListSect
 class HsTaskListHelperRegistrationSpec extends HsTaskListHelperBehaviour with Enumerable.Implicits {
 
   private val fakeFeatureManagementService = new FakeFeatureSwitchManagementService(false)
+  private val fakeFeatureManagementServiceToggleOn = new FakeFeatureSwitchManagementService(true)
   override val createTaskListHelper:
     (UserAnswers, FeatureSwitchManagementService) => HsTaskListHelper = (ua, fs) => new HsTaskListHelperRegistration(ua, fs)
 
@@ -186,7 +187,13 @@ class HsTaskListHelperRegistrationSpec extends HsTaskListHelperBehaviour with En
 
   "declaration" must {
     "have a declaration section" in {
-      val userAnswers = answersData().asOpt.value
+      val userAnswers = answersData(toggled = false).asOpt.value
+      val helper = createTaskListHelper(userAnswers, fakeFeatureManagementService)
+      helper.declarationSection(userAnswers).isDefined mustBe true
+    }
+
+    "have a declaration section with toggle ON" in {
+      val userAnswers = answersData(toggled = true).asOpt.value
       val helper = createTaskListHelper(userAnswers, fakeFeatureManagementService)
       helper.declarationSection(userAnswers).isDefined mustBe true
     }
@@ -194,12 +201,23 @@ class HsTaskListHelperRegistrationSpec extends HsTaskListHelperBehaviour with En
     behave like declarationSection()
 
     "not have link when about bank details section not completed" in {
-      val userAnswers = answersData(isCompleteAboutBank = false).asOpt.value
+      val userAnswers = answersData(isCompleteAboutBank = false, toggled = false).asOpt.value
+      mustHaveNoLink(createTaskListHelper(userAnswers, fakeFeatureManagementService), userAnswers)
+    }
+
+
+    "not have link when about bank details section not completed with toggle ON" in {
+      val userAnswers = answersData(isCompleteAboutBank = false, toggled = true).asOpt.value
       mustHaveNoLink(createTaskListHelper(userAnswers, fakeFeatureManagementService), userAnswers)
     }
 
     "not have link when working knowledge section not completed" in {
-      val userAnswers = answersData(isCompleteWk = false).asOpt.value
+      val userAnswers = answersData(isCompleteWk = false, toggled = false).asOpt.value
+      mustHaveNoLink(createTaskListHelper(userAnswers, fakeFeatureManagementService), userAnswers)
+    }
+
+    "not have link when working knowledge section not completed with toggle ON" in {
+      val userAnswers = answersData(isCompleteWk = false, toggled = true).asOpt.value
       mustHaveNoLink(createTaskListHelper(userAnswers, fakeFeatureManagementService), userAnswers)
     }
   }
@@ -253,8 +271,8 @@ class HsTaskListHelperRegistrationSpec extends HsTaskListHelperBehaviour with En
 
   def trusteesSection(mode: Mode, srn: Option[String]): Unit = {
 
-    "return the seq of trustees sub sections for non deleted trustees which are all completed" in {
-      val userAnswers = allTrustees()
+    "return the seq of trustees sub sections for non deleted trustees which are all completed when toggle is off" in {
+      val userAnswers = allTrustees(toggled = false)
       val helper = new HsTaskListHelperRegistration(userAnswers, fakeFeatureManagementService)
       helper.trustees(userAnswers) mustBe
         Seq(SchemeDetailsTaskListSection(Some(true), Link(individualLinkText,
@@ -266,9 +284,35 @@ class HsTaskListHelperRegistrationSpec extends HsTaskListHelperBehaviour with En
         )
     }
 
-    "return the seq of trustees sub sections for non deleted trustees which are not completed" in {
-      val userAnswers = allTrustees(isCompleteTrustees = false)
+    "return the seq of trustees sub sections for non deleted trustees which are all completed when toggle is on" in {
+      val userAnswers = allTrustees(toggled = true)
+      val helper = new HsTaskListHelperRegistration(userAnswers, fakeFeatureManagementServiceToggleOn)
+      helper.trustees(userAnswers) mustBe
+        Seq(SchemeDetailsTaskListSection(Some(true), Link(individualLinkText,
+          controllers.register.trustees.individual.routes.CheckYourAnswersController.onPageLoad(mode, 0, srn).url), Some("firstName lastName")),
+          SchemeDetailsTaskListSection(Some(true), Link(companyLinkText,
+            controllers.register.trustees.company.routes.CheckYourAnswersController.onPageLoad(mode, 1, srn).url), Some("test company")),
+          SchemeDetailsTaskListSection(Some(true), Link(partnershipLinkText,
+            controllers.register.trustees.partnership.routes.CheckYourAnswersController.onPageLoad(mode, 2, srn).url), Some("test partnership"))
+        )
+    }
+
+    "return the seq of trustees sub sections for non deleted trustees which are not completed when toggle off" in {
+      val userAnswers = allTrustees(isCompleteTrustees = false, toggled = false)
       val helper = new HsTaskListHelperRegistration(userAnswers, fakeFeatureManagementService)
+      helper.trustees(userAnswers) mustBe
+        Seq(SchemeDetailsTaskListSection(Some(false), Link(individualLinkText,
+          controllers.register.trustees.individual.routes.TrusteeDetailsController.onPageLoad(mode, 0, srn).url), Some("firstName lastName")),
+          SchemeDetailsTaskListSection(Some(false), Link(companyLinkText,
+            controllers.register.trustees.company.routes.CompanyDetailsController.onPageLoad(mode, 1, srn).url), Some("test company")),
+          SchemeDetailsTaskListSection(Some(false), Link(partnershipLinkText,
+            controllers.register.trustees.partnership.routes.TrusteeDetailsController.onPageLoad(mode, 2, srn).url), Some("test partnership"))
+        )
+    }
+
+    "return the seq of trustees sub sections for non deleted trustees which are not completed when toggle on" in {
+      val userAnswers = allTrustees(isCompleteTrustees = false, toggled = true)
+      val helper = new HsTaskListHelperRegistration(userAnswers, fakeFeatureManagementServiceToggleOn)
       helper.trustees(userAnswers) mustBe
         Seq(SchemeDetailsTaskListSection(Some(false), Link(individualLinkText,
           controllers.register.trustees.individual.routes.TrusteeDetailsController.onPageLoad(mode, 0, srn).url), Some("firstName lastName")),

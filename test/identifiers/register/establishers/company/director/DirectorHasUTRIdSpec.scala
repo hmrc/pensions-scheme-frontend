@@ -20,46 +20,46 @@ import base.SpecBase
 import play.api.libs.json.Json
 import utils.UserAnswers
 
-class DirectorHasUTRIdSpec extends SpecBase{
+class DirectorHasUTRIdSpec extends SpecBase {
 
   "Cleanup" when {
 
-  def answers(hasUtr: Boolean = true): UserAnswers = UserAnswers(Json.obj())
-  .set(DirectorHasUTRId(0, 0))(hasUtr)
-  .flatMap(_.set(DirectorUTRId(0, 0))("test-utr"))
-  .flatMap(_.set(DirectorNoUTRReasonId(0, 0))("reason"))
-  .asOpt.value
+    def answers(hasUtr: Boolean = true): UserAnswers = UserAnswers(Json.obj())
+      .set(DirectorHasUTRId(0, 0))(hasUtr)
+      .flatMap(_.set(DirectorUTRId(0, 0))("test-utr"))
+      .flatMap(_.set(DirectorNoUTRReasonId(0, 0))("reason"))
+      .asOpt.value
 
-  "`DirectorHasUTR` is set to `false`" must {
+    "`DirectorHasUTR` is set to `false`" must {
 
-  val result: UserAnswers = answers().set(DirectorHasUTRId(0, 0))(false).asOpt.value
+      val result: UserAnswers = answers().set(DirectorHasUTRId(0, 0))(false).asOpt.value
 
-  "remove the data for `DirectorUTR`" in {
-  result.get(DirectorUTRId(0, 0)) mustNot be(defined)
-}
-}
+      "remove the data for `DirectorUTR`" in {
+        result.get(DirectorUTRId(0, 0)) mustNot be(defined)
+      }
+    }
 
-  "`DirectorHasUTR` is set to `true`" must {
+    "`DirectorHasUTR` is set to `true`" must {
 
-  val result: UserAnswers = answers(false).set(DirectorHasUTRId(0, 0))(true).asOpt.value
+      val result: UserAnswers = answers(false).set(DirectorHasUTRId(0, 0))(true).asOpt.value
 
-  "remove the data for `NoUTRReason`" in {
-  result.get(DirectorNoUTRReasonId(0, 0)) mustNot be(defined)
-}
-}
+      "remove the data for `NoUTRReason`" in {
+        result.get(DirectorNoUTRReasonId(0, 0)) mustNot be(defined)
+      }
+    }
 
-  "`DirectorHasUTR` is not present" must {
+    "`DirectorHasUTR` is not present" must {
 
-  val result: UserAnswers = answers().remove(DirectorHasUTRId(0, 0)).asOpt.value
+      val result: UserAnswers = answers().remove(DirectorHasUTRId(0, 0)).asOpt.value
 
-  "not remove the data for `DirectorUTR`" in {
-  result.get(DirectorUTRId(0, 0)) mustBe defined
-}
+      "not remove the data for `DirectorUTR`" in {
+        result.get(DirectorUTRId(0, 0)) mustBe defined
+      }
 
-  "not remove the data for `NoUTRReason`" in {
-  result.get(DirectorNoUTRReasonId(0, 0)) mustBe defined
-}
-}
-}
+      "not remove the data for `NoUTRReason`" in {
+        result.get(DirectorNoUTRReasonId(0, 0)) mustBe defined
+      }
+    }
+  }
 
 }

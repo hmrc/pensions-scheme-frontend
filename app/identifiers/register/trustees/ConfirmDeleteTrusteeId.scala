@@ -17,7 +17,16 @@
 package identifiers.register.trustees
 
 import identifiers.TypedIdentifier
+import play.api.libs.json.JsResult
+import utils.UserAnswers
 
 case object ConfirmDeleteTrusteeId extends TypedIdentifier[Boolean] {
   override def toString: String = "confirmDeleteTrustee"
+
+  override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): JsResult[UserAnswers] = {
+    value match {
+      case Some(true) => userAnswers.remove(MoreThanTenTrusteesId)
+      case _ => super.cleanup(value, userAnswers)
+    }
+  }
 }

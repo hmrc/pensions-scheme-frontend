@@ -184,7 +184,7 @@ trait ControllerSpecBase extends SpecBase with Enumerable.Implicits with MapForm
 
   def getMandatoryWorkingKnowledgePerson: FakeDataRetrievalAction = new FakeDataRetrievalAction(
     Some(Json.obj(AdviserNameId.toString ->
-        "name"
+      "name"
     ))
   )
 
@@ -203,6 +203,22 @@ trait ControllerSpecBase extends SpecBase with Enumerable.Implicits with MapForm
               jsValue
             )
           )
+        )
+      )
+    )
+  }
+
+  protected def validTrusteeData(jsValue: (String, Json.JsValueWrapper)): JsObject = {
+    Json.obj(
+      TrusteesId.toString -> Json.arr(
+        Json.obj(
+          TrusteeNameId.toString -> Json.obj(
+            "firstName" -> "Test",
+            "lastName" -> "Name",
+            "date" -> "2001-01-01",
+            "isDeleted" -> "false"
+          ),
+          jsValue
         )
       )
     )

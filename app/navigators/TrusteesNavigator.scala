@@ -60,11 +60,14 @@ class TrusteesNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnec
 
   protected def checkUpdateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] = None
 
+  private def toggled:Boolean = featureSwitchManagementService.get(Toggles.isEstablisherCompanyHnSEnabled)
+
   private def haveAnyTrusteesRoutes(answers: UserAnswers): Option[NavigateTo] = {
+
     answers.get(HaveAnyTrusteesId) match {
       case Some(true) =>
-        if (answers.allTrusteesAfterDelete.isEmpty) {
-          NavigateTo.dontSave(controllers.register.trustees.routes.TrusteeKindController.onPageLoad(NormalMode, answers.allTrustees.size, None))
+        if (answers.allTrusteesAfterDelete(toggled).isEmpty) {
+          NavigateTo.dontSave(controllers.register.trustees.routes.TrusteeKindController.onPageLoad(NormalMode, answers.allTrustees(toggled).size, None))
         } else {
           NavigateTo.dontSave(controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode, None))
         }
@@ -77,7 +80,7 @@ class TrusteesNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnec
 
   private def addTrusteeRoutes(answers: UserAnswers, mode: Mode, srn: Option[String]): Option[NavigateTo] = {
     import controllers.register.trustees.routes._
-    val trusteesLengthCompare = answers.allTrustees.lengthCompare(appConfig.maxTrustees)
+    val trusteesLengthCompare = answers.allTrustees(toggled).lengthCompare(appConfig.maxTrustees)
 
     answers.get(AddTrusteeId) match {
       case Some(false) =>
