@@ -17,13 +17,48 @@
 package identifiers.register.trustees.individual
 
 import identifiers._
-import identifiers.register.trustees.TrusteesId
-import play.api.libs.json.JsPath
+import identifiers.register.trustees.{IsTrusteeNewId, TrusteesId}
+import play.api.i18n.Messages
+import play.api.libs.json.{JsPath, JsResult}
+import utils.UserAnswers
+import utils.checkyouranswers.CheckYourAnswers
+import utils.checkyouranswers.CheckYourAnswers.BooleanCYA
+import viewmodels.AnswerRow
 
 case class TrusteeHasNINOId(index: Int) extends TypedIdentifier[Boolean] {
   override def path: JsPath = TrusteesId(index).path \ TrusteeHasNINOId.toString
+
+  override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): JsResult[UserAnswers] = {
+    value match {
+      case Some(true)  => userAnswers.remove(TrusteeNoNINOReasonId(index))
+      case Some(false) => userAnswers.remove(TrusteeNinoId(index))
+      case _           => super.cleanup(value, userAnswers)
+    }
+  }
 }
 
 object TrusteeHasNINOId {
   override def toString: String = "hasNino"
+
+  implicit def cya(implicit userAnswers: UserAnswers, messages: Messages): CheckYourAnswers[TrusteeHasNINOId] = {
+
+    def label(index: Int): Option[String] =
+      userAnswers.get(TrusteeNameId(index)) match {
+        case Some(trusteeName) => Some(messages("messages__genericHasNino__title", trusteeName))
+        case _                 => Some(messages("messages__genericHasNino__title", messages("messages__theTrustee")))
+      }
+
+    def hiddenLabel: Option[String] = Some("messages__visuallyhidden__trustee__nino_yes_no")
+
+    new CheckYourAnswers[TrusteeHasNINOId] {
+      override def row(id: TrusteeHasNINOId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+        BooleanCYA(label(id.index), hiddenLabel)().row(id)(changeUrl, userAnswers)
+
+      override def updateRow(id: TrusteeHasNINOId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+        userAnswers.get(IsTrusteeNewId(id.index)) match {
+          case Some(true) => BooleanCYA(label(id.index), hiddenLabel)().row(id)(changeUrl, userAnswers)
+          case _          => Seq.empty[AnswerRow]
+        }
+    }
+  }
 }

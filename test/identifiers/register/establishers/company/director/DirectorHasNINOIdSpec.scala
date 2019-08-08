@@ -21,13 +21,13 @@ import models.ReferenceValue
 import play.api.libs.json.Json
 import utils.UserAnswers
 
-class DirectorHasNINOIdSpec extends SpecBase{
+class DirectorHasNINOIdSpec extends SpecBase {
 
   "Cleanup" when {
 
     def answers(hasNino: Boolean = true): UserAnswers = UserAnswers(Json.obj())
       .set(DirectorHasNINOId(0, 0))(hasNino)
-      .flatMap(_.set(DirectorNewNinoId(0, 0))(ReferenceValue("test-nino", true)))
+      .flatMap(_.set(DirectorNewNinoId(0, 0))(ReferenceValue("test-nino", isEditable = true)))
       .flatMap(_.set(DirectorNoNINOReasonId(0, 0))("reason"))
       .asOpt.value
 
