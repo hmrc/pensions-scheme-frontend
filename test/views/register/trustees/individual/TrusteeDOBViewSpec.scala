@@ -27,7 +27,7 @@ import views.html.register.trustees.individual.trusteeDOB
 
 class TrusteeDOBViewSpec extends QuestionViewBehaviours[LocalDate] {
 
-  val messageKeyPrefix = "directorDOB"
+  val messageKeyPrefix = "trusteeIndividualDOB"
 
   val index = Index(1)
   val personName = "John Doe"
@@ -59,7 +59,7 @@ class TrusteeDOBViewSpec extends QuestionViewBehaviours[LocalDate] {
 
   "DirectorDOB view" must {
 
-    behave like normalPage(createView(), messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__heading", "John Doe"))
+    behave like normalPageWithTitle(createView(), messageKeyPrefix, messages("messages__common__dob"), messages(s"messages__${messageKeyPrefix}__heading", "John Doe"))
 
     "display an input text box with the correct label and value for day" in {
       val doc = asDocument(createViewUsingForm(form.bind(validData)))

@@ -24,11 +24,14 @@ import play.api.data.Form
 class DOBFormProvider @Inject() extends Mappings with Transforms {
 
   def apply(): Form[LocalDate] = Form(
-    "date" -> dateMapping("messages__error__date", "error.invalid_date")
-      .verifying(firstError(futureDate("messages__error__date_future"),
-        notBeforeYear("messages__error__date_past", DOBFormProvider.startYear)
-      )
-      )
+    "date" ->
+      dateMapping("messages__error__date", "error.invalid_date")
+        .verifying(
+          firstError(
+            futureDate("messages__error__date_future"),
+            notBeforeYear("messages__error__date_past", DOBFormProvider.startYear)
+          )
+        )
   )
 }
 

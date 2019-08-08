@@ -23,7 +23,7 @@
 @(appConfig: FrontendAppConfig, form: Form[_], mode: Mode, schemeName: Option[String], postCall: Call, srn:Option[String], fullName: String)(implicit request: Request[_], messages: Messages)
 
 @main_template(
-    title = messages("messages__directorDOB__title"),
+    title = messages("messages__common__dob"),
     appConfig = appConfig,
     bodyClasses = None) {
 
@@ -32,7 +32,7 @@
         @components.error_summary(form.errors)
 
         @components.heading(
-            headingKey=messages("messages__directorDOB__heading", fullName)
+            headingKey=messages("messages__trusteeIndividualDOB__heading", fullName)
         )
 
         @components.input_date(

@@ -61,14 +61,19 @@ class TrusteeDOBController @Inject()(
         }
 
         TrusteeNameId(index).retrieve.right.map(personName =>
-          Future.successful(Ok(trusteeDOB(
-            appConfig,
-            preparedForm,
-            mode,
-            existingSchemeName,
-            postCall(mode, index, srn),
-            srn,
-            personName.fullName))))
+          Future.successful(
+            Ok(
+               trusteeDOB(appConfig,
+                         preparedForm,
+                         mode,
+                         existingSchemeName,
+                         postCall(mode, index, srn),
+                         srn,
+                         personName.fullName
+               )
+            )
+          )
+        )
     }
 
 
@@ -78,15 +83,19 @@ class TrusteeDOBController @Inject()(
       form.bindFromRequest().fold(
         formWithErrors =>
           TrusteeNameId(index).retrieve.right.map(personName =>
-            Future.successful(BadRequest(trusteeDOB(
-              appConfig,
-              formWithErrors,
-              mode,
-              existingSchemeName,
-              postCall(mode, index, srn),
-              srn,
-              personName.fullName
-            )))),
+            Future.successful(
+              BadRequest(
+                trusteeDOB(appConfig,
+                           formWithErrors,
+                           mode,
+                           existingSchemeName,
+                           postCall(mode, index, srn),
+                           srn,
+                           personName.fullName
+                )
+              )
+            )
+          ),
 
         value =>
           userAnswersService.save(mode, srn, TrusteeDOBId(index), value).map {
