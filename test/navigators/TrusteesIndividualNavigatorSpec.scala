@@ -42,9 +42,13 @@ class TrusteesIndividualNavigatorSpec extends SpecBase with MustMatchers with Na
     Table(
       ("Id", "UserAnswers", "Next Page"),
       row(TrusteeDOBId(index))(someDate, controllers.register.trustees.individual.routes.TrusteeHasNINOController.onPageLoad(mode, index, None)),
-      row(TrusteeHasNINOId(index))(true, controllers.register.trustees.individual.routes.TrusteeNinoController.onPageLoad(mode, index, None)),
+      row(TrusteeHasNINOId(index))(true, controllers.register.trustees.individual.routes.TrusteeNinoNewController.onPageLoad(mode, index, None)),
       row(TrusteeHasNINOId(index))(false, controllers.register.trustees.individual.routes.TrusteeNoNINOReasonController.onPageLoad(mode, index, None)),
-      row(TrusteeNoNINOReasonId(index))(someStringValue, cyaIndividualDetailsPage(mode))
+      row(TrusteeNewNinoId(index))(someRefValue, controllers.register.trustees.individual.routes.TrusteeHasUTRController.onPageLoad(mode, index, None)),
+      row(TrusteeNoNINOReasonId(index))(someStringValue, controllers.register.trustees.individual.routes.TrusteeHasUTRController.onPageLoad(mode, index, None))
+
+
+      //row(TrusteeNoUTRReasonId(index))(someStringValue, cyaIndividualDetailsPage(mode))
     )
 
 

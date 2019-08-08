@@ -33,7 +33,9 @@ class TrusteesIndividualNavigator @Inject()(val dataCacheConnector: UserAnswersC
   private def normalAndUpdateModeRoutes(mode: Mode, ua: UserAnswers, srn: Option[String]): PartialFunction[Identifier, Call] = {
     case TrusteeDOBId(index) => hasNinoPage(mode, index, srn)
     case id@TrusteeHasNINOId(index) => booleanNav(id, ua, mode, index, srn, ninoPage, noNinoReasonPage)
-    case TrusteeNoNINOReasonId(index) => cyaAddressPage(mode, index, srn)
+    case TrusteeNewNinoId(index) => trusteeHasUtrPage(mode, index, srn)
+    case TrusteeNoNINOReasonId(index) => trusteeHasUtrPage(mode, index, srn)
+//    case TrusteeNoUTRReasonId(index) => cyaAddressPage(mode, index, srn)
 
   }
 
@@ -50,7 +52,9 @@ class TrusteesIndividualNavigator @Inject()(val dataCacheConnector: UserAnswersC
 object TrusteesIndividualNavigator {
   private def hasNinoPage(mode: Mode, index: Int, srn: Option[String]): Call = TrusteeHasNINOController.onPageLoad(mode, index, srn)
 
-  private def ninoPage(mode: Mode, index: Int, srn: Option[String]): Call = TrusteeNinoController.onPageLoad(mode, index, srn)
+  private def ninoPage(mode: Mode, index: Int, srn: Option[String]): Call = TrusteeNinoNewController.onPageLoad(mode, index, srn)
+
+  private def trusteeHasUtrPage(mode: Mode, index: Int, srn: Option[String]): Call = TrusteeHasUTRController.onPageLoad(mode, index, None)
 
   private def noNinoReasonPage(mode: Mode, index: Int, srn: Option[String]): Call = TrusteeNoNINOReasonController.onPageLoad(mode, index, srn)
 
