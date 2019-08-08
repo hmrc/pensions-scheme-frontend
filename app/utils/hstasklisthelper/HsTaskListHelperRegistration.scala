@@ -99,28 +99,35 @@ class HsTaskListHelperRegistration(answers: UserAnswers,
   }
 
   protected[utils] override def addTrusteeHeader(userAnswers: UserAnswers, mode: Mode, srn: Option[String]): Option[SchemeDetailsTaskListHeader] = {
-    (userAnswers.get(HaveAnyTrusteesId), userAnswers.allTrusteesAfterDelete(isHnSEnabled).isEmpty) match {
-      case (None | Some(true), false) =>
-
+    (userAnswers.get(HaveAnyTrusteesId), userAnswers.allTrusteesAfterDelete(isHnSEnabled).isEmpty, isHnSEnabled) match {
+      case (None | Some(true), false, false) =>
         val (linkText, additionalText): (String, Option[String]) =
           getTrusteeHeaderText(userAnswers.allTrusteesAfterDelete(isHnSEnabled).size, userAnswers.get(SchemeTypeId))
-
         Some(
           SchemeDetailsTaskListHeader(
             link = addTrusteeLink(linkText, srn, mode),
             p1 = additionalText))
 
-      case (None | Some(true), true) =>
-
+      case (None | Some(true), true, false) =>
         Some(
           SchemeDetailsTaskListHeader(
             None,
             typeOfTrusteeLink(addTrusteesLinkText, userAnswers.allTrustees(isHnSEnabled).size, srn, mode)))
 
+      case (None | Some(true), false, true) =>
+        Some(
+          SchemeDetailsTaskListHeader(None, Some(Link(changeTrusteesLinkText,
+            controllers.register.trustees.routes.AddTrusteeController.onPageLoad(mode, srn).url)), None))
+
+      case (None | Some(true), true, true) =>
+        Some(
+          SchemeDetailsTaskListHeader(None, Some(Link(addTrusteesLinkText,
+            controllers.register.trustees.routes.TrusteeKindController.onPageLoad(mode,
+              userAnswers.allTrustees(isHnSEnabled).size, srn).url)), None))
+
       case _ =>
         None
     }
-
   }
 
   protected[utils] def addEstablisherHeader(userAnswers: UserAnswers, mode: Mode, srn: Option[String]): Option[SchemeDetailsTaskListHeader] = {

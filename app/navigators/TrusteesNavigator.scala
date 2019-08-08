@@ -19,17 +19,21 @@ package navigators
 import com.google.inject.Inject
 import config.{FeatureSwitchManagementService, FrontendAppConfig}
 import connectors.UserAnswersCacheConnector
+import controllers.register.trustees.company.routes._
+import controllers.register.trustees.individual.routes._
+import controllers.register.trustees.routes._
+import controllers.routes._
 import identifiers.EstablishersOrTrusteesChangedId
 import identifiers.register.trustees._
-import models.register.trustees.TrusteeKind
 import models._
+import models.register.trustees.TrusteeKind
 import play.api.mvc.Call
 import utils.{Enumerable, Toggles, UserAnswers}
 
 class TrusteesNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector, appConfig: FrontendAppConfig,
                                   featureSwitchManagementService: FeatureSwitchManagementService) extends AbstractNavigator with Enumerable.Implicits {
 
-  private val isHnSEnabled = featureSwitchManagementService.get(Toggles.isEstablisherCompanyHnSEnabled)
+  private val isHnSEnabled: Boolean = featureSwitchManagementService.get(Toggles.isEstablisherCompanyHnSEnabled)
 
   protected def routes(from: NavigateFrom, mode: Mode, srn: Option[String]): Option[NavigateTo] =
     from.id match {
@@ -38,11 +42,11 @@ class TrusteesNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnec
       case AddTrusteeId =>
         addTrusteeRoutes(from.userAnswers, mode, srn)
       case MoreThanTenTrusteesId =>
-        redirectToAnyMoreChanges(controllers.routes.SchemeTaskListController.onPageLoad(mode, srn), mode, srn)
+        redirectToAnyMoreChanges(SchemeTaskListController.onPageLoad(mode, srn), mode, srn)
       case TrusteeKindId(index) =>
         trusteeKindRoutes(index, from.userAnswers, mode, srn)
       case ConfirmDeleteTrusteeId =>
-        redirectToAnyMoreChanges(controllers.register.trustees.routes.AddTrusteeController.onPageLoad(mode, srn), mode, srn)
+        redirectToAnyMoreChanges(AddTrusteeController.onPageLoad(mode, srn), mode, srn)
       case _ => None
     }
 
@@ -50,7 +54,7 @@ class TrusteesNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnec
     if(mode == CheckMode || mode == NormalMode){
       NavigateTo.dontSave(normalModeRoutes)
     } else {
-      NavigateTo.dontSave(controllers.routes.AnyMoreChangesController.onPageLoad(srn))
+      NavigateTo.dontSave(AnyMoreChangesController.onPageLoad(srn))
     }
   }
 
@@ -63,17 +67,18 @@ class TrusteesNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnec
   protected def checkUpdateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] = None
 
   private def haveAnyTrusteesRoutes(answers: UserAnswers): Option[NavigateTo] = {
+
     answers.get(HaveAnyTrusteesId) match {
       case Some(true) =>
         if (answers.allTrusteesAfterDelete(isHnSEnabled).isEmpty) {
-          NavigateTo.dontSave(controllers.register.trustees.routes.TrusteeKindController.onPageLoad(NormalMode, answers.allTrustees(isHnSEnabled).size, None))
+          NavigateTo.dontSave(TrusteeKindController.onPageLoad(NormalMode, answers.allTrustees(isHnSEnabled).size, None))
         } else {
-          NavigateTo.dontSave(controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode, None))
+          NavigateTo.dontSave(AddTrusteeController.onPageLoad(NormalMode, None))
         }
       case Some(false) =>
-        NavigateTo.dontSave(controllers.routes.SchemeTaskListController.onPageLoad(NormalMode, None))
+        NavigateTo.dontSave(SchemeTaskListController.onPageLoad(NormalMode, None))
       case None =>
-        NavigateTo.dontSave(controllers.routes.SessionExpiredController.onPageLoad())
+        NavigateTo.dontSave(SessionExpiredController.onPageLoad())
     }
   }
 
@@ -83,14 +88,14 @@ class TrusteesNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnec
 
     answers.get(AddTrusteeId) match {
       case Some(false) =>
-        if (featureSwitchManagementService.get(Toggles.isEstablisherCompanyHnSEnabled)) {
-          NavigateTo.dontSave(controllers.routes.SchemeTaskListController.onPageLoad(mode, srn))
+        if (isHnSEnabled) {
+          NavigateTo.dontSave(SchemeTaskListController.onPageLoad(mode, srn))
         } else {
           mode match {
             case UpdateMode | CheckUpdateMode if answers.get(EstablishersOrTrusteesChangedId).contains(true) =>
-              NavigateTo.dontSave(controllers.routes.AnyMoreChangesController.onPageLoad(srn))
+              NavigateTo.dontSave(AnyMoreChangesController.onPageLoad(srn))
             case _ =>
-              NavigateTo.dontSave(controllers.routes.SchemeTaskListController.onPageLoad(mode, srn))
+              NavigateTo.dontSave(SchemeTaskListController.onPageLoad(mode, srn))
           }
         }
       case Some(true) =>
@@ -105,13 +110,17 @@ class TrusteesNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnec
   private def trusteeKindRoutes(index: Int, answers: UserAnswers, mode: Mode, srn: Option[String]): Option[NavigateTo] = {
     answers.get(TrusteeKindId(index)) match {
       case Some(TrusteeKind.Company) =>
-        NavigateTo.dontSave(controllers.register.trustees.company.routes.CompanyDetailsController.onPageLoad(mode, index, srn))
+        NavigateTo.dontSave(CompanyDetailsController.onPageLoad(mode, index, srn))
       case Some(TrusteeKind.Individual) =>
-        NavigateTo.dontSave(controllers.register.trustees.individual.routes.TrusteeDetailsController.onPageLoad(mode, index, srn))
+        if (isHnSEnabled) {
+          NavigateTo.dontSave(TrusteeNameController.onPageLoad(mode, index, srn))
+        } else {
+          NavigateTo.dontSave(TrusteeDetailsController.onPageLoad(mode, index, srn))
+        }
       case Some(TrusteeKind.Partnership) =>
         NavigateTo.dontSave(controllers.register.trustees.partnership.routes.TrusteeDetailsController.onPageLoad(mode, index, srn))
       case _ =>
-        NavigateTo.dontSave(controllers.routes.SessionExpiredController.onPageLoad())
+        NavigateTo.dontSave(SessionExpiredController.onPageLoad())
     }
   }
 }

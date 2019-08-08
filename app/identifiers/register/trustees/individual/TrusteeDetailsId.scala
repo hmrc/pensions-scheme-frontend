@@ -30,7 +30,7 @@ case class TrusteeDetailsId(index: Int) extends TypedIdentifier[PersonDetails] {
   override def path: JsPath = TrusteesId(index).path \ TrusteeDetailsId.toString
 
   override def cleanup(value: Option[PersonDetails], userAnswers: UserAnswers): JsResult[UserAnswers] = {
-    userAnswers.allTrusteesAfterDelete(false).lengthCompare(10) match {
+    userAnswers.allTrusteesAfterDelete(isHnSEnabled = false).lengthCompare(10) match {
       case lengthCompare if lengthCompare <= 0 => userAnswers.remove(MoreThanTenTrusteesId)
       case _ => super.cleanup(value, userAnswers)
     }
