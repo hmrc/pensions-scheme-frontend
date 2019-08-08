@@ -37,6 +37,7 @@ class TrusteesIndividualNavigator @Inject()(val dataCacheConnector: UserAnswersC
     case TrusteeNoNINOReasonId(index) => trusteeHasUtrPage(mode, index, srn)
     case id@TrusteeHasUTRId(index) => booleanNav(id, ua, mode, index, srn, utrPage, noUtrReasonPage)
     case TrusteeNoUTRReasonId(index) => cyaIndividualDetailsPage(mode, index, srn)
+    case TrusteeUTRId(index) => cyaIndividualDetailsPage(mode, index, srn)
 
   }
 
