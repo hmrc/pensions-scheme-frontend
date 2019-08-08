@@ -122,11 +122,11 @@ class HsTaskListHelperVariations(answers: UserAnswers,
     }
 
   protected[utils] override def addTrusteeHeader(userAnswers: UserAnswers, mode: Mode, srn: Option[String]): Option[SchemeDetailsTaskListHeader] =
-    (userAnswers.allTrusteesAfterDelete.isEmpty, viewOnly) match {
-      case (true, true) => Some(SchemeDetailsTaskListHeader(plainText = Some(noTrusteesText)))
-      case (true, false) => Some(SchemeDetailsTaskListHeader(
+    (userAnswers.allTrusteesAfterDelete.isEmpty, viewOnly, isHnSEnabled) match {
+      case (true, true, _) => Some(SchemeDetailsTaskListHeader(plainText = Some(noTrusteesText)))
+      case (true, false, _) => Some(SchemeDetailsTaskListHeader(
         link = typeOfTrusteeLink(addTrusteesLinkText, userAnswers.allTrustees.size, srn, mode)))
-      case (false, false) => {
+      case (false, false, false) => {
 
         val (linkText, additionalText): (String, Option[String]) =
           getTrusteeHeaderText(userAnswers.allTrusteesAfterDelete.size, userAnswers.get(SchemeTypeId))
@@ -136,6 +136,11 @@ class HsTaskListHelperVariations(answers: UserAnswers,
             link = addTrusteeLink(linkText, srn, mode),
             p1 = additionalText))
       }
-      case (false, true) => Some(SchemeDetailsTaskListHeader(header = Some(messages("messages__schemeTaskList__sectionTrustees_header"))))
+      case (false, false, true) => {
+        Some(
+          SchemeDetailsTaskListHeader(None, Some(Link(changeTrusteesLinkText,
+            controllers.register.trustees.routes.AddTrusteeController.onPageLoad(mode, srn).url)), None))
+      }
+      case (false, true, _) => Some(SchemeDetailsTaskListHeader(header = Some(messages("messages__schemeTaskList__sectionTrustees_header"))))
     }
 }
