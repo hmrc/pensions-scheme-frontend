@@ -19,12 +19,12 @@ package navigators
 import com.google.inject.Inject
 import connectors.UserAnswersCacheConnector
 import controllers.register.trustees.individual.routes._
-import identifiers.{Identifier, TypedIdentifier}
+import identifiers.Identifier
 import identifiers.register.trustees.individual._
-import models._
+import models.Mode._
+import models.{CheckMode, Mode, NormalMode}
 import play.api.mvc.Call
 import utils.UserAnswers
-import models.Mode._
 
 class TrusteesIndividualNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector) extends AbstractNavigator {
 
@@ -33,12 +33,12 @@ class TrusteesIndividualNavigator @Inject()(val dataCacheConnector: UserAnswersC
   private def normalAndUpdateModeRoutes(mode: Mode, ua: UserAnswers, srn: Option[String]): PartialFunction[Identifier, Call] = {
     case TrusteeDOBId(index) if mode == NormalMode => hasNinoPage(mode, index, srn)
     case TrusteeDOBId(index) if mode == CheckMode => CheckYourAnswersIndividualDetailsController.onPageLoad(journeyMode(mode), index, None)
-    case id@TrusteeHasNINOId(index) => booleanNav(id, ua, mode, index, srn, ninoPage, noNinoReasonPage)
+    case id@TrusteeHasNINOId(index) => booleanNav(id, ua, ninoPage(mode, index, srn), noNinoReasonPage(mode, index, srn))
     case TrusteeNewNinoId(index) if mode == NormalMode => trusteeHasUtrPage(mode, index, srn)
     case TrusteeNewNinoId(index) if mode == CheckMode => CheckYourAnswersIndividualDetailsController.onPageLoad(journeyMode(mode), index, None)
     case TrusteeNoNINOReasonId(index) if mode == NormalMode => trusteeHasUtrPage(mode, index, srn)
     case TrusteeNoNINOReasonId(index) if mode == CheckMode => CheckYourAnswersIndividualDetailsController.onPageLoad(journeyMode(mode), index, None)
-    case id@TrusteeHasUTRId(index) => booleanNav(id, ua, mode, index, srn, utrPage, noUtrReasonPage)
+    case id@TrusteeHasUTRId(index) => booleanNav(id, ua, utrPage(mode, index, srn), noUtrReasonPage(mode, index, srn))
     case TrusteeNoUTRReasonId(index) => cyaIndividualDetailsPage(mode, index, srn)
     case TrusteeUTRId(index) => cyaIndividualDetailsPage(mode, index, srn)
   }
