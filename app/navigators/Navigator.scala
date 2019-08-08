@@ -123,8 +123,12 @@ abstract class AbstractNavigator extends Navigator {
 
   protected def anyMoreChangesPage(srn: Option[String]): Call = AnyMoreChangesController.onPageLoad(srn)
 
-  protected def goToSessionExpiredPage: Identifier => Call = _ => sessionExpiredPage
-
-  protected def applyRoutes(pf:(Mode, UserAnswers, Option[String]) => PartialFunction[Identifier,Call], from: NavigateFrom, mode:Mode, srn:Option[String]): Option[NavigateTo] =
-    NavigateTo.dontSave(pf(mode, from.userAnswers, srn).applyOrElse(from.id, goToSessionExpiredPage))
+  // TODO: We shouldn't be using functions like this. They create indirection and limit flexablity of the solution.
+  protected def navigateOrSessionReset(routeMapping: PartialFunction[Identifier, Call], identifier: Identifier): Option[NavigateTo] =
+    NavigateTo.dontSave {
+      if (routeMapping.isDefinedAt(identifier))
+        routeMapping(identifier)
+      else
+        sessionExpiredPage
+    }
 }

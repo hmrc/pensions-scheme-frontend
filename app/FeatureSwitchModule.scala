@@ -44,9 +44,9 @@ class FeatureSwitchModule extends Module {
         bind(classOf[Navigator]).qualifiedWith[TrusteesCompany].to(classOf[TrusteesCompanyNavigatorOld])
       },
       if (hubSpokeEnabled) {
-        bind(classOf[Navigator]).qualifiedWith[TrusteesIndividual].to(classOf[TrusteesIndividualNavigator])
+        bind(classOf[Navigator]).qualifiedWith[TrusteesIndividual].to(classOf[TrusteesIndividualNavigator]) // TODO: Remove this
       } else {
-        bind(classOf[Navigator]).qualifiedWith[TrusteesIndividual].to(classOf[TrusteesIndividualNavigatorOld])
+        bind(classOf[Navigator]).qualifiedWith[TrusteesIndividual].to(classOf[TrusteesIndividualNavigatorOld]) // TODO: Remove this
       }
     )
 

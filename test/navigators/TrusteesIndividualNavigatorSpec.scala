@@ -30,6 +30,7 @@ import utils.UserAnswers
 import org.scalacheck.Arbitrary.arbitrary
 import controllers.register.trustees.individual.routes._
 import models.Mode._
+import scala.concurrent.ExecutionContext.Implicits.global
 
 class TrusteesIndividualNavigatorSpec extends SpecBase with MustMatchers with NavigatorBehaviour with Generators {
 
@@ -52,11 +53,48 @@ class TrusteesIndividualNavigatorSpec extends SpecBase with MustMatchers with Na
       row(TrusteeUTRId(index))(someStringValue, cyaIndividualDetailsPage(mode))
     )
 
-
   behave like navigatorWithRoutesForMode(NormalMode)(navigator, normalAndUpdateModeRoutes(NormalMode))
 
-//  behave like navigatorWithRoutesForMode(CheckMode)(navigator, routesCheckMode(CheckMode))
-//
+  "TrusteesIndividualNavigator in CheckMode" should {
+    "navigate from TrusteeDOBId" in {
+      val userAnswers = UserAnswers().set(TrusteeDOBId(index))(someDate).asOpt.value
+      navigator.nextPage(TrusteeDOBId(index), CheckMode, userAnswers, None) mustEqual cyaIndividualDetailsPage(CheckMode)
+    }
+    "navigate from TrusteeHasNINOId when user answers true" in {
+      val userAnswers = UserAnswers().set(TrusteeHasNINOId(index))(true).asOpt.value
+      navigator.nextPage(TrusteeHasNINOId(index), CheckMode, userAnswers, None) mustEqual controllers.register.trustees.individual.routes.TrusteeNinoNewController.onPageLoad(CheckMode, index, None)
+    }
+    "navigate from TrusteeNewNinoId" in {
+      val userAnswers = UserAnswers().set(TrusteeNewNinoId(index))(someRefValue).asOpt.value
+      navigator.nextPage(TrusteeNewNinoId(index), CheckMode, userAnswers, None) mustEqual cyaIndividualDetailsPage(CheckMode)
+    }
+    "navigate from TrusteeHasNINOId when user answers false" in {
+      val userAnswers = UserAnswers().set(TrusteeHasNINOId(index))(false).asOpt.value
+      navigator.nextPage(TrusteeHasNINOId(index), CheckMode, userAnswers, None) mustEqual controllers.register.trustees.individual.routes.TrusteeNoNINOReasonController.onPageLoad(CheckMode, index, None)
+    }
+    "navigate from TrusteeNoNINOReasonId" in {
+      val userAnswers = UserAnswers().set(TrusteeNoNINOReasonId(index))(someStringValue).asOpt.value
+      navigator.nextPage(TrusteeNoNINOReasonId(index), CheckMode, userAnswers, None) mustEqual cyaIndividualDetailsPage(CheckMode)
+    }
+    "navigate from TrusteeHasUTRId when user answers true" in {
+      val userAnswers = UserAnswers().set(TrusteeHasUTRId(index))(true).asOpt.value
+      navigator.nextPage(TrusteeHasUTRId(index), CheckMode, userAnswers, None) mustEqual TrusteeUTRController.onPageLoad(CheckMode, index, None)
+    }
+    "navigate from TrusteeUTRId" in {
+      val userAnswers = UserAnswers().set(TrusteeUTRId(index))(someStringValue).asOpt.value
+      navigator.nextPage(TrusteeUTRId(index), CheckMode, userAnswers, None) mustEqual cyaIndividualDetailsPage(CheckMode)
+    }
+    "navigate from TrusteeHasUTRId when user answers false" in {
+      val userAnswers = UserAnswers().set(TrusteeHasUTRId(index))(false).asOpt.value
+      navigator.nextPage(TrusteeHasUTRId(index), CheckMode, userAnswers, None) mustEqual TrusteeNoUTRReasonController.onPageLoad(CheckMode, index, None)
+    }
+    "navigate from TrusteeNoUTRReasonId" in {
+      val userAnswers = UserAnswers().set(TrusteeNoUTRReasonId(index))(someStringValue).asOpt.value
+      navigator.nextPage(TrusteeNoUTRReasonId(index), CheckMode, userAnswers, None) mustEqual cyaIndividualDetailsPage(CheckMode)
+    }
+  }
+
+
 //  behave like navigatorWithRoutesForMode(UpdateMode)(navigator, normalAndUpdateModeRoutes(UpdateMode))
 //
 //  behave like navigatorWithRoutesForMode(CheckUpdateMode)(navigator, routesCheckUpdateMode(CheckUpdateMode))
