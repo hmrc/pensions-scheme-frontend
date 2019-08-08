@@ -20,14 +20,16 @@ import play.api.mvc.{JavascriptLiteral, PathBindable}
 import utils.WithName
 
 sealed trait Mode
+sealed trait Registration extends Mode
+sealed trait Variance extends Mode
 
-case object NormalMode extends WithName("") with Mode
+case object NormalMode extends WithName("") with Registration
 
-case object CheckMode extends WithName("change") with Mode
+case object CheckMode extends WithName("change") with Registration
 
-case object UpdateMode extends WithName("changing") with Mode
+case object UpdateMode extends WithName("changing") with Variance
 
-case object CheckUpdateMode extends WithName("update") with Mode
+case object CheckUpdateMode extends WithName("update") with Variance
 
 object Mode {
 

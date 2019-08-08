@@ -22,7 +22,7 @@ import controllers.register.trustees.individual.routes._
 import identifiers.Identifier
 import identifiers.register.trustees.individual._
 import models.Mode._
-import models.{CheckMode, Mode, NormalMode}
+import models.{CheckMode, Mode, Registration, NormalMode}
 import play.api.mvc.Call
 import utils.UserAnswers
 
@@ -30,7 +30,7 @@ class TrusteesIndividualNavigator @Inject()(val dataCacheConnector: UserAnswersC
 
   import TrusteesIndividualNavigator._
 
-  private def normalAndUpdateModeRoutes(mode: Mode, ua: UserAnswers, srn: Option[String]): PartialFunction[Identifier, Call] = {
+  private def normalAndUpdateModeRoutes(mode: Registration, ua: UserAnswers, srn: Option[String]): PartialFunction[Identifier, Call] = {
     case TrusteeDOBId(index) if mode == NormalMode => hasNinoPage(mode, index, srn)
     case TrusteeDOBId(index) if mode == CheckMode => CheckYourAnswersIndividualDetailsController.onPageLoad(journeyMode(mode), index, None)
     case id@TrusteeHasNINOId(index) => booleanNav(id, ua, ninoPage(mode, index, srn), noNinoReasonPage(mode, index, srn))
