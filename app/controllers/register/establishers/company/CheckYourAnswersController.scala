@@ -16,12 +16,11 @@
 
 package controllers.register.establishers.company
 
-import config.{FeatureSwitchManagementService, FrontendAppConfig}
+import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions._
 import identifiers.register.establishers.IsEstablisherNewId
-import identifiers.register.establishers.company._
-import identifiers.register.establishers.company.CompanyRegistrationNumberVariationsId
+import identifiers.register.establishers.company.{CompanyRegistrationNumberVariationsId, _}
 import javax.inject.Inject
 import models.Mode.checkMode
 import models.requests.DataRequest
@@ -95,11 +94,9 @@ class CheckYourAnswersController @Inject()(
     }
 
   def onSubmit(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] = (
-    authenticate andThen getData(mode, srn) andThen requireData).async {
+    authenticate andThen getData(mode, srn) andThen requireData) {
     implicit request =>
-      userAnswersService.setCompleteFlag(mode, srn, IsCompanyCompleteId(index), request.userAnswers, true).map { _ =>
-        Redirect(navigator.nextPage(CheckYourAnswersId(index), mode, request.userAnswers, srn))
-      }
+      Redirect(navigator.nextPage(CheckYourAnswersId(index), mode, request.userAnswers, srn))
   }
 
   private def companyRegistrationNumberCya(mode: Mode, srn: Option[String], index: Index)(implicit request: DataRequest[AnyContent]) = {

@@ -41,7 +41,6 @@ import uk.gov.hmrc.domain.PsaId
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.Register
 import utils.{Enumerable, Toggles, UserAnswers}
-import utils.{Enumerable, UserAnswers}
 import views.html.register.declaration
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -88,7 +87,7 @@ class DeclarationController @Inject()(
   }
 
   private def showPage(status: HtmlFormat.Appendable => Result, form: Form[_])(implicit request: DataRequest[AnyContent]) = {
-    val isCompany = request.userAnswers.hasCompanies(fs.get(Toggles.isEstablisherCompanyHnSEnabled))
+    val isCompany = request.userAnswers.hasCompanies(fs.get(Toggles.isEstablisherCompanyHnSEnabled), NormalMode)
 
     val declarationDormantValue = if (isDeclarationDormant) DeclarationDormant.values.head else DeclarationDormant.values(1)
     val readyForRender = if (isCompany) {
@@ -111,7 +110,7 @@ class DeclarationController @Inject()(
   }
 
   private def isDeclarationDormant(implicit request: DataRequest[AnyContent]): Boolean =
-    request.userAnswers.allEstablishersAfterDelete(fs.get(Toggles.isEstablisherCompanyHnSEnabled)).exists { allEstablishers =>
+    request.userAnswers.allEstablishersAfterDelete(fs.get(Toggles.isEstablisherCompanyHnSEnabled), NormalMode).exists { allEstablishers =>
       allEstablishers.id match {
         case CompanyDetailsId(index) =>
           isDormant(request.userAnswers.get(IsCompanyDormantId(index)))

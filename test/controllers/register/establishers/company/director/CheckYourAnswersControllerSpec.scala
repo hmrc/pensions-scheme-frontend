@@ -21,7 +21,6 @@ import config.FeatureSwitchManagementService
 import controllers.ControllerSpecBase
 import controllers.actions._
 import controllers.behaviours.ControllerAllowChangeBehaviour
-import identifiers.register.establishers.IsEstablisherNewId
 import identifiers.register.establishers.company.director._
 import models._
 import models.address.Address
@@ -231,33 +230,11 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
       }
 
       "onSubmit" must {
-        "mark the section as complete and redirect to the next page" in {
+        "redirect to the next page" in {
           val result = controller(toggle = false).onSubmit(firstIndex, firstIndex, NormalMode, None)(request)
 
           status(result) mustBe SEE_OTHER
           redirectLocation(result) mustBe Some(desiredRoute.url)
-
-          FakeUserAnswersService.verify(IsDirectorCompleteId(firstIndex, firstIndex), true)
-        }
-
-        "mark the section as complete and redirect to the next page in UpdateMode if Establisher is new" in {
-          val newDirectorAnswers = directorAnswers.set(IsEstablisherNewId(firstIndex))(true).asOpt.value
-
-          val result = controller(newDirectorAnswers.dataRetrievalAction, toggle = false).onSubmit(firstIndex, firstIndex, UpdateMode, None)(request)
-
-          status(result) mustBe SEE_OTHER
-          redirectLocation(result) mustBe Some(desiredRoute.url)
-
-          FakeUserAnswersService.verify(IsDirectorCompleteId(firstIndex, firstIndex), true)
-        }
-
-        "mark the section as complete and redirect to the next page in UpdateMode if Establisher is not new" in {
-          val result = controller(directorAnswers.dataRetrievalAction, toggle = false).onSubmit(firstIndex, firstIndex, UpdateMode, None)(request)
-
-          status(result) mustBe SEE_OTHER
-          redirectLocation(result) mustBe Some(desiredRoute.url)
-
-          FakeUserAnswersService.verify(IsDirectorCompleteId(firstIndex, firstIndex), true)
         }
       }
     }
@@ -360,28 +337,6 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
 
           status(result) mustBe SEE_OTHER
           redirectLocation(result) mustBe Some(desiredRoute.url)
-
-          FakeUserAnswersService.verify(IsDirectorCompleteId(firstIndex, firstIndex), true)
-        }
-
-        "mark the section as complete and redirect to the next page in UpdateMode if Establisher is new" in {
-          val newDirectorAnswers = directorAnswers.set(IsEstablisherNewId(firstIndex))(true).asOpt.value
-
-          val result = controller(newDirectorAnswers.dataRetrievalAction, toggle = true).onSubmit(firstIndex, firstIndex, UpdateMode, None)(request)
-
-          status(result) mustBe SEE_OTHER
-          redirectLocation(result) mustBe Some(desiredRoute.url)
-
-          FakeUserAnswersService.verify(IsDirectorCompleteId(firstIndex, firstIndex), true)
-        }
-
-        "mark the section as complete and redirect to the next page in UpdateMode if Establisher is not new" in {
-          val result = controller(directorAnswers.dataRetrievalAction, toggle = true).onSubmit(firstIndex, firstIndex, UpdateMode, None)(request)
-
-          status(result) mustBe SEE_OTHER
-          redirectLocation(result) mustBe Some(desiredRoute.url)
-
-          FakeUserAnswersService.verify(IsDirectorCompleteId(firstIndex, firstIndex), true)
         }
       }
     }
