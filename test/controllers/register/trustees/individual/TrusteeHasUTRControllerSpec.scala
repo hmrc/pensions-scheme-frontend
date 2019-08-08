@@ -1,0 +1,131 @@
+/*
+ * Copyright 2019 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package controllers.register.trustees.individual
+
+import controllers.ControllerSpecBase
+import controllers.actions._
+import forms.HasUtrFormProvider
+import identifiers.register.trustees.individual.{TrusteeHasUTRId, TrusteeNameId, TrusteeNoUTRReasonId, TrusteeUTRId}
+import models.person.PersonName
+import models.{Index, NormalMode}
+import play.api.data.Form
+import play.api.mvc.Call
+import play.api.test.Helpers._
+import services.FakeUserAnswersService
+import utils.{FakeNavigator, UserAnswers}
+import viewmodels.{CommonFormWithHintViewModel, Message}
+import views.html.hasUtr
+
+class TrusteeHasUTRControllerSpec extends ControllerSpecBase {
+  private def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
+
+  private val formProvider = new HasUtrFormProvider()
+  private val form = formProvider("messages__hasUtr__error__required", "test name")
+  private val index = Index(0)
+  private val srn = None
+  private val postCall = controllers.register.trustees.individual.routes.TrusteeHasUTRController.onSubmit(NormalMode, index, srn)
+  private val viewModel = CommonFormWithHintViewModel(
+    postCall = postCall,
+    title = Message("messages__hasTrusteeUtr__title"),
+    heading = Message("messages__hasTrusteeUtr__h1", "First Last"),
+    hint = Some(Message("messages__hasUtr__p1")),
+    srn = srn
+  )
+
+  private val trusteeIndividualData = UserAnswers().set(TrusteeNameId(0))(PersonName("First", "Last")).asOpt.value
+
+  private def trusteeIndividualDataWithUtr(hasUtr: Boolean = true): DataRetrievalAction =
+    trusteeIndividualData.set(TrusteeUTRId(0))("test-utr").flatMap(_.set(TrusteeNoUTRReasonId(0))("no utr")).flatMap(
+      _.set(TrusteeHasUTRId(0))(hasUtr)
+    ).asOpt.value.dataRetrievalAction
+
+  private def controller(dataRetrievalAction: DataRetrievalAction =
+                         trusteeIndividualData.dataRetrievalAction, isHnsEnabled: Boolean = false): TrusteeHasUTRController =
+    new TrusteeHasUTRController(
+      frontendAppConfig,
+      messagesApi,
+      FakeUserAnswersService,
+      new FakeNavigator(desiredRoute = onwardRoute),
+      FakeAuthAction,
+      dataRetrievalAction,
+      FakeAllowAccessProvider(),
+      new DataRequiredActionImpl,
+      formProvider
+    )
+
+  private def viewAsString(form: Form[_] = form): String = hasUtr(frontendAppConfig, form, viewModel, None)(fakeRequest, messages).toString
+
+  "TrusteeHasUTRController" must {
+
+    "return OK and the correct view for a GET" in {
+      val result = controller().onPageLoad(NormalMode, index, None)(fakeRequest)
+
+      status(result) mustBe OK
+      contentAsString(result) mustBe viewAsString()
+    }
+
+    "redirect to the next page when valid data is submitted for true" in {
+      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "true"))
+
+      val result = controller().onSubmit(NormalMode, index, None)(postRequest)
+
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result) mustBe Some(onwardRoute.url)
+      FakeUserAnswersService.userAnswer.get(TrusteeHasUTRId(index)).value mustEqual true
+    }
+
+    "redirect to the session expired page when no trustee name has been added" in {
+      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "true"))
+
+      val result = controller(getEmptyData).onSubmit(NormalMode, index, None)(postRequest)
+
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result).value mustBe controllers.routes.SessionExpiredController.onPageLoad().url
+    }
+
+    "return a Bad Request and errors when invalid data is submitted" in {
+      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "invalid value"))
+      val boundForm = form.bind(Map("value" -> "invalid value"))
+
+      val result = controller().onSubmit(NormalMode, index, None)(postRequest)
+
+      status(result) mustBe BAD_REQUEST
+      contentAsString(result) mustBe viewAsString(boundForm)
+    }
+
+    "if user changes answer from yes to no then clean up should take place on utr number" in {
+      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "false"))
+      val result = controller(trusteeIndividualDataWithUtr()).onSubmit(NormalMode, index, None)(postRequest)
+
+      status(result) mustBe SEE_OTHER
+      FakeUserAnswersService.userAnswer.get(TrusteeHasUTRId(index)).value mustEqual false
+      FakeUserAnswersService.userAnswer.get(TrusteeUTRId(index)) mustBe None
+      FakeUserAnswersService.userAnswer.get(TrusteeNoUTRReasonId(index)) mustBe Some("no utr")
+    }
+
+    "if user changes answer from no to yes then clean up should take place on no utr reason" in {
+      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "true"))
+      val result = controller(trusteeIndividualDataWithUtr(hasUtr = false)).onSubmit(NormalMode, index, None)(postRequest)
+
+      status(result) mustBe SEE_OTHER
+      FakeUserAnswersService.userAnswer.get(TrusteeHasUTRId(index)).value mustEqual true
+      FakeUserAnswersService.userAnswer.get(TrusteeNoUTRReasonId(index)) mustBe None
+      FakeUserAnswersService.userAnswer.get(TrusteeUTRId(index)) mustBe Some("test-utr")
+    }
+
+  }
+}

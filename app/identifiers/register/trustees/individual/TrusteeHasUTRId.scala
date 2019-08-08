@@ -18,10 +18,21 @@ package identifiers.register.trustees.individual
 
 import identifiers._
 import identifiers.register.trustees.TrusteesId
-import play.api.libs.json.JsPath
+import play.api.libs.json.{JsPath, JsResult}
+import utils.UserAnswers
 
 case class TrusteeHasUTRId(index: Int) extends TypedIdentifier[Boolean] {
   override def path: JsPath = TrusteesId(index).path \ TrusteeHasUTRId.toString
+  override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): JsResult[UserAnswers] = {
+    value match {
+      case Some(true) =>
+        userAnswers.remove(TrusteeNoUTRReasonId(index))
+      case Some(false) =>
+        userAnswers.remove(TrusteeUTRId(index))
+      case _ =>
+        super.cleanup(value, userAnswers)
+    }
+  }
 }
 
 object TrusteeHasUTRId {

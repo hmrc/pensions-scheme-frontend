@@ -16,18 +16,20 @@
 
 package controllers.register.trustees.individual
 
-import config.FrontendAppConfig
-import controllers.Retrievals
+import config.{FeatureSwitchManagementService, FrontendAppConfig}
+import controllers.HasReferenceNumberController
 import controllers.actions._
+import forms.HasUtrFormProvider
+import identifiers.register.trustees.individual.{TrusteeDetailsId, TrusteeHasUTRId, TrusteeNameId}
 import javax.inject.Inject
 import models.{Index, Mode}
 import navigators.Navigator
-import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import utils.Enumerable
+import utils.Toggles
 import utils.annotations.TrusteesIndividual
+import viewmodels.{CommonFormWithHintViewModel, Message}
 
 import scala.concurrent.ExecutionContext
 
@@ -38,15 +40,40 @@ class TrusteeHasUTRController @Inject()(val appConfig: FrontendAppConfig,
                                         authenticate: AuthAction,
                                         getData: DataRetrievalAction,
                                         allowAccess: AllowAccessActionProvider,
-                                        requireData: DataRequiredAction
-                                     )(implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
+                                        requireData: DataRequiredAction,
+                                        formProvider: HasUtrFormProvider
+                                       )(implicit val ec: ExecutionContext) extends HasReferenceNumberController {
+
+  private def viewModel(mode: Mode, index: Index, srn: Option[String], trusteeName: String): CommonFormWithHintViewModel =
+    CommonFormWithHintViewModel(
+      postCall = controllers.register.trustees.individual.routes.TrusteeHasUTRController.onSubmit(mode, index, srn),
+      title = Message("messages__hasTrusteeUtr__title"),
+      heading = Message("messages__hasTrusteeUtr__h1", trusteeName),
+      hint = Some(Message("messages__hasUtr__p1")),
+      srn = srn
+    )
+
+  private def form(trusteeName: String) = formProvider("messages__hasUtr__error__required", trusteeName)
+
+  private def trusteeName(index: Index) = Retrieval { implicit request =>
+    TrusteeNameId(index).retrieve.right.map(_.fullName)
+  }
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData) {
-      implicit request => NotImplemented("Not implemented: " + this.getClass.toString)
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+      implicit request =>
+        trusteeName(index).retrieve.right.map {
+          name =>
+            get(TrusteeHasUTRId(index), form(name), viewModel(mode, index, srn, name))
+        }
     }
 
-  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData) {
-    implicit request => NotImplemented("Not implemented: " + this.getClass.toString)
-  }
+  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen requireData).async {
+      implicit request =>
+        trusteeName(index).retrieve.right.map {
+          name =>
+            post(TrusteeHasUTRId(index), mode, form(name), viewModel(mode, index, srn, name))
+        }
+    }
 }

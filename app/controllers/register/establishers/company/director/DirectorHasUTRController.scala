@@ -56,7 +56,7 @@ class DirectorHasUTRController @Inject()(override val appConfig: FrontendAppConf
     )
 
 
-  private def form(personName: String) = formProvider("messages__hasDirectorUtr__error__required", personName)
+  private def form(personName: String) = formProvider("messages__hasUtr__error__required", personName)
 
   def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
