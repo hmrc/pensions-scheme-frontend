@@ -143,9 +143,9 @@ trait HsTaskListHelperBehaviour extends SpecBase with MustMatchers with OptionVa
             Seq(
               EntitySpoke(Link(messages("messages__schemeTaskList__sectionEstablishersCompany_add_details", "test company"),
                 establisherCompanyRoutes.WhatYouWillNeedCompanyDetailsController.onPageLoad(mode, srn, 0).url), None),
-              EntitySpoke(Link(messages("messages__schemeTaskList__sectionEstablishersCompany_add_address", "test company"),
+              EntitySpoke(Link(messages("messages__schemeTaskList__sectionIndividual_add_address", "test company"),
                 establisherCompanyRoutes.WhatYouWillNeedCompanyAddressController.onPageLoad(mode, srn, 0).url), None),
-              EntitySpoke(Link(messages("messages__schemeTaskList__sectionEstablishersCompany_add_contact", "test company"),
+              EntitySpoke(Link(messages("messages__schemeTaskList__sectionIndividual_add_contact", "test company"),
                 establisherCompanyRoutes.WhatYouWillNeedCompanyContactDetailsController.onPageLoad(mode, srn, 0).url), None),
               EntitySpoke(Link(messages("messages__schemeTaskList__sectionEstablishersCompany_add_directors", "test company"),
                 controllers.register.establishers.company.director.routes.WhatYouWillNeedDirectorController.onPageLoad(mode, srn, 0).url), None)
@@ -166,9 +166,9 @@ trait HsTaskListHelperBehaviour extends SpecBase with MustMatchers with OptionVa
             Seq(
               EntitySpoke(Link(messages("messages__schemeTaskList__sectionEstablishersCompany_change_details", "test company"),
                 trusteeCompanyRoutes.WhatYouWillNeedCompanyDetailsController.onPageLoad(mode, 0, srn).url), modeBasedCompletion(Some(false))),
-              EntitySpoke(Link(messages("messages__schemeTaskList__sectionEstablishersCompany_change_address", "test company"),
+              EntitySpoke(Link(messages("messages__schemeTaskList__sectionIndividual_change_address", "test company"),
                 trusteeCompanyRoutes.WhatYouWillNeedCompanyAddressController.onPageLoad(mode, 0, srn).url), modeBasedCompletion(Some(false))),
-              EntitySpoke(Link(messages("messages__schemeTaskList__sectionEstablishersCompany_change_contact", "test company"),
+              EntitySpoke(Link(messages("messages__schemeTaskList__sectionIndividual_change_contact", "test company"),
                 trusteeCompanyRoutes.WhatYouWillNeedCompanyContactDetailsController.onPageLoad(mode, 0, srn).url), modeBasedCompletion(Some(false)))
             ), Some("test company"))
         )
@@ -183,9 +183,9 @@ trait HsTaskListHelperBehaviour extends SpecBase with MustMatchers with OptionVa
             Seq(
               EntitySpoke(Link(messages("messages__schemeTaskList__sectionEstablishersCompany_change_details", "test company"),
                 trusteeCompanyRoutes.CheckYourAnswersCompanyDetailsController.onPageLoad(mode, 0, srn).url), modeBasedCompletion(Some(true))),
-              EntitySpoke(Link(messages("messages__schemeTaskList__sectionEstablishersCompany_change_address", "test company"),
+              EntitySpoke(Link(messages("messages__schemeTaskList__sectionIndividual_change_address", "test company"),
                 trusteeCompanyRoutes.CheckYourAnswersCompanyAddressController.onPageLoad(mode, 0, srn).url), modeBasedCompletion(Some(true))),
-              EntitySpoke(Link(messages("messages__schemeTaskList__sectionEstablishersCompany_change_contact", "test company"),
+              EntitySpoke(Link(messages("messages__schemeTaskList__sectionIndividual_change_contact", "test company"),
                 trusteeCompanyRoutes.CheckYourAnswersCompanyContactDetailsController.onPageLoad(mode, 0, srn).url), modeBasedCompletion(Some(true)))
             ), Some("test company"))
         )

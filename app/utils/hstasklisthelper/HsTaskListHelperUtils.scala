@@ -101,8 +101,8 @@ trait HsTaskListHelperUtils extends Enumerable.Implicits {
 
   private def getChangeLinkText(spokeName: Spoke): String => String = spokeName match {
     case EstablisherCompanyDetails | TrusteeCompanyDetails => messages("messages__schemeTaskList__sectionEstablishersCompany_change_details", _)
-    case EstablisherCompanyAddress | TrusteeCompanyAddress => messages("messages__schemeTaskList__sectionEstablishersCompany_change_address", _)
-    case EstablisherCompanyContactDetails | TrusteeCompanyContactDetails => messages("messages__schemeTaskList__sectionEstablishersCompany_change_contact", _)
+    case EstablisherCompanyAddress | TrusteeCompanyAddress => messages("messages__schemeTaskList__sectionIndividual_change_address", _)
+    case EstablisherCompanyContactDetails | TrusteeCompanyContactDetails => messages("messages__schemeTaskList__sectionIndividual_change_contact", _)
     case EstablisherCompanyDirectors => messages("messages__schemeTaskList__sectionEstablishersCompany_change_directors", _)
     case TrusteeIndividualDetails => messages("messages__schemeTaskList__sectionIndividual_change_details",  _)
     case TrusteeIndividualAddress => messages("messages__schemeTaskList__sectionIndividual_change_address",  _)
@@ -112,8 +112,8 @@ trait HsTaskListHelperUtils extends Enumerable.Implicits {
 
   private def getAddLinkText(spokeName: Spoke): String => String = spokeName match {
     case EstablisherCompanyDetails | TrusteeCompanyDetails => messages("messages__schemeTaskList__sectionEstablishersCompany_add_details", _)
-    case EstablisherCompanyAddress | TrusteeCompanyAddress => messages("messages__schemeTaskList__sectionEstablishersCompany_add_address", _)
-    case EstablisherCompanyContactDetails | TrusteeCompanyContactDetails => messages("messages__schemeTaskList__sectionEstablishersCompany_add_contact", _)
+    case EstablisherCompanyAddress | TrusteeCompanyAddress => messages("messages__schemeTaskList__sectionIndividual_add_address", _)
+    case EstablisherCompanyContactDetails | TrusteeCompanyContactDetails => messages("messages__schemeTaskList__sectionIndividual_add_contact", _)
     case EstablisherCompanyDirectors => messages("messages__schemeTaskList__sectionEstablishersCompany_add_directors", _)
     case TrusteeIndividualDetails => messages("messages__schemeTaskList__sectionIndividual_add_details",  _)
     case TrusteeIndividualAddress => messages("messages__schemeTaskList__sectionIndividual_add_address",  _)
