@@ -43,8 +43,8 @@ class IndividualAddressListControllerSpec extends ControllerSpecBase with CSRFRe
 
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
-  private val trusteeDetails = PersonDetails("First Name", Some("Second Name"), "Last Name", LocalDate.now())
-  private val trusteeName = PersonName("Test", "Name")
+  val trusteeDetails = PersonDetails("Test", None, "Name", LocalDate.now)
+  val trusteeName = PersonName("Test", "Name")
 
   private val addresses = Seq(
     TolerantAddress(
@@ -65,32 +65,29 @@ class IndividualAddressListControllerSpec extends ControllerSpecBase with CSRFRe
     )
   )
 
-//  private val data =
-//    UserAnswers(Json.obj())
-//      .set(TrusteeDetailsId(0))(trusteeDetails)
-//      .flatMap(_.set(IndividualPostCodeLookupId(0))(addresses))
-//      .asOpt.map(_.json)
-
   private def retrieval(isHnsEnabled: Boolean = false): DataRetrievalAction = {
     if(isHnsEnabled){
-      UserAnswers().set(TrusteeNameId(0))(trusteeName).asOpt.value.dataRetrievalAction
+      UserAnswers(Json.obj())
+        .set(TrusteeNameId(0))(trusteeName)
+        .flatMap(_.set(IndividualPostCodeLookupId(0))(addresses)).asOpt.value.dataRetrievalAction
     } else {
-      UserAnswers().set(TrusteeDetailsId(0))(trusteeDetails).asOpt.value.dataRetrievalAction
+      UserAnswers(Json.obj())
+        .set(TrusteeDetailsId(0))(trusteeDetails)
+        .flatMap(_.set(IndividualPostCodeLookupId(0))(addresses)).asOpt.value.dataRetrievalAction
     }
   }
-  //private val dataRetrievalAction = new FakeDataRetrievalAction(data)
+
   lazy val fakeNavigator = new FakeNavigator(desiredRoute = onwardRoute)
 
   "Individual Address List Controller" must {
     Seq(true, false).foreach { isHnsEnabled =>
-
-      s"return Ok and the correct view on a Get Request when toggle is $isHnsEnabled" in {
+      s"return Ok and the correct view on a Get Request $isHnsEnabled" in {
         running(_.overrides(
           bind[AuthAction].to(FakeAuthAction),
           bind[UserAnswersService].toInstance(FakeUserAnswersService),
-          bind[DataRetrievalAction].toInstance(retrieval(isHnsEnabled)),
+          bind[DataRetrievalAction].toInstance(retrieval(isHnsEnabled = isHnsEnabled)),
           bind(classOf[Navigator]).qualifiedWith(classOf[TrusteesIndividual]).toInstance(fakeNavigator),
-          bind[FeatureSwitchManagementService].toInstance(new FakeFeatureSwitchManagementService(isHnsEnabled))
+          bind[FeatureSwitchManagementService].to(new FakeFeatureSwitchManagementService(isHnsEnabled))
         )) { implicit app =>
           val request = addToken(FakeRequest(routes.IndividualAddressListController.onPageLoad(NormalMode, Index(0), None)))
           val result = route(app, request).value
@@ -104,14 +101,14 @@ class IndividualAddressListControllerSpec extends ControllerSpecBase with CSRFRe
         }
       }
 
-      s"redirect to the next page on POST of valid data when toggle is $isHnsEnabled" in {
+      s"redirect to the next page on POST of valid data $isHnsEnabled" in {
 
         running(_.overrides(
           bind[AuthAction].to(FakeAuthAction),
           bind[UserAnswersService].toInstance(FakeUserAnswersService),
           bind(classOf[Navigator]).qualifiedWith(classOf[TrusteesIndividual]).toInstance(fakeNavigator),
-          bind[DataRetrievalAction].toInstance(retrieval(isHnsEnabled)),
-          bind[FeatureSwitchManagementService].toInstance(new FakeFeatureSwitchManagementService(isHnsEnabled))
+          bind[DataRetrievalAction].toInstance(retrieval(isHnsEnabled = isHnsEnabled)),
+          bind[FeatureSwitchManagementService].to(new FakeFeatureSwitchManagementService(isHnsEnabled))
         )) { implicit app =>
           val request =
             addToken(
@@ -125,15 +122,16 @@ class IndividualAddressListControllerSpec extends ControllerSpecBase with CSRFRe
           redirectLocation(result) mustBe Some(onwardRoute.url)
         }
       }
-
     }
+
     "redirect to Individual Post Code Lookup if no address data on a GET request" in {
 
       running(_.overrides(
         bind[AuthAction].to(FakeAuthAction),
         bind[UserAnswersService].toInstance(FakeUserAnswersService),
         bind[DataRetrievalAction].toInstance(getEmptyData),
-        bind(classOf[Navigator]).qualifiedWith(classOf[TrusteesIndividual]).toInstance(fakeNavigator)
+        bind(classOf[Navigator]).qualifiedWith(classOf[TrusteesIndividual]).toInstance(fakeNavigator),
+        bind[FeatureSwitchManagementService].to(new FakeFeatureSwitchManagementService(false))
       )) { implicit app =>
         val request = addToken(FakeRequest(routes.IndividualAddressListController.onPageLoad(NormalMode, Index(0), None)))
         val result = route(app, request).value
@@ -150,7 +148,8 @@ class IndividualAddressListControllerSpec extends ControllerSpecBase with CSRFRe
         bind[AuthAction].to(FakeAuthAction),
         bind[UserAnswersService].toInstance(FakeUserAnswersService),
         bind[DataRetrievalAction].toInstance(dontGetAnyData),
-        bind(classOf[Navigator]).qualifiedWith(classOf[TrusteesIndividual]).toInstance(fakeNavigator)
+        bind(classOf[Navigator]).qualifiedWith(classOf[TrusteesIndividual]).toInstance(fakeNavigator),
+        bind[FeatureSwitchManagementService].to(new FakeFeatureSwitchManagementService(false))
       )) { implicit app =>
         val request = addToken(FakeRequest(routes.IndividualAddressListController.onPageLoad(NormalMode, Index(0), None)))
         val result = route(app, request).value
@@ -167,7 +166,8 @@ class IndividualAddressListControllerSpec extends ControllerSpecBase with CSRFRe
         bind[AuthAction].to(FakeAuthAction),
         bind[UserAnswersService].toInstance(FakeUserAnswersService),
         bind[DataRetrievalAction].toInstance(dontGetAnyData),
-        bind(classOf[Navigator]).qualifiedWith(classOf[TrusteesIndividual]).toInstance(fakeNavigator)
+        bind(classOf[Navigator]).qualifiedWith(classOf[TrusteesIndividual]).toInstance(fakeNavigator),
+        bind[FeatureSwitchManagementService].to(new FakeFeatureSwitchManagementService(false))
       )) { implicit app =>
         val request =
           addToken(
@@ -189,7 +189,8 @@ class IndividualAddressListControllerSpec extends ControllerSpecBase with CSRFRe
         bind[AuthAction].to(FakeAuthAction),
         bind[UserAnswersService].toInstance(FakeUserAnswersService),
         bind[DataRetrievalAction].toInstance(getEmptyData),
-        bind(classOf[Navigator]).qualifiedWith(classOf[TrusteesIndividual]).toInstance(fakeNavigator)
+        bind(classOf[Navigator]).qualifiedWith(classOf[TrusteesIndividual]).toInstance(fakeNavigator),
+        bind[FeatureSwitchManagementService].to(new FakeFeatureSwitchManagementService(false))
       )) { implicit app =>
         val request =
           addToken(
@@ -204,7 +205,6 @@ class IndividualAddressListControllerSpec extends ControllerSpecBase with CSRFRe
       }
 
     }
-
   }
 
   private def addressListViewModel(addresses: Seq[TolerantAddress]): AddressListViewModel = {
