@@ -19,12 +19,10 @@ package controllers.register.establishers.company.director
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.HasReferenceNumberFormProvider
-import identifiers.register.establishers.EstablishersId
-import identifiers.register.establishers.company.CompanyDetailsId
 import identifiers.register.establishers.company.director.DirectorHasNINOId
-import models.{CompanyDetails, Index, NormalMode}
+import models.{Index, NormalMode}
 import play.api.data.Form
-import play.api.libs.json.{JsObject, Json}
+import play.api.mvc.Call
 import play.api.test.Helpers._
 import services.FakeUserAnswersService
 import utils.FakeNavigator
@@ -78,7 +76,7 @@ class DirectorHasNINOControllerSpec extends ControllerSpecBase {
 object DirectorHasNINOControllerSpec extends ControllerSpecBase {
   private val schemeName = None
 
-  private def onwardRoute = controllers.routes.IndexController.onPageLoad()
+  private def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
   private val formProvider = new HasReferenceNumberFormProvider()
   private val form = formProvider("error", "test company name")
@@ -88,8 +86,8 @@ object DirectorHasNINOControllerSpec extends ControllerSpecBase {
   private val postCall = controllers.register.establishers.company.director.routes.DirectorHasNINOController.onSubmit(NormalMode, establisherIndex, directorIndex, srn)
   private val viewModel = CommonFormWithHintViewModel(
     postCall,
-    title = Message("messages__directorHasNino__title"),
-    heading = Message("messages__directorHasNino__h1", "first last"),
+    title = Message("messages__genericHasNino__title", Message("messages__theDirector").resolve),
+    heading = Message("messages__genericHasNino__h1", "first last"),
     hint = None
   )
 

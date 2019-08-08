@@ -61,7 +61,8 @@ class TrusteeAddressControllerSpec extends ControllerBehaviours {
       bind[UserAnswersService].toInstance(FakeUserAnswersService),
       bind[AuthAction].to(FakeAuthAction),
       bind[DataRetrievalAction].to(retrieval),
-      bind[CountryOptions].to(countryOptions)
+      bind[CountryOptions].to(countryOptions),
+      bind[FeatureSwitchManagementService].to(new FakeFeatureSwitchManagementService(false))
     )
 
   private val controller = builder.build().injector.instanceOf[TrusteeAddressController]
