@@ -1293,7 +1293,7 @@ messages__schemeTaskList__sectionEstablishersCompany_add_contact = Add {0}’s c
 messages__schemeTaskList__sectionEstablishersCompany_add_directors = Add {0}’s directors
 
 messages__schemeTaskList__sectionEstablishersIndividual_add_details = Add {0}’s details
-messages__schemeTaskList__sectionEstablishersIndividual_add_address = Add {0}’s addresses
+messages__schemeTaskList__sectionEstablishersIndividual_add_address = Add {0}’s address
 messages__schemeTaskList__sectionEstablishersIndividual_add_contact = Add {0}’s contact details
 
 messages__schemeTaskList__sectionEstablishersCompany_change_details = Change {0}’s company details
@@ -1302,7 +1302,7 @@ messages__schemeTaskList__sectionEstablishersCompany_change_contact = Change {0}
 messages__schemeTaskList__sectionEstablishersCompany_change_directors = Change {0}’s directors
 
 messages__schemeTaskList__sectionEstablishersIndividual_change_details = Change {0}’s details
-messages__schemeTaskList__sectionEstablishersIndividual_change_address = Change {0}’s addresses
+messages__schemeTaskList__sectionEstablishersIndividual_change_address = Change {0}’s address
 messages__schemeTaskList__sectionEstablishersIndividual_change_contact = Change {0}’s contact details
 
 messages__schemeTaskList__sectionTrustees_header = Trustees
