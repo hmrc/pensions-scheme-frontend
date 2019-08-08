@@ -59,7 +59,7 @@ class AddTrusteeViewSpec extends YesNoViewBehaviours with EntityListBehaviours w
       .asOpt
       .value
 
-  private val trustees: Seq[Trustee[_]] = userAnswers.allTrustees
+  private def trustees(toggled:Boolean): Seq[Trustee[_]] = userAnswers.allTrustees(toggled)
   private val fullTrustees: Seq[TrusteeIndividualEntity] = (0 to 9).map(index => TrusteeIndividualEntity(
     TrusteeDetailsId(index), "trustee name", isDeleted = false, isCompleted = false, isNewEntity = true, 10, Some(SingleTrust.toString)))
 
@@ -74,7 +74,7 @@ class AddTrusteeViewSpec extends YesNoViewBehaviours with EntityListBehaviours w
   private def createViewUsingForm(trustees: Seq[Trustee[_]] = Seq.empty) = (form: Form[Boolean]) =>
     addTrustee(frontendAppConfig, form, NormalMode, trustees, None, None, enableSubmission = true)(fakeRequest, messages)
 
-  "AddTrustee view" must {
+  "AddTrustee view with toggle off" must {
     behave like normalPage(createView(), messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__heading"))
 
     behave like pageWithReturnLink(createView(), getReturnLink)
@@ -82,7 +82,7 @@ class AddTrusteeViewSpec extends YesNoViewBehaviours with EntityListBehaviours w
     behave like pageWithReturnLinkAndSrn(createUpdateView(), getReturnLinkWithSrn)
 
     behave like yesNoPage(
-      createViewUsingForm(trustees),
+      createViewUsingForm(trustees(toggled = false)),
       messageKeyPrefix,
       routes.AddTrusteeController.onSubmit(NormalMode, None).url,
       "_text",
@@ -124,14 +124,25 @@ class AddTrusteeViewSpec extends YesNoViewBehaviours with EntityListBehaviours w
       }
     }
 
-    behave like entityList(createView(), createView(trustees, false), trustees, frontendAppConfig)
+    behave like entityList(createView(), createView(trustees(toggled = false), false), trustees(toggled = false), frontendAppConfig)
 
     "display all the partially added trustee names with yes/No buttons if the maximum trustees are not added yet" in {
-      val doc = asDocument(createView(trustees)())
+      val doc = asDocument(createView(trustees(toggled = false))())
       doc.select("#value-yes").size() mustEqual 1
       doc.select("#value-no").size() mustEqual 1
 
     }
+  }
 
+  "AddTrustee view with toggle on" must {
+    behave like yesNoPage(
+      createViewUsingForm(trustees(toggled = true)),
+      messageKeyPrefix,
+      routes.AddTrusteeController.onSubmit(NormalMode, None).url,
+      "_text",
+      expectedHintKey = Some("_lede")
+    )
+
+    behave like entityList(createView(), createView(trustees(toggled = true), false), trustees(toggled = true), frontendAppConfig)
   }
 }
