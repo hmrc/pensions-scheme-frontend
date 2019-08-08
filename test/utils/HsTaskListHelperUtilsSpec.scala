@@ -20,6 +20,7 @@ import base.SpecBase
 import controllers.register.establishers.company.{routes => establisherCompanyRoutes}
 import controllers.register.trustees.company.{routes => trusteeCompanyRoutes}
 import controllers.register.trustees.individual.{routes => trusteeIndividualRoutes}
+import helpers.DataCompletionHelper
 import identifiers.register.establishers.company.director.DirectorNameId
 import identifiers.register.establishers.company.{CompanyEmailId, CompanyVatId}
 import identifiers.register.establishers.{IsEstablisherNewId, company => establisherCompanyPath}
@@ -157,7 +158,7 @@ class HsTaskListHelperUtilsSpec extends SpecBase with MustMatchers with OptionVa
   }
 }
 
-object HsTaskListHelperUtilsSpec extends SpecBase with OptionValues with CompletionStatusHelper {
+object HsTaskListHelperUtilsSpec extends SpecBase with OptionValues with DataCompletionHelper {
 
   val srn = Some("S123")
   private val fakeFeatureSwitch = new FakeFeatureSwitchManagementService(true)

@@ -20,6 +20,7 @@ import base.SpecBase
 import config.FeatureSwitchManagementService
 import controllers.register.establishers.company.{routes => establisherCompanyRoutes}
 import controllers.register.trustees.company.{routes => trusteeCompanyRoutes}
+import helpers.DataCompletionHelper
 import identifiers.register.establishers.individual.EstablisherDetailsId
 import identifiers.register.establishers.partnership.{PartnershipDetailsId => EstablisherPartnershipDetailsId}
 import identifiers.register.establishers.{IsEstablisherAddressCompleteId, IsEstablisherCompleteId, IsEstablisherNewId, company => establisherCompanyPath}
@@ -36,12 +37,12 @@ import org.scalatest.{MustMatchers, OptionValues}
 import play.api.libs.json.JsResult
 import utils.DataCompletionSpec.readJsonFromFile
 import utils.hstasklisthelper.HsTaskListHelper
-import utils.{CompletionStatusHelper, FakeFeatureSwitchManagementService, UserAnswers}
+import utils.{FakeFeatureSwitchManagementService, UserAnswers}
 import viewmodels._
 import identifiers.register.establishers.{company => establisherCompanyPath}
 import identifiers.register.trustees.{company => trusteeCompanyPath}
 
-trait HsTaskListHelperBehaviour extends SpecBase with MustMatchers with OptionValues with CompletionStatusHelper {
+trait HsTaskListHelperBehaviour extends SpecBase with MustMatchers with OptionValues with DataCompletionHelper {
 
   protected lazy val beforeYouStartLinkText: String = messages("messages__schemeTaskList__before_you_start_link_text")
   protected lazy val schemeInfoLinkText: String = messages("messages__schemeTaskList__scheme_info_link_text")

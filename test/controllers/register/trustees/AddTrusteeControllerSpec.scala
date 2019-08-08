@@ -19,6 +19,7 @@ package controllers.register.trustees
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.register.trustees.AddTrusteeFormProvider
+import helpers.DataCompletionHelper
 import identifiers.register.trustees.company.CompanyDetailsId
 import identifiers.register.trustees.individual._
 import identifiers.register.trustees.{IsTrusteeNewId, TrusteeKindId, TrusteesId, _}
@@ -33,12 +34,12 @@ import play.api.data.Form
 import play.api.libs.json._
 import play.api.mvc.{Call, Result}
 import play.api.test.Helpers.{contentAsString, _}
-import utils.{CompletionStatusHelper, FakeFeatureSwitchManagementService, FakeNavigator, UserAnswers}
+import utils.{FakeFeatureSwitchManagementService, FakeNavigator, UserAnswers}
 import views.html.register.trustees.addTrustee
 
 import scala.concurrent.Future
 
-class AddTrusteeControllerSpec extends ControllerSpecBase with CompletionStatusHelper {
+class AddTrusteeControllerSpec extends ControllerSpecBase with DataCompletionHelper {
   appRunning()
 
   lazy val trusteeCompanyA: TrusteeCompanyEntity = TrusteeCompanyEntity(

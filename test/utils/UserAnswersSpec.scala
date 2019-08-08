@@ -16,6 +16,7 @@
 
 package utils
 
+import helpers.DataCompletionHelper
 import identifiers.register.establishers.company.director._
 import identifiers.register.establishers.company.{CompanyDetailsId => EstablisherCompanyDetailsId}
 import identifiers.register.establishers.individual.EstablisherDetailsId
@@ -38,7 +39,7 @@ import org.scalatest.{MustMatchers, OptionValues, WordSpec}
 import play.api.libs.json._
 import utils.DataCompletionSpec.readJsonFromFile
 
-class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues with Enumerable.Implicits with CompletionStatusHelper {
+class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues with Enumerable.Implicits with DataCompletionHelper {
 
   import UserAnswersSpec._
 
