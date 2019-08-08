@@ -17,11 +17,24 @@
 package identifiers.register.establishers.company.director
 
 import base.SpecBase
-import models.ReferenceValue
+import models.person.PersonName
+import models.{Link, ReferenceValue}
 import play.api.libs.json.Json
 import utils.UserAnswers
+import viewmodels.{AnswerRow, Message}
 
 class DirectorHasNINOIdSpec extends SpecBase {
+
+  private val personDetails = PersonName("first", "last")
+  private val onwardUrl = "onwardUrl"
+  private val answerRowsWithChangeLinks = Seq(
+    AnswerRow(
+      label = Message("messages__genericHasNino__title", personDetails.fullName),
+      answer = Seq("false"),
+      answerIsMessageKey = false,
+      changeUrl = Some(Link("site.change", onwardUrl, Some(Message("messages__visuallyhidden__trustee__nino_yes_no", personDetails.fullName).resolve)))
+    )
+  )
 
   "Cleanup" when {
 
@@ -58,5 +71,4 @@ class DirectorHasNINOIdSpec extends SpecBase {
       }
     }
   }
-
 }

@@ -17,11 +17,31 @@
 package identifiers.register.trustees.individual
 
 import base.SpecBase
-import models.ReferenceValue
+import identifiers.register.trustees.IsTrusteeNewId
+import models.person.PersonName
+import models.requests.DataRequest
+import models.{Link, NormalMode, ReferenceValue, UpdateMode}
+import org.scalatest.OptionValues
 import play.api.libs.json.Json
+import play.api.mvc.AnyContent
+import play.api.test.FakeRequest
+import uk.gov.hmrc.domain.PsaId
 import utils.UserAnswers
+import utils.checkyouranswers.Ops.toOps
+import viewmodels.{AnswerRow, Message}
 
-class TrusteeHasNINOIdSpec extends SpecBase {
+class TrusteeHasNINOIdSpec extends SpecBase with OptionValues {
+
+  private val onwardUrl = "onwardUrl"
+  private val personDetails = PersonName("first", "last")
+  private val answerRowsWithChangeLinks = Seq(
+    AnswerRow(
+      label = Message("messages__genericHasNino__title", personDetails.fullName).resolve,
+      answer = Seq("site.no"),
+      answerIsMessageKey = true,
+      changeUrl = Some(Link("site.change", onwardUrl, Some(Message("messages__visuallyhidden__trustee__nino_yes_no", personDetails.fullName).resolve)))
+    )
+  )
 
   "Cleanup" when {
     def answers(hasNino: Boolean = true): UserAnswers = UserAnswers(Json.obj())
@@ -54,6 +74,44 @@ class TrusteeHasNINOIdSpec extends SpecBase {
 
       "not remove the data for `TrusteeNoNinoReason`" in {
         result.get(TrusteeNoNINOReasonId(0)) mustBe defined
+      }
+    }
+  }
+
+  "cya" when {
+    def answers: UserAnswers =
+      UserAnswers()
+        .set(TrusteeNameId(0))(personDetails).asOpt.value
+        .set(TrusteeHasNINOId(0))(false).asOpt.value
+
+    "in normal mode" must {
+
+      "return answers rows with change links" in {
+        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
+        implicit val userAnswers: UserAnswers = request.userAnswers
+
+        TrusteeHasNINOId(0).row(onwardUrl, NormalMode) must equal(answerRowsWithChangeLinks)
+      }
+    }
+
+    "in update mode for new trustee" must {
+      val updatedAnswers = answers.set(IsTrusteeNewId(0))(true).asOpt.value
+
+      "return answers rows with change links" in {
+        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", updatedAnswers, PsaId("A0000000"))
+        implicit val userAnswers: UserAnswers = request.userAnswers
+
+        TrusteeHasNINOId(0).row(onwardUrl, UpdateMode) must equal(answerRowsWithChangeLinks)
+      }
+    }
+
+    "in update mode for existing trustee" must {
+
+      "Not return answer rows" in {
+        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
+        implicit val userAnswers: UserAnswers = request.userAnswers
+
+        TrusteeHasNINOId(0).row(onwardUrl, UpdateMode) must equal(Seq.empty[AnswerRow])
       }
     }
   }

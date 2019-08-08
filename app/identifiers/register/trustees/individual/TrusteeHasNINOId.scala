@@ -44,11 +44,11 @@ object TrusteeHasNINOId {
 
     def label(index: Int): Option[String] =
       userAnswers.get(TrusteeNameId(index)) match {
-        case Some(trusteeName) => Some(messages("messages__genericHasNino__title", trusteeName))
+        case Some(trusteeName) => Some(messages("messages__genericHasNino__title", trusteeName.fullName))
         case _                 => Some(messages("messages__genericHasNino__title", messages("messages__theTrustee")))
       }
 
-    def hiddenLabel: Option[String] = Some("messages__visuallyhidden__trustee__nino_yes_no")
+    def hiddenLabel: Option[String] = Some(messages("messages__visuallyhidden__trustee__nino_yes_no"))
 
     new CheckYourAnswers[TrusteeHasNINOId] {
       override def row(id: TrusteeHasNINOId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
