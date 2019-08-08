@@ -24,9 +24,9 @@ import views.html.schemeDetailsTaskList
 import controllers.register.establishers.company.{routes => establisherCompanyRoutes}
 import controllers.register.trustees.company.{routes => trusteeCompanyRoutes}
 
-class SchemeDetailsTaskListViewSpec extends ViewBehaviours {
+class SchemeDetailsTaskListNonHnsViewSpec extends ViewBehaviours {
 
-  import SchemeDetailsTaskListViewSpec._
+  import SchemeDetailsTaskListNonHnsViewSpec._
 
   private def simpleSection(linkId: String, linkUrl: String, linkText: String, statusId: String,
                             notStarted: SchemeDetailsTaskList, inProgress: SchemeDetailsTaskList, completed: SchemeDetailsTaskList) {
@@ -407,7 +407,7 @@ class SchemeDetailsTaskListViewSpec extends ViewBehaviours {
 
 }
 
-object SchemeDetailsTaskListViewSpec extends ViewSpecBase {
+object SchemeDetailsTaskListNonHnsViewSpec extends ViewSpecBase {
   private lazy val beforeYouStartLinkText = messages("messages__schemeTaskList__before_you_start_link_text")
   private lazy val aboutMembersLinkText = messages("messages__schemeTaskList__about_members_link_text")
   private lazy val aboutBenefitsAndInsuranceLinkText = messages("messages__schemeTaskList__about_benefits_and_insurance_link_text")
@@ -467,9 +467,9 @@ object SchemeDetailsTaskListViewSpec extends ViewSpecBase {
       Seq(
         EntitySpoke(Link(messages("messages__schemeTaskList__sectionEstablishersCompany_add_details", "test company"),
           establisherCompanyRoutes.WhatYouWillNeedCompanyDetailsController.onPageLoad(NormalMode, None, 0).url), None),
-        EntitySpoke(Link(messages("messages__schemeTaskList__sectionIndividual_add_address", "test company"),
+        EntitySpoke(Link(messages("messages__schemeTaskList__sectionEstablishersCompany_add_address", "test company"),
           establisherCompanyRoutes.WhatYouWillNeedCompanyAddressController.onPageLoad(NormalMode, None, 0).url), None),
-        EntitySpoke(Link(messages("messages__schemeTaskList__sectionIndividual_add_contact", "test company"),
+        EntitySpoke(Link(messages("messages__schemeTaskList__sectionEstablishersCompany_add_contact", "test company"),
           establisherCompanyRoutes.WhatYouWillNeedCompanyContactDetailsController.onPageLoad(NormalMode, None, 0).url), None),
         EntitySpoke(Link(messages("messages__schemeTaskList__sectionEstablishersCompany_add_directors", "test company"),
           establisherCompanyRoutes.AddCompanyDirectorsController.onPageLoad(NormalMode, None, 0).url, None))
@@ -487,9 +487,9 @@ object SchemeDetailsTaskListViewSpec extends ViewSpecBase {
       Seq(
         EntitySpoke(Link(messages("messages__schemeTaskList__sectionEstablishersCompany_add_details", "test company"),
           trusteeCompanyRoutes.WhatYouWillNeedCompanyDetailsController.onPageLoad(NormalMode, 0, None).url), None),
-        EntitySpoke(Link(messages("messages__schemeTaskList__sectionIndividual_add_address", "test company"),
+        EntitySpoke(Link(messages("messages__schemeTaskList__sectionEstablishersCompany_add_address", "test company"),
           trusteeCompanyRoutes.WhatYouWillNeedCompanyAddressController.onPageLoad(NormalMode, 0, None).url), None),
-        EntitySpoke(Link(messages("messages__schemeTaskList__sectionIndividual_add_contact", "test company"),
+        EntitySpoke(Link(messages("messages__schemeTaskList__sectionEstablishersCompany_add_contact", "test company"),
           trusteeCompanyRoutes.WhatYouWillNeedCompanyContactDetailsController.onPageLoad(NormalMode, 0, None).url), None)
       ),
       Some("test company")),
@@ -524,5 +524,7 @@ object SchemeDetailsTaskListViewSpec extends ViewSpecBase {
   }
 
 }
+
+
 
 

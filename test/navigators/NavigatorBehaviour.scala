@@ -48,7 +48,7 @@ trait NavigatorBehaviour extends PropertyChecks with OptionValues {
   protected val someAddress = Address("line 1", "line 2", None, None, None, "GB")
 
   protected def row(id: TypedIdentifier.PathDependent)(value: id.Data, call: Call, ua: Option[UserAnswers] = None)
-                 (implicit writes: Writes[id.Data]): (id.type, UserAnswers, Call) = {
+                   (implicit writes: Writes[id.Data]): (id.type, UserAnswers, Call) = {
     val userAnswers = ua.fold(UserAnswers())(identity).set(id)(value).asOpt.value
     Tuple3(id, userAnswers, call)
   }
@@ -56,8 +56,8 @@ trait NavigatorBehaviour extends PropertyChecks with OptionValues {
   protected def anyMoreChangesPage: Call = AnyMoreChangesController.onPageLoad(None)
 
   protected def navigatorWithRoutesForMode(mode: Mode)(navigator: Navigator,
-                                             routes: TableFor3[Identifier, UserAnswers, Call],
-                                             srn: Option[String] = None): Unit = {
+                                                       routes: TableFor3[Identifier, UserAnswers, Call],
+                                                       srn: Option[String] = None): Unit = {
     forAll(routes) {
       (id: Identifier, userAnswers: UserAnswers, call: Call) =>
         s"move from $id to $call in ${Mode.jsLiteral.to(mode)} with data: ${userAnswers.toString}" in {

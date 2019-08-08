@@ -24,7 +24,7 @@ import identifiers.register.establishers.partnership.PartnershipDetailsId
 import identifiers.register.trustees.partnership.{PartnershipDetailsId => TrusteePartnershipDetailsId}
 import identifiers.register.trustees.TrusteeKindId
 import identifiers.register.trustees.company.CompanyDetailsId
-import identifiers.register.trustees.individual.TrusteeDetailsId
+import identifiers.register.trustees.individual.{TrusteeDetailsId, TrusteeNameId}
 import models.{NormalMode, UpdateMode}
 import models.register.SchemeType.SingleTrust
 import models.register.establishers.EstablisherKind
@@ -433,8 +433,8 @@ class EntitySpec extends WordSpecLike with MustMatchers with OptionValues {
     }
   }
 
-  "TrusteeIndividualEntity" must {
-    val individualEntity = TrusteeIndividualEntity(
+  "TrusteeIndividualEntityNonHns" must {
+    val individualEntity = TrusteeIndividualEntityNonHns(
       TrusteeDetailsId(index = 1),
       name = "test name",
       isDeleted = false,
@@ -454,7 +454,7 @@ class EntitySpec extends WordSpecLike with MustMatchers with OptionValues {
     }
 
     "have cya link when individual is complete and new" in {
-      val completeIndividualEntity = TrusteeIndividualEntity(
+      val completeIndividualEntity = TrusteeIndividualEntityNonHns(
         TrusteeDetailsId(index = 1),
         name = "test name",
         isDeleted = false,
@@ -469,7 +469,7 @@ class EntitySpec extends WordSpecLike with MustMatchers with OptionValues {
     }
 
     "have cya link when individual is complete and not new" in {
-      val completeIndividualEntity = TrusteeIndividualEntity(
+      val completeIndividualEntity = TrusteeIndividualEntityNonHns(
         TrusteeDetailsId(index = 1),
         name = "test name",
         isDeleted = false,
@@ -501,6 +501,31 @@ class EntitySpec extends WordSpecLike with MustMatchers with OptionValues {
     "have correct delete link with update mode" in {
       val expectedDeleteLink = controllers.register.trustees.routes.ConfirmDeleteTrusteeController.onPageLoad(UpdateMode, 1, TrusteeKind.Individual, None).url
       individualEntity.copy(noOfRecords = 2).deleteLink(UpdateMode, None) mustBe Some(expectedDeleteLink)
+    }
+  }
+
+  "TrusteeIndividualEntity" must {
+    val individualEntity = TrusteeIndividualEntity(
+      TrusteeNameId(trusteeIndex = 1),
+      name = "test name",
+      isDeleted = false,
+      isCompleted = false,
+      isNewEntity = true,
+      1,
+      Some(SingleTrust.toString)
+    )
+
+    "have correct individual index" in {
+      individualEntity.index mustEqual 1
+    }
+
+    "not have edit link" in {
+      individualEntity.editLink(NormalMode, None) mustBe None
+    }
+
+    "have correct delete link" in {
+      val expectedDeleteLink = controllers.register.trustees.routes.ConfirmDeleteTrusteeController.onPageLoad(NormalMode, 1, TrusteeKind.Individual, None).url
+      individualEntity.deleteLink(NormalMode, None) mustBe Some(expectedDeleteLink)
     }
   }
 

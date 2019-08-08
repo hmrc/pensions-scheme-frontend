@@ -17,6 +17,7 @@
 package controllers.register.trustees.individual
 
 import base.CSRFRequest
+import config.FeatureSwitchManagementService
 import services.{FakeUserAnswersService, UserAnswersService}
 import controllers.ControllerSpecBase
 import controllers.actions.{AuthAction, DataRetrievalAction, FakeAuthAction, FakeDataRetrievalAction}
@@ -33,7 +34,7 @@ import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{contentAsString, route, running, status, _}
 import utils.annotations.TrusteesIndividual
-import utils.{FakeNavigator, UserAnswers}
+import utils.{FakeFeatureSwitchManagementService, FakeNavigator, UserAnswers}
 import viewmodels.Message
 import viewmodels.address.AddressListViewModel
 import views.html.address.addressList
@@ -80,7 +81,8 @@ class IndividualAddressListControllerSpec extends ControllerSpecBase with CSRFRe
         bind[AuthAction].to(FakeAuthAction),
         bind[UserAnswersService].toInstance(FakeUserAnswersService),
         bind[DataRetrievalAction].toInstance(dataRetrievalAction),
-        bind(classOf[Navigator]).qualifiedWith(classOf[TrusteesIndividual]).toInstance(fakeNavigator)
+        bind(classOf[Navigator]).qualifiedWith(classOf[TrusteesIndividual]).toInstance(fakeNavigator),
+        bind[FeatureSwitchManagementService].to(new FakeFeatureSwitchManagementService(false))
       )) { implicit app =>
         val request = addToken(FakeRequest(routes.IndividualAddressListController.onPageLoad(NormalMode, Index(0), None)))
         val result = route(app, request).value
@@ -100,7 +102,8 @@ class IndividualAddressListControllerSpec extends ControllerSpecBase with CSRFRe
         bind[AuthAction].to(FakeAuthAction),
         bind[UserAnswersService].toInstance(FakeUserAnswersService),
         bind[DataRetrievalAction].toInstance(getEmptyData),
-        bind(classOf[Navigator]).qualifiedWith(classOf[TrusteesIndividual]).toInstance(fakeNavigator)
+        bind(classOf[Navigator]).qualifiedWith(classOf[TrusteesIndividual]).toInstance(fakeNavigator),
+        bind[FeatureSwitchManagementService].to(new FakeFeatureSwitchManagementService(false))
       )) { implicit app =>
         val request = addToken(FakeRequest(routes.IndividualAddressListController.onPageLoad(NormalMode, Index(0), None)))
         val result = route(app, request).value
@@ -117,7 +120,8 @@ class IndividualAddressListControllerSpec extends ControllerSpecBase with CSRFRe
         bind[AuthAction].to(FakeAuthAction),
         bind[UserAnswersService].toInstance(FakeUserAnswersService),
         bind[DataRetrievalAction].toInstance(dontGetAnyData),
-        bind(classOf[Navigator]).qualifiedWith(classOf[TrusteesIndividual]).toInstance(fakeNavigator)
+        bind(classOf[Navigator]).qualifiedWith(classOf[TrusteesIndividual]).toInstance(fakeNavigator),
+        bind[FeatureSwitchManagementService].to(new FakeFeatureSwitchManagementService(false))
       )) { implicit app =>
         val request = addToken(FakeRequest(routes.IndividualAddressListController.onPageLoad(NormalMode, Index(0), None)))
         val result = route(app, request).value
@@ -134,7 +138,8 @@ class IndividualAddressListControllerSpec extends ControllerSpecBase with CSRFRe
         bind[AuthAction].to(FakeAuthAction),
         bind[UserAnswersService].toInstance(FakeUserAnswersService),
         bind(classOf[Navigator]).qualifiedWith(classOf[TrusteesIndividual]).toInstance(fakeNavigator),
-        bind[DataRetrievalAction].toInstance(dataRetrievalAction)
+        bind[DataRetrievalAction].toInstance(dataRetrievalAction),
+        bind[FeatureSwitchManagementService].to(new FakeFeatureSwitchManagementService(false))
       )) { implicit app =>
         val request =
           addToken(
@@ -155,7 +160,8 @@ class IndividualAddressListControllerSpec extends ControllerSpecBase with CSRFRe
         bind[AuthAction].to(FakeAuthAction),
         bind[UserAnswersService].toInstance(FakeUserAnswersService),
         bind[DataRetrievalAction].toInstance(dontGetAnyData),
-        bind(classOf[Navigator]).qualifiedWith(classOf[TrusteesIndividual]).toInstance(fakeNavigator)
+        bind(classOf[Navigator]).qualifiedWith(classOf[TrusteesIndividual]).toInstance(fakeNavigator),
+        bind[FeatureSwitchManagementService].to(new FakeFeatureSwitchManagementService(false))
       )) { implicit app =>
         val request =
           addToken(
@@ -177,7 +183,8 @@ class IndividualAddressListControllerSpec extends ControllerSpecBase with CSRFRe
         bind[AuthAction].to(FakeAuthAction),
         bind[UserAnswersService].toInstance(FakeUserAnswersService),
         bind[DataRetrievalAction].toInstance(getEmptyData),
-        bind(classOf[Navigator]).qualifiedWith(classOf[TrusteesIndividual]).toInstance(fakeNavigator)
+        bind(classOf[Navigator]).qualifiedWith(classOf[TrusteesIndividual]).toInstance(fakeNavigator),
+        bind[FeatureSwitchManagementService].to(new FakeFeatureSwitchManagementService(false))
       )) { implicit app =>
         val request =
           addToken(
