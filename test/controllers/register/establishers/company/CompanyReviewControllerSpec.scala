@@ -19,9 +19,9 @@ package controllers.register.establishers.company
 import controllers.ControllerSpecBase
 import controllers.actions._
 import controllers.behaviours.ControllerAllowChangeBehaviour
-import identifiers.register.establishers.company.director.{DirectorDetailsId, IsDirectorAddressCompleteId, IsDirectorCompleteId}
-import identifiers.register.establishers.company.{CompanyDetailsId, CompanyPayeId, IsCompanyCompleteId}
-import identifiers.register.establishers.{EstablishersId, IsEstablisherAddressCompleteId, IsEstablisherCompleteId}
+import identifiers.register.establishers.company.director.{DirectorDetailsId, IsDirectorAddressCompleteId}
+import identifiers.register.establishers.company.{CompanyDetailsId, CompanyPayeId}
+import identifiers.register.establishers.{EstablishersId, IsEstablisherAddressCompleteId}
 import identifiers.register.trustees.company.CompanyVatId
 import models._
 import models.person.PersonDetails
@@ -73,53 +73,6 @@ class CompanyReviewControllerSpec extends ControllerSpecBase with ControllerAllo
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
     }
-
-    "set establisher as complete when company is complete and all directors are completed on submit" in {
-      val getRelevantData = new FakeDataRetrievalAction(Some(validData()))
-      val result = controller(getRelevantData).onSubmit(NormalMode, None, index)(fakeRequest)
-      status(result) mustBe SEE_OTHER
-      FakeUserAnswersService.verify(IsEstablisherCompleteId(0), true)
-    }
-
-    "not set establisher as complete when company is not complete but directors are completed" in {
-      FakeUserAnswersService.reset()
-      val validData: JsObject = Json.obj(
-        EstablishersId.toString -> Json.arr(
-          Json.obj(
-            CompanyDetailsId.toString -> companyDetails,
-            "director" -> directors
-          )
-        )
-      )
-      val getRelevantData = new FakeDataRetrievalAction(Some(validData))
-      val result = controller(getRelevantData).onSubmit(NormalMode, None, index)(fakeRequest)
-      status(result) mustBe SEE_OTHER
-      FakeUserAnswersService.verifyNot(IsEstablisherCompleteId(0))
-    }
-
-    "not set establisher as complete when company is complete but directors are not complete" in {
-      FakeUserAnswersService.reset()
-      val getRelevantData = new FakeDataRetrievalAction(Some(validData(isComplete = false)))
-      val result = controller(getRelevantData).onSubmit(NormalMode, None, index)(fakeRequest)
-      status(result) mustBe SEE_OTHER
-      FakeUserAnswersService.verifyNot(IsEstablisherCompleteId(0))
-    }
-
-    "not set establisher as complete when company is complete but directors are not present" in {
-      FakeUserAnswersService.reset()
-      val validData: JsObject = Json.obj(
-        EstablishersId.toString -> Json.arr(
-          Json.obj(
-            CompanyDetailsId.toString -> companyDetails,
-            IsCompanyCompleteId.toString -> true
-          )
-        )
-      )
-      val getRelevantData = new FakeDataRetrievalAction(Some(validData))
-      val result = controller(getRelevantData).onSubmit(NormalMode, None, index)(fakeRequest)
-      status(result) mustBe SEE_OTHER
-      FakeUserAnswersService.verifyNot(IsEstablisherCompleteId(0))
-    }
   }
 }
 
@@ -133,8 +86,7 @@ object CompanyReviewControllerSpec {
   val companyDetails = CompanyDetails(companyName)
 
   def director(lastName: String, isComplete: Boolean = true): JsObject = Json.obj(
-    DirectorDetailsId.toString -> PersonDetails("director", None, lastName, LocalDate.now()),
-    IsDirectorCompleteId.toString -> isComplete
+    DirectorDetailsId.toString -> PersonDetails("director", None, lastName, LocalDate.now())
   )
 
   val directors = Seq(director("a"), director("b"), director("c"))
@@ -143,7 +95,6 @@ object CompanyReviewControllerSpec {
     EstablishersId.toString -> Json.arr(
       Json.obj(
         CompanyDetailsId.toString -> companyDetails,
-        IsCompanyCompleteId.toString -> true,
         CompanyPayeId.toString -> Paye.Yes("paye"),
         CompanyVatId.toString -> Vat.Yes("vat"),
         IsEstablisherAddressCompleteId.toString -> true,

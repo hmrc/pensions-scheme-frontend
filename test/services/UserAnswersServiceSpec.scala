@@ -22,8 +22,6 @@ import config.FrontendAppConfig
 import connectors._
 import identifiers.TypedIdentifier
 import identifiers.register.establishers.IsEstablisherCompleteId
-import identifiers.register.establishers.company.IsCompanyCompleteId
-import identifiers.register.establishers.company.director.{DirectorDetailsId, IsDirectorCompleteId}
 import identifiers.register.establishers.partnership.partner._
 import identifiers.register.establishers.partnership.{IsPartnershipCompleteId, partner}
 import identifiers.register.trustees
@@ -292,22 +290,6 @@ class UserAnswersServiceSpec extends AsyncWordSpec with MustMatchers with Mockit
 
   ".setCompleteForAddress" must {
 
-    "return correct user answers with establisher complete flag and company complete flag if company is complete and all directors are complete" in {
-      val answers = UserAnswers().set(IsDirectorCompleteId(0, 0))(true).flatMap(
-        _.set(DirectorDetailsId(0, 0))(PersonDetails("sr", None, "test", new LocalDate()))).asOpt.value
-      val expectedAnswers = answers.set(IsEstablisherCompleteId(0))(true).flatMap(
-        _.set(IsCompanyCompleteId(0))(true)).asOpt.value
-
-      testServiceEstAndTrustees.setCompleteForAddress(Some(IsCompanyCompleteId(0)), answers, UpdateMode, Some(srn)) mustEqual expectedAnswers
-    }
-
-    "return correct user answers with only company complete flag if company is complete and all directors are not complete" in {
-      val answers = UserAnswers().set(IsDirectorCompleteId(0, 0))(false).flatMap(
-        _.set(DirectorDetailsId(0, 0))(PersonDetails("sr", None, "test", new LocalDate()))).asOpt.value
-      val expectedAnswers = answers.set(IsCompanyCompleteId(0))(true).asOpt.value
-      testServiceEstAndTrustees.setCompleteForAddress(Some(IsCompanyCompleteId(0)), answers, UpdateMode, Some(srn)) mustEqual expectedAnswers
-    }
-
     "return correct user answers with establisher complete flag and partnership complete flag if partnership is complete and all partners are complete" in {
       val answers = UserAnswers().set(IsPartnerCompleteId(0, 0))(true).flatMap(
         _.set(PartnerDetailsId(0, 0))(PersonDetails("sr", None, "test", new LocalDate()))).asOpt.value
@@ -340,23 +322,6 @@ class UserAnswersServiceSpec extends AsyncWordSpec with MustMatchers with Mockit
       val expectedAnswers = answers.set(partner.IsPartnerCompleteId(0, 0))(true).asOpt.value
 
       testServiceEstAndTrustees.setCompleteForAddress(Some(partner.IsPartnerCompleteId(0, 0)), answers, UpdateMode, Some(srn)) mustEqual expectedAnswers
-    }
-
-    "return correct user answers with establisher complete flag if company is complete and all directors are complete" in {
-      val answers = UserAnswers().set(DirectorDetailsId(0, 0))(PersonDetails("sr", None, "test", new LocalDate())).flatMap(
-        _.set(IsCompanyCompleteId(0))(true)
-      ).asOpt.value
-      val expectedAnswers = answers.set(IsEstablisherCompleteId(0))(true).flatMap(_.set(IsDirectorCompleteId(0, 0))(true)).asOpt.value
-
-      testServiceEstAndTrustees.setCompleteForAddress(Some(IsDirectorCompleteId(0, 0)), answers, UpdateMode, Some(srn)) mustEqual expectedAnswers
-    }
-
-    "return correct user answers with only director complete flag if company is not complete but all directors are complete" in {
-      val answers = UserAnswers().set(DirectorDetailsId(0, 0))(PersonDetails("sr", None, "test", new LocalDate())
-      ).asOpt.value
-      val expectedAnswers = answers.set(IsDirectorCompleteId(0, 0))(true).asOpt.value
-
-      testServiceEstAndTrustees.setCompleteForAddress(Some(IsDirectorCompleteId(0, 0)), answers, UpdateMode, Some(srn)) mustEqual expectedAnswers
     }
 
     "return the user answers with establisher complete flag if establisher individual is complete" in {

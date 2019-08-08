@@ -131,10 +131,10 @@ class HsTaskListHelperRegistration(answers: UserAnswers,
   }
 
   protected[utils] def addEstablisherHeader(userAnswers: UserAnswers, mode: Mode, srn: Option[String]): Option[SchemeDetailsTaskListHeader] = {
-    if (userAnswers.allEstablishersAfterDelete(isHnSEnabled).isEmpty) {
+    if (userAnswers.allEstablishersAfterDelete(isHnSEnabled, mode).isEmpty) {
       Some(SchemeDetailsTaskListHeader(None, Some(Link(addEstablisherLinkText,
         controllers.register.establishers.routes.EstablisherKindController.onPageLoad(mode,
-          userAnswers.allEstablishers(isHnSEnabled).size, srn).url)), None))
+          userAnswers.allEstablishers(isHnSEnabled, mode).size, srn).url)), None))
     } else {
       Some(SchemeDetailsTaskListHeader(None, Some(Link(changeEstablisherLinkText,
         controllers.register.establishers.routes.AddEstablisherController.onPageLoad(mode, srn).url)), None))

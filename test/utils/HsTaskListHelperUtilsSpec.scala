@@ -19,16 +19,15 @@ package utils
 import base.SpecBase
 import controllers.register.establishers.company.{routes => establisherCompanyRoutes}
 import controllers.register.trustees.company.{routes => trusteeCompanyRoutes}
-import identifiers.register.establishers.company.director.{DirectorNameId, IsDirectorCompleteId}
-import identifiers.register.establishers.company.{CompanyEmailId, CompanyPhoneId, CompanyVatId}
+import identifiers.register.establishers.company.director.DirectorNameId
+import identifiers.register.establishers.company.{CompanyEmailId, CompanyVatId}
 import identifiers.register.establishers.{IsEstablisherNewId, company => establisherCompanyPath}
+import identifiers.register.trustees.{IsTrusteeNewId, company => trusteeCompanyPath}
 import models.address.Address
 import models.person.PersonName
 import models.{CompanyDetails, EntitySpoke, Link, Mode, NormalMode, UpdateMode, _}
-import identifiers.register.trustees.{IsTrusteeNewId, company => trusteeCompanyPath}
-import models.person.PersonName
-import models._
 import org.scalatest.{MustMatchers, OptionValues}
+import utils.DataCompletionSpec.readJsonFromFile
 import utils.hstasklisthelper.{HsTaskListHelper, HsTaskListHelperRegistration, HsTaskListHelperVariations}
 
 class HsTaskListHelperUtilsSpec extends SpecBase with MustMatchers with OptionValues {
@@ -50,7 +49,7 @@ class HsTaskListHelperUtilsSpec extends SpecBase with MustMatchers with OptionVa
 
       "in subscription journey when all spokes are complete" in {
         subscriptionHelper.getEstablisherCompanySpokes(
-          establisherCompanyWithCompletedDirectors(isComplete = true), NormalMode, None, "test company", 0
+          establisherCompanyWithCompletedDirectors, NormalMode, None, "test company", 0
         ) mustBe expectedCompletedSpokes(NormalMode, None)
       }
 
@@ -68,7 +67,7 @@ class HsTaskListHelperUtilsSpec extends SpecBase with MustMatchers with OptionVa
 
       "in variations journey when all spokes are complete" in {
         subscriptionHelper.getEstablisherCompanySpokes(
-          establisherCompany(isComplete = true), UpdateMode, srn, "test company", 0
+          establisherCompanyWithCompletedDirectors, UpdateMode, srn, "test company", 0
         ) mustBe expectedCompletedSpokes(UpdateMode, srn)
       }
     }
@@ -123,35 +122,24 @@ object HsTaskListHelperUtilsSpec extends SpecBase with OptionValues {
   private val address = Address("line 1", "line 2", Some("line 3"), Some("line 4"), Some("zz11zz"), "GB")
 
   protected def establisherCompanyBlank: UserAnswers = {
-    UserAnswers().set(establisherCompanyPath.CompanyDetailsId(0))(CompanyDetails("test company", false)).flatMap(
+    UserAnswers().set(establisherCompanyPath.CompanyDetailsId(0))(CompanyDetails("test company")).flatMap(
       _.set(IsEstablisherNewId(0))(true)
     )
       .asOpt.value
   }
 
-  protected def establisherCompany(isComplete: Boolean): UserAnswers = {
-    establisherCompanyBlank
-      .set(IsEstablisherNewId(0))(true).flatMap(
-        _.set(establisherCompanyPath.CompanyAddressId(0))(address).flatMap(
-        _.set(establisherCompanyPath.CompanyAddressYearsId(0))(AddressYears.OverAYear).flatMap(
-          _.set(establisherCompanyPath.IsDetailsCompleteId(0))(isComplete).flatMap(
-            _.set(CompanyEmailId(0))("test@test.com").flatMap(
-            _.set(CompanyPhoneId(0))("12345").flatMap(
-            _.set(DirectorNameId(0, 0))(PersonName("Joe", "Bloggs"))
-          )))))).asOpt.value
-  }
-
   protected def establisherCompanyWithPartialData: UserAnswers = {
     establisherCompanyBlank
       .set(CompanyVatId(0))(Vat.Yes("test-vat")).flatMap(
+      _.set(establisherCompanyPath.HasCompanyVATId(0))(true).flatMap(
       _.set(establisherCompanyPath.CompanyAddressId(0))(address).flatMap(
         _.set(CompanyEmailId(0))("test@test.com").flatMap(
             _.set(DirectorNameId(0, 0))(PersonName("Joe", "Bloggs"))
-        ))).asOpt.value
+        )))).asOpt.value
   }
 
   protected def trusteeCompanyBlank: UserAnswers = {
-    UserAnswers().set(trusteeCompanyPath.CompanyDetailsId(0))(CompanyDetails("test company", false)).flatMap(
+    UserAnswers().set(trusteeCompanyPath.CompanyDetailsId(0))(CompanyDetails("test company")).flatMap(
       _.set(IsTrusteeNewId(0))(true)
     )
       .asOpt.value
@@ -165,8 +153,7 @@ object HsTaskListHelperUtilsSpec extends SpecBase with OptionValues {
           _.set(trusteeCompanyPath.IsContactDetailsCompleteId(0))(isComplete)))).asOpt.value
   }
 
-  protected def establisherCompanyWithCompletedDirectors(isComplete: Boolean) = establisherCompany(isComplete)
-    .set(IsDirectorCompleteId(0, 0))(true).asOpt.value
+  protected def establisherCompanyWithCompletedDirectors = UserAnswers(readJsonFromFile("/payloadHnS.json"))
 
   def modeBasedCompletion(mode: Mode, completion: Option[Boolean]): Option[Boolean] = if(mode == NormalMode) completion else None
 

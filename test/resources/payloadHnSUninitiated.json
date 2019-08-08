@@ -1,0 +1,20 @@
+{
+  "schemeName" : "Test Scheme Name",
+  "isBeforeYouStartComplete" : true,
+  "schemeType" : {
+    "name" : "single"
+  },
+  "schemeEstablishedCountry" : "GB",
+  "declarationDuties" : true,
+  "isWorkingKnowledgeComplete" : true,
+  "establishers" : [
+    {
+      "isEstablisherNew": true,
+      "establisherKind": "company",
+      "companyDetails": {
+        "companyName": "Test Company",
+        "isDeleted": false
+      }
+    }
+  ]
+}

@@ -49,14 +49,14 @@ class AddEstablisherController @Inject()(appConfig: FrontendAppConfig,
   def onPageLoad(mode: Mode, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
-        val establishers = request.userAnswers.allEstablishersAfterDelete(fsms.get(Toggles.isEstablisherCompanyHnSEnabled))
+        val establishers = request.userAnswers.allEstablishersAfterDelete(fsms.get(Toggles.isEstablisherCompanyHnSEnabled), mode)
         Future.successful(Ok(addEstablisher(appConfig, formProvider(establishers), mode,
           establishers, existingSchemeName, srn, checkContinueButton(establishers), displayStatus = displayStatus)))
     }
 
   def onSubmit(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
-      val establishers = request.userAnswers.allEstablishersAfterDelete(fsms.get(Toggles.isEstablisherCompanyHnSEnabled))
+      val establishers = request.userAnswers.allEstablishersAfterDelete(fsms.get(Toggles.isEstablisherCompanyHnSEnabled), mode)
       formProvider(establishers).bindFromRequest().fold(
         formWithErrors =>
           Future.successful(BadRequest(addEstablisher(appConfig, formWithErrors, mode,

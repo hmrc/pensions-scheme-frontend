@@ -46,6 +46,7 @@ class PreviousAddressControllerSpec extends ControllerSpecBase with ScalaFutures
   val form = formProvider()
   val firstIndex = Index(0)
   val establisherName: String = "test first name test last name"
+  val heading: Message = "messages__common__confirmPreviousAddress__h1"
 
   val options = Seq(InputOption("territory:AE-AZ", "Abu Dhabi"), InputOption("country:AF", "Afghanistan"))
 
@@ -75,7 +76,7 @@ class PreviousAddressControllerSpec extends ControllerSpecBase with ScalaFutures
         routes.PreviousAddressController.onSubmit(NormalMode, firstIndex, None),
         countryOptions.options,
         Message("messages__establisher_individual_previous_address__title"),
-        Message("messages__establisher_individual_previous_address__title"),
+        Message(heading,establisherName),
         Some(Message(establisherName)),
         Some(Message("messages__establisher_individual_previous_address_lede"))
       ),

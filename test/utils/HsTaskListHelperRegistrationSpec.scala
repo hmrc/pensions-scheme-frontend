@@ -69,7 +69,7 @@ class HsTaskListHelperRegistrationSpec extends HsTaskListHelperBehaviour with En
       helper.taskList.aboutHeader mustBe messages("messages__schemeTaskList__about_scheme_header", schemeName)
     }
   }
-  
+
   "page title" must {
     "display Pension scheme details" in {
       val userAnswers = UserAnswers()
@@ -161,7 +161,7 @@ class HsTaskListHelperRegistrationSpec extends HsTaskListHelperBehaviour with En
   }
 
   "addTrusteeHeader " when {
-    
+
     "toggle is off" must {
       behave like addTrusteeHeaderNonHns(NormalMode, None)
 
@@ -212,32 +212,33 @@ class HsTaskListHelperRegistrationSpec extends HsTaskListHelperBehaviour with En
   def establishersSection(mode: Mode, srn: Option[String]): Unit = {
 
     "return the seq of establishers sub sections for non deleted establishers which are all completed" in {
-      val userAnswers = allEstablishers()
+      val userAnswers = allEstablishers
       val helper = new HsTaskListHelperRegistration(userAnswers, fakeFeatureManagementService())
       helper.establishers(userAnswers, mode, srn) mustBe
-        Seq(SchemeDetailsTaskListEntitySection(Some(true), Seq(EntitySpoke(Link(individualLinkText,
-          controllers.register.establishers.individual.routes.CheckYourAnswersController.onPageLoad(mode, 0, srn).url),
-          Some(true))), Some("firstName lastName")),
-          SchemeDetailsTaskListEntitySection(Some(true), Seq(EntitySpoke(Link(companyLinkText,
-            controllers.register.establishers.company.routes.CompanyReviewController.onPageLoad(mode, srn, 1).url), Some(true))), Some("test company")),
+        Seq(SchemeDetailsTaskListEntitySection(Some(true), Seq(EntitySpoke(Link(companyLinkText,
+            controllers.register.establishers.company.routes.CompanyReviewController.onPageLoad(mode, srn, 0).url), Some(true))), Some("Test company name")),
+          SchemeDetailsTaskListEntitySection(Some(true), Seq(EntitySpoke(Link(individualLinkText,
+            controllers.register.establishers.individual.routes.CheckYourAnswersController.onPageLoad(mode, 1, srn).url),
+            Some(true))), Some("Test individual name")),
           SchemeDetailsTaskListEntitySection(Some(true), Seq(EntitySpoke(Link(partnershipLinkText,
             controllers.register.establishers.partnership.routes.PartnershipReviewController.onPageLoad(mode, 2, srn).url),
-            Some(true))), Some("test partnership"))
+            Some(true))), Some("Test Partnership"))
         )
     }
 
     "return the seq of establishers sub sections for non deleted establishers which are not completed" in {
-      val userAnswers = allEstablishers(isCompleteEstablisher = false)
+      val userAnswers = allEstablishersIncomplete
       val helper = new HsTaskListHelperRegistration(userAnswers, fakeFeatureManagementService())
       helper.establishers(userAnswers, NormalMode, None) mustBe
-        Seq(SchemeDetailsTaskListEntitySection(Some(false), Seq(EntitySpoke(Link(individualLinkText,
-          controllers.register.establishers.individual.routes.EstablisherDetailsController.onPageLoad(mode, 0, srn).url),
-          Some(false))), Some("firstName lastName")),
+        Seq(
           SchemeDetailsTaskListEntitySection(Some(false), Seq(EntitySpoke(Link(companyLinkText,
-            controllers.register.establishers.company.routes.CompanyDetailsController.onPageLoad(mode, srn, 1).url), Some(false))), Some("test company")),
+            controllers.register.establishers.company.routes.CompanyDetailsController.onPageLoad(mode, srn, 0).url), Some(false))), Some("Test company name")),
+          SchemeDetailsTaskListEntitySection(Some(false), Seq(EntitySpoke(Link(individualLinkText,
+            controllers.register.establishers.individual.routes.EstablisherDetailsController.onPageLoad(mode, 1, srn).url),
+            Some(false))), Some("Test individual name")),
           SchemeDetailsTaskListEntitySection(Some(false), Seq(EntitySpoke(Link(partnershipLinkText,
             controllers.register.establishers.partnership.routes.PartnershipDetailsController.onPageLoad(mode, 2, srn).url),
-            Some(false))), Some("test partnership"))
+            Some(false))), Some("Test Partnership"))
         )
     }
 

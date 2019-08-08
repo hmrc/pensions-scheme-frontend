@@ -265,33 +265,35 @@ class HsTaskListHelperVariationsSpec extends HsTaskListHelperBehaviour {
   def establishersSection(): Unit = {
 
     "return the seq of establishers sub sections for non deleted establishers which are all completed" in {
-      val userAnswers = allEstablishers()
+      val userAnswers = allEstablishers
       val helper = new HsTaskListHelperVariations(userAnswers, viewOnly = false, Some("test-srn"), fakeFeatureManagementService)
       helper.establishers(userAnswers, UpdateMode, srn) mustBe
-        Seq(SchemeDetailsTaskListEntitySection(None, Seq(EntitySpoke(Link(
-          messages("messages__schemeTaskList__persons_details__link_text", "firstName lastName"),
-          controllers.register.establishers.individual.routes.CheckYourAnswersController.onPageLoad(UpdateMode, 0, srn).url), None)), None),
+        Seq(
           SchemeDetailsTaskListEntitySection(None, Seq(EntitySpoke(Link(
-            messages("messages__schemeTaskList__persons_details__link_text", "test company"),
-            controllers.register.establishers.company.routes.CompanyReviewController.onPageLoad(UpdateMode, srn, 1).url), None)), None),
+            messages("messages__schemeTaskList__persons_details__link_text", "Test company name"),
+            controllers.register.establishers.company.routes.CompanyReviewController.onPageLoad(UpdateMode, srn, 0).url), None)), None),
           SchemeDetailsTaskListEntitySection(None, Seq(EntitySpoke(Link(
-            messages("messages__schemeTaskList__persons_details__link_text", "test partnership"),
+          messages("messages__schemeTaskList__persons_details__link_text", "Test individual name"),
+          controllers.register.establishers.individual.routes.CheckYourAnswersController.onPageLoad(UpdateMode, 1, srn).url), None)), None),
+          SchemeDetailsTaskListEntitySection(None, Seq(EntitySpoke(Link(
+            messages("messages__schemeTaskList__persons_details__link_text", "Test Partnership"),
             controllers.register.establishers.partnership.routes.PartnershipReviewController.onPageLoad(UpdateMode, 2, srn).url), None)), None)
         )
     }
 
     "return the seq of establishers sub sections for non deleted establishers which are not completed" in {
-      val userAnswers = allEstablishers(isCompleteEstablisher = false)
+      val userAnswers = allEstablishersIncomplete
       val helper = new HsTaskListHelperVariations(userAnswers, viewOnly = false, Some("test-srn"), fakeFeatureManagementService)
       helper.establishers(userAnswers, UpdateMode, srn) mustBe
-        Seq(SchemeDetailsTaskListEntitySection(None, Seq(EntitySpoke(Link(
-          messages("messages__schemeTaskList__persons_details__link_text", "firstName lastName"),
-          controllers.register.establishers.individual.routes.EstablisherDetailsController.onPageLoad(UpdateMode, 0, srn).url), None)), None),
+        Seq(
           SchemeDetailsTaskListEntitySection(None, Seq(EntitySpoke(Link(
-            messages("messages__schemeTaskList__persons_details__link_text", "test company"),
-            controllers.register.establishers.company.routes.CompanyDetailsController.onPageLoad(UpdateMode, srn, 1).url), None)), None),
+            messages("messages__schemeTaskList__persons_details__link_text", "Test company name"),
+            controllers.register.establishers.company.routes.CompanyDetailsController.onPageLoad(UpdateMode, srn, 0).url), None)), None),
           SchemeDetailsTaskListEntitySection(None, Seq(EntitySpoke(Link(
-            messages("messages__schemeTaskList__persons_details__link_text", "test partnership"),
+          messages("messages__schemeTaskList__persons_details__link_text", "Test individual name"),
+          controllers.register.establishers.individual.routes.EstablisherDetailsController.onPageLoad(UpdateMode, 1, srn).url), None)), None),
+          SchemeDetailsTaskListEntitySection(None, Seq(EntitySpoke(Link(
+            messages("messages__schemeTaskList__persons_details__link_text", "Test Partnership"),
             controllers.register.establishers.partnership.routes.PartnershipDetailsController.onPageLoad(UpdateMode, 2, srn).url), None)), None)
         )
     }

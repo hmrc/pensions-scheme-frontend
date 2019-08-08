@@ -54,7 +54,7 @@ class AdviserAddressController @Inject()(
 
   private[controllers] val postCall = AdviserAddressController.onSubmit _
   private[controllers] val title: Message = "messages__confirmAdviserAddress__title"
-  private[controllers] def heading(adviserName: String): Message = Message("messages__confirmAdviserAddress__heading", adviserName)
+  private[controllers] def heading(adviserName: String): Message = Message("messages__common__confirmAddress__h1", adviserName)
   private[controllers] val secondary: Message = "messages__adviserAddress__secondary"
   private[controllers] val hint = None
 
