@@ -45,9 +45,9 @@ trait ReasonController extends FrontendController with Retrievals with I18nSuppo
   def get(id: TypedIdentifier[String], viewmodel: ReasonViewModel, form: Form[String])
          (implicit request: DataRequest[AnyContent]): Future[Result] = {
     val preparedForm = request.userAnswers.get(id) match {
-        case Some(reason) => form.fill(reason)
-        case _ => form
-      }
+      case Some(reason) => form.fill(reason)
+      case _ => form
+    }
 
     Future.successful(Ok(reason(appConfig, preparedForm, viewmodel, existingSchemeName)))
   }

@@ -1423,9 +1423,6 @@ messages__membership_pension_regulator__h1 = The scheme details will be shared w
 messages__membership_pension_regulator__p1 = HMRC will share the scheme and your contact details with The Pensions Regulator.
 messages__membership_pension_regulator__p2 = The Pensions Regulator will contact you to register the scheme with them.
 
-messages__established_country__title = Which country was the scheme established in?
-messages__established_country__h1 = Which country was {0} established in?
-
 messages__what_you_will_need_bank_details__title = Bank details
 messages__what_you_will_need_bank_details__h1 = Bank details
 messages__what_you_will_need_bank_details__p1 = You will need to tell us if the scheme has a bank account.
