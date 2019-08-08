@@ -35,7 +35,8 @@ class TrusteesIndividualNavigator @Inject()(val dataCacheConnector: UserAnswersC
     case id@TrusteeHasNINOId(index) => booleanNav(id, ua, mode, index, srn, ninoPage, noNinoReasonPage)
     case TrusteeNewNinoId(index) => trusteeHasUtrPage(mode, index, srn)
     case TrusteeNoNINOReasonId(index) => trusteeHasUtrPage(mode, index, srn)
-//    case TrusteeNoUTRReasonId(index) => cyaAddressPage(mode, index, srn)
+    case id@TrusteeHasUTRId(index) => booleanNav(id, ua, mode, index, srn, utrPage, noUtrReasonPage)
+    case TrusteeNoUTRReasonId(index) => cyaIndividualDetailsPage(mode, index, srn)
 
   }
 
@@ -58,5 +59,9 @@ object TrusteesIndividualNavigator {
 
   private def noNinoReasonPage(mode: Mode, index: Int, srn: Option[String]): Call = TrusteeNoNINOReasonController.onPageLoad(mode, index, srn)
 
-  private def cyaAddressPage(mode: Mode, index: Int, srn: Option[String]): Call = CheckYourAnswersIndividualDetailsController.onPageLoad(journeyMode(mode), index, None)
+  private def utrPage(mode: Mode, index: Int, srn: Option[String]): Call = TrusteeUTRController.onPageLoad(mode, index, None)
+  private def noUtrReasonPage(mode: Mode, index: Int, srn: Option[String]): Call = TrusteeNoUTRReasonController.onPageLoad(mode, index, None)
+
+
+  private def cyaIndividualDetailsPage(mode: Mode, index: Int, srn: Option[String]): Call = CheckYourAnswersIndividualDetailsController.onPageLoad(journeyMode(mode), index, None)
 }
