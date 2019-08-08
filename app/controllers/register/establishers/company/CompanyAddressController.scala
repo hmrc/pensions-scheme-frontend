@@ -53,7 +53,7 @@ class CompanyAddressController @Inject()(
 
   private[controllers] val postCall = routes.CompanyAddressController.onSubmit _
   private[controllers] val title: Message = "messages__establisherConfirmAddress__title"
-  private[controllers] val heading: Message = "messages__establisherConfirmAddress__h1"
+  private[controllers] val heading: Message = "messages__common__confirmAddress__h1"
   private[controllers] val hint: Message = "messages__establisherConfirmAddress__lede"
 
   protected val form: Form[Address] = formProvider()

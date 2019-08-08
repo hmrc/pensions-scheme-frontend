@@ -20,12 +20,11 @@ import base.JsonFileReader
 import helpers.DataCompletionHelper
 import identifiers.register.establishers.company._
 import identifiers.register.establishers.company.director.{DirectorHasNINOId, DirectorNewNinoId, DirectorNoNINOReasonId}
-import identifiers.register.trustees.individual.{TrusteeHasUTRId, TrusteeNoUTRReasonId, TrusteeUTRId}
 import models.NormalMode
 import org.scalatest.{MustMatchers, OptionValues, WordSpec}
 import play.api.libs.json.JsValue
 
-class DataCompletionSpec extends WordSpec with MustMatchers with OptionValues with Enumerable.Implicits {
+class DataCompletionSpec extends WordSpec with MustMatchers with OptionValues with Enumerable.Implicits  {
 
   import DataCompletionSpec._
 

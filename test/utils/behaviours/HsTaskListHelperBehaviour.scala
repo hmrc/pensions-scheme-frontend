@@ -21,12 +21,15 @@ import config.FeatureSwitchManagementService
 import controllers.register.establishers.company.{routes => establisherCompanyRoutes}
 import controllers.register.trustees.company.{routes => trusteeCompanyRoutes}
 import helpers.DataCompletionHelper
+import identifiers.register.establishers.company.director.DirectorDetailsId
 import identifiers.register.establishers.individual.EstablisherDetailsId
 import identifiers.register.establishers.partnership.{PartnershipDetailsId => EstablisherPartnershipDetailsId}
 import identifiers.register.establishers.{IsEstablisherAddressCompleteId, IsEstablisherCompleteId, IsEstablisherNewId, company => establisherCompanyPath}
 import identifiers.register.trustees.individual._
+import identifiers.register.trustees.individual.TrusteeDetailsId
+import identifiers.register.trustees.{company => trusteesCompany}
 import identifiers.register.trustees.partnership.{IsPartnershipCompleteId, PartnershipDetailsId => TrusteePartnershipDetailsId}
-import identifiers.register.trustees.{IsTrusteeAddressCompleteId, IsTrusteeCompleteId, IsTrusteeNewId, MoreThanTenTrusteesId, company => trusteesCompany}
+import identifiers.register.trustees.{IsTrusteeAddressCompleteId, IsTrusteeCompleteId, IsTrusteeNewId, MoreThanTenTrusteesId, company => trusteeCompanyPath}
 import identifiers.{IsWorkingKnowledgeCompleteId, _}
 import models._
 import models.person.PersonDetails
@@ -107,14 +110,6 @@ trait HsTaskListHelperBehaviour extends SpecBase with MustMatchers with OptionVa
       helper.addEstablisherHeader(userAnswers, mode, srn).value mustBe
         SchemeDetailsTaskListHeader(None, Some(Link(addEstablisherLinkText,
           controllers.register.establishers.routes.EstablisherKindController.onPageLoad(mode, userAnswers.allEstablishers(isHnSEnabled, mode).size, srn).url)), None)
-    }
-
-    "return the link to establisher kind page when no establishers are added with toggle ON" in {
-      val userAnswers = UserAnswers()
-      val helper = createTaskListHelper(userAnswers, fakeFeatureManagementServiceToggleON)
-      helper.addEstablisherHeader(userAnswers, mode, srn).value mustBe
-        SchemeDetailsTaskListHeader(None, Some(Link(addEstablisherLinkText,
-          controllers.register.establishers.routes.EstablisherKindController.onPageLoad(mode, userAnswers.allEstablishers(true, mode).size, srn).url)), None)
     }
 
     "return the link to add establisher page when establishers are added " in {
@@ -492,7 +487,6 @@ trait HsTaskListHelperBehaviour extends SpecBase with MustMatchers with OptionVa
     helper.declarationSection(userAnswers).foreach(_.declarationLink mustBe None)
 
   protected def allEstablishers: UserAnswers = UserAnswers(readJsonFromFile("/payload.json"))
-
   protected def allEstablishersIncomplete: UserAnswers = UserAnswers(readJsonFromFile("/payloadIncomplete.json"))
 
   protected def trusteeCompany(isCompleteTrustee: Boolean = true): UserAnswers = {

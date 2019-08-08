@@ -26,21 +26,22 @@ import play.api.libs.json.Reads
 
 trait DataCompletion {
 
+
   self: UserAnswers =>
 
   //GENERIC METHODS
   def isComplete(list: Seq[Option[Boolean]]): Option[Boolean] =
-    if (list.flatten.isEmpty) None
+    if(list.flatten.isEmpty) None
     else
       Some(list.foldLeft(true)({
-        case (acc, Some(true)) => acc
+        case (acc , Some(true)) => acc
         case (_, Some(false)) => false
         case (_, None) => false
       }))
 
   def isListComplete(list: Seq[Boolean]): Boolean =
     list.nonEmpty & list.foldLeft(true)({
-      case (acc, true) => acc
+      case (acc , true) => acc
       case (_, false) => false
     })
 
@@ -70,8 +71,8 @@ trait DataCompletion {
     }
 
   def isAnswerComplete(yesNoQuestionId: TypedIdentifier[Boolean],
-                       yesValueId: TypedIdentifier[ReferenceValue],
-                       noReasonIdOpt: Option[TypedIdentifier[String]]): Option[Boolean] =
+                              yesValueId: TypedIdentifier[ReferenceValue],
+                              noReasonIdOpt: Option[TypedIdentifier[String]]): Option[Boolean] =
     (get(yesNoQuestionId), get(yesValueId), noReasonIdOpt) match {
       case (None, _, _) => None
       case (Some(true), Some(_), _) => Some(true)
@@ -98,15 +99,15 @@ trait DataCompletion {
 
 
   //ESTABLISHER COMPANY
-  def isEstablisherCompanyDetailsComplete(index: Int, mode: Mode): Option[Boolean] =
-    isComplete(
-      Seq(
-        isAnswerComplete(HasCompanyNumberId(index), CompanyRegistrationNumberVariationsId(index), Some(NoCompanyNumberId(index))),
-        isUtrComplete(HasCompanyUTRId(index), CompanyUTRId(index), NoCompanyUTRId(index)),
-        isAnswerComplete(HasCompanyVATId(index), CompanyVatVariationsId(index), None),
-        isAnswerComplete(HasCompanyPAYEId(index), CompanyPayeVariationsId(index), None)
-      ) ++ (if (mode == NormalMode) Seq(isAnswerComplete(IsCompanyDormantId(index))) else Nil)
-    )
+   def isEstablisherCompanyDetailsComplete(index: Int, mode: Mode): Option[Boolean] =
+     isComplete(
+       Seq(
+         isAnswerComplete(HasCompanyNumberId(index), CompanyRegistrationNumberVariationsId(index), Some(NoCompanyNumberId(index))),
+         isUtrComplete(HasCompanyUTRId(index), CompanyUTRId(index), NoCompanyUTRId(index)),
+         isAnswerComplete(HasCompanyVATId(index), CompanyVatVariationsId(index), None),
+         isAnswerComplete(HasCompanyPAYEId(index), CompanyPayeVariationsId(index), None)
+       ) ++ (if (mode == NormalMode) Seq(isAnswerComplete(IsCompanyDormantId(index))) else Nil)
+     )
 
   def isEstablisherCompanyAddressComplete(index: Int): Option[Boolean] =
     isAddressComplete(CompanyAddressId(index), CompanyPreviousAddressId(index), CompanyAddressYearsId(index), Some(HasBeenTradingCompanyId(index)))
@@ -121,7 +122,7 @@ trait DataCompletion {
       get(CompanyUniqueTaxReferenceId(index)).isDefined | get(CompanyUTRId(index)).isDefined,
       get(CompanyVatId(index)).isDefined | get(CompanyVatVariationsId(index)).isDefined,
       get(CompanyPayeId(index)).isDefined | get(CompanyPayeVariationsId(index)).isDefined,
-      if (mode == NormalMode) get(IsCompanyDormantId(index)).isDefined else true,
+      if(mode==NormalMode) get(IsCompanyDormantId(index)).isDefined else true,
       isAddressComplete(CompanyAddressId(index), CompanyPreviousAddressId(index), CompanyAddressYearsId(index), None).getOrElse(false),
       get(CompanyContactDetailsId(index)).isDefined
     ))

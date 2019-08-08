@@ -302,8 +302,8 @@ class HsTaskListHelperVariationsSpec extends HsTaskListHelperBehaviour {
             messages("messages__schemeTaskList__persons_details__link_text", "Test company name"),
             controllers.register.establishers.company.routes.CompanyDetailsController.onPageLoad(UpdateMode, srn, 0).url), None)), None),
           SchemeDetailsTaskListEntitySection(None, Seq(EntitySpoke(Link(
-            messages("messages__schemeTaskList__persons_details__link_text", "Test individual name"),
-            controllers.register.establishers.individual.routes.EstablisherDetailsController.onPageLoad(UpdateMode, 1, srn).url), None)), None),
+          messages("messages__schemeTaskList__persons_details__link_text", "Test individual name"),
+          controllers.register.establishers.individual.routes.EstablisherDetailsController.onPageLoad(UpdateMode, 1, srn).url), None)), None),
           SchemeDetailsTaskListEntitySection(None, Seq(EntitySpoke(Link(
             messages("messages__schemeTaskList__persons_details__link_text", "Test Partnership"),
             controllers.register.establishers.partnership.routes.PartnershipDetailsController.onPageLoad(UpdateMode, 2, srn).url), None)), None)

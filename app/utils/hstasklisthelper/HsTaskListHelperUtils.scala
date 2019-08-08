@@ -23,6 +23,7 @@ import controllers.register.trustees.company.{routes => trusteeCompanyRoutes}
 import controllers.register.trustees.individual.{routes => trusteeIndividualRoutes}
 import identifiers.register.establishers.IsEstablisherNewId
 import identifiers.register.establishers.IsEstablisherNewId
+import identifiers.register.establishers.IsEstablisherNewId
 import identifiers.register.trustees.{IsTrusteeNewId, company => trusteeCompany}
 import models._
 import models.register.Entity
