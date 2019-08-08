@@ -43,6 +43,7 @@ import services.{FakeUserAnswersService, UserAnswersService}
 import utils.{CountryOptions, FakeNavigator, InputOption}
 import viewmodels.address.ManualAddressViewModel
 import views.html.address.manualAddress
+import viewmodels.Message
 
 class PartnerPreviousAddressControllerSpec extends ControllerSpecBase with MockitoSugar with ScalaFutures with CSRFRequest with OptionValues {
 
@@ -87,7 +88,7 @@ class PartnerPreviousAddressControllerSpec extends ControllerSpecBase with Mocki
             controller.postCall(NormalMode, establisherIndex, partnerIndex, None),
             countryOptions.options,
             controller.title,
-            controller.heading,
+            Message(controller.heading,partnerDetails.fullName),
             secondaryHeader = Some(partnerDetails.fullName)
           )
 

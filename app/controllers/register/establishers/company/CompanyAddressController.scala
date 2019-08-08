@@ -30,8 +30,8 @@ import play.api.data._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
-import utils.annotations.EstablishersCompany
 import utils.CountryOptions
+import utils.annotations.EstablishersCompany
 import viewmodels.Message
 import viewmodels.address.ManualAddressViewModel
 
@@ -53,7 +53,7 @@ class CompanyAddressController @Inject()(
 
   private[controllers] val postCall = routes.CompanyAddressController.onSubmit _
   private[controllers] val title: Message = "messages__establisherConfirmAddress__title"
-  private[controllers] val heading: Message = "messages__establisherConfirmAddress__h1"
+  private[controllers] val heading: Message = "messages__common__confirmAddress__h1"
   private[controllers] val hint: Message = "messages__establisherConfirmAddress__lede"
 
   protected val form: Form[Address] = formProvider()
@@ -86,7 +86,7 @@ class CompanyAddressController @Inject()(
     implicit request =>
       viewmodel(index, mode, srn).retrieve.right.map {
         vm =>
-          post(CompanyAddressId(index), CompanyAddressListId(index), vm, mode, context(vm), CompanyPostCodeLookupId(index), Some(IsAddressCompleteId(index)))
+          post(CompanyAddressId(index), CompanyAddressListId(index), vm, mode, context(vm), CompanyPostCodeLookupId(index), None)
       }
   }
 

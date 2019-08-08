@@ -19,9 +19,8 @@ package controllers.register.establishers.company
 import controllers.ControllerSpecBase
 import controllers.actions._
 import controllers.behaviours.ControllerAllowChangeBehaviour
-import identifiers.register.establishers.company._
-import models._
 import models.Mode.checkMode
+import models._
 import models.address.Address
 import play.api.mvc.Call
 import play.api.test.Helpers._
@@ -68,12 +67,6 @@ class CheckYourAnswersCompanyAddressControllerSpec extends ControllerSpecBase wi
         val result = controller().onSubmit(NormalMode, None, index)(fakeRequest)
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(onwardRoute.url)
-      }
-
-      "mark company address as complete" in {
-        val result = controller().onSubmit(NormalMode, None, index)(fakeRequest)
-        status(result) mustBe SEE_OTHER
-        FakeUserAnswersService.verify(IsAddressCompleteId(index), true)
       }
 
       behave like changeableController(

@@ -193,8 +193,7 @@ class CompanyPreviousAddressListControllerSpec extends ControllerSpecBase with C
       routes.CompanyPreviousAddressController.onPageLoad(NormalMode, Index(0), None),
       addresses,
       title = previousAddressTitle,
-      heading = previousAddressHeading,
-      subHeading = Some(Message(companyDetails.companyName))
+      heading = previousAddressHeading
     )
   }
 }

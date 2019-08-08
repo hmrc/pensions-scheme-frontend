@@ -56,7 +56,7 @@ class DirectorAddressController @Inject()(
 
   private[controllers] val postCall = DirectorAddressController.onSubmit _
   private[controllers] val title: Message = "messages__directorAddressConfirm__title"
-  private[controllers] val heading: Message = "messages__directorAddressConfirm__heading"
+  private[controllers] val heading: Message = "messages__common__confirmAddress__h1"
   private[controllers] val hint: Message = "messages__directorAddressPostcodeLookup__lede"
 
   protected val form: Form[Address] = formProvider()

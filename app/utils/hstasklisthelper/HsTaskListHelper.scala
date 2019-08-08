@@ -128,7 +128,7 @@ abstract class HsTaskListHelper(answers: UserAnswers,
       userAnswers.get(IsAboutBankDetailsCompleteId),
       userAnswers.get(IsAboutBenefitsAndInsuranceCompleteId),
       userAnswers.get(IsWorkingKnowledgeCompleteId),
-      Some(isAllEstablishersCompleted(userAnswers)),
+      Some(isAllEstablishersCompleted(userAnswers, NormalMode)),
       Some(isTrusteeOptional | isAllTrusteesCompleted(userAnswers)),
       Some(userAnswers.allTrusteesAfterDelete.size < 10 || userAnswers.get(MoreThanTenTrusteesId).isDefined)
     ).forall(_.contains(true))
@@ -152,12 +152,12 @@ abstract class HsTaskListHelper(answers: UserAnswers,
     userAnswers.allTrusteesAfterDelete.nonEmpty && userAnswers.allTrusteesAfterDelete.forall(_.isCompleted)
   }
 
-  protected def isAllEstablishersCompleted(userAnswers: UserAnswers): Boolean = {
-    userAnswers.allEstablishersAfterDelete(isHnSEnabled).nonEmpty && userAnswers.allEstablishersAfterDelete(isHnSEnabled).forall(_.isCompleted)
+  protected def isAllEstablishersCompleted(userAnswers: UserAnswers, mode: Mode): Boolean = {
+    userAnswers.allEstablishersAfterDelete(isHnSEnabled, mode).nonEmpty && userAnswers.allEstablishersAfterDelete(isHnSEnabled, mode).forall(_.isCompleted)
   }
 
   protected[utils] def establishers(userAnswers: UserAnswers, mode: Mode, srn: Option[String]): Seq[SchemeDetailsTaskListEntitySection] = {
-    val sections = userAnswers.allEstablishers(isHnSEnabled)
+    val sections = userAnswers.allEstablishers(isHnSEnabled, mode)
     val notDeletedElements = for ((section, _) <- sections.zipWithIndex) yield {
       if (section.isDeleted) None else {
         section.id match {
@@ -175,7 +175,8 @@ abstract class HsTaskListHelper(answers: UserAnswers,
               Some(section.name))
             )
 
-          case _ => Some(SchemeDetailsTaskListEntitySection(
+          case _ =>
+            Some(SchemeDetailsTaskListEntitySection(
             None,
             Seq(EntitySpoke(Link(messages("messages__schemeTaskList__persons_details__link_text", section.name),
               section.editLink(UpdateMode, srn).getOrElse(controllers.routes.SessionExpiredController.onPageLoad().url)), None)),

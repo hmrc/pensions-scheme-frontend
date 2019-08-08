@@ -186,8 +186,7 @@ class CompanyAddressListControllerSpec extends ControllerSpecBase with CSRFReque
     AddressListViewModel(
       routes.CompanyAddressListController.onSubmit(NormalMode, Index(0), None),
       routes.CompanyAddressController.onPageLoad(NormalMode, Index(0), None),
-      addresses,
-      subHeading = Some(Message(companyDetails.companyName))
+      addresses
     )
   }
 

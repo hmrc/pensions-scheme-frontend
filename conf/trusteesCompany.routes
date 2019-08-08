@@ -212,3 +212,4 @@ GET         /:index/company/change/enter-unique-taxpayer-reference              
 POST        /:index/company/change/enter-unique-taxpayer-reference                       controllers.register.trustees.company.CompanyUTRController.onSubmit(mode: Mode = CheckMode, srn: Option[String] = None, index: Index)
 GET         /:index/company/:mode/enter-unique-taxpayer-reference/:srn                   controllers.register.trustees.company.CompanyUTRController.onPageLoad(mode: Mode, srn: Option[String], index: Index)
 POST        /:index/company/:mode/enter-unique-taxpayer-reference/:srn                   controllers.register.trustees.company.CompanyUTRController.onSubmit(mode: Mode, srn: Option[String], index: Index)
+

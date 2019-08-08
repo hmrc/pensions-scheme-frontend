@@ -68,9 +68,7 @@ class EstablisherKindIdSpec extends WordSpec with MustMatchers with OptionValues
         result.get(DirectorDetailsId(0, 0)) mustNot be(defined)
         result.get(DirectorDetailsId(0, 1)) mustNot be(defined)
       }
-      "remove the data for `IsCompanyComplete`" in {
-        result.get(IsCompanyCompleteId(0)) mustNot be(defined)
-      }
+
       "not remove the data for `EstablisherDetails`" in {
         result.get(EstablisherDetailsId(0)) mustBe defined
       }
@@ -197,7 +195,6 @@ object EstablisherKindIdSpec extends OptionValues with Enumerable.Implicits {
     .flatMap(_.set(CompanyPreviousAddressPostcodeLookupId(0))(Seq.empty))
     .flatMap(_.set(CompanyPreviousAddressId(0))(Address("", "", None, None, None, "")))
     .flatMap(_.set(CompanyContactDetailsId(0))(ContactDetails("", "")))
-    .flatMap(_.set(IsCompanyCompleteId(0))(true))
     .flatMap(_.set(DirectorDetailsId(0, 0))(PersonDetails("dir1", None, "", LocalDate.now)))
     .flatMap(_.set(DirectorDetailsId(0, 1))(PersonDetails("dir2", None, "", LocalDate.now)))
     .flatMap(_.set(EstablisherDetailsId(0))(PersonDetails("", None, "", LocalDate.now)))

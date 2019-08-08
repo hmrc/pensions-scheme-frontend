@@ -23,6 +23,7 @@ import forms.NinoNewFormProvider
 import identifiers.register.establishers.EstablisherNewNinoId
 import identifiers.register.establishers.individual.EstablisherDetailsId
 import javax.inject.Inject
+import models.person.PersonDetails
 import models.{Index, Mode}
 import navigators.Navigator
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -46,40 +47,30 @@ class EstablisherNinoNewController @Inject()(
                                  )(implicit val ec: ExecutionContext) extends NinoController with I18nSupport {
 
   private[controllers] val postCall = controllers.register.establishers.individual.routes.EstablisherNinoNewController.onSubmit _
-  private[controllers] val title: Message = "messages__common_nino__title"
-  private[controllers] val heading: Message = "messages__common_nino__h1"
-  private[controllers] val hint: Message = "messages__common__nino_hint"
 
-  private def viewmodel(index: Index,  mode: Mode, srn: Option[String]): Retrieval[NinoViewModel] =
-    Retrieval {
-      implicit request =>
-        EstablisherDetailsId(index).retrieve.right.map {
-          details =>
-            NinoViewModel(
-              postCall(mode, Index(index), srn),
-              title = title,
-              heading = heading,
-              hint = hint,
-              personName = details.fullName,
-              srn = srn
-            )
-        }
-    }
+  private def viewmodel(personDetails: PersonDetails, index: Index,  mode: Mode, srn: Option[String]): NinoViewModel =
+    NinoViewModel(
+      postCall(mode, Index(index), srn),
+      title = Message("messages__common_nino__title"),
+      heading = Message("messages__common_nino__h1", personDetails.fullName),
+      hint = Message("messages__common__nino_hint"),
+      srn = srn
+    )
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
     implicit request =>
-      viewmodel(index, mode, srn).retrieve.right.map {
-        vm =>
-          get(EstablisherNewNinoId(index), formProvider(vm.personName), vm)
+      EstablisherDetailsId(index).retrieve.right.map {
+        details =>
+          get(EstablisherNewNinoId(index), formProvider(details.fullName), viewmodel(details, index, mode, srn))
       }
   }
 
   def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
-      viewmodel(index, mode, srn).retrieve.right.map {
-        vm =>
-          post(EstablisherNewNinoId(index), mode, formProvider(vm.personName), vm)
+      EstablisherDetailsId(index).retrieve.right.map {
+        details =>
+          post(EstablisherNewNinoId(index), mode, formProvider(details.fullName), viewmodel(details, index, mode, srn))
       }
   }
 

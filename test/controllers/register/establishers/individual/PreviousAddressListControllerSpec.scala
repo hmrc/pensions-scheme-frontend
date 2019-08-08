@@ -72,8 +72,7 @@ class PreviousAddressListControllerSpec extends ControllerSpecBase with Enumerab
         routes.PreviousAddressController.onPageLoad(NormalMode, firstIndex, None),
         previousAddresses,
         title = Message("messages__select_the_previous_address__title"),
-        heading = Message("messages__select_the_previous_address__title"),
-        subHeading = Some(establisherName)
+        heading = Message("messages__select_the_previous_address__title")
       ),
       None
     )(fakeRequest, messages).toString

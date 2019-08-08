@@ -152,8 +152,7 @@ object AdviserAddressListControllerSpec extends ControllerSpecBase {
     AddressListViewModel(
       routes.AdviserAddressListController.onSubmit(NormalMode),
       routes.AdviserAddressController.onPageLoad(NormalMode),
-      addresses,
-      subHeading = Some(Message("messages__adviserDetails__secondary_heading"))
+      addresses
     )
   }
 
