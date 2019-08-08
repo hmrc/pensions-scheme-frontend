@@ -18,7 +18,7 @@ package controllers.register.trustees.individual
 
 import audit.testdoubles.StubSuccessfulAuditService
 import audit.{AddressAction, AddressEvent, AuditService}
-import config.FrontendAppConfig
+import config.{FeatureSwitchManagementService, FrontendAppConfig}
 import controllers.actions._
 import controllers.behaviours.ControllerBehaviours
 import identifiers.register.trustees.TrusteesId
@@ -35,8 +35,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.{FakeUserAnswersService, UserAnswersService}
 import utils.annotations.TrusteesIndividual
-import utils.{CountryOptions, FakeNavigator, InputOption}
-import viewmodels.Message
+import utils.{CountryOptions, FakeFeatureSwitchManagementService, FakeNavigator, InputOption}
 import viewmodels.address.ManualAddressViewModel
 
 class TrusteeAddressControllerSpec extends ControllerBehaviours {
@@ -100,7 +99,8 @@ class TrusteeAddressControllerSpec extends ControllerBehaviours {
       bind[AuthAction].to(FakeAuthAction),
       bind[CountryOptions].to(countryOptions),
       bind[DataRetrievalAction].to(retrieval),
-      bind[AuditService].toInstance(fakeAuditService)
+      bind[AuditService].toInstance(fakeAuditService),
+      bind[FeatureSwitchManagementService].to(new FakeFeatureSwitchManagementService(false))
     )) {
       implicit app =>
 
