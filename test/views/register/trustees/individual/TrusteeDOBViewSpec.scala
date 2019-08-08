@@ -57,9 +57,10 @@ class TrusteeDOBViewSpec extends QuestionViewBehaviours[LocalDate] {
     "date.year" -> s"$year"
   )
 
-  "DirectorDOB view" must {
+  "Trustee DOB view" must {
 
-    behave like normalPageWithTitle(createView(), messageKeyPrefix, messages("messages__common__dob"), messages(s"messages__${messageKeyPrefix}__heading", "John Doe"))
+    behave like normalPageWithTitle(createView(), messageKeyPrefix,
+      messages("messages__trusteeIndividualDOB__heading", messages("messages__theTrustee")), messages(s"messages__${messageKeyPrefix}__heading", "John Doe"))
 
     "display an input text box with the correct label and value for day" in {
       val doc = asDocument(createViewUsingForm(form.bind(validData)))

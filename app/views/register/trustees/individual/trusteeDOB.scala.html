@@ -23,7 +23,7 @@
 @(appConfig: FrontendAppConfig, form: Form[_], mode: Mode, schemeName: Option[String], postCall: Call, srn:Option[String], fullName: String)(implicit request: Request[_], messages: Messages)
 
 @main_template(
-    title = messages("messages__common__dob"),
+    title = messages("messages__trusteeIndividualDOB__heading", messages("messages__theTrustee")),
     appConfig = appConfig,
     bodyClasses = None) {
 
