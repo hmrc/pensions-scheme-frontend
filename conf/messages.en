@@ -1593,6 +1593,7 @@ messages__changeTrusteeAddress = Change {0}’s address
 messages__hasBeen1Year = Has {0} been at their address for at least 1 year?
 messages__changeHasBeen1Year = Change whether {0} has been at their address for at least 1 year?
 messages__theTrustee = the trustee
+messages__theDirector = the director
 
 messages__hasBeenTradingCompany__title = Has the establisher been trading for more than a year?
 messages__hasBeenTradingCompany__h1 =  Has {0} been trading for more than a year?
@@ -1725,6 +1726,10 @@ messages__hasDirectorUtr__error__required = Select yes if {0} has a Unique Taxpa
 messages__noDirectorUtr__title = Why does the director not have a UTR?
 messages__noDirectorUtr__heading = Why does {0} not have a UTR?
 messages__noDirectorUtr__cya_fallback = Why does the director not have a UTR?
+
+messages__noGenericUtr__title = Why does {0} not have a UTR?
+messages__noGenericUtr__heading = Why does {0} not have a UTR?
+messages__noGenericUtr__cya_fallback = Why does {0} not have a UTR?
 
 messages__establisherPostCode__title = What is the establisher’s postcode?
 messages__establisherPostCode__h1 = What is {0}’s postcode?

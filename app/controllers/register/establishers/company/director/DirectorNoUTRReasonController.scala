@@ -48,8 +48,8 @@ class DirectorNoUTRReasonController @Inject()(override val appConfig: FrontendAp
   private def viewModel(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String], directorName: String): ReasonViewModel = {
     ReasonViewModel(
       postCall = routes.DirectorNoUTRReasonController.onSubmit(mode, establisherIndex, directorIndex, srn),
-      title = Message("messages__noDirectorUtr__title"),
-      heading = Message("messages__noDirectorUtr__heading", directorName),
+      title = Message("messages__noGenericUtr__title", Message("messages__theDirector")),
+      heading = Message("messages__noGenericUtr__heading", directorName),
       srn = srn
     )
   }

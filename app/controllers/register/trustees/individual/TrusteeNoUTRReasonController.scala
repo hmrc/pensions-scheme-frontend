@@ -17,17 +17,19 @@
 package controllers.register.trustees.individual
 
 import config.FrontendAppConfig
-import controllers.Retrievals
+import controllers.ReasonController
 import controllers.actions._
+import forms.ReasonFormProvider
+import identifiers.register.trustees.individual.{TrusteeNameId, TrusteeNoUTRReasonId}
 import javax.inject.Inject
 import models.{Index, Mode}
 import navigators.Navigator
-import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.data.Form
+import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import utils.Enumerable
 import utils.annotations.TrusteesIndividual
+import viewmodels.{Message, ReasonViewModel}
 
 import scala.concurrent.ExecutionContext
 
@@ -38,15 +40,36 @@ class TrusteeNoUTRReasonController @Inject()(val appConfig: FrontendAppConfig,
                                              authenticate: AuthAction,
                                              getData: DataRetrievalAction,
                                              allowAccess: AllowAccessActionProvider,
-                                             requireData: DataRequiredAction
-                                     )(implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
+                                             requireData: DataRequiredAction,
+                                             formProvider: ReasonFormProvider
+                                            )(implicit val ec: ExecutionContext) extends ReasonController {
+
+  private def form(trusteeName: String): Form[String] = formProvider("messages__reason__error_utrRequired", trusteeName)
+
+  private def viewModel(mode: Mode, index: Index, srn: Option[String], trusteeName: String): ReasonViewModel = {
+    ReasonViewModel(
+      postCall = routes.TrusteeNoUTRReasonController.onSubmit(mode, index, srn),
+      title = Message("messages__noGenericUtr__title", Message("messages__theTrustee")),
+      heading = Message("messages__noGenericUtr__heading", trusteeName),
+      srn = srn
+    )
+  }
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData) {
-      implicit request => NotImplemented("Not implemented: " + this.getClass.toString)
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+      implicit request =>
+        TrusteeNameId(index).retrieve.right.map {
+          trusteeName =>
+            get(TrusteeNoUTRReasonId(index), viewModel(mode, index, srn, trusteeName.fullName), form(trusteeName.fullName))
+        }
     }
 
-  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData) {
-    implicit request => NotImplemented("Not implemented: " + this.getClass.toString)
-  }
+  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen requireData).async {
+      implicit request =>
+        TrusteeNameId(index).retrieve.right.map {
+          trusteeName =>
+            post(TrusteeNoUTRReasonId(index), mode, viewModel(mode, index, srn, trusteeName.fullName), form(trusteeName.fullName))
+        }
+    }
 }
