@@ -79,15 +79,6 @@ class PartnerNinoNewControllerSpec extends ControllerSpecBase {
       )
     )
   )
-  
-  private def viewmodel(srn:Option[String]) = NinoViewModel(
-    postCall = controllers.register.establishers.partnership.partner.routes.PartnerNinoNewController.onSubmit(NormalMode, establisherIndex, partnerIndex, None),
-    title = "messages__partner_yes_nino__title",
-    heading ="messages__common_nino__h1",
-    hint = "messages__common__nino_hint",
-    personName = partnerName,
-    srn = srn
-  )
 
   def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisher): PartnerNinoNewController =
     new PartnerNinoNewController(frontendAppConfig, messagesApi, FakeUserAnswersService, new FakeNavigator(desiredRoute = onwardRoute),
@@ -95,7 +86,17 @@ class PartnerNinoNewControllerSpec extends ControllerSpecBase {
 
   private val postCall = routes.PartnerNinoNewController.onSubmit _
 
-  def viewAsString(form: Form[_] = form): String = nino(frontendAppConfig, form, viewmodel(None), None)(fakeRequest, messages).toString
+  private def viewAsString(form: Form[_] = form): String = {
+    val viewmodel = NinoViewModel(
+      postCall = controllers.register.establishers.partnership.partner.routes.PartnerNinoNewController.onSubmit(NormalMode, establisherIndex, partnerIndex, None),
+      title = messages("messages__partner_yes_nino__title"),
+      heading = messages("messages__common_nino__h1", partnerName),
+      hint = messages("messages__common__nino_hint"),
+      srn = None
+    )
+
+    nino(frontendAppConfig, form, viewmodel, None)(fakeRequest, messages).toString
+  }
 
   "PartnerNino Controller" must {
 

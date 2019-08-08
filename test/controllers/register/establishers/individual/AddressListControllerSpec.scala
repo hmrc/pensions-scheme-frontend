@@ -69,8 +69,7 @@ class AddressListControllerSpec extends ControllerSpecBase with Enumerable.Impli
       AddressListViewModel(
         routes.AddressListController.onSubmit(NormalMode, firstIndex, None),
         routes.AddressController.onPageLoad(NormalMode, firstIndex, None),
-        addresses,
-        subHeading = Some(establisherName)
+        addresses
       ),
       None
     )(fakeRequest, messages).toString

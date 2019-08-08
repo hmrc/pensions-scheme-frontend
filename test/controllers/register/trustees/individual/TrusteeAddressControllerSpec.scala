@@ -68,12 +68,12 @@ class TrusteeAddressControllerSpec extends ControllerBehaviours {
   private val controller = builder.build().injector.instanceOf[TrusteeAddressController]
 
   val viewmodel = ManualAddressViewModel(
-    controller.postCall(NormalMode, firstIndex, None),
-    countryOptions.options,
-    Message(controller.title),
-    Message(controller.heading),
+    postCall = controller.postCall(NormalMode, firstIndex, None),
+    countryOptions = countryOptions.options,
+    title = messages("messages__trustee__individual__address__confirm__title"),
+    heading = messages("messages__trustee__individual__address__confirm__heading", personDetails.fullName),
     secondaryHeader = Some(personDetails.fullName),
-    Some(Message(controller.hint))
+    hint = Some(messages("messages__trustee__individual__address__confirm__lede"))
   )
 
   behave like manualAddress(

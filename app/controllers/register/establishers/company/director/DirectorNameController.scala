@@ -49,7 +49,7 @@ class DirectorNameController @Inject()(
                                         sectionComplete: SectionComplete
                                       )(implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
 
-  private val form = formProvider()
+  private val form = formProvider("messages__error__director")
 
   private def postCall: (Mode, Index, Index, Option[String]) => Call = routes.DirectorNameController.onSubmit _
 

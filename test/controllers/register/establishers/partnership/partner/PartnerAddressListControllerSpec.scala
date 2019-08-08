@@ -190,8 +190,7 @@ class PartnerAddressListControllerSpec extends ControllerSpecBase with CSRFReque
     AddressListViewModel(
       routes.PartnerAddressListController.onSubmit(NormalMode, Index(0), Index(0), None),
       routes.PartnerAddressController.onPageLoad(NormalMode, Index(0), Index(0), None),
-      addresses,
-      subHeading = Some(Message(partnerDetails.fullName))
+      addresses
     )
   }
 
