@@ -31,16 +31,16 @@ trait DataCompletionHelper extends OptionValues {
   private val firstName = "firstName"
   private val lastName = "lastName"
 
-  protected def setTrusteeCompletionStatusIndividualDetails(isComplete: Boolean, toggled: Boolean, index: Int, ua: UserAnswers): UserAnswers =
+  protected def setTrusteeCompletionStatusIndividualDetails(isComplete: Boolean, toggled: Boolean, index: Int = 0, ua: UserAnswers = UserAnswers()): UserAnswers =
     setTrusteeCompletionStatusJsResultIndividualDetails(isComplete, toggled, index, ua).asOpt.value
 
-  protected def setTrusteeCompletionStatusAddressDetails(isComplete: Boolean, toggled: Boolean, index: Int, ua: UserAnswers): UserAnswers =
+  protected def setTrusteeCompletionStatusAddressDetails(isComplete: Boolean, toggled: Boolean, index: Int = 0, ua: UserAnswers = UserAnswers()): UserAnswers =
     setTrusteeCompletionStatusJsResultAddressDetails(isComplete, toggled, index, ua).asOpt.value
 
-  protected def setTrusteeCompletionStatusContactDetails(isComplete: Boolean, toggled: Boolean, index: Int, ua: UserAnswers): UserAnswers =
+  protected def setTrusteeCompletionStatusContactDetails(isComplete: Boolean, toggled: Boolean, index: Int = 0, ua: UserAnswers = UserAnswers()): UserAnswers =
     setTrusteeCompletionStatusJsResultContactDetails(isComplete, toggled, index, ua).asOpt.value
 
-  protected def setTrusteeCompletionStatusJsResultIndividualDetails(isComplete: Boolean, toggled: Boolean, index: Int, ua: UserAnswers): JsResult[UserAnswers] =
+  protected def setTrusteeCompletionStatusJsResultIndividualDetails(isComplete: Boolean, toggled: Boolean, index: Int = 0, ua: UserAnswers = UserAnswers()): JsResult[UserAnswers] =
     if (isComplete) {
       if (toggled) {
         ua.
@@ -69,7 +69,7 @@ trait DataCompletionHelper extends OptionValues {
       }
     }
 
-  protected def setTrusteeCompletionStatusJsResultAddressDetails(isComplete: Boolean, toggled: Boolean, index: Int, ua: UserAnswers): JsResult[UserAnswers] =
+  protected def setTrusteeCompletionStatusJsResultAddressDetails(isComplete: Boolean, toggled: Boolean, index: Int, ua: UserAnswers = UserAnswers()): JsResult[UserAnswers] =
     if (isComplete) {
       ua
         .set(TrusteeAddressId(index))(address).asOpt.value
@@ -79,7 +79,7 @@ trait DataCompletionHelper extends OptionValues {
         .set(TrusteeAddressId(index))(address)
     }
 
-  protected def setTrusteeCompletionStatusJsResultContactDetails(isComplete: Boolean, toggled: Boolean, index: Int, ua: UserAnswers): JsResult[UserAnswers] =
+  protected def setTrusteeCompletionStatusJsResultContactDetails(isComplete: Boolean, toggled: Boolean, index: Int, ua: UserAnswers = UserAnswers()): JsResult[UserAnswers] =
     if (isComplete) {
       if (toggled) {
         ua
@@ -99,11 +99,11 @@ trait DataCompletionHelper extends OptionValues {
       }
     }
 
-  protected def setTrusteeCompletionStatusJsResult(isComplete: Boolean, toggled: Boolean, index: Int, ua: UserAnswers): JsResult[UserAnswers] =
+  protected def setTrusteeCompletionStatusJsResult(isComplete: Boolean, toggled: Boolean, index: Int, ua: UserAnswers = UserAnswers()): JsResult[UserAnswers] =
     setTrusteeCompletionStatusJsResultContactDetails(isComplete, toggled, index,
       setTrusteeCompletionStatusJsResultAddressDetails(isComplete, toggled, index,
         setTrusteeCompletionStatusJsResultIndividualDetails(isComplete, toggled, index, ua).asOpt.value).asOpt.value)
 
-  protected def setTrusteeCompletionStatus(isComplete: Boolean, toggled: Boolean, index: Int, ua: UserAnswers): UserAnswers =
+  protected def setTrusteeCompletionStatus(isComplete: Boolean, toggled: Boolean, index: Int, ua: UserAnswers = UserAnswers()): UserAnswers =
     setTrusteeCompletionStatusJsResult(isComplete, toggled, index, ua).asOpt.value
 }

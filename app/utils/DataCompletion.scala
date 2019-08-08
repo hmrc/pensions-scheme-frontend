@@ -98,15 +98,15 @@ trait DataCompletion {
 
 
   //ESTABLISHER COMPANY
-   def isEstablisherCompanyDetailsComplete(index: Int, mode: Mode): Option[Boolean] =
-     isComplete(
-       Seq(
-         isAnswerComplete(HasCompanyNumberId(index), CompanyRegistrationNumberVariationsId(index), Some(NoCompanyNumberId(index))),
-         isUtrComplete(HasCompanyUTRId(index), CompanyUTRId(index), NoCompanyUTRId(index)),
-         isAnswerComplete(HasCompanyVATId(index), CompanyVatVariationsId(index), None),
-         isAnswerComplete(HasCompanyPAYEId(index), CompanyPayeVariationsId(index), None)
-       ) ++ (if (mode == NormalMode) Seq(isAnswerComplete(IsCompanyDormantId(index))) else Nil)
-     )
+  def isEstablisherCompanyDetailsComplete(index: Int, mode: Mode): Option[Boolean] =
+    isComplete(
+      Seq(
+        isAnswerComplete(HasCompanyNumberId(index), CompanyRegistrationNumberVariationsId(index), Some(NoCompanyNumberId(index))),
+        isUtrComplete(HasCompanyUTRId(index), CompanyUTRId(index), NoCompanyUTRId(index)),
+        isAnswerComplete(HasCompanyVATId(index), CompanyVatVariationsId(index), None),
+        isAnswerComplete(HasCompanyPAYEId(index), CompanyPayeVariationsId(index), None)
+      ) ++ (if (mode == NormalMode) Seq(isAnswerComplete(IsCompanyDormantId(index))) else Nil)
+    )
 
   def isEstablisherCompanyAddressComplete(index: Int): Option[Boolean] =
     isAddressComplete(CompanyAddressId(index), CompanyPreviousAddressId(index), CompanyAddressYearsId(index), Some(HasBeenTradingCompanyId(index)))
@@ -121,7 +121,7 @@ trait DataCompletion {
       get(CompanyUniqueTaxReferenceId(index)).isDefined | get(CompanyUTRId(index)).isDefined,
       get(CompanyVatId(index)).isDefined | get(CompanyVatVariationsId(index)).isDefined,
       get(CompanyPayeId(index)).isDefined | get(CompanyPayeVariationsId(index)).isDefined,
-      if(mode==NormalMode) get(IsCompanyDormantId(index)).isDefined else true,
+      if (mode == NormalMode) get(IsCompanyDormantId(index)).isDefined else true,
       isAddressComplete(CompanyAddressId(index), CompanyPreviousAddressId(index), CompanyAddressYearsId(index), None).getOrElse(false),
       get(CompanyContactDetailsId(index)).isDefined
     ))
@@ -177,30 +177,28 @@ trait DataCompletion {
       isUtrComplete(TrusteeHasUTRId(trusteeIndex), TrusteeUTRId(trusteeIndex), TrusteeNoUTRReasonId(trusteeIndex))
     ))
 
-  def isTrusteeIndividualCompleteHnS(trusteeIndex: Int): Boolean = {
-    isComplete(
-      Seq(
-        isTrusteeIndividualDetailsComplete(trusteeIndex),
-        isAddressComplete(TrusteeAddressId(trusteeIndex), TrusteePreviousAddressId(trusteeIndex), TrusteeAddressYearsId(trusteeIndex), None),
-        isContactDetailsComplete(TrusteeEmailId(trusteeIndex), TrusteePhoneId(trusteeIndex))
-      )
-    ).getOrElse(false)
-  }
-
-  def isTrusteeIndividualCompleteNonHnS(trusteeIndex: Int): Boolean =
-    isListComplete(Seq(
-      get(TrusteeDetailsId(trusteeIndex)).isDefined,
-      get(TrusteeNinoId(trusteeIndex)).isDefined,
-      get(UniqueTaxReferenceId(trusteeIndex)).isDefined,
-      isAddressComplete(TrusteeAddressId(trusteeIndex), TrusteePreviousAddressId(trusteeIndex),
-        TrusteeAddressYearsId(trusteeIndex), None).getOrElse(false),
-      get(TrusteeContactDetailsId(trusteeIndex)).isDefined
-    ))
-
-  def isTrusteeIndividualComplete(isHnSEnabled: Boolean, index:Int):Boolean =
-    if (isHnSEnabled) isTrusteeIndividualCompleteHnS(index) else isTrusteeIndividualCompleteNonHnS(index)
-
-  def isTrusteeIndividualContactDetailsComplete(index: Int): Option[Boolean] = isContactDetailsComplete(TrusteeEmailId(index), TrusteePhoneId(index))
   def isTrusteeIndividualAddressComplete(index: Int): Option[Boolean] =
     isAddressComplete(TrusteeAddressId(index), TrusteePreviousAddressId(index), TrusteeAddressYearsId(index), None)
+
+  def isTrusteeIndividualContactDetailsComplete(index: Int): Option[Boolean] = isContactDetailsComplete(TrusteeEmailId(index), TrusteePhoneId(index))
+
+  def isTrusteeIndividualComplete(isHnSEnabled: Boolean, index: Int): Boolean =
+    if (isHnSEnabled) {
+      isComplete(
+        Seq(
+          isTrusteeIndividualDetailsComplete(index),
+          isTrusteeIndividualAddressComplete(index),
+          isTrusteeIndividualContactDetailsComplete(index)
+        )
+      ).getOrElse(false)
+    } else {
+      isListComplete(Seq(
+        get(TrusteeDetailsId(index)).isDefined,
+        get(TrusteeNinoId(index)).isDefined,
+        get(UniqueTaxReferenceId(index)).isDefined,
+        isAddressComplete(TrusteeAddressId(index), TrusteePreviousAddressId(index),
+          TrusteeAddressYearsId(index), None).getOrElse(false),
+        get(TrusteeContactDetailsId(index)).isDefined
+      ))
+    }
 }

@@ -17,6 +17,7 @@
 package utils
 
 import base.JsonFileReader
+import helpers.DataCompletionHelper
 import identifiers.register.establishers.company._
 import identifiers.register.establishers.company.director.{DirectorHasNINOId, DirectorNewNinoId, DirectorNoNINOReasonId}
 import identifiers.register.trustees.individual.{TrusteeHasUTRId, TrusteeNoUTRReasonId, TrusteeUTRId}
@@ -222,33 +223,85 @@ class DataCompletionSpec extends WordSpec with MustMatchers with OptionValues wi
 
   // TRUSTEE INDIVIDUAL
 
-  "isTrusteeIndividualCompleteNonHnS" must {
+  "isTrusteeIndividualComplete H&S disabled" must {
     "return true when all answers are present" in {
-      UserAnswers(userAnswersCompletedNonHnS).isTrusteeIndividualCompleteNonHnS(0) mustBe true
+      UserAnswers(userAnswersCompletedNonHnS).isTrusteeIndividualComplete(isHnSEnabled = false, 0) mustBe true
     }
 
     "return false when some answer is missing" in {
-      UserAnswers(userAnswersInProgress).isTrusteeIndividualCompleteNonHnS(0) mustBe false
+      UserAnswers(userAnswersInProgress).isTrusteeIndividualComplete(isHnSEnabled = false, 0) mustBe false
     }
   }
 
-  "isTrusteeIndividualCompleteHnS" must {
+  "isTrusteeIndividualComplete H&S enabled" must {
     "return true when all answers are present" in {
-      UserAnswers(userAnswersCompleted).isTrusteeIndividualCompleteHnS(0) mustBe true
+      UserAnswers(userAnswersCompleted).isTrusteeIndividualComplete(isHnSEnabled = true,0) mustBe true
     }
 
     "return false when some answer is missing" in {
-      UserAnswers(userAnswersInProgress).isTrusteeIndividualCompleteHnS(0) mustBe false
+      UserAnswers(userAnswersInProgress).isTrusteeIndividualComplete(isHnSEnabled = true,0) mustBe false
+    }
+  }
+
+  "isTrusteeIndividualDetailsComplete" must {
+    "return None when no answers are present" in {
+      emptyAnswers.isTrusteeIndividualDetailsComplete(0) mustBe None
+    }
+
+    "return Some(true) when all answers are present" in {
+      userAnswersIndividualDetailsCompleted.isTrusteeIndividualDetailsComplete(0) mustBe Some(true)
+    }
+
+    "return Some(false) when some answer is missing" in {
+      userAnswersIndividualDetailsInProgress.isTrusteeIndividualDetailsComplete(0) mustBe Some(false)
+    }
+  }
+
+  "isTrusteeIndividualAddressComplete" must {
+    "return None when no answers are present" in {
+      emptyAnswers.isTrusteeIndividualAddressComplete(0) mustBe None
+    }
+
+    "return Some(true) when all answers are present" in {
+      userAnswersAddressDetailsCompleted.isTrusteeIndividualAddressComplete(0) mustBe Some(true)
+    }
+
+    "return Some(false) when some answer is missing" in {
+      userAnswersAddressDetailsInProgress.isTrusteeIndividualAddressComplete(0) mustBe Some(false)
+    }
+  }
+
+  "isTrusteeIndividualContactDetailsComplete" must {
+    "return None when no answers are present" in {
+      emptyAnswers.isTrusteeIndividualContactDetailsComplete(0) mustBe None
+    }
+
+    "return Some(true) when all answers are present" in {
+      userAnswersContactDetailsCompleted.isTrusteeIndividualContactDetailsComplete(0) mustBe Some(true)
+    }
+
+    "return Some(false) when some answer is missing" in {
+      userAnswersContactDetailsInProgress.isTrusteeIndividualContactDetailsComplete(0) mustBe Some(false)
     }
   }
 }
 
-object DataCompletionSpec extends JsonFileReader {
+object DataCompletionSpec extends JsonFileReader with DataCompletionHelper  {
+  private val mode = NormalMode
+  private val userAnswersCompleted: JsValue = readJsonFromFile("/payloadHnS.json")
+  private val userAnswersInProgress: JsValue = readJsonFromFile("/payloadHnSInProgress.json")
 
-  val mode = NormalMode
-  val userAnswersCompleted: JsValue = readJsonFromFile("/payloadHnS.json")
-  val userAnswersInProgress: JsValue = readJsonFromFile("/payloadHnSInProgress.json")
+  private val userAnswersCompletedNonHnS: JsValue = readJsonFromFile("/payload.json")
+  private val userAnswersUninitiated: JsValue = readJsonFromFile("/payloadHnSUninitiated.json")
 
-  val userAnswersCompletedNonHnS: JsValue = readJsonFromFile("/payload.json")
-  val userAnswersUninitiated: JsValue = readJsonFromFile("/payloadHnSUninitiated.json")
+  private val userAnswersIndividualDetailsCompleted: UserAnswers = setTrusteeCompletionStatusIndividualDetails(isComplete = true, toggled = true)
+  private val userAnswersIndividualDetailsInProgress: UserAnswers = setTrusteeCompletionStatusIndividualDetails(isComplete = false, toggled = true)
+
+  private val userAnswersAddressDetailsCompleted: UserAnswers = setTrusteeCompletionStatusAddressDetails(isComplete = true, toggled = true)
+  private val userAnswersAddressDetailsInProgress: UserAnswers = setTrusteeCompletionStatusAddressDetails(isComplete = false, toggled = true)
+
+  private val userAnswersContactDetailsCompleted: UserAnswers = setTrusteeCompletionStatusContactDetails(isComplete = true, toggled = true)
+  private val userAnswersContactDetailsInProgress: UserAnswers = setTrusteeCompletionStatusContactDetails(isComplete = false, toggled = true)
+
+  private val emptyAnswers = UserAnswers()
 }
