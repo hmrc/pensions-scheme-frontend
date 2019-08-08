@@ -259,11 +259,11 @@ object HsTaskListHelperUtilsSpec extends SpecBase with OptionValues with DataCom
   )
 
   def expectedAddTrusteeIndividualSpokes(mode: Mode, srn: Option[String]): Seq[EntitySpoke] = Seq(
-    EntitySpoke(Link(messages("messages__schemeTaskList__sectionEstablishersIndividual_add_details", "test individual"),
+    EntitySpoke(Link(messages("messages__schemeTaskList__sectionIndividual_add_details", "test individual"),
       trusteeIndividualRoutes.WhatYouWillNeedIndividualDetailsController.onPageLoad(mode, 0, srn).url), None),
-    EntitySpoke(Link(messages("messages__schemeTaskList__sectionEstablishersIndividual_add_address", "test individual"),
+    EntitySpoke(Link(messages("messages__schemeTaskList__sectionIndividual_add_address", "test individual"),
       trusteeIndividualRoutes.WhatYouWillNeedIndividualAddressController.onPageLoad(mode, 0, srn).url), None),
-    EntitySpoke(Link(messages("messages__schemeTaskList__sectionEstablishersIndividual_add_contact", "test individual"),
+    EntitySpoke(Link(messages("messages__schemeTaskList__sectionIndividual_add_contact", "test individual"),
       trusteeIndividualRoutes.WhatYouWillNeedIndividualContactDetailsController.onPageLoad(mode, 0, srn).url), None)
   )
 
@@ -277,11 +277,11 @@ object HsTaskListHelperUtilsSpec extends SpecBase with OptionValues with DataCom
   )
 
   def expectedInProgressTrusteeIndividualSpokes(mode: Mode, srn: Option[String]): Seq[EntitySpoke] = Seq(
-    EntitySpoke(Link(messages("messages__schemeTaskList__sectionEstablishersIndividual_change_details", "test individual"),
+    EntitySpoke(Link(messages("messages__schemeTaskList__sectionIndividual_change_details", "test individual"),
       trusteeIndividualRoutes.WhatYouWillNeedIndividualDetailsController.onPageLoad(mode, 0, srn).url), modeBasedCompletion(mode, Some(false))),
-    EntitySpoke(Link(messages("messages__schemeTaskList__sectionEstablishersIndividual_change_address", "test individual"),
+    EntitySpoke(Link(messages("messages__schemeTaskList__sectionIndividual_change_address", "test individual"),
       trusteeIndividualRoutes.WhatYouWillNeedIndividualAddressController.onPageLoad(mode, 0, srn).url), modeBasedCompletion(mode, Some(false))),
-    EntitySpoke(Link(messages("messages__schemeTaskList__sectionEstablishersIndividual_change_contact", "test individual"),
+    EntitySpoke(Link(messages("messages__schemeTaskList__sectionIndividual_change_contact", "test individual"),
       trusteeIndividualRoutes.WhatYouWillNeedIndividualContactDetailsController.onPageLoad(mode, 0, srn).url), modeBasedCompletion(mode, Some(false)))
   )
 
@@ -295,11 +295,11 @@ object HsTaskListHelperUtilsSpec extends SpecBase with OptionValues with DataCom
     )
 
   def expectedCompletedTrusteeIndividualSpokes(mode: Mode, srn: Option[String]): Seq[EntitySpoke] = Seq(
-    EntitySpoke(Link(messages("messages__schemeTaskList__sectionEstablishersIndividual_change_details", "test individual"),
+    EntitySpoke(Link(messages("messages__schemeTaskList__sectionIndividual_change_details", "test individual"),
       trusteeIndividualRoutes.CheckYourAnswersIndividualDetailsController.onPageLoad(mode, 0, srn).url), modeBasedCompletion(mode, Some(true))),
-    EntitySpoke(Link(messages("messages__schemeTaskList__sectionEstablishersIndividual_change_address", "test individual"),
+    EntitySpoke(Link(messages("messages__schemeTaskList__sectionIndividual_change_address", "test individual"),
       trusteeIndividualRoutes.CheckYourAnswersIndividualAddressController.onPageLoad(mode, 0, srn).url), modeBasedCompletion(mode, Some(true))),
-    EntitySpoke(Link(messages("messages__schemeTaskList__sectionEstablishersIndividual_change_contact", "test individual"),
+    EntitySpoke(Link(messages("messages__schemeTaskList__sectionIndividual_change_contact", "test individual"),
       trusteeIndividualRoutes.CheckYourAnswersIndividualContactDetailsController.onPageLoad(mode, 0, srn).url), modeBasedCompletion(mode, Some(true)))
   )
 

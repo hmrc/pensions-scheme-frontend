@@ -484,6 +484,136 @@
   ],
   "trustees": [
     {
+      "partnershipDetails": {
+        "name": "Test partnership name",
+        "isDeleted": false
+      },
+      "partnershipVat": {
+        "hasVat": true,
+        "vat": "123456789"
+      },
+      "partnershipPaye": {
+        "hasPaye": true,
+        "paye": "123AB56789"
+      },
+      "partnershipUniqueTaxReference": {
+        "hasUtr": true,
+        "utr": "1234567890"
+      },
+      "partnershipPostcodeLookup": [
+        {
+          "addressLine1": "10 Other Place",
+          "addressLine2": "Some District",
+          "addressLine3": "Anytown",
+          "addressLine4": "Somerset",
+          "postalCode": "ZZ1 1ZZ",
+          "countryCode": "UK"
+        },
+        {
+          "addressLine1": "2 Other Place",
+          "addressLine2": "Some District",
+          "addressLine3": "Anytown",
+          "addressLine4": "Somerset",
+          "postalCode": "ZZ1 1ZZ",
+          "countryCode": "UK"
+        },
+        {
+          "addressLine1": "3 Other Place",
+          "addressLine2": "Some District",
+          "addressLine3": "Anytown",
+          "addressLine4": "Somerset",
+          "postalCode": "ZZ1 1ZZ",
+          "countryCode": "UK"
+        },
+        {
+          "addressLine1": "4 Other Place",
+          "addressLine2": "Some District",
+          "addressLine3": "Anytown",
+          "addressLine4": "Somerset",
+          "postalCode": "ZZ1 1ZZ",
+          "countryCode": "UK"
+        },
+        {
+          "addressLine1": "5 Other Place",
+          "addressLine2": "Some District",
+          "addressLine3": "Anytown",
+          "addressLine4": "Somerset",
+          "postalCode": "ZZ1 1ZZ",
+          "countryCode": "UK"
+        },
+        {
+          "addressLine1": "6 Other Place",
+          "addressLine2": "Some District",
+          "addressLine3": "Anytown",
+          "addressLine4": "Somerset",
+          "postalCode": "ZZ1 1ZZ",
+          "countryCode": "UK"
+        },
+        {
+          "addressLine1": "8 Other Place",
+          "addressLine2": "Some District",
+          "addressLine3": "Anytown",
+          "addressLine4": "Somerset",
+          "postalCode": "ZZ1 1ZZ",
+          "countryCode": "UK"
+        },
+        {
+          "addressLine1": "9 Other Place",
+          "addressLine2": "Some District",
+          "addressLine3": "Anytown",
+          "addressLine4": "Somerset",
+          "postalCode": "ZZ1 1ZZ",
+          "countryCode": "UK"
+        },
+        {
+          "addressLine1": "Flat 1",
+          "addressLine2": "7 Other Place",
+          "addressLine3": "Some District",
+          "addressLine4": "Somerset",
+          "postalCode": "ZZ1 1ZZ",
+          "countryCode": "UK"
+        },
+        {
+          "addressLine1": "Flat 2",
+          "addressLine2": "7 Other Place",
+          "addressLine3": "Some District",
+          "addressLine4": "Somerset",
+          "postalCode": "ZZ1 1ZZ",
+          "countryCode": "UK"
+        },
+        {
+          "addressLine1": "Flat 3",
+          "addressLine2": "7 Other Place",
+          "addressLine3": "Some District",
+          "addressLine4": "Somerset",
+          "postalCode": "ZZ1 1ZZ",
+          "countryCode": "UK"
+        }
+      ],
+      "partnershipAddressList": {
+        "addressLine1": "4 Other Place",
+        "addressLine2": "Some District",
+        "addressLine3": "Anytown",
+        "addressLine4": "Somerset",
+        "postalCode": "ZZ1 1ZZ",
+        "countryCode": "GB"
+      },
+      "partnershipAddress": {
+        "addressLine1": "4 Other Place",
+        "addressLine2": "Some District",
+        "addressLine3": "Anytown",
+        "addressLine4": "Somerset",
+        "postcode": "ZZ1 1ZZ",
+        "country": "GB"
+      },
+      "partnershipAddressYears": "over_a_year",
+      "partnershipContactDetails": {
+        "emailAddress": "x@x.x",
+        "phoneNumber": "98765"
+      },
+      "isPartnershipCompleteId": true
+    },
+    {
       "isTrusteeNew" : true,
       "trusteeKind" : "individual",
       "trusteeDetails" : {
@@ -508,7 +638,7 @@
         "postalCode" : "ZZ1 1ZZ",
         "countryCode" : "GB"
       },
-      "trusteeAddress" : {
+      "trusteeAddressId" : {
         "addressLine1" : "10 Other Place",
         "addressLine2" : "Some District",
         "addressLine3" : "Anytown",

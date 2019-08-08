@@ -104,9 +104,9 @@ trait HsTaskListHelperUtils extends Enumerable.Implicits {
     case EstablisherCompanyAddress | TrusteeCompanyAddress => messages("messages__schemeTaskList__sectionEstablishersCompany_change_address", _)
     case EstablisherCompanyContactDetails | TrusteeCompanyContactDetails => messages("messages__schemeTaskList__sectionEstablishersCompany_change_contact", _)
     case EstablisherCompanyDirectors => messages("messages__schemeTaskList__sectionEstablishersCompany_change_directors", _)
-    case TrusteeIndividualDetails => messages("messages__schemeTaskList__sectionEstablishersIndividual_change_details",  _)
-    case TrusteeIndividualAddress => messages("messages__schemeTaskList__sectionEstablishersIndividual_change_address",  _)
-    case TrusteeIndividualContactDetails => messages("messages__schemeTaskList__sectionEstablishersIndividual_change_contact", _)
+    case TrusteeIndividualDetails => messages("messages__schemeTaskList__sectionIndividual_change_details",  _)
+    case TrusteeIndividualAddress => messages("messages__schemeTaskList__sectionIndividual_change_address",  _)
+    case TrusteeIndividualContactDetails => messages("messages__schemeTaskList__sectionIndividual_change_contact", _)
     case _ => (_: String) => s"Not found link text for spoke $spokeName"
   }
 
@@ -115,9 +115,9 @@ trait HsTaskListHelperUtils extends Enumerable.Implicits {
     case EstablisherCompanyAddress | TrusteeCompanyAddress => messages("messages__schemeTaskList__sectionEstablishersCompany_add_address", _)
     case EstablisherCompanyContactDetails | TrusteeCompanyContactDetails => messages("messages__schemeTaskList__sectionEstablishersCompany_add_contact", _)
     case EstablisherCompanyDirectors => messages("messages__schemeTaskList__sectionEstablishersCompany_add_directors", _)
-    case TrusteeIndividualDetails => messages("messages__schemeTaskList__sectionEstablishersIndividual_add_details",  _)
-    case TrusteeIndividualAddress => messages("messages__schemeTaskList__sectionEstablishersIndividual_add_address",  _)
-    case TrusteeIndividualContactDetails => messages("messages__schemeTaskList__sectionEstablishersIndividual_add_contact", _)
+    case TrusteeIndividualDetails => messages("messages__schemeTaskList__sectionIndividual_add_details",  _)
+    case TrusteeIndividualAddress => messages("messages__schemeTaskList__sectionIndividual_add_address",  _)
+    case TrusteeIndividualContactDetails => messages("messages__schemeTaskList__sectionIndividual_add_contact", _)
     case _ => (_: String) => s"Not found link text for spoke $spokeName"
   }
 

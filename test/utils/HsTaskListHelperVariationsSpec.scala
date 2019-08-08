@@ -354,11 +354,11 @@ class HsTaskListHelperVariationsSpec extends HsTaskListHelperBehaviour {
           SchemeDetailsTaskListEntitySection(
             isCompleted = None,
             entities = List(
-              EntitySpoke(Link(messages("messages__schemeTaskList__sectionEstablishersIndividual_change_details", "firstName lastName"),
+              EntitySpoke(Link(messages("messages__schemeTaskList__sectionIndividual_change_details", "firstName lastName"),
                 controllers.register.trustees.individual.routes.CheckYourAnswersIndividualDetailsController.onPageLoad(UpdateMode, 0, srn).url, None), None),
-              EntitySpoke(Link(messages("messages__schemeTaskList__sectionEstablishersIndividual_change_address", "firstName lastName"),
+              EntitySpoke(Link(messages("messages__schemeTaskList__sectionIndividual_change_address", "firstName lastName"),
                 controllers.register.trustees.individual.routes.CheckYourAnswersIndividualAddressController.onPageLoad(UpdateMode, 0, srn).url, None), None),
-              EntitySpoke(Link(messages("messages__schemeTaskList__sectionEstablishersIndividual_change_contact", "firstName lastName"),
+              EntitySpoke(Link(messages("messages__schemeTaskList__sectionIndividual_change_contact", "firstName lastName"),
                 controllers.register.trustees.individual.routes.CheckYourAnswersIndividualContactDetailsController.onPageLoad(UpdateMode, 0, srn).url, None), None)
             ),
             Some("firstName lastName")
@@ -387,11 +387,11 @@ class HsTaskListHelperVariationsSpec extends HsTaskListHelperBehaviour {
           SchemeDetailsTaskListEntitySection(
             isCompleted = None,
             entities = List(
-              EntitySpoke(Link(messages("messages__schemeTaskList__sectionEstablishersIndividual_change_details", "firstName lastName"),
+              EntitySpoke(Link(messages("messages__schemeTaskList__sectionIndividual_change_details", "firstName lastName"),
                 controllers.register.trustees.individual.routes.WhatYouWillNeedIndividualDetailsController.onPageLoad(UpdateMode, 0, srn).url, None), None),
-              EntitySpoke(Link(messages("messages__schemeTaskList__sectionEstablishersIndividual_change_address", "firstName lastName"),
+              EntitySpoke(Link(messages("messages__schemeTaskList__sectionIndividual_change_address", "firstName lastName"),
                 controllers.register.trustees.individual.routes.WhatYouWillNeedIndividualAddressController.onPageLoad(UpdateMode, 0, srn).url, None), None),
-              EntitySpoke(Link(messages("messages__schemeTaskList__sectionEstablishersIndividual_change_contact", "firstName lastName"),
+              EntitySpoke(Link(messages("messages__schemeTaskList__sectionIndividual_change_contact", "firstName lastName"),
                 controllers.register.trustees.individual.routes.WhatYouWillNeedIndividualContactDetailsController.onPageLoad(UpdateMode, 0, srn).url, None), None)
             ),
             Some("firstName lastName")

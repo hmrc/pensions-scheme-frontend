@@ -29,7 +29,7 @@ case class TrusteeAddressId(index: Int) extends TypedIdentifier[Address] {
 }
 
 object TrusteeAddressId {
-  override lazy val toString: String = "trusteeAddress"
+  override lazy val toString: String = "trusteeAddressId"
 
   implicit def cya(implicit countryOptions: CountryOptions): CheckYourAnswers[TrusteeAddressId] =
     AddressCYA[TrusteeAddressId](changeAddress = "messages__visuallyhidden__trustee__address")()

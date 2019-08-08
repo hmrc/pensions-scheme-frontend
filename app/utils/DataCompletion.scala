@@ -195,8 +195,8 @@ trait DataCompletion {
     } else {
       isListComplete(Seq(
         get(TrusteeDetailsId(index)).isDefined,
-        get(TrusteeNinoId(index)).isDefined,
-        get(UniqueTaxReferenceId(index)).isDefined,
+        get(TrusteeNinoId(index)).isDefined | get(TrusteeNewNinoId(index)).isDefined,
+        get(UniqueTaxReferenceId(index)).isDefined | get(TrusteeUTRId(index)).isDefined,
         isAddressComplete(TrusteeAddressId(index), TrusteePreviousAddressId(index),
           TrusteeAddressYearsId(index), None).getOrElse(false),
         get(TrusteeContactDetailsId(index)).isDefined
