@@ -19,10 +19,12 @@ package controllers.register.trustees.individual
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.HasUtrFormProvider
+import identifiers.register.trustees.TrusteesId
 import identifiers.register.trustees.individual.{TrusteeHasUTRId, TrusteeNameId, TrusteeNoUTRReasonId, TrusteeUTRId}
 import models.person.PersonName
-import models.{Index, NormalMode}
+import models.{Index, NormalMode, person}
 import play.api.data.Form
+import play.api.libs.json.Json
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import services.FakeUserAnswersService
@@ -37,6 +39,8 @@ class TrusteeHasUTRControllerSpec extends ControllerSpecBase {
   private val form = formProvider("messages__hasUtr__error__required", "test name")
   private val index = Index(0)
   private val srn = None
+  private val utr = "test-utr"
+  private val noUtr = "no utr"
   private val postCall = controllers.register.trustees.individual.routes.TrusteeHasUTRController.onSubmit(NormalMode, index, srn)
   private val viewModel = CommonFormWithHintViewModel(
     postCall = postCall,
@@ -48,10 +52,18 @@ class TrusteeHasUTRControllerSpec extends ControllerSpecBase {
 
   private val trusteeIndividualData = UserAnswers().set(TrusteeNameId(0))(PersonName("First", "Last")).asOpt.value
 
-  private def trusteeIndividualDataWithUtr(hasUtr: Boolean = true): DataRetrievalAction =
-    trusteeIndividualData.set(TrusteeUTRId(0))("test-utr").flatMap(_.set(TrusteeNoUTRReasonId(0))("no utr")).flatMap(
-      _.set(TrusteeHasUTRId(0))(hasUtr)
-    ).asOpt.value.dataRetrievalAction
+  private def getTrusteeIndividualDataWithUtr(hasUtrValue:Boolean): FakeDataRetrievalAction = new FakeDataRetrievalAction(
+    Some(Json.obj(
+      TrusteesId.toString -> Json.arr(
+        Json.obj(
+          TrusteeNameId.toString -> person.PersonName("first", "last"),
+          TrusteeHasUTRId.toString -> hasUtrValue,
+          TrusteeNoUTRReasonId.toString -> noUtr,
+          TrusteeUTRId.toString -> utr
+        )
+      )
+    ))
+  )
 
   private def controller(dataRetrievalAction: DataRetrievalAction =
                          trusteeIndividualData.dataRetrievalAction, isHnsEnabled: Boolean = false): TrusteeHasUTRController =
@@ -108,23 +120,25 @@ class TrusteeHasUTRControllerSpec extends ControllerSpecBase {
     }
 
     "if user changes answer from yes to no then clean up should take place on utr number" in {
-      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "false"))
-      val result = controller(trusteeIndividualDataWithUtr()).onSubmit(NormalMode, index, None)(postRequest)
+      FakeUserAnswersService.reset()
+     val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "false"))
+      val result = controller(getTrusteeIndividualDataWithUtr(true)).onSubmit(NormalMode, index, None)(postRequest)
 
       status(result) mustBe SEE_OTHER
+
       FakeUserAnswersService.userAnswer.get(TrusteeHasUTRId(index)).value mustEqual false
       FakeUserAnswersService.userAnswer.get(TrusteeUTRId(index)) mustBe None
-      FakeUserAnswersService.userAnswer.get(TrusteeNoUTRReasonId(index)) mustBe Some("no utr")
+      FakeUserAnswersService.userAnswer.get(TrusteeNoUTRReasonId(index)) mustBe Some(noUtr)
     }
 
     "if user changes answer from no to yes then clean up should take place on no utr reason" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "true"))
-      val result = controller(trusteeIndividualDataWithUtr(hasUtr = false)).onSubmit(NormalMode, index, None)(postRequest)
+      val result = controller(getTrusteeIndividualDataWithUtr(false)).onSubmit(NormalMode, index, None)(postRequest)
 
       status(result) mustBe SEE_OTHER
       FakeUserAnswersService.userAnswer.get(TrusteeHasUTRId(index)).value mustEqual true
       FakeUserAnswersService.userAnswer.get(TrusteeNoUTRReasonId(index)) mustBe None
-      FakeUserAnswersService.userAnswer.get(TrusteeUTRId(index)) mustBe Some("test-utr")
+      FakeUserAnswersService.userAnswer.get(TrusteeUTRId(index)) mustBe Some(utr)
     }
 
   }
