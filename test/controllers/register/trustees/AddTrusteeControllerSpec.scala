@@ -25,6 +25,8 @@ import identifiers.register.trustees.individual._
 import identifiers.register.trustees.{IsTrusteeNewId, TrusteeKindId, TrusteesId, _}
 import models._
 import models.address.Address
+import identifiers.register.trustees.individual.TrusteeDetailsId
+import identifiers.register.trustees.{IsTrusteeNewId, TrusteeKindId, TrusteesId, _}
 import models.person.PersonDetails
 import models.register.SchemeType.SingleTrust
 import models.register._
@@ -46,7 +48,7 @@ class AddTrusteeControllerSpec extends ControllerSpecBase with DataCompletionHel
     CompanyDetailsId(0), "Trustee Company A", isDeleted = false, isCompleted = false, isNewEntity = true, 3, Some(SingleTrust.toString))
   lazy val trusteeCompanyB: TrusteeCompanyEntity = TrusteeCompanyEntity(
     CompanyDetailsId(1), "Trustee Company B", isDeleted = false, isCompleted = false, isNewEntity = true, 3, Some(SingleTrust.toString))
-  lazy val trusteeIndividual: TrusteeIndividualEntity = TrusteeIndividualEntity(
+  lazy val trusteeIndividual: TrusteeIndividualEntityNonHns = TrusteeIndividualEntityNonHns(
     TrusteeDetailsId(2), "Trustee Individual", isDeleted = false, isCompleted = false, isNewEntity = true, 3, Some(SingleTrust.toString))
   lazy val allTrustees = Seq(trusteeCompanyA, trusteeCompanyB, trusteeIndividual)
   val formProvider = new AddTrusteeFormProvider()
@@ -87,7 +89,7 @@ class AddTrusteeControllerSpec extends ControllerSpecBase with DataCompletionHel
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
   def viewAsString(form: Form[_] = form, trustees: Seq[Trustee[_]] = Seq.empty, enable: Boolean = false): String =
-    addTrustee(frontendAppConfig, form, NormalMode, trustees, None, None, enable)(fakeRequest, messages).toString
+    addTrustee(frontendAppConfig, form, NormalMode, trustees, None, None, enable, false)(fakeRequest, messages).toString
 
   private def validData = {
     Json.obj(

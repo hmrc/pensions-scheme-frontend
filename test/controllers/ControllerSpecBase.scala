@@ -28,7 +28,7 @@ import identifiers.register.trustees.TrusteesId
 import identifiers.register.trustees.individual.{TrusteeDetailsId, TrusteeNameId}
 import identifiers.{AdviserNameId, SchemeNameId}
 import models.person.{PersonDetails, PersonName}
-import models.{CompanyDetails, PartnershipDetails}
+import models.{CompanyDetails, PartnershipDetails, person}
 import org.joda.time.LocalDate
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document

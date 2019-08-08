@@ -28,8 +28,8 @@ import identifiers.register.trustees.{IsTrusteeAddressCompleteId, IsTrusteeCompl
 import identifiers.{DeclarationDutiesId, IsAboutBenefitsAndInsuranceCompleteId, IsAboutMembersCompleteId, SchemeNameId, _}
 import models._
 import models.person.PersonDetails
+import models.register.SchemeType
 import org.joda.time.LocalDate
-import controllers.register.establishers.company.{routes => establisherCompanyRoutes}
 import play.api.libs.json.JsResult
 import utils.behaviours.HsTaskListHelperBehaviour
 import utils.hstasklisthelper.{HsTaskListHelper, HsTaskListHelperVariations}
@@ -193,25 +193,35 @@ class HsTaskListHelperVariationsSpec extends HsTaskListHelperBehaviour {
     }
   }
 
-  "addTrusteeHeader " must {
+  "addTrusteeHeader" must {
 
     behave like addTrusteeHeader(UpdateMode, srn)
 
+    "display correct link data when trustee is mandatory and no trustees exists with toggle ON" in {
+      val userAnswers = UserAnswers().set(HaveAnyTrusteesId)(true).asOpt.value
+        .set(SchemeTypeId)(SchemeType.MasterTrust).asOpt.value
+      val helper = createTaskListHelper(userAnswers, fakeFeatureManagementServiceToggleON)
+      helper.addTrusteeHeader(userAnswers, UpdateMode, srn).value mustBe
+        SchemeDetailsTaskListHeader(None, Some(Link(addTrusteesLinkText,
+          controllers.register.trustees.routes.TrusteeKindController.onPageLoad(UpdateMode, userAnswers.allTrustees(true).size, srn).url)), None,
+          None)
+    }
+
     "display plain text when scheme is locked and no trustees exist" in {
       val userAnswers = UserAnswers().set(DeclarationDutiesId)(true).asOpt.value
-      val helper = new HsTaskListHelperVariations(userAnswers, viewOnly = true, srn, fakeFeatureManagementService)
+      val helper = new HsTaskListHelperVariations(userAnswers, viewOnly = true, srn, fakeFeatureManagementServiceToggleON)
       helper.taskList.addTrusteeHeader.value mustBe
         SchemeDetailsTaskListHeader(None, None, None, None, Some(messages("messages__schemeTaskList__sectionTrustees_no_trustees")))
     }
 
-    "not display an add link when scheme is locked and trustees exist" in {
+    "no links when scheme is locked and trustees exist" in {
       val userAnswers = UserAnswers()
         .set(TrusteeDetailsId(0))(PersonDetails("firstName", None, "lastName", LocalDate.now())).flatMap(
         _.set(IsTrusteeCompleteId(0))(true)).asOpt.value
         .set(TrusteeDetailsId(1))(PersonDetails("firstName", None, "lastName", LocalDate.now())).flatMap(
         _.set(IsTrusteeCompleteId(1))(true)).asOpt.value
-      val helper = new HsTaskListHelperVariations(userAnswers, viewOnly = true, srn, fakeFeatureManagementService)
-      helper.taskList.addTrusteeHeader mustBe None
+      val helper = new HsTaskListHelperVariations(userAnswers, viewOnly = true, srn, fakeFeatureManagementServiceToggleON)
+      helper.taskList.addTrusteeHeader mustBe Some(SchemeDetailsTaskListHeader(header = Some(messages("messages__schemeTaskList__sectionTrustees_header"))))
     }
   }
 
@@ -302,8 +312,8 @@ class HsTaskListHelperVariationsSpec extends HsTaskListHelperBehaviour {
             messages("messages__schemeTaskList__persons_details__link_text", "Test company name"),
             controllers.register.establishers.company.routes.CompanyDetailsController.onPageLoad(UpdateMode, srn, 0).url), None)), None),
           SchemeDetailsTaskListEntitySection(None, Seq(EntitySpoke(Link(
-          messages("messages__schemeTaskList__persons_details__link_text", "Test individual name"),
-          controllers.register.establishers.individual.routes.EstablisherDetailsController.onPageLoad(UpdateMode, 1, srn).url), None)), None),
+            messages("messages__schemeTaskList__persons_details__link_text", "Test individual name"),
+            controllers.register.establishers.individual.routes.EstablisherDetailsController.onPageLoad(UpdateMode, 1, srn).url), None)), None),
           SchemeDetailsTaskListEntitySection(None, Seq(EntitySpoke(Link(
             messages("messages__schemeTaskList__persons_details__link_text", "Test Partnership"),
             controllers.register.establishers.partnership.routes.PartnershipDetailsController.onPageLoad(UpdateMode, 2, srn).url), None)), None)
