@@ -46,6 +46,7 @@ class AddressControllerSpec extends ControllerSpecBase with ScalaFutures {
   private val form: Form[Address] = formProvider()
   private val firstIndex = Index(0)
   private val establisherName: String = "test first name test last name"
+  private val heading: Message = "messages__common__confirmAddress__h1"
 
   private val options = Seq(InputOption("territory:AE-AZ", "Abu Dhabi"), InputOption("country:AF", "Afghanistan"))
 
@@ -75,7 +76,7 @@ class AddressControllerSpec extends ControllerSpecBase with ScalaFutures {
       routes.AddressController.onSubmit(NormalMode, firstIndex, None),
       countryOptions.options,
       Message("messages__establisher_individual_address__title"),
-      Message("messages__establisher_individual_address__title"),
+      Message(heading,establisherName),
       Some(establisherName),
       Some(Message("messages__establisher_individual_address_lede"))
     ),

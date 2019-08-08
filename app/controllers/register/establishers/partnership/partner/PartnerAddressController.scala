@@ -54,7 +54,7 @@ class PartnerAddressController @Inject()(
 
   private[controllers] val postCall = PartnerAddressController.onSubmit _
   private[controllers] val title: Message = "messages__partnerAddress__title"
-  private[controllers] val heading: Message = "messages__partnerAddress__heading"
+  private[controllers] val heading: Message = "messages__common__confirmAddress__h1"
   private[controllers] val hint: Message = "messages__partnerAddress__lede"
 
   protected val form: Form[Address] = formProvider()
@@ -93,7 +93,7 @@ class PartnerAddressController @Inject()(
               postCall(mode, Index(establisherIndex), Index(partnerIndex), srn),
               countryOptions.options,
               title = Message(title),
-              heading = Message(heading),
+              heading = Message(heading,details.fullName),
               hint = Some(Message(hint)),
               secondaryHeader = Some(details.fullName),
               srn = srn

@@ -197,8 +197,7 @@ class PartnershipAddressListControllerSpec extends ControllerSpecBase with CSRFR
     AddressListViewModel(
       routes.PartnershipAddressListController.onSubmit(NormalMode, Index(0), None),
       routes.PartnershipAddressController.onPageLoad(NormalMode, Index(0), None),
-      addresses,
-      subHeading = Some(Message(partnershipDetails.name))
+      addresses
     )
   }
 }

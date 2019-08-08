@@ -16,12 +16,11 @@
 
 package controllers.register.establishers.company.director
 
-import services.UserAnswersService
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.register.PersonDetailsFormProvider
 import identifiers.register.establishers.company.CompanyDetailsId
-import identifiers.register.establishers.company.director.{DirectorDetailsId, IsDirectorCompleteId, IsNewDirectorId}
+import identifiers.register.establishers.company.director.{DirectorDetailsId, IsNewDirectorId}
 import identifiers.register.establishers.{EstablishersId, IsEstablisherCompleteId}
 import models.person.PersonDetails
 import models.{CompanyDetails, Index, NormalMode}
@@ -33,6 +32,7 @@ import play.api.data.Form
 import play.api.libs.json.Json
 import play.api.mvc.Call
 import play.api.test.Helpers._
+import services.UserAnswersService
 import utils.{FakeNavigator, SectionComplete, UserAnswers}
 import views.html.register.establishers.company.director.directorDetails
 

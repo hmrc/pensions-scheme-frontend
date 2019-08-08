@@ -51,6 +51,8 @@ messages__common__vat__hint = This has 9 characters and is issued by HMRC. It mi
 messages__common__company_vat__hint = This is 9 numbers, sometimes with ‘GB’ at the start, for example 123456789 or GB123456789. You can find it on {0}’s VAT registration certificate.
 messages__common__nino = National Insurance number
 messages__common__reason = Reason
+messages__common__confirmAddress__h1 = Confirm {0}’s address
+messages__common__confirmPreviousAddress__h1 = Confirm {0}’s previous address
 
 messages__common__postcode_lookup__enter_postcode = You can {0} enter the address manually {1}.
 messages__common__postcode_lookup__manual_link = You can {0} enter the address manually {1}.
@@ -65,8 +67,10 @@ messages__error__postcode_invalid = Enter a valid postcode
 messages__error__postcode_failed = There is a problem with the address finder. Try again or enter the address manually
 messages__error__postcode_no_results = There are no addresses for that postcode
 
-messages__error__first_name = Enter the first name
-messages__error__last_name = Enter the last name
+messages__error__trustees = trustee’s
+messages__error__director = director’s
+messages__error__first_name = Enter the {0} first name
+messages__error__last_name = Enter the {0} last name
 messages__error__date = Enter a valid date
 messages__error__date_future = Date cannot be a date in the future
 messages__error__date_past = The date of birth must be after 1900
@@ -324,9 +328,9 @@ messages__establishers__add_limit = You have added the maximum number of establi
 
 messages__establisher_individual__title = Establisher details
 messages__error__first_name_length = The first name cannot be more than 35 characters
-messages__error__first_name_invalid = Enter the valid first name
+messages__error__first_name_invalid = Name must only include letters and punctuation marks
 messages__error__last_name_length = The last name cannot be more than 35 characters
-messages__error__last_name_invalid = Enter the valid last name
+messages__error__last_name_invalid = Name must only include letters and punctuation marks
 messages__error__middle_name_length = The middle name cannot be more than 35 characters
 messages__error__middle_name_invalid = Enter the valid middle name
 
@@ -490,10 +494,8 @@ messages__companyAddress__trustee__lede = This is usually the registered busines
 messages__companyAddress__checkYourAnswersLabel = Address
 
 messages__companyConfirmAddress__title = Confirm the company’s address
-messages__companyConfirmAddress__heading = Confirm {0}’s address
 
 messages__companyConfirmPreviousAddress__title = Confirm the company’s previous address
-messages__companyConfirmPreviousAddress__heading = Confirm {0}’s previous address
 
 messages__directorDetails__title = Company director
 messages__directorDetails__heading = Company director
@@ -581,7 +583,6 @@ messages__confirmDeleteDirector__title =  Are you sure you want to delete this e
 messages__confirmDeleteDirector__heading = Are you sure you want to delete {0}?
 
 messages__directorAddressConfirm__title = Confirm the director’s address
-messages__directorAddressConfirm__heading = Confirm {0}’s address
 
 messages__directorAddressPostcodeLookup__title = Director’s address
 messages__directorAddressPostcodeLookup__heading = Director’s address
@@ -639,7 +640,6 @@ messages__checkYourAnswers__trustees__company__utr_no_reason = Why the trustee d
 messages__checkYourAnswers__establishers__company__number = Company number
 
 messages__directorPreviousAddressConfirm__title = Confirm the director’s previous address
-messages__directorPreviousAddressConfirm__heading = Confirm {0}’s previous address
 
 messages__directorPreviousAddressPostcodeLookup__title = What is the director’s previous postcode?
 messages__previousAddressPostcodeLookup__heading = What was {0}’s previous postcode?
@@ -697,9 +697,18 @@ messages__declarationDuties__no_hint1 = I have appointed an adviser to the pensi
 messages__declarationDuties__no_hint2 = Where HMRC believes that any of the persons who are the scheme administrator is not a fit and proper person, HMRC may refuse to register the scheme or, if the scheme is already registered, HMRC may de-register the scheme
 messages__error_declaration_duties_required = Tell us if you have the appropriate knowledge to admnister a pension scheme
 
-messages__trustee__individual__address__title = Trustee’s address
-messages__trustee__individual__address__heading = Trustee’s address
+messages__trustee__individual__nino__title = What is the trustee’s National Insurance number?
+messages__trustee__individual__nino__heading = What is {0}’s National Insurance number?
+
+messages__trustee__individual__address__title = What is the trustee’s address?
+messages__trustee__individual__address__heading = What is {0}’s address?
 messages__trustee__individual__address__lede = This is usually the residential address for this person.
+
+messages__trustee__individual__address__confirm__title = Confirm the trustee’s address
+messages__trustee__individual__address__confirm__lede = This is usually the residential address for this person.
+
+messages__trustee__individual__previous__address__title = What was the trustee’s previous address?
+messages__trustee__individual__previous__address__heading = What was {0}’s previous address?
 
 messages__trusteeNino__title = Does the trustee have a National Insurance number?
 messages__trusteeNino__heading = Does the trustee have a National Insurance number?
@@ -710,15 +719,20 @@ messages__trusteeNino__nino_question_cya_label = Does the trustee have a Nationa
 messages__trusteeNino__nino_cya_label = National Insurance number
 messages__trusteeNino__nino_reason_cya_label = Reason
 
+messages__trusteeName__title = What is the trustee’s name?
+messages__trusteeName__heading = What is the trustee’s name?
 
-messages__individualPostCodeLookup__title = Trustee’s address
+
+messages__individualPostCodeLookup__title = What is the trustee’s postcode?
 messages__individualPostCodeLookup__heading = What is {0}’s postcode?
 messages__individualPostCodeLookup__enter_postcode = Enter the postcode, or if you have an overseas address, {0} enter the address manually {1}
 messages__trustee_individualPostCodeLookup__enter_postcode = Enter the postcode, or if you have an overseas address, {0} enter the address manually {1}
 
-messages__trustee_individual_previous_address__title = Previous address
+messages__trustee_individual_previous_address__title = What was the trustee’s previous postcode?
 messages__trustee_individual_previous_address__heading = What was {0}’s previous postcode?
 messages__trustee_individual_utr_cya_label = Unique Taxpayer Reference number
+
+messages__trustee_individual_confirm__previous_address__title = Confirm the trustee’s previous address
 
 messages__trustee__uniqueTaxReference__title = Does the trustee have a Self-Assessment Unique Taxpayer Reference number (SAUTR)?
 messages__trustee__uniqueTaxReference__heading = Does the trustee have a Self-Assessment Unique Taxpayer Reference number (SAUTR)?
@@ -730,8 +744,8 @@ messages__trustee__uniqueTaxReference__error__utr_required = Enter the Unique Ta
 messages__trustee__uniqueTaxReference__error__reason_required = You need to tell us why the trustee does not have a UTR
 messages__trustee__uniqueTaxReference__error__utr_invalid = Please give an answer for uniqueTaxReference
 
-messages__trusteeAddressYears__title = Has {0} used this contact address for at least 1 year?
-messages__trusteeAddressYears__heading = Has {0} used this contact address for at least 1 year?
+messages__trusteeAddressYears__title = Has {0} used this address for at least 1 year?
+messages__trusteeAddressYears__heading = Has {0} used this address for at least 1 year?
 messages__trusteeAddressYears__error_required = Select yes if {0} has been at this contact address for at least 1 year
 
 messages__trusteeAddressYears_cya_label = How long has the trustee been at this address?
@@ -795,7 +809,6 @@ messages__adviserDetails__error__adviser_name_length = The adviser name cannot b
 messages__adviserDetails__error__adviser_name_invalid = The adviser name contains invalid characters
 
 messages__confirmAdviserAddress__title = Confirm the person’s address
-messages__confirmAdviserAddress__heading = Confirm {0}’s address
 
 #Delete 3 messages later
 messages__adviserAddress__secondary = Pension adviser
@@ -919,7 +932,6 @@ messages__partnershipPreviousAddressPostcodeLookup__heading = What was {0}’s p
 messages__partnershipPreviousAddressPostcodeLookup__checkYourAnswersLabel = Previous address
 
 messages__partnershipPreviousAddress__title = Enter the partnership’s previous address
-messages__partnershipPreviousAddress__heading = Enter the partnership’s previous address
 
 messages__otherPartners__title=Do you need to tell us about other partners?
 messages__otherPartners__heading=Do you need to tell us about other partners?
@@ -1048,7 +1060,6 @@ messages__partnershipReview__partners__viewLink = View details of partners
 messages__checkYourAnswers__trustees__partnership__address_years = How long has the partnership been at this address?
 
 messages__trusteePartnershipAddress__title = Enter the partnership’s address
-messages__trusteePartnershipAddress__heading = Enter the partnership’s address
 messages__trusteePartnershipAddress__lede = This is usually the registered business address but you can enter any address you have for this trustee.
 
 messages__needContact__title = What is your email address?
@@ -1277,14 +1288,18 @@ messages__schemeTaskList__sectionEstablishers_change_link = Change establishers
 messages__schemeTaskList__sectionEstablishers_no_establishers = No establishers
 
 messages__schemeTaskList__sectionEstablishersCompany_add_details = Add {0}’s company details
-messages__schemeTaskList__sectionEstablishersCompany_add_address = Add {0}’s address
-messages__schemeTaskList__sectionEstablishersCompany_add_contact = Add {0}’s contact details
 messages__schemeTaskList__sectionEstablishersCompany_add_directors = Add {0}’s directors
 
+messages__schemeTaskList__sectionIndividual_add_details = Add {0}’s details
+messages__schemeTaskList__sectionIndividual_add_address = Add {0}’s address
+messages__schemeTaskList__sectionIndividual_add_contact = Add {0}’s contact details
+
 messages__schemeTaskList__sectionEstablishersCompany_change_details = Change {0}’s company details
-messages__schemeTaskList__sectionEstablishersCompany_change_address = Change {0}’s address
-messages__schemeTaskList__sectionEstablishersCompany_change_contact = Change {0}’s contact details
 messages__schemeTaskList__sectionEstablishersCompany_change_directors = Change {0}’s directors
+
+messages__schemeTaskList__sectionIndividual_change_details = Change {0}’s details
+messages__schemeTaskList__sectionIndividual_change_address = Change {0}’s address
+messages__schemeTaskList__sectionIndividual_change_contact = Change {0}’s contact details
 
 messages__schemeTaskList__sectionTrustees_header = Trustees
 messages__schemeTaskList__sectionTrustees_add_link = Add a trustee
@@ -1550,6 +1565,13 @@ messages__whatYouWillNeedTrusteeCompany__item3 = VAT registration number, if it 
 messages__whatYouWillNeedTrusteeCompany__item4 = employer PAYE reference, if it has one
 messages__whatYouWillNeedTrusteeCompany__p2 = You will also need to tell us if the company has been dormant at any time in the last 12 months.
 
+messages__whatYouWillNeedTrusteeIndividual__title = Trustee’s details
+messages__whatYouWillNeedTrusteeIndividual__h1 = {0}’s details
+messages__whatYouWillNeedTrusteeIndividual__p1 = For each trustee, you will need to tell us their:
+messages__whatYouWillNeedTrusteeIndividual__item1 = date of birth
+messages__whatYouWillNeedTrusteeIndividual__item2 = National Insurance number, or reason why they do not have one
+messages__whatYouWillNeedTrusteeIndividual__item3 = Unique Taxpayer Reference (UTR), or reason why they do not have one
+
 messages__tradingAtLeastOneYear__error = Select yes if {0} has been trading for at least 1 year
 
 messages__hasCompanyCompanyNumber__title = Does the company have a company number?
@@ -1575,6 +1597,7 @@ messages__changeTrusteeAddress = Change {0}’s address
 messages__hasBeen1Year = Has {0} been at their address for at least 1 year?
 messages__changeHasBeen1Year = Change whether {0} has been at their address for at least 1 year?
 messages__theTrustee = the trustee
+messages__theDirector = the director
 
 messages__hasBeenTradingCompany__title = Has the establisher been trading for more than a year?
 messages__hasBeenTradingCompany__h1 =  Has {0} been trading for more than a year?
@@ -1690,9 +1713,9 @@ messages__directorNoNinoReason__title = Why does the director not have a Nationa
 messages__directorNoNinoReason__heading = Why does {0} not have a National Insurance number?
 messages__directorNoNinoReason__cya_fallback = Why does the director not have a National Insurance number?
 
-messages__directorHasNino__title =  Does the director have a National Insurance number?
-messages__directorHasNino__h1 =  Does {0} have a National Insurance number?
-messages__directorHasNino__error__required = Select yes if the director has a National Insurance number
+messages__genericHasNino__title =  Does {0} have a National Insurance number?
+messages__genericHasNino__h1 =  Does {0} have a National Insurance number?
+messages__genericHasNino__error__required = Select yes if {0} has a National Insurance number
 
 messages__directorUtr__title = What is the director’s UTR?
 messages__directorUtr__heading = What is {0}’s UTR?
@@ -1721,12 +1744,10 @@ messages__establisherPreviousSelectAddress__title = Select the previous address
 messages__establisherPreviousSelectAddress__h1 = Select the previous address
 
 messages__establisherConfirmAddress__title = Confirm the establisher’s address
-messages__establisherConfirmAddress__h1 = Confirm {0}’s address
 messages__establisherConfirmAddress__cya_label = {0}’s address
 messages__establisherConfirmAddress__cya_visually_hidden_label = contact address
 
 messages__establisherPreviousConfirmAddress__title = Confirm the establisher’s previous address
-messages__establisherPreviousConfirmAddress__h1 = Confirm {0}’s previous address
 messages__establisherPreviousConfirmAddress__cya_label = {0}’s previous address
 messages__establisherPreviousConfirmAddress__cya_visually_hidden_label = previous contact address
 

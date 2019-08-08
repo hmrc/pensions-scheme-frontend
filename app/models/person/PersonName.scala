@@ -15,8 +15,8 @@
  */
 
 package models.person
-import play.api.libs.functional.syntax._
 
+import play.api.libs.functional.syntax._
 import play.api.libs.json.{JsPath, Json, Reads, Writes}
 
 case class PersonName(firstName: String, lastName: String, isDeleted: Boolean = false) {
@@ -26,10 +26,11 @@ case class PersonName(firstName: String, lastName: String, isDeleted: Boolean = 
 
 object PersonName {
   implicit val reads: Reads[PersonName] =
-    ((JsPath \ "firstName").read[String] and
+    (
+      (JsPath \ "firstName").read[String] and
       (JsPath \ "lastName").read[String] and
       ((JsPath \ "isDeleted").read[Boolean] orElse Reads.pure(false))
-      ) (PersonName.apply _)
+    )(PersonName.apply _)
 
   implicit val writes: Writes[PersonName] = Json.writes[PersonName]
 

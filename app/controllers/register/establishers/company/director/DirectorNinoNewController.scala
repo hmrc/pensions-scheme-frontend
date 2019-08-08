@@ -29,7 +29,7 @@ import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
 import utils.Toggles
 import utils.annotations.EstablishersCompanyDirector
-import viewmodels.NinoViewModel
+import viewmodels.{Message, NinoViewModel}
 
 import scala.concurrent.ExecutionContext
 
@@ -47,26 +47,22 @@ class DirectorNinoNewController @Inject()(
                                  )(implicit val ec: ExecutionContext) extends NinoController with I18nSupport {
 
   private[controllers] val postCall = controllers.register.establishers.company.director.routes.DirectorNinoNewController.onSubmit _
-  private[controllers] val title: String = "messages__director_yes_nino__title"
-  private[controllers] val heading: String = "messages__common_nino__h1"
   private[controllers] val hint: String = "messages__common__nino_hint"
 
   private def viewmodel(establisherIndex: Index, directorIndex: Index, mode: Mode, srn: Option[String], name: String): NinoViewModel =
+    NinoViewModel(
+      postCall(mode, Index(establisherIndex), Index(directorIndex), srn),
+      title = Message("messages__director_yes_nino__title"),
+      heading = Message("messages__common_nino__h1", name),
+      hint = hint,
+      srn = srn
+    )
 
-            NinoViewModel(
-              postCall(mode, Index(establisherIndex), Index(directorIndex), srn),
-              title = title,
-              heading = heading,
-              hint = hint,
-              personName = name,
-              srn = srn
-            )
-
-  val directorName = (establisherIndex: Index, directorIndex: Index) => Retrieval {
+  private val directorName: (Index, Index) => Retrieval[String] = (establisherIndex, directorIndex) => Retrieval {
     implicit request =>
       if (featureSwitchManagementService.get(Toggles.isEstablisherCompanyHnSEnabled))
-      DirectorNameId(establisherIndex, directorIndex).retrieve.right.map(_.fullName)
-    else
+        DirectorNameId(establisherIndex, directorIndex).retrieve.right.map(_.fullName)
+      else
         DirectorDetailsId(establisherIndex, directorIndex).retrieve.right.map(_.fullName)
   }
 

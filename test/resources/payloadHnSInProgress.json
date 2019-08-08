@@ -1,0 +1,118 @@
+{
+  "schemeName" : "Test Scheme Name",
+  "isBeforeYouStartComplete" : true,
+  "schemeType" : {
+    "name" : "single"
+  },
+  "schemeEstablishedCountry" : "GB",
+  "declarationDuties" : true,
+  "isWorkingKnowledgeComplete" : true,
+  "trustees" : [
+    {
+      "isTrusteeNew" : true,
+      "trusteeKind" : "individual",
+      "trusteeDetails" : {
+        "firstName" : "qwqwq",
+        "lastName" : "wqwq",
+        "date" : "2000-01-01",
+        "isDeleted" : false
+      },
+      "hasUtr" : true,
+      "hasNino" : true,
+      "trusteeNino": {
+        "value": "CS121212C",
+        "isEditable" : true
+      },
+      "trusteeDOB": "2000-02-02",
+      "trusteeAddressId" : {
+        "addressLine1" : "10 Other Place",
+        "addressLine2" : "Some District",
+        "addressLine3" : "Anytown",
+        "addressLine4" : "Somerset",
+        "postcode" : "ZZ1 1ZZ",
+        "country" : "GB"
+      },
+      "trusteeAddressYears" : "under_a_year",
+      "trusteePreviousAddress" : {
+        "addressLine1" : "10 Other Place",
+        "addressLine2" : "Some District",
+        "addressLine3" : "Anytown",
+        "addressLine4" : "Somerset",
+        "postcode" : "ZZ1 1ZZ",
+        "country" : "GB"
+      },
+      "emailAddress": "a@a.c",
+      "phoneNumber": "11"
+    }
+  ],
+  "establishers" : [
+    {
+      "isEstablisherNew" : true,
+      "establisherKind" : "company",
+      "companyDetails" : {
+        "companyName" : "Test Company",
+        "isDeleted" : false
+      },
+      "hasCrn" : true,
+      "companyRegistrationNumber" : {
+        "value" : "12345678",
+        "isEditable" : true
+      },
+      "hasUtr" : true,
+      "hasVat" : true,
+      "companyVat" : {
+        "value" : "123456789",
+        "isEditable" : true
+      },
+      "isCompanyDormant" : "no",
+      "companyAddress" : {
+        "addressLine1" : "2 Other Place",
+        "addressLine2" : "Some District",
+        "addressLine3" : "Anytown",
+        "addressLine4" : "Somerset",
+        "postcode" : "ZZ1 1ZZ",
+        "country" : "GB"
+      },
+      "companyAddressYears" : "under_a_year",
+      "hasBeenTrading" : true,
+      "companyContactDetails" : {
+        "phoneNumber" : "12345"
+      },
+      "director" : [
+        {
+          "isNewDirector" : true,
+          "directorDetails" : {
+            "firstName" : "Director",
+            "lastName" : "One",
+            "isDeleted" : false
+          },
+          "dateOfBirth" : "2002-01-01",
+          "hasNino" : true,
+          "hasUtr" : true,
+          "utr" : "1234567890",
+          "directorAddressId" : {
+            "addressLine1" : "Flat 1",
+            "addressLine2" : "7 Other Place",
+            "addressLine3" : "Some District",
+            "addressLine4" : "Somerset",
+            "postcode" : "ZZ1 1ZZ",
+            "country" : "GB"
+          },
+          "companyDirectorAddressYears" : "under_a_year",
+          "previousAddress" : {
+            "addressLine1" : "Flat 2",
+            "addressLine2" : "7 Other Place",
+            "addressLine3" : "Some District",
+            "addressLine4" : "Somerset",
+            "postcode" : "ZZ1 1ZZ",
+            "country" : "GB"
+          },
+          "directorContactDetails" : {
+            "emailAddress" : "p@p.p",
+            "phoneNumber" : "345678"
+          }
+        }
+      ]
+    }
+  ]
+}

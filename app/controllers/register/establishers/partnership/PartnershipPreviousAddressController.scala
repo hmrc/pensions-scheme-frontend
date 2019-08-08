@@ -54,7 +54,7 @@ class PartnershipPreviousAddressController @Inject()(
   protected val form: Form[Address] = formProvider()
   private[controllers] val postCall = routes.PartnershipPreviousAddressController.onSubmit _
   private[controllers] val title: Message = "messages__partnershipPreviousAddress__title"
-  private[controllers] val heading: Message = "messages__partnershipPreviousAddress__heading"
+  private[controllers] val heading: Message = "messages__common__confirmPreviousAddress__h1"
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
@@ -83,7 +83,7 @@ class PartnershipPreviousAddressController @Inject()(
               postCall(mode, Index(index), srn),
               countryOptions.options,
               title = Message(title),
-              heading = Message(heading),
+              heading = Message(heading,details.name),
               secondaryHeader = Some(details.name),
               srn = srn
             )

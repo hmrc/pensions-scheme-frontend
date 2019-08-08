@@ -22,18 +22,18 @@ import controllers.actions._
 import identifiers.register.establishers.IsEstablisherNewId
 import identifiers.register.establishers.company._
 import javax.inject.Inject
+import models.Mode.checkMode
 import models.{Index, Mode}
+import navigators.Navigator
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import utils._
 import utils.annotations.{EstablishersCompany, NoSuspendedCheck}
 import utils.checkyouranswers.Ops._
-import utils._
 import viewmodels.AnswerSection
 import views.html.check_your_answers
-import models.Mode.checkMode
-import navigators.Navigator
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -77,11 +77,9 @@ class CheckYourAnswersCompanyAddressController @Inject()(appConfig: FrontendAppC
     }
 
   def onSubmit(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] = (
-    authenticate andThen getData(mode, srn) andThen requireData).async {
+    authenticate andThen getData(mode, srn) andThen requireData) {
     implicit request =>
-      userAnswersService.setCompleteFlag(mode, srn, IsAddressCompleteId(index), request.userAnswers, true).map { _ =>
-        Redirect(controllers.routes.SchemeTaskListController.onPageLoad(mode, srn))
-      }
+      Redirect(controllers.routes.SchemeTaskListController.onPageLoad(mode, srn))
   }
 
 }
