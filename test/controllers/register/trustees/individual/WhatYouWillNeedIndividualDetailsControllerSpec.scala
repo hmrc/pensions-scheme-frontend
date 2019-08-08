@@ -26,9 +26,9 @@ import views.html.register.trustees.individual.whatYouWillNeedIndividualDetails
 
 class WhatYouWillNeedIndividualDetailsControllerSpec extends ControllerSpecBase with MockitoSugar with BeforeAndAfterEach {
 
-  val personName = "Test Name"
+  private val personName = "Test Name"
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryTrustee): WhatYouWillNeedIndividualDetailsController =
+  private def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryTrustee): WhatYouWillNeedIndividualDetailsController =
     new WhatYouWillNeedIndividualDetailsController(frontendAppConfig,
       messagesApi,
       FakeAuthAction,
@@ -37,9 +37,9 @@ class WhatYouWillNeedIndividualDetailsControllerSpec extends ControllerSpecBase 
       new DataRequiredActionImpl
     )
 
-  lazy val href = controllers.register.trustees.individual.routes.WhatYouWillNeedIndividualDetailsController.onPageLoad(NormalMode, index=Index(0), None)
+  private def href = controllers.register.trustees.individual.routes.TrusteeDOBController.onPageLoad(NormalMode, index=Index(0), None)
 
-  def viewAsString(): String = whatYouWillNeedIndividualDetails(frontendAppConfig, None, href, None, personName)(fakeRequest, messages).toString
+  private def viewAsString(): String = whatYouWillNeedIndividualDetails(frontendAppConfig, None, href, None, personName)(fakeRequest, messages).toString
 
   "WhatYouWillNeedIndividualDetailsControllerSpec" when {
 
@@ -53,4 +53,3 @@ class WhatYouWillNeedIndividualDetailsControllerSpec extends ControllerSpecBase 
     }
   }
 }
-
