@@ -25,5 +25,5 @@ case class TrusteeHasUTRId(index: Int) extends TypedIdentifier[Boolean] {
 }
 
 object TrusteeHasUTRId {
-  override def toString: String = "hasUTR"
+  override def toString: String = "hasUtr"
 }

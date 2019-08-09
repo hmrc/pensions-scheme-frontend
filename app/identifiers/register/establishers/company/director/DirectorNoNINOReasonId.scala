@@ -28,8 +28,6 @@ import viewmodels.AnswerRow
 case class DirectorNoNINOReasonId(establisherIndex: Int, directorIndex: Int) extends TypedIdentifier[String] {
   override def path: JsPath = EstablishersId(establisherIndex).path \ "director" \ directorIndex \ DirectorNoNINOReasonId.toString
 
-  override def cleanup(value: Option[String], userAnswers: UserAnswers): JsResult[UserAnswers] =
-    userAnswers.remove(DirectorNinoId(establisherIndex, directorIndex))
 }
 
 object DirectorNoNINOReasonId {
@@ -40,7 +38,7 @@ object DirectorNoNINOReasonId {
                    countryOptions: CountryOptions): CheckYourAnswers[DirectorNoNINOReasonId] = {
 
     def label(establisherIndex: Int, directorIndex: Int) = userAnswers.get(DirectorNameId(establisherIndex, directorIndex)) match {
-      case Some(name) => Some(messages("messages__directorNoNinoReason__heading", name.fullName))
+      case Some(name) => Some(messages("messages__noNinoReason__heading", name.fullName))
       case _ => Some(messages("messages__directorNoNinoReason__cya_fallback"))
     }
 

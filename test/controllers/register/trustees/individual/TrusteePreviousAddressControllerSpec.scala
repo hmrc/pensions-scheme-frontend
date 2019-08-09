@@ -177,8 +177,8 @@ class TrusteePreviousAddressControllerSpec extends ControllerSpecBase with CSRFR
           bind[AuthAction].to(FakeAuthAction),
           bind[CountryOptions].to(countryOptions),
           bind[DataRetrievalAction].to(retrieval(isHnsEnabled)),
-          bind[AuditService].toInstance(fakeAuditService)
-        )) {
+          bind[AuditService].toInstance(fakeAuditService),
+        bind[FeatureSwitchManagementService].to(new FakeFeatureSwitchManagementService(false)))) {
           implicit app =>
 
             val fakeRequest = addToken(FakeRequest(routes.TrusteePreviousAddressController.onSubmit(NormalMode, firstIndex, None))

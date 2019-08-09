@@ -44,27 +44,6 @@ class CompanyDetailsIdSpec extends SpecBase with Enumerable.Implicits {
     s"test-company-$index"
   )
 
-  "Cleanup" must {
-
-    val answers = UserAnswers(Json.obj())
-      .set(CompanyDetailsId(0))(companyTrustee(0))
-      .flatMap(_.set(TrusteeDetailsId(1))(individualTrustee(1)))
-      .flatMap(_.set(MoreThanTenTrusteesId)(true))
-      .asOpt.value
-
-    "One trustee is deleted from a set of 10 while the `more than ten trustees` flag was set to yes" when {
-
-      val result: UserAnswers = answers.remove(CompanyDetailsId(1)).asOpt.value
-
-      "remove the data for `More than 10 trustees`" in {
-        result.get(MoreThanTenTrusteesId) mustNot be(defined)
-      }
-
-
-    }
-
-  }
-
   "cya" when {
 
     val onwardUrl = "onwardUrl"

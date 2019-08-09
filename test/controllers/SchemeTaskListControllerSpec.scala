@@ -30,9 +30,9 @@ import org.scalatest.mockito.MockitoSugar
 import play.api.Configuration
 import play.api.libs.json.JsNull
 import play.api.test.Helpers._
-import utils.UserAnswers
+import utils.{FakeFeatureSwitchManagementService, UserAnswers}
 import viewmodels._
-import views.html.schemeDetailsTaskList
+import views.html.{schemeDetailsTaskList, schemeDetailsTaskListNonHns}
 
 import scala.concurrent.Future
 
@@ -48,11 +48,21 @@ class SchemeTaskListControllerSpec extends ControllerSpecBase with BeforeAndAfte
 
     "accessed in NormalMode with srn as None" must {
 
-      "return OK and the correct view" in {
-        val result = controller(UserAnswers().set(SchemeNameId)("test scheme").asOpt.value.dataRetrievalAction).onPageLoad(NormalMode, None)(fakeRequest)
+      "return OK and the correct view" when {
+        "toggle is off" in {
+          val result = controller(UserAnswers().set(SchemeNameId)("test scheme").asOpt.value.dataRetrievalAction).onPageLoad(NormalMode, None)(fakeRequest)
 
-        status(result) mustBe OK
-        contentAsString(result) mustBe schemeDetailsTaskList(frontendAppConfig, schemeDetailsTL)(fakeRequest, messages).toString()
+          status(result) mustBe OK
+          contentAsString(result) mustBe schemeDetailsTaskListNonHns(frontendAppConfig, schemeDetailsTL)(fakeRequest, messages).toString()
+        }
+
+        "toggle is on" in {
+          val result = controller(UserAnswers().set(SchemeNameId)("test scheme").asOpt.value.dataRetrievalAction,
+            isHnsEnabled = true).onPageLoad(NormalMode, None)(fakeRequest)
+
+          status(result) mustBe OK
+          contentAsString(result) mustBe schemeDetailsTaskList(frontendAppConfig, schemeDetailsTL)(fakeRequest, messages).toString()
+        }
       }
     }
 
@@ -165,7 +175,7 @@ class SchemeTaskListControllerSpec extends ControllerSpecBase with BeforeAndAfte
 object SchemeTaskListControllerSpec extends ControllerSpecBase with MockitoSugar with JsonFileReader {
 
 
-  def controller(dataRetrievalAction: DataRetrievalAction = userAnswers): SchemeTaskListController =
+  def controller(dataRetrievalAction: DataRetrievalAction = userAnswers, isHnsEnabled: Boolean = false): SchemeTaskListController =
     new SchemeTaskListController(
       frontendAppConfig,
       messagesApi,
@@ -174,7 +184,7 @@ object SchemeTaskListControllerSpec extends ControllerSpecBase with MockitoSugar
       FakeAllowAccessProvider(),
       fakeSchemeDetailsConnector,
       new ErrorHandler(frontendAppConfig, messagesApi),
-      fs,
+      new FakeFeatureSwitchManagementService(isHnsEnabled),
       fakeLockConnector,
       fakeSchemeDetailsReadOnlyCacheConnector,
       fakeUpdateCacheConnector,
@@ -188,8 +198,6 @@ object SchemeTaskListControllerSpec extends ControllerSpecBase with MockitoSugar
   val fakeLockConnector: PensionSchemeVarianceLockConnector = mock[PensionSchemeVarianceLockConnector]
   val fakeMinimalPsaConnector: MinimalPsaConnector = mock[MinimalPsaConnector]
   val config = injector.instanceOf[Configuration]
-
-  val fs: FeatureSwitchManagementService = new FeatureSwitchManagementServiceTestImpl(config, environment)
 
   val srnValue = "S1000000456"
   val srn = Some(srnValue)
