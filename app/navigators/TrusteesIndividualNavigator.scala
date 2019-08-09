@@ -20,9 +20,9 @@ import com.google.inject.Inject
 import connectors.UserAnswersCacheConnector
 import controllers.register.trustees.individual.routes._
 import identifiers.Identifier
-import identifiers.register.trustees.individual._
+import identifiers.register.trustees.individual.{TrusteeDOBId, _}
 import models.Mode._
-import models.{CheckMode, Mode, Registration, NormalMode}
+import models.{CheckMode, Mode, NormalMode, RegistrationMode, UpdateMode, VarianceMode}
 import play.api.mvc.Call
 import utils.UserAnswers
 
@@ -30,7 +30,7 @@ class TrusteesIndividualNavigator @Inject()(val dataCacheConnector: UserAnswersC
 
   import TrusteesIndividualNavigator._
 
-  private def normalAndUpdateModeRoutes(mode: Registration, ua: UserAnswers, srn: Option[String]): PartialFunction[Identifier, Call] = {
+  private def normalAndUpdateModeRoutes(mode: RegistrationMode, ua: UserAnswers, srn: Option[String]): PartialFunction[Identifier, Call] = {
     case TrusteeDOBId(index) if mode == NormalMode => hasNinoPage(mode, index, srn)
     case TrusteeDOBId(index) if mode == CheckMode => CheckYourAnswersIndividualDetailsController.onPageLoad(journeyMode(mode), index, None)
     case id@TrusteeHasNINOId(index) => booleanNav(id, ua, ninoPage(mode, index, srn), noNinoReasonPage(mode, index, srn))
@@ -43,12 +43,15 @@ class TrusteesIndividualNavigator @Inject()(val dataCacheConnector: UserAnswersC
     case TrusteeUTRId(index) => cyaIndividualDetailsPage(mode, index, srn)
   }
 
+  private def updateModeRoutes(mode: VarianceMode, ua: UserAnswers, srn: Option[String]): PartialFunction[Identifier, Call] = {
+    case TrusteeNewNinoId(index) => controllers.routes.AnyMoreChangesController.onPageLoad(srn)
+  }
 
   override protected def routeMap(from: NavigateFrom): Option[NavigateTo] = navigateOrSessionReset(normalAndUpdateModeRoutes(NormalMode, from.userAnswers, None), from.id )
 
   override protected def editRouteMap(from: NavigateFrom): Option[NavigateTo] = navigateOrSessionReset(normalAndUpdateModeRoutes(CheckMode, from.userAnswers, None), from.id)
 
-  override protected def updateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] = None
+  override protected def updateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] = navigateOrSessionReset(updateModeRoutes(UpdateMode, from.userAnswers, None), from.id)
 
   override protected def checkUpdateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] = None
 }
