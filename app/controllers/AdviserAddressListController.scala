@@ -62,8 +62,7 @@ class AdviserAddressListController @Inject()(override val appConfig: FrontendApp
         AddressListViewModel(
           postCall = routes.AdviserAddressListController.onSubmit(mode),
           manualInputCall = routes.AdviserAddressController.onPageLoad(mode),
-          addresses = addresses,
-          subHeading = Some(Message("messages__adviserDetails__secondary_heading"))
+          addresses = addresses
         )
     }.left.map(_ => Future.successful(Redirect(routes.AdviserPostCodeLookupController.onPageLoad(mode))))
   }

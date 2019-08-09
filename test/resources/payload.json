@@ -26,6 +26,12 @@
         "companyName": "Test company name",
         "isDeleted": false
       },
+      "companyVat" : {
+        "hasVat" : false
+      },
+      "companyPaye" : {
+        "hasPaye" : false
+      },
       "companyRegistrationNumber": {
         "hasCrn": true,
         "crn": "AB123456"
@@ -145,7 +151,6 @@
         "emailAddress": "m@m.m",
         "phoneNumber": "1234567"
       },
-      "isCompanyComplete": true,
       "director": [
         {
           "directorDetails": {
@@ -273,11 +278,9 @@
           "directorContactDetails": {
             "emailAddress": "a@a.a",
             "phoneNumber": "321"
-          },
-          "isDirectorComplete": true
+          }
         }
       ],
-      "isEstablisherComplete": true,
       "isCompanyDormant" : "no"
     },
     {
@@ -409,6 +412,74 @@
         "phoneNumber": "456456"
       },
       "isEstablisherComplete": true
+    },
+    {
+      "establisherKind" : "partnership",
+      "isEstablisherNew" : true,
+      "partnershipDetails" : {
+        "name" : "Test Partnership",
+        "isDeleted" : false
+      },
+      "partnershipVat" : {
+        "hasVat" : true,
+        "vat" : "123456789"
+      },
+      "partnershipPaye" : {
+        "hasPaye" : true,
+        "paye" : "123456"
+      },
+      "partnershipUniqueTaxReference" : {
+        "hasUtr" : true,
+        "utr" : "1234567890"
+      },
+      "partnershipAddress" : {
+        "addressLine1" : "4 Other Place",
+        "addressLine2" : "Some District",
+        "addressLine3" : "Anytown",
+        "addressLine4" : "Somerset",
+        "postcode" : "ZZ1 1ZZ",
+        "country" : "GB"
+      },
+      "partnershipAddressYears" : "over_a_year",
+      "partnershipContactDetails" : {
+        "emailAddress" : "r@r.r",
+        "phoneNumber" : "123456"
+      },
+      "isPartnershipCompleteId" : true,
+      "partner" : [
+        {
+          "isNewPartner" : true,
+          "partnerDetails" : {
+            "firstName" : "Partner",
+            "lastName" : "One",
+            "date" : "2001-01-01",
+            "isDeleted" : false
+          },
+          "partnerNino" : {
+            "hasNino" : true,
+            "nino" : "AB123456C"
+          },
+          "partnerUniqueTaxReference" : {
+            "hasUtr" : true,
+            "utr" : "1234567890"
+          },
+          "partnerAddressId" : {
+            "addressLine1" : "10 Other Place",
+            "addressLine2" : "Some District",
+            "addressLine3" : "Anytown",
+            "addressLine4" : "Somerset",
+            "postcode" : "ZZ1 1ZZ",
+            "country" : "GB"
+          },
+          "partnerAddressYears" : "over_a_year",
+          "partnerContactDetails" : {
+            "emailAddress" : "e@e.e",
+            "phoneNumber" : "1234567"
+          },
+          "isPartnerComplete" : true
+        }
+      ],
+      "isEstablisherComplete" : true
     }
   ],
   "trustees": [
@@ -541,6 +612,54 @@
         "phoneNumber": "98765"
       },
       "isPartnershipCompleteId": true
+    },
+    {
+      "isTrusteeNew" : true,
+      "trusteeKind" : "individual",
+      "trusteeDetails" : {
+        "firstName" : "Arthur",
+        "lastName" : "Smith",
+        "date" : "2000-02-02",
+        "isDeleted" : false
+      },
+      "trusteeNino" : {
+        "hasNino" : true,
+        "nino" : "NP565656C"
+      },
+      "uniqueTaxReference" : {
+        "hasUtr" : true,
+        "utr" : "1111111111"
+      },
+      "IndividualAddressList" : {
+        "addressLine1" : "10 Other Place",
+        "addressLine2" : "Some District",
+        "addressLine3" : "Anytown",
+        "addressLine4" : "Somerset",
+        "postalCode" : "ZZ1 1ZZ",
+        "countryCode" : "GB"
+      },
+      "trusteeAddressId" : {
+        "addressLine1" : "10 Other Place",
+        "addressLine2" : "Some District",
+        "addressLine3" : "Anytown",
+        "addressLine4" : "Somerset",
+        "postcode" : "ZZ1 1ZZ",
+        "country" : "GB"
+      },
+      "trusteeAddressYears" : "under_a_year",
+      "trusteePreviousAddress" : {
+        "addressLine1" : "10 Other Place",
+        "addressLine2" : "Some District",
+        "addressLine3" : "Anytown",
+        "addressLine4" : "Somerset",
+        "postcode" : "ZZ1 1ZZ",
+        "country" : "GB"
+      },
+      "trusteeContactDetails" : {
+        "emailAddress" : "a@a.c",
+        "phoneNumber" : "1"
+      },
+      "isTrusteeComplete" : true
     }
   ],
   "isWorkingKnowledgeComplete": true

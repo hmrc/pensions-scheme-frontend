@@ -43,13 +43,13 @@ trait Navigator {
   }
 
   def nextPage(id: Identifier, mode: Mode, userAnswers: UserAnswers, srn: Option[String] = None)
-                             (implicit ex: IdentifiedRequest, ec: ExecutionContext, hc: HeaderCarrier): Call = {
+              (implicit ex: IdentifiedRequest, ec: ExecutionContext, hc: HeaderCarrier): Call = {
     nextPageOptional(id, mode, userAnswers, srn)
       .getOrElse(defaultPage(id, mode))
   }
 
   def nextPageOptional(id: Identifier, mode: Mode, userAnswers: UserAnswers, srn: Option[String] = None)
-              (implicit ex: IdentifiedRequest, ec: ExecutionContext, hc: HeaderCarrier): Option[Call]
+                      (implicit ex: IdentifiedRequest, ec: ExecutionContext, hc: HeaderCarrier): Option[Call]
 
   private def defaultPage(id: Identifier, mode: Mode): Call = {
     Logger.warn(s"No navigation defined for id $id in mode $mode")
@@ -75,7 +75,7 @@ abstract class AbstractNavigator extends Navigator {
   protected def checkUpdateRouteMap(from: NavigateFrom, srn: Option[String] = None): Option[NavigateTo]
 
   override final def nextPageOptional(id: Identifier, mode: Mode, userAnswers: UserAnswers, srn: Option[String] = None)
-              (implicit ex: IdentifiedRequest, ec: ExecutionContext, hc: HeaderCarrier): Option[Call] = {
+                                     (implicit ex: IdentifiedRequest, ec: ExecutionContext, hc: HeaderCarrier): Option[Call] = {
 
     val navigateTo = {
       mode match {
@@ -99,10 +99,10 @@ abstract class AbstractNavigator extends Navigator {
   }
 
   protected def booleanNav(id: TypedIdentifier[Boolean],
-                         answers: UserAnswers,
-                         mode: Mode,
-                         truePath: => Call,
-                         falsePath: => Call): Call =
+                           answers: UserAnswers,
+                           mode: Mode,
+                           truePath: => Call,
+                           falsePath: => Call): Call =
 
     answers.get(id) match {
       case Some(true) => truePath
@@ -111,12 +111,12 @@ abstract class AbstractNavigator extends Navigator {
     }
 
   protected def booleanNav(id: TypedIdentifier[Boolean],
-                         answers: UserAnswers,
-                         mode: Mode,
-                         index: Index,
-                         srn: Option[String],
-                         truePath: (Mode, Int, Option[String]) => Call,
-                         falsePath: (Mode, Int, Option[String]) => Call): Call =
+                           answers: UserAnswers,
+                           mode: Mode,
+                           index: Index,
+                           srn: Option[String],
+                           truePath: (Mode, Int, Option[String]) => Call,
+                           falsePath: (Mode, Int, Option[String]) => Call): Call =
     booleanNav(id, answers, mode, truePath(mode, index, srn), falsePath(mode, index, srn))
 
   protected def sessionExpiredPage: Call = controllers.routes.SessionExpiredController.onPageLoad()

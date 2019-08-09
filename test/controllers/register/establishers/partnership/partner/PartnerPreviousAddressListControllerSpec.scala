@@ -193,8 +193,7 @@ class PartnerPreviousAddressListControllerSpec extends ControllerSpecBase with C
       routes.PartnerPreviousAddressController.onPageLoad(NormalMode, Index(0), Index(0), None),
       addresses,
       title = previousAddressTitle,
-      heading = previousAddressHeading,
-      subHeading = Some(Message(partnerDetails.fullName))
+      heading = previousAddressHeading
     )
   }
 }

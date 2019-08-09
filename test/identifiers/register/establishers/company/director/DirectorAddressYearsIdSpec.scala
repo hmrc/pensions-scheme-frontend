@@ -43,8 +43,6 @@ class DirectorAddressYearsIdSpec extends SpecBase with Enumerable.Implicits {
       .flatMap(_.set(DirectorPreviousAddressPostcodeLookupId(0, 0))(Seq.empty))
       .flatMap(_.set(DirectorPreviousAddressId(0, 0))(Address("foo", "bar", None, None, None, "GB")))
       .flatMap(_.set(DirectorPreviousAddressListId(0, 0))(TolerantAddress(Some("foo"), Some("bar"), None, None, None, Some("GB"))))
-      .flatMap(_.set(IsDirectorCompleteId(0, 0))(true))
-      .flatMap(_.set(IsEstablisherCompleteId(0))(true))
       .asOpt.value
 
     "`AddressYears` is set to `OverAYear`" when {
@@ -62,11 +60,6 @@ class DirectorAddressYearsIdSpec extends SpecBase with Enumerable.Implicits {
       "remove the data for `PreviousAddressList`" in {
         result.get(DirectorPreviousAddressListId(0, 0)) mustNot be(defined)
       }
-
-      "do not change the value of IsDirectorCompleteId and IsEstablisherCompleteId" in {
-        result.get(IsDirectorCompleteId(0, 0)).value mustBe true
-        result.get(IsEstablisherCompleteId(0)).value mustBe true
-      }
     }
 
     "`AddressYears` is set to `UnderAYear`" when {
@@ -76,14 +69,7 @@ class DirectorAddressYearsIdSpec extends SpecBase with Enumerable.Implicits {
         .flatMap(_.set(DirectorPreviousAddressPostcodeLookupId(0, 0))(Seq.empty))
         .flatMap(_.set(DirectorPreviousAddressId(0, 0))(Address("foo", "bar", None, None, None, "GB")))
         .flatMap(_.set(DirectorPreviousAddressListId(0, 0))(TolerantAddress(Some("foo"), Some("bar"), None, None, None, Some("GB"))))
-        .flatMap(_.set(IsDirectorCompleteId(0, 0))(true))
-        .flatMap(_.set(IsEstablisherCompleteId(0))(true)).asOpt.value.
-        set(DirectorAddressYearsId(0, 0))(AddressYears.UnderAYear).asOpt.value
-
-      "set the value of IsDirectorCompleteId and IsEstablisherCompleteId to false" in {
-        result.get(IsDirectorCompleteId(0, 0)).value mustBe false
-        result.get(IsEstablisherCompleteId(0)).value mustBe false
-      }
+        .flatMap(_.set(DirectorAddressYearsId(0, 0))(AddressYears.UnderAYear)).asOpt.value
 
       "not remove the data for `PreviousPostCodeLookup`" in {
         result.get(DirectorPreviousAddressPostcodeLookupId(0, 0)) mustBe defined

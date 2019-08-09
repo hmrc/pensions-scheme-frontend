@@ -20,10 +20,8 @@ import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions._
 import forms.register.PersonDetailsFormProvider
-import identifiers.register.trustees.TrusteeKindId
 import identifiers.register.trustees.individual.TrusteeDetailsId
 import javax.inject.Inject
-import models.register.trustees.TrusteeKind._
 import models.{Index, Mode}
 import navigators.Navigator
 import play.api.data.Form

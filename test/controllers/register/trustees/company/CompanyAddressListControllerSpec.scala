@@ -134,6 +134,7 @@ class CompanyAddressListControllerSpec extends ControllerSpecBase with CSRFReque
         val result = route(app, request).value
 
         status(result) mustBe SEE_OTHER
+        redirectLocation(result) mustBe Some(controllers.register.trustees.company.routes.CompanyAddressController.onPageLoad(NormalMode, 0, None).url)
       }
 
     }
@@ -186,8 +187,7 @@ class CompanyAddressListControllerSpec extends ControllerSpecBase with CSRFReque
     AddressListViewModel(
       routes.CompanyAddressListController.onSubmit(NormalMode, Index(0), None),
       routes.CompanyAddressController.onPageLoad(NormalMode, Index(0), None),
-      addresses,
-      subHeading = Some(Message(companyDetails.companyName))
+      addresses
     )
   }
 

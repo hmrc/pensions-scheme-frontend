@@ -37,7 +37,7 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
                                              appConfig: FrontendAppConfig,
                                              featureSwitchManagementService: FeatureSwitchManagementService) extends AbstractNavigator {
 
-  private val isEstablisherCompanyHnSEnabled: Boolean = featureSwitchManagementService.get(Toggles.isEstablisherCompanyHnSEnabled)
+  private def isEstablisherCompanyHnSEnabled: Boolean = featureSwitchManagementService.get(Toggles.isEstablisherCompanyHnSEnabled)
 
   private def exitMiniJourney(index: Int,
                               mode: Mode,

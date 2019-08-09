@@ -71,7 +71,7 @@ class PreviousAddressPostCodeLookupControllerSpec extends ControllerSpecBase wit
       routes.PreviousAddressPostCodeLookupController.onSubmit(NormalMode, firstIndex, None),
       routes.PreviousAddressController.onPageLoad(NormalMode, firstIndex, None),
       Message("messages__establisher_individual_previous_address__title"),
-      Message("messages__establisher_individual_previous_address__title"),
+      Message("messages__establisher_individual_previous_address__heading", establisherName),
       Some(establisherName)
     ),
     None

@@ -41,8 +41,8 @@ class DirectorNoNINOReasonControllerSpec extends ControllerSpecBase {
 
   val viewmodel = ReasonViewModel(
     postCall = postCall,
-    title = Message("messages__directorNoNinoReason__title"),
-    heading = Message("messages__directorNoNinoReason__heading", name),
+    title = Message("messages__noNinoReason__director_title"),
+    heading = Message("messages__noNinoReason__heading", name),
     srn = srn
   )
 

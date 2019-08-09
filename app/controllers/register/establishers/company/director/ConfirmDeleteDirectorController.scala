@@ -20,12 +20,10 @@ import config.{FeatureSwitchManagementService, FrontendAppConfig}
 import controllers.Retrievals
 import controllers.actions._
 import forms.register.establishers.company.director.ConfirmDeleteDirectorFormProvider
-import identifiers.register.establishers.IsEstablisherCompleteId
-import identifiers.register.establishers.company.CompanyDetailsId
 import identifiers.register.establishers.company.director.{ConfirmDeleteDirectorId, DirectorDetailsId, DirectorNameId}
 import javax.inject.Inject
 import models.requests.DataRequest
-import models.{CheckMode, Index, Mode, NormalMode}
+import models.{Index, Mode}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -123,27 +121,9 @@ class ConfirmDeleteDirectorController @Inject()(
               } else {
                 Future.successful(request.userAnswers.json)
               }
-              deletionResult.flatMap {
-                jsValue =>
-                  val userAnswers = UserAnswers(jsValue)
-                  if (userAnswers.allDirectorsAfterDelete(establisherIndex, fs.get(Toggles.isEstablisherCompanyHnSEnabled)).isEmpty) {
-                    userAnswers.upsert(IsEstablisherCompleteId(establisherIndex))(false) { result =>
-                      userAnswersService.upsert(mode, srn, result.json).map { _ =>
-                        Redirect(navigator.nextPage(ConfirmDeleteDirectorId(establisherIndex), mode, userAnswers, srn))
-                      }
-                    }
-                  } else {
-                    mode match {
-                      case CheckMode | NormalMode =>
-                        Future.successful(Redirect(navigator.nextPage(ConfirmDeleteDirectorId(establisherIndex), mode, userAnswers, srn)))
-                      case _ =>
-                        userAnswers.upsert(IsEstablisherCompleteId(establisherIndex))(true) { result =>
-                          userAnswersService.upsert(mode, srn, result.json).map { json =>
-                            Redirect(navigator.nextPage(ConfirmDeleteDirectorId(establisherIndex), mode, userAnswers, srn))
-                          }
-                        }
-                    }
-                  }
+              deletionResult.flatMap { jsValue =>
+                Future.successful(Redirect(navigator.nextPage(ConfirmDeleteDirectorId(establisherIndex), mode, UserAnswers(jsValue), srn)))
+
               }
             }
 

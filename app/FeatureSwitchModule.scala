@@ -14,14 +14,11 @@
  * limitations under the License.
  */
 
-import com.typesafe.config.ConfigException
 import config.{FeatureSwitchManagementService, FeatureSwitchManagementServiceProductionImpl, FeatureSwitchManagementServiceTestImpl}
-import navigators.{Navigator, TrusteesCompanyNavigatorOld, TrusteesCompanyNavigator}
+import navigators._
 import play.api.inject.{Binding, Module}
 import play.api.{Configuration, Environment}
-import utils.annotations.TrusteesCompany
-
-import scala.util.{Failure, Success, Try}
+import utils.annotations.{TrusteesCompany, TrusteesIndividual}
 
 class FeatureSwitchModule extends Module {
 
@@ -37,14 +34,15 @@ class FeatureSwitchModule extends Module {
 
     val hubSpokeEnabled = configuration.getBoolean("features.is-establisher-company-hns").getOrElse(false)
 
-    val trusteesCompanyNavigatorBinding = Seq(
+    val trusteesNavigatorBinding =
       if (hubSpokeEnabled) {
-        bind(classOf[Navigator]).qualifiedWith[TrusteesCompany].to(classOf[TrusteesCompanyNavigator])
+        Seq(bind(classOf[Navigator]).qualifiedWith[TrusteesIndividual].to(classOf[TrusteesIndividualNavigator]),
+        bind(classOf[Navigator]).qualifiedWith[TrusteesCompany].to(classOf[TrusteesCompanyNavigator]))
       } else {
-        bind(classOf[Navigator]).qualifiedWith[TrusteesCompany].to(classOf[TrusteesCompanyNavigatorOld])
+        Seq(bind(classOf[Navigator]).qualifiedWith[TrusteesIndividual].to(classOf[TrusteesIndividualNavigatorOld]),
+        bind(classOf[Navigator]).qualifiedWith[TrusteesCompany].to(classOf[TrusteesCompanyNavigatorOld]))
       }
-    )
 
-    featureSwitchBinding ++ trusteesCompanyNavigatorBinding
+    featureSwitchBinding ++ trusteesNavigatorBinding
   }
 }

@@ -17,7 +17,7 @@
 package views.register.establishers.company.director
 
 import controllers.register.establishers.company.director.routes
-import forms.register.establishers.company.director.DirectorDOBFormProvider
+import forms.DOBFormProvider
 import models.{Index, NormalMode}
 import org.joda.time.LocalDate
 import play.api.data.{Form, FormError}
@@ -34,7 +34,7 @@ class DirectorDOBViewSpec extends QuestionViewBehaviours[LocalDate] {
   val personName = "John Doe"
   private val postCall = routes.DirectorDOBController.onSubmit _
 
-  override val form = new DirectorDOBFormProvider()()
+  override val form = new DOBFormProvider()()
 
   def createView(): () => HtmlFormat.Appendable = () =>
     directorDOB(frontendAppConfig, form, NormalMode, establisherIndex, directorIndex, None,

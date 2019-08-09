@@ -16,19 +16,19 @@
 
 package identifiers.register.establishers.company
 
-import identifiers.register.establishers.{IsEstablisherCompleteId, IsEstablisherNewId}
+import identifiers.register.establishers.IsEstablisherNewId
 import models.AddressYears.UnderAYear
-import models.{AddressYears, Link, NormalMode, UpdateMode}
 import models.address.{Address, TolerantAddress}
 import models.requests.DataRequest
+import models.{AddressYears, Link, NormalMode, UpdateMode}
 import org.scalatest.{MustMatchers, OptionValues, WordSpec}
 import play.api.libs.json.Json
 import play.api.mvc.AnyContent
 import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.PsaId
+import utils.checkyouranswers.Ops._
 import utils.{Enumerable, UserAnswers}
 import viewmodels.AnswerRow
-import utils.checkyouranswers.Ops._
 
 class CompanyAddressYearsIdSpec extends WordSpec with MustMatchers with OptionValues with Enumerable.Implicits {
 
@@ -39,8 +39,6 @@ class CompanyAddressYearsIdSpec extends WordSpec with MustMatchers with OptionVa
       .flatMap(_.set(CompanyPreviousAddressPostcodeLookupId(0))(Seq.empty))
       .flatMap(_.set(CompanyPreviousAddressId(0))(Address("foo", "bar", None, None, None, "GB")))
       .flatMap(_.set(CompanyPreviousAddressListId(0))(TolerantAddress(Some("foo"), Some("bar"), None, None, None, Some("GB"))))
-      .flatMap(_.set(IsCompanyCompleteId(0))(true))
-      .flatMap(_.set(IsEstablisherCompleteId(0))(true))
       .asOpt.value
 
     "`AddressYears` is set to `OverAYear`" when {
@@ -58,11 +56,6 @@ class CompanyAddressYearsIdSpec extends WordSpec with MustMatchers with OptionVa
       "remove the data for `PreviousAddressList`" in {
         result.get(CompanyPreviousAddressListId(0)) mustNot be(defined)
       }
-
-      "do not change the value of IsCompanyCompleteId and IsEstablisherCompleteId" in {
-        result.get(IsCompanyCompleteId(0)).value mustBe true
-        result.get(IsEstablisherCompleteId(0)).value mustBe true
-      }
     }
 
     "`AddressYears` is set to `UnderAYear`" when {
@@ -72,14 +65,7 @@ class CompanyAddressYearsIdSpec extends WordSpec with MustMatchers with OptionVa
         .flatMap(_.set(CompanyPreviousAddressPostcodeLookupId(0))(Seq.empty))
         .flatMap(_.set(CompanyPreviousAddressId(0))(Address("foo", "bar", None, None, None, "GB")))
         .flatMap(_.set(CompanyPreviousAddressListId(0))(TolerantAddress(Some("foo"), Some("bar"), None, None, None, Some("GB"))))
-        .flatMap(_.set(IsCompanyCompleteId(0))(true))
-        .flatMap(_.set(IsEstablisherCompleteId(0))(true))
         .asOpt.value.set(CompanyAddressYearsId(0))(AddressYears.UnderAYear).asOpt.value
-
-      "set the value of IsCompanyCompleteId and IsEstablisherCompleteId to false" in {
-        result.get(IsCompanyCompleteId(0)).value mustBe false
-        result.get(IsEstablisherCompleteId(0)).value mustBe false
-      }
 
       "not remove the data for `PreviousPostCodeLookup`" in {
         result.get(CompanyPreviousAddressPostcodeLookupId(0)) mustBe defined

@@ -192,8 +192,7 @@ class DirectorAddressListControllerSpec extends ControllerSpecBase with CSRFRequ
     AddressListViewModel(
       routes.DirectorAddressListController.onSubmit(NormalMode, Index(0), Index(0), None),
       routes.DirectorAddressController.onPageLoad(NormalMode, Index(0), Index(0), None),
-      addresses,
-      subHeading = Some(Message(directorDetails.fullName))
+      addresses
     )
   }
 

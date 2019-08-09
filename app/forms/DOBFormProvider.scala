@@ -14,16 +14,27 @@
  * limitations under the License.
  */
 
-package identifiers.register.establishers.company
+package forms
 
-import identifiers.TypedIdentifier
-import identifiers.register.establishers.EstablishersId
-import play.api.libs.json.JsPath
+import forms.mappings.{Mappings, Transforms}
+import javax.inject.Inject
+import org.joda.time.LocalDate
+import play.api.data.Form
 
-case class IsCompanyCompleteId(index: Int) extends TypedIdentifier[Boolean] {
-  override def path: JsPath = EstablishersId(index).path \ IsCompanyCompleteId.toString
+class DOBFormProvider @Inject() extends Mappings with Transforms {
+
+  def apply(): Form[LocalDate] = Form(
+    "date" ->
+      dateMapping("messages__error__date", "error.invalid_date")
+        .verifying(
+          firstError(
+            futureDate("messages__error__date_future"),
+            notBeforeYear("messages__error__date_past", DOBFormProvider.startYear)
+          )
+        )
+  )
 }
 
-object IsCompanyCompleteId {
-  override def toString: String = "isCompanyComplete"
+object DOBFormProvider {
+  val startYear: Int = 1900
 }

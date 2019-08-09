@@ -14,20 +14,16 @@
  * limitations under the License.
  */
 
-package identifiers.register.establishers.company.director
+package identifiers.register.trustees.individual
 
-import identifiers.TypedIdentifier
-import identifiers.register.establishers.EstablishersId
+import identifiers._
+import identifiers.register.trustees.TrusteesId
 import play.api.libs.json.JsPath
 
-case class IsDirectorCompleteId(establisherIndex: Int, directorIndex: Int) extends TypedIdentifier[Boolean] {
-  override def path: JsPath = EstablishersId(establisherIndex).path \ "director" \ directorIndex \ IsDirectorCompleteId.toString
+case class TrusteeUTRId(index: Int) extends TypedIdentifier[String] {
+  override def path: JsPath = TrusteesId(index).path \ TrusteeUTRId.toString
 }
 
-object IsDirectorCompleteId {
-  override def toString: String = "isDirectorComplete"
+object TrusteeUTRId {
+  override def toString: String = "utr"
 }
-
-
-
-
