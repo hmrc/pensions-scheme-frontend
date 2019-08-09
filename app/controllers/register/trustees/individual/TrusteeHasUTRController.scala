@@ -16,18 +16,17 @@
 
 package controllers.register.trustees.individual
 
-import config.{FeatureSwitchManagementService, FrontendAppConfig}
+import config.FrontendAppConfig
 import controllers.HasReferenceNumberController
 import controllers.actions._
-import forms.HasUtrFormProvider
-import identifiers.register.trustees.individual.{TrusteeDetailsId, TrusteeHasUTRId, TrusteeNameId}
+import forms.HasReferenceNumberFormProvider
+import identifiers.register.trustees.individual.{TrusteeHasUTRId, TrusteeNameId}
 import javax.inject.Inject
 import models.{Index, Mode}
 import navigators.Navigator
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
-import utils.Toggles
 import utils.annotations.TrusteesIndividual
 import viewmodels.{CommonFormWithHintViewModel, Message}
 
@@ -41,7 +40,7 @@ class TrusteeHasUTRController @Inject()(val appConfig: FrontendAppConfig,
                                         getData: DataRetrievalAction,
                                         allowAccess: AllowAccessActionProvider,
                                         requireData: DataRequiredAction,
-                                        formProvider: HasUtrFormProvider
+                                        formProvider: HasReferenceNumberFormProvider
                                        )(implicit val ec: ExecutionContext) extends HasReferenceNumberController {
 
   private def viewModel(mode: Mode, index: Index, srn: Option[String], trusteeName: String): CommonFormWithHintViewModel =

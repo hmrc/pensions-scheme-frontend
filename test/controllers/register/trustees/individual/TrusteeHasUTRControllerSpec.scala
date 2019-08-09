@@ -18,7 +18,7 @@ package controllers.register.trustees.individual
 
 import controllers.ControllerSpecBase
 import controllers.actions._
-import forms.HasUtrFormProvider
+import forms.{HasReferenceNumberFormProvider, HasUtrFormProvider}
 import identifiers.register.trustees.TrusteesId
 import identifiers.register.trustees.individual.{TrusteeHasUTRId, TrusteeNameId, TrusteeNoUTRReasonId, TrusteeUTRId}
 import models.person.PersonName
@@ -35,7 +35,7 @@ import views.html.hasUtr
 class TrusteeHasUTRControllerSpec extends ControllerSpecBase {
   private def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
-  private val formProvider = new HasUtrFormProvider()
+  private val formProvider = new HasReferenceNumberFormProvider()
   private val form = formProvider("messages__hasUtr__error__required", "test name")
   private val index = Index(0)
   private val srn = None
@@ -45,12 +45,12 @@ class TrusteeHasUTRControllerSpec extends ControllerSpecBase {
   private val viewModel = CommonFormWithHintViewModel(
     postCall = postCall,
     title = Message("messages__hasTrusteeUtr__title"),
-    heading = Message("messages__hasTrusteeUtr__h1", "First Last"),
+    heading = Message("messages__hasTrusteeUtr__h1", "first Last"),
     hint = Some(Message("messages__hasUtr__p1")),
     srn = srn
   )
 
-  private val trusteeIndividualData = UserAnswers().set(TrusteeNameId(0))(PersonName("First", "Last")).asOpt.value
+  private val trusteeIndividualData = UserAnswers().set(TrusteeNameId(0))(PersonName("first", "Last")).asOpt.value
 
   private def getTrusteeIndividualDataWithUtr(hasUtrValue:Boolean): FakeDataRetrievalAction = new FakeDataRetrievalAction(
     Some(Json.obj(
@@ -90,7 +90,7 @@ class TrusteeHasUTRControllerSpec extends ControllerSpecBase {
       contentAsString(result) mustBe viewAsString()
     }
 
-    "redirect to the next page when valid data is submitted for true" in {
+    "redirect to the next page when valid data is submitted" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "true"))
 
       val result = controller().onSubmit(NormalMode, index, None)(postRequest)
@@ -119,8 +119,7 @@ class TrusteeHasUTRControllerSpec extends ControllerSpecBase {
       contentAsString(result) mustBe viewAsString(boundForm)
     }
 
-    "if user changes answer from yes to no then clean up should take place on utr number" in {
-      FakeUserAnswersService.reset()
+    "clean up utr number, if user changes answer from yes to no" in {
      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "false"))
       val result = controller(getTrusteeIndividualDataWithUtr(true)).onSubmit(NormalMode, index, None)(postRequest)
 
@@ -131,7 +130,7 @@ class TrusteeHasUTRControllerSpec extends ControllerSpecBase {
       FakeUserAnswersService.userAnswer.get(TrusteeNoUTRReasonId(index)) mustBe Some(noUtr)
     }
 
-    "if user changes answer from no to yes then clean up should take place on no utr reason" in {
+    "clean up no utr reason, if user changes answer from no to yes" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "true"))
       val result = controller(getTrusteeIndividualDataWithUtr(false)).onSubmit(NormalMode, index, None)(postRequest)
 
@@ -140,6 +139,5 @@ class TrusteeHasUTRControllerSpec extends ControllerSpecBase {
       FakeUserAnswersService.userAnswer.get(TrusteeNoUTRReasonId(index)) mustBe None
       FakeUserAnswersService.userAnswer.get(TrusteeUTRId(index)) mustBe Some(utr)
     }
-
   }
 }
