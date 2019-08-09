@@ -38,7 +38,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
 
   "Check Your Answers Controller" must {
     "return 200 and the correct view for a GET" in {
-      val result = controller(getMandatoryTrustee).onPageLoad(NormalMode, firstIndex, None)(fakeRequest)
+      val result = controller(getMandatoryTrusteeNonHnS).onPageLoad(NormalMode, firstIndex, None)(fakeRequest)
 
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString(answerSections, NormalMode, None)
@@ -70,7 +70,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
         )
       }
 
-      val result = controller(getMandatoryTrustee).onPageLoad(UpdateMode, firstIndex, Some("srn"))(fakeRequest)
+      val result = controller(getMandatoryTrusteeNonHnS).onPageLoad(UpdateMode, firstIndex, Some("srn"))(fakeRequest)
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString(expectedAnswerSections, UpdateMode, Some("srn"))
     }
@@ -107,7 +107,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
     }
 
     behave like changeableController(
-      controller(getMandatoryTrustee, _: AllowChangeHelper).onPageLoad(NormalMode, firstIndex, None)(fakeRequest)
+      controller(getMandatoryTrusteeNonHnS, _: AllowChangeHelper).onPageLoad(NormalMode, firstIndex, None)(fakeRequest)
     )
   }
 }

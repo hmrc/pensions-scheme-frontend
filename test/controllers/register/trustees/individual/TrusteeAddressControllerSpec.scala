@@ -18,7 +18,7 @@ package controllers.register.trustees.individual
 
 import audit.testdoubles.StubSuccessfulAuditService
 import audit.{AddressAction, AddressEvent, AuditService}
-import config.FrontendAppConfig
+import config.{FeatureSwitchManagementService, FrontendAppConfig}
 import controllers.actions._
 import controllers.behaviours.ControllerBehaviours
 import identifiers.register.trustees.TrusteesId
@@ -35,8 +35,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.{FakeUserAnswersService, UserAnswersService}
 import utils.annotations.TrusteesIndividual
-import utils.{CountryOptions, FakeNavigator, InputOption}
-import viewmodels.Message
+import utils.{CountryOptions, FakeFeatureSwitchManagementService, FakeNavigator, InputOption}
 import viewmodels.address.ManualAddressViewModel
 
 class TrusteeAddressControllerSpec extends ControllerBehaviours {
@@ -62,18 +61,19 @@ class TrusteeAddressControllerSpec extends ControllerBehaviours {
       bind[UserAnswersService].toInstance(FakeUserAnswersService),
       bind[AuthAction].to(FakeAuthAction),
       bind[DataRetrievalAction].to(retrieval),
-      bind[CountryOptions].to(countryOptions)
+      bind[CountryOptions].to(countryOptions),
+      bind[FeatureSwitchManagementService].to(new FakeFeatureSwitchManagementService(false))
     )
 
   private val controller = builder.build().injector.instanceOf[TrusteeAddressController]
 
   val viewmodel = ManualAddressViewModel(
-    controller.postCall(NormalMode, firstIndex, None),
-    countryOptions.options,
-    Message(controller.title),
-    Message(controller.heading),
+    postCall = controller.postCall(NormalMode, firstIndex, None),
+    countryOptions = countryOptions.options,
+    title = messages("messages__trustee__individual__address__confirm__title"),
+    heading = messages("messages__common__confirmAddress__h1", personDetails.fullName),
     secondaryHeader = Some(personDetails.fullName),
-    Some(Message(controller.hint))
+    hint = Some(messages("messages__trustee__individual__address__confirm__lede"))
   )
 
   behave like manualAddress(
@@ -100,7 +100,8 @@ class TrusteeAddressControllerSpec extends ControllerBehaviours {
       bind[AuthAction].to(FakeAuthAction),
       bind[CountryOptions].to(countryOptions),
       bind[DataRetrievalAction].to(retrieval),
-      bind[AuditService].toInstance(fakeAuditService)
+      bind[AuditService].toInstance(fakeAuditService),
+      bind[FeatureSwitchManagementService].to(new FakeFeatureSwitchManagementService(false))
     )) {
       implicit app =>
 

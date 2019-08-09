@@ -17,7 +17,6 @@
 package controllers.register.trustees.company
 
 import base.CSRFRequest
-import services.{UserAnswersService, FakeUserAnswersService}
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.address.AddressListFormProvider
@@ -28,8 +27,8 @@ import play.api.inject.bind
 import play.api.libs.json._
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import services.{FakeUserAnswersService, UserAnswersService}
 import utils.UserAnswers
-import viewmodels.Message
 import viewmodels.address.AddressListViewModel
 import views.html.address.addressList
 
@@ -195,8 +194,7 @@ class CompanyPreviousAddressListControllerSpec extends ControllerSpecBase with C
       routes.CompanyPreviousAddressController.onPageLoad(NormalMode, Index(0), None),
       addresses,
       title = previousAddressTitle,
-      heading = previousAddressHeading,
-      subHeading = Some(Message(companyDetails.companyName))
+      heading = previousAddressHeading
     )
   }
 }

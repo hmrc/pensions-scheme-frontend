@@ -38,7 +38,7 @@ class HasUtrViewSpec@Inject()(appConfig: FrontendAppConfig) extends YesNoViewBeh
     postCall,
     title = Message("messages__hasCompanyUtr__title"),
     heading = Message("messages__hasCompanyUtr__h1", "ABC"),
-    hint = Some(Message("messages__hasCompanyUtr__p1")),
+    hint = Some(Message("messages__hasUtr__p1")),
     srn = srn
   )
   def createView(srn : Option[String] = None): () => HtmlFormat.Appendable = () =>

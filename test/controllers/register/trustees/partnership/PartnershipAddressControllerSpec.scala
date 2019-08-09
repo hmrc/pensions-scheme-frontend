@@ -78,7 +78,7 @@ class PartnershipAddressControllerSpec extends ControllerSpecBase with ScalaFutu
         routes.PartnershipAddressController.onSubmit(NormalMode, firstIndex, None),
         options,
         Message("messages__trusteePartnershipAddress__title"),
-        Message("messages__trusteePartnershipAddress__heading"),
+        Message("messages__common__confirmAddress__h1",partnershipName),
         Some(partnershipName),
         Some(Message("messages__trusteePartnershipAddress__lede"))
       ),

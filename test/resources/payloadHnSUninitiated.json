@@ -1,0 +1,32 @@
+{
+  "schemeName" : "Test Scheme Name",
+  "isBeforeYouStartComplete" : true,
+  "schemeType" : {
+    "name" : "single"
+  },
+  "schemeEstablishedCountry" : "GB",
+  "declarationDuties" : true,
+  "isWorkingKnowledgeComplete" : true,
+  "trustees" : [
+    {
+      "isTrusteeNew": true,
+      "trusteeKind": "individual",
+      "trusteeDetails": {
+        "firstName": "qwqwq",
+        "lastName": "wqwq",
+        "date": "2000-01-01",
+        "isDeleted": false
+      }
+    }
+  ],
+  "establishers" : [
+    {
+      "isEstablisherNew": true,
+      "establisherKind": "company",
+      "companyDetails": {
+        "companyName": "Test Company",
+        "isDeleted": false
+      }
+    }
+  ]
+}

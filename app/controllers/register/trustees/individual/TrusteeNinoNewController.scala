@@ -16,21 +16,23 @@
 
 package controllers.register.trustees.individual
 
-import config.FrontendAppConfig
+import config.{FeatureSwitchManagementService, FrontendAppConfig}
 import controllers.NinoController
 import controllers.actions._
 import forms.NinoNewFormProvider
-import identifiers.register.trustees.individual.{TrusteeDetailsId, TrusteeNewNinoId}
+import identifiers.register.trustees.individual.{TrusteeDetailsId, TrusteeNameId, TrusteeNewNinoId}
 import javax.inject.Inject
+import models.person.PersonDetails
 import models.{Index, Mode}
 import navigators.Navigator
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent}
+import play.api.mvc.{Action, AnyContent, Result}
 import services.UserAnswersService
+import utils.Toggles
 import utils.annotations.TrusteesIndividual
 import viewmodels.{Message, NinoViewModel}
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 class TrusteeNinoNewController @Inject()(
                                            val appConfig: FrontendAppConfig,
@@ -41,44 +43,45 @@ class TrusteeNinoNewController @Inject()(
                                            getData: DataRetrievalAction,
                                            allowAccess: AllowAccessActionProvider,
                                            requireData: DataRequiredAction,
-                                           val formProvider: NinoNewFormProvider
+                                           val formProvider: NinoNewFormProvider,
+                                           fs: FeatureSwitchManagementService
                                  )(implicit val ec: ExecutionContext) extends NinoController with I18nSupport {
 
   private[controllers] val postCall = controllers.register.trustees.individual.routes.TrusteeNinoNewController.onSubmit _
-  private[controllers] val title: Message = "messages__common_nino__title"
-  private[controllers] val heading: Message = "messages__common_nino__h1"
-  private[controllers] val hint: Message = "messages__common__nino_hint"
 
-  private def viewmodel(index: Index,  mode: Mode, srn: Option[String]): Retrieval[NinoViewModel] =
-    Retrieval {
-      implicit request =>
-        TrusteeDetailsId(index).retrieve.right.map {
-          details =>
-            NinoViewModel(
-              postCall(mode, Index(index), srn),
-              title = title,
-              heading = heading,
-              hint = hint,
-              personName = details.fullName,
-              srn = srn
-            )
-        }
-    }
+  private def viewmodel(fullName: String, index: Index,  mode: Mode, srn: Option[String]): NinoViewModel =
+    NinoViewModel(
+      postCall(mode, Index(index), srn),
+      title = Message("messages__trustee__individual__nino__title"),
+      heading = Message("messages__trustee__individual__nino__heading", fullName),
+      hint = Message("messages__common__nino_hint"),
+      srn = srn
+    )
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
     implicit request =>
-      viewmodel(index, mode, srn).retrieve.right.map {
-        vm =>
-          get(TrusteeNewNinoId(index), formProvider(vm.personName), vm)
+      val fullNameOption: Either[Future[Result], String] = if (fs.get(Toggles.isEstablisherCompanyHnSEnabled))
+        TrusteeNameId(index).retrieve.right.map(_.fullName)
+      else
+        TrusteeDetailsId(index).retrieve.right.map(_.fullName)
+
+      fullNameOption.right.map {
+        fullName =>
+          get(TrusteeNewNinoId(index), formProvider(fullName), viewmodel(fullName, index, mode, srn))
       }
   }
 
   def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
-      viewmodel(index, mode, srn).retrieve.right.map {
-        vm =>
-          post(TrusteeNewNinoId(index), mode, formProvider(vm.personName), vm)
+      val fullNameOption: Either[Future[Result], String] = if (fs.get(Toggles.isEstablisherCompanyHnSEnabled))
+        TrusteeNameId(index).retrieve.right.map(_.fullName)
+      else
+        TrusteeDetailsId(index).retrieve.right.map(_.fullName)
+
+      fullNameOption.right.map {
+        fullName =>
+          post(TrusteeNewNinoId(index), mode, formProvider(fullName), viewmodel(fullName, index, mode, srn))
       }
   }
 

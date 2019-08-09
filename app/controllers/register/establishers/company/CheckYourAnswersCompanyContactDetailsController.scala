@@ -20,7 +20,7 @@ import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions._
 import identifiers.register.establishers.IsEstablisherNewId
-import identifiers.register.establishers.company.{CompanyEmailId, CompanyPhoneId, IsContactDetailsCompleteId}
+import identifiers.register.establishers.company.{CompanyEmailId, CompanyPhoneId}
 import javax.inject.Inject
 import models.Mode.checkMode
 import models.{Index, Mode}
@@ -71,10 +71,8 @@ class CheckYourAnswersCompanyContactDetailsController @Inject()(appConfig: Front
     }
 
   def onSubmit(mode: Mode, srn: Option[String] = None, index: Index): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData) {
       implicit request =>
-        userAnswersService.setCompleteFlag(mode, srn, IsContactDetailsCompleteId(index), request.userAnswers, value = true).map { _ =>
-          Redirect(controllers.routes.SchemeTaskListController.onPageLoad(mode, srn))
-        }
+        Redirect(controllers.routes.SchemeTaskListController.onPageLoad(mode, srn))
     }
 }

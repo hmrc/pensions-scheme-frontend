@@ -17,250 +17,162 @@
 package navigators
 
 import com.google.inject.Inject
-import config.{FeatureSwitchManagementService, FrontendAppConfig}
 import connectors.UserAnswersCacheConnector
 import controllers.register.trustees.company.routes._
-import controllers.register.trustees.routes._
-import controllers.routes._
+import identifiers.Identifier
 import identifiers.register.trustees.IsTrusteeNewId
 import identifiers.register.trustees.company._
-import models.Mode.journeyMode
+import models.Mode._
 import models._
-import utils.{Toggles, UserAnswers}
+import play.api.mvc.Call
+import utils.UserAnswers
+import controllers.register.trustees.routes.AddTrusteeController
+import controllers.routes.AnyMoreChangesController
 
-class TrusteesCompanyNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector,
-                                         appConfig: FrontendAppConfig,
-                                         featureSwitchManagementService: FeatureSwitchManagementService) extends AbstractNavigator {
+class TrusteesCompanyNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector) extends AbstractNavigator {
+  import TrusteesCompanyNavigator._
 
-  private def exitMiniJourney(index: Index, mode: Mode, srn: Option[String], answers: UserAnswers,
-                              cyaPage: (Mode, Index, Option[String]) => Option[NavigateTo] = cya): Option[NavigateTo] = {
-    val cyaToggled = if (featureSwitchManagementService.get(Toggles.isEstablisherCompanyHnSEnabled)) cyaPage else cya _
-
-    if (mode == CheckMode || mode == NormalMode) {
-      cyaToggled(journeyMode(mode), index, srn)
-    } else {
-      if (answers.get(IsTrusteeNewId(index)).getOrElse(false)) cyaToggled(journeyMode(mode), index, srn)
-      else anyMoreChanges(srn)
-    }
+  private def normalAndUpdateModeRoutes(mode: Mode, ua: UserAnswers, srn: Option[String]): PartialFunction[Identifier, Call] = {
+    case CompanyDetailsId(index) => addTrusteePage(mode, srn)
+    case id@HasCompanyNumberId(index) => booleanNav(id, ua, mode, index, srn, companyNoPage, noCompanyNoPage)
+    case NoCompanyNumberId(index) => hasCompanyUtrPage(mode, index, srn)
+    case CompanyRegistrationNumberVariationsId(index) => hasCompanyUtrPage(mode, index, srn)
+    case id@HasCompanyUTRId(index) => booleanNav(id, ua, mode, index, srn, utrPage, noUtrPage)
+    case CompanyNoUTRReasonId(index) => hasCompanyVatPage(mode, index, srn)
+    case CompanyUTRId(index) => hasCompanyVatPage(mode, index, srn)
+    case id@HasCompanyVATId(index) => booleanNav(id, ua, mode, index, srn, vatPage, noVatPage)
+    case CompanyVatVariationsId(index) => hasCompanyPayePage(mode, index, srn)
+    case id@HasCompanyPAYEId(index) => booleanNav(id, ua, mode, index, srn, payePage, cyaPage)
+    case CompanyPayeVariationsId(index) => cyaPage(mode, index, srn)
+    case CompanyPostcodeLookupId(index) => selectAddressPage(mode, index, srn)
+    case CompanyAddressListId(index) => confirmAddressPage(mode, index, srn)
+    case CompanyAddressId(index) => addressYearsPage(mode, index, srn)
+    case CompanyAddressYearsId(index) if overAYear(ua, index) => cyaAddressPage(mode, index, srn)
+    case CompanyAddressYearsId(index) if underAYear(ua, index) => hasBeenTradingPage(mode, index, srn)
+    case id@HasBeenTradingCompanyId(index) => booleanNav(id, ua, mode, index, srn, previousAddressLookupPage, cyaAddressPage)
+    case CompanyPreviousAddressPostcodeLookupId(index) => selectPreviousAddressPage(mode, index, srn)
+    case CompanyPreviousAddressListId(index) => confirmPreviousAddressPage(mode, index, srn)
+    case CompanyPreviousAddressId(index) => cyaAddressPage(mode, index, srn)
+    case CompanyEmailId(index) => phonePage(mode, index, srn)
+    case CompanyPhoneId(index) => cyaContactDetailsPage(mode, index, srn)
   }
 
-  private def anyMoreChanges(srn: Option[String]): Option[NavigateTo] =
-    NavigateTo.dontSave(AnyMoreChangesController.onPageLoad(srn))
-
-  private def cyaContactDetails(mode: Mode, index: Index, srn: Option[String]): Option[NavigateTo] =
-    NavigateTo.dontSave(CheckYourAnswersCompanyContactDetailsController.onPageLoad(mode, index, srn))
-
-  private def cya(mode: Mode, index: Index, srn: Option[String]): Option[NavigateTo] =
-    NavigateTo.dontSave(CheckYourAnswersController.onPageLoad(mode, index, srn))
-
-  private def cyaAddressDetails(mode: Mode, index: Index, srn: Option[String]): Option[NavigateTo] =
-    NavigateTo.dontSave(CheckYourAnswersCompanyAddressController.onPageLoad(mode, index, srn))
-
-
-  //scalastyle:off cyclomatic.complexity
-  protected def routes(from: NavigateFrom, mode: Mode, srn: Option[String]): Option[NavigateTo] = {
-    from.id match {
-      case CompanyDetailsId(index) =>
-        NavigateTo.dontSave(CompanyVatController.onPageLoad(mode, index, srn))
-
-      case CompanyVatId(index) =>
-        NavigateTo.dontSave(CompanyPayeController.onPageLoad(mode, index, srn))
-
-      case CompanyEmailId(index) =>
-        NavigateTo.dontSave(CompanyPhoneController.onPageLoad(mode, index, srn))
-
-      case CompanyPhoneId(index) =>
-        NavigateTo.dontSave(CheckYourAnswersCompanyContactDetailsController.onPageLoad(mode, index, srn))
-
-      case CompanyPayeId(index) =>
-        NavigateTo.dontSave(CompanyRegistrationNumberController.onPageLoad(mode, srn, index))
-
-      case CompanyRegistrationNumberId(index) =>
-        NavigateTo.dontSave(CompanyUniqueTaxReferenceController.onPageLoad(mode, index, srn))
-
-      case CompanyUniqueTaxReferenceId(index) =>
-        NavigateTo.dontSave(CompanyPostCodeLookupController.onPageLoad(mode, index, srn))
-
-      case CompanyPostcodeLookupId(index) =>
-        NavigateTo.dontSave(CompanyAddressListController.onPageLoad(mode, index, srn))
-
-      case CompanyAddressListId(index) =>
-        NavigateTo.dontSave(CompanyAddressController.onPageLoad(mode, index, srn))
-
-      case CompanyAddressId(index) =>
-        NavigateTo.dontSave(CompanyAddressYearsController.onPageLoad(mode, index, srn))
-
-      case CompanyAddressYearsId(index) =>
-        addressYearsRoutes(index, from.userAnswers, mode, srn)
-
-      case CompanyPreviousAddressPostcodeLookupId(index) =>
-        NavigateTo.dontSave(CompanyPreviousAddressListController.onPageLoad(mode, index, srn))
-
-      case CompanyPreviousAddressListId(index) =>
-        NavigateTo.dontSave(CompanyPreviousAddressController.onPageLoad(mode, index, srn))
-
-      case CompanyPreviousAddressId(index) =>
-        if (featureSwitchManagementService.get(Toggles.isEstablisherCompanyHnSEnabled))
-          NavigateTo.dontSave(CheckYourAnswersCompanyAddressController.onPageLoad(mode, index, srn))
-        else
-          NavigateTo.dontSave(CompanyContactDetailsController.onPageLoad(mode, index, srn))
-      case CompanyContactDetailsId(index) =>
-        NavigateTo.dontSave(CheckYourAnswersController.onPageLoad(mode, index, srn))
-
-      case CheckYourAnswersId =>
-        NavigateTo.dontSave(AddTrusteeController.onPageLoad(mode, srn))
-
-      case CompanyConfirmPreviousAddressId(index) => confirmPreviousAddressRoutes(index, mode, srn)(from.userAnswers)
-
-      case HasBeenTradingCompanyId(index) => hasBeenTradingRoutes(index, from.userAnswers, mode, srn)
-
-      case _ => None
-    }
+  private def checkModeRoutes(mode: Mode, ua: UserAnswers, srn: Option[String]): PartialFunction[Identifier, Call] = {
+    case id@HasCompanyNumberId(index) => booleanNav(id, ua, mode, index, srn, companyNoPage, noCompanyNoPage)
+    case NoCompanyNumberId(index) => cyaPage(mode, index, srn)
+    case CompanyRegistrationNumberVariationsId(index) => cyaPage(mode, index, srn)
+    case id@HasCompanyUTRId(index) => booleanNav(id, ua, mode, index, srn, utrPage, noUtrPage)
+    case CompanyNoUTRReasonId(index) => cyaPage(mode, index, srn)
+    case CompanyUTRId(index) => cyaPage(mode, index, srn)
+    case id@HasCompanyVATId(index) => booleanNav(id, ua, mode, index, srn,vatPage, cyaPage)
+    case CompanyVatVariationsId(index) => cyaPage(mode, index, srn)
+    case id@HasCompanyPAYEId(index) => booleanNav(id, ua, mode, index, srn, payePage, cyaPage)
+    case CompanyPayeVariationsId(index) => cyaPage(mode, index, srn)
+    case CompanyAddressId(index) => cyaAddressPage(mode, index, srn)
+    case CompanyAddressYearsId(index) if overAYear(ua, index) => cyaAddressPage(mode, index, srn)
+    case CompanyAddressYearsId(index) if underAYear(ua, index) => hasBeenTradingPage(mode, index, srn)
+    case id@HasBeenTradingCompanyId(index) => booleanNav(id, ua, mode, index, srn, previousAddressLookupPage, cyaAddressPage)
+    case CompanyPreviousAddressPostcodeLookupId(index) => selectPreviousAddressPage(mode, index, srn)
+    case CompanyPreviousAddressListId(index) => confirmPreviousAddressPage(mode, index, srn)
+    case CompanyPreviousAddressId(index) => cyaAddressPage(mode, index, srn)
+    case CompanyEmailId(index) => cyaContactDetailsPage(mode, index, srn)
+    case CompanyPhoneId(index) => cyaContactDetailsPage(mode, index, srn)
   }
 
-  protected def editRoutes(from: NavigateFrom, mode: Mode, srn: Option[String]): Option[NavigateTo] = {
-    from.id match {
-      case CompanyDetailsId(index) =>
-        exitMiniJourney(index, mode, srn, from.userAnswers)
-
-      case CompanyVatId(index) =>
-        exitMiniJourney(index, mode, srn, from.userAnswers)
-
-      case CompanyVatVariationsId(index) =>
-        exitMiniJourney(index, mode, srn, from.userAnswers)
-
-      case CompanyEmailId(index) =>
-        exitMiniJourney(index, mode, srn, from.userAnswers, cyaContactDetails)
-
-      case CompanyPhoneId(index) =>
-        exitMiniJourney(index, mode, srn, from.userAnswers, cyaContactDetails)
-
-      case CompanyPayeId(index) =>
-        exitMiniJourney(index, mode, srn, from.userAnswers)
-
-      case CompanyPayeVariationsId(index) =>
-        exitMiniJourney(index, mode, srn, from.userAnswers)
-
-      case CompanyRegistrationNumberId(index) =>
-        exitMiniJourney(index, mode, srn, from.userAnswers)
-
-      case CompanyRegistrationNumberVariationsId(index) =>
-        exitMiniJourney(index, mode, srn, from.userAnswers)
-
-      case CompanyUniqueTaxReferenceId(index) =>
-        exitMiniJourney(index, mode, srn, from.userAnswers)
-
-      case CompanyPostcodeLookupId(index) =>
-        NavigateTo.dontSave(CompanyAddressListController.onPageLoad(mode, index, srn))
-
-      case CompanyAddressListId(index) =>
-        NavigateTo.dontSave(CompanyAddressController.onPageLoad(mode, index, srn))
-
-      case CompanyAddressId(index) =>
-        val isNew = from.userAnswers.get(IsTrusteeNewId(index)).contains(true)
-        if (isNew || mode == CheckMode) {
-          if (featureSwitchManagementService.get(Toggles.isEstablisherCompanyHnSEnabled)) {
-            cyaAddressDetails(journeyMode(mode), index, srn)
-          } else {
-            checkYourAnswers(index, journeyMode(mode), srn)
-          }
-        } else if (!isNew && mode == CheckUpdateMode) {
-          NavigateTo.dontSave(CompanyConfirmPreviousAddressController.onPageLoad(index, srn))
-        } else {
-          NavigateTo.dontSave(CompanyAddressYearsController.onPageLoad(mode, index, srn))
-        }
-      case CompanyConfirmPreviousAddressId(index) => confirmPreviousAddressRoutes(index, mode, srn)(from.userAnswers)
-
-      case CompanyAddressYearsId(index) =>
-        editAddressYearsRoutes(index, from.userAnswers, mode, srn)
-
-      case CompanyPreviousAddressPostcodeLookupId(index) =>
-        NavigateTo.dontSave(CompanyPreviousAddressListController.onPageLoad(mode, index, srn))
-
-      case CompanyPreviousAddressListId(index) =>
-        NavigateTo.dontSave(CompanyPreviousAddressController.onPageLoad(mode, index, srn))
-
-      case CompanyPreviousAddressId(index) =>
-        exitMiniJourney(index, mode, srn, from.userAnswers, cyaAddressDetails)
-
-      case CompanyContactDetailsId(index) =>
-        exitMiniJourney(index, mode, srn, from.userAnswers)
-
-      case _ => None
-    }
+  private def checkUpdateModeRoutes(mode: Mode, ua: UserAnswers, srn: Option[String]): PartialFunction[Identifier, Call] = {
+    case id@HasCompanyNumberId(index) => booleanNav(id, ua, mode, index, srn, companyNoPage, noCompanyNoPage)
+    case NoCompanyNumberId(index) => cyaPage(mode, index, srn)
+    case CompanyRegistrationNumberVariationsId(index) if isNewTrustee(ua, index) => cyaPage(mode, index, srn)
+    case CompanyRegistrationNumberVariationsId(_) => anyMoreChangesPage(srn)
+    case id@HasCompanyUTRId(index) => booleanNav(id, ua, mode, index, srn, utrPage, noUtrPage)
+    case CompanyUTRId(index) if isNewTrustee(ua, index) => cyaPage(mode, index, srn)
+    case CompanyUTRId(_) => anyMoreChangesPage(srn)
+    case CompanyNoUTRReasonId(index) => cyaPage(mode, index, srn)
+    case id@HasCompanyVATId(index) => booleanNav(id, ua, mode, index, srn, vatPage, cyaPage)
+    case CompanyVatVariationsId(index) if isNewTrustee(ua, index) => cyaPage(mode, index, srn)
+    case CompanyVatVariationsId(_) => anyMoreChangesPage(srn)
+    case id@HasCompanyPAYEId(index) => booleanNav(id, ua, mode, index, srn, payePage, cyaPage)
+    case CompanyPayeVariationsId(index) if isNewTrustee(ua, index) => cyaPage(mode, index, srn)
+    case CompanyPayeVariationsId(_) => anyMoreChangesPage(srn)
+    case CompanyAddressId(index) if isNewTrustee(ua, index) => cyaAddressPage(mode, index, srn)
+    case CompanyAddressId(index) => isThisPreviousAddressPage(index, srn)
+    case id@CompanyConfirmPreviousAddressId(index) => booleanNav(id, ua, mode, index, srn, moreChanges, previousAddressLookupPage)
+    case CompanyAddressYearsId(index) if overAYear(ua, index) => cyaAddressPage(mode, index, srn)
+    case CompanyAddressYearsId(index) if underAYear(ua, index) => hasBeenTradingPage(mode, index, srn)
+    case CompanyPreviousAddressPostcodeLookupId(index) => selectPreviousAddressPage(mode, index, srn)
+    case CompanyPreviousAddressListId(index) => confirmPreviousAddressPage(mode, index, srn)
+    case CompanyPreviousAddressId(index) if isNewTrustee(ua, index) => cyaAddressPage(mode, index, srn)
+    case CompanyPreviousAddressId(_) => anyMoreChangesPage(srn)
+    case id@HasBeenTradingCompanyId(index) => booleanNav(id, ua, mode, index, srn, previousAddressLookupPage, cyaAddressPage)
+    case CompanyEmailId(index) if isNewTrustee(ua, index) => cyaContactDetailsPage(mode, index, srn)
+    case CompanyEmailId(_) => anyMoreChangesPage(srn)
+    case CompanyPhoneId(index) if isNewTrustee(ua, index) => cyaContactDetailsPage(mode, index, srn)
+    case CompanyPhoneId(_) => anyMoreChangesPage(srn)
   }
 
-  override protected def routeMap(from: NavigateFrom): Option[NavigateTo] = routes(from, NormalMode, None)
+  override protected def routeMap(from: NavigateFrom): Option[NavigateTo] = applyRoutes(normalAndUpdateModeRoutes, from, NormalMode, None)
 
-  protected def updateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] = routes(from, UpdateMode, srn)
+  override protected def editRouteMap(from: NavigateFrom): Option[NavigateTo] = applyRoutes(checkModeRoutes, from, CheckMode, None)
 
-  override protected def editRouteMap(from: NavigateFrom): Option[NavigateTo] = editRoutes(from, CheckMode, None)
+  override protected def updateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] = applyRoutes(normalAndUpdateModeRoutes, from, UpdateMode, srn)
 
-  protected def checkUpdateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] = editRoutes(from, CheckUpdateMode, srn)
+  override protected def checkUpdateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] = applyRoutes(checkUpdateModeRoutes, from, CheckUpdateMode, srn)
+}
 
-  private def checkYourAnswers(index: Int, mode: Mode, srn: Option[String]): Option[NavigateTo] = {
-    NavigateTo.dontSave(CheckYourAnswersController.onPageLoad(mode, index, srn))
-  }
+object TrusteesCompanyNavigator {
+  private def isNewTrustee(ua: UserAnswers, index: Int): Boolean = ua.get(IsTrusteeNewId(index)).getOrElse(false)
 
-  private def addressYearsRoutes(index: Int, answers: UserAnswers, mode: Mode, srn: Option[String]): Option[NavigateTo] = {
+  private def overAYear(ua: UserAnswers, index: Int): Boolean = ua.get(CompanyAddressYearsId(index)).contains(AddressYears.OverAYear)
 
-    (answers.get(CompanyAddressYearsId(index)), featureSwitchManagementService.get(Toggles.isEstablisherCompanyHnSEnabled)) match {
-      case (Some(AddressYears.UnderAYear), true) =>
-        NavigateTo.dontSave(HasBeenTradingCompanyController.onPageLoad(mode, index, srn))
-      case (Some(AddressYears.UnderAYear), false) =>
-        NavigateTo.dontSave(CompanyPreviousAddressPostcodeLookupController.onPageLoad(mode, index, srn))
-      case (Some(AddressYears.OverAYear), true) =>
-        NavigateTo.dontSave(CheckYourAnswersCompanyAddressController.onPageLoad(mode, index, srn))
-      case (Some(AddressYears.OverAYear), false) =>
-        NavigateTo.dontSave(CompanyContactDetailsController.onPageLoad(mode, index, srn))
-      case _ =>
-        NavigateTo.dontSave(SessionExpiredController.onPageLoad())
-    }
-  }
+  private def underAYear(ua: UserAnswers, index: Int): Boolean = ua.get(CompanyAddressYearsId(index)).contains(AddressYears.UnderAYear)
 
-  private def hasBeenTradingRoutes(index: Int, answers: UserAnswers, mode: Mode, srn: Option[String]): Option[NavigateTo] = {
-    answers.get(HasBeenTradingCompanyId(index)) match {
-      case Some(true) =>
-        NavigateTo.dontSave(CompanyPreviousAddressPostcodeLookupController.onPageLoad(mode, index, srn))
-      case Some(false) =>
-        cyaAddressDetails(mode, index, srn)
-      case _ =>
-        NavigateTo.dontSave(SessionExpiredController.onPageLoad())
-    }
-  }
+  private def companyNoPage(mode: Mode, index: Int, srn: Option[String]): Call = CompanyRegistrationNumberVariationsController.onPageLoad(mode, srn, index)
 
-  private def editAddressYearsRoutes(index: Int, answers: UserAnswers, mode: Mode, srn: Option[String]): Option[NavigateTo] = {
-    (
-      answers.get(CompanyAddressYearsId(index)),
-      featureSwitchManagementService.get(Toggles.isEstablisherCompanyHnSEnabled),
-      answers.get(IsTrusteeNewId(index)).getOrElse(false)
-    ) match {
-      case (Some(AddressYears.UnderAYear), _, false) =>
-        NavigateTo.dontSave(CompanyConfirmPreviousAddressController.onPageLoad(index, srn))
-      case (Some(AddressYears.UnderAYear), true, _) =>
-        NavigateTo.dontSave(HasBeenTradingCompanyController.onPageLoad(mode, index, srn))
-      case (Some(AddressYears.UnderAYear), false, _) =>
-        NavigateTo.dontSave(CompanyPreviousAddressPostcodeLookupController.onPageLoad(mode, index, srn))
-      case (Some(AddressYears.OverAYear), true, _) =>
-        exitMiniJourney(index, mode, srn, answers, cyaAddressDetails)
-      case (Some(AddressYears.OverAYear), false, _) =>
-        exitMiniJourney(index, mode, srn, answers)
-      case _ =>
-        NavigateTo.dontSave(SessionExpiredController.onPageLoad())
-    }
-  }
+  private def noCompanyNoPage(mode: Mode, index: Int, srn: Option[String]): Call = NoCompanyNumberController.onPageLoad(mode, index, srn)
 
-  private def confirmPreviousAddressRoutes(index: Int, mode: Mode, srn: Option[String])(answers: UserAnswers): Option[NavigateTo] =
-    if (mode == CheckUpdateMode) {
-      answers.get(CompanyConfirmPreviousAddressId(index)) match {
-        case Some(false) =>
-          NavigateTo.dontSave(CompanyPreviousAddressPostcodeLookupController.onPageLoad(mode, index, srn))
-        case Some(true) =>
-          anyMoreChanges(srn)
-        case None =>
-          NavigateTo.dontSave(SessionExpiredController.onPageLoad())
-      }
-    } else {
-      NavigateTo.dontSave(SessionExpiredController.onPageLoad())
-    }
+  private def utrPage(mode: Mode, index: Int, srn: Option[String]): Call = CompanyUTRController.onPageLoad(mode, srn, index)
+
+  private def noUtrPage(mode: Mode, index: Int, srn: Option[String]): Call = CompanyNoUTRReasonController.onPageLoad(mode, index, srn)
+
+  private def vatPage(mode: Mode, index: Int, srn: Option[String]): Call = CompanyVatVariationsController.onPageLoad(mode, index, srn)
+
+  private def noVatPage(mode: Mode, index: Int, srn: Option[String]): Call = HasCompanyPAYEController.onPageLoad(mode, index, srn)
+
+  private def payePage(mode: Mode, index: Int, srn: Option[String]): Call = CompanyPayeVariationsController.onPageLoad(mode, index, srn)
+
+  private def cyaPage(mode: Mode, index: Int, srn: Option[String]): Call = CheckYourAnswersCompanyDetailsController.onPageLoad(journeyMode(mode), index, srn)
+
+  private def cyaContactDetailsPage(mode: Mode, index: Int, srn: Option[String]): Call =
+    CheckYourAnswersCompanyContactDetailsController.onPageLoad(journeyMode(mode), index, srn)
+
+  private def cyaAddressPage(mode: Mode, index: Int, srn: Option[String]): Call = CheckYourAnswersCompanyAddressController.onPageLoad(journeyMode(mode), index, srn)
+
+  private def hasCompanyUtrPage(mode: Mode, index: Int, srn: Option[String]): Call = HasCompanyUTRController.onPageLoad(mode, index, srn)
+
+  private def hasCompanyVatPage(mode: Mode, index: Int, srn: Option[String]): Call = HasCompanyVATController.onPageLoad(mode, index, srn)
+
+  private def hasCompanyPayePage(mode: Mode, index: Int, srn: Option[String]): Call = HasCompanyPAYEController.onPageLoad(mode, index, srn)
+
+  private def phonePage(mode: Mode, index: Int, srn: Option[String]): Call = CompanyPhoneController.onPageLoad(mode, index, srn)
+
+  private def addTrusteePage(mode: Mode, srn: Option[String]): Call = AddTrusteeController.onPageLoad(mode, srn)
+
+  private def selectAddressPage(mode: Mode, index: Int, srn: Option[String]): Call = CompanyAddressListController.onPageLoad(mode, index, srn)
+
+  private def confirmAddressPage(mode: Mode, index: Int, srn: Option[String]): Call = CompanyAddressController.onPageLoad(mode, index, srn)
+
+  private def addressYearsPage(mode: Mode, index: Int, srn: Option[String]): Call = CompanyAddressYearsController.onPageLoad(mode, index, srn)
+
+  private def hasBeenTradingPage(mode: Mode, index: Int, srn: Option[String]): Call = HasBeenTradingCompanyController.onPageLoad(mode, index, srn)
+
+  private def previousAddressLookupPage(mode: Mode, index: Int, srn: Option[String]): Call = CompanyPreviousAddressPostcodeLookupController.onPageLoad(mode, index, srn)
+
+  private def selectPreviousAddressPage(mode: Mode, index: Int, srn: Option[String]): Call = CompanyPreviousAddressListController.onPageLoad(mode, index, srn)
+
+  private def confirmPreviousAddressPage(mode: Mode, index: Int, srn: Option[String]): Call = CompanyPreviousAddressController.onPageLoad(mode, index, srn)
+
+  private def isThisPreviousAddressPage(index: Int, srn: Option[String]): Call = CompanyConfirmPreviousAddressController.onPageLoad(index, srn)
+
+  private def moreChanges(mode: Mode, index: Int, srn: Option[String]): Call = AnyMoreChangesController.onPageLoad(srn)
+
 }

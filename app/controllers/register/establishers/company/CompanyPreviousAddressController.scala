@@ -54,7 +54,7 @@ class CompanyPreviousAddressController @Inject()(
   protected val form: Form[Address] = formProvider()
   private[controllers] val postCall = routes.CompanyPreviousAddressController.onSubmit _
   private[controllers] val title: Message = "messages__establisherPreviousConfirmAddress__title"
-  private[controllers] val heading: Message = "messages__establisherPreviousConfirmAddress__h1"
+  private[controllers] val heading: Message = "messages__common__confirmPreviousAddress__h1"
   private[controllers] val hint: Message = "messages__companyAddress__lede"
 
   def onPageLoad(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] =

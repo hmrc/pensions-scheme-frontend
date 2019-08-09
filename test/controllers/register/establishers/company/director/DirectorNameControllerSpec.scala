@@ -24,7 +24,6 @@ import identifiers.register.establishers.company.director.{DirectorNameId, IsNew
 import identifiers.register.establishers.{EstablishersId, IsEstablisherCompleteId}
 import models.person.PersonName
 import models.{CompanyDetails, Index, NormalMode}
-import org.joda.time.LocalDate
 import org.mockito.Matchers.{eq => eqTo, _}
 import org.mockito.Mockito._
 import org.scalatest.mockito.MockitoSugar
@@ -208,21 +207,16 @@ class DirectorNameControllerSpec extends ControllerSpecBase {
   }
 }
 
-object DirectorNameControllerSpec extends MockitoSugar {
+object DirectorNameControllerSpec extends ControllerSpecBase with MockitoSugar {
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
-  val formProvider: PersonNameFormProvider = new PersonNameFormProvider()
-  val form: Form[PersonName] = formProvider()
+  private val formProvider: PersonNameFormProvider = new PersonNameFormProvider()
+  private val form: Form[PersonName] = formProvider("messages__error__director")
 
-  val firstEstablisherIndex: Index = Index(0)
-  val firstDirectorIndex: Index = Index(0)
-  val invalidIndex: Index = Index(10)
+  private val firstEstablisherIndex: Index = Index(0)
+  private val firstDirectorIndex: Index = Index(0)
 
-  val companyName: String = "test company name"
-  val mockUserAnswersService: UserAnswersService = mock[UserAnswersService]
-  val mockSectionComplete: SectionComplete = mock[SectionComplete]
-
-  val day: Int = LocalDate.now().getDayOfMonth
-  val month: Int = LocalDate.now().getMonthOfYear
-  val year: Int = LocalDate.now().getYear - 20
+  private val companyName: String = "test company name"
+  private val mockUserAnswersService: UserAnswersService = mock[UserAnswersService]
+  private val mockSectionComplete: SectionComplete = mock[SectionComplete]
 }

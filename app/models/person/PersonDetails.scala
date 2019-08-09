@@ -26,7 +26,7 @@ case class PersonDetails(firstName: String, middleName: Option[String], lastName
 
   def fullName: String = middleName match {
     case Some(middle) => s"$firstName $middle $lastName"
-    case _ => s"$firstName $lastName"
+    case _ => firstAndLastName
   }
 }
 

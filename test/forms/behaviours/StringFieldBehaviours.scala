@@ -73,7 +73,7 @@ trait StringFieldBehaviours extends FieldBehaviours {
                               fieldName: String,
                               requiredError: FormError): Unit = {
 
-    "not bind spaces" in {
+    s"not bind spaces for form with error message ${requiredError.message}" in {
       forAll(RegexpGen.from("""^\s+$""")) { s =>
         val result = form.bind(Map(fieldName -> s)).apply(fieldName)
         result.errors mustEqual Seq(requiredError)

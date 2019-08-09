@@ -15,21 +15,34 @@
  */
 
 import config.{FeatureSwitchManagementService, FeatureSwitchManagementServiceProductionImpl, FeatureSwitchManagementServiceTestImpl}
+import navigators._
 import play.api.inject.{Binding, Module}
 import play.api.{Configuration, Environment}
+import utils.annotations.{TrusteesCompany, TrusteesIndividual}
 
 class FeatureSwitchModule extends Module {
 
   override def bindings(environment: Environment, configuration: Configuration): Seq[Binding[_]] = {
 
-    if(configuration.underlying.getBoolean("enable-dynamic-switches")){
-      Seq(
+    val featureSwitchBinding = Seq(
+      if (configuration.underlying.getBoolean("enable-dynamic-switches")) {
         bind[FeatureSwitchManagementService].to[FeatureSwitchManagementServiceTestImpl]
-      )
-    } else {
-      Seq(
+      } else {
         bind[FeatureSwitchManagementService].to[FeatureSwitchManagementServiceProductionImpl]
-      )
-    }
+      }
+    )
+
+    val hubSpokeEnabled = configuration.getBoolean("features.is-establisher-company-hns").getOrElse(false)
+
+    val trusteesNavigatorBinding =
+      if (hubSpokeEnabled) {
+        Seq(bind(classOf[Navigator]).qualifiedWith[TrusteesIndividual].to(classOf[TrusteesIndividualNavigator]),
+        bind(classOf[Navigator]).qualifiedWith[TrusteesCompany].to(classOf[TrusteesCompanyNavigator]))
+      } else {
+        Seq(bind(classOf[Navigator]).qualifiedWith[TrusteesIndividual].to(classOf[TrusteesIndividualNavigatorOld]),
+        bind(classOf[Navigator]).qualifiedWith[TrusteesCompany].to(classOf[TrusteesCompanyNavigatorOld]))
+      }
+
+    featureSwitchBinding ++ trusteesNavigatorBinding
   }
 }

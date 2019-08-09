@@ -93,7 +93,7 @@ object IndividualPostCodeLookupControllerSpec extends ControllerSpecBase with Mo
     postCall = routes.IndividualPostCodeLookupController.onSubmit(NormalMode, firstIndex, None),
     manualInputCall = routes.TrusteeAddressController.onPageLoad(NormalMode, firstIndex, None),
     title = Message("messages__individualPostCodeLookup__title"),
-    heading = Message("messages__individualPostCodeLookup__heading"),
+    heading = Message("messages__individualPostCodeLookup__heading", personDetails.fullName),
     subHeading = Some(personDetails.fullName),
     enterPostcode = Message("messages__trustee_individualPostCodeLookup__enter_postcode")
   )

@@ -35,7 +35,7 @@ class UTRViewSpec extends QuestionViewBehaviours[String] {
     postCall = postCall,
     title = Message("messages__companyUtr__title"),
     heading = Message("messages__companyUtr__heading"),
-    hint = Message("messages__companyUtr__hint"),
+    hint = Message("messages_utr__hint"),
     subHeading = None,
     srn = srn
   )

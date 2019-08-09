@@ -14,16 +14,17 @@
  * limitations under the License.
  */
 
-package identifiers.register.establishers.company
+package identifiers.register.trustees.individual
 
-import identifiers.TypedIdentifier
-import identifiers.register.establishers.EstablishersId
+import identifiers._
+import identifiers.register.trustees.TrusteesId
+import org.joda.time.LocalDate
 import play.api.libs.json.JsPath
 
-case class IsAddressCompleteId(index: Int) extends TypedIdentifier[Boolean] {
-  override def path: JsPath = EstablishersId(index).path \ IsAddressCompleteId.toString
+case class TrusteeDOBId(index: Int) extends TypedIdentifier[LocalDate] {
+  override def path: JsPath = TrusteesId(index).path \ TrusteeDOBId.toString
 }
 
-object IsAddressCompleteId {
-  override def toString: String = "isAddressComplete"
+object TrusteeDOBId {
+  override def toString: String = "trusteeDOB"
 }

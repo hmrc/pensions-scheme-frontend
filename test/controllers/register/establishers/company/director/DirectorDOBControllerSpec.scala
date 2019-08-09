@@ -18,7 +18,7 @@ package controllers.register.establishers.company.director
 
 import controllers.ControllerSpecBase
 import controllers.actions._
-import forms.register.establishers.company.director.DirectorDOBFormProvider
+import forms.DOBFormProvider
 import identifiers.register.establishers.company.CompanyDetailsId
 import identifiers.register.establishers.company.director.{DirectorDOBId, DirectorNameId, IsNewDirectorId}
 import identifiers.register.establishers.{EstablishersId, IsEstablisherCompleteId}
@@ -128,7 +128,7 @@ class DirectorDOBControllerSpec extends ControllerSpecBase {
 object DirectorDOBControllerSpec extends MockitoSugar {
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
-  val formProvider: DirectorDOBFormProvider = new DirectorDOBFormProvider()
+  val formProvider: DOBFormProvider = new DOBFormProvider()
   val form: Form[LocalDate] = formProvider()
 
   val firstEstablisherIndex: Index = Index(0)

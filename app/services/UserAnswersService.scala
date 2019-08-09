@@ -20,7 +20,7 @@ import config.{FeatureSwitchManagementService, FrontendAppConfig}
 import connectors.{PensionSchemeVarianceLockConnector, SchemeDetailsReadOnlyCacheConnector, UpdateSchemeCacheConnector, UserAnswersCacheConnector}
 import identifiers._
 import identifiers.register.establishers.company.director._
-import identifiers.register.establishers.company.{IsCompanyCompleteId, CompanyAddressYearsId => EstablisherCompanyAddressYearsId, CompanyPreviousAddressId => EstablisherCompanyPreviousAddressId}
+import identifiers.register.establishers.company.{CompanyAddressYearsId => EstablisherCompanyAddressYearsId, CompanyPreviousAddressId => EstablisherCompanyPreviousAddressId}
 import identifiers.register.establishers.individual.{AddressYearsId => EstablisherIndividualAddressYearsId, PreviousAddressId => EstablisherIndividualPreviousAddressId}
 import identifiers.register.establishers.partnership.partner._
 import identifiers.register.establishers.partnership.{IsPartnershipCompleteId => IsEstablisherPartnershipCompleteId, PartnershipAddressYearsId => EstablisherPartnershipAddressYearsId, PartnershipPreviousAddressId => EstablisherPartnershipPreviousAddressId}
@@ -185,17 +185,8 @@ trait UserAnswersService {
             IsEstablisherPartnershipCompleteId(partnershipIndex),
             partnershipIndex
           )
-        case IsDirectorCompleteId(companyIndex, _) =>
-          setIsEstablisherComplete(
-            ua,
-            ua.allDirectorsAfterDelete(companyIndex, isHnSEnabled).forall(_.isCompleted),
-            IsCompanyCompleteId(companyIndex),
-            companyIndex
-          )
         case IsEstablisherPartnershipCompleteId(partnershipIndex) if ua.allPartnersAfterDelete(partnershipIndex).forall(_.isCompleted) =>
           ua.set(IsEstablisherCompleteId(partnershipIndex))(true).asOpt.getOrElse(ua)
-        case IsCompanyCompleteId(companyIndex) if ua.allDirectorsAfterDelete(companyIndex, isHnSEnabled).forall(_.isCompleted) =>
-          ua.set(IsEstablisherCompleteId(companyIndex))(true).asOpt.getOrElse(ua)
         case _ => ua
       }
     }
@@ -227,19 +218,15 @@ trait UserAnswersService {
     case TruesteeCompanyAddressYearsId(index) => Some(IsTrusteeCompleteId(index))
     case TruesteePartnershipAddressYearsId(index) => Some(IsPartnershipCompleteId(index))
     case TruesteeIndividualAddressYearsId(index) => Some(IsTrusteeCompleteId(index))
-    case EstablisherCompanyAddressYearsId(index) => Some(IsCompanyCompleteId(index))
     case EstablisherPartnershipAddressYearsId(index) => Some(IsEstablisherPartnershipCompleteId(index))
     case EstablisherIndividualAddressYearsId(index) => Some(IsEstablisherCompleteId(index))
     case PartnerAddressYearsId(establisherIndex, partnerIndex) => Some(IsPartnerCompleteId(establisherIndex, partnerIndex))
-    case DirectorAddressYearsId(establisherIndex, directorIndex) => Some(IsDirectorCompleteId(establisherIndex, directorIndex))
     case TruesteeCompanyPreviousAddressId(index) => Some(IsTrusteeCompleteId(index))
     case TruesteePartnershipPreviousAddressId(index) => Some(IsPartnershipCompleteId(index))
     case TruesteeIndividualPreviousAddressId(index) => Some(IsTrusteeCompleteId(index))
-    case EstablisherCompanyPreviousAddressId(index) => Some(IsCompanyCompleteId(index))
     case EstablisherPartnershipPreviousAddressId(index) => Some(IsEstablisherPartnershipCompleteId(index))
     case EstablisherIndividualPreviousAddressId(index) => Some(IsEstablisherCompleteId(index))
     case PartnerPreviousAddressId(establisherIndex, partnerIndex) => Some(IsPartnerCompleteId(establisherIndex, partnerIndex))
-    case DirectorPreviousAddressId(establisherIndex, directorIndex) => Some(IsDirectorCompleteId(establisherIndex, directorIndex))
     case InsurerConfirmAddressId => Some(IsAboutBenefitsAndInsuranceCompleteId)
     case _ => None
   }
