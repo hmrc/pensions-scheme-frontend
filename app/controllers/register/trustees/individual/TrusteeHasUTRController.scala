@@ -54,25 +54,23 @@ class TrusteeHasUTRController @Inject()(val appConfig: FrontendAppConfig,
 
   private def form(trusteeName: String) = formProvider("messages__hasUtr__error__required", trusteeName)
 
-  private def trusteeName(index: Index) = Retrieval { implicit request =>
-    TrusteeNameId(index).retrieve.right.map(_.fullName)
-  }
-
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
-        trusteeName(index).retrieve.right.map {
+        TrusteeNameId(index).retrieve.right.map {
           name =>
-            get(TrusteeHasUTRId(index), form(name), viewModel(mode, index, srn, name))
+            val trusteeName = name.fullName
+            get(TrusteeHasUTRId(index), form(trusteeName), viewModel(mode, index, srn, trusteeName))
         }
     }
 
   def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
-        trusteeName(index).retrieve.right.map {
+        TrusteeNameId(index).retrieve.right.map {
           name =>
-            post(TrusteeHasUTRId(index), mode, form(name), viewModel(mode, index, srn, name))
+            val trusteeName = name.fullName
+            post(TrusteeHasUTRId(index), mode, form(trusteeName), viewModel(mode, index, srn, trusteeName))
         }
     }
 }
