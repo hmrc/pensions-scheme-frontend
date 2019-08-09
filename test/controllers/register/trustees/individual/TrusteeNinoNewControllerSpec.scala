@@ -20,16 +20,16 @@ import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.NinoNewFormProvider
 import identifiers.SchemeNameId
-import identifiers.register.trustees.individual.{TrusteeDetailsId, TrusteeNewNinoId}
+import identifiers.register.trustees.individual.{TrusteeDetailsId, TrusteeNameId, TrusteeNewNinoId}
 import models._
-import models.person.PersonDetails
+import models.person.{PersonDetails, PersonName}
 import org.joda.time.LocalDate
 import play.api.data.Form
 import play.api.libs.json._
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import services.FakeUserAnswersService
-import utils.{FakeFeatureSwitchManagementService, FakeNavigator}
+import utils.{FakeFeatureSwitchManagementService, FakeNavigator, UserAnswers}
 import viewmodels.NinoViewModel
 import views.html.nino
 
@@ -45,10 +45,20 @@ class TrusteeNinoNewControllerSpec extends ControllerSpecBase {
       contentAsString(result) mustBe viewAsString(form, UpdateMode, index, srn)
     }
 
-    "populate the view correctly on a GET when the question has previously been answered" in {
-      val getRelevantData = new FakeDataRetrievalAction(Some(alreadySubmittedData))
-      val result = controller(getRelevantData).onPageLoad(UpdateMode, index, srn)(fakeRequest)
-      contentAsString(result) mustBe viewAsString(form.fill(ReferenceValue("CS700100A")), UpdateMode, index, srn)
+    "populate the view correctly on a GET when the question has previously been answered" when {
+      "toggle is off" in {
+        val getRelevantData = UserAnswers().set(TrusteeDetailsId(0))(PersonDetails("Test", Some("Trustee"), "Name", LocalDate.now)).flatMap(_.set(
+          TrusteeNewNinoId(0))(ReferenceValue(ninoData))).flatMap(_.set(SchemeNameId)(schemeName)).asOpt.value.dataRetrievalAction
+        val result = controller(getRelevantData, toggled = false).onPageLoad(UpdateMode, index, srn)(fakeRequest)
+        contentAsString(result) mustBe viewAsString(form.fill(ReferenceValue("CS700100A")), UpdateMode, index, srn, trusteeFullName)
+      }
+
+      "toggle is on" in {
+        val getRelevantData = UserAnswers().set(TrusteeNameId(0))(PersonName("Test", "Name")).flatMap(_.set(
+          TrusteeNewNinoId(0))(ReferenceValue(ninoData))).flatMap(_.set(SchemeNameId)(schemeName)).asOpt.value.dataRetrievalAction
+        val result = controller(getRelevantData).onPageLoad(UpdateMode, index, srn)(fakeRequest)
+        contentAsString(result) mustBe viewAsString(form.fill(ReferenceValue("CS700100A")), UpdateMode, index, srn)
+      }
     }
 
     "redirect to the next page when valid data is submitted" in {
@@ -111,7 +121,7 @@ object TrusteeNinoNewControllerSpec extends ControllerSpecBase {
 
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryTrustee, toggled: Boolean = false): TrusteeNinoNewController =
+  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryTrustee, toggled: Boolean = true): TrusteeNinoNewController =
     new TrusteeNinoNewController(frontendAppConfig,
                                  messagesApi,
                                  FakeUserAnswersService,
@@ -121,14 +131,14 @@ object TrusteeNinoNewControllerSpec extends ControllerSpecBase {
                                  FakeAllowAccessProvider(),
                                  new DataRequiredActionImpl,
                                  formProvider,
-                                 new FakeFeatureSwitchManagementService(true))
+                                 new FakeFeatureSwitchManagementService(toggled))
 
-  private def viewAsString(form: Form[_], mode: Mode, index: Index, srn: Option[String]): String = {
+  private def viewAsString(form: Form[_], mode: Mode, index: Index, srn: Option[String], trusteeName: String = trusteeFirstAndLastName): String = {
 
     val vm = NinoViewModel(
       postCall = controllers.register.trustees.individual.routes.TrusteeNinoNewController.onSubmit(mode, index, srn),
       title = messages("messages__trustee__individual__nino__title"),
-      heading = messages("messages__trustee__individual__nino__heading", trusteeFirstAndLastName),
+      heading = messages("messages__trustee__individual__nino__heading", trusteeName),
       hint = "messages__common__nino_hint",
       srn = srn
     )

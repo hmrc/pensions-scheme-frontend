@@ -19,7 +19,7 @@ package controllers.register.trustees.individual
 import audit.testdoubles.StubSuccessfulAuditService
 import audit.{AddressAction, AddressEvent, AuditService}
 import base.CSRFRequest
-import config.FrontendAppConfig
+import config.{FeatureSwitchManagementService, FrontendAppConfig}
 import services.{FakeUserAnswersService, UserAnswersService}
 import controllers.ControllerSpecBase
 import controllers.actions._
@@ -42,7 +42,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.{FakeUserAnswersService, UserAnswersService}
 import utils.annotations.TrusteesIndividual
-import utils.{CountryOptions, FakeCountryOptions, FakeNavigator, InputOption}
+import utils.{CountryOptions, FakeCountryOptions, FakeFeatureSwitchManagementService, FakeNavigator, InputOption}
 import viewmodels.Message
 import viewmodels.address.ManualAddressViewModel
 import views.html.address.manualAddress
@@ -77,7 +77,8 @@ class TrusteePreviousAddressControllerSpec extends ControllerSpecBase with CSRFR
         bind[UserAnswersService].toInstance(FakeUserAnswersService),
         bind[AuthAction].to(FakeAuthAction),
         bind[DataRetrievalAction].to(retrieval),
-        bind[CountryOptions].to(countryOptions)
+        bind[CountryOptions].to(countryOptions),
+        bind[FeatureSwitchManagementService].to(new FakeFeatureSwitchManagementService(false))
       )) {
         implicit app =>
 
@@ -130,7 +131,8 @@ class TrusteePreviousAddressControllerSpec extends ControllerSpecBase with CSRFR
           bind[AuthAction].to(FakeAuthAction),
           bind[DataRetrievalAction].to(retrieval),
           bind[DataRequiredAction].to(new DataRequiredActionImpl),
-          bind[AddressFormProvider].to(formProvider)
+          bind[AddressFormProvider].to(formProvider),
+          bind[FeatureSwitchManagementService].to(new FakeFeatureSwitchManagementService(false))
         )) {
           implicit app =>
 
@@ -170,7 +172,8 @@ class TrusteePreviousAddressControllerSpec extends ControllerSpecBase with CSRFR
         bind[AuthAction].to(FakeAuthAction),
         bind[CountryOptions].to(countryOptions),
         bind[DataRetrievalAction].to(retrieval),
-        bind[AuditService].toInstance(fakeAuditService)
+        bind[AuditService].toInstance(fakeAuditService),
+        bind[FeatureSwitchManagementService].to(new FakeFeatureSwitchManagementService(false))
       )) {
         implicit app =>
 
