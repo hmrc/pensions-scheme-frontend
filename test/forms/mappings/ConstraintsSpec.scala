@@ -214,8 +214,8 @@ class ConstraintsSpec extends PlaySpec with Constraints with RegexBehaviourSpec 
       "@@@@@@",
       ".df@com",
       "123 2@s.com",
-      "xyz;a@v",
-      "AÀ@v.com"
+      "xyz;a@value",
+      "AÀ@value.com"
     )
 
     val invalidMsg = "contactDetails.error.email.valid"
