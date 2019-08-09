@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers.register.establishers.company
+package controllers.register.trustees.individual
 
 import base.CSRFRequest
 import controllers.ControllerSpecBase
@@ -30,22 +30,22 @@ import play.api.mvc.{Call, Request, Result}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{contentAsString, status, _}
 import services.{FakeUserAnswersService, UserAnswersService}
-import utils.annotations.EstablishersCompany
 import utils.FakeNavigator
+import utils.annotations.TrusteesIndividual
 import viewmodels.{Message, UTRViewModel}
 import views.html.utr
 
 import scala.concurrent.Future
 
-class CompanyUTRControllerSpec extends ControllerSpecBase with MustMatchers with CSRFRequest {
+class TrusteeUTRControllerSpec extends ControllerSpecBase with MustMatchers with CSRFRequest {
 
-  import CompanyUTRControllerSpec._
+  import TrusteeUTRControllerSpec._
 
-  "CompanyUTRController" must {
+  "TrusteeUTRController" must {
 
     "render the view correctly on a GET request" in {
       requestResult(
-        implicit app => addToken(FakeRequest(routes.CompanyUTRController.onPageLoad(CheckUpdateMode, srn, firstIndex))),
+        implicit app => addToken(FakeRequest(routes.TrusteeUTRController.onPageLoad(CheckUpdateMode, firstIndex, srn))),
         (request, result) => {
           status(result) mustBe OK
           contentAsString(result) mustBe utr(frontendAppConfig, form, viewModel, Some("pension scheme details"))(request, messages).toString()
@@ -55,7 +55,7 @@ class CompanyUTRControllerSpec extends ControllerSpecBase with MustMatchers with
 
     "redirect to the next page on a POST request" in {
       requestResult(
-        implicit app => addToken(FakeRequest(routes.CompanyUTRController.onSubmit(CheckUpdateMode, srn, firstIndex))
+        implicit app => addToken(FakeRequest(routes.TrusteeUTRController.onSubmit(CheckUpdateMode, firstIndex, srn))
           .withFormUrlEncodedBody(("utr", "1234567890"))),
         (_, result) => {
           status(result) mustBe SEE_OTHER
@@ -66,9 +66,7 @@ class CompanyUTRControllerSpec extends ControllerSpecBase with MustMatchers with
   }
 }
 
-
-
-object CompanyUTRControllerSpec extends CompanyUTRControllerSpec {
+object TrusteeUTRControllerSpec extends TrusteeUTRControllerSpec {
 
   val form = new UTRFormProvider()()
   val firstIndex = Index(0)
@@ -77,9 +75,9 @@ object CompanyUTRControllerSpec extends CompanyUTRControllerSpec {
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
   val viewModel = UTRViewModel(
-    routes.CompanyUTRController.onSubmit(CheckUpdateMode, srn, firstIndex),
-    title = Message("messages__companyUtr__title"),
-    heading = Message("messages__companyUtr__heading", "test company name"),
+    routes.TrusteeUTRController.onSubmit(CheckUpdateMode, firstIndex, srn),
+    title = Message("messages__trusteeUtr__title"),
+    heading = Message("messages__trusteeUtr__h1", "Test Name"),
     hint = Message("messages_utr__hint"),
     subHeading = None,
     srn = srn
@@ -90,8 +88,8 @@ object CompanyUTRControllerSpec extends CompanyUTRControllerSpec {
 
     running(_.overrides(
       bind[AuthAction].to(FakeAuthAction),
-      bind[DataRetrievalAction].toInstance(getMandatoryEstablisherCompany),
-      bind(classOf[Navigator]).qualifiedWith(classOf[EstablishersCompany]).toInstance(new FakeNavigator(onwardRoute)),
+      bind[DataRetrievalAction].toInstance(getMandatoryTrustee),
+      bind(classOf[Navigator]).qualifiedWith(classOf[TrusteesIndividual]).toInstance(new FakeNavigator(onwardRoute)),
       bind[UserAnswersService].toInstance(FakeUserAnswersService),
       bind[AllowAccessActionProvider].toInstance(FakeAllowAccessProvider())
     )) {
@@ -102,6 +100,10 @@ object CompanyUTRControllerSpec extends CompanyUTRControllerSpec {
     }
   }
 }
+
+
+
+
 
 
 
