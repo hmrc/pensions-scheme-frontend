@@ -1688,7 +1688,7 @@ messages__companyUtr__guidance2 = If there is a letter ‘K’ at the end of the
 messages__companyUtr__hint = For example, 12345 67890
 messages__companyUtr__checkyouranswerslabel = Unique Taxpayer Reference (UTR)
 
-messages__reason__error_utrRequired = Enter a reason why {0} does not have a UTR
+messages__reason__error_utrRequired = Enter a reason why {0} does not have a Unique Taxpayer Reference (UTR)
 messages__reason__error_ninoRequired = Enter a reason why {0} does not have a NINO
 messages__reason__error_maxLength = Reason must be 160 characters or less
 messages__reason__error_invalid = Reason must only include letters, numbers and punctuation marks

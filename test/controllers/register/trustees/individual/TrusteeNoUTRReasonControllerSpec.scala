@@ -40,13 +40,13 @@ import scala.concurrent.Future
 class TrusteeNoUTRReasonControllerSpec extends ControllerSpecBase with MockitoSugar {
 
   private val formProvider = new ReasonFormProvider()
-  private val form = formProvider("messages__reason__error_utrRequired", "test director name")
+  private val form = formProvider("messages__reason__error_utrRequired", "Test Name")
   private val mockUserAnswersService: UserAnswersService = mock[UserAnswersService]
   private def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
   private val postCall = controllers.register.trustees.individual.routes.TrusteeNoUTRReasonController.onSubmit(NormalMode, Index(0), None)
   private val viewModel = ReasonViewModel(
     postCall = postCall,
-    title = Message("messages__noGenericUtr__title", Message("messages__theTrustee")),
+    title = Message("messages__noGenericUtr__title", Message("messages__theTrustee").resolve),
     heading = Message("messages__noGenericUtr__heading", "Test Name"),
     srn = None
   )
@@ -71,7 +71,6 @@ class TrusteeNoUTRReasonControllerSpec extends ControllerSpecBase with MockitoSu
     "return OK and the correct view for a GET where valid reason given" in {
       val trusteeDataWithNoUTRReasonAnswer = new FakeDataRetrievalAction(Some(validTrusteeData("noUtrReason" -> "blah")))
 
-      println(s"\n\n\n${validTrusteeData("noUtrReason" -> "blah")}\n\n\n")
       val app = applicationBuilder(trusteeDataWithNoUTRReasonAnswer).build()
 
       val controller = app.injector.instanceOf[TrusteeNoUTRReasonController]
@@ -80,57 +79,57 @@ class TrusteeNoUTRReasonControllerSpec extends ControllerSpecBase with MockitoSu
 
       status(result) mustBe OK
 
-      contentAsString(result) mustBe viewAsString()
+      contentAsString(result) mustBe viewAsString(form = form.fill(value = "blah"))
 
       app.stop()
     }
 
-//    "redirect to the next page when valid data is submitted" in {
-//      val app = applicationBuilder(getMandatoryTrustee)
-//        .overrides(
-//          bind[UserAnswersService].toInstance(mockUserAnswersService)
-//        ).build()
-//
-//      val validData = Json.obj(
-//        "trustees" -> Json.arr(
-//          Json.obj(
-//            TrusteeNameId.toString ->
-//              PersonName("Test", "Name")
-//          )
-//        )
-//      )
-//
-//      when(mockUserAnswersService.upsert(any(), any(), any())(any(), any(), any())).thenReturn(Future.successful(validData))
-//
-//      val controller = app.injector.instanceOf[TrusteeNoUTRReasonController]
-//
-//      val postRequest = fakeRequest.withFormUrlEncodedBody(("reason", "blah"))
-//
-//      val result = controller.onSubmit(NormalMode, Index(0), None)(postRequest)
-//
-//      status(result) mustBe SEE_OTHER
-//
-//      redirectLocation(result) mustBe Some(onwardRoute.url)
-//
-//      app.stop()
-//    }
+    "redirect to the next page when valid data is submitted" in {
+      val app = applicationBuilder(getMandatoryTrustee)
+        .overrides(
+          bind[UserAnswersService].toInstance(mockUserAnswersService)
+        ).build()
 
-//    "return a Bad Request when invalid data is submitted" in {
-//      val app = applicationBuilder(getMandatoryTrustee).build()
-//
-//      val controller = app.injector.instanceOf[TrusteeHasNINOController]
-//
-//      val postRequest = fakeRequest.withFormUrlEncodedBody(("reason", ""))
-//
-//      val boundForm = form.bind(Map("value" -> "invalid value"))
-//
-//      val result = controller.onSubmit(NormalMode, Index(0), None)(postRequest)
-//
-//      status(result) mustBe BAD_REQUEST
-//
-//      contentAsString(result) mustBe viewAsString(boundForm)
-//
-//      app.stop()
-//    }
+      val validData = Json.obj(
+        "trustees" -> Json.arr(
+          Json.obj(
+            TrusteeNameId.toString ->
+              PersonName("Test", "Name")
+          )
+        )
+      )
+
+      when(mockUserAnswersService.save(any(), any(), any(), any())(any(), any(), any(), any())).thenReturn(Future.successful(validData))
+
+      val controller = app.injector.instanceOf[TrusteeNoUTRReasonController]
+
+      val postRequest = fakeRequest.withFormUrlEncodedBody(("reason", "blah"))
+
+      val result = controller.onSubmit(NormalMode, Index(0), None)(postRequest)
+
+      status(result) mustBe SEE_OTHER
+
+      redirectLocation(result) mustBe Some(onwardRoute.url)
+
+      app.stop()
+    }
+
+    "return a Bad Request when invalid data is submitted" in {
+      val app = applicationBuilder(getMandatoryTrustee).build()
+
+      val controller = app.injector.instanceOf[TrusteeNoUTRReasonController]
+
+      val postRequest = fakeRequest.withFormUrlEncodedBody(("noUtrReason", ""))
+
+      val boundForm = form.bind(Map("noUtrReason" -> ""))
+
+      val result = controller.onSubmit(NormalMode, Index(0), None)(postRequest)
+
+      status(result) mustBe BAD_REQUEST
+
+      contentAsString(result) mustBe viewAsString(boundForm)
+
+      app.stop()
+    }
   }
 }
