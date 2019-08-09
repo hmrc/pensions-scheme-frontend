@@ -200,7 +200,7 @@ abstract class HsTaskListHelper(answers: UserAnswers,
               Some(section.name))
             )
 
-          case TrusteeDetailsId(_) if isHnSEnabled => // Trustee individuals
+          case TrusteeNameId(_) if isHnSEnabled => // Trustee individuals
             Some(SchemeDetailsTaskListEntitySection(
               None,
               getTrusteeIndividualSpokes(userAnswers, mode, srn, section.name, section.index),
