@@ -60,6 +60,8 @@ messages__common__postcode_lookup__manual_link = You can {0} enter the address m
 messages__common__postcode_lookup__enter_postcode = Enter the postcode, or if you have an overseas address, {0} enter the address manually {1}
 messages__common__postcode_lookup__address_postcode = Postcode
 messages__common_individual_postCode_lookup__lede = This is usually the residential address for this person.
+messages__hasUtr__p1 = This is a 10-digit or 13-digit number. You can find it on tax returns and other documents from HMRC. It might be called ‘reference’, ‘UTR’ or ‘official use’.
+
 messages__error__postcode = Enter the postcode
 messages__error__postcode_length = The postcode cannot be more than 8 characters
 messages__error__postcode_nonUK_length = The postcode cannot be more than 10 characters
@@ -92,6 +94,7 @@ messages__error__address_line_3_invalid = The third line of the address contains
 messages__error__address_line_4_invalid = The fourth line of the address contains invalid characters
 messages__error_country_required = Enter a country
 messages__error_country_invalid = Enter a valid country
+messages__hasUtr__error__required = Select yes if {0} has a Unique Taxpayer Reference (UTR)
 
 messages__common_email__heading = What is {0}’s email address?
 messages__common_company_email__visually_hidden_change_label = company email address
@@ -1583,7 +1586,6 @@ messages__hasCompanyNumber__error__required = Select yes if {0} has a company nu
 
 messages__hasCompanyUtr__title = Does the company have a UTR?
 messages__hasCompanyUtr__h1 = Does {0} have a Unique Taxpayer Reference (UTR)?
-messages__hasCompanyUtr__p1 = This is a 10-digit or 13-digit number. You can find it on tax returns and other documents from HMRC. It might be called ‘reference’, ‘UTR’ or ‘official use’.
 messages__hasCompanyUtr__error__required = Select yes if the company has a UTR
 
 messages__hasCompanyVat__title = Is the company registered for VAT?
@@ -1726,8 +1728,6 @@ messages__hasDirectorUtr__title = Does the director have a UTR?
 messages__hasDirectorUtr__h1 = Does {0} have a Unique Taxpayer Reference (UTR)?
 messages__hasDirectorUtr__cya = Does {0} have a UTR?
 messages__hasDirectorUtr__cya_fallback = Does the director have a UTR?
-messages__hasDirectorUtr__p1 = This is a 10-digit or 13-digit number. You can find it on tax returns and other documents from HMRC. It might be called ‘reference’, ‘UTR’ or ‘official use’.
-messages__hasDirectorUtr__error__required = Select yes if {0} has a Unique Taxpayer Reference (UTR)
 
 messages__noDirectorUtr__title = Why does the director not have a UTR?
 messages__noDirectorUtr__heading = Why does {0} not have a UTR?
@@ -1759,5 +1759,9 @@ messages__director_email__title =  What is the director’s email address?
 messages__establisher__type__title = What kind of establisher are you adding?
 messages__establisher__type__h1 = What kind of establisher are you adding?
 
+messages__hasTrusteeUtr__title = Does the trustee have a UTR?
+messages__hasTrusteeUtr__h1 = Does {0} have a Unique Taxpayer Reference (UTR)?
+
 messages__trusteeUtr__title = What is the trustee’s UTR?
 messages__trusteeUtr__h1 =  What is {0}’s UTR?
+
