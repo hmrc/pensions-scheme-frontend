@@ -24,7 +24,7 @@ import identifiers.register.establishers.partnership.PartnershipDetailsId
 import identifiers.register.establishers.partnership.partner.PartnerDetailsId
 import identifiers.register.trustees.TrusteeKindId
 import identifiers.register.trustees.company.{CompanyDetailsId => TrusteeCompanyDetailsId}
-import identifiers.register.trustees.individual.TrusteeDetailsId
+import identifiers.register.trustees.individual.{TrusteeDetailsId, TrusteeNameId}
 import identifiers.register.trustees.partnership.{PartnershipDetailsId => TrusteePartnershipDetailsId}
 import models._
 import models.register.establishers.EstablisherKind
@@ -238,7 +238,18 @@ case class TrusteeCompanyEntity(id: TrusteeCompanyDetailsId, name: String, isDel
   override def index: Int = id.index
 }
 
-case class TrusteeIndividualEntity(id: TrusteeDetailsId, name: String, isDeleted: Boolean,
+case class TrusteeIndividualEntity(id: TrusteeNameId, name: String, isDeleted: Boolean,
+                                   isCompleted: Boolean, isNewEntity: Boolean, noOfRecords : Int,
+                                   schemeType: Option[String]) extends Trustee[TrusteeNameId] {
+  override def editLink(mode: Mode, srn: Option[String]): Option[String] = None
+
+  override def deleteLink(mode: Mode, srn: Option[String]): Option[String] =
+    Some(controllers.register.trustees.routes.ConfirmDeleteTrusteeController.onPageLoad(mode, id.trusteeIndex, TrusteeKind.Individual, srn).url)
+
+  override def index: Int = id.trusteeIndex
+}
+
+case class TrusteeIndividualEntityNonHns(id: TrusteeDetailsId, name: String, isDeleted: Boolean,
                                    isCompleted: Boolean, isNewEntity: Boolean, noOfRecords : Int,
                                    schemeType: Option[String]) extends Trustee[TrusteeDetailsId] {
   override def editLink(mode: Mode, srn: Option[String]): Option[String] = (isNewEntity, isCompleted) match {

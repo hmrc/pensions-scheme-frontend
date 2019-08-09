@@ -24,7 +24,7 @@ import identifiers.register.establishers.partnership.PartnershipDetailsId
 import identifiers.register.establishers.partnership.partner.{IsNewPartnerId, IsPartnerCompleteId, PartnerDetailsId}
 import identifiers.register.establishers.{EstablisherKindId, EstablishersId, IsEstablisherCompleteId, IsEstablisherNewId}
 import identifiers.register.trustees.company.CompanyDetailsId
-import identifiers.register.trustees.individual.TrusteeDetailsId
+import identifiers.register.trustees.individual.{TrusteeDetailsId, TrusteeNameId}
 import identifiers.register.trustees.partnership.{IsPartnershipCompleteId, PartnershipDetailsId => TrusteePartnershipDetailsId}
 import identifiers.register.trustees.{IsTrusteeCompleteId, IsTrusteeNewId, TrusteeKindId, TrusteesId}
 import models.address.Address
@@ -319,14 +319,25 @@ final case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Impl
     }
 
     // Change this method
-    private def readsIndividual(index: Int): Reads[Trustee[_]] = (
+    private def readsIndividualNonHns(index: Int): Reads[Trustee[_]] = (
       (JsPath \ TrusteeDetailsId.toString).read[PersonDetails] and
         (JsPath \ IsTrusteeNewId.toString).readNullable[Boolean]
       ) ((details, isNew) =>
-      TrusteeIndividualEntity(
+      TrusteeIndividualEntityNonHns(
         TrusteeDetailsId(index), details.fullName, details.isDeleted,
         isTrusteeIndividualComplete(isHnSEnabled, index), isNew.fold(false)(identity), noOfRecords, schemeType)
     )
+
+    private def readsIndividual(index: Int): Reads[Trustee[_]] =
+      (
+        (JsPath \ TrusteeNameId.toString).read[PersonName] and
+          (JsPath \ IsTrusteeCompleteId.toString).readNullable[Boolean] and
+          (JsPath \ IsTrusteeNewId.toString).readNullable[Boolean]
+        ) ((details, isComplete, isNew) =>
+        TrusteeIndividualEntity(
+          TrusteeNameId(index), details.fullName, details.isDeleted,
+          isComplete.getOrElse(false), isNew.fold(false)(identity), noOfRecords, schemeType)
+      )
 
     private def readsCompany(index: Int): Reads[Trustee[_]] = (
       (JsPath \ CompanyDetailsId.toString).read[CompanyDetails] and
@@ -358,7 +369,7 @@ final case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Impl
           readEntities(
             trustees,
             index =>
-              readsIndividual(index)
+                readsIndividual(index) orElse readsIndividualNonHns(index)
                 orElse readsCompany(index)
                 orElse readsPartnership(index)
                 orElse readsSkeleton(index)

@@ -77,13 +77,10 @@ class TrusteesIndividualNavigatorSpec extends SpecBase with MustMatchers with Na
   def updateMode(mode: Mode): TableFor3[Identifier, UserAnswers, Call] =
     Table(
       ("Id", "UserAnswers", "Next Page"),
-      row(TrusteeNewNinoId(index))(someRefValue, anyMoreChangesPage),
       row(TrusteeNewNinoId(index))(someRefValue, anyMoreChangesPage)
     )
 
   behave like navigatorWithRoutesForMode(UpdateMode)(navigator, updateMode(UpdateMode))
-
-//  behave like navigatorWithRoutesForMode(CheckUpdateMode)(navigator, setNewTrusteeIdentifier(routesCheckMode(CheckUpdateMode)))
 
 }
 

@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import com.typesafe.config.ConfigException
 import config.{FeatureSwitchManagementService, FeatureSwitchManagementServiceProductionImpl, FeatureSwitchManagementServiceTestImpl}
 import navigators._
 import play.api.inject.{Binding, Module}

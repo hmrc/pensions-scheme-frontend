@@ -17,17 +17,19 @@
 package controllers.register.trustees.individual
 
 import config.FrontendAppConfig
-import controllers.Retrievals
 import controllers.actions._
+import controllers.{ReasonController, Retrievals}
+import forms.ReasonFormProvider
+import identifiers.register.trustees.individual.{TrusteeNameId, TrusteeNoNINOReasonId}
 import javax.inject.Inject
 import models.{Index, Mode}
 import navigators.Navigator
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.Enumerable
 import utils.annotations.TrusteesIndividual
+import viewmodels.{Message, ReasonViewModel}
 
 import scala.concurrent.ExecutionContext
 
@@ -38,15 +40,38 @@ class TrusteeNoNINOReasonController @Inject()(val appConfig: FrontendAppConfig,
                                               authenticate: AuthAction,
                                               getData: DataRetrievalAction,
                                               allowAccess: AllowAccessActionProvider,
-                                              requireData: DataRequiredAction
-                                     )(implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
+                                              requireData: DataRequiredAction,
+                                              formProvider: ReasonFormProvider
+                                            )(implicit val ec: ExecutionContext) extends ReasonController with Retrievals
+                                            with I18nSupport with Enumerable.Implicits {
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData) {
-      implicit request => NotImplemented("Not implemented: " + this.getClass.toString)
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+      implicit request =>
+        TrusteeNameId(index).retrieve.right.map { name =>
+          get(TrusteeNoNINOReasonId(index),
+            viewModel(mode, index, srn, name.fullName), form(name.fullName))
+        }
     }
 
-  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData) {
-    implicit request => NotImplemented("Not implemented: " + this.getClass.toString)
+  private def form(name: String) = formProvider("messages__reason__error_ninoRequired", name)
+
+  private def viewModel(mode: Mode, index: Index, srn: Option[String], name: String): ReasonViewModel = {
+    ReasonViewModel(
+      postCall = routes.TrusteeNoNINOReasonController.onSubmit(mode, index, srn),
+      title = Message("messages__noNinoReason__trustee_title"),
+      heading = Message("messages__noNinoReason__heading", name),
+      srn = srn
+    )
   }
+
+  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen requireData).async {
+      implicit request =>
+        TrusteeNameId(index).retrieve.right.map { name =>
+          post(TrusteeNoNINOReasonId(index), mode,
+            viewModel(mode, index, srn, name.fullName), form(name.fullName))
+        }
+    }
+
 }

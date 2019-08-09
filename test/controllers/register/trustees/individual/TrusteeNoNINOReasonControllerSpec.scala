@@ -14,40 +14,39 @@
  * limitations under the License.
  */
 
-package controllers.register.establishers.company.director
+package controllers.register.trustees.individual
 
 import controllers.ControllerSpecBase
 import controllers.actions.{DataRequiredActionImpl, DataRetrievalAction, FakeAllowAccessProvider, FakeAuthAction}
 import forms.ReasonFormProvider
-import identifiers.register.establishers.company.director.DirectorNoNINOReasonId
+import identifiers.register.trustees.individual.TrusteeNoNINOReasonId
 import models.{Index, NormalMode}
 import play.api.data.Form
-import play.api.mvc.Call
 import play.api.test.Helpers.{contentAsString, redirectLocation, status, _}
 import services.FakeUserAnswersService
 import utils.FakeNavigator
 import viewmodels.{Message, ReasonViewModel}
 import views.html.reason
 
-class DirectorNoNINOReasonControllerSpec extends ControllerSpecBase {
+class TrusteeNoNINOReasonControllerSpec extends ControllerSpecBase {
     private val schemeName = None
     private def onwardRoute = controllers.routes.IndexController.onPageLoad()
     val formProvider = new ReasonFormProvider()
-    val name = "first last"
+    val name = "Test Name"
     val form = formProvider("messages__reason__error_ninoRequired", name)
-    val establisherIndex, directorIndex = Index(0)
+    val index = Index(0)
     val srn = None
-    val postCall = routes.DirectorNoNINOReasonController.onSubmit(NormalMode, establisherIndex, directorIndex, srn)
+    val postCall = routes.TrusteeNoNINOReasonController.onSubmit(NormalMode, index, srn)
 
   val viewmodel = ReasonViewModel(
     postCall = postCall,
-    title = Message("messages__noNinoReason__director_title"),
+    title = Message("messages__noNinoReason__trustee_title"),
     heading = Message("messages__noNinoReason__heading", name),
     srn = srn
   )
 
-    def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisherCompanyDirectorWithDirectorName): DirectorNoNINOReasonController =
-      new DirectorNoNINOReasonController(
+    def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryTrustee): TrusteeNoNINOReasonController =
+      new TrusteeNoNINOReasonController(
         frontendAppConfig,
         messagesApi,
         FakeUserAnswersService,
@@ -61,10 +60,10 @@ class DirectorNoNINOReasonControllerSpec extends ControllerSpecBase {
 
     private def viewAsString(form: Form[_] = form) = reason(frontendAppConfig, form, viewmodel, schemeName)(fakeRequest, messages).toString
 
-    "HasCompanyNumberController" must {
+    "TrusteeNoNinoReasonController" must {
 
       "return OK and the correct view for a GET" in {
-        val result = controller().onPageLoad(NormalMode, establisherIndex, directorIndex, None)(fakeRequest)
+        val result = controller().onPageLoad(NormalMode, index, None)(fakeRequest)
 
         status(result) mustBe OK
         contentAsString(result) mustBe viewAsString()
@@ -73,18 +72,18 @@ class DirectorNoNINOReasonControllerSpec extends ControllerSpecBase {
       "redirect to the next page when valid data is submitted for true" in {
         val postRequest = fakeRequest.withFormUrlEncodedBody(("reason", "reason"))
 
-        val result = controller().onSubmit(NormalMode, establisherIndex, directorIndex, None)(postRequest)
+        val result = controller().onSubmit(NormalMode, index, None)(postRequest)
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(onwardRoute.url)
-        FakeUserAnswersService.verify(DirectorNoNINOReasonId(establisherIndex, directorIndex), "reason")
+        FakeUserAnswersService.verify(TrusteeNoNINOReasonId(index), "reason")
       }
 
       "return a Bad Request and errors when invalid data is submitted" in {
         val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "invalid value"))
         val boundForm = form.bind(Map("value" -> "invalid value"))
 
-        val result = controller().onSubmit(NormalMode, establisherIndex, directorIndex, None)(postRequest)
+        val result = controller().onSubmit(NormalMode, index, None)(postRequest)
 
         status(result) mustBe BAD_REQUEST
         contentAsString(result) mustBe viewAsString(boundForm)

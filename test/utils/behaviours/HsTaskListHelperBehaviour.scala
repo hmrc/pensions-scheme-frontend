@@ -204,26 +204,6 @@ trait HsTaskListHelperBehaviour extends SpecBase with MustMatchers with OptionVa
   def trusteeTests(mode: Mode, srn: Option[String], toggle:Boolean):Unit = {
     val fsm:FakeFeatureSwitchManagementService = if(toggle) fakeFeatureManagementServiceToggleON else fakeFeatureManagementService
 
-    s"display correct link data when trustee is mandatory and 1 trustee exists with toggle set to $toggle" in {
-      val userAnswers = UserAnswers().set(HaveAnyTrusteesId)(true).asOpt.value
-        .set(TrusteeDetailsId(0))(PersonDetails("firstName", None, "lastName", LocalDate.now())).flatMap(
-        _.set(IsTrusteeCompleteId(0))(true)).asOpt.value
-        .set(SchemeTypeId)(SchemeType.MasterTrust).asOpt.value
-      val helper = createTaskListHelper(userAnswers, fsm)
-      helper.addTrusteeHeader(userAnswers, mode, srn).value mustBe
-        SchemeDetailsTaskListHeader(None, Some(Link(addTrusteesLinkText,
-          controllers.register.trustees.routes.AddTrusteeController.onPageLoad(mode, srn).url)), None, Some(addTrusteesAdditionalInfo))
-    }
-
-    s"display correct link data when 10 trustees exist  with toggle set to $toggle" in {
-      val userAnswers = answersDataWithTenTrustees(toggled = toggle).asOpt.value
-      val helper = createTaskListHelper(userAnswers, fsm)
-      helper.addTrusteeHeader(userAnswers, mode, srn).value mustBe
-        SchemeDetailsTaskListHeader(None, Some(Link(deleteTrusteesLinkText,
-          controllers.register.trustees.routes.AddTrusteeController.onPageLoad(mode, srn).url)), None,
-          Some(deleteTrusteesAdditionalInfo))
-    }
-
     s"display and link should go to trustee kind page when do you have any trustees is true and no trustees are added  with toggle set to $toggle" in {
       val userAnswers = UserAnswers().set(HaveAnyTrusteesId)(true).asOpt.value
       val helper = createTaskListHelper(userAnswers, fsm)
@@ -289,14 +269,24 @@ trait HsTaskListHelperBehaviour extends SpecBase with MustMatchers with OptionVa
           None)
     }
 
-    "display correct link data when trustee is mandatory and no trustees exists with toggle ON" in {
+    s"display correct link data when trustee is mandatory and 1 trustee exists with toggle off" in {
       val userAnswers = UserAnswers().set(HaveAnyTrusteesId)(true).asOpt.value
+        .set(TrusteeDetailsId(0))(PersonDetails("firstName", None, "lastName", LocalDate.now())).flatMap(
+        _.set(IsTrusteeCompleteId(0))(true)).asOpt.value
         .set(SchemeTypeId)(SchemeType.MasterTrust).asOpt.value
-      val helper = createTaskListHelper(userAnswers, fakeFeatureManagementServiceToggleON)
+      val helper = createTaskListHelper(userAnswers, fakeFeatureManagementService)
       helper.addTrusteeHeader(userAnswers, mode, srn).value mustBe
-        SchemeDetailsTaskListHeader(if (mode == UpdateMode) None else Some(false), Some(Link(addTrusteesLinkText,
-          controllers.register.trustees.routes.TrusteeKindController.onPageLoad(mode, userAnswers.allTrustees(true).size, srn).url)), None,
-          None)
+        SchemeDetailsTaskListHeader(None, Some(Link(addTrusteesLinkText,
+          controllers.register.trustees.routes.AddTrusteeController.onPageLoad(mode, srn).url)), None, Some(addTrusteesAdditionalInfo))
+    }
+
+    s"display correct link data when 10 trustees exist  with toggle off" in {
+      val userAnswers = answersDataWithTenTrustees(toggled = false).asOpt.value
+      val helper = createTaskListHelper(userAnswers, fakeFeatureManagementService)
+      helper.addTrusteeHeader(userAnswers, mode, srn).value mustBe
+        SchemeDetailsTaskListHeader(None, Some(Link(deleteTrusteesLinkText,
+          controllers.register.trustees.routes.AddTrusteeController.onPageLoad(mode, srn).url)), None,
+          Some(deleteTrusteesAdditionalInfo))
     }
 
     trusteeTests(mode, srn, toggle = false)
@@ -396,6 +386,10 @@ trait HsTaskListHelperBehaviour extends SpecBase with MustMatchers with OptionVa
     declarationTests(toggled = false)
     declarationTests(toggled =true)
 
+    "not have link when trustees section not completed" in {
+      val userAnswers = answersData(isCompleteTrustees = false, toggled = false).asOpt.value
+      mustHaveNoLink(createTaskListHelper(userAnswers, fakeFeatureManagementService), userAnswers)
+    }
 
     "not have link when do you have any trustees is true but no trustees are added" in {
       val userAnswers = UserAnswers().set(IsBeforeYouStartCompleteId)(true).flatMap(

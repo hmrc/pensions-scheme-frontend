@@ -14,18 +14,17 @@
  * limitations under the License.
  */
 
-package controllers.register.establishers.company.director
+package controllers.register.trustees.individual
 
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.DOBFormProvider
-import identifiers.register.establishers.company.CompanyDetailsId
-import identifiers.register.establishers.company.director.{DirectorDOBId, DirectorNameId, IsNewDirectorId}
-import identifiers.register.establishers.{EstablishersId, IsEstablisherCompleteId}
+import identifiers.register.trustees.TrusteesId
+import identifiers.register.trustees.individual.{TrusteeDOBId, TrusteeNameId}
 import models.person.PersonName
-import models.{CompanyDetails, Index, NormalMode}
+import models.{Index, NormalMode}
 import org.joda.time.LocalDate
-import org.mockito.Matchers.{eq => eqTo, _}
+import org.mockito.Matchers._
 import org.mockito.Mockito._
 import org.scalatest.mockito.MockitoSugar
 import play.api.data.Form
@@ -33,19 +32,19 @@ import play.api.libs.json.Json
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import services.UserAnswersService
-import utils.{FakeNavigator, SectionComplete, UserAnswers}
-import views.html.register.establishers.company.director.directorDOB
+import utils.{FakeNavigator, SectionComplete}
+import views.html.register.trustees.individual.trusteeDOB
 
 import scala.concurrent.Future
 
 //scalastyle:off magic.number
 
-class DirectorDOBControllerSpec extends ControllerSpecBase {
+class TrusteeDOBControllerSpec extends ControllerSpecBase {
 
-  import DirectorDOBControllerSpec._
+  import TrusteeDOBControllerSpec._
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisherCompanyDirectorWithDirectorName): DirectorDOBController =
-    new DirectorDOBController(
+  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryTrusteeIndividual): TrusteeDOBController =
+    new TrusteeDOBController(
       frontendAppConfig,
       messagesApi,
       mockUserAnswersService,
@@ -56,27 +55,25 @@ class DirectorDOBControllerSpec extends ControllerSpecBase {
       new DataRequiredActionImpl,
       formProvider)
 
-  private val postCall = routes.DirectorDOBController.onSubmit _
+  private val postCall = routes.TrusteeDOBController.onSubmit _
 
-  def viewAsString(form: Form[_] = form): String = directorDOB(
+  def viewAsString(form: Form[_] = form): String = trusteeDOB(
     frontendAppConfig,
     form,
     NormalMode,
-    firstEstablisherIndex,
-    firstDirectorIndex,
     None,
-    postCall(NormalMode, firstEstablisherIndex, firstDirectorIndex, None),
+    postCall(NormalMode, index, None),
     None,
-    "first last")(fakeRequest, messages).toString
+    "Test Name")(fakeRequest, messages).toString
 
   private val postRequest = fakeRequest
     .withFormUrlEncodedBody(("date.day", day.toString), ("date.month", month.toString), ("date.year", year.toString))
 
-  "DirectorDOB Controller" must {
+  "TrusteeDOB Controller" must {
 
     "return OK and the correct view for a GET" in {
       val result = controller()
-        .onPageLoad(NormalMode, firstEstablisherIndex, firstDirectorIndex, None)(fakeRequest)
+        .onPageLoad(NormalMode, index, None)(fakeRequest)
 
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString()
@@ -85,7 +82,7 @@ class DirectorDOBControllerSpec extends ControllerSpecBase {
     "populate the view correctly on a GET when the question has previously been answered" in {
 
       val getRelevantData = new FakeDataRetrievalAction(Some(validData))
-      val result = controller(getRelevantData).onPageLoad(NormalMode, firstEstablisherIndex, firstDirectorIndex, None)(fakeRequest)
+      val result = controller(getRelevantData).onPageLoad(NormalMode, index, None)(fakeRequest)
 
       contentAsString(result) mustBe viewAsString(form.fill(new LocalDate(year, month, day)))
     }
@@ -93,7 +90,7 @@ class DirectorDOBControllerSpec extends ControllerSpecBase {
     "redirect to the next page when valid data is submitted" in {
 
       when(mockUserAnswersService.save(any(), any(), any(), any())(any(), any(), any(), any())).thenReturn(Future.successful(validData))
-      val result = controller().onSubmit(NormalMode, firstEstablisherIndex, firstDirectorIndex, None)(postRequest)
+      val result = controller().onSubmit(NormalMode, index, None)(postRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
@@ -103,21 +100,21 @@ class DirectorDOBControllerSpec extends ControllerSpecBase {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "invalid value"))
       val boundForm = form.bind(Map("value" -> "invalid value"))
 
-      val result = controller().onSubmit(NormalMode, firstEstablisherIndex, firstDirectorIndex, None)(postRequest)
+      val result = controller().onSubmit(NormalMode, index, None)(postRequest)
 
       status(result) mustBe BAD_REQUEST
       contentAsString(result) mustBe viewAsString(boundForm)
     }
 
     "redirect to Session Expired for a GET if no existing data is found" in {
-      val result = controller(dontGetAnyData).onPageLoad(NormalMode, firstEstablisherIndex, firstDirectorIndex, None)(fakeRequest)
+      val result = controller(dontGetAnyData).onPageLoad(NormalMode, index, None)(fakeRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
     }
 
     "redirect to Session Expired for a POST if no existing data is found" in {
-      val result = controller(dontGetAnyData).onSubmit(NormalMode, firstEstablisherIndex, firstDirectorIndex, None)(postRequest)
+      val result = controller(dontGetAnyData).onSubmit(NormalMode, index, None)(postRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
@@ -125,14 +122,13 @@ class DirectorDOBControllerSpec extends ControllerSpecBase {
   }
 }
 
-object DirectorDOBControllerSpec extends MockitoSugar {
+private object TrusteeDOBControllerSpec extends MockitoSugar {
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
   val formProvider: DOBFormProvider = new DOBFormProvider()
   val form: Form[LocalDate] = formProvider()
 
-  val firstEstablisherIndex: Index = Index(0)
-  val firstDirectorIndex: Index = Index(0)
+  val index: Index = Index(0)
   val invalidIndex: Index = Index(10)
 
   val companyName: String = "test company name"
@@ -144,21 +140,14 @@ object DirectorDOBControllerSpec extends MockitoSugar {
   val year: Int = LocalDate.now().getYear - 20
 
   val validData = Json.obj(
-    EstablishersId.toString -> Json.arr(
+    TrusteesId.toString -> Json.arr(
       Json.obj(
-        CompanyDetailsId.toString -> CompanyDetails(companyName),
-        "director" -> Json.arr(
-          Json.obj(
-            "directorDetails" -> Json.obj(
-              "firstName" -> "first",
-              "lastName" -> "last"
-            ),
-            "dateOfBirth" -> s"$year-$month-$day"
-          )
-        )
+        TrusteeNameId.toString -> PersonName("Test", "Name"),
+        TrusteeDOBId.toString  -> new LocalDate(year, month, day)
       )
     )
   )
 }
+
 
 

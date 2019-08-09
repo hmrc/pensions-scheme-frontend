@@ -80,7 +80,7 @@ object CompanyUTRControllerSpec extends CompanyUTRControllerSpec {
     routes.CompanyUTRController.onSubmit(CheckUpdateMode, srn, firstIndex),
     title = Message("messages__companyUtr__title"),
     heading = Message("messages__companyUtr__heading", "test company name"),
-    hint = Message("messages__companyUtr__hint"),
+    hint = Message("messages_utr__hint"),
     subHeading = None,
     srn = srn
   )

@@ -51,12 +51,12 @@ class DirectorHasUTRController @Inject()(override val appConfig: FrontendAppConf
       postCall = controllers.register.establishers.company.director.routes.DirectorHasUTRController.onSubmit(mode, establisherIndex, directorIndex, srn),
       title = Message("messages__hasDirectorUtr__title"),
       heading = Message("messages__hasDirectorUtr__h1", personName),
-      hint = Some(Message("messages__hasDirectorUtr__p1")),
+      hint = Some(Message("messages__hasUtr__p1")),
       srn = srn
     )
 
 
-  private def form(personName: String) = formProvider("messages__hasDirectorUtr__error__required", personName)
+  private def form(personName: String) = formProvider("messages__hasUtr__error__required", personName)
 
   def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
