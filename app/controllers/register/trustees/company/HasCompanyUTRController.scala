@@ -48,7 +48,7 @@ class HasCompanyUTRController @Inject()(override val appConfig: FrontendAppConfi
       postCall = controllers.register.trustees.company.routes.HasCompanyUTRController.onSubmit(mode, index, srn),
       title = Message("messages__hasCompanyUtr__title"),
       heading = Message("messages__hasCompanyUtr__h1", companyName),
-      hint = Some(Message("messages__hasCompanyUtr__p1")),
+      hint = Some(Message("messages__hasUtr__p1")),
       srn = srn
     )
 

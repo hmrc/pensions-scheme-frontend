@@ -14,24 +14,27 @@
  * limitations under the License.
  */
 
-package forms.register.establishers.company.director
+package forms
 
 import forms.mappings.{Mappings, Transforms}
 import javax.inject.Inject
 import org.joda.time.LocalDate
 import play.api.data.Form
 
-class DirectorDOBFormProvider @Inject() extends Mappings with Transforms {
+class DOBFormProvider @Inject() extends Mappings with Transforms {
 
   def apply(): Form[LocalDate] = Form(
-    "date" -> dateMapping("messages__error__date", "error.invalid_date")
-      .verifying(firstError(futureDate("messages__error__date_future"),
-        notBeforeYear("messages__error__date_past", DirectorDOBFormProvider.startYear)
-      )
-      )
+    "date" ->
+      dateMapping("messages__error__date", "error.invalid_date")
+        .verifying(
+          firstError(
+            futureDate("messages__error__date_future"),
+            notBeforeYear("messages__error__date_past", DOBFormProvider.startYear)
+          )
+        )
   )
 }
 
-object DirectorDOBFormProvider {
+object DOBFormProvider {
   val startYear: Int = 1900
 }
