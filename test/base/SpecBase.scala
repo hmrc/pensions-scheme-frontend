@@ -57,11 +57,12 @@ trait SpecBase extends PlaySpec with GuiceOneAppPerSuite {
     assert(doc.getElementById(id) != null, "\n\nElement " + id + " was not rendered on the page.\n")
   }
 
-  def applicationBuilder(dataRetrievalAction: DataRetrievalAction, onwardRoute: Call = controllers.routes.IndexController.onPageLoad()): GuiceApplicationBuilder =
+  def applicationBuilder(dataRetrievalAction: DataRetrievalAction,
+                         onwardRoute: Call = controllers.routes.IndexController.onPageLoad()): GuiceApplicationBuilder =
     new GuiceApplicationBuilder()
       .overrides(
         bind[AuthAction].toInstance(FakeAuthAction),
-        bind[Navigator].toInstance(new FakeNavigator(desiredRoute = onwardRoute)),
+        bind[Navigator].to(new FakeNavigator(desiredRoute = onwardRoute)),
         bind[AllowAccessActionProvider].toInstance(FakeAllowAccessProvider()),
         bind[DataRetrievalAction].toInstance(dataRetrievalAction)
       )

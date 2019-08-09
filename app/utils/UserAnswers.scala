@@ -331,12 +331,11 @@ final case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Impl
     private def readsIndividual(index: Int): Reads[Trustee[_]] =
       (
         (JsPath \ TrusteeNameId.toString).read[PersonName] and
-          (JsPath \ IsTrusteeCompleteId.toString).readNullable[Boolean] and
           (JsPath \ IsTrusteeNewId.toString).readNullable[Boolean]
-        ) ((details, isComplete, isNew) =>
+        ) ((details, isNew) =>
         TrusteeIndividualEntity(
           TrusteeNameId(index), details.fullName, details.isDeleted,
-          isComplete.getOrElse(false), isNew.fold(false)(identity), noOfRecords, schemeType)
+          isTrusteeIndividualComplete(isHnSEnabled, index), isNew.fold(false)(identity), noOfRecords, schemeType)
       )
 
     private def readsCompany(index: Int): Reads[Trustee[_]] = (

@@ -26,5 +26,5 @@ case class TrusteeDOBId(index: Int) extends TypedIdentifier[LocalDate] {
 }
 
 object TrusteeDOBId {
-  override def toString: String = "trusteeDOB"
+  override def toString: String = "dateOfBirth"
 }

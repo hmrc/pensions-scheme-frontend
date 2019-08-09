@@ -164,18 +164,18 @@ trait HsTaskListHelperBehaviour extends SpecBase with MustMatchers with OptionVa
         Seq(
           SchemeDetailsTaskListEntitySection(None,
             Seq(
-              EntitySpoke(Link(messages("messages__schemeTaskList__sectionEstablishersCompany_change_details", "test company"),
-                trusteeCompanyRoutes.WhatYouWillNeedCompanyDetailsController.onPageLoad(mode, 0, srn).url), modeBasedCompletion(Some(false))),
-              EntitySpoke(Link(messages("messages__schemeTaskList__sectionIndividual_change_address", "test company"),
-                trusteeCompanyRoutes.WhatYouWillNeedCompanyAddressController.onPageLoad(mode, 0, srn).url), modeBasedCompletion(Some(false))),
-              EntitySpoke(Link(messages("messages__schemeTaskList__sectionIndividual_change_contact", "test company"),
-                trusteeCompanyRoutes.WhatYouWillNeedCompanyContactDetailsController.onPageLoad(mode, 0, srn).url), modeBasedCompletion(Some(false)))
+              EntitySpoke(Link(messages("messages__schemeTaskList__sectionEstablishersCompany_add_details", "test company"),
+                trusteeCompanyRoutes.WhatYouWillNeedCompanyDetailsController.onPageLoad(mode, 0, srn).url), None),
+              EntitySpoke(Link(messages("messages__schemeTaskList__sectionIndividual_add_address", "test company"),
+                trusteeCompanyRoutes.WhatYouWillNeedCompanyAddressController.onPageLoad(mode, 0, srn).url), None),
+              EntitySpoke(Link(messages("messages__schemeTaskList__sectionIndividual_add_contact", "test company"),
+                trusteeCompanyRoutes.WhatYouWillNeedCompanyContactDetailsController.onPageLoad(mode, 0, srn).url), None)
             ), Some("test company"))
         )
     }
 
     "return the seq of trustees sub sections when h&s toggle is on when all spokes are completed" in {
-      val userAnswers = allAnswersHnS
+      val userAnswers = allAnswersHnSMigrated
       val helper = createTaskListHelper(userAnswers, new FakeFeatureSwitchManagementService(true))
       helper.trustees(userAnswers, mode, srn) mustBe
         Seq(
@@ -421,7 +421,8 @@ trait HsTaskListHelperBehaviour extends SpecBase with MustMatchers with OptionVa
                                         ): JsResult[UserAnswers] = {
 
     val addTrustee: (UserAnswers, Int) => JsResult[UserAnswers] = (ua, index) =>
-      setTrusteeCompletionStatusJsResult(isComplete = isCompleteTrustees, toggled = toggled, index, ua.set(TrusteeDetailsId(index))(PersonDetails(s"firstName$index", None, s"lastName$index", LocalDate.now()))
+      setTrusteeCompletionStatusJsResult(isComplete = isCompleteTrustees, toggled = toggled, index,
+        ua.set(TrusteeDetailsId(index))(PersonDetails(s"firstName$index", None, s"lastName$index", LocalDate.now()))
         .flatMap(_.set(IsTrusteeAddressCompleteId(index))(isCompleteTrustees)).asOpt.value)
 
     answersData(isCompleteBeforeStart,
@@ -481,7 +482,8 @@ trait HsTaskListHelperBehaviour extends SpecBase with MustMatchers with OptionVa
     helper.declarationSection(userAnswers).foreach(_.declarationLink mustBe None)
 
   protected def allAnswers: UserAnswers = UserAnswers(readJsonFromFile("/payload.json"))
-  protected def allAnswersHnS: UserAnswers = UserAnswers(readJsonFromFile("/payloadHnSOnly.json"))
+  protected def allAnswersHnS: UserAnswers = UserAnswers(readJsonFromFile("/payloadHnS.json"))
+  protected def allAnswersHnSMigrated: UserAnswers = UserAnswers(readJsonFromFile("/payloadHnSOnly.json"))
   protected def allAnswersIncomplete: UserAnswers = UserAnswers(readJsonFromFile("/payloadIncomplete.json"))
 
   protected def trusteeCompany(isCompleteTrustee: Boolean = true): UserAnswers =

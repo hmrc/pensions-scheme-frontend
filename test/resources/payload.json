@@ -1,10 +1,9 @@
 {
-  "schemeDetails": {
+
     "schemeName": "Test scheme name",
     "schemeType": {
       "name": "single"
-    }
-  },
+    },
   "lastPage": {
     "method": "GET",
     "url": "/register-pension-scheme/register/declaration-dormant-company"
@@ -190,8 +189,8 @@
   ],
   "trustees": [
     {
-      "isTrusteeNew" : true,
       "trusteeKind" : "company",
+      "isTrusteeNew" : true,
       "companyDetails" : {
         "companyName" : "test company",
         "isDeleted" : false
@@ -227,8 +226,8 @@
       }
     },
     {
-      "isTrusteeNew" : true,
       "trusteeKind" : "individual",
+      "isTrusteeNew" : true,
       "trusteeDetails" : {
         "firstName" : "firstName",
         "lastName" : "lastName",
@@ -259,6 +258,8 @@
       "isTrusteeComplete" : true
     },
     {
+      "trusteeKind" : "partnership",
+      "isTrusteeNew" : true,
       "partnershipDetails": {
         "name": "test partnership",
         "isDeleted": false
@@ -289,54 +290,6 @@
         "phoneNumber": "98765"
       },
       "isPartnershipCompleteId": true
-    },
-    {
-      "isTrusteeNew" : true,
-      "trusteeKind" : "individual",
-      "trusteeDetails" : {
-        "firstName" : "Arthur",
-        "lastName" : "Smith",
-        "date" : "2000-02-02",
-        "isDeleted" : false
-      },
-      "trusteeNino" : {
-        "hasNino" : true,
-        "nino" : "NP565656C"
-      },
-      "uniqueTaxReference" : {
-        "hasUtr" : true,
-        "utr" : "1111111111"
-      },
-      "IndividualAddressList" : {
-        "addressLine1" : "10 Other Place",
-        "addressLine2" : "Some District",
-        "addressLine3" : "Anytown",
-        "addressLine4" : "Somerset",
-        "postalCode" : "ZZ1 1ZZ",
-        "countryCode" : "GB"
-      },
-      "trusteeAddressId" : {
-        "addressLine1" : "10 Other Place",
-        "addressLine2" : "Some District",
-        "addressLine3" : "Anytown",
-        "addressLine4" : "Somerset",
-        "postcode" : "ZZ1 1ZZ",
-        "country" : "GB"
-      },
-      "trusteeAddressYears" : "under_a_year",
-      "trusteePreviousAddress" : {
-        "addressLine1" : "10 Other Place",
-        "addressLine2" : "Some District",
-        "addressLine3" : "Anytown",
-        "addressLine4" : "Somerset",
-        "postcode" : "ZZ1 1ZZ",
-        "country" : "GB"
-      },
-      "trusteeContactDetails" : {
-        "emailAddress" : "a@a.c",
-        "phoneNumber" : "1"
-      },
-      "isTrusteeComplete" : true
     }
   ],
   "isWorkingKnowledgeComplete": true

@@ -19,8 +19,8 @@ package controllers.register.trustees.individual
 import controllers.ControllerSpecBase
 import controllers.actions.FakeDataRetrievalAction
 import forms.HasReferenceNumberFormProvider
-import identifiers.register.trustees.individual.TrusteeDetailsId
-import models.person.PersonDetails
+import identifiers.register.trustees.individual.{TrusteeDetailsId, TrusteeNameId}
+import models.person.{PersonDetails, PersonName}
 import models.{Index, NormalMode}
 import org.joda.time.LocalDate
 import org.mockito.Matchers.any
@@ -32,6 +32,7 @@ import play.api.libs.json.Json
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import services.UserAnswersService
+import utils.UserAnswers
 import viewmodels.{CommonFormWithHintViewModel, Message}
 import views.html.hasReferenceNumber
 
@@ -79,16 +80,9 @@ class TrusteeHasNINOControllerSpec extends ControllerSpecBase {
         )
         .build()
 
-      val validData = Json.obj(
-        "trustees" -> Json.arr(
-          Json.obj(
-            TrusteeDetailsId.toString ->
-              PersonDetails("Test", Some("Trustee"), "Name", LocalDate.now)
-          )
-        )
-      )
+      val validData = UserAnswers().set(TrusteeNameId(0))(PersonName("test", "name")).asOpt.value.json
 
-      when(mockUserAnswersService.upsert(any(), any(), any())(any(), any(), any())).thenReturn(Future.successful(validData))
+      when(mockUserAnswersService.save(any(), any(), any(), any())(any(), any(), any(), any())).thenReturn(Future.successful(validData))
 
       val controller = app.injector.instanceOf[TrusteeHasNINOController]
 
