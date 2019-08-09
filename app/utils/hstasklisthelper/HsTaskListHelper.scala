@@ -22,7 +22,7 @@ import identifiers.register.establishers.individual.EstablisherDetailsId
 import identifiers.register.establishers.partnership.{PartnershipDetailsId => EstablisherPartnershipDetailsId}
 import identifiers.register.trustees.MoreThanTenTrusteesId
 import identifiers.register.trustees.company.{CompanyDetailsId => TrusteeCompanyDetailsId}
-import identifiers.register.trustees.individual.TrusteeDetailsId
+import identifiers.register.trustees.individual.{TrusteeDetailsId, TrusteeNameId}
 import identifiers.register.trustees.partnership.{PartnershipDetailsId => TrusteePartnershipDetailsId}
 import identifiers.{DeclarationDutiesId, IsWorkingKnowledgeCompleteId, _}
 import models.register.SchemeType.{MasterTrust, SingleTrust}
@@ -130,7 +130,7 @@ abstract class HsTaskListHelper(answers: UserAnswers,
       userAnswers.get(IsWorkingKnowledgeCompleteId),
       Some(isAllEstablishersCompleted(userAnswers, NormalMode)),
       Some(isTrusteeOptional | isAllTrusteesCompleted(userAnswers)),
-      Some(userAnswers.allTrusteesAfterDelete.size < 10 || userAnswers.get(MoreThanTenTrusteesId).isDefined)
+      Some(userAnswers.allTrusteesAfterDelete(isHnSEnabled).size < 10 || userAnswers.get(MoreThanTenTrusteesId).isDefined)
     ).forall(_.contains(true))
   }
 
@@ -144,12 +144,12 @@ abstract class HsTaskListHelper(answers: UserAnswers,
 
   protected def linkText(item: Entity[_]): String = item.id match {
     case establisherCompany.CompanyDetailsId(_) | TrusteeCompanyDetailsId(_) => companyLinkText
-    case EstablisherDetailsId(_) | TrusteeDetailsId(_) => individualLinkText
+    case EstablisherDetailsId(_) | TrusteeDetailsId(_) | TrusteeNameId(_) => individualLinkText
     case EstablisherPartnershipDetailsId(_) | TrusteePartnershipDetailsId(_) => partnershipLinkText
   }
 
   protected def isAllTrusteesCompleted(userAnswers: UserAnswers): Boolean = {
-    userAnswers.allTrusteesAfterDelete.nonEmpty && userAnswers.allTrusteesAfterDelete.forall(_.isCompleted)
+    userAnswers.allTrusteesAfterDelete(isHnSEnabled).nonEmpty && userAnswers.allTrusteesAfterDelete(isHnSEnabled).forall(_.isCompleted)
   }
 
   protected def isAllEstablishersCompleted(userAnswers: UserAnswers, mode: Mode): Boolean = {
@@ -189,16 +189,24 @@ abstract class HsTaskListHelper(answers: UserAnswers,
   }
 
   protected[utils] def trustees(userAnswers: UserAnswers, mode: Mode, srn: Option[String]): Seq[SchemeDetailsTaskListEntitySection] = {
-    val sections = userAnswers.allTrustees
+    val sections = userAnswers.allTrustees(isHnSEnabled)
     val notDeletedElements = for ((section, _) <- sections.zipWithIndex) yield {
       if (section.isDeleted) None else {
         section.id match {
-          case TrusteeCompanyDetailsId(_) if featureSwitchManagementService.get(Toggles.isEstablisherCompanyHnSEnabled) =>
+          case TrusteeCompanyDetailsId(_) if isHnSEnabled => // Trustee companies
             Some(SchemeDetailsTaskListEntitySection(
               None,
               getTrusteeCompanySpokes(userAnswers, mode, srn, section.name, section.index),
               Some(section.name))
             )
+
+          case TrusteeDetailsId(_) if isHnSEnabled => // Trustee individuals
+            Some(SchemeDetailsTaskListEntitySection(
+              None,
+              getTrusteeIndividualSpokes(userAnswers, mode, srn, section.name, section.index),
+              Some(section.name))
+            )
+
           case _ if mode == NormalMode =>
             Some(SchemeDetailsTaskListEntitySection(
               Some(section.isCompleted),

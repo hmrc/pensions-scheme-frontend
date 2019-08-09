@@ -17,7 +17,6 @@
 package controllers.register.trustees
 
 import config.{FeatureSwitchManagementService, FrontendAppConfig}
-import connectors.UserAnswersCacheConnector
 import controllers.Retrievals
 import controllers.actions._
 import forms.register.trustees.AddTrusteeFormProvider
@@ -55,21 +54,21 @@ class AddTrusteeController @Inject()(
   def onPageLoad(mode: Mode, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
     implicit request =>
-      val trustees = request.userAnswers.allTrusteesAfterDelete
-      Future.successful(Ok(addTrustee(appConfig, form, mode, trustees, existingSchemeName, srn, enableSubmission(trustees))))
+      val trustees = request.userAnswers.allTrusteesAfterDelete(isHnSEnabled = fsm.get(Toggles.isEstablisherCompanyHnSEnabled))
+      Future.successful(Ok(addTrustee(appConfig, form, mode, trustees, existingSchemeName, srn, enableSubmission(trustees), isHnsEnabled)))
   }
 
   def onSubmit(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
 
-      val trustees = request.userAnswers.allTrusteesAfterDelete
+      val trustees = request.userAnswers.allTrusteesAfterDelete(isHnSEnabled = fsm.get(Toggles.isEstablisherCompanyHnSEnabled))
 
       if (trustees.isEmpty || trustees.lengthCompare(appConfig.maxTrustees) >= 0)
         Future.successful(Redirect(navigator.nextPage(AddTrusteeId, mode, request.userAnswers, srn)))
       else {
         form.bindFromRequest().fold(
           (formWithErrors: Form[_]) => {
-            Future.successful(BadRequest(addTrustee(appConfig, formWithErrors, mode, trustees, existingSchemeName, srn, enableSubmission(trustees))))
+            Future.successful(BadRequest(addTrustee(appConfig, formWithErrors, mode, trustees, existingSchemeName, srn, enableSubmission(trustees), isHnsEnabled)))
           },
           value =>
             request.userAnswers.set(AddTrusteeId)(value).fold(
@@ -84,7 +83,9 @@ class AddTrusteeController @Inject()(
       }
   }
 
+  private def isHnsEnabled: Boolean = fsm.get(Toggles.isEstablisherCompanyHnSEnabled)
+
   private def enableSubmission(trusteeList: Seq[Trustee[_]]): Boolean = {
-    fsm.get(Toggles.isEstablisherCompanyHnSEnabled) || trusteeList.forall(_.isCompleted)
+    isHnsEnabled || trusteeList.forall(_.isCompleted)
   }
 }

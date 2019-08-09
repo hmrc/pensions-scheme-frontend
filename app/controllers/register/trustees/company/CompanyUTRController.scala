@@ -51,7 +51,7 @@ class CompanyUTRController @Inject()(override val appConfig: FrontendAppConfig,
       postCall = routes.CompanyUTRController.onSubmit(mode, srn, index),
       title = Message("messages__companyUtr__title"),
       heading = Message("messages__companyUtr__heading", companyName),
-      hint = Message("messages__companyUtr__hint"),
+      hint = Message("messages_utr__hint"),
       subHeading = None,
       srn = srn
     )

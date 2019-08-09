@@ -65,5 +65,4 @@ trait SpecBase extends PlaySpec with GuiceOneAppPerSuite {
         bind[AllowAccessActionProvider].toInstance(FakeAllowAccessProvider()),
         bind[DataRetrievalAction].toInstance(dataRetrievalAction)
       )
-
 }

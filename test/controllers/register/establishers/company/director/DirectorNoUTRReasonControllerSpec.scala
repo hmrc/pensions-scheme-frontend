@@ -22,7 +22,6 @@ import forms.ReasonFormProvider
 import identifiers.register.establishers.company.director.DirectorNoUTRReasonId
 import models.{Index, NormalMode}
 import play.api.data.Form
-import play.api.libs.json.Json
 import play.api.test.Helpers._
 import services.FakeUserAnswersService
 import utils.FakeNavigator
