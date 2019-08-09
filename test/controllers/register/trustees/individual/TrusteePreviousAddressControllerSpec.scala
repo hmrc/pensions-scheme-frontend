@@ -53,7 +53,7 @@ class TrusteePreviousAddressControllerSpec extends ControllerSpecBase with CSRFR
 
   def countryOptions: CountryOptions = new CountryOptions(options)
 
-  val options = Seq(InputOption("territory:AE-AZ", "Abu Dhabi"), InputOption("country:AF", "Afghanistan"))
+  private val options = Seq(InputOption("territory:AE-AZ", "Abu Dhabi"), InputOption("country:AF", "Afghanistan"))
 
   val firstIndex = Index(0)
 
@@ -135,12 +135,12 @@ class TrusteePreviousAddressControllerSpec extends ControllerSpecBase with CSRFR
             bind[UserAnswersService].toInstance(FakeUserAnswersService),
             bind(classOf[Navigator]).qualifiedWith(classOf[TrusteesIndividual]).toInstance(fakeNavigator),
             bind[AuthAction].to(FakeAuthAction),
-            bind[DataRetrievalAction].to(retrieval(isHnsEnabled)),
+            bind[DataRetrievalAction].toInstance(retrieval(isHnsEnabled)),
             bind[DataRequiredAction].to(new DataRequiredActionImpl),
-            bind[AddressFormProvider].to(formProvider)
+            bind[AddressFormProvider].to(formProvider),
+            bind[FeatureSwitchManagementService].toInstance(new FakeFeatureSwitchManagementService(isHnsEnabled))
           )) {
             implicit app =>
-
 
               val fakeRequest = addToken(FakeRequest(TrusteePreviousAddressController.onSubmit(NormalMode, firstIndex, None))
                 .withHeaders("Csrf-Token" -> "nocheck")
