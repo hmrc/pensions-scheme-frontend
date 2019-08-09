@@ -19,9 +19,10 @@ package controllers.register.trustees.individual
 import controllers.ControllerSpecBase
 import controllers.actions.FakeDataRetrievalAction
 import forms.HasReferenceNumberFormProvider
-import identifiers.register.trustees.individual.TrusteeDetailsId
+import identifiers.register.trustees.individual.{TrusteeDetailsId, TrusteeNameId}
 import models.person.PersonDetails
 import models.{Index, NormalMode}
+import navigators.Navigator
 import org.joda.time.LocalDate
 import org.mockito.Matchers.any
 import org.mockito.Mockito.when
@@ -32,6 +33,8 @@ import play.api.libs.json.Json
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import services.UserAnswersService
+import utils.FakeNavigator
+import utils.annotations.TrusteesIndividual
 import viewmodels.{CommonFormWithHintViewModel, Message}
 import views.html.hasReferenceNumber
 
@@ -75,14 +78,16 @@ class TrusteeHasNINOControllerSpec extends ControllerSpecBase {
     "redirect to the next page when valid data is submitted for true" in {
       val app = applicationBuilder(getMandatoryTrustee)
         .overrides(
-          bind[UserAnswersService].toInstance(mockUserAnswersService)
+          bind[UserAnswersService].toInstance(mockUserAnswersService),
+          bind(classOf[Navigator]).qualifiedWith(classOf[TrusteesIndividual])
+            .toInstance(new FakeNavigator(onwardRoute))
         )
         .build()
 
       val validData = Json.obj(
         "trustees" -> Json.arr(
           Json.obj(
-            TrusteeDetailsId.toString ->
+            TrusteeNameId.toString ->
               PersonDetails("Test", Some("Trustee"), "Name", LocalDate.now)
           )
         )
