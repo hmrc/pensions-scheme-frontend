@@ -65,18 +65,9 @@ class CheckYourAnswersIndividualDetailsControllerSpec extends ControllerSpecBase
           viewAsString(allChangeLinksVariations(request), UpdateMode, srn, postUrlUpdateMode)
       }
 
-      "return OK and the correct view with full answers when user has answered no to all questions" in {
-        val request = FakeDataRequest(fullAnswersNo)
-        val result = controller(fullAnswersNo.dataRetrievalAction).onPageLoad(UpdateMode, index, srn)(request)
-
-        status(result) mustBe OK
-        contentAsString(result) mustBe
-          viewAsString(variationExisting(request), UpdateMode, srn, postUrlUpdateMode)
-      }
-
       "return OK and the correct view with add links for values" in {
         val request = FakeDataRequest(fullAnswersNo)
-        val result = controller(emptyAnswers.dataRetrievalAction).onPageLoad(UpdateMode, index, srn)(request)
+        val result = controller(fullAnswersNo.dataRetrievalAction).onPageLoad(UpdateMode, index, srn)(request)
 
         status(result) mustBe OK
         contentAsString(result) mustBe
@@ -138,7 +129,7 @@ object CheckYourAnswersIndividualDetailsControllerSpec extends ControllerSpecBas
     .set(TrusteeNameId(0))(trusteeName).flatMap(
     _.set(TrusteeDOBId(0))(trusteeDob).flatMap(
       _.set(TrusteeHasNINOId(0))(true).flatMap(
-        _.set(TrusteeNewNinoId(0))(ReferenceValue(nino, isEditable = true)).flatMap(
+        _.set(TrusteeNewNinoId(0))(ReferenceValue(nino, isEditable = false)).flatMap(
           _.set(TrusteeHasUTRId(0))(true).flatMap(
             _.set(TrusteeUTRId(0))(utr)
               ))))).asOpt.value
@@ -161,12 +152,9 @@ object CheckYourAnswersIndividualDetailsControllerSpec extends ControllerSpecBas
     Seq(AnswerSection(
       None,
       Seq(
-        stringLink(messages("messages__noCompanyUtr__heading", name), reason),
-        stringLink(messages("messages__noCompanyUtr__heading", name), reason),
-        addLink(messages("messages__checkYourAnswers__establishers__company__number"), nino(UpdateMode, srn),
-          messages("messages__visuallyhidden__companyNumber_add")),
-        addLink(messages("messages__common__cya__vat"), utr(UpdateMode, srn),
-          messages("messages__visuallyhidden__companyVat_add"))
+        stringLink(messages("messages__director__cya__dob", name), DateHelper.formatDate(trusteeDob)),
+        addLink(messages("messages__common__nino"), nino(UpdateMode, srn),
+          messages("messages__visuallyhidden__trustee__nino_add"))
       )
     ))
 
@@ -174,10 +162,9 @@ object CheckYourAnswersIndividualDetailsControllerSpec extends ControllerSpecBas
     Seq(AnswerSection(
       None,
       Seq(
-        stringLink(messages("messages__noCompanyUtr__heading", name), reason),
-        stringLink(messages("messages__noCompanyUtr__heading", name), reason),
-        stringLink(messages("messages__checkYourAnswers__establishers__company__number"), nino),
-        stringLink(messages("messages__common__cya__vat"), utr)
+        stringLink(messages("messages__director__cya__dob", name), DateHelper.formatDate(trusteeDob)),
+        stringLink(messages("messages__common__nino"), nino),
+        stringLink(messages("messages__company__cya__utr"), utr)
       )
     ))
 
@@ -186,18 +173,16 @@ object CheckYourAnswersIndividualDetailsControllerSpec extends ControllerSpecBas
     Seq(AnswerSection(
       None,
       Seq(
-        stringChangeLink(messages("messages__noCompanyUtr__heading", name), trusteeName(mode, srn), reason,
-          messages("messages__visuallyhidden__noCompanyUTRReason")),
-        stringChangeLink(messages("messages__noCompanyUtr__heading", name), trusteeDob(mode, srn), reason,
-          messages("messages__visuallyhidden__noCompanyUTRReason")),
-        booleanChangeLink(messages("messages__hasCompanyNumber__h1", name), hasNino(mode, srn), value = true,
-          messages("messages__visuallyhidden__hasCompanyNumber")),
-        stringChangeLink(messages("messages__noCompanyNumber__establisher__heading", name), nino(mode, srn), reason,
-          messages("messages__visuallyhidden__noCompanyNumberReason")),
-        booleanChangeLink(messages("messages__hasCompanyUtr__h1", name), hasUtr(mode, srn), value = true,
-          messages("messages__visuallyhidden__hasCompanyUtr")),
-        stringChangeLink(messages("messages__noCompanyUtr__heading", name), utr(mode, srn), reason,
-          messages("messages__visuallyhidden__noCompanyUTRReason"))
+        stringChangeLink(messages("messages__director__cya__dob", name), trusteeDob(mode, srn), DateHelper.formatDate(trusteeDob),
+          messages("messages__visuallyhidden__trustee__dob")),
+        booleanChangeLink(messages("messages__genericHasNino__title", name), hasNino(mode, srn), value = true,
+          messages("messages__visuallyhidden__trustee__nino_yes_no")),
+        stringChangeLink(messages("messages__common__nino"), nino(mode, srn), nino,
+          messages("messages__visuallyhidden__trustee__nino")),
+        booleanChangeLink(messages("messages__hasUtr__h1", name), hasUtr(mode, srn), value = true,
+          messages("messages__visuallyhidden__trustee__utr_yes_no")),
+        stringChangeLink(messages("messages__company__cya__utr"), utr(mode, srn), utr,
+          messages("messages__visuallyhidden__trustee__utr"))
       )
       )
     )
@@ -208,18 +193,16 @@ object CheckYourAnswersIndividualDetailsControllerSpec extends ControllerSpecBas
     Seq(AnswerSection(
       None,
       Seq(
-        stringChangeLink(messages("messages__noCompanyUtr__heading", name), trusteeName(mode, srn), reason,
-          messages("messages__visuallyhidden__noCompanyUTRReason")),
-        stringChangeLink(messages("messages__noCompanyUtr__heading", name), trusteeDob(mode, srn), reason,
-          messages("messages__visuallyhidden__noCompanyUTRReason")),
-        booleanChangeLink(messages("messages__hasCompanyNumber__h1", name), hasNino(mode, srn), value = false,
-          messages("messages__visuallyhidden__hasCompanyNumber")),
-        stringChangeLink(messages("messages__noCompanyNumber__establisher__heading", name), noNinoReason(mode, srn), reason,
-          messages("messages__visuallyhidden__noCompanyNumberReason")),
-        booleanChangeLink(messages("messages__hasCompanyUtr__h1", name), hasUtr(mode, srn), value = false,
-          messages("messages__visuallyhidden__hasCompanyUtr")),
-        stringChangeLink(messages("messages__noCompanyUtr__heading", name), noUtrReason(mode, srn), reason,
-          messages("messages__visuallyhidden__noCompanyUTRReason"))
+        stringChangeLink(messages("messages__director__cya__dob", name), trusteeDob(mode, srn), DateHelper.formatDate(trusteeDob),
+          messages("messages__visuallyhidden__trustee__dob")),
+        booleanChangeLink(messages("messages__genericHasNino__title", name), hasNino(mode, srn), value = false,
+          messages("messages__visuallyhidden__trustee__nino_yes_no")),
+        stringChangeLink(messages("messages__noNinoReason__heading", name), noNinoReason(mode, srn), reason,
+          messages("messages__visuallyhidden__trustee__nino_no")),
+        booleanChangeLink(messages("messages__hasUtr__h1", name), hasUtr(mode, srn), value = false,
+          messages("messages__visuallyhidden__trustee__utr_yes_no")),
+        stringChangeLink(messages("messages__noGenericUtr__heading", name), noUtrReason(mode, srn), reason,
+          messages("messages__visuallyhidden__trustee__utr_no"))
       )
     ))
 
@@ -261,7 +244,8 @@ object CheckYourAnswersIndividualDetailsControllerSpec extends ControllerSpecBas
       dataRetrievalAction,
       FakeAllowAccessProvider(),
       allowChangeHelper,
-  new DataRequiredActionImpl
+  new DataRequiredActionImpl,
+      new FakeCountryOptions
     )
 
   def viewAsString(answerSections: Seq[AnswerSection], mode: Mode = NormalMode,

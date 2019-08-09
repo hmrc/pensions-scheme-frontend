@@ -17,9 +17,14 @@
 package identifiers.register.trustees.individual
 
 import identifiers._
-import identifiers.register.trustees.TrusteesId
+import identifiers.register.trustees.{IsTrusteeNewId, TrusteesId}
+import models.Link
 import org.joda.time.LocalDate
+import play.api.i18n.Messages
 import play.api.libs.json.JsPath
+import utils.{DateHelper, UserAnswers}
+import utils.checkyouranswers.CheckYourAnswers
+import viewmodels.{AnswerRow, Message}
 
 case class TrusteeDOBId(index: Int) extends TypedIdentifier[LocalDate] {
   override def path: JsPath = TrusteesId(index).path \ TrusteeDOBId.toString
@@ -27,4 +32,43 @@ case class TrusteeDOBId(index: Int) extends TypedIdentifier[LocalDate] {
 
 object TrusteeDOBId {
   override def toString: String = "trusteeDOB"
+
+  implicit def cya(implicit answers: UserAnswers, messages: Messages): CheckYourAnswers[TrusteeDOBId] = {
+    new CheckYourAnswers[TrusteeDOBId] {
+
+      def label(index: Int) =
+        answers.get(TrusteeNameId(index)) match {
+          case Some(name) => messages("messages__director__cya__dob", name.fullName)
+          case _ => messages("messages__director__cya__dob", messages("messages__theTrustee"))
+        }
+
+      override def row(id: TrusteeDOBId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+        userAnswers.get(id).fold(Nil: Seq[AnswerRow]) { dob => {
+          Seq(
+            AnswerRow(
+              label(id.index),
+              Seq(DateHelper.formatDate(dob)),
+              answerIsMessageKey = false,
+              Some(Link("site.change", changeUrl, Some(Message("messages__visuallyhidden__trustee__dob"))))
+            )
+          )
+        }}
+
+      override def updateRow(id: TrusteeDOBId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+        userAnswers.get(IsTrusteeNewId(id.index)) match {
+          case Some(true) => row(id)(changeUrl, userAnswers)
+          case _ =>
+            userAnswers.get(id).fold(Nil: Seq[AnswerRow]) { dob =>
+              Seq(
+                AnswerRow(
+                  label(id.index),
+                  Seq(DateHelper.formatDate(dob)),
+                  answerIsMessageKey = false,
+                  None
+                )
+              )
+            }
+        }
+    }
+  }
 }

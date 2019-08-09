@@ -29,7 +29,7 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import utils.{AllowChangeHelper, Enumerable, UserAnswers}
+import utils.{AllowChangeHelper, CountryOptions, Enumerable, UserAnswers}
 import utils.annotations.TrusteesIndividual
 import viewmodels.AnswerSection
 import utils.checkyouranswers.Ops._
@@ -45,7 +45,8 @@ class CheckYourAnswersIndividualDetailsController @Inject()(val appConfig: Front
                                                             getData: DataRetrievalAction,
                                                             allowAccess: AllowAccessActionProvider,
                                                             allowChangeHelper: AllowChangeHelper,
-                                                            requireData: DataRequiredAction
+                                                            requireData: DataRequiredAction,
+                                                            implicit val countryOptions: CountryOptions
                                      )(implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
@@ -54,12 +55,11 @@ class CheckYourAnswersIndividualDetailsController @Inject()(val appConfig: Front
         implicit val userAnswers: UserAnswers = request.userAnswers
         val companyDetails = Seq(AnswerSection(
           None,
-          TrusteeNameId(index).row(routes.TrusteeNameController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
             TrusteeDOBId(index)
-              .row(routes.TrusteeDOBController.onPageLoad(checkMode(mode), srn, index).url, mode) ++
+              .row(routes.TrusteeDOBController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
             TrusteeHasNINOId(index).row(routes.TrusteeHasNINOController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
             TrusteeNewNinoId(index).row(routes.TrusteeNinoNewController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
-            TrusteeNoNINOReasonId(index).row(routes.TrusteeNoNINOReasonController.onPageLoad(checkMode(mode), srn, index).url, mode) ++
+            TrusteeNoNINOReasonId(index).row(routes.TrusteeNoNINOReasonController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
             TrusteeHasUTRId(index).row(routes.TrusteeHasUTRController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
             TrusteeUTRId(index).row(routes.TrusteeUTRController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
             TrusteeNoUTRReasonId(index).row(routes.TrusteeNoUTRReasonController.onPageLoad(checkMode(mode), index, srn).url, mode)

@@ -17,9 +17,13 @@
 package identifiers.register.trustees.individual
 
 import identifiers._
-import identifiers.register.trustees.TrusteesId
+import identifiers.register.trustees.{IsTrusteeNewId, TrusteesId}
+import play.api.i18n.Messages
 import play.api.libs.json.{JsPath, JsResult}
 import utils.UserAnswers
+import utils.checkyouranswers.CheckYourAnswers
+import utils.checkyouranswers.CheckYourAnswers.BooleanCYA
+import viewmodels.AnswerRow
 
 case class TrusteeHasUTRId(index: Int) extends TypedIdentifier[Boolean] {
   override def path: JsPath = TrusteesId(index).path \ TrusteeHasUTRId.toString
@@ -37,4 +41,26 @@ case class TrusteeHasUTRId(index: Int) extends TypedIdentifier[Boolean] {
 
 object TrusteeHasUTRId {
   override def toString: String = "hasUtr"
+
+  implicit def cya(implicit userAnswers: UserAnswers, messages: Messages): CheckYourAnswers[TrusteeHasUTRId] = {
+
+    def label(index: Int): Option[String] =
+      userAnswers.get(TrusteeNameId(index)) match {
+        case Some(trusteeName) => Some(messages("messages__hasUtr__h1", trusteeName.fullName))
+        case _                 => Some(messages("messages__hasUtr__h1", messages("messages__theTrustee")))
+      }
+
+    def hiddenLabel: Option[String] = Some(messages("messages__visuallyhidden__trustee__utr_yes_no"))
+
+    new CheckYourAnswers[TrusteeHasUTRId] {
+      override def row(id: TrusteeHasUTRId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+        BooleanCYA(label(id.index), hiddenLabel)().row(id)(changeUrl, userAnswers)
+
+      override def updateRow(id: TrusteeHasUTRId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+        userAnswers.get(IsTrusteeNewId(id.index)) match {
+          case Some(true) => BooleanCYA(label(id.index), hiddenLabel)().row(id)(changeUrl, userAnswers)
+          case _          => Seq.empty[AnswerRow]
+        }
+    }
+  }
 }
