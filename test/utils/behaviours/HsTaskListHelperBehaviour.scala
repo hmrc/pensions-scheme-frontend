@@ -32,7 +32,7 @@ import identifiers.register.trustees.partnership.{IsPartnershipCompleteId, Partn
 import identifiers.register.trustees.{IsTrusteeAddressCompleteId, IsTrusteeCompleteId, IsTrusteeNewId, MoreThanTenTrusteesId, company => trusteeCompanyPath}
 import identifiers.{IsWorkingKnowledgeCompleteId, _}
 import models._
-import models.person.PersonDetails
+import models.person.{PersonDetails, PersonName}
 import models.register.SchemeType
 import models.register.SchemeType.SingleTrust
 import org.joda.time.LocalDate
@@ -521,7 +521,7 @@ trait HsTaskListHelperBehaviour extends SpecBase with MustMatchers with OptionVa
   protected def allTrusteesIndividual(isCompleteTrustees: Boolean = true, toggled: Boolean): UserAnswers = {
     setTrusteeCompletionStatus(
       isCompleteTrustees, toggled, 0, UserAnswers()
-        .set(TrusteeDetailsId(0))(PersonDetails("firstName", None, "lastName", LocalDate.now())).flatMap(
+        .set(TrusteeNameId(0))(PersonName("firstName", "lastName")).flatMap(
         _.set(IsTrusteeNewId(0))(true)
       ).asOpt.value
     )
