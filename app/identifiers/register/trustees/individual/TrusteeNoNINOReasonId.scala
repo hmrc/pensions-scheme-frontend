@@ -17,14 +17,45 @@
 package identifiers.register.trustees.individual
 
 import identifiers._
-import identifiers.register.trustees.TrusteesId
+import identifiers.register.trustees.{IsTrusteeNewId, TrusteesId}
+import play.api.i18n.Messages
 import play.api.libs.json.JsPath
+import utils.checkyouranswers.CheckYourAnswers
+import utils.checkyouranswers.CheckYourAnswers.StringCYA
+import utils.{CountryOptions, UserAnswers}
+import viewmodels.AnswerRow
 
 case class TrusteeNoNINOReasonId(index: Int) extends TypedIdentifier[String] {
   override def path: JsPath = TrusteesId(index).path \ TrusteeNoNINOReasonId.toString
+
 }
 
 object TrusteeNoNINOReasonId {
   override def toString: String = "noNinoReason"
+
+  implicit def cya(implicit userAnswers: UserAnswers,
+                   messages: Messages,
+                   countryOptions: CountryOptions): CheckYourAnswers[TrusteeNoNINOReasonId] = {
+
+    def label(index: Int): Option[String] =
+      userAnswers.get(TrusteeNameId(index)) match {
+      case Some(name) => Some(messages("messages__noNinoReason__heading", name.fullName))
+      case _ => Some(messages("messages__trusteeNoNinoReason__cya_fallback"))
+    }
+
+    def hiddenLabel = Some(messages("messages__visuallyhidden__trustee__nino_no"))
+
+    new CheckYourAnswers[TrusteeNoNINOReasonId] {
+      override def row(id: TrusteeNoNINOReasonId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+        StringCYA(label(id.index), hiddenLabel)().row(id)(changeUrl, userAnswers)
+
+
+      override def updateRow(id: TrusteeNoNINOReasonId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+        userAnswers.get(IsTrusteeNewId(id.index)) match {
+          case Some(true) => row(id)(changeUrl, userAnswers)
+          case _ => Seq.empty[AnswerRow]
+        }
+    }
+  }
 }
 

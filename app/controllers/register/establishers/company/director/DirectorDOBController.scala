@@ -19,7 +19,7 @@ package controllers.register.establishers.company.director
 import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions._
-import forms.register.establishers.company.director.DirectorDOBFormProvider
+import forms.DOBFormProvider
 import identifiers.register.establishers.company.director.{DirectorDOBId, DirectorNameId, IsNewDirectorId}
 import javax.inject.Inject
 import models.{Index, Mode}
@@ -44,7 +44,7 @@ class DirectorDOBController @Inject()(
                                        getData: DataRetrievalAction,
                                        allowAccess: AllowAccessActionProvider,
                                        requireData: DataRequiredAction,
-                                       formProvider: DirectorDOBFormProvider
+                                       formProvider: DOBFormProvider
                                      )(implicit val ec: ExecutionContext)
   extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
 

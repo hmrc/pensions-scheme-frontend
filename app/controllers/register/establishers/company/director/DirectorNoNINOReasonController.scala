@@ -50,8 +50,8 @@ class DirectorNoNINOReasonController @Inject()(
   private def viewModel(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String], name: String): ReasonViewModel = {
     ReasonViewModel(
       postCall = routes.DirectorNoNINOReasonController.onSubmit(mode, establisherIndex, directorIndex, srn),
-      title = Message("messages__directorNoNinoReason__title"),
-      heading = Message("messages__directorNoNinoReason__heading", name),
+      title = Message("messages__noNinoReason__director_title"),
+      heading = Message("messages__noNinoReason__heading", name),
       srn = srn
     )
   }
