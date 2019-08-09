@@ -61,6 +61,9 @@ class TrusteesCompanyNavigator @Inject()(val dataCacheConnector: UserAnswersCach
   protected def routes(from: NavigateFrom, mode: Mode, srn: Option[String]): Option[NavigateTo] = {
     from.id match {
       case CompanyDetailsId(index) =>
+        if (featureSwitchManagementService.get(Toggles.isEstablisherCompanyHnSEnabled))
+          NavigateTo.dontSave(AddTrusteeController.onPageLoad(mode, srn))
+        else
         NavigateTo.dontSave(CompanyVatController.onPageLoad(mode, index, srn))
 
       case CompanyVatId(index) =>

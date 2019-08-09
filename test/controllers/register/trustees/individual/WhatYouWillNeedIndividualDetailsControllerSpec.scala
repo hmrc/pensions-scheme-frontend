@@ -18,17 +18,21 @@ package controllers.register.trustees.individual
 
 import controllers.ControllerSpecBase
 import controllers.actions._
+import identifiers.register.trustees.individual.TrusteeNameId
+import models.person.PersonName
 import models.{Index, NormalMode}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.mockito.MockitoSugar
 import play.api.test.Helpers._
+import utils.UserAnswers
 import views.html.register.trustees.individual.whatYouWillNeedIndividualDetails
 
 class WhatYouWillNeedIndividualDetailsControllerSpec extends ControllerSpecBase with MockitoSugar with BeforeAndAfterEach {
 
-  val personName = "Test Name"
+  private val personName = "Test Name"
+  private val mandatoryTrustee = UserAnswers().set(TrusteeNameId(0))(PersonName("Test", "Name")).asOpt.value.dataRetrievalAction
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryTrustee): WhatYouWillNeedIndividualDetailsController =
+  def controller(dataRetrievalAction: DataRetrievalAction = mandatoryTrustee): WhatYouWillNeedIndividualDetailsController =
     new WhatYouWillNeedIndividualDetailsController(frontendAppConfig,
       messagesApi,
       FakeAuthAction,

@@ -17,17 +17,30 @@
 package identifiers.register.establishers.company.director
 
 import base.SpecBase
-import models.ReferenceValue
+import models.person.PersonName
+import models.{Link, ReferenceValue}
 import play.api.libs.json.Json
 import utils.UserAnswers
+import viewmodels.{AnswerRow, Message}
 
-class DirectorHasNINOIdSpec extends SpecBase{
+class DirectorHasNINOIdSpec extends SpecBase {
+
+  private val personDetails = PersonName("first", "last")
+  private val onwardUrl = "onwardUrl"
+  private val answerRowsWithChangeLinks = Seq(
+    AnswerRow(
+      label = Message("messages__genericHasNino__title", personDetails.fullName),
+      answer = Seq("false"),
+      answerIsMessageKey = false,
+      changeUrl = Some(Link("site.change", onwardUrl, Some(Message("messages__visuallyhidden__trustee__nino_yes_no", personDetails.fullName).resolve)))
+    )
+  )
 
   "Cleanup" when {
 
     def answers(hasNino: Boolean = true): UserAnswers = UserAnswers(Json.obj())
       .set(DirectorHasNINOId(0, 0))(hasNino)
-      .flatMap(_.set(DirectorNewNinoId(0, 0))(ReferenceValue("test-nino", true)))
+      .flatMap(_.set(DirectorNewNinoId(0, 0))(ReferenceValue("test-nino", isEditable = true)))
       .flatMap(_.set(DirectorNoNINOReasonId(0, 0))("reason"))
       .asOpt.value
 
@@ -58,5 +71,4 @@ class DirectorHasNINOIdSpec extends SpecBase{
       }
     }
   }
-
 }

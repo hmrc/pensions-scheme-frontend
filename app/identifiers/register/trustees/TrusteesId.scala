@@ -24,8 +24,8 @@ case class TrusteesId(index: Int) extends TypedIdentifier[Nothing] {
   override def path: JsPath = __ \ TrusteesId.toString \ index
 
   override def cleanup(value: Option[Nothing], userAnswers: UserAnswers): JsResult[UserAnswers] = {
-    userAnswers.allTrustees.lengthCompare(10) match {
-      case x if x <= 0 => userAnswers.remove(MoreThanTenTrusteesId)
+    value match {
+      case None => userAnswers.remove(MoreThanTenTrusteesId)
       case _ => super.cleanup(value, userAnswers)
     }
   }

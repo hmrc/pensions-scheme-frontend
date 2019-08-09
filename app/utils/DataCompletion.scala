@@ -19,12 +19,14 @@ package utils
 import identifiers.TypedIdentifier
 import identifiers.register.establishers.company._
 import identifiers.register.establishers.company.director._
+import identifiers.register.trustees.individual._
 import models.address.Address
 import models.{AddressYears, Mode, NormalMode, ReferenceValue}
 import play.api.libs.json.Reads
 
 trait DataCompletion {
-  
+
+
   self: UserAnswers =>
 
   //GENERIC METHODS
@@ -167,5 +169,37 @@ trait DataCompletion {
       get(DirectorContactDetailsId(estIndex, dirIndex)).isDefined
     ))
 
+  // INDIVIDUAL TRUSTEE
 
+  def isTrusteeIndividualDetailsComplete(trusteeIndex: Int): Option[Boolean] =
+    isComplete(Seq(
+      isAnswerComplete(TrusteeDOBId(trusteeIndex)),
+      isAnswerComplete(TrusteeHasNINOId(trusteeIndex), TrusteeNewNinoId(trusteeIndex), Some(TrusteeNoNINOReasonId(trusteeIndex))),
+      isUtrComplete(TrusteeHasUTRId(trusteeIndex), TrusteeUTRId(trusteeIndex), TrusteeNoUTRReasonId(trusteeIndex))
+    ))
+
+  def isTrusteeIndividualAddressComplete(index: Int): Option[Boolean] =
+    isAddressComplete(TrusteeAddressId(index), TrusteePreviousAddressId(index), TrusteeAddressYearsId(index), None)
+
+  def isTrusteeIndividualContactDetailsComplete(index: Int): Option[Boolean] = isContactDetailsComplete(TrusteeEmailId(index), TrusteePhoneId(index))
+
+  def isTrusteeIndividualComplete(isHnSEnabled: Boolean, index: Int): Boolean =
+    if (isHnSEnabled) {
+      isComplete(
+        Seq(
+          isTrusteeIndividualDetailsComplete(index),
+          isTrusteeIndividualAddressComplete(index),
+          isTrusteeIndividualContactDetailsComplete(index)
+        )
+      ).getOrElse(false)
+    } else {
+      isListComplete(Seq(
+        get(TrusteeDetailsId(index)).isDefined,
+        get(TrusteeNinoId(index)).isDefined | get(TrusteeNewNinoId(index)).isDefined,
+        get(UniqueTaxReferenceId(index)).isDefined | get(TrusteeUTRId(index)).isDefined,
+        isAddressComplete(TrusteeAddressId(index), TrusteePreviousAddressId(index),
+          TrusteeAddressYearsId(index), None).getOrElse(false),
+        get(TrusteeContactDetailsId(index)).isDefined
+      ))
+    }
 }

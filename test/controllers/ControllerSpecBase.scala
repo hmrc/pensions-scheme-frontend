@@ -28,7 +28,7 @@ import identifiers.register.trustees.TrusteesId
 import identifiers.register.trustees.individual.{TrusteeDetailsId, TrusteeNameId}
 import identifiers.{AdviserNameId, SchemeNameId}
 import models.person.{PersonDetails, PersonName}
-import models.{CompanyDetails, PartnershipDetails}
+import models.{CompanyDetails, PartnershipDetails, person}
 import org.joda.time.LocalDate
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -73,6 +73,16 @@ trait ControllerSpecBase extends SpecBase with Enumerable.Implicits with MapForm
       "trustees" -> Json.arr(
         Json.obj(
           TrusteeDetailsId.toString ->
+            PersonDetails("Test", Some("Trustee"), "Name", LocalDate.now)
+        )
+      )
+    )))
+
+  def getMandatoryTrusteeIndividual: FakeDataRetrievalAction = new FakeDataRetrievalAction(Some(
+    Json.obj(
+      "trustees" -> Json.arr(
+        Json.obj(
+          TrusteeNameId.toString ->
             PersonDetails("Test", Some("Trustee"), "Name", LocalDate.now)
         )
       )
@@ -184,7 +194,7 @@ trait ControllerSpecBase extends SpecBase with Enumerable.Implicits with MapForm
 
   def getMandatoryWorkingKnowledgePerson: FakeDataRetrievalAction = new FakeDataRetrievalAction(
     Some(Json.obj(AdviserNameId.toString ->
-        "name"
+      "name"
     ))
   )
 
@@ -203,6 +213,22 @@ trait ControllerSpecBase extends SpecBase with Enumerable.Implicits with MapForm
               jsValue
             )
           )
+        )
+      )
+    )
+  }
+
+  protected def validTrusteeData(jsValue: (String, Json.JsValueWrapper)): JsObject = {
+    Json.obj(
+      TrusteesId.toString -> Json.arr(
+        Json.obj(
+          TrusteeNameId.toString -> Json.obj(
+            "firstName" -> "Test",
+            "lastName" -> "Name",
+            "date" -> "2001-01-01",
+            "isDeleted" -> "false"
+          ),
+          jsValue
         )
       )
     )

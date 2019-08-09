@@ -14,22 +14,37 @@
  * limitations under the License.
  */
 
+import com.typesafe.config.ConfigException
 import config.{FeatureSwitchManagementService, FeatureSwitchManagementServiceProductionImpl, FeatureSwitchManagementServiceTestImpl}
+import navigators._
 import play.api.inject.{Binding, Module}
 import play.api.{Configuration, Environment}
+import utils.annotations.{TrusteesCompany, TrusteesIndividual}
+
+import scala.util.{Failure, Success, Try}
 
 class FeatureSwitchModule extends Module {
 
   override def bindings(environment: Environment, configuration: Configuration): Seq[Binding[_]] = {
 
-    if(configuration.underlying.getBoolean("enable-dynamic-switches")){
-      Seq(
+    val featureSwitchBinding = Seq(
+      if (configuration.underlying.getBoolean("enable-dynamic-switches")) {
         bind[FeatureSwitchManagementService].to[FeatureSwitchManagementServiceTestImpl]
-      )
-    } else {
-      Seq(
+      } else {
         bind[FeatureSwitchManagementService].to[FeatureSwitchManagementServiceProductionImpl]
-      )
-    }
+      }
+    )
+
+    val hubSpokeEnabled = configuration.getBoolean("features.is-establisher-company-hns").getOrElse(false)
+
+    val trusteesIndividualNavigatorBinding = Seq(
+      if (hubSpokeEnabled) {
+        bind(classOf[Navigator]).qualifiedWith[TrusteesIndividual].to(classOf[TrusteesIndividualNavigator])
+      } else {
+        bind(classOf[Navigator]).qualifiedWith[TrusteesIndividual].to(classOf[TrusteesIndividualNavigatorOld])
+      }
+    )
+
+    featureSwitchBinding ++ trusteesIndividualNavigatorBinding
   }
 }
