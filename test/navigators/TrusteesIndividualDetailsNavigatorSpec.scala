@@ -20,6 +20,7 @@ import base.SpecBase
 import controllers.register.trustees.individual.routes._
 import generators.Generators
 import identifiers.Identifier
+import identifiers.register.trustees.IsTrusteeNewId
 import identifiers.register.trustees.individual._
 import models.{CheckMode, CheckUpdateMode, Index, Mode, NormalMode, ReferenceValue, UpdateMode}
 import org.joda.time.LocalDate
@@ -36,53 +37,84 @@ class TrusteesIndividualDetailsNavigatorSpec extends SpecBase with MustMatchers 
 
   val navigator: Navigator = injector.instanceOf[TrusteesIndividualDetailsNavigator]
 
-  def normalModeRoutes(mode: Mode): TableFor3[Identifier, UserAnswers, Call] =
+  "NormalMode" must {
+    def navigationForNewTrusteeIndividual(mode: Mode): TableFor3[Identifier, UserAnswers, Call] =
     Table(
       ("Id", "UserAnswers", "Next Page"),
       row(TrusteeNameId(index))(somePersonNameValue, controllers.register.trustees.routes.AddTrusteeController.onPageLoad(mode, None)),
-      row(TrusteeDOBId(index))(someDate, controllers.register.trustees.individual.routes.TrusteeHasNINOController.onPageLoad(mode, index, None)),
-      row(TrusteeHasNINOId(index))(true, controllers.register.trustees.individual.routes.TrusteeNinoNewController.onPageLoad(mode, index, None)),
-      row(TrusteeHasNINOId(index))(false, controllers.register.trustees.individual.routes.TrusteeNoNINOReasonController.onPageLoad(mode, index, None)),
-      row(TrusteeNewNinoId(index))(someRefValue, controllers.register.trustees.individual.routes.TrusteeHasUTRController.onPageLoad(mode, index, None)),
-      row(TrusteeNoNINOReasonId(index))(someStringValue, controllers.register.trustees.individual.routes.TrusteeHasUTRController.onPageLoad(mode, index, None)),
+      row(TrusteeDOBId(index))(someDate, TrusteeHasNINOController.onPageLoad(mode, index, None)),
+      row(TrusteeHasNINOId(index))(true, TrusteeNinoNewController.onPageLoad(mode, index, None)),
+      row(TrusteeHasNINOId(index))(false, TrusteeNoNINOReasonController.onPageLoad(mode, index, None)),
+      row(TrusteeNewNinoId(index))(someRefValue, TrusteeHasUTRController.onPageLoad(mode, index, None)),
+      row(TrusteeNoNINOReasonId(index))(someStringValue, TrusteeHasUTRController.onPageLoad(mode, index, None)),
       row(TrusteeHasUTRId(index))(true, TrusteeUTRController.onPageLoad(mode, index, None)),
       row(TrusteeHasUTRId(index))(false, TrusteeNoUTRReasonController.onPageLoad(mode, index, None)),
-      row(TrusteeNoUTRReasonId(index))(someStringValue, cyaIndividualDetailsPage(mode, index)),
-      row(TrusteeUTRId(index))(someStringValue, cyaIndividualDetailsPage(mode, index))
+      row(TrusteeNoUTRReasonId(index))(someStringValue, cyaIndividualDetailsPage(mode, index, None)),
+      row(TrusteeUTRId(index))(someStringValue, cyaIndividualDetailsPage(mode, index, None))
     )
 
-  behave like navigatorWithRoutesForMode(NormalMode)(navigator, normalModeRoutes(NormalMode))
+    behave like navigatorWithRoutesForMode(NormalMode)(navigator, navigationForNewTrusteeIndividual(NormalMode), None)
+  }
 
-  def checkModeRoutes(mode: Mode): TableFor3[Identifier, UserAnswers, Call] =
+  "CheckMode" must {
+    def checkModeRoutes(mode: Mode): TableFor3[Identifier, UserAnswers, Call] =
     Table(
       ("Id", "UserAnswers", "Expected next page"),
-      row(TrusteeDOBId(index))(someDate, cyaIndividualDetailsPage(CheckMode, index)),
-      row(TrusteeHasNINOId(index))(true, controllers.register.trustees.individual.routes.TrusteeNinoNewController.onPageLoad(CheckMode, index, None)),
-      row(TrusteeNewNinoId(index))(someRefValue, cyaIndividualDetailsPage(CheckMode, index)),
-      row(TrusteeHasNINOId(index))(false, controllers.register.trustees.individual.routes.TrusteeNoNINOReasonController.onPageLoad(CheckMode, index, None)),
-      row(TrusteeNoNINOReasonId(index))(someStringValue, cyaIndividualDetailsPage(CheckMode, index)),
+      row(TrusteeDOBId(index))(someDate, cyaIndividualDetailsPage(CheckMode, index, None)),
+      row(TrusteeHasNINOId(index))(true, TrusteeNinoNewController.onPageLoad(CheckMode, index, None)),
+      row(TrusteeNewNinoId(index))(someRefValue, cyaIndividualDetailsPage(CheckMode, index, None)),
+      row(TrusteeHasNINOId(index))(false, TrusteeNoNINOReasonController.onPageLoad(CheckMode, index, None)),
+      row(TrusteeNoNINOReasonId(index))(someStringValue, cyaIndividualDetailsPage(CheckMode, index, None)),
       row(TrusteeHasUTRId(index))(true, TrusteeUTRController.onPageLoad(CheckMode, index, None)),
-      row(TrusteeUTRId(index))(someStringValue, cyaIndividualDetailsPage(CheckMode, index)),
+      row(TrusteeUTRId(index))(someStringValue, cyaIndividualDetailsPage(CheckMode, index, None)),
       row(TrusteeHasUTRId(index))(false, TrusteeNoUTRReasonController.onPageLoad(CheckMode, index, None)),
-      row(TrusteeNoUTRReasonId(index))(someStringValue, cyaIndividualDetailsPage(CheckMode, index))
+      row(TrusteeNoUTRReasonId(index))(someStringValue, cyaIndividualDetailsPage(CheckMode, index, None))
     )
 
-  behave like navigatorWithRoutesForMode(CheckMode)(navigator, checkModeRoutes(CheckMode))
+    behave like navigatorWithRoutesForMode(CheckMode)(navigator, checkModeRoutes(CheckMode), None)
+  }
 
-  def updateMode(mode: Mode): TableFor3[Identifier, UserAnswers, Call] =
+  "UpdateMode" must {
+    def navigationForVarianceModeTrusteeIndividual(mode: Mode): TableFor3[Identifier, UserAnswers, Call] =
     Table(
-      ("Id", "UserAnswers", "Next Page"),
-      row(TrusteeNewNinoId(index))(someRefValue, anyMoreChangesPage)
+      ("Id", "UserAnswers", "Expected next page"),
+      row(TrusteeNameId(index))(somePersonNameValue, controllers.register.trustees.routes.AddTrusteeController.onPageLoad(mode, srn), Some(newTrusteeUserAnswers)),
+      row(TrusteeDOBId(index))(someDate, TrusteeHasNINOController.onPageLoad(mode, index, srn), Some(newTrusteeUserAnswers)),
+      row(TrusteeHasNINOId(index))(true, TrusteeNinoNewController.onPageLoad(mode, index, srn), Some(newTrusteeUserAnswers)),
+      row(TrusteeHasNINOId(index))(false, TrusteeNoNINOReasonController.onPageLoad(mode, index, srn), Some(newTrusteeUserAnswers)),
+      row(TrusteeNewNinoId(index))(someRefValue, TrusteeHasUTRController.onPageLoad(mode, index, srn), Some(newTrusteeUserAnswers)),
+      row(TrusteeNoNINOReasonId(index))(someStringValue, TrusteeHasUTRController.onPageLoad(mode, index, srn), Some(newTrusteeUserAnswers)),
+      row(TrusteeHasUTRId(index))(true, TrusteeUTRController.onPageLoad(mode, index, srn), Some(newTrusteeUserAnswers)),
+      row(TrusteeHasUTRId(index))(false, TrusteeNoUTRReasonController.onPageLoad(mode, index, srn), Some(newTrusteeUserAnswers)),
+      row(TrusteeNoUTRReasonId(index))(someStringValue, cyaIndividualDetailsPage(mode, index, srn), Some(newTrusteeUserAnswers)),
+      row(TrusteeUTRId(index))(someStringValue, cyaIndividualDetailsPage(mode, index, srn), Some(newTrusteeUserAnswers))
     )
 
-  behave like navigatorWithRoutesForMode(UpdateMode)(navigator, updateMode(UpdateMode))
+    behave like navigatorWithRoutesForMode(UpdateMode)(navigator, navigationForVarianceModeTrusteeIndividual(UpdateMode), srn)
+  }
+
+
+  "CheckUpdateMode" must {
+    def navigationForVarianceModeTrusteeIndividual(mode: Mode): TableFor3[Identifier, UserAnswers, Call] =
+      Table(
+        ("Id", "UserAnswers", "Expected next page"),
+        row(TrusteeNewNinoId(index))(someRefValue, anyMoreChangesPage(srn), Some(newTrusteeUserAnswers))
+      )
+
+    behave like navigatorWithRoutesForMode(CheckUpdateMode)(navigator, navigationForVarianceModeTrusteeIndividual(CheckUpdateMode), srn)
+  }
+
 
 }
 
 object TrusteesIndividualDetailsNavigatorSpec extends SpecBase with MustMatchers with NavigatorBehaviour with Generators {
   private lazy val index = 0 // intsAboveValue(-1).sample.value
   private val someDate =  LocalDate.now() // arbitrary[LocalDate].sample.value
+  private val srn = Some("srn")
+  private val newTrusteeUserAnswers = UserAnswers().set(IsTrusteeNewId(index))(true).asOpt.value
+  private val exisitingTrusteeUserAnswers = UserAnswers().set(IsTrusteeNewId(index))(false).asOpt.value
 
-  private def cyaIndividualDetailsPage(mode: Mode, index: Index): Call = CheckYourAnswersIndividualDetailsController.onPageLoad(Mode.journeyMode(mode), index, None)
+  private def cyaIndividualDetailsPage(mode: Mode, index: Index, srn: Option[String]): Call =
+    CheckYourAnswersIndividualDetailsController.onPageLoad(Mode.journeyMode(mode), index, srn)
 
 }

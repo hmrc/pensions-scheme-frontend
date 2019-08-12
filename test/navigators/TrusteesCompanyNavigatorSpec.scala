@@ -35,13 +35,13 @@ class TrusteesCompanyNavigatorSpec extends SpecBase with MustMatchers with Navig
 
   "TrusteesCompanyNavigator" must {
 
-    behave like navigatorWithRoutesForMode(NormalMode)(navigator, normalAndUpdateModeRoutes(NormalMode))
-    behave like navigatorWithRoutesForMode(CheckMode)(navigator, routesCheckMode(CheckMode))
+    behave like navigatorWithRoutesForMode(NormalMode)(navigator, normalAndUpdateModeRoutes(NormalMode), None)
+    behave like navigatorWithRoutesForMode(CheckMode)(navigator, routesCheckMode(CheckMode), None)
 
-    behave like navigatorWithRoutesForMode(UpdateMode)(navigator, normalAndUpdateModeRoutes(UpdateMode))
+    behave like navigatorWithRoutesForMode(UpdateMode)(navigator, normalAndUpdateModeRoutes(UpdateMode), None)
 
-    behave like navigatorWithRoutesForMode(CheckUpdateMode)(navigator, routesCheckUpdateMode(CheckUpdateMode))
-    behave like navigatorWithRoutesForMode(CheckUpdateMode)(navigator, setNewTrusteeIdentifier(routesCheckMode(CheckUpdateMode)))
+    behave like navigatorWithRoutesForMode(CheckUpdateMode)(navigator, routesCheckUpdateMode(CheckUpdateMode), None)
+    behave like navigatorWithRoutesForMode(CheckUpdateMode)(navigator, setNewTrusteeIdentifier(routesCheckMode(CheckUpdateMode)), None)
   }
 }
 
@@ -160,16 +160,16 @@ object TrusteesCompanyNavigatorSpec extends SpecBase with NavigatorBehaviour {
   def routesCheckUpdateMode(mode: Mode): TableFor3[Identifier, UserAnswers, Call] = {
     Table(
       ("Id", "UserAnswers", "Next Page"),
-      row(CompanyRegistrationNumberVariationsId(0))(someRefValue, anyMoreChangesPage),
-      row(CompanyUTRId(0))(someStringValue, anyMoreChangesPage),
-      row(CompanyVatVariationsId(0))(someRefValue, anyMoreChangesPage),
-      row(CompanyPayeVariationsId(0))(someRefValue, anyMoreChangesPage),
+      row(CompanyRegistrationNumberVariationsId(0))(someRefValue, anyMoreChangesPage()),
+      row(CompanyUTRId(0))(someStringValue, anyMoreChangesPage()),
+      row(CompanyVatVariationsId(0))(someRefValue, anyMoreChangesPage()),
+      row(CompanyPayeVariationsId(0))(someRefValue, anyMoreChangesPage()),
       row(CompanyAddressId(0))(someAddress, isThisPreviousAddressPage),
-      row(CompanyConfirmPreviousAddressId(0))(true, anyMoreChangesPage),
+      row(CompanyConfirmPreviousAddressId(0))(true, anyMoreChangesPage()),
       row(CompanyConfirmPreviousAddressId(0))(false, previousAddressLookupPage(mode)),
-      row(CompanyPreviousAddressId(0))(someAddress, anyMoreChangesPage),
-      row(CompanyEmailId(0))(someStringValue, anyMoreChangesPage),
-      row(CompanyPhoneId(0))(someStringValue, anyMoreChangesPage)
+      row(CompanyPreviousAddressId(0))(someAddress, anyMoreChangesPage()),
+      row(CompanyEmailId(0))(someStringValue, anyMoreChangesPage()),
+      row(CompanyPhoneId(0))(someStringValue, anyMoreChangesPage())
     )
   }
 

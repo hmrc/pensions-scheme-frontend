@@ -55,11 +55,11 @@ trait NavigatorBehaviour extends PropertyChecks with OptionValues {
     Tuple3(id, userAnswers, call)
   }
 
-  protected def anyMoreChangesPage: Call = AnyMoreChangesController.onPageLoad(None)
+  protected def anyMoreChangesPage(srn: Option[String] = None): Call = AnyMoreChangesController.onPageLoad(srn)
 
   protected def navigatorWithRoutesForMode(mode: Mode)(navigator: Navigator,
                                                        routes: TableFor3[Identifier, UserAnswers, Call],
-                                                       srn: Option[String] = None): Unit = {
+                                                       srn: Option[String]): Unit = {
     forAll(routes) {
       (id: Identifier, userAnswers: UserAnswers, call: Call) =>
         s"move from $id to $call in ${Mode.jsLiteral.to(mode)} with data: ${userAnswers.toString}" in {
