@@ -23,6 +23,7 @@ import identifiers.register.trustees.individual.TrusteeNameId
 import identifiers.register.trustees.{IsTrusteeNewId, TrusteesId}
 import models.person.PersonName
 import models.{Index, NormalMode}
+import navigators.Navigator
 import org.mockito.Matchers.{any, eq => eqTo}
 import org.mockito.Mockito.{reset, times, verify, when}
 import org.scalatest.mockito.MockitoSugar
@@ -30,9 +31,11 @@ import org.scalatestplus.play.OneAppPerSuite
 import play.api.data.Form
 import play.api.inject.bind
 import play.api.libs.json.Json
+import play.api.mvc.Call
 import play.api.test.Helpers._
 import services.UserAnswersService
-import utils.{SectionComplete, UserAnswers}
+import utils.annotations.TrusteesIndividual
+import utils.{FakeNavigator, SectionComplete, UserAnswers}
 import views.html.register.trustees.individual.trusteeName
 
 import scala.concurrent.Future
@@ -97,7 +100,9 @@ class TrusteeNameControllerSpec extends ControllerSpecBase with OneAppPerSuite {
 
       val app = applicationBuilder(getEmptyData)
         .overrides(
-          bind[UserAnswersService].toInstance(mockUserAnswersService)
+          bind[UserAnswersService].toInstance(mockUserAnswersService),
+          bind(classOf[Navigator]).qualifiedWith(classOf[TrusteesIndividual])
+            .toInstance(new FakeNavigator(onwardRoute))
         ).build()
 
       val controller = app.injector.instanceOf[TrusteeNameController]
@@ -105,6 +110,7 @@ class TrusteeNameControllerSpec extends ControllerSpecBase with OneAppPerSuite {
       val result = controller.onSubmit(NormalMode, firstTrusteeIndex, None)(postRequest)
 
       status(result) mustBe SEE_OTHER
+      redirectLocation(result) mustBe Some(onwardRoute.url)
 
       app.stop()
     }
@@ -171,4 +177,5 @@ object TrusteeNameControllerSpec extends ControllerSpecBase with MockitoSugar {
   private val firstTrusteeIndex: Index = Index(0)
   private val mockUserAnswersService: UserAnswersService = mock[UserAnswersService]
   private val mockSectionComplete: SectionComplete = mock[SectionComplete]
+  private def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 }
