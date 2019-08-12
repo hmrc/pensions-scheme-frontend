@@ -1767,4 +1767,5 @@ messages__hasUtr__h1 = Does {0} have a Unique Taxpayer Reference (UTR)?
 
 messages__trusteeUtr__title = What is the trustee’s UTR?
 messages__trusteeUtr__h1 =  What is {0}’s UTR?
+messages__trustee__cya__dob = What is {0}’s date of birth?
 
