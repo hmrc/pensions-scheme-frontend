@@ -46,8 +46,8 @@ class TrusteeHasUTRController @Inject()(val appConfig: FrontendAppConfig,
   private def viewModel(mode: Mode, index: Index, srn: Option[String], trusteeName: String): CommonFormWithHintViewModel =
     CommonFormWithHintViewModel(
       postCall = controllers.register.trustees.individual.routes.TrusteeHasUTRController.onSubmit(mode, index, srn),
-      title = Message("messages__hasUtr__h1", Message("messages__theTrustee").resolve),
-      heading = Message("messages__hasUtr__h1", trusteeName),
+      title = Message("messages__hasTrusteeUtr__title"),
+      heading = Message("messages__hasTrusteeUtr__h1", trusteeName),
       hint = Some(Message("messages__hasUtr__p1")),
       srn = srn
     )

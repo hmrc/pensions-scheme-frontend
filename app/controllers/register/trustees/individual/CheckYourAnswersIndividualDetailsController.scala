@@ -19,23 +19,17 @@ package controllers.register.trustees.individual
 import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions._
-import identifiers.register.trustees.IsTrusteeNewId
-import identifiers.register.trustees.individual._
 import javax.inject.Inject
-import models.Mode.checkMode
 import models.{Index, Mode}
 import navigators.Navigator
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import utils.{AllowChangeHelper, CountryOptions, Enumerable, UserAnswers}
+import utils.Enumerable
 import utils.annotations.TrusteesIndividual
-import viewmodels.AnswerSection
-import utils.checkyouranswers.Ops._
-import views.html.check_your_answers
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
 class CheckYourAnswersIndividualDetailsController @Inject()(val appConfig: FrontendAppConfig,
                                                             val messagesApi: MessagesApi,
@@ -44,43 +38,15 @@ class CheckYourAnswersIndividualDetailsController @Inject()(val appConfig: Front
                                                             authenticate: AuthAction,
                                                             getData: DataRetrievalAction,
                                                             allowAccess: AllowAccessActionProvider,
-                                                            allowChangeHelper: AllowChangeHelper,
-                                                            requireData: DataRequiredAction,
-                                                            implicit val countryOptions: CountryOptions
+                                                            requireData: DataRequiredAction
                                      )(implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
-      implicit request =>
-        implicit val userAnswers: UserAnswers = request.userAnswers
-        val companyDetails = Seq(AnswerSection(
-          None,
-            TrusteeDOBId(index)
-              .row(routes.TrusteeDOBController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
-            TrusteeHasNINOId(index).row(routes.TrusteeHasNINOController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
-            TrusteeNewNinoId(index).row(routes.TrusteeNinoNewController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
-            TrusteeNoNINOReasonId(index).row(routes.TrusteeNoNINOReasonController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
-            TrusteeHasUTRId(index).row(routes.TrusteeHasUTRController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
-            TrusteeUTRId(index).row(routes.TrusteeUTRController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
-            TrusteeNoUTRReasonId(index).row(routes.TrusteeNoUTRReasonController.onPageLoad(checkMode(mode), index, srn).url, mode)
-          ))
-
-        Future.successful(Ok(check_your_answers(
-          appConfig,
-          companyDetails,
-          routes.CheckYourAnswersIndividualDetailsController.onSubmit(mode, index, srn),
-          existingSchemeName,
-          mode = mode,
-          hideEditLinks = request.viewOnly || !userAnswers.get(IsTrusteeNewId(index)).getOrElse(true),
-          hideSaveAndContinueButton = allowChangeHelper.hideSaveAndContinueButton(request, IsTrusteeNewId(index), mode),
-          srn = srn
-        )))
-
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData) {
+      implicit request => NotImplemented("Not implemented: " + this.getClass.toString)
     }
 
-  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (
-    authenticate andThen getData(mode, srn) andThen requireData) {
-      Redirect(controllers.routes.SchemeTaskListController.onPageLoad(mode, srn))
-
+  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData) {
+    implicit request => NotImplemented("Not implemented: " + this.getClass.toString)
   }
 }

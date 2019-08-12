@@ -30,10 +30,12 @@ import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.{NoSuspendedCheck, TrusteesCompany}
-import utils.checkyouranswers.Ops._
 import utils.{AllowChangeHelper, CountryOptions, Enumerable, UserAnswers}
 import viewmodels.AnswerSection
+import utils.checkyouranswers.Ops._
 import views.html.check_your_answers
+import utils.annotations.TrusteesCompany
+import utils.Enumerable
 
 import scala.concurrent.{ExecutionContext, Future}
 
