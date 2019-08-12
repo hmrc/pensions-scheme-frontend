@@ -19,10 +19,10 @@ package controllers.register.trustees.individual
 import controllers.ControllerSpecBase
 import controllers.actions.FakeDataRetrievalAction
 import forms.ReasonFormProvider
-import identifiers.register.trustees.individual.{TrusteeDetailsId, TrusteeNameId}
-import models.person.{PersonDetails, PersonName}
+import identifiers.register.trustees.individual.TrusteeNameId
+import models.person.PersonName
 import models.{Index, NormalMode}
-import org.joda.time.LocalDate
+import navigators.Navigator
 import org.mockito.Matchers.any
 import org.mockito.Mockito._
 import org.scalatest.mockito.MockitoSugar
@@ -32,6 +32,8 @@ import play.api.libs.json.Json
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import services.UserAnswersService
+import utils.FakeNavigator
+import utils.annotations.TrusteesIndividual
 import viewmodels.{Message, ReasonViewModel}
 import views.html.reason
 
@@ -87,7 +89,8 @@ class TrusteeNoUTRReasonControllerSpec extends ControllerSpecBase with MockitoSu
     "redirect to the next page when valid data is submitted" in {
       val app = applicationBuilder(getMandatoryTrustee)
         .overrides(
-          bind[UserAnswersService].toInstance(mockUserAnswersService)
+          bind[UserAnswersService].toInstance(mockUserAnswersService),
+          bind(classOf[Navigator]).qualifiedWith(classOf[TrusteesIndividual]).toInstance(new FakeNavigator(onwardRoute))
         ).build()
 
       val validData = Json.obj(

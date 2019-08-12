@@ -152,9 +152,10 @@ object CheckYourAnswersIndividualDetailsControllerSpec extends ControllerSpecBas
     Seq(AnswerSection(
       None,
       Seq(
-        stringLink(messages("messages__director__cya__dob", name), DateHelper.formatDate(trusteeDob)),
+        stringLink(messages("messages__trustee__cya__dob", name), DateHelper.formatDate(trusteeDob)),
         addLink(messages("messages__common__nino"), nino(UpdateMode, srn),
-          messages("messages__visuallyhidden__trustee__nino_add"))
+          messages("messages__visuallyhidden__trustee__nino_add")),
+        AnswerRow(messages("messages__common__utr"), Seq("site.not_entered"), answerIsMessageKey = true, None)
       )
     ))
 
@@ -162,9 +163,9 @@ object CheckYourAnswersIndividualDetailsControllerSpec extends ControllerSpecBas
     Seq(AnswerSection(
       None,
       Seq(
-        stringLink(messages("messages__director__cya__dob", name), DateHelper.formatDate(trusteeDob)),
+        stringLink(messages("messages__trustee__cya__dob", name), DateHelper.formatDate(trusteeDob)),
         stringLink(messages("messages__common__nino"), nino),
-        stringLink(messages("messages__company__cya__utr"), utr)
+        stringLink(messages("messages__common__utr"), utr)
       )
     ))
 
@@ -173,7 +174,7 @@ object CheckYourAnswersIndividualDetailsControllerSpec extends ControllerSpecBas
     Seq(AnswerSection(
       None,
       Seq(
-        stringChangeLink(messages("messages__director__cya__dob", name), trusteeDob(mode, srn), DateHelper.formatDate(trusteeDob),
+        stringChangeLink(messages("messages__trustee__cya__dob", name), trusteeDob(mode, srn), DateHelper.formatDate(trusteeDob),
           messages("messages__visuallyhidden__trustee__dob")),
         booleanChangeLink(messages("messages__genericHasNino__title", name), hasNino(mode, srn), value = true,
           messages("messages__visuallyhidden__trustee__nino_yes_no")),
@@ -181,7 +182,7 @@ object CheckYourAnswersIndividualDetailsControllerSpec extends ControllerSpecBas
           messages("messages__visuallyhidden__trustee__nino")),
         booleanChangeLink(messages("messages__hasUtr__h1", name), hasUtr(mode, srn), value = true,
           messages("messages__visuallyhidden__trustee__utr_yes_no")),
-        stringChangeLink(messages("messages__company__cya__utr"), utr(mode, srn), utr,
+        stringChangeLink(messages("messages__common__utr"), utr(mode, srn), utr,
           messages("messages__visuallyhidden__trustee__utr"))
       )
       )
@@ -193,7 +194,7 @@ object CheckYourAnswersIndividualDetailsControllerSpec extends ControllerSpecBas
     Seq(AnswerSection(
       None,
       Seq(
-        stringChangeLink(messages("messages__director__cya__dob", name), trusteeDob(mode, srn), DateHelper.formatDate(trusteeDob),
+        stringChangeLink(messages("messages__trustee__cya__dob", name), trusteeDob(mode, srn), DateHelper.formatDate(trusteeDob),
           messages("messages__visuallyhidden__trustee__dob")),
         booleanChangeLink(messages("messages__genericHasNino__title", name), hasNino(mode, srn), value = false,
           messages("messages__visuallyhidden__trustee__nino_yes_no")),
