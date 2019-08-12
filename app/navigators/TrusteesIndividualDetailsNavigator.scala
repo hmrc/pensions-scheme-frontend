@@ -16,28 +16,30 @@
 
 package navigators
 
-import com.google.inject.{Inject, Singleton}
-import config.FrontendAppConfig
+import com.google.inject.Inject
 import connectors.UserAnswersCacheConnector
 import controllers.register.trustees.individual.routes._
 import identifiers.Identifier
+import identifiers.register.trustees.IsTrusteeNewId
 import identifiers.register.trustees.individual.{TrusteeDOBId, _}
 import models.Mode._
 import models.{CheckMode, CheckUpdateMode, Mode, NormalMode, SubscriptionMode, UpdateMode, VarianceMode}
 import play.api.mvc.Call
 import utils.UserAnswers
 
+abstract class TrusteesIndividualNavigator extends AbstractNavigator
+
 class TrusteesIndividualDetailsNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector) extends AbstractNavigator {
 
   import TrusteesIndividualDetailsNavigator._
 
-  private def normalAndCheckModeRoutes(mode: Mode, ua: UserAnswers, srn: Option[String]): PartialFunction[Identifier, Call] = {
-    case TrusteeNameId(index) if mode == NormalMode  => controllers.register.trustees.routes.AddTrusteeController.onPageLoad(mode, srn)
-    case TrusteeDOBId(index) if mode == NormalMode => hasNinoPage(mode, index, srn)
-    case TrusteeDOBId(index) if mode == CheckMode => CheckYourAnswersIndividualDetailsController.onPageLoad(journeyMode(mode), index, None)
-    case id@TrusteeHasNINOId(index) => booleanNav(id, ua, ninoPage(mode, index, srn), noNinoReasonPage(mode, index, srn))
-    case TrusteeNewNinoId(index) if mode == NormalMode => trusteeHasUtrPage(mode, index, srn)
-    case TrusteeNewNinoId(index) if mode == CheckMode => CheckYourAnswersIndividualDetailsController.onPageLoad(journeyMode(mode), index, None)
+  private def normalAndCheckModeRoutes(mode: SubscriptionMode, ua: UserAnswers, srn: Option[String]): PartialFunction[Identifier, Call] = {
+    case TrusteeNameId(index) if mode == NormalMode         => controllers.register.trustees.routes.AddTrusteeController.onPageLoad(mode, srn)
+    case TrusteeDOBId(index) if mode == NormalMode          => hasNinoPage(mode, index, srn)
+    case TrusteeDOBId(index) if mode == CheckMode           => CheckYourAnswersIndividualDetailsController.onPageLoad(journeyMode(mode), index, None)
+    case id@TrusteeHasNINOId(index)                         => booleanNav(id, ua, ninoPage(mode, index, srn), noNinoReasonPage(mode, index, srn))
+    case TrusteeNewNinoId(index) if mode == NormalMode      => trusteeHasUtrPage(mode, index, srn)
+    case TrusteeNewNinoId(index) if mode == CheckMode       => CheckYourAnswersIndividualDetailsController.onPageLoad(journeyMode(mode), index, None)
     case TrusteeNoNINOReasonId(index) if mode == NormalMode => trusteeHasUtrPage(mode, index, srn)
     case TrusteeNoNINOReasonId(index) if mode == CheckMode  => CheckYourAnswersIndividualDetailsController.onPageLoad(journeyMode(mode), index, None)
     case id@TrusteeHasUTRId(index)                          => booleanNav(id, ua, utrPage(mode, index, srn), noUtrReasonPage(mode, index, srn))
@@ -46,14 +48,14 @@ class TrusteesIndividualDetailsNavigator @Inject()(val dataCacheConnector: UserA
   }
 
   private def updateModeRoutes(mode: VarianceMode, ua: UserAnswers, srn: Option[String]): PartialFunction[Identifier, Call] = {
-    case TrusteeNameId(index)    => controllers.register.trustees.routes.AddTrusteeController.onPageLoad(mode, srn)
-    case TrusteeDOBId(index)  => hasNinoPage(mode, index, srn)
-    case id@TrusteeHasNINOId(index) => booleanNav(id, ua, ninoPage(mode, index, srn), noNinoReasonPage(mode, index, srn))
-    case TrusteeNewNinoId(index) => trusteeHasUtrPage(mode, index, srn)
-    case TrusteeNoNINOReasonId(index) => trusteeHasUtrPage(mode, index, srn)
-    case id@TrusteeHasUTRId(index)                          => booleanNav(id, ua, utrPage(mode, index, srn), noUtrReasonPage(mode, index, srn))
-    case TrusteeNoUTRReasonId(index)                        => cyaIndividualDetailsPage(mode, index, srn)
-    case TrusteeUTRId(index)                                => cyaIndividualDetailsPage(mode, index, srn)
+    case TrusteeNameId(index) if ua.get(IsTrusteeNewId(index)).getOrElse(false)         => controllers.register.trustees.routes.AddTrusteeController.onPageLoad(mode, srn)
+    case TrusteeDOBId(index) if ua.get(IsTrusteeNewId(index)).getOrElse(false)          => hasNinoPage(mode, index, srn)
+    case id@TrusteeHasNINOId(index) if ua.get(IsTrusteeNewId(index)).getOrElse(false)   => booleanNav(id, ua, ninoPage(mode, index, srn), noNinoReasonPage(mode, index, srn))
+    case TrusteeNewNinoId(index) if ua.get(IsTrusteeNewId(index)).getOrElse(false)      => trusteeHasUtrPage(mode, index, srn)
+    case TrusteeNoNINOReasonId(index) if ua.get(IsTrusteeNewId(index)).getOrElse(false) => trusteeHasUtrPage(mode, index, srn)
+    case id@TrusteeHasUTRId(index) if ua.get(IsTrusteeNewId(index)).getOrElse(false)    => booleanNav(id, ua, utrPage(mode, index, srn), noUtrReasonPage(mode, index, srn))
+    case TrusteeNoUTRReasonId(index) if ua.get(IsTrusteeNewId(index)).getOrElse(false)  => cyaIndividualDetailsPage(mode, index, srn)
+    case TrusteeUTRId(index) if ua.get(IsTrusteeNewId(index)).getOrElse(false)          => cyaIndividualDetailsPage(mode, index, srn)
   }
 
   private def checkUpdateModeRoute(mode: VarianceMode, ua: UserAnswers, srn: Option[String]): PartialFunction[Identifier, Call] = {
@@ -61,13 +63,17 @@ class TrusteesIndividualDetailsNavigator @Inject()(val dataCacheConnector: UserA
   }
 
 
-  override protected def routeMap(from: NavigateFrom): Option[NavigateTo] = navigateOrSessionReset(normalAndCheckModeRoutes(NormalMode, from.userAnswers, None), from.id )
+  override protected def routeMap(from: NavigateFrom): Option[NavigateTo] =
+    navigateOrSessionReset(normalAndCheckModeRoutes(NormalMode, from.userAnswers, None), from.id )
 
-  override protected def editRouteMap(from: NavigateFrom): Option[NavigateTo] = navigateOrSessionReset(normalAndCheckModeRoutes(CheckMode, from.userAnswers, None), from.id)
+  override protected def editRouteMap(from: NavigateFrom): Option[NavigateTo] =
+    navigateOrSessionReset(normalAndCheckModeRoutes(CheckMode, from.userAnswers, None), from.id)
 
-  override protected def updateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] = navigateOrSessionReset(updateModeRoutes(UpdateMode, from.userAnswers, srn), from.id)
+  override protected def updateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] =
+    navigateOrSessionReset(updateModeRoutes(UpdateMode, from.userAnswers, srn), from.id)
 
-  override protected def checkUpdateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] = navigateOrSessionReset(checkUpdateModeRoute(CheckUpdateMode, from.userAnswers, srn), from.id)
+  override protected def checkUpdateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] =
+    navigateOrSessionReset(checkUpdateModeRoute(CheckUpdateMode, from.userAnswers, srn), from.id)
 }
 
 object TrusteesIndividualDetailsNavigator {

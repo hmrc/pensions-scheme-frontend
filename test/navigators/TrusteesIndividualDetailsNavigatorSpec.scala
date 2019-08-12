@@ -24,8 +24,6 @@ import identifiers.register.trustees.IsTrusteeNewId
 import identifiers.register.trustees.individual._
 import models.{CheckMode, CheckUpdateMode, Index, Mode, NormalMode, ReferenceValue, UpdateMode}
 import org.joda.time.LocalDate
-import org.scalacheck.Arbitrary.arbitrary
-import org.scalacheck.Properties
 import org.scalatest.MustMatchers
 import org.scalatest.prop._
 import play.api.mvc.Call
