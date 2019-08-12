@@ -1247,7 +1247,6 @@ messages__visuallyhidden__trustee__crn_add = Add the trustee’s Company Registr
 messages__visuallyhidden__trustee__utr_yes_no = Change whether the trustee has a Unique Taxpayer Reference number
 messages__visuallyhidden__trustee__utr_no = Change why the trustee does not have a Unique Taxpayer Reference number
 messages__visuallyhidden__trustee__utr = Change the trustee’s Unique Taxpayer Reference number
-messages__visuallyhidden__trustee__utr_add = Add the trustee’s Unique Taxpayer Reference number
 messages__visuallyhidden__trustee__address = Change the trustee’s address
 messages__visuallyhidden__trustee__address_years = Change how long the trustee has been at their address
 messages__visuallyhidden__trustee__previous_address = Change the trustee’s previous address
