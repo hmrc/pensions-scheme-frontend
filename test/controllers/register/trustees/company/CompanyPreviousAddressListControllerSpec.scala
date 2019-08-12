@@ -29,7 +29,6 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.{FakeUserAnswersService, UserAnswersService}
 import utils.UserAnswers
-import viewmodels.Message
 import viewmodels.address.AddressListViewModel
 import views.html.address.addressList
 
@@ -139,6 +138,8 @@ class CompanyPreviousAddressListControllerSpec extends ControllerSpecBase with C
         val result = route(app, request).value
 
         status(result) mustBe SEE_OTHER
+        redirectLocation(result) mustBe
+          Some(routes.CompanyPreviousAddressController.onPageLoad(NormalMode, Index(0), None).url)
       }
 
     }
