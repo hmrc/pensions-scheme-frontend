@@ -21,6 +21,7 @@ import controllers.routes.AnyMoreChangesController
 import identifiers.{Identifier, TypedIdentifier}
 import models.Mode.checkMode
 import models.address.{Address, TolerantAddress}
+import models.person.PersonName
 import models.requests.IdentifiedRequest
 import models.{CheckMode, Mode, NormalMode, ReferenceValue}
 import org.scalatest.exceptions.TableDrivenPropertyCheckFailedException
@@ -43,6 +44,7 @@ trait NavigatorBehaviour extends PropertyChecks with OptionValues {
   protected implicit val hc: HeaderCarrier = HeaderCarrier()
 
   protected val someStringValue = "111111"
+  protected val somePersonNameValue = PersonName("abc", "def")
   protected val someRefValue = ReferenceValue(someStringValue)
   protected val someTolerantAddress = TolerantAddress(None, None, None, None, None, None)
   protected val someAddress = Address("line 1", "line 2", None, None, None, "GB")

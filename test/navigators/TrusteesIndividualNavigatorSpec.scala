@@ -36,9 +36,10 @@ class TrusteesIndividualNavigatorSpec extends SpecBase with MustMatchers with Na
 
   val navigator: Navigator = injector.instanceOf[TrusteesIndividualNavigator]
 
-  def normalAndUpdateModeRoutes(mode: Mode): TableFor3[Identifier, UserAnswers, Call] =
+  def normalModeRoutes(mode: Mode): TableFor3[Identifier, UserAnswers, Call] =
     Table(
       ("Id", "UserAnswers", "Next Page"),
+      row(TrusteeNameId(index))(somePersonNameValue, controllers.register.trustees.routes.AddTrusteeController.onPageLoad(mode, None)),
       row(TrusteeDOBId(index))(someDate, controllers.register.trustees.individual.routes.TrusteeHasNINOController.onPageLoad(mode, index, None)),
       row(TrusteeHasNINOId(index))(true, controllers.register.trustees.individual.routes.TrusteeNinoNewController.onPageLoad(mode, index, None)),
       row(TrusteeHasNINOId(index))(false, controllers.register.trustees.individual.routes.TrusteeNoNINOReasonController.onPageLoad(mode, index, None)),
@@ -50,7 +51,7 @@ class TrusteesIndividualNavigatorSpec extends SpecBase with MustMatchers with Na
       row(TrusteeUTRId(index))(someStringValue, cyaIndividualDetailsPage(mode))
     )
 
-  behave like navigatorWithRoutesForMode(NormalMode)(navigator, normalAndUpdateModeRoutes(NormalMode))
+  behave like navigatorWithRoutesForMode(NormalMode)(navigator, normalModeRoutes(NormalMode))
 
   def checkModeRoutes(mode: Mode): TableFor3[Identifier, UserAnswers, Call] =
     Table(
