@@ -42,7 +42,7 @@ class TrusteeNinoController @Inject()(appConfig: FrontendAppConfig,
                                       getData: DataRetrievalAction,
                                       allowAccess: AllowAccessActionProvider,
                                       requireData: DataRequiredAction,
-                                      @TrusteesIndividual navigator: Navigator,
+                                      navigator: Navigator,
                                       userAnswersService: UserAnswersService) (implicit val ec: ExecutionContext)
   extends FrontendController with I18nSupport with Retrievals {
 

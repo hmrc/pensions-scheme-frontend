@@ -42,7 +42,7 @@ class TrusteePreviousAddressController @Inject()(
                                                   override val appConfig: FrontendAppConfig,
                                                   override val messagesApi: MessagesApi,
                                                   val userAnswersService: UserAnswersService,
-                                                  @TrusteesIndividual override val navigator: Navigator,
+                                                  override val navigator: Navigator,
                                                   authenticate: AuthAction,
                                                   getData: DataRetrievalAction,
                                                   allowAccess: AllowAccessActionProvider,

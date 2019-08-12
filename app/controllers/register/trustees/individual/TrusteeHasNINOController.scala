@@ -36,7 +36,7 @@ import scala.concurrent.ExecutionContext
 class TrusteeHasNINOController @Inject()(val appConfig: FrontendAppConfig,
                                          val messagesApi: MessagesApi,
                                          val userAnswersService: UserAnswersService,
-                                         @TrusteesIndividual val navigator: Navigator,
+                                         val navigator: Navigator,
                                          authenticate: AuthAction,
                                          allowAccess: AllowAccessActionProvider,
                                          getData: DataRetrievalAction,

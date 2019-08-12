@@ -39,7 +39,7 @@ class TrusteeDOBController @Inject()(
                                        appConfig: FrontendAppConfig,
                                        override val messagesApi: MessagesApi,
                                        userAnswersService: UserAnswersService,
-                                       @TrusteesIndividual navigator: Navigator,
+                                       navigator: Navigator,
                                        authenticate: AuthAction,
                                        getData: DataRetrievalAction,
                                        allowAccess: AllowAccessActionProvider,

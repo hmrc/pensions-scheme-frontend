@@ -30,7 +30,7 @@ import utils.{Toggles, UserAnswers}
 
 class TrusteesCompanyNavigatorOld @Inject()(val dataCacheConnector: UserAnswersCacheConnector,
                                          appConfig: FrontendAppConfig,
-                                         featureSwitchManagementService: FeatureSwitchManagementService) extends AbstractNavigator {
+                                         featureSwitchManagementService: FeatureSwitchManagementService) extends TrusteesIndividualNavigator {
 
   private def exitMiniJourney(index: Index, mode: Mode, srn: Option[String], answers: UserAnswers,
                               cyaPage: (Mode, Index, Option[String]) => Option[NavigateTo] = cya): Option[NavigateTo] = {

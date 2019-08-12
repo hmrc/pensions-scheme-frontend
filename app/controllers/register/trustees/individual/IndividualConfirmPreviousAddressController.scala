@@ -38,7 +38,7 @@ import scala.concurrent.ExecutionContext
 class IndividualConfirmPreviousAddressController @Inject()(val appConfig: FrontendAppConfig,
                                                            val messagesApi: MessagesApi,
                                                            val userAnswersService: UserAnswersService,
-                                                           @TrusteesIndividual val navigator: Navigator,
+                                                           val navigator: Navigator,
                                                            authenticate: AuthAction,
                                                            allowAccess: AllowAccessActionProvider,
                                                            getData: DataRetrievalAction,
