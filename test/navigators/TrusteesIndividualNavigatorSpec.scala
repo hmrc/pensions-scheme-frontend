@@ -17,22 +17,17 @@
 package navigators
 
 import base.SpecBase
+import controllers.register.trustees.individual.routes._
 import generators.Generators
 import identifiers.Identifier
 import identifiers.register.trustees.individual._
-import models.{CheckMode, CheckUpdateMode, Index, Mode, NormalMode, ReferenceValue, UpdateMode}
+import models.Mode._
+import models.{CheckMode, Mode, NormalMode, UpdateMode}
 import org.joda.time.LocalDate
-import org.scalacheck.{Arbitrary, Gen}
 import org.scalatest.MustMatchers
 import org.scalatest.prop._
 import play.api.mvc.Call
 import utils.UserAnswers
-import org.scalacheck.Arbitrary.arbitrary
-import controllers.register.trustees.individual.routes._
-import controllers.routes.AnyMoreChangesController
-import models.Mode._
-
-import scala.concurrent.ExecutionContext.Implicits.global
 
 class TrusteesIndividualNavigatorSpec extends SpecBase with MustMatchers with NavigatorBehaviour with Generators {
 
