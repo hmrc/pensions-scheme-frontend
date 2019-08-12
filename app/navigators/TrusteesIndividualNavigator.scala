@@ -31,7 +31,7 @@ class TrusteesIndividualNavigator @Inject()(val dataCacheConnector: UserAnswersC
 
   import TrusteesIndividualNavigator._
 
-  private def normalAndUpdateModeRoutes(mode: RegistrationMode, ua: UserAnswers, srn: Option[String]): PartialFunction[Identifier, Call] = {
+  private def normalAndEditModeRoutes(mode: RegistrationMode, ua: UserAnswers, srn: Option[String]): PartialFunction[Identifier, Call] = {
     case TrusteeDOBId(index) if mode == NormalMode => hasNinoPage(mode, index, srn)
     case TrusteeDOBId(index) if mode == CheckMode => CheckYourAnswersIndividualDetailsController.onPageLoad(journeyMode(mode), index, None)
     case id@TrusteeHasNINOId(index) => booleanNav(id, ua, ninoPage(mode, index, srn), noNinoReasonPage(mode, index, srn))
@@ -48,9 +48,9 @@ class TrusteesIndividualNavigator @Inject()(val dataCacheConnector: UserAnswersC
     case TrusteeNewNinoId(index) => controllers.routes.AnyMoreChangesController.onPageLoad(srn)
   }
 
-  override protected def routeMap(from: NavigateFrom): Option[NavigateTo] = navigateOrSessionReset(normalAndUpdateModeRoutes(NormalMode, from.userAnswers, None), from.id )
+  override protected def routeMap(from: NavigateFrom): Option[NavigateTo] = navigateOrSessionReset(normalAndEditModeRoutes(NormalMode, from.userAnswers, None), from.id )
 
-  override protected def editRouteMap(from: NavigateFrom): Option[NavigateTo] = navigateOrSessionReset(normalAndUpdateModeRoutes(CheckMode, from.userAnswers, None), from.id)
+  override protected def editRouteMap(from: NavigateFrom): Option[NavigateTo] = navigateOrSessionReset(normalAndEditModeRoutes(CheckMode, from.userAnswers, None), from.id)
 
   override protected def updateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] = navigateOrSessionReset(updateModeRoutes(UpdateMode, from.userAnswers, None), from.id)
 
