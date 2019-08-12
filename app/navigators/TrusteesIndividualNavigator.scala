@@ -23,7 +23,7 @@ import controllers.register.trustees.individual.routes._
 import identifiers.Identifier
 import identifiers.register.trustees.individual.{TrusteeDOBId, _}
 import models.Mode._
-import models.{CheckMode, Mode, NormalMode, RegistrationMode, UpdateMode, VarianceMode}
+import models._
 import play.api.mvc.Call
 import utils.UserAnswers
 
@@ -31,7 +31,7 @@ class TrusteesIndividualNavigator @Inject()(val dataCacheConnector: UserAnswersC
 
   import TrusteesIndividualNavigator._
 
-  private def normalAndEditModeRoutes(mode: RegistrationMode, ua: UserAnswers, srn: Option[String]): PartialFunction[Identifier, Call] = {
+  private def normalAndEditModeRoutes(mode: Mode, ua: UserAnswers, srn: Option[String]): PartialFunction[Identifier, Call] = {
     case TrusteeNameId(index) if mode == NormalMode  => controllers.register.trustees.routes.AddTrusteeController.onPageLoad(mode, srn)
     case TrusteeDOBId(index) if mode == NormalMode => hasNinoPage(mode, index, srn)
     case TrusteeDOBId(index) if mode == CheckMode => CheckYourAnswersIndividualDetailsController.onPageLoad(journeyMode(mode), index, None)
@@ -53,9 +53,9 @@ class TrusteesIndividualNavigator @Inject()(val dataCacheConnector: UserAnswersC
 
   override protected def editRouteMap(from: NavigateFrom): Option[NavigateTo] = navigateOrSessionReset(normalAndEditModeRoutes(CheckMode, from.userAnswers, None), from.id)
 
-  override protected def updateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] = navigateOrSessionReset(updateModeRoutes(UpdateMode, from.userAnswers, None), from.id)
+  override protected def updateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] = navigateOrSessionReset(normalAndEditModeRoutes(UpdateMode, from.userAnswers, None), from.id )
 
-  override protected def checkUpdateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] = None
+  override protected def checkUpdateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] = navigateOrSessionReset(updateModeRoutes(CheckUpdateMode, from.userAnswers, srn), from.id)
 }
 
 object TrusteesIndividualNavigator {
