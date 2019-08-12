@@ -123,13 +123,14 @@ class CompanyAddressYearsIdSpec extends SpecBase {
     val onwardUrl = "onwardUrl"
     val companyName = "test company name"
 
-    def answers = UserAnswers()
+    def answers: UserAnswers = UserAnswers()
       .set(CompanyAddressYearsId(0))(UnderAYear).asOpt.get
       .set(CompanyDetailsId(0))(CompanyDetails(companyName)).asOpt.get
 
+    implicit val countryOptions: CountryOptions = new CountryOptions(Seq.empty[InputOption])
+
     "in normal mode" must {
       "return answers rows with change links" in {
-        implicit val countryOptions: CountryOptions = new CountryOptions(Seq.empty[InputOption])
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
         implicit val userAnswers: UserAnswers = request.userAnswers
         CompanyAddressYearsId(0).row(onwardUrl, NormalMode) must equal(Seq(
@@ -143,7 +144,7 @@ class CompanyAddressYearsIdSpec extends SpecBase {
       }
     }
 
-    "in update mode for new trustee - company paye" must {
+    "in update mode for new trustee" must {
 
       val companyName = "test company name"
 
@@ -152,7 +153,6 @@ class CompanyAddressYearsIdSpec extends SpecBase {
 
 
       "return answers rows with change links" in {
-        implicit val countryOptions: CountryOptions = new CountryOptions(Seq.empty[InputOption])
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answersNew, PsaId("A0000000"))
         implicit val userAnswers: UserAnswers = request.userAnswers
         CompanyAddressYearsId(0).row(onwardUrl, UpdateMode) must equal(Seq(
@@ -166,9 +166,9 @@ class CompanyAddressYearsIdSpec extends SpecBase {
       }
     }
 
-    "in update mode for existing trustee - company paye" must {
+    "in update mode for existing trustee" must {
 
-      "return answers rows without change links" in {
+      "return no rows" in {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
         implicit val userAnswers: UserAnswers = request.userAnswers
 
