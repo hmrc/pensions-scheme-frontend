@@ -83,4 +83,3 @@ class FrontendAppConfig @Inject()(override val runModeConfiguration: Configurati
   //FEATURES
   lazy val languageTranslationEnabled:Boolean = runModeConfiguration.getBoolean("features.welsh-translation").getOrElse(true)
 }
-

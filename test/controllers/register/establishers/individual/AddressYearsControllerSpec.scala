@@ -124,7 +124,7 @@ class AddressYearsControllerSpec extends ControllerSpecBase {
       val result = controller().onSubmit(UpdateMode, firstIndex, None)(postRequest)
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
-      FakeUserAnswersService.userAnswer.get(IsEstablisherCompleteId(firstIndex)) mustBe None
+      FakeUserAnswersService.userAnswer.get(IsEstablisherCompleteId(firstIndex)) mustBe Some(false)
     }
 
     "return a Bad Request and errors when invalid data is submitted" in {

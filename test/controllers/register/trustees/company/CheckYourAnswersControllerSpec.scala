@@ -210,11 +210,18 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase with Controller
       )().row(CompanyAddressId(index))(companyAddressRoute, request.userAnswers)
     }
 
+    val previousAddressRows = {
+      def label(index: Int) = messages("messages__trusteePreviousAddress", trusteeName(index))
+      def changeAddress(index: Int) = messages("messages__changeTrusteePreviousAddress", trusteeName(index))
+      AddressCYA[CompanyPreviousAddressId](
+        label = label(index),
+        changeAddress = changeAddress(index)
+      )().row(CompanyPreviousAddressId(index))(companyPreviousAddressRoute, request.userAnswers)
+    }
 
     val contactDetailsSection = AnswerSection(
       Some("messages__checkYourAnswers__section__contact_details"),
-      addressRows ++ addressYearsRows ++
-        CompanyPreviousAddressId(index).row(companyPreviousAddressRoute)
+      addressRows ++ addressYearsRows ++ previousAddressRows
     )
     Seq(companyDetailsSection, contactDetailsSection)
   }

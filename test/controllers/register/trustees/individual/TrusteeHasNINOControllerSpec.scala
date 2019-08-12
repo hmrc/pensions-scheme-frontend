@@ -19,20 +19,20 @@ package controllers.register.trustees.individual
 import controllers.ControllerSpecBase
 import controllers.actions.FakeDataRetrievalAction
 import forms.HasReferenceNumberFormProvider
-import identifiers.register.trustees.individual.{TrusteeDetailsId, TrusteeNameId}
-import models.person.{PersonDetails, PersonName}
+import identifiers.register.trustees.individual.TrusteeNameId
+import models.person.PersonName
 import models.{Index, NormalMode}
-import org.joda.time.LocalDate
+import navigators.Navigator
 import org.mockito.Matchers.any
 import org.mockito.Mockito.when
 import org.scalatest.mockito.MockitoSugar
 import play.api.data.Form
 import play.api.inject.bind
-import play.api.libs.json.Json
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import services.UserAnswersService
-import utils.UserAnswers
+import utils.{FakeNavigator, UserAnswers}
+import utils.annotations.TrusteesIndividual
 import viewmodels.{CommonFormWithHintViewModel, Message}
 import views.html.hasReferenceNumber
 
@@ -76,7 +76,9 @@ class TrusteeHasNINOControllerSpec extends ControllerSpecBase {
     "redirect to the next page when valid data is submitted for true" in {
       val app = applicationBuilder(getMandatoryTrustee)
         .overrides(
-          bind[UserAnswersService].toInstance(mockUserAnswersService)
+          bind[UserAnswersService].toInstance(mockUserAnswersService),
+          bind(classOf[Navigator]).qualifiedWith(classOf[TrusteesIndividual])
+            .toInstance(new FakeNavigator(onwardRoute))
         )
         .build()
 

@@ -42,7 +42,7 @@ class HasCompanyUTRControllerSpec extends ControllerSpecBase {
     postCall,
     title = Message("messages__hasCompanyUtr__title"),
     heading = Message("messages__hasCompanyUtr__h1", "test company name"),
-    hint = Some(Message("messages__hasCompanyUtr__p1"))
+    hint = Some(Message("messages__hasUtr__p1"))
   )
 
   private def getTrusteeCompanyPlusUtr(hasUtrValue:Boolean): FakeDataRetrievalAction = new FakeDataRetrievalAction(

@@ -88,7 +88,7 @@ object DirectorHasUTRControllerSpec extends ControllerSpecBase {
     postCall,
     title = Message("messages__hasDirectorUtr__title"),
     heading = Message("messages__hasDirectorUtr__h1", "first last"),
-    hint = Some(Message("messages__hasDirectorUtr__p1"))
+    hint = Some(Message("messages__hasUtr__p1"))
   )
 
   private def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisherCompanyDirectorWithDirectorName): DirectorHasUTRController =

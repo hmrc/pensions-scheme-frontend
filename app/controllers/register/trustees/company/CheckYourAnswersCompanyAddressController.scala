@@ -20,6 +20,7 @@ import config.{FeatureSwitchManagementService, FrontendAppConfig}
 import controllers.Retrievals
 import controllers.actions._
 import identifiers.register.establishers.IsEstablisherNewId
+import identifiers.register.trustees.IsTrusteeNewId
 import identifiers.register.trustees.company.{CompanyAddressId, CompanyAddressYearsId, CompanyPreviousAddressId}
 import javax.inject.Inject
 import models.Mode.checkMode
@@ -29,9 +30,9 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import utils.{Enumerable, _}
 import utils.annotations.{NoSuspendedCheck, TrusteesCompany}
 import utils.checkyouranswers.Ops._
+import utils.{Enumerable, _}
 import viewmodels.AnswerSection
 import views.html.check_your_answers
 
@@ -70,7 +71,7 @@ class CheckYourAnswersCompanyAddressController @Inject()(appConfig: FrontendAppC
           existingSchemeName,
           mode = mode,
           hideEditLinks = request.viewOnly || !userAnswers.get(IsEstablisherNewId(index)).getOrElse(true),
-          hideSaveAndContinueButton = allowChangeHelper.hideSaveAndContinueButton(request, IsEstablisherNewId(index), mode),
+          hideSaveAndContinueButton = allowChangeHelper.hideSaveAndContinueButton(request, IsTrusteeNewId(index), mode),
           srn = srn
         )))
 

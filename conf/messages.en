@@ -60,6 +60,8 @@ messages__common__postcode_lookup__manual_link = You can {0} enter the address m
 messages__common__postcode_lookup__enter_postcode = Enter the postcode, or if you have an overseas address, {0} enter the address manually {1}
 messages__common__postcode_lookup__address_postcode = Postcode
 messages__common_individual_postCode_lookup__lede = This is usually the residential address for this person.
+messages__hasUtr__p1 = This is a 10-digit or 13-digit number. You can find it on tax returns and other documents from HMRC. It might be called ‘reference’, ‘UTR’ or ‘official use’.
+
 messages__error__postcode = Enter the postcode
 messages__error__postcode_length = The postcode cannot be more than 8 characters
 messages__error__postcode_nonUK_length = The postcode cannot be more than 10 characters
@@ -92,6 +94,7 @@ messages__error__address_line_3_invalid = The third line of the address contains
 messages__error__address_line_4_invalid = The fourth line of the address contains invalid characters
 messages__error_country_required = Enter a country
 messages__error_country_invalid = Enter a valid country
+messages__hasUtr__error__required = Select yes if {0} has a Unique Taxpayer Reference (UTR)
 
 messages__common_email__heading = What is {0}’s email address?
 messages__common_company_email__visually_hidden_change_label = company email address
@@ -1427,9 +1430,6 @@ messages__membership_pension_regulator__h1 = The scheme details will be shared w
 messages__membership_pension_regulator__p1 = HMRC will share the scheme and your contact details with The Pensions Regulator.
 messages__membership_pension_regulator__p2 = The Pensions Regulator will contact you to register the scheme with them.
 
-messages__established_country__title = Which country was the scheme established in?
-messages__established_country__h1 = Which country was {0} established in?
-
 messages__what_you_will_need_bank_details__title = Bank details
 messages__what_you_will_need_bank_details__h1 = Bank details
 messages__what_you_will_need_bank_details__p1 = You will need to tell us if the scheme has a bank account.
@@ -1583,7 +1583,6 @@ messages__hasCompanyNumber__error__required = Select yes if {0} has a company nu
 
 messages__hasCompanyUtr__title = Does the company have a UTR?
 messages__hasCompanyUtr__h1 = Does {0} have a Unique Taxpayer Reference (UTR)?
-messages__hasCompanyUtr__p1 = This is a 10-digit or 13-digit number. You can find it on tax returns and other documents from HMRC. It might be called ‘reference’, ‘UTR’ or ‘official use’.
 messages__hasCompanyUtr__error__required = Select yes if the company has a UTR
 
 messages__hasCompanyVat__title = Is the company registered for VAT?
@@ -1593,6 +1592,9 @@ messages__hasCompanyVat__error__required = Select yes if the {0} is registered 
 
 messages__trusteeAddress = {0}’s address
 messages__changeTrusteeAddress = Change {0}’s address
+
+messages__trusteePreviousAddress = {0}’s previous address
+messages__changeTrusteePreviousAddress = Change {0}’s previous address
 
 messages__hasBeen1Year = Has {0} been at their address for at least 1 year?
 messages__changeHasBeen1Year = Change whether {0} has been at their address for at least 1 year?
@@ -1686,16 +1688,16 @@ messages__payeVariations__error_length = Enter {0}’s employer PAYE reference u
 messages__payeVariations__error_required = Enter an employer PAYE reference
 
 messages__utr__error_required = Enter a Unique Taxpayer Reference (UTR)
-messages__utr__error_maxLength = The Unique Taxpayer Reference (UTR) must be 10 numbers
+messages__utr__error_maxLength = Unique Taxpayer Reference (UTR) must be 10 numbers
 messages__utr__error_invalid = Enter a Unique Taxpayer Reference (UTR) in the correct format
 messages__companyUtr__title = What is the company’s UTR?
 messages__companyUtr__heading = What is {0}’s UTR?
 messages__companyUtr__guidance1 = If the Unique Taxpayer Reference (UTR) is 13 numbers, only enter the last 10.
 messages__companyUtr__guidance2 = If there is a letter ‘K’ at the end of the number, do not enter it.
-messages__companyUtr__hint = For example, 12345 67890
+messages_utr__hint = For example, 12345 67890
 messages__companyUtr__checkyouranswerslabel = Unique Taxpayer Reference (UTR)
 
-messages__reason__error_utrRequired = Enter a reason why {0} does not have a UTR
+messages__reason__error_utrRequired = Enter a reason why {0} does not have a Unique Taxpayer Reference (UTR)
 messages__reason__error_ninoRequired = Enter a reason why {0} does not have a NINO
 messages__reason__error_maxLength = Reason must be 160 characters or less
 messages__reason__error_invalid = Reason must only include letters, numbers and punctuation marks
@@ -1726,12 +1728,14 @@ messages__hasDirectorUtr__title = Does the director have a UTR?
 messages__hasDirectorUtr__h1 = Does {0} have a Unique Taxpayer Reference (UTR)?
 messages__hasDirectorUtr__cya = Does {0} have a UTR?
 messages__hasDirectorUtr__cya_fallback = Does the director have a UTR?
-messages__hasDirectorUtr__p1 = This is a 10-digit or 13-digit number. You can find it on tax returns and other documents from HMRC. It might be called ‘reference’, ‘UTR’ or ‘official use’.
-messages__hasDirectorUtr__error__required = Select yes if {0} has a Unique Taxpayer Reference (UTR)
 
 messages__noDirectorUtr__title = Why does the director not have a UTR?
 messages__noDirectorUtr__heading = Why does {0} not have a UTR?
 messages__noDirectorUtr__cya_fallback = Why does the director not have a UTR?
+
+messages__noGenericUtr__title = Why does {0} not have a UTR?
+messages__noGenericUtr__heading = Why does {0} not have a UTR?
+messages__noGenericUtr__cya_fallback = Why does {0} not have a UTR?
 
 messages__establisherPostCode__title = What is the establisher’s postcode?
 messages__establisherPostCode__h1 = What is {0}’s postcode?
@@ -1758,3 +1762,10 @@ messages__director_email__title =  What is the director’s email address?
 
 messages__establisher__type__title = What kind of establisher are you adding?
 messages__establisher__type__h1 = What kind of establisher are you adding?
+
+messages__hasTrusteeUtr__title = Does the trustee have a UTR?
+messages__hasTrusteeUtr__h1 = Does {0} have a Unique Taxpayer Reference (UTR)?
+
+messages__trusteeUtr__title = What is the trustee’s UTR?
+messages__trusteeUtr__h1 =  What is {0}’s UTR?
+

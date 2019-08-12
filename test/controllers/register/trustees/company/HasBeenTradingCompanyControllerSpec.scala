@@ -19,9 +19,14 @@ package controllers.register.trustees.company
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.HasBeenTradingFormProvider
-import identifiers.register.trustees.company.HasBeenTradingCompanyId
-import models.{Index, NormalMode}
+import identifiers.register.trustees.TrusteesId
+import identifiers.register.trustees.company._
+import identifiers.register.trustees.individual.TrusteeNameId
+import models.address.{Address, TolerantAddress}
+import models.person.PersonName
+import models.{CompanyDetails, Index, NormalMode}
 import play.api.data.Form
+import play.api.libs.json.Json
 import play.api.test.Helpers._
 import services.FakeUserAnswersService
 import utils.FakeNavigator
@@ -43,6 +48,22 @@ class HasBeenTradingCompanyControllerSpec extends ControllerSpecBase {
     heading = Message("messages__hasBeenTradingCompany__h1", "test company name"),
     hint = None
   )
+  val tolerantAddress = TolerantAddress(None, None, None, None, None, None)
+  val address = Address("line 1", "line 2", None, None, None, "GB")
+
+  private def getTrusteeCompanyDataWithPreviousAddress(hasBeenTrading: Boolean): FakeDataRetrievalAction = new FakeDataRetrievalAction(
+    Some(Json.obj(
+      TrusteesId.toString -> Json.arr(
+        Json.obj(
+          CompanyDetailsId.toString -> CompanyDetails("test company name"),
+          HasBeenTradingCompanyId.toString -> hasBeenTrading,
+          CompanyPreviousAddressPostcodeLookupId.toString -> Seq(tolerantAddress),
+          CompanyPreviousAddressId.toString -> address,
+          CompanyPreviousAddressListId.toString -> tolerantAddress
+        )
+      )
+    ))
+  )
 
   def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryTrusteeCompany): HasBeenTradingCompanyController =
     new HasBeenTradingCompanyController(
@@ -60,7 +81,7 @@ class HasBeenTradingCompanyControllerSpec extends ControllerSpecBase {
 
   private def viewAsString(form: Form[_] = form) = hasReferenceNumber(frontendAppConfig, form, viewModel, schemeName)(fakeRequest, messages).toString
 
-  "HasCompanyVatController" must {
+  "HasBeenTradingCompanyController" must {
 
     "return OK and the correct view for a GET" in {
       val result = controller().onPageLoad(NormalMode, index, None)(fakeRequest)
@@ -89,6 +110,30 @@ class HasBeenTradingCompanyControllerSpec extends ControllerSpecBase {
       contentAsString(result) mustBe viewAsString(boundForm)
     }
 
+    "clean up previous address, if user changes answer from yes to no" in {
+      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "false"))
+
+      val result = controller(getTrusteeCompanyDataWithPreviousAddress(hasBeenTrading = true)).onSubmit(NormalMode, index, None)(postRequest)
+
+      status(result) mustBe SEE_OTHER
+
+      FakeUserAnswersService.userAnswer.get(HasBeenTradingCompanyId(index)).value mustEqual false
+      FakeUserAnswersService.userAnswer.get(CompanyPreviousAddressPostcodeLookupId(index)) mustBe None
+      FakeUserAnswersService.userAnswer.get(CompanyPreviousAddressId(index)) mustBe None
+      FakeUserAnswersService.userAnswer.get(CompanyPreviousAddressListId(index)) mustBe None
+    }
+
+    "not clean up for previous address, if user changes answer from no to yes" in {
+      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "true"))
+      val result = controller(getTrusteeCompanyDataWithPreviousAddress(hasBeenTrading = false)).onSubmit(NormalMode, index, None)(postRequest)
+
+      status(result) mustBe SEE_OTHER
+
+      FakeUserAnswersService.userAnswer.get(HasBeenTradingCompanyId(index)).value mustEqual true
+      FakeUserAnswersService.userAnswer.get(CompanyPreviousAddressPostcodeLookupId(index)) mustBe Some(Seq(tolerantAddress))
+      FakeUserAnswersService.userAnswer.get(CompanyPreviousAddressId(index)) mustBe Some(address)
+      FakeUserAnswersService.userAnswer.get(CompanyPreviousAddressListId(index)) mustBe Some(tolerantAddress)
+    }
   }
 }
 

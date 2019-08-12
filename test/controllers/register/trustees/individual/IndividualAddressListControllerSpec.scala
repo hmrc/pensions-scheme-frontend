@@ -24,7 +24,7 @@ import controllers.actions.{AuthAction, DataRetrievalAction, FakeAuthAction, Fak
 import forms.address.AddressListFormProvider
 import identifiers.register.trustees.individual._
 import models.address.TolerantAddress
-import models.person.PersonDetails
+import models.person.{PersonDetails, PersonName}
 import models.{Index, NormalMode}
 import navigators.Navigator
 import org.joda.time.LocalDate
@@ -43,7 +43,8 @@ class IndividualAddressListControllerSpec extends ControllerSpecBase with CSRFRe
 
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
-  private val trusteeDetails = PersonDetails("First Name", Some("Second Name"), "Last Name", LocalDate.now())
+  val trusteeDetails = PersonDetails("Test", None, "Name", LocalDate.now)
+  val trusteeName = PersonName("Test", "Name")
 
   private val addresses = Seq(
     TolerantAddress(
@@ -64,35 +65,62 @@ class IndividualAddressListControllerSpec extends ControllerSpecBase with CSRFRe
     )
   )
 
-  private val data =
-    UserAnswers(Json.obj())
-      .set(TrusteeDetailsId(0))(trusteeDetails)
-      .flatMap(_.set(IndividualPostCodeLookupId(0))(addresses))
-      .asOpt.map(_.json)
+  private def retrieval(isHnsEnabled: Boolean = false): DataRetrievalAction = {
+    if(isHnsEnabled){
+      UserAnswers(Json.obj())
+        .set(TrusteeNameId(0))(trusteeName)
+        .flatMap(_.set(IndividualPostCodeLookupId(0))(addresses)).asOpt.value.dataRetrievalAction
+    } else {
+      UserAnswers(Json.obj())
+        .set(TrusteeDetailsId(0))(trusteeDetails)
+        .flatMap(_.set(IndividualPostCodeLookupId(0))(addresses)).asOpt.value.dataRetrievalAction
+    }
+  }
 
-
-  private val dataRetrievalAction = new FakeDataRetrievalAction(data)
   lazy val fakeNavigator = new FakeNavigator(desiredRoute = onwardRoute)
 
-
   "Individual Address List Controller" must {
-    "return Ok and the correct view on a Get Request" in {
-      running(_.overrides(
-        bind[AuthAction].to(FakeAuthAction),
-        bind[UserAnswersService].toInstance(FakeUserAnswersService),
-        bind[DataRetrievalAction].toInstance(dataRetrievalAction),
-        bind(classOf[Navigator]).qualifiedWith(classOf[TrusteesIndividual]).toInstance(fakeNavigator),
-        bind[FeatureSwitchManagementService].to(new FakeFeatureSwitchManagementService(false))
-      )) { implicit app =>
-        val request = addToken(FakeRequest(routes.IndividualAddressListController.onPageLoad(NormalMode, Index(0), None)))
-        val result = route(app, request).value
+    Seq(true, false).foreach { isHnsEnabled =>
+      s"return Ok and the correct view on a Get Request $isHnsEnabled" in {
+        running(_.overrides(
+          bind[AuthAction].to(FakeAuthAction),
+          bind[UserAnswersService].toInstance(FakeUserAnswersService),
+          bind[DataRetrievalAction].toInstance(retrieval(isHnsEnabled = isHnsEnabled)),
+          bind(classOf[Navigator]).qualifiedWith(classOf[TrusteesIndividual]).toInstance(fakeNavigator),
+          bind[FeatureSwitchManagementService].to(new FakeFeatureSwitchManagementService(isHnsEnabled))
+        )) { implicit app =>
+          val request = addToken(FakeRequest(routes.IndividualAddressListController.onPageLoad(NormalMode, Index(0), None)))
+          val result = route(app, request).value
 
-        status(result) mustBe OK
+          status(result) mustBe OK
 
-        val viewModel: AddressListViewModel = addressListViewModel(addresses)
-        val form = new AddressListFormProvider()(viewModel.addresses)
+          val viewModel: AddressListViewModel = addressListViewModel(addresses)
+          val form = new AddressListFormProvider()(viewModel.addresses)
 
-        contentAsString(result) mustBe addressList(frontendAppConfig, form, viewModel, None)(request, messages).toString
+          contentAsString(result) mustBe addressList(frontendAppConfig, form, viewModel, None)(request, messages).toString
+        }
+      }
+
+      s"redirect to the next page on POST of valid data $isHnsEnabled" in {
+
+        running(_.overrides(
+          bind[AuthAction].to(FakeAuthAction),
+          bind[UserAnswersService].toInstance(FakeUserAnswersService),
+          bind(classOf[Navigator]).qualifiedWith(classOf[TrusteesIndividual]).toInstance(fakeNavigator),
+          bind[DataRetrievalAction].toInstance(retrieval(isHnsEnabled = isHnsEnabled)),
+          bind[FeatureSwitchManagementService].to(new FakeFeatureSwitchManagementService(isHnsEnabled))
+        )) { implicit app =>
+          val request =
+            addToken(
+              FakeRequest(routes.IndividualAddressListController.onSubmit(NormalMode, Index(0), None))
+                .withFormUrlEncodedBody(("value", "0"))
+            )
+
+          val result = route(app, request).value
+
+          status(result) mustBe SEE_OTHER
+          redirectLocation(result) mustBe Some(onwardRoute.url)
+        }
       }
     }
 
@@ -130,28 +158,6 @@ class IndividualAddressListControllerSpec extends ControllerSpecBase with CSRFRe
         redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
       }
 
-    }
-
-    "redirect to the next page on POST of valid data" in {
-
-      running(_.overrides(
-        bind[AuthAction].to(FakeAuthAction),
-        bind[UserAnswersService].toInstance(FakeUserAnswersService),
-        bind(classOf[Navigator]).qualifiedWith(classOf[TrusteesIndividual]).toInstance(fakeNavigator),
-        bind[DataRetrievalAction].toInstance(dataRetrievalAction),
-        bind[FeatureSwitchManagementService].to(new FakeFeatureSwitchManagementService(false))
-      )) { implicit app =>
-        val request =
-          addToken(
-            FakeRequest(routes.IndividualAddressListController.onSubmit(NormalMode, Index(0), None))
-              .withFormUrlEncodedBody(("value", "0"))
-          )
-
-        val result = route(app, request).value
-
-        status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(onwardRoute.url)
-      }
     }
 
     "redirect to Session Expired controller when no session data exists on a POST request" in {

@@ -39,6 +39,7 @@ class CompanyAddressYearsIdSpec extends SpecBase {
       .flatMap(_.set(CompanyPreviousAddressPostcodeLookupId(0))(Seq.empty))
       .flatMap(_.set(CompanyPreviousAddressId(0))(Address("foo", "bar", None, None, None, "GB")))
       .flatMap(_.set(CompanyPreviousAddressListId(0))(TolerantAddress(Some("foo"), Some("bar"), None, None, None, Some("GB"))))
+      .flatMap(_.set(HasBeenTradingCompanyId(0))(true))
       .flatMap(_.set(IsTrusteeCompleteId(0))(true))
       .asOpt.value
 
@@ -58,6 +59,10 @@ class CompanyAddressYearsIdSpec extends SpecBase {
         result.get(CompanyPreviousAddressListId(0)) mustNot be(defined)
       }
 
+      "remove the data for `HasBeenTrading`" in {
+        result.get(HasBeenTradingCompanyId(0)) mustNot be(defined)
+      }
+
       "do not change the value of IsTrusteeCompleteId" in {
         result.get(IsTrusteeCompleteId(0)).value mustBe true
       }
@@ -70,6 +75,7 @@ class CompanyAddressYearsIdSpec extends SpecBase {
         .flatMap(_.set(CompanyPreviousAddressPostcodeLookupId(0))(Seq.empty))
         .flatMap(_.set(CompanyPreviousAddressId(0))(Address("foo", "bar", None, None, None, "GB")))
         .flatMap(_.set(CompanyPreviousAddressListId(0))(TolerantAddress(Some("foo"), Some("bar"), None, None, None, Some("GB"))))
+        .flatMap(_.set(HasBeenTradingCompanyId(0))(true))
         .flatMap(_.set(IsTrusteeCompleteId(0))(true))
         .asOpt.value.set(CompanyAddressYearsId(0))(AddressYears.UnderAYear).asOpt.value
 
@@ -88,6 +94,10 @@ class CompanyAddressYearsIdSpec extends SpecBase {
       "not remove the data for `PreviousAddressList`" in {
         result.get(CompanyPreviousAddressListId(0)) mustBe defined
       }
+
+      "not remove the data for `HasBeenTrading`" in {
+        result.get(HasBeenTradingCompanyId(0)) mustBe defined
+      }
     }
 
     "`AddressYears` is removed" when {
@@ -105,6 +115,7 @@ class CompanyAddressYearsIdSpec extends SpecBase {
       "not remove the data for `PreviousAddressList`" in {
         result.get(CompanyPreviousAddressListId(0)) mustBe defined
       }
+
     }
   }
 
@@ -112,13 +123,14 @@ class CompanyAddressYearsIdSpec extends SpecBase {
     val onwardUrl = "onwardUrl"
     val companyName = "test company name"
 
-    def answers = UserAnswers()
+    def answers: UserAnswers = UserAnswers()
       .set(CompanyAddressYearsId(0))(UnderAYear).asOpt.get
       .set(CompanyDetailsId(0))(CompanyDetails(companyName)).asOpt.get
 
+    implicit val countryOptions: CountryOptions = new CountryOptions(Seq.empty[InputOption])
+
     "in normal mode" must {
       "return answers rows with change links" in {
-        implicit val countryOptions: CountryOptions = new CountryOptions(Seq.empty[InputOption])
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
         implicit val userAnswers: UserAnswers = request.userAnswers
         CompanyAddressYearsId(0).row(onwardUrl, NormalMode) must equal(Seq(
@@ -132,7 +144,7 @@ class CompanyAddressYearsIdSpec extends SpecBase {
       }
     }
 
-    "in update mode for new trustee - company paye" must {
+    "in update mode for new trustee" must {
 
       val companyName = "test company name"
 
@@ -141,7 +153,6 @@ class CompanyAddressYearsIdSpec extends SpecBase {
 
 
       "return answers rows with change links" in {
-        implicit val countryOptions: CountryOptions = new CountryOptions(Seq.empty[InputOption])
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answersNew, PsaId("A0000000"))
         implicit val userAnswers: UserAnswers = request.userAnswers
         CompanyAddressYearsId(0).row(onwardUrl, UpdateMode) must equal(Seq(
@@ -155,9 +166,9 @@ class CompanyAddressYearsIdSpec extends SpecBase {
       }
     }
 
-    "in update mode for existing trustee - company paye" must {
+    "in update mode for existing trustee" must {
 
-      "return answers rows without change links" in {
+      "return no rows" in {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
         implicit val userAnswers: UserAnswers = request.userAnswers
 

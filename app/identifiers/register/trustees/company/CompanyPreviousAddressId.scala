@@ -18,12 +18,11 @@ package identifiers.register.trustees.company
 
 import identifiers._
 import identifiers.register.trustees.{IsTrusteeNewId, TrusteesId}
-import models.AddressYears.UnderAYear
-import models.Link
 import models.address.Address
+import play.api.i18n.Messages
 import play.api.libs.json._
-import utils.{CountryOptions, UserAnswers}
 import utils.checkyouranswers.{AddressCYA, CheckYourAnswers, PreviousAddressCYA}
+import utils.{CountryOptions, UserAnswers}
 import viewmodels.AnswerRow
 
 case class CompanyPreviousAddressId(index: Int) extends TypedIdentifier[Address] {
@@ -33,21 +32,21 @@ case class CompanyPreviousAddressId(index: Int) extends TypedIdentifier[Address]
 object CompanyPreviousAddressId {
   override def toString: String = "companyPreviousAddress"
 
-  implicit def cya(implicit countryOptions: CountryOptions): CheckYourAnswers[CompanyPreviousAddressId] = {
-    val label: String = "messages__common__cya__previous_address"
-    val changeAddress: String = "messages__visuallyhidden__trustee__previous_address"
-    val previousAddressAddLabel: String = "messages__visuallyhidden__trustee__previous_address_add"
+  implicit def cya(implicit countryOptions: CountryOptions, messages: Messages, ua: UserAnswers): CheckYourAnswers[CompanyPreviousAddressId] = {
+    def trusteeName(index: Int) = ua.get(CompanyDetailsId(index)).fold(messages("messages__theTrustee"))(_.companyName)
+    def label(index: Int) = messages("messages__trusteePreviousAddress", trusteeName(index))
+    def changeAddress(index: Int) = messages("messages__changeTrusteePreviousAddress", trusteeName(index))
 
     new CheckYourAnswers[CompanyPreviousAddressId] {
       override def row(id: CompanyPreviousAddressId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        AddressCYA(label, changeAddress)().row(id)(changeUrl, userAnswers)
+        AddressCYA(label(id.index), changeAddress(id.index))().row(id)(changeUrl, userAnswers)
 
       override def updateRow(id: CompanyPreviousAddressId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        PreviousAddressCYA(label,
-          changeAddress,
+        PreviousAddressCYA(label(id.index),
+          changeAddress(id.index),
           userAnswers.get(IsTrusteeNewId(id.index)),
           userAnswers.get(CompanyAddressYearsId(id.index)),
-          Some(previousAddressAddLabel))().updateRow(id)(changeUrl, userAnswers)
+          Some(changeAddress(id.index)))().updateRow(id)(changeUrl, userAnswers)
     }
   }
 }
