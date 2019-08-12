@@ -20,6 +20,7 @@ import config.{FeatureSwitchManagementService, FrontendAppConfig}
 import controllers.Retrievals
 import controllers.actions._
 import identifiers.register.establishers.IsEstablisherNewId
+import identifiers.register.trustees.IsTrusteeNewId
 import identifiers.register.trustees.company.{CompanyAddressId, CompanyAddressYearsId, CompanyPreviousAddressId, IsAddressCompleteId}
 import javax.inject.Inject
 import models.Mode.checkMode
@@ -72,7 +73,7 @@ class CheckYourAnswersCompanyAddressController @Inject()(appConfig: FrontendAppC
           existingSchemeName,
           mode = mode,
           hideEditLinks = request.viewOnly || !userAnswers.get(IsEstablisherNewId(index)).getOrElse(true),
-          hideSaveAndContinueButton = allowChangeHelper.hideSaveAndContinueButton(request, IsEstablisherNewId(index), mode),
+          hideSaveAndContinueButton = allowChangeHelper.hideSaveAndContinueButton(request, IsTrusteeNewId(index), mode),
           srn = srn
         )))
 

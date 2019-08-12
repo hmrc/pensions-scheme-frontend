@@ -311,6 +311,3 @@ object CheckYourAnswersCompanyDetailsControllerSpec extends ControllerSpecBase w
     )(fakeRequest, messages).toString
 
 }
-
-
-
