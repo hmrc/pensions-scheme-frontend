@@ -125,7 +125,7 @@ object CheckYourAnswersCompanyAddressControllerSpec extends ControllerSpecBase w
       Some("messages__establisherConfirmAddress__cya_visually_hidden_label")))
   )
   def addressYearsAnswerRow(mode: Mode, srn: Option[String]): AnswerRow = AnswerRow(
-    "companyAddressYears.checkYourAnswersLabel",
+    Message("messages__company_address_years__h1", companyName),
     Seq(s"messages__common__$addressYearsUnderAYear"),
     answerIsMessageKey = true,
     Some(Link("site.change", companyAddressYearsRoute(checkMode(mode), srn),

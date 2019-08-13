@@ -19,10 +19,11 @@ package identifiers.register.establishers.company
 import identifiers.TypedIdentifier
 import identifiers.register.establishers.{EstablishersId, IsEstablisherNewId}
 import models.AddressYears
+import play.api.i18n.Messages
 import play.api.libs.json.{JsPath, JsResult}
 import utils.UserAnswers
 import utils.checkyouranswers.{AddressYearsCYA, CheckYourAnswers}
-import viewmodels.AnswerRow
+import viewmodels.{AnswerRow, Message}
 
 case class CompanyAddressYearsId(index: Int) extends TypedIdentifier[AddressYears] {
   override def path: JsPath = EstablishersId(index).path \ CompanyAddressYearsId.toString
@@ -43,18 +44,20 @@ case class CompanyAddressYearsId(index: Int) extends TypedIdentifier[AddressYear
 object CompanyAddressYearsId {
   override lazy val toString: String = "companyAddressYears"
 
-  implicit val cya: CheckYourAnswers[CompanyAddressYearsId] = {
-    val label: String = "companyAddressYears.checkYourAnswersLabel"
+  implicit def cya(implicit messages: Messages): CheckYourAnswers[CompanyAddressYearsId] = {
+    def label(ua: UserAnswers, index: Int): Message = ua.get(CompanyDetailsId(index)).map(details =>
+      Message("messages__company_address_years__h1", details.companyName)).getOrElse(Message("messages__company_address_years__title"))
+
     val changeAddressYears: String = "messages__visuallyhidden__establisher__address_years"
 
     new CheckYourAnswers[CompanyAddressYearsId] {
       override def row(id: CompanyAddressYearsId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        AddressYearsCYA(label, changeAddressYears)().row(id)(changeUrl, userAnswers)
+        AddressYearsCYA(label(userAnswers, id.index), changeAddressYears)().row(id)(changeUrl, userAnswers)
 
       override def updateRow(id: CompanyAddressYearsId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
         userAnswers.get(IsEstablisherNewId(id.index)) match {
-          case Some(true) => AddressYearsCYA(label, changeAddressYears)().row(id)(changeUrl, userAnswers)
-          case _ => AddressYearsCYA(label, changeAddressYears)().updateRow(id)(changeUrl, userAnswers)
+          case Some(true) => row(id)(changeUrl, userAnswers)
+          case _ => AddressYearsCYA(label(userAnswers, id.index), changeAddressYears)().updateRow(id)(changeUrl, userAnswers)
         }
     }
   }
