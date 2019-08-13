@@ -20,6 +20,7 @@ import base.SpecBase
 import identifiers.register.establishers.IsEstablisherNewId
 import models._
 import models.requests.DataRequest
+import play.api.libs.json.Json
 import play.api.mvc.AnyContent
 import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.PsaId
@@ -35,6 +36,16 @@ class CompanyRegistrationNumberVariationsIdSpec extends SpecBase {
     AnswerRow("messages__checkYourAnswers__establishers__company__number",List("companyRegistrationNumber"),false,Some(Link("site.change",onwardUrl,
       Some("messages__visuallyhidden__companyNumber"))))
   )
+
+  "Cleanup" when {
+    def answers: UserAnswers = UserAnswers(Json.obj())
+      .set(NoCompanyNumberId(0))("reason").asOpt.value
+
+    "remove the data for `NoCompanyNumber`" in {
+      val result: UserAnswers = answers.set(CompanyRegistrationNumberVariationsId(0))(ReferenceValue("crn", true)).asOpt.value
+      result.get(NoCompanyNumberId(0)) mustNot be(defined)
+    }
+  }
 
   "cya" when {
 

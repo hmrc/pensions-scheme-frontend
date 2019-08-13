@@ -19,6 +19,7 @@ package identifiers.register.establishers.company.director
 import base.SpecBase
 import models._
 import models.requests.DataRequest
+import play.api.libs.json.Json
 import play.api.mvc.AnyContent
 import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.PsaId
@@ -34,6 +35,16 @@ class DirectorNewNinoIdSpec extends SpecBase {
     AnswerRow("messages__common__nino",List("nino"),false,Some(Link("site.change",onwardUrl,
       Some("messages__visuallyhidden__director__nino"))))
   )
+
+  "Cleanup" when {
+    def answers: UserAnswers = UserAnswers(Json.obj())
+      .set(DirectorNoNINOReasonId(0, 0))("reason").asOpt.value
+
+    "remove the data for `DirectorNoNINOReason`" in {
+      val result: UserAnswers = answers.set(DirectorNewNinoId(0, 0))(ReferenceValue("nino", true)).asOpt.value
+      result.get(DirectorNoNINOReasonId(0, 0)) mustNot be(defined)
+    }
+  }
 
   "cya" when {
 

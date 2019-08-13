@@ -20,6 +20,7 @@ import base.SpecBase
 import identifiers.register.trustees.IsTrusteeNewId
 import models._
 import models.requests.DataRequest
+import play.api.libs.json.Json
 import play.api.mvc.AnyContent
 import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.PsaId
@@ -40,6 +41,17 @@ class TrusteeUTRIdSpec extends SpecBase {
 
   private val answerRowsWithoutChangeLink = Seq(
     AnswerRow(messages("messages__common__utr"), List(utr), false, None))
+
+
+  "Cleanup" when {
+    def answers: UserAnswers = UserAnswers(Json.obj())
+      .set(TrusteeNoUTRReasonId(0))("reason").asOpt.value
+
+    "remove the data for `TrusteeNoUTRReason`" in {
+      val result: UserAnswers = answers.set(TrusteeUTRId(0))("utr").asOpt.value
+      result.get(TrusteeNoUTRReasonId(0)) mustNot be(defined)
+    }
+  }
 
   "cya" when {
 

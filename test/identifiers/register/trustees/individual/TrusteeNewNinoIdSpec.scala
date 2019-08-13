@@ -20,6 +20,8 @@ import base.SpecBase
 import identifiers.register.trustees.IsTrusteeNewId
 import models._
 import models.requests.DataRequest
+import org.scalatest.OptionValues
+import play.api.libs.json.Json
 import play.api.mvc.AnyContent
 import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.PsaId
@@ -27,7 +29,7 @@ import utils.checkyouranswers.Ops._
 import utils.{CountryOptions, UserAnswers}
 import viewmodels.AnswerRow
 
-class TrusteeNewNinoIdSpec extends SpecBase {
+class TrusteeNewNinoIdSpec extends SpecBase with OptionValues {
 
   implicit val countryOptions: CountryOptions = new CountryOptions(environment, frontendAppConfig)
   private val onwardUrl = "onwardUrl"
@@ -35,6 +37,16 @@ class TrusteeNewNinoIdSpec extends SpecBase {
     AnswerRow("messages__common__nino",List("nino"),false,Some(Link("site.change",onwardUrl,
       Some("messages__visuallyhidden__trustee__nino"))))
   )
+
+  "Cleanup" when {
+    def answers: UserAnswers = UserAnswers(Json.obj())
+      .set(TrusteeNoNINOReasonId(0))("reason").asOpt.value
+
+      "remove the data for `TrusteeNoNINOReason`" in {
+        val result: UserAnswers = answers.set(TrusteeNewNinoId(0))(ReferenceValue("nino", true)).asOpt.value
+        result.get(TrusteeNoNINOReasonId(0)) mustNot be(defined)
+      }
+    }
 
   "cya" when {
 
