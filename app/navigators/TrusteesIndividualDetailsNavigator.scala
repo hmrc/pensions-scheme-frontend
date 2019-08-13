@@ -32,7 +32,8 @@ class TrusteesIndividualDetailsNavigator @Inject()(val dataCacheConnector: UserA
   import TrusteesIndividualDetailsNavigator._
 
   private def normalAndCheckModeRoutes(mode: SubscriptionMode, ua: UserAnswers, srn: Option[String]): PartialFunction[Identifier, Call] = {
-    case TrusteeNameId(index) if mode == NormalMode         => controllers.register.trustees.routes.AddTrusteeController.onPageLoad(mode, srn)
+    case TrusteeNameId(index)          =>
+      controllers.register.trustees.routes.AddTrusteeController.onPageLoad(mode, srn)
     case TrusteeDOBId(index) if mode == NormalMode          => hasNinoPage(mode, index, srn)
     case TrusteeDOBId(index) if mode == CheckMode           => CheckYourAnswersIndividualDetailsController.onPageLoad(journeyMode(mode), index, None)
     case id@TrusteeHasNINOId(index)                         => booleanNav(id, ua, ninoPage(mode, index, srn), noNinoReasonPage(mode, index, srn))

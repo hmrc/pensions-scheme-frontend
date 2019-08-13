@@ -114,10 +114,9 @@ abstract class AbstractNavigator extends Navigator {
   protected def anyMoreChangesPage(srn: Option[String]): Call = AnyMoreChangesController.onPageLoad(srn)
 
   protected def navigateOrSessionReset(routeMapping: PartialFunction[Identifier, Call], identifier: Identifier): Option[NavigateTo] =
-    NavigateTo.dontSave {
-      if (routeMapping.isDefinedAt(identifier))
-        routeMapping(identifier)
-      else
-        controllers.routes.SessionExpiredController.onPageLoad()
-    }
+    if (routeMapping.isDefinedAt(identifier))
+      NavigateTo.dontSave(routeMapping(identifier))
+    else
+      None
+
 }
