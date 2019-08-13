@@ -23,7 +23,7 @@ import identifiers.Identifier
 import identifiers.register.trustees.IsTrusteeNewId
 import identifiers.register.trustees.individual.{TrusteeDOBId, _}
 import models.Mode._
-import models.{CheckMode, CheckUpdateMode, Mode, NormalMode, SubscriptionMode, UpdateMode, VarianceMode}
+import models._
 import play.api.mvc.Call
 import utils.UserAnswers
 
@@ -57,8 +57,15 @@ class TrusteesIndividualDetailsNavigator @Inject()(val dataCacheConnector: UserA
     case TrusteeUTRId(index) if ua.get(IsTrusteeNewId(index)).getOrElse(false)          => cyaIndividualDetailsPage(mode, index, srn)
   }
 
-  private def checkUpdateModeRoute(mode: VarianceMode, ua: UserAnswers, srn: Option[String]): PartialFunction[Identifier, Call] = {
-    case TrusteeNewNinoId(index)    => anyMoreChangesPage(srn)
+  private def checkUpdateModeRoute(mode: CheckUpdateMode.type, ua: UserAnswers, srn: Option[String]): PartialFunction[Identifier, Call] = {
+    case TrusteeDOBId(index) if ua.get(IsTrusteeNewId(index)).getOrElse(false)            => cyaIndividualDetailsPage(mode, index, srn)
+    case TrusteeNewNinoId(index) if ua.get(IsTrusteeNewId(index)).getOrElse(false)        => cyaIndividualDetailsPage(mode, index, srn)
+    case TrusteeNewNinoId(index) if !ua.get(IsTrusteeNewId(index)).getOrElse(false)       => anyMoreChangesPage(srn)
+    case TrusteeNoNINOReasonId(index) if ua.get(IsTrusteeNewId(index)).getOrElse(false)   => cyaIndividualDetailsPage(mode, index, srn)
+    case id@TrusteeHasNINOId(index) if ua.get(IsTrusteeNewId(index)).getOrElse(false)     => booleanNav(id, ua, ninoPage(mode, index, srn), noNinoReasonPage(mode, index, srn))
+    case id@TrusteeHasUTRId(index) if ua.get(IsTrusteeNewId(index)).getOrElse(false)      => booleanNav(id, ua, utrPage(mode, index, srn), noUtrReasonPage(mode, index, srn))
+    case TrusteeNoUTRReasonId(index) if ua.get(IsTrusteeNewId(index)).getOrElse(false)    => cyaIndividualDetailsPage(mode, index, srn)
+    case TrusteeUTRId(index) if ua.get(IsTrusteeNewId(index)).getOrElse(false)            => cyaIndividualDetailsPage(mode, index, srn)
   }
 
 

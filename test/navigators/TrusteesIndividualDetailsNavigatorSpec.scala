@@ -22,7 +22,7 @@ import generators.Generators
 import identifiers.Identifier
 import identifiers.register.trustees.IsTrusteeNewId
 import identifiers.register.trustees.individual._
-import models.{CheckMode, CheckUpdateMode, Index, Mode, NormalMode, ReferenceValue, UpdateMode}
+import models._
 import org.joda.time.LocalDate
 import org.scalatest.MustMatchers
 import org.scalatest.prop._
@@ -31,7 +31,6 @@ import utils.UserAnswers
 
 class TrusteesIndividualDetailsNavigatorSpec extends SpecBase with MustMatchers with NavigatorBehaviour with Generators {
   import TrusteesIndividualDetailsNavigatorSpec._
-
 
   val navigator: Navigator = injector.instanceOf[TrusteesIndividualDetailsNavigator]
 
@@ -96,7 +95,16 @@ class TrusteesIndividualDetailsNavigatorSpec extends SpecBase with MustMatchers 
     def navigationForVarianceModeTrusteeIndividual(mode: Mode): TableFor3[Identifier, UserAnswers, Call] =
       Table(
         ("Id", "UserAnswers", "Expected next page"),
-        row(TrusteeNewNinoId(index))(someRefValue, anyMoreChangesPage(srn), Some(newTrusteeUserAnswers))
+        row(TrusteeDOBId(index))(someDate, cyaIndividualDetailsPage(CheckUpdateMode, index, srn), Some(newTrusteeUserAnswers)),
+        row(TrusteeHasNINOId(index))(true, TrusteeNinoNewController.onPageLoad(CheckUpdateMode, index, srn), Some(newTrusteeUserAnswers)),
+        row(TrusteeNewNinoId(index))(someRefValue, cyaIndividualDetailsPage(CheckUpdateMode, index, srn), Some(newTrusteeUserAnswers)),
+        row(TrusteeNewNinoId(index))(someRefValue, anyMoreChangesPage(srn), Some(exisitingTrusteeUserAnswers)),
+        row(TrusteeHasNINOId(index))(false, TrusteeNoNINOReasonController.onPageLoad(CheckUpdateMode, index, srn), Some(newTrusteeUserAnswers)),
+        row(TrusteeNoNINOReasonId(index))(someStringValue, cyaIndividualDetailsPage(CheckUpdateMode, index, srn), Some(newTrusteeUserAnswers)),
+        row(TrusteeHasUTRId(index))(true, TrusteeUTRController.onPageLoad(CheckUpdateMode, index, srn), Some(newTrusteeUserAnswers)),
+        row(TrusteeUTRId(index))(someStringValue, cyaIndividualDetailsPage(CheckUpdateMode, index, srn), Some(newTrusteeUserAnswers)),
+        row(TrusteeHasUTRId(index))(false, TrusteeNoUTRReasonController.onPageLoad(CheckUpdateMode, index, srn), Some(newTrusteeUserAnswers)),
+        row(TrusteeNoUTRReasonId(index))(someStringValue, cyaIndividualDetailsPage(CheckUpdateMode, index, srn), Some(newTrusteeUserAnswers))
       )
 
     behave like navigatorWithRoutesForMode(CheckUpdateMode)(navigator, navigationForVarianceModeTrusteeIndividual(CheckUpdateMode), srn)
@@ -106,11 +114,11 @@ class TrusteesIndividualDetailsNavigatorSpec extends SpecBase with MustMatchers 
 }
 
 object TrusteesIndividualDetailsNavigatorSpec extends SpecBase with MustMatchers with NavigatorBehaviour with Generators {
-  private lazy val index = 0 // intsAboveValue(-1).sample.value
-  private val someDate =  LocalDate.now() // arbitrary[LocalDate].sample.value
-  private val srn = Some("srn")
+  private lazy val index = 0
+  private val someDate =  LocalDate.now()
   private val newTrusteeUserAnswers = UserAnswers().set(IsTrusteeNewId(index))(true).asOpt.value
   private val exisitingTrusteeUserAnswers = UserAnswers().set(IsTrusteeNewId(index))(false).asOpt.value
+  private val srn = Some("srn")
 
   private def cyaIndividualDetailsPage(mode: Mode, index: Index, srn: Option[String]): Call =
     CheckYourAnswersIndividualDetailsController.onPageLoad(Mode.journeyMode(mode), index, srn)
