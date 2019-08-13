@@ -16,21 +16,21 @@
 
 package identifiers.register.establishers.company
 
+import base.SpecBase
 import identifiers.register.establishers.IsEstablisherNewId
 import models.AddressYears.UnderAYear
+import models._
 import models.address.{Address, TolerantAddress}
 import models.requests.DataRequest
-import models.{AddressYears, Link, NormalMode, UpdateMode}
-import org.scalatest.{MustMatchers, OptionValues, WordSpec}
 import play.api.libs.json.Json
 import play.api.mvc.AnyContent
 import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.PsaId
+import utils.UserAnswers
 import utils.checkyouranswers.Ops._
-import utils.{Enumerable, UserAnswers}
-import viewmodels.AnswerRow
+import viewmodels.{AnswerRow, Message}
 
-class CompanyAddressYearsIdSpec extends WordSpec with MustMatchers with OptionValues with Enumerable.Implicits {
+class CompanyAddressYearsIdSpec extends SpecBase {
 
   "Cleanup" must {
 
@@ -101,8 +101,10 @@ class CompanyAddressYearsIdSpec extends WordSpec with MustMatchers with OptionVa
   "cya" when {
 
     val onwardUrl = "onwardUrl"
+    val companyName = "test company"
 
-    def answers = UserAnswers().set(CompanyAddressYearsId(0))(UnderAYear).asOpt.get
+    def answers: UserAnswers = UserAnswers().set(CompanyAddressYearsId(0))(UnderAYear).flatMap(
+      _.set(CompanyDetailsId(0))(CompanyDetails(companyName))).asOpt.get
 
     "in normal mode" must {
 
@@ -111,7 +113,7 @@ class CompanyAddressYearsIdSpec extends WordSpec with MustMatchers with OptionVa
         implicit val userAnswers = request.userAnswers
         CompanyAddressYearsId(0).row(onwardUrl, NormalMode) must equal(Seq(
           AnswerRow(
-            "companyAddressYears.checkYourAnswersLabel",
+            Message("messages__company_address_years__h1", companyName),
             Seq(s"messages__common__under_a_year"),
             answerIsMessageKey = true,
             Some(Link("site.change", onwardUrl,
@@ -120,16 +122,16 @@ class CompanyAddressYearsIdSpec extends WordSpec with MustMatchers with OptionVa
       }
     }
 
-    "in update mode for new trustee - company paye" must {
+    "in update mode for new trustee" must {
 
       def answersNew: UserAnswers = answers.set(IsEstablisherNewId(0))(true).asOpt.value
 
       "return answers rows with change links" in {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answersNew, PsaId("A0000000"))
-        implicit val userAnswers = request.userAnswers
+        implicit val userAnswers: UserAnswers = request.userAnswers
         CompanyAddressYearsId(0).row(onwardUrl, UpdateMode) must equal(Seq(
           AnswerRow(
-            "companyAddressYears.checkYourAnswersLabel",
+            Message("messages__company_address_years__h1", companyName),
             Seq(s"messages__common__under_a_year"),
             answerIsMessageKey = true,
             Some(Link("site.change", onwardUrl,
@@ -138,11 +140,11 @@ class CompanyAddressYearsIdSpec extends WordSpec with MustMatchers with OptionVa
       }
     }
 
-    "in update mode for existing trustee - company paye" must {
+    "in update mode for existing trustee" must {
 
       "return answers rows without change links" in {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
-        implicit val userAnswers = request.userAnswers
+        implicit val userAnswers: UserAnswers = request.userAnswers
 
         CompanyAddressYearsId(0).row(onwardUrl, UpdateMode) must equal(Nil)
       }

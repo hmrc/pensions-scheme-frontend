@@ -202,7 +202,7 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase with Enumerable
       changeAddress = "messages__establisherConfirmAddress__cya_visually_hidden_label")().row(
       CompanyAddressId(index))(companyAddressRoute, request.userAnswers)
 
-    val addressYearsRows = AddressYearsCYA(label = "companyAddressYears.checkYourAnswersLabel",
+    val addressYearsRows = AddressYearsCYA(label = Message("messages__company_address_years__h1", companyDetails.companyName),
       changeAddressYears = "messages__visuallyhidden__establisher__address_years")().row(CompanyAddressYearsId(index))(
       companyAddressYearsRoute, request.userAnswers
     )
