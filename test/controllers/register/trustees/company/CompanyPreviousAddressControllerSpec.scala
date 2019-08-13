@@ -123,7 +123,7 @@ class CompanyPreviousAddressControllerSpec extends ControllerSpecBase with Mocki
         )
 
         running(_.overrides(
-          bind(classOf[Navigator]).qualifiedWith(classOf[TrusteesCompany]).toInstance(new FakeNavigator(onwardCall)),
+          bind(classOf[Navigator]).toInstance(new FakeNavigator(onwardCall)),
           bind[FrontendAppConfig].to(frontendAppConfig),
           bind[MessagesApi].to(messagesApi),
           bind[UserAnswersService].toInstance(FakeUserAnswersService),
