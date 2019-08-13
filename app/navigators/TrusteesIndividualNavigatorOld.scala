@@ -17,15 +17,41 @@
 package navigators
 
 import com.google.inject.{Inject, Singleton}
-import config.FrontendAppConfig
+import config.{FeatureSwitchManagementService, FrontendAppConfig}
 import connectors.UserAnswersCacheConnector
 import controllers.register.trustees.individual.routes._
 import controllers.routes._
+import identifiers.Identifier
 import identifiers.register.trustees.{ExistingCurrentAddressId, IsTrusteeNewId}
 import identifiers.register.trustees.individual._
 import models.Mode.journeyMode
 import models._
-import utils.UserAnswers
+import models.requests.IdentifiedRequest
+import play.api.mvc.Call
+import uk.gov.hmrc.http.HeaderCarrier
+import utils.{Toggles, UserAnswers}
+
+import scala.concurrent.ExecutionContext
+
+class TrusteesIndividualFeatureSwitchNavigator @Inject() (
+                                                        featureSwitchService: FeatureSwitchManagementService,
+                                                        oldNavigator: TrusteesIndividualNavigatorOld,
+                                                        navigator: TrusteesIndividualDetailsNavigator
+                                                      ) extends Navigator {
+
+  override def nextPageOptional(id: Identifier,
+                                mode: Mode,
+                                userAnswers: UserAnswers,
+                                srn: Option[String])(
+                                 implicit ex: IdentifiedRequest,
+                                 ec: ExecutionContext,
+                                 hc: HeaderCarrier): Option[Call] =
+    if (featureSwitchService.get(Toggles.isEstablisherCompanyHnSEnabled)) {
+      navigator.nextPageOptional(id, mode, userAnswers, srn)
+    } else {
+      oldNavigator.nextPageOptional(id, mode, userAnswers, srn)
+    }
+}
 
 @Singleton
 class TrusteesIndividualNavigatorOld @Inject()(val dataCacheConnector: UserAnswersCacheConnector,

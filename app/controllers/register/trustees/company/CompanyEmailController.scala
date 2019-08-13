@@ -40,7 +40,7 @@ class CompanyEmailController @Inject()(val appConfig: FrontendAppConfig,
                                        override val userAnswersService: UserAnswersService,
                                        allowAccess: AllowAccessActionProvider,
                                        requireData: DataRequiredAction,
-                                       @TrusteesCompany val navigator: Navigator,
+                                        val navigator: Navigator,
                                        formProvider: EmailFormProvider
                                       )(implicit val ec: ExecutionContext) extends EmailAddressController with I18nSupport {
 

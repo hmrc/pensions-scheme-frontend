@@ -40,7 +40,7 @@ class CompanyPhoneController @Inject()(val appConfig: FrontendAppConfig,
                                        override val userAnswersService: UserAnswersService,
                                        allowAccess: AllowAccessActionProvider,
                                        requireData: DataRequiredAction,
-                                       @TrusteesCompany val navigator: Navigator,
+                                        val navigator: Navigator,
                                        formProvider: PhoneFormProvider
                                       )(implicit val ec: ExecutionContext) extends PhoneNumberController with I18nSupport {
 

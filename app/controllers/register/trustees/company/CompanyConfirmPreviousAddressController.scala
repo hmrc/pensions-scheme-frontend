@@ -38,7 +38,7 @@ import scala.concurrent.ExecutionContext
 class CompanyConfirmPreviousAddressController @Inject()(val appConfig: FrontendAppConfig,
                                                            val messagesApi: MessagesApi,
                                                            val userAnswersService: UserAnswersService,
-                                                           @TrusteesCompany val navigator: Navigator,
+                                                            val navigator: Navigator,
                                                            authenticate: AuthAction,
                                                            allowAccess: AllowAccessActionProvider,
                                                            getData: DataRetrievalAction,

@@ -22,15 +22,42 @@ import connectors.UserAnswersCacheConnector
 import controllers.register.trustees.company.routes._
 import controllers.register.trustees.routes._
 import controllers.routes._
+import identifiers.Identifier
 import identifiers.register.trustees.IsTrusteeNewId
 import identifiers.register.trustees.company._
 import models.Mode.journeyMode
 import models._
+import models.requests.IdentifiedRequest
+import play.api.mvc.Call
+import uk.gov.hmrc.http.HeaderCarrier
 import utils.{Toggles, UserAnswers}
+
+import scala.concurrent.ExecutionContext
+
+
+class TrusteesCompanyFeatureSwitchNavigator @Inject() (
+                                         featureSwitchService: FeatureSwitchManagementService,
+                                         oldNavigator: TrusteesCompanyNavigatorOld,
+                                         navigator: TrusteesCompanyNavigator
+                                       ) extends Navigator {
+
+  override def nextPageOptional(id: Identifier,
+                                mode: Mode,
+                                userAnswers: UserAnswers,
+                                srn: Option[String])(
+                                 implicit ex: IdentifiedRequest,
+                                 ec: ExecutionContext,
+                                 hc: HeaderCarrier): Option[Call] =
+    if (featureSwitchService.get(Toggles.isEstablisherCompanyHnSEnabled)) {
+      navigator.nextPageOptional(id, mode, userAnswers, srn)
+    } else {
+      oldNavigator.nextPageOptional(id, mode, userAnswers, srn)
+    }
+}
 
 class TrusteesCompanyNavigatorOld @Inject()(val dataCacheConnector: UserAnswersCacheConnector,
                                          appConfig: FrontendAppConfig,
-                                         featureSwitchManagementService: FeatureSwitchManagementService) extends TrusteesIndividualNavigator {
+                                         featureSwitchManagementService: FeatureSwitchManagementService) extends AbstractNavigator {
 
   private def exitMiniJourney(index: Index, mode: Mode, srn: Option[String], answers: UserAnswers,
                               cyaPage: (Mode, Index, Option[String]) => Option[NavigateTo] = cya): Option[NavigateTo] = {

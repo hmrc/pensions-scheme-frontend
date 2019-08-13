@@ -27,7 +27,7 @@ import models.{CheckMode, CheckUpdateMode, Mode, NormalMode, SubscriptionMode, U
 import play.api.mvc.Call
 import utils.UserAnswers
 
-class TrusteesIndividualDetailsNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector) extends TrusteesIndividualNavigator {
+class TrusteesIndividualDetailsNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector) extends AbstractNavigator {
 
   import TrusteesIndividualDetailsNavigator._
 

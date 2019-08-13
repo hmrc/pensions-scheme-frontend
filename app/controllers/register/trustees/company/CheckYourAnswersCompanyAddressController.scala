@@ -47,7 +47,7 @@ class CheckYourAnswersCompanyAddressController @Inject()(appConfig: FrontendAppC
                                                          @NoSuspendedCheck allowAccess: AllowAccessActionProvider,
                                                          requireData: DataRequiredAction,
                                                          implicit val countryOptions: CountryOptions,
-                                                         @TrusteesCompany navigator: Navigator,
+                                                          navigator: Navigator,
                                                          userAnswersService: UserAnswersService,
                                                          allowChangeHelper: AllowChangeHelper,
                                                          fs: FeatureSwitchManagementService

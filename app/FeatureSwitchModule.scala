@@ -20,8 +20,6 @@ import play.api.inject.{Binding, Module}
 import play.api.{Configuration, Environment}
 import utils.annotations.{TrusteesCompany, TrusteesIndividual}
 
-import scala.util.{Failure, Success, Try}
-
 class FeatureSwitchModule extends Module {
 
   override def bindings(environment: Environment, configuration: Configuration): Seq[Binding[_]] = {
@@ -34,19 +32,6 @@ class FeatureSwitchModule extends Module {
       }
     )
 
-    val hubSpokeEnabled = configuration.getBoolean("features.is-establisher-company-hns").getOrElse(false)
-
-    val trusteesNavigatorBinding = if (hubSpokeEnabled)
-      Seq(
-        bind(classOf[Navigator]).qualifiedWith[TrusteesCompany].to(classOf[TrusteesCompanyNavigator]),
-        bind(classOf[TrusteesIndividualNavigator]).to(classOf[TrusteesIndividualDetailsNavigator])
-      )
-    else
-      Seq(
-        bind(classOf[Navigator]).qualifiedWith[TrusteesCompany].to(classOf[TrusteesCompanyNavigatorOld]),
-        bind(classOf[TrusteesIndividualNavigator]).to(classOf[TrusteesCompanyNavigatorOld])
-      )
-
-    featureSwitchBinding ++ trusteesNavigatorBinding
+    featureSwitchBinding
   }
 }
