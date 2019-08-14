@@ -60,7 +60,7 @@ class TrusteeNameControllerSpec extends ControllerSpecBase with OneAppPerSuite {
 
   "TrusteeNameController" must {
     "return OK and the correct view for a GET" in {
-      val app = applicationBuilder(getEmptyData).build()
+      val app = applicationBuilder(getEmptyData, featureSwitchEnabled = false).build()
 
       val controller = app.injector.instanceOf[TrusteeNameController]
 
@@ -74,7 +74,7 @@ class TrusteeNameControllerSpec extends ControllerSpecBase with OneAppPerSuite {
     }
 
     "populate the view correctly on a GET when the question has previously been answered" in {
-      val app = applicationBuilder(getMandatoryTrustee).build()
+      val app = applicationBuilder(getMandatoryTrustee, featureSwitchEnabled = false).build()
 
       val controller = app.injector.instanceOf[TrusteeNameController]
 
@@ -98,11 +98,10 @@ class TrusteeNameControllerSpec extends ControllerSpecBase with OneAppPerSuite {
 
       when(mockUserAnswersService.upsert(any(), any(), any())(any(), any(), any())).thenReturn(Future.successful(validData))
 
-      val app = applicationBuilder(getEmptyData)
+      val app = applicationBuilder(getEmptyData, featureSwitchEnabled = false)
         .overrides(
           bind[UserAnswersService].toInstance(mockUserAnswersService),
-          bind(classOf[Navigator]).qualifiedWith(classOf[TrusteesIndividual])
-            .toInstance(new FakeNavigator(onwardRoute))
+          bind(classOf[Navigator]).toInstance(new FakeNavigator(onwardRoute))
         ).build()
 
       val controller = app.injector.instanceOf[TrusteeNameController]
@@ -116,7 +115,7 @@ class TrusteeNameControllerSpec extends ControllerSpecBase with OneAppPerSuite {
     }
 
     "return a Bad Request and errors when invalid data is submitted" in {
-      val app = applicationBuilder(getEmptyData).build()
+      val app = applicationBuilder(getEmptyData, featureSwitchEnabled = false).build()
 
       val controller = app.injector.instanceOf[TrusteeNameController]
 
@@ -130,7 +129,7 @@ class TrusteeNameControllerSpec extends ControllerSpecBase with OneAppPerSuite {
     }
 
     "return a Bad Request and errors when no data is submitted" in {
-      val app = applicationBuilder(getEmptyData).build()
+      val app = applicationBuilder(getEmptyData, featureSwitchEnabled = false).build()
 
       val controller = app.injector.instanceOf[TrusteeNameController]
 
@@ -152,7 +151,7 @@ class TrusteeNameControllerSpec extends ControllerSpecBase with OneAppPerSuite {
 
       when(mockUserAnswersService.upsert(any(), any(), any())(any(), any(), any())).thenReturn(Future.successful(validData))
 
-      val app = applicationBuilder(getRelevantData)
+      val app = applicationBuilder(getRelevantData, featureSwitchEnabled = false)
         .overrides(
             bind[UserAnswersService].toInstance(mockUserAnswersService)
         ).build()
