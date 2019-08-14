@@ -234,7 +234,7 @@ class DataCompletionSpec extends WordSpec with MustMatchers with OptionValues wi
 
   "isTrusteeIndividualComplete H&S enabled" must {
     "return true when all answers are present" in {
-      UserAnswers(userAnswersCompleted).isTrusteeIndividualComplete(isHnSEnabled = true,0) mustBe true
+      UserAnswers(userAnswersCompleted).isTrusteeIndividualComplete(isHnSEnabled = true,1) mustBe true
     }
 
     "return false when some answer is missing" in {

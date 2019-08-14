@@ -26,6 +26,7 @@ import utils.checkyouranswers.{CheckYourAnswers, CompanyDetailsCYA}
 import viewmodels.AnswerRow
 
 case class CompanyDetailsId(index: Int) extends TypedIdentifier[CompanyDetails] {
+
   override def path: JsPath = TrusteesId(index).path \ CompanyDetailsId.toString
 }
 

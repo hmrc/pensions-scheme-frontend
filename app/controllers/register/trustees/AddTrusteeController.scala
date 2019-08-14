@@ -54,21 +54,22 @@ class AddTrusteeController @Inject()(
   def onPageLoad(mode: Mode, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
     implicit request =>
-      val trustees = request.userAnswers.allTrusteesAfterDelete(isHnSEnabled = fsm.get(Toggles.isEstablisherCompanyHnSEnabled))
-      Future.successful(Ok(addTrustee(appConfig, form, mode, trustees, existingSchemeName, srn, enableSubmission(trustees), isHnsEnabled)))
+      val trustees = request.userAnswers.allTrusteesAfterDelete(isHnSEnabled)
+      Future.successful(Ok(addTrustee(appConfig, form, mode, trustees, existingSchemeName, srn, enableSubmission(trustees), isHnSEnabled)))
   }
 
   def onSubmit(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
 
-      val trustees = request.userAnswers.allTrusteesAfterDelete(isHnSEnabled = fsm.get(Toggles.isEstablisherCompanyHnSEnabled))
+      val trustees = request.userAnswers.allTrusteesAfterDelete(isHnSEnabled)
 
       if (trustees.isEmpty || trustees.lengthCompare(appConfig.maxTrustees) >= 0)
         Future.successful(Redirect(navigator.nextPage(AddTrusteeId, mode, request.userAnswers, srn)))
       else {
         form.bindFromRequest().fold(
           (formWithErrors: Form[_]) => {
-            Future.successful(BadRequest(addTrustee(appConfig, formWithErrors, mode, trustees, existingSchemeName, srn, enableSubmission(trustees), isHnsEnabled)))
+            Future.successful(BadRequest(
+              addTrustee(appConfig, formWithErrors, mode, trustees, existingSchemeName, srn, enableSubmission(trustees), isHnSEnabled)))
           },
           value =>
             request.userAnswers.set(AddTrusteeId)(value).fold(
@@ -83,9 +84,9 @@ class AddTrusteeController @Inject()(
       }
   }
 
-  private def isHnsEnabled: Boolean = fsm.get(Toggles.isEstablisherCompanyHnSEnabled)
-
   private def enableSubmission(trusteeList: Seq[Trustee[_]]): Boolean = {
-    isHnsEnabled || trusteeList.forall(_.isCompleted)
+    isHnSEnabled || trusteeList.forall(_.isCompleted)
   }
+
+  private val isHnSEnabled = fsm.get(Toggles.isEstablisherCompanyHnSEnabled)
 }

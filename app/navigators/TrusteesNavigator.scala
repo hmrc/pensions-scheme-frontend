@@ -32,7 +32,9 @@ import utils.{Enumerable, Toggles, UserAnswers}
 
 class TrusteesNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector, appConfig: FrontendAppConfig,
                                   featureSwitchManagementService: FeatureSwitchManagementService) extends AbstractNavigator with Enumerable.Implicits {
-  private def isHnsEnabled: Boolean = featureSwitchManagementService.get(Toggles.isEstablisherCompanyHnSEnabled)
+
+  private val isHnSEnabled: Boolean = featureSwitchManagementService.get(Toggles.isEstablisherCompanyHnSEnabled)
+
   protected def routes(from: NavigateFrom, mode: Mode, srn: Option[String]): Option[NavigateTo] =
     from.id match {
       case HaveAnyTrusteesId =>
@@ -64,14 +66,12 @@ class TrusteesNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnec
 
   protected def checkUpdateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] = None
 
-  private def toggled:Boolean = featureSwitchManagementService.get(Toggles.isEstablisherCompanyHnSEnabled)
-
   private def haveAnyTrusteesRoutes(answers: UserAnswers): Option[NavigateTo] = {
 
     answers.get(HaveAnyTrusteesId) match {
       case Some(true) =>
-        if (answers.allTrusteesAfterDelete(toggled).isEmpty) {
-          NavigateTo.dontSave(TrusteeKindController.onPageLoad(NormalMode, answers.allTrustees(toggled).size, None))
+        if (answers.allTrusteesAfterDelete(isHnSEnabled).isEmpty) {
+          NavigateTo.dontSave(TrusteeKindController.onPageLoad(NormalMode, answers.allTrustees(isHnSEnabled).size, None))
         } else {
           NavigateTo.dontSave(AddTrusteeController.onPageLoad(NormalMode, None))
         }
@@ -84,11 +84,11 @@ class TrusteesNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnec
 
   private def addTrusteeRoutes(answers: UserAnswers, mode: Mode, srn: Option[String]): Option[NavigateTo] = {
     import controllers.register.trustees.routes._
-    val trusteesLengthCompare = answers.allTrustees(toggled).lengthCompare(appConfig.maxTrustees)
+    val trusteesLengthCompare = answers.allTrustees(isHnSEnabled).lengthCompare(appConfig.maxTrustees)
 
     answers.get(AddTrusteeId) match {
       case Some(false) =>
-        if (isHnsEnabled) {
+        if (isHnSEnabled) {
           NavigateTo.dontSave(SchemeTaskListController.onPageLoad(mode, srn))
         } else {
           mode match {
@@ -112,7 +112,7 @@ class TrusteesNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnec
       case Some(TrusteeKind.Company) =>
         NavigateTo.dontSave(CompanyDetailsController.onPageLoad(mode, index, srn))
       case Some(TrusteeKind.Individual) =>
-        if (isHnsEnabled) {
+        if (isHnSEnabled) {
           NavigateTo.dontSave(TrusteeNameController.onPageLoad(mode, index, srn))
         } else {
           NavigateTo.dontSave(TrusteeDetailsController.onPageLoad(mode, index, srn))

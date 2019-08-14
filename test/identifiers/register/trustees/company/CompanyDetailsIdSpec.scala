@@ -33,17 +33,6 @@ import viewmodels.AnswerRow
 
 class CompanyDetailsIdSpec extends SpecBase with Enumerable.Implicits {
 
-  private def individualTrustee(index: Int) = PersonDetails(
-    s"test-trustee-$index",
-    None,
-    "test-last-name",
-    LocalDate.now()
-  )
-
-  private def companyTrustee(index: Int) = CompanyDetails(
-    s"test-company-$index"
-  )
-
   "cya" when {
 
     val onwardUrl = "onwardUrl"

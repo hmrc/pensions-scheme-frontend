@@ -18,8 +18,10 @@ package identifiers.register.trustees.company
 
 import base.SpecBase
 import identifiers.register.trustees.IsTrusteeNewId
+import identifiers.register.trustees.individual.{TrusteeNoUTRReasonId, TrusteeUTRId}
 import models._
 import models.requests.DataRequest
+import play.api.libs.json.Json
 import play.api.mvc.AnyContent
 import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.PsaId
@@ -40,6 +42,16 @@ class CompanyUTRIdSpec extends SpecBase {
 
   private val answerRowsWithoutChangeLink = Seq(
     AnswerRow(messages("messages__companyUtr__checkyouranswerslabel"), List(utr), false, None))
+
+  "Cleanup" when {
+    def answers: UserAnswers = UserAnswers(Json.obj())
+      .set(CompanyNoUTRReasonId(0))("reason").asOpt.value
+
+    "remove the data for `CompanyNoUTRReason`" in {
+      val result: UserAnswers = answers.set(CompanyUTRId(0))("utr").asOpt.value
+      result.get(CompanyNoUTRReasonId(0)) mustNot be(defined)
+    }
+  }
 
   "cya" when {
 

@@ -81,9 +81,6 @@ class HsTaskListHelperRegistration(answers: UserAnswers,
       declarationLink = declarationLink(userAnswers),
       incompleteDeclarationText = "messages__schemeTaskList__sectionDeclaration_incomplete"))
 
-  protected[utils] def trustees(userAnswers: UserAnswers): Seq[SchemeDetailsTaskListSection] =
-    listOf(userAnswers.allTrustees(isHnSEnabled), userAnswers)
-
   protected def listOf(sections: Seq[Entity[_]], userAnswers: UserAnswers): Seq[SchemeDetailsTaskListSection] = {
     val notDeletedElements = for ((section, _) <- sections.zipWithIndex) yield {
       if (section.isDeleted) None else {
@@ -111,7 +108,7 @@ class HsTaskListHelperRegistration(answers: UserAnswers,
       case (None | Some(true), true, false) =>
         Some(
           SchemeDetailsTaskListHeader(
-            trusteeStatus(isAllTrusteesCompleted(userAnswers), trusteesMandatory(userAnswers.get(SchemeTypeId))),
+            None,
             typeOfTrusteeLink(addTrusteesLinkText, userAnswers.allTrustees(isHnSEnabled).size, srn, mode)))
 
       case (None | Some(true), false, true) =>

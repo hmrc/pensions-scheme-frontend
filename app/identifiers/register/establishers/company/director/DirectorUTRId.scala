@@ -30,7 +30,7 @@ case class DirectorUTRId(establisherIndex: Int, directorIndex: Int) extends Type
   override def path: JsPath = EstablishersId(establisherIndex).path \ "director" \ directorIndex \ DirectorUTRId.toString
 
   override def cleanup(value: Option[String], userAnswers: UserAnswers): JsResult[UserAnswers] =
-    userAnswers.remove(DirectorUniqueTaxReferenceId(establisherIndex, directorIndex))
+    userAnswers.remove(DirectorNoUTRReasonId(establisherIndex, directorIndex))
 }
 
 object DirectorUTRId {

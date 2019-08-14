@@ -18,16 +18,18 @@ package identifiers.register.establishers.company
 
 import identifiers.TypedIdentifier
 import identifiers.register.establishers.{EstablishersId, IsEstablisherNewId}
-import models.UniqueTaxReference
 import play.api.i18n.Messages
-import play.api.libs.json.JsPath
-import utils.{CountryOptions, UserAnswers}
+import play.api.libs.json.{JsPath, JsResult}
 import utils.checkyouranswers.CheckYourAnswers
 import utils.checkyouranswers.CheckYourAnswers.StringCYA
+import utils.{CountryOptions, UserAnswers}
 import viewmodels.AnswerRow
 
 case class CompanyUTRId(index: Int) extends TypedIdentifier[String] {
   override def path: JsPath = EstablishersId(index).path \ CompanyUTRId.toString
+
+  override def cleanup(value: Option[String], userAnswers: UserAnswers): JsResult[UserAnswers] =
+    userAnswers.remove(NoCompanyUTRId(this.index))
 }
 
 object CompanyUTRId {

@@ -331,21 +331,19 @@ final case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Impl
     private def readsIndividual(index: Int): Reads[Trustee[_]] =
       (
         (JsPath \ TrusteeNameId.toString).read[PersonName] and
-          (JsPath \ IsTrusteeCompleteId.toString).readNullable[Boolean] and
           (JsPath \ IsTrusteeNewId.toString).readNullable[Boolean]
-        ) ((details, isComplete, isNew) =>
+        ) ((details, isNew) =>
         TrusteeIndividualEntity(
           TrusteeNameId(index), details.fullName, details.isDeleted,
-          isComplete.getOrElse(false), isNew.fold(false)(identity), noOfRecords, schemeType)
+          isTrusteeIndividualComplete(isHnSEnabled, index), isNew.fold(false)(identity), noOfRecords, schemeType)
       )
 
     private def readsCompany(index: Int): Reads[Trustee[_]] = (
       (JsPath \ CompanyDetailsId.toString).read[CompanyDetails] and
-        (JsPath \ IsTrusteeCompleteId.toString).readNullable[Boolean] and
         (JsPath \ IsTrusteeNewId.toString).readNullable[Boolean]
-      ) ((details, isComplete, isNew) => {
+      ) ((details, isNew) => {
       TrusteeCompanyEntity(CompanyDetailsId(index), details.companyName, details.isDeleted,
-        isComplete.getOrElse(false), isNew.fold(false)(identity), noOfRecords, schemeType)
+        isTrusteeCompanyComplete(index, isHnSEnabled), isNew.fold(false)(identity), noOfRecords, schemeType)
     }
     )
     private def readsPartnership(index: Int): Reads[Trustee[_]] = (
@@ -380,6 +378,7 @@ final case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Impl
   }
 
   def allTrustees(isHnSEnabled: Boolean): Seq[Trustee[_]] = {
+
     json.validate[Seq[Trustee[_]]](readTrustees(isHnSEnabled)) match {
       case JsSuccess(trustees, _) =>
         trustees
@@ -451,11 +450,11 @@ final case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Impl
   def isAllTrusteesCompleted(isHnSEnabled: Boolean): Boolean = {
     val isSingleOrMaster = schemeType.fold(false)(scheme => Seq("single", "master").exists(_.equals(scheme)))
 
-    if(isSingleOrMaster) {
+    if(isSingleOrMaster)
       allTrusteesAfterDelete(isHnSEnabled).nonEmpty && allTrusteesAfterDelete(isHnSEnabled).forall(_.isCompleted)
-    }else {
+    else
       allTrusteesAfterDelete(isHnSEnabled).forall(_.isCompleted)
-    }
+
   }
 
   def isDirectorPartnerCompleted(establisherIndex:Int, isHnSEnabled: Boolean) = get(EstablisherKindId(establisherIndex)) match {
@@ -478,4 +477,5 @@ final case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Impl
 
   def areVariationChangesCompleted(isHnSEnabled: Boolean = false): Boolean =
     isInsuranceCompleted && isAllTrusteesCompleted(isHnSEnabled) && allEstablishersCompleted(isHnSEnabled, UpdateMode)
+
 }

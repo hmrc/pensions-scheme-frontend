@@ -28,6 +28,8 @@ import viewmodels.AnswerRow
 case class DirectorNewNinoId(establisherIndex: Int, directorIndex: Int) extends TypedIdentifier[ReferenceValue] {
   override def path: JsPath = EstablishersId(establisherIndex).path \ "director" \ directorIndex \ DirectorNewNinoId.toString
 
+  override def cleanup(value: Option[ReferenceValue], userAnswers: UserAnswers): JsResult[UserAnswers] =
+    userAnswers.remove(DirectorNoNINOReasonId(this.establisherIndex, this.directorIndex))
 }
 
 object DirectorNewNinoId {

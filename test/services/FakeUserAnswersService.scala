@@ -22,7 +22,7 @@ import identifiers.TypedIdentifier
 import models.Mode
 import models.address.Address
 import models.requests.DataRequest
-import org.scalatest.Matchers
+import org.scalatest.{Matchers, OptionValues}
 import play.api.libs.json._
 import play.api.mvc.Results.Ok
 import play.api.mvc.{AnyContent, Result}
@@ -32,7 +32,7 @@ import utils.{FakeFeatureSwitchManagementService, UserAnswers}
 import scala.collection.mutable
 import scala.concurrent.{ExecutionContext, Future}
 
-trait FakeUserAnswersService extends UserAnswersService with Matchers {
+trait FakeUserAnswersService extends UserAnswersService with Matchers with OptionValues {
 
   override protected def subscriptionCacheConnector: SubscriptionCacheConnector = FakeSubscriptionCacheConnector.getConnector
   override protected def updateSchemeCacheConnector: UpdateSchemeCacheConnector = FakeUpdateCacheConnector.getConnector
@@ -49,6 +49,7 @@ trait FakeUserAnswersService extends UserAnswersService with Matchers {
                                                 request: DataRequest[AnyContent]): Future[JsValue] =
   {
     data += (id.toString -> Json.toJson(value))
+    data += ("userAnswer" -> request.userAnswers.set(id)(value).asOpt.value.json)
     Future.successful(Json.obj())
   }
 

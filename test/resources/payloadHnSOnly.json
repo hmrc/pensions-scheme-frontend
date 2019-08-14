@@ -7,44 +7,34 @@
   "schemeEstablishedCountry" : "GB",
   "declarationDuties" : true,
   "isWorkingKnowledgeComplete" : true,
-  "trustees" : [
-    {
-      "isTrusteeNew" : true,
-      "trusteeKind" : "individual",
-      "trusteeDetails" : {
-        "firstName" : "qwqwq",
-        "lastName" : "wqwq",
-        "date" : "2000-01-01",
-        "isDeleted" : false
-      },
-      "hasUtr" : true,
-      "hasNino" : true,
-      "trusteeNino": {
-        "value": "CS121212C",
-        "isEditable" : true
-      },
-      "dateOfBirth": "2000-02-02",
-      "trusteeAddressId" : {
-        "addressLine1" : "10 Other Place",
-        "addressLine2" : "Some District",
-        "addressLine3" : "Anytown",
-        "addressLine4" : "Somerset",
-        "postcode" : "ZZ1 1ZZ",
-        "country" : "GB"
-      },
-      "trusteeAddressYears" : "under_a_year",
-      "trusteePreviousAddress" : {
-        "addressLine1" : "10 Other Place",
-        "addressLine2" : "Some District",
-        "addressLine3" : "Anytown",
-        "addressLine4" : "Somerset",
-        "postcode" : "ZZ1 1ZZ",
-        "country" : "GB"
-      },
-      "emailAddress": "a@a.c",
-      "phoneNumber": "11"
-    }
-  ],
+  "membership" : "opt2",
+  "isAboutMembersComplete" : true,
+  "membershipFuture" : "opt3",
+  "investmentRegulated" : true,
+  "isAboutBenefitsAndInsuranceComplete" : true,
+  "occupationalPensionScheme" : true,
+  "benefits" : "opt2",
+  "securedBenefits" : true,
+  "insuranceCompanyName" : "Insurance company",
+  "insurancePolicyNumber" : "12345678",
+  "insurerAddressList" : {
+    "addressLine1" : "6 Other Place",
+    "addressLine2" : "Some District",
+    "addressLine3" : "Anytown",
+    "addressLine4" : "Somerset",
+    "postalCode" : "ZZ1 1ZZ",
+    "countryCode" : "GB"
+  },
+  "insurerAddress" : {
+    "addressLine1" : "6 Other Place",
+    "addressLine2" : "Some District",
+    "addressLine3" : "Anytown",
+    "addressLine4" : "Somerset",
+    "postcode" : "ZZ1 1ZZ",
+    "country" : "GB"
+  },
+  "uKBankAccount" : false,
+  "IsAboutBankDetailsComplete" : true,
   "establishers" : [
     {
       "isEstablisherNew" : true,
@@ -59,12 +49,19 @@
         "isEditable" : true
       },
       "hasUtr" : true,
+      "utr" : "1234567890",
       "hasVat" : true,
       "companyVat" : {
         "value" : "123456789",
         "isEditable" : true
       },
+      "hasPaye" : true,
+      "companyPaye" : {
+        "value" : "123456",
+        "isEditable" : true
+      },
       "isCompanyDormant" : "no",
+      "isAddressComplete" : true,
       "companyAddress" : {
         "addressLine1" : "2 Other Place",
         "addressLine2" : "Some District",
@@ -74,8 +71,20 @@
         "country" : "GB"
       },
       "companyAddressYears" : "under_a_year",
+      "isCompanyComplete" : false,
+      "isEstablisherComplete" : false,
       "hasBeenTrading" : true,
+      "companyPreviousAddress" : {
+        "addressLine1" : "6 Other Place",
+        "addressLine2" : "Some District",
+        "addressLine3" : "Anytown",
+        "addressLine4" : "Somerset",
+        "postcode" : "ZZ1 1ZZ",
+        "country" : "GB"
+      },
+      "isContactDetailsComplete" : true,
       "companyContactDetails" : {
+        "emailAddress" : "z@z.z",
         "phoneNumber" : "12345"
       },
       "director" : [
@@ -88,6 +97,10 @@
           },
           "dateOfBirth" : "2002-01-01",
           "hasNino" : true,
+          "directorNino" : {
+            "value" : "AB123456C",
+            "isEditable" : true
+          },
           "hasUtr" : true,
           "utr" : "1234567890",
           "directorAddressId" : {
@@ -99,6 +112,7 @@
             "country" : "GB"
           },
           "companyDirectorAddressYears" : "under_a_year",
+          "isDirectorComplete" : true,
           "previousAddress" : {
             "addressLine1" : "Flat 2",
             "addressLine2" : "7 Other Place",
@@ -129,6 +143,7 @@
         "isEditable" : true
       },
       "hasUtr" : true,
+      "utr" : "1234567890",
       "hasVat" : true,
       "companyVat" : {
         "value" : "123456789",
@@ -147,9 +162,12 @@
         "postcode" : "ZZ1 1ZZ",
         "country" : "GB"
       },
-      "trusteesCompanyAddressYears" : "under_a_year",
+      "trusteesCompanyAddressYears" : "over_a_year",
+      "isAddressComplete" : true,
+      "isContactDetailsComplete" : true,
       "companyContactDetails" : {
-        "emailAddress" : "a@a.a"
+        "emailAddress" : "a@a.a",
+        "phoneNumber" : "123456"
       }
     }
   ]

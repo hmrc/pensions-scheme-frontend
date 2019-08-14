@@ -18,7 +18,7 @@ package controllers.register.trustees.individual
 
 import controllers.ControllerSpecBase
 import controllers.actions._
-import forms.{HasReferenceNumberFormProvider, HasUtrFormProvider}
+import forms.HasReferenceNumberFormProvider
 import identifiers.register.trustees.TrusteesId
 import identifiers.register.trustees.individual.{TrusteeHasUTRId, TrusteeNameId, TrusteeNoUTRReasonId, TrusteeUTRId}
 import models.person.PersonName
@@ -58,8 +58,8 @@ class TrusteeHasUTRControllerSpec extends ControllerSpecBase {
         Json.obj(
           TrusteeNameId.toString -> person.PersonName("first", "last"),
           TrusteeHasUTRId.toString -> hasUtrValue,
-          TrusteeNoUTRReasonId.toString -> noUtr,
-          TrusteeUTRId.toString -> utr
+          TrusteeUTRId.toString -> utr,
+          TrusteeNoUTRReasonId.toString -> noUtr
         )
       )
     ))
@@ -127,7 +127,6 @@ class TrusteeHasUTRControllerSpec extends ControllerSpecBase {
 
       FakeUserAnswersService.userAnswer.get(TrusteeHasUTRId(index)).value mustEqual false
       FakeUserAnswersService.userAnswer.get(TrusteeUTRId(index)) mustBe None
-      FakeUserAnswersService.userAnswer.get(TrusteeNoUTRReasonId(index)) mustBe Some(noUtr)
     }
 
     "clean up no utr reason, if user changes answer from no to yes" in {

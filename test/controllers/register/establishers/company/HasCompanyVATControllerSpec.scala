@@ -79,7 +79,7 @@ class HasCompanyVATControllerSpec extends ControllerSpecBase with MockitoSugar w
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
-      FakeUserAnswersService.userAnswer.get(HasCompanyVATId(index)).value mustEqual true
+      FakeUserAnswersService.verify(HasCompanyVATId(index), true)
     }
 
     "return a Bad Request and errors when invalid data is submitted" in {

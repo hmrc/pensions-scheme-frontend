@@ -287,7 +287,7 @@ class HsTaskListHelperVariationsSpec extends HsTaskListHelperBehaviour {
   def establishersSection(): Unit = {
 
     "return the seq of establishers sub sections for non deleted establishers which are all completed" in {
-      val userAnswers = allEstablishers
+      val userAnswers = allAnswers
       val helper = new HsTaskListHelperVariations(userAnswers, viewOnly = false, Some("test-srn"), fakeFeatureManagementService)
       helper.establishers(userAnswers, UpdateMode, srn) mustBe
         Seq(
@@ -304,7 +304,7 @@ class HsTaskListHelperVariationsSpec extends HsTaskListHelperBehaviour {
     }
 
     "return the seq of establishers sub sections for non deleted establishers which are not completed" in {
-      val userAnswers = allEstablishersIncomplete
+      val userAnswers = allAnswersIncomplete
       val helper = new HsTaskListHelperVariations(userAnswers, viewOnly = false, Some("test-srn"), fakeFeatureManagementService)
       helper.establishers(userAnswers, UpdateMode, srn) mustBe
         Seq(
@@ -343,13 +343,13 @@ class HsTaskListHelperVariationsSpec extends HsTaskListHelperBehaviour {
 
   def trusteesSection(): Unit = {
     "return the seq of trustees sub sections for non deleted trustees which are all completed with toggle OFF" in {
-      val userAnswers = allTrustees(toggled = false)
+      val userAnswers = allAnswers
       val helper = new HsTaskListHelperVariations(userAnswers, viewOnly = false, srn = Some("test-srn"), fakeFeatureManagementService)
       helper.trustees(userAnswers, UpdateMode, srn) mustBe
-        Seq(SchemeDetailsTaskListEntitySection(None, List(EntitySpoke(Link(messages("messages__schemeTaskList__persons_details__link_text", "firstName lastName"),
-          controllers.register.trustees.individual.routes.CheckYourAnswersController.onPageLoad(UpdateMode, 0, srn).url), None)), None),
-          SchemeDetailsTaskListEntitySection(None, List(EntitySpoke(Link(messages("messages__schemeTaskList__persons_details__link_text", "test company"),
-            controllers.register.trustees.company.routes.CheckYourAnswersController.onPageLoad(UpdateMode, 1, srn).url), None)), None),
+        Seq(SchemeDetailsTaskListEntitySection(None, List(EntitySpoke(Link(messages("messages__schemeTaskList__persons_details__link_text", "test company"),
+          controllers.register.trustees.company.routes.CheckYourAnswersController.onPageLoad(UpdateMode, 0, srn).url), None)), None),
+          SchemeDetailsTaskListEntitySection(None, List(EntitySpoke(Link(messages("messages__schemeTaskList__persons_details__link_text", "firstName lastName"),
+          controllers.register.trustees.individual.routes.CheckYourAnswersController.onPageLoad(UpdateMode, 1, srn).url), None)), None),
           SchemeDetailsTaskListEntitySection(None, List(EntitySpoke(Link(messages("messages__schemeTaskList__persons_details__link_text", "test partnership"),
             controllers.register.trustees.partnership.routes.CheckYourAnswersController.onPageLoad(UpdateMode, 2, srn).url), None)), None)
         )
@@ -377,13 +377,13 @@ class HsTaskListHelperVariationsSpec extends HsTaskListHelperBehaviour {
     }
 
     "return the seq of trustees sub sections for non deleted trustees which are not completed with toggle OFF" in {
-      val userAnswers = allTrustees(isCompleteTrustees = false, toggled = false)
+      val userAnswers = allAnswersIncomplete
       val helper = new HsTaskListHelperVariations(userAnswers, viewOnly = false, srn = Some("test-srn"), fakeFeatureManagementService)
       helper.trustees(userAnswers, UpdateMode, srn) mustBe
-        Seq(SchemeDetailsTaskListEntitySection(None, List(EntitySpoke(Link(messages("messages__schemeTaskList__persons_details__link_text", "firstName lastName"),
-          controllers.register.trustees.individual.routes.TrusteeDetailsController.onPageLoad(UpdateMode, 0, srn).url), None)), None),
-          SchemeDetailsTaskListEntitySection(None, List(EntitySpoke(Link(messages("messages__schemeTaskList__persons_details__link_text", "test company"),
-            controllers.register.trustees.company.routes.CompanyDetailsController.onPageLoad(UpdateMode, 1, srn).url), None)), None),
+        Seq(SchemeDetailsTaskListEntitySection(None, List(EntitySpoke(Link(messages("messages__schemeTaskList__persons_details__link_text", "test company"),
+          controllers.register.trustees.company.routes.CompanyDetailsController.onPageLoad(UpdateMode, 0, srn).url), None)), None),
+          SchemeDetailsTaskListEntitySection(None, List(EntitySpoke(Link(messages("messages__schemeTaskList__persons_details__link_text", "firstName lastName"),
+          controllers.register.trustees.individual.routes.TrusteeDetailsController.onPageLoad(UpdateMode, 1, srn).url), None)), None),
           SchemeDetailsTaskListEntitySection(None, List(EntitySpoke(Link(messages("messages__schemeTaskList__persons_details__link_text", "test partnership"),
             controllers.register.trustees.partnership.routes.TrusteeDetailsController.onPageLoad(UpdateMode, 2, srn).url), None)), None)
         )

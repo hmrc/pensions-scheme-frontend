@@ -98,6 +98,7 @@ object TrusteesNavigatorSpec extends OptionValues with Enumerable.Implicits {
   private val emptyAnswers = UserAnswers()
   private val srnValue = "123"
   private val srn = Some(srnValue)
+  private val isHnSEnabled = false
 
   private def addTrusteeFalse = emptyAnswers.addTrustee(false)
 
@@ -159,7 +160,7 @@ object TrusteesNavigatorSpec extends OptionValues with Enumerable.Implicits {
       s"trusteeKind: $value"
     }
 
-    val trustees = answers.allTrustees(isHnSEnabled = false).length match {
+    val trustees = answers.allTrustees(isHnSEnabled).length match {
       case n if n > 0 => Some(s"trustees: $n")
       case _ => None
     }

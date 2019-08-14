@@ -24,12 +24,10 @@ import identifiers.register.trustees.company.{CompanyDetailsId, HasCompanyNumber
 import javax.inject.Inject
 import models.{Index, Mode}
 import navigators.Navigator
-import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
 import utils.annotations.TrusteesCompany
-import utils.Enumerable
 import viewmodels.{CommonFormWithHintViewModel, Message}
 
 import scala.concurrent.ExecutionContext
@@ -72,7 +70,7 @@ class HasCompanyNumberController @Inject()(override val appConfig: FrontendAppCo
       implicit request =>
         CompanyDetailsId(index).retrieve.right.map {
           details =>
-            post(HasCompanyNumberId(index), mode, form(details.companyName), viewModel(mode, index, srn, details.companyName), None)
+            post(HasCompanyNumberId(index), mode, form(details.companyName), viewModel(mode, index, srn, details.companyName))
         }
     }
 }

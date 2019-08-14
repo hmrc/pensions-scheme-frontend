@@ -20,6 +20,8 @@ import controllers.register.trustees.routes
 import forms.register.trustees.AddTrusteeFormProvider
 import identifiers.SchemeTypeId
 import identifiers.register.trustees.company.CompanyDetailsId
+import identifiers.register.trustees.individual.{TrusteeDetailsId, TrusteeNameId}
+import models.person.{PersonDetails, PersonName}
 import identifiers.register.trustees.individual.TrusteeDetailsId
 import identifiers.register.trustees.{IsTrusteeNewId, TrusteeKindId}
 import models.person.PersonDetails

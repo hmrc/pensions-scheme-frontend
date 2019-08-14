@@ -98,7 +98,7 @@ class HasCompanyNumberControllerSpec extends ControllerSpecBase with MockitoSuga
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
-      FakeUserAnswersService.userAnswer.get(HasCompanyNumberId(index)).value mustEqual true
+      FakeUserAnswersService.verify(HasCompanyNumberId(index), true)
 
     }
 
@@ -117,8 +117,8 @@ class HasCompanyNumberControllerSpec extends ControllerSpecBase with MockitoSuga
       val result = controller(getTrusteeCompanyPlusCrn(hasCrnValue = true)).onSubmit(NormalMode, index, None)(postRequest)
 
       status(result) mustBe SEE_OTHER
-      FakeUserAnswersService.userAnswer.get(HasCompanyNumberId(index)).value mustEqual false
-      FakeUserAnswersService.userAnswer.get(CompanyRegistrationNumberVariationsId(index)) mustBe None
+      FakeUserAnswersService.verify(HasCompanyNumberId(index), false)
+      FakeUserAnswersService.verifyNot(CompanyRegistrationNumberVariationsId(index))
     }
 
     "if user changes answer from no to yes then clean up should take place on no crn reason" in {
@@ -126,8 +126,8 @@ class HasCompanyNumberControllerSpec extends ControllerSpecBase with MockitoSuga
       val result = controller(getTrusteeCompanyPlusCrn(hasCrnValue = false)).onSubmit(NormalMode, index, None)(postRequest)
 
       status(result) mustBe SEE_OTHER
-      FakeUserAnswersService.userAnswer.get(HasCompanyNumberId(index)).value mustEqual true
-      FakeUserAnswersService.userAnswer.get(NoCompanyNumberId(index)) mustBe None
+      FakeUserAnswersService.verify(HasCompanyNumberId(index), true)
+      FakeUserAnswersService.verifyNot(NoCompanyNumberId(index))
     }
   }
 }

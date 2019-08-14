@@ -21,13 +21,16 @@ import identifiers.register.trustees
 import identifiers.register.trustees.TrusteesId
 import models.ReferenceValue
 import play.api.i18n.Messages
-import play.api.libs.json.JsPath
+import play.api.libs.json.{JsPath, JsResult}
 import utils.checkyouranswers.{CheckYourAnswers, ReferenceValueCYA}
 import utils.{CountryOptions, UserAnswers}
 import viewmodels.AnswerRow
 
 case class TrusteeNewNinoId(index: Int) extends TypedIdentifier[ReferenceValue] {
   override def path: JsPath = TrusteesId(index).path \ TrusteeNewNinoId.toString
+
+  override def cleanup(value: Option[ReferenceValue], userAnswers: UserAnswers): JsResult[UserAnswers] =
+    userAnswers.remove(TrusteeNoNINOReasonId(this.index))
 }
 
 object TrusteeNewNinoId {

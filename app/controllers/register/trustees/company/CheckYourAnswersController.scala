@@ -16,14 +16,13 @@
 
 package controllers.register.trustees.company
 
-import config.{FeatureSwitchManagementService, FrontendAppConfig}
+import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRequiredAction, DataRetrievalAction}
+import identifiers.register.trustees.IsTrusteeNewId
 import identifiers.register.trustees.company._
-import identifiers.register.trustees.{IsTrusteeCompleteId, IsTrusteeNewId}
 import javax.inject.Inject
 import models.Mode._
-import models.requests.DataRequest
 import models.{Index, Mode, UpdateMode}
 import navigators.Navigator
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -33,7 +32,7 @@ import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils._
 import utils.annotations.{NoSuspendedCheck, TrusteesCompany}
 import utils.checkyouranswers.Ops._
-import viewmodels.{AnswerRow, AnswerSection}
+import viewmodels.AnswerSection
 import views.html.check_your_answers
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -102,10 +101,8 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
         )))
     }
 
-  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requiredData).async {
+  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requiredData) {
     implicit request =>
-      userAnswersService.setCompleteFlag(mode, srn, IsTrusteeCompleteId(index), request.userAnswers, value = true).map { _ =>
-        Redirect(navigator.nextPage(CheckYourAnswersId, mode, request.userAnswers, srn))
-      }
+      Redirect(navigator.nextPage(CheckYourAnswersId, mode, request.userAnswers, srn))
   }
 }

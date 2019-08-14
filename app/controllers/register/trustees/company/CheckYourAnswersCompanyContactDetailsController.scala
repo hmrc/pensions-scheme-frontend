@@ -19,24 +19,20 @@ package controllers.register.trustees.company
 import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions._
-import identifiers.register.establishers.IsEstablisherNewId
 import identifiers.register.trustees.IsTrusteeNewId
-import identifiers.register.trustees.company.{CompanyEmailId, CompanyPhoneId, IsContactDetailsCompleteId}
+import identifiers.register.trustees.company.{CompanyEmailId, CompanyPhoneId}
 import javax.inject.Inject
 import models.Mode.checkMode
 import models.{Index, Mode}
-import navigators.Navigator
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.NoSuspendedCheck
-import utils.checkyouranswers.Ops._
 import utils.{AllowChangeHelper, CountryOptions, UserAnswers}
 import viewmodels.AnswerSection
+import utils.checkyouranswers.Ops._
 import views.html.check_your_answers
-import utils.annotations.TrusteesCompany
-import utils.Enumerable
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -75,10 +71,7 @@ class CheckYourAnswersCompanyContactDetailsController @Inject()(appConfig: Front
     }
 
   def onSubmit(mode: Mode, index: Index, srn: Option[String] = None): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
-      implicit request =>
-        userAnswersService.setCompleteFlag(mode, srn, IsContactDetailsCompleteId(index), request.userAnswers, value = true).map { _ =>
-          Redirect(controllers.routes.SchemeTaskListController.onPageLoad(mode, srn))
-        }
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData) {
+        Redirect(controllers.routes.SchemeTaskListController.onPageLoad(mode, srn))
     }
 }

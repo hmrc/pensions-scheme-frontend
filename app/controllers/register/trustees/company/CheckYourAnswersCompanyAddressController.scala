@@ -21,7 +21,7 @@ import controllers.Retrievals
 import controllers.actions._
 import identifiers.register.establishers.IsEstablisherNewId
 import identifiers.register.trustees.IsTrusteeNewId
-import identifiers.register.trustees.company.{CompanyAddressId, CompanyAddressYearsId, CompanyPreviousAddressId, IsAddressCompleteId}
+import identifiers.register.trustees.company.{CompanyAddressId, CompanyAddressYearsId, CompanyPreviousAddressId}
 import javax.inject.Inject
 import models.Mode.checkMode
 import models.{Index, Mode}
@@ -30,13 +30,11 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import utils._
 import utils.annotations.{NoSuspendedCheck, TrusteesCompany}
 import utils.checkyouranswers.Ops._
+import utils.{Enumerable, _}
 import viewmodels.AnswerSection
 import views.html.check_your_answers
-import utils.annotations.TrusteesCompany
-import utils.Enumerable
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -80,11 +78,8 @@ class CheckYourAnswersCompanyAddressController @Inject()(appConfig: FrontendAppC
     }
 
   def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (
-    authenticate andThen getData(mode, srn) andThen requireData).async {
-    implicit request =>
-      userAnswersService.setCompleteFlag(mode, srn, IsAddressCompleteId(index), request.userAnswers, true).map { _ =>
+    authenticate andThen getData(mode, srn) andThen requireData) {
         Redirect(controllers.routes.SchemeTaskListController.onPageLoad(mode, srn))
-      }
   }
 
 }

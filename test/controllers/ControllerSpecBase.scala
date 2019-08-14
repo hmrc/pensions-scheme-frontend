@@ -90,7 +90,7 @@ trait ControllerSpecBase extends SpecBase with Enumerable.Implicits with MapForm
 
   def getMandatoryTrustee: FakeDataRetrievalAction = new FakeDataRetrievalAction(Some(
     Json.obj(
-      "trustees" -> Json.arr(
+      TrusteesId.toString -> Json.arr(
         Json.obj(
           TrusteeNameId.toString ->
             PersonName("Test", "Name")

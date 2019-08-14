@@ -224,7 +224,7 @@ class HsTaskListHelperRegistrationSpec extends HsTaskListHelperBehaviour with En
   def establishersSection(mode: Mode, srn: Option[String]): Unit = {
 
     "return the seq of establishers sub sections for non deleted establishers which are all completed" in {
-      val userAnswers = allEstablishers
+      val userAnswers = allAnswers
       val helper = new HsTaskListHelperRegistration(userAnswers, fakeFeatureManagementService)
       helper.establishers(userAnswers, mode, srn) mustBe
         Seq(SchemeDetailsTaskListEntitySection(Some(true), Seq(EntitySpoke(Link(companyLinkText,
@@ -239,7 +239,7 @@ class HsTaskListHelperRegistrationSpec extends HsTaskListHelperBehaviour with En
     }
 
     "return the seq of establishers sub sections for non deleted establishers which are not completed" in {
-      val userAnswers = allEstablishersIncomplete
+      val userAnswers = allAnswersIncomplete
       val helper = new HsTaskListHelperRegistration(userAnswers, fakeFeatureManagementService)
       helper.establishers(userAnswers, NormalMode, None) mustBe
         Seq(
@@ -271,54 +271,28 @@ class HsTaskListHelperRegistrationSpec extends HsTaskListHelperBehaviour with En
   def trusteesSection(mode: Mode, srn: Option[String]): Unit = {
 
     "return the seq of trustees sub sections for non deleted trustees which are all completed when toggle is off" in {
-      val userAnswers = allTrustees(toggled = false)
+      val userAnswers = allAnswers
       val helper = new HsTaskListHelperRegistration(userAnswers, fakeFeatureManagementService)
-      helper.trustees(userAnswers) mustBe
-        Seq(SchemeDetailsTaskListSection(Some(true), Link(individualLinkText,
-          controllers.register.trustees.individual.routes.CheckYourAnswersController.onPageLoad(mode, 0, srn).url), Some("firstName lastName")),
-          SchemeDetailsTaskListSection(Some(true), Link(companyLinkText,
-            controllers.register.trustees.company.routes.CheckYourAnswersController.onPageLoad(mode, 1, srn).url), Some("test company")),
-          SchemeDetailsTaskListSection(Some(true), Link(partnershipLinkText,
-            controllers.register.trustees.partnership.routes.CheckYourAnswersController.onPageLoad(mode, 2, srn).url), Some("test partnership"))
-        )
-    }
-
-    "return the seq of trustees sub sections for non deleted trustees which are all completed when toggle is on" in {
-      val userAnswers = allTrustees(toggled = true)
-      val helper = new HsTaskListHelperRegistration(userAnswers, fakeFeatureManagementServiceToggleOn)
-      helper.trustees(userAnswers) mustBe
-        Seq(SchemeDetailsTaskListSection(Some(true), Link(individualLinkText,
-          controllers.register.trustees.individual.routes.CheckYourAnswersController.onPageLoad(mode, 0, srn).url), Some("firstName lastName")),
-          SchemeDetailsTaskListSection(Some(true), Link(companyLinkText,
-            controllers.register.trustees.company.routes.CheckYourAnswersController.onPageLoad(mode, 1, srn).url), Some("test company")),
-          SchemeDetailsTaskListSection(Some(true), Link(partnershipLinkText,
-            controllers.register.trustees.partnership.routes.CheckYourAnswersController.onPageLoad(mode, 2, srn).url), Some("test partnership"))
+      helper.trustees(userAnswers, mode, srn) mustBe
+        Seq(SchemeDetailsTaskListEntitySection(Some(true), List(EntitySpoke(Link(companyLinkText,
+          controllers.register.trustees.company.routes.CheckYourAnswersController.onPageLoad(mode, 0, srn).url), Some(true))), Some("test company")),
+          SchemeDetailsTaskListEntitySection(Some(true), List(EntitySpoke(Link(individualLinkText,
+          controllers.register.trustees.individual.routes.CheckYourAnswersController.onPageLoad(mode, 1, srn).url), Some(true))), Some("firstName lastName")),
+          SchemeDetailsTaskListEntitySection(Some(true), List(EntitySpoke(Link(partnershipLinkText,
+            controllers.register.trustees.partnership.routes.CheckYourAnswersController.onPageLoad(mode, 2, srn).url), Some(true))), Some("test partnership"))
         )
     }
 
     "return the seq of trustees sub sections for non deleted trustees which are not completed when toggle off" in {
-      val userAnswers = allTrustees(isCompleteTrustees = false, toggled = false)
+      val userAnswers = allAnswersIncomplete
       val helper = new HsTaskListHelperRegistration(userAnswers, fakeFeatureManagementService)
-      helper.trustees(userAnswers) mustBe
-        Seq(SchemeDetailsTaskListSection(Some(false), Link(individualLinkText,
-          controllers.register.trustees.individual.routes.TrusteeDetailsController.onPageLoad(mode, 0, srn).url), Some("firstName lastName")),
-          SchemeDetailsTaskListSection(Some(false), Link(companyLinkText,
-            controllers.register.trustees.company.routes.CompanyDetailsController.onPageLoad(mode, 1, srn).url), Some("test company")),
-          SchemeDetailsTaskListSection(Some(false), Link(partnershipLinkText,
-            controllers.register.trustees.partnership.routes.TrusteeDetailsController.onPageLoad(mode, 2, srn).url), Some("test partnership"))
-        )
-    }
-
-    "return the seq of trustees sub sections for non deleted trustees which are not completed when toggle on" in {
-      val userAnswers = allTrustees(isCompleteTrustees = false, toggled = true)
-      val helper = new HsTaskListHelperRegistration(userAnswers, fakeFeatureManagementServiceToggleOn)
-      helper.trustees(userAnswers) mustBe
-        Seq(SchemeDetailsTaskListSection(Some(false), Link(individualLinkText,
-          controllers.register.trustees.individual.routes.TrusteeDetailsController.onPageLoad(mode, 0, srn).url), Some("firstName lastName")),
-          SchemeDetailsTaskListSection(Some(false), Link(companyLinkText,
-            controllers.register.trustees.company.routes.CompanyDetailsController.onPageLoad(mode, 1, srn).url), Some("test company")),
-          SchemeDetailsTaskListSection(Some(false), Link(partnershipLinkText,
-            controllers.register.trustees.partnership.routes.TrusteeDetailsController.onPageLoad(mode, 2, srn).url), Some("test partnership"))
+      helper.trustees(userAnswers, mode, srn) mustBe
+        Seq(SchemeDetailsTaskListEntitySection(Some(false), List(EntitySpoke(Link(companyLinkText,
+          controllers.register.trustees.company.routes.CompanyDetailsController.onPageLoad(mode, 0, srn).url), Some(false))), Some("test company")),
+          SchemeDetailsTaskListEntitySection(Some(false), List(EntitySpoke(Link(individualLinkText,
+          controllers.register.trustees.individual.routes.TrusteeDetailsController.onPageLoad(mode, 1, srn).url), Some(false))), Some("firstName lastName")),
+          SchemeDetailsTaskListEntitySection(Some(false), List(EntitySpoke(Link(partnershipLinkText,
+            controllers.register.trustees.partnership.routes.TrusteeDetailsController.onPageLoad(mode, 2, srn).url), Some(false))), Some("test partnership"))
         )
     }
 
@@ -337,11 +311,11 @@ class HsTaskListHelperRegistrationSpec extends HsTaskListHelperBehaviour with En
                             _.set(IsPartnershipCompleteId(2))(false)
                           ))))))))))).asOpt.value
       val helper = new HsTaskListHelperRegistration(userAnswers, fakeFeatureManagementService)
-      helper.trustees(userAnswers) mustBe
-        Seq(SchemeDetailsTaskListSection(Some(false), Link(individualLinkText,
-          controllers.register.trustees.individual.routes.TrusteeDetailsController.onPageLoad(mode, 0, srn).url), Some("firstName lastName")),
-          SchemeDetailsTaskListSection(Some(false), Link(partnershipLinkText,
-            controllers.register.trustees.partnership.routes.TrusteeDetailsController.onPageLoad(mode, 2, srn).url), Some("test partnership"))
+      helper.trustees(userAnswers, mode, srn) mustBe
+        Seq(SchemeDetailsTaskListEntitySection(Some(false), List(EntitySpoke(Link(individualLinkText,
+          controllers.register.trustees.individual.routes.TrusteeDetailsController.onPageLoad(mode, 0, srn).url), Some(false))), Some("firstName lastName")),
+          SchemeDetailsTaskListEntitySection(Some(false), List(EntitySpoke(Link(partnershipLinkText,
+            controllers.register.trustees.partnership.routes.TrusteeDetailsController.onPageLoad(mode, 2, srn).url), Some(false))), Some("test partnership"))
         )
     }
   }
