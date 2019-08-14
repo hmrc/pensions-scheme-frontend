@@ -35,7 +35,7 @@ import scala.concurrent.ExecutionContext
 class NoCompanyNumberController @Inject()(override val appConfig: FrontendAppConfig,
                                           override val messagesApi: MessagesApi,
                                           override val userAnswersService: UserAnswersService,
-                                          @TrusteesCompany val navigator: Navigator,
+                                           val navigator: Navigator,
                                           authenticate: AuthAction,
                                           getData: DataRetrievalAction,
                                           allowAccess: AllowAccessActionProvider,

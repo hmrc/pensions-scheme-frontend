@@ -19,8 +19,8 @@ package navigators
 import connectors.UserAnswersCacheConnector
 import controllers.routes.AnyMoreChangesController
 import identifiers.{Identifier, LastPageId, TypedIdentifier}
-import models._
 import models.requests.IdentifiedRequest
+import models._
 import play.api.Logger
 import play.api.libs.json.Reads
 import play.api.mvc.Call
@@ -98,33 +98,25 @@ abstract class AbstractNavigator extends Navigator {
     navigation.page
   }
 
+  // TODO: Should we remove this? It is essentially abstracting over the match, does this provide enough value?
   protected def booleanNav(id: TypedIdentifier[Boolean],
                            answers: UserAnswers,
-                           mode: Mode,
                            truePath: => Call,
-                           falsePath: => Call): Call =
+                           falsePath: => Call): Call = {
 
     answers.get(id) match {
       case Some(true) => truePath
       case Some(false) => falsePath
-      case _ => sessionExpiredPage
+      case _ => controllers.routes.SessionExpiredController.onPageLoad()
     }
-
-  protected def booleanNav(id: TypedIdentifier[Boolean],
-                           answers: UserAnswers,
-                           mode: Mode,
-                           index: Index,
-                           srn: Option[String],
-                           truePath: (Mode, Int, Option[String]) => Call,
-                           falsePath: (Mode, Int, Option[String]) => Call): Call =
-    booleanNav(id, answers, mode, truePath(mode, index, srn), falsePath(mode, index, srn))
-
-  protected def sessionExpiredPage: Call = controllers.routes.SessionExpiredController.onPageLoad()
+  }
 
   protected def anyMoreChangesPage(srn: Option[String]): Call = AnyMoreChangesController.onPageLoad(srn)
 
-  protected def goToSessionExpiredPage: Identifier => Call = _ => sessionExpiredPage
+  protected def navigateOrSessionReset(routeMapping: PartialFunction[Identifier, Call], identifier: Identifier): Option[NavigateTo] =
+    if (routeMapping.isDefinedAt(identifier))
+      NavigateTo.dontSave(routeMapping(identifier))
+    else
+      None
 
-  protected def applyRoutes(pf:(Mode, UserAnswers, Option[String]) => PartialFunction[Identifier,Call], from: NavigateFrom, mode:Mode, srn:Option[String]): Option[NavigateTo] =
-    NavigateTo.dontSave(pf(mode, from.userAnswers, srn).applyOrElse(from.id, goToSessionExpiredPage))
 }

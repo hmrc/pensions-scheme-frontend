@@ -41,7 +41,7 @@ class WhatYouWillNeedIndividualDetailsControllerSpec extends ControllerSpecBase 
       new DataRequiredActionImpl
     )
 
-  lazy val href = controllers.register.trustees.individual.routes.WhatYouWillNeedIndividualDetailsController.onPageLoad(NormalMode, index=Index(0), None)
+  lazy val href = controllers.register.trustees.individual.routes.TrusteeDOBController.onPageLoad(NormalMode, index=Index(0), None)
 
   def viewAsString(): String = whatYouWillNeedIndividualDetails(frontendAppConfig, None, href, None, personName)(fakeRequest, messages).toString
 

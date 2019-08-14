@@ -43,7 +43,7 @@ class CompanyPreviousAddressController @Inject()(
                                                   val appConfig: FrontendAppConfig,
                                                   val messagesApi: MessagesApi,
                                                   val userAnswersService: UserAnswersService,
-                                                  @TrusteesCompany val navigator: Navigator,
+                                                   val navigator: Navigator,
                                                   authenticate: AuthAction,
                                                   getData: DataRetrievalAction,
                                                   allowAccess: AllowAccessActionProvider,

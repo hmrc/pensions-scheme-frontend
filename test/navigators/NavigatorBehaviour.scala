@@ -21,6 +21,7 @@ import controllers.routes.AnyMoreChangesController
 import identifiers.{Identifier, TypedIdentifier}
 import models.Mode.checkMode
 import models.address.{Address, TolerantAddress}
+import models.person.PersonName
 import models.requests.IdentifiedRequest
 import models.{CheckMode, Mode, NormalMode, ReferenceValue}
 import org.scalatest.exceptions.TableDrivenPropertyCheckFailedException
@@ -43,6 +44,7 @@ trait NavigatorBehaviour extends PropertyChecks with OptionValues {
   protected implicit val hc: HeaderCarrier = HeaderCarrier()
 
   protected val someStringValue = "111111"
+  protected val somePersonNameValue = PersonName("abc", "def")
   protected val someRefValue = ReferenceValue(someStringValue)
   protected val someTolerantAddress = TolerantAddress(None, None, None, None, None, None)
   protected val someAddress = Address("line 1", "line 2", None, None, None, "GB")
@@ -53,11 +55,11 @@ trait NavigatorBehaviour extends PropertyChecks with OptionValues {
     Tuple3(id, userAnswers, call)
   }
 
-  protected def anyMoreChangesPage: Call = AnyMoreChangesController.onPageLoad(None)
+  protected def anyMoreChangesPage(srn: Option[String] = None): Call = AnyMoreChangesController.onPageLoad(srn)
 
   protected def navigatorWithRoutesForMode(mode: Mode)(navigator: Navigator,
                                                        routes: TableFor3[Identifier, UserAnswers, Call],
-                                                       srn: Option[String] = None): Unit = {
+                                                       srn: Option[String]): Unit = {
     forAll(routes) {
       (id: Identifier, userAnswers: UserAnswers, call: Call) =>
         s"move from $id to $call in ${Mode.jsLiteral.to(mode)} with data: ${userAnswers.toString}" in {
@@ -141,7 +143,7 @@ trait NavigatorBehaviour extends PropertyChecks with OptionValues {
 
     val testId: Identifier = new Identifier {}
 
-    s"behaviour like a navigator without normalAndUpdateModeRoutes with $mode" when {
+    s"behaviour like a navigator without normalAndEditModeRoutes with $mode" when {
       "navigating in NormalMode" must {
         "return a call given a non-configured Id" in {
           navigator.nextPage(testId, mode, UserAnswers()) mustBe a[Call]

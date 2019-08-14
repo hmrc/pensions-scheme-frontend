@@ -41,7 +41,7 @@ import scala.language.implicitConversions
 
 class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
                                            override val messagesApi: MessagesApi,
-                                           @TrusteesIndividual navigator: Navigator,
+                                           navigator: Navigator,
                                            authenticate: AuthAction,
                                            getData: DataRetrievalAction,
                                            @NoSuspendedCheck allowAccess: AllowAccessActionProvider,

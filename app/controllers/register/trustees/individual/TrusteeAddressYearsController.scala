@@ -38,7 +38,7 @@ import scala.concurrent.ExecutionContext
 class TrusteeAddressYearsController @Inject()(
                                                override val appConfig: FrontendAppConfig,
                                                val userAnswersService: UserAnswersService,
-                                               @TrusteesIndividual override val navigator: Navigator,
+                                               override val navigator: Navigator,
                                                override val messagesApi: MessagesApi,
                                                authenticate: AuthAction,
                                                getData: DataRetrievalAction,

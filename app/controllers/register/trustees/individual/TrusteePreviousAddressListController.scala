@@ -36,7 +36,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class TrusteePreviousAddressListController @Inject()(override val appConfig: FrontendAppConfig,
                                                      override val messagesApi: MessagesApi,
-                                                     @TrusteesIndividual override val navigator: Navigator,
+                                                     override val navigator: Navigator,
                                                      val userAnswersService: UserAnswersService,
                                                      authenticate: AuthAction,
                                                      getData: DataRetrievalAction,

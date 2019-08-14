@@ -133,7 +133,7 @@ class TrusteePreviousAddressControllerSpec extends ControllerSpecBase with CSRFR
             bind[FrontendAppConfig].to(frontendAppConfig),
             bind[MessagesApi].to(messagesApi),
             bind[UserAnswersService].toInstance(FakeUserAnswersService),
-            bind(classOf[Navigator]).qualifiedWith(classOf[TrusteesIndividual]).toInstance(fakeNavigator),
+            bind(classOf[Navigator]).toInstance(fakeNavigator),
             bind[AuthAction].to(FakeAuthAction),
             bind[DataRetrievalAction].toInstance(retrieval(isHnsEnabled)),
             bind[DataRequiredAction].to(new DataRequiredActionImpl),

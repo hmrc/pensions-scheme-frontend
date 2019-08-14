@@ -118,7 +118,7 @@ object IndividualPostCodeLookupControllerSpec extends ControllerSpecBase with Mo
       bind[DataRetrievalAction].toInstance(retrieval),
       bind[DataRequiredAction].to(new DataRequiredActionImpl),
       bind[AddressLookupConnector].toInstance(fakeAddressLookupConnector),
-      bind(classOf[Navigator]).qualifiedWith(classOf[TrusteesIndividual]).toInstance(fakeNavigator),
+      bind(classOf[Navigator]).toInstance(fakeNavigator),
       bind[UserAnswersService].toInstance(FakeUserAnswersService),
       bind[PostCodeLookupFormProvider].to(formProvider)
     )) {

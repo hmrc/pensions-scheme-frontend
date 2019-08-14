@@ -36,7 +36,7 @@ import scala.concurrent.ExecutionContext
 class CompanyAddressYearsController @Inject()(
                                                override val appConfig: FrontendAppConfig,
                                                override val messagesApi: MessagesApi,
-                                               @TrusteesCompany override val navigator: Navigator,
+                                                override val navigator: Navigator,
                                                val userAnswersService: UserAnswersService,
                                                authenticate: AuthAction,
                                                getData: DataRetrievalAction,

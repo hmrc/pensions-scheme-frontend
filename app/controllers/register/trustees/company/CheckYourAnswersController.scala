@@ -45,7 +45,7 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
                                            @NoSuspendedCheck allowAccess: AllowAccessActionProvider,
                                            requiredData: DataRequiredAction,
                                            implicit val countryOptions: CountryOptions,
-                                           @TrusteesCompany navigator: Navigator,
+                                            navigator: Navigator,
                                            userAnswersService: UserAnswersService,
                                            allowChangeHelper: AllowChangeHelper
                                           )(implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport {
