@@ -367,7 +367,7 @@ final case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Impl
           readEntities(
             trustees,
             index =>
-                readsIndividual(index) orElse readsIndividualNonHns(index)
+              (if(isHnSEnabled) readsIndividual(index) else readsIndividualNonHns(index))
                 orElse readsCompany(index)
                 orElse readsPartnership(index)
                 orElse readsSkeleton(index)

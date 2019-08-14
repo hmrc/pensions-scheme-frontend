@@ -78,16 +78,7 @@ case class DirectorEntityNonHnS(id: DirectorDetailsId, name: String, isDeleted: 
 
 case class DirectorEntity(id: DirectorNameId, name: String, isDeleted: Boolean,
                                 isCompleted: Boolean, isNewEntity: Boolean, noOfRecords : Int) extends Director[DirectorNameId] {
-  override def editLink(mode: Mode, srn: Option[String]): Option[String] = {
-    (isNewEntity, isCompleted) match {
-      case (false, _) => Some(controllers.register.establishers.company.director.routes.CheckYourAnswersController.onPageLoad(
-        id.establisherIndex, id.directorIndex, mode, srn).url)
-      case (_, true) => Some(controllers.register.establishers.company.director.routes.CheckYourAnswersController.onPageLoad(
-        id.establisherIndex, id.directorIndex, mode, srn).url)
-      case (_, false) => Some(controllers.register.establishers.company.director.routes.DirectorNameController.onPageLoad(
-        mode, id.establisherIndex, id.directorIndex, srn).url)
-    }
-  }
+  override def editLink(mode: Mode, srn: Option[String]): Option[String] = None
 
   override def deleteLink(mode: Mode, srn: Option[String]): Option[String] = {
     mode match {
