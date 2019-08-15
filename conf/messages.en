@@ -1552,6 +1552,12 @@ messages__whatYouWillNeedEstablisherCompanyContact__lede = You will need to tell
 messages__whatYouWillNeedEstablisherCompanyContact__item1 = contact email address
 messages__whatYouWillNeedEstablisherCompanyContact__item2 = contact phone number
 
+messages__whatYouWillNeedTrusteeIndividualContact__title = Contact details
+messages__whatYouWillNeedTrusteeIndividualContact__h1 = Contact details
+messages__whatYouWillNeedTrusteeIndividualContact__p1 = You will need to tell us the trustee’s:
+messages__whatYouWillNeedTrusteeIndividualContact__item1 = contact email address
+messages__whatYouWillNeedTrusteeIndividualContact__item2 = contact phone number
+
 messages__whatYouWillNeedDirectors__title = Directors
 messages__whatYouWillNeedDirectors__h1 = Directors
 messages__whatYouWillNeedDirectors__p1 = We need to know about every director associated with the company you’re registering.

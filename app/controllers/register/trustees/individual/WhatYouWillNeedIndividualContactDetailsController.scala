@@ -16,18 +16,20 @@
 
 package controllers.register.trustees.individual
 
+import akka.actor.FSM.Normal
 import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions._
 import javax.inject.Inject
-import models.{Index, Mode}
+import models.{Index, Mode, NormalMode}
 import navigators.Navigator
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent}
+import play.api.mvc.{Action, AnyContent, Call}
 import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.Enumerable
-import utils.annotations.TrusteesIndividual
+import views.html.register.trustees.individual.whatYouWillNeedIndividualContactDetailsView
+import views.html.schemeName
 
 import scala.concurrent.ExecutionContext
 
@@ -43,10 +45,12 @@ class WhatYouWillNeedIndividualContactDetailsController @Inject()(val appConfig:
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData) {
-      implicit request => NotImplemented("Not implemented: " + this.getClass.toString)
+      implicit request => {
+        // TODO: Move to navigator
+        val nextPageHref = routes.TrusteeEmailController.onPageLoad(mode, index, srn)
+
+        Ok(whatYouWillNeedIndividualContactDetailsView(appConfig, existingSchemeName, nextPageHref, srn))
+      }
     }
 
-  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData) {
-    implicit request => NotImplemented("Not implemented: " + this.getClass.toString)
-  }
 }
