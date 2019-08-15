@@ -17,36 +17,65 @@
 package controllers.register.trustees.individual
 
 import config.FrontendAppConfig
-import controllers.Retrievals
+import controllers.EmailAddressController
 import controllers.actions._
+import forms.EmailFormProvider
+import identifiers.register.trustees.individual.{TrusteeEmailId, TrusteeNameId}
 import javax.inject.Inject
 import models.{Index, Mode}
 import navigators.Navigator
+import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import utils.Enumerable
-import utils.annotations.TrusteesIndividual
+import viewmodels.{CommonFormWithHintViewModel, Message}
 
 import scala.concurrent.ExecutionContext
 
-class TrusteeEmailController @Inject()(val appConfig: FrontendAppConfig,
-                                       val messagesApi: MessagesApi,
-                                       val userAnswersService: UserAnswersService,
-                                       val navigator: Navigator,
-                                       authenticate: AuthAction,
-                                       getData: DataRetrievalAction,
-                                       allowAccess: AllowAccessActionProvider,
-                                       requireData: DataRequiredAction
-                                     )(implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
+class TrusteeEmailController  @Inject()(val appConfig: FrontendAppConfig,
+                                        override val messagesApi: MessagesApi,
+                                        authenticate: AuthAction,
+                                        getData: DataRetrievalAction,
+                                        override val userAnswersService: UserAnswersService,
+                                        allowAccess: AllowAccessActionProvider,
+                                        requireData: DataRequiredAction,
+                                        val navigator: Navigator,
+                                        formProvider: EmailFormProvider
+                                       )(implicit val ec: ExecutionContext) extends EmailAddressController with I18nSupport {
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData) {
-      implicit request => NotImplemented("Not implemented: " + this.getClass.toString)
+  protected val form: Form[String] = formProvider()
+
+  private def viewModel(mode: Mode, index: Index, srn: Option[String]): Retrieval[CommonFormWithHintViewModel] =
+    Retrieval {
+      implicit request =>
+        TrusteeNameId(index).retrieve.right.map {
+          details =>
+            CommonFormWithHintViewModel(
+              routes.TrusteeEmailController.onSubmit(mode, index, srn),
+              Message("messages__common_email__heading", Message("messages__common__address_years__trustee").resolve),
+              Message("messages__common_email__heading", details.fullName),
+              Some(Message("messages__establisher_email__hint")),
+              srn = srn
+            )
+        }
     }
 
-  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData) {
-    implicit request => NotImplemented("Not implemented: " + this.getClass.toString)
-  }
+  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+      implicit request =>
+        viewModel(mode, index, srn).retrieve.right.map {
+          vm =>
+            get(TrusteeEmailId(index), form, vm)
+        }
+    }
+
+  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+      implicit request =>
+        viewModel(mode, index, srn).retrieve.right.map {
+          vm =>
+            post(TrusteeEmailId(index), mode, form, vm, None)
+        }
+    }
+
 }
