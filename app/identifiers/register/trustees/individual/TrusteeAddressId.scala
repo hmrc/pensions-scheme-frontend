@@ -19,10 +19,11 @@ package identifiers.register.trustees.individual
 import identifiers.TypedIdentifier
 import identifiers.register.trustees.TrusteesId
 import models.address.Address
+import play.api.i18n.Messages
 import play.api.libs.json.JsPath
-import utils.CountryOptions
+import utils.{CountryOptions, UserAnswers}
 import utils.checkyouranswers.{AddressCYA, CheckYourAnswers}
-
+import viewmodels.AnswerRow
 
 case class TrusteeAddressId(index: Int) extends TypedIdentifier[Address] {
   override def path: JsPath = TrusteesId(index).path \ TrusteeAddressId.toString
@@ -31,6 +32,21 @@ case class TrusteeAddressId(index: Int) extends TypedIdentifier[Address] {
 object TrusteeAddressId {
   override lazy val toString: String = "trusteeAddressId"
 
-  implicit def cya(implicit countryOptions: CountryOptions): CheckYourAnswers[TrusteeAddressId] =
-    AddressCYA[TrusteeAddressId](changeAddress = "messages__visuallyhidden__trustee__address")()
+  implicit def cya(implicit countryOptions: CountryOptions, messages: Messages, ua: UserAnswers): CheckYourAnswers[TrusteeAddressId] =
+    new CheckYourAnswers[TrusteeAddressId] {
+      override def row(id: TrusteeAddressId)(changeUrl: String, ua: UserAnswers): Seq[AnswerRow] = {
+        def trusteeName(index: Int) = ua.get(TrusteeNameId(index)).fold(messages("messages__theTrustee"))(_.fullName)
+
+        def label(index: Int) = messages("messages__trusteeAddress", trusteeName(index))
+
+        def changeAddress(index: Int) = messages("messages__changeTrusteeAddress", trusteeName(index))
+
+        AddressCYA(
+          label = label(id.index),
+          changeAddress = changeAddress(id.index)
+        )().row(id)(changeUrl, ua)
+      }
+
+      override def updateRow(id: TrusteeAddressId)(changeUrl: String, ua: UserAnswers): Seq[AnswerRow] = row(id)(changeUrl, ua)
+    }
 }
