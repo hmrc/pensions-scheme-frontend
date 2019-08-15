@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package navigators
+package navigators.trustees.individuals
 
 import base.SpecBase
 import controllers.register.trustees.individual.routes._
@@ -23,6 +23,7 @@ import identifiers.Identifier
 import identifiers.register.trustees.IsTrusteeNewId
 import identifiers.register.trustees.individual._
 import models._
+import navigators.{Navigator, NavigatorBehaviour}
 import org.joda.time.LocalDate
 import org.scalatest.MustMatchers
 import org.scalatest.prop._
