@@ -44,8 +44,11 @@ class EmailAddressViewSpec extends QuestionViewBehaviours[String] {
     (form: Form[String]) => emailAddress(frontendAppConfig, form, viewModel, Some("test scheme"))(fakeRequest, messages)
 
   behave like normalPage(createView, messageKeyPrefix,
-    messages("messages__common_email__heading", companyName),
-   "_hint")
+    messages("messages__common_email__heading", companyName))
+
+  "have correct hint text" in {
+    assertContainsText(asDocument(createView()),messages("messages__email__hint"))
+  }
 
   behave like pageWithTextFields(
     createViewWithForm,
