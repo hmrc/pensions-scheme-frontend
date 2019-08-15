@@ -27,6 +27,7 @@ import identifiers.register.trustees.individual._
 import models.Mode.journeyMode
 import models._
 import models.requests.IdentifiedRequest
+import navigators.trustees.individuals.TrusteesIndividualDetailsNavigator
 import play.api.mvc.Call
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.{Toggles, UserAnswers}
@@ -36,7 +37,7 @@ import scala.concurrent.ExecutionContext
 class TrusteesIndividualFeatureSwitchNavigator @Inject() (
                                                         featureSwitchService: FeatureSwitchManagementService,
                                                         oldNavigator: TrusteesIndividualNavigatorOld,
-                                                        navigator: TrusteesIndividualNavigator
+                                                        navigator: TrusteesIndividualDetailsNavigator
                                                       ) extends Navigator {
 
   override def nextPageOptional(id: Identifier,
