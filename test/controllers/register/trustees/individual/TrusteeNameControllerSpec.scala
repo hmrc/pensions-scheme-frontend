@@ -60,7 +60,7 @@ class TrusteeNameControllerSpec extends ControllerSpecBase with OneAppPerSuite {
 
   "TrusteeNameController" must {
     "return OK and the correct view for a GET" in {
-      val app = applicationBuilder(getEmptyData, featureSwitchEnabled = false).build()
+      val app = applicationBuilder(getEmptyData, featureSwitchEnabled = true).build()
 
       val controller = app.injector.instanceOf[TrusteeNameController]
 
@@ -74,7 +74,7 @@ class TrusteeNameControllerSpec extends ControllerSpecBase with OneAppPerSuite {
     }
 
     "populate the view correctly on a GET when the question has previously been answered" in {
-      val app = applicationBuilder(getMandatoryTrustee, featureSwitchEnabled = false).build()
+      val app = applicationBuilder(getMandatoryTrustee, featureSwitchEnabled = true).build()
 
       val controller = app.injector.instanceOf[TrusteeNameController]
 
@@ -98,7 +98,7 @@ class TrusteeNameControllerSpec extends ControllerSpecBase with OneAppPerSuite {
 
       when(mockUserAnswersService.upsert(any(), any(), any())(any(), any(), any())).thenReturn(Future.successful(validData))
 
-      val app = applicationBuilder(getEmptyData, featureSwitchEnabled = false)
+      val app = applicationBuilder(getEmptyData, featureSwitchEnabled = true)
         .overrides(
           bind[UserAnswersService].toInstance(mockUserAnswersService),
           bind(classOf[Navigator]).toInstance(new FakeNavigator(onwardRoute))
@@ -115,7 +115,7 @@ class TrusteeNameControllerSpec extends ControllerSpecBase with OneAppPerSuite {
     }
 
     "return a Bad Request and errors when invalid data is submitted" in {
-      val app = applicationBuilder(getEmptyData, featureSwitchEnabled = false).build()
+      val app = applicationBuilder(getEmptyData, featureSwitchEnabled = true).build()
 
       val controller = app.injector.instanceOf[TrusteeNameController]
 
@@ -129,7 +129,7 @@ class TrusteeNameControllerSpec extends ControllerSpecBase with OneAppPerSuite {
     }
 
     "return a Bad Request and errors when no data is submitted" in {
-      val app = applicationBuilder(getEmptyData, featureSwitchEnabled = false).build()
+      val app = applicationBuilder(getEmptyData, featureSwitchEnabled = true).build()
 
       val controller = app.injector.instanceOf[TrusteeNameController]
 
@@ -151,7 +151,7 @@ class TrusteeNameControllerSpec extends ControllerSpecBase with OneAppPerSuite {
 
       when(mockUserAnswersService.upsert(any(), any(), any())(any(), any(), any())).thenReturn(Future.successful(validData))
 
-      val app = applicationBuilder(getRelevantData, featureSwitchEnabled = false)
+      val app = applicationBuilder(getRelevantData, featureSwitchEnabled = true)
         .overrides(
             bind[UserAnswersService].toInstance(mockUserAnswersService)
         ).build()
@@ -176,5 +176,5 @@ object TrusteeNameControllerSpec extends ControllerSpecBase with MockitoSugar {
   private val firstTrusteeIndex: Index = Index(0)
   private val mockUserAnswersService: UserAnswersService = mock[UserAnswersService]
   private val mockSectionComplete: SectionComplete = mock[SectionComplete]
-  private def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
+  private def onwardRoute: Call = Call("GET", "/foward-url")
 }
