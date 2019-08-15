@@ -33,7 +33,7 @@ import viewmodels.{ContactDetailsViewModel, Message}
 import scala.concurrent.ExecutionContext
 
 class CompanyContactDetailsController @Inject()(
-                                                 @TrusteesCompany override val navigator: Navigator,
+                                                  override val navigator: Navigator,
                                                  override val appConfig: FrontendAppConfig,
                                                  override val messagesApi: MessagesApi,
                                                  val userAnswersService: UserAnswersService,

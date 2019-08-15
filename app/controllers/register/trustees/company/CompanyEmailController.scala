@@ -40,7 +40,7 @@ class CompanyEmailController @Inject()(val appConfig: FrontendAppConfig,
                                        override val userAnswersService: UserAnswersService,
                                        allowAccess: AllowAccessActionProvider,
                                        requireData: DataRequiredAction,
-                                       @TrusteesCompany val navigator: Navigator,
+                                        val navigator: Navigator,
                                        formProvider: EmailFormProvider
                                       )(implicit val ec: ExecutionContext) extends EmailAddressController with I18nSupport {
 
@@ -55,7 +55,7 @@ class CompanyEmailController @Inject()(val appConfig: FrontendAppConfig,
               controllers.register.trustees.company.routes.CompanyEmailController.onSubmit(mode,index,srn),
               Message("messages__establisher_email__title"),
               Message("messages__common_email__heading", details.companyName),
-              Some(Message("messages__establisher_email__hint")),
+              Some(Message("messages__email__hint")),
               srn = srn
             )
         }

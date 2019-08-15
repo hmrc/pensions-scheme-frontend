@@ -65,7 +65,7 @@ trait Generators {
     arbitrary[Int] suchThat (_ < value)
 
   def intsAboveValue(value: Int): Gen[Int] =
-    arbitrary[Int] suchThat (_ > value)
+    Gen.chooseNum(value, Int.MaxValue)
 
   def intsOutsideRange(min: Int, max: Int): Gen[Int] =
     arbitrary[Int] suchThat (x => x < min || x > max)
@@ -124,6 +124,14 @@ trait Generators {
         case _ => true
       }
     )
+  }
+
+  implicit val arbitraryLocalDate: Arbitrary[org.joda.time.LocalDate] = Arbitrary {
+    for {
+      year  <- intsAboveValue(1900) suchThat (_ < LocalDate.now().getYear)
+      month <- Gen.chooseNum(1, 12)
+      day   <- Gen.chooseNum(1, 28)
+    } yield new org.joda.time.LocalDate(year, month, day)
   }
 
 }

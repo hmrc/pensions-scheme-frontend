@@ -57,7 +57,7 @@ class TrusteeAddressControllerSpec extends ControllerBehaviours {
   private implicit val builder: GuiceApplicationBuilder = new GuiceApplicationBuilder()
     .overrides(
       bind[FrontendAppConfig].to(frontendAppConfig),
-      bind[Navigator].qualifiedWith(classOf[TrusteesIndividual]).toInstance(FakeNavigator),
+      bind[Navigator].toInstance(FakeNavigator),
       bind[UserAnswersService].toInstance(FakeUserAnswersService),
       bind[AuthAction].to(FakeAuthAction),
       bind[DataRetrievalAction].to(retrieval),

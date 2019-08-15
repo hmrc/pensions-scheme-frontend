@@ -40,7 +40,7 @@ class CompanyUniqueTaxReferenceController @Inject()(
                                                      appConfig: FrontendAppConfig,
                                                      override val messagesApi: MessagesApi,
                                                      userAnswersService: UserAnswersService,
-                                                     @TrusteesCompany navigator: Navigator,
+                                                      navigator: Navigator,
                                                      authenticate: AuthAction,
                                                      getData: DataRetrievalAction,
                                                      allowAccess: AllowAccessActionProvider,

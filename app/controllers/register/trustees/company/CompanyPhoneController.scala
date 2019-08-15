@@ -40,7 +40,7 @@ class CompanyPhoneController @Inject()(val appConfig: FrontendAppConfig,
                                        override val userAnswersService: UserAnswersService,
                                        allowAccess: AllowAccessActionProvider,
                                        requireData: DataRequiredAction,
-                                       @TrusteesCompany val navigator: Navigator,
+                                        val navigator: Navigator,
                                        formProvider: PhoneFormProvider
                                       )(implicit val ec: ExecutionContext) extends PhoneNumberController with I18nSupport {
 
@@ -55,7 +55,7 @@ class CompanyPhoneController @Inject()(val appConfig: FrontendAppConfig,
               routes.CompanyPhoneController.onSubmit(mode, index, srn),
               Message("messages__establisher_phone__title"),
               Message("messages__common_phone__heading", details.companyName),
-              Some(Message("messages__establisher_phone__hint")),
+              Some(Message("messages__phone__hint")),
               srn = srn
             )
         }

@@ -32,17 +32,6 @@ class FeatureSwitchModule extends Module {
       }
     )
 
-    val hubSpokeEnabled = configuration.getBoolean("features.is-establisher-company-hns").getOrElse(false)
-
-    val trusteesNavigatorBinding =
-      if (hubSpokeEnabled) {
-        Seq(bind(classOf[Navigator]).qualifiedWith[TrusteesIndividual].to(classOf[TrusteesIndividualNavigator]),
-        bind(classOf[Navigator]).qualifiedWith[TrusteesCompany].to(classOf[TrusteesCompanyNavigator]))
-      } else {
-        Seq(bind(classOf[Navigator]).qualifiedWith[TrusteesIndividual].to(classOf[TrusteesIndividualNavigatorOld]),
-        bind(classOf[Navigator]).qualifiedWith[TrusteesCompany].to(classOf[TrusteesCompanyNavigatorOld]))
-      }
-
-    featureSwitchBinding ++ trusteesNavigatorBinding
+    featureSwitchBinding
   }
 }

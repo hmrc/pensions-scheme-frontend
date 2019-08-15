@@ -36,7 +36,7 @@ import scala.concurrent.ExecutionContext
 class TrusteeHasNINOController @Inject()(val appConfig: FrontendAppConfig,
                                          val messagesApi: MessagesApi,
                                          val userAnswersService: UserAnswersService,
-                                         @TrusteesIndividual val navigator: Navigator,
+                                         val navigator: Navigator,
                                          authenticate: AuthAction,
                                          allowAccess: AllowAccessActionProvider,
                                          getData: DataRetrievalAction,
@@ -54,7 +54,7 @@ class TrusteeHasNINOController @Inject()(val appConfig: FrontendAppConfig,
     )
 
   private def form(personName: String): Form[Boolean] =
-    formProvider(Message("messages__genericHasNino__error__required", personName), personName)
+    formProvider("messages__genericHasNino__error__required", personName)
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
