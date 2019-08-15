@@ -14,16 +14,14 @@
  * limitations under the License.
  */
 
-package controllers.register.establishers.company.director
+package controllers.register.trustees.individual
 
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.PhoneFormProvider
-import identifiers.register.establishers.company.director.DirectorNameId
+import identifiers.register.trustees.individual.TrusteeNameId
 import models.person.PersonName
 import models.{Index, NormalMode}
-import org.scalatest.BeforeAndAfterEach
-import org.scalatest.mockito.MockitoSugar
 import play.api.data.Form
 import play.api.mvc.Call
 import play.api.test.Helpers._
@@ -32,18 +30,19 @@ import utils.{FakeNavigator, UserAnswers}
 import viewmodels.{CommonFormWithHintViewModel, Message}
 import views.html.phoneNumber
 
-class DirectorPhoneNumberControllerSpec extends ControllerSpecBase with MockitoSugar with BeforeAndAfterEach {
+class TrusteePhoneControllerSpec extends ControllerSpecBase {
 
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
   val formProvider = new PhoneFormProvider()
   val form: Form[String] = formProvider()
   val firstIndex = Index(0)
+  val invalidValue = "invalid value"
 
-  private val estCompanyDirector = UserAnswers().set(DirectorNameId(0, 0))(PersonName("first", "last")).asOpt.value.dataRetrievalAction
+  private val trusteeDataRetrievalAction = UserAnswers().set(TrusteeNameId(0))(PersonName("first", "last")).asOpt.value.dataRetrievalAction
 
-  def controller(dataRetrievalAction: DataRetrievalAction = estCompanyDirector): DirectorPhoneNumberController =
-    new DirectorPhoneNumberController(frontendAppConfig,
+  def controller(dataRetrievalAction: DataRetrievalAction = trusteeDataRetrievalAction): TrusteePhoneController =
+    new TrusteePhoneController(frontendAppConfig,
       messagesApi,
       FakeAuthAction,
       dataRetrievalAction,
@@ -59,8 +58,8 @@ class DirectorPhoneNumberControllerSpec extends ControllerSpecBase with MockitoS
       frontendAppConfig,
       form,
       CommonFormWithHintViewModel(
-        routes.DirectorPhoneNumberController.onSubmit(NormalMode, firstIndex, firstIndex, None),
-        Message("messages__director_phone__title"),
+        routes.TrusteePhoneController.onSubmit(NormalMode, firstIndex, None),
+        Message("messages__common_phone__heading", Message("messages__common__address_years__trustee").resolve),
         Message("messages__common_phone__heading", "first last"),
         Some(Message("messages__phone__hint")),
         None
@@ -68,11 +67,11 @@ class DirectorPhoneNumberControllerSpec extends ControllerSpecBase with MockitoS
       None
     )(fakeRequest, messages).toString
 
-  "DirectorPhoneNumberController" when {
+  "TrusteePhoneController" when {
 
     "on a GET" must {
       "return OK and the correct view" in {
-        val result = controller().onPageLoad(NormalMode, firstIndex, firstIndex, None)(fakeRequest)
+        val result = controller().onPageLoad(NormalMode, firstIndex, None)(fakeRequest)
 
         status(result) mustBe OK
         contentAsString(result) mustBe viewAsString()
@@ -82,10 +81,19 @@ class DirectorPhoneNumberControllerSpec extends ControllerSpecBase with MockitoS
     "on a POST" must {
       "redirect to relevant page" in {
         val postRequest = fakeRequest.withFormUrlEncodedBody(("phone", "09090909090"))
-        val result = controller().onSubmit(NormalMode, firstIndex, firstIndex, None)(postRequest)
+        val result = controller().onSubmit(NormalMode, firstIndex, None)(postRequest)
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(onwardRoute.url)
+      }
+
+      "yield BAD REQUEST when invalid value submitted" in {
+        val postRequest = fakeRequest.withFormUrlEncodedBody(("phone", invalidValue))
+        val result = controller().onSubmit(NormalMode, firstIndex, None)(postRequest)
+        val boundForm = form.bind(Map("phone" -> invalidValue))
+
+        status(result) mustBe BAD_REQUEST
+        contentAsString(result) mustBe viewAsString(boundForm)
       }
     }
   }
