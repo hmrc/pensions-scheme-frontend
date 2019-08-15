@@ -50,12 +50,6 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(onwardRoute.url)
       }
-
-      "mark trustee individual as complete" in {
-        val result = controller().onSubmit(NormalMode, firstIndex, None)(fakeRequest)
-        status(result) mustBe SEE_OTHER
-        FakeUserAnswersService.verify(IsTrusteeCompleteId(firstIndex), true)
-      }
     }
 
     "return OK and display Add link for UpdateMode pointing to new Nino page where no nino retrieved from ETMP" in {
