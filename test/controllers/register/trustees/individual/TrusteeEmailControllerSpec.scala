@@ -39,6 +39,7 @@ class TrusteeEmailControllerSpec extends ControllerSpecBase with MockitoSugar wi
   private val formProvider = new EmailFormProvider()
   private val form: Form[String] = formProvider()
   private val firstIndex = Index(0)
+  private val invalidValue = "invalid value"
 
   private val trusteeDataRetrievalAction = UserAnswers().set(TrusteeNameId(0))(PersonName("first", "last")).asOpt.value.dataRetrievalAction
 
@@ -87,7 +88,15 @@ class TrusteeEmailControllerSpec extends ControllerSpecBase with MockitoSugar wi
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(onwardRoute.url)
       }
+
+      "yield a bad request response when invalid details are submitted" in {
+        val postRequest = fakeRequest.withFormUrlEncodedBody(("email", invalidValue))
+        val result = controller().onSubmit(NormalMode, firstIndex, None)(postRequest)
+        val boundForm = form.bind(Map("email" -> invalidValue))
+
+        status(result) mustBe BAD_REQUEST
+        contentAsString(result) mustBe viewAsString(boundForm)
+      }
     }
   }
 }
-
