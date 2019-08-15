@@ -1758,7 +1758,6 @@ messages__establisherPreviousConfirmAddress__title = Confirm the establisher’s
 messages__establisherPreviousConfirmAddress__cya_label = {0}’s previous address
 messages__establisherPreviousConfirmAddress__cya_visually_hidden_label = previous contact address
 
-
 messages__director_email__title =  What is the director’s email address?
 
 messages__establisher__type__title = What kind of establisher are you adding?
