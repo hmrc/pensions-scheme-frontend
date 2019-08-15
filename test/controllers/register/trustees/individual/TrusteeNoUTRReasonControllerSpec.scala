@@ -57,7 +57,7 @@ class TrusteeNoUTRReasonControllerSpec extends ControllerSpecBase with MockitoSu
 
   "TrusteeNoUTRReasonController" must {
     "return OK and the correct view for a GET" in {
-      val app = applicationBuilder(getMandatoryTrustee).build()
+      val app = applicationBuilder(getMandatoryTrustee, featureSwitchEnabled = false).build()
 
       val controller = app.injector.instanceOf[TrusteeNoUTRReasonController]
 
@@ -73,7 +73,7 @@ class TrusteeNoUTRReasonControllerSpec extends ControllerSpecBase with MockitoSu
     "return OK and the correct view for a GET where valid reason given" in {
       val trusteeDataWithNoUTRReasonAnswer = new FakeDataRetrievalAction(Some(validTrusteeData("noUtrReason" -> "blah")))
 
-      val app = applicationBuilder(trusteeDataWithNoUTRReasonAnswer).build()
+      val app = applicationBuilder(trusteeDataWithNoUTRReasonAnswer, featureSwitchEnabled = false).build()
 
       val controller = app.injector.instanceOf[TrusteeNoUTRReasonController]
 
@@ -87,10 +87,10 @@ class TrusteeNoUTRReasonControllerSpec extends ControllerSpecBase with MockitoSu
     }
 
     "redirect to the next page when valid data is submitted" in {
-      val app = applicationBuilder(getMandatoryTrustee)
+      val app = applicationBuilder(getMandatoryTrustee, featureSwitchEnabled = false)
         .overrides(
           bind[UserAnswersService].toInstance(mockUserAnswersService),
-          bind(classOf[Navigator]).qualifiedWith(classOf[TrusteesIndividual]).toInstance(new FakeNavigator(onwardRoute))
+          bind(classOf[Navigator]).toInstance(new FakeNavigator(onwardRoute))
         ).build()
 
       val validData = Json.obj(
@@ -118,7 +118,7 @@ class TrusteeNoUTRReasonControllerSpec extends ControllerSpecBase with MockitoSu
     }
 
     "return a Bad Request when invalid data is submitted" in {
-      val app = applicationBuilder(getMandatoryTrustee).build()
+      val app = applicationBuilder(getMandatoryTrustee, featureSwitchEnabled = false).build()
 
       val controller = app.injector.instanceOf[TrusteeNoUTRReasonController]
 

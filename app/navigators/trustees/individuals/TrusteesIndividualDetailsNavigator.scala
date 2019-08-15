@@ -14,16 +14,18 @@
  * limitations under the License.
  */
 
-package navigators
+package navigators.trustees.individuals
 
 import com.google.inject.Inject
 import connectors.UserAnswersCacheConnector
 import controllers.register.trustees.individual.routes._
+import controllers.register.trustees.routes._
 import identifiers.Identifier
 import identifiers.register.trustees.IsTrusteeNewId
 import identifiers.register.trustees.individual.{TrusteeDOBId, _}
 import models.Mode._
 import models._
+import navigators.AbstractNavigator
 import play.api.mvc.Call
 import utils.UserAnswers
 
@@ -32,8 +34,7 @@ class TrusteesIndividualDetailsNavigator @Inject()(val dataCacheConnector: UserA
   import TrusteesIndividualDetailsNavigator._
 
   private def normalAndCheckModeRoutes(mode: SubscriptionMode, ua: UserAnswers, srn: Option[String]): PartialFunction[Identifier, Call] = {
-    case TrusteeNameId(index)          =>
-      controllers.register.trustees.routes.AddTrusteeController.onPageLoad(mode, srn)
+    case TrusteeNameId(_)                                   => AddTrusteeController.onPageLoad(mode, srn)
     case TrusteeDOBId(index) if mode == NormalMode          => hasNinoPage(mode, index, srn)
     case TrusteeDOBId(index) if mode == CheckMode           => CheckYourAnswersIndividualDetailsController.onPageLoad(journeyMode(mode), index, None)
     case id@TrusteeHasNINOId(index)                         => booleanNav(id, ua, ninoPage(mode, index, srn), noNinoReasonPage(mode, index, srn))
@@ -47,7 +48,7 @@ class TrusteesIndividualDetailsNavigator @Inject()(val dataCacheConnector: UserA
   }
 
   private def updateModeRoutes(mode: VarianceMode, ua: UserAnswers, srn: Option[String]): PartialFunction[Identifier, Call] = {
-    case TrusteeNameId(index) if ua.get(IsTrusteeNewId(index)).getOrElse(false)         => controllers.register.trustees.routes.AddTrusteeController.onPageLoad(mode, srn)
+    case TrusteeNameId(index) if ua.get(IsTrusteeNewId(index)).getOrElse(false)         => AddTrusteeController.onPageLoad(mode, srn)
     case TrusteeDOBId(index) if ua.get(IsTrusteeNewId(index)).getOrElse(false)          => hasNinoPage(mode, index, srn)
     case id@TrusteeHasNINOId(index) if ua.get(IsTrusteeNewId(index)).getOrElse(false)   => booleanNav(id, ua, ninoPage(mode, index, srn), noNinoReasonPage(mode, index, srn))
     case TrusteeNewNinoId(index) if ua.get(IsTrusteeNewId(index)).getOrElse(false)      => trusteeHasUtrPage(mode, index, srn)
@@ -67,7 +68,6 @@ class TrusteesIndividualDetailsNavigator @Inject()(val dataCacheConnector: UserA
     case TrusteeNoUTRReasonId(index) if ua.get(IsTrusteeNewId(index)).getOrElse(false)    => cyaIndividualDetailsPage(mode, index, srn)
     case TrusteeUTRId(index) if ua.get(IsTrusteeNewId(index)).getOrElse(false)            => cyaIndividualDetailsPage(mode, index, srn)
   }
-
 
   override protected def routeMap(from: NavigateFrom): Option[NavigateTo] =
     navigateOrSessionReset(normalAndCheckModeRoutes(NormalMode, from.userAnswers, None), from.id )
@@ -94,7 +94,6 @@ object TrusteesIndividualDetailsNavigator {
   private def utrPage(mode: Mode, index: Int, srn: Option[String]): Call = TrusteeUTRController.onPageLoad(mode, index, srn)
 
   private def noUtrReasonPage(mode: Mode, index: Int, srn: Option[String]): Call = TrusteeNoUTRReasonController.onPageLoad(mode, index, srn)
-
 
   private def cyaIndividualDetailsPage(mode: Mode, index: Int, srn: Option[String]): Call = CheckYourAnswersIndividualDetailsController.onPageLoad(journeyMode(mode), index, srn)
 }

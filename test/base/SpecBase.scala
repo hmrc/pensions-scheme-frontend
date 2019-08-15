@@ -16,7 +16,7 @@
 
 package base
 
-import config.FrontendAppConfig
+import config.{FeatureSwitchManagementService, FeatureSwitchManagementServiceSpec, FrontendAppConfig}
 import controllers.actions._
 import navigators.Navigator
 import org.jsoup.nodes.Document
@@ -30,7 +30,7 @@ import play.api.inject.{Injector, bind}
 import play.api.mvc.{AnyContentAsEmpty, Call}
 import play.api.test.FakeRequest
 import uk.gov.hmrc.crypto.ApplicationCrypto
-import utils.FakeNavigator
+import utils.{FakeFeatureSwitchManagementService, FakeNavigator}
 
 trait SpecBase extends PlaySpec with GuiceOneAppPerSuite {
   protected def crypto: ApplicationCrypto = injector.instanceOf[ApplicationCrypto]
@@ -58,11 +58,13 @@ trait SpecBase extends PlaySpec with GuiceOneAppPerSuite {
   }
 
   def applicationBuilder(dataRetrievalAction: DataRetrievalAction,
+                         featureSwitchEnabled: Boolean,
                          onwardRoute: Call = controllers.routes.IndexController.onPageLoad()): GuiceApplicationBuilder =
     new GuiceApplicationBuilder()
       .overrides(
         bind[AuthAction].toInstance(FakeAuthAction),
         bind[AllowAccessActionProvider].toInstance(FakeAllowAccessProvider()),
-        bind[DataRetrievalAction].toInstance(dataRetrievalAction)
+        bind[DataRetrievalAction].toInstance(dataRetrievalAction),
+        bind[FeatureSwitchManagementService].toInstance(new FakeFeatureSwitchManagementService(featureSwitchEnabled))
       )
 }
