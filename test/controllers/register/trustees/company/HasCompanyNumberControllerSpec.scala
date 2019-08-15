@@ -113,6 +113,7 @@ class HasCompanyNumberControllerSpec extends ControllerSpecBase with MockitoSuga
     }
 
     "if user changes answer from yes to no then clean up should take place on crn number" in {
+      FakeUserAnswersService.reset()
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "false"))
       val result = controller(getTrusteeCompanyPlusCrn(hasCrnValue = true)).onSubmit(NormalMode, index, None)(postRequest)
 
@@ -122,6 +123,7 @@ class HasCompanyNumberControllerSpec extends ControllerSpecBase with MockitoSuga
     }
 
     "if user changes answer from no to yes then clean up should take place on no crn reason" in {
+      FakeUserAnswersService.reset()
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "true"))
       val result = controller(getTrusteeCompanyPlusCrn(hasCrnValue = false)).onSubmit(NormalMode, index, None)(postRequest)
 
