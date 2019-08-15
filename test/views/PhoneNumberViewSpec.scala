@@ -34,7 +34,7 @@ class PhoneNumberViewSpec extends QuestionViewBehaviours[String] {
     postCall = Call("GET", "www.example.com"),
     Message("messages__establisher_phone__title"),
     Message("messages__common_phone__heading", companyName),
-    Some(Message("messages__establisher_phone__hint")),
+    Some(Message("messages__phone__hint")),
     None
   )
 

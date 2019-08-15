@@ -63,7 +63,7 @@ class TrusteePhoneControllerSpec extends ControllerSpecBase with MockitoSugar wi
         routes.TrusteePhoneController.onSubmit(NormalMode, firstIndex, None),
         Message("messages__common_phone__heading", Message("messages__common__address_years__trustee").resolve),
         Message("messages__common_phone__heading", "first last"),
-        Some(Message("messages__establisher_phone__hint")),
+        Some(Message("messages__phone__hint")),
         None
       ),
       None
