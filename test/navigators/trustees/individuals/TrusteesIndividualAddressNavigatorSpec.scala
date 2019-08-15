@@ -39,7 +39,14 @@ class TrusteesIndividualAddressNavigatorSpec extends SpecBase with MustMatchers 
     def navigationForNewTrusteeIndividual(mode: Mode): TableFor3[Identifier, UserAnswers, Call] =
     Table(
       ("Id", "UserAnswers", "Next Page"),
-      row(IndividualPostCodeLookupId(index))(Seq(someTolerantAddress), IndividualAddressListController.onPageLoad(mode, index, None))
+      row(IndividualPostCodeLookupId(index))(Seq(someTolerantAddress), IndividualAddressListController.onPageLoad(mode, index, None)),
+      row(IndividualAddressListId(index))(someTolerantAddress, TrusteeAddressController.onPageLoad(mode, index, None)),
+      row(TrusteeAddressId(index))(someAddress, TrusteeAddressYearsController.onPageLoad(mode, index, None)),
+      row(TrusteeAddressYearsId(index))(AddressYears.UnderAYear, IndividualPreviousAddressPostcodeLookupController.onPageLoad(mode, index, None)),
+      row(TrusteeAddressYearsId(index))(AddressYears.OverAYear, CheckYourAnswersIndividualAddressController.onPageLoad(mode, index, None)),
+      row(IndividualPreviousAddressPostCodeLookupId(index))(Seq(someTolerantAddress), TrusteePreviousAddressListController.onPageLoad(mode, index, None)),
+      row(TrusteePreviousAddressListId(index))(someTolerantAddress, TrusteePreviousAddressController.onPageLoad(mode, index, None)),
+      row(TrusteePreviousAddressId(index))(someAddress, CheckYourAnswersIndividualAddressController.onPageLoad(mode, index, None))
     )
 
     behave like navigatorWithRoutesForMode(NormalMode)(navigator, navigationForNewTrusteeIndividual(NormalMode), None)
