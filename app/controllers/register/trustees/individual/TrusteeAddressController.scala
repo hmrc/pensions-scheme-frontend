@@ -50,32 +50,32 @@ class TrusteeAddressController @Inject()(
                                           val formProvider: AddressFormProvider,
                                           val countryOptions: CountryOptions,
                                           val auditService: AuditService,
-                                          featureSwitchManagementService: FeatureSwitchManagementService
+                                          fs: FeatureSwitchManagementService
                                         )(implicit val ec: ExecutionContext) extends ManualAddressController with I18nSupport {
 
   private[controllers] val postCall = TrusteeAddressController.onSubmit _
 
   protected val form: Form[Address] = formProvider()
 
-  private def viewmodel(index: Int, mode: Mode, srn: Option[String], name:String): ManualAddressViewModel =
-            ManualAddressViewModel(
-              postCall(mode, Index(index), srn),
-              countryOptions.options,
-              title = Message("messages__trustee__individual__address__confirm__title"),
-              heading = Message("messages__common__confirmAddress__h1", name),
-              hint = Some(Message("messages__trustee__individual__address__confirm__lede")),
-              secondaryHeader = Some(name),
-              srn = srn
-            )
+  private def viewmodel(index: Int, mode: Mode, srn: Option[String], name: String): ManualAddressViewModel =
+    ManualAddressViewModel(
+      postCall(mode, Index(index), srn),
+      countryOptions.options,
+      title = Message("messages__trustee__individual__address__confirm__title"),
+      heading = Message("messages__common__confirmAddress__h1", name),
+      hint = Some(Message("messages__trustee__individual__address__confirm__lede")),
+      secondaryHeader = Some(name),
+      srn = srn
+    )
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
-    implicit request =>
-      trusteeName(index).retrieve.right.map {
-        name =>
-            get(TrusteeAddressId(index), IndividualAddressListId(index), viewmodel(index, mode, srn,name))
-      }
-  }
+      implicit request =>
+        trusteeName(index).retrieve.right.map {
+          name =>
+            get(TrusteeAddressId(index), IndividualAddressListId(index), viewmodel(index, mode, srn, name))
+        }
+    }
 
   def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
@@ -86,9 +86,9 @@ class TrusteeAddressController @Inject()(
       }
   }
 
-  val trusteeName = (trusteeIndex: Index) => Retrieval {
+  val trusteeName: Index => Retrieval[String] = (trusteeIndex: Index) => Retrieval {
     implicit request =>
-      if (featureSwitchManagementService.get(Toggles.isEstablisherCompanyHnSEnabled))
+      if (fs.get(Toggles.isEstablisherCompanyHnSEnabled))
         TrusteeNameId(trusteeIndex).retrieve.right.map(_.fullName)
       else
         TrusteeDetailsId(trusteeIndex).retrieve.right.map(_.fullName)

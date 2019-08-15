@@ -23,7 +23,7 @@ import controllers.routes._
 import identifiers.Identifier
 import identifiers.register.trustees.individual._
 import models.AddressYears._
-import models.{AddressYears, Mode, NormalMode, SubscriptionMode}
+import models._
 import navigators.AbstractNavigator
 import play.api.mvc.Call
 import utils.UserAnswers
@@ -45,7 +45,8 @@ class TrusteesIndividualAddressNavigator @Inject()(val dataCacheConnector: UserA
   override protected def routeMap(from: NavigateFrom): Option[NavigateTo] =
     navigateOrSessionReset(normalAndCheckModeRoutes(NormalMode, from.userAnswers, None), from.id)
 
-  override protected def editRouteMap(from: NavigateFrom): Option[NavigateTo] = ???
+  override protected def editRouteMap(from: NavigateFrom): Option[NavigateTo] =
+    navigateOrSessionReset(normalAndCheckModeRoutes(CheckMode, from.userAnswers, None), from.id)
 
   override protected def updateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] = ???
 

@@ -17,7 +17,7 @@
 package controllers.register.trustees.individual
 
 import audit.AuditService
-import config.{FeatureSwitchManagementService,FrontendAppConfig}
+import config.{FeatureSwitchManagementService, FrontendAppConfig}
 import controllers.actions._
 import controllers.address.ManualAddressController
 import controllers.register.trustees.individual.routes._
@@ -57,41 +57,49 @@ class TrusteePreviousAddressController @Inject()(
 
   protected val form: Form[Address] = formProvider()
 
-  private def viewmodel(index: Int, mode: Mode, srn: Option[String],name:String): ManualAddressViewModel =
-            ManualAddressViewModel(
-              postCall(mode, Index(index), srn),
-              countryOptions.options,
-              title = Message("messages__trustee_individual_confirm__previous_address__title"),
-              heading = Message("messages__common__confirmPreviousAddress__h1", name),
-              secondaryHeader = Some(name),
-              srn = srn
-            )
+  private def viewmodel(index: Int, mode: Mode, srn: Option[String], name: String): ManualAddressViewModel =
+    ManualAddressViewModel(
+      postCall(mode, Index(index), srn),
+      countryOptions.options,
+      title = Message("messages__trustee_individual_confirm__previous_address__title"),
+      heading = Message("messages__common__confirmPreviousAddress__h1", name),
+      secondaryHeader = Some(name),
+      srn = srn
+    )
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         trusteeName(index).retrieve.right.map {
           name =>
-          get(TrusteePreviousAddressId(index), TrusteePreviousAddressListId(index), viewmodel(index, mode, srn,name))
+            get(
+              id = TrusteePreviousAddressId(index),
+              selectedId = TrusteePreviousAddressListId(index),
+              viewModel = viewmodel(index, mode, srn, name)
+            )
         }
     }
+
   def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
       trusteeName(index).retrieve.right.map {
         name =>
-          post(TrusteePreviousAddressId(index), TrusteePreviousAddressListId(index), viewmodel(index, mode, srn, name), mode, context(name),
-            IndividualPreviousAddressPostCodeLookupId(index))
+          post(
+            id = TrusteePreviousAddressId(index),
+            selectedId = TrusteePreviousAddressListId(index),
+            viewModel = viewmodel(index, mode, srn, name),
+            mode = mode,
+            context = s"Trustee Individual Previous Address: $name",
+            postCodeLookupIdForCleanup = IndividualPreviousAddressPostCodeLookupId(index)
+          )
       }
   }
 
-
-  val trusteeName = (trusteeIndex: Index) => Retrieval {
+  val trusteeName: Index => Retrieval[String] = (trusteeIndex: Index) => Retrieval {
     implicit request =>
       if (featureSwitchManagementService.get(Toggles.isEstablisherCompanyHnSEnabled))
         TrusteeNameId(trusteeIndex).retrieve.right.map(_.fullName)
       else
         TrusteeDetailsId(trusteeIndex).retrieve.right.map(_.fullName)
   }
-  private def context(fullName: String): String = s"Trustee Individual Previous Address: $fullName"
-
 }
