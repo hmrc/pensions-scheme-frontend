@@ -21,16 +21,16 @@
 @(appConfig: FrontendAppConfig, schemeName: Option[String], href: Call, srn:Option[String])(implicit request: Request[_], messages: Messages)
 
 @main_template(
-    title = messages("messages__whatYouWillNeedEstablisherCompanyAddress__title"),
+    title = messages("messages__whatYouWillNeedAddress__title"),
     appConfig = appConfig,
     bodyClasses = None
 ) {
-    @components.heading(headingKey = messages("messages__whatYouWillNeedEstablisherCompanyAddress__h1"))
+    @components.heading(headingKey = messages("messages__whatYouWillNeedAddress__h1"))
 
-    <p>@messages("messages__whatYouWillNeedEstablisherCompanyAddress__lede")</p>
+    <p>@messages("messages__whatYouWillNeedTrusteeCompanyAddress__lede")</p>
 
     <ul class="list list-bullet">
-        <li>@messages("messages__whatYouWillNeedEstablisherCompanyAddress__item1")</li>
+        <li>@messages("messages__whatYouWillNeedTrusteeCompanyAddress__item1")</li>
         <li>@messages("messages__whatYouWillNeedTrusteeCompanyAddress__item2")</li>
     </ul>
 
