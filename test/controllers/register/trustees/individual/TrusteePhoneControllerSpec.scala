@@ -22,8 +22,6 @@ import forms.PhoneFormProvider
 import identifiers.register.trustees.individual.TrusteeNameId
 import models.person.PersonName
 import models.{Index, NormalMode}
-import org.scalatest.BeforeAndAfterEach
-import org.scalatest.mockito.MockitoSugar
 import play.api.data.Form
 import play.api.mvc.Call
 import play.api.test.Helpers._
@@ -32,7 +30,7 @@ import utils.{FakeNavigator, UserAnswers}
 import viewmodels.{CommonFormWithHintViewModel, Message}
 import views.html.phoneNumber
 
-class TrusteePhoneControllerSpec extends ControllerSpecBase with MockitoSugar with BeforeAndAfterEach {
+class TrusteePhoneControllerSpec extends ControllerSpecBase {
 
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
