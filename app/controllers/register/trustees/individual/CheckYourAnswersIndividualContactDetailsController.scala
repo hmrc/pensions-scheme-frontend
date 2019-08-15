@@ -51,7 +51,7 @@ class CheckYourAnswersIndividualContactDetailsController @Inject()(val appConfig
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         implicit val userAnswers: UserAnswers = request.userAnswers
-        val notNewEstablisher = !userAnswers.get(IsTrusteeNewId(index)).getOrElse(true)
+        val notNewTrustee = !userAnswers.get(IsTrusteeNewId(index)).getOrElse(true)
         val contactDetails = AnswerSection(
           None,
           TrusteeEmailId(index).row(routes.TrusteeEmailController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
@@ -64,7 +64,7 @@ class CheckYourAnswersIndividualContactDetailsController @Inject()(val appConfig
           routes.CheckYourAnswersIndividualContactDetailsController.onSubmit(mode, index, srn),
           existingSchemeName,
           mode = mode,
-          hideEditLinks = request.viewOnly || notNewEstablisher,
+          hideEditLinks = request.viewOnly || notNewTrustee,
           hideSaveAndContinueButton = allowChangeHelper.hideSaveAndContinueButton(request, IsTrusteeNewId(index), mode),
           srn = srn
         )))
