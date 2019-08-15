@@ -44,7 +44,7 @@ class TrusteeHasNINOControllerSpec extends ControllerSpecBase {
 
   "TrusteeHasNINOController" must {
     "return OK and the correct view for a GET" in {
-      val app = applicationBuilder(getMandatoryTrustee).build()
+      val app = applicationBuilder(getMandatoryTrustee, featureSwitchEnabled = false).build()
 
       val controller = app.injector.instanceOf[TrusteeHasNINOController]
 
@@ -60,7 +60,7 @@ class TrusteeHasNINOControllerSpec extends ControllerSpecBase {
     "return OK and the correct view for a GET where question already answered" in {
       val trusteeDataWithNinoAnswer = new FakeDataRetrievalAction(Some(validTrusteeData("hasNino" -> false)))
 
-      val app = applicationBuilder(trusteeDataWithNinoAnswer).build()
+      val app = applicationBuilder(trusteeDataWithNinoAnswer, featureSwitchEnabled = false).build()
 
       val controller = app.injector.instanceOf[TrusteeHasNINOController]
 
@@ -74,11 +74,10 @@ class TrusteeHasNINOControllerSpec extends ControllerSpecBase {
     }
 
     "redirect to the next page when valid data is submitted for true" in {
-      val app = applicationBuilder(getMandatoryTrustee)
+      val app = applicationBuilder(getMandatoryTrustee, featureSwitchEnabled = false)
         .overrides(
           bind[UserAnswersService].toInstance(mockUserAnswersService),
-          bind(classOf[Navigator]).qualifiedWith(classOf[TrusteesIndividual])
-            .toInstance(new FakeNavigator(onwardRoute))
+          bind(classOf[Navigator]).toInstance(new FakeNavigator(onwardRoute))
         )
         .build()
 
@@ -100,7 +99,7 @@ class TrusteeHasNINOControllerSpec extends ControllerSpecBase {
     }
 
     "return a Bad Request and errors when invalid data is submitted" in {
-      val app = applicationBuilder(getMandatoryTrustee).build()
+      val app = applicationBuilder(getMandatoryTrustee, featureSwitchEnabled = false).build()
 
       val controller = app.injector.instanceOf[TrusteeHasNINOController]
 
