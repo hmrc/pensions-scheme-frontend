@@ -1710,7 +1710,7 @@ messages__director_phone__title =  What is the director’s phone number?
 messages__phone__hint = We will only use this to contact about pension scheme administration.
 
 messages__establisher_email__title =  What is the company’s email address?
-messages__establisher_email__hint = We will only use this to contact about pension scheme administration.
+messages__email__hint = We will only use this to contact about pension scheme administration.
 
 messages__noNinoReason__director_title = Why does the director not have a National Insurance number?
 messages__noNinoReason__trustee_title = Why does the trustee not have a National Insurance number?
