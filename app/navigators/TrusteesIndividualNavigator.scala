@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package navigators.trustees.individuals
+package navigators
 
 import com.google.inject.Inject
 import connectors.UserAnswersCacheConnector
@@ -25,13 +25,12 @@ import identifiers.register.trustees.IsTrusteeNewId
 import identifiers.register.trustees.individual.{TrusteeDOBId, _}
 import models.Mode._
 import models._
-import navigators.AbstractNavigator
 import play.api.mvc.Call
 import utils.UserAnswers
 
-class TrusteesIndividualDetailsNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector) extends AbstractNavigator {
+class TrusteesIndividualNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector) extends AbstractNavigator {
 
-  import TrusteesIndividualDetailsNavigator._
+  import TrusteesIndividualNavigator._
 
   private def normalAndCheckModeRoutes(mode: SubscriptionMode, ua: UserAnswers, srn: Option[String]): PartialFunction[Identifier, Call] = {
     case TrusteeNameId(_)                                   => AddTrusteeController.onPageLoad(mode, srn)
@@ -45,17 +44,22 @@ class TrusteesIndividualDetailsNavigator @Inject()(val dataCacheConnector: UserA
     case id@TrusteeHasUTRId(index)                          => booleanNav(id, ua, utrPage(mode, index, srn), noUtrReasonPage(mode, index, srn))
     case TrusteeNoUTRReasonId(index)                        => cyaIndividualDetailsPage(mode, index, srn)
     case TrusteeUTRId(index)                                => cyaIndividualDetailsPage(mode, index, srn)
+    case TrusteeEmailId(index) if mode == NormalMode        => phonePage(mode, index, srn)
+    case TrusteeEmailId(index)                              => cyaIndividualContactDetailsPage(mode, index, srn)
+    case TrusteePhoneId(index)                              => cyaIndividualContactDetailsPage(mode, index, srn)
   }
 
-  private def updateModeRoutes(mode: VarianceMode, ua: UserAnswers, srn: Option[String]): PartialFunction[Identifier, Call] = {
-    case TrusteeNameId(index) if ua.get(IsTrusteeNewId(index)).getOrElse(false)         => AddTrusteeController.onPageLoad(mode, srn)
-    case TrusteeDOBId(index) if ua.get(IsTrusteeNewId(index)).getOrElse(false)          => hasNinoPage(mode, index, srn)
-    case id@TrusteeHasNINOId(index) if ua.get(IsTrusteeNewId(index)).getOrElse(false)   => booleanNav(id, ua, ninoPage(mode, index, srn), noNinoReasonPage(mode, index, srn))
-    case TrusteeNewNinoId(index) if ua.get(IsTrusteeNewId(index)).getOrElse(false)      => trusteeHasUtrPage(mode, index, srn)
-    case TrusteeNoNINOReasonId(index) if ua.get(IsTrusteeNewId(index)).getOrElse(false) => trusteeHasUtrPage(mode, index, srn)
-    case id@TrusteeHasUTRId(index) if ua.get(IsTrusteeNewId(index)).getOrElse(false)    => booleanNav(id, ua, utrPage(mode, index, srn), noUtrReasonPage(mode, index, srn))
-    case TrusteeNoUTRReasonId(index) if ua.get(IsTrusteeNewId(index)).getOrElse(false)  => cyaIndividualDetailsPage(mode, index, srn)
-    case TrusteeUTRId(index) if ua.get(IsTrusteeNewId(index)).getOrElse(false)          => cyaIndividualDetailsPage(mode, index, srn)
+  private def updateModeRoutes(mode: UpdateMode.type, ua: UserAnswers, srn: Option[String]): PartialFunction[Identifier, Call] = {
+    case TrusteeNameId(index)         => AddTrusteeController.onPageLoad(mode, srn)
+    case TrusteeDOBId(index)          => hasNinoPage(mode, index, srn)
+    case id@TrusteeHasNINOId(index)   => booleanNav(id, ua, ninoPage(mode, index, srn), noNinoReasonPage(mode, index, srn))
+    case TrusteeNewNinoId(index)      => trusteeHasUtrPage(mode, index, srn)
+    case TrusteeNoNINOReasonId(index) => trusteeHasUtrPage(mode, index, srn)
+    case id@TrusteeHasUTRId(index)    => booleanNav(id, ua, utrPage(mode, index, srn), noUtrReasonPage(mode, index, srn))
+    case TrusteeNoUTRReasonId(index)  => cyaIndividualDetailsPage(mode, index, srn)
+    case TrusteeUTRId(index)          => cyaIndividualDetailsPage(mode, index, srn)
+    case TrusteeEmailId(index)        => phonePage(mode, index, srn)
+    case TrusteePhoneId(index)        => cyaIndividualContactDetailsPage(mode, index, srn)
   }
 
   private def checkUpdateModeRoute(mode: CheckUpdateMode.type, ua: UserAnswers, srn: Option[String]): PartialFunction[Identifier, Call] = {
@@ -67,6 +71,10 @@ class TrusteesIndividualDetailsNavigator @Inject()(val dataCacheConnector: UserA
     case id@TrusteeHasUTRId(index) if ua.get(IsTrusteeNewId(index)).getOrElse(false)      => booleanNav(id, ua, utrPage(mode, index, srn), noUtrReasonPage(mode, index, srn))
     case TrusteeNoUTRReasonId(index) if ua.get(IsTrusteeNewId(index)).getOrElse(false)    => cyaIndividualDetailsPage(mode, index, srn)
     case TrusteeUTRId(index) if ua.get(IsTrusteeNewId(index)).getOrElse(false)            => cyaIndividualDetailsPage(mode, index, srn)
+    case TrusteeEmailId(index) if ua.get(IsTrusteeNewId(index)).getOrElse(false)          => cyaIndividualContactDetailsPage(mode, index, srn)
+    case TrusteeEmailId(_)                                                                => anyMoreChangesPage(srn)
+    case TrusteePhoneId(index) if ua.get(IsTrusteeNewId(index)).getOrElse(false)          => cyaIndividualContactDetailsPage(mode, index, srn)
+    case TrusteePhoneId(_)                                                                => anyMoreChangesPage(srn)
   }
 
   override protected def routeMap(from: NavigateFrom): Option[NavigateTo] =
@@ -82,7 +90,7 @@ class TrusteesIndividualDetailsNavigator @Inject()(val dataCacheConnector: UserA
     navigateOrSessionReset(checkUpdateModeRoute(CheckUpdateMode, from.userAnswers, srn), from.id)
 }
 
-object TrusteesIndividualDetailsNavigator {
+object TrusteesIndividualNavigator {
   private def hasNinoPage(mode: Mode, index: Int, srn: Option[String]): Call = TrusteeHasNINOController.onPageLoad(mode, index, srn)
 
   private def ninoPage(mode: Mode, index: Int, srn: Option[String]): Call = TrusteeNinoNewController.onPageLoad(mode, index, srn)
@@ -96,4 +104,8 @@ object TrusteesIndividualDetailsNavigator {
   private def noUtrReasonPage(mode: Mode, index: Int, srn: Option[String]): Call = TrusteeNoUTRReasonController.onPageLoad(mode, index, srn)
 
   private def cyaIndividualDetailsPage(mode: Mode, index: Int, srn: Option[String]): Call = CheckYourAnswersIndividualDetailsController.onPageLoad(journeyMode(mode), index, srn)
+
+  private def phonePage(mode: Mode, index: Int, srn: Option[String]): Call = TrusteePhoneController.onPageLoad(mode, index, srn)
+
+  private def cyaIndividualContactDetailsPage(mode: Mode, index: Int, srn: Option[String]): Call = CheckYourAnswersIndividualContactDetailsController.onPageLoad(journeyMode(mode), index, srn)
 }
