@@ -14,65 +14,62 @@
  * limitations under the License.
  */
 
-package controllers.register.trustees.company
+package controllers.register.trustees.individual
 
 import controllers.ControllerSpecBase
 import controllers.actions._
 import controllers.behaviours.ControllerAllowChangeBehaviour
-import identifiers.register.trustees.company.{CompanyDetailsId, CompanyEmailId, CompanyPhoneId}
+import identifiers.register.trustees.individual.{TrusteeEmailId, TrusteeNameId, TrusteePhoneId}
 import models.Mode.checkMode
 import models._
+import models.person.PersonName
 import models.requests.DataRequest
-import org.scalatest.BeforeAndAfterEach
-import org.scalatest.mockito.MockitoSugar
 import play.api.mvc.{AnyContent, Call}
 import play.api.test.Helpers._
-import services.FakeUserAnswersService
 import utils.checkyouranswers.CheckYourAnswers.StringCYA
 import utils.{AllowChangeHelper, CountryOptions, FakeCountryOptions, FakeDataRequest, UserAnswers}
 import viewmodels.AnswerSection
 import views.html.check_your_answers
 
-class CheckYourAnswersCompanyContactDetailsControllerSpec extends ControllerSpecBase with MockitoSugar
-  with BeforeAndAfterEach with ControllerAllowChangeBehaviour {
+class CheckYourAnswersIndividualContactDetailsControllerSpec extends ControllerSpecBase with ControllerAllowChangeBehaviour {
 
   private val index = Index(0)
   private val srn = Some("test-srn")
   private implicit val fakeCountryOptions: CountryOptions = new FakeCountryOptions
 
   private def submitUrl(mode: Mode = NormalMode, srn: Option[String] = None): Call =
-    routes.CheckYourAnswersCompanyContactDetailsController.onSubmit(mode, index, srn)
+    routes.CheckYourAnswersIndividualContactDetailsController.onSubmit(mode, index, srn)
 
   private def answerSection(mode: Mode, srn: Option[String] = None)(implicit request: DataRequest[AnyContent]): Seq[AnswerSection] = {
     val userAnswers = request.userAnswers
-    val cn = userAnswers.get(CompanyDetailsId(index)).map(_.companyName).value
+    val trusteeName = userAnswers.get(TrusteeNameId(index)).map(_.fullName).value
 
     Seq(AnswerSection(None,
-      StringCYA[CompanyEmailId](
-        Some(messages("messages__common_email__heading", cn)),
-        Some(messages("messages__common_email__visually_hidden_change_label", cn))
-      )().row(CompanyEmailId(index))(
-        routes.CompanyEmailController.onPageLoad(checkMode(mode), Index(index), srn).url, userAnswers) ++
+      StringCYA[TrusteeEmailId](
+        Some(messages("messages__common_email__heading", trusteeName)),
+        Some(messages("messages__common_email__visually_hidden_change_label", trusteeName))
+      )().row(TrusteeEmailId(index))(
+        routes.TrusteeEmailController.onPageLoad(checkMode(mode), Index(index), srn).url, userAnswers) ++
 
-        StringCYA[CompanyPhoneId](
-         Some(messages("messages__common_phone__heading", cn)),
-          Some(messages("messages__common_phone__visually_hidden_change_label", cn))
-        )().row(CompanyPhoneId(index))(
-          routes.CompanyPhoneController.onPageLoad(checkMode(mode), Index(index), srn).url, userAnswers)
+        StringCYA[TrusteePhoneId](
+         Some(messages("messages__common_phone__heading", trusteeName)),
+          Some(messages("messages__common_phone__visually_hidden_change_label", trusteeName))
+        )().row(TrusteePhoneId(index))(
+          routes.TrusteePhoneController.onPageLoad(checkMode(mode), Index(index), srn).url, userAnswers)
     ))
   }
 
   def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData,
-                 allowChangeHelper: AllowChangeHelper = ach): CheckYourAnswersCompanyContactDetailsController =
-    new CheckYourAnswersCompanyContactDetailsController(frontendAppConfig,
+                 allowChangeHelper: AllowChangeHelper = ach): CheckYourAnswersIndividualContactDetailsController =
+    new CheckYourAnswersIndividualContactDetailsController(
+      frontendAppConfig,
       messagesApi,
       FakeAuthAction,
       dataRetrievalAction,
       FakeAllowAccessProvider(),
       new DataRequiredActionImpl,
       fakeCountryOptions,
-      allowChangeHelper,
-      FakeUserAnswersService
+      allowChangeHelper
     )
 
   def viewAsString(answerSections: Seq[AnswerSection], srn: Option[String] = None, postUrl: Call = submitUrl()): String =
@@ -86,10 +83,10 @@ class CheckYourAnswersCompanyContactDetailsControllerSpec extends ControllerSpec
       hideSaveAndContinueButton = false
     )(fakeRequest, messages).toString
 
-  private val fullAnswers = UserAnswers().set(CompanyEmailId(0))("test@test.com").flatMap(_.set(CompanyPhoneId(0))("12345"))
-    .flatMap(_.set(CompanyDetailsId(0))(CompanyDetails("test company"))).asOpt.value
+  private val fullAnswers = UserAnswers().set(TrusteeEmailId(0))("test@test.com").flatMap(_.set(TrusteePhoneId(0))("12345"))
+    .flatMap(_.set(TrusteeNameId(0))(PersonName("test", "name"))).asOpt.value
 
-  "CheckYourAnswersCompanyContactDetailsController" when {
+  "CheckYourAnswersIndividualContactDetailsController" when {
 
     "on a GET" must {
       "return OK and the correct view with full answers" when {
@@ -101,6 +98,7 @@ class CheckYourAnswersCompanyContactDetailsControllerSpec extends ControllerSpec
 
           contentAsString(result) mustBe viewAsString(answerSection(NormalMode))
         }
+
         "Update Mode" in {
           implicit val request: DataRequest[AnyContent] = FakeDataRequest(fullAnswers)
           val result = controller(fullAnswers.dataRetrievalAction).onPageLoad(UpdateMode, index, srn)(request)

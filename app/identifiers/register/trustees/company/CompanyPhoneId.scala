@@ -38,7 +38,7 @@ object CompanyPhoneId {
     override def row(id: CompanyPhoneId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
       def trusteeName(index: Int) = userAnswers.get(CompanyDetailsId(index)).fold(messages("messages__theTrustee"))(_.companyName)
       def label(index:Int) = messages("messages__common_phone__heading", trusteeName(index))
-      def hiddenLabel(index:Int) = Some(messages("messages__common_trustee_company_phone__visually_hidden_change_label", trusteeName(index)))
+      def hiddenLabel(index:Int) = Some(messages("messages__common_phone__visually_hidden_change_label", trusteeName(index)))
 
       StringCYA(
         Some(label(id.index)),
