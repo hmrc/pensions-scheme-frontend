@@ -88,5 +88,5 @@ class AddTrusteeController @Inject()(
     isHnSEnabled || trusteeList.forall(_.isCompleted)
   }
 
-  private val isHnSEnabled = fsm.get(Toggles.isEstablisherCompanyHnSEnabled)
+  private def isHnSEnabled = fsm.get(Toggles.isEstablisherCompanyHnSEnabled)
 }
