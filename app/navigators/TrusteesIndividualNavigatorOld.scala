@@ -28,6 +28,7 @@ import models.Mode.journeyMode
 import models._
 import models.requests.IdentifiedRequest
 import navigators.trustees.individuals.{TrusteesIndividualAddressNavigator, TrusteesIndividualDetailsNavigator}
+import navigators.trustees.individuals.{TrusteesIndividualContactDetailsNavigator, TrusteesIndividualDetailsNavigator}
 import play.api.mvc.Call
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.{Toggles, UserAnswers}
@@ -38,7 +39,8 @@ class TrusteesIndividualFeatureSwitchNavigator @Inject()(
                                                           featureSwitchService: FeatureSwitchManagementService,
                                                           oldNavigator: TrusteesIndividualNavigatorOld,
                                                           detailsNavigator: TrusteesIndividualDetailsNavigator,
-                                                          addressNavigator: TrusteesIndividualAddressNavigator
+                                                          addressNavigator: TrusteesIndividualAddressNavigator,
+                                                          contactDetailsNavigator: TrusteesIndividualContactDetailsNavigator
                                                         ) extends Navigator {
 
   override def nextPageOptional(id: Identifier,
@@ -50,7 +52,8 @@ class TrusteesIndividualFeatureSwitchNavigator @Inject()(
                                  hc: HeaderCarrier): Option[Call] =
     if (featureSwitchService.get(Toggles.isEstablisherCompanyHnSEnabled)) {
       detailsNavigator.nextPageOptional(id, mode, userAnswers, srn) orElse
-        addressNavigator.nextPageOptional(id, mode, userAnswers, srn)
+        addressNavigator.nextPageOptional(id, mode, userAnswers, srn) orElse
+        contactDetailsNavigator.nextPageOptional(id, mode, userAnswers, srn)
     } else {
       oldNavigator.nextPageOptional(id, mode, userAnswers, srn)
     }

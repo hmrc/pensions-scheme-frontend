@@ -14,27 +14,23 @@
  * limitations under the License.
  */
 
-package controllers.register.trustees.individual
+package controllers.register.trustees.partnership
 
-import akka.actor.FSM.Normal
 import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions._
-import identifiers.register.trustees.individual.TrusteeNameId
 import javax.inject.Inject
-import models.{Index, Mode, NormalMode}
+import models.{Index, Mode}
 import navigators.Navigator
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, Call, Result}
+import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.Enumerable
-import viewmodels.Message
-import views.html.register.trustees.individual.WhatYouWillNeedIndividualContactDetailsView
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
-class WhatYouWillNeedIndividualContactDetailsController @Inject()(val appConfig: FrontendAppConfig,
+class CheckYourAnswersPartnershipDetailsController @Inject()(val appConfig: FrontendAppConfig,
                                                                   val messagesApi: MessagesApi,
                                                                   val userAnswersService: UserAnswersService,
                                                                   val navigator: Navigator,
@@ -45,16 +41,11 @@ class WhatYouWillNeedIndividualContactDetailsController @Inject()(val appConfig:
                                      )(implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
-      implicit request => {
-        val nextPageHref = routes.TrusteeEmailController.onPageLoad(mode, index, srn)
-
-        TrusteeNameId(index).retrieve.right.map {
-          name =>
-            val title = Message("messages__whatYouWillNeedTrusteeIndividualContact__h1", name.fullName)
-            Future.successful(Ok(WhatYouWillNeedIndividualContactDetailsView(appConfig, existingSchemeName, nextPageHref, srn, title)))
-        }
-      }
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData) {
+      implicit request => NotImplemented("Not implemented: " + this.getClass.toString)
     }
 
+  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData) {
+    implicit request => Redirect(controllers.routes.IndexController.onPageLoad())
+  }
 }
