@@ -37,7 +37,7 @@ class PartnershipHasPAYEIdSpec extends SpecBase {
     "`PartnershipHasPAYE` changed to true" must {
       val result = ua(false).set(PartnershipHasPAYEId(0))(true).asOpt.value
 
-      "remove the data for `PartnershipPayeVariationsId`" in {
+      "not remove the data for `PartnershipPayeVariationsId`" in {
         result.get(PartnershipPayeVariationsId(0)) must be(defined)
       }
     }

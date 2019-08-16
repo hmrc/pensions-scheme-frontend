@@ -27,7 +27,7 @@ class PartnershipHasVATIdSpec extends SpecBase {
 
   "cleanup" when {
     "`PartnershipHasVAT` changed to false" must {
-      val result = ua(true)
+      val result = ua
         .set(PartnershipHasVATId(0))(false)
         .asOpt.value
 
@@ -40,11 +40,11 @@ class PartnershipHasVATIdSpec extends SpecBase {
 
 object PartnershipHasVATIdSpec extends SpecBase {
 
-  private def ua(v: Boolean) =
+  private val ua =
     UserAnswers(Json.obj(
       TrusteesId.toString -> Json.arr(
         Json.obj(
-          PartnershipHasVATId.toString -> v,
+          PartnershipHasVATId.toString -> true,
           PartnershipVatVariationsId.toString -> "value"
         )
       )
