@@ -46,6 +46,6 @@ class PartnershipHasVatController @Inject()(val appConfig: FrontendAppConfig,
     }
 
   def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData) {
-    implicit request => NotImplemented("Not implemented: " + this.getClass.toString)
+    implicit request => Redirect(controllers.routes.IndexController.onPageLoad())
   }
 }
