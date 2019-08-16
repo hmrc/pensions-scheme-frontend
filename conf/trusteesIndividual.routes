@@ -142,6 +142,7 @@ POST       /:index/individual/:mode/check-your-answers-individual-details/:srn  
 
 GET        /:index/individual/individual-address                                        controllers.register.trustees.individual.WhatYouWillNeedIndividualAddressController.onPageLoad(mode: Mode = NormalMode, index: Index, srn: Option[String] = None)
 GET        /:index/individual/:mode/individual-address/:srn                             controllers.register.trustees.individual.WhatYouWillNeedIndividualAddressController.onPageLoad(mode: Mode,index: Index, srn: Option[String])
+
 GET        /:index/individual/check-your-answers-individual-address                     controllers.register.trustees.individual.CheckYourAnswersIndividualAddressController.onPageLoad(mode: Mode = NormalMode, index: Index, srn: Option[String] = None)
 POST       /:index/individual/check-your-answers-individual-address                     controllers.register.trustees.individual.CheckYourAnswersIndividualAddressController.onSubmit(mode: Mode = NormalMode, index: Index, srn: Option[String] = None)
 GET        /:index/individual/:mode/check-your-answers-individual-address/:srn          controllers.register.trustees.individual.CheckYourAnswersIndividualAddressController.onPageLoad(mode: Mode,index: Index, srn: Option[String])

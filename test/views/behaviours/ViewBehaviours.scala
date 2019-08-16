@@ -17,8 +17,8 @@
 package views.behaviours
 
 import org.joda.time.LocalDate
-import org.jsoup.Jsoup
 import play.api.data.{Form, FormError}
+import play.api.mvc.Call
 import play.twirl.api.HtmlFormat
 import views.ViewSpecBase
 
@@ -122,10 +122,11 @@ trait ViewBehaviours extends ViewSpecBase {
     }
   }
 
-  def pageWithSubmitButton(view: () => HtmlFormat.Appendable): Unit = {
+  def pageWithSubmitButton(view: () => HtmlFormat.Appendable, action: Option[Call] = None): Unit = {
     "behave like a page with a submit button" in {
       val doc = asDocument(view())
       assertRenderedById(doc, "submit")
+      action.map(href => assertLink(doc, "submit", href.url))
     }
   }
 
