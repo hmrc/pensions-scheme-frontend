@@ -47,7 +47,6 @@ class WhatYouWillNeedIndividualContactDetailsController @Inject()(val appConfig:
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request => {
-        // TODO: Move to navigator
         val nextPageHref = routes.TrusteeEmailController.onPageLoad(mode, index, srn)
 
         TrusteeNameId(index).retrieve.right.map {

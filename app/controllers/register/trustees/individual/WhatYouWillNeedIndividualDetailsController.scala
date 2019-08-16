@@ -42,7 +42,6 @@ class WhatYouWillNeedIndividualDetailsController @Inject()(appConfig: FrontendAp
     implicit request =>
       TrusteeNameId(index).retrieve.right.map {
         details =>
-          // TODO: Move to navigator
           val href = routes.TrusteeDOBController.onPageLoad(mode, index, srn)
           Future.successful(Ok(whatYouWillNeedIndividualDetails(appConfig, existingSchemeName, href, srn, details.fullName)))
       }
