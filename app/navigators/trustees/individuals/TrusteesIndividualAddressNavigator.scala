@@ -20,8 +20,8 @@ import com.google.inject.Inject
 import connectors.UserAnswersCacheConnector
 import controllers.register.trustees.individual.routes._
 import controllers.routes._
+import identifiers.Identifier
 import identifiers.register.trustees.IsTrusteeNewId
-import identifiers.{AnyMoreChangesId, Identifier}
 import identifiers.register.trustees.individual._
 import models.AddressYears._
 import models.Mode._
@@ -48,10 +48,10 @@ class TrusteesIndividualAddressNavigator @Inject()(val dataCacheConnector: UserA
     case IndividualPostCodeLookupId(index)                => IndividualAddressListController.onPageLoad(mode, index, srn)
     case IndividualAddressListId(index)                   => TrusteeAddressController.onPageLoad(mode, index, srn)
     case TrusteeAddressId(index)                          => TrusteeAddressYearsController.onPageLoad(mode, index, srn)
-    case TrusteeAddressYearsId(index)                     => trusteeAddressYearsRoutes(mode, ua, index, srn)
+    case TrusteeAddressYearsId(index)                     => trusteeAddressYearsRoutes(journeyMode(mode), ua, index, srn)
     case IndividualPreviousAddressPostCodeLookupId(index) => TrusteePreviousAddressListController.onPageLoad(mode, index, srn)
     case TrusteePreviousAddressListId(index)              => TrusteePreviousAddressController.onPageLoad(mode, index, srn)
-    case TrusteePreviousAddressId(index)                  => isNewTrustee(ua, mode, index, srn)
+    case TrusteePreviousAddressId(index)                  => isNewTrustee(ua, journeyMode(mode), index, srn)
   }
 
   override protected def routeMap(from: NavigateFrom): Option[NavigateTo] =
