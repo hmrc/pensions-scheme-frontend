@@ -17,7 +17,7 @@
 package identifiers.register.trustees.company
 
 import identifiers.TypedIdentifier
-import identifiers.register.trustees.{IsTrusteeCompleteId, IsTrusteeNewId, TrusteesId}
+import identifiers.register.trustees.{IsTrusteeNewId, TrusteesId}
 import models.AddressYears
 import play.api.i18n.Messages
 import play.api.libs.json.{JsPath, JsResult}
@@ -37,8 +37,6 @@ case class CompanyAddressYearsId(index: Int) extends TypedIdentifier[AddressYear
           CompanyPreviousAddressListId(index),
           HasBeenTradingCompanyId(index)
         ))
-      case Some(AddressYears.UnderAYear) =>
-        userAnswers.set(IsTrusteeCompleteId(index))(false)
       case _ => super.cleanup(value, userAnswers)
     }
   }

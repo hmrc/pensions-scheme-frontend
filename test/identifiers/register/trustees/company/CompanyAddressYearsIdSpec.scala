@@ -17,7 +17,7 @@
 package identifiers.register.trustees.company
 
 import base.SpecBase
-import identifiers.register.trustees.{IsTrusteeCompleteId, IsTrusteeNewId}
+import identifiers.register.trustees.IsTrusteeNewId
 import models.AddressYears.UnderAYear
 import models._
 import models.address.{Address, TolerantAddress}
@@ -40,7 +40,6 @@ class CompanyAddressYearsIdSpec extends SpecBase {
       .flatMap(_.set(CompanyPreviousAddressId(0))(Address("foo", "bar", None, None, None, "GB")))
       .flatMap(_.set(CompanyPreviousAddressListId(0))(TolerantAddress(Some("foo"), Some("bar"), None, None, None, Some("GB"))))
       .flatMap(_.set(HasBeenTradingCompanyId(0))(true))
-      .flatMap(_.set(IsTrusteeCompleteId(0))(true))
       .asOpt.value
 
     "`AddressYears` is set to `OverAYear`" when {
@@ -62,60 +61,6 @@ class CompanyAddressYearsIdSpec extends SpecBase {
       "remove the data for `HasBeenTrading`" in {
         result.get(HasBeenTradingCompanyId(0)) mustNot be(defined)
       }
-
-      "do not change the value of IsTrusteeCompleteId" in {
-        result.get(IsTrusteeCompleteId(0)).value mustBe true
-      }
-    }
-
-    "`AddressYears` is set to `UnderAYear`" when {
-
-      val result: UserAnswers = UserAnswers(Json.obj())
-        .set(CompanyAddressYearsId(0))(AddressYears.OverAYear)
-        .flatMap(_.set(CompanyPreviousAddressPostcodeLookupId(0))(Seq.empty))
-        .flatMap(_.set(CompanyPreviousAddressId(0))(Address("foo", "bar", None, None, None, "GB")))
-        .flatMap(_.set(CompanyPreviousAddressListId(0))(TolerantAddress(Some("foo"), Some("bar"), None, None, None, Some("GB"))))
-        .flatMap(_.set(HasBeenTradingCompanyId(0))(true))
-        .flatMap(_.set(IsTrusteeCompleteId(0))(true))
-        .asOpt.value.set(CompanyAddressYearsId(0))(AddressYears.UnderAYear).asOpt.value
-
-      "set the value of IsTrusteeCompleteId to false" in {
-        result.get(IsTrusteeCompleteId(0)).value mustBe false
-      }
-
-      "not remove the data for `PreviousPostCodeLookup`" in {
-        result.get(CompanyPreviousAddressPostcodeLookupId(0)) mustBe defined
-      }
-
-      "not remove the data for `PreviousAddress`" in {
-        result.get(CompanyPreviousAddressId(0)) mustBe defined
-      }
-
-      "not remove the data for `PreviousAddressList`" in {
-        result.get(CompanyPreviousAddressListId(0)) mustBe defined
-      }
-
-      "not remove the data for `HasBeenTrading`" in {
-        result.get(HasBeenTradingCompanyId(0)) mustBe defined
-      }
-    }
-
-    "`AddressYears` is removed" when {
-
-      val result: UserAnswers = answers.remove(CompanyAddressYearsId(0)).asOpt.value
-
-      "not remove the data for `PreviousPostCodeLookup`" in {
-        result.get(CompanyPreviousAddressPostcodeLookupId(0)) mustBe defined
-      }
-
-      "not remove the data for `PreviousAddress`" in {
-        result.get(CompanyPreviousAddressId(0)) mustBe defined
-      }
-
-      "not remove the data for `PreviousAddressList`" in {
-        result.get(CompanyPreviousAddressListId(0)) mustBe defined
-      }
-
     }
   }
 

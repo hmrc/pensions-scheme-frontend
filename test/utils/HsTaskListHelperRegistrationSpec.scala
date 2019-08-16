@@ -20,8 +20,8 @@ import config.FeatureSwitchManagementService
 import identifiers._
 import identifiers.register.trustees.company.{CompanyDetailsId => TrusteeCompanyDetailsId}
 import identifiers.register.trustees.individual.TrusteeDetailsId
-import identifiers.register.trustees.partnership.{IsPartnershipCompleteId, PartnershipDetailsId => TrusteePartnershipDetailsId}
-import identifiers.register.trustees.{IsTrusteeCompleteId, IsTrusteeNewId, TrusteeKindId}
+import identifiers.register.trustees.partnership.{PartnershipDetailsId => TrusteePartnershipDetailsId}
+import identifiers.register.trustees.{IsTrusteeNewId, TrusteeKindId}
 import models._
 import models.person.PersonDetails
 import models.register.trustees.TrusteeKind
@@ -298,18 +298,15 @@ class HsTaskListHelperRegistrationSpec extends HsTaskListHelperBehaviour with En
 
     "return the seq of trustees sub sections after filtering out deleted trustees" in {
       val userAnswers = UserAnswers().set(TrusteeDetailsId(0))(PersonDetails("firstName", None, "lastName", LocalDate.now())).flatMap(
-        _.set(IsTrusteeCompleteId(0))(false).flatMap(
           _.set(IsTrusteeNewId(0))(true).flatMap(
             _.set(TrusteeKindId(0))(TrusteeKind.Individual).flatMap(
               _.set(TrusteeCompanyDetailsId(1))(CompanyDetails("test company", true)).flatMap(
-                _.set(IsTrusteeCompleteId(1))(false).flatMap(
                   _.set(IsTrusteeNewId(1))(true).flatMap(
                     _.set(TrusteeKindId(1))(TrusteeKind.Company).flatMap(
                       _.set(TrusteePartnershipDetailsId(2))(PartnershipDetails("test partnership", false)).flatMap(
                         _.set(TrusteeKindId(2))(TrusteeKind.Partnership).flatMap(
-                          _.set(IsTrusteeNewId(2))(true).flatMap(
-                            _.set(IsPartnershipCompleteId(2))(false)
-                          ))))))))))).asOpt.value
+                          _.set(IsTrusteeNewId(2))(true)
+                          )))))))).asOpt.value
       val helper = new HsTaskListHelperRegistration(userAnswers, fakeFeatureManagementService)
       helper.trustees(userAnswers, mode, srn) mustBe
         Seq(SchemeDetailsTaskListEntitySection(Some(false), List(EntitySpoke(Link(individualLinkText,
