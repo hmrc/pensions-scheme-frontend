@@ -1553,7 +1553,7 @@ messages__whatYouWillNeedEstablisherCompanyContact__item1 = contact email addres
 messages__whatYouWillNeedEstablisherCompanyContact__item2 = contact phone number
 
 messages__whatYouWillNeedTrusteeIndividualContact__title = Contact details
-messages__whatYouWillNeedTrusteeIndividualContact__h1 = Contact details
+messages__whatYouWillNeedTrusteeIndividualContact__h1 = Contact details for {0}
 messages__whatYouWillNeedTrusteeIndividualContact__p1 = You will need to tell us the trustee’s:
 messages__whatYouWillNeedTrusteeIndividualContact__item1 = contact email address
 messages__whatYouWillNeedTrusteeIndividualContact__item2 = contact phone number

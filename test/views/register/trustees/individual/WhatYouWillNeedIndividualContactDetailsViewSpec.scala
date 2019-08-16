@@ -20,24 +20,23 @@ import models.{Index, NormalMode}
 import play.api.mvc.Call
 import play.twirl.api.HtmlFormat
 import views.behaviours.ViewBehaviours
-import views.html.register.trustees.individual.whatYouWillNeedIndividualContactDetailsView
+import views.html.register.trustees.individual.WhatYouWillNeedIndividualContactDetailsView
 
 class WhatYouWillNeedIndividualContactDetailsViewSpec extends ViewBehaviours {
 
-//  val personName = "wibble"
 
-  lazy val href: Call = Call("GET", "cinammon.html")
+  lazy val href: Call = Call("GET", "url")
 
   val schemeName = Some("testScheme")
 
-  def createView(): HtmlFormat.Appendable = whatYouWillNeedIndividualContactDetailsView(frontendAppConfig, schemeName, href, None)(fakeRequest, messages)
+  def createView(): HtmlFormat.Appendable = WhatYouWillNeedIndividualContactDetailsView(frontendAppConfig, schemeName, href, None, "heading")(fakeRequest, messages)
 
   "whatYouWillNeedTrusteeIndividualDetails view" must {
 
     behave like normalPage(
       createView,
       "whatYouWillNeedTrusteeIndividualContact",
-      messages("messages__whatYouWillNeedTrusteeIndividualContact__h1"),
+      "heading",
       "_item1",
       "_item2"
     )

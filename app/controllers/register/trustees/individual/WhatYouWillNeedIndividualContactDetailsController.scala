@@ -20,18 +20,19 @@ import akka.actor.FSM.Normal
 import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions._
+import identifiers.register.trustees.individual.TrusteeNameId
 import javax.inject.Inject
 import models.{Index, Mode, NormalMode}
 import navigators.Navigator
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, Call}
+import play.api.mvc.{Action, AnyContent, Call, Result}
 import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.Enumerable
-import views.html.register.trustees.individual.whatYouWillNeedIndividualContactDetailsView
-import views.html.schemeName
+import viewmodels.Message
+import views.html.register.trustees.individual.WhatYouWillNeedIndividualContactDetailsView
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 class WhatYouWillNeedIndividualContactDetailsController @Inject()(val appConfig: FrontendAppConfig,
                                                                   val messagesApi: MessagesApi,
@@ -44,12 +45,16 @@ class WhatYouWillNeedIndividualContactDetailsController @Inject()(val appConfig:
                                      )(implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData) {
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request => {
         // TODO: Move to navigator
         val nextPageHref = routes.TrusteeEmailController.onPageLoad(mode, index, srn)
 
-        Ok(whatYouWillNeedIndividualContactDetailsView(appConfig, existingSchemeName, nextPageHref, srn))
+        TrusteeNameId(index).retrieve.right.map {
+          name =>
+            val title = Message("messages__whatYouWillNeedTrusteeIndividualContact__h1", name.fullName)
+            Future.successful(Ok(WhatYouWillNeedIndividualContactDetailsView(appConfig, existingSchemeName, nextPageHref, srn, title)))
+        }
       }
     }
 

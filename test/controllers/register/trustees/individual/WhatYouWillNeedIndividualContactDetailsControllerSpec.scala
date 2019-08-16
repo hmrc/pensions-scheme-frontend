@@ -17,18 +17,38 @@
 package controllers.register.trustees.individual
 
 import controllers.ControllerSpecBase
+import controllers.actions.FakeDataRetrievalAction
+import identifiers.SchemeNameId
+import identifiers.register.trustees.individual.TrusteeNameId
+import models.person.{PersonDetails, PersonName}
 import models.{Index, NormalMode, UpdateMode}
+import org.joda.time.LocalDate
+import play.api.libs.json.Json
 import play.api.test.Helpers._
 import play.api.mvc.{Action, AnyContent, Call, Result}
-import views.html.register.trustees.individual.whatYouWillNeedIndividualContactDetailsView
+import viewmodels.Message
+import views.html.register.trustees.individual.WhatYouWillNeedIndividualContactDetailsView
 
 import scala.concurrent.Future
 
 class WhatYouWillNeedIndividualContactDetailsControllerSpec extends ControllerSpecBase {
 
+  val trusteeName =  PersonName("Test", "Name")
+
+  val schemeNameAndTrusteeDetailsData = Json.obj(
+    SchemeNameId.toString -> "Test Scheme Name",
+    "trustees" -> Json.arr(
+      Json.obj(
+        TrusteeNameId.toString -> trusteeName
+      )
+    )
+  )
+
   def controller: WhatYouWillNeedIndividualContactDetailsController =
-    applicationBuilder(getMandatorySchemeNameHs, true)
-      .build()
+    applicationBuilder(
+      new FakeDataRetrievalAction(Some(schemeNameAndTrusteeDetailsData)),
+      featureSwitchEnabled = true
+    ).build()
       .injector
       .instanceOf[WhatYouWillNeedIndividualContactDetailsController]
 
@@ -39,11 +59,13 @@ class WhatYouWillNeedIndividualContactDetailsControllerSpec extends ControllerSp
       "on a GET" in {
         val result: Future[Result] = controller.onPageLoad(NormalMode, index, None)(fakeRequest)
 
-        val schemeName: Option[String] = Some("Test Scheme Name")
+        val expectedSchemeName: Option[String] = Some("Test Scheme Name")
         val expectedRedirectLocation: Call = routes.TrusteeEmailController.onPageLoad(NormalMode, index, None)
+        val expectedHeading = Message("messages__whatYouWillNeedTrusteeIndividualContact__h1", trusteeName.fullName)
+        val expectedView = WhatYouWillNeedIndividualContactDetailsView(frontendAppConfig, expectedSchemeName, expectedRedirectLocation, None, expectedHeading)(fakeRequest, messages).toString
 
         status(result) mustEqual OK
-        contentAsString(result) mustBe whatYouWillNeedIndividualContactDetailsView(frontendAppConfig, schemeName, expectedRedirectLocation, None)(fakeRequest, messages).toString
+        contentAsString(result) mustBe expectedView
       }
 
     }
@@ -53,11 +75,13 @@ class WhatYouWillNeedIndividualContactDetailsControllerSpec extends ControllerSp
         val srn = Some("1234567890")
         val result: Future[Result] = controller.onPageLoad(UpdateMode, index, srn)(fakeRequest)
 
-        val schemeName: Option[String] = Some("Test Scheme Name")
+        val expectedSchemeName: Option[String] = Some("Test Scheme Name")
         val expectedRedirectLocation: Call = routes.TrusteeEmailController.onPageLoad(UpdateMode, index, srn)
+        val expectedHeading = Message("messages__whatYouWillNeedTrusteeIndividualContact__h1", trusteeName.fullName)
+        val expectedView = WhatYouWillNeedIndividualContactDetailsView(frontendAppConfig, expectedSchemeName, expectedRedirectLocation, srn, expectedHeading)(fakeRequest, messages).toString
 
         status(result) mustEqual OK
-        contentAsString(result) mustBe whatYouWillNeedIndividualContactDetailsView(frontendAppConfig, schemeName, expectedRedirectLocation, srn)(fakeRequest, messages).toString
+        contentAsString(result) mustBe expectedView
       }
 
     }
