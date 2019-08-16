@@ -21,9 +21,9 @@
         legend: String,
         legendClass: Option[String] = None,
         hint: Option[String] = None,
-        trackGa: Boolean = false,
         inputs: Seq[InputOption],
-        fieldsetClass: Option[String] = None
+        fieldsetClass: Option[String] = None,
+        labelClass: Option[String] = None
 )(implicit messages: Messages)
 
 <div class="form-field @if(field.hasErrors){form-field--error}">
@@ -38,7 +38,7 @@
             }
         </legend>
         @for(input <- inputs) {
-            @components.radio(field, input.label, input.value, input.dataTarget, input.hint)
+            @components.radio(field, input.label, input.value, input.dataTarget, input.hint, labelClass)
         }
     </fieldset>
 </div>

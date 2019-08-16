@@ -20,7 +20,7 @@ import controllers.ControllerSpecBase
 import controllers.actions._
 import identifiers.register.trustees.individual.TrusteeNameId
 import models.person.PersonName
-import models.{Index, NormalMode}
+import models.{Index, Mode, NormalMode, UpdateMode}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.mockito.MockitoSugar
 import play.api.test.Helpers._
@@ -41,18 +41,28 @@ class WhatYouWillNeedIndividualDetailsControllerSpec extends ControllerSpecBase 
       new DataRequiredActionImpl
     )
 
-  lazy val href = controllers.register.trustees.individual.routes.TrusteeDOBController.onPageLoad(NormalMode, index=Index(0), None)
-
-  def viewAsString(): String = whatYouWillNeedIndividualDetails(frontendAppConfig, None, href, None, personName)(fakeRequest, messages).toString
+  def viewAsString(mode: Mode): String = {
+    val href = controllers.register.trustees.individual.routes.TrusteeDOBController.onPageLoad(mode, index=Index(0), None)
+    whatYouWillNeedIndividualDetails(frontendAppConfig, None, href, None, personName)(fakeRequest, messages).toString
+  }
 
   "WhatYouWillNeedIndividualDetailsControllerSpec" when {
 
-    "on a GET" must {
-      "return OK and the correct view" in {
+    "in Subscription journey" must {
+      "on a GET it must return OK and the correct view" in {
         val result = controller().onPageLoad(NormalMode, Index(0), None)(fakeRequest)
 
         status(result) mustBe OK
-        contentAsString(result) mustBe viewAsString()
+        contentAsString(result) mustBe viewAsString(NormalMode)
+      }
+    }
+
+    "in Variations journey" must {
+      "on a GET it must return OK and the correct view" in {
+        val result = controller().onPageLoad(UpdateMode, Index(0), None)(fakeRequest)
+
+        status(result) mustBe OK
+        contentAsString(result) mustBe viewAsString(UpdateMode)
       }
     }
   }
