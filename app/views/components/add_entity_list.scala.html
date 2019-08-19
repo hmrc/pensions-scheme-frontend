@@ -38,7 +38,7 @@
 <div class="form-group">
     <ul id="items" class="govuk-check-your-answers form-group cya-questions-long">
 
-        <li>
+        <li class="cya-question">
             <div class="cya-question">
                 <h2 id="person-header" class="bold std-text">@messages(entityNameHeader)</h2>
             </div>
@@ -46,6 +46,7 @@
             <div class="cya-question">
                 <h2 id="kind-header" class="bold std-text">@messages("site.type")</h2>
             </div>
+            <div></div>
         </li>
 
             @for(entity <- entities) {
