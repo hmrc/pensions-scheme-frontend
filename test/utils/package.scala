@@ -19,8 +19,10 @@ import identifiers._
 import identifiers.register._
 import identifiers.register.trustees.IsTrusteeNewId
 import identifiers.register.trustees.company.{CompanyPayeVariationsId, CompanyRegistrationNumberId, CompanyRegistrationNumberVariationsId}
+import identifiers.register.trustees.individual.TrusteeNameId
 import models._
 import models.address.{Address, TolerantAddress}
+import models.person.PersonName
 import models.register.{establishers => _, trustees => _, _}
 import org.scalatest.OptionValues
 
@@ -256,6 +258,11 @@ package object utils {
     }
 
     //Trustee Individual
+
+    def trusteeName(index: Int, trusteeName: PersonName): UserAnswers = {
+      answers.set(TrusteeNameId(index))(trusteeName).asOpt.value
+    }
+
     def trusteesAddress(index: Int, address: Address): UserAnswers = {
       answers.set(trustees.individual.TrusteeAddressId(index))(address).asOpt.value
     }
