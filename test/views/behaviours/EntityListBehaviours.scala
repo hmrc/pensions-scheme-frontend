@@ -100,8 +100,8 @@ trait EntityListBehaviours {
           val visibleText = doc.select(s"#person-${item.index}-delete span[aria-hidden=true]").first.text
           val hiddenText = doc.select(s"#person-${item.index}-delete span[class=visually-hidden]").first.text
           link.size mustBe 1
-          visibleText mustBe messages("site.delete")
-          hiddenText mustBe s"${messages("site.delete")} ${item.name}"
+          visibleText mustBe messages("site.remove")
+          hiddenText mustBe s"${messages("site.remove")} ${item.name}"
           link.first.attr("href") mustBe item.deleteLink(NormalMode, None).get
         }
       }

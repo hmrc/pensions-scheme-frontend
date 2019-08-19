@@ -18,15 +18,46 @@
 @import config.FrontendAppConfig
 @import models.requests.DataRequest
 @import models.register.{Entity, Establisher}
-@(entities: Seq[Entity[_]], mode: Mode, srn: Option[String])(implicit messages: Messages)
+@import identifiers.register.establishers.company.CompanyDetailsId
+@import identifiers.register.establishers.individual.EstablisherDetailsId
+@import identifiers.register.establishers.partnership.PartnershipDetailsId
+@import identifiers.register.trustees.company.{CompanyDetailsId => TrusteeCompanyDetailsId}
+@import identifiers.register.trustees.individual.TrusteeNameId
+@import identifiers.register.trustees.partnership.{PartnershipDetailsId => TrusteePartnershipDetailsId}
+@(entities: Seq[Entity[_]], mode: Mode, srn: Option[String], entityNameHeader: String)(implicit messages: Messages)
+
+@getKind(entity: Entity[_]) = @{
+    entity.id match {
+        case CompanyDetailsId(_) | TrusteeCompanyDetailsId(_) => "Company"
+        case EstablisherDetailsId(_) | TrusteeNameId(_) => "Individual"
+        case PartnershipDetailsId(_) | TrusteePartnershipDetailsId(_) => "Partnership"
+        case _ => ""
+    }
+}
 
 <div class="form-group">
     <ul id="items" class="govuk-check-your-answers form-group cya-questions-long">
-        @for(entity <- entities) {
+
+        <li>
+            <div class="cya-question">
+                <h2 id="person-header" class="bold std-text">@messages(entityNameHeader)</h2>
+            </div>
+
+            <div class="cya-question">
+                <h2 id="kind-header" class="bold std-text">@messages("site.type")</h2>
+            </div>
+        </li>
+
+            @for(entity <- entities) {
             <li>
                 <div class="cya-question">
-                    <h2 id="person-@{entity.index}" class="bold std-text">@entity.name</h2>
+                    <p id="person-@{entity.index}" class="std-text">@entity.name</p>
                 </div>
+
+                <div class="cya-question">
+                    <p id="kind-@{entity.index}" class="std-text">@getKind(entity)</p>
+                </div>
+
                     @entity.deleteLink(mode, srn).map{ deleteLink=>
                         <div>
                             <a id="person-@{entity.index}-delete" href="@deleteLink">

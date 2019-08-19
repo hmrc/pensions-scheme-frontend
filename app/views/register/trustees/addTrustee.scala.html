@@ -52,7 +52,7 @@
         } else {
 
             @if(isHnsEnabled) {
-                @components.add_entity_list(trustees, mode, srn)
+                @components.add_entity_list(trustees, mode, srn, "messages__addTrustee__header")
 
             } else {
                 @components.entity_list(trustees, mode = mode, srn = srn)

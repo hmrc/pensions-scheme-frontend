@@ -30,7 +30,7 @@
     schemeName: Option[String],
     srn: Option[String],
     enableSubmission:Boolean,
-    displayStatus: Boolean = true
+    isHnsEnabled: Boolean
 )(implicit request: Request[_], messages: Messages)
 
 @main_template(
@@ -56,13 +56,18 @@
                 headingKey=messages("messages__establishers__add__title")
             )
 
-            @components.entity_list(establishers, mode = mode, srn = srn, displayStatus = displayStatus)
+
+            @if(isHnsEnabled) {
+                @components.add_entity_list(establishers, mode, srn, "messages__establishers__add_header")
+            } else {
+                @components.entity_list(establishers, mode = mode, srn = srn, displayStatus = !isHnsEnabled)
+            }
 
             @components.input_yes_no(
                 field = form("value"),
                 label = messages("messages__establishers__add_legend_more"),
                 labelClass = Some("bold-small"),
-                hint = Some(messages("messages__establishers__add_hint"))
+                hint = None
             )
         }
 

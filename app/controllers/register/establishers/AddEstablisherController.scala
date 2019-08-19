@@ -21,9 +21,12 @@ import controllers.Retrievals
 import controllers.actions._
 import forms.register.establishers.AddEstablisherFormProvider
 import identifiers.register.establishers.AddEstablisherId
+import identifiers.register.establishers.company.CompanyDetailsId
+import identifiers.register.establishers.individual.EstablisherDetailsId
+import identifiers.register.establishers.partnership.PartnershipDetailsId
 import javax.inject.Inject
 import models.Mode
-import models.register.Establisher
+import models.register.{Entity, Establisher}
 import navigators.Navigator
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
@@ -49,25 +52,34 @@ class AddEstablisherController @Inject()(appConfig: FrontendAppConfig,
   def onPageLoad(mode: Mode, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
-        val establishers = request.userAnswers.allEstablishersAfterDelete(fsms.get(Toggles.isEstablisherCompanyHnSEnabled), mode)
+        val establishers = request.userAnswers.allEstablishersAfterDelete(isHnSEnabled, mode)
         Future.successful(Ok(addEstablisher(appConfig, formProvider(establishers), mode,
-          establishers, existingSchemeName, srn, checkContinueButton(establishers), displayStatus = displayStatus)))
+          establishers, existingSchemeName, srn, enableSubmission(establishers), isHnSEnabled)))
     }
 
   def onSubmit(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
-      val establishers = request.userAnswers.allEstablishersAfterDelete(fsms.get(Toggles.isEstablisherCompanyHnSEnabled), mode)
+      val establishers = request.userAnswers.allEstablishersAfterDelete(isHnSEnabled, mode)
       formProvider(establishers).bindFromRequest().fold(
         formWithErrors =>
           Future.successful(BadRequest(addEstablisher(appConfig, formWithErrors, mode,
-            establishers, existingSchemeName, srn, checkContinueButton(establishers), displayStatus = displayStatus))),
+            establishers, existingSchemeName, srn, enableSubmission(establishers), isHnSEnabled))),
         value =>
           Future.successful(Redirect(navigator.nextPage(AddEstablisherId(value), mode, request.userAnswers, srn)))
       )
   }
 
-  private def checkContinueButton(establishers: Seq[Establisher[_]]) =
-    fsms.get(Toggles.isEstablisherCompanyHnSEnabled) || establishers.forall(_.isCompleted)
+  private def enableSubmission(establishers: Seq[Establisher[_]]) =
+    isHnSEnabled || establishers.forall(_.isCompleted)
 
-  private def displayStatus = !fsms.get(Toggles.isEstablisherCompanyHnSEnabled)
+  private def isHnSEnabled = fsms.get(Toggles.isEstablisherCompanyHnSEnabled)
+
+  def returnKind(entity: Entity[_]) = {
+    entity.id match {
+      case CompanyDetailsId(_)  => "Company"
+      case EstablisherDetailsId(_) => "Individual"
+      case PartnershipDetailsId(_) => "Partnership"
+      case _ => ""
+    }
+  }
 }
