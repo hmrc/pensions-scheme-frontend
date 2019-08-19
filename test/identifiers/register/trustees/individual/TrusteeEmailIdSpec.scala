@@ -34,16 +34,15 @@ class TrusteeEmailIdSpec extends SpecBase {
     val email = "test@test.com"
     val onwardUrl = "onwardUrl"
     val personName = PersonName("first", "last")
+    implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id",
+      UserAnswers().set(TrusteeEmailId(0))(email).flatMap(
+        _.set(TrusteeNameId(0))(personName)).asOpt.value, PsaId("A0000000"))
+    implicit val userAnswers: UserAnswers = request.userAnswers
 
     Seq(NormalMode, UpdateMode).foreach { mode =>
 
       s"in ${mode.toString} mode" must {
         "return answers rows with change links" in {
-          implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id",
-            UserAnswers().set(TrusteeEmailId(0))(email).flatMap(
-              _.set(TrusteeNameId(0))(personName)).asOpt.value, PsaId("A0000000"))
-          implicit val userAnswers: UserAnswers = request.userAnswers
-
           TrusteeEmailId(0).row(onwardUrl, mode) must equal(Seq(
             AnswerRow(
               Message("messages__common_email__heading", personName.fullName),

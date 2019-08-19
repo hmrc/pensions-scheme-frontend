@@ -36,13 +36,13 @@ object CompanyPhoneId {
       CheckYourAnswers[CompanyPhoneId] {
 
     override def row(id: CompanyPhoneId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
-      def trusteeName(index: Int) = userAnswers.get(CompanyDetailsId(index)).fold(messages("messages__theTrustee"))(_.companyName)
-      def label(index:Int) = messages("messages__common_phone__heading", trusteeName(index))
-      def hiddenLabel(index:Int) = Some(messages("messages__common_phone__visually_hidden_change_label", trusteeName(index)))
+      val trusteeName: String = userAnswers.get(CompanyDetailsId(id.index)).fold(messages("messages__theTrustee"))(_.companyName)
+      val label = messages("messages__common_phone__heading", trusteeName)
+      val hiddenLabel = Some(messages("messages__common_phone__visually_hidden_change_label", trusteeName))
 
       StringCYA(
-        Some(label(id.index)),
-        hiddenLabel(id.index)
+        Some(label),
+        hiddenLabel
       )().row(id)(changeUrl, userAnswers)
     }
 
