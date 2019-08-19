@@ -19,6 +19,7 @@ package utils
 import identifiers.TypedIdentifier
 import identifiers.register.establishers.company._
 import identifiers.register.trustees.{company => tc}
+import identifiers.register.trustees.{partnership => tp}
 import identifiers.register.establishers.company.director._
 import identifiers.register.trustees.individual._
 import models.address.Address
@@ -207,7 +208,7 @@ trait DataCompletion {
     else
       isTrusteeCompanyCompleteNonHns(index)
 
-  // INDIVIDUAL TRUSTEE
+  //TRUSTEE INDIVIDUAL
 
   def isTrusteeIndividualDetailsComplete(trusteeIndex: Int): Option[Boolean] =
     isComplete(Seq(
@@ -240,4 +241,39 @@ trait DataCompletion {
         get(TrusteeContactDetailsId(index)).isDefined
       ))
     }
+
+  //TRUSTEE PARTNERSHIP
+  def isTrusteePartnershipDetailsComplete(index: Int): Option[Boolean] =
+    isComplete(
+      Seq(
+        isUtrComplete(tp.PartnershipHasUTRId(index), tp.PartnershipUTRId(index), tp.PartnershipNoUTRReasonId(index)),
+        isAnswerComplete(tp.PartnershipHasVATId(index), tp.PartnershipVatVariationsId(index), None),
+        isAnswerComplete(tp.PartnershipHasPAYEId(index), tp.PartnershipPayeVariationsId(index), None)
+      )
+    )
+
+  def isTrusteePartnershipAddressComplete(index: Int): Option[Boolean] =
+    isAddressComplete(tp.PartnershipAddressId(index), tp.PartnershipPreviousAddressId(index), tp.PartnershipAddressYearsId(index), None)
+
+  def isTrusteePartnershipContactDetailsComplete(index: Int): Option[Boolean] =
+    isContactDetailsComplete(tp.PartnershipEmailId(index), tp.PartnershipPhoneId(index))
+
+  def isTrusteePartnershipCompleteNonHns(index: Int): Boolean =
+    isListComplete(Seq(
+      get(tp.PartnershipDetailsId(index)).isDefined,
+      get(tp.PartnershipUniqueTaxReferenceId(index)).isDefined | get(tp.PartnershipUTRId(index)).isDefined,
+      get(tp.PartnershipVatId(index)).isDefined | get(tp.PartnershipVatVariationsId(index)).isDefined,
+      get(tp.PartnershipPayeId(index)).isDefined | get(tp.PartnershipPayeVariationsId(index)).isDefined,
+      isAddressComplete(tp.PartnershipAddressId(index), tp.PartnershipPreviousAddressId(index), tp.PartnershipAddressYearsId(index), None).getOrElse(false),
+      get(tp.PartnershipContactDetailsId(index)).isDefined
+    ))
+
+  def isTrusteePartnershipComplete(index: Int, isHnSEnabled: Boolean): Boolean =
+    if (isHnSEnabled)
+      isComplete(Seq(
+        isTrusteePartnershipDetailsComplete(index),
+        isTrusteePartnershipAddressComplete(index),
+        isTrusteePartnershipContactDetailsComplete(index))).getOrElse(false)
+    else
+      isTrusteePartnershipCompleteNonHns(index)
 }

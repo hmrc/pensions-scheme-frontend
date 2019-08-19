@@ -17,17 +17,18 @@
 package controllers.register.trustees.individual
 
 import com.google.inject.{Inject, Singleton}
-import config.FrontendAppConfig
+import config.{FeatureSwitchManagementService, FrontendAppConfig}
 import controllers.Retrievals
 import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRequiredAction, DataRetrievalAction}
 import controllers.address.AddressYearsController
 import forms.address.AddressYearsFormProvider
-import identifiers.register.trustees.individual.{TrusteeAddressYearsId, TrusteeDetailsId}
+import identifiers.register.trustees.individual.{TrusteeAddressYearsId, TrusteeDetailsId, TrusteeNameId}
 import models.{Index, Mode}
 import navigators.Navigator
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
+import utils.Toggles
 import utils.annotations.TrusteesIndividual
 import viewmodels.Message
 import viewmodels.address.AddressYearsViewModel
@@ -43,7 +44,8 @@ class TrusteeAddressYearsController @Inject()(
                                                authenticate: AuthAction,
                                                getData: DataRetrievalAction,
                                                allowAccess: AllowAccessActionProvider,
-                                               requireData: DataRequiredAction
+                                               requireData: DataRequiredAction,
+                                               fs: FeatureSwitchManagementService
                                              )(implicit val ec: ExecutionContext) extends AddressYearsController with Retrievals {
 
   private def form(trusteeName: String) = new AddressYearsFormProvider()(Message("messages__trusteeAddressYears__error_required", trusteeName))
@@ -51,16 +53,24 @@ class TrusteeAddressYearsController @Inject()(
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
     implicit request =>
-      TrusteeDetailsId(index).retrieve.right.map { trusteeDetails =>
-        get(TrusteeAddressYearsId(index), form(trusteeDetails.fullName), viewModel(mode, index, trusteeDetails.fullName, srn))
+      trusteeName(index).retrieve.right.map { name =>
+        get(TrusteeAddressYearsId(index), form(name), viewModel(mode, index, name, srn))
       }
   }
 
   def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
-      TrusteeDetailsId(index).retrieve.right.map { trusteeDetails =>
-        post(TrusteeAddressYearsId(index), mode, form(trusteeDetails.fullName), viewModel(mode, index, trusteeDetails.fullName, srn))
+      trusteeName(index).retrieve.right.map { name =>
+        post(TrusteeAddressYearsId(index), mode, form(name), viewModel(mode, index, name, srn))
       }
+  }
+
+  val trusteeName: Index => Retrieval[String] = (trusteeIndex: Index) => Retrieval {
+    implicit request =>
+      if (fs.get(Toggles.isEstablisherCompanyHnSEnabled))
+        TrusteeNameId(trusteeIndex).retrieve.right.map(_.fullName)
+      else
+        TrusteeDetailsId(trusteeIndex).retrieve.right.map(_.fullName)
   }
 
   private def viewModel(mode: Mode, index: Index, trusteeName: String, srn: Option[String]) = AddressYearsViewModel(

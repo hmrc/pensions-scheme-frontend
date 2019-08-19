@@ -19,6 +19,8 @@ package controllers.register.trustees.individual
 import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions._
+import identifiers.register.trustees.IsTrusteeNewId
+import identifiers.register.trustees.individual.{TrusteeEmailId, TrusteePhoneId}
 import javax.inject.Inject
 import models.{Index, Mode}
 import navigators.Navigator
@@ -26,27 +28,50 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import utils.Enumerable
-import utils.annotations.TrusteesIndividual
+import utils.{AllowChangeHelper, CountryOptions, Enumerable, UserAnswers}
+import controllers.register.trustees.individual.routes._
+import viewmodels.AnswerSection
+import utils.checkyouranswers.Ops._
+import models.Mode.checkMode
+import views.html.check_your_answers
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 class CheckYourAnswersIndividualContactDetailsController @Inject()(val appConfig: FrontendAppConfig,
                                                                    val messagesApi: MessagesApi,
-                                                                   val userAnswersService: UserAnswersService,
-                                                                   val navigator: Navigator,
                                                                    authenticate: AuthAction,
                                                                    getData: DataRetrievalAction,
                                                                    allowAccess: AllowAccessActionProvider,
-                                                                   requireData: DataRequiredAction
+                                                                   requireData: DataRequiredAction,
+                                                                   implicit val countryOptions: CountryOptions,
+                                                                   allowChangeHelper: AllowChangeHelper
                                      )(implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData) {
-      implicit request => NotImplemented("Not implemented: " + this.getClass.toString)
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+      implicit request =>
+        implicit val userAnswers: UserAnswers = request.userAnswers
+        val notNewTrustee = !userAnswers.get(IsTrusteeNewId(index)).getOrElse(true)
+        val contactDetails = AnswerSection(
+          None,
+          TrusteeEmailId(index).row(routes.TrusteeEmailController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
+            TrusteePhoneId(index).row(routes.TrusteePhoneController.onPageLoad(checkMode(mode), index, srn).url, mode)
+        )
+
+        Future.successful(Ok(check_your_answers(
+          appConfig,
+          Seq(contactDetails),
+          routes.CheckYourAnswersIndividualContactDetailsController.onSubmit(mode, index, srn),
+          existingSchemeName,
+          mode = mode,
+          hideEditLinks = request.viewOnly || notNewTrustee,
+          hideSaveAndContinueButton = allowChangeHelper.hideSaveAndContinueButton(request, IsTrusteeNewId(index), mode),
+          srn = srn
+        )))
     }
 
   def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData) {
-    implicit request => NotImplemented("Not implemented: " + this.getClass.toString)
+    implicit request =>
+      Redirect(controllers.routes.SchemeTaskListController.onPageLoad(mode, srn))
   }
 }

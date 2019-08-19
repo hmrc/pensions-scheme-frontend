@@ -25,9 +25,9 @@ import identifiers.register.establishers.IsEstablisherCompleteId
 import identifiers.register.establishers.partnership.partner._
 import identifiers.register.establishers.partnership.{IsPartnershipCompleteId, partner}
 import identifiers.register.trustees
+import identifiers.register.trustees.IsTrusteeNewId
 import identifiers.register.trustees.company.{CompanyAddressYearsId => TruesteeCompanyAddressYearsId, CompanyPreviousAddressId => TruesteeCompanyPreviousAddressId}
 import identifiers.register.trustees.individual.{TrusteeAddressId, TrusteeAddressYearsId}
-import identifiers.register.trustees.{IsTrusteeCompleteId, IsTrusteeNewId}
 import models.AddressYears.{OverAYear, UnderAYear}
 import models._
 import models.address.Address
@@ -336,7 +336,7 @@ class UserAnswersServiceSpec extends AsyncWordSpec with MustMatchers with Mockit
     "in UpdateMode" must {
       "save the complete flag if the trustee is not new" in {
         val answers = UserAnswers().set(IsTrusteeNewId(0))(false).asOpt.value
-        val expectedAnswers = answers.set(IsTrusteeCompleteId(0))(true).asOpt.value
+        val expectedAnswers = answers
         when(lockConnector.lock(any(), any())(any(), any()))
           .thenReturn(Future(VarianceLock))
 
@@ -399,7 +399,7 @@ class UserAnswersServiceSpec extends AsyncWordSpec with MustMatchers with Mockit
       "save the complete flag if the trustee is not new and address years is over a year" in {
         val answers = UserAnswers().set(IsTrusteeNewId(0))(false).flatMap(
           _.set(TrusteeAddressYearsId(0))(OverAYear)).asOpt.value
-        val expectedAnswers = answers.set(IsTrusteeCompleteId(0))(true).asOpt.value
+        val expectedAnswers = answers
         when(lockConnector.lock(any(), any())(any(), any()))
           .thenReturn(Future(VarianceLock))
 
