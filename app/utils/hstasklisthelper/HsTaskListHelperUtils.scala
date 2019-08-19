@@ -21,6 +21,7 @@ import controllers.register.establishers.company.director.{routes => establisher
 import controllers.register.establishers.company.{routes => establisherCompanyRoutes}
 import controllers.register.trustees.company.{routes => trusteeCompanyRoutes}
 import controllers.register.trustees.individual.{routes => trusteeIndividualRoutes}
+import controllers.register.trustees.partnership.{routes => trusteePartnershipRoutes}
 import identifiers.register.establishers.IsEstablisherNewId
 import identifiers.register.establishers.IsEstablisherNewId
 import identifiers.register.establishers.IsEstablisherNewId
@@ -114,9 +115,9 @@ trait HsTaskListHelperUtils extends Enumerable.Implicits {
     case TrusteeIndividualDetails => answers.isTrusteeIndividualDetailsComplete(index)
     case TrusteeIndividualAddress => answers.isTrusteeIndividualAddressComplete(index)
     case TrusteeIndividualContactDetails => answers.isTrusteeIndividualContactDetailsComplete(index)
-    case TrusteePartnershipDetails => ???
-    case TrusteePartnershipAddress => ???
-    case TrusteePartnershipContactDetails => ???
+    case TrusteePartnershipDetails => answers.isTrusteePartnershipDetailsComplete(index)
+    case TrusteePartnershipAddress => answers.isTrusteePartnershipAddressComplete(index)
+    case TrusteePartnershipContactDetails => answers.isTrusteePartnershipContactDetailsComplete(index)
     case _ => None
   }
 
@@ -128,6 +129,9 @@ trait HsTaskListHelperUtils extends Enumerable.Implicits {
     case TrusteeIndividualDetails => messages("messages__schemeTaskList__sectionIndividual_change_details",  _)
     case TrusteeIndividualAddress => messages("messages__schemeTaskList__sectionIndividual_change_address",  _)
     case TrusteeIndividualContactDetails => messages("messages__schemeTaskList__sectionIndividual_change_contact", _)
+    case TrusteePartnershipDetails => messages("messages__schemeTaskList__sectionPartnership_change_details",  _)
+    case TrusteePartnershipAddress => messages("messages__schemeTaskList__sectionPartnership_change_address",  _)
+    case TrusteePartnershipContactDetails => messages("messages__schemeTaskList__sectionPartnership_change_contact", _)
     case _ => (_: String) => s"Not found link text for spoke $spokeName"
   }
 
@@ -156,6 +160,9 @@ trait HsTaskListHelperUtils extends Enumerable.Implicits {
     case TrusteeIndividualDetails => trusteeIndividualRoutes.CheckYourAnswersIndividualDetailsController.onPageLoad(mode, index, srn)
     case TrusteeIndividualAddress => trusteeIndividualRoutes.CheckYourAnswersIndividualAddressController.onPageLoad(mode, index, srn)
     case TrusteeIndividualContactDetails => trusteeIndividualRoutes.CheckYourAnswersIndividualContactDetailsController.onPageLoad(mode, index, srn)
+    case TrusteePartnershipDetails => trusteePartnershipRoutes.CheckYourAnswersPartnershipDetailsController.onPageLoad(mode, index, srn)
+    case TrusteePartnershipAddress => trusteePartnershipRoutes.CheckYourAnswersPartnershipAddressController.onPageLoad(mode, index, srn)
+    case TrusteePartnershipContactDetails => trusteePartnershipRoutes.CheckYourAnswersPartnershipContactDetailsController.onPageLoad(mode, index, srn)
     case _ => controllers.routes.IndexController.onPageLoad()
   }
 
@@ -170,6 +177,9 @@ trait HsTaskListHelperUtils extends Enumerable.Implicits {
     case TrusteeIndividualDetails => trusteeIndividualRoutes.WhatYouWillNeedIndividualDetailsController.onPageLoad(mode, index,srn) //change the route
     case TrusteeIndividualAddress => trusteeIndividualRoutes.WhatYouWillNeedIndividualAddressController.onPageLoad(mode, index, srn) //change the route
     case TrusteeIndividualContactDetails => trusteeIndividualRoutes.WhatYouWillNeedIndividualContactDetailsController.onPageLoad(mode, index, srn) //change the route
+    case TrusteePartnershipDetails => trusteePartnershipRoutes.WhatYouWillNeedPartnershipDetailsController.onPageLoad(mode, index,srn)
+    case TrusteePartnershipAddress => trusteePartnershipRoutes.WhatYouWillNeedPartnershipAddressController.onPageLoad(mode, index, srn)
+    case TrusteePartnershipContactDetails => trusteePartnershipRoutes.WhatYouWillNeedPartnershipContactDetailsController.onPageLoad(mode, index, srn)
     case _ => controllers.routes.IndexController.onPageLoad()
   }
 

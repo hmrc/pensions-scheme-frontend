@@ -1309,6 +1309,10 @@ messages__schemeTaskList__sectionIndividual_change_details = Change {0}’s deta
 messages__schemeTaskList__sectionIndividual_change_address = Change {0}’s address
 messages__schemeTaskList__sectionIndividual_change_contact = Change {0}’s contact details
 
+messages__schemeTaskList__sectionPartnership_change_details = Change {0}’s partnership’s details
+messages__schemeTaskList__sectionPartnership_change_address = Change {0}’s partnership’s address
+messages__schemeTaskList__sectionPartnership_change_contact = Change {0}’s partnership’s contact details
+
 messages__schemeTaskList__sectionTrustees_header = Trustees
 messages__schemeTaskList__sectionTrustees_add_link = Add a trustee
 messages__schemeTaskList__sectionTrustees_add_additional_text = There must be a minimum of 1 trustee. If you want to remove this trustee, you must first add a new one.
