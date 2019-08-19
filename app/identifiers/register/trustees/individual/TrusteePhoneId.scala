@@ -18,7 +18,12 @@ package identifiers.register.trustees.individual
 
 import identifiers._
 import identifiers.register.trustees.TrusteesId
+import play.api.i18n.Messages
 import play.api.libs.json.JsPath
+import utils.checkyouranswers.CheckYourAnswers
+import utils.checkyouranswers.CheckYourAnswers.StringCYA
+import utils.{CountryOptions, UserAnswers}
+import viewmodels.AnswerRow
 
 case class TrusteePhoneId(index: Int) extends TypedIdentifier[String] {
   override def path: JsPath = TrusteesId(index).path \ "trusteeContactDetails" \ TrusteePhoneId.toString
@@ -26,4 +31,21 @@ case class TrusteePhoneId(index: Int) extends TypedIdentifier[String] {
 
 object TrusteePhoneId {
   override def toString: String = "phoneNumber"
+
+  implicit def cya(implicit messages: Messages, countryOptions: CountryOptions, userAnswers: UserAnswers): CheckYourAnswers[TrusteePhoneId] = new
+      CheckYourAnswers[TrusteePhoneId] {
+
+    override def row(id: TrusteePhoneId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
+      def trusteeName(index: Int): String = userAnswers.get(TrusteeNameId(index)).fold(messages("messages__theTrustee"))(_.fullName)
+      def label(index:Int): String = messages("messages__common_phone__heading", trusteeName(index))
+      def hiddenLabel(index:Int): Option[String] = Some(messages("messages__common_phone__visually_hidden_change_label", trusteeName(index)))
+
+      StringCYA(
+        Some(label(id.index)),
+        hiddenLabel(id.index)
+      )().row(id)(changeUrl, userAnswers)
+    }
+
+    override def updateRow(id: TrusteePhoneId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = row(id)(changeUrl, userAnswers)
+  }
 }
