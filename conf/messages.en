@@ -101,10 +101,10 @@ messages__hasUtr__error__required = Select yes if {0} has a Unique Taxpayer Refe
 
 messages__common_email__heading = What is {0}’s email address?
 messages__common_company_email__visually_hidden_change_label = company email address
-messages__common_trustee_company_email__visually_hidden_change_label = Change {0}’s email
+messages__common_email__visually_hidden_change_label = Change {0}’s email
 messages__common_phone__heading = What is {0}’s phone number?
 messages__common_company_phone__visually_hidden_change_label = company phone number
-messages__common_trustee_company_phone__visually_hidden_change_label = Change {0}’s phone number
+messages__common_phone__visually_hidden_change_label = Change {0}’s phone number
 
 
 
@@ -1559,6 +1559,12 @@ messages__whatYouWillNeedEstablisherCompanyContact__lede = You will need to tell
 messages__whatYouWillNeedEstablisherCompanyContact__item1 = contact email address
 messages__whatYouWillNeedEstablisherCompanyContact__item2 = contact phone number
 
+messages__whatYouWillNeedTrusteeIndividualContact__title = Contact details
+messages__whatYouWillNeedTrusteeIndividualContact__h1 = Contact details for {0}
+messages__whatYouWillNeedTrusteeIndividualContact__p1 = You will need to tell us the trustee’s:
+messages__whatYouWillNeedTrusteeIndividualContact__item1 = contact email address
+messages__whatYouWillNeedTrusteeIndividualContact__item2 = contact phone number
+
 messages__whatYouWillNeedDirectors__title = Directors
 messages__whatYouWillNeedDirectors__h1 = Directors
 messages__whatYouWillNeedDirectors__p1 = We need to know about every director associated with the company you’re registering.
@@ -1611,6 +1617,7 @@ messages__changeTrusteeAddress = Change {0}’s address
 
 messages__trusteePreviousAddress = {0}’s previous address
 messages__changeTrusteePreviousAddress = Change {0}’s previous address
+messages__addTrusteePreviousAddress = Add {0}’s previous address
 
 messages__hasBeen1Year = Has {0} been at their address for at least 1 year?
 messages__changeHasBeen1Year = Change whether {0} has been at their address for at least 1 year?

@@ -16,12 +16,12 @@
 
 package controllers.register.trustees.individual
 
-import config.FrontendAppConfig
+import config.{FeatureSwitchManagementService, FrontendAppConfig}
 import connectors.AddressLookupConnector
 import controllers.actions._
 import controllers.address.PostcodeLookupController
 import forms.address.PostCodeLookupFormProvider
-import identifiers.register.trustees.individual.{IndividualPreviousAddressPostCodeLookupId, TrusteeDetailsId}
+import identifiers.register.trustees.individual.{IndividualPreviousAddressPostCodeLookupId, TrusteeDetailsId, TrusteeNameId}
 import javax.inject.Inject
 import models.{Index, Mode}
 import navigators.Navigator
@@ -29,48 +29,56 @@ import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
-import utils.annotations.TrusteesIndividual
+import utils.Toggles
 import viewmodels.Message
 import viewmodels.address.PostcodeLookupViewModel
 
 import scala.concurrent.ExecutionContext
 
-class IndividualPreviousAddressPostcodeLookupController @Inject()(
-                                                                   val appConfig: FrontendAppConfig,
-                                                                   override val messagesApi: MessagesApi,
-                                                                   val userAnswersService: UserAnswersService,
-                                                                   val navigator: Navigator,
-                                                                   authenticate: AuthAction,
-                                                                   getData: DataRetrievalAction,
-                                                                   allowAccess: AllowAccessActionProvider,
-                                                                   requireData: DataRequiredAction,
-                                                                   formProvider: PostCodeLookupFormProvider,
-                                                                   val addressLookupConnector: AddressLookupConnector
+class IndividualPreviousAddressPostcodeLookupController @Inject()(val appConfig: FrontendAppConfig,
+                                                                  override val messagesApi: MessagesApi,
+                                                                  val userAnswersService: UserAnswersService,
+                                                                  val navigator: Navigator,
+                                                                  authenticate: AuthAction,
+                                                                  getData: DataRetrievalAction,
+                                                                  allowAccess: AllowAccessActionProvider,
+                                                                  requireData: DataRequiredAction,
+                                                                  formProvider: PostCodeLookupFormProvider,
+                                                                  val addressLookupConnector: AddressLookupConnector,
+                                                                  fs: FeatureSwitchManagementService
                                                                  )(implicit val ec: ExecutionContext) extends PostcodeLookupController with I18nSupport {
   override protected val form: Form[String] = formProvider()
 
   private def viewmodel(index: Int, mode: Mode, srn: Option[String]): Retrieval[PostcodeLookupViewModel] =
     Retrieval {
       implicit request =>
-        TrusteeDetailsId(index).retrieve.right.map {
-          details =>
+        trusteeName(index).retrieve.right.map {
+          name =>
             PostcodeLookupViewModel(
               routes.IndividualPreviousAddressPostcodeLookupController.onSubmit(mode, index, srn),
               routes.TrusteePreviousAddressController.onPageLoad(mode, index, srn),
               title = Message("messages__trustee_individual_previous_address__title"),
-              heading = Message("messages__trustee_individual_previous_address__heading", details.fullName),
-              subHeading = Some(details.fullName),
+              heading = Message("messages__trustee_individual_previous_address__heading", name),
+              subHeading = Some(name),
               enterPostcode = Message("messages__trustee_individualPostCodeLookup__enter_postcode"),
               srn = srn
             )
         }
     }
 
+  val trusteeName: Index => Retrieval[String] = (trusteeIndex: Index) => Retrieval {
+    implicit request =>
+      if (fs.get(Toggles.isEstablisherCompanyHnSEnabled))
+        TrusteeNameId(trusteeIndex).retrieve.right.map(_.fullName)
+      else
+        TrusteeDetailsId(trusteeIndex).retrieve.right.map(_.fullName)
+  }
+
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
-    implicit request =>
-      viewmodel(index, mode, srn).retrieve.right map get
-  }
+      implicit request =>
+        viewmodel(index, mode, srn).retrieve.right map get
+    }
 
   def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>

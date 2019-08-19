@@ -18,14 +18,22 @@ package identifiers.register.trustees.partnership
 
 import identifiers.TypedIdentifier
 import identifiers.register.trustees.TrusteesId
-import models.Index
-import play.api.libs.json.JsPath
+import play.api.libs.json.{JsPath, JsResult}
+import utils.UserAnswers
 
-case class IsPartnershipCompleteId(index: Index) extends TypedIdentifier[Boolean] {
-  override def path: JsPath = TrusteesId(index).path \ IsPartnershipCompleteId.toString
+case class PartnershipHasPAYEId(index: Int) extends TypedIdentifier[Boolean] {
+  override def path: JsPath = TrusteesId(index).path \ PartnershipHasPAYEId.toString
+
+  override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): JsResult[UserAnswers] = {
+    value match {
+      case Some(false) =>
+        userAnswers.remove(PartnershipPayeVariationsId(this.index))
+      case _ =>
+        super.cleanup(value, userAnswers)
+    }
+  }
 }
 
-object IsPartnershipCompleteId {
-  override def toString: String = "isPartnershipCompleteId"
+object PartnershipHasPAYEId {
+  override def toString: String = "hasPaye"
 }
-

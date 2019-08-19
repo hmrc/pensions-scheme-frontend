@@ -21,15 +21,12 @@ import config.FeatureSwitchManagementService
 import controllers.register.establishers.company.{routes => establisherCompanyRoutes}
 import controllers.register.trustees.company.{routes => trusteeCompanyRoutes}
 import helpers.DataCompletionHelper
-import identifiers.register.establishers.company.director.DirectorDetailsId
 import identifiers.register.establishers.individual.EstablisherDetailsId
 import identifiers.register.establishers.partnership.{PartnershipDetailsId => EstablisherPartnershipDetailsId}
 import identifiers.register.establishers.{IsEstablisherAddressCompleteId, IsEstablisherCompleteId, IsEstablisherNewId, company => establisherCompanyPath}
-import identifiers.register.trustees.individual._
-import identifiers.register.trustees.individual.TrusteeDetailsId
-import identifiers.register.trustees.{company => trusteesCompany}
-import identifiers.register.trustees.partnership.{IsPartnershipCompleteId, PartnershipDetailsId => TrusteePartnershipDetailsId}
-import identifiers.register.trustees.{IsTrusteeAddressCompleteId, IsTrusteeCompleteId, IsTrusteeNewId, MoreThanTenTrusteesId, company => trusteeCompanyPath}
+import identifiers.register.trustees.individual.{TrusteeDetailsId, _}
+import identifiers.register.trustees.partnership.{PartnershipDetailsId => TrusteePartnershipDetailsId}
+import identifiers.register.trustees.{IsTrusteeNewId, MoreThanTenTrusteesId, company => trusteesCompany}
 import identifiers.{IsWorkingKnowledgeCompleteId, _}
 import models._
 import models.person.{PersonDetails, PersonName}
@@ -42,8 +39,6 @@ import utils.DataCompletionSpec.readJsonFromFile
 import utils.hstasklisthelper.HsTaskListHelper
 import utils.{FakeFeatureSwitchManagementService, UserAnswers}
 import viewmodels._
-import identifiers.register.establishers.{company => establisherCompanyPath}
-import identifiers.register.trustees.{company => trusteeCompanyPath}
 
 trait HsTaskListHelperBehaviour extends SpecBase with MustMatchers with OptionValues with DataCompletionHelper {
 
@@ -214,9 +209,7 @@ trait HsTaskListHelperBehaviour extends SpecBase with MustMatchers with OptionVa
 
     "display and link should go to add trustees page when do you have any trustees is not present" +
       s"and trustees are added and completed  with toggle set to $toggle" in {
-      val userAnswers = UserAnswers().set(TrusteeDetailsId(0))(PersonDetails("firstName", None, "lastName", LocalDate.now())).flatMap(
-        _.set(IsTrusteeCompleteId(0))(true).flatMap(_.set(IsTrusteeAddressCompleteId(0))(true))
-      ).asOpt.value
+      val userAnswers = UserAnswers().set(TrusteeDetailsId(0))(PersonDetails("firstName", None, "lastName", LocalDate.now())).asOpt.value
       val helper = createTaskListHelper(userAnswers, fsm)
       helper.addTrusteeHeader(userAnswers, mode, srn).value mustBe
         SchemeDetailsTaskListHeader(None, Some(Link(changeTrusteesLinkText,
@@ -225,9 +218,8 @@ trait HsTaskListHelperBehaviour extends SpecBase with MustMatchers with OptionVa
 
     "display and link should go to add trustees page and status is not completed when do you have any trustees is not present" +
       s"and trustees are added and not completed  with toggle set to $toggle" in {
-      val userAnswers = UserAnswers().set(TrusteeDetailsId(0))(PersonDetails("firstName", None, "lastName", LocalDate.now())).flatMap(
-        _.set(IsTrusteeCompleteId(0))(false)
-      ).asOpt.value
+      val userAnswers = UserAnswers().set(TrusteeDetailsId(0))(PersonDetails("firstName", None, "lastName", LocalDate.now()))
+       .asOpt.value
       val helper = createTaskListHelper(userAnswers, fsm)
       helper.addTrusteeHeader(userAnswers, mode, srn).value mustBe
         SchemeDetailsTaskListHeader(None, Some(Link(changeTrusteesLinkText,
@@ -240,10 +232,8 @@ trait HsTaskListHelperBehaviour extends SpecBase with MustMatchers with OptionVa
 
     "display correct link data when 2 trustees exist " in {
       val userAnswers = UserAnswers()
-        .set(TrusteeDetailsId(0))(PersonDetails("firstName", None, "lastName", LocalDate.now())).flatMap(
-        _.set(IsTrusteeCompleteId(0))(true)).asOpt.value
-        .set(TrusteeDetailsId(1))(PersonDetails("firstName", None, "lastName", LocalDate.now())).flatMap(
-        _.set(IsTrusteeCompleteId(1))(true)).asOpt.value
+        .set(TrusteeDetailsId(0))(PersonDetails("firstName", None, "lastName", LocalDate.now())).asOpt.value
+        .set(TrusteeDetailsId(1))(PersonDetails("firstName", None, "lastName", LocalDate.now())).asOpt.value
       val helper = createTaskListHelper(userAnswers, fakeFeatureManagementService)
       helper.addTrusteeHeader(userAnswers, mode, srn).value mustBe
         SchemeDetailsTaskListHeader(None, Some(Link(addDeleteTrusteesLinkText,
@@ -271,8 +261,7 @@ trait HsTaskListHelperBehaviour extends SpecBase with MustMatchers with OptionVa
 
     s"display correct link data when trustee is mandatory and 1 trustee exists with toggle off" in {
       val userAnswers = UserAnswers().set(HaveAnyTrusteesId)(true).asOpt.value
-        .set(TrusteeDetailsId(0))(PersonDetails("firstName", None, "lastName", LocalDate.now())).flatMap(
-        _.set(IsTrusteeCompleteId(0))(true)).asOpt.value
+        .set(TrusteeDetailsId(0))(PersonDetails("firstName", None, "lastName", LocalDate.now())).asOpt.value
         .set(SchemeTypeId)(SchemeType.MasterTrust).asOpt.value
       val helper = createTaskListHelper(userAnswers, fakeFeatureManagementService)
       helper.addTrusteeHeader(userAnswers, mode, srn).value mustBe
@@ -422,8 +411,7 @@ trait HsTaskListHelperBehaviour extends SpecBase with MustMatchers with OptionVa
 
     val addTrustee: (UserAnswers, Int) => JsResult[UserAnswers] = (ua, index) =>
       setTrusteeCompletionStatusJsResult(isComplete = isCompleteTrustees, toggled = toggled, index,
-        ua.set(TrusteeDetailsId(index))(PersonDetails(s"firstName$index", None, s"lastName$index", LocalDate.now()))
-        .flatMap(_.set(IsTrusteeAddressCompleteId(index))(isCompleteTrustees)).asOpt.value)
+        ua.set(TrusteeDetailsId(index))(PersonDetails(s"firstName$index", None, s"lastName$index", LocalDate.now())).asOpt.value)
 
     answersData(isCompleteBeforeStart,
       isCompleteAboutMembers,
@@ -465,8 +453,7 @@ trait HsTaskListHelperBehaviour extends SpecBase with MustMatchers with OptionVa
               _.set(EstablisherDetailsId(0))(PersonDetails("firstName", None, "lastName", LocalDate.now())).flatMap(
                 _.set(IsEstablisherCompleteId(0))(isCompleteEstablishers)).flatMap(
                 _.set(IsEstablisherAddressCompleteId(0))(isCompleteEstablishers)).flatMap(
-                _.set(TrusteeDetailsId(0))(PersonDetails("firstName", None, "lastName", LocalDate.now())).flatMap(
-                  _.set(IsTrusteeAddressCompleteId(0))(isCompleteTrustees)))
+                _.set(TrusteeDetailsId(0))(PersonDetails("firstName", None, "lastName", LocalDate.now())))
             )
           )
         )
@@ -487,29 +474,24 @@ trait HsTaskListHelperBehaviour extends SpecBase with MustMatchers with OptionVa
   protected def allAnswersIncomplete: UserAnswers = UserAnswers(readJsonFromFile("/payloadIncomplete.json"))
 
   protected def trusteeCompany(isCompleteTrustee: Boolean = true): UserAnswers =
-    UserAnswers().set(trusteeCompanyPath.CompanyDetailsId(0))(CompanyDetails("test company", false)).flatMap(
+    UserAnswers().set(trusteesCompany.CompanyDetailsId(0))(CompanyDetails("test company", false)).flatMap(
       _.set(IsTrusteeNewId(0))(true)).asOpt.value
 
   protected def allTrustees(isCompleteTrustees: Boolean = true, toggled: Boolean): UserAnswers = {
     setTrusteeCompletionStatus(isCompleteTrustees, toggled, 0, UserAnswers().set(TrusteeDetailsId(0))(PersonDetails("firstName", None, "lastName", LocalDate.now()))
       .flatMap(
         _.set(IsTrusteeNewId(0))(true).flatMap(
-          _.set(IsTrusteeAddressCompleteId(0))(isCompleteTrustees).flatMap(
             _.set(trusteesCompany.CompanyVatId(0))(Vat.No).flatMap(
               _.set(trusteesCompany.CompanyPayeId(0))(Paye.No).flatMap(
                 _.set(trusteesCompany.CompanyDetailsId(1))(CompanyDetails("test company", false)).flatMap(
                   _.set(IsTrusteeNewId(1))(true).flatMap(
-                    _.set(IsTrusteeAddressCompleteId(1))(isCompleteTrustees).flatMap(
                       _.set(trusteesCompany.CompanyVatId(1))(Vat.No).flatMap(
                         _.set(trusteesCompany.CompanyPayeId(1))(Paye.No).flatMap(
-                          _.set(IsTrusteeCompleteId(1))(isCompleteTrustees).flatMap(
                             _.set(TrusteePartnershipDetailsId(2))(PartnershipDetails("test partnership", false)).flatMap(
                               _.set(IsTrusteeNewId(2))(true).flatMap(
-                                _.set(IsTrusteeAddressCompleteId(2))(isCompleteTrustees).flatMap(
                                   _.set(trusteesCompany.CompanyVatId(2))(Vat.No).flatMap(
-                                    _.set(trusteesCompany.CompanyPayeId(2))(Paye.No).flatMap(
-                                      _.set(IsPartnershipCompleteId(2))(isCompleteTrustees)
-                                    )))))))))))))))).asOpt.value)
+                                    _.set(trusteesCompany.CompanyPayeId(2))(Paye.No)
+                                    ))))))))))).asOpt.value)
   }
 
   protected def allTrusteesIndividual(isCompleteTrustees: Boolean = true, toggled: Boolean): UserAnswers = {

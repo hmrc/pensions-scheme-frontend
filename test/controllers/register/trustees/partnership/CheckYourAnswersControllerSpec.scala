@@ -93,12 +93,6 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(onwardRoute.url)
       }
-
-      "mark trustee partnership as complete" in {
-        val result = controller().onSubmit(NormalMode, firstIndex, None)(fakeRequest)
-        status(result) mustBe SEE_OTHER
-        FakeUserAnswersService.verify(IsPartnershipCompleteId(firstIndex), true)
-      }
     }
   }
 }
