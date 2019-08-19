@@ -29,19 +29,19 @@ import utils.UserAnswers
 class TrusteesPartnershipDetailsNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector) extends AbstractNavigator {
 
   private def normalAndCheckModeRoutes(mode: SubscriptionMode, ua: UserAnswers, srn: Option[String]): PartialFunction[Identifier, Call] = {
-    case PartnershipDetailsId(_)                                   => AddTrusteeController.onPageLoad(mode, srn)
+    case PartnershipDetailsId(_) => AddTrusteeController.onPageLoad(mode, srn)
   }
 
   private def updateModeRoutes(mode: VarianceMode, ua: UserAnswers, srn: Option[String]): PartialFunction[Identifier, Call] = {
-    case _ => controllers.routes.SessionExpiredController.onPageLoad()
+    case PartnershipDetailsId(_) => AddTrusteeController.onPageLoad(mode, srn)
   }
 
-  private def checkUpdateModeRoute(mode: CheckUpdateMode.type, ua: UserAnswers, srn: Option[String]): PartialFunction[Identifier, Call] = {
+  private def checkUpdateModeRoute(mode: VarianceMode, ua: UserAnswers, srn: Option[String]): PartialFunction[Identifier, Call] = {
     case _ => controllers.routes.SessionExpiredController.onPageLoad()
   }
 
   override protected def routeMap(from: NavigateFrom): Option[NavigateTo] =
-    navigateOrSessionReset(normalAndCheckModeRoutes(NormalMode, from.userAnswers, None), from.id )
+    navigateOrSessionReset(normalAndCheckModeRoutes(NormalMode, from.userAnswers, None), from.id)
 
   override protected def editRouteMap(from: NavigateFrom): Option[NavigateTo] =
     navigateOrSessionReset(normalAndCheckModeRoutes(CheckMode, from.userAnswers, None), from.id)
