@@ -48,15 +48,15 @@ object TrusteeAddressYearsId {
   implicit def cya(implicit countryOptions: CountryOptions, messages: Messages, ua: UserAnswers): CheckYourAnswers[TrusteeAddressYearsId] =
     new CheckYourAnswers[TrusteeAddressYearsId] {
       override def row(id: TrusteeAddressYearsId)(changeUrl: String, ua: UserAnswers): Seq[AnswerRow] = {
-        def trusteeName(index: Int) = ua.get(TrusteeNameId(index)).fold(messages("messages__theTrustee"))(_.fullName)
+        val trusteeName = ua.get(TrusteeNameId(id.index)).fold(messages("messages__theTrustee"))(_.fullName)
 
-        def label(index: Int) = messages("messages__hasBeen1Year", trusteeName(index))
+        val label = messages("messages__hasBeen1Year", trusteeName)
 
-        def changeAddressYears(index: Int) = messages("messages__changeHasBeen1Year", trusteeName(index))
+        val changeAddressYears = messages("messages__changeHasBeen1Year", trusteeName)
 
         AddressYearsCYA(
-          label = label(id.index),
-          changeAddressYears = changeAddressYears(id.index)
+          label,
+          changeAddressYears
         )().row(id)(changeUrl, ua)
       }
 
