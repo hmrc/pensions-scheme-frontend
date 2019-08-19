@@ -72,24 +72,12 @@ trait HsTaskListHelperUtils extends Enumerable.Implicits {
 
     val isChangeLink = getCompleteFlag(answers, index, spokeName, mode)
     val isComplete: Option[Boolean] = if (mode == NormalMode) isChangeLink else None
-    //println("\n >>>>>>>> " + answers)
+
     (isChangeLink, isNew) match {
       case (_, false) => EntitySpoke(Link(getChangeLinkText(spokeName)(name), getChangeLink(spokeName)(mode, srn, index).url), None)
       case (Some(true), _) => EntitySpoke(Link(getChangeLinkText(spokeName)(name), getChangeLink(spokeName)(mode, srn, index).url), isComplete)
       case (Some(false), _) => EntitySpoke(Link(getChangeLinkText(spokeName)(name), getAddLink(spokeName)(mode, srn, index).url), isComplete)
-      case _ => {
-        println("hiii :::::::::::")
-        println("::::::::::::::::: " + name)
-        println("::::::::::::::::: " + spokeName)
-        println("::::::::::::::::: isChange " + isChangeLink)
-        println("::::::::::::::::: isComp " + isComplete)
-        println("::::::::::::::::: isNew " + isNew)
-        println("::::::::::::::::: toggle " + isHnSEnabled)
-        println("::::::::::::::::: index " + index)
-        println("::::::::::::::::: mode " + mode)
-
-        EntitySpoke(Link(getAddLinkText(spokeName)(name), getAddLink(spokeName)(mode, srn, index).url), None)
-      }
+      case _ => EntitySpoke(Link(getAddLinkText(spokeName)(name), getAddLink(spokeName)(mode, srn, index).url), None)
     }
   }
 
