@@ -52,7 +52,7 @@ class PartnershipPreviousAddressController @Inject()(
                                                     )(implicit val ec: ExecutionContext) extends ManualAddressController with I18nSupport {
 
   private[controllers] val postCall = routes.PartnershipPreviousAddressController.onSubmit _
-  private[controllers] val title: Message = "messages__partnershipPreviousAddress__title"
+  private[controllers] val title: Message = "messages__common__partnership_confirmPreviousAddress__title"
   private[controllers] val heading: Message = "messages__common__confirmPreviousAddress__h1"
 
   protected val form: Form[Address] = formProvider()

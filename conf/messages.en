@@ -53,6 +53,9 @@ messages__common__nino = National Insurance number
 messages__common__reason = Reason
 messages__common__confirmAddress__h1 = Confirm {0}’s address
 messages__common__confirmPreviousAddress__h1 = Confirm {0}’s previous address
+messages__common__selectPreviousAddress__h1 = What was {0}’s previous postcode?
+messages__common__partnership_selectPreviousAddress__title = What was the partnership’s previous postcode?
+messages__common__partnership_confirmPreviousAddress__title = Confirm the partnership’s previous address
 
 messages__common__postcode_lookup__enter_postcode = You can {0} enter the address manually {1}.
 messages__common__postcode_lookup__manual_link = You can {0} enter the address manually {1}.
@@ -921,7 +924,7 @@ messages__partnershipAddress__title = Enter the partnership’s address
 messages__partnershipAddress__heading = Enter the partnership’s address
 messages__partnershipAddress__lede = This is usually the registered business address but you can enter any address you have for this scheme establisher.
 
-messages__partnershipPostcodeLookup__title = Enter the partnership’s postcode
+messages__partnershipPostcodeLookup__title = What is the partnership’s postcode?
 messages__partnershipPostcodeLookup__heading = What is {0}’s postcode?
 messages__partnershipPostcodeLookup__hint = This is usually the registered business address but you can enter any address you have for this scheme establisher.
 messages__trusteePartnershipPostcodeLookup__hint = This is usually the registered business address but you can enter any address you have for this trustee.
@@ -930,7 +933,7 @@ messages__partnershipAddress__title = Enter the partnership’s address
 messages__partnershipAddress__heading = Enter the partnership’s address
 messages__partnershipAddress__lede = This is usually the registered business address but you can enter any address you have for this scheme establisher.
 
-messages__partnershipPreviousAddressPostcodeLookup__title = Enter the partnership’s previous postcode
+messages__partnershipPreviousAddressPostcodeLookup__title = What was the partnership’s previous postcode?
 messages__partnershipPreviousAddressPostcodeLookup__heading = What was {0}’s previous postcode?
 messages__partnershipPreviousAddressPostcodeLookup__checkYourAnswersLabel = Previous address
 
@@ -941,9 +944,9 @@ messages__otherPartners__heading=Do you need to tell us about other partners?
 messages__otherPartners__lede=You do not have to add them now. We may contact you if we need this information.
 messages__otherPartners__error__required=Select yes if you need to tell us about other partners
 
-messages__partnershipAddressYears__title = Has {0} used this registered address for at least 1 year?
-messages__partnershipAddressYears__heading = Has {0} used this registered address for at least 1 year?
-messages__partnershipAddressYears__error = Select yes if {0} has used this registered address for at least 1 year
+messages__partnershipAddressYears__title = Has {0} used this address for at least 1 year?
+messages__partnershipAddressYears__heading = Has {0} used this address for at least 1 year?
+messages__partnershipAddressYears__error = Select yes if {0} has used this address for at least 1 year
 
 messages__partnershipVat__title = Does the partnership have a VAT registration number?
 messages__partnershipVat__heading = Does the partnership have a VAT registration number?
@@ -958,6 +961,9 @@ messages__partnershipDetails__label = Enter the partnership’s name
 messages__partnershipDetails__error__required = Enter a name
 messages__partnershipDetails__error_too_long = Enter a name using 160 characters or less
 messages__partnershipDetails__invalid = Enter a valid name
+
+messages__partnershipName__title = What is the partnership’s name?
+messages__partnershipName__heading = What is the partnership’s name?
 
 messages__partnership_has_utr__title = Does the partnership have a Self Assessment Unique Taxpayer Reference number?
 messages__partnership_utr_hint_format=A Unique Taxpayer Reference number is 10 numbers.
@@ -1062,7 +1068,7 @@ messages__partnershipReview__partners__viewLink = View details of partners
 
 messages__checkYourAnswers__trustees__partnership__address_years = How long has the partnership been at this address?
 
-messages__trusteePartnershipAddress__title = Enter the partnership’s address
+messages__trusteePartnershipAddress__title = Confirm the partnership’s address
 messages__trusteePartnershipAddress__lede = This is usually the registered business address but you can enter any address you have for this trustee.
 
 messages__needContact__title = What is your email address?
@@ -1769,4 +1775,8 @@ messages__hasUtr__h1 = Does {0} have a Unique Taxpayer Reference (UTR)?
 messages__trusteeUtr__title = What is the trustee’s UTR?
 messages__trusteeUtr__h1 =  What is {0}’s UTR?
 messages__trustee__cya__dob = What is {0}’s date of birth?
+
+messages__partnership__address__title = What is the partnership’s address?
+messages__partnership__address__heading = What is {0}’s address?
+
 
