@@ -21,32 +21,25 @@ import controllers.Retrievals
 import controllers.actions._
 import javax.inject.Inject
 import models.{Index, Mode}
-import navigators.Navigator
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
-import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import utils.Enumerable
-import utils.annotations.TrusteesIndividual
+import views.html.register.trustees.individual.whatYouWillNeedIndividualAddress
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 class WhatYouWillNeedIndividualAddressController @Inject()(val appConfig: FrontendAppConfig,
                                                            val messagesApi: MessagesApi,
-                                                           val userAnswersService: UserAnswersService,
-                                                           val navigator: Navigator,
                                                            authenticate: AuthAction,
                                                            getData: DataRetrievalAction,
                                                            allowAccess: AllowAccessActionProvider,
                                                            requireData: DataRequiredAction
-                                     )(implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
+                                                          )(implicit val ec: ExecutionContext) extends FrontendController with I18nSupport with Retrievals {
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData) {
-      implicit request => NotImplemented("Not implemented: " + this.getClass.toString)
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+      implicit request =>
+        val href = controllers.register.trustees.individual.routes.IndividualPostCodeLookupController.onSubmit(mode, index, srn)
+        Future.successful(Ok(whatYouWillNeedIndividualAddress(appConfig, existingSchemeName, href, srn)))
     }
-
-  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData) {
-    implicit request => NotImplemented("Not implemented: " + this.getClass.toString)
-  }
 }

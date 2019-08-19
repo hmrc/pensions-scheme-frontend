@@ -14,35 +14,35 @@
  * limitations under the License.
  */
 
-package views.register.trustees.company
+package views.register.trustees.individual
 
-import models.{Index, NormalMode}
+import models.NormalMode
 import play.api.mvc.Call
 import play.twirl.api.HtmlFormat
 import views.behaviours.ViewBehaviours
-import views.html.register.trustees.company.whatYouWillNeedCompanyAddress
+import views.html.register.trustees.individual.whatYouWillNeedIndividualAddress
 
-class WhatYouWillNeedCompanyAddressViewSpec extends ViewBehaviours {
+class WhatYouWillNeedIndividualAddressViewSpec extends ViewBehaviours {
 
   val messageKeyPrefix = "whatYouWillNeedAddress"
 
-  private def href: Call = controllers.register.establishers.company.routes.CompanyPostCodeLookupController.onPageLoad(NormalMode, None, index=Index(0))
+  private def href: Call = controllers.register.trustees.individual.routes.IndividualPostCodeLookupController.onPageLoad(NormalMode, index = 0, None)
 
-  def createView: () => HtmlFormat.Appendable = () => whatYouWillNeedCompanyAddress(frontendAppConfig, Some("testScheme"), href, None)(fakeRequest, messages)
+  def createView: () => HtmlFormat.Appendable = () => whatYouWillNeedIndividualAddress(frontendAppConfig, Some("testScheme"), href, None)(fakeRequest, messages)
 
   "whatYouWillNeedCompanyAddress view" must {
 
     behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__h1"))
 
-    "display the correct paragraph" in {
+    "display the correct p1" in {
       val doc = asDocument(createView())
-      assertContainsText(doc, messages("messages__whatYouWillNeedTrusteeCompanyAddress__lede"))
+      assertContainsText(doc, messages("messages__whatYouWillNeedTrusteeAddress__p1"))
     }
 
     "display the correct bullet points" in {
       val doc = asDocument(createView())
-      assertContainsText(doc, messages("messages__whatYouWillNeedTrusteeCompanyAddress__item1"))
-      assertContainsText(doc, messages("messages__whatYouWillNeedTrusteeCompanyAddress__item2"))
+      assertContainsText(doc, messages("messages__whatYouWillNeedTrusteeAddress__item1"))
+      assertContainsText(doc, messages("messages__whatYouWillNeedTrusteeAddress__item2"))
     }
 
     behave like pageWithSubmitButton(createView, Some(href))

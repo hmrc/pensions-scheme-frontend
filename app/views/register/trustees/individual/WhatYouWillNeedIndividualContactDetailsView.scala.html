@@ -16,22 +16,24 @@
 
 @import config.FrontendAppConfig
 @import uk.gov.hmrc.play.views.html._
-@import controllers.register.establishers.company.routes._
+@import controllers.register.trustees.company.routes._
+@import viewmodels.Message
 
-@(appConfig: FrontendAppConfig, schemeName: Option[String], href: Call, srn:Option[String])(implicit request: Request[_], messages: Messages)
+@(appConfig: FrontendAppConfig, schemeName: Option[String], href: Call, srn:Option[String], heading: Message)(implicit request: Request[_], messages: Messages)
 
 @main_template(
-    title = messages("messages__whatYouWillNeedAddress__title"),
+    title = messages("messages__whatYouWillNeedTrusteeIndividualContact__title"),
     appConfig = appConfig,
     bodyClasses = None
 ) {
-    @components.heading(headingKey = messages("messages__whatYouWillNeedAddress__h1"))
 
-    <p>@messages("messages__whatYouWillNeedEstablisherCompanyAddress__lede")</p>
+    @components.heading(headingKey = heading.resolve)
+
+    <p>@messages("messages__whatYouWillNeedTrusteeIndividualContact__p1")</p>
 
     <ul class="list list-bullet">
-        <li>@messages("messages__whatYouWillNeedEstablisherCompanyAddress__item1")</li>
-        <li>@messages("messages__whatYouWillNeedEstablisherCompanyAddress__item2")</li>
+        <li>@messages("messages__whatYouWillNeedTrusteeIndividualContact__item1")</li>
+        <li>@messages("messages__whatYouWillNeedTrusteeIndividualContact__item2")</li>
     </ul>
 
     @components.button_link("site.continue", href.url, "submit")
