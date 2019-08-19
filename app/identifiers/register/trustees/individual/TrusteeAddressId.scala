@@ -42,8 +42,8 @@ object TrusteeAddressId {
         val changeAddress = messages("messages__changeTrusteeAddress", trusteeName)
 
         AddressCYA(
-          label = label,
-          changeAddress = changeAddress
+          label,
+          changeAddress
         )().row(id)(changeUrl, ua)
       }
 

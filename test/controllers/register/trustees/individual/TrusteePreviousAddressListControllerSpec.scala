@@ -17,7 +17,7 @@
 package controllers.register.trustees.individual
 
 import base.CSRFRequest
-import services.{FakeUserAnswersService, UserAnswersService}
+import config.FeatureSwitchManagementService
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.address.AddressListFormProvider
@@ -31,9 +31,8 @@ import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import utils.annotations.TrusteesIndividual
-import utils.{FakeNavigator, UserAnswers}
-import viewmodels.Message
+import services.{FakeUserAnswersService, UserAnswersService}
+import utils.{FakeFeatureSwitchManagementService, FakeNavigator, UserAnswers}
 import viewmodels.address.AddressListViewModel
 import views.html.address.addressList
 
@@ -78,7 +77,8 @@ class TrusteePreviousAddressListControllerSpec extends ControllerSpecBase with C
         bind[AuthAction].to(FakeAuthAction),
         bind[UserAnswersService].toInstance(FakeUserAnswersService),
         bind[DataRetrievalAction].toInstance(dataRetrievalAction),
-        bind(classOf[Navigator]).toInstance(fakeNavigator)
+        bind(classOf[Navigator]).toInstance(fakeNavigator),
+        bind[FeatureSwitchManagementService].toInstance(new FakeFeatureSwitchManagementService(false))
       )) { implicit app =>
         val request = addToken(FakeRequest(routes.TrusteePreviousAddressListController.onPageLoad(NormalMode, Index(0), None)))
         val result = route(app, request).value
@@ -133,7 +133,8 @@ class TrusteePreviousAddressListControllerSpec extends ControllerSpecBase with C
         bind[AuthAction].to(FakeAuthAction),
         bind[UserAnswersService].toInstance(FakeUserAnswersService),
         bind(classOf[Navigator]).toInstance(fakeNavigator),
-        bind[DataRetrievalAction].toInstance(dataRetrievalAction)
+        bind[DataRetrievalAction].toInstance(dataRetrievalAction),
+        bind[FeatureSwitchManagementService].toInstance(new FakeFeatureSwitchManagementService(false))
       )) { implicit app =>
         val request = addToken(FakeRequest(routes.TrusteePreviousAddressListController.onSubmit(NormalMode, Index(0), None))
           .withFormUrlEncodedBody(("value", "0"))
@@ -174,7 +175,8 @@ class TrusteePreviousAddressListControllerSpec extends ControllerSpecBase with C
         bind[AuthAction].to(FakeAuthAction),
         bind[UserAnswersService].toInstance(FakeUserAnswersService),
         bind[DataRetrievalAction].toInstance(getEmptyData),
-        bind(classOf[Navigator]).toInstance(fakeNavigator)
+        bind(classOf[Navigator]).toInstance(fakeNavigator),
+        bind[FeatureSwitchManagementService].toInstance(new FakeFeatureSwitchManagementService(false))
       )) { implicit app =>
         val request =
           addToken(

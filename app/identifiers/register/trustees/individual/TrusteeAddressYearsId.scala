@@ -55,8 +55,8 @@ object TrusteeAddressYearsId {
         val changeAddressYears = messages("messages__changeHasBeen1Year", trusteeName)
 
         AddressYearsCYA(
-          label = label,
-          changeAddressYears = changeAddressYears
+          label,
+          changeAddressYears
         )().row(id)(changeUrl, ua)
       }
 
