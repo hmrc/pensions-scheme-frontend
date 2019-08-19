@@ -33,7 +33,7 @@ case class TrusteeNameId(trusteeIndex: Int) extends TypedIdentifier[PersonName] 
 object TrusteeNameId {
   def collectionPath(trusteeIndex: Int): JsPath = TrusteesId(trusteeIndex).path \ TrusteeNameId.toString
 
-  override def toString: String = "trusteeName"
+  override def toString: String = "trusteeDetails"
 
   implicit def cya(implicit messages: Messages): CheckYourAnswers[TrusteeNameId] = {
     new CheckYourAnswers[TrusteeNameId] {

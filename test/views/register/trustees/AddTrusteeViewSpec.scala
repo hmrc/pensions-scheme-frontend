@@ -150,7 +150,7 @@ class AddTrusteeViewSpec extends YesNoViewBehaviours with EntityListBehaviours w
       expectedHintKey = Some("_lede")
     )
 
-    behave like entityList(createView(), createView(trustees(toggled = true), false), trustees(toggled = true), frontendAppConfig)
+    behave like entityList(createView(), createView(trustees(toggled = true), enable = false), trustees(toggled = true), frontendAppConfig, isToggleOn = true)
 
     "not display the status and edit link if hnsEnabled is true" in {
       val doc = asDocument(createView(trustees(toggled = false), isHnsEnabled = true)())
