@@ -32,9 +32,9 @@ import play.api.mvc.Call
 import utils.UserAnswers
 
 //scalastyle:off line.size.limit
-class TrusteesPartnershipNavigatorSpec extends SpecBase with NavigatorBehaviour {
+class TrusteesPartnershipNavigatorOldSpec extends SpecBase with NavigatorBehaviour {
 
-  import TrusteesPartnershipNavigatorSpec._
+  import TrusteesPartnershipNavigatorOldSpec._
 
   private def routes(mode: Mode): TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = Table(
     ("Id", "User Answers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (Check Mode)", "Save (CM)"),
@@ -84,7 +84,7 @@ class TrusteesPartnershipNavigatorSpec extends SpecBase with NavigatorBehaviour 
     )
   }
 
-  val navigator = new TrusteesPartnershipNavigator(FakeUserAnswersCacheConnector, frontendAppConfig)
+  val navigator = new TrusteesPartnershipNavigatorOld(FakeUserAnswersCacheConnector, frontendAppConfig)
 
   navigator.getClass.getSimpleName must {
     appRunning()
@@ -95,7 +95,7 @@ class TrusteesPartnershipNavigatorSpec extends SpecBase with NavigatorBehaviour 
   }
 }
 
-object TrusteesPartnershipNavigatorSpec extends OptionValues {
+object TrusteesPartnershipNavigatorOldSpec extends OptionValues {
 
   private val newTrustee = UserAnswers(Json.obj()).set(IsTrusteeNewId(0))(true).asOpt.value
 
