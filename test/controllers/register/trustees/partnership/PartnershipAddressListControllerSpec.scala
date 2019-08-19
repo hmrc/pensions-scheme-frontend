@@ -195,9 +195,10 @@ class PartnershipAddressListControllerSpec extends ControllerSpecBase with CSRFR
 
   private def addressListViewModel(addresses: Seq[TolerantAddress]): AddressListViewModel = {
     AddressListViewModel(
-      routes.PartnershipAddressListController.onSubmit(NormalMode, Index(0), None),
-      routes.PartnershipAddressController.onPageLoad(NormalMode, Index(0), None),
-      addresses
+      postCall = routes.PartnershipAddressListController.onSubmit(NormalMode, Index(0), None),
+      manualInputCall = routes.PartnershipAddressController.onPageLoad(NormalMode, Index(0), None),
+      addresses = addresses,
+      heading = Message("messages__common__partnership__selectAddress__h1", partnershipDetails.name)
     )
   }
 }

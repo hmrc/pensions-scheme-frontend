@@ -53,9 +53,10 @@ messages__common__nino = National Insurance number
 messages__common__reason = Reason
 messages__common__confirmAddress__h1 = Confirm {0}’s address
 messages__common__confirmPreviousAddress__h1 = Confirm {0}’s previous address
-messages__common__selectPreviousAddress__h1 = What was {0}’s previous postcode?
-messages__common__partnership_selectPreviousAddress__title = What was the partnership’s previous postcode?
+messages__common__selectPreviousAddress__h1 = What was {0}’s previous address?
+messages__common__partnership_selectPreviousAddress__title = What was the partnership’s previous address?
 messages__common__partnership_confirmPreviousAddress__title = Confirm the partnership’s previous address
+messages__common__partnership__selectAddress__h1 = What is {0}’s address?
 
 messages__common__postcode_lookup__enter_postcode = You can {0} enter the address manually {1}.
 messages__common__postcode_lookup__manual_link = You can {0} enter the address manually {1}.
@@ -1789,9 +1790,5 @@ messages__hasUtr__h1 = Does {0} have a Unique Taxpayer Reference (UTR)?
 messages__trusteeUtr__title = What is the trustee’s UTR?
 messages__trusteeUtr__h1 =  What is {0}’s UTR?
 messages__trustee__cya__dob = What is {0}’s date of birth?
-
-messages__partnership__address__title = What is the partnership’s address?
-messages__partnership__address__heading = What is {0}’s address?
-
 
 

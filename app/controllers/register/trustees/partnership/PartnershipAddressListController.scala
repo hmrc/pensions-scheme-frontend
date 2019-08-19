@@ -62,8 +62,7 @@ class PartnershipAddressListController @Inject()(override val appConfig: Fronten
   Either[Future[Result], AddressListViewModel] = {
     (PartnershipDetailsId(index) and PartnershipPostcodeLookupId(index)).retrieve.right.map {
       case partnershipDetails ~ addresses => AddressListViewModel(
-        title = Message("messages__partnership__address__title"),
-        heading = Message("messages__partnership__address__heading", partnershipDetails.name),
+        heading = Message("messages__common__partnership__selectAddress__h1", partnershipDetails.name),
         postCall = routes.PartnershipAddressListController.onSubmit(mode, index, srn),
         manualInputCall = routes.PartnershipAddressController.onPageLoad(mode, index, srn),
         addresses = addresses,
