@@ -28,7 +28,6 @@ import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
-import utils.annotations.TrusteesPartnership
 import viewmodels.{Message, PayeViewModel}
 
 import scala.concurrent.ExecutionContext
@@ -37,7 +36,7 @@ class PartnershipPayeController @Inject()(
                                            val appConfig: FrontendAppConfig,
                                            override val messagesApi: MessagesApi,
                                            val userAnswersService: UserAnswersService,
-                                           @TrusteesPartnership val navigator: Navigator,
+                                           val navigator: Navigator,
                                            authenticate: AuthAction,
                                            getData: DataRetrievalAction,
                                            allowAccess: AllowAccessActionProvider,

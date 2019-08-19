@@ -26,14 +26,12 @@ import navigators.Navigator
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
-import utils._
-import utils.annotations.TrusteesPartnership
 import viewmodels.{ContactDetailsViewModel, Message}
 
 import scala.concurrent.ExecutionContext
 
 class PartnershipContactDetailsController @Inject()(
-                                                     @TrusteesPartnership override val navigator: Navigator,
+                                                     override val navigator: Navigator,
                                                      override val appConfig: FrontendAppConfig,
                                                      override val messagesApi: MessagesApi,
                                                      val userAnswersService: UserAnswersService,
