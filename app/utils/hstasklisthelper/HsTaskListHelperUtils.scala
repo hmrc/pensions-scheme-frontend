@@ -58,6 +58,12 @@ trait HsTaskListHelperUtils extends Enumerable.Implicits {
 
   case object TrusteeIndividualDetails extends Spoke
 
+  case object TrusteePartnershipAddress extends Spoke
+
+  case object TrusteePartnershipContactDetails extends Spoke
+
+  case object TrusteePartnershipDetails extends Spoke
+
 
   def createSpoke(answers: UserAnswers,
                   spokeName: Spoke,
@@ -65,12 +71,24 @@ trait HsTaskListHelperUtils extends Enumerable.Implicits {
 
     val isChangeLink = getCompleteFlag(answers, index, spokeName, mode)
     val isComplete: Option[Boolean] = if (mode == NormalMode) isChangeLink else None
-
+    //println("\n >>>>>>>> " + answers)
     (isChangeLink, isNew) match {
       case (_, false) => EntitySpoke(Link(getChangeLinkText(spokeName)(name), getChangeLink(spokeName)(mode, srn, index).url), None)
       case (Some(true), _) => EntitySpoke(Link(getChangeLinkText(spokeName)(name), getChangeLink(spokeName)(mode, srn, index).url), isComplete)
       case (Some(false), _) => EntitySpoke(Link(getChangeLinkText(spokeName)(name), getAddLink(spokeName)(mode, srn, index).url), isComplete)
-      case _ => EntitySpoke(Link(getAddLinkText(spokeName)(name), getAddLink(spokeName)(mode, srn, index).url), None)
+      case _ => {
+        println("hiii :::::::::::")
+        println("::::::::::::::::: " + name)
+        println("::::::::::::::::: " + spokeName)
+        println("::::::::::::::::: isChange " + isChangeLink)
+        println("::::::::::::::::: isComp " + isComplete)
+        println("::::::::::::::::: isNew " + isNew)
+        println("::::::::::::::::: toggle " + isHnSEnabled)
+        println("::::::::::::::::: index " + index)
+        println("::::::::::::::::: mode " + mode)
+
+        EntitySpoke(Link(getAddLinkText(spokeName)(name), getAddLink(spokeName)(mode, srn, index).url), None)
+      }
     }
   }
 
@@ -96,6 +114,9 @@ trait HsTaskListHelperUtils extends Enumerable.Implicits {
     case TrusteeIndividualDetails => answers.isTrusteeIndividualDetailsComplete(index)
     case TrusteeIndividualAddress => answers.isTrusteeIndividualAddressComplete(index)
     case TrusteeIndividualContactDetails => answers.isTrusteeIndividualContactDetailsComplete(index)
+    case TrusteePartnershipDetails => ???
+    case TrusteePartnershipAddress => ???
+    case TrusteePartnershipContactDetails => ???
     case _ => None
   }
 
@@ -118,6 +139,9 @@ trait HsTaskListHelperUtils extends Enumerable.Implicits {
     case TrusteeIndividualDetails => messages("messages__schemeTaskList__sectionIndividual_add_details",  _)
     case TrusteeIndividualAddress => messages("messages__schemeTaskList__sectionIndividual_add_address",  _)
     case TrusteeIndividualContactDetails => messages("messages__schemeTaskList__sectionIndividual_add_contact", _)
+    case TrusteePartnershipDetails => messages("messages__schemeTaskList__sectionIndividual_add_details",  _)
+    case TrusteePartnershipAddress => messages("messages__schemeTaskList__sectionIndividual_add_details",  _)
+    case TrusteePartnershipContactDetails => messages("messages__schemeTaskList__sectionIndividual_add_details",  _)
     case _ => (_: String) => s"Not found link text for spoke $spokeName"
   }
 
@@ -174,6 +198,15 @@ trait HsTaskListHelperUtils extends Enumerable.Implicits {
       createSpoke(answers, TrusteeIndividualDetails, mode, srn, name, index, isTrusteeNew),
       createSpoke(answers, TrusteeIndividualAddress, mode, srn, name, index, isTrusteeNew),
       createSpoke(answers, TrusteeIndividualContactDetails, mode, srn, name, index, isTrusteeNew)
+    )
+  }
+
+  def getTrusteePartnershipSpokes(answers: UserAnswers, mode: Mode, srn: Option[String], name: String, index: Int): Seq[EntitySpoke] = {
+    val isTrusteeNew = answers.get(IsTrusteeNewId(index)).getOrElse(false)
+    Seq(
+      createSpoke(answers, TrusteePartnershipDetails, mode, srn, name, index, isTrusteeNew),
+      createSpoke(answers, TrusteePartnershipAddress, mode, srn, name, index, isTrusteeNew),
+      createSpoke(answers, TrusteePartnershipContactDetails, mode, srn, name, index, isTrusteeNew)
     )
   }
 }
