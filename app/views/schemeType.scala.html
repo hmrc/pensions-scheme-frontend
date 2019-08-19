@@ -37,7 +37,8 @@
             field = form("schemeType.type"),
             legend = messages("messages__scheme_type__title"),
             legendClass = Some("visually-hidden"),
-            inputs = SchemeType.options(appConfig)
+            inputs = SchemeType.options(appConfig),
+            labelClass = Some("form-label-bold")
         )
 
         @components.input_text(

@@ -98,10 +98,10 @@ messages__hasUtr__error__required = Select yes if {0} has a Unique Taxpayer Refe
 
 messages__common_email__heading = What is {0}’s email address?
 messages__common_company_email__visually_hidden_change_label = company email address
-messages__common_trustee_company_email__visually_hidden_change_label = Change {0}’s email
+messages__common_email__visually_hidden_change_label = Change {0}’s email
 messages__common_phone__heading = What is {0}’s phone number?
 messages__common_company_phone__visually_hidden_change_label = company phone number
-messages__common_trustee_company_phone__visually_hidden_change_label = Change {0}’s phone number
+messages__common_phone__visually_hidden_change_label = Change {0}’s phone number
 
 
 
@@ -1531,18 +1531,32 @@ messages__whatYouWillNeedEstablisherCompany__item2 = Unique Taxpayer Reference (
 messages__whatYouWillNeedEstablisherCompany__item3 = VAT registration number, if it has one
 messages__whatYouWillNeedEstablisherCompany__item4 = employer PAYE number, if it has one
 
-messages__whatYouWillNeedEstablisherCompanyAddress__title = Address
-messages__whatYouWillNeedEstablisherCompanyAddress__h1 = Address
+messages__whatYouWillNeedAddress__title = Address
+messages__whatYouWillNeedAddress__h1 = Address
+
 messages__whatYouWillNeedEstablisherCompanyAddress__lede = You will need to tell us the company’s:
 messages__whatYouWillNeedEstablisherCompanyAddress__item1 = current address
 messages__whatYouWillNeedEstablisherCompanyAddress__item2 = previous address if the company has not been at the current address for at least 1 year
+
+messages__whatYouWillNeedTrusteeCompanyAddress__lede = You will need to tell us the company’s:
+messages__whatYouWillNeedTrusteeCompanyAddress__item1 = current address
 messages__whatYouWillNeedTrusteeCompanyAddress__item2 = previous address if the company has been at the current address for less than 1 year
+
+messages__whatYouWillNeedTrusteeAddress__p1 = You will need to tell us the trustee’s:
+messages__whatYouWillNeedTrusteeAddress__item1 = current address
+messages__whatYouWillNeedTrusteeAddress__item2 = previous address if the trustee has been at the current address for less than 1 year
 
 messages__whatYouWillNeedEstablisherCompanyContact__title = Contact details
 messages__whatYouWillNeedEstablisherCompanyContact__h1 = Contact details
 messages__whatYouWillNeedEstablisherCompanyContact__lede = You will need to tell us the company’s:
 messages__whatYouWillNeedEstablisherCompanyContact__item1 = contact email address
 messages__whatYouWillNeedEstablisherCompanyContact__item2 = contact phone number
+
+messages__whatYouWillNeedTrusteeIndividualContact__title = Contact details
+messages__whatYouWillNeedTrusteeIndividualContact__h1 = Contact details for {0}
+messages__whatYouWillNeedTrusteeIndividualContact__p1 = You will need to tell us the trustee’s:
+messages__whatYouWillNeedTrusteeIndividualContact__item1 = contact email address
+messages__whatYouWillNeedTrusteeIndividualContact__item2 = contact phone number
 
 messages__whatYouWillNeedDirectors__title = Directors
 messages__whatYouWillNeedDirectors__h1 = Directors
@@ -1770,4 +1784,5 @@ messages__hasUtr__h1 = Does {0} have a Unique Taxpayer Reference (UTR)?
 messages__trusteeUtr__title = What is the trustee’s UTR?
 messages__trusteeUtr__h1 =  What is {0}’s UTR?
 messages__trustee__cya__dob = What is {0}’s date of birth?
+
 
