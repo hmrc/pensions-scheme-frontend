@@ -70,23 +70,23 @@ class TrusteePreviousAddressIdSpec extends SpecBase {
 
       s"in ${mode.toString} mode" must {
         "return answers rows with change links for subscription or variation when adding new trustee" in {
-          implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id",
+          val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id",
             answers.set(IsTrusteeNewId(0))(value = true).asOpt.value, PsaId("A0000000"))
           implicit val userAnswers: UserAnswers = request.userAnswers
 
-          TrusteePreviousAddressId(0).row(onwardUrl, NormalMode) must equal(answerRowWithChangeLInks)
+          TrusteePreviousAddressId(0).row(onwardUrl, NormalMode)(request, implicitly) must equal(answerRowWithChangeLInks)
         }
       }
     }
 
     "in update mode" must {
       "return row with add links for existing trustee if address years is under a year and there is no previous address" in {
-        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id",
+        val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id",
           UserAnswers().set(TrusteeAddressYearsId(0))(AddressYears.UnderAYear).flatMap(
             _.set(TrusteeNameId(0))(PersonName("Test", "Name"))).asOpt.value, PsaId("A0000000"))
         implicit val userAnswers: UserAnswers = request.userAnswers
 
-        TrusteePreviousAddressId(0).row(onwardUrl, UpdateMode) must equal(Seq(
+        TrusteePreviousAddressId(0).row(onwardUrl, UpdateMode)(request, implicitly) must equal(Seq(
           AnswerRow(
             Message("messages__trusteePreviousAddress", trusteeName),
             Seq("site.not_entered"),
@@ -96,11 +96,11 @@ class TrusteePreviousAddressIdSpec extends SpecBase {
       }
 
       "return row with change links for existing trustee if there is a previous address" in {
-        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id",
+        val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id",
           answers, PsaId("A0000000"))
         implicit val userAnswers: UserAnswers = request.userAnswers
 
-        TrusteePreviousAddressId(0).row(onwardUrl, NormalMode) must equal(answerRowWithChangeLInks)
+        TrusteePreviousAddressId(0).row(onwardUrl, NormalMode)(request, implicitly) must equal(answerRowWithChangeLInks)
       }
     }
   }

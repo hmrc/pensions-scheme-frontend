@@ -21,8 +21,8 @@ import identifiers.register.trustees.TrusteesId
 import models.address.Address
 import play.api.i18n.Messages
 import play.api.libs.json.JsPath
-import utils.{CountryOptions, UserAnswers}
 import utils.checkyouranswers.{AddressCYA, CheckYourAnswers}
+import utils.{CountryOptions, UserAnswers}
 import viewmodels.AnswerRow
 
 case class TrusteeAddressId(index: Int) extends TypedIdentifier[Address] {
@@ -35,15 +35,15 @@ object TrusteeAddressId {
   implicit def cya(implicit countryOptions: CountryOptions, messages: Messages, ua: UserAnswers): CheckYourAnswers[TrusteeAddressId] =
     new CheckYourAnswers[TrusteeAddressId] {
       override def row(id: TrusteeAddressId)(changeUrl: String, ua: UserAnswers): Seq[AnswerRow] = {
-        def trusteeName(index: Int) = ua.get(TrusteeNameId(index)).fold(messages("messages__theTrustee"))(_.fullName)
+        val trusteeName = ua.get(TrusteeNameId(id.index)).fold(messages("messages__theTrustee"))(_.fullName)
 
-        def label(index: Int) = messages("messages__trusteeAddress", trusteeName(index))
+        val label = messages("messages__trusteeAddress", trusteeName)
 
-        def changeAddress(index: Int) = messages("messages__changeTrusteeAddress", trusteeName(index))
+        val changeAddress = messages("messages__changeTrusteeAddress", trusteeName)
 
         AddressCYA(
-          label = label(id.index),
-          changeAddress = changeAddress(id.index)
+          label = label,
+          changeAddress = changeAddress
         )().row(id)(changeUrl, ua)
       }
 

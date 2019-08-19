@@ -33,7 +33,7 @@ object TrusteePreviousAddressId {
   override def toString: String = "trusteePreviousAddress"
 
   implicit def cya(implicit countryOptions: CountryOptions, messages: Messages, ua: UserAnswers): CheckYourAnswers[TrusteePreviousAddressId] = {
-    def trusteeName(index: Int) = ua.get(TrusteeNameId(index)).fold(messages("messages__theTrustee"))(_.fullName)
+    def trusteeName(index: Int): String = ua.get(TrusteeNameId(index)).fold(messages("messages__theTrustee"))(_.fullName)
     def label(index: Int) = messages("messages__trusteePreviousAddress", trusteeName(index))
     def changeAddress(index: Int) = messages("messages__changeTrusteePreviousAddress", trusteeName(index))
     def addAddress(index: Int) = messages("messages__addTrusteePreviousAddress", trusteeName(index))

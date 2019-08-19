@@ -54,12 +54,12 @@ class TrusteeAddressIdSpec extends SpecBase {
 
       s"in ${mode.toString} mode" must {
         "return answers rows with change links" in {
-          implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id",
+          val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id",
             UserAnswers().set(TrusteeAddressId(0))(address).flatMap(
               _.set(TrusteeNameId(0))(PersonName("test", "name"))).asOpt.value, PsaId("A0000000"))
           implicit val ua: UserAnswers = request.userAnswers
 
-          TrusteeAddressId(0).row(onwardUrl, mode) must equal(Seq(
+          TrusteeAddressId(0).row(onwardUrl, mode)(request, implicitly) must equal(Seq(
             AnswerRow(
               Message("messages__trusteeAddress", "test name"),
               addressAnswer(address),

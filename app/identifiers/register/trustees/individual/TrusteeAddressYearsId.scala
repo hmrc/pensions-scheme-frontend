@@ -21,8 +21,8 @@ import identifiers.register.trustees.{IsTrusteeCompleteId, IsTrusteeNewId, Trust
 import models.AddressYears
 import play.api.i18n.Messages
 import play.api.libs.json.{JsPath, JsResult}
-import utils.{CountryOptions, UserAnswers}
 import utils.checkyouranswers.{AddressYearsCYA, CheckYourAnswers}
+import utils.{CountryOptions, UserAnswers}
 import viewmodels.AnswerRow
 
 case class TrusteeAddressYearsId(index: Int) extends TypedIdentifier[AddressYears] {
@@ -36,7 +36,7 @@ case class TrusteeAddressYearsId(index: Int) extends TypedIdentifier[AddressYear
           .flatMap(_.remove(TrusteePreviousAddressId(this.index)))
           .flatMap(_.remove(TrusteePreviousAddressListId(this.index)))
       case Some(AddressYears.UnderAYear) =>
-        userAnswers.set(IsTrusteeCompleteId(index))(false)
+        userAnswers.set(IsTrusteeCompleteId(index))(value = false)
       case _ => super.cleanup(value, userAnswers)
     }
   }
@@ -48,15 +48,15 @@ object TrusteeAddressYearsId {
   implicit def cya(implicit countryOptions: CountryOptions, messages: Messages, ua: UserAnswers): CheckYourAnswers[TrusteeAddressYearsId] =
     new CheckYourAnswers[TrusteeAddressYearsId] {
       override def row(id: TrusteeAddressYearsId)(changeUrl: String, ua: UserAnswers): Seq[AnswerRow] = {
-        def trusteeName(index: Int) = ua.get(TrusteeNameId(index)).fold(messages("messages__theTrustee"))(_.fullName)
+        val trusteeName = ua.get(TrusteeNameId(id.index)).fold(messages("messages__theTrustee"))(_.fullName)
 
-        def label(index: Int) = messages("messages__hasBeen1Year", trusteeName(index))
+        val label = messages("messages__hasBeen1Year", trusteeName)
 
-        def changeAddressYears(index: Int) = messages("messages__changeHasBeen1Year", trusteeName(index))
+        val changeAddressYears = messages("messages__changeHasBeen1Year", trusteeName)
 
         AddressYearsCYA(
-          label = label(id.index),
-          changeAddressYears = changeAddressYears(id.index)
+          label = label,
+          changeAddressYears = changeAddressYears
         )().row(id)(changeUrl, ua)
       }
 
