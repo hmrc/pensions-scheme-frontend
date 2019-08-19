@@ -38,7 +38,7 @@ class TrusteesIndividualAddressNavigator @Inject()(val dataCacheConnector: UserA
     case IndividualPostCodeLookupId(index)                => IndividualAddressListController.onPageLoad(journeyMode(mode), index, None)
     case IndividualAddressListId(index)                   => TrusteeAddressController.onPageLoad(journeyMode(mode), index, None)
     case TrusteeAddressId(index)                          => TrusteeAddressYearsController.onPageLoad(journeyMode(mode), index, None)
-    case TrusteeAddressYearsId(index)                     => trusteeAddressYearsRoutes(journeyMode(mode), ua, index, None)
+    case TrusteeAddressYearsId(index)                     => trusteeAddressYearsRoutes(mode, ua, index, None)
     case IndividualPreviousAddressPostCodeLookupId(index) => TrusteePreviousAddressListController.onPageLoad(journeyMode(mode), index, None)
     case TrusteePreviousAddressListId(index)              => TrusteePreviousAddressController.onPageLoad(journeyMode(mode), index, None)
     case TrusteePreviousAddressId(index)                  => CheckYourAnswersIndividualAddressController.onPageLoad(journeyMode(mode), index, None)
@@ -48,7 +48,7 @@ class TrusteesIndividualAddressNavigator @Inject()(val dataCacheConnector: UserA
     case IndividualPostCodeLookupId(index)                => IndividualAddressListController.onPageLoad(mode, index, srn)
     case IndividualAddressListId(index)                   => TrusteeAddressController.onPageLoad(mode, index, srn)
     case TrusteeAddressId(index)                          => TrusteeAddressYearsController.onPageLoad(mode, index, srn)
-    case TrusteeAddressYearsId(index)                     => trusteeAddressYearsRoutes(journeyMode(mode), ua, index, srn)
+    case TrusteeAddressYearsId(index)                     => trusteeAddressYearsRoutes(mode, ua, index, srn)
     case IndividualPreviousAddressPostCodeLookupId(index) => TrusteePreviousAddressListController.onPageLoad(mode, index, srn)
     case TrusteePreviousAddressListId(index)              => TrusteePreviousAddressController.onPageLoad(mode, index, srn)
     case TrusteePreviousAddressId(index)                  => isNewTrustee(ua, journeyMode(mode), index, srn)
@@ -71,13 +71,12 @@ object TrusteesIndividualAddressNavigator {
   private def isNewTrustee(ua: UserAnswers, mode: Mode, index: Int, srn: Option[String]): Call =
     ua.get(IsTrusteeNewId(index)) match {
       case Some(true) => CheckYourAnswersIndividualAddressController.onPageLoad(mode, index, srn)
-      case Some(false) => AnyMoreChangesController.onPageLoad(srn)
-      case _ => SessionExpiredController.onPageLoad()
+      case _ => AnyMoreChangesController.onPageLoad(srn)
     }
 
   private def trusteeAddressYearsRoutes(mode: Mode, ua: UserAnswers, index: Int, srn: Option[String]): Call =
     ua.get(TrusteeAddressYearsId(index)) match {
-      case Some(AddressYears.OverAYear) => CheckYourAnswersIndividualAddressController.onPageLoad(mode, index, srn)
+      case Some(AddressYears.OverAYear) => CheckYourAnswersIndividualAddressController.onPageLoad(journeyMode(mode), index, srn)
       case Some(AddressYears.UnderAYear) => IndividualPreviousAddressPostcodeLookupController.onPageLoad(mode, index, srn)
       case _ => SessionExpiredController.onPageLoad()
     }
