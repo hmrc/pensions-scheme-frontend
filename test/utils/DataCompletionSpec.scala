@@ -24,10 +24,10 @@ import models.NormalMode
 import org.scalatest.{MustMatchers, OptionValues, WordSpec}
 import play.api.libs.json.JsValue
 
-class DataCompletionSpec extends WordSpec with MustMatchers with OptionValues with Enumerable.Implicits  {
+class DataCompletionSpec extends WordSpec with MustMatchers with OptionValues with Enumerable.Implicits {
 
   import DataCompletionSpec._
-
+  "All generic methods" when {
   "isComplete" must {
     "return Some(true) only when all values in list are true" in {
       UserAnswers().isComplete(Seq(Some(true), Some(true), Some(true))) mustBe Some(true)
@@ -129,158 +129,305 @@ class DataCompletionSpec extends WordSpec with MustMatchers with OptionValues wi
         CompanyUTRId(0), NoCompanyUTRId(0)) mustBe Some(false)
     }
   }
+}
 
-  "isEstablisherCompanyDetailsComplete" must {
-    "return None when all answers are missing" in {
-      UserAnswers(userAnswersUninitiated).isEstablisherCompanyDetailsComplete(0, mode) mustBe None
+  "Establisher Company completion status should be returned correctly" when {
+    "isEstablisherCompanyDetailsComplete" must {
+      "return None when all answers are missing" in {
+        UserAnswers(userAnswersUninitiated).isEstablisherCompanyDetailsComplete(0, mode) mustBe None
+      }
+
+      "return Some(true) when all answers are present" in {
+        UserAnswers(userAnswersCompleted).isEstablisherCompanyDetailsComplete(0, mode) mustBe Some(true)
+      }
+
+      "return Some(false) when some answer is missing" in {
+        UserAnswers(userAnswersInProgress).isEstablisherCompanyDetailsComplete(0, mode) mustBe Some(false)
+      }
     }
 
-    "return Some(true) when all answers are present" in {
-      UserAnswers(userAnswersCompleted).isEstablisherCompanyDetailsComplete(0, mode) mustBe Some(true)
+    "isEstablisherCompanyAddressComplete" must {
+      "return None when all answers are missing" in {
+        UserAnswers(userAnswersUninitiated).isEstablisherCompanyAddressComplete(0) mustBe None
+      }
+
+      "return Some(true) when all answers are present" in {
+        UserAnswers(userAnswersCompleted).isEstablisherCompanyAddressComplete(0) mustBe Some(true)
+      }
+
+      "return Some(false) when some answer is missing" in {
+        UserAnswers(userAnswersInProgress).isEstablisherCompanyAddressComplete(0) mustBe Some(false)
+      }
     }
 
-    "return Some(false) when some answer is missing" in {
-      UserAnswers(userAnswersInProgress).isEstablisherCompanyDetailsComplete(0, mode) mustBe Some(false)
-    }
-  }
+    "isEstablisherCompanyContactDetailsComplete" must {
+      "return None when all answers are missing" in {
+        UserAnswers(userAnswersUninitiated).isEstablisherCompanyContactDetailsComplete(0) mustBe None
+      }
 
-  "isEstablisherCompanyAddressComplete" must {
-    "return None when all answers are missing" in {
-      UserAnswers(userAnswersUninitiated).isEstablisherCompanyAddressComplete(0) mustBe None
-    }
+      "return Some(true) when all answers are present" in {
+        UserAnswers(userAnswersCompleted).isEstablisherCompanyContactDetailsComplete(0) mustBe Some(true)
+      }
 
-    "return Some(true) when all answers are present" in {
-      UserAnswers(userAnswersCompleted).isEstablisherCompanyAddressComplete(0) mustBe Some(true)
-    }
-
-    "return Some(false) when some answer is missing" in {
-      UserAnswers(userAnswersInProgress).isEstablisherCompanyAddressComplete(0) mustBe Some(false)
-    }
-  }
-
-  "isEstablisherCompanyContactDetailsComplete" must {
-    "return None when all answers are missing" in {
-      UserAnswers(userAnswersUninitiated).isEstablisherCompanyContactDetailsComplete(0) mustBe None
+      "return Some(false) when some answer is missing" in {
+        UserAnswers(userAnswersInProgress).isEstablisherCompanyContactDetailsComplete(0) mustBe Some(false)
+      }
     }
 
-    "return Some(true) when all answers are present" in {
-      UserAnswers(userAnswersCompleted).isEstablisherCompanyContactDetailsComplete(0) mustBe Some(true)
+    "isEstablisherCompanyComplete with hns toggle on" must {
+      "return false when all answers are missing" in {
+        UserAnswers(userAnswersUninitiated).isEstablisherCompanyComplete(0, mode, true) mustBe false
+      }
+
+      "return true when all answers are present" in {
+        UserAnswers(userAnswersCompleted).isEstablisherCompanyComplete(0, mode, true) mustBe true
+      }
+
+      "return false when some answer is missing" in {
+        UserAnswers(userAnswersInProgress).isEstablisherCompanyComplete(0, mode, true) mustBe false
+      }
     }
 
-    "return Some(false) when some answer is missing" in {
-      UserAnswers(userAnswersInProgress).isEstablisherCompanyContactDetailsComplete(0) mustBe Some(false)
-    }
-  }
+    "isEstablisherCompanyComplete with hns toggle off" must {
+      "return false when all answers are missing" in {
+        UserAnswers(userAnswersUninitiated).isEstablisherCompanyComplete(0, mode, false) mustBe false
+      }
 
-  "isEstablisherCompanyComplete with hns toggle on" must {
-    "return false when all answers are missing" in {
-      UserAnswers(userAnswersUninitiated).isEstablisherCompanyComplete(0, mode, true) mustBe false
-    }
+      "return true when all answers are present" in {
+        UserAnswers(userAnswersCompletedNonHnS).isEstablisherCompanyComplete(0, mode, false) mustBe true
+      }
 
-    "return true when all answers are present" in {
-      UserAnswers(userAnswersCompleted).isEstablisherCompanyComplete(0, mode, true) mustBe true
-    }
-
-    "return false when some answer is missing" in {
-      UserAnswers(userAnswersInProgress).isEstablisherCompanyComplete(0, mode, true) mustBe false
-    }
-  }
-
-  "isEstablisherCompanyComplete with hns toggle off" must {
-    "return false when all answers are missing" in {
-      UserAnswers(userAnswersUninitiated).isEstablisherCompanyComplete(0, mode, false) mustBe false
+      "return false when some answer is missing" in {
+        UserAnswers(userAnswersInProgress).isEstablisherCompanyComplete(0, mode, false) mustBe false
+      }
     }
 
-    "return true when all answers are present" in {
-      UserAnswers(userAnswersCompletedNonHnS).isEstablisherCompanyComplete(0, mode, false) mustBe true
+    "isDirectorCompleteNonHnS" must {
+      "return true when all answers are present" in {
+        UserAnswers(userAnswersCompletedNonHnS).isDirectorCompleteNonHnS(0, 0) mustBe true
+      }
+
+      "return false when some answer is missing" in {
+        UserAnswers(userAnswersInProgress).isDirectorCompleteNonHnS(0, 0) mustBe false
+      }
     }
 
-    "return false when some answer is missing" in {
-      UserAnswers(userAnswersInProgress).isEstablisherCompanyComplete(0, mode, false) mustBe false
-    }
-  }
+    "isDirectorCompleteHnS" must {
+      "return true when all answers are present" in {
+        UserAnswers(userAnswersCompleted).isDirectorCompleteHnS(0, 0) mustBe true
+      }
 
-  "isDirectorCompleteNonHnS" must {
-    "return true when all answers are present" in {
-      UserAnswers(userAnswersCompletedNonHnS).isDirectorCompleteNonHnS(0, 0) mustBe true
-    }
-
-    "return false when some answer is missing" in {
-      UserAnswers(userAnswersInProgress).isDirectorCompleteNonHnS(0, 0) mustBe false
-    }
-  }
-
-  "isDirectorCompleteHnS" must {
-    "return true when all answers are present" in {
-      UserAnswers(userAnswersCompleted).isDirectorCompleteHnS(0, 0) mustBe true
-    }
-
-    "return false when some answer is missing" in {
-      UserAnswers(userAnswersInProgress).isDirectorCompleteHnS(0, 0) mustBe false
-    }
-  }
-
-  // TRUSTEE INDIVIDUAL
-
-  "isTrusteeIndividualComplete H&S disabled" must {
-    "return true when all answers are present" in {
-      UserAnswers(userAnswersCompletedNonHnS).isTrusteeIndividualComplete(isHnSEnabled = false, 1) mustBe true
-    }
-
-    "return false when some answer is missing" in {
-      UserAnswers(userAnswersInProgress).isTrusteeIndividualComplete(isHnSEnabled = false, 0) mustBe false
+      "return false when some answer is missing" in {
+        UserAnswers(userAnswersInProgress).isDirectorCompleteHnS(0, 0) mustBe false
+      }
     }
   }
 
-  "isTrusteeIndividualComplete H&S enabled" must {
-    "return true when all answers are present" in {
-      UserAnswers(userAnswersCompleted).isTrusteeIndividualComplete(isHnSEnabled = true,1) mustBe true
+  "Trustee Company completion status should be returned correctly" when {
+    "isTrusteeCompanyDetailsComplete" must {
+      "return None when all answers are missing" in {
+        UserAnswers(userAnswersUninitiated).isTrusteeCompanyDetailsComplete(0) mustBe None
+      }
+
+      "return Some(true) when all answers are present" in {
+        UserAnswers(userAnswersCompleted).isTrusteeCompanyDetailsComplete(0) mustBe Some(true)
+      }
+
+      "return Some(false) when some answer is missing" in {
+        UserAnswers(userAnswersInProgress).isTrusteeCompanyDetailsComplete(0) mustBe Some(false)
+      }
     }
 
-    "return false when some answer is missing" in {
-      UserAnswers(userAnswersInProgress).isTrusteeIndividualComplete(isHnSEnabled = true,0) mustBe false
+    "isTrusteeCompanyAddressComplete" must {
+      "return None when all answers are missing" in {
+        UserAnswers(userAnswersUninitiated).isTrusteeCompanyAddressComplete(0) mustBe None
+      }
+
+      "return Some(true) when all answers are present" in {
+        UserAnswers(userAnswersCompleted).isTrusteeCompanyAddressComplete(0) mustBe Some(true)
+      }
+
+      "return Some(false) when some answer is missing" in {
+        UserAnswers(userAnswersInProgress).isTrusteeCompanyAddressComplete(0) mustBe Some(false)
+      }
+    }
+
+    "isTrusteeCompanyContactDetailsComplete" must {
+      "return None when all answers are missing" in {
+        UserAnswers(userAnswersUninitiated).isTrusteeCompanyContactDetailsComplete(0) mustBe None
+      }
+
+      "return Some(true) when all answers are present" in {
+        UserAnswers(userAnswersCompleted).isTrusteeCompanyContactDetailsComplete(0) mustBe Some(true)
+      }
+
+      "return Some(false) when some answer is missing" in {
+        UserAnswers(userAnswersInProgress).isTrusteeCompanyContactDetailsComplete(0) mustBe Some(false)
+      }
+    }
+
+    "isTrusteeCompanyComplete with hns toggle on" must {
+      "return false when all answers are missing" in {
+        UserAnswers(userAnswersUninitiated).isTrusteeCompanyComplete(0, true) mustBe false
+      }
+
+      "return true when all answers are present" in {
+        UserAnswers(userAnswersCompleted).isTrusteeCompanyComplete(0, true) mustBe true
+      }
+
+      "return false when some answer is missing" in {
+        UserAnswers(userAnswersInProgress).isTrusteeCompanyComplete(0, true) mustBe false
+      }
+    }
+
+    "isTrusteeCompanyComplete with hns toggle off" must {
+      "return false when all answers are missing" in {
+        UserAnswers(userAnswersUninitiated).isTrusteeCompanyComplete(0, false) mustBe false
+      }
+
+      "return true when all answers are present" in {
+        UserAnswers(userAnswersCompletedNonHnS).isTrusteeCompanyComplete(0, false) mustBe true
+      }
+
+      "return false when some answer is missing" in {
+        UserAnswers(userAnswersInProgress).isTrusteeCompanyComplete(0, false) mustBe false
+      }
     }
   }
 
-  "isTrusteeIndividualDetailsComplete" must {
-    "return None when no answers are present" in {
-      emptyAnswers.isTrusteeIndividualDetailsComplete(0) mustBe None
+  "Trustee Individual completion status should be returned correctly" when {
+    "isTrusteeIndividualComplete H&S disabled" must {
+      "return true when all answers are present" in {
+        UserAnswers(userAnswersCompletedNonHnS).isTrusteeIndividualComplete(isHnSEnabled = false, 1) mustBe true
+      }
+
+      "return false when some answer is missing" in {
+        UserAnswers(userAnswersInProgress).isTrusteeIndividualComplete(isHnSEnabled = false, 1) mustBe false
+      }
     }
 
-    "return Some(true) when all answers are present" in {
-      userAnswersIndividualDetailsCompleted.isTrusteeIndividualDetailsComplete(0) mustBe Some(true)
+    "isTrusteeIndividualComplete H&S enabled" must {
+      "return true when all answers are present" in {
+        UserAnswers(userAnswersCompleted).isTrusteeIndividualComplete(isHnSEnabled = true, 1) mustBe true
+      }
+
+      "return false when some answer is missing" in {
+        UserAnswers(userAnswersInProgress).isTrusteeIndividualComplete(isHnSEnabled = true, 1) mustBe false
+      }
     }
 
-    "return Some(false) when some answer is missing" in {
-      userAnswersIndividualDetailsInProgress.isTrusteeIndividualDetailsComplete(0) mustBe Some(false)
+    "isTrusteeIndividualDetailsComplete" must {
+      "return None when no answers are present" in {
+        emptyAnswers.isTrusteeIndividualDetailsComplete(0) mustBe None
+      }
+
+      "return Some(true) when all answers are present" in {
+        userAnswersIndividualDetailsCompleted.isTrusteeIndividualDetailsComplete(0) mustBe Some(true)
+      }
+
+      "return Some(false) when some answer is missing" in {
+        userAnswersIndividualDetailsInProgress.isTrusteeIndividualDetailsComplete(0) mustBe Some(false)
+      }
+    }
+
+    "isTrusteeIndividualAddressComplete" must {
+      "return None when no answers are present" in {
+        emptyAnswers.isTrusteeIndividualAddressComplete(0) mustBe None
+      }
+
+      "return Some(true) when all answers are present" in {
+        userAnswersAddressDetailsCompleted.isTrusteeIndividualAddressComplete(0) mustBe Some(true)
+      }
+
+      "return Some(false) when some answer is missing" in {
+        userAnswersAddressDetailsInProgress.isTrusteeIndividualAddressComplete(0) mustBe Some(false)
+      }
+    }
+
+    "isTrusteeIndividualContactDetailsComplete" must {
+      "return None when no answers are present" in {
+        emptyAnswers.isTrusteeIndividualContactDetailsComplete(0) mustBe None
+      }
+
+      "return Some(true) when all answers are present" in {
+        userAnswersContactDetailsCompleted.isTrusteeIndividualContactDetailsComplete(0) mustBe Some(true)
+      }
+
+      "return Some(false) when some answer is missing" in {
+        userAnswersContactDetailsInProgress.isTrusteeIndividualContactDetailsComplete(0) mustBe Some(false)
+      }
     }
   }
 
-  "isTrusteeIndividualAddressComplete" must {
-    "return None when no answers are present" in {
-      emptyAnswers.isTrusteeIndividualAddressComplete(0) mustBe None
+  "Trustee Partnership completion status should be returned correctly" when {
+    "isTrusteePartnershipDetailsComplete" must {
+      "return None when all answers are missing" in {
+        UserAnswers(userAnswersUninitiated).isTrusteePartnershipDetailsComplete(2) mustBe None
+      }
+
+      "return Some(true) when all answers are present" in {
+        UserAnswers(userAnswersCompleted).isTrusteePartnershipDetailsComplete(2) mustBe Some(true)
+      }
+
+      "return Some(false) when some answer is missing" in {
+        UserAnswers(userAnswersInProgress).isTrusteePartnershipDetailsComplete(2) mustBe Some(false)
+      }
     }
 
-    "return Some(true) when all answers are present" in {
-      userAnswersAddressDetailsCompleted.isTrusteeIndividualAddressComplete(0) mustBe Some(true)
+    "isTrusteePartnershipAddressComplete" must {
+      "return None when all answers are missing" in {
+        UserAnswers(userAnswersUninitiated).isTrusteePartnershipAddressComplete(2) mustBe None
+      }
+
+      "return Some(true) when all answers are present" in {
+        UserAnswers(userAnswersCompleted).isTrusteePartnershipAddressComplete(2) mustBe Some(true)
+      }
+
+      "return Some(false) when some answer is missing" in {
+        UserAnswers(userAnswersInProgress).isTrusteePartnershipAddressComplete(2) mustBe Some(false)
+      }
     }
 
-    "return Some(false) when some answer is missing" in {
-      userAnswersAddressDetailsInProgress.isTrusteeIndividualAddressComplete(0) mustBe Some(false)
-    }
-  }
+    "isTrusteePartnershipContactDetailsComplete" must {
+      "return None when all answers are missing" in {
+        UserAnswers(userAnswersUninitiated).isTrusteePartnershipContactDetailsComplete(2) mustBe None
+      }
 
-  "isTrusteeIndividualContactDetailsComplete" must {
-    "return None when no answers are present" in {
-      emptyAnswers.isTrusteeIndividualContactDetailsComplete(0) mustBe None
+      "return Some(true) when all answers are present" in {
+        UserAnswers(userAnswersCompleted).isTrusteePartnershipContactDetailsComplete(2) mustBe Some(true)
+      }
+
+      "return Some(false) when some answer is missing" in {
+        UserAnswers(userAnswersInProgress).isTrusteePartnershipContactDetailsComplete(2) mustBe Some(false)
+      }
     }
 
-    "return Some(true) when all answers are present" in {
-      userAnswersContactDetailsCompleted.isTrusteeIndividualContactDetailsComplete(0) mustBe Some(true)
+    "isTrusteePartnershipComplete with hns toggle on" must {
+      "return false when all answers are missing" in {
+        UserAnswers(userAnswersUninitiated).isTrusteePartnershipComplete(2, true) mustBe false
+      }
+
+      "return true when all answers are present" in {
+        UserAnswers(userAnswersCompleted).isTrusteePartnershipComplete(2, true) mustBe true
+      }
+
+      "return false when some answer is missing" in {
+        UserAnswers(userAnswersInProgress).isTrusteePartnershipComplete(2, true) mustBe false
+      }
     }
 
-    "return Some(false) when some answer is missing" in {
-      userAnswersContactDetailsInProgress.isTrusteeIndividualContactDetailsComplete(0) mustBe Some(false)
+    "isTrusteePartnershipComplete with hns toggle off" must {
+      "return false when all answers are missing" in {
+        UserAnswers(userAnswersUninitiated).isTrusteePartnershipComplete(2, false) mustBe false
+      }
+
+      "return true when all answers are present" in {
+        UserAnswers(userAnswersCompletedNonHnS).isTrusteePartnershipComplete(2, false) mustBe true
+      }
+
+      "return false when some answer is missing" in {
+        UserAnswers(userAnswersInProgress).isTrusteePartnershipComplete(2, false) mustBe false
+      }
     }
   }
 }

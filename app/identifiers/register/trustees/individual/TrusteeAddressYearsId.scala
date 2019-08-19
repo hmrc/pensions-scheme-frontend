@@ -17,7 +17,7 @@
 package identifiers.register.trustees.individual
 
 import identifiers.TypedIdentifier
-import identifiers.register.trustees.{IsTrusteeCompleteId, IsTrusteeNewId, TrusteesId}
+import identifiers.register.trustees.{IsTrusteeNewId, TrusteesId}
 import models.AddressYears
 import play.api.i18n.Messages
 import play.api.libs.json.{JsPath, JsResult}
@@ -35,8 +35,6 @@ case class TrusteeAddressYearsId(index: Int) extends TypedIdentifier[AddressYear
           IndividualPreviousAddressPostCodeLookupId(this.index))
           .flatMap(_.remove(TrusteePreviousAddressId(this.index)))
           .flatMap(_.remove(TrusteePreviousAddressListId(this.index)))
-      case Some(AddressYears.UnderAYear) =>
-        userAnswers.set(IsTrusteeCompleteId(index))(value = false)
       case _ => super.cleanup(value, userAnswers)
     }
   }
