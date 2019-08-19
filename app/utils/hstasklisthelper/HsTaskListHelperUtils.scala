@@ -139,9 +139,9 @@ trait HsTaskListHelperUtils extends Enumerable.Implicits {
     case TrusteeIndividualDetails => messages("messages__schemeTaskList__sectionIndividual_add_details",  _)
     case TrusteeIndividualAddress => messages("messages__schemeTaskList__sectionIndividual_add_address",  _)
     case TrusteeIndividualContactDetails => messages("messages__schemeTaskList__sectionIndividual_add_contact", _)
-    case TrusteePartnershipDetails => messages("messages__schemeTaskList__sectionIndividual_add_details",  _)
-    case TrusteePartnershipAddress => messages("messages__schemeTaskList__sectionIndividual_add_details",  _)
-    case TrusteePartnershipContactDetails => messages("messages__schemeTaskList__sectionIndividual_add_details",  _)
+    case TrusteePartnershipDetails => messages("messages__schemeTaskList__sectionPartnership_add_details",  _)
+    case TrusteePartnershipAddress => messages("messages__schemeTaskList__sectionPartnership_add_address",  _)
+    case TrusteePartnershipContactDetails => messages("messages__schemeTaskList__sectionPartnership_add_contact",  _)
     case _ => (_: String) => s"Not found link text for spoke $spokeName"
   }
 
