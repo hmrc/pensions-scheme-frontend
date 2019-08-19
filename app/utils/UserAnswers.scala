@@ -25,8 +25,8 @@ import identifiers.register.establishers.partnership.partner.{IsNewPartnerId, Is
 import identifiers.register.establishers.{EstablisherKindId, EstablishersId, IsEstablisherCompleteId, IsEstablisherNewId}
 import identifiers.register.trustees.company.CompanyDetailsId
 import identifiers.register.trustees.individual.{TrusteeDetailsId, TrusteeNameId}
-import identifiers.register.trustees.partnership.{IsPartnershipCompleteId, PartnershipDetailsId => TrusteePartnershipDetailsId}
-import identifiers.register.trustees.{IsTrusteeCompleteId, IsTrusteeNewId, TrusteeKindId, TrusteesId}
+import identifiers.register.trustees.partnership.{PartnershipDetailsId => TrusteePartnershipDetailsId}
+import identifiers.register.trustees.{IsTrusteeNewId, TrusteeKindId, TrusteesId}
 import models.address.Address
 import models.person.{PersonDetails, PersonName}
 import models.register._
@@ -348,11 +348,10 @@ final case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Impl
     )
     private def readsPartnership(index: Int): Reads[Trustee[_]] = (
       (JsPath \ TrusteePartnershipDetailsId.toString).read[PartnershipDetails] and
-        (JsPath \ IsPartnershipCompleteId.toString).readNullable[Boolean] and
         (JsPath \ IsTrusteeNewId.toString).readNullable[Boolean]
-      ) ((details, isComplete, isNew) => TrusteePartnershipEntity(
+      ) ((details, isNew) => TrusteePartnershipEntity(
       TrusteePartnershipDetailsId(index), details.name, details.isDeleted,
-      isComplete.getOrElse(false), isNew.fold(false)(identity), noOfRecords, schemeType)
+      isTrusteePartnershipComplete(index, isHnSEnabled), isNew.fold(false)(identity), noOfRecords, schemeType)
     )
     private def readsSkeleton(index: Int): Reads[Trustee[_]] = new Reads[Trustee[_]] {
       override def reads(json: JsValue): JsResult[Trustee[_]] = {

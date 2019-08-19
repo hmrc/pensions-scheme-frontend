@@ -288,8 +288,7 @@
       "partnershipContactDetails": {
         "emailAddress": "x@x.x",
         "phoneNumber": "98765"
-      },
-      "isPartnershipCompleteId": true
+      }
     }
   ],
   "isWorkingKnowledgeComplete": true

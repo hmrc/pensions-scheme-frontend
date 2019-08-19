@@ -19,8 +19,7 @@ package controllers.register.trustees.individual
 import controllers.ControllerSpecBase
 import controllers.actions._
 import controllers.behaviours.ControllerAllowChangeBehaviour
-import identifiers.register.trustees.IsTrusteeCompleteId
-import identifiers.register.trustees.individual.{TrusteeDetailsId, TrusteeNewNinoId, TrusteeNinoId}
+import identifiers.register.trustees.individual.{TrusteeDetailsId, TrusteeNewNinoId}
 import models._
 import models.person.PersonDetails
 import org.joda.time.LocalDate

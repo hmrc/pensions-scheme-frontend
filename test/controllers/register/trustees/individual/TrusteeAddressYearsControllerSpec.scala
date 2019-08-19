@@ -27,7 +27,7 @@ import org.joda.time.LocalDate
 import play.api.data.Form
 import play.api.libs.json.{JsError, JsResultException, JsSuccess}
 import play.api.test.Helpers._
-import utils.{FakeNavigator, UserAnswers}
+import utils.{FakeFeatureSwitchManagementService, FakeNavigator, UserAnswers}
 import viewmodels.Message
 import viewmodels.address.AddressYearsViewModel
 import views.html.address.addressYears
@@ -130,7 +130,8 @@ object TrusteeAddressYearsControllerSpec extends ControllerSpecBase {
       FakeAuthAction,
       dataRetrievalAction,
       FakeAllowAccessProvider(),
-      new DataRequiredActionImpl()
+      new DataRequiredActionImpl(),
+      new FakeFeatureSwitchManagementService(false)
     )
 
   private val viewModel =

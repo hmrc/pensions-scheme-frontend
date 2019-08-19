@@ -17,30 +17,35 @@
 package views.register.trustees.company
 
 import models.{Index, NormalMode}
+import play.api.mvc.Call
 import play.twirl.api.HtmlFormat
 import views.behaviours.ViewBehaviours
 import views.html.register.trustees.company.whatYouWillNeedCompanyAddress
 
 class WhatYouWillNeedCompanyAddressViewSpec extends ViewBehaviours {
 
-  val messageKeyPrefix = "whatYouWillNeedEstablisherCompanyAddress"
+  val messageKeyPrefix = "whatYouWillNeedAddress"
 
-  val href = controllers.register.establishers.company.routes.CompanyPostCodeLookupController.onPageLoad(NormalMode, None, index=Index(0))
+  private def href: Call = controllers.register.establishers.company.routes.CompanyPostCodeLookupController.onPageLoad(NormalMode, None, index=Index(0))
 
   def createView: () => HtmlFormat.Appendable = () => whatYouWillNeedCompanyAddress(frontendAppConfig, Some("testScheme"), href, None)(fakeRequest, messages)
 
   "whatYouWillNeedCompanyAddress view" must {
 
-    behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__h1"),
-      "_lede", "_item1")
+    behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__h1"))
 
-
-    "display the correct for second bullet point" in {
+    "display the correct paragraph" in {
       val doc = asDocument(createView())
+      assertContainsText(doc, messages("messages__whatYouWillNeedTrusteeCompanyAddress__lede"))
+    }
+
+    "display the correct bullet points" in {
+      val doc = asDocument(createView())
+      assertContainsText(doc, messages("messages__whatYouWillNeedTrusteeCompanyAddress__item1"))
       assertContainsText(doc, messages("messages__whatYouWillNeedTrusteeCompanyAddress__item2"))
     }
 
-    behave like pageWithSubmitButton(createView)
+    behave like pageWithSubmitButton(createView, Some(href))
 
     behave like pageWithReturnLink(createView, getReturnLink)
   }

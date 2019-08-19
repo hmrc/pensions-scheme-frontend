@@ -14,20 +14,17 @@
  * limitations under the License.
  */
 
-package identifiers.register.trustees
+package identifiers.register.trustees.partnership
 
 import identifiers.TypedIdentifier
+import identifiers.register.trustees.TrusteesId
 import play.api.libs.json.JsPath
 
-case class IsTrusteeAddressCompleteId(index: Int) extends TypedIdentifier[Boolean] {
-  override def path: JsPath = TrusteesId(index).path \ IsTrusteeAddressCompleteId.toString
+case class PartnershipEmailId(index: Int) extends TypedIdentifier[String] {
+  override def path: JsPath =
+    TrusteesId(index).path \ "partnershipContactDetails" \ PartnershipEmailId.toString
 }
 
-object IsTrusteeAddressCompleteId {
-  override def toString: String = "isTrusteeAddressCompleteId"
+object PartnershipEmailId {
+  override def toString: String = "emailAddress"
 }
-
-
-
-
-

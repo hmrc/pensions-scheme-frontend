@@ -91,7 +91,8 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
       )))
   }
 
-  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requiredData) {
+  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen requiredData) {
     implicit request =>
       Redirect(navigator.nextPage(CheckYourAnswersId, mode, request.userAnswers, srn))
   }

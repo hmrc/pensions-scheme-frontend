@@ -27,18 +27,21 @@ import identifiers.register.trustees.individual._
 import models.Mode.journeyMode
 import models._
 import models.requests.IdentifiedRequest
-import navigators.trustees.individuals.TrusteesIndividualDetailsNavigator
+import navigators.trustees.individuals.{TrusteesIndividualAddressNavigator, TrusteesIndividualDetailsNavigator}
+import navigators.trustees.individuals.{TrusteesIndividualContactDetailsNavigator, TrusteesIndividualDetailsNavigator}
 import play.api.mvc.Call
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.{Toggles, UserAnswers}
 
 import scala.concurrent.ExecutionContext
 
-class TrusteesIndividualFeatureSwitchNavigator @Inject() (
-                                                        featureSwitchService: FeatureSwitchManagementService,
-                                                        oldNavigator: TrusteesIndividualNavigatorOld,
-                                                        navigator: TrusteesIndividualDetailsNavigator
-                                                      ) extends Navigator {
+class TrusteesIndividualFeatureSwitchNavigator @Inject()(
+                                                          featureSwitchService: FeatureSwitchManagementService,
+                                                          oldNavigator: TrusteesIndividualNavigatorOld,
+                                                          detailsNavigator: TrusteesIndividualDetailsNavigator,
+                                                          addressNavigator: TrusteesIndividualAddressNavigator,
+                                                          contactDetailsNavigator: TrusteesIndividualContactDetailsNavigator
+                                                        ) extends Navigator {
 
   override def nextPageOptional(id: Identifier,
                                 mode: Mode,
@@ -48,7 +51,9 @@ class TrusteesIndividualFeatureSwitchNavigator @Inject() (
                                  ec: ExecutionContext,
                                  hc: HeaderCarrier): Option[Call] =
     if (featureSwitchService.get(Toggles.isEstablisherCompanyHnSEnabled)) {
-      navigator.nextPageOptional(id, mode, userAnswers, srn)
+      detailsNavigator.nextPageOptional(id, mode, userAnswers, srn) orElse
+        addressNavigator.nextPageOptional(id, mode, userAnswers, srn) orElse
+        contactDetailsNavigator.nextPageOptional(id, mode, userAnswers, srn)
     } else {
       oldNavigator.nextPageOptional(id, mode, userAnswers, srn)
     }
@@ -62,10 +67,10 @@ class TrusteesIndividualNavigatorOld @Inject()(val dataCacheConnector: UserAnswe
     NavigateTo.dontSave(CheckYourAnswersController.onPageLoad(mode, index, srn))
 
   private def exitMiniJourney(index: Index, mode: Mode, srn: Option[String], answers: UserAnswers): Option[NavigateTo] =
-    if(mode == CheckMode || mode == NormalMode){
+    if (mode == CheckMode || mode == NormalMode) {
       checkYourAnswers(index, journeyMode(mode), srn)
     } else {
-      if(answers.get(IsTrusteeNewId(index)).getOrElse(false)) checkYourAnswers(index, journeyMode(mode), srn)
+      if (answers.get(IsTrusteeNewId(index)).getOrElse(false)) checkYourAnswers(index, journeyMode(mode), srn)
       else anyMoreChanges(srn)
     }
 
@@ -116,7 +121,7 @@ class TrusteesIndividualNavigatorOld @Inject()(val dataCacheConnector: UserAnswe
         NavigateTo.dontSave(TrusteeAddressController.onPageLoad(mode, index, srn))
       case TrusteeAddressId(index) =>
         val isNew = from.userAnswers.get(IsTrusteeNewId(index)).contains(true)
-        if(isNew || mode == CheckMode) {
+        if (isNew || mode == CheckMode) {
           checkYourAnswers(index, journeyMode(mode), srn)
         } else if (!from.userAnswers.get(IsTrusteeNewId(index)).contains(true) && mode == CheckUpdateMode) {
           NavigateTo.dontSave(IndividualConfirmPreviousAddressController.onPageLoad(index, srn))

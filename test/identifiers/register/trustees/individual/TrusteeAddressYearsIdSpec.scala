@@ -16,21 +16,22 @@
 
 package identifiers.register.trustees.individual
 
-import identifiers.register.trustees.{IsTrusteeCompleteId, IsTrusteeNewId}
+import base.SpecBase
+import identifiers.register.trustees.IsTrusteeNewId
 import models.AddressYears.UnderAYear
-import models.{AddressYears, Link, NormalMode, UpdateMode}
 import models.address.{Address, TolerantAddress}
+import models.person.PersonName
 import models.requests.DataRequest
-import org.scalatest.{MustMatchers, OptionValues, WordSpec}
+import models.{AddressYears, Link, NormalMode, UpdateMode}
 import play.api.libs.json.Json
 import play.api.mvc.AnyContent
 import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.PsaId
-import utils.{Enumerable, UserAnswers}
-import viewmodels.AnswerRow
 import utils.checkyouranswers.Ops._
+import utils.{CountryOptions, InputOption, UserAnswers}
+import viewmodels.{AnswerRow, Message}
 
-class TrusteeAddressYearsIdSpec extends WordSpec with MustMatchers with OptionValues with Enumerable.Implicits {
+class TrusteeAddressYearsIdSpec extends SpecBase {
 
   "Cleanup" must {
 
@@ -39,7 +40,6 @@ class TrusteeAddressYearsIdSpec extends WordSpec with MustMatchers with OptionVa
       .flatMap(_.set(IndividualPreviousAddressPostCodeLookupId(0))(Seq.empty))
       .flatMap(_.set(TrusteePreviousAddressId(0))(Address("foo", "bar", None, None, None, "GB")))
       .flatMap(_.set(TrusteePreviousAddressListId(0))(TolerantAddress(Some("foo"), Some("bar"), None, None, None, Some("GB"))))
-      .flatMap(_.set(IsTrusteeCompleteId(0))(true))
       .asOpt.value
 
     "`AddressYears` is set to `UnderAYear`" when {
@@ -56,37 +56,6 @@ class TrusteeAddressYearsIdSpec extends WordSpec with MustMatchers with OptionVa
 
       "remove the data for `PreviousAddressList`" in {
         result.get(TrusteePreviousAddressListId(0)) mustNot be(defined)
-      }
-
-      "do not change the value of IsTrusteeCompleteId" in {
-        result.get(IsTrusteeCompleteId(0)).value mustBe true
-      }
-    }
-
-    "`AddressYears` is set to `OverAYear`" when {
-
-      val result: UserAnswers = UserAnswers(Json.obj())
-        .set(TrusteeAddressYearsId(0))(AddressYears.OverAYear)
-        .flatMap(_.set(IndividualPreviousAddressPostCodeLookupId(0))(Seq.empty))
-        .flatMap(_.set(TrusteePreviousAddressId(0))(Address("foo", "bar", None, None, None, "GB")))
-        .flatMap(_.set(TrusteePreviousAddressListId(0))(TolerantAddress(Some("foo"), Some("bar"), None, None, None, Some("GB"))))
-        .flatMap(_.set(IsTrusteeCompleteId(0))(true))
-        .asOpt.value.set(TrusteeAddressYearsId(0))(AddressYears.UnderAYear).asOpt.value
-
-      "set the value of IsTrusteeCompleteId to false" in {
-        result.get(IsTrusteeCompleteId(0)).value mustBe false
-      }
-
-      "not remove the data for `PreviousPostCodeLookup`" in {
-        result.get(IndividualPreviousAddressPostCodeLookupId(0)) mustBe defined
-      }
-
-      "not remove the data for `PreviousAddress`" in {
-        result.get(TrusteePreviousAddressId(0)) mustBe defined
-      }
-
-      "not remove the data for `PreviousAddressList`" in {
-        result.get(TrusteePreviousAddressListId(0)) mustBe defined
       }
     }
 
@@ -111,50 +80,41 @@ class TrusteeAddressYearsIdSpec extends WordSpec with MustMatchers with OptionVa
   "cya" when {
 
     val onwardUrl = "onwardUrl"
+    val trusteeName = "Test Name"
 
-    def answers = UserAnswers().set(TrusteeAddressYearsId(0))(UnderAYear).asOpt.get
+    implicit val countryOptions: CountryOptions = new CountryOptions(Seq.empty[InputOption])
 
-    "in normal mode" must {
+    def answers: UserAnswers = UserAnswers().set(TrusteeAddressYearsId(0))(UnderAYear).flatMap(
+      _.set(TrusteeNameId(0))(PersonName("Test", "Name")
+      )
+    ).asOpt.get
 
-      "return answers rows with change links" in {
-        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
-        implicit val userAnswers = request.userAnswers
-        TrusteeAddressYearsId(0).row(onwardUrl, NormalMode) must equal(Seq(
-          AnswerRow(
-            "messages__trusteeAddressYears_cya_label",
-            Seq(s"messages__common__under_a_year"),
-            answerIsMessageKey = true,
-            Some(Link("site.change", onwardUrl,
-              Some("messages__visuallyhidden__trustee__address_years")))
-          )))
+    Seq(NormalMode, UpdateMode).foreach { mode =>
+
+      s"in ${mode.toString} mode" must {
+        "return answers rows with change links for subscription or variation when adding new trustee" in {
+          val answersWithNew = answers.set(IsTrusteeNewId(0))(value = true).asOpt.value
+          val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answersWithNew, PsaId("A0000000"))
+          implicit val userAnswers: UserAnswers = request.userAnswers
+          TrusteeAddressYearsId(0).row(onwardUrl, mode)(request, implicitly) must equal(Seq(
+            AnswerRow(
+              Message("messages__hasBeen1Year", trusteeName),
+              Seq(s"messages__common__under_a_year"),
+              answerIsMessageKey = true,
+              Some(Link("site.change", onwardUrl,
+                Some(Message("messages__changeHasBeen1Year", trusteeName))))
+            )))
+        }
       }
     }
 
-    "in update mode for new trustee - company paye" must {
+    "in update mode for existing trustee" must {
 
-      def answersNew: UserAnswers = answers.set(IsTrusteeNewId(0))(true).asOpt.value
+      "return no answers row" in {
+        val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
+        implicit val userAnswers: UserAnswers = request.userAnswers
 
-      "return answers rows with change links" in {
-        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answersNew, PsaId("A0000000"))
-        implicit val userAnswers = request.userAnswers
-        TrusteeAddressYearsId(0).row(onwardUrl, UpdateMode) must equal(Seq(
-          AnswerRow(
-            "messages__trusteeAddressYears_cya_label",
-            Seq(s"messages__common__under_a_year"),
-            answerIsMessageKey = true,
-            Some(Link("site.change", onwardUrl,
-              Some("messages__visuallyhidden__trustee__address_years")))
-          )))
-      }
-    }
-
-    "in update mode for existing trustee - company paye" must {
-
-      "return answers rows without change links" in {
-        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
-        implicit val userAnswers = request.userAnswers
-
-        TrusteeAddressYearsId(0).row(onwardUrl, UpdateMode) must equal(Nil)
+        TrusteeAddressYearsId(0).row(onwardUrl, UpdateMode)(request, implicitly) must equal(Nil)
       }
     }
   }

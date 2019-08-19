@@ -67,7 +67,7 @@ trait Retrievals {
 
   }
 
-  private[controllers] def existingSchemeName[A <:WrappedRequest[AnyContent]](implicit request:A):Option[String] =
+  private[controllers] def existingSchemeName[A <:WrappedRequest[AnyContent]](implicit request:A): Option[String] =
     request match {
       case optionalDataRequest: OptionalDataRequest[_] => optionalDataRequest.userAnswers.flatMap(_.get(SchemeNameId))
       case dataRequest: DataRequest[_] =>
