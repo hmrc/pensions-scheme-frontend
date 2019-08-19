@@ -21,8 +21,8 @@ import identifiers.register.trustees.{IsTrusteeCompleteId, IsTrusteeNewId, Trust
 import models.AddressYears
 import play.api.i18n.Messages
 import play.api.libs.json.{JsPath, JsResult}
-import utils.{CountryOptions, UserAnswers}
 import utils.checkyouranswers.{AddressYearsCYA, CheckYourAnswers}
+import utils.{CountryOptions, UserAnswers}
 import viewmodels.AnswerRow
 
 case class TrusteeAddressYearsId(index: Int) extends TypedIdentifier[AddressYears] {
@@ -36,7 +36,7 @@ case class TrusteeAddressYearsId(index: Int) extends TypedIdentifier[AddressYear
           .flatMap(_.remove(TrusteePreviousAddressId(this.index)))
           .flatMap(_.remove(TrusteePreviousAddressListId(this.index)))
       case Some(AddressYears.UnderAYear) =>
-        userAnswers.set(IsTrusteeCompleteId(index))(false)
+        userAnswers.set(IsTrusteeCompleteId(index))(value = false)
       case _ => super.cleanup(value, userAnswers)
     }
   }

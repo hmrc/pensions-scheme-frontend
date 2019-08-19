@@ -17,15 +17,14 @@
 package controllers.register.trustees.individual
 
 import controllers.ControllerSpecBase
-import controllers.actions.{DataRequiredActionImpl, DataRetrievalAction, FakeAllowAccessProvider, FakeAuthAction}
 import controllers.behaviours.ControllerAllowChangeBehaviour
 import models.Mode.checkMode
 import models._
 import models.address.Address
 import models.person.PersonName
+import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.Helpers._
-import services.FakeUserAnswersService
 import utils._
 import viewmodels.{AnswerRow, AnswerSection, Message}
 import views.html.check_your_answers
@@ -36,26 +35,44 @@ class CheckYourAnswersIndividualAddressControllerSpec extends ControllerSpecBase
 
   "Check Your Answers Individual Address Controller " when {
     "on Page load" must {
-      "return OK and the correct view with full answers" in {
-        val request = FakeDataRequest(fullAnswers)
-        val result = controller(fullAnswers.dataRetrievalAction).onPageLoad(NormalMode, index, None)(request)
+      "return OK and the correct view with full answers" when {
+        "Normal MOde" in {
+          val app = applicationBuilder(fullAnswers.dataRetrievalAction, featureSwitchEnabled = true).build()
 
-        status(result) mustBe OK
-        contentAsString(result) mustBe viewAsString(companyAddressNormal)
+          val controller = app.injector.instanceOf[CheckYourAnswersIndividualAddressController]
+          val result = controller.onPageLoad(NormalMode, index, None)(fakeRequest)
+
+          status(result) mustBe OK
+          contentAsString(result) mustBe viewAsString(answerSection())
+          app.stop()
+        }
+
+        "Update Mode" in {
+          val app = applicationBuilder(fullAnswers.dataRetrievalAction, featureSwitchEnabled = true).overrides(
+            bind[AllowChangeHelper].toInstance(allowChangeHelper(saveAndContinueButton = true))
+          ).build()
+
+          val controller = app.injector.instanceOf[CheckYourAnswersIndividualAddressController]
+          val result = controller.onPageLoad(UpdateMode, index, srn)(fakeRequest)
+
+          status(result) mustBe OK
+          contentAsString(result) mustBe viewAsString(answerSection(UpdateMode, srn), srn, submitUrl(UpdateMode, srn), hideButton = true)
+          app.stop()
+        }
       }
     }
 
     "on Submit" must {
       "redirect to next page " in {
-        val result = controller().onSubmit(NormalMode, index, None)(fakeRequest)
-        status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(onwardRoute.url)
-      }
+        val app = applicationBuilder(fullAnswers.dataRetrievalAction, featureSwitchEnabled = true).build()
 
-      behave like changeableController(
-        controller(fullAnswers.dataRetrievalAction, _: AllowChangeHelper)
-          .onPageLoad(NormalMode, index, None)(FakeDataRequest(fullAnswers))
-      )
+        val controller = app.injector.instanceOf[CheckYourAnswersIndividualAddressController]
+        val result = controller.onSubmit(NormalMode, index, None)(fakeRequest)
+
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result) mustBe Some(controllers.routes.SchemeTaskListController.onPageLoad(NormalMode, None).url)
+        app.stop()
+      }
     }
   }
 
@@ -67,6 +84,7 @@ object CheckYourAnswersIndividualAddressControllerSpec extends ControllerSpecBas
 
   private implicit val fakeCountryOptions: CountryOptions = new FakeCountryOptions
   val index = Index(0)
+  val srn = Some("test-srn")
   val trusteeName = "First Last"
 
   private val address = Address("address-1-line-1", "address-1-line-2", None, None, Some("post-code-1"), "country-1")
@@ -83,12 +101,12 @@ object CheckYourAnswersIndividualAddressControllerSpec extends ControllerSpecBas
     routes.TrusteePreviousAddressController.onPageLoad(mode, index, srn).url
 
   private val fullAnswers = UserAnswers().
-    trusteeName(0, PersonName("First", "Last")).
-    trusteesAddress(0, address).
-    trusteesIndividualAddressYears(0, addressYearsUnderAYear).
-    trusteesPreviousAddress(0, previousAddress)
+    trusteeName(index, PersonName("First", "Last")).
+    trusteesAddress(index, address).
+    trusteesIndividualAddressYears(index, addressYearsUnderAYear).
+    trusteesPreviousAddress(index, previousAddress)
 
-  def postUrl: Call = routes.CheckYourAnswersIndividualAddressController.onSubmit(NormalMode, index, None)
+  def submitUrl(mode: Mode = NormalMode, srn: Option[String] = None): Call = routes.CheckYourAnswersIndividualAddressController.onSubmit(mode, index, srn)
 
   def addressAnswerRow(mode: Mode, srn: Option[String]): AnswerRow = AnswerRow(
     Message("messages__trusteeAddress", trusteeName),
@@ -114,36 +132,13 @@ object CheckYourAnswersIndividualAddressControllerSpec extends ControllerSpecBas
       Some(Message("messages__changeTrusteePreviousAddress", trusteeName))))
   )
 
-  def companyAddressNormal: Seq[AnswerSection] = Seq(AnswerSection(None, Seq(
-    addressAnswerRow(NormalMode, None), addressYearsAnswerRow(NormalMode, None),
-    previousAddressAnswerRow(NormalMode, None)
-  )))
+  def answerSection(mode: Mode = NormalMode, srn: Option[String] = None): Seq[AnswerSection] = Seq(AnswerSection(None,
+    if (mode == NormalMode) Seq(addressAnswerRow(mode, srn), addressYearsAnswerRow(mode, srn), previousAddressAnswerRow(mode, srn))
+    else Seq(addressAnswerRow(mode, srn), previousAddressAnswerRow(mode, srn))))
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData,
-                 allowChangeHelper: AllowChangeHelper = ach,
-                 isToggleOn: Boolean = false): CheckYourAnswersIndividualAddressController =
-    new CheckYourAnswersIndividualAddressController(
-      frontendAppConfig,
-      messagesApi,
-      FakeUserAnswersService,
-      new FakeNavigator(onwardRoute),
-      FakeAuthAction,
-      dataRetrievalAction,
-      FakeAllowAccessProvider(),
-      new DataRequiredActionImpl,
-      fakeCountryOptions,
-      allowChangeHelper
-    )
-
-  def viewAsString(answerSections: Seq[AnswerSection], srn: Option[String] = None, postUrl: Call = postUrl): String =
-    check_your_answers(
-      frontendAppConfig,
-      answerSections,
-      postUrl,
-      None,
-      hideEditLinks = false,
-      srn = srn,
-      hideSaveAndContinueButton = false
+  def viewAsString(answerSections: Seq[AnswerSection], srn: Option[String] = None, postUrl: Call = submitUrl(), hideButton: Boolean = false): String =
+    check_your_answers(frontendAppConfig, answerSections, postUrl, None, hideEditLinks = false,
+      srn = srn, hideSaveAndContinueButton = hideButton
     )(fakeRequest, messages).toString
 
 }

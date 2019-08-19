@@ -21,8 +21,8 @@ import identifiers.register.trustees.TrusteesId
 import models.address.Address
 import play.api.i18n.Messages
 import play.api.libs.json.JsPath
-import utils.{CountryOptions, UserAnswers}
 import utils.checkyouranswers.{AddressCYA, CheckYourAnswers}
+import utils.{CountryOptions, UserAnswers}
 import viewmodels.AnswerRow
 
 case class TrusteeAddressId(index: Int) extends TypedIdentifier[Address] {
