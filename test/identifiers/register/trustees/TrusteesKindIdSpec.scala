@@ -112,6 +112,5 @@ object TrusteesKindIdSpec extends OptionValues with Enumerable.Implicits {
     .flatMap(_.set(partnership.PartnershipPreviousAddressListId(0))(TolerantAddress(Some(""),
       Some(""), None, None, None, None)))
     .flatMap(_.set(PartnershipContactDetailsId(0))(ContactDetails("", "")))
-    .flatMap(_.set(IsPartnershipCompleteId(0))(true))
     .asOpt.value
 }

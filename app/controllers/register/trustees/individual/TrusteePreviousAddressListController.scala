@@ -16,7 +16,7 @@
 
 package controllers.register.trustees.individual
 
-import config.FrontendAppConfig
+import config.{FeatureSwitchManagementService, FrontendAppConfig}
 import controllers.Retrievals
 import controllers.actions._
 import controllers.address.AddressListController
@@ -28,6 +28,7 @@ import navigators.Navigator
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Result}
 import services.UserAnswersService
+import utils.Toggles
 import utils.annotations.TrusteesIndividual
 import viewmodels.Message
 import viewmodels.address.AddressListViewModel
@@ -41,17 +42,18 @@ class TrusteePreviousAddressListController @Inject()(override val appConfig: Fro
                                                      authenticate: AuthAction,
                                                      getData: DataRetrievalAction,
                                                      allowAccess: AllowAccessActionProvider,
-                                                     requireData: DataRequiredAction
+                                                     requireData: DataRequiredAction,
+                                                     fs: FeatureSwitchManagementService
                                                     )(implicit val ec: ExecutionContext) extends AddressListController with Retrievals with I18nSupport {
 
   def viewmodel(mode: Mode, index: Index, srn: Option[String])(implicit request: DataRequest[AnyContent]): Either[Future[Result], AddressListViewModel] = {
-    (TrusteeDetailsId(index) and IndividualPreviousAddressPostCodeLookupId(index)).retrieve.right.map {
-      case trusteeDetails ~ addresses => AddressListViewModel(
+    (trusteeName(index) and IndividualPreviousAddressPostCodeLookupId(index)).retrieve.right.map {
+      case name ~ addresses => AddressListViewModel(
         routes.TrusteePreviousAddressListController.onSubmit(mode, index, srn),
         routes.TrusteePreviousAddressController.onPageLoad(mode, index, srn),
         addresses,
         title = Message("messages__trustee__individual__previous__address__title"),
-        heading = Message("messages__trustee__individual__previous__address__heading", trusteeDetails.fullName),
+        heading = Message("messages__trustee__individual__previous__address__heading", name),
         srn = srn
       )
     }.left.map(_ => Future.successful(Redirect(routes.IndividualPreviousAddressPostcodeLookupController.onPageLoad(mode, index, srn))))
@@ -59,8 +61,16 @@ class TrusteePreviousAddressListController @Inject()(override val appConfig: Fro
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+      implicit request =>
+        viewmodel(mode, index, srn).right.map(get)
+    }
+
+  val trusteeName: Index => Retrieval[String] = (trusteeIndex: Index) => Retrieval {
     implicit request =>
-      viewmodel(mode, index, srn).right.map(get)
+      if (fs.get(Toggles.isEstablisherCompanyHnSEnabled))
+        TrusteeNameId(trusteeIndex).retrieve.right.map(_.fullName)
+      else
+        TrusteeDetailsId(trusteeIndex).retrieve.right.map(_.fullName)
   }
 
   def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {

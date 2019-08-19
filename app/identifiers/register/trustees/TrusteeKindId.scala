@@ -50,8 +50,7 @@ object TrusteeKindId {
     PartnershipPayeId(index), PartnershipVatId(index), PartnershipUniqueTaxReferenceId(index),
     PartnershipPostcodeLookupId(index), PartnershipAddressListId(index), PartnershipAddressId(index), PartnershipAddressYearsId(index),
     PartnershipPreviousAddressPostcodeLookupId(index), PartnershipPreviousAddressId(index), PartnershipPreviousAddressListId(index),
-    PartnershipContactDetailsId(index), IsPartnershipCompleteId(index),
-    IsTrusteeCompleteId(index)
+    PartnershipContactDetailsId(index)
   )
 
   private def companyIdList(index: Index): List[TypedIdentifier[_]] = List(
@@ -63,8 +62,7 @@ object TrusteeKindId {
     CompanyAddressYearsId(index),
     CompanyPreviousAddressPostcodeLookupId(index),
     CompanyPreviousAddressId(index),
-    CompanyContactDetailsId(index),
-    IsTrusteeCompleteId(index)
+    CompanyContactDetailsId(index)
   )
 
   private def individualIdList(index: Index): List[TypedIdentifier[_]] = List(
@@ -76,8 +74,7 @@ object TrusteeKindId {
     TrusteeAddressYearsId(index),
     IndividualPreviousAddressPostCodeLookupId(index),
     TrusteePreviousAddressId(index),
-    TrusteeContactDetailsId(index),
-    IsTrusteeCompleteId(index)
+    TrusteeContactDetailsId(index)
   )
 
   def collectionPath: JsPath = __ \ TrusteesId.toString \\ TrusteeKindId.toString

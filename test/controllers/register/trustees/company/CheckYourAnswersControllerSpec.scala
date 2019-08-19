@@ -19,7 +19,6 @@ package controllers.register.trustees.company
 import controllers.ControllerSpecBase
 import controllers.actions.{DataRequiredActionImpl, DataRetrievalAction, FakeAllowAccessProvider, FakeAuthAction}
 import controllers.behaviours.ControllerAllowChangeBehaviour
-import identifiers.register.trustees.IsTrusteeCompleteId
 import identifiers.register.trustees.company._
 import models._
 import models.address.Address

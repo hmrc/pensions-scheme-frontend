@@ -21,10 +21,10 @@ import identifiers.register.establishers.company.{CompanyDetailsId => Establishe
 import identifiers.register.establishers.individual.EstablisherDetailsId
 import identifiers.register.establishers.partnership.{PartnershipDetailsId => EstablisherPartnershipDetailsId}
 import identifiers.register.establishers.{IsEstablisherAddressCompleteId, IsEstablisherCompleteId, IsEstablisherNewId}
+import identifiers.register.trustees.IsTrusteeNewId
 import identifiers.register.trustees.company.{CompanyDetailsId => TrusteeCompanyDetailsId}
 import identifiers.register.trustees.individual.TrusteeDetailsId
-import identifiers.register.trustees.partnership.{IsPartnershipCompleteId, PartnershipDetailsId => TrusteePartnershipDetailsId}
-import identifiers.register.trustees.{IsTrusteeAddressCompleteId, IsTrusteeCompleteId, IsTrusteeNewId}
+import identifiers.register.trustees.partnership.{PartnershipDetailsId => TrusteePartnershipDetailsId}
 import identifiers.{DeclarationDutiesId, IsAboutBenefitsAndInsuranceCompleteId, IsAboutMembersCompleteId, SchemeNameId, _}
 import models._
 import models.person.PersonDetails
@@ -66,7 +66,6 @@ class HsTaskListHelperVariationsSpec extends HsTaskListHelperBehaviour {
                     _.set(IsEstablisherCompleteId(0))(isCompleteEstablishers)).flatMap(
                     _.set(IsEstablisherAddressCompleteId(0))(isCompleteEstablishers)).flatMap(
                     _.set(TrusteeDetailsId(0))(PersonDetails("firstName", None, "lastName", LocalDate.now())).flatMap(
-                      _.set(IsTrusteeAddressCompleteId(0))(isCompleteTrustees)).flatMap(
                       _.set(InsuranceDetailsChangedId)(isChangedInsuranceDetails))
                   )
                 )
@@ -216,10 +215,8 @@ class HsTaskListHelperVariationsSpec extends HsTaskListHelperBehaviour {
 
     "no links when scheme is locked and trustees exist" in {
       val userAnswers = UserAnswers()
-        .set(TrusteeDetailsId(0))(PersonDetails("firstName", None, "lastName", LocalDate.now())).flatMap(
-        _.set(IsTrusteeCompleteId(0))(true)).asOpt.value
-        .set(TrusteeDetailsId(1))(PersonDetails("firstName", None, "lastName", LocalDate.now())).flatMap(
-        _.set(IsTrusteeCompleteId(1))(true)).asOpt.value
+        .set(TrusteeDetailsId(0))(PersonDetails("firstName", None, "lastName", LocalDate.now())).asOpt.value
+        .set(TrusteeDetailsId(1))(PersonDetails("firstName", None, "lastName", LocalDate.now())).asOpt.value
       val helper = new HsTaskListHelperVariations(userAnswers, viewOnly = true, srn, fakeFeatureManagementServiceToggleON)
       helper.taskList.addTrusteeHeader mustBe Some(SchemeDetailsTaskListHeader(header = Some(messages("messages__schemeTaskList__sectionTrustees_header"))))
     }
@@ -411,15 +408,12 @@ class HsTaskListHelperVariationsSpec extends HsTaskListHelperBehaviour {
 
     "return the seq of trustees sub sections after filtering out deleted trustees" in {
       val userAnswers = UserAnswers().set(TrusteeDetailsId(0))(PersonDetails("firstName", None, "lastName", LocalDate.now())).flatMap(
-        _.set(IsTrusteeCompleteId(0))(false).flatMap(
           _.set(IsTrusteeNewId(0))(true).flatMap(
             _.set(TrusteeCompanyDetailsId(1))(CompanyDetails("test company", true)).flatMap(
-              _.set(IsTrusteeCompleteId(1))(false).flatMap(
                 _.set(IsTrusteeNewId(1))(true).flatMap(
                   _.set(TrusteePartnershipDetailsId(2))(PartnershipDetails("test partnership", false)).flatMap(
-                    _.set(IsTrusteeNewId(2))(true)).flatMap(
-                    _.set(IsPartnershipCompleteId(2))(false)
-                  ))))))).asOpt.value
+                    _.set(IsTrusteeNewId(2))(true))
+                  )))).asOpt.value
       val helper = new HsTaskListHelperVariations(userAnswers, viewOnly = false, srn = Some("test-srn"), fakeFeatureManagementService)
       helper.trustees(userAnswers, UpdateMode, srn) mustBe
         Seq(SchemeDetailsTaskListEntitySection(None, List(EntitySpoke(Link(messages("messages__schemeTaskList__persons_details__link_text", "firstName lastName"),

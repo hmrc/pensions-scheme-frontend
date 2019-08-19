@@ -1610,6 +1610,7 @@ messages__changeTrusteeAddress = Change {0}’s address
 
 messages__trusteePreviousAddress = {0}’s previous address
 messages__changeTrusteePreviousAddress = Change {0}’s previous address
+messages__addTrusteePreviousAddress = Add {0}’s previous address
 
 messages__hasBeen1Year = Has {0} been at their address for at least 1 year?
 messages__changeHasBeen1Year = Change whether {0} has been at their address for at least 1 year?

@@ -655,9 +655,7 @@ object UserAnswersSpec extends OptionValues with Enumerable.Implicits {
 
   private val userAnswersHnS = UserAnswers(readJsonFromFile("/payloadHnS.json"))
 
-  val establisherPartnership = trustee.set(IsTrusteeCompleteId(0))(true)
-    .flatMap(_.set(IsTrusteeAddressCompleteId(0))(true))
-    .flatMap(_.set(EstablisherKindId(0))(EstablisherKind.Partnership))
+  val establisherPartnership = trustee.set(EstablisherKindId(0))(EstablisherKind.Partnership)
     .flatMap(_.set(PartnershipDetailsId(0))(PartnershipDetails("")))
     .flatMap(_.set(PartnershipVatId(0))(Vat.No))
     .flatMap(_.set(PartnershipPayeId(0))(Paye.No))
