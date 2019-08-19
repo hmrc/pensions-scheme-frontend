@@ -108,6 +108,59 @@ trait EntityListBehaviours {
     }
   }
 
+  def addEntityList(view: View, items: Seq[Entity[_]], entityType: String, entityKind: Seq[String]): Unit = {
+
+    "display the header for name column and kind column" in {
+      val doc = asDocument(view())
+      val nameColumnHeader = doc.select("#person-header")
+      val kindColumnHeader = doc.select("#kind-header")
+
+      nameColumnHeader.text mustBe s"$entityType name"
+      kindColumnHeader.text mustBe messages("site.type")
+    }
+
+    "display the correct details for each person" in {
+      val doc = asDocument(view())
+      items.foreach { item =>
+        val name = doc.select(s"#person-${item.index}")
+        name.size mustBe 1
+        name.first.text mustBe item.name
+      }
+    }
+
+    "display the kind for each person" in {
+      val doc = asDocument(view())
+      items.foreach { item =>
+        val kind = doc.select(s"#kind-${item.index}")
+        kind.text mustBe entityKind(item.index)
+      }
+    }
+
+    "show delete links " when {
+      "multiple records exist" in {
+        val doc = asDocument(view())
+        items.foreach { item =>
+
+          val link = doc.select(s"#person-${item.index}-delete")
+          val visibleText = doc.select(s"#person-${item.index}-delete span[aria-hidden=true]").first.text
+          val hiddenText = doc.select(s"#person-${item.index}-delete span[class=visually-hidden]").first.text
+
+          link.size mustBe 1
+          visibleText mustBe messages("site.delete")
+          hiddenText mustBe s"${messages("site.delete")} ${item.name}"
+          link.first.attr("href") mustBe item.deleteLink(NormalMode, None).get
+        }
+      }
+    }
+
+    "not display the status and edit link if hnsEnabled is true" in {
+      val doc = asDocument(view())
+      doc mustNot haveDynamicText("site.complete")
+      doc mustNot haveDynamicText("site.incomplete")
+      assertNotRenderedById(doc,"person-0-edit")
+    }
+  }
+
   private def entityListSingleLink(emptyView: View, nonEmptyView: View, items: Seq[Entity[_]], appConfig: FrontendAppConfig): Unit = {
 
     "not show delete link" when {

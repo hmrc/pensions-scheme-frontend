@@ -28,9 +28,9 @@
 
 @getKind(entity: Entity[_]) = @{
     entity.id match {
-        case CompanyDetailsId(_) | TrusteeCompanyDetailsId(_) => "Company"
-        case EstablisherDetailsId(_) | TrusteeNameId(_) => "Individual"
-        case PartnershipDetailsId(_) | TrusteePartnershipDetailsId(_) => "Partnership"
+        case CompanyDetailsId(_) | TrusteeCompanyDetailsId(_) => messages("messages__common__entityKind_company")
+        case EstablisherDetailsId(_) | TrusteeNameId(_) => messages("messages__common__entityKind_individual")
+        case PartnershipDetailsId(_) | TrusteePartnershipDetailsId(_) => messages("messages__common__entityKind_partnership")
         case _ => ""
     }
 }

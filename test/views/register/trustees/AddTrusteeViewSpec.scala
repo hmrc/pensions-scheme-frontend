@@ -23,11 +23,12 @@ import identifiers.register.trustees.company.CompanyDetailsId
 import identifiers.register.trustees.individual.{TrusteeDetailsId, TrusteeNameId}
 import models.person.{PersonDetails, PersonName}
 import identifiers.register.trustees.individual.TrusteeDetailsId
+import identifiers.register.trustees.partnership.PartnershipDetailsId
 import identifiers.register.trustees.{IsTrusteeNewId, TrusteeKindId}
 import models.person.PersonDetails
 import models.register.SchemeType.SingleTrust
 import models.register.trustees.TrusteeKind
-import models.register.{SchemeType, Trustee, TrusteeIndividualEntityNonHns}
+import models.register.{SchemeType, Trustee, TrusteeCompanyEntity, TrusteeIndividualEntity, TrusteeIndividualEntityNonHns, TrusteePartnershipEntity}
 import models.{CompanyDetails, NormalMode, UpdateMode}
 import org.joda.time.LocalDate
 import play.api.data.Form
@@ -48,6 +49,7 @@ class AddTrusteeViewSpec extends YesNoViewBehaviours with EntityListBehaviours w
     "Doe",
     LocalDate.now()
   )
+  private val trusteeName = PersonName("John", "Doe")
 
   private val userAnswers =
     UserAnswers()
@@ -64,6 +66,12 @@ class AddTrusteeViewSpec extends YesNoViewBehaviours with EntityListBehaviours w
   private def trustees(toggled:Boolean): Seq[Trustee[_]] = userAnswers.allTrustees(toggled)
   private val fullTrustees: Seq[TrusteeIndividualEntityNonHns] = (0 to 9).map(index => TrusteeIndividualEntityNonHns(
     TrusteeDetailsId(index), "trustee name", isDeleted = false, isCompleted = false, isNewEntity = true, 10, Some(SingleTrust.toString)))
+
+  private val johnDoe = TrusteeIndividualEntity(TrusteeNameId(2), "John Doe", false, false, true, 3, Some("single"))
+  private val testCompany = TrusteeCompanyEntity(CompanyDetailsId(1), "Trustee Company", false, true, true, 3, Some("single"))
+  private val testPartnership = TrusteePartnershipEntity(PartnershipDetailsId(0), "Trustee Partnership", false, true, true, 3, Some("single"))
+
+  private val trusteesToggleOn = Seq(johnDoe, testCompany, testPartnership)
 
   val form = new AddTrusteeFormProvider()()
 
@@ -152,11 +160,7 @@ class AddTrusteeViewSpec extends YesNoViewBehaviours with EntityListBehaviours w
 
     behave like entityList(createView(), createView(trustees(toggled = true), false), trustees(toggled = true), frontendAppConfig)
 
-    "not display the status and edit link if hnsEnabled is true" in {
-      val doc = asDocument(createView(trustees(toggled = false), isHnsEnabled = true)())
-      doc mustNot haveDynamicText("site.complete")
-      doc mustNot haveDynamicText("site.incomplete")
-      assertNotRenderedById(doc,"person-0-edit")
-    }
+    behave like addEntityList(createView(trusteesToggleOn, isHnsEnabled = true), trusteesToggleOn, "Trustee",
+      Seq("Partnership", "Company", "Individual"))
   }
 }

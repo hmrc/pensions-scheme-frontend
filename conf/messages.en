@@ -53,6 +53,9 @@ messages__common__nino = National Insurance number
 messages__common__reason = Reason
 messages__common__confirmAddress__h1 = Confirm {0}’s address
 messages__common__confirmPreviousAddress__h1 = Confirm {0}’s previous address
+messages__common__entityKind_company = Company
+messages__common__entityKind_individual = Individual
+messages__common__entityKind_partnership = Partnership
 
 messages__common__postcode_lookup__enter_postcode = You can {0} enter the address manually {1}.
 messages__common__postcode_lookup__manual_link = You can {0} enter the address manually {1}.
