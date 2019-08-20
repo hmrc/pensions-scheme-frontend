@@ -19,6 +19,7 @@ package controllers.register.trustees.individual
 import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions._
+import identifiers.register.trustees.individual.{TrusteeHasUTRId, TrusteeNameId}
 import javax.inject.Inject
 import models.{Index, Mode}
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -39,7 +40,10 @@ class WhatYouWillNeedIndividualAddressController @Inject()(val appConfig: Fronte
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
-        val href = controllers.register.trustees.individual.routes.IndividualPostCodeLookupController.onSubmit(mode, index, srn)
-        Future.successful(Ok(whatYouWillNeedIndividualAddress(appConfig, existingSchemeName, href, srn)))
+        TrusteeNameId(index).retrieve.right.map {
+          name =>
+            val trusteeName = name.fullName
+            val href = controllers.register.trustees.individual.routes.IndividualPostCodeLookupController.onSubmit(mode, index, srn)
+            Future.successful(Ok(whatYouWillNeedIndividualAddress(appConfig, existingSchemeName, href, srn, trusteeName)))        }
     }
 }
