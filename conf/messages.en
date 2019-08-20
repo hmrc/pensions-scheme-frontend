@@ -617,7 +617,7 @@ messages__companyRegistrationNumber__title = Does the trustee have a Company Reg
 messages__companyRegistrationNumber__heading = Does the trustee have a Company Registration number?
 messages__companyRegistrationNumber__error__required = Please give an answer for companyRegistrationNumber
 
-messages__companyNumber__trustee__title = What is their company number?
+messages__companyNumber__trustee__title = What is the company’s company number?
 messages__companyNumber__trustee__heading = What is {0}’s company number?
 
 messages__companyNumber__establisher__title = What is the establisher’s company number?
