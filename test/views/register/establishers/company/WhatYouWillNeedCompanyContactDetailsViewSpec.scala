@@ -32,7 +32,7 @@ class WhatYouWillNeedCompanyContactDetailsViewSpec extends ViewBehaviours {
 
   "whatYouWillNeedCompanyContactDetails view" must {
 
-    behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__h1", companyName),
+    behave like normalPage(createView, messageKeyPrefix, messages(s"messages__contactDetailsFor", companyName),
       "_lede", "_item1", "_item2")
 
     behave like pageWithSubmitButton(createView)
