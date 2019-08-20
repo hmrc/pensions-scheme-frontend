@@ -1532,7 +1532,8 @@ messages__whatYouWillNeedEstablisherCompany__item3 = VAT registration number, if
 messages__whatYouWillNeedEstablisherCompany__item4 = employer PAYE number, if it has one
 
 messages__whatYouWillNeedAddress__title = Address
-messages__whatYouWillNeedAddress__h1 = Address
+messages__whatYouWillNeedAddress__h1 = Address for {0}
+messages__addressFor = Address for {0}
 
 messages__whatYouWillNeedEstablisherCompanyAddress__lede = You will need to tell us the company’s:
 messages__whatYouWillNeedEstablisherCompanyAddress__item1 = current address
@@ -1551,6 +1552,8 @@ messages__whatYouWillNeedEstablisherCompanyContact__h1 = Contact details
 messages__whatYouWillNeedEstablisherCompanyContact__lede = You will need to tell us the company’s:
 messages__whatYouWillNeedEstablisherCompanyContact__item1 = contact email address
 messages__whatYouWillNeedEstablisherCompanyContact__item2 = contact phone number
+
+messages__contactDetailsFor = Contact details for {0}
 
 messages__whatYouWillNeedTrusteeIndividualContact__title = Contact details
 messages__whatYouWillNeedTrusteeIndividualContact__h1 = Contact details for {0}
@@ -1620,8 +1623,8 @@ messages__theDirector = the director
 messages__hasBeenTradingCompany__title = Has the establisher been trading for more than a year?
 messages__hasBeenTradingCompany__h1 =  Has {0} been trading for more than a year?
 messages__hasBeenTradingCompany__error__required = Select yes if {0} has been trading  for more than a year
-messages__hasBeenTradingCompany__title = Has the company been trading for at least 1 year?
-messages__hasBeenTradingCompany__h1 =  Has {0} been trading for at least 1 year?
+messages__hasBeenTradingCompany__title = Has the establisher been trading for more than a year?
+messages__hasBeenTradingCompany__h1 =  Has {0} been trading for more than a year?
 messages__hasBeenTradingCompany__error__required = Select yes if {0} has been trading for at least 1 year
 
 messages__schemeTaskList__before_you_start_link_text = Setting up your scheme application
@@ -1721,10 +1724,12 @@ messages__noCompanyUtr__title = Why does the company not have a UTR?
 messages__noCompanyUtr__heading = Why does {0} not have a UTR?
 
 messages__establisher_phone__title =  What is the company’s phone number?
+messages__establisherPhone__title =  What is the establisher’s phone number?
 messages__director_phone__title =  What is the director’s phone number?
 messages__phone__hint = We will only use this to contact about pension scheme administration.
 
 messages__establisher_email__title =  What is the company’s email address?
+messages__establisherEmail__title =  What is the establisher’s email address?
 messages__email__hint = We will only use this to contact about pension scheme administration.
 
 messages__noNinoReason__director_title = Why does the director not have a National Insurance number?
@@ -1760,7 +1765,7 @@ messages__establisherPreviousPostCode__title = What was the establisher’s prev
 messages__establisherPreviousPostCode__h1 = What was {0}’s previous postcode?
 
 messages__establisherSelectAddress__title = Select the address
-messages__establisherSelectAddress__h1 = Select the address
+messages__establisherSelectAddress__h1 = What is {0}’s address?
 
 messages__establisherPreviousSelectAddress__title = Select the previous address
 messages__establisherPreviousSelectAddress__h1 = Select the previous address
