@@ -48,6 +48,8 @@
 
             <p>@messages("messages__establishers__add_hint")</p>
 
+            @components.submit_button("site.continue", enableSubmission)
+
         } else {
 
             @components.error_summary(form.errors)
@@ -69,9 +71,10 @@
                 legendClass = Some("heading-medium"),
                 hint = None
             )
-        }
 
-        @components.submit_button("messages__common__continue", enableSubmission)
+
+            @components.submit_button("site.save_and_continue", enableSubmission)
+        }
 
         @components.return_link("messages__schemeTaskList__returnlink", schemeName, None, srn)
     }

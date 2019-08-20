@@ -49,6 +49,8 @@
 
             @components.paragraph_text(messages("messages__addTrustee__lede"))
 
+            @components.submit_button("site.continue", enableSubmission)
+
         } else {
 
             @if(isHnsEnabled) {
@@ -74,9 +76,8 @@
 
             }
 
+            @components.submit_button("site.save_and_continue", enableSubmission)
         }
-
-        @components.submit_button("site.save_and_continue", enableSubmission)
 
         @components.return_link("messages__schemeTaskList__returnlink", schemeName, None, srn)
 
