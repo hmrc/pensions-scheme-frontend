@@ -19,6 +19,7 @@ package controllers.register.establishers.company
 import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions._
+import identifiers.register.establishers.company.CompanyDetailsId
 import javax.inject.Inject
 import models.{Index, Mode}
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -40,6 +41,8 @@ class WhatYouWillNeedCompanyDetailsController @Inject()(appConfig: FrontendAppCo
     getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
     implicit request =>
       val href = controllers.register.establishers.company.routes.HasCompanyNumberController.onSubmit(mode, srn, index)
-      Future.successful(Ok(whatYouWillNeedCompanyDetails(appConfig, existingSchemeName, href, srn)))
+      CompanyDetailsId(index).retrieve.right.map { details =>
+        Future.successful(Ok(whatYouWillNeedCompanyDetails(appConfig, existingSchemeName, href, srn, details.companyName)))
+      }
   }
 }

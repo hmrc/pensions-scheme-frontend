@@ -1279,7 +1279,7 @@ messages__workingKnowledge__p3 = If you do not have that knowledge, you must be 
 messages__workingKnowledge__error__required = Select yes if you have working knowledge of pensions and pensions tax legislation
 
 messages__is_dormant__title = Has the company been dormant in the last 12 months?
-messages__is_dormant__heading = Have {0} been dormant in the last 12 months?
+messages__is_dormant__heading = Has {0} been dormant in the last 12 months?
 messages__is_dormant__yes = Yes
 messages__is_dormant__no = No
 messages__is_dormant__error = Select yes if the establisher has been dormant in the last 12 months
@@ -1523,8 +1523,8 @@ messages__visuallyhidden__hns_uKBankAccount = Change if {0} has a UK bank accoun
 uKBankDetails.hns_checkYourAnswersLabel = What are {0}’s bank account details?
 messages__visuallyhidden__hns_uKBankDetails = Change {0}’s bank account details
 
-messages__whatYouWillNeedEstablisherCompany__title = What you will need
-messages__whatYouWillNeedEstablisherCompany__h1 = Company details
+messages__whatYouWillNeedEstablisherCompany__title = Company details
+messages__whatYouWillNeedEstablisherCompany__h1 = Company details for {0}
 messages__whatYouWillNeedEstablisherCompany__lede = You will need to tell us the company’s:
 messages__whatYouWillNeedEstablisherCompany__item1 = company number, or reason why it does not have one
 messages__whatYouWillNeedEstablisherCompany__item2 = Unique Taxpayer Reference (UTR), or reason why it does not have one
@@ -1658,7 +1658,7 @@ messages__companyPaye__title = Does the company have an employer PAYE number?
 messages__companyPaye__heading = Does {0} have an employer PAYE number?
 messages__companyPaye__error__required = Select yes if the company has an employer PAYE number
 
-messages__companyPayeRef__title = Does the establisher have an employer PAYE reference?
+messages__companyPayeRef__title = Does the company have an employer PAYE reference?
 messages__companyPayeRef__trustee_title = Does the company have an employer PAYE reference?
 messages__companyPayeRef__h1 = Does {0} have an employer PAYE reference?
 messages__companyPayeRef__error__required = Select whether the company has an employer PAYE number
@@ -1687,7 +1687,7 @@ messages__confirmPreviousAddress__title = Is this the previous address?
 messages__confirmPreviousAddress__heading = Is this {0}’s previous address?
 messages__confirmPreviousAddress__error = Select yes if this is {0}’s previous address
 
-messages__vatVariations__company_title = What is their VAT registration number?
+messages__vatVariations__company_title = What is the company’s VAT registration number?
 messages__vatVariations__partnership_title = What is the partnership’s VAT registration number?
 messages__vatVariations__heading = What is {0}’s VAT registration number?
 messages__vatVariations__hint = This is 9 numbers, sometimes with ‘GB’ at the start, for example 123456789 or GB123456789.
