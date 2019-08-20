@@ -28,7 +28,7 @@ class WhatYouWillNeedIndividualAddressViewSpec extends ViewBehaviours {
 
   private def href: Call = controllers.register.trustees.individual.routes.IndividualPostCodeLookupController.onPageLoad(NormalMode, index = 0, None)
 
-  def createView: () => HtmlFormat.Appendable = () => whatYouWillNeedIndividualAddress(frontendAppConfig, Some("testScheme"), href, None)(fakeRequest, messages)
+  def createView: () => HtmlFormat.Appendable = () => whatYouWillNeedIndividualAddress(frontendAppConfig, Some("testScheme"), href, None, "test name")(fakeRequest, messages)
 
   "whatYouWillNeedCompanyAddress view" must {
 

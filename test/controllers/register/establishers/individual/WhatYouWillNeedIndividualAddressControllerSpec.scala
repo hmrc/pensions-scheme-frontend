@@ -37,7 +37,7 @@ class WhatYouWillNeedIndividualAddressControllerSpec extends ControllerSpecBase 
 
   private def href: Call = controllers.register.trustees.individual.routes.IndividualPostCodeLookupController.onSubmit(NormalMode, index = 0, None)
 
-  private def viewAsString(): String = whatYouWillNeedIndividualAddress(frontendAppConfig, None, href, None)(fakeRequest, messages).toString
+  private def viewAsString(): String = whatYouWillNeedIndividualAddress(frontendAppConfig, None, href, None, "test name")(fakeRequest, messages).toString
 
   "WhatYouWillNeedIndividualAddressController" when {
 
