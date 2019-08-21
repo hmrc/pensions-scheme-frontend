@@ -1590,8 +1590,8 @@ messages__whatYouWillNeedTrusteeCompany__item3 = VAT registration number, if it 
 messages__whatYouWillNeedTrusteeCompany__item4 = employer PAYE reference, if it has one
 messages__whatYouWillNeedTrusteeCompany__p2 = You will also need to tell us if the company has been dormant at any time in the last 12 months.
 
-messages__whatYouWillNeedTrusteeIndividual__title = Trustee’s details
-messages__whatYouWillNeedTrusteeIndividual__h1 = {0}’s details
+messages__whatYouWillNeedTrusteeIndividual__title = Details
+messages__whatYouWillNeedTrusteeIndividual__h1 = Details for {0}
 messages__whatYouWillNeedTrusteeIndividual__p1 = For each trustee, you will need to tell us their:
 messages__whatYouWillNeedTrusteeIndividual__item1 = date of birth
 messages__whatYouWillNeedTrusteeIndividual__item2 = National Insurance number, or reason why they do not have one
@@ -1790,8 +1790,8 @@ messages__director_email__title =  What is the director’s email address?
 messages__establisher__type__title = What kind of establisher are you adding?
 messages__establisher__type__h1 = What kind of establisher are you adding?
 
-messages__hasUtr__title = Does {0} have a UTR?
-messages__hasUtr__h1 = Does {0} have a Unique Taxpayer Reference (UTR)?
+messages__hasUtr__title = Does the trustee have a UTR?
+messages__hasUtr__h1 = Does {0} have a UTR?
 
 messages__trusteeUtr__title = What is the trustee’s UTR?
 messages__trusteeUtr__h1 =  What is {0}’s UTR?
