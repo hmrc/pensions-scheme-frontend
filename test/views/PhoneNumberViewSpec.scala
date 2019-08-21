@@ -32,7 +32,7 @@ class PhoneNumberViewSpec extends QuestionViewBehaviours[String] {
 
   val viewModel = CommonFormWithHintViewModel(
     postCall = Call("GET", "www.example.com"),
-    Message("messages__establisher_phone__title"),
+    Message("messages__trustee_phone__title"),
     Message("messages__common_phone__heading", companyName),
     Some(Message("messages__phone__hint")),
     None
@@ -43,7 +43,7 @@ class PhoneNumberViewSpec extends QuestionViewBehaviours[String] {
   private val createViewWithForm: Form[String] => HtmlFormat.Appendable =
     (form: Form[String]) => phoneNumber(frontendAppConfig, form, viewModel, Some("test scheme"))(fakeRequest, messages)
 
-  behave like normalPage(createView, messageKeyPrefix, messages("messages__common_phone__heading", companyName))
+  behave like normalPageWithTitle(createView, messageKeyPrefix, Message("messages__trustee_phone__title"), messages("messages__common_phone__heading", companyName))
 
   "have correct hint text" in {
     assertContainsText(asDocument(createView()),messages("messages__phone__hint"))
