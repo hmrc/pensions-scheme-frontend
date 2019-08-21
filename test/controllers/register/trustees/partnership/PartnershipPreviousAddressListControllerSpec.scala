@@ -29,6 +29,7 @@ import play.api.libs.json._
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import utils.FakeNavigator
+import viewmodels.Message
 import viewmodels.address.AddressListViewModel
 import views.html.address.addressList
 
@@ -41,8 +42,6 @@ class PartnershipPreviousAddressListControllerSpec extends ControllerSpecBase {
   val index = Index(0)
   val partnershipName = "test partnership name"
   val schemeName = "test scheme name"
-  val previousAddressTitle = "Select the previous address"
-  val previousAddressHeading = "Select the previous address"
   val addresses = Seq(
     address("test post code 1"),
     address("test post code 2")
@@ -60,7 +59,7 @@ class PartnershipPreviousAddressListControllerSpec extends ControllerSpecBase {
   val validData: JsObject = Json.obj(
     TrusteesId.toString -> Json.arr(
       Json.obj(
-        "partnershipDetails" -> PartnershipDetails(partnershipName, false),
+        "partnershipDetails" -> PartnershipDetails(partnershipName),
         PartnershipPreviousAddressPostcodeLookupId.toString -> addresses
       )
     )
@@ -84,8 +83,8 @@ class PartnershipPreviousAddressListControllerSpec extends ControllerSpecBase {
         routes.PartnershipPreviousAddressListController.onSubmit(NormalMode, index, None),
         routes.PartnershipPreviousAddressController.onPageLoad(NormalMode, index, None),
         addresses,
-        title = previousAddressTitle,
-        heading = previousAddressHeading
+        title = Message("messages__common__partnership_selectPreviousAddress__title"),
+        heading = Message("messages__common__selectPreviousAddress__h1", partnershipName)
       ),
       None
     )(fakeRequest, messages).toString
