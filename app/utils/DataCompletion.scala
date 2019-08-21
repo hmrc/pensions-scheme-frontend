@@ -105,7 +105,7 @@ trait DataCompletion {
      isComplete(
        Seq(
          isAnswerComplete(HasCompanyNumberId(index), CompanyRegistrationNumberVariationsId(index), Some(NoCompanyNumberId(index))),
-         isAnswerComplete(HasCompanyUTRId(index), CompanyUTRId(index), None),
+         isAnswerComplete(HasCompanyUTRId(index), CompanyUTRId(index), Some(NoCompanyUTRId(index))),
          isAnswerComplete(HasCompanyVATId(index), CompanyVatVariationsId(index), None),
          isAnswerComplete(HasCompanyPAYEId(index), CompanyPayeVariationsId(index), None)
        ) ++ (if (mode == NormalMode) Seq(isAnswerComplete(IsCompanyDormantId(index))) else Nil)

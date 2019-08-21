@@ -69,7 +69,7 @@ class TrusteeUTRIdSpec extends SpecBase {
     "in update mode" when {
       def answersNew: UserAnswers = answers().set(IsTrusteeNewId(0))(value = true).asOpt.value
 
-      "for new director" must {
+      "for new trustee" must {
 
         "return answers rows with change links" in {
           val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answersNew, PsaId("A0000000"))
@@ -78,7 +78,7 @@ class TrusteeUTRIdSpec extends SpecBase {
         }
       }
 
-      "for existing director" must {
+      "for existing trustee" must {
 
         "return row with add link if there is no data available" in {
           val answerRowWithAddLink = AnswerRow("messages__common__utr", List("site.not_entered"), answerIsMessageKey = true,
@@ -92,7 +92,7 @@ class TrusteeUTRIdSpec extends SpecBase {
           TrusteeUTRId(0).row(onwardUrl, UpdateMode)(request, implicitly) mustEqual Seq(answerRowWithAddLink)
         }
 
-        "return row without change link if there is data avalable and is not editable" in {
+        "return row without change link if there is data available and is not editable" in {
           val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers(), PsaId("A0000000"))
           implicit val userAnswers: UserAnswers = request.userAnswers
 

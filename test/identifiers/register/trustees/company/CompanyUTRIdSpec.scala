@@ -68,7 +68,7 @@ class CompanyUTRIdSpec extends SpecBase {
     "in update mode" when {
       def answersNew: UserAnswers = answers().set(IsTrusteeNewId(0))(true).asOpt.value
 
-      "for new establisher" must {
+      "for new trustee" must {
 
         "return answers rows with change links" in {
           val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answersNew, PsaId("A0000000"))
@@ -77,7 +77,7 @@ class CompanyUTRIdSpec extends SpecBase {
         }
       }
 
-      "for existing establisher" must {
+      "for existing trustee" must {
 
         "return row with add link if there is no data available" in {
           val answerRowWithAddLink = AnswerRow("messages__companyUtr__checkyouranswerslabel", List("site.not_entered"), answerIsMessageKey = true,
