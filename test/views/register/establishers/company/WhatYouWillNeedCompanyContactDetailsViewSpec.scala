@@ -23,15 +23,16 @@ import views.html.register.establishers.company.whatYouWillNeedCompanyContactDet
 
 class WhatYouWillNeedCompanyContactDetailsViewSpec extends ViewBehaviours {
 
-  val messageKeyPrefix = "whatYouWillNeedEstablisherCompanyContact"
+  private val messageKeyPrefix = "whatYouWillNeedEstablisherCompanyContact"
+  private val companyName = "pop ltd"
 
-  val href = controllers.register.establishers.company.routes.CompanyEmailController.onPageLoad(NormalMode, None, Index(0))
+  private val href = controllers.register.establishers.company.routes.CompanyEmailController.onPageLoad(NormalMode, None, Index(0))
 
-  def createView: () => HtmlFormat.Appendable = () => whatYouWillNeedCompanyContactDetails(frontendAppConfig, Some("testScheme"), href, None)(fakeRequest, messages)
+  private def createView: () => HtmlFormat.Appendable = () => whatYouWillNeedCompanyContactDetails(frontendAppConfig, Some("testScheme"), href, None, companyName)(fakeRequest, messages)
 
   "whatYouWillNeedCompanyContactDetails view" must {
 
-    behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__h1"),
+    behave like normalPage(createView, messageKeyPrefix, messages(s"messages__contactDetailsFor", companyName),
       "_lede", "_item1", "_item2")
 
     behave like pageWithSubmitButton(createView)

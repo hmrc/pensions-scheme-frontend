@@ -28,6 +28,7 @@ import navigators.Navigator
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, Result}
 import services.UserAnswersService
+import viewmodels.Message
 import viewmodels.address.AddressListViewModel
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -56,9 +57,11 @@ class PartnershipAddressListController @Inject()(override val appConfig: Fronten
       }
   }
 
-  private def viewmodel(mode: Mode, index: Index, srn: Option[String])(implicit request: DataRequest[AnyContent]): Either[Future[Result], AddressListViewModel] = {
+  private def viewmodel(mode: Mode, index: Index, srn: Option[String])(implicit request: DataRequest[AnyContent]):
+  Either[Future[Result], AddressListViewModel] = {
     (PartnershipDetailsId(index) and PartnershipPostcodeLookupId(index)).retrieve.right.map {
       case partnershipDetails ~ addresses => AddressListViewModel(
+        heading = Message("messages__common__partnership__selectAddress__h1", partnershipDetails.name),
         postCall = routes.PartnershipAddressListController.onSubmit(mode, index, srn),
         manualInputCall = routes.PartnershipAddressController.onPageLoad(mode, index, srn),
         addresses = addresses,

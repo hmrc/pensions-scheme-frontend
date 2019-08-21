@@ -19,7 +19,7 @@ package views.register.trustees.company
 import models.{Index, NormalMode}
 import play.twirl.api.HtmlFormat
 import views.behaviours.ViewBehaviours
-import views.html.register.establishers.company.whatYouWillNeedCompanyContactDetails
+import views.html.register.trustees.company.whatYouWillNeedCompanyContactDetails
 
 class WhatYouWillNeedCompanyContactDetailsViewSpec extends ViewBehaviours {
 

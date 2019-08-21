@@ -32,7 +32,7 @@ class EmailAddressViewSpec extends QuestionViewBehaviours[String] {
 
   val viewModel = CommonFormWithHintViewModel(
     postCall = Call("GET", "www.example.com"),
-    Message("messages__establisher_email__title"),
+    Message("messages__trustee_email__title"),
     Message("messages__common_email__heading", companyName),
     Some(Message("messages__email__hint")),
     None
@@ -43,7 +43,9 @@ class EmailAddressViewSpec extends QuestionViewBehaviours[String] {
   private val createViewWithForm: Form[String] => HtmlFormat.Appendable =
     (form: Form[String]) => emailAddress(frontendAppConfig, form, viewModel, Some("test scheme"))(fakeRequest, messages)
 
-  behave like normalPage(createView, messageKeyPrefix,
+
+
+  behave like normalPageWithTitle(createView, messageKeyPrefix, Message("messages__trustee_email__title"),
     messages("messages__common_email__heading", companyName))
 
   "have correct hint text" in {

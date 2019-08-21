@@ -26,7 +26,7 @@ import views.html.register.establishers.company.whatYouWillNeedCompanyContactDet
 
 class WhatYouWillNeedCompanyContactDetailsControllerSpec extends ControllerSpecBase with MockitoSugar with BeforeAndAfterEach {
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): WhatYouWillNeedCompanyContactDetailsController =
+  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisherCompany): WhatYouWillNeedCompanyContactDetailsController =
     new WhatYouWillNeedCompanyContactDetailsController(frontendAppConfig,
       messagesApi,
       FakeAuthAction,
@@ -37,7 +37,7 @@ class WhatYouWillNeedCompanyContactDetailsControllerSpec extends ControllerSpecB
 
   lazy val href = controllers.register.establishers.company.routes.CompanyEmailController.onPageLoad(NormalMode, None, Index(0))
 
-  def viewAsString(): String = whatYouWillNeedCompanyContactDetails(frontendAppConfig, None, href, None)(fakeRequest, messages).toString
+  def viewAsString(): String = whatYouWillNeedCompanyContactDetails(frontendAppConfig, None, href, None, "test company name")(fakeRequest, messages).toString
 
   "WhatYouWillNeedCompanyContactDetailsController" when {
 
