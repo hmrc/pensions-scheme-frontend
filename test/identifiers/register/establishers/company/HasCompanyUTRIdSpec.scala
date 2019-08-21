@@ -41,7 +41,7 @@ class HasCompanyUTRIdSpec extends SpecBase {
 
     def answers(hasUtr: Boolean = true): UserAnswers = UserAnswers(Json.obj())
       .set(HasCompanyUTRId(0))(hasUtr)
-      .flatMap(_.set(CompanyUTRId(0))("test-utr"))
+      .flatMap(_.set(CompanyUTRId(0))(ReferenceValue("test-utr")))
       .flatMap(_.set(NoCompanyUTRId(0))("reason"))
       .asOpt.value
 

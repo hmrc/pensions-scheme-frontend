@@ -18,7 +18,7 @@ package controllers
 
 import config.FrontendAppConfig
 import identifiers.TypedIdentifier
-import models.Mode
+import models.{Mode, ReferenceValue}
 import models.requests.DataRequest
 import navigators.Navigator
 import play.api.data.Form
@@ -42,7 +42,7 @@ trait UTRController extends FrontendController with Retrievals with I18nSupport 
 
   protected def navigator: Navigator
 
-  def get(id: TypedIdentifier[String], viewmodel: UTRViewModel, form: Form[String])
+  def get(id: TypedIdentifier[ReferenceValue], viewmodel: UTRViewModel, form: Form[ReferenceValue])
          (implicit request: DataRequest[AnyContent]): Future[Result] = {
     val preparedForm =
       request.userAnswers.get(id) match {
@@ -53,7 +53,7 @@ trait UTRController extends FrontendController with Retrievals with I18nSupport 
     Future.successful(Ok(utr(appConfig, preparedForm, viewmodel, existingSchemeName)))
   }
 
-  def post(id: TypedIdentifier[String], mode: Mode, viewmodel: UTRViewModel, form: Form[String])
+  def post(id: TypedIdentifier[ReferenceValue], mode: Mode, viewmodel: UTRViewModel, form: Form[ReferenceValue])
           (implicit request: DataRequest[AnyContent]): Future[Result] = {
     form.bindFromRequest().fold(
       (formWithErrors: Form[_]) =>

@@ -17,6 +17,7 @@
 package identifiers.register.establishers.company.director
 
 import base.SpecBase
+import models.ReferenceValue
 import play.api.libs.json.Json
 import utils.UserAnswers
 
@@ -26,7 +27,7 @@ class DirectorHasUTRIdSpec extends SpecBase {
 
     def answers(hasUtr: Boolean = true): UserAnswers = UserAnswers(Json.obj())
       .set(DirectorHasUTRId(0, 0))(hasUtr)
-      .flatMap(_.set(DirectorUTRId(0, 0))("test-utr"))
+      .flatMap(_.set(DirectorUTRId(0, 0))(ReferenceValue("test-utr")))
       .flatMap(_.set(DirectorNoUTRReasonId(0, 0))("reason"))
       .asOpt.value
 

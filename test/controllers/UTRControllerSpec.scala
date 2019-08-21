@@ -21,7 +21,7 @@ import com.google.inject.Inject
 import config.FrontendAppConfig
 import forms.UTRFormProvider
 import identifiers.TypedIdentifier
-import models.NormalMode
+import models.{NormalMode, ReferenceValue}
 import models.requests.DataRequest
 import navigators.Navigator
 import org.scalatest.concurrent.ScalaFutures
@@ -88,13 +88,13 @@ class UTRControllerSpec extends WordSpec with MustMatchers with OptionValues wit
           val request = FakeRequest()
           val messages = app.injector.instanceOf[MessagesApi].preferred(request)
           val controller = app.injector.instanceOf[TestController]
-          val answers = UserAnswers().set(FakeIdentifier)("1234567890").get
+          val answers = UserAnswers().set(FakeIdentifier)(ReferenceValue("1234567890")).get
           val result = controller.onPageLoad(viewmodel, answers)
 
           status(result) mustEqual OK
           contentAsString(result) mustEqual utr(
             appConfig,
-            formProvider().fill("1234567890"),
+            formProvider().fill(ReferenceValue("1234567890")),
             viewmodel,
             None
           )(request, messages).toString
@@ -124,7 +124,7 @@ class UTRControllerSpec extends WordSpec with MustMatchers with OptionValues wit
 
           status(result) mustEqual SEE_OTHER
           redirectLocation(result).value mustEqual "www.example.com"
-          FakeUserAnswersService.verify(FakeIdentifier, "1234567890")
+          FakeUserAnswersService.verify(FakeIdentifier, ReferenceValue("1234567890"))
       }
     }
 
@@ -162,7 +162,7 @@ class UTRControllerSpec extends WordSpec with MustMatchers with OptionValues wit
 
 object UTRControllerSpec {
 
-  object FakeIdentifier extends TypedIdentifier[String]
+  object FakeIdentifier extends TypedIdentifier[ReferenceValue]
 
   val companyName = "test company"
   class TestController @Inject()(

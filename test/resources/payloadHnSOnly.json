@@ -143,7 +143,10 @@
         "isEditable" : true
       },
       "hasUtr" : true,
-      "utr" : "1234567890",
+      "utr": {
+        "value" : "1234567890",
+        "isEditable" : true
+      },
       "hasVat" : true,
       "companyVat" : {
         "value" : "123456789",

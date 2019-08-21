@@ -48,7 +48,7 @@ class TrusteesIndividualDetailsNavigatorSpec extends SpecBase with MustMatchers 
       row(TrusteeHasUTRId(index))(true, TrusteeUTRController.onPageLoad(mode, index, None)),
       row(TrusteeHasUTRId(index))(false, TrusteeNoUTRReasonController.onPageLoad(mode, index, None)),
       row(TrusteeNoUTRReasonId(index))(someStringValue, cyaIndividualDetailsPage(mode, index, None)),
-      row(TrusteeUTRId(index))(someStringValue, cyaIndividualDetailsPage(mode, index, None))
+      row(TrusteeUTRId(index))(someRefValue, cyaIndividualDetailsPage(mode, index, None))
     )
 
     behave like navigatorWithRoutesForMode(NormalMode)(navigator, navigationForNewTrusteeIndividual(NormalMode), None)
@@ -64,7 +64,7 @@ class TrusteesIndividualDetailsNavigatorSpec extends SpecBase with MustMatchers 
       row(TrusteeHasNINOId(index))(false, TrusteeNoNINOReasonController.onPageLoad(CheckMode, index, None)),
       row(TrusteeNoNINOReasonId(index))(someStringValue, cyaIndividualDetailsPage(CheckMode, index, None)),
       row(TrusteeHasUTRId(index))(true, TrusteeUTRController.onPageLoad(CheckMode, index, None)),
-      row(TrusteeUTRId(index))(someStringValue, cyaIndividualDetailsPage(CheckMode, index, None)),
+      row(TrusteeUTRId(index))(someRefValue, cyaIndividualDetailsPage(CheckMode, index, None)),
       row(TrusteeHasUTRId(index))(false, TrusteeNoUTRReasonController.onPageLoad(CheckMode, index, None)),
       row(TrusteeNoUTRReasonId(index))(someStringValue, cyaIndividualDetailsPage(CheckMode, index, None))
     )
@@ -85,7 +85,7 @@ class TrusteesIndividualDetailsNavigatorSpec extends SpecBase with MustMatchers 
       row(TrusteeHasUTRId(index))(true, TrusteeUTRController.onPageLoad(mode, index, srn), Some(newTrusteeUserAnswers)),
       row(TrusteeHasUTRId(index))(false, TrusteeNoUTRReasonController.onPageLoad(mode, index, srn), Some(newTrusteeUserAnswers)),
       row(TrusteeNoUTRReasonId(index))(someStringValue, cyaIndividualDetailsPage(mode, index, srn), Some(newTrusteeUserAnswers)),
-      row(TrusteeUTRId(index))(someStringValue, cyaIndividualDetailsPage(mode, index, srn), Some(newTrusteeUserAnswers))
+      row(TrusteeUTRId(index))(someRefValue, cyaIndividualDetailsPage(mode, index, srn), Some(newTrusteeUserAnswers))
     )
 
     behave like navigatorWithRoutesForMode(UpdateMode)(navigator, navigationForVarianceModeTrusteeIndividual(UpdateMode), srn)
@@ -103,7 +103,7 @@ class TrusteesIndividualDetailsNavigatorSpec extends SpecBase with MustMatchers 
         row(TrusteeHasNINOId(index))(false, TrusteeNoNINOReasonController.onPageLoad(CheckUpdateMode, index, srn), Some(newTrusteeUserAnswers)),
         row(TrusteeNoNINOReasonId(index))(someStringValue, cyaIndividualDetailsPage(CheckUpdateMode, index, srn), Some(newTrusteeUserAnswers)),
         row(TrusteeHasUTRId(index))(true, TrusteeUTRController.onPageLoad(CheckUpdateMode, index, srn), Some(newTrusteeUserAnswers)),
-        row(TrusteeUTRId(index))(someStringValue, cyaIndividualDetailsPage(CheckUpdateMode, index, srn), Some(newTrusteeUserAnswers)),
+        row(TrusteeUTRId(index))(someRefValue, cyaIndividualDetailsPage(CheckUpdateMode, index, srn), Some(newTrusteeUserAnswers)),
         row(TrusteeHasUTRId(index))(false, TrusteeNoUTRReasonController.onPageLoad(CheckUpdateMode, index, srn), Some(newTrusteeUserAnswers)),
         row(TrusteeNoUTRReasonId(index))(someStringValue, cyaIndividualDetailsPage(CheckUpdateMode, index, srn), Some(newTrusteeUserAnswers))
       )

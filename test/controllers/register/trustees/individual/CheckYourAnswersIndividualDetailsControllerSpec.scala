@@ -129,9 +129,9 @@ object CheckYourAnswersIndividualDetailsControllerSpec extends ControllerSpecBas
     .set(TrusteeNameId(0))(trusteeName).flatMap(
     _.set(TrusteeDOBId(0))(trusteeDob).flatMap(
       _.set(TrusteeHasNINOId(0))(true).flatMap(
-        _.set(TrusteeNewNinoId(0))(ReferenceValue(nino, isEditable = false)).flatMap(
+        _.set(TrusteeNewNinoId(0))(ReferenceValue(nino)).flatMap(
           _.set(TrusteeHasUTRId(0))(true).flatMap(
-            _.set(TrusteeUTRId(0))(utr)
+            _.set(TrusteeUTRId(0))(ReferenceValue(utr))
               ))))).asOpt.value
 
   private val fullAnswersNo = emptyAnswers
@@ -155,8 +155,8 @@ object CheckYourAnswersIndividualDetailsControllerSpec extends ControllerSpecBas
         stringLink(messages("messages__trustee__cya__dob", name), DateHelper.formatDate(trusteeDob)),
         addLink(messages("messages__common__nino"), nino(UpdateMode, srn),
           messages("messages__visuallyhidden__trustee__nino_add")),
-        AnswerRow(messages("messages__common__utr"), Seq("site.not_entered"), answerIsMessageKey = true, None)
-      )
+        addLink(messages("messages__common__utr"), utr(UpdateMode, srn),
+          messages("messages__visuallyhidden__trustee__utr_add")))
     ))
 
   private def allChangeLinksVariations(implicit request: DataRequest[AnyContent]): Seq[AnswerSection] =

@@ -144,7 +144,7 @@ object CheckYourAnswersCompanyDetailsControllerSpec extends ControllerSpecBase w
     .set(HasCompanyNumberId(0))(true).flatMap(
       _.set(CompanyRegistrationNumberVariationsId(0))(ReferenceValue(crn, isEditable = true)).flatMap(
        _.set(HasCompanyUTRId(0))(true).flatMap(
-         _.set(CompanyUTRId(0))(utr).flatMap(
+         _.set(CompanyUTRId(0))(ReferenceValue(utr)).flatMap(
            _.set(HasCompanyVATId(0))(true).flatMap(
            _.set(CompanyVatVariationsId(0))(ReferenceValue(vat, isEditable = true)).flatMap(
              _.set(HasCompanyPAYEId(0))(true).flatMap(
@@ -160,7 +160,7 @@ object CheckYourAnswersCompanyDetailsControllerSpec extends ControllerSpecBase w
               _.set(HasCompanyPAYEId(0))(false)
               ))))).asOpt.value
 
-    private val fullAnswers = fullAnswersYes.set(IsCompanyDormantId(0))(DeclarationDormant.No).asOpt.value
+  private val fullAnswers = fullAnswersYes.set(IsCompanyDormantId(0))(DeclarationDormant.No).asOpt.value
 
   def postUrl: Call = routes.CheckYourAnswersCompanyDetailsController.onSubmit(NormalMode, None, index)
 
@@ -173,6 +173,8 @@ object CheckYourAnswersCompanyDetailsControllerSpec extends ControllerSpecBase w
       Seq(
         addLink(messages("messages__checkYourAnswers__establishers__company__number"), companyRegistrationNumberVariationsRoute(UpdateMode, srn),
           messages("messages__visuallyhidden__companyNumber_add")),
+        addLink(messages("messages__companyUtr__checkyouranswerslabel"), companyUTRRoute(UpdateMode, srn),
+          messages("messages__visuallyhidden__companyUTR_add")),
         addLink(messages("messages__common__cya__vat"), companyVatVariationsRoute(UpdateMode, srn),
           messages("messages__visuallyhidden__companyVat_add")),
         addLink(messages("messages__common__cya__paye"), companyPayeVariationsRoute(UpdateMode, srn),

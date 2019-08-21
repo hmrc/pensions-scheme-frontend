@@ -48,7 +48,7 @@ trait DataCompletionHelper extends OptionValues {
           .set(TrusteeHasNINOId(index))(true).asOpt.value
           .set(TrusteeNewNinoId(index))(ReferenceValue(stringValue)).asOpt.value
           .set(TrusteeHasUTRId(index))(true).asOpt.value
-          .set(TrusteeUTRId(index))(stringValue)
+          .set(TrusteeUTRId(index))(ReferenceValue(stringValue))
       } else {
         ua.
           set(TrusteeDetailsId(index))(PersonDetails(firstName, None, lastName, LocalDate.now())).asOpt.value
@@ -61,7 +61,7 @@ trait DataCompletionHelper extends OptionValues {
           set(TrusteeDOBId(index))(LocalDate.now()).asOpt.value
           .set(TrusteeHasNINOId(index))(true).asOpt.value
           .set(TrusteeHasUTRId(index))(true).asOpt.value
-          .set(TrusteeUTRId(index))(stringValue)
+          .set(TrusteeUTRId(index))(ReferenceValue(stringValue))
       } else {
         ua.
           set(TrusteeDetailsId(index))(PersonDetails(firstName, None, lastName, LocalDate.now())).asOpt.value
