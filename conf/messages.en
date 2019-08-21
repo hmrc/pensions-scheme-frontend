@@ -550,8 +550,8 @@ messages__addCompanyDirectors_add_director = Add a director
 messages__addCompanyDirectors_at_maximum = You have added the maximum number of directors.
 messages__addCompanyDirectorsOrPartners_tell_us_if_you_have_more = You can tell us on the next page if you have more to add.
 
-messages__director_address_years__title = Has {0} used this contact address for at least 1 year?
-messages__director_address_years__heading = Has {0} used this contact address for at least 1 year?
+messages__director_address_years__title = Has {0} been at this address for at least 1 year?
+messages__director_address_years__heading = Has {0} been at this address for at least 1 year?
 messages__director_address_years__cya = Has the director been at their address for at least 1 year?
 messages__director_address_years__form_error = Select yes if {0} has used this contact address for at least 1 year
 
