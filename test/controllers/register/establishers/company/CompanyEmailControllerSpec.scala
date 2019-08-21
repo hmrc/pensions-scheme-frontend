@@ -56,7 +56,7 @@ class CompanyEmailControllerSpec extends ControllerSpecBase with MockitoSugar wi
       form,
       CommonFormWithHintViewModel(
         routes.CompanyEmailController.onSubmit(NormalMode, None, firstIndex),
-        Message("messages__establisherEmail__title"),
+        Message("messages__establisher_email__title"),
         Message("messages__common_email__heading", "test company name"),
         Some(Message("messages__email__hint")),
         None

@@ -53,7 +53,7 @@ class CompanyPhoneController @Inject()(val appConfig: FrontendAppConfig,
           details =>
             CommonFormWithHintViewModel(
               routes.CompanyPhoneController.onSubmit(mode, srn, index),
-              Message("messages__establisherPhone__title"),
+              Message("messages__establisher_phone__title"),
               Message("messages__common_phone__heading", details.companyName),
               Some(Message("messages__phone__hint")),
               srn = srn

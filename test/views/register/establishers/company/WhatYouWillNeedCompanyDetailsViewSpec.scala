@@ -23,12 +23,12 @@ import views.html.register.establishers.company.whatYouWillNeedCompanyDetails
 
 class WhatYouWillNeedCompanyDetailsViewSpec extends ViewBehaviours {
 
-  val messageKeyPrefix = "whatYouWillNeedEstablisherCompany"
-  val companyName = "hifi ltd"
+  private val messageKeyPrefix = "whatYouWillNeedEstablisherCompany"
+  private val companyName = "hifi ltd"
 
-  lazy val href = controllers.register.establishers.company.routes.HasCompanyNumberController.onPageLoad(NormalMode, None, index=Index(0))
+  private val href = controllers.register.establishers.company.routes.HasCompanyNumberController.onPageLoad(NormalMode, None, index=Index(0))
 
-  def createView: () => HtmlFormat.Appendable = () => whatYouWillNeedCompanyDetails(frontendAppConfig, Some("testScheme"), href, None, companyName)(fakeRequest, messages)
+  private def createView: () => HtmlFormat.Appendable = () => whatYouWillNeedCompanyDetails(frontendAppConfig, Some("testScheme"), href, None, companyName)(fakeRequest, messages)
 
   "WhatYouWillNeedCompanyDetails view" must {
 

@@ -24,15 +24,16 @@ import views.html.register.establishers.company.whatYouWillNeedCompanyAddress
 
 class WhatYouWillNeedCompanyAddressViewSpec extends ViewBehaviours {
 
-  val messageKeyPrefix = "whatYouWillNeedAddress"
+  private val messageKeyPrefix = "whatYouWillNeedAddress"
+  private val companyName = "abc ltd"
 
   private def href: Call = controllers.register.establishers.company.routes.CompanyPostCodeLookupController.onPageLoad(NormalMode, None, Index(0))
 
-  def createView: () => HtmlFormat.Appendable = () => whatYouWillNeedCompanyAddress(frontendAppConfig, Some("testScheme"), href, None, "abc ltd")(fakeRequest, messages)
+  private def createView: () => HtmlFormat.Appendable = () => whatYouWillNeedCompanyAddress(frontendAppConfig, Some("testScheme"), href, None, companyName)(fakeRequest, messages)
 
   "whatYouWillNeedCompanyAddress view" must {
 
-    behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__h1", "abc ltd"))
+    behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__h1", companyName))
 
     "display the correct paragraph" in {
       val doc = asDocument(createView())

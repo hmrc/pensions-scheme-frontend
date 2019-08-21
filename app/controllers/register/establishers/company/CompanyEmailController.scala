@@ -53,7 +53,7 @@ class CompanyEmailController @Inject()(val appConfig: FrontendAppConfig,
           details =>
             CommonFormWithHintViewModel(
               routes.CompanyEmailController.onSubmit(mode, srn, index),
-              Message("messages__establisherEmail__title"),
+              Message("messages__establisher_email__title"),
               Message("messages__common_email__heading", details.companyName),
               Some(Message("messages__email__hint")),
               srn = srn
