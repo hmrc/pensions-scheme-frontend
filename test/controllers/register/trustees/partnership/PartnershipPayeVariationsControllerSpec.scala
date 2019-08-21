@@ -90,7 +90,7 @@ object PartnershipPayeVariationsControllerSpec extends PartnershipPayeVariations
     running(_.overrides(
       bind[AuthAction].to(FakeAuthAction),
       bind[DataRetrievalAction].toInstance(getMandatoryTrusteePartnership),
-      bind(classOf[Navigator]).qualifiedWith(classOf[TrusteesPartnership]).toInstance(new FakeNavigator(onwardRoute)),
+      bind(classOf[Navigator]).toInstance(new FakeNavigator(onwardRoute)),
       bind[UserAnswersService].toInstance(FakeUserAnswersService),
       bind[AllowAccessActionProvider].toInstance(FakeAllowAccessProvider())
 

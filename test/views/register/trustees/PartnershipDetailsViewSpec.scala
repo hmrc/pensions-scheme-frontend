@@ -26,7 +26,7 @@ import views.html.register.trustees.partnership.partnershipDetails
 
 class PartnershipDetailsViewSpec extends QuestionViewBehaviours[PartnershipDetails] {
 
-  val messageKeyPrefix = "partnershipDetails"
+  val messageKeyPrefix = "partnershipName"
 
   override val form = new PartnershipDetailsFormProvider()()
   val firstIndex = Index(1)

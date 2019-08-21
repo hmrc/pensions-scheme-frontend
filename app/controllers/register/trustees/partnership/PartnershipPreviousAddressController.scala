@@ -30,7 +30,6 @@ import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
-import utils.annotations.TrusteesPartnership
 import utils.CountryOptions
 import viewmodels.Message
 import viewmodels.address.ManualAddressViewModel
@@ -41,7 +40,7 @@ class PartnershipPreviousAddressController @Inject()(
                                                       val appConfig: FrontendAppConfig,
                                                       val messagesApi: MessagesApi,
                                                       val userAnswersService: UserAnswersService,
-                                                      @TrusteesPartnership val navigator: Navigator,
+                                                      val navigator: Navigator,
                                                       authenticate: AuthAction,
                                                       getData: DataRetrievalAction,
                                                       allowAccess: AllowAccessActionProvider,
@@ -52,7 +51,7 @@ class PartnershipPreviousAddressController @Inject()(
                                                     )(implicit val ec: ExecutionContext) extends ManualAddressController with I18nSupport {
 
   private[controllers] val postCall = routes.PartnershipPreviousAddressController.onSubmit _
-  private[controllers] val title: Message = "messages__partnershipPreviousAddress__title"
+  private[controllers] val title: Message = "messages__common__partnership_confirmPreviousAddress__title"
   private[controllers] val heading: Message = "messages__common__confirmPreviousAddress__h1"
 
   protected val form: Form[Address] = formProvider()

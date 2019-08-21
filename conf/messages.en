@@ -53,6 +53,10 @@ messages__common__nino = National Insurance number
 messages__common__reason = Reason
 messages__common__confirmAddress__h1 = Confirm {0}’s address
 messages__common__confirmPreviousAddress__h1 = Confirm {0}’s previous address
+messages__common__selectPreviousAddress__h1 = What was {0}’s previous address?
+messages__common__partnership_selectPreviousAddress__title = What was the partnership’s previous address?
+messages__common__partnership_confirmPreviousAddress__title = Confirm the partnership’s previous address
+messages__common__partnership__selectAddress__h1 = What is {0}’s address?
 messages__common__entityKind_company = Company
 messages__common__entityKind_individual = Individual
 messages__common__entityKind_partnership = Partnership
@@ -928,7 +932,7 @@ messages__partnershipAddress__title = Enter the partnership’s address
 messages__partnershipAddress__heading = Enter the partnership’s address
 messages__partnershipAddress__lede = This is usually the registered business address but you can enter any address you have for this scheme establisher.
 
-messages__partnershipPostcodeLookup__title = Enter the partnership’s postcode
+messages__partnershipPostcodeLookup__title = What is the partnership’s postcode?
 messages__partnershipPostcodeLookup__heading = What is {0}’s postcode?
 messages__partnershipPostcodeLookup__hint = This is usually the registered business address but you can enter any address you have for this scheme establisher.
 messages__trusteePartnershipPostcodeLookup__hint = This is usually the registered business address but you can enter any address you have for this trustee.
@@ -937,7 +941,7 @@ messages__partnershipAddress__title = Enter the partnership’s address
 messages__partnershipAddress__heading = Enter the partnership’s address
 messages__partnershipAddress__lede = This is usually the registered business address but you can enter any address you have for this scheme establisher.
 
-messages__partnershipPreviousAddressPostcodeLookup__title = Enter the partnership’s previous postcode
+messages__partnershipPreviousAddressPostcodeLookup__title = What was the partnership’s previous postcode?
 messages__partnershipPreviousAddressPostcodeLookup__heading = What was {0}’s previous postcode?
 messages__partnershipPreviousAddressPostcodeLookup__checkYourAnswersLabel = Previous address
 
@@ -948,9 +952,9 @@ messages__otherPartners__heading=Do you need to tell us about other partners?
 messages__otherPartners__lede=You do not have to add them now. We may contact you if we need this information.
 messages__otherPartners__error__required=Select yes if you need to tell us about other partners
 
-messages__partnershipAddressYears__title = Has {0} used this registered address for at least 1 year?
-messages__partnershipAddressYears__heading = Has {0} used this registered address for at least 1 year?
-messages__partnershipAddressYears__error = Select yes if {0} has used this registered address for at least 1 year
+messages__partnershipAddressYears__title = Has {0} used this address for at least 1 year?
+messages__partnershipAddressYears__heading = Has {0} used this address for at least 1 year?
+messages__partnershipAddressYears__error = Select yes if {0} has used this address for at least 1 year
 
 messages__partnershipVat__title = Does the partnership have a VAT registration number?
 messages__partnershipVat__heading = Does the partnership have a VAT registration number?
@@ -965,6 +969,9 @@ messages__partnershipDetails__label = Enter the partnership’s name
 messages__partnershipDetails__error__required = Enter a name
 messages__partnershipDetails__error_too_long = Enter a name using 160 characters or less
 messages__partnershipDetails__invalid = Enter a valid name
+
+messages__partnershipName__title = What is the partnership’s name?
+messages__partnershipName__heading = What is the partnership’s name?
 
 messages__partnership_has_utr__title = Does the partnership have a Self Assessment Unique Taxpayer Reference number?
 messages__partnership_utr_hint_format=A Unique Taxpayer Reference number is 10 numbers.
@@ -1069,7 +1076,7 @@ messages__partnershipReview__partners__viewLink = View details of partners
 
 messages__checkYourAnswers__trustees__partnership__address_years = How long has the partnership been at this address?
 
-messages__trusteePartnershipAddress__title = Enter the partnership’s address
+messages__trusteePartnershipAddress__title = Confirm the partnership’s address
 messages__trusteePartnershipAddress__lede = This is usually the registered business address but you can enter any address you have for this trustee.
 
 messages__needContact__title = What is your email address?
@@ -1286,7 +1293,7 @@ messages__workingKnowledge__p3 = If you do not have that knowledge, you must be 
 messages__workingKnowledge__error__required = Select yes if you have working knowledge of pensions and pensions tax legislation
 
 messages__is_dormant__title = Has the company been dormant in the last 12 months?
-messages__is_dormant__heading = Have {0} been dormant in the last 12 months?
+messages__is_dormant__heading = Has {0} been dormant in the last 12 months?
 messages__is_dormant__yes = Yes
 messages__is_dormant__no = No
 messages__is_dormant__error = Select yes if the establisher has been dormant in the last 12 months
@@ -1530,8 +1537,8 @@ messages__visuallyhidden__hns_uKBankAccount = Change if {0} has a UK bank accoun
 uKBankDetails.hns_checkYourAnswersLabel = What are {0}’s bank account details?
 messages__visuallyhidden__hns_uKBankDetails = Change {0}’s bank account details
 
-messages__whatYouWillNeedEstablisherCompany__title = What you will need
-messages__whatYouWillNeedEstablisherCompany__h1 = Company details
+messages__whatYouWillNeedEstablisherCompany__title = Company details
+messages__whatYouWillNeedEstablisherCompany__h1 = Company details for {0}
 messages__whatYouWillNeedEstablisherCompany__lede = You will need to tell us the company’s:
 messages__whatYouWillNeedEstablisherCompany__item1 = company number, or reason why it does not have one
 messages__whatYouWillNeedEstablisherCompany__item2 = Unique Taxpayer Reference (UTR), or reason why it does not have one
@@ -1539,7 +1546,8 @@ messages__whatYouWillNeedEstablisherCompany__item3 = VAT registration number, if
 messages__whatYouWillNeedEstablisherCompany__item4 = employer PAYE number, if it has one
 
 messages__whatYouWillNeedAddress__title = Address
-messages__whatYouWillNeedAddress__h1 = Address
+messages__whatYouWillNeedAddress__h1 = Address for {0}
+messages__addressFor = Address for {0}
 
 messages__whatYouWillNeedEstablisherCompanyAddress__lede = You will need to tell us the company’s:
 messages__whatYouWillNeedEstablisherCompanyAddress__item1 = current address
@@ -1558,6 +1566,8 @@ messages__whatYouWillNeedEstablisherCompanyContact__h1 = Contact details
 messages__whatYouWillNeedEstablisherCompanyContact__lede = You will need to tell us the company’s:
 messages__whatYouWillNeedEstablisherCompanyContact__item1 = contact email address
 messages__whatYouWillNeedEstablisherCompanyContact__item2 = contact phone number
+
+messages__contactDetailsFor = Contact details for {0}
 
 messages__whatYouWillNeedTrusteeIndividualContact__title = Contact details
 messages__whatYouWillNeedTrusteeIndividualContact__h1 = Contact details for {0}
@@ -1627,8 +1637,8 @@ messages__theDirector = the director
 messages__hasBeenTradingCompany__title = Has the establisher been trading for more than a year?
 messages__hasBeenTradingCompany__h1 =  Has {0} been trading for more than a year?
 messages__hasBeenTradingCompany__error__required = Select yes if {0} has been trading  for more than a year
-messages__hasBeenTradingCompany__title = Has the company been trading for at least 1 year?
-messages__hasBeenTradingCompany__h1 =  Has {0} been trading for at least 1 year?
+messages__hasBeenTradingCompany__title = Has the establisher been trading for more than a year?
+messages__hasBeenTradingCompany__h1 =  Has {0} been trading for more than a year?
 messages__hasBeenTradingCompany__error__required = Select yes if {0} has been trading for at least 1 year
 
 messages__schemeTaskList__before_you_start_link_text = Setting up your scheme application
@@ -1665,7 +1675,7 @@ messages__companyPaye__title = Does the company have an employer PAYE number?
 messages__companyPaye__heading = Does {0} have an employer PAYE number?
 messages__companyPaye__error__required = Select yes if the company has an employer PAYE number
 
-messages__companyPayeRef__title = Does the establisher have an employer PAYE reference?
+messages__companyPayeRef__title = Does the company have an employer PAYE reference?
 messages__companyPayeRef__trustee_title = Does the company have an employer PAYE reference?
 messages__companyPayeRef__h1 = Does {0} have an employer PAYE reference?
 messages__companyPayeRef__error__required = Select whether the company has an employer PAYE number
@@ -1694,7 +1704,7 @@ messages__confirmPreviousAddress__title = Is this the previous address?
 messages__confirmPreviousAddress__heading = Is this {0}’s previous address?
 messages__confirmPreviousAddress__error = Select yes if this is {0}’s previous address
 
-messages__vatVariations__company_title = What is their VAT registration number?
+messages__vatVariations__company_title = What is the company’s VAT registration number?
 messages__vatVariations__partnership_title = What is the partnership’s VAT registration number?
 messages__vatVariations__heading = What is {0}’s VAT registration number?
 messages__vatVariations__hint = This is 9 numbers, sometimes with ‘GB’ at the start, for example 123456789 or GB123456789.
@@ -1727,11 +1737,13 @@ messages__reason__error_invalid = Reason must only include letters, numbers and 
 messages__noCompanyUtr__title = Why does the company not have a UTR?
 messages__noCompanyUtr__heading = Why does {0} not have a UTR?
 
-messages__establisher_phone__title =  What is the company’s phone number?
+messages__trustee_phone__title =  What is the company’s phone number?
+messages__establisher_phone__title =  What is the establisher’s phone number?
 messages__director_phone__title =  What is the director’s phone number?
 messages__phone__hint = We will only use this to contact about pension scheme administration.
 
-messages__establisher_email__title =  What is the company’s email address?
+messages__trustee_email__title =  What is the company’s email address?
+messages__establisher_email__title =  What is the establisher’s email address?
 messages__email__hint = We will only use this to contact about pension scheme administration.
 
 messages__noNinoReason__director_title = Why does the director not have a National Insurance number?
@@ -1767,7 +1779,7 @@ messages__establisherPreviousPostCode__title = What was the establisher’s prev
 messages__establisherPreviousPostCode__h1 = What was {0}’s previous postcode?
 
 messages__establisherSelectAddress__title = Select the address
-messages__establisherSelectAddress__h1 = Select the address
+messages__establisherSelectAddress__h1 = What is {0}’s address?
 
 messages__establisherPreviousSelectAddress__title = Select the previous address
 messages__establisherPreviousSelectAddress__h1 = Select the previous address

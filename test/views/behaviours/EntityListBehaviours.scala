@@ -25,7 +25,7 @@ trait EntityListBehaviours {
   this: ViewSpecBase =>
 
   // scalastyle:off method.length
-  def entityList(emptyView: View, nonEmptyView: View, items: Seq[Entity[_]], appConfig: FrontendAppConfig): Unit = {
+  def entityList(emptyView: View, nonEmptyView: View, items: Seq[Entity[_]], appConfig: FrontendAppConfig, isToggleOn: Boolean = false): Unit = {
     "behave like a list of items" must {
       "not show the list if there are no items" in {
         val doc = asDocument(emptyView())
@@ -67,16 +67,19 @@ trait EntityListBehaviours {
         doc.getElementById("submit").hasAttr("disabled") mustBe true
       }
 
+
       "display the edit link for each person" in {
-        val doc = asDocument(nonEmptyView())
-        items.foreach { item =>
-          val link = doc.select(s"#person-${item.index}-edit")
-          val visibleText = doc.select(s"#person-${item.index}-edit span[aria-hidden=true]").first.text
-          val hiddenText = doc.select(s"#person-${item.index}-edit span[class=visually-hidden]").first.text
-          link.size mustBe 1
-          visibleText mustBe messages("site.edit")
-          hiddenText mustBe s"${messages("site.edit")} ${item.name}"
-          link.first.attr("href") mustBe item.editLink(NormalMode, None).get
+        if (!isToggleOn) {
+          val doc = asDocument(nonEmptyView())
+          items.foreach { item =>
+            val link = doc.select(s"#person-${item.index}-edit")
+            val visibleText = doc.select(s"#person-${item.index}-edit span[aria-hidden=true]").first.text
+            val hiddenText = doc.select(s"#person-${item.index}-edit span[class=visually-hidden]").first.text
+            link.size mustBe 1
+            visibleText mustBe messages("site.edit")
+            hiddenText mustBe s"${messages("site.edit")} ${item.name}"
+            link.first.attr("href") mustBe item.editLink(NormalMode, None).get
+          }
         }
       }
     }
