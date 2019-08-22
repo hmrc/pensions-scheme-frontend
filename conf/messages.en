@@ -550,8 +550,8 @@ messages__addCompanyDirectors_add_director = Add a director
 messages__addCompanyDirectors_at_maximum = You have added the maximum number of directors.
 messages__addCompanyDirectorsOrPartners_tell_us_if_you_have_more = You can tell us on the next page if you have more to add.
 
-messages__director_address_years__title = Has {0} used this contact address for at least 1 year?
-messages__director_address_years__heading = Has {0} used this contact address for at least 1 year?
+messages__director_address_years__title = Has {0} been at this address for at least 1 year?
+messages__director_address_years__heading = Has {0} been at this address for at least 1 year?
 messages__director_address_years__cya = Has the director been at their address for at least 1 year?
 messages__director_address_years__form_error = Select yes if {0} has used this contact address for at least 1 year
 
@@ -648,7 +648,7 @@ messages__checkYourAnswers__establishers__company__number = Company number
 
 messages__directorPreviousAddressConfirm__title = Confirm the director’s previous address
 
-messages__directorPreviousAddressPostcodeLookup__title = What is the director’s previous postcode?
+messages__directorPreviousAddressPostcodeLookup__title = What was the director’s previous postcode?
 messages__previousAddressPostcodeLookup__heading = What was {0}’s previous postcode?
 messages__directorPreviousAddressPostcodeLookup__lede = This is usually the director’s residential address.
 
@@ -1305,12 +1305,20 @@ messages__schemeTaskList__sectionIndividual_add_details = Add {0}’s details
 messages__schemeTaskList__sectionIndividual_add_address = Add {0}’s address
 messages__schemeTaskList__sectionIndividual_add_contact = Add {0}’s contact details
 
+messages__schemeTaskList__sectionPartnership_add_details = Add {0}’s partnership’s details
+messages__schemeTaskList__sectionPartnership_add_address = Add {0}’s partnership’s address
+messages__schemeTaskList__sectionPartnership_add_contact = Add {0}’s partnership’s contact details
+
 messages__schemeTaskList__sectionEstablishersCompany_change_details = Change {0}’s company details
 messages__schemeTaskList__sectionEstablishersCompany_change_directors = Change {0}’s directors
 
 messages__schemeTaskList__sectionIndividual_change_details = Change {0}’s details
 messages__schemeTaskList__sectionIndividual_change_address = Change {0}’s address
 messages__schemeTaskList__sectionIndividual_change_contact = Change {0}’s contact details
+
+messages__schemeTaskList__sectionPartnership_change_details = Change {0}’s partnership’s details
+messages__schemeTaskList__sectionPartnership_change_address = Change {0}’s partnership’s address
+messages__schemeTaskList__sectionPartnership_change_contact = Change {0}’s partnership’s contact details
 
 messages__schemeTaskList__sectionTrustees_header = Trustees
 messages__schemeTaskList__sectionTrustees_add_link = Add a trustee
@@ -1590,8 +1598,8 @@ messages__whatYouWillNeedTrusteeCompany__item3 = VAT registration number, if it 
 messages__whatYouWillNeedTrusteeCompany__item4 = employer PAYE reference, if it has one
 messages__whatYouWillNeedTrusteeCompany__p2 = You will also need to tell us if the company has been dormant at any time in the last 12 months.
 
-messages__whatYouWillNeedTrusteeIndividual__title = Trustee’s details
-messages__whatYouWillNeedTrusteeIndividual__h1 = {0}’s details
+messages__whatYouWillNeedTrusteeIndividual__title = Details
+messages__whatYouWillNeedTrusteeIndividual__h1 = Details for {0}
 messages__whatYouWillNeedTrusteeIndividual__p1 = For each trustee, you will need to tell us their:
 messages__whatYouWillNeedTrusteeIndividual__item1 = date of birth
 messages__whatYouWillNeedTrusteeIndividual__item2 = National Insurance number, or reason why they do not have one
@@ -1790,8 +1798,8 @@ messages__director_email__title =  What is the director’s email address?
 messages__establisher__type__title = What kind of establisher are you adding?
 messages__establisher__type__h1 = What kind of establisher are you adding?
 
-messages__hasUtr__title = Does {0} have a UTR?
-messages__hasUtr__h1 = Does {0} have a Unique Taxpayer Reference (UTR)?
+messages__hasUtr__title = Does the trustee have a UTR?
+messages__hasUtr__h1 = Does {0} have a UTR?
 
 messages__trusteeUtr__title = What is the trustee’s UTR?
 messages__trusteeUtr__h1 =  What is {0}’s UTR?
