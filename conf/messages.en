@@ -550,8 +550,8 @@ messages__addCompanyDirectors_add_director = Add a director
 messages__addCompanyDirectors_at_maximum = You have added the maximum number of directors.
 messages__addCompanyDirectorsOrPartners_tell_us_if_you_have_more = You can tell us on the next page if you have more to add.
 
-messages__director_address_years__title = Has {0} used this contact address for at least 1 year?
-messages__director_address_years__heading = Has {0} used this contact address for at least 1 year?
+messages__director_address_years__title = Has {0} been at this address for at least 1 year?
+messages__director_address_years__heading = Has {0} been at this address for at least 1 year?
 messages__director_address_years__cya = Has the director been at their address for at least 1 year?
 messages__director_address_years__form_error = Select yes if {0} has used this contact address for at least 1 year
 
@@ -648,7 +648,7 @@ messages__checkYourAnswers__establishers__company__number = Company number
 
 messages__directorPreviousAddressConfirm__title = Confirm the director’s previous address
 
-messages__directorPreviousAddressPostcodeLookup__title = What is the director’s previous postcode?
+messages__directorPreviousAddressPostcodeLookup__title = What was the director’s previous postcode?
 messages__previousAddressPostcodeLookup__heading = What was {0}’s previous postcode?
 messages__directorPreviousAddressPostcodeLookup__lede = This is usually the director’s residential address.
 
