@@ -21,9 +21,6 @@ import controllers.Retrievals
 import controllers.actions._
 import forms.register.establishers.AddEstablisherFormProvider
 import identifiers.register.establishers.AddEstablisherId
-import identifiers.register.establishers.company.CompanyDetailsId
-import identifiers.register.establishers.individual.EstablisherDetailsId
-import identifiers.register.establishers.partnership.PartnershipDetailsId
 import javax.inject.Inject
 import models.Mode
 import models.register.{Entity, Establisher}
@@ -73,13 +70,4 @@ class AddEstablisherController @Inject()(appConfig: FrontendAppConfig,
     isHnSEnabled || establishers.forall(_.isCompleted)
 
   private def isHnSEnabled = fsms.get(Toggles.isEstablisherCompanyHnSEnabled)
-
-  def returnKind(entity: Entity[_]) = {
-    entity.id match {
-      case CompanyDetailsId(_)  => "Company"
-      case EstablisherDetailsId(_) => "Individual"
-      case PartnershipDetailsId(_) => "Partnership"
-      case _ => ""
-    }
-  }
 }
