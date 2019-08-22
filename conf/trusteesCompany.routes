@@ -136,12 +136,12 @@ POST        /:index/company/change/reason-for-no-company-number                 
 GET         /:index/company/:mode/reason-for-no-company-number/:srn                      controllers.register.trustees.company.NoCompanyNumberController.onPageLoad(mode: Mode,index: Index, srn: Option[String])
 POST        /:index/company/:mode/reason-for-no-company-number/:srn                      controllers.register.trustees.company.NoCompanyNumberController.onSubmit(mode: Mode,index: Index, srn: Option[String])
 
-GET         /:index/company/unique-taxpayer-reference                                    controllers.register.trustees.company.HasCompanyUTRController.onPageLoad(mode: Mode = NormalMode, index: Index, srn: Option[String] = None)
-POST        /:index/company/unique-taxpayer-reference                                    controllers.register.trustees.company.HasCompanyUTRController.onSubmit(mode: Mode = NormalMode, index: Index, srn: Option[String] = None)
-GET         /:index/company/change/unique-taxpayer-reference                             controllers.register.trustees.company.HasCompanyUTRController.onPageLoad(mode: Mode = CheckMode, index: Index, srn: Option[String] = None)
-POST        /:index/company/change/unique-taxpayer-reference                             controllers.register.trustees.company.HasCompanyUTRController.onSubmit(mode: Mode = CheckMode, index: Index, srn: Option[String] = None)
-GET         /:index/company/:mode/unique-taxpayer-reference/:srn                         controllers.register.trustees.company.HasCompanyUTRController.onPageLoad(mode: Mode,index: Index, srn: Option[String])
-POST        /:index/company/:mode/unique-taxpayer-reference/:srn                         controllers.register.trustees.company.HasCompanyUTRController.onSubmit(mode: Mode,index: Index, srn: Option[String])
+GET         /:index/company/company-unique-taxpayer-reference                                    controllers.register.trustees.company.HasCompanyUTRController.onPageLoad(mode: Mode = NormalMode, index: Index, srn: Option[String] = None)
+POST        /:index/company/company-unique-taxpayer-reference                                    controllers.register.trustees.company.HasCompanyUTRController.onSubmit(mode: Mode = NormalMode, index: Index, srn: Option[String] = None)
+GET         /:index/company/change/company-unique-taxpayer-reference                             controllers.register.trustees.company.HasCompanyUTRController.onPageLoad(mode: Mode = CheckMode, index: Index, srn: Option[String] = None)
+POST        /:index/company/change/company-unique-taxpayer-reference                             controllers.register.trustees.company.HasCompanyUTRController.onSubmit(mode: Mode = CheckMode, index: Index, srn: Option[String] = None)
+GET         /:index/company/:mode/company-unique-taxpayer-reference/:srn                         controllers.register.trustees.company.HasCompanyUTRController.onPageLoad(mode: Mode,index: Index, srn: Option[String])
+POST        /:index/company/:mode/company-unique-taxpayer-reference/:srn                         controllers.register.trustees.company.HasCompanyUTRController.onSubmit(mode: Mode,index: Index, srn: Option[String])
 
 GET         /:index/company/reason-for-no-unique-taxpayer-reference                      controllers.register.trustees.company.CompanyNoUTRReasonController.onPageLoad(mode: Mode = NormalMode, index: Index, srn: Option[String] = None)
 POST        /:index/company/reason-for-no-unique-taxpayer-reference                      controllers.register.trustees.company.CompanyNoUTRReasonController.onSubmit(mode: Mode = NormalMode, index: Index, srn: Option[String] = None)
