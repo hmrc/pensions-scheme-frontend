@@ -27,7 +27,11 @@ import identifiers.register.trustees.{ExistingCurrentAddressId, IsTrusteeNewId}
 import models.Mode.journeyMode
 import models._
 import models.requests.IdentifiedRequest
-import navigators.trustees.individuals.{TrusteesIndividualAddressNavigator, TrusteesIndividualContactDetailsNavigator, TrusteesIndividualDetailsNavigator}
+import navigators.trustees.individuals.{
+  TrusteesIndividualAddressNavigator,
+  TrusteesIndividualContactDetailsNavigator,
+  TrusteesIndividualDetailsNavigator
+}
 import play.api.mvc.Call
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.{Toggles, UserAnswers}
@@ -50,8 +54,7 @@ class TrusteesIndividualFeatureSwitchNavigator @Inject()(
       detailsNavigator.nextPageOptional(id, mode, userAnswers, srn) orElse
         addressNavigator.nextPageOptional(id, mode, userAnswers, srn) orElse
         contactDetailsNavigator.nextPageOptional(id, mode, userAnswers, srn)
-    }
-    else {
+    } else {
       oldNavigator.nextPageOptional(id, mode, userAnswers, srn)
     }
   }
@@ -67,8 +70,7 @@ class TrusteesIndividualNavigatorOld @Inject()(val dataCacheConnector: UserAnswe
   private def exitMiniJourney(index: Index, mode: Mode, srn: Option[String], answers: UserAnswers): Option[NavigateTo] =
     if (mode == CheckMode || mode == NormalMode) {
       checkYourAnswers(index, journeyMode(mode), srn)
-    }
-    else {
+    } else {
       if (answers.get(IsTrusteeNewId(index)).getOrElse(false))
         checkYourAnswers(index, journeyMode(mode), srn)
       else anyMoreChanges(srn)
@@ -123,13 +125,9 @@ class TrusteesIndividualNavigatorOld @Inject()(val dataCacheConnector: UserAnswe
         val isNew = from.userAnswers.get(IsTrusteeNewId(index)).contains(true)
         if (isNew || mode == CheckMode) {
           checkYourAnswers(index, journeyMode(mode), srn)
-        }
-        else if (!from.userAnswers
-                   .get(IsTrusteeNewId(index))
-                   .contains(true) && mode == CheckUpdateMode) {
+        } else if (!from.userAnswers.get(IsTrusteeNewId(index)).contains(true) && mode == CheckUpdateMode) {
           NavigateTo.dontSave(IndividualConfirmPreviousAddressController.onPageLoad(index, srn))
-        }
-        else {
+        } else {
           NavigateTo.dontSave(TrusteeAddressYearsController.onPageLoad(mode, index, srn))
         }
       case TrusteeAddressYearsId(index) =>
@@ -193,8 +191,7 @@ class TrusteesIndividualNavigatorOld @Inject()(val dataCacheConnector: UserAnswe
     answers.get(IndividualConfirmPreviousAddressId(index)) match {
       case Some(false) =>
         NavigateTo.dontSave(
-          controllers.register.trustees.individual.routes.IndividualPreviousAddressPostcodeLookupController
-            .onPageLoad(mode, index, srn))
+          controllers.register.trustees.individual.routes.IndividualPreviousAddressPostcodeLookupController.onPageLoad(mode, index, srn))
       case Some(true) =>
         anyMoreChanges(srn)
       case None =>
