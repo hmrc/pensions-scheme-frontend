@@ -157,12 +157,12 @@ POST        /:index/company/change/is-company-vat-registered                    
 GET         /:index/company/:mode/is-company-vat-registered/:srn                         controllers.register.trustees.company.HasCompanyVATController.onPageLoad(mode: Mode, index: Index, srn: Option[String])
 POST        /:index/company/:mode/is-company-vat-registered/:srn                         controllers.register.trustees.company.HasCompanyVATController.onSubmit(mode: Mode, index: Index, srn: Option[String])
 
-GET         /:index/company/employer-paye-reference                                      controllers.register.trustees.company.HasCompanyPAYEController.onPageLoad(mode: Mode = NormalMode, index: Index, srn: Option[String] = None)
-POST        /:index/company/employer-paye-reference                                      controllers.register.trustees.company.HasCompanyPAYEController.onSubmit(mode: Mode = NormalMode, index: Index, srn: Option[String] = None)
-GET         /:index/company/change/employer-paye-reference                               controllers.register.trustees.company.HasCompanyPAYEController.onPageLoad(mode: Mode = CheckMode, index: Index, srn: Option[String] = None)
-POST        /:index/company/change/employer-paye-reference                               controllers.register.trustees.company.HasCompanyPAYEController.onSubmit(mode: Mode = CheckMode, index: Index, srn: Option[String] = None)
-GET         /:index/company/:mode/employer-paye-reference/:srn                           controllers.register.trustees.company.HasCompanyPAYEController.onPageLoad(mode: Mode,index: Index, srn: Option[String])
-POST        /:index/company/:mode/employer-paye-reference/:srn                           controllers.register.trustees.company.HasCompanyPAYEController.onSubmit(mode: Mode,index: Index, srn: Option[String])
+GET         /:index/company/company-have-employer-paye-reference                                      controllers.register.trustees.company.HasCompanyPAYEController.onPageLoad(mode: Mode = NormalMode, index: Index, srn: Option[String] = None)
+POST        /:index/company/company-have-employer-paye-reference                                      controllers.register.trustees.company.HasCompanyPAYEController.onSubmit(mode: Mode = NormalMode, index: Index, srn: Option[String] = None)
+GET         /:index/company/change/company-have-employer-paye-reference                               controllers.register.trustees.company.HasCompanyPAYEController.onPageLoad(mode: Mode = CheckMode, index: Index, srn: Option[String] = None)
+POST        /:index/company/change/company-have-employer-paye-reference                               controllers.register.trustees.company.HasCompanyPAYEController.onSubmit(mode: Mode = CheckMode, index: Index, srn: Option[String] = None)
+GET         /:index/company/:mode/company-have-employer-paye-reference/:srn                           controllers.register.trustees.company.HasCompanyPAYEController.onPageLoad(mode: Mode,index: Index, srn: Option[String])
+POST        /:index/company/:mode/company-have-employer-paye-reference/:srn                           controllers.register.trustees.company.HasCompanyPAYEController.onSubmit(mode: Mode,index: Index, srn: Option[String])
 
 GET         /:index/company/check-your-answers-company-details                           controllers.register.trustees.company.CheckYourAnswersCompanyDetailsController.onPageLoad(mode: Mode = NormalMode, index: Index, srn: Option[String] = None)
 POST        /:index/company/check-your-answers-company-details                           controllers.register.trustees.company.CheckYourAnswersCompanyDetailsController.onSubmit(mode: Mode = NormalMode, index: Index, srn: Option[String] = None)
