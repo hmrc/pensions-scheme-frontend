@@ -83,7 +83,7 @@ case class DirectorEntity(id: DirectorNameId, name: String, isDeleted: Boolean,
       id.establisherIndex, id.directorIndex, mode, srn).url)
     case (_, true) => Some(controllers.register.establishers.company.director.routes.CheckYourAnswersController.onPageLoad(
       id.establisherIndex, id.directorIndex, mode, srn).url)
-    case (_, false) => Some(controllers.register.establishers.company.director.routes.DirectorDetailsController.onPageLoad(
+    case (_, false) => Some(controllers.register.establishers.company.director.routes.DirectorNameController.onPageLoad(
       mode, id.establisherIndex, id.directorIndex, srn).url)
   }
 
