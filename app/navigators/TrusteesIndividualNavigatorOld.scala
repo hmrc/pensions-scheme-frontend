@@ -49,14 +49,19 @@ class TrusteesIndividualFeatureSwitchNavigator @Inject()(
                                 srn: Option[String])(
                                  implicit ex: IdentifiedRequest,
                                  ec: ExecutionContext,
-                                 hc: HeaderCarrier): Option[Call] =
+                                 hc: HeaderCarrier): Option[Call] = {
+    println( "\nI AM HERE")
     if (featureSwitchService.get(Toggles.isEstablisherCompanyHnSEnabled)) {
+      println("\n>>>>>>" + mode)
+
       detailsNavigator.nextPageOptional(id, mode, userAnswers, srn) orElse
         addressNavigator.nextPageOptional(id, mode, userAnswers, srn) orElse
-        contactDetailsNavigator.nextPageOptional(id, mode, userAnswers, srn)
-    } else {
+                                     contactDetailsNavigator.nextPageOptional(id, mode, userAnswers, srn)
+    }
+                                   else {
       oldNavigator.nextPageOptional(id, mode, userAnswers, srn)
     }
+                                 }
 }
 
 @Singleton

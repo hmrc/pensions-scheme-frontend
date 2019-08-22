@@ -36,21 +36,15 @@ class TrusteesPartnershipDetailsNavigator @Inject()(val dataCacheConnector: User
     case PartnershipDetailsId(_) => AddTrusteeController.onPageLoad(mode, srn)
   }
 
-  private def checkUpdateModeRoute(mode: VarianceMode, ua: UserAnswers, srn: Option[String]): PartialFunction[Identifier, Call] = {
-    case _ => controllers.routes.SessionExpiredController.onPageLoad()
-  }
-
   override protected def routeMap(from: NavigateFrom): Option[NavigateTo] =
-    navigateOrSessionReset(normalAndCheckModeRoutes(NormalMode, from.userAnswers, None), from.id)
+    navigateTo(normalAndCheckModeRoutes(NormalMode, from.userAnswers, None), from.id)
 
   override protected def editRouteMap(from: NavigateFrom): Option[NavigateTo] =
-    navigateOrSessionReset(normalAndCheckModeRoutes(CheckMode, from.userAnswers, None), from.id)
+    navigateTo(normalAndCheckModeRoutes(CheckMode, from.userAnswers, None), from.id)
 
   override protected def updateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] =
-    navigateOrSessionReset(updateModeRoutes(UpdateMode, from.userAnswers, srn), from.id)
+    navigateTo(updateModeRoutes(UpdateMode, from.userAnswers, srn), from.id)
 
   override protected def checkUpdateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] =
-    navigateOrSessionReset(checkUpdateModeRoute(CheckUpdateMode, from.userAnswers, srn), from.id)
+    None
 }
-
-
