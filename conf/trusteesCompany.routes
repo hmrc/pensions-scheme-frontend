@@ -34,12 +34,12 @@ POST        /:index/company/change/employer-paye-number                         
 GET         /:index/company/:mode/employer-paye-number/:srn                              controllers.register.trustees.company.CompanyPayeController.onPageLoad(mode: Mode, index: Index, srn: Option[String])
 POST        /:index/company/:mode/employer-paye-number/:srn                              controllers.register.trustees.company.CompanyPayeController.onSubmit(mode: Mode, index: Index, srn: Option[String])
 
-GET         /:index/company/enter-employer-paye-reference                                controllers.register.trustees.company.CompanyPayeVariationsController.onPageLoad(mode: Mode = NormalMode, index: Index, srn: Option[String])
-POST        /:index/company/enter-employer-paye-reference                                controllers.register.trustees.company.CompanyPayeVariationsController.onSubmit(mode: Mode = NormalMode, index: Index, srn: Option[String])
-GET         /:index/company/change/enter-employer-paye-reference                         controllers.register.trustees.company.CompanyPayeVariationsController.onPageLoad(mode: Mode = CheckMode, index: Index, srn: Option[String])
-POST        /:index/company/change/enter-employer-paye-reference                         controllers.register.trustees.company.CompanyPayeVariationsController.onSubmit(mode: Mode = CheckMode, index: Index, srn: Option[String])
-GET         /:index/company/:mode/enter-employer-paye-reference/:srn                     controllers.register.trustees.company.CompanyPayeVariationsController.onPageLoad(mode: Mode, index: Index, srn: Option[String])
-POST        /:index/company/:mode/enter-employer-paye-reference/:srn                     controllers.register.trustees.company.CompanyPayeVariationsController.onSubmit(mode: Mode, index: Index, srn: Option[String])
+GET         /:index/company/company-employer-paye-reference                              controllers.register.trustees.company.CompanyPayeVariationsController.onPageLoad(mode: Mode = NormalMode, index: Index, srn: Option[String])
+POST        /:index/company/company-employer-paye-reference                              controllers.register.trustees.company.CompanyPayeVariationsController.onSubmit(mode: Mode = NormalMode, index: Index, srn: Option[String])
+GET         /:index/company/change/company-employer-paye-reference                       controllers.register.trustees.company.CompanyPayeVariationsController.onPageLoad(mode: Mode = CheckMode, index: Index, srn: Option[String])
+POST        /:index/company/change/company-employer-paye-reference                       controllers.register.trustees.company.CompanyPayeVariationsController.onSubmit(mode: Mode = CheckMode, index: Index, srn: Option[String])
+GET         /:index/company/:mode/company-employer-paye-reference/:srn                   controllers.register.trustees.company.CompanyPayeVariationsController.onPageLoad(mode: Mode, index: Index, srn: Option[String])
+POST        /:index/company/:mode/company-employer-paye-reference/:srn                   controllers.register.trustees.company.CompanyPayeVariationsController.onSubmit(mode: Mode, index: Index, srn: Option[String])
 
 GET         /:index/company/trustee-previous-address-manual                              controllers.register.trustees.company.CompanyPreviousAddressController.onPageLoad(mode: Mode = NormalMode, index: Index, srn: Option[String] = None)
 POST        /:index/company/trustee-previous-address-manual                              controllers.register.trustees.company.CompanyPreviousAddressController.onSubmit(mode: Mode = NormalMode, index: Index, srn: Option[String] = None)
