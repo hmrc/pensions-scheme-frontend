@@ -76,9 +76,9 @@ trait DataCompletion {
                               yesValueId: TypedIdentifier[ReferenceValue],
                               noReasonIdOpt: Option[TypedIdentifier[String]]): Option[Boolean] =
     (get(yesNoQuestionId), get(yesValueId), noReasonIdOpt) match {
-      case (None, _, _) => None
-      case (Some(true), Some(_), _) => Some(true)
-      case (Some(false), _, Some(noReasonId)) if get(noReasonId).isDefined => Some(true)
+      case (None, None, _) => None
+      case (_, Some(_), _) => Some(true)
+      case (_, _, Some(noReasonId)) if get(noReasonId).isDefined => Some(true)
       case (Some(false), _, None) => Some(true)
       case _ => Some(false)
     }
@@ -94,8 +94,8 @@ trait DataCompletion {
                     reasonId: TypedIdentifier[String]): Option[Boolean] =
     (get(hasUtrId), get(utrId), get(reasonId)) match {
       case (None, _, _) => None
-      case (Some(true), Some(_), _) => Some(true)
-      case (Some(false), _, Some(_)) => Some(true)
+      case (_, Some(_), _) => Some(true)
+      case (_, _, Some(_)) => Some(true)
       case _ => Some(false)
     }
 
@@ -210,12 +210,13 @@ trait DataCompletion {
 
   //TRUSTEE INDIVIDUAL
 
-  def isTrusteeIndividualDetailsComplete(trusteeIndex: Int): Option[Boolean] =
+  def isTrusteeIndividualDetailsComplete(trusteeIndex: Int): Option[Boolean] = {
     isComplete(Seq(
       isAnswerComplete(TrusteeDOBId(trusteeIndex)),
       isAnswerComplete(TrusteeHasNINOId(trusteeIndex), TrusteeNewNinoId(trusteeIndex), Some(TrusteeNoNINOReasonId(trusteeIndex))),
       isUtrComplete(TrusteeHasUTRId(trusteeIndex), TrusteeUTRId(trusteeIndex), TrusteeNoUTRReasonId(trusteeIndex))
     ))
+  }
 
   def isTrusteeIndividualAddressComplete(index: Int): Option[Boolean] =
     isAddressComplete(TrusteeAddressId(index), TrusteePreviousAddressId(index), TrusteeAddressYearsId(index), None)
