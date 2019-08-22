@@ -19,20 +19,22 @@ package views.register.trustees.company
 import models.{Index, NormalMode}
 import play.api.mvc.Call
 import play.twirl.api.HtmlFormat
+import viewmodels.Message
 import views.behaviours.ViewBehaviours
 import views.html.register.trustees.company.whatYouWillNeedCompanyAddress
 
 class WhatYouWillNeedCompanyAddressViewSpec extends ViewBehaviours {
 
   val messageKeyPrefix = "whatYouWillNeedAddress"
+  private val pageHeader = Message("page header")
 
   private def href: Call = controllers.register.establishers.company.routes.CompanyPostCodeLookupController.onPageLoad(NormalMode, None, index=Index(0))
 
-  def createView: () => HtmlFormat.Appendable = () => whatYouWillNeedCompanyAddress(frontendAppConfig, Some("testScheme"), href, None)(fakeRequest, messages)
+  def createView(): HtmlFormat.Appendable = whatYouWillNeedCompanyAddress(frontendAppConfig, Some("testScheme"), href, None, pageHeader)(fakeRequest, messages)
 
   "whatYouWillNeedCompanyAddress view" must {
 
-    behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__h1"))
+    behave like normalPage(createView, messageKeyPrefix, pageHeader)
 
     "display the correct paragraph" in {
       val doc = asDocument(createView())
