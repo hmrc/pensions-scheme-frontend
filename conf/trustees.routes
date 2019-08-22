@@ -1,10 +1,10 @@
 
-GET        /trustees                                                    controllers.register.trustees.AddTrusteeController.onPageLoad(mode: Mode = NormalMode, srn: Option[String] = None)
-POST       /trustees                                                    controllers.register.trustees.AddTrusteeController.onSubmit(mode: Mode = NormalMode, srn: Option[String] = None)
-GET        /change/trustees                                             controllers.register.trustees.AddTrusteeController.onPageLoad(mode: Mode = CheckMode, srn: Option[String] = None)
-POST       /change/trustees                                             controllers.register.trustees.AddTrusteeController.onSubmit(mode: Mode = CheckMode, srn: Option[String] = None)
-GET        /:mode/trustees/:srn                                         controllers.register.trustees.AddTrusteeController.onPageLoad(mode: Mode, srn: Option[String])
-POST       /:mode/trustees/:srn                                         controllers.register.trustees.AddTrusteeController.onSubmit(mode: Mode, srn: Option[String])
+GET        /scheme-trustees                                             controllers.register.trustees.AddTrusteeController.onPageLoad(mode: Mode = NormalMode, srn: Option[String] = None)
+POST       /scheme-trustees                                             controllers.register.trustees.AddTrusteeController.onSubmit(mode: Mode = NormalMode, srn: Option[String] = None)
+GET        /change/scheme-trustees                                      controllers.register.trustees.AddTrusteeController.onPageLoad(mode: Mode = CheckMode, srn: Option[String] = None)
+POST       /change/scheme-trustees                                      controllers.register.trustees.AddTrusteeController.onSubmit(mode: Mode = CheckMode, srn: Option[String] = None)
+GET        /:mode/scheme-trustees/:srn                                  controllers.register.trustees.AddTrusteeController.onPageLoad(mode: Mode, srn: Option[String])
+POST       /:mode/scheme-trustees/:srn                                  controllers.register.trustees.AddTrusteeController.onSubmit(mode: Mode, srn: Option[String])
 
 GET        /:index/company/trustee-confirm-delete                       controllers.register.trustees.ConfirmDeleteTrusteeController.onPageLoad(mode: Mode = NormalMode, index: Index, trusteeKind: TrusteeKind = TrusteeKind.Company, srn: Option[String] = None)
 POST       /:index/company/trustee-confirm-delete                       controllers.register.trustees.ConfirmDeleteTrusteeController.onSubmit(mode: Mode = NormalMode, index: Index, trusteeKind: TrusteeKind = TrusteeKind.Company, srn: Option[String] = None)
