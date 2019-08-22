@@ -124,7 +124,7 @@ class UTRControllerSpec extends WordSpec with MustMatchers with OptionValues wit
 
           status(result) mustEqual SEE_OTHER
           redirectLocation(result).value mustEqual "www.example.com"
-          FakeUserAnswersService.verify(FakeIdentifier, ReferenceValue("1234567890"))
+          FakeUserAnswersService.verify(FakeIdentifier, ReferenceValue("1234567890", isEditable = true))
       }
     }
 

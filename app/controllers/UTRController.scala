@@ -59,7 +59,7 @@ trait UTRController extends FrontendController with Retrievals with I18nSupport 
       (formWithErrors: Form[_]) =>
         Future.successful(BadRequest(utr(appConfig, formWithErrors, viewmodel, existingSchemeName))),
       utr => {
-        userAnswersService.save(mode, viewmodel.srn, id, utr).map(cacheMap =>
+        userAnswersService.save(mode, viewmodel.srn, id, utr.copy(isEditable = true)).map(cacheMap =>
           Redirect(navigator.nextPage(id, mode, UserAnswers(cacheMap), viewmodel.srn)))
       }
     )
