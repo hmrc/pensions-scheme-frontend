@@ -28,11 +28,12 @@ class WhatYouWillNeedCompanyDetailsViewSpec extends ViewBehaviours {
 
   private val href = controllers.register.establishers.company.routes.HasCompanyNumberController.onPageLoad(NormalMode, None, index=Index(0))
 
-  private def createView: () => HtmlFormat.Appendable = () => whatYouWillNeedCompanyDetails(frontendAppConfig, Some("testScheme"), href, None, companyName)(fakeRequest, messages)
+  private def createView: () => HtmlFormat.Appendable = () => whatYouWillNeedCompanyDetails(frontendAppConfig,
+    Some("testScheme"), href, None, companyName)(fakeRequest, messages)
 
   "WhatYouWillNeedCompanyDetails view" must {
 
-    behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__h1", companyName),
+    behave like normalPage(createView, messageKeyPrefix, messages("messages__companyDetailsFor", companyName),
       "_lede", "_item1", "_item2", "_item3", "_item4")
 
     behave like pageWithSubmitButton(createView)

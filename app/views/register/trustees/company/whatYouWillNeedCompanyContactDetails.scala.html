@@ -18,14 +18,14 @@
 @import uk.gov.hmrc.play.views.html._
 @import controllers.register.trustees.company.routes._
 
-@(appConfig: FrontendAppConfig, schemeName: Option[String], href: Call, srn:Option[String])(implicit request: Request[_], messages: Messages)
+@(appConfig: FrontendAppConfig, schemeName: Option[String], href: Call, srn:Option[String], companyName: String)(implicit request: Request[_], messages: Messages)
 
 @main_template(
     title = messages("messages__whatYouWillNeedEstablisherCompanyContact__title"),
     appConfig = appConfig,
     bodyClasses = None
 ) {
-    @components.heading(headingKey = messages("messages__whatYouWillNeedEstablisherCompanyContact__h1"))
+    @components.heading(headingKey = messages("messages__contactDetailsFor", companyName))
 
     <p>@messages("messages__whatYouWillNeedEstablisherCompanyContact__lede")</p>
 

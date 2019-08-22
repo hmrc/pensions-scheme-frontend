@@ -23,17 +23,19 @@ import views.html.register.establishers.company.director.whatYouWillNeed
 
 class WhatYouWillNeedViewSpec extends ViewBehaviours {
 
-  val messageKeyPrefix = "whatYouWillNeedDirectors"
+  private val messageKeyPrefix = "whatYouWillNeedDirectors"
 
-  val postCall = controllers.register.establishers.company.director.routes.WhatYouWillNeedDirectorController.onSubmit(NormalMode, None, Index(0))
+  private val companyName = "test company name"
 
-  def createView: () => HtmlFormat.Appendable = () => whatYouWillNeed(frontendAppConfig, Some("testScheme"), postCall, None)(fakeRequest, messages)
+  private val postCall = controllers.register.establishers.company.director.routes.WhatYouWillNeedDirectorController.onSubmit(NormalMode, None, Index(0))
 
-  val messageKeys = (1 to 8).map(num => s"_item$num").toList
+  private def createView: () => HtmlFormat.Appendable = () => whatYouWillNeed(frontendAppConfig, Some("testScheme"), postCall, None, companyName)(fakeRequest, messages)
+
+  private val messageKeys = (1 to 8).map(num => s"_item$num").toList
 
   "WhatYouWillNeedCompanyDetails view" must {
 
-    behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__h1"), messageKeys:_*)
+    behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__h1", companyName), messageKeys:_*)
 
     behave like pageWithSubmitButton(createView)
 
