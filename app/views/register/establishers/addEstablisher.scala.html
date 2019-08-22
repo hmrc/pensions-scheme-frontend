@@ -30,7 +30,7 @@
     schemeName: Option[String],
     srn: Option[String],
     enableSubmission:Boolean,
-    displayStatus: Boolean = true
+    isHnsEnabled: Boolean
 )(implicit request: Request[_], messages: Messages)
 
 @main_template(
@@ -48,6 +48,8 @@
 
             <p>@messages("messages__establishers__add_hint")</p>
 
+            @components.submit_button("site.continue", enableSubmission)
+
         } else {
 
             @components.error_summary(form.errors)
@@ -56,17 +58,23 @@
                 headingKey=messages("messages__establishers__add__title")
             )
 
-            @components.entity_list(establishers, mode = mode, srn = srn, displayStatus = displayStatus)
+
+            @if(isHnsEnabled) {
+                @components.add_entity_list(establishers, mode, srn, "messages__establishers__add_header")
+            } else {
+                @components.entity_list(establishers, mode = mode, srn = srn, displayStatus = !isHnsEnabled)
+            }
 
             @components.input_yes_no(
                 field = form("value"),
                 label = messages("messages__establishers__add_legend_more"),
-                labelClass = Some("bold-small"),
-                hint = Some(messages("messages__establishers__add_hint"))
+                legendClass = Some("heading-medium"),
+                hint = None
             )
-        }
 
-        @components.submit_button("messages__common__continue", enableSubmission)
+
+            @components.submit_button("site.save_and_continue", enableSubmission)
+        }
 
         @components.return_link("messages__schemeTaskList__returnlink", schemeName, None, srn)
     }

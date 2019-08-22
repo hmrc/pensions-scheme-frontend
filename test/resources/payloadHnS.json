@@ -295,11 +295,7 @@
         "value": "1234567890",
         "isEditable": true
       },
-      "hasVat": true,
-      "companyVat": {
-        "value": "123456789",
-        "isEditable": true
-      },
+      "hasVat": false,
       "hasPaye": true,
       "companyPaye": {
         "value": "123456",

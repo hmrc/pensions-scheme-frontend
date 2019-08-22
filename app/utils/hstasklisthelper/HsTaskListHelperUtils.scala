@@ -125,12 +125,12 @@ trait HsTaskListHelperUtils extends Enumerable.Implicits {
 
   private def getAddLinkText(spokeName: Spoke): String => String = spokeName match {
     case EstablisherCompanyDetails | TrusteeCompanyDetails => messages("messages__schemeTaskList__sectionEstablishersCompany_add_details", _)
-    case EstablisherCompanyAddress | TrusteeCompanyAddress => messages("messages__schemeTaskList__sectionIndividual_add_address", _)
-    case EstablisherCompanyContactDetails | TrusteeCompanyContactDetails => messages("messages__schemeTaskList__sectionIndividual_add_contact", _)
+    case EstablisherCompanyAddress | TrusteeCompanyAddress => messages("messages__schemeTaskList__add_address", _)
+    case EstablisherCompanyContactDetails | TrusteeCompanyContactDetails => messages("messages__schemeTaskList__add_contact", _)
     case EstablisherCompanyDirectors => messages("messages__schemeTaskList__sectionEstablishersCompany_add_directors", _)
     case TrusteeIndividualDetails => messages("messages__schemeTaskList__sectionIndividual_add_details",  _)
-    case TrusteeIndividualAddress => messages("messages__schemeTaskList__sectionIndividual_add_address",  _)
-    case TrusteeIndividualContactDetails => messages("messages__schemeTaskList__sectionIndividual_add_contact", _)
+    case TrusteeIndividualAddress => messages("messages__schemeTaskList__add_address",  _)
+    case TrusteeIndividualContactDetails => messages("messages__schemeTaskList__add_contact", _)
     case TrusteePartnershipDetails => messages("messages__schemeTaskList__sectionPartnership_add_details",  _)
     case TrusteePartnershipAddress => messages("messages__schemeTaskList__sectionPartnership_add_address",  _)
     case TrusteePartnershipContactDetails => messages("messages__schemeTaskList__sectionPartnership_add_contact",  _)
