@@ -57,6 +57,9 @@ messages__common__selectPreviousAddress__h1 = What was {0}’s previous address?
 messages__common__partnership_selectPreviousAddress__title = What was the partnership’s previous address?
 messages__common__partnership_confirmPreviousAddress__title = Confirm the partnership’s previous address
 messages__common__partnership__selectAddress__h1 = What is {0}’s address?
+messages__common__entityKind_company = Company
+messages__common__entityKind_individual = Individual
+messages__common__entityKind_partnership = Partnership
 
 messages__common__postcode_lookup__enter_postcode = You can {0} enter the address manually {1}.
 messages__common__postcode_lookup__manual_link = You can {0} enter the address manually {1}.
@@ -147,7 +150,8 @@ site.back = Back
 site.continue = Continue
 site.complete = Completed
 site.incomplete = In progress
-site.delete = Remove
+site.remove = Remove
+site.delete = Delete
 site.edit = Edit
 site.change = Change
 site.add = Add
@@ -169,6 +173,7 @@ site.signOut = Sign out
 site.printThisPage = Print this page
 site.saveOrPrint = Save or print
 site.return_to = Return to {0}
+site.type = Type
 
 messages__unauthorised__title = You can’t access this service with this account
 
@@ -332,6 +337,7 @@ messages__establishers__add__title = Establishers
 messages__establishers__add_legend_more = Do you want to add another establisher?
 messages__establishers__add_hint = You must tell us about all your scheme establishers.
 messages__establishers__add_limit = You have added the maximum number of establishers
+messages__establishers__add_header = Establisher name
 
 messages__establisher_individual__title = Establisher details
 messages__error__first_name_length = The first name cannot be more than 35 characters
@@ -656,6 +662,7 @@ messages__addTrustee__title = Trustees
 messages__addTrustee__heading = Trustees
 messages__addTrustee__lede = You must tell us about all your trustees. You can add up to 10 using the digital service.
 messages__addTrustee__text = Do you want to add another trustee?
+messages__addTrustee__header = Trustee name
 messages__addTrustees_at_maximum = You have added the maximum number of trustees.
 messages__addTrustees_tell_us_if_you_have_more = You can tell us on the next page if you have more to add.
 

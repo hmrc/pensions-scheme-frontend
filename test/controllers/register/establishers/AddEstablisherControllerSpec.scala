@@ -44,7 +44,7 @@ class AddEstablisherControllerSpec extends ControllerSpecBase {
       val getRelevantData = establisherWithDeletedDataRetrieval
       val result = controller(getRelevantData, toggle = true).onPageLoad(NormalMode, None)(fakeRequest)
 
-      contentAsString(result) mustBe viewAsString(form, establishersAsEntities, enableSubmission = true, displayStatus = false)
+      contentAsString(result) mustBe viewAsString(form, establishersAsEntities, enableSubmission = true, isHnSEnabled = true)
     }
   }
 
@@ -146,7 +146,8 @@ object AddEstablisherControllerSpec extends AddEstablisherControllerSpec {
       new FakeFeatureSwitchManagementService(toggle)
     )
 
-  private def viewAsString(form: Form[_] = form, allEstablishers: Seq[Establisher[_]] = Seq.empty, enableSubmission:Boolean = false, displayStatus: Boolean = true): String =
+  private def viewAsString(form: Form[_] = form, allEstablishers: Seq[Establisher[_]] = Seq.empty, enableSubmission:Boolean = false,
+                           isHnSEnabled: Boolean = false): String =
     addEstablisher(
       frontendAppConfig,
       form,
@@ -155,7 +156,7 @@ object AddEstablisherControllerSpec extends AddEstablisherControllerSpec {
       None,
       None,
       enableSubmission,
-      displayStatus
+      isHnSEnabled
     )(fakeRequest, messages).toString
 
   private val day = LocalDate.now().getDayOfMonth
