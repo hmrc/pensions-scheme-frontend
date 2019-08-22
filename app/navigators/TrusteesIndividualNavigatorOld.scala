@@ -65,9 +65,7 @@ class TrusteesIndividualNavigatorOld @Inject()(val dataCacheConnector: UserAnswe
     if (mode == CheckMode || mode == NormalMode) {
       checkYourAnswers(index, journeyMode(mode), srn)
     } else {
-      if (answers.get(IsTrusteeNewId(index)).getOrElse(false))
-        checkYourAnswers(index, journeyMode(mode), srn)
-      else anyMoreChanges(srn)
+      if (answers.get(IsTrusteeNewId(index)).getOrElse(false)) checkYourAnswers(index, journeyMode(mode), srn) else anyMoreChanges(srn)
     }
 
   private def anyMoreChanges(srn: Option[String]): Option[NavigateTo] =
