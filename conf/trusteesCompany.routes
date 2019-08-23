@@ -48,12 +48,12 @@ POST        /:index/company/change/trustee-previous-address-manual              
 GET         /:index/company/:mode/trustee-previous-address-manual/:srn                   controllers.register.trustees.company.CompanyPreviousAddressController.onPageLoad(mode: Mode, index: Index, srn: Option[String])
 POST        /:index/company/:mode/trustee-previous-address-manual/:srn                   controllers.register.trustees.company.CompanyPreviousAddressController.onSubmit(mode: Mode, index: Index, srn: Option[String])
 
-GET         /:index/company/trustee-address-manual                                       controllers.register.trustees.company.CompanyAddressController.onPageLoad(mode: Mode = NormalMode, index: Index, srn: Option[String] = None)
-POST        /:index/company/trustee-address-manual                                       controllers.register.trustees.company.CompanyAddressController.onSubmit(mode: Mode = NormalMode, index: Index, srn: Option[String] = None)
-GET         /:index/company/change/trustee-address-manual                                controllers.register.trustees.company.CompanyAddressController.onPageLoad(mode: Mode = CheckMode, index: Index, srn: Option[String] = None)
-POST        /:index/company/change/trustee-address-manual                                controllers.register.trustees.company.CompanyAddressController.onSubmit(mode: Mode = CheckMode, index: Index, srn: Option[String] = None)
-GET         /:index/company/:mode/trustee-address-manual/:srn                            controllers.register.trustees.company.CompanyAddressController.onPageLoad(mode: Mode, index: Index, srn: Option[String])
-POST        /:index/company/:mode/trustee-address-manual/:srn                            controllers.register.trustees.company.CompanyAddressController.onSubmit(mode: Mode, index: Index, srn: Option[String])
+GET         /:index/company/confirm-company-address                                      controllers.register.trustees.company.CompanyAddressController.onPageLoad(mode: Mode = NormalMode, index: Index, srn: Option[String] = None)
+POST        /:index/company/confirm-company-address                                      controllers.register.trustees.company.CompanyAddressController.onSubmit(mode: Mode = NormalMode, index: Index, srn: Option[String] = None)
+GET         /:index/company/change/confirm-company-address                               controllers.register.trustees.company.CompanyAddressController.onPageLoad(mode: Mode = CheckMode, index: Index, srn: Option[String] = None)
+POST        /:index/company/change/confirm-company-address                               controllers.register.trustees.company.CompanyAddressController.onSubmit(mode: Mode = CheckMode, index: Index, srn: Option[String] = None)
+GET         /:index/company/:mode/confirm-company-address/:srn                           controllers.register.trustees.company.CompanyAddressController.onPageLoad(mode: Mode, index: Index, srn: Option[String])
+POST        /:index/company/:mode/confirm-company-address/:srn                           controllers.register.trustees.company.CompanyAddressController.onSubmit(mode: Mode, index: Index, srn: Option[String])
 
 GET         /:index/company/update/is-this-previous-address/:srn                         controllers.register.trustees.company.CompanyConfirmPreviousAddressController.onPageLoad(mode: Mode = CheckUpdateMode, index:Index, srn: Option[String])
 POST        /:index/company/update/is-this-previous-address/:srn                         controllers.register.trustees.company.CompanyConfirmPreviousAddressController.onSubmit(mode: Mode = CheckUpdateMode, index:Index, srn: Option[String])
