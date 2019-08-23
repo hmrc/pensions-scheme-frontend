@@ -19,6 +19,7 @@ package controllers.register.establishers.company.director
 import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions._
+import identifiers.register.establishers.company.CompanyDetailsId
 import javax.inject.Inject
 import models.{Index, Mode}
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -40,7 +41,9 @@ class WhatYouWillNeedDirectorController @Inject()(appConfig: FrontendAppConfig,
     getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
     implicit request =>
       val postCall = routes.WhatYouWillNeedDirectorController.onSubmit(mode, srn, establisherIndex)
-      Future.successful(Ok(whatYouWillNeed(appConfig, existingSchemeName, postCall, srn)))
+      CompanyDetailsId(establisherIndex).retrieve.right.map { companyDetails =>
+        Future.successful(Ok(whatYouWillNeed(appConfig, existingSchemeName, postCall, srn,companyDetails.companyName)))
+      }
 
   }
 

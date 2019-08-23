@@ -1546,7 +1546,7 @@ uKBankDetails.hns_checkYourAnswersLabel = What are {0}’s bank account details?
 messages__visuallyhidden__hns_uKBankDetails = Change {0}’s bank account details
 
 messages__whatYouWillNeedEstablisherCompany__title = Company details
-messages__whatYouWillNeedEstablisherCompany__h1 = Company details for {0}
+messages__companyDetailsFor = Company details for {0}
 messages__whatYouWillNeedEstablisherCompany__lede = You will need to tell us the company’s:
 messages__whatYouWillNeedEstablisherCompany__item1 = company number, or reason why it does not have one
 messages__whatYouWillNeedEstablisherCompany__item2 = Unique Taxpayer Reference (UTR), or reason why it does not have one
@@ -1554,7 +1554,6 @@ messages__whatYouWillNeedEstablisherCompany__item3 = VAT registration number, if
 messages__whatYouWillNeedEstablisherCompany__item4 = employer PAYE number, if it has one
 
 messages__whatYouWillNeedAddress__title = Address
-messages__whatYouWillNeedAddress__h1 = Address for {0}
 messages__addressFor = Address for {0}
 
 messages__whatYouWillNeedEstablisherCompanyAddress__lede = You will need to tell us the company’s:
@@ -1584,7 +1583,7 @@ messages__whatYouWillNeedTrusteeIndividualContact__item1 = contact email address
 messages__whatYouWillNeedTrusteeIndividualContact__item2 = contact phone number
 
 messages__whatYouWillNeedDirectors__title = Directors
-messages__whatYouWillNeedDirectors__h1 = Directors
+messages__whatYouWillNeedDirectors__h1 = Directors for {0}
 messages__whatYouWillNeedDirectors__p1 = We need to know about every director associated with the company you’re registering.
 messages__whatYouWillNeedDirectors__p2 = You will need to tell us each director’s:
 messages__whatYouWillNeedDirectors__item1 = name

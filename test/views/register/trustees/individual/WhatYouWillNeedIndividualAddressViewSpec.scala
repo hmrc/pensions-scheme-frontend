@@ -29,11 +29,12 @@ class WhatYouWillNeedIndividualAddressViewSpec extends ViewBehaviours {
 
   private def href: Call = controllers.register.trustees.individual.routes.IndividualPostCodeLookupController.onPageLoad(NormalMode, index = 0, None)
 
-  def createView: () => HtmlFormat.Appendable = () => whatYouWillNeedIndividualAddress(frontendAppConfig, Some("testScheme"), href, None, testUser)(fakeRequest, messages)
+  def createView: () => HtmlFormat.Appendable = () => whatYouWillNeedIndividualAddress(frontendAppConfig,
+    Some("testScheme"), href, None, testUser)(fakeRequest, messages)
 
   "whatYouWillNeedCompanyAddress view" must {
 
-    behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__h1", testUser))
+    behave like normalPage(createView, messageKeyPrefix, messages("messages__addressFor", testUser))
 
     "display the correct p1" in {
       val doc = asDocument(createView())
