@@ -207,6 +207,13 @@ abstract class HsTaskListHelper(answers: UserAnswers,
               Some(section.name))
             )
 
+          case TrusteePartnershipDetailsId(_) if isHnSEnabled => // Trustee partnership
+            Some(SchemeDetailsTaskListEntitySection(
+              None,
+              getTrusteePartnershipSpokes(userAnswers, mode, srn, section.name, section.index),
+              Some(section.name))
+            )
+
           case _ if mode == NormalMode =>
             Some(SchemeDetailsTaskListEntitySection(
               Some(section.isCompleted),

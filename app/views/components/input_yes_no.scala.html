@@ -22,14 +22,15 @@
         hint: Option[String] = None,
         yesAssoc: Option[String] = None,
         noAssoc: Option[String] = None,
-        labelClass: Option[String] = None
+        labelClass: Option[String] = None,
+        legendClass: Option[String] = None
 )(implicit messages: Messages)
 
 
 <div class="form-group @if(field.hasErrors){form-field--error}">
     <fieldset class="@fieldsetClass" id="@{field.id}">
 
-        <legend>
+        <legend @if(legendClass.nonEmpty){class="@legendClass"}>
             <span @if(labelClass.nonEmpty){class="@labelClass"}>@label</span>
             @if(hint.nonEmpty){
                 <span class="form-hint">@hint</span>

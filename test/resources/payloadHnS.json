@@ -283,11 +283,7 @@
       },
       "hasUtr": true,
       "utr": "1234567890",
-      "hasVat": true,
-      "companyVat": {
-        "value": "123456789",
-        "isEditable": true
-      },
+      "hasVat": false,
       "hasPaye": true,
       "companyPaye": {
         "value": "123456",

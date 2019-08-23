@@ -19,6 +19,7 @@ package controllers.register.trustees.company
 import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions._
+import identifiers.register.trustees.company.CompanyDetailsId
 import javax.inject.Inject
 import models.{CompanyDetails, Index, Mode}
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -40,7 +41,7 @@ class WhatYouWillNeedCompanyContactDetailsController @Inject()(appConfig: Fronte
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
-        identifiers.register.trustees.company.CompanyDetailsId(index).retrieve.right.map {
+        CompanyDetailsId(index).retrieve.right.map {
           case CompanyDetails(companyName, _) =>
             val pageHeader  = Message("messages__whatYouWillNeedEstablisherCompanyContact__h1", companyName)
             val href = controllers.register.trustees.company.routes.CompanyEmailController.onSubmit(mode, index, srn)

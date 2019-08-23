@@ -138,6 +138,7 @@ GET         /:establisherIndex/company/change/other-directors                   
 POST        /:establisherIndex/company/change/other-directors                            controllers.register.establishers.company.OtherDirectorsController.onSubmit(mode:Mode=CheckMode, srn: Option[String] = None, establisherIndex:Index)
 GET         /:establisherIndex/company/:mode/other-directors/:srn                        controllers.register.establishers.company.OtherDirectorsController.onPageLoad(mode:Mode, srn: Option[String], establisherIndex:Index)
 POST        /:establisherIndex/company/:mode/other-directors/:srn                        controllers.register.establishers.company.OtherDirectorsController.onSubmit(mode:Mode, srn: Option[String], establisherIndex:Index)
+
 GET         /:index/company/directors                                                    controllers.register.establishers.company.AddCompanyDirectorsController.onPageLoad(mode: Mode = NormalMode, srn: Option[String] = None, index: Index)
 POST        /:index/company/directors                                                    controllers.register.establishers.company.AddCompanyDirectorsController.onSubmit(mode: Mode = NormalMode, srn: Option[String] = None, index: Index)
 GET         /:index/company/change/directors                                             controllers.register.establishers.company.AddCompanyDirectorsController.onPageLoad(mode: Mode = CheckMode, srn: Option[String] = None, index: Index)

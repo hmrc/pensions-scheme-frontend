@@ -19,7 +19,9 @@ package utils
 import base.JsonFileReader
 import helpers.DataCompletionHelper
 import identifiers.register.establishers.company._
+import identifiers.register.trustees.{company => tc}
 import identifiers.register.establishers.company.director.{DirectorHasNINOId, DirectorNewNinoId, DirectorNoNINOReasonId}
+import identifiers.register.trustees.individual.{TrusteeHasNINOId, TrusteeNewNinoId, TrusteeNoNINOReasonId}
 import models.NormalMode
 import org.scalatest.{MustMatchers, OptionValues, WordSpec}
 import play.api.libs.json.JsValue
@@ -102,9 +104,19 @@ class DataCompletionSpec extends WordSpec with MustMatchers with OptionValues wi
         DirectorNewNinoId(0, 0), Some(DirectorNoNINOReasonId(0, 0))) mustBe None
     }
 
-    "return Some(true) when answer is present" in {
+    "return Some(true) when answer for yes value is present" in {
       UserAnswers(userAnswersCompleted).isAnswerComplete(DirectorHasNINOId(0, 0),
         DirectorNewNinoId(0, 0), Some(DirectorNoNINOReasonId(0, 0))) mustBe Some(true)
+    }
+
+    "return Some(true) when answer for no - reason is present" in {
+      UserAnswers(userAnswersCompleted).isAnswerComplete(TrusteeHasNINOId(1),
+        TrusteeNewNinoId(1), Some(TrusteeNoNINOReasonId(1))) mustBe Some(true)
+    }
+
+    "return Some(true) when has value is false and reason is not needed" in {
+      UserAnswers(userAnswersCompleted).isAnswerComplete(tc.HasCompanyVATId(0),
+        tc.CompanyVatVariationsId(0), None) mustBe Some(true)
     }
 
     "return Some(false) when answer is missing" in {

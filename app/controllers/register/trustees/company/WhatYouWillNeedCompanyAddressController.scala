@@ -19,6 +19,7 @@ package controllers.register.trustees.company
 import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions._
+import identifiers.register.trustees.company.CompanyDetailsId
 import javax.inject.Inject
 import models.{CompanyDetails, Index, Mode}
 import play.api.i18n.{I18nSupport, MessagesApi}

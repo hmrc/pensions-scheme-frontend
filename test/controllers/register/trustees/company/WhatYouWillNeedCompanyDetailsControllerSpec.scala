@@ -21,7 +21,6 @@ import controllers.actions._
 import models.{Index, NormalMode}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.mockito.MockitoSugar
-import play.api.mvc.Call
 import play.api.test.Helpers._
 import viewmodels.Message
 import views.html.register.trustees.company.whatYouWillNeedCompanyDetails

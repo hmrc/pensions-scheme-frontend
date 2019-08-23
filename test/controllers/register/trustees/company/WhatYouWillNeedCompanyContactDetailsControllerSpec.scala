@@ -41,7 +41,7 @@ class WhatYouWillNeedCompanyContactDetailsControllerSpec extends ControllerSpecB
 
   lazy val href = controllers.register.trustees.company.routes.CompanyEmailController.onPageLoad(NormalMode, Index(0), None)
 
-  def viewAsString(): String = whatYouWillNeedCompanyContactDetails(frontendAppConfig, None, href, None, Message("messages__whatYouWillNeedEstablisherCompanyContact__h1"))(fakeRequest, messages).toString
+  def viewAsString(): String = whatYouWillNeedCompanyContactDetails(frontendAppConfig, None, href, None, Message("messages__whatYouWillNeedEstablisherCompanyContact__h1", "test company name"))(fakeRequest, messages).toString
 
   "WhatYouWillNeedCompanyContactDetailsController" when {
 
