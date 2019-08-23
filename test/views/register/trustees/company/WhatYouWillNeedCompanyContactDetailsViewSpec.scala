@@ -18,20 +18,23 @@ package views.register.trustees.company
 
 import models.{Index, NormalMode}
 import play.twirl.api.HtmlFormat
+import viewmodels.Message
 import views.behaviours.ViewBehaviours
 import views.html.register.trustees.company.whatYouWillNeedCompanyContactDetails
 
 class WhatYouWillNeedCompanyContactDetailsViewSpec extends ViewBehaviours {
 
   val messageKeyPrefix = "whatYouWillNeedEstablisherCompanyContact"
+  private val pageHeader = Message("page header")
+
 
   val href = controllers.register.trustees.company.routes.CompanyEmailController.onPageLoad(NormalMode, Index(0), None)
 
-  def createView: () => HtmlFormat.Appendable = () => whatYouWillNeedCompanyContactDetails(frontendAppConfig, Some("testScheme"), href, None)(fakeRequest, messages)
+  def createView(): HtmlFormat.Appendable = whatYouWillNeedCompanyContactDetails(frontendAppConfig, Some("testScheme"), href, None, pageHeader)(fakeRequest, messages)
 
   "whatYouWillNeedCompanyContactDetails view" must {
 
-    behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__h1"),
+    behave like normalPage(createView, messageKeyPrefix, pageHeader,
       "_lede", "_item1", "_item2")
 
     behave like pageWithSubmitButton(createView)
