@@ -38,7 +38,7 @@ class WhatYouWillNeedCompanyAddressControllerSpec extends ControllerSpecBase wit
 
   lazy val href = controllers.register.trustees.company.routes.CompanyPostCodeLookupController.onSubmit(NormalMode, index=Index(0), None)
 
-  def viewAsString(): String = whatYouWillNeedCompanyAddress(frontendAppConfig, None, href, None, Message("messages__whatYouWillNeedAddress__h1", "test company name"))(fakeRequest, messages).toString
+  def viewAsString(): String = whatYouWillNeedCompanyAddress(frontendAppConfig, None, href, None, Message("messages__addressFor", "test company name"))(fakeRequest, messages).toString
 
   "WhatYouWillNeedCompanyAddressController" when {
 

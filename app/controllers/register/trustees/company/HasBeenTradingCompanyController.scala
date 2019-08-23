@@ -46,7 +46,7 @@ class HasBeenTradingCompanyController @Inject()(override val appConfig: Frontend
   private def viewModel(mode: Mode, index: Index, srn: Option[String], companyName: String): CommonFormWithHintViewModel =
     CommonFormWithHintViewModel(
       postCall = controllers.register.trustees.company.routes.HasBeenTradingCompanyController.onSubmit(mode, index, srn),
-      title = Message("messages__hasBeenTradingCompany__title"),
+      title = Message("messages__trustee_company_trading-time__title"),
       heading = Message("messages__hasBeenTradingCompany__h1", companyName),
       hint = None,
       srn = srn

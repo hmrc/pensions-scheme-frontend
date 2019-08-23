@@ -44,7 +44,7 @@ class HasBeenTradingCompanyControllerSpec extends ControllerSpecBase {
 
   val viewModel = CommonFormWithHintViewModel(
     controllers.register.trustees.company.routes.HasBeenTradingCompanyController.onSubmit(NormalMode, index, srn),
-    title = Message("messages__hasBeenTradingCompany__title"),
+    title = Message("messages__trustee_company_trading-time__title"),
     heading = Message("messages__hasBeenTradingCompany__h1", "test company name"),
     hint = None
   )
