@@ -18,12 +18,16 @@ package forms
 
 import forms.mappings.UtrMapping
 import javax.inject.Inject
+import models.ReferenceValue
 import play.api.data.Form
+import play.api.data.Forms._
 
 class UTRFormProvider @Inject() extends UtrMapping {
 
-  def apply(): Form[String] =
+  def apply(): Form[ReferenceValue] =
     Form(
-      "utr" -> utrStringMapping()
+      mapping(
+        "utr" -> utrMapping()
+      )(ReferenceValue.applyEditable)(ReferenceValue.unapplyEditable)
     )
 }

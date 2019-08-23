@@ -46,7 +46,10 @@
         "isDeleted": false
       },
       "hasUtr": true,
-      "utr": "123123",
+      "utr": {
+        "value": "123123",
+        "isEditable": true
+      },
       "hasNino": true,
       "trusteeNino": {
         "value": "CS121212C",
@@ -88,7 +91,10 @@
         "isEditable": true
       },
       "hasUtr": true,
-      "utr": "1234567890",
+      "utr": {
+        "value": "1234567890",
+        "isEditable": true
+      },
       "hasVat": true,
       "companyVat": {
         "value": "123456789",
@@ -141,7 +147,10 @@
             "isEditable": true
           },
           "hasUtr": true,
-          "utr": "1234567890",
+          "utr": {
+            "value": "1234567890",
+            "isEditable": true
+          },
           "directorAddressId": {
             "addressLine1": "Flat 1",
             "addressLine2": "7 Other Place",
@@ -282,7 +291,10 @@
         "isEditable": true
       },
       "hasUtr": true,
-      "utr": "1234567890",
+      "utr": {
+        "value": "1234567890",
+        "isEditable": true
+      },
       "hasVat": false,
       "hasPaye": true,
       "companyPaye": {

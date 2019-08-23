@@ -22,13 +22,12 @@ import controllers.actions._
 import forms.UTRFormProvider
 import identifiers.register.trustees.company.{CompanyDetailsId, CompanyUTRId}
 import javax.inject.Inject
-import models.{Index, Mode}
+import models.{Index, Mode, ReferenceValue}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
-import utils.annotations.TrusteesCompany
 import viewmodels.{Message, UTRViewModel}
 
 import scala.concurrent.ExecutionContext
@@ -44,7 +43,7 @@ class CompanyUTRController @Inject()(override val appConfig: FrontendAppConfig,
                                      formProvider: UTRFormProvider
                                     )(implicit val ec: ExecutionContext) extends UTRController {
 
-  private def form: Form[String] = formProvider()
+  private def form: Form[ReferenceValue] = formProvider()
 
   private def viewModel(mode: Mode, index: Index, srn: Option[String], companyName: String): UTRViewModel = {
     UTRViewModel(

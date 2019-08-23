@@ -60,9 +60,9 @@ trait UtrMapping extends Mappings with Transforms {
       transform(toUniqueTaxReference, fromUniqueTaxReference)
   }
 
-  def utrStringMapping(requiredKey: String = "messages__utr__error_required",
-                       maxLengthKey: String = "messages__utr__error_maxLength",
-                       invalidKey: String = "messages__utr__error_invalid"
+  def utrMapping(requiredKey: String = "messages__utr__error_required",
+                 maxLengthKey: String = "messages__utr__error_maxLength",
+                 invalidKey: String = "messages__utr__error_invalid"
                       ): Mapping[String] = text(requiredKey)
     .transform(standardTextTransform, noTransform)
     .verifying(firstError(exactLength(utrMaxLength, maxLengthKey),

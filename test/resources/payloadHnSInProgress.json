@@ -51,7 +51,10 @@
           "dateOfBirth" : "2002-01-01",
           "hasNino" : true,
           "hasUtr" : true,
-          "utr" : "1234567890",
+          "utr": {
+            "value": "1234567890",
+            "isEditable": true
+          },
           "directorAddressId" : {
             "addressLine1" : "Flat 1",
             "addressLine2" : "7 Other Place",

@@ -59,14 +59,15 @@ class TrusteesIndividualDetailsNavigator @Inject()(val dataCacheConnector: UserA
   }
 
   private def checkUpdateModeRoute(mode: CheckUpdateMode.type, ua: UserAnswers, srn: Option[String]): PartialFunction[Identifier, Call] = {
-    case TrusteeDOBId(index) if ua.get(IsTrusteeNewId(index)).getOrElse(false)            => cyaIndividualDetailsPage(mode, index, srn)
+    case TrusteeDOBId(index)            => cyaIndividualDetailsPage(mode, index, srn)
     case TrusteeNewNinoId(index) if ua.get(IsTrusteeNewId(index)).getOrElse(false)        => cyaIndividualDetailsPage(mode, index, srn)
-    case TrusteeNewNinoId(index) if !ua.get(IsTrusteeNewId(index)).getOrElse(false)       => anyMoreChangesPage(srn)
-    case TrusteeNoNINOReasonId(index) if ua.get(IsTrusteeNewId(index)).getOrElse(false)   => cyaIndividualDetailsPage(mode, index, srn)
-    case id@TrusteeHasNINOId(index) if ua.get(IsTrusteeNewId(index)).getOrElse(false)     => booleanNav(id, ua, ninoPage(mode, index, srn), noNinoReasonPage(mode, index, srn))
-    case id@TrusteeHasUTRId(index) if ua.get(IsTrusteeNewId(index)).getOrElse(false)      => booleanNav(id, ua, utrPage(mode, index, srn), noUtrReasonPage(mode, index, srn))
-    case TrusteeNoUTRReasonId(index) if ua.get(IsTrusteeNewId(index)).getOrElse(false)    => cyaIndividualDetailsPage(mode, index, srn)
+    case TrusteeNewNinoId(index)        => anyMoreChangesPage(srn)
+    case TrusteeNoNINOReasonId(index)   => cyaIndividualDetailsPage(mode, index, srn)
+    case id@TrusteeHasNINOId(index)     => booleanNav(id, ua, ninoPage(mode, index, srn), noNinoReasonPage(mode, index, srn))
+    case id@TrusteeHasUTRId(index)      => booleanNav(id, ua, utrPage(mode, index, srn), noUtrReasonPage(mode, index, srn))
+    case TrusteeNoUTRReasonId(index)    => cyaIndividualDetailsPage(mode, index, srn)
     case TrusteeUTRId(index) if ua.get(IsTrusteeNewId(index)).getOrElse(false)            => cyaIndividualDetailsPage(mode, index, srn)
+    case TrusteeUTRId(index)            => anyMoreChangesPage(srn)
   }
 
   override protected def routeMap(from: NavigateFrom): Option[NavigateTo] =

@@ -17,6 +17,7 @@
 package forms
 
 import forms.behaviours.UtrBehaviour
+import models.ReferenceValue
 import play.api.data.Form
 
 class UTRFormProviderSpec extends UtrBehaviour {
@@ -25,10 +26,14 @@ class UTRFormProviderSpec extends UtrBehaviour {
   private val maxLengthKey = "messages__utr__error_maxLength"
   private val invalidKey = "messages__utr__error_invalid"
 
-  "A form with a Vat" should {
+  private val fieldName: String = "utr"
+
+  "A form with a Utr" should {
     val testForm = new UTRFormProvider().apply()
 
-    behave like formWithUtrString(testForm: Form[String],
+    behave like formWithUniqueTaxReference[ReferenceValue](
+      testForm: Form[ReferenceValue],
+      fieldName = fieldName,
       requiredKey: String,
       maxLengthKey: String,
       invalidKey: String

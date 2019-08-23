@@ -21,15 +21,14 @@ import identifiers.register.establishers.EstablishersId
 import models.ReferenceValue
 import play.api.i18n.Messages
 import play.api.libs.json.{JsPath, JsResult}
+import utils.checkyouranswers.{CheckYourAnswers, ReferenceValueCYA}
 import utils.{CountryOptions, UserAnswers}
-import utils.checkyouranswers.CheckYourAnswers
-import utils.checkyouranswers.CheckYourAnswers.StringCYA
 import viewmodels.AnswerRow
 
-case class DirectorUTRId(establisherIndex: Int, directorIndex: Int) extends TypedIdentifier[String] {
+case class DirectorUTRId(establisherIndex: Int, directorIndex: Int) extends TypedIdentifier[ReferenceValue] {
   override def path: JsPath = EstablishersId(establisherIndex).path \ "director" \ directorIndex \ DirectorUTRId.toString
 
-  override def cleanup(value: Option[String], userAnswers: UserAnswers): JsResult[UserAnswers] =
+  override def cleanup(value: Option[ReferenceValue], userAnswers: UserAnswers): JsResult[UserAnswers] =
     userAnswers.remove(DirectorNoUTRReasonId(establisherIndex, directorIndex))
 }
 
@@ -40,18 +39,18 @@ object DirectorUTRId {
                    messages: Messages,
                    countryOptions: CountryOptions): CheckYourAnswers[DirectorUTRId] = {
 
-    val label: String = messages("messages__companyUtr__checkyouranswerslabel")
-    val hiddenLabel = messages("messages__visuallyhidden__companyUTR")
+    val label: String = "messages__companyUtr__checkyouranswerslabel"
+    val hiddenLabel = "messages__visuallyhidden__companyUTR"
 
     new CheckYourAnswers[DirectorUTRId] {
       override def row(id: DirectorUTRId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        StringCYA(Some(label), Some(hiddenLabel))().row(id)(changeUrl, userAnswers)
+        ReferenceValueCYA(label, hiddenLabel)().row(id)(changeUrl, userAnswers)
 
 
       override def updateRow(id: DirectorUTRId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
         userAnswers.get(IsNewDirectorId(id.establisherIndex, id.directorIndex)) match {
           case Some(true) => row(id)(changeUrl, userAnswers)
-          case _ => StringCYA(Some(label), Some(hiddenLabel), true)().updateRow(id)(changeUrl, userAnswers)
+          case _ => ReferenceValueCYA(label, hiddenLabel)().updateRow(id)(changeUrl, userAnswers)
         }
     }
   }

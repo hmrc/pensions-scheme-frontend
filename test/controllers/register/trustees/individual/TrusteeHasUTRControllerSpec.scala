@@ -136,7 +136,6 @@ class TrusteeHasUTRControllerSpec extends ControllerSpecBase {
       status(result) mustBe SEE_OTHER
       FakeUserAnswersService.userAnswer.get(TrusteeHasUTRId(index)).value mustEqual true
       FakeUserAnswersService.userAnswer.get(TrusteeNoUTRReasonId(index)) mustBe None
-      FakeUserAnswersService.userAnswer.get(TrusteeUTRId(index)) mustBe Some(utr)
     }
   }
 }

@@ -17,6 +17,7 @@
 package views
 
 import forms.UTRFormProvider
+import models.ReferenceValue
 import play.api.data.Form
 import play.api.mvc.Call
 import play.twirl.api.HtmlFormat
@@ -24,7 +25,7 @@ import viewmodels.{Message, UTRViewModel}
 import views.behaviours.QuestionViewBehaviours
 import views.html.utr
 
-class UTRViewSpec extends QuestionViewBehaviours[String] {
+class UTRViewSpec extends QuestionViewBehaviours[ReferenceValue] {
 
   val messageKeyPrefix = "companyUtr"
 
