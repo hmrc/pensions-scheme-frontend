@@ -17,7 +17,6 @@
 package controllers.register.trustees.partnership
 
 import base.CSRFRequest
-import services.{FakeUserAnswersService, UserAnswersService}
 import controllers.ControllerSpecBase
 import controllers.actions.{AuthAction, DataRetrievalAction, FakeAuthAction, FakeDataRetrievalAction}
 import forms.address.AddressListFormProvider
@@ -30,7 +29,8 @@ import play.api.libs.json.Json
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import utils.annotations.EstablisherPartnership
+import services.{FakeUserAnswersService, UserAnswersService}
+import utils.annotations.TrusteesPartnership
 import utils.{FakeNavigator, UserAnswers}
 import viewmodels.Message
 import viewmodels.address.AddressListViewModel
@@ -78,7 +78,7 @@ class PartnershipAddressListControllerSpec extends ControllerSpecBase with CSRFR
         bind[AuthAction].to(FakeAuthAction),
         bind[UserAnswersService].toInstance(FakeUserAnswersService),
         bind[DataRetrievalAction].toInstance(dataRetrievalAction),
-        bind(classOf[Navigator]).qualifiedWith(classOf[EstablisherPartnership]).toInstance(fakeNavigator)
+        bind(classOf[Navigator]).toInstance(fakeNavigator)
       )) { implicit app =>
         val request = addToken(FakeRequest(routes.PartnershipAddressListController.onPageLoad(NormalMode, Index(0), None)))
         val result = route(app, request).value
@@ -99,7 +99,7 @@ class PartnershipAddressListControllerSpec extends ControllerSpecBase with CSRFR
         bind[AuthAction].to(FakeAuthAction),
         bind[UserAnswersService].toInstance(FakeUserAnswersService),
         bind[DataRetrievalAction].toInstance(getEmptyData),
-        bind(classOf[Navigator]).qualifiedWith(classOf[EstablisherPartnership]).toInstance(fakeNavigator)
+        bind(classOf[Navigator]).toInstance(fakeNavigator)
       )) { implicit app =>
         val request = addToken(FakeRequest(routes.PartnershipAddressListController.onPageLoad(NormalMode, Index(0), None)))
         val result = route(app, request).value
@@ -116,7 +116,7 @@ class PartnershipAddressListControllerSpec extends ControllerSpecBase with CSRFR
         bind[AuthAction].to(FakeAuthAction),
         bind[UserAnswersService].toInstance(FakeUserAnswersService),
         bind[DataRetrievalAction].toInstance(dontGetAnyData),
-        bind(classOf[Navigator]).qualifiedWith(classOf[EstablisherPartnership]).toInstance(fakeNavigator)
+        bind(classOf[Navigator]).toInstance(fakeNavigator)
       )) { implicit app =>
         val request = addToken(FakeRequest(routes.PartnershipAddressListController.onPageLoad(NormalMode, Index(0), None)))
         val result = route(app, request).value
@@ -132,7 +132,7 @@ class PartnershipAddressListControllerSpec extends ControllerSpecBase with CSRFR
       running(_.overrides(
         bind[AuthAction].to(FakeAuthAction),
         bind[UserAnswersService].toInstance(FakeUserAnswersService),
-        bind(classOf[Navigator]).qualifiedWith(classOf[EstablisherPartnership]).toInstance(fakeNavigator),
+        bind(classOf[Navigator]).toInstance(fakeNavigator),
         bind[DataRetrievalAction].toInstance(dataRetrievalAction)
       )) { implicit app =>
         val request =
@@ -154,7 +154,7 @@ class PartnershipAddressListControllerSpec extends ControllerSpecBase with CSRFR
         bind[AuthAction].to(FakeAuthAction),
         bind[UserAnswersService].toInstance(FakeUserAnswersService),
         bind[DataRetrievalAction].toInstance(dontGetAnyData),
-        bind(classOf[Navigator]).qualifiedWith(classOf[EstablisherPartnership]).toInstance(fakeNavigator)
+        bind(classOf[Navigator]).toInstance(fakeNavigator)
       )) { implicit app =>
         val request =
           addToken(
@@ -176,7 +176,7 @@ class PartnershipAddressListControllerSpec extends ControllerSpecBase with CSRFR
         bind[AuthAction].to(FakeAuthAction),
         bind[UserAnswersService].toInstance(FakeUserAnswersService),
         bind[DataRetrievalAction].toInstance(getEmptyData),
-        bind(classOf[Navigator]).qualifiedWith(classOf[EstablisherPartnership]).toInstance(fakeNavigator)
+        bind(classOf[Navigator]).toInstance(fakeNavigator)
       )) { implicit app =>
         val request =
           addToken(

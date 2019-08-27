@@ -22,13 +22,12 @@ import controllers.actions._
 import forms.UTRFormProvider
 import identifiers.register.trustees.individual.{TrusteeNameId, TrusteeUTRId}
 import javax.inject.Inject
-import models.{Index, Mode}
+import models.{Index, Mode, ReferenceValue}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
-import utils.annotations.TrusteesIndividual
 import viewmodels.{Message, UTRViewModel}
 
 import scala.concurrent.ExecutionContext
@@ -44,7 +43,7 @@ class TrusteeUTRController @Inject()(val appConfig: FrontendAppConfig,
                                      formProvider: UTRFormProvider
                                      )(implicit val ec: ExecutionContext) extends UTRController {
 
-  private def form: Form[String] = formProvider()
+  private def form: Form[ReferenceValue] = formProvider()
 
   private def viewModel(mode: Mode, index: Index, srn: Option[String], trusteeName: String): UTRViewModel = {
     UTRViewModel(
@@ -56,7 +55,6 @@ class TrusteeUTRController @Inject()(val appConfig: FrontendAppConfig,
       srn = srn
     )
   }
-
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {

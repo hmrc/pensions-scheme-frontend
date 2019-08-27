@@ -22,6 +22,7 @@ import identifiers.register.establishers.company._
 import identifiers.register.trustees.{company => tc}
 import identifiers.register.establishers.company.director.{DirectorHasNINOId, DirectorNewNinoId, DirectorNoNINOReasonId}
 import identifiers.register.trustees.individual.{TrusteeHasNINOId, TrusteeNewNinoId, TrusteeNoNINOReasonId}
+import identifiers.register.trustees.partnership.{PartnershipHasUTRId, PartnershipNoUTRReasonId, PartnershipUTRId}
 import models.NormalMode
 import org.scalatest.{MustMatchers, OptionValues, WordSpec}
 import play.api.libs.json.JsValue
@@ -127,18 +128,18 @@ class DataCompletionSpec extends WordSpec with MustMatchers with OptionValues wi
 
   "isUtrComplete" must {
     "return None when answer is missing" in {
-      UserAnswers(userAnswersUninitiated).isUtrComplete(HasCompanyUTRId(0),
-        CompanyUTRId(0), NoCompanyUTRId(0)) mustBe None
+      UserAnswers(userAnswersUninitiated).isUtrComplete(PartnershipHasUTRId(2),
+        PartnershipUTRId(2), PartnershipNoUTRReasonId(2)) mustBe None
     }
 
     "return Some(true) when answer is present" in {
-      UserAnswers(userAnswersCompleted).isUtrComplete(HasCompanyUTRId(0),
-        CompanyUTRId(0), NoCompanyUTRId(0)) mustBe Some(true)
+      UserAnswers(userAnswersCompleted).isUtrComplete(PartnershipHasUTRId(2),
+        PartnershipUTRId(2), PartnershipNoUTRReasonId(2)) mustBe Some(true)
     }
 
     "return Some(false) when answer is missing" in {
-      UserAnswers(userAnswersInProgress).isUtrComplete(HasCompanyUTRId(0),
-        CompanyUTRId(0), NoCompanyUTRId(0)) mustBe Some(false)
+      UserAnswers(userAnswersInProgress).isUtrComplete(PartnershipHasUTRId(2),
+        PartnershipUTRId(2), PartnershipNoUTRReasonId(2)) mustBe Some(false)
     }
   }
 }

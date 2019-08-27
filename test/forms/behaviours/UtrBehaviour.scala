@@ -22,8 +22,9 @@ import generators.Generators
 import models.UniqueTaxReference
 import org.scalatest.prop.PropertyChecks
 import play.api.data.{Form, FormError}
+import wolfendale.scalacheck.regexp.RegexpGen
 
-trait UtrBehaviour extends FormSpec with UtrMapping with PropertyChecks with Generators {
+trait UtrBehaviour extends FormSpec with UtrMapping with PropertyChecks with Generators with StringFieldBehaviours {
 
   //  scalastyle:off magic.number
 
@@ -96,49 +97,39 @@ trait UtrBehaviour extends FormSpec with UtrMapping with PropertyChecks with Gen
     }
   }
 
-  def formWithUtrString(testForm: Form[String],
-                  requiredKey: String,
-                  maxLengthKey: String,
-                  invalidKey: String): Unit = {
+  def formWithUniqueTaxReference[A](testForm: Form[A],
+                                    fieldName: String,
+                                    requiredKey: String,
+                                    maxLengthKey: String,
+                                    invalidKey: String): Unit = {
 
     "behave like form with UTR" must {
 
-      Seq("1234556676", " 1234454646 ").foreach {
-        utrNo =>
-          s"bind a valid uniqueTaxReference with utr $utrNo" in {
-            val result = testForm.bind(Map("utr" -> utrNo))
-            result.get mustBe utrNo.trim
-          }
+      behave like fieldThatBindsValidData(
+        testForm,
+        fieldName,
+        RegexpGen.from(regexUtr)
+      )
+
+      behave like mandatoryField(
+        testForm,
+        fieldName,
+        FormError("utr", requiredKey)
+      )
+
+      Seq("1234", "12345678909").foreach { utr =>
+        s"not bind numbers $utr with more/less than 10 digits" in {
+          val result = testForm.bind(Map(fieldName -> utr)).apply(fieldName)
+          result.errors mustEqual Seq(FormError("utr", maxLengthKey, Seq(10)))
+        }
       }
 
-      "fail to bind" when {
-        "an empty Map" in {
-          val result = testForm.bind(Map.empty[String, String])
-          result.errors mustBe Seq(FormError("utr", requiredKey))
-        }
-
-        Seq("124-3'3434", "sdfghjkloi").foreach { utrNo =>
-          s"utr $utrNo is invalid" in {
-            val result = testForm.bind(Map("utr" -> utrNo))
-            result.errors mustBe Seq(FormError("utr", invalidKey, Seq(regexUtr)))
-          }
-        }
-
-        Seq("12345678766655", "adfghsdfghjkloi", "1234").foreach { utrNo =>
-          s"utr $utrNo exceeds max length allowed" in {
-            val maxLength = 10
-            val result = testForm.bind(Map("utr" -> utrNo))
-            result.errors mustBe Seq(FormError("utr", maxLengthKey, Seq(maxLength)))
-          }
-        }
-
-      }
-
-      "Successfully unbind 'utr'" in {
-        val result = testForm.fill("utr").data
-        result must contain("utr" -> "utr")
-      }
-
+      behave like fieldWithRegex(
+        testForm,
+        fieldName,
+        invalidString = "AB12344555",
+        FormError("utr", invalidKey, Seq(regexUtr))
+      )
     }
   }
 }

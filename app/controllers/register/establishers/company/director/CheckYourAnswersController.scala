@@ -53,8 +53,7 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requiredData).async {
     implicit request =>
 
-      implicit val userAnswers = request.userAnswers
-      implicit val featureSwitchManagementService = fs
+      implicit val userAnswers: UserAnswers = request.userAnswers
 
       val directorAnswerSection = AnswerSection(
         None,

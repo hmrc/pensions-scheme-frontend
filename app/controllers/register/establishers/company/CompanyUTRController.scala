@@ -22,7 +22,7 @@ import controllers.actions._
 import forms.UTRFormProvider
 import identifiers.register.establishers.company.{CompanyDetailsId, CompanyUTRId}
 import javax.inject.Inject
-import models.{Index, Mode}
+import models.{Index, Mode, ReferenceValue}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.MessagesApi
@@ -45,7 +45,7 @@ class CompanyUTRController @Inject()(
                                       formProvider: UTRFormProvider
                                     )(implicit val ec: ExecutionContext) extends UTRController {
 
-  private def form: Form[String] = formProvider()
+  private def form: Form[ReferenceValue] = formProvider()
 
   private def viewModel(mode: Mode, index: Index, srn: Option[String], companyName: String): UTRViewModel = {
     UTRViewModel(

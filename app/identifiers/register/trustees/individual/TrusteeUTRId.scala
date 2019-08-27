@@ -17,19 +17,20 @@
 package identifiers.register.trustees.individual
 
 import identifiers._
-import identifiers.register.trustees.{IsTrusteeNewId, TrusteesId}
+import identifiers.register.trustees
+import identifiers.register.trustees.TrusteesId
+import models.ReferenceValue
 import play.api.i18n.Messages
 import play.api.libs.json.{JsPath, JsResult}
-import utils.checkyouranswers.CheckYourAnswers
-import utils.checkyouranswers.CheckYourAnswers.StringCYA
+import utils.checkyouranswers.{CheckYourAnswers, ReferenceValueCYA}
 import utils.{CountryOptions, UserAnswers}
 import viewmodels.AnswerRow
 
-case class TrusteeUTRId(index: Int) extends TypedIdentifier[String] {
+case class TrusteeUTRId(index: Int) extends TypedIdentifier[ReferenceValue] {
   override def path: JsPath = TrusteesId(index).path \ TrusteeUTRId.toString
 
-  override def cleanup(value: Option[String], userAnswers: UserAnswers): JsResult[UserAnswers] =
-    userAnswers.remove(TrusteeNoUTRReasonId(this.index))
+  override def cleanup(value: Option[ReferenceValue], userAnswers: UserAnswers): JsResult[UserAnswers] =
+    userAnswers.remove(TrusteeNoUTRReasonId(index))
 }
 
 object TrusteeUTRId {
@@ -39,21 +40,19 @@ object TrusteeUTRId {
                    messages: Messages,
                    countryOptions: CountryOptions): CheckYourAnswers[TrusteeUTRId] = {
 
-    val label: String = messages("messages__common__utr")
-    val hiddenLabel = messages("messages__visuallyhidden__trustee__utr")
+    val label: String = "messages__common__utr"
+    val hiddenLabel = "messages__visuallyhidden__trustee__utr"
 
     new CheckYourAnswers[TrusteeUTRId] {
       override def row(id: TrusteeUTRId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        StringCYA(Some(label), Some(hiddenLabel))().row(id)(changeUrl, userAnswers)
-
+        ReferenceValueCYA[TrusteeUTRId](label, hiddenLabel)().row(id)(changeUrl, userAnswers)
 
       override def updateRow(id: TrusteeUTRId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
-        val trusteeUtr = userAnswers.get(TrusteeUTRId(id.index))
-        userAnswers.get(IsTrusteeNewId(id.index)) match {
-          case Some(true) => row(id)(changeUrl, userAnswers)
+        userAnswers.get(trustees.IsTrusteeNewId(id.index)) match {
+          case Some(true) =>
+            row(id)(changeUrl, userAnswers)
           case _ =>
-            trusteeUtr.fold(Seq(AnswerRow(label, Seq("site.not_entered"), answerIsMessageKey = true, None)))(
-              utr => Seq(AnswerRow(label, Seq(utr), answerIsMessageKey = false, None)))
+            ReferenceValueCYA[TrusteeUTRId](label, hiddenLabel)().updateRow(id)(changeUrl, userAnswers)
         }
       }
     }

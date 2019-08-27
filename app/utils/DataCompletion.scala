@@ -105,7 +105,7 @@ trait DataCompletion {
      isComplete(
        Seq(
          isAnswerComplete(HasCompanyNumberId(index), CompanyRegistrationNumberVariationsId(index), Some(NoCompanyNumberId(index))),
-         isUtrComplete(HasCompanyUTRId(index), CompanyUTRId(index), NoCompanyUTRId(index)),
+         isAnswerComplete(HasCompanyUTRId(index), CompanyUTRId(index), Some(NoCompanyUTRId(index))),
          isAnswerComplete(HasCompanyVATId(index), CompanyVatVariationsId(index), None),
          isAnswerComplete(HasCompanyPAYEId(index), CompanyPayeVariationsId(index), None)
        ) ++ (if (mode == NormalMode) Seq(isAnswerComplete(IsCompanyDormantId(index))) else Nil)
@@ -151,7 +151,7 @@ trait DataCompletion {
     isComplete(Seq(
       Some(get(DirectorDOBId(estIndex, dirIndex)).isDefined),
       isAnswerComplete(DirectorHasNINOId(estIndex, dirIndex), DirectorNewNinoId(estIndex, dirIndex), Some(DirectorNoNINOReasonId(estIndex, dirIndex))),
-      isUtrComplete(DirectorHasUTRId(estIndex, dirIndex), DirectorUTRId(estIndex, dirIndex), DirectorNoUTRReasonId(estIndex, dirIndex))
+      isAnswerComplete(DirectorHasUTRId(estIndex, dirIndex), DirectorUTRId(estIndex, dirIndex), Some(DirectorNoUTRReasonId(estIndex, dirIndex)))
     ))
 
   def isDirectorCompleteHnS(estIndex: Int, dirIndex: Int): Boolean =
@@ -176,7 +176,7 @@ trait DataCompletion {
     isComplete(
       Seq(
         isAnswerComplete(tc.HasCompanyNumberId(index), tc.CompanyRegistrationNumberVariationsId(index), Some(tc.NoCompanyNumberId(index))),
-        isUtrComplete(tc.HasCompanyUTRId(index), tc.CompanyUTRId(index), tc.CompanyNoUTRReasonId(index)),
+        isAnswerComplete(tc.HasCompanyUTRId(index), tc.CompanyUTRId(index), Some(tc.CompanyNoUTRReasonId(index))),
         isAnswerComplete(tc.HasCompanyVATId(index), tc.CompanyVatVariationsId(index), None),
         isAnswerComplete(tc.HasCompanyPAYEId(index), tc.CompanyPayeVariationsId(index), None)
       )
@@ -214,7 +214,7 @@ trait DataCompletion {
     isComplete(Seq(
       isAnswerComplete(TrusteeDOBId(trusteeIndex)),
       isAnswerComplete(TrusteeHasNINOId(trusteeIndex), TrusteeNewNinoId(trusteeIndex), Some(TrusteeNoNINOReasonId(trusteeIndex))),
-      isUtrComplete(TrusteeHasUTRId(trusteeIndex), TrusteeUTRId(trusteeIndex), TrusteeNoUTRReasonId(trusteeIndex))
+      isAnswerComplete(TrusteeHasUTRId(trusteeIndex), TrusteeUTRId(trusteeIndex), Some(TrusteeNoUTRReasonId(trusteeIndex)))
     ))
   }
 
