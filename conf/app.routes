@@ -1,7 +1,9 @@
 # microservice specific routes
-->         /register                                    register.Routes
+->         /establisher                                establishers.Routes
+->         /trustee                                     trustees.Routes
 
 GET        /                                            controllers.BeforeYouStartController.onPageLoad()
+
 
 GET        /scheme-details                              controllers.SchemeTaskListController.onPageLoad(mode: Mode = NormalMode, srn: Option[String] = None)
 GET        /scheme-details/:srn                         controllers.SchemeTaskListController.onPageLoad(mode: Mode = UpdateMode, srn: Option[String])
@@ -210,3 +212,16 @@ POST       /declare-after-changing-details/:srn      controllers.VariationDeclar
 
 GET        /make-more-changes/:srn    controllers.AnyMoreChangesController.onPageLoad(srn: Option[String])
 POST       /make-more-changes/:srn    controllers.AnyMoreChangesController.onSubmit(srn: Option[String])
+
+GET         /confirmation                                controllers.register.SchemeSuccessController.onPageLoad()
+POST        /confirmation                                controllers.register.SchemeSuccessController.onSubmit()
+
+GET        /declaration                                 controllers.register.DeclarationController.onPageLoad
+POST       /declaration                                 controllers.register.DeclarationController.onSubmit
+GET        /change-declaration                          controllers.register.DeclarationController.onPageLoad
+POST       /change-declaration                          controllers.register.DeclarationController.onSubmit
+
+GET        /details-updated/:srn                        controllers.register.SchemeVariationsSuccessController.onPageLoad(srn)
+
+GET        /you-still-have-changes/:srn                 controllers.register.StillNeedDetailsController.onPageLoad(srn: Option[String])
+GET        /cannot-make-changes/:srn                    controllers.register.CannotMakeChangesController.onPageLoad(srn: Option[String])
