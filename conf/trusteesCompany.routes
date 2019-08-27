@@ -55,8 +55,8 @@ POST        /:index/change/company/confirm-address                              
 GET         /:index/:mode/company/confirm-address/:srn                                controllers.register.trustees.company.CompanyAddressController.onPageLoad(mode: Mode, index: Index, srn: Option[String])
 POST        /:index/:mode/company/confirm-address/:srn                                controllers.register.trustees.company.CompanyAddressController.onSubmit(mode: Mode, index: Index, srn: Option[String])
 
-GET         /:index/company/update/is-this-previous-address/:srn                      controllers.register.trustees.company.CompanyConfirmPreviousAddressController.onPageLoad(mode: Mode = CheckUpdateMode, index:Index, srn: Option[String])
-POST        /:index/company/update/is-this-previous-address/:srn                      controllers.register.trustees.company.CompanyConfirmPreviousAddressController.onSubmit(mode: Mode = CheckUpdateMode, index:Index, srn: Option[String])
+GET         /:index/update/company/is-this-previous-address/:srn                      controllers.register.trustees.company.CompanyConfirmPreviousAddressController.onPageLoad(mode: Mode = CheckUpdateMode, index:Index, srn: Option[String])
+POST        /:index/update/company/is-this-previous-address/:srn                      controllers.register.trustees.company.CompanyConfirmPreviousAddressController.onSubmit(mode: Mode = CheckUpdateMode, index:Index, srn: Option[String])
 
 GET         /:index/company/enter-previous-postcode                                   controllers.register.trustees.company.CompanyPreviousAddressPostcodeLookupController.onPageLoad(mode: Mode = NormalMode, index: Index, srn: Option[String] = None)
 POST        /:index/company/enter-previous-postcode                                   controllers.register.trustees.company.CompanyPreviousAddressPostcodeLookupController.onSubmit(mode: Mode = NormalMode, index: Index, srn: Option[String] = None)
