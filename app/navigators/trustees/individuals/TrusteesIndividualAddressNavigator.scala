@@ -47,11 +47,12 @@ class TrusteesIndividualAddressNavigator @Inject()(val dataCacheConnector: UserA
   private def updateModeRoutes(mode: VarianceMode, ua: UserAnswers, srn: Option[String]): PartialFunction[Identifier, Call] = {
     case IndividualPostCodeLookupId(index)                => IndividualAddressListController.onPageLoad(mode, index, srn)
     case IndividualAddressListId(index)                   => TrusteeAddressController.onPageLoad(mode, index, srn)
-    case TrusteeAddressId(index)                          => TrusteeAddressYearsController.onPageLoad(mode, index, srn)
+    case TrusteeAddressId(index)                          => trusteeAddressRoute(ua, mode, index, srn)
     case TrusteeAddressYearsId(index)                     => trusteeAddressYearsRoutes(mode, ua, index, srn)
     case IndividualPreviousAddressPostCodeLookupId(index) => TrusteePreviousAddressListController.onPageLoad(mode, index, srn)
     case TrusteePreviousAddressListId(index)              => TrusteePreviousAddressController.onPageLoad(mode, index, srn)
-    case TrusteePreviousAddressId(index)                  => isNewTrustee(ua, journeyMode(mode), index, srn)
+    case id@IndividualConfirmPreviousAddressId(index)     => booleanNav(id, ua, moreChanges(srn), previousAddressLookup(mode, index, srn))
+    case TrusteePreviousAddressId(index)                  => cyaOrMoreChanges(ua, journeyMode(mode), index, srn)
   }
 
   override protected def routeMap(from: NavigateFrom): Option[NavigateTo] =
@@ -68,16 +69,26 @@ class TrusteesIndividualAddressNavigator @Inject()(val dataCacheConnector: UserA
 }
 
 object TrusteesIndividualAddressNavigator {
-  private def isNewTrustee(ua: UserAnswers, mode: Mode, index: Int, srn: Option[String]): Call =
+  private def moreChanges(srn: Option[String]): Call = AnyMoreChangesController.onPageLoad(srn)
+  private def previousAddressLookup(mode: Mode, index: Index, srn: Option[String]): Call =
+    IndividualPreviousAddressPostcodeLookupController.onPageLoad(mode, index, srn)
+
+  private def cyaOrMoreChanges(ua: UserAnswers, mode: Mode, index: Int, srn: Option[String]): Call =
     ua.get(IsTrusteeNewId(index)) match {
       case Some(true) => CheckYourAnswersIndividualAddressController.onPageLoad(mode, index, srn)
-      case _ => AnyMoreChangesController.onPageLoad(srn)
+      case _ => moreChanges(srn)
+    }
+
+  private def trusteeAddressRoute(ua: UserAnswers, mode: Mode, index: Int, srn: Option[String]): Call =
+    ua.get(IsTrusteeNewId(index)) match {
+      case Some(true) => TrusteeAddressYearsController.onPageLoad(mode, index, srn)
+      case _ => IndividualConfirmPreviousAddressController.onPageLoad(index, srn)
     }
 
   private def trusteeAddressYearsRoutes(mode: Mode, ua: UserAnswers, index: Int, srn: Option[String]): Call =
     ua.get(TrusteeAddressYearsId(index)) match {
       case Some(AddressYears.OverAYear) => CheckYourAnswersIndividualAddressController.onPageLoad(journeyMode(mode), index, srn)
-      case Some(AddressYears.UnderAYear) => IndividualPreviousAddressPostcodeLookupController.onPageLoad(mode, index, srn)
+      case Some(AddressYears.UnderAYear) => previousAddressLookup(mode, index, srn)
       case _ => SessionExpiredController.onPageLoad()
     }
 }
