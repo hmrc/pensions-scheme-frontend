@@ -27,7 +27,6 @@ import navigators.Navigator
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
-import utils.annotations.TrusteesPartnership
 import viewmodels.{Message, VatViewModel}
 
 import scala.concurrent.ExecutionContext
