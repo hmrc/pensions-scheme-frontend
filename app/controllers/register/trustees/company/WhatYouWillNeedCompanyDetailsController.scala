@@ -19,12 +19,14 @@ package controllers.register.trustees.company
 import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRequiredAction, DataRetrievalAction}
+import controllers.register.trustees.company.routes.HasCompanyNumberController
 import identifiers.register.trustees.company.CompanyDetailsId
 import javax.inject.Inject
-import models.{Index, Mode}
+import models.{CompanyDetails, Index, Mode}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import viewmodels.Message
 import views.html.register.trustees.company.whatYouWillNeedCompanyDetails
 
 import scala.concurrent.Future
@@ -35,14 +37,23 @@ class WhatYouWillNeedCompanyDetailsController @Inject()(appConfig: FrontendAppCo
                                                         getData: DataRetrievalAction,
                                                         allowAccess: AllowAccessActionProvider,
                                                         requireData: DataRequiredAction
-                                                    ) extends FrontendController with I18nSupport with Retrievals{
+                                                    ) extends FrontendController with I18nSupport with Retrievals {
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String] = None): Action[AnyContent] = (authenticate andThen
-    getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+  def onPageLoad(mode: Mode, index: Index, srn: Option[String] = None): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
     implicit request =>
-      val href = controllers.register.trustees.company.routes.HasCompanyNumberController.onSubmit(mode, index, srn)
-      CompanyDetailsId(index).retrieve.right.map { companyDetails =>
-        Future.successful(Ok(whatYouWillNeedCompanyDetails(appConfig, existingSchemeName, href, srn, companyDetails.companyName)))
-      }
+      CompanyDetailsId(index).retrieve.right.map {
+        case CompanyDetails(companyName, _) =>
+          Future.successful(Ok(
+            whatYouWillNeedCompanyDetails(
+              appConfig = appConfig,
+              schemeName = existingSchemeName,
+              href = HasCompanyNumberController.onSubmit(mode, index, srn),
+              srn = srn,
+              title = Message("messages__whatYouWillNeedTrusteeCompany__h1", companyName
+              )
+            )
+          ))
+        }
   }
 }

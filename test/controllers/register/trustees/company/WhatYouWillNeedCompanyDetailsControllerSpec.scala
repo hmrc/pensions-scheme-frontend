@@ -22,11 +22,10 @@ import models.{Index, NormalMode}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.mockito.MockitoSugar
 import play.api.test.Helpers._
+import viewmodels.Message
 import views.html.register.trustees.company.whatYouWillNeedCompanyDetails
 
 class WhatYouWillNeedCompanyDetailsControllerSpec extends ControllerSpecBase with MockitoSugar with BeforeAndAfterEach {
-
-  private val companyName = "test company name"
 
   def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryTrusteeCompany): WhatYouWillNeedCompanyDetailsController =
     new WhatYouWillNeedCompanyDetailsController(frontendAppConfig,
@@ -39,7 +38,10 @@ class WhatYouWillNeedCompanyDetailsControllerSpec extends ControllerSpecBase wit
 
   lazy val postCall = controllers.register.trustees.company.routes.HasCompanyNumberController.onSubmit(NormalMode, Index(0), None)
 
-  def viewAsString(): String = whatYouWillNeedCompanyDetails(frontendAppConfig, None, postCall, None, companyName)(fakeRequest, messages).toString
+  def viewAsString(): String = {
+    val header = Message("messages__whatYouWillNeedTrusteeCompany__h1", "test company name")
+    whatYouWillNeedCompanyDetails(frontendAppConfig, None, postCall, None, header)(fakeRequest, messages).toString
+  }
 
 
   "WhatYouWillNeedCompanyDetailsControllerSpec" when {

@@ -22,19 +22,24 @@ import views.behaviours.ViewBehaviours
 import views.html.register.trustees.company.whatYouWillNeedCompanyDetails
 
 class WhatYouWillNeedCompanyDetailsViewSpec extends ViewBehaviours {
+  val pageHeading = "page heading"
 
-  private val companyName = "test company name"
+  lazy val href = controllers.register.trustees.company.routes.HasCompanyNumberController.onSubmit(NormalMode, Index(0), None)
 
-  private val messageKeyPrefix = "whatYouWillNeedTrusteeCompany"
-
-  private val href = controllers.register.trustees.company.routes.HasCompanyNumberController.onSubmit(NormalMode, Index(0), None)
-
-  private def createView: () => HtmlFormat.Appendable = () => whatYouWillNeedCompanyDetails(frontendAppConfig,
-    Some("testScheme"), href, None, companyName)(fakeRequest, messages)
+  def createView(): HtmlFormat.Appendable = whatYouWillNeedCompanyDetails(
+    frontendAppConfig,
+    Some("testScheme"),
+    href,
+    None,
+    pageHeading
+  )(fakeRequest, messages)
 
   "WhatYouWillNeedCompanyDetails view" must {
 
-    behave like normalPage(createView, messageKeyPrefix, messages("messages__companyDetailsFor", companyName),
+    behave like normalPage(
+      createView,
+      "whatYouWillNeedTrusteeCompany",
+      pageHeading,
       "_p1", "_item1", "_item2", "_item3", "_item4", "_p2")
 
     behave like pageWithSubmitButton(createView)
