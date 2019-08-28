@@ -379,6 +379,8 @@ messages__company_director_contact__heading = Enter the director’s contact det
 messages__trustee_company_contact_details__title = Enter the company’s contact details
 messages__trustee_company_contact_details__heading = Enter the company’s contact details
 
+messages__trustee_company_trading-time__title = Has the company been trading for at least 1 year?
+
 messages__trustee_contact_details__title = Enter the trustee’s contact details
 messages__trustee_contact_details__heading = Enter the trustee’s contact details
 
@@ -623,7 +625,7 @@ messages__companyRegistrationNumber__title = Does the trustee have a Company Reg
 messages__companyRegistrationNumber__heading = Does the trustee have a Company Registration number?
 messages__companyRegistrationNumber__error__required = Please give an answer for companyRegistrationNumber
 
-messages__companyNumber__trustee__title = What is their company number?
+messages__companyNumber__trustee__title = What is the company’s company number?
 messages__companyNumber__trustee__heading = What is {0}’s company number?
 
 messages__companyNumber__establisher__title = What is the establisher’s company number?
@@ -1569,7 +1571,7 @@ messages__whatYouWillNeedTrusteeAddress__item1 = current address
 messages__whatYouWillNeedTrusteeAddress__item2 = previous address if the trustee has been at the current address for less than 1 year
 
 messages__whatYouWillNeedEstablisherCompanyContact__title = Contact details
-messages__whatYouWillNeedEstablisherCompanyContact__h1 = Contact details
+messages__whatYouWillNeedEstablisherCompanyContact__h1 = Contact details for {0}
 messages__whatYouWillNeedEstablisherCompanyContact__lede = You will need to tell us the company’s:
 messages__whatYouWillNeedEstablisherCompanyContact__item1 = contact email address
 messages__whatYouWillNeedEstablisherCompanyContact__item2 = contact phone number
@@ -1596,7 +1598,7 @@ messages__whatYouWillNeedDirectors__item7 = contact email address
 messages__whatYouWillNeedDirectors__item8 = contact phone number
 
 messages__whatYouWillNeedTrusteeCompany__title = Company details
-messages__whatYouWillNeedTrusteeCompany__h1 = Company details
+messages__whatYouWillNeedTrusteeCompany__h1 = Company details for {0}
 messages__whatYouWillNeedTrusteeCompany__p1 = You will need to tell us the company’s:
 messages__whatYouWillNeedTrusteeCompany__item1 = company number, or reason why it does not have one
 messages__whatYouWillNeedTrusteeCompany__item2 = Unique Taxpayer Reference (UTR), or reason why it does not have one

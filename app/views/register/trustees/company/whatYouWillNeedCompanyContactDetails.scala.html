@@ -17,15 +17,16 @@
 @import config.FrontendAppConfig
 @import uk.gov.hmrc.play.views.html._
 @import controllers.register.trustees.company.routes._
+@import viewmodels.Message
 
-@(appConfig: FrontendAppConfig, schemeName: Option[String], href: Call, srn:Option[String], companyName: String)(implicit request: Request[_], messages: Messages)
+@(appConfig: FrontendAppConfig, schemeName: Option[String], href: Call, srn:Option[String], pageHeader: Message)(implicit request: Request[_], messages: Messages)
 
 @main_template(
     title = messages("messages__whatYouWillNeedEstablisherCompanyContact__title"),
     appConfig = appConfig,
     bodyClasses = None
 ) {
-    @components.heading(headingKey = messages("messages__contactDetailsFor", companyName))
+    @components.heading(headingKey = pageHeader.resolve)
 
     <p>@messages("messages__whatYouWillNeedEstablisherCompanyContact__lede")</p>
 

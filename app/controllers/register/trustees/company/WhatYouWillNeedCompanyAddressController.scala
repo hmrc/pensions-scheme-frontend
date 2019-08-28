@@ -21,11 +21,12 @@ import controllers.Retrievals
 import controllers.actions._
 import identifiers.register.trustees.company.CompanyDetailsId
 import javax.inject.Inject
-import models.{Index, Mode}
+import models.{CompanyDetails, Index, Mode}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import views.html.register.trustees.company.whatYouWillNeedCompanyAddress
+import viewmodels.Message
 
 import scala.concurrent.Future
 
@@ -40,9 +41,11 @@ class WhatYouWillNeedCompanyAddressController @Inject()(appConfig: FrontendAppCo
   def onPageLoad(mode: Mode, index: Index, srn: Option[String] = None): Action[AnyContent] = (authenticate andThen
     getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
     implicit request =>
-      val href = controllers.register.trustees.company.routes.CompanyPostCodeLookupController.onSubmit(mode, index, srn)
-      CompanyDetailsId(index).retrieve.right.map { companyDetails =>
-        Future.successful(Ok(whatYouWillNeedCompanyAddress(appConfig, existingSchemeName, href, srn, companyDetails.companyName)))
+      CompanyDetailsId(index).retrieve.right.map {
+        case CompanyDetails(companyName, _) =>
+          val pageHeader = Message("messages__addressFor", companyName)
+          val href = controllers.register.trustees.company.routes.CompanyPostCodeLookupController.onSubmit(mode, index, srn)
+          Future.successful(Ok(whatYouWillNeedCompanyAddress(appConfig, existingSchemeName, href, srn, pageHeader)))
       }
   }
 }

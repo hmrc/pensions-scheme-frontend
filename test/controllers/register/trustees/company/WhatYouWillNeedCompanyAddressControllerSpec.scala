@@ -22,11 +22,10 @@ import models.{Index, NormalMode}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.mockito.MockitoSugar
 import play.api.test.Helpers._
+import viewmodels.Message
 import views.html.register.trustees.company.whatYouWillNeedCompanyAddress
 
 class WhatYouWillNeedCompanyAddressControllerSpec extends ControllerSpecBase with MockitoSugar with BeforeAndAfterEach {
-
-  private val companyName = "test company name"
 
   def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryTrusteeCompany): WhatYouWillNeedCompanyAddressController =
     new WhatYouWillNeedCompanyAddressController(frontendAppConfig,
@@ -39,7 +38,7 @@ class WhatYouWillNeedCompanyAddressControllerSpec extends ControllerSpecBase wit
 
   lazy val href = controllers.register.trustees.company.routes.CompanyPostCodeLookupController.onSubmit(NormalMode, index=Index(0), None)
 
-  def viewAsString(): String = whatYouWillNeedCompanyAddress(frontendAppConfig, None, href, None, companyName)(fakeRequest, messages).toString
+  def viewAsString(): String = whatYouWillNeedCompanyAddress(frontendAppConfig, None, href, None, Message("messages__addressFor", "test company name"))(fakeRequest, messages).toString
 
   "WhatYouWillNeedCompanyAddressController" when {
 
