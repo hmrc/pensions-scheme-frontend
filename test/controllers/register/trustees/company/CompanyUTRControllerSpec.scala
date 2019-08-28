@@ -81,7 +81,6 @@ object CompanyUTRControllerSpec extends CompanyUTRControllerSpec {
     title = Message("messages__companyUtr__title"),
     heading = Message("messages__companyUtr__heading", "test company name"),
     hint = Message("messages_utr__hint"),
-    subHeading = None,
     srn = srn
   )
 

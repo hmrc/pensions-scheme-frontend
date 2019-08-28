@@ -23,6 +23,5 @@ case class UTRViewModel(
                          title: Message,
                          heading: Message,
                          hint: Message,
-                         subHeading: Option[Message] = None,
                          srn: Option[String] = None
                        )

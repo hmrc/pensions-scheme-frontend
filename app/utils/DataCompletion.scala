@@ -89,17 +89,6 @@ trait DataCompletion {
       case Some(_) => Some(true)
     }
 
-  def isUtrComplete(hasUtrId: TypedIdentifier[Boolean],
-                    utrId: TypedIdentifier[String],
-                    reasonId: TypedIdentifier[String]): Option[Boolean] =
-    (get(hasUtrId), get(utrId), get(reasonId)) match {
-      case (None, _, _) => None
-      case (_, Some(_), _) => Some(true)
-      case (_, _, Some(_)) => Some(true)
-      case _ => Some(false)
-    }
-
-
   //ESTABLISHER COMPANY
    def isEstablisherCompanyDetailsComplete(index: Int, mode: Mode): Option[Boolean] =
      isComplete(
@@ -247,7 +236,7 @@ trait DataCompletion {
   def isTrusteePartnershipDetailsComplete(index: Int): Option[Boolean] =
     isComplete(
       Seq(
-        isUtrComplete(tp.PartnershipHasUTRId(index), tp.PartnershipUTRId(index), tp.PartnershipNoUTRReasonId(index)),
+        isAnswerComplete(tp.PartnershipHasUTRId(index), tp.PartnershipUTRId(index), Some(tp.PartnershipNoUTRReasonId(index))),
         isAnswerComplete(tp.PartnershipHasVATId(index), tp.PartnershipVatVariationsId(index), None),
         isAnswerComplete(tp.PartnershipHasPAYEId(index), tp.PartnershipPayeVariationsId(index), None)
       )

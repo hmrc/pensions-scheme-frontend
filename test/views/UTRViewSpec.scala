@@ -37,7 +37,6 @@ class UTRViewSpec extends QuestionViewBehaviours[ReferenceValue] {
     title = Message("messages__companyUtr__title"),
     heading = Message("messages__companyUtr__heading"),
     hint = Message("messages_utr__hint"),
-    subHeading = None,
     srn = srn
   )
 

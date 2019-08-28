@@ -31,118 +31,101 @@ class DataCompletionSpec extends WordSpec with MustMatchers with OptionValues wi
 
   import DataCompletionSpec._
   "All generic methods" when {
-  "isComplete" must {
-    "return Some(true) only when all values in list are true" in {
-      UserAnswers().isComplete(Seq(Some(true), Some(true), Some(true))) mustBe Some(true)
-      UserAnswers().isComplete(Seq(Some(true), Some(false), Some(true))) mustBe Some(false)
+    "isComplete" must {
+      "return Some(true) only when all values in list are true" in {
+        UserAnswers().isComplete(Seq(Some(true), Some(true), Some(true))) mustBe Some(true)
+        UserAnswers().isComplete(Seq(Some(true), Some(false), Some(true))) mustBe Some(false)
+      }
+
+      "return None when only all values in list are true" in {
+        UserAnswers().isComplete(Seq(None, None, None, None)) mustBe None
+        UserAnswers().isComplete(Seq(None, Some(false), Some(true))) mustBe Some(false)
+      }
+
+      "return false in every other case" in {
+        UserAnswers().isComplete(Seq(Some(true), None, Some(false), None)) mustBe Some(false)
+        UserAnswers().isComplete(Seq(None, Some(true), Some(true))) mustBe Some(false)
+      }
     }
 
-    "return None when only all values in list are true" in {
-      UserAnswers().isComplete(Seq(None, None, None, None)) mustBe None
-      UserAnswers().isComplete(Seq(None, Some(false), Some(true))) mustBe Some(false)
+    "isListComplete" must {
+      "return true only when all values in list are true" in {
+        UserAnswers().isListComplete(Seq(true, true, true)) mustBe true
+      }
+
+      "return false in every other case" in {
+        UserAnswers().isListComplete(Seq(true, false, true)) mustBe false
+      }
     }
 
-    "return false in every other case" in {
-      UserAnswers().isComplete(Seq(Some(true), None, Some(false), None)) mustBe Some(false)
-      UserAnswers().isComplete(Seq(None, Some(true), Some(true))) mustBe Some(false)
+    "isAddressComplete" must {
+      "return None when current Address is missing" in {
+        UserAnswers(userAnswersUninitiated).isAddressComplete(CompanyAddressId(0), CompanyPreviousAddressId(0),
+          CompanyAddressYearsId(0), Some(HasBeenTradingCompanyId(0))) mustBe None
+      }
+
+      "return Some(true) when entire address journey is completed" in {
+        UserAnswers(userAnswersCompleted).isAddressComplete(CompanyAddressId(0), CompanyPreviousAddressId(0),
+          CompanyAddressYearsId(0), Some(HasBeenTradingCompanyId(0))) mustBe Some(true)
+      }
+
+      "return Some(false) when previous Address is missing" in {
+        UserAnswers(userAnswersInProgress).isAddressComplete(CompanyAddressId(0), CompanyPreviousAddressId(0),
+          CompanyAddressYearsId(0), Some(HasBeenTradingCompanyId(0))) mustBe Some(false)
+      }
+    }
+
+    "isContactDetailsComplete" must {
+      "return None when both contact details are missing" in {
+        UserAnswers(userAnswersUninitiated).isContactDetailsComplete(CompanyEmailId(0), CompanyPhoneId(0)) mustBe None
+      }
+
+      "return Some(true) when contact details are complete" in {
+        UserAnswers(userAnswersCompleted).isContactDetailsComplete(CompanyEmailId(0), CompanyPhoneId(0)) mustBe Some(true)
+      }
+
+      "return Some(false) when one of the contact details is missing" in {
+        UserAnswers(userAnswersInProgress).isContactDetailsComplete(CompanyEmailId(0), CompanyPhoneId(0)) mustBe Some(false)
+      }
+    }
+
+    "isAnswerComplete" must {
+      "return None when answer is missing" in {
+        UserAnswers(userAnswersUninitiated).isAnswerComplete(IsCompanyDormantId(0)) mustBe None
+      }
+
+      "return Some(true) when answer is present" in {
+        UserAnswers(userAnswersCompleted).isAnswerComplete(IsCompanyDormantId(0)) mustBe Some(true)
+      }
+    }
+
+    "isAnswerComplete for yes no answers" must {
+      "return None when answer is missing" in {
+        UserAnswers(userAnswersUninitiated).isAnswerComplete(DirectorHasNINOId(0, 0),
+          DirectorNewNinoId(0, 0), Some(DirectorNoNINOReasonId(0, 0))) mustBe None
+      }
+
+      "return Some(true) when answer for yes value is present" in {
+        UserAnswers(userAnswersCompleted).isAnswerComplete(DirectorHasNINOId(0, 0),
+          DirectorNewNinoId(0, 0), Some(DirectorNoNINOReasonId(0, 0))) mustBe Some(true)
+      }
+
+      "return Some(true) when answer for no - reason is present" in {
+        UserAnswers(userAnswersCompleted).isAnswerComplete(TrusteeHasNINOId(1),
+          TrusteeNewNinoId(1), Some(TrusteeNoNINOReasonId(1))) mustBe Some(true)
+      }
+
+      "return Some(true) when has value is false and reason is not needed" in {
+        UserAnswers(userAnswersCompleted).isAnswerComplete(tc.HasCompanyVATId(0),
+          tc.CompanyVatVariationsId(0), None) mustBe Some(true)
+      }
+
+      "return Some(false) when answer is missing" in {
+        UserAnswers(userAnswersInProgress).isAnswerComplete(DirectorHasNINOId(0, 0),
+          DirectorNewNinoId(0, 0), Some(DirectorNoNINOReasonId(0, 0))) mustBe Some(false)
+      }
     }
   }
-
-  "isListComplete" must {
-    "return true only when all values in list are true" in {
-      UserAnswers().isListComplete(Seq(true, true, true)) mustBe true
-    }
-
-    "return false in every other case" in {
-      UserAnswers().isListComplete(Seq(true, false, true)) mustBe false
-    }
-  }
-
-  "isAddressComplete" must {
-    "return None when current Address is missing" in {
-      UserAnswers(userAnswersUninitiated).isAddressComplete(CompanyAddressId(0), CompanyPreviousAddressId(0),
-        CompanyAddressYearsId(0), Some(HasBeenTradingCompanyId(0))) mustBe None
-    }
-
-    "return Some(true) when entire address journey is completed" in {
-      UserAnswers(userAnswersCompleted).isAddressComplete(CompanyAddressId(0), CompanyPreviousAddressId(0),
-        CompanyAddressYearsId(0), Some(HasBeenTradingCompanyId(0))) mustBe Some(true)
-    }
-
-    "return Some(false) when previous Address is missing" in {
-      UserAnswers(userAnswersInProgress).isAddressComplete(CompanyAddressId(0), CompanyPreviousAddressId(0),
-        CompanyAddressYearsId(0), Some(HasBeenTradingCompanyId(0))) mustBe Some(false)
-    }
-  }
-
-  "isContactDetailsComplete" must {
-    "return None when both contact details are missing" in {
-      UserAnswers(userAnswersUninitiated).isContactDetailsComplete(CompanyEmailId(0), CompanyPhoneId(0)) mustBe None
-    }
-
-    "return Some(true) when contact details are complete" in {
-      UserAnswers(userAnswersCompleted).isContactDetailsComplete(CompanyEmailId(0), CompanyPhoneId(0)) mustBe Some(true)
-    }
-
-    "return Some(false) when one of the contact details is missing" in {
-      UserAnswers(userAnswersInProgress).isContactDetailsComplete(CompanyEmailId(0), CompanyPhoneId(0)) mustBe Some(false)
-    }
-  }
-
-  "isAnswerComplete" must {
-    "return None when answer is missing" in {
-      UserAnswers(userAnswersUninitiated).isAnswerComplete(IsCompanyDormantId(0)) mustBe None
-    }
-
-    "return Some(true) when answer is present" in {
-      UserAnswers(userAnswersCompleted).isAnswerComplete(IsCompanyDormantId(0)) mustBe Some(true)
-    }
-  }
-
-  "isAnswerComplete for yes no answers" must {
-    "return None when answer is missing" in {
-      UserAnswers(userAnswersUninitiated).isAnswerComplete(DirectorHasNINOId(0, 0),
-        DirectorNewNinoId(0, 0), Some(DirectorNoNINOReasonId(0, 0))) mustBe None
-    }
-
-    "return Some(true) when answer for yes value is present" in {
-      UserAnswers(userAnswersCompleted).isAnswerComplete(DirectorHasNINOId(0, 0),
-        DirectorNewNinoId(0, 0), Some(DirectorNoNINOReasonId(0, 0))) mustBe Some(true)
-    }
-
-    "return Some(true) when answer for no - reason is present" in {
-      UserAnswers(userAnswersCompleted).isAnswerComplete(TrusteeHasNINOId(1),
-        TrusteeNewNinoId(1), Some(TrusteeNoNINOReasonId(1))) mustBe Some(true)
-    }
-
-    "return Some(true) when has value is false and reason is not needed" in {
-      UserAnswers(userAnswersCompleted).isAnswerComplete(tc.HasCompanyVATId(0),
-        tc.CompanyVatVariationsId(0), None) mustBe Some(true)
-    }
-
-    "return Some(false) when answer is missing" in {
-      UserAnswers(userAnswersInProgress).isAnswerComplete(DirectorHasNINOId(0, 0),
-        DirectorNewNinoId(0, 0), Some(DirectorNoNINOReasonId(0, 0))) mustBe Some(false)
-    }
-  }
-
-  "isUtrComplete" must {
-    "return None when answer is missing" in {
-      UserAnswers(userAnswersUninitiated).isUtrComplete(PartnershipHasUTRId(2),
-        PartnershipUTRId(2), PartnershipNoUTRReasonId(2)) mustBe None
-    }
-
-    "return Some(true) when answer is present" in {
-      UserAnswers(userAnswersCompleted).isUtrComplete(PartnershipHasUTRId(2),
-        PartnershipUTRId(2), PartnershipNoUTRReasonId(2)) mustBe Some(true)
-    }
-
-    "return Some(false) when answer is missing" in {
-      UserAnswers(userAnswersInProgress).isUtrComplete(PartnershipHasUTRId(2),
-        PartnershipUTRId(2), PartnershipNoUTRReasonId(2)) mustBe Some(false)
-    }
-  }
-}
 
   "Establisher Company completion status should be returned correctly" when {
     "isEstablisherCompanyDetailsComplete" must {
