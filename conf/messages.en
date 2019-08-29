@@ -1720,7 +1720,7 @@ messages__confirmPreviousAddress__error = Select yes if this is {0}’s previous
 messages__enterVAT__company_title = What is the company’s VAT registration number?
 messages__enterVAT__partnership_title = What is the partnership’s VAT registration number?
 messages__enterVAT__heading = What is {0}’s VAT registration number?
-messages__enterVAT__hint = This is 9 numbers, sometimes with ‘GB’ at the start, for example 123456789 or GB123456789.
+messages__enterVAT__hint = This is 9 numbers, sometimes with ‘GB’ at the start, for example 123456789 or GB123456789. You can find it on {0}’s VAT registration certificate.
 
 messages__enterVAT__company_invalid = Enter {0}’s VAT registration number in the correct format
 messages__enterVAT__company_length = Enter {0}’s VAT registration number using either 9 numbers only or GB followed by 9 numbers
