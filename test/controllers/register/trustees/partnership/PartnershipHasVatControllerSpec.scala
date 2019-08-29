@@ -111,7 +111,6 @@ class PartnershipHasVatControllerSpec extends ControllerSpecBase {
       app.stop()
     }
   }
-
 }
 
 object PartnershipHasVatControllerSpec extends ControllerSpecBase with MockitoSugar {
@@ -128,7 +127,7 @@ object PartnershipHasVatControllerSpec extends ControllerSpecBase with MockitoSu
     postCall = PartnershipHasVatController.onSubmit(NormalMode, index, srn),
     title = Message("messages__vat__title", partnershipName),
     heading = Message("messages__vat__heading", partnershipName),
-    hint = Some(Message("messages__common__vat__hint")),
+    hint = None,
     srn = srn
   )
 

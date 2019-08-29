@@ -961,9 +961,9 @@ messages__partnershipAddressYears__error = Select yes if {0} has used this addre
 messages__partnershipVat__title = Does the partnership have a VAT registration number?
 messages__partnershipVat__heading = Does the partnership have a VAT registration number?
 
-messages__vat__title = Does {0} have a VAT registration number?
-messages__vat__heading = Does {0} have a VAT registration number?
-messages__vat__formError = Select yes if {0} has a VAT registration number
+messages__vat__title = Is {0} registered for VAT?
+messages__vat__heading = Is {0} registered for VAT?
+messages__vat__formError = Select yes if {0} is registered for VAT
 
 messages__partnership_contact_details__title = Enter the partnership’s contact details
 messages__partnership_contact_details__heading = Enter the partnership’s contact details

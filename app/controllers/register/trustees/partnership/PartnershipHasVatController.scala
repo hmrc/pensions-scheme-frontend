@@ -51,7 +51,7 @@ class PartnershipHasVatController @Inject()(val appConfig: FrontendAppConfig,
       postCall = PartnershipHasVatController.onSubmit(mode, index, srn),
       title = Message("messages__vat__title", partnershipName),
       heading = Message("messages__vat__heading", partnershipName),
-      hint = Some(Message("messages__common__vat__hint")),
+      hint = None,
       srn = srn
     )
 
