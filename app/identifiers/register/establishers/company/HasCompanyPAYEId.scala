@@ -44,7 +44,7 @@ object HasCompanyPAYEId {
   implicit def cya(implicit userAnswers: UserAnswers, messages: Messages): CheckYourAnswers[HasCompanyPAYEId] = {
 
     def label(index: Int) = userAnswers.get(CompanyDetailsId(index)) match {
-      case Some(details) => Some(messages("messages__companyPayeRef__h1", details.companyName))
+      case Some(details) => Some(messages("messages__hasPaye__h1", details.companyName))
       case _ => Some(messages("messages__companyPayeRef__title"))
     }
 
