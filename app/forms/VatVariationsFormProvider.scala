@@ -24,14 +24,14 @@ import play.api.data.Forms._
 import play.api.i18n.Messages
 import viewmodels.Message
 
-class VatVariationsFormProvider @Inject() extends VatMapping {
+class EnterVATFormProvider @Inject() extends VatMapping {
 
   def apply(name: String)(implicit messages: Messages): Form[ReferenceValue] =
     Form(
       mapping(
         "vat" -> vatStringMapping(
-          vatLengthKey = Message("messages__vatVariations__company_length", name),
-          invalidVatKey = Message("messages__vatVariations__company_invalid", name)
+          vatLengthKey = Message("messages__enterVAT__company_length", name),
+          invalidVatKey = Message("messages__enterVAT__company_invalid", name)
         )
       )
       (ReferenceValue.applyEditable)(ReferenceValue.unapplyEditable)

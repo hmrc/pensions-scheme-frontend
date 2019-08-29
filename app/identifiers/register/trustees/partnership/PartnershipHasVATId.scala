@@ -27,7 +27,7 @@ case class PartnershipHasVATId(index: Int) extends TypedIdentifier[Boolean] {
   override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): JsResult[UserAnswers] = {
     value match {
       case Some(false) =>
-        userAnswers.remove(PartnershipVatVariationsId(this.index))
+        userAnswers.remove(PartnershipEnterVATId(this.index))
       case _ =>
         super.cleanup(value, userAnswers)
     }

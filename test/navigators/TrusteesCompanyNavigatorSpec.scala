@@ -68,7 +68,7 @@ object TrusteesCompanyNavigatorSpec extends SpecBase with NavigatorBehaviour {
 
   private def noUtrPage(mode: Mode): Call = CompanyNoUTRReasonController.onPageLoad(mode, 0, None)
 
-  private def vatPage(mode: Mode): Call = CompanyVatVariationsController.onPageLoad(mode, 0, None)
+  private def vatPage(mode: Mode): Call = CompanyEnterVATController.onPageLoad(mode, 0, None)
 
   private def payePage(mode: Mode): Call = CompanyPayeVariationsController.onPageLoad(mode, 0, None)
 
@@ -110,7 +110,7 @@ object TrusteesCompanyNavigatorSpec extends SpecBase with NavigatorBehaviour {
       row(CompanyUTRId(0))(someRefValue, hasCompanyVatPage(mode)),
       row(HasCompanyVATId(0))(true, vatPage(mode)),
       row(HasCompanyVATId(0))(false, hasCompanyPayePage(mode)),
-      row(CompanyVatVariationsId(0))(someRefValue, hasCompanyPayePage(mode)),
+      row(CompanyEnterVATId(0))(someRefValue, hasCompanyPayePage(mode)),
       row(HasCompanyPAYEId(0))(true, payePage(mode)),
       row(HasCompanyPAYEId(0))(false, cyaPage(mode)),
       row(CompanyPayeVariationsId(0))(someRefValue, cyaPage(mode)),
@@ -141,7 +141,7 @@ object TrusteesCompanyNavigatorSpec extends SpecBase with NavigatorBehaviour {
       row(CompanyUTRId(0))(someRefValue, cyaPage(mode)),
       row(HasCompanyVATId(0))(true, vatPage(mode)),
       row(HasCompanyVATId(0))(false, cyaPage(mode)),
-      row(CompanyVatVariationsId(0))(someRefValue, cyaPage(mode)),
+      row(CompanyEnterVATId(0))(someRefValue, cyaPage(mode)),
       row(HasCompanyPAYEId(0))(true, payePage(mode)),
       row(HasCompanyPAYEId(0))(false, cyaPage(mode)),
       row(CompanyPayeVariationsId(0))(someRefValue, cyaPage(mode)),
@@ -162,7 +162,7 @@ object TrusteesCompanyNavigatorSpec extends SpecBase with NavigatorBehaviour {
       ("Id", "UserAnswers", "Next Page"),
       row(CompanyRegistrationNumberVariationsId(0))(someRefValue, anyMoreChangesPage()),
       row(CompanyUTRId(0))(someRefValue, anyMoreChangesPage()),
-      row(CompanyVatVariationsId(0))(someRefValue, anyMoreChangesPage()),
+      row(CompanyEnterVATId(0))(someRefValue, anyMoreChangesPage()),
       row(CompanyPayeVariationsId(0))(someRefValue, anyMoreChangesPage()),
       row(CompanyAddressId(0))(someAddress, isThisPreviousAddressPage),
       row(CompanyConfirmPreviousAddressId(0))(true, anyMoreChangesPage()),

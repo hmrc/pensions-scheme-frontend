@@ -16,36 +16,36 @@
 
 package views
 
-import forms.VatVariationsFormProvider
+import forms.EnterVATFormProvider
 import models.ReferenceValue
 import play.api.data.Form
 import play.api.mvc.Call
 import play.twirl.api.HtmlFormat
-import viewmodels.{Message, VatViewModel}
+import viewmodels.{Message, EnterVATViewModel}
 import views.behaviours.QuestionViewBehaviours
-import views.html.vatVariations
+import views.html.enterVATView
 
-class VatVariationsViewSpec extends QuestionViewBehaviours[ReferenceValue] {
+class EnterVATViewSpec extends QuestionViewBehaviours[ReferenceValue] {
 
-  val messageKeyPrefix = "vatVariations"
+  val messageKeyPrefix = "enterVAT"
 
-  val form = new VatVariationsFormProvider()("companyName")
+  val form = new EnterVATFormProvider()("companyName")
   val postCall = Call("GET", "/")
 
-  def viewmodel(srn:Option[String]): VatViewModel = VatViewModel(
+  def viewModel(srn:Option[String]): EnterVATViewModel = EnterVATViewModel(
     postCall = postCall,
-    title = Message("messages__vatVariations__company_title"),
-    heading = Message("messages__vatVariations__heading"),
-    hint = Message("messages__vatVariations__hint"),
+    title = Message("messages__enterVAT__company_title"),
+    heading = Message("messages__enterVAT__heading"),
+    hint = Message("messages__enterVAT__hint"),
     subHeading = None,
     srn = srn
   )
 
   def createView(): () => HtmlFormat.Appendable = () =>
-    vatVariations(frontendAppConfig, form, viewmodel(Some("srn")), None)(fakeRequest, messages)
+    enterVATView(frontendAppConfig, form, viewModel(Some("srn")), None)(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) =>
-    vatVariations(frontendAppConfig, form, viewmodel(None), None)(fakeRequest, messages)
+    enterVATView(frontendAppConfig, form, viewModel(None), None)(fakeRequest, messages)
 
   "Vat Variations view" when {
     "rendered" must {

@@ -95,7 +95,7 @@ trait DataCompletion {
        Seq(
          isAnswerComplete(HasCompanyNumberId(index), CompanyRegistrationNumberVariationsId(index), Some(NoCompanyNumberId(index))),
          isAnswerComplete(HasCompanyUTRId(index), CompanyUTRId(index), Some(NoCompanyUTRId(index))),
-         isAnswerComplete(HasCompanyVATId(index), CompanyVatVariationsId(index), None),
+         isAnswerComplete(HasCompanyVATId(index), CompanyEnterVATId(index), None),
          isAnswerComplete(HasCompanyPAYEId(index), CompanyPayeVariationsId(index), None)
        ) ++ (if (mode == NormalMode) Seq(isAnswerComplete(IsCompanyDormantId(index))) else Nil)
      )
@@ -111,7 +111,7 @@ trait DataCompletion {
       get(CompanyDetailsId(index)).isDefined,
       get(CompanyRegistrationNumberId(index)).isDefined | get(CompanyRegistrationNumberVariationsId(index)).isDefined,
       get(CompanyUniqueTaxReferenceId(index)).isDefined | get(CompanyUTRId(index)).isDefined,
-      get(CompanyVatId(index)).isDefined | get(CompanyVatVariationsId(index)).isDefined,
+      get(CompanyVatId(index)).isDefined | get(CompanyEnterVATId(index)).isDefined,
       get(CompanyPayeId(index)).isDefined | get(CompanyPayeVariationsId(index)).isDefined,
       if(mode==NormalMode) get(IsCompanyDormantId(index)).isDefined else true,
       isAddressComplete(CompanyAddressId(index), CompanyPreviousAddressId(index), CompanyAddressYearsId(index), None).getOrElse(false),
@@ -166,7 +166,7 @@ trait DataCompletion {
       Seq(
         isAnswerComplete(tc.HasCompanyNumberId(index), tc.CompanyRegistrationNumberVariationsId(index), Some(tc.NoCompanyNumberId(index))),
         isAnswerComplete(tc.HasCompanyUTRId(index), tc.CompanyUTRId(index), Some(tc.CompanyNoUTRReasonId(index))),
-        isAnswerComplete(tc.HasCompanyVATId(index), tc.CompanyVatVariationsId(index), None),
+        isAnswerComplete(tc.HasCompanyVATId(index), tc.CompanyEnterVATId(index), None),
         isAnswerComplete(tc.HasCompanyPAYEId(index), tc.CompanyPayeVariationsId(index), None)
       )
     )
@@ -182,7 +182,7 @@ trait DataCompletion {
       get(tc.CompanyDetailsId(index)).isDefined,
       get(tc.CompanyRegistrationNumberId(index)).isDefined | get(tc.CompanyRegistrationNumberVariationsId(index)).isDefined,
       get(tc.CompanyUniqueTaxReferenceId(index)).isDefined | get(tc.CompanyUTRId(index)).isDefined,
-      get(tc.CompanyVatId(index)).isDefined | get(tc.CompanyVatVariationsId(index)).isDefined,
+      get(tc.CompanyVatId(index)).isDefined | get(tc.CompanyEnterVATId(index)).isDefined,
       get(tc.CompanyPayeId(index)).isDefined | get(tc.CompanyPayeVariationsId(index)).isDefined,
       isAddressComplete(tc.CompanyAddressId(index), tc.CompanyPreviousAddressId(index), tc.CompanyAddressYearsId(index), None).getOrElse(false),
       get(tc.CompanyContactDetailsId(index)).isDefined
@@ -237,7 +237,7 @@ trait DataCompletion {
     isComplete(
       Seq(
         isAnswerComplete(tp.PartnershipHasUTRId(index), tp.PartnershipUTRId(index), Some(tp.PartnershipNoUTRReasonId(index))),
-        isAnswerComplete(tp.PartnershipHasVATId(index), tp.PartnershipVatVariationsId(index), None),
+        isAnswerComplete(tp.PartnershipHasVATId(index), tp.PartnershipEnterVATId(index), None),
         isAnswerComplete(tp.PartnershipHasPAYEId(index), tp.PartnershipPayeVariationsId(index), None)
       )
     )
@@ -252,7 +252,7 @@ trait DataCompletion {
     isListComplete(Seq(
       get(tp.PartnershipDetailsId(index)).isDefined,
       get(tp.PartnershipUniqueTaxReferenceId(index)).isDefined | get(tp.PartnershipUTRId(index)).isDefined,
-      get(tp.PartnershipVatId(index)).isDefined | get(tp.PartnershipVatVariationsId(index)).isDefined,
+      get(tp.PartnershipVatId(index)).isDefined | get(tp.PartnershipEnterVATId(index)).isDefined,
       get(tp.PartnershipPayeId(index)).isDefined | get(tp.PartnershipPayeVariationsId(index)).isDefined,
       isAddressComplete(tp.PartnershipAddressId(index), tp.PartnershipPreviousAddressId(index), tp.PartnershipAddressYearsId(index), None).getOrElse(false),
       get(tp.PartnershipContactDetailsId(index)).isDefined

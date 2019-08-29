@@ -33,7 +33,7 @@ import play.api.test.Helpers.{contentAsString, redirectLocation, status, _}
 import services.{FakeUserAnswersService, UserAnswersService}
 import utils.annotations.TrusteesCompany
 import utils.FakeNavigator
-import viewmodels.{Message, VatViewModel}
+import viewmodels.{Message, EnterVATViewModel}
 import views.html.vat
 
 import scala.concurrent.Future
@@ -73,7 +73,7 @@ object CompanyVatControllerSpec extends CompanyVatControllerSpec {
 
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
-  val viewModel = VatViewModel(
+  val viewModel = EnterVATViewModel(
     routes.CompanyVatController.onSubmit(NormalMode, firstIndex, None),
     title = Message("messages__companyVat__title"),
     heading = Message("messages__companyVat__heading", "test company name"),
