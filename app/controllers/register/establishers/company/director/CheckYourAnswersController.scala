@@ -54,6 +54,7 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
     implicit request =>
 
       implicit val userAnswers: UserAnswers = request.userAnswers
+      implicit val featureSwitchManagementService: FeatureSwitchManagementService = fs
 
       val directorAnswerSection = AnswerSection(
         None,

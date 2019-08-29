@@ -300,6 +300,10 @@ package object utils {
       answers.set(trustees.partnership.PartnershipPreviousAddressId(index))(address).asOpt.value
     }
 
+    def trusteePartnershipEmail(index: Int, email: String): UserAnswers = {
+      answers.set(trustees.partnership.PartnershipEmailId(index))(email).asOpt.value
+    }
+
     //Advisers
     def advisersAddress(address: Address): UserAnswers = {
       answers.set(AdviserAddressId)(address).asOpt.value
