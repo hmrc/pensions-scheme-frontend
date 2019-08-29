@@ -57,15 +57,12 @@ trait SpecBase extends PlaySpec with GuiceOneAppPerSuite {
     assert(doc.getElementById(id) != null, "\n\nElement " + id + " was not rendered on the page.\n")
   }
 
-  def modules(dataRetrievalAction: DataRetrievalAction,
-              featureSwitchEnabled: Boolean): Seq[GuiceableModule] = {
-    Seq(
-      bind[AuthAction].toInstance(FakeAuthAction),
-      bind[AllowAccessActionProvider].toInstance(FakeAllowAccessProvider()),
-      bind[DataRetrievalAction].toInstance(dataRetrievalAction),
-      bind[FeatureSwitchManagementService].toInstance(new FakeFeatureSwitchManagementService(featureSwitchEnabled))
-    )
-  }
+  def modules(dataRetrievalAction: DataRetrievalAction, featureSwitchEnabled: Boolean): Seq[GuiceableModule] = Seq(
+    bind[AuthAction].toInstance(FakeAuthAction),
+    bind[AllowAccessActionProvider].toInstance(FakeAllowAccessProvider()),
+    bind[DataRetrievalAction].toInstance(dataRetrievalAction),
+    bind[FeatureSwitchManagementService].toInstance(new FakeFeatureSwitchManagementService(featureSwitchEnabled))
+  )
 
   def applicationBuilder(dataRetrievalAction: DataRetrievalAction,
                          featureSwitchEnabled: Boolean,

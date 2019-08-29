@@ -22,16 +22,16 @@ import models.ReferenceValue
 import play.api.data.Form
 import viewmodels.Message
 
-class VatVariationsFormProviderSpec extends VatBehaviours with SpecBase{
+class EnterVATFormProviderSpec extends VatBehaviours with SpecBase{
 
-  private val vatLengthKey = Message("messages__vatVariations__company_length", "test company")
+  private val vatLengthKey = Message("messages__enterVAT__company_length", "test company")
   private val requiredVatKey = "messages__error__vat_required"
-  private val invalidVatKey = Message("messages__vatVariations__company_invalid", "test company")
+  private val invalidVatKey = Message("messages__enterVAT__company_invalid", "test company")
 
   "A form with a Vat" should {
-    val testForm = new VatVariationsFormProvider().apply("test company")
+    val testForm = new EnterVATFormProvider().apply("test company")
 
-    behave like formWithVatVariations(testForm: Form[ReferenceValue],
+    behave like formWithEnterVAT(testForm: Form[ReferenceValue],
       vatLengthKey: String,
       requiredVatKey: String,
       invalidVatKey: String

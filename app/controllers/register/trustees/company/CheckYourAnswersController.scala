@@ -54,21 +54,21 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requiredData).async {
       implicit request =>
         implicit val userAnswers: UserAnswers = request.userAnswers
-        lazy val isVatVariationsEnabled = !userAnswers.get(IsTrusteeNewId(index)).getOrElse(false)
+        lazy val isEnterVATEnabled = !userAnswers.get(IsTrusteeNewId(index)).getOrElse(false)
         val companyDetailsRow = CompanyDetailsId(index).row(routes.CompanyDetailsController.onPageLoad(checkMode(mode), index, srn).url, mode)
-        val companyVatRow = if (mode == UpdateMode && isVatVariationsEnabled) {
-          CompanyVatVariationsId(index).row(routes.CompanyVatVariationsController.onPageLoad(checkMode(mode), index, srn).url, mode)
+        val companyVatRow = if (mode == UpdateMode && isEnterVATEnabled) {
+          CompanyEnterVATId(index).row(routes.CompanyEnterVATController.onPageLoad(checkMode(mode), index, srn).url, mode)
         } else {
           CompanyVatId(index).row(routes.CompanyVatController.onPageLoad(checkMode(mode), index, srn).url, mode)
         }
-        val companyPayeRow = if (mode == UpdateMode && isVatVariationsEnabled) {
+        val companyPayeRow = if (mode == UpdateMode && isEnterVATEnabled) {
           CompanyPayeVariationsId(index).row(routes.CompanyPayeVariationsController.onPageLoad(checkMode(mode), index, srn).url, mode)
         }
         else {
           CompanyPayeId(index).row(routes.CompanyPayeController.onPageLoad(checkMode(mode), index, srn).url, mode)
         }
 
-        val companyRegistrationNumber = if (mode == UpdateMode && isVatVariationsEnabled) {
+        val companyRegistrationNumber = if (mode == UpdateMode && isEnterVATEnabled) {
           CompanyRegistrationNumberVariationsId(index).row(routes.CompanyRegistrationNumberVariationsController.onPageLoad(checkMode(mode), srn, index).url, mode)
         }
         else {

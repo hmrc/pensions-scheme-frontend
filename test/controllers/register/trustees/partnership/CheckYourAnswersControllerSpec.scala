@@ -57,11 +57,11 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
 
     "on Page load if toggle on in UpdateMode" must {
       "return OK and the correct view for vat if not new trustee" in {
-        val answers = UserAnswers().set(PartnershipVatVariationsId(firstIndex))(ReferenceValue("098765432")).flatMap(
+        val answers = UserAnswers().set(PartnershipEnterVATId(firstIndex))(ReferenceValue("098765432")).flatMap(
           _.set(PartnershipPayeVariationsId(firstIndex))(ReferenceValue("12345678"))).asOpt.value
         implicit val userAnswers = FakeDataRequest(answers)
         val expectedCompanyDetailsSection = partnershipDetailsSection(
-          PartnershipVatVariationsId(firstIndex).row(partnershipVatVariationsRoute, UpdateMode)++
+          PartnershipEnterVATId(firstIndex).row(partnershipEnterVATRoute, UpdateMode)++
           PartnershipPayeVariationsId(firstIndex).row(partnershipPayeVariationsRoute, UpdateMode)
         )
         val result = controller(answers.dataRetrievalAction).onPageLoad(UpdateMode, firstIndex, srn)(userAnswers)
@@ -103,7 +103,7 @@ object CheckYourAnswersControllerSpec extends CheckYourAnswersControllerSpec {
   implicit val countryOptions: CountryOptions = new FakeCountryOptions()
   private val onwardRoute = controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode, None)
   private def partnershipVatRoute(mode: Mode = CheckMode, srn: Option[String] = None) = routes.PartnershipVatController.onPageLoad(mode, firstIndex, srn).url
-  private lazy val partnershipVatVariationsRoute = routes.PartnershipVatVariationsController.onPageLoad(CheckMode, firstIndex, None).url
+  private lazy val partnershipEnterVATRoute = routes.PartnershipEnterVATController.onPageLoad(CheckMode, firstIndex, None).url
   private def partnershipPayeRoute(mode: Mode = CheckMode, srn: Option[String] = None) = routes.PartnershipPayeController.onPageLoad(mode, firstIndex, srn).url
   private lazy val partnershipPayeVariationsRoute = routes.PartnershipPayeVariationsController.onPageLoad(CheckMode, firstIndex, None).url
   private lazy val partnershipUniqueTaxReferenceRoute = routes.PartnershipUniqueTaxReferenceController.onPageLoad(CheckMode, firstIndex, None).url

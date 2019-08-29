@@ -20,7 +20,7 @@ import forms.VatFormProvider
 import play.api.data.Form
 import play.api.mvc.Call
 import play.twirl.api.HtmlFormat
-import viewmodels.{Message, VatViewModel}
+import viewmodels.{Message, EnterVATViewModel}
 import views.behaviours.ViewBehaviours
 import views.html.vat
 
@@ -30,7 +30,7 @@ class VatViewSpec extends ViewBehaviours {
 
   val form = new VatFormProvider()()
 
-  def viewmodel(srn:Option[String]) = VatViewModel(
+  def viewmodel(srn:Option[String]) = EnterVATViewModel(
     postCall = Call("GET", "/"),
     title = Message("messages__partnershipVat__title"),
     heading = Message("messages__partnershipVat__heading"),

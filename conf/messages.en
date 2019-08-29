@@ -961,6 +961,10 @@ messages__partnershipAddressYears__error = Select yes if {0} has used this addre
 messages__partnershipVat__title = Does the partnership have a VAT registration number?
 messages__partnershipVat__heading = Does the partnership have a VAT registration number?
 
+messages__vat__title = Is {0} registered for VAT?
+messages__vat__heading = Is {0} registered for VAT?
+messages__vat__formError = Select yes if {0} is registered for VAT
+
 messages__partnership_contact_details__title = Enter the partnership’s contact details
 messages__partnership_contact_details__heading = Enter the partnership’s contact details
 messages__partnership_contact_details__body = These details will be used if we need to contact someone in the company about the pension scheme.
@@ -1686,9 +1690,7 @@ messages__companyPaye__error__required = Select yes if the company has an employ
 
 messages__companyPayeRef__title = Does the company have an employer PAYE reference?
 messages__companyPayeRef__trustee_title = Does the company have an employer PAYE reference?
-messages__companyPayeRef__h1 = Does {0} have an employer PAYE reference?
 messages__companyPayeRef__error__required = Select whether the company has an employer PAYE number
-messages__companyPayeRef__p1 = This is a 3 digit tax office number, a forward slash, and a tax office employer reference, like 123/AB456. It may be called ‘Employer PAYE reference’ or ‘PAYE reference’. It will be on letters from HMRC about PAYE.
 
 messages__companyVat__title = Is the company registered for VAT?
 messages__companyVat__heading = Is {0} registered for VAT?
@@ -1713,13 +1715,13 @@ messages__confirmPreviousAddress__title = Is this the previous address?
 messages__confirmPreviousAddress__heading = Is this {0}’s previous address?
 messages__confirmPreviousAddress__error = Select yes if this is {0}’s previous address
 
-messages__vatVariations__company_title = What is the company’s VAT registration number?
-messages__vatVariations__partnership_title = What is the partnership’s VAT registration number?
-messages__vatVariations__heading = What is {0}’s VAT registration number?
-messages__vatVariations__hint = This is 9 numbers, sometimes with ‘GB’ at the start, for example 123456789 or GB123456789.
+messages__enterVAT__company_title = What is the company’s VAT registration number?
+messages__enterVAT__partnership_title = What is the partnership’s VAT registration number?
+messages__enterVAT__heading = What is {0}’s VAT registration number?
+messages__enterVAT__hint = This is 9 numbers, sometimes with ‘GB’ at the start, for example 123456789 or GB123456789.
 
-messages__vatVariations__company_invalid = Enter {0}’s VAT registration number in the correct format
-messages__vatVariations__company_length = Enter {0}’s VAT registration number using either 9 numbers only or GB followed by 9 numbers
+messages__enterVAT__company_invalid = Enter {0}’s VAT registration number in the correct format
+messages__enterVAT__company_length = Enter {0}’s VAT registration number using either 9 numbers only or GB followed by 9 numbers
 
 messages__payeVariations__company_title = What is the company’s employer PAYE reference?
 messages__payeVariations__partnership_title = What is the partnership’s employer PAYE reference?
@@ -1814,8 +1816,21 @@ messages__trusteeUtr__h1 =  What is {0}’s UTR?
 messages__trustee__cya__dob = What is {0}’s date of birth?
 
 messages__partnershipHasUtr__title = Does the partnership have a UTR?
+messages__partnershipHasUtr__heading = Does {0} have a Unique Taxpayer Reference (UTR)?
 messages__partnershipUtr__title = What is the partnership’s UTR?
 messages__partnershipNoUtr__title = Why does the partnership not have a UTR?
 messages__hasUtr__partnership_error_required = Select yes if the partnership has a UTR
+
+messages__hasPaye__h1 = Does {0} have an employer PAYE reference?
+messages__hasPaye__p1 = This is a 3 digit tax office number, a forward slash, and a tax office employer reference, like 123/AB456. It may be called ‘Employer PAYE reference’ or ‘PAYE reference’. It will be on letters from HMRC about PAYE.
+messages__partnershipHasPaye__title = Does the partnership have an employer PAYE reference?
+messages__partnershipHasPaye__error__required = Select whether the partnership has an employer PAYE number
+
+messages__whatYouWillNeedTrusteePartnershipContact__title = Contact details
+messages__whatYouWillNeedTrusteePartnershipContact__h1 = Contact details for {0}
+messages__whatYouWillNeedTrusteePartnershipContact__p1 = You will need to tell us the partnership’s:
+messages__whatYouWillNeedTrusteePartnershipContact__item1 = contact email address
+messages__whatYouWillNeedTrusteePartnershipContact__item2 = contact phone number
+messages__partnership_email__title =  What is the partnership’s email address?
 
 

@@ -17,10 +17,10 @@
 package controllers.register.establishers.partnership
 
 import config.FrontendAppConfig
-import controllers.VatVariationsController
+import controllers.EnterVATController
 import controllers.actions._
-import forms.VatVariationsFormProvider
-import identifiers.register.establishers.partnership.{PartnershipDetailsId, PartnershipVatVariationsId}
+import forms.EnterVATFormProvider
+import identifiers.register.establishers.partnership.{PartnershipDetailsId, PartnershipEnterVATId}
 import javax.inject.Inject
 import models.{Index, Mode}
 import navigators.Navigator
@@ -28,11 +28,11 @@ import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
 import utils.annotations.EstablisherPartnership
-import viewmodels.{Message, VatViewModel}
+import viewmodels.{Message, EnterVATViewModel}
 
 import scala.concurrent.ExecutionContext
 
-class PartnershipVatVariationsController @Inject()(
+class PartnershipEnterVATController @Inject()(
                                                     override val appConfig: FrontendAppConfig,
                                                     override val messagesApi: MessagesApi,
                                                     override val userAnswersService: UserAnswersService,
@@ -41,17 +41,17 @@ class PartnershipVatVariationsController @Inject()(
                                                     getData: DataRetrievalAction,
                                                     allowAccess: AllowAccessActionProvider,
                                                     requireData: DataRequiredAction,
-                                                    formProvider: VatVariationsFormProvider
-                                              )(implicit val ec: ExecutionContext) extends VatVariationsController {
+                                                    formProvider: EnterVATFormProvider
+                                              )(implicit val ec: ExecutionContext) extends EnterVATController {
 
   private def form(companyName: String) = formProvider(companyName)
 
-  private def viewModel(mode: Mode, index: Index, srn: Option[String], companyName: String): VatViewModel = {
-    VatViewModel(
-      postCall = routes.PartnershipVatVariationsController.onSubmit(mode, index, srn),
-      title = Message("messages__vatVariations__partnership_title"),
-      heading = Message("messages__vatVariations__heading", companyName),
-      hint = Message("messages__vatVariations__hint", companyName),
+  private def viewModel(mode: Mode, index: Index, srn: Option[String], companyName: String): EnterVATViewModel = {
+    EnterVATViewModel(
+      postCall = routes.PartnershipEnterVATController.onSubmit(mode, index, srn),
+      title = Message("messages__enterVAT__partnership_title"),
+      heading = Message("messages__enterVAT__heading", companyName),
+      hint = Message("messages__enterVAT__hint", companyName),
       subHeading = None,
       srn = srn
     )
@@ -62,7 +62,7 @@ class PartnershipVatVariationsController @Inject()(
       implicit request =>
         PartnershipDetailsId(index).retrieve.right.map { details =>
           val partnershipName = details.name
-          get(PartnershipVatVariationsId(index), viewModel(mode, index, srn, partnershipName), form(partnershipName))
+          get(PartnershipEnterVATId(index), viewModel(mode, index, srn, partnershipName), form(partnershipName))
         }
     }
 
@@ -71,7 +71,7 @@ class PartnershipVatVariationsController @Inject()(
       implicit request =>
         PartnershipDetailsId(index).retrieve.right.map { details =>
           val partnershipName = details.name
-          post(PartnershipVatVariationsId(index), mode, viewModel(mode, index, srn, partnershipName), form(partnershipName))
+          post(PartnershipEnterVATId(index), mode, viewModel(mode, index, srn, partnershipName), form(partnershipName))
         }
     }
 }

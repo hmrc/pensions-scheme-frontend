@@ -17,19 +17,19 @@
 package controllers.register.trustees.partnership
 
 import controllers.ControllerSpecBase
+import controllers.actions._
 import controllers.behaviours.ControllerAllowChangeBehaviour
-import identifiers.register.trustees.partnership.{PartnershipDetailsId, PartnershipEmailId, PartnershipPhoneId}
+import identifiers.register.trustees.partnership.{PartnershipEmailId, PartnershipPhoneId}
 import models.Mode.checkMode
 import models._
-import models.requests.DataRequest
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.mockito.MockitoSugar
 import play.api.inject.bind
-import play.api.inject.guice.GuiceableModule
-import play.api.mvc.{AnyContent, Call}
+import play.api.mvc.Call
 import play.api.test.Helpers._
+import utils.annotations.NoSuspendedCheck
 import utils.checkyouranswers.CheckYourAnswers.StringCYA
-import utils.{AllowChangeHelper, CountryOptions, FakeCountryOptions, FakeDataRequest, UserAnswers}
+import utils.{CountryOptions, FakeCountryOptions, UserAnswers}
 import viewmodels.AnswerSection
 import views.html.check_your_answers
 
@@ -91,9 +91,9 @@ class CheckYourAnswersPartnershipContactDetailsControllerSpec extends Controller
 
         "Update Mode" in {
           running(_.overrides(
-            modules(fullAnswers.dataRetrievalAction, featureSwitchEnabled = true) ++
-              Seq[GuiceableModule](bind[AllowChangeHelper].toInstance(allowChangeHelper(saveAndContinueButton = true))
-              ): _*)) {
+            bind[AuthAction].toInstance(FakeAuthAction),
+            bind(classOf[AllowAccessActionProvider]).qualifiedWith(classOf[NoSuspendedCheck]).toInstance(FakeAllowAccessProvider()),
+            bind[DataRetrievalAction].toInstance(fullAnswers.dataRetrievalAction))) {
             app =>
               val controller = app.injector.instanceOf[CheckYourAnswersPartnershipContactDetailsController]
               val result = controller.onPageLoad(UpdateMode, index, srn)(fakeRequest)

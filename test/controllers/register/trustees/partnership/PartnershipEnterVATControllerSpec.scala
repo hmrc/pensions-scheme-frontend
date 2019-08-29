@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package controllers.register.establishers.company
+package controllers.register.trustees.partnership
 
 import base.CSRFRequest
 import controllers.ControllerSpecBase
-import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRetrievalAction, FakeAllowAccessProvider, FakeAuthAction}
-import forms.VatVariationsFormProvider
-import models.{CheckUpdateMode, Index, NormalMode}
+import controllers.actions.{AuthAction, DataRetrievalAction, FakeAuthAction}
+import forms.EnterVATFormProvider
+import models.{Index, NormalMode}
 import navigators.Navigator
 import org.scalatest.MustMatchers
 import play.api.Application
@@ -28,34 +28,34 @@ import play.api.http.Writeable
 import play.api.inject.bind
 import play.api.mvc.{Call, Request, Result}
 import play.api.test.FakeRequest
-import play.api.test.Helpers.{contentAsString, status, _}
+import play.api.test.Helpers.{contentAsString, redirectLocation, status, _}
 import services.{FakeUserAnswersService, UserAnswersService}
-import utils.annotations.EstablishersCompany
+import utils.annotations.TrusteesPartnership
 import utils.FakeNavigator
-import viewmodels.{Message, VatViewModel}
-import views.html.vatVariations
+import viewmodels.{Message, EnterVATViewModel}
+import views.html.enterVATView
 
 import scala.concurrent.Future
 
-class CompanyVatVariationsControllerSpec extends ControllerSpecBase with MustMatchers with CSRFRequest {
+class PartnershipEnterVATControllerSpec extends ControllerSpecBase with MustMatchers with CSRFRequest {
 
-  import CompanyVatVariationsControllerSpec._
+  import PartnershipEnterVATControllerSpec._
 
-  "CompanyVatVariationsController" must {
+  "PartnershipEnterVATController" must {
 
     "render the view correctly on a GET request" in {
       requestResult(
-        implicit app => addToken(FakeRequest(routes.CompanyVatVariationsController.onPageLoad(CheckUpdateMode, firstIndex, srn))),
+        implicit app => addToken(FakeRequest(routes.PartnershipEnterVATController.onPageLoad(NormalMode, firstIndex, None))),
         (request, result) => {
           status(result) mustBe OK
-          contentAsString(result) mustBe vatVariations(frontendAppConfig, form, viewModel, Some("pension scheme details"))(request, messages).toString()
+          contentAsString(result) mustBe enterVATView(frontendAppConfig, form, viewModel, Some("pension scheme details"))(request, messages).toString()
         }
       )
     }
 
     "redirect to the next page on a POST request" in {
       requestResult(
-        implicit app => addToken(FakeRequest(routes.CompanyVatVariationsController.onSubmit(CheckUpdateMode, firstIndex, srn))
+        implicit app => addToken(FakeRequest(routes.PartnershipEnterVATController.onSubmit(NormalMode, firstIndex, None))
           .withFormUrlEncodedBody(("vat", "123456789"))),
         (_, result) => {
           status(result) mustBe SEE_OTHER
@@ -66,22 +66,19 @@ class CompanyVatVariationsControllerSpec extends ControllerSpecBase with MustMat
   }
 }
 
+object PartnershipEnterVATControllerSpec extends PartnershipEnterVATControllerSpec {
 
-object CompanyVatVariationsControllerSpec extends CompanyVatVariationsControllerSpec {
-
-  val form = new VatVariationsFormProvider()("test company")
+  val form = new EnterVATFormProvider()("test partnership")
   val firstIndex = Index(0)
-  val srn = Some("S123")
 
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
-  val viewModel = VatViewModel(
-    routes.CompanyVatVariationsController.onSubmit(CheckUpdateMode, firstIndex, srn),
-    title = Message("messages__vatVariations__company_title"),
-    heading = Message("messages__vatVariations__heading", "test company name"),
-    hint = Message("messages__vatVariations__hint"),
-    subHeading = None,
-    srn = srn
+  val viewModel = EnterVATViewModel(
+    routes.PartnershipEnterVATController.onSubmit(NormalMode, firstIndex, None),
+    title = Message("messages__enterVAT__partnership_title"),
+    heading = Message("messages__enterVAT__heading", "test partnership name"),
+    hint = Message("messages__enterVAT__hint", "test partnership name"),
+    subHeading = None
   )
 
   private def requestResult[T](request: Application => Request[T], test: (Request[_], Future[Result]) => Unit)
@@ -89,10 +86,9 @@ object CompanyVatVariationsControllerSpec extends CompanyVatVariationsController
 
     running(_.overrides(
       bind[AuthAction].to(FakeAuthAction),
-      bind[DataRetrievalAction].toInstance(getMandatoryEstablisherCompany),
-      bind(classOf[Navigator]).qualifiedWith(classOf[EstablishersCompany]).toInstance(new FakeNavigator(onwardRoute)),
-      bind[UserAnswersService].toInstance(FakeUserAnswersService),
-      bind[AllowAccessActionProvider].toInstance(FakeAllowAccessProvider())
+      bind[DataRetrievalAction].toInstance(getMandatoryTrusteePartnership),
+      bind(classOf[Navigator]).qualifiedWith(classOf[TrusteesPartnership]).toInstance(new FakeNavigator(onwardRoute)),
+      bind[UserAnswersService].toInstance(FakeUserAnswersService)
     )) {
       app =>
         val req = request(app)
@@ -101,6 +97,5 @@ object CompanyVatVariationsControllerSpec extends CompanyVatVariationsController
     }
   }
 }
-
 
 

@@ -27,7 +27,7 @@ import play.api.mvc.{AnyContent, Result}
 import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.UserAnswers
-import viewmodels.VatViewModel
+import viewmodels.EnterVATViewModel
 import views.html.vat
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -42,7 +42,7 @@ trait VatController extends FrontendController with Retrievals with I18nSupport 
 
   protected def navigator: Navigator
 
-  def get(id: TypedIdentifier[Vat], form: Form[Vat], viewmodel: VatViewModel)
+  def get(id: TypedIdentifier[Vat], form: Form[Vat], viewmodel: EnterVATViewModel)
          (implicit request: DataRequest[AnyContent]): Future[Result] = {
     val preparedForm =
       request.userAnswers.get(id).map(form.fill).getOrElse(form)
@@ -50,7 +50,7 @@ trait VatController extends FrontendController with Retrievals with I18nSupport 
     Future.successful(Ok(vat(appConfig, preparedForm, viewmodel, existingSchemeName)))
   }
 
-  def post(id: TypedIdentifier[Vat], mode: Mode, form: Form[Vat], viewmodel: VatViewModel)
+  def post(id: TypedIdentifier[Vat], mode: Mode, form: Form[Vat], viewmodel: EnterVATViewModel)
           (implicit request: DataRequest[AnyContent]): Future[Result] = {
     form.bindFromRequest().fold(
       (formWithErrors: Form[_]) =>

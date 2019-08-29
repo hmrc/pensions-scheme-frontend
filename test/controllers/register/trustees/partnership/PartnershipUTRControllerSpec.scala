@@ -54,7 +54,7 @@ class PartnershipUTRControllerSpec extends ControllerSpecBase with MustMatchers 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
       FakeUserAnswersService.userAnswer.get(PartnershipUTRId(index)).value mustBe ReferenceValue(utrValue, true)
-      FakeUserAnswersService.verifyNot(PartnershipNoUTRReasonId(index))
+      FakeUserAnswersService.userAnswer.get(PartnershipNoUTRReasonId(index)) mustBe None
     }
 
     "return a Bad Request and errors when invalid data is submitted" in {
