@@ -1715,13 +1715,13 @@ messages__confirmPreviousAddress__title = Is this the previous address?
 messages__confirmPreviousAddress__heading = Is this {0}’s previous address?
 messages__confirmPreviousAddress__error = Select yes if this is {0}’s previous address
 
-messages__vatVariations__company_title = What is the company’s VAT registration number?
-messages__vatVariations__partnership_title = What is the partnership’s VAT registration number?
-messages__vatVariations__heading = What is {0}’s VAT registration number?
-messages__vatVariations__hint = This is 9 numbers, sometimes with ‘GB’ at the start, for example 123456789 or GB123456789.
+messages__enterVAT__company_title = What is the company’s VAT registration number?
+messages__enterVAT__partnership_title = What is the partnership’s VAT registration number?
+messages__enterVAT__heading = What is {0}’s VAT registration number?
+messages__enterVAT__hint = This is 9 numbers, sometimes with ‘GB’ at the start, for example 123456789 or GB123456789.
 
-messages__vatVariations__company_invalid = Enter {0}’s VAT registration number in the correct format
-messages__vatVariations__company_length = Enter {0}’s VAT registration number using either 9 numbers only or GB followed by 9 numbers
+messages__enterVAT__company_invalid = Enter {0}’s VAT registration number in the correct format
+messages__enterVAT__company_length = Enter {0}’s VAT registration number using either 9 numbers only or GB followed by 9 numbers
 
 messages__payeVariations__company_title = What is the company’s employer PAYE reference?
 messages__payeVariations__partnership_title = What is the partnership’s employer PAYE reference?
@@ -1826,4 +1826,9 @@ messages__hasPaye__p1 = This is a 3 digit tax office number, a forward slash, an
 messages__partnershipHasPaye__title = Does the partnership have an employer PAYE reference?
 messages__partnershipHasPaye__error__required = Select whether the partnership has an employer PAYE number
 
+messages__whatYouWillNeedTrusteePartnershipContact__title = Contact details
+messages__whatYouWillNeedTrusteePartnershipContact__h1 = Contact details for {0}
+messages__whatYouWillNeedTrusteePartnershipContact__p1 = You will need to tell us the partnership’s:
+messages__whatYouWillNeedTrusteePartnershipContact__item1 = contact email address
+messages__whatYouWillNeedTrusteePartnershipContact__item2 = contact phone number
 

@@ -61,7 +61,7 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
 
           PartnershipDetailsId(index).row(routes.PartnershipDetailsController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
             (if (mode == UpdateMode && !userAnswers.get(IsEstablisherNewId(index)).getOrElse(false)) {
-              PartnershipVatVariationsId(index).row(routes.PartnershipVatVariationsController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
+              PartnershipEnterVATId(index).row(routes.PartnershipEnterVATController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
                 PartnershipPayeVariationsId(index).row(routes.PartnershipPayeVariationsController.onPageLoad(checkMode(mode), index, srn).url, mode)
             } else {
               PartnershipVatId(index).row(routes.PartnershipVatController.onPageLoad(checkMode(mode), index, srn).url, mode) ++

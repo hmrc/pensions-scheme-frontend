@@ -60,11 +60,11 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
 
     "on Page load in UpdateMode" must {
       "return OK and the correct view for vat, paye and crn if not new establisher" in {
-        val answers = UserAnswers().set(CompanyVatVariationsId(index))(ReferenceValue("098765432")).flatMap(
+        val answers = UserAnswers().set(CompanyEnterVATId(index))(ReferenceValue("098765432")).flatMap(
           _.set(CompanyPayeVariationsId(index))(ReferenceValue("12345678"))).asOpt.value
         implicit val request = FakeDataRequest(answers)
         val expectedCompanyDetailsSection = estCompanyDetailsSection(
-          CompanyVatVariationsId(index).row(companyVatVariationsRoute, UpdateMode) ++
+          CompanyEnterVATId(index).row(companyEnterVATRoute, UpdateMode) ++
             CompanyPayeVariationsId(index).row(companyPayeVariationsRoute, UpdateMode) ++
               CompanyRegistrationNumberVariationsId(index).row(companyRegistrationNumberVariationsRoute, UpdateMode)
         )
@@ -131,7 +131,7 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase with Enumerable
   private val emptyAnswers = UserAnswers()
   private val companyRegistrationNumberRoute = routes.CompanyRegistrationNumberController.onPageLoad(CheckMode, None, 0).url
   private val companyRegistrationNumberVariationsRoute = routes.CompanyRegistrationNumberVariationsController.onPageLoad(CheckUpdateMode, srn, index).url
-  private val companyVatVariationsRoute = routes.CompanyVatVariationsController.onPageLoad(CheckUpdateMode, 0, srn).url
+  private val companyEnterVATRoute = routes.CompanyEnterVATController.onPageLoad(CheckUpdateMode, 0, srn).url
   private def companyVatRoute(mode: Mode = CheckMode, srn: Option[String] = None) = routes.CompanyVatController.onPageLoad(mode, 0, srn).url
   private val companyUniqueTaxReferenceRoute = routes.CompanyUniqueTaxReferenceController.onPageLoad(CheckMode, None, 0).url
   private val companyDetailsRoute = routes.CompanyDetailsController.onPageLoad(CheckMode, None, 0).url

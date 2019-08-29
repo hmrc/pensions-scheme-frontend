@@ -138,8 +138,8 @@ object CheckYourAnswersCompanyDetailsControllerSpec extends ControllerSpecBase w
   private def hasCompanyVatRoute(mode: Mode, srn: Option[String]) =
     routes.HasCompanyVATController.onPageLoad(checkMode(mode), 0, srn).url
 
-  private def companyVatVariationsRoute(mode: Mode, srn: Option[String]) =
-    routes.CompanyVatVariationsController.onPageLoad(checkMode(mode), 0, srn).url
+  private def companyEnterVATRoute(mode: Mode, srn: Option[String]) =
+    routes.CompanyEnterVATController.onPageLoad(checkMode(mode), 0, srn).url
 
   private def hasCompanyPayeRoute(mode: Mode, srn: Option[String]) =
     routes.HasCompanyPAYEController.onPageLoad(checkMode(mode), 0, srn).url
@@ -153,7 +153,7 @@ object CheckYourAnswersCompanyDetailsControllerSpec extends ControllerSpecBase w
       _.set(HasCompanyUTRId(0))(true).flatMap(
         _.set(CompanyUTRId(0))(ReferenceValue(utr, isEditable = true)).flatMap(
           _.set(HasCompanyVATId(0))(true).flatMap(
-            _.set(CompanyVatVariationsId(0))(ReferenceValue(vat, isEditable = true)).flatMap(
+            _.set(CompanyEnterVATId(0))(ReferenceValue(vat, isEditable = true)).flatMap(
               _.set(HasCompanyPAYEId(0))(true).flatMap(
                 _.set(CompanyPayeVariationsId(0))(ReferenceValue(paye, isEditable = true))
               ))))))).asOpt.value
@@ -180,7 +180,7 @@ object CheckYourAnswersCompanyDetailsControllerSpec extends ControllerSpecBase w
           messages("messages__visuallyhidden__companyNumber_add")),
         addLink(messages("messages__companyUtr__checkyouranswerslabel"), companyUTRRoute(UpdateMode, srn),
           messages("messages__visuallyhidden__companyUTR_add")),
-        addLink(messages("messages__common__cya__vat"), companyVatVariationsRoute(UpdateMode, srn),
+        addLink(messages("messages__common__cya__vat"), companyEnterVATRoute(UpdateMode, srn),
           messages("messages__visuallyhidden__companyVat_add")),
         addLink(messages("messages__common__cya__paye"), companyPayeVariationsRoute(UpdateMode, srn),
           messages("messages__visuallyhidden__companyPaye_add"))
@@ -215,7 +215,7 @@ object CheckYourAnswersCompanyDetailsControllerSpec extends ControllerSpecBase w
       messages("messages__visuallyhidden__companyUTR")))
 
   private def vatRow(mode: Mode, srn: Option[String]): Seq[AnswerRow] =
-    Seq(stringChangeLink(messages("messages__common__cya__vat"), companyVatVariationsRoute(mode, srn), vat,
+    Seq(stringChangeLink(messages("messages__common__cya__vat"), companyEnterVATRoute(mode, srn), vat,
       messages("messages__visuallyhidden__companyVat")))
 
   private def payeRow(mode: Mode, srn: Option[String]): Seq[AnswerRow] =

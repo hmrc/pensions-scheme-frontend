@@ -42,15 +42,15 @@ class HasCompanyVatIdSpec extends SpecBase {
 
     def answers(hasVat: Boolean = true): UserAnswers = UserAnswers(Json.obj())
       .set(HasCompanyVATId(0))(hasVat)
-      .flatMap(_.set(CompanyVatVariationsId(0))(ReferenceValue("test-crn")))
+      .flatMap(_.set(CompanyEnterVATId(0))(ReferenceValue("test-crn")))
       .asOpt.value
 
     "`HasCompanyVat` is set to `false`" must {
 
       val result: UserAnswers = answers().set(HasCompanyVATId(0))(false).asOpt.value
 
-      "remove the data for `CompanyVatVariations`" in {
-        result.get(CompanyVatVariationsId(0)) mustNot be(defined)
+      "remove the data for `CompanyEnterVAT`" in {
+        result.get(CompanyEnterVATId(0)) mustNot be(defined)
       }
     }
 
@@ -58,8 +58,8 @@ class HasCompanyVatIdSpec extends SpecBase {
 
       val result: UserAnswers = answers(false).set(HasCompanyVATId(0))(true).asOpt.value
 
-      "no clean up for `CompanyVatVariations`" in {
-        result.get(CompanyVatVariationsId(0)) must be(defined)
+      "no clean up for `CompanyEnterVAT`" in {
+        result.get(CompanyEnterVATId(0)) must be(defined)
       }
     }
 
@@ -67,8 +67,8 @@ class HasCompanyVatIdSpec extends SpecBase {
 
       val result: UserAnswers = answers().remove(HasCompanyVATId(0)).asOpt.value
 
-      "no clean up for `CompanyVatVariations`" in {
-        result.get(CompanyVatVariationsId(0)) mustBe defined
+      "no clean up for `CompanyEnterVAT`" in {
+        result.get(CompanyEnterVATId(0)) mustBe defined
       }
     }
   }
