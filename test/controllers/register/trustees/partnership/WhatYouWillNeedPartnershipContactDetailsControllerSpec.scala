@@ -38,7 +38,7 @@ class WhatYouWillNeedPartnershipContactDetailsControllerSpec extends ControllerS
     frontendAppConfig,
     None,
     CommonFormWithHintViewModel(
-      postCall = controllers.register.trustees.partnership.routes.PartnershipEmailController.onSubmit(NormalMode, index, None),
+      postCall = controllers.register.trustees.partnership.routes.PartnershipEmailController.onPageLoad(NormalMode, index, None),
       title = Message("messages__whatYouWillNeedTrusteePartnershipContact__title"),
       heading = Message("messages__whatYouWillNeedTrusteePartnershipContact__h1", trusteePartnership.name),
       srn = None

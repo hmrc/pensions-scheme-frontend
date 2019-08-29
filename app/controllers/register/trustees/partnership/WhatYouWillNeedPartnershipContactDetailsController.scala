@@ -44,7 +44,7 @@ class WhatYouWillNeedPartnershipContactDetailsController @Inject()(val appConfig
         PartnershipDetailsId(index).retrieve.right.map {
           case PartnershipDetails(partnershipName, _) =>
             val viewModel = CommonFormWithHintViewModel(
-              postCall = controllers.register.trustees.partnership.routes.PartnershipEmailController.onSubmit(mode, index, srn),
+              postCall = controllers.register.trustees.partnership.routes.PartnershipEmailController.onPageLoad(mode, index, srn),
               title = Message("messages__whatYouWillNeedTrusteePartnershipContact__title"),
               heading = Message("messages__whatYouWillNeedTrusteePartnershipContact__h1", partnershipName),
               srn = srn

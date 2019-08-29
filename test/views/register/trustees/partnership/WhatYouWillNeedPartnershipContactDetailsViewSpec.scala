@@ -32,7 +32,7 @@ class WhatYouWillNeedPartnershipContactDetailsViewSpec extends ViewBehaviours {
     frontendAppConfig,
     Some("testScheme"),
     CommonFormWithHintViewModel(
-      postCall = controllers.register.trustees.partnership.routes.PartnershipEmailController.onSubmit(NormalMode, index, None),
+      postCall = controllers.register.trustees.partnership.routes.PartnershipEmailController.onPageLoad(NormalMode, index, None),
       title = Message("messages__whatYouWillNeedTrusteePartnershipContact__title"),
       heading = pageHeader,
       srn = None
@@ -43,7 +43,8 @@ class WhatYouWillNeedPartnershipContactDetailsViewSpec extends ViewBehaviours {
     behave like normalPage(createView, messageKeyPrefix, pageHeader,
       expectedGuidanceKeys = "_p1", "_item1", "_item2")
 
-    behave like pageWithSubmitButton(createView)
+    behave like pageWithSubmitButton(createView,
+      action = Some(controllers.register.trustees.partnership.routes.PartnershipEmailController.onPageLoad(NormalMode, index, None)))
 
     behave like pageWithReturnLink(createView, getReturnLink)
   }
