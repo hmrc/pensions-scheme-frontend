@@ -18,7 +18,7 @@ package viewmodels
 
 import play.api.mvc.Call
 
-case class VatViewModel(
+case class EnterVATViewModel(
                          postCall: Call,
                          title: Message,
                          heading: Message,

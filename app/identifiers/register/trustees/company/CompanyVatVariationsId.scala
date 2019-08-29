@@ -25,27 +25,27 @@ import utils.checkyouranswers.{CheckYourAnswers, ReferenceValueCYA}
 import utils.{CountryOptions, UserAnswers}
 import viewmodels.AnswerRow
 
-case class CompanyVatVariationsId(index: Int) extends TypedIdentifier[ReferenceValue] {
-  override def path: JsPath = TrusteesId(index).path \ CompanyVatVariationsId.toString
+case class CompanyEnterVATId(index: Int) extends TypedIdentifier[ReferenceValue] {
+  override def path: JsPath = TrusteesId(index).path \ CompanyEnterVATId.toString
 }
 
-object CompanyVatVariationsId {
+object CompanyEnterVATId {
   override def toString: String = "companyVat"
 
-  implicit def cya(implicit messages: Messages, countryOptions: CountryOptions): CheckYourAnswers[CompanyVatVariationsId] = {
-    new CheckYourAnswers[CompanyVatVariationsId] {
+  implicit def cya(implicit messages: Messages, countryOptions: CountryOptions): CheckYourAnswers[CompanyEnterVATId] = {
+    new CheckYourAnswers[CompanyEnterVATId] {
 
       private val labelVat = "messages__common__cya__vat"
       private val hiddenLabelVat = "messages__visuallyhidden__companyVat"
 
-      override def row(id: CompanyVatVariationsId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        ReferenceValueCYA[CompanyVatVariationsId](labelVat, hiddenLabelVat)().row(id)(changeUrl, userAnswers)
+      override def row(id: CompanyEnterVATId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+        ReferenceValueCYA[CompanyEnterVATId](labelVat, hiddenLabelVat)().row(id)(changeUrl, userAnswers)
 
-      override def updateRow(id: CompanyVatVariationsId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+      override def updateRow(id: CompanyEnterVATId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
         userAnswers.get(IsTrusteeNewId(id.index)) match {
-          case Some(true) => ReferenceValueCYA[CompanyVatVariationsId](labelVat, hiddenLabelVat)().row(id)(changeUrl, userAnswers)
+          case Some(true) => ReferenceValueCYA[CompanyEnterVATId](labelVat, hiddenLabelVat)().row(id)(changeUrl, userAnswers)
           case _ =>
-            ReferenceValueCYA[CompanyVatVariationsId](labelVat, hiddenLabelVat)().updateRow(id)(changeUrl, userAnswers)
+            ReferenceValueCYA[CompanyEnterVATId](labelVat, hiddenLabelVat)().updateRow(id)(changeUrl, userAnswers)
         }
     }
   }

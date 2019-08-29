@@ -39,7 +39,7 @@ import play.api.test.Helpers._
 import services.UserAnswersService
 import uk.gov.hmrc.domain.PsaId
 import utils.{FakeNavigator, UserAnswers}
-import viewmodels.VatViewModel
+import viewmodels.EnterVATViewModel
 import views.html.vat
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -56,11 +56,11 @@ object VatControllerSpec {
                                   formProvider: VatFormProvider
                                 )(implicit val ec: ExecutionContext) extends VatController {
 
-    def onPageLoad(viewmodel: VatViewModel, answers: UserAnswers): Future[Result] = {
+    def onPageLoad(viewmodel: EnterVATViewModel, answers: UserAnswers): Future[Result] = {
       get(FakeIdentifier, formProvider(), viewmodel)(DataRequest(FakeRequest(), "cacheId", answers, PsaId("A0000000")))
     }
 
-    def onSubmit(viewmodel: VatViewModel, answers: UserAnswers, fakeRequest: Request[AnyContent]): Future[Result] = {
+    def onSubmit(viewmodel: EnterVATViewModel, answers: UserAnswers, fakeRequest: Request[AnyContent]): Future[Result] = {
       post(FakeIdentifier, NormalMode, formProvider(), viewmodel)(DataRequest(fakeRequest, "cacheId", answers, PsaId("A0000000")))
     }
   }
@@ -71,7 +71,7 @@ class VatControllerSpec extends WordSpec with MustMatchers with OptionValues wit
 
   import VatControllerSpec._
 
-  val viewmodel = VatViewModel(
+  val viewmodel = EnterVATViewModel(
     postCall = Call("GET", "www.example.com"),
     title = "title",
     heading = "heading",

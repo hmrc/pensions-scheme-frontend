@@ -17,35 +17,59 @@
 package controllers.register.trustees.partnership
 
 import config.FrontendAppConfig
-import controllers.Retrievals
 import controllers.actions._
+import controllers.{ReasonController, Retrievals}
+import forms.ReasonFormProvider
+import identifiers.register.trustees.partnership.{PartnershipDetailsId, PartnershipNoUTRReasonId}
 import javax.inject.Inject
 import models.{Index, Mode}
 import navigators.Navigator
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.Enumerable
+import viewmodels.{Message, ReasonViewModel}
 
 import scala.concurrent.ExecutionContext
 
-class PartnershipNoUTRReasonController @Inject()(val appConfig: FrontendAppConfig,
-                                                                  val messagesApi: MessagesApi,
-                                                                  val userAnswersService: UserAnswersService,
-                                                                  val navigator: Navigator,
-                                                                  authenticate: AuthAction,
-                                                                  getData: DataRetrievalAction,
-                                                                  allowAccess: AllowAccessActionProvider,
-                                                                  requireData: DataRequiredAction
-                                     )(implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
+class PartnershipNoUTRReasonController @Inject()(
+                                                  override val appConfig: FrontendAppConfig,
+                                                  override val messagesApi: MessagesApi,
+                                                  override val userAnswersService: UserAnswersService,
+                                                  override val navigator: Navigator,
+                                                  authenticate: AuthAction,
+                                                  getData: DataRetrievalAction,
+                                                  allowAccess: AllowAccessActionProvider,
+                                                  requireData: DataRequiredAction,
+                                                  formProvider: ReasonFormProvider
+                                                )(implicit val ec: ExecutionContext) extends ReasonController with Retrievals
+                                                                                     with I18nSupport with Enumerable.Implicits {
+
+  private def form(companyName: String) = formProvider("messages__reason__error_utrRequired", companyName)
+
+  private def viewModel(mode: Mode, index: Index, srn: Option[String], partnershipName: String): ReasonViewModel =
+    ReasonViewModel(
+      postCall = routes.PartnershipNoUTRReasonController.onSubmit(mode, index, srn),
+      title = Message("messages__partnershipNoUtr__title"),
+      heading = Message("messages__noGenericUtr__heading", partnershipName),
+      srn = srn
+    )
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData) {
-      implicit request => NotImplemented("Not implemented: " + this.getClass.toString)
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+      implicit request =>
+        PartnershipDetailsId(index).retrieve.right.map { details =>
+          val partnershipName = details.name
+          get(PartnershipNoUTRReasonId(index), viewModel(mode, index, srn, partnershipName), form(partnershipName))
+        }
     }
 
-  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData) {
-    implicit request => Redirect(controllers.routes.IndexController.onPageLoad())
-  }
+  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen requireData).async {
+      implicit request =>
+        PartnershipDetailsId(index).retrieve.right.map { details =>
+          val partnershipName = details.name
+          post(PartnershipNoUTRReasonId(index), mode, viewModel(mode, index, srn, partnershipName), form(partnershipName))
+        }
+    }
 }

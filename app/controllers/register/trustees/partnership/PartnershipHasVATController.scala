@@ -19,11 +19,13 @@ package controllers.register.trustees.partnership
 import config.FrontendAppConfig
 import controllers.HasReferenceNumberController
 import controllers.actions._
-import forms.HasUtrFormProvider
-import identifiers.register.trustees.partnership.{PartnershipDetailsId, PartnershipHasUTRId}
+import controllers.register.trustees.partnership.routes._
+import forms.HasReferenceNumberFormProvider
+import identifiers.register.trustees.partnership.{PartnershipDetailsId, PartnershipHasVATId}
 import javax.inject.Inject
 import models.{Index, Mode}
 import navigators.Navigator
+import play.api.data.Form
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
@@ -31,43 +33,43 @@ import viewmodels.{CommonFormWithHintViewModel, Message}
 
 import scala.concurrent.ExecutionContext
 
-class PartnershipHasUTRController @Inject()(override val appConfig: FrontendAppConfig,
-                                            override val messagesApi: MessagesApi,
-                                            override val userAnswersService: UserAnswersService,
-                                            override val navigator: Navigator,
+class PartnershipHasVATController @Inject()(val appConfig: FrontendAppConfig,
+                                            val messagesApi: MessagesApi,
+                                            val userAnswersService: UserAnswersService,
+                                            val navigator: Navigator,
                                             authenticate: AuthAction,
-                                            allowAccess: AllowAccessActionProvider,
                                             getData: DataRetrievalAction,
+                                            allowAccess: AllowAccessActionProvider,
                                             requireData: DataRequiredAction,
-                                            formProvider: HasUtrFormProvider
+                                            formProvider: HasReferenceNumberFormProvider
                                            )(implicit val ec: ExecutionContext) extends HasReferenceNumberController {
 
-  private def viewModel(mode: Mode, index: Index, srn: Option[String], companyName: String): CommonFormWithHintViewModel =
+  def form(partnershipName: String): Form[Boolean] = formProvider("messages__vat__formError", partnershipName)
+
+  private def viewModel(mode: Mode, index: Index, srn: Option[String], partnershipName: String): CommonFormWithHintViewModel =
     CommonFormWithHintViewModel(
-      postCall = routes.PartnershipHasUTRController.onSubmit(mode, index, srn),
-      title = Message("messages__partnershipHasUtr__title"),
-      heading = Message("messages__partnershipHasUtr__heading", companyName),
-      hint = Some(Message("messages__hasUtr__p1")),
+      postCall = PartnershipHasVATController.onSubmit(mode, index, srn),
+      title = Message("messages__vat__title", partnershipName),
+      heading = Message("messages__vat__heading", partnershipName),
+      hint = None,
       srn = srn
     )
 
-  private def form(partnershipName: String) = formProvider("messages__hasUtr__partnership_error_required", partnershipName)
-
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String] = None): Action[AnyContent] =
+  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         PartnershipDetailsId(index).retrieve.right.map {
           details =>
-            get(PartnershipHasUTRId(index), form(details.name), viewModel(mode, index, srn, details.name))
+            get(PartnershipHasVATId(index), form(details.name), viewModel(mode, index, srn, details.name))
         }
     }
 
-  def onSubmit(mode: Mode, index: Index, srn: Option[String] = None): Action[AnyContent] =
+  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
         PartnershipDetailsId(index).retrieve.right.map {
           details =>
-            post(PartnershipHasUTRId(index), mode, form(details.name), viewModel(mode, index, srn, details.name))
+            post(PartnershipHasVATId(index), mode: Mode, form(details.name), viewModel(mode, index, srn, details.name))
         }
     }
 }

@@ -108,7 +108,7 @@ trait VatBehaviours extends FormSpec with Generators with PropertyChecks with Co
     }
   }
 
-  def formWithVatVariations(testForm: Form[ReferenceValue],
+  def formWithEnterVAT(testForm: Form[ReferenceValue],
                             vatLengthKey: String,
                             requiredVatKey: String,
                             invalidVatKey: String

@@ -27,12 +27,12 @@ import play.api.mvc.{AnyContent, Result}
 import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.UserAnswers
-import viewmodels.VatViewModel
-import views.html.vatVariations
+import viewmodels.EnterVATViewModel
+import views.html.enterVATView
 
 import scala.concurrent.{ExecutionContext, Future}
 
-trait VatVariationsController extends FrontendController with Retrievals with I18nSupport {
+trait EnterVATController extends FrontendController with Retrievals with I18nSupport {
 
   protected implicit def ec: ExecutionContext
 
@@ -42,17 +42,17 @@ trait VatVariationsController extends FrontendController with Retrievals with I1
 
   protected def navigator: Navigator
 
-  def get(id: TypedIdentifier[ReferenceValue], viewmodel: VatViewModel, form: Form[ReferenceValue])
+  def get(id: TypedIdentifier[ReferenceValue], viewmodel: EnterVATViewModel, form: Form[ReferenceValue])
          (implicit request: DataRequest[AnyContent]): Future[Result] = {
     val preparedForm = request.userAnswers.get(id).fold(form)(form.fill)
-    Future.successful(Ok(vatVariations(appConfig, preparedForm, viewmodel, existingSchemeName)))
+    Future.successful(Ok(enterVATView(appConfig, preparedForm, viewmodel, existingSchemeName)))
   }
 
-  def post(id: TypedIdentifier[ReferenceValue], mode: Mode, viewmodel: VatViewModel, form: Form[ReferenceValue])
+  def post(id: TypedIdentifier[ReferenceValue], mode: Mode, viewmodel: EnterVATViewModel, form: Form[ReferenceValue])
           (implicit request: DataRequest[AnyContent]): Future[Result] = {
     form.bindFromRequest().fold(
       (formWithErrors: Form[_]) =>
-        Future.successful(BadRequest(vatVariations(appConfig, formWithErrors, viewmodel, existingSchemeName))),
+        Future.successful(BadRequest(enterVATView(appConfig, formWithErrors, viewmodel, existingSchemeName))),
       vat => {
         userAnswersService.save(mode, viewmodel.srn, id, vat.copy(isEditable = true)).map(cacheMap =>
           Redirect(navigator.nextPage(id, mode, UserAnswers(cacheMap), viewmodel.srn)))

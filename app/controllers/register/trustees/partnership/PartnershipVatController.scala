@@ -27,8 +27,7 @@ import navigators.Navigator
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
-import utils.annotations.TrusteesPartnership
-import viewmodels.{Message, VatViewModel}
+import viewmodels.{Message, EnterVATViewModel}
 
 import scala.concurrent.ExecutionContext
 
@@ -45,12 +44,12 @@ class PartnershipVatController @Inject()(
                                           formProvider: VatFormProvider
                                         )(implicit val ec: ExecutionContext) extends VatController {
 
-  private def viewmodel(mode: Mode, index: Index, srn: Option[String]): Retrieval[VatViewModel] =
+  private def viewmodel(mode: Mode, index: Index, srn: Option[String]): Retrieval[EnterVATViewModel] =
     Retrieval {
       implicit request =>
         PartnershipDetailsId(index).retrieve.right.map {
           details =>
-            VatViewModel(
+            EnterVATViewModel(
               postCall = routes.PartnershipVatController.onSubmit(mode, index, srn),
               title = Message("messages__partnershipVat__title"),
               heading = Message("messages__partnershipVat__heading"),

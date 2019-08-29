@@ -58,12 +58,12 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
 
     "on Page load in UpdateMode" must {
       "return OK and the correct view for vat, crn and paye if not new trustee" in {
-        val answers = UserAnswers().trusteesCompanyVatVariations(index, ReferenceValue("098765432")).
+        val answers = UserAnswers().trusteesCompanyEnterVAT(index, ReferenceValue("098765432")).
           trusteesCompanyPayeVariations(index, ReferenceValue("12345678"))
           .trusteesCompanyCrnVariations(index, ReferenceValue("AB123456"))
         implicit val request = FakeDataRequest(answers)
         val expectedCompanyDetailsSection = companyDetailsSection(
-          CompanyVatVariationsId(index).row(companyVatVariationsRoute, UpdateMode) ++
+          CompanyEnterVATId(index).row(companyEnterVATRoute, UpdateMode) ++
             CompanyPayeVariationsId(index).row(companyPayeVariationsRoute, UpdateMode)++
             CompanyRegistrationNumberVariationsId(index).row(companyRegistrationNumberVariationsRoute, UpdateMode)
         )
@@ -142,7 +142,7 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase with Controller
   private def companyVatRoute(mode: Mode = CheckMode, srn: Option[String] = None) = routes.CompanyVatController.onPageLoad(mode, index, srn).url
   private def companyPayeRoute(mode: Mode = CheckMode, srn: Option[String] = None) = routes.CompanyPayeController.onPageLoad(mode, index, srn).url
   private lazy val companyPayeVariationsRoute = routes.CompanyPayeVariationsController.onPageLoad(CheckMode, index, srn).url
-  private lazy val companyVatVariationsRoute = routes.CompanyVatVariationsController.onPageLoad(CheckMode, index, srn).url
+  private lazy val companyEnterVATRoute = routes.CompanyEnterVATController.onPageLoad(CheckMode, index, srn).url
 
   private def postUrl(mode: Mode, srn: Option[String] = None) = routes.CheckYourAnswersController.onSubmit(mode, index, srn)
 

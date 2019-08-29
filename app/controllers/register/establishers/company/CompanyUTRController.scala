@@ -53,7 +53,6 @@ class CompanyUTRController @Inject()(
       title = Message("messages__companyUtr__title"),
       heading = Message("messages__companyUtr__heading", companyName),
       hint = Message("messages_utr__hint"),
-      subHeading = None,
       srn = srn
     )
   }

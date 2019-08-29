@@ -17,6 +17,7 @@
 package identifiers.register.trustees.partnership
 
 import base.SpecBase
+import models.ReferenceValue
 import play.api.libs.json.Json
 import utils.UserAnswers
 
@@ -26,7 +27,7 @@ class PartnershipUTRIdSpec extends SpecBase {
 
   "cleanup" when {
     "`PartnershipUTR` changed to a new value" must {
-     val result = ua.set(PartnershipUTRId(0))("value").asOpt.value
+     val result = ua.set(PartnershipUTRId(0))(ReferenceValue("value")).asOpt.value
 
       "remove the data for `PartnershipNoUTRReasonId`" in {
         result.get(PartnershipNoUTRReasonId(0)) mustNot be(defined)
