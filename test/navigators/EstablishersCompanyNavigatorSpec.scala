@@ -52,8 +52,8 @@ class EstablishersCompanyNavigatorSpec extends SpecBase with MustMatchers with N
     (HasCompanyVATId(0), hasCompanyVat(false), hasCompanyPaye(mode), true, Some(cyaCompanyDetails(mode)), true),
     (CompanyVatId(0), emptyAnswers, companyPaye(mode), true, Some(exitJourney(mode, emptyAnswers, 0, cya(mode))), true),
     (CompanyVatId(0), newEstablisher, companyPaye(mode), true, Some(cya(mode)), true),
-    (CompanyVatVariationsId(0), emptyAnswers, sessionExpired, true, Some(exitJourney(mode, emptyAnswers, 0, cyaCompanyDetails(mode), toggled)), true),
-    (CompanyVatVariationsId(0), establisherEnteredPAYE, companyHasPaye(mode), true, Some(exitJourney(mode, establisherEnteredPAYE, 0, cyaCompanyDetails(mode), toggled)), true),
+    (CompanyEnterVATId(0), emptyAnswers, sessionExpired, true, Some(exitJourney(mode, emptyAnswers, 0, cyaCompanyDetails(mode), toggled)), true),
+    (CompanyEnterVATId(0), establisherEnteredPAYE, companyHasPaye(mode), true, Some(exitJourney(mode, establisherEnteredPAYE, 0, cyaCompanyDetails(mode), toggled)), true),
     (HasCompanyPAYEId(0), emptyAnswers, sessionExpired, true, Some(sessionExpired), true),
     (HasCompanyPAYEId(0), establisherHasPAYE(true), whatIsPAYE(mode), true, Some(whatIsPAYE(checkMode(mode))), true),
     (CompanyPayeId(0), emptyAnswers, companyRegistrationNumber(mode), true, Some(exitJourney(mode, emptyAnswers, 0, cya(mode))), true),
@@ -165,7 +165,7 @@ object EstablishersCompanyNavigatorSpec extends OptionValues with Enumerable.Imp
     .set(HasCompanyPAYEId(0))(v).asOpt.value
 
   private def establisherEnteredPAYE = UserAnswers(Json.obj())
-    .set(CompanyVatVariationsId(0))(ReferenceValue("123456789")).asOpt.value
+    .set(CompanyEnterVATId(0))(ReferenceValue("123456789")).asOpt.value
 
   private def hasCompanyNumber(yesNo: Boolean) = UserAnswers(Json.obj()).set(HasCompanyNumberId(0))(yesNo).asOpt.value
 
@@ -221,7 +221,7 @@ object EstablishersCompanyNavigatorSpec extends OptionValues with Enumerable.Imp
     controllers.register.establishers.company.routes.NoCompanyNumberController.onPageLoad(mode, None, 0)
 
   private def companyVatNumberNew(mode: Mode): Call =
-    controllers.register.establishers.company.routes.CompanyVatVariationsController.onPageLoad(mode, 0, None)
+    controllers.register.establishers.company.routes.CompanyEnterVATController.onPageLoad(mode, 0, None)
 
   private def companyUTR(mode: Mode): Call =
     controllers.register.establishers.company.routes.CompanyUniqueTaxReferenceController.onPageLoad(mode, None, 0)
@@ -245,7 +245,7 @@ object EstablishersCompanyNavigatorSpec extends OptionValues with Enumerable.Imp
     controllers.register.establishers.company.routes.CompanyVatController.onPageLoad(mode, 0, None)
 
   private def companyVatNew(mode: Mode): Call =
-    controllers.register.establishers.company.routes.CompanyVatVariationsController.onPageLoad(mode, 0, None)
+    controllers.register.establishers.company.routes.CompanyEnterVATController.onPageLoad(mode, 0, None)
 
   private def hasCompanyVat(mode: Mode): Call =
     controllers.register.establishers.company.routes.HasCompanyVATController.onPageLoad(mode, None, 0)

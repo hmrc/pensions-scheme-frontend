@@ -84,8 +84,8 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
         confirmHasCompanyVat(index, mode, srn)(from.userAnswers)
       case CompanyVatId(index) =>
         NavigateTo.dontSave(establisherCompanyRoutes.CompanyPayeController.onPageLoad(mode, index, srn))
-      case CompanyVatVariationsId(index) =>
-        navigateOrSessionExpired(from.userAnswers, CompanyVatVariationsId(index), (_: ReferenceValue) =>
+      case CompanyEnterVATId(index) =>
+        navigateOrSessionExpired(from.userAnswers, CompanyEnterVATId(index), (_: ReferenceValue) =>
           establisherCompanyRoutes.HasCompanyPAYEController.onPageLoad(mode, srn, index))
       case HasCompanyPAYEId(index) => confirmHasCompanyPAYE(index, mode, srn)(from.userAnswers)
       case CompanyPayeId(index) =>
@@ -167,7 +167,7 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
       case HasCompanyVATId(index) =>              confirmHasCompanyVat(index, mode, srn)(from.userAnswers)
       case HasCompanyPAYEId(index) =>             confirmHasCompanyPAYE(index, mode, srn)(from.userAnswers)
       case CompanyVatId(index) =>                 exitMiniJourney(index, mode, srn, from.userAnswers)
-      case CompanyVatVariationsId(index) =>       exitMiniJourney(index, mode, srn, from.userAnswers, cyaCompanyDetails)
+      case CompanyEnterVATId(index) =>       exitMiniJourney(index, mode, srn, from.userAnswers, cyaCompanyDetails)
       case CompanyPayeId(index) =>                exitMiniJourney(index, mode, srn, from.userAnswers)
       case CompanyPayeVariationsId(index) =>      exitMiniJourney(index, mode, srn, from.userAnswers, cyaCompanyDetails)
       case CompanyRegistrationNumberId(index) =>  exitMiniJourney(index, mode, srn, from.userAnswers)
@@ -382,7 +382,7 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
   private def confirmHasCompanyVat(index: Int, mode: Mode, srn: Option[String])(answers: UserAnswers): Option[NavigateTo] = {
     answers.get(HasCompanyVATId(index)) match {
       case Some(true) =>
-        NavigateTo.dontSave(establisherCompanyRoutes.CompanyVatVariationsController.onPageLoad(mode, index, srn))
+        NavigateTo.dontSave(establisherCompanyRoutes.CompanyEnterVATController.onPageLoad(mode, index, srn))
       case Some(false) if Seq(NormalMode, UpdateMode).contains(mode)=>
         NavigateTo.dontSave(establisherCompanyRoutes.HasCompanyPAYEController.onPageLoad(mode, srn, index))
       case Some(false) =>

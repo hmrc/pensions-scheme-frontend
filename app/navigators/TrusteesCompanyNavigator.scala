@@ -41,7 +41,7 @@ class TrusteesCompanyNavigator @Inject()(val dataCacheConnector: UserAnswersCach
     case CompanyNoUTRReasonId(index) => hasCompanyVatPage(mode, index, srn)
     case CompanyUTRId(index) => hasCompanyVatPage(mode, index, srn)
     case id@HasCompanyVATId(index) => booleanNav(id, ua, vatPage(mode, index, srn), noVatPage(mode, index, srn))
-    case CompanyVatVariationsId(index) => hasCompanyPayePage(mode, index, srn)
+    case CompanyEnterVATId(index) => hasCompanyPayePage(mode, index, srn)
     case id@HasCompanyPAYEId(index) => booleanNav(id, ua, payePage(mode, index, srn), cyaPage(mode, index, srn))
     case CompanyPayeVariationsId(index) => cyaPage(mode, index, srn)
     case CompanyPostcodeLookupId(index) => selectAddressPage(mode, index, srn)
@@ -65,7 +65,7 @@ class TrusteesCompanyNavigator @Inject()(val dataCacheConnector: UserAnswersCach
     case CompanyNoUTRReasonId(index) => cyaPage(mode, index, srn)
     case CompanyUTRId(index) => cyaPage(mode, index, srn)
     case id@HasCompanyVATId(index) => booleanNav(id, ua,vatPage(mode, index, srn), cyaPage(mode, index, srn))
-    case CompanyVatVariationsId(index) => cyaPage(mode, index, srn)
+    case CompanyEnterVATId(index) => cyaPage(mode, index, srn)
     case id@HasCompanyPAYEId(index) => booleanNav(id, ua, payePage(mode, index, srn), cyaPage(mode, index, srn))
     case CompanyPayeVariationsId(index) => cyaPage(mode, index, srn)
     case CompanyAddressId(index) => cyaAddressPage(mode, index, srn)
@@ -89,8 +89,8 @@ class TrusteesCompanyNavigator @Inject()(val dataCacheConnector: UserAnswersCach
     case CompanyUTRId(_) => anyMoreChangesPage(srn)
     case CompanyNoUTRReasonId(index) => cyaPage(mode, index, srn)
     case id@HasCompanyVATId(index) => booleanNav(id, ua, vatPage(mode, index, srn), cyaPage(mode, index, srn))
-    case CompanyVatVariationsId(index) if isNewTrustee(ua, index) => cyaPage(mode, index, srn)
-    case CompanyVatVariationsId(_) => anyMoreChangesPage(srn)
+    case CompanyEnterVATId(index) if isNewTrustee(ua, index) => cyaPage(mode, index, srn)
+    case CompanyEnterVATId(_) => anyMoreChangesPage(srn)
     case id@HasCompanyPAYEId(index) => booleanNav(id, ua, payePage(mode, index, srn), cyaPage(mode, index, srn))
     case CompanyPayeVariationsId(index) if isNewTrustee(ua, index) => cyaPage(mode, index, srn)
     case CompanyPayeVariationsId(_) => anyMoreChangesPage(srn)
@@ -134,7 +134,7 @@ object TrusteesCompanyNavigator {
 
   private def noUtrPage(mode: Mode, index: Int, srn: Option[String]): Call = CompanyNoUTRReasonController.onPageLoad(mode, index, srn)
 
-  private def vatPage(mode: Mode, index: Int, srn: Option[String]): Call = CompanyVatVariationsController.onPageLoad(mode, index, srn)
+  private def vatPage(mode: Mode, index: Int, srn: Option[String]): Call = CompanyEnterVATController.onPageLoad(mode, index, srn)
 
   private def noVatPage(mode: Mode, index: Int, srn: Option[String]): Call = HasCompanyPAYEController.onPageLoad(mode, index, srn)
 

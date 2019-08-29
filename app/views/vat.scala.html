@@ -18,9 +18,9 @@
 @import uk.gov.hmrc.play.views.html._
 @import controllers.routes._
 @import models.Mode
-@import viewmodels.VatViewModel
+@import viewmodels.EnterVATViewModel
 
-@(appConfig: FrontendAppConfig, form: Form[_], viewmodel: VatViewModel, schemeName: Option[String])(implicit request: Request[_], messages: Messages)
+@(appConfig: FrontendAppConfig, form: Form[_], viewmodel: EnterVATViewModel, schemeName: Option[String])(implicit request: Request[_], messages: Messages)
 
 @_options = @{
 Vat.options

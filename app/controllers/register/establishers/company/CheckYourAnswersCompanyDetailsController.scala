@@ -67,7 +67,7 @@ class CheckYourAnswersCompanyDetailsController @Inject()(
           CompanyUTRId(index).row(routes.CompanyUTRController.onPageLoad(checkMode(mode), srn, index).url, mode) ++
           NoCompanyUTRId(index).row(routes.NoCompanyUTRController.onPageLoad(checkMode(mode), srn, index).url, mode) ++
           HasCompanyVATId(index).row(routes.HasCompanyVATController.onPageLoad(checkMode(mode), srn, index).url, mode) ++
-          CompanyVatVariationsId(index).row(routes.CompanyVatVariationsController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
+          CompanyEnterVATId(index).row(routes.CompanyEnterVATController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
           HasCompanyPAYEId(index).row(routes.HasCompanyPAYEController.onPageLoad(checkMode(mode), srn, index).url, mode) ++
           CompanyPayeVariationsId(index).row(routes.CompanyPayeVariationsController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
           IsCompanyDormantId(index).row(routes.IsCompanyDormantController.onPageLoad(checkMode(mode), srn, index).url, mode)

@@ -117,7 +117,7 @@ class DataCompletionSpec extends WordSpec with MustMatchers with OptionValues wi
 
     "return Some(true) when has value is false and reason is not needed" in {
       UserAnswers(userAnswersCompleted).isAnswerComplete(tc.HasCompanyVATId(0),
-        tc.CompanyVatVariationsId(0), None) mustBe Some(true)
+        tc.CompanyEnterVATId(0), None) mustBe Some(true)
     }
 
     "return Some(false) when answer is missing" in {

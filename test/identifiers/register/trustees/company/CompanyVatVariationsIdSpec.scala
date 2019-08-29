@@ -27,7 +27,7 @@ import utils.checkyouranswers.Ops._
 import utils.{CountryOptions, UserAnswers}
 import viewmodels.AnswerRow
 
-class CompanyVatVariationsIdSpec extends SpecBase {
+class CompanyEnterVATIdSpec extends SpecBase {
 
   implicit val countryOptions: CountryOptions = new CountryOptions(environment, frontendAppConfig)
   private val onwardUrl = "onwardUrl"
@@ -38,14 +38,14 @@ class CompanyVatVariationsIdSpec extends SpecBase {
 
   "cya" when {
 
-    def answers: UserAnswers = UserAnswers().set(CompanyVatVariationsId(0))(ReferenceValue("vat")).asOpt.get
+    def answers: UserAnswers = UserAnswers().set(CompanyEnterVATId(0))(ReferenceValue("vat")).asOpt.get
 
     "in normal mode" must {
 
       "return answers rows with change links" in {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
         implicit val userAnswers: UserAnswers = request.userAnswers
-        CompanyVatVariationsId(0).row(onwardUrl, NormalMode) must equal(answerRowsWithChangeLinks)
+        CompanyEnterVATId(0).row(onwardUrl, NormalMode) must equal(answerRowsWithChangeLinks)
       }
     }
 
@@ -56,7 +56,7 @@ class CompanyVatVariationsIdSpec extends SpecBase {
       "return answers rows with change links" in {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answersNew, PsaId("A0000000"))
         implicit val userAnswers: UserAnswers = request.userAnswers
-        CompanyVatVariationsId(0).row(onwardUrl, UpdateMode) must equal(answerRowsWithChangeLinks)
+        CompanyEnterVATId(0).row(onwardUrl, UpdateMode) must equal(answerRowsWithChangeLinks)
       }
     }
 
@@ -66,24 +66,24 @@ class CompanyVatVariationsIdSpec extends SpecBase {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
         implicit val userAnswers: UserAnswers = request.userAnswers
 
-        CompanyVatVariationsId(0).row(onwardUrl, UpdateMode) must equal(Seq(
+        CompanyEnterVATId(0).row(onwardUrl, UpdateMode) must equal(Seq(
           AnswerRow("messages__common__cya__vat",List("vat"),false, None)
         ))
       }
 
       "return answers rows with change links if vat is available and editable" in {
-        val answers = UserAnswers().set(CompanyVatVariationsId(0))(ReferenceValue("vat", true)).asOpt.get
+        val answers = UserAnswers().set(CompanyEnterVATId(0))(ReferenceValue("vat", true)).asOpt.get
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
         implicit val userAnswers: UserAnswers = request.userAnswers
 
-        CompanyVatVariationsId(0).row(onwardUrl, UpdateMode) must equal(answerRowsWithChangeLinks)
+        CompanyEnterVATId(0).row(onwardUrl, UpdateMode) must equal(answerRowsWithChangeLinks)
       }
 
       "display an add link if vat is not available" in {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(), PsaId("A0000000"))
         implicit val userAnswers: UserAnswers = request.userAnswers
 
-        CompanyVatVariationsId(0).row(onwardUrl, UpdateMode) must equal(Seq(
+        CompanyEnterVATId(0).row(onwardUrl, UpdateMode) must equal(Seq(
           AnswerRow("messages__common__cya__vat", Seq("site.not_entered"), answerIsMessageKey = true,
             Some(Link("site.add", onwardUrl, Some("messages__visuallyhidden__companyVat_add"))))))
       }
