@@ -19,7 +19,7 @@ package controllers.register.establishers.partnership
 import base.CSRFRequest
 import controllers.ControllerSpecBase
 import controllers.actions._
-import forms.VatVariationsFormProvider
+import forms.EnterVATFormProvider
 import models.{CheckUpdateMode, Index}
 import navigators.Navigator
 import org.scalatest.MustMatchers
@@ -32,30 +32,30 @@ import play.api.test.Helpers.{contentAsString, status, _}
 import services.{FakeUserAnswersService, UserAnswersService}
 import utils.annotations.EstablisherPartnership
 import utils.FakeNavigator
-import viewmodels.{Message, VatViewModel}
-import views.html.vatVariations
+import viewmodels.{Message, EnterVATViewModel}
+import views.html.enterVATView
 
 import scala.concurrent.Future
 
-class PartnershipVatVariationsControllerSpec extends ControllerSpecBase with MustMatchers with CSRFRequest {
+class PartnershipEnterVATControllerSpec extends ControllerSpecBase with MustMatchers with CSRFRequest {
 
-  import PartnershipVatVariationsControllerSpec._
+  import PartnershipEnterVATControllerSpec._
 
-  "PartnershipVatVariationsController" must {
+  "PartnershipEnterVATController" must {
 
     "render the view correctly on a GET request" in {
       requestResult(
-        implicit app => addToken(FakeRequest(routes.PartnershipVatVariationsController.onPageLoad(CheckUpdateMode, firstIndex, srn))),
+        implicit app => addToken(FakeRequest(routes.PartnershipEnterVATController.onPageLoad(CheckUpdateMode, firstIndex, srn))),
         (request, result) => {
           status(result) mustBe OK
-          contentAsString(result) mustBe vatVariations(frontendAppConfig, form, viewModel, Some("pension scheme details"))(request, messages).toString()
+          contentAsString(result) mustBe enterVATView(frontendAppConfig, form, viewModel, Some("pension scheme details"))(request, messages).toString()
         }
       )
     }
 
     "redirect to the next page on a POST request" in {
       requestResult(
-        implicit app => addToken(FakeRequest(routes.PartnershipVatVariationsController.onSubmit(CheckUpdateMode, firstIndex, srn))
+        implicit app => addToken(FakeRequest(routes.PartnershipEnterVATController.onSubmit(CheckUpdateMode, firstIndex, srn))
           .withFormUrlEncodedBody(("vat", "123456789"))),
         (_, result) => {
           status(result) mustBe SEE_OTHER
@@ -66,19 +66,19 @@ class PartnershipVatVariationsControllerSpec extends ControllerSpecBase with Mus
   }
 }
 
-object PartnershipVatVariationsControllerSpec extends PartnershipVatVariationsControllerSpec {
+object PartnershipEnterVATControllerSpec extends PartnershipEnterVATControllerSpec {
 
-  val form = new VatVariationsFormProvider()("test partnership name")
+  val form = new EnterVATFormProvider()("test partnership name")
   val firstIndex = Index(0)
   val srn = Some("S123")
 
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
-  val viewModel = VatViewModel(
-    routes.PartnershipVatVariationsController.onSubmit(CheckUpdateMode, firstIndex, srn),
-    title = Message("messages__vatVariations__partnership_title"),
-    heading = Message("messages__vatVariations__heading", "test partnership name"),
-    hint = Message("messages__vatVariations__hint"),
+  val viewModel = EnterVATViewModel(
+    routes.PartnershipEnterVATController.onSubmit(CheckUpdateMode, firstIndex, srn),
+    title = Message("messages__enterVAT__partnership_title"),
+    heading = Message("messages__enterVAT__heading", "test partnership name"),
+    hint = Message("messages__enterVAT__hint"),
     subHeading = None,
     srn = srn
   )

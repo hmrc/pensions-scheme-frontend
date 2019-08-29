@@ -26,6 +26,6 @@ class HasUtrFormProvider @Inject() extends Mappings {
 
   def apply(errorKey:String, name : String)(implicit messages: Messages): Form[Boolean] =
     Form(
-      "value" -> boolean(Message("messages__hasCompanyUtr__error__required", name).resolve)
+      "value" -> boolean(Message(errorKey, name).resolve)
     )
 }

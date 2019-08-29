@@ -47,8 +47,7 @@ class UTRControllerSpec extends WordSpec with MustMatchers with OptionValues wit
     postCall = Call("GET", "www.example.com"),
     title = "title",
     heading = "heading",
-    hint = "legend",
-    subHeading = Some("sub-heading")
+    hint = "legend"
   )
 
   "get" must {

@@ -64,8 +64,8 @@ class TrusteesCompanyNavigatorOldSpec extends SpecBase with MustMatchers with Na
     (CompanyContactDetailsId(0), emptyAnswers, cya(mode), true, Some(exitJourney(mode, emptyAnswers, 0, toggled, cya(mode))), true),
     (CompanyContactDetailsId(0), newTrustee, cya(mode), true, Some(exitJourney(mode, newTrustee, 0, toggled, cya(mode))), true),
     (CheckYourAnswersId, emptyAnswers, addTrustee(mode), false, None, true),
-    (CompanyVatVariationsId(0), emptyAnswers, index, false, Some(exitJourney(mode, emptyAnswers, 0, toggled, cya(mode))), true),
-    (CompanyVatVariationsId(0), newTrustee, index, false, Some(exitJourney(mode, newTrustee, 0, toggled, cya(mode))), true),
+    (CompanyEnterVATId(0), emptyAnswers, index, false, Some(exitJourney(mode, emptyAnswers, 0, toggled, cya(mode))), true),
+    (CompanyEnterVATId(0), newTrustee, index, false, Some(exitJourney(mode, newTrustee, 0, toggled, cya(mode))), true),
     (HasBeenTradingCompanyId(0), tradingLessThanAYear, cyaAddress(mode), false, None, true),
     (HasBeenTradingCompanyId(0), tradingMoreThanAYear, prevAddPostCodeLookup(mode), false, None, true)
   )

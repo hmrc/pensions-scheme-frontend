@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package controllers.register.trustees.partnership
+package controllers.register.trustees.company
 
 import base.CSRFRequest
 import controllers.ControllerSpecBase
 import controllers.actions.{AuthAction, DataRetrievalAction, FakeAuthAction}
-import forms.VatVariationsFormProvider
+import forms.EnterVATFormProvider
 import models.{Index, NormalMode}
 import navigators.Navigator
 import org.scalatest.MustMatchers
@@ -30,32 +30,32 @@ import play.api.mvc.{Call, Request, Result}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{contentAsString, redirectLocation, status, _}
 import services.{FakeUserAnswersService, UserAnswersService}
-import utils.annotations.TrusteesPartnership
+import utils.annotations.TrusteesCompany
 import utils.FakeNavigator
-import viewmodels.{Message, VatViewModel}
-import views.html.vatVariations
+import viewmodels.{Message, EnterVATViewModel}
+import views.html.enterVATView
 
 import scala.concurrent.Future
 
-class PartnershipVatVariationsControllerSpec extends ControllerSpecBase with MustMatchers with CSRFRequest {
+class CompanyEnterVATControllerSpec extends ControllerSpecBase with MustMatchers with CSRFRequest {
 
-  import PartnershipVatVariationsControllerSpec._
+  import CompanyEnterVATControllerSpec._
 
-  "PartnershipVatVariationsController" must {
+  "CompanyEnterVATController" must {
 
     "render the view correctly on a GET request" in {
       requestResult(
-        implicit app => addToken(FakeRequest(routes.PartnershipVatVariationsController.onPageLoad(NormalMode, firstIndex, None))),
+        implicit app => addToken(FakeRequest(routes.CompanyEnterVATController.onPageLoad(NormalMode, firstIndex, None))),
         (request, result) => {
           status(result) mustBe OK
-          contentAsString(result) mustBe vatVariations(frontendAppConfig, form, viewModel, Some("pension scheme details"))(request, messages).toString()
+          contentAsString(result) mustBe enterVATView(frontendAppConfig, form, viewModel, None)(request, messages).toString()
         }
       )
     }
 
     "redirect to the next page on a POST request" in {
       requestResult(
-        implicit app => addToken(FakeRequest(routes.PartnershipVatVariationsController.onSubmit(NormalMode, firstIndex, None))
+        implicit app => addToken(FakeRequest(routes.CompanyEnterVATController.onSubmit(NormalMode, firstIndex, None))
           .withFormUrlEncodedBody(("vat", "123456789"))),
         (_, result) => {
           status(result) mustBe SEE_OTHER
@@ -65,19 +65,18 @@ class PartnershipVatVariationsControllerSpec extends ControllerSpecBase with Mus
     }
   }
 }
+object CompanyEnterVATControllerSpec extends CompanyEnterVATControllerSpec {
 
-object PartnershipVatVariationsControllerSpec extends PartnershipVatVariationsControllerSpec {
-
-  val form = new VatVariationsFormProvider()("test partnership")
+  val form = new EnterVATFormProvider()("test company")
   val firstIndex = Index(0)
 
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
-  val viewModel = VatViewModel(
-    routes.PartnershipVatVariationsController.onSubmit(NormalMode, firstIndex, None),
-    title = Message("messages__vatVariations__partnership_title"),
-    heading = Message("messages__vatVariations__heading", "test partnership name"),
-    hint = Message("messages__vatVariations__hint", "test partnership name"),
+  val viewModel = EnterVATViewModel(
+    routes.CompanyEnterVATController.onSubmit(NormalMode, firstIndex, None),
+    title = Message("messages__enterVAT__company_title"),
+    heading = Message("messages__enterVAT__heading", "test company name"),
+    hint = Message("messages__enterVAT__hint", "test company name"),
     subHeading = None
   )
 
@@ -86,8 +85,8 @@ object PartnershipVatVariationsControllerSpec extends PartnershipVatVariationsCo
 
     running(_.overrides(
       bind[AuthAction].to(FakeAuthAction),
-      bind[DataRetrievalAction].toInstance(getMandatoryTrusteePartnership),
-      bind(classOf[Navigator]).qualifiedWith(classOf[TrusteesPartnership]).toInstance(new FakeNavigator(onwardRoute)),
+      bind[DataRetrievalAction].toInstance(getMandatoryTrusteeCompany),
+      bind(classOf[Navigator]).toInstance(new FakeNavigator(onwardRoute)),
       bind[UserAnswersService].toInstance(FakeUserAnswersService)
     )) {
       app =>

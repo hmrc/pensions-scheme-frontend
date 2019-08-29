@@ -32,7 +32,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import utils.annotations.EstablisherPartnership
 import utils.FakeNavigator
-import viewmodels.{Message, VatViewModel}
+import viewmodels.{Message, EnterVATViewModel}
 import views.html.vat
 
 import scala.concurrent.Future
@@ -75,7 +75,7 @@ object PartnershipVatControllerSpec extends PartnershipVatControllerSpec {
 
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
-  val viewModel = VatViewModel(
+  val viewModel = EnterVATViewModel(
     routes.PartnershipVatController.onSubmit(NormalMode, firstIndex, None),
     title = Message("messages__partnershipVat__title"),
     heading = Message("messages__partnershipVat__heading"),

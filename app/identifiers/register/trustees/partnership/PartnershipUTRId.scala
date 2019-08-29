@@ -18,13 +18,14 @@ package identifiers.register.trustees.partnership
 
 import identifiers._
 import identifiers.register.trustees.TrusteesId
+import models.ReferenceValue
 import play.api.libs.json.{JsPath, JsResult}
 import utils.UserAnswers
 
-case class PartnershipUTRId(index: Int) extends TypedIdentifier[String] {
+case class PartnershipUTRId(index: Int) extends TypedIdentifier[ReferenceValue] {
   override def path: JsPath = TrusteesId(index).path \ PartnershipUTRId.toString
 
-  override def cleanup(value: Option[String], userAnswers: UserAnswers): JsResult[UserAnswers] =
+  override def cleanup(value: Option[ReferenceValue], userAnswers: UserAnswers): JsResult[UserAnswers] =
     userAnswers.remove(PartnershipNoUTRReasonId(this.index))
 }
 

@@ -81,7 +81,6 @@ object DirectorUTRControllerSpec extends DirectorUTRControllerSpec {
     title = Message("messages__directorUtr__title"),
     heading = Message("messages__directorUtr__heading", "first last"),
     hint = Message("messages_utr__hint"),
-    subHeading = None,
     srn = srn
   )
 

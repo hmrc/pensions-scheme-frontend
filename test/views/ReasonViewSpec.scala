@@ -16,13 +16,13 @@
 
 package views
 
-import forms.{ReasonFormProvider, VatVariationsFormProvider}
+import forms.{ReasonFormProvider, EnterVATFormProvider}
 import play.api.data.Form
 import play.api.mvc.Call
 import play.twirl.api.HtmlFormat
-import viewmodels.{Message, ReasonViewModel, VatViewModel}
+import viewmodels.{Message, ReasonViewModel, EnterVATViewModel}
 import views.behaviours.QuestionViewBehaviours
-import views.html.{reason, vatVariations}
+import views.html.{reason, enterVATView}
 
 class ReasonViewSpec extends QuestionViewBehaviours[String] {
 
