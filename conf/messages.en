@@ -1690,9 +1690,7 @@ messages__companyPaye__error__required = Select yes if the company has an employ
 
 messages__companyPayeRef__title = Does the company have an employer PAYE reference?
 messages__companyPayeRef__trustee_title = Does the company have an employer PAYE reference?
-messages__companyPayeRef__h1 = Does {0} have an employer PAYE reference?
 messages__companyPayeRef__error__required = Select whether the company has an employer PAYE number
-messages__companyPayeRef__p1 = This is a 3 digit tax office number, a forward slash, and a tax office employer reference, like 123/AB456. It may be called ‘Employer PAYE reference’ or ‘PAYE reference’. It will be on letters from HMRC about PAYE.
 
 messages__companyVat__title = Is the company registered for VAT?
 messages__companyVat__heading = Is {0} registered for VAT?
@@ -1822,5 +1820,10 @@ messages__partnershipHasUtr__heading = Does {0} have a Unique Taxpayer Reference
 messages__partnershipUtr__title = What is the partnership’s UTR?
 messages__partnershipNoUtr__title = Why does the partnership not have a UTR?
 messages__hasUtr__partnership_error_required = Select yes if the partnership has a UTR
+
+messages__hasPaye__h1 = Does {0} have an employer PAYE reference?
+messages__hasPaye__p1 = This is a 3 digit tax office number, a forward slash, and a tax office employer reference, like 123/AB456. It may be called ‘Employer PAYE reference’ or ‘PAYE reference’. It will be on letters from HMRC about PAYE.
+messages__partnershipHasPaye__title = Does the partnership have an employer PAYE reference?
+messages__partnershipHasPaye__error__required = Select whether the partnership has an employer PAYE number
 
 

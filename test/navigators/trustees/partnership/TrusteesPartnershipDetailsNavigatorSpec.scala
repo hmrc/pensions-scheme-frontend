@@ -108,7 +108,7 @@ object TrusteesPartnershipDetailsNavigatorSpec extends OptionValues {
     controllers.register.trustees.routes.AddTrusteeController.onPageLoad(Mode.journeyMode(mode), srn)
 
   private def hasVatPage(mode: Mode, index: Index, srn: Option[String]): Call =
-    PartnershipHasVatController.onPageLoad(Mode.journeyMode(mode), index, srn)
+    PartnershipHasVATController.onPageLoad(Mode.journeyMode(mode), index, srn)
 
   private def cyaPartnershipDetailsPage(mode: Mode, index: Index, srn: Option[String]): Call =
     CheckYourAnswersPartnershipDetailsController.onPageLoad(Mode.journeyMode(mode), index, srn)

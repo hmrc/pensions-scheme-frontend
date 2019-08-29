@@ -83,7 +83,7 @@ object TrusteesPartnershipDetailsNavigator {
     PartnershipNoUTRReasonController.onPageLoad(mode, index, srn)
 
   private def hasVat(mode: Mode, index: Int, srn: Option[String]): Call =
-    PartnershipHasVatController.onPageLoad(mode, index, srn)
+    PartnershipHasVATController.onPageLoad(mode, index, srn)
 
   private def cyaPage(mode: Mode, index: Int, srn: Option[String]): Call =
     CheckYourAnswersPartnershipDetailsController.onPageLoad(journeyMode(mode), index, srn)
