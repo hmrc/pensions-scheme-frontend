@@ -236,7 +236,7 @@ trait DataCompletion {
   def isTrusteePartnershipDetailsComplete(index: Int): Option[Boolean] =
     isComplete(
       Seq(
-        isUtrComplete(tp.PartnershipHasUTRId(index), tp.PartnershipUTRId(index), tp.PartnershipNoUTRReasonId(index)),
+        isAnswerComplete(tp.PartnershipHasUTRId(index), tp.PartnershipUTRId(index), Some(tp.PartnershipNoUTRReasonId(index))),
         isAnswerComplete(tp.PartnershipHasVATId(index), tp.PartnershipEnterVATId(index), None),
         isAnswerComplete(tp.PartnershipHasPAYEId(index), tp.PartnershipPayeVariationsId(index), None)
       )
