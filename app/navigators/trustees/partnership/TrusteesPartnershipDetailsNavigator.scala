@@ -18,22 +18,42 @@ package navigators.trustees.partnership
 
 import com.google.inject.Inject
 import connectors.UserAnswersCacheConnector
-import controllers.register.trustees.routes._
+import controllers.register.trustees.partnership.routes._
 import identifiers.Identifier
-import identifiers.register.trustees.partnership.PartnershipDetailsId
+import identifiers.register.trustees.IsTrusteeNewId
+import identifiers.register.trustees.partnership._
 import models._
+import models.Mode._
 import navigators.AbstractNavigator
 import play.api.mvc.Call
 import utils.UserAnswers
 
 class TrusteesPartnershipDetailsNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector) extends AbstractNavigator {
 
+  import TrusteesPartnershipDetailsNavigator._
+
   private def normalAndCheckModeRoutes(mode: SubscriptionMode, ua: UserAnswers, srn: Option[String]): PartialFunction[Identifier, Call] = {
-    case PartnershipDetailsId(_) => AddTrusteeController.onPageLoad(mode, srn)
+    case PartnershipDetailsId(_)                                  => addTrusteesPage(mode, srn)
+    case id@PartnershipHasUTRId(index)                            => booleanNav(id, ua, utrPage(mode, index, srn), noUtrReasonPage(mode, index, srn))
+    case PartnershipUTRId(index) if mode == NormalMode            => hasVat(mode, index, srn)
+    case PartnershipUTRId(index)                                  => cyaPage(mode, index, srn)
+    case PartnershipNoUTRReasonId(index) if mode == NormalMode    => hasVat(mode, index, srn)
+    case PartnershipNoUTRReasonId(index)                          => cyaPage(mode, index, srn)
   }
 
   private def updateModeRoutes(mode: VarianceMode, ua: UserAnswers, srn: Option[String]): PartialFunction[Identifier, Call] = {
-    case PartnershipDetailsId(_) => AddTrusteeController.onPageLoad(mode, srn)
+    case PartnershipDetailsId(_) => addTrusteesPage(mode, srn)
+    case id@PartnershipHasUTRId(index)        => booleanNav(id, ua, utrPage(mode, index, srn), noUtrReasonPage(mode, index, srn))
+    case PartnershipUTRId(index)              => hasVat(mode, index, srn)
+    case PartnershipNoUTRReasonId(index)      => hasVat(mode, index, srn)
+  }
+
+  private def checkUpdateModeRoutes(mode: VarianceMode, ua: UserAnswers, srn: Option[String]): PartialFunction[Identifier, Call] = {
+    case id@PartnershipHasUTRId(index)                                  => booleanNav(id, ua, utrPage(mode, index, srn), noUtrReasonPage(mode, index, srn))
+    case PartnershipUTRId(index) if isNewTrustee(index, ua)             => cyaPage(mode, index, srn)
+    case PartnershipUTRId(_)                                            => anyMoreChangesPage(srn)
+    case PartnershipNoUTRReasonId(index) if isNewTrustee(index, ua)     => cyaPage(mode, index, srn)
+    case PartnershipNoUTRReasonId(_)                                    => anyMoreChangesPage(srn)
   }
 
   override protected def routeMap(from: NavigateFrom): Option[NavigateTo] =
@@ -46,5 +66,26 @@ class TrusteesPartnershipDetailsNavigator @Inject()(val dataCacheConnector: User
     navigateTo(updateModeRoutes(UpdateMode, from.userAnswers, srn), from.id)
 
   override protected def checkUpdateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] =
-    None
+    navigateTo(checkUpdateModeRoutes(CheckUpdateMode, from.userAnswers, srn), from.id)
+}
+
+object TrusteesPartnershipDetailsNavigator {
+
+  private def isNewTrustee(index: Int, ua: UserAnswers) = ua.get(IsTrusteeNewId(index)).getOrElse(false)
+
+  private def addTrusteesPage(mode: Mode, srn: Option[String]): Call =
+    controllers.register.trustees.routes.AddTrusteeController.onPageLoad(mode, srn)
+
+  private def utrPage(mode: Mode, index: Int, srn: Option[String]): Call =
+    PartnershipUTRController.onPageLoad(mode, index, srn)
+
+  private def noUtrReasonPage(mode: Mode, index: Int, srn: Option[String]): Call =
+    PartnershipNoUTRReasonController.onPageLoad(mode, index, srn)
+
+  private def hasVat(mode: Mode, index: Int, srn: Option[String]): Call =
+    PartnershipHasVatController.onPageLoad(mode, index, srn)
+
+  private def cyaPage(mode: Mode, index: Int, srn: Option[String]): Call =
+    CheckYourAnswersPartnershipDetailsController.onPageLoad(journeyMode(mode), index, srn)
+
 }
