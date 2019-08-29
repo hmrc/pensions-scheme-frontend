@@ -46,7 +46,7 @@ class PartnershipHasUTRController @Inject()(override val appConfig: FrontendAppC
     CommonFormWithHintViewModel(
       postCall = routes.PartnershipHasUTRController.onSubmit(mode, index, srn),
       title = Message("messages__partnershipHasUtr__title"),
-      heading = Message("messages__hasUtr__h1", companyName),
+      heading = Message("messages__partnershipHasUtr__heading", companyName),
       hint = Some(Message("messages__hasUtr__p1")),
       srn = srn
     )
