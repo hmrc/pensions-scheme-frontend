@@ -75,7 +75,11 @@ class PartnershipEmailControllerSpec extends ControllerSpecBase {
 
     "on a POST" must {
       "redirect to relevant page" in {
-        running(_.overrides(modules(fullAnswers.dataRetrievalAction, featureSwitchEnabled = true): _*)) {
+        running(_.overrides(
+          modules(fullAnswers.dataRetrievalAction, featureSwitchEnabled = true) ++
+            Seq[GuiceableModule](bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
+              bind[UserAnswersService].toInstance(FakeUserAnswersService)
+            ): _*)) {
           app =>
           val controller = app.injector.instanceOf[PartnershipEmailController]
           val postRequest = fakeRequest.withFormUrlEncodedBody(("email", email))
