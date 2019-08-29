@@ -17,35 +17,64 @@
 package controllers.register.trustees.partnership
 
 import config.FrontendAppConfig
-import controllers.Retrievals
+import controllers.EmailAddressController
 import controllers.actions._
+import forms.EmailFormProvider
+import identifiers.register.trustees.partnership.{PartnershipDetailsId, PartnershipEmailId}
 import javax.inject.Inject
 import models.{Index, Mode}
 import navigators.Navigator
+import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import utils.Enumerable
+import viewmodels.{CommonFormWithHintViewModel, Message}
 
 import scala.concurrent.ExecutionContext
 
 class PartnershipEmailController @Inject()(val appConfig: FrontendAppConfig,
-                                                                  val messagesApi: MessagesApi,
-                                                                  val userAnswersService: UserAnswersService,
-                                                                  val navigator: Navigator,
-                                                                  authenticate: AuthAction,
-                                                                  getData: DataRetrievalAction,
-                                                                  allowAccess: AllowAccessActionProvider,
-                                                                  requireData: DataRequiredAction
-                                     )(implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
+                                           override val messagesApi: MessagesApi,
+                                           authenticate: AuthAction,
+                                           getData: DataRetrievalAction,
+                                           override val userAnswersService: UserAnswersService,
+                                           allowAccess: AllowAccessActionProvider,
+                                           requireData: DataRequiredAction,
+                                           override val navigator: Navigator,
+                                           formProvider: EmailFormProvider
+                                          )(implicit val ec: ExecutionContext) extends EmailAddressController with I18nSupport {
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData) {
-      implicit request => NotImplemented("Not implemented: " + this.getClass.toString)
+  protected val form: Form[String] = formProvider()
+
+  private def viewModel(mode: Mode, srn: Option[String], index: Index): Retrieval[CommonFormWithHintViewModel] =
+    Retrieval {
+      implicit request =>
+        PartnershipDetailsId(index).retrieve.right.map {
+          details =>
+            CommonFormWithHintViewModel(
+              controllers.register.trustees.partnership.routes.PartnershipEmailController.onSubmit(mode, index, srn),
+              Message("messages__partnership_email__title"),
+              Message("messages__common_email__heading", details.name),
+              Some(Message("messages__email__hint")),
+              srn = srn
+            )
+        }
     }
 
-  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData) {
-    implicit request => Redirect(controllers.routes.IndexController.onPageLoad())
+  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+      implicit request =>
+        viewModel(mode, srn, index).retrieve.right.map {
+          vm =>
+            get(PartnershipEmailId(index), form, vm)
+        }
+    }
+
+  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen requireData).async {
+    implicit request =>
+      viewModel(mode, srn, index).retrieve.right.map {
+        vm =>
+          post(PartnershipEmailId(index), mode, form, vm, None)
+      }
   }
 }

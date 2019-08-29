@@ -1828,4 +1828,6 @@ messages__whatYouWillNeedTrusteePartnershipContact__h1 = Contact details for {0}
 messages__whatYouWillNeedTrusteePartnershipContact__p1 = You will need to tell us the partnership’s:
 messages__whatYouWillNeedTrusteePartnershipContact__item1 = contact email address
 messages__whatYouWillNeedTrusteePartnershipContact__item2 = contact phone number
+messages__partnership_email__title =  What is the partnership’s email address?
+
 
