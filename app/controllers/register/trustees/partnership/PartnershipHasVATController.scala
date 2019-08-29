@@ -33,7 +33,7 @@ import viewmodels.{CommonFormWithHintViewModel, Message}
 
 import scala.concurrent.ExecutionContext
 
-class PartnershipHasVatController @Inject()(val appConfig: FrontendAppConfig,
+class PartnershipHasVATController @Inject()(val appConfig: FrontendAppConfig,
                                             val messagesApi: MessagesApi,
                                             val userAnswersService: UserAnswersService,
                                             val navigator: Navigator,
@@ -48,7 +48,7 @@ class PartnershipHasVatController @Inject()(val appConfig: FrontendAppConfig,
 
   private def viewModel(mode: Mode, index: Index, srn: Option[String], partnershipName: String): CommonFormWithHintViewModel =
     CommonFormWithHintViewModel(
-      postCall = PartnershipHasVatController.onSubmit(mode, index, srn),
+      postCall = PartnershipHasVATController.onSubmit(mode, index, srn),
       title = Message("messages__vat__title", partnershipName),
       heading = Message("messages__vat__heading", partnershipName),
       hint = None,
