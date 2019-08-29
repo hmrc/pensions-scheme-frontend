@@ -18,7 +18,7 @@ package controllers.register.trustees.partnership
 
 import controllers.ControllerSpecBase
 import controllers.actions.FakeDataRetrievalAction
-import controllers.register.trustees.partnership.routes.PartnershipHasVatController
+import controllers.register.trustees.partnership.routes.PartnershipHasVATController
 import forms.HasReferenceNumberFormProvider
 import identifiers.register.trustees.partnership.PartnershipHasVATId
 import models.{Index, NormalMode}
@@ -37,15 +37,15 @@ import play.api.mvc.Call
 
 import scala.concurrent.Future
 
-class PartnershipHasVatControllerSpec extends ControllerSpecBase {
+class PartnershipHasVATControllerSpec extends ControllerSpecBase {
 
-  import PartnershipHasVatControllerSpec._
+  import PartnershipHasVATControllerSpec._
 
   "PartnershipHasVatController" must {
     "return OK and the correct view for a GET" in {
-      val app = applicationBuilder(getMandatoryTrusteePartnership, featureSwitchEnabled = false).build()
+      val app = applicationBuilder(getMandatoryTrusteePartnership, featureSwitchEnabled = true).build()
 
-      val controller = app.injector.instanceOf[PartnershipHasVatController]
+      val controller = app.injector.instanceOf[PartnershipHasVATController]
 
       val result = controller.onPageLoad(NormalMode, index, None)(fakeRequest)
 
@@ -59,9 +59,9 @@ class PartnershipHasVatControllerSpec extends ControllerSpecBase {
     "return OK and the correct view for a GET where question already answered" in {
       val answered = new FakeDataRetrievalAction(Some(validTrusteePartnershipData("hasVat" -> false)))
 
-      val app = applicationBuilder(answered, featureSwitchEnabled = false).build()
+      val app = applicationBuilder(answered, featureSwitchEnabled = true).build()
 
-      val controller = app.injector.instanceOf[PartnershipHasVatController]
+      val controller = app.injector.instanceOf[PartnershipHasVATController]
 
       val result = controller.onPageLoad(NormalMode, index, None)(fakeRequest)
 
@@ -73,7 +73,7 @@ class PartnershipHasVatControllerSpec extends ControllerSpecBase {
     }
 
     "redirect to the next page when valid data is submitted for true" in {
-      val app = applicationBuilder(getMandatoryTrusteePartnership, featureSwitchEnabled = false)
+      val app = applicationBuilder(getMandatoryTrusteePartnership, featureSwitchEnabled = true)
         .overrides(
           bind[UserAnswersService].toInstance(mockUserAnswersService),
           bind(classOf[Navigator]).toInstance(new FakeNavigator(onwardRoute))
@@ -84,7 +84,7 @@ class PartnershipHasVatControllerSpec extends ControllerSpecBase {
 
       when(mockUserAnswersService.save(any(), any(), any(), any())(any(), any(), any(), any())).thenReturn(Future.successful(validData))
 
-      val controller = app.injector.instanceOf[PartnershipHasVatController]
+      val controller = app.injector.instanceOf[PartnershipHasVATController]
 
       val result = controller.onSubmit(NormalMode, index, None)(fakeRequest.withFormUrlEncodedBody(("value", "true")))
 
@@ -96,9 +96,9 @@ class PartnershipHasVatControllerSpec extends ControllerSpecBase {
     }
 
     "return a Bad Request and errors when invalid data is submitted" in {
-      val app = applicationBuilder(getMandatoryTrusteePartnership, featureSwitchEnabled = false).build()
+      val app = applicationBuilder(getMandatoryTrusteePartnership, featureSwitchEnabled = true).build()
 
-      val controller = app.injector.instanceOf[PartnershipHasVatController]
+      val controller = app.injector.instanceOf[PartnershipHasVATController]
 
       val boundForm = form.bind(Map("value" -> "invalid value"))
 
@@ -113,7 +113,7 @@ class PartnershipHasVatControllerSpec extends ControllerSpecBase {
   }
 }
 
-object PartnershipHasVatControllerSpec extends ControllerSpecBase with MockitoSugar {
+object PartnershipHasVATControllerSpec extends ControllerSpecBase with MockitoSugar {
   private val schemeName = None
   private val partnershipName = "test partnership name"
   private val formProvider = new HasReferenceNumberFormProvider()
@@ -124,7 +124,7 @@ object PartnershipHasVatControllerSpec extends ControllerSpecBase with MockitoSu
   private def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
   private val viewModel = CommonFormWithHintViewModel(
-    postCall = PartnershipHasVatController.onSubmit(NormalMode, index, srn),
+    postCall = PartnershipHasVATController.onSubmit(NormalMode, index, srn),
     title = Message("messages__vat__title", partnershipName),
     heading = Message("messages__vat__heading", partnershipName),
     hint = None,

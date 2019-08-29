@@ -17,35 +17,57 @@
 package controllers.register.trustees.partnership
 
 import config.FrontendAppConfig
-import controllers.Retrievals
+import controllers.UTRController
 import controllers.actions._
+import forms.UTRFormProvider
+import identifiers.register.trustees.partnership.{PartnershipDetailsId, PartnershipUTRId}
 import javax.inject.Inject
-import models.{Index, Mode}
+import models.{Index, Mode, ReferenceValue}
 import navigators.Navigator
-import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.data.Form
+import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import utils.Enumerable
+import viewmodels.{Message, UTRViewModel}
 
 import scala.concurrent.ExecutionContext
 
-class PartnershipUTRController @Inject()(val appConfig: FrontendAppConfig,
-                                                                  val messagesApi: MessagesApi,
-                                                                  val userAnswersService: UserAnswersService,
-                                                                  val navigator: Navigator,
-                                                                  authenticate: AuthAction,
-                                                                  getData: DataRetrievalAction,
-                                                                  allowAccess: AllowAccessActionProvider,
-                                                                  requireData: DataRequiredAction
-                                     )(implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
+class PartnershipUTRController @Inject()(override val appConfig: FrontendAppConfig,
+                                         override val messagesApi: MessagesApi,
+                                         override val userAnswersService: UserAnswersService,
+                                         override val navigator: Navigator,
+                                         authenticate: AuthAction,
+                                         getData: DataRetrievalAction,
+                                         allowAccess: AllowAccessActionProvider,
+                                         requireData: DataRequiredAction,
+                                         formProvider: UTRFormProvider
+                                        )(implicit val ec: ExecutionContext) extends UTRController {
+
+  private def form: Form[ReferenceValue] = formProvider()
+
+  private def viewModel(mode: Mode, index: Index, srn: Option[String], partnershipName: String): UTRViewModel = {
+    UTRViewModel(
+      postCall = routes.PartnershipUTRController.onSubmit(mode, index, srn),
+      title = Message("messages__partnershipUtr__title"),
+      heading = Message("messages__trusteeUtr__h1", partnershipName),
+      hint = Message("messages_utr__hint"),
+      srn = srn
+    )
+  }
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData) {
-      implicit request => NotImplemented("Not implemented: " + this.getClass.toString)
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+      implicit request =>
+        PartnershipDetailsId(index).retrieve.right.map { details =>
+          get(PartnershipUTRId(index), viewModel(mode, index, srn, details.name), form)
+        }
     }
 
-  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData) {
-    implicit request => Redirect(controllers.routes.IndexController.onPageLoad())
-  }
+  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen requireData).async {
+      implicit request =>
+        PartnershipDetailsId(index).retrieve.right.map { details =>
+          post(PartnershipUTRId(index), mode, viewModel(mode, index, srn, details.name), form)
+        }
+    }
 }

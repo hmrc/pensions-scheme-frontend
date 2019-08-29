@@ -51,7 +51,6 @@ class TrusteeUTRController @Inject()(val appConfig: FrontendAppConfig,
       title = Message("messages__trusteeUtr__title"),
       heading = Message("messages__trusteeUtr__h1", trusteeName),
       hint = Message("messages_utr__hint"),
-      subHeading = None,
       srn = srn
     )
   }

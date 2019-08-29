@@ -1817,4 +1817,9 @@ messages__trusteeUtr__title = What is the trustee’s UTR?
 messages__trusteeUtr__h1 =  What is {0}’s UTR?
 messages__trustee__cya__dob = What is {0}’s date of birth?
 
+messages__partnershipHasUtr__title = Does the partnership have a UTR?
+messages__partnershipUtr__title = What is the partnership’s UTR?
+messages__partnershipNoUtr__title = Why does the partnership not have a UTR?
+messages__hasUtr__partnership_error_required = Select yes if the partnership has a UTR
+
 

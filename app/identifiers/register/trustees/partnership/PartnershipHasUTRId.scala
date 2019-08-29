@@ -22,15 +22,17 @@ import play.api.libs.json.{JsPath, JsResult}
 import utils.UserAnswers
 
 case class PartnershipHasUTRId(index: Int) extends TypedIdentifier[Boolean] {
+
   override def path: JsPath = TrusteesId(index).path \ PartnershipHasUTRId.toString
+
   override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): JsResult[UserAnswers] = {
     value match {
-      case Some(true) =>
-        userAnswers.remove(PartnershipNoUTRReasonId(index))
-      case Some(false) =>
-        userAnswers.remove(PartnershipUTRId(index))
-      case _ =>
-        super.cleanup(value, userAnswers)
+
+      case Some(true) => userAnswers.remove(PartnershipNoUTRReasonId(index))
+
+      case Some(false) => userAnswers.remove(PartnershipUTRId(index))
+
+      case _ => super.cleanup(value, userAnswers)
     }
   }
 }
