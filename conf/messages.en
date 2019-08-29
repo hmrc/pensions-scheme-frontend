@@ -1813,4 +1813,9 @@ messages__trusteeUtr__title = What is the trustee’s UTR?
 messages__trusteeUtr__h1 =  What is {0}’s UTR?
 messages__trustee__cya__dob = What is {0}’s date of birth?
 
+messages__whatYouWillNeedTrusteePartnershipContact__title = Contact details
+messages__whatYouWillNeedTrusteePartnershipContact__h1 = Contact details for {0}
+messages__whatYouWillNeedTrusteePartnershipContact__p1 = You will need to tell us the partnership’s:
+messages__whatYouWillNeedTrusteePartnershipContact__item1 = contact email address
+messages__whatYouWillNeedTrusteePartnershipContact__item2 = contact phone number
 
