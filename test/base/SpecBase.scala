@@ -25,7 +25,7 @@ import org.scalatestplus.play.PlaySpec
 import org.scalatestplus.play.guice._
 import play.api.Environment
 import play.api.i18n.{Messages, MessagesApi}
-import play.api.inject.guice.GuiceApplicationBuilder
+import play.api.inject.guice.{GuiceApplicationBuilder, GuiceableModule}
 import play.api.inject.{Injector, bind}
 import play.api.mvc.{AnyContentAsEmpty, Call}
 import play.api.test.FakeRequest
@@ -57,14 +57,21 @@ trait SpecBase extends PlaySpec with GuiceOneAppPerSuite {
     assert(doc.getElementById(id) != null, "\n\nElement " + id + " was not rendered on the page.\n")
   }
 
+  def modules(dataRetrievalAction: DataRetrievalAction,
+              featureSwitchEnabled: Boolean): Seq[GuiceableModule] = {
+    Seq(
+      bind[AuthAction].toInstance(FakeAuthAction),
+      bind[AllowAccessActionProvider].toInstance(FakeAllowAccessProvider()),
+      bind[DataRetrievalAction].toInstance(dataRetrievalAction),
+      bind[FeatureSwitchManagementService].toInstance(new FakeFeatureSwitchManagementService(featureSwitchEnabled))
+    )
+  }
+
   def applicationBuilder(dataRetrievalAction: DataRetrievalAction,
                          featureSwitchEnabled: Boolean,
                          onwardRoute: Call = controllers.routes.IndexController.onPageLoad()): GuiceApplicationBuilder =
     new GuiceApplicationBuilder()
       .overrides(
-        bind[AuthAction].toInstance(FakeAuthAction),
-        bind[AllowAccessActionProvider].toInstance(FakeAllowAccessProvider()),
-        bind[DataRetrievalAction].toInstance(dataRetrievalAction),
-        bind[FeatureSwitchManagementService].toInstance(new FakeFeatureSwitchManagementService(featureSwitchEnabled))
+        modules(dataRetrievalAction, featureSwitchEnabled): _*
       )
 }
