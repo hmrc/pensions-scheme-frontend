@@ -50,8 +50,8 @@ class TrusteesPartnershipDetailsNavigatorSpec extends SpecBase with MustMatchers
           row(PartnershipNoUTRReasonId(index))(someStringValue, hasVatPage(NormalMode, index, None)),
           row(PartnershipUTRId(index))(someRefValue, hasVatPage(NormalMode, index, None)),
           row(PartnershipHasVATId(index))(true, PartnershipEnterVATController.onPageLoad(NormalMode, index, None)),
-          row(PartnershipHasVATId(index))(false, HasPartnershipPAYEController.onPageLoad(NormalMode, index, None)),
-          row(PartnershipEnterVATId(index))(someRefValue, HasPartnershipPAYEController.onPageLoad(NormalMode, index, None)),
+          row(PartnershipHasVATId(index))(false, PartnershipHasPAYEController.onPageLoad(NormalMode, index, None)),
+          row(PartnershipEnterVATId(index))(someRefValue, PartnershipHasPAYEController.onPageLoad(NormalMode, index, None)),
           row(PartnershipHasPAYEId(index))(true, PartnershipPayeVariationsController.onPageLoad(NormalMode, index, None)),
           row(PartnershipHasPAYEId(index))(false, cyaPartnershipDetailsPage(NormalMode, index, None)),
           row(PartnershipPayeVariationsId(index))(someRefValue, cyaPartnershipDetailsPage(NormalMode, index, None))
@@ -89,8 +89,8 @@ class TrusteesPartnershipDetailsNavigatorSpec extends SpecBase with MustMatchers
           row(PartnershipNoUTRReasonId(index))(someStringValue, hasVatPage(UpdateMode, index, srn), Some(newTrusteeUserAnswers)),
           row(PartnershipUTRId(index))(someRefValue, hasVatPage(UpdateMode, index, srn), Some(newTrusteeUserAnswers)),
           row(PartnershipHasVATId(index))(true, PartnershipEnterVATController.onPageLoad(UpdateMode, index, srn)),
-          row(PartnershipHasVATId(index))(false, HasPartnershipPAYEController.onPageLoad(UpdateMode, index, srn)),
-          row(PartnershipEnterVATId(index))(someRefValue, HasPartnershipPAYEController.onPageLoad(UpdateMode, index, srn)),
+          row(PartnershipHasVATId(index))(false, PartnershipHasPAYEController.onPageLoad(UpdateMode, index, srn)),
+          row(PartnershipEnterVATId(index))(someRefValue, PartnershipHasPAYEController.onPageLoad(UpdateMode, index, srn)),
           row(PartnershipHasPAYEId(index))(true, PartnershipPayeVariationsController.onPageLoad(UpdateMode, index, srn)),
           row(PartnershipHasPAYEId(index))(false, cyaPartnershipDetailsPage(UpdateMode, index, srn)),
           row(PartnershipPayeVariationsId(index))(someRefValue, cyaPartnershipDetailsPage(UpdateMode, index, srn))

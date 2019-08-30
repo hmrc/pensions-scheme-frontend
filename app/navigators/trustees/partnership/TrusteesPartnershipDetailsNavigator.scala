@@ -88,7 +88,8 @@ class TrusteesPartnershipDetailsNavigator @Inject()(val dataCacheConnector: User
 
 object TrusteesPartnershipDetailsNavigator {
 
-  private def isNewTrustee(index: Int, ua: UserAnswers) = ua.get(IsTrusteeNewId(index)).getOrElse(false)
+  private def isNewTrustee(index: Int, ua: UserAnswers): Boolean =
+    ua.get(IsTrusteeNewId(index)).getOrElse(false)
 
   private def addTrusteesPage(mode: Mode, srn: Option[String]): Call =
     AddTrusteeController.onPageLoad(mode, srn)
@@ -106,7 +107,7 @@ object TrusteesPartnershipDetailsNavigator {
     PartnershipEnterVATController.onPageLoad(mode, index, srn)
 
   private def hasPaye(mode: Mode, index: Int, srn: Option[String]): Call =
-    HasPartnershipPAYEController.onPageLoad(mode, index, srn)
+    PartnershipHasPAYEController.onPageLoad(mode, index, srn)
 
   private def payePage(mode: Mode, index: Int, srn: Option[String]): Call =
     PartnershipPayeVariationsController.onPageLoad(mode, index, srn)
