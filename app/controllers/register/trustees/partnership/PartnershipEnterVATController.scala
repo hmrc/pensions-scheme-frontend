@@ -22,29 +22,28 @@ import controllers.actions._
 import forms.EnterVATFormProvider
 import identifiers.register.trustees.partnership.{PartnershipDetailsId, PartnershipEnterVATId}
 import javax.inject.Inject
-import models.{Index, Mode}
+import models.{Index, Mode, ReferenceValue}
 import navigators.Navigator
+import play.api.data.Form
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
-import utils.annotations.TrusteesPartnership
-import viewmodels.{Message, EnterVATViewModel}
+import viewmodels.{EnterVATViewModel, Message}
 
 import scala.concurrent.ExecutionContext
 
-class PartnershipEnterVATController @Inject()(
-                                                    override val appConfig: FrontendAppConfig,
-                                                    override val messagesApi: MessagesApi,
-                                                    val userAnswersService: UserAnswersService,
-                                                    override val navigator: Navigator,
-                                                    authenticate: AuthAction,
-                                                    getData: DataRetrievalAction,
-                                                    allowAccess: AllowAccessActionProvider,
-                                                    requireData: DataRequiredAction,
-                                                    formProvider: EnterVATFormProvider
-                                                  )(implicit val ec: ExecutionContext) extends EnterVATController {
+class PartnershipEnterVATController @Inject()(override val appConfig: FrontendAppConfig,
+                                              override val messagesApi: MessagesApi,
+                                              val userAnswersService: UserAnswersService,
+                                              override val navigator: Navigator,
+                                              authenticate: AuthAction,
+                                              getData: DataRetrievalAction,
+                                              allowAccess: AllowAccessActionProvider,
+                                              requireData: DataRequiredAction,
+                                              formProvider: EnterVATFormProvider
+                                             )(implicit val ec: ExecutionContext) extends EnterVATController {
 
-  private def form(companyName: String) = formProvider(companyName)
+  private def form(companyName: String): Form[ReferenceValue] = formProvider(companyName)
 
   private def viewModel(mode: Mode, index: Index, srn: Option[String], companyName: String): EnterVATViewModel = {
     EnterVATViewModel(

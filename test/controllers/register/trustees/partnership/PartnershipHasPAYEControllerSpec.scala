@@ -18,9 +18,9 @@ package controllers.register.trustees.partnership
 
 import controllers.ControllerSpecBase
 import controllers.actions._
-import forms.HasUtrFormProvider
+import forms.HasPAYEFormProvider
 import identifiers.register.trustees.TrusteesId
-import identifiers.register.trustees.partnership.{PartnershipDetailsId, PartnershipHasUTRId, PartnershipNoUTRReasonId, PartnershipUTRId}
+import identifiers.register.trustees.partnership.{PartnershipDetailsId, PartnershipHasPAYEId, PartnershipPayeVariationsId}
 import models.{Index, NormalMode, PartnershipDetails}
 import play.api.data.Form
 import play.api.libs.json.Json
@@ -30,36 +30,36 @@ import utils.FakeNavigator
 import viewmodels.{CommonFormWithHintViewModel, Message}
 import views.html.hasReferenceNumber
 
-class PartnershipHasUTRControllerSpec extends ControllerSpecBase {
+class PartnershipHasPAYEControllerSpec extends ControllerSpecBase {
   private val schemeName = None
   private def onwardRoute = controllers.routes.IndexController.onPageLoad()
-  private val formProvider = new HasUtrFormProvider()
-  private val form = formProvider("messages__hasUtr__partnership_error_required","test partnership name")
+  private val formProvider = new HasPAYEFormProvider()
+  private val form = formProvider("messages__partnershipHasPaye__error__required","test partnership name")
   private val index = Index(0)
   private val srn = None
-  private val postCall = controllers.register.trustees.partnership.routes.PartnershipHasUTRController.onSubmit(NormalMode, index, srn)
+  private val postCall = controllers.register.trustees.partnership.routes.PartnershipHasPAYEController.onSubmit(NormalMode, index, srn)
   private val viewModel = CommonFormWithHintViewModel(
     postCall,
-    title = Message("messages__partnershipHasUtr__title"),
-    heading = Message("messages__partnershipHasUtr__heading", "test partnership name"),
-    hint = Some(Message("messages__hasUtr__p1"))
+    title = Message("messages__partnershipHasPaye__title"),
+    heading = Message("messages__hasPaye__h1", "test partnership name"),
+    hint = Some(Message("messages__hasPaye__p1")),
+    formFieldName = Some("hasPaye")
   )
 
-  private def getDataWithUtr(hasUtrValue:Boolean): FakeDataRetrievalAction = new FakeDataRetrievalAction(
+  private val getDataWithPaye: FakeDataRetrievalAction = new FakeDataRetrievalAction(
     Some(Json.obj(
       TrusteesId.toString -> Json.arr(
         Json.obj(
           PartnershipDetailsId.toString -> PartnershipDetails("test partnership name"),
-          PartnershipHasUTRId.toString -> hasUtrValue,
-          PartnershipNoUTRReasonId.toString -> "utr number is not present",
-          PartnershipUTRId.toString -> "9999999999"
+          PartnershipHasPAYEId.toString -> true,
+          PartnershipPayeVariationsId.toString -> "9999999999"
         )
       )
     ))
   )
 
-  private def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryTrusteePartnership): PartnershipHasUTRController =
-    new PartnershipHasUTRController(
+  private def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryTrusteePartnership): PartnershipHasPAYEController =
+    new PartnershipHasPAYEController(
       frontendAppConfig,
       messagesApi,
       FakeUserAnswersService,
@@ -73,7 +73,7 @@ class PartnershipHasUTRControllerSpec extends ControllerSpecBase {
 
   private def viewAsString(form: Form[_] = form) = hasReferenceNumber(frontendAppConfig, form, viewModel, schemeName)(fakeRequest, messages).toString
 
-  "PartnershipHasUTRController" must {
+  "PartnershipHasPAYEController" must {
 
     "return OK and the correct view for a GET" in {
       val result = controller().onPageLoad(NormalMode, index, None)(fakeRequest)
@@ -83,18 +83,18 @@ class PartnershipHasUTRControllerSpec extends ControllerSpecBase {
     }
 
     "redirect to the next page when valid data is submitted for true" in {
-      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "true"))
+      val postRequest = fakeRequest.withFormUrlEncodedBody(("hasPaye", "true"))
 
       val result = controller().onSubmit(NormalMode, index, None)(postRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
-      FakeUserAnswersService.verify(PartnershipHasUTRId(index), true)
+      FakeUserAnswersService.verify(PartnershipHasPAYEId(index), true)
     }
 
     "return a Bad Request and errors when invalid data is submitted" in {
-      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "invalid value"))
-      val boundForm = form.bind(Map("value" -> "invalid value"))
+      val postRequest = fakeRequest.withFormUrlEncodedBody(("hasPaye", "invalid value"))
+      val boundForm = form.bind(Map("hasPaye" -> "invalid value"))
 
       val result = controller().onSubmit(NormalMode, index, None)(postRequest)
 
@@ -104,23 +104,12 @@ class PartnershipHasUTRControllerSpec extends ControllerSpecBase {
 
     "if user changes answer from yes to no then clean up should take place on utr number" in {
       FakeUserAnswersService.reset()
-      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "false"))
-      val result = controller(getDataWithUtr(hasUtrValue = true)).onSubmit(NormalMode, index, None)(postRequest)
+      val postRequest = fakeRequest.withFormUrlEncodedBody(("hasPaye", "false"))
+      val result = controller(getDataWithPaye).onSubmit(NormalMode, index, None)(postRequest)
 
       status(result) mustBe SEE_OTHER
-      FakeUserAnswersService.verify(PartnershipHasUTRId(index), false)
-      FakeUserAnswersService.verifyNot(PartnershipUTRId(index))
-    }
-
-    "if user changes answer from no to yes then clean up should take place on no utr reason" in {
-      FakeUserAnswersService.reset()
-      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "true"))
-      val result = controller(getDataWithUtr(hasUtrValue = false)).onSubmit(NormalMode, index, None)(postRequest)
-
-      status(result) mustBe SEE_OTHER
-
-      FakeUserAnswersService.verify(PartnershipHasUTRId(index), true)
-      FakeUserAnswersService.verifyNot(PartnershipNoUTRReasonId(index))
+      FakeUserAnswersService.verify(PartnershipHasPAYEId(index), false)
+      FakeUserAnswersService.verifyNot(PartnershipPayeVariationsId(index))
     }
 
   }

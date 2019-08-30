@@ -233,7 +233,7 @@ object CheckYourAnswersCompanyDetailsControllerSpec extends ControllerSpecBase w
 
   private def hasCompanyPayeYesRow(mode: Mode, srn: Option[String]): Seq[AnswerRow] =
     if(mode == NormalMode)
-      Seq(booleanChangeLink(messages("messages__companyPayeRef__h1", companyName), hasCompanyPayeRoute(mode, srn), value = true,
+      Seq(booleanChangeLink(messages("messages__hasPaye__h1", companyName), hasCompanyPayeRoute(mode, srn), value = true,
         messages("messages__visuallyhidden__companyPayeRef"))) else Nil
 
   private def dormantAnswerRow(mode: Mode, srn: Option[String]): Seq[AnswerRow] =
@@ -257,7 +257,7 @@ object CheckYourAnswersCompanyDetailsControllerSpec extends ControllerSpecBase w
           messages("messages__visuallyhidden__noCompanyUTRReason")),
         booleanChangeLink(messages("messages__hasCompanyVat__h1", companyName), hasCompanyVatRoute(mode, srn), value = false,
           messages("messages__visuallyhidden__hasCompanyVat")),
-        booleanChangeLink(messages("messages__companyPayeRef__h1", companyName), hasCompanyPayeRoute(mode, srn), value = false,
+        booleanChangeLink(messages("messages__hasPaye__h1", companyName), hasCompanyPayeRoute(mode, srn), value = false,
           messages("messages__visuallyhidden__companyPayeRef"))
       )
     ))
