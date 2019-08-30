@@ -17,6 +17,7 @@
 package controllers.register.establishers.company.director
 
 import base.SpecBase
+import config.FeatureSwitchManagementService
 import controllers.ControllerSpecBase
 import controllers.actions._
 import controllers.behaviours.ControllerAllowChangeBehaviour
@@ -80,6 +81,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
 
   "CheckYourAnswersController for Directors" when {
     "toggle isEstablisherCompanyHnSEnabled is false" when {
+      implicit val featureSwitchManagementService: FeatureSwitchManagementService = new FakeFeatureSwitchManagementService(false)
       def answerSectionForIsEstablisherCompanyHnSEnabled(mode: Mode, srn: Option[String] = None): Seq[AnswerSection] = Seq(
         AnswerSection(
           Some("messages__director__cya__details_heading"),
@@ -240,7 +242,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
     "toggle isEstablisherCompanyHnSEnabled is true" when {
       val request: DataRequest[AnyContent] = FakeDataRequest(directorAnswersHnsEnabled)
       implicit val userAnswers: UserAnswers = request.userAnswers
-
+      implicit val featureSwitchManagementService: FeatureSwitchManagementService = new FakeFeatureSwitchManagementService(true)
       def answerSectionDirectorHnSEnabled(mode: Mode, srn: Option[String] = None): Seq[AnswerSection] =
         Seq(
           AnswerSection(
