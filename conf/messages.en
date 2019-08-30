@@ -1836,3 +1836,11 @@ messages__whatYouWillNeedTrusteePartnershipContact__item2 = contact phone number
 messages__partnership_email__title =  What is the partnership’s email address?
 
 
+messages__whatYouWillNeedTrusteePartnershipDetails__title = Partnership details
+messages__whatYouWillNeedTrusteePartnershipDetails__h1 = Partnership details for {0}
+messages__whatYouWillNeedTrusteePartnershipDetails__p1 = You will need to tell us the partnership’s:
+messages__whatYouWillNeedTrusteePartnershipDetails__item1 = Unique Taxpayer Reference (UTR), or reason why it does not have one
+messages__whatYouWillNeedTrusteePartnershipDetails__p2 = If {0} has them, you will also need to tell us their:
+messages__whatYouWillNeedTrusteePartnershipDetails__item2 = VAT registration number
+messages__whatYouWillNeedTrusteePartnershipDetails__item3 = employer PAYE reference (you can tell us any employer PAYE reference if has more than one)
+
