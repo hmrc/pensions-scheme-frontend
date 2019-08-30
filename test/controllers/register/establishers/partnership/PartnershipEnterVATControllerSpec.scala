@@ -78,7 +78,7 @@ object PartnershipEnterVATControllerSpec extends PartnershipEnterVATControllerSp
     routes.PartnershipEnterVATController.onSubmit(CheckUpdateMode, firstIndex, srn),
     title = Message("messages__enterVAT__partnership_title"),
     heading = Message("messages__enterVAT__heading", "test partnership name"),
-    hint = Message("messages__enterVAT__hint"),
+    hint = Message("messages__enterVAT__hint", "test partnership name"),
     subHeading = None,
     srn = srn
   )

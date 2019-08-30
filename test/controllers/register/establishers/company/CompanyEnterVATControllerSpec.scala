@@ -79,7 +79,7 @@ object CompanyEnterVATControllerSpec extends CompanyEnterVATControllerSpec {
     routes.CompanyEnterVATController.onSubmit(CheckUpdateMode, firstIndex, srn),
     title = Message("messages__enterVAT__company_title"),
     heading = Message("messages__enterVAT__heading", "test company name"),
-    hint = Message("messages__enterVAT__hint"),
+    hint = Message("messages__enterVAT__hint", "test company name"),
     subHeading = None,
     srn = srn
   )
