@@ -16,24 +16,33 @@
 
 @import config.FrontendAppConfig
 @import uk.gov.hmrc.play.views.html._
-@import controllers.register.establishers.company.routes._
+@import controllers.register.establishers.company.director.routes._
 
-@(appConfig: FrontendAppConfig, schemeName: Option[String], postCall: Call, srn:Option[String], companyName:String)(implicit request: Request[_], messages: Messages)
+@(
+        appConfig: FrontendAppConfig,
+        schemeName: Option[String],
+        srn: Option[String],
+        companyName: String,
+        mode: Mode,
+        establisherIndex: Int,
+        directorIndex: Int
+)(
+        implicit request: Request[_],
+        messages: Messages
+)
 
 @main_template(
     title = messages("messages__whatYouWillNeedDirectors__title"),
     appConfig = appConfig,
-    bodyClasses = None) {
-
-    @helpers.form(action = postCall, 'autoComplete -> "off") {
-
+    bodyClasses = None
+) {
     @components.heading(messages("messages__whatYouWillNeedDirectors__h1", companyName))
-    
+
     @components.paragraph_text(messages("messages__whatYouWillNeedDirectors__p1"))
-    
+
     @components.paragraph_text(messages("messages__whatYouWillNeedDirectors__p2"))
-    
-    
+
+
     <ul class="list list-bullet">
         <li>@messages("messages__whatYouWillNeedDirectors__item1")</li>
         <li>@messages("messages__whatYouWillNeedDirectors__item2")</li>
@@ -45,8 +54,7 @@
         <li>@messages("messages__whatYouWillNeedDirectors__item8")</li>
     </ul>
 
-        @components.submit_button("site.continue")
+    @components.button_link("site.continue", DirectorNameController.onPageLoad(mode, establisherIndex, directorIndex, srn).url, "submit", Some("to directors section"))
 
-        @components.return_link("messages__schemeTaskList__returnlink", schemeName, None, srn)
-    }
+    @components.return_link("messages__schemeTaskList__returnlink", schemeName, None, srn)
 }

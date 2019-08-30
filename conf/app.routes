@@ -9,7 +9,6 @@ GET        /scheme-details                              controllers.SchemeTaskLi
 GET        /scheme-details/:srn                         controllers.SchemeTaskListController.onPageLoad(mode: Mode = UpdateMode, srn: Option[String])
 
 GET        /what-you-will-need-before-start             controllers.BeforeYouStartController.onPageLoad()
-POST       /what-you-will-need-before-start             controllers.BeforeYouStartController.onSubmit()
 
 GET        /index                                       controllers.IndexController.onPageLoad
 
