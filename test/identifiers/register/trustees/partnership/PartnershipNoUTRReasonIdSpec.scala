@@ -18,49 +18,37 @@ package identifiers.register.trustees.partnership
 
 import base.SpecBase
 import identifiers.register.trustees.IsTrusteeNewId
-import models.{Link, NormalMode, PartnershipDetails, ReferenceValue, UpdateMode}
+import models._
 import models.requests.DataRequest
-import play.api.libs.json.Json
 import play.api.mvc.AnyContent
 import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.PsaId
-import utils.UserAnswers
+import utils.{CountryOptions, UserAnswers}
 import utils.checkyouranswers.Ops._
 import viewmodels.AnswerRow
 
-class PartnershipHasPAYEIdSpec extends SpecBase {
-  
-  import PartnershipHasPAYEIdSpec._
+class PartnershipNoUTRReasonIdSpec extends SpecBase {
 
-  "cleanup" when {
-    "`PartnershipHasPAYE` changed to false" must {
-     val result = ua(true).set(PartnershipHasPAYEId(0))(false).asOpt.value
-
-      "remove the data for `PartnershipPayeVariationsId`" in {
-        result.get(PartnershipPayeVariationsId(0)) mustNot be(defined)
-      }
-    }
-
-    "`PartnershipHasPAYE` changed to true" must {
-      val result = ua(false).set(PartnershipHasPAYEId(0))(true).asOpt.value
-
-      "not remove the data for `PartnershipPayeVariationsId`" in {
-        result.get(PartnershipPayeVariationsId(0)) must be(defined)
-      }
-    }
-  }
+  val onwardUrl = "onwardUrl"
+  val name = "test partnership name"
+  val reason = "some lame reason"
+  implicit val countryOptions: CountryOptions = new CountryOptions(environment, frontendAppConfig)
+  private val answerRowsWithChangeLinks = Seq(
+    AnswerRow(messages("messages__noGenericUtr__heading", name), List(reason), false, Some(Link("site.change",onwardUrl,
+      Some(messages("messages__visuallyhidden__partnership__utr_no")))))
+  )
 
   "cya" when {
 
     val answers: UserAnswers = UserAnswers().set(PartnershipDetailsId(0))(PartnershipDetails(name)).flatMap(
-      _.set(PartnershipHasPAYEId(0))(true)).asOpt.get
+      _.set(PartnershipNoUTRReasonId(0))(reason)).asOpt.get
 
     "in normal mode" must {
 
       "return answers rows with change links" in {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
         implicit val userAnswers: UserAnswers = request.userAnswers
-        PartnershipHasPAYEId(0).row(onwardUrl, NormalMode) must equal(answerRowsWithChangeLinks)
+        PartnershipNoUTRReasonId(0).row(onwardUrl, NormalMode) must equal(answerRowsWithChangeLinks)
       }
     }
 
@@ -71,7 +59,7 @@ class PartnershipHasPAYEIdSpec extends SpecBase {
       "return answers rows with change links" in {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answersNew, PsaId("A0000000"))
         implicit val userAnswers: UserAnswers = request.userAnswers
-        PartnershipHasPAYEId(0).row(onwardUrl, UpdateMode) must equal(answerRowsWithChangeLinks)
+        PartnershipNoUTRReasonId(0).row(onwardUrl, UpdateMode) must equal(answerRowsWithChangeLinks)
       }
     }
 
@@ -81,26 +69,8 @@ class PartnershipHasPAYEIdSpec extends SpecBase {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
         implicit val userAnswers: UserAnswers = request.userAnswers
 
-        PartnershipHasPAYEId(0).row(onwardUrl, UpdateMode) mustEqual Nil
+        PartnershipNoUTRReasonId(0).row(onwardUrl, UpdateMode) mustEqual Nil
       }
     }
   }
 }
-
-object PartnershipHasPAYEIdSpec extends SpecBase {
-
-  val onwardUrl = "onwardUrl"
-  val name = "test partnership name"
-
-  private val answerRowsWithChangeLinks = Seq(
-    AnswerRow(messages("messages__hasPaye__h1", name), List("site.yes"), true, Some(Link("site.change",onwardUrl,
-      Some(messages("messages__visuallyhidden__partnership__paye_yes_no", name)))))
-  )
-
-  private def ua(v:Boolean) = UserAnswers(Json.obj())
-    .set(PartnershipHasPAYEId(0))(v)
-    .flatMap(_.set(PartnershipPayeVariationsId(0))(ReferenceValue("value")))
-    .asOpt
-    .value
-}
-

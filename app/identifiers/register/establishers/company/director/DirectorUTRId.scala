@@ -39,7 +39,7 @@ object DirectorUTRId {
                    messages: Messages,
                    countryOptions: CountryOptions): CheckYourAnswers[DirectorUTRId] = {
 
-    val label: String = "messages__companyUtr__checkyouranswerslabel"
+    val label: String = "messages__utr__checkyouranswerslabel"
     val hiddenLabel = "messages__visuallyhidden__companyUTR"
 
     new CheckYourAnswers[DirectorUTRId] {

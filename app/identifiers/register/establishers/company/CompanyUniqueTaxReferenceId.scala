@@ -33,7 +33,7 @@ object CompanyUniqueTaxReferenceId {
   override def toString: String = "companyUniqueTaxReference"
 
   val label = "messages__company__cya__utr_yes_no"
-  val utrLabel = "messages__company__cya__utr"
+  val utrLabel = "messages__cya__utr"
   val reasonLabel = "messages__company__cya__utr_no_reason"
   val changeHasUtr = "messages__visuallyhidden__establisher__utr_yes_no"
   val changeUtr = "messages__visuallyhidden__establisher__utr"
