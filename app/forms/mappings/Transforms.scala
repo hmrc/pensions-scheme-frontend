@@ -30,7 +30,7 @@ trait Transforms {
     value.trim
   }
 
-  def ninoTransform(value: String): String = {
+  def noSpaceWithUpperCaseTransform(value: String): String = {
     strip(value).toUpperCase
   }
 
