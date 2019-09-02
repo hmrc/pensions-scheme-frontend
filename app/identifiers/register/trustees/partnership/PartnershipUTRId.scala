@@ -17,10 +17,14 @@
 package identifiers.register.trustees.partnership
 
 import identifiers._
+import identifiers.register.trustees
 import identifiers.register.trustees.TrusteesId
 import models.ReferenceValue
+import play.api.i18n.Messages
 import play.api.libs.json.{JsPath, JsResult}
-import utils.UserAnswers
+import utils.{CountryOptions, UserAnswers}
+import utils.checkyouranswers.{CheckYourAnswers, ReferenceValueCYA}
+import viewmodels.AnswerRow
 
 case class PartnershipUTRId(index: Int) extends TypedIdentifier[ReferenceValue] {
   override def path: JsPath = TrusteesId(index).path \ PartnershipUTRId.toString
@@ -31,4 +35,26 @@ case class PartnershipUTRId(index: Int) extends TypedIdentifier[ReferenceValue] 
 
 object PartnershipUTRId {
   override def toString: String = "utr"
+
+  implicit def cya(implicit userAnswers: UserAnswers,
+                   messages: Messages,
+                   countryOptions: CountryOptions): CheckYourAnswers[PartnershipUTRId] = {
+
+    val label: String = "messages__cya__utr"
+    val hiddenLabel = "messages__visuallyhidden__partnership__utr"
+
+    new CheckYourAnswers[PartnershipUTRId] {
+      override def row(id: PartnershipUTRId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+        ReferenceValueCYA[PartnershipUTRId](label, hiddenLabel)().row(id)(changeUrl, userAnswers)
+
+      override def updateRow(id: PartnershipUTRId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
+        userAnswers.get(trustees.IsTrusteeNewId(id.index)) match {
+          case Some(true) =>
+            row(id)(changeUrl, userAnswers)
+          case _ =>
+            ReferenceValueCYA[PartnershipUTRId](label, hiddenLabel)().updateRow(id)(changeUrl, userAnswers)
+        }
+      }
+    }
+  }
 }

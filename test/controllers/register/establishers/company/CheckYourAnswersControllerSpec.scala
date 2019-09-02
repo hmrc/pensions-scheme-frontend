@@ -181,7 +181,7 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase with Enumerable
 
     val utrRows = UniqueTaxReferenceCYA(
       label = "messages__company__cya__utr_yes_no",
-      utrLabel = "messages__company__cya__utr",
+      utrLabel = "messages__cya__utr",
       reasonLabel = "messages__company__cya__utr_no_reason",
       changeHasUtr = "messages__visuallyhidden__establisher__utr_yes_no",
       changeUtr = "messages__visuallyhidden__establisher__utr",

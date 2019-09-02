@@ -35,12 +35,12 @@ class DirectorUTRIdSpec extends SpecBase {
   val utr = "1234567890"
   implicit val countryOptions: CountryOptions = new CountryOptions(environment, frontendAppConfig)
   private val answerRowsWithChangeLinks = Seq(
-    AnswerRow("messages__companyUtr__checkyouranswerslabel", List(utr), false, Some(Link("site.change",onwardUrl,
+    AnswerRow("messages__utr__checkyouranswerslabel", List(utr), false, Some(Link("site.change",onwardUrl,
       Some("messages__visuallyhidden__companyUTR"))))
   )
 
   private val answerRowsWithoutChangeLink = Seq(
-    AnswerRow("messages__companyUtr__checkyouranswerslabel", List(utr), false, None))
+    AnswerRow("messages__utr__checkyouranswerslabel", List(utr), false, None))
 
   "Cleanup" when {
     def answers: UserAnswers = UserAnswers(Json.obj())
@@ -80,7 +80,7 @@ class DirectorUTRIdSpec extends SpecBase {
       "for existing director" must {
 
         "return row with add link if there is no data available" in {
-          val answerRowWithAddLink = AnswerRow("messages__companyUtr__checkyouranswerslabel", List("site.not_entered"), answerIsMessageKey = true,
+          val answerRowWithAddLink = AnswerRow("messages__utr__checkyouranswerslabel", List("site.not_entered"), answerIsMessageKey = true,
             Some(Link("site.add",onwardUrl,
               Some("messages__visuallyhidden__companyUTR_add")
               )))

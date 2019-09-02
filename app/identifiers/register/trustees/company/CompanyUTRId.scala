@@ -40,7 +40,7 @@ object CompanyUTRId {
                    messages: Messages,
                    countryOptions: CountryOptions): CheckYourAnswers[CompanyUTRId] = {
 
-    val label: String = "messages__companyUtr__checkyouranswerslabel"
+    val label: String = "messages__utr__checkyouranswerslabel"
     val hiddenLabel = "messages__visuallyhidden__companyUTR"
 
     new CheckYourAnswers[CompanyUTRId] {

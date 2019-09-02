@@ -18,35 +18,37 @@ package identifiers.register.trustees.partnership
 
 import base.SpecBase
 import identifiers.register.trustees.IsTrusteeNewId
-import models.Paye._
 import models._
 import models.requests.DataRequest
 import play.api.mvc.AnyContent
 import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.PsaId
-import utils.UserAnswers
+import utils.{CountryOptions, UserAnswers}
 import utils.checkyouranswers.Ops._
 import viewmodels.AnswerRow
 
-class PartnershipPayeIdSpec extends SpecBase {
+class PartnershipNoUTRReasonIdSpec extends SpecBase {
+
+  val onwardUrl = "onwardUrl"
+  val name = "test partnership name"
+  val reason = "some lame reason"
+  implicit val countryOptions: CountryOptions = new CountryOptions(environment, frontendAppConfig)
+  private val answerRowsWithChangeLinks = Seq(
+    AnswerRow(messages("messages__noGenericUtr__heading", name), List(reason), false, Some(Link("site.change",onwardUrl,
+      Some(messages("messages__visuallyhidden__partnership__utr_no")))))
+  )
 
   "cya" when {
-    
-    val onwardUrl = "onwardUrl"
 
-    def answers = UserAnswers().set(PartnershipPayeId(0))(Yes("paye")).asOpt.get
+    val answers: UserAnswers = UserAnswers().set(PartnershipDetailsId(0))(PartnershipDetails(name)).flatMap(
+      _.set(PartnershipNoUTRReasonId(0))(reason)).asOpt.get
 
     "in normal mode" must {
 
       "return answers rows with change links" in {
         val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
-        implicit val userAnswers = request.userAnswers
-        PartnershipPayeId(0).row(onwardUrl, NormalMode)(request, implicitly) must equal(Seq(
-          AnswerRow("messages__partnership__checkYourAnswers__paye",List("site.yes"),true,
-            Some(Link("site.change",onwardUrl,Some("messages__visuallyhidden__partnership__paye_yes_no")))),
-          AnswerRow("messages__common__cya__paye",List("paye"),false,Some(Link("site.change",onwardUrl,
-            Some("messages__visuallyhidden__partnership__paye_number"))))
-        ))
+        implicit val userAnswers: UserAnswers = request.userAnswers
+        PartnershipNoUTRReasonId(0).row(onwardUrl, NormalMode)(request, implicitly) must equal(answerRowsWithChangeLinks)
       }
     }
 
@@ -56,25 +58,18 @@ class PartnershipPayeIdSpec extends SpecBase {
 
       "return answers rows with change links" in {
         val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answersNew, PsaId("A0000000"))
-        implicit val userAnswers = request.userAnswers
-        PartnershipPayeId(0).row(onwardUrl, NormalMode)(request, implicitly) must equal(Seq(
-          AnswerRow("messages__partnership__checkYourAnswers__paye",List("site.yes"),true,
-            Some(Link("site.change",onwardUrl,Some("messages__visuallyhidden__partnership__paye_yes_no")))),
-          AnswerRow("messages__common__cya__paye",List("paye"),false,Some(Link("site.change",onwardUrl,
-            Some("messages__visuallyhidden__partnership__paye_number"))))
-        ))
+        implicit val userAnswers: UserAnswers = request.userAnswers
+        PartnershipNoUTRReasonId(0).row(onwardUrl, UpdateMode)(request, implicitly) must equal(answerRowsWithChangeLinks)
       }
     }
 
     "in update mode for existing trustee - partnership paye" must {
 
-      "return answers rows without change links" in {
+      "not display any row" in {
         val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
-        implicit val userAnswers = request.userAnswers
+        implicit val userAnswers: UserAnswers = request.userAnswers
 
-        PartnershipPayeId(0).row(onwardUrl, UpdateMode)(request, implicitly) must equal(Seq(
-          AnswerRow("messages__common__cya__paye",List("paye"),false,None)
-        ))
+        PartnershipNoUTRReasonId(0).row(onwardUrl, UpdateMode)(request, implicitly) mustEqual Nil
       }
     }
   }

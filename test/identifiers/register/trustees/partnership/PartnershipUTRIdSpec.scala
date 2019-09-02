@@ -17,9 +17,16 @@
 package identifiers.register.trustees.partnership
 
 import base.SpecBase
-import models.ReferenceValue
+import identifiers.register.trustees.IsTrusteeNewId
+import models.requests.DataRequest
+import models.{Link, NormalMode, PartnershipDetails, ReferenceValue, UpdateMode}
 import play.api.libs.json.Json
-import utils.UserAnswers
+import play.api.mvc.AnyContent
+import play.api.test.FakeRequest
+import uk.gov.hmrc.domain.PsaId
+import utils.checkyouranswers.Ops._
+import utils.{CountryOptions, UserAnswers}
+import viewmodels.AnswerRow
 
 class PartnershipUTRIdSpec extends SpecBase {
   
@@ -34,9 +41,78 @@ class PartnershipUTRIdSpec extends SpecBase {
       }
     }
   }
+
+  "cya" when {
+
+    def answers(isEditable: Boolean = false): UserAnswers = UserAnswers().set(PartnershipUTRId(0))(ReferenceValue(utr, isEditable)).asOpt.get
+
+    "in normal mode" must {
+
+      "return answers rows with change links" in {
+        val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers(), PsaId("A0000000"))
+        implicit val userAnswers: UserAnswers = request.userAnswers
+        PartnershipUTRId(0).row(onwardUrl, NormalMode)(request, implicitly) must equal(answerRowsWithChangeLinks)
+      }
+    }
+
+    "in update mode" when {
+      def answersNew: UserAnswers = answers().set(IsTrusteeNewId(0))(true).asOpt.value
+
+      "for new trustee" must {
+
+        "return answers rows with change links" in {
+          val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answersNew, PsaId("A0000000"))
+          implicit val userAnswers: UserAnswers = request.userAnswers
+          PartnershipUTRId(0).row(onwardUrl, UpdateMode)(request, implicitly) must equal(answerRowsWithChangeLinks)
+        }
+      }
+
+      "for existing trustee" must {
+
+        "return row with add link if there is no data available" in {
+          val answerRowWithAddLink = AnswerRow("messages__cya__utr", List("site.not_entered"), answerIsMessageKey = true,
+            Some(Link("site.add",onwardUrl,
+              Some("messages__visuallyhidden__partnership__utr_add")
+            )))
+          val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id",
+            UserAnswers().trusteePartnershipDetails(index = 0, PartnershipDetails(name)), PsaId("A0000000"))
+          implicit val userAnswers: UserAnswers = request.userAnswers
+
+          PartnershipUTRId(0).row(onwardUrl, UpdateMode)(request, implicitly) mustEqual Seq(answerRowWithAddLink)
+        }
+
+        "return row without change link if there is data avalable and is not editable" in {
+          val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers(), PsaId("A0000000"))
+          implicit val userAnswers: UserAnswers = request.userAnswers
+
+          PartnershipUTRId(0).row(onwardUrl, UpdateMode)(request, implicitly) mustEqual answerRowsWithoutChangeLink
+        }
+
+        "return row with change link if there is data available and is editable" in {
+          val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers(isEditable = true), PsaId("A0000000"))
+          implicit val userAnswers: UserAnswers = request.userAnswers
+
+          PartnershipUTRId(0).row(onwardUrl, UpdateMode)(request, implicitly) mustEqual answerRowsWithChangeLinks
+        }
+      }
+    }
+  }
 }
 
 object PartnershipUTRIdSpec extends SpecBase {
+
+  val onwardUrl = "onwardUrl"
+  val name = "test partnership name"
+  val utr = "1234567890"
+  implicit val countryOptions: CountryOptions = new CountryOptions(environment, frontendAppConfig)
+
+  private val answerRowsWithChangeLinks = Seq(
+    AnswerRow("messages__cya__utr", List(utr), false, Some(Link("site.change",onwardUrl,
+      Some("messages__visuallyhidden__partnership__utr"))))
+  )
+
+  private val answerRowsWithoutChangeLink = Seq(
+    AnswerRow("messages__cya__utr", List(utr), false, None))
 
   private def ua = UserAnswers(Json.obj())
     .set(PartnershipNoUTRReasonId(0))("value")
