@@ -62,9 +62,9 @@ class PartnershipHasUTRIdSpec extends SpecBase {
     "in normal mode" must {
 
       "return answers rows with change links" in {
-        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
+        val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
         implicit val userAnswers: UserAnswers = request.userAnswers
-        PartnershipHasUTRId(0).row(onwardUrl, NormalMode) must equal(answerRowsWithChangeLinks)
+        PartnershipHasUTRId(0).row(onwardUrl, NormalMode)(request, implicitly) must equal(answerRowsWithChangeLinks)
       }
     }
 
@@ -73,19 +73,19 @@ class PartnershipHasUTRIdSpec extends SpecBase {
       def answersNew: UserAnswers = answers.set(IsTrusteeNewId(0))(true).asOpt.value
 
       "return answers rows with change links" in {
-        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answersNew, PsaId("A0000000"))
+        val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answersNew, PsaId("A0000000"))
         implicit val userAnswers: UserAnswers = request.userAnswers
-        PartnershipHasUTRId(0).row(onwardUrl, UpdateMode) must equal(answerRowsWithChangeLinks)
+        PartnershipHasUTRId(0).row(onwardUrl, UpdateMode)(request, implicitly) must equal(answerRowsWithChangeLinks)
       }
     }
 
     "in update mode for existing trustee - partnership paye" must {
 
       "not display any row" in {
-        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
+        val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
         implicit val userAnswers: UserAnswers = request.userAnswers
 
-        PartnershipHasUTRId(0).row(onwardUrl, UpdateMode) mustEqual Nil
+        PartnershipHasUTRId(0).row(onwardUrl, UpdateMode)(request, implicitly) mustEqual Nil
       }
     }
   }
