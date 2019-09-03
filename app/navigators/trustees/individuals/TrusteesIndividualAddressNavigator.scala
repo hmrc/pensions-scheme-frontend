@@ -35,12 +35,12 @@ class TrusteesIndividualAddressNavigator @Inject()(val dataCacheConnector: UserA
   import TrusteesIndividualAddressNavigator._
 
   private def normalAndCheckModeRoutes(mode: SubscriptionMode, ua: UserAnswers, srn: Option[String]): PartialFunction[Identifier, Call] = {
-    case IndividualPostCodeLookupId(index)                => IndividualAddressListController.onPageLoad(journeyMode(mode), index, None)
-    case IndividualAddressListId(index)                   => TrusteeAddressController.onPageLoad(journeyMode(mode), index, None)
-    case TrusteeAddressId(index)                          => TrusteeAddressYearsController.onPageLoad(journeyMode(mode), index, None)
+    case IndividualPostCodeLookupId(index)                => IndividualAddressListController.onPageLoad(mode, index, None)
+    case IndividualAddressListId(index)                   => TrusteeAddressController.onPageLoad(mode, index, None)
+    case TrusteeAddressId(index)                          => TrusteeAddressYearsController.onPageLoad(mode, index, None)
     case TrusteeAddressYearsId(index)                     => trusteeAddressYearsRoutes(mode, ua, index, None)
-    case IndividualPreviousAddressPostCodeLookupId(index) => TrusteePreviousAddressListController.onPageLoad(journeyMode(mode), index, None)
-    case TrusteePreviousAddressListId(index)              => TrusteePreviousAddressController.onPageLoad(journeyMode(mode), index, None)
+    case IndividualPreviousAddressPostCodeLookupId(index) => TrusteePreviousAddressListController.onPageLoad(mode, index, None)
+    case TrusteePreviousAddressListId(index)              => TrusteePreviousAddressController.onPageLoad(mode, index, None)
     case TrusteePreviousAddressId(index)                  => CheckYourAnswersIndividualAddressController.onPageLoad(journeyMode(mode), index, None)
   }
 
@@ -79,11 +79,13 @@ object TrusteesIndividualAddressNavigator {
       case _ => moreChanges(srn)
     }
 
-  private def trusteeAddressRoute(ua: UserAnswers, mode: Mode, index: Int, srn: Option[String]): Call =
+  private def trusteeAddressRoute(ua: UserAnswers, mode: Mode, index: Int, srn: Option[String]): Call = {
+    println("\n\n\n here1..")
     ua.get(IsTrusteeNewId(index)) match {
       case Some(true) => TrusteeAddressYearsController.onPageLoad(mode, index, srn)
       case _ => IndividualConfirmPreviousAddressController.onPageLoad(index, srn)
     }
+  }
 
   private def trusteeAddressYearsRoutes(mode: Mode, ua: UserAnswers, index: Int, srn: Option[String]): Call =
     ua.get(TrusteeAddressYearsId(index)) match {
