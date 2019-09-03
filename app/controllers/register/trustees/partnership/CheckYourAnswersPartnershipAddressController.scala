@@ -19,7 +19,6 @@ package controllers.register.trustees.partnership
 import config.{FeatureSwitchManagementService, FrontendAppConfig}
 import controllers.Retrievals
 import controllers.actions._
-import identifiers.register.establishers.IsEstablisherNewId
 import identifiers.register.trustees.IsTrusteeNewId
 import identifiers.register.trustees.partnership.{PartnershipAddressId, PartnershipAddressYearsId, PartnershipPreviousAddressId}
 import javax.inject.Inject
@@ -70,7 +69,7 @@ class CheckYourAnswersPartnershipAddressController @Inject()(appConfig: Frontend
           routes.CheckYourAnswersPartnershipAddressController.onSubmit(mode, index, srn),
           existingSchemeName,
           mode = mode,
-          hideEditLinks = request.viewOnly || !userAnswers.get(IsEstablisherNewId(index)).getOrElse(true),
+          hideEditLinks = request.viewOnly || !userAnswers.get(IsTrusteeNewId(index)).getOrElse(true),
           hideSaveAndContinueButton = allowChangeHelper.hideSaveAndContinueButton(request, IsTrusteeNewId(index), mode),
           srn = srn
         )))

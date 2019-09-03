@@ -16,21 +16,21 @@
 
 package identifiers.register.trustees.partnership
 
+import base.SpecBase
 import identifiers.register.trustees.IsTrusteeNewId
 import models.AddressYears.UnderAYear
-import models.{AddressYears, Link, NormalMode, UpdateMode}
 import models.address.{Address, TolerantAddress}
 import models.requests.DataRequest
-import org.scalatest.{MustMatchers, OptionValues, WordSpec}
+import models.{AddressYears, Link, NormalMode, UpdateMode}
 import play.api.libs.json.Json
 import play.api.mvc.AnyContent
 import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.PsaId
-import utils.{Enumerable, UserAnswers}
-import viewmodels.AnswerRow
 import utils.checkyouranswers.Ops._
+import utils.{CountryOptions, InputOption, UserAnswers}
+import viewmodels.{AnswerRow, Message}
 
-class PartnershipAddressYearsIdSpec extends WordSpec with MustMatchers with OptionValues with Enumerable.Implicits {
+class PartnershipAddressYearsIdSpec extends SpecBase {
 
   "Cleanup" must {
 
@@ -78,6 +78,8 @@ class PartnershipAddressYearsIdSpec extends WordSpec with MustMatchers with Opti
 
   "cya" when {
 
+    implicit val countryOptions = new CountryOptions(Seq.empty[InputOption])
+
     val onwardUrl = "onwardUrl"
 
     def answers = UserAnswers().set(PartnershipAddressYearsId(0))(UnderAYear).asOpt.get
@@ -89,11 +91,11 @@ class PartnershipAddressYearsIdSpec extends WordSpec with MustMatchers with Opti
         implicit val userAnswers = request.userAnswers
         PartnershipAddressYearsId(0).row(onwardUrl, NormalMode) must equal(Seq(
           AnswerRow(
-            "messages__checkYourAnswers__trustees__partnership__address_years",
+            Message("messages__hasBeen1Year", messages("messages__theTrustee")),
             Seq(s"messages__common__under_a_year"),
             answerIsMessageKey = true,
             Some(Link("site.change", onwardUrl,
-              Some("messages__visuallyhidden__trustee__address_years")))
+              Some(Message("messages__changeHasBeen1Year", messages("messages__theTrustee")))))
           )))
       }
     }
@@ -107,12 +109,12 @@ class PartnershipAddressYearsIdSpec extends WordSpec with MustMatchers with Opti
         implicit val userAnswers = request.userAnswers
         PartnershipAddressYearsId(0).row(onwardUrl, UpdateMode) must equal(Seq(
           AnswerRow(
-            "messages__checkYourAnswers__trustees__partnership__address_years",
+            Message("messages__hasBeen1Year", messages("messages__theTrustee")),
             Seq(s"messages__common__under_a_year"),
             answerIsMessageKey = true,
             Some(Link("site.change", onwardUrl,
-              Some("messages__visuallyhidden__trustee__address_years")))
-          )))
+             Some(Message("messages__changeHasBeen1Year", messages("messages__theTrustee")))
+          )))))
       }
     }
 

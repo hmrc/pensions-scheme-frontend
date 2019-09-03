@@ -19,8 +19,9 @@ package identifiers.register.trustees.partnership
 import identifiers.TypedIdentifier
 import identifiers.register.trustees.{IsTrusteeNewId, TrusteesId}
 import models.AddressYears
+import play.api.i18n.Messages
 import play.api.libs.json.{JsPath, JsResult}
-import utils.UserAnswers
+import utils.{CountryOptions, UserAnswers}
 import utils.checkyouranswers.{AddressYearsCYA, CheckYourAnswers}
 import viewmodels.AnswerRow
 
@@ -43,20 +44,25 @@ case class PartnershipAddressYearsId(index: Int) extends TypedIdentifier[Address
 object PartnershipAddressYearsId {
   override lazy val toString: String = "partnershipAddressYears"
 
-  implicit val cya: CheckYourAnswers[PartnershipAddressYearsId] = {
-
+  implicit def cya(implicit countryOptions: CountryOptions, messages: Messages, ua: UserAnswers): CheckYourAnswers[PartnershipAddressYearsId] =
     new CheckYourAnswers[PartnershipAddressYearsId] {
-      val label: String = "messages__checkYourAnswers__trustees__partnership__address_years"
-      val changeAddressYears: String = "messages__visuallyhidden__trustee__address_years"
+      override def row(id: PartnershipAddressYearsId)(changeUrl: String, ua: UserAnswers): Seq[AnswerRow] = {
+        def trusteeName(index: Int) = ua.get(PartnershipDetailsId(index)).fold(messages("messages__theTrustee"))(_.name)
 
-      override def row(id: PartnershipAddressYearsId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        AddressYearsCYA(label, changeAddressYears)().row(id)(changeUrl, userAnswers)
+        def label(index: Int) = messages("messages__hasBeen1Year", trusteeName(index))
 
-      override def updateRow(id: PartnershipAddressYearsId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        userAnswers.get(IsTrusteeNewId(id.index)) match {
-          case Some(true) => AddressYearsCYA(label, changeAddressYears)().row(id)(changeUrl, userAnswers)
-          case _ => AddressYearsCYA(label, changeAddressYears)().updateRow(id)(changeUrl, userAnswers)
+        def changeAddressYears(index: Int) = messages("messages__changeHasBeen1Year", trusteeName(index))
+
+        AddressYearsCYA(
+          label = label(id.index),
+          changeAddressYears = changeAddressYears(id.index)
+        )().row(id)(changeUrl, ua)
+      }
+
+      override def updateRow(id: PartnershipAddressYearsId)(changeUrl: String, ua: UserAnswers): Seq[AnswerRow] =
+        ua.get(IsTrusteeNewId(id.index)) match {
+          case Some(true) => row(id)(changeUrl, ua)
+          case _ => Nil
         }
     }
-  }
 }
