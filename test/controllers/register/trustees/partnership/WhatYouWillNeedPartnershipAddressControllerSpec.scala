@@ -18,31 +18,24 @@ package controllers.register.trustees.partnership
 
 import controllers.ControllerSpecBase
 import controllers.actions._
-import models.{Index, NormalMode, PartnershipDetails}
+import models.{NormalMode, PartnershipDetails}
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import utils.UserAnswers
-import viewmodels.{CommonFormWithHintViewModel, Message}
-import views.html.register.trustees.partnership.whatYouWillNeedPartnershipContactDetails
+import views.html.register.trustees.partnership.whatYouWillNeedPartnershipAddress
 
-class WhatYouWillNeedPartnershipContactDetailsControllerSpec extends ControllerSpecBase {
-  private val index = 0
+class WhatYouWillNeedPartnershipAddressControllerSpec extends ControllerSpecBase {
+
+  private val index  = 0
   private val trusteePartnership = PartnershipDetails("partnership Name")
 
-  def onwardRoute: Call = controllers.register.trustees.company.routes.CompanyEmailController.onPageLoad(NormalMode, Index(0), None)
+  private def href: Call = controllers.register.trustees.partnership.routes.PartnershipPostcodeLookupController.onPageLoad(NormalMode, index = 0, None)
 
-  def viewAsString(): String = whatYouWillNeedPartnershipContactDetails(
-    frontendAppConfig,
-    None,
-    CommonFormWithHintViewModel(
-      postCall = controllers.register.trustees.partnership.routes.PartnershipEmailController.onPageLoad(NormalMode, index, None),
-      title = Message("messages__whatYouWillNeedTrusteePartnershipContact__title"),
-      heading = Message("messages__whatYouWillNeedTrusteePartnershipContact__h1", trusteePartnership.name),
-      srn = None
-    ))(fakeRequest, messages).toString
+  private def viewAsString(): String =
+    whatYouWillNeedPartnershipAddress(frontendAppConfig, None, href, None, trusteePartnership.name)(fakeRequest, messages).toString
 
-  "WhatYouWillNeedPartnershipContactDetailsController" when {
+  "WhatYouWillNeedPartnershipAddressController" when {
 
     "on a GET" must {
       "return OK and the correct view" in {
@@ -51,7 +44,7 @@ class WhatYouWillNeedPartnershipContactDetailsControllerSpec extends ControllerS
           bind[AllowAccessActionProvider].toInstance(FakeAllowAccessProvider()),
           bind[DataRetrievalAction].toInstance(UserAnswers().trusteePartnershipDetails(index, trusteePartnership).dataRetrievalAction)
         )) { app =>
-          val controller = app.injector.instanceOf[WhatYouWillNeedPartnershipContactDetailsController]
+          val controller = app.injector.instanceOf[WhatYouWillNeedPartnershipAddressController]
           val result = controller.onPageLoad(NormalMode, index, None)(fakeRequest)
 
           status(result) mustBe OK

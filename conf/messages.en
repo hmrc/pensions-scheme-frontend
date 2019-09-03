@@ -1575,6 +1575,10 @@ messages__whatYouWillNeedTrusteeAddress__p1 = You will need to tell us the trust
 messages__whatYouWillNeedTrusteeAddress__item1 = current address
 messages__whatYouWillNeedTrusteeAddress__item2 = previous address if the trustee has been at the current address for less than 1 year
 
+messages__whatYouWillNeedTrusteePartnershipAddress__p1 = You will need to tell us the partnership’s:
+messages__whatYouWillNeedTrusteePartnershipAddress__item1 = current address
+messages__whatYouWillNeedTrusteePartnershipAddress__item2 = previous address if the partnership has been at the current address for less than 1 year
+
 messages__whatYouWillNeedEstablisherCompanyContact__title = Contact details
 messages__whatYouWillNeedEstablisherCompanyContact__h1 = Contact details for {0}
 messages__whatYouWillNeedEstablisherCompanyContact__lede = You will need to tell us the company’s:
@@ -1843,4 +1847,5 @@ messages__whatYouWillNeedTrusteePartnershipDetails__item1 = Unique Taxpayer Refe
 messages__whatYouWillNeedTrusteePartnershipDetails__p2 = If {0} has them, you will also need to tell us their:
 messages__whatYouWillNeedTrusteePartnershipDetails__item2 = VAT registration number
 messages__whatYouWillNeedTrusteePartnershipDetails__item3 = employer PAYE reference (you can tell us any employer PAYE reference if has more than one)
+
 
