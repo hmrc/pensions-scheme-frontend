@@ -28,7 +28,7 @@ class NinoNewFormProvider @Inject()() extends Mappings with Constraints with Tra
   def apply(personName: String)(implicit messages: Messages): Form[ReferenceValue] =
     Form(
       mapping(
-        "nino" -> text(Message("messages__error__common_nino", personName).resolve).transform(ninoTransform, noTransform).
+        "nino" -> text(Message("messages__error__common_nino", personName).resolve).transform(noSpaceWithUpperCaseTransform, noTransform).
           verifying(validNino(Message("messages__error__common_nino_invalid", personName)))
       )(ReferenceValue.applyEditable)(ReferenceValue.unapplyEditable)
     )

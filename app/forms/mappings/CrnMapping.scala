@@ -52,7 +52,7 @@ trait CrnMapping extends Mappings with Transforms {
 
     tuple("hasCrn" -> boolean(requiredKey),
       "crn" -> mandatoryIfTrue("companyRegistrationNumber.hasCrn", text(requiredCRNKey).
-        transform(standardTextTransform, noTransform).verifying(validCrn(invalidCRNKey))),
+        transform(noSpaceWithUpperCaseTransform, noTransform).verifying(validCrn(invalidCRNKey))),
       "reason" -> mandatoryIfFalse("companyRegistrationNumber.hasCrn", text(noReasonKey).
         verifying(firstError(
           maxLength(reasonMaxLength, reasonLengthKey),
@@ -63,6 +63,6 @@ trait CrnMapping extends Mappings with Transforms {
                         requiredCRNKey: String = "messages__error__company_number",
                         invalidCRNKey: String = "messages__error__crn_invalid"):
     Mapping[String] = text(requiredCRNKey)
-      .transform(standardTextTransform, noTransform)
+      .transform(noSpaceWithUpperCaseTransform, noTransform)
       .verifying(validCrn(invalidCRNKey))
 }
