@@ -16,20 +16,19 @@
 
 package controllers.register.trustees.individual
 
-import config.FrontendAppConfig
+import config.{FeatureSwitchManagementService, FrontendAppConfig}
 import controllers.Retrievals
 import controllers.actions._
 import controllers.address.ConfirmPreviousAddressController
 import identifiers.register.trustees.ExistingCurrentAddressId
-import identifiers.register.trustees.individual.{IndividualConfirmPreviousAddressId, TrusteeDetailsId, TrusteePreviousAddressId}
+import identifiers.register.trustees.individual.{IndividualConfirmPreviousAddressId, TrusteeDetailsId, TrusteeNameId, TrusteePreviousAddressId}
 import javax.inject.Inject
 import models.{Index, Mode}
 import navigators.Navigator
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
-import utils.annotations.TrusteesIndividual
-import utils.CountryOptions
+import utils.{CountryOptions, Toggles}
 import viewmodels.Message
 import viewmodels.address.ConfirmAddressViewModel
 
@@ -43,46 +42,56 @@ class IndividualConfirmPreviousAddressController @Inject()(val appConfig: Fronte
                                                            allowAccess: AllowAccessActionProvider,
                                                            getData: DataRetrievalAction,
                                                            requireData: DataRequiredAction,
-                                                           val countryOptions: CountryOptions
-                                                )(implicit val ec: ExecutionContext) extends ConfirmPreviousAddressController with Retrievals with I18nSupport {
+                                                           val countryOptions: CountryOptions,
+                                                           fs: FeatureSwitchManagementService
+                                                          )(implicit val ec: ExecutionContext) extends ConfirmPreviousAddressController with Retrievals with I18nSupport {
 
   private[controllers] val postCall = routes.IndividualConfirmPreviousAddressController.onSubmit _
   private[controllers] val title: Message = "messages__confirmPreviousAddress__title"
   private[controllers] val heading: Message = "messages__confirmPreviousAddress__heading"
 
-  private def viewmodel(mode: Mode, index: Int, srn: Option[String]) =
+  private def viewmodel(trusteeName: String, mode: Mode, index: Int, srn: Option[String]) = {
     Retrieval(
       implicit request =>
-        (TrusteeDetailsId(index) and ExistingCurrentAddressId(index)).retrieve.right.map {
-          case details ~ address =>
-            ConfirmAddressViewModel(
-              postCall(index, srn),
-              title = Message(title),
-              heading = Message(heading, details.fullName),
-              hint = None,
-              address = address,
-              name = details.fullName,
-              srn = srn
-            )
-      }
+        ExistingCurrentAddressId(index).retrieve.right.map { address =>
+          ConfirmAddressViewModel(
+            postCall(index, srn),
+            title = Message(title),
+            heading = Message(heading, trusteeName),
+            hint = None,
+            address = address,
+            name = trusteeName,
+            srn = srn
+          )
+        }
     )
+  }
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
-    implicit request =>
-      viewmodel(mode, index, srn).retrieve.right.map { vm =>
-        get(IndividualConfirmPreviousAddressId(index), vm)
-      }
-  }
+      implicit request =>
+        trusteeName(index).retrieve.right.flatMap { trusteeName =>
+          viewmodel(trusteeName, mode, index, srn).retrieve.right.map { vm =>
+            get(IndividualConfirmPreviousAddressId(index), vm)
+          }
+        }
+    }
 
   def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen requireData).async {
+      implicit request =>
+        trusteeName(index).retrieve.right.flatMap { trusteeName =>
+          viewmodel(trusteeName, mode, index, srn).retrieve.right.map { vm =>
+            post(IndividualConfirmPreviousAddressId(index), TrusteePreviousAddressId(index), vm, mode)
+          }
+        }
+    }
+
+  val trusteeName: Index => Retrieval[String] = (trusteeIndex: Index) => Retrieval {
     implicit request =>
-      viewmodel(mode, index, srn).retrieve.right.map { vm =>
-        post(IndividualConfirmPreviousAddressId(index), TrusteePreviousAddressId(index), vm, mode)
-      }
+      if (fs.get(Toggles.isEstablisherCompanyHnSEnabled))
+        TrusteeNameId(trusteeIndex).retrieve.right.map(_.fullName)
+      else
+        TrusteeDetailsId(trusteeIndex).retrieve.right.map(_.fullName)
   }
-
-
-
 }
