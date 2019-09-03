@@ -24,7 +24,6 @@ import models._
 import models.address.Address
 import play.api.mvc.Call
 import play.api.test.Helpers._
-import services.FakeUserAnswersService
 import utils._
 import viewmodels.{AnswerRow, AnswerSection, Message}
 import views.html.check_your_answers
@@ -171,10 +170,7 @@ object CheckYourAnswersPartnershipAddressControllerSpec extends ControllerSpecBa
       FakeAllowAccessProvider(),
       new DataRequiredActionImpl,
       fakeCountryOptions,
-      new FakeNavigator(onwardRoute),
-      FakeUserAnswersService,
-      allowChangeHelper,
-      new FakeFeatureSwitchManagementService(isToggleOn)
+      allowChangeHelper
     )
 
   private def viewAsString(answerSections: Seq[AnswerSection], srn: Option[String] = None, postUrl: Call = postUrl): String =

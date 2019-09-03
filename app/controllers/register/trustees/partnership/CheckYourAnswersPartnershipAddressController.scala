@@ -16,7 +16,7 @@
 
 package controllers.register.trustees.partnership
 
-import config.{FeatureSwitchManagementService, FrontendAppConfig}
+import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions._
 import identifiers.register.trustees.IsTrusteeNewId
@@ -24,10 +24,8 @@ import identifiers.register.trustees.partnership.{PartnershipAddressId, Partners
 import javax.inject.Inject
 import models.Mode.checkMode
 import models.{Index, Mode}
-import navigators.Navigator
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
-import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.NoSuspendedCheck
 import utils.checkyouranswers.Ops._
@@ -44,10 +42,7 @@ class CheckYourAnswersPartnershipAddressController @Inject()(appConfig: Frontend
                                                          @NoSuspendedCheck allowAccess: AllowAccessActionProvider,
                                                          requireData: DataRequiredAction,
                                                          implicit val countryOptions: CountryOptions,
-                                                          navigator: Navigator,
-                                                         userAnswersService: UserAnswersService,
-                                                         allowChangeHelper: AllowChangeHelper,
-                                                         fs: FeatureSwitchManagementService
+                                                         allowChangeHelper: AllowChangeHelper
                                           )(implicit val ec: ExecutionContext) extends FrontendController
   with Retrievals with I18nSupport with Enumerable.Implicits {
 
