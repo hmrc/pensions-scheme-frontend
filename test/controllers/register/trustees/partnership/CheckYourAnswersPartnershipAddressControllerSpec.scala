@@ -40,6 +40,12 @@ class CheckYourAnswersPartnershipAddressControllerSpec extends ControllerSpecBas
         status(result) mustBe OK
         contentAsString(result) mustBe viewAsString(partnershipAddressNormal)
       }
+
+      behave like changeableController(
+        controller(fullAnswers.dataRetrievalAction, _: AllowChangeHelper)
+          .onPageLoad(NormalMode, index, None)(FakeDataRequest(fullAnswers))
+      )
+
     }
 
     "on Page load in UpdateMode" must {
@@ -58,19 +64,6 @@ class CheckYourAnswersPartnershipAddressControllerSpec extends ControllerSpecBas
         status(result) mustBe OK
         contentAsString(result) mustBe viewAsString(partnershipAddressUpdatePartial, srn, postUrlUpdateMode)
       }
-    }
-
-    "on Submit" must {
-      "redirect to next page " in {
-        val result = controller().onSubmit(NormalMode, index, None)(fakeRequest)
-        status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(onwardRoute.url)
-      }
-
-      behave like changeableController(
-        controller(fullAnswers.dataRetrievalAction, _: AllowChangeHelper)
-          .onPageLoad(NormalMode, index, None)(FakeDataRequest(fullAnswers))
-      )
     }
   }
 
@@ -111,9 +104,11 @@ object CheckYourAnswersPartnershipAddressControllerSpec extends ControllerSpecBa
     .trusteePartnershipAddress(0, address)
     .trusteePartnershipAddressYears(0, addressYearsUnderAYear)
 
-  private def postUrl: Call = routes.CheckYourAnswersPartnershipAddressController.onSubmit(NormalMode, index, None)
+  private def postUrl: Call =
+    controllers.routes.SchemeTaskListController.onPageLoad(NormalMode, None)
 
-  private def postUrlUpdateMode: Call = routes.CheckYourAnswersPartnershipAddressController.onSubmit(UpdateMode, index, srn)
+  private def postUrlUpdateMode: Call =
+    controllers.routes.SchemeTaskListController.onPageLoad(UpdateMode, srn)
 
   private def addressAnswerRow(mode: Mode, srn: Option[String]): AnswerRow = AnswerRow(
     Message("messages__addressFor", partnershipName),

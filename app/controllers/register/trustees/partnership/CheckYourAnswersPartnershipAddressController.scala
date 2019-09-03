@@ -32,6 +32,7 @@ import utils.checkyouranswers.Ops._
 import utils.{Enumerable, _}
 import viewmodels.AnswerSection
 import views.html.check_your_answers
+import controllers.routes._
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -61,7 +62,7 @@ class CheckYourAnswersPartnershipAddressController @Inject()(appConfig: Frontend
         Future.successful(Ok(check_your_answers(
           appConfig,
           answerSections,
-          routes.CheckYourAnswersPartnershipAddressController.onSubmit(mode, index, srn),
+          controllers.routes.SchemeTaskListController.onPageLoad(mode, srn),
           existingSchemeName,
           mode = mode,
           hideEditLinks = request.viewOnly || !userAnswers.get(IsTrusteeNewId(index)).getOrElse(true),
@@ -70,10 +71,5 @@ class CheckYourAnswersPartnershipAddressController @Inject()(appConfig: Frontend
         )))
 
     }
-
-  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (
-    authenticate andThen getData(mode, srn) andThen requireData) {
-        Redirect(controllers.routes.SchemeTaskListController.onPageLoad(mode, srn))
-  }
 
 }
