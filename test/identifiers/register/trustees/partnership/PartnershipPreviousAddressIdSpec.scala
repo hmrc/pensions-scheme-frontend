@@ -27,12 +27,12 @@ import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.PsaId
 import utils.checkyouranswers.Ops._
 import utils.{CountryOptions, InputOption, UserAnswers}
-import viewmodels.AnswerRow
+import viewmodels.{AnswerRow, Message}
 
 class PartnershipPreviousAddressIdSpec extends SpecBase {
 
   "cya" when {
-    implicit val countryOptions = new CountryOptions(Seq.empty[InputOption])
+    implicit val countryOptions:CountryOptions = new CountryOptions(Seq.empty[InputOption])
 
     val address = Address(
       "address1", "address2", Some("address3"), Some("address4"), Some("postcode"), "GB"
@@ -57,13 +57,14 @@ class PartnershipPreviousAddressIdSpec extends SpecBase {
       "return answers rows with change links" in {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id",
           UserAnswers().set(PartnershipPreviousAddressId(0))(address).asOpt.value, PsaId("A0000000"))
+        implicit val userAnswers:UserAnswers = request.userAnswers
 
         PartnershipPreviousAddressId(0).row(onwardUrl, NormalMode) must equal(Seq(
           AnswerRow(
-            "messages__common__cya__previous_address",
+            Message("messages__previousAddressFor", messages("messages__theTrustee")),
             addressAnswer(address),
-            false,
-            Some(Link("site.change", onwardUrl, Some("messages__visuallyhidden__partnership__previous_address")))
+            answerIsMessageKey = false,
+            Some(Link("site.change", onwardUrl, Some(messages("messages__changeTrusteePreviousAddress", messages("messages__theTrustee")))))
           )))
       }
     }
@@ -72,39 +73,43 @@ class PartnershipPreviousAddressIdSpec extends SpecBase {
       "return row with add links for existing establisher if address years is under a year and there is no previous address" in {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id",
           UserAnswers().set(PartnershipAddressYearsId(0))(UnderAYear).asOpt.value, PsaId("A0000000"))
+        implicit val userAnswers:UserAnswers = request.userAnswers
 
         PartnershipPreviousAddressId(0).row(onwardUrl, UpdateMode) must equal(Seq(
-          AnswerRow("messages__common__cya__previous_address",
+          AnswerRow(Message("messages__previousAddressFor", messages("messages__theTrustee")),
             Seq("site.not_entered"),
             answerIsMessageKey = true,
-            Some(Link("site.add", onwardUrl, Some("messages__visuallyhidden__partnership__previous_address_add")))))
+            Some(Link("site.add", onwardUrl, Some(Message("messages__changeTrusteePreviousAddress", messages("messages__theTrustee"))))))
+        )
         )
       }
 
-      "return row with change links for existing establisher if there is a previous address" in {
+    "return row with change links for existing establisher if there is a previous address" in {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id",
           UserAnswers().set(PartnershipPreviousAddressId(0))(address).asOpt.value, PsaId("A0000000"))
+        implicit val userAnswers:UserAnswers = request.userAnswers
 
         PartnershipPreviousAddressId(0).row(onwardUrl, NormalMode) must equal(Seq(
           AnswerRow(
-            "messages__common__cya__previous_address",
+            Message("messages__previousAddressFor", messages("messages__theTrustee")),
             addressAnswer(address),
-            false,
-            Some(Link("site.change", onwardUrl, Some("messages__visuallyhidden__partnership__previous_address")))
+            answerIsMessageKey = false,
+            Some(Link("site.change", onwardUrl, Some(messages("messages__changeTrusteePreviousAddress", messages("messages__theTrustee")))))
           )))
       }
 
-      "return row with change links for new establisher if there is a previous address" in {
-        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id",
-          UserAnswers().set(PartnershipPreviousAddressId(0))(address).flatMap(_.set(IsEstablisherNewId(0))(true)).asOpt.value, PsaId("A0000000"))
+    "return row with change links for new establisher if there is a previous address" in {
+      implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id",
+        UserAnswers().set(PartnershipPreviousAddressId(0))(address).flatMap(_.set(IsEstablisherNewId(0))(true)).asOpt.value, PsaId("A0000000"))
+      implicit val userAnswers:UserAnswers = request.userAnswers
 
-        PartnershipPreviousAddressId(0).row(onwardUrl, NormalMode) must equal(Seq(
-          AnswerRow(
-            "messages__common__cya__previous_address",
-            addressAnswer(address),
-            false,
-            Some(Link("site.change", onwardUrl, Some("messages__visuallyhidden__partnership__previous_address")))
-          )))
+      PartnershipPreviousAddressId(0).row(onwardUrl, NormalMode) must equal(Seq(
+        AnswerRow(
+          Message("messages__previousAddressFor", messages("messages__theTrustee")),
+          addressAnswer(address),
+          answerIsMessageKey = false,
+          Some(Link("site.change", onwardUrl, Some(messages("messages__changeTrusteePreviousAddress", messages("messages__theTrustee")))))
+        )))
       }
     }
   }
