@@ -144,19 +144,12 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
       Future.successful(Ok(check_your_answers(
         appConfig,
         answerSections,
-        routes.CheckYourAnswersController.onSubmit(companyIndex, directorIndex, mode, srn),
+        navigator.nextPage(CheckYourAnswersId(companyIndex, directorIndex), mode, request.userAnswers, srn),
         existingSchemeName,
         mode = mode,
         hideEditLinks = request.viewOnly,
         hideSaveAndContinueButton = allowChangeHelper.hideSaveAndContinueButton(request, IsNewDirectorId(companyIndex, directorIndex), mode),
         srn = srn
       )))
-
     }
-
-  def onSubmit(companyIndex: Index, directorIndex: Index, mode: Mode, srn: Option[String]): Action[AnyContent] = (
-    authenticate andThen getData(mode, srn) andThen requiredData) {
-    implicit request =>
-        Redirect(navigator.nextPage(CheckYourAnswersId(companyIndex, directorIndex), mode, request.userAnswers, srn))
-  }
 }

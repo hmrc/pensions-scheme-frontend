@@ -43,14 +43,6 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
       contentAsString(result) mustBe viewAsString(answerSections, NormalMode, None)
     }
 
-    "redirect to Add Trustee page" when {
-      "POST is called" in {
-        val result = controller().onSubmit(NormalMode, firstIndex, None)(fakeRequest)
-        status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(onwardRoute.url)
-      }
-    }
-
     "return OK and display Add link for UpdateMode pointing to new Nino page where no nino retrieved from ETMP" in {
       val expectedAnswerSections = {
         val expectedAnswerRowNino = AnswerRow("messages__common__nino", Seq("site.not_entered"), answerIsMessageKey = true,
@@ -111,7 +103,7 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase with Controller
   val firstIndex = Index(0)
   lazy val trusteeDetailsRoute: String = routes.TrusteeDetailsController.onPageLoad(CheckMode, firstIndex, None).url
 
-  def postUrl(mode: Mode, srn: Option[String]): Call = routes.CheckYourAnswersController.onSubmit(mode, firstIndex, srn)
+  def postUrl(mode: Mode, srn: Option[String]): Call = controllers.register.trustees.routes.AddTrusteeController.onPageLoad(mode, srn)
 
   lazy val trusteeDetailsSection = AnswerSection(None,
     Seq(

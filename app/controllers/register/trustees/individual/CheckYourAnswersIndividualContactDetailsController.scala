@@ -61,7 +61,7 @@ class CheckYourAnswersIndividualContactDetailsController @Inject()(val appConfig
         Future.successful(Ok(check_your_answers(
           appConfig,
           Seq(contactDetails),
-          routes.CheckYourAnswersIndividualContactDetailsController.onSubmit(mode, index, srn),
+          controllers.routes.SchemeTaskListController.onPageLoad(mode, srn),
           existingSchemeName,
           mode = mode,
           hideEditLinks = request.viewOnly || notNewTrustee,
@@ -69,9 +69,4 @@ class CheckYourAnswersIndividualContactDetailsController @Inject()(val appConfig
           srn = srn
         )))
     }
-
-  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData) {
-    implicit request =>
-      Redirect(controllers.routes.SchemeTaskListController.onPageLoad(mode, srn))
-  }
 }

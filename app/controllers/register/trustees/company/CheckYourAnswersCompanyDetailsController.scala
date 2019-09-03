@@ -45,7 +45,7 @@ class CheckYourAnswersCompanyDetailsController @Inject()(
                                                           @NoSuspendedCheck allowAccess: AllowAccessActionProvider,
                                                           requireData: DataRequiredAction,
                                                           implicit val countryOptions: CountryOptions,
-                                                           navigator: Navigator,
+                                                          navigator: Navigator,
                                                           userAnswersService: UserAnswersService,
                                                           allowChangeHelper: AllowChangeHelper,
                                                           fs: FeatureSwitchManagementService
@@ -74,19 +74,12 @@ class CheckYourAnswersCompanyDetailsController @Inject()(
         Future.successful(Ok(check_your_answers(
           appConfig,
           companyDetails,
-          routes.CheckYourAnswersCompanyDetailsController.onSubmit(mode, index, srn),
+          controllers.routes.SchemeTaskListController.onPageLoad(mode, srn),
           existingSchemeName,
           mode = mode,
           hideEditLinks = request.viewOnly || !userAnswers.get(IsTrusteeNewId(index)).getOrElse(true),
           hideSaveAndContinueButton = allowChangeHelper.hideSaveAndContinueButton(request, IsTrusteeNewId(index), mode),
           srn = srn
         )))
-
     }
-
-  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (
-    authenticate andThen getData(mode, srn) andThen requireData) {
-        Redirect(controllers.routes.SchemeTaskListController.onPageLoad(mode, srn))
-  }
-
 }

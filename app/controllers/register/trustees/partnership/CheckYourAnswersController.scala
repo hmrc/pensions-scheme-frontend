@@ -81,7 +81,7 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
         Future.successful(Ok(check_your_answers(
           appConfig,
           Seq(partnershipDetails, partnershipContactDetails),
-          routes.CheckYourAnswersController.onSubmit(mode, index, srn),
+          controllers.register.trustees.routes.AddTrusteeController.onPageLoad(mode, srn),
           existingSchemeName,
           mode = mode,
           hideEditLinks = request.viewOnly || !userAnswers.get(IsTrusteeNewId(index)).getOrElse(true),
@@ -89,10 +89,4 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
           srn = srn
         )))
     }
-
-  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen requiredData) {
-    implicit request =>
-      Redirect(navigator.nextPage(CheckYourAnswersId(index), mode, request.userAnswers, srn))
-  }
 }

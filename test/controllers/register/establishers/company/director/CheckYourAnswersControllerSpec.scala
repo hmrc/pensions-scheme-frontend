@@ -72,7 +72,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
     check_your_answers(
       frontendAppConfig,
       answerSection,
-      routes.CheckYourAnswersController.onSubmit(index, index, mode, srn),
+      controllers.routes.IndexController.onPageLoad(),
       None,
       hideEditLinks = false,
       hideSaveAndContinueButton = false,
@@ -228,15 +228,6 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
             .onPageLoad(index, index, NormalMode, None)(request)
         )
       }
-
-      "onSubmit" must {
-        "redirect to the next page" in {
-          val result = controller(toggle = false).onSubmit(index, index, NormalMode, None)(request)
-
-          status(result) mustBe SEE_OTHER
-          redirectLocation(result) mustBe Some(desiredRoute.url)
-        }
-      }
     }
 
     "toggle isEstablisherCompanyHnSEnabled is true" when {
@@ -285,15 +276,6 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
           controller(directorAnswersHnsEnabled.dataRetrievalAction, _: AllowChangeHelper, toggle = true)
             .onPageLoad(index, index, NormalMode, None)(request)
         )
-      }
-
-      "onSubmit" when {
-        "mark the section as complete and redirect to the next page" in {
-          val result = controller(toggle = true).onSubmit(index, index, NormalMode, None)(request)
-
-          status(result) mustBe SEE_OTHER
-          redirectLocation(result) mustBe Some(desiredRoute.url)
-        }
       }
     }
   }

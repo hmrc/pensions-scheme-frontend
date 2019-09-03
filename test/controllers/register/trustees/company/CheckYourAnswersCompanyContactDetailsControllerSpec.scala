@@ -41,7 +41,7 @@ class CheckYourAnswersCompanyContactDetailsControllerSpec extends ControllerSpec
   private implicit val fakeCountryOptions: CountryOptions = new FakeCountryOptions
 
   private def submitUrl(mode: Mode = NormalMode, srn: Option[String] = None): Call =
-    routes.CheckYourAnswersCompanyContactDetailsController.onSubmit(mode, index, srn)
+    controllers.routes.SchemeTaskListController.onPageLoad(mode, srn)
 
   private def answerSection(mode: Mode, srn: Option[String] = None)(implicit request: DataRequest[AnyContent]): Seq[AnswerSection] = {
     val userAnswers = request.userAnswers
@@ -108,15 +108,6 @@ class CheckYourAnswersCompanyContactDetailsControllerSpec extends ControllerSpec
           status(result) mustBe OK
           contentAsString(result) mustBe viewAsString(answerSection(UpdateMode, srn), postUrl = submitUrl(UpdateMode, srn), srn = srn)
         }
-      }
-    }
-
-    "on a POST" must {
-      "redirect to task list page" in {
-        val result = controller().onSubmit(NormalMode, Index(1), None)(fakeRequest)
-
-        status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(controllers.routes.SchemeTaskListController.onPageLoad(NormalMode, None).url)
       }
     }
   }

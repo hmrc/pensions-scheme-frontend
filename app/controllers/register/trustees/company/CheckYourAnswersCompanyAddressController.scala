@@ -45,11 +45,11 @@ class CheckYourAnswersCompanyAddressController @Inject()(appConfig: FrontendAppC
                                                          @NoSuspendedCheck allowAccess: AllowAccessActionProvider,
                                                          requireData: DataRequiredAction,
                                                          implicit val countryOptions: CountryOptions,
-                                                          navigator: Navigator,
+                                                         navigator: Navigator,
                                                          userAnswersService: UserAnswersService,
                                                          allowChangeHelper: AllowChangeHelper,
                                                          fs: FeatureSwitchManagementService
-                                          )(implicit val ec: ExecutionContext) extends FrontendController
+                                                        )(implicit val ec: ExecutionContext) extends FrontendController
   with Retrievals with I18nSupport with Enumerable.Implicits {
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
@@ -59,27 +59,20 @@ class CheckYourAnswersCompanyAddressController @Inject()(appConfig: FrontendAppC
 
         val answerSections = Seq(AnswerSection(
           None,
-          CompanyAddressId(index).row(routes.CompanyAddressController.onPageLoad(checkMode(mode), index, srn).url, mode)++
-          CompanyAddressYearsId(index).row(routes.CompanyAddressYearsController.onPageLoad(checkMode(mode), index, srn).url, mode)++
-          CompanyPreviousAddressId(index).row(routes.CompanyPreviousAddressController.onPageLoad(checkMode(mode), index, srn).url, mode)
+          CompanyAddressId(index).row(routes.CompanyAddressController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
+            CompanyAddressYearsId(index).row(routes.CompanyAddressYearsController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
+            CompanyPreviousAddressId(index).row(routes.CompanyPreviousAddressController.onPageLoad(checkMode(mode), index, srn).url, mode)
         ))
 
         Future.successful(Ok(check_your_answers(
           appConfig,
           answerSections,
-          routes.CheckYourAnswersCompanyAddressController.onSubmit(mode, index, srn),
+          controllers.routes.SchemeTaskListController.onPageLoad(mode, srn),
           existingSchemeName,
           mode = mode,
           hideEditLinks = request.viewOnly || !userAnswers.get(IsEstablisherNewId(index)).getOrElse(true),
           hideSaveAndContinueButton = allowChangeHelper.hideSaveAndContinueButton(request, IsTrusteeNewId(index), mode),
           srn = srn
         )))
-
     }
-
-  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (
-    authenticate andThen getData(mode, srn) andThen requireData) {
-        Redirect(controllers.routes.SchemeTaskListController.onPageLoad(mode, srn))
-  }
-
 }

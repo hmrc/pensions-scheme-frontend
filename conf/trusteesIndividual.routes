@@ -58,9 +58,7 @@ GET         /:index/:mode/individual/enter-unique-taxpayer-reference/:srn       
 POST        /:index/:mode/individual/enter-unique-taxpayer-reference/:srn                       controllers.register.trustees.individual.TrusteeUTRController.onSubmit(mode: Mode, index: Index, srn: Option[String])
 
 GET         /:index/individual/check-your-answers-details                                       controllers.register.trustees.individual.CheckYourAnswersIndividualDetailsController.onPageLoad(mode: Mode = NormalMode, index: Index, srn: Option[String] = None)
-POST        /:index/individual/check-your-answers-details                                       controllers.register.trustees.individual.CheckYourAnswersIndividualDetailsController.onSubmit(mode: Mode = NormalMode, index: Index, srn: Option[String] = None)
 GET         /:index/:mode/individual/check-your-answers-details/:srn                            controllers.register.trustees.individual.CheckYourAnswersIndividualDetailsController.onPageLoad(mode: Mode,index: Index, srn: Option[String])
-POST        /:index/:mode/individual/check-your-answers-details/:srn                            controllers.register.trustees.individual.CheckYourAnswersIndividualDetailsController.onSubmit(mode: Mode,index: Index, srn: Option[String])
 
 GET         /:index/individual/address                                                          controllers.register.trustees.individual.WhatYouWillNeedIndividualAddressController.onPageLoad(mode: Mode = NormalMode, index: Index, srn: Option[String] = None)
 GET         /:index/:mode/individual/address/:srn                                               controllers.register.trustees.individual.WhatYouWillNeedIndividualAddressController.onPageLoad(mode: Mode,index: Index, srn: Option[String])
@@ -115,11 +113,8 @@ GET         /:index/:mode/individual/confirm-previous-address/:srn              
 POST        /:index/:mode/individual/confirm-previous-address/:srn                              controllers.register.trustees.individual.TrusteePreviousAddressController.onSubmit(mode: Mode, index: Index, srn: Option[String])
 
 GET         /:index/individual/check-your-answers-address                                       controllers.register.trustees.individual.CheckYourAnswersIndividualAddressController.onPageLoad(mode: Mode = NormalMode, index: Index, srn: Option[String] = None)
-POST        /:index/individual/check-your-answers-address                                       controllers.register.trustees.individual.CheckYourAnswersIndividualAddressController.onSubmit(mode: Mode = NormalMode, index: Index, srn: Option[String] = None)
 GET         /:index/change/individual/check-your-answers-address                                controllers.register.trustees.individual.CheckYourAnswersIndividualAddressController.onPageLoad(mode: Mode = CheckMode,index: Index, srn: Option[String])
-POST        /:index/change/individual/check-your-answers-address                                controllers.register.trustees.individual.CheckYourAnswersIndividualAddressController.onSubmit(mode: Mode = CheckMode,index: Index, srn: Option[String])
 GET         /:index/:mode/individual/check-your-answers-address/:srn                            controllers.register.trustees.individual.CheckYourAnswersIndividualAddressController.onPageLoad(mode: Mode,index: Index, srn: Option[String])
-POST        /:index/:mode/individual/check-your-answers-address/:srn                            controllers.register.trustees.individual.CheckYourAnswersIndividualAddressController.onSubmit(mode: Mode,index: Index, srn: Option[String])
 
 GET         /:index/individual/contact-details                                                  controllers.register.trustees.individual.WhatYouWillNeedIndividualContactDetailsController.onPageLoad(mode: Mode = NormalMode, index: Index, srn: Option[String] = None)
 GET         /:index/:mode/individual/contact-details/:srn                                       controllers.register.trustees.individual.WhatYouWillNeedIndividualContactDetailsController.onPageLoad(mode: Mode,index: Index, srn: Option[String])
@@ -139,9 +134,7 @@ GET         /:index/:mode/individual/enter-phone-number/:srn                    
 POST        /:index/:mode/individual/enter-phone-number/:srn                                    controllers.register.trustees.individual.TrusteePhoneController.onSubmit(mode: Mode, index: Index, srn: Option[String])
 
 GET         /:index/individual/check-your-answers-contact-details                               controllers.register.trustees.individual.CheckYourAnswersIndividualContactDetailsController.onPageLoad(mode: Mode = NormalMode, index: Index, srn: Option[String] = None)
-POST        /:index/individual/check-your-answers-contact-details                               controllers.register.trustees.individual.CheckYourAnswersIndividualContactDetailsController.onSubmit(mode: Mode = NormalMode, index: Index, srn: Option[String] = None)
 GET         /:index/:mode/individual/check-your-answers-contact-details/:srn                    controllers.register.trustees.individual.CheckYourAnswersIndividualContactDetailsController.onPageLoad(mode: Mode,index: Index, srn: Option[String])
-POST        /:index/:mode/individual/check-your-answers-contact-details/:srn                    controllers.register.trustees.individual.CheckYourAnswersIndividualContactDetailsController.onSubmit(mode: Mode,index: Index, srn: Option[String])
 
 GET         /:index/update/individual/is-this-previous-address/:srn                             controllers.register.trustees.individual.IndividualConfirmPreviousAddressController.onPageLoad(mode: Mode = CheckUpdateMode, index:Index, srn: Option[String])
 POST        /:index/update/individual/is-this-previous-address/:srn                             controllers.register.trustees.individual.IndividualConfirmPreviousAddressController.onSubmit(mode: Mode = CheckUpdateMode, index:Index, srn: Option[String])
@@ -161,9 +154,7 @@ GET         /:index/:mode/individual/unique-taxpayer-reference/:srn             
 POST        /:index/:mode/individual/unique-taxpayer-reference/:srn                             controllers.register.trustees.individual.UniqueTaxReferenceController.onSubmit(mode: Mode, index: Index, srn: Option[String])
 
 GET         /:index/individual/check-your-answers                                              controllers.register.trustees.individual.CheckYourAnswersController.onPageLoad(mode: Mode = NormalMode, index: Index, srn: Option[String] = None)
-POST        /:index/individual/check-your-answers                                              controllers.register.trustees.individual.CheckYourAnswersController.onSubmit(mode: Mode = NormalMode, index: Index, srn: Option[String] = None)
 GET         /:index/:mode/individual/check-your-answers/:srn                                   controllers.register.trustees.individual.CheckYourAnswersController.onPageLoad(mode: Mode, index: Index, srn: Option[String])
-POST        /:index/:mode/individual/check-your-answers/:srn                                   controllers.register.trustees.individual.CheckYourAnswersController.onSubmit(mode: Mode, index: Index, srn: Option[String])
 
 GET         /:index/individual/national-insurance-number                                       controllers.register.trustees.individual.TrusteeNinoController.onPageLoad(mode: Mode = NormalMode, index: Index, srn: Option[String] = None)
 POST        /:index/individual/national-insurance-number                                       controllers.register.trustees.individual.TrusteeNinoController.onSubmit(mode: Mode = NormalMode, index: Index, srn: Option[String] = None)

@@ -61,19 +61,6 @@ class CheckYourAnswersIndividualAddressControllerSpec extends ControllerSpecBase
         }
       }
     }
-
-    "on Submit" must {
-      "redirect to next page " in {
-        val app = applicationBuilder(fullAnswers.dataRetrievalAction, featureSwitchEnabled = true).build()
-
-        val controller = app.injector.instanceOf[CheckYourAnswersIndividualAddressController]
-        val result = controller.onSubmit(NormalMode, index, None)(fakeRequest)
-
-        status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(controllers.routes.SchemeTaskListController.onPageLoad(NormalMode, None).url)
-        app.stop()
-      }
-    }
   }
 
 }
@@ -106,7 +93,7 @@ object CheckYourAnswersIndividualAddressControllerSpec extends ControllerSpecBas
     trusteesIndividualAddressYears(index, addressYearsUnderAYear).
     trusteesPreviousAddress(index, previousAddress)
 
-  def submitUrl(mode: Mode = NormalMode, srn: Option[String] = None): Call = routes.CheckYourAnswersIndividualAddressController.onSubmit(mode, index, srn)
+  def submitUrl(mode: Mode = NormalMode, srn: Option[String] = None): Call = controllers.routes.SchemeTaskListController.onPageLoad(mode, srn)
 
   def addressAnswerRow(mode: Mode, srn: Option[String]): AnswerRow = AnswerRow(
     Message("messages__trusteeAddress", trusteeName),

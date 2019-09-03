@@ -77,7 +77,5 @@ class CheckYourAnswersPartnershipDetailsController @Inject()(
           hideSaveAndContinueButton = allowChangeHelper.hideSaveAndContinueButton(request, IsTrusteeNewId(index), mode),
           srn = srn
         )))
-
     }
-
 }

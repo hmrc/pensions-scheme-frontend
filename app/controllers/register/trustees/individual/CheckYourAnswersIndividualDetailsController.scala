@@ -68,7 +68,7 @@ class CheckYourAnswersIndividualDetailsController @Inject()(val appConfig: Front
         Future.successful(Ok(check_your_answers(
           appConfig,
           companyDetails,
-          routes.CheckYourAnswersIndividualDetailsController.onSubmit(mode, index, srn),
+          controllers.routes.SchemeTaskListController.onPageLoad(mode, srn),
           existingSchemeName,
           mode = mode,
           hideEditLinks = request.viewOnly || !userAnswers.get(IsTrusteeNewId(index)).getOrElse(true),
@@ -77,10 +77,4 @@ class CheckYourAnswersIndividualDetailsController @Inject()(val appConfig: Front
         )))
 
     }
-
-  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (
-    authenticate andThen getData(mode, srn) andThen requireData) {
-      Redirect(controllers.routes.SchemeTaskListController.onPageLoad(mode, srn))
-
-  }
 }

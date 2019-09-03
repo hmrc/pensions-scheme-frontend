@@ -83,12 +83,7 @@ class CheckYourAnswersCompanyDetailsControllerSpec extends ControllerSpecBase wi
       }
     }
 
-    "on Submit" must {
-      "redirect to next page " in {
-        val result = controller().onSubmit(NormalMode, index, None)(fakeRequest)
-        status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(onwardRoute.url)
-      }
+    "when rendering view" must {
 
       behave like changeableController(
         controller(fullAnswers.dataRetrievalAction, _: AllowChangeHelper)
@@ -167,9 +162,9 @@ object CheckYourAnswersCompanyDetailsControllerSpec extends ControllerSpecBase w
             _.set(HasCompanyPAYEId(0))(false)
           ))))).asOpt.value
 
-  def postUrl: Call = routes.CheckYourAnswersCompanyDetailsController.onSubmit(NormalMode, index, None)
+  def postUrl: Call = controllers.routes.SchemeTaskListController.onPageLoad(NormalMode, None)
 
-  def postUrlUpdateMode: Call = routes.CheckYourAnswersCompanyDetailsController.onSubmit(UpdateMode, index, srn)
+  def postUrlUpdateMode: Call = controllers.routes.SchemeTaskListController.onPageLoad(UpdateMode, srn)
 
 
   private def companyDetailsAddLinksValues(implicit request: DataRequest[AnyContent]): Seq[AnswerSection] =

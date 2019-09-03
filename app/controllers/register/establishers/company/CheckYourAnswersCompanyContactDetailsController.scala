@@ -19,6 +19,7 @@ package controllers.register.establishers.company
 import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions._
+import controllers.routes._
 import identifiers.register.establishers.IsEstablisherNewId
 import identifiers.register.establishers.company.{CompanyEmailId, CompanyPhoneId}
 import javax.inject.Inject
@@ -61,18 +62,12 @@ class CheckYourAnswersCompanyContactDetailsController @Inject()(appConfig: Front
         Future.successful(Ok(check_your_answers(
           appConfig,
           Seq(contactDetails),
-          routes.CheckYourAnswersCompanyContactDetailsController.onSubmit(mode, srn, index),
+          SchemeTaskListController.onPageLoad(mode, srn),
           existingSchemeName,
           mode = mode,
           hideEditLinks = request.viewOnly || notNewEstablisher,
           hideSaveAndContinueButton = allowChangeHelper.hideSaveAndContinueButton(request, IsEstablisherNewId(index), mode),
           srn = srn
         )))
-    }
-
-  def onSubmit(mode: Mode, srn: Option[String] = None, index: Index): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData) {
-      implicit request =>
-        Redirect(controllers.routes.SchemeTaskListController.onPageLoad(mode, srn))
     }
 }

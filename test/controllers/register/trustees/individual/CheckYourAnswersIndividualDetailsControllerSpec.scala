@@ -74,19 +74,6 @@ class CheckYourAnswersIndividualDetailsControllerSpec extends ControllerSpecBase
           viewAsString(allAddLinksVariations(request), UpdateMode, srn, postUrlUpdateMode)
       }
      }
-
-    "on Submit" must {
-      "redirect to next page " in {
-        val result = controller().onSubmit(NormalMode, index, None)(fakeRequest)
-        status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(onwardRoute.url)
-      }
-
-      behave like changeableController(
-        controller(fullAnswers.dataRetrievalAction, _: AllowChangeHelper)
-          .onPageLoad(NormalMode, index, None)(FakeDataRequest(fullAnswers))
-      )
-    }
   }
 
 }
@@ -143,9 +130,9 @@ object CheckYourAnswersIndividualDetailsControllerSpec extends ControllerSpecBas
             _.set(TrusteeNoUTRReasonId(0))(reason)
           ))))).asOpt.value
 
-  def postUrl: Call = routes.CheckYourAnswersIndividualDetailsController.onSubmit(NormalMode, index, None)
+  def postUrl: Call = controllers.routes.SchemeTaskListController.onPageLoad(NormalMode, None)
 
-  def postUrlUpdateMode: Call = routes.CheckYourAnswersIndividualDetailsController.onSubmit(UpdateMode, index, srn)
+  def postUrlUpdateMode: Call = controllers.routes.SchemeTaskListController.onPageLoad(UpdateMode, srn)
 
 
   private def allAddLinksVariations(implicit request: DataRequest[AnyContent]): Seq[AnswerSection] =

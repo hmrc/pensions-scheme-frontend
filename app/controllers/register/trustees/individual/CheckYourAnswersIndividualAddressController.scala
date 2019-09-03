@@ -57,14 +57,14 @@ class CheckYourAnswersIndividualAddressController @Inject()(val appConfig: Front
         val answerSections = Seq(AnswerSection(
           None,
           TrusteeAddressId(index).row(routes.TrusteeAddressController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
-          TrusteeAddressYearsId(index).row(routes.TrusteeAddressYearsController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
-          TrusteePreviousAddressId(index).row(routes.TrusteePreviousAddressController.onPageLoad(checkMode(mode), index, srn).url, mode)
+            TrusteeAddressYearsId(index).row(routes.TrusteeAddressYearsController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
+            TrusteePreviousAddressId(index).row(routes.TrusteePreviousAddressController.onPageLoad(checkMode(mode), index, srn).url, mode)
         ))
 
         Future.successful(Ok(check_your_answers(
           appConfig,
           answerSections,
-          routes.CheckYourAnswersIndividualAddressController.onSubmit(mode, index, srn),
+          controllers.routes.SchemeTaskListController.onPageLoad(mode, srn),
           existingSchemeName,
           mode = mode,
           hideEditLinks = request.viewOnly || !userAnswers.get(IsTrusteeNewId(index)).getOrElse(true),
@@ -72,9 +72,4 @@ class CheckYourAnswersIndividualAddressController @Inject()(val appConfig: Front
           srn = srn
         )))
     }
-
-  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData) {
-    implicit request =>
-      Redirect(controllers.routes.SchemeTaskListController.onPageLoad(mode, srn))
-  }
 }

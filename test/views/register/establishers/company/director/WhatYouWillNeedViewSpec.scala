@@ -27,9 +27,7 @@ class WhatYouWillNeedViewSpec extends ViewBehaviours {
 
   private val companyName = "test company name"
 
-  private val postCall = controllers.register.establishers.company.director.routes.WhatYouWillNeedDirectorController.onSubmit(NormalMode, None, Index(0))
-
-  private def createView: () => HtmlFormat.Appendable = () => whatYouWillNeed(frontendAppConfig, Some("testScheme"), postCall, None, companyName)(fakeRequest, messages)
+  private def createView: () => HtmlFormat.Appendable = () => whatYouWillNeed(frontendAppConfig, Some("testScheme"), None, companyName, NormalMode, 0, 0)(fakeRequest, messages)
 
   private val messageKeys = (1 to 8).map(num => s"_item$num").toList
 

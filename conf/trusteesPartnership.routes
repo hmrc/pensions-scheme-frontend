@@ -181,7 +181,5 @@ GET         /:index/:mode/partnership/vat-number/:srn                           
 POST        /:index/:mode/partnership/vat-number/:srn                                                 controllers.register.trustees.partnership.PartnershipVatController.onSubmit(mode: Mode, index: Index, srn: Option[String])
 
 GET         /:index/partnership/check-your-answers                                                    controllers.register.trustees.partnership.CheckYourAnswersController.onPageLoad(mode: Mode = NormalMode, index: Index, srn: Option[String] = None)
-POST        /:index/partnership/check-your-answers                                                    controllers.register.trustees.partnership.CheckYourAnswersController.onSubmit(mode: Mode = NormalMode, index: Index, srn: Option[String] = None)
 GET         /:index/:mode/partnership/check-your-answers/:srn                                         controllers.register.trustees.partnership.CheckYourAnswersController.onPageLoad(mode: Mode, index: Index, srn: Option[String])
-POST        /:index/:mode/partnership/check-your-answers/:srn                                         controllers.register.trustees.partnership.CheckYourAnswersController.onSubmit(mode: Mode, index: Index, srn: Option[String])
 
