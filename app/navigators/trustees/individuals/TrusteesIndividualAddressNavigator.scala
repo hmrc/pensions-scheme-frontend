@@ -80,7 +80,6 @@ object TrusteesIndividualAddressNavigator {
     }
 
   private def trusteeAddressRoute(ua: UserAnswers, mode: Mode, index: Int, srn: Option[String]): Call = {
-    println("\n\n\n here1..")
     ua.get(IsTrusteeNewId(index)) match {
       case Some(true) => TrusteeAddressYearsController.onPageLoad(mode, index, srn)
       case _ => IndividualConfirmPreviousAddressController.onPageLoad(index, srn)
