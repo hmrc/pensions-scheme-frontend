@@ -72,4 +72,9 @@ class CheckYourAnswersPartnershipAddressController @Inject()(appConfig: Frontend
 
     }
 
+  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (
+    authenticate andThen getData(mode, srn) andThen requireData) {
+    Redirect(controllers.routes.SchemeTaskListController.onPageLoad(mode, srn))
+  }
+
 }
