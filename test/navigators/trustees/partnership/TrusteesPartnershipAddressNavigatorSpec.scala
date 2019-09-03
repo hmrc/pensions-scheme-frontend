@@ -59,7 +59,7 @@ class TrusteesPartnershipAddressNavigatorSpec extends SpecBase with MustMatchers
         ("Id", "UserAnswers", "Next Page"),
         row(PartnershipPostcodeLookupId(index))(Seq(someTolerantAddress), addressListPage(CheckMode, None)),
         row(PartnershipAddressListId(index))(someTolerantAddress, addressPage(CheckMode, None)),
-        row(PartnershipAddressId(index))(someAddress, addressYearsPage(CheckMode, None)),
+        row(PartnershipAddressId(index))(someAddress, cyaAddressPage(NormalMode, None)),
         row(PartnershipAddressYearsId(index))(AddressYears.UnderAYear, previousAddressPostcodeLookupPage(CheckMode, None)),
         row(PartnershipAddressYearsId(index))(AddressYears.OverAYear, cyaAddressPage(NormalMode, None)),
         row(PartnershipPreviousAddressPostcodeLookupId(index))(Seq(someTolerantAddress), previousAddressListPage(CheckMode, None)),
@@ -76,7 +76,7 @@ class TrusteesPartnershipAddressNavigatorSpec extends SpecBase with MustMatchers
         ("Id", "UserAnswers", "Next page"),
         row(PartnershipPostcodeLookupId(index))(Seq(someTolerantAddress), addressListPage(UpdateMode, srn)),
         row(PartnershipAddressListId(index))(someTolerantAddress, addressPage(UpdateMode, srn)),
-        row(PartnershipAddressId(index))(someAddress, addressYearsPage(UpdateMode, srn), Some(newTrusteeUserAnswers)),
+        row(PartnershipAddressId(index))(someAddress, addressYearsPage(UpdateMode, srn)),
         row(PartnershipAddressYearsId(index))(AddressYears.UnderAYear, previousAddressPostcodeLookupPage(UpdateMode, srn)),
         row(PartnershipAddressYearsId(index))(AddressYears.OverAYear, cyaAddressPage(UpdateMode, srn)),
         row(PartnershipPreviousAddressPostcodeLookupId(index))(Seq(someTolerantAddress), previousAddressListPage(UpdateMode, srn)),
@@ -93,14 +93,14 @@ class TrusteesPartnershipAddressNavigatorSpec extends SpecBase with MustMatchers
         ("Id", "UserAnswers", "Next page"),
         row(PartnershipPostcodeLookupId(index))(Seq(someTolerantAddress), addressListPage(CheckUpdateMode, srn)),
         row(PartnershipAddressListId(index))(someTolerantAddress, addressPage(CheckUpdateMode, srn)),
-        row(PartnershipAddressId(index))(someAddress, addressYearsPage(CheckUpdateMode, srn), Some(newTrusteeUserAnswers)),
+        row(PartnershipAddressId(index))(someAddress, cyaAddressPage(UpdateMode, srn), Some(newTrusteeUserAnswers)),
         row(PartnershipAddressId(index))(someAddress, isThisPreviousAddressPage(srn)),
         row(PartnershipAddressYearsId(index))(AddressYears.UnderAYear, previousAddressPostcodeLookupPage(CheckUpdateMode, srn)),
         row(PartnershipAddressYearsId(index))(AddressYears.OverAYear, cyaAddressPage(UpdateMode, srn)),
         row(PartnershipPreviousAddressPostcodeLookupId(index))(Seq(someTolerantAddress), previousAddressListPage(CheckUpdateMode, srn)),
         row(PartnershipPreviousAddressListId(index))(someTolerantAddress, previousAddressPage(CheckUpdateMode, srn)),
         row(PartnershipPreviousAddressId(index))(someAddress, cyaAddressPage(UpdateMode, srn), Some(newTrusteeUserAnswers)),
-        row(PartnershipPreviousAddressId(index))(someAddress, AnyMoreChangesController.onPageLoad(srn), Some(existingTrusteeUserAnswers))
+        row(PartnershipPreviousAddressId(index))(someAddress, AnyMoreChangesController.onPageLoad(srn))
       )
 
     behave like navigatorWithRoutesForMode(CheckUpdateMode)(navigator, checkUpdateModeRoutes, srn)
@@ -113,7 +113,6 @@ object TrusteesPartnershipAddressNavigatorSpec extends SpecBase with MustMatcher
   private lazy val index = 0
   private val srn = Some("srn")
   private val newTrusteeUserAnswers: UserAnswers = UserAnswers().set(IsTrusteeNewId(index))(value = true).asOpt.value
-  private val existingTrusteeUserAnswers = UserAnswers().set(IsTrusteeNewId(index))(value = false).asOpt.value
 
   private def addressYearsPage(mode: Mode, srn: Option[String]): Call = PartnershipAddressYearsController.onPageLoad(mode, index, srn)
 
