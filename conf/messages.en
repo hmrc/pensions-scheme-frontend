@@ -1575,7 +1575,7 @@ messages__whatYouWillNeedTrusteeAddress__p1 = You will need to tell us the trust
 messages__whatYouWillNeedTrusteeAddress__item1 = current address
 messages__whatYouWillNeedTrusteeAddress__item2 = previous address if the trustee has been at the current address for less than 1 year
 
-messages__whatYouWillNeedTrusteePartnershipAddress__p1 = You will need to tell us the trustee’s:
+messages__whatYouWillNeedTrusteePartnershipAddress__p1 = You will need to tell us the partnership’s:
 messages__whatYouWillNeedTrusteePartnershipAddress__item1 = current address
 messages__whatYouWillNeedTrusteePartnershipAddress__item2 = previous address if the partnership has been at the current address for less than 1 year
 
