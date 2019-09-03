@@ -34,7 +34,7 @@ object CompanyUniqueTaxReferenceId {
 
   implicit val cya: CheckYourAnswers[CompanyUniqueTaxReferenceId] = {
     val label = "messages__checkYourAnswers__trustees__company__utr"
-    val utrLabel = "messages__company__cya__utr"
+    val utrLabel = "messages__cya__utr"
     val reasonLabel = "messages__checkYourAnswers__trustees__company__utr_no_reason"
     val changeHasUtr = "messages__visuallyhidden__trustee__utr_yes_no"
     val changeUtr = "messages__visuallyhidden__trustee__utr"

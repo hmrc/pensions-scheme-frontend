@@ -44,7 +44,7 @@ class CompanyUniqueTaxReferenceIdSpec extends SpecBase {
         CompanyUniqueTaxReferenceId(0).row(onwardUrl, NormalMode) must equal(Seq(
           AnswerRow("messages__checkYourAnswers__trustees__company__utr",List("Yes"),false,
             Some(Link("site.change",onwardUrl,Some("messages__visuallyhidden__trustee__utr_yes_no")))),
-          AnswerRow("messages__company__cya__utr",List("utr"),false,
+          AnswerRow("messages__cya__utr",List("utr"),false,
             Some(Link("site.change",onwardUrl,Some("messages__visuallyhidden__trustee__utr"))))
         ))
       }
@@ -60,7 +60,7 @@ class CompanyUniqueTaxReferenceIdSpec extends SpecBase {
         CompanyUniqueTaxReferenceId(0).row(onwardUrl, NormalMode) must equal(Seq(
           AnswerRow("messages__checkYourAnswers__trustees__company__utr",List("Yes"),false,
             Some(Link("site.change",onwardUrl,Some("messages__visuallyhidden__trustee__utr_yes_no")))),
-          AnswerRow("messages__company__cya__utr",List("utr"),false,
+          AnswerRow("messages__cya__utr",List("utr"),false,
             Some(Link("site.change",onwardUrl,Some("messages__visuallyhidden__trustee__utr"))))
         ))
       }
@@ -73,7 +73,7 @@ class CompanyUniqueTaxReferenceIdSpec extends SpecBase {
         implicit val userAnswers = request.userAnswers
 
         CompanyUniqueTaxReferenceId(0).row(onwardUrl, UpdateMode) must equal(Seq(
-          AnswerRow("messages__company__cya__utr",List("utr"),false,None)
+          AnswerRow("messages__cya__utr",List("utr"),false,None)
         ))
       }
     }

@@ -17,9 +17,13 @@
 package identifiers.register.trustees.partnership
 
 import identifiers.TypedIdentifier
-import identifiers.register.trustees.TrusteesId
+import identifiers.register.trustees.{IsTrusteeNewId, TrusteesId}
+import play.api.i18n.Messages
 import play.api.libs.json.{JsPath, JsResult}
 import utils.UserAnswers
+import utils.checkyouranswers.CheckYourAnswers
+import utils.checkyouranswers.CheckYourAnswers.BooleanCYA
+import viewmodels.AnswerRow
 
 case class PartnershipHasVATId(index: Int) extends TypedIdentifier[Boolean] {
   override def path: JsPath = TrusteesId(index).path \ PartnershipHasVATId.toString
@@ -36,4 +40,25 @@ case class PartnershipHasVATId(index: Int) extends TypedIdentifier[Boolean] {
 
 object PartnershipHasVATId {
   override def toString: String = "hasVat"
+
+  implicit def cya(implicit userAnswers: UserAnswers, messages: Messages): CheckYourAnswers[PartnershipHasVATId] = {
+
+    def label(index: Int) = userAnswers.get(PartnershipDetailsId(index)) match {
+      case Some(details) => Some(messages("messages__vat__heading", details.name))
+      case _ => Some(messages("messages__vat__heading"))
+    }
+
+    def hiddenLabel = Some(messages("messages__visuallyhidden__partnership__vat_yes_no"))
+
+    new CheckYourAnswers[PartnershipHasVATId] {
+      override def row(id: PartnershipHasVATId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+        BooleanCYA(label(id.index), hiddenLabel)().row(id)(changeUrl, userAnswers)
+
+      override def updateRow(id: PartnershipHasVATId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+        userAnswers.get(IsTrusteeNewId(id.index)) match {
+          case Some(true) => BooleanCYA(label(id.index), hiddenLabel)().row(id)(changeUrl, userAnswers)
+          case _ => Seq.empty[AnswerRow]
+        }
+    }
+  }
 }

@@ -163,7 +163,7 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase with Controller
 
     val utrRows = UniqueTaxReferenceCYA[CompanyUniqueTaxReferenceId](
       label = "messages__checkYourAnswers__trustees__company__utr",
-      utrLabel = "messages__company__cya__utr",
+      utrLabel = "messages__cya__utr",
       changeHasUtr = "messages__visuallyhidden__trustee__utr_yes_no",
       changeUtr = "messages__visuallyhidden__trustee__utr",
       changeNoUtr = "messages__visuallyhidden__trustee__utr_no"
