@@ -17,14 +17,14 @@
 package forms.behaviours
 
 import forms.FormSpec
-import forms.mappings.CrnMapping
+import forms.mappings.{CrnMapping, Transforms}
 import generators.Generators
 import models.{CompanyRegistrationNumber, ReferenceValue}
 import models.CompanyRegistrationNumber.Yes
 import org.scalatest.prop.PropertyChecks
 import play.api.data.{Form, FormError}
 
-trait CrnBehaviour extends FormSpec with CrnMapping with PropertyChecks with Generators {
+trait CrnBehaviour extends FormSpec with CrnMapping with PropertyChecks with Generators with Transforms {
 
   def formWithCrnVariations(testForm: Form[ReferenceValue],
                             crnLengthKey: String,
@@ -34,12 +34,12 @@ trait CrnBehaviour extends FormSpec with CrnMapping with PropertyChecks with Gen
 
     "behave like a form with a companyRegistrationNumber Mapping in variations" must {
 
-      Seq("1234567", " 1234567 ").foreach {
+      Seq("1234567", " 1234 567 ").foreach {
         crnNo =>
           s"bind successfully when CRN $crnNo is valid" in {
             val result = testForm.bind(Map("companyRegistrationNumber" -> crnNo))
             result.errors.size mustBe 0
-            result.get mustBe ReferenceValue(crnNo.trim)
+            result.get mustBe ReferenceValue(noSpaceWithUpperCaseTransform(crnNo))
           }
       }
 
@@ -65,12 +65,12 @@ trait CrnBehaviour extends FormSpec with CrnMapping with PropertyChecks with Gen
       val crn = "companyRegistrationNumber.crn"
       val reason = "companyRegistrationNumber.reason"
 
-      Seq("1234567", " 1234567 ").foreach {
+      Seq("1234567", " 1234 567 ").foreach {
         crnNo =>
           s"bind successfully when CRN $crnNo is valid" in {
             val result = testForm.bind(Map(hasCrn -> "true", crn -> crnNo))
             result.errors.size mustBe 0
-            result.get mustBe Yes(crnNo.trim)
+            result.get mustBe Yes(noSpaceWithUpperCaseTransform(crnNo))
           }
       }
 
