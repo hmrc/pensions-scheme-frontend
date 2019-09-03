@@ -33,7 +33,7 @@ import services.FakeUserAnswersService
 import utils.checkyouranswers.Ops._
 import utils.{AllowChangeHelper, DateHelper, FakeCountryOptions, FakeDataRequest, FakeFeatureSwitchManagementService, FakeNavigator, UserAnswers, _}
 import viewmodels.{AnswerRow, AnswerSection, Message}
-import views.html.check_your_answers
+import views.html.checkYourAnswers
 
 class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerAllowChangeBehaviour {
 
@@ -69,7 +69,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
   private def viewAsString(mode: Mode = NormalMode,
                            answerSection: Seq[AnswerSection],
                            srn: Option[String] = None): String =
-    check_your_answers(
+    checkYourAnswers(
       frontendAppConfig,
       answerSection,
       controllers.routes.IndexController.onPageLoad(),

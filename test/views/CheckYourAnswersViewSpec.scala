@@ -23,7 +23,7 @@ import models.{Link, Mode, NormalMode}
 import play.twirl.api.HtmlFormat
 import viewmodels.{AnswerRow, AnswerSection, Section}
 import views.behaviours.{CheckYourAnswersBehaviours, ViewBehaviours}
-import views.html.check_your_answers
+import views.html.check_your_answers_old
 
 class CheckYourAnswersViewSpec extends CheckYourAnswersBehaviours with ViewBehaviours {
 
@@ -47,7 +47,7 @@ class CheckYourAnswersViewSpec extends CheckYourAnswersBehaviours with ViewBehav
                  srn: Option[String] = None,
                  hideSaveAndContinueButton: Boolean
                 ): () => HtmlFormat.Appendable = () =>
-    check_your_answers(
+    check_your_answers_old(
       frontendAppConfig,
       emptyAnswerSections,
       routes.IndexController.onPageLoad(),
@@ -60,7 +60,7 @@ class CheckYourAnswersViewSpec extends CheckYourAnswersBehaviours with ViewBehav
     )(fakeRequest, messages)
 
   def createViewWithData: (Seq[Section], Mode, Boolean) => HtmlFormat.Appendable = (sections, mode, viewOnly) =>
-    check_your_answers(
+    check_your_answers_old(
       frontendAppConfig,
       sections,
       routes.IndexController.onPageLoad(),
@@ -70,7 +70,7 @@ class CheckYourAnswersViewSpec extends CheckYourAnswersBehaviours with ViewBehav
       hideSaveAndContinueButton = viewOnly
     )(fakeRequest, messages)
 
-  "check_your_answers view" must {
+  "check_your_answers_old view" must {
 
     behave like normalPageWithTitle(createView(hideSaveAndContinueButton = false),
       messageKeyPrefix, messages("checkYourAnswers.hs.title"), messages("checkYourAnswers.hs.heading"))

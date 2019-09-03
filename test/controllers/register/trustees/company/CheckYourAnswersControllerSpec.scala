@@ -31,7 +31,7 @@ import utils.checkyouranswers.CheckYourAnswers.{PayeCYA, VatCYA}
 import utils.checkyouranswers.Ops._
 import utils.checkyouranswers.{AddressCYA, AddressYearsCYA, CompanyRegistrationNumberCYA, UniqueTaxReferenceCYA}
 import viewmodels.{AnswerRow, AnswerSection}
-import views.html.check_your_answers
+import views.html.checkYourAnswers
 
 class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerAllowChangeBehaviour {
 
@@ -220,7 +220,7 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase with Controller
     Seq(companyDetailsSection, contactDetailsSection)
   }
 
-  private def viewAsString(answerSections: Seq[AnswerSection], mode: Mode = NormalMode, srn: Option[String] = None) = check_your_answers(
+  private def viewAsString(answerSections: Seq[AnswerSection], mode: Mode = NormalMode, srn: Option[String] = None) = checkYourAnswers(
     frontendAppConfig, answerSections, postUrl, None, srn = srn, hideEditLinks = false, hideSaveAndContinueButton = false
   )(fakeRequest, messages).toString
 

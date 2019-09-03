@@ -24,7 +24,7 @@
 
 @(appConfig: FrontendAppConfig,
     answerSections: Seq[Section],
-    postUrl: Call,
+    href: Call,
     schemeName: Option[String],
     returnOverview: Boolean = false,
     mode: Mode = NormalMode,
@@ -53,7 +53,7 @@
     }
 
     @if(!hideSaveAndContinueButton) {
-        @components.button_link("site.save_and_continue", postUrl.url, "submit")
+        @components.button_link("site.save_and_continue", href.url, "submit")
     }
 
     @if(returnOverview){

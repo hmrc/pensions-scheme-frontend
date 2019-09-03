@@ -34,7 +34,7 @@ import services.FakeUserAnswersService
 import utils._
 import utils.checkyouranswers.Ops._
 import viewmodels.{AnswerRow, AnswerSection}
-import views.html.check_your_answers
+import views.html.check_your_answers_old
 
 class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerAllowChangeBehaviour {
 
@@ -159,7 +159,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
 object CheckYourAnswersControllerSpec extends OptionValues {
   def postUrl(mode: Mode, srn: Option[String]): Call = routes.CheckYourAnswersController.onSubmit(mode, firstIndex, srn)
 
-  def viewAsString(answerSections: Seq[AnswerSection], mode: Mode, srn: Option[String]): String = check_your_answers(
+  def viewAsString(answerSections: Seq[AnswerSection], mode: Mode, srn: Option[String]): String = check_your_answers_old(
     frontendAppConfig,
     answerSections,
     postUrl(mode, srn),

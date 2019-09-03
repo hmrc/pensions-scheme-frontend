@@ -34,7 +34,7 @@ import utils.checkyouranswers.CheckYourAnswers.{PayeCYA, VatCYA}
 import utils.checkyouranswers.Ops._
 import utils.checkyouranswers.UniqueTaxReferenceCYA
 import viewmodels.{AnswerRow, AnswerSection}
-import views.html.check_your_answers
+import views.html.checkYourAnswers
 
 class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerAllowChangeBehaviour {
 
@@ -120,7 +120,7 @@ object CheckYourAnswersControllerSpec extends CheckYourAnswersControllerSpec {
   private def emptyPartnershipContactDetailsSection =
     AnswerSection(Some("messages__partnership__checkYourAnswers__partnership_contact_details"), Nil)
 
-  def viewAsString(answerSections: Seq[AnswerSection], mode: Mode = NormalMode, srn: Option[String] = None): String = check_your_answers(
+  def viewAsString(answerSections: Seq[AnswerSection], mode: Mode = NormalMode, srn: Option[String] = None): String = checkYourAnswers(
     frontendAppConfig, answerSections, AddTrusteeController.onPageLoad(mode, srn),
     None, srn = srn, hideEditLinks = false, hideSaveAndContinueButton = false)(fakeRequest, messages).toString
 

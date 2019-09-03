@@ -28,7 +28,7 @@ import play.api.test.Helpers._
 import utils.checkyouranswers.CheckYourAnswers.StringCYA
 import utils.{AllowChangeHelper, CountryOptions, FakeCountryOptions, UserAnswers}
 import viewmodels.AnswerSection
-import views.html.check_your_answers
+import views.html.checkYourAnswers
 
 class CheckYourAnswersIndividualContactDetailsControllerSpec extends ControllerSpecBase with ControllerAllowChangeBehaviour {
   private val index = Index(0)
@@ -56,7 +56,7 @@ class CheckYourAnswersIndividualContactDetailsControllerSpec extends ControllerS
   }
 
   def viewAsString(answerSections: Seq[AnswerSection], srn: Option[String] = None, postUrl: Call = submitUrl(), hideButton: Boolean = false): String =
-    check_your_answers(frontendAppConfig, answerSections, postUrl, None, hideEditLinks = false,
+    checkYourAnswers(frontendAppConfig, answerSections, postUrl, None, hideEditLinks = false,
       srn = srn, hideSaveAndContinueButton = hideButton)(fakeRequest, messages).toString
 
   "CheckYourAnswersIndividualContactDetailsController" when {

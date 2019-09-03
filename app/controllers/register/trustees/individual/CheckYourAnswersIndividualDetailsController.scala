@@ -33,7 +33,7 @@ import utils.{AllowChangeHelper, CountryOptions, Enumerable, UserAnswers}
 import utils.annotations.TrusteesIndividual
 import viewmodels.AnswerSection
 import utils.checkyouranswers.Ops._
-import views.html.check_your_answers
+import views.html.checkYourAnswers
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -65,7 +65,7 @@ class CheckYourAnswersIndividualDetailsController @Inject()(val appConfig: Front
             TrusteeNoUTRReasonId(index).row(routes.TrusteeNoUTRReasonController.onPageLoad(checkMode(mode), index, srn).url, mode)
           ))
 
-        Future.successful(Ok(check_your_answers(
+        Future.successful(Ok(checkYourAnswers(
           appConfig,
           companyDetails,
           controllers.routes.SchemeTaskListController.onPageLoad(mode, srn),

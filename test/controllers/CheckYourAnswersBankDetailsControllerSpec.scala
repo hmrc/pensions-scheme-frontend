@@ -24,7 +24,7 @@ import play.api.libs.json.Json
 import play.api.test.Helpers._
 import utils.{FakeCountryOptions, FakeNavigator, FakeSectionComplete}
 import viewmodels.{AnswerRow, AnswerSection}
-import views.html.check_your_answers
+import views.html.check_your_answers_old
 
 class CheckYourAnswersBankDetailsControllerSpec extends ControllerSpecBase {
 
@@ -107,7 +107,7 @@ object CheckYourAnswersBankDetailsControllerSpec extends ControllerSpecBase {
     )
   )
 
-  private def viewAsString(): String = check_your_answers(
+  private def viewAsString(): String = check_your_answers_old(
     frontendAppConfig, Seq(bankAccountSection), postUrl, Some("Test Scheme Name"),
     hideEditLinks = false,
     hideSaveAndContinueButton = false)(fakeRequest, messages).toString

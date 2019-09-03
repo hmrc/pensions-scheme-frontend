@@ -27,7 +27,7 @@ import play.api.mvc.Call
 import play.api.test.Helpers._
 import utils._
 import viewmodels.{AnswerRow, AnswerSection, Message}
-import views.html.check_your_answers
+import views.html.checkYourAnswers
 
 class CheckYourAnswersIndividualAddressControllerSpec extends ControllerSpecBase with ControllerAllowChangeBehaviour {
 
@@ -124,7 +124,7 @@ object CheckYourAnswersIndividualAddressControllerSpec extends ControllerSpecBas
     else Seq(addressAnswerRow(mode, srn), previousAddressAnswerRow(mode, srn))))
 
   def viewAsString(answerSections: Seq[AnswerSection], srn: Option[String] = None, postUrl: Call = submitUrl(), hideButton: Boolean = false): String =
-    check_your_answers(frontendAppConfig, answerSections, postUrl, None, hideEditLinks = false,
+    checkYourAnswers(frontendAppConfig, answerSections, postUrl, None, hideEditLinks = false,
       srn = srn, hideSaveAndContinueButton = hideButton
     )(fakeRequest, messages).toString
 

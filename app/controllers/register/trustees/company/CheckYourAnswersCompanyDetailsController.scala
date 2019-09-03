@@ -33,7 +33,7 @@ import utils.annotations.{NoSuspendedCheck, TrusteesCompany}
 import utils.checkyouranswers.Ops._
 import utils.{AllowChangeHelper, CountryOptions, Enumerable, UserAnswers}
 import viewmodels.AnswerSection
-import views.html.check_your_answers
+import views.html.checkYourAnswers
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -71,7 +71,7 @@ class CheckYourAnswersCompanyDetailsController @Inject()(
             CompanyPayeVariationsId(index).row(routes.CompanyPayeVariationsController.onPageLoad(checkMode(mode), index, srn).url, mode)
         ))
 
-        Future.successful(Ok(check_your_answers(
+        Future.successful(Ok(checkYourAnswers(
           appConfig,
           companyDetails,
           controllers.routes.SchemeTaskListController.onPageLoad(mode, srn),

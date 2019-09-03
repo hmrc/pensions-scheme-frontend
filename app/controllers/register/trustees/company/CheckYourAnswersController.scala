@@ -33,7 +33,7 @@ import utils._
 import utils.annotations.{NoSuspendedCheck, TrusteesCompany}
 import utils.checkyouranswers.Ops._
 import viewmodels.AnswerSection
-import views.html.check_your_answers
+import views.html.checkYourAnswers
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.language.implicitConversions
@@ -91,7 +91,7 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
         val contactDetailsSection = AnswerSection(Some("messages__checkYourAnswers__section__contact_details"),
           companyAddress ++ companyAddressYears ++ companyPreviousAddress ++ companyContactDetails)
 
-        Future.successful(Ok(check_your_answers(
+        Future.successful(Ok(checkYourAnswers(
           appConfig,
           Seq(companyDetailsSection, contactDetailsSection),
           navigator.nextPage(CheckYourAnswersId, mode, request.userAnswers, srn),

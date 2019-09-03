@@ -32,7 +32,7 @@ import utils._
 import utils.annotations.{EstablishersCompanyDirector, NoSuspendedCheck}
 import utils.checkyouranswers.Ops._
 import viewmodels.AnswerSection
-import views.html.check_your_answers
+import views.html.checkYourAnswers
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -141,7 +141,7 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
       else
         Seq(companyDirectorDetails, companyDirectorContactDetails)
 
-      Future.successful(Ok(check_your_answers(
+      Future.successful(Ok(checkYourAnswers(
         appConfig,
         answerSections,
         navigator.nextPage(CheckYourAnswersId(companyIndex, directorIndex), mode, request.userAnswers, srn),

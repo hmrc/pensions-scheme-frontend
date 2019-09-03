@@ -33,7 +33,7 @@ import utils._
 import utils.annotations.NoSuspendedCheck
 import utils.checkyouranswers.Ops._
 import viewmodels.AnswerSection
-import views.html.check_your_answers
+import views.html.checkYourAnswers
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -78,7 +78,7 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
           ).flatten
         )
 
-        Future.successful(Ok(check_your_answers(
+        Future.successful(Ok(checkYourAnswers(
           appConfig,
           Seq(partnershipDetails, partnershipContactDetails),
           controllers.register.trustees.routes.AddTrusteeController.onPageLoad(mode, srn),

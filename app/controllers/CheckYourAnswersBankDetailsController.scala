@@ -27,7 +27,7 @@ import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.checkyouranswers.Ops._
 import utils.{CountryOptions, Enumerable, SectionComplete}
 import viewmodels.AnswerSection
-import views.html.check_your_answers
+import views.html.check_your_answers_old
 
 import scala.concurrent.ExecutionContext
 
@@ -51,7 +51,7 @@ class CheckYourAnswersBankDetailsController @Inject()(appConfig: FrontendAppConf
         BankAccountDetailsId.row(controllers.routes.BankAccountDetailsController.onPageLoad(CheckMode).url)
       )
 
-      Ok(check_your_answers(
+      Ok(check_your_answers_old(
         appConfig,
         Seq(bankAccountSection),
         controllers.routes.CheckYourAnswersBankDetailsController.onSubmit(),

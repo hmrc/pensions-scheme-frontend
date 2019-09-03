@@ -29,7 +29,7 @@ import play.api.test.Helpers._
 import services.FakeUserAnswersService
 import utils._
 import viewmodels.{AnswerRow, AnswerSection, Message}
-import views.html.check_your_answers
+import views.html.checkYourAnswers
 
 class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerAllowChangeBehaviour {
 
@@ -168,7 +168,7 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase with Controller
     contactDetailsSection
   )
 
-  def viewAsString(answerSections: Seq[AnswerSection], mode: Mode, srn: Option[String]): String = check_your_answers(
+  def viewAsString(answerSections: Seq[AnswerSection], mode: Mode, srn: Option[String]): String = checkYourAnswers(
     frontendAppConfig,
     answerSections,
     postUrl(mode, srn),

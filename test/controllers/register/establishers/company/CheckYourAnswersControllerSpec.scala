@@ -34,7 +34,7 @@ import utils.checkyouranswers.Ops._
 import utils.checkyouranswers._
 import utils.{CountryOptions, FakeCountryOptions, FakeNavigator, UserAnswers, _}
 import viewmodels.{AnswerRow, AnswerSection, Message}
-import views.html.check_your_answers
+import views.html.checkYourAnswers
 
 class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerAllowChangeBehaviour {
 
@@ -232,7 +232,7 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase with Enumerable
     )
 
   def viewAsString(answerSections: Seq[AnswerSection], srn: Option[String] = None): String =
-    check_your_answers(
+    checkYourAnswers(
       frontendAppConfig,
       answerSections,
       IndexController.onPageLoad(),
