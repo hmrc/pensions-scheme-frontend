@@ -17,9 +17,16 @@
 package identifiers.register.trustees.partnership
 
 import base.SpecBase
-import models.ReferenceValue
+import identifiers.register.trustees.IsTrusteeNewId
+import models.{Link, NormalMode, PartnershipDetails, ReferenceValue, UpdateMode}
+import models.requests.DataRequest
 import play.api.libs.json.Json
+import play.api.mvc.AnyContent
+import play.api.test.FakeRequest
+import uk.gov.hmrc.domain.PsaId
 import utils.UserAnswers
+import utils.checkyouranswers.Ops._
+import viewmodels.AnswerRow
 
 class PartnershipHasPAYEIdSpec extends SpecBase {
   
@@ -42,9 +49,53 @@ class PartnershipHasPAYEIdSpec extends SpecBase {
       }
     }
   }
+
+  "cya" when {
+
+    val answers: UserAnswers = UserAnswers().set(PartnershipDetailsId(0))(PartnershipDetails(name)).flatMap(
+      _.set(PartnershipHasPAYEId(0))(true)).asOpt.get
+
+    "in normal mode" must {
+
+      "return answers rows with change links" in {
+        val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
+        implicit val userAnswers: UserAnswers = request.userAnswers
+        PartnershipHasPAYEId(0).row(onwardUrl, NormalMode)(request, implicitly) must equal(answerRowsWithChangeLinks)
+      }
+    }
+
+    "in update mode for new trustee - partnership paye" must {
+
+      def answersNew: UserAnswers = answers.set(IsTrusteeNewId(0))(true).asOpt.value
+
+      "return answers rows with change links" in {
+        val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answersNew, PsaId("A0000000"))
+        implicit val userAnswers: UserAnswers = request.userAnswers
+        PartnershipHasPAYEId(0).row(onwardUrl, UpdateMode)(request, implicitly) must equal(answerRowsWithChangeLinks)
+      }
+    }
+
+    "in update mode for existing trustee - partnership paye" must {
+
+      "not display any row" in {
+        val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
+        implicit val userAnswers: UserAnswers = request.userAnswers
+
+        PartnershipHasPAYEId(0).row(onwardUrl, UpdateMode)(request, implicitly) mustEqual Nil
+      }
+    }
+  }
 }
 
 object PartnershipHasPAYEIdSpec extends SpecBase {
+
+  val onwardUrl = "onwardUrl"
+  val name = "test partnership name"
+
+  private val answerRowsWithChangeLinks = Seq(
+    AnswerRow(messages("messages__hasPaye__h1", name), List("site.yes"), true, Some(Link("site.change",onwardUrl,
+      Some(messages("messages__visuallyhidden__partnership__paye_yes_no", name)))))
+  )
 
   private def ua(v:Boolean) = UserAnswers(Json.obj())
     .set(PartnershipHasPAYEId(0))(v)

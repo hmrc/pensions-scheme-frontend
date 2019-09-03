@@ -534,7 +534,7 @@ messages__company__cya__crn_no_reason = Why the scheme establisher does not have
 messages__company__cya__utr_yes_no = Does the scheme establisher have a Unique Taxpayer Reference number?
 messages__company__cya__vat_yes_no = Does the scheme establisher have a VAT registration number?
 messages__company__cya__paye_yes_no = Does the scheme establisher have a PAYE employer reference number?
-messages__company__cya__utr = UTR
+messages__cya__utr = UTR
 messages__company__cya__utr_no_reason = Why the scheme establisher does not have a Unique Taxpayer Reference number?
 messages__company__cya__dormant = Has the establisher been dormant in the last 12 months?
 messages__company__paye_error_length = The PAYE number cannot be more than 13 characters
@@ -1227,6 +1227,7 @@ messages__visuallyhidden__partnership__paye_number_add = Add the partnership’s
 messages__visuallyhidden__partnership__utr_yes_no = Change whether the partnership has a Unique Taxpayer Reference number
 messages__visuallyhidden__partnership__utr_no = Change why the partnership does not have a Unique Taxpayer Reference number
 messages__visuallyhidden__partnership__utr = Change the partnership’s Unique Taxpayer Reference number
+messages__visuallyhidden__partnership__utr_add = Add the partnership’s Unique Taxpayer Reference number
 messages__visuallyhidden__partnership__address = Change the partnership’s address
 messages__visuallyhidden__partnership__address_years = Change how long the partnership has been at their address
 messages__visuallyhidden__partnership__previous_address = Change the partnership’s previous address
@@ -1574,6 +1575,10 @@ messages__whatYouWillNeedTrusteeAddress__p1 = You will need to tell us the trust
 messages__whatYouWillNeedTrusteeAddress__item1 = current address
 messages__whatYouWillNeedTrusteeAddress__item2 = previous address if the trustee has been at the current address for less than 1 year
 
+messages__whatYouWillNeedTrusteePartnershipAddress__p1 = You will need to tell us the partnership’s:
+messages__whatYouWillNeedTrusteePartnershipAddress__item1 = current address
+messages__whatYouWillNeedTrusteePartnershipAddress__item2 = previous address if the partnership has been at the current address for less than 1 year
+
 messages__whatYouWillNeedEstablisherCompanyContact__title = Contact details
 messages__whatYouWillNeedEstablisherCompanyContact__h1 = Contact details for {0}
 messages__whatYouWillNeedEstablisherCompanyContact__lede = You will need to tell us the company’s:
@@ -1739,7 +1744,7 @@ messages__companyUtr__heading = What is {0}’s UTR?
 messages__companyUtr__guidance1 = If the UTR is 13 numbers, only enter the last 10.
 messages__companyUtr__guidance2 = If there is a letter ‘K’ at the end of the number, do not enter it.
 messages_utr__hint = For example, 12345 67890
-messages__companyUtr__checkyouranswerslabel = Unique Taxpayer Reference (UTR)
+messages__utr__checkyouranswerslabel = Unique Taxpayer Reference (UTR)
 
 messages__reason__error_utrRequired = Enter a reason why {0} does not have a Unique Taxpayer Reference (UTR)
 messages__reason__error_ninoRequired = Enter a reason why {0} does not have a NINO
@@ -1842,4 +1847,5 @@ messages__whatYouWillNeedTrusteePartnershipDetails__item1 = Unique Taxpayer Refe
 messages__whatYouWillNeedTrusteePartnershipDetails__p2 = If {0} has them, you will also need to tell us their:
 messages__whatYouWillNeedTrusteePartnershipDetails__item2 = VAT registration number
 messages__whatYouWillNeedTrusteePartnershipDetails__item3 = employer PAYE reference (you can tell us any employer PAYE reference if has more than one)
+
 

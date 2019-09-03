@@ -178,7 +178,7 @@ object CheckYourAnswersCompanyDetailsControllerSpec extends ControllerSpecBase w
       Seq(
         addLink(messages("messages__checkYourAnswers__establishers__company__number"), companyRegistrationNumberVariationsRoute(UpdateMode, srn),
           messages("messages__visuallyhidden__companyNumber_add")),
-        addLink(messages("messages__companyUtr__checkyouranswerslabel"), companyUTRRoute(UpdateMode, srn),
+        addLink(messages("messages__utr__checkyouranswerslabel"), companyUTRRoute(UpdateMode, srn),
           messages("messages__visuallyhidden__companyUTR_add")),
         addLink(messages("messages__common__cya__vat"), companyEnterVATRoute(UpdateMode, srn),
           messages("messages__visuallyhidden__companyVat_add")),
@@ -211,7 +211,7 @@ object CheckYourAnswersCompanyDetailsControllerSpec extends ControllerSpecBase w
       messages("messages__visuallyhidden__companyNumber")))
 
   private def utrRow(mode: Mode, srn: Option[String]): Seq[AnswerRow] =
-    Seq(stringChangeLink(messages("messages__companyUtr__checkyouranswerslabel"), companyUTRRoute(mode, srn), utr,
+    Seq(stringChangeLink(messages("messages__utr__checkyouranswerslabel"), companyUTRRoute(mode, srn), utr,
       messages("messages__visuallyhidden__companyUTR")))
 
   private def vatRow(mode: Mode, srn: Option[String]): Seq[AnswerRow] =

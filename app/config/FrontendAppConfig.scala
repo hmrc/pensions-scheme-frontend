@@ -36,8 +36,6 @@ class FrontendAppConfig @Inject()(override val runModeConfiguration: Configurati
   lazy val managePensionsSchemeSummaryUrl = loadConfig("urls.manage-pensions-frontend.schemesSummary")
   lazy val managePensionsYourPensionSchemesUrl: String = loadConfig("urls.manage-pensions-frontend.yourPensionSchemes")
   lazy val appName: String = runModeConfiguration.underlying.getString("appName")
-  lazy val analyticsToken = loadConfig(s"google-analytics.token")
-  lazy val analyticsHost = loadConfig(s"google-analytics.host")
   lazy val googleTagManagerIdAvailable: Boolean = runModeConfiguration.underlying.getBoolean(s"google-tag-manager.id-available")
   lazy val googleTagManagerId: String = loadConfig(s"google-tag-manager.id")
   lazy val reportAProblemPartialUrl = s"$contactHost/contact/problem_reports_ajax?service=$contactFormServiceIdentifier"

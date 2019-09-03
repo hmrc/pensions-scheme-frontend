@@ -87,7 +87,7 @@ object PartnershipEnterVATControllerSpec extends PartnershipEnterVATControllerSp
     running(_.overrides(
       bind[AuthAction].to(FakeAuthAction),
       bind[DataRetrievalAction].toInstance(getMandatoryTrusteePartnership),
-      bind(classOf[Navigator]).qualifiedWith(classOf[TrusteesPartnership]).toInstance(new FakeNavigator(onwardRoute)),
+      bind(classOf[Navigator]).toInstance(new FakeNavigator(onwardRoute)),
       bind[UserAnswersService].toInstance(FakeUserAnswersService)
     )) {
       app =>
