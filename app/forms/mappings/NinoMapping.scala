@@ -50,7 +50,7 @@ trait NinoMapping extends Mappings with Transforms {
 
     tuple("hasNino" -> boolean(requiredKey),
       "nino" -> mandatoryIfTrue("nino.hasNino",
-        text(requiredNinoKey).transform(ninoTransform, noTransform)
+        text(requiredNinoKey).transform(noSpaceWithUpperCaseTransform, noTransform)
           .verifying(validNino(invalidNinoKey))),
       "reason" -> mandatoryIfFalse("nino.hasNino",
         text(requiredReasonKey).

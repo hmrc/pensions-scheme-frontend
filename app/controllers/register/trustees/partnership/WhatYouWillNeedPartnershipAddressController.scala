@@ -19,29 +19,31 @@ package controllers.register.trustees.partnership
 import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions._
+import identifiers.register.trustees.partnership.PartnershipDetailsId
 import javax.inject.Inject
-import models.{Index, Mode}
-import navigators.Navigator
+import models.{Index, Mode, PartnershipDetails}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
-import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import utils.Enumerable
+import views.html.register.trustees.partnership.whatYouWillNeedPartnershipAddress
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 class WhatYouWillNeedPartnershipAddressController @Inject()(val appConfig: FrontendAppConfig,
-                                                           val messagesApi: MessagesApi,
-                                                           val userAnswersService: UserAnswersService,
-                                                           val navigator: Navigator,
-                                                           authenticate: AuthAction,
-                                                           getData: DataRetrievalAction,
-                                                           allowAccess: AllowAccessActionProvider,
-                                                           requireData: DataRequiredAction
-                                     )(implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
+                                                            val messagesApi: MessagesApi,
+                                                            authenticate: AuthAction,
+                                                            getData: DataRetrievalAction,
+                                                            allowAccess: AllowAccessActionProvider,
+                                                            requireData: DataRequiredAction
+                                                           )(implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport {
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData) {
-      implicit request => NotImplemented("Not implemented: " + this.getClass.toString)
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+      implicit request =>
+        PartnershipDetailsId(index).retrieve.right.map {
+          case PartnershipDetails(partnershipName, _) =>
+            val href = controllers.register.trustees.partnership.routes.PartnershipPostcodeLookupController.onPageLoad(mode, index, srn)
+            Future.successful(Ok(whatYouWillNeedPartnershipAddress(appConfig, existingSchemeName, href, srn, partnershipName)))
+        }
     }
 }
