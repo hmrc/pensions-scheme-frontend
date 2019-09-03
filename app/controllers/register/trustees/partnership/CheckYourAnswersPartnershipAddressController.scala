@@ -16,36 +16,70 @@
 
 package controllers.register.trustees.partnership
 
-import config.FrontendAppConfig
+import config.{FeatureSwitchManagementService, FrontendAppConfig}
 import controllers.Retrievals
 import controllers.actions._
+import identifiers.register.establishers.IsEstablisherNewId
+import identifiers.register.trustees.IsTrusteeNewId
+import identifiers.register.trustees.partnership.{PartnershipAddressId, PartnershipAddressYearsId, PartnershipPreviousAddressId}
 import javax.inject.Inject
+import models.Mode.checkMode
 import models.{Index, Mode}
 import navigators.Navigator
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import utils.Enumerable
+import utils.annotations.NoSuspendedCheck
+import utils.checkyouranswers.Ops._
+import utils.{Enumerable, _}
+import viewmodels.AnswerSection
+import views.html.check_your_answers
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
-class CheckYourAnswersPartnershipAddressController @Inject()(val appConfig: FrontendAppConfig,
-                                                                  val messagesApi: MessagesApi,
-                                                                  val userAnswersService: UserAnswersService,
-                                                                  val navigator: Navigator,
-                                                                  authenticate: AuthAction,
-                                                                  getData: DataRetrievalAction,
-                                                                  allowAccess: AllowAccessActionProvider,
-                                                                  requireData: DataRequiredAction
-                                     )(implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
+class CheckYourAnswersPartnershipAddressController @Inject()(appConfig: FrontendAppConfig,
+                                                         override val messagesApi: MessagesApi,
+                                                         authenticate: AuthAction,
+                                                         getData: DataRetrievalAction,
+                                                         @NoSuspendedCheck allowAccess: AllowAccessActionProvider,
+                                                         requireData: DataRequiredAction,
+                                                         implicit val countryOptions: CountryOptions,
+                                                          navigator: Navigator,
+                                                         userAnswersService: UserAnswersService,
+                                                         allowChangeHelper: AllowChangeHelper,
+                                                         fs: FeatureSwitchManagementService
+                                          )(implicit val ec: ExecutionContext) extends FrontendController
+  with Retrievals with I18nSupport with Enumerable.Implicits {
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData) {
-      implicit request => NotImplemented("Not implemented: " + this.getClass.toString)
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+      implicit request =>
+        implicit val userAnswers: UserAnswers = request.userAnswers
+
+        val answerSections = Seq(AnswerSection(
+          None,
+          PartnershipAddressId(index).row(routes.PartnershipAddressController.onPageLoad(checkMode(mode), index, srn).url, mode)++
+          PartnershipAddressYearsId(index).row(routes.PartnershipAddressYearsController.onPageLoad(checkMode(mode), index, srn).url, mode)++
+          PartnershipPreviousAddressId(index).row(routes.PartnershipPreviousAddressController.onPageLoad(checkMode(mode), index, srn).url, mode)
+        ))
+
+        Future.successful(Ok(check_your_answers(
+          appConfig,
+          answerSections,
+          routes.CheckYourAnswersPartnershipAddressController.onSubmit(mode, index, srn),
+          existingSchemeName,
+          mode = mode,
+          hideEditLinks = request.viewOnly || !userAnswers.get(IsEstablisherNewId(index)).getOrElse(true),
+          hideSaveAndContinueButton = allowChangeHelper.hideSaveAndContinueButton(request, IsTrusteeNewId(index), mode),
+          srn = srn
+        )))
+
     }
 
-  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData) {
-    implicit request => Redirect(controllers.routes.IndexController.onPageLoad())
+  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (
+    authenticate andThen getData(mode, srn) andThen requireData) {
+        Redirect(controllers.routes.SchemeTaskListController.onPageLoad(mode, srn))
   }
+
 }
