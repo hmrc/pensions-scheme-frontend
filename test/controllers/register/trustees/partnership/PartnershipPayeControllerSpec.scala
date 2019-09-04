@@ -79,8 +79,7 @@ object PartnershipPayeControllerSpec extends PartnershipPayeControllerSpec {
     routes.PartnershipPayeController.onSubmit(NormalMode, firstIndex, None),
     title = Message("messages__partnershipPaye__title"),
     heading = Message("messages__partnershipPaye__heading"),
-    hint = Some(Message("messages__common__paye_hint")),
-    subHeading = Some(Message("test partnership name"))
+    hint = Some(Message("messages__common__paye_hint"))
   )
 
   private def requestResult[T](request: Application => Request[T], test: (Request[_], Future[Result]) => Unit)

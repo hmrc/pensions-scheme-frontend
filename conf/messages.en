@@ -1732,6 +1732,7 @@ messages__payeVariations__company_title = What is the company’s employer PAYE 
 messages__payeVariations__partnership_title = What is the partnership’s employer PAYE reference?
 messages__payeVariations__heading = What is {0}’s employer PAYE reference?
 messages__payeVariations__hint = For example, 123/AB456
+messages__payeVariations__p1 = You can tell us any employer PAYE reference if {0} has more then one.
 messages__payeVariations__error_invalid = Enter {0}’s employer PAYE reference in the correct format
 messages__payeVariations__error_length = Enter {0}’s employer PAYE reference using 16 characters or less
 messages__payeVariations__error_required = Enter an employer PAYE reference

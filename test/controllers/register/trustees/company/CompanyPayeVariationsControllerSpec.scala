@@ -81,7 +81,8 @@ object CompanyPayeVariationsControllerSpec extends CompanyPayeVariationsControll
     title = Message("messages__payeVariations__company_title"),
     heading = Message("messages__payeVariations__heading", "test company name"),
     hint = Some(Message("messages__payeVariations__hint")),
-    srn = srn
+    srn = srn,
+    entityName = Some("test company name")
   )
 
   private def requestResult[T](request: Application => Request[T], test: (Request[_], Future[Result]) => Unit)

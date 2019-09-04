@@ -78,8 +78,7 @@ object CompanyPayeControllerSpec extends CompanyPayeControllerSpec {
     routes.CompanyPayeController.onSubmit(NormalMode, firstIndex, None),
     title = Message("messages__companyPaye__title"),
     heading = Message("messages__companyPaye__heading", "test company name"),
-    hint = Some(Message("messages__common__paye_hint")),
-    subHeading = None
+    hint = Some(Message("messages__common__paye_hint"))
   )
 
   private def requestResult[T](request: Application => Request[T], test: (Request[_], Future[Result]) => Unit)
