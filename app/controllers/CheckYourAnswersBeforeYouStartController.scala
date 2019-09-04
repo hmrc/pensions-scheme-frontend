@@ -44,7 +44,7 @@ class CheckYourAnswersBeforeYouStartController @Inject()(appConfig: FrontendAppC
                                                         )(implicit val ec: ExecutionContext) extends FrontendController
   with Enumerable.Implicits with I18nSupport with Retrievals {
 
-  def onPageLoad(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+  def onPageLoad(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData) {
     implicit request =>
 
       implicit val userAnswers: UserAnswers = request.userAnswers
@@ -58,17 +58,22 @@ class CheckYourAnswersBeforeYouStartController @Inject()(appConfig: FrontendAppC
         DeclarationDutiesId.row(routes.WorkingKnowledgeController.onPageLoad(CheckMode).url, mode)
       )
 
+      Ok(check_your_answers_old(
+        appConfig,
+        Seq(beforeYouStart),
+        routes.CheckYourAnswersBeforeYouStartController.onSubmit(mode, srn),
+        existingSchemeName,
+        returnOverview = !userAnswers.get(IsBeforeYouStartCompleteId).getOrElse(false),
+        mode,
+        hideEditLinks = request.viewOnly, srn,
+        hideSaveAndContinueButton = mode == UpdateMode || mode == CheckUpdateMode
+      ))
+  }
+
+  def onSubmit(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData() andThen requireData).async {
+    implicit request =>
       userAnswersService.setCompleteFlag(mode, srn, IsBeforeYouStartCompleteId, request.userAnswers, value = true) map { _ =>
-        Ok(check_your_answers_old(
-          appConfig,
-          Seq(beforeYouStart),
-          controllers.routes.SchemeTaskListController.onPageLoad(mode, srn),
-          existingSchemeName,
-          returnOverview = !userAnswers.get(IsBeforeYouStartCompleteId).getOrElse(false),
-          mode,
-          hideEditLinks = request.viewOnly, srn,
-          hideSaveAndContinueButton = mode == UpdateMode || mode == CheckUpdateMode
-        ))
+        Redirect(controllers.routes.SchemeTaskListController.onPageLoad(mode, srn))
       }
   }
 }

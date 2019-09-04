@@ -62,6 +62,17 @@ class CheckYourAnswersBeforeYouStartControllerSpec extends ControllerSpecBase {
       }
 
     }
+
+    "onSubmit is called" must {
+      "redirect to next page" in {
+        val result = controller().onSubmit(NormalMode, None)(fakeRequest)
+
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result) mustBe Some(onwardRoute.url)
+        FakeUserAnswersService.verify(IsBeforeYouStartCompleteId, true)
+      }
+    }
+
   }
 }
 
@@ -81,7 +92,7 @@ object CheckYourAnswersBeforeYouStartControllerSpec extends ControllerSpecBase {
       FakeUserAnswersService
     )
 
-  private def postUrl(mode:Mode) = controllers.routes.SchemeTaskListController.onPageLoad(mode, None)
+  private def postUrl(mode:Mode) = routes.CheckYourAnswersBeforeYouStartController.onSubmit(mode, None)
 
   private val schemeInfo = new FakeDataRetrievalAction(
     Some(Json.obj(
