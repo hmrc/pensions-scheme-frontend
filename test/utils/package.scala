@@ -308,6 +308,14 @@ package object utils {
       answers.set(trustees.partnership.PartnershipPhoneId(index))(phone).asOpt.value
     }
 
+    def trusteePartnershipAddressYears(index: Int, addressYears: AddressYears): UserAnswers = {
+      answers.set(trustees.partnership.PartnershipAddressYearsId(index))(addressYears).asOpt.value
+    }
+
+    def trusteePartnershipTradingTime(index: Int, hasBeenTrading: Boolean): UserAnswers = {
+      answers.set(trustees.partnership.PartnershipHasBeenTradingId(index))(hasBeenTrading).asOpt.value
+    }
+
     //Advisers
     def advisersAddress(address: Address): UserAnswers = {
       answers.set(AdviserAddressId)(address).asOpt.value
