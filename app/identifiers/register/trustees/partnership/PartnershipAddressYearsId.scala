@@ -31,10 +31,12 @@ case class PartnershipAddressYearsId(index: Int) extends TypedIdentifier[Address
   override def cleanup(value: Option[AddressYears], userAnswers: UserAnswers): JsResult[UserAnswers] = {
     value match {
       case Some(AddressYears.OverAYear) =>
-        userAnswers
-          .remove(PartnershipPreviousAddressPostcodeLookupId(this.index))
-          .flatMap(_.remove(PartnershipPreviousAddressId(this.index)))
-          .flatMap(_.remove(PartnershipPreviousAddressListId(this.index)))
+        userAnswers.removeAllOf(List(
+          PartnershipPreviousAddressPostcodeLookupId(index),
+          PartnershipPreviousAddressId(index),
+          PartnershipPreviousAddressListId(index),
+          PartnershipHasBeenTradingId(index)
+        ))
       case _ => super.cleanup(value, userAnswers)
     }
   }

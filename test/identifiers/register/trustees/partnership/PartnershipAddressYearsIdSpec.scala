@@ -39,6 +39,7 @@ class PartnershipAddressYearsIdSpec extends SpecBase {
       .flatMap(_.set(PartnershipPreviousAddressPostcodeLookupId(0))(Seq.empty))
       .flatMap(_.set(PartnershipPreviousAddressId(0))(Address("foo", "bar", None, None, None, "GB")))
       .flatMap(_.set(PartnershipPreviousAddressListId(0))(TolerantAddress(Some("foo"), Some("bar"), None, None, None, Some("GB"))))
+      .flatMap(_.set(PartnershipHasBeenTradingId(0))(value = true))
       .asOpt.value
 
     "`AddressYears` is set to `OverAYear`" when {
@@ -56,6 +57,10 @@ class PartnershipAddressYearsIdSpec extends SpecBase {
       "remove the data for `PreviousAddressList`" in {
         result.get(PartnershipPreviousAddressListId(0)) mustNot be(defined)
       }
+
+      "remove the data for `HasBeenTradingId`" in {
+        result.get(PartnershipHasBeenTradingId(0)) mustNot be(defined)
+      }
     }
 
     "`AddressYears` is removed" when {
@@ -72,6 +77,10 @@ class PartnershipAddressYearsIdSpec extends SpecBase {
 
       "not remove the data for `PreviousAddressList`" in {
         result.get(PartnershipPreviousAddressListId(0)) mustBe defined
+      }
+
+      "not remove the data for `HasBeenTradingId`" in {
+        result.get(PartnershipHasBeenTradingId(0)) mustBe defined
       }
     }
   }
