@@ -380,6 +380,7 @@ messages__trustee_company_contact_details__title = Enter the company’s contact
 messages__trustee_company_contact_details__heading = Enter the company’s contact details
 
 messages__trustee_company_trading-time__title = Has the company been trading for at least 1 year?
+messages__trustee_partnership_trading-time__title = Has the partnership been trading for at least 1 year?
 
 messages__trustee_contact_details__title = Enter the trustee’s contact details
 messages__trustee_contact_details__heading = Enter the trustee’s contact details
@@ -1653,11 +1654,8 @@ messages__changeHasBeen1Year = Change whether {0} has been at their address for 
 messages__theTrustee = the trustee
 messages__theDirector = the director
 
-messages__hasBeenTradingCompany__title = Has the establisher been trading for more than a year?
-messages__hasBeenTradingCompany__h1 =  Has {0} been trading for more than a year?
-messages__hasBeenTradingCompany__error__required = Select yes if {0} has been trading  for more than a year
-messages__hasBeenTradingCompany__title = Has the establisher been trading for more than a year?
-messages__hasBeenTradingCompany__h1 =  Has {0} been trading for more than a year?
+messages__hasBeenTradingCompany__title = Has the establisher been trading for at least 1 year?
+messages__hasBeenTrading__h1 =  Has {0} been trading for at least 1 year?
 messages__hasBeenTradingCompany__error__required = Select yes if {0} has been trading for at least 1 year
 
 messages__schemeTaskList__before_you_start_link_text = Setting up your scheme application

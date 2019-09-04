@@ -14,59 +14,57 @@
  * limitations under the License.
  */
 
-package controllers.register.trustees.company
+package controllers.register.trustees.partnership
 
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.HasBeenTradingFormProvider
 import identifiers.register.trustees.TrusteesId
-import identifiers.register.trustees.company._
-import identifiers.register.trustees.individual.TrusteeNameId
+import identifiers.register.trustees.partnership._
 import models.address.{Address, TolerantAddress}
-import models.person.PersonName
-import models.{CompanyDetails, Index, NormalMode}
+import models.{Index, NormalMode, PartnershipDetails}
 import play.api.data.Form
 import play.api.libs.json.Json
+import play.api.mvc.Call
 import play.api.test.Helpers._
 import services.FakeUserAnswersService
 import utils.FakeNavigator
 import viewmodels.{CommonFormWithHintViewModel, Message}
 import views.html.hasReferenceNumber
 
-class HasBeenTradingCompanyControllerSpec extends ControllerSpecBase {
+class PartnershipHasBeenTradingControllerSpec extends ControllerSpecBase {
   private val schemeName = None
-  private def onwardRoute = controllers.routes.IndexController.onPageLoad()
-  val formProvider = new HasBeenTradingFormProvider()
-  val form = formProvider("messages__tradingAtLeastOneYear__error","test company name")
-  val index = Index(0)
-  val srn = None
-  val postCall = controllers.register.trustees.company.routes.HasBeenTradingCompanyController.onSubmit(NormalMode, index, srn)
+  private def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
+  private val formProvider = new HasBeenTradingFormProvider()
+  private val form = formProvider("messages__tradingAtLeastOneYear__error","test partnership name")
+  private val index = Index(0)
+  private val srn = None
 
   val viewModel = CommonFormWithHintViewModel(
-    controllers.register.trustees.company.routes.HasBeenTradingCompanyController.onSubmit(NormalMode, index, srn),
-    title = Message("messages__trustee_company_trading-time__title"),
-    heading = Message("messages__hasBeenTrading__h1", "test company name"),
+    controllers.register.trustees.partnership.routes.PartnershipHasBeenTradingController.onSubmit(NormalMode, index, srn),
+    title = Message("messages__trustee_partnership_trading-time__title"),
+    heading = Message("messages__hasBeenTrading__h1", "test partnership name"),
     hint = None
   )
   val tolerantAddress = TolerantAddress(None, None, None, None, None, None)
   val address = Address("line 1", "line 2", None, None, None, "GB")
 
-  private def getTrusteeCompanyDataWithPreviousAddress(hasBeenTrading: Boolean): FakeDataRetrievalAction = new FakeDataRetrievalAction(
+  private def getTrusteePartnershipDataWithPreviousAddress(hasBeenTrading: Boolean): FakeDataRetrievalAction = new FakeDataRetrievalAction(
     Some(Json.obj(
       TrusteesId.toString -> Json.arr(
         Json.obj(
-          CompanyDetailsId.toString -> CompanyDetails("test company name"),
-          HasBeenTradingCompanyId.toString -> hasBeenTrading,
-          CompanyPreviousAddressPostcodeLookupId.toString -> Seq(tolerantAddress),
-          CompanyPreviousAddressId.toString -> address,
-          CompanyPreviousAddressListId.toString -> tolerantAddress
+          PartnershipDetailsId.toString -> PartnershipDetails("test partnership name"),
+          PartnershipHasBeenTradingId.toString -> hasBeenTrading,
+          PartnershipPreviousAddressPostcodeLookupId.toString -> Seq(tolerantAddress),
+          PartnershipPreviousAddressId.toString -> address,
+          PartnershipPreviousAddressListId.toString -> tolerantAddress
         )
       )
     ))
   )
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryTrusteeCompany): HasBeenTradingCompanyController =
-    new HasBeenTradingCompanyController(
+  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryTrusteePartnership): PartnershipHasBeenTradingController =
+    new PartnershipHasBeenTradingController(
       frontendAppConfig,
       messagesApi,
       FakeUserAnswersService,
@@ -79,9 +77,9 @@ class HasBeenTradingCompanyControllerSpec extends ControllerSpecBase {
       global
     )
 
-  private def viewAsString(form: Form[_] = form) = hasReferenceNumber(frontendAppConfig, form, viewModel, schemeName)(fakeRequest, messages).toString
+  private def viewAsString(form: Form[_] = form): String = hasReferenceNumber(frontendAppConfig, form, viewModel, schemeName)(fakeRequest, messages).toString
 
-  "HasBeenTradingCompanyController" must {
+  "PartnershipHasBeenTradingController" must {
 
     "return OK and the correct view for a GET" in {
       val result = controller().onPageLoad(NormalMode, index, None)(fakeRequest)
@@ -97,7 +95,7 @@ class HasBeenTradingCompanyControllerSpec extends ControllerSpecBase {
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
-      FakeUserAnswersService.verify(HasBeenTradingCompanyId(index), true)
+      FakeUserAnswersService.verify(PartnershipHasBeenTradingId(index), value = true)
     }
 
     "return a Bad Request and errors when invalid data is submitted" in {
@@ -113,26 +111,26 @@ class HasBeenTradingCompanyControllerSpec extends ControllerSpecBase {
     "clean up previous address, if user changes answer from yes to no" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "false"))
 
-      val result = controller(getTrusteeCompanyDataWithPreviousAddress(hasBeenTrading = true)).onSubmit(NormalMode, index, None)(postRequest)
+      val result = controller(getTrusteePartnershipDataWithPreviousAddress(hasBeenTrading = true)).onSubmit(NormalMode, index, None)(postRequest)
 
       status(result) mustBe SEE_OTHER
 
-      FakeUserAnswersService.userAnswer.get(HasBeenTradingCompanyId(index)).value mustEqual false
-      FakeUserAnswersService.userAnswer.get(CompanyPreviousAddressPostcodeLookupId(index)) mustBe None
-      FakeUserAnswersService.userAnswer.get(CompanyPreviousAddressId(index)) mustBe None
-      FakeUserAnswersService.userAnswer.get(CompanyPreviousAddressListId(index)) mustBe None
+      FakeUserAnswersService.userAnswer.get(PartnershipHasBeenTradingId(index)).value mustEqual false
+      FakeUserAnswersService.userAnswer.get(PartnershipPreviousAddressPostcodeLookupId(index)) mustBe None
+      FakeUserAnswersService.userAnswer.get(PartnershipPreviousAddressId(index)) mustBe None
+      FakeUserAnswersService.userAnswer.get(PartnershipPreviousAddressListId(index)) mustBe None
     }
 
     "not clean up for previous address, if user changes answer from no to yes" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "true"))
-      val result = controller(getTrusteeCompanyDataWithPreviousAddress(hasBeenTrading = false)).onSubmit(NormalMode, index, None)(postRequest)
+      val result = controller(getTrusteePartnershipDataWithPreviousAddress(hasBeenTrading = false)).onSubmit(NormalMode, index, None)(postRequest)
 
       status(result) mustBe SEE_OTHER
 
-      FakeUserAnswersService.userAnswer.get(HasBeenTradingCompanyId(index)).value mustEqual true
-      FakeUserAnswersService.userAnswer.get(CompanyPreviousAddressPostcodeLookupId(index)) mustBe Some(Seq(tolerantAddress))
-      FakeUserAnswersService.userAnswer.get(CompanyPreviousAddressId(index)) mustBe Some(address)
-      FakeUserAnswersService.userAnswer.get(CompanyPreviousAddressListId(index)) mustBe Some(tolerantAddress)
+      FakeUserAnswersService.userAnswer.get(PartnershipHasBeenTradingId(index)).value mustEqual true
+      FakeUserAnswersService.userAnswer.get(PartnershipPreviousAddressPostcodeLookupId(index)) mustBe Some(Seq(tolerantAddress))
+      FakeUserAnswersService.userAnswer.get(PartnershipPreviousAddressId(index)) mustBe Some(address)
+      FakeUserAnswersService.userAnswer.get(PartnershipPreviousAddressListId(index)) mustBe Some(tolerantAddress)
     }
   }
 }
