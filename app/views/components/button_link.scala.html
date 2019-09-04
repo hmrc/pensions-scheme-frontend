@@ -18,7 +18,7 @@
         messageKey: String = "",
         href: String,
         id: String,
-        continueTo: Option[String] = None
+        extraHiddenText: Option[String] = None
 )(implicit messages: Messages)
 
 <div class="section">
@@ -27,7 +27,7 @@
             @messages(messageKey)
         </span>
         <span class="visually-hidden">
-            @messages(messageKey) @if(continueTo.nonEmpty) @{continueTo.get}
+            @messages(messageKey) @if(extraHiddenText.nonEmpty) @{extraHiddenText.get}
         </span>
     </a>
 </div>

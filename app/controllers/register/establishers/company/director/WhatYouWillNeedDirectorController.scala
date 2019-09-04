@@ -54,12 +54,4 @@ class WhatYouWillNeedDirectorController @Inject()(appConfig: FrontendAppConfig,
       }
 
   }
-
-  //  def onSubmit(mode: Mode, srn: Option[String] = None, establisherIndex: Index): Action[AnyContent] = (authenticate andThen
-  //    getData(mode, srn) andThen requireData).async {
-  //    implicit request =>
-  //
-  //      Future.successful(
-  //        Redirect(routes.DirectorNameController.onPageLoad(mode, establisherIndex, directorIndex, srn)))
-  //  }
 }

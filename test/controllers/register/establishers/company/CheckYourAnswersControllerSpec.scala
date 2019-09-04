@@ -63,11 +63,11 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
       "return OK and the correct view for vat, paye and crn if not new establisher" in {
         val answers = UserAnswers().set(CompanyEnterVATId(index))(ReferenceValue("098765432")).flatMap(
           _.set(CompanyPayeVariationsId(index))(ReferenceValue("12345678"))).asOpt.value
-        implicit val request = FakeDataRequest(answers)
+        implicit val request: FakeDataRequest = FakeDataRequest(answers)
         val expectedCompanyDetailsSection = estCompanyDetailsSection(
           CompanyEnterVATId(index).row(companyEnterVATRoute, UpdateMode) ++
             CompanyPayeVariationsId(index).row(companyPayeVariationsRoute, UpdateMode) ++
-              CompanyRegistrationNumberVariationsId(index).row(companyRegistrationNumberVariationsRoute, UpdateMode)
+            CompanyRegistrationNumberVariationsId(index).row(companyRegistrationNumberVariationsRoute, UpdateMode)
         )
         val result = controller(answers.dataRetrievalAction).onPageLoad(UpdateMode, srn, index)(request)
 
@@ -78,7 +78,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
       "return OK and the correct view for vat and paye if new establisher" in {
         val answers = UserAnswers().set(CompanyVatId(index))(Vat.Yes("098765432")).flatMap(
           _.set(CompanyPayeId(index))(Paye.Yes("12345678"))).flatMap(_.set(IsEstablisherNewId(index))(true)).asOpt.value
-        implicit val request = FakeDataRequest(answers)
+        implicit val request: FakeDataRequest = FakeDataRequest(answers)
 
         val expectedCompanyDetailsSection = estCompanyDetailsSection(
           CompanyVatId(index).row(companyVatRoute(CheckUpdateMode, srn), UpdateMode) ++
@@ -107,9 +107,9 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase with Enumerable
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
   private implicit val fakeCountryOptions: CountryOptions = new FakeCountryOptions
-  val index = Index(0)
-  val testSchemeName = "Test Scheme Name"
-  val srn = Some("S123")
+  private val index = Index(0)
+  private val testSchemeName = "Test Scheme Name"
+  private val srn = Some("S123")
   private val companyDetails = CompanyDetails("test company")
   private val companyRegNoYes = CompanyRegistrationNumber.Yes("crn")
   private val utrYes = UniqueTaxReference.Yes("utr")
@@ -128,7 +128,9 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase with Enumerable
   private val companyRegistrationNumberRoute = routes.CompanyRegistrationNumberController.onPageLoad(CheckMode, None, 0).url
   private val companyRegistrationNumberVariationsRoute = routes.CompanyRegistrationNumberVariationsController.onPageLoad(CheckUpdateMode, srn, index).url
   private val companyEnterVATRoute = routes.CompanyEnterVATController.onPageLoad(CheckUpdateMode, 0, srn).url
+
   private def companyVatRoute(mode: Mode = CheckMode, srn: Option[String] = None) = routes.CompanyVatController.onPageLoad(mode, 0, srn).url
+
   private val companyUniqueTaxReferenceRoute = routes.CompanyUniqueTaxReferenceController.onPageLoad(CheckMode, None, 0).url
   private val companyDetailsRoute = routes.CompanyDetailsController.onPageLoad(CheckMode, None, 0).url
   private val isCompanyDormantRoute = routes.IsCompanyDormantController.onPageLoad(CheckMode, None, 0).url
@@ -137,6 +139,7 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase with Enumerable
   private val companyPreviousAddressRoute = routes.CompanyPreviousAddressController.onPageLoad(CheckMode, None, Index(index)).url
   private val companyContactDetailsRoute = routes.CompanyContactDetailsController.onPageLoad(CheckMode, None, Index(index)).url
   private val companyPayeVariationsRoute = routes.CompanyPayeVariationsController.onPageLoad(CheckUpdateMode, 0, srn).url
+
   private def companyPayeRoute(mode: Mode = CheckMode, srn: Option[String] = None) = routes.CompanyPayeController.onPageLoad(mode, 0, srn).url
 
   private val fullAnswers = emptyAnswers.
@@ -174,10 +177,7 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase with Enumerable
     val utrRows = UniqueTaxReferenceCYA(
       label = "messages__company__cya__utr_yes_no",
       utrLabel = "messages__cya__utr",
-      reasonLabel = "messages__company__cya__utr_no_reason",
-      changeHasUtr = "messages__visuallyhidden__establisher__utr_yes_no",
-      changeUtr = "messages__visuallyhidden__establisher__utr",
-      changeNoUtr = "messages__visuallyhidden__establisher__utr_no"
+      reasonLabel = "messages__company__cya__utr_no_reason"
     )().row(CompanyUniqueTaxReferenceId(index))(companyUniqueTaxReferenceRoute, request.userAnswers)
 
     val isDormantRows = IsDormantCYA()().row(IsCompanyDormantId(index))(isCompanyDormantRoute, request.userAnswers)

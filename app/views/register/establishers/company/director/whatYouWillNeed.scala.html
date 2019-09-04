@@ -54,7 +54,7 @@
         <li>@messages("messages__whatYouWillNeedDirectors__item8")</li>
     </ul>
 
-    @components.button_link("site.continue", DirectorNameController.onPageLoad(mode, establisherIndex, directorIndex, srn).url, "submit", Some("to directors section"))
+    @components.button_link("site.continue", DirectorNameController.onPageLoad(mode, establisherIndex, directorIndex, srn).url, "submit")
 
     @components.return_link("messages__schemeTaskList__returnlink", schemeName, None, srn)
 }
