@@ -36,13 +36,13 @@ object PartnershipAddressId {
 
     new CheckYourAnswers[PartnershipAddressId] {
       override def row(id: PartnershipAddressId)(changeUrl: String, ua: UserAnswers): Seq[AnswerRow] = {
-        def trusteeName(index: Int) = ua.get(PartnershipDetailsId(index)).fold(messages("messages__theTrustee"))(_.name)
-        def label(index: Int) = messages("messages__addressFor", trusteeName(index))
-        def changeAddress(index: Int) = messages("messages__changeTrusteeAddress", trusteeName(index))
+        val trusteeName = ua.get(PartnershipDetailsId(id.index)).fold(messages("messages__theTrustee"))(_.name)
+        val label = messages("messages__addressFor", trusteeName)
+        val changeAddress = messages("messages__changeTrusteeAddress", trusteeName)
 
         AddressCYA(
-          label = label(id.index),
-          changeAddress = changeAddress(id.index)
+          label = label,
+          changeAddress = changeAddress
         )().row(id)(changeUrl, ua)
       }
       override def updateRow(id: PartnershipAddressId)(changeUrl: String, ua: UserAnswers): Seq[AnswerRow] = row(id)(changeUrl, ua)
