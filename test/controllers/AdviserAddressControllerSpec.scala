@@ -81,8 +81,7 @@ class AdviserAddressControllerSpec extends ControllerSpecBase with MockitoSugar 
             controller.postCall(NormalMode),
             countryOptions.options,
             Message(controller.title),
-            Message(controller.heading("name")),
-            secondaryHeader = Some(controller.secondary))
+            Message(controller.heading("name")))
 
           val request = addToken(
             FakeRequest(AdviserAddressController.onPageLoad(NormalMode))

@@ -51,7 +51,7 @@
 
         <p>@Html(viewmodel.enterPostcode.withArgs(openLink, closeLink))</p>
 
-        @components.submit_button("site.find_address")
+        @components.submit_button("site.save_and_continue")
 
         @components.return_link("messages__schemeTaskList__returnlink", schemeName, None, viewmodel.srn)
     }

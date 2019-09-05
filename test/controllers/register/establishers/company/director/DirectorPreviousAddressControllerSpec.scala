@@ -90,8 +90,7 @@ class DirectorPreviousAddressControllerSpec extends ControllerSpecBase with Mock
             controller.postCall(NormalMode, establisherIndex, directorIndex, None),
             countryOptions.options,
             controller.title,
-            Message(controller.heading, directorDetails.fullName),
-            secondaryHeader = Some(directorDetails.fullName)
+            Message(controller.heading, directorDetails.fullName)
           )
 
           val request = addToken(

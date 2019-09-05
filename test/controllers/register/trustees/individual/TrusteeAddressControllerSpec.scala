@@ -71,9 +71,7 @@ class TrusteeAddressControllerSpec extends ControllerBehaviours {
     postCall = controller.postCall(NormalMode, firstIndex, None),
     countryOptions = countryOptions.options,
     title = messages("messages__trustee__individual__address__confirm__title"),
-    heading = messages("messages__common__confirmAddress__h1", personDetails.fullName),
-    secondaryHeader = Some(personDetails.fullName),
-    hint = Some(messages("messages__trustee__individual__address__confirm__lede"))
+    heading = messages("messages__common__confirmAddress__h1", personDetails.fullName)
   )
 
   behave like manualAddress(

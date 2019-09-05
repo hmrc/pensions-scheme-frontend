@@ -86,7 +86,6 @@ class PartnershipPreviousAddressControllerSpec extends ControllerSpecBase with S
         options,
         Message("messages__common__partnership_confirmPreviousAddress__title"),
         Message("messages__common__confirmPreviousAddress__h1",partnershipName),
-        Some(partnershipName),
         None
       ),
       None
