@@ -23,9 +23,7 @@
         schemeName: Option[String],
         srn: Option[String],
         companyName: String,
-        mode: Mode,
-        establisherIndex: Int,
-        directorIndex: Int
+        href: Call
 )(
         implicit request: Request[_],
         messages: Messages
@@ -54,7 +52,7 @@
         <li>@messages("messages__whatYouWillNeedDirectors__item8")</li>
     </ul>
 
-    @components.button_link("site.continue", DirectorNameController.onPageLoad(mode, establisherIndex, directorIndex, srn).url, "submit")
+    @components.button_link("site.continue", href.url, "submit")
 
     @components.return_link("messages__schemeTaskList__returnlink", schemeName, None, srn)
 }

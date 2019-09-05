@@ -16,7 +16,9 @@
 
 package views.register.establishers.company.director
 
-import models.{Index, NormalMode}
+import controllers.register.establishers.company.director.routes.DirectorNameController
+import models.NormalMode
+import play.api.mvc.Call
 import play.twirl.api.HtmlFormat
 import views.behaviours.ViewBehaviours
 import views.html.register.establishers.company.director.whatYouWillNeed
@@ -27,7 +29,9 @@ class WhatYouWillNeedViewSpec extends ViewBehaviours {
 
   private val companyName = "test company name"
 
-  private def createView: () => HtmlFormat.Appendable = () => whatYouWillNeed(frontendAppConfig, Some("testScheme"), None, companyName, NormalMode, 0, 0)(fakeRequest, messages)
+  private val href: Call = DirectorNameController.onPageLoad(NormalMode, 0, 0, None)
+
+  private def createView: () => HtmlFormat.Appendable = () => whatYouWillNeed(frontendAppConfig, Some("testScheme"), None, companyName, href)(fakeRequest, messages)
 
   private val messageKeys = (1 to 8).map(num => s"_item$num").toList
 

@@ -19,6 +19,7 @@ package controllers.register.establishers.company.director
 import config.{FeatureSwitchManagementService, FrontendAppConfig}
 import controllers.Retrievals
 import controllers.actions._
+import controllers.register.establishers.company.routes._
 import identifiers.register.establishers.company.director._
 import javax.inject.Inject
 import models.Mode.checkMode
@@ -43,7 +44,6 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
                                            @NoSuspendedCheck allowAccess: AllowAccessActionProvider,
                                            requiredData: DataRequiredAction,
                                            userAnswersService: UserAnswersService,
-                                           @EstablishersCompanyDirector navigator: Navigator,
                                            implicit val countryOptions: CountryOptions,
                                            allowChangeHelper: AllowChangeHelper,
                                            fs: FeatureSwitchManagementService
@@ -144,7 +144,7 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
       Future.successful(Ok(checkYourAnswers(
         appConfig,
         answerSections,
-        navigator.nextPage(CheckYourAnswersId(companyIndex, directorIndex), mode, request.userAnswers, srn),
+        AddCompanyDirectorsController.onPageLoad(mode, srn, companyIndex),
         existingSchemeName,
         mode = mode,
         hideEditLinks = request.viewOnly,

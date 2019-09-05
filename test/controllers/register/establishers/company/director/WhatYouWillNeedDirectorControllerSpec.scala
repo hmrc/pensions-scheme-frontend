@@ -18,6 +18,7 @@ package controllers.register.establishers.company.director
 
 import controllers.ControllerSpecBase
 import controllers.actions._
+import controllers.register.establishers.company.director.routes.DirectorNameController
 import models.{Index, NormalMode}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.mockito.MockitoSugar
@@ -29,10 +30,6 @@ class WhatYouWillNeedDirectorControllerSpec extends ControllerSpecBase with Mock
 
   private val companyName = "test company name"
 
-  private def onwardRoute: Call =
-    controllers.register.establishers.company.director.routes.DirectorNameController
-      .onSubmit(NormalMode, establisherIndex = Index(0), directorIndex = Index(0), None)
-
   private def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisherCompany): WhatYouWillNeedDirectorController =
     new WhatYouWillNeedDirectorController(frontendAppConfig,
       messagesApi,
@@ -42,7 +39,9 @@ class WhatYouWillNeedDirectorControllerSpec extends ControllerSpecBase with Mock
       new DataRequiredActionImpl
     )
 
-  private def viewAsString(): String = whatYouWillNeed(frontendAppConfig, None, None, companyName, NormalMode, 0, 0)(fakeRequest, messages).toString
+  val href: Call = DirectorNameController.onPageLoad(NormalMode, 0, 0, None)
+
+  private def viewAsString(): String = whatYouWillNeed(frontendAppConfig, None, None, companyName, href)(fakeRequest, messages).toString
 
   "WhatYouWillNeedCompanyDetailsControllerSpec" when {
 

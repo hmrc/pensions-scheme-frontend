@@ -19,6 +19,7 @@ package controllers.register.establishers.company.director
 import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions._
+import controllers.register.establishers.company.director.routes._
 import identifiers.register.establishers.company.CompanyDetailsId
 import javax.inject.Inject
 import models.{Index, Mode}
@@ -47,9 +48,7 @@ class WhatYouWillNeedDirectorController @Inject()(appConfig: FrontendAppConfig,
           existingSchemeName,
           srn,
           companyDetails.companyName,
-          mode,
-          establisherIndex,
-          directorIndex
+          DirectorNameController.onPageLoad(mode, establisherIndex, directorIndex, srn)
         )))
       }
 
