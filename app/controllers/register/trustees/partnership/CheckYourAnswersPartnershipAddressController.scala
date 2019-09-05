@@ -31,8 +31,7 @@ import utils.annotations.NoSuspendedCheck
 import utils.checkyouranswers.Ops._
 import utils.{Enumerable, _}
 import viewmodels.AnswerSection
-import views.html.check_your_answers
-import controllers.routes._
+import views.html.checkYourAnswers
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -59,7 +58,7 @@ class CheckYourAnswersPartnershipAddressController @Inject()(appConfig: Frontend
           PartnershipPreviousAddressId(index).row(routes.PartnershipPreviousAddressController.onPageLoad(checkMode(mode), index, srn).url, mode)
         ))
 
-        Future.successful(Ok(check_your_answers(
+        Future.successful(Ok(checkYourAnswers(
           appConfig,
           answerSections,
           controllers.routes.SchemeTaskListController.onPageLoad(mode, srn),
@@ -71,10 +70,4 @@ class CheckYourAnswersPartnershipAddressController @Inject()(appConfig: Frontend
         )))
 
     }
-
-  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (
-    authenticate andThen getData(mode, srn) andThen requireData) {
-    Redirect(controllers.routes.SchemeTaskListController.onPageLoad(mode, srn))
-  }
-
 }

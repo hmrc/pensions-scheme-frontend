@@ -26,7 +26,7 @@ import play.api.mvc.Call
 import play.api.test.Helpers._
 import utils._
 import viewmodels.{AnswerRow, AnswerSection, Message}
-import views.html.check_your_answers
+import views.html.checkYourAnswers
 
 class CheckYourAnswersPartnershipAddressControllerSpec extends ControllerSpecBase with ControllerAllowChangeBehaviour {
   import CheckYourAnswersPartnershipAddressControllerSpec._
@@ -169,7 +169,7 @@ object CheckYourAnswersPartnershipAddressControllerSpec extends ControllerSpecBa
     )
 
   private def viewAsString(answerSections: Seq[AnswerSection], srn: Option[String] = None, postUrl: Call = postUrl): String =
-    check_your_answers(
+    checkYourAnswers(
       frontendAppConfig,
       answerSections,
       postUrl,
