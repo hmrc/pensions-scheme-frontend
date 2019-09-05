@@ -43,15 +43,15 @@
             headingKey=messages(viewmodel.heading)
         )
 
-
         @components.input_text(
             field = form("value"),
-            label = messages(viewmodel.formLabel)
+            label = messages(viewmodel.formLabel),
+            labelClass = Some("visually-hidden")
         )
 
         <p>@Html(viewmodel.enterPostcode.withArgs(openLink, closeLink))</p>
 
-        @components.submit_button("site.save_and_continue")
+        @components.submit_button("site.find_address")
 
         @components.return_link("messages__schemeTaskList__returnlink", schemeName, None, viewmodel.srn)
     }

@@ -67,7 +67,6 @@ class DirectorPreviousAddressPostcodeLookupController @Inject()(
           Message("messages__directorPreviousAddressPostcodeLookup__title"),
           Message("messages__previousAddressPostcodeLookup__heading", name),
           None,
-          enterPostcode = Message("messages__common__postcode_lookup__manual_link"),
           srn = srn
         )
       )
