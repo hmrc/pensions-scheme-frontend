@@ -1237,6 +1237,19 @@ messages__visuallyhidden__partnership__email_address = Change the partnership’
 messages__visuallyhidden__partnership__phone_number = Change the partnership’s phone number
 messages__visuallyhidden__partnership__dormant = Change whether the partnership been dormant in the last 12 months
 
+messages__visuallyhidden__dynamic_hasUtr = whether {0} has a Unique Taxpayer Reference number
+messages__visuallyhidden__dynamic_utr = the UTR for {0}
+messages__visuallyhidden__dynamic_noUtrReason = the reason why {0} does not have a UTR
+messages__visuallyhidden__dynamic_hasVat = whether {0} is registered for VAT
+messages__visuallyhidden__dynamic_vat = the VAT registration number for {0}
+messages__visuallyhidden__dynamic_hasPaye = whether {0} has an employer PAYE reference
+messages__visuallyhidden__dynamic_paye = the employer PAYE reference for {0}
+messages__visuallyhidden__dynamic_address = the address for {0}
+messages__visuallyhidden__dynamic_addressYears = whether {0} has been at their address for at least 1 year
+messages__visuallyhidden__dynamic_previousAddress = the previous address for {0}
+messages__visuallyhidden__dynamic_email = the email address for {0}
+messages__visuallyhidden__dynamic_phone = the phone number for {0}
+
 messages__visuallyhidden__partner__nino_yes_no = Change whether the partner has a National Insurance number
 messages__visuallyhidden__partner__nino_no = Change why the partner does not have a National Insurance number
 messages__visuallyhidden__partner__nino = Change the partner’s National Insurance number
@@ -1279,6 +1292,10 @@ messages__visuallyhidden__trustee__phone_number = Change the trustee’s phone n
 messages__visuallyhidden__adviser__email_address = Change the adviser’s email address
 messages__visuallyhidden__adviser__phone_number = Change the adviser’s phone number
 messages__visuallyhidden__adviser__address = Change the adviser’s address
+
+messages__cya__utr = UTR for {0}
+messages__cya__vat = VAT registration number for {0}
+messages__cya__paye = Employer PAYE reference for {0}
 
 messages__schemeTaskList__title = Pension scheme details
 messages__schemeTaskList__heading = Pension scheme details
@@ -1650,7 +1667,7 @@ messages__changeTrusteePreviousAddress = Change {0}’s previous address
 messages__addTrusteePreviousAddress = Add {0}’s previous address
 
 messages__hasBeen1Year = Has {0} been at their address for at least 1 year?
-messages__changeHasBeen1Year = Change whether {0} has been at their address for at least 1 year?
+messages__changeHasBeen1Year = whether {0} has been at their address for at least 1 year?
 messages__theTrustee = the trustee
 messages__theDirector = the director
 
