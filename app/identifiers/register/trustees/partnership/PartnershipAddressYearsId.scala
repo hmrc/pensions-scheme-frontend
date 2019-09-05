@@ -19,8 +19,9 @@ package identifiers.register.trustees.partnership
 import identifiers.TypedIdentifier
 import identifiers.register.trustees.{IsTrusteeNewId, TrusteesId}
 import models.AddressYears
+import play.api.i18n.Messages
 import play.api.libs.json.{JsPath, JsResult}
-import utils.UserAnswers
+import utils.{CountryOptions, UserAnswers}
 import utils.checkyouranswers.{AddressYearsCYA, CheckYourAnswers}
 import viewmodels.AnswerRow
 
@@ -30,10 +31,12 @@ case class PartnershipAddressYearsId(index: Int) extends TypedIdentifier[Address
   override def cleanup(value: Option[AddressYears], userAnswers: UserAnswers): JsResult[UserAnswers] = {
     value match {
       case Some(AddressYears.OverAYear) =>
-        userAnswers
-          .remove(PartnershipPreviousAddressPostcodeLookupId(this.index))
-          .flatMap(_.remove(PartnershipPreviousAddressId(this.index)))
-          .flatMap(_.remove(PartnershipPreviousAddressListId(this.index)))
+        userAnswers.removeAllOf(List(
+          PartnershipPreviousAddressPostcodeLookupId(index),
+          PartnershipPreviousAddressId(index),
+          PartnershipPreviousAddressListId(index),
+          PartnershipHasBeenTradingId(index)
+        ))
       case _ => super.cleanup(value, userAnswers)
     }
   }
@@ -43,20 +46,23 @@ case class PartnershipAddressYearsId(index: Int) extends TypedIdentifier[Address
 object PartnershipAddressYearsId {
   override lazy val toString: String = "partnershipAddressYears"
 
-  implicit val cya: CheckYourAnswers[PartnershipAddressYearsId] = {
-
+  implicit def cya(implicit countryOptions: CountryOptions, messages: Messages, ua: UserAnswers): CheckYourAnswers[PartnershipAddressYearsId] =
     new CheckYourAnswers[PartnershipAddressYearsId] {
-      val label: String = "messages__checkYourAnswers__trustees__partnership__address_years"
-      val changeAddressYears: String = "messages__visuallyhidden__trustee__address_years"
+      override def row(id: PartnershipAddressYearsId)(changeUrl: String, ua: UserAnswers): Seq[AnswerRow] = {
+        val trusteeName = ua.get(PartnershipDetailsId(id.index)).fold(messages("messages__theTrustee"))(_.name)
+        val label = messages("messages__hasBeen1Year", trusteeName)
+        val changeAddressYears = messages("messages__changeHasBeen1Year", trusteeName)
 
-      override def row(id: PartnershipAddressYearsId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        AddressYearsCYA(label, changeAddressYears)().row(id)(changeUrl, userAnswers)
+        AddressYearsCYA(
+          label = label,
+          changeAddressYears = changeAddressYears
+        )().row(id)(changeUrl, ua)
+      }
 
-      override def updateRow(id: PartnershipAddressYearsId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        userAnswers.get(IsTrusteeNewId(id.index)) match {
-          case Some(true) => AddressYearsCYA(label, changeAddressYears)().row(id)(changeUrl, userAnswers)
-          case _ => AddressYearsCYA(label, changeAddressYears)().updateRow(id)(changeUrl, userAnswers)
+      override def updateRow(id: PartnershipAddressYearsId)(changeUrl: String, ua: UserAnswers): Seq[AnswerRow] =
+        ua.get(IsTrusteeNewId(id.index)) match {
+          case Some(true) => row(id)(changeUrl, ua)
+          case _ => Nil
         }
     }
-  }
 }

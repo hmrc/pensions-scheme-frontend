@@ -51,8 +51,7 @@ class PayeVariationsControllerSpec extends WordSpec with MustMatchers with Optio
     postCall = Call("GET", "www.example.com"),
     title = "title",
     heading = "heading",
-    hint = Some("legend"),
-    subHeading = Some("sub-heading")
+    hint = Some("legend")
   )
 
   "get" must {

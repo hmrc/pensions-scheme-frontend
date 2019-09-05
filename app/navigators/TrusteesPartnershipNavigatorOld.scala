@@ -27,7 +27,7 @@ import identifiers.register.trustees.{ExistingCurrentAddressId, IsTrusteeNewId}
 import models.Mode.journeyMode
 import models._
 import models.requests.IdentifiedRequest
-import navigators.trustees.partnership.{TrusteesPartnershipContactDetailsNavigator, TrusteesPartnershipDetailsNavigator}
+import navigators.trustees.partnership.{TrusteesPartnershipAddressNavigator, TrusteesPartnershipContactDetailsNavigator, TrusteesPartnershipDetailsNavigator}
 import play.api.mvc.Call
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.{Toggles, UserAnswers}
@@ -38,7 +38,8 @@ class TrusteesPartnershipFeatureSwitchNavigator @Inject() (
                                                            featureSwitchService: FeatureSwitchManagementService,
                                                            oldNavigator: TrusteesPartnershipNavigatorOld,
                                                            detailsNavigator: TrusteesPartnershipDetailsNavigator,
-                                                           contactDetailsNavigator: TrusteesPartnershipContactDetailsNavigator
+                                                           contactDetailsNavigator: TrusteesPartnershipContactDetailsNavigator,
+                                                           addressNavigator: TrusteesPartnershipAddressNavigator
                                                          ) extends Navigator {
 
   override def nextPageOptional(id: Identifier,
@@ -50,7 +51,8 @@ class TrusteesPartnershipFeatureSwitchNavigator @Inject() (
                                  hc: HeaderCarrier): Option[Call] =
     if (featureSwitchService.get(Toggles.isEstablisherCompanyHnSEnabled)) {
       detailsNavigator.nextPageOptional(id, mode, userAnswers, srn) orElse
-        contactDetailsNavigator.nextPageOptional(id, mode, userAnswers, srn)
+        contactDetailsNavigator.nextPageOptional(id, mode, userAnswers, srn) orElse
+        addressNavigator.nextPageOptional(id, mode, userAnswers, srn)
     } else {
       oldNavigator.nextPageOptional(id, mode, userAnswers, srn)
     }

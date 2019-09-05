@@ -33,14 +33,15 @@
             messages(viewmodel.heading).toString
         )
 
-        @viewmodel.hint.map{hint =>
-            <p>@messages(hint)</p>
+        @viewmodel.entityName.map{name =>
+            <p>@messages("messages__payeVariations__p1", name)</p>
         }
 
         @components.input_text(
             field = form("paye"),
             label = messages(viewmodel.title),
-            labelClass = Some("visually-hidden")
+            labelClass = Some("visually-hidden"),
+            hint = viewmodel.hint.map(hint => messages(hint))
         )
 
         @components.submit_button("site.save_and_continue")

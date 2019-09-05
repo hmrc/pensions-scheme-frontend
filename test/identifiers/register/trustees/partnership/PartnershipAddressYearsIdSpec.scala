@@ -16,21 +16,21 @@
 
 package identifiers.register.trustees.partnership
 
+import base.SpecBase
 import identifiers.register.trustees.IsTrusteeNewId
 import models.AddressYears.UnderAYear
-import models.{AddressYears, Link, NormalMode, UpdateMode}
 import models.address.{Address, TolerantAddress}
 import models.requests.DataRequest
-import org.scalatest.{MustMatchers, OptionValues, WordSpec}
+import models.{AddressYears, Link, NormalMode, UpdateMode}
 import play.api.libs.json.Json
 import play.api.mvc.AnyContent
 import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.PsaId
-import utils.{Enumerable, UserAnswers}
-import viewmodels.AnswerRow
 import utils.checkyouranswers.Ops._
+import utils.{CountryOptions, InputOption, UserAnswers}
+import viewmodels.{AnswerRow, Message}
 
-class PartnershipAddressYearsIdSpec extends WordSpec with MustMatchers with OptionValues with Enumerable.Implicits {
+class PartnershipAddressYearsIdSpec extends SpecBase {
 
   "Cleanup" must {
 
@@ -39,6 +39,7 @@ class PartnershipAddressYearsIdSpec extends WordSpec with MustMatchers with Opti
       .flatMap(_.set(PartnershipPreviousAddressPostcodeLookupId(0))(Seq.empty))
       .flatMap(_.set(PartnershipPreviousAddressId(0))(Address("foo", "bar", None, None, None, "GB")))
       .flatMap(_.set(PartnershipPreviousAddressListId(0))(TolerantAddress(Some("foo"), Some("bar"), None, None, None, Some("GB"))))
+      .flatMap(_.set(PartnershipHasBeenTradingId(0))(value = true))
       .asOpt.value
 
     "`AddressYears` is set to `OverAYear`" when {
@@ -55,6 +56,10 @@ class PartnershipAddressYearsIdSpec extends WordSpec with MustMatchers with Opti
 
       "remove the data for `PreviousAddressList`" in {
         result.get(PartnershipPreviousAddressListId(0)) mustNot be(defined)
+      }
+
+      "remove the data for `HasBeenTradingId`" in {
+        result.get(PartnershipHasBeenTradingId(0)) mustNot be(defined)
       }
     }
 
@@ -73,10 +78,16 @@ class PartnershipAddressYearsIdSpec extends WordSpec with MustMatchers with Opti
       "not remove the data for `PreviousAddressList`" in {
         result.get(PartnershipPreviousAddressListId(0)) mustBe defined
       }
+
+      "not remove the data for `HasBeenTradingId`" in {
+        result.get(PartnershipHasBeenTradingId(0)) mustBe defined
+      }
     }
   }
 
   "cya" when {
+
+    implicit val countryOptions = new CountryOptions(Seq.empty[InputOption])
 
     val onwardUrl = "onwardUrl"
 
@@ -89,11 +100,11 @@ class PartnershipAddressYearsIdSpec extends WordSpec with MustMatchers with Opti
         implicit val userAnswers = request.userAnswers
         PartnershipAddressYearsId(0).row(onwardUrl, NormalMode) must equal(Seq(
           AnswerRow(
-            "messages__checkYourAnswers__trustees__partnership__address_years",
+            Message("messages__hasBeen1Year", messages("messages__theTrustee")),
             Seq(s"messages__common__under_a_year"),
             answerIsMessageKey = true,
             Some(Link("site.change", onwardUrl,
-              Some("messages__visuallyhidden__trustee__address_years")))
+              Some(Message("messages__changeHasBeen1Year", messages("messages__theTrustee")))))
           )))
       }
     }
@@ -107,12 +118,12 @@ class PartnershipAddressYearsIdSpec extends WordSpec with MustMatchers with Opti
         implicit val userAnswers = request.userAnswers
         PartnershipAddressYearsId(0).row(onwardUrl, UpdateMode) must equal(Seq(
           AnswerRow(
-            "messages__checkYourAnswers__trustees__partnership__address_years",
+            Message("messages__hasBeen1Year", messages("messages__theTrustee")),
             Seq(s"messages__common__under_a_year"),
             answerIsMessageKey = true,
             Some(Link("site.change", onwardUrl,
-              Some("messages__visuallyhidden__trustee__address_years")))
-          )))
+             Some(Message("messages__changeHasBeen1Year", messages("messages__theTrustee")))
+          )))))
       }
     }
 

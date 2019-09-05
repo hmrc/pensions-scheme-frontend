@@ -53,8 +53,8 @@ class CompanyPayeVariationsController @Inject()(
       title = Message("messages__payeVariations__company_title"),
       heading = Message("messages__payeVariations__heading", companyName),
       hint = Some(Message("messages__payeVariations__hint")),
-      subHeading = None,
-      srn = srn
+      srn = srn,
+      entityName = Some(companyName)
     )
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
