@@ -28,7 +28,6 @@ import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
-import utils.annotations.TrusteesCompany
 import viewmodels.{Message, PayeViewModel}
 
 import scala.concurrent.ExecutionContext
@@ -52,8 +51,8 @@ class CompanyPayeVariationsController @Inject()(
       title = Message("messages__payeVariations__company_title"),
       heading = Message("messages__payeVariations__heading", companyName),
       hint = Some(Message("messages__payeVariations__hint")),
-      subHeading = None,
-      srn = srn
+      srn = srn,
+      entityName = Some(companyName)
     )
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =

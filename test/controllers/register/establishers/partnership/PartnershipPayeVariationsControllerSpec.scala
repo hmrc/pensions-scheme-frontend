@@ -83,7 +83,8 @@ object PartnershipPayeVariationsControllerSpec extends PartnershipPayeVariations
     title = Message("messages__payeVariations__partnership_title"),
     heading = Message("messages__payeVariations__heading", partnershipName),
     hint = Some(Message("messages__payeVariations__hint")),
-    srn = srn
+    srn = srn,
+    entityName = Some(partnershipName)
   )
 
   private def requestResult[T](request: Application => Request[T], test: (Request[_], Future[Result]) => Unit)

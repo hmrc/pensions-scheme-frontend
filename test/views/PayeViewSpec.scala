@@ -35,7 +35,6 @@ class PayeViewSpec extends ViewBehaviours {
     title = Message("messages__partnershipPaye__title"),
     heading = Message("messages__partnershipPaye__heading"),
     hint = Some(Message("messages__common__paye_hint")),
-    subHeading = Some(Message("test company name")),
     srn = srn
   )
 

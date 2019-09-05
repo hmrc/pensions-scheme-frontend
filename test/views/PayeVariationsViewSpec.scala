@@ -18,6 +18,7 @@ package views
 
 import forms.PayeVariationsFormProvider
 import models.ReferenceValue
+import org.jsoup.Jsoup
 import play.api.data.Form
 import play.api.mvc.Call
 import play.twirl.api.HtmlFormat
@@ -37,7 +38,8 @@ class PayeVariationsViewSpec extends QuestionViewBehaviours[ReferenceValue] {
     title = Message("messages__payeVariations__company_title"),
     heading = Message("messages__payeVariations__heading"),
     hint = Some(Message("messages__payeVariations__hint")),
-    srn = srn
+    srn = srn,
+    entityName = Some(companyName)
   )
 
   def createView(): () => HtmlFormat.Appendable = () =>
@@ -57,6 +59,11 @@ class PayeVariationsViewSpec extends QuestionViewBehaviours[ReferenceValue] {
 
       behave like pageWithTextFields(createViewUsingForm, messageKeyPrefix, postCall.url,
         "paye")
+
+      "display correct p1" in {
+        val doc = asDocument(createView()())
+        doc must haveDynamicText(Message("messages__payeVariations__p1", companyName))
+      }
     }
   }
 }

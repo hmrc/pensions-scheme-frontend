@@ -58,7 +58,6 @@ class CompanyPayeController @Inject()(
               title = Message("messages__companyPaye__title"),
               heading = Message("messages__companyPaye__heading", details.companyName),
               hint = Some(Message("messages__common__paye_hint")),
-              subHeading = None,
               srn = srn
             )
         }

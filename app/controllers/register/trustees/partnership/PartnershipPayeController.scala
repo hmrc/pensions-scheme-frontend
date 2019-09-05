@@ -56,7 +56,6 @@ class PartnershipPayeController @Inject()(
               title = Message("messages__partnershipPaye__title"),
               heading = Message("messages__partnershipPaye__heading"),
               hint = Some(Message("messages__common__paye_hint")),
-              subHeading = Some(details.name),
               srn = srn
             )
         }
