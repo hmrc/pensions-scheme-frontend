@@ -31,7 +31,7 @@ import utils.annotations.WorkingKnowledge
 import utils.checkyouranswers.Ops._
 import utils.{CountryOptions, SectionComplete}
 import viewmodels.AnswerSection
-import views.html.check_your_answers
+import views.html.check_your_answers_old
 
 import scala.concurrent.ExecutionContext
 
@@ -58,7 +58,7 @@ class AdviserCheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
           Seq(AnswerSection(None, adviserNameRow ++ adviserEmailRow ++ adviserPhoneRow ++ adviserAddressRow))
       }
       Ok(
-        check_your_answers(
+        check_your_answers_old(
           appConfig,
           seqAnswerSection,
           controllers.routes.AdviserCheckYourAnswersController.onSubmit(),

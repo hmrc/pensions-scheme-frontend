@@ -27,7 +27,7 @@ import play.api.mvc.Call
 import play.api.test.Helpers._
 import utils._
 import viewmodels.{AnswerRow, AnswerSection, Message}
-import views.html.check_your_answers
+import views.html.checkYourAnswers
 
 class CheckYourAnswersIndividualAddressControllerSpec extends ControllerSpecBase with ControllerAllowChangeBehaviour {
 
@@ -59,19 +59,6 @@ class CheckYourAnswersIndividualAddressControllerSpec extends ControllerSpecBase
           contentAsString(result) mustBe viewAsString(answerSection(UpdateMode, srn), srn, submitUrl(UpdateMode, srn), hideButton = true)
           app.stop()
         }
-      }
-    }
-
-    "on Submit" must {
-      "redirect to next page " in {
-        val app = applicationBuilder(fullAnswers.dataRetrievalAction, featureSwitchEnabled = true).build()
-
-        val controller = app.injector.instanceOf[CheckYourAnswersIndividualAddressController]
-        val result = controller.onSubmit(NormalMode, index, None)(fakeRequest)
-
-        status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(controllers.routes.SchemeTaskListController.onPageLoad(NormalMode, None).url)
-        app.stop()
       }
     }
   }
@@ -106,7 +93,7 @@ object CheckYourAnswersIndividualAddressControllerSpec extends ControllerSpecBas
     trusteesIndividualAddressYears(index, addressYearsUnderAYear).
     trusteesPreviousAddress(index, previousAddress)
 
-  def submitUrl(mode: Mode = NormalMode, srn: Option[String] = None): Call = routes.CheckYourAnswersIndividualAddressController.onSubmit(mode, index, srn)
+  def submitUrl(mode: Mode = NormalMode, srn: Option[String] = None): Call = controllers.routes.SchemeTaskListController.onPageLoad(mode, srn)
 
   def addressAnswerRow(mode: Mode, srn: Option[String]): AnswerRow = AnswerRow(
     Message("messages__trusteeAddress", trusteeName),
@@ -137,7 +124,7 @@ object CheckYourAnswersIndividualAddressControllerSpec extends ControllerSpecBas
     else Seq(addressAnswerRow(mode, srn), previousAddressAnswerRow(mode, srn))))
 
   def viewAsString(answerSections: Seq[AnswerSection], srn: Option[String] = None, postUrl: Call = submitUrl(), hideButton: Boolean = false): String =
-    check_your_answers(frontendAppConfig, answerSections, postUrl, None, hideEditLinks = false,
+    checkYourAnswers(frontendAppConfig, answerSections, postUrl, None, hideEditLinks = false,
       srn = srn, hideSaveAndContinueButton = hideButton
     )(fakeRequest, messages).toString
 

@@ -33,7 +33,7 @@ import utils.annotations.{NoSuspendedCheck, TrusteesCompany}
 import utils.checkyouranswers.Ops._
 import utils.{AllowChangeHelper, CountryOptions, Enumerable, UserAnswers}
 import viewmodels.AnswerSection
-import views.html.check_your_answers
+import views.html.checkYourAnswers
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -45,7 +45,7 @@ class CheckYourAnswersCompanyDetailsController @Inject()(
                                                           @NoSuspendedCheck allowAccess: AllowAccessActionProvider,
                                                           requireData: DataRequiredAction,
                                                           implicit val countryOptions: CountryOptions,
-                                                           navigator: Navigator,
+                                                          navigator: Navigator,
                                                           userAnswersService: UserAnswersService,
                                                           allowChangeHelper: AllowChangeHelper,
                                                           fs: FeatureSwitchManagementService
@@ -71,22 +71,15 @@ class CheckYourAnswersCompanyDetailsController @Inject()(
             CompanyPayeVariationsId(index).row(routes.CompanyPayeVariationsController.onPageLoad(checkMode(mode), index, srn).url, mode)
         ))
 
-        Future.successful(Ok(check_your_answers(
+        Future.successful(Ok(checkYourAnswers(
           appConfig,
           companyDetails,
-          routes.CheckYourAnswersCompanyDetailsController.onSubmit(mode, index, srn),
+          controllers.routes.SchemeTaskListController.onPageLoad(mode, srn),
           existingSchemeName,
           mode = mode,
           hideEditLinks = request.viewOnly || !userAnswers.get(IsTrusteeNewId(index)).getOrElse(true),
           hideSaveAndContinueButton = allowChangeHelper.hideSaveAndContinueButton(request, IsTrusteeNewId(index), mode),
           srn = srn
         )))
-
     }
-
-  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (
-    authenticate andThen getData(mode, srn) andThen requireData) {
-        Redirect(controllers.routes.SchemeTaskListController.onPageLoad(mode, srn))
-  }
-
 }

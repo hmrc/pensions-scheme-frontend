@@ -33,7 +33,7 @@ import utils.{AllowChangeHelper, CountryOptions, Enumerable, UserAnswers}
 import utils.annotations.TrusteesIndividual
 import viewmodels.AnswerSection
 import utils.checkyouranswers.Ops._
-import views.html.check_your_answers
+import views.html.checkYourAnswers
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -65,10 +65,10 @@ class CheckYourAnswersIndividualDetailsController @Inject()(val appConfig: Front
             TrusteeNoUTRReasonId(index).row(routes.TrusteeNoUTRReasonController.onPageLoad(checkMode(mode), index, srn).url, mode)
           ))
 
-        Future.successful(Ok(check_your_answers(
+        Future.successful(Ok(checkYourAnswers(
           appConfig,
           companyDetails,
-          routes.CheckYourAnswersIndividualDetailsController.onSubmit(mode, index, srn),
+          controllers.routes.SchemeTaskListController.onPageLoad(mode, srn),
           existingSchemeName,
           mode = mode,
           hideEditLinks = request.viewOnly || !userAnswers.get(IsTrusteeNewId(index)).getOrElse(true),
@@ -77,10 +77,4 @@ class CheckYourAnswersIndividualDetailsController @Inject()(val appConfig: Front
         )))
 
     }
-
-  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (
-    authenticate andThen getData(mode, srn) andThen requireData) {
-      Redirect(controllers.routes.SchemeTaskListController.onPageLoad(mode, srn))
-
-  }
 }

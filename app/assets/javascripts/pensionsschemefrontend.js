@@ -1,5 +1,14 @@
 $(document).ready(function() {
 
+    $('body').on('keypress', '[role="button"]', function (e) {
+        if ((e.which === 13) || (e.which === 32)) {
+            e.preventDefault();
+            this.click();
+        }
+    })
+
+
+
     // =====================================================
     // Initialise show-hide-content
     // Toggles additional content based on radio/checkbox input state

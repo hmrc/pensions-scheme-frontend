@@ -18,6 +18,7 @@ package controllers.register.establishers.company.director
 
 import controllers.ControllerSpecBase
 import controllers.actions._
+import controllers.register.establishers.company.director.routes.DirectorNameController
 import models.{Index, NormalMode}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.mockito.MockitoSugar
@@ -29,10 +30,6 @@ class WhatYouWillNeedDirectorControllerSpec extends ControllerSpecBase with Mock
 
   private val companyName = "test company name"
 
-  private def onwardRoute: Call =
-    controllers.register.establishers.company.director.routes.DirectorNameController
-      .onSubmit(NormalMode, establisherIndex = Index(0), directorIndex = Index(0), None)
-
   private def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisherCompany): WhatYouWillNeedDirectorController =
     new WhatYouWillNeedDirectorController(frontendAppConfig,
       messagesApi,
@@ -42,10 +39,9 @@ class WhatYouWillNeedDirectorControllerSpec extends ControllerSpecBase with Mock
       new DataRequiredActionImpl
     )
 
-  private def postCall = controllers.register.establishers.company.director.routes.WhatYouWillNeedDirectorController
-    .onSubmit(NormalMode, None, establisherIndex = Index(0))
+  val href: Call = DirectorNameController.onPageLoad(NormalMode, 0, 0, None)
 
-  private def viewAsString(): String = whatYouWillNeed(frontendAppConfig, None, postCall, None, companyName)(fakeRequest, messages).toString
+  private def viewAsString(): String = whatYouWillNeed(frontendAppConfig, None, None, companyName, href)(fakeRequest, messages).toString
 
   "WhatYouWillNeedCompanyDetailsControllerSpec" when {
 
@@ -55,15 +51,6 @@ class WhatYouWillNeedDirectorControllerSpec extends ControllerSpecBase with Mock
 
         status(result) mustBe OK
         contentAsString(result) mustBe viewAsString()
-      }
-    }
-
-    "on a POST" must {
-      "redirect to relavant page" in {
-        val result = controller().onSubmit(NormalMode, None, Index(0))(fakeRequest)
-
-        status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(onwardRoute.url)
       }
     }
   }

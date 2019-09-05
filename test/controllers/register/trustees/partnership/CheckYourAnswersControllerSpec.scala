@@ -18,6 +18,7 @@ package controllers.register.trustees.partnership
 
 import controllers.ControllerSpecBase
 import controllers.actions.{DataRequiredActionImpl, DataRetrievalAction, FakeAllowAccessProvider, FakeAuthAction}
+import controllers.register.trustees.routes._
 import controllers.behaviours.ControllerAllowChangeBehaviour
 import identifiers.register.trustees.IsTrusteeNewId
 import identifiers.register.trustees.partnership._
@@ -33,7 +34,7 @@ import utils.checkyouranswers.CheckYourAnswers.{PayeCYA, VatCYA}
 import utils.checkyouranswers.Ops._
 import utils.checkyouranswers.UniqueTaxReferenceCYA
 import viewmodels.{AnswerRow, AnswerSection}
-import views.html.check_your_answers
+import views.html.checkYourAnswers
 
 class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerAllowChangeBehaviour {
 
@@ -85,15 +86,6 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
         contentAsString(result) mustBe viewAsString(Seq(expectedPartnershipDetailsSection, emptyPartnershipContactDetailsSection), UpdateMode, srn)
       }
     }
-
-    "on Submit" must {
-      "redirect to next page " in {
-        val result = controller().onSubmit(NormalMode, firstIndex, None)(fakeRequest)
-
-        status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(onwardRoute.url)
-      }
-    }
   }
 }
 
@@ -128,8 +120,8 @@ object CheckYourAnswersControllerSpec extends CheckYourAnswersControllerSpec {
   private def emptyPartnershipContactDetailsSection =
     AnswerSection(Some("messages__partnership__checkYourAnswers__partnership_contact_details"), Nil)
 
-  def viewAsString(answerSections: Seq[AnswerSection], mode: Mode = NormalMode, srn: Option[String] = None): String = check_your_answers(
-    frontendAppConfig, answerSections, routes.CheckYourAnswersController.onSubmit(mode, firstIndex, srn),
+  def viewAsString(answerSections: Seq[AnswerSection], mode: Mode = NormalMode, srn: Option[String] = None): String = checkYourAnswers(
+    frontendAppConfig, answerSections, AddTrusteeController.onPageLoad(mode, srn),
     None, srn = srn, hideEditLinks = false, hideSaveAndContinueButton = false)(fakeRequest, messages).toString
 
   private def partnershipDetailsSection(vatRow: Seq[AnswerRow]): AnswerSection =

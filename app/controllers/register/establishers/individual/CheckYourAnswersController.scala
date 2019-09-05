@@ -34,7 +34,7 @@ import utils.annotations.{EstablishersIndividual, NoSuspendedCheck, TaskList}
 import utils.checkyouranswers.Ops._
 import utils._
 import viewmodels.AnswerSection
-import views.html.check_your_answers
+import views.html.check_your_answers_old
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -85,7 +85,7 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
 
       Future.successful(
         Ok(
-          check_your_answers(
+          check_your_answers_old(
             appConfig, sections, routes.CheckYourAnswersController.onSubmit(mode, index, srn),
             existingSchemeName,
             mode = mode,

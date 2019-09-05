@@ -26,7 +26,7 @@ import play.api.test.Helpers._
 import services.FakeUserAnswersService
 import utils.FakeCountryOptions
 import viewmodels.{AnswerRow, AnswerSection}
-import views.html.check_your_answers
+import views.html.check_your_answers_old
 
 class CheckYourAnswersBeforeYouStartControllerSpec extends ControllerSpecBase {
 
@@ -156,7 +156,7 @@ object CheckYourAnswersBeforeYouStartControllerSpec extends ControllerSpecBase {
     )
   )
 
-  private def viewAsString(): String = check_your_answers(
+  private def viewAsString(): String = check_your_answers_old(
     frontendAppConfig,
     Seq(beforeYouStart),
     postUrl(NormalMode),
@@ -166,7 +166,7 @@ object CheckYourAnswersBeforeYouStartControllerSpec extends ControllerSpecBase {
     mode = NormalMode
   )(fakeRequest, messages).toString
 
-  private def viewAsStringWithReturnToManage(): String = check_your_answers(
+  private def viewAsStringWithReturnToManage(): String = check_your_answers_old(
     frontendAppConfig,
     Seq(beforeYouStart),
     postUrl(NormalMode),

@@ -40,9 +40,4 @@ class BeforeYouStartController @Inject()(appConfig: FrontendAppConfig,
     implicit request =>
       Ok(beforeYouStart(appConfig))
   }
-
-  def onSubmit: Action[AnyContent] = authenticate.async {
-    implicit request =>
-      Future.successful(Redirect(controllers.routes.SchemeNameController.onPageLoad(NormalMode)))
-  }
 }

@@ -21,19 +21,21 @@ import config.FeatureSwitchManagementService
 import controllers.ControllerSpecBase
 import controllers.actions._
 import controllers.behaviours.ControllerAllowChangeBehaviour
+import controllers.register.establishers.company.routes.AddCompanyDirectorsController
 import identifiers.register.establishers.company.director._
 import models._
 import models.address.Address
 import models.person.{PersonDetails, PersonName}
 import models.requests.DataRequest
+import navigators.{EstablishersCompanyDirectorNavigator, EstablishersCompanyNavigator}
 import org.joda.time.LocalDate
-import play.api.mvc.AnyContent
+import play.api.mvc.{AnyContent, Call}
 import play.api.test.Helpers._
 import services.FakeUserAnswersService
 import utils.checkyouranswers.Ops._
 import utils.{AllowChangeHelper, DateHelper, FakeCountryOptions, FakeDataRequest, FakeFeatureSwitchManagementService, FakeNavigator, UserAnswers, _}
 import viewmodels.{AnswerRow, AnswerSection, Message}
-import views.html.check_your_answers
+import views.html.checkYourAnswers
 
 class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerAllowChangeBehaviour {
 
@@ -55,7 +57,6 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
       FakeAllowAccessProvider(),
       new DataRequiredActionImpl,
       FakeUserAnswersService,
-      new FakeNavigator(desiredRoute),
       countryOptions,
       allowChangeHelper,
       new FakeFeatureSwitchManagementService(toggle)
@@ -63,16 +64,19 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
 
   private def viewAsString(mode: Mode,
                            answerSection: (Mode, Option[String]) => Seq[AnswerSection],
-                           srn: Option[String]): String =
-    viewAsString(mode, answerSection(NormalMode, srn), srn)
+                           href: Call,
+                           srn: Option[String]
+                          ): String =
+    viewAsString(mode, answerSection(NormalMode, srn), href, srn)
 
   private def viewAsString(mode: Mode = NormalMode,
                            answerSection: Seq[AnswerSection],
+                           href: Call,
                            srn: Option[String] = None): String =
-    check_your_answers(
+    checkYourAnswers(
       frontendAppConfig,
       answerSection,
-      routes.CheckYourAnswersController.onSubmit(index, index, mode, srn),
+      href,
       None,
       hideEditLinks = false,
       hideSaveAndContinueButton = false,
@@ -115,7 +119,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
           val result = controller(directorAnswers.dataRetrievalAction, toggle = false).onPageLoad(index, index, NormalMode, None)(request)
 
           status(result) mustBe OK
-          contentAsString(result) mustBe viewAsString(NormalMode, answerSectionForIsEstablisherCompanyHnSEnabled _, None)
+          contentAsString(result) mustBe viewAsString(NormalMode, answerSectionForIsEstablisherCompanyHnSEnabled _, href(NormalMode, None, 0), None)
         }
 
         "return OK and display all given answers for UpdateMode" in {
@@ -124,7 +128,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
             onPageLoad(index, index, UpdateMode, Some("srn"))(request)
 
           status(result) mustBe OK
-          contentAsString(result) mustBe viewAsString(UpdateMode, displayNewNinoAnswerRowWithAdd, Some("srn"))
+          contentAsString(result) mustBe viewAsString(UpdateMode, displayNewNinoAnswerRowWithAdd, href(UpdateMode, Some("srn"), 0), Some("srn"))
         }
 
         "return OK and display new Nino with Add link for UpdateMode" in {
@@ -133,7 +137,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
             onPageLoad(index, index, UpdateMode, Some("srn"))(request)
 
           status(result) mustBe OK
-          contentAsString(result) mustBe viewAsString(UpdateMode, displayNewNinoAnswerRowWithAdd, Some("srn"))
+          contentAsString(result) mustBe viewAsString(UpdateMode, displayNewNinoAnswerRowWithAdd, href(UpdateMode, Some("srn"), 0), Some("srn"))
         }
 
         "return OK and display new Nino with no link for UpdateMode" in {
@@ -158,7 +162,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
             onPageLoad(index, index, UpdateMode, Some("srn"))(request)
 
           status(result) mustBe OK
-          contentAsString(result) mustBe viewAsString(UpdateMode, displayNewNinoAnswerRowWithNoLink, Some("srn"))
+          contentAsString(result) mustBe viewAsString(UpdateMode, displayNewNinoAnswerRowWithNoLink, href(UpdateMode, Some("srn"), 0), Some("srn"))
         }
 
         "return OK and display old Nino links for UpdateMode, New Director" in {
@@ -220,22 +224,13 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
           )
 
           status(result) mustBe OK
-          contentAsString(result) mustBe viewAsString(UpdateMode, expectedAnswerRowsForUpdateWithChange, Some("srn"))
+          contentAsString(result) mustBe viewAsString(UpdateMode, expectedAnswerRowsForUpdateWithChange, href(UpdateMode, Some("srn"), 0), Some("srn"))
         }
 
         behave like changeableController(
           controller(directorAnswers.dataRetrievalAction, _: AllowChangeHelper, toggle = false)
             .onPageLoad(index, index, NormalMode, None)(request)
         )
-      }
-
-      "onSubmit" must {
-        "redirect to the next page" in {
-          val result = controller(toggle = false).onSubmit(index, index, NormalMode, None)(request)
-
-          status(result) mustBe SEE_OTHER
-          redirectLocation(result) mustBe Some(desiredRoute.url)
-        }
       }
     }
 
@@ -271,29 +266,20 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
           val result = controller(directorAnswersHnsEnabled.dataRetrievalAction, toggle = true).onPageLoad(index, index, NormalMode, None)(request)
 
           status(result) mustBe OK
-          contentAsString(result) mustBe viewAsString(NormalMode, answerSectionDirectorHnSEnabled _, None)
+          contentAsString(result) mustBe viewAsString(NormalMode, answerSectionDirectorHnSEnabled _, href(NormalMode, None, 0), None)
         }
 
         "return OK and display all given answers for UpdateMode" in {
           val result = controller(directorAnswersHnsEnabled.dataRetrievalAction, toggle = true).onPageLoad(index, index, UpdateMode, Some("srn"))(request)
 
           status(result) mustBe OK
-          contentAsString(result) mustBe viewAsString(UpdateMode, answerSectionDirectorHnSEnabled(UpdateMode, Some("srn")), Some("srn"))
+          contentAsString(result) mustBe viewAsString(UpdateMode, answerSectionDirectorHnSEnabled(UpdateMode, Some("srn")), href(UpdateMode, Some("srn"), 0), Some("srn"))
         }
 
         behave like changeableController(
           controller(directorAnswersHnsEnabled.dataRetrievalAction, _: AllowChangeHelper, toggle = true)
             .onPageLoad(index, index, NormalMode, None)(request)
         )
-      }
-
-      "onSubmit" when {
-        "mark the section as complete and redirect to the next page" in {
-          val result = controller(toggle = true).onSubmit(index, index, NormalMode, None)(request)
-
-          status(result) mustBe SEE_OTHER
-          redirectLocation(result) mustBe Some(desiredRoute.url)
-        }
       }
     }
   }
@@ -303,7 +289,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
 object CheckYourAnswersControllerSpec extends SpecBase {
   val index = Index(0)
   val schemeName = "test scheme name"
-  val desiredRoute = controllers.routes.IndexController.onPageLoad()
+  def href(mode: Mode, srn: Option[String], companyIndex: Int) = AddCompanyDirectorsController.onPageLoad(mode, srn, companyIndex)
   val name = "First Name"
 
   val directorPersonDetails = PersonDetails("first name", None, "last name", LocalDate.now(), false)

@@ -19,6 +19,7 @@ package controllers.register.establishers.company.director
 import config.{FeatureSwitchManagementService, FrontendAppConfig}
 import controllers.Retrievals
 import controllers.actions._
+import controllers.register.establishers.company.routes._
 import identifiers.register.establishers.company.director._
 import javax.inject.Inject
 import models.Mode.checkMode
@@ -32,7 +33,7 @@ import utils._
 import utils.annotations.{EstablishersCompanyDirector, NoSuspendedCheck}
 import utils.checkyouranswers.Ops._
 import viewmodels.AnswerSection
-import views.html.check_your_answers
+import views.html.checkYourAnswers
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -43,7 +44,6 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
                                            @NoSuspendedCheck allowAccess: AllowAccessActionProvider,
                                            requiredData: DataRequiredAction,
                                            userAnswersService: UserAnswersService,
-                                           @EstablishersCompanyDirector navigator: Navigator,
                                            implicit val countryOptions: CountryOptions,
                                            allowChangeHelper: AllowChangeHelper,
                                            fs: FeatureSwitchManagementService
@@ -141,22 +141,15 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
       else
         Seq(companyDirectorDetails, companyDirectorContactDetails)
 
-      Future.successful(Ok(check_your_answers(
+      Future.successful(Ok(checkYourAnswers(
         appConfig,
         answerSections,
-        routes.CheckYourAnswersController.onSubmit(companyIndex, directorIndex, mode, srn),
+        AddCompanyDirectorsController.onPageLoad(mode, srn, companyIndex),
         existingSchemeName,
         mode = mode,
         hideEditLinks = request.viewOnly,
         hideSaveAndContinueButton = allowChangeHelper.hideSaveAndContinueButton(request, IsNewDirectorId(companyIndex, directorIndex), mode),
         srn = srn
       )))
-
     }
-
-  def onSubmit(companyIndex: Index, directorIndex: Index, mode: Mode, srn: Option[String]): Action[AnyContent] = (
-    authenticate andThen getData(mode, srn) andThen requiredData) {
-    implicit request =>
-        Redirect(navigator.nextPage(CheckYourAnswersId(companyIndex, directorIndex), mode, request.userAnswers, srn))
-  }
 }

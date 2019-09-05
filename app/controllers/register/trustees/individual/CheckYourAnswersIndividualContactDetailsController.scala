@@ -22,18 +22,15 @@ import controllers.actions._
 import identifiers.register.trustees.IsTrusteeNewId
 import identifiers.register.trustees.individual.{TrusteeEmailId, TrusteePhoneId}
 import javax.inject.Inject
+import models.Mode.checkMode
 import models.{Index, Mode}
-import navigators.Navigator
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
-import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import utils.{AllowChangeHelper, CountryOptions, Enumerable, UserAnswers}
-import controllers.register.trustees.individual.routes._
-import viewmodels.AnswerSection
 import utils.checkyouranswers.Ops._
-import models.Mode.checkMode
-import views.html.check_your_answers
+import utils.{AllowChangeHelper, CountryOptions, Enumerable, UserAnswers}
+import viewmodels.AnswerSection
+import views.html.checkYourAnswers
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -58,10 +55,10 @@ class CheckYourAnswersIndividualContactDetailsController @Inject()(val appConfig
             TrusteePhoneId(index).row(routes.TrusteePhoneController.onPageLoad(checkMode(mode), index, srn).url, mode)
         )
 
-        Future.successful(Ok(check_your_answers(
+        Future.successful(Ok(checkYourAnswers(
           appConfig,
           Seq(contactDetails),
-          routes.CheckYourAnswersIndividualContactDetailsController.onSubmit(mode, index, srn),
+          controllers.routes.SchemeTaskListController.onPageLoad(mode, srn),
           existingSchemeName,
           mode = mode,
           hideEditLinks = request.viewOnly || notNewTrustee,
@@ -69,9 +66,4 @@ class CheckYourAnswersIndividualContactDetailsController @Inject()(val appConfig
           srn = srn
         )))
     }
-
-  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData) {
-    implicit request =>
-      Redirect(controllers.routes.SchemeTaskListController.onPageLoad(mode, srn))
-  }
 }

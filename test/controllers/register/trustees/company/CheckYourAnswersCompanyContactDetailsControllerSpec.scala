@@ -31,7 +31,7 @@ import services.FakeUserAnswersService
 import utils.checkyouranswers.CheckYourAnswers.StringCYA
 import utils.{AllowChangeHelper, CountryOptions, FakeCountryOptions, FakeDataRequest, UserAnswers}
 import viewmodels.AnswerSection
-import views.html.check_your_answers
+import views.html.checkYourAnswers
 
 class CheckYourAnswersCompanyContactDetailsControllerSpec extends ControllerSpecBase with MockitoSugar
   with BeforeAndAfterEach with ControllerAllowChangeBehaviour {
@@ -41,7 +41,7 @@ class CheckYourAnswersCompanyContactDetailsControllerSpec extends ControllerSpec
   private implicit val fakeCountryOptions: CountryOptions = new FakeCountryOptions
 
   private def submitUrl(mode: Mode = NormalMode, srn: Option[String] = None): Call =
-    routes.CheckYourAnswersCompanyContactDetailsController.onSubmit(mode, index, srn)
+    controllers.routes.SchemeTaskListController.onPageLoad(mode, srn)
 
   private def answerSection(mode: Mode, srn: Option[String] = None)(implicit request: DataRequest[AnyContent]): Seq[AnswerSection] = {
     val userAnswers = request.userAnswers
@@ -76,7 +76,7 @@ class CheckYourAnswersCompanyContactDetailsControllerSpec extends ControllerSpec
     )
 
   def viewAsString(answerSections: Seq[AnswerSection], srn: Option[String] = None, postUrl: Call = submitUrl()): String =
-    check_your_answers(
+    checkYourAnswers(
       frontendAppConfig,
       answerSections,
       postUrl,
@@ -108,15 +108,6 @@ class CheckYourAnswersCompanyContactDetailsControllerSpec extends ControllerSpec
           status(result) mustBe OK
           contentAsString(result) mustBe viewAsString(answerSection(UpdateMode, srn), postUrl = submitUrl(UpdateMode, srn), srn = srn)
         }
-      }
-    }
-
-    "on a POST" must {
-      "redirect to task list page" in {
-        val result = controller().onSubmit(NormalMode, Index(1), None)(fakeRequest)
-
-        status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(controllers.routes.SchemeTaskListController.onPageLoad(NormalMode, None).url)
       }
     }
   }

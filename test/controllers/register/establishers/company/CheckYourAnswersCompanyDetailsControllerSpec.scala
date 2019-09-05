@@ -19,6 +19,7 @@ package controllers.register.establishers.company
 import controllers.ControllerSpecBase
 import controllers.actions.{DataRetrievalAction, FakeAuthAction, _}
 import controllers.behaviours.ControllerAllowChangeBehaviour
+import controllers.routes.SchemeTaskListController
 import identifiers.register.establishers.company._
 import models.Mode.checkMode
 import models.register.DeclarationDormant
@@ -30,7 +31,7 @@ import play.api.test.Helpers._
 import services.FakeUserAnswersService
 import utils.{CountryOptions, FakeCountryOptions, FakeNavigator, UserAnswers, _}
 import viewmodels.{AnswerRow, AnswerSection}
-import views.html.check_your_answers
+import views.html.checkYourAnswers
 
 class CheckYourAnswersCompanyDetailsControllerSpec extends ControllerSpecBase with ControllerAllowChangeBehaviour {
 
@@ -84,12 +85,7 @@ class CheckYourAnswersCompanyDetailsControllerSpec extends ControllerSpecBase wi
       }
     }
 
-    "on Submit" must {
-      "redirect to next page " in {
-        val result = controller().onSubmit(NormalMode, None, index)(fakeRequest)
-        status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(onwardRoute.url)
-      }
+    "rendering submit button_link" must {
 
       behave like changeableController(
         controller(fullAnswers.dataRetrievalAction, _: AllowChangeHelper)
@@ -162,10 +158,9 @@ object CheckYourAnswersCompanyDetailsControllerSpec extends ControllerSpecBase w
 
   private val fullAnswers = fullAnswersYes.set(IsCompanyDormantId(0))(DeclarationDormant.No).asOpt.value
 
-  def postUrl: Call = routes.CheckYourAnswersCompanyDetailsController.onSubmit(NormalMode, None, index)
+  def postUrl: Call = SchemeTaskListController.onPageLoad(NormalMode, None)
 
-  def postUrlUpdateMode: Call = routes.CheckYourAnswersCompanyDetailsController.onSubmit(UpdateMode, srn, index)
-
+  def postUrlUpdateMode: Call = SchemeTaskListController.onPageLoad(UpdateMode, srn)
 
   private def companyDetailsAddLinksValues(implicit request: DataRequest[AnyContent]): Seq[AnswerSection] =
     Seq(AnswerSection(
@@ -307,7 +302,7 @@ object CheckYourAnswersCompanyDetailsControllerSpec extends ControllerSpecBase w
 
   def viewAsString(answerSections: Seq[AnswerSection], mode: Mode = NormalMode,
                    srn: Option[String] = None, postUrl: Call = postUrl): String =
-    check_your_answers(
+    checkYourAnswers(
       frontendAppConfig,
       answerSections,
       postUrl,

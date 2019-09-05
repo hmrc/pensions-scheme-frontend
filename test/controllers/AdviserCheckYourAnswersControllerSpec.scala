@@ -30,7 +30,7 @@ import play.api.test.Helpers._
 import uk.gov.hmrc.domain.PsaId
 import utils.{FakeCountryOptions, FakeNavigator, FakeSectionComplete, UserAnswers}
 import viewmodels.{AnswerRow, AnswerSection, Message}
-import views.html.check_your_answers
+import views.html.check_your_answers_old
 
 class AdviserCheckYourAnswersControllerSpec extends ControllerSpecBase with ScalaFutures {
 
@@ -86,7 +86,7 @@ class AdviserCheckYourAnswersControllerSpec extends ControllerSpecBase with Scal
         )
       )
 
-      val viewAsString: String = check_your_answers(
+      val viewAsString: String = check_your_answers_old(
         frontendAppConfig,
         Seq(adviserSection),
         postUrl,
@@ -159,7 +159,7 @@ object AdviserCheckYourAnswersControllerSpec extends ControllerSpecBase with Moc
       FakeSectionComplete
     )
 
-  lazy val viewAsString: String = check_your_answers(
+  lazy val viewAsString: String = check_your_answers_old(
     frontendAppConfig,
     Seq(adviserSection),
     postUrl,

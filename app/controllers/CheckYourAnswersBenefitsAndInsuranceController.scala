@@ -28,7 +28,7 @@ import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.checkyouranswers.Ops._
 import utils.{CountryOptions, Enumerable, SectionComplete}
 import viewmodels.AnswerSection
-import views.html.check_your_answers
+import views.html.check_your_answers_old
 import models.Mode._
 import models.requests.DataRequest
 import services.UserAnswersService
@@ -61,7 +61,7 @@ class CheckYourAnswersBenefitsAndInsuranceController @Inject()(appConfig: Fronte
           InsurerConfirmAddressId.row(routes.InsurerConfirmAddressController.onPageLoad(checkMode(mode), srn).url, mode)
       )
 
-      Ok(check_your_answers(
+      Ok(check_your_answers_old(
         appConfig,
         Seq(benefitsAndInsuranceSection),
         routes.CheckYourAnswersBenefitsAndInsuranceController.onSubmit(mode, srn),

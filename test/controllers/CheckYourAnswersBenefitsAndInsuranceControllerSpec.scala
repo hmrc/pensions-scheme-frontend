@@ -27,7 +27,7 @@ import play.api.test.Helpers._
 import services.FakeUserAnswersService
 import utils.{FakeCountryOptions, FakeSectionComplete, UserAnswers}
 import viewmodels.{AnswerRow, AnswerSection}
-import views.html.check_your_answers
+import views.html.check_your_answers_old
 
 class CheckYourAnswersBenefitsAndInsuranceControllerSpec extends ControllerSpecBase with OptionValues {
 
@@ -202,7 +202,7 @@ object CheckYourAnswersBenefitsAndInsuranceControllerSpec extends ControllerSpec
     )
   }
 
-  private def viewAsString(mode : Mode = NormalMode, hideSaveAndContinueButton:Boolean = false): String = check_your_answers(
+  private def viewAsString(mode : Mode = NormalMode, hideSaveAndContinueButton:Boolean = false): String = check_your_answers_old(
     frontendAppConfig,
     Seq(
       benefitsAndInsuranceSection(mode)
@@ -215,7 +215,7 @@ object CheckYourAnswersBenefitsAndInsuranceControllerSpec extends ControllerSpec
     hideSaveAndContinueButton = hideSaveAndContinueButton
   )(fakeRequest, messages).toString
 
-  private def viewAsStringWithLessData(mode : Mode = CheckMode): String = check_your_answers(
+  private def viewAsStringWithLessData(mode : Mode = CheckMode): String = check_your_answers_old(
     frontendAppConfig,
     Seq(
       updateBenefitsAndInsuranceSection(mode)

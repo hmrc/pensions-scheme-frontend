@@ -32,7 +32,7 @@ import utils.annotations.NoSuspendedCheck
 import utils.{AllowChangeHelper, CountryOptions, UserAnswers}
 import viewmodels.AnswerSection
 import utils.checkyouranswers.Ops._
-import views.html.check_your_answers
+import views.html.checkYourAnswers
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -58,20 +58,15 @@ class CheckYourAnswersCompanyContactDetailsController @Inject()(appConfig: Front
             CompanyPhoneId(index).row(routes.CompanyPhoneController.onPageLoad(checkMode(mode), index, srn).url, mode)
         )
 
-        Future.successful(Ok(check_your_answers(
+        Future.successful(Ok(checkYourAnswers(
           appConfig,
           Seq(contactDetails),
-          routes.CheckYourAnswersCompanyContactDetailsController.onSubmit(mode, index, srn),
+          controllers.routes.SchemeTaskListController.onPageLoad(mode, srn),
           existingSchemeName,
           mode = mode,
           hideEditLinks = request.viewOnly || notNewEstablisher,
           hideSaveAndContinueButton = allowChangeHelper.hideSaveAndContinueButton(request, IsTrusteeNewId(index), mode),
           srn = srn
         )))
-    }
-
-  def onSubmit(mode: Mode, index: Index, srn: Option[String] = None): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData) {
-        Redirect(controllers.routes.SchemeTaskListController.onPageLoad(mode, srn))
     }
 }

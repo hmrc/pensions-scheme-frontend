@@ -29,7 +29,7 @@ import play.api.test.Helpers._
 import services.FakeUserAnswersService
 import utils._
 import viewmodels.{AnswerRow, AnswerSection, Message}
-import views.html.check_your_answers
+import views.html.checkYourAnswers
 
 class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerAllowChangeBehaviour {
 
@@ -41,14 +41,6 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
 
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString(answerSections, NormalMode, None)
-    }
-
-    "redirect to Add Trustee page" when {
-      "POST is called" in {
-        val result = controller().onSubmit(NormalMode, firstIndex, None)(fakeRequest)
-        status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(onwardRoute.url)
-      }
     }
 
     "return OK and display Add link for UpdateMode pointing to new Nino page where no nino retrieved from ETMP" in {
@@ -111,7 +103,7 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase with Controller
   val firstIndex = Index(0)
   lazy val trusteeDetailsRoute: String = routes.TrusteeDetailsController.onPageLoad(CheckMode, firstIndex, None).url
 
-  def postUrl(mode: Mode, srn: Option[String]): Call = routes.CheckYourAnswersController.onSubmit(mode, firstIndex, srn)
+  def postUrl(mode: Mode, srn: Option[String]): Call = controllers.register.trustees.routes.AddTrusteeController.onPageLoad(mode, srn)
 
   lazy val trusteeDetailsSection = AnswerSection(None,
     Seq(
@@ -176,7 +168,7 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase with Controller
     contactDetailsSection
   )
 
-  def viewAsString(answerSections: Seq[AnswerSection], mode: Mode, srn: Option[String]): String = check_your_answers(
+  def viewAsString(answerSections: Seq[AnswerSection], mode: Mode, srn: Option[String]): String = checkYourAnswers(
     frontendAppConfig,
     answerSections,
     postUrl(mode, srn),
