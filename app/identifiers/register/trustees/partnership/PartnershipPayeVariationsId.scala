@@ -32,21 +32,22 @@ case class PartnershipPayeVariationsId(index: Int) extends TypedIdentifier[Refer
 object PartnershipPayeVariationsId {
   override def toString: String = "partnershipPaye"
 
-  implicit def cya(implicit messages: Messages, countryOptions: CountryOptions): CheckYourAnswers[PartnershipPayeVariationsId] = {
+  implicit def cya(implicit userAnswers: UserAnswers, messages: Messages, countryOptions: CountryOptions): CheckYourAnswers[PartnershipPayeVariationsId] = {
     new CheckYourAnswers[PartnershipPayeVariationsId] {
 
-      private val payeLabel = "messages__common__cya__paye"
-      private val hiddenLabelPaye = "messages__visuallyhidden__trustee__paye_number"
+      def trusteeName(index: Int) = userAnswers.get(PartnershipDetailsId(index)).fold(messages("messages__theTrustee"))(_.name)
+      def label(index: Int) = messages("messages__cya__paye", trusteeName(index))
+      def hiddenLabel(index: Int) = messages("messages__visuallyhidden__dynamic_paye", trusteeName(index))
 
       override def row(id: PartnershipPayeVariationsId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        ReferenceValueCYA[PartnershipPayeVariationsId](payeLabel, hiddenLabelPaye)().row(id)(changeUrl, userAnswers)
+        ReferenceValueCYA[PartnershipPayeVariationsId](label(id.index), hiddenLabel(id.index))().row(id)(changeUrl, userAnswers)
 
       override def updateRow(id: PartnershipPayeVariationsId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
         userAnswers.get(IsTrusteeNewId(id.index)) match {
           case Some(true) =>
-            ReferenceValueCYA[PartnershipPayeVariationsId](payeLabel, hiddenLabelPaye)().row(id)(changeUrl, userAnswers)
+            ReferenceValueCYA[PartnershipPayeVariationsId](label(id.index), hiddenLabel(id.index))().row(id)(changeUrl, userAnswers)
           case _ =>
-            ReferenceValueCYA[PartnershipPayeVariationsId](payeLabel, hiddenLabelPaye)().updateRow(id)(changeUrl, userAnswers)
+            ReferenceValueCYA[PartnershipPayeVariationsId](label(id.index), hiddenLabel(id.index))().updateRow(id)(changeUrl, userAnswers)
         }
     }
   }

@@ -189,7 +189,7 @@ object CheckYourAnswersControllerSpec extends SpecBase {
   private def answerRowWithAdd: AnswerRow = AnswerRow("messages__common__nino", Seq("site.not_entered"), answerIsMessageKey = true,
     Some(Link("site.add",
       routes.PartnerNinoNewController.onPageLoad(Mode.checkMode(UpdateMode), firstIndex, firstIndex, Some("srn")).url,
-      Some(s"messages__visuallyhidden__partner__nino_add"))))
+      Some(s"messages__visuallyhidden__partner__nino"))))
 
   private def answerRowWithChange: AnswerRow = AnswerRow("messages__common__nino", Seq("AB100100A"), answerIsMessageKey = false, Some(
     Link("site.change", routes.PartnerNinoNewController.onPageLoad(Mode.checkMode(UpdateMode), firstIndex, firstIndex, Some("srn")).url,

@@ -99,7 +99,7 @@ object PartnershipHasUTRIdSpec extends SpecBase {
   val name = "test partnership name"
   private val answerRowsWithChangeLinks = Seq(
     AnswerRow(messages("messages__partnershipHasUtr__heading", name), List("site.yes"), true, Some(Link("site.change",onwardUrl,
-      Some(messages("messages__visuallyhidden__partnership__utr_yes_no")))))
+      Some(messages("messages__visuallyhidden__dynamic_hasUtr", name)))))
   )
 
   private def ua(v: Boolean) =

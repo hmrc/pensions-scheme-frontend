@@ -56,7 +56,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
         val expectedAnswerRowNino = AnswerRow("messages__common__nino", Seq("site.not_entered"), answerIsMessageKey = true,
           Some(Link("site.add",
             routes.TrusteeNinoNewController.onPageLoad(Mode.checkMode(UpdateMode), firstIndex, Some("srn")).url,
-            Some(s"messages__visuallyhidden__trustee__nino_add"))))
+            Some(s"messages__visuallyhidden__trustee__nino"))))
         Seq(
           trusteeDetailsSectionUpdate(expectedAnswerRowNino),
           contactDetailsSection

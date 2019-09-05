@@ -31,13 +31,17 @@ class PartnershipPayeVariationsIdSpec extends SpecBase {
 
   implicit val countryOptions: CountryOptions = new CountryOptions(environment, frontendAppConfig)
   private val onwardUrl = "onwardUrl"
+  private val partnershipName = "test partnership name"
   private val answerRowsWithChangeLinks = Seq(
-    AnswerRow("messages__common__cya__paye",List("paye"),false,Some(Link("site.change",onwardUrl,
-      Some("messages__visuallyhidden__trustee__paye_number"))))
+    AnswerRow(messages("messages__cya__paye", partnershipName),List("paye"),false,Some(Link("site.change",onwardUrl,
+      Some(messages("messages__visuallyhidden__dynamic_paye", partnershipName)))))
   )
+
+  private val ua = UserAnswers().set(PartnershipDetailsId(0))(PartnershipDetails(partnershipName)).asOpt.value
+
   "cya" when {
 
-    def answers: UserAnswers = UserAnswers().set(PartnershipPayeVariationsId(0))(ReferenceValue("paye")).asOpt.get
+    def answers: UserAnswers = ua.set(PartnershipPayeVariationsId(0))(ReferenceValue("paye")).asOpt.get
 
     "in normal mode" must {
 
@@ -66,12 +70,12 @@ class PartnershipPayeVariationsIdSpec extends SpecBase {
         implicit val userAnswers: UserAnswers = request.userAnswers
 
         PartnershipPayeVariationsId(0).row(onwardUrl, UpdateMode)(request, implicitly) must equal(Seq(
-          AnswerRow("messages__common__cya__paye",List("paye"),false,None)
+          AnswerRow(messages("messages__cya__paye", partnershipName),List("paye"),false,None)
         ))
       }
 
       "return answers rows with change links if paye is available and editable" in {
-        val answers = UserAnswers().set(PartnershipPayeVariationsId(0))(ReferenceValue("paye", true)).asOpt.get
+        val answers = ua.set(PartnershipPayeVariationsId(0))(ReferenceValue("paye", true)).asOpt.get
         val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
         implicit val userAnswers: UserAnswers = request.userAnswers
 
@@ -79,12 +83,12 @@ class PartnershipPayeVariationsIdSpec extends SpecBase {
       }
 
       "display an add link if no answer if found" in {
-        val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(), PsaId("A0000000"))
+        val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", ua, PsaId("A0000000"))
         implicit val userAnswers: UserAnswers = request.userAnswers
 
         PartnershipPayeVariationsId(0).row(onwardUrl, CheckUpdateMode)(request, implicitly) must equal(Seq(
-          AnswerRow("messages__common__cya__paye", Seq("site.not_entered"), answerIsMessageKey = true,
-            Some(Link("site.add", onwardUrl, Some("messages__visuallyhidden__trustee__paye_number_add"))))))
+          AnswerRow(messages("messages__cya__paye", partnershipName), Seq("site.not_entered"), answerIsMessageKey = true,
+            Some(Link("site.add", onwardUrl, Some(messages("messages__visuallyhidden__dynamic_paye", partnershipName)))))))
       }
     }
   }

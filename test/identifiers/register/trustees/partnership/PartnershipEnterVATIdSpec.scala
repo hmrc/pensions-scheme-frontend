@@ -31,14 +31,18 @@ class PartnershipEnterVATIdSpec extends SpecBase {
 
   implicit val countryOptions: CountryOptions = new CountryOptions(environment, frontendAppConfig)
   private val onwardUrl = "onwardUrl"
+  private val partnershipName = "test partnership name"
   private val answerRowsWithChangeLinks = Seq(
-    AnswerRow("messages__common__cya__vat",List("vat"),false,Some(Link("site.change",onwardUrl,
-      Some("messages__visuallyhidden__partnership__vat_number"))))
+    AnswerRow(messages("messages__cya__vat", partnershipName),List("vat"),false,Some(Link("site.change",onwardUrl,
+      Some(messages("messages__visuallyhidden__dynamic_vat", partnershipName)))))
   )
+
+  private val ua = UserAnswers()
+    .set(PartnershipDetailsId(0))(PartnershipDetails(partnershipName)).asOpt.value
 
   "cya" when {
 
-    def answers: UserAnswers = UserAnswers().set(PartnershipEnterVATId(0))(ReferenceValue("vat")).asOpt.get
+    def answers: UserAnswers = ua.set(PartnershipEnterVATId(0))(ReferenceValue("vat")).asOpt.value
 
     "in normal mode" must {
 
@@ -67,12 +71,12 @@ class PartnershipEnterVATIdSpec extends SpecBase {
         implicit val userAnswers: UserAnswers = request.userAnswers
 
         PartnershipEnterVATId(0).row(onwardUrl, UpdateMode)(request, implicitly) must equal(Seq(
-          AnswerRow("messages__common__cya__vat",List("vat"),false, None)
+          AnswerRow(messages("messages__cya__vat", partnershipName),List("vat"),false, None)
         ))
       }
 
       "return answers rows with change links if vat is available and editable" in {
-        val answers = UserAnswers().set(PartnershipEnterVATId(0))(ReferenceValue("vat", true)).asOpt.get
+        val answers = ua.set(PartnershipEnterVATId(0))(ReferenceValue("vat", true)).asOpt.get
         val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
         implicit val userAnswers: UserAnswers = request.userAnswers
 
@@ -80,12 +84,12 @@ class PartnershipEnterVATIdSpec extends SpecBase {
       }
 
       "display an add link if vat is not available" in {
-        val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(), PsaId("A0000000"))
+        val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", ua, PsaId("A0000000"))
         implicit val userAnswers: UserAnswers = request.userAnswers
 
         PartnershipEnterVATId(0).row(onwardUrl, UpdateMode)(request, implicitly) must equal(Seq(
-          AnswerRow("messages__common__cya__vat", Seq("site.not_entered"), answerIsMessageKey = true,
-            Some(Link("site.add", onwardUrl, Some("messages__visuallyhidden__partnership__vat_number_add"))))))
+          AnswerRow(messages("messages__cya__vat", partnershipName), Seq("site.not_entered"), answerIsMessageKey = true,
+            Some(Link("site.add", onwardUrl, Some(messages("messages__visuallyhidden__dynamic_vat", partnershipName)))))))
       }
     }
   }

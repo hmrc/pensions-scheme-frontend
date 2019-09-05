@@ -44,7 +44,9 @@ class PartnershipUTRIdSpec extends SpecBase {
 
   "cya" when {
 
-    def answers(isEditable: Boolean = false): UserAnswers = UserAnswers().set(PartnershipUTRId(0))(ReferenceValue(utr, isEditable)).asOpt.get
+    def answers(isEditable: Boolean = false): UserAnswers = UserAnswers()
+      .trusteePartnershipDetails(index = 0, PartnershipDetails(name))
+      .set(PartnershipUTRId(0))(ReferenceValue(utr, isEditable)).asOpt.get
 
     "in normal mode" must {
 
@@ -70,9 +72,9 @@ class PartnershipUTRIdSpec extends SpecBase {
       "for existing trustee" must {
 
         "return row with add link if there is no data available" in {
-          val answerRowWithAddLink = AnswerRow("messages__cya__utr", List("site.not_entered"), answerIsMessageKey = true,
+          val answerRowWithAddLink = AnswerRow(messages("messages__cya__utr", name), List("site.not_entered"), answerIsMessageKey = true,
             Some(Link("site.add",onwardUrl,
-              Some("messages__visuallyhidden__partnership__utr_add")
+              Some(messages("messages__visuallyhidden__dynamic_utr", name))
             )))
           val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id",
             UserAnswers().trusteePartnershipDetails(index = 0, PartnershipDetails(name)), PsaId("A0000000"))
@@ -107,14 +109,15 @@ object PartnershipUTRIdSpec extends SpecBase {
   implicit val countryOptions: CountryOptions = new CountryOptions(environment, frontendAppConfig)
 
   private val answerRowsWithChangeLinks = Seq(
-    AnswerRow("messages__cya__utr", List(utr), false, Some(Link("site.change",onwardUrl,
-      Some("messages__visuallyhidden__partnership__utr"))))
+    AnswerRow(messages("messages__cya__utr", name), List(utr), false, Some(Link("site.change",onwardUrl,
+      Some(messages("messages__visuallyhidden__dynamic_utr", name)))))
   )
 
   private val answerRowsWithoutChangeLink = Seq(
-    AnswerRow("messages__cya__utr", List(utr), false, None))
+    AnswerRow(messages("messages__cya__utr", name), List(utr), false, None))
 
   private def ua = UserAnswers(Json.obj())
+    .trusteePartnershipDetails(index = 0, PartnershipDetails(name))
     .set(PartnershipNoUTRReasonId(0))("value")
     .asOpt
     .value

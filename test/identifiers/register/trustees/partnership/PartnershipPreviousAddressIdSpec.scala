@@ -64,7 +64,7 @@ class PartnershipPreviousAddressIdSpec extends SpecBase {
             Message("messages__previousAddressFor", messages("messages__theTrustee")),
             addressAnswer(address),
             answerIsMessageKey = false,
-            Some(Link("site.change", onwardUrl, Some(messages("messages__changeTrusteePreviousAddress", messages("messages__theTrustee")))))
+            Some(Link("site.change", onwardUrl, Some(messages("messages__visuallyhidden__dynamic_previousAddress", messages("messages__theTrustee")))))
           )))
       }
     }
@@ -79,7 +79,7 @@ class PartnershipPreviousAddressIdSpec extends SpecBase {
           AnswerRow(Message("messages__previousAddressFor", messages("messages__theTrustee")),
             Seq("site.not_entered"),
             answerIsMessageKey = true,
-            Some(Link("site.add", onwardUrl, Some(Message("messages__changeTrusteePreviousAddress", messages("messages__theTrustee"))))))
+            Some(Link("site.add", onwardUrl, Some(Message("messages__visuallyhidden__dynamic_previousAddress", messages("messages__theTrustee"))))))
         )
         )
       }
@@ -94,7 +94,7 @@ class PartnershipPreviousAddressIdSpec extends SpecBase {
             Message("messages__previousAddressFor", messages("messages__theTrustee")),
             addressAnswer(address),
             answerIsMessageKey = false,
-            Some(Link("site.change", onwardUrl, Some(messages("messages__changeTrusteePreviousAddress", messages("messages__theTrustee")))))
+            Some(Link("site.change", onwardUrl, Some(messages("messages__visuallyhidden__dynamic_previousAddress", messages("messages__theTrustee")))))
           )))
       }
 
@@ -108,7 +108,7 @@ class PartnershipPreviousAddressIdSpec extends SpecBase {
           Message("messages__previousAddressFor", messages("messages__theTrustee")),
           addressAnswer(address),
           answerIsMessageKey = false,
-          Some(Link("site.change", onwardUrl, Some(messages("messages__changeTrusteePreviousAddress", messages("messages__theTrustee")))))
+          Some(Link("site.change", onwardUrl, Some(messages("messages__visuallyhidden__dynamic_previousAddress", messages("messages__theTrustee")))))
         )))
       }
     }

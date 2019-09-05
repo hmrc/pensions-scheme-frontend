@@ -96,7 +96,7 @@ class CompanyRegistrationNumberVariationsIdSpec extends SpecBase {
 
         CompanyRegistrationNumberVariationsId(0).row(onwardUrl, UpdateMode) must equal(Seq(
           AnswerRow("messages__checkYourAnswers__establishers__company__number", Seq("site.not_entered"), answerIsMessageKey = true,
-            Some(Link("site.add", onwardUrl, Some("messages__visuallyhidden__companyNumber_add"))))))
+            Some(Link("site.add", onwardUrl, Some("messages__visuallyhidden__companyNumber"))))))
       }
     }
   }

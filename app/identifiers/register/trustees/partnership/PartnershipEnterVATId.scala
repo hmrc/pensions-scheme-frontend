@@ -32,21 +32,24 @@ case class PartnershipEnterVATId(index: Int) extends TypedIdentifier[ReferenceVa
 object PartnershipEnterVATId {
   override def toString: String = "partnershipVat"
 
-  implicit def cya(implicit messages: Messages, countryOptions: CountryOptions): CheckYourAnswers[PartnershipEnterVATId] = {
+  implicit def cya(implicit userAnswers: UserAnswers,
+                   messages: Messages,
+                   countryOptions: CountryOptions): CheckYourAnswers[PartnershipEnterVATId] = {
     new CheckYourAnswers[PartnershipEnterVATId] {
 
-      private val hiddenLabelVat = "messages__visuallyhidden__partnership__vat_number"
-      private val vatLabel = "messages__common__cya__vat"
+      def trusteeName(index: Int) = userAnswers.get(PartnershipDetailsId(index)).fold(messages("messages__theTrustee"))(_.name)
+      def label(index: Int) = messages("messages__cya__vat", trusteeName(index))
+      def hiddenLabel(index: Int) = messages("messages__visuallyhidden__dynamic_vat", trusteeName(index))
 
       override def row(id: PartnershipEnterVATId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        ReferenceValueCYA[PartnershipEnterVATId](vatLabel, hiddenLabelVat)().row(id)(changeUrl, userAnswers)
+        ReferenceValueCYA[PartnershipEnterVATId](label(id.index), hiddenLabel(id.index))().row(id)(changeUrl, userAnswers)
 
       override def updateRow(id: PartnershipEnterVATId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
         userAnswers.get(IsTrusteeNewId(id.index)) match {
           case Some(true) =>
-            ReferenceValueCYA[PartnershipEnterVATId](vatLabel, hiddenLabelVat)().row(id)(changeUrl, userAnswers)
+            ReferenceValueCYA[PartnershipEnterVATId](label(id.index), hiddenLabel(id.index))().row(id)(changeUrl, userAnswers)
           case _ =>
-            ReferenceValueCYA[PartnershipEnterVATId](vatLabel, hiddenLabelVat)().updateRow(id)(changeUrl, userAnswers)
+            ReferenceValueCYA[PartnershipEnterVATId](label(id.index), hiddenLabel(id.index))().updateRow(id)(changeUrl, userAnswers)
         }
     }
   }
