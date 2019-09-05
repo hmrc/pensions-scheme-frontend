@@ -19,7 +19,12 @@ $(document).ready(function() {
         e.preventDefault();
         window.history.back();
     })
-
+    $("#declarationId").submit(function() {
+        $(this).submit(function() {
+          return false;
+        });
+        return true;
+    });
 
     if(document.querySelectorAll('select').length > 0){
         var graphUrl = '/register-pension-scheme/assets/javascripts/autocomplete/location-autocomplete-graph.json'
