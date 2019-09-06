@@ -44,7 +44,7 @@ case object InsurerConfirmAddressId extends TypedIdentifier[Address] {
             case Some(true) => Seq(AnswerRow(label,
               Seq("site.not_entered"),
               answerIsMessageKey = true,
-              Some(Link("site.add", changeUrl,Some("messages__visuallyhidden__add_insurer_confirm_address")))))
+              Some(Link("site.add", changeUrl,Some(hiddenLabel)))))
             case _ => Seq.empty[AnswerRow]
           }
         }

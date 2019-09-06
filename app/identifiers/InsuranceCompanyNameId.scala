@@ -52,7 +52,7 @@ case object InsuranceCompanyNameId extends TypedIdentifier[String] {
               "insuranceCompanyName.checkYourAnswersLabel",
               Seq("site.not_entered"),
               answerIsMessageKey = true,
-              Some(Link("site.add", changeUrl, Some(messages("messages__visuallyhidden__add_insuranceCompanyName"))))))
+              Some(Link("site.add", changeUrl, Some(messages("messages__visuallyhidden__insuranceCompanyName"))))))
             case _ => Seq.empty[AnswerRow]
           }
         }

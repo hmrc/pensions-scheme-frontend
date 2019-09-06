@@ -45,8 +45,8 @@ object CompanyPreviousAddressId {
         PreviousAddressCYA(label(id.index),
           changeAddress(id.index),
           userAnswers.get(IsTrusteeNewId(id.index)),
-          userAnswers.get(CompanyAddressYearsId(id.index)),
-          Some(changeAddress(id.index)))().updateRow(id)(changeUrl, userAnswers)
+          userAnswers.get(CompanyAddressYearsId(id.index))
+        )().updateRow(id)(changeUrl, userAnswers)
     }
   }
 }

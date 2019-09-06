@@ -147,7 +147,7 @@ class DirectorNinoIdSpec extends SpecBase {
             "messages__common__nino",
             Seq("site.not_entered"),
             true,
-            Some(Link("site.add", onwardUrl, Some("messages__visuallyhidden__director__nino_add")))
+            Some(Link("site.add", onwardUrl, Some("messages__visuallyhidden__director__nino")))
           )
         )
 

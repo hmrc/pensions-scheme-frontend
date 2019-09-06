@@ -90,7 +90,7 @@ class InsuranceCompanyNameIdSpec extends SpecBase with MustMatchers with Propert
         implicit val userAnswers = request.userAnswers
         val onwardUrl = "onwardUrl"
         InsuranceCompanyNameId.row(onwardUrl, UpdateMode) must equal(Seq(AnswerRow("insuranceCompanyName.checkYourAnswersLabel",
-          List("site.not_entered"),true,Some(Link("site.add",onwardUrl,Some(Message("messages__visuallyhidden__add_insuranceCompanyName")))))))
+          List("site.not_entered"),true,Some(Link("site.add",onwardUrl,Some(Message("messages__visuallyhidden__insuranceCompanyName")))))))
       }
     }
   }

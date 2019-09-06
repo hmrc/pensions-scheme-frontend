@@ -152,7 +152,7 @@ object CheckYourAnswersBenefitsAndInsuranceControllerSpec extends ControllerSpec
         Seq("site.not_entered"),
         answerIsMessageKey = true,
         Some(Link("site.add", routes.InsurerConfirmAddressController.onPageLoad(checkMode(mode), None).url,
-          Some(messages("messages__visuallyhidden__add_insurer_confirm_address")))))
+          Some(messages("messages__visuallyhidden__insurer_confirm_address")))))
     )
   )
 

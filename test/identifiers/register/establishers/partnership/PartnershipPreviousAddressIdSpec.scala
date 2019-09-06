@@ -77,7 +77,7 @@ class PartnershipPreviousAddressIdSpec extends SpecBase {
           AnswerRow("messages__common__cya__previous_address",
             Seq("site.not_entered"),
             answerIsMessageKey = true,
-            Some(Link("site.add", onwardUrl, Some("messages__visuallyhidden__partnership__previous_address_add")))))
+            Some(Link("site.add", onwardUrl, Some("messages__visuallyhidden__partnership__previous_address")))))
         )
       }
 
