@@ -46,7 +46,7 @@ case class PartnershipAddressYearsId(index: Int) extends TypedIdentifier[Address
 object PartnershipAddressYearsId {
   override lazy val toString: String = "partnershipAddressYears"
 
-  implicit def cya(implicit countryOptions: CountryOptions, messages: Messages, ua: UserAnswers): CheckYourAnswers[PartnershipAddressYearsId] =
+  implicit def cya(implicit countryOptions: CountryOptions, messages: Messages): CheckYourAnswers[PartnershipAddressYearsId] =
     new CheckYourAnswers[PartnershipAddressYearsId] {
       override def row(id: PartnershipAddressYearsId)(changeUrl: String, ua: UserAnswers): Seq[AnswerRow] = {
         val trusteeName = ua.get(PartnershipDetailsId(id.index)).fold(messages("messages__theTrustee"))(_.name)

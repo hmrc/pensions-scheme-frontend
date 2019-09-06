@@ -39,6 +39,7 @@ class CompanyAddressYearsIdSpec extends SpecBase {
       .flatMap(_.set(CompanyPreviousAddressPostcodeLookupId(0))(Seq.empty))
       .flatMap(_.set(CompanyPreviousAddressId(0))(Address("foo", "bar", None, None, None, "GB")))
       .flatMap(_.set(CompanyPreviousAddressListId(0))(TolerantAddress(Some("foo"), Some("bar"), None, None, None, Some("GB"))))
+      .flatMap(_.set(HasBeenTradingCompanyId(0))(value = true))
       .asOpt.value
 
     "`AddressYears` is set to `OverAYear`" when {
@@ -56,6 +57,10 @@ class CompanyAddressYearsIdSpec extends SpecBase {
       "remove the data for `PreviousAddressList`" in {
         result.get(CompanyPreviousAddressListId(0)) mustNot be(defined)
       }
+
+      "remove the data for `HasBeenTrading`" in {
+        result.get(HasBeenTradingCompanyId(0)) mustNot be(defined)
+      }
     }
 
     "`AddressYears` is set to `UnderAYear`" when {
@@ -65,6 +70,7 @@ class CompanyAddressYearsIdSpec extends SpecBase {
         .flatMap(_.set(CompanyPreviousAddressPostcodeLookupId(0))(Seq.empty))
         .flatMap(_.set(CompanyPreviousAddressId(0))(Address("foo", "bar", None, None, None, "GB")))
         .flatMap(_.set(CompanyPreviousAddressListId(0))(TolerantAddress(Some("foo"), Some("bar"), None, None, None, Some("GB"))))
+        .flatMap(_.set(HasBeenTradingCompanyId(0))(value = true))
         .asOpt.value.set(CompanyAddressYearsId(0))(AddressYears.UnderAYear).asOpt.value
 
       "not remove the data for `PreviousPostCodeLookup`" in {
@@ -77,6 +83,10 @@ class CompanyAddressYearsIdSpec extends SpecBase {
 
       "not remove the data for `PreviousAddressList`" in {
         result.get(CompanyPreviousAddressListId(0)) mustBe defined
+      }
+
+      "not remove the data for `HasBeenTrading`" in {
+        result.get(HasBeenTradingCompanyId(0)) mustBe defined
       }
     }
 
@@ -109,9 +119,8 @@ class CompanyAddressYearsIdSpec extends SpecBase {
     "in normal mode" must {
 
       "return answers rows with change links" in {
-        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
-        implicit val userAnswers = request.userAnswers
-        CompanyAddressYearsId(0).row(onwardUrl, NormalMode) must equal(Seq(
+        val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
+        CompanyAddressYearsId(0).row(onwardUrl, NormalMode)(request, implicitly) must equal(Seq(
           AnswerRow(
             Message("messages__company_address_years__h1", companyName),
             Seq(s"messages__common__under_a_year"),
@@ -127,9 +136,8 @@ class CompanyAddressYearsIdSpec extends SpecBase {
       def answersNew: UserAnswers = answers.set(IsEstablisherNewId(0))(true).asOpt.value
 
       "return answers rows with change links" in {
-        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answersNew, PsaId("A0000000"))
-        implicit val userAnswers: UserAnswers = request.userAnswers
-        CompanyAddressYearsId(0).row(onwardUrl, UpdateMode) must equal(Seq(
+        val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answersNew, PsaId("A0000000"))
+        CompanyAddressYearsId(0).row(onwardUrl, UpdateMode)(request, implicitly) must equal(Seq(
           AnswerRow(
             Message("messages__company_address_years__h1", companyName),
             Seq(s"messages__common__under_a_year"),
@@ -143,10 +151,9 @@ class CompanyAddressYearsIdSpec extends SpecBase {
     "in update mode for existing trustee" must {
 
       "return answers rows without change links" in {
-        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
-        implicit val userAnswers: UserAnswers = request.userAnswers
+        val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
 
-        CompanyAddressYearsId(0).row(onwardUrl, UpdateMode) must equal(Nil)
+        CompanyAddressYearsId(0).row(onwardUrl, UpdateMode)(request, implicitly) must equal(Nil)
       }
     }
   }
