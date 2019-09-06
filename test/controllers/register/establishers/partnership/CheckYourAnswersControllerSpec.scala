@@ -33,7 +33,7 @@ import utils.checkyouranswers.CheckYourAnswers.{PayeCYA, VatCYA}
 import utils.checkyouranswers.Ops._
 import utils.checkyouranswers.UniqueTaxReferenceCYA
 import viewmodels.{AnswerRow, AnswerSection}
-import views.html.check_your_answers
+import views.html.check_your_answers_old
 
 class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerAllowChangeBehaviour {
 
@@ -171,7 +171,7 @@ object CheckYourAnswersControllerSpec extends CheckYourAnswersControllerSpec {
       new DataRequiredActionImpl, FakeUserAnswersService, new FakeNavigator(onwardRoute), countryOptions, allowChangeHelper
     )
 
-  private def viewAsString(answerSections: Seq[AnswerSection], mode: Mode = NormalMode, srn: Option[String] = None): String = check_your_answers(
+  private def viewAsString(answerSections: Seq[AnswerSection], mode: Mode = NormalMode, srn: Option[String] = None): String = check_your_answers_old(
     frontendAppConfig, answerSections, routes.CheckYourAnswersController.onSubmit(mode, firstIndex, srn),
     None, srn = srn, hideEditLinks = false, hideSaveAndContinueButton = false)(fakeRequest, messages).toString
 

@@ -31,7 +31,7 @@ import utils.annotations.NoSuspendedCheck
 import utils.checkyouranswers.Ops._
 import utils.{AllowChangeHelper, CountryOptions, UserAnswers}
 import viewmodels.AnswerSection
-import views.html.check_your_answers
+import views.html.checkYourAnswers
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -56,7 +56,7 @@ class CheckYourAnswersPartnershipContactDetailsController @Inject()(appConfig: F
             PartnershipPhoneId(index).row(routes.PartnershipPhoneNumberController.onPageLoad(checkMode(mode), index, srn).url, mode)
         )
 
-        Future.successful(Ok(check_your_answers(
+        Future.successful(Ok(checkYourAnswers(
           appConfig,
           Seq(contactDetailsSection),
           controllers.routes.SchemeTaskListController.onPageLoad(mode, srn),

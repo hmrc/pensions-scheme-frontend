@@ -33,7 +33,7 @@ import utils.annotations.NoSuspendedCheck
 import utils.{AllowChangeHelper, CountryOptions, Enumerable, UserAnswers}
 import viewmodels.AnswerSection
 import utils.checkyouranswers.Ops._
-import views.html.check_your_answers
+import views.html.checkYourAnswers
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -67,7 +67,7 @@ class CheckYourAnswersPartnershipDetailsController @Inject()(
             PartnershipPayeVariationsId(index).row(routes.PartnershipPayeVariationsController.onPageLoad(checkMode(mode), index, srn).url, mode)
         ))
 
-        Future.successful(Ok(check_your_answers(
+        Future.successful(Ok(checkYourAnswers(
           appConfig,
           companyDetails,
           controllers.routes.SchemeTaskListController.onPageLoad(mode, srn),
@@ -77,7 +77,5 @@ class CheckYourAnswersPartnershipDetailsController @Inject()(
           hideSaveAndContinueButton = allowChangeHelper.hideSaveAndContinueButton(request, IsTrusteeNewId(index), mode),
           srn = srn
         )))
-
     }
-
 }

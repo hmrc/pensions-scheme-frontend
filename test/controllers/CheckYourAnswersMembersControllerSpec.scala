@@ -24,7 +24,7 @@ import play.api.test.Helpers._
 import services.FakeUserAnswersService
 import utils.UserAnswers
 import viewmodels.{AnswerRow, AnswerSection}
-import views.html.check_your_answers
+import views.html.check_your_answers_old
 
 class CheckYourAnswersMembersControllerSpec extends ControllerSpecBase with OptionValues{
 
@@ -102,7 +102,7 @@ object CheckYourAnswersMembersControllerSpec extends ControllerSpecBase {
     )
   )
 
-  private def viewAsString(): String = check_your_answers(
+  private def viewAsString(): String = check_your_answers_old(
     frontendAppConfig,
     Seq(
       membersSection

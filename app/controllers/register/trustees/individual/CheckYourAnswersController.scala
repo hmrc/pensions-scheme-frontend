@@ -34,7 +34,7 @@ import utils._
 import utils.annotations.NoSuspendedCheck
 import utils.checkyouranswers.Ops._
 import viewmodels.AnswerSection
-import views.html.check_your_answers
+import views.html.checkYourAnswers
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.language.implicitConversions
@@ -79,21 +79,15 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
         trusteeAddressRow ++ trusteeAddressYearsRow ++ trusteePreviousAddressRow ++ trusteeContactDetails
       )
 
-      Future.successful(Ok(check_your_answers(
+      Future.successful(Ok(checkYourAnswers(
         appConfig,
         Seq(trusteeDetailsSection, contactDetailsSection),
-        routes.CheckYourAnswersController.onSubmit(mode, index, srn),
+        controllers.register.trustees.routes.AddTrusteeController.onPageLoad(mode, srn),
         existingSchemeName,
         mode = mode,
         hideEditLinks = request.viewOnly || !userAnswers.get(IsTrusteeNewId(index)).getOrElse(true),
         hideSaveAndContinueButton = allowChangeHelper.hideSaveAndContinueButton(request, IsTrusteeNewId(index), mode),
         srn = srn
       )))
-  }
-
-  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen requiredData) {
-    implicit request =>
-      Redirect(navigator.nextPage(CheckYourAnswersId, mode, request.userAnswers, srn))
   }
 }

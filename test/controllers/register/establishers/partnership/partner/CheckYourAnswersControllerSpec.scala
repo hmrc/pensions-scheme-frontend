@@ -31,7 +31,7 @@ import services.FakeUserAnswersService
 import utils.checkyouranswers.Ops._
 import utils.{FakeCountryOptions, FakeDataRequest, FakeNavigator, UserAnswers, _}
 import viewmodels.{AnswerRow, AnswerSection, Message}
-import views.html.check_your_answers
+import views.html.check_your_answers_old
 
 class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerAllowChangeBehaviour {
 
@@ -84,7 +84,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
 
   private def viewAsString(mode: Mode = NormalMode,
                            answerSection: Seq[AnswerSection] = Seq(partnerDetails(NormalMode), partnerContactDetails(NormalMode)),
-                           srn: Option[String] = None) = check_your_answers(
+                           srn: Option[String] = None) = check_your_answers_old(
     frontendAppConfig,
     answerSection,
     routes.CheckYourAnswersController.onSubmit(mode, firstIndex, firstIndex, srn),

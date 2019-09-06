@@ -20,17 +20,16 @@ import config.FrontendAppConfig
 import controllers.actions._
 import identifiers.{DeclarationDutiesId, _}
 import javax.inject.Inject
-import models.requests.DataRequest
 import models.{CheckMode, CheckUpdateMode, Mode, UpdateMode}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils._
-import utils.annotations.{NoSuspendedCheck, TaskList}
+import utils.annotations.NoSuspendedCheck
 import utils.checkyouranswers.Ops._
 import viewmodels.AnswerSection
-import views.html.check_your_answers
+import views.html.check_your_answers_old
 
 import scala.concurrent.ExecutionContext
 
@@ -59,7 +58,7 @@ class CheckYourAnswersBeforeYouStartController @Inject()(appConfig: FrontendAppC
         DeclarationDutiesId.row(routes.WorkingKnowledgeController.onPageLoad(CheckMode).url, mode)
       )
 
-      Ok(check_your_answers(
+      Ok(check_your_answers_old(
         appConfig,
         Seq(beforeYouStart),
         routes.CheckYourAnswersBeforeYouStartController.onSubmit(mode, srn),
@@ -67,7 +66,8 @@ class CheckYourAnswersBeforeYouStartController @Inject()(appConfig: FrontendAppC
         returnOverview = !userAnswers.get(IsBeforeYouStartCompleteId).getOrElse(false),
         mode,
         hideEditLinks = request.viewOnly, srn,
-        hideSaveAndContinueButton = mode == UpdateMode || mode == CheckUpdateMode))
+        hideSaveAndContinueButton = mode == UpdateMode || mode == CheckUpdateMode
+      ))
   }
 
   def onSubmit(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData() andThen requireData).async {
@@ -76,5 +76,4 @@ class CheckYourAnswersBeforeYouStartController @Inject()(appConfig: FrontendAppC
         Redirect(controllers.routes.SchemeTaskListController.onPageLoad(mode, srn))
       }
   }
-
 }

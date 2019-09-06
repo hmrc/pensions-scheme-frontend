@@ -19,30 +19,33 @@
 @import controllers.routes._
 @import models.Mode
 
-@(appConfig: FrontendAppConfig)(implicit request: Request[_], messages: Messages)
-
-@pageTitle=@{messages("messages__before_you_start__title")}
+@(
+        appConfig: FrontendAppConfig
+)(
+        implicit request: Request[_],
+        messages: Messages
+)
 
 @main_template(
-    title = pageTitle,
+    title = messages("messages__before_you_start__title"),
     appConfig = appConfig,
-    bodyClasses = None) {
+    bodyClasses = None
+) {
 
-    @helpers.form(action = BeforeYouStartController.onSubmit, 'autoComplete -> "off") {
+    @components.heading(headingKey = messages("messages__before_you_start__title"))
 
-        @components.heading(headingKey = messages("messages__before_you_start__title"))
+    <p>@messages("messages__before_you_start__lede")</p>
 
-        <p>@messages("messages__before_you_start__lede")</p>
-        <ul class="list list-bullet">
-            <li>@messages("messages__before_you_start__item_1")</li>
-            <li>@messages("messages__before_you_start__item_2")</li>
-            <li>@messages("messages__before_you_start__item_3")</li>
-            <li>@messages("messages__before_you_start__item_4")</li>
-        </ul>
-        <p>@messages("messages__before_you_start__scheme_setup")</p>
+    <ul class="list list-bullet">
+        <li>@messages("messages__before_you_start__item_1")</li>
+        <li>@messages("messages__before_you_start__item_2")</li>
+        <li>@messages("messages__before_you_start__item_3")</li>
+        <li>@messages("messages__before_you_start__item_4")</li>
+    </ul>
 
-        @components.submit_button("site.continue")
+    <p>@messages("messages__before_you_start__scheme_setup")</p>
 
-        @components.return_link("messages__complete__return", None, Some(appConfig.managePensionsSchemeOverviewUrl))
-    }
+    @components.button_link("site.continue", SchemeNameController.onPageLoad(NormalMode).url, "submit")
+
+    @components.return_link("messages__complete__return", None, Some(appConfig.managePensionsSchemeOverviewUrl))
 }

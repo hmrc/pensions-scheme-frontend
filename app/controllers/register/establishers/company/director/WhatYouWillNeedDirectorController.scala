@@ -19,6 +19,7 @@ package controllers.register.establishers.company.director
 import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions._
+import controllers.register.establishers.company.director.routes._
 import identifiers.register.establishers.company.CompanyDetailsId
 import javax.inject.Inject
 import models.{Index, Mode}
@@ -35,23 +36,21 @@ class WhatYouWillNeedDirectorController @Inject()(appConfig: FrontendAppConfig,
                                                   getData: DataRetrievalAction,
                                                   allowAccess: AllowAccessActionProvider,
                                                   requireData: DataRequiredAction
-                                                    ) extends FrontendController with I18nSupport with Retrievals{
+                                                 ) extends FrontendController with I18nSupport with Retrievals {
 
   def onPageLoad(mode: Mode, srn: Option[String] = None, establisherIndex: Index): Action[AnyContent] = (authenticate andThen
     getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
     implicit request =>
-      val postCall = routes.WhatYouWillNeedDirectorController.onSubmit(mode, srn, establisherIndex)
+      val directorIndex = request.userAnswers.allDirectorsHnS(establisherIndex).size
       CompanyDetailsId(establisherIndex).retrieve.right.map { companyDetails =>
-        Future.successful(Ok(whatYouWillNeed(appConfig, existingSchemeName, postCall, srn,companyDetails.companyName)))
+        Future.successful(Ok(whatYouWillNeed(
+          appConfig,
+          existingSchemeName,
+          srn,
+          companyDetails.companyName,
+          DirectorNameController.onPageLoad(mode, establisherIndex, directorIndex, srn)
+        )))
       }
 
-  }
-
-  def onSubmit(mode: Mode, srn: Option[String] = None, establisherIndex: Index): Action[AnyContent] = (authenticate andThen
-    getData(mode, srn) andThen requireData).async {
-    implicit request =>
-      val directorIndex = request.userAnswers.allDirectorsHnS(establisherIndex).size
-      Future.successful(
-        Redirect(routes.DirectorNameController.onPageLoad(mode, establisherIndex, directorIndex, srn)))
   }
 }

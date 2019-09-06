@@ -31,7 +31,7 @@ import utils.checkyouranswers.CheckYourAnswers.{PayeCYA, VatCYA}
 import utils.checkyouranswers.Ops._
 import utils.checkyouranswers.{AddressCYA, AddressYearsCYA, CompanyRegistrationNumberCYA, UniqueTaxReferenceCYA}
 import viewmodels.{AnswerRow, AnswerSection}
-import views.html.check_your_answers
+import views.html.checkYourAnswers
 
 class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerAllowChangeBehaviour {
 
@@ -89,12 +89,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
       }
     }
 
-    "on Submit" must {
-      "redirect to next page " in {
-        val result = controller().onSubmit(NormalMode, index, None)(fakeRequest)
-        status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(onwardRoute.url)
-      }
+    "when rendering page" must {
 
       behave like changeableController(
         controller(fullAnswers.dataRetrievalAction, _: AllowChangeHelper)
@@ -144,7 +139,7 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase with Controller
   private lazy val companyPayeVariationsRoute = routes.CompanyPayeVariationsController.onPageLoad(CheckMode, index, srn).url
   private lazy val companyEnterVATRoute = routes.CompanyEnterVATController.onPageLoad(CheckMode, index, srn).url
 
-  private def postUrl(mode: Mode, srn: Option[String] = None) = routes.CheckYourAnswersController.onSubmit(mode, index, srn)
+  private def postUrl = controllers.routes.IndexController.onPageLoad()
 
   private def emptyContactDetailsSection =
     AnswerSection(Some("messages__checkYourAnswers__section__contact_details"), Nil)
@@ -225,8 +220,8 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase with Controller
     Seq(companyDetailsSection, contactDetailsSection)
   }
 
-  private def viewAsString(answerSections: Seq[AnswerSection], mode: Mode = NormalMode, srn: Option[String] = None) = check_your_answers(
-    frontendAppConfig, answerSections, postUrl(mode, srn), None, srn = srn, hideEditLinks = false, hideSaveAndContinueButton = false
+  private def viewAsString(answerSections: Seq[AnswerSection], mode: Mode = NormalMode, srn: Option[String] = None) = checkYourAnswers(
+    frontendAppConfig, answerSections, postUrl, None, srn = srn, hideEditLinks = false, hideSaveAndContinueButton = false
   )(fakeRequest, messages).toString
 
   private def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData,

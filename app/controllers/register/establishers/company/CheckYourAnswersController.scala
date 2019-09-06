@@ -34,7 +34,7 @@ import utils._
 import utils.annotations.{EstablishersCompany, NoSuspendedCheck}
 import utils.checkyouranswers.Ops._
 import viewmodels.AnswerSection
-import views.html.check_your_answers
+import views.html.checkYourAnswers
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -80,24 +80,17 @@ class CheckYourAnswersController @Inject()(
             CompanyContactDetailsId(index).row(routes.CompanyContactDetailsController.onPageLoad(checkMode(mode), srn, index).url, mode)
         )
 
-        Future.successful(Ok(check_your_answers(
+        Future.successful(Ok(checkYourAnswers(
           appConfig,
           Seq(companyDetails, companyContactDetails),
-          routes.CheckYourAnswersController.onSubmit(mode, srn, index),
+          navigator.nextPage(CheckYourAnswersId(index), mode, request.userAnswers, srn),
           existingSchemeName,
           mode = mode,
           hideEditLinks = request.viewOnly || !userAnswers.get(IsEstablisherNewId(index)).getOrElse(true),
           hideSaveAndContinueButton = allowChangeHelper.hideSaveAndContinueButton(request, IsEstablisherNewId(index), mode),
           srn = srn
         )))
-
     }
-
-  def onSubmit(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] = (
-    authenticate andThen getData(mode, srn) andThen requireData) {
-    implicit request =>
-      Redirect(navigator.nextPage(CheckYourAnswersId(index), mode, request.userAnswers, srn))
-  }
 
   private def companyRegistrationNumberCya(mode: Mode, srn: Option[String], index: Index)(implicit request: DataRequest[AnyContent]) = {
     if (mode == UpdateMode && !request.userAnswers.get(IsEstablisherNewId(index)).getOrElse(false))

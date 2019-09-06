@@ -29,7 +29,7 @@ import play.api.test.Helpers._
 import services.FakeUserAnswersService
 import utils.{CountryOptions, FakeCountryOptions, FakeNavigator, UserAnswers, _}
 import viewmodels.{AnswerRow, AnswerSection}
-import views.html.check_your_answers
+import views.html.checkYourAnswers
 
 class CheckYourAnswersCompanyDetailsControllerSpec extends ControllerSpecBase with ControllerAllowChangeBehaviour {
 
@@ -83,12 +83,7 @@ class CheckYourAnswersCompanyDetailsControllerSpec extends ControllerSpecBase wi
       }
     }
 
-    "on Submit" must {
-      "redirect to next page " in {
-        val result = controller().onSubmit(NormalMode, index, None)(fakeRequest)
-        status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(onwardRoute.url)
-      }
+    "when rendering view" must {
 
       behave like changeableController(
         controller(fullAnswers.dataRetrievalAction, _: AllowChangeHelper)
@@ -167,9 +162,9 @@ object CheckYourAnswersCompanyDetailsControllerSpec extends ControllerSpecBase w
             _.set(HasCompanyPAYEId(0))(false)
           ))))).asOpt.value
 
-  def postUrl: Call = routes.CheckYourAnswersCompanyDetailsController.onSubmit(NormalMode, index, None)
+  def postUrl: Call = controllers.routes.SchemeTaskListController.onPageLoad(NormalMode, None)
 
-  def postUrlUpdateMode: Call = routes.CheckYourAnswersCompanyDetailsController.onSubmit(UpdateMode, index, srn)
+  def postUrlUpdateMode: Call = controllers.routes.SchemeTaskListController.onPageLoad(UpdateMode, srn)
 
 
   private def companyDetailsAddLinksValues(implicit request: DataRequest[AnyContent]): Seq[AnswerSection] =
@@ -302,7 +297,7 @@ object CheckYourAnswersCompanyDetailsControllerSpec extends ControllerSpecBase w
 
   def viewAsString(answerSections: Seq[AnswerSection], mode: Mode = NormalMode,
                    srn: Option[String] = None, postUrl: Call = postUrl): String =
-    check_your_answers(
+    checkYourAnswers(
       frontendAppConfig,
       answerSections,
       postUrl,

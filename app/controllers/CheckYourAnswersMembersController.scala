@@ -30,7 +30,7 @@ import utils.annotations.{NoSuspendedCheck, TaskList}
 import utils.checkyouranswers.Ops._
 import utils.{Enumerable, UserAnswers}
 import viewmodels.AnswerSection
-import views.html.check_your_answers
+import views.html.check_your_answers_old
 
 import scala.concurrent.ExecutionContext
 
@@ -52,7 +52,7 @@ class CheckYourAnswersMembersController @Inject()(appConfig: FrontendAppConfig,
         CurrentMembersId.row(routes.CurrentMembersController.onPageLoad(CheckMode).url, mode) ++
           FutureMembersId.row(routes.FutureMembersController.onPageLoad(CheckMode).url, mode)
       )
-      Ok(check_your_answers(
+      Ok(check_your_answers_old(
         appConfig,
         Seq(membersSection),
         routes.CheckYourAnswersMembersController.onSubmit(mode, srn),

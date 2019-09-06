@@ -28,7 +28,7 @@ import play.api.test.Helpers._
 import utils.checkyouranswers.CheckYourAnswers.StringCYA
 import utils.{AllowChangeHelper, CountryOptions, FakeCountryOptions, UserAnswers}
 import viewmodels.AnswerSection
-import views.html.check_your_answers
+import views.html.checkYourAnswers
 
 class CheckYourAnswersIndividualContactDetailsControllerSpec extends ControllerSpecBase with ControllerAllowChangeBehaviour {
   private val index = Index(0)
@@ -37,7 +37,7 @@ class CheckYourAnswersIndividualContactDetailsControllerSpec extends ControllerS
   private implicit val fakeCountryOptions: CountryOptions = new FakeCountryOptions
 
   private def submitUrl(mode: Mode = NormalMode, srn: Option[String] = None): Call =
-    routes.CheckYourAnswersIndividualContactDetailsController.onSubmit(mode, index, srn)
+    controllers.routes.SchemeTaskListController.onPageLoad(mode, srn)
 
   private val fullAnswers = UserAnswers().set(TrusteeEmailId(0))(value = "test@test.com").flatMap(_.set(TrusteePhoneId(0))(value = "12345"))
     .flatMap(_.set(TrusteeNameId(0))(PersonName("test", "name"))).asOpt.value
@@ -56,7 +56,7 @@ class CheckYourAnswersIndividualContactDetailsControllerSpec extends ControllerS
   }
 
   def viewAsString(answerSections: Seq[AnswerSection], srn: Option[String] = None, postUrl: Call = submitUrl(), hideButton: Boolean = false): String =
-    check_your_answers(frontendAppConfig, answerSections, postUrl, None, hideEditLinks = false,
+    checkYourAnswers(frontendAppConfig, answerSections, postUrl, None, hideEditLinks = false,
       srn = srn, hideSaveAndContinueButton = hideButton)(fakeRequest, messages).toString
 
   "CheckYourAnswersIndividualContactDetailsController" when {
@@ -87,19 +87,6 @@ class CheckYourAnswersIndividualContactDetailsControllerSpec extends ControllerS
           contentAsString(result) mustBe viewAsString(answerSection(UpdateMode, srn), srn, postUrl = submitUrl(UpdateMode, srn), hideButton = true)
           app.stop()
         }
-      }
-    }
-
-    "on a POST" must {
-      "redirect to task list page" in {
-        val app = applicationBuilder(fullAnswers.dataRetrievalAction, featureSwitchEnabled = true).build()
-
-        val controller = app.injector.instanceOf[CheckYourAnswersIndividualContactDetailsController]
-        val result = controller.onSubmit(NormalMode, index, None)(fakeRequest)
-
-        status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(controllers.routes.SchemeTaskListController.onPageLoad(NormalMode, None).url)
-        app.stop()
       }
     }
   }

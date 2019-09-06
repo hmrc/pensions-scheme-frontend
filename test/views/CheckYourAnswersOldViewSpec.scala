@@ -17,14 +17,15 @@
 package views
 
 import controllers.routes
+import models.{Mode, NormalMode, UpdateMode}
 import models.Mode.checkMode
-import models.{Link, Mode, NormalMode, UpdateMode}
+import models.{Link, Mode, NormalMode}
 import play.twirl.api.HtmlFormat
 import viewmodels.{AnswerRow, AnswerSection, Section}
 import views.behaviours.{CheckYourAnswersBehaviours, ViewBehaviours}
-import views.html.checkYourAnswers
+import views.html.check_your_answers_old
 
-class CheckYourAnswersViewSpec extends CheckYourAnswersBehaviours with ViewBehaviours {
+class CheckYourAnswersOldViewSpec extends CheckYourAnswersBehaviours with ViewBehaviours {
 
   private val messageKeyPrefix = "checkYourAnswers"
 
@@ -46,7 +47,7 @@ class CheckYourAnswersViewSpec extends CheckYourAnswersBehaviours with ViewBehav
                  srn: Option[String] = None,
                  hideSaveAndContinueButton: Boolean
                 ): () => HtmlFormat.Appendable = () =>
-    checkYourAnswers(
+    check_your_answers_old(
       frontendAppConfig,
       emptyAnswerSections,
       routes.IndexController.onPageLoad(),
@@ -59,7 +60,7 @@ class CheckYourAnswersViewSpec extends CheckYourAnswersBehaviours with ViewBehav
     )(fakeRequest, messages)
 
   def createViewWithData: (Seq[Section], Mode, Boolean) => HtmlFormat.Appendable = (sections, mode, viewOnly) =>
-    checkYourAnswers(
+    check_your_answers_old(
       frontendAppConfig,
       sections,
       routes.IndexController.onPageLoad(),
