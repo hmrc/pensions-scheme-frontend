@@ -743,7 +743,7 @@ class CheckYourAnswersSpec extends SpecBase with MustMatchers with PropertyCheck
             "messages__common__cya__name",
             Seq("site.not_entered"),
             true,
-            Some(Link("site.add", onwardUrl, Some("messages__visuallyhidden__common__name_add")))
+            Some(Link("site.add", onwardUrl, Some("messages__visuallyhidden__common__name")))
           )))
         }
       }

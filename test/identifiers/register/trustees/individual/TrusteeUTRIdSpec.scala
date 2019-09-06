@@ -83,7 +83,7 @@ class TrusteeUTRIdSpec extends SpecBase {
         "return row with add link if there is no data available" in {
           val answerRowWithAddLink = AnswerRow("messages__common__utr", List("site.not_entered"), answerIsMessageKey = true,
             Some(Link("site.add",onwardUrl,
-              Some("messages__visuallyhidden__trustee__utr_add")
+              Some("messages__visuallyhidden__trustee__utr")
             )))
           val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id",
             UserAnswers().trusteesCompanyDetails(index = 0, CompanyDetails(name)), PsaId("A0000000"))

@@ -85,7 +85,7 @@ class CompanyEnterVATIdSpec extends SpecBase {
 
         CompanyEnterVATId(0).row(onwardUrl, UpdateMode) must equal(Seq(
           AnswerRow("messages__common__cya__vat", Seq("site.not_entered"), answerIsMessageKey = true,
-            Some(Link("site.add", onwardUrl, Some("messages__visuallyhidden__companyVat_add"))))))
+            Some(Link("site.add", onwardUrl, Some("messages__visuallyhidden__companyVat"))))))
       }
     }
   }

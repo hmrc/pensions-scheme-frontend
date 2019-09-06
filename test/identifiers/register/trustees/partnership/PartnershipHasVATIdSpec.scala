@@ -88,7 +88,7 @@ object PartnershipHasVATIdSpec extends SpecBase {
 
   private val answerRowsWithChangeLinks = Seq(
     AnswerRow(messages("messages__vat__heading", name), List("site.yes"), true, Some(Link("site.change",onwardUrl,
-      Some(messages("messages__visuallyhidden__partnership__vat_yes_no")))))
+      Some(messages("messages__visuallyhidden__dynamic_hasVat", name)))))
   )
 
   private val ua =

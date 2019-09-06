@@ -58,10 +58,12 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
 
     "on Page load if toggle on in UpdateMode" must {
       "return OK and the correct view for vat if not new trustee" in {
-        val answers = UserAnswers().set(PartnershipEnterVATId(firstIndex))(ReferenceValue("098765432")).flatMap(
+        val answers = UserAnswers().trusteePartnershipDetails(firstIndex, PartnershipDetails("PartnershipName"))
+          .set(PartnershipEnterVATId(firstIndex))(ReferenceValue("098765432")).flatMap(
           _.set(PartnershipPayeVariationsId(firstIndex))(ReferenceValue("12345678"))).asOpt.value
         implicit val userAnswers = FakeDataRequest(answers)
         val expectedCompanyDetailsSection = partnershipDetailsSection(
+          PartnershipDetailsId(firstIndex).row(partnershipNameRoute(), UpdateMode)++
           PartnershipEnterVATId(firstIndex).row(partnershipEnterVATRoute, UpdateMode)++
           PartnershipPayeVariationsId(firstIndex).row(partnershipPayeVariationsRoute, UpdateMode)
         )
@@ -72,11 +74,13 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
       }
 
       "return OK and the correct view for vat if new trustee" in {
-        val answers = UserAnswers().set(PartnershipVatId(firstIndex))(Vat.Yes("098765432")).flatMap(
+        val answers = UserAnswers().trusteePartnershipDetails(firstIndex, PartnershipDetails("PartnershipName"))
+          .set(PartnershipVatId(firstIndex))(Vat.Yes("098765432")).flatMap(
           _.set(PartnershipPayeId(firstIndex))(Paye.Yes("12345678"))).flatMap(
           _.set(IsTrusteeNewId(firstIndex))(true)).asOpt.value
         implicit val userAnswers = FakeDataRequest(answers)
         val expectedPartnershipDetailsSection = partnershipDetailsSection(
+          PartnershipDetailsId(firstIndex).row(partnershipNameRoute(CheckUpdateMode, srn), UpdateMode)++
           PartnershipVatId(firstIndex).row(partnershipVatRoute(CheckUpdateMode, srn), UpdateMode)++
           PartnershipPayeId(firstIndex).row(partnershipPayeRoute(CheckUpdateMode, srn), UpdateMode)
         )
@@ -95,6 +99,7 @@ object CheckYourAnswersControllerSpec extends CheckYourAnswersControllerSpec {
   implicit val countryOptions: CountryOptions = new FakeCountryOptions()
   private val onwardRoute = controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode, None)
   private def partnershipVatRoute(mode: Mode = CheckMode, srn: Option[String] = None) = routes.PartnershipVatController.onPageLoad(mode, firstIndex, srn).url
+  private def partnershipNameRoute(mode: Mode = UpdateMode, srn: Option[String] = None) = routes.TrusteeDetailsController.onPageLoad(mode, firstIndex, srn).url
   private lazy val partnershipEnterVATRoute = routes.PartnershipEnterVATController.onPageLoad(CheckMode, firstIndex, None).url
   private def partnershipPayeRoute(mode: Mode = CheckMode, srn: Option[String] = None) = routes.PartnershipPayeController.onPageLoad(mode, firstIndex, srn).url
   private lazy val partnershipPayeVariationsRoute = routes.PartnershipPayeVariationsController.onPageLoad(CheckMode, firstIndex, None).url

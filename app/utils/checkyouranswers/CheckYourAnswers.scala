@@ -651,7 +651,7 @@ case class ReferenceValueCYA[I <: TypedIdentifier[ReferenceValue]](
             row(id)(changeUrl, userAnswers)
           case _ =>
             Seq(AnswerRow(nameLabel, Seq("site.not_entered"), answerIsMessageKey = true,
-              Some(Link("site.add", changeUrl, Some(s"${hiddenNameLabel}_add")))))
+              Some(Link("site.add", changeUrl, Some(hiddenNameLabel)))))
         }
     }
   }

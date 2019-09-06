@@ -84,7 +84,7 @@ class PartnerNewNinoIdSpec extends SpecBase {
 
         PartnerNewNinoId(0, 0).row(onwardUrl, UpdateMode) must equal(Seq(
           AnswerRow("messages__common__nino", Seq("site.not_entered"), answerIsMessageKey = true,
-            Some(Link("site.add", onwardUrl, Some("messages__visuallyhidden__partner__nino_add"))))))
+            Some(Link("site.add", onwardUrl, Some("messages__visuallyhidden__partner__nino"))))))
       }
     }
   }

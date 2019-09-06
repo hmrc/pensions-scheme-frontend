@@ -47,7 +47,7 @@ class PartnershipEmailIdSpec extends SpecBase {
               Message("messages__common_email__heading", partnershipDetails.name),
               Seq(email),
               answerIsMessageKey = false,
-              Some(Link("site.change", onwardUrl, Some(Message("messages__common_email__visually_hidden_change_label", partnershipDetails.name))))
+              Some(Link("site.change", onwardUrl, Some(Message("messages__visuallyhidden__dynamic_email", partnershipDetails.name))))
             )))
         }
       }

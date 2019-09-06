@@ -43,20 +43,17 @@ object PartnershipHasVATId {
 
   implicit def cya(implicit userAnswers: UserAnswers, messages: Messages): CheckYourAnswers[PartnershipHasVATId] = {
 
-    def label(index: Int) = userAnswers.get(PartnershipDetailsId(index)) match {
-      case Some(details) => Some(messages("messages__vat__heading", details.name))
-      case _ => Some(messages("messages__vat__heading"))
-    }
-
-    def hiddenLabel = Some(messages("messages__visuallyhidden__partnership__vat_yes_no"))
+    def trusteeName(index: Int) = userAnswers.get(PartnershipDetailsId(index)).fold(messages("messages__theTrustee"))(_.name)
+    def label(index: Int) = Some(messages("messages__vat__heading", trusteeName(index)))
+    def hiddenLabel(index: Int) = Some(messages("messages__visuallyhidden__dynamic_hasVat", trusteeName(index)))
 
     new CheckYourAnswers[PartnershipHasVATId] {
       override def row(id: PartnershipHasVATId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        BooleanCYA(label(id.index), hiddenLabel)().row(id)(changeUrl, userAnswers)
+        BooleanCYA(label(id.index), hiddenLabel(id.index))().row(id)(changeUrl, userAnswers)
 
       override def updateRow(id: PartnershipHasVATId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
         userAnswers.get(IsTrusteeNewId(id.index)) match {
-          case Some(true) => BooleanCYA(label(id.index), hiddenLabel)().row(id)(changeUrl, userAnswers)
+          case Some(true) => BooleanCYA(label(id.index), hiddenLabel(id.index))().row(id)(changeUrl, userAnswers)
           case _ => Seq.empty[AnswerRow]
         }
     }

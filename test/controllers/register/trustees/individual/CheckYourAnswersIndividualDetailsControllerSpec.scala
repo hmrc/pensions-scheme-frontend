@@ -141,9 +141,9 @@ object CheckYourAnswersIndividualDetailsControllerSpec extends ControllerSpecBas
       Seq(
         stringLink(messages("messages__trustee__cya__dob", name), DateHelper.formatDate(trusteeDob)),
         addLink(messages("messages__common__nino"), nino(UpdateMode, srn),
-          messages("messages__visuallyhidden__trustee__nino_add")),
+          messages("messages__visuallyhidden__trustee__nino")),
         addLink(messages("messages__common__utr"), utr(UpdateMode, srn),
-          messages("messages__visuallyhidden__trustee__utr_add")))
+          messages("messages__visuallyhidden__trustee__utr")))
     ))
 
   private def allChangeLinksVariations(implicit request: DataRequest[AnyContent]): Seq[AnswerSection] =
