@@ -40,19 +40,25 @@ object CompanyUTRId {
                    messages: Messages,
                    countryOptions: CountryOptions): CheckYourAnswers[CompanyUTRId] = {
 
+    def companyName(index: Int) =
+      userAnswers.get(CompanyDetailsId(index)) match {
+        case Some(companyDetails) => companyDetails.companyName
+        case _                    => messages("messages__theCompany")
+      }
+
     val label: String = "messages__utr__checkyouranswerslabel"
-    val hiddenLabel = "messages__visuallyhidden__companyUTR"
+    def hiddenLabel(index: Int) = messages("messages__visuallyhidden__dynamic_utr", companyName(index))
 
     new CheckYourAnswers[CompanyUTRId] {
       override def row(id: CompanyUTRId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        ReferenceValueCYA[CompanyUTRId](label, hiddenLabel)().row(id)(changeUrl, userAnswers)
+        ReferenceValueCYA[CompanyUTRId](label, hiddenLabel(id.index))().row(id)(changeUrl, userAnswers)
 
       override def updateRow(id: CompanyUTRId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
         userAnswers.get(trustees.IsTrusteeNewId(id.index)) match {
           case Some(true) =>
             row(id)(changeUrl, userAnswers)
           case _ =>
-            ReferenceValueCYA[CompanyUTRId](label, hiddenLabel)().updateRow(id)(changeUrl, userAnswers)
+            ReferenceValueCYA[CompanyUTRId](label, hiddenLabel(id.index))().updateRow(id)(changeUrl, userAnswers)
         }
       }
     }

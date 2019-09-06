@@ -35,17 +35,24 @@ object CompanyPayeVariationsId {
   implicit def cya(implicit messages: Messages, countryOptions: CountryOptions): CheckYourAnswers[CompanyPayeVariationsId] = {
     new CheckYourAnswers[CompanyPayeVariationsId] {
 
+      private def companyName(index: Int, userAnswers: UserAnswers) =
+        userAnswers.get(CompanyDetailsId(index)) match {
+          case Some(companyDetails) => companyDetails.companyName
+          case _                    => messages("messages__theCompany")
+        }
+
       private val labelPaye = "messages__common__cya__paye"
-      private val hiddenLabelPaye = "messages__visuallyhidden__companyPaye"
+
+      def hiddenLabelPaye(index: Int, userAnswers: UserAnswers) = messages("messages__visuallyhidden__dynamic_paye", companyName(index, userAnswers))
 
       override def row(id: CompanyPayeVariationsId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        ReferenceValueCYA[CompanyPayeVariationsId](labelPaye, hiddenLabelPaye)().row(id)(changeUrl, userAnswers)
+        ReferenceValueCYA[CompanyPayeVariationsId](labelPaye, hiddenLabelPaye(id.index, userAnswers))().row(id)(changeUrl, userAnswers)
 
       override def updateRow(id: CompanyPayeVariationsId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
         userAnswers.get(IsTrusteeNewId(id.index)) match {
-          case Some(true) => ReferenceValueCYA[CompanyPayeVariationsId](labelPaye, hiddenLabelPaye)().row(id)(changeUrl, userAnswers)
+          case Some(true) => ReferenceValueCYA[CompanyPayeVariationsId](labelPaye, hiddenLabelPaye(id.index, userAnswers))().row(id)(changeUrl, userAnswers)
           case _ =>
-            ReferenceValueCYA[CompanyPayeVariationsId](labelPaye, hiddenLabelPaye)().updateRow(id)(changeUrl, userAnswers)
+            ReferenceValueCYA[CompanyPayeVariationsId](labelPaye, hiddenLabelPaye(id.index, userAnswers))().updateRow(id)(changeUrl, userAnswers)
         }
     }
   }
