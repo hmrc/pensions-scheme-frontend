@@ -50,13 +50,13 @@ class CheckYourAnswersCompanyContactDetailsControllerSpec extends ControllerSpec
     Seq(AnswerSection(None,
       StringCYA[CompanyEmailId](
         Some(messages("messages__common_email__heading", cn)),
-        Some(messages("messages__common_email__visually_hidden_change_label", cn))
+        Some(messages("messages__visuallyhidden__dynamic_email", cn))
       )().row(CompanyEmailId(index))(
         routes.CompanyEmailController.onPageLoad(checkMode(mode), Index(index), srn).url, userAnswers) ++
 
         StringCYA[CompanyPhoneId](
          Some(messages("messages__common_phone__heading", cn)),
-          Some(messages("messages__common_phone__visually_hidden_change_label", cn))
+          Some(messages("messages__visuallyhidden__dynamic_phone", cn))
         )().row(CompanyPhoneId(index))(
           routes.CompanyPhoneController.onPageLoad(checkMode(mode), Index(index), srn).url, userAnswers)
     ))

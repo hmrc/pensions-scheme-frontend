@@ -73,7 +73,10 @@ class CompanyEnterVATIdSpec extends SpecBase {
       }
 
       "return answers rows with change links if vat is available and editable" in {
-        val answers = UserAnswers().set(CompanyEnterVATId(0))(ReferenceValue("vat", true)).asOpt.get
+
+        val answers: UserAnswers = UserAnswers().set(CompanyDetailsId(0))(CompanyDetails(companyName)).flatMap(
+          _.set(CompanyEnterVATId(0))(ReferenceValue("vat", true))).asOpt.get
+
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
         implicit val userAnswers: UserAnswers = request.userAnswers
 
@@ -81,12 +84,13 @@ class CompanyEnterVATIdSpec extends SpecBase {
       }
 
       "display an add link if vat is not available" in {
-        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(), PsaId("A0000000"))
+        def answers: UserAnswers = UserAnswers().set(CompanyDetailsId(0))(CompanyDetails(companyName)).asOpt.get
+        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
         implicit val userAnswers: UserAnswers = request.userAnswers
 
         CompanyEnterVATId(0).row(onwardUrl, UpdateMode) must equal(Seq(
           AnswerRow("messages__common__cya__vat", Seq("site.not_entered"), answerIsMessageKey = true,
-            Some(Link("site.add", onwardUrl, Some("messages__visuallyhidden__companyVat"))))))
+            Some(Link("site.add", onwardUrl, Some(messages("messages__visuallyhidden__dynamic_vat", companyName)))))))
       }
     }
   }
