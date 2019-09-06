@@ -66,7 +66,7 @@ class CompanyPreviousAddressIdSpec extends SpecBase {
             Message("messages__trusteePreviousAddress", "test company"),
             addressAnswer(address),
             false,
-            Some(Link("site.change", onwardUrl, Some(Message("messages__changeTrusteePreviousAddress", "test company"))))
+            Some(Link("site.change", onwardUrl, Some(Message("messages__visuallyhidden__dynamic_previousAddress", "test company"))))
           )))
       }
     }
@@ -82,7 +82,7 @@ class CompanyPreviousAddressIdSpec extends SpecBase {
             Message("messages__trusteePreviousAddress", "the trustee"),
             Seq("site.not_entered"),
             answerIsMessageKey = true,
-            Some(Link("site.add", onwardUrl, Some(Message("messages__changeTrusteePreviousAddress", "the trustee"))))))
+            Some(Link("site.add", onwardUrl, Some(Message("messages__visuallyhidden__dynamic_previousAddress", "the trustee"))))))
         )
       }
 
@@ -96,7 +96,7 @@ class CompanyPreviousAddressIdSpec extends SpecBase {
             Message("messages__trusteePreviousAddress", "the trustee"),
             addressAnswer(address),
             false,
-            Some(Link("site.change", onwardUrl, Some(Message("messages__changeTrusteePreviousAddress", "the trustee"))))
+            Some(Link("site.change", onwardUrl, Some(Message("messages__visuallyhidden__dynamic_previousAddress", "the trustee"))))
           )))
       }
 
@@ -110,7 +110,7 @@ class CompanyPreviousAddressIdSpec extends SpecBase {
             Message("messages__trusteePreviousAddress", "the trustee"),
             addressAnswer(address),
             false,
-            Some(Link("site.change", onwardUrl, Some(Message("messages__changeTrusteePreviousAddress", "the trustee"))))
+            Some(Link("site.change", onwardUrl, Some(Message("messages__visuallyhidden__dynamic_previousAddress", "the trustee"))))
           )))
       }
     }

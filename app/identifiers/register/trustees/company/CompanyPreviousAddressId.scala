@@ -35,7 +35,7 @@ object CompanyPreviousAddressId {
   implicit def cya(implicit countryOptions: CountryOptions, messages: Messages, ua: UserAnswers): CheckYourAnswers[CompanyPreviousAddressId] = {
     def trusteeName(index: Int) = ua.get(CompanyDetailsId(index)).fold(messages("messages__theTrustee"))(_.companyName)
     def label(index: Int) = messages("messages__trusteePreviousAddress", trusteeName(index))
-    def changeAddress(index: Int) = messages("messages__changeTrusteePreviousAddress", trusteeName(index))
+    def changeAddress(index: Int) = messages("messages__visuallyhidden__dynamic_previousAddress", trusteeName(index))
 
     new CheckYourAnswers[CompanyPreviousAddressId] {
       override def row(id: CompanyPreviousAddressId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =

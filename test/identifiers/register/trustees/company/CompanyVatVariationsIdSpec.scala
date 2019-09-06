@@ -29,16 +29,17 @@ import viewmodels.AnswerRow
 
 class CompanyEnterVATIdSpec extends SpecBase {
 
+  private val companyName = "name"
   implicit val countryOptions: CountryOptions = new CountryOptions(environment, frontendAppConfig)
   private val onwardUrl = "onwardUrl"
   private val answerRowsWithChangeLinks = Seq(
     AnswerRow("messages__common__cya__vat",List("vat"),false,Some(Link("site.change",onwardUrl,
-      Some("messages__visuallyhidden__companyVat"))))
+      Some(messages("messages__visuallyhidden__dynamic_vat", companyName)))))
   )
 
   "cya" when {
-
-    def answers: UserAnswers = UserAnswers().set(CompanyEnterVATId(0))(ReferenceValue("vat")).asOpt.get
+    def answers: UserAnswers = UserAnswers().set(CompanyDetailsId(0))(CompanyDetails(companyName)).flatMap(
+      _.set(CompanyEnterVATId(0))(ReferenceValue("vat"))).asOpt.get
 
     "in normal mode" must {
 

@@ -36,7 +36,7 @@ class CompanyUTRIdSpec extends SpecBase {
 
   private val answerRowsWithChangeLinks = Seq(
     AnswerRow("messages__utr__checkyouranswerslabel", List(utr), false, Some(Link("site.change",onwardUrl,
-      Some("messages__visuallyhidden__companyUTR"))))
+      Some(messages("messages__visuallyhidden__dynamic_utr", name)))))
   )
 
   private val answerRowsWithoutChangeLink = Seq(
@@ -82,7 +82,7 @@ class CompanyUTRIdSpec extends SpecBase {
         "return row with add link if there is no data available" in {
           val answerRowWithAddLink = AnswerRow("messages__utr__checkyouranswerslabel", List("site.not_entered"), answerIsMessageKey = true,
             Some(Link("site.add",onwardUrl,
-              Some("messages__visuallyhidden__companyUTR_add")
+              Some("messages__visuallyhidden__dynamic_utr_add")
             )))
           val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id",
             UserAnswers().trusteesCompanyDetails(index = 0, CompanyDetails(name)), PsaId("A0000000"))

@@ -53,7 +53,7 @@ object CompanyAddressYearsId {
 
         def label(index: Int) = messages("messages__hasBeen1Year", trusteeName(index))
 
-        def changeAddressYears(index: Int) = messages("messages__changeHasBeen1Year", trusteeName(index))
+        def changeAddressYears(index: Int) = messages("messages__visuallyhidden__dynamic_addressYears", trusteeName(index))
 
         AddressYearsCYA(
           label = label(id.index),

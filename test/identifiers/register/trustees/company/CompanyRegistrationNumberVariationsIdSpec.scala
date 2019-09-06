@@ -30,11 +30,12 @@ import viewmodels.AnswerRow
 
 class CompanyRegistrationNumberVariationsIdSpec extends SpecBase {
 
+  private val name = "name"
   implicit val countryOptions: CountryOptions = new CountryOptions(environment, frontendAppConfig)
   private val onwardUrl = "onwardUrl"
   private val answerRowsWithChangeLinks = Seq(
     AnswerRow("messages__checkYourAnswers__trustees__company__number",List("companyRegistrationNumber"),false,Some(Link("site.change",onwardUrl,
-      Some("messages__visuallyhidden__companyNumber"))))
+      Some(messages("messages__visuallyhidden__dynamic_crn", name)))))
   )
 
   "Cleanup" when {
@@ -49,7 +50,8 @@ class CompanyRegistrationNumberVariationsIdSpec extends SpecBase {
 
   "cya" when {
 
-    def answers: UserAnswers = UserAnswers().set(CompanyRegistrationNumberVariationsId(0))(ReferenceValue("companyRegistrationNumber")).asOpt.get
+    def answers: UserAnswers = UserAnswers().set(CompanyDetailsId(0))(CompanyDetails(name)).flatMap(
+      _.set(CompanyRegistrationNumberVariationsId(0))(ReferenceValue("companyRegistrationNumber"))).asOpt.get
 
     "in normal mode" must {
 
@@ -96,7 +98,7 @@ class CompanyRegistrationNumberVariationsIdSpec extends SpecBase {
 
         CompanyRegistrationNumberVariationsId(0).row(onwardUrl, UpdateMode) must equal(Seq(
           AnswerRow("messages__checkYourAnswers__trustees__company__number", Seq("site.not_entered"), answerIsMessageKey = true,
-            Some(Link("site.add", onwardUrl, Some("messages__visuallyhidden__companyNumber_add"))))))
+            Some(Link("site.add", onwardUrl, Some("messages__visuallyhidden__dynamic_crn_add"))))))
       }
     }
   }
