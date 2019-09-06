@@ -62,9 +62,7 @@ messages__common__entityKind_individual = Individual
 messages__common__entityKind_partnership = Partnership
 
 messages__common__postcode_lookup__enter_postcode = You can {0} enter the address manually {1}.
-messages__common__postcode_lookup__manual_link = You can {0} enter the address manually {1}.
 
-messages__common__postcode_lookup__enter_postcode = Enter the postcode, or if you have an overseas address, {0} enter the address manually {1}
 messages__common__postcode_lookup__address_postcode = Postcode
 messages__common_individual_postCode_lookup__lede = This is usually the residential address for this person.
 messages__hasUtr__p1 = This is a 10-digit or 13-digit number. You can find it on tax returns and other documents from HMRC. It might be called ‘reference’, ‘UTR’ or ‘official use’.
@@ -742,8 +740,6 @@ messages__trusteeName__heading = What is the trustee’s name?
 
 messages__individualPostCodeLookup__title = What is the trustee’s postcode?
 messages__individualPostCodeLookup__heading = What is {0}’s postcode?
-messages__individualPostCodeLookup__enter_postcode = Enter the postcode, or if you have an overseas address, {0} enter the address manually {1}
-messages__trustee_individualPostCodeLookup__enter_postcode = Enter the postcode, or if you have an overseas address, {0} enter the address manually {1}
 
 messages__trustee_individual_previous_address__title = What was the trustee’s previous postcode?
 messages__trustee_individual_previous_address__heading = What was {0}’s previous postcode?

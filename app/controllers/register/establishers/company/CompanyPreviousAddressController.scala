@@ -60,40 +60,29 @@ class CompanyPreviousAddressController @Inject()(
   def onPageLoad(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
-        viewmodel(index, srn, mode).retrieve.right.map {
-          vm =>
-            get(CompanyPreviousAddressId(index), CompanyPreviousAddressListId(index), vm)
+        CompanyDetailsId(index).retrieve.right.map {
+          details =>
+            get(CompanyPreviousAddressId(index), CompanyPreviousAddressListId(index), viewmodel(index, srn, mode, details.companyName))
         }
     }
 
   def onSubmit(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
-      viewmodel(index, srn, mode).retrieve.right.map {
-        vm =>
-          post(CompanyPreviousAddressId(index), CompanyPreviousAddressListId(index), vm, mode, context(vm), CompanyPreviousAddressPostcodeLookupId(index))
+      CompanyDetailsId(index).retrieve.right.map {
+        details =>
+          val context = s"Establisher Company Previous Address: ${details.companyName}"
+          post(CompanyPreviousAddressId(index), CompanyPreviousAddressListId(index),
+            viewmodel(index, srn, mode, details.companyName), mode, context, CompanyPreviousAddressPostcodeLookupId(index))
       }
   }
 
-  private def viewmodel(index: Int, srn: Option[String], mode: Mode): Retrieval[ManualAddressViewModel] =
-    Retrieval {
-      implicit request =>
-        CompanyDetailsId(index).retrieve.right.map {
-          details =>
-            ManualAddressViewModel(
-              postCall(mode, srn, Index(index)),
-              countryOptions.options,
-              title = Message(title),
-              heading = Message(heading, details.companyName),
-              srn = srn
-            )
-        }
-    }
-
-  private def context(viewModel: ManualAddressViewModel): String = {
-    viewModel.secondaryHeader match {
-      case Some(name) => s"Establisher Company Previous Address: $name"
-      case _ => "Establisher Company Previous Address"
-    }
-  }
+  private def viewmodel(index: Int, srn: Option[String], mode: Mode, name: String): ManualAddressViewModel =
+    ManualAddressViewModel(
+      postCall(mode, srn, Index(index)),
+      countryOptions.options,
+      title = Message(title),
+      heading = Message(heading, name),
+      srn = srn
+    )
 
 }

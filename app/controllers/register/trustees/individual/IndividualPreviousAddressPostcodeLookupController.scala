@@ -60,7 +60,6 @@ class IndividualPreviousAddressPostcodeLookupController @Inject()(val appConfig:
               title = Message("messages__trustee_individual_previous_address__title"),
               heading = Message("messages__trustee_individual_previous_address__heading", name),
               subHeading = Some(name),
-              enterPostcode = Message("messages__trustee_individualPostCodeLookup__enter_postcode"),
               srn = srn
             )
         }

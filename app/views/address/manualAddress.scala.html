@@ -35,10 +35,6 @@
             headingKey=messages(viewmodel.heading)
         )
 
-        @viewmodel.hint.map{ hint =>
-            <p>@messages(hint)</p>
-        }
-
         @components.address(form, viewmodel.countryOptions)
 
         @components.submit_button()
