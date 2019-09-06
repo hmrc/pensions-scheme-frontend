@@ -40,7 +40,7 @@
         @if(!viewOnly){
             @row.changeUrl.map{ changeUrl =>
                 <a id="cya-@idPath-change" href='@changeUrl.target'>
-                    <span aria-hidden="true">@messages(changeUrl.text)</span>
+                    <span>@messages(changeUrl.text)</span>
                     @changeUrl.visuallyHiddenText.map { visuallyHiddenText =>
                         <span class="visually-hidden">@messages(visuallyHiddenText, messages(row.label))</span>
                     }.getOrElse {
