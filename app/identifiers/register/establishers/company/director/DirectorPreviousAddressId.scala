@@ -34,7 +34,6 @@ object DirectorPreviousAddressId {
   implicit def cya(implicit countryOptions: CountryOptions): CheckYourAnswers[DirectorPreviousAddressId] = {
     val label: String = "messages__common__cya__previous_address"
     val changeAddress: String = "messages__visuallyhidden__director__previous_address"
-    val previousAddressAddLabel: String = "messages__visuallyhidden__director__previous_address_add"
 
     new CheckYourAnswers[DirectorPreviousAddressId] {
       override def row(id: DirectorPreviousAddressId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
@@ -44,8 +43,8 @@ object DirectorPreviousAddressId {
         PreviousAddressCYA(label,
           changeAddress,
           userAnswers.get(IsNewDirectorId(id.establisherIndex, id.directorIndex)),
-          userAnswers.get(DirectorAddressYearsId(id.establisherIndex, id.directorIndex)),
-          Some(previousAddressAddLabel))().updateRow(id)(changeUrl, userAnswers)
+          userAnswers.get(DirectorAddressYearsId(id.establisherIndex, id.directorIndex))
+        )().updateRow(id)(changeUrl, userAnswers)
     }
   }
 }

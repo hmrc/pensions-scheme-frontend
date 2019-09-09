@@ -298,7 +298,7 @@ object CheckYourAnswers {
           userAnswers.get(id).map {
             case Vat.Yes(vat) => Seq(AnswerRow("messages__common__cya__vat", Seq(vat), answerIsMessageKey = false, None))
             case Vat.No => Seq(AnswerRow("messages__common__cya__vat", Seq("site.not_entered"), answerIsMessageKey = true,
-              Some(Link("site.add", changeUrl, Some(s"${hiddenLabelVat}_add")))))
+              Some(Link("site.add", changeUrl, Some(hiddenLabelVat)))))
           } getOrElse Seq.empty[AnswerRow]
       }
     }
@@ -326,7 +326,7 @@ object CheckYourAnswers {
           userAnswers.get(id).map {
             case Paye.Yes(paye) => Seq(AnswerRow("messages__common__cya__paye", Seq(paye), answerIsMessageKey = false, None))
             case Paye.No => Seq(AnswerRow("messages__common__cya__paye", Seq("site.not_entered"), answerIsMessageKey = true,
-              Some(Link("site.add", changeUrl, Some(s"${hiddenLabelPaye}_add")))))
+              Some(Link("site.add", changeUrl, Some(hiddenLabelPaye)))))
           } getOrElse Seq.empty[AnswerRow]
       }
     }
@@ -375,7 +375,7 @@ case class NinoCYA[I <: TypedIdentifier[Nino]](
       override def updateRow(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = userAnswers.get(id) match {
         case Some(Nino.Yes(nino)) => Seq(AnswerRow("messages__common__nino", Seq(nino), answerIsMessageKey = false, None))
         case Some(Nino.No(_)) => Seq(AnswerRow("messages__common__nino", Seq("site.not_entered"), answerIsMessageKey = true,
-          Some(Link("site.add", changeUrl, Some(s"${changeNino}_add")))))
+          Some(Link("site.add", changeUrl, Some(changeNino)))))
         case _ => Seq.empty[AnswerRow]
       }
     }
@@ -417,7 +417,7 @@ case class CompanyRegistrationNumberCYA[I <: TypedIdentifier[CompanyRegistration
           )
           case Some(CompanyRegistrationNumber.No(_)) => Seq(
             AnswerRow("messages__common__crn", Seq("site.not_entered"), answerIsMessageKey = true,
-              Some(Link("site.add", changeUrl, Some(s"${changeCrn}_add"))))
+              Some(Link("site.add", changeUrl, Some(changeCrn))))
           )
           case _ => Seq.empty[AnswerRow]
         }
@@ -502,8 +502,7 @@ case class AddressCYA[I <: TypedIdentifier[Address]](
 case class PreviousAddressCYA[I <: TypedIdentifier[Address]](label: String,
                                                              changeAddress: String,
                                                              isNew: Option[Boolean],
-                                                             addressYear: Option[AddressYears],
-                                                             previousAddressAddLabel: Option[String]
+                                                             addressYear: Option[AddressYears]
                                                             ) {
 
   def apply()(implicit rds: Reads[Address], countryOptions: CountryOptions): CheckYourAnswers[I] = {
@@ -523,7 +522,7 @@ case class PreviousAddressCYA[I <: TypedIdentifier[Address]](label: String,
                   case Some(UnderAYear) => Seq(AnswerRow(label,
                     Seq("site.not_entered"),
                     answerIsMessageKey = true,
-                    Some(Link("site.add", changeUrl, previousAddressAddLabel))))
+                    Some(Link("site.add", changeUrl, Some(changeAddress)))))
                   case _ => Seq.empty[AnswerRow]
                 }
             }

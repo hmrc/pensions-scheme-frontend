@@ -82,7 +82,7 @@ class AdviserCheckYourAnswersControllerSpec extends ControllerSpecBase with Scal
               "Country of GB"),
             answerIsMessageKey = false,
             Some(Link("site.change", routes.AdviserAddressController.onPageLoad(CheckMode).url,
-              Some("Change the adviser’s address"))))
+              Some("the adviser’s address"))))
         )
       )
 
