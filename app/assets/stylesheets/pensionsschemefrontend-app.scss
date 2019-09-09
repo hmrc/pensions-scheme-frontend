@@ -82,7 +82,8 @@ $task-list-indent: 35px;
 
 .task-name {
   width: 66.66667%;
-  float: left;
+  overflow-wrap: break-word;
+  display: inline-block;
 }
 
 .task-completed {
