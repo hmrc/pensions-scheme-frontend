@@ -22,7 +22,7 @@ import controllers.Retrievals
 import controllers.actions._
 import controllers.address.ManualAddressController
 import forms.address.AddressFormProvider
-import identifiers.register.establishers.company.director.{DirectorDetailsId, DirectorNameId, DirectorPreviousAddressId, DirectorPreviousAddressListId, DirectorPreviousAddressPostcodeLookupId}
+import identifiers.register.establishers.company.director._
 import javax.inject.Inject
 import models.address.Address
 import models.{Index, Mode}
@@ -61,29 +61,23 @@ class DirectorPreviousAddressController @Inject()(
   def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
-        viewmodel(mode: Mode, establisherIndex: Index, directorIndex: Index, srn).retrieve.right.map {
-          vm =>
-            get(DirectorPreviousAddressId(establisherIndex, directorIndex), DirectorPreviousAddressListId(establisherIndex, directorIndex), vm)
-        }
-    }
-
-  private def viewmodel(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Retrieval[ManualAddressViewModel] =
-    Retrieval {
-      implicit request =>
         directorName(establisherIndex, directorIndex).retrieve.right.map {
           name =>
-            ManualAddressViewModel(
-              postCall(mode, establisherIndex, directorIndex, srn),
-              countryOptions.options,
-              title = Message(title),
-              heading = Message(heading, name),
-              secondaryHeader = None,
-              srn = srn
-            )
+            get(DirectorPreviousAddressId(establisherIndex, directorIndex), DirectorPreviousAddressListId(establisherIndex, directorIndex),
+              viewmodel(mode, establisherIndex, directorIndex, srn, name))
         }
     }
 
-  val directorName = (establisherIndex: Index, directorIndex: Index) => Retrieval {
+  private def viewmodel(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String], name: String): ManualAddressViewModel =
+    ManualAddressViewModel(
+      postCall(mode, establisherIndex, directorIndex, srn),
+      countryOptions.options,
+      title = Message(title),
+      heading = Message(heading, name),
+      srn = srn
+    )
+
+  private val directorName = (establisherIndex: Index, directorIndex: Index) => Retrieval {
     implicit request =>
       if (featureSwitchManagementService.get(Toggles.isEstablisherCompanyHnSEnabled))
         DirectorNameId(establisherIndex, directorIndex).retrieve.right.map(_.fullName)
@@ -91,26 +85,21 @@ class DirectorPreviousAddressController @Inject()(
         DirectorDetailsId(establisherIndex, directorIndex).retrieve.right.map(_.fullName)
   }
 
-  def onSubmit(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
-    implicit request =>
-      viewmodel(mode: Mode, establisherIndex: Index, directorIndex: Index, srn).retrieve.right.map {
-        vm =>
-          post(
-            DirectorPreviousAddressId(establisherIndex, directorIndex),
-            DirectorPreviousAddressListId(establisherIndex, directorIndex),
-            vm,
-            mode,
-            context(vm),
-            DirectorPreviousAddressPostcodeLookupId(establisherIndex, directorIndex)
-          )
-      }
-  }
-
-  private def context(viewModel: ManualAddressViewModel): String = {
-    viewModel.secondaryHeader match {
-      case Some(name) => s"Company Director Previous Address: $name"
-      case _ => "Company Director Previous Address"
+  def onSubmit(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen requireData).async {
+      implicit request =>
+        directorName(establisherIndex, directorIndex).retrieve.right.map {
+          name =>
+            val context = s"Company Director Previous Address: $name"
+            post(
+              DirectorPreviousAddressId(establisherIndex, directorIndex),
+              DirectorPreviousAddressListId(establisherIndex, directorIndex),
+              viewmodel(mode, establisherIndex, directorIndex, srn, name),
+              mode,
+              context,
+              DirectorPreviousAddressPostcodeLookupId(establisherIndex, directorIndex)
+            )
+        }
     }
-  }
 
 }

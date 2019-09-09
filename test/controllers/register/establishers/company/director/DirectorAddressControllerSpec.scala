@@ -100,12 +100,10 @@ class DirectorAddressControllerSpec extends ControllerSpecBase with MockitoSugar
           val controller = app.injector.instanceOf[DirectorAddressController]
 
           val viewmodel = ManualAddressViewModel(
-            controller.postCall(NormalMode, establisherIndex, directorIndex, None),
-            countryOptions.options,
-            Message(controller.title),
-            Message(controller.heading, director.fullName),
-            secondaryHeader = Some(director.fullName),
-            Some(Message(controller.hint))
+            postCall = controller.postCall(NormalMode, establisherIndex, directorIndex, None),
+            countryOptions = countryOptions.options,
+            title = Message(controller.title),
+            heading = Message(controller.heading, director.fullName)
           )
 
           val request = addToken(

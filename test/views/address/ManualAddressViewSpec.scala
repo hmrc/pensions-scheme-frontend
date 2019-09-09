@@ -16,9 +16,8 @@
 
 package views.address
 
-import controllers.register.routes
 import forms.address.AddressFormProvider
-import models.{NormalMode, UpdateMode}
+import models.NormalMode
 import models.address.Address
 import play.api.data.Form
 import play.api.mvc.Call
@@ -37,15 +36,13 @@ class ManualAddressViewSpec extends QuestionViewBehaviours[Address] {
     Call("GET", "/"),
     countryOptions,
     Message("messages__common__manual__address__title"),
-    Message("messages__common__manual__address__heading"),
-    Some("secondary.header")
+    Message("messages__common__manual__address__heading")
   )
   val updateViewModel = ManualAddressViewModel(
     Call("GET", "/"),
     countryOptions,
     Message("messages__common__manual__address__title"),
     Message("messages__common__manual__address__heading"),
-    Some("secondary.header"),
     srn = Some("srn")
   )
 

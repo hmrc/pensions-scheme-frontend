@@ -88,8 +88,7 @@ class PartnerPreviousAddressControllerSpec extends ControllerSpecBase with Mocki
             controller.postCall(NormalMode, establisherIndex, partnerIndex, None),
             countryOptions.options,
             controller.title,
-            Message(controller.heading,partnerDetails.fullName),
-            secondaryHeader = Some(partnerDetails.fullName)
+            Message(controller.heading,partnerDetails.fullName)
           )
 
           val request = addToken(

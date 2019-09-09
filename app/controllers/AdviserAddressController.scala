@@ -81,8 +81,6 @@ class AdviserAddressController @Inject()(
       postCall(mode),
       countryOptions.options,
       title = Message(title),
-      heading = heading(adviserName),
-      hint = None,
-      secondaryHeader = Some(secondary)
+      heading = heading(adviserName)
     )
 }

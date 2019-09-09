@@ -18,7 +18,6 @@ package controllers.register.establishers.individual
 
 import audit.AuditService
 import config.FrontendAppConfig
-import connectors.UserAnswersCacheConnector
 import controllers.actions._
 import controllers.address.ManualAddressController
 import forms.address.AddressFormProvider
@@ -31,8 +30,8 @@ import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
-import utils.annotations.EstablishersIndividual
 import utils.CountryOptions
+import utils.annotations.EstablishersIndividual
 import viewmodels.Message
 import viewmodels.address.ManualAddressViewModel
 
@@ -59,47 +58,34 @@ class PreviousAddressController @Inject()(
 
   protected val form: Form[Address] = formProvider()
 
-  private def viewmodel(index: Int, mode: Mode, srn: Option[String]): Retrieval[ManualAddressViewModel] =
-    Retrieval {
-      implicit request =>
-        EstablisherDetailsId(index).retrieve.right.map {
-          details =>
-            ManualAddressViewModel(
-              postCall(mode, Index(index), srn),
-              countryOptions.options,
-              title = Message(title),
-              heading = Message(heading,details.fullName),
-              hint = Some(Message(hint)),
-              secondaryHeader = Some(details.fullName),
-              srn = srn
-            )
-        }
-    }
+  private def viewmodel(index: Int, mode: Mode, srn: Option[String], name: String): ManualAddressViewModel =
+    ManualAddressViewModel(
+      postCall(mode, Index(index), srn),
+      countryOptions.options,
+      title = Message(title),
+      heading = Message(heading, name),
+      srn = srn
+    )
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
-    implicit request =>
-      viewmodel(index, mode, srn).retrieve.right.map {
-        vm =>
-          get(PreviousAddressId(index), PreviousAddressListId(index), vm)
-      }
-  }
+      implicit request =>
+        EstablisherDetailsId(index).retrieve.right.map {
+          details =>
+            get(PreviousAddressId(index), PreviousAddressListId(index), viewmodel(index, mode, srn, details.fullName))
+        }
+    }
 
   def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
-      viewmodel(index, mode, srn).retrieve.right.map {
-        vm =>
-          post(PreviousAddressId(index), PreviousAddressListId(index), vm, mode, context(vm),
+      EstablisherDetailsId(index).retrieve.right.map {
+        details =>
+          val context = s"Establisher Individual Previous Address: ${details.fullName}"
+          post(PreviousAddressId(index), PreviousAddressListId(index),
+            viewmodel(index, mode, srn, details.fullName), mode, context,
             PreviousPostCodeLookupId(index)
           )
       }
-  }
-
-  private def context(viewModel: ManualAddressViewModel): String = {
-    viewModel.secondaryHeader match {
-      case Some(name) => s"Establisher Individual Previous Address: $name"
-      case _ => "Establisher Individual Previous Address"
-    }
   }
 
 }
