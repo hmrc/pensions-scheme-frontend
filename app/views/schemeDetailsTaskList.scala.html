@@ -72,13 +72,13 @@
                 <ul class="task-list-items">
                     <li class="task-list-item">
                         @if(taskSections.beforeYouStart.isCompleted.isEmpty){
-                        <a id="section-before-you-start-link" href="@taskSections.beforeYouStart.link.target">
+                        <a id="section-before-you-start-link" class="task-name" href="@taskSections.beforeYouStart.link.target">
                             @messages(taskSections.beforeYouStart.link.text)
                         </a>
                         }
 
                         @taskSections.beforeYouStart.isCompleted.map{ isCompleted =>
-                        <a id="section-before-you-start-link" href="@taskSections.beforeYouStart.link.target" aria-describedby="section-beforeYouStart-status">
+                        <a id="section-before-you-start-link" class="task-name" href="@taskSections.beforeYouStart.link.target" aria-describedby="section-beforeYouStart-status">
                             @messages(taskSections.beforeYouStart.link.text)
                         </a>
                             <strong class="@statusClass(isCompleted)" id="section-beforeYouStart-status">@messages(status(isCompleted))</strong>
@@ -202,7 +202,7 @@
                     <ul class="task-list-items">
                         @for((entity, j) <- item.entities.zipWithIndex){
                             <li class="task-list-item">
-                                <a id="section-trustees-link-@i-@j" href="@{entity.link.target}">
+                                <a id="section-trustees-link-@i-@j" class="task-name" href="@{entity.link.target}">
                                     @messages(entity.link.text)
                                 </a>
                                 @entity.isCompleted.map{ isCompleted =>
