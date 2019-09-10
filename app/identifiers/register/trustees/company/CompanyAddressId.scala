@@ -38,7 +38,7 @@ object CompanyAddressId {
       override def row(id: CompanyAddressId)(changeUrl: String, ua: UserAnswers): Seq[AnswerRow] = {
         val trusteeName = ua.get(CompanyDetailsId(id.index)).fold(messages("messages__theTrustee"))(_.companyName)
         val label = messages("messages__trusteeAddress", trusteeName)
-        val changeAddress = messages("messages__changeTrusteeAddress", trusteeName)
+        val changeAddress = messages("messages__visuallyhidden__dynamic_address", trusteeName)
 
         AddressCYA(
           label = label,

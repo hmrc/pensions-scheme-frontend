@@ -197,7 +197,7 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase with Controller
 
     val addressRows = {
       def label(index: Int) = messages("messages__trusteeAddress", trusteeName(index))
-      def changeAddress(index: Int) = messages("messages__changeTrusteeAddress", trusteeName(index))
+      def changeAddress(index: Int) = messages("messages__visuallyhidden__dynamic_address", trusteeName(index))
       AddressCYA[CompanyAddressId](
         label = label(index),
         changeAddress = changeAddress(index)
@@ -206,7 +206,7 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase with Controller
 
     val previousAddressRows = {
       def label(index: Int) = messages("messages__trusteePreviousAddress", trusteeName(index))
-      def changeAddress(index: Int) = messages("messages__changeTrusteePreviousAddress", trusteeName(index))
+      def changeAddress(index: Int) = messages("messages__visuallyhidden__dynamic_previousAddress", trusteeName(index))
       AddressCYA[CompanyPreviousAddressId](
         label = label(index),
         changeAddress = changeAddress(index)

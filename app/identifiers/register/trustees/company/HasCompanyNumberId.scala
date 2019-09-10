@@ -19,14 +19,11 @@ package identifiers.register.trustees.company
 import identifiers.TypedIdentifier
 import identifiers.register.trustees.{IsTrusteeNewId, TrusteesId}
 import play.api.i18n.Messages
-import play.api.libs.json.JsPath
+import play.api.libs.json.{JsPath, JsResult}
 import utils.UserAnswers
 import utils.checkyouranswers.CheckYourAnswers
 import utils.checkyouranswers.CheckYourAnswers.BooleanCYA
 import viewmodels.AnswerRow
-import identifiers.register.trustees.TrusteesId
-import play.api.libs.json.{JsPath, JsResult}
-import utils.UserAnswers
 
 case class HasCompanyNumberId(index: Int) extends TypedIdentifier[Boolean] {
   override def path: JsPath = TrusteesId(index).path \ HasCompanyNumberId.toString
@@ -48,22 +45,25 @@ object HasCompanyNumberId {
 
   implicit def cya(implicit userAnswers: UserAnswers, messages: Messages): CheckYourAnswers[HasCompanyNumberId] = {
 
-    def label(index: Int) =
+    def companyName(index: Int) =
       userAnswers.get(CompanyDetailsId(index)) match {
-        case Some(companyDetails) => Some(messages("messages__hasCompanyNumber__h1", companyDetails.companyName))
-        case _ => Some(messages("messages__hasCompanyNumber__title"))
+        case Some(companyDetails) => companyDetails.companyName
+        case _                    => messages("messages__theCompany")
       }
 
-    def hiddenLabel = Some(messages("messages__visuallyhidden__hasCompanyNumber"))
+    def label(index: Int) =
+      Some(messages("messages__hasCompanyNumber__h1", companyName(index)))
+
+    def hiddenLabel(index: Int) = Some(messages("messages__visuallyhidden__dynamic_hasCrn", companyName(index)))
 
     new CheckYourAnswers[HasCompanyNumberId] {
       override def row(id: HasCompanyNumberId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        BooleanCYA(label(id.index), hiddenLabel)().row(id)(changeUrl, userAnswers)
+        BooleanCYA(label(id.index), hiddenLabel(id.index))().row(id)(changeUrl, userAnswers)
 
       override def updateRow(id: HasCompanyNumberId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
         userAnswers.get(IsTrusteeNewId(id.index)) match {
-          case Some(true) => BooleanCYA(label(id.index), hiddenLabel)().row(id)(changeUrl, userAnswers)
-          case _ => Seq.empty[AnswerRow]
+          case Some(true) => BooleanCYA(label(id.index), hiddenLabel(id.index))().row(id)(changeUrl, userAnswers)
+          case _          => Seq.empty[AnswerRow]
         }
     }
   }

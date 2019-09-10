@@ -1232,6 +1232,9 @@ messages__visuallyhidden__dynamic_dob = the date of birth for {0}
 messages__visuallyhidden__dynamic_hasNino = whether {0} has a National Insurance number
 messages__visuallyhidden__dynamic_nino = the National Insurance number for {0}
 messages__visuallyhidden__dynamic_noNinoReason = the reason why {0} does not have a National Insurance number
+messages__visuallyhidden__dynamic_hasCrn = whether {0} has a company number
+messages__visuallyhidden__dynamic_noCrnReason = the reason why {0} does not have a company number
+messages__visuallyhidden__dynamic_crn = the company number for {0}
 
 messages__visuallyhidden__partner__nino_yes_no = whether the partner has a National Insurance number
 messages__visuallyhidden__partner__nino_no = why the partner does not have a National Insurance number
@@ -1643,6 +1646,7 @@ messages__hasBeen1Year = Has {0} been at their address for at least 1 year?
 messages__changeHasBeen1Year = whether {0} has been at their address for at least 1 year?
 messages__theTrustee = the trustee
 messages__theDirector = the director
+messages__theCompany = the company
 
 messages__hasBeenTradingCompany__title = Has the establisher been trading for at least 1 year?
 messages__hasBeenTrading__h1 =  Has {0} been trading for at least 1 year?

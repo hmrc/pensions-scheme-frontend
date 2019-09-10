@@ -30,11 +30,12 @@ import viewmodels.AnswerRow
 
 class CompanyRegistrationNumberVariationsIdSpec extends SpecBase {
 
+  private val name = "name"
   implicit val countryOptions: CountryOptions = new CountryOptions(environment, frontendAppConfig)
   private val onwardUrl = "onwardUrl"
   private val answerRowsWithChangeLinks = Seq(
     AnswerRow("messages__checkYourAnswers__trustees__company__number",List("companyRegistrationNumber"),false,Some(Link("site.change",onwardUrl,
-      Some("messages__visuallyhidden__companyNumber"))))
+      Some(messages("messages__visuallyhidden__dynamic_crn", name)))))
   )
 
   "Cleanup" when {
@@ -49,7 +50,8 @@ class CompanyRegistrationNumberVariationsIdSpec extends SpecBase {
 
   "cya" when {
 
-    def answers: UserAnswers = UserAnswers().set(CompanyRegistrationNumberVariationsId(0))(ReferenceValue("companyRegistrationNumber")).asOpt.get
+    def answers: UserAnswers = UserAnswers().set(CompanyDetailsId(0))(CompanyDetails(name)).flatMap(
+      _.set(CompanyRegistrationNumberVariationsId(0))(ReferenceValue("companyRegistrationNumber"))).asOpt.get
 
     "in normal mode" must {
 
@@ -83,7 +85,10 @@ class CompanyRegistrationNumberVariationsIdSpec extends SpecBase {
       }
 
       "return answers rows with change links if companyRegistrationNumber is available and editable" in {
-        val answers = UserAnswers().set(CompanyRegistrationNumberVariationsId(0))(ReferenceValue("companyRegistrationNumber", true)).asOpt.get
+
+        def answers: UserAnswers = UserAnswers().set(CompanyDetailsId(0))(CompanyDetails(name)).flatMap(
+          _.set(CompanyRegistrationNumberVariationsId(0))(ReferenceValue("companyRegistrationNumber", true))).asOpt.get
+
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
         implicit val userAnswers: UserAnswers = request.userAnswers
 
@@ -91,12 +96,16 @@ class CompanyRegistrationNumberVariationsIdSpec extends SpecBase {
       }
 
       "display an add link if companyRegistrationNumber is not available" in {
-        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(), PsaId("A0000000"))
+
+
+        def answers: UserAnswers = UserAnswers().set(CompanyDetailsId(0))(CompanyDetails(name)).asOpt.get
+
+        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
         implicit val userAnswers: UserAnswers = request.userAnswers
 
         CompanyRegistrationNumberVariationsId(0).row(onwardUrl, UpdateMode) must equal(Seq(
           AnswerRow("messages__checkYourAnswers__trustees__company__number", Seq("site.not_entered"), answerIsMessageKey = true,
-            Some(Link("site.add", onwardUrl, Some("messages__visuallyhidden__companyNumber"))))))
+            Some(Link("site.add", onwardUrl, Some(messages("messages__visuallyhidden__dynamic_crn", name)))))))
       }
     }
   }

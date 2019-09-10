@@ -35,7 +35,7 @@ class NoCompanyNumberIdSpec extends SpecBase {
   implicit val countryOptions: CountryOptions = new CountryOptions(environment, frontendAppConfig)
   private val answerRowsWithChangeLinks = Seq(
     AnswerRow(messages("messages__noCompanyNumber__establisher__heading", name), List(reason), false, Some(Link("site.change",onwardUrl,
-      Some(messages("messages__visuallyhidden__noCompanyNumberReason")))))
+      Some(messages("messages__visuallyhidden__dynamic_noCrnReason", name)))))
   )
 
   "cya" when {

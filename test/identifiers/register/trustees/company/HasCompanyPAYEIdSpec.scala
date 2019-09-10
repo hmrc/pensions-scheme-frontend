@@ -35,7 +35,7 @@ class HasCompanyPAYEIdSpec extends SpecBase {
 
   private val answerRowsWithChangeLinks = Seq(
     AnswerRow(messages("messages__hasPaye__h1", name), List("site.yes"), true, Some(Link("site.change",onwardUrl,
-      Some(messages("messages__visuallyhidden__companyPayeRef", name)))))
+      Some(messages("messages__visuallyhidden__dynamic_hasPaye", name)))))
   )
 
   "Cleanup" when {
