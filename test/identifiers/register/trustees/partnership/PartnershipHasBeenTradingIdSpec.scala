@@ -15,18 +15,26 @@
  */
 
 package identifiers.register.trustees.partnership
+
 import base.SpecBase
+import models.{Link, NormalMode, PartnershipDetails, UpdateMode}
 import models.address.{Address, TolerantAddress}
+import models.requests.DataRequest
 import play.api.libs.json.Json
+import play.api.mvc.AnyContent
+import play.api.test.FakeRequest
+import uk.gov.hmrc.domain.PsaId
 import utils.UserAnswers
+import viewmodels.{AnswerRow, Message}
+import utils.checkyouranswers.Ops._
 
 class PartnershipHasBeenTradingIdSpec extends SpecBase {
-  
+
   import PartnershipHasBeenTradingIdSpec._
 
   "cleanup" when {
     "`PartnershipHasBeenTrading` changed to false" must {
-     val result = ua(true).set(PartnershipHasBeenTradingId(0))(false).asOpt.value
+      val result = ua(true).set(PartnershipHasBeenTradingId(0))(false).asOpt.value
 
       "remove the data for `PartnershipPreviousAddressPostcodeLookupId`" in {
         result.get(PartnershipPreviousAddressPostcodeLookupId(0)) mustNot be(defined)
@@ -53,11 +61,40 @@ class PartnershipHasBeenTradingIdSpec extends SpecBase {
       }
     }
   }
+
+  "cya" when {
+    val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers.isTrusteeNew(index, flag = true), PsaId("A0000000"))
+
+    Seq(NormalMode, UpdateMode).foreach { mode =>
+      s"in ${mode.toString} mode" must {
+        "return answers rows with change links" in {
+          PartnershipHasBeenTradingId(0).row(onwardUrl, mode)(request, implicitly) must equal(Seq(
+            AnswerRow(
+              Message("messages__hasBeenTrading__h1", partnershipDetails.name),
+              Seq("site.no"),
+              answerIsMessageKey = true,
+              Some(Link("site.change", onwardUrl, Some(Message("messages__visuallyhidden__dynamic__hasBeenTrading", partnershipDetails.name))))
+            )))
+        }
+      }
+    }
+
+    "in Update Mode for an existing partnership returned from ETMP" must {
+      "return no rows" in {
+        val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
+
+        PartnershipHasBeenTradingId(0).row(onwardUrl, UpdateMode)(request, implicitly) must equal(Nil)
+      }
+    }
+  }
+
 }
 
 object PartnershipHasBeenTradingIdSpec extends SpecBase {
+  private val index = 0
+  private val partnershipDetails = PartnershipDetails("test partnership name")
 
-  private def ua(v:Boolean) = UserAnswers(Json.obj())
+  private def ua(v: Boolean): UserAnswers = UserAnswers(Json.obj())
     .set(PartnershipHasBeenTradingId(0))(v)
     .flatMap(_.set(PartnershipPreviousAddressPostcodeLookupId(0))(Seq.empty))
     .flatMap(_.set(PartnershipPreviousAddressId(0))(Address("", "", None, None, None, "")))
@@ -65,4 +102,8 @@ object PartnershipHasBeenTradingIdSpec extends SpecBase {
       TolerantAddress(Some(""), Some(""), None, None, None, Some(""))))
     .asOpt
     .value
+
+  private val onwardUrl = "onwardUrl"
+  private val answers = UserAnswers().trusteePartnershipDetails(index, partnershipDetails).
+    trusteePartnershipTradingTime(index, hasBeenTrading = false)
 }

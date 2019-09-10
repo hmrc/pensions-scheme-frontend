@@ -75,13 +75,11 @@ object CheckYourAnswersPartnershipAddressControllerSpec extends ControllerSpecBa
 
   private implicit val fakeCountryOptions: CountryOptions = new FakeCountryOptions
   private val index                                       = Index(0)
-  private val testSchemeName                              = "Test Scheme Name"
   private val partnershipName                             = "Test partnership Name"
   private val srn                                         = Some("S123")
 
   private val address                = Address("address-1-line-1", "address-1-line-2", None, None, Some("post-code-1"), "country-1")
   private val addressYearsUnderAYear = AddressYears.UnderAYear
-  private val addressYearsOverAYear  = AddressYears.OverAYear
   private val previousAddress        = Address("address-2-line-1", "address-2-line-2", None, None, Some("post-code-2"), "country-2")
 
   private val emptyAnswers = UserAnswers()
@@ -91,18 +89,20 @@ object CheckYourAnswersPartnershipAddressControllerSpec extends ControllerSpecBa
     routes.PartnershipAddressYearsController.onPageLoad(mode, Index(index), srn).url
   private def partnershipPreviousAddressRoute(mode: Mode, srn: Option[String]) =
     routes.PartnershipPreviousAddressController.onPageLoad(mode, Index(index), srn).url
+  private def partnershipTradingTimeRoute(mode: Mode, srn: Option[String]) =
+    routes.PartnershipHasBeenTradingController.onPageLoad(mode, Index(index), srn).url
 
   private val fullAnswers = emptyAnswers
-    .trusteePartnershipDetails(0, PartnershipDetails(partnershipName))
-    .trusteePartnershipAddress(0, address)
-    .trusteePartnershipAddressYears(0, addressYearsUnderAYear)
-    .trusteePartnershipTradingTime(0, true)
-    .trusteesPartnershipPreviousAddress(0, previousAddress)
+    .trusteePartnershipDetails(index, PartnershipDetails(partnershipName))
+    .trusteePartnershipAddress(index, address)
+    .trusteePartnershipAddressYears(index, addressYearsUnderAYear)
+    .trusteePartnershipTradingTime(index, hasBeenTrading = true)
+    .trusteesPartnershipPreviousAddress(index, previousAddress)
 
   private val partialAnswers = emptyAnswers
-    .trusteePartnershipDetails(0, PartnershipDetails(partnershipName))
-    .trusteePartnershipAddress(0, address)
-    .trusteePartnershipAddressYears(0, addressYearsUnderAYear)
+    .trusteePartnershipDetails(index, PartnershipDetails(partnershipName))
+    .trusteePartnershipAddress(index, address)
+    .trusteePartnershipAddressYears(index, addressYearsUnderAYear)
 
   private def postUrl: Call =
     controllers.routes.SchemeTaskListController.onPageLoad(NormalMode, None)
@@ -122,6 +122,14 @@ object CheckYourAnswersPartnershipAddressControllerSpec extends ControllerSpecBa
     Seq(s"messages__common__$addressYearsUnderAYear"),
     answerIsMessageKey = true,
     Some(Link("site.change", partnershipAddressYearsRoute(checkMode(mode), srn), Some(Message("messages__visuallyhidden__dynamic_addressYears", partnershipName))))
+  )
+
+  def tradingTimeAnswerRow(mode: Mode, srn: Option[String]): AnswerRow = AnswerRow(
+    Message("messages__hasBeenTrading__h1", partnershipName),
+    Seq("site.yes"),
+    answerIsMessageKey = true,
+    Some(Link("site.change", partnershipTradingTimeRoute(checkMode(mode), srn),
+      Some(Message("messages__visuallyhidden__dynamic__hasBeenTrading", partnershipName))))
   )
 
   private def previousAddressAnswerRow(mode: Mode, srn: Option[String]): AnswerRow =
@@ -146,6 +154,7 @@ object CheckYourAnswersPartnershipAddressControllerSpec extends ControllerSpecBa
                     Seq(
                       addressAnswerRow(NormalMode, None),
                       addressYearsAnswerRow(NormalMode, None),
+                      tradingTimeAnswerRow(NormalMode, None),
                       previousAddressAnswerRow(NormalMode, None)
                     )))
 

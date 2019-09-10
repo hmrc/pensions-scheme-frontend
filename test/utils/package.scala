@@ -17,6 +17,7 @@
 import controllers.actions.{DataRetrievalAction, FakeDataRetrievalAction}
 import identifiers._
 import identifiers.register._
+import identifiers.register.establishers.IsEstablisherNewId
 import identifiers.register.trustees.IsTrusteeNewId
 import identifiers.register.trustees.company.{CompanyPayeVariationsId, CompanyRegistrationNumberId, CompanyRegistrationNumberVariationsId}
 import identifiers.register.trustees.individual.TrusteeNameId
@@ -173,6 +174,10 @@ package object utils {
       answers.set(establishers.company.CompanyContactDetailsId(index))(contactDetails).asOpt.value
     }
 
+    def isEstablisherNew(index: Int, flag: Boolean): UserAnswers = {
+      answers.set(IsEstablisherNewId(index))(flag).asOpt.value
+    }
+
     //Establisher company director
     def establishersCompanyDirectorAddress(establisherId: Int, directorId: Int, address: Address): UserAnswers = {
       answers.set(establishers.company.director.DirectorAddressId(establisherId, directorId))(address).asOpt.value
@@ -255,6 +260,10 @@ package object utils {
 
     def trusteesUniqueTaxReference(index: Int, utr: UniqueTaxReference): UserAnswers = {
       answers.set(trustees.company.CompanyUniqueTaxReferenceId(index))(utr).asOpt.value
+    }
+
+    def trusteeCompanyTradingTime(index: Int, hasBeenTrading: Boolean): UserAnswers = {
+      answers.set(trustees.company.HasBeenTradingCompanyId(index))(hasBeenTrading).asOpt.value
     }
 
     //Trustee Individual
