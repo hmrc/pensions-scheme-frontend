@@ -55,12 +55,11 @@ class CheckYourAnswersCompanyAddressController @Inject()(appConfig: FrontendAppC
   def onPageLoad(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
-        implicit val userAnswers: UserAnswers = request.userAnswers
-
         val answerSections = Seq(AnswerSection(
           None,
           CompanyAddressId(index).row(routes.CompanyAddressController.onPageLoad(checkMode(mode), srn, index).url, mode) ++
             CompanyAddressYearsId(index).row(routes.CompanyAddressYearsController.onPageLoad(checkMode(mode), srn, index).url, mode) ++
+            HasBeenTradingCompanyId(index).row(routes.HasBeenTradingCompanyController.onPageLoad(checkMode(mode), srn, index).url, mode) ++
             CompanyPreviousAddressId(index).row(routes.CompanyPreviousAddressController.onPageLoad(checkMode(mode), srn, index).url, mode)
         ))
 
@@ -70,7 +69,7 @@ class CheckYourAnswersCompanyAddressController @Inject()(appConfig: FrontendAppC
           SchemeTaskListController.onPageLoad(mode, srn),
           existingSchemeName,
           mode = mode,
-          hideEditLinks = request.viewOnly || !userAnswers.get(IsEstablisherNewId(index)).getOrElse(true),
+          hideEditLinks = request.viewOnly || !request.userAnswers.get(IsEstablisherNewId(index)).getOrElse(true),
           hideSaveAndContinueButton = allowChangeHelper.hideSaveAndContinueButton(request, IsEstablisherNewId(index), mode),
           srn = srn
         )))

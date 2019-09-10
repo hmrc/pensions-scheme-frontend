@@ -16,19 +16,17 @@
 
 package controllers.register.trustees.company
 
-import config.{FeatureSwitchManagementService, FrontendAppConfig}
+import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions._
 import identifiers.register.establishers.IsEstablisherNewId
 import identifiers.register.trustees.IsTrusteeNewId
-import identifiers.register.trustees.company.{CompanyAddressId, CompanyAddressYearsId, CompanyPreviousAddressId}
+import identifiers.register.trustees.company.{CompanyAddressId, CompanyAddressYearsId, CompanyPreviousAddressId, HasBeenTradingCompanyId}
 import javax.inject.Inject
 import models.Mode.checkMode
 import models.{Index, Mode}
-import navigators.Navigator
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
-import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.NoSuspendedCheck
 import utils.checkyouranswers.Ops._
@@ -45,22 +43,19 @@ class CheckYourAnswersCompanyAddressController @Inject()(appConfig: FrontendAppC
                                                          @NoSuspendedCheck allowAccess: AllowAccessActionProvider,
                                                          requireData: DataRequiredAction,
                                                          implicit val countryOptions: CountryOptions,
-                                                         navigator: Navigator,
-                                                         userAnswersService: UserAnswersService,
-                                                         allowChangeHelper: AllowChangeHelper,
-                                                         fs: FeatureSwitchManagementService
+                                                         allowChangeHelper: AllowChangeHelper
                                                         )(implicit val ec: ExecutionContext) extends FrontendController
   with Retrievals with I18nSupport with Enumerable.Implicits {
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
-        implicit val userAnswers: UserAnswers = request.userAnswers
 
         val answerSections = Seq(AnswerSection(
           None,
           CompanyAddressId(index).row(routes.CompanyAddressController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
             CompanyAddressYearsId(index).row(routes.CompanyAddressYearsController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
+            HasBeenTradingCompanyId(index).row(routes.HasBeenTradingCompanyController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
             CompanyPreviousAddressId(index).row(routes.CompanyPreviousAddressController.onPageLoad(checkMode(mode), index, srn).url, mode)
         ))
 
@@ -70,7 +65,7 @@ class CheckYourAnswersCompanyAddressController @Inject()(appConfig: FrontendAppC
           controllers.routes.SchemeTaskListController.onPageLoad(mode, srn),
           existingSchemeName,
           mode = mode,
-          hideEditLinks = request.viewOnly || !userAnswers.get(IsEstablisherNewId(index)).getOrElse(true),
+          hideEditLinks = request.viewOnly || !request.userAnswers.get(IsEstablisherNewId(index)).getOrElse(true),
           hideSaveAndContinueButton = allowChangeHelper.hideSaveAndContinueButton(request, IsTrusteeNewId(index), mode),
           srn = srn
         )))
