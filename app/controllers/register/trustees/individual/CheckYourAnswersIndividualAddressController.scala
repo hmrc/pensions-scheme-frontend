@@ -16,7 +16,7 @@
 
 package controllers.register.trustees.individual
 
-import config.FrontendAppConfig
+import config.{FeatureSwitchManagementService, FrontendAppConfig}
 import controllers.Retrievals
 import controllers.actions._
 import identifiers.register.trustees.IsTrusteeNewId
@@ -45,7 +45,8 @@ class CheckYourAnswersIndividualAddressController @Inject()(val appConfig: Front
                                                             allowAccess: AllowAccessActionProvider,
                                                             requireData: DataRequiredAction,
                                                             implicit val countryOptions: CountryOptions,
-                                                            allowChangeHelper: AllowChangeHelper
+                                                            allowChangeHelper: AllowChangeHelper,
+                                                            implicit val featureSwitchManagementService: FeatureSwitchManagementService
                                                            )(implicit val ec: ExecutionContext)
   extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
 

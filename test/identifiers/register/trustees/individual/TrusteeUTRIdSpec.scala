@@ -19,6 +19,7 @@ package identifiers.register.trustees.individual
 import base.SpecBase
 import identifiers.register.trustees.IsTrusteeNewId
 import models._
+import models.person.PersonName
 import models.requests.DataRequest
 import play.api.libs.json.Json
 import play.api.mvc.AnyContent
@@ -31,16 +32,16 @@ import viewmodels.AnswerRow
 class TrusteeUTRIdSpec extends SpecBase {
 
   val onwardUrl = "onwardUrl"
-  val name = "test company name"
+  val name = "test name"
   val utr = "1234567890"
   implicit val countryOptions: CountryOptions = new CountryOptions(environment, frontendAppConfig)
   private val answerRowsWithChangeLinks = Seq(
-    AnswerRow("messages__common__utr", List(utr), false, Some(Link("site.change", onwardUrl,
-      Some("messages__visuallyhidden__trustee__utr"))))
+    AnswerRow(messages("messages__trusteeUtr__h1", name), List(utr), false, Some(Link("site.change", onwardUrl,
+      Some(messages("messages__visuallyhidden__dynamic_utr", name)))))
   )
 
   private val answerRowsWithoutChangeLink = Seq(
-    AnswerRow("messages__common__utr", List(utr), false, None))
+    AnswerRow(messages("messages__trusteeUtr__h1", name), List(utr), false, None))
 
 
   "Cleanup" when {
@@ -55,7 +56,9 @@ class TrusteeUTRIdSpec extends SpecBase {
 
   "cya" when {
 
-    def answers(isEditable: Boolean = false): UserAnswers = UserAnswers().set(TrusteeUTRId(0))(ReferenceValue(utr, isEditable)).asOpt.get
+    def answers(isEditable: Boolean = false): UserAnswers = UserAnswers()
+      .set(TrusteeNameId(0))(PersonName("test", "name")).asOpt.value
+      .set(TrusteeUTRId(0))(ReferenceValue(utr, isEditable)).asOpt.get
 
     "in normal mode" must {
 
@@ -81,12 +84,14 @@ class TrusteeUTRIdSpec extends SpecBase {
       "for existing trustee" must {
 
         "return row with add link if there is no data available" in {
-          val answerRowWithAddLink = AnswerRow("messages__common__utr", List("site.not_entered"), answerIsMessageKey = true,
+          val answerRowWithAddLink = AnswerRow(messages("messages__trusteeUtr__h1", name), List("site.not_entered"), answerIsMessageKey = true,
             Some(Link("site.add",onwardUrl,
-              Some("messages__visuallyhidden__trustee__utr")
+              Some(messages("messages__visuallyhidden__dynamic_utr", name))
             )))
           val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id",
-            UserAnswers().trusteesCompanyDetails(index = 0, CompanyDetails(name)), PsaId("A0000000"))
+            UserAnswers()
+              .set(TrusteeNameId(0))(PersonName("test", "name")).asOpt.value
+              .trusteesCompanyDetails(index = 0, CompanyDetails(name)), PsaId("A0000000"))
           implicit val userAnswers: UserAnswers = request.userAnswers
 
           TrusteeUTRId(0).row(onwardUrl, UpdateMode)(request, implicitly) mustEqual Seq(answerRowWithAddLink)

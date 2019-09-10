@@ -17,6 +17,7 @@
 package identifiers.register.trustees.individual
 
 import identifiers._
+import identifiers.register.trustees.partnership.PartnershipDetailsId
 import identifiers.register.trustees.{IsTrusteeNewId, TrusteesId}
 import play.api.i18n.Messages
 import play.api.libs.json.{JsPath, JsResult}
@@ -44,21 +45,17 @@ object TrusteeHasUTRId {
 
   implicit def cya(implicit userAnswers: UserAnswers, messages: Messages): CheckYourAnswers[TrusteeHasUTRId] = {
 
-    def label(index: Int): Option[String] =
-      userAnswers.get(TrusteeNameId(index)) match {
-        case Some(trusteeName) => Some(messages("messages__hasUtr__h1", trusteeName.fullName))
-        case _                 => Some(messages("messages__hasUtr__h1", messages("messages__theTrustee")))
-      }
-
-    def hiddenLabel: Option[String] = Some(messages("messages__visuallyhidden__trustee__utr_yes_no"))
+    def trusteeName(index: Int) = userAnswers.get(TrusteeNameId(index)).fold(messages("messages__theTrustee"))(_.fullName)
+    def label(index: Int) = Some(messages("messages__hasUtr__h1", trusteeName(index)))
+    def hiddenLabel(index: Int) = Some(messages("messages__visuallyhidden__dynamic_hasUtr", trusteeName(index)))
 
     new CheckYourAnswers[TrusteeHasUTRId] {
       override def row(id: TrusteeHasUTRId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        BooleanCYA(label(id.index), hiddenLabel)().row(id)(changeUrl, userAnswers)
+        BooleanCYA(label(id.index), hiddenLabel(id.index))().row(id)(changeUrl, userAnswers)
 
       override def updateRow(id: TrusteeHasUTRId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
         userAnswers.get(IsTrusteeNewId(id.index)) match {
-          case Some(true) => BooleanCYA(label(id.index), hiddenLabel)().row(id)(changeUrl, userAnswers)
+          case Some(true) => BooleanCYA(label(id.index), hiddenLabel(id.index))().row(id)(changeUrl, userAnswers)
           case _          => Seq.empty[AnswerRow]
         }
     }

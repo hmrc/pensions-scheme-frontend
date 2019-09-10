@@ -1228,6 +1228,10 @@ messages__visuallyhidden__dynamic_addressYears = whether {0} has been at their a
 messages__visuallyhidden__dynamic_previousAddress = the previous address for {0}
 messages__visuallyhidden__dynamic_email = the email address for {0}
 messages__visuallyhidden__dynamic_phone = the phone number for {0}
+messages__visuallyhidden__dynamic_dob = the date of birth for {0}
+messages__visuallyhidden__dynamic_hasNino = whether {0} has a National Insurance number
+messages__visuallyhidden__dynamic_nino = the National Insurance number for {0}
+messages__visuallyhidden__dynamic_noNinoReason = the reason why {0} does not have a National Insurance number
 
 messages__visuallyhidden__partner__nino_yes_no = whether the partner has a National Insurance number
 messages__visuallyhidden__partner__nino_no = why the partner does not have a National Insurance number

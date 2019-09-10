@@ -16,13 +16,14 @@
 
 package identifiers.register.trustees.individual
 
+import config.FeatureSwitchManagementService
 import identifiers.TypedIdentifier
 import identifiers.register.trustees.{IsTrusteeNewId, TrusteesId}
 import models.AddressYears
 import play.api.i18n.Messages
 import play.api.libs.json.{JsPath, JsResult}
 import utils.checkyouranswers.{AddressYearsCYA, CheckYourAnswers}
-import utils.{CountryOptions, UserAnswers}
+import utils.{CountryOptions, Toggles, UserAnswers}
 import viewmodels.AnswerRow
 
 case class TrusteeAddressYearsId(index: Int) extends TypedIdentifier[AddressYears] {
@@ -43,14 +44,21 @@ case class TrusteeAddressYearsId(index: Int) extends TypedIdentifier[AddressYear
 object TrusteeAddressYearsId {
   override def toString: String = "trusteeAddressYears"
 
-  implicit def cya(implicit countryOptions: CountryOptions, messages: Messages, ua: UserAnswers): CheckYourAnswers[TrusteeAddressYearsId] =
+  implicit def cya(implicit countryOptions: CountryOptions, messages: Messages, ua: UserAnswers,
+                   featureSwitchManagementService: FeatureSwitchManagementService): CheckYourAnswers[TrusteeAddressYearsId] =
     new CheckYourAnswers[TrusteeAddressYearsId] {
       override def row(id: TrusteeAddressYearsId)(changeUrl: String, ua: UserAnswers): Seq[AnswerRow] = {
-        val trusteeName = ua.get(TrusteeNameId(id.index)).fold(messages("messages__theTrustee"))(_.fullName)
+        val name = (index: Int) =>
+          if(featureSwitchManagementService.get(Toggles.isEstablisherCompanyHnSEnabled))
+            ua.get(TrusteeNameId(index)).map(_.fullName)
+          else
+            ua.get(TrusteeDetailsId(index)).map(_.fullName)
 
-        val label = messages("messages__hasBeen1Year", trusteeName)
+        val trusteeName = name(id.index).getOrElse(messages("messages__theTrustee"))
 
-        val changeAddressYears = messages("messages__changeHasBeen1Year", trusteeName)
+        val label = messages("messages__trusteeAddressYears__heading", trusteeName)
+
+        val changeAddressYears = messages("messages__visuallyhidden__dynamic_addressYears", trusteeName)
 
         AddressYearsCYA(
           label,

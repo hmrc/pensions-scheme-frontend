@@ -139,20 +139,20 @@ object CheckYourAnswersIndividualDetailsControllerSpec extends ControllerSpecBas
     Seq(AnswerSection(
       None,
       Seq(
-        stringLink(messages("messages__trustee__cya__dob", name), DateHelper.formatDate(trusteeDob)),
-        addLink(messages("messages__common__nino"), nino(UpdateMode, srn),
-          messages("messages__visuallyhidden__trustee__nino")),
-        addLink(messages("messages__common__utr"), utr(UpdateMode, srn),
-          messages("messages__visuallyhidden__trustee__utr")))
+        stringLink(messages("messages__trusteeIndividualDOB__heading", name), DateHelper.formatDate(trusteeDob)),
+        addLink(messages("messages__trustee__individual__nino__heading", name), nino(UpdateMode, srn),
+          messages("messages__visuallyhidden__dynamic_nino", name)),
+        addLink(messages("messages__trusteeUtr__h1", name), utr(UpdateMode, srn),
+          messages("messages__visuallyhidden__dynamic_utr", name)))
     ))
 
   private def allChangeLinksVariations(implicit request: DataRequest[AnyContent]): Seq[AnswerSection] =
     Seq(AnswerSection(
       None,
       Seq(
-        stringLink(messages("messages__trustee__cya__dob", name), DateHelper.formatDate(trusteeDob)),
-        stringLink(messages("messages__common__nino"), nino),
-        stringLink(messages("messages__common__utr"), utr)
+        stringLink(messages("messages__trusteeIndividualDOB__heading", name), DateHelper.formatDate(trusteeDob)),
+        stringLink(messages("messages__trustee__individual__nino__heading", name), nino),
+        stringLink(messages("messages__trusteeUtr__h1", name), utr)
       )
     ))
 
@@ -161,16 +161,16 @@ object CheckYourAnswersIndividualDetailsControllerSpec extends ControllerSpecBas
     Seq(AnswerSection(
       None,
       Seq(
-        stringChangeLink(messages("messages__trustee__cya__dob", name), trusteeDob(mode, srn), DateHelper.formatDate(trusteeDob),
-          messages("messages__visuallyhidden__trustee__dob")),
-        booleanChangeLink(messages("messages__genericHasNino__title", name), hasNino(mode, srn), value = true,
-          messages("messages__visuallyhidden__trustee__nino_yes_no")),
-        stringChangeLink(messages("messages__common__nino"), nino(mode, srn), nino,
-          messages("messages__visuallyhidden__trustee__nino")),
+        stringChangeLink(messages("messages__trusteeIndividualDOB__heading", name), trusteeDob(mode, srn), DateHelper.formatDate(trusteeDob),
+          messages("messages__visuallyhidden__dynamic_dob", name)),
+        booleanChangeLink(messages("messages__genericHasNino__h1", name), hasNino(mode, srn), value = true,
+          messages("messages__visuallyhidden__dynamic_hasNino", name)),
+        stringChangeLink(messages("messages__trustee__individual__nino__heading", name), nino(mode, srn), nino,
+          messages("messages__visuallyhidden__dynamic_nino", name)),
         booleanChangeLink(messages("messages__hasUtr__h1", name), hasUtr(mode, srn), value = true,
-          messages("messages__visuallyhidden__trustee__utr_yes_no")),
-        stringChangeLink(messages("messages__common__utr"), utr(mode, srn), utr,
-          messages("messages__visuallyhidden__trustee__utr"))
+          messages("messages__visuallyhidden__dynamic_hasUtr", name)),
+        stringChangeLink(messages("messages__trusteeUtr__h1", name), utr(mode, srn), utr,
+          messages("messages__visuallyhidden__dynamic_utr", name))
       )
       )
     )
@@ -181,16 +181,16 @@ object CheckYourAnswersIndividualDetailsControllerSpec extends ControllerSpecBas
     Seq(AnswerSection(
       None,
       Seq(
-        stringChangeLink(messages("messages__trustee__cya__dob", name), trusteeDob(mode, srn), DateHelper.formatDate(trusteeDob),
-          messages("messages__visuallyhidden__trustee__dob")),
-        booleanChangeLink(messages("messages__genericHasNino__title", name), hasNino(mode, srn), value = false,
-          messages("messages__visuallyhidden__trustee__nino_yes_no")),
+        stringChangeLink(messages("messages__trusteeIndividualDOB__heading", name), trusteeDob(mode, srn), DateHelper.formatDate(trusteeDob),
+          messages("messages__visuallyhidden__dynamic_dob", name)),
+        booleanChangeLink(messages("messages__genericHasNino__h1", name), hasNino(mode, srn), value = false,
+          messages("messages__visuallyhidden__dynamic_hasNino", name)),
         stringChangeLink(messages("messages__noNinoReason__heading", name), noNinoReason(mode, srn), reason,
-          messages("messages__visuallyhidden__trustee__nino_no")),
+          messages("messages__visuallyhidden__dynamic_noNinoReason", name)),
         booleanChangeLink(messages("messages__hasUtr__h1", name), hasUtr(mode, srn), value = false,
-          messages("messages__visuallyhidden__trustee__utr_yes_no")),
+          messages("messages__visuallyhidden__dynamic_hasUtr", name)),
         stringChangeLink(messages("messages__noGenericUtr__heading", name), noUtrReason(mode, srn), reason,
-          messages("messages__visuallyhidden__trustee__utr_no"))
+          messages("messages__visuallyhidden__dynamic_noUtrReason", name))
       )
     ))
 
@@ -233,7 +233,8 @@ object CheckYourAnswersIndividualDetailsControllerSpec extends ControllerSpecBas
       FakeAllowAccessProvider(),
       allowChangeHelper,
   new DataRequiredActionImpl,
-      new FakeCountryOptions
+      new FakeCountryOptions,
+      new FakeFeatureSwitchManagementService(true)
     )
 
   def viewAsString(answerSections: Seq[AnswerSection], mode: Mode = NormalMode,

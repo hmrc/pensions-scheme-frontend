@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
-package identifiers.register.establishers.individual
+package identifiers.register.trustees.individual
 
 import base.SpecBase
 import identifiers.register.trustees.IsTrusteeNewId
-import identifiers.register.trustees.individual.{TrusteeNameId, TrusteeNoNINOReasonId}
 import models._
 import models.person.PersonName
 import models.requests.DataRequest
@@ -36,7 +35,7 @@ class TrusteeNoNINOReasonIdSpec extends SpecBase {
   private val name = "test name"
   private val answerRowsWithChangeLinks = Seq(
     AnswerRow(messages("messages__noNinoReason__heading", name),List("reason"),false,Some(Link("site.change",onwardUrl,
-      Some(messages("messages__visuallyhidden__trustee__nino_no")))))
+      Some(messages("messages__visuallyhidden__dynamic_noNinoReason", name)))))
   )
 
   "cya" when {

@@ -16,13 +16,14 @@
 
 package identifiers.register.trustees.individual
 
+import config.FeatureSwitchManagementService
 import identifiers._
 import identifiers.register.trustees.{IsTrusteeNewId, TrusteesId}
 import models.address.Address
 import play.api.i18n.Messages
 import play.api.libs.json.JsPath
 import utils.checkyouranswers.{AddressCYA, CheckYourAnswers, PreviousAddressCYA}
-import utils.{CountryOptions, UserAnswers}
+import utils.{CountryOptions, Toggles, UserAnswers}
 import viewmodels.AnswerRow
 
 case class TrusteePreviousAddressId(index: Int) extends TypedIdentifier[Address] {
@@ -32,10 +33,17 @@ case class TrusteePreviousAddressId(index: Int) extends TypedIdentifier[Address]
 object TrusteePreviousAddressId {
   override def toString: String = "trusteePreviousAddress"
 
-  implicit def cya(implicit countryOptions: CountryOptions, messages: Messages, ua: UserAnswers): CheckYourAnswers[TrusteePreviousAddressId] = {
-    def trusteeName(index: Int): String = ua.get(TrusteeNameId(index)).fold(messages("messages__theTrustee"))(_.fullName)
-    def label(index: Int) = messages("messages__trusteePreviousAddress", trusteeName(index))
-    def changeAddress(index: Int) = messages("messages__changeTrusteePreviousAddress", trusteeName(index))
+  implicit def cya(implicit countryOptions: CountryOptions, messages: Messages, ua: UserAnswers,
+                   featureSwitchManagementService: FeatureSwitchManagementService): CheckYourAnswers[TrusteePreviousAddressId] = {
+    val name = (index: Int) =>
+      if(featureSwitchManagementService.get(Toggles.isEstablisherCompanyHnSEnabled))
+        ua.get(TrusteeNameId(index)).map(_.fullName)
+      else
+        ua.get(TrusteeDetailsId(index)).map(_.fullName)
+
+    def trusteeName(index: Int) = name(index).getOrElse(messages("messages__theTrustee"))
+    def label(index: Int) = messages("messages__common__confirmPreviousAddress__h1", trusteeName(index))
+    def changeAddress(index: Int) = messages("messages__visuallyhidden__dynamic_previousAddress", trusteeName(index))
 
     new CheckYourAnswers[TrusteePreviousAddressId] {
       override def row(id: TrusteePreviousAddressId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =

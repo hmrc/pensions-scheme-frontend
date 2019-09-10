@@ -40,7 +40,7 @@ object TrusteeEmailId {
 
       def label(index: Int): String = messages("messages__common_email__heading", trusteeName(index))
 
-      def hiddenLabel(index: Int): Option[String] = Some(messages("messages__common_email__visually_hidden_change_label", trusteeName(index)))
+      def hiddenLabel(index: Int): Option[String] = Some(messages("messages__visuallyhidden__dynamic_email", trusteeName(index)))
 
       StringCYA(
         Some(label(id.index)),

@@ -40,19 +40,20 @@ object TrusteeUTRId {
                    messages: Messages,
                    countryOptions: CountryOptions): CheckYourAnswers[TrusteeUTRId] = {
 
-    val label: String = "messages__common__utr"
-    val hiddenLabel = "messages__visuallyhidden__trustee__utr"
+    def trusteeName(index: Int) = userAnswers.get(TrusteeNameId(index)).fold(messages("messages__theTrustee"))(_.fullName)
+    def label(index: Int): String = messages("messages__trusteeUtr__h1", trusteeName(index))
+    def hiddenLabel(index: Int) = messages("messages__visuallyhidden__dynamic_utr", trusteeName(index))
 
     new CheckYourAnswers[TrusteeUTRId] {
       override def row(id: TrusteeUTRId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        ReferenceValueCYA[TrusteeUTRId](label, hiddenLabel)().row(id)(changeUrl, userAnswers)
+        ReferenceValueCYA[TrusteeUTRId](label(id.index), hiddenLabel(id.index))().row(id)(changeUrl, userAnswers)
 
       override def updateRow(id: TrusteeUTRId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
         userAnswers.get(trustees.IsTrusteeNewId(id.index)) match {
           case Some(true) =>
             row(id)(changeUrl, userAnswers)
           case _ =>
-            ReferenceValueCYA[TrusteeUTRId](label, hiddenLabel)().updateRow(id)(changeUrl, userAnswers)
+            ReferenceValueCYA[TrusteeUTRId](label(id.index), hiddenLabel(id.index))().updateRow(id)(changeUrl, userAnswers)
         }
       }
     }

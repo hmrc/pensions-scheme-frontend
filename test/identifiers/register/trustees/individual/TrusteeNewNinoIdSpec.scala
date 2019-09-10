@@ -17,8 +17,10 @@
 package identifiers.register.trustees.individual
 
 import base.SpecBase
+import config.FeatureSwitchManagementService
 import identifiers.register.trustees.IsTrusteeNewId
 import models._
+import models.person.PersonName
 import models.requests.DataRequest
 import org.scalatest.OptionValues
 import play.api.libs.json.Json
@@ -26,16 +28,19 @@ import play.api.mvc.AnyContent
 import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.PsaId
 import utils.checkyouranswers.Ops._
-import utils.{CountryOptions, UserAnswers}
+import utils.{CountryOptions, FakeFeatureSwitchManagementService, UserAnswers}
 import viewmodels.AnswerRow
 
 class TrusteeNewNinoIdSpec extends SpecBase with OptionValues {
 
   implicit val countryOptions: CountryOptions = new CountryOptions(environment, frontendAppConfig)
+  implicit val featureSwitchManagementService: FeatureSwitchManagementService = new FakeFeatureSwitchManagementService(true)
   private val onwardUrl = "onwardUrl"
+  private val name = "test name"
   private val answerRowsWithChangeLinks = Seq(
-    AnswerRow("messages__common__nino",List("nino"),false,Some(Link("site.change",onwardUrl,
-      Some("messages__visuallyhidden__trustee__nino"))))
+    AnswerRow(messages("messages__trustee__individual__nino__heading", name),
+      List("nino"),false,Some(Link("site.change",onwardUrl,
+      Some(messages("messages__visuallyhidden__dynamic_nino", name)))))
   )
 
   "Cleanup" when {
@@ -50,7 +55,8 @@ class TrusteeNewNinoIdSpec extends SpecBase with OptionValues {
 
   "cya" when {
 
-    def answers: UserAnswers = UserAnswers().set(TrusteeNewNinoId(0))(ReferenceValue("nino")).asOpt.get
+    def answers: UserAnswers = UserAnswers().set(TrusteeNameId(0))(PersonName("test", "name")).asOpt.value
+      .set(TrusteeNewNinoId(0))(ReferenceValue("nino")).asOpt.value
 
     "in normal mode" must {
 
@@ -79,12 +85,13 @@ class TrusteeNewNinoIdSpec extends SpecBase with OptionValues {
         implicit val userAnswers: UserAnswers = request.userAnswers
 
         TrusteeNewNinoId(0).row(onwardUrl, UpdateMode) must equal(Seq(
-          AnswerRow("messages__common__nino",List("nino"),false, None)
+          AnswerRow(messages("messages__trustee__individual__nino__heading", name), List("nino"),false, None)
         ))
       }
 
       "return answers rows with change links if nino is available and editable" in {
-        val answers = UserAnswers().set(TrusteeNewNinoId(0))(ReferenceValue("nino", true)).asOpt.get
+        val answers = UserAnswers().set(TrusteeNameId(0))(PersonName("test", "name")).asOpt.value
+          .set(TrusteeNewNinoId(0))(ReferenceValue("nino", true)).asOpt.get
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
         implicit val userAnswers: UserAnswers = request.userAnswers
 
@@ -92,12 +99,13 @@ class TrusteeNewNinoIdSpec extends SpecBase with OptionValues {
       }
 
       "display an add link if nino is not available" in {
-        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(), PsaId("A0000000"))
+        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id",
+          UserAnswers().set(TrusteeNameId(0))(PersonName("test", "name")).asOpt.value, PsaId("A0000000"))
         implicit val userAnswers: UserAnswers = request.userAnswers
 
         TrusteeNewNinoId(0).row(onwardUrl, UpdateMode) must equal(Seq(
-          AnswerRow("messages__common__nino", Seq("site.not_entered"), answerIsMessageKey = true,
-            Some(Link("site.add", onwardUrl, Some("messages__visuallyhidden__trustee__nino"))))))
+          AnswerRow(messages("messages__trustee__individual__nino__heading", name), Seq("site.not_entered"), answerIsMessageKey = true,
+            Some(Link("site.add", onwardUrl, Some(messages("messages__visuallyhidden__dynamic_nino", name)))))))
       }
     }
   }

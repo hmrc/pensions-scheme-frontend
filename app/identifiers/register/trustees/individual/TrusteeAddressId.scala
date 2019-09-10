@@ -16,13 +16,14 @@
 
 package identifiers.register.trustees.individual
 
+import config.FeatureSwitchManagementService
 import identifiers.TypedIdentifier
 import identifiers.register.trustees.TrusteesId
 import models.address.Address
 import play.api.i18n.Messages
 import play.api.libs.json.JsPath
 import utils.checkyouranswers.{AddressCYA, CheckYourAnswers}
-import utils.{CountryOptions, UserAnswers}
+import utils.{CountryOptions, Toggles, UserAnswers}
 import viewmodels.AnswerRow
 
 case class TrusteeAddressId(index: Int) extends TypedIdentifier[Address] {
@@ -32,14 +33,21 @@ case class TrusteeAddressId(index: Int) extends TypedIdentifier[Address] {
 object TrusteeAddressId {
   override lazy val toString: String = "trusteeAddressId"
 
-  implicit def cya(implicit countryOptions: CountryOptions, messages: Messages, ua: UserAnswers): CheckYourAnswers[TrusteeAddressId] =
+  implicit def cya(implicit countryOptions: CountryOptions, messages: Messages, ua: UserAnswers,
+                   featureSwitchManagementService: FeatureSwitchManagementService): CheckYourAnswers[TrusteeAddressId] =
     new CheckYourAnswers[TrusteeAddressId] {
       override def row(id: TrusteeAddressId)(changeUrl: String, ua: UserAnswers): Seq[AnswerRow] = {
-        val trusteeName = ua.get(TrusteeNameId(id.index)).fold(messages("messages__theTrustee"))(_.fullName)
+        val name = (index: Int) =>
+          if(featureSwitchManagementService.get(Toggles.isEstablisherCompanyHnSEnabled))
+            ua.get(TrusteeNameId(index)).map(_.fullName)
+          else
+            ua.get(TrusteeDetailsId(index)).map(_.fullName)
 
-        val label = messages("messages__trusteeAddress", trusteeName)
+        val trusteeName = name(id.index).getOrElse(messages("messages__theTrustee"))
 
-        val changeAddress = messages("messages__changeTrusteeAddress", trusteeName)
+        val label = messages("messages__common__confirmAddress__h1", trusteeName)
+
+        val changeAddress = messages("messages__visuallyhidden__dynamic_address", trusteeName)
 
         AddressCYA(
           label,

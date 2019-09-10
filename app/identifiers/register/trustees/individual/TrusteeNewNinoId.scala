@@ -16,14 +16,16 @@
 
 package identifiers.register.trustees.individual
 
+import config.FeatureSwitchManagementService
 import identifiers._
 import identifiers.register.trustees
 import identifiers.register.trustees.TrusteesId
+import identifiers.register.trustees.partnership.PartnershipDetailsId
 import models.ReferenceValue
 import play.api.i18n.Messages
 import play.api.libs.json.{JsPath, JsResult}
 import utils.checkyouranswers.{CheckYourAnswers, ReferenceValueCYA}
-import utils.{CountryOptions, UserAnswers}
+import utils.{CountryOptions, Toggles, UserAnswers}
 import viewmodels.AnswerRow
 
 case class TrusteeNewNinoId(index: Int) extends TypedIdentifier[ReferenceValue] {
@@ -37,22 +39,30 @@ object TrusteeNewNinoId {
 
   override lazy val toString: String = "trusteeNino"
 
-  implicit def cya(implicit userAnswers: UserAnswers, messages: Messages, countryOptions: CountryOptions): CheckYourAnswers[TrusteeNewNinoId] = {
+  implicit def cya(implicit userAnswers: UserAnswers, messages: Messages, countryOptions: CountryOptions,
+                   featureSwitchManagementService: FeatureSwitchManagementService): CheckYourAnswers[TrusteeNewNinoId] = {
 
     new CheckYourAnswers[TrusteeNewNinoId] {
 
-      private val label = "messages__common__nino"
-      private val hiddenLabel = "messages__visuallyhidden__trustee__nino"
+      val name = (index: Int) =>
+        if(featureSwitchManagementService.get(Toggles.isEstablisherCompanyHnSEnabled))
+          userAnswers.get(TrusteeNameId(index)).map(_.fullName)
+        else
+          userAnswers.get(TrusteeDetailsId(index)).map(_.fullName)
+
+      def trusteeName(index: Int) = name(index).getOrElse(messages("messages__theTrustee"))
+      def label(index: Int): String = messages("messages__trustee__individual__nino__heading", trusteeName(index))
+      def hiddenLabel(index: Int) = messages("messages__visuallyhidden__dynamic_nino", trusteeName(index))
 
       override def row(id: TrusteeNewNinoId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        ReferenceValueCYA[TrusteeNewNinoId](label, hiddenLabel)().row(id)(changeUrl, userAnswers)
+        ReferenceValueCYA[TrusteeNewNinoId](label(id.index), hiddenLabel(id.index))().row(id)(changeUrl, userAnswers)
 
       override def updateRow(id: TrusteeNewNinoId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
         userAnswers.get(trustees.IsTrusteeNewId(id.index)) match {
           case Some(true) =>
-            ReferenceValueCYA[TrusteeNewNinoId](label, hiddenLabel)().row(id)(changeUrl, userAnswers)
+            ReferenceValueCYA[TrusteeNewNinoId](label(id.index), hiddenLabel(id.index))().row(id)(changeUrl, userAnswers)
           case _ =>
-            ReferenceValueCYA[TrusteeNewNinoId](label, hiddenLabel)().updateRow(id)(changeUrl, userAnswers)
+            ReferenceValueCYA[TrusteeNewNinoId](label(id.index), hiddenLabel(id.index))().updateRow(id)(changeUrl, userAnswers)
         }
       }
     }
