@@ -14,19 +14,18 @@
  * limitations under the License.
  */
 
-package controllers.register.establishers.company
+package controllers.register.trustees.company
 
 import controllers.ControllerSpecBase
-import controllers.actions._
+import controllers.actions.{DataRequiredActionImpl, DataRetrievalAction, FakeAllowAccessProvider, FakeAuthAction}
 import controllers.behaviours.ControllerAllowChangeBehaviour
 import controllers.routes.SchemeTaskListController
 import models.Mode.checkMode
-import models._
 import models.address.Address
+import models.{NormalMode, _}
 import play.api.mvc.Call
 import play.api.test.Helpers._
-import services.FakeUserAnswersService
-import utils.{CountryOptions, FakeCountryOptions, FakeNavigator, UserAnswers, _}
+import utils._
 import viewmodels.{AnswerRow, AnswerSection, Message}
 import views.html.checkYourAnswers
 
@@ -37,8 +36,9 @@ class CheckYourAnswersCompanyAddressControllerSpec extends ControllerSpecBase wi
   "Check Your Answers Company Address Controller " when {
     "on Page load in Normal Mode" must {
       "return OK and the correct view with full answers" in {
+
         val request = FakeDataRequest(fullAnswers)
-        val result = controller(fullAnswers.dataRetrievalAction).onPageLoad(NormalMode, None, index)(request)
+        val result = controller(fullAnswers.dataRetrievalAction).onPageLoad(NormalMode, index, None)(request)
 
         status(result) mustBe OK
         contentAsString(result) mustBe viewAsString(companyAddressNormal)
@@ -46,20 +46,21 @@ class CheckYourAnswersCompanyAddressControllerSpec extends ControllerSpecBase wi
     }
 
     "on Page load in UpdateMode" must {
+
       "return OK and the correct view with full answers" in {
         val request = FakeDataRequest(fullAnswers)
-        val result = controller(fullAnswers.dataRetrievalAction).onPageLoad(UpdateMode, srn, index)(request)
+        val result = controller(fullAnswers.dataRetrievalAction).onPageLoad(UpdateMode, index, srn)(request)
 
         status(result) mustBe OK
         contentAsString(result) mustBe viewAsString(companyAddressUpdate, srn, postUrlUpdateMode)
       }
 
       "return OK and the correct view with partial answers" in {
-        val request = FakeDataRequest(partialAnswers)
-        val result = controller(partialAnswers.dataRetrievalAction).onPageLoad(UpdateMode, srn, index)(request)
+        val request = FakeDataRequest(partialAnswersForAddLink)
+        val result = controller(partialAnswersForAddLink.dataRetrievalAction).onPageLoad(UpdateMode, index, srn)(request)
 
         status(result) mustBe OK
-        contentAsString(result) mustBe viewAsString(companyAddressUpdatePartial, srn, postUrlUpdateMode)
+        contentAsString(result) mustBe viewAsString(companyAddressSectionWithAddLink, srn, postUrlUpdateMode)
       }
     }
 
@@ -67,11 +68,10 @@ class CheckYourAnswersCompanyAddressControllerSpec extends ControllerSpecBase wi
 
       behave like changeableController(
         controller(fullAnswers.dataRetrievalAction, _: AllowChangeHelper)
-          .onPageLoad(NormalMode, None, index)(FakeDataRequest(fullAnswers))
+          .onPageLoad(NormalMode, index, None)(FakeDataRequest(fullAnswers))
       )
     }
   }
-
 }
 
 object CheckYourAnswersCompanyAddressControllerSpec extends ControllerSpecBase with Enumerable.Implicits with ControllerAllowChangeBehaviour {
@@ -80,50 +80,51 @@ object CheckYourAnswersCompanyAddressControllerSpec extends ControllerSpecBase w
 
   private implicit val fakeCountryOptions: CountryOptions = new FakeCountryOptions
   val index = Index(0)
-  val testSchemeName = "Test Scheme Name"
   val companyName = "Test company Name"
   val srn = Some("S123")
 
   private val address = Address("address-1-line-1", "address-1-line-2", None, None, Some("post-code-1"), "country-1")
   private val addressYearsUnderAYear = AddressYears.UnderAYear
-  private val addressYearsOverAYear = AddressYears.OverAYear
   private val previousAddress = Address("address-2-line-1", "address-2-line-2", None, None, Some("post-code-2"), "country-2")
-
   private val emptyAnswers = UserAnswers()
-  private def companyAddressRoute(mode: Mode, srn: Option[String]): String = routes.CompanyAddressController.onPageLoad(mode, srn, Index(index)).url
-  private def companyAddressYearsRoute(mode: Mode, srn: Option[String]): String = routes.CompanyAddressYearsController.onPageLoad(mode, srn, Index(index)).url
-  private def companyPreviousAddressRoute(mode: Mode, srn: Option[String]): String = routes.CompanyPreviousAddressController.onPageLoad(mode, srn, Index(index)).url
-  private def companyTradingTimeRoute(mode: Mode, srn: Option[String]): String = routes.HasBeenTradingCompanyController.onPageLoad(mode, srn, index).url
+
+  private def companyAddressRoute(mode: Mode, srn: Option[String]): String = routes.CompanyAddressController.onPageLoad(mode, index, srn).url
+
+  private def companyAddressYearsRoute(mode: Mode, srn: Option[String]): String = routes.CompanyAddressYearsController.onPageLoad(mode, index, srn).url
+  private def companyTradingTimeRoute(mode: Mode, srn: Option[String]): String = routes.HasBeenTradingCompanyController.onPageLoad(mode, index, srn).url
+
+  private def companyPreviousAddressRoute(mode: Mode, srn: Option[String]): String = routes.CompanyPreviousAddressController.onPageLoad(mode, index, srn).url
 
   private val fullAnswers = emptyAnswers.
-    establisherCompanyDetails(0, CompanyDetails(companyName)).
-    establishersCompanyAddress(0, address).
-    establisherCompanyAddressYears(0, addressYearsUnderAYear).
-    establisherCompanyTradingTime(0, true).
-    establishersCompanyPreviousAddress(0, previousAddress)
+    trusteesCompanyDetails(index, CompanyDetails(companyName)).
+    trusteesCompanyAddress(index, address).
+    trusteesCompanyAddressYears(index, addressYearsUnderAYear).
+    trusteeCompanyTradingTime(index, hasBeenTrading = true).
+    trusteesCompanyPreviousAddress(index, previousAddress)
 
-  private val partialAnswers = emptyAnswers.
-    establisherCompanyDetails(0, CompanyDetails(companyName)).
-    establishersCompanyAddress(0, address).
-    establisherCompanyAddressYears(0, addressYearsUnderAYear)
+  private val partialAnswersForAddLink = emptyAnswers.
+    trusteesCompanyDetails(index, CompanyDetails(companyName)).
+    trusteesCompanyAddress(index, address).
+    trusteesCompanyAddressYears(index, addressYearsUnderAYear)
 
   def postUrl: Call = SchemeTaskListController.onPageLoad(NormalMode, None)
 
   def postUrlUpdateMode: Call = SchemeTaskListController.onPageLoad(UpdateMode, srn)
 
   def addressAnswerRow(mode: Mode, srn: Option[String]): AnswerRow = AnswerRow(
-    Message("messages__establisherConfirmAddress__cya_label", companyName),
+    Message("messages__trusteeAddress", companyName),
     UserAnswers().addressAnswer(address),
     answerIsMessageKey = false,
     Some(Link("site.change", companyAddressRoute(checkMode(mode), srn),
-      Some("messages__establisherConfirmAddress__cya_visually_hidden_label")))
+      Some(Message("messages__changeTrusteeAddress", companyName))))
   )
+
   def addressYearsAnswerRow(mode: Mode, srn: Option[String]): AnswerRow = AnswerRow(
-    Message("messages__company_address_years__h1", companyName),
+    Message("messages__hasBeen1Year", companyName),
     Seq(s"messages__common__$addressYearsUnderAYear"),
     answerIsMessageKey = true,
     Some(Link("site.change", companyAddressYearsRoute(checkMode(mode), srn),
-      Some("messages__visuallyhidden__establisher__address_years")))
+      Some(Message("messages__changeHasBeen1Year", companyName))))
   )
 
   def tradingTimeAnswerRow(mode: Mode, srn: Option[String]): AnswerRow = AnswerRow(
@@ -135,56 +136,40 @@ object CheckYourAnswersCompanyAddressControllerSpec extends ControllerSpecBase w
   )
 
   def previousAddressAnswerRow(mode: Mode, srn: Option[String]): AnswerRow = AnswerRow(
-    Message("messages__establisherPreviousConfirmAddress__cya_label", companyName),
+    Message("messages__trusteePreviousAddress", companyName),
     UserAnswers().addressAnswer(previousAddress),
     answerIsMessageKey = false,
     Some(Link("site.change", companyPreviousAddressRoute(checkMode(mode), srn),
-      Some("messages__establisherPreviousConfirmAddress__cya_visually_hidden_label")))
+      Some(Message("messages__changeTrusteePreviousAddress", companyName))))
   )
 
   def previousAddressAddLink(mode: Mode, srn: Option[String]): AnswerRow =
-    AnswerRow(Message("messages__establisherPreviousConfirmAddress__cya_label", companyName),
-    Seq("site.not_entered"),
-    answerIsMessageKey = true,
-    Some(Link("site.add", companyPreviousAddressRoute(checkMode(mode), srn), Some("messages__establisherPreviousConfirmAddress__cya_visually_hidden_label"))))
+    AnswerRow(Message("messages__trusteePreviousAddress", companyName),
+      Seq("site.not_entered"),
+      answerIsMessageKey = true,
+      Some(Link("site.add", companyPreviousAddressRoute(checkMode(mode), srn),
+        Some(Message("messages__changeTrusteePreviousAddress", companyName)))))
 
   def companyAddressNormal: Seq[AnswerSection] = Seq(AnswerSection(None, Seq(
-    addressAnswerRow(NormalMode, None), addressYearsAnswerRow(NormalMode, None), tradingTimeAnswerRow(NormalMode, None),
-    previousAddressAnswerRow(NormalMode, None)
+    addressAnswerRow(NormalMode, None), addressYearsAnswerRow(NormalMode, None),
+    tradingTimeAnswerRow(NormalMode, None), previousAddressAnswerRow(NormalMode, None)
   )))
 
   def companyAddressUpdate: Seq[AnswerSection] = Seq(AnswerSection(None, Seq(
     addressAnswerRow(UpdateMode, srn), previousAddressAnswerRow(UpdateMode, srn))))
-  def companyAddressUpdatePartial: Seq[AnswerSection] = Seq(AnswerSection(None, Seq(
+
+  def companyAddressSectionWithAddLink: Seq[AnswerSection] = Seq(AnswerSection(None, Seq(
     addressAnswerRow(UpdateMode, srn), previousAddressAddLink(UpdateMode, srn))))
 
   def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData,
-                 allowChangeHelper: AllowChangeHelper = ach,
-                 isToggleOn: Boolean = false): CheckYourAnswersCompanyAddressController =
-    new CheckYourAnswersCompanyAddressController(
-      frontendAppConfig,
-      messagesApi,
-      FakeAuthAction,
-      dataRetrievalAction,
-      FakeAllowAccessProvider(),
-      new DataRequiredActionImpl,
-      fakeCountryOptions,
-      new FakeNavigator(onwardRoute),
-      FakeUserAnswersService,
-      allowChangeHelper,
-      new FakeFeatureSwitchManagementService(isToggleOn)
-    )
+                 allowChangeHelper: AllowChangeHelper = ach): CheckYourAnswersCompanyAddressController =
+    new CheckYourAnswersCompanyAddressController(frontendAppConfig, messagesApi, FakeAuthAction,
+      dataRetrievalAction, FakeAllowAccessProvider(), new DataRequiredActionImpl,
+      fakeCountryOptions, allowChangeHelper)
 
   def viewAsString(answerSections: Seq[AnswerSection], srn: Option[String] = None, postUrl: Call = postUrl): String =
-    checkYourAnswers(
-      frontendAppConfig,
-      answerSections,
-      postUrl,
-      None,
-      hideEditLinks = false,
-      srn = srn,
-      hideSaveAndContinueButton = false
-    )(fakeRequest, messages).toString
+    checkYourAnswers(frontendAppConfig, answerSections, postUrl, None,
+      hideEditLinks = false, srn = srn, hideSaveAndContinueButton = false)(fakeRequest, messages).toString
 
 }
 

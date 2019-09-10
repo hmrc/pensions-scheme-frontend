@@ -32,18 +32,20 @@ case class CompanyAddressId(index: Int) extends TypedIdentifier[Address] {
 object CompanyAddressId {
   override def toString: String = "companyAddress"
 
-  implicit def cya(implicit countryOptions: CountryOptions, messages: Messages, ua: UserAnswers): CheckYourAnswers[CompanyAddressId] =
+  implicit def cya(implicit countryOptions: CountryOptions, messages: Messages): CheckYourAnswers[CompanyAddressId] =
     new CheckYourAnswers[CompanyAddressId] {
+
       override def row(id: CompanyAddressId)(changeUrl: String, ua: UserAnswers): Seq[AnswerRow] = {
-        def trusteeName(index: Int) = ua.get(CompanyDetailsId(index)).fold(messages("messages__theTrustee"))(_.companyName)
-        def label(index: Int) = messages("messages__trusteeAddress", trusteeName(index))
-        def changeAddress(index: Int) = messages("messages__changeTrusteeAddress", trusteeName(index))
+        val trusteeName = ua.get(CompanyDetailsId(id.index)).fold(messages("messages__theTrustee"))(_.companyName)
+        val label = messages("messages__trusteeAddress", trusteeName)
+        val changeAddress = messages("messages__changeTrusteeAddress", trusteeName)
 
         AddressCYA(
-          label = label(id.index),
-          changeAddress = changeAddress(id.index)
+          label = label,
+          changeAddress = changeAddress
         )().row(id)(changeUrl, ua)
       }
+
       override def updateRow(id: CompanyAddressId)(changeUrl: String, ua: UserAnswers): Seq[AnswerRow] = row(id)(changeUrl, ua)
     }
 }

@@ -1834,3 +1834,4 @@ messages__whatYouWillNeedTrusteePartnershipDetails__p2 = If {0} has them, you wi
 messages__whatYouWillNeedTrusteePartnershipDetails__item2 = VAT registration number
 messages__whatYouWillNeedTrusteePartnershipDetails__item3 = employer PAYE reference (you can tell us any employer PAYE reference if has more than one)
 
+messages__visuallyhidden__dynamic__hasBeenTrading = whether {0} has been trading for at least 1 year

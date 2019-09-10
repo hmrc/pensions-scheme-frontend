@@ -73,13 +73,13 @@
                 <ul class="task-list-items">
                     <li class="task-list-item">
                         @if(taskSections.beforeYouStart.isCompleted.isEmpty){
-                        <a id= "section-before-you-start-link" href="@taskSections.beforeYouStart.link.target">
+                        <a id="section-before-you-start-link" class="task-name" href="@taskSections.beforeYouStart.link.target">
                             @messages(taskSections.beforeYouStart.link.text)
                         </a>
                         }
 
                         @taskSections.beforeYouStart.isCompleted.map{ isCompleted =>
-                        <a id= "section-before-you-start-link" href="@taskSections.beforeYouStart.link.target" aria-describedby="section-beforeYouStart-status">
+                        <a id="section-before-you-start-link" class="task-name" href="@taskSections.beforeYouStart.link.target" aria-describedby="section-beforeYouStart-status">
                             @messages(taskSections.beforeYouStart.link.text)
                         </a>
                             <strong class="@statusClass(isCompleted)" id="section-beforeYouStart-status">@messages(status(isCompleted))</strong>
@@ -96,7 +96,7 @@
                 <ul class="task-list-items">
                     @for((item, i) <- taskSections.about.zipWithIndex){
                         <li class="task-list-item">
-                            <a id= "section-about-link-@i"  href="@{item.link.target}">
+                            <a id="section-about-link-@i" class="task-name" href="@{item.link.target}">
                                 @messages(item.link.text)
                             </a>
                             @item.isCompleted.map{ isCompleted =>
@@ -118,7 +118,7 @@
 
                         <ul class="task-list-items">
                             <li class="task-list-item">
-                                <a id= "section-working-knowledge-link" href="@wk.link.target" aria-describedby="section-working-knowledge-status">
+                                <a id="section-working-knowledge-link" class="task-name" href="@wk.link.target" aria-describedby="section-working-knowledge-status">
                                     @messages(wk.link.text)
                                 </a>
 
@@ -141,8 +141,7 @@
                 @taskSections.addEstablisherHeader.map { header =>
 
                     @header.link.map { link =>
-                        <!--this is the add link-->
-                        <a id="section-establishers-link" href="@{link.target}" >
+                        <a id="section-establishers-link" class="task-name" href="@{link.target}" >
                             @messages(link.text)
                         </a>
                     }
@@ -163,7 +162,7 @@
                             }
                             @for((entity, j) <- item.entities.zipWithIndex){
                                 <li class="task-list-item">
-                                    <a id= "section-establishers-link-@i-@j" href="@{entity.link.target}">
+                                    <a id="section-establishers-link-@i-@j" class="task-name" href="@{entity.link.target}">
                                         @messages(entity.link.text)
                                     </a>
                                     @entity.isCompleted.map{ isCompleted =>
@@ -184,8 +183,7 @@
                     @messages("messages__schemeTaskList__sectionTrustees_header")
                 </h2>
                 @header.link.map { link =>
-                    <!--this is the add link-->
-                    <a id= "section-trustees-link"  href="@{link.target}">
+                    <a id="section-trustees-link" class="task-name" href="@{link.target}">
                         @messages(link.text)
                     </a>
                 }
@@ -213,7 +211,7 @@
 
                     @for((entity, j) <- item.entities.zipWithIndex){
                         <li class="task-list-item">
-                            <a id= "section-trustees-link-@i-@j" href="@{entity.link.target}">
+                            <a id="section-trustees-link-@i-@j" class="task-name" href="@{entity.link.target}">
                                 @messages(entity.link.text)
                             </a>
                             @entity.isCompleted.map{ isCompleted =>
@@ -234,7 +232,7 @@
                 <p class="tasklist">
                         @if(declarationSection.declarationLink.isDefined){
                             @declarationSection.declarationLink.map{ link =>
-                                <a id= "section-declaration-link" href="@link.target">@messages(link.text)</a>
+                                <a id="section-declaration-link" class="task-name" href="@link.target">@messages(link.text)</a>
                             }
                         }else{
                             @for((incompleteMessage, i) <- declarationSection.incompleteDeclarationText.zipWithIndex){
@@ -248,7 +246,7 @@
     </div>
 
     <hr>
-    <a id= "save-and-return" class="task-name"
+    <a id="save-and-return" class="task-name"
        href="@taskSections.srn.fold(appConfig.managePensionsSchemeOverviewUrl.url)(srn => appConfig.managePensionsSchemeSummaryUrl.format(srn))">
         @if(taskSections.srn.isDefined){
             @messages("messages__complete__returnToSchemeSummary")
