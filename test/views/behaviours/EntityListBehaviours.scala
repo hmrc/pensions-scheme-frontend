@@ -145,12 +145,12 @@ trait EntityListBehaviours {
         items.foreach { item =>
 
           val link = doc.select(s"#person-${item.index}-delete")
-          val visibleText = doc.select(s"#person-${item.index}-delete span[aria-hidden=true]").first.text
+          val visibleText = doc.select(s"#person-${item.index}-delete span").first.text
           val hiddenText = doc.select(s"#person-${item.index}-delete span[class=visually-hidden]").first.text
 
           link.size mustBe 1
           visibleText mustBe messages("site.delete")
-          hiddenText mustBe s"${messages("site.delete")} ${item.name}"
+          hiddenText mustBe item.name
           link.first.attr("href") mustBe item.deleteLink(NormalMode, None).get
         }
       }
