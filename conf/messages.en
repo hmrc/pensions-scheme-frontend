@@ -1805,7 +1805,7 @@ messages__establisher__type__title = What kind of establisher are you adding?
 messages__establisher__type__h1 = What kind of establisher are you adding?
 
 messages__hasUtr__title = Does the trustee have a UTR?
-messages__hasUtr__h1 = Does {0} have a UTR?Unique Taxpayer Reference (UTR)?
+messages__hasUtr__h1 = Does {0} have a Unique Taxpayer Reference (UTR)?
 
 messages__trusteeUtr__title = What is the trustee’s UTR?
 messages__trusteeUtr__h1 =  What is {0}’s UTR?
