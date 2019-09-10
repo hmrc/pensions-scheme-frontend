@@ -149,7 +149,7 @@ object CheckYourAnswersCompanyAddressControllerSpec extends ControllerSpecBase w
       Seq("site.not_entered"),
       answerIsMessageKey = true,
       Some(Link("site.add", companyPreviousAddressRoute(checkMode(mode), srn),
-        Some(Message("messages__changeTrusteePreviousAddress", companyName)))))
+        Some(Message("messages__visuallyhidden__dynamic_previousAddress", companyName)))))
 
   def companyAddressNormal: Seq[AnswerSection] = Seq(AnswerSection(None, Seq(
     addressAnswerRow(NormalMode, None), addressYearsAnswerRow(NormalMode, None),
