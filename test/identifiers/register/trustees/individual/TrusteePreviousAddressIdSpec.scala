@@ -91,7 +91,7 @@ class TrusteePreviousAddressIdSpec extends SpecBase {
             Message("messages__trusteePreviousAddress", trusteeName),
             Seq("site.not_entered"),
             answerIsMessageKey = true,
-            Some(Link("site.add", onwardUrl, Some(Message("messages__addTrusteePreviousAddress", trusteeName))))))
+            Some(Link("site.add", onwardUrl, Some(Message("messages__changeTrusteePreviousAddress", trusteeName))))))
         )
       }
 

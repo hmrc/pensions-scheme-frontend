@@ -51,13 +51,13 @@ class CheckYourAnswersPartnershipContactDetailsControllerSpec extends Controller
     Seq(AnswerSection(None,
       StringCYA[PartnershipEmailId](
         Some(messages("messages__common_email__heading", partnershipDetails.name)),
-        Some(messages("messages__common_email__visually_hidden_change_label", partnershipDetails.name))
+        Some(messages("messages__visuallyhidden__dynamic_email", partnershipDetails.name))
       )().row(PartnershipEmailId(index))(
         routes.PartnershipEmailController.onPageLoad(checkMode(mode), Index(index), srn).url, fullAnswers) ++
 
         StringCYA[PartnershipPhoneId](
           Some(messages("messages__common_phone__heading", partnershipDetails.name)),
-          Some(messages("messages__common_phone__visually_hidden_change_label", partnershipDetails.name))
+          Some(messages("messages__visuallyhidden__dynamic_phone", partnershipDetails.name))
         )().row(PartnershipPhoneId(index))(
           routes.PartnershipPhoneNumberController.onPageLoad(checkMode(mode), Index(index), srn).url, fullAnswers)
     ))

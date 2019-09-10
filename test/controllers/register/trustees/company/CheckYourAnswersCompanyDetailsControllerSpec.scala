@@ -172,13 +172,13 @@ object CheckYourAnswersCompanyDetailsControllerSpec extends ControllerSpecBase w
       None,
       Seq(
         addLink(messages("messages__checkYourAnswers__establishers__company__number"), companyRegistrationNumberVariationsRoute(UpdateMode, srn),
-          messages("messages__visuallyhidden__companyNumber_add")),
+          messages("messages__visuallyhidden__companyNumber")),
         addLink(messages("messages__utr__checkyouranswerslabel"), companyUTRRoute(UpdateMode, srn),
-          messages("messages__visuallyhidden__companyUTR_add")),
+          messages("messages__visuallyhidden__companyUTR")),
         addLink(messages("messages__common__cya__vat"), companyEnterVATRoute(UpdateMode, srn),
-          messages("messages__visuallyhidden__companyVat_add")),
+          messages("messages__visuallyhidden__companyVat")),
         addLink(messages("messages__common__cya__paye"), companyPayeVariationsRoute(UpdateMode, srn),
-          messages("messages__visuallyhidden__companyPaye_add"))
+          messages("messages__visuallyhidden__companyPaye"))
       )
     ))
 

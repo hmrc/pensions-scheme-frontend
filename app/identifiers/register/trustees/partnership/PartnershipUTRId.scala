@@ -40,19 +40,20 @@ object PartnershipUTRId {
                    messages: Messages,
                    countryOptions: CountryOptions): CheckYourAnswers[PartnershipUTRId] = {
 
-    val label: String = "messages__cya__utr"
-    val hiddenLabel = "messages__visuallyhidden__partnership__utr"
+    def trusteeName(index: Int) = userAnswers.get(PartnershipDetailsId(index)).fold(messages("messages__theTrustee"))(_.name)
+    def label(index: Int) = messages("messages__cya__utr", trusteeName(index))
+    def hiddenLabel(index: Int) = messages("messages__visuallyhidden__dynamic_utr", trusteeName(index))
 
     new CheckYourAnswers[PartnershipUTRId] {
       override def row(id: PartnershipUTRId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        ReferenceValueCYA[PartnershipUTRId](label, hiddenLabel)().row(id)(changeUrl, userAnswers)
+        ReferenceValueCYA[PartnershipUTRId](label(id.index), hiddenLabel(id.index))().row(id)(changeUrl, userAnswers)
 
       override def updateRow(id: PartnershipUTRId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
         userAnswers.get(trustees.IsTrusteeNewId(id.index)) match {
           case Some(true) =>
             row(id)(changeUrl, userAnswers)
           case _ =>
-            ReferenceValueCYA[PartnershipUTRId](label, hiddenLabel)().updateRow(id)(changeUrl, userAnswers)
+            ReferenceValueCYA[PartnershipUTRId](label(id.index), hiddenLabel(id.index))().updateRow(id)(changeUrl, userAnswers)
         }
       }
     }

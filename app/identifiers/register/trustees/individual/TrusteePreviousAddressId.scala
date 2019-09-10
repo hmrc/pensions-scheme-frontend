@@ -36,7 +36,6 @@ object TrusteePreviousAddressId {
     def trusteeName(index: Int): String = ua.get(TrusteeNameId(index)).fold(messages("messages__theTrustee"))(_.fullName)
     def label(index: Int) = messages("messages__trusteePreviousAddress", trusteeName(index))
     def changeAddress(index: Int) = messages("messages__changeTrusteePreviousAddress", trusteeName(index))
-    def addAddress(index: Int) = messages("messages__addTrusteePreviousAddress", trusteeName(index))
 
     new CheckYourAnswers[TrusteePreviousAddressId] {
       override def row(id: TrusteePreviousAddressId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
@@ -46,8 +45,8 @@ object TrusteePreviousAddressId {
         PreviousAddressCYA(label(id.index),
           changeAddress(id.index),
           userAnswers.get(IsTrusteeNewId(id.index)),
-          userAnswers.get(TrusteeAddressYearsId(id.index)),
-          Some(addAddress(id.index)))().updateRow(id)(changeUrl, userAnswers)
+          userAnswers.get(TrusteeAddressYearsId(id.index))
+        )().updateRow(id)(changeUrl, userAnswers)
     }
   }
 }

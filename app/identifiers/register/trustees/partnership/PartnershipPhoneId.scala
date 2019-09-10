@@ -39,7 +39,7 @@ object PartnershipPhoneId {
     override def row(id: PartnershipPhoneId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
       val trusteeName: String = userAnswers.get(PartnershipDetailsId(id.index)).fold(messages("messages__theTrustee"))(_.name)
       val label = messages("messages__common_phone__heading", trusteeName)
-      val hiddenLabel = Some(messages("messages__common_phone__visually_hidden_change_label", trusteeName))
+      val hiddenLabel = Some(messages("messages__visuallyhidden__dynamic_phone", trusteeName))
 
       StringCYA(
         Some(label),

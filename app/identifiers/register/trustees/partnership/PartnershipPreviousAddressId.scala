@@ -37,7 +37,7 @@ object PartnershipPreviousAddressId {
 
     def label(index: Int, ua: UserAnswers) = messages("messages__previousAddressFor", trusteeName(index, ua))
 
-    def changeAddress(index: Int, ua: UserAnswers) = messages("messages__changeTrusteePreviousAddress", trusteeName(index, ua))
+    def changeAddress(index: Int, ua: UserAnswers) = messages("messages__visuallyhidden__dynamic_previousAddress", trusteeName(index, ua))
 
     new CheckYourAnswers[PartnershipPreviousAddressId] {
       override def row(id: PartnershipPreviousAddressId)(changeUrl: String, ua: UserAnswers): Seq[AnswerRow] =
@@ -47,8 +47,8 @@ object PartnershipPreviousAddressId {
         PreviousAddressCYA(label(id.index, ua),
           changeAddress(id.index, ua),
           ua.get(IsTrusteeNewId(id.index)),
-          ua.get(PartnershipAddressYearsId(id.index)),
-          Some(changeAddress(id.index, ua)))().updateRow(id)(changeUrl, ua)
+          ua.get(PartnershipAddressYearsId(id.index))
+        )().updateRow(id)(changeUrl, ua)
     }
   }
 }

@@ -114,7 +114,7 @@ object CheckYourAnswersPartnershipAddressControllerSpec extends ControllerSpecBa
     Message("messages__addressFor", partnershipName),
     UserAnswers().addressAnswer(address),
     answerIsMessageKey = false,
-    Some(Link("site.change", partnershipAddressRoute(checkMode(mode), srn), Some(Message("messages__changeTrusteeAddress", partnershipName))))
+    Some(Link("site.change", partnershipAddressRoute(checkMode(mode), srn), Some(Message("messages__visuallyhidden__dynamic_address", partnershipName))))
   )
 
   private def addressYearsAnswerRow(mode: Mode, srn: Option[String]): AnswerRow = AnswerRow(
@@ -137,7 +137,7 @@ object CheckYourAnswersPartnershipAddressControllerSpec extends ControllerSpecBa
       Message("messages__previousAddressFor", partnershipName),
       UserAnswers().addressAnswer(previousAddress),
       answerIsMessageKey = false,
-      Some(Link("site.change", partnershipPreviousAddressRoute(checkMode(mode), srn), Some(Message("messages__changeTrusteePreviousAddress", partnershipName))))
+      Some(Link("site.change", partnershipPreviousAddressRoute(checkMode(mode), srn), Some(Message("messages__visuallyhidden__dynamic_previousAddress", partnershipName))))
     )
 
   private def previousAddressAddLink(mode: Mode, srn: Option[String]): AnswerRow =
@@ -145,7 +145,7 @@ object CheckYourAnswersPartnershipAddressControllerSpec extends ControllerSpecBa
       Message("messages__previousAddressFor", partnershipName),
       Seq("site.not_entered"),
       answerIsMessageKey = true,
-      Some(Link("site.add", partnershipPreviousAddressRoute(checkMode(mode), srn), Some(Message("messages__changeTrusteePreviousAddress", partnershipName))))
+      Some(Link("site.add", partnershipPreviousAddressRoute(checkMode(mode), srn), Some(Message("messages__visuallyhidden__dynamic_previousAddress", partnershipName))))
     )
 
   private def partnershipAddressNormal: Seq[AnswerSection] =

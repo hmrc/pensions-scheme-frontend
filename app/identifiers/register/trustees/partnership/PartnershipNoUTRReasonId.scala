@@ -36,21 +36,18 @@ object PartnershipNoUTRReasonId {
                    messages: Messages,
                    countryOptions: CountryOptions): CheckYourAnswers[PartnershipNoUTRReasonId] = {
 
-    def label(index: Int) = userAnswers.get(PartnershipDetailsId(index)) match {
-      case Some(details) => Some(messages("messages__noGenericUtr__heading", details.name))
-      case _ => Some(messages("messages__partnershipNoUtr__title"))
-    }
-
-    def hiddenLabel = Some(messages("messages__visuallyhidden__partnership__utr_no"))
+    def trusteeName(index: Int) = userAnswers.get(PartnershipDetailsId(index)).fold(messages("messages__theTrustee"))(_.name)
+    def label(index: Int) = Some(messages("messages__noGenericUtr__heading", trusteeName(index)))
+    def hiddenLabel(index: Int) = Some(messages("messages__visuallyhidden__dynamic_noUtrReason", trusteeName(index)))
 
     new CheckYourAnswers[PartnershipNoUTRReasonId] {
       override def row(id: PartnershipNoUTRReasonId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        StringCYA(label(id.index), hiddenLabel)().row(id)(changeUrl, userAnswers)
+        StringCYA(label(id.index), hiddenLabel(id.index))().row(id)(changeUrl, userAnswers)
 
 
       override def updateRow(id: PartnershipNoUTRReasonId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
         userAnswers.get(IsTrusteeNewId(id.index)) match {
-          case Some(true) => StringCYA(label(id.index), hiddenLabel)().row(id)(changeUrl, userAnswers)
+          case Some(true) => StringCYA(label(id.index), hiddenLabel(id.index))().row(id)(changeUrl, userAnswers)
           case _ => Seq.empty[AnswerRow]
         }
     }

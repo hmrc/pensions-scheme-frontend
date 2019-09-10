@@ -549,7 +549,7 @@ class CheckYourAnswersSpec extends SpecBase with MustMatchers with PropertyCheck
               "messages__common__nino",
               Seq("site.not_entered"),
               true,
-              Some(Link("site.add", onwardUrl, Some("messages__visuallyhidden__trustee__nino_add")))
+              Some(Link("site.add", onwardUrl, Some("messages__visuallyhidden__trustee__nino")))
             )))
         }
       }
@@ -620,7 +620,7 @@ class CheckYourAnswersSpec extends SpecBase with MustMatchers with PropertyCheck
               "messages__common__cya__vat",
               Seq("site.not_entered"),
               true,
-              Some(Link("site.add", onwardUrl, Some(s"messages__visuallyhidden__partnership__vat_number_add")))
+              Some(Link("site.add", onwardUrl, Some(s"messages__visuallyhidden__partnership__vat_number")))
             )))
         }
 
@@ -655,7 +655,7 @@ class CheckYourAnswersSpec extends SpecBase with MustMatchers with PropertyCheck
               "messages__common__cya__paye",
               Seq("site.not_entered"),
               true,
-              Some(Link("site.add", onwardUrl, Some(s"messages__visuallyhidden__partnership__paye_number_add")))
+              Some(Link("site.add", onwardUrl, Some(s"messages__visuallyhidden__partnership__paye_number")))
             )))
         }
 
@@ -682,7 +682,7 @@ class CheckYourAnswersSpec extends SpecBase with MustMatchers with PropertyCheck
 
           testIdentifier[CompanyRegistrationNumber].row(onwardUrl, UpdateMode) must equal(Seq(
             AnswerRow("messages__common__crn", Seq("site.not_entered"), true,
-              Some(Link("site.add", onwardUrl, Some(s"messages__visuallyhidden__establisher__crn_add")))
+              Some(Link("site.add", onwardUrl, Some(s"messages__visuallyhidden__establisher__crn")))
             )))
         }
 
@@ -743,7 +743,7 @@ class CheckYourAnswersSpec extends SpecBase with MustMatchers with PropertyCheck
             "messages__common__cya__name",
             Seq("site.not_entered"),
             true,
-            Some(Link("site.add", onwardUrl, Some("messages__visuallyhidden__common__name_add")))
+            Some(Link("site.add", onwardUrl, Some("messages__visuallyhidden__common__name")))
           )))
         }
       }

@@ -87,7 +87,7 @@ class CompanyPayeVariationsIdSpec extends SpecBase {
 
         CompanyPayeVariationsId(0).row(onwardUrl, CheckUpdateMode) must equal(Seq(
           AnswerRow("messages__common__cya__paye", Seq("site.not_entered"), answerIsMessageKey = true,
-            Some(Link("site.add", onwardUrl, Some("messages__visuallyhidden__companyPaye_add"))))))
+            Some(Link("site.add", onwardUrl, Some("messages__visuallyhidden__companyPaye"))))))
       }
     }
   }

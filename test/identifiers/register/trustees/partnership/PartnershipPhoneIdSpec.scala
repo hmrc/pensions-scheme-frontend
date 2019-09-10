@@ -47,7 +47,7 @@ class PartnershipPhoneIdSpec extends SpecBase {
               Message("messages__common_phone__heading", partnershipDetails.name),
               Seq(phone),
               answerIsMessageKey = false,
-              Some(Link("site.change", onwardUrl, Some(Message("messages__common_phone__visually_hidden_change_label", partnershipDetails.name))))
+              Some(Link("site.change", onwardUrl, Some(Message("messages__visuallyhidden__dynamic_phone", partnershipDetails.name))))
             )))
         }
       }
