@@ -63,7 +63,6 @@ class TrusteePreviousAddressController @Inject()(
       countryOptions.options,
       title = Message("messages__trustee_individual_confirm__previous_address__title"),
       heading = Message("messages__common__confirmPreviousAddress__h1", name),
-      secondaryHeader = Some(name),
       srn = srn
     )
 

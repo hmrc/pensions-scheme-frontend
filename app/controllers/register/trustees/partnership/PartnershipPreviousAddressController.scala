@@ -56,37 +56,32 @@ class PartnershipPreviousAddressController @Inject()(
 
   protected val form: Form[Address] = formProvider()
 
-  private def viewmodel(index: Int, mode: Mode, srn: Option[String]): Retrieval[ManualAddressViewModel] =
-    Retrieval {
-      implicit request =>
-        PartnershipDetailsId(index).retrieve.right.map {
-          details =>
-            ManualAddressViewModel(
-              postCall(mode, Index(index), srn),
-              countryOptions.options,
-              title = Message(title),
-              heading = Message(heading,details.name),
-              secondaryHeader = Some(details.name),
-              srn = srn
-            )
-        }
-    }
+  private def viewmodel(index: Int, mode: Mode, srn: Option[String], name: String): ManualAddressViewModel =
+
+    ManualAddressViewModel(
+      postCall(mode, Index(index), srn),
+      countryOptions.options,
+      title = Message(title),
+      heading = Message(heading, name),
+      srn = srn
+    )
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
-    implicit request =>
-      viewmodel(index, mode, srn).retrieve.right.map {
-        vm =>
-          get(PartnershipPreviousAddressId(index), PartnershipPreviousAddressListId(index), vm)
-      }
-  }
+      implicit request =>
+        PartnershipDetailsId(index).retrieve.right.map {
+          details =>
+            get(PartnershipPreviousAddressId(index), PartnershipPreviousAddressListId(index), viewmodel(index, mode, srn, details.name))
+        }
+    }
 
   def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
-      viewmodel(index, mode, srn).retrieve.right.map {
-        vm =>
-          val context = s"Trustee Partnership Previous Address: ${vm.secondaryHeader.get}"
-          post(PartnershipPreviousAddressId(index), PartnershipPreviousAddressListId(index), vm, mode, context,
+      PartnershipDetailsId(index).retrieve.right.map {
+        details =>
+          val context = s"Trustee Partnership Previous Address: ${details.name}"
+          post(PartnershipPreviousAddressId(index), PartnershipPreviousAddressListId(index),
+            viewmodel(index, mode, srn, details.name), mode, context,
             PartnershipPreviousAddressPostcodeLookupId(index)
           )
       }

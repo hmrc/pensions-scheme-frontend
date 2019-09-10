@@ -31,7 +31,6 @@ import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
-import utils.annotations.TrusteesCompany
 import utils.CountryOptions
 import viewmodels.Message
 import viewmodels.address.ManualAddressViewModel
@@ -42,7 +41,7 @@ class CompanyAddressController @Inject()(
                                           val appConfig: FrontendAppConfig,
                                           val messagesApi: MessagesApi,
                                           val userAnswersService: UserAnswersService,
-                                           val navigator: Navigator,
+                                          val navigator: Navigator,
                                           authenticate: AuthAction,
                                           getData: DataRetrievalAction,
                                           allowAccess: AllowAccessActionProvider,
@@ -59,45 +58,32 @@ class CompanyAddressController @Inject()(
 
   protected val form: Form[Address] = formProvider()
 
-  private def viewmodel(index: Int, mode: Mode, srn: Option[String]): Retrieval[ManualAddressViewModel] =
-    Retrieval {
-      implicit request =>
-        CompanyDetailsId(index).retrieve.right.map {
-          details =>
-            ManualAddressViewModel(
-              postCall(mode, Index(index), srn),
-              countryOptions.options,
-              title = Message(title),
-              heading = Message(heading, details.companyName),
-              hint = Some(Message(hint)),
-              secondaryHeader = Some(details.companyName),
-              srn = srn
-            )
-        }
-    }
+  private def viewmodel(index: Int, mode: Mode, srn: Option[String], name: String): ManualAddressViewModel =
+    ManualAddressViewModel(
+      postCall(mode, Index(index), srn),
+      countryOptions.options,
+      title = Message(title),
+      heading = Message(heading, name),
+      srn = srn
+    )
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
-    implicit request =>
-      viewmodel(index, mode, srn).retrieve.right.map {
-        vm =>
-          get(CompanyAddressId(index), CompanyAddressListId(index), vm)
-      }
-  }
+      implicit request =>
+        CompanyDetailsId(index).retrieve.right.map {
+          details =>
+            get(CompanyAddressId(index), CompanyAddressListId(index), viewmodel(index, mode, srn, details.companyName))
+        }
+    }
 
   def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
-      viewmodel(index, mode, srn).retrieve.right.map {
-        vm =>
-          post(CompanyAddressId(index), CompanyAddressListId(index), vm, mode, context(vm),CompanyPostcodeLookupId(index))
+      CompanyDetailsId(index).retrieve.right.map {
+        details =>
+          val context = s"Trustee Company Address: ${details.companyName}"
+          post(CompanyAddressId(index), CompanyAddressListId(index),
+            viewmodel(index, mode, srn, details.companyName), mode, context, CompanyPostcodeLookupId(index))
       }
-  }
-
-  private def context(viewModel: ManualAddressViewModel): String = {
-    viewModel.secondaryHeader match {
-      case Some(name) => s"Trustee Company Address: $name"
-      case _ => "Trustee Company Address"
-    }
   }
 
 }

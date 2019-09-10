@@ -85,8 +85,7 @@ class CompanyPreviousAddressControllerSpec extends ControllerSpecBase with Scala
         routes.CompanyPreviousAddressController.onSubmit(NormalMode, None, index),
         options,
         Message("messages__establisherPreviousConfirmAddress__title"),
-        Message("messages__common__confirmPreviousAddress__h1", companyName),
-        Some(Message("messages__companyAddress__lede"))
+        Message("messages__common__confirmPreviousAddress__h1", companyName)
       ),
       None
     )(fakeRequest, messages).toString

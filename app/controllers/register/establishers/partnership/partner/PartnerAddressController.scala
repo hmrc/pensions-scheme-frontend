@@ -31,8 +31,8 @@ import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
-import utils.annotations.EstablishersPartner
 import utils.CountryOptions
+import utils.annotations.EstablishersPartner
 import viewmodels.Message
 import viewmodels.address.ManualAddressViewModel
 
@@ -61,51 +61,39 @@ class PartnerAddressController @Inject()(
 
   def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
-    implicit request =>
-      viewmodel(establisherIndex, partnerIndex, mode, srn).retrieve.right.map {
-        vm =>
-          get(PartnerAddressId(establisherIndex, partnerIndex), PartnerAddressListId(establisherIndex, partnerIndex), vm)
-      }
-  }
-
-  def onSubmit(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen requireData).async {
-    implicit request =>
-      viewmodel(establisherIndex, partnerIndex, mode, srn).retrieve.right.map {
-        vm =>
-          post(
-            PartnerAddressId(establisherIndex, partnerIndex),
-            PartnerAddressListId(establisherIndex, partnerIndex),
-            vm,
-            mode,
-            context(vm),
-            PartnerAddressPostcodeLookupId(establisherIndex, partnerIndex)
-          )
-      }
-  }
-
-  private def viewmodel(establisherIndex: Int, partnerIndex: Int, mode: Mode, srn: Option[String]): Retrieval[ManualAddressViewModel] =
-    Retrieval {
       implicit request =>
         PartnerDetailsId(establisherIndex, partnerIndex).retrieve.right.map {
           details =>
-            ManualAddressViewModel(
-              postCall(mode, Index(establisherIndex), Index(partnerIndex), srn),
-              countryOptions.options,
-              title = Message(title),
-              heading = Message(heading,details.fullName),
-              hint = Some(Message(hint)),
-              secondaryHeader = Some(details.fullName),
-              srn = srn
+            get(PartnerAddressId(establisherIndex, partnerIndex),
+              PartnerAddressListId(establisherIndex, partnerIndex),
+              viewmodel(establisherIndex, partnerIndex, mode, srn, details.fullName))
+        }
+    }
+
+  def onSubmit(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen requireData).async {
+      implicit request =>
+        PartnerDetailsId(establisherIndex, partnerIndex).retrieve.right.map {
+          details =>
+            val context = s"Company Partner Address: ${details.fullName}"
+            post(
+              PartnerAddressId(establisherIndex, partnerIndex),
+              PartnerAddressListId(establisherIndex, partnerIndex),
+              viewmodel(establisherIndex, partnerIndex, mode, srn, details.fullName),
+              mode,
+              context,
+              PartnerAddressPostcodeLookupId(establisherIndex, partnerIndex)
             )
         }
     }
 
-  private def context(viewModel: ManualAddressViewModel): String = {
-    viewModel.secondaryHeader match {
-      case Some(name) => s"Company Partner Address: $name"
-      case _ => "Company Partner Address"
-    }
-  }
+  private def viewmodel(establisherIndex: Int, partnerIndex: Int, mode: Mode, srn: Option[String], name: String): ManualAddressViewModel =
+    ManualAddressViewModel(
+      postCall(mode, Index(establisherIndex), Index(partnerIndex), srn),
+      countryOptions.options,
+      title = Message(title),
+      heading = Message(heading, name),
+      srn = srn
+    )
 
 }

@@ -78,7 +78,6 @@ class DirectorAddressPostcodeLookupController @Inject()(
               title = Message("messages__directorCompanyAddressPostcodeLookup__title"),
               heading = Message("messages__addressPostcodeLookup__heading", name),
               subHeading = None,
-              enterPostcode = Message("messages__common__postcode_lookup__manual_link"),
               srn = srn
             )
         }

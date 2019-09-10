@@ -18,12 +18,11 @@ package controllers.register.establishers.company.director
 
 import audit.AuditService
 import config.{FeatureSwitchManagementService, FrontendAppConfig}
-import connectors.UserAnswersCacheConnector
 import controllers.actions._
 import controllers.address.ManualAddressController
 import controllers.register.establishers.company.director.routes._
 import forms.address.AddressFormProvider
-import identifiers.register.establishers.company.director.{DirectorAddressId, DirectorAddressListId, DirectorAddressPostcodeLookupId, DirectorDetailsId, DirectorNameId}
+import identifiers.register.establishers.company.director._
 import javax.inject.Inject
 import models.address.Address
 import models.{Index, Mode}
@@ -63,40 +62,38 @@ class DirectorAddressController @Inject()(
 
   def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
-    implicit request =>
-      directorName(establisherIndex, directorIndex).retrieve.right.map {
-        name =>
-          get(DirectorAddressId(establisherIndex, directorIndex), DirectorAddressListId(establisherIndex, directorIndex),
-            viewmodel(establisherIndex, directorIndex, mode, srn, name))
-      }
-  }
+      implicit request =>
+        directorName(establisherIndex, directorIndex).retrieve.right.map {
+          name =>
+            get(DirectorAddressId(establisherIndex, directorIndex), DirectorAddressListId(establisherIndex, directorIndex),
+              viewmodel(establisherIndex, directorIndex, mode, srn, name))
+        }
+    }
 
   def onSubmit(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen requireData).async {
-    implicit request =>
-      directorName(establisherIndex, directorIndex).retrieve.right.map {
-        name =>
-          post(
-            DirectorAddressId(establisherIndex, directorIndex),
-            DirectorAddressListId(establisherIndex, directorIndex),
-            viewmodel(establisherIndex, directorIndex, mode, srn, name),
-            mode,
-            context(name),
-            DirectorAddressPostcodeLookupId(establisherIndex, directorIndex)
-          )
-      }
-  }
+      implicit request =>
+        directorName(establisherIndex, directorIndex).retrieve.right.map {
+          name =>
+            post(
+              DirectorAddressId(establisherIndex, directorIndex),
+              DirectorAddressListId(establisherIndex, directorIndex),
+              viewmodel(establisherIndex, directorIndex, mode, srn, name),
+              mode,
+              context = s"Company Director Address: $name",
+              DirectorAddressPostcodeLookupId(establisherIndex, directorIndex)
+            )
+        }
+    }
 
   private def viewmodel(establisherIndex: Int, directorIndex: Int, mode: Mode, srn: Option[String], name: String): ManualAddressViewModel =
     ManualAddressViewModel(
-              postCall(mode, Index(establisherIndex), Index(directorIndex), srn),
-              countryOptions.options,
-              title = Message(title),
-              heading = Message(heading, name),
-              hint = Some(Message(hint)),
-              secondaryHeader = None,
-              srn = srn
-            )
+      postCall(mode, Index(establisherIndex), Index(directorIndex), srn),
+      countryOptions.options,
+      title = Message(title),
+      heading = Message(heading, name),
+      srn = srn
+    )
 
   val directorName = (establisherIndex: Index, directorIndex: Index) => Retrieval {
     implicit request =>
@@ -104,10 +101,6 @@ class DirectorAddressController @Inject()(
         DirectorNameId(establisherIndex, directorIndex).retrieve.right.map(_.fullName)
       else
         DirectorDetailsId(establisherIndex, directorIndex).retrieve.right.map(_.fullName)
-  }
-
-  private def context(name: String): String = {
-    s"Company Director Address: $name"
   }
 
 }
