@@ -160,11 +160,11 @@ object CheckYourAnswersPartnershipDetailsControllerSpec extends ControllerSpecBa
     Seq(AnswerSection(
       None,
       Seq(
-        addLink(messages("messages__cya__utr", partnershipName), partnershipUTRRoute(UpdateMode, srn),
+        addLink(messages("messages__trusteeUtr__h1", partnershipName), partnershipUTRRoute(UpdateMode, srn),
           messages("messages__visuallyhidden__dynamic_utr", partnershipName)),
-        addLink(messages("messages__cya__vat", partnershipName), partnershipEnterVATRoute(UpdateMode, srn),
+        addLink(messages("messages__enterVAT__heading", partnershipName), partnershipEnterVATRoute(UpdateMode, srn),
           messages("messages__visuallyhidden__dynamic_vat", partnershipName)),
-        addLink(messages("messages__cya__paye", partnershipName), partnershipPayeVariationsRoute(UpdateMode, srn),
+        addLink(messages("messages__payeVariations__heading", partnershipName), partnershipPayeVariationsRoute(UpdateMode, srn),
           messages("messages__visuallyhidden__dynamic_paye", partnershipName))
       )
     ))
@@ -176,15 +176,15 @@ object CheckYourAnswersPartnershipDetailsControllerSpec extends ControllerSpecBa
       Seq(
         booleanChangeLink(messages("messages__partnershipHasUtr__heading", partnershipName), hasPartnershipUTRRoute(mode, srn), value = true,
           messages("messages__visuallyhidden__dynamic_hasUtr", partnershipName)),
-        stringChangeLink(messages("messages__cya__utr", partnershipName), partnershipUTRRoute(mode, srn), utr,
+        stringChangeLink(messages("messages__trusteeUtr__h1", partnershipName), partnershipUTRRoute(mode, srn), utr,
           messages("messages__visuallyhidden__dynamic_utr", partnershipName)),
         booleanChangeLink(messages("messages__vat__heading", partnershipName), hasPartnershipVatRoute(mode, srn), value = true,
           messages("messages__visuallyhidden__dynamic_hasVat", partnershipName)),
-        stringChangeLink(messages("messages__cya__vat", partnershipName), partnershipEnterVATRoute(mode, srn), vat,
+        stringChangeLink(messages("messages__enterVAT__heading", partnershipName), partnershipEnterVATRoute(mode, srn), vat,
           messages("messages__visuallyhidden__dynamic_vat", partnershipName)),
         booleanChangeLink(messages("messages__hasPaye__h1", partnershipName), hasPartnershipPayeRoute(mode, srn), value = true,
           messages("messages__visuallyhidden__dynamic_hasPaye", partnershipName)),
-        stringChangeLink(messages("messages__cya__paye", partnershipName), partnershipPayeVariationsRoute(mode, srn), paye,
+        stringChangeLink(messages("messages__payeVariations__heading", partnershipName), partnershipPayeVariationsRoute(mode, srn), paye,
           messages("messages__visuallyhidden__dynamic_paye", partnershipName))
       )
     ))
@@ -194,9 +194,9 @@ object CheckYourAnswersPartnershipDetailsControllerSpec extends ControllerSpecBa
     Seq(AnswerSection(
       None,
       Seq(
-        stringNoLink(messages("messages__cya__utr", partnershipName), utr),
-        stringNoLink(messages("messages__cya__vat", partnershipName), vat),
-        stringNoLink(messages("messages__cya__paye", partnershipName), paye)
+        stringNoLink(messages("messages__trusteeUtr__h1", partnershipName), utr),
+        stringNoLink(messages("messages__enterVAT__heading", partnershipName), vat),
+        stringNoLink(messages("messages__payeVariations__heading", partnershipName), paye)
       )
     ))
 

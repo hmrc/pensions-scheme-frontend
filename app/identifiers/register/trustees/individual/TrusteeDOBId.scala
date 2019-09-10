@@ -17,6 +17,7 @@
 package identifiers.register.trustees.individual
 
 import identifiers._
+import identifiers.register.trustees.partnership.PartnershipDetailsId
 import identifiers.register.trustees.{IsTrusteeNewId, TrusteesId}
 import models.Link
 import org.joda.time.LocalDate
@@ -36,11 +37,9 @@ object TrusteeDOBId {
   implicit def cya(implicit answers: UserAnswers, messages: Messages): CheckYourAnswers[TrusteeDOBId] = {
     new CheckYourAnswers[TrusteeDOBId] {
 
-      def label(index: Int): String =
-        answers.get(TrusteeNameId(index)) match {
-          case Some(name) => messages("messages__trustee__cya__dob", name.fullName)
-          case _ => messages("messages__trustee__cya__dob", messages("messages__theTrustee"))
-        }
+      def trusteeName(index: Int) = answers.get(TrusteeNameId(index)).fold(messages("messages__theTrustee"))(_.fullName)
+      def label(index: Int): String = messages("messages__trusteeIndividualDOB__heading", trusteeName(index))
+      def hiddenLabel(index: Int) = Some(messages("messages__visuallyhidden__dynamic_dob", trusteeName(index)))
 
       override def row(id: TrusteeDOBId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
         userAnswers.get(id).fold(Nil: Seq[AnswerRow]) {
@@ -50,7 +49,7 @@ object TrusteeDOBId {
                 label(id.index),
                 Seq(DateHelper.formatDate(dob)),
                 answerIsMessageKey = false,
-                Some(Link("site.change", changeUrl, Some(Message("messages__visuallyhidden__trustee__dob"))))
+                Some(Link("site.change", changeUrl, hiddenLabel(id.index)))
               )
             )
           }

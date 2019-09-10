@@ -44,7 +44,7 @@ class TrusteeHasUTRControllerSpec extends ControllerSpecBase {
   private val postCall = controllers.register.trustees.individual.routes.TrusteeHasUTRController.onSubmit(NormalMode, index, srn)
   private val viewModel = CommonFormWithHintViewModel(
     postCall = postCall,
-    title = Message("messages__hasUtr__h1", Message("messages__theTrustee").resolve),
+    title = Message("messages__hasUtr__title", Message("messages__theTrustee").resolve),
     heading = Message("messages__hasUtr__h1", "first Last"),
     hint = Some(Message("messages__hasUtr__p1")),
     srn = srn

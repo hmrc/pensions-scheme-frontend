@@ -48,7 +48,7 @@ class TrusteeEmailIdSpec extends SpecBase {
               Message("messages__common_email__heading", personName.fullName),
               Seq(email),
               answerIsMessageKey = false,
-              Some(Link("site.change", onwardUrl, Some(Message("messages__common_email__visually_hidden_change_label", personName.fullName))))
+              Some(Link("site.change", onwardUrl, Some(Message("messages__visuallyhidden__dynamic_email", personName.fullName))))
             )))
         }
       }

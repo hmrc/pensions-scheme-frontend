@@ -100,15 +100,15 @@ object CheckYourAnswersIndividualAddressControllerSpec extends ControllerSpecBas
     UserAnswers().addressAnswer(address),
     answerIsMessageKey = false,
     Some(Link("site.change", trusteeAddressRoute(checkMode(mode), srn),
-      Some(Message("messages__changeTrusteeAddress", trusteeName)))
+      Some(Message("messages__visuallyhidden__dynamic_address", trusteeName)))
     ))
 
   def addressYearsAnswerRow(mode: Mode, srn: Option[String]): AnswerRow = AnswerRow(
-    Message("messages__hasBeen1Year", trusteeName),
+    Message("messages__trusteeAddressYears__heading", trusteeName),
     Seq(s"messages__common__$addressYearsUnderAYear"),
     answerIsMessageKey = true,
     Some(Link("site.change", trusteeAddressYearsRoute(checkMode(mode), srn),
-      Some(Message("messages__changeHasBeen1Year", trusteeName))))
+      Some(Message("messages__visuallyhidden__dynamic_addressYears", trusteeName))))
   )
 
   def previousAddressAnswerRow(mode: Mode, srn: Option[String]): AnswerRow = AnswerRow(
@@ -116,7 +116,7 @@ object CheckYourAnswersIndividualAddressControllerSpec extends ControllerSpecBas
     UserAnswers().addressAnswer(previousAddress),
     answerIsMessageKey = false,
     Some(Link("site.change", trusteePreviousAddressRoute(checkMode(mode), srn),
-      Some(Message("messages__changeTrusteePreviousAddress", trusteeName))))
+      Some(Message("messages__visuallyhidden__dynamic_previousAddress", trusteeName))))
   )
 
   def answerSection(mode: Mode = NormalMode, srn: Option[String] = None): Seq[AnswerSection] = Seq(AnswerSection(None,

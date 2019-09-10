@@ -45,11 +45,11 @@ class CheckYourAnswersIndividualContactDetailsControllerSpec extends ControllerS
   private def answerSection(mode: Mode, srn: Option[String] = None): Seq[AnswerSection] = {
     Seq(AnswerSection(None, StringCYA[TrusteeEmailId](
       Some(messages("messages__common_email__heading", trusteeName)),
-      Some(messages("messages__common_email__visually_hidden_change_label", trusteeName))
+      Some(messages("messages__visuallyhidden__dynamic_email", trusteeName))
     )().row(TrusteeEmailId(index))(routes.TrusteeEmailController.onPageLoad(checkMode(mode), Index(index), srn).url, fullAnswers) ++
       StringCYA[TrusteePhoneId](
         Some(messages("messages__common_phone__heading", trusteeName)),
-        Some(messages("messages__common_phone__visually_hidden_change_label", trusteeName))
+        Some(messages("messages__visuallyhidden__dynamic_phone", trusteeName))
       )().row(TrusteePhoneId(index))(
         routes.TrusteePhoneController.onPageLoad(checkMode(mode), Index(index), srn).url, fullAnswers)
     ))

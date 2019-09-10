@@ -17,6 +17,7 @@
 package identifiers.register.trustees.individual
 
 import identifiers._
+import identifiers.register.trustees.partnership.PartnershipDetailsId
 import identifiers.register.trustees.{IsTrusteeNewId, TrusteesId}
 import play.api.i18n.Messages
 import play.api.libs.json.{JsPath, JsResult}
@@ -42,21 +43,17 @@ object TrusteeHasNINOId {
 
   implicit def cya(implicit userAnswers: UserAnswers, messages: Messages): CheckYourAnswers[TrusteeHasNINOId] = {
 
-    def label(index: Int): Option[String] =
-      userAnswers.get(TrusteeNameId(index)) match {
-        case Some(trusteeName) => Some(messages("messages__genericHasNino__title", trusteeName.fullName))
-        case _                 => Some(messages("messages__genericHasNino__title", messages("messages__theTrustee")))
-      }
-
-    def hiddenLabel: Option[String] = Some(messages("messages__visuallyhidden__trustee__nino_yes_no"))
+    def trusteeName(index: Int) = userAnswers.get(TrusteeNameId(index)).fold(messages("messages__theTrustee"))(_.fullName)
+    def label(index: Int): Option[String] = Some(messages("messages__genericHasNino__h1", trusteeName(index)))
+    def hiddenLabel(index: Int) = Some(messages("messages__visuallyhidden__dynamic_hasNino", trusteeName(index)))
 
     new CheckYourAnswers[TrusteeHasNINOId] {
       override def row(id: TrusteeHasNINOId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        BooleanCYA(label(id.index), hiddenLabel)().row(id)(changeUrl, userAnswers)
+        BooleanCYA(label(id.index), hiddenLabel(id.index))().row(id)(changeUrl, userAnswers)
 
       override def updateRow(id: TrusteeHasNINOId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
         userAnswers.get(IsTrusteeNewId(id.index)) match {
-          case Some(true) => BooleanCYA(label(id.index), hiddenLabel)().row(id)(changeUrl, userAnswers)
+          case Some(true) => BooleanCYA(label(id.index), hiddenLabel(id.index))().row(id)(changeUrl, userAnswers)
           case _          => Seq.empty[AnswerRow]
         }
     }

@@ -132,8 +132,8 @@ object PartnershipAddressYearsControllerSpec extends ControllerSpecBase {
     AddressYearsViewModel(
       postCall = routes.PartnershipAddressYearsController.onSubmit(mode, index, None),
       title = Message("messages__partnershipAddressYears__title", Message("messages__common__address_years__partnership").resolve),
-      heading = Message("messages__partnershipAddressYears__heading", partnershipUserAnswers.get(PartnershipDetailsId(index)).get.name),
-      legend = Message("messages__partnershipAddressYears__heading", partnershipUserAnswers.get(PartnershipDetailsId(index)).get.name),
+      heading = Message("messages__trusteeAddressYears__heading", partnershipUserAnswers.get(PartnershipDetailsId(index)).get.name),
+      legend = Message("messages__trusteeAddressYears__heading", partnershipUserAnswers.get(PartnershipDetailsId(index)).get.name),
       subHeading = Some(Message(partnership.name))
     )
 

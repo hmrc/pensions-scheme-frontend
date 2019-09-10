@@ -45,10 +45,10 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
 
     "return OK and display Add link for UpdateMode pointing to new Nino page where no nino retrieved from ETMP" in {
       val expectedAnswerSections = {
-        val expectedAnswerRowNino = AnswerRow("messages__common__nino", Seq("site.not_entered"), answerIsMessageKey = true,
+        val expectedAnswerRowNino = AnswerRow(messages("messages__trustee__individual__nino__heading", trusteeName), Seq("site.not_entered"), answerIsMessageKey = true,
           Some(Link("site.add",
             routes.TrusteeNinoNewController.onPageLoad(Mode.checkMode(UpdateMode), firstIndex, Some("srn")).url,
-            Some(s"messages__visuallyhidden__trustee__nino"))))
+            Some(messages("messages__visuallyhidden__dynamic_nino", trusteeName)))))
         Seq(
           trusteeDetailsSectionUpdate(expectedAnswerRowNino),
           contactDetailsSection
@@ -62,7 +62,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
 
     "return OK and display no Add link but do display old nino for UpdateMode where a nino retrieved from ETMP" in {
       val expectedAnswerSections = {
-        val expectedAnswerRowNino = AnswerRow("messages__common__nino", Seq("CS121212C"), answerIsMessageKey = false, None)
+        val expectedAnswerRowNino = AnswerRow(messages("messages__trustee__individual__nino__heading", trusteeName), Seq("CS121212C"), answerIsMessageKey = false, None)
         Seq(
           trusteeDetailsSectionUpdate(expectedAnswerRowNino),
           contactDetailsSection
@@ -77,9 +77,9 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
     "return OK and display change link and display new nino for UpdateMode where" +
       "a new nino has already been entered" in {
       val expectedAnswerSections = {
-        val expectedAnswerRowNino = AnswerRow("messages__common__nino", Seq("CS121212C"), answerIsMessageKey = false,
+        val expectedAnswerRowNino = AnswerRow(messages("messages__trustee__individual__nino__heading", trusteeName), Seq("CS121212C"), answerIsMessageKey = false,
           Some(Link("site.change", routes.TrusteeNinoNewController.onPageLoad(CheckUpdateMode, 0, Some("srn")).url,
-            Some("messages__visuallyhidden__trustee__nino"))))
+            Some(messages("messages__visuallyhidden__dynamic_nino", trusteeName)))))
         Seq(
           trusteeDetailsSectionUpdate(expectedAnswerRowNino),
           contactDetailsSection
@@ -160,7 +160,8 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase with Controller
       new DataRequiredActionImpl,
       FakeUserAnswersService,
       new FakeCountryOptions,
-      allowChangeHelper
+      allowChangeHelper,
+      new FakeFeatureSwitchManagementService(false)
     )
 
   val answerSections = Seq(

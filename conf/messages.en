@@ -757,8 +757,8 @@ messages__trustee__uniqueTaxReference__error__utr_required = Enter the Unique Ta
 messages__trustee__uniqueTaxReference__error__reason_required = You need to tell us why the trustee does not have a UTR
 messages__trustee__uniqueTaxReference__error__utr_invalid = Please give an answer for uniqueTaxReference
 
-messages__trusteeAddressYears__title = Has {0} used this address for at least 1 year?
-messages__trusteeAddressYears__heading = Has {0} used this address for at least 1 year?
+messages__trusteeAddressYears__title = Has {0} used this contact address for at least 1 year?
+messages__trusteeAddressYears__heading = Has {0} used this contact address for at least 1 year?
 messages__trusteeAddressYears__error_required = Select yes if {0} has been at this contact address for at least 1 year
 
 messages__trusteeAddressYears_cya_label = How long has the trustee been at this address?
@@ -1224,10 +1224,14 @@ messages__visuallyhidden__dynamic_vat = the VAT registration number for {0}
 messages__visuallyhidden__dynamic_hasPaye = whether {0} has an employer PAYE reference
 messages__visuallyhidden__dynamic_paye = the employer PAYE reference for {0}
 messages__visuallyhidden__dynamic_address = the address for {0}
-messages__visuallyhidden__dynamic_addressYears = whether {0} has been at their address for at least 1 year
+messages__visuallyhidden__dynamic_addressYears = whether {0} has used this contact address for at least 1 year
 messages__visuallyhidden__dynamic_previousAddress = the previous address for {0}
 messages__visuallyhidden__dynamic_email = the email address for {0}
 messages__visuallyhidden__dynamic_phone = the phone number for {0}
+messages__visuallyhidden__dynamic_dob = the date of birth for {0}
+messages__visuallyhidden__dynamic_hasNino = whether {0} has a National Insurance number
+messages__visuallyhidden__dynamic_nino = the National Insurance number for {0}
+messages__visuallyhidden__dynamic_noNinoReason = the reason why {0} does not have a National Insurance number
 messages__visuallyhidden__dynamic_hasCrn = whether {0} has a company number
 messages__visuallyhidden__dynamic_noCrnReason = the reason why {0} does not have a company number
 messages__visuallyhidden__dynamic_crn = the company number for {0}
@@ -1805,7 +1809,7 @@ messages__establisher__type__title = What kind of establisher are you adding?
 messages__establisher__type__h1 = What kind of establisher are you adding?
 
 messages__hasUtr__title = Does the trustee have a UTR?
-messages__hasUtr__h1 = Does {0} have a UTR?
+messages__hasUtr__h1 = Does {0} have a Unique Taxpayer Reference (UTR)?
 
 messages__trusteeUtr__title = What is the trustee’s UTR?
 messages__trusteeUtr__h1 =  What is {0}’s UTR?

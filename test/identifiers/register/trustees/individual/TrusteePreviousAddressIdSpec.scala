@@ -17,6 +17,7 @@
 package identifiers.register.trustees.individual
 
 import base.SpecBase
+import config.FeatureSwitchManagementService
 import identifiers.register.trustees.IsTrusteeNewId
 import models.AddressYears.UnderAYear
 import models._
@@ -27,7 +28,7 @@ import play.api.mvc.AnyContent
 import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.PsaId
 import utils.checkyouranswers.Ops._
-import utils.{CountryOptions, InputOption, UserAnswers}
+import utils.{CountryOptions, FakeFeatureSwitchManagementService, InputOption, UserAnswers}
 import viewmodels.{AnswerRow, Message}
 
 class TrusteePreviousAddressIdSpec extends SpecBase {
@@ -58,12 +59,14 @@ class TrusteePreviousAddressIdSpec extends SpecBase {
       _.set(TrusteeNameId(0))(PersonName("Test", "Name"))
     ).asOpt.value
 
+    implicit val featureSwitchManagementService: FeatureSwitchManagementService = new FakeFeatureSwitchManagementService(true)
+
     val answerRowWithChangeLInks = Seq(
       AnswerRow(
         Message("messages__trusteePreviousAddress", trusteeName),
         addressAnswer(address),
         answerIsMessageKey = false,
-        Some(Link("site.change", onwardUrl, Some(Message("messages__changeTrusteePreviousAddress", trusteeName))))
+        Some(Link("site.change", onwardUrl, Some(Message("messages__visuallyhidden__dynamic_previousAddress", trusteeName))))
       ))
 
     Seq(NormalMode, UpdateMode).foreach { mode =>
@@ -91,7 +94,7 @@ class TrusteePreviousAddressIdSpec extends SpecBase {
             Message("messages__trusteePreviousAddress", trusteeName),
             Seq("site.not_entered"),
             answerIsMessageKey = true,
-            Some(Link("site.add", onwardUrl, Some(Message("messages__changeTrusteePreviousAddress", trusteeName))))))
+            Some(Link("site.add", onwardUrl, Some(Message("messages__visuallyhidden__dynamic_previousAddress", trusteeName))))))
         )
       }
 

@@ -121,7 +121,7 @@ object CheckYourAnswersCompanyAddressControllerSpec extends ControllerSpecBase w
   )
 
   def addressYearsAnswerRow(mode: Mode, srn: Option[String]): AnswerRow = AnswerRow(
-    Message("messages__hasBeen1Year", companyName),
+    Message("messages__trusteeAddressYears__heading", companyName),
     Seq(s"messages__common__$addressYearsUnderAYear"),
     answerIsMessageKey = true,
     Some(Link("site.change", companyAddressYearsRoute(checkMode(mode), srn),

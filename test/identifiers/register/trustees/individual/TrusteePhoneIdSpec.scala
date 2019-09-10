@@ -49,7 +49,7 @@ class TrusteePhoneIdSpec extends SpecBase {
               Message("messages__common_phone__heading", personName.fullName),
               Seq(phone),
               answerIsMessageKey = false,
-              Some(Link("site.change", onwardUrl, Some(Message("messages__common_phone__visually_hidden_change_label", personName.fullName))))
+              Some(Link("site.change", onwardUrl, Some(Message("messages__visuallyhidden__dynamic_phone", personName.fullName))))
             )))
         }
       }

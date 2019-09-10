@@ -17,6 +17,7 @@
 package identifiers.register.trustees.individual
 
 import base.SpecBase
+import config.FeatureSwitchManagementService
 import identifiers.register.trustees.IsTrusteeNewId
 import models.AddressYears.UnderAYear
 import models.address.{Address, TolerantAddress}
@@ -28,7 +29,7 @@ import play.api.mvc.AnyContent
 import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.PsaId
 import utils.checkyouranswers.Ops._
-import utils.{CountryOptions, InputOption, UserAnswers}
+import utils.{CountryOptions, FakeFeatureSwitchManagementService, InputOption, UserAnswers}
 import viewmodels.{AnswerRow, Message}
 
 class TrusteeAddressYearsIdSpec extends SpecBase {
@@ -83,6 +84,7 @@ class TrusteeAddressYearsIdSpec extends SpecBase {
     val trusteeName = "Test Name"
 
     implicit val countryOptions: CountryOptions = new CountryOptions(Seq.empty[InputOption])
+    implicit val featureSwitchManagementService: FeatureSwitchManagementService = new FakeFeatureSwitchManagementService(true)
 
     def answers: UserAnswers = UserAnswers().set(TrusteeAddressYearsId(0))(UnderAYear).flatMap(
       _.set(TrusteeNameId(0))(PersonName("Test", "Name")
@@ -98,11 +100,11 @@ class TrusteeAddressYearsIdSpec extends SpecBase {
           implicit val userAnswers: UserAnswers = request.userAnswers
           TrusteeAddressYearsId(0).row(onwardUrl, mode)(request, implicitly) must equal(Seq(
             AnswerRow(
-              Message("messages__hasBeen1Year", trusteeName),
+              Message("messages__trusteeAddressYears__heading", trusteeName),
               Seq(s"messages__common__under_a_year"),
               answerIsMessageKey = true,
               Some(Link("site.change", onwardUrl,
-                Some(Message("messages__changeHasBeen1Year", trusteeName))))
+                Some(Message("messages__visuallyhidden__dynamic_addressYears", trusteeName))))
             )))
         }
       }

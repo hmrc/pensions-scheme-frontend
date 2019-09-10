@@ -100,11 +100,11 @@ class PartnershipAddressYearsIdSpec extends SpecBase {
         implicit val userAnswers = request.userAnswers
         PartnershipAddressYearsId(0).row(onwardUrl, NormalMode) must equal(Seq(
           AnswerRow(
-            Message("messages__hasBeen1Year", messages("messages__theTrustee")),
+            Message("messages__trusteeAddressYears__heading", messages("messages__theTrustee")),
             Seq(s"messages__common__under_a_year"),
             answerIsMessageKey = true,
             Some(Link("site.change", onwardUrl,
-              Some(Message("messages__changeHasBeen1Year", messages("messages__theTrustee")))))
+              Some(Message("messages__visuallyhidden__dynamic_addressYears", messages("messages__theTrustee")))))
           )))
       }
     }
@@ -118,11 +118,11 @@ class PartnershipAddressYearsIdSpec extends SpecBase {
         implicit val userAnswers = request.userAnswers
         PartnershipAddressYearsId(0).row(onwardUrl, UpdateMode) must equal(Seq(
           AnswerRow(
-            Message("messages__hasBeen1Year", messages("messages__theTrustee")),
+            Message("messages__trusteeAddressYears__heading", messages("messages__theTrustee")),
             Seq(s"messages__common__under_a_year"),
             answerIsMessageKey = true,
             Some(Link("site.change", onwardUrl,
-             Some(Message("messages__changeHasBeen1Year", messages("messages__theTrustee")))
+             Some(Message("messages__visuallyhidden__dynamic_addressYears", messages("messages__theTrustee")))
           )))))
       }
     }

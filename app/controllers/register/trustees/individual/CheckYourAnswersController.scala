@@ -16,7 +16,7 @@
 
 package controllers.register.trustees.individual
 
-import config.FrontendAppConfig
+import config.{FeatureSwitchManagementService, FrontendAppConfig}
 import controllers.Retrievals
 import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRequiredAction, DataRetrievalAction}
 import identifiers.register.trustees
@@ -48,7 +48,8 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
                                            requiredData: DataRequiredAction,
                                            userAnswersService: UserAnswersService,
                                            implicit val countryOptions: CountryOptions,
-                                           allowChangeHelper: AllowChangeHelper
+                                           allowChangeHelper: AllowChangeHelper,
+                                           implicit val featureSwitchManagementService: FeatureSwitchManagementService
                                           )(implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport {
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
