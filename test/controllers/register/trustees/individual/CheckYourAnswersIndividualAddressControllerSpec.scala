@@ -96,7 +96,7 @@ object CheckYourAnswersIndividualAddressControllerSpec extends ControllerSpecBas
   def submitUrl(mode: Mode = NormalMode, srn: Option[String] = None): Call = controllers.routes.SchemeTaskListController.onPageLoad(mode, srn)
 
   def addressAnswerRow(mode: Mode, srn: Option[String]): AnswerRow = AnswerRow(
-    Message("messages__common__confirmAddress__h1", trusteeName),
+    Message("messages__trusteeAddress", trusteeName),
     UserAnswers().addressAnswer(address),
     answerIsMessageKey = false,
     Some(Link("site.change", trusteeAddressRoute(checkMode(mode), srn),
@@ -112,7 +112,7 @@ object CheckYourAnswersIndividualAddressControllerSpec extends ControllerSpecBas
   )
 
   def previousAddressAnswerRow(mode: Mode, srn: Option[String]): AnswerRow = AnswerRow(
-    Message("messages__common__confirmPreviousAddress__h1", trusteeName),
+    Message("messages__trusteePreviousAddress", trusteeName),
     UserAnswers().addressAnswer(previousAddress),
     answerIsMessageKey = false,
     Some(Link("site.change", trusteePreviousAddressRoute(checkMode(mode), srn),

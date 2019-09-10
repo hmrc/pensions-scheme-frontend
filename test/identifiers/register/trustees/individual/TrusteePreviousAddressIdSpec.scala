@@ -63,7 +63,7 @@ class TrusteePreviousAddressIdSpec extends SpecBase {
 
     val answerRowWithChangeLInks = Seq(
       AnswerRow(
-        Message("messages__common__confirmPreviousAddress__h1", trusteeName),
+        Message("messages__trusteePreviousAddress", trusteeName),
         addressAnswer(address),
         answerIsMessageKey = false,
         Some(Link("site.change", onwardUrl, Some(Message("messages__visuallyhidden__dynamic_previousAddress", trusteeName))))
@@ -91,7 +91,7 @@ class TrusteePreviousAddressIdSpec extends SpecBase {
 
         TrusteePreviousAddressId(0).row(onwardUrl, UpdateMode)(request, implicitly) must equal(Seq(
           AnswerRow(
-            Message("messages__common__confirmPreviousAddress__h1", trusteeName),
+            Message("messages__trusteePreviousAddress", trusteeName),
             Seq("site.not_entered"),
             answerIsMessageKey = true,
             Some(Link("site.add", onwardUrl, Some(Message("messages__visuallyhidden__dynamic_previousAddress", trusteeName))))))

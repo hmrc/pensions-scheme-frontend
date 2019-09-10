@@ -38,7 +38,7 @@ object PartnershipEnterVATId {
     new CheckYourAnswers[PartnershipEnterVATId] {
 
       def trusteeName(index: Int) = userAnswers.get(PartnershipDetailsId(index)).fold(messages("messages__theTrustee"))(_.name)
-      def label(index: Int) = messages("messages__cya__vat", trusteeName(index))
+      def label(index: Int) = messages("messages__enterVAT__heading", trusteeName(index))
       def hiddenLabel(index: Int) = messages("messages__visuallyhidden__dynamic_vat", trusteeName(index))
 
       override def row(id: PartnershipEnterVATId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =

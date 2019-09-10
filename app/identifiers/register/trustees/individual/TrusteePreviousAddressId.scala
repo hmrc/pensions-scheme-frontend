@@ -42,7 +42,7 @@ object TrusteePreviousAddressId {
         ua.get(TrusteeDetailsId(index)).map(_.fullName)
 
     def trusteeName(index: Int) = name(index).getOrElse(messages("messages__theTrustee"))
-    def label(index: Int) = messages("messages__common__confirmPreviousAddress__h1", trusteeName(index))
+    def label(index: Int) = messages("messages__trusteePreviousAddress", trusteeName(index))
     def changeAddress(index: Int) = messages("messages__visuallyhidden__dynamic_previousAddress", trusteeName(index))
 
     new CheckYourAnswers[TrusteePreviousAddressId] {

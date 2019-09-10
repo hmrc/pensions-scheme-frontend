@@ -45,7 +45,7 @@ object TrusteeAddressId {
 
         val trusteeName = name(id.index).getOrElse(messages("messages__theTrustee"))
 
-        val label = messages("messages__common__confirmAddress__h1", trusteeName)
+        val label = messages("messages__trusteeAddress", trusteeName)
 
         val changeAddress = messages("messages__visuallyhidden__dynamic_address", trusteeName)
 
