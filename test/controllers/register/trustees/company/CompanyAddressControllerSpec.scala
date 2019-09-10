@@ -69,9 +69,7 @@ class CompanyAddressControllerSpec extends ControllerBehaviours {
     controller.postCall(NormalMode, firstIndex, None),
     countryOptions.options,
     Message(controller.title),
-    Message(controller.heading, companyDetails.companyName),
-    secondaryHeader = Some(companyDetails.companyName),
-    Some(Message(controller.hint))
+    Message(controller.heading, companyDetails.companyName)
   )
 
   behave like manualAddress(

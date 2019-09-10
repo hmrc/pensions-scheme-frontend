@@ -31,7 +31,7 @@
     appConfig = appConfig,
     bodyClasses = None) {
 
-    @helpers.form(action = DeclarationController.onSubmit(), 'autoComplete -> "off") {
+    @helpers.form(action = DeclarationController.onSubmit(), 'id -> "declarationId", 'autoComplete -> "off") {
 
         @components.error_summary(form.errors)
 

@@ -43,10 +43,10 @@
             headingKey=messages(viewmodel.heading)
         )
 
-
         @components.input_text(
             field = form("value"),
-            label = messages(viewmodel.formLabel)
+            label = messages(viewmodel.formLabel),
+            labelClass = Some("visually-hidden")
         )
 
         <p>@Html(viewmodel.enterPostcode.withArgs(openLink, closeLink))</p>

@@ -30,8 +30,8 @@ import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
-import utils.annotations.EstablisherPartnership
 import utils.CountryOptions
+import utils.annotations.EstablisherPartnership
 import viewmodels.Message
 import viewmodels.address.ManualAddressViewModel
 
@@ -60,43 +60,30 @@ class PartnershipAddressController @Inject()(
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
-        viewmodel(index, mode, srn).retrieve.right.map {
-          vm =>
-            get(PartnershipAddressId(index), PartnershipAddressListId(index), vm)
+        PartnershipDetailsId(index).retrieve.right.map {
+          details =>
+            get(PartnershipAddressId(index), PartnershipAddressListId(index), viewmodel(index, mode, srn, details.name))
         }
     }
 
   def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
-      viewmodel(index, mode, srn).retrieve.right.map {
-        vm =>
-          post(PartnershipAddressId(index), PartnershipAddressListId(index), vm, mode, context(vm), PartnershipPostcodeLookupId(index))
+      PartnershipDetailsId(index).retrieve.right.map {
+        details =>
+          val context = s"Partnership Address: ${details.name}"
+          post(PartnershipAddressId(index), PartnershipAddressListId(index),
+            viewmodel(index, mode, srn, details.name), mode, context, PartnershipPostcodeLookupId(index))
       }
   }
 
-  private def viewmodel(index: Int, mode: Mode, srn: Option[String]): Retrieval[ManualAddressViewModel] =
-    Retrieval {
-      implicit request =>
-        PartnershipDetailsId(index).retrieve.right.map {
-          details =>
-            ManualAddressViewModel(
-              postCall(mode, Index(index), srn),
-              countryOptions.options,
-              title = Message(title),
-              heading = Message(heading,details.name),
-              hint = Some(Message(hint)),
-              secondaryHeader = Some(details.name),
-              srn = srn
-            )
-        }
-    }
-
-  private def context(viewModel: ManualAddressViewModel): String = {
-    viewModel.secondaryHeader match {
-      case Some(name) => s"Partnership Address: $name"
-      case _ => "Partnership Address"
-    }
-  }
+  private def viewmodel(index: Int, mode: Mode, srn: Option[String], name: String): ManualAddressViewModel =
+    ManualAddressViewModel(
+      postCall(mode, Index(index), srn),
+      countryOptions.options,
+      title = Message(title),
+      heading = Message(heading, name),
+      srn = srn
+    )
 
   def onClick(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>

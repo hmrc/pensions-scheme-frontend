@@ -58,43 +58,32 @@ class CompanyAddressController @Inject()(
 
   protected val form: Form[Address] = formProvider()
 
-  private def viewmodel(index: Int, mode: Mode, srn: Option[String]): Retrieval[ManualAddressViewModel] =
-    Retrieval {
-      implicit request =>
-        CompanyDetailsId(index).retrieve.right.map {
-          details =>
-            ManualAddressViewModel(
-              postCall(mode, srn, Index(index)),
-              countryOptions.options,
-              title = Message(title),
-              heading = Message(heading, details.companyName),
-              srn = srn
-            )
-        }
-    }
+  private def viewmodel(index: Int, mode: Mode, srn: Option[String], name: String): ManualAddressViewModel =
+    ManualAddressViewModel(
+      postCall(mode, srn, Index(index)),
+      countryOptions.options,
+      title = Message(title),
+      heading = Message(heading, name),
+      srn = srn
+    )
 
   def onPageLoad(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
-    implicit request =>
-      viewmodel(index, mode, srn).retrieve.right.map {
-        vm =>
-          get(CompanyAddressId(index), CompanyAddressListId(index), vm)
-      }
-  }
+      implicit request =>
+        CompanyDetailsId(index).retrieve.right.map {
+          details =>
+            get(CompanyAddressId(index), CompanyAddressListId(index), viewmodel(index, mode, srn, details.companyName))
+        }
+    }
 
   def onSubmit(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
-      viewmodel(index, mode, srn).retrieve.right.map {
-        vm =>
-          post(CompanyAddressId(index), CompanyAddressListId(index), vm, mode, context(vm), CompanyPostCodeLookupId(index))
+      CompanyDetailsId(index).retrieve.right.map {
+        details =>
+          val context = s"Establisher Company Address: ${details.companyName}"
+          post(CompanyAddressId(index), CompanyAddressListId(index),
+            viewmodel(index, mode, srn, details.companyName), mode, context, CompanyPostCodeLookupId(index))
       }
-  }
-
-  private def context(viewModel: ManualAddressViewModel): String = {
-    viewModel.secondaryHeader match {
-      case Some(name) => s"Establisher Company Address: $name"
-      case _ => "Establisher Company Address"
-    }
   }
 
   def onClick(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] =

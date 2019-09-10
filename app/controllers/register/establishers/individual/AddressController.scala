@@ -18,7 +18,6 @@ package controllers.register.establishers.individual
 
 import audit.AuditService
 import config.FrontendAppConfig
-import connectors.UserAnswersCacheConnector
 import controllers.actions._
 import controllers.address.ManualAddressController
 import forms.address.AddressFormProvider
@@ -31,8 +30,8 @@ import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
-import utils.annotations.EstablishersIndividual
 import utils.CountryOptions
+import utils.annotations.EstablishersIndividual
 import viewmodels.Message
 import viewmodels.address.ManualAddressViewModel
 
@@ -59,37 +58,31 @@ class AddressController @Inject()(
 
   protected val form: Form[Address] = formProvider()
 
-  private def viewmodel(index: Int, mode: Mode, srn: Option[String]): Retrieval[ManualAddressViewModel] =
-    Retrieval {
-      implicit request =>
-        EstablisherDetailsId(index).retrieve.right.map {
-          details =>
-            ManualAddressViewModel(
-              postCall(mode, Index(index), srn),
-              countryOptions.options,
-              title = Message(title),
-              heading = Message(heading,details.fullName),
-              hint = Some(Message(hint)),
-              secondaryHeader = Some(details.fullName),
-              srn = srn
-            )
-        }
-    }
+  private def viewmodel(index: Int, mode: Mode, srn: Option[String], name: String): ManualAddressViewModel =
+    ManualAddressViewModel(
+      postCall(mode, Index(index), srn),
+      countryOptions.options,
+      title = Message(title),
+      heading = Message(heading, name),
+      srn = srn
+    )
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
-    implicit request =>
-      viewmodel(index, mode, srn).retrieve.right.map {
-        vm =>
-          get(AddressId(index), AddressListId(index), vm)
-      }
-  }
+      implicit request =>
+        EstablisherDetailsId(index).retrieve.right.map {
+          details =>
+            get(AddressId(index), AddressListId(index), viewmodel(index, mode, srn, details.fullName))
+        }
+    }
 
   def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
-      viewmodel(index, mode, srn).retrieve.right.map {
-        vm =>
-          post(AddressId(index), AddressListId(index), vm, mode, context(vm),
+      EstablisherDetailsId(index).retrieve.right.map {
+        details =>
+          val context = s"Establisher Individual Address: ${details.fullName}"
+          post(AddressId(index), AddressListId(index),
+            viewmodel(index, mode, srn, details.fullName), mode, context,
             PostCodeLookupId(index)
           )
       }
@@ -99,12 +92,4 @@ class AddressController @Inject()(
     implicit request =>
       clear(AddressId(index), AddressListId(index), mode, srn, routes.AddressController.onPageLoad(mode, index, srn))
   }
-
-  private def context(viewModel: ManualAddressViewModel): String = {
-    viewModel.secondaryHeader match {
-      case Some(name) => s"Establisher Individual Address: $name"
-      case _ => "Establisher Individual Address"
-    }
-  }
-
 }
