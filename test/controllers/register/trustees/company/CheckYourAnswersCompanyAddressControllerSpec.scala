@@ -46,32 +46,32 @@ class CheckYourAnswersCompanyAddressControllerSpec extends ControllerSpecBase wi
       }
     }
 
-//    "on Page load in UpdateMode" must {
-//
-//      "return OK and the correct view with full answers" in {
-//        val request = FakeDataRequest(fullAnswers)
-//        val result = controller(fullAnswers.dataRetrievalAction).onPageLoad(UpdateMode, index, srn)(request)
-//
-//        status(result) mustBe OK
-//        contentAsString(result) mustBe viewAsString(companyAddressUpdate, srn, postUrlUpdateMode)
-//      }
-//
-//      "return OK and the correct view with partial answers" in {
-//        val request = FakeDataRequest(partialAnswersForAddLink)
-//        val result = controller(partialAnswersForAddLink.dataRetrievalAction).onPageLoad(UpdateMode, index, srn)(request)
-//
-//        status(result) mustBe OK
-//        contentAsString(result) mustBe viewAsString(companyAddressSectionWithAddLink, srn, postUrlUpdateMode)
-//      }
-//    }
+    "on Page load in UpdateMode" must {
 
-//    "rendering submit button_link" must {
-//
-//      behave like changeableController(
-//        controller(fullAnswers.dataRetrievalAction, _: AllowChangeHelper)
-//          .onPageLoad(NormalMode, index, None)(FakeDataRequest(fullAnswers))
-//      )
-//    }
+      "return OK and the correct view with full answers" in {
+        val request = FakeDataRequest(fullAnswers)
+        val result = controller(fullAnswers.dataRetrievalAction).onPageLoad(UpdateMode, index, srn)(request)
+
+        status(result) mustBe OK
+        contentAsString(result) mustBe viewAsString(companyAddressUpdate, srn, postUrlUpdateMode)
+      }
+
+      "return OK and the correct view with partial answers" in {
+        val request = FakeDataRequest(partialAnswersForAddLink)
+        val result = controller(partialAnswersForAddLink.dataRetrievalAction).onPageLoad(UpdateMode, index, srn)(request)
+
+        status(result) mustBe OK
+        contentAsString(result) mustBe viewAsString(companyAddressSectionWithAddLink, srn, postUrlUpdateMode)
+      }
+    }
+
+    "rendering submit button_link" must {
+
+      behave like changeableController(
+        controller(fullAnswers.dataRetrievalAction, _: AllowChangeHelper)
+          .onPageLoad(NormalMode, index, None)(FakeDataRequest(fullAnswers))
+      )
+    }
   }
 }
 
