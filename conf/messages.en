@@ -1216,7 +1216,7 @@ messages__visuallyhidden__partnership__email_address = the partnership’s email
 messages__visuallyhidden__partnership__phone_number = the partnership’s phone number
 messages__visuallyhidden__partnership__dormant = whether the partnership been dormant in the last 12 months
 
-messages__visuallyhidden__dynamic_hasUtr = whether {0} has a Unique Taxpayer Reference number
+messages__visuallyhidden__dynamic_hasUtr = whether {0} has a Unique Taxpayer Reference number (UTR)
 messages__visuallyhidden__dynamic_utr = the UTR for {0}
 messages__visuallyhidden__dynamic_noUtrReason = the reason why {0} does not have a UTR
 messages__visuallyhidden__dynamic_hasVat = whether {0} is registered for VAT
@@ -1805,7 +1805,7 @@ messages__establisher__type__title = What kind of establisher are you adding?
 messages__establisher__type__h1 = What kind of establisher are you adding?
 
 messages__hasUtr__title = Does the trustee have a UTR?
-messages__hasUtr__h1 = Does {0} have a UTR?
+messages__hasUtr__h1 = Does {0} have a UTR?Unique Taxpayer Reference (UTR)?
 
 messages__trusteeUtr__title = What is the trustee’s UTR?
 messages__trusteeUtr__h1 =  What is {0}’s UTR?
