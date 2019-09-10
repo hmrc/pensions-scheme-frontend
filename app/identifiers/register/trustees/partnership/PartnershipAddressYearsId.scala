@@ -50,8 +50,8 @@ object PartnershipAddressYearsId {
     new CheckYourAnswers[PartnershipAddressYearsId] {
       override def row(id: PartnershipAddressYearsId)(changeUrl: String, ua: UserAnswers): Seq[AnswerRow] = {
         val trusteeName = ua.get(PartnershipDetailsId(id.index)).fold(messages("messages__theTrustee"))(_.name)
-        val label = messages("messages__hasBeen1Year", trusteeName)
-        val changeAddressYears = messages("messages__changeHasBeen1Year", trusteeName)
+        val label = messages("messages__trusteeAddressYears__heading", trusteeName)
+        val changeAddressYears = messages("messages__visuallyhidden__dynamic_addressYears", trusteeName)
 
         AddressYearsCYA(
           label = label,

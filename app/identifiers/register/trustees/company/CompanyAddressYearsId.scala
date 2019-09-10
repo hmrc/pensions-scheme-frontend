@@ -51,9 +51,9 @@ object CompanyAddressYearsId {
       override def row(id: CompanyAddressYearsId)(changeUrl: String, ua: UserAnswers): Seq[AnswerRow] = {
         def trusteeName(index: Int) = ua.get(CompanyDetailsId(index)).fold(messages("messages__theTrustee"))(_.companyName)
 
-        def label(index: Int) = messages("messages__hasBeen1Year", trusteeName(index))
+        def label(index: Int) = messages("messages__trusteeAddressYears__heading", trusteeName(index))
 
-        def changeAddressYears(index: Int) = messages("messages__changeHasBeen1Year", trusteeName(index))
+        def changeAddressYears(index: Int) = messages("messages__visuallyhidden__dynamic_addressYears", trusteeName(index))
 
         AddressYearsCYA(
           label = label(id.index),

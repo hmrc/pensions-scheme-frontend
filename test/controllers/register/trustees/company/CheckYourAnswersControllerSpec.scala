@@ -186,9 +186,9 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase with Controller
     def trusteeName(index: Int) = request.userAnswers.get(CompanyDetailsId(index)).fold(messages("messages__theTrustee"))(_.companyName)
 
     val addressYearsRows = {
-      def label(index: Int) = messages("messages__hasBeen1Year", trusteeName(index))
+      def label(index: Int) = messages("messages__trusteeAddressYears__heading", trusteeName(index))
 
-      def changeAddressYears(index: Int) = messages("messages__changeHasBeen1Year", trusteeName(index))
+      def changeAddressYears(index: Int) = messages("messages__visuallyhidden__dynamic_addressYears", trusteeName(index))
       AddressYearsCYA[CompanyAddressYearsId](
         label = label(index),
         changeAddressYears = changeAddressYears(index)
