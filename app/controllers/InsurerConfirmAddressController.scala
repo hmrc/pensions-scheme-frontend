@@ -63,7 +63,6 @@ class InsurerConfirmAddressController @Inject()(val appConfig: FrontendAppConfig
       countryOptions.options,
       title = Message(title),
       heading = Message(heading),
-      secondaryHeader = None,
       srn = srn
     )
 

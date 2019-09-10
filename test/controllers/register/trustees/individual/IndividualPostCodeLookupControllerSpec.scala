@@ -95,8 +95,7 @@ object IndividualPostCodeLookupControllerSpec extends ControllerSpecBase with Mo
     manualInputCall = routes.TrusteeAddressController.onPageLoad(NormalMode, firstIndex, None),
     title = Message("messages__individualPostCodeLookup__title"),
     heading = Message("messages__individualPostCodeLookup__heading", personDetails.fullName),
-    subHeading = Some(personDetails.fullName),
-    enterPostcode = Message("messages__trustee_individualPostCodeLookup__enter_postcode")
+    subHeading = Some(personDetails.fullName)
   )
   val retrieval = new FakeDataRetrievalAction(Some(
     Json.obj(

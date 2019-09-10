@@ -46,18 +46,18 @@ case class CompanyAddressYearsId(index: Int) extends TypedIdentifier[AddressYear
 object CompanyAddressYearsId {
   override lazy val toString: String = "trusteesCompanyAddressYears"
 
-  implicit def cya(implicit countryOptions: CountryOptions, messages: Messages, ua: UserAnswers): CheckYourAnswers[CompanyAddressYearsId] =
+  implicit def cya(implicit countryOptions: CountryOptions, messages: Messages): CheckYourAnswers[CompanyAddressYearsId] =
     new CheckYourAnswers[CompanyAddressYearsId] {
       override def row(id: CompanyAddressYearsId)(changeUrl: String, ua: UserAnswers): Seq[AnswerRow] = {
-        def trusteeName(index: Int) = ua.get(CompanyDetailsId(index)).fold(messages("messages__theTrustee"))(_.companyName)
+        val trusteeName = ua.get(CompanyDetailsId(id.index)).fold(messages("messages__theTrustee"))(_.companyName)
 
-        def label(index: Int) = messages("messages__hasBeen1Year", trusteeName(index))
+        val label = messages("messages__hasBeen1Year", trusteeName)
 
-        def changeAddressYears(index: Int) = messages("messages__visuallyhidden__dynamic_addressYears", trusteeName(index))
+        val changeAddressYears = messages("messages__visuallyhidden__dynamic_addressYears", trusteeName)
 
         AddressYearsCYA(
-          label = label(id.index),
-          changeAddressYears = changeAddressYears(id.index)
+          label = label,
+          changeAddressYears = changeAddressYears
         )().row(id)(changeUrl, ua)
       }
 

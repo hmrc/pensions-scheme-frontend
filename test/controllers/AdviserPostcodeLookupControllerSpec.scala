@@ -72,8 +72,7 @@ class AdviserPostcodeLookupControllerSpec extends ControllerSpecBase with Mockit
     manualInputCall = manualInputCall,
     title = Message("messages__adviserPostCodeLookup__title"),
     heading = Message("messages__adviserPostCodeLookup__heading", "name"),
-    subHeading = Some(Message("messages__adviserPostCodeLookupAddress__secondary")),
-    enterPostcode = Message("messages__adviserPostCodeLookupAddress__enterPostCode")
+    subHeading = Some(Message("messages__adviserPostCodeLookupAddress__secondary"))
   )
 
   "Adviser Postcode Controller" must {

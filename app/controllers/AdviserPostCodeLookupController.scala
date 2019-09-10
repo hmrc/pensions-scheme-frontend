@@ -72,7 +72,6 @@ class AdviserPostCodeLookupController @Inject()(
       routes.AdviserAddressController.onPageLoad(mode),
       title = Message("messages__adviserPostCodeLookup__title"),
       heading = Message("messages__adviserPostCodeLookup__heading", adviserName),
-      subHeading = Some(Message("messages__adviserPostCodeLookupAddress__secondary")),
-      enterPostcode = Message("messages__adviserPostCodeLookupAddress__enterPostCode")
+      subHeading = Some(Message("messages__adviserPostCodeLookupAddress__secondary"))
     )
 }

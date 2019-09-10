@@ -69,8 +69,7 @@ class DirectorPreviousAddressPostcodeLookupControllerSpec extends ControllerSpec
     manualInputCall,
     Message("messages__directorPreviousAddressPostcodeLookup__title"),
     Message("messages__previousAddressPostcodeLookup__heading",director.fullName),
-    Some(director.fullName),
-    Message("messages__common__postcode_lookup__manual_link")
+    Some(director.fullName)
   )
 
   "DirectorPreviousAddressPostcodeLookup Controller" must {

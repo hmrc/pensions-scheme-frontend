@@ -22,6 +22,7 @@ import identifiers.register.trustees.{company => tc}
 import identifiers.register.trustees.{partnership => tp}
 import identifiers.register.establishers.company.director._
 import identifiers.register.trustees.individual._
+import identifiers.register.trustees.partnership.PartnershipHasBeenTradingId
 import models.address.Address
 import models.{AddressYears, Mode, NormalMode, ReferenceValue}
 import play.api.libs.json.Reads
@@ -243,7 +244,8 @@ trait DataCompletion {
     )
 
   def isTrusteePartnershipAddressComplete(index: Int): Option[Boolean] =
-    isAddressComplete(tp.PartnershipAddressId(index), tp.PartnershipPreviousAddressId(index), tp.PartnershipAddressYearsId(index), None)
+    isAddressComplete(tp.PartnershipAddressId(index), tp.PartnershipPreviousAddressId(index), tp.PartnershipAddressYearsId(index),
+      Some(PartnershipHasBeenTradingId(index)))
 
   def isTrusteePartnershipContactDetailsComplete(index: Int): Option[Boolean] =
     isContactDetailsComplete(tp.PartnershipEmailId(index), tp.PartnershipPhoneId(index))

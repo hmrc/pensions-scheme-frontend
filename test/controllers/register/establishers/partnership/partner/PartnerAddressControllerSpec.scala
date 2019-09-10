@@ -101,9 +101,7 @@ class PartnerAddressControllerSpec extends ControllerSpecBase with MockitoSugar 
             controller.postCall(NormalMode, establisherIndex, partnerIndex, None),
             countryOptions.options,
             Message(controller.title),
-            Message(controller.heading,partner.fullName),
-            secondaryHeader = Some(partner.fullName),
-            Some(Message(controller.hint))
+            Message(controller.heading,partner.fullName)
           )
 
           val request = addToken(
