@@ -53,7 +53,7 @@ object CompanyAddressYearsId {
 
         val label = messages("messages__hasBeen1Year", trusteeName)
 
-        val changeAddressYears = messages("messages__changeHasBeen1Year", trusteeName)
+        val changeAddressYears = messages("messages__visuallyhidden__dynamic_addressYears", trusteeName)
 
         AddressYearsCYA(
           label = label,

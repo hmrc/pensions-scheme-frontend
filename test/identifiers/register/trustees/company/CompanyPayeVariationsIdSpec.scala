@@ -29,18 +29,20 @@ import viewmodels.AnswerRow
 
 class CompanyPayeVariationsIdSpec extends SpecBase {
 
+  private val companyName = "name"
   implicit val countryOptions: CountryOptions = new CountryOptions(environment, frontendAppConfig)
   private val onwardUrl = "onwardUrl"
   private val answerRowsWithChangeLinks = Seq(
     AnswerRow("messages__common__cya__paye",List("paye"),false,Some(Link("site.change",onwardUrl,
-      Some("messages__visuallyhidden__companyPaye"))))
+      Some(messages("messages__visuallyhidden__dynamic_paye", companyName)))))
   )
 
   "cya" when {
 
     val onwardUrl = "onwardUrl"
 
-    def answers: UserAnswers = UserAnswers().set(CompanyPayeVariationsId(0))(ReferenceValue("paye")).asOpt.get
+    val answers: UserAnswers = UserAnswers().set(CompanyDetailsId(0))(CompanyDetails(companyName)).flatMap(
+      _.set(CompanyPayeVariationsId(0))(ReferenceValue("paye"))).asOpt.get
 
     "in normal mode" must {
 
@@ -74,7 +76,9 @@ class CompanyPayeVariationsIdSpec extends SpecBase {
       }
 
       "return answers rows with change links if paye is available and editable" in {
-        val answers = UserAnswers().set(CompanyPayeVariationsId(0))(ReferenceValue("paye", true)).asOpt.get
+
+        val answers: UserAnswers = UserAnswers().set(CompanyDetailsId(0))(CompanyDetails(companyName)).flatMap(
+          _.set(CompanyPayeVariationsId(0))(ReferenceValue("paye", true))).asOpt.get
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
         implicit val userAnswers: UserAnswers = request.userAnswers
 
@@ -82,12 +86,15 @@ class CompanyPayeVariationsIdSpec extends SpecBase {
       }
 
       "display an add link if no answer if found" in {
-        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(), PsaId("A0000000"))
+
+        val answers: UserAnswers = UserAnswers().set(CompanyDetailsId(0))(CompanyDetails(companyName)).asOpt.get
+
+        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
         implicit val userAnswers: UserAnswers = request.userAnswers
 
         CompanyPayeVariationsId(0).row(onwardUrl, CheckUpdateMode) must equal(Seq(
           AnswerRow("messages__common__cya__paye", Seq("site.not_entered"), answerIsMessageKey = true,
-            Some(Link("site.add", onwardUrl, Some("messages__visuallyhidden__companyPaye"))))))
+            Some(Link("site.add", onwardUrl, Some(messages("messages__visuallyhidden__dynamic_paye", companyName)))))))
       }
     }
   }

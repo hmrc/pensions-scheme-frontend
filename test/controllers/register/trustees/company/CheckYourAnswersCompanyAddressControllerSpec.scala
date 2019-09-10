@@ -41,6 +41,7 @@ class CheckYourAnswersCompanyAddressControllerSpec extends ControllerSpecBase wi
         val result = controller(fullAnswers.dataRetrievalAction).onPageLoad(NormalMode, index, None)(request)
 
         status(result) mustBe OK
+
         contentAsString(result) mustBe viewAsString(companyAddressNormal)
       }
     }
@@ -116,7 +117,7 @@ object CheckYourAnswersCompanyAddressControllerSpec extends ControllerSpecBase w
     UserAnswers().addressAnswer(address),
     answerIsMessageKey = false,
     Some(Link("site.change", companyAddressRoute(checkMode(mode), srn),
-      Some(Message("messages__changeTrusteeAddress", companyName))))
+      Some(Message("messages__visuallyhidden__dynamic_address", companyName))))
   )
 
   def addressYearsAnswerRow(mode: Mode, srn: Option[String]): AnswerRow = AnswerRow(
@@ -124,7 +125,7 @@ object CheckYourAnswersCompanyAddressControllerSpec extends ControllerSpecBase w
     Seq(s"messages__common__$addressYearsUnderAYear"),
     answerIsMessageKey = true,
     Some(Link("site.change", companyAddressYearsRoute(checkMode(mode), srn),
-      Some(Message("messages__changeHasBeen1Year", companyName))))
+      Some(Message("messages__visuallyhidden__dynamic_addressYears", companyName))))
   )
 
   def tradingTimeAnswerRow(mode: Mode, srn: Option[String]): AnswerRow = AnswerRow(
@@ -140,7 +141,7 @@ object CheckYourAnswersCompanyAddressControllerSpec extends ControllerSpecBase w
     UserAnswers().addressAnswer(previousAddress),
     answerIsMessageKey = false,
     Some(Link("site.change", companyPreviousAddressRoute(checkMode(mode), srn),
-      Some(Message("messages__changeTrusteePreviousAddress", companyName))))
+      Some(Message("messages__visuallyhidden__dynamic_previousAddress", companyName))))
   )
 
   def previousAddressAddLink(mode: Mode, srn: Option[String]): AnswerRow =
@@ -148,7 +149,7 @@ object CheckYourAnswersCompanyAddressControllerSpec extends ControllerSpecBase w
       Seq("site.not_entered"),
       answerIsMessageKey = true,
       Some(Link("site.add", companyPreviousAddressRoute(checkMode(mode), srn),
-        Some(Message("messages__changeTrusteePreviousAddress", companyName)))))
+        Some(Message("messages__visuallyhidden__dynamic_previousAddress", companyName)))))
 
   def companyAddressNormal: Seq[AnswerSection] = Seq(AnswerSection(None, Seq(
     addressAnswerRow(NormalMode, None), addressYearsAnswerRow(NormalMode, None),

@@ -1216,7 +1216,7 @@ messages__visuallyhidden__partnership__email_address = the partnership’s email
 messages__visuallyhidden__partnership__phone_number = the partnership’s phone number
 messages__visuallyhidden__partnership__dormant = whether the partnership been dormant in the last 12 months
 
-messages__visuallyhidden__dynamic_hasUtr = whether {0} has a Unique Taxpayer Reference number
+messages__visuallyhidden__dynamic_hasUtr = whether {0} has a Unique Taxpayer Reference (UTR)
 messages__visuallyhidden__dynamic_utr = the UTR for {0}
 messages__visuallyhidden__dynamic_noUtrReason = the reason why {0} does not have a UTR
 messages__visuallyhidden__dynamic_hasVat = whether {0} is registered for VAT
@@ -1228,6 +1228,9 @@ messages__visuallyhidden__dynamic_addressYears = whether {0} has been at their a
 messages__visuallyhidden__dynamic_previousAddress = the previous address for {0}
 messages__visuallyhidden__dynamic_email = the email address for {0}
 messages__visuallyhidden__dynamic_phone = the phone number for {0}
+messages__visuallyhidden__dynamic_hasCrn = whether {0} has a company number
+messages__visuallyhidden__dynamic_noCrnReason = the reason why {0} does not have a company number
+messages__visuallyhidden__dynamic_crn = the company number for {0}
 
 messages__visuallyhidden__partner__nino_yes_no = whether the partner has a National Insurance number
 messages__visuallyhidden__partner__nino_no = why the partner does not have a National Insurance number
@@ -1639,6 +1642,7 @@ messages__hasBeen1Year = Has {0} been at their address for at least 1 year?
 messages__changeHasBeen1Year = whether {0} has been at their address for at least 1 year?
 messages__theTrustee = the trustee
 messages__theDirector = the director
+messages__theCompany = the company
 
 messages__hasBeenTradingCompany__title = Has the establisher been trading for at least 1 year?
 messages__hasBeenTrading__h1 =  Has {0} been trading for at least 1 year?
