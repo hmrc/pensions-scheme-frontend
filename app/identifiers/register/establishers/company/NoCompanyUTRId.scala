@@ -36,21 +36,24 @@ object NoCompanyUTRId {
                    messages: Messages,
                    countryOptions: CountryOptions): CheckYourAnswers[NoCompanyUTRId] = {
 
-    def label(index: Int) = userAnswers.get(CompanyDetailsId(index)) match {
-      case Some(details) => Some(messages("messages__noCompanyUtr__heading", details.companyName))
-      case _ => Some(messages("messages__noCompanyUtr__title"))
-    }
+    def companyName(index: Int) =
+      userAnswers.get(CompanyDetailsId(index)) match {
+        case Some(companyDetails) => companyDetails.companyName
+        case _ => messages("messages__theCompany")
+      }
 
-    def hiddenLabel = Some(messages("messages__visuallyhidden__noCompanyUTRReason"))
+    def label(index: Int) = Some(messages("messages__noCompanyUtr__heading", companyName(index)))
+
+    def hiddenLabel(index: Int) = Some(messages("messages__visuallyhidden__dynamic_noUtrReason", companyName(index)))
 
     new CheckYourAnswers[NoCompanyUTRId] {
       override def row(id: NoCompanyUTRId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        StringCYA(label(id.index), hiddenLabel)().row(id)(changeUrl, userAnswers)
+        StringCYA(label(id.index), hiddenLabel(id.index))().row(id)(changeUrl, userAnswers)
 
 
       override def updateRow(id: NoCompanyUTRId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
         userAnswers.get(IsEstablisherNewId(id.index)) match {
-          case Some(true) => StringCYA(label(id.index), hiddenLabel)().row(id)(changeUrl, userAnswers)
+          case Some(true) => StringCYA(label(id.index), hiddenLabel(id.index))().row(id)(changeUrl, userAnswers)
           case _ => Seq.empty[AnswerRow]
         }
     }

@@ -45,20 +45,24 @@ object HasCompanyUTRId {
 
   implicit def cya(implicit userAnswers: UserAnswers, messages: Messages): CheckYourAnswers[HasCompanyUTRId] = {
 
-    def label(index: Int) = userAnswers.get(CompanyDetailsId(index)) match {
-      case Some(details) => Some(messages("messages__hasCompanyUtr__h1", details.companyName))
-      case _ => Some(messages("messages__hasCompanyUtr__title"))
-    }
+    def companyName(index: Int) =
+      userAnswers.get(CompanyDetailsId(index)) match {
+        case Some(companyDetails) => companyDetails.companyName
+        case _ => messages("messages__theCompany")
+      }
 
-    def hiddenLabel = Some(messages("messages__visuallyhidden__hasCompanyUtr"))
+    def label(index: Int) = Some(messages("messages__hasCompanyUtr__h1", companyName(index)))
+
+
+    def hiddenLabel(index: Int) = Some(messages("messages__visuallyhidden__dynamic_hasUtr", companyName(index)))
 
     new CheckYourAnswers[HasCompanyUTRId] {
       override def row(id: HasCompanyUTRId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        BooleanCYA(label(id.index), hiddenLabel)().row(id)(changeUrl, userAnswers)
+        BooleanCYA(label(id.index), hiddenLabel(id.index))().row(id)(changeUrl, userAnswers)
 
       override def updateRow(id: HasCompanyUTRId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
         userAnswers.get(IsEstablisherNewId(id.index)) match {
-          case Some(true) => BooleanCYA(label(id.index), hiddenLabel)().row(id)(changeUrl, userAnswers)
+          case Some(true) => BooleanCYA(label(id.index), hiddenLabel(id.index))().row(id)(changeUrl, userAnswers)
           case _ => Seq.empty[AnswerRow]
         }
     }

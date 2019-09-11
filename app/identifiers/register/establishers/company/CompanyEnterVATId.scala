@@ -35,18 +35,26 @@ object CompanyEnterVATId {
   implicit def cya(implicit messages: Messages, countryOptions: CountryOptions): CheckYourAnswers[CompanyEnterVATId] = {
     new CheckYourAnswers[CompanyEnterVATId] {
 
-      private val hiddenLabelVat = "messages__visuallyhidden__companyVat"
+      private def companyName(index: Int,  ua:UserAnswers) =
+        ua.get(CompanyDetailsId(index)) match {
+          case Some(companyDetails) => companyDetails.companyName
+          case _ => messages("messages__theCompany")
+        }
+
+      private def hiddenLabelVat(index:Int, ua:UserAnswers) =
+        messages("messages__visuallyhidden__dynamic_vat", companyName(index, ua))
+
       private val vatLabel = "messages__common__cya__vat"
 
       override def row(id: CompanyEnterVATId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        ReferenceValueCYA[CompanyEnterVATId](vatLabel, hiddenLabelVat)().row(id)(changeUrl, userAnswers)
+        ReferenceValueCYA[CompanyEnterVATId](vatLabel, hiddenLabelVat(id.index, userAnswers))().row(id)(changeUrl, userAnswers)
 
       override def updateRow(id: CompanyEnterVATId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
         userAnswers.get(IsEstablisherNewId(id.index)) match {
           case Some(true) =>
-            ReferenceValueCYA[CompanyEnterVATId](vatLabel, hiddenLabelVat)().row(id)(changeUrl, userAnswers)
+            ReferenceValueCYA[CompanyEnterVATId](vatLabel, hiddenLabelVat(id.index, userAnswers))().row(id)(changeUrl, userAnswers)
           case _ =>
-            ReferenceValueCYA[CompanyEnterVATId](vatLabel, hiddenLabelVat)().updateRow(id)(changeUrl, userAnswers)
+            ReferenceValueCYA[CompanyEnterVATId](vatLabel, hiddenLabelVat(id.index, userAnswers))().updateRow(id)(changeUrl, userAnswers)
         }
       }
     }

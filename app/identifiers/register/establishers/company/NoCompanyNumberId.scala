@@ -36,16 +36,19 @@ object NoCompanyNumberId {
                    messages: Messages,
                    countryOptions: CountryOptions): CheckYourAnswers[NoCompanyNumberId] = {
 
-    def label(index: Int) = userAnswers.get(CompanyDetailsId(index)) match {
-      case Some(details) => Some(messages("messages__noCompanyNumber__establisher__heading", details.companyName))
-      case _ => Some(messages("messages__noCompanyNumber__establisher__title"))
-    }
+    def companyName(index: Int) =
+      userAnswers.get(CompanyDetailsId(index)) match {
+        case Some(companyDetails) => companyDetails.companyName
+        case _ => messages("messages__theCompany")
+      }
 
-    def hiddenLabel = Some(messages("messages__visuallyhidden__noCompanyNumberReason"))
+    def label(index: Int) = Some(messages("messages__noCompanyNumber__establisher__heading", companyName(index)))
+
+    def hiddenLabel(index: Int) = Some(messages("messages__visuallyhidden__dynamic_noCrnReason", companyName(index)))
 
     new CheckYourAnswers[NoCompanyNumberId] {
       override def row(id: NoCompanyNumberId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        StringCYA(label(id.index), hiddenLabel)().row(id)(changeUrl, userAnswers)
+        StringCYA(label(id.index), hiddenLabel(id.index))().row(id)(changeUrl, userAnswers)
 
 
       override def updateRow(id: NoCompanyNumberId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =

@@ -37,19 +37,25 @@ object CompanyRegistrationNumberVariationsId {
 
   implicit def cya(implicit messages: Messages, countryOptions: CountryOptions): CheckYourAnswers[CompanyRegistrationNumberVariationsId] = {
 
+    def companyName(index: Int, userAnswers: UserAnswers) =
+      userAnswers.get(CompanyDetailsId(index)) match {
+        case Some(companyDetails) => companyDetails.companyName
+        case _ => messages("messages__theCompany")
+      }
+
     val label: String = "messages__checkYourAnswers__establishers__company__number"
-    val changeCrn: String = "messages__visuallyhidden__companyNumber"
+    def changeCrn(index: Int, userAnswers: UserAnswers): String = messages("messages__visuallyhidden__dynamic_crn", companyName(index, userAnswers))
 
     new CheckYourAnswers[CompanyRegistrationNumberVariationsId] {
       override def row(id: CompanyRegistrationNumberVariationsId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        ReferenceValueCYA[CompanyRegistrationNumberVariationsId](label, changeCrn)().row(id)(changeUrl, userAnswers)
+        ReferenceValueCYA[CompanyRegistrationNumberVariationsId](label, changeCrn(id.index, userAnswers: UserAnswers))().row(id)(changeUrl, userAnswers)
 
       override def updateRow(id: CompanyRegistrationNumberVariationsId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
         userAnswers.get(IsEstablisherNewId(id.index)) match {
           case Some(true) =>
             row(id)(changeUrl, userAnswers)
           case _ =>
-            ReferenceValueCYA[CompanyRegistrationNumberVariationsId](label, changeCrn)().updateRow(id)(changeUrl, userAnswers)
+            ReferenceValueCYA[CompanyRegistrationNumberVariationsId](label, changeCrn(id.index, userAnswers: UserAnswers))().updateRow(id)(changeUrl, userAnswers)
         }
     }
   }
