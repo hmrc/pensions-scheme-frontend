@@ -44,12 +44,13 @@ case class HasBeenTradingCompanyId(index: Int) extends TypedIdentifier[Boolean] 
 object HasBeenTradingCompanyId {
   override def toString: String = "hasBeenTrading"
 
-  implicit def cya(implicit messages: Messages): CheckYourAnswers[HasBeenTradingCompanyId] =
+  implicit def cya(implicit messages: Messages): CheckYourAnswers[HasBeenTradingCompanyId] = {
+
     new CheckYourAnswers[HasBeenTradingCompanyId] {
 
       override def row(id: HasBeenTradingCompanyId)(changeUrl: String, ua: UserAnswers): Seq[AnswerRow] = {
         val companyName = ua.get(CompanyDetailsId(id.index)).fold(messages("messages__theTrustee"))(_.companyName)
-        val label = messages("messages__hasBeenTrading__h1", companyName)
+        val label       = messages("messages__hasBeenTrading__h1", companyName)
         val hiddenLabel = messages("messages__visuallyhidden__dynamic__hasBeenTrading", companyName)
 
         BooleanCYA(Some(label), Some(hiddenLabel))().row(id)(changeUrl, ua)
@@ -58,8 +59,9 @@ object HasBeenTradingCompanyId {
       override def updateRow(id: HasBeenTradingCompanyId)(changeUrl: String, ua: UserAnswers): Seq[AnswerRow] =
         ua.get(IsEstablisherNewId(id.index)) match {
           case Some(true) => row(id)(changeUrl, ua)
-          case _ => Seq.empty[AnswerRow]
+          case _          => Seq.empty[AnswerRow]
         }
     }
-}
+  }
+  }
 

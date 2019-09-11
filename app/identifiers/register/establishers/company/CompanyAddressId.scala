@@ -35,10 +35,16 @@ object CompanyAddressId {
   implicit def cya(implicit countryOptions: CountryOptions, messages: Messages): CheckYourAnswers[CompanyAddressId] =
     new CheckYourAnswers[CompanyAddressId] {
 
+      private def companyName(index: Int, userAnswers: UserAnswers) =
+        userAnswers.get(CompanyDetailsId(index)) match {
+          case Some(companyDetails) => companyDetails.companyName
+          case _ => messages("messages__theCompany")
+        }
+
       override def row(id: CompanyAddressId)(changeUrl: String, ua: UserAnswers): Seq[AnswerRow] = {
         val label = ua.get(CompanyDetailsId(id.index)).map(details => Message("messages__establisherConfirmAddress__cya_label", details.companyName)).
           getOrElse(Message("messages__common__cya__address"))
-        AddressCYA(label, "messages__establisherConfirmAddress__cya_visually_hidden_label")().row(id)(changeUrl, ua)
+        AddressCYA(label, messages("messages__visuallyhidden__dynamic_address", companyName(id.index, ua)) )().row(id)(changeUrl, ua)
       }
 
       override def updateRow(id: CompanyAddressId)(changeUrl: String, ua: UserAnswers): Seq[AnswerRow] = row(id)(changeUrl, ua)

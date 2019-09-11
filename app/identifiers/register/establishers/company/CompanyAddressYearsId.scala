@@ -46,19 +46,26 @@ object CompanyAddressYearsId {
   override lazy val toString: String = "companyAddressYears"
 
   implicit def cya(implicit messages: Messages): CheckYourAnswers[CompanyAddressYearsId] = {
+
+    def companyName(index: Int, userAnswers: UserAnswers) =
+    userAnswers.get(CompanyDetailsId(index)) match {
+      case Some(companyDetails) => companyDetails.companyName
+      case _ => messages("messages__theCompany")
+    }
+
     def label(ua: UserAnswers, index: Int): Message = ua.get(CompanyDetailsId(index)).map(details =>
       Message("messages__company_address_years__h1", details.companyName)).getOrElse(Message("messages__company_address_years__title"))
 
-    val changeAddressYears: String = "messages__visuallyhidden__establisher__address_years"
+    def changeAddressYears(ua: UserAnswers, index: Int): String = messages("messages__visuallyhidden__dynamic_addressYears", companyName(index, ua))
 
     new CheckYourAnswers[CompanyAddressYearsId] {
       override def row(id: CompanyAddressYearsId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        AddressYearsCYA(label(userAnswers, id.index), changeAddressYears)().row(id)(changeUrl, userAnswers)
+        AddressYearsCYA(label(userAnswers, id.index), changeAddressYears(userAnswers, id.index))().row(id)(changeUrl, userAnswers)
 
       override def updateRow(id: CompanyAddressYearsId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
         userAnswers.get(IsEstablisherNewId(id.index)) match {
           case Some(true) => row(id)(changeUrl, userAnswers)
-          case _ => AddressYearsCYA(label(userAnswers, id.index), changeAddressYears)().updateRow(id)(changeUrl, userAnswers)
+          case _ => AddressYearsCYA(label(userAnswers, id.index), changeAddressYears(userAnswers, id.index))().updateRow(id)(changeUrl, userAnswers)
         }
     }
   }

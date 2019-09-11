@@ -35,15 +35,18 @@ object CompanyPreviousAddressId {
   implicit def cya(implicit countryOptions: CountryOptions, messages: Messages): CheckYourAnswers[CompanyPreviousAddressId] = {
     def label(ua: UserAnswers, index: Int): Message = ua.get(CompanyDetailsId(index)).map(details =>
       Message("messages__establisherPreviousConfirmAddress__cya_label", details.companyName)).getOrElse(Message("messages__common__cya__address"))
-    val changeAddress: String = "messages__establisherPreviousConfirmAddress__cya_visually_hidden_label"
+    def changeAddress(ua: UserAnswers, index: Int): String = {
+      val companyName = ua.get(CompanyDetailsId(index)).fold(messages("messages__theTrustee"))(_.companyName)
+      messages("messages__visuallyhidden__dynamic_previousAddress", companyName)
+    }
 
     new CheckYourAnswers[CompanyPreviousAddressId] {
       override def row(id: CompanyPreviousAddressId)(changeUrl: String, ua: UserAnswers): Seq[AnswerRow] =
-        AddressCYA(label(ua, id.index), changeAddress)().row(id)(changeUrl, ua)
+        AddressCYA(label(ua, id.index), changeAddress(ua, id.index))().row(id)(changeUrl, ua)
 
       override def updateRow(id: CompanyPreviousAddressId)(changeUrl: String, ua: UserAnswers): Seq[AnswerRow] =
         PreviousAddressCYA(label(ua, id.index),
-          changeAddress,
+          changeAddress(ua, id.index),
           ua.get(IsEstablisherNewId(id.index)),
           ua.get(CompanyAddressYearsId(id.index)))().updateRow(id)(changeUrl, ua)
     }
