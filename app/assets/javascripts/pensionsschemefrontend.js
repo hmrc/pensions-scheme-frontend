@@ -27,12 +27,10 @@ $(document).ready(function() {
     $('#back-link').on('click', function(e){
         e.preventDefault();
         window.history.back();
-    })
+    });
+
     $("#declarationId").submit(function() {
-        $(this).submit(function() {
-          return false;
-        });
-        return true;
+        $(this).find(':submit').attr('disabled', 'disabled');
     });
 
     if(document.querySelectorAll('select').length > 0){
