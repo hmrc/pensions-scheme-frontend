@@ -38,13 +38,17 @@ import play.api.libs.json.Reads._
 import play.api.libs.json._
 import play.api.mvc.Result
 import play.api.mvc.Results._
+import utils.datacompletion.{DataCompletion, DataCompletionEstablishers, DataCompletionTrustees}
 
 import scala.annotation.tailrec
 import scala.concurrent.Future
 import scala.language.implicitConversions
 
 //scalastyle:off number.of.methods
-final case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Implicits with DataCompletion {
+final case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Implicits
+                                                          with DataCompletion
+                                                          with DataCompletionEstablishers
+                                                          with DataCompletionTrustees {
 
   def prettyPrint: String = Json.prettyPrint(json)
 
