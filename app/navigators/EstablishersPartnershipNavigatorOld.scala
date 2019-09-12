@@ -17,18 +17,46 @@
 package navigators
 
 import com.google.inject.Inject
-import config.FrontendAppConfig
+import config.{FeatureSwitchManagementService, FrontendAppConfig}
 import connectors.UserAnswersCacheConnector
 import controllers.register.establishers.partnership.routes._
 import controllers.routes._
+import identifiers.Identifier
 import identifiers.register.establishers.partnership._
 import identifiers.register.establishers.{ExistingCurrentAddressId, IsEstablisherNewId}
 import models.Mode._
 import models._
-import utils.UserAnswers
+import models.requests.IdentifiedRequest
+import navigators.establishers.partnership.EstablisherPartnershipDetailsNavigator
+import play.api.mvc.Call
+import uk.gov.hmrc.http.HeaderCarrier
+import utils.{Toggles, UserAnswers}
 
-class EstablishersPartnershipNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector,
-                                                 appConfig: FrontendAppConfig) extends AbstractNavigator {
+import scala.concurrent.ExecutionContext
+
+class EstablisherPartnershipFeatureSwitchNavigator @Inject() (
+                                                        featureSwitchService: FeatureSwitchManagementService,
+                                                        oldNavigator: EstablishersPartnershipNavigatorOld,
+                                                        detailsNavigator: EstablisherPartnershipDetailsNavigator
+                                                      ) extends Navigator {
+
+  override def nextPageOptional(id: Identifier,
+                                mode: Mode,
+                                userAnswers: UserAnswers,
+                                srn: Option[String])(
+                                 implicit ex: IdentifiedRequest,
+                                 ec: ExecutionContext,
+                                 hc: HeaderCarrier): Option[Call] =
+    if (featureSwitchService.get(Toggles.isHnSEnabled)) {
+      println("\n\n\n 4636")
+      detailsNavigator.nextPageOptional(id, mode, userAnswers, srn)
+    } else {
+      oldNavigator.nextPageOptional(id, mode, userAnswers, srn)
+    }
+}
+
+class EstablishersPartnershipNavigatorOld @Inject()(val dataCacheConnector: UserAnswersCacheConnector,
+                                                    appConfig: FrontendAppConfig) extends AbstractNavigator {
 
   private def checkYourAnswers(index: Int, mode: Mode, srn: Option[String]): Option[NavigateTo] =
     NavigateTo.dontSave(CheckYourAnswersController.onPageLoad(mode, index, srn))
