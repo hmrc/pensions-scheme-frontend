@@ -17,14 +17,9 @@
 package identifiers.register.trustees.individual
 
 import identifiers.TypedIdentifier
-import identifiers.register.trustees.{IsTrusteeNewId, TrusteesId}
-import models.Link
+import identifiers.register.trustees.TrusteesId
 import models.person.PersonName
-import play.api.i18n.Messages
 import play.api.libs.json.JsPath
-import utils.UserAnswers
-import utils.checkyouranswers.CheckYourAnswers
-import viewmodels.{AnswerRow, Message}
 
 case class TrusteeNameId(trusteeIndex: Int) extends TypedIdentifier[PersonName] {
   override def path: JsPath = TrusteesId(trusteeIndex).path \ TrusteeNameId.toString
@@ -34,32 +29,4 @@ object TrusteeNameId {
   def collectionPath(trusteeIndex: Int): JsPath = TrusteesId(trusteeIndex).path \ TrusteeNameId.toString
 
   override def toString: String = "trusteeDetails"
-
-  implicit def cya(implicit messages: Messages): CheckYourAnswers[TrusteeNameId] = {
-    new CheckYourAnswers[TrusteeNameId] {
-      override def row(id: TrusteeNameId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        userAnswers.get(id).fold(Nil: Seq[AnswerRow]) { personDetails =>
-          Seq(AnswerRow(
-            "messages__trusteeName__cya",
-            Seq(personDetails.fullName),
-            answerIsMessageKey = false,
-            Some(Link("site.change", changeUrl, Some(Message("messages__visuallyhidden__trusteeName", personDetails.fullName).resolve)))
-          ))
-        }
-
-      override def updateRow(id: TrusteeNameId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        userAnswers.get(IsTrusteeNewId(id.trusteeIndex)) match {
-          case Some(true) => row(id)(changeUrl, userAnswers)
-          case _ =>
-            userAnswers.get(id).fold(Nil: Seq[AnswerRow]) { personDetails =>
-              Seq(AnswerRow(
-                "messages__trusteeName__cya",
-                Seq(personDetails.fullName),
-                answerIsMessageKey = false,
-                None
-              ))
-            }
-        }
-    }
-  }
 }
