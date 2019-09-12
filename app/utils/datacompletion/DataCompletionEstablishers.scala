@@ -99,18 +99,18 @@ trait DataCompletionEstablishers {
 
   //ESTABLISHER INDIVIDUAL
 
-  def isEstablisherIndividualDetailsComplete(establisherIndex: Int): Option[Boolean] = {
+  def isEstablisherIndividualDetailsComplete(establisherIndex: Int): Option[Boolean] =
     isComplete(Seq(
       isAnswerComplete(EstablisherDOBId(establisherIndex)),
       isAnswerComplete(EstablisherHasNINOId(establisherIndex), EstablisherNewNinoId(establisherIndex), Some(EstablisherNoNINOReasonId(establisherIndex))),
       isAnswerComplete(EstablisherHasUTRId(establisherIndex), EstablisherUTRId(establisherIndex), Some(EstablisherNoUTRReasonId(establisherIndex)))
     ))
-  }
 
   def isEstablisherIndividualAddressComplete(index: Int): Option[Boolean] =
     isAddressComplete(AddressId(index), PreviousAddressId(index), AddressYearsId(index), None)
 
-  def isEstablisherIndividualContactDetailsComplete(index: Int): Option[Boolean] = isContactDetailsComplete(EstablisherEmailId(index), EstablisherPhoneId(index))
+  def isEstablisherIndividualContactDetailsComplete(index: Int): Option[Boolean] =
+    isContactDetailsComplete(EstablisherEmailId(index), EstablisherPhoneId(index))
 
   def isEstablisherIndividualComplete(isHnSEnabled: Boolean, index: Int): Boolean =
     if (isHnSEnabled) {

@@ -16,23 +16,19 @@
 
 package utils
 
-import base.SpecBase
+import base.{JsonFileReader, SpecBase}
 import controllers.register.establishers.company.{routes => establisherCompanyRoutes}
 import controllers.register.trustees.company.{routes => trusteeCompanyRoutes}
 import controllers.register.trustees.individual.{routes => trusteeIndividualRoutes}
 import controllers.register.trustees.partnership.{routes => trusteePartnershipRoutes}
 import helpers.DataCompletionHelper
-import identifiers.register.establishers.company.director.DirectorNameId
-import identifiers.register.establishers.company.{CompanyEmailId, CompanyVatId}
 import identifiers.register.establishers.{IsEstablisherNewId, company => establisherCompanyPath}
 import identifiers.register.trustees.{IsTrusteeNewId, company => trusteeCompanyPath, individual => trusteeIndividualPath, partnership => trusteePartnershipPath}
 import models.address.Address
-import models.person.{PersonDetails, PersonName}
+import models.person.PersonDetails
 import models.{CompanyDetails, EntitySpoke, Link, Mode, NormalMode, UpdateMode, _}
 import org.joda.time.LocalDate
-import models._
 import org.scalatest.{MustMatchers, OptionValues}
-import utils.DataCompletionSpec.readJsonFromFile
 import utils.hstasklisthelper.{HsTaskListHelper, HsTaskListHelperRegistration, HsTaskListHelperVariations}
 
 class HsTaskListHelperUtilsSpec extends SpecBase with MustMatchers with OptionValues {
@@ -202,7 +198,7 @@ class HsTaskListHelperUtilsSpec extends SpecBase with MustMatchers with OptionVa
   }
 }
 
-object HsTaskListHelperUtilsSpec extends SpecBase with OptionValues with DataCompletionHelper {
+object HsTaskListHelperUtilsSpec extends SpecBase with OptionValues with DataCompletionHelper with JsonFileReader {
 
   val srn = Some("S123")
   private val fakeFeatureSwitch = new FakeFeatureSwitchManagementService(true)

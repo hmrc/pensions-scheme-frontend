@@ -16,6 +16,7 @@
 
 package utils
 
+import base.JsonFileReader
 import helpers.DataCompletionHelper
 import identifiers.register.establishers.company.director._
 import identifiers.register.establishers.company.{CompanyDetailsId => EstablisherCompanyDetailsId}
@@ -37,9 +38,8 @@ import models.register.trustees.TrusteeKind
 import org.joda.time.LocalDate
 import org.scalatest.{MustMatchers, OptionValues, WordSpec}
 import play.api.libs.json._
-import utils.DataCompletionSpec.readJsonFromFile
 
-class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues with Enumerable.Implicits with DataCompletionHelper {
+class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues with Enumerable.Implicits with DataCompletionHelper with JsonFileReader {
 
   import UserAnswersSpec._
 
@@ -582,7 +582,7 @@ class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues with 
 
 }
 
-object UserAnswersSpec extends OptionValues with Enumerable.Implicits {
+object UserAnswersSpec extends OptionValues with Enumerable.Implicits with JsonFileReader {
   private def establisherEntity(name: String, index: Int, establisherKind: EstablisherKind, isComplete: Boolean = false, countAfterDeleted : Int = 3): Establisher[_] = {
     establisherKind match {
       case Indivdual =>
