@@ -84,7 +84,8 @@ class CompanyEnterVATIdSpec extends SpecBase {
       }
 
       "display an add link if vat is not available" in {
-        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(), PsaId("A0000000"))
+        val answers = UserAnswers().set(CompanyDetailsId(0))(CompanyDetails(companyName)).asOpt.value
+        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
         implicit val userAnswers: UserAnswers = request.userAnswers
 
         CompanyEnterVATId(0).row(onwardUrl, UpdateMode) must equal(Seq(
