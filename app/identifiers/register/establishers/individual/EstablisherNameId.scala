@@ -14,16 +14,18 @@
  * limitations under the License.
  */
 
-package toggles
+package identifiers.register.establishers.individual
 
-class TogglesSpec extends FeatureToggleBehaviours {
+import identifiers._
+import identifiers.register.establishers.EstablishersId
+import models.person.PersonName
+import play.api.libs.json.JsPath
 
-  "is-establisher-company-hns new feature toggle" should {
-    behave like featureToggle("is-establisher-company-hns", false)
-  }
+case class EstablisherNameId(index: Int) extends TypedIdentifier[PersonName] {
+  override def path: JsPath = EstablishersId(index).path \ EstablisherNameId.toString
+}
 
-  "is-hns-enabled new feature toggle" should {
-    behave like featureToggle("is-hns-enabled", false)
-  }
+object EstablisherNameId {
+  override lazy val toString: String = "establisherDetails"
 
 }
