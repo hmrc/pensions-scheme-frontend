@@ -17,6 +17,7 @@
 package controllers.register.establishers.individual
 
 import controllers.ControllerSpecBase
+import controllers.register.establishers.individual.routes._
 import controllers.actions.{DataRequiredActionImpl, DataRetrievalAction, FakeAllowAccessProvider, FakeAuthAction}
 import identifiers.register.establishers.individual.EstablisherDetailsId
 import models.{Index, Mode, NormalMode, UpdateMode}
@@ -47,7 +48,7 @@ class WhatYouWillNeedIndividualDetailsControllerSpec extends ControllerSpecBase 
     )
 
   def viewAsString(mode: Mode): String = {
-    val href = routes.EstablisherDetailsController.onPageLoad(mode, 0, None)
+    val href = EstablisherDOBController.onPageLoad(mode, 0, None)
     whatYouWillNeedIndividualDetails(frontendAppConfig, None, href, None, establisherName)(fakeRequest, messages).toString
   }
 

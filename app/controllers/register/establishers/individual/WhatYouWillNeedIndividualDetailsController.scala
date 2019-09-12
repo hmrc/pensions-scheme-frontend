@@ -18,8 +18,9 @@ package controllers.register.establishers.individual
 
 import config.FrontendAppConfig
 import controllers.Retrievals
+import controllers.register.establishers.individual.routes._
 import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRequiredAction, DataRetrievalAction}
-import identifiers.register.establishers.individual.EstablisherDetailsId
+import identifiers.register.establishers.individual.EstablisherNameId
 import javax.inject.Inject
 import models.{Index, Mode}
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -39,9 +40,9 @@ class WhatYouWillNeedIndividualDetailsController @Inject()(appConfig: FrontendAp
   def onPageLoad(mode: Mode, index: Index, srn: Option[String] = None): Action[AnyContent] = (authenticate andThen
     getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
     implicit request =>
-      EstablisherDetailsId(index).retrieve.right.map {
+      EstablisherNameId(index).retrieve.right.map {
         details =>
-          val href = routes.EstablisherDetailsController.onPageLoad(mode, index, srn)
+          val href = EstablisherDOBController.onPageLoad(mode, index, srn)
           Future.successful(Ok(whatYouWillNeedIndividualDetails(appConfig, existingSchemeName, href, srn, details.fullName)))
       }
 
