@@ -29,7 +29,7 @@ import utils.annotations.EstablishersIndividual
 
 import scala.concurrent.ExecutionContext
 
-class WhatYouWillNeedContactDetailsController @Inject()(
+class WhatYouWillNeedIndividualContactDetailsController @Inject()(
                                                             val appConfig: FrontendAppConfig,
                                                             val messagesApi: MessagesApi,
                                                             val userAnswersService: UserAnswersService,

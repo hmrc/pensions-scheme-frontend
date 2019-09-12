@@ -125,8 +125,8 @@ GET        /:index/individual/:mode/address/:srn                           contr
 GET        /:index/individual/check-your-answers-address                                      controllers.register.establishers.individual.CheckYourAnswersAddressController.onPageLoad(mode: Mode = NormalMode, index: Index, srn: Option[String] = None)
 GET        /:index/individual/:mode/check-your-answers-address/:srn                           controllers.register.establishers.individual.CheckYourAnswersAddressController.onPageLoad(mode: Mode, index: Index, srn: Option[String])
 
-GET        /:index/individual/contact-details                                      controllers.register.establishers.individual.WhatYouWillNeedContactDetailsController.onPageLoad(mode: Mode = NormalMode, index: Index, srn: Option[String] = None)
-GET        /:index/individual/:mode/contact-details/:srn                           controllers.register.establishers.individual.WhatYouWillNeedContactDetailsController.onPageLoad(mode: Mode, index: Index, srn: Option[String])
+GET        /:index/individual/contact-details                                      controllers.register.establishers.individual.WhatYouWillNeedIndividualContactDetailsController.onPageLoad(mode: Mode = NormalMode, index: Index, srn: Option[String] = None)
+GET        /:index/individual/:mode/contact-details/:srn                           controllers.register.establishers.individual.WhatYouWillNeedIndividualContactDetailsController.onPageLoad(mode: Mode, index: Index, srn: Option[String])
 
 GET        /:index/individual/enter-email-address                    controllers.register.establishers.individual.EstablisherEmailController.onPageLoad(mode: Mode = NormalMode,index:Index, srn: Option[String] = None)
 POST       /:index/individual/enter-email-address                    controllers.register.establishers.individual.EstablisherEmailController.onSubmit(mode: Mode = NormalMode,index:Index, srn: Option[String] = None)
