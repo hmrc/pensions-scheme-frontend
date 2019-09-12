@@ -38,7 +38,7 @@ object TrusteeDOBId {
     new CheckYourAnswers[TrusteeDOBId] {
 
       def trusteeName(index: Int) = answers.get(TrusteeNameId(index)).fold(messages("messages__theTrustee"))(_.fullName)
-      def label(index: Int): String = messages("messages__trusteeIndividualDOB__heading", trusteeName(index))
+      def label(index: Int): String = messages("messages__individualDOB__heading", trusteeName(index))
       def hiddenLabel(index: Int) = Some(messages("messages__visuallyhidden__dynamic_dob", trusteeName(index)))
 
       override def row(id: TrusteeDOBId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
