@@ -31,16 +31,16 @@ import viewmodels.AnswerRow
 class DirectorUTRIdSpec extends SpecBase {
 
   val onwardUrl = "onwardUrl"
-  val name = "test company name"
+  val name = "first last"
   val utr = "1234567890"
   implicit val countryOptions: CountryOptions = new CountryOptions(environment, frontendAppConfig)
   private val answerRowsWithChangeLinks = Seq(
-    AnswerRow("messages__utr__checkyouranswerslabel", List(utr), false, Some(Link("site.change",onwardUrl,
-      Some("messages__visuallyhidden__companyUTR"))))
+    AnswerRow(messages("messages__utr__checkyouranswerslabel"), List(utr), false, Some(Link("site.change",onwardUrl,
+      Some(messages("messages__visuallyhidden__dynamic_utr", name)))))
   )
 
   private val answerRowsWithoutChangeLink = Seq(
-    AnswerRow("messages__utr__checkyouranswerslabel", List(utr), false, None))
+    AnswerRow(messages("messages__utr__checkyouranswerslabel"), List(utr), false, None))
 
   "Cleanup" when {
     def answers: UserAnswers = UserAnswers(Json.obj())
@@ -54,7 +54,11 @@ class DirectorUTRIdSpec extends SpecBase {
 
   "cya" when {
 
-    def answers(isEditable: Boolean = false): UserAnswers = UserAnswers().set(DirectorUTRId(0, 0))(ReferenceValue(utr, isEditable)).asOpt.get
+    def answers(isEditable: Boolean = false): UserAnswers = UserAnswers()
+      .set(DirectorUTRId(0, 0))(ReferenceValue(utr, isEditable))
+      .flatMap(
+        _.set(DirectorNameId(0, 0))(PersonName("first", "last"))
+    ).asOpt.get
 
     "in normal mode" must {
 
@@ -80,10 +84,10 @@ class DirectorUTRIdSpec extends SpecBase {
       "for existing director" must {
 
         "return row with add link if there is no data available" in {
-          val answerRowWithAddLink = AnswerRow("messages__utr__checkyouranswerslabel", List("site.not_entered"), answerIsMessageKey = true,
+          val answerRowWithAddLink = AnswerRow(messages("messages__utr__checkyouranswerslabel"), List("site.not_entered"), answerIsMessageKey = true,
             Some(Link("site.add",onwardUrl,
-              Some("messages__visuallyhidden__companyUTR")
-              )))
+              Some(messages("messages__visuallyhidden__dynamic_utr", "the director")
+              ))))
           val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id",
             UserAnswers().trusteesCompanyDetails(index = 0, CompanyDetails(name)), PsaId("A0000000"))
           implicit val userAnswers: UserAnswers = request.userAnswers

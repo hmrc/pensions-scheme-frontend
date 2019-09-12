@@ -30,12 +30,7 @@ import viewmodels.AnswerRow
 
 class CompanyRegistrationNumberVariationsIdSpec extends SpecBase {
 
-  private val companyName = "test company"
-
-  private def baseAnswers = UserAnswers()
-    .set(CompanyDetailsId(0))(CompanyDetails(companyName)).asOpt.value
-
-
+  private val companyName = "the company"
   implicit val countryOptions: CountryOptions = new CountryOptions(environment, frontendAppConfig)
   private val onwardUrl = "onwardUrl"
   private val answerRowsWithChangeLinks = Seq(
@@ -44,7 +39,7 @@ class CompanyRegistrationNumberVariationsIdSpec extends SpecBase {
   )
 
   "Cleanup" when {
-    def answers: UserAnswers = baseAnswers
+    def answers: UserAnswers = UserAnswers(Json.obj())
       .set(NoCompanyNumberId(0))("reason").asOpt.value
 
     "remove the data for `NoCompanyNumber`" in {
@@ -55,7 +50,7 @@ class CompanyRegistrationNumberVariationsIdSpec extends SpecBase {
 
   "cya" when {
 
-    def answers: UserAnswers = baseAnswers.set(CompanyRegistrationNumberVariationsId(0))(ReferenceValue("companyRegistrationNumber")).asOpt.get
+    def answers: UserAnswers = UserAnswers().set(CompanyRegistrationNumberVariationsId(0))(ReferenceValue("companyRegistrationNumber")).asOpt.get
 
     "in normal mode" must {
 
@@ -89,7 +84,7 @@ class CompanyRegistrationNumberVariationsIdSpec extends SpecBase {
       }
 
       "return answers rows with change links if companyRegistrationNumber is available and editable" in {
-        val answers = baseAnswers.set(CompanyRegistrationNumberVariationsId(0))(ReferenceValue("companyRegistrationNumber", true)).asOpt.get
+        val answers = UserAnswers().set(CompanyRegistrationNumberVariationsId(0))(ReferenceValue("companyRegistrationNumber", true)).asOpt.get
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
         implicit val userAnswers: UserAnswers = request.userAnswers
 
@@ -97,7 +92,7 @@ class CompanyRegistrationNumberVariationsIdSpec extends SpecBase {
       }
 
       "display an add link if companyRegistrationNumber is not available" in {
-        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
+        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(), PsaId("A0000000"))
         implicit val userAnswers: UserAnswers = request.userAnswers
 
         CompanyRegistrationNumberVariationsId(0).row(onwardUrl, UpdateMode) must equal(Seq(
