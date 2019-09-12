@@ -21,7 +21,7 @@ import identifiers.register.establishers.EstablishersId
 import play.api.i18n.Messages
 import play.api.libs.json.JsPath
 import utils.{CountryOptions, UserAnswers}
-import utils.checkyouranswers.CheckYourAnswers
+import utils.checkyouranswers.{CheckYourAnswers, CheckYourAnswersDirectors}
 import utils.checkyouranswers.CheckYourAnswers.StringCYA
 import viewmodels.AnswerRow
 
@@ -37,23 +37,26 @@ object DirectorEmailId {
                    messages: Messages,
                    countryOptions: CountryOptions): CheckYourAnswers[DirectorEmailId] = {
 
-    def emailLabel(establisherIndex: Int, directorIndex: Int) =
-      userAnswers.get(DirectorNameId(establisherIndex, directorIndex)) match {
-      case Some(name) => messages("messages__director__cya__email_address", name.fullName)
-      case None => "messages__director__cya__email_address__fallback"
-    }
+    new CheckYourAnswersDirectors[DirectorEmailId] {
 
-    val hiddenLabel = messages("messages__visuallyhidden__common__email_address")
+      private def label(establisherIndex: Int, directorIndex: Int, ua:UserAnswers):String =
+        dynamicMessage(establisherIndex, directorIndex, ua, "messages__director__cya__email_address")
 
-    new CheckYourAnswers[DirectorEmailId] {
+      private def hiddenLabel(establisherIndex: Int, directorIndex: Int, ua:UserAnswers):String =
+        dynamicMessage(establisherIndex, directorIndex, ua, "messages__visuallyhidden__dynamic_email")
+
       override def row(id: DirectorEmailId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        StringCYA(Some(emailLabel(id.establisherIndex, id.directorIndex)), Some(hiddenLabel))().row(id)(changeUrl, userAnswers)
+        StringCYA(Some(label(id.establisherIndex, id.directorIndex, userAnswers)),
+          Some(hiddenLabel(id.establisherIndex, id.directorIndex, userAnswers)))()
+          .row(id)(changeUrl, userAnswers)
 
 
       override def updateRow(id: DirectorEmailId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
         userAnswers.get(IsNewDirectorId(id.establisherIndex, id.directorIndex)) match {
           case Some(true) => row(id)(changeUrl, userAnswers)
-          case _ => StringCYA(Some(emailLabel(id.establisherIndex, id.directorIndex)), Some(hiddenLabel), true)().updateRow(id)(changeUrl, userAnswers)
+          case _ => StringCYA(Some(label(id.establisherIndex, id.directorIndex, userAnswers)),
+            Some(hiddenLabel(id.establisherIndex, id.directorIndex, userAnswers)), true)()
+            .updateRow(id)(changeUrl, userAnswers)
         }
     }
   }
