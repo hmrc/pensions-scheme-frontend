@@ -17,31 +17,34 @@
 package controllers.register.establishers.individual
 
 import config.FrontendAppConfig
+import controllers.Retrievals
+import controllers.register.establishers.individual.routes._
 import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRequiredAction, DataRetrievalAction}
+import identifiers.register.establishers.individual.EstablisherNameId
 import javax.inject.Inject
 import models.{Index, Mode}
-import navigators.Navigator
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.Results.NotImplemented
 import play.api.mvc.{Action, AnyContent}
-import services.UserAnswersService
-import utils.annotations.EstablishersIndividual
+import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import views.html.register.establishers.individual.whatYouWillNeedIndividualDetails
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.Future
 
-class WhatYouWillNeedIndividualDetailsController @Inject()(
-                                                            val appConfig: FrontendAppConfig,
-                                                            val messagesApi: MessagesApi,
-                                                            val userAnswersService: UserAnswersService,
-                                                            @EstablishersIndividual val navigator: Navigator,
-                                                            authenticate: AuthAction,
-                                                            getData: DataRetrievalAction,
-                                                            allowAccess: AllowAccessActionProvider,
-                                                            requireData: DataRequiredAction
-                                                          )(implicit val ec: ExecutionContext) extends I18nSupport {
+class WhatYouWillNeedIndividualDetailsController @Inject()(appConfig: FrontendAppConfig,
+                                                           override val messagesApi: MessagesApi,
+                                                           authenticate: AuthAction,
+                                                           getData: DataRetrievalAction,
+                                                           allowAccess: AllowAccessActionProvider,
+                                                           requireData: DataRequiredAction
+                                                          ) extends FrontendController with I18nSupport with Retrievals {
+  def onPageLoad(mode: Mode, index: Index, srn: Option[String] = None): Action[AnyContent] = (authenticate andThen
+    getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+    implicit request =>
+      EstablisherNameId(index).retrieve.right.map {
+        details =>
+          val href = EstablisherDOBController.onPageLoad(mode, index, srn)
+          Future.successful(Ok(whatYouWillNeedIndividualDetails(appConfig, existingSchemeName, href, srn, details.fullName)))
+      }
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData) {
-      implicit request => NotImplemented("Not implemented: " + this.getClass.toString)
-    }
+  }
 }
