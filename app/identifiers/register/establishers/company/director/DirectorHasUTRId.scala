@@ -21,7 +21,7 @@ import identifiers.register.establishers.EstablishersId
 import play.api.i18n.Messages
 import play.api.libs.json.{JsPath, JsResult}
 import utils.UserAnswers
-import utils.checkyouranswers.CheckYourAnswers
+import utils.checkyouranswers.{CheckYourAnswers, CheckYourAnswersDirectors}
 import utils.checkyouranswers.CheckYourAnswers.BooleanCYA
 import viewmodels.AnswerRow
 
@@ -45,21 +45,24 @@ object DirectorHasUTRId {
 
   implicit def cya(implicit userAnswers: UserAnswers, messages: Messages): CheckYourAnswers[DirectorHasUTRId] = {
 
-    def label(establisherIndex: Int, directorIndex: Int) =
-      userAnswers.get(DirectorNameId(establisherIndex, directorIndex)) match {
-        case Some(directorName) => Some(messages("messages__hasDirectorUtr__cya", directorName.fullName))
-        case _ => Some(messages("messages__hasDirectorUtr__cya_fallback"))
-      }
+    new CheckYourAnswersDirectors[DirectorHasUTRId] {
 
-    def hiddenLabel = Some(messages("messages__visuallyhidden__director__utr_yes_no"))
+      private def label(establisherIndex: Int, directorIndex: Int, ua:UserAnswers):String =
+        dynamicMessage(establisherIndex, directorIndex, ua, "messages__hasDirectorUtr__cya")
 
-    new CheckYourAnswers[DirectorHasUTRId] {
+      private def hiddenLabel(establisherIndex: Int, directorIndex: Int, ua:UserAnswers):String =
+        dynamicMessage(establisherIndex, directorIndex, ua, "messages__visuallyhidden__dynamic_hasUtr")
+
       override def row(id: DirectorHasUTRId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        BooleanCYA(label(id.establisherIndex, id.directorIndex), hiddenLabel)().row(id)(changeUrl, userAnswers)
+        BooleanCYA(Some(label(id.establisherIndex, id.directorIndex, userAnswers)),
+          Some(hiddenLabel(id.establisherIndex, id.directorIndex, userAnswers)))()
+          .row(id)(changeUrl, userAnswers)
 
       override def updateRow(id: DirectorHasUTRId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
         userAnswers.get(IsNewDirectorId(id.establisherIndex, id.directorIndex)) match {
-          case Some(true) => BooleanCYA(label(id.establisherIndex, id.directorIndex), hiddenLabel)().row(id)(changeUrl, userAnswers)
+          case Some(true) => BooleanCYA(Some(label(id.establisherIndex, id.directorIndex, userAnswers)),
+            Some(hiddenLabel(id.establisherIndex, id.directorIndex, userAnswers)))()
+            .row(id)(changeUrl, userAnswers)
           case _ => Seq.empty[AnswerRow]
         }
     }

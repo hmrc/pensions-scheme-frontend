@@ -30,6 +30,7 @@ case class DirectorAddressId(establisherIndex: Int, directorIndex: Int) extends 
 object DirectorAddressId {
   override def toString: String = "directorAddressId"
 
-  implicit def cya(implicit countryOptions: CountryOptions): CheckYourAnswers[DirectorAddressId] =
+  implicit def cya(implicit countryOptions: CountryOptions): CheckYourAnswers[DirectorAddressId] = {
     AddressCYA[DirectorAddressId](changeAddress = "messages__visuallyhidden__director__address")()
+  }
 }
