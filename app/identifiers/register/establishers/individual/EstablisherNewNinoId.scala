@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-package identifiers.register.establishers
+package identifiers.register.establishers.individual
 
 import identifiers._
+import identifiers.register.establishers.{EstablishersId, IsEstablisherNewId}
 import models.ReferenceValue
 import play.api.i18n.Messages
 import play.api.libs.json.JsPath

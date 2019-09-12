@@ -17,7 +17,7 @@
 package identifiers.register.establishers.individual
 
 import base.SpecBase
-import identifiers.register.establishers.{EstablisherNewNinoId, IsEstablisherNewId}
+import identifiers.register.establishers.IsEstablisherNewId
 import models._
 import models.requests.DataRequest
 import play.api.mvc.AnyContent
