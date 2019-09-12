@@ -20,8 +20,7 @@ import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.NinoNewFormProvider
 import identifiers.SchemeNameId
-import identifiers.register.establishers.EstablisherNewNinoId
-import identifiers.register.establishers.individual.EstablisherDetailsId
+import identifiers.register.establishers.individual.{EstablisherDetailsId, EstablisherNewNinoId}
 import models._
 import models.person.PersonDetails
 import org.joda.time.LocalDate

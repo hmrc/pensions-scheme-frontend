@@ -14,16 +14,17 @@
  * limitations under the License.
  */
 
-package toggles
+package identifiers.register.establishers.individual
 
-class TogglesSpec extends FeatureToggleBehaviours {
+import identifiers.TypedIdentifier
+import identifiers.register.establishers.EstablishersId
+import org.joda.time.LocalDate
+import play.api.libs.json.JsPath
 
-  "is-establisher-company-hns new feature toggle" should {
-    behave like featureToggle("is-establisher-company-hns", false)
-  }
+case class EstablisherDOBId(index: Int) extends TypedIdentifier[LocalDate] {
+  override def path: JsPath = EstablishersId(index).path \ EstablisherDOBId.toString
+}
 
-  "is-hns-enabled new feature toggle" should {
-    behave like featureToggle("is-hns-enabled", false)
-  }
-
+object EstablisherDOBId {
+  override def toString: String = "dateOfBirth"
 }
