@@ -1,36 +1,36 @@
 # routes for establishers
 
-GET        /scheme-establishers                                         controllers.register.establishers.AddEstablisherController.onPageLoad(mode: Mode = NormalMode, srn: Option[String] = None)
-POST       /scheme-establishers                                         controllers.register.establishers.AddEstablisherController.onSubmit(mode: Mode = NormalMode, srn: Option[String] = None)
-GET        /:mode/scheme-establishers/:srn                              controllers.register.establishers.AddEstablisherController.onPageLoad(mode: Mode, srn: Option[String])
-POST       /:mode/scheme-establishers/:srn                              controllers.register.establishers.AddEstablisherController.onSubmit(mode: Mode, srn: Option[String])
+GET         /scheme-establishers                                     controllers.register.establishers.AddEstablisherController.onPageLoad(mode: Mode = NormalMode, srn: Option[String] = None)
+POST        /scheme-establishers                                     controllers.register.establishers.AddEstablisherController.onSubmit(mode: Mode = NormalMode, srn: Option[String] = None)
+GET         /:mode/scheme-establishers/:srn                          controllers.register.establishers.AddEstablisherController.onPageLoad(mode: Mode, srn: Option[String])
+POST        /:mode/scheme-establishers/:srn                          controllers.register.establishers.AddEstablisherController.onSubmit(mode: Mode, srn: Option[String])
 
-GET        /:index/company/delete-establisher                    controllers.register.establishers.ConfirmDeleteEstablisherController.onPageLoad(mode: Mode = NormalMode,index: Index, establisherKind: EstablisherKind = EstablisherKind.Company, srn: Option[String] = None)
-POST       /:index/company/delete-establisher                    controllers.register.establishers.ConfirmDeleteEstablisherController.onSubmit(mode: Mode = NormalMode,index: Index, establisherKind: EstablisherKind = EstablisherKind.Company, srn: Option[String] = None)
-GET        /:index/company/:mode/delete-establisher/:srn         controllers.register.establishers.ConfirmDeleteEstablisherController.onPageLoad(mode: Mode,index: Index, establisherKind: EstablisherKind = EstablisherKind.Company, srn: Option[String])
-POST       /:index/company/:mode/delete-establisher/:srn         controllers.register.establishers.ConfirmDeleteEstablisherController.onSubmit(mode: Mode,index: Index, establisherKind: EstablisherKind = EstablisherKind.Company, srn: Option[String])
+GET         /:index/company/delete-establisher                       controllers.register.establishers.ConfirmDeleteEstablisherController.onPageLoad(mode: Mode = NormalMode,index: Index, establisherKind: EstablisherKind = EstablisherKind.Company, srn: Option[String] = None)
+POST        /:index/company/delete-establisher                       controllers.register.establishers.ConfirmDeleteEstablisherController.onSubmit(mode: Mode = NormalMode,index: Index, establisherKind: EstablisherKind = EstablisherKind.Company, srn: Option[String] = None)
+GET         /:index/company/:mode/delete-establisher/:srn            controllers.register.establishers.ConfirmDeleteEstablisherController.onPageLoad(mode: Mode,index: Index, establisherKind: EstablisherKind = EstablisherKind.Company, srn: Option[String])
+POST        /:index/company/:mode/delete-establisher/:srn            controllers.register.establishers.ConfirmDeleteEstablisherController.onSubmit(mode: Mode,index: Index, establisherKind: EstablisherKind = EstablisherKind.Company, srn: Option[String])
 
-GET        /:index/individual/already-deleted                    controllers.register.establishers.AlreadyDeletedController.onPageLoad(mode: Mode = NormalMode,index: Index, establisherKind: EstablisherKind = EstablisherKind.Indivdual, srn: Option[String] = None)
-GET        /:index/individual/:mode/already-deleted              controllers.register.establishers.AlreadyDeletedController.onPageLoad(mode: Mode, index: Index, establisherKind: EstablisherKind = EstablisherKind.Indivdual, srn: Option[String])
+GET         /:index/individual/already-deleted                       controllers.register.establishers.AlreadyDeletedController.onPageLoad(mode: Mode = NormalMode,index: Index, establisherKind: EstablisherKind = EstablisherKind.Indivdual, srn: Option[String] = None)
+GET         /:index/individual/:mode/already-deleted                 controllers.register.establishers.AlreadyDeletedController.onPageLoad(mode: Mode, index: Index, establisherKind: EstablisherKind = EstablisherKind.Indivdual, srn: Option[String])
 
-GET        /:index/individual/delete-establisher                 controllers.register.establishers.ConfirmDeleteEstablisherController.onPageLoad(mode: Mode = NormalMode, index: Index, establisherKind: EstablisherKind = EstablisherKind.Indivdual, srn: Option[String] = None)
-POST       /:index/individual/delete-establisher                 controllers.register.establishers.ConfirmDeleteEstablisherController.onSubmit(mode: Mode = NormalMode, index: Index, establisherKind: EstablisherKind = EstablisherKind.Indivdual, srn: Option[String] = None)
-GET        /:index/individual/:mode/delete-establisher/:srn      controllers.register.establishers.ConfirmDeleteEstablisherController.onPageLoad(mode: Mode, index: Index, establisherKind: EstablisherKind = EstablisherKind.Indivdual, srn: Option[String])
-POST       /:index/individual/:mode/delete-establisher/:srn      controllers.register.establishers.ConfirmDeleteEstablisherController.onSubmit(mode: Mode, index: Index, establisherKind: EstablisherKind = EstablisherKind.Indivdual, srn: Option[String])
+GET         /:index/individual/delete-establisher                    controllers.register.establishers.ConfirmDeleteEstablisherController.onPageLoad(mode: Mode = NormalMode, index: Index, establisherKind: EstablisherKind = EstablisherKind.Indivdual, srn: Option[String] = None)
+POST        /:index/individual/delete-establisher                    controllers.register.establishers.ConfirmDeleteEstablisherController.onSubmit(mode: Mode = NormalMode, index: Index, establisherKind: EstablisherKind = EstablisherKind.Indivdual, srn: Option[String] = None)
+GET         /:index/individual/:mode/delete-establisher/:srn         controllers.register.establishers.ConfirmDeleteEstablisherController.onPageLoad(mode: Mode, index: Index, establisherKind: EstablisherKind = EstablisherKind.Indivdual, srn: Option[String])
+POST        /:index/individual/:mode/delete-establisher/:srn         controllers.register.establishers.ConfirmDeleteEstablisherController.onSubmit(mode: Mode, index: Index, establisherKind: EstablisherKind = EstablisherKind.Indivdual, srn: Option[String])
 
-GET        /:index/partnership/delete-establisher                controllers.register.establishers.ConfirmDeleteEstablisherController.onPageLoad(mode: Mode = NormalMode,index: Index, establisherKind: EstablisherKind = EstablisherKind.Partnership, srn: Option[String] = None)
-POST       /:index/partnership/delete-establisher                controllers.register.establishers.ConfirmDeleteEstablisherController.onSubmit(mode: Mode = NormalMode,index: Index, establisherKind: EstablisherKind = EstablisherKind.Partnership, srn: Option[String] = None)
-GET        /:index/partnership/:mode/delete-establisher/:srn     controllers.register.establishers.ConfirmDeleteEstablisherController.onPageLoad(mode: Mode,index: Index, establisherKind: EstablisherKind = EstablisherKind.Partnership, srn: Option[String])
-POST       /:index/partnership/:mode/delete-establisher/:srn     controllers.register.establishers.ConfirmDeleteEstablisherController.onSubmit(mode: Mode,index: Index, establisherKind: EstablisherKind = EstablisherKind.Partnership, srn: Option[String])
+GET         /:index/partnership/delete-establisher                   controllers.register.establishers.ConfirmDeleteEstablisherController.onPageLoad(mode: Mode = NormalMode,index: Index, establisherKind: EstablisherKind = EstablisherKind.Partnership, srn: Option[String] = None)
+POST        /:index/partnership/delete-establisher                   controllers.register.establishers.ConfirmDeleteEstablisherController.onSubmit(mode: Mode = NormalMode,index: Index, establisherKind: EstablisherKind = EstablisherKind.Partnership, srn: Option[String] = None)
+GET         /:index/partnership/:mode/delete-establisher/:srn        controllers.register.establishers.ConfirmDeleteEstablisherController.onPageLoad(mode: Mode,index: Index, establisherKind: EstablisherKind = EstablisherKind.Partnership, srn: Option[String])
+POST        /:index/partnership/:mode/delete-establisher/:srn        controllers.register.establishers.ConfirmDeleteEstablisherController.onSubmit(mode: Mode,index: Index, establisherKind: EstablisherKind = EstablisherKind.Partnership, srn: Option[String])
 
-GET        /:index/establisher-type                              controllers.register.establishers.EstablisherKindController.onPageLoad(mode: Mode = NormalMode,index:Index, srn: Option[String] = None)
-POST       /:index/establisher-type                              controllers.register.establishers.EstablisherKindController.onSubmit(mode: Mode = NormalMode,index:Index, srn: Option[String] = None)
-GET        /:index/:mode/establisher-type/:srn                   controllers.register.establishers.EstablisherKindController.onPageLoad(mode: Mode,index:Index, srn: Option[String])
-POST       /:index/:mode/establisher-type/:srn                   controllers.register.establishers.EstablisherKindController.onSubmit(mode: Mode,index:Index, srn: Option[String])
+GET         /:index/establisher-type                                 controllers.register.establishers.EstablisherKindController.onPageLoad(mode: Mode = NormalMode,index:Index, srn: Option[String] = None)
+POST        /:index/establisher-type                                 controllers.register.establishers.EstablisherKindController.onSubmit(mode: Mode = NormalMode,index:Index, srn: Option[String] = None)
+GET         /:index/:mode/establisher-type/:srn                      controllers.register.establishers.EstablisherKindController.onPageLoad(mode: Mode,index:Index, srn: Option[String])
+POST        /:index/:mode/establisher-type/:srn                      controllers.register.establishers.EstablisherKindController.onSubmit(mode: Mode,index:Index, srn: Option[String])
 
-GET        /:index/company/already-deleted                       controllers.register.establishers.AlreadyDeletedController.onPageLoad(mode: Mode = NormalMode,index: Index, establisherKind: EstablisherKind = EstablisherKind.Company, srn: Option[String] = None)
-GET        /:index/company/:mode/already-deleted/:srn            controllers.register.establishers.AlreadyDeletedController.onPageLoad(mode: Mode,index: Index, establisherKind: EstablisherKind = EstablisherKind.Company, srn: Option[String])
+GET         /:index/company/already-deleted                          controllers.register.establishers.AlreadyDeletedController.onPageLoad(mode: Mode = NormalMode,index: Index, establisherKind: EstablisherKind = EstablisherKind.Company, srn: Option[String] = None)
+GET         /:index/company/:mode/already-deleted/:srn               controllers.register.establishers.AlreadyDeletedController.onPageLoad(mode: Mode,index: Index, establisherKind: EstablisherKind = EstablisherKind.Company, srn: Option[String])
 
-->         /                                                     establishersCompany.Routes
-->         /                                                     establishersIndividual.Routes
-->         /                                                     establishersPartnership.Routes
+->          /                                                        establishersCompany.Routes
+->          /                                                        establishersIndividual.Routes
+->          /                                                        establishersPartnership.Routes
